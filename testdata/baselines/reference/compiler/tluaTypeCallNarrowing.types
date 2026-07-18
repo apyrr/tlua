@@ -1,0 +1,353 @@
+//// [tests/cases/compiler/tluaTypeCallNarrowing.tlua] ////
+
+=== tluaTypeCallNarrowing.tlua ===
+// `type(x)` is the Lua type guard. Every tag it can return narrows, including the
+// three branded object kinds, which carry the same type facts as a plain table and
+// therefore cannot be told apart by facts alone.
+
+type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
+>Mixed : Mixed
+>n : number
+>a : number
+
+function tags(v: Mixed): void {
+>tags : (v: Mixed) => void
+>v : Mixed
+
+  if type(v) == "table" then
+>type(v) == "table" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"table" : "table"
+
+    local table1: { n: number } = v; // the brands are not tables, and "table" excludes nil
+>table1 : { n: number; }
+>n : number
+>v : LuaCData | { n: number; }
+
+  end
+  if type(v) == "thread" then
+>type(v) == "thread" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"thread" : "thread"
+
+    local thread1: LuaThread = v;
+>thread1 : LuaThread
+>v : LuaThread
+
+  end
+  if type(v) == "userdata" then
+>type(v) == "userdata" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"userdata" : "userdata"
+
+    local userdata1: LuaUserdata = v;
+>userdata1 : LuaUserdata
+>v : LuaUserdata
+
+  end
+  if type(v) == "cdata" then
+>type(v) == "cdata" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"cdata" : "cdata"
+
+    local cdata1: LuaCData = v;
+>cdata1 : LuaCData
+>v : Mixed
+
+  end
+  if type(v) == "function" then
+>type(v) == "function" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"function" : "function"
+
+    local function1: (a: number) => void = v;
+>function1 : (a: number) => void
+>a : number
+>v : (a: number) => void
+
+  end
+  if type(v) == "string" then
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"string" : "string"
+
+    local string1: string = v;
+>string1 : string
+>v : string
+
+  end
+  if type(v) == "number" then
+>type(v) == "number" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"number" : "number"
+
+    local number1: number = v;
+>number1 : number
+>v : number
+
+  end
+  if type(v) == "boolean" then
+>type(v) == "boolean" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"boolean" : "boolean"
+
+    local boolean1: boolean = v;
+>boolean1 : boolean
+>v : boolean
+
+  end
+  if type(v) == "nil" then
+>type(v) == "nil" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"nil" : "nil"
+
+    local nil1: nil = v;
+>nil1 : nil
+>v : nil
+
+  end
+}
+
+function negated(v: Mixed): void {
+>negated : (v: Mixed) => void
+>v : Mixed
+
+  if type(v) ~= "table" then
+>type(v) ~= "table" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"table" : "table"
+
+    local notTable: LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+>notTable : string | number | boolean | LuaCData | LuaThread | LuaUserdata | ((a: number) => void) | nil
+>a : number
+>v : string | number | boolean | LuaThread | LuaUserdata | ((a: number) => void) | nil
+
+  end
+  if type(v) ~= "thread" then
+>type(v) ~= "thread" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"thread" : "thread"
+
+    // A negated brand keeps every table: only the brand is ruled out.
+    local notThread: { n: number } | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+>notThread : string | number | boolean | LuaCData | LuaUserdata | { n: number; } | ((a: number) => void) | nil
+>n : number
+>a : number
+>v : string | number | boolean | LuaCData | LuaUserdata | { n: number; } | ((a: number) => void) | nil
+
+  end
+  if type(v) ~= "nil" then
+>type(v) ~= "nil" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"nil" : "nil"
+
+    local present: { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean = v;
+>present : string | number | boolean | LuaCData | LuaThread | LuaUserdata | { n: number; } | ((a: number) => void)
+>n : number
+>a : number
+>v : string | number | boolean | LuaCData | LuaThread | LuaUserdata | { n: number; } | ((a: number) => void)
+
+  end
+}
+
+// The `and`/`or` idiom narrows the same way an if-statement does.
+function idiom(v: string | number): string {
+>idiom : (v: string | number) => string
+>v : string | number
+
+  return type(v) == "string" and v or tostring(v);
+>type(v) == "string" and v or tostring(v) : string
+>type(v) == "string" and v : string | false
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number
+>"string" : "string"
+>v : string
+>tostring(v) : string
+>tostring : (value: any) => string
+>v : number
+}
+
+function tops(u: unknown, a: any): void {
+>tops : (u: unknown, a: any) => void
+>u : unknown
+>a : any
+
+  if type(u) == "table" then
+>type(u) == "table" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : unknown
+>"table" : "table"
+
+    local o: object = u;
+>o : object
+>u : object
+
+  end
+  if type(u) == "thread" then
+>type(u) == "thread" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : unknown
+>"thread" : "thread"
+
+    local t: LuaThread = u;
+>t : LuaThread
+>u : LuaThread
+
+  end
+  if type(u) == "string" then
+>type(u) == "string" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : unknown
+>"string" : "string"
+
+    local s: string = u;
+>s : string
+>u : string
+
+  end
+  if type(a) == "table" then
+>type(a) == "table" : boolean
+>type(a) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>a : any
+>"table" : "table"
+
+    local stillAny: number = a; // `any` survives every tag
+>stillAny : number
+>a : any
+
+  end
+}
+
+function generic<T>(v: T): void {
+>generic : <T>(v: T) => void
+>v : T
+
+  if type(v) == "thread" then
+>type(v) == "thread" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : T
+>"thread" : "thread"
+
+    local t: T & LuaThread = v;
+>t : T & LuaThread
+>v : T & LuaThread
+
+  end
+}
+
+function constrained<T extends LuaThread | string>(v: T): void {
+>constrained : <T extends LuaThread | string>(v: T) => void
+>v : T
+
+  if type(v) ~= "thread" then
+>type(v) ~= "thread" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | LuaThread
+>"thread" : "thread"
+
+    local s: string = v;
+>s : string
+>v : string
+
+  end
+}
+
+// An unreachable tag: `type()` never reports it, so the true branch is uninhabited.
+function unknownTag(v: string | number): void {
+>unknownTag : (v: string | number) => void
+>v : string | number
+
+  if type(v) == "chair" then
+>type(v) == "chair" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number
+>"chair" : "chair"
+
+    local none: never = v;
+>none : never
+>v : never
+
+  end
+}
+
+// The tags partition values, so a guard that is provably false is a dead branch:
+// a concrete type unrelated to a brand narrows to never, not to an intersection.
+function disjoint(x: { n: number }, u: { n: number } | string, s: string): void {
+>disjoint : (x: { n: number; }, u: { n: number; } | string, s: string) => void
+>x : { n: number; }
+>n : number
+>u : string | { n: number; }
+>n : number
+>s : string
+
+  if type(x) == "thread" then
+>type(x) == "thread" : boolean
+>type(x) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>x : { n: number; }
+>"thread" : "thread"
+
+    local dead: never = x;
+>dead : never
+>x : never
+
+  end
+  if type(u) == "thread" then
+>type(u) == "thread" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : string | { n: number; }
+>"thread" : "thread"
+
+    local dead2: never = u;
+>dead2 : never
+>u : never
+
+  end
+  if type(s) == "userdata" then
+>type(s) == "userdata" : boolean
+>type(s) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>s : string
+>"userdata" : "userdata"
+
+    local dead3: never = s;
+>dead3 : never
+>s : never
+
+  end
+}
+

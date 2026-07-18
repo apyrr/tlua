@@ -1,0 +1,304 @@
+{
+    "name": "tlua",
+    "displayName": "tlua",
+    "publisher": "tlua",
+    "description": "%description%",
+    "icon": "logo.png",
+    "private": true,
+    "version": "0.0.0",
+    "type": "commonjs",
+    "l10n": "./l10n",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/apyrr/tlua"
+    },
+    "//enabledApiProposals": [
+        "editorHoverVerbosityLevel",
+        "multiDocumentHighlightProvider"
+    ],
+    "engines": {
+        "vscode": "^1.126.0"
+    },
+    "extensionKind": [
+        "workspace"
+    ],
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": false
+        }
+    },
+    "activationEvents": [
+        "onLanguage:tlua"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "tlua",
+                "aliases": [
+                    "tlua",
+                    "Typed Lua"
+                ],
+                "extensions": [
+                    ".tlua",
+                    ".d.tlua"
+                ],
+                "icon": {
+                    "light": "./icons/tlua.svg",
+                    "dark": "./icons/tlua.svg"
+                },
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "tlua",
+                "scopeName": "source.tlua",
+                "path": "./syntaxes/tlua.tmLanguage.json"
+            }
+        ],
+        "configuration": [
+            {
+                "title": "tlua",
+                "properties": {
+                    "tlua.customConfigFileName": {
+                        "type": "string",
+                        "default": "",
+                        "description": "%tlua.customConfigFileName.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "tlua.trace.server": {
+                        "type": "string",
+                        "enum": [
+                            "off",
+                            "messages",
+                            "verbose"
+                        ],
+                        "default": "off",
+                        "description": "%tlua.trace.server.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "tlua.server.pprofDir": {
+                        "type": "string",
+                        "description": "%tlua.pprofDir.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "tlua.tsdk.path": {
+                        "type": "string",
+                        "description": "%tlua.tsdk.description%",
+                        "scope": "window",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "tlua.showDebugInfo": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "%tlua.showDebugInfo.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "tlua.server.goMemLimit": {
+                        "type": "string",
+                        "description": "%tlua.goMemLimit.description%",
+                        "pattern": "^[0-9]+(([KMGT]i)?B)?$",
+                        "patternErrorMessage": "%tlua.goMemLimit.error%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "tlua.autoClosingTags.enabled": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "%tlua.autoClosingTags.description%"
+                    },
+                    "tlua.preferences.autoImportEntrypointDirectorySearch": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Enables recursive directory search for auto-importable files in all packages that lack `exports` in their `package.json`. Enabling this option allows more auto-importable paths to be discovered at the cost of increased scanning time.",
+                        "scope": "window",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "tlua.server.showFailedResponses": {
+                        "type": "string",
+                        "enum": [
+                            "always",
+                            "never",
+                            "auto"
+                        ],
+                        "enumDescriptions": [
+                            "%tlua.showFailedResponses.always%",
+                            "%tlua.showFailedResponses.never%",
+                            "%tlua.showFailedResponses.auto%"
+                        ],
+                        "default": "auto",
+                        "description": "%tlua.showFailedResponses.description%",
+                        "scope": "window"
+                    }
+                }
+            }
+        ],
+        "commands": [
+            {
+                "command": "tlua.enable",
+                "title": "%tlua.enable.title%",
+                "enablement": "!tlua.serverRunning",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.disable",
+                "title": "%tlua.disable.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.restart",
+                "title": "%tlua.restart.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.output.focus",
+                "title": "%tlua.output.focus.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.reportIssue",
+                "title": "%tlua.reportIssue.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.goToSourceDefinition",
+                "title": "%tlua.goToSourceDefinition.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.sortImports",
+                "title": "%tlua.sortImports.title%",
+                "enablement": "tlua.serverRunning && resourceLangId == tlua",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.removeUnusedImports",
+                "title": "%tlua.removeUnusedImports.title%",
+                "enablement": "tlua.serverRunning && resourceLangId == tlua",
+                "category": "tlua"
+            },
+            {
+                "command": "tlua.codeLens.showLocations",
+                "title": "%tlua.codeLens.showLocations.title%",
+                "enablement": "false"
+            },
+            {
+                "command": "tlua.dev.runGC",
+                "title": "%tlua.dev.runGC.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "%developer%"
+            },
+            {
+                "command": "tlua.dev.saveHeapProfile",
+                "title": "%tlua.dev.saveHeapProfile.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "%developer%"
+            },
+            {
+                "command": "tlua.dev.saveAllocProfile",
+                "title": "%tlua.dev.saveAllocProfile.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "%developer%"
+            },
+            {
+                "command": "tlua.dev.startCPUProfile",
+                "title": "%tlua.dev.startCPUProfile.title%",
+                "enablement": "tlua.serverRunning && !tlua.cpuProfileRunning",
+                "category": "%developer%"
+            },
+            {
+                "command": "tlua.dev.stopCPUProfile",
+                "title": "%tlua.dev.stopCPUProfile.title%",
+                "enablement": "tlua.cpuProfileRunning",
+                "category": "%developer%"
+            },
+            {
+                "command": "tlua.initializeAPIConnection.ui",
+                "title": "%tlua.initializeAPIConnection.ui.title%",
+                "enablement": "tlua.serverRunning",
+                "category": "%developer%"
+            }
+        ],
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "tlua.restart",
+                    "when": "tlua.serverRunning"
+                },
+                {
+                    "command": "tlua.output.focus",
+                    "when": "tlua.serverRunning"
+                },
+                {
+                    "command": "tlua.goToSourceDefinition",
+                    "when": "tlua.serverRunning && tsSupportsSourceDefinition"
+                },
+                {
+                    "command": "tlua.sortImports",
+                    "when": "tlua.serverRunning && supportedCodeAction =~ /(\\s|^)source\\.sortImports\\b/ && editorLangId == tlua"
+                },
+                {
+                    "command": "tlua.removeUnusedImports",
+                    "when": "tlua.serverRunning && supportedCodeAction =~ /(\\s|^)source\\.removeUnusedImports\\b/ && editorLangId == tlua"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "tlua.goToSourceDefinition",
+                    "when": "tlua.serverRunning && tsSupportsSourceDefinition && resourceLangId == tlua",
+                    "group": "navigation@1.41"
+                }
+            ]
+        }
+    },
+    "main": "./dist/extension.bundle.js",
+    "files": [
+        "dist/extension.bundle.js",
+        "language-configuration.json",
+        "syntaxes",
+        "icons",
+        "lib",
+        "LICENSE",
+        "NOTICE.txt",
+        "logo.png",
+        "l10n/bundle.l10n.json",
+        "package.nls.json"
+    ],
+    "scripts": {
+        "build": "tsc && npm run bundle",
+        "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.bundle.js --sourcemap",
+        "watch": "npm run bundle -- --watch",
+        "generateLocTest": "npx @vscode/l10n-dev generate-pseudo -o ./l10n/ ./l10n/bundle.l10n.json ./package.nls.json",
+        "generateLocBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
+        "//vscode:prepublish": "we do not use this hook; the Herebyfile runs bundle:release once instead",
+        "bundle:release": "npm run bundle -- --minify"
+    },
+    "dependencies": {
+        "@vscode/extension-telemetry": "^1.5.2",
+        "vscode-languageclient": "^10.0.1",
+        "vscode-tas-client": "^0.2.1"
+    },
+    "devDependencies": {
+        "@types/vscode": "~1.125.0",
+        "@vscode/vsce": "^3.9.2",
+        "esbuild": "^0.28.1"
+    }
+}

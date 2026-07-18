@@ -1,0 +1,79 @@
+//// [tests/cases/compiler/tluaTableMixed.tlua] ////
+
+=== tluaTableMixed.tlua ===
+// Mixed array/hash parts: positional entries count only positional entries,
+// interleaved keyed entries do not consume indices (Lua semantics).
+declare k: string;
+>k : string
+
+local m = { "r", mode = 1, [k] = true, "s"; 3 };
+>m : { [k]: boolean; 1: string; mode: number; 2: string; 3: number; }
+>{ "r", mode = 1, [k] = true, "s"; 3 } : { [k]: boolean; 1: string; mode: number; 2: string; 3: number; }
+>mode : number
+>1 : 1
+>[k] : boolean
+>k : string
+>true : true
+
+local r: string = m[1];
+>r : string
+>m[1] : string
+>m : { [k]: boolean; 1: string; mode: number; 2: string; 3: number; }
+>1 : 1
+
+local s: string = m[2];
+>s : string
+>m[2] : string
+>m : { [k]: boolean; 1: string; mode: number; 2: string; 3: number; }
+>2 : 2
+
+local three: number = m[3];
+>three : number
+>m[3] : number
+>m : { [k]: boolean; 1: string; mode: number; 2: string; 3: number; }
+>3 : 3
+
+local mode: number = m.mode;
+>mode : number
+>m.mode : number
+>m : { [k]: boolean; 1: string; mode: number; 2: string; 3: number; }
+>mode : number
+
+local all = {r, s, three, mode};
+>all : { 1: string; 2: string; 3: number; 4: number; }
+>{r, s, three, mode} : { 1: string; 2: string; 3: number; 4: number; }
+>r : error
+>s : error
+>three : error
+>mode : error
+
+// Nested tables mixing both parts.
+local nested = { { 1, 2 }, cols = { "a"; "b" } };
+>nested : { 1: { 1: number; 2: number; }; cols: { 1: string; 2: string; }; }
+>{ { 1, 2 }, cols = { "a"; "b" } } : { 1: { 1: number; 2: number; }; cols: { 1: string; 2: string; }; }
+>{ 1, 2 } : { 1: number; 2: number; }
+>cols : { 1: string; 2: string; }
+>{ "a"; "b" } : { 1: string; 2: string; }
+
+local n11: number = nested[1][1];
+>n11 : number
+>nested[1][1] : number
+>nested[1] : { 1: number; 2: number; }
+>nested : { 1: { 1: number; 2: number; }; cols: { 1: string; 2: string; }; }
+>1 : 1
+>1 : 1
+
+local nc2: string = nested.cols[2];
+>nc2 : string
+>nested.cols[2] : string
+>nested.cols : { 1: string; 2: string; }
+>nested : { 1: { 1: number; 2: number; }; cols: { 1: string; 2: string; }; }
+>cols : { 1: string; 2: string; }
+>2 : 2
+
+local ns = {n11, nc2};
+>ns : { 1: number; 2: string; }
+>{n11, nc2} : { 1: number; 2: string; }
+>n11 : error
+>nc2 : error
+

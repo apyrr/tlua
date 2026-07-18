@@ -1,0 +1,17 @@
+// === findAllReferences ===
+// === /findAllRefsDestructureGeneric.tlua ===
+// interface I<T> {
+//     /*FIND ALL REFS*/[|x|]: boolean;
+// }
+// declare i: I<number>;
+// local { x } = i;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDestructureGeneric.tlua ===
+// interface I<T> {
+//     x: boolean;
+// }
+// declare i: I<number>;
+// local { /*FIND ALL REFS*/x } = i;

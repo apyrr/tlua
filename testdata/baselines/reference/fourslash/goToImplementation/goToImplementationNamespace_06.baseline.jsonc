@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationNamespace_06.tlua ===
+// namespace F/*GOTO IMPL*/oo {
+//     declare function hello(): void;
+// }
+// 
+// 
+// local x: typeof Foo = { hello() {} };

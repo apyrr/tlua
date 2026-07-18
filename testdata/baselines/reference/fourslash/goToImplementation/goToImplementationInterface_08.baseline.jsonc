@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationInterface_08.tlua ===
+// --- (line: 10) skipped ---
+// }
+// 
+// function someFunction(d : A) {
+//     d.he/*GOTO IMPL*/llo();
+// }

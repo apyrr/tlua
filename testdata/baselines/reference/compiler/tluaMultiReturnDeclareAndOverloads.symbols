@@ -1,0 +1,51 @@
+//// [tests/cases/compiler/tluaMultiReturnDeclareAndOverloads.tlua] ////
+
+=== tluaMultiReturnDeclareAndOverloads.tlua ===
+// Ambient declarations take bare return-type lists.
+declare function ambient(): (number, string);
+>ambient : Symbol(ambient, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 0, 0))
+
+declare function ambientVariadic(n: number): (number, ...string);
+>ambientVariadic : Symbol(ambientVariadic, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 1, 45))
+>n : Symbol(n, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 33))
+
+// Overload signatures terminate with `;`, so the list grammar is unambiguous.
+function over(a: number): (number, string);
+>over : Symbol(over, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 65), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 43), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 43))
+>a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 14))
+
+function over(a: string): (string, number);
+>over : Symbol(over, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 65), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 43), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 43))
+>a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 14))
+
+function over(a: number | string): (number | string, string | number) {
+>over : Symbol(over, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 65), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 43), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 43))
+>a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
+
+  if (type(a) == "number") {
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
+
+    return a, "n";
+>a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
+  }
+  return a, 0;
+>a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
+}
+
+local a = ambient();
+>a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 14, 5))
+>ambient : Symbol(ambient, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 0, 0))
+
+local v = ambientVariadic(1);
+>v : Symbol(v, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 15, 5))
+>ambientVariadic : Symbol(ambientVariadic, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 1, 45))
+
+local o1 = over(1);
+>o1 : Symbol(o1, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 16, 5))
+>over : Symbol(over, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 65), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 43), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 43))
+
+local o2 = over("x");
+>o2 : Symbol(o2, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 17, 5))
+>over : Symbol(over, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 65), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 43), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 43))
+

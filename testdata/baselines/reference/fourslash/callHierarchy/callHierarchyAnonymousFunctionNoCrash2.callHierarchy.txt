@@ -1,0 +1,16 @@
+// === Call Hierarchy ===
+╭ name: /main.tlua
+├ kind: module
+├ file: /main.tlua
+├ span:
+│ ╭ /main.tlua:1:1-1:16
+│ │ 1: (function() {})
+│ │    ^^^^^^^^^^^^^^^
+│ ╰
+├ selectionSpan:
+│ ╭ /main.tlua:1:1-1:1
+│ │ 1: (function() {})
+│ │    <
+│ ╰
+├ incoming: none
+╰ outgoing: none

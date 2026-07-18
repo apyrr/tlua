@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/tluaNumberKeyKeyofTuples.tlua] ////
+
+=== tluaNumberKeyKeyofTuples.tlua ===
+// keyof separates number keys from string keys.
+type T = { 1: number; "1": string; x: boolean };
+>T : Symbol(T, Decl(tluaNumberKeyKeyofTuples.tlua, 0, 0))
+>1 : Symbol(1, Decl(tluaNumberKeyKeyofTuples.tlua, 1, 10))
+>"1" : Symbol("1", Decl(tluaNumberKeyKeyofTuples.tlua, 1, 21))
+>x : Symbol(x, Decl(tluaNumberKeyKeyofTuples.tlua, 1, 34))
+
+type K = keyof T; // 1 | "1" | "x"
+>K : Symbol(K, Decl(tluaNumberKeyKeyofTuples.tlua, 1, 48))
+>T : Symbol(T, Decl(tluaNumberKeyKeyofTuples.tlua, 0, 0))
+
+local k1: K = 1;
+>k1 : Symbol(k1, Decl(tluaNumberKeyKeyofTuples.tlua, 3, 5))
+>K : Symbol(K, Decl(tluaNumberKeyKeyofTuples.tlua, 1, 48))
+
+local k2: K = "1";
+>k2 : Symbol(k2, Decl(tluaNumberKeyKeyofTuples.tlua, 4, 5))
+>K : Symbol(K, Decl(tluaNumberKeyKeyofTuples.tlua, 1, 48))
+
+local k3: K = "x";
+>k3 : Symbol(k3, Decl(tluaNumberKeyKeyofTuples.tlua, 5, 5))
+>K : Symbol(K, Decl(tluaNumberKeyKeyofTuples.tlua, 1, 48))
+
+// Indexed access distinguishes the namespaces too.
+type N = T[1];   // number
+>N : Symbol(N, Decl(tluaNumberKeyKeyofTuples.tlua, 5, 18))
+>T : Symbol(T, Decl(tluaNumberKeyKeyofTuples.tlua, 0, 0))
+
+type S = T["1"]; // string
+>S : Symbol(S, Decl(tluaNumberKeyKeyofTuples.tlua, 8, 14))
+>T : Symbol(T, Decl(tluaNumberKeyKeyofTuples.tlua, 0, 0))
+
+local n: N = 0;
+>n : Symbol(n, Decl(tluaNumberKeyKeyofTuples.tlua, 10, 5))
+>N : Symbol(N, Decl(tluaNumberKeyKeyofTuples.tlua, 5, 18))
+
+local s: S = "";
+>s : Symbol(s, Decl(tluaNumberKeyKeyofTuples.tlua, 11, 5))
+>S : Symbol(S, Decl(tluaNumberKeyKeyofTuples.tlua, 8, 14))
+
+// Multireturn packs are tuples under the hood; positional truncation still works.
+// (Tuple type syntax `[A, B]` is removed from tlua source, so packs are the
+// only way to spell a tuple now.)
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaNumberKeyKeyofTuples.tlua, 11, 16))
+
+  return 1, "a";
+end
+local p: number = pair();
+>p : Symbol(p, Decl(tluaNumberKeyKeyofTuples.tlua, 19, 5))
+>pair : Symbol(pair, Decl(tluaNumberKeyKeyofTuples.tlua, 11, 16))
+
+local es = {k1, k2, k3, n, s, p};
+>es : Symbol(es, Decl(tluaNumberKeyKeyofTuples.tlua, 21, 5))
+

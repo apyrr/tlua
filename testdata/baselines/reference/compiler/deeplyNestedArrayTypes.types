@@ -1,0 +1,66 @@
+//// [tests/cases/compiler/deeplyNestedArrayTypes.tlua] ////
+
+=== deeplyNestedArrayTypes.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3426
+
+type AOuter = {
+>AOuter : AOuter
+
+    inners: AInner[];
+>inners : AInner[]
+}
+type AInner = {
+>AInner : AInner
+
+    mids: AMid[];
+>mids : AMid[]
+}
+type AMid = {
+>AMid : AMid
+
+    leaves: ALeaf[];
+>leaves : ALeaf[]
+}
+type ALeaf = {
+>ALeaf : ALeaf
+
+    id: string;
+>id : string
+}
+
+type BOuter = {
+>BOuter : BOuter
+
+    inners: BInner[];
+>inners : BInner[]
+}
+type BInner = {
+>BInner : BInner
+
+    mids: BMid[];
+>mids : BMid[]
+}
+type BMid = {
+>BMid : BMid
+
+    leaves: BLeaf[];
+>leaves : BLeaf[]
+}
+type BLeaf = {
+>BLeaf : BLeaf
+
+    id: number;
+>id : number
+}
+
+function test(a: AOuter, b: BOuter) {
+>test : (a: AOuter, b: BOuter) => void
+>a : AOuter
+>b : BOuter
+
+    a = b
+>a = b : BOuter
+>a : AOuter
+>b : BOuter
+}
+

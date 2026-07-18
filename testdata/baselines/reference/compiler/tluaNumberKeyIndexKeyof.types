@@ -1,0 +1,94 @@
+//// [tests/cases/compiler/tluaNumberKeyIndexKeyof.tlua] ////
+
+=== tluaNumberKeyIndexKeyof.tlua ===
+// keyof a string index signature is string only (not string | number).
+type SK = keyof { [k: string]: boolean }; // string
+>SK : string
+>k : string
+
+local sk: SK = "x";
+>sk : string
+>"x" : "x"
+
+local skBad: SK = 1; // error: number not a string key
+>skBad : string
+>1 : 1
+
+// keyof a number index signature is number.
+type NK = keyof { [k: number]: boolean }; // number
+>NK : number
+>k : number
+
+local nk: NK = 1;
+>nk : number
+>1 : 1
+
+local nkBad: NK = "x"; // error: string not a number key
+>nkBad : number
+>"x" : "x"
+
+// Both signatures: keyof is string | number.
+type BK = keyof { [k: string]: boolean; [k: number]: boolean };
+>BK : string | number
+>k : string
+>k : number
+
+local bk1: BK = "x";
+>bk1 : string | number
+>"x" : "x"
+
+local bk2: BK = 1;
+>bk2 : string | number
+>1 : 1
+
+// Mapped type over a string-indexed type only iterates string keys.
+type M = { [K in keyof { [k: string]: number }]: boolean };
+>M : M
+>k : string
+
+local m: M = { anything = true };
+>m : M
+>{ anything = true } : { anything: true; }
+>anything : true
+>true : true
+
+// `${number}` is a string-pattern type and behaves as a string key.
+type TplKey = keyof { [k: `${number}`]: boolean };
+>TplKey : `${number}`
+>k : `${number}`
+
+local tk: TplKey = "123";
+>tk : `${number}`
+>"123" : "123"
+
+// A key-remapped mapped type over a string index is not widened to
+// string | number either: keyof of the mapped type stays string.
+type S2 = { [k: string]: number };
+>S2 : S2
+>k : string
+
+type M2 = { [K in keyof S2 as K]: S2[K] };
+>M2 : M2
+
+local m2Ok: keyof M2 = "x";
+>m2Ok : string
+>"x" : "x"
+
+local m2Bad: keyof M2 = 1; // error: keyof M2 is string, not string | number
+>m2Bad : string
+>1 : 1
+
+local es = {sk, skBad, nk, nkBad, bk1, bk2, m, tk, m2Ok, m2Bad};
+>es : { 1: string; 2: string; 3: number; 4: number; 5: string; 6: number; 7: M; 8: `${number}`; 9: string; 10: string; }
+>{sk, skBad, nk, nkBad, bk1, bk2, m, tk, m2Ok, m2Bad} : { 1: string; 2: string; 3: number; 4: number; 5: string; 6: number; 7: M; 8: `${number}`; 9: string; 10: string; }
+>sk : any
+>skBad : any
+>nk : any
+>nkBad : any
+>bk1 : any
+>bk2 : any
+>m : any
+>tk : any
+>m2Ok : any
+>m2Bad : any
+

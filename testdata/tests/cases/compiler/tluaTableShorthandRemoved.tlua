@@ -1,0 +1,30 @@
+// @strict: true
+// @noEmit: true
+
+// TS object shorthand is gone: `{x}` is a positional entry `[1] = x`.
+local x = 1;
+local t = { x };
+local t1: number = t[1];
+// ... so it is not assignable where a property `x` is required.
+local s: { x: number } = { x };
+local es = {t1, s};
+
+// Destructuring assignment is gone with it: an object literal on the left of
+// `=` is an ordinary (erroneous) assignment target ...
+declare obj: { q: number; w?: number };
+local q: number;
+({ q } = obj);
+
+// ... and `{ w = 5 }` has exactly one meaning -- a Lua keyed field -- so the
+// old cover-grammar destructuring reading is an error too.
+local w: number | nil;
+({ w = 5 } = obj);
+
+// Lua spells the extraction with member access ...
+local q3 = obj.q;
+// ... and parameter binding patterns are a separate grammar, untouched.
+function take({ q: q4 }: { q: number }): number { return q4; }
+local all = {q, w, q3, take};
+
+// `export {x}` is different syntax, untouched.
+{ x };

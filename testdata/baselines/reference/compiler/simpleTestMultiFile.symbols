@@ -1,0 +1,10 @@
+//// [tests/cases/compiler/simpleTestMultiFile.tlua] ////
+
+=== /src/foo.tlua ===
+local x: number = "";
+>x : Symbol(x, Decl(foo.tlua, 0, 5))
+
+=== /src/bar.tlua ===
+local y: string = 1;
+>y : Symbol(y, Decl(bar.tlua, 0, 5))
+

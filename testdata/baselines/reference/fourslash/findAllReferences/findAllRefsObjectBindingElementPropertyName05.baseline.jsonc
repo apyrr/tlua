@@ -1,0 +1,10 @@
+// === findAllReferences ===
+// === /findAllRefsObjectBindingElementPropertyName05.tlua ===
+// interface I {
+//     property1: number;
+//     property2: string;
+// }
+// 
+// function f({ /*FIND ALL REFS*/property1: p }, { property1 }) {
+//     local x = property1;
+// }

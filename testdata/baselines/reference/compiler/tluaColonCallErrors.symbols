@@ -1,0 +1,108 @@
+//// [tests/cases/compiler/tluaColonCallErrors.tlua] ////
+
+=== tluaColonCallErrors.tlua ===
+local M = { count = 0 };
+>M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaColonCallErrors.tlua, 0, 11))
+
+function M:inc(by: number): number
+>M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
+>: : Symbol(:, Decl(tluaColonCallErrors.tlua, 2, 10))
+>M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
+>by : Symbol(by, Decl(tluaColonCallErrors.tlua, 2, 15))
+
+  self.count = self.count + by;
+>self.count : Symbol(count, Decl(tluaColonCallErrors.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallErrors.tlua, 2, 10))
+>count : Symbol(count, Decl(tluaColonCallErrors.tlua, 0, 11))
+>self.count : Symbol(count, Decl(tluaColonCallErrors.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallErrors.tlua, 2, 10))
+>count : Symbol(count, Decl(tluaColonCallErrors.tlua, 0, 11))
+>by : Symbol(by, Decl(tluaColonCallErrors.tlua, 2, 15))
+
+  return self.count;
+>self.count : Symbol(count, Decl(tluaColonCallErrors.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallErrors.tlua, 2, 10))
+>count : Symbol(count, Decl(tluaColonCallErrors.tlua, 0, 11))
+
+end
+
+interface Ops {
+>Ops : Symbol(Ops, Decl(tluaColonCallErrors.tlua, 5, 3))
+
+  noSelf(a: number): number;
+>noSelf : Symbol(Ops.noSelf, Decl(tluaColonCallErrors.tlua, 7, 15))
+>a : Symbol(a, Decl(tluaColonCallErrors.tlua, 8, 9))
+
+  tag: string;
+>tag : Symbol(Ops.tag, Decl(tluaColonCallErrors.tlua, 8, 28))
+}
+declare ops: Ops;
+>ops : Symbol(ops, Decl(tluaColonCallErrors.tlua, 11, 7))
+>Ops : Symbol(Ops, Decl(tluaColonCallErrors.tlua, 5, 3))
+
+// Wrong argument type.
+M:inc("x");
+>M:inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
+
+// Arity: the receiver fills the first parameter, so one explicit argument is
+// expected here.
+M:inc();
+>M:inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
+
+M:inc(1, 2);
+>M:inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
+
+// The receiver is checked against the declared self parameter, and the error
+// lands on the receiver.
+interface Counter {
+>Counter : Symbol(Counter, Decl(tluaColonCallErrors.tlua, 19, 12))
+
+  count: number;
+>count : Symbol(Counter.count, Decl(tluaColonCallErrors.tlua, 23, 19))
+}
+interface Mislabeled {
+>Mislabeled : Symbol(Mislabeled, Decl(tluaColonCallErrors.tlua, 25, 1))
+
+  count: string;
+>count : Symbol(Mislabeled.count, Decl(tluaColonCallErrors.tlua, 26, 22))
+
+  bump(self: Counter, by: number): number;
+>bump : Symbol(Mislabeled.bump, Decl(tluaColonCallErrors.tlua, 27, 16))
+>self : Symbol(self, Decl(tluaColonCallErrors.tlua, 28, 7))
+>Counter : Symbol(Counter, Decl(tluaColonCallErrors.tlua, 19, 12))
+>by : Symbol(by, Decl(tluaColonCallErrors.tlua, 28, 21))
+}
+declare mislabeled: Mislabeled;
+>mislabeled : Symbol(mislabeled, Decl(tluaColonCallErrors.tlua, 30, 7))
+>Mislabeled : Symbol(Mislabeled, Decl(tluaColonCallErrors.tlua, 25, 1))
+
+mislabeled:bump(1);
+>mislabeled:bump : Symbol(Mislabeled.bump, Decl(tluaColonCallErrors.tlua, 27, 16))
+>mislabeled : Symbol(mislabeled, Decl(tluaColonCallErrors.tlua, 30, 7))
+>bump : Symbol(Mislabeled.bump, Decl(tluaColonCallErrors.tlua, 27, 16))
+
+// A member that does not take the receiver as its first parameter rejects the
+// colon form's receiver argument.
+ops:noSelf(1);
+>ops:noSelf : Symbol(Ops.noSelf, Decl(tluaColonCallErrors.tlua, 7, 15))
+>ops : Symbol(ops, Decl(tluaColonCallErrors.tlua, 11, 7))
+>noSelf : Symbol(Ops.noSelf, Decl(tluaColonCallErrors.tlua, 7, 15))
+
+// Colon-calling a non-function member.
+ops:tag();
+>ops:tag : Symbol(Ops.tag, Decl(tluaColonCallErrors.tlua, 8, 28))
+>ops : Symbol(ops, Decl(tluaColonCallErrors.tlua, 11, 7))
+>tag : Symbol(Ops.tag, Decl(tluaColonCallErrors.tlua, 8, 28))
+
+// Colon-calling an unknown member.
+M:absent();
+>M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
+

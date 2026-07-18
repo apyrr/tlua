@@ -1,0 +1,76 @@
+// === Inlay Hints ===
+function foo1 () {
+                ^
+{
+  "position": {
+    "line": 0,
+    "character": 16
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local a = () => 1
+            ^
+{
+  "position": {
+    "line": 11,
+    "character": 12
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local b = function () { return 1 }
+                     ^
+{
+  "position": {
+    "line": 12,
+    "character": 21
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local c = (b) => 1
+             ^
+{
+  "position": {
+    "line": 13,
+    "character": 13
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}

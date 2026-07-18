@@ -1,0 +1,121 @@
+//// [tests/cases/compiler/tluaTypeGuardIdentity.tlua] ////
+
+=== tluaTypeGuardIdentity.tlua ===
+// Only a call to the real global `type` narrows. The binder matches the call by
+// spelling, so every one of these shapes reaches the checker and is turned down
+// there; each unnarrowed use below is an error.
+
+declare v: string | number;
+>v : string | number
+
+declare function use(x: unknown): void;
+>use : (x: unknown) => void
+>x : unknown
+
+function shadowed(): void {
+>shadowed : () => void
+
+  local type = function(value: any) return "string"; end;
+>type : (value: any) => string
+>function(value: any) return "string"; end : (value: any) => string
+>value : any
+>"string" : "string"
+
+  if type(v) == "string" then
+>type(v) == "string" : boolean
+>type(v) : string
+>type : (value: any) => string
+>v : string | number
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number
+
+  end
+}
+
+function aliased(): void {
+>aliased : () => void
+
+  local t = type;
+>t : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+
+  if t(v) == "string" then
+>t(v) == "string" : boolean
+>t(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>t : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number
+
+  end
+}
+
+declare holder: { type: (value: any) => string };
+>holder : { type: (value: any) => string; }
+>type : (value: any) => string
+>value : any
+
+function member(): void {
+>member : () => void
+
+  if holder.type(v) == "string" then
+>holder.type(v) == "string" : boolean
+>holder.type(v) : string
+>holder.type : (value: any) => string
+>holder : { type: (value: any) => string; }
+>type : (value: any) => string
+>v : string | number
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number
+
+  end
+}
+
+function wrongArity(): void {
+>wrongArity : () => void
+
+  if type() == "string" then
+>type() == "string" : boolean
+>type() : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number
+
+  end
+}
+
+// The global still narrows in the same file, once the shadow is out of scope.
+function global(): void {
+>global : () => void
+
+  if type(v) == "string" then
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string
+
+    use(s);
+>use(s) : void
+>use : (x: unknown) => void
+>s : string
+
+  end
+}
+

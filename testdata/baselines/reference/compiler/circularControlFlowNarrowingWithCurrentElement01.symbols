@@ -1,0 +1,78 @@
+//// [tests/cases/compiler/circularControlFlowNarrowingWithCurrentElement01.tlua] ////
+
+=== circularControlFlowNarrowingWithCurrentElement01.tlua ===
+class A {
+  next: A | null = null;
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+
+  constructor(readonly children: (A | null)[]) {}
+}
+
+function getNodes(): A[] {
+>getNodes : Symbol(getNodes, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 4, 1))
+>A : Symbol(A)
+
+  local out: A[] = [];
+>out : Symbol(out, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 7, 7))
+>A : Symbol(A)
+
+  local current: A | null = new A([]);
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+>A : Symbol(A)
+
+  while (current ~= null) {
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+
+    local firstChild = null;
+>firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
+
+    if (out.length) {
+>out : Symbol(out, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 7, 7))
+
+      current = current.next;
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+
+      continue;
+    }
+
+    for i = 0, current.children.length - 1 do
+>i : Symbol(i, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 19, 7))
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+
+      local child = current.children[i];
+>child : Symbol(child, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 20, 11))
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+>i : Symbol(i, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 19, 7))
+
+      if (child) {
+>child : Symbol(child, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 20, 11))
+
+        if (!firstChild) {
+>firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
+
+          firstChild = child;
+>firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
+>child : Symbol(child, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 20, 11))
+
+          firstChild.next = current.next;
+>firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+        }
+
+        child.next = current.next;
+>child : Symbol(child, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 20, 11))
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+      }
+    end
+
+    current = firstChild || current.next;
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+>firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
+>current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
+  }
+
+  return out;
+>out : Symbol(out, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 7, 7))
+}
+

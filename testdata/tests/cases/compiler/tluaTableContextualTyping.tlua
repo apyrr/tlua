@@ -1,0 +1,23 @@
+// @strict: true
+// @noEmit: true
+
+// Contextual typing flows into `=` field initializers: `x` is inferred as
+// number.
+local ctx: { f: (x: number) => number } = { f = function(x) return x; end };
+local applied = ctx.f(1);
+
+// Excess property checking works through `=` fields.
+local excess: { a: number } = { b = 1 };
+
+// Assignability errors surface on the field.
+local wrong: { a: string } = { a = 1 };
+
+// Interface-typed tables.
+interface Box {
+    value: string;
+    size?: number;
+}
+local box: Box = { value = "v" };
+local sized: Box = { value = "v", size = 2 };
+local bad: Box = { value = 1 };
+local boxes = {box, sized, bad};

@@ -1,0 +1,20 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: a.tlua
+local b = require("b");
+local A = { name = "a" };
+function A.callB(): string
+  return b.name;
+end
+return A;
+
+// @filename: b.tlua
+local B = { name = "b" };
+return B;
+
+// @filename: main.tlua
+local a = require("a");
+local s: string = a.callB();

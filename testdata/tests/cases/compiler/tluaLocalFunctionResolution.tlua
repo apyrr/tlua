@@ -1,0 +1,46 @@
+// @strict: true
+// @target: esnext
+// @noEmit: true
+// @noUnusedLocals: true
+
+local function factorial(n: number): number
+  if (n <= 1) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+end
+factorial(3);
+
+local function recursiveOnly(n: number): number
+  if (n <= 0) {
+    return 0;
+  }
+  return recursiveOnly(n - 1);
+end
+
+beforeLocal();
+local function beforeLocal(): void
+end
+beforeLocal();
+
+local function mutable(): number
+  return 1;
+end
+mutable = function(): number
+  return 2;
+end;
+mutable();
+
+local function shadow(): number
+  return 1;
+end
+shadow();
+
+{
+  local function shadow(): number
+    return 2;
+  end
+  shadow();
+}
+
+shadow();

@@ -1,0 +1,66 @@
+//// [tests/cases/compiler/tluaGotoIntoLetScope.tlua] ////
+
+=== tluaGotoIntoLetScope.tlua ===
+// The jump-into-local-scope rule covers the transitional let/const/local forms
+// too: they declare names that compile to Lua locals.
+declare function log(n: number): void;
+>log : (n: number) => void
+>n : number
+
+function intoLetScope(): void {
+>intoLetScope : () => void
+
+    goto done
+>done : any
+
+    local x = 1;
+>x : number
+>1 : 1
+
+    ::done::
+>done : any
+
+    log(x);
+>log(x) : void
+>log : (n: number) => void
+>x : number
+}
+
+function intoConstScope(): void {
+>intoConstScope : () => void
+
+    goto done
+>done : any
+
+    local c = 1;
+>c : number
+>1 : 1
+
+    ::done::
+>done : any
+
+    log(c);
+>log(c) : void
+>log : (n: number) => void
+>c : number
+}
+
+function intoVarScope(): void {
+>intoVarScope : () => void
+
+    goto done
+>done : any
+
+    local v = 1;
+>v : number
+>1 : 1
+
+    ::done::
+>done : any
+
+    log(v);
+>log(v) : void
+>log : (n: number) => void
+>v : number
+}
+

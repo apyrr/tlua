@@ -1,0 +1,97 @@
+// === QuickInfo ===
+=== /quickinfoVerbosityNamespaceClassHeritage.tlua ===
+// 
+// declare class Base {
+//     id: number;
+// }
+// 
+// declare namespace Shapes {
+//                   ^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//                   ^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//     class Circle extends Base {
+//         radius: number;
+//     }
+//     class Square extends Base {
+//         side: number;
+//     }
+//     interface Drawable {
+//         draw(): void;
+//     }
+// }
+// 
+[
+  {
+    "marker": {
+      "Position": 65,
+      "LSPosition": {
+        "line": 5,
+        "character": 24
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 5,
+            "character": 18
+          },
+          "end": {
+            "line": 5,
+            "character": 24
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 65,
+      "LSPosition": {
+        "line": 5,
+        "character": 24
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 5,
+            "character": 18
+          },
+          "end": {
+            "line": 5,
+            "character": 24
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  }
+]

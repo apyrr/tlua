@@ -1,0 +1,99 @@
+//// [tests/cases/compiler/tluaDoBlock.tlua] ////
+
+=== tluaDoBlock.tlua ===
+// Standalone do-block: locals scoped inside, shadowing works.
+function scoped(): number
+>scoped : Symbol(scoped, Decl(tluaDoBlock.tlua, 0, 0))
+
+  local x = 1;
+>x : Symbol(x, Decl(tluaDoBlock.tlua, 2, 7))
+
+  do
+    local x = 2;
+>x : Symbol(x, Decl(tluaDoBlock.tlua, 4, 9))
+
+    local y = x + 1;
+>y : Symbol(y, Decl(tluaDoBlock.tlua, 5, 9))
+>x : Symbol(x, Decl(tluaDoBlock.tlua, 4, 9))
+
+    y;
+>y : Symbol(y, Decl(tluaDoBlock.tlua, 5, 9))
+
+  end
+  return x;
+>x : Symbol(x, Decl(tluaDoBlock.tlua, 2, 7))
+
+end
+
+// Block locals are not visible outside.
+function leak(): number
+>leak : Symbol(leak, Decl(tluaDoBlock.tlua, 9, 3))
+
+  do
+    local hidden = 1;
+>hidden : Symbol(hidden, Decl(tluaDoBlock.tlua, 14, 9))
+
+  end
+  return hidden;
+end
+
+// Nested do-blocks; TS statements inside.
+function nested(flag: boolean): number
+>nested : Symbol(nested, Decl(tluaDoBlock.tlua, 17, 3))
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 20, 16))
+
+  local n = 0;
+>n : Symbol(n, Decl(tluaDoBlock.tlua, 21, 7))
+
+  do
+    do
+      if (flag) {
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 20, 16))
+
+        n = 1;
+>n : Symbol(n, Decl(tluaDoBlock.tlua, 21, 7))
+      }
+    end
+  end
+  return n;
+>n : Symbol(n, Decl(tluaDoBlock.tlua, 21, 7))
+
+end
+
+// TS do-while coexists with Lua do-blocks in one body.
+function coexist(flag: boolean): number {
+>coexist : Symbol(coexist, Decl(tluaDoBlock.tlua, 30, 3))
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 33, 17))
+
+  do {
+    flag = false;
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 33, 17))
+
+  } while (flag);
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 33, 17))
+
+  do
+    local x = 1;
+>x : Symbol(x, Decl(tluaDoBlock.tlua, 38, 9))
+
+    x;
+>x : Symbol(x, Decl(tluaDoBlock.tlua, 38, 9))
+
+  end
+  return 0;
+}
+
+// The canonicalization edge: a TS if with a Lua do-block body prints as a
+// Lua if (semantically identical).
+function canonical(flag: boolean): number
+>canonical : Symbol(canonical, Decl(tluaDoBlock.tlua, 42, 1))
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 46, 19))
+
+  if (flag) do
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 46, 19))
+
+    return 1;
+  end
+  return 0;
+end
+

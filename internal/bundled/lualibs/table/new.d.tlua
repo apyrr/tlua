@@ -1,0 +1,1 @@
+type TableNew = (arraySize: number, hashSize: number) => object;

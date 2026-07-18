@@ -1,0 +1,8 @@
+// === goToDefinition ===
+// === /goToDefinitionOverriddenMember12.tlua ===
+// class Foo {
+// 	static p = '';
+// }
+// class Bar extends Foo {
+// 	static /*GOTO DEF*/override p = '';
+// }

@@ -1,0 +1,21 @@
+// === findAllReferences ===
+// === /findAllReferencesFilteringMappedTypeProperty.tlua ===
+// local obj = { /*FIND ALL REFS*/[|a|] = 1, b = 2 };
+// local filtered: { [P in keyof typeof obj as P extends 'b' ? never : P]: 0; } = { [|a|] = 0 };
+// filtered.[|a|];
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesFilteringMappedTypeProperty.tlua ===
+// local obj = { [|a|] = 1, b = 2 };
+// local filtered: { [P in keyof typeof obj as P extends 'b' ? never : P]: 0; } = { /*FIND ALL REFS*/[|a|] = 0 };
+// filtered.[|a|];
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesFilteringMappedTypeProperty.tlua ===
+// local obj = { [|a|] = 1, b = 2 };
+// local filtered: { [P in keyof typeof obj as P extends 'b' ? never : P]: 0; } = { [|a|] = 0 };
+// filtered./*FIND ALL REFS*/[|a|];

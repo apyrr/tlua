@@ -1,0 +1,136 @@
+//// [tests/cases/compiler/tluaAndOrNotReserved.tlua] ////
+
+=== tluaAndOrNotReserved.tlua ===
+// `and`, `or` and `not` are keywords, so they are reserved. Every use as a name
+// falls into stock recovery, as with the class, decorator, array and this
+// removals. Lua reserves them too, so `t.and` is invalid there as well.
+
+local obj = { x = 1 };
+>obj : { x: number; }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+// Member names.
+local a1 = obj.and;
+>a1 : any
+>obj.and : any
+>obj. : any
+>obj : { x: number; }
+> : any
+> : any
+
+local a2 = obj.or;
+>a2 : any
+>obj.or : any
+>obj. : any
+>obj : { x: number; }
+> : any
+> : any
+
+local a3 = obj.not;
+>a3 : any
+>obj. : any
+>obj : { x: number; }
+> : any
+>not : boolean
+> : any
+
+// Property names in an object literal.
+local o1 = { and = 1 };
+>o1 : { 1: any; 2: number; }
+>{ and = 1 } : { 1: any; 2: number; }
+>and : any
+> : any
+> : any
+
+local o2 = { or = 1 };
+>o2 : { 1: any; 2: number; }
+>{ or = 1 } : { 1: any; 2: number; }
+>or : any
+> : any
+> : any
+
+local o3 = { not = 1 };
+>o3 : { 1: boolean; 2: number; }
+>{ not = 1 } : { 1: boolean; 2: number; }
+>not : boolean
+> : any
+
+// Binding names.
+local and = 1;
+> : any
+>and : any
+> : any
+> : any
+>1 : 1
+
+local or = 2;
+> : any
+>or : any
+> : any
+> : any
+>2 : 2
+
+local not = 3;
+> : any
+>not : boolean
+> : any
+>3 : 3
+
+// Declaration names.
+function or() {}
+> : () => any
+>or() : any
+> : any
+>() : any
+> : any
+
+// `not` shares KindExclamationToken with `!`, but only the punctuation spelling
+// is the non-null and definite-assignment operator. Accepting the word in those
+// roles would silently suppress a nil check.
+declare maybe: number | nil;
+>maybe : number | nil
+
+local n1 = maybe not;
+>n1 : number | nil
+>maybe : number | nil
+>not : boolean
+> : any
+
+local n2 not: number;
+>n2 : any
+>not : boolean
+> : any
+>number : any
+
+// The punctuation spelling keeps both roles.
+local n3 = maybe!;
+>n3 : number
+>maybe! : number
+>maybe : number | nil
+
+local n4!: number;
+>n4 : any
+>! : boolean
+> : any
+>number : any
+
+// And the word keeps its own: prefix negation.
+local n5 = not maybe;
+>n5 : boolean
+>not maybe : boolean
+>maybe : number | nil
+
+// The type-position `!` (the JSDoc non-nullable operator) is punctuation-only
+// as well: the word `not` never silently becomes a type operator.
+local n6: number not;
+>n6 : number
+>not : boolean
+> : any
+
+type N7 = not number;
+>N7 : any
+>not number : boolean
+>number : any
+

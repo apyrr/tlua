@@ -1,0 +1,22 @@
+early.tlua(4,1): error TS100053: A top-level 'return' must be the last statement of the chunk.
+nested.tlua(3,3): error TS100053: A top-level 'return' must be the last statement of the chunk.
+
+
+==== early.tlua (1 errors) ====
+    // A chunk returns its value as its last statement; an earlier return is not
+    // the module value.
+    local M = {};
+    return M;
+    ~~~~~~
+!!! error TS100053: A top-level 'return' must be the last statement of the chunk.
+    local after = 1;
+    
+==== nested.tlua (1 errors) ====
+    declare flag: boolean;
+    if flag then
+      return 1;
+      ~~~~~~
+!!! error TS100053: A top-level 'return' must be the last statement of the chunk.
+    end
+    return 2;
+    

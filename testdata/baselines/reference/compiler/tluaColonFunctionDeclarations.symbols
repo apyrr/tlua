@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaColonFunctionDeclarations.tlua] ////
+
+=== tluaColonFunctionDeclarations.tlua ===
+local M = { count = 0 };
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+
+// The colon form is sugar for an explicit first parameter, so `self` is in scope
+// with the type of the table being extended.
+function M:inc(by: number): number
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>: : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 4, 10))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>by : Symbol(by, Decl(tluaColonFunctionDeclarations.tlua, 4, 15))
+
+  self.count = self.count + by;
+>self.count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 4, 10))
+>count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+>self.count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 4, 10))
+>count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+>by : Symbol(by, Decl(tluaColonFunctionDeclarations.tlua, 4, 15))
+
+  return self.count;
+>self.count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 4, 10))
+>count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+
+end
+
+function M:read(): number
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>read : Symbol(read, Decl(tluaColonFunctionDeclarations.tlua, 7, 3))
+>: : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 9, 10))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+
+  return self.count;
+>self.count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 9, 10))
+>count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
+
+end
+
+// A colon method still reaches the table's other members through `self`.
+function M:double(): number
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>double : Symbol(double, Decl(tluaColonFunctionDeclarations.tlua, 11, 3))
+>: : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 14, 10))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+
+  return self.inc(self, self.read(self));
+>self.inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 14, 10))
+>inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 14, 10))
+>self.read : Symbol(read, Decl(tluaColonFunctionDeclarations.tlua, 7, 3))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 14, 10))
+>read : Symbol(read, Decl(tluaColonFunctionDeclarations.tlua, 7, 3))
+>self : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 14, 10))
+
+end
+
+// Calls pass the receiver explicitly, or implicitly with the colon form.
+local a = M.inc(M, 1);
+>a : Symbol(a, Decl(tluaColonFunctionDeclarations.tlua, 19, 5))
+>M.inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+
+local b = M:read();
+>b : Symbol(b, Decl(tluaColonFunctionDeclarations.tlua, 20, 5))
+>M:read : Symbol(read, Decl(tluaColonFunctionDeclarations.tlua, 7, 3))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>read : Symbol(read, Decl(tluaColonFunctionDeclarations.tlua, 7, 3))
+
+// The receiver is checked like any other parameter.
+M.inc(1, 1);
+>M.inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+
+M.inc(M, "x");
+>M.inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+
+// And it is not optional.
+M.inc(1);
+>M.inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
+

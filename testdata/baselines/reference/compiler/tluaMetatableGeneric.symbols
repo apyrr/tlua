@@ -1,0 +1,100 @@
+//// [tests/cases/compiler/tluaMetatableGeneric.tlua] ////
+
+=== tluaMetatableGeneric.tlua ===
+// A pairing resolves its members eagerly, so it can only hold concrete types. A generic
+// table falls back to the intersection, which is less precise about collisions but does
+// instantiate -- the same trade a generic spread makes.
+
+local helpers = { describe = function(self: object): string return "d"; end };
+>helpers : Symbol(helpers, Decl(tluaMetatableGeneric.tlua, 4, 5))
+>describe : Symbol(describe, Decl(tluaMetatableGeneric.tlua, 4, 17))
+>self : Symbol(self, Decl(tluaMetatableGeneric.tlua, 4, 38))
+
+function withHelpers<T extends object>(value: T)
+>withHelpers : Symbol(withHelpers, Decl(tluaMetatableGeneric.tlua, 4, 78))
+>T : Symbol(T, Decl(tluaMetatableGeneric.tlua, 6, 21))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 6, 39))
+>T : Symbol(T, Decl(tluaMetatableGeneric.tlua, 6, 21))
+
+  return setmetatable(value, { __index = helpers });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 6, 39))
+>__index : Symbol(__index, Decl(tluaMetatableGeneric.tlua, 7, 30))
+>helpers : Symbol(helpers, Decl(tluaMetatableGeneric.tlua, 4, 5))
+
+end
+
+local w = withHelpers({ own = "o" });
+>w : Symbol(w, Decl(tluaMetatableGeneric.tlua, 10, 5))
+>withHelpers : Symbol(withHelpers, Decl(tluaMetatableGeneric.tlua, 4, 78))
+>own : Symbol(own, Decl(tluaMetatableGeneric.tlua, 10, 23))
+
+local o1: string = w.own;
+>o1 : Symbol(o1, Decl(tluaMetatableGeneric.tlua, 11, 5))
+>w.own : Symbol(own, Decl(tluaMetatableGeneric.tlua, 10, 23))
+>w : Symbol(w, Decl(tluaMetatableGeneric.tlua, 10, 5))
+>own : Symbol(own, Decl(tluaMetatableGeneric.tlua, 10, 23))
+
+local d1: string = w.describe(w);
+>d1 : Symbol(d1, Decl(tluaMetatableGeneric.tlua, 12, 5))
+>w.describe : Symbol(describe, Decl(tluaMetatableGeneric.tlua, 4, 17))
+>w : Symbol(w, Decl(tluaMetatableGeneric.tlua, 10, 5))
+>describe : Symbol(describe, Decl(tluaMetatableGeneric.tlua, 4, 17))
+>w : Symbol(w, Decl(tluaMetatableGeneric.tlua, 10, 5))
+
+local wbad: number = w.own;
+>wbad : Symbol(wbad, Decl(tluaMetatableGeneric.tlua, 13, 5))
+>w.own : Symbol(own, Decl(tluaMetatableGeneric.tlua, 10, 23))
+>w : Symbol(w, Decl(tluaMetatableGeneric.tlua, 10, 5))
+>own : Symbol(own, Decl(tluaMetatableGeneric.tlua, 10, 23))
+
+// A concrete table whose *member* type mentions a type parameter still pairs, and the
+// pairing instantiates with it.
+function box<T>(value: T)
+>box : Symbol(box, Decl(tluaMetatableGeneric.tlua, 13, 27))
+>T : Symbol(T, Decl(tluaMetatableGeneric.tlua, 17, 13))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 17, 16))
+>T : Symbol(T, Decl(tluaMetatableGeneric.tlua, 17, 13))
+
+  return setmetatable({ value = value }, { __index = helpers });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 18, 23))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 17, 16))
+>__index : Symbol(__index, Decl(tluaMetatableGeneric.tlua, 18, 42))
+>helpers : Symbol(helpers, Decl(tluaMetatableGeneric.tlua, 4, 5))
+
+end
+
+local b = box(42);
+>b : Symbol(b, Decl(tluaMetatableGeneric.tlua, 21, 5))
+>box : Symbol(box, Decl(tluaMetatableGeneric.tlua, 13, 27))
+
+local v: number = b.value;
+>v : Symbol(v, Decl(tluaMetatableGeneric.tlua, 22, 5))
+>b.value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 18, 23))
+>b : Symbol(b, Decl(tluaMetatableGeneric.tlua, 21, 5))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 18, 23))
+
+local d2: string = b.describe(b);
+>d2 : Symbol(d2, Decl(tluaMetatableGeneric.tlua, 23, 5))
+>b.describe : Symbol(describe, Decl(tluaMetatableGeneric.tlua, 4, 17))
+>b : Symbol(b, Decl(tluaMetatableGeneric.tlua, 21, 5))
+>describe : Symbol(describe, Decl(tluaMetatableGeneric.tlua, 4, 17))
+>b : Symbol(b, Decl(tluaMetatableGeneric.tlua, 21, 5))
+
+local bbad: string = b.value;
+>bbad : Symbol(bbad, Decl(tluaMetatableGeneric.tlua, 24, 5))
+>b.value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 18, 23))
+>b : Symbol(b, Decl(tluaMetatableGeneric.tlua, 21, 5))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 18, 23))
+
+local bs = box("s");
+>bs : Symbol(bs, Decl(tluaMetatableGeneric.tlua, 26, 5))
+>box : Symbol(box, Decl(tluaMetatableGeneric.tlua, 13, 27))
+
+local sv: string = bs.value;
+>sv : Symbol(sv, Decl(tluaMetatableGeneric.tlua, 27, 5))
+>bs.value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 18, 23))
+>bs : Symbol(bs, Decl(tluaMetatableGeneric.tlua, 26, 5))
+>value : Symbol(value, Decl(tluaMetatableGeneric.tlua, 18, 23))
+

@@ -1,0 +1,4 @@
+// === goToDefinition ===
+// === /src/app.tlua ===
+// /// <reference types="lib/*GOTO DEF*/"/>
+// $.x;

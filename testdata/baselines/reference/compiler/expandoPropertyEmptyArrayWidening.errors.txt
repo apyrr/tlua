@@ -1,0 +1,76 @@
+expandoPropertyEmptyArrayWidening.tlua(7,17): error TS1109: Expression expected.
+expandoPropertyEmptyArrayWidening.tlua(7,18): error TS1011: An element access expression should take an argument.
+expandoPropertyEmptyArrayWidening.tlua(10,8): error TS1109: Expression expected.
+expandoPropertyEmptyArrayWidening.tlua(10,9): error TS1011: An element access expression should take an argument.
+expandoPropertyEmptyArrayWidening.tlua(13,4): error TS2339: Property 'a' does not exist on type '() => void'.
+expandoPropertyEmptyArrayWidening.tlua(13,8): error TS1109: Expression expected.
+expandoPropertyEmptyArrayWidening.tlua(13,9): error TS1011: An element access expression should take an argument.
+expandoPropertyEmptyArrayWidening.tlua(16,4): error TS2339: Property 'a' does not exist on type '() => void'.
+expandoPropertyEmptyArrayWidening.tlua(16,8): error TS1109: Expression expected.
+expandoPropertyEmptyArrayWidening.tlua(16,9): error TS1011: An element access expression should take an argument.
+expandoPropertyEmptyArrayWidening.tlua(18,7): error TS2741: Property 'a' is missing in type '() => void' but required in type '{ (): void; a: string[]; }'.
+expandoPropertyEmptyArrayWidening.tlua(19,8): error TS1109: Expression expected.
+expandoPropertyEmptyArrayWidening.tlua(19,9): error TS1011: An element access expression should take an argument.
+expandoPropertyEmptyArrayWidening.tlua(21,7): error TS2741: Property 'a' is missing in type '() => void' but required in type '{ (): void; a: string[]; }'.
+expandoPropertyEmptyArrayWidening.tlua(22,8): error TS1109: Expression expected.
+expandoPropertyEmptyArrayWidening.tlua(22,9): error TS1011: An element access expression should take an argument.
+
+
+==== expandoPropertyEmptyArrayWidening.tlua (16 errors) ====
+    // https://github.com/microsoft/typescript-go/issues/3976
+    
+    local example: {
+      (): void;
+      items?: string[];
+    } = () => undefined;
+    example.items = [];
+                    ~
+!!! error TS1109: Expression expected.
+                     
+!!! error TS1011: An element access expression should take an argument.
+    
+    function f1() {}
+    f1.a = [];  // Implicit any error
+           ~
+!!! error TS1109: Expression expected.
+            
+!!! error TS1011: An element access expression should take an argument.
+    
+    local f2 = function() end;
+    f2.a = [];  // Implicit any error
+       ~
+!!! error TS2339: Property 'a' does not exist on type '() => void'.
+           ~
+!!! error TS1109: Expression expected.
+            
+!!! error TS1011: An element access expression should take an argument.
+    
+    local f3 = () => {};
+    f3.a = [];  // Implicit any error
+       ~
+!!! error TS2339: Property 'a' does not exist on type '() => void'.
+           ~
+!!! error TS1109: Expression expected.
+            
+!!! error TS1011: An element access expression should take an argument.
+    
+    local f4: { (): void, a: string[] } = () => {};
+          ~~
+!!! error TS2741: Property 'a' is missing in type '() => void' but required in type '{ (): void; a: string[]; }'.
+!!! related TS2728 expandoPropertyEmptyArrayWidening.tlua:18:23: 'a' is declared here.
+    f4.a = [];
+           ~
+!!! error TS1109: Expression expected.
+            
+!!! error TS1011: An element access expression should take an argument.
+    
+    local f5: { (): void, a: string[] } = function() end;
+          ~~
+!!! error TS2741: Property 'a' is missing in type '() => void' but required in type '{ (): void; a: string[]; }'.
+!!! related TS2728 expandoPropertyEmptyArrayWidening.tlua:21:23: 'a' is declared here.
+    f5.a = [];
+           ~
+!!! error TS1109: Expression expected.
+            
+!!! error TS1011: An element access expression should take an argument.
+    

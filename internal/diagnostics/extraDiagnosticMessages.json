@@ -1,0 +1,278 @@
+{
+    "Do not print diagnostics.": {
+        "category": "Message",
+        "code": 100000
+    },
+    "Run in single threaded mode.": {
+        "category": "Message",
+        "code": 100001
+    },
+    "Generate pprof CPU/memory profiles to the given directory.": {
+        "category": "Message",
+        "code": 100002
+    },
+    "Set the number of checkers per project.": {
+        "category": "Message",
+        "code": 100003
+    },
+    "4, unless --singleThreaded is passed.": {
+        "category": "Message",
+        "code": 100004
+    },
+    "{0} references": {
+        "category": "Message",
+        "code": 100005
+    },
+    "1 reference": {
+        "category": "Message",
+        "code": 100006
+    },
+    "{0} implementations": {
+        "category": "Message",
+        "code": 100007
+    },
+    "1 implementation": {
+        "category": "Message",
+        "code": 100008
+    },
+    "Set the number of projects to build concurrently.": {
+        "category": "Message",
+        "code": 100009
+    },
+    "Non-relative paths are not allowed. Did you forget a leading './'?": {
+        "category": "Error",
+        "code": 5090
+    },
+    "A JSDoc '@type' tag on a function must have a signature with the correct number of arguments.": {
+        "category": "Error",
+        "code": 8030
+    },
+    "Failed to delete file '{0}'.": {
+        "category": "Message",
+        "code": 6353
+    },
+    "Project '{0}' is out of date because config file does not exist.": {
+        "category": "Message",
+        "code": 6401
+    },
+    "Project '{0}' is out of date because input '{1}' does not exist.": {
+        "category": "Message",
+        "code": 6420
+    },
+    "Project '{0}' is out of date because it has errors.": {
+        "category": "Message",
+        "code": 6423
+    },
+    "Multiple 'module.exports' assignments cannot be serialized for declaration emit.": {
+        "category": "Error",
+        "code": 6424
+    },
+    "Nested CommonJS export constructs cannot be serialized for declaration emit.": {
+        "category": "Error",
+        "code": 6425
+    },
+    "Locale must be an IETF BCP 47 language tag. Examples: '{0}', '{1}'.": {
+        "category": "Error",
+        "code": 6048
+    },
+    "Ignore the tsconfig found and build with commandline options and files.": {
+        "category": "Message",
+        "code": 1549
+    },
+    "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.": {
+        "category": "Error",
+        "code": 5112
+    },
+    "Option '--incremental' is only valid with a known configuration file (like 'tsconfig.json') or when '--tsBuildInfoFile' is explicitly provided.": {
+        "category": "Error",
+        "code": 5074
+    },
+    "Option '{0}' requires value to be greater than '{1}'.": {
+        "category": "Error",
+        "code": 5002
+    },
+    "Deduplicate packages with the same name and version.": {
+        "category": "Message",
+        "code": 100011
+    },
+    "Loading": {
+        "category": "Message",
+        "code": 100012
+    },
+    "Project '{0}'": {
+        "category": "Message",
+        "code": 100014
+    },
+    "Installing types for '{0}'": {
+        "category": "Message",
+        "code": 100013
+    },
+    "Fix All": {
+        "category": "Message",
+        "code": 100015
+    },
+    "Organize Imports": {
+        "category": "Message",
+        "code": 100016
+    },
+    "Remove Unused Imports": {
+        "category": "Message",
+        "code": 100017
+    },
+    "Sort Imports": {
+        "category": "Message",
+        "code": 100018
+    },
+    "File rename is not supported by the editor": {
+        "category": "Error",
+        "code": 8040
+    },
+    "JSDoc comment": {
+        "category": "Message",
+        "code": 100019
+    },
+    "'{0}' is not a valid tlua operator. Use '{1}' instead.": {
+        "category": "Error",
+        "code": 100020
+    },
+    "A type predicate cannot be part of a multiple return type.": {
+        "category": "Error",
+        "code": 100021
+    },
+    "A Lua numeric for statement has at most three control expressions.": {
+        "category": "Error",
+        "code": 100022
+    },
+    "An async function can only be called from an async context.": {
+        "category": "Error",
+        "code": 100023
+    },
+    "An async function is not assignable to a non-async function type.": {
+        "category": "Error",
+        "code": 100024
+    },
+    "No visible label '{0}' for goto.": {
+        "category": "Error",
+        "code": 100025
+    },
+    "Cannot jump into the scope of local '{0}'.": {
+        "category": "Error",
+        "code": 100026
+    },
+    "A label cannot appear in a single-statement context.": {
+        "category": "Error",
+        "code": 100027
+    },
+    "An arithmetic operand must be of type 'any' or 'number'.": {
+        "category": "Error",
+        "code": 100028
+    },
+    "The left-hand side of an arithmetic operation must be of type 'any' or 'number'.": {
+        "category": "Error",
+        "code": 100029
+    },
+    "The right-hand side of an arithmetic operation must be of type 'any' or 'number'.": {
+        "category": "Error",
+        "code": 100030
+    },
+    "A 'const' assertion can only be applied to string, number, boolean, array, or object literals.": {
+        "category": "Error",
+        "code": 100031
+    },
+    "A 'const' initializer in an ambient context must be a string, numeric, or boolean literal.": {
+        "category": "Error",
+        "code": 100032
+    },
+    "Multiple return types must be parenthesized.": {
+        "category": "Error",
+        "code": 100033
+    },
+    "A vararg parameter cannot have a name.": {
+        "category": "Error",
+        "code": 100034
+    },
+    "A '...' expression is only allowed inside a vararg function.": {
+        "category": "Error",
+        "code": 100035
+    },
+    "An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.": {
+        "category": "Error",
+        "code": 100036
+    },
+    "Expected at most {0} arguments, but a tail may pass more.": {
+        "category": "Error",
+        "code": 100037
+    },
+    "A multiple return type cannot be used as a value type.": {
+        "category": "Error",
+        "code": 100038
+    },
+    "An index signature parameter type cannot include 'nil'.": {
+        "category": "Error",
+        "code": 100039
+    },
+    "A table key cannot be 'nil'.": {
+        "category": "Error",
+        "code": 100040
+    },
+    "Cannot change a protected metatable.": {
+        "category": "Error",
+        "code": 100041
+    },
+    "The '#' operator can only be applied to a string or a table.": {
+        "category": "Error",
+        "code": 100042
+    },
+    "A generic type parameter cannot follow a generic pack parameter.": {
+        "category": "Error",
+        "code": 100043
+    },
+    "A generic pack parameter can only be used in a vararg parameter or a multiple-return position.": {
+        "category": "Error",
+        "code": 100044
+    },
+    "A generic pack parameter is only allowed on a function or a type alias.": {
+        "category": "Error",
+        "code": 100045
+    },
+    "A generic pack parameter cannot have a constraint or a default.": {
+        "category": "Error",
+        "code": 100046
+    },
+    "A generic pack argument can only be supplied for a generic pack parameter.": {
+        "category": "Error",
+        "code": 100047
+    },
+    "A type argument for an index-key type parameter cannot include 'nil'.": {
+        "category": "Error",
+        "code": 100048
+    },
+    "JSX element implicitly has type 'any' because the global type 'JsxElement' does not exist.": {
+        "category": "Error",
+        "code": 100049
+    },
+    "The global type '{0}' may not have more than one property.": {
+        "category": "Error",
+        "code": 100050
+    },
+    "JSX element implicitly has type 'any' because no interface '{0}' exists.": {
+        "category": "Error",
+        "code": 100051
+    },
+    "A 'break' statement can only be used within an enclosing iteration statement.": {
+        "category": "Error",
+        "code": 100052
+    },
+    "A top-level 'return' must be the last statement of the chunk.": {
+        "category": "Error",
+        "code": 100053
+    },
+    "Declaration emit is not supported for a Lua module yet.": {
+        "category": "Error",
+        "code": 100054
+    },
+    "Module name '{0}' resolves to the same file as '{1}'; a module has one canonical name.": {
+        "category": "Error",
+        "code": 100055
+    }
+}

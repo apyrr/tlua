@@ -1,0 +1,178 @@
+//// [tests/cases/compiler/tluaMetatableImprecise.tlua] ////
+
+=== tluaMetatableImprecise.tlua ===
+// The pairing is only as precise as the metatable's type. A metatable that does not say
+// which fallback applies leaves the call returning the plain table rather than guessing at a
+// wrong one.
+
+// The declared parameter type is exactly that: LuaMetatable<T> names every metamethod and
+// commits to none.
+declare declared: LuaMetatable<{ n: number }>;
+>declared : LuaMetatable<{ n: number; }>
+>n : number
+
+local d = setmetatable({ n = 1 }, declared);
+>d : { n: number; }
+>setmetatable({ n = 1 }, declared) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>declared : LuaMetatable<{ n: number; }>
+
+local dn: number = d.n;
+>dn : number
+>d.n : number
+>d : { n: number; }
+>n : number
+
+local dbad = d.anything;
+>dbad : any
+>d.anything : any
+>d : { n: number; }
+>anything : any
+
+// A __index that is either a table or a function does not say which read wins.
+declare unionIndex: { __index: { a: number } | ((t: object, k: any) => string) };
+>unionIndex : { __index: { a: number; } | ((t: object, k: any) => string); }
+>__index : { a: number; } | ((t: object, k: any) => string)
+>a : number
+>t : object
+>k : any
+
+local u = setmetatable({ n = 1 }, unionIndex);
+>u : { n: number; }
+>setmetatable({ n = 1 }, unionIndex) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>unionIndex : { __index: { a: number; } | ((t: object, k: any) => string); }
+
+local ubad = u.a;
+>ubad : any
+>u.a : any
+>u : { n: number; }
+>a : any
+
+// A metatable that may not be there at all.
+declare maybe: { __index: { a: number } } | nil;
+>maybe : { __index: { a: number; }; } | nil
+>__index : { a: number; }
+>a : number
+
+local m = setmetatable({ n = 1 }, maybe);
+>m : { n: number; }
+>setmetatable({ n = 1 }, maybe) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>maybe : { __index: { a: number; }; } | nil
+
+local mbad = m.a;
+>mbad : any
+>m.a : any
+>m : { n: number; }
+>a : any
+
+// `nil` says there is no metatable.
+local none = setmetatable({ n = 1 }, nil);
+>none : { n: number; }
+>setmetatable({ n = 1 }, nil) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+local nn: number = none.n;
+>nn : number
+>none.n : number
+>none : { n: number; }
+>n : number
+
+local nbad = none.anything;
+>nbad : any
+>none.anything : any
+>none : { n: number; }
+>anything : any
+
+// A metatable with no __index has no fallback to merge, and no pairing is kept for it.
+local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end });
+>noIndex : { n: number; }
+>setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end }) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __tostring = function(t: object): string return "t"; end } : { __tostring: (t: object) => string; }
+>__tostring : (t: object) => string
+>function(t: object): string return "t"; end : (t: object) => string
+>t : object
+>"t" : "t"
+
+local xn: number = noIndex.n;
+>xn : number
+>noIndex.n : number
+>noIndex : { n: number; }
+>n : number
+
+// A callable table would be indexed by Lua, but which half answers a read is not worth
+// guessing at.
+declare hybrid: { __index: { (t: object, k: any): string; extra: number } };
+>hybrid : { __index: { (t: object, k: any): string; extra: number; }; }
+>__index : { (t: object, k: any): string; extra: number; }
+>t : object
+>k : any
+>extra : number
+
+local h = setmetatable({ n = 1 }, hybrid);
+>h : { n: number; }
+>setmetatable({ n = 1 }, hybrid) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>hybrid : { __index: { (t: object, k: any): string; extra: number; }; }
+
+local hbad = h.extra;
+>hbad : any
+>h.extra : any
+>h : { n: number; }
+>extra : any
+
+// __index declared optional strips its nil arm: what is left names one fallback.
+declare optional: { __index?: { a: number } };
+>optional : { __index?: { a: number; }; }
+>__index : { a: number; } | nil
+>a : number
+
+local o = setmetatable({ n = 1 }, optional);
+>o : { a: number; n: number; }
+>setmetatable({ n = 1 }, optional) : { a: number; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>optional : { __index?: { a: number; }; }
+
+local oa: number = o.a;
+>oa : number
+>o.a : number
+>o : { a: number; n: number; }
+>a : number
+
+// An error inside the metatable literal is reported once.
+local bad = setmetatable({ n = 1 }, { __index = { a = missingName } });
+>bad : { n: number; a: any; }
+>setmetatable({ n = 1 }, { __index = { a = missingName } }) : { n: number; a: any; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __index = { a = missingName } } : { __index: { a: any; }; }
+>__index : { a: any; }
+>{ a = missingName } : { a: any; }
+>a : any
+>missingName : any
+

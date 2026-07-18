@@ -1,0 +1,121 @@
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// return;
+// return;
+// function f(a: number) {
+//     if (a > 0) {
+//         return (function ()
+//             () => /*HIGHLIGHTS*/[|return|];
+//             [|return|];
+//             [|return|];
+// 
+//             if (false) {
+//                 [|return|] true;
+//             }
+//         end)() || true;
+//     }
+// --- (line: 15) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// return;
+// return;
+// function f(a: number) {
+//     if (a > 0) {
+//         return (function ()
+//             () => [|return|];
+//             /*HIGHLIGHTS*/[|return|];
+//             [|return|];
+// 
+//             if (false) {
+//                 [|return|] true;
+//             }
+//         end)() || true;
+//     }
+// --- (line: 15) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// return;
+// return;
+// function f(a: number) {
+//     if (a > 0) {
+//         return (function ()
+//             () => [|return|];
+//             [|return|];
+//             /*HIGHLIGHTS*/[|return|];
+// 
+//             if (false) {
+//                 [|return|] true;
+//             }
+//         end)() || true;
+//     }
+// --- (line: 15) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// return;
+// return;
+// function f(a: number) {
+//     if (a > 0) {
+//         return (function ()
+//             () => [|return|];
+//             [|return|];
+//             [|return|];
+// 
+//             if (false) {
+//                 /*HIGHLIGHTS*/[|return|] true;
+//             }
+//         end)() || true;
+//     }
+// --- (line: 15) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// ret/*HIGHLIGHTS*/urn;
+// return;
+// function f(a: number) {
+//     if (a > 0) {
+// --- (line: 5) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// return;
+// retu/*HIGHLIGHTS*/rn;
+// function f(a: number) {
+//     if (a > 0) {
+//         return (function ()
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// --- (line: 19) skipped ---
+// }
+// 
+// class A {
+//     ret/*HIGHLIGHTS*/urn;
+//     return 8675309;
+// }
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesReturnBroken.tlua ===
+// --- (line: 20) skipped ---
+// 
+// class A {
+//     return;
+//     r/*HIGHLIGHTS*/eturn 8675309;
+// }

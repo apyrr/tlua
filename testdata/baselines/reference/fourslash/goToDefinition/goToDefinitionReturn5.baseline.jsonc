@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /goToDefinitionReturn5.tlua ===
+// <|function [|foo|]() {
+//     class Foo {
+//         static { /*GOTO DEF*/return; }
+//     }
+// }|>

@@ -1,0 +1,35 @@
+tluaColonFunctionAnnotatedTable.tlua(18,14): error TS2322: Type '(self: Ops, a: number) => number' is not assignable to type '(a: number) => number'.
+  Target signature provides too few arguments. Expected 2 or more, but got 1.
+tluaColonFunctionAnnotatedTable.tlua(22,14): error TS2339: Property 'absent' does not exist on type 'Ops'.
+
+
+==== tluaColonFunctionAnnotatedTable.tlua (2 errors) ====
+    interface Ops {
+      good(self: Ops, a: number): number;
+      noSelf(a: number): number;
+    }
+    
+    local ops: Ops = {
+      good = function(self: Ops, a: number) return a; end,
+      noSelf = function(a: number) return a; end,
+    };
+    
+    // An annotated table gets an assignability check against the declared member,
+    // and the colon form supplies the receiver the interface asks for.
+    function ops:good(a: number): number
+      return a;
+    end
+    
+    // `noSelf` takes no receiver, so the colon form does not fit it.
+    function ops:noSelf(a: number): number
+                 ~~~~~~
+!!! error TS2322: Type '(self: Ops, a: number) => number' is not assignable to type '(a: number) => number'.
+!!! error TS2322:   Target signature provides too few arguments. Expected 2 or more, but got 1.
+      return a;
+    end
+    
+    function ops:absent(): void
+                 ~~~~~~
+!!! error TS2339: Property 'absent' does not exist on type 'Ops'.
+    end
+    

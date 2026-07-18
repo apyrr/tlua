@@ -1,0 +1,33 @@
+// === findAllReferences ===
+// === /file1.tlua ===
+// class Foo {
+//     constructor(private /*FIND ALL REFS*/privateParam: number,
+//         public publicParam: string,
+//         protected protectedParam: boolean) {
+// 
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /file1.tlua ===
+// class Foo {
+//     constructor(private privateParam: number,
+//         public /*FIND ALL REFS*/publicParam: string,
+//         protected protectedParam: boolean) {
+// 
+//         local localPrivate = privateParam;
+// --- (line: 7) skipped ---
+
+
+
+// === findAllReferences ===
+// === /file1.tlua ===
+// class Foo {
+//     constructor(private privateParam: number,
+//         public publicParam: string,
+//         protected /*FIND ALL REFS*/protectedParam: boolean) {
+// 
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// --- (line: 8) skipped ---

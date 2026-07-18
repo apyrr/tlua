@@ -1,0 +1,7 @@
+// === documentHighlights ===
+// filesToSearch:
+//   /a.tlua
+
+// === /a.tlua ===
+// subTitle:
+// /*HIGHLIGHTS*/export local title: string

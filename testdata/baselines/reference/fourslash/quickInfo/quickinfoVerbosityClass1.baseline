@@ -1,0 +1,702 @@
+// === QuickInfo ===
+=== /quickinfoVerbosityClass1.tlua ===
+// {
+//     class Foo {
+//         a!: "a" | "c";
+//     }
+//     local f = new Foo();
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// }
+// {
+//     type FooParam = "a" | "b";
+//     class Foo {
+//         constructor(public x: string) {
+//             this.x = "a";
+//         }
+//         foo(p: FooParam): void {}
+//     }
+//     local f = new Foo("");
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 2)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// }
+// {
+//     class Bar {
+//           ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//         a!: string;
+//         bar(): void {}
+//         baz(param: string): void {}
+//     }
+//     class Foo extends Bar {
+//         b!: boolean;
+//         override baz(param: string | number): void {}
+//     }
+//     local f = new Foo();
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// }
+// {
+//     class Bar<B extends string> {
+//         bar(param: B): void {}
+//         baz(): this { return this; }
+//     }
+//     class Foo extends Bar<"foo"> {
+//         foo(): this { return this; }
+//     }
+//     local b = new Bar();
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local b: any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local b: any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//     local f = new Foo();
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local f: any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// }
+// {
+//     class Bar<B extends string> {
+//         bar(param: B): void {}
+//         baz(): this { return this; }
+//     }
+//     local noname = new (class extends Bar<"foo"> {
+//           ^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local noname: any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local noname: any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//         foo(): this { return this; }
+//     })();
+//     local klass = class extends Bar<"foo"> {
+//         foo(): this { return this; }
+//     };
+//     local k = new klass();
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local k: any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local k: any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// }
+[
+  {
+    "marker": {
+      "Position": 58,
+      "LSPosition": {
+        "line": 4,
+        "character": 11
+      },
+      "Name": "f1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 4,
+            "character": 10
+          },
+          "end": {
+            "line": 4,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 58,
+      "LSPosition": {
+        "line": 4,
+        "character": 11
+      },
+      "Name": "f1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 4,
+            "character": 10
+          },
+          "end": {
+            "line": 4,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 250,
+      "LSPosition": {
+        "line": 14,
+        "character": 11
+      },
+      "Name": "f2",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 14,
+            "character": 10
+          },
+          "end": {
+            "line": 14,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 250,
+      "LSPosition": {
+        "line": 14,
+        "character": 11
+      },
+      "Name": "f2",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 14,
+            "character": 10
+          },
+          "end": {
+            "line": 14,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 250,
+      "LSPosition": {
+        "line": 14,
+        "character": 11
+      },
+      "Name": "f2",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 14,
+            "character": 10
+          },
+          "end": {
+            "line": 14,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 2
+    }
+  },
+  {
+    "marker": {
+      "Position": 283,
+      "LSPosition": {
+        "line": 17,
+        "character": 13
+      },
+      "Name": "B",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 17,
+            "character": 10
+          },
+          "end": {
+            "line": 17,
+            "character": 13
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 283,
+      "LSPosition": {
+        "line": 17,
+        "character": 13
+      },
+      "Name": "B",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 17,
+            "character": 10
+          },
+          "end": {
+            "line": 17,
+            "character": 13
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 491,
+      "LSPosition": {
+        "line": 26,
+        "character": 11
+      },
+      "Name": "f3",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 26,
+            "character": 10
+          },
+          "end": {
+            "line": 26,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 491,
+      "LSPosition": {
+        "line": 26,
+        "character": 11
+      },
+      "Name": "f3",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 26,
+            "character": 10
+          },
+          "end": {
+            "line": 26,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 706,
+      "LSPosition": {
+        "line": 36,
+        "character": 11
+      },
+      "Name": "b1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal b: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 36,
+            "character": 10
+          },
+          "end": {
+            "line": 36,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 706,
+      "LSPosition": {
+        "line": 36,
+        "character": 11
+      },
+      "Name": "b1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal b: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 36,
+            "character": 10
+          },
+          "end": {
+            "line": 36,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 731,
+      "LSPosition": {
+        "line": 37,
+        "character": 11
+      },
+      "Name": "f4",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 37,
+            "character": 10
+          },
+          "end": {
+            "line": 37,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 731,
+      "LSPosition": {
+        "line": 37,
+        "character": 11
+      },
+      "Name": "f4",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal f: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 37,
+            "character": 10
+          },
+          "end": {
+            "line": 37,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 873,
+      "LSPosition": {
+        "line": 44,
+        "character": 16
+      },
+      "Name": "n1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal noname: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 44,
+            "character": 10
+          },
+          "end": {
+            "line": 44,
+            "character": 16
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 873,
+      "LSPosition": {
+        "line": 44,
+        "character": 16
+      },
+      "Name": "n1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal noname: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 44,
+            "character": 10
+          },
+          "end": {
+            "line": 44,
+            "character": 16
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 1055,
+      "LSPosition": {
+        "line": 50,
+        "character": 11
+      },
+      "Name": "k1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal k: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 50,
+            "character": 10
+          },
+          "end": {
+            "line": 50,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1055,
+      "LSPosition": {
+        "line": 50,
+        "character": 11
+      },
+      "Name": "k1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nlocal k: any\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 50,
+            "character": 10
+          },
+          "end": {
+            "line": 50,
+            "character": 11
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  }
+]

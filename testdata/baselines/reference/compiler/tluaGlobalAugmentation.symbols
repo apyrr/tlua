@@ -1,0 +1,150 @@
+//// [tests/cases/compiler/tluaGlobalAugmentation.tlua] ////
+
+=== a.tlua ===
+G.x = 1;
+>G.x : Symbol(x, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 7))
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>x : Symbol(x, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 7))
+
+local gx: number | string = G.x;
+>gx : Symbol(gx, Decl(a.tlua, 1, 5))
+>G.x : Symbol(x, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 7))
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>x : Symbol(x, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 7))
+
+local n: number | string = N;
+>n : Symbol(n, Decl(a.tlua, 2, 5))
+>N : Symbol(N, Decl(b.tlua, 1, 12), Decl(b.tlua, 2, 6))
+
+=== b.tlua ===
+G = {};
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+
+G.x = "two";
+>G.x : Symbol(x, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 7))
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>x : Symbol(x, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 7))
+
+N = 1;
+>N : Symbol(N, Decl(b.tlua, 1, 12), Decl(b.tlua, 2, 6))
+
+N = "two";
+>N : Symbol(N, Decl(b.tlua, 1, 12), Decl(b.tlua, 2, 6))
+
+=== c.tlua ===
+local G = {};
+>G : Symbol(G, Decl(c.tlua, 0, 5))
+
+G.localOnly = true;
+>G.localOnly : Symbol(localOnly, Decl(c.tlua, 0, 13))
+>G : Symbol(G, Decl(c.tlua, 0, 5))
+>localOnly : Symbol(localOnly, Decl(c.tlua, 0, 13))
+
+local localOnly: boolean = G.localOnly;
+>localOnly : Symbol(localOnly, Decl(c.tlua, 2, 5))
+>G.localOnly : Symbol(localOnly, Decl(c.tlua, 0, 13))
+>G : Symbol(G, Decl(c.tlua, 0, 5))
+>localOnly : Symbol(localOnly, Decl(c.tlua, 0, 13))
+
+function G.identity(value: number): number
+>G : Symbol(G, Decl(c.tlua, 0, 5))
+>identity : Symbol(identity, Decl(c.tlua, 2, 39))
+>value : Symbol(value, Decl(c.tlua, 4, 20))
+
+  return value;
+>value : Symbol(value, Decl(c.tlua, 4, 20))
+
+end
+
+local localIdentity: number = G.identity(1);
+>localIdentity : Symbol(localIdentity, Decl(c.tlua, 8, 5))
+>G.identity : Symbol(identity, Decl(c.tlua, 2, 39))
+>G : Symbol(G, Decl(c.tlua, 0, 5))
+>identity : Symbol(identity, Decl(c.tlua, 2, 39))
+
+=== d.tlua ===
+function G.double(value: number): number
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>double : Symbol(double, Decl(d.tlua, 0, 0))
+>value : Symbol(value, Decl(d.tlua, 0, 18))
+
+  return value * 2;
+>value : Symbol(value, Decl(d.tlua, 0, 18))
+
+end
+
+local doubled: number = G.double(2);
+>doubled : Symbol(doubled, Decl(d.tlua, 4, 5))
+>G.double : Symbol(double, Decl(d.tlua, 0, 0))
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>double : Symbol(double, Decl(d.tlua, 0, 0))
+
+function G:triple(value: number): number
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>triple : Symbol(triple, Decl(d.tlua, 4, 36))
+>: : Symbol(:, Decl(d.tlua, 6, 10))
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>value : Symbol(value, Decl(d.tlua, 6, 18))
+
+  return value * 3;
+>value : Symbol(value, Decl(d.tlua, 6, 18))
+
+end
+
+local tripled: number = G.triple(G, 3);
+>tripled : Symbol(tripled, Decl(d.tlua, 10, 5))
+>G.triple : Symbol(triple, Decl(d.tlua, 4, 36))
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+>triple : Symbol(triple, Decl(d.tlua, 4, 36))
+>G : Symbol(G, Decl(b.tlua, 0, 0))
+
+=== e.tlua ===
+Shadow = {};
+>Shadow : Symbol(Shadow, Decl(e.tlua, 0, 0))
+
+Shadow.globalValue = 1;
+>Shadow.globalValue : Symbol(globalValue, Decl(e.tlua, 0, 12))
+>Shadow : Symbol(Shadow, Decl(e.tlua, 0, 0))
+>globalValue : Symbol(globalValue, Decl(e.tlua, 0, 12))
+
+local globalValue: number = Shadow.globalValue;
+>globalValue : Symbol(globalValue, Decl(e.tlua, 2, 5))
+>Shadow.globalValue : Symbol(globalValue, Decl(e.tlua, 0, 12))
+>Shadow : Symbol(Shadow, Decl(e.tlua, 0, 0))
+>globalValue : Symbol(globalValue, Decl(e.tlua, 0, 12))
+
+local Shadow = {};
+>Shadow : Symbol(Shadow, Decl(e.tlua, 4, 5))
+
+Shadow.localValue = true;
+>Shadow.localValue : Symbol(localValue, Decl(e.tlua, 4, 18))
+>Shadow : Symbol(Shadow, Decl(e.tlua, 4, 5))
+>localValue : Symbol(localValue, Decl(e.tlua, 4, 18))
+
+local localValue: boolean = Shadow.localValue;
+>localValue : Symbol(localValue, Decl(e.tlua, 6, 5))
+>Shadow.localValue : Symbol(localValue, Decl(e.tlua, 4, 18))
+>Shadow : Symbol(Shadow, Decl(e.tlua, 4, 5))
+>localValue : Symbol(localValue, Decl(e.tlua, 4, 18))
+
+ModuleGlobal = {};
+>ModuleGlobal : Symbol(ModuleGlobal, Decl(e.tlua, 6, 46))
+
+ModuleGlobal.value = "module";
+>ModuleGlobal.value : Symbol(value, Decl(e.tlua, 8, 18))
+>ModuleGlobal : Symbol(ModuleGlobal, Decl(e.tlua, 6, 46))
+>value : Symbol(value, Decl(e.tlua, 8, 18))
+
+=== f.tlua ===
+local moduleValue: string = ModuleGlobal.value;
+>moduleValue : Symbol(moduleValue, Decl(f.tlua, 0, 5))
+>ModuleGlobal.value : Symbol(value, Decl(e.tlua, 8, 18))
+>ModuleGlobal : Symbol(ModuleGlobal, Decl(e.tlua, 6, 46))
+>value : Symbol(value, Decl(e.tlua, 8, 18))
+
+local crossFileGlobalValue: number = Shadow.globalValue;
+>crossFileGlobalValue : Symbol(crossFileGlobalValue, Decl(f.tlua, 1, 5))
+>Shadow.globalValue : Symbol(globalValue, Decl(e.tlua, 0, 12))
+>Shadow : Symbol(Shadow, Decl(e.tlua, 0, 0))
+>globalValue : Symbol(globalValue, Decl(e.tlua, 0, 12))
+

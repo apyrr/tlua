@@ -1,0 +1,36 @@
+tluaMetatableCall.tlua(12,36): error TS2554: Expected 1 arguments, but got 2.
+tluaMetatableCall.tlua(13,27): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+
+
+==== tluaMetatableCall.tlua (2 errors) ====
+    // __call makes a paired table callable. Lua passes the table itself as the metamethod's first
+    // argument, so a call site supplies the arguments from the second parameter on.
+    
+    local callable = setmetatable({ n = 1 }, {
+      __call = function(self: object, x: number): string return "s"; end,
+    });
+    
+    local r: string = callable(2);
+    local n: number = callable.n;       // the table's own members still read
+    
+    // The receiver is implicit, so passing it back is one argument too many.
+    local tooMany = callable(callable, 2);
+                                       ~
+!!! error TS2554: Expected 1 arguments, but got 2.
+    local wrongArg = callable("x");
+                              ~~~
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    
+    // A callable pairing is still a table: pairs iterates it.
+    for k, v in pairs(callable) do
+      local key: string = k;
+    end
+    
+    // A __call whose only parameter is a rest keeps it -- the rest absorbs the receiver and the
+    // arguments alike.
+    local rest = setmetatable({}, { __call = function(...: any): number return 1; end });
+    local rr: number = rest(1, "x");
+    
+    // A __call-only metatable is enough to pair, so getmetatable answers for it.
+    local mt = getmetatable(callable);
+    

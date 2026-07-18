@@ -1,0 +1,18 @@
+// === Document Symbols ===
+// === /navigationBarVariables.tlua ===
+// local <|[|{| name: x, kind: Variable |}x|] = 0|>;
+// local <|[|{| name: y, kind: Variable |}y|] = 1|>;
+// local <|[|{| name: z, kind: Variable |}z|] = 2|>;
+
+// === Details ===
+(Variable) x
+(Variable) y
+(Variable) z
+
+
+
+
+// === Document Symbols ===
+
+
+// === Details ===

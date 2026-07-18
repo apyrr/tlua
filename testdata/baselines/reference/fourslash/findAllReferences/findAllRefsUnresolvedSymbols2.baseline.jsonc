@@ -1,0 +1,131 @@
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { /*FIND ALL REFS*/Bar } from "does-not-exist";
+// 
+// local a: Bar;
+// local b: Bar<string>;
+// --- (line: 5) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: /*FIND ALL REFS*/[|Bar|];
+// local b: [|Bar|]<string>;
+// local c: [|Bar|]<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: [|Bar|];
+// local b: /*FIND ALL REFS*/[|Bar|]<string>;
+// local c: [|Bar|]<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: [|Bar|];
+// local b: [|Bar|]<string>;
+// local c: /*FIND ALL REFS*/[|Bar|]<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: /*FIND ALL REFS*/[|Bar|].X;
+// local e: [|Bar|].X<string>;
+// local f: [|Bar|].X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: [|Bar|].X;
+// local e: /*FIND ALL REFS*/[|Bar|].X<string>;
+// local f: [|Bar|].X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: [|Bar|].X;
+// local e: [|Bar|].X<string>;
+// local f: /*FIND ALL REFS*/[|Bar|].X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: Bar./*FIND ALL REFS*/[|X|];
+// local e: Bar.[|X|]<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// import { Bar } from "does-not-exist";
+// 
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: Bar.[|X|];
+// local e: Bar./*FIND ALL REFS*/[|X|]<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// --- (line: 4) skipped ---
+// local c: Bar<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar./*FIND ALL REFS*/[|X|].Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols2.tlua ===
+// --- (line: 4) skipped ---
+// local c: Bar<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X./*FIND ALL REFS*/[|Y|];

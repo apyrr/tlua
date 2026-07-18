@@ -1,0 +1,32 @@
+iface-local-first.tlua(4,11): error TS2687: All declarations of 'Flipped' must have identical modifiers.
+iface.tlua(6,17): error TS2687: All declarations of 'Mixed' must have identical modifiers.
+
+
+==== iface.tlua (1 errors) ====
+    // A `local interface` merging with a bare `interface` of the same name is an
+    // inconsistent-modifier error: the `local` prefix decides whether the whole
+    // merged symbol is module-private, so a mismatched prefix is ambiguous. The error
+    // points at the inconsistent `local` declaration, not whichever came first.
+    interface Mixed { a: number };
+    local interface Mixed { b: number };
+                    ~~~~~
+!!! error TS2687: All declarations of 'Mixed' must have identical modifiers.
+    
+==== iface-local-first.tlua (1 errors) ====
+    // The same, with the `local` declaration first: the error now anchors on the bare
+    // declaration (the one that differs from the local primary), regardless of order.
+    local interface Flipped { a: number };
+    interface Flipped { b: number };
+              ~~~~~~~
+!!! error TS2687: All declarations of 'Flipped' must have identical modifiers.
+    
+==== shadow-a.tlua (0 errors) ====
+    // A module-private `local type` and a bare global `type` of the same name live
+    // in different scopes across modules and do NOT collide: each module sees its own.
+    local type Name = number;
+    local va: Name = 1;
+    
+==== shadow-b.tlua (0 errors) ====
+    type Name = string;
+    local vb: Name = "x";
+    

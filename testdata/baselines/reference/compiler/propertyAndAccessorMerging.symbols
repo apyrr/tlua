@@ -1,0 +1,65 @@
+//// [tests/cases/compiler/propertyAndAccessorMerging.tlua] ////
+
+=== propertyAndAccessorMerging.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3613
+
+interface EntityMetadata1 {
+>EntityMetadata1 : Symbol(EntityMetadata1, Decl(propertyAndAccessorMerging.tlua, 0, 0), Decl(propertyAndAccessorMerging.tlua, 5, 1))
+
+    get tableName(): string;
+>tableName : Symbol(EntityMetadata1.tableName, Decl(propertyAndAccessorMerging.tlua, 2, 27), Decl(propertyAndAccessorMerging.tlua, 3, 28), Decl(propertyAndAccessorMerging.tlua, 7, 27))
+
+    set tableName(name: string);
+>tableName : Symbol(EntityMetadata1.tableName, Decl(propertyAndAccessorMerging.tlua, 2, 27), Decl(propertyAndAccessorMerging.tlua, 3, 28), Decl(propertyAndAccessorMerging.tlua, 7, 27))
+>name : Symbol(name, Decl(propertyAndAccessorMerging.tlua, 4, 18))
+}
+
+interface EntityMetadata1 {
+>EntityMetadata1 : Symbol(EntityMetadata1, Decl(propertyAndAccessorMerging.tlua, 0, 0), Decl(propertyAndAccessorMerging.tlua, 5, 1))
+
+    tableName: string;
+>tableName : Symbol(EntityMetadata1.tableName, Decl(propertyAndAccessorMerging.tlua, 2, 27), Decl(propertyAndAccessorMerging.tlua, 3, 28), Decl(propertyAndAccessorMerging.tlua, 7, 27))
+}
+
+interface EntityMetadata2 {
+>EntityMetadata2 : Symbol(EntityMetadata2, Decl(propertyAndAccessorMerging.tlua, 9, 1), Decl(propertyAndAccessorMerging.tlua, 13, 1))
+
+    tableName: string;
+>tableName : Symbol(EntityMetadata2.tableName, Decl(propertyAndAccessorMerging.tlua, 11, 27), Decl(propertyAndAccessorMerging.tlua, 15, 27), Decl(propertyAndAccessorMerging.tlua, 16, 28))
+}
+
+interface EntityMetadata2 {
+>EntityMetadata2 : Symbol(EntityMetadata2, Decl(propertyAndAccessorMerging.tlua, 9, 1), Decl(propertyAndAccessorMerging.tlua, 13, 1))
+
+    get tableName(): string;
+>tableName : Symbol(EntityMetadata2.tableName, Decl(propertyAndAccessorMerging.tlua, 11, 27), Decl(propertyAndAccessorMerging.tlua, 15, 27), Decl(propertyAndAccessorMerging.tlua, 16, 28))
+
+    set tableName(name: string);
+>tableName : Symbol(EntityMetadata2.tableName, Decl(propertyAndAccessorMerging.tlua, 11, 27), Decl(propertyAndAccessorMerging.tlua, 15, 27), Decl(propertyAndAccessorMerging.tlua, 16, 28))
+>name : Symbol(name, Decl(propertyAndAccessorMerging.tlua, 17, 18))
+}
+
+class Foo1 {
+    accessor x: string = "abc"
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+}
+
+interface Foo1 {
+>Foo1 : Symbol(Foo1, Decl(propertyAndAccessorMerging.tlua, 22, 1))
+
+    x: string
+>x : Symbol(Foo1.x, Decl(propertyAndAccessorMerging.tlua, 24, 16))
+}
+
+interface Foo2 {
+>Foo2 : Symbol(Foo2, Decl(propertyAndAccessorMerging.tlua, 26, 1))
+
+    x: string
+>x : Symbol(Foo2.x, Decl(propertyAndAccessorMerging.tlua, 28, 16))
+}
+
+class Foo2 {
+    accessor x: string = "abc"
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+}
+

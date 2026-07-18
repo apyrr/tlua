@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/typeRootsRelativePath.tlua] ////
+
+=== typeRootsRelativePath.tlua ===
+local x = 1;
+>x : Symbol(x, Decl(typeRootsRelativePath.tlua, 0, 5))
+

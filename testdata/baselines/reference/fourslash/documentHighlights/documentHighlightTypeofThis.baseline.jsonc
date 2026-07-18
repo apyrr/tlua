@@ -1,0 +1,6 @@
+// === documentHighlights ===
+// === /a.tlua ===
+// interface Foo {
+//   bar(): typeof /*HIGHLIGHTS*/this;
+// }
+// 

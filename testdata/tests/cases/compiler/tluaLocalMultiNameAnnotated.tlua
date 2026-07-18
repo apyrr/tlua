@@ -1,0 +1,23 @@
+// @target: esnext
+
+function pair(): (number, string)
+  return 1, "a";
+end
+
+// Annotations check their positional value.
+local a: number, b: string = pair();
+
+// Position 0 mismatch.
+local c: string, d = pair();
+
+// Position 1 mismatch.
+local e, f: boolean = pair();
+
+// A name past the values must accept nil.
+local g: number, h: string, i: boolean = pair();
+
+// nil-accepting annotations are fine past the end.
+local j: number, k: string, l: boolean | nil = pair();
+
+// Mixed annotated and inferred names.
+local m, n: string = pair();

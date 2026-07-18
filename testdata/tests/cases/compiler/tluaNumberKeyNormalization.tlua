@@ -1,0 +1,9 @@
+// @strict: true
+
+// Every spelling of a numeric value names the same key.
+local t = { [0x10] = "hex", [1e2] = "exp", [1.5] = "frac", [-1] = "neg" };
+local hex: string = t[16];
+local exp: string = t[100];
+local frac: string = t[1.5];
+local neg: string = t[-1];
+local es = {hex, exp, frac, neg};

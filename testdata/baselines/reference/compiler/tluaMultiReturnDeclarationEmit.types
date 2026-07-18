@@ -1,0 +1,72 @@
+//// [tests/cases/compiler/tluaMultiReturnDeclarationEmit.tlua] ////
+
+=== defs.d.tlua ===
+declare function fromDts(): (number, string);
+>fromDts : () => (number, string)
+
+declare function fromDtsVariadic(): (boolean, ...number);
+>fromDtsVariadic : () => (boolean, ...number)
+
+=== main.tlua ===
+function annotated(): (number, string) {
+>annotated : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+}
+
+function inferred(cond: boolean) {
+>inferred : (cond: boolean) => (number, (string | nil)?)
+>cond : boolean
+
+  if (cond) {
+>cond : boolean
+
+    return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+  }
+  return 2;
+>2 : 2
+}
+
+function variadic(): (number, ...string) {
+>variadic : () => (number, ...string)
+
+  return 1, "a", "b";
+>1, "a", "b" : number, string, string
+>1 : 1
+>"a" : "a"
+>"b" : "b"
+}
+
+function optional(): (number, string?) {
+>optional : () => (number, string?)
+
+  return 1;
+>1 : 1
+}
+
+type PairCallback = () => (number, string);
+>PairCallback : PairCallback
+
+interface PairCallable {
+  (): (number, string);
+  pair(): (number, string);
+>pair : () => (number, string)
+}
+
+// Consuming hand-written d.tlua packs proves the declared syntax parses.
+local fromDeclaration = fromDts();
+>fromDeclaration : number
+>fromDts() : number
+>fromDts : () => (number, string)
+
+local fromDeclarationVariadic = fromDtsVariadic();
+>fromDeclarationVariadic : boolean
+>fromDtsVariadic() : boolean
+>fromDtsVariadic : () => (boolean, ...number)
+

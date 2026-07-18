@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/tluaMultiReturnDeclarationEmit.tlua] ////
+
+=== defs.d.tlua ===
+declare function fromDts(): (number, string);
+>fromDts : Symbol(fromDts, Decl(defs.d.tlua, 0, 0))
+
+declare function fromDtsVariadic(): (boolean, ...number);
+>fromDtsVariadic : Symbol(fromDtsVariadic, Decl(defs.d.tlua, 0, 45))
+
+=== main.tlua ===
+function annotated(): (number, string) {
+>annotated : Symbol(annotated, Decl(main.tlua, 0, 0))
+
+  return 1, "a";
+}
+
+function inferred(cond: boolean) {
+>inferred : Symbol(inferred, Decl(main.tlua, 2, 1))
+>cond : Symbol(cond, Decl(main.tlua, 4, 18))
+
+  if (cond) {
+>cond : Symbol(cond, Decl(main.tlua, 4, 18))
+
+    return 1, "a";
+  }
+  return 2;
+}
+
+function variadic(): (number, ...string) {
+>variadic : Symbol(variadic, Decl(main.tlua, 9, 1))
+
+  return 1, "a", "b";
+}
+
+function optional(): (number, string?) {
+>optional : Symbol(optional, Decl(main.tlua, 13, 1))
+
+  return 1;
+}
+
+type PairCallback = () => (number, string);
+>PairCallback : Symbol(PairCallback, Decl(main.tlua, 17, 1))
+
+interface PairCallable {
+>PairCallable : Symbol(PairCallable, Decl(main.tlua, 19, 43))
+
+  (): (number, string);
+  pair(): (number, string);
+>pair : Symbol(PairCallable.pair, Decl(main.tlua, 22, 23))
+}
+
+// Consuming hand-written d.tlua packs proves the declared syntax parses.
+local fromDeclaration = fromDts();
+>fromDeclaration : Symbol(fromDeclaration, Decl(main.tlua, 27, 5))
+>fromDts : Symbol(fromDts, Decl(defs.d.tlua, 0, 0))
+
+local fromDeclarationVariadic = fromDtsVariadic();
+>fromDeclarationVariadic : Symbol(fromDeclarationVariadic, Decl(main.tlua, 28, 5))
+>fromDtsVariadic : Symbol(fromDtsVariadic, Decl(defs.d.tlua, 0, 45))
+

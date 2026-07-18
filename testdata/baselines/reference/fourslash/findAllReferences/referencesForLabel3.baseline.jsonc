@@ -1,0 +1,5 @@
+// === findAllReferences ===
+// === /referencesForLabel3.tlua ===
+// /*FIND ALL REFS*/label: while (true) {
+//     local label = "label";
+// }

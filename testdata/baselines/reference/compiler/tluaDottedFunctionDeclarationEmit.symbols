@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaDottedFunctionDeclarationEmit.tlua] ////
+
+=== tluaDottedFunctionDeclarationEmit.tlua ===
+local Exported = {};
+>Exported : Symbol(Exported, Decl(tluaDottedFunctionDeclarationEmit.tlua, 0, 5))
+
+function Exported.visible(a: number): number
+>Exported : Symbol(Exported, Decl(tluaDottedFunctionDeclarationEmit.tlua, 0, 5))
+>visible : Symbol(visible, Decl(tluaDottedFunctionDeclarationEmit.tlua, 0, 20))
+>a : Symbol(a, Decl(tluaDottedFunctionDeclarationEmit.tlua, 2, 26))
+
+  return a;
+>a : Symbol(a, Decl(tluaDottedFunctionDeclarationEmit.tlua, 2, 26))
+
+end
+
+local Hidden = {};
+>Hidden : Symbol(Hidden, Decl(tluaDottedFunctionDeclarationEmit.tlua, 6, 5))
+
+function Hidden.invisible(): void
+>Hidden : Symbol(Hidden, Decl(tluaDottedFunctionDeclarationEmit.tlua, 6, 5))
+>invisible : Symbol(invisible, Decl(tluaDottedFunctionDeclarationEmit.tlua, 6, 18))
+
+end
+

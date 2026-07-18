@@ -1,0 +1,9 @@
+// === findAllReferences ===
+// === /a.tlua ===
+// /*FIND ALL REFS*/export { x };
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// export { /*FIND ALL REFS*/x };

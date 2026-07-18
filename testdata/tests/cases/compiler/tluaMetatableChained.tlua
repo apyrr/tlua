@@ -1,0 +1,28 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A metatable's __index may be a table that has a metatable of its own, and Lua keeps
+// walking. Nothing special is needed for that: each pairing already carries the members it
+// inherited, so a chain merges one link at a time.
+
+local base = { fromBase = true };
+local mid = setmetatable({ fromMid = 1 }, { __index = base });
+local top = setmetatable({ fromTop = "t" }, { __index = mid });
+
+local t1: string = top.fromTop;
+local m1: number = top.fromMid;
+local b1: boolean = top.fromBase;
+local absent = top.nowhere;
+
+// Three deep, and the nearest link still wins a collision.
+local deep = setmetatable({ own = 1 }, { __index = top });
+local d1: number = deep.own;
+local d2: boolean = deep.fromBase;
+
+local shadowBase = { v = "base" };
+local shadowMid = setmetatable({ v = 1 }, { __index = shadowBase });
+local shadowTop = setmetatable({ }, { __index = shadowMid });
+local s1: number = shadowTop.v;
+local s2: string = shadowTop.v;

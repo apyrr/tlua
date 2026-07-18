@@ -1,0 +1,54 @@
+tluaMultiReturnTypeSyntaxErrors.tlua(2,10): error TS2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
+tluaMultiReturnTypeSyntaxErrors.tlua(5,42): error TS1228: A type predicate is only allowed in return type position for functions and methods.
+tluaMultiReturnTypeSyntaxErrors.tlua(5,42): error TS100021: A type predicate cannot be part of a multiple return type.
+tluaMultiReturnTypeSyntaxErrors.tlua(23,22): error TS100033: Multiple return types must be parenthesized.
+tluaMultiReturnTypeSyntaxErrors.tlua(26,33): error TS100033: Multiple return types must be parenthesized.
+tluaMultiReturnTypeSyntaxErrors.tlua(27,29): error TS100033: Multiple return types must be parenthesized.
+
+
+==== tluaMultiReturnTypeSyntaxErrors.tlua (6 errors) ====
+    // Ordinary callable return types do not consume enclosing commas.
+    type H = Map<() => number, string>;
+             ~~~
+!!! error TS2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
+    type ParenthesizedSingle = () => (string)[];
+    type ConditionalSingle<T> = () => (T extends string ? number : boolean);
+    type BadPredicate = (value: unknown) => (value is string, number);
+                                             ~~~~~~~~~~~~~~~
+!!! error TS1228: A type predicate is only allowed in return type position for functions and methods.
+                                             ~~~~~~~~~~~~~~~
+!!! error TS100021: A type predicate cannot be part of a multiple return type.
+    
+    function takesCallback(cb: () => number, more: string) {
+      return cb() + more.length;
+    }
+    
+    function trailingCallback(cb: () => number,) {
+      return cb();
+    }
+    
+    // An arrow return type in a call argument list does not swallow the comma.
+    function twoArgs(a: (x: number) => number, b: number) {
+      return a(b);
+    }
+    local r = twoArgs((x): number => x, 1);
+    
+    // A bare multiple return type must be parenthesized; the list is still
+    // parsed for recovery, so the pack itself checks normally.
+    function barePair(): number, string {
+                         ~~~~~~~~~~~~~~
+!!! error TS100033: Multiple return types must be parenthesized.
+      return 1, "a";
+    }
+    declare function bareAmbient(): number, ...string;
+                                    ~~~~~~~~~~~~~~~~~
+!!! error TS100033: Multiple return types must be parenthesized.
+    local function bareLocal(): number, string?
+                                ~~~~~~~~~~~~~~~
+!!! error TS100033: Multiple return types must be parenthesized.
+      return 1, nil;
+    end
+    local a, b = barePair();
+    local n: number = a;
+    local s: string = b;
+    

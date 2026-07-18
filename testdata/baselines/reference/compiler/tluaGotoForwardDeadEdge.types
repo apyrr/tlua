@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaGotoForwardDeadEdge.tlua] ////
+
+=== tluaGotoForwardDeadEdge.tlua ===
+// A label's entry is the join of the fall-through AND every forward goto. A
+// forward edge the checker later proves dead (here: behind a never call) must
+// not mask a live fall-through — only the goto itself is unreachable.
+declare function fail(): never;
+>fail : () => never
+
+declare function log(n: number): void;
+>log : (n: number) => void
+>n : number
+
+function liveFallThroughDeadGoto(b: boolean): void
+>liveFallThroughDeadGoto : (b: boolean) => void
+>b : boolean
+
+    if b then
+>b : boolean
+
+        fail();
+>fail() : never
+>fail : () => never
+
+        goto done
+>done : any
+
+    end
+    log(1);
+>log(1) : void
+>log : (n: number) => void
+>1 : 1
+
+    ::done::
+>done : any
+
+    log(2);
+>log(2) : void
+>log : (n: number) => void
+>2 : 2
+
+end
+
+// The mirror case: several forward gotos, the FIRST-bound one dead, a later one
+// live, fall-through dead. The label is still reachable through the live edge.
+function liveSecondGoto(b: boolean): number
+>liveSecondGoto : (b: boolean) => number
+>b : boolean
+
+    if b then
+>b : boolean
+
+        fail();
+>fail() : never
+>fail : () => never
+
+        goto out
+>out : any
+
+    end
+    goto out
+>out : any
+
+    ::out::
+>out : any
+
+    return 1;
+>1 : 1
+
+end
+
+// Narrowing still joins all live entries when a dead edge is among them.
+function narrowPastDeadEdge(x: string | nil): string
+>narrowPastDeadEdge : (x: string | nil) => string
+>x : string | nil
+
+    if x == nil then
+>x == nil : boolean
+>x : string | nil
+
+        fail();
+>fail() : never
+>fail : () => never
+
+        goto has
+>has : any
+
+    end
+    ::has::
+>has : any
+
+    return x;
+>x : string
+
+end
+

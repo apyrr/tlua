@@ -1,0 +1,21 @@
+// @strict: true
+// @noEmit: true
+
+// Contextual typing by numeric-keyed members.
+interface Pair {
+    1: string;
+    2: number;
+}
+local p: Pair = { "a", 2 };
+local bad: Pair = { 1, "b" };
+
+// Contextual typing by a numeric index signature.
+local ns: { [i: number]: string } = { "a", "b" };
+local nbad: { [i: number]: string } = { "a", 1 };
+
+// Excess positional entry against a closed target.
+local excess: { 1: string } = { "a", "b" };
+
+// Contextual parameter typing of a function-expression entry.
+local fns: { 1: (n: number) => number } = { function(n) return n; end };
+local all = {p, bad, ns, nbad, excess, fns};

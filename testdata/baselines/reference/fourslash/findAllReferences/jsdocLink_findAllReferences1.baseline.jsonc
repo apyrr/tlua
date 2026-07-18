@@ -1,0 +1,7 @@
+// === findAllReferences ===
+// === /jsdocLink_findAllReferences1.tlua ===
+// interface [|A|]/*FIND ALL REFS*/ {}
+// /**
+//  * {@link [|A|]()} is ok
+//  */
+// declare a: [|A|]

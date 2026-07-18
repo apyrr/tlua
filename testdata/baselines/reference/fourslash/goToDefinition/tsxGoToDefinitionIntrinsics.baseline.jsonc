@@ -1,0 +1,30 @@
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         span: { n: string; };
+//     }
+// }
+// local x = <di/*GOTO DEF*/v />;
+// local y = <span />;
+// local z = <div name='hello' />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     }
+// }
+// local x = <div />;
+// local y = <s/*GOTO DEF*/pan />;
+// local z = <div name='hello' />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 9) skipped ---
+// }
+// local x = <div />;
+// local y = <span />;
+// local z = <div <|[|na/*GOTO DEF*/me|]='hello'|> />;

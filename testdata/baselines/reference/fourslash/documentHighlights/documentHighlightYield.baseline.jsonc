@@ -1,0 +1,10 @@
+// === documentHighlights ===
+// === /a.tlua ===
+// class C {
+//   async *[Symbol.asyncIterator]() {
+//     /*HIGHLIGHTS*/yield {
+// 		type: 'type',
+// 	};
+//   }
+// }
+// 

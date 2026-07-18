@@ -1,0 +1,30 @@
+//// [tests/cases/compiler/tluaRequirePathShaped.tlua] ////
+
+=== main.tlua ===
+local a = require("./m");
+>a : Symbol(a, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local b = require("../up");
+>b : Symbol(b, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local c = require("dir/m");
+>c : Symbol(c, Decl(main.tlua, 2, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local ok = require("m");
+>ok : Symbol(ok, Decl(main.tlua, 3, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+ok;
+>ok : Symbol(ok, Decl(main.tlua, 3, 5))
+
+=== m.tlua ===
+local x = 1;
+>x : Symbol(x, Decl(m.tlua, 0, 5))
+
+return { x = x };
+>x : Symbol(x, Decl(m.tlua, 1, 8))
+>x : Symbol(x, Decl(m.tlua, 0, 5))
+

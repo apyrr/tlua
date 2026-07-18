@@ -1,0 +1,39 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// `..` dispatches __concat and `#` dispatches __len on a paired operand, exactly as the other
+// operator metamethods do: the handler's parameters check the operands and its return type is
+// the expression's type.
+
+local Str = {
+  // Lua passes __concat whichever operand is not the table, so its arguments are arbitrary.
+  __concat = function(a: any, b: any): string return "s"; end,
+  // A multi-return handler adjusts to its first value.
+  __len = function(a: { n: number }): (number, string) return a.n, "w"; end,
+};
+
+local v = setmetatable({ n = 3 }, Str);
+
+local c1: string = v .. "z";       // __concat, v on the left
+local c2: string = "z" .. v;       // __concat, v on the right (still receives operands in order)
+local l1: number = #v;             // __len, adjusted to its first value
+
+// getmetatable is precise for a metatable that commits only to __concat/__len -- they are
+// interpreted metamethods, so the pairing triggers.
+local mt = getmetatable(v);
+local h: (a: any, b: any) => string = mt.__concat;
+
+// A __concat handler whose parameter rejects the operand is an error.
+local Strict = {
+  __concat = function(a: { tag: string }, b: { tag: string }): string return "s"; end,
+};
+local p = setmetatable({ tag = "p" }, Strict);
+local badConcat = p .. 5;
+
+// A table with no __concat still errors on `..`, while `#` without __len falls back to
+// the structural rule, which measures any table -- a plain record included.
+local plain = { n = 1 };
+local noConcat = plain .. "x";
+local noLen: number = #plain;

@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/tluaNumberKeyDiagnosticDisplay.tlua] ////
+
+=== tluaNumberKeyDiagnosticDisplay.tlua ===
+// A number key must render as its decimal text in diagnostics, never as the
+// internal "\xFEn:" mangled symbol name.
+
+// A duplicate number key is reported as '1', not as a mangled name. (This used
+// to be exercised through a spread override, `{ [1] = "a", ...src }`; object spread
+// is gone, so the duplicate is written directly.)
+local dup = { [1] = "a", [1] = "b" }; // error: duplicate '1'
+>dup : Symbol(dup, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 5))
+>[1] : Symbol([1], Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 13), Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 24))
+>1 : Symbol([1], Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 13), Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 24))
+>[1] : Symbol([1], Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 13), Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 24))
+>1 : Symbol([1], Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 13), Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 24))
+
+// A missing number-key element access displays the key as '1' (a mangled name
+// must not reach the "Property ... does not exist" diagnostic).
+interface Near { l: string }
+>Near : Symbol(Near, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 37))
+>l : Symbol(Near.l, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 10, 16))
+
+declare n: Near;
+>n : Symbol(n, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 11, 7))
+>Near : Symbol(Near, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 6, 37))
+
+local miss = n[1]; // error: Property '1' does not exist on type 'Near'
+>miss : Symbol(miss, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 12, 5))
+>n : Symbol(n, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 11, 7))
+
+local es = {dup, miss};
+>es : Symbol(es, Decl(tluaNumberKeyDiagnosticDisplay.tlua, 14, 5))
+

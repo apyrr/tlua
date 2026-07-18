@@ -1,0 +1,29 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfComputedProperty.tlua ===
+// local o = { /*FIND ALL REFS*/["foo"]: 12 };
+// local y = o.foo;
+// local z = o['foo'];
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfComputedProperty.tlua ===
+// local o = { ["/*FIND ALL REFS*/[|foo|]"]: 12 };
+// local y = o.[|foo|];
+// local z = o['[|foo|]'];
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfComputedProperty.tlua ===
+// local o = { ["[|foo|]"]: 12 };
+// local y = o./*FIND ALL REFS*/[|foo|];
+// local z = o['[|foo|]'];
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfComputedProperty.tlua ===
+// local o = { ["[|foo|]"]: 12 };
+// local y = o.[|foo|];
+// local z = o['/*FIND ALL REFS*/[|foo|]'];

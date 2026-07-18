@@ -1,0 +1,160 @@
+// === Inlay Hints ===
+T:add(1, 2);
+      ^
+{
+  "position": {
+    "line": 4,
+    "character": 6
+  },
+  "label": [
+    {
+      "value": "x",
+      "location": {
+        "uri": "file:///luaColonCallInlayParameterHints.tlua",
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 15
+          },
+          "end": {
+            "line": 1,
+            "character": 16
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
+  "kind": 2,
+  "paddingRight": true
+}
+
+T:add(1, 2);
+         ^
+{
+  "position": {
+    "line": 4,
+    "character": 9
+  },
+  "label": [
+    {
+      "value": "y",
+      "location": {
+        "uri": "file:///luaColonCallInlayParameterHints.tlua",
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 26
+          },
+          "end": {
+            "line": 1,
+            "character": 27
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
+  "kind": 2,
+  "paddingRight": true
+}
+
+T.add(T, 3, 4);
+      ^
+{
+  "position": {
+    "line": 5,
+    "character": 6
+  },
+  "label": [
+    {
+      "value": "self",
+      "location": {
+        "uri": "file:///luaColonCallInlayParameterHints.tlua",
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 10
+          },
+          "end": {
+            "line": 1,
+            "character": 11
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
+  "kind": 2,
+  "paddingRight": true
+}
+
+T.add(T, 3, 4);
+         ^
+{
+  "position": {
+    "line": 5,
+    "character": 9
+  },
+  "label": [
+    {
+      "value": "x",
+      "location": {
+        "uri": "file:///luaColonCallInlayParameterHints.tlua",
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 15
+          },
+          "end": {
+            "line": 1,
+            "character": 16
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
+  "kind": 2,
+  "paddingRight": true
+}
+
+T.add(T, 3, 4);
+            ^
+{
+  "position": {
+    "line": 5,
+    "character": 12
+  },
+  "label": [
+    {
+      "value": "y",
+      "location": {
+        "uri": "file:///luaColonCallInlayParameterHints.tlua",
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 26
+          },
+          "end": {
+            "line": 1,
+            "character": 27
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
+  "kind": 2,
+  "paddingRight": true
+}

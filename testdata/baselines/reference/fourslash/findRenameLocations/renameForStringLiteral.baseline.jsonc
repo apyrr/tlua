@@ -1,0 +1,11 @@
+// === findRenameLocations ===
+// === /a.tlua ===
+// interface Foo {
+//     property: /*RENAME*/"[|fooRENAME|]";
+// }
+// /**
+//  * @type {{ property: "foo"}}
+//  */
+// local obj: Foo = {
+//     property = "[|fooRENAME|]",
+// }

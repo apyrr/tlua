@@ -1,0 +1,77 @@
+// === documentHighlights ===
+// === /file1.tlua ===
+// class Foo {
+//     // This is not valid syntax: parameter property can't be binding pattern
+//     constructor(private [/*HIGHLIGHTS*/privateParam]: number,
+//         public [publicParam]: string,
+//         protected [protectedParam]: boolean) {
+// 
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// class Foo {
+//     // This is not valid syntax: parameter property can't be binding pattern
+//     constructor(private [privateParam]: number,
+//         public [/*HIGHLIGHTS*/publicParam]: string,
+//         protected [protectedParam]: boolean) {
+// 
+//         local localPrivate = privateParam;
+// --- (line: 8) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// class Foo {
+//     // This is not valid syntax: parameter property can't be binding pattern
+//     constructor(private [privateParam]: number,
+//         public [publicParam]: string,
+//         protected [/*HIGHLIGHTS*/protectedParam]: boolean) {
+// 
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// --- (line: 9) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 3) skipped ---
+//         public [publicParam]: string,
+//         protected [protectedParam]: boolean) {
+// 
+//         local localPrivate = /*HIGHLIGHTS*/privateParam;
+//         this.privateParam += 10;
+// 
+//         local localPublic = publicParam;
+// --- (line: 11) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 6) skipped ---
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// 
+//         local localPublic = /*HIGHLIGHTS*/publicParam;
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = protectedParam;
+// --- (line: 14) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 9) skipped ---
+//         local localPublic = publicParam;
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = /*HIGHLIGHTS*/protectedParam;
+//         this.protectedParam = false;
+//     }
+// }

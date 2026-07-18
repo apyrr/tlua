@@ -1,0 +1,86 @@
+//// [tests/cases/compiler/tluaMultiReturnTypeSyntaxErrors.tlua] ////
+
+=== tluaMultiReturnTypeSyntaxErrors.tlua ===
+// Ordinary callable return types do not consume enclosing commas.
+type H = Map<() => number, string>;
+>H : Symbol(H, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 0, 0))
+>Map : Symbol(Map)
+
+type ParenthesizedSingle = () => (string)[];
+>ParenthesizedSingle : Symbol(ParenthesizedSingle, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 1, 35))
+
+type ConditionalSingle<T> = () => (T extends string ? number : boolean);
+>ConditionalSingle : Symbol(ConditionalSingle, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 2, 44))
+>T : Symbol(T, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 3, 23))
+>T : Symbol(T, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 3, 23))
+
+type BadPredicate = (value: unknown) => (value is string, number);
+>BadPredicate : Symbol(BadPredicate, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 3, 72))
+>value : Symbol(value, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 4, 21))
+>value : Symbol(value, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 4, 21))
+
+function takesCallback(cb: () => number, more: string) {
+>takesCallback : Symbol(takesCallback, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 4, 66))
+>cb : Symbol(cb, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 6, 23))
+>more : Symbol(more, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 6, 40))
+
+  return cb() + more.length;
+>cb : Symbol(cb, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 6, 23))
+>more.length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
+>more : Symbol(more, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 6, 40))
+>length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
+}
+
+function trailingCallback(cb: () => number,) {
+>trailingCallback : Symbol(trailingCallback, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 8, 1))
+>cb : Symbol(cb, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 10, 26))
+
+  return cb();
+>cb : Symbol(cb, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 10, 26))
+}
+
+// An arrow return type in a call argument list does not swallow the comma.
+function twoArgs(a: (x: number) => number, b: number) {
+>twoArgs : Symbol(twoArgs, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 12, 1))
+>a : Symbol(a, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 17))
+>x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 21))
+>b : Symbol(b, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 42))
+
+  return a(b);
+>a : Symbol(a, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 17))
+>b : Symbol(b, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 42))
+}
+local r = twoArgs((x): number => x, 1);
+>r : Symbol(r, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 5))
+>twoArgs : Symbol(twoArgs, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 12, 1))
+>x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 19))
+>x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 19))
+
+// A bare multiple return type must be parenthesized; the list is still
+// parsed for recovery, so the pack itself checks normally.
+function barePair(): number, string {
+>barePair : Symbol(barePair, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 39))
+
+  return 1, "a";
+}
+declare function bareAmbient(): number, ...string;
+>bareAmbient : Symbol(bareAmbient, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 24, 1))
+
+local function bareLocal(): number, string?
+>bareLocal : Symbol(bareLocal, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 25, 50))
+
+  return 1, nil;
+end
+local a, b = barePair();
+>a : Symbol(a, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 29, 5))
+>b : Symbol(b, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 29, 8))
+>barePair : Symbol(barePair, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 39))
+
+local n: number = a;
+>n : Symbol(n, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 30, 5))
+>a : Symbol(a, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 29, 5))
+
+local s: string = b;
+>s : Symbol(s, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 31, 5))
+>b : Symbol(b, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 29, 8))
+

@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/reachabilityChecksIgnored.tlua] ////
+
+=== reachabilityChecksIgnored.tlua ===
+function a() {
+>a : () => void
+
+    throw new Error("");
+>new Error("") : any
+>Error : any
+>"" : ""
+
+    // @ts-ignore
+    console.log("unreachable");
+>console.log("unreachable") : any
+>console.log : any
+>console : any
+>log : any
+>"unreachable" : "unreachable"
+}
+
+function b() {
+>b : () => void
+
+    throw new Error("");
+>new Error("") : any
+>Error : any
+>"" : ""
+
+    // @ts-expect-error
+    console.log("unreachable");
+>console.log("unreachable") : any
+>console.log : any
+>console : any
+>log : any
+>"unreachable" : "unreachable"
+}
+

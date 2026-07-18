@@ -1,0 +1,9 @@
+//// [tests/cases/compiler/tluaConstEnumSyntaxUnsupported.tlua] ////
+
+=== tluaConstEnumSyntaxUnsupported.tlua ===
+local enum E {
+>enum : Symbol(enum, Decl(tluaConstEnumSyntaxUnsupported.tlua, 0, 5))
+
+    A,
+}
+

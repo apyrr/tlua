@@ -1,0 +1,17 @@
+//// [tests/cases/compiler/tluaGlobalReferenceNonIdentifierCallee.tlua] ////
+
+=== tluaGlobalReferenceNonIdentifierCallee.tlua ===
+// Regression: the Lua global-reference guard (setmetatable/getmetatable/type
+// dispatch) must ignore non-identifier callee bases. `get().run()` used to
+// panic once the LuaJIT lib became the default: the property access's base is
+// a CallExpression, which was passed to identifier-only symbol resolution.
+declare function get(): { run: () => number };
+>get : Symbol(get, Decl(tluaGlobalReferenceNonIdentifierCallee.tlua, 0, 0))
+>run : Symbol(run, Decl(tluaGlobalReferenceNonIdentifierCallee.tlua, 4, 25))
+
+local n: number = get().run();
+>n : Symbol(n, Decl(tluaGlobalReferenceNonIdentifierCallee.tlua, 5, 5))
+>get().run : Symbol(run, Decl(tluaGlobalReferenceNonIdentifierCallee.tlua, 4, 25))
+>get : Symbol(get, Decl(tluaGlobalReferenceNonIdentifierCallee.tlua, 0, 0))
+>run : Symbol(run, Decl(tluaGlobalReferenceNonIdentifierCallee.tlua, 4, 25))
+

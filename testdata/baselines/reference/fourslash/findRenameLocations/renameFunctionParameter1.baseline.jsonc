@@ -1,0 +1,10 @@
+// === findRenameLocations ===
+// === /renameFunctionParameter1.tlua ===
+// function Foo() {
+//     /**
+//      * @param {number} p
+//      */
+//     this.foo = function([|pRENAME|]/*RENAME*/)
+//         return [|pRENAME|];
+//     end
+// }

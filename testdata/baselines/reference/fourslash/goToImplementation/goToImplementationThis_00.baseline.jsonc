@@ -1,0 +1,9 @@
+// === goToImplementation ===
+// === /goToImplementationThis_00.tlua ===
+// class Bar extends Foo {
+//     hello() {
+//         thi/*GOTO IMPL*/s.whatever();
+//     }
+// 
+//     whatever() {}
+// }

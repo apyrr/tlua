@@ -1,0 +1,109 @@
+//// [tests/cases/compiler/tluaLocalMultiNameDeclarations.tlua] ////
+
+=== tluaLocalMultiNameDeclarations.tlua ===
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+function variadic(): (number, ...string)
+>variadic : () => (number, ...string)
+
+  return 1, "a", "b";
+>1, "a", "b" : number, string, string
+>1 : 1
+>"a" : "a"
+>"b" : "b"
+
+end
+
+function nothing(): void
+>nothing : () => void
+
+end
+
+// Exact arity.
+local a, b = pair();
+>a : number
+>b : string
+>pair() : number
+>pair : () => (number, string)
+
+// More names than values: the extras read as nil.
+local c, d, e = pair();
+>c : number
+>d : string
+>e : nil
+>pair() : number
+>pair : () => (number, string)
+
+// A non-tail call truncates to one value; the tail expands.
+local f, g, h = pair(), pair();
+>f : number
+>g : number
+>h : string
+>pair(), pair() : number, number, string
+>pair() : number
+>pair : () => (number, string)
+>pair() : number
+>pair : () => (number, string)
+
+// Plain positional values.
+local i, j = 1, "x";
+>i : number
+>j : string
+>1, "x" : number, string
+>1 : 1
+>"x" : "x"
+
+// More values than names: extra values are evaluated and dropped.
+local k = 1, "dropped";
+>k : number
+>1, "dropped" : number, string
+>1 : 1
+>"dropped" : "dropped"
+
+// A variadic tail covers all remaining names.
+local l, m, n = variadic();
+>l : number
+>m : string | nil
+>n : string | nil
+>variadic() : number
+>variadic : () => (number, ...string)
+
+// A void call provides no values.
+local o, q = nothing();
+>o : nil
+>q : nil
+>nothing() : void
+>nothing : () => void
+
+// No value list at all.
+local r, s;
+>r : any
+>s : any
+
+function useAll(): number
+>useAll : () => number
+
+  r = a + c + f + l;
+>r = a + c + f + l : number
+>r : any
+>a + c + f + l : number
+>a + c + f : number
+>a + c : number
+>a : number
+>c : number
+>f : number
+>l : number
+
+  return r;
+>r : number
+
+end
+

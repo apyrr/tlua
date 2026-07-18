@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationLocal_03.tlua ===
+// <|local [|he/*GOTO IMPL*/llo|] = {};|>
+// 
+// x.hello();
+// 
+// hello = {};
+// 

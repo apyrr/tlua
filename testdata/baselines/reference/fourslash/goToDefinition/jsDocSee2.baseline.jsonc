@@ -1,0 +1,87 @@
+// === goToDefinition ===
+// === /jsDocSee2.tlua ===
+// /** @see {/*GOTO DEF*/foooo} unknown reference*/
+// local a = ""
+// /** @see {@bar} invalid tag*/
+// local b = ""
+// --- (line: 5) skipped ---
+
+
+
+// === goToDefinition ===
+// === /jsDocSee2.tlua ===
+// /** @see {foooo} unknown reference*/
+// local a = ""
+// /** @see {/*GOTO DEF*/@bar} invalid tag*/
+// local b = ""
+// /** @see foooo unknown reference without brace*/
+// local c = ""
+// --- (line: 7) skipped ---
+
+
+
+// === goToDefinition ===
+// === /jsDocSee2.tlua ===
+// /** @see {foooo} unknown reference*/
+// local a = ""
+// /** @see {@bar} invalid tag*/
+// local b = ""
+// /** @see /*GOTO DEF*/foooo unknown reference without brace*/
+// local c = ""
+// /** @see @bar invalid tag without brace*/
+// local d = ""
+// --- (line: 9) skipped ---
+
+
+
+// === goToDefinition ===
+// === /jsDocSee2.tlua ===
+// --- (line: 3) skipped ---
+// local b = ""
+// /** @see foooo unknown reference without brace*/
+// local c = ""
+// /** @see /*GOTO DEF*/@bar invalid tag without brace*/
+// local d = ""
+// /** @see {d@fff} partial reference */
+// local e = ""
+// --- (line: 11) skipped ---
+
+
+
+// === goToDefinition ===
+// === /jsDocSee2.tlua ===
+// --- (line: 4) skipped ---
+// /** @see foooo unknown reference without brace*/
+// local c = ""
+// /** @see @bar invalid tag without brace*/
+// <|local [|d|] = ""|>
+// /** @see {/*GOTO DEF*/d@fff} partial reference */
+// local e = ""
+// /** @see @@@@@@ total invalid tag*/
+// local f = ""
+// /** @see d@{fff} partial reference */
+// local g = ""
+
+
+
+// === goToDefinition ===
+// === /jsDocSee2.tlua ===
+// --- (line: 7) skipped ---
+// local d = ""
+// /** @see {d@fff} partial reference */
+// local e = ""
+// /** @see /*GOTO DEF*/@@@@@@ total invalid tag*/
+// local f = ""
+// /** @see d@{fff} partial reference */
+// local g = ""
+
+
+
+// === goToDefinition ===
+// === /jsDocSee2.tlua ===
+// --- (line: 9) skipped ---
+// local e = ""
+// /** @see @@@@@@ total invalid tag*/
+// local f = ""
+// /** @see d@{/*GOTO DEF*/fff} partial reference */
+// local g = ""

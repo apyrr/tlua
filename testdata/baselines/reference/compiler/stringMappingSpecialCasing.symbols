@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/stringMappingSpecialCasing.tlua] ////
+
+=== stringMappingSpecialCasing.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3489
+
+type Lower = Lowercase<"İSPANYOL" | "ΟΣ">;
+>Lower : Symbol(Lower, Decl(stringMappingSpecialCasing.tlua, 0, 0))
+>Lowercase : Symbol(Lowercase, Decl(lib.luajit.d.tlua, --, --))
+
+local lowerMap: Record<Lower, string> = {
+>lowerMap : Symbol(lowerMap, Decl(stringMappingSpecialCasing.tlua, 4, 5))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Lower : Symbol(Lower, Decl(stringMappingSpecialCasing.tlua, 0, 0))
+
+	["i̇spanyol"] = "spanish",
+>["i̇spanyol"] : Symbol(["i̇spanyol"], Decl(stringMappingSpecialCasing.tlua, 4, 41))
+>"i̇spanyol" : Symbol(["i̇spanyol"], Decl(stringMappingSpecialCasing.tlua, 4, 41))
+
+	["ος"] = "greek-final-sigma",
+>["ος"] : Symbol(["ος"], Decl(stringMappingSpecialCasing.tlua, 5, 27))
+>"ος" : Symbol(["ος"], Decl(stringMappingSpecialCasing.tlua, 5, 27))
+
+};
+
+type Upper = Uppercase<"ßfoo" | "ﬁoo">;
+>Upper : Symbol(Upper, Decl(stringMappingSpecialCasing.tlua, 7, 2))
+>Uppercase : Symbol(Uppercase, Decl(lib.luajit.d.tlua, --, --))
+
+local upperMap: Record<Upper, string> = {
+>upperMap : Symbol(upperMap, Decl(stringMappingSpecialCasing.tlua, 11, 5))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Upper : Symbol(Upper, Decl(stringMappingSpecialCasing.tlua, 7, 2))
+
+	["SSFOO"] = "eszett",
+>["SSFOO"] : Symbol(["SSFOO"], Decl(stringMappingSpecialCasing.tlua, 11, 41))
+>"SSFOO" : Symbol(["SSFOO"], Decl(stringMappingSpecialCasing.tlua, 11, 41))
+
+	["FIOO"] = "ligature",
+>["FIOO"] : Symbol(["FIOO"], Decl(stringMappingSpecialCasing.tlua, 12, 22))
+>"FIOO" : Symbol(["FIOO"], Decl(stringMappingSpecialCasing.tlua, 12, 22))
+
+};
+
+type Capitalized = Capitalize<"ßfoo" | "ﬁoo">;
+>Capitalized : Symbol(Capitalized, Decl(stringMappingSpecialCasing.tlua, 14, 2))
+>Capitalize : Symbol(Capitalize, Decl(lib.luajit.d.tlua, --, --))
+
+local capitalizedMap: Record<Capitalized, string> = {
+>capitalizedMap : Symbol(capitalizedMap, Decl(stringMappingSpecialCasing.tlua, 18, 5))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Capitalized : Symbol(Capitalized, Decl(stringMappingSpecialCasing.tlua, 14, 2))
+
+	["SSfoo"] = "eszett",
+>["SSfoo"] : Symbol(["SSfoo"], Decl(stringMappingSpecialCasing.tlua, 18, 53))
+>"SSfoo" : Symbol(["SSfoo"], Decl(stringMappingSpecialCasing.tlua, 18, 53))
+
+	["FIoo"] = "ligature",
+>["FIoo"] : Symbol(["FIoo"], Decl(stringMappingSpecialCasing.tlua, 19, 22))
+>"FIoo" : Symbol(["FIoo"], Decl(stringMappingSpecialCasing.tlua, 19, 22))
+
+};
+
+type Uncapitalized = Uncapitalize<"İfoo" | "ΟΣ">;
+>Uncapitalized : Symbol(Uncapitalized, Decl(stringMappingSpecialCasing.tlua, 21, 2))
+>Uncapitalize : Symbol(Uncapitalize, Decl(lib.luajit.d.tlua, --, --))
+
+local uncapitalizedMap: Record<Uncapitalized, string> = {
+>uncapitalizedMap : Symbol(uncapitalizedMap, Decl(stringMappingSpecialCasing.tlua, 25, 5))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Uncapitalized : Symbol(Uncapitalized, Decl(stringMappingSpecialCasing.tlua, 21, 2))
+
+	["i̇foo"] = "dotted-i",
+>["i̇foo"] : Symbol(["i̇foo"], Decl(stringMappingSpecialCasing.tlua, 25, 57))
+>"i̇foo" : Symbol(["i̇foo"], Decl(stringMappingSpecialCasing.tlua, 25, 57))
+
+	["οΣ"] = "sigma-prefix",
+>["οΣ"] : Symbol(["οΣ"], Decl(stringMappingSpecialCasing.tlua, 26, 24))
+>"οΣ" : Symbol(["οΣ"], Decl(stringMappingSpecialCasing.tlua, 26, 24))
+
+};
+

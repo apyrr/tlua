@@ -1,0 +1,86 @@
+//// [tests/cases/compiler/tluaLocalResolution.tlua] ////
+
+=== tluaLocalResolution.tlua ===
+local outer = 10;
+>outer : number
+>10 : 10
+
+local same = outer;
+>same : number
+>outer : number
+
+same = same + 1;
+>same = same + 1 : number
+>same : number
+>same + 1 : number
+>same : number
+>1 : 1
+
+{
+  local blockValue = same;
+>blockValue : number
+>same : number
+
+  blockValue = blockValue + 1;
+>blockValue = blockValue + 1 : number
+>blockValue : number
+>blockValue + 1 : number
+>blockValue : number
+>1 : 1
+
+  local blockValue = blockValue + 1;
+>blockValue : number
+>blockValue + 1 : number
+>blockValue : number
+>1 : 1
+
+  blockValue = blockValue + 1;
+>blockValue = blockValue + 1 : number
+>blockValue : number
+>blockValue + 1 : number
+>blockValue : number
+>1 : 1
+}
+
+local forward = laterLocal;
+>forward : any
+>laterLocal : any
+
+local laterLocal = 1;
+>laterLocal : number
+>1 : 1
+
+local outer = outer + 1;
+>outer : number
+>outer + 1 : number
+>outer : number
+>1 : 1
+
+outer = outer + 1;
+>outer = outer + 1 : number
+>outer : number
+>outer + 1 : number
+>outer : number
+>1 : 1
+
+function flowForLuaLocal() {
+>flowForLuaLocal : () => void
+
+  local narrowed: string | number;
+>narrowed : string | number
+
+  narrowed = 1;
+>narrowed = 1 : 1
+>narrowed : string | number
+>1 : 1
+
+  local reader = () => narrowed;
+>reader : () => number
+>() => narrowed : () => number
+>narrowed : number
+
+  reader();
+>reader() : number
+>reader : () => number
+}
+

@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/tluaGenericPackDeclarationEmit.tlua] ////
+
+=== tluaGenericPackDeclarationEmit.tlua ===
+// A generic pack signature round-trips through declaration emit as `<...A>` and
+// `...: A` / `...R`, the same spelling the source uses.
+
+declare function apply<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+>apply : <...A, ...R>(f: (...: A) => (...R), ...: A) => (...R)
+>f : (...: A) => (...R)
+> : A
+> : A
+
+function wrap<...A, ...R>(f: (...: A) => (...R)): (...: A) => (...R)
+>wrap : <...A, ...R>(f: (...: A) => (...R)) => (...: A) => (...R)
+>f : (...: A) => (...R)
+> : A
+> : A
+
+  return f;
+>f : (...: A) => (...R)
+
+end
+

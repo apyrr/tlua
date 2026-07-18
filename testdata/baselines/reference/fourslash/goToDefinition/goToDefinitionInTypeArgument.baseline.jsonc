@@ -1,0 +1,17 @@
+// === goToDefinition ===
+// === /goToDefinitionInTypeArgument.tlua ===
+// class Foo<T> { }
+// 
+// class Bar { }
+// 
+// local x = new Foo<Ba/*GOTO DEF*/r>();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionInTypeArgument.tlua ===
+// class Foo<T> { }
+// 
+// class Bar { }
+// 
+// local x = new Fo/*GOTO DEF*/o<Bar>();

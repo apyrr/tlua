@@ -1,0 +1,39 @@
+// === findAllReferences ===
+// === /referencesForIndexProperty3.tlua ===
+// interface Object {
+//     /*FIND ALL REFS*/[|toMyString|]();
+// }
+// 
+// local y: Object;
+// y.[|toMyString|]();
+// 
+// local x = {};
+// x["[|toMyString|]"]();
+
+
+
+// === findAllReferences ===
+// === /referencesForIndexProperty3.tlua ===
+// interface Object {
+//     [|toMyString|]();
+// }
+// 
+// local y: Object;
+// y./*FIND ALL REFS*/[|toMyString|]();
+// 
+// local x = {};
+// x["[|toMyString|]"]();
+
+
+
+// === findAllReferences ===
+// === /referencesForIndexProperty3.tlua ===
+// interface Object {
+//     [|toMyString|]();
+// }
+// 
+// local y: Object;
+// y.[|toMyString|]();
+// 
+// local x = {};
+// x["/*FIND ALL REFS*/[|toMyString|]"]();

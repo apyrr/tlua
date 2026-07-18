@@ -1,0 +1,5 @@
+// === documentHighlights ===
+// === /getOccurrencesReadonly2.tlua ===
+// type T = {
+//   /*HIGHLIGHTS*/[|readonly|] prop: string;
+// }

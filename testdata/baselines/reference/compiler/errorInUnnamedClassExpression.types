@@ -1,0 +1,27 @@
+//// [tests/cases/compiler/errorInUnnamedClassExpression.tlua] ////
+
+=== errorInUnnamedClassExpression.tlua ===
+// https://github.com/microsoft/TypeScript/issues/62920
+
+local Foo = class {
+>Foo : any
+>class : any
+
+    constructor() {
+>constructor() : any
+>constructor : any
+
+        this.bar = this.bar + 1;
+>bar = : any
+>bar : any
+> : any
+>bar + 1 : any
+>bar : any
+>1 : 1
+    }
+    abstract bar;
+>abstract : any
+>bar : any
+
+};
+

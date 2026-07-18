@@ -1,0 +1,20 @@
+// === findRenameLocations ===
+// === /file.tsx ===
+// declare namespace JSX {
+//     interface Element { }
+//     interface IntrinsicElements {
+//         /*RENAME*/[|divRENAME|]: {
+//             name?: string;
+//             isOpen?: boolean;
+//         };
+// --- (line: 8) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         span: { n: string; };
+//     }
+// }
+// local x = </*RENAME*/div />;

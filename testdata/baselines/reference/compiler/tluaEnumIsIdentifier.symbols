@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/tluaEnumIsIdentifier.tlua] ////
+
+=== tluaEnumIsIdentifier.tlua ===
+local enum = 1
+>enum : Symbol(enum, Decl(tluaEnumIsIdentifier.tlua, 0, 5))
+
+enum = enum + 1
+>enum : Symbol(enum, Decl(tluaEnumIsIdentifier.tlua, 0, 5))
+>enum : Symbol(enum, Decl(tluaEnumIsIdentifier.tlua, 0, 5))
+
+local value: number = enum
+>value : Symbol(value, Decl(tluaEnumIsIdentifier.tlua, 3, 5))
+>enum : Symbol(enum, Decl(tluaEnumIsIdentifier.tlua, 0, 5))
+

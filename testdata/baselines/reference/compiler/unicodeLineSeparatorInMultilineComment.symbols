@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/unicodeLineSeparatorInMultilineComment.tlua] ////
+
+=== unicodeLineSeparatorInMultilineComment.tlua ===
+/* a
+b */ local x = 1;
+>x : Symbol(x, Decl(unicodeLineSeparatorInMultilineComment.tlua, 1, 10))
+

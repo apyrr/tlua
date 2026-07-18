@@ -1,0 +1,41 @@
+//// [tests/cases/compiler/tluaNilRename.tlua] ////
+
+=== tluaNilRename.tlua ===
+// `nil` works as a type and a value.
+local a: nil = nil;
+>a : Symbol(a, Decl(tluaNilRename.tlua, 1, 5))
+
+local b = nil;
+>b : Symbol(b, Decl(tluaNilRename.tlua, 2, 5))
+
+// `undefined` is a transitional alias for the same keyword/type/value.
+local c: undefined = undefined;
+>c : Symbol(c, Decl(tluaNilRename.tlua, 5, 5))
+
+local d = undefined;
+>d : Symbol(d, Decl(tluaNilRename.tlua, 6, 5))
+
+// `nil` and `undefined` are the same type, so they are interchangeable.
+local e: nil = undefined;
+>e : Symbol(e, Decl(tluaNilRename.tlua, 9, 5))
+
+local f: undefined = nil;
+>f : Symbol(f, Decl(tluaNilRename.tlua, 10, 5))
+
+// Optional properties surface as `nil`.
+interface Box {
+>Box : Symbol(Box, Decl(tluaNilRename.tlua, 10, 25))
+
+	value?: number;
+>value : Symbol(Box.value, Decl(tluaNilRename.tlua, 13, 15))
+}
+local g: Box = {};
+>g : Symbol(g, Decl(tluaNilRename.tlua, 16, 5))
+>Box : Symbol(Box, Decl(tluaNilRename.tlua, 10, 25))
+
+local h = g.value;
+>h : Symbol(h, Decl(tluaNilRename.tlua, 17, 5))
+>g.value : Symbol(Box.value, Decl(tluaNilRename.tlua, 13, 15))
+>g : Symbol(g, Decl(tluaNilRename.tlua, 16, 5))
+>value : Symbol(Box.value, Decl(tluaNilRename.tlua, 13, 15))
+

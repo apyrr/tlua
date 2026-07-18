@@ -1,0 +1,29 @@
+// === findRenameLocations ===
+// === /renameForDefaultExport01.tlua ===
+// export default class /*RENAME*/DefaultExportedClass {
+// }
+// /*
+//  *  Commenting DefaultExportedClass
+// --- (line: 5) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /renameForDefaultExport01.tlua ===
+// --- (line: 3) skipped ---
+//  *  Commenting DefaultExportedClass
+//  */
+// 
+// local x: /*RENAME*/DefaultExportedClass;
+// 
+// local y = new DefaultExportedClass;
+
+
+
+// === findRenameLocations ===
+// === /renameForDefaultExport01.tlua ===
+// --- (line: 5) skipped ---
+// 
+// local x: DefaultExportedClass;
+// 
+// local y = new /*RENAME*/DefaultExportedClass;

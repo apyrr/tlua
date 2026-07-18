@@ -1,0 +1,40 @@
+//// [tests/cases/compiler/tluaTableAugmentationContextualWrite.tlua] ////
+
+=== tluaTableAugmentationContextualWrite.tlua ===
+// The binder stamps a candidate symbol on every member assignment, not just
+// genuine augmentations. An ordinary checked write to an already
+// constructor-declared member must still contextually type its RHS from the
+// member's existing type — only real augmentations suppress that.
+
+// Base is an identifier (`t`): exercises the KindIdentifier branch.
+local t = { cb = function(x: number): number return x; end };
+>t : Symbol(t, Decl(tluaTableAugmentationContextualWrite.tlua, 6, 5))
+>cb : Symbol(cb, Decl(tluaTableAugmentationContextualWrite.tlua, 6, 11))
+>x : Symbol(x, Decl(tluaTableAugmentationContextualWrite.tlua, 6, 26))
+>x : Symbol(x, Decl(tluaTableAugmentationContextualWrite.tlua, 6, 26))
+
+t.cb = function(x) return x + 1; end;
+>t.cb : Symbol(cb, Decl(tluaTableAugmentationContextualWrite.tlua, 6, 11))
+>t : Symbol(t, Decl(tluaTableAugmentationContextualWrite.tlua, 6, 5))
+>cb : Symbol(cb, Decl(tluaTableAugmentationContextualWrite.tlua, 6, 11))
+>x : Symbol(x, Decl(tluaTableAugmentationContextualWrite.tlua, 7, 16))
+>x : Symbol(x, Decl(tluaTableAugmentationContextualWrite.tlua, 7, 16))
+
+// Base is a property access (`nested.inner`): exercises the
+// KindPropertyAccessExpression branch.
+local nested = { inner = { cb = function(y: number): number return y; end } };
+>nested : Symbol(nested, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 5))
+>inner : Symbol(inner, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 16))
+>cb : Symbol(cb, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 26))
+>y : Symbol(y, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 41))
+>y : Symbol(y, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 41))
+
+nested.inner.cb = function(y) return y + 1; end;
+>nested.inner.cb : Symbol(cb, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 26))
+>nested.inner : Symbol(inner, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 16))
+>nested : Symbol(nested, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 5))
+>inner : Symbol(inner, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 16))
+>cb : Symbol(cb, Decl(tluaTableAugmentationContextualWrite.tlua, 11, 26))
+>y : Symbol(y, Decl(tluaTableAugmentationContextualWrite.tlua, 12, 27))
+>y : Symbol(y, Decl(tluaTableAugmentationContextualWrite.tlua, 12, 27))
+

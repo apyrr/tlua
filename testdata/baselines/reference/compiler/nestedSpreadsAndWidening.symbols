@@ -1,0 +1,174 @@
+//// [tests/cases/compiler/nestedSpreadsAndWidening.tlua] ////
+
+=== nestedSpreadsAndWidening.tlua ===
+// https://github.com/microsoft/typescript-go/issues/2551
+
+type S1 = { input: { a: number } };
+>S1 : Symbol(S1, Decl(nestedSpreadsAndWidening.tlua, 0, 0))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 2, 11))
+>a : Symbol(a, Decl(nestedSpreadsAndWidening.tlua, 2, 20))
+
+type S2 = { input: { b: number } };
+>S2 : Symbol(S2, Decl(nestedSpreadsAndWidening.tlua, 2, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 3, 11))
+>b : Symbol(b, Decl(nestedSpreadsAndWidening.tlua, 3, 20))
+
+type S3 = { input: { c: number } };
+>S3 : Symbol(S3, Decl(nestedSpreadsAndWidening.tlua, 3, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 4, 11))
+>c : Symbol(c, Decl(nestedSpreadsAndWidening.tlua, 4, 20))
+
+type S4 = { input: { d: number } };
+>S4 : Symbol(S4, Decl(nestedSpreadsAndWidening.tlua, 4, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 5, 11))
+>d : Symbol(d, Decl(nestedSpreadsAndWidening.tlua, 5, 20))
+
+type S5 = { input: { e: number } };
+>S5 : Symbol(S5, Decl(nestedSpreadsAndWidening.tlua, 5, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 6, 11))
+>e : Symbol(e, Decl(nestedSpreadsAndWidening.tlua, 6, 20))
+
+type S6 = { input: { f: number } };
+>S6 : Symbol(S6, Decl(nestedSpreadsAndWidening.tlua, 6, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 7, 11))
+>f : Symbol(f, Decl(nestedSpreadsAndWidening.tlua, 7, 20))
+
+type S7 = { input: { g: number } };
+>S7 : Symbol(S7, Decl(nestedSpreadsAndWidening.tlua, 7, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 8, 11))
+>g : Symbol(g, Decl(nestedSpreadsAndWidening.tlua, 8, 20))
+
+type S8 = { input: { h: number } };
+>S8 : Symbol(S8, Decl(nestedSpreadsAndWidening.tlua, 8, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 9, 11))
+>h : Symbol(h, Decl(nestedSpreadsAndWidening.tlua, 9, 20))
+
+type S9 = { input: { i: number } };
+>S9 : Symbol(S9, Decl(nestedSpreadsAndWidening.tlua, 9, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 10, 11))
+>i : Symbol(i, Decl(nestedSpreadsAndWidening.tlua, 10, 20))
+
+type S10 = { input: { j: number } };
+>S10 : Symbol(S10, Decl(nestedSpreadsAndWidening.tlua, 10, 35))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 11, 12))
+>j : Symbol(j, Decl(nestedSpreadsAndWidening.tlua, 11, 21))
+
+type S11 = { input: { k?: string[] } };
+>S11 : Symbol(S11, Decl(nestedSpreadsAndWidening.tlua, 11, 36))
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 12, 12))
+>k : Symbol(k, Decl(nestedSpreadsAndWidening.tlua, 12, 21))
+
+type Base = { type: string; settings: S1 | S2 | S3 | S4 | S5 | S6 | S7 | S8 | S9 | S10 | S11; };
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 14, 13))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 14, 27))
+>S1 : Symbol(S1, Decl(nestedSpreadsAndWidening.tlua, 0, 0))
+>S2 : Symbol(S2, Decl(nestedSpreadsAndWidening.tlua, 2, 35))
+>S3 : Symbol(S3, Decl(nestedSpreadsAndWidening.tlua, 3, 35))
+>S4 : Symbol(S4, Decl(nestedSpreadsAndWidening.tlua, 4, 35))
+>S5 : Symbol(S5, Decl(nestedSpreadsAndWidening.tlua, 5, 35))
+>S6 : Symbol(S6, Decl(nestedSpreadsAndWidening.tlua, 6, 35))
+>S7 : Symbol(S7, Decl(nestedSpreadsAndWidening.tlua, 7, 35))
+>S8 : Symbol(S8, Decl(nestedSpreadsAndWidening.tlua, 8, 35))
+>S9 : Symbol(S9, Decl(nestedSpreadsAndWidening.tlua, 9, 35))
+>S10 : Symbol(S10, Decl(nestedSpreadsAndWidening.tlua, 10, 35))
+>S11 : Symbol(S11, Decl(nestedSpreadsAndWidening.tlua, 11, 36))
+
+type Action =
+>Action : Symbol(Action, Decl(nestedSpreadsAndWidening.tlua, 14, 96))
+
+  | Base & { type: '1'; settings: S1 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 17, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 17, 23))
+>S1 : Symbol(S1, Decl(nestedSpreadsAndWidening.tlua, 0, 0))
+
+  | Base & { type: '2'; settings: S2 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 18, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 18, 23))
+>S2 : Symbol(S2, Decl(nestedSpreadsAndWidening.tlua, 2, 35))
+
+  | Base & { type: '3'; settings: S3 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 19, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 19, 23))
+>S3 : Symbol(S3, Decl(nestedSpreadsAndWidening.tlua, 3, 35))
+
+  | Base & { type: '4'; settings: S4 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 20, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 20, 23))
+>S4 : Symbol(S4, Decl(nestedSpreadsAndWidening.tlua, 4, 35))
+
+  | Base & { type: '5'; settings: S5 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 21, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 21, 23))
+>S5 : Symbol(S5, Decl(nestedSpreadsAndWidening.tlua, 5, 35))
+
+  | Base & { type: '6'; settings: S6 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 22, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 22, 23))
+>S6 : Symbol(S6, Decl(nestedSpreadsAndWidening.tlua, 6, 35))
+
+  | Base & { type: '7'; settings: S7 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 23, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 23, 23))
+>S7 : Symbol(S7, Decl(nestedSpreadsAndWidening.tlua, 7, 35))
+
+  | Base & { type: '8'; settings: S8 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 24, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 24, 23))
+>S8 : Symbol(S8, Decl(nestedSpreadsAndWidening.tlua, 8, 35))
+
+  | Base & { type: '9'; settings: S9 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 25, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 25, 23))
+>S9 : Symbol(S9, Decl(nestedSpreadsAndWidening.tlua, 9, 35))
+
+  | Base & { type: '10'; settings: S10 }
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 26, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 26, 24))
+>S10 : Symbol(S10, Decl(nestedSpreadsAndWidening.tlua, 10, 35))
+
+  | Base & { type: '11'; settings: S11 };
+>Base : Symbol(Base, Decl(nestedSpreadsAndWidening.tlua, 12, 39))
+>type : Symbol(type, Decl(nestedSpreadsAndWidening.tlua, 27, 12))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 27, 24))
+>S11 : Symbol(S11, Decl(nestedSpreadsAndWidening.tlua, 11, 36))
+
+declare function read<T>(arg: T): void;
+>read : Symbol(read, Decl(nestedSpreadsAndWidening.tlua, 27, 41))
+>T : Symbol(T, Decl(nestedSpreadsAndWidening.tlua, 29, 22))
+>arg : Symbol(arg, Decl(nestedSpreadsAndWidening.tlua, 29, 25))
+>T : Symbol(T, Decl(nestedSpreadsAndWidening.tlua, 29, 22))
+
+declare step: Action;
+>step : Symbol(step, Decl(nestedSpreadsAndWidening.tlua, 30, 7))
+>Action : Symbol(Action, Decl(nestedSpreadsAndWidening.tlua, 14, 96))
+
+read({
+>read : Symbol(read, Decl(nestedSpreadsAndWidening.tlua, 27, 41))
+
+  ...step,
+  settings = { ...step.settings, input = { ...step.settings.input, k = ['5'] } },
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 33, 10))
+>step.settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 17, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 18, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27) ... and 17 more)
+>step : Symbol(step, Decl(nestedSpreadsAndWidening.tlua, 30, 7))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 17, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 18, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27) ... and 17 more)
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 34, 32))
+>step.settings.input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 2, 11), Decl(nestedSpreadsAndWidening.tlua, 11, 12), Decl(nestedSpreadsAndWidening.tlua, 12, 12), Decl(nestedSpreadsAndWidening.tlua, 3, 11), Decl(nestedSpreadsAndWidening.tlua, 4, 11) ... and 226 more)
+>step.settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 17, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 18, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27) ... and 17 more)
+>step : Symbol(step, Decl(nestedSpreadsAndWidening.tlua, 30, 7))
+>settings : Symbol(settings, Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 17, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27), Decl(nestedSpreadsAndWidening.tlua, 18, 23), Decl(nestedSpreadsAndWidening.tlua, 14, 27) ... and 17 more)
+>input : Symbol(input, Decl(nestedSpreadsAndWidening.tlua, 2, 11), Decl(nestedSpreadsAndWidening.tlua, 11, 12), Decl(nestedSpreadsAndWidening.tlua, 12, 12), Decl(nestedSpreadsAndWidening.tlua, 3, 11), Decl(nestedSpreadsAndWidening.tlua, 4, 11) ... and 226 more)
+>k : Symbol(k, Decl(nestedSpreadsAndWidening.tlua, 34, 66))
+
+});
+

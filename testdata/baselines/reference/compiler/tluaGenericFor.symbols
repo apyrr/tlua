@@ -1,0 +1,163 @@
+//// [tests/cases/compiler/tluaGenericFor.tlua] ////
+
+=== tluaGenericFor.tlua ===
+declare function iterStep(t: string[], i: number): (number, string?);
+>iterStep : Symbol(iterStep, Decl(tluaGenericFor.tlua, 0, 0))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 0, 26))
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 0, 38))
+
+declare function ipairsLike(t: string[]): typeof iterStep;
+>ipairsLike : Symbol(ipairsLike, Decl(tluaGenericFor.tlua, 0, 69))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 1, 28))
+>iterStep : Symbol(iterStep, Decl(tluaGenericFor.tlua, 0, 0))
+
+// The first name drops nil (a nil first value ends the loop); the second
+// keeps the iterator's declared nil-ability and narrows normally.
+function walk(t: string[]): number
+>walk : Symbol(walk, Decl(tluaGenericFor.tlua, 1, 58))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 5, 14))
+
+  local count = 0;
+>count : Symbol(count, Decl(tluaGenericFor.tlua, 6, 7))
+
+  for i, s in ipairsLike(t) do
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 7, 5))
+>s : Symbol(s, Decl(tluaGenericFor.tlua, 7, 8))
+>ipairsLike : Symbol(ipairsLike, Decl(tluaGenericFor.tlua, 0, 69))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 5, 14))
+
+    count = count + i;
+>count : Symbol(count, Decl(tluaGenericFor.tlua, 6, 7))
+>count : Symbol(count, Decl(tluaGenericFor.tlua, 6, 7))
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 7, 5))
+
+    if s ~= nil then
+>s : Symbol(s, Decl(tluaGenericFor.tlua, 7, 8))
+
+      count = count + s.length;
+>count : Symbol(count, Decl(tluaGenericFor.tlua, 6, 7))
+>count : Symbol(count, Decl(tluaGenericFor.tlua, 6, 7))
+>s.length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
+>s : Symbol(s, Decl(tluaGenericFor.tlua, 7, 8))
+>length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
+
+    end
+  end
+  return count;
+>count : Symbol(count, Decl(tluaGenericFor.tlua, 6, 7))
+
+end
+
+// Single-name form.
+function keys(t: string[]): number
+>keys : Symbol(keys, Decl(tluaGenericFor.tlua, 14, 3))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 17, 14))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 18, 7))
+
+  for i in ipairsLike(t) do
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 19, 5))
+>ipairsLike : Symbol(ipairsLike, Decl(tluaGenericFor.tlua, 0, 69))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 17, 14))
+
+    total = total + i;
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 18, 7))
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 18, 7))
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 19, 5))
+
+  end
+  return total;
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 18, 7))
+
+end
+
+// Explist form: iterator, state, control.
+declare function next(t: string[], k: number | nil): (number, string?);
+>next : Symbol(next, Decl(tluaGenericFor.tlua, 23, 3))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 26, 22))
+>k : Symbol(k, Decl(tluaGenericFor.tlua, 26, 34))
+
+function explist(t: string[]): number
+>explist : Symbol(explist, Decl(tluaGenericFor.tlua, 26, 71))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 28, 17))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 29, 7))
+
+  for k, v in next, t, nil do
+>k : Symbol(k, Decl(tluaGenericFor.tlua, 30, 5))
+>v : Symbol(v, Decl(tluaGenericFor.tlua, 30, 8))
+>next : Symbol(next, Decl(tluaGenericFor.tlua, 23, 3))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 28, 17))
+
+    total = total + k;
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 29, 7))
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 29, 7))
+>k : Symbol(k, Decl(tluaGenericFor.tlua, 30, 5))
+
+  end
+  return total;
+>total : Symbol(total, Decl(tluaGenericFor.tlua, 29, 7))
+
+end
+
+// Names past the iterator's values read as nil.
+function extraName(t: string[]): void
+>extraName : Symbol(extraName, Decl(tluaGenericFor.tlua, 34, 3))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 37, 19))
+
+  for i, s, extra in ipairsLike(t) do
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 38, 5))
+>s : Symbol(s, Decl(tluaGenericFor.tlua, 38, 8))
+>extra : Symbol(extra, Decl(tluaGenericFor.tlua, 38, 11))
+>ipairsLike : Symbol(ipairsLike, Decl(tluaGenericFor.tlua, 0, 69))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 37, 19))
+
+    local x: nil = extra;
+>x : Symbol(x, Decl(tluaGenericFor.tlua, 39, 9))
+>extra : Symbol(extra, Decl(tluaGenericFor.tlua, 38, 11))
+
+    x;
+>x : Symbol(x, Decl(tluaGenericFor.tlua, 39, 9))
+
+  end
+end
+
+// Annotated names check against their positional value.
+function annotated(t: string[]): void
+>annotated : Symbol(annotated, Decl(tluaGenericFor.tlua, 42, 3))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 45, 19))
+
+  for i: number, s: string | nil in ipairsLike(t) do
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 46, 5))
+>s : Symbol(s, Decl(tluaGenericFor.tlua, 46, 16))
+>ipairsLike : Symbol(ipairsLike, Decl(tluaGenericFor.tlua, 0, 69))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 45, 19))
+
+    i;
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 46, 5))
+
+    s;
+>s : Symbol(s, Decl(tluaGenericFor.tlua, 46, 16))
+
+  end
+end
+
+// break and TS statements inside the body.
+function firstKey(t: string[]): number
+>firstKey : Symbol(firstKey, Decl(tluaGenericFor.tlua, 50, 3))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 53, 18))
+
+  for i in ipairsLike(t) do
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 54, 5))
+>ipairsLike : Symbol(ipairsLike, Decl(tluaGenericFor.tlua, 0, 69))
+>t : Symbol(t, Decl(tluaGenericFor.tlua, 53, 18))
+
+    return i;
+>i : Symbol(i, Decl(tluaGenericFor.tlua, 54, 5))
+
+  end
+  return 0;
+end
+

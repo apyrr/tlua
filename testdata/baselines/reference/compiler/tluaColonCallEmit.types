@@ -1,0 +1,116 @@
+//// [tests/cases/compiler/tluaColonCallEmit.tlua] ////
+
+=== tluaColonCallEmit.tlua ===
+local T = { n = 0 };
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>{ n = 0 } : { n: number; bump(self: { n: number; bump(self: any): number; twice(self: any): number; }): number; twice(self: { n: number; bump(self: any): number; twice(self: any): number; }): number; }
+>n : number
+>0 : 0
+
+function T:bump(): number
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>: : { n: number; bump(self: any): number; twice(self: any): number; }
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+
+  self.n = self.n + 1;
+>self.n = self.n + 1 : number
+>self.n : number
+>self : { n: number; bump(self: any): number; twice(self: any): number; }
+>n : number
+>self.n + 1 : number
+>self.n : number
+>self : { n: number; bump(self: any): number; twice(self: any): number; }
+>n : number
+>1 : 1
+
+  return self.n;
+>self.n : number
+>self : { n: number; bump(self: any): number; twice(self: any): number; }
+>n : number
+
+end
+
+// Colon calls round-trip through the emitter.
+T:bump();
+>T:bump() : number
+>T:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+
+local a = T:bump() + T:bump();
+>a : number
+>T:bump() + T:bump() : number
+>T:bump() : number
+>T:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>T:bump() : number
+>T:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+
+// A parenthesized receiver keeps its parentheses.
+local b = (T):bump();
+>b : number
+>(T):bump() : number
+>(T):bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>(T) : { n: number; bump(self: any): number; twice(self: any): number; }
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+
+// Parentheses around the whole call truncate it to one value.
+local c = (T:bump());
+>c : number
+>(T:bump()) : number
+>T:bump() : number
+>T:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+
+// Chains keep every colon.
+local d = { u = T };
+>d : { u: { n: number; bump(self: any): number; twice(self: any): number; }; }
+>{ u = T } : { u: { n: number; bump(self: any): number; twice(self: any): number; }; }
+>u : { n: number; bump(self: any): number; twice(self: any): number; }
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+
+d.u:bump();
+>d.u:bump() : number
+>d.u:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>d.u : { n: number; bump(self: any): number; twice(self: any): number; }
+>d : { u: { n: number; bump(self: any): number; twice(self: any): number; }; }
+>u : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+
+// Return- and throw-position colon calls keep their colon: the no-ASI
+// parenthesizer must not rebuild the callee as a dot access.
+function T:twice(): number
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>twice : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>: : { n: number; bump(self: any): number; twice(self: any): number; }
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+
+  return self:bump() + self:bump();
+>self:bump() + self:bump() : number
+>self:bump() : number
+>self:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>self : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>self:bump() : number
+>self:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>self : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+
+end
+
+function raise(): never {
+>raise : () => never
+
+  throw T:bump();
+>T:bump() : number
+>T:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+>T : { n: number; bump(self: any): number; twice(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
+}
+

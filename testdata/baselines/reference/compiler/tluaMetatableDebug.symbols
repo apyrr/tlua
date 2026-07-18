@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/tluaMetatableDebug.tlua] ////
+
+=== tluaMetatableDebug.tlua ===
+// The debug library bypasses __metatable protection. debug.getmetatable returns the real
+// metatable, and debug.setmetatable replaces it, both regardless of protection.
+
+local guarded = setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "locked" });
+>guarded : Symbol(guarded, Decl(tluaMetatableDebug.tlua, 3, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableDebug.tlua, 3, 30))
+>__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 3, 41))
+>a : Symbol(a, Decl(tluaMetatableDebug.tlua, 3, 53))
+>__metatable : Symbol(__metatable, Decl(tluaMetatableDebug.tlua, 3, 62))
+
+// debug.getmetatable sees the real metatable, not the sentinel.
+local real = debug.getmetatable(guarded);
+>real : Symbol(real, Decl(tluaMetatableDebug.tlua, 6, 5))
+>debug.getmetatable : Symbol(DebugLib.getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>getmetatable : Symbol(DebugLib.getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>guarded : Symbol(guarded, Decl(tluaMetatableDebug.tlua, 3, 5))
+
+local ra: number = real.__index.a;
+>ra : Symbol(ra, Decl(tluaMetatableDebug.tlua, 7, 5))
+>real.__index.a : Symbol(a, Decl(tluaMetatableDebug.tlua, 3, 53))
+>real.__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 3, 41))
+>real : Symbol(real, Decl(tluaMetatableDebug.tlua, 6, 5))
+>__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 3, 41))
+>a : Symbol(a, Decl(tluaMetatableDebug.tlua, 3, 53))
+
+// debug.setmetatable replaces a protected pairing without error.
+local swapped = debug.setmetatable(guarded, { __index = { b = "s" } });
+>swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 10, 5))
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>guarded : Symbol(guarded, Decl(tluaMetatableDebug.tlua, 3, 5))
+>__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 10, 45))
+>b : Symbol(b, Decl(tluaMetatableDebug.tlua, 10, 57))
+
+local sb: string = swapped.b;
+>sb : Symbol(sb, Decl(tluaMetatableDebug.tlua, 11, 5))
+>swapped.b : Symbol(b, Decl(tluaMetatableDebug.tlua, 10, 57))
+>swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 10, 5))
+>b : Symbol(b, Decl(tluaMetatableDebug.tlua, 10, 57))
+
+local goneA = swapped.a;
+>goneA : Symbol(goneA, Decl(tluaMetatableDebug.tlua, 12, 5))
+>swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 10, 5))
+
+// A member call through anything but the debug global is not the protocol.
+local fake = { setmetatable = function(v: object, mt: object): object return v; end };
+>fake : Symbol(fake, Decl(tluaMetatableDebug.tlua, 15, 5))
+>setmetatable : Symbol(setmetatable, Decl(tluaMetatableDebug.tlua, 15, 14))
+>v : Symbol(v, Decl(tluaMetatableDebug.tlua, 15, 39))
+>mt : Symbol(mt, Decl(tluaMetatableDebug.tlua, 15, 49))
+>v : Symbol(v, Decl(tluaMetatableDebug.tlua, 15, 39))
+
+local aliased = fake.setmetatable(guarded, { __index = { c = 1 } });
+>aliased : Symbol(aliased, Decl(tluaMetatableDebug.tlua, 16, 5))
+>fake.setmetatable : Symbol(setmetatable, Decl(tluaMetatableDebug.tlua, 15, 14))
+>fake : Symbol(fake, Decl(tluaMetatableDebug.tlua, 15, 5))
+>setmetatable : Symbol(setmetatable, Decl(tluaMetatableDebug.tlua, 15, 14))
+>guarded : Symbol(guarded, Decl(tluaMetatableDebug.tlua, 3, 5))
+>__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 16, 44))
+>c : Symbol(c, Decl(tluaMetatableDebug.tlua, 16, 56))
+
+local noC = aliased.c;
+>noC : Symbol(noC, Decl(tluaMetatableDebug.tlua, 17, 5))
+>aliased : Symbol(aliased, Decl(tluaMetatableDebug.tlua, 16, 5))
+
+// The statement form bypasses protection too: debug.setmetatable narrows past a protected
+// antecedent where the global setmetatable would refuse.
+function stmtBypass(): void
+>stmtBypass : Symbol(stmtBypass, Decl(tluaMetatableDebug.tlua, 17, 22))
+
+  local prot = setmetatable({ y = 1 }, { __index = { base = 1 }, __metatable = "locked" });
+>prot : Symbol(prot, Decl(tluaMetatableDebug.tlua, 22, 7))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>y : Symbol(y, Decl(tluaMetatableDebug.tlua, 22, 29))
+>__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 22, 40))
+>base : Symbol(base, Decl(tluaMetatableDebug.tlua, 22, 52))
+>__metatable : Symbol(__metatable, Decl(tluaMetatableDebug.tlua, 22, 64))
+
+  debug.setmetatable(prot, { __index = { swapped = "s" } });
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>prot : Symbol(prot, Decl(tluaMetatableDebug.tlua, 22, 7))
+>__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 23, 28))
+>swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 23, 40))
+
+  local s: string = prot.swapped;
+>s : Symbol(s, Decl(tluaMetatableDebug.tlua, 24, 7))
+>prot.swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 23, 40))
+>prot : Symbol(prot, Decl(tluaMetatableDebug.tlua, 22, 7))
+>swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 23, 40))
+
+  local goneBase = prot.base;
+>goneBase : Symbol(goneBase, Decl(tluaMetatableDebug.tlua, 25, 7))
+>prot : Symbol(prot, Decl(tluaMetatableDebug.tlua, 22, 7))
+
+end
+

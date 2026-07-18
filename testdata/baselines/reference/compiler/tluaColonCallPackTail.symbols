@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/tluaColonCallPackTail.tlua] ////
+
+=== tluaColonCallPackTail.tlua ===
+interface Reader {
+>Reader : Symbol(Reader, Decl(tluaColonCallPackTail.tlua, 0, 0))
+
+  pair(self: Reader): (number, string);
+>pair : Symbol(Reader.pair, Decl(tluaColonCallPackTail.tlua, 0, 18))
+>self : Symbol(self, Decl(tluaColonCallPackTail.tlua, 1, 7))
+>Reader : Symbol(Reader, Decl(tluaColonCallPackTail.tlua, 0, 0))
+
+  sum(self: Reader, ...: number): number;
+>sum : Symbol(Reader.sum, Decl(tluaColonCallPackTail.tlua, 1, 39))
+>self : Symbol(self, Decl(tluaColonCallPackTail.tlua, 2, 6))
+>Reader : Symbol(Reader, Decl(tluaColonCallPackTail.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaColonCallPackTail.tlua, 2, 19))
+
+  one(self: Reader, n: number): number;
+>one : Symbol(Reader.one, Decl(tluaColonCallPackTail.tlua, 2, 41))
+>self : Symbol(self, Decl(tluaColonCallPackTail.tlua, 3, 6))
+>Reader : Symbol(Reader, Decl(tluaColonCallPackTail.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaColonCallPackTail.tlua, 3, 19))
+}
+declare reader: Reader;
+>reader : Symbol(reader, Decl(tluaColonCallPackTail.tlua, 5, 7))
+>Reader : Symbol(Reader, Decl(tluaColonCallPackTail.tlua, 0, 0))
+
+declare function takesNumberString(a: number, b: string): void;
+>takesNumberString : Symbol(takesNumberString, Decl(tluaColonCallPackTail.tlua, 5, 23))
+>a : Symbol(a, Decl(tluaColonCallPackTail.tlua, 6, 35))
+>b : Symbol(b, Decl(tluaColonCallPackTail.tlua, 6, 45))
+
+declare function takesNumber(a: number): void;
+>takesNumber : Symbol(takesNumber, Decl(tluaColonCallPackTail.tlua, 6, 63))
+>a : Symbol(a, Decl(tluaColonCallPackTail.tlua, 7, 29))
+
+declare function makeReader(): Reader;
+>makeReader : Symbol(makeReader, Decl(tluaColonCallPackTail.tlua, 7, 46))
+>Reader : Symbol(Reader, Decl(tluaColonCallPackTail.tlua, 0, 0))
+
+// A colon call in tail argument position contributes its full pack.
+takesNumberString(reader:pair());
+>takesNumberString : Symbol(takesNumberString, Decl(tluaColonCallPackTail.tlua, 5, 23))
+>reader:pair : Symbol(Reader.pair, Decl(tluaColonCallPackTail.tlua, 0, 18))
+>reader : Symbol(reader, Decl(tluaColonCallPackTail.tlua, 5, 7))
+>pair : Symbol(Reader.pair, Decl(tluaColonCallPackTail.tlua, 0, 18))
+
+// So a one-parameter target overflows on the expanded pack.
+takesNumber(reader:pair());
+>takesNumber : Symbol(takesNumber, Decl(tluaColonCallPackTail.tlua, 6, 63))
+>reader:pair : Symbol(Reader.pair, Decl(tluaColonCallPackTail.tlua, 0, 18))
+>reader : Symbol(reader, Decl(tluaColonCallPackTail.tlua, 5, 7))
+>pair : Symbol(Reader.pair, Decl(tluaColonCallPackTail.tlua, 0, 18))
+
+// In non-tail position it adjusts to its single first value.
+takesNumberString(reader:pair(), "s");
+>takesNumberString : Symbol(takesNumberString, Decl(tluaColonCallPackTail.tlua, 5, 23))
+>reader:pair : Symbol(Reader.pair, Decl(tluaColonCallPackTail.tlua, 0, 18))
+>reader : Symbol(reader, Decl(tluaColonCallPackTail.tlua, 5, 7))
+>pair : Symbol(Reader.pair, Decl(tluaColonCallPackTail.tlua, 0, 18))
+
+// The vararg tail flows through the colon call's own argument list.
+function forward(...: number): number
+>forward : Symbol(forward, Decl(tluaColonCallPackTail.tlua, 17, 38))
+> : Symbol((Missing), Decl(tluaColonCallPackTail.tlua, 20, 17))
+
+  return reader:sum(...);
+>reader:sum : Symbol(Reader.sum, Decl(tluaColonCallPackTail.tlua, 1, 39))
+>reader : Symbol(reader, Decl(tluaColonCallPackTail.tlua, 5, 7))
+>sum : Symbol(Reader.sum, Decl(tluaColonCallPackTail.tlua, 1, 39))
+
+end
+
+// A call receiver adjusts to its single value before becoming the implicit
+// first argument: `makeReader():one(1)` passes one Reader, not a pack.
+local n = makeReader():one(1);
+>n : Symbol(n, Decl(tluaColonCallPackTail.tlua, 26, 5))
+>makeReader():one : Symbol(Reader.one, Decl(tluaColonCallPackTail.tlua, 2, 41))
+>makeReader : Symbol(makeReader, Decl(tluaColonCallPackTail.tlua, 7, 46))
+>one : Symbol(Reader.one, Decl(tluaColonCallPackTail.tlua, 2, 41))
+

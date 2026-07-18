@@ -1,0 +1,27 @@
+// === findAllReferences ===
+// === /findAllRefsForVariableInExtendsClause02.tlua ===
+// /*FIND ALL REFS*/interface [|Base|] { }
+// namespace n {
+//     local Base = class { };
+//     interface I extends [|Base|] { }
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForVariableInExtendsClause02.tlua ===
+// interface /*FIND ALL REFS*/[|Base|] { }
+// namespace n {
+//     local Base = class { };
+//     interface I extends [|Base|] { }
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForVariableInExtendsClause02.tlua ===
+// interface [|Base|] { }
+// namespace n {
+//     local Base = class { };
+//     interface I extends /*FIND ALL REFS*/[|Base|] { }
+// }

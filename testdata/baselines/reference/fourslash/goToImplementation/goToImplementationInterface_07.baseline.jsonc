@@ -1,0 +1,23 @@
+// === goToImplementation ===
+// === /goToImplementationInterface_07.tlua ===
+// interface Fo/*GOTO IMPL*/o {
+//     hello (): void;
+// }
+// 
+// interface Bar {
+//     hello (): void;
+// }
+// 
+// local x1: Foo            = [|{ hello ()          { /**typeReference*/ } }|];
+// local x2: () => Foo      = [|(() => { hello ()   { /**functionType*/} })|];
+// local x3: Foo | Bar      = [|{ hello ()          { /**unionType*/} }|];
+// local x4: Foo & (Foo & Bar)      = [|{ hello ()          { /**intersectionType*/} }|];
+// local x5: [Foo]          = [{ hello ()         { /**tupleType*/} }];
+// local x6: (Foo)          = [|{ hello ()          { /**parenthesizedType*/} }|];
+// local x7: (new() => Foo) = class { hello ()    { /**constructorType*/} };
+// local x8: Foo[]          = [{ hello ()         { /**arrayType*/} }];
+// local x9: { y: Foo }     = [|{ y: { hello ()     { /**typeLiteral*/} } }|];
+// local x10 = class implements Foo { hello() {} }
+// local x11 = class C implements Foo { hello() {} }
+// 
+// --- (line: 21) skipped ---

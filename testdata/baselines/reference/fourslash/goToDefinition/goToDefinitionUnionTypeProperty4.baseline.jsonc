@@ -1,0 +1,14 @@
+// === goToDefinition ===
+// === /goToDefinitionUnionTypeProperty4.tlua ===
+// interface SnapCrackle {
+//     <|[|pop|](): string;|>
+// }
+// 
+// interface Magnitude {
+// --- (line: 6) skipped ---
+
+// --- (line: 13) skipped ---
+// local magnitude: Magnitude;
+// local snapcrackle: SnapCrackle;
+// 
+// local x = (snapcrackle || magnitude || art)./*GOTO DEF*/pop;

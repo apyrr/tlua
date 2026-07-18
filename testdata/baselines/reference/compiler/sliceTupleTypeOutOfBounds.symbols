@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/sliceTupleTypeOutOfBounds.tlua] ////
+
+=== sliceTupleTypeOutOfBounds.tlua ===
+type Middle<T> = T extends [unknown, ... infer X, unknown] ? X: never;
+>Middle : Symbol(Middle, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 0))
+>T : Symbol(T, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 12))
+>T : Symbol(T, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 12))
+> : Symbol(unknown)
+> : Symbol(unknown)
+> : Symbol(unknown)
+
+type Example = Middle<[1]>;
+>Example : Symbol(Example, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 70))
+>Middle : Symbol(Middle, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 0))
+

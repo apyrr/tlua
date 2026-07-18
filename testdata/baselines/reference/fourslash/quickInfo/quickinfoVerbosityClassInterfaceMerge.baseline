@@ -1,0 +1,168 @@
+// === QuickInfo ===
+=== /quickinfoVerbosityClassInterfaceMerge.tlua ===
+// 
+// declare class Foo {
+//               ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//               ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//     x: number;
+// }
+// declare interface Foo {
+//     y: string;
+// }
+// local f: Foo = { x: 1, y: "hello" };
+//          ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | interface Foo {
+// |     y: string;
+// | }
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//          ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | interface Foo
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 18,
+      "LSPosition": {
+        "line": 1,
+        "character": 17
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 14
+          },
+          "end": {
+            "line": 1,
+            "character": 17
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 18,
+      "LSPosition": {
+        "line": 1,
+        "character": 17
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 14
+          },
+          "end": {
+            "line": 1,
+            "character": 17
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 91,
+      "LSPosition": {
+        "line": 7,
+        "character": 12
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\ninterface Foo\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 7,
+            "character": 9
+          },
+          "end": {
+            "line": 7,
+            "character": 12
+          }
+        },
+        "canIncreaseVerbosity": true
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 91,
+      "LSPosition": {
+        "line": 7,
+        "character": 12
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\ninterface Foo {\n    y: string;\n}\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 7,
+            "character": 9
+          },
+          "end": {
+            "line": 7,
+            "character": 12
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  }
+]

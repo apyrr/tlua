@@ -1,0 +1,14 @@
+// @target: esnext
+
+// Missing values: natural expression-expected errors.
+local a = { x = };
+local b = { ["k"] = };
+
+// Literal string/number keys must use the bracket form (`["s"] = 1`,
+// `[1] = 2`): a bare string/number key is a natural recovery error.
+local c = { "s" = 1 };
+local d = { 1 = 2 };
+
+// Stray separators: natural recovery errors.
+local e = { ; };
+local f = { g = 1;; h = 2 };

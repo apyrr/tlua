@@ -1,0 +1,23 @@
+// @strict: true
+// @noEmit: true
+
+// A context-sensitive function expression in LAST positional-entry position
+// must register an intra-expression inference site like any other entry: its
+// inferred type fixes T for context-sensitive consumers checked later in the
+// same containing expression. The and/or chain is the standard Lua ternary
+// idiom, so "later in the same expression" is ordinary code. A member's
+// position in the table must not decide whether it participates.
+declare function pick<T>(t: { 1: (n: number) => T } | ((v: T) => void)): void;
+declare function pick2<T>(t: { 1: (n: number) => T, 2?: string } | ((v: T) => void)): void;
+declare cond: boolean;
+
+// The producer entry is last (and the table's only entry): T infers number,
+// so the consumer's `v` is number.
+pick((cond and { function(n) return n; end }) or function(v)
+  local ok: number = v;
+end);
+
+// Control: the same producer in non-last position behaves identically.
+pick2((cond and { function(n) return n; end, "pad" }) or function(v)
+  local ok: number = v;
+end);

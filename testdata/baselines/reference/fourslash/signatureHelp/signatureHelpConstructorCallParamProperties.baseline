@@ -1,0 +1,29 @@
+// === SignatureHelp ===
+=== /signatureHelpConstructorCallParamProperties.tlua ===
+// class Circle {
+//     /**
+//       * Initialize a circle.
+//       * @param  radius The radius of the circle.
+//       */
+//     constructor(private radius: number) {
+//     }
+// }
+// local a = new Circle(
+//                      ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /**/.
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 181,
+      "LSPosition": {
+        "line": 8,
+        "character": 21
+      },
+      "Name": "",
+      "Data": {}
+    },
+    "item": null
+  }
+]

@@ -1,0 +1,83 @@
+//// [tests/cases/compiler/tluaWordOperatorPropertyNames.tlua] ////
+
+=== tluaWordOperatorPropertyNames.tlua ===
+// A property may be *named* `and`, `or` or `not` -- only the bare member syntax
+// is unavailable, exactly as in Lua, where `t["and"]` works and `t.and` does not.
+// So the type printer must quote these names: an emitted `and: number` would not
+// parse back in. Ordinary keywords like `while` stay bare when *printed* as a
+// member, even though a reserved word still needs the bracket key form in a
+// table literal.
+
+local t = { ["and"] = 1, ["or"] = 2, ["not"] = 3, ["while"] = 4, plain = 5 };
+>t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
+>["and"] : Symbol(["and"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 11))
+>"and" : Symbol(["and"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 11))
+>["or"] : Symbol(["or"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 24))
+>"or" : Symbol(["or"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 24))
+>["not"] : Symbol(["not"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 36))
+>"not" : Symbol(["not"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 36))
+>["while"] : Symbol(["while"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 49))
+>"while" : Symbol(["while"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 49))
+>plain : Symbol(plain, Decl(tluaWordOperatorPropertyNames.tlua, 7, 64))
+
+// Reading them back requires the bracket form.
+local readAnd = t["and"];
+>readAnd : Symbol(readAnd, Decl(tluaWordOperatorPropertyNames.tlua, 10, 5))
+>t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
+>"and" : Symbol(["and"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 11))
+
+local readOr = t["or"];
+>readOr : Symbol(readOr, Decl(tluaWordOperatorPropertyNames.tlua, 11, 5))
+>t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
+>"or" : Symbol(["or"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 24))
+
+local readNot = t["not"];
+>readNot : Symbol(readNot, Decl(tluaWordOperatorPropertyNames.tlua, 12, 5))
+>t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
+>"not" : Symbol(["not"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 36))
+
+local readWhile = t.while;
+>readWhile : Symbol(readWhile, Decl(tluaWordOperatorPropertyNames.tlua, 13, 5))
+>t.while : Symbol(["while"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 49))
+>t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
+>while : Symbol(["while"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 49))
+
+// Interfaces declare them the same way.
+interface Bits {
+>Bits : Symbol(Bits, Decl(tluaWordOperatorPropertyNames.tlua, 13, 26))
+
+  "and"(v: number): number;
+>"and" : Symbol(Bits["and"], Decl(tluaWordOperatorPropertyNames.tlua, 16, 16))
+>v : Symbol(v, Decl(tluaWordOperatorPropertyNames.tlua, 17, 8))
+
+  "or"(v: number): number;
+>"or" : Symbol(Bits["or"], Decl(tluaWordOperatorPropertyNames.tlua, 17, 27))
+>v : Symbol(v, Decl(tluaWordOperatorPropertyNames.tlua, 18, 7))
+
+  while: number;
+>while : Symbol(Bits.while, Decl(tluaWordOperatorPropertyNames.tlua, 18, 26))
+}
+declare bits: Bits;
+>bits : Symbol(bits, Decl(tluaWordOperatorPropertyNames.tlua, 21, 7))
+>Bits : Symbol(Bits, Decl(tluaWordOperatorPropertyNames.tlua, 13, 26))
+
+local banded = bits["and"](1);
+>banded : Symbol(banded, Decl(tluaWordOperatorPropertyNames.tlua, 22, 5))
+>bits : Symbol(bits, Decl(tluaWordOperatorPropertyNames.tlua, 21, 7))
+>"and" : Symbol(Bits["and"], Decl(tluaWordOperatorPropertyNames.tlua, 16, 16))
+
+// An expando member named `and` is skipped by declaration emit rather than
+// emitted as the bare alias `export { ... as and }`, which would not parse.
+function A(): string { return "A"; }
+>A : Symbol(A, Decl(tluaWordOperatorPropertyNames.tlua, 22, 30))
+
+A["and"] = t;
+>A : Symbol(A, Decl(tluaWordOperatorPropertyNames.tlua, 22, 30))
+>"and" : Symbol(A["and"], Decl(tluaWordOperatorPropertyNames.tlua, 26, 36))
+>t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
+
+A["ok"] = t;
+>A : Symbol(A, Decl(tluaWordOperatorPropertyNames.tlua, 22, 30))
+>"ok" : Symbol(A["ok"], Decl(tluaWordOperatorPropertyNames.tlua, 27, 13))
+>t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
+

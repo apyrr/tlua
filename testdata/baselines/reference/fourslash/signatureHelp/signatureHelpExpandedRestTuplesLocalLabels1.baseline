@@ -1,0 +1,1065 @@
+// === SignatureHelp ===
+=== /signatureHelpExpandedRestTuplesLocalLabels1.tlua ===
+// interface AppleInfo {
+//   color: "green" | "red";
+// }
+// 
+// interface BananaInfo {
+//   curvature: number;
+// }
+// 
+// type FruitAndInfo1 = ["apple", AppleInfo] | ["banana", BananaInfo];
+// 
+// function logFruitTuple1(...[fruit, info]: FruitAndInfo1) {}
+// logFruitTuple1();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple1(**...: any[]**, fruit: any, info: any): any
+// | ----------------------------------------------------------------------
+// 
+// function logFruitTuple2(...[, info]: FruitAndInfo1) {}
+// logFruitTuple2();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple2(**...: any[]**, info: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple2("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple2(...: any[], **info: any**): any
+// | ----------------------------------------------------------------------
+// 
+// function logFruitTuple3(...[fruit, ...rest]: FruitAndInfo1) {}
+// logFruitTuple3();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple3(**...: any[]**, fruit: any, ...rest: any[]): any
+// | ----------------------------------------------------------------------
+// logFruitTuple3("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple3(...: any[], **fruit: any**, ...rest: any[]): any
+// | ----------------------------------------------------------------------
+// function logFruitTuple4(...[fruit, ...[info]]: FruitAndInfo1) {}
+// logFruitTuple4();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple4(**...: any[]**, fruit: any, ...: any[], info: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple4("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple4(...: any[], **fruit: any**, ...: any[], info: any): any
+// | ----------------------------------------------------------------------
+// 
+// type FruitAndInfo2 = ["apple", ...AppleInfo[]] | ["banana", ...BananaInfo[]];
+// 
+// function logFruitTuple5(...[fruit, firstInfo]: FruitAndInfo2) {}
+// logFruitTuple5();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple5(**...: any[]**, fruit: any, firstInfo: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple5("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple5(...: any[], **fruit: any**, firstInfo: any): any
+// | ----------------------------------------------------------------------
+// 
+// function logFruitTuple6(...[fruit, ...fruitInfo]: FruitAndInfo2) {}
+// logFruitTuple6();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple6(**...: any[]**, fruit: any, ...fruitInfo: any[]): any
+// | ----------------------------------------------------------------------
+// logFruitTuple6("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple6(...: any[], **fruit: any**, ...fruitInfo: any[]): any
+// | ----------------------------------------------------------------------
+// 
+// type FruitAndInfo3 = ["apple", ...AppleInfo[], number] | ["banana", ...BananaInfo[], number];
+// 
+// function logFruitTuple7(...[fruit, fruitInfoOrNumber, secondFruitInfoOrNumber]: FruitAndInfo3) {}
+// logFruitTuple7();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple7(**...: any[]**, fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple7("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple7(...: any[], **fruit: any**, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple7("apple", { color: "red" }, );
+//                                           ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple7(...: any[], fruit: any, **fruitInfoOrNumber: any**, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// 
+// function logFruitTuple8(...[fruit, , secondFruitInfoOrNumber]: FruitAndInfo3) {}
+// logFruitTuple8();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple8(**...: any[]**, fruit: any, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple8("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple8(...: any[], **fruit: any**, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple8("apple", { color: "red" }, );
+//                                           ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple8(...: any[], fruit: any, **secondFruitInfoOrNumber: any**): any
+// | ----------------------------------------------------------------------
+// 
+// function logFruitTuple9(...[...[fruit, fruitInfoOrNumber, secondFruitInfoOrNumber]]: FruitAndInfo3) {}
+// logFruitTuple9();
+//                ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple9(**...: any[]**, ...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple9("apple", );
+//                         ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple9(**...: any[]**, ...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple9("apple", { color: "red" }, );
+//                                           ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple9(...: any[], ...: any[], **fruit: any**, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// 
+// function logFruitTuple10(...[fruit, {}, secondFruitInfoOrNumber]: FruitAndInfo3) {}
+// logFruitTuple10();
+//                 ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple10(**...: any[]**, fruit: any, {}: {}, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple10("apple", );
+//                          ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple10(...: any[], **fruit: any**, {}: {}, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// logFruitTuple10("apple", { color: "red" }, );
+//                                            ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple10(...: any[], fruit: any, **{}: {}**, secondFruitInfoOrNumber: any): any
+// | ----------------------------------------------------------------------
+// 
+// function logFruitTuple11(...{}: FruitAndInfo3) {}
+// logFruitTuple11();
+//                 ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple11(**...{}: FruitAndInfo3**): void
+// | ----------------------------------------------------------------------
+// logFruitTuple11("apple", );
+//                          ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple11(**...{}: FruitAndInfo3**): void
+// | ----------------------------------------------------------------------
+// logFruitTuple11("apple", { color: "red" }, );
+//                                            ^
+// | ----------------------------------------------------------------------
+// | logFruitTuple11(**...{}: FruitAndInfo3**): void
+// | ----------------------------------------------------------------------
+// function withPair(...[first, second]: [number, named: string]) {}
+// withPair();
+//          ^
+// | ----------------------------------------------------------------------
+// | withPair(**...: any[]**, first: any, second: any): any
+// | ----------------------------------------------------------------------
+// withPair(101, );
+//               ^
+// | ----------------------------------------------------------------------
+// | withPair(...: any[], **first: any**, second: any): any
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 242,
+      "LSPosition": {
+        "line": 11,
+        "character": 15
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple1(...: any[], fruit: any, info: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "info: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 316,
+      "LSPosition": {
+        "line": 14,
+        "character": 15
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple2(...: any[], info: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "info: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 343,
+      "LSPosition": {
+        "line": 15,
+        "character": 24
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple2(...: any[], info: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "info: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 425,
+      "LSPosition": {
+        "line": 18,
+        "character": 15
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple3(...: any[], fruit: any, ...rest: any[]): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "...rest: any[]"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 452,
+      "LSPosition": {
+        "line": 19,
+        "character": 24
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple3(...: any[], fruit: any, ...rest: any[]): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "...rest: any[]"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 535,
+      "LSPosition": {
+        "line": 21,
+        "character": 15
+      },
+      "Name": "6",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple4(...: any[], fruit: any, ...: any[], info: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "info: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 562,
+      "LSPosition": {
+        "line": 22,
+        "character": 24
+      },
+      "Name": "7",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple4(...: any[], fruit: any, ...: any[], info: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "info: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 725,
+      "LSPosition": {
+        "line": 27,
+        "character": 15
+      },
+      "Name": "8",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple5(...: any[], fruit: any, firstInfo: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "firstInfo: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 752,
+      "LSPosition": {
+        "line": 28,
+        "character": 24
+      },
+      "Name": "9",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple5(...: any[], fruit: any, firstInfo: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "firstInfo: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 839,
+      "LSPosition": {
+        "line": 31,
+        "character": 15
+      },
+      "Name": "10",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple6(...: any[], fruit: any, ...fruitInfo: any[]): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "...fruitInfo: any[]"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 866,
+      "LSPosition": {
+        "line": 32,
+        "character": 24
+      },
+      "Name": "11",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple6(...: any[], fruit: any, ...fruitInfo: any[]): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "...fruitInfo: any[]"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1078,
+      "LSPosition": {
+        "line": 37,
+        "character": 15
+      },
+      "Name": "12",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple7(...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "fruitInfoOrNumber: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1105,
+      "LSPosition": {
+        "line": 38,
+        "character": 24
+      },
+      "Name": "13",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple7(...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "fruitInfoOrNumber: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1150,
+      "LSPosition": {
+        "line": 39,
+        "character": 42
+      },
+      "Name": "14",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple7(...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "fruitInfoOrNumber: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 2
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1250,
+      "LSPosition": {
+        "line": 42,
+        "character": 15
+      },
+      "Name": "15",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple8(...: any[], fruit: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1277,
+      "LSPosition": {
+        "line": 43,
+        "character": 24
+      },
+      "Name": "16",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple8(...: any[], fruit: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1322,
+      "LSPosition": {
+        "line": 44,
+        "character": 42
+      },
+      "Name": "17",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple8(...: any[], fruit: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 2
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1444,
+      "LSPosition": {
+        "line": 47,
+        "character": 15
+      },
+      "Name": "18",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple9(...: any[], ...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "fruitInfoOrNumber: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1471,
+      "LSPosition": {
+        "line": 48,
+        "character": 24
+      },
+      "Name": "19",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple9(...: any[], ...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "fruitInfoOrNumber: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1516,
+      "LSPosition": {
+        "line": 49,
+        "character": 42
+      },
+      "Name": "20",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple9(...: any[], ...: any[], fruit: any, fruitInfoOrNumber: any, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "fruitInfoOrNumber: any"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 2
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1620,
+      "LSPosition": {
+        "line": 52,
+        "character": 16
+      },
+      "Name": "21",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple10(...: any[], fruit: any, {}: {}, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "{}: {}"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1648,
+      "LSPosition": {
+        "line": 53,
+        "character": 25
+      },
+      "Name": "22",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple10(...: any[], fruit: any, {}: {}, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "{}: {}"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1694,
+      "LSPosition": {
+        "line": 54,
+        "character": 43
+      },
+      "Name": "23",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple10(...: any[], fruit: any, {}: {}, secondFruitInfoOrNumber: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "fruit: any"
+            },
+            {
+              "label": "{}: {}"
+            },
+            {
+              "label": "secondFruitInfoOrNumber: any"
+            }
+          ],
+          "activeParameter": 2
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1764,
+      "LSPosition": {
+        "line": 57,
+        "character": 16
+      },
+      "Name": "24",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple11(...{}: FruitAndInfo3): void",
+          "parameters": [
+            {
+              "label": "...{}: FruitAndInfo3"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1792,
+      "LSPosition": {
+        "line": 58,
+        "character": 25
+      },
+      "Name": "25",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple11(...{}: FruitAndInfo3): void",
+          "parameters": [
+            {
+              "label": "...{}: FruitAndInfo3"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1838,
+      "LSPosition": {
+        "line": 59,
+        "character": 43
+      },
+      "Name": "26",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "logFruitTuple11(...{}: FruitAndInfo3): void",
+          "parameters": [
+            {
+              "label": "...{}: FruitAndInfo3"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1916,
+      "LSPosition": {
+        "line": 61,
+        "character": 9
+      },
+      "Name": "27",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "withPair(...: any[], first: any, second: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "first: any"
+            },
+            {
+              "label": "second: any"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1933,
+      "LSPosition": {
+        "line": 62,
+        "character": 14
+      },
+      "Name": "28",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "withPair(...: any[], first: any, second: any): any",
+          "parameters": [
+            {
+              "label": "...: any[]"
+            },
+            {
+              "label": "first: any"
+            },
+            {
+              "label": "second: any"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]

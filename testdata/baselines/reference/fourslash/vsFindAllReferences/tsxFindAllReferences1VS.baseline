@@ -1,0 +1,173 @@
+// === vsFindAllReferences ===
+// === /file.tsx ===
+// declare namespace JSX {
+//     interface Element { }
+//     interface IntrinsicElements {
+//         /*FIND ALL REFS*/[|div|]: {
+//             name?: string;
+//             isOpen?: boolean;
+//         };
+// --- (line: 8) skipped ---
+
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///file.tsx",
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 8
+        },
+        "end": {
+          "line": 3,
+          "character": 11
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "property",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "IntrinsicElements.div",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "{",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "name",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "?",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "string",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "isOpen",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "?",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "boolean",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "}",
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         span: { n: string; };
+//     }
+// }
+// local x = /*FIND ALL REFS*/<div />;
+
+[]
+
+
+
+// === vsFindAllReferences ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         span: { n: string; };
+//     }
+// }
+// local x = </*FIND ALL REFS*/div />;
+
+[]

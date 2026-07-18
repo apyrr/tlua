@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/typeParameterComparableRelation.tlua] ////
+
+=== typeParameterComparableRelation.tlua ===
+// https://github.com/microsoft/typescript-go/issues/1462
+
+type StringOrT<T> = T | string
+>StringOrT : Symbol(StringOrT, Decl(typeParameterComparableRelation.tlua, 0, 0))
+>T : Symbol(T, Decl(typeParameterComparableRelation.tlua, 2, 15))
+>T : Symbol(T, Decl(typeParameterComparableRelation.tlua, 2, 15))
+
+function func<A, B, T extends StringOrT<B>>(thing: T): void {
+>func : Symbol(func, Decl(typeParameterComparableRelation.tlua, 2, 30))
+>A : Symbol(A, Decl(typeParameterComparableRelation.tlua, 4, 14))
+>B : Symbol(B, Decl(typeParameterComparableRelation.tlua, 4, 16))
+>T : Symbol(T, Decl(typeParameterComparableRelation.tlua, 4, 19))
+>StringOrT : Symbol(StringOrT, Decl(typeParameterComparableRelation.tlua, 0, 0))
+>B : Symbol(B, Decl(typeParameterComparableRelation.tlua, 4, 16))
+>thing : Symbol(thing, Decl(typeParameterComparableRelation.tlua, 4, 44))
+>T : Symbol(T, Decl(typeParameterComparableRelation.tlua, 4, 19))
+
+    thing as A; // Error
+>thing : Symbol(thing, Decl(typeParameterComparableRelation.tlua, 4, 44))
+>A : Symbol(A, Decl(typeParameterComparableRelation.tlua, 4, 14))
+}
+

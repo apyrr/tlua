@@ -1,0 +1,159 @@
+//// [tests/cases/compiler/tluaVarargFunctionTypes.tlua] ////
+
+=== tluaVarargFunctionTypes.tlua ===
+// Callable types spell the vararg the same way as declarations.
+type Annotated = (...: string) => void;
+>Annotated : Annotated
+> : string[]
+
+type Bare = (...) => void;
+>Bare : Bare
+> : any[]
+
+type Fixed = (a: string) => void;
+>Fixed : Fixed
+>a : string
+
+declare annotated: Annotated;
+>annotated : Annotated
+
+declare bare: Bare;
+>bare : Bare
+
+declare fixed: Fixed;
+>fixed : Fixed
+
+// Assignability in both directions.
+local toBare: Bare = annotated;
+>toBare : Bare
+>annotated : Annotated
+
+local toAnnotated: Annotated = bare;
+>toAnnotated : Annotated
+>bare : Bare
+
+// A fixed-arity function does not accept a vararg caller's extra values, but a
+// vararg function can stand in for a fixed one.
+local fixedFromVararg: Fixed = annotated;
+>fixedFromVararg : Fixed
+>annotated : Annotated
+
+local varargFromFixed: Annotated = fixed;
+>varargFromFixed : Annotated
+>fixed : Fixed
+
+// Contextual typing of a bare `...`. With leading fixed parameters in the
+// contextual signature the pack is heterogeneous -- positionally
+// `(number, string, ...boolean)` -- and must never silently fall back to `any`.
+type H = (a: number, b: string, ...: boolean) => void;
+>H : H
+>a : number
+>b : string
+> : boolean[]
+
+local contextual: H = function(...)
+>contextual : H
+>function(...)  local first, second, third, fourth = ...;  // A positive annotation cannot catch an `any` fallback (any assigns to  // everything), so assert negatively: if the pack is precise, the first value  // is a `number` and this is an error. If it degrades to `any`, it passes.  local wrong: string = ...;end : (a: number, b: string, ...: boolean) => void
+> : [a: number, b: string, ...boolean[]]
+
+  local first, second, third, fourth = ...;
+>first : number
+>second : string
+>third : boolean | nil
+>fourth : boolean | nil
+>... : number
+
+  // A positive annotation cannot catch an `any` fallback (any assigns to
+  // everything), so assert negatively: if the pack is precise, the first value
+  // is a `number` and this is an error. If it degrades to `any`, it passes.
+  local wrong: string = ...;
+>wrong : string
+>... : number
+
+end;
+
+// Return-type position disambiguation. `(...)` after `:` opens a *callable
+// type*, so this is a function returning a function.
+function mk(): (...) => void
+>mk : () => (...: any) => void
+> : any[]
+
+  return function(...): void end;
+>function(...): void end : (...: any) => void
+> : any[]
+
+end
+
+function mkAnnotated(): (...: string) => void
+>mkAnnotated : () => (...: string) => void
+> : string[]
+
+  return function(...: string): void end;
+>function(...: string): void end : (...: string) => void
+> : string[]
+
+end
+
+// A type start after `...` makes it a pure-variadic *return pack* instead.
+function g(): (...string)
+>g : () => (...string)
+
+  return "a", "b";
+>"a", "b" : string, string
+>"a" : "a"
+>"b" : "b"
+
+end
+
+function h(): (number, ...string)
+>h : () => (number, ...string)
+
+  return 1, "a", "b";
+>1, "a", "b" : number, string, string
+>1 : 1
+>"a" : "a"
+>"b" : "b"
+
+end
+
+// An arrow with a bare vararg, including with a return-type annotation: the
+// `(...` lookahead must not mistake these for a parenthesized vararg expression.
+local arrowBare = (...) => 1;
+>arrowBare : (...: any) => number
+>(...) => 1 : (...: any) => number
+> : any[]
+>1 : 1
+
+local arrowTyped = (...): number => 1;
+>arrowTyped : (...: any) => number
+>(...): number => 1 : (...: any) => number
+> : any[]
+>1 : 1
+
+local arrowAnnotated = (...: string): number => 1;
+>arrowAnnotated : (...: string) => number
+>(...: string): number => 1 : (...: string) => number
+> : string[]
+>1 : 1
+
+// Every rest the *checker* synthesizes is a vararg too. An intersection of
+// signatures combines their parameters into a synthetic one whose elements have
+// no declarations to take labels from; the error below prints that signature, so
+// it pins the display: no `..._0` labels (unparseable), and the tail keeps `...`.
+type Fixed2 = (a: number, b: string) => void;
+>Fixed2 : Fixed2
+>a : number
+>b : string
+
+type VarargTail = (x: number, y: string, ...: boolean) => void;
+>VarargTail : VarargTail
+>x : number
+>y : string
+> : boolean[]
+
+local combined: Fixed2 & VarargTail = function(q: boolean, ...) end;
+>combined : Fixed2 & VarargTail
+>function(q: boolean, ...) end : (q: boolean, arg_0: string, ...: unknown) => void
+>q : boolean
+> : [string, ...unknown[]]
+

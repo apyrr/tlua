@@ -1,0 +1,9 @@
+// @target: esnext
+// @filename: pkg/init.tlua
+local v = 1;
+return { v = v };
+
+// @filename: main.tlua
+local a = require("pkg");
+local b = require("pkg.init");
+a; b;

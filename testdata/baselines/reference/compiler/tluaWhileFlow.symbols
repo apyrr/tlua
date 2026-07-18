@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/tluaWhileFlow.tlua] ////
+
+=== tluaWhileFlow.tlua ===
+// Assignment in the body is visible after the loop (loop-label join).
+function joinAfterLoop(flag: boolean): number | string
+>joinAfterLoop : Symbol(joinAfterLoop, Decl(tluaWhileFlow.tlua, 0, 0))
+>flag : Symbol(flag, Decl(tluaWhileFlow.tlua, 1, 23))
+
+  local x: number | string = 1;
+>x : Symbol(x, Decl(tluaWhileFlow.tlua, 2, 7))
+
+  while flag do
+>flag : Symbol(flag, Decl(tluaWhileFlow.tlua, 1, 23))
+
+    x = "s";
+>x : Symbol(x, Decl(tluaWhileFlow.tlua, 2, 7))
+
+    flag = false;
+>flag : Symbol(flag, Decl(tluaWhileFlow.tlua, 1, 23))
+
+  end
+  return x;
+>x : Symbol(x, Decl(tluaWhileFlow.tlua, 2, 7))
+
+end
+
+// Code after `while true do break end` is reachable.
+function reachableAfterBreak(): number
+>reachableAfterBreak : Symbol(reachableAfterBreak, Decl(tluaWhileFlow.tlua, 8, 3))
+
+  while true do
+    break;
+  end
+  return 1;
+end
+
+// Code after `while true do end` (no break) is unreachable.
+function unreachableAfterInfinite(): number
+>unreachableAfterInfinite : Symbol(unreachableAfterInfinite, Decl(tluaWhileFlow.tlua, 16, 3))
+
+  while true do
+  end
+  return 1;
+end
+
+// Statements after break are unreachable inside the body.
+function unreachableAfterBreakInBody(): number
+>unreachableAfterBreakInBody : Symbol(unreachableAfterBreakInBody, Decl(tluaWhileFlow.tlua, 23, 3))
+
+  local n = 0;
+>n : Symbol(n, Decl(tluaWhileFlow.tlua, 27, 7))
+
+  while true do
+    break;
+    n = 1;
+>n : Symbol(n, Decl(tluaWhileFlow.tlua, 27, 7))
+
+  end
+  return n;
+>n : Symbol(n, Decl(tluaWhileFlow.tlua, 27, 7))
+
+end
+

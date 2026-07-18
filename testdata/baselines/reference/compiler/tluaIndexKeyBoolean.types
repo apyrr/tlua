@@ -1,0 +1,77 @@
+//// [tests/cases/compiler/tluaIndexKeyBoolean.tlua] ////
+
+=== tluaIndexKeyBoolean.tlua ===
+// `boolean` is interned as the union `false | true`, so iterating an index key without
+// care shreds it into two *literal* keys -- which the literal rule then rejects,
+// leaving the signature with no index at all. It must stay whole.
+
+interface Flags {
+  [key: boolean]: string;
+>key : boolean
+}
+
+declare f: Flags;
+>f : Flags
+
+local yes: string = f[true];
+>yes : string
+>f[true] : string
+>f : Flags
+>true : true
+
+local no: string = f[false];
+>no : string
+>f[false] : string
+>f : Flags
+>false : false
+
+declare b: boolean;
+>b : boolean
+
+local either: string = f[b];
+>either : string
+>f[b] : string
+>f : Flags
+>b : boolean
+
+// keyof reports the key as `boolean`, not `true | false`.
+type K = keyof Flags;
+>K : boolean
+
+local k: K = true;
+>k : boolean
+>true : true
+
+// A boolean key coexists with the other domains: they are disjoint.
+interface Mixed {
+  [key: boolean]: string;
+>key : boolean
+
+  [key: number]: number;
+>key : number
+
+  named: object;
+>named : object
+}
+
+declare m: Mixed;
+>m : Mixed
+
+local s: string = m[true];
+>s : string
+>m[true] : string
+>m : Mixed
+>true : true
+
+local n: number = m[1];
+>n : number
+>m[1] : number
+>m : Mixed
+>1 : 1
+
+local o: object = m.named;
+>o : object
+>m.named : object
+>m : Mixed
+>named : object
+

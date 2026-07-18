@@ -1,0 +1,31 @@
+// === documentHighlights ===
+// === /documentHighlightInKeyword.tlua ===
+// export type Foo<T> = {
+//     [K /*HIGHLIGHTS*/in keyof T]: any;
+// }
+// 
+// "a" in {};
+// 
+// for (local a in {}) {}
+
+
+
+// === documentHighlights ===
+// === /documentHighlightInKeyword.tlua ===
+// export type Foo<T> = {
+//     [K in keyof T]: any;
+// }
+// 
+// "a" /*HIGHLIGHTS*/in {};
+// 
+// for (local a in {}) {}
+
+
+
+// === documentHighlights ===
+// === /documentHighlightInKeyword.tlua ===
+// --- (line: 3) skipped ---
+// 
+// "a" in {};
+// 
+// for (local a /*HIGHLIGHTS*/in {}) {}

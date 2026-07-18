@@ -1,0 +1,22 @@
+// === documentHighlights ===
+// === /getOccurrencesSetAndGet.tlua ===
+// class Foo {
+//     /*HIGHLIGHTS*/set bar(b: any) {
+//     }
+// 
+//     public get bar(): any {
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSetAndGet.tlua ===
+// class Foo {
+//     set bar(b: any) {
+//     }
+// 
+//     public /*HIGHLIGHTS*/get bar(): any {
+//         return undefined;
+//     }
+// 
+// --- (line: 9) skipped ---

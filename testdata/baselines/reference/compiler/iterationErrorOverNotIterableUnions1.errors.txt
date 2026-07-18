@@ -1,0 +1,51 @@
+iterationErrorOverNotIterableUnions1.tlua(7,10): error TS2339: Property 'b' does not exist on type 'A'.
+iterationErrorOverNotIterableUnions1.tlua(11,17): error TS2339: Property 'b' does not exist on type 'A'.
+iterationErrorOverNotIterableUnions1.tlua(14,7): error TS1003: Identifier expected.
+iterationErrorOverNotIterableUnions1.tlua(14,8): error TS1434: Unexpected keyword or identifier.
+iterationErrorOverNotIterableUnions1.tlua(14,8): error TS2304: Cannot find name 'el'.
+iterationErrorOverNotIterableUnions1.tlua(14,10): error TS1128: Declaration or statement expected.
+iterationErrorOverNotIterableUnions1.tlua(14,12): error TS1128: Declaration or statement expected.
+iterationErrorOverNotIterableUnions1.tlua(15,1): error TS2304: Cannot find name 'el'.
+iterationErrorOverNotIterableUnions1.tlua(17,13): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'B | A[]'.
+  Property '0' does not exist on type 'B | A[]'.
+
+
+==== iterationErrorOverNotIterableUnions1.tlua (9 errors) ====
+    type A = { a: string };
+    type B = { b: string };
+    
+    declare data: A[] | B;
+    
+    for _, item in ipairs(data) do
+        item.b;
+             ~
+!!! error TS2339: Property 'b' does not exist on type 'A'.
+    end
+    
+    for _, ignoredItem in ipairs(data) do
+        ignoredItem.b;
+                    ~
+!!! error TS2339: Property 'b' does not exist on type 'A'.
+    end
+    
+    local [el] = data;
+          ~
+!!! error TS1003: Identifier expected.
+           ~~
+!!! error TS1434: Unexpected keyword or identifier.
+           ~~
+!!! error TS2304: Cannot find name 'el'.
+             ~
+!!! error TS1128: Declaration or statement expected.
+               ~
+!!! error TS1128: Declaration or statement expected.
+    el.b;
+    ~~
+!!! error TS2304: Cannot find name 'el'.
+    
+    local el2 = data[0];
+                ~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'B | A[]'.
+!!! error TS7053:   Property '0' does not exist on type 'B | A[]'.
+    el2.b;
+    

@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /goToDefinitionShadowVariable.tlua ===
+// local shadowVariable = "foo";
+// function shadowVariableTestModule() {
+//     <|local [|shadowVariable|];|>
+//     /*GOTO DEF*/shadowVariable = 1;
+// }

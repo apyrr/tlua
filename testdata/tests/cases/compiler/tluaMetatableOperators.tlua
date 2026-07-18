@@ -1,0 +1,52 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// An operator on a paired operand dispatches to the metamethod its metatable commits to. The
+// metamethod's return type is the expression's type; its parameters check the operands.
+
+local Ops = {
+  __add = function(a: { x: number }, b: { x: number } | number): { x: number } return a; end,
+  __mul = function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end,
+  __lt = function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end,
+  __le = function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end,
+  __eq = function(a: object, b: object): boolean return true; end,
+  __unm = function(a: { x: number }): { x: number } return a; end,
+  __pow = function(a: { x: number }, n: number): { x: number } return a; end,
+};
+
+local v = setmetatable({ x = 1 }, Ops);
+local w = setmetatable({ x = 2 }, Ops);
+
+local sum: { x: number } = v + w;
+local first: number = v * 2;        // a multi-return metamethod adjusts to its first value
+local powed: { x: number } = v ^ 2; // ^ is Lua's __pow
+local neg: { x: number } = -v;      // unary minus is __unm
+local lt: boolean = v < w;
+local gt: boolean = v > w;          // a > b runs __lt(b, a)
+local le: boolean = v <= w;
+local ge: boolean = v >= w;
+local eq: boolean = v == w;         // the no-overlap error is suppressed
+local ne: boolean = v ~= w;
+
+// A compound assignment runs the same metamethod its operator does and checks the result back
+// into the target.
+v += w;
+
+// An operand the metamethod's parameter does not admit is an error.
+local badOperand = v * "s";
+
+// A handler found on the right operand still receives the left as its first argument: `2 ^ v`
+// checks 2 against __pow's { x: number } first parameter and v against its number second.
+local badLeft = 2 ^ v;
+
+// A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
+// has no handler for is still an error. `+` reports that its own way.
+local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end });
+local eqOk: boolean = eqOnly == eqOnly;
+local noAdd = eqOnly + eqOnly;
+
+// Unary minus is arithmetic now: a non-numeric operand is rejected whether or not it is paired.
+local minusString = -"abc";
+local minusTable = -eqOnly;

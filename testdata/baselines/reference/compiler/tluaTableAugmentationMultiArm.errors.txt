@@ -1,0 +1,32 @@
+c.tlua(7,14): error TS2339: Property 'b' does not exist on type '{ m: string; } | { m: string; b: number; }'.
+  Property 'b' does not exist on type '{ m: string; }'.
+c.tlua(8,3): error TS2339: Property 'b' does not exist on type '{ m: string; } | { m: string; b: number; }'.
+  Property 'b' does not exist on type '{ m: string; }'.
+
+
+==== a.tlua (0 errors) ====
+    V = {};
+    V.m = "s";
+    local va: string = V.m;
+    
+==== b.tlua (0 errors) ====
+    V = { b = 2 };
+    local vm: string = V.m;
+    local vb: number = V.b;
+    
+==== c.tlua (2 errors) ====
+    // Hover-visible union: records V's union type in the .types baseline.
+    local v = V;
+    local cm: string = V.m;
+    
+    // `b` exists in only one arm's constructor. Read here on the un-narrowed
+    // union to record whether a direct read is an error or union-with-nil.
+    local cb = V.b;
+                 ~
+!!! error TS2339: Property 'b' does not exist on type '{ m: string; } | { m: string; b: number; }'.
+!!! error TS2339:   Property 'b' does not exist on type '{ m: string; }'.
+    V.b = 3;
+      ~
+!!! error TS2339: Property 'b' does not exist on type '{ m: string; } | { m: string; b: number; }'.
+!!! error TS2339:   Property 'b' does not exist on type '{ m: string; }'.
+    

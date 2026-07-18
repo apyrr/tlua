@@ -1,0 +1,21 @@
+// === goToImplementation ===
+// === /goToImplementationInvalid.tlua ===
+// local x1 = 50/*GOTO IMPL*/0;
+// local x2 = "hello";
+// 
+
+
+
+// === goToImplementation ===
+// === /goToImplementationInvalid.tlua ===
+// local x1 = 500;
+// local x2 = "hel/*GOTO IMPL*/lo";
+// 
+
+
+
+// === goToImplementation ===
+// === /goToImplementationInvalid.tlua ===
+// local x1 = 500;
+// local x2 = "hello";
+// /*GOTO IMPL*/

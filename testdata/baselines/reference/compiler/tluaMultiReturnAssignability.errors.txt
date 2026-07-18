@@ -1,0 +1,70 @@
+tluaMultiReturnAssignability.tlua(32,7): error TS2322: Type '() => number' is not assignable to type '() => (number, string)'.
+  Type 'number' is not assignable to type 'number, string'.
+    Source has 1 element(s) but target requires 2.
+tluaMultiReturnAssignability.tlua(36,7): error TS2322: Type '() => void' is not assignable to type '() => (number, string)'.
+  Type 'void' is not assignable to type 'number, string'.
+    Source has 0 element(s) but target requires 2.
+tluaMultiReturnAssignability.tlua(37,7): error TS2322: Type '() => void' is not assignable to type '() => (number, (string | nil)?)'.
+  Type 'void' is not assignable to type 'number, (string | nil)?'.
+    Source has 0 element(s) but target requires 1.
+tluaMultiReturnAssignability.tlua(40,7): error TS2322: Type '() => (number, string)' is not assignable to type '() => string'.
+  Type 'number' is not assignable to type 'string'.
+
+
+==== tluaMultiReturnAssignability.tlua (4 errors) ====
+    function pair(): (number, string)
+      return 1, "a";
+    end
+    
+    function triple(): (number, string, boolean)
+      return 1, "a", true;
+    end
+    
+    function one(): number
+      return 1;
+    end
+    
+    function onePlusOptional(): (number, string?)
+      return 1;
+    end
+    
+    function allOptional(): (number?, string?)
+    end
+    
+    function nothing(): void
+    end
+    
+    // Extra returned values are dropped at call sites: assigning a many-valued
+    // function where fewer values are consumed is sound.
+    local toSingle: (() => number) = pair;
+    local toPair: typeof pair = triple;
+    
+    // A one-valued function satisfies a pack whose tail is optional...
+    local optOk: typeof onePlusOptional = one;
+    
+    // ...but not a pack that requires two values.
+    local needTwo: typeof pair = one;
+          ~~~~~~~
+!!! error TS2322: Type '() => number' is not assignable to type '() => (number, string)'.
+!!! error TS2322:   Type 'number' is not assignable to type 'number, string'.
+!!! error TS2322:     Source has 1 element(s) but target requires 2.
+    
+    // Zero values only satisfy packs that require none.
+    local voidOk: typeof allOptional = nothing;
+    local voidBad: typeof pair = nothing;
+          ~~~~~~~
+!!! error TS2322: Type '() => void' is not assignable to type '() => (number, string)'.
+!!! error TS2322:   Type 'void' is not assignable to type 'number, string'.
+!!! error TS2322:     Source has 0 element(s) but target requires 2.
+    local voidBadRequired: typeof onePlusOptional = nothing;
+          ~~~~~~~~~~~~~~~
+!!! error TS2322: Type '() => void' is not assignable to type '() => (number, (string | nil)?)'.
+!!! error TS2322:   Type 'void' is not assignable to type 'number, (string | nil)?'.
+!!! error TS2322:     Source has 0 element(s) but target requires 1.
+    
+    // The first value must still match.
+    local firstMismatch: (() => string) = pair;
+          ~~~~~~~~~~~~~
+!!! error TS2322: Type '() => (number, string)' is not assignable to type '() => string'.
+!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+    

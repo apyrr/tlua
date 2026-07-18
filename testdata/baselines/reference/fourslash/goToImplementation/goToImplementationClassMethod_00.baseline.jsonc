@@ -1,0 +1,7 @@
+// === goToImplementation ===
+// === /goToImplementationClassMethod_00.tlua ===
+// class Bar {
+//     hello() {}
+// }
+// 
+// new Bar().hel/*GOTO IMPL*/lo;

@@ -1,0 +1,43 @@
+//// [tests/cases/compiler/tluaLocalDeclarations.tlua] ////
+
+=== tluaLocalDeclarations.tlua ===
+local plain;
+>plain : any
+
+plain = 1;
+>plain = 1 : 1
+>plain : any
+>1 : 1
+
+local typed: number;
+>typed : number
+
+typed = plain;
+>typed = plain : number
+>typed : number
+>plain : number
+
+local initialized = typed;
+>initialized : number
+>typed : number
+
+local typedInitialized: number = initialized;
+>typedInitialized : number
+>initialized : number
+
+typedInitialized = typedInitialized + 1;
+>typedInitialized = typedInitialized + 1 : number
+>typedInitialized : number
+>typedInitialized + 1 : number
+>typedInitialized : number
+>1 : 1
+
+local literal = "a";
+>literal : string
+>"a" : "a"
+
+literal = "b";
+>literal = "b" : "b"
+>literal : string
+>"b" : "b"
+

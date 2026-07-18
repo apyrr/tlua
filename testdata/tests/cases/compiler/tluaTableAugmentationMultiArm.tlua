@@ -1,0 +1,27 @@
+// @target: esnext
+// @strict: true
+
+// An implicit global with a constructor arm in two different files. The
+// augmented member `m` attaches to every arm, so it reads as `string`
+// everywhere; a member written in only one arm's constructor (`b`) needs
+// narrowing, so a direct read on the union is checked against the whole union.
+
+// @filename: a.tlua
+V = {};
+V.m = "s";
+local va: string = V.m;
+
+// @filename: b.tlua
+V = { b = 2 };
+local vm: string = V.m;
+local vb: number = V.b;
+
+// @filename: c.tlua
+// Hover-visible union: records V's union type in the .types baseline.
+local v = V;
+local cm: string = V.m;
+
+// `b` exists in only one arm's constructor. Read here on the un-narrowed
+// union to record whether a direct read is an error or union-with-nil.
+local cb = V.b;
+V.b = 3;

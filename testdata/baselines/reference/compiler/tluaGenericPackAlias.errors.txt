@@ -1,0 +1,54 @@
+tluaGenericPackAlias.tlua(31,34): error TS100047: A generic pack argument can only be supplied for a generic pack parameter.
+tluaGenericPackAlias.tlua(34,8): error TS100047: A generic pack argument can only be supplied for a generic pack parameter.
+tluaGenericPackAlias.tlua(36,25): error TS100045: A generic pack parameter is only allowed on a function or a type alias.
+tluaGenericPackAlias.tlua(38,39): error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+
+
+==== tluaGenericPackAlias.tlua (4 errors) ====
+    type Handler<...A> = (...: A) => void;
+    type PairHandler = Handler<(number, string)>;
+    type EmptyHandler = Handler<()>;
+    type OneHandler = Handler<number>;
+    type StringHandlers = Handler<(...string)>;
+    type ForwardedHandler<...A> = Handler<(...A)>;
+    
+    local pair: Handler<(number, string)> = function(a, b): void
+        local n: number = a;
+        local s: string = b;
+    end;
+    pair(1, "x");
+    
+    local empty: Handler<()> = function(): void end;
+    empty();
+    
+    local one: Handler<number> = function(value): void
+        local n: number = value;
+    end;
+    one(1);
+    
+    local strings: Handler<(...string)> = function(...: string): void end;
+    strings("a", "b");
+    
+    local forward = function<...A>(handler: Handler<(...A)>, ...: A): void
+        handler(...);
+    end;
+    forward(pair, 1, "x");
+    
+    type Scalar<T> = T;
+    type WrongAliasArgument = Scalar<(number, string)>;
+                                     ~~~~~~~~~~~~~~~~
+!!! error TS100047: A generic pack argument can only be supplied for a generic pack parameter.
+    
+    declare function scalar<T>(value: T): void;
+    scalar<(number, string)>(1);
+           ~~~~~~~~~~~~~~~~
+!!! error TS100047: A generic pack argument can only be supplied for a generic pack parameter.
+    
+    interface StillRejected<...A> {}
+                            ~~~~
+!!! error TS100045: A generic pack parameter is only allowed on a function or a type alias.
+    
+    type BarePackArgument<...A> = Handler<A>;
+                                          ~
+!!! error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+    

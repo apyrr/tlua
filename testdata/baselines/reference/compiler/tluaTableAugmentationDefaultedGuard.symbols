@@ -1,0 +1,206 @@
+//// [tests/cases/compiler/tluaTableAugmentationDefaultedGuard.tlua] ////
+
+=== a.tlua ===
+G = G or {};
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+G.fromA = 1;
+>G.fromA : Symbol(fromA, Decl(a.tlua, 0, 12))
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromA : Symbol(fromA, Decl(a.tlua, 0, 12))
+
+local fromB: string = G.fromB;
+>fromB : Symbol(fromB, Decl(a.tlua, 2, 5))
+>G.fromB : Symbol(fromB, Decl(b.tlua, 0, 12))
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromB : Symbol(fromB, Decl(b.tlua, 0, 12))
+
+local M = {};
+>M : Symbol(M, Decl(a.tlua, 4, 5))
+
+M.sub = M.sub or {};
+>M.sub : Symbol(sub, Decl(a.tlua, 4, 13))
+>M : Symbol(M, Decl(a.tlua, 4, 5))
+>sub : Symbol(sub, Decl(a.tlua, 4, 13))
+>M.sub : Symbol(sub, Decl(a.tlua, 4, 13))
+>M : Symbol(M, Decl(a.tlua, 4, 5))
+>sub : Symbol(sub, Decl(a.tlua, 4, 13))
+
+M.sub.value = true;
+>M.sub.value : Symbol(value, Decl(a.tlua, 5, 20))
+>M.sub : Symbol(sub, Decl(a.tlua, 4, 13))
+>M : Symbol(M, Decl(a.tlua, 4, 5))
+>sub : Symbol(sub, Decl(a.tlua, 4, 13))
+>value : Symbol(value, Decl(a.tlua, 5, 20))
+
+local value: boolean = M.sub.value;
+>value : Symbol(value, Decl(a.tlua, 7, 5))
+>M.sub.value : Symbol(value, Decl(a.tlua, 5, 20))
+>M.sub : Symbol(sub, Decl(a.tlua, 4, 13))
+>M : Symbol(M, Decl(a.tlua, 4, 5))
+>sub : Symbol(sub, Decl(a.tlua, 4, 13))
+>value : Symbol(value, Decl(a.tlua, 5, 20))
+
+local A = {};
+>A : Symbol(A, Decl(a.tlua, 9, 5))
+
+A.k = A["k"] or {};
+>A.k : Symbol(k, Decl(a.tlua, 9, 13))
+>A : Symbol(A, Decl(a.tlua, 9, 5))
+>k : Symbol(k, Decl(a.tlua, 9, 13))
+>A : Symbol(A, Decl(a.tlua, 9, 5))
+>"k" : Symbol(k, Decl(a.tlua, 9, 13))
+
+A.k.value = 1;
+>A.k.value : Symbol(value, Decl(a.tlua, 10, 19))
+>A.k : Symbol(k, Decl(a.tlua, 9, 13))
+>A : Symbol(A, Decl(a.tlua, 9, 5))
+>k : Symbol(k, Decl(a.tlua, 9, 13))
+>value : Symbol(value, Decl(a.tlua, 10, 19))
+
+local mixedKey: number = A["k"].value;
+>mixedKey : Symbol(mixedKey, Decl(a.tlua, 12, 5))
+>A["k"].value : Symbol(value, Decl(a.tlua, 10, 19))
+>A : Symbol(A, Decl(a.tlua, 9, 5))
+>"k" : Symbol(k, Decl(a.tlua, 9, 13))
+>value : Symbol(value, Decl(a.tlua, 10, 19))
+
+Mixed = Mixed or {};
+>Mixed : Symbol(Mixed, Decl(a.tlua, 12, 38), Decl(b.tlua, 9, 20))
+>Mixed : Symbol(Mixed, Decl(a.tlua, 12, 38), Decl(b.tlua, 9, 20))
+
+Mixed.extra = 1;
+>Mixed : Symbol(Mixed, Decl(a.tlua, 12, 38), Decl(b.tlua, 9, 20))
+
+// An implicit global as the base of a nested member guard: the base read
+// `GNested` inside `GNested.sub` must resolve like any other global, not
+// trip used-before-assigned.
+GNested = {};
+>GNested : Symbol(GNested, Decl(a.tlua, 15, 16))
+
+GNested.sub = GNested.sub or {};
+>GNested.sub : Symbol(sub, Decl(a.tlua, 20, 13))
+>GNested : Symbol(GNested, Decl(a.tlua, 15, 16))
+>sub : Symbol(sub, Decl(a.tlua, 20, 13))
+>GNested.sub : Symbol(sub, Decl(a.tlua, 20, 13))
+>GNested : Symbol(GNested, Decl(a.tlua, 15, 16))
+>sub : Symbol(sub, Decl(a.tlua, 20, 13))
+
+GNested.sub.deep = 1;
+>GNested.sub.deep : Symbol(deep, Decl(a.tlua, 21, 32))
+>GNested.sub : Symbol(sub, Decl(a.tlua, 20, 13))
+>GNested : Symbol(GNested, Decl(a.tlua, 15, 16))
+>sub : Symbol(sub, Decl(a.tlua, 20, 13))
+>deep : Symbol(deep, Decl(a.tlua, 21, 32))
+
+local deep: number = GNested.sub.deep;
+>deep : Symbol(deep, Decl(a.tlua, 23, 5))
+>GNested.sub.deep : Symbol(deep, Decl(a.tlua, 21, 32))
+>GNested.sub : Symbol(sub, Decl(a.tlua, 20, 13))
+>GNested : Symbol(GNested, Decl(a.tlua, 15, 16))
+>sub : Symbol(sub, Decl(a.tlua, 20, 13))
+>deep : Symbol(deep, Decl(a.tlua, 21, 32))
+
+=== b.tlua ===
+G = G ?? {};
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+G.fromB = "b";
+>G.fromB : Symbol(fromB, Decl(b.tlua, 0, 12))
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromB : Symbol(fromB, Decl(b.tlua, 0, 12))
+
+local fromA: number = G.fromA;
+>fromA : Symbol(fromA, Decl(b.tlua, 2, 5))
+>G.fromA : Symbol(fromA, Decl(a.tlua, 0, 12))
+>G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromA : Symbol(fromA, Decl(a.tlua, 0, 12))
+
+local function make(): { fixed: number }
+>make : Symbol(make, Decl(b.tlua, 2, 30))
+>fixed : Symbol(fixed, Decl(b.tlua, 4, 24))
+
+  return { fixed = 1 };
+>fixed : Symbol(fixed, Decl(b.tlua, 5, 10))
+
+end
+
+Closed = Closed or make();
+>Closed : Symbol(Closed, Decl(b.tlua, 6, 3))
+>Closed : Symbol(Closed, Decl(b.tlua, 6, 3))
+>make : Symbol(make, Decl(b.tlua, 2, 30))
+
+Closed.extra = true;
+>Closed : Symbol(Closed, Decl(b.tlua, 6, 3))
+
+Mixed = make();
+>Mixed : Symbol(Mixed, Decl(a.tlua, 12, 38), Decl(b.tlua, 9, 20))
+>make : Symbol(make, Decl(b.tlua, 2, 30))
+
+// Parentheses make this an ordinary self-referential assignment rather than
+// the exact defaulted-guard idiom.
+Paren = (Paren) or {};
+>Paren : Symbol(Paren, Decl(b.tlua, 11, 15))
+>Paren : Symbol(Paren, Decl(b.tlua, 11, 15))
+
+local Numeric = {};
+>Numeric : Symbol(Numeric, Decl(b.tlua, 17, 5))
+
+Numeric[1] = Numeric["1"] or {};
+>Numeric : Symbol(Numeric, Decl(b.tlua, 17, 5))
+>1 : Symbol(1, Decl(b.tlua, 17, 19))
+>Numeric : Symbol(Numeric, Decl(b.tlua, 17, 5))
+
+local Other = {};
+>Other : Symbol(Other, Decl(b.tlua, 20, 5))
+
+Chain = Chain or Other or {};
+>Chain : Symbol(Chain, Decl(b.tlua, 20, 17))
+>Chain : Symbol(Chain, Decl(b.tlua, 20, 17))
+>Other : Symbol(Other, Decl(b.tlua, 20, 5))
+
+Different = Other or {};
+>Different : Symbol(Different, Decl(b.tlua, 21, 29))
+>Other : Symbol(Other, Decl(b.tlua, 20, 5))
+
+Different.extra = true;
+>Different : Symbol(Different, Decl(b.tlua, 21, 29))
+
+local function keep(value: any): {}
+>keep : Symbol(keep, Decl(b.tlua, 24, 23))
+>value : Symbol(value, Decl(b.tlua, 26, 20))
+
+  return {};
+end
+ReadInside = ReadInside or keep(ReadInside);
+>ReadInside : Symbol(ReadInside, Decl(b.tlua, 28, 3))
+>ReadInside : Symbol(ReadInside, Decl(b.tlua, 28, 3))
+>keep : Symbol(keep, Decl(b.tlua, 24, 23))
+>ReadInside : Symbol(ReadInside, Decl(b.tlua, 28, 3))
+
+local LocalSelf = LocalSelf or {};
+>LocalSelf : Symbol(LocalSelf, Decl(b.tlua, 31, 5))
+
+local Declared: {};
+>Declared : Symbol(Declared, Decl(b.tlua, 33, 5))
+
+Declared = Declared or {};
+>Declared : Symbol(Declared, Decl(b.tlua, 33, 5))
+>Declared : Symbol(Declared, Decl(b.tlua, 33, 5))
+
+local Outer = { base = 1 };
+>Outer : Symbol(Outer, Decl(b.tlua, 36, 5))
+>base : Symbol(base, Decl(b.tlua, 36, 15))
+
+do
+  local Outer = Outer or {};
+>Outer : Symbol(Outer, Decl(b.tlua, 38, 7))
+>Outer : Symbol(Outer, Decl(b.tlua, 36, 5))
+
+  Outer.extra = true;
+>Outer : Symbol(Outer, Decl(b.tlua, 38, 7))
+
+end
+

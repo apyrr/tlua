@@ -1,0 +1,50 @@
+//// [tests/cases/compiler/tluaVarargNotPrefixExp.tlua] ////
+
+//// [tluaVarargNotPrefixExp.tlua]
+// In Lua `...` is not a prefixexp: it cannot be called, indexed, or
+// member-accessed. Each of these must be a parse error rather than quietly
+// reading as a call/index/property access on the pack -- the TS spread forms
+// `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+function f(...: number): void
+  local called = ...(1);
+  local indexed = ...[1];
+  local accessed = ....x;
+end
+
+// The same holds in a table constructor, where TS object spread used to live.
+function g(...: number): void
+  local t = { ...({} as number) };
+end
+
+// A bare `...` in each of those positions is still fine.
+function h(...: number): void
+  local ok = ...;
+  local t = { ... };
+  f(...);
+end
+
+
+//// [tluaVarargNotPrefixExp.lua]
+-- In Lua `...` is not a prefixexp: it cannot be called, indexed, or
+-- member-accessed. Each of these must be a parse error rather than quietly
+-- reading as a call/index/property access on the pack -- the TS spread forms
+-- `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+function f(...)
+    local called = ...;
+    (1);
+    local indexed = ...;
+    1;
+    ;
+    local accessed = ...;
+    x;
+end
+-- The same holds in a table constructor, where TS object spread used to live.
+function g(...)
+    local t = { ..., ({} as number) };
+end
+-- A bare `...` in each of those positions is still fine.
+function h(...)
+    local ok = ...;
+    local t = { ... };
+    f(...);
+end

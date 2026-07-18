@@ -1,0 +1,7 @@
+// === Document Symbols ===
+// === /navigationBarItemsClass5.tlua ===
+// class Foo {}
+// local <|[|{| name: Foo, kind: Variable |}Foo|] = 1|>;
+
+// === Details ===
+(Variable) Foo

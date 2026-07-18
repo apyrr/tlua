@@ -1,0 +1,105 @@
+//// [tests/cases/compiler/tluaNoThis.tlua] ////
+
+=== tluaNoThis.tlua ===
+// The TypeScript `this` feature is removed from tlua source: Lua methods take
+// an explicit `self` parameter. Each form below decomposes into stock
+// parser-recovery errors (no tlua-specific diagnostic), exactly like the
+// class/array removals. Ordinary `x is T` predicates are unaffected.
+
+declare function use(x: unknown): void;
+>use : (x: unknown) => void
+>x : unknown
+
+// `this` is not an expression; a colon method's receiver is named `self`.
+local x = this;
+>x : any
+> : any
+
+// ...nor the base of a property access.
+local y = this.foo;
+>y : any
+> : any
+>foo : any
+
+// `this` parameters are gone; write an ordinary parameter instead.
+function f(this: number, a: string) {}
+>f : (number: any, a: string) => void
+>number : any
+>a : string
+
+// The polymorphic `this` type is gone.
+interface Poly {
+  m(): this;
+>m : () => this
+}
+
+// `this` in any other type position.
+type T = this;
+>T : this
+
+// `this is T` predicates are gone (ordinary `x is T` still works).
+interface Animal {
+  isDog(): this is Dog;
+>isDog : () => this
+>is : any
+>Dog : any
+}
+interface Dog extends Animal {
+  bark(): void;
+>bark : () => void
+}
+
+// `asserts this is T` is gone too.
+declare function assertDog(): asserts this is Dog;
+>assertDog : () => asserts
+>is : any
+>Dog : any
+
+// The `ThisType<T>` marker, `ThisParameterType`, and `OmitThisParameter` are
+// no longer part of the lib.
+type TT = ThisType<number>;
+>TT : ThisType<number>
+
+type TPT = ThisParameterType<() => void>;
+>TPT : ThisParameterType<() => void>
+
+type OTP = OmitThisParameter<() => void>;
+>OTP : OmitThisParameter<() => void>
+
+// `this` is not a value even in type queries: it resolves like any other
+// unresolvable name instead of typing as the receiver or global environment.
+type TQ = typeof this;
+>TQ : any
+>this : any
+
+type TQP = typeof this.foo;
+>TQP : any
+>this.foo : any
+>this : any
+>foo : any
+
+function q(self: number) {
+>q : (self: number) => void
+>self : number
+
+  local a: typeof this = self;
+>a : any
+>this : any
+>self : number
+
+  use(a);
+>use(a) : void
+>use : (x: unknown) => void
+>a : any
+}
+
+use(x);
+>use(x) : void
+>use : (x: unknown) => void
+>x : any
+
+use(y);
+>use(y) : void
+>use : (x: unknown) => void
+>y : any
+

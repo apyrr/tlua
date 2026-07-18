@@ -1,0 +1,39 @@
+// === documentHighlights ===
+// === /getOccurrencesIfElse4.tlua ===
+// --- (line: 5) skipped ---
+//     if (true) {
+//     }
+//     else {
+//         /*HIGHLIGHTS*/[|if|] (false)
+//             if (true)
+//                 local x = undefined;
+//     }
+// --- (line: 13) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesIfElse4.tlua ===
+// --- (line: 6) skipped ---
+//     }
+//     else {
+//         if (false)
+//             /*HIGHLIGHTS*/[|if|] (true)
+//                 local x = undefined;
+//     }
+// }
+// --- (line: 14) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesIfElse4.tlua ===
+// --- (line: 6) skipped ---
+//     }
+//     else {
+//         if (false)
+//             [|i/*HIGHLIGHTS*/f|] (true)
+//                 local x = undefined;
+//     }
+// }
+// --- (line: 14) skipped ---

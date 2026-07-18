@@ -1,0 +1,93 @@
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// /*FIND ALL REFS*/label:  while (true) {
+//             if (false) break label;
+//             function blah() {
+// label:          while (true) {
+// --- (line: 5) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// label:  while (true) {
+//             if (false) /*FIND ALL REFS*/break label;
+//             function blah() {
+// label:          while (true) {
+//                     if (false) break label;
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// label:  while (true) {
+//             if (false) break /*FIND ALL REFS*/label;
+//             function blah() {
+// label:          while (true) {
+//                     if (false) break label;
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// label:  while (true) {
+//             if (false) break label;
+//             function blah() {
+// /*FIND ALL REFS*/label:          while (true) {
+//                     if (false) break label;
+//                 }
+//             }
+//             if (false) break label;
+//         }
+
+
+
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// label:  while (true) {
+//             if (false) break label;
+//             function blah() {
+// label:          while (true) {
+//                     if (false) /*FIND ALL REFS*/break label;
+//                 }
+//             }
+//             if (false) break label;
+//         }
+
+
+
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// label:  while (true) {
+//             if (false) break label;
+//             function blah() {
+// label:          while (true) {
+//                     if (false) break /*FIND ALL REFS*/label;
+//                 }
+//             }
+//             if (false) break label;
+//         }
+
+
+
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// --- (line: 4) skipped ---
+//                     if (false) break label;
+//                 }
+//             }
+//             if (false) /*FIND ALL REFS*/break label;
+//         }
+
+
+
+// === findAllReferences ===
+// === /referencesForLabel5.tlua ===
+// --- (line: 4) skipped ---
+//                     if (false) break label;
+//                 }
+//             }
+//             if (false) break /*FIND ALL REFS*/label;
+//         }

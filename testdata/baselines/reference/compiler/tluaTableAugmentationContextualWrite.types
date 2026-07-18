@@ -1,0 +1,53 @@
+//// [tests/cases/compiler/tluaTableAugmentationContextualWrite.tlua] ////
+
+=== tluaTableAugmentationContextualWrite.tlua ===
+// The binder stamps a candidate symbol on every member assignment, not just
+// genuine augmentations. An ordinary checked write to an already
+// constructor-declared member must still contextually type its RHS from the
+// member's existing type — only real augmentations suppress that.
+
+// Base is an identifier (`t`): exercises the KindIdentifier branch.
+local t = { cb = function(x: number): number return x; end };
+>t : { cb: (x: number) => number; }
+>{ cb = function(x: number): number return x; end } : { cb: (x: number) => number; }
+>cb : (x: number) => number
+>function(x: number): number return x; end : (x: number) => number
+>x : number
+>x : number
+
+t.cb = function(x) return x + 1; end;
+>t.cb = function(x) return x + 1; end : (x: number) => number
+>t.cb : (x: number) => number
+>t : { cb: (x: number) => number; }
+>cb : (x: number) => number
+>function(x) return x + 1; end : (x: number) => number
+>x : number
+>x + 1 : number
+>x : number
+>1 : 1
+
+// Base is a property access (`nested.inner`): exercises the
+// KindPropertyAccessExpression branch.
+local nested = { inner = { cb = function(y: number): number return y; end } };
+>nested : { inner: { cb: (y: number) => number; }; }
+>{ inner = { cb = function(y: number): number return y; end } } : { inner: { cb: (y: number) => number; }; }
+>inner : { cb: (y: number) => number; }
+>{ cb = function(y: number): number return y; end } : { cb: (y: number) => number; }
+>cb : (y: number) => number
+>function(y: number): number return y; end : (y: number) => number
+>y : number
+>y : number
+
+nested.inner.cb = function(y) return y + 1; end;
+>nested.inner.cb = function(y) return y + 1; end : (y: number) => number
+>nested.inner.cb : (y: number) => number
+>nested.inner : { cb: (y: number) => number; }
+>nested : { inner: { cb: (y: number) => number; }; }
+>inner : { cb: (y: number) => number; }
+>cb : (y: number) => number
+>function(y) return y + 1; end : (y: number) => number
+>y : number
+>y + 1 : number
+>y : number
+>1 : 1
+

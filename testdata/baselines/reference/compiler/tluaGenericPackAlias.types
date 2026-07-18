@@ -1,0 +1,116 @@
+//// [tests/cases/compiler/tluaGenericPackAlias.tlua] ////
+
+=== tluaGenericPackAlias.tlua ===
+type Handler<...A> = (...: A) => void;
+>Handler : Handler<A>
+> : A
+
+type PairHandler = Handler<(number, string)>;
+>PairHandler : PairHandler
+
+type EmptyHandler = Handler<()>;
+>EmptyHandler : EmptyHandler
+
+type OneHandler = Handler<number>;
+>OneHandler : OneHandler
+
+type StringHandlers = Handler<(...string)>;
+>StringHandlers : StringHandlers
+
+type ForwardedHandler<...A> = Handler<(...A)>;
+>ForwardedHandler : ForwardedHandler<A>
+
+local pair: Handler<(number, string)> = function(a, b): void
+>pair : Handler<(number, string)>
+>function(a, b): void    local n: number = a;    local s: string = b;end : (a: number, b: string) => void
+>a : number
+>b : string
+
+    local n: number = a;
+>n : number
+>a : number
+
+    local s: string = b;
+>s : string
+>b : string
+
+end;
+pair(1, "x");
+>pair(1, "x") : void
+>pair : Handler<(number, string)>
+>1 : 1
+>"x" : "x"
+
+local empty: Handler<()> = function(): void end;
+>empty : Handler<void>
+>function(): void end : () => void
+
+empty();
+>empty() : void
+>empty : Handler<void>
+
+local one: Handler<number> = function(value): void
+>one : Handler<(number)>
+>function(value): void    local n: number = value;end : (value: number) => void
+>value : number
+
+    local n: number = value;
+>n : number
+>value : number
+
+end;
+one(1);
+>one(1) : void
+>one : Handler<(number)>
+>1 : 1
+
+local strings: Handler<(...string)> = function(...: string): void end;
+>strings : Handler<(...string)>
+>function(...: string): void end : (...: string) => void
+> : string[]
+
+strings("a", "b");
+>strings("a", "b") : void
+>strings : Handler<(...string)>
+>"a" : "a"
+>"b" : "b"
+
+local forward = function<...A>(handler: Handler<(...A)>, ...: A): void
+>forward : <...A>(handler: Handler<(...A)>, ...: A) => void
+>function<...A>(handler: Handler<(...A)>, ...: A): void    handler(...);end : <...A>(handler: Handler<(...A)>, ...: A) => void
+>handler : Handler<(...A)>
+> : A
+
+    handler(...);
+>handler(...) : void
+>handler : Handler<(...A)>
+>... : A[number] | nil
+
+end;
+forward(pair, 1, "x");
+>forward(pair, 1, "x") : void
+>forward : <...A>(handler: Handler<(...A)>, ...: A) => void
+>pair : Handler<(number, string)>
+>1 : 1
+>"x" : "x"
+
+type Scalar<T> = T;
+>Scalar : T
+
+type WrongAliasArgument = Scalar<(number, string)>;
+>WrongAliasArgument : number, string
+
+declare function scalar<T>(value: T): void;
+>scalar : <T>(value: T) => void
+>value : T
+
+scalar<(number, string)>(1);
+>scalar<(number, string)>(1) : void
+>scalar : <T>(value: T) => void
+>1 : 1
+
+interface StillRejected<...A> {}
+
+type BarePackArgument<...A> = Handler<A>;
+>BarePackArgument : BarePackArgument<A>
+

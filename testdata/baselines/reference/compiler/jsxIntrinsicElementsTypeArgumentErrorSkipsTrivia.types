@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx] ////
+
+=== jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx ===
+interface JsxElement {}
+interface JsxIntrinsicElements { div: { children?: any }; }
+>div : { children?: any; }
+>children : any
+
+declare React: { createElement: any };
+>React : { createElement: any; }
+>createElement : any
+
+local a = <div<   number> />;
+>a : JsxElement
+><div<   number> /> : JsxElement
+>div : any
+
+local b = <div<
+>b : JsxElement
+><div<    number> /> : JsxElement
+>div : any
+
+    number> />;
+

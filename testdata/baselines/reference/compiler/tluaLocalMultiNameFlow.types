@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/tluaLocalMultiNameFlow.tlua] ////
+
+=== tluaLocalMultiNameFlow.tlua ===
+function maybePair(): (number, string?)
+>maybePair : () => (number, string?)
+
+  return 1;
+>1 : 1
+
+end
+
+// Every name in a list with a value list counts as initialized.
+local a, b = maybePair();
+>a : number
+>b : string | nil
+>maybePair() : number
+>maybePair : () => (number, string?)
+
+function useBoth(): number
+>useBoth : () => number
+
+  if (b != nil) {
+>b != nil : boolean
+>b : string | nil
+
+    return a + b.length;
+>a + b.length : number
+>a : number
+>b.length : number
+>b : string
+>length : number
+  }
+  return a;
+>a : number
+
+end
+
+// Without a value list, use-before-assignment still applies per name.
+local c, d;
+>c : any
+>d : any
+
+function useUnassigned(): number
+>useUnassigned : () => number
+
+  return c;
+>c : nil
+
+end
+
+// Narrowing works on positional values.
+local e, f = maybePair();
+>e : number
+>f : string | nil
+>maybePair() : number
+>maybePair : () => (number, string?)
+
+function narrowed(): string {
+>narrowed : () => string
+
+  if (f == nil) {
+>f == nil : boolean
+>f : string | nil
+
+    return "";
+>"" : ""
+  }
+  return f;
+>f : string
+}
+

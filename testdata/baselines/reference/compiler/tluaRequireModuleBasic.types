@@ -1,0 +1,72 @@
+//// [tests/cases/compiler/tluaRequireModuleBasic.tlua] ////
+
+=== main.tlua ===
+// A chunk's top-level return is its module value; require reports it.
+local util = require("util");
+>util : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>require("util") : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"util" : "util"
+
+local n = util.clamp(5, 1, 3);
+>n : number
+>util.clamp(5, 1, 3) : number
+>util.clamp : (n: number, lo: number, hi: number) => number
+>util : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>clamp : (n: number, lo: number, hi: number) => number
+>5 : 5
+>1 : 1
+>3 : 3
+
+local s: string = util.name;
+>s : string
+>util.name : string
+>util : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>name : string
+
+// The extension is implicit, as in Lua's module names.
+local missing = util.nope;
+>missing : any
+>util.nope : any
+>util : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>nope : any
+
+=== util.tlua ===
+local M = {};
+>M : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>{} : { clamp(n: number, lo: number, hi: number): number; name: string; }
+
+function M.clamp(n: number, lo: number, hi: number): number
+>M : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>clamp : (n: number, lo: number, hi: number) => number
+>n : number
+>lo : number
+>hi : number
+
+  if n < lo then return lo end
+>n < lo : boolean
+>n : number
+>lo : number
+>lo : number
+
+  if n > hi then return hi end
+>n > hi : boolean
+>n : number
+>hi : number
+>hi : number
+
+  return n;
+>n : number
+
+end
+
+M.name = "util";
+>M.name = "util" : "util"
+>M.name : string
+>M : { clamp(n: number, lo: number, hi: number): number; name: string; }
+>name : string
+>"util" : "util"
+
+return M;
+>M : { clamp(n: number, lo: number, hi: number): number; name: string; }
+

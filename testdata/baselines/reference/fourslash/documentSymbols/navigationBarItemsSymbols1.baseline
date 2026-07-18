@@ -1,0 +1,10 @@
+// === Document Symbols ===
+// === /navigationBarItemsSymbols1.tlua ===
+// class C {
+//     [Symbol.isRegExp] = 0;
+//     [Symbol.iterator]<|[|{| name: <function>, kind: Function |}|]() { }|>
+//     get [Symbol.isConcatSpreadable]() { }
+// }
+
+// === Details ===
+(Function) <function>

@@ -1,0 +1,33 @@
+// === goToDefinition ===
+// === /goToDefinitionBuiltInTypes.tlua ===
+// local n: /*GOTO DEF*/number;
+// local s: string;
+// local b: boolean;
+// local v: void;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionBuiltInTypes.tlua ===
+// local n: number;
+// local s: /*GOTO DEF*/string;
+// local b: boolean;
+// local v: void;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionBuiltInTypes.tlua ===
+// local n: number;
+// local s: string;
+// local b: /*GOTO DEF*/boolean;
+// local v: void;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionBuiltInTypes.tlua ===
+// local n: number;
+// local s: string;
+// local b: boolean;
+// local v: /*GOTO DEF*/void;

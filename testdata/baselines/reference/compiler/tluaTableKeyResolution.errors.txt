@@ -1,0 +1,33 @@
+tluaTableKeyResolution.tlua(7,7): error TS6133: 'unused' is declared but its value is never read.
+tluaTableKeyResolution.tlua(12,23): error TS1117: An object literal cannot have multiple properties with the same name.
+tluaTableKeyResolution.tlua(13,23): error TS1117: An object literal cannot have multiple properties with the same name.
+tluaTableKeyResolution.tlua(14,27): error TS1117: An object literal cannot have multiple properties with the same name.
+
+
+==== tluaTableKeyResolution.tlua (4 errors) ====
+    // The name in `x = 1` is a property key, not a value reference: no `x`
+    // needs to be in scope.
+    local a = { x = 1 };
+    local ax = a.x;
+    
+    // A key spelling a local's name is not a *use* of that local.
+    local unused = 1;
+          ~~~~~~
+!!! error TS6133: 'unused' is declared but its value is never read.
+    local u = { unused = 2 };
+    local uu = u.unused;
+    
+    // Duplicate keys error across spellings (identifier vs bracket string).
+    local d1 = { dup = 1, dup = 2 };
+                          ~~~
+!!! error TS1117: An object literal cannot have multiple properties with the same name.
+    local d2 = { dup = 1, ["dup"] = 2 };
+                          ~~~~~~~
+!!! error TS1117: An object literal cannot have multiple properties with the same name.
+    local d3 = { ["dup"] = 1, dup = 2 };
+                              ~~~
+!!! error TS1117: An object literal cannot have multiple properties with the same name.
+    local ds = {d1, d2, d3};
+    
+    return { ax = ax, uu = uu, ds = ds };
+    

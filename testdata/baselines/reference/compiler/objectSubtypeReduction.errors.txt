@@ -1,0 +1,46 @@
+objectSubtypeReduction.tlua(4,12): error TS2693: 'Object' only refers to a type, but is being used as a value here.
+objectSubtypeReduction.tlua(5,16): error TS1109: Expression expected.
+objectSubtypeReduction.tlua(5,17): error TS2304: Cannot find name 'k1'.
+objectSubtypeReduction.tlua(5,17): error TS2695: Left side of comma operator is unused and has no side effects.
+objectSubtypeReduction.tlua(5,21): error TS2304: Cannot find name 'v1'.
+objectSubtypeReduction.tlua(5,26): error TS1109: Expression expected.
+objectSubtypeReduction.tlua(5,27): error TS2304: Cannot find name 'k2'.
+objectSubtypeReduction.tlua(5,27): error TS2695: Left side of comma operator is unused and has no side effects.
+objectSubtypeReduction.tlua(5,31): error TS2304: Cannot find name 'v2'.
+objectSubtypeReduction.tlua(5,36): error TS1005: ',' expected.
+objectSubtypeReduction.tlua(5,39): error TS2304: Cannot find name 'v1'.
+objectSubtypeReduction.tlua(5,61): error TS2304: Cannot find name 'v2'.
+
+
+==== objectSubtypeReduction.tlua (12 errors) ====
+    // https://github.com/microsoft/typescript-go/issues/1164
+    
+    function foo(x?: object) {
+        return Object.entries(x || {})
+               ~~~~~~
+!!! error TS2693: 'Object' only refers to a type, but is being used as a value here.
+            .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name));
+                   ~
+!!! error TS1109: Expression expected.
+                    ~~
+!!! error TS2304: Cannot find name 'k1'.
+                    ~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                        ~~
+!!! error TS2304: Cannot find name 'v1'.
+                             ~
+!!! error TS1109: Expression expected.
+                              ~~
+!!! error TS2304: Cannot find name 'k2'.
+                              ~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                                  ~~
+!!! error TS2304: Cannot find name 'v2'.
+                                       ~~
+!!! error TS1005: ',' expected.
+                                          ~~
+!!! error TS2304: Cannot find name 'v1'.
+                                                                ~~
+!!! error TS2304: Cannot find name 'v2'.
+    }
+    

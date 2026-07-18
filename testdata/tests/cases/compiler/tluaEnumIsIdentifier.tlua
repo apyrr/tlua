@@ -1,0 +1,6 @@
+// @strict: true
+
+local enum = 1
+enum = enum + 1
+
+local value: number = enum

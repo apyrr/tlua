@@ -1,0 +1,51 @@
+// === findAllReferences ===
+// === /referencesForInheritedProperties.tlua ===
+// interface interface1 {
+//     /*FIND ALL REFS*/[|doStuff|](): void;
+// }
+// 
+// interface interface2  extends interface1{
+//     [|doStuff|](): void;
+// }
+// 
+// class class1 implements interface2 {
+// --- (line: 10) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties.tlua ===
+// interface interface1 {
+//     [|doStuff|](): void;
+// }
+// 
+// interface interface2  extends interface1{
+//     /*FIND ALL REFS*/[|doStuff|](): void;
+// }
+// 
+// class class1 implements interface2 {
+// --- (line: 10) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties.tlua ===
+// --- (line: 6) skipped ---
+// }
+// 
+// class class1 implements interface2 {
+//     /*FIND ALL REFS*/doStuff() {
+// 
+//     }
+// }
+// --- (line: 14) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties.tlua ===
+// --- (line: 16) skipped ---
+// }
+// 
+// local v: class2;
+// v./*FIND ALL REFS*/doStuff();

@@ -1,0 +1,106 @@
+a.tlua(16,7): error TS2339: Property 'extra' does not exist on type '{}'.
+b.tlua(10,8): error TS2339: Property 'extra' does not exist on type '{ fixed: number; }'.
+b.tlua(16,1): error TS7022: 'Paren' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+b.tlua(19,1): error TS7022: '1' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+b.tlua(19,14): error TS7053: Element implicitly has an 'any' type because expression of type '"1"' can't be used to index type '{ 1: any; }'.
+  Property '1' does not exist on type '{ 1: any; }'.
+b.tlua(22,1): error TS7022: 'Chain' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+b.tlua(25,11): error TS2339: Property 'extra' does not exist on type '{}'.
+b.tlua(30,1): error TS7022: 'ReadInside' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+b.tlua(32,19): error TS2304: Cannot find name 'LocalSelf'.
+b.tlua(35,12): error TS2454: Variable 'Declared' is used before being assigned.
+b.tlua(40,9): error TS2339: Property 'extra' does not exist on type '{ base: number; }'.
+
+
+==== a.tlua (1 errors) ====
+    G = G or {};
+    G.fromA = 1;
+    local fromB: string = G.fromB;
+    
+    local M = {};
+    M.sub = M.sub or {};
+    M.sub.value = true;
+    local value: boolean = M.sub.value;
+    
+    local A = {};
+    A.k = A["k"] or {};
+    A.k.value = 1;
+    local mixedKey: number = A["k"].value;
+    
+    Mixed = Mixed or {};
+    Mixed.extra = 1;
+          ~~~~~
+!!! error TS2339: Property 'extra' does not exist on type '{}'.
+    
+    // An implicit global as the base of a nested member guard: the base read
+    // `GNested` inside `GNested.sub` must resolve like any other global, not
+    // trip used-before-assigned.
+    GNested = {};
+    GNested.sub = GNested.sub or {};
+    GNested.sub.deep = 1;
+    local deep: number = GNested.sub.deep;
+    
+==== b.tlua (10 errors) ====
+    G = G ?? {};
+    G.fromB = "b";
+    local fromA: number = G.fromA;
+    
+    local function make(): { fixed: number }
+      return { fixed = 1 };
+    end
+    
+    Closed = Closed or make();
+    Closed.extra = true;
+           ~~~~~
+!!! error TS2339: Property 'extra' does not exist on type '{ fixed: number; }'.
+    
+    Mixed = make();
+    
+    // Parentheses make this an ordinary self-referential assignment rather than
+    // the exact defaulted-guard idiom.
+    Paren = (Paren) or {};
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7022: 'Paren' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    
+    local Numeric = {};
+    Numeric[1] = Numeric["1"] or {};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7022: '1' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                 ~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type '"1"' can't be used to index type '{ 1: any; }'.
+!!! error TS7053:   Property '1' does not exist on type '{ 1: any; }'.
+    
+    local Other = {};
+    Chain = Chain or Other or {};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7022: 'Chain' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    
+    Different = Other or {};
+    Different.extra = true;
+              ~~~~~
+!!! error TS2339: Property 'extra' does not exist on type '{}'.
+    
+    local function keep(value: any): {}
+      return {};
+    end
+    ReadInside = ReadInside or keep(ReadInside);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7022: 'ReadInside' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    
+    local LocalSelf = LocalSelf or {};
+                      ~~~~~~~~~
+!!! error TS2304: Cannot find name 'LocalSelf'.
+    
+    local Declared: {};
+    Declared = Declared or {};
+               ~~~~~~~~
+!!! error TS2454: Variable 'Declared' is used before being assigned.
+    
+    local Outer = { base = 1 };
+    do
+      local Outer = Outer or {};
+      Outer.extra = true;
+            ~~~~~
+!!! error TS2339: Property 'extra' does not exist on type '{ base: number; }'.
+    end
+    

@@ -1,0 +1,141 @@
+//// [tests/cases/compiler/tluaMetatableClassIdiom.tlua] ////
+
+=== tluaMetatableClassIdiom.tlua ===
+// The Lua class idiom: a method table behind __index, and a constructor that pairs a fresh
+// table with it. The constructor's result satisfies the interface only because of the
+// fallback -- the table it builds has a balance and nothing else.
+
+interface Account {
+>Account : Symbol(Account, Decl(tluaMetatableClassIdiom.tlua, 0, 0))
+
+  balance: number;
+>balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+
+  deposit: (self: Account, amount: number) => void;
+>deposit : Symbol(Account.deposit, Decl(tluaMetatableClassIdiom.tlua, 5, 18))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 6, 12))
+>Account : Symbol(Account, Decl(tluaMetatableClassIdiom.tlua, 0, 0))
+>amount : Symbol(amount, Decl(tluaMetatableClassIdiom.tlua, 6, 26))
+
+  withdraw: (self: Account, amount: number) => boolean;
+>withdraw : Symbol(Account.withdraw, Decl(tluaMetatableClassIdiom.tlua, 6, 51))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 7, 13))
+>Account : Symbol(Account, Decl(tluaMetatableClassIdiom.tlua, 0, 0))
+>amount : Symbol(amount, Decl(tluaMetatableClassIdiom.tlua, 7, 27))
+}
+
+local AccountClass = {
+>AccountClass : Symbol(AccountClass, Decl(tluaMetatableClassIdiom.tlua, 10, 5))
+
+  deposit = function(self: Account, amount: number) self.balance = self.balance + amount; end,
+>deposit : Symbol(deposit, Decl(tluaMetatableClassIdiom.tlua, 10, 22))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 11, 21))
+>Account : Symbol(Account, Decl(tluaMetatableClassIdiom.tlua, 0, 0))
+>amount : Symbol(amount, Decl(tluaMetatableClassIdiom.tlua, 11, 35))
+>self.balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 11, 21))
+>balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>self.balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 11, 21))
+>balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>amount : Symbol(amount, Decl(tluaMetatableClassIdiom.tlua, 11, 35))
+
+  withdraw = function(self: Account, amount: number): boolean
+>withdraw : Symbol(withdraw, Decl(tluaMetatableClassIdiom.tlua, 11, 94))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 12, 22))
+>Account : Symbol(Account, Decl(tluaMetatableClassIdiom.tlua, 0, 0))
+>amount : Symbol(amount, Decl(tluaMetatableClassIdiom.tlua, 12, 36))
+
+    if self.balance < amount then
+>self.balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 12, 22))
+>balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>amount : Symbol(amount, Decl(tluaMetatableClassIdiom.tlua, 12, 36))
+
+      return false;
+    end
+    self.balance = self.balance - amount;
+>self.balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 12, 22))
+>balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>self.balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaMetatableClassIdiom.tlua, 12, 22))
+>balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>amount : Symbol(amount, Decl(tluaMetatableClassIdiom.tlua, 12, 36))
+
+    return true;
+  end,
+};
+
+local AccountMeta = { __index = AccountClass };
+>AccountMeta : Symbol(AccountMeta, Decl(tluaMetatableClassIdiom.tlua, 21, 5))
+>__index : Symbol(__index, Decl(tluaMetatableClassIdiom.tlua, 21, 21))
+>AccountClass : Symbol(AccountClass, Decl(tluaMetatableClassIdiom.tlua, 10, 5))
+
+function newAccount(balance: number): Account
+>newAccount : Symbol(newAccount, Decl(tluaMetatableClassIdiom.tlua, 21, 47))
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 23, 20))
+>Account : Symbol(Account, Decl(tluaMetatableClassIdiom.tlua, 0, 0))
+
+  return setmetatable({ balance = balance }, AccountMeta);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 24, 23))
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 23, 20))
+>AccountMeta : Symbol(AccountMeta, Decl(tluaMetatableClassIdiom.tlua, 21, 5))
+
+end
+
+local account = newAccount(100);
+>account : Symbol(account, Decl(tluaMetatableClassIdiom.tlua, 27, 5))
+>newAccount : Symbol(newAccount, Decl(tluaMetatableClassIdiom.tlua, 21, 47))
+
+account.deposit(account, 50);
+>account.deposit : Symbol(Account.deposit, Decl(tluaMetatableClassIdiom.tlua, 5, 18))
+>account : Symbol(account, Decl(tluaMetatableClassIdiom.tlua, 27, 5))
+>deposit : Symbol(Account.deposit, Decl(tluaMetatableClassIdiom.tlua, 5, 18))
+>account : Symbol(account, Decl(tluaMetatableClassIdiom.tlua, 27, 5))
+
+local ok: boolean = account.withdraw(account, 20);
+>ok : Symbol(ok, Decl(tluaMetatableClassIdiom.tlua, 29, 5))
+>account.withdraw : Symbol(Account.withdraw, Decl(tluaMetatableClassIdiom.tlua, 6, 51))
+>account : Symbol(account, Decl(tluaMetatableClassIdiom.tlua, 27, 5))
+>withdraw : Symbol(Account.withdraw, Decl(tluaMetatableClassIdiom.tlua, 6, 51))
+>account : Symbol(account, Decl(tluaMetatableClassIdiom.tlua, 27, 5))
+
+local balance: number = account.balance;
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 30, 5))
+>account.balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+>account : Symbol(account, Decl(tluaMetatableClassIdiom.tlua, 27, 5))
+>balance : Symbol(Account.balance, Decl(tluaMetatableClassIdiom.tlua, 4, 19))
+
+// Without the pairing, the same table does not.
+function missingMethods(balance: number): Account
+>missingMethods : Symbol(missingMethods, Decl(tluaMetatableClassIdiom.tlua, 30, 40))
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 33, 24))
+>Account : Symbol(Account, Decl(tluaMetatableClassIdiom.tlua, 0, 0))
+
+  return { balance = balance };
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 34, 10))
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 33, 24))
+
+end
+
+// A table paired with the method table is still a table: pairs iterates it.
+local paired = setmetatable({ balance = 1 }, AccountMeta);
+>paired : Symbol(paired, Decl(tluaMetatableClassIdiom.tlua, 38, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>balance : Symbol(balance, Decl(tluaMetatableClassIdiom.tlua, 38, 29))
+>AccountMeta : Symbol(AccountMeta, Decl(tluaMetatableClassIdiom.tlua, 21, 5))
+
+for k, v in pairs(paired) do
+>k : Symbol(k, Decl(tluaMetatableClassIdiom.tlua, 39, 3))
+>v : Symbol(v, Decl(tluaMetatableClassIdiom.tlua, 39, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>paired : Symbol(paired, Decl(tluaMetatableClassIdiom.tlua, 38, 5))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaMetatableClassIdiom.tlua, 40, 7))
+>k : Symbol(k, Decl(tluaMetatableClassIdiom.tlua, 39, 3))
+
+end
+

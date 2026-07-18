@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/loneSurrogateStringLiteralTypes.tlua] ////
+
+=== loneSurrogateStringLiteralTypes.tlua ===
+local x: "\uD800" = "\uDC00";
+>x : Symbol(x, Decl(loneSurrogateStringLiteralTypes.tlua, 0, 5))
+

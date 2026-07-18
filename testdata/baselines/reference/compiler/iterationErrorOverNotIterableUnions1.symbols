@@ -1,0 +1,51 @@
+//// [tests/cases/compiler/iterationErrorOverNotIterableUnions1.tlua] ////
+
+=== iterationErrorOverNotIterableUnions1.tlua ===
+type A = { a: string };
+>A : Symbol(A, Decl(iterationErrorOverNotIterableUnions1.tlua, 0, 0))
+>a : Symbol(a, Decl(iterationErrorOverNotIterableUnions1.tlua, 0, 10))
+
+type B = { b: string };
+>B : Symbol(B, Decl(iterationErrorOverNotIterableUnions1.tlua, 0, 23))
+>b : Symbol(b, Decl(iterationErrorOverNotIterableUnions1.tlua, 1, 10))
+
+declare data: A[] | B;
+>data : Symbol(data, Decl(iterationErrorOverNotIterableUnions1.tlua, 3, 7))
+>A : Symbol(A, Decl(iterationErrorOverNotIterableUnions1.tlua, 0, 0))
+>B : Symbol(B, Decl(iterationErrorOverNotIterableUnions1.tlua, 0, 23))
+
+for _, item in ipairs(data) do
+>_ : Symbol(_, Decl(iterationErrorOverNotIterableUnions1.tlua, 5, 3))
+>item : Symbol(item, Decl(iterationErrorOverNotIterableUnions1.tlua, 5, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>data : Symbol(data, Decl(iterationErrorOverNotIterableUnions1.tlua, 3, 7))
+
+    item.b;
+>item : Symbol(item, Decl(iterationErrorOverNotIterableUnions1.tlua, 5, 6))
+
+end
+
+for _, ignoredItem in ipairs(data) do
+>_ : Symbol(_, Decl(iterationErrorOverNotIterableUnions1.tlua, 9, 3))
+>ignoredItem : Symbol(ignoredItem, Decl(iterationErrorOverNotIterableUnions1.tlua, 9, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>data : Symbol(data, Decl(iterationErrorOverNotIterableUnions1.tlua, 3, 7))
+
+    ignoredItem.b;
+>ignoredItem : Symbol(ignoredItem, Decl(iterationErrorOverNotIterableUnions1.tlua, 9, 6))
+
+end
+
+local [el] = data;
+> : Symbol((Missing), Decl(iterationErrorOverNotIterableUnions1.tlua, 13, 5))
+>data : Symbol(data, Decl(iterationErrorOverNotIterableUnions1.tlua, 3, 7))
+
+el.b;
+
+local el2 = data[0];
+>el2 : Symbol(el2, Decl(iterationErrorOverNotIterableUnions1.tlua, 16, 5))
+>data : Symbol(data, Decl(iterationErrorOverNotIterableUnions1.tlua, 3, 7))
+
+el2.b;
+>el2 : Symbol(el2, Decl(iterationErrorOverNotIterableUnions1.tlua, 16, 5))
+

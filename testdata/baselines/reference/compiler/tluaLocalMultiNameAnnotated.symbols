@@ -1,0 +1,47 @@
+//// [tests/cases/compiler/tluaLocalMultiNameAnnotated.tlua] ////
+
+=== tluaLocalMultiNameAnnotated.tlua ===
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaLocalMultiNameAnnotated.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+// Annotations check their positional value.
+local a: number, b: string = pair();
+>a : Symbol(a, Decl(tluaLocalMultiNameAnnotated.tlua, 5, 5))
+>b : Symbol(b, Decl(tluaLocalMultiNameAnnotated.tlua, 5, 16))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameAnnotated.tlua, 0, 0))
+
+// Position 0 mismatch.
+local c: string, d = pair();
+>c : Symbol(c, Decl(tluaLocalMultiNameAnnotated.tlua, 8, 5))
+>d : Symbol(d, Decl(tluaLocalMultiNameAnnotated.tlua, 8, 16))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameAnnotated.tlua, 0, 0))
+
+// Position 1 mismatch.
+local e, f: boolean = pair();
+>e : Symbol(e, Decl(tluaLocalMultiNameAnnotated.tlua, 11, 5))
+>f : Symbol(f, Decl(tluaLocalMultiNameAnnotated.tlua, 11, 8))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameAnnotated.tlua, 0, 0))
+
+// A name past the values must accept nil.
+local g: number, h: string, i: boolean = pair();
+>g : Symbol(g, Decl(tluaLocalMultiNameAnnotated.tlua, 14, 5))
+>h : Symbol(h, Decl(tluaLocalMultiNameAnnotated.tlua, 14, 16))
+>i : Symbol(i, Decl(tluaLocalMultiNameAnnotated.tlua, 14, 27))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameAnnotated.tlua, 0, 0))
+
+// nil-accepting annotations are fine past the end.
+local j: number, k: string, l: boolean | nil = pair();
+>j : Symbol(j, Decl(tluaLocalMultiNameAnnotated.tlua, 17, 5))
+>k : Symbol(k, Decl(tluaLocalMultiNameAnnotated.tlua, 17, 16))
+>l : Symbol(l, Decl(tluaLocalMultiNameAnnotated.tlua, 17, 27))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameAnnotated.tlua, 0, 0))
+
+// Mixed annotated and inferred names.
+local m, n: string = pair();
+>m : Symbol(m, Decl(tluaLocalMultiNameAnnotated.tlua, 20, 5))
+>n : Symbol(n, Decl(tluaLocalMultiNameAnnotated.tlua, 20, 8))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameAnnotated.tlua, 0, 0))
+

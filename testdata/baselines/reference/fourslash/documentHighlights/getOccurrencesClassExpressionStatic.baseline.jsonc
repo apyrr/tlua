@@ -1,0 +1,48 @@
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStatic.tlua ===
+// local A = class Foo {
+//     public /*HIGHLIGHTS*/static foo;
+//     static a;
+//     constructor(public y: string, private x: string) {
+//     }
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStatic.tlua ===
+// local A = class Foo {
+//     public static foo;
+//     /*HIGHLIGHTS*/static a;
+//     constructor(public y: string, private x: string) {
+//     }
+//     public method() { }
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStatic.tlua ===
+// --- (line: 4) skipped ---
+//     }
+//     public method() { }
+//     private method2() {}
+//     public /*HIGHLIGHTS*/static static() { }
+//     private static static2() { }
+// }
+// 
+// --- (line: 12) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStatic.tlua ===
+// --- (line: 5) skipped ---
+//     public method() { }
+//     private method2() {}
+//     public static static() { }
+//     private /*HIGHLIGHTS*/static static2() { }
+// }
+// 
+// local B = class D {
+// --- (line: 13) skipped ---

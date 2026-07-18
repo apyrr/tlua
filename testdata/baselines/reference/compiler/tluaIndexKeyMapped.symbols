@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/tluaIndexKeyMapped.tlua] ////
+
+=== tluaIndexKeyMapped.tlua ===
+// A mapped type carries a Lua-only key over as an index of its own -- it cannot become
+// a property, and dropping it would make every Copy/Partial-style utility silently
+// strip boolean/table/thread-keyed indexes.
+
+interface Flags { [key: boolean]: string }
+>Flags : Symbol(Flags, Decl(tluaIndexKeyMapped.tlua, 0, 0))
+>key : Symbol(key, Decl(tluaIndexKeyMapped.tlua, 4, 19))
+
+interface Point { n: number }
+>Point : Symbol(Point, Decl(tluaIndexKeyMapped.tlua, 4, 42))
+>n : Symbol(Point.n, Decl(tluaIndexKeyMapped.tlua, 5, 17))
+
+interface ByTable { [key: Point]: string }
+>ByTable : Symbol(ByTable, Decl(tluaIndexKeyMapped.tlua, 5, 29))
+>key : Symbol(key, Decl(tluaIndexKeyMapped.tlua, 6, 21))
+>Point : Symbol(Point, Decl(tluaIndexKeyMapped.tlua, 4, 42))
+
+type Copy<T> = { [P in keyof T]: T[P] };
+>Copy : Symbol(Copy, Decl(tluaIndexKeyMapped.tlua, 6, 42))
+>T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 8, 10))
+>P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 8, 18))
+>T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 8, 10))
+>T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 8, 10))
+>P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 8, 18))
+
+declare cf: Copy<Flags>;
+>cf : Symbol(cf, Decl(tluaIndexKeyMapped.tlua, 10, 7))
+>Copy : Symbol(Copy, Decl(tluaIndexKeyMapped.tlua, 6, 42))
+>Flags : Symbol(Flags, Decl(tluaIndexKeyMapped.tlua, 0, 0))
+
+local s1: string = cf[true];
+>s1 : Symbol(s1, Decl(tluaIndexKeyMapped.tlua, 11, 5))
+>cf : Symbol(cf, Decl(tluaIndexKeyMapped.tlua, 10, 7))
+
+declare cb: Copy<ByTable>;
+>cb : Symbol(cb, Decl(tluaIndexKeyMapped.tlua, 12, 7))
+>Copy : Symbol(Copy, Decl(tluaIndexKeyMapped.tlua, 6, 42))
+>ByTable : Symbol(ByTable, Decl(tluaIndexKeyMapped.tlua, 5, 29))
+
+declare pt: Point;
+>pt : Symbol(pt, Decl(tluaIndexKeyMapped.tlua, 13, 7))
+>Point : Symbol(Point, Decl(tluaIndexKeyMapped.tlua, 4, 42))
+
+local s2: string = cb[pt];
+>s2 : Symbol(s2, Decl(tluaIndexKeyMapped.tlua, 14, 5))
+>cb : Symbol(cb, Decl(tluaIndexKeyMapped.tlua, 12, 7))
+>pt : Symbol(pt, Decl(tluaIndexKeyMapped.tlua, 13, 7))
+
+// The modifiers still apply.
+type Ro<T> = { readonly [P in keyof T]: T[P] };
+>Ro : Symbol(Ro, Decl(tluaIndexKeyMapped.tlua, 14, 26))
+>T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 17, 8))
+>P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 17, 25))
+>T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 17, 8))
+>T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 17, 8))
+>P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 17, 25))
+
+declare ro: Ro<Flags>;
+>ro : Symbol(ro, Decl(tluaIndexKeyMapped.tlua, 18, 7))
+>Ro : Symbol(Ro, Decl(tluaIndexKeyMapped.tlua, 14, 26))
+>Flags : Symbol(Flags, Decl(tluaIndexKeyMapped.tlua, 0, 0))
+
+local s3: string = ro[false];
+>s3 : Symbol(s3, Decl(tluaIndexKeyMapped.tlua, 19, 5))
+>ro : Symbol(ro, Decl(tluaIndexKeyMapped.tlua, 18, 7))
+
+// Mixed domains map together.
+interface Mixed { [key: boolean]: string; named: number }
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 29))
+>key : Symbol(key, Decl(tluaIndexKeyMapped.tlua, 22, 19))
+>named : Symbol(Mixed.named, Decl(tluaIndexKeyMapped.tlua, 22, 41))
+
+declare cm: Copy<Mixed>;
+>cm : Symbol(cm, Decl(tluaIndexKeyMapped.tlua, 23, 7))
+>Copy : Symbol(Copy, Decl(tluaIndexKeyMapped.tlua, 6, 42))
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 29))
+
+local s4: string = cm[true];
+>s4 : Symbol(s4, Decl(tluaIndexKeyMapped.tlua, 24, 5))
+>cm : Symbol(cm, Decl(tluaIndexKeyMapped.tlua, 23, 7))
+
+local n1: number = cm.named;
+>n1 : Symbol(n1, Decl(tluaIndexKeyMapped.tlua, 25, 5))
+>cm.named : Symbol(named, Decl(tluaIndexKeyMapped.tlua, 22, 41))
+>cm : Symbol(cm, Decl(tluaIndexKeyMapped.tlua, 23, 7))
+>named : Symbol(named, Decl(tluaIndexKeyMapped.tlua, 22, 41))
+
+// The constraint check follows the table-key domain: a concrete boolean (or keyof of
+// a boolean-keyed type) maps directly, not only through a generic alias.
+type Direct = { [P in keyof Mixed]: number };
+>Direct : Symbol(Direct, Decl(tluaIndexKeyMapped.tlua, 25, 28))
+>P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 29, 17))
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 29))
+
+declare dd: Direct;
+>dd : Symbol(dd, Decl(tluaIndexKeyMapped.tlua, 30, 7))
+>Direct : Symbol(Direct, Decl(tluaIndexKeyMapped.tlua, 25, 28))
+
+local n2: number = dd[true];
+>n2 : Symbol(n2, Decl(tluaIndexKeyMapped.tlua, 31, 5))
+>dd : Symbol(dd, Decl(tluaIndexKeyMapped.tlua, 30, 7))
+
+declare mb: { [P in boolean]: string };
+>mb : Symbol(mb, Decl(tluaIndexKeyMapped.tlua, 32, 7))
+>P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 32, 15))
+
+local s5: string = mb[false];
+>s5 : Symbol(s5, Decl(tluaIndexKeyMapped.tlua, 33, 5))
+>mb : Symbol(mb, Decl(tluaIndexKeyMapped.tlua, 32, 7))
+

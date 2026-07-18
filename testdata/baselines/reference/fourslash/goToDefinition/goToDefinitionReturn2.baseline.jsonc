@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /goToDefinitionReturn2.tlua ===
+// function foo() {
+//     return [|() => {
+//         /*GOTO DEF*/return 10;
+//     }|]
+// }

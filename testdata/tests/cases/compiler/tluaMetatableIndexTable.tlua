@@ -1,0 +1,66 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// setmetatable pairs a table with its metatable: a read the table misses falls through to
+// the metatable's __index, so the call cannot keep returning the plain table it was given.
+
+local Helpers = {
+  describe = function(self: object): string return "d"; end,
+  count = 0,
+};
+
+local mt = { __index = Helpers };
+
+local obj = setmetatable({ n = 1 }, mt);
+
+// The table's own members stay.
+local n: number = obj.n;
+
+// A missing member is found behind __index.
+local d: string = obj.describe(obj);
+local c: number = obj.count;
+
+// What neither has is still missing.
+local absent = obj.nothing;
+
+// The table wins a collision: a raw read hits it before the metatable ever runs.
+local collide = setmetatable({ v = 1 }, { __index = { v = "str" } });
+local cn: number = collide.v;
+local cs: string = collide.v;
+
+// A fallback member is writable at its own type -- a Lua write raw-sets the table, which
+// shadows the metatable's copy from then on.
+obj.count = 2;
+obj.count = "two";
+
+// An index signature behind __index carries over.
+declare idxMt: { __index: { [key: string]: number } };
+local ix = setmetatable({ n = 1 }, idxMt);
+local iv: number = ix["anything"];
+
+// The table only wins while it *answers*: a key that is absent or nil is exactly what makes
+// Lua run the metatable, so a member that admits nil reads as its own non-nil half or the
+// fallback's value. Defaults behind __index -- the reason this matters -- work.
+declare partial: { name?: string; id: number };
+local defaulted = setmetatable(partial, { __index = { name = "anonymous" } });
+local always: string = defaulted.name;
+
+declare nilable: { v: number | nil };
+local either = setmetatable(nilable, { __index = { v = "str" } });
+local both: number | string = either.v;
+local notJustNumber: number = either.v;
+
+// An intersection still says what its __index is.
+declare interMt: { __index: { a: number } } & { __tostring: () => string };
+local inter = setmetatable({ n = 1 }, interMt);
+local ia: number = inter.a;
+
+// The result is still the table it was built from.
+interface HasN { n: number }
+local asTable: HasN = obj;
+
+// ...and a named interface that also spells the fallback out.
+interface Described { n: number; describe: (self: object) => string; count: number }
+local asDescribed: Described = obj;

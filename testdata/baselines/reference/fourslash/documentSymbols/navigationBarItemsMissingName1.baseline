@@ -1,0 +1,9 @@
+// === Document Symbols ===
+// === /navigationBarItemsMissingName1.tlua ===
+// export <|function
+// [|{| name: class, kind: Function |}class|]|> C {
+//     foo() {}
+// }
+
+// === Details ===
+(Function) class

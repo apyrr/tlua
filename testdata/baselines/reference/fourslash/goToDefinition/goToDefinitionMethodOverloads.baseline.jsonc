@@ -1,0 +1,72 @@
+// === goToDefinition ===
+// === /goToDefinitionMethodOverloads.tlua ===
+// --- (line: 6) skipped ---
+//     public method(foo?: any) { return "foo" }
+// }
+// // static method
+// MethodOverload./*GOTO DEF*/method();
+// MethodOverload.method("123");
+// // instance method
+// local methodOverload = new MethodOverload();
+// methodOverload.method();
+// methodOverload.method("456");
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionMethodOverloads.tlua ===
+// --- (line: 7) skipped ---
+// }
+// // static method
+// MethodOverload.method();
+// MethodOverload./*GOTO DEF*/method("123");
+// // instance method
+// local methodOverload = new MethodOverload();
+// methodOverload.method();
+// methodOverload.method("456");
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionMethodOverloads.tlua ===
+// --- (line: 10) skipped ---
+// MethodOverload.method("123");
+// // instance method
+// local methodOverload = new MethodOverload();
+// methodOverload./*GOTO DEF*/method();
+// methodOverload.method("456");
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionMethodOverloads.tlua ===
+// --- (line: 11) skipped ---
+// // instance method
+// local methodOverload = new MethodOverload();
+// methodOverload.method();
+// methodOverload./*GOTO DEF*/method("456");
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionMethodOverloads.tlua ===
+// class MethodOverload {
+//     static /*GOTO DEF*/method();
+//     static method(foo: string);
+//     static method(foo?: any) { }
+//     public method(): any;
+// --- (line: 6) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionMethodOverloads.tlua ===
+// class MethodOverload {
+//     static method();
+//     static method(foo: string);
+//     static method(foo?: any) { }
+//     public /*GOTO DEF*/method(): any;
+//     public method(foo: string);
+//     public method(foo?: any) { return "foo" }
+// }
+// --- (line: 9) skipped ---

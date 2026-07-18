@@ -1,0 +1,17 @@
+// === findAllReferences ===
+// === /a.tlua ===
+// Config = {};
+// Config./*FIND ALL REFS*/[|debug|] = true;
+
+// === /b.tlua ===
+// local d = Config.[|debug|];
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// Config = {};
+// Config.[|debug|] = true;
+
+// === /b.tlua ===
+// local d = Config./*FIND ALL REFS*/[|debug|];

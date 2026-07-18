@@ -1,0 +1,86 @@
+//// [tests/cases/compiler/tluaColonCallPackTail.tlua] ////
+
+=== tluaColonCallPackTail.tlua ===
+interface Reader {
+  pair(self: Reader): (number, string);
+>pair : (self: Reader) => (number, string)
+>self : Reader
+
+  sum(self: Reader, ...: number): number;
+>sum : (self: Reader, ...: number) => number
+>self : Reader
+> : number[]
+
+  one(self: Reader, n: number): number;
+>one : (self: Reader, n: number) => number
+>self : Reader
+>n : number
+}
+declare reader: Reader;
+>reader : Reader
+
+declare function takesNumberString(a: number, b: string): void;
+>takesNumberString : (a: number, b: string) => void
+>a : number
+>b : string
+
+declare function takesNumber(a: number): void;
+>takesNumber : (a: number) => void
+>a : number
+
+declare function makeReader(): Reader;
+>makeReader : () => Reader
+
+// A colon call in tail argument position contributes its full pack.
+takesNumberString(reader:pair());
+>takesNumberString(reader:pair()) : void
+>takesNumberString : (a: number, b: string) => void
+>reader:pair() : number
+>reader:pair : (self: Reader) => (number, string)
+>reader : Reader
+>pair : (self: Reader) => (number, string)
+
+// So a one-parameter target overflows on the expanded pack.
+takesNumber(reader:pair());
+>takesNumber(reader:pair()) : void
+>takesNumber : (a: number) => void
+>reader:pair() : number
+>reader:pair : (self: Reader) => (number, string)
+>reader : Reader
+>pair : (self: Reader) => (number, string)
+
+// In non-tail position it adjusts to its single first value.
+takesNumberString(reader:pair(), "s");
+>takesNumberString(reader:pair(), "s") : void
+>takesNumberString : (a: number, b: string) => void
+>reader:pair() : number
+>reader:pair : (self: Reader) => (number, string)
+>reader : Reader
+>pair : (self: Reader) => (number, string)
+>"s" : "s"
+
+// The vararg tail flows through the colon call's own argument list.
+function forward(...: number): number
+>forward : (...: number) => number
+> : number[]
+
+  return reader:sum(...);
+>reader:sum(...) : number
+>reader:sum : (self: Reader, ...: number) => number
+>reader : Reader
+>sum : (self: Reader, ...: number) => number
+>... : number | nil
+
+end
+
+// A call receiver adjusts to its single value before becoming the implicit
+// first argument: `makeReader():one(1)` passes one Reader, not a pack.
+local n = makeReader():one(1);
+>n : number
+>makeReader():one(1) : number
+>makeReader():one : (self: Reader, n: number) => number
+>makeReader() : Reader
+>makeReader : () => Reader
+>one : (self: Reader, n: number) => number
+>1 : 1
+

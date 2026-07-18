@@ -1,0 +1,9 @@
+// === findRenameLocations ===
+// === /referencesForGlobals_1.tlua ===
+// local /*RENAME*/[|globalNameRENAME|] = 0;
+
+
+
+// === findRenameLocations ===
+// === /referencesForGlobals_2.tlua ===
+// local y = /*RENAME*/globalName;

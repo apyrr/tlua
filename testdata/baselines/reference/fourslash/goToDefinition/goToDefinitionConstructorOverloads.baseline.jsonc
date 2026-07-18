@@ -1,0 +1,57 @@
+// === goToDefinition ===
+// === /goToDefinitionConstructorOverloads.tlua ===
+// --- (line: 3) skipped ---
+//     constructor(foo: any)  { }
+// }
+// 
+// local constructorOverload = new /*GOTO DEF*/ConstructorOverload();
+// local constructorOverload = new ConstructorOverload("foo");
+// 
+// class Extended extends ConstructorOverload {
+// --- (line: 11) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOverloads.tlua ===
+// --- (line: 4) skipped ---
+// }
+// 
+// local constructorOverload = new ConstructorOverload();
+// local constructorOverload = new /*GOTO DEF*/ConstructorOverload("foo");
+// 
+// class Extended extends ConstructorOverload {
+//     readonly name = "extended";
+// --- (line: 12) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOverloads.tlua ===
+// class ConstructorOverload {
+//     /*GOTO DEF*/constructor();
+//     constructor(foo: string);
+//     constructor(foo: any)  { }
+// }
+// --- (line: 6) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOverloads.tlua ===
+// --- (line: 9) skipped ---
+// class Extended extends ConstructorOverload {
+//     readonly name = "extended";
+// }
+// local extended1 = new /*GOTO DEF*/Extended();
+// local extended2 = new Extended("foo");
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOverloads.tlua ===
+// --- (line: 10) skipped ---
+//     readonly name = "extended";
+// }
+// local extended1 = new Extended();
+// local extended2 = new /*GOTO DEF*/Extended("foo");

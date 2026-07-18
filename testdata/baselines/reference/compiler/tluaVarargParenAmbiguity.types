@@ -1,0 +1,66 @@
+//// [tests/cases/compiler/tluaVarargParenAmbiguity.tlua] ////
+
+=== tluaVarargParenAmbiguity.tlua ===
+// `(...` is ambiguous between an arrow parameter list, the Lua single-value
+// truncation idiom `(...)`, and `...` as an operand inside parentheses. The
+// arrow lookahead must not commit where the expression reading is the legal
+// one: committing turns legal code into a parse error, and a parse error
+// suppresses every semantic diagnostic in the program. The main chunk is a
+// vararg function, so a top-level `...` is legal throughout.
+
+declare n: number;
+>n : number
+
+// A parenthesized expression list is an expression, with or without a vararg
+// inside it.
+local plain = (1, 2);
+>plain : number
+>(1, 2) : 2
+>1, 2 : 2
+>1 : 1
+>2 : 2
+
+local withVararg = (..., 2);
+>withVararg : number
+>(..., 2) : 2
+>..., 2 : 2
+>... : any
+>2 : 2
+
+// Still arrows: a bare vararg parameter list, one with the (ambiguous) return
+// type colon, and an annotated vararg.
+local arrow = (...) => 1;
+>arrow : (...: any) => number
+>(...) => 1 : (...: any) => number
+> : any[]
+>1 : 1
+
+local arrowWithReturnType = (...): number => 2;
+>arrowWithReturnType : (...: any) => number
+>(...): number => 2 : (...: any) => number
+> : any[]
+>2 : 2
+
+local arrowAnnotated = (...: string) => 3;
+>arrowAnnotated : (...: string) => number
+>(...: string) => 3 : (...: string) => number
+> : string[]
+>3 : 3
+
+// A misplaced vararg is still an arrow when the `=>` says so -- the parameter
+// grammar reports it precisely (a rest parameter must be last).
+local misplacedInArrow = (..., x: number) => x;
+>misplacedInArrow : (...: any, x: number) => number
+>(..., x: number) => x : (...: any, x: number) => number
+> : any[]
+>x : number
+>x : number
+
+// Without the `=>` the same shape is an expression list, not a mangled arrow.
+local notAnArrow = (..., n);
+>notAnArrow : number
+>(..., n) : number
+>..., n : number
+>... : any
+>n : number
+

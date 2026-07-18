@@ -1,0 +1,14 @@
+declare function require(module: "bit"): BitLib;
+declare function require(module: "jit"): JITLib;
+declare function require(module: "ffi"): FFILib;
+declare function require(module: "jit.profile"): JITProfileLib;
+declare function require(module: "jit.util"): JITUtilLib;
+declare function require(module: "table.clear"): TableClear;
+declare function require(module: "table.new"): TableNew;
+declare function require(module: "string.buffer"): StringBufferLib;
+declare function require(module: string): any;
+
+/* A dotted module name that resolves to a project file is typed as that
+   chunk's return value before these overloads are consulted; unresolved
+   dotted names (runtime-provided packages, C modules) fall through to the
+   dynamic `any` fallback. */

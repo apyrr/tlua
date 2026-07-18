@@ -1,0 +1,22 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// `Table<in out K, V>` is invariant in its key: K is an input when the table is indexed
+// and an output when it is iterated. Measured structurally it would come out
+// contravariant, which accepts `Table<string | number, V>` where `Table<string, V>` is
+// wanted -- and `pairs` would then report a number key as a string.
+
+declare wide: Table<string | number, boolean>;
+declare narrow: Table<string, boolean>;
+
+local a: Table<string, boolean> = wide;
+local b: Table<string | number, boolean> = narrow;
+
+// Identical keys relate as before.
+local c: Table<string, boolean> = narrow;
+
+// A value-keyed table is still covariant in the value it holds.
+declare numbers: Table<string, number>;
+local d: Table<string, number | string> = numbers;

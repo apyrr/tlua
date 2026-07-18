@@ -1,0 +1,76 @@
+sameComputedNameError.tlua(3,1): error TS1434: Unexpected keyword or identifier.
+sameComputedNameError.tlua(3,1): error TS2304: Cannot find name 'class'.
+sameComputedNameError.tlua(3,7): error TS1434: Unexpected keyword or identifier.
+sameComputedNameError.tlua(3,7): error TS2304: Cannot find name 'A'.
+sameComputedNameError.tlua(4,3): error TS1128: Declaration or statement expected.
+sameComputedNameError.tlua(4,4): error TS1434: Unexpected keyword or identifier.
+sameComputedNameError.tlua(4,5): error TS1128: Declaration or statement expected.
+sameComputedNameError.tlua(4,6): error TS1128: Declaration or statement expected.
+sameComputedNameError.tlua(4,8): error TS2693: 'number' only refers to a type, but is being used as a value here.
+sameComputedNameError.tlua(7,1): error TS1434: Unexpected keyword or identifier.
+sameComputedNameError.tlua(7,1): error TS2304: Cannot find name 'class'.
+sameComputedNameError.tlua(7,7): error TS1434: Unexpected keyword or identifier.
+sameComputedNameError.tlua(7,7): error TS2304: Cannot find name 'B'.
+sameComputedNameError.tlua(7,9): error TS1128: Declaration or statement expected.
+sameComputedNameError.tlua(7,17): error TS1434: Unexpected keyword or identifier.
+sameComputedNameError.tlua(7,17): error TS2304: Cannot find name 'A'.
+sameComputedNameError.tlua(8,3): error TS1128: Declaration or statement expected.
+sameComputedNameError.tlua(8,4): error TS1434: Unexpected keyword or identifier.
+sameComputedNameError.tlua(8,5): error TS1128: Declaration or statement expected.
+sameComputedNameError.tlua(8,6): error TS1128: Declaration or statement expected.
+sameComputedNameError.tlua(8,8): error TS2588: Cannot assign to 'string' because it is a constant.
+
+
+==== sameComputedNameError.tlua (21 errors) ====
+    declare s: unique symbol;
+    
+    class A {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~
+!!! error TS2304: Cannot find name 'A'.
+      [s]: number = 1;
+      ~
+!!! error TS1128: Declaration or statement expected.
+       ~
+!!! error TS1434: Unexpected keyword or identifier.
+        ~
+!!! error TS1128: Declaration or statement expected.
+         ~
+!!! error TS1128: Declaration or statement expected.
+           ~~~~~~
+!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+    }
+    
+    class B extends A {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~
+!!! error TS2304: Cannot find name 'B'.
+            ~~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                    ~
+!!! error TS1434: Unexpected keyword or identifier.
+                    ~
+!!! error TS2304: Cannot find name 'A'.
+      [s]: string = "x";
+      ~
+!!! error TS1128: Declaration or statement expected.
+       ~
+!!! error TS1434: Unexpected keyword or identifier.
+        ~
+!!! error TS1128: Declaration or statement expected.
+         ~
+!!! error TS1128: Declaration or statement expected.
+           ~~~~~~
+!!! error TS2588: Cannot assign to 'string' because it is a constant.
+    }
+    

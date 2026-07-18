@@ -1,0 +1,15 @@
+// === Document Symbols ===
+// === /navigationBarInitializerSpans.tlua ===
+// // get the name for the navbar from the variable name rather than the function name
+// local <|[|{| name: x, kind: Variable |}x|] = () => { local <|[|{| name: a, kind: Variable |}a|]|>; }|>;
+// local <|[|{| name: f, kind: Variable |}f|] = function() local <|[|{| name: b, kind: Variable |}b|]|>; end|>;
+// local <|[|{| name: y, kind: Variable |}y|] = { <|[|{| name: z, kind: Property |}z|] = function() local <|[|{| name: c, kind: Variable |}c|]|>; end|> }|>;
+
+// === Details ===
+(Variable) x
+  (Variable) a
+(Variable) f
+  (Variable) b
+(Variable) y
+  (Property) z
+    (Variable) c

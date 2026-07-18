@@ -1,0 +1,5 @@
+// === Smart Selection ===
+local /**/x = 3;
+
+      x     
+local x = 3;

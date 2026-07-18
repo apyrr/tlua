@@ -1,0 +1,16 @@
+typeArgumentArityErrorSkipsTrivia.tlua(3,6): error TS2558: Expected 1 type arguments, but got 2.
+typeArgumentArityErrorSkipsTrivia.tlua(6,5): error TS2558: Expected 1 type arguments, but got 2.
+
+
+==== typeArgumentArityErrorSkipsTrivia.tlua (2 errors) ====
+    declare function f<T>(a: T): T;
+    
+    f<   string, number>("a");
+         ~~~~~~~~~~~~~~
+!!! error TS2558: Expected 1 type arguments, but got 2.
+    
+    f<
+        string, number>("a");
+        ~~~~~~~~~~~~~~
+!!! error TS2558: Expected 1 type arguments, but got 2.
+    

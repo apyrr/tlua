@@ -1,0 +1,62 @@
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionPublic.tlua ===
+// local A = class Foo {
+//     /*HIGHLIGHTS*/public foo;
+//     public public;
+//     constructor(public y: string, private x: string) {
+//     }
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionPublic.tlua ===
+// local A = class Foo {
+//     public foo;
+//     /*HIGHLIGHTS*/public public;
+//     constructor(public y: string, private x: string) {
+//     }
+//     public method() { }
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionPublic.tlua ===
+// local A = class Foo {
+//     public foo;
+//     public public;
+//     constructor(/*HIGHLIGHTS*/public y: string, private x: string) {
+//     }
+//     public method() { }
+//     private method2() {}
+// --- (line: 8) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionPublic.tlua ===
+// local A = class Foo {
+//     public foo;
+//     public public;
+//     constructor(public y: string, private x: string) {
+//     }
+//     /*HIGHLIGHTS*/public method() { }
+//     private method2() {}
+//     public static static() { }
+// }
+// --- (line: 10) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionPublic.tlua ===
+// --- (line: 4) skipped ---
+//     }
+//     public method() { }
+//     private method2() {}
+//     /*HIGHLIGHTS*/public static static() { }
+// }
+// 
+// local B = class D {
+// --- (line: 12) skipped ---

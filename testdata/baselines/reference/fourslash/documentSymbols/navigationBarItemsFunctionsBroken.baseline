@@ -1,0 +1,8 @@
+// === Document Symbols ===
+// === /navigationBarItemsFunctionsBroken.tlua ===
+// <|function [|{| name: f, kind: Function |}f|]() {
+//     function;
+// }|>
+
+// === Details ===
+(Function) f

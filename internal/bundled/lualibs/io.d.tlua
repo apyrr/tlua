@@ -1,0 +1,31 @@
+type LuaReadFormat = "*n" | "*a" | "*l" | number;
+
+// File handles are userdata in Lua, so `type(file)` reports "userdata".
+interface LuaFile extends LuaUserdata {
+    close(): (boolean | nil, string?);
+    flush(): (boolean | nil, string?);
+    lines(...: LuaReadFormat): LuaFunction;
+    read(...: LuaReadFormat): (any, ...any);
+    seek(whence?: "set" | "cur" | "end", offset?: number): (number | nil, string?);
+    setvbuf(mode: "no" | "full" | "line", size?: number): (boolean | nil, string?);
+    write(...: string | number): (LuaFile | nil, string?);
+}
+
+interface IOLib {
+    readonly stdin: LuaFile;
+    readonly stdout: LuaFile;
+    readonly stderr: LuaFile;
+    close(file?: LuaFile): (boolean | nil, string?);
+    flush(): (boolean | nil, string?);
+    input(file?: string | LuaFile): LuaFile;
+    lines(filename?: string, ...: LuaReadFormat): LuaFunction;
+    open(filename: string, mode?: string): (LuaFile?, string?);
+    output(file?: string | LuaFile): LuaFile;
+    popen(command: string, mode?: "r" | "w"): (LuaFile?, string?);
+    read(...: LuaReadFormat): (any, ...any);
+    tmpfile(): LuaFile | nil;
+    type(value: any): "file" | "closed file" | nil;
+    write(...: string | number): (LuaFile | nil, string?);
+}
+
+declare io: IOLib;

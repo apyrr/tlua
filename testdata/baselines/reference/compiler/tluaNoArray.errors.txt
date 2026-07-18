@@ -1,0 +1,127 @@
+tluaNoArray.tlua(10,13): error TS1109: Expression expected.
+tluaNoArray.tlua(10,14): error TS2695: Left side of comma operator is unused and has no side effects.
+tluaNoArray.tlua(10,14): error TS2695: Left side of comma operator is unused and has no side effects.
+tluaNoArray.tlua(15,16): error TS1109: Expression expected.
+tluaNoArray.tlua(15,17): error TS2695: Left side of comma operator is unused and has no side effects.
+tluaNoArray.tlua(15,23): error TS1005: ']' expected.
+tluaNoArray.tlua(15,28): error TS1128: Declaration or statement expected.
+tluaNoArray.tlua(18,7): error TS1003: Identifier expected.
+tluaNoArray.tlua(18,8): error TS2304: Cannot find name 'a'.
+tluaNoArray.tlua(18,8): error TS2695: Left side of comma operator is unused and has no side effects.
+tluaNoArray.tlua(18,11): error TS2304: Cannot find name 'b'.
+tluaNoArray.tlua(18,12): error TS1005: ';' expected.
+tluaNoArray.tlua(18,14): error TS1128: Declaration or statement expected.
+tluaNoArray.tlua(21,1): error TS1128: Declaration or statement expected.
+tluaNoArray.tlua(21,2): error TS2304: Cannot find name 'a'.
+tluaNoArray.tlua(21,2): error TS2695: Left side of comma operator is unused and has no side effects.
+tluaNoArray.tlua(21,5): error TS2304: Cannot find name 'b'.
+tluaNoArray.tlua(21,6): error TS1005: ';' expected.
+tluaNoArray.tlua(21,8): error TS1128: Declaration or statement expected.
+tluaNoArray.tlua(24,5): error TS1003: Identifier expected.
+tluaNoArray.tlua(24,6): error TS1109: Expression expected.
+tluaNoArray.tlua(24,14): error TS1005: ';' expected.
+tluaNoArray.tlua(24,14): error TS2304: Cannot find name 'of'.
+tluaNoArray.tlua(24,17): error TS1434: Unexpected keyword or identifier.
+tluaNoArray.tlua(24,22): error TS1128: Declaration or statement expected.
+tluaNoArray.tlua(29,10): error TS1110: Type expected.
+tluaNoArray.tlua(29,17): error TS1005: ']' expected.
+tluaNoArray.tlua(29,25): error TS1005: ';' expected.
+tluaNoArray.tlua(29,27): error TS1128: Declaration or statement expected.
+tluaNoArray.tlua(34,1): error TS1005: 'end' expected.
+
+
+==== tluaNoArray.tlua (30 errors) ====
+    // The TypeScript array/tuple/iteration syntax is removed from tlua source.
+    // Each form below decomposes into stock parser-recovery errors (no
+    // tlua-specific diagnostic), exactly like the class/generator removals.
+    
+    declare function pair(): (number, string);
+    declare items: number[];
+    declare function use(x: unknown): void;
+    
+    // Array literals no longer parse in expression position; use a table `{...}`.
+    local lit = [1, 2, 3];
+                ~
+!!! error TS1109: Expression expected.
+                 ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                 ~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    
+    // Array-literal spread. Every spread form is gone; `...` is the Lua vararg, so
+    // the `...` here reads as a vararg expression (legal in the main chunk) and the
+    // operand that follows is the error.
+    local spread = [0, ...items];
+                   ~
+!!! error TS1109: Expression expected.
+                    ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                          ~~~~~
+!!! error TS1005: ']' expected.
+                               ~
+!!! error TS1128: Declaration or statement expected.
+    
+    // Array binding patterns; use a Lua name list `local a, b = f()`.
+    local [a, b] = pair();
+          ~
+!!! error TS1003: Identifier expected.
+           ~
+!!! error TS2304: Cannot find name 'a'.
+           ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+              ~
+!!! error TS2304: Cannot find name 'b'.
+               ~
+!!! error TS1005: ';' expected.
+                 ~
+!!! error TS1128: Declaration or statement expected.
+    
+    // Array destructuring assignment.
+    [a, b] = pair();
+    ~
+!!! error TS1128: Declaration or statement expected.
+     ~
+!!! error TS2304: Cannot find name 'a'.
+     ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+        ~
+!!! error TS2304: Cannot find name 'b'.
+         ~
+!!! error TS1005: ';' expected.
+           ~
+!!! error TS1128: Declaration or statement expected.
+    
+    // `for..of`; use a Lua generic-for `for _, v in ipairs(t) do`.
+    for (local v of items) {
+        ~
+!!! error TS1003: Identifier expected.
+         ~~~~~
+!!! error TS1109: Expression expected.
+                 ~~
+!!! error TS1005: ';' expected.
+                 ~~
+!!! error TS2304: Cannot find name 'of'.
+                    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+                         ~
+!!! error TS1128: Declaration or statement expected.
+      use(v);
+    }
+    
+    // Tuple type syntax in source; multireturn return-lists spell packs instead.
+    local t: [number, string] = pair();
+             ~
+!!! error TS1110: Type expected.
+                    ~
+!!! error TS1005: ']' expected.
+                            ~
+!!! error TS1005: ';' expected.
+                              ~
+!!! error TS1128: Declaration or statement expected.
+    
+    // `of` is an ordinary identifier again.
+    local of = 3;
+    use(of);
+    
+    
+!!! error TS1005: 'end' expected.

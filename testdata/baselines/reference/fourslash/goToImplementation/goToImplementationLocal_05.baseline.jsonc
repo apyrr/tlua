@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationLocal_05.tlua ===
+// class Bar {
+//     public hello() {}
+// }
+// 
+// <|local [|someVar|] = new Bar();|>
+// someVa/*GOTO IMPL*/r.hello();

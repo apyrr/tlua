@@ -1,0 +1,13 @@
+//// [tests/cases/compiler/jsxLibraryManagedAttributesUnexpectedType.tsx] ////
+
+=== jsxLibraryManagedAttributesUnexpectedType.tsx ===
+type JsxLibraryManagedAttributes = number;
+>JsxLibraryManagedAttributes : Symbol(JsxLibraryManagedAttributes, Decl(jsxLibraryManagedAttributesUnexpectedType.tsx, 0, 0))
+
+local C = nil as any as () => any;
+>C : Symbol(C, Decl(jsxLibraryManagedAttributesUnexpectedType.tsx, 2, 5))
+
+local x = <C />;
+>x : Symbol(x, Decl(jsxLibraryManagedAttributesUnexpectedType.tsx, 4, 5))
+>C : Symbol(C, Decl(jsxLibraryManagedAttributesUnexpectedType.tsx, 2, 5))
+

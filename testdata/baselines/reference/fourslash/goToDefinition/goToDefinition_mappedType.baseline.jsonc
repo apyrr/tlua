@@ -1,0 +1,5 @@
+// === goToDefinition ===
+// === /goToDefinition_mappedType.tlua ===
+// interface I { <|[|m|](): void;|> };
+// declare i: { [K in "m"]: I[K] };
+// i./*GOTO DEF*/m();

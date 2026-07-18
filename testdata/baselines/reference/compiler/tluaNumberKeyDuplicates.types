@@ -1,0 +1,66 @@
+//// [tests/cases/compiler/tluaNumberKeyDuplicates.tlua] ////
+
+=== tluaNumberKeyDuplicates.tlua ===
+// [1] written twice names the same number key: duplicate.
+local dup1 = { [1] = 1, [1] = 2 };
+>dup1 : { 1: number; }
+>{ [1] = 1, [1] = 2 } : { 1: number; }
+>[1] : number
+>1 : 1
+>1 : 1
+>[1] : number
+>1 : 1
+>2 : 2
+
+// Number key 1 and string key "1" are distinct keys: no duplicate.
+local ok1 = { [1] = 1, ["1"] = 2 };
+>ok1 : { 1: number; "1": number; }
+>{ [1] = 1, ["1"] = 2 } : { 1: number; "1": number; }
+>[1] : number
+>1 : 1
+>1 : 1
+>["1"] : number
+>"1" : "1"
+>2 : 2
+
+local ok2 = { [1] = 1, ["1"] = 2 };
+>ok2 : { 1: number; "1": number; }
+>{ [1] = 1, ["1"] = 2 } : { 1: number; "1": number; }
+>[1] : number
+>1 : 1
+>1 : 1
+>["1"] : number
+>"1" : "1"
+>2 : 2
+
+// Spelling canonicalization: 0x10 and 16 name the same key.
+local dup2 = { [0x10] = 1, [16] = 2 };
+>dup2 : { 16: number; }
+>{ [0x10] = 1, [16] = 2 } : { 16: number; }
+>[0x10] : number
+>0x10 : 16
+>1 : 1
+>[16] : number
+>16 : 16
+>2 : 2
+
+// 1.0 and 1 name the same key.
+local dup3 = { [1.0] = 1, [1] = 2 };
+>dup3 : { 1: number; }
+>{ [1.0] = 1, [1] = 2 } : { 1: number; }
+>[1.0] : number
+>1.0 : 1
+>1 : 1
+>[1] : number
+>1 : 1
+>2 : 2
+
+local es = {dup1, ok1, ok2, dup2, dup3};
+>es : { 1: { 1: number; }; 2: { 1: number; "1": number; }; 3: { 1: number; "1": number; }; 4: { 16: number; }; 5: { 1: number; }; }
+>{dup1, ok1, ok2, dup2, dup3} : { 1: { 1: number; }; 2: { 1: number; "1": number; }; 3: { 1: number; "1": number; }; 4: { 16: number; }; 5: { 1: number; }; }
+>dup1 : any
+>ok1 : any
+>ok2 : any
+>dup2 : any
+>dup3 : any
+

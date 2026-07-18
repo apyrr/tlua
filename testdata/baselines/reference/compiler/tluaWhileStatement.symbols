@@ -1,0 +1,120 @@
+//// [tests/cases/compiler/tluaWhileStatement.tlua] ////
+
+=== tluaWhileStatement.tlua ===
+function sum(limit: number): number
+>sum : Symbol(sum, Decl(tluaWhileStatement.tlua, 0, 0))
+>limit : Symbol(limit, Decl(tluaWhileStatement.tlua, 0, 13))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaWhileStatement.tlua, 1, 7))
+
+  local i = 0;
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 2, 7))
+
+  while i < limit do
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 2, 7))
+>limit : Symbol(limit, Decl(tluaWhileStatement.tlua, 0, 13))
+
+    total = total + i;
+>total : Symbol(total, Decl(tluaWhileStatement.tlua, 1, 7))
+>total : Symbol(total, Decl(tluaWhileStatement.tlua, 1, 7))
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 2, 7))
+
+    i = i + 1;
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 2, 7))
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 2, 7))
+
+  end
+  return total;
+>total : Symbol(total, Decl(tluaWhileStatement.tlua, 1, 7))
+
+end
+
+// Parenthesized condition with `do` is Lua.
+function parens(flag: boolean): number
+>parens : Symbol(parens, Decl(tluaWhileStatement.tlua, 8, 3))
+>flag : Symbol(flag, Decl(tluaWhileStatement.tlua, 11, 16))
+
+  local n = 0;
+>n : Symbol(n, Decl(tluaWhileStatement.tlua, 12, 7))
+
+  while (flag) do
+>flag : Symbol(flag, Decl(tluaWhileStatement.tlua, 11, 16))
+
+    flag = false;
+>flag : Symbol(flag, Decl(tluaWhileStatement.tlua, 11, 16))
+
+    n = 1;
+>n : Symbol(n, Decl(tluaWhileStatement.tlua, 12, 7))
+
+  end
+  return n;
+>n : Symbol(n, Decl(tluaWhileStatement.tlua, 12, 7))
+
+end
+
+// break exits the loop; one-liner bodies parse (ASI before `end`).
+function firstOver(limit: number): number
+>firstOver : Symbol(firstOver, Decl(tluaWhileStatement.tlua, 18, 3))
+>limit : Symbol(limit, Decl(tluaWhileStatement.tlua, 21, 19))
+
+  local i = 0;
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 22, 7))
+
+  while true do
+    if i > limit then break end
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 22, 7))
+>limit : Symbol(limit, Decl(tluaWhileStatement.tlua, 21, 19))
+
+    i = i + 1;
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 22, 7))
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 22, 7))
+
+  end
+  return i;
+>i : Symbol(i, Decl(tluaWhileStatement.tlua, 22, 7))
+
+end
+
+// Nested while loops.
+function grid(w: number, h: number): number
+>grid : Symbol(grid, Decl(tluaWhileStatement.tlua, 28, 3))
+>w : Symbol(w, Decl(tluaWhileStatement.tlua, 31, 14))
+>h : Symbol(h, Decl(tluaWhileStatement.tlua, 31, 24))
+
+  local count = 0;
+>count : Symbol(count, Decl(tluaWhileStatement.tlua, 32, 7))
+
+  local x = 0;
+>x : Symbol(x, Decl(tluaWhileStatement.tlua, 33, 7))
+
+  while x < w do
+>x : Symbol(x, Decl(tluaWhileStatement.tlua, 33, 7))
+>w : Symbol(w, Decl(tluaWhileStatement.tlua, 31, 14))
+
+    local y = 0;
+>y : Symbol(y, Decl(tluaWhileStatement.tlua, 35, 9))
+
+    while y < h do
+>y : Symbol(y, Decl(tluaWhileStatement.tlua, 35, 9))
+>h : Symbol(h, Decl(tluaWhileStatement.tlua, 31, 24))
+
+      count = count + 1;
+>count : Symbol(count, Decl(tluaWhileStatement.tlua, 32, 7))
+>count : Symbol(count, Decl(tluaWhileStatement.tlua, 32, 7))
+
+      y = y + 1;
+>y : Symbol(y, Decl(tluaWhileStatement.tlua, 35, 9))
+>y : Symbol(y, Decl(tluaWhileStatement.tlua, 35, 9))
+
+    end
+    x = x + 1;
+>x : Symbol(x, Decl(tluaWhileStatement.tlua, 33, 7))
+>x : Symbol(x, Decl(tluaWhileStatement.tlua, 33, 7))
+
+  end
+  return count;
+>count : Symbol(count, Decl(tluaWhileStatement.tlua, 32, 7))
+
+end
+

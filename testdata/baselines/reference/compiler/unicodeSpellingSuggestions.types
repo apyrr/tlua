@@ -1,0 +1,17 @@
+//// [tests/cases/compiler/unicodeSpellingSuggestions.tlua] ////
+
+=== unicodeSpellingSuggestions.tlua ===
+// https://github.com/microsoft/typescript-go/issues/4223
+
+classAé {
+>classAé : any
+}
+
+classAéé {
+>classAéé : any
+}
+
+classAééé {
+>classAééé : any
+}
+

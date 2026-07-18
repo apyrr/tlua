@@ -1,0 +1,11 @@
+// === findAllReferences ===
+// === /findAllRefsDefinition.tlua ===
+// local /*FIND ALL REFS*/[|x|] = 0;
+// [|x|];
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDefinition.tlua ===
+// local [|x|] = 0;
+// /*FIND ALL REFS*/[|x|];

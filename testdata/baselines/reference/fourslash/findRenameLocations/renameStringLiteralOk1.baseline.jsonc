@@ -1,0 +1,17 @@
+// === findRenameLocations ===
+// === /renameStringLiteralOk1.tlua ===
+// declare function f(): '/*RENAME*/[|fooRENAME|]' | 'bar'
+// class Foo {
+//     f = f()
+// }
+// --- (line: 5) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralOk1.tlua ===
+// --- (line: 3) skipped ---
+// }
+// local d: 'foo' = 'foo'
+// declare ff: Foo
+// ff.f = '/*RENAME*/foo'

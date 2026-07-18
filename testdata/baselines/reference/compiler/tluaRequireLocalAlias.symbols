@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/tluaRequireLocalAlias.tlua] ////
+
+=== main.tlua ===
+// The standard Lua caching idiom keeps require's module typing.
+local require = require;
+>require : Symbol(require, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local m = require("m");
+>m : Symbol(m, Decl(main.tlua, 2, 5))
+>require : Symbol(require, Decl(main.tlua, 1, 5))
+
+local n: number = m.value;
+>n : Symbol(n, Decl(main.tlua, 3, 5))
+>m.value : Symbol(value, Decl(m.tlua, 1, 8))
+>m : Symbol(m, Decl(main.tlua, 2, 5))
+>value : Symbol(value, Decl(m.tlua, 1, 8))
+
+n;
+>n : Symbol(n, Decl(main.tlua, 3, 5))
+
+=== m.tlua ===
+local value = 42;
+>value : Symbol(value, Decl(m.tlua, 0, 5))
+
+return { value = value };
+>value : Symbol(value, Decl(m.tlua, 1, 8))
+>value : Symbol(value, Decl(m.tlua, 0, 5))
+

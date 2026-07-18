@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/tluaWhileFlow.tlua] ////
+
+=== tluaWhileFlow.tlua ===
+// Assignment in the body is visible after the loop (loop-label join).
+function joinAfterLoop(flag: boolean): number | string
+>joinAfterLoop : (flag: boolean) => number | string
+>flag : boolean
+
+  local x: number | string = 1;
+>x : string | number
+>1 : 1
+
+  while flag do
+>flag : boolean
+
+    x = "s";
+>x = "s" : "s"
+>x : string | number
+>"s" : "s"
+
+    flag = false;
+>flag = false : false
+>flag : boolean
+>false : false
+
+  end
+  return x;
+>x : string | number
+
+end
+
+// Code after `while true do break end` is reachable.
+function reachableAfterBreak(): number
+>reachableAfterBreak : () => number
+
+  while true do
+>true : true
+
+    break;
+  end
+  return 1;
+>1 : 1
+
+end
+
+// Code after `while true do end` (no break) is unreachable.
+function unreachableAfterInfinite(): number
+>unreachableAfterInfinite : () => number
+
+  while true do
+>true : true
+
+  end
+  return 1;
+>1 : 1
+
+end
+
+// Statements after break are unreachable inside the body.
+function unreachableAfterBreakInBody(): number
+>unreachableAfterBreakInBody : () => number
+
+  local n = 0;
+>n : number
+>0 : 0
+
+  while true do
+>true : true
+
+    break;
+    n = 1;
+>n = 1 : 1
+>n : number
+>1 : 1
+
+  end
+  return n;
+>n : number
+
+end
+

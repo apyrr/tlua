@@ -1,0 +1,15 @@
+// === findAllReferences ===
+// === /findAllRefsInClassExpression.tlua ===
+// interface I { /*FIND ALL REFS*/[|boom|](): void; }
+// new class C implements I {
+//    boom(){}
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInClassExpression.tlua ===
+// interface I { boom(): void; }
+// new class C implements I {
+//    /*FIND ALL REFS*/boom(){}
+// }

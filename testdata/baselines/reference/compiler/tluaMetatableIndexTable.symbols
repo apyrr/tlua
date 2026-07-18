@@ -1,0 +1,189 @@
+//// [tests/cases/compiler/tluaMetatableIndexTable.tlua] ////
+
+=== tluaMetatableIndexTable.tlua ===
+// setmetatable pairs a table with its metatable: a read the table misses falls through to
+// the metatable's __index, so the call cannot keep returning the plain table it was given.
+
+local Helpers = {
+>Helpers : Symbol(Helpers, Decl(tluaMetatableIndexTable.tlua, 3, 5))
+
+  describe = function(self: object): string return "d"; end,
+>describe : Symbol(describe, Decl(tluaMetatableIndexTable.tlua, 3, 17))
+>self : Symbol(self, Decl(tluaMetatableIndexTable.tlua, 4, 22))
+
+  count = 0,
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+
+};
+
+local mt = { __index = Helpers };
+>mt : Symbol(mt, Decl(tluaMetatableIndexTable.tlua, 8, 5))
+>__index : Symbol(__index, Decl(tluaMetatableIndexTable.tlua, 8, 12))
+>Helpers : Symbol(Helpers, Decl(tluaMetatableIndexTable.tlua, 3, 5))
+
+local obj = setmetatable({ n = 1 }, mt);
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableIndexTable.tlua, 10, 26))
+>mt : Symbol(mt, Decl(tluaMetatableIndexTable.tlua, 8, 5))
+
+// The table's own members stay.
+local n: number = obj.n;
+>n : Symbol(n, Decl(tluaMetatableIndexTable.tlua, 13, 5))
+>obj.n : Symbol(n, Decl(tluaMetatableIndexTable.tlua, 10, 26))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+>n : Symbol(n, Decl(tluaMetatableIndexTable.tlua, 10, 26))
+
+// A missing member is found behind __index.
+local d: string = obj.describe(obj);
+>d : Symbol(d, Decl(tluaMetatableIndexTable.tlua, 16, 5))
+>obj.describe : Symbol(describe, Decl(tluaMetatableIndexTable.tlua, 3, 17))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+>describe : Symbol(describe, Decl(tluaMetatableIndexTable.tlua, 3, 17))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+
+local c: number = obj.count;
+>c : Symbol(c, Decl(tluaMetatableIndexTable.tlua, 17, 5))
+>obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+
+// What neither has is still missing.
+local absent = obj.nothing;
+>absent : Symbol(absent, Decl(tluaMetatableIndexTable.tlua, 20, 5))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+
+// The table wins a collision: a raw read hits it before the metatable ever runs.
+local collide = setmetatable({ v = 1 }, { __index = { v = "str" } });
+>collide : Symbol(collide, Decl(tluaMetatableIndexTable.tlua, 23, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 23, 30))
+>__index : Symbol(__index, Decl(tluaMetatableIndexTable.tlua, 23, 41))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 23, 53))
+
+local cn: number = collide.v;
+>cn : Symbol(cn, Decl(tluaMetatableIndexTable.tlua, 24, 5))
+>collide.v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 23, 30))
+>collide : Symbol(collide, Decl(tluaMetatableIndexTable.tlua, 23, 5))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 23, 30))
+
+local cs: string = collide.v;
+>cs : Symbol(cs, Decl(tluaMetatableIndexTable.tlua, 25, 5))
+>collide.v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 23, 30))
+>collide : Symbol(collide, Decl(tluaMetatableIndexTable.tlua, 23, 5))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 23, 30))
+
+// A fallback member is writable at its own type -- a Lua write raw-sets the table, which
+// shadows the metatable's copy from then on.
+obj.count = 2;
+>obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+
+obj.count = "two";
+>obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+
+// An index signature behind __index carries over.
+declare idxMt: { __index: { [key: string]: number } };
+>idxMt : Symbol(idxMt, Decl(tluaMetatableIndexTable.tlua, 33, 7))
+>__index : Symbol(__index, Decl(tluaMetatableIndexTable.tlua, 33, 16))
+>key : Symbol(key, Decl(tluaMetatableIndexTable.tlua, 33, 29))
+
+local ix = setmetatable({ n = 1 }, idxMt);
+>ix : Symbol(ix, Decl(tluaMetatableIndexTable.tlua, 34, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableIndexTable.tlua, 34, 25))
+>idxMt : Symbol(idxMt, Decl(tluaMetatableIndexTable.tlua, 33, 7))
+
+local iv: number = ix["anything"];
+>iv : Symbol(iv, Decl(tluaMetatableIndexTable.tlua, 35, 5))
+>ix : Symbol(ix, Decl(tluaMetatableIndexTable.tlua, 34, 5))
+
+// The table only wins while it *answers*: a key that is absent or nil is exactly what makes
+// Lua run the metatable, so a member that admits nil reads as its own non-nil half or the
+// fallback's value. Defaults behind __index -- the reason this matters -- work.
+declare partial: { name?: string; id: number };
+>partial : Symbol(partial, Decl(tluaMetatableIndexTable.tlua, 40, 7))
+>name : Symbol(name, Decl(tluaMetatableIndexTable.tlua, 40, 18))
+>id : Symbol(id, Decl(tluaMetatableIndexTable.tlua, 40, 33))
+
+local defaulted = setmetatable(partial, { __index = { name = "anonymous" } });
+>defaulted : Symbol(defaulted, Decl(tluaMetatableIndexTable.tlua, 41, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>partial : Symbol(partial, Decl(tluaMetatableIndexTable.tlua, 40, 7))
+>__index : Symbol(__index, Decl(tluaMetatableIndexTable.tlua, 41, 41))
+>name : Symbol(name, Decl(tluaMetatableIndexTable.tlua, 41, 53))
+
+local always: string = defaulted.name;
+>always : Symbol(always, Decl(tluaMetatableIndexTable.tlua, 42, 5))
+>defaulted.name : Symbol(name, Decl(tluaMetatableIndexTable.tlua, 40, 18))
+>defaulted : Symbol(defaulted, Decl(tluaMetatableIndexTable.tlua, 41, 5))
+>name : Symbol(name, Decl(tluaMetatableIndexTable.tlua, 40, 18))
+
+declare nilable: { v: number | nil };
+>nilable : Symbol(nilable, Decl(tluaMetatableIndexTable.tlua, 44, 7))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 44, 18))
+
+local either = setmetatable(nilable, { __index = { v = "str" } });
+>either : Symbol(either, Decl(tluaMetatableIndexTable.tlua, 45, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>nilable : Symbol(nilable, Decl(tluaMetatableIndexTable.tlua, 44, 7))
+>__index : Symbol(__index, Decl(tluaMetatableIndexTable.tlua, 45, 38))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 45, 50))
+
+local both: number | string = either.v;
+>both : Symbol(both, Decl(tluaMetatableIndexTable.tlua, 46, 5))
+>either.v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 44, 18))
+>either : Symbol(either, Decl(tluaMetatableIndexTable.tlua, 45, 5))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 44, 18))
+
+local notJustNumber: number = either.v;
+>notJustNumber : Symbol(notJustNumber, Decl(tluaMetatableIndexTable.tlua, 47, 5))
+>either.v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 44, 18))
+>either : Symbol(either, Decl(tluaMetatableIndexTable.tlua, 45, 5))
+>v : Symbol(v, Decl(tluaMetatableIndexTable.tlua, 44, 18))
+
+// An intersection still says what its __index is.
+declare interMt: { __index: { a: number } } & { __tostring: () => string };
+>interMt : Symbol(interMt, Decl(tluaMetatableIndexTable.tlua, 50, 7))
+>__index : Symbol(__index, Decl(tluaMetatableIndexTable.tlua, 50, 18))
+>a : Symbol(a, Decl(tluaMetatableIndexTable.tlua, 50, 29))
+>__tostring : Symbol(__tostring, Decl(tluaMetatableIndexTable.tlua, 50, 47))
+
+local inter = setmetatable({ n = 1 }, interMt);
+>inter : Symbol(inter, Decl(tluaMetatableIndexTable.tlua, 51, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableIndexTable.tlua, 51, 28))
+>interMt : Symbol(interMt, Decl(tluaMetatableIndexTable.tlua, 50, 7))
+
+local ia: number = inter.a;
+>ia : Symbol(ia, Decl(tluaMetatableIndexTable.tlua, 52, 5))
+>inter.a : Symbol(a, Decl(tluaMetatableIndexTable.tlua, 50, 29))
+>inter : Symbol(inter, Decl(tluaMetatableIndexTable.tlua, 51, 5))
+>a : Symbol(a, Decl(tluaMetatableIndexTable.tlua, 50, 29))
+
+// The result is still the table it was built from.
+interface HasN { n: number }
+>HasN : Symbol(HasN, Decl(tluaMetatableIndexTable.tlua, 52, 27))
+>n : Symbol(HasN.n, Decl(tluaMetatableIndexTable.tlua, 55, 16))
+
+local asTable: HasN = obj;
+>asTable : Symbol(asTable, Decl(tluaMetatableIndexTable.tlua, 56, 5))
+>HasN : Symbol(HasN, Decl(tluaMetatableIndexTable.tlua, 52, 27))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+
+// ...and a named interface that also spells the fallback out.
+interface Described { n: number; describe: (self: object) => string; count: number }
+>Described : Symbol(Described, Decl(tluaMetatableIndexTable.tlua, 56, 26))
+>n : Symbol(Described.n, Decl(tluaMetatableIndexTable.tlua, 59, 21))
+>describe : Symbol(Described.describe, Decl(tluaMetatableIndexTable.tlua, 59, 32))
+>self : Symbol(self, Decl(tluaMetatableIndexTable.tlua, 59, 44))
+>count : Symbol(Described.count, Decl(tluaMetatableIndexTable.tlua, 59, 68))
+
+local asDescribed: Described = obj;
+>asDescribed : Symbol(asDescribed, Decl(tluaMetatableIndexTable.tlua, 60, 5))
+>Described : Symbol(Described, Decl(tluaMetatableIndexTable.tlua, 56, 26))
+>obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
+

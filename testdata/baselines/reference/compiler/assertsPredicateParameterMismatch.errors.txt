@@ -1,0 +1,29 @@
+assertsPredicateParameterMismatch.tlua(7,12): error TS1225: Cannot find parameter 'condition'.
+assertsPredicateParameterMismatch.tlua(9,15): error TS2304: Cannot find name 'Error'.
+assertsPredicateParameterMismatch.tlua(15,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+
+
+==== assertsPredicateParameterMismatch.tlua (3 errors) ====
+    // This test verifies that the checker doesn't panic when an assertion predicate
+    // references a parameter name that doesn't match any actual function parameter.
+    // This specifically tests the code path in isReachableFlowNodeWorker.
+    
+    function assertCondition(
+      _condition: boolean
+    ): asserts condition {  // "condition" doesn't match parameter "_condition"
+               ~~~~~~~~~
+!!! error TS1225: Cannot find parameter 'condition'.
+      if (!_condition) {
+        throw new Error('Condition failed');
+                  ~~~~~
+!!! error TS2304: Cannot find name 'Error'.
+      }
+    }
+    
+    function test(): void {
+      assertCondition(false);
+      console.log("unreachable");
+      ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+    }
+    

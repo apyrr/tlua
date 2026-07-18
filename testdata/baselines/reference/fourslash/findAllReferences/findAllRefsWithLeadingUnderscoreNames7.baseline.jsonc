@@ -1,0 +1,21 @@
+// === findAllReferences ===
+// === /findAllRefsWithLeadingUnderscoreNames7.tlua ===
+// /*FIND ALL REFS*/function [|__foo|]() {
+//     [|__foo|]();
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsWithLeadingUnderscoreNames7.tlua ===
+// function /*FIND ALL REFS*/[|__foo|]() {
+//     [|__foo|]();
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsWithLeadingUnderscoreNames7.tlua ===
+// function [|__foo|]() {
+//     /*FIND ALL REFS*/[|__foo|]();
+// }

@@ -1,0 +1,917 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsClassAutoAccessors.tlua ===
+// class c {
+//     public accessor publicProperty: string;
+//                     ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     private accessor privateProperty: string;
+//                      ^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     protected accessor protectedProperty: string;
+//                        ^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     static accessor staticProperty: string;
+//                     ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     private static accessor privateStaticProperty: string;
+//                             ^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     protected static accessor protectedStaticProperty: string;
+//                               ^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     method() {
+//         local x: string;
+//         x = this.publicProperty;
+//                  ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         x = this.privateProperty;
+//                  ^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         x = this.protectedProperty;
+//                  ^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         x = c.staticProperty;
+//               ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         x = c.privateStaticProperty;
+//               ^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         x = c.protectedStaticProperty;
+//               ^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         this.publicProperty = "";
+//              ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         this.privateProperty = "";
+//              ^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         this.protectedProperty = "";
+//              ^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         c.staticProperty = "";
+//           ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         c.privateStaticProperty = "";
+//           ^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         c.protectedStaticProperty = "";
+//           ^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+// }
+// local cInstance = new c();
+// local y: string;
+// y = cInstance.publicProperty;
+//     ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cInstance: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//               ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// y = c.staticProperty;
+//     ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//       ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// cInstance.publicProperty = y;
+// ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cInstance: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//           ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// c.staticProperty = y;
+// ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//   ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 30,
+      "LSPosition": {
+        "line": 1,
+        "character": 20
+      },
+      "Name": "1a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 20
+        },
+        "end": {
+          "line": 1,
+          "character": 34
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 75,
+      "LSPosition": {
+        "line": 2,
+        "character": 21
+      },
+      "Name": "2a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 21
+        },
+        "end": {
+          "line": 2,
+          "character": 36
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 123,
+      "LSPosition": {
+        "line": 3,
+        "character": 23
+      },
+      "Name": "3a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 23
+        },
+        "end": {
+          "line": 3,
+          "character": 40
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 170,
+      "LSPosition": {
+        "line": 4,
+        "character": 20
+      },
+      "Name": "4a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 20
+        },
+        "end": {
+          "line": 4,
+          "character": 34
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 222,
+      "LSPosition": {
+        "line": 5,
+        "character": 28
+      },
+      "Name": "5a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 28
+        },
+        "end": {
+          "line": 5,
+          "character": 49
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 283,
+      "LSPosition": {
+        "line": 6,
+        "character": 30
+      },
+      "Name": "6a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 30
+        },
+        "end": {
+          "line": 6,
+          "character": 53
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 373,
+      "LSPosition": {
+        "line": 9,
+        "character": 17
+      },
+      "Name": "1g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 17
+        },
+        "end": {
+          "line": 9,
+          "character": 31
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 406,
+      "LSPosition": {
+        "line": 10,
+        "character": 17
+      },
+      "Name": "2g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 10,
+          "character": 17
+        },
+        "end": {
+          "line": 10,
+          "character": 32
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 440,
+      "LSPosition": {
+        "line": 11,
+        "character": 17
+      },
+      "Name": "3g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 11,
+          "character": 17
+        },
+        "end": {
+          "line": 11,
+          "character": 34
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 473,
+      "LSPosition": {
+        "line": 12,
+        "character": 14
+      },
+      "Name": "4g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 14
+        },
+        "end": {
+          "line": 12,
+          "character": 28
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 503,
+      "LSPosition": {
+        "line": 13,
+        "character": 14
+      },
+      "Name": "5g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 13,
+          "character": 14
+        },
+        "end": {
+          "line": 13,
+          "character": 35
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 540,
+      "LSPosition": {
+        "line": 14,
+        "character": 14
+      },
+      "Name": "6g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 14,
+          "character": 14
+        },
+        "end": {
+          "line": 14,
+          "character": 37
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 578,
+      "LSPosition": {
+        "line": 15,
+        "character": 13
+      },
+      "Name": "1s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 15,
+          "character": 13
+        },
+        "end": {
+          "line": 15,
+          "character": 27
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 612,
+      "LSPosition": {
+        "line": 16,
+        "character": 13
+      },
+      "Name": "2s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 16,
+          "character": 13
+        },
+        "end": {
+          "line": 16,
+          "character": 28
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 647,
+      "LSPosition": {
+        "line": 17,
+        "character": 13
+      },
+      "Name": "3s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 17,
+          "character": 13
+        },
+        "end": {
+          "line": 17,
+          "character": 30
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 681,
+      "LSPosition": {
+        "line": 18,
+        "character": 10
+      },
+      "Name": "4s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 18,
+          "character": 10
+        },
+        "end": {
+          "line": 18,
+          "character": 24
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 712,
+      "LSPosition": {
+        "line": 19,
+        "character": 10
+      },
+      "Name": "5s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 19,
+          "character": 10
+        },
+        "end": {
+          "line": 19,
+          "character": 31
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 750,
+      "LSPosition": {
+        "line": 20,
+        "character": 10
+      },
+      "Name": "6s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 20,
+          "character": 10
+        },
+        "end": {
+          "line": 20,
+          "character": 33
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 836,
+      "LSPosition": {
+        "line": 25,
+        "character": 4
+      },
+      "Name": "7g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cInstance: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 25,
+          "character": 4
+        },
+        "end": {
+          "line": 25,
+          "character": 13
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 846,
+      "LSPosition": {
+        "line": 25,
+        "character": 14
+      },
+      "Name": "8g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 25,
+          "character": 14
+        },
+        "end": {
+          "line": 25,
+          "character": 28
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 866,
+      "LSPosition": {
+        "line": 26,
+        "character": 4
+      },
+      "Name": "9g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 26,
+          "character": 4
+        },
+        "end": {
+          "line": 26,
+          "character": 5
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 868,
+      "LSPosition": {
+        "line": 26,
+        "character": 6
+      },
+      "Name": "10g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 26,
+          "character": 6
+        },
+        "end": {
+          "line": 26,
+          "character": 20
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 884,
+      "LSPosition": {
+        "line": 27,
+        "character": 0
+      },
+      "Name": "7s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cInstance: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 27,
+          "character": 0
+        },
+        "end": {
+          "line": 27,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 894,
+      "LSPosition": {
+        "line": 27,
+        "character": 10
+      },
+      "Name": "8s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 27,
+          "character": 10
+        },
+        "end": {
+          "line": 27,
+          "character": 24
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 914,
+      "LSPosition": {
+        "line": 28,
+        "character": 0
+      },
+      "Name": "9s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 28,
+          "character": 0
+        },
+        "end": {
+          "line": 28,
+          "character": 1
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 916,
+      "LSPosition": {
+        "line": 28,
+        "character": 2
+      },
+      "Name": "10s",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 28,
+          "character": 2
+        },
+        "end": {
+          "line": 28,
+          "character": 16
+        }
+      }
+    }
+  }
+]

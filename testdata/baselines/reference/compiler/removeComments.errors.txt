@@ -1,0 +1,78 @@
+removeComments.tlua(2,9): error TS1109: Expression expected.
+removeComments.tlua(2,13): error TS1128: Declaration or statement expected.
+removeComments.tlua(2,14): error TS2304: Cannot find name 'a'.
+removeComments.tlua(2,19): error TS1005: ';' expected.
+removeComments.tlua(3,9): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+removeComments.tlua(3,27): error TS1135: Argument expression expected.
+removeComments.tlua(3,31): error TS1135: Argument expression expected.
+removeComments.tlua(3,32): error TS2304: Cannot find name 'a'.
+removeComments.tlua(10,5): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+removeComments.tlua(19,5): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+removeComments.tlua(22,17): error TS1109: Expression expected.
+removeComments.tlua(22,21): error TS1109: Expression expected.
+removeComments.tlua(23,17): error TS1109: Expression expected.
+removeComments.tlua(23,21): error TS1109: Expression expected.
+removeComments.tlua(24,17): error TS1109: Expression expected.
+removeComments.tlua(24,21): error TS1109: Expression expected.
+
+
+==== removeComments.tlua (16 errors) ====
+    function t1() {
+        if (this.a < 2) { // comment after if
+            ~~~~
+!!! error TS1109: Expression expected.
+                ~
+!!! error TS1128: Declaration or statement expected.
+                 ~
+!!! error TS2304: Cannot find name 'a'.
+                      ~
+!!! error TS1005: ';' expected.
+            console.log('t1', this.a)
+            ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+                              ~~~~
+!!! error TS1135: Argument expression expected.
+                                  ~
+!!! error TS1135: Argument expression expected.
+                                   ~
+!!! error TS2304: Cannot find name 'a'.
+    
+            // comment after empty line in if block
+        }
+    }
+    
+    function t2() {
+        console.log("t2");
+        ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+    
+        local obj = // comment here
+        {
+            a = 1,   // comment a
+            b = 2,   // comment b
+            c = 3,   // comment c (removed)
+        }
+    
+        console.log(
+        ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+            "test", // comment 1
+            {
+                a = this.a,  // comment a
+                    ~~~~
+!!! error TS1109: Expression expected.
+                        ~
+!!! error TS1109: Expression expected.
+                b = this.b,  // comment b
+                    ~~~~
+!!! error TS1109: Expression expected.
+                        ~
+!!! error TS1109: Expression expected.
+                c = this.c,  // comment c (removed)
+                    ~~~~
+!!! error TS1109: Expression expected.
+                        ~
+!!! error TS1109: Expression expected.
+            }, obj)
+    }
+    

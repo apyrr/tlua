@@ -1,0 +1,35 @@
+// @target: esnext
+
+function classify(n: number): string
+  if n < 0 then
+    return "neg";
+  elseif n == 0 then
+    return "zero";
+  elseif n < 10 then
+    return "small";
+  else
+    return "big";
+  end
+end
+
+// `else` holding a nested full if takes its own end (two ends total).
+function elseNestedIf(a: boolean, b: boolean): number
+  if a then
+    return 1;
+  else
+    if b then
+      return 2;
+    end
+    return 3;
+  end
+end
+
+// elseif without a final else.
+function noFinalElse(n: number): number
+  if n == 1 then
+    return 10;
+  elseif n == 2 then
+    return 20;
+  end
+  return 0;
+end

@@ -1,0 +1,117 @@
+//// [tests/cases/compiler/tluaMetatableReplace.tlua] ////
+
+=== tluaMetatableReplace.tlua ===
+// setmetatable *replaces* a metatable. A table that already had one keeps only what it
+// holds itself: the old __index does not answer any more, whether or not a new one takes
+// its place.
+
+local First = { fromFirst = 1 };
+>First : Symbol(First, Decl(tluaMetatableReplace.tlua, 4, 5))
+>fromFirst : Symbol(fromFirst, Decl(tluaMetatableReplace.tlua, 4, 15))
+
+local Second = { fromSecond = "s" };
+>Second : Symbol(Second, Decl(tluaMetatableReplace.tlua, 5, 5))
+>fromSecond : Symbol(fromSecond, Decl(tluaMetatableReplace.tlua, 5, 16))
+
+local obj = setmetatable({ own = true }, { __index = First });
+>obj : Symbol(obj, Decl(tluaMetatableReplace.tlua, 7, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>own : Symbol(own, Decl(tluaMetatableReplace.tlua, 7, 26))
+>__index : Symbol(__index, Decl(tluaMetatableReplace.tlua, 7, 42))
+>First : Symbol(First, Decl(tluaMetatableReplace.tlua, 4, 5))
+
+local f1: number = obj.fromFirst;
+>f1 : Symbol(f1, Decl(tluaMetatableReplace.tlua, 8, 5))
+>obj.fromFirst : Symbol(fromFirst, Decl(tluaMetatableReplace.tlua, 4, 15))
+>obj : Symbol(obj, Decl(tluaMetatableReplace.tlua, 7, 5))
+>fromFirst : Symbol(fromFirst, Decl(tluaMetatableReplace.tlua, 4, 15))
+
+local repaired = setmetatable(obj, { __index = Second });
+>repaired : Symbol(repaired, Decl(tluaMetatableReplace.tlua, 10, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>obj : Symbol(obj, Decl(tluaMetatableReplace.tlua, 7, 5))
+>__index : Symbol(__index, Decl(tluaMetatableReplace.tlua, 10, 36))
+>Second : Symbol(Second, Decl(tluaMetatableReplace.tlua, 5, 5))
+
+local s1: string = repaired.fromSecond;
+>s1 : Symbol(s1, Decl(tluaMetatableReplace.tlua, 11, 5))
+>repaired.fromSecond : Symbol(fromSecond, Decl(tluaMetatableReplace.tlua, 5, 16))
+>repaired : Symbol(repaired, Decl(tluaMetatableReplace.tlua, 10, 5))
+>fromSecond : Symbol(fromSecond, Decl(tluaMetatableReplace.tlua, 5, 16))
+
+local own1: boolean = repaired.own;
+>own1 : Symbol(own1, Decl(tluaMetatableReplace.tlua, 12, 5))
+>repaired.own : Symbol(own, Decl(tluaMetatableReplace.tlua, 7, 26))
+>repaired : Symbol(repaired, Decl(tluaMetatableReplace.tlua, 10, 5))
+>own : Symbol(own, Decl(tluaMetatableReplace.tlua, 7, 26))
+
+local gone = repaired.fromFirst;
+>gone : Symbol(gone, Decl(tluaMetatableReplace.tlua, 13, 5))
+>repaired : Symbol(repaired, Decl(tluaMetatableReplace.tlua, 10, 5))
+
+// `setmetatable(t, nil)` is how a metatable is detached.
+local detached = setmetatable(obj, nil);
+>detached : Symbol(detached, Decl(tluaMetatableReplace.tlua, 16, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>obj : Symbol(obj, Decl(tluaMetatableReplace.tlua, 7, 5))
+
+local own2: boolean = detached.own;
+>own2 : Symbol(own2, Decl(tluaMetatableReplace.tlua, 17, 5))
+>detached.own : Symbol(own, Decl(tluaMetatableReplace.tlua, 7, 26))
+>detached : Symbol(detached, Decl(tluaMetatableReplace.tlua, 16, 5))
+>own : Symbol(own, Decl(tluaMetatableReplace.tlua, 7, 26))
+
+local gone2 = detached.fromFirst;
+>gone2 : Symbol(gone2, Decl(tluaMetatableReplace.tlua, 18, 5))
+>detached : Symbol(detached, Decl(tluaMetatableReplace.tlua, 16, 5))
+
+// A metatable with no __index detaches the fallback just as thoroughly.
+local other = setmetatable(obj, { __tostring = function(t: object): string return "t"; end });
+>other : Symbol(other, Decl(tluaMetatableReplace.tlua, 21, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>obj : Symbol(obj, Decl(tluaMetatableReplace.tlua, 7, 5))
+>__tostring : Symbol(__tostring, Decl(tluaMetatableReplace.tlua, 21, 33))
+>t : Symbol(t, Decl(tluaMetatableReplace.tlua, 21, 56))
+
+local gone3 = other.fromFirst;
+>gone3 : Symbol(gone3, Decl(tluaMetatableReplace.tlua, 22, 5))
+>other : Symbol(other, Decl(tluaMetatableReplace.tlua, 21, 5))
+
+// The metatable goes with it: nothing pairs these tables now.
+local dm = getmetatable(detached);
+>dm : Symbol(dm, Decl(tluaMetatableReplace.tlua, 25, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>detached : Symbol(detached, Decl(tluaMetatableReplace.tlua, 16, 5))
+
+// A read still goes through the *current* metatable.
+local rm = getmetatable(repaired);
+>rm : Symbol(rm, Decl(tluaMetatableReplace.tlua, 28, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>repaired : Symbol(repaired, Decl(tluaMetatableReplace.tlua, 10, 5))
+
+local back: string = rm.__index.fromSecond;
+>back : Symbol(back, Decl(tluaMetatableReplace.tlua, 29, 5))
+>rm.__index.fromSecond : Symbol(fromSecond, Decl(tluaMetatableReplace.tlua, 5, 16))
+>rm.__index : Symbol(__index, Decl(tluaMetatableReplace.tlua, 10, 36))
+>rm : Symbol(rm, Decl(tluaMetatableReplace.tlua, 28, 5))
+>__index : Symbol(__index, Decl(tluaMetatableReplace.tlua, 10, 36))
+>fromSecond : Symbol(fromSecond, Decl(tluaMetatableReplace.tlua, 5, 16))
+
+// The statement form -- how Lua mutates a table in place -- narrows the variable, so its
+// fallback is visible afterward. (tluaMetatableStatement covers this in full.)
+local plain = { n = 1 };
+>plain : Symbol(plain, Decl(tluaMetatableReplace.tlua, 33, 5))
+>n : Symbol(n, Decl(tluaMetatableReplace.tlua, 33, 15))
+
+setmetatable(plain, { __index = First });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>plain : Symbol(plain, Decl(tluaMetatableReplace.tlua, 33, 5))
+>__index : Symbol(__index, Decl(tluaMetatableReplace.tlua, 34, 21))
+>First : Symbol(First, Decl(tluaMetatableReplace.tlua, 4, 5))
+
+local statementForm: boolean = plain.fromFirst;
+>statementForm : Symbol(statementForm, Decl(tluaMetatableReplace.tlua, 35, 5))
+>plain.fromFirst : Symbol(fromFirst, Decl(tluaMetatableReplace.tlua, 4, 15))
+>plain : Symbol(plain, Decl(tluaMetatableReplace.tlua, 33, 5))
+>fromFirst : Symbol(fromFirst, Decl(tluaMetatableReplace.tlua, 4, 15))
+

@@ -1,0 +1,492 @@
+//// [tests/cases/compiler/varianceComputationNoCrash.tlua] ////
+
+=== varianceComputationNoCrash.tlua ===
+// https://github.com/microsoft/typescript-go/issues/2935
+
+type Whitespace = '\u{9}' | '\u{A}' | '\u{B}' | '\u{C}' | '\u{D}' | '\u{20}' | '\u{85}' | '\u{A0}' | '\u{1680}' | '\u{2000}' | '\u{2001}' | '\u{2002}' | '\u{2003}' | '\u{2004}' | '\u{2005}' | '\u{2006}' | '\u{2007}' | '\u{2008}' | '\u{2009}' | '\u{200A}' | '\u{2028}' | '\u{2029}' | '\u{202F}' | '\u{205F}' | '\u{3000}' | '\u{FEFF}';
+>Whitespace : Symbol(Whitespace, Decl(varianceComputationNoCrash.tlua, 0, 0))
+
+type WordSeparators = '-' | '_' | Whitespace;
+>WordSeparators : Symbol(WordSeparators, Decl(varianceComputationNoCrash.tlua, 2, 333))
+>Whitespace : Symbol(Whitespace, Decl(varianceComputationNoCrash.tlua, 0, 0))
+
+type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
+>Simplify : Symbol(Simplify, Decl(varianceComputationNoCrash.tlua, 3, 45))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 4, 14))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 4, 21))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 4, 14))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 4, 14))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 4, 21))
+
+type IsAny<T> = 0 extends 1 & T ? true : false;
+>IsAny : Symbol(IsAny, Decl(varianceComputationNoCrash.tlua, 4, 59))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 5, 11))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 5, 11))
+
+type IsNever<T> = [T] extends [never] ? true : false;
+>IsNever : Symbol(IsNever, Decl(varianceComputationNoCrash.tlua, 5, 47))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 6, 13))
+> : Symbol(unknown)
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 6, 13))
+> : Symbol(unknown)
+
+type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = IsAny<T> extends true ? TypeIfAny : TypeIfNotAny;
+>IfAny : Symbol(IfAny, Decl(varianceComputationNoCrash.tlua, 6, 53))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 7, 11))
+>TypeIfAny : Symbol(TypeIfAny, Decl(varianceComputationNoCrash.tlua, 7, 13))
+>TypeIfNotAny : Symbol(TypeIfNotAny, Decl(varianceComputationNoCrash.tlua, 7, 31))
+>IsAny : Symbol(IsAny, Decl(varianceComputationNoCrash.tlua, 4, 59))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 7, 11))
+>TypeIfAny : Symbol(TypeIfAny, Decl(varianceComputationNoCrash.tlua, 7, 13))
+>TypeIfNotAny : Symbol(TypeIfNotAny, Decl(varianceComputationNoCrash.tlua, 7, 31))
+
+type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = IsNever<T> extends true ? TypeIfNever : TypeIfNotNever;
+>IfNever : Symbol(IfNever, Decl(varianceComputationNoCrash.tlua, 7, 105))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 8, 13))
+>TypeIfNever : Symbol(TypeIfNever, Decl(varianceComputationNoCrash.tlua, 8, 15))
+>TypeIfNotNever : Symbol(TypeIfNotNever, Decl(varianceComputationNoCrash.tlua, 8, 35))
+>IsNever : Symbol(IsNever, Decl(varianceComputationNoCrash.tlua, 5, 47))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 8, 13))
+>TypeIfNever : Symbol(TypeIfNever, Decl(varianceComputationNoCrash.tlua, 8, 15))
+>TypeIfNotNever : Symbol(TypeIfNotNever, Decl(varianceComputationNoCrash.tlua, 8, 35))
+
+type RequiredKeysOf<BaseType extends object> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
+>RequiredKeysOf : Symbol(RequiredKeysOf, Decl(varianceComputationNoCrash.tlua, 8, 117))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
+>Exclude : Symbol(Exclude, Decl(lib.luajit.d.tlua, --, --))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
+
+type OptionalKeysOf<BaseType extends object> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], undefined>;
+>OptionalKeysOf : Symbol(OptionalKeysOf, Decl(varianceComputationNoCrash.tlua, 9, 168))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
+>Exclude : Symbol(Exclude, Decl(lib.luajit.d.tlua, --, --))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
+>BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
+
+type OmitIndexSignature<ObjectType> = {[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown> ? never : KeyType]: ObjectType[KeyType]};
+>OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 168))
+>ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 11, 24))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 11, 40))
+>ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 11, 24))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 11, 40))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 11, 40))
+>ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 11, 24))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 11, 40))
+
+type PickIndexSignature<ObjectType> = {[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown> ? KeyType : never]: ObjectType[KeyType]};
+>PickIndexSignature : Symbol(PickIndexSignature, Decl(varianceComputationNoCrash.tlua, 11, 148))
+>ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 12, 24))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 12, 40))
+>ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 12, 24))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 12, 40))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 12, 40))
+>ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 12, 24))
+>KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 12, 40))
+
+type SimpleMerge<Destination, Source> = {[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key]} & Source;
+>SimpleMerge : Symbol(SimpleMerge, Decl(varianceComputationNoCrash.tlua, 12, 148))
+>Destination : Symbol(Destination, Decl(varianceComputationNoCrash.tlua, 13, 17))
+>Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 13, 29))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 13, 42))
+>Destination : Symbol(Destination, Decl(varianceComputationNoCrash.tlua, 13, 17))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 13, 42))
+>Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 13, 29))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 13, 42))
+>Destination : Symbol(Destination, Decl(varianceComputationNoCrash.tlua, 13, 17))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 13, 42))
+>Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 13, 29))
+
+type Merge<Destination, Source> = Simplify<SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>> & SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>>;
+>Merge : Symbol(Merge, Decl(varianceComputationNoCrash.tlua, 13, 138))
+>Destination : Symbol(Destination, Decl(varianceComputationNoCrash.tlua, 14, 11))
+>Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 14, 23))
+>Simplify : Symbol(Simplify, Decl(varianceComputationNoCrash.tlua, 3, 45))
+>SimpleMerge : Symbol(SimpleMerge, Decl(varianceComputationNoCrash.tlua, 12, 148))
+>PickIndexSignature : Symbol(PickIndexSignature, Decl(varianceComputationNoCrash.tlua, 11, 148))
+>Destination : Symbol(Destination, Decl(varianceComputationNoCrash.tlua, 14, 11))
+>PickIndexSignature : Symbol(PickIndexSignature, Decl(varianceComputationNoCrash.tlua, 11, 148))
+>Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 14, 23))
+>SimpleMerge : Symbol(SimpleMerge, Decl(varianceComputationNoCrash.tlua, 12, 148))
+>OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 168))
+>Destination : Symbol(Destination, Decl(varianceComputationNoCrash.tlua, 14, 11))
+>OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 168))
+>Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 14, 23))
+
+type TrimLeft<V extends string> = V extends `${Whitespace}${infer R}` ? TrimLeft<R> : V;
+>TrimLeft : Symbol(TrimLeft, Decl(varianceComputationNoCrash.tlua, 14, 192))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 15, 14))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 15, 14))
+>Whitespace : Symbol(Whitespace, Decl(varianceComputationNoCrash.tlua, 0, 0))
+>R : Symbol(R, Decl(varianceComputationNoCrash.tlua, 15, 65))
+>TrimLeft : Symbol(TrimLeft, Decl(varianceComputationNoCrash.tlua, 14, 192))
+>R : Symbol(R, Decl(varianceComputationNoCrash.tlua, 15, 65))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 15, 14))
+
+type TrimRight<V extends string> = V extends `${infer R}${Whitespace}` ? TrimRight<R> : V;
+>TrimRight : Symbol(TrimRight, Decl(varianceComputationNoCrash.tlua, 15, 88))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 16, 15))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 16, 15))
+>R : Symbol(R, Decl(varianceComputationNoCrash.tlua, 16, 53))
+>Whitespace : Symbol(Whitespace, Decl(varianceComputationNoCrash.tlua, 0, 0))
+>TrimRight : Symbol(TrimRight, Decl(varianceComputationNoCrash.tlua, 15, 88))
+>R : Symbol(R, Decl(varianceComputationNoCrash.tlua, 16, 53))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 16, 15))
+
+type Trim<V extends string> = TrimLeft<TrimRight<V>>;
+>Trim : Symbol(Trim, Decl(varianceComputationNoCrash.tlua, 16, 90))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 17, 10))
+>TrimLeft : Symbol(TrimLeft, Decl(varianceComputationNoCrash.tlua, 14, 192))
+>TrimRight : Symbol(TrimRight, Decl(varianceComputationNoCrash.tlua, 15, 88))
+>V : Symbol(V, Decl(varianceComputationNoCrash.tlua, 17, 10))
+
+type IsLowerCase<T extends string> = T extends Lowercase<T> ? true : false;
+>IsLowerCase : Symbol(IsLowerCase, Decl(varianceComputationNoCrash.tlua, 17, 53))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 18, 17))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 18, 17))
+>Lowercase : Symbol(Lowercase, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 18, 17))
+
+type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
+>IsUpperCase : Symbol(IsUpperCase, Decl(varianceComputationNoCrash.tlua, 18, 75))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 19, 17))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 19, 17))
+>Uppercase : Symbol(Uppercase, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 19, 17))
+
+type IsNumeric<T extends string> = T extends `${number}` ? Trim<T> extends T ? true : false : false;
+>IsNumeric : Symbol(IsNumeric, Decl(varianceComputationNoCrash.tlua, 19, 75))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 20, 15))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 20, 15))
+>Trim : Symbol(Trim, Decl(varianceComputationNoCrash.tlua, 16, 90))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 20, 15))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 20, 15))
+
+type ApplyDefaultOptions<
+>ApplyDefaultOptions : Symbol(ApplyDefaultOptions, Decl(varianceComputationNoCrash.tlua, 20, 100))
+
+    Options extends object,
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
+
+    Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>Simplify : Symbol(Simplify, Decl(varianceComputationNoCrash.tlua, 3, 45))
+>Omit : Symbol(Omit, Decl(lib.luajit.d.tlua, --, --))
+>Required : Symbol(Required, Decl(lib.luajit.d.tlua, --, --))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
+>RequiredKeysOf : Symbol(RequiredKeysOf, Decl(varianceComputationNoCrash.tlua, 8, 117))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
+>Partial : Symbol(Partial, Decl(lib.luajit.d.tlua, --, --))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>RequiredKeysOf : Symbol(RequiredKeysOf, Decl(varianceComputationNoCrash.tlua, 8, 117))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
+
+    SpecifiedOptions extends Options,
+>SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
+
+> = IfAny<SpecifiedOptions, Defaults, IfNever<SpecifiedOptions, Defaults, Simplify<Merge<Defaults, {[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]}> & Required<Options>>>>;
+>IfAny : Symbol(IfAny, Decl(varianceComputationNoCrash.tlua, 6, 53))
+>SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>IfNever : Symbol(IfNever, Decl(varianceComputationNoCrash.tlua, 7, 105))
+>SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>Simplify : Symbol(Simplify, Decl(varianceComputationNoCrash.tlua, 3, 45))
+>Merge : Symbol(Merge, Decl(varianceComputationNoCrash.tlua, 13, 138))
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
+>SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
+>OptionalKeysOf : Symbol(OptionalKeysOf, Decl(varianceComputationNoCrash.tlua, 9, 168))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
+>SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
+>SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
+>Required : Symbol(Required, Decl(lib.luajit.d.tlua, --, --))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
+
+type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
+>SkipEmptyWord : Symbol(SkipEmptyWord, Decl(varianceComputationNoCrash.tlua, 25, 281))
+>Word : Symbol(Word, Decl(varianceComputationNoCrash.tlua, 27, 19))
+>Word : Symbol(Word, Decl(varianceComputationNoCrash.tlua, 27, 19))
+> : Symbol(unknown)
+> : Symbol(unknown)
+>Word : Symbol(Word, Decl(varianceComputationNoCrash.tlua, 27, 19))
+
+type RemoveLastCharacter<Sentence extends string, Character extends string> = Sentence extends `${infer LeftSide}${Character}` ? SkipEmptyWord<LeftSide> : never;
+>RemoveLastCharacter : Symbol(RemoveLastCharacter, Decl(varianceComputationNoCrash.tlua, 27, 72))
+>Sentence : Symbol(Sentence, Decl(varianceComputationNoCrash.tlua, 28, 25))
+>Character : Symbol(Character, Decl(varianceComputationNoCrash.tlua, 28, 49))
+>Sentence : Symbol(Sentence, Decl(varianceComputationNoCrash.tlua, 28, 25))
+>LeftSide : Symbol(LeftSide, Decl(varianceComputationNoCrash.tlua, 28, 103))
+>Character : Symbol(Character, Decl(varianceComputationNoCrash.tlua, 28, 49))
+>SkipEmptyWord : Symbol(SkipEmptyWord, Decl(varianceComputationNoCrash.tlua, 25, 281))
+>LeftSide : Symbol(LeftSide, Decl(varianceComputationNoCrash.tlua, 28, 103))
+
+type WordsOptions = { splitOnNumbers?: boolean };
+>WordsOptions : Symbol(WordsOptions, Decl(varianceComputationNoCrash.tlua, 28, 161))
+>splitOnNumbers : Symbol(splitOnNumbers, Decl(varianceComputationNoCrash.tlua, 29, 21))
+
+type DefaultWordsOptions = { splitOnNumbers: true };
+>DefaultWordsOptions : Symbol(DefaultWordsOptions, Decl(varianceComputationNoCrash.tlua, 29, 49))
+>splitOnNumbers : Symbol(splitOnNumbers, Decl(varianceComputationNoCrash.tlua, 30, 28))
+
+type WordsImplementation<
+>WordsImplementation : Symbol(WordsImplementation, Decl(varianceComputationNoCrash.tlua, 30, 52))
+
+    Sentence extends string,
+>Sentence : Symbol(Sentence, Decl(varianceComputationNoCrash.tlua, 32, 25))
+
+    Options extends Required<WordsOptions>,
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 33, 28))
+>Required : Symbol(Required, Decl(lib.luajit.d.tlua, --, --))
+>WordsOptions : Symbol(WordsOptions, Decl(varianceComputationNoCrash.tlua, 28, 161))
+
+    LastCharacter extends string = '',
+>LastCharacter : Symbol(LastCharacter, Decl(varianceComputationNoCrash.tlua, 34, 43))
+
+    CurrentWord extends string = '',
+>CurrentWord : Symbol(CurrentWord, Decl(varianceComputationNoCrash.tlua, 35, 38))
+
+> = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
+>Sentence : Symbol(Sentence, Decl(varianceComputationNoCrash.tlua, 32, 25))
+>FirstCharacter : Symbol(FirstCharacter, Decl(varianceComputationNoCrash.tlua, 37, 29))
+>RemainingCharacters : Symbol(RemainingCharacters, Decl(varianceComputationNoCrash.tlua, 37, 52))
+
+    ? FirstCharacter extends WordSeparators
+>FirstCharacter : Symbol(FirstCharacter, Decl(varianceComputationNoCrash.tlua, 37, 29))
+>WordSeparators : Symbol(WordSeparators, Decl(varianceComputationNoCrash.tlua, 2, 333))
+
+        ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options>]
+> : Symbol(unknown)
+> : Symbol(unknown)
+> : Symbol(unknown)
+> : Symbol(unknown)
+>CurrentWord : Symbol(CurrentWord)
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+
+        : LastCharacter extends ''
+            ? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+            : [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
+>LastCharacter : Symbol(LastCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                ? Options['splitOnNumbers'] extends true
+                    ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+>CurrentWord : Symbol(CurrentWord)
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                    : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>CurrentWord : Symbol(CurrentWord)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                : [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
+>LastCharacter : Symbol(LastCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                    ? Options['splitOnNumbers'] extends true
+                        ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+>CurrentWord : Symbol(CurrentWord)
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                        : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>CurrentWord : Symbol(CurrentWord)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                    : [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
+>LastCharacter : Symbol(LastCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                        ? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>CurrentWord : Symbol(CurrentWord)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                        : [true, true] extends [IsLowerCase<LastCharacter>, IsUpperCase<FirstCharacter>]
+>LastCharacter : Symbol(LastCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                            ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+>CurrentWord : Symbol(CurrentWord)
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                            : [true, true] extends [IsUpperCase<LastCharacter>, IsLowerCase<FirstCharacter>]
+>LastCharacter : Symbol(LastCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                                ? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
+>CurrentWord : Symbol(CurrentWord)
+>LastCharacter : Symbol(LastCharacter)
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>LastCharacter : Symbol(LastCharacter)
+>FirstCharacter : Symbol(FirstCharacter)
+
+                                : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+>RemainingCharacters : Symbol(RemainingCharacters)
+>Options : Symbol(Options)
+>FirstCharacter : Symbol(FirstCharacter)
+>CurrentWord : Symbol(CurrentWord)
+>FirstCharacter : Symbol(FirstCharacter)
+
+    : [...SkipEmptyWord<CurrentWord>];
+>CurrentWord : Symbol(CurrentWord)
+
+type Words<Sentence extends string, Options extends WordsOptions = {}> =
+>Words : Symbol(Words, Decl(varianceComputationNoCrash.tlua, 57, 38))
+>Sentence : Symbol(Sentence, Decl(varianceComputationNoCrash.tlua, 59, 11))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 59, 35))
+>WordsOptions : Symbol(WordsOptions, Decl(varianceComputationNoCrash.tlua, 28, 161))
+
+    WordsImplementation<Sentence, ApplyDefaultOptions<WordsOptions, DefaultWordsOptions, Options>>;
+>WordsImplementation : Symbol(WordsImplementation, Decl(varianceComputationNoCrash.tlua, 30, 52))
+>Sentence : Symbol(Sentence, Decl(varianceComputationNoCrash.tlua, 59, 11))
+>ApplyDefaultOptions : Symbol(ApplyDefaultOptions, Decl(varianceComputationNoCrash.tlua, 20, 100))
+>WordsOptions : Symbol(WordsOptions, Decl(varianceComputationNoCrash.tlua, 28, 161))
+>DefaultWordsOptions : Symbol(DefaultWordsOptions, Decl(varianceComputationNoCrash.tlua, 29, 49))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 59, 35))
+
+type CamelCaseOptions = { preserveConsecutiveUppercase?: boolean };
+>CamelCaseOptions : Symbol(CamelCaseOptions, Decl(varianceComputationNoCrash.tlua, 60, 99))
+>preserveConsecutiveUppercase : Symbol(preserveConsecutiveUppercase, Decl(varianceComputationNoCrash.tlua, 62, 25))
+
+type DefaultCamelCaseOptions = { preserveConsecutiveUppercase: true };
+>DefaultCamelCaseOptions : Symbol(DefaultCamelCaseOptions, Decl(varianceComputationNoCrash.tlua, 62, 67))
+>preserveConsecutiveUppercase : Symbol(preserveConsecutiveUppercase, Decl(varianceComputationNoCrash.tlua, 63, 32))
+
+type CamelCaseFromArray<
+>CamelCaseFromArray : Symbol(CamelCaseFromArray, Decl(varianceComputationNoCrash.tlua, 63, 70))
+
+    W extends string[],
+>W : Symbol(W, Decl(varianceComputationNoCrash.tlua, 65, 24))
+
+    Options extends Required<CamelCaseOptions>,
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 66, 23))
+>Required : Symbol(Required, Decl(lib.luajit.d.tlua, --, --))
+>CamelCaseOptions : Symbol(CamelCaseOptions, Decl(varianceComputationNoCrash.tlua, 60, 99))
+
+    OutputString extends string = '',
+>OutputString : Symbol(OutputString, Decl(varianceComputationNoCrash.tlua, 67, 47))
+
+> = W extends [infer FirstWord extends string, ...infer RemainingWords extends string[]]
+>W : Symbol(W, Decl(varianceComputationNoCrash.tlua, 65, 24))
+> : Symbol(unknown)
+>FirstWord : Symbol(FirstWord, Decl(varianceComputationNoCrash.tlua, 69, 20))
+> : Symbol(unknown)
+> : Symbol(unknown)
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+
+    ? Options['preserveConsecutiveUppercase'] extends true
+        ? `${Capitalize<FirstWord>}${CamelCaseFromArray<RemainingWords, Options>}`
+>FirstWord : Symbol(FirstWord)
+>RemainingWords : Symbol(RemainingWords)
+>Options : Symbol(Options)
+
+        : `${Capitalize<Lowercase<FirstWord>>}${CamelCaseFromArray<RemainingWords, Options>}`
+>Lowercase : Symbol(Lowercase, Decl(lib.luajit.d.tlua, --, --))
+>FirstWord : Symbol(FirstWord)
+>RemainingWords : Symbol(RemainingWords)
+>Options : Symbol(Options)
+
+    : OutputString;
+
+type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
+>CamelCase : Symbol(CamelCase, Decl(varianceComputationNoCrash.tlua, 73, 19))
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 75, 20))
+>CamelCaseOptions : Symbol(CamelCaseOptions, Decl(varianceComputationNoCrash.tlua, 60, 99))
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+
+    ? string extends Type
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+
+        ? Type
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+
+        : Uncapitalize<CamelCaseFromArray<
+>Uncapitalize : Symbol(Uncapitalize, Decl(lib.luajit.d.tlua, --, --))
+>CamelCaseFromArray : Symbol(CamelCaseFromArray, Decl(varianceComputationNoCrash.tlua, 63, 70))
+
+            Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>,
+>Words : Symbol(Words, Decl(varianceComputationNoCrash.tlua, 57, 38))
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+>Uppercase : Symbol(Uppercase, Decl(lib.luajit.d.tlua, --, --))
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+>Lowercase : Symbol(Lowercase, Decl(lib.luajit.d.tlua, --, --))
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+
+            ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>
+>ApplyDefaultOptions : Symbol(ApplyDefaultOptions, Decl(varianceComputationNoCrash.tlua, 20, 100))
+>CamelCaseOptions : Symbol(CamelCaseOptions, Decl(varianceComputationNoCrash.tlua, 60, 99))
+>DefaultCamelCaseOptions : Symbol(DefaultCamelCaseOptions, Decl(varianceComputationNoCrash.tlua, 62, 67))
+>Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 75, 20))
+
+        >>
+    : Type;
+>Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
+
+// This would cause a stack overflow during variance computation
+function boom<T>(x: CamelCase<T>, y: CamelCase<T, {}>) {
+>boom : Symbol(boom, Decl(varianceComputationNoCrash.tlua, 82, 11))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 85, 14))
+>x : Symbol(x, Decl(varianceComputationNoCrash.tlua, 85, 17))
+>CamelCase : Symbol(CamelCase, Decl(varianceComputationNoCrash.tlua, 73, 19))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 85, 14))
+>y : Symbol(y, Decl(varianceComputationNoCrash.tlua, 85, 33))
+>CamelCase : Symbol(CamelCase, Decl(varianceComputationNoCrash.tlua, 73, 19))
+>T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 85, 14))
+
+    x = y
+>x : Symbol(x, Decl(varianceComputationNoCrash.tlua, 85, 17))
+>y : Symbol(y, Decl(varianceComputationNoCrash.tlua, 85, 33))
+
+    y = x
+>y : Symbol(y, Decl(varianceComputationNoCrash.tlua, 85, 33))
+>x : Symbol(x, Decl(varianceComputationNoCrash.tlua, 85, 17))
+}
+

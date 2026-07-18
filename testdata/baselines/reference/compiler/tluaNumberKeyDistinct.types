@@ -1,0 +1,73 @@
+//// [tests/cases/compiler/tluaNumberKeyDistinct.tlua] ////
+
+=== tluaNumberKeyDistinct.tlua ===
+// Lua distinguishes number keys from string keys: t[1] and t["1"] are
+// different slots.
+local t = { [1] = "a", ["1"] = 1 };
+>t : { 1: string; "1": number; }
+>{ [1] = "a", ["1"] = 1 } : { 1: string; "1": number; }
+>[1] : string
+>1 : 1
+>"a" : "a"
+>["1"] : number
+>"1" : "1"
+>1 : 1
+
+local n: string = t[1];
+>n : string
+>t[1] : string
+>t : { 1: string; "1": number; }
+>1 : 1
+
+local s: number = t["1"];
+>s : number
+>t["1"] : number
+>t : { 1: string; "1": number; }
+>"1" : "1"
+
+// Cross-access errors: the other namespace's type does not match.
+local bad1: number = t[1];
+>bad1 : number
+>t[1] : string
+>t : { 1: string; "1": number; }
+>1 : 1
+
+local bad2: string = t["1"];
+>bad2 : string
+>t["1"] : number
+>t : { 1: string; "1": number; }
+>"1" : "1"
+
+// Same distinction in type position: 1 is a number key, "1" a string key.
+interface I {
+  1: number;
+>1 : number
+
+  "1": string;
+>"1" : string
+}
+declare i: I;
+>i : I
+
+local in1: number = i[1];
+>in1 : number
+>i[1] : number
+>i : I
+>1 : 1
+
+local is1: string = i["1"];
+>is1 : string
+>i["1"] : string
+>i : I
+>"1" : "1"
+
+local es = {n, s, bad1, bad2, in1, is1};
+>es : { 1: string; 2: number; 3: number; 4: string; 5: number; 6: string; }
+>{n, s, bad1, bad2, in1, is1} : { 1: string; 2: number; 3: number; 4: string; 5: number; 6: string; }
+>n : any
+>s : any
+>bad1 : any
+>bad2 : any
+>in1 : any
+>is1 : any
+

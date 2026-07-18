@@ -1,0 +1,16 @@
+interface BitLib {
+    tobit(value: number): number;
+    tohex(value: number, digits?: number): string;
+    bnot(value: number): number;
+    bor(left: number, right: number, ...: number): number;
+    band(left: number, right: number, ...: number): number;
+    bxor(left: number, right: number, ...: number): number;
+    lshift(value: number, count: number): number;
+    rshift(value: number, count: number): number;
+    arshift(value: number, count: number): number;
+    rol(value: number, count: number): number;
+    ror(value: number, count: number): number;
+    bswap(value: number): number;
+}
+
+declare bit: BitLib;

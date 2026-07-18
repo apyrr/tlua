@@ -1,0 +1,8 @@
+//// [tests/cases/compiler/contextuallyTypedFunctionOptionalAndRest.tlua] ////
+
+=== contextuallyTypedFunctionOptionalAndRest.tlua ===
+local f: () => void = (a?, ...b) => {};
+>f : Symbol(f, Decl(contextuallyTypedFunctionOptionalAndRest.tlua, 0, 5))
+>a : Symbol(a, Decl(contextuallyTypedFunctionOptionalAndRest.tlua, 0, 23))
+>b : Symbol(b, Decl(contextuallyTypedFunctionOptionalAndRest.tlua, 0, 26))
+

@@ -1,0 +1,55 @@
+tluaLibLuaJIT.tlua(29,13): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaLibLuaJIT.tlua(30,7): error TS2322: Type 'number | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+tluaLibLuaJIT.tlua(31,13): error TS2554: Expected 1 arguments, but got 2.
+tluaLibLuaJIT.tlua(32,20): error TS2554: Expected 2 arguments, but got 3.
+tluaLibLuaJIT.tlua(33,7): error TS2741: Property '__luaUserdataBrand' is missing in type 'LuaThread' but required in type 'LuaUserdata'.
+
+
+==== tluaLibLuaJIT.tlua (5 errors) ====
+    local bitlib = require("bit");
+    local ffiLib = require("ffi");
+    local jitlib = require("jit");
+    local profile = require("jit.profile");
+    local newTable = require("table.new");
+    local buffer = require("string.buffer");
+    
+    local masked: number = bitlib.band(0xff, 0x0f);
+    local platform: string = jitlib.os;
+    local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
+    local memory: LuaCData = ffiLib.new(ctype);
+    local argumentsObject: IArguments;
+    local constructorFunction: NewableFunction;
+    local presized: object = newTable(8, 4);
+    local encoded: string = buffer.encode(presized);
+    local randomValue: number = math.random(1, 10);
+    local date: LuaDateTable = os.date("*t");
+    local fileKind: "file" | "closed file" | nil = io.type(io.stdout);
+    local asserted, message = assert(1, "ok");
+    local assertedValue: number = asserted;
+    local assertionMessage: string = message;
+    profile.start("f", function(thread, samples, vmstate)
+        print(thread, samples, vmstate);
+    end);
+    local first, second = string.find("typed lua", "lua");
+    local ok: number = assert(first);
+    local finish: number = assert(second);
+    
+    bitlib.band("wrong", 1);
+                ~~~~~~~
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    local wrong: string = ffiLib.sizeof(memory);
+          ~~~~~
+!!! error TS2322: Type 'number | nil' is not assignable to type 'string'.
+!!! error TS2322:   Type 'nil' is not assignable to type 'string'.
+    math.log(8, 2);
+                ~
+!!! error TS2554: Expected 1 arguments, but got 2.
+    string.rep("a", 2, ",");
+                       ~~~
+!!! error TS2554: Expected 2 arguments, but got 3.
+    local notUserdata: LuaUserdata = coroutine.create(function() end);
+          ~~~~~~~~~~~
+!!! error TS2741: Property '__luaUserdataBrand' is missing in type 'LuaThread' but required in type 'LuaUserdata'.
+!!! related TS2728 lib.luajit.d.tlua:37:14: '__luaUserdataBrand' is declared here.
+    

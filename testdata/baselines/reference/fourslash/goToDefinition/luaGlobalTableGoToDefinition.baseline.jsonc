@@ -1,0 +1,6 @@
+// === goToDefinition ===
+// === /write.tlua ===
+// <|_G.[|shared|] = 1;|>
+
+// === /read.tlua ===
+// local bare = /*GOTO DEF*/shared;

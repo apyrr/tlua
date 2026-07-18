@@ -1,0 +1,28 @@
+// @strict: true
+// @noEmit: true
+
+// `keyof` over a tuple yields its numeric indices, the `number` index of the
+// underlying table, and `length` — but NOT the members of the inert global
+// `Array` (push/pop/map/...), which tlua tuples no longer inherit. This holds
+// for concrete tuples (resolved from their members) and, crucially, for
+// generic variadic tuples, whose known keys flow through the relater
+// (getKnownKeysOfTupleType). Tuple type syntax `[A, B]` lives only in
+// declaration files, so the tuples are declared in a .d.tlua.
+
+// @filename: shapes.d.tlua
+declare pair: [string, boolean];
+
+// The default type argument `"push"` is validated against the constraint
+// `keyof [number, ...T]` while `T` is still generic. A tuple has no `push`
+// member, so this default is not a valid key of the tuple.
+interface KeyBox<T extends unknown[], K extends keyof [number, ...T] = "push"> {
+  key: K;
+}
+
+// @filename: main.tlua
+// Numeric indices and `length` are keys of the tuple; Array method names are not.
+local ok0: keyof typeof pair = 0;
+local okLen: keyof typeof pair = "length";
+local bad: keyof typeof pair = "push";
+
+local es = {ok0, okLen};

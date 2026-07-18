@@ -1,0 +1,13 @@
+// @target: esnext
+// @strict: true
+
+local Exported = {};
+
+function Exported.visible(a: number): number
+  return a;
+end
+
+local Hidden = {};
+
+function Hidden.invisible(): void
+end

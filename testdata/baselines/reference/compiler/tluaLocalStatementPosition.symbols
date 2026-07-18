@@ -1,0 +1,53 @@
+//// [tests/cases/compiler/tluaLocalStatementPosition.tlua] ////
+
+=== tluaLocalStatementPosition.tlua ===
+// A `local` declared as the unbraced body of a TS-form control statement is
+// rejected: its list carries no block-scope flag, but without the error the
+// binder would hoist it into the ENCLOSING scope -- visible and typed after
+// the statement while the runtime value never escapes the body.
+declare cond: boolean;
+>cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
+
+if (cond) local a = 1;
+>cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
+>a : Symbol(a, Decl(tluaLocalStatementPosition.tlua, 5, 15))
+
+while (cond) local b = 2;
+>cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
+>b : Symbol(b, Decl(tluaLocalStatementPosition.tlua, 6, 18))
+
+// Braced and Lua-block bodies are real blocks; the declarations are fine and
+// stay contained.
+if (cond) {
+>cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
+
+  local ok1 = 1;
+>ok1 : Symbol(ok1, Decl(tluaLocalStatementPosition.tlua, 11, 7))
+
+  print(ok1);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>ok1 : Symbol(ok1, Decl(tluaLocalStatementPosition.tlua, 11, 7))
+}
+if cond then
+>cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
+
+  local ok2 = 2;
+>ok2 : Symbol(ok2, Decl(tluaLocalStatementPosition.tlua, 15, 7))
+
+  print(ok2);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>ok2 : Symbol(ok2, Decl(tluaLocalStatementPosition.tlua, 15, 7))
+
+end
+while cond do
+>cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
+
+  local ok3 = 3;
+>ok3 : Symbol(ok3, Decl(tluaLocalStatementPosition.tlua, 19, 7))
+
+  print(ok3);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>ok3 : Symbol(ok3, Decl(tluaLocalStatementPosition.tlua, 19, 7))
+
+end
+

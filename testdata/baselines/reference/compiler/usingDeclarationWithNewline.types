@@ -1,0 +1,9 @@
+//// [tests/cases/compiler/usingDeclarationWithNewline.tlua] ////
+
+=== usingDeclarationWithNewline.tlua ===
+using
+>using : any
+
+identifier;
+>identifier : any
+

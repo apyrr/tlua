@@ -1,0 +1,60 @@
+// === findAllReferences ===
+// === /referencesForClassParameter.tlua ===
+// local p = 2;
+// 
+// class p { }
+// 
+// class foo {
+//     constructor (/*FIND ALL REFS*/public p: any) {
+//     }
+// 
+//     public f(p) {
+// --- (line: 10) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassParameter.tlua ===
+// local [|p|] = 2;
+// 
+// class [|p|] { }
+// 
+// class foo {
+//     constructor (public /*FIND ALL REFS*/[|p|]: any) {
+//     }
+// 
+//     public f([|p|]) {
+//         this.[|p|] = [|p|];
+//     }
+// 
+// }
+// --- (line: 14) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassParameter.tlua ===
+// local [|p|] = 2;
+// 
+// class [|p|] { }
+// 
+// class foo {
+//     constructor (public [|p|]: any) {
+//     }
+// 
+//     public f([|p|]) {
+//         this./*FIND ALL REFS*/[|p|] = [|p|];
+//     }
+// 
+// }
+// --- (line: 14) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassParameter.tlua ===
+// --- (line: 12) skipped ---
+// }
+// 
+// local n = new foo(undefined);
+// n./*FIND ALL REFS*/p = null;

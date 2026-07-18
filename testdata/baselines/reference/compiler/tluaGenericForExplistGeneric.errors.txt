@@ -1,0 +1,85 @@
+tluaGenericForExplistGeneric.tlua(46,21): error TS2345: Argument of type 'number' is not assignable to parameter of type 'number[]'.
+tluaGenericForExplistGeneric.tlua(53,22): error TS2554: Expected 1 arguments, but got 2.
+tluaGenericForExplistGeneric.tlua(65,19): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Table<never, unknown>'.
+
+
+==== tluaGenericForExplistGeneric.tlua (3 errors) ====
+    interface Rec {
+      [key: string]: number;
+    }
+    
+    declare t: Rec;
+    
+    for k, v in next, t do
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    for k, v in next, t, "seed" do
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    declare c: string | nil;
+    
+    for k, v in next, t, c do
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    for k, v in pairs(t) do
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    declare function step<T>(state: T[], i: number | nil): (number | nil, T);
+    declare arr: { name: string }[];
+    
+    for i, x in step, arr, nil do
+      local index: number = i;
+      local element: { name: string } = x;
+    end
+    
+    declare function ov(state: string[], i: nil): (number | nil, string);
+    declare function ov(state: number[], i: nil): (number | nil, boolean);
+    declare strings: string[];
+    
+    for i, value in ov, strings, nil do
+      local index: number = i;
+      local element: string = value;
+    end
+    
+    for i, value in ov, 42, nil do
+                        ~~
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'number[]'.
+      local index: number = i;
+      local element: string | boolean = value;
+    end
+    
+    declare function each<K, V>(state: Table<K, V>): (K?, V);
+    
+    for k, v in each, t, "oops" do
+                         ~~~~~~
+!!! error TS2554: Expected 1 arguments, but got 2.
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    declare function requiredControl(state: Rec, control: string): (string | nil, number);
+    
+    for k, v in requiredControl, t, nil do
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    for k, v in next, 42 do
+                      ~~
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'Table<never, unknown>'.
+      k;
+      v;
+    end
+    
+    for k in next do
+      k;
+    end
+    

@@ -1,0 +1,83 @@
+privateNameTaggedTemplate.tlua(1,1): error TS1434: Unexpected keyword or identifier.
+privateNameTaggedTemplate.tlua(1,1): error TS2304: Cannot find name 'class'.
+privateNameTaggedTemplate.tlua(1,7): error TS1434: Unexpected keyword or identifier.
+privateNameTaggedTemplate.tlua(1,7): error TS2304: Cannot find name 'Foo'.
+privateNameTaggedTemplate.tlua(2,4): error TS2304: Cannot find name 'x'.
+privateNameTaggedTemplate.tlua(2,6): error TS1005: ';' expected.
+privateNameTaggedTemplate.tlua(3,4): error TS2304: Cannot find name 'y'.
+privateNameTaggedTemplate.tlua(3,6): error TS1005: ';' expected.
+privateNameTaggedTemplate.tlua(4,3): error TS2304: Cannot find name 'func'.
+privateNameTaggedTemplate.tlua(4,10): error TS1005: ';' expected.
+privateNameTaggedTemplate.tlua(5,5): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+privateNameTaggedTemplate.tlua(5,17): error TS1135: Argument expression expected.
+privateNameTaggedTemplate.tlua(5,21): error TS1135: Argument expression expected.
+privateNameTaggedTemplate.tlua(5,23): error TS2304: Cannot find name 'y'.
+privateNameTaggedTemplate.tlua(5,30): error TS1109: Expression expected.
+privateNameTaggedTemplate.tlua(5,34): error TS1135: Argument expression expected.
+privateNameTaggedTemplate.tlua(5,36): error TS2304: Cannot find name 'x'.
+privateNameTaggedTemplate.tlua(5,37): error TS1005: ',' expected.
+privateNameTaggedTemplate.tlua(5,38): error TS2352: Conversion of type 'number' to type '() => any' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+privateNameTaggedTemplate.tlua(5,40): error TS1139: Type parameter declaration expected.
+privateNameTaggedTemplate.tlua(5,41): error TS100028: An arithmetic operand must be of type 'any' or 'number'.
+privateNameTaggedTemplate.tlua(8,1): error TS1160: Unterminated template literal.
+
+
+==== privateNameTaggedTemplate.tlua (22 errors) ====
+    class Foo {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+      #x = 3;
+       ~
+!!! error TS2304: Cannot find name 'x'.
+         ~
+!!! error TS1005: ';' expected.
+      #y = null as any;
+       ~
+!!! error TS2304: Cannot find name 'y'.
+         ~
+!!! error TS1005: ';' expected.
+      func() {
+      ~~~~
+!!! error TS2304: Cannot find name 'func'.
+             ~
+!!! error TS1005: ';' expected.
+        console.log(this.#y`->>${this.#x}<<-`);
+        ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+                    ~~~~
+!!! error TS1135: Argument expression expected.
+                        ~
+!!! error TS1135: Argument expression expected.
+                          ~
+!!! error TS2304: Cannot find name 'y'.
+                                 ~~~~
+!!! error TS1109: Expression expected.
+                                     ~
+!!! error TS1135: Argument expression expected.
+                                       ~
+!!! error TS2304: Cannot find name 'x'.
+                                        ~
+!!! error TS1005: ',' expected.
+                                         ~~~~~~
+                                           ~
+!!! error TS1139: Type parameter declaration expected.
+                                            ~~~
+      }
+    ~~~
+    ~~~
+    }
+    ~
+    ~
+    
+    
+!!! error TS2352: Conversion of type 'number' to type '() => any' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+    
+!!! error TS100028: An arithmetic operand must be of type 'any' or 'number'.
+    
+!!! error TS1160: Unterminated template literal.

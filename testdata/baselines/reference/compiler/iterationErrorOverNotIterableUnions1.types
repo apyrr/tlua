@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/iterationErrorOverNotIterableUnions1.tlua] ////
+
+=== iterationErrorOverNotIterableUnions1.tlua ===
+type A = { a: string };
+>A : A
+>a : string
+
+type B = { b: string };
+>B : B
+>b : string
+
+declare data: A[] | B;
+>data : B | A[]
+
+for _, item in ipairs(data) do
+>_ : number
+>item : A
+>ipairs(data) : LuaIPairsIterator<A>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>data : B | A[]
+
+    item.b;
+>item.b : any
+>item : A
+>b : any
+
+end
+
+for _, ignoredItem in ipairs(data) do
+>_ : number
+>ignoredItem : A
+>ipairs(data) : LuaIPairsIterator<A>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>data : B | A[]
+
+    ignoredItem.b;
+>ignoredItem.b : any
+>ignoredItem : A
+>b : any
+
+end
+
+local [el] = data;
+> : any
+>el : any
+>data : B | A[]
+
+el.b;
+>el.b : any
+>el : any
+>b : any
+
+local el2 = data[0];
+>el2 : any
+>data[0] : any
+>data : B | A[]
+>0 : 0
+
+el2.b;
+>el2.b : any
+>el2 : any
+>b : any
+

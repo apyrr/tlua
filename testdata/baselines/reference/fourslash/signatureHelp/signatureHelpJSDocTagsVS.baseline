@@ -1,0 +1,126 @@
+// === SignatureHelp ===
+=== /signatureHelpJSDocTagsVS.tlua ===
+// /**
+//  * This is class Foo.
+//  * @mytag comment1 comment2
+//  */
+// class Foo {
+//     /**
+//      * This is the constructor.
+//      * @myjsdoctag this is a comment
+//      */
+//     constructor(value: number) {}
+//     /**
+//      * method1 documentation
+//      * @mytag comment1 comment2
+//      */
+//     static method1() {}
+//     /**
+//      * @mytag
+//      */
+//     method2() {}
+//     /**
+//      * @mytag comment1 comment2
+//      */
+//     property1: string;
+//     /**
+//      * @mytag1 some comments
+//      * some more comments about mytag1
+//      * @mytag2
+//      * here all the comments are on a new line
+//      * @mytag3
+//      * @mytag
+//      */
+//     property2: number;
+//     /**
+//      * @returns {number} a value
+//      */
+//     method3(): number { return 3; }
+//     /**
+//      * @param {string} foo A value.
+//      * @returns {number} Another value
+//      * @mytag
+//      */
+//     method4(foo: string): number { return 3; }
+//     /** @mytag */
+//     method5() {}
+//     /** method documentation
+//      *  @mytag a JSDoc tag
+//      */
+//     newMethod() {}
+// }
+// local foo = new Foo(4);
+//                     ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*10*/.
+// | ----------------------------------------------------------------------
+// Foo.method1();
+//             ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*11*/.
+// | ----------------------------------------------------------------------
+// foo.method2();
+//             ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*12*/.
+// | ----------------------------------------------------------------------
+// foo.method3();
+//             ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*13*/.
+// | ----------------------------------------------------------------------
+// foo.method4();
+// foo.property1;
+// foo.property2;
+// foo.method5();
+// foo.newMet
+[
+  {
+    "marker": {
+      "Position": 983,
+      "LSPosition": {
+        "line": 49,
+        "character": 20
+      },
+      "Name": "10",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 999,
+      "LSPosition": {
+        "line": 50,
+        "character": 12
+      },
+      "Name": "11",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1014,
+      "LSPosition": {
+        "line": 51,
+        "character": 12
+      },
+      "Name": "12",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1029,
+      "LSPosition": {
+        "line": 52,
+        "character": 12
+      },
+      "Name": "13",
+      "Data": {}
+    },
+    "item": null
+  }
+]

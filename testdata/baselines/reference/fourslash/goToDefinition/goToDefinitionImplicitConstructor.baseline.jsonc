@@ -1,0 +1,5 @@
+// === goToDefinition ===
+// === /goToDefinitionImplicitConstructor.tlua ===
+// class ImplicitConstructor {
+// }
+// local implicitConstructor = new /*GOTO DEF*/ImplicitConstructor();

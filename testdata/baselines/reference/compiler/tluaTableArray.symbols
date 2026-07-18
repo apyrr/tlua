@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/tluaTableArray.tlua] ////
+
+=== tluaTableArray.tlua ===
+// Positional entries: keys 1..n, exactly as if written `[i] = v`.
+local a = { 1, 2, 3 };
+>a : Symbol(a, Decl(tluaTableArray.tlua, 1, 5))
+
+local a1: number = a[1];
+>a1 : Symbol(a1, Decl(tluaTableArray.tlua, 2, 5))
+>a : Symbol(a, Decl(tluaTableArray.tlua, 1, 5))
+>1 : Symbol(1, Decl(tluaTableArray.tlua, 1, 11))
+
+local a3: number = a[3];
+>a3 : Symbol(a3, Decl(tluaTableArray.tlua, 3, 5))
+>a : Symbol(a, Decl(tluaTableArray.tlua, 1, 5))
+>3 : Symbol(3, Decl(tluaTableArray.tlua, 1, 17))
+
+// Equivalence with explicit bracket keys.
+local b = { [1] = 1, [2] = 2, [3] = 3 };
+>b : Symbol(b, Decl(tluaTableArray.tlua, 6, 5))
+>[1] : Symbol([1], Decl(tluaTableArray.tlua, 6, 11))
+>1 : Symbol([1], Decl(tluaTableArray.tlua, 6, 11))
+>[2] : Symbol([2], Decl(tluaTableArray.tlua, 6, 20))
+>2 : Symbol([2], Decl(tluaTableArray.tlua, 6, 20))
+>[3] : Symbol([3], Decl(tluaTableArray.tlua, 6, 29))
+>3 : Symbol([3], Decl(tluaTableArray.tlua, 6, 29))
+
+local eq: typeof b = a;
+>eq : Symbol(eq, Decl(tluaTableArray.tlua, 7, 5))
+>b : Symbol(b, Decl(tluaTableArray.tlua, 6, 5))
+>a : Symbol(a, Decl(tluaTableArray.tlua, 1, 5))
+
+local es = {a1, a3, eq};
+>es : Symbol(es, Decl(tluaTableArray.tlua, 8, 5))
+
+// Element types are per-position, like `[i] = v`.
+local mixed = { 1, "two", true };
+>mixed : Symbol(mixed, Decl(tluaTableArray.tlua, 11, 5))
+
+local m1: number = mixed[1];
+>m1 : Symbol(m1, Decl(tluaTableArray.tlua, 12, 5))
+>mixed : Symbol(mixed, Decl(tluaTableArray.tlua, 11, 5))
+>1 : Symbol(1, Decl(tluaTableArray.tlua, 11, 15))
+
+local m2: string = mixed[2];
+>m2 : Symbol(m2, Decl(tluaTableArray.tlua, 13, 5))
+>mixed : Symbol(mixed, Decl(tluaTableArray.tlua, 11, 5))
+>2 : Symbol(2, Decl(tluaTableArray.tlua, 11, 18))
+
+local m3: boolean = mixed[3];
+>m3 : Symbol(m3, Decl(tluaTableArray.tlua, 14, 5))
+>mixed : Symbol(mixed, Decl(tluaTableArray.tlua, 11, 5))
+>3 : Symbol(3, Decl(tluaTableArray.tlua, 11, 25))
+
+local ms = {m1, m2, m3};
+>ms : Symbol(ms, Decl(tluaTableArray.tlua, 15, 5))
+

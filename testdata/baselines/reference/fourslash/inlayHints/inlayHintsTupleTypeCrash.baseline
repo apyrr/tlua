@@ -1,0 +1,19 @@
+// === Inlay Hints ===
+  tuples.forEach((l) => {})
+                   ^
+{
+  "position": {
+    "line": 1,
+    "character": 19
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}

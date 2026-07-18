@@ -1,0 +1,159 @@
+//// [tests/cases/compiler/tluaMetatableClassIdiom.tlua] ////
+
+=== tluaMetatableClassIdiom.tlua ===
+// The Lua class idiom: a method table behind __index, and a constructor that pairs a fresh
+// table with it. The constructor's result satisfies the interface only because of the
+// fallback -- the table it builds has a balance and nothing else.
+
+interface Account {
+  balance: number;
+>balance : number
+
+  deposit: (self: Account, amount: number) => void;
+>deposit : (self: Account, amount: number) => void
+>self : Account
+>amount : number
+
+  withdraw: (self: Account, amount: number) => boolean;
+>withdraw : (self: Account, amount: number) => boolean
+>self : Account
+>amount : number
+}
+
+local AccountClass = {
+>AccountClass : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }
+>{  deposit = function(self: Account, amount: number) self.balance = self.balance + amount; end,  withdraw = function(self: Account, amount: number): boolean    if self.balance < amount then      return false;    end    self.balance = self.balance - amount;    return true;  end,} : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }
+
+  deposit = function(self: Account, amount: number) self.balance = self.balance + amount; end,
+>deposit : (self: Account, amount: number) => void
+>function(self: Account, amount: number) self.balance = self.balance + amount; end : (self: Account, amount: number) => void
+>self : Account
+>amount : number
+>self.balance = self.balance + amount : number
+>self.balance : number
+>self : Account
+>balance : number
+>self.balance + amount : number
+>self.balance : number
+>self : Account
+>balance : number
+>amount : number
+
+  withdraw = function(self: Account, amount: number): boolean
+>withdraw : (self: Account, amount: number) => boolean
+>function(self: Account, amount: number): boolean    if self.balance < amount then      return false;    end    self.balance = self.balance - amount;    return true;  end : (self: Account, amount: number) => boolean
+>self : Account
+>amount : number
+
+    if self.balance < amount then
+>self.balance < amount : boolean
+>self.balance : number
+>self : Account
+>balance : number
+>amount : number
+
+      return false;
+>false : false
+
+    end
+    self.balance = self.balance - amount;
+>self.balance = self.balance - amount : number
+>self.balance : number
+>self : Account
+>balance : number
+>self.balance - amount : number
+>self.balance : number
+>self : Account
+>balance : number
+>amount : number
+
+    return true;
+>true : true
+
+  end,
+};
+
+local AccountMeta = { __index = AccountClass };
+>AccountMeta : { __index: { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }; }
+>{ __index = AccountClass } : { __index: { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }; }
+>__index : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }
+>AccountClass : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }
+
+function newAccount(balance: number): Account
+>newAccount : (balance: number) => Account
+>balance : number
+
+  return setmetatable({ balance = balance }, AccountMeta);
+>setmetatable({ balance = balance }, AccountMeta) : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ balance = balance } : { balance: number; }
+>balance : number
+>balance : number
+>AccountMeta : { __index: { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }; }
+
+end
+
+local account = newAccount(100);
+>account : Account
+>newAccount(100) : Account
+>newAccount : (balance: number) => Account
+>100 : 100
+
+account.deposit(account, 50);
+>account.deposit(account, 50) : void
+>account.deposit : (self: Account, amount: number) => void
+>account : Account
+>deposit : (self: Account, amount: number) => void
+>account : Account
+>50 : 50
+
+local ok: boolean = account.withdraw(account, 20);
+>ok : boolean
+>account.withdraw(account, 20) : boolean
+>account.withdraw : (self: Account, amount: number) => boolean
+>account : Account
+>withdraw : (self: Account, amount: number) => boolean
+>account : Account
+>20 : 20
+
+local balance: number = account.balance;
+>balance : number
+>account.balance : number
+>account : Account
+>balance : number
+
+// Without the pairing, the same table does not.
+function missingMethods(balance: number): Account
+>missingMethods : (balance: number) => Account
+>balance : number
+
+  return { balance = balance };
+>{ balance = balance } : { balance: number; }
+>balance : number
+>balance : number
+
+end
+
+// A table paired with the method table is still a table: pairs iterates it.
+local paired = setmetatable({ balance = 1 }, AccountMeta);
+>paired : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
+>setmetatable({ balance = 1 }, AccountMeta) : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ balance = 1 } : { balance: number; }
+>balance : number
+>1 : 1
+>AccountMeta : { __index: { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; }; }
+
+for k, v in pairs(paired) do
+>k : "balance" | "deposit" | "withdraw"
+>v : number | ((self: Account, amount: number) => void) | ((self: Account, amount: number) => boolean)
+>pairs(paired) : LuaPairsIterator<"balance" | "deposit" | "withdraw", number | ((self: Account, amount: number) => void) | ((self: Account, amount: number) => boolean)>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>paired : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
+
+  local key: string = k;
+>key : string
+>k : "balance" | "deposit" | "withdraw"
+
+end
+

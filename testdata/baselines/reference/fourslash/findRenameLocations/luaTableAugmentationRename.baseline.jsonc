@@ -1,0 +1,7 @@
+// === findRenameLocations ===
+// === /a.tlua ===
+// Config = {};
+// Config./*RENAME*/[|debugRENAME|] = true;
+
+// === /b.tlua ===
+// local d = Config.[|debugRENAME|];

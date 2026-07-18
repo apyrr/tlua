@@ -1,0 +1,67 @@
+//// [tests/cases/compiler/tluaColonCallErrors.tlua] ////
+
+//// [tluaColonCallErrors.tlua]
+local M = { count = 0 };
+
+function M:inc(by: number): number
+  self.count = self.count + by;
+  return self.count;
+end
+
+interface Ops {
+  noSelf(a: number): number;
+  tag: string;
+}
+declare ops: Ops;
+
+// Wrong argument type.
+M:inc("x");
+
+// Arity: the receiver fills the first parameter, so one explicit argument is
+// expected here.
+M:inc();
+M:inc(1, 2);
+
+// The receiver is checked against the declared self parameter, and the error
+// lands on the receiver.
+interface Counter {
+  count: number;
+}
+interface Mislabeled {
+  count: string;
+  bump(self: Counter, by: number): number;
+}
+declare mislabeled: Mislabeled;
+mislabeled:bump(1);
+
+// A member that does not take the receiver as its first parameter rejects the
+// colon form's receiver argument.
+ops:noSelf(1);
+
+// Colon-calling a non-function member.
+ops:tag();
+
+// Colon-calling an unknown member.
+M:absent();
+
+
+//// [tluaColonCallErrors.lua]
+local M = { count = 0 };
+function M:inc(by)
+    self.count = self.count + by;
+    return self.count;
+end
+-- Wrong argument type.
+M:inc("x");
+-- Arity: the receiver fills the first parameter, so one explicit argument is
+-- expected here.
+M:inc();
+M:inc(1, 2);
+mislabeled:bump(1);
+-- A member that does not take the receiver as its first parameter rejects the
+-- colon form's receiver argument.
+ops:noSelf(1);
+-- Colon-calling a non-function member.
+ops:tag();
+-- Colon-calling an unknown member.
+M:absent();

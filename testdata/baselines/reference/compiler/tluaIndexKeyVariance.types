@@ -1,0 +1,35 @@
+//// [tests/cases/compiler/tluaIndexKeyVariance.tlua] ////
+
+=== tluaIndexKeyVariance.tlua ===
+// `Table<in out K, V>` is invariant in its key: K is an input when the table is indexed
+// and an output when it is iterated. Measured structurally it would come out
+// contravariant, which accepts `Table<string | number, V>` where `Table<string, V>` is
+// wanted -- and `pairs` would then report a number key as a string.
+
+declare wide: Table<string | number, boolean>;
+>wide : Table<string | number, boolean>
+
+declare narrow: Table<string, boolean>;
+>narrow : Table<string, boolean>
+
+local a: Table<string, boolean> = wide;
+>a : Table<string, boolean>
+>wide : Table<string | number, boolean>
+
+local b: Table<string | number, boolean> = narrow;
+>b : Table<string | number, boolean>
+>narrow : Table<string, boolean>
+
+// Identical keys relate as before.
+local c: Table<string, boolean> = narrow;
+>c : Table<string, boolean>
+>narrow : Table<string, boolean>
+
+// A value-keyed table is still covariant in the value it holds.
+declare numbers: Table<string, number>;
+>numbers : Table<string, number>
+
+local d: Table<string, number | string> = numbers;
+>d : Table<string, string | number>
+>numbers : Table<string, number>
+

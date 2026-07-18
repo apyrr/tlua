@@ -1,0 +1,11 @@
+// @module: nodenext
+// @filename: a.mts
+
+// @see https://github.com/microsoft/TypeScript/issues/44442
+local a = <T,>(arg: T): T => {
+  return arg;
+};
+
+local b = <T>(arg: T): T => {
+  return arg;
+};

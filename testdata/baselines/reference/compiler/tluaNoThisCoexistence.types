@@ -1,0 +1,187 @@
+//// [tests/cases/compiler/tluaNoThisCoexistence.tlua] ////
+
+=== tluaNoThisCoexistence.tlua ===
+// `this` is removed, but the constructs that neighbour it must keep working.
+// This file must stay zero-error.
+
+declare function use(x: unknown): void;
+>use : (x: unknown) => void
+>x : unknown
+
+// Ordinary identifier type predicates still narrow. Only the `this is T` form
+// was removed, and it is a distinct branch of the predicate machinery.
+function isString(v: unknown): v is string {
+>isString : (v: unknown) => v is string
+>v : unknown
+
+  return type(v) == "string";
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : unknown
+>"string" : "string"
+}
+
+declare function assertString(v: unknown): asserts v is string;
+>assertString : (v: unknown) => asserts v is string
+>v : unknown
+
+function narrow(v: unknown): void {
+>narrow : (v: unknown) => void
+>v : unknown
+
+  if (isString(v)) {
+>isString(v) : boolean
+>isString : (v: unknown) => v is string
+>v : unknown
+
+    local s: string = v;
+>s : string
+>v : string
+
+    use(s);
+>use(s) : void
+>use : (x: unknown) => void
+>s : string
+  }
+  assertString(v);
+>assertString(v) : void
+>assertString : (v: unknown) => asserts v is string
+>v : unknown
+
+  local t: string = v;
+>t : string
+>v : string
+
+  use(t);
+>use(t) : void
+>use : (x: unknown) => void
+>t : string
+}
+
+// Lua's global environment remains available independently of `this`.
+local g: typeof _G = _G;
+>g : typeof _G
+>_G : typeof _G
+>_G : typeof _G
+
+// Colon methods supply the receiver as an ordinary `self` parameter, which is
+// what replaced `this`. The inert `Signature.thisParameter` never fills in.
+interface Counter {
+  n: number;
+>n : number
+
+  bump(self: Counter, by: number): number;
+>bump : (self: Counter, by: number) => number
+>self : Counter
+>by : number
+}
+
+local counter: Counter = {
+>counter : Counter
+>{  n = 0,  bump = function(self: Counter, by: number) return self.n + by; end,} : { n: number; bump: (self: Counter, by: number) => number; }
+
+  n = 0,
+>n : number
+>0 : 0
+
+  bump = function(self: Counter, by: number) return self.n + by; end,
+>bump : (self: Counter, by: number) => number
+>function(self: Counter, by: number) return self.n + by; end : (self: Counter, by: number) => number
+>self : Counter
+>by : number
+>self.n + by : number
+>self.n : number
+>self : Counter
+>n : number
+>by : number
+
+};
+
+function counter:bump(by: number): number
+>counter : Counter
+>bump : (self: Counter, by: number) => number
+>: : Counter
+>counter : Counter
+>by : number
+
+  return self.n + by;
+>self.n + by : number
+>self.n : number
+>self : Counter
+>n : number
+>by : number
+
+end
+
+// Interfaces and generics still instantiate: the inert `InterfaceType.thisType`
+// type parameter does not perturb signature relations or inference.
+interface Box<T> {
+  value: T;
+>value : T
+
+  map<U>(self: Box<T>, f: (v: T) => U): Box<U>;
+>map : <U>(self: Box<T>, f: (v: T) => U) => Box<U>
+>self : Box<T>
+>f : (v: T) => U
+>v : T
+}
+
+declare box: Box<number>;
+>box : Box<number>
+
+declare function toStr(v: number): string;
+>toStr : (v: number) => string
+>v : number
+
+local mapped: Box<string> = box.map(box, toStr);
+>mapped : Box<string>
+>box.map(box, toStr) : Box<string>
+>box.map : <U>(self: Box<number>, f: (v: number) => U) => Box<U>
+>box : Box<number>
+>map : <U>(self: Box<number>, f: (v: number) => U) => Box<U>
+>box : Box<number>
+>toStr : (v: number) => string
+
+// Interface `extends` heritage and construct signatures are untouched.
+interface Base {
+  b: number;
+>b : number
+}
+interface Derived extends Base {
+  d: number;
+>d : number
+}
+declare K: { new (): Derived };
+>K : new () => Derived
+
+local inst: Derived = new K();
+>inst : Derived
+>new K() : Derived
+>K : new () => Derived
+
+use(narrow);
+>use(narrow) : void
+>use : (x: unknown) => void
+>narrow : (v: unknown) => void
+
+use(g);
+>use(g) : void
+>use : (x: unknown) => void
+>g : typeof _G
+
+use(counter);
+>use(counter) : void
+>use : (x: unknown) => void
+>counter : Counter
+
+use(mapped);
+>use(mapped) : void
+>use : (x: unknown) => void
+>mapped : Box<string>
+
+use(inst);
+>use(inst) : void
+>use : (x: unknown) => void
+>inst : Derived
+

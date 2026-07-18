@@ -1,0 +1,25 @@
+// === findAllReferences ===
+// === /findAllRefsInsideTemplates1.tlua ===
+// /*FIND ALL REFS*/local [|x|] = 10;
+// local y = `${ [|x|] } ${ [|x|] }`
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInsideTemplates1.tlua ===
+// local /*FIND ALL REFS*/[|x|] = 10;
+// local y = `${ [|x|] } ${ [|x|] }`
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInsideTemplates1.tlua ===
+// local [|x|] = 10;
+// local y = `${ /*FIND ALL REFS*/[|x|] } ${ [|x|] }`
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInsideTemplates1.tlua ===
+// local [|x|] = 10;
+// local y = `${ [|x|] } ${ /*FIND ALL REFS*/[|x|] }`

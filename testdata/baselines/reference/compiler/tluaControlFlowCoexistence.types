@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/tluaControlFlowCoexistence.tlua] ////
+
+=== tluaControlFlowCoexistence.tlua ===
+// The remaining TS control-flow forms keep parsing unchanged.
+function tsForms(flag: boolean): number {
+>tsForms : (flag: boolean) => number
+>flag : boolean
+
+  if (flag) {
+>flag : boolean
+
+    return 1;
+>1 : 1
+  }
+  if (flag) return 2;
+>flag : false
+>2 : 2
+
+  if (flag) return 3; else return 4;
+>flag : false
+>3 : 3
+>4 : 4
+
+  while (flag) {
+>flag : boolean
+
+    flag = false;
+>flag = false : false
+>flag : boolean
+>false : false
+  }
+  while (flag) flag = false;
+>flag : boolean
+>flag = false : false
+>flag : boolean
+>false : false
+
+  do {
+    flag = false;
+>flag = false : false
+>flag : boolean
+>false : false
+
+  } while (flag);
+>flag : boolean
+
+  return 0;
+>0 : 0
+}
+
+// TS statements inside Lua bodies.
+function tsInLua(flag: boolean): number
+>tsInLua : (flag: boolean) => number
+>flag : boolean
+
+  if flag then
+>flag : boolean
+
+    return 1;
+>1 : 1
+
+  end
+  while flag do
+>flag : false
+
+    do {
+      flag = false;
+>flag = false : false
+>flag : boolean
+>false : false
+
+    } while (flag);
+>flag : false
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+// Lua statements inside TS braces.
+function luaInTs(flag: boolean): number {
+>luaInTs : (flag: boolean) => number
+>flag : boolean
+
+  if (flag) {
+>flag : boolean
+
+    if flag then
+>flag : true
+
+      return 1;
+>1 : 1
+
+    end
+  }
+  while (flag) {
+>flag : false
+
+    while flag do
+>flag : false
+
+      flag = false;
+>flag = false : false
+>flag : boolean
+>false : false
+
+    end
+  }
+  return 0;
+>0 : 0
+}
+

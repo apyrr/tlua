@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/tluaNumberKeyContextual.tlua] ////
+
+=== tluaNumberKeyContextual.tlua ===
+// A number index signature contextually types number-key entries only.
+interface NumIdx {
+  [k: number]: string;
+>k : number
+}
+local ok: NumIdx = { [1] = "a", [2] = "b" };
+>ok : NumIdx
+>{ [1] = "a", [2] = "b" } : { 1: string; 2: string; }
+>[1] : string
+>1 : 1
+>"a" : "a"
+>[2] : string
+>2 : 2
+>"b" : "b"
+
+// A string-key entry is not covered by a number index signature: excess.
+local bad: NumIdx = { ["x"] = "a" }; // error
+>bad : NumIdx
+>{ ["x"] = "a" } : { x: string; }
+>["x"] : string
+>"x" : "x"
+>"a" : "a"
+
+// A string index signature contextually types string-key entries only.
+interface StrIdx {
+  [k: string]: number;
+>k : string
+}
+local okS: StrIdx = { x = 1, y = 2 };
+>okS : StrIdx
+>{ x = 1, y = 2 } : { x: number; y: number; }
+>x : number
+>1 : 1
+>y : number
+>2 : 2
+
+// A number-key entry against a string index errors (disjoint).
+local badS: StrIdx = { [1] = 1 }; // error
+>badS : StrIdx
+>{ [1] = 1 } : { 1: number; }
+>[1] : number
+>1 : 1
+>1 : 1
+
+local es = {ok, bad, okS, badS};
+>es : { 1: NumIdx; 2: NumIdx; 3: StrIdx; 4: StrIdx; }
+>{ok, bad, okS, badS} : { 1: NumIdx; 2: NumIdx; 3: StrIdx; 4: StrIdx; }
+>ok : any
+>bad : any
+>okS : any
+>badS : any
+

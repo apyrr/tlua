@@ -1,0 +1,18 @@
+// === findAllReferences ===
+// === /index.tsx ===
+// /*FIND ALL REFS*/local [|obj|] = {Component: () => <div/>};
+// local element = <[|obj|].Component/>;
+
+
+
+// === findAllReferences ===
+// === /index.tsx ===
+// local /*FIND ALL REFS*/[|obj|] = {Component: () => <div/>};
+// local element = <[|obj|].Component/>;
+
+
+
+// === findAllReferences ===
+// === /index.tsx ===
+// local [|obj|] = {Component: () => <div/>};
+// local element = </*FIND ALL REFS*/[|obj|].Component/>;

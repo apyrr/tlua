@@ -1,0 +1,49 @@
+//// [tests/cases/compiler/tluaDottedFunctionNestedChains.tlua] ////
+
+=== tluaDottedFunctionNestedChains.tlua ===
+local a = { b = {} };
+>a : Symbol(a, Decl(tluaDottedFunctionNestedChains.tlua, 0, 5))
+>b : Symbol(b, Decl(tluaDottedFunctionNestedChains.tlua, 0, 11))
+
+function a.b.deep(x: number): number
+>a.b : Symbol(b, Decl(tluaDottedFunctionNestedChains.tlua, 0, 11))
+>a : Symbol(a, Decl(tluaDottedFunctionNestedChains.tlua, 0, 5))
+>b : Symbol(b, Decl(tluaDottedFunctionNestedChains.tlua, 0, 11))
+>deep : Symbol(deep, Decl(tluaDottedFunctionNestedChains.tlua, 0, 21))
+>x : Symbol(x, Decl(tluaDottedFunctionNestedChains.tlua, 2, 18))
+
+  return x;
+>x : Symbol(x, Decl(tluaDottedFunctionNestedChains.tlua, 2, 18))
+
+end
+
+local viaChain = a.b.deep(1);
+>viaChain : Symbol(viaChain, Decl(tluaDottedFunctionNestedChains.tlua, 6, 5))
+>a.b.deep : Symbol(deep, Decl(tluaDottedFunctionNestedChains.tlua, 0, 21))
+>a.b : Symbol(b, Decl(tluaDottedFunctionNestedChains.tlua, 0, 11))
+>a : Symbol(a, Decl(tluaDottedFunctionNestedChains.tlua, 0, 5))
+>b : Symbol(b, Decl(tluaDottedFunctionNestedChains.tlua, 0, 11))
+>deep : Symbol(deep, Decl(tluaDottedFunctionNestedChains.tlua, 0, 21))
+
+local outer = {};
+>outer : Symbol(outer, Decl(tluaDottedFunctionNestedChains.tlua, 8, 5))
+
+function outer.mid(): void
+>outer : Symbol(outer, Decl(tluaDottedFunctionNestedChains.tlua, 8, 5))
+>mid : Symbol(mid, Decl(tluaDottedFunctionNestedChains.tlua, 8, 17))
+
+end
+
+// The intermediate link is a function, not a table, so it cannot be extended.
+local host = { fn = 0 };
+>host : Symbol(host, Decl(tluaDottedFunctionNestedChains.tlua, 14, 5))
+>fn : Symbol(fn, Decl(tluaDottedFunctionNestedChains.tlua, 14, 14))
+
+function host.fn.nested(): void
+>host.fn : Symbol(fn, Decl(tluaDottedFunctionNestedChains.tlua, 14, 14))
+>host : Symbol(host, Decl(tluaDottedFunctionNestedChains.tlua, 14, 5))
+>fn : Symbol(fn, Decl(tluaDottedFunctionNestedChains.tlua, 14, 14))
+>nested : Symbol(nested, Decl(tluaDottedFunctionNestedChains.tlua, 14, 24))
+
+end
+

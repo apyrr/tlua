@@ -1,0 +1,305 @@
+//// [tests/cases/compiler/tluaTypeCallNarrowing.tlua] ////
+
+=== tluaTypeCallNarrowing.tlua ===
+// `type(x)` is the Lua type guard. Every tag it can return narrows, including the
+// three branded object kinds, which carry the same type facts as a plain table and
+// therefore cannot be told apart by facts alone.
+
+type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
+>Mixed : Symbol(Mixed, Decl(tluaTypeCallNarrowing.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 4, 14))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 4, 68))
+
+function tags(v: Mixed): void {
+>tags : Symbol(tags, Decl(tluaTypeCallNarrowing.tlua, 4, 122))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+>Mixed : Symbol(Mixed, Decl(tluaTypeCallNarrowing.tlua, 0, 0))
+
+  if type(v) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local table1: { n: number } = v; // the brands are not tables, and "table" excludes nil
+>table1 : Symbol(table1, Decl(tluaTypeCallNarrowing.tlua, 8, 9))
+>n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 8, 19))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local thread1: LuaThread = v;
+>thread1 : Symbol(thread1, Decl(tluaTypeCallNarrowing.tlua, 11, 9))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "userdata" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local userdata1: LuaUserdata = v;
+>userdata1 : Symbol(userdata1, Decl(tluaTypeCallNarrowing.tlua, 14, 9))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "cdata" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local cdata1: LuaCData = v;
+>cdata1 : Symbol(cdata1, Decl(tluaTypeCallNarrowing.tlua, 17, 9))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "function" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local function1: (a: number) => void = v;
+>function1 : Symbol(function1, Decl(tluaTypeCallNarrowing.tlua, 20, 9))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 20, 22))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local string1: string = v;
+>string1 : Symbol(string1, Decl(tluaTypeCallNarrowing.tlua, 23, 9))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "number" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local number1: number = v;
+>number1 : Symbol(number1, Decl(tluaTypeCallNarrowing.tlua, 26, 9))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "boolean" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local boolean1: boolean = v;
+>boolean1 : Symbol(boolean1, Decl(tluaTypeCallNarrowing.tlua, 29, 9))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+  if type(v) == "nil" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+    local nil1: nil = v;
+>nil1 : Symbol(nil1, Decl(tluaTypeCallNarrowing.tlua, 32, 9))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
+
+  end
+}
+
+function negated(v: Mixed): void {
+>negated : Symbol(negated, Decl(tluaTypeCallNarrowing.tlua, 34, 1))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
+>Mixed : Symbol(Mixed, Decl(tluaTypeCallNarrowing.tlua, 0, 0))
+
+  if type(v) ~= "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
+
+    local notTable: LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+>notTable : Symbol(notTable, Decl(tluaTypeCallNarrowing.tlua, 38, 9))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 38, 59))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
+
+  end
+  if type(v) ~= "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
+
+    // A negated brand keeps every table: only the brand is ruled out.
+    local notThread: { n: number } | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+>notThread : Symbol(notThread, Decl(tluaTypeCallNarrowing.tlua, 42, 9))
+>n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 42, 22))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 42, 64))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
+
+  end
+  if type(v) ~= "nil" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
+
+    local present: { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean = v;
+>present : Symbol(present, Decl(tluaTypeCallNarrowing.tlua, 45, 9))
+>n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 45, 20))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 45, 74))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
+
+  end
+}
+
+// The `and`/`or` idiom narrows the same way an if-statement does.
+function idiom(v: string | number): string {
+>idiom : Symbol(idiom, Decl(tluaTypeCallNarrowing.tlua, 47, 1))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 50, 15))
+
+  return type(v) == "string" and v or tostring(v);
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 50, 15))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 50, 15))
+>tostring : Symbol(tostring, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 50, 15))
+}
+
+function tops(u: unknown, a: any): void {
+>tops : Symbol(tops, Decl(tluaTypeCallNarrowing.tlua, 52, 1))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 54, 25))
+
+  if type(u) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
+
+    local o: object = u;
+>o : Symbol(o, Decl(tluaTypeCallNarrowing.tlua, 56, 9))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
+
+  end
+  if type(u) == "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
+
+    local t: LuaThread = u;
+>t : Symbol(t, Decl(tluaTypeCallNarrowing.tlua, 59, 9))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
+
+  end
+  if type(u) == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
+
+    local s: string = u;
+>s : Symbol(s, Decl(tluaTypeCallNarrowing.tlua, 62, 9))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
+
+  end
+  if type(a) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 54, 25))
+
+    local stillAny: number = a; // `any` survives every tag
+>stillAny : Symbol(stillAny, Decl(tluaTypeCallNarrowing.tlua, 65, 9))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 54, 25))
+
+  end
+}
+
+function generic<T>(v: T): void {
+>generic : Symbol(generic, Decl(tluaTypeCallNarrowing.tlua, 67, 1))
+>T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 69, 17))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 69, 20))
+>T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 69, 17))
+
+  if type(v) == "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 69, 20))
+
+    local t: T & LuaThread = v;
+>t : Symbol(t, Decl(tluaTypeCallNarrowing.tlua, 71, 9))
+>T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 69, 17))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 69, 20))
+
+  end
+}
+
+function constrained<T extends LuaThread | string>(v: T): void {
+>constrained : Symbol(constrained, Decl(tluaTypeCallNarrowing.tlua, 73, 1))
+>T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 75, 21))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 51))
+>T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 75, 21))
+
+  if type(v) ~= "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 51))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeCallNarrowing.tlua, 77, 9))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 51))
+
+  end
+}
+
+// An unreachable tag: `type()` never reports it, so the true branch is uninhabited.
+function unknownTag(v: string | number): void {
+>unknownTag : Symbol(unknownTag, Decl(tluaTypeCallNarrowing.tlua, 79, 1))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 82, 20))
+
+  if type(v) == "chair" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 82, 20))
+
+    local none: never = v;
+>none : Symbol(none, Decl(tluaTypeCallNarrowing.tlua, 84, 9))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 82, 20))
+
+  end
+}
+
+// The tags partition values, so a guard that is provably false is a dead branch:
+// a concrete type unrelated to a brand narrows to never, not to an intersection.
+function disjoint(x: { n: number }, u: { n: number } | string, s: string): void {
+>disjoint : Symbol(disjoint, Decl(tluaTypeCallNarrowing.tlua, 86, 1))
+>x : Symbol(x, Decl(tluaTypeCallNarrowing.tlua, 90, 18))
+>n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 90, 22))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 90, 35))
+>n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 90, 40))
+>s : Symbol(s, Decl(tluaTypeCallNarrowing.tlua, 90, 62))
+
+  if type(x) == "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaTypeCallNarrowing.tlua, 90, 18))
+
+    local dead: never = x;
+>dead : Symbol(dead, Decl(tluaTypeCallNarrowing.tlua, 92, 9))
+>x : Symbol(x, Decl(tluaTypeCallNarrowing.tlua, 90, 18))
+
+  end
+  if type(u) == "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 90, 35))
+
+    local dead2: never = u;
+>dead2 : Symbol(dead2, Decl(tluaTypeCallNarrowing.tlua, 95, 9))
+>u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 90, 35))
+
+  end
+  if type(s) == "userdata" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>s : Symbol(s, Decl(tluaTypeCallNarrowing.tlua, 90, 62))
+
+    local dead3: never = s;
+>dead3 : Symbol(dead3, Decl(tluaTypeCallNarrowing.tlua, 98, 9))
+>s : Symbol(s, Decl(tluaTypeCallNarrowing.tlua, 90, 62))
+
+  end
+}
+

@@ -1,0 +1,22 @@
+// === documentHighlights ===
+// === /getOccurrencesAfterEdit.tlua ===
+// 
+// interface A {
+//     [|foo|]: string;
+// }
+// function foo(x: A) {
+//     x.[|f/*HIGHLIGHTS*/oo|]
+// }
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAfterEdit.tlua ===
+// 
+// 
+// interface A {
+//     [|foo|]: string;
+// }
+// function foo(x: A) {
+//     x.[|f/*HIGHLIGHTS*/oo|]
+// }

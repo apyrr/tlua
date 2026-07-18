@@ -1,0 +1,200 @@
+//// [tests/cases/compiler/tluaMetatableIndexFunction.tlua] ////
+
+=== tluaMetatableIndexFunction.tlua ===
+// A function __index answers a read of every key its parameter admits, which is an index
+// signature rather than a property: nothing names the keys it will be asked for.
+
+// An `any` key could be a key of any domain, so it feeds string and number alike -- the
+// rule a computed table key already follows.
+local anyMt = { __index = function(t: object, k: any): string return "x"; end };
+>anyMt : { __index: (t: object, k: any) => string; }
+>{ __index = function(t: object, k: any): string return "x"; end } : { __index: (t: object, k: any) => string; }
+>__index : (t: object, k: any) => string
+>function(t: object, k: any): string return "x"; end : (t: object, k: any) => string
+>t : object
+>k : any
+>"x" : "x"
+
+local a = setmetatable({ n = 1 }, anyMt);
+>a : { [x: string]: string; [x: number]: string; n: number; }
+>setmetatable({ n = 1 }, anyMt) : { [x: string]: string; [x: number]: string; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>anyMt : { __index: (t: object, k: any) => string; }
+
+local s1: string = a.whatever;
+>s1 : string
+>a.whatever : string
+>a : { [x: string]: string; [x: number]: string; n: number; }
+>whatever : string
+
+local s2: string = a[1];
+>s2 : string
+>a[1] : string
+>a : { [x: string]: string; [x: number]: string; n: number; }
+>1 : 1
+
+local n1: number = a.n;
+>n1 : number
+>a.n : number
+>a : { [x: string]: string; [x: number]: string; n: number; }
+>n : number
+
+// A concrete key domain keeps to itself: this table answers number keys only.
+local numMt = { __index = function(t: object, k: number): boolean return true; end };
+>numMt : { __index: (t: object, k: number) => boolean; }
+>{ __index = function(t: object, k: number): boolean return true; end } : { __index: (t: object, k: number) => boolean; }
+>__index : (t: object, k: number) => boolean
+>function(t: object, k: number): boolean return true; end : (t: object, k: number) => boolean
+>t : object
+>k : number
+>true : true
+
+local num = setmetatable({ n = 1 }, numMt);
+>num : { [x: number]: boolean; n: number; }
+>setmetatable({ n = 1 }, numMt) : { [x: number]: boolean; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>numMt : { __index: (t: object, k: number) => boolean; }
+
+local b1: boolean = num[3];
+>b1 : boolean
+>num[3] : boolean
+>num : { [x: number]: boolean; n: number; }
+>3 : 3
+
+local absent = num.missing;
+>absent : any
+>num.missing : any
+>num : { [x: number]: boolean; n: number; }
+>missing : any
+
+// A literal key widens to its domain, because an index signature may not be keyed by a
+// literal -- the same widening a computed key gets.
+local litMt = { __index = function(t: object, k: "a"): number return 1; end };
+>litMt : { __index: (t: object, k: "a") => number; }
+>{ __index = function(t: object, k: "a"): number return 1; end } : { __index: (t: object, k: "a") => number; }
+>__index : (t: object, k: "a") => number
+>function(t: object, k: "a"): number return 1; end : (t: object, k: "a") => number
+>t : object
+>k : "a"
+>1 : 1
+
+local lit = setmetatable({ n = 1 }, litMt);
+>lit : { [x: string]: number; n: number; }
+>setmetatable({ n = 1 }, litMt) : { [x: string]: number; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>litMt : { __index: (t: object, k: "a") => number; }
+
+local l1: number = lit["zzz"];
+>l1 : number
+>lit["zzz"] : number
+>lit : { [x: string]: number; n: number; }
+>"zzz" : "zzz"
+
+// A multi-return __index truncates to its first value at the call boundary, as every other
+// call does.
+local packMt = { __index = function(t: object, k: any): (string, number) return "x", 1; end };
+>packMt : { __index: (t: object, k: any) => (string, number); }
+>{ __index = function(t: object, k: any): (string, number) return "x", 1; end } : { __index: (t: object, k: any) => (string, number); }
+>__index : (t: object, k: any) => (string, number)
+>function(t: object, k: any): (string, number) return "x", 1; end : (t: object, k: any) => (string, number)
+>t : object
+>k : any
+>"x", 1 : string, number
+>"x" : "x"
+>1 : 1
+
+local pack = setmetatable({ n = 1 }, packMt);
+>pack : { [x: string]: string; [x: number]: string; n: number; }
+>setmetatable({ n = 1 }, packMt) : { [x: string]: string; [x: number]: string; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>packMt : { __index: (t: object, k: any) => (string, number); }
+
+local p1: string = pack.anything;
+>p1 : string
+>pack.anything : string
+>pack : { [x: string]: string; [x: number]: string; n: number; }
+>anything : string
+
+// Overloads that answer the same key domain both apply: a read of such a key gets whichever
+// one Lua dispatches to.
+declare overloaded: { __index: { (t: object, k: "a"): number; (t: object, k: "b"): string } };
+>overloaded : { __index: { (t: object, k: "a"): number; (t: object, k: "b"): string; }; }
+>__index : { (t: object, k: "a"): number; (t: object, k: "b"): string; }
+>t : object
+>k : "a"
+>t : object
+>k : "b"
+
+local ov = setmetatable({ n = 1 }, overloaded);
+>ov : { [x: string]: string | number; n: number; }
+>setmetatable({ n = 1 }, overloaded) : { [x: string]: string | number; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>overloaded : { __index: { (t: object, k: "a"): number; (t: object, k: "b"): string; }; }
+
+local either: number | string = ov.b;
+>either : string | number
+>ov.b : string | number
+>ov : { [x: string]: string | number; n: number; }
+>b : string | number
+
+local notJustNumber: number = ov.b;
+>notJustNumber : number
+>ov.b : string | number
+>ov : { [x: string]: string | number; n: number; }
+>b : string | number
+
+// The table's own members still win: a function __index only runs on a miss.
+local own = setmetatable({ n = 1 }, anyMt);
+>own : { [x: string]: string; [x: number]: string; n: number; }
+>setmetatable({ n = 1 }, anyMt) : { [x: string]: string; [x: number]: string; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>anyMt : { __index: (t: object, k: any) => string; }
+
+local o1: number = own.n;
+>o1 : number
+>own.n : number
+>own : { [x: string]: string; [x: number]: string; n: number; }
+>n : number
+
+local o2: string = own.n;
+>o2 : string
+>own.n : number
+>own : { [x: string]: string; [x: number]: string; n: number; }
+>n : number
+
+// ...unless the member can be nil, which is the miss.
+declare partial: { v?: number };
+>partial : { v?: number; }
+>v : number | nil
+
+local fallsThrough = setmetatable(partial, anyMt);
+>fallsThrough : { [x: string]: string; [x: number]: string; v: string | number; }
+>setmetatable(partial, anyMt) : { [x: string]: string; [x: number]: string; v: string | number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>partial : { v?: number; }
+>anyMt : { __index: (t: object, k: any) => string; }
+
+local merged: number | string = fallsThrough.v;
+>merged : string | number
+>fallsThrough.v : string | number
+>fallsThrough : { [x: string]: string; [x: number]: string; v: string | number; }
+>v : string | number
+

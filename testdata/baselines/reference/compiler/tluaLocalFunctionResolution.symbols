@@ -1,0 +1,78 @@
+//// [tests/cases/compiler/tluaLocalFunctionResolution.tlua] ////
+
+=== tluaLocalFunctionResolution.tlua ===
+local function factorial(n: number): number
+>factorial : Symbol(factorial, Decl(tluaLocalFunctionResolution.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 0, 25))
+
+  if (n <= 1) {
+>n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 0, 25))
+
+    return 1;
+  }
+  return n * factorial(n - 1);
+>n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 0, 25))
+>factorial : Symbol(factorial, Decl(tluaLocalFunctionResolution.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 0, 25))
+
+end
+factorial(3);
+>factorial : Symbol(factorial, Decl(tluaLocalFunctionResolution.tlua, 0, 0))
+
+local function recursiveOnly(n: number): number
+>recursiveOnly : Symbol(recursiveOnly, Decl(tluaLocalFunctionResolution.tlua, 6, 13))
+>n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 8, 29))
+
+  if (n <= 0) {
+>n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 8, 29))
+
+    return 0;
+  }
+  return recursiveOnly(n - 1);
+>recursiveOnly : Symbol(recursiveOnly, Decl(tluaLocalFunctionResolution.tlua, 6, 13))
+>n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 8, 29))
+
+end
+
+beforeLocal();
+local function beforeLocal(): void
+>beforeLocal : Symbol(beforeLocal, Decl(tluaLocalFunctionResolution.tlua, 15, 14))
+
+end
+beforeLocal();
+>beforeLocal : Symbol(beforeLocal, Decl(tluaLocalFunctionResolution.tlua, 15, 14))
+
+local function mutable(): number
+>mutable : Symbol(mutable, Decl(tluaLocalFunctionResolution.tlua, 18, 14))
+
+  return 1;
+end
+mutable = function(): number
+>mutable : Symbol(mutable, Decl(tluaLocalFunctionResolution.tlua, 18, 14))
+
+  return 2;
+end;
+mutable();
+>mutable : Symbol(mutable, Decl(tluaLocalFunctionResolution.tlua, 18, 14))
+
+local function shadow(): number
+>shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 26, 10))
+
+  return 1;
+end
+shadow();
+>shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 26, 10))
+
+{
+  local function shadow(): number
+>shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 33, 1))
+
+    return 2;
+  end
+  shadow();
+>shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 33, 1))
+}
+
+shadow();
+>shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 26, 10))
+

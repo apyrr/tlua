@@ -1,0 +1,26 @@
+//// [tests/cases/compiler/tluaTableAugmentationDeclareGlobal.tlua] ////
+
+=== decl.tlua ===
+declare global {
+>global : Symbol(global, Decl(decl.tlua, 0, 0))
+
+  interface Shape {
+>Shape : Symbol(Shape, Decl(decl.tlua, 0, 16), Decl(use.tlua, 0, 0))
+
+    x: number;
+>x : Symbol(Shape.x, Decl(decl.tlua, 1, 19))
+  }
+}
+
+=== use.tlua ===
+Shape = {};
+>Shape : Symbol(Shape, Decl(decl.tlua, 0, 16), Decl(use.tlua, 0, 0))
+
+Shape.tag = 1;
+>Shape : Symbol(Shape, Decl(decl.tlua, 0, 16), Decl(use.tlua, 0, 0))
+
+local s: Shape = { x = 1 };
+>s : Symbol(s, Decl(use.tlua, 2, 5))
+>Shape : Symbol(Shape, Decl(decl.tlua, 0, 16), Decl(use.tlua, 0, 0))
+>x : Symbol(x, Decl(use.tlua, 2, 18))
+

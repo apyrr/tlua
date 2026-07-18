@@ -1,0 +1,33 @@
+// === goToDefinition ===
+// === /goToDefinitionUndefinedSymbols.tlua ===
+// some/*GOTO DEF*/Variable;
+// local a: someType;
+// local x = {}; x.someProperty;
+// local a: any; a.someProperty;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionUndefinedSymbols.tlua ===
+// someVariable;
+// local a: some/*GOTO DEF*/Type;
+// local x = {}; x.someProperty;
+// local a: any; a.someProperty;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionUndefinedSymbols.tlua ===
+// someVariable;
+// local a: someType;
+// local x = {}; x.some/*GOTO DEF*/Property;
+// local a: any; a.someProperty;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionUndefinedSymbols.tlua ===
+// someVariable;
+// local a: someType;
+// local x = {}; x.someProperty;
+// local a: any; a.some/*GOTO DEF*/Property;

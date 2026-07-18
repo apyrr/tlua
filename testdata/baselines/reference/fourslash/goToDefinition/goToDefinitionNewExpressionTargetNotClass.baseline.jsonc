@@ -1,0 +1,23 @@
+// === goToDefinition ===
+// === /goToDefinitionNewExpressionTargetNotClass.tlua ===
+// class C2 {
+// }
+// <|local [|I|]: {
+//     [|new(): C2;|]
+// };|>
+// new /*GOTO DEF*/I();
+// local I2: {
+// };
+// new I2();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionNewExpressionTargetNotClass.tlua ===
+// --- (line: 3) skipped ---
+//     new(): C2;
+// };
+// new I();
+// <|local [|I2|]: {
+// };|>
+// new /*GOTO DEF*/I2();

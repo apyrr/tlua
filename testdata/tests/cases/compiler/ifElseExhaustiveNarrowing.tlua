@@ -1,0 +1,40 @@
+// @strict: true
+// @noEmit: true
+
+interface ClientSource {
+  type: "client";
+}
+
+interface ServiceSource {
+  type: "service";
+}
+
+// An if/elseif chain over a discriminant with a never-typed sink in the final
+// else is the exhaustiveness idiom now that switch is gone.
+function isDisplaySource(source: ClientSource | ServiceSource | nil): boolean
+  if source == nil then
+    return false;
+  elseif source.type == "client" then
+    return true;
+  elseif source.type == "service" then
+    return false;
+  else
+    neverReached(source);
+    return false;
+  end
+end
+
+// The optional-chain discriminant works too when the nil arm comes last: each
+// arm re-evaluates the chain against the narrowed receiver.
+function viaChain(source: ClientSource | ServiceSource | nil): boolean
+  if source?.type == "client" then
+    return true;
+  elseif source?.type == "service" then
+    return false;
+  else
+    local rest: nil = source;
+    return false;
+  end
+end
+
+function neverReached(_v: never): void {}

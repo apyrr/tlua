@@ -1,0 +1,88 @@
+//// [tests/cases/compiler/tluaNumberKeyIndexKeyof.tlua] ////
+
+=== tluaNumberKeyIndexKeyof.tlua ===
+// keyof a string index signature is string only (not string | number).
+type SK = keyof { [k: string]: boolean }; // string
+>SK : Symbol(SK, Decl(tluaNumberKeyIndexKeyof.tlua, 0, 0))
+>k : Symbol(k, Decl(tluaNumberKeyIndexKeyof.tlua, 1, 19))
+
+local sk: SK = "x";
+>sk : Symbol(sk, Decl(tluaNumberKeyIndexKeyof.tlua, 2, 5))
+>SK : Symbol(SK, Decl(tluaNumberKeyIndexKeyof.tlua, 0, 0))
+
+local skBad: SK = 1; // error: number not a string key
+>skBad : Symbol(skBad, Decl(tluaNumberKeyIndexKeyof.tlua, 3, 5))
+>SK : Symbol(SK, Decl(tluaNumberKeyIndexKeyof.tlua, 0, 0))
+
+// keyof a number index signature is number.
+type NK = keyof { [k: number]: boolean }; // number
+>NK : Symbol(NK, Decl(tluaNumberKeyIndexKeyof.tlua, 3, 20))
+>k : Symbol(k, Decl(tluaNumberKeyIndexKeyof.tlua, 6, 19))
+
+local nk: NK = 1;
+>nk : Symbol(nk, Decl(tluaNumberKeyIndexKeyof.tlua, 7, 5))
+>NK : Symbol(NK, Decl(tluaNumberKeyIndexKeyof.tlua, 3, 20))
+
+local nkBad: NK = "x"; // error: string not a number key
+>nkBad : Symbol(nkBad, Decl(tluaNumberKeyIndexKeyof.tlua, 8, 5))
+>NK : Symbol(NK, Decl(tluaNumberKeyIndexKeyof.tlua, 3, 20))
+
+// Both signatures: keyof is string | number.
+type BK = keyof { [k: string]: boolean; [k: number]: boolean };
+>BK : Symbol(BK, Decl(tluaNumberKeyIndexKeyof.tlua, 8, 22))
+>k : Symbol(k, Decl(tluaNumberKeyIndexKeyof.tlua, 11, 19))
+>k : Symbol(k, Decl(tluaNumberKeyIndexKeyof.tlua, 11, 41))
+
+local bk1: BK = "x";
+>bk1 : Symbol(bk1, Decl(tluaNumberKeyIndexKeyof.tlua, 12, 5))
+>BK : Symbol(BK, Decl(tluaNumberKeyIndexKeyof.tlua, 8, 22))
+
+local bk2: BK = 1;
+>bk2 : Symbol(bk2, Decl(tluaNumberKeyIndexKeyof.tlua, 13, 5))
+>BK : Symbol(BK, Decl(tluaNumberKeyIndexKeyof.tlua, 8, 22))
+
+// Mapped type over a string-indexed type only iterates string keys.
+type M = { [K in keyof { [k: string]: number }]: boolean };
+>M : Symbol(M, Decl(tluaNumberKeyIndexKeyof.tlua, 13, 18))
+>K : Symbol(K, Decl(tluaNumberKeyIndexKeyof.tlua, 16, 12))
+>k : Symbol(k, Decl(tluaNumberKeyIndexKeyof.tlua, 16, 26))
+
+local m: M = { anything = true };
+>m : Symbol(m, Decl(tluaNumberKeyIndexKeyof.tlua, 17, 5))
+>M : Symbol(M, Decl(tluaNumberKeyIndexKeyof.tlua, 13, 18))
+>anything : Symbol(anything, Decl(tluaNumberKeyIndexKeyof.tlua, 17, 14))
+
+// `${number}` is a string-pattern type and behaves as a string key.
+type TplKey = keyof { [k: `${number}`]: boolean };
+>TplKey : Symbol(TplKey, Decl(tluaNumberKeyIndexKeyof.tlua, 17, 33))
+>k : Symbol(k, Decl(tluaNumberKeyIndexKeyof.tlua, 20, 23))
+
+local tk: TplKey = "123";
+>tk : Symbol(tk, Decl(tluaNumberKeyIndexKeyof.tlua, 21, 5))
+>TplKey : Symbol(TplKey, Decl(tluaNumberKeyIndexKeyof.tlua, 17, 33))
+
+// A key-remapped mapped type over a string index is not widened to
+// string | number either: keyof of the mapped type stays string.
+type S2 = { [k: string]: number };
+>S2 : Symbol(S2, Decl(tluaNumberKeyIndexKeyof.tlua, 21, 25))
+>k : Symbol(k, Decl(tluaNumberKeyIndexKeyof.tlua, 25, 13))
+
+type M2 = { [K in keyof S2 as K]: S2[K] };
+>M2 : Symbol(M2, Decl(tluaNumberKeyIndexKeyof.tlua, 25, 34))
+>K : Symbol(K, Decl(tluaNumberKeyIndexKeyof.tlua, 26, 13))
+>S2 : Symbol(S2, Decl(tluaNumberKeyIndexKeyof.tlua, 21, 25))
+>K : Symbol(K, Decl(tluaNumberKeyIndexKeyof.tlua, 26, 13))
+>S2 : Symbol(S2, Decl(tluaNumberKeyIndexKeyof.tlua, 21, 25))
+>K : Symbol(K, Decl(tluaNumberKeyIndexKeyof.tlua, 26, 13))
+
+local m2Ok: keyof M2 = "x";
+>m2Ok : Symbol(m2Ok, Decl(tluaNumberKeyIndexKeyof.tlua, 27, 5))
+>M2 : Symbol(M2, Decl(tluaNumberKeyIndexKeyof.tlua, 25, 34))
+
+local m2Bad: keyof M2 = 1; // error: keyof M2 is string, not string | number
+>m2Bad : Symbol(m2Bad, Decl(tluaNumberKeyIndexKeyof.tlua, 28, 5))
+>M2 : Symbol(M2, Decl(tluaNumberKeyIndexKeyof.tlua, 25, 34))
+
+local es = {sk, skBad, nk, nkBad, bk1, bk2, m, tk, m2Ok, m2Bad};
+>es : Symbol(es, Decl(tluaNumberKeyIndexKeyof.tlua, 30, 5))
+

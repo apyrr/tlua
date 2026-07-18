@@ -1,0 +1,32 @@
+// @strict: true
+// @target: esnext
+// @lib: luajit
+// @noEmit: true
+
+declare function two(): (number, string);
+declare function sinkNumber(...: any): number;
+declare function sink3(a: boolean, b: number, c: string): void;
+
+// A generic, overloaded tail call expands its resolved result pack.
+local r = sinkNumber(pcall(two));
+sink3(pcall(two));
+
+// A non-generic tail call keeps the existing expansion path.
+declare function sink2(a: number, b: string): void;
+sink2(two());
+
+// A generic scalar return still declines tail expansion, allowing the outer
+// parameter type to contextually type the function passed through id.
+declare function id<T>(x: T): T;
+declare function outer(callback: (value: number) => number): void;
+outer(id(function(value) return value; end));
+
+// Passing overloaded pcall as a value is separate from tail-pack expansion.
+local nestedOk, nestedInnerOk, nestedValue = pcall(pcall, two);
+
+// A failed overload resolution must not treat its synthetic intersection
+// return as a pack.
+declare function f(x: number): (number, string);
+declare function f(x: string): (boolean, number);
+declare function sink(...: any): void;
+sink(f(true));

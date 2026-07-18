@@ -1,0 +1,115 @@
+//// [tests/cases/compiler/tluaGenericPackErrors.tlua] ////
+
+=== tluaGenericPackErrors.tlua ===
+// The grammar and usage rules that keep a generic pack parameter in a pack
+// position.
+
+// A pack parameter must trail the plain ones: a plain parameter cannot follow it.
+declare function ordering<...A, T>(...: A): T;
+>ordering : Symbol(ordering, Decl(tluaGenericPackErrors.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 4, 26))
+>T : Symbol(T, Decl(tluaGenericPackErrors.tlua, 4, 31))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 4, 35))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 4, 26))
+>T : Symbol(T, Decl(tluaGenericPackErrors.tlua, 4, 31))
+
+// A pack parameter names several values, so it cannot stand in a single-value
+// position: as a plain annotation, a tuple/return element, or a value type.
+declare function asValue<...A>(x: A): void;
+>asValue : Symbol(asValue, Decl(tluaGenericPackErrors.tlua, 4, 46))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 8, 25))
+>x : Symbol(x, Decl(tluaGenericPackErrors.tlua, 8, 31))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 8, 25))
+
+declare function asReturn<...A>(): A;
+>asReturn : Symbol(asReturn, Decl(tluaGenericPackErrors.tlua, 8, 43))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 9, 26))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 9, 26))
+
+declare function inList<...A>(): (number, A);
+>inList : Symbol(inList, Decl(tluaGenericPackErrors.tlua, 9, 37))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 10, 24))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 10, 24))
+
+// A pack parameter is allowed on an alias, but not an interface or class.
+type Alias<...A> = number;
+>Alias : Symbol(Alias, Decl(tluaGenericPackErrors.tlua, 10, 45))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 13, 11))
+
+interface Iface<...A> {}
+>Iface : Symbol(Iface, Decl(tluaGenericPackErrors.tlua, 13, 26))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 14, 16))
+
+// Any function-shaped signature carries one, though: an interface METHOD or call
+// signature is a function, so neither of these errors.
+interface WithMethods {
+>WithMethods : Symbol(WithMethods, Decl(tluaGenericPackErrors.tlua, 14, 24))
+
+    m<...A>(...: A): (...A);
+>m : Symbol(WithMethods.m, Decl(tluaGenericPackErrors.tlua, 18, 23))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 19, 6))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 19, 12))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 19, 6))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 19, 6))
+
+    <...R>(...: R): (...R);
+>R : Symbol(R, Decl(tluaGenericPackErrors.tlua, 20, 5))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 20, 11))
+>R : Symbol(R, Decl(tluaGenericPackErrors.tlua, 20, 5))
+>R : Symbol(R, Decl(tluaGenericPackErrors.tlua, 20, 5))
+}
+
+// A written constraint or default on a pack parameter is rejected: the implicit
+// constraint is the open `(...any)` pack, and silently ignoring the syntax would
+// enforce nothing.
+declare function constrained<...A extends string>(...: A): void;
+>constrained : Symbol(constrained, Decl(tluaGenericPackErrors.tlua, 21, 1))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 26, 29))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 26, 50))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 26, 29))
+
+declare function defaulted<...A = string>(...: A): void;
+>defaulted : Symbol(defaulted, Decl(tluaGenericPackErrors.tlua, 26, 64))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 27, 27))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 27, 42))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 27, 27))
+
+// `...T` where T is an ordinary (non-pack) type parameter stays a homogeneous
+// pack of element T -- this is the Stage 1 form and is NOT an error.
+declare function homogeneous<T>(...: T): (...T);
+>homogeneous : Symbol(homogeneous, Decl(tluaGenericPackErrors.tlua, 27, 56))
+>T : Symbol(T, Decl(tluaGenericPackErrors.tlua, 31, 29))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 31, 32))
+>T : Symbol(T, Decl(tluaGenericPackErrors.tlua, 31, 29))
+>T : Symbol(T, Decl(tluaGenericPackErrors.tlua, 31, 29))
+
+local okA, okB = homogeneous(1, 2);
+>okA : Symbol(okA, Decl(tluaGenericPackErrors.tlua, 32, 5))
+>okB : Symbol(okB, Decl(tluaGenericPackErrors.tlua, 32, 10))
+>homogeneous : Symbol(homogeneous, Decl(tluaGenericPackErrors.tlua, 27, 56))
+
+// A well-formed pack function, so the errors above are isolated.
+declare function fine<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+>fine : Symbol(fine, Decl(tluaGenericPackErrors.tlua, 32, 35))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 35, 22))
+>R : Symbol(R, Decl(tluaGenericPackErrors.tlua, 35, 27))
+>f : Symbol(f, Decl(tluaGenericPackErrors.tlua, 35, 34))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 35, 38))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 35, 22))
+>R : Symbol(R, Decl(tluaGenericPackErrors.tlua, 35, 27))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 35, 56))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 35, 22))
+>R : Symbol(R, Decl(tluaGenericPackErrors.tlua, 35, 27))
+
+// Explicit scalar arguments are lifted even when a failed call uses its
+// candidate signature for error recovery.
+declare function id<...A>(...: A): (...A);
+>id : Symbol(id, Decl(tluaGenericPackErrors.tlua, 35, 73))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 39, 20))
+> : Symbol((Missing), Decl(tluaGenericPackErrors.tlua, 39, 26))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 39, 20))
+>A : Symbol(A, Decl(tluaGenericPackErrors.tlua, 39, 20))
+
+id<number>("s");
+>id : Symbol(id, Decl(tluaGenericPackErrors.tlua, 35, 73))
+

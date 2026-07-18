@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/classFieldsAssignmentNamedEvaluation.tlua] ////
+
+=== classFieldsAssignmentNamedEvaluation.tlua ===
+local x: any;
+>x : any
+
+x = class { static #foo = 1; };
+>x = class : any
+>x : any
+>class : any
+>static : any
+>#foo : number
+>foo : any
+>1 : 1
+

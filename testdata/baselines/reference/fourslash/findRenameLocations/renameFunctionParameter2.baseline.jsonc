@@ -1,0 +1,8 @@
+// === findRenameLocations ===
+// === /renameFunctionParameter2.tlua ===
+// /**
+//  * @param {number} p
+//  */
+// local foo = function([|pRENAME|]/*RENAME*/)
+//     return [|pRENAME|];
+// end

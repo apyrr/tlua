@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceProperty_01.tlua ===
+// --- (line: 4) skipped ---
+// }
+// 
+// function whatever(foo: Foo) {
+//     foo.he/*GOTO IMPL*/llo;
+// }

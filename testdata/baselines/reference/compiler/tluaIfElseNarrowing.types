@@ -1,0 +1,115 @@
+//// [tests/cases/compiler/tluaIfElseNarrowing.tlua] ////
+
+=== tluaIfElseNarrowing.tlua ===
+function narrowNil(x: number | nil): number
+>narrowNil : (x: number | nil) => number
+>x : number | nil
+
+  if x ~= nil then
+>x ~= nil : boolean
+>x : number | nil
+
+    return x;
+>x : number
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+function narrowElse(x: number | nil): number
+>narrowElse : (x: number | nil) => number
+>x : number | nil
+
+  if x == nil then
+>x == nil : boolean
+>x : number | nil
+
+    return 0;
+>0 : 0
+
+  else
+    return x;
+>x : number
+
+  end
+end
+
+function narrowElseifChain(x: number | string | nil): string
+>narrowElseifChain : (x: number | string | nil) => string
+>x : string | number | nil
+
+  if x == nil then
+>x == nil : boolean
+>x : string | number | nil
+
+    return "nil";
+>"nil" : "nil"
+
+  elseif type(x) == "number" then
+>type(x) == "number" : boolean
+>type(x) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>x : string | number
+>"number" : "number"
+
+    return "" + x;
+>"" + x : string
+>"" : ""
+>x : number
+
+  else
+    return x;
+>x : string
+
+  end
+end
+
+// A function-typed condition is always truthy — existing diagnostic fires.
+function alwaysTruthy(f: () => void): number
+>alwaysTruthy : (f: () => void) => number
+>f : () => void
+
+  if f then
+>f : () => void
+
+    return 1;
+>1 : 1
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+// Narrowing persists into while bodies.
+function whileNarrow(x: number | nil): number
+>whileNarrow : (x: number | nil) => number
+>x : number | nil
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  while x ~= nil do
+>x ~= nil : boolean
+>x : number | nil
+
+    total = total + x;
+>total = total + x : number
+>total : number
+>total + x : number
+>total : number
+>x : number
+
+    x = nil;
+>x = nil : nil
+>x : number | nil
+
+  end
+  return total;
+>total : number
+
+end
+

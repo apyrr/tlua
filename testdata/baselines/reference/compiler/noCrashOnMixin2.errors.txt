@@ -1,0 +1,131 @@
+noCrashOnMixin2.tlua(3,1): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(3,1): error TS2304: Cannot find name 'class'.
+noCrashOnMixin2.tlua(3,7): error TS1435: Unknown keyword or identifier. Did you mean 'abstract'?
+noCrashOnMixin2.tlua(3,7): error TS2304: Cannot find name 'Abstract'.
+noCrashOnMixin2.tlua(4,5): error TS1128: Declaration or statement expected.
+noCrashOnMixin2.tlua(4,15): error TS2304: Cannot find name 'constructor'.
+noCrashOnMixin2.tlua(4,29): error TS1005: ';' expected.
+noCrashOnMixin2.tlua(8,1): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(8,1): error TS2304: Cannot find name 'class'.
+noCrashOnMixin2.tlua(8,7): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(8,7): error TS2304: Cannot find name 'Concrete'.
+noCrashOnMixin2.tlua(8,16): error TS1128: Declaration or statement expected.
+noCrashOnMixin2.tlua(8,24): error TS1435: Unknown keyword or identifier. Did you mean 'abstract'?
+noCrashOnMixin2.tlua(8,24): error TS2304: Cannot find name 'Abstract'.
+noCrashOnMixin2.tlua(11,33): error TS2370: A rest parameter must be of an array type.
+noCrashOnMixin2.tlua(11,36): error TS100034: A vararg parameter cannot have a name.
+noCrashOnMixin2.tlua(14,12): error TS2304: Cannot find name 'class'.
+noCrashOnMixin2.tlua(14,18): error TS1005: ';' expected.
+noCrashOnMixin2.tlua(14,26): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(18,1): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(18,1): error TS2304: Cannot find name 'class'.
+noCrashOnMixin2.tlua(18,7): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(18,7): error TS2304: Cannot find name 'Empty'.
+noCrashOnMixin2.tlua(21,1): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(21,1): error TS2304: Cannot find name 'class'.
+noCrashOnMixin2.tlua(21,7): error TS1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(21,7): error TS2304: Cannot find name 'CrashTrigger'.
+noCrashOnMixin2.tlua(21,20): error TS1128: Declaration or statement expected.
+noCrashOnMixin2.tlua(21,34): error TS2304: Cannot find name 'Empty'.
+noCrashOnMixin2.tlua(21,41): error TS1005: ';' expected.
+noCrashOnMixin2.tlua(22,5): error TS1128: Declaration or statement expected.
+noCrashOnMixin2.tlua(22,12): error TS2304: Cannot find name 'trigger'.
+noCrashOnMixin2.tlua(22,22): error TS1005: ';' expected.
+noCrashOnMixin2.tlua(23,13): error TS2304: Cannot find name 'Concrete'.
+
+
+==== noCrashOnMixin2.tlua (34 errors) ====
+    // https://github.com/microsoft/TypeScript/issues/62921
+    
+    class Abstract {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~~~~~
+!!! error TS1435: Unknown keyword or identifier. Did you mean 'abstract'?
+          ~~~~~~~~
+!!! error TS2304: Cannot find name 'Abstract'.
+        protected constructor() {
+        ~~~~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                  ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'constructor'.
+                                ~
+!!! error TS1005: ';' expected.
+        }
+    }
+    
+    class Concrete extends Abstract {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~~~~~~
+!!! error TS2304: Cannot find name 'Concrete'.
+                   ~~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                           ~~~~~~~~
+!!! error TS1435: Unknown keyword or identifier. Did you mean 'abstract'?
+                           ~~~~~~~~
+!!! error TS2304: Cannot find name 'Abstract'.
+    }
+    
+    type Constructor<T = {}> = new (...args?: any[]) => T;
+                                    ~~~~~~~~~~~~~~~
+!!! error TS2370: A rest parameter must be of an array type.
+                                       ~~~~
+!!! error TS100034: A vararg parameter cannot have a name.
+    
+    function Mixin<TBase extends Constructor>(Base: TBase) {
+        return class extends Base {
+               ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+                     ~~~~~~~
+!!! error TS1005: ';' expected.
+                             ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+        };
+    }
+    
+    class Empty {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~~~
+!!! error TS2304: Cannot find name 'Empty'.
+    }
+    
+    class CrashTrigger extends Mixin(Empty) {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~~~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'CrashTrigger'.
+                       ~~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                                     ~~~~~
+!!! error TS2304: Cannot find name 'Empty'.
+                                            ~
+!!! error TS1005: ';' expected.
+        public trigger() {
+        ~~~~~~
+!!! error TS1128: Declaration or statement expected.
+               ~~~~~~~
+!!! error TS2304: Cannot find name 'trigger'.
+                         ~
+!!! error TS1005: ';' expected.
+            new Concrete();
+                ~~~~~~~~
+!!! error TS2304: Cannot find name 'Concrete'.
+        }
+    }
+    

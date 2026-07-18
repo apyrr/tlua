@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/noCrashOnMixin2.tlua] ////
+
+=== noCrashOnMixin2.tlua ===
+// https://github.com/microsoft/TypeScript/issues/62921
+
+class Abstract {
+>class : any
+>Abstract : any
+
+    protected constructor() {
+>constructor() : any
+>constructor : any
+    }
+}
+
+class Concrete extends Abstract {
+>class : any
+>Concrete : any
+>Abstract : any
+}
+
+type Constructor<T = {}> = new (...args?: any[]) => T;
+>Constructor : Constructor<T>
+>args : any[] | nil
+
+function Mixin<TBase extends Constructor>(Base: TBase) {
+>Mixin : <TBase extends Constructor>(Base: TBase) => any
+>Base : TBase
+
+    return class extends Base {
+>class : any
+>Base : TBase
+
+    };
+}
+
+class Empty {
+>class : any
+>Empty : any
+}
+
+class CrashTrigger extends Mixin(Empty) {
+>class : any
+>CrashTrigger : any
+>Mixin(Empty) : any
+>Mixin : <TBase extends Constructor>(Base: TBase) => any
+>Empty : any
+
+    public trigger() {
+>trigger() : any
+>trigger : any
+
+        new Concrete();
+>new Concrete() : any
+>Concrete : any
+    }
+}
+

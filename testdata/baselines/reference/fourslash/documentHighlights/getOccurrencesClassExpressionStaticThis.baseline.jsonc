@@ -1,0 +1,67 @@
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStaticThis.tlua ===
+// --- (line: 26) skipped ---
+//     }
+// 
+//     static bar() {
+//         /*HIGHLIGHTS*/this;
+//         this.staticX;
+//         () => this;
+//         () => {
+// --- (line: 34) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStaticThis.tlua ===
+// --- (line: 27) skipped ---
+// 
+//     static bar() {
+//         this;
+//         /*HIGHLIGHTS*/this.staticX;
+//         () => this;
+//         () => {
+//             if (this) {
+// --- (line: 35) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStaticThis.tlua ===
+// --- (line: 28) skipped ---
+//     static bar() {
+//         this;
+//         this.staticX;
+//         () => /*HIGHLIGHTS*/this;
+//         () => {
+//             if (this) {
+//                 this;
+// --- (line: 36) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStaticThis.tlua ===
+// --- (line: 30) skipped ---
+//         this.staticX;
+//         () => this;
+//         () => {
+//             if (/*HIGHLIGHTS*/this) {
+//                 this;
+//             }
+//         }
+// --- (line: 38) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionStaticThis.tlua ===
+// --- (line: 31) skipped ---
+//         () => this;
+//         () => {
+//             if (this) {
+//                 /*HIGHLIGHTS*/this;
+//             }
+//         }
+//         function inside() {
+// --- (line: 39) skipped ---

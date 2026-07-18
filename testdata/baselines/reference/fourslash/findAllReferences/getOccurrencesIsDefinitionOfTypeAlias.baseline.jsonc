@@ -1,0 +1,18 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfTypeAlias.tlua ===
+// /*FIND ALL REFS*/type [|Alias|]= number;
+// local n: [|Alias|] = 12;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfTypeAlias.tlua ===
+// type /*FIND ALL REFS*/[|Alias|]= number;
+// local n: [|Alias|] = 12;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfTypeAlias.tlua ===
+// type [|Alias|]= number;
+// local n: /*FIND ALL REFS*/[|Alias|] = 12;

@@ -1,0 +1,17 @@
+jsxElementTypeUnexpectedType.tsx(5,12): error TS2786: 'C' cannot be used as a JSX component.
+  Its type '() => any' is not a valid JSX element type.
+jsxElementTypeUnexpectedType.tsx(5,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+
+
+==== jsxElementTypeUnexpectedType.tsx (2 errors) ====
+    type JsxElementType = number;
+    
+    local C = nil as any as () => any;
+    
+    local x = <C />;
+               ~
+!!! error TS2786: 'C' cannot be used as a JSX component.
+!!! error TS2786:   Its type '() => any' is not a valid JSX element type.
+               ~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+    

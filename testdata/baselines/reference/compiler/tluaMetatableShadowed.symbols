@@ -1,0 +1,87 @@
+//// [tests/cases/compiler/tluaMetatableShadowed.tlua] ////
+
+=== tluaMetatableShadowed.tlua ===
+// Only the real globals carry the protocol. A shadowing local, or a call through an alias,
+// resolves to a different symbol and keeps whatever it declares -- the rule the type()
+// narrowing builtins already follow.
+
+local Helpers = { describe = function(self: object): string return "d"; end };
+>Helpers : Symbol(Helpers, Decl(tluaMetatableShadowed.tlua, 4, 5))
+>describe : Symbol(describe, Decl(tluaMetatableShadowed.tlua, 4, 17))
+>self : Symbol(self, Decl(tluaMetatableShadowed.tlua, 4, 38))
+
+local mt = { __index = Helpers };
+>mt : Symbol(mt, Decl(tluaMetatableShadowed.tlua, 5, 5))
+>__index : Symbol(__index, Decl(tluaMetatableShadowed.tlua, 5, 12))
+>Helpers : Symbol(Helpers, Decl(tluaMetatableShadowed.tlua, 4, 5))
+
+function shadowed(): void
+>shadowed : Symbol(shadowed, Decl(tluaMetatableShadowed.tlua, 5, 33))
+
+  local setmetatable = function(value: object, metatable: object): object return value; end;
+>setmetatable : Symbol(setmetatable, Decl(tluaMetatableShadowed.tlua, 8, 7))
+>value : Symbol(value, Decl(tluaMetatableShadowed.tlua, 8, 32))
+>metatable : Symbol(metatable, Decl(tluaMetatableShadowed.tlua, 8, 46))
+>value : Symbol(value, Decl(tluaMetatableShadowed.tlua, 8, 32))
+
+  local getmetatable = function(value: object): object return value; end;
+>getmetatable : Symbol(getmetatable, Decl(tluaMetatableShadowed.tlua, 9, 7))
+>value : Symbol(value, Decl(tluaMetatableShadowed.tlua, 9, 32))
+>value : Symbol(value, Decl(tluaMetatableShadowed.tlua, 9, 32))
+
+  local obj = setmetatable({ n = 1 }, mt);
+>obj : Symbol(obj, Decl(tluaMetatableShadowed.tlua, 10, 7))
+>setmetatable : Symbol(setmetatable, Decl(tluaMetatableShadowed.tlua, 8, 7))
+>n : Symbol(n, Decl(tluaMetatableShadowed.tlua, 10, 28))
+>mt : Symbol(mt, Decl(tluaMetatableShadowed.tlua, 5, 5))
+
+  local absent = obj.describe;
+>absent : Symbol(absent, Decl(tluaMetatableShadowed.tlua, 11, 7))
+>obj : Symbol(obj, Decl(tluaMetatableShadowed.tlua, 10, 7))
+
+  local ownAbsent = obj.n;
+>ownAbsent : Symbol(ownAbsent, Decl(tluaMetatableShadowed.tlua, 12, 7))
+>obj : Symbol(obj, Decl(tluaMetatableShadowed.tlua, 10, 7))
+
+  local back = getmetatable(obj);
+>back : Symbol(back, Decl(tluaMetatableShadowed.tlua, 13, 7))
+>getmetatable : Symbol(getmetatable, Decl(tluaMetatableShadowed.tlua, 9, 7))
+>obj : Symbol(obj, Decl(tluaMetatableShadowed.tlua, 10, 7))
+
+end
+
+// An alias is a different symbol too.
+local alias = setmetatable;
+>alias : Symbol(alias, Decl(tluaMetatableShadowed.tlua, 17, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+local aliased = alias({ n = 1 }, mt);
+>aliased : Symbol(aliased, Decl(tluaMetatableShadowed.tlua, 18, 5))
+>alias : Symbol(alias, Decl(tluaMetatableShadowed.tlua, 17, 5))
+>n : Symbol(n, Decl(tluaMetatableShadowed.tlua, 18, 23))
+>mt : Symbol(mt, Decl(tluaMetatableShadowed.tlua, 5, 5))
+
+local aliasBad = aliased.describe;
+>aliasBad : Symbol(aliasBad, Decl(tluaMetatableShadowed.tlua, 19, 5))
+>aliased : Symbol(aliased, Decl(tluaMetatableShadowed.tlua, 18, 5))
+
+local aliasOwn: number = aliased.n;
+>aliasOwn : Symbol(aliasOwn, Decl(tluaMetatableShadowed.tlua, 20, 5))
+>aliased.n : Symbol(n, Decl(tluaMetatableShadowed.tlua, 18, 23))
+>aliased : Symbol(aliased, Decl(tluaMetatableShadowed.tlua, 18, 5))
+>n : Symbol(n, Decl(tluaMetatableShadowed.tlua, 18, 23))
+
+// The globals themselves still work in the same file.
+local real = setmetatable({ n = 1 }, mt);
+>real : Symbol(real, Decl(tluaMetatableShadowed.tlua, 23, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableShadowed.tlua, 23, 27))
+>mt : Symbol(mt, Decl(tluaMetatableShadowed.tlua, 5, 5))
+
+local d: string = real.describe(real);
+>d : Symbol(d, Decl(tluaMetatableShadowed.tlua, 24, 5))
+>real.describe : Symbol(describe, Decl(tluaMetatableShadowed.tlua, 4, 17))
+>real : Symbol(real, Decl(tluaMetatableShadowed.tlua, 23, 5))
+>describe : Symbol(describe, Decl(tluaMetatableShadowed.tlua, 4, 17))
+>real : Symbol(real, Decl(tluaMetatableShadowed.tlua, 23, 5))
+

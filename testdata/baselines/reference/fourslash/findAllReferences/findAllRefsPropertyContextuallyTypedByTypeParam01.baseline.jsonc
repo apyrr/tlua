@@ -1,0 +1,15 @@
+// === findAllReferences ===
+// === /findAllRefsPropertyContextuallyTypedByTypeParam01.tlua ===
+// interface IFoo {
+//     /*FIND ALL REFS*/[|a|]: string;
+// }
+// class C<T extends IFoo> {
+//     method() {
+// --- (line: 6) skipped ---
+
+// --- (line: 11) skipped ---
+// 
+// 
+// local x: IFoo = {
+//     [|a|] = "ss"
+// };

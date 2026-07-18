@@ -1,0 +1,8 @@
+// === findAllReferences ===
+// === /referencesForInheritedProperties6.tlua ===
+// class class1 extends class1 {
+//     /*FIND ALL REFS*/doStuff() { }
+// }
+// class class2 extends class1 {
+//     doStuff() { }
+// --- (line: 6) skipped ---

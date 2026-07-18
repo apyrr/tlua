@@ -1,0 +1,82 @@
+//// [tests/cases/compiler/tluaGenericPackPrefixed.tlua] ////
+
+=== tluaGenericPackPrefixed.tlua ===
+// Prefixed packs: this file pins the boundary between what generic packs
+// support and the one shape that is fundamentally ambiguous. tlua matches
+// upstream TypeScript (variadicTuples `curry` vs `curry2`) and Luau here.
+
+// 1. A fixed element before a LONE pack correlates -- the shipped `pcall`/
+//    `assert` shape `(boolean, ...R)` / `(T, ...M)`. The split point is
+//    unambiguous because the single variadic consumes everything after the
+//    fixed prefix.
+declare function prepend<T, ...A>(head: T, ...: A): (T, ...A);
+>prepend : <T, ...A>(head: T, ...: A) => (T, ...A)
+>head : T
+> : A
+
+local a, b, c = prepend(true, 1, "x");
+>a : boolean
+>b : number
+>c : string
+>prepend(true, 1, "x") : boolean
+>prepend : <T, ...A>(head: T, ...: A) => (T, ...A)
+>true : true
+>1 : 1
+>"x" : "x"
+
+// a: boolean, b: number, c: string
+
+// 2. Two ADJACENT packs correlate when each is inferred from its OWN source:
+//    every pack has a definite arity, so there is no split to guess.
+declare function both<...A, ...B>(
+>both : <...A, ...B>(f: (...: A) => (...A), g: (...: B) => (...B)) => (...A, ...B)
+
+    f: (...: A) => (...A),
+>f : (...: A) => (...A)
+> : A
+
+    g: (...: B) => (...B),
+>g : (...: B) => (...B)
+> : B
+
+): (...A, ...B);
+local x, y = both(
+>x : number
+>y : string
+>both(    function(n: number): (number) return n; end,    function(s: string): (string) return s; end,) : number
+>both : <...A, ...B>(f: (...: A) => (...A), g: (...: B) => (...B)) => (...A, ...B)
+
+    function(n: number): (number) return n; end,
+>function(n: number): (number) return n; end : (n: number) => (number)
+>n : number
+>n : number
+
+    function(s: string): (string) return s; end,
+>function(s: string): (string) return s; end : (s: string) => (string)
+>s : string
+>s : string
+
+);
+// x: number, y: string
+
+// 3. Inferring the split of two adjacent packs from a SINGLE source pack is
+//    ambiguous -- nothing says where A ends and B begins. tlua declines
+//    (the packs degrade to the open `(...any)`), exactly as upstream declines
+//    `curry2`. This is the documented limitation, pinned so a future change to
+//    variadic-tuple inference is a deliberate decision, not an accident.
+declare function split<...A, ...B>(source: () => (...A, ...B)): (...A);
+>split : <...A, ...B>(source: () => (...A, ...B)) => (...A)
+>source : () => (...A, ...B)
+
+declare function pair(): (number, string);
+>pair : () => (number, string)
+
+local p, q = split(pair);
+>p : any
+>q : any
+>split(pair) : any
+>split : <...A, ...B>(source: () => (...A, ...B)) => (...A)
+>pair : () => (number, string)
+
+// p: any, q: any -- the ambiguous split, not (number)
+

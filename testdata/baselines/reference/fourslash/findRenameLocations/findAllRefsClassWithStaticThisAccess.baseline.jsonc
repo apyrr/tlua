@@ -1,0 +1,7 @@
+// === findRenameLocations ===
+// === /findAllRefsClassWithStaticThisAccess.tlua ===
+// class /*RENAME*/C {
+//     static s() {
+//         this;
+//     }
+// --- (line: 5) skipped ---

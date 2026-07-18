@@ -1,0 +1,94 @@
+//// [tests/cases/compiler/tluaConcatOperator.tlua] ////
+
+=== tluaConcatOperator.tlua ===
+// Lua's `..` concatenates strings and numbers (a number coerces to its string form) and
+// always yields a string. It binds below `+`/`-` and above comparison, and is
+// right-associative.
+
+local s1: string = "a" .. "b";
+>s1 : string
+>"a" .. "b" : string
+>"a" : "a"
+>"b" : "b"
+
+// A number coerces; the result is still a string.
+local n = 42;
+>n : number
+>42 : 42
+
+local s2: string = n .. "!";
+>s2 : string
+>n .. "!" : string
+>n : number
+>"!" : "!"
+
+local s3: string = "count=" .. n;
+>s3 : string
+>"count=" .. n : string
+>"count=" : "count="
+>n : number
+
+// Right-associative chain.
+local s4: string = "a" .. "b" .. "c";
+>s4 : string
+>"a" .. "b" .. "c" : string
+>"a" : "a"
+>"b" .. "c" : string
+>"b" : "b"
+>"c" : "c"
+
+// `+` binds tighter than `..`: this is `"n=" .. (1 + 2)`. If `..` bound tighter it would
+// be `("n=" .. 1) + 2`, a string `+` number error -- so the clean assignment pins the
+// precedence.
+local s5: string = "n=" .. 1 + 2;
+>s5 : string
+>"n=" .. 1 + 2 : string
+>"n=" : "n="
+>1 + 2 : number
+>1 : 1
+>2 : 2
+
+local s6: string = 1 + 2 .. "=n";
+>s6 : string
+>1 + 2 .. "=n" : string
+>1 + 2 : number
+>1 : 1
+>2 : 2
+>"=n" : "=n"
+
+// `..` binds tighter than comparison: `("a" .. b) < c` is a string comparison.
+local b = "b";
+>b : string
+>"b" : "b"
+
+local c = "c";
+>c : string
+>"c" : "c"
+
+local cmp: boolean = "a" .. b < c;
+>cmp : boolean
+>"a" .. b < c : boolean
+>"a" .. b : string
+>"a" : "a"
+>b : string
+>c : string
+
+// Errors: a table or a boolean operand without a __concat metamethod.
+local e1 = {} .. "a";
+>e1 : string
+>{} .. "a" : string
+>{} : {}
+>"a" : "a"
+
+local e2 = true .. "b";
+>e2 : string
+>true .. "b" : string
+>true : true
+>"b" : "b"
+
+local e3 = "a" .. {};
+>e3 : string
+>"a" .. {} : string
+>"a" : "a"
+>{} : {}
+

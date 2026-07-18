@@ -1,0 +1,11 @@
+// === documentHighlights ===
+// === /getOccurrencesStringLiterals.tlua ===
+// local x = "/*HIGHLIGHTS*/[|string|]";
+// function f(a = "initial value") { }
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesStringLiterals.tlua ===
+// local x = "string";
+// function f(a = "/*HIGHLIGHTS*/[|initial value|]") { }

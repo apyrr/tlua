@@ -1,0 +1,140 @@
+//// [tests/cases/compiler/tluaVarargForwarding.tlua] ////
+
+=== tluaVarargForwarding.tlua ===
+declare function target(a: number, ...: string): void;
+>target : (a: number, ...: string) => void
+>a : number
+> : string[]
+
+function forward(...: any): void
+>forward : (...: any) => void
+> : any[]
+
+  // Forwarding into a rest parameter, in tail position.
+  print(...);
+>print(...) : void
+>print : (...: any) => void
+>... : any
+
+  print("x", ...);
+>print("x", ...) : void
+>print : (...: any) => void
+>"x" : "x"
+>... : any
+
+  target(1, ...);
+>target(1, ...) : void
+>target : (a: number, ...: string) => void
+>1 : 1
+>... : any
+
+  // The Lua libraries take the pack through their own rest tails.
+  local ok = pcall(forward, ...);
+>ok : boolean
+>pcall(forward, ...) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>forward : (...: any) => void
+>... : any
+
+  local count = select("#", ...);
+>count : number
+>select("#", ...) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>"#" : "#"
+>... : any
+
+  // Forwarding into a fixed parameter passes `any | nil`, because the tail may
+  // run out before it. `tostring(value: any)` accepts nil -- and so does Lua,
+  // where `tostring(nil)` is "nil" -- so this is legal, and no arity rule is
+  // involved.
+  tostring(...);
+>tostring(...) : string
+>tostring : (value: any) => string
+>... : any
+
+  // Parenthesized truncation says "exactly one value" explicitly. Same result.
+  tostring((...));
+>tostring((...)) : string
+>tostring : (value: any) => string
+>(...) : any
+>... : any
+
+  // `error()` takes no argument in Lua, and its parameters are optional here, so
+  // a possibly-empty tail forwards cleanly.
+  error(...);
+>error(...) : never
+>error : (message?: any, level?: number) => never
+>... : any
+
+end
+
+declare function needsString(value: string): void;
+>needsString : (value: string) => void
+>value : string
+
+function forwardIntoRequired(...: number): void
+>forwardIntoRequired : (...: number) => void
+> : number[]
+
+  // The tail's value may be absent, so a parameter that cannot hold nil rejects
+  // it -- an ordinary assignability error naming the real type, not an arity
+  // rule. This is the check that keeps a maybe-empty tail out of a slot that
+  // needs a value.
+  needsString(...);
+>needsString(...) : void
+>needsString : (value: string) => void
+>... : number | nil
+
+end
+
+// Lib sanity assertions on the inherited-lib rest rewrite.
+declare function twoArgs(a: number, b: string): number;
+>twoArgs : (a: number, b: string) => number
+>a : number
+>b : string
+
+// `ReturnType<T>` still resolves: its `(...: any) => infer R` survived the
+// rewrite with `R` bound. The negative assertion is the real gate -- if the
+// rewrite ate the `infer`, `R` degrades to `any` and only a *mismatch* can
+// detect it, since `any` satisfies every positive annotation.
+type Ret = ReturnType<typeof twoArgs>;
+>Ret : number
+>twoArgs : (a: number, b: string) => number
+
+local ret: Ret = 1;
+>ret : number
+>1 : 1
+
+local badRet: Ret = "a";
+>badRet : number
+>"a" : "a"
+
+// `Awaited<T>` matches a thenable through `then(onfulfilled: infer F, ...: infer _)`.
+// The `infer` sits in a vararg annotation, so it infers the pack's *element* type
+// and must carry no implicit `unknown[]` constraint -- with one, no element
+// candidate can satisfy it, `then` never matches, and Awaited silently stops
+// unwrapping (resolving to Promise<number> rather than number).
+type Unwrapped = Awaited<Promise<number>>;
+>Unwrapped : number
+
+local unwrapped: Unwrapped = 1;
+>unwrapped : number
+>1 : 1
+
+local badUnwrapped: Unwrapped = "a";
+>badUnwrapped : number
+>"a" : "a"
+
+// `Parameters<T>` and `ConstructorParameters<T>` are deliberately removed from
+// the libs: they are built on `...args: infer P`, which only works because a TS
+// rest parameter's type IS the parameter tuple. A vararg's annotation is the
+// pack's element type, so the tuple is unreachable -- and with operand spread
+// gone, no tlua program could consume it anyway. Restoring them is Stage 2.
+type Params = Parameters<typeof twoArgs>;
+>Params : Parameters<(a: number, b: string) => number>
+>twoArgs : (a: number, b: string) => number
+
+type CtorParams = ConstructorParameters<typeof twoArgs>;
+>CtorParams : ConstructorParameters<(a: number, b: string) => number>
+>twoArgs : (a: number, b: string) => number
+

@@ -1,0 +1,71 @@
+// === findAllReferences ===
+// === /referencesForClassMembers.tlua ===
+// class Base {
+//     /*FIND ALL REFS*/a: number;
+//     method(): void { }
+// }
+// class MyClass extends Base {
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembers.tlua ===
+// class Base {
+//     a: number;
+//     method(): void { }
+// }
+// class MyClass extends Base {
+//     /*FIND ALL REFS*/a;
+//     method() { }
+// }
+// 
+// --- (line: 10) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembers.tlua ===
+// --- (line: 7) skipped ---
+// }
+// 
+// local c: MyClass;
+// c./*FIND ALL REFS*/a;
+// c.method();
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembers.tlua ===
+// class Base {
+//     a: number;
+//     /*FIND ALL REFS*/method(): void { }
+// }
+// class MyClass extends Base {
+//     a;
+// --- (line: 7) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembers.tlua ===
+// --- (line: 3) skipped ---
+// }
+// class MyClass extends Base {
+//     a;
+//     /*FIND ALL REFS*/method() { }
+// }
+// 
+// local c: MyClass;
+// c.a;
+// c.method();
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembers.tlua ===
+// --- (line: 8) skipped ---
+// 
+// local c: MyClass;
+// c.a;
+// c./*FIND ALL REFS*/method();

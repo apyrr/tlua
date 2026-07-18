@@ -1,0 +1,83 @@
+//// [tests/cases/compiler/tluaNumberKeyIndexDisjoint.tlua] ////
+
+=== tluaNumberKeyIndexDisjoint.tlua ===
+// Number and string index signatures are fully independent and may coexist
+// with no "number index must be assignable to string index" constraint.
+interface Both {
+>Both : Symbol(Both, Decl(tluaNumberKeyIndexDisjoint.tlua, 0, 0))
+
+  [k: number]: string;
+>k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 3, 3))
+
+  [k: string]: number;
+>k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 4, 3))
+}
+declare b: Both;
+>b : Symbol(b, Decl(tluaNumberKeyIndexDisjoint.tlua, 6, 7))
+>Both : Symbol(Both, Decl(tluaNumberKeyIndexDisjoint.tlua, 0, 0))
+
+local n: string = b[1];    // number index → string
+>n : Symbol(n, Decl(tluaNumberKeyIndexDisjoint.tlua, 7, 5))
+>b : Symbol(b, Decl(tluaNumberKeyIndexDisjoint.tlua, 6, 7))
+
+local s: number = b["x"];  // string index → number
+>s : Symbol(s, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 5))
+>b : Symbol(b, Decl(tluaNumberKeyIndexDisjoint.tlua, 6, 7))
+
+// A number index signature serves number-key access.
+interface NumOnly {
+>NumOnly : Symbol(NumOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 25))
+
+  [k: number]: boolean;
+>k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 12, 3))
+}
+local nb: boolean = (({} as NumOnly))[0];
+>nb : Symbol(nb, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 5))
+>NumOnly : Symbol(NumOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 25))
+
+// A string-only index does NOT serve number-key access (disjoint).
+interface StrOnly {
+>StrOnly : Symbol(StrOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 41))
+
+  [k: string]: boolean;
+>k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 18, 3))
+}
+declare so: StrOnly;
+>so : Symbol(so, Decl(tluaNumberKeyIndexDisjoint.tlua, 20, 7))
+>StrOnly : Symbol(StrOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 41))
+
+local bad = so[0]; // error: number key not covered by string index
+>bad : Symbol(bad, Decl(tluaNumberKeyIndexDisjoint.tlua, 21, 5))
+>so : Symbol(so, Decl(tluaNumberKeyIndexDisjoint.tlua, 20, 7))
+
+local okStr: boolean = so["x"];
+>okStr : Symbol(okStr, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 5))
+>so : Symbol(so, Decl(tluaNumberKeyIndexDisjoint.tlua, 20, 7))
+
+// Value-type mismatches between the two signatures are independent, not
+// forced to agree (TS requires the number value assignable to the string
+// value; tlua does not).
+interface Mixed {
+>Mixed : Symbol(Mixed, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 31))
+
+  [k: number]: string;
+>k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 28, 3))
+
+  [k: string]: boolean;
+>k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 29, 3))
+}
+declare m: Mixed;
+>m : Symbol(m, Decl(tluaNumberKeyIndexDisjoint.tlua, 31, 7))
+>Mixed : Symbol(Mixed, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 31))
+
+local mn: string = m[0];
+>mn : Symbol(mn, Decl(tluaNumberKeyIndexDisjoint.tlua, 32, 5))
+>m : Symbol(m, Decl(tluaNumberKeyIndexDisjoint.tlua, 31, 7))
+
+local ms: boolean = m["x"];
+>ms : Symbol(ms, Decl(tluaNumberKeyIndexDisjoint.tlua, 33, 5))
+>m : Symbol(m, Decl(tluaNumberKeyIndexDisjoint.tlua, 31, 7))
+
+local es = {n, s, nb, bad, okStr, mn, ms};
+>es : Symbol(es, Decl(tluaNumberKeyIndexDisjoint.tlua, 35, 5))
+

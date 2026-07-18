@@ -1,0 +1,143 @@
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// t /*HIGHLIGHTS*/ry {
+//     try {
+//     }
+//     ctch (x) {
+// --- (line: 5) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// t ry {
+//     [|t/*HIGHLIGHTS*/ry|] {
+//     }
+//     ctch (x) {
+//     }
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 4) skipped ---
+//     }
+// 
+//     tr {
+//     }[||]
+//     fin/*HIGHLIGHTS*/ally {
+//     }
+// }
+// catch (e) {
+// --- (line: 13) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 8) skipped ---
+//     finally {
+//     }
+// }
+// c/*HIGHLIGHTS*/atch (e) {
+// }[||]
+// [|finally|] {
+// }
+// 
+// // Missing catch variable
+// --- (line: 18) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 9) skipped ---
+//     }
+// }
+// catch (e) {
+// }[||]
+// [|f/*HIGHLIGHTS*/inally|] {
+// }
+// 
+// // Missing catch variable
+// --- (line: 18) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 14) skipped ---
+// }
+// 
+// // Missing catch variable
+// [|t/*HIGHLIGHTS*/ry|] {
+// }
+// catch {
+// }
+// [|finally|] {
+// }
+// 
+// // Missing try entirely
+// --- (line: 26) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 14) skipped ---
+// }
+// 
+// // Missing catch variable
+// [|try|] {
+// }
+// catc/*HIGHLIGHTS*/h {
+// }
+// [|finally|] {
+// }
+// 
+// // Missing try entirely
+// --- (line: 26) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 14) skipped ---
+// }
+// 
+// // Missing catch variable
+// [|try|] {
+// }
+// catch {
+// }
+// /*HIGHLIGHTS*/[|finally|] {
+// }
+// 
+// // Missing try entirely
+// --- (line: 26) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 22) skipped ---
+// }
+// 
+// // Missing try entirely
+// cat/*HIGHLIGHTS*/ch (x) {
+// }[||]
+// [|finally|] {
+// }
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesTryCatchFinallyBroken.tlua ===
+// --- (line: 23) skipped ---
+// 
+// // Missing try entirely
+// catch (x) {
+// }[||]
+// [|final/*HIGHLIGHTS*/ly|] {
+// }

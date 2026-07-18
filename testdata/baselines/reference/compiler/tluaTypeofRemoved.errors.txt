@@ -1,0 +1,44 @@
+tluaTypeofRemoved.tlua(12,1): error TS1128: Declaration or statement expected.
+tluaTypeofRemoved.tlua(14,13): error TS1109: Expression expected.
+tluaTypeofRemoved.tlua(16,4): error TS1109: Expression expected.
+tluaTypeofRemoved.tlua(16,25): error TS1005: ';' expected.
+tluaTypeofRemoved.tlua(17,9): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+
+
+==== tluaTypeofRemoved.tlua (5 errors) ====
+    // The `typeof` OPERATOR does not exist in tlua: `type(value)` is the Lua type
+    // guard, and the operator has no AST node left to parse into. What follows is a
+    // syntax error, not a checked expression.
+    //
+    // Each use below also pins that the parser keeps making progress: `typeof` does
+    // not start an expression, so the statement list skips the token instead of
+    // re-entering on it forever.
+    
+    declare v: string | number;
+    declare function f(a: number): string;
+    
+    typeof v;
+    ~~~~~~
+!!! error TS1128: Declaration or statement expected.
+    
+    local tag = typeof v;
+                ~~~~~~
+!!! error TS1109: Expression expected.
+    
+    if typeof v == "string" then
+       ~~~~~~
+!!! error TS1109: Expression expected.
+                            ~~~~
+!!! error TS1005: ';' expected.
+      local s: string = v;
+            ~
+!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+    end
+    
+    // `typeof` TYPE QUERIES are static syntax with no runtime counterpart, and stay.
+    local g: typeof f = f;
+    type Q = typeof v;
+    local r: string = g(1);
+    

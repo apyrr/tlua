@@ -1,0 +1,28 @@
+//// [tests/cases/compiler/tluaRequireDottedName.tlua] ////
+
+=== main.tlua ===
+local util = require("app.util");
+>util : { value: number; }
+>require("app.util") : { value: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"app.util" : "app.util"
+
+local n: number = util.value;
+>n : number
+>util.value : number
+>util : { value: number; }
+>value : number
+
+n;
+>n : number
+
+=== app/util.tlua ===
+local value = 42;
+>value : number
+>42 : 42
+
+return { value = value };
+>{ value = value } : { value: number; }
+>value : number
+>value : number
+

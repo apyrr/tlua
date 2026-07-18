@@ -1,0 +1,110 @@
+//// [tests/cases/compiler/tluaLengthOperator.tlua] ////
+
+=== tluaLengthOperator.tlua ===
+// Lua's `#` is a unary length operator: a string or a table yields a number.
+
+local ls: number = #"abc";
+>ls : number
+>#"abc" : number
+>"abc" : "abc"
+
+// `#` composes like any prefix operator.
+local sum: number = #"ab" + #"cd";
+>sum : number
+>#"ab" + #"cd" : number
+>#"ab" : number
+>"ab" : "ab"
+>#"cd" : number
+>"cd" : "cd"
+
+// A table works when its type carries a numeric index: an array type or an explicit index
+// signature both qualify.
+function lenArr(arr: number[]): number
+>lenArr : (arr: number[]) => number
+>arr : number[]
+
+  return #arr;
+>#arr : number
+>arr : number[]
+
+end
+function lenIndex(t: { [i: number]: number }): number
+>lenIndex : (t: { [i: number]: number; }) => number
+>t : { [i: number]: number; }
+>i : number
+
+  return #t;
+>#t : number
+>t : { [i: number]: number; }
+
+end
+
+// Errors: a number, a boolean, or a function has no length.
+local e1 = #5;
+>e1 : number
+>#5 : number
+>5 : 5
+
+local e2 = #true;
+>e2 : number
+>#true : number
+>true : true
+
+function fn(): void end
+>fn : () => void
+
+local e3 = #fn;
+>e3 : number
+>#fn : number
+>fn : () => void
+
+// A record with no numeric index measures too: Lua returns a border (0 for no
+// array part) for ANY table, so only non-tables reject.
+local rec = { x = 1 };
+>rec : { x: number; }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+local recLen: number = #rec;
+>recLen : number
+>#rec : number
+>rec : { x: number; }
+
+// A union measures when every arm does; a non-table arm rejects the whole.
+declare arrOrRec: number[] | { x: number };
+>arrOrRec : { x: number; } | number[]
+>x : number
+
+local unionLen: number = #arrOrRec;
+>unionLen : number
+>#arrOrRec : number
+>arrOrRec : { x: number; } | number[]
+
+declare strOrRec: string | { x: number };
+>strOrRec : string | { x: number; }
+>x : number
+
+local mixedLen: number = #strOrRec;
+>mixedLen : number
+>#strOrRec : number
+>strOrRec : string | { x: number; }
+
+declare numOrRec: number | { x: number };
+>numOrRec : number | { x: number; }
+>x : number
+
+local e4 = #numOrRec;
+>e4 : number
+>#numOrRec : number
+>numOrRec : number | { x: number; }
+
+// Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
+declare th: LuaThread;
+>th : LuaThread
+
+local e5 = #th;
+>e5 : number
+>#th : number
+>th : LuaThread
+

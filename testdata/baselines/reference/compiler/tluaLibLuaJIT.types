@@ -1,0 +1,217 @@
+//// [tests/cases/compiler/tluaLibLuaJIT.tlua] ////
+
+=== tluaLibLuaJIT.tlua ===
+local bitlib = require("bit");
+>bitlib : BitLib
+>require("bit") : BitLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"bit" : "bit"
+
+local ffiLib = require("ffi");
+>ffiLib : FFILib
+>require("ffi") : FFILib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"ffi" : "ffi"
+
+local jitlib = require("jit");
+>jitlib : JITLib
+>require("jit") : JITLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"jit" : "jit"
+
+local profile = require("jit.profile");
+>profile : JITProfileLib
+>require("jit.profile") : JITProfileLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"jit.profile" : "jit.profile"
+
+local newTable = require("table.new");
+>newTable : TableNew
+>require("table.new") : TableNew
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"table.new" : "table.new"
+
+local buffer = require("string.buffer");
+>buffer : StringBufferLib
+>require("string.buffer") : StringBufferLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"string.buffer" : "string.buffer"
+
+local masked: number = bitlib.band(0xff, 0x0f);
+>masked : number
+>bitlib.band(0xff, 0x0f) : number
+>bitlib.band : (left: number, right: number, ...: number) => number
+>bitlib : BitLib
+>band : (left: number, right: number, ...: number) => number
+>0xff : 255
+>0x0f : 15
+
+local platform: string = jitlib.os;
+>platform : string
+>jitlib.os : "BSD" | "Linux" | "OSX" | "Other" | "POSIX" | "Windows"
+>jitlib : JITLib
+>os : "BSD" | "Linux" | "OSX" | "Other" | "POSIX" | "Windows"
+
+local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
+>ctype : LuaCType
+>ffiLib.typeof("int[?]", 4) : LuaCType
+>ffiLib.typeof : (type: LuaCTypeSpec, ...: any) => LuaCType
+>ffiLib : FFILib
+>typeof : (type: LuaCTypeSpec, ...: any) => LuaCType
+>"int[?]" : "int[?]"
+>4 : 4
+
+local memory: LuaCData = ffiLib.new(ctype);
+>memory : LuaCData
+>ffiLib.new(ctype) : LuaCData
+>ffiLib.new : (type: LuaCTypeSpec, ...: any) => LuaCData
+>ffiLib : FFILib
+>new : (type: LuaCTypeSpec, ...: any) => LuaCData
+>ctype : LuaCType
+
+local argumentsObject: IArguments;
+>argumentsObject : IArguments
+
+local constructorFunction: NewableFunction;
+>constructorFunction : NewableFunction
+
+local presized: object = newTable(8, 4);
+>presized : object
+>newTable(8, 4) : object
+>newTable : TableNew
+>8 : 8
+>4 : 4
+
+local encoded: string = buffer.encode(presized);
+>encoded : string
+>buffer.encode(presized) : string
+>buffer.encode : (value: any) => string
+>buffer : StringBufferLib
+>encode : (value: any) => string
+>presized : object
+
+local randomValue: number = math.random(1, 10);
+>randomValue : number
+>math.random(1, 10) : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>1 : 1
+>10 : 10
+
+local date: LuaDateTable = os.date("*t");
+>date : LuaDateTable
+>os.date("*t") : LuaDateTable
+>os.date : { (format: "*t" | "!*t", time?: number): LuaDateTable; (format?: string, time?: number): string; }
+>os : OSLib
+>date : { (format: "*t" | "!*t", time?: number): LuaDateTable; (format?: string, time?: number): string; }
+>"*t" : "*t"
+
+local fileKind: "file" | "closed file" | nil = io.type(io.stdout);
+>fileKind : "closed file" | "file" | nil
+>io.type(io.stdout) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>io.stdout : LuaFile
+>io : IOLib
+>stdout : LuaFile
+
+local asserted, message = assert(1, "ok");
+>asserted : number
+>message : string
+>assert(1, "ok") : number
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M)
+>1 : 1
+>"ok" : "ok"
+
+local assertedValue: number = asserted;
+>assertedValue : number
+>asserted : number
+
+local assertionMessage: string = message;
+>assertionMessage : string
+>message : string
+
+profile.start("f", function(thread, samples, vmstate)
+>profile.start("f", function(thread, samples, vmstate)    print(thread, samples, vmstate);end) : void
+>profile.start : (mode: string, callback: (thread: LuaThread, samples: number, vmstate: string) => void) => void
+>profile : JITProfileLib
+>start : (mode: string, callback: (thread: LuaThread, samples: number, vmstate: string) => void) => void
+>"f" : "f"
+>function(thread, samples, vmstate)    print(thread, samples, vmstate);end : (thread: LuaThread, samples: number, vmstate: string) => void
+>thread : LuaThread
+>samples : number
+>vmstate : string
+
+    print(thread, samples, vmstate);
+>print(thread, samples, vmstate) : void
+>print : (...: any) => void
+>thread : LuaThread
+>samples : number
+>vmstate : string
+
+end);
+local first, second = string.find("typed lua", "lua");
+>first : number | nil
+>second : number | nil
+>string.find("typed lua", "lua") : number | nil
+>string.find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>string : StringLib
+>find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>"typed lua" : "typed lua"
+>"lua" : "lua"
+
+local ok: number = assert(first);
+>ok : number
+>assert(first) : number
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M)
+>first : number | nil
+
+local finish: number = assert(second);
+>finish : number
+>assert(second) : number
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M)
+>second : number | nil
+
+bitlib.band("wrong", 1);
+>bitlib.band("wrong", 1) : number
+>bitlib.band : (left: number, right: number, ...: number) => number
+>bitlib : BitLib
+>band : (left: number, right: number, ...: number) => number
+>"wrong" : "wrong"
+>1 : 1
+
+local wrong: string = ffiLib.sizeof(memory);
+>wrong : string
+>ffiLib.sizeof(memory) : number | nil
+>ffiLib.sizeof : (type: LuaCTypeSpec, count?: number) => number | nil
+>ffiLib : FFILib
+>sizeof : (type: LuaCTypeSpec, count?: number) => number | nil
+>memory : LuaCData
+
+math.log(8, 2);
+>math.log(8, 2) : number
+>math.log : (value: number) => number
+>math : MathLib
+>log : (value: number) => number
+>8 : 8
+>2 : 2
+
+string.rep("a", 2, ",");
+>string.rep("a", 2, ",") : string
+>string.rep : (value: string, n: number) => string
+>string : StringLib
+>rep : (value: string, n: number) => string
+>"a" : "a"
+>2 : 2
+>"," : ","
+
+local notUserdata: LuaUserdata = coroutine.create(function() end);
+>notUserdata : LuaUserdata
+>coroutine.create(function() end) : LuaThread
+>coroutine.create : (fn: LuaFunction) => LuaThread
+>coroutine : CoroutineLib
+>create : (fn: LuaFunction) => LuaThread
+>function() end : () => void
+

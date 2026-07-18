@@ -1,0 +1,71 @@
+tluaMultiReturnArityErrors.tlua(2,3): error TS2322: Type '1' is not assignable to type 'number, string'.
+  Source has 1 element(s) but target requires 2.
+tluaMultiReturnArityErrors.tlua(6,3): error TS2322: Type 'number, string, boolean' is not assignable to type 'number, string'.
+  Source has 3 element(s) but target allows only 2.
+tluaMultiReturnArityErrors.tlua(10,3): error TS2322: Type 'string, number' is not assignable to type 'number, string'.
+  Type at position 0 in source is not compatible with type at position 0 in target.
+    Type 'string' is not assignable to type 'number'.
+tluaMultiReturnArityErrors.tlua(14,3): error TS2322: Type 'number, string' is not assignable to type 'number'.
+tluaMultiReturnArityErrors.tlua(19,3): error TS2322: Type 'void' is not assignable to type 'number, string'.
+  Source has 0 element(s) but target requires 2.
+tluaMultiReturnArityErrors.tlua(27,24): error TS2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+tluaMultiReturnArityErrors.tlua(31,37): error TS1228: A type predicate is only allowed in return type position for functions and methods.
+tluaMultiReturnArityErrors.tlua(31,37): error TS100021: A type predicate cannot be part of a multiple return type.
+
+
+==== tluaMultiReturnArityErrors.tlua (8 errors) ====
+    function need2(): (number, string)
+      return 1;
+      ~~~~~~
+!!! error TS2322: Type '1' is not assignable to type 'number, string'.
+!!! error TS2322:   Source has 1 element(s) but target requires 2.
+    end
+    
+    function allows2(): (number, string)
+      return 1, "a", true;
+      ~~~~~~
+!!! error TS2322: Type 'number, string, boolean' is not assignable to type 'number, string'.
+!!! error TS2322:   Source has 3 element(s) but target allows only 2.
+    end
+    
+    function wrongTypes(): (number, string)
+      return "a", 1;
+      ~~~~~~
+!!! error TS2322: Type 'string, number' is not assignable to type 'number, string'.
+!!! error TS2322:   Type at position 0 in source is not compatible with type at position 0 in target.
+!!! error TS2322:     Type 'string' is not assignable to type 'number'.
+    end
+    
+    function single(): number
+      return 1, "a";
+      ~~~~~~
+!!! error TS2322: Type 'number, string' is not assignable to type 'number'.
+    end
+    
+    // A bare return provides zero values against a pack that requires two.
+    function bareReturn(): (number, string)
+      return;
+      ~~~~~~
+!!! error TS2322: Type 'void' is not assignable to type 'number, string'.
+!!! error TS2322:   Source has 0 element(s) but target requires 2.
+    end
+    
+    // An all-optional pack allows returning nothing at all.
+    function allOptional(): (number?, string?)
+    end
+    
+    // A pack with required values must return.
+    function mustReturn(): (number, string?)
+                           ~~~~~~~~~~~~~~~~~
+!!! error TS2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+    end
+    
+    // A type predicate cannot start a multiple return type.
+    function badPredicate(x: unknown): (x is string, number) {
+                                        ~~~~~~~~~~~
+!!! error TS1228: A type predicate is only allowed in return type position for functions and methods.
+                                        ~~~~~~~~~~~
+!!! error TS100021: A type predicate cannot be part of a multiple return type.
+      return type(x) == "string", 1;
+    }
+    

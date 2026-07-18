@@ -1,0 +1,14 @@
+interface PackageLib {
+    readonly config: string;
+    readonly cpath: string;
+    readonly loaded: {[name: string]: any};
+    readonly loaders: ((name: string) => LuaFunction | string)[];
+    readonly path: string;
+    readonly preload: {[name: string]: LuaFunction};
+    readonly searchers: ((name: string) => LuaFunction | string)[];
+    loadlib(library: string, functionName: string): (LuaFunction | nil, string?);
+    searchpath(name: string, path: string, separator?: string, replacement?: string): (string?, string?);
+    seeall(module: object): void;
+}
+
+declare package: PackageLib;

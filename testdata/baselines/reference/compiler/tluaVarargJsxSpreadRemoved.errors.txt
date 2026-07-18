@@ -1,0 +1,49 @@
+tluaVarargJsxSpreadRemoved.tsx(11,30): error TS1003: Identifier expected.
+tluaVarargJsxSpreadRemoved.tsx(11,34): error TS1005: ';' expected.
+tluaVarargJsxSpreadRemoved.tsx(11,41): error TS1161: Unterminated regular expression literal.
+tluaVarargJsxSpreadRemoved.tsx(14,39): error TS1003: Identifier expected.
+tluaVarargJsxSpreadRemoved.tsx(14,43): error TS1005: ';' expected.
+tluaVarargJsxSpreadRemoved.tsx(14,50): error TS1161: Unterminated regular expression literal.
+tluaVarargJsxSpreadRemoved.tsx(17,33): error TS1005: '}' expected.
+tluaVarargJsxSpreadRemoved.tsx(17,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+
+
+==== tluaVarargJsxSpreadRemoved.tsx (8 errors) ====
+    interface JsxElement {}
+    interface JsxElementChildrenAttribute { children: {}; }
+    interface JsxIntrinsicElements {
+        div: { a?: number; b?: string; children?: any };
+    }
+    
+    declare props: { a: number; b: string };
+    declare items: number[];
+    
+    // JSX is not a reason to keep spread: attribute spread is gone.
+    local spreadAttribute = <div {...props} />;
+                                 ~
+!!! error TS1003: Identifier expected.
+                                     ~~~~~
+!!! error TS1005: ';' expected.
+                                            ~~
+!!! error TS1161: Unterminated regular expression literal.
+    
+    // Including when mixed with regular attributes.
+    local spreadAndAttribute = <div a={1} {...props} />;
+                                          ~
+!!! error TS1003: Identifier expected.
+                                              ~~~~~
+!!! error TS1005: ';' expected.
+                                                     ~~
+!!! error TS1161: Unterminated regular expression literal.
+    
+    // Children spread is gone too.
+    local spreadChildren = <div>{...items}</div>;
+                                    ~~~~~
+!!! error TS1005: '}' expected.
+                                         ~
+!!! error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    
+    // Regular attributes and children still fold into the attributes type.
+    local plain = <div a={1} b="x" />;
+    local withChildren = <div a={1}>{items}</div>;
+    

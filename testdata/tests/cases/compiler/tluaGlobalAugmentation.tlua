@@ -1,0 +1,53 @@
+// @target: esnext
+// @strict: true
+
+// @filename: a.tlua
+G.x = 1;
+local gx: number | string = G.x;
+local n: number | string = N;
+
+// @filename: b.tlua
+G = {};
+G.x = "two";
+N = 1;
+N = "two";
+
+// @filename: c.tlua
+local G = {};
+G.localOnly = true;
+local localOnly: boolean = G.localOnly;
+
+function G.identity(value: number): number
+  return value;
+end
+
+local localIdentity: number = G.identity(1);
+
+// @filename: d.tlua
+function G.double(value: number): number
+  return value * 2;
+end
+
+local doubled: number = G.double(2);
+
+function G:triple(value: number): number
+  return value * 3;
+end
+
+local tripled: number = G.triple(G, 3);
+
+// @filename: e.tlua
+Shadow = {};
+Shadow.globalValue = 1;
+local globalValue: number = Shadow.globalValue;
+
+local Shadow = {};
+Shadow.localValue = true;
+local localValue: boolean = Shadow.localValue;
+
+ModuleGlobal = {};
+ModuleGlobal.value = "module";
+
+// @filename: f.tlua
+local moduleValue: string = ModuleGlobal.value;
+local crossFileGlobalValue: number = Shadow.globalValue;

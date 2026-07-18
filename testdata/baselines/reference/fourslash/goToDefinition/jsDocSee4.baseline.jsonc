@@ -1,0 +1,52 @@
+// === goToDefinition ===
+// === /jsDocSee4.tlua ===
+// class A {
+//     foo () { }
+// }
+// declare a: A;
+// /**
+//  * @see {/*GOTO DEF*/A#foo}
+//  */
+// local t1 = 1
+// /**
+// --- (line: 10) skipped ---
+
+
+
+// === goToDefinition ===
+// === /jsDocSee4.tlua ===
+// class A {
+//     foo () { }
+// }
+// <|declare [|a|]: A;|>
+// /**
+//  * @see {A#foo}
+//  */
+// local t1 = 1
+// /**
+//  * @see {/*GOTO DEF*/a.foo()}
+//  */
+// local t2 = 1
+// /**
+// --- (line: 14) skipped ---
+
+
+
+// === goToDefinition ===
+// === /jsDocSee4.tlua ===
+// class A {
+//     foo () { }
+// }
+// <|declare [|a|]: A;|>
+// /**
+//  * @see {A#foo}
+//  */
+// local t1 = 1
+// /**
+//  * @see {a.foo()}
+//  */
+// local t2 = 1
+// /**
+//  * @see {@link /*GOTO DEF*/a.foo()}
+//  */
+// local t3 = 1

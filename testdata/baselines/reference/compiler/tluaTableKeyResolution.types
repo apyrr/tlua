@@ -1,0 +1,77 @@
+//// [tests/cases/compiler/tluaTableKeyResolution.tlua] ////
+
+=== tluaTableKeyResolution.tlua ===
+// The name in `x = 1` is a property key, not a value reference: no `x`
+// needs to be in scope.
+local a = { x = 1 };
+>a : { x: number; }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+local ax = a.x;
+>ax : number
+>a.x : number
+>a : { x: number; }
+>x : number
+
+// A key spelling a local's name is not a *use* of that local.
+local unused = 1;
+>unused : number
+>1 : 1
+
+local u = { unused = 2 };
+>u : { unused: number; }
+>{ unused = 2 } : { unused: number; }
+>unused : number
+>2 : 2
+
+local uu = u.unused;
+>uu : number
+>u.unused : number
+>u : { unused: number; }
+>unused : number
+
+// Duplicate keys error across spellings (identifier vs bracket string).
+local d1 = { dup = 1, dup = 2 };
+>d1 : { dup: number; }
+>{ dup = 1, dup = 2 } : { dup: number; }
+>dup : number
+>1 : 1
+>dup : number
+>2 : 2
+
+local d2 = { dup = 1, ["dup"] = 2 };
+>d2 : { dup: number; }
+>{ dup = 1, ["dup"] = 2 } : { dup: number; }
+>dup : number
+>1 : 1
+>["dup"] : number
+>"dup" : "dup"
+>2 : 2
+
+local d3 = { ["dup"] = 1, dup = 2 };
+>d3 : { dup: number; }
+>{ ["dup"] = 1, dup = 2 } : { dup: number; }
+>["dup"] : number
+>"dup" : "dup"
+>1 : 1
+>dup : number
+>2 : 2
+
+local ds = {d1, d2, d3};
+>ds : { 1: { dup: number; }; 2: { dup: number; }; 3: { dup: number; }; }
+>{d1, d2, d3} : { 1: { dup: number; }; 2: { dup: number; }; 3: { dup: number; }; }
+>d1 : any
+>d2 : any
+>d3 : any
+
+return { ax = ax, uu = uu, ds = ds };
+>{ ax = ax, uu = uu, ds = ds } : { ax: number; uu: number; ds: { 1: { dup: number; }; 2: { dup: number; }; 3: { dup: number; }; }; }
+>ax : number
+>ax : number
+>uu : number
+>uu : number
+>ds : { 1: { dup: number; }; 2: { dup: number; }; 3: { dup: number; }; }
+>ds : { 1: { dup: number; }; 2: { dup: number; }; 3: { dup: number; }; }
+

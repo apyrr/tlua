@@ -1,0 +1,15 @@
+// @target: esnext
+
+// `yield` is freed as an ordinary identifier in tlua: generators are removed,
+// so it is not a reserved word even though modules are always strict. None of
+// these uses should produce a reserved-word diagnostic (upstream TS reports
+// TS1212/TS1213 here).
+
+local yield = 1;
+local sum = yield + 1;
+
+function useYield(yield: number): number
+  return yield;
+end
+
+local exportedYield = yield;

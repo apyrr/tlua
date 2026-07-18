@@ -1,0 +1,122 @@
+//// [tests/cases/compiler/tluaGenericPackAlias.tlua] ////
+
+=== tluaGenericPackAlias.tlua ===
+type Handler<...A> = (...: A) => void;
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 0, 13))
+> : Symbol((Missing), Decl(tluaGenericPackAlias.tlua, 0, 22))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 0, 13))
+
+type PairHandler = Handler<(number, string)>;
+>PairHandler : Symbol(PairHandler, Decl(tluaGenericPackAlias.tlua, 0, 38))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+
+type EmptyHandler = Handler<()>;
+>EmptyHandler : Symbol(EmptyHandler, Decl(tluaGenericPackAlias.tlua, 1, 45))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+
+type OneHandler = Handler<number>;
+>OneHandler : Symbol(OneHandler, Decl(tluaGenericPackAlias.tlua, 2, 32))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+
+type StringHandlers = Handler<(...string)>;
+>StringHandlers : Symbol(StringHandlers, Decl(tluaGenericPackAlias.tlua, 3, 34))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+
+type ForwardedHandler<...A> = Handler<(...A)>;
+>ForwardedHandler : Symbol(ForwardedHandler, Decl(tluaGenericPackAlias.tlua, 4, 43))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 5, 22))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 5, 22))
+
+local pair: Handler<(number, string)> = function(a, b): void
+>pair : Symbol(pair, Decl(tluaGenericPackAlias.tlua, 7, 5))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+>a : Symbol(a, Decl(tluaGenericPackAlias.tlua, 7, 49))
+>b : Symbol(b, Decl(tluaGenericPackAlias.tlua, 7, 51))
+
+    local n: number = a;
+>n : Symbol(n, Decl(tluaGenericPackAlias.tlua, 8, 9))
+>a : Symbol(a, Decl(tluaGenericPackAlias.tlua, 7, 49))
+
+    local s: string = b;
+>s : Symbol(s, Decl(tluaGenericPackAlias.tlua, 9, 9))
+>b : Symbol(b, Decl(tluaGenericPackAlias.tlua, 7, 51))
+
+end;
+pair(1, "x");
+>pair : Symbol(pair, Decl(tluaGenericPackAlias.tlua, 7, 5))
+
+local empty: Handler<()> = function(): void end;
+>empty : Symbol(empty, Decl(tluaGenericPackAlias.tlua, 13, 5))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+
+empty();
+>empty : Symbol(empty, Decl(tluaGenericPackAlias.tlua, 13, 5))
+
+local one: Handler<number> = function(value): void
+>one : Symbol(one, Decl(tluaGenericPackAlias.tlua, 16, 5))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+>value : Symbol(value, Decl(tluaGenericPackAlias.tlua, 16, 38))
+
+    local n: number = value;
+>n : Symbol(n, Decl(tluaGenericPackAlias.tlua, 17, 9))
+>value : Symbol(value, Decl(tluaGenericPackAlias.tlua, 16, 38))
+
+end;
+one(1);
+>one : Symbol(one, Decl(tluaGenericPackAlias.tlua, 16, 5))
+
+local strings: Handler<(...string)> = function(...: string): void end;
+>strings : Symbol(strings, Decl(tluaGenericPackAlias.tlua, 21, 5))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaGenericPackAlias.tlua, 21, 47))
+
+strings("a", "b");
+>strings : Symbol(strings, Decl(tluaGenericPackAlias.tlua, 21, 5))
+
+local forward = function<...A>(handler: Handler<(...A)>, ...: A): void
+>forward : Symbol(forward, Decl(tluaGenericPackAlias.tlua, 24, 5))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 24, 25))
+>handler : Symbol(handler, Decl(tluaGenericPackAlias.tlua, 24, 31))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 24, 25))
+> : Symbol((Missing), Decl(tluaGenericPackAlias.tlua, 24, 56))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 24, 25))
+
+    handler(...);
+>handler : Symbol(handler, Decl(tluaGenericPackAlias.tlua, 24, 31))
+
+end;
+forward(pair, 1, "x");
+>forward : Symbol(forward, Decl(tluaGenericPackAlias.tlua, 24, 5))
+>pair : Symbol(pair, Decl(tluaGenericPackAlias.tlua, 7, 5))
+
+type Scalar<T> = T;
+>Scalar : Symbol(Scalar, Decl(tluaGenericPackAlias.tlua, 27, 22))
+>T : Symbol(T, Decl(tluaGenericPackAlias.tlua, 29, 12))
+>T : Symbol(T, Decl(tluaGenericPackAlias.tlua, 29, 12))
+
+type WrongAliasArgument = Scalar<(number, string)>;
+>WrongAliasArgument : Symbol(WrongAliasArgument, Decl(tluaGenericPackAlias.tlua, 29, 19))
+>Scalar : Symbol(Scalar, Decl(tluaGenericPackAlias.tlua, 27, 22))
+
+declare function scalar<T>(value: T): void;
+>scalar : Symbol(scalar, Decl(tluaGenericPackAlias.tlua, 30, 51))
+>T : Symbol(T, Decl(tluaGenericPackAlias.tlua, 32, 24))
+>value : Symbol(value, Decl(tluaGenericPackAlias.tlua, 32, 27))
+>T : Symbol(T, Decl(tluaGenericPackAlias.tlua, 32, 24))
+
+scalar<(number, string)>(1);
+>scalar : Symbol(scalar, Decl(tluaGenericPackAlias.tlua, 30, 51))
+
+interface StillRejected<...A> {}
+>StillRejected : Symbol(StillRejected, Decl(tluaGenericPackAlias.tlua, 33, 28))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 35, 24))
+
+type BarePackArgument<...A> = Handler<A>;
+>BarePackArgument : Symbol(BarePackArgument, Decl(tluaGenericPackAlias.tlua, 35, 32))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 37, 22))
+>Handler : Symbol(Handler, Decl(tluaGenericPackAlias.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackAlias.tlua, 37, 22))
+

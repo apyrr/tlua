@@ -1,0 +1,114 @@
+//// [tests/cases/compiler/tluaTablePositionalExpressions.tlua] ////
+
+=== tluaTablePositionalExpressions.tlua ===
+// Any expression is a positional entry.
+local x = 10;
+>x : Symbol(x, Decl(tluaTablePositionalExpressions.tlua, 1, 5))
+
+declare function f(): number;
+>f : Symbol(f, Decl(tluaTablePositionalExpressions.tlua, 1, 13))
+
+declare o: { y: number };
+>o : Symbol(o, Decl(tluaTablePositionalExpressions.tlua, 3, 7))
+>y : Symbol(y, Decl(tluaTablePositionalExpressions.tlua, 3, 12))
+
+declare get: string;
+>get : Symbol(get, Decl(tluaTablePositionalExpressions.tlua, 4, 7))
+
+declare a: number;
+>a : Symbol(a, Decl(tluaTablePositionalExpressions.tlua, 5, 7))
+
+declare b: number;
+>b : Symbol(b, Decl(tluaTablePositionalExpressions.tlua, 6, 7))
+
+local t = {
+>t : Symbol(t, Decl(tluaTablePositionalExpressions.tlua, 8, 5))
+
+    x,                                        // identifier (TS shorthand is gone)
+    o.y,                                      // property access
+>o.y : Symbol(y, Decl(tluaTablePositionalExpressions.tlua, 3, 12))
+>o : Symbol(o, Decl(tluaTablePositionalExpressions.tlua, 3, 7))
+>y : Symbol(y, Decl(tluaTablePositionalExpressions.tlua, 3, 12))
+
+    f(),                                      // call
+>f : Symbol(f, Decl(tluaTablePositionalExpressions.tlua, 1, 13))
+
+    1 + 2,                                    // arithmetic
+    "str",                                    // string literal
+    `tpl${x}`,                                // template
+>x : Symbol(x, Decl(tluaTablePositionalExpressions.tlua, 1, 5))
+
+    function(n: number): number return n; end,// function expression
+>n : Symbol(n, Decl(tluaTablePositionalExpressions.tlua, 15, 13))
+>n : Symbol(n, Decl(tluaTablePositionalExpressions.tlua, 15, 13))
+
+    get,                                      // `get` is just a variable
+    a < b,                                    // comparison
+>a : Symbol(a, Decl(tluaTablePositionalExpressions.tlua, 5, 7))
+>b : Symbol(b, Decl(tluaTablePositionalExpressions.tlua, 6, 7))
+
+    a and b,                                  // logical
+>a : Symbol(a, Decl(tluaTablePositionalExpressions.tlua, 5, 7))
+>b : Symbol(b, Decl(tluaTablePositionalExpressions.tlua, 6, 7))
+
+    true, nil,                                // literals
+};
+local t1: number = t[1];
+>t1 : Symbol(t1, Decl(tluaTablePositionalExpressions.tlua, 21, 5))
+>t : Symbol(t, Decl(tluaTablePositionalExpressions.tlua, 8, 5))
+>1 : Symbol(1, Decl(tluaTablePositionalExpressions.tlua, 8, 11))
+
+local t8: string = t[8];
+>t8 : Symbol(t8, Decl(tluaTablePositionalExpressions.tlua, 22, 5))
+>t : Symbol(t, Decl(tluaTablePositionalExpressions.tlua, 8, 5))
+>8 : Symbol(8, Decl(tluaTablePositionalExpressions.tlua, 15, 46))
+
+local t9: boolean = t[9];
+>t9 : Symbol(t9, Decl(tluaTablePositionalExpressions.tlua, 23, 5))
+>t : Symbol(t, Decl(tluaTablePositionalExpressions.tlua, 8, 5))
+>9 : Symbol(9, Decl(tluaTablePositionalExpressions.tlua, 16, 8))
+
+local es = {t1, t8, t9};
+>es : Symbol(es, Decl(tluaTablePositionalExpressions.tlua, 24, 5))
+
+// A multireturn call in the tail expands; in any other position it truncates to
+// its first value. (Object spread `{ ...src, 9 }` is gone; `...` is the vararg.)
+declare function two(): (number, string);
+>two : Symbol(two, Decl(tluaTablePositionalExpressions.tlua, 24, 24))
+
+local tail = { 9, two() };
+>tail : Symbol(tail, Decl(tluaTablePositionalExpressions.tlua, 29, 5))
+>two : Symbol(two, Decl(tluaTablePositionalExpressions.tlua, 24, 24))
+
+local tail1: number = tail[1];
+>tail1 : Symbol(tail1, Decl(tluaTablePositionalExpressions.tlua, 30, 5))
+>tail : Symbol(tail, Decl(tluaTablePositionalExpressions.tlua, 29, 5))
+>1 : Symbol(1, Decl(tluaTablePositionalExpressions.tlua, 29, 14))
+
+local tail2: number = tail[2];
+>tail2 : Symbol(tail2, Decl(tluaTablePositionalExpressions.tlua, 31, 5))
+>tail : Symbol(tail, Decl(tluaTablePositionalExpressions.tlua, 29, 5))
+>2 : Symbol(2, Decl(tluaTablePositionalExpressions.tlua, 29, 17))
+
+local tail3: string = tail[3];
+>tail3 : Symbol(tail3, Decl(tluaTablePositionalExpressions.tlua, 32, 5))
+>tail : Symbol(tail, Decl(tluaTablePositionalExpressions.tlua, 29, 5))
+>3 : Symbol(3, Decl(tluaTablePositionalExpressions.tlua, 29, 17))
+
+local nonTail = { two(), 9 };
+>nonTail : Symbol(nonTail, Decl(tluaTablePositionalExpressions.tlua, 33, 5))
+>two : Symbol(two, Decl(tluaTablePositionalExpressions.tlua, 24, 24))
+
+local nt1: number = nonTail[1];
+>nt1 : Symbol(nt1, Decl(tluaTablePositionalExpressions.tlua, 34, 5))
+>nonTail : Symbol(nonTail, Decl(tluaTablePositionalExpressions.tlua, 33, 5))
+>1 : Symbol(1, Decl(tluaTablePositionalExpressions.tlua, 33, 17))
+
+local nt2: number = nonTail[2];
+>nt2 : Symbol(nt2, Decl(tluaTablePositionalExpressions.tlua, 35, 5))
+>nonTail : Symbol(nonTail, Decl(tluaTablePositionalExpressions.tlua, 33, 5))
+>2 : Symbol(2, Decl(tluaTablePositionalExpressions.tlua, 33, 24))
+
+local sps = {tail1, tail2, tail3, nt1, nt2};
+>sps : Symbol(sps, Decl(tluaTablePositionalExpressions.tlua, 36, 5))
+

@@ -1,0 +1,5 @@
+// === goToDefinition ===
+// === /goToDefinitionOverriddenMember7.tlua ===
+// class Foo {
+//     /*GOTO DEF*/override m() {}
+// }

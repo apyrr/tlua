@@ -1,0 +1,24 @@
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// /*FIND ALL REFS*/interface [|globalInterface|] {
+//      f();
+// }
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// interface /*FIND ALL REFS*/[|globalInterface|] {
+//      f();
+// }
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// interface [|globalInterface|] {
+//      f();
+// }
+
+// === /referencesForGlobals_2.tlua ===
+// local i: /*FIND ALL REFS*/globalInterface;

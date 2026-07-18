@@ -1,0 +1,10 @@
+// === Document Symbols ===
+// === /navigationBarWithLocalVariables.tlua ===
+// <|function [|{| name: x, kind: Function |}x|](){
+// 	local <|[|{| name: x, kind: Variable |}x|] = Object()|>
+// 	x.foo = ""
+// }|>
+
+// === Details ===
+(Function) x
+  (Variable) x

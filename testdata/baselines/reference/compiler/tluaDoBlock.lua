@@ -1,0 +1,106 @@
+//// [tests/cases/compiler/tluaDoBlock.tlua] ////
+
+//// [tluaDoBlock.tlua]
+// Standalone do-block: locals scoped inside, shadowing works.
+function scoped(): number
+  local x = 1;
+  do
+    local x = 2;
+    local y = x + 1;
+    y;
+  end
+  return x;
+end
+
+// Block locals are not visible outside.
+function leak(): number
+  do
+    local hidden = 1;
+  end
+  return hidden;
+end
+
+// Nested do-blocks; TS statements inside.
+function nested(flag: boolean): number
+  local n = 0;
+  do
+    do
+      if (flag) {
+        n = 1;
+      }
+    end
+  end
+  return n;
+end
+
+// TS do-while coexists with Lua do-blocks in one body.
+function coexist(flag: boolean): number {
+  do {
+    flag = false;
+  } while (flag);
+  do
+    local x = 1;
+    x;
+  end
+  return 0;
+}
+
+// The canonicalization edge: a TS if with a Lua do-block body prints as a
+// Lua if (semantically identical).
+function canonical(flag: boolean): number
+  if (flag) do
+    return 1;
+  end
+  return 0;
+end
+
+
+//// [tluaDoBlock.lua]
+-- Standalone do-block: locals scoped inside, shadowing works.
+function scoped()
+    local x = 1;
+    do
+        local x = 2;
+        local y = x + 1;
+        y;
+    end
+    return x;
+end
+-- Block locals are not visible outside.
+function leak()
+    do
+        local hidden = 1;
+    end
+    return hidden;
+end
+-- Nested do-blocks; TS statements inside.
+function nested(flag)
+    local n = 0;
+    do
+        do
+            if (flag) {
+                n = 1;
+            }
+        end
+    end
+    return n;
+end
+-- TS do-while coexists with Lua do-blocks in one body.
+function coexist(flag) {
+    do {
+        flag = false;
+    } while (flag);
+    do
+        local x = 1;
+        x;
+    end
+    return 0;
+}
+-- The canonicalization edge: a TS if with a Lua do-block body prints as a
+-- Lua if (semantically identical).
+function canonical(flag)
+    if flag then
+        return 1;
+    end
+    return 0;
+end

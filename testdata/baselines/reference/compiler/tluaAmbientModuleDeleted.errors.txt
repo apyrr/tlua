@@ -1,0 +1,30 @@
+ambient.tlua(1,1): error TS2304: Cannot find name 'declare'.
+ambient.tlua(1,16): error TS2819: Namespace name cannot be 'some.native.module'.
+ambient.tlua(1,37): error TS1005: ';' expected.
+importAlias.tlua(1,1): error TS2304: Cannot find name 'declare'.
+importAlias.tlua(1,16): error TS2304: Cannot find name 'Foo'.
+importAlias.tlua(1,16): error TS2819: Namespace name cannot be 'Foo'.
+
+
+==== ambient.tlua (3 errors) ====
+    declare module "some.native.module" {
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'declare'.
+                   ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2819: Namespace name cannot be 'some.native.module'.
+                                        ~
+!!! error TS1005: ';' expected.
+      local x: number;
+    }
+    
+==== importAlias.tlua (3 errors) ====
+    declare module Foo {
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'declare'.
+                   ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+                   ~~~
+!!! error TS2819: Namespace name cannot be 'Foo'.
+      local y: number;
+    }
+    

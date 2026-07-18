@@ -1,0 +1,43 @@
+tluaRepeatUntilErrors.tlua(7,1): error TS1128: Declaration or statement expected.
+tluaRepeatUntilErrors.tlua(10,10): error TS2391: Function implementation is missing or not immediately following the declaration.
+tluaRepeatUntilErrors.tlua(11,3): error TS1128: Declaration or statement expected.
+tluaRepeatUntilErrors.tlua(13,1): error TS1128: Declaration or statement expected.
+tluaRepeatUntilErrors.tlua(22,9): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+
+
+==== tluaRepeatUntilErrors.tlua (5 errors) ====
+    // Missing `until`.
+    function missingUntil(): number
+      repeat
+        local n = 1;
+        n;
+      return 0;
+    end
+    ~~~
+!!! error TS1128: Declaration or statement expected.
+    
+    // `until` outside a repeat.
+    function strayUntil(): number
+             ~~~~~~~~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+      until true;
+      ~~~~~
+!!! error TS1128: Declaration or statement expected.
+      return 0;
+    end
+    ~~~
+!!! error TS1128: Declaration or statement expected.
+    
+    // A void condition cannot be tested.
+    declare function nothing(): void;
+    
+    function voidCondition(): number
+      repeat
+        local n = 1;
+        n;
+      until nothing();
+            ~~~~~~~~~
+!!! error TS1345: An expression of type 'void' cannot be tested for truthiness.
+      return 0;
+    end
+    

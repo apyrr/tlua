@@ -1,0 +1,67 @@
+//// [tests/cases/compiler/tluaTableShorthandRemoved.tlua] ////
+
+=== tluaTableShorthandRemoved.tlua ===
+// TS object shorthand is gone: `{x}` is a positional entry `[1] = x`.
+local x = 1;
+>x : Symbol(x, Decl(tluaTableShorthandRemoved.tlua, 1, 5))
+
+local t = { x };
+>t : Symbol(t, Decl(tluaTableShorthandRemoved.tlua, 2, 5))
+
+local t1: number = t[1];
+>t1 : Symbol(t1, Decl(tluaTableShorthandRemoved.tlua, 3, 5))
+>t : Symbol(t, Decl(tluaTableShorthandRemoved.tlua, 2, 5))
+>1 : Symbol(1, Decl(tluaTableShorthandRemoved.tlua, 2, 11))
+
+// ... so it is not assignable where a property `x` is required.
+local s: { x: number } = { x };
+>s : Symbol(s, Decl(tluaTableShorthandRemoved.tlua, 5, 5))
+>x : Symbol(x, Decl(tluaTableShorthandRemoved.tlua, 5, 10))
+
+local es = {t1, s};
+>es : Symbol(es, Decl(tluaTableShorthandRemoved.tlua, 6, 5))
+
+// Destructuring assignment is gone with it: an object literal on the left of
+// `=` is an ordinary (erroneous) assignment target ...
+declare obj: { q: number; w?: number };
+>obj : Symbol(obj, Decl(tluaTableShorthandRemoved.tlua, 10, 7))
+>q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 10, 14))
+>w : Symbol(w, Decl(tluaTableShorthandRemoved.tlua, 10, 25))
+
+local q: number;
+>q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 11, 5))
+
+({ q } = obj);
+>obj : Symbol(obj, Decl(tluaTableShorthandRemoved.tlua, 10, 7))
+
+// ... and `{ w = 5 }` has exactly one meaning -- a Lua keyed field -- so the
+// old cover-grammar destructuring reading is an error too.
+local w: number | nil;
+>w : Symbol(w, Decl(tluaTableShorthandRemoved.tlua, 16, 5))
+
+({ w = 5 } = obj);
+>w : Symbol(w, Decl(tluaTableShorthandRemoved.tlua, 17, 2))
+>obj : Symbol(obj, Decl(tluaTableShorthandRemoved.tlua, 10, 7))
+
+// Lua spells the extraction with member access ...
+local q3 = obj.q;
+>q3 : Symbol(q3, Decl(tluaTableShorthandRemoved.tlua, 20, 5))
+>obj.q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 10, 14))
+>obj : Symbol(obj, Decl(tluaTableShorthandRemoved.tlua, 10, 7))
+>q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 10, 14))
+
+// ... and parameter binding patterns are a separate grammar, untouched.
+function take({ q: q4 }: { q: number }): number { return q4; }
+>take : Symbol(take, Decl(tluaTableShorthandRemoved.tlua, 20, 17))
+>q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 22, 26))
+>q4 : Symbol(q4, Decl(tluaTableShorthandRemoved.tlua, 22, 15))
+>q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 22, 26))
+>q4 : Symbol(q4, Decl(tluaTableShorthandRemoved.tlua, 22, 15))
+
+local all = {q, w, q3, take};
+>all : Symbol(all, Decl(tluaTableShorthandRemoved.tlua, 23, 5))
+
+// `export {x}` is different syntax, untouched.
+{ x };
+>x : Symbol(x, Decl(tluaTableShorthandRemoved.tlua, 1, 5))
+

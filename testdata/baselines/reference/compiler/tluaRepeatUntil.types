@@ -1,0 +1,148 @@
+//// [tests/cases/compiler/tluaRepeatUntil.tlua] ////
+
+=== tluaRepeatUntil.tlua ===
+declare function poll(): number | nil;
+>poll : () => number | nil
+
+// Body locals are visible in the until-condition.
+function bodyLocal(n: number): number
+>bodyLocal : (n: number) => number
+>n : number
+
+  repeat
+    local step = n - 1;
+>step : number
+>n - 1 : number
+>n : number
+>1 : 1
+
+    n = step;
+>n = step : number
+>n : number
+>step : number
+
+  until step <= 0;
+>step <= 0 : boolean
+>step : number
+>0 : 0
+
+  return n;
+>n : number
+
+end
+
+// ...but not after the loop.
+function afterLoop(): number
+>afterLoop : () => number
+
+  repeat
+    local secret = 1;
+>secret : number
+>1 : 1
+
+  until true;
+>true : true
+
+  return secret;
+>secret : any
+
+end
+
+// break exits; continue targets the condition.
+function loops(n: number): number
+>loops : (n: number) => number
+>n : number
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  repeat
+    n = n - 1;
+>n = n - 1 : number
+>n : number
+>n - 1 : number
+>n : number
+>1 : 1
+
+    if n == 3 then
+>n == 3 : boolean
+>n : number
+>3 : 3
+
+      continue;
+    end
+    if n <= 0 then
+>n <= 0 : boolean
+>n : number
+>0 : 0
+
+      break;
+    end
+    total = total + n;
+>total = total + n : number
+>total : number
+>total + n : number
+>total : number
+>n : number
+
+  until false;
+>false : false
+
+  return total;
+>total : number
+
+end
+
+// One-liner form.
+function once(): number
+>once : () => number
+
+  local n = 0;
+>n : number
+>0 : 0
+
+  repeat n = n + 1 until n > 0;
+>n = n + 1 : number
+>n : number
+>n + 1 : number
+>n : number
+>1 : 1
+>n > 0 : boolean
+>n : number
+>0 : 0
+
+  return n;
+>n : number
+
+end
+
+// Nested repeat.
+function nested(n: number): number
+>nested : (n: number) => number
+>n : number
+
+  repeat
+    repeat
+      n = n - 1;
+>n = n - 1 : number
+>n : number
+>n - 1 : number
+>n : number
+>1 : 1
+
+    until n <= 10;
+>n <= 10 : boolean
+>n : number
+>10 : 10
+
+  until n <= 0;
+>n <= 0 : boolean
+>n : number
+>0 : 0
+
+  return n;
+>n : number
+
+end
+

@@ -1,0 +1,10 @@
+// === Document Symbols ===
+// === /navigationBarClassStaticBlock.tlua ===
+// class C {
+//   static {
+//     local <|[|{| name: x, kind: Variable |}x|]|>;
+//   }
+// }
+
+// === Details ===
+(Variable) x

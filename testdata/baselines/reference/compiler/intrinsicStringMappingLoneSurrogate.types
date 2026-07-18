@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/intrinsicStringMappingLoneSurrogate.tlua] ////
+
+=== intrinsicStringMappingLoneSurrogate.tlua ===
+// Intrinsic string mapping types should preserve lone surrogates, matching tsc.
+// A lone surrogate has no case mapping, so it passes through unchanged.
+type U = Uppercase<"\uD800">;
+>U : "\xed\xa0\x80"
+
+type L = Lowercase<"A\uD800B">;
+>L : "a\xed\xa0\x80b"
+
+type C = Capitalize<"\uDC00x">;
+>C : "\xed\xb0\x80x"
+
+type Un = Uncapitalize<"\uD834X">;
+>Un : "\xed\xa0\xb4X"
+
+local u: "\uD800" = "x" as unknown as U;
+>u : "\xed\xa0\x80"
+>"x" as unknown as U : "\xed\xa0\x80"
+>"x" as unknown : unknown
+>"x" : "x"
+
+local l: "a\uD800b" = "x" as unknown as L;
+>l : "a\xed\xa0\x80b"
+>"x" as unknown as L : "a\xed\xa0\x80b"
+>"x" as unknown : unknown
+>"x" : "x"
+

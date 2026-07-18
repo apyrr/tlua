@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/tluaLocalUnused.tlua] ////
+
+=== tluaLocalUnused.tlua ===
+local scriptLet = 1;
+>scriptLet : number
+>1 : 1
+
+local unusedLua = 1;
+>unusedLua : number
+>1 : 1
+
+local usedLua = 1;
+>usedLua : number
+>1 : 1
+
+usedLua;
+>usedLua : number
+

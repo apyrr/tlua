@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaIndexKeyMapped.tlua] ////
+
+=== tluaIndexKeyMapped.tlua ===
+// A mapped type carries a Lua-only key over as an index of its own -- it cannot become
+// a property, and dropping it would make every Copy/Partial-style utility silently
+// strip boolean/table/thread-keyed indexes.
+
+interface Flags { [key: boolean]: string }
+>key : boolean
+
+interface Point { n: number }
+>n : number
+
+interface ByTable { [key: Point]: string }
+>key : Point
+
+type Copy<T> = { [P in keyof T]: T[P] };
+>Copy : Copy<T>
+
+declare cf: Copy<Flags>;
+>cf : Copy<Flags>
+
+local s1: string = cf[true];
+>s1 : string
+>cf[true] : string
+>cf : Copy<Flags>
+>true : true
+
+declare cb: Copy<ByTable>;
+>cb : Copy<ByTable>
+
+declare pt: Point;
+>pt : Point
+
+local s2: string = cb[pt];
+>s2 : string
+>cb[pt] : string
+>cb : Copy<ByTable>
+>pt : Point
+
+// The modifiers still apply.
+type Ro<T> = { readonly [P in keyof T]: T[P] };
+>Ro : Ro<T>
+
+declare ro: Ro<Flags>;
+>ro : Ro<Flags>
+
+local s3: string = ro[false];
+>s3 : string
+>ro[false] : string
+>ro : Ro<Flags>
+>false : false
+
+// Mixed domains map together.
+interface Mixed { [key: boolean]: string; named: number }
+>key : boolean
+>named : number
+
+declare cm: Copy<Mixed>;
+>cm : Copy<Mixed>
+
+local s4: string = cm[true];
+>s4 : string
+>cm[true] : string
+>cm : Copy<Mixed>
+>true : true
+
+local n1: number = cm.named;
+>n1 : number
+>cm.named : number
+>cm : Copy<Mixed>
+>named : number
+
+// The constraint check follows the table-key domain: a concrete boolean (or keyof of
+// a boolean-keyed type) maps directly, not only through a generic alias.
+type Direct = { [P in keyof Mixed]: number };
+>Direct : Direct
+
+declare dd: Direct;
+>dd : Direct
+
+local n2: number = dd[true];
+>n2 : number
+>dd[true] : number
+>dd : Direct
+>true : true
+
+declare mb: { [P in boolean]: string };
+>mb : { [x: boolean]: string; }
+
+local s5: string = mb[false];
+>s5 : string
+>mb[false] : string
+>mb : { [x: boolean]: string; }
+>false : false
+

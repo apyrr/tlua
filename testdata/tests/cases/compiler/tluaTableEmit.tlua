@@ -1,0 +1,13 @@
+// @target: esnext
+// @noTypesAndSymbols: true
+
+// Keyed fields round-trip in emit: `x = 1` and `[k] = v` print with `=`;
+// `;` separators normalize to `,`.
+local key = "dyn";
+local t = {
+    x = 1;
+    y = 2,
+    ["lit"] = 3;
+    [key] = 4,
+    [5] = "five";
+};

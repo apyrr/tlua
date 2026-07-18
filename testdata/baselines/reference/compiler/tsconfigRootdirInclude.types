@@ -1,0 +1,4 @@
+//// [tests/cases/compiler/tsconfigRootdirInclude.tlua] ////
+
+=== src1/main.tlua ===
+

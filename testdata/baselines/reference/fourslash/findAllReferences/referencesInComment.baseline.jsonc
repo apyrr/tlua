@@ -1,0 +1,33 @@
+// === findAllReferences ===
+// === /referencesInComment.tlua ===
+// // References to /*FIND ALL REFS*/foo or bar
+// /* in comments should not find foo or bar */
+// class foo { }
+// local bar = 0;
+
+
+
+// === findAllReferences ===
+// === /referencesInComment.tlua ===
+// // References to foo or b/*FIND ALL REFS*/ar
+// /* in comments should not find foo or bar */
+// class foo { }
+// local bar = 0;
+
+
+
+// === findAllReferences ===
+// === /referencesInComment.tlua ===
+// // References to foo or bar
+// /* in comments should not find fo/*FIND ALL REFS*/o or bar */
+// class foo { }
+// local bar = 0;
+
+
+
+// === findAllReferences ===
+// === /referencesInComment.tlua ===
+// // References to foo or bar
+// /* in comments should not find foo or bar/*FIND ALL REFS*/ */
+// class foo { }
+// local bar = 0;

@@ -1,0 +1,99 @@
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// class class1 extends class1 {
+//     /*FIND ALL REFS*/doStuff() { }
+//     propName: string;
+// }
+// interface interface1 extends interface1 {
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// class class1 extends class1 {
+//     doStuff() { }
+//     /*FIND ALL REFS*/propName: string;
+// }
+// interface interface1 extends interface1 {
+//     doStuff(): void;
+// --- (line: 7) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// class class1 extends class1 {
+//     doStuff() { }
+//     propName: string;
+// }
+// interface interface1 extends interface1 {
+//     /*FIND ALL REFS*/[|doStuff|](): void;
+//     propName: string;
+// }
+// class class2 extends class1 implements interface1 {
+// --- (line: 10) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// --- (line: 3) skipped ---
+// }
+// interface interface1 extends interface1 {
+//     doStuff(): void;
+//     /*FIND ALL REFS*/[|propName|]: string;
+// }
+// class class2 extends class1 implements interface1 {
+//     doStuff() { }
+// --- (line: 11) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// --- (line: 6) skipped ---
+//     propName: string;
+// }
+// class class2 extends class1 implements interface1 {
+//     /*FIND ALL REFS*/doStuff() { }
+//     propName: string;
+// }
+// 
+// --- (line: 14) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// --- (line: 11) skipped ---
+// }
+// 
+// local v: class2;
+// v./*FIND ALL REFS*/doStuff();
+// v.propName;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// --- (line: 7) skipped ---
+// }
+// class class2 extends class1 implements interface1 {
+//     doStuff() { }
+//     /*FIND ALL REFS*/propName: string;
+// }
+// 
+// local v: class2;
+// v.doStuff();
+// v.propName;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsInheritedProperties3.tlua ===
+// --- (line: 12) skipped ---
+// 
+// local v: class2;
+// v.doStuff();
+// v./*FIND ALL REFS*/propName;

@@ -1,0 +1,60 @@
+tluaIndexKeyObjectLiteral.tlua(41,52): error TS2322: Type 'string' is not assignable to type 'number'.
+
+
+==== tluaIndexKeyObjectLiteral.tlua (1 errors) ====
+    // A table literal with a computed key synthesizes one index per distinct key type, in
+    // first-appearance order -- not the string/number/symbol trichotomy TypeScript uses.
+    
+    declare b: boolean;
+    declare pt: { n: number };
+    declare s: string;
+    
+    local byBool = { [b] = 1 };
+    local n1: number = byBool[true];
+    
+    local byTable = { [pt] = "v" };
+    local s1: string = byTable[pt];
+    
+    // A literal key widens to its base type. An index signature may not be keyed by a
+    // literal, so `{ [true] = 1 }` must synthesize `[key: boolean]`, never `[key: true]` --
+    // which the grammar rejects and an emitted .d.tlua would not re-parse.
+    local byTrue = { [true] = 1 };
+    local n2: number = byTrue[false];
+    
+    // Several key domains in one literal, each its own index.
+    local mixed = { [b] = 1, [pt] = 2, [s] = 3 };
+    local n3: number = mixed[true];
+    local n4: number = mixed[pt];
+    local n5: number = mixed["k"];
+    
+    // A computed key is contextually typed by the index it feeds.
+    interface BoolIdx { [key: boolean]: number }
+    local ctx: BoolIdx = { [b] = 1 };
+    
+    // A union key spans one index per constituent domain: the member is behind both
+    // indexes, and the literal is indexable by the union itself.
+    declare sn: string | number;
+    local byEither = { [sn] = 1 };
+    local n6: number = byEither[sn];
+    local n7: number = byEither["x"];
+    local n8: number = byEither[1];
+    
+    // A member whose key spans the string domain counts against a string index: the named
+    // member cannot slip past it through a union-keyed side door.
+    declare sb: string | boolean;
+    local bad: { [key: string]: number } = { [sb] = 1, a = "x" };
+                                                       ~
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! related TS6501 tluaIndexKeyObjectLiteral.tlua:41:14: The expected type comes from this index signature.
+    
+    // A union-keyed member is contextually typed by the indexes it feeds.
+    local fm: { [key: string]: (x: number) => number; [key: boolean]: (x: number) => number } = {
+      [sb] = function(x) return x; end,
+    };
+    
+    // An `any` key could be a key of any domain, so it feeds string and number alike.
+    declare anyKey: any;
+    local viaAny = { [anyKey] = 5 };
+    local n9: number = viaAny["x"];
+    local n10: number = viaAny[1];
+    

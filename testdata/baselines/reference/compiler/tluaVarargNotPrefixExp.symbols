@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaVarargNotPrefixExp.tlua] ////
+
+=== tluaVarargNotPrefixExp.tlua ===
+// In Lua `...` is not a prefixexp: it cannot be called, indexed, or
+// member-accessed. Each of these must be a parse error rather than quietly
+// reading as a call/index/property access on the pack -- the TS spread forms
+// `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+function f(...: number): void
+>f : Symbol(f, Decl(tluaVarargNotPrefixExp.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargNotPrefixExp.tlua, 4, 11))
+
+  local called = ...(1);
+>called : Symbol(called, Decl(tluaVarargNotPrefixExp.tlua, 5, 7))
+
+  local indexed = ...[1];
+>indexed : Symbol(indexed, Decl(tluaVarargNotPrefixExp.tlua, 6, 7))
+
+  local accessed = ....x;
+>accessed : Symbol(accessed, Decl(tluaVarargNotPrefixExp.tlua, 7, 7))
+
+end
+
+// The same holds in a table constructor, where TS object spread used to live.
+function g(...: number): void
+>g : Symbol(g, Decl(tluaVarargNotPrefixExp.tlua, 8, 3))
+> : Symbol((Missing), Decl(tluaVarargNotPrefixExp.tlua, 11, 11))
+
+  local t = { ...({} as number) };
+>t : Symbol(t, Decl(tluaVarargNotPrefixExp.tlua, 12, 7))
+
+end
+
+// A bare `...` in each of those positions is still fine.
+function h(...: number): void
+>h : Symbol(h, Decl(tluaVarargNotPrefixExp.tlua, 13, 3))
+> : Symbol((Missing), Decl(tluaVarargNotPrefixExp.tlua, 16, 11))
+
+  local ok = ...;
+>ok : Symbol(ok, Decl(tluaVarargNotPrefixExp.tlua, 17, 7))
+
+  local t = { ... };
+>t : Symbol(t, Decl(tluaVarargNotPrefixExp.tlua, 18, 7))
+
+  f(...);
+>f : Symbol(f, Decl(tluaVarargNotPrefixExp.tlua, 0, 0))
+
+end
+

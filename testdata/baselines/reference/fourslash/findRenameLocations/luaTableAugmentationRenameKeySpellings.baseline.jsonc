@@ -1,0 +1,10 @@
+// === findRenameLocations ===
+// === /a.tlua ===
+// Store = {};
+// Store./*RENAME*/[|itemRENAME|] = 1;
+
+// === /b.tlua ===
+// local x = Store["[|itemRENAME|]"];
+
+// === /c.tlua ===
+// local y = Store.[|itemRENAME|];

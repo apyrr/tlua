@@ -1,0 +1,34 @@
+// @target: esnext
+
+// Template literals have no Lua equivalent, so they lower to `..` concatenation.
+// Each substitution is wrapped in tostring() to coerce like JS String()/Luau interp.
+
+local a: number = 5
+local b: string = "hi"
+
+// No substitutions: just a plain Lua string.
+local plain = `hello world`
+
+// Leading and trailing text around substitutions.
+local s1 = `x${a}y${b}z`
+
+// Substitution only, empty head and tail.
+local s2 = `${a}`
+
+// Adjacent substitutions, no text between.
+local s3 = `${a}${b}`
+
+// Text that needs escaping in a Lua string.
+local s4 = `line "one"
+line two ${a}`
+
+// Nested template inside a substitution.
+local s5 = `outer ${`inner ${a}`} end`
+
+// An expression substitution.
+local s6 = `sum is ${a + a}`
+
+// Control characters must use Lua's `\ddd` decimal escape, not JS `\uXXXX` (invalid Lua).
+// Here \x1b is an ANSI escape (ESC, 0x1B) and \u{2028} is a non-ASCII separator kept raw.
+local s7 = `color ${a}\x1b[0m`
+local s8 = `\u{2028}sep`

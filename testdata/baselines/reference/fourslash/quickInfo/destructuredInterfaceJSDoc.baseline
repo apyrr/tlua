@@ -1,0 +1,154 @@
+// === QuickInfo ===
+=== /destructuredInterfaceJSDoc.tlua ===
+// 
+// interface FooBar {
+//     /** foo comment */
+//     foo: number;
+//     /** bar comment */
+//     bar: string;
+//     /** baz comment */
+//     baz: string;
+// }
+// 
+// declare fubar: FooBar;
+// 
+// local {foo, bar, baz: biz} = fubar;
+//        ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//             ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                  ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                       ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 174,
+      "LSPosition": {
+        "line": 12,
+        "character": 7
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 7
+        },
+        "end": {
+          "line": 12,
+          "character": 10
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 179,
+      "LSPosition": {
+        "line": 12,
+        "character": 12
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 12
+        },
+        "end": {
+          "line": 12,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 184,
+      "LSPosition": {
+        "line": 12,
+        "character": 17
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 17
+        },
+        "end": {
+          "line": 12,
+          "character": 20
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 189,
+      "LSPosition": {
+        "line": 12,
+        "character": 22
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 22
+        },
+        "end": {
+          "line": 12,
+          "character": 25
+        }
+      }
+    }
+  }
+]

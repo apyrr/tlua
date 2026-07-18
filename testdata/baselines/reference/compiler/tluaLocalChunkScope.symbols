@@ -1,0 +1,13 @@
+//// [tests/cases/compiler/tluaLocalChunkScope.tlua] ////
+
+=== a.tlua ===
+local chunkValue = 1;
+>chunkValue : Symbol(chunkValue, Decl(a.tlua, 0, 5))
+
+chunkValue;
+>chunkValue : Symbol(chunkValue, Decl(a.tlua, 0, 5))
+
+=== b.tlua ===
+
+chunkValue;
+

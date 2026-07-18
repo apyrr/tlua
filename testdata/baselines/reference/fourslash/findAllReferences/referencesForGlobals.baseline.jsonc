@@ -1,0 +1,95 @@
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// /*FIND ALL REFS*/local [|global|] = 2;
+// 
+// class foo {
+//     constructor (public [|global|]) { }
+//     public f([|global|]) { }
+//     public f2([|global|]) { }
+// }
+// 
+// class bar {
+//     constructor () {
+//         local n = [|global|];
+// 
+//         local f = new foo('');
+//         f.global = '';
+//     }
+// }
+// 
+// local k = [|global|];
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// local /*FIND ALL REFS*/[|global|] = 2;
+// 
+// class foo {
+//     constructor (public [|global|]) { }
+//     public f([|global|]) { }
+//     public f2([|global|]) { }
+// }
+// 
+// class bar {
+//     constructor () {
+//         local n = [|global|];
+// 
+//         local f = new foo('');
+//         f.global = '';
+//     }
+// }
+// 
+// local k = [|global|];
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// local [|global|] = 2;
+// 
+// class foo {
+//     constructor (public [|global|]) { }
+//     public f([|global|]) { }
+//     public f2([|global|]) { }
+// }
+// 
+// class bar {
+//     constructor () {
+//         local n = /*FIND ALL REFS*/[|global|];
+// 
+//         local f = new foo('');
+//         f.global = '';
+//     }
+// }
+// 
+// local k = [|global|];
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// local [|global|] = 2;
+// 
+// class foo {
+//     constructor (public [|global|]) { }
+//     public f([|global|]) { }
+//     public f2([|global|]) { }
+// }
+// 
+// class bar {
+//     constructor () {
+//         local n = [|global|];
+// 
+//         local f = new foo('');
+//         f.global = '';
+//     }
+// }
+// 
+// local k = /*FIND ALL REFS*/[|global|];
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_2.tlua ===
+// local m = /*FIND ALL REFS*/global;

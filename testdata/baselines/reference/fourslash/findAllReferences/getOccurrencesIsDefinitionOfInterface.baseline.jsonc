@@ -1,0 +1,24 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterface.tlua ===
+// /*FIND ALL REFS*/interface [|I|] {
+//     p: number;
+// }
+// local i: [|I|] = { p: 12 };
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterface.tlua ===
+// interface /*FIND ALL REFS*/[|I|] {
+//     p: number;
+// }
+// local i: [|I|] = { p: 12 };
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterface.tlua ===
+// interface [|I|] {
+//     p: number;
+// }
+// local i: /*FIND ALL REFS*/[|I|] = { p: 12 };

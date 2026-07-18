@@ -1,0 +1,8 @@
+//// [tests/cases/compiler/unicodeLineSeparatorInMultilineComment.tlua] ////
+
+=== unicodeLineSeparatorInMultilineComment.tlua ===
+/* a
+b */ local x = 1;
+>x : number
+>1 : 1
+

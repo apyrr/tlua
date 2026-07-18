@@ -1,0 +1,129 @@
+//// [tests/cases/compiler/tluaMetatableGetmetatable.tlua] ////
+
+=== tluaMetatableGetmetatable.tlua ===
+// getmetatable reads back the metatable a table was paired with, rather than the union its
+// declaration has to fall back on.
+
+local Helpers = { describe = function(self: object): string return "d"; end };
+>Helpers : { describe: (self: object) => string; }
+>{ describe = function(self: object): string return "d"; end } : { describe: (self: object) => string; }
+>describe : (self: object) => string
+>function(self: object): string return "d"; end : (self: object) => string
+>self : object
+>"d" : "d"
+
+local obj = setmetatable({ n = 1 }, { __index = Helpers });
+>obj : { describe: (self: object) => string; n: number; }
+>setmetatable({ n = 1 }, { __index = Helpers }) : { describe: (self: object) => string; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __index = Helpers } : { __index: { describe: (self: object) => string; }; }
+>__index : { describe: (self: object) => string; }
+>Helpers : { describe: (self: object) => string; }
+
+local mt = getmetatable(obj);
+>mt : { __index: { describe: (self: object) => string; }; }
+>getmetatable(obj) : { __index: { describe: (self: object) => string; }; }
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>obj : { describe: (self: object) => string; n: number; }
+
+local back: string = mt.__index.describe(obj);
+>back : string
+>mt.__index.describe(obj) : string
+>mt.__index.describe : (self: object) => string
+>mt.__index : { describe: (self: object) => string; }
+>mt : { __index: { describe: (self: object) => string; }; }
+>__index : { describe: (self: object) => string; }
+>describe : (self: object) => string
+>obj : { describe: (self: object) => string; n: number; }
+
+// The printed type is the metatable itself.
+local shown: number = mt;
+>shown : number
+>mt : { __index: { describe: (self: object) => string; }; }
+
+// A table with no metatable the checker knows about keeps the declared result.
+local plain = getmetatable({ n = 1 });
+>plain : any
+>getmetatable({ n = 1 }) : any
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+// A union of paired tables answers with the union of their metatables, which is to say a
+// member of one arm is readable only after narrowing, as it is for any other union.
+declare cond: boolean;
+>cond : boolean
+
+local p1 = setmetatable({ n = 1 }, { __index = { a = 1 } });
+>p1 : { n: number; a: number; }
+>setmetatable({ n = 1 }, { __index = { a = 1 } }) : { n: number; a: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __index = { a = 1 } } : { __index: { a: number; }; }
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+local p2 = setmetatable({ s = "x" }, { __index = { b = "b" } });
+>p2 : { s: string; b: string; }
+>setmetatable({ s = "x" }, { __index = { b = "b" } }) : { s: string; b: string; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ s = "x" } : { s: string; }
+>s : string
+>"x" : "x"
+>{ __index = { b = "b" } } : { __index: { b: string; }; }
+>__index : { b: string; }
+>{ b = "b" } : { b: string; }
+>b : string
+>"b" : "b"
+
+local either = cond and p1 or p2;
+>either : { n: number; a: number; } | { s: string; b: string; }
+>cond and p1 or p2 : { n: number; a: number; } | { s: string; b: string; }
+>cond and p1 : false | { n: number; a: number; }
+>cond : boolean
+>p1 : { n: number; a: number; }
+>p2 : { s: string; b: string; }
+
+local em = getmetatable(either);
+>em : { __index: { a: number; }; } | { __index: { b: string; }; }
+>getmetatable(either) : { __index: { a: number; }; } | { __index: { b: string; }; }
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>either : { n: number; a: number; } | { s: string; b: string; }
+
+local eshown: number = em;
+>eshown : number
+>em : { __index: { a: number; }; } | { __index: { b: string; }; }
+
+local ea = em.__index.a;
+>ea : any
+>em.__index.a : any
+>em.__index : { a: number; } | { b: string; }
+>em : { __index: { a: number; }; } | { __index: { b: string; }; }
+>__index : { a: number; } | { b: string; }
+>a : any
+
+// One arm with no metatable makes the whole union unknown: the value may be that arm.
+local mixed = cond and p1 or { s = "x" };
+>mixed : { s: string; } | { n: number; a: number; }
+>cond and p1 or { s = "x" } : { s: string; } | { n: number; a: number; }
+>cond and p1 : false | { n: number; a: number; }
+>cond : boolean
+>p1 : { n: number; a: number; }
+>{ s = "x" } : { s: string; }
+>s : string
+>"x" : "x"
+
+local mm = getmetatable(mixed);
+>mm : any
+>getmetatable(mixed) : any
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>mixed : { s: string; } | { n: number; a: number; }
+

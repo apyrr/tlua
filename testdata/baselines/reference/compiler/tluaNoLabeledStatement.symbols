@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/tluaNoLabeledStatement.tlua] ////
+
+=== tluaNoLabeledStatement.tlua ===
+// tlua has no labeled statement and no labeled jump: `::name::` and `goto` took
+// their place. Each of these is now a parse error.
+
+// `name:` no longer starts a labeled statement.
+outer: while true do
+end
+
+// break takes no label.
+function labeledBreak(n: number): void
+>labeledBreak : Symbol(labeledBreak, Decl(tluaNoLabeledStatement.tlua, 5, 3))
+>n : Symbol(n, Decl(tluaNoLabeledStatement.tlua, 8, 22))
+
+    while n > 0 do
+>n : Symbol(n, Decl(tluaNoLabeledStatement.tlua, 8, 22))
+
+        break outer
+    end
+end
+
+// continue takes no label.
+function labeledContinue(n: number): void
+>labeledContinue : Symbol(labeledContinue, Decl(tluaNoLabeledStatement.tlua, 12, 3))
+>n : Symbol(n, Decl(tluaNoLabeledStatement.tlua, 15, 25))
+
+    while n > 0 do
+>n : Symbol(n, Decl(tluaNoLabeledStatement.tlua, 15, 25))
+
+        continue outer
+    end
+end
+
+// `goto` is a reserved word, so it cannot be a binding name.
+local goto = 1;
+> : Symbol((Missing), Decl(tluaNoLabeledStatement.tlua, 22, 5))
+

@@ -1,0 +1,15 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A bare name is not a project file, so the declared overloads still type it.
+local bit = require("bit");
+local band: number = bit.band(1, 2);
+
+local ffi = require("ffi");
+local jit = require("jit");
+local profile = require("jit.profile");
+
+// An unknown bare name falls to the `(module: string): any` overload.
+local unknown = require("nosuchlib");

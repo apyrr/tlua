@@ -1,0 +1,126 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// /*FIND ALL REFS*/interface [|Numbers|] {
+//     p: number;
+// }
+// interface [|Numbers|] {
+//     m: number;
+// }
+// class Numbers {
+//     f(n: number) {
+//         return this.p + this.m + n;
+//     }
+// }
+// local i: [|Numbers|] = new Numbers();
+// local x = i.f(i.p + i.m);
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// interface /*FIND ALL REFS*/[|Numbers|] {
+//     p: number;
+// }
+// interface [|Numbers|] {
+//     m: number;
+// }
+// class Numbers {
+//     f(n: number) {
+//         return this.p + this.m + n;
+//     }
+// }
+// local i: [|Numbers|] = new Numbers();
+// local x = i.f(i.p + i.m);
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// interface [|Numbers|] {
+//     p: number;
+// }
+// /*FIND ALL REFS*/interface [|Numbers|] {
+//     m: number;
+// }
+// class Numbers {
+//     f(n: number) {
+//         return this.p + this.m + n;
+//     }
+// }
+// local i: [|Numbers|] = new Numbers();
+// local x = i.f(i.p + i.m);
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// interface [|Numbers|] {
+//     p: number;
+// }
+// interface /*FIND ALL REFS*/[|Numbers|] {
+//     m: number;
+// }
+// class Numbers {
+//     f(n: number) {
+//         return this.p + this.m + n;
+//     }
+// }
+// local i: [|Numbers|] = new Numbers();
+// local x = i.f(i.p + i.m);
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// --- (line: 3) skipped ---
+// interface Numbers {
+//     m: number;
+// }
+// /*FIND ALL REFS*/class Numbers {
+//     f(n: number) {
+//         return this.p + this.m + n;
+//     }
+// --- (line: 11) skipped ---
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// --- (line: 3) skipped ---
+// interface Numbers {
+//     m: number;
+// }
+// class /*FIND ALL REFS*/Numbers {
+//     f(n: number) {
+//         return this.p + this.m + n;
+//     }
+// --- (line: 11) skipped ---
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// interface [|Numbers|] {
+//     p: number;
+// }
+// interface [|Numbers|] {
+//     m: number;
+// }
+// class Numbers {
+//     f(n: number) {
+//         return this.p + this.m + n;
+//     }
+// }
+// local i: /*FIND ALL REFS*/[|Numbers|] = new Numbers();
+// local x = i.f(i.p + i.m);
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfInterfaceClassMerge.tlua ===
+// --- (line: 8) skipped ---
+//         return this.p + this.m + n;
+//     }
+// }
+// local i: Numbers = new /*FIND ALL REFS*/Numbers();
+// local x = i.f(i.p + i.m);

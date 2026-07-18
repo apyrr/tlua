@@ -1,0 +1,44 @@
+// === Call Hierarchy ===
+╭ name: bar
+├ kind: function
+├ file: /callHierarchyClass.tlua
+├ span:
+│ ╭ /callHierarchyClass.tlua:5:1-7:2
+│ │ 5: function bar() {
+│ │    ^^^^^^^^^^^^^^^^
+│ │ 6:     new Baz();
+│ │    ^^^^^^^^^^^^^^
+│ │ 7: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /callHierarchyClass.tlua:5:10-5:13
+│ │ 5: function bar() {
+│ │             ^^^
+│ ╰
+├ incoming:
+│ ╭ from:
+│ │ ╭ name: foo
+│ │ ├ kind: function
+│ │ ├ file: /callHierarchyClass.tlua
+│ │ ├ span:
+│ │ │ ╭ /callHierarchyClass.tlua:1:1-3:2
+│ │ │ │ 1: function foo() {
+│ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ │ 2:     bar();
+│ │ │ │    ^^^^^^^^^^
+│ │ │ │ 3: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /callHierarchyClass.tlua:1:10-1:13
+│ │ │ │ 1: function foo() {
+│ │ │ │             ^^^
+│ │ │ ╰
+│ │ ╰ incoming: none
+│ ├ fromSpans:
+│ │ ╭ /callHierarchyClass.tlua:2:5-2:8
+│ │ │ 2:     bar();
+│ │ │        ^^^
+│ ╰ ╰
+╰ outgoing: none

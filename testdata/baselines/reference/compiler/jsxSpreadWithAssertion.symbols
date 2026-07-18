@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/jsxSpreadWithAssertion.tsx] ////
+
+=== jsxSpreadWithAssertion.tsx ===
+declare EntryTextDialog: any;
+>EntryTextDialog : Symbol(EntryTextDialog, Decl(jsxSpreadWithAssertion.tsx, 0, 7))
+
+local c = <EntryTextDialog
+>c : Symbol(c, Decl(jsxSpreadWithAssertion.tsx, 2, 5))
+>EntryTextDialog : Symbol(EntryTextDialog, Decl(jsxSpreadWithAssertion.tsx, 0, 7))
+
+    {...{
+        first: 0,
+        foo: 1,
+        bar: 2 as any,
+        baz: 3,
+        last: 4
+    }}
+/>
+

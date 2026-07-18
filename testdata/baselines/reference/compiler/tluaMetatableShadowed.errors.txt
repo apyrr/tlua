@@ -1,0 +1,38 @@
+tluaMetatableShadowed.tlua(12,22): error TS2339: Property 'describe' does not exist on type 'object'.
+tluaMetatableShadowed.tlua(13,25): error TS2339: Property 'n' does not exist on type 'object'.
+tluaMetatableShadowed.tlua(20,26): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+
+
+==== tluaMetatableShadowed.tlua (3 errors) ====
+    // Only the real globals carry the protocol. A shadowing local, or a call through an alias,
+    // resolves to a different symbol and keeps whatever it declares -- the rule the type()
+    // narrowing builtins already follow.
+    
+    local Helpers = { describe = function(self: object): string return "d"; end };
+    local mt = { __index = Helpers };
+    
+    function shadowed(): void
+      local setmetatable = function(value: object, metatable: object): object return value; end;
+      local getmetatable = function(value: object): object return value; end;
+      local obj = setmetatable({ n = 1 }, mt);
+      local absent = obj.describe;
+                         ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type 'object'.
+      local ownAbsent = obj.n;
+                            ~
+!!! error TS2339: Property 'n' does not exist on type 'object'.
+      local back = getmetatable(obj);
+    end
+    
+    // An alias is a different symbol too.
+    local alias = setmetatable;
+    local aliased = alias({ n = 1 }, mt);
+    local aliasBad = aliased.describe;
+                             ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+    local aliasOwn: number = aliased.n;
+    
+    // The globals themselves still work in the same file.
+    local real = setmetatable({ n = 1 }, mt);
+    local d: string = real.describe(real);
+    

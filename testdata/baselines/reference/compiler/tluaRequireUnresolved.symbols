@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/tluaRequireUnresolved.tlua] ////
+
+=== main.tlua ===
+// A path-shaped specifier is not a Lua module name; it is an error.
+local missing = require("./nosuchfile");
+>missing : Symbol(missing, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+// An unresolved dotted name falls back to the ambient overloads (any):
+// it may be a runtime-provided package or a C module.
+local maybe = require("no.such.module");
+>maybe : Symbol(maybe, Decl(main.tlua, 5, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local n: number = maybe;
+>n : Symbol(n, Decl(main.tlua, 6, 5))
+>maybe : Symbol(maybe, Decl(main.tlua, 5, 5))
+
+// A declaration file declares globals; it is not a chunk with a value, so
+// `defs` does not resolve to defs.d.tlua and stays the dynamic overload.
+local defs = require("defs");
+>defs : Symbol(defs, Decl(main.tlua, 10, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+// A computed specifier keeps the dynamic overload.
+declare name: string;
+>name : Symbol(name, Decl(main.tlua, 13, 7))
+
+local dynamic = require(name);
+>dynamic : Symbol(dynamic, Decl(main.tlua, 14, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+>name : Symbol(name, Decl(main.tlua, 13, 7))
+

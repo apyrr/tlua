@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/tluaAsyncFunctionTypeErrors.tlua] ////
+
+=== tluaAsyncFunctionTypeErrors.tlua ===
+// Strict async assignability: an async function is not assignable to a plain
+// (non-async) function type. This closes the laundering hole — async-ness can
+// no longer be silently erased by annotating a sync function type.
+
+declare function request(url: string): boolean;
+>request : (url: string) => boolean
+>url : string
+
+async function fetchOk(url: string): boolean
+>fetchOk : async (url: string) => boolean
+>url : string
+
+  return request(url);
+>request(url) : boolean
+>request : (url: string) => boolean
+>url : string
+
+end
+
+// Error: async fn laundered through a plain (sync) function-typed slot.
+local bad: (url: string) => boolean = fetchOk;
+>bad : (url: string) => boolean
+>url : string
+>fetchOk : async (url: string) => boolean
+
+// Error: async fn passed to a specific sync-typed callback parameter.
+declare function run(cb: (url: string) => boolean): void;
+>run : (cb: (url: string) => boolean) => void
+>cb : (url: string) => boolean
+>url : string
+
+run(fetchOk);
+>run(fetchOk) : void
+>run : (cb: (url: string) => boolean) => void
+>fetchOk : async (url: string) => boolean
+

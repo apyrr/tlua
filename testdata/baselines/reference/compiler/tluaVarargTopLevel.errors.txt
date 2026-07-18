@@ -1,0 +1,30 @@
+tluaVarargTopLevel.tlua(22,16): error TS100035: A '...' expression is only allowed inside a vararg function.
+
+
+==== tluaVarargTopLevel.tlua (1 errors) ====
+    declare function takesAny(...: any): void;
+    declare function takesNumbers(...: number): void;
+    
+    // The main chunk is itself a vararg function, so top-level `...` is legal and
+    // its pack is `(...any)`. This is not the 100035 error case.
+    local first = ...;
+    local a, b = ...;
+    
+    // It expands in a table constructor tail like any other pack.
+    local args = {...};
+    
+    // And forwards into a rest parameter.
+    takesAny(...);
+    takesAny("x", ...);
+    
+    // The chunk pack is `any`, so it satisfies any element type.
+    takesNumbers(...);
+    
+    // A nested function does not capture the chunk's pack: only the directly
+    // enclosing vararg function may use `...`.
+    function inner(): void
+      local nope = ...;
+                   ~~~
+!!! error TS100035: A '...' expression is only allowed inside a vararg function.
+    end
+    

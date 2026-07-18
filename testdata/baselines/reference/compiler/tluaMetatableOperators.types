@@ -1,0 +1,231 @@
+//// [tests/cases/compiler/tluaMetatableOperators.tlua] ////
+
+=== tluaMetatableOperators.tlua ===
+// An operator on a paired operand dispatches to the metamethod its metatable commits to. The
+// metamethod's return type is the expression's type; its parameters check the operands.
+
+local Ops = {
+>Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+>{  __add = function(a: { x: number }, b: { x: number } | number): { x: number } return a; end,  __mul = function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end,  __lt = function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end,  __le = function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end,  __eq = function(a: object, b: object): boolean return true; end,  __unm = function(a: { x: number }): { x: number } return a; end,  __pow = function(a: { x: number }, n: number): { x: number } return a; end,} : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+
+  __add = function(a: { x: number }, b: { x: number } | number): { x: number } return a; end,
+>__add : (a: { x: number; }, b: { x: number; } | number) => { x: number; }
+>function(a: { x: number }, b: { x: number } | number): { x: number } return a; end : (a: { x: number; }, b: { x: number; } | number) => { x: number; }
+>a : { x: number; }
+>x : number
+>b : number | { x: number; }
+>x : number
+>x : number
+>a : { x: number; }
+
+  __mul = function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end,
+>__mul : (a: { x: number; }, s: number) => (number, string)
+>function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end : (a: { x: number; }, s: number) => (number, string)
+>a : { x: number; }
+>x : number
+>s : number
+>a.x * s, "w" : number, string
+>a.x * s : number
+>a.x : number
+>a : { x: number; }
+>x : number
+>s : number
+>"w" : "w"
+
+  __lt = function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end,
+>__lt : (a: { x: number; }, b: { x: number; }) => boolean
+>function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end : (a: { x: number; }, b: { x: number; }) => boolean
+>a : { x: number; }
+>x : number
+>b : { x: number; }
+>x : number
+>a.x < b.x : boolean
+>a.x : number
+>a : { x: number; }
+>x : number
+>b.x : number
+>b : { x: number; }
+>x : number
+
+  __le = function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end,
+>__le : (a: { x: number; }, b: { x: number; }) => boolean
+>function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end : (a: { x: number; }, b: { x: number; }) => boolean
+>a : { x: number; }
+>x : number
+>b : { x: number; }
+>x : number
+>a.x <= b.x : boolean
+>a.x : number
+>a : { x: number; }
+>x : number
+>b.x : number
+>b : { x: number; }
+>x : number
+
+  __eq = function(a: object, b: object): boolean return true; end,
+>__eq : (a: object, b: object) => boolean
+>function(a: object, b: object): boolean return true; end : (a: object, b: object) => boolean
+>a : object
+>b : object
+>true : true
+
+  __unm = function(a: { x: number }): { x: number } return a; end,
+>__unm : (a: { x: number; }) => { x: number; }
+>function(a: { x: number }): { x: number } return a; end : (a: { x: number; }) => { x: number; }
+>a : { x: number; }
+>x : number
+>x : number
+>a : { x: number; }
+
+  __pow = function(a: { x: number }, n: number): { x: number } return a; end,
+>__pow : (a: { x: number; }, n: number) => { x: number; }
+>function(a: { x: number }, n: number): { x: number } return a; end : (a: { x: number; }, n: number) => { x: number; }
+>a : { x: number; }
+>x : number
+>n : number
+>x : number
+>a : { x: number; }
+
+};
+
+local v = setmetatable({ x = 1 }, Ops);
+>v : { x: number; }
+>setmetatable({ x = 1 }, Ops) : { x: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+>Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+
+local w = setmetatable({ x = 2 }, Ops);
+>w : { x: number; }
+>setmetatable({ x = 2 }, Ops) : { x: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ x = 2 } : { x: number; }
+>x : number
+>2 : 2
+>Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+
+local sum: { x: number } = v + w;
+>sum : { x: number; }
+>x : number
+>v + w : { x: number; }
+>v : { x: number; }
+>w : { x: number; }
+
+local first: number = v * 2;        // a multi-return metamethod adjusts to its first value
+>first : number
+>v * 2 : number
+>v : { x: number; }
+>2 : 2
+
+local powed: { x: number } = v ^ 2; // ^ is Lua's __pow
+>powed : { x: number; }
+>x : number
+>v ^ 2 : { x: number; }
+>v : { x: number; }
+>2 : 2
+
+local neg: { x: number } = -v;      // unary minus is __unm
+>neg : { x: number; }
+>x : number
+>-v : { x: number; }
+>v : { x: number; }
+
+local lt: boolean = v < w;
+>lt : boolean
+>v < w : boolean
+>v : { x: number; }
+>w : { x: number; }
+
+local gt: boolean = v > w;          // a > b runs __lt(b, a)
+>gt : boolean
+>v > w : boolean
+>v : { x: number; }
+>w : { x: number; }
+
+local le: boolean = v <= w;
+>le : boolean
+>v <= w : boolean
+>v : { x: number; }
+>w : { x: number; }
+
+local ge: boolean = v >= w;
+>ge : boolean
+>v >= w : boolean
+>v : { x: number; }
+>w : { x: number; }
+
+local eq: boolean = v == w;         // the no-overlap error is suppressed
+>eq : boolean
+>v == w : boolean
+>v : { x: number; }
+>w : { x: number; }
+
+local ne: boolean = v ~= w;
+>ne : boolean
+>v ~= w : boolean
+>v : { x: number; }
+>w : { x: number; }
+
+// A compound assignment runs the same metamethod its operator does and checks the result back
+// into the target.
+v += w;
+>v += w : { x: number; }
+>v : { x: number; }
+>w : { x: number; }
+
+// An operand the metamethod's parameter does not admit is an error.
+local badOperand = v * "s";
+>badOperand : number
+>v * "s" : number
+>v : { x: number; }
+>"s" : "s"
+
+// A handler found on the right operand still receives the left as its first argument: `2 ^ v`
+// checks 2 against __pow's { x: number } first parameter and v against its number second.
+local badLeft = 2 ^ v;
+>badLeft : { x: number; }
+>2 ^ v : { x: number; }
+>2 : 2
+>v : { x: number; }
+
+// A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
+// has no handler for is still an error. `+` reports that its own way.
+local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end });
+>eqOnly : { n: number; }
+>setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end }) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __eq = function(a: object, b: object): boolean return true; end } : { __eq: (a: object, b: object) => boolean; }
+>__eq : (a: object, b: object) => boolean
+>function(a: object, b: object): boolean return true; end : (a: object, b: object) => boolean
+>a : object
+>b : object
+>true : true
+
+local eqOk: boolean = eqOnly == eqOnly;
+>eqOk : boolean
+>eqOnly == eqOnly : boolean
+>eqOnly : { n: number; }
+>eqOnly : { n: number; }
+
+local noAdd = eqOnly + eqOnly;
+>noAdd : any
+>eqOnly + eqOnly : any
+>eqOnly : { n: number; }
+>eqOnly : { n: number; }
+
+// Unary minus is arithmetic now: a non-numeric operand is rejected whether or not it is paired.
+local minusString = -"abc";
+>minusString : number
+>-"abc" : number
+>"abc" : "abc"
+
+local minusTable = -eqOnly;
+>minusTable : number
+>-eqOnly : number
+>eqOnly : { n: number; }
+

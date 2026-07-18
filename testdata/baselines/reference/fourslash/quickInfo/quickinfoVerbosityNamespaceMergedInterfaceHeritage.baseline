@@ -1,0 +1,99 @@
+// === QuickInfo ===
+=== /quickinfoVerbosityNamespaceMergedInterfaceHeritage.tlua ===
+// 
+// declare namespace NS {
+//                   ^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//                   ^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//     interface Config extends A {
+//         a: string;
+//     }
+// 
+//     interface Config extends B {
+//         b: number;
+//     }
+// 
+//     interface A {
+//         a: string;
+//     }
+// 
+//     interface B {
+//         b: number;
+//     }
+// }
+// 
+[
+  {
+    "marker": {
+      "Position": 21,
+      "LSPosition": {
+        "line": 1,
+        "character": 20
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 18
+          },
+          "end": {
+            "line": 1,
+            "character": 20
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 21,
+      "LSPosition": {
+        "line": 1,
+        "character": 20
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 18
+          },
+          "end": {
+            "line": 1,
+            "character": 20
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  }
+]

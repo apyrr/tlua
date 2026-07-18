@@ -1,0 +1,17 @@
+// @strict: true
+// @noEmit: true
+
+// [1] written twice names the same number key: duplicate.
+local dup1 = { [1] = 1, [1] = 2 };
+
+// Number key 1 and string key "1" are distinct keys: no duplicate.
+local ok1 = { [1] = 1, ["1"] = 2 };
+local ok2 = { [1] = 1, ["1"] = 2 };
+
+// Spelling canonicalization: 0x10 and 16 name the same key.
+local dup2 = { [0x10] = 1, [16] = 2 };
+
+// 1.0 and 1 name the same key.
+local dup3 = { [1.0] = 1, [1] = 2 };
+
+local es = {dup1, ok1, ok2, dup2, dup3};

@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/regularExpressionQuantifierBounds1.tlua] ////
+
+=== regularExpressionQuantifierBounds1.tlua ===
+local regexes: RegExp[] = [
+>regexes : Symbol(regexes, Decl(regularExpressionQuantifierBounds1.tlua, 0, 5))
+>RegExp : Symbol(RegExp, Decl(lib.luajit.d.tlua, --, --))
+
+	/a{7,8}/,
+	/a{9223372036854775807,9223372036854775808}/,
+	/a{8,7}/,
+	/a{9223372036854775808,9223372036854775807}/,
+	/a{8,8}/,
+	/a{9223372036854775808,9223372036854775808}/,
+];
+

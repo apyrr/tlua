@@ -1,0 +1,51 @@
+regularExpressionQuantifierBounds1.tlua(1,27): error TS1109: Expression expected.
+regularExpressionQuantifierBounds1.tlua(2,2): error TS2695: Left side of comma operator is unused and has no side effects.
+regularExpressionQuantifierBounds1.tlua(2,2): error TS2695: Left side of comma operator is unused and has no side effects.
+regularExpressionQuantifierBounds1.tlua(2,2): error TS2695: Left side of comma operator is unused and has no side effects.
+regularExpressionQuantifierBounds1.tlua(2,2): error TS2695: Left side of comma operator is unused and has no side effects.
+regularExpressionQuantifierBounds1.tlua(2,2): error TS2695: Left side of comma operator is unused and has no side effects.
+regularExpressionQuantifierBounds1.tlua(2,2): error TS2695: Left side of comma operator is unused and has no side effects.
+regularExpressionQuantifierBounds1.tlua(8,1): error TS1109: Expression expected.
+
+
+==== regularExpressionQuantifierBounds1.tlua (8 errors) ====
+    local regexes: RegExp[] = [
+                              ~
+!!! error TS1109: Expression expected.
+    	/a{7,8}/,
+    	~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    	~~~~~~~~~
+    	~~~~~~~~~
+    	~~~~~~~~~
+    	~~~~~~~~~
+    	~~~~~~~~~
+    	/a{9223372036854775807,9223372036854775808}/,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    	/a{8,7}/,
+    ~~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    ~~~~~~~~~~
+    ~~~~~~~~~~
+    ~~~~~~~~~~
+    	/a{9223372036854775808,9223372036854775807}/,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    	/a{8,8}/,
+    ~~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    ~~~~~~~~~~
+    	/a{9223372036854775808,9223372036854775808}/,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+    ];
+    ~
+!!! error TS1109: Expression expected.
+    

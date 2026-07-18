@@ -1,0 +1,94 @@
+//// [tests/cases/compiler/tluaVarargBasics.tlua] ////
+
+=== tluaVarargBasics.tlua ===
+// A vararg parameter is a bare `...` in final position. It has no binding name,
+// and its annotation is the *element* type of the pack, not an array type.
+function annotated(...: number): void
+>annotated : (...: number) => void
+> : number[]
+
+end
+
+// An unannotated vararg is an `any` pack.
+function bare(...): void
+>bare : (...: any) => void
+> : any[]
+
+end
+
+// Varargs coexist with fixed parameters.
+function withFixed(label: string, ...: string): string
+>withFixed : (label: string, ...: string) => string
+>label : string
+> : string[]
+
+  return label;
+>label : string
+
+end
+
+// `...` expands in a value list, so both names bind. A rest-only pack may be
+// empty, so each name is `number | nil`.
+function twoNames(...: number): (number | nil, number | nil)
+>twoNames : (...: number) => (number | nil, number | nil)
+> : number[]
+
+  local a, b = ...;
+>a : number | nil
+>b : number | nil
+>... : number | nil
+
+  return a, b;
+>a, b : number | nil, number | nil
+>a : number | nil
+>b : number | nil
+
+end
+
+// A vararg function accepts zero or more trailing arguments.
+annotated();
+>annotated() : void
+>annotated : (...: number) => void
+
+annotated(1, 2, 3);
+>annotated(1, 2, 3) : void
+>annotated : (...: number) => void
+>1 : 1
+>2 : 2
+>3 : 3
+
+withFixed("x");
+>withFixed("x") : string
+>withFixed : (label: string, ...: string) => string
+>"x" : "x"
+
+withFixed("x", "y", "z");
+>withFixed("x", "y", "z") : string
+>withFixed : (label: string, ...: string) => string
+>"x" : "x"
+>"y" : "y"
+>"z" : "z"
+
+bare();
+>bare() : void
+>bare : (...: any) => void
+
+bare(1, "two", true);
+>bare(1, "two", true) : void
+>bare : (...: any) => void
+>1 : 1
+>"two" : "two"
+>true : true
+
+// The element type is checked.
+annotated("nope");
+>annotated("nope") : void
+>annotated : (...: number) => void
+>"nope" : "nope"
+
+withFixed("x", 1);
+>withFixed("x", 1) : string
+>withFixed : (label: string, ...: string) => string
+>"x" : "x"
+>1 : 1
+

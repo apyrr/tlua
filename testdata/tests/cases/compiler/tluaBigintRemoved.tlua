@@ -1,0 +1,36 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// bigint does not exist in tlua: Lua has a single `number` type. Neither the
+// `0n` literal nor the `bigint` type keyword survives. The `n` suffix no longer
+// scans as a bigint marker, so an `n` glued to a numeric literal is the ordinary
+// "identifier cannot immediately follow a numeric literal" error, and `bigint`
+// in a type position is just an unresolved name (`Cannot find name 'bigint'`).
+//
+// Each use also pins that the scanner/parser keep making progress: the stray `n`
+// is scanned as a separate identifier rather than re-entering forever.
+
+declare v: number;
+
+// `0n` no longer scans as a bigint literal; the trailing `n` is rejected.
+local a = 0n;
+local b = 123n;
+local c = -5n;
+
+// `bigint` is not a type keyword; it resolves to an unknown name.
+local t: bigint = 1;
+type Alias = bigint;
+declare function f(x: bigint): bigint;
+
+// `0n` in assorted expression positions.
+local obj = { key = 1n };
+if 0n then
+end
+
+// Plain number arithmetic still works and yields `number`.
+local sum: number = v + 1;
+local prod: number = v * 2;
+local neg: number = -v;
+local len: number = #"abc";

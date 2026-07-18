@@ -1,0 +1,19 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_02.tlua ===
+// --- (line: 10) skipped ---
+// }
+// 
+// function whatever(a: AbstractBar) {
+//     a.he/*GOTO IMPL*/llo();
+// }
+
+
+
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_02.tlua ===
+// interface Foo {
+//     he/*GOTO IMPL*/llo(): void
+// }
+// 
+// abstract class AbstractBar implements Foo {
+// --- (line: 6) skipped ---

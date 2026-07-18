@@ -1,0 +1,125 @@
+// === vsFindAllReferences ===
+// === /a.tlua ===
+// /*FIND ALL REFS*/local [|x|]: number;
+
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///a.tlua",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 7
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "local ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "local name",
+          "Text": "x",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "number",
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+// === /a.tlua ===
+// local /*FIND ALL REFS*/[|x|]: number;
+
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///a.tlua",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 7
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "local ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "local name",
+          "Text": "x",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "number",
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+// === /b.tlua ===
+// /// <reference path="a.tlua" />
+// /*FIND ALL REFS*/x++;
+
+[]
+
+
+
+// === vsFindAllReferences ===
+// === /c.tlua ===
+// /// <reference path="a.tlua" />
+// /*FIND ALL REFS*/x++;
+
+[]

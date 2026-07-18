@@ -1,0 +1,5 @@
+// === findAllReferences ===
+// === /findAllRefsExportDefaultClassConstructor.tlua ===
+// export default class {
+//     /*FIND ALL REFS*/constructor() {}
+// }

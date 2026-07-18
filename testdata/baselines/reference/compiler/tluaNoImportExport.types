@@ -1,0 +1,67 @@
+//// [tests/cases/compiler/tluaNoImportExport.tlua] ////
+
+=== tluaNoImportExport.tlua ===
+// tlua has no TypeScript module syntax: a chunk loads its dependencies with
+// `require` and returns its own value.
+import { named } from "m";
+>named : any
+>from : any
+>"m" : "m"
+
+import * as star from "m";
+>* as : number
+> : any
+>as : any
+>star : any
+>from : any
+>"m" : "m"
+
+import def from "m";
+>def : any
+>from : any
+>"m" : "m"
+
+import legacy = require("m");
+>legacy = require("m") : any
+>legacy : any
+>require("m") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+export local value = 1;
+>export : any
+>value : number
+>1 : 1
+
+export default value;
+>export : any
+>default : any
+>value : number
+
+export = value;
+>export = value : number
+>export : any
+>value : number
+
+export { value };
+>export : any
+>value : number
+
+export * from "m";
+>export * from : number
+>export : any
+>from : any
+>"m" : "m"
+
+// The dynamic forms are gone too.
+local dynamic = import("m");
+>dynamic : any
+> : any
+>("m") : "m"
+>"m" : "m"
+
+local meta = import.meta;
+>meta : any
+> : any
+>meta : any
+

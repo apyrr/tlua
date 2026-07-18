@@ -1,0 +1,6 @@
+// === Document Symbols ===
+// === /navbar_let.tlua ===
+// local <|[|{| name: c, kind: Variable |}c|] = 0|>;
+
+// === Details ===
+(Variable) c

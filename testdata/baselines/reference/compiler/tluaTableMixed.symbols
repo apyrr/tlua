@@ -1,0 +1,59 @@
+//// [tests/cases/compiler/tluaTableMixed.tlua] ////
+
+=== tluaTableMixed.tlua ===
+// Mixed array/hash parts: positional entries count only positional entries,
+// interleaved keyed entries do not consume indices (Lua semantics).
+declare k: string;
+>k : Symbol(k, Decl(tluaTableMixed.tlua, 2, 7))
+
+local m = { "r", mode = 1, [k] = true, "s"; 3 };
+>m : Symbol(m, Decl(tluaTableMixed.tlua, 3, 5))
+>mode : Symbol(mode, Decl(tluaTableMixed.tlua, 3, 16))
+>[k] : Symbol([k], Decl(tluaTableMixed.tlua, 3, 26))
+>k : Symbol(k, Decl(tluaTableMixed.tlua, 2, 7))
+
+local r: string = m[1];
+>r : Symbol(r, Decl(tluaTableMixed.tlua, 4, 5))
+>m : Symbol(m, Decl(tluaTableMixed.tlua, 3, 5))
+>1 : Symbol(1, Decl(tluaTableMixed.tlua, 3, 11))
+
+local s: string = m[2];
+>s : Symbol(s, Decl(tluaTableMixed.tlua, 5, 5))
+>m : Symbol(m, Decl(tluaTableMixed.tlua, 3, 5))
+>2 : Symbol(2, Decl(tluaTableMixed.tlua, 3, 38))
+
+local three: number = m[3];
+>three : Symbol(three, Decl(tluaTableMixed.tlua, 6, 5))
+>m : Symbol(m, Decl(tluaTableMixed.tlua, 3, 5))
+>3 : Symbol(3, Decl(tluaTableMixed.tlua, 3, 43))
+
+local mode: number = m.mode;
+>mode : Symbol(mode, Decl(tluaTableMixed.tlua, 7, 5))
+>m.mode : Symbol(mode, Decl(tluaTableMixed.tlua, 3, 16))
+>m : Symbol(m, Decl(tluaTableMixed.tlua, 3, 5))
+>mode : Symbol(mode, Decl(tluaTableMixed.tlua, 3, 16))
+
+local all = {r, s, three, mode};
+>all : Symbol(all, Decl(tluaTableMixed.tlua, 8, 5))
+
+// Nested tables mixing both parts.
+local nested = { { 1, 2 }, cols = { "a"; "b" } };
+>nested : Symbol(nested, Decl(tluaTableMixed.tlua, 11, 5))
+>cols : Symbol(cols, Decl(tluaTableMixed.tlua, 11, 26))
+
+local n11: number = nested[1][1];
+>n11 : Symbol(n11, Decl(tluaTableMixed.tlua, 12, 5))
+>nested : Symbol(nested, Decl(tluaTableMixed.tlua, 11, 5))
+>1 : Symbol(1, Decl(tluaTableMixed.tlua, 11, 16))
+>1 : Symbol(1, Decl(tluaTableMixed.tlua, 11, 18))
+
+local nc2: string = nested.cols[2];
+>nc2 : Symbol(nc2, Decl(tluaTableMixed.tlua, 13, 5))
+>nested.cols : Symbol(cols, Decl(tluaTableMixed.tlua, 11, 26))
+>nested : Symbol(nested, Decl(tluaTableMixed.tlua, 11, 5))
+>cols : Symbol(cols, Decl(tluaTableMixed.tlua, 11, 26))
+>2 : Symbol(2, Decl(tluaTableMixed.tlua, 11, 40))
+
+local ns = {n11, nc2};
+>ns : Symbol(ns, Decl(tluaTableMixed.tlua, 14, 5))
+

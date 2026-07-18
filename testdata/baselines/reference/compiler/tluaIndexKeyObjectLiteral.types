@@ -1,0 +1,187 @@
+//// [tests/cases/compiler/tluaIndexKeyObjectLiteral.tlua] ////
+
+=== tluaIndexKeyObjectLiteral.tlua ===
+// A table literal with a computed key synthesizes one index per distinct key type, in
+// first-appearance order -- not the string/number/symbol trichotomy TypeScript uses.
+
+declare b: boolean;
+>b : boolean
+
+declare pt: { n: number };
+>pt : { n: number; }
+>n : number
+
+declare s: string;
+>s : string
+
+local byBool = { [b] = 1 };
+>byBool : { [b]: number; }
+>{ [b] = 1 } : { [b]: number; }
+>[b] : number
+>b : boolean
+>1 : 1
+
+local n1: number = byBool[true];
+>n1 : number
+>byBool[true] : number
+>byBool : { [b]: number; }
+>true : true
+
+local byTable = { [pt] = "v" };
+>byTable : { [pt]: string; }
+>{ [pt] = "v" } : { [pt]: string; }
+>[pt] : string
+>pt : { n: number; }
+>"v" : "v"
+
+local s1: string = byTable[pt];
+>s1 : string
+>byTable[pt] : string
+>byTable : { [pt]: string; }
+>pt : { n: number; }
+
+// A literal key widens to its base type. An index signature may not be keyed by a
+// literal, so `{ [true] = 1 }` must synthesize `[key: boolean]`, never `[key: true]` --
+// which the grammar rejects and an emitted .d.tlua would not re-parse.
+local byTrue = { [true] = 1 };
+>byTrue : { [x: boolean]: number; }
+>{ [true] = 1 } : { [x: boolean]: number; }
+>[true] : number
+>true : true
+>1 : 1
+
+local n2: number = byTrue[false];
+>n2 : number
+>byTrue[false] : number
+>byTrue : { [x: boolean]: number; }
+>false : false
+
+// Several key domains in one literal, each its own index.
+local mixed = { [b] = 1, [pt] = 2, [s] = 3 };
+>mixed : { [b]: number; [pt]: number; [s]: number; }
+>{ [b] = 1, [pt] = 2, [s] = 3 } : { [b]: number; [pt]: number; [s]: number; }
+>[b] : number
+>b : boolean
+>1 : 1
+>[pt] : number
+>pt : { n: number; }
+>2 : 2
+>[s] : number
+>s : string
+>3 : 3
+
+local n3: number = mixed[true];
+>n3 : number
+>mixed[true] : number
+>mixed : { [b]: number; [pt]: number; [s]: number; }
+>true : true
+
+local n4: number = mixed[pt];
+>n4 : number
+>mixed[pt] : number
+>mixed : { [b]: number; [pt]: number; [s]: number; }
+>pt : { n: number; }
+
+local n5: number = mixed["k"];
+>n5 : number
+>mixed["k"] : number
+>mixed : { [b]: number; [pt]: number; [s]: number; }
+>"k" : "k"
+
+// A computed key is contextually typed by the index it feeds.
+interface BoolIdx { [key: boolean]: number }
+>key : boolean
+
+local ctx: BoolIdx = { [b] = 1 };
+>ctx : BoolIdx
+>{ [b] = 1 } : { [b]: number; }
+>[b] : number
+>b : boolean
+>1 : 1
+
+// A union key spans one index per constituent domain: the member is behind both
+// indexes, and the literal is indexable by the union itself.
+declare sn: string | number;
+>sn : string | number
+
+local byEither = { [sn] = 1 };
+>byEither : { [sn]: number; }
+>{ [sn] = 1 } : { [sn]: number; }
+>[sn] : number
+>sn : string | number
+>1 : 1
+
+local n6: number = byEither[sn];
+>n6 : number
+>byEither[sn] : number
+>byEither : { [sn]: number; }
+>sn : string | number
+
+local n7: number = byEither["x"];
+>n7 : number
+>byEither["x"] : number
+>byEither : { [sn]: number; }
+>"x" : "x"
+
+local n8: number = byEither[1];
+>n8 : number
+>byEither[1] : number
+>byEither : { [sn]: number; }
+>1 : 1
+
+// A member whose key spans the string domain counts against a string index: the named
+// member cannot slip past it through a union-keyed side door.
+declare sb: string | boolean;
+>sb : string | boolean
+
+local bad: { [key: string]: number } = { [sb] = 1, a = "x" };
+>bad : { [key: string]: number; }
+>key : string
+>{ [sb] = 1, a = "x" } : { [sb]: number; a: string; }
+>[sb] : number
+>sb : string | boolean
+>1 : 1
+>a : string
+>"x" : "x"
+
+// A union-keyed member is contextually typed by the indexes it feeds.
+local fm: { [key: string]: (x: number) => number; [key: boolean]: (x: number) => number } = {
+>fm : { [key: string]: (x: number) => number; [key: boolean]: (x: number) => number; }
+>key : string
+>x : number
+>key : boolean
+>x : number
+>{  [sb] = function(x) return x; end,} : { [sb]: (x: number) => number; }
+
+  [sb] = function(x) return x; end,
+>[sb] : (x: number) => number
+>sb : string | boolean
+>function(x) return x; end : (x: number) => number
+>x : number
+>x : number
+
+};
+
+// An `any` key could be a key of any domain, so it feeds string and number alike.
+declare anyKey: any;
+>anyKey : any
+
+local viaAny = { [anyKey] = 5 };
+>viaAny : { [anyKey]: number; }
+>{ [anyKey] = 5 } : { [anyKey]: number; }
+>[anyKey] : number
+>anyKey : any
+>5 : 5
+
+local n9: number = viaAny["x"];
+>n9 : number
+>viaAny["x"] : number
+>viaAny : { [anyKey]: number; }
+>"x" : "x"
+
+local n10: number = viaAny[1];
+>n10 : number
+>viaAny[1] : number
+>viaAny : { [anyKey]: number; }
+>1 : 1
+

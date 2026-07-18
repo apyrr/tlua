@@ -1,0 +1,169 @@
+//// [tests/cases/compiler/tluaLibLuaJIT.tlua] ////
+
+=== tluaLibLuaJIT.tlua ===
+local bitlib = require("bit");
+>bitlib : Symbol(bitlib, Decl(tluaLibLuaJIT.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local ffiLib = require("ffi");
+>ffiLib : Symbol(ffiLib, Decl(tluaLibLuaJIT.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local jitlib = require("jit");
+>jitlib : Symbol(jitlib, Decl(tluaLibLuaJIT.tlua, 2, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local profile = require("jit.profile");
+>profile : Symbol(profile, Decl(tluaLibLuaJIT.tlua, 3, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local newTable = require("table.new");
+>newTable : Symbol(newTable, Decl(tluaLibLuaJIT.tlua, 4, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local buffer = require("string.buffer");
+>buffer : Symbol(buffer, Decl(tluaLibLuaJIT.tlua, 5, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local masked: number = bitlib.band(0xff, 0x0f);
+>masked : Symbol(masked, Decl(tluaLibLuaJIT.tlua, 7, 5))
+>bitlib.band : Symbol(BitLib.band, Decl(lib.luajit.d.tlua, --, --))
+>bitlib : Symbol(bitlib, Decl(tluaLibLuaJIT.tlua, 0, 5))
+>band : Symbol(BitLib.band, Decl(lib.luajit.d.tlua, --, --))
+
+local platform: string = jitlib.os;
+>platform : Symbol(platform, Decl(tluaLibLuaJIT.tlua, 8, 5))
+>jitlib.os : Symbol(JITLib.os, Decl(lib.luajit.d.tlua, --, --))
+>jitlib : Symbol(jitlib, Decl(tluaLibLuaJIT.tlua, 2, 5))
+>os : Symbol(JITLib.os, Decl(lib.luajit.d.tlua, --, --))
+
+local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
+>ctype : Symbol(ctype, Decl(tluaLibLuaJIT.tlua, 9, 5))
+>LuaCType : Symbol(LuaCType, Decl(lib.luajit.d.tlua, --, --))
+>ffiLib.typeof : Symbol(FFILib["typeof"], Decl(lib.luajit.d.tlua, --, --))
+>ffiLib : Symbol(ffiLib, Decl(tluaLibLuaJIT.tlua, 1, 5))
+>typeof : Symbol(FFILib["typeof"], Decl(lib.luajit.d.tlua, --, --))
+
+local memory: LuaCData = ffiLib.new(ctype);
+>memory : Symbol(memory, Decl(tluaLibLuaJIT.tlua, 10, 5))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+>ffiLib.new : Symbol(FFILib["new"], Decl(lib.luajit.d.tlua, --, --))
+>ffiLib : Symbol(ffiLib, Decl(tluaLibLuaJIT.tlua, 1, 5))
+>new : Symbol(FFILib["new"], Decl(lib.luajit.d.tlua, --, --))
+>ctype : Symbol(ctype, Decl(tluaLibLuaJIT.tlua, 9, 5))
+
+local argumentsObject: IArguments;
+>argumentsObject : Symbol(argumentsObject, Decl(tluaLibLuaJIT.tlua, 11, 5))
+>IArguments : Symbol(IArguments, Decl(lib.luajit.d.tlua, --, --))
+
+local constructorFunction: NewableFunction;
+>constructorFunction : Symbol(constructorFunction, Decl(tluaLibLuaJIT.tlua, 12, 5))
+>NewableFunction : Symbol(NewableFunction, Decl(lib.luajit.d.tlua, --, --))
+
+local presized: object = newTable(8, 4);
+>presized : Symbol(presized, Decl(tluaLibLuaJIT.tlua, 13, 5))
+>newTable : Symbol(newTable, Decl(tluaLibLuaJIT.tlua, 4, 5))
+
+local encoded: string = buffer.encode(presized);
+>encoded : Symbol(encoded, Decl(tluaLibLuaJIT.tlua, 14, 5))
+>buffer.encode : Symbol(StringBufferLib.encode, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibLuaJIT.tlua, 5, 5))
+>encode : Symbol(StringBufferLib.encode, Decl(lib.luajit.d.tlua, --, --))
+>presized : Symbol(presized, Decl(tluaLibLuaJIT.tlua, 13, 5))
+
+local randomValue: number = math.random(1, 10);
+>randomValue : Symbol(randomValue, Decl(tluaLibLuaJIT.tlua, 15, 5))
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+local date: LuaDateTable = os.date("*t");
+>date : Symbol(date, Decl(tluaLibLuaJIT.tlua, 16, 5))
+>LuaDateTable : Symbol(LuaDateTable, Decl(lib.luajit.d.tlua, --, --))
+>os.date : Symbol(OSLib.date, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>os : Symbol(os, Decl(lib.luajit.d.tlua, --, --))
+>date : Symbol(OSLib.date, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+local fileKind: "file" | "closed file" | nil = io.type(io.stdout);
+>fileKind : Symbol(fileKind, Decl(tluaLibLuaJIT.tlua, 17, 5))
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io.stdout : Symbol(IOLib.stdout, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>stdout : Symbol(IOLib.stdout, Decl(lib.luajit.d.tlua, --, --))
+
+local asserted, message = assert(1, "ok");
+>asserted : Symbol(asserted, Decl(tluaLibLuaJIT.tlua, 18, 5))
+>message : Symbol(message, Decl(tluaLibLuaJIT.tlua, 18, 15))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+local assertedValue: number = asserted;
+>assertedValue : Symbol(assertedValue, Decl(tluaLibLuaJIT.tlua, 19, 5))
+>asserted : Symbol(asserted, Decl(tluaLibLuaJIT.tlua, 18, 5))
+
+local assertionMessage: string = message;
+>assertionMessage : Symbol(assertionMessage, Decl(tluaLibLuaJIT.tlua, 20, 5))
+>message : Symbol(message, Decl(tluaLibLuaJIT.tlua, 18, 15))
+
+profile.start("f", function(thread, samples, vmstate)
+>profile.start : Symbol(JITProfileLib.start, Decl(lib.luajit.d.tlua, --, --))
+>profile : Symbol(profile, Decl(tluaLibLuaJIT.tlua, 3, 5))
+>start : Symbol(JITProfileLib.start, Decl(lib.luajit.d.tlua, --, --))
+>thread : Symbol(thread, Decl(tluaLibLuaJIT.tlua, 21, 28))
+>samples : Symbol(samples, Decl(tluaLibLuaJIT.tlua, 21, 35))
+>vmstate : Symbol(vmstate, Decl(tluaLibLuaJIT.tlua, 21, 44))
+
+    print(thread, samples, vmstate);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>thread : Symbol(thread, Decl(tluaLibLuaJIT.tlua, 21, 28))
+>samples : Symbol(samples, Decl(tluaLibLuaJIT.tlua, 21, 35))
+>vmstate : Symbol(vmstate, Decl(tluaLibLuaJIT.tlua, 21, 44))
+
+end);
+local first, second = string.find("typed lua", "lua");
+>first : Symbol(first, Decl(tluaLibLuaJIT.tlua, 24, 5))
+>second : Symbol(second, Decl(tluaLibLuaJIT.tlua, 24, 12))
+>string.find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+
+local ok: number = assert(first);
+>ok : Symbol(ok, Decl(tluaLibLuaJIT.tlua, 25, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>first : Symbol(first, Decl(tluaLibLuaJIT.tlua, 24, 5))
+
+local finish: number = assert(second);
+>finish : Symbol(finish, Decl(tluaLibLuaJIT.tlua, 26, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>second : Symbol(second, Decl(tluaLibLuaJIT.tlua, 24, 12))
+
+bitlib.band("wrong", 1);
+>bitlib.band : Symbol(BitLib.band, Decl(lib.luajit.d.tlua, --, --))
+>bitlib : Symbol(bitlib, Decl(tluaLibLuaJIT.tlua, 0, 5))
+>band : Symbol(BitLib.band, Decl(lib.luajit.d.tlua, --, --))
+
+local wrong: string = ffiLib.sizeof(memory);
+>wrong : Symbol(wrong, Decl(tluaLibLuaJIT.tlua, 29, 5))
+>ffiLib.sizeof : Symbol(FFILib.sizeof, Decl(lib.luajit.d.tlua, --, --))
+>ffiLib : Symbol(ffiLib, Decl(tluaLibLuaJIT.tlua, 1, 5))
+>sizeof : Symbol(FFILib.sizeof, Decl(lib.luajit.d.tlua, --, --))
+>memory : Symbol(memory, Decl(tluaLibLuaJIT.tlua, 10, 5))
+
+math.log(8, 2);
+>math.log : Symbol(MathLib.log, Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>log : Symbol(MathLib.log, Decl(lib.luajit.d.tlua, --, --))
+
+string.rep("a", 2, ",");
+>string.rep : Symbol(StringLib.rep, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>rep : Symbol(StringLib.rep, Decl(lib.luajit.d.tlua, --, --))
+
+local notUserdata: LuaUserdata = coroutine.create(function() end);
+>notUserdata : Symbol(notUserdata, Decl(tluaLibLuaJIT.tlua, 32, 5))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+>coroutine.create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+

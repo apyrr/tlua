@@ -1,0 +1,21 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfFunction.tlua ===
+// /*FIND ALL REFS*/function [|func|](x: number) {
+// }
+// [|func|](x)
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfFunction.tlua ===
+// function /*FIND ALL REFS*/[|func|](x: number) {
+// }
+// [|func|](x)
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfFunction.tlua ===
+// function [|func|](x: number) {
+// }
+// /*FIND ALL REFS*/[|func|](x)

@@ -1,0 +1,62 @@
+// === goToDefinition ===
+// === /goToDefinitionAmbiants.tlua ===
+// --- (line: 5) skipped ---
+//     public method();
+// }
+// 
+// /*GOTO DEF*/ambientVar = 1;
+// ambientFunction();
+// local ambientClassVariable = new ambientClass();
+// ambientClass.method();
+// ambientClassVariable.method();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionAmbiants.tlua ===
+// declare ambientVar;
+// <|declare function [|ambientFunction|]();|>
+// declare class ambientClass {
+//     constructor();
+//     static method();
+//     public method();
+// }
+// 
+// ambientVar = 1;
+// /*GOTO DEF*/ambientFunction();
+// local ambientClassVariable = new ambientClass();
+// ambientClass.method();
+// ambientClassVariable.method();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionAmbiants.tlua ===
+// --- (line: 7) skipped ---
+// 
+// ambientVar = 1;
+// ambientFunction();
+// local ambientClassVariable = new /*GOTO DEF*/ambientClass();
+// ambientClass.method();
+// ambientClassVariable.method();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionAmbiants.tlua ===
+// --- (line: 8) skipped ---
+// ambientVar = 1;
+// ambientFunction();
+// local ambientClassVariable = new ambientClass();
+// ambientClass./*GOTO DEF*/method();
+// ambientClassVariable.method();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionAmbiants.tlua ===
+// --- (line: 9) skipped ---
+// ambientFunction();
+// local ambientClassVariable = new ambientClass();
+// ambientClass.method();
+// ambientClassVariable./*GOTO DEF*/method();

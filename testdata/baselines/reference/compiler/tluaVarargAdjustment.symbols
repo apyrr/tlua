@@ -1,0 +1,440 @@
+//// [tests/cases/compiler/tluaVarargAdjustment.tlua] ////
+
+=== tluaVarargAdjustment.tlua ===
+declare function takesNumbers(...: number): void;
+>takesNumbers : Symbol(takesNumbers, Decl(tluaVarargAdjustment.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 0, 30))
+
+declare function takesOne(a: number): void;
+>takesOne : Symbol(takesOne, Decl(tluaVarargAdjustment.tlua, 0, 49))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 1, 26))
+
+declare function takesOneNilable(a: number | nil): void;
+>takesOneNilable : Symbol(takesOneNilable, Decl(tluaVarargAdjustment.tlua, 1, 43))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 2, 33))
+
+declare function takesTwo(a: number, b: number): void;
+>takesTwo : Symbol(takesTwo, Decl(tluaVarargAdjustment.tlua, 2, 56))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 3, 26))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 3, 36))
+
+declare function takesTwoNilable(a: number | nil, b: number): void;
+>takesTwoNilable : Symbol(takesTwoNilable, Decl(tluaVarargAdjustment.tlua, 3, 54))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 4, 33))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 4, 49))
+
+declare function nothing(): void;
+>nothing : Symbol(nothing, Decl(tluaVarargAdjustment.tlua, 4, 67))
+
+declare function pair(): (number, string);
+>pair : Symbol(pair, Decl(tluaVarargAdjustment.tlua, 5, 33))
+
+declare function midRest(): (number, ...string, boolean);
+>midRest : Symbol(midRest, Decl(tluaVarargAdjustment.tlua, 6, 42))
+
+declare function optionalTail(): (number, string?);
+>optionalTail : Symbol(optionalTail, Decl(tluaVarargAdjustment.tlua, 7, 57))
+
+declare key: number;
+>key : Symbol(key, Decl(tluaVarargAdjustment.tlua, 9, 7))
+
+function callArguments(...: number): void
+>callArguments : Symbol(callArguments, Decl(tluaVarargAdjustment.tlua, 9, 20))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 11, 23))
+
+  // Tail position expands to the full pack.
+  takesNumbers(...);
+>takesNumbers : Symbol(takesNumbers, Decl(tluaVarargAdjustment.tlua, 0, 0))
+
+  takesNumbers(1, ...);
+>takesNumbers : Symbol(takesNumbers, Decl(tluaVarargAdjustment.tlua, 0, 0))
+
+  // Non-tail position adjusts to a single first value -- so this is two
+  // arguments, not "the pack then 1". A rest-only pack may be empty, so that
+  // value's type is `number | nil`, which the first parameter rejects.
+  takesTwoNilable(..., 1);
+>takesTwoNilable : Symbol(takesTwoNilable, Decl(tluaVarargAdjustment.tlua, 3, 54))
+
+  takesTwo(..., 1);
+>takesTwo : Symbol(takesTwo, Decl(tluaVarargAdjustment.tlua, 2, 56))
+
+  // Parentheses make a vararg single-valued, with that same `number | nil`, so
+  // the truncation idiom only satisfies nil-accepting targets.
+  takesOneNilable((...));
+>takesOneNilable : Symbol(takesOneNilable, Decl(tluaVarargAdjustment.tlua, 1, 43))
+
+  takesOne((...));
+>takesOne : Symbol(takesOne, Decl(tluaVarargAdjustment.tlua, 0, 49))
+
+  // A parenthesized call is one value too, so the second value is dropped.
+  local onlyFirst: number = (pair());
+>onlyFirst : Symbol(onlyFirst, Decl(tluaVarargAdjustment.tlua, 28, 7))
+>pair : Symbol(pair, Decl(tluaVarargAdjustment.tlua, 5, 33))
+
+  // A tail imposes no arity of its own: Lua neither pads nor complains. What it
+  // supplies is a type question -- a value it may not have is `number | nil`.
+  // So a required `number` rejects it...
+  takesOne(...);
+>takesOne : Symbol(takesOne, Decl(tluaVarargAdjustment.tlua, 0, 49))
+
+  takesTwo(...);
+>takesTwo : Symbol(takesTwo, Decl(tluaVarargAdjustment.tlua, 2, 56))
+
+  // ...while anything that accepts nil takes it, with no exception needed.
+  takesOneNilable(...);
+>takesOneNilable : Symbol(takesOneNilable, Decl(tluaVarargAdjustment.tlua, 1, 43))
+
+  takesTwoNilable(...);
+>takesTwoNilable : Symbol(takesTwoNilable, Decl(tluaVarargAdjustment.tlua, 3, 54))
+
+  // The one arity rule left: a tail that cannot contribute. Every parameter is
+  // already filled, so every value it produces would be discarded (100037).
+  takesOne(1, ...);
+>takesOne : Symbol(takesOne, Decl(tluaVarargAdjustment.tlua, 0, 49))
+
+end
+
+declare function optionalOnly(a?: number): void;
+>optionalOnly : Symbol(optionalOnly, Decl(tluaVarargAdjustment.tlua, 43, 3))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 45, 30))
+
+declare function trailingOptional(a: number, b?: number): void;
+>trailingOptional : Symbol(trailingOptional, Decl(tluaVarargAdjustment.tlua, 45, 48))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 46, 34))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 46, 44))
+
+declare function leadingFixed(prefix: string, ...: number): void;
+>leadingFixed : Symbol(leadingFixed, Decl(tluaVarargAdjustment.tlua, 46, 63))
+>prefix : Symbol(prefix, Decl(tluaVarargAdjustment.tlua, 47, 30))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 47, 45))
+
+function tailIntoParameters(...: number): void
+>tailIntoParameters : Symbol(tailIntoParameters, Decl(tluaVarargAdjustment.tlua, 47, 65))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 49, 28))
+
+  // Every parameter the tail reaches may go without a value, so each receives
+  // `number | nil` -- which is exactly what makes these legal without a special
+  // case for optional parameters.
+  optionalOnly(...);
+>optionalOnly : Symbol(optionalOnly, Decl(tluaVarargAdjustment.tlua, 43, 3))
+
+  trailingOptional(1, ...);
+>trailingOptional : Symbol(trailingOptional, Decl(tluaVarargAdjustment.tlua, 45, 48))
+
+  // A rest parameter absorbs whatever is left, however little, so it receives
+  // the element type unchanged -- no nil, no arity check.
+  takesNumbers(...);
+>takesNumbers : Symbol(takesNumbers, Decl(tluaVarargAdjustment.tlua, 0, 0))
+
+  leadingFixed("x", ...);
+>leadingFixed : Symbol(leadingFixed, Decl(tluaVarargAdjustment.tlua, 46, 63))
+
+  // But a fixed parameter ahead of the rest is still a fixed parameter.
+  leadingFixed(...);
+>leadingFixed : Symbol(leadingFixed, Decl(tluaVarargAdjustment.tlua, 46, 63))
+
+end
+
+function parenthesizedOperand(...: number): void
+>parenthesizedOperand : Symbol(parenthesizedOperand, Decl(tluaVarargAdjustment.tlua, 63, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 65, 30))
+
+  // `(...` opens an arrow parameter list only when a parameter continuation
+  // follows the `...`. An operator after it keeps the vararg an operand of a
+  // parenthesized expression, truncated to its first `number | nil` value.
+  local defaulted: number = (... or 0);
+>defaulted : Symbol(defaulted, Decl(tluaVarargAdjustment.tlua, 69, 7))
+
+  local compared: boolean = (... == 1);
+>compared : Symbol(compared, Decl(tluaVarargAdjustment.tlua, 70, 7))
+
+  // The arrow forms stay arrows.
+  local arrow = (...) => (... or 0);
+>arrow : Symbol(arrow, Decl(tluaVarargAdjustment.tlua, 73, 7))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 73, 17))
+
+  local annotated = (...: number) => 0;
+>annotated : Symbol(annotated, Decl(tluaVarargAdjustment.tlua, 74, 7))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 74, 21))
+
+end
+
+// Return value lists follow the same rules.
+function returnTail(...: string): (string, ...string)
+>returnTail : Symbol(returnTail, Decl(tluaVarargAdjustment.tlua, 75, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 78, 20))
+
+  return "first", ...;
+end
+
+function returnTruncated(...: string): (string | nil, string)
+>returnTruncated : Symbol(returnTruncated, Decl(tluaVarargAdjustment.tlua, 80, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 82, 25))
+
+  return ..., "last";
+end
+
+// An unbounded tail cannot fill a required fixed return value either.
+function returnUnderfilled(...: string): (string, string)
+>returnUnderfilled : Symbol(returnUnderfilled, Decl(tluaVarargAdjustment.tlua, 84, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 87, 27))
+
+  return ...;
+end
+
+function localValueLists(...: number): void
+>localValueLists : Symbol(localValueLists, Decl(tluaVarargAdjustment.tlua, 89, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 91, 25))
+
+  // Tail expansion: both names come out of the pack.
+  local a, b = ...;
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 93, 7))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 93, 10))
+
+  // A non-tail `...` contributes one value; the tail still expands.
+  local c, d = ..., 1;
+>c : Symbol(c, Decl(tluaVarargAdjustment.tlua, 96, 7))
+>d : Symbol(d, Decl(tluaVarargAdjustment.tlua, 96, 10))
+
+  // Fixed value first, tail expands into the rest.
+  local e, f = 1, ...;
+>e : Symbol(e, Decl(tluaVarargAdjustment.tlua, 99, 7))
+>f : Symbol(f, Decl(tluaVarargAdjustment.tlua, 99, 10))
+
+end
+
+function tableConstructors(...: number): void
+>tableConstructors : Symbol(tableConstructors, Decl(tluaVarargAdjustment.tlua, 100, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 102, 27))
+
+  // The last positional entry expands, so the tail lands in the number index.
+  local expanded = {1, ...};
+>expanded : Symbol(expanded, Decl(tluaVarargAdjustment.tlua, 104, 7))
+
+  // A non-tail `...` stores only its first value.
+  local truncated = {..., 1};
+>truncated : Symbol(truncated, Decl(tluaVarargAdjustment.tlua, 107, 7))
+
+  // A void pack in tail position contributes zero values, so this table is
+  // empty -- it is not `{ 1: void }`.
+  local voided = {nothing()};
+>voided : Symbol(voided, Decl(tluaVarargAdjustment.tlua, 111, 7))
+>nothing : Symbol(nothing, Decl(tluaVarargAdjustment.tlua, 4, 67))
+
+  // Calls expand in the tail exactly like varargs.
+  local fromCall = {1, pair()};
+>fromCall : Symbol(fromCall, Decl(tluaVarargAdjustment.tlua, 114, 7))
+>pair : Symbol(pair, Decl(tluaVarargAdjustment.tlua, 5, 33))
+
+end
+
+function tableTailShapes(...: number): void
+>tableTailShapes : Symbol(tableTailShapes, Decl(tluaVarargAdjustment.tlua, 115, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 117, 25))
+
+  // A fixed element *after* an unbounded one has no static index -- it sits
+  // wherever the rest ends -- so it joins the number index type instead of
+  // claiming index 2.
+  local mid = {midRest()};
+>mid : Symbol(mid, Decl(tluaVarargAdjustment.tlua, 121, 7))
+>midRest : Symbol(midRest, Decl(tluaVarargAdjustment.tlua, 6, 42))
+
+  local notBoolean: boolean = mid[2];
+>notBoolean : Symbol(notBoolean, Decl(tluaVarargAdjustment.tlua, 122, 7))
+>mid : Symbol(mid, Decl(tluaVarargAdjustment.tlua, 121, 7))
+
+  // An optional pack element may be absent, so the property it produces is
+  // optional and its type carries nil.
+  local opt = {optionalTail()};
+>opt : Symbol(opt, Decl(tluaVarargAdjustment.tlua, 126, 7))
+>optionalTail : Symbol(optionalTail, Decl(tluaVarargAdjustment.tlua, 7, 57))
+
+  local maybeMissing: string = opt[2];
+>maybeMissing : Symbol(maybeMissing, Decl(tluaVarargAdjustment.tlua, 127, 7))
+>opt : Symbol(opt, Decl(tluaVarargAdjustment.tlua, 126, 7))
+>2 : Symbol(2, Decl(tluaVarargAdjustment.tlua, 126, 15))
+
+  // A computed number key and a pack tail share the number index domain: one
+  // signature covers both, so neither hides the other.
+  local mixed = { [key] = "s", ... };
+>mixed : Symbol(mixed, Decl(tluaVarargAdjustment.tlua, 131, 7))
+>[key] : Symbol([key], Decl(tluaVarargAdjustment.tlua, 131, 17))
+>key : Symbol(key, Decl(tluaVarargAdjustment.tlua, 9, 7))
+
+  local both: string | number = mixed[1];
+>both : Symbol(both, Decl(tluaVarargAdjustment.tlua, 132, 7))
+>mixed : Symbol(mixed, Decl(tluaVarargAdjustment.tlua, 131, 7))
+
+  local notJustNumber: number = mixed[1];
+>notJustNumber : Symbol(notJustNumber, Decl(tluaVarargAdjustment.tlua, 133, 7))
+>mixed : Symbol(mixed, Decl(tluaVarargAdjustment.tlua, 131, 7))
+
+end
+
+// A union of packs is only reachable by INFERENCE. The annotation form does not
+// parse -- a parenthesized return list is committed to before the `|` is seen --
+// so writing `(number, ...number) | string` here would produce two parse errors
+// and a plain pack, quietly testing the opposite of what this section claims.
+function inferredUnionOfPacks(b: boolean, ...: number)
+>inferredUnionOfPacks : Symbol(inferredUnionOfPacks, Decl(tluaVarargAdjustment.tlua, 134, 3))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 140, 30))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 140, 41))
+
+  if b then
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 140, 30))
+
+    return 1, ...;
+  end
+  return "a";
+end
+
+function unionTail(b: boolean): void
+>unionTail : Symbol(unionTail, Decl(tluaVarargAdjustment.tlua, 145, 3))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 147, 19))
+
+  // A union of packs has no single positional shape, so the tail stays one value
+  // rather than expanding -- and must not be READ as a pack: TargetTupleType() on
+  // a union is a nil dereference, which is what used to crash the checker.
+  local t = {inferredUnionOfPacks(b, 1)};
+>t : Symbol(t, Decl(tluaVarargAdjustment.tlua, 151, 7))
+>inferredUnionOfPacks : Symbol(inferredUnionOfPacks, Decl(tluaVarargAdjustment.tlua, 134, 3))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 147, 19))
+
+  local single: string | number = t[1];
+>single : Symbol(single, Decl(tluaVarargAdjustment.tlua, 152, 7))
+>t : Symbol(t, Decl(tluaVarargAdjustment.tlua, 151, 7))
+>1 : Symbol(1, Decl(tluaVarargAdjustment.tlua, 151, 13))
+
+end
+
+function varargOperands(...: number): void
+>varargOperands : Symbol(varargOperands, Decl(tluaVarargAdjustment.tlua, 153, 3))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 155, 24))
+
+  // `...` is an operand like any other: Lua allows it under a unary operator,
+  // and a parenthesized cast is how you narrow the adjusted value.
+  local negated = not ...;
+>negated : Symbol(negated, Decl(tluaVarargAdjustment.tlua, 158, 7))
+
+  local defaulted: number = (... or 0);
+>defaulted : Symbol(defaulted, Decl(tluaVarargAdjustment.tlua, 159, 7))
+
+  local cast = (... as number);
+>cast : Symbol(cast, Decl(tluaVarargAdjustment.tlua, 160, 7))
+
+end
+
+// A pack tail supplies a *type* per parameter position, and every consumer --
+// arity, inference and applicability -- must agree on what that type is. These
+// pin the three that used to disagree.
+
+declare function id<T>(x: T): T;
+>id : Symbol(id, Decl(tluaVarargAdjustment.tlua, 161, 3))
+>T : Symbol(T, Decl(tluaVarargAdjustment.tlua, 167, 20))
+>x : Symbol(x, Decl(tluaVarargAdjustment.tlua, 167, 23))
+>T : Symbol(T, Decl(tluaVarargAdjustment.tlua, 167, 20))
+>T : Symbol(T, Decl(tluaVarargAdjustment.tlua, 167, 20))
+
+declare function bothOf<T>(a: T, b: T): T;
+>bothOf : Symbol(bothOf, Decl(tluaVarargAdjustment.tlua, 167, 32))
+>T : Symbol(T, Decl(tluaVarargAdjustment.tlua, 168, 24))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 168, 27))
+>T : Symbol(T, Decl(tluaVarargAdjustment.tlua, 168, 24))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 168, 32))
+>T : Symbol(T, Decl(tluaVarargAdjustment.tlua, 168, 24))
+>T : Symbol(T, Decl(tluaVarargAdjustment.tlua, 168, 24))
+
+function tailIntoGeneric(...: number): void
+>tailIntoGeneric : Symbol(tailIntoGeneric, Decl(tluaVarargAdjustment.tlua, 168, 42))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 170, 25))
+
+  // Inference must see what the applicability check sees. Inferring from the
+  // element type alone would fix T to `number` and then reject the `number | nil`
+  // the tail actually supplies -- making every generic callee uncallable with the
+  // canonical Lua forward.
+  local inferred: number | nil = id(...);
+>inferred : Symbol(inferred, Decl(tluaVarargAdjustment.tlua, 175, 7))
+>id : Symbol(id, Decl(tluaVarargAdjustment.tlua, 161, 3))
+
+  local pairwise: number | nil = bothOf(...);
+>pairwise : Symbol(pairwise, Decl(tluaVarargAdjustment.tlua, 176, 7))
+>bothOf : Symbol(bothOf, Decl(tluaVarargAdjustment.tlua, 167, 32))
+
+  // A parenthesized tail is exactly one value, so it infers the same way.
+  local truncated: number | nil = id((...));
+>truncated : Symbol(truncated, Decl(tluaVarargAdjustment.tlua, 178, 7))
+>id : Symbol(id, Decl(tluaVarargAdjustment.tlua, 161, 3))
+
+end
+
+declare function takesPair(x: number, y: string): void;
+>takesPair : Symbol(takesPair, Decl(tluaVarargAdjustment.tlua, 179, 3))
+>x : Symbol(x, Decl(tluaVarargAdjustment.tlua, 181, 27))
+>y : Symbol(y, Decl(tluaVarargAdjustment.tlua, 181, 37))
+
+type PrefixedVararg = (a: number, b: string, ...: boolean) => void;
+>PrefixedVararg : Symbol(PrefixedVararg, Decl(tluaVarargAdjustment.tlua, 181, 55))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 183, 23))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 183, 33))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 183, 44))
+
+// A contextually-typed bare `...` takes its pack from the contextual signature,
+// so here the pack has a FIXED PREFIX: `(number, string, ...boolean)`.
+local tailWithFixedPrefix: PrefixedVararg = (...) =>
+>tailWithFixedPrefix : Symbol(tailWithFixedPrefix, Decl(tluaVarargAdjustment.tlua, 187, 5))
+>PrefixedVararg : Symbol(PrefixedVararg, Decl(tluaVarargAdjustment.tlua, 181, 55))
+> : Symbol((Missing), Decl(tluaVarargAdjustment.tlua, 187, 45))
+
+  // The prefix fills both of takesPair's parameters, so the tail is not "unable
+  // to contribute" and there is no arity error: only the *variable* part of the
+  // pack is discarded. Counting the prefix as filled-by-a-fixed-argument used to
+  // report 100037 here and mask any real type error underneath it.
+  takesPair(...);
+>takesPair : Symbol(takesPair, Decl(tluaVarargAdjustment.tlua, 179, 3))
+
+function midRestIntoParameters(): void
+>midRestIntoParameters : Symbol(midRestIntoParameters, Decl(tluaVarargAdjustment.tlua, 192, 17))
+
+  // `(number, ...string, boolean)` always yields at least two values, so the
+  // second parameter can never go without one: it receives `string | boolean`,
+  // not `string | boolean | nil`.
+  takesNumberAndEither(midRest());
+>takesNumberAndEither : Symbol(takesNumberAndEither, Decl(tluaVarargAdjustment.tlua, 202, 3))
+>midRest : Symbol(midRest, Decl(tluaVarargAdjustment.tlua, 6, 42))
+
+  // ...and the trailing fixed element is really checked: a `boolean` can land on
+  // the second parameter when the string run is empty.
+  takesNumberAndString(midRest());
+>takesNumberAndString : Symbol(takesNumberAndString, Decl(tluaVarargAdjustment.tlua, 204, 76))
+>midRest : Symbol(midRest, Decl(tluaVarargAdjustment.tlua, 6, 42))
+
+end
+
+declare function takesNumberAndEither(a: number, b: string | boolean): void;
+>takesNumberAndEither : Symbol(takesNumberAndEither, Decl(tluaVarargAdjustment.tlua, 202, 3))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 204, 38))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 204, 48))
+
+declare function takesNumberAndString(a: number, b: string | nil): void;
+>takesNumberAndString : Symbol(takesNumberAndString, Decl(tluaVarargAdjustment.tlua, 204, 76))
+>a : Symbol(a, Decl(tluaVarargAdjustment.tlua, 205, 38))
+>b : Symbol(b, Decl(tluaVarargAdjustment.tlua, 205, 48))
+
+function voidTail(): void
+>voidTail : Symbol(voidTail, Decl(tluaVarargAdjustment.tlua, 205, 72))
+
+  // A call that returns nothing contributes zero values in tail position, the
+  // same rule `{nothing()}` and `local a, b = nothing()` already follow.
+  takesNothing(nothing());
+>takesNothing : Symbol(takesNothing, Decl(tluaVarargAdjustment.tlua, 212, 3))
+>nothing : Symbol(nothing, Decl(tluaVarargAdjustment.tlua, 4, 67))
+
+  takesNumbers(nothing());
+>takesNumbers : Symbol(takesNumbers, Decl(tluaVarargAdjustment.tlua, 0, 0))
+>nothing : Symbol(nothing, Decl(tluaVarargAdjustment.tlua, 4, 67))
+
+end
+
+declare function takesNothing(): void;
+>takesNothing : Symbol(takesNothing, Decl(tluaVarargAdjustment.tlua, 212, 3))
+

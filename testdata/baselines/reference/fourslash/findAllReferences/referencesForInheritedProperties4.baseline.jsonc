@@ -1,0 +1,42 @@
+// === findAllReferences ===
+// === /referencesForInheritedProperties4.tlua ===
+// class class1 extends class1 {
+//    /*FIND ALL REFS*/doStuff() { }
+//    propName: string;
+// }
+// 
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties4.tlua ===
+// class class1 extends class1 {
+//    doStuff() { }
+//    /*FIND ALL REFS*/propName: string;
+// }
+// 
+// local c: class1;
+// c.doStuff();
+// c.propName;
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties4.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// local c: class1;
+// c./*FIND ALL REFS*/doStuff();
+// c.propName;
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties4.tlua ===
+// --- (line: 4) skipped ---
+// 
+// local c: class1;
+// c.doStuff();
+// c./*FIND ALL REFS*/propName;

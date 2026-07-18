@@ -1,0 +1,107 @@
+//// [tests/cases/compiler/tluaIndexKeyRejected.tlua] ////
+
+=== tluaIndexKeyRejected.tlua ===
+// Two rules survive the widening.
+
+// A key must not be nil: `t[nil]` is an error in Lua, not a lookup (100039).
+interface NilKey { [key: nil]: string }
+>NilKey : Symbol(NilKey, Decl(tluaIndexKeyRejected.tlua, 0, 0))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 3, 20))
+
+interface MaybeNilKey { [key: string | nil]: string }
+>MaybeNilKey : Symbol(MaybeNilKey, Decl(tluaIndexKeyRejected.tlua, 3, 39))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 4, 25))
+
+interface UnknownKey { [key: unknown]: string }
+>UnknownKey : Symbol(UnknownKey, Decl(tluaIndexKeyRejected.tlua, 4, 53))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 5, 24))
+
+interface AnyKey { [key: any]: string }
+>AnyKey : Symbol(AnyKey, Decl(tluaIndexKeyRejected.tlua, 5, 47))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 6, 20))
+
+// A key must not be a literal: one key is a named property, or a mapped type (100036).
+// This is the half of TypeScript's rule that stays -- the *generic* half is gone.
+interface StringLiteralKey { [key: "a"]: string }
+>StringLiteralKey : Symbol(StringLiteralKey, Decl(tluaIndexKeyRejected.tlua, 6, 39))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 10, 30))
+
+interface NumberLiteralKey { [key: 1]: string }
+>NumberLiteralKey : Symbol(NumberLiteralKey, Decl(tluaIndexKeyRejected.tlua, 10, 49))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 11, 30))
+
+interface BooleanLiteralKey { [key: true]: string }
+>BooleanLiteralKey : Symbol(BooleanLiteralKey, Decl(tluaIndexKeyRejected.tlua, 11, 47))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 12, 31))
+
+interface UnionOfLiteralsKey { [key: "a" | "b"]: string }
+>UnionOfLiteralsKey : Symbol(UnionOfLiteralsKey, Decl(tluaIndexKeyRejected.tlua, 12, 51))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 13, 32))
+
+// A table key cannot be nil either (100040), and `unknown` may be nil.
+declare k: string;
+>k : Symbol(k, Decl(tluaIndexKeyRejected.tlua, 16, 7))
+
+local ok = { [k] = 1 };
+>ok : Symbol(ok, Decl(tluaIndexKeyRejected.tlua, 17, 5))
+>[k] : Symbol([k], Decl(tluaIndexKeyRejected.tlua, 17, 12))
+>k : Symbol(k, Decl(tluaIndexKeyRejected.tlua, 16, 7))
+
+local bad = { [nil] = 1 };
+>bad : Symbol(bad, Decl(tluaIndexKeyRejected.tlua, 18, 5))
+>[nil] : Symbol([nil], Decl(tluaIndexKeyRejected.tlua, 18, 13))
+
+declare u: unknown;
+>u : Symbol(u, Decl(tluaIndexKeyRejected.tlua, 19, 7))
+
+local bad2 = { [u] = 1 };
+>bad2 : Symbol(bad2, Decl(tluaIndexKeyRejected.tlua, 20, 5))
+>[u] : Symbol([u], Decl(tluaIndexKeyRejected.tlua, 20, 14))
+>u : Symbol(u, Decl(tluaIndexKeyRejected.tlua, 19, 7))
+
+// Pattern literal keys remain valid: they denote a set of string keys, not one.
+interface PatternKey { [key: `id-${string}`]: number }
+>PatternKey : Symbol(PatternKey, Decl(tluaIndexKeyRejected.tlua, 20, 25))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 23, 24))
+
+declare p: PatternKey;
+>p : Symbol(p, Decl(tluaIndexKeyRejected.tlua, 24, 7))
+>PatternKey : Symbol(PatternKey, Decl(tluaIndexKeyRejected.tlua, 20, 25))
+
+local n: number = p["id-1"];
+>n : Symbol(n, Decl(tluaIndexKeyRejected.tlua, 25, 5))
+>p : Symbol(p, Decl(tluaIndexKeyRejected.tlua, 24, 7))
+
+// A literal that arrives through instantiation widens to its domain rather than
+// keying an index nothing can represent: a template key completed by a type argument
+// becomes a string index, and a literal type argument a string one.
+interface Prefixed<T extends string> { [key: `a${T}`]: number }
+>Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 28))
+>T : Symbol(T, Decl(tluaIndexKeyRejected.tlua, 30, 19))
+>key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 30, 40))
+>T : Symbol(T, Decl(tluaIndexKeyRejected.tlua, 30, 19))
+
+declare pre: Prefixed<"x">;
+>pre : Symbol(pre, Decl(tluaIndexKeyRejected.tlua, 31, 7))
+>Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 28))
+
+local n2: number = pre["ax"];
+>n2 : Symbol(n2, Decl(tluaIndexKeyRejected.tlua, 32, 5))
+>pre : Symbol(pre, Decl(tluaIndexKeyRejected.tlua, 31, 7))
+
+type PK = keyof Prefixed<"x">;
+>PK : Symbol(PK, Decl(tluaIndexKeyRejected.tlua, 32, 29))
+>Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 28))
+
+local pk: PK = "anything";
+>pk : Symbol(pk, Decl(tluaIndexKeyRejected.tlua, 34, 5))
+>PK : Symbol(PK, Decl(tluaIndexKeyRejected.tlua, 32, 29))
+
+declare tl: Table<"a", number>;
+>tl : Symbol(tl, Decl(tluaIndexKeyRejected.tlua, 35, 7))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+local n3: number = tl["b"];
+>n3 : Symbol(n3, Decl(tluaIndexKeyRejected.tlua, 36, 5))
+>tl : Symbol(tl, Decl(tluaIndexKeyRejected.tlua, 35, 7))
+

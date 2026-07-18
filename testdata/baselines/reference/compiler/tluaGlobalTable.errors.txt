@@ -1,0 +1,266 @@
+declarations.tlua(7,5): error TS2304: Cannot find name 'namespace'.
+declarations.tlua(7,15): error TS2819: Namespace name cannot be '_G'.
+dottedFunctionConflict.tlua(2,13): error TS2397: Declaration name conflicts with built-in global identifier '_G'.
+reads.tlua(6,34): error TS2339: Property 'declared' does not exist on type 'typeof _G'.
+reads.tlua(7,4): error TS2339: Property 'declared' does not exist on type 'typeof _G'.
+reads.tlua(8,1): error TS2631: Cannot assign to '_G' because it is a namespace.
+reads.tlua(20,8): error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+reads.tlua(25,8): error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+reads.tlua(26,5): error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+reads.tlua(28,8): error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+reads.tlua(34,5): error TS2304: Cannot find name 'globalThis'.
+reads.tlua(35,33): error TS2304: Cannot find name 'globalThis'.
+reads.tlua(38,4): error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+reads.tlua(45,5): error TS2304: Cannot find name 'localOnly'.
+reads.tlua(54,11): error TS2322: Type 'nil' is not assignable to type 'boolean'.
+reads.tlua(66,11): error TS2322: Type 'nil' is not assignable to type 'boolean'.
+reads.tlua(76,11): error TS2322: Type 'nil' is not assignable to type 'boolean'.
+writes.tlua(13,13): error TS2339: Property 'existingFunction' does not exist on type 'typeof _G'.
+writes.tlua(19,13): error TS2300: Duplicate identifier 'dup'.
+writes.tlua(20,13): error TS2300: Duplicate identifier 'dup'.
+writes.tlua(24,13): error TS2300: Duplicate identifier 'mixedGlobal'.
+writes.tlua(25,4): error TS2300: Duplicate identifier 'mixedGlobal'.
+writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assigned.
+
+
+==== declarations.tlua (2 errors) ====
+    declare global {
+        function use(x: unknown): void;
+        function getMaybeNumber(): number | nil;
+        declare declared: number;
+        declare existingFunction: (x: number) => number;
+        declare hidden: string | nil;
+        namespace _G {
+        ~~~~~~~~~
+!!! error TS2304: Cannot find name 'namespace'.
+                  ~~
+!!! error TS2819: Namespace name cannot be '_G'.
+            declare rejectedEnvironmentMember: number;
+        }
+    }
+    
+==== writes.tlua (6 errors) ====
+    _G.fromDot = 1;
+    _G["fromElement"] = "text";
+    function _G.fromFunction(x: number): number
+        return x;
+    end
+    
+    // A type-only global can share its name with one implicit global function.
+    interface pairedGlobal {}
+    function _G.pairedGlobal(x: number): number
+        return x;
+    end
+    
+    function _G.existingFunction(x: string): string
+                ~~~~~~~~~~~~~~~~
+!!! error TS2339: Property 'existingFunction' does not exist on type 'typeof _G'.
+        return x;
+    end
+    
+    // Collisions with a type-only global recover on the final merged symbol.
+    interface dup {}
+    function _G.dup(): void end
+                ~~~
+!!! error TS2300: Duplicate identifier 'dup'.
+!!! related TS6203 writes.tlua:20:13: 'dup' was also declared here.
+    function _G.dup(): void end
+                ~~~
+!!! error TS2300: Duplicate identifier 'dup'.
+!!! related TS6203 writes.tlua:19:13: 'dup' was also declared here.
+    
+    // Function syntax and ordinary assignment collide when they jointly declare
+    // an otherwise missing global.
+    function _G.mixedGlobal(): void end
+                ~~~~~~~~~~~
+!!! error TS2300: Duplicate identifier 'mixedGlobal'.
+!!! related TS6203 writes.tlua:25:4: 'mixedGlobal' was also declared here.
+    _G.mixedGlobal = 1;
+       ~~~~~~~~~~~
+!!! error TS2300: Duplicate identifier 'mixedGlobal'.
+!!! related TS6203 writes.tlua:24:13: 'mixedGlobal' was also declared here.
+    
+    bareTable = _G.bareTable or {};
+    _G.bareTable.fromQualified = 1;
+    
+    qualifiedTable = _G.qualifiedTable or {};
+    qualifiedTable.fromBare = "text";
+    
+    // Repeated environment self-access still reaches the canonical global table.
+    _G._G.repeatedGlobal = 1;
+    function _G._G.repeatedFunction(x: number): number
+        return x;
+    end
+    
+    // Deep mixed-spelling guards describe the same canonical entity.
+    deepTable = {};
+    _G.deepTable.value = deepTable.value or 1;
+    _G.deepTable.object = deepTable.object or {};
+    _G.deepTable.object.member = "ok";
+    
+    // A same-named lexical local is not the global guard entity.
+    local shadowedGuard = getMaybeNumber();
+    _G.shadowedGuard = shadowedGuard or "default";
+    local pending: string;
+    _G.pending = pending or "default";
+                 ~~~~~~~
+!!! error TS2454: Variable 'pending' is used before being assigned.
+    
+==== reads.tlua (14 errors) ====
+    local n: number = fromDot;
+    local s: string = fromElement;
+    local fnResult: number = fromFunction(1);
+    local pairedResult: number = pairedGlobal(1);
+    local existingFnResult: number = existingFunction(1);
+    local declaredValue: number = _G.declared;
+                                     ~~~~~~~~
+!!! error TS2339: Property 'declared' does not exist on type 'typeof _G'.
+    _G.declared = "wrong";
+       ~~~~~~~~
+!!! error TS2339: Property 'declared' does not exist on type 'typeof _G'.
+    _G = {};
+    ~~
+!!! error TS2631: Cannot assign to '_G' because it is a namespace.
+    local qualifiedMember: number = bareTable.fromQualified;
+    local bareMember: string = _G.qualifiedTable.fromBare;
+    local environment: typeof _G = _G._G;
+    local repeatedValue: number = repeatedGlobal;
+    local repeatedFunctionResult: number = repeatedFunction(1);
+    local deepValue: number = deepTable.value;
+    local deepMember: string = deepTable.object.member;
+    local guardUnion: number | string = _G.shadowedGuard;
+    local dupValue = dup;
+    local mixedValue = mixedGlobal;
+    local printFunction: () => void = _G.print;
+    use(_G.rejectedEnvironmentMember);
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+    
+    // A declared global is a property of the environment under both spellings,
+    // and narrowing one spelling does not leak through a write to the other
+    // (the write itself errors: declared globals are read-only).
+    use(_G.hidden);
+           ~~~~~~
+!!! error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+    use(_G["hidden"]);
+        ~~~~~~~~~~~~
+!!! error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+    if hidden ~= nil then
+        _G.hidden = nil;
+           ~~~~~~
+!!! error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+        local stillNarrowed: string = hidden;
+        use(stillNarrowed);
+    end
+    
+    // `globalThis` is no longer compiler-provided.
+    use(globalThis);
+        ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'globalThis'.
+    type RemovedGlobalThis = typeof globalThis;
+                                    ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'globalThis'.
+    
+    // Deep writes require an existing canonical global root.
+    _G.missing.member = 1;
+       ~~~~~~~
+!!! error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+    
+    // A lexical `_G` is an ordinary table and does not create globals.
+    function shadow(): void
+        local _G = {};
+        _G.localOnly = true;
+    end
+    use(localOnly);
+        ~~~~~~~~~
+!!! error TS2304: Cannot find name 'localOnly'.
+    
+    // Narrowing crosses bare and environment-qualified spellings.
+    maybe = true as boolean | nil;
+    local globalKey: "maybe" = "maybe";
+    if _G.maybe ~= nil then
+        local narrowed: boolean = ((_G.maybe));
+        local narrowedThroughStaticKey: boolean = _G[globalKey];
+        _G[globalKey] = nil;
+        local invalidated: boolean = _G.maybe;
+              ~~~~~~~~~~~
+!!! error TS2322: Type 'nil' is not assignable to type 'boolean'.
+        use(narrowed);
+        use(narrowedThroughStaticKey);
+        use(invalidated);
+    end
+    
+    // Static keys normalize even when the keyed spelling is the guard.
+    reverseMaybe = true as boolean | nil;
+    local reverseGlobalKey: "reverseMaybe" = "reverseMaybe";
+    if _G[reverseGlobalKey] ~= nil then
+        local narrowedBare: boolean = reverseMaybe;
+        reverseMaybe = nil;
+        local invalidatedStaticKey: boolean = _G[reverseGlobalKey];
+              ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type 'nil' is not assignable to type 'boolean'.
+        use(narrowedBare);
+        use(invalidatedStaticKey);
+    end
+    
+    // Repeated `_G` self-access has the same flow identity as the bare global.
+    repeatedMaybe = true as boolean | nil;
+    if _G._G.repeatedMaybe ~= nil then
+        local narrowedRepeatedBare: boolean = repeatedMaybe;
+        repeatedMaybe = nil;
+        local invalidatedRepeated: boolean = _G._G.repeatedMaybe;
+              ~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type 'nil' is not assignable to type 'boolean'.
+        use(narrowedRepeatedBare);
+        use(invalidatedRepeated);
+    end
+    
+    // Assignments mint implicit globals whose narrowing spans both spellings and
+    // shares one flow-cache key. (The var-declared initialized global and the
+    // destructured binding global died with the TS declaration forms.)
+    initializedBareFirst = 1;
+    local initializedBareFirstBare: number = initializedBareFirst;
+    local initializedBareFirstQualified: number = _G.initializedBareFirst;
+    initializedQualifiedFirst = 1;
+    local initializedQualifiedFirstQualified: number = _G.initializedQualifiedFirst;
+    local initializedQualifiedFirstBare: number = initializedQualifiedFirst;
+    
+    // Guard identity uses the same static-key resolution as flow identity.
+    local guardGlobalKey: "guardTable" = "guardTable";
+    guardTable = _G[guardGlobalKey] or {};
+    guardTable.fromStaticGuard = 1;
+    local staticGuardMember: number = _G.guardTable.fromStaticGuard;
+    
+    use(n);
+    use(s);
+    use(fnResult);
+    use(pairedResult);
+    use(existingFnResult);
+    use(declaredValue);
+    use(qualifiedMember);
+    use(bareMember);
+    use(environment);
+    use(repeatedValue);
+    use(repeatedFunctionResult);
+    use(deepValue);
+    use(deepMember);
+    use(guardUnion);
+    use(dupValue);
+    use(mixedValue);
+    use(printFunction);
+    use(initializedBareFirstBare);
+    use(initializedBareFirstQualified);
+    use(initializedQualifiedFirstQualified);
+    use(initializedQualifiedFirstBare);
+    use(staticGuardMember);
+    
+==== conflict.tlua (0 errors) ====
+    // A source global cannot replace the built-in environment symbol.
+    local _G = 1;
+    
+==== dottedFunctionConflict.tlua (1 errors) ====
+    // Replacing the environment through its self-property is the same conflict.
+    function _G._G(): void end
+                ~~
+!!! error TS2397: Declaration name conflicts with built-in global identifier '_G'.
+    

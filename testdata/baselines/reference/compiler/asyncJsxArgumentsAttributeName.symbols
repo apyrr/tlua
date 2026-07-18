@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/asyncJsxArgumentsAttributeName.tlua] ////
+
+=== test.tsx ===
+  interface JsxIntrinsicElements { div: any; }
+>JsxIntrinsicElements : Symbol(JsxIntrinsicElements, Decl(test.tsx, 0, 0))
+>div : Symbol(JsxIntrinsicElements.div, Decl(test.tsx, 0, 34))
+
+async function f() {
+>f : Symbol(f, Decl(test.tsx, 0, 46))
+
+  return <div arguments={42} />;
+>div : Symbol(JsxIntrinsicElements.div, Decl(test.tsx, 0, 34))
+>arguments : Symbol(arguments, Decl(test.tsx, 3, 13))
+}
+

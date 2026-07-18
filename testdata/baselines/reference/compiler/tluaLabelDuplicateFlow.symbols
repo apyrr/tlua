@@ -1,0 +1,41 @@
+//// [tests/cases/compiler/tluaLabelDuplicateFlow.tlua] ////
+
+=== tluaLabelDuplicateFlow.tlua ===
+// A duplicate label is an error, but it must not merge its flow into the first
+// label's join: x stays narrowed to string at the assignment — the nil written
+// later cannot travel "back" through a shared label node.
+declare function use(s: string): void;
+>use : Symbol(use, Decl(tluaLabelDuplicateFlow.tlua, 0, 0))
+>s : Symbol(s, Decl(tluaLabelDuplicateFlow.tlua, 3, 21))
+
+function duplicateNoMerge(x: string | nil): void
+>duplicateNoMerge : Symbol(duplicateNoMerge, Decl(tluaLabelDuplicateFlow.tlua, 3, 38))
+>x : Symbol(x, Decl(tluaLabelDuplicateFlow.tlua, 4, 26))
+
+    if x == nil then return end
+>x : Symbol(x, Decl(tluaLabelDuplicateFlow.tlua, 4, 26))
+
+    ::a::
+    local y: string = x;
+>y : Symbol(y, Decl(tluaLabelDuplicateFlow.tlua, 7, 9))
+>x : Symbol(x, Decl(tluaLabelDuplicateFlow.tlua, 4, 26))
+
+    use(y);
+>use : Symbol(use, Decl(tluaLabelDuplicateFlow.tlua, 0, 0))
+>y : Symbol(y, Decl(tluaLabelDuplicateFlow.tlua, 7, 9))
+
+    x = nil;
+>x : Symbol(x, Decl(tluaLabelDuplicateFlow.tlua, 4, 26))
+
+    ::a::
+end
+
+// Adjacent duplicates must not make the label its own antecedent.
+function adjacentDuplicates(): number
+>adjacentDuplicates : Symbol(adjacentDuplicates, Decl(tluaLabelDuplicateFlow.tlua, 11, 3))
+
+    ::b::
+    ::b::
+    return 1;
+end
+

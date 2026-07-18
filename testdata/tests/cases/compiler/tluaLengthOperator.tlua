@@ -1,0 +1,43 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// Lua's `#` is a unary length operator: a string or a table yields a number.
+
+local ls: number = #"abc";
+
+// `#` composes like any prefix operator.
+local sum: number = #"ab" + #"cd";
+
+// A table works when its type carries a numeric index: an array type or an explicit index
+// signature both qualify.
+function lenArr(arr: number[]): number
+  return #arr;
+end
+function lenIndex(t: { [i: number]: number }): number
+  return #t;
+end
+
+// Errors: a number, a boolean, or a function has no length.
+local e1 = #5;
+local e2 = #true;
+function fn(): void end
+local e3 = #fn;
+
+// A record with no numeric index measures too: Lua returns a border (0 for no
+// array part) for ANY table, so only non-tables reject.
+local rec = { x = 1 };
+local recLen: number = #rec;
+
+// A union measures when every arm does; a non-table arm rejects the whole.
+declare arrOrRec: number[] | { x: number };
+local unionLen: number = #arrOrRec;
+declare strOrRec: string | { x: number };
+local mixedLen: number = #strOrRec;
+declare numOrRec: number | { x: number };
+local e4 = #numOrRec;
+
+// Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
+declare th: LuaThread;
+local e5 = #th;

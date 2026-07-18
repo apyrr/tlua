@@ -1,0 +1,290 @@
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     className?: string;
+// }
+// interface ButtonProps extends ClickableProps {
+//     /*RENAME*/[|onClickRENAME|](event?: React.MouseEvent<HTMLButtonElement>): void;
+// }
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function MainButton(buttonProps: ButtonProps): JSX.Element;
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton [|onClickRENAME|]={()=>{}} />;
+// local opt = <MainButton [|onClickRENAME|]={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     className?: string;
+// }
+// interface ButtonProps extends ClickableProps {
+//     [|onClickRENAME|](event?: React.MouseEvent<HTMLButtonElement>): void;
+// }
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function MainButton(buttonProps: ButtonProps): JSX.Element;
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton /*RENAME*/[|onClickRENAME|]={()=>{}} />;
+// local opt = <MainButton [|onClickRENAME|]={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     className?: string;
+// }
+// interface ButtonProps extends ClickableProps {
+//     [|onClickRENAME|](event?: React.MouseEvent<HTMLButtonElement>): void;
+// }
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function MainButton(buttonProps: ButtonProps): JSX.Element;
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton [|onClickRENAME|]={()=>{}} />;
+// local opt = <MainButton /*RENAME*/[|onClickRENAME|]={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 11) skipped ---
+//     onClick(event?: React.MouseEvent<HTMLButtonElement>): void;
+// }
+// interface LinkProps extends ClickableProps {
+//     /*RENAME*/[|goToRENAME|]: string;
+// }
+// declare function MainButton(buttonProps: ButtonProps): JSX.Element;
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton [|goToRENAME|]="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 11) skipped ---
+//     onClick(event?: React.MouseEvent<HTMLButtonElement>): void;
+// }
+// interface LinkProps extends ClickableProps {
+//     [|goToRENAME|]: string;
+// }
+// declare function MainButton(buttonProps: ButtonProps): JSX.Element;
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton /*RENAME*/[|goToRENAME|]="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function /*RENAME*/[|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function /*RENAME*/[|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function /*RENAME*/[|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = </*RENAME*/[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = </*RENAME*/[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = </*RENAME*/[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = </*RENAME*/[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = </*RENAME*/[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = <[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// declare function [|MainButtonRENAME|](buttonProps: ButtonProps): JSX.Element;
+// declare function [|MainButtonRENAME|](linkProps: LinkProps): JSX.Element;
+// declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <[|MainButtonRENAME|] />;
+// local opt = <[|MainButtonRENAME|] children="chidlren" />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
+// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] goTo="goTo" />;
+// local opt = </*RENAME*/[|MainButtonRENAME|] wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 19) skipped ---
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} /*RENAME*/[|ignore-propRENAME|] />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 21) skipped ---
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton /*RENAME*/[|wrongRENAME|] />;

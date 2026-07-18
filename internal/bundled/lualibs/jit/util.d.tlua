@@ -1,0 +1,40 @@
+interface JITFunctionInfo {
+    addr?: number;
+    linedefined?: number;
+    lastlinedefined?: number;
+    stackslots?: number;
+    params?: number;
+    bytecodes?: number;
+    gcconsts?: number;
+    nconsts?: number;
+    upvalues: number;
+    currentline?: number;
+    isvararg?: boolean;
+    children?: boolean;
+    source?: string;
+    loc?: string;
+    ffid?: number;
+}
+
+interface JITTraceInfo {
+    nins: number;
+    nk: number;
+    link: number;
+    nexit: number;
+    linktype: string;
+}
+
+interface JITUtilLib {
+    funcinfo(fn: LuaFunction, pc?: number): JITFunctionInfo;
+    funcbc(fn: LuaFunction, pc: number): (number?, number?);
+    funck(fn: LuaFunction, index: number): any;
+    funcuvname(fn: LuaFunction, index: number): string | nil;
+    traceinfo(trace: number): JITTraceInfo | nil;
+    traceir(trace: number, reference: number): (number?, number?, number?, number?, number?);
+    tracek(trace: number, index: number): (any?, number?, number?);
+    tracesnap(trace: number, snapshot: number): number[] | nil;
+    tracemc(trace: number): (string?, number?, number?);
+    traceexitstub(trace: number, exitNumber: number): number | nil;
+    traceexitstub(exitNumber: number): number;
+    ircalladdr(index: number): number | nil;
+}

@@ -1,0 +1,109 @@
+// === Smart Selection ===
+local a;
+local b: {
+    /** Comment */ /**/p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+};
+local c;
+
+                   p0        ↲
+                   p0: number↲
+
+                   p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number↲
+
+         {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+} ↲
+
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+};↲
+
+local a;
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+};
+local c;
+
+================================================================================
+
+local a;
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ /**/p1: number
+    /** Comment */ p2: number
+};
+local c;
+
+                   p1        ↲
+                   p1: number↲
+
+                   p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number↲
+
+         {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+} ↲
+
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+};↲
+
+local a;
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+};
+local c;
+
+================================================================================
+
+local a;
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ /**/p2: number
+};
+local c;
+
+                   p2        ↲
+                   p2: number↲
+
+                   p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number↲
+
+         {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+} ↲
+
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+};↲
+
+local a;
+local b: {
+    /** Comment */ p0: number
+    /** Comment */ p1: number
+    /** Comment */ p2: number
+};
+local c;

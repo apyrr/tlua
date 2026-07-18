@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/tluaTablePositionalContextualTyping.tlua] ////
+
+=== tluaTablePositionalContextualTyping.tlua ===
+// Contextual typing by numeric-keyed members.
+interface Pair {
+    1: string;
+>1 : string
+
+    2: number;
+>2 : number
+}
+local p: Pair = { "a", 2 };
+>p : Pair
+>{ "a", 2 } : { 1: string; 2: number; }
+
+local bad: Pair = { 1, "b" };
+>bad : Pair
+>{ 1, "b" } : { 1: number; 2: string; }
+
+// Contextual typing by a numeric index signature.
+local ns: { [i: number]: string } = { "a", "b" };
+>ns : { [i: number]: string; }
+>i : number
+>{ "a", "b" } : { 1: string; 2: string; }
+
+local nbad: { [i: number]: string } = { "a", 1 };
+>nbad : { [i: number]: string; }
+>i : number
+>{ "a", 1 } : { 1: string; 2: number; }
+
+// Excess positional entry against a closed target.
+local excess: { 1: string } = { "a", "b" };
+>excess : { 1: string; }
+>1 : string
+>{ "a", "b" } : { 1: string; 2: string; }
+
+// Contextual parameter typing of a function-expression entry.
+local fns: { 1: (n: number) => number } = { function(n) return n; end };
+>fns : { 1: (n: number) => number; }
+>1 : (n: number) => number
+>n : number
+>{ function(n) return n; end } : { 1: (n: number) => number; }
+>function(n) return n; end : (n: number) => number
+>n : number
+>n : number
+
+local all = {p, bad, ns, nbad, excess, fns};
+>all : { 1: Pair; 2: Pair; 3: { [i: number]: string; }; 4: { [i: number]: string; }; 5: { 1: string; }; 6: { 1: (n: number) => number; }; }
+>{p, bad, ns, nbad, excess, fns} : { 1: Pair; 2: Pair; 3: { [i: number]: string; }; 4: { [i: number]: string; }; 5: { 1: string; }; 6: { 1: (n: number) => number; }; }
+>p : any
+>bad : any
+>ns : any
+>nbad : any
+>excess : any
+>fns : any
+

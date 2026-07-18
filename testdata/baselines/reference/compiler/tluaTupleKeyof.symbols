@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/tluaTupleKeyof.tlua] ////
+
+=== shapes.d.tlua ===
+declare pair: [string, boolean];
+>pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
+
+// The default type argument `"push"` is validated against the constraint
+// `keyof [number, ...T]` while `T` is still generic. A tuple has no `push`
+// member, so this default is not a valid key of the tuple.
+interface KeyBox<T extends unknown[], K extends keyof [number, ...T] = "push"> {
+>KeyBox : Symbol(KeyBox, Decl(shapes.d.tlua, 0, 32))
+>T : Symbol(T, Decl(shapes.d.tlua, 5, 17))
+>K : Symbol(K, Decl(shapes.d.tlua, 5, 37))
+>T : Symbol(T, Decl(shapes.d.tlua, 5, 17))
+
+  key: K;
+>key : Symbol(KeyBox.key, Decl(shapes.d.tlua, 5, 80))
+>K : Symbol(K, Decl(shapes.d.tlua, 5, 37))
+}
+
+=== main.tlua ===
+// Numeric indices and `length` are keys of the tuple; Array method names are not.
+local ok0: keyof typeof pair = 0;
+>ok0 : Symbol(ok0, Decl(main.tlua, 1, 5))
+>pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
+
+local okLen: keyof typeof pair = "length";
+>okLen : Symbol(okLen, Decl(main.tlua, 2, 5))
+>pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
+
+local bad: keyof typeof pair = "push";
+>bad : Symbol(bad, Decl(main.tlua, 3, 5))
+>pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
+
+local es = {ok0, okLen};
+>es : Symbol(es, Decl(main.tlua, 5, 5))
+

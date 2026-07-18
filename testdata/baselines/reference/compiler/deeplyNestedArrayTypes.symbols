@@ -1,0 +1,73 @@
+//// [tests/cases/compiler/deeplyNestedArrayTypes.tlua] ////
+
+=== deeplyNestedArrayTypes.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3426
+
+type AOuter = {
+>AOuter : Symbol(AOuter, Decl(deeplyNestedArrayTypes.tlua, 0, 0))
+
+    inners: AInner[];
+>inners : Symbol(inners, Decl(deeplyNestedArrayTypes.tlua, 2, 15))
+>AInner : Symbol(AInner, Decl(deeplyNestedArrayTypes.tlua, 4, 1))
+}
+type AInner = {
+>AInner : Symbol(AInner, Decl(deeplyNestedArrayTypes.tlua, 4, 1))
+
+    mids: AMid[];
+>mids : Symbol(mids, Decl(deeplyNestedArrayTypes.tlua, 5, 15))
+>AMid : Symbol(AMid, Decl(deeplyNestedArrayTypes.tlua, 7, 1))
+}
+type AMid = {
+>AMid : Symbol(AMid, Decl(deeplyNestedArrayTypes.tlua, 7, 1))
+
+    leaves: ALeaf[];
+>leaves : Symbol(leaves, Decl(deeplyNestedArrayTypes.tlua, 8, 13))
+>ALeaf : Symbol(ALeaf, Decl(deeplyNestedArrayTypes.tlua, 10, 1))
+}
+type ALeaf = {
+>ALeaf : Symbol(ALeaf, Decl(deeplyNestedArrayTypes.tlua, 10, 1))
+
+    id: string;
+>id : Symbol(id, Decl(deeplyNestedArrayTypes.tlua, 11, 14))
+}
+
+type BOuter = {
+>BOuter : Symbol(BOuter, Decl(deeplyNestedArrayTypes.tlua, 13, 1))
+
+    inners: BInner[];
+>inners : Symbol(inners, Decl(deeplyNestedArrayTypes.tlua, 15, 15))
+>BInner : Symbol(BInner, Decl(deeplyNestedArrayTypes.tlua, 17, 1))
+}
+type BInner = {
+>BInner : Symbol(BInner, Decl(deeplyNestedArrayTypes.tlua, 17, 1))
+
+    mids: BMid[];
+>mids : Symbol(mids, Decl(deeplyNestedArrayTypes.tlua, 18, 15))
+>BMid : Symbol(BMid, Decl(deeplyNestedArrayTypes.tlua, 20, 1))
+}
+type BMid = {
+>BMid : Symbol(BMid, Decl(deeplyNestedArrayTypes.tlua, 20, 1))
+
+    leaves: BLeaf[];
+>leaves : Symbol(leaves, Decl(deeplyNestedArrayTypes.tlua, 21, 13))
+>BLeaf : Symbol(BLeaf, Decl(deeplyNestedArrayTypes.tlua, 23, 1))
+}
+type BLeaf = {
+>BLeaf : Symbol(BLeaf, Decl(deeplyNestedArrayTypes.tlua, 23, 1))
+
+    id: number;
+>id : Symbol(id, Decl(deeplyNestedArrayTypes.tlua, 24, 14))
+}
+
+function test(a: AOuter, b: BOuter) {
+>test : Symbol(test, Decl(deeplyNestedArrayTypes.tlua, 26, 1))
+>a : Symbol(a, Decl(deeplyNestedArrayTypes.tlua, 28, 14))
+>AOuter : Symbol(AOuter, Decl(deeplyNestedArrayTypes.tlua, 0, 0))
+>b : Symbol(b, Decl(deeplyNestedArrayTypes.tlua, 28, 24))
+>BOuter : Symbol(BOuter, Decl(deeplyNestedArrayTypes.tlua, 13, 1))
+
+    a = b
+>a : Symbol(a, Decl(deeplyNestedArrayTypes.tlua, 28, 14))
+>b : Symbol(b, Decl(deeplyNestedArrayTypes.tlua, 28, 24))
+}
+

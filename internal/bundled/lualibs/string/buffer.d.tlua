@@ -1,0 +1,28 @@
+interface LuaStringBuffer {
+    put(value: string | number | object, ...: string | number | object): LuaStringBuffer;
+    putf(format: string, ...: string | number | object): LuaStringBuffer;
+    putcdata(value: LuaCData, length: number): LuaStringBuffer;
+    set(value: string | LuaCData, length?: number): LuaStringBuffer;
+    reset(): LuaStringBuffer;
+    free(): void;
+    reserve(size: number): (LuaCData, number);
+    commit(used: number): LuaStringBuffer;
+    skip(length: number): LuaStringBuffer;
+    get(length?: number, ...: number | nil): (string, ...string);
+    tostring(): string;
+    ref(): (LuaCData, number);
+    encode(value: any): LuaStringBuffer;
+    decode(): any;
+}
+
+interface StringBufferOptions {
+    dict?: string[];
+    metatable?: object[];
+}
+
+interface StringBufferLib {
+    new(size?: number, options?: StringBufferOptions): LuaStringBuffer;
+    new(options: StringBufferOptions): LuaStringBuffer;
+    encode(value: any): string;
+    decode(value: string): any;
+}

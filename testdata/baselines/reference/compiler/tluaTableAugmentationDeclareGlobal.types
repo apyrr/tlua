@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/tluaTableAugmentationDeclareGlobal.tlua] ////
+
+=== decl.tlua ===
+declare global {
+>global : any
+
+  interface Shape {
+    x: number;
+>x : number
+  }
+}
+
+=== use.tlua ===
+Shape = {};
+>Shape = {} : {}
+>Shape : {}
+>{} : {}
+
+Shape.tag = 1;
+>Shape.tag = 1 : 1
+>Shape.tag : any
+>Shape : {}
+>tag : any
+>1 : 1
+
+local s: Shape = { x = 1 };
+>s : Shape
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+

@@ -1,0 +1,50 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A function __index answers a read of every key its parameter admits, which is an index
+// signature rather than a property: nothing names the keys it will be asked for.
+
+// An `any` key could be a key of any domain, so it feeds string and number alike -- the
+// rule a computed table key already follows.
+local anyMt = { __index = function(t: object, k: any): string return "x"; end };
+local a = setmetatable({ n = 1 }, anyMt);
+local s1: string = a.whatever;
+local s2: string = a[1];
+local n1: number = a.n;
+
+// A concrete key domain keeps to itself: this table answers number keys only.
+local numMt = { __index = function(t: object, k: number): boolean return true; end };
+local num = setmetatable({ n = 1 }, numMt);
+local b1: boolean = num[3];
+local absent = num.missing;
+
+// A literal key widens to its domain, because an index signature may not be keyed by a
+// literal -- the same widening a computed key gets.
+local litMt = { __index = function(t: object, k: "a"): number return 1; end };
+local lit = setmetatable({ n = 1 }, litMt);
+local l1: number = lit["zzz"];
+
+// A multi-return __index truncates to its first value at the call boundary, as every other
+// call does.
+local packMt = { __index = function(t: object, k: any): (string, number) return "x", 1; end };
+local pack = setmetatable({ n = 1 }, packMt);
+local p1: string = pack.anything;
+
+// Overloads that answer the same key domain both apply: a read of such a key gets whichever
+// one Lua dispatches to.
+declare overloaded: { __index: { (t: object, k: "a"): number; (t: object, k: "b"): string } };
+local ov = setmetatable({ n = 1 }, overloaded);
+local either: number | string = ov.b;
+local notJustNumber: number = ov.b;
+
+// The table's own members still win: a function __index only runs on a miss.
+local own = setmetatable({ n = 1 }, anyMt);
+local o1: number = own.n;
+local o2: string = own.n;
+
+// ...unless the member can be nil, which is the miss.
+declare partial: { v?: number };
+local fallsThrough = setmetatable(partial, anyMt);
+local merged: number | string = fallsThrough.v;

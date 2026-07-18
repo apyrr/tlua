@@ -1,0 +1,21 @@
+// @strict: true
+// @noUnusedLocals: true
+// @noEmit: true
+
+// The name in `x = 1` is a property key, not a value reference: no `x`
+// needs to be in scope.
+local a = { x = 1 };
+local ax = a.x;
+
+// A key spelling a local's name is not a *use* of that local.
+local unused = 1;
+local u = { unused = 2 };
+local uu = u.unused;
+
+// Duplicate keys error across spellings (identifier vs bracket string).
+local d1 = { dup = 1, dup = 2 };
+local d2 = { dup = 1, ["dup"] = 2 };
+local d3 = { ["dup"] = 1, dup = 2 };
+local ds = {d1, d2, d3};
+
+return { ax = ax, uu = uu, ds = ds };

@@ -1,0 +1,407 @@
+// === SignatureHelp ===
+=== /signatureHelpCommentsClassMembers.tlua ===
+// /** This is comment for c1*/
+// class c1 {
+//     /** p1 is property of c1*/
+//     public p1: number;
+//     /** sum with property*/
+//     public p2(/** number to add*/b: number) {
+//         return this.p1 + b;
+//     }
+//     /** getter property 1*/
+//     public get p3() {
+//         return this.p2(this.p1);
+//                        ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*8*/.
+// | ----------------------------------------------------------------------
+//     }
+//     /** setter property 1*/
+//     public set p3(/** this is value*/value: number) {
+//         this.p1 = this.p2(value);
+//                           ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*13*/.
+// | ----------------------------------------------------------------------
+//     }
+//     /** pp1 is property of c1*/
+//     private pp1: number;
+//     /** sum with property*/
+//     private pp2(/** number to add*/b: number) {
+//         return this.p1 + b;
+//     }
+//     /** getter property 2*/
+//     private get pp3() {
+//         return this.pp2(this.pp1);
+//                         ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*20*/.
+// | ----------------------------------------------------------------------
+//     }
+//     /** setter property 2*/
+//     private set pp3( /** this is value*/value: number) {
+//         this.pp1 = this.pp2(value);
+//                             ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*25*/.
+// | ----------------------------------------------------------------------
+//     }
+//     /** Constructor method*/
+//     constructor() {
+//     }
+//     /** s1 is static property of c1*/
+//     static s1: number;
+//     /** static sum with property*/
+//     static s2(/** number to add*/b: number) {
+//         return c1.s1 + b;
+//     }
+//     /** static getter property*/
+//     static get s3() {
+//         return c1.s2(c1.s1);
+//                      ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*35*/.
+// | ----------------------------------------------------------------------
+//     }
+//     /** setter property 3*/
+//     static set s3( /** this is value*/value: number) {
+//         c1.s1 = c1.s2(value);
+//                       ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*42*/.
+// | ----------------------------------------------------------------------
+//     }
+//     public nc_p1: number;
+//     public nc_p2(b: number) {
+//         return this.nc_p1 + b;
+//     }
+//     public get nc_p3() {
+//         return this.nc_p2(this.nc_p1);
+//                           ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*47*/.
+// | ----------------------------------------------------------------------
+//     }
+//     public set nc_p3(value: number) {
+//         this.nc_p1 = this.nc_p2(value);
+//                                 ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*49*/.
+// | ----------------------------------------------------------------------
+//     }
+//     private nc_pp1: number;
+//     private nc_pp2(b: number) {
+//         return this.nc_pp1 + b;
+//     }
+//     private get nc_pp3() {
+//         return this.nc_pp2(this.nc_pp1);
+//                            ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*54*/.
+// | ----------------------------------------------------------------------
+//     }
+//     private set nc_pp3(value: number) {
+//         this.nc_pp1 = this.nc_pp2(value);
+//                                   ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*56*/.
+// | ----------------------------------------------------------------------
+//     }
+//     static nc_s1: number;
+//     static nc_s2(b: number) {
+//         return c1.nc_s1 + b;
+//     }
+//     static get nc_s3() {
+//         return c1.nc_s2(c1.nc_s1);
+//                         ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*61*/.
+// | ----------------------------------------------------------------------
+//     }
+//     static set nc_s3(value: number) {
+//         c1.nc_s1 = c1.nc_s2(value);
+//                             ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*63*/.
+// | ----------------------------------------------------------------------
+//     }
+// }
+// local i1 = new c1();
+//                   ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*65*/.
+// | ----------------------------------------------------------------------
+// local i1_p = i1.p1;
+// local i1_f = i1.p2;
+// local i1_r = i1.p2(20);
+//                    ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*71*/.
+// | ----------------------------------------------------------------------
+// local i1_prop = i1.p3;
+// i1.p3 = i1_prop;
+// local i1_nc_p = i1.nc_p1;
+// local i1_ncf = i1.nc_p2;
+// local i1_ncr = i1.nc_p2(20);
+//                         ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*81*/.
+// | ----------------------------------------------------------------------
+// local i1_ncprop = i1.nc_p3;
+// i1.nc_p3 = i1_ncprop;
+// local i1_s_p = c1.s1;
+// local i1_s_f = c1.s2;
+// local i1_s_r = c1.s2(20);
+//                      ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*92*/.
+// | ----------------------------------------------------------------------
+// local i1_s_prop = c1.s3;
+// c1.s3 = i1_s_prop;
+// local i1_s_nc_p = c1.nc_s1;
+// local i1_s_ncf = c1.nc_s2;
+// local i1_s_ncr = c1.nc_s2(20);
+//                           ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*102*/.
+// | ----------------------------------------------------------------------
+// local i1_s_ncprop = c1.nc_s3;
+// c1.nc_s3 = i1_s_ncprop;
+// local i1_c = c1;
+// 
+// class cProperties {
+//     private val: number;
+//     /** getter only property*/
+//     public get p1() {
+//         return this.val;
+//     }
+//     public get nc_p1() {
+//         return this.val;
+//     }
+//     /**setter only property*/
+//     public set p2(value: number) {
+//         this.val = value;
+//     }
+//     public set nc_p2(value: number) {
+//         this.val = value;
+//     }
+// }
+// local cProperties_i = new cProperties();
+// cProperties_i.p2 = cProperties_i.p1;
+// cProperties_i.nc_p2 = cProperties_i.nc_p1;
+// class cWithConstructorProperty {
+//     /**
+//     * this is class cWithConstructorProperty's constructor
+//     * @param a this is first parameter a
+//     */
+//     constructor(/**more info about a*/public a: number) {
+//         local bbbb = 10;
+//         this.a = a + 2 + bbbb;
+//     }
+// }
+[
+  {
+    "marker": {
+      "Position": 275,
+      "LSPosition": {
+        "line": 10,
+        "character": 23
+      },
+      "Name": "8",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 399,
+      "LSPosition": {
+        "line": 14,
+        "character": 26
+      },
+      "Name": "13",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 656,
+      "LSPosition": {
+        "line": 24,
+        "character": 24
+      },
+      "Name": "20",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 786,
+      "LSPosition": {
+        "line": 28,
+        "character": 28
+      },
+      "Name": "25",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1105,
+      "LSPosition": {
+        "line": 41,
+        "character": 21
+      },
+      "Name": "35",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1224,
+      "LSPosition": {
+        "line": 45,
+        "character": 22
+      },
+      "Name": "42",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1382,
+      "LSPosition": {
+        "line": 52,
+        "character": 26
+      },
+      "Name": "47",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1471,
+      "LSPosition": {
+        "line": 55,
+        "character": 32
+      },
+      "Name": "49",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1637,
+      "LSPosition": {
+        "line": 62,
+        "character": 27
+      },
+      "Name": "54",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1731,
+      "LSPosition": {
+        "line": 65,
+        "character": 34
+      },
+      "Name": "56",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1885,
+      "LSPosition": {
+        "line": 72,
+        "character": 24
+      },
+      "Name": "61",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 1968,
+      "LSPosition": {
+        "line": 75,
+        "character": 28
+      },
+      "Name": "63",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 2002,
+      "LSPosition": {
+        "line": 78,
+        "character": 18
+      },
+      "Name": "65",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 2064,
+      "LSPosition": {
+        "line": 81,
+        "character": 19
+      },
+      "Name": "71",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 2184,
+      "LSPosition": {
+        "line": 86,
+        "character": 24
+      },
+      "Name": "81",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 2304,
+      "LSPosition": {
+        "line": 91,
+        "character": 21
+      },
+      "Name": "92",
+      "Data": {}
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 2434,
+      "LSPosition": {
+        "line": 96,
+        "character": 26
+      },
+      "Name": "102",
+      "Data": {}
+    },
+    "item": null
+  }
+]

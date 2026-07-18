@@ -1,0 +1,200 @@
+//// [tests/cases/compiler/tluaTypeCallIfExhaustive.tlua] ////
+
+=== tluaTypeCallIfExhaustive.tlua ===
+type Mixed = { n: number } | LuaThread | ((a: number) => void) | string | nil;
+>Mixed : Mixed
+>n : number
+>a : number
+
+function clauses(v: Mixed): string
+>clauses : (v: Mixed) => string
+>v : Mixed
+
+  if type(v) == "string" then
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : Mixed
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string
+
+    return s;
+>s : string
+
+  elseif type(v) == "table" or type(v) == "function" then
+>type(v) == "table" or type(v) == "function" : boolean
+>type(v) == "table" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : LuaThread | { n: number; } | ((a: number) => void) | nil
+>"table" : "table"
+>type(v) == "function" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : LuaThread | ((a: number) => void) | nil
+>"function" : "function"
+
+    // An or-grouped condition narrows to the union of its tags.
+    local tf: { n: number } | ((a: number) => void) = v;
+>tf : { n: number; } | ((a: number) => void)
+>n : number
+>a : number
+>v : { n: number; } | ((a: number) => void)
+
+    return "tf";
+>"tf" : "tf"
+
+  elseif type(v) == "thread" then
+>type(v) == "thread" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : LuaThread | nil
+>"thread" : "thread"
+
+    local th: LuaThread = v;
+>th : LuaThread
+>v : LuaThread
+
+    return "thread";
+>"thread" : "thread"
+
+  else
+    // The final else is left with what no other arm handled.
+    local rest: nil = v;
+>rest : nil
+>v : nil
+
+    return "nil";
+>"nil" : "nil"
+
+  end
+end
+
+// Handling every tag in arms without a final else still leaves the fall-out
+// path: the exhaustive-switch return inference did not survive switch's
+// deletion, so the return type gains nil.
+function allTagsNoElse(u: unknown)
+>allTagsNoElse : (u: unknown) => 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | nil
+>u : unknown
+
+  if type(u) == "nil" then return 1
+>type(u) == "nil" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : unknown
+>"nil" : "nil"
+>1 : 1
+
+  elseif type(u) == "boolean" then return 2
+>type(u) == "boolean" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"boolean" : "boolean"
+>2 : 2
+
+  elseif type(u) == "number" then return 3
+>type(u) == "number" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"number" : "number"
+>3 : 3
+
+  elseif type(u) == "string" then return 4
+>type(u) == "string" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"string" : "string"
+>4 : 4
+
+  elseif type(u) == "table" then return 5
+>type(u) == "table" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"table" : "table"
+>5 : 5
+
+  elseif type(u) == "function" then return 6
+>type(u) == "function" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"function" : "function"
+>6 : 6
+
+  elseif type(u) == "thread" then return 7
+>type(u) == "thread" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"thread" : "thread"
+>7 : 7
+
+  elseif type(u) == "userdata" then return 8
+>type(u) == "userdata" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"userdata" : "userdata"
+>8 : 8
+
+  elseif type(u) == "cdata" then return 9
+>type(u) == "cdata" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : {}
+>"cdata" : "cdata"
+>9 : 9
+
+  end
+end
+
+local widened: number = allTagsNoElse(1); // error: number | nil
+>widened : number
+>allTagsNoElse(1) : 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | nil
+>allTagsNoElse : (u: unknown) => 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | nil
+>1 : 1
+
+// The final else of a chain covering a concrete union narrows to never, so an
+// else-based exhaustiveness check types clean.
+function coveredUnion(v: string | LuaThread): number
+>coveredUnion : (v: string | LuaThread) => number
+>v : string | LuaThread
+
+  if type(v) == "string" then
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | LuaThread
+>"string" : "string"
+
+    return 1;
+>1 : 1
+
+  elseif type(v) == "thread" then
+>type(v) == "thread" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : LuaThread
+>"thread" : "thread"
+
+    return 2;
+>2 : 2
+
+  else
+    local n: never = v;
+>n : never
+>v : never
+
+    return 3;
+>3 : 3
+
+  end
+end
+

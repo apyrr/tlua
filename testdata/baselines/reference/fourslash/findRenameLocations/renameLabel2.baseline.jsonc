@@ -1,0 +1,5 @@
+// === findRenameLocations ===
+// === /renameLabel2.tlua ===
+// /*RENAME*/foo: {
+//     break foo;
+// }

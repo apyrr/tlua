@@ -1,0 +1,33 @@
+// === findAllReferences ===
+// === /findAllRefsRootSymbols.tlua ===
+// interface I { /*FIND ALL REFS*/[|x|]: {}; }
+// interface J { x: {}; }
+// declare o: (I | J) & { x: string };
+// o.[|x|];
+
+
+
+// === findAllReferences ===
+// === /findAllRefsRootSymbols.tlua ===
+// interface I { x: {}; }
+// interface J { /*FIND ALL REFS*/[|x|]: {}; }
+// declare o: (I | J) & { x: string };
+// o.[|x|];
+
+
+
+// === findAllReferences ===
+// === /findAllRefsRootSymbols.tlua ===
+// interface I { x: {}; }
+// interface J { x: {}; }
+// declare o: (I | J) & { /*FIND ALL REFS*/[|x|]: string };
+// o.[|x|];
+
+
+
+// === findAllReferences ===
+// === /findAllRefsRootSymbols.tlua ===
+// interface I { [|x|]: {}; }
+// interface J { [|x|]: {}; }
+// declare o: (I | J) & { [|x|]: string };
+// o./*FIND ALL REFS*/[|x|];

@@ -1,0 +1,5 @@
+// === goToDefinition ===
+// === /goToDefinitionShorthandProperty02.tlua ===
+// local x = {
+//     f/*GOTO DEF*/oo
+// }

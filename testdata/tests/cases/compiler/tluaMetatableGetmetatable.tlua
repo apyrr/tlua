@@ -1,0 +1,33 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// getmetatable reads back the metatable a table was paired with, rather than the union its
+// declaration has to fall back on.
+
+local Helpers = { describe = function(self: object): string return "d"; end };
+local obj = setmetatable({ n = 1 }, { __index = Helpers });
+
+local mt = getmetatable(obj);
+local back: string = mt.__index.describe(obj);
+
+// The printed type is the metatable itself.
+local shown: number = mt;
+
+// A table with no metatable the checker knows about keeps the declared result.
+local plain = getmetatable({ n = 1 });
+
+// A union of paired tables answers with the union of their metatables, which is to say a
+// member of one arm is readable only after narrowing, as it is for any other union.
+declare cond: boolean;
+local p1 = setmetatable({ n = 1 }, { __index = { a = 1 } });
+local p2 = setmetatable({ s = "x" }, { __index = { b = "b" } });
+local either = cond and p1 or p2;
+local em = getmetatable(either);
+local eshown: number = em;
+local ea = em.__index.a;
+
+// One arm with no metatable makes the whole union unknown: the value may be that arm.
+local mixed = cond and p1 or { s = "x" };
+local mm = getmetatable(mixed);

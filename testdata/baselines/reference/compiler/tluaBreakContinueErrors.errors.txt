@@ -1,0 +1,44 @@
+tluaBreakContinueErrors.tlua(3,3): error TS1107: Jump target cannot cross function boundary.
+tluaBreakContinueErrors.tlua(8,3): error TS1107: Jump target cannot cross function boundary.
+
+
+==== tluaBreakContinueErrors.tlua (2 errors) ====
+    // break outside any loop is a grammar error.
+    function breakOutside(): void
+      break;
+      ~~~~~~
+!!! error TS1107: Jump target cannot cross function boundary.
+    end
+    
+    // continue outside any loop is a grammar error.
+    function continueOutside(): void
+      continue;
+      ~~~~~~~~~
+!!! error TS1107: Jump target cannot cross function boundary.
+    end
+    
+    // break nested in a Lua if inside a Lua while is fine.
+    function breakNested(flag: boolean): number
+      while true do
+        if flag then
+          break;
+        end
+        flag = true;
+      end
+      return 1;
+    end
+    
+    // continue keeps working inside Lua loops (TS keyword, no rejection guard).
+    function continueInLua(n: number): number
+      local i = 0;
+      local total = 0;
+      while i < n do
+        i = i + 1;
+        if i == 2 then
+          continue;
+        end
+        total = total + i;
+      end
+      return total;
+    end
+    

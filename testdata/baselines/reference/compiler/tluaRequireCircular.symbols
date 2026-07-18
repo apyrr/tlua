@@ -1,0 +1,43 @@
+//// [tests/cases/compiler/tluaRequireCircular.tlua] ////
+
+=== main.tlua ===
+local a = require("a");
+>a : Symbol(a, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local s: string = a.callB();
+>s : Symbol(s, Decl(main.tlua, 1, 5))
+>a.callB : Symbol(callB, Decl(a.tlua, 1, 25))
+>a : Symbol(a, Decl(main.tlua, 0, 5))
+>callB : Symbol(callB, Decl(a.tlua, 1, 25))
+
+=== a.tlua ===
+local b = require("b");
+>b : Symbol(b, Decl(a.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local A = { name = "a" };
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+>name : Symbol(name, Decl(a.tlua, 1, 11))
+
+function A.callB(): string
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+>callB : Symbol(callB, Decl(a.tlua, 1, 25))
+
+  return b.name;
+>b.name : Symbol(name, Decl(b.tlua, 0, 11))
+>b : Symbol(b, Decl(a.tlua, 0, 5))
+>name : Symbol(name, Decl(b.tlua, 0, 11))
+
+end
+return A;
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+
+=== b.tlua ===
+local B = { name = "b" };
+>B : Symbol(B, Decl(b.tlua, 0, 5))
+>name : Symbol(name, Decl(b.tlua, 0, 11))
+
+return B;
+>B : Symbol(B, Decl(b.tlua, 0, 5))
+

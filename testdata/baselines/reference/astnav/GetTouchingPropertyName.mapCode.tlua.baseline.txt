@@ -1,0 +1,1416 @@
+〚Positions: [0, 5]〛
+【TS: Identifier [0, 5)】
+《Go: LocalKeyword [0, 5)》
+1 │《【〚local】》 〛ts = require("namespaces.ts");
+2 │local ChangeTracker = require("textChanges").ChangeTracker;
+3 │
+
+
+〚Positions: [10, 10]〛
+【TS: BinaryExpression [5, 35)】
+《Go: VariableDeclaration [5, 35)》
+1 │local《【 ts =〚 〛require("namespaces.ts")】》;
+2 │local ChangeTracker = require("textChanges").ChangeTracker;
+3 │
+
+
+〚Positions: [37, 42]〛
+【TS: Identifier [36, 42)】
+《Go: LocalKeyword [36, 42)》
+1 │local ts = require("namespaces.ts");《【
+2 │〚local】》 〛ChangeTracker = require("textChanges").ChangeTracker;
+3 │
+4 │/** @internal */
+
+
+〚Positions: [58, 58]〛
+【TS: BinaryExpression [42, 95)】
+《Go: VariableDeclaration [42, 95)》
+1 │local ts = require("namespaces.ts");
+2 │local《【 ChangeTracker =〚 〛require("textChanges").ChangeTracker】》;
+3 │
+4 │/** @internal */
+
+
+〚Positions: [98, 101]〛
+【TS: JSDoc [98, 114)】
+《Go: JSDoc [96, 114)》
+1 │local ts = require("namespaces.ts");
+2 │local ChangeTracker = require("textChanges").ChangeTracker;《
+3 │
+4 │【〚/** 〛@internal */】》
+5 │function mapCode(
+6 │    sourceFile: SourceFile,
+
+
+〚Positions: [102, 102]〛
+【TS: JSDocTag [102, 112)】
+《Go: JSDocUnknownTag [102, 112)》
+2 │local ChangeTracker = require("textChanges").ChangeTracker;
+3 │
+4 │/** 《【〚@〛internal 】》*/
+5 │function mapCode(
+6 │    sourceFile: SourceFile,
+
+
+〚Positions: [112, 112]〛
+【TS: Identifier [103, 111)】
+《Go: JSDoc [96, 114)》
+1 │local ts = require("namespaces.ts");
+2 │local ChangeTracker = require("textChanges").ChangeTracker;《
+3 │
+4 │/** @【internal】 〚*〛/》
+5 │function mapCode(
+6 │    sourceFile: SourceFile,
+
+
+〚Positions: [113, 113]〛
+【TS: JSDoc [98, 114)】
+《Go: JSDoc [96, 114)》
+1 │local ts = require("namespaces.ts");
+2 │local ChangeTracker = require("textChanges").ChangeTracker;《
+3 │
+4 │【/** @internal *〚/〛】》
+5 │function mapCode(
+6 │    sourceFile: SourceFile,
+
+
+〚Positions: [114, 114]〛
+【TS: Identifier [103, 111)】
+《Go: FunctionDeclaration [96, 880)》
+ 1 │local ts = require("namespaces.ts");
+ 2 │local ChangeTracker = require("textChanges").ChangeTracker;《
+ 3 │
+ 4 │/** @【internal】 */〚
+ 5 │〛function mapCode(
+ 6 │    sourceFile: SourceFile,
+ 7 │    contents: string[],
+ 8 │    focusLocations: TextSpan[][] | undefined,
+ 9 │    host: LanguageServiceHost,
+   │........ 12 lines omitted ........
+21 │                    changeTracker,
+22 │                    nodes,
+23 │                    flattenedLocations,
+24 │                );
+25 │            }
+26 │        }》,
+27 │    );
+28 │}
+
+
+〚Positions: [220, 229]〛
+【TS: UndefinedKeyword [219, 229)】
+《Go: NilKeyword [219, 229)》
+6 │    sourceFile: SourceFile,
+7 │    contents: string[],
+8 │    focusLocations: TextSpan[][] |《【 〚undefined】》,〛
+9 │    host: LanguageServiceHost,
+10 │    formatContext: formatting.FormatContext,
+
+
+〚Positions: [492, 497]〛
+【TS: Identifier [479, 497)】
+《Go: LocalKeyword [479, 497)》
+13 │    return textChanges.ChangeTracker.with(
+14 │        { host, formatContext, preferences },
+15 │        changeTracker => {《【
+16 │            〚local】》 〛parsed = contents.map(c => parse(sourceFile, c));
+17 │            local flattenedLocations = focusLocations && flatten(focusLocations);
+18 │            for (local nodes of parsed) {
+
+
+〚Positions: [506, 506]〛
+【TS: BinaryExpression [497, 546)】
+《Go: VariableDeclaration [497, 546)》
+14 │        { host, formatContext, preferences },
+15 │        changeTracker => {
+16 │            local《【 parsed =〚 〛contents.map(c => parse(sourceFile, c))】》;
+17 │            local flattenedLocations = focusLocations && flatten(focusLocations);
+18 │            for (local nodes of parsed) {
+
+
+〚Positions: [560, 565]〛
+【TS: Identifier [547, 565)】
+《Go: LocalKeyword [547, 565)》
+14 │        { host, formatContext, preferences },
+15 │        changeTracker => {
+16 │            local parsed = contents.map(c => parse(sourceFile, c));《【
+17 │            〚local】》 〛flattenedLocations = focusLocations && flatten(focusLocations);
+18 │            for (local nodes of parsed) {
+19 │                placeNodeGroup(
+
+
+〚Positions: [586, 586]〛
+【TS: BinaryExpression [565, 628)】
+《Go: VariableDeclaration [565, 628)》
+15 │        changeTracker => {
+16 │            local parsed = contents.map(c => parse(sourceFile, c));
+17 │            local《【 flattenedLocations =〚 〛focusLocations && flatten(focusLocations)】》;
+18 │            for (local nodes of parsed) {
+19 │                placeNodeGroup(
+
+
+〚Positions: [645, 645]〛
+【TS: ForKeyword [629, 645)】
+《Go: ForOfStatement [629, 668)》
+15 │        changeTracker => {
+16 │            local parsed = contents.map(c => parse(sourceFile, c));
+17 │            local flattenedLocations = focusLocations && flatten(focusLocations);《【
+18 │            for】〚 〛(local nodes of parsed》) {
+19 │                placeNodeGroup(
+20 │                    sourceFile,
+
+
+〚Positions: [647, 652]〛
+【TS: Identifier [647, 652)】
+《Go: LocalKeyword [647, 652)》
+16 │            local parsed = contents.map(c => parse(sourceFile, c));
+17 │            local flattenedLocations = focusLocations && flatten(focusLocations);
+18 │            for (《【〚local】》 〛nodes of parsed) {
+19 │                placeNodeGroup(
+20 │                    sourceFile,
+
+
+〚Positions: [892, 1010]〛
+【TS: JSDoc [892, 1011)】
+《Go: JSDoc [890, 1011)》
+26 │        },
+27 │    );
+28 │}《
+29 │
+30 │【〚/**
+31 │ * Tries to parse something into either "top-level" statements, or into blocks
+32 │ * of class-context definitions.
+33 │ */〛】》
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+
+
+〚Positions: [1280, 1285]〛
+【TS: Identifier [1086, 1285)】
+《Go: LocalKeyword [1086, 1285)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {《【
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    〚local】》 〛nodeKinds = [
+39 │        {
+40 │            parse: () =>
+
+
+〚Positions: [1297, 1297]〛
+【TS: BinaryExpression [1285, 2111)】
+《Go: VariableDeclaration [1285, 2111)》
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local《【 nodeKinds =〚 〛[
+39 │        {
+40 │            parse: () =>
+41 │                createSourceFile(
+42 │                    "__mapcode_content_nodes.tlua",
+43 │                    content,
+   │........ 13 lines omitted ........
+56 │                    /*setParentNodes*/ true,
+57 │                    sourceFile.scriptKind,
+58 │                ),
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ]】》;
+62 │
+63 │    local parsedNodes = [];
+
+
+〚Positions: [1299, 1307]〛
+【TS: ArrayLiteralExpression [1297, 2111)】
+《Go: ElementAccessExpression [1297, 2111)》
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds =《【 [〚
+39 │        〛{
+40 │            parse: () =>
+41 │                createSourceFile(
+42 │                    "__mapcode_content_nodes.tlua",
+43 │                    content,
+   │........ 13 lines omitted ........
+56 │                    /*setParentNodes*/ true,
+57 │                    sourceFile.scriptKind,
+58 │                ),
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ]】》;
+62 │
+63 │    local parsedNodes = [];
+
+
+〚Positions: [1328, 1328]〛
+【TS: PropertyAssignment [1309, 1603)】
+《Go: ObjectLiteralExpression [1299, 1667)》
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [《
+39 │        {【
+40 │            parse:〚 〛() =>
+41 │                createSourceFile(
+42 │                    "__mapcode_content_nodes.tlua",
+43 │                    content,
+44 │                    sourceFile.languageVersion,
+45 │                    /*setParentNodes*/ true,
+46 │                    sourceFile.scriptKind,
+47 │                )】,
+48 │            body: (sf: SourceFile) => sf.statements,
+49 │        }》,
+50 │        {
+51 │            parse: () =>
+
+
+〚Positions: [1622, 1622]〛
+【TS: PropertyAssignment [1604, 1656)】
+《Go: ObjectLiteralExpression [1299, 1667)》
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [《
+39 │        {
+40 │            parse: () =>
+41 │                createSourceFile(
+42 │                    "__mapcode_content_nodes.tlua",
+43 │                    content,
+44 │                    sourceFile.languageVersion,
+45 │                    /*setParentNodes*/ true,
+46 │                    sourceFile.scriptKind,
+47 │                ),【
+48 │            body:〚 〛(sf: SourceFile) => sf.statements】,
+49 │        }》,
+50 │        {
+51 │            parse: () =>
+
+
+〚Positions: [1668, 1676]〛
+【TS: ArrayLiteralExpression [1297, 2111)】
+《Go: BinaryExpression [1299, 2104)》
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds =【 [《
+39 │        {
+40 │            parse: () =>
+41 │                createSourceFile(
+42 │                    "__mapcode_content_nodes.tlua",
+43 │                    content,
+   │........ 12 lines omitted ........
+55 │                    sourceFile.languageVersion,
+56 │                    /*setParentNodes*/ true,
+57 │                    sourceFile.scriptKind,
+58 │                ),
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        }》,
+61 │    ]】;
+62 │
+63 │    local parsedNodes = [];
+
+
+〚Positions: [1697, 1697]〛
+【TS: PropertyAssignment [1678, 2003)】
+《Go: ObjectLiteralExpression [1668, 2104)》
+47 │                ),
+48 │            body: (sf: SourceFile) => sf.statements,
+49 │        },《
+50 │        {【
+51 │            parse:〚 〛() =>
+52 │                createSourceFile(
+53 │                    "__mapcode_class_content_nodes.tlua",
+54 │                    `class __class {\n${content}\n}`,
+55 │                    sourceFile.languageVersion,
+56 │                    /*setParentNodes*/ true,
+57 │                    sourceFile.scriptKind,
+58 │                )】,
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        }》,
+61 │    ];
+62 │
+
+
+〚Positions: [2022, 2022]〛
+【TS: PropertyAssignment [2004, 2093)】
+《Go: ObjectLiteralExpression [1668, 2104)》
+47 │                ),
+48 │            body: (sf: SourceFile) => sf.statements,
+49 │        },《
+50 │        {
+51 │            parse: () =>
+52 │                createSourceFile(
+53 │                    "__mapcode_class_content_nodes.tlua",
+54 │                    `class __class {\n${content}\n}`,
+55 │                    sourceFile.languageVersion,
+56 │                    /*setParentNodes*/ true,
+57 │                    sourceFile.scriptKind,
+58 │                ),【
+59 │            body:〚 〛(cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members】,
+60 │        }》,
+61 │    ];
+62 │
+
+
+〚Positions: [2105, 2109]〛
+【TS: ArrayLiteralExpression [1297, 2111)】
+《Go: ElementAccessExpression [1297, 2111)》
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds =《【 [
+39 │        {
+40 │            parse: () =>
+41 │                createSourceFile(
+42 │                    "__mapcode_content_nodes.tlua",
+43 │                    content,
+   │........ 13 lines omitted ........
+56 │                    /*setParentNodes*/ true,
+57 │                    sourceFile.scriptKind,
+58 │                ),
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },〚
+61 │    〛]】》;
+62 │
+63 │    local parsedNodes = [];
+
+
+〚Positions: [2118, 2123]〛
+【TS: Identifier [2112, 2123)】
+《Go: LocalKeyword [2112, 2123)》
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];《【
+62 │
+63 │    〚local】》 〛parsedNodes = [];
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+
+
+〚Positions: [2137, 2137]〛
+【TS: BinaryExpression [2123, 2140)】
+《Go: VariableDeclaration [2123, 2140)》
+61 │    ];
+62 │
+63 │    local《【 parsedNodes =〚 〛[]】》;
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+
+
+〚Positions: [2139, 2139]〛
+【TS: CloseBracketToken [2139, 2140)】
+《Go: Identifier [2139, 2139)》
+61 │    ];
+62 │
+63 │    local parsedNodes = [》《【〚]〛】;
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+
+
+〚Positions: [2149, 2149]〛
+【TS: ForKeyword [2141, 2149)】
+《Go: ForOfStatement [2141, 2954)》
+61 │    ];
+62 │
+63 │    local parsedNodes = [];《【
+64 │    for】〚 〛(local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );
+83 │    local { body } = parsedNodes[0];
+84 │    return body;》
+85 │}
+86 │
+
+
+〚Positions: [2151, 2156]〛
+【TS: Identifier [2151, 2156)】
+《Go: LocalKeyword [2151, 2156)》
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《【〚local】》 〛{ parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+
+
+〚Positions: [2158, 2158]〛
+【TS: ObjectLiteralExpression [2156, 2172)】
+《Go: Block [2156, 2172)》
+62 │
+63 │    local parsedNodes = [];
+64 │    for (local《【 {〚 〛parse, body }】》 of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+
+
+〚Positions: [2165, 2165]〛
+【TS: ObjectLiteralExpression [2156, 2172)】
+《Go: BinaryExpression [2158, 2170)》
+62 │
+63 │    local parsedNodes = [];
+64 │    for (local【 {《 parse,〚 〛body》 }】 of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+
+
+〚Positions: [2172, 2172]〛
+【TS: ForStatement [2141, 2185)】
+《Go: Block [2151, 2954)》
+61 │    ];
+62 │
+63 │    local parsedNodes = [];【
+64 │    for (《local { parse, body }〚 〛of nodeKinds】) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );
+83 │    local { body } = parsedNodes[0];
+84 │    return body;》
+85 │}
+86 │
+
+
+〚Positions: [2186, 2186]〛
+【TS: Block [1084, 2956)】
+《Go: Block [2151, 2954)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node>【 {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [
+39 │        {
+   │........ 20 lines omitted ........
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《local { parse, body } of nodeKinds)〚 〛{
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );
+83 │    local { body } = parsedNodes[0];
+84 │    return body;》
+85 │}】
+86 │
+87 │function placeNodeGroup(
+
+
+〚Positions: [2197, 2202]〛
+【TS: Identifier [2188, 2202)】
+《Go: LocalKeyword [2188, 2202)》
+62 │
+63 │    local parsedNodes = [];
+64 │    for (local { parse, body } of nodeKinds) {《【
+65 │        〚local】》 〛sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+
+
+〚Positions: [2215, 2215]〛
+【TS: BinaryExpression [2202, 2223)】
+《Go: VariableDeclaration [2202, 2223)》
+63 │    local parsedNodes = [];
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local《【 sourceFile =〚 〛parse()】》;
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+
+
+〚Positions: [2233, 2238]〛
+【TS: Identifier [2224, 2238)】
+《Go: LocalKeyword [2224, 2238)》
+63 │    local parsedNodes = [];
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();《【
+66 │        〚local】》 〛bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+
+
+〚Positions: [2244, 2244]〛
+【TS: BinaryExpression [2238, 2261)】
+《Go: VariableDeclaration [2238, 2261)》
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local《【 bod =〚 〛body(sourceFile)】》;
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+
+
+〚Positions: [2661, 2661]〛
+【TS: PropertyAssignment [2655, 2665)】
+《Go: ObjectLiteralExpression [2642, 2667)》
+72 │        else if (bod.length) {
+73 │            // Otherwise, we'll need to look at others.
+74 │            parsedNodes.push(《{ sourceFile,【 body:〚 〛bod】 }》);
+75 │        }
+76 │    }
+
+
+〚Positions: [2685, 2756]〛
+【TS: Block [1084, 2956)】
+《Go: Block [2151, 2954)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node>【 {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [
+39 │        {
+   │........ 20 lines omitted ........
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );
+83 │    local { body } = parsedNodes[0];
+84 │    return body;》
+85 │}】
+86 │
+87 │function placeNodeGroup(
+
+
+〚Positions: [2900, 2904]〛
+【TS: Block [1084, 2956)】
+《Go: Block [2151, 2954)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node>【 {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [
+39 │        {
+   │........ 20 lines omitted ........
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );〚
+83 │    〛local { body } = parsedNodes[0];
+84 │    return body;》
+85 │}】
+86 │
+87 │function placeNodeGroup(
+
+
+〚Positions: [2905, 2910]〛
+【TS: Identifier [2900, 2910)】
+《Go: LocalKeyword [2900, 2910)》
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );《【
+83 │    〚local】》 〛{ body } = parsedNodes[0];
+84 │    return body;
+85 │}
+
+
+〚Positions: [2919, 2919]〛
+【TS: Block [1084, 2956)】
+《Go: Block [2151, 2954)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node>【 {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [
+39 │        {
+   │........ 20 lines omitted ........
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );
+83 │    local { body }〚 〛= parsedNodes[0];
+84 │    return body;》
+85 │}】
+86 │
+87 │function placeNodeGroup(
+
+
+〚Positions: [2921, 2921]〛
+【TS: Block [1084, 2956)】
+《Go: Block [2151, 2954)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node>【 {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [
+39 │        {
+   │........ 20 lines omitted ........
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );
+83 │    local { body } =〚 〛parsedNodes[0];
+84 │    return body;》
+85 │}】
+86 │
+87 │function placeNodeGroup(
+
+
+〚Positions: [2937, 2941]〛
+【TS: Block [1084, 2956)】
+《Go: Block [2151, 2954)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node>【 {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    local nodeKinds = [
+39 │        {
+   │........ 20 lines omitted ........
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+69 │            return bod;
+   │........ 10 lines omitted ........
+79 │        (a, b) =>
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );
+83 │    local { body } = parsedNodes[0];〚
+84 │    〛return body;》
+85 │}】
+86 │
+87 │function placeNodeGroup(
+
+
+〚Positions: [3736, 3741]〛
+【TS: Identifier [3731, 3741)】
+《Go: LocalKeyword [3731, 3741)》
+114 │    changes: NodeArray<ClassElement> | NodeArray<TypeElement>,
+115 │    focusLocations?: TextSpan[],
+116 │) {《【
+117 │    〚local】》 〛classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
+
+
+〚Positions: [3870, 3871]〛
+【TS: Identifier [3869, 3872)】
+《Go: BarBarToken [3869, 3872)》
+117 │    local classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface = find(originalFile.statements,《【 〚or〛】》(isClassLike, isInterfaceDeclaration));
+120 │    }
+121 │    else {
+
+
+〚Positions: [3872, 3872]〛
+【TS: Identifier [3869, 3872)】
+《Go: OpenParenToken [3872, 3873)》
+117 │    local classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface = find(originalFile.statements,【 or】《〚(〛》isClassLike, isInterfaceDeclaration));
+120 │    }
+121 │    else {
+
+
+〚Positions: [3885, 3885]〛
+【TS: CallExpression [3869, 3909)】
+《Go: BinaryExpression [3873, 3908)》
+117 │    local classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface = find(originalFile.statements,【 or(《isClassLike,〚 〛isInterfaceDeclaration》)】);
+120 │    }
+121 │    else {
+
+
+〚Positions: [4100, 4101]〛
+【TS: Identifier [4083, 4102)】
+《Go: BarBarToken [4083, 4102)》
+122 │        classOrInterface = forEach(focusLocations, location =>
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),《【
+125 │                〚or〛】》(isClassLike, isInterfaceDeclaration),
+126 │            ));
+127 │    }
+
+
+〚Positions: [4102, 4102]〛
+【TS: Identifier [4083, 4102)】
+《Go: OpenParenToken [4102, 4103)》
+122 │        classOrInterface = forEach(focusLocations, location =>
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),【
+125 │                or】《〚(〛》isClassLike, isInterfaceDeclaration),
+126 │            ));
+127 │    }
+
+
+〚Positions: [4115, 4115]〛
+【TS: CallExpression [4083, 4139)】
+《Go: BinaryExpression [4103, 4138)》
+122 │        classOrInterface = forEach(focusLocations, location =>
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),【
+125 │                or(《isClassLike,〚 〛isInterfaceDeclaration》)】,
+126 │            ));
+127 │    }
+
+
+〚Positions: [4255, 4260]〛
+【TS: Identifier [4249, 4260)】
+《Go: LocalKeyword [4249, 4260)》
+130 │        // No class? don't insert.
+131 │        return;
+132 │    }《【
+133 │
+134 │    〚local】》 〛firstMatch = classOrInterface.members.find(member => changes.some(change => matchNode(change, member)));
+135 │    if (firstMatch) {
+136 │        // can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [4273, 4273]〛
+【TS: BinaryExpression [4260, 4364)】
+《Go: VariableDeclaration [4260, 4364)》
+132 │    }
+133 │
+134 │    local《【 firstMatch =〚 〛classOrInterface.members.find(member => changes.some(change => matchNode(change, member)))】》;
+135 │    if (firstMatch) {
+136 │        // can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [4474, 4479]〛
+【TS: Identifier [4387, 4479)】
+《Go: LocalKeyword [4387, 4479)》
+133 │
+134 │    local firstMatch = classOrInterface.members.find(member => changes.some(change => matchNode(change, member)));
+135 │    if (firstMatch) {《【
+136 │        // can't be undefined here, since we know we have at least one match.
+137 │        〚local】》 〛lastMatch = findLast(
+138 │            classOrInterface.members as NodeArray<ClassElement | TypeElement>,
+139 │            member => changes.some(change => matchNode(change, member)),
+
+
+〚Positions: [4491, 4491]〛
+【TS: BinaryExpression [4479, 4664)】
+《Go: VariableDeclaration [4479, 4664)》
+135 │    if (firstMatch) {
+136 │        // can't be undefined here, since we know we have at least one match.
+137 │        local《【 lastMatch =〚 〛findLast(
+138 │            classOrInterface.members as NodeArray<ClassElement | TypeElement>,
+139 │            member => changes.some(change => matchNode(change, member)),
+140 │        )!】》;
+141 │
+142 │        forEach(changes, wipeNode);
+
+
+〚Positions: [5439, 5439]〛
+【TS: ForKeyword [5430, 5439)】
+《Go: ForOfStatement [5430, 6951)》
+171 │        );
+172 │        return;
+173 │    }《【
+174 │
+175 │    for】〚 〛(local location of focusLocations) {
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+    │........ 30 lines omitted ........
+210 │    forEach(changes, wipeNode);
+211 │    changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}
+217 │
+
+
+〚Positions: [5441, 5446]〛
+【TS: Identifier [5441, 5446)】
+《Go: LocalKeyword [5441, 5446)》
+173 │    }
+174 │
+175 │    for (《【〚local】》 〛location of focusLocations) {
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+
+
+〚Positions: [5474, 5474]〛
+【TS: Block [5227, 6953)】
+《Go: Block [5441, 6951)》
+163 │    changes: NodeArray<Statement>,
+164 │    focusLocations?: TextSpan[],
+165 │)【 {
+166 │    if (!focusLocations?.length) {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+171 │        );
+172 │        return;
+173 │    }
+174 │
+175 │    for (《local location of focusLocations)〚 〛{
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+    │........ 30 lines omitted ........
+210 │    forEach(changes, wipeNode);
+211 │    changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}】
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+
+
+〚Positions: [5485, 5490]〛
+【TS: Identifier [5476, 5490)】
+《Go: LocalKeyword [5476, 5490)》
+173 │    }
+174 │
+175 │    for (local location of focusLocations) {《【
+176 │        〚local】》 〛scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>
+
+
+〚Positions: [5498, 5498]〛
+【TS: BinaryExpression [5490, 5795)】
+《Go: VariableDeclaration [5490, 5795)》
+174 │
+175 │    for (local location of focusLocations) {
+176 │        local《【 scope =〚 〛findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+181 │        )】》;
+182 │        if (scope) {
+183 │            local start = scope.statements.find(stmt => changes.some(node => matchNode(node, stmt)));
+
+
+〚Positions: [5643, 5644]〛
+【TS: Identifier [5626, 5645)】
+《Go: BarBarToken [5626, 5645)》
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>《【
+179 │                〚or〛】》(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+181 │        );
+
+
+〚Positions: [5645, 5645]〛
+【TS: Identifier [5626, 5645)】
+《Go: OpenParenToken [5645, 5646)》
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>【
+179 │                or】《〚(〛》isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+181 │        );
+
+
+〚Positions: [5654, 5654]〛
+【TS: CallExpression [5626, 5668)】
+《Go: BinaryExpression [5646, 5667)》
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>【
+179 │                or(《isBlock,〚 〛isSourceFile》)】(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+181 │        );
+
+
+〚Positions: [5675, 5675]〛
+【TS: BinaryExpression [5626, 5784)】
+《Go: BinaryExpression [5645, 5784)》
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>【
+179 │                or《(isBlock, isSourceFile)(block)〚 〛&&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt)))】》,
+181 │        );
+182 │        if (scope) {
+
+
+〚Positions: [5678, 5694]〛
+【TS: BinaryExpression [5626, 5784)】
+《Go: BinaryExpression [5645, 5784)》
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>【
+179 │                or《(isBlock, isSourceFile)(block) &&〚
+180 │                〛some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt)))】》,
+181 │        );
+182 │        if (scope) {
+
+
+〚Positions: [5830, 5835]〛
+【TS: Identifier [5817, 5835)】
+《Go: LocalKeyword [5817, 5835)》
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+181 │        );
+182 │        if (scope) {《【
+183 │            〚local】》 〛start = scope.statements.find(stmt => changes.some(node => matchNode(node, stmt)));
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [5843, 5843]〛
+【TS: BinaryExpression [5835, 5918)】
+《Go: VariableDeclaration [5835, 5918)》
+181 │        );
+182 │        if (scope) {
+183 │            local《【 start =〚 〛scope.statements.find(stmt => changes.some(node => matchNode(node, stmt)))】》;
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [6047, 6052]〛
+【TS: Identifier [5944, 6052)】
+《Go: LocalKeyword [5944, 6052)》
+182 │        if (scope) {
+183 │            local start = scope.statements.find(stmt => changes.some(node => matchNode(node, stmt)));
+184 │            if (start) {《【
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                〚local】》 〛fin = findLast(scope.statements, stmt => changes.some(node => matchNode(node, stmt)))!;
+187 │                forEach(changes, wipeNode);
+188 │                changeTracker.replaceNodeRangeWithNodes(
+
+
+〚Positions: [6058, 6058]〛
+【TS: BinaryExpression [6052, 6139)】
+《Go: VariableDeclaration [6052, 6139)》
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                local《【 fin =〚 〛findLast(scope.statements, stmt => changes.some(node => matchNode(node, stmt)))!】》;
+187 │                forEach(changes, wipeNode);
+188 │                changeTracker.replaceNodeRangeWithNodes(
+
+
+〚Positions: [6429, 6434]〛
+【TS: Block [5227, 6953)】
+《Go: Block [5441, 6951)》
+163 │    changes: NodeArray<Statement>,
+164 │    focusLocations?: TextSpan[],
+165 │)【 {
+166 │    if (!focusLocations?.length) {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+171 │        );
+172 │        return;
+173 │    }
+174 │
+175 │    for (《local location of focusLocations) {
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+    │........ 30 lines omitted ........
+210 │    forEach(changes, wipeNode);
+211 │    changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}】
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+
+
+〚Positions: [6435, 6440]〛
+【TS: Identifier [6429, 6440)】
+《Go: LocalKeyword [6429, 6440)》
+195 │            }
+196 │        }
+197 │    }《【
+198 │
+199 │    〚local】》 〛scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+
+
+〚Positions: [6457, 6457]〛
+【TS: LabeledStatement [6440, 6505)】
+《Go: VariableDeclaration [6440, 6504)》
+197 │    }
+198 │
+199 │    local《【 scopeStatements:〚 〛NodeArray<Statement> = originalFile.statements》;】
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+
+
+〚Positions: [6478, 6478]〛
+【TS: BinaryExpression [6457, 6504)】
+《Go: VariableDeclaration [6440, 6504)》
+197 │    }
+198 │
+199 │    local《 scopeStatements:【 NodeArray<Statement>〚 〛= originalFile.statements】》;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+
+
+〚Positions: [6480, 6480]〛
+【TS: BinaryExpression [6457, 6504)】
+《Go: VariableDeclaration [6440, 6504)》
+197 │    }
+198 │
+199 │    local《 scopeStatements:【 NodeArray<Statement> =〚 〛originalFile.statements】》;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+
+
+〚Positions: [6505, 6509]〛
+【TS: Block [5227, 6953)】
+《Go: Block [5441, 6951)》
+163 │    changes: NodeArray<Statement>,
+164 │    focusLocations?: TextSpan[],
+165 │)【 {
+166 │    if (!focusLocations?.length) {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+171 │        );
+172 │        return;
+173 │    }
+174 │
+175 │    for (《local location of focusLocations) {
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+    │........ 30 lines omitted ........
+210 │    forEach(changes, wipeNode);
+211 │    changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}】
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+
+
+〚Positions: [6513, 6513]〛
+【TS: ForKeyword [6505, 6513)】
+《Go: ForOfStatement [6505, 6951)》
+197 │    }
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;《【
+200 │    for】〚 〛(local location of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+203 │            isBlock,
+204 │        );
+205 │        if (block) {
+    │........ 5 lines omitted ........
+210 │    forEach(changes, wipeNode);
+211 │    changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}
+217 │
+
+
+〚Positions: [6515, 6520]〛
+【TS: Identifier [6515, 6520)】
+《Go: LocalKeyword [6515, 6520)》
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (《【〚local】》 〛location of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+
+
+〚Positions: [6548, 6548]〛
+【TS: Block [5227, 6953)】
+《Go: Block [6515, 6951)》
+163 │    changes: NodeArray<Statement>,
+164 │    focusLocations?: TextSpan[],
+165 │)【 {
+166 │    if (!focusLocations?.length) {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+    │........ 25 lines omitted ........
+195 │            }
+196 │        }
+197 │    }
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (《local location of focusLocations)〚 〛{
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+203 │            isBlock,
+204 │        );
+205 │        if (block) {
+    │........ 5 lines omitted ........
+210 │    forEach(changes, wipeNode);
+211 │    changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}】
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+
+
+〚Positions: [6559, 6564]〛
+【TS: Identifier [6550, 6564)】
+《Go: LocalKeyword [6550, 6564)》
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {《【
+201 │        〚local】》 〛block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+203 │            isBlock,
+
+
+〚Positions: [6572, 6572]〛
+【TS: BinaryExpression [6564, 6679)】
+《Go: VariableDeclaration [6564, 6679)》
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {
+201 │        local《【 block =〚 〛findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+203 │            isBlock,
+204 │        )】》;
+205 │        if (block) {
+206 │            scopeStatements = block.statements;
+
+
+〚Positions: [6784, 6788]〛
+【TS: Block [5227, 6953)】
+《Go: Block [6515, 6951)》
+163 │    changes: NodeArray<Statement>,
+164 │    focusLocations?: TextSpan[],
+165 │)【 {
+166 │    if (!focusLocations?.length) {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+    │........ 25 lines omitted ........
+195 │            }
+196 │        }
+197 │    }
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (《local location of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+203 │            isBlock,
+204 │        );
+205 │        if (block) {
+    │........ 5 lines omitted ........
+210 │    〛forEach(changes, wipeNode);
+211 │    changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}】
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+
+
+〚Positions: [6816, 6820]〛
+【TS: Block [5227, 6953)】
+《Go: Block [6515, 6951)》
+163 │    changes: NodeArray<Statement>,
+164 │    focusLocations?: TextSpan[],
+165 │)【 {
+166 │    if (!focusLocations?.length) {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+    │........ 25 lines omitted ........
+195 │            }
+196 │        }
+197 │    }
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (《local location of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+203 │            isBlock,
+204 │        );
+205 │        if (block) {
+    │........ 5 lines omitted ........
+210 │    forEach(changes, wipeNode);〚
+211 │    〛changeTracker.insertNodesAfter(
+212 │        originalFile,
+213 │        scopeStatements[scopeStatements.length - 1],
+214 │        changes,
+215 │    );》
+216 │}】
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+
+
+〚Positions: [7018, 7018]〛
+【TS: TildeToken [7017, 7019)】
+《Go: TildeEqualsToken [7017, 7020)》
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+219 │    if (a.kind《【 〚~〛】=》 b.kind) {
+220 │        return false;
+221 │    }
+
+
+〚Positions: [7019, 7019]〛
+【TS: EqualsToken [7019, 7020)】
+《Go: TildeEqualsToken [7017, 7020)》
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+219 │    if (a.kind《 ~【〚=〛】》 b.kind) {
+220 │        return false;
+221 │    }
+
+
+〚Positions: [7020, 7020]〛
+【TS: Block [7000, 8550)】
+《Go: BinaryExpression [7011, 7027)》
+216 │}
+217 │
+218 │function matchNode(a: Node, b: Node): boolean【 {
+219 │    if (《a.kind ~=〚 〛b.kind》) {
+220 │        return false;
+221 │    }
+222 │
+223 │    if (a.kind == SyntaxKind.Constructor) {
+224 │        return a.kind == b.kind;
+    │........ 46 lines omitted ........
+270 │    if (a.getText() == b.getText()) {
+271 │        return true;
+272 │    }
+273 │
+274 │    return false;
+275 │}】
+276 │
+277 │function wipeNode(node: Mutable<Node>) {
+
+
+〚Positions: [7028, 7028]〛
+【TS: Block [7000, 8550)】
+《Go: IfStatement [7002, 7058)》
+216 │}
+217 │
+218 │function matchNode(a: Node, b: Node): boolean【 {《
+219 │    if (a.kind ~= b.kind)〚 〛{
+220 │        return false;
+221 │    }》
+222 │
+223 │    if (a.kind == SyntaxKind.Constructor) {
+224 │        return a.kind == b.kind;
+225 │    }
+226 │
+    │........ 44 lines omitted ........
+270 │    if (a.getText() == b.getText()) {
+271 │        return true;
+272 │    }
+273 │
+274 │    return false;
+275 │}】
+276 │
+277 │function wipeNode(node: Mutable<Node>) {
+
+
+〚Positions: [8641, 8650]〛
+【TS: Identifier [8640, 8650)】
+《Go: NilKeyword [8640, 8650)》
+277 │function wipeNode(node: Mutable<Node>) {
+278 │    resetNodePositions(node);
+279 │    node.parent =《【 〚undefined】》!〛;
+280 │}
+281 │

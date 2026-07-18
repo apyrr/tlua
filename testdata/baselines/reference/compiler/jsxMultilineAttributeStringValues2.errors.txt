@@ -1,0 +1,41 @@
+jsxMultilineAttributeStringValues2.tsx(1,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxMultilineAttributeStringValues2.tsx(5,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxMultilineAttributeStringValues2.tsx(9,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxMultilineAttributeStringValues2.tsx(14,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+
+
+==== jsxMultilineAttributeStringValues2.tsx (4 errors) ====
+    local a = <div className= "foo
+              ~~~~~~~~~~~~~~~~~~~~
+    
+    
+     bar" />;
+    ~~~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    
+    local b = <div className=	"foo
+              ~~~~~~~~~~~~~~~~~~~~
+    
+    
+     bar" />;
+    ~~~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    
+    local c = <div className=
+              ~~~~~~~~~~~~~~~
+    "foo
+    ~~~~
+    
+    
+     bar" />;
+    ~~~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    
+    local d = <div className=   "foo
+              ~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+     bar" />;
+    ~~~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    

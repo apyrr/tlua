@@ -1,0 +1,9 @@
+// === findRenameLocations ===
+// === /renameStringLiteralTypes4.tlua ===
+// interface I {
+//     "[|Prop 1RENAME|]": string;
+// }
+// 
+// declare fn: <K extends keyof I>(p: K) => void
+// 
+// fn("[|Prop 1RENAME|]"/*RENAME*/)

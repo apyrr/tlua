@@ -1,0 +1,21 @@
+//// [tests/cases/compiler/reachabilityChecksIgnored.tlua] ////
+
+=== reachabilityChecksIgnored.tlua ===
+function a() {
+>a : Symbol(a, Decl(reachabilityChecksIgnored.tlua, 0, 0))
+
+    throw new Error("");
+
+    // @ts-ignore
+    console.log("unreachable");
+}
+
+function b() {
+>b : Symbol(b, Decl(reachabilityChecksIgnored.tlua, 5, 1))
+
+    throw new Error("");
+
+    // @ts-expect-error
+    console.log("unreachable");
+}
+

@@ -1,0 +1,205 @@
+//// [tests/cases/compiler/tluaLuaTruthiness.tlua] ////
+
+=== tluaLuaTruthiness.tlua ===
+// In Lua only `nil` and `false` are falsy. `0`, `""` and NaN are truthy.
+
+declare s: string;
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+declare n: number;
+>n : Symbol(n, Decl(tluaLuaTruthiness.tlua, 3, 7))
+
+declare empty: "";
+>empty : Symbol(empty, Decl(tluaLuaTruthiness.tlua, 4, 7))
+
+declare zero: 0;
+>zero : Symbol(zero, Decl(tluaLuaTruthiness.tlua, 5, 7))
+
+declare maybe: string | nil;
+>maybe : Symbol(maybe, Decl(tluaLuaTruthiness.tlua, 6, 7))
+
+declare flag: boolean;
+>flag : Symbol(flag, Decl(tluaLuaTruthiness.tlua, 7, 7))
+
+// A string is always truthy, so testing one narrows nothing and the else branch
+// is unreachable.
+function narrowString(): void
+>narrowString : Symbol(narrowString, Decl(tluaLuaTruthiness.tlua, 7, 22))
+
+  if s then
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+    local inThen: string = s;
+>inThen : Symbol(inThen, Decl(tluaLuaTruthiness.tlua, 13, 9))
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+  else
+    local inElse: never = s;
+>inElse : Symbol(inElse, Decl(tluaLuaTruthiness.tlua, 15, 9))
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+  end
+end
+
+// Same for numbers: `0 | 1` keeps both constituents.
+function narrowNumber(x: 0 | 1): void
+>narrowNumber : Symbol(narrowNumber, Decl(tluaLuaTruthiness.tlua, 17, 3))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 20, 22))
+
+  if x then
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 20, 22))
+
+    local kept: 0 | 1 = x;
+>kept : Symbol(kept, Decl(tluaLuaTruthiness.tlua, 22, 9))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 20, 22))
+
+  end
+end
+
+// `nil` is still falsy, so absence still narrows.
+function narrowNil(): void
+>narrowNil : Symbol(narrowNil, Decl(tluaLuaTruthiness.tlua, 24, 3))
+
+  if maybe then
+>maybe : Symbol(maybe, Decl(tluaLuaTruthiness.tlua, 6, 7))
+
+    local present: string = maybe;
+>present : Symbol(present, Decl(tluaLuaTruthiness.tlua, 29, 9))
+>maybe : Symbol(maybe, Decl(tluaLuaTruthiness.tlua, 6, 7))
+
+  end
+end
+
+// `false` is still falsy.
+function narrowBoolean(): void
+>narrowBoolean : Symbol(narrowBoolean, Decl(tluaLuaTruthiness.tlua, 31, 3))
+
+  if flag then
+>flag : Symbol(flag, Decl(tluaLuaTruthiness.tlua, 7, 7))
+
+    local t: true = flag;
+>t : Symbol(t, Decl(tluaLuaTruthiness.tlua, 36, 9))
+>flag : Symbol(flag, Decl(tluaLuaTruthiness.tlua, 7, 7))
+
+  else
+    local f: false = flag;
+>f : Symbol(f, Decl(tluaLuaTruthiness.tlua, 38, 9))
+>flag : Symbol(flag, Decl(tluaLuaTruthiness.tlua, 7, 7))
+
+  end
+end
+
+// `not` on a truthy value is `false`.
+local notZero: false = not zero;
+>notZero : Symbol(notZero, Decl(tluaLuaTruthiness.tlua, 43, 5))
+>zero : Symbol(zero, Decl(tluaLuaTruthiness.tlua, 5, 7))
+
+local notEmpty: false = not empty;
+>notEmpty : Symbol(notEmpty, Decl(tluaLuaTruthiness.tlua, 44, 5))
+>empty : Symbol(empty, Decl(tluaLuaTruthiness.tlua, 4, 7))
+
+local notString: false = not s;
+>notString : Symbol(notString, Decl(tluaLuaTruthiness.tlua, 45, 5))
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+local notFalse: true = not false;
+>notFalse : Symbol(notFalse, Decl(tluaLuaTruthiness.tlua, 46, 5))
+
+// Through a name, so the syntactic always-falsy check does not fire on the
+// `nil` literal itself.
+declare nothing: nil;
+>nothing : Symbol(nothing, Decl(tluaLuaTruthiness.tlua, 49, 7))
+
+local notNil: true = not nothing;
+>notNil : Symbol(notNil, Decl(tluaLuaTruthiness.tlua, 50, 5))
+>nothing : Symbol(nothing, Decl(tluaLuaTruthiness.tlua, 49, 7))
+
+// `and` yields its right operand whenever the left is always truthy.
+local and1: number = zero and n;
+>and1 : Symbol(and1, Decl(tluaLuaTruthiness.tlua, 53, 5))
+>zero : Symbol(zero, Decl(tluaLuaTruthiness.tlua, 5, 7))
+>n : Symbol(n, Decl(tluaLuaTruthiness.tlua, 3, 7))
+
+local and2: number = empty and n;
+>and2 : Symbol(and2, Decl(tluaLuaTruthiness.tlua, 54, 5))
+>empty : Symbol(empty, Decl(tluaLuaTruthiness.tlua, 4, 7))
+>n : Symbol(n, Decl(tluaLuaTruthiness.tlua, 3, 7))
+
+local and3: string | false = flag and s;
+>and3 : Symbol(and3, Decl(tluaLuaTruthiness.tlua, 55, 5))
+>flag : Symbol(flag, Decl(tluaLuaTruthiness.tlua, 7, 7))
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+// `or` yields its left operand whenever that operand is always truthy.
+local or1: "" = empty or n;
+>or1 : Symbol(or1, Decl(tluaLuaTruthiness.tlua, 58, 5))
+>empty : Symbol(empty, Decl(tluaLuaTruthiness.tlua, 4, 7))
+>n : Symbol(n, Decl(tluaLuaTruthiness.tlua, 3, 7))
+
+local or2: 0 = zero or s;
+>or2 : Symbol(or2, Decl(tluaLuaTruthiness.tlua, 59, 5))
+>zero : Symbol(zero, Decl(tluaLuaTruthiness.tlua, 5, 7))
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+local or3: string = maybe or s;
+>or3 : Symbol(or3, Decl(tluaLuaTruthiness.tlua, 60, 5))
+>maybe : Symbol(maybe, Decl(tluaLuaTruthiness.tlua, 6, 7))
+>s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
+
+// `??` is unaffected: it tests for absence, not falsiness.
+local nullish1: "" = empty ?? "other";
+>nullish1 : Symbol(nullish1, Decl(tluaLuaTruthiness.tlua, 63, 5))
+>empty : Symbol(empty, Decl(tluaLuaTruthiness.tlua, 4, 7))
+
+local nullish2: 0 = zero ?? 1;
+>nullish2 : Symbol(nullish2, Decl(tluaLuaTruthiness.tlua, 64, 5))
+>zero : Symbol(zero, Decl(tluaLuaTruthiness.tlua, 5, 7))
+
+local nullish3: string = maybe ?? "other";
+>nullish3 : Symbol(nullish3, Decl(tluaLuaTruthiness.tlua, 65, 5))
+>maybe : Symbol(maybe, Decl(tluaLuaTruthiness.tlua, 6, 7))
+
+// A `while` over a number can only be left by `break`, since no number is falsy.
+function loopExit(x: number): number
+>loopExit : Symbol(loopExit, Decl(tluaLuaTruthiness.tlua, 65, 42))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+
+  while x do
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+
+    if x == 3 then
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+
+      break;
+    end
+    if x == 5 then
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+
+      break;
+    end
+  end
+  // Only the values it broke on survive.
+  local after: 3 | 5 = x;
+>after : Symbol(after, Decl(tluaLuaTruthiness.tlua, 78, 7))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+
+  return after;
+>after : Symbol(after, Decl(tluaLuaTruthiness.tlua, 78, 7))
+
+end
+
+// Literal conditions: the JS-era `while(0)`/`while(1)` exemption is retired.
+// `0` no longer means "loop never", so a numeric literal condition is reported
+// always-truthy exactly like a string literal.
+function literalConditions(): void
+>literalConditions : Symbol(literalConditions, Decl(tluaLuaTruthiness.tlua, 80, 3))
+
+  while 1 do
+    break;
+  end
+  if 0 then
+  end
+  if "" then
+  end
+end
+

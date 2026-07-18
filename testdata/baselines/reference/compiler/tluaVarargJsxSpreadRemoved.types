@@ -1,0 +1,69 @@
+//// [tests/cases/compiler/tluaVarargJsxSpreadRemoved.tsx] ////
+
+=== tluaVarargJsxSpreadRemoved.tsx ===
+interface JsxElement {}
+interface JsxElementChildrenAttribute { children: {}; }
+>children : {}
+
+interface JsxIntrinsicElements {
+    div: { a?: number; b?: string; children?: any };
+>div : { a?: number; b?: string; children?: any; }
+>a : number | nil
+>b : string | nil
+>children : any
+}
+
+declare props: { a: number; b: string };
+>props : { a: number; b: string; }
+>a : number
+>b : string
+
+declare items: number[];
+>items : number[]
+
+// JSX is not a reason to keep spread: attribute spread is gone.
+local spreadAttribute = <div {...props} />;
+>spreadAttribute : JsxElement
+><div : JsxElement
+>div : any
+>... : any
+>props : { a: number; b: string; }
+>/> : RegExp
+
+// Including when mixed with regular attributes.
+local spreadAndAttribute = <div a={1} {...props} />;
+>spreadAndAttribute : JsxElement
+><div a={1} : JsxElement
+>div : any
+>a : number
+>1 : 1
+>... : any
+>props : { a: number; b: string; }
+>/> : RegExp
+
+// Children spread is gone too.
+local spreadChildren = <div>{...items}</div>;
+>spreadChildren : JsxElement
+><div>{...items}</div> : JsxElement
+>div : any
+>... : any
+>div : any
+
+// Regular attributes and children still fold into the attributes type.
+local plain = <div a={1} b="x" />;
+>plain : JsxElement
+><div a={1} b="x" /> : JsxElement
+>div : any
+>a : number
+>1 : 1
+>b : string
+
+local withChildren = <div a={1}>{items}</div>;
+>withChildren : JsxElement
+><div a={1}>{items}</div> : JsxElement
+>div : any
+>a : number
+>1 : 1
+>items : number[]
+>div : any
+

@@ -1,0 +1,78 @@
+//// [tests/cases/compiler/tluaGenericPackInference.tlua] ////
+
+=== tluaGenericPackInference.tlua ===
+// A pack parameter shared between a callback and the trailing vararg correlates
+// the two: the arguments are checked against the callback's parameters, and the
+// callback's results become the call's results.
+
+declare function apply<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+>apply : Symbol(apply, Decl(tluaGenericPackInference.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackInference.tlua, 4, 23))
+>R : Symbol(R, Decl(tluaGenericPackInference.tlua, 4, 28))
+>f : Symbol(f, Decl(tluaGenericPackInference.tlua, 4, 35))
+> : Symbol((Missing), Decl(tluaGenericPackInference.tlua, 4, 39))
+>A : Symbol(A, Decl(tluaGenericPackInference.tlua, 4, 23))
+>R : Symbol(R, Decl(tluaGenericPackInference.tlua, 4, 28))
+> : Symbol((Missing), Decl(tluaGenericPackInference.tlua, 4, 57))
+>A : Symbol(A, Decl(tluaGenericPackInference.tlua, 4, 23))
+>R : Symbol(R, Decl(tluaGenericPackInference.tlua, 4, 28))
+
+declare function takesNumberString(a: number, b: string): (boolean, number);
+>takesNumberString : Symbol(takesNumberString, Decl(tluaGenericPackInference.tlua, 4, 74))
+>a : Symbol(a, Decl(tluaGenericPackInference.tlua, 6, 35))
+>b : Symbol(b, Decl(tluaGenericPackInference.tlua, 6, 45))
+
+// Arguments must match the callback's parameters (A is pinned by f).
+apply(takesNumberString, 1, "x");        // ok
+>apply : Symbol(apply, Decl(tluaGenericPackInference.tlua, 0, 0))
+>takesNumberString : Symbol(takesNumberString, Decl(tluaGenericPackInference.tlua, 4, 74))
+
+apply(takesNumberString, "wrong", "x");  // error: string is not a number
+>apply : Symbol(apply, Decl(tluaGenericPackInference.tlua, 0, 0))
+>takesNumberString : Symbol(takesNumberString, Decl(tluaGenericPackInference.tlua, 4, 74))
+
+apply(takesNumberString, 1);             // error: missing the second argument
+>apply : Symbol(apply, Decl(tluaGenericPackInference.tlua, 0, 0))
+>takesNumberString : Symbol(takesNumberString, Decl(tluaGenericPackInference.tlua, 4, 74))
+
+// Forwarding a vararg pack into another correlated call: `...` carries the whole
+// pack A, so `apply(g, ...)` type-checks against g's parameters.
+function relay<...A, ...R>(g: (...: A) => (...R), ...: A): (...R)
+>relay : Symbol(relay, Decl(tluaGenericPackInference.tlua, 11, 28))
+>A : Symbol(A, Decl(tluaGenericPackInference.tlua, 15, 15))
+>R : Symbol(R, Decl(tluaGenericPackInference.tlua, 15, 20))
+>g : Symbol(g, Decl(tluaGenericPackInference.tlua, 15, 27))
+> : Symbol((Missing), Decl(tluaGenericPackInference.tlua, 15, 31))
+>A : Symbol(A, Decl(tluaGenericPackInference.tlua, 15, 15))
+>R : Symbol(R, Decl(tluaGenericPackInference.tlua, 15, 20))
+> : Symbol((Missing), Decl(tluaGenericPackInference.tlua, 15, 49))
+>A : Symbol(A, Decl(tluaGenericPackInference.tlua, 15, 15))
+>R : Symbol(R, Decl(tluaGenericPackInference.tlua, 15, 20))
+
+  return apply(g, ...);
+>apply : Symbol(apply, Decl(tluaGenericPackInference.tlua, 0, 0))
+>g : Symbol(g, Decl(tluaGenericPackInference.tlua, 15, 27))
+
+end
+
+declare function g2(x: string, y: boolean): number;
+>g2 : Symbol(g2, Decl(tluaGenericPackInference.tlua, 17, 3))
+>x : Symbol(x, Decl(tluaGenericPackInference.tlua, 19, 20))
+>y : Symbol(y, Decl(tluaGenericPackInference.tlua, 19, 30))
+
+local relayed: number = relay(g2, "s", true);
+>relayed : Symbol(relayed, Decl(tluaGenericPackInference.tlua, 20, 5))
+>relay : Symbol(relay, Decl(tluaGenericPackInference.tlua, 11, 28))
+>g2 : Symbol(g2, Decl(tluaGenericPackInference.tlua, 17, 3))
+
+// An open forward: the tail feeds the correlated parameter list.
+function callWithNumbers(...: number): void
+>callWithNumbers : Symbol(callWithNumbers, Decl(tluaGenericPackInference.tlua, 20, 45))
+> : Symbol((Missing), Decl(tluaGenericPackInference.tlua, 23, 25))
+
+  apply(g2, ...);  // error: number tail is not (string, boolean)
+>apply : Symbol(apply, Decl(tluaGenericPackInference.tlua, 0, 0))
+>g2 : Symbol(g2, Decl(tluaGenericPackInference.tlua, 17, 3))
+
+end
+

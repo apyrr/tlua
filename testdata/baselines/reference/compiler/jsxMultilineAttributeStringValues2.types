@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/jsxMultilineAttributeStringValues2.tsx] ////
+
+=== jsxMultilineAttributeStringValues2.tsx ===
+local a = <div className= "foo
+>a : any
+><div className= "foo bar" /> : any
+>div : any
+>className : string
+
+ bar" />;
+
+local b = <div className=	"foo
+>b : any
+><div className=	"foo bar" /> : any
+>div : any
+>className : string
+
+ bar" />;
+
+local c = <div className=
+>c : any
+><div className="foo bar" /> : any
+>div : any
+>className : string
+
+"foo
+
+ bar" />;
+
+local d = <div className=   "foo
+>d : any
+><div className=   "foo bar" /> : any
+>div : any
+>className : string
+
+ bar" />;
+

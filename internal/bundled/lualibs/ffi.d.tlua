@@ -1,0 +1,47 @@
+interface LuaCData {
+    readonly __ffiCDataBrand: unique symbol;
+    [index: number]: any;
+    [member: string]: any;
+}
+
+interface LuaCType {
+    readonly __ffiCTypeBrand: unique symbol;
+    (...: any): LuaCData;
+}
+
+interface LuaCallback extends LuaCData {
+    readonly __ffiCallbackBrand: unique symbol;
+    free(): void;
+    set(fn: LuaFunction): void;
+}
+
+interface LuaCNamespace {
+    [name: string]: any;
+}
+
+type LuaCTypeSpec = LuaCType | string | LuaCData;
+
+interface FFILib {
+    readonly C: LuaCNamespace;
+    readonly os: string;
+    readonly arch: string;
+    cdef(definition: string): void;
+    load(name: string, global?: boolean): LuaCNamespace;
+    "new": (type: LuaCTypeSpec, ...: any) => LuaCData;
+    "typeof": (type: LuaCTypeSpec, ...: any) => LuaCType;
+    cast(type: LuaCTypeSpec, initializer: any): LuaCData;
+    metatype(type: LuaCTypeSpec, metatable: object): LuaCType;
+    gc(value: LuaCData, finalizer?: LuaFunction): LuaCData;
+    sizeof(type: LuaCTypeSpec, count?: number): number | nil;
+    alignof(type: LuaCTypeSpec): number;
+    offsetof(type: LuaCTypeSpec, field: string): (number, number?, number?);
+    istype(type: LuaCTypeSpec, value: any): boolean;
+    errno(value?: number): number;
+    string(pointer: any, length?: number): string;
+    copy(destination: any, source: string): void;
+    copy(destination: any, source: any, length: number): void;
+    fill(destination: any, length: number, value?: number): void;
+    abi(parameter: string): boolean;
+}
+
+declare ffi: FFILib;

@@ -1,0 +1,175 @@
+//// [tests/cases/compiler/tluaIoTypeNarrowing.tlua] ////
+
+=== tluaIoTypeNarrowing.tlua ===
+// `io.type(x)` reports "file" for an open handle, "closed file" for a closed one,
+// and nil for anything that is not a file handle.
+
+declare v: LuaFile | string | nil;
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+
+function comparisons(): void {
+>comparisons : Symbol(comparisons, Decl(tluaIoTypeNarrowing.tlua, 3, 34))
+
+  if io.type(v) == "file" then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+    local open: LuaFile = v;
+>open : Symbol(open, Decl(tluaIoTypeNarrowing.tlua, 7, 9))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  end
+  if io.type(v) == "closed file" then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+    local closed: LuaFile = v;
+>closed : Symbol(closed, Decl(tluaIoTypeNarrowing.tlua, 10, 9))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  end
+  if io.type(v) ~= nil then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+    local handle: LuaFile = v;
+>handle : Symbol(handle, Decl(tluaIoTypeNarrowing.tlua, 13, 9))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  end
+  if io.type(v) == nil then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+    local notAFile: string | nil = v;
+>notAFile : Symbol(notAFile, Decl(tluaIoTypeNarrowing.tlua, 16, 9))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  end
+}
+
+// The call is truthy exactly for file handles.
+function truthiness(): void {
+>truthiness : Symbol(truthiness, Decl(tluaIoTypeNarrowing.tlua, 18, 1))
+
+  if io.type(v) then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+    local handle: LuaFile = v;
+>handle : Symbol(handle, Decl(tluaIoTypeNarrowing.tlua, 23, 9))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  else
+    local notAFile: string | nil = v;
+>notAFile : Symbol(notAFile, Decl(tluaIoTypeNarrowing.tlua, 25, 9))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  end
+}
+
+// Grouping both file tags with `or` narrows the then-branch, but the else
+// cannot rule LuaFile out: each equality's false branch still admits the
+// other tag. (Switch fallthrough groups excluded the tag set at once; that
+// died with switch. The truthiness form above covers the disjoint case.)
+function grouped(): void {
+>grouped : Symbol(grouped, Decl(tluaIoTypeNarrowing.tlua, 27, 1))
+
+  if io.type(v) == "file" or io.type(v) == "closed file" then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+    local handle: LuaFile = v;
+>handle : Symbol(handle, Decl(tluaIoTypeNarrowing.tlua, 35, 9))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  else
+    local rest: LuaFile | string | nil = v;
+>rest : Symbol(rest, Decl(tluaIoTypeNarrowing.tlua, 37, 9))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaIoTypeNarrowing.tlua, 3, 7))
+
+  end
+}
+
+// A file handle is userdata in Lua, so `type` reports it as such and never as a table.
+function fileIsUserdata(x: LuaFile | { n: number }): void {
+>fileIsUserdata : Symbol(fileIsUserdata, Decl(tluaIoTypeNarrowing.tlua, 39, 1))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 42, 24))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaIoTypeNarrowing.tlua, 42, 38))
+
+  if type(x) == "userdata" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 42, 24))
+
+    local handle: LuaFile = x;
+>handle : Symbol(handle, Decl(tluaIoTypeNarrowing.tlua, 44, 9))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 42, 24))
+
+  end
+  if type(x) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 42, 24))
+
+    local table1: { n: number } = x;
+>table1 : Symbol(table1, Decl(tluaIoTypeNarrowing.tlua, 47, 9))
+>n : Symbol(n, Decl(tluaIoTypeNarrowing.tlua, 47, 19))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 42, 24))
+
+  end
+}
+
+// A table is never a file handle, so the guard is a dead branch.
+function disjoint(x: { n: number }): void {
+>disjoint : Symbol(disjoint, Decl(tluaIoTypeNarrowing.tlua, 49, 1))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 52, 18))
+>n : Symbol(n, Decl(tluaIoTypeNarrowing.tlua, 52, 22))
+
+  if io.type(x) == "file" then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 52, 18))
+
+    local dead: never = x;
+>dead : Symbol(dead, Decl(tluaIoTypeNarrowing.tlua, 54, 9))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 52, 18))
+
+  end
+  if io.type(x) then
+>io.type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 52, 18))
+
+    local dead2: never = x;
+>dead2 : Symbol(dead2, Decl(tluaIoTypeNarrowing.tlua, 57, 9))
+>x : Symbol(x, Decl(tluaIoTypeNarrowing.tlua, 52, 18))
+
+  end
+}
+

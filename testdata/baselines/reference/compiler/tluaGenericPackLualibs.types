@@ -1,0 +1,335 @@
+//// [tests/cases/compiler/tluaGenericPackLualibs.tlua] ////
+
+=== tluaGenericPackLualibs.tlua ===
+// The standard library correlates a call's arguments with its results now that
+// generic packs exist: pcall/xpcall/assert forward the callee's pack.
+
+declare function compute(a: number, b: string): (boolean, number);
+>compute : (a: number, b: string) => (boolean, number)
+>a : number
+>b : string
+
+declare function pure(x: number): string;
+>pure : (x: number) => string
+>x : number
+
+// pcall: A is checked against compute's parameters, R becomes compute's results.
+local ok, flag, count = pcall(compute, 1, "x");
+>ok : boolean
+>flag : boolean
+>count : number
+>pcall(compute, 1, "x") : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>compute : (a: number, b: string) => (boolean, number)
+>1 : 1
+>"x" : "x"
+
+local okType: boolean = ok;
+>okType : boolean
+>ok : boolean
+
+local flagType: boolean = flag;
+>flagType : boolean
+>flag : boolean
+
+local countType: number = count;
+>countType : number
+>count : number
+
+// A wrong argument does NOT error: it fails the generic overload and falls
+// through to the erased fallback, whose results are `(boolean, ...any)`. That is
+// the deliberate trade-off for keeping every previously-legal pcall working
+// (overloaded callees, below); precise results reward the calls that match.
+local wok2, wres = pcall(compute, "wrong", "x"); // wres: any, not number
+>wok2 : boolean
+>wres : any
+>pcall(compute, "wrong", "x") : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>compute : (a: number, b: string) => (boolean, number)
+>"wrong" : "wrong"
+>"x" : "x"
+
+// A single-result callee correlates too.
+local pok, s = pcall(pure, 3);
+>pok : boolean
+>s : string
+>pcall(pure, 3) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pure : (x: number) => string
+>3 : 3
+
+local sType: string = s;
+>sType : string
+>s : string
+
+// xpcall forwards trailing arguments (LuaJIT) and correlates the result pack.
+local xok, xs = xpcall(pure, function(e: any) return e; end, 7);
+>xok : boolean
+>xs : string
+>xpcall(pure, function(e: any) return e; end, 7) : boolean
+>xpcall : { <...A, ...R>(fn: (...: A) => (...R), handler: (message: any) => any, ...: A): (boolean, ...R); (fn: LuaFunction, handler: (message: any) => any, ...: any): (boolean, ...any); }
+>pure : (x: number) => string
+>function(e: any) return e; end : (e: any) => any
+>e : any
+>e : any
+>7 : 7
+
+local xsType: string = xs;
+>xsType : string
+>xs : string
+
+// assert returns everything it was passed; the first value is narrowed non-nil.
+declare maybe: number | nil;
+>maybe : number | nil
+
+local asserted, extra = assert(maybe, "message");
+>asserted : number
+>extra : string
+>assert(maybe, "message") : number
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M)
+>maybe : number | nil
+>"message" : "message"
+
+local assertedType: number = asserted;
+>assertedType : number
+>asserted : number
+
+local extraType: string = extra;
+>extraType : string
+>extra : string
+
+// coroutine.wrap stays deliberately erased: a wrapped call exchanges values with
+// `yield` (the first call's results are the first yield's arguments), so packs
+// correlated with fn's parameters/returns would be wrong for every coroutine that
+// yields. The result is a plain LuaFunction.
+local wrapped = coroutine.wrap(compute);
+>wrapped : LuaFunction
+>coroutine.wrap(compute) : LuaFunction
+>coroutine.wrap : (fn: LuaFunction) => LuaFunction
+>coroutine : CoroutineLib
+>wrap : (fn: LuaFunction) => LuaFunction
+>compute : (a: number, b: string) => (boolean, number)
+
+local wok = wrapped(2, "y");
+>wok : any
+>wrapped(2, "y") : any
+>wrapped : LuaFunction
+>2 : 2
+>"y" : "y"
+
+// An OVERLOADED callee cannot pin A to one signature, so pcall falls through to
+// the erased overload instead of mis-checking against the wrong one: select's
+// "#" form is legal here.
+local sok, count = pcall(select, "#", 1, 2);
+>sok : boolean
+>count : any
+>pcall(select, "#", 1, 2) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>"#" : "#"
+>1 : 1
+>2 : 2
+
+local sokType: boolean = sok;
+>sokType : boolean
+>sok : boolean
+
+// The error-path approximation, pinned: pcall's result is `(boolean, ...R)`, so
+// on failure the second value reads as R's first element, not as the error value
+// (the true union `(true, ...R) | (false, error)` is inexpressible).
+local cok, cerr = pcall(compute, 1, "x");
+>cok : boolean
+>cerr : boolean
+>pcall(compute, 1, "x") : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>compute : (a: number, b: string) => (boolean, number)
+>1 : 1
+>"x" : "x"
+
+local cerrIsFirstResult: boolean = cerr;
+>cerrIsFirstResult : boolean
+>cerr : boolean
+
+// select with a literal index slices the argument pack: select(2, ...) drops the
+// first value, so `first` is the second argument (a boolean), not the string.
+declare str: string;
+>str : string
+
+declare bool: boolean;
+>bool : boolean
+
+declare num: number;
+>num : number
+
+local first, rest = select(2, str, bool, num);
+>first : boolean
+>rest : number
+>select(2, str, bool, num) : boolean
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>2 : 2
+>str : string
+>bool : boolean
+>num : number
+
+local firstIsBoolean: boolean = first;
+>firstIsBoolean : boolean
+>first : boolean
+
+local restIsNumber: number = rest;
+>restIsNumber : number
+>rest : number
+
+// select("#", ...) counts the arguments.
+local argCount: number = select("#", str, bool, num);
+>argCount : number
+>select("#", str, bool, num) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>"#" : "#"
+>str : string
+>bool : boolean
+>num : number
+
+// A non-literal index cannot pin positions, so each selected slot is the sound
+// union of the values (or nil past the end).
+declare dynamicIndex: number;
+>dynamicIndex : number
+
+local dyn = select(dynamicIndex, str, num);
+>dyn : string | number | nil
+>select(dynamicIndex, str, num) : string | number | nil
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>dynamicIndex : number
+>str : string
+>num : number
+
+local dynType: string | number | nil = dyn;
+>dynType : string | number | nil
+>dyn : string | number | nil
+
+// A slice of exactly one value in the tail of a value list stays a pack (not a
+// collapsed scalar): `select(3, ...)` here selects just `num`, and the list keeps
+// its arity.
+local one, two = str, select(3, str, bool, num);
+>one : string
+>two : number
+>str, select(3, str, bool, num) : string, number
+>str : string
+>select(3, str, bool, num) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>3 : 3
+>str : string
+>bool : boolean
+>num : number
+
+local oneIsString: string = one;
+>oneIsString : string
+>one : string
+
+local twoIsNumber: number = two;
+>twoIsNumber : number
+>two : number
+
+// The same as a multiple-return tail.
+function sliceTail(): (string, number)
+>sliceTail : () => (string, number)
+
+  return str, select(3, str, bool, num);
+>str, select(3, str, bool, num) : string, number
+>str : string
+>select(3, str, bool, num) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>3 : 3
+>str : string
+>bool : boolean
+>num : number
+
+end
+
+// A literal index with an open tail keeps the fixed positions and splices the
+// tail: values before the index never leak into the result.
+function literalWithTail(...: boolean): void
+>literalWithTail : (...: boolean) => void
+> : boolean[]
+
+  local m, b = select(2, str, num, ...);
+>m : number
+>b : boolean | nil
+>select(2, str, num, ...) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>2 : 2
+>str : string
+>num : number
+>... : boolean | nil
+
+  local mIsNumber: number = m;
+>mIsNumber : number
+>m : number
+
+  local bIsBoolean: boolean | nil = b;
+>bIsBoolean : boolean | nil
+>b : boolean | nil
+
+end
+
+// A literal index landing inside the tail selects the tail's values only.
+function literalInsideTail(...: boolean): void
+>literalInsideTail : (...: boolean) => void
+> : boolean[]
+
+  local t = select(3, str, num, ...);
+>t : boolean | nil
+>select(3, str, num, ...) : boolean | nil
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>3 : 3
+>str : string
+>num : number
+>... : boolean | nil
+
+  local tIsBoolean: boolean | nil = t;
+>tIsBoolean : boolean | nil
+>t : boolean | nil
+
+end
+
+// The tail may be a call through a union-typed function -- a union of packs.
+// (This crashed the checker before it distributed over the union.)
+declare function gPack(): (number, string);
+>gPack : () => (number, string)
+
+declare function hPack(): (boolean, nil);
+>hPack : () => (boolean, nil)
+
+declare cond: boolean;
+>cond : boolean
+
+local packFn = cond and gPack or hPack;
+>packFn : (() => (number, string)) | (() => (boolean, nil))
+>cond and gPack or hPack : (() => (number, string)) | (() => (boolean, nil))
+>cond and gPack : false | (() => (number, string))
+>cond : boolean
+>gPack : () => (number, string)
+>hPack : () => (boolean, nil)
+
+declare dynamic: number;
+>dynamic : number
+
+local u = select(dynamic, packFn());
+>u : string | number | boolean | nil
+>select(dynamic, packFn()) : string | number | boolean | nil
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>dynamic : number
+>packFn() : number | boolean
+>packFn : (() => (number, string)) | (() => (boolean, nil))
+
+local uType: number | string | boolean | nil = u;
+>uType : string | number | boolean | nil
+>u : string | number | boolean | nil
+
+// A literal slice keeps literal freshness: the annotation still accepts it.
+local exact: 5 = select(1, 5);
+>exact : 5
+>select(1, 5) : 5
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>1 : 1
+>5 : 5
+

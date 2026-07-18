@@ -1,0 +1,45 @@
+//// [tests/cases/compiler/tluaRepeatUntilErrors.tlua] ////
+
+=== tluaRepeatUntilErrors.tlua ===
+// Missing `until`.
+function missingUntil(): number
+>missingUntil : Symbol(missingUntil, Decl(tluaRepeatUntilErrors.tlua, 0, 0))
+
+  repeat
+    local n = 1;
+>n : Symbol(n, Decl(tluaRepeatUntilErrors.tlua, 3, 9))
+
+    n;
+>n : Symbol(n, Decl(tluaRepeatUntilErrors.tlua, 3, 9))
+
+  return 0;
+end
+
+// `until` outside a repeat.
+function strayUntil(): number
+>strayUntil : Symbol(strayUntil, Decl(tluaRepeatUntilErrors.tlua, 6, 3))
+
+  until true;
+  return 0;
+end
+
+// A void condition cannot be tested.
+declare function nothing(): void;
+>nothing : Symbol(nothing, Decl(tluaRepeatUntilErrors.tlua, 12, 3))
+
+function voidCondition(): number
+>voidCondition : Symbol(voidCondition, Decl(tluaRepeatUntilErrors.tlua, 15, 33))
+
+  repeat
+    local n = 1;
+>n : Symbol(n, Decl(tluaRepeatUntilErrors.tlua, 19, 9))
+
+    n;
+>n : Symbol(n, Decl(tluaRepeatUntilErrors.tlua, 19, 9))
+
+  until nothing();
+>nothing : Symbol(nothing, Decl(tluaRepeatUntilErrors.tlua, 12, 3))
+
+  return 0;
+end
+

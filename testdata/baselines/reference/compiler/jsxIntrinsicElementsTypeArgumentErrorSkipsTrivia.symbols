@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx] ////
+
+=== jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx ===
+interface JsxElement {}
+>JsxElement : Symbol(JsxElement, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 0, 0))
+
+interface JsxIntrinsicElements { div: { children?: any }; }
+>JsxIntrinsicElements : Symbol(JsxIntrinsicElements, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 0, 23))
+>div : Symbol(JsxIntrinsicElements.div, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 1, 32))
+>children : Symbol(children, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 1, 39))
+
+declare React: { createElement: any };
+>React : Symbol(React, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 2, 7))
+>createElement : Symbol(createElement, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 2, 16))
+
+local a = <div<   number> />;
+>a : Symbol(a, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 4, 5))
+>div : Symbol(JsxIntrinsicElements.div, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 1, 32))
+
+local b = <div<
+>b : Symbol(b, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 6, 5))
+>div : Symbol(JsxIntrinsicElements.div, Decl(jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx, 1, 32))
+
+    number> />;
+

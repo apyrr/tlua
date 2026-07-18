@@ -1,0 +1,87 @@
+//// [tests/cases/compiler/tluaIfStatement.tlua] ////
+
+=== tluaIfStatement.tlua ===
+function basic(n: number): string
+>basic : Symbol(basic, Decl(tluaIfStatement.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaIfStatement.tlua, 0, 15))
+
+  if n < 0 then
+>n : Symbol(n, Decl(tluaIfStatement.tlua, 0, 15))
+
+    return "neg";
+  end
+  return "other";
+end
+
+function withElse(flag: boolean): number
+>withElse : Symbol(withElse, Decl(tluaIfStatement.tlua, 5, 3))
+>flag : Symbol(flag, Decl(tluaIfStatement.tlua, 7, 18))
+
+  if flag then
+>flag : Symbol(flag, Decl(tluaIfStatement.tlua, 7, 18))
+
+    return 1;
+  else
+    return 2;
+  end
+end
+
+// Parenthesized conditions are ordinary expressions.
+function parens(flag: boolean): number
+>parens : Symbol(parens, Decl(tluaIfStatement.tlua, 13, 3))
+>flag : Symbol(flag, Decl(tluaIfStatement.tlua, 16, 16))
+
+  if (flag) then
+>flag : Symbol(flag, Decl(tluaIfStatement.tlua, 16, 16))
+
+    return 1;
+  end
+  return 0;
+end
+
+// The condition may extend past an opening paren.
+function pastParens(a: boolean, b: boolean): number
+>pastParens : Symbol(pastParens, Decl(tluaIfStatement.tlua, 21, 3))
+>a : Symbol(a, Decl(tluaIfStatement.tlua, 24, 20))
+>b : Symbol(b, Decl(tluaIfStatement.tlua, 24, 31))
+
+  if (a) == b then
+>a : Symbol(a, Decl(tluaIfStatement.tlua, 24, 20))
+>b : Symbol(b, Decl(tluaIfStatement.tlua, 24, 31))
+
+    return 1;
+  end
+  return 0;
+end
+
+// Empty arms are fine.
+function emptyArms(flag: boolean): void
+>emptyArms : Symbol(emptyArms, Decl(tluaIfStatement.tlua, 29, 3))
+>flag : Symbol(flag, Decl(tluaIfStatement.tlua, 32, 19))
+
+  if flag then
+>flag : Symbol(flag, Decl(tluaIfStatement.tlua, 32, 19))
+
+  else
+  end
+end
+
+// Nested Lua ifs, each with its own end.
+function nested(a: boolean, b: boolean): number
+>nested : Symbol(nested, Decl(tluaIfStatement.tlua, 36, 3))
+>a : Symbol(a, Decl(tluaIfStatement.tlua, 39, 16))
+>b : Symbol(b, Decl(tluaIfStatement.tlua, 39, 27))
+
+  if a then
+>a : Symbol(a, Decl(tluaIfStatement.tlua, 39, 16))
+
+    if b then
+>b : Symbol(b, Decl(tluaIfStatement.tlua, 39, 27))
+
+      return 3;
+    end
+    return 2;
+  end
+  return 1;
+end
+

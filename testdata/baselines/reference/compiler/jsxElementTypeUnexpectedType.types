@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/jsxElementTypeUnexpectedType.tsx] ////
+
+=== jsxElementTypeUnexpectedType.tsx ===
+type JsxElementType = number;
+>JsxElementType : number
+
+local C = nil as any as () => any;
+>C : () => any
+>nil as any as () => any : () => any
+>nil as any : any
+
+local x = <C />;
+>x : any
+><C /> : any
+>C : () => any
+

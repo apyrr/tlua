@@ -1,0 +1,27 @@
+// === findRenameLocations ===
+// === /jsDocSee_rename1.tlua ===
+// interface /*RENAME*/[|ARENAME|] {}
+// /**
+//  * @see {[|ARENAME|]}
+//  */
+// declare a: [|ARENAME|]
+
+
+
+// === findRenameLocations ===
+// === /jsDocSee_rename1.tlua ===
+// interface [|ARENAME|] {}
+// /**
+//  * @see {/*RENAME*/[|ARENAME|]}
+//  */
+// declare a: [|ARENAME|]
+
+
+
+// === findRenameLocations ===
+// === /jsDocSee_rename1.tlua ===
+// interface [|ARENAME|] {}
+// /**
+//  * @see {[|ARENAME|]}
+//  */
+// declare a: /*RENAME*/[|ARENAME|]

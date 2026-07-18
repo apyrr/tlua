@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/loneSurrogateStringLiteralTypes.tlua] ////
+
+=== loneSurrogateStringLiteralTypes.tlua ===
+local x: "\uD800" = "\uDC00";
+>x : "\xed\xa0\x80"
+>"\uDC00" : "\xed\xb0\x80"
+

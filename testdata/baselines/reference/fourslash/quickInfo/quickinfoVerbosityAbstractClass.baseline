@@ -1,0 +1,87 @@
+// === QuickInfo ===
+=== /quickinfoVerbosityAbstractClass.tlua ===
+// 
+// declare abstract class Shape {
+//                        ^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//                        ^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//     abstract area(): number;
+//     abstract perimeter(): number;
+//     toString(): string;
+// }
+// 
+[
+  {
+    "marker": {
+      "Position": 29,
+      "LSPosition": {
+        "line": 1,
+        "character": 28
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 23
+          },
+          "end": {
+            "line": 1,
+            "character": 28
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 29,
+      "LSPosition": {
+        "line": 1,
+        "character": 28
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 23
+          },
+          "end": {
+            "line": 1,
+            "character": 28
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  }
+]

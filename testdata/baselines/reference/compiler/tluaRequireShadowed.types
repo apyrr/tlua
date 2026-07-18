@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/tluaRequireShadowed.tlua] ////
+
+=== main.tlua ===
+// A shadowing local is not the require global, so nothing resolves as a module.
+local require = function(name: string): number return 1; end;
+>require : (name: string) => number
+>function(name: string): number return 1; end : (name: string) => number
+>name : string
+>1 : 1
+
+local shadowed: number = require("util");
+>shadowed : number
+>require("util") : number
+>require : (name: string) => number
+>"util" : "util"
+
+=== util.tlua ===
+return { n = 1 };
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+

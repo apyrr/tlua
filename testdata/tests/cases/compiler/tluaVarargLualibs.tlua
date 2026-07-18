@@ -1,0 +1,41 @@
+// @strict: true
+// @noEmit: true
+// @lib: luajit
+
+// How the Lua standard library behaves under the tail rule. A tail supplies
+// `E | nil` to every fixed parameter it reaches, so a lualib whose signature has
+// a REQUIRED LEADING PARAMETER before its vararg cannot be called with a bare
+// tail. That is a Stage 1 expressiveness gap -- a pack cannot say "at least one
+// value" -- and NOT a bug in the signatures: `math.max()` with no arguments is a
+// Lua runtime error, so the required parameter is correct and the call really is
+// unsound. Pinned here so it stays a decision rather than drifting.
+
+function pureTails(...: string): void
+  // A pure vararg parameter absorbs a tail with no nil in sight.
+  print(...);
+  local formatted = string.format("%s", ...);
+end
+
+function requiredLeadingParameter(...: number): void
+  // Errors: the tail may be empty, so it supplies `number | nil` to `value`.
+  local biggest = math.max(...);
+  local smallest = math.min(...);
+
+  // Parenthesizing does not help -- `(...)` is exactly one value, and an empty
+  // vararg makes that value nil.
+  local alsoErrors = math.max((...));
+
+  // The workaround: supply the required value yourself, and the tail then only
+  // has to satisfy the rest parameter.
+  local fine = math.max(-math.huge, ...);
+end
+
+function selectAndPcall(...: number): void
+  // Generic packs (Stage 2) correlate these now: `pcall` infers the number tail
+  // as `print`'s arguments and returns `(boolean, ...print's results)` -- print
+  // returns nothing, so just `boolean`. `select("#", ...)` still counts.
+  local count = select("#", ...);
+  local isCount: number = count;
+  local ok = pcall(print, ...);
+  local isOk: boolean = ok;
+end

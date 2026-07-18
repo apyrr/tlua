@@ -1,0 +1,51 @@
+//// [tests/cases/compiler/tluaColonCallParseErrors.tlua] ////
+
+=== tluaColonCallParseErrors.tlua ===
+local M = { ping = function(self: {}) return 1; end };
+>M : Symbol(M, Decl(tluaColonCallParseErrors.tlua, 0, 5))
+>ping : Symbol(ping, Decl(tluaColonCallParseErrors.tlua, 0, 11))
+>self : Symbol(self, Decl(tluaColonCallParseErrors.tlua, 0, 28))
+
+// A colon access exists only as a call: Lua rejects `obj:f` without arguments.
+local f = M:ping;
+>f : Symbol(f, Decl(tluaColonCallParseErrors.tlua, 3, 5))
+>M : Symbol(M, Decl(tluaColonCallParseErrors.tlua, 0, 5))
+
+// The colon needs a member name after it.
+local g = M:(1);
+>g : Symbol(g, Decl(tluaColonCallParseErrors.tlua, 6, 5))
+>M : Symbol(M, Decl(tluaColonCallParseErrors.tlua, 0, 5))
+
+// Lua reserved words cannot name a colon call: committing on `M:end(` would
+// swallow the enclosing block terminator.
+local h = M:end();
+>h : Symbol(h, Decl(tluaColonCallParseErrors.tlua, 10, 5))
+>M : Symbol(M, Decl(tluaColonCallParseErrors.tlua, 0, 5))
+
+// An instantiation expression cannot be followed by a colon call, matching the
+// dot form's diagnostic.
+declare id: <T>(self: {}, x: T) => T;
+>id : Symbol(id, Decl(tluaColonCallParseErrors.tlua, 14, 7))
+>T : Symbol(T, Decl(tluaColonCallParseErrors.tlua, 14, 13))
+>self : Symbol(self, Decl(tluaColonCallParseErrors.tlua, 14, 16))
+>x : Symbol(x, Decl(tluaColonCallParseErrors.tlua, 14, 25))
+>T : Symbol(T, Decl(tluaColonCallParseErrors.tlua, 14, 13))
+>T : Symbol(T, Decl(tluaColonCallParseErrors.tlua, 14, 13))
+
+local i = id<number>:ping();
+>i : Symbol(i, Decl(tluaColonCallParseErrors.tlua, 15, 5))
+>id : Symbol(id, Decl(tluaColonCallParseErrors.tlua, 14, 7))
+
+// Error recovery: an annotation-shaped `ident : ident` in invalid code must
+// not swallow the declarations that follow it into a bogus argument list.
+local bad = (b: number);
+>bad : Symbol(bad, Decl(tluaColonCallParseErrors.tlua, 19, 5))
+>b : Symbol(b, Decl(tluaColonCallParseErrors.tlua, 19, 13))
+
+declare fine: (n: number) => void;
+>fine : Symbol(fine, Decl(tluaColonCallParseErrors.tlua, 20, 7))
+>n : Symbol(n, Decl(tluaColonCallParseErrors.tlua, 20, 15))
+
+fine(1);
+>fine : Symbol(fine, Decl(tluaColonCallParseErrors.tlua, 20, 7))
+

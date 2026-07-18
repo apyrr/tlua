@@ -1,0 +1,34 @@
+tluaNotCallableErrors.tlua(6,1): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+tluaNotCallableErrors.tlua(9,1): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+tluaNotCallableErrors.tlua(12,1): error TS2349: This expression is not callable.
+  Type 'Function' has no call signatures.
+
+
+==== tluaNotCallableErrors.tlua (3 errors) ====
+    // Calling a value with no call signatures must error. TypeScript's
+    // "untyped call" escape hatch keyed on Function-assignability, which is
+    // meaningless against tlua's empty Function interface — every value was
+    // Function-assignable and not-callable errors vanished.
+    local notCallable = 1;
+    notCallable();
+    ~~~~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Number' has no call signatures.
+    
+    local emptyObject = {};
+    emptyObject();
+    ~~~~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type '{}' has no call signatures.
+    
+    declare legacyFunction: Function;
+    legacyFunction();
+    ~~~~~~~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'Function' has no call signatures.
+    
+    declare untypedValue: any;
+    untypedValue(); // any stays callable
+    

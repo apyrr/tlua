@@ -1,0 +1,69 @@
+//// [tests/cases/compiler/tluaMetatableCall.tlua] ////
+
+=== tluaMetatableCall.tlua ===
+// __call makes a paired table callable. Lua passes the table itself as the metamethod's first
+// argument, so a call site supplies the arguments from the second parameter on.
+
+local callable = setmetatable({ n = 1 }, {
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCall.tlua, 3, 31))
+
+  __call = function(self: object, x: number): string return "s"; end,
+>__call : Symbol(__call, Decl(tluaMetatableCall.tlua, 3, 42))
+>self : Symbol(self, Decl(tluaMetatableCall.tlua, 4, 20))
+>x : Symbol(x, Decl(tluaMetatableCall.tlua, 4, 33))
+
+});
+
+local r: string = callable(2);
+>r : Symbol(r, Decl(tluaMetatableCall.tlua, 7, 5))
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+
+local n: number = callable.n;       // the table's own members still read
+>n : Symbol(n, Decl(tluaMetatableCall.tlua, 8, 5))
+>callable.n : Symbol(n, Decl(tluaMetatableCall.tlua, 3, 31))
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+>n : Symbol(n, Decl(tluaMetatableCall.tlua, 3, 31))
+
+// The receiver is implicit, so passing it back is one argument too many.
+local tooMany = callable(callable, 2);
+>tooMany : Symbol(tooMany, Decl(tluaMetatableCall.tlua, 11, 5))
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+
+local wrongArg = callable("x");
+>wrongArg : Symbol(wrongArg, Decl(tluaMetatableCall.tlua, 12, 5))
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+
+// A callable pairing is still a table: pairs iterates it.
+for k, v in pairs(callable) do
+>k : Symbol(k, Decl(tluaMetatableCall.tlua, 15, 3))
+>v : Symbol(v, Decl(tluaMetatableCall.tlua, 15, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaMetatableCall.tlua, 16, 7))
+>k : Symbol(k, Decl(tluaMetatableCall.tlua, 15, 3))
+
+end
+
+// A __call whose only parameter is a rest keeps it -- the rest absorbs the receiver and the
+// arguments alike.
+local rest = setmetatable({}, { __call = function(...: any): number return 1; end });
+>rest : Symbol(rest, Decl(tluaMetatableCall.tlua, 21, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__call : Symbol(__call, Decl(tluaMetatableCall.tlua, 21, 31))
+> : Symbol((Missing), Decl(tluaMetatableCall.tlua, 21, 50))
+
+local rr: number = rest(1, "x");
+>rr : Symbol(rr, Decl(tluaMetatableCall.tlua, 22, 5))
+>rest : Symbol(rest, Decl(tluaMetatableCall.tlua, 21, 5))
+
+// A __call-only metatable is enough to pair, so getmetatable answers for it.
+local mt = getmetatable(callable);
+>mt : Symbol(mt, Decl(tluaMetatableCall.tlua, 25, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>callable : Symbol(callable, Decl(tluaMetatableCall.tlua, 3, 5))
+

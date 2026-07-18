@@ -1,0 +1,93 @@
+//// [tests/cases/compiler/tluaTableAsArray.tlua] ////
+
+=== tluaTableAsArray.tlua ===
+// `T[]` denotes the number-key table type `{ [k: number]: T }`, so a table
+// constructor satisfies it and is indexed element-wise.
+local xs: number[] = {1, 2, 3};
+>xs : number[]
+>{1, 2, 3} : { 1: number; 2: number; 3: number; }
+
+local first: number = xs[1];
+>first : number
+>xs[1] : number
+>xs : number[]
+>1 : 1
+
+// A vararg has no name, so the pack is reached the Lua way: collect it into a
+// table with `{...}`, which is itself a number-key table and indexes
+// element-wise.
+function firstOf(...: string): string
+>firstOf : (...: string) => string
+> : string[]
+
+  local args: string[] = {...};
+>args : string[]
+>{...} : { [x: number]: string; }
+>... : string | nil
+
+  return args[1];
+>args[1] : string
+>args : string[]
+>1 : 1
+
+end
+local f1: string = firstOf("a", "b", "c");
+>f1 : string
+>firstOf("a", "b", "c") : string
+>firstOf : (...: string) => string
+>"a" : "a"
+>"b" : "b"
+>"c" : "c"
+
+// Generic vararg inference: T is inferred from the value arguments.
+function pickFirst<T>(...: T): T
+>pickFirst : <T>(...: T) => T
+> : T[]
+
+  local items: T[] = {...};
+>items : T[]
+>{...} : { [x: number]: T; }
+>... : T | nil
+
+  return items[1];
+>items[1] : T
+>items : T[]
+>1 : 1
+
+end
+local n: number = pickFirst(1, 2, 3);
+>n : number
+>pickFirst(1, 2, 3) : 1 | 2 | 3
+>pickFirst : <T>(...: T) => T
+>1 : 1
+>2 : 2
+>3 : 3
+
+// readonly T[] is the readonly number-key table.
+local ys: readonly number[] = {10, 20};
+>ys : readonly number[]
+>{10, 20} : { 1: number; 2: number; }
+
+// The global Array survives only as an inert, separately-nameable type: it is
+// distinct from T[], so a table is not assignable to it (missing length/methods).
+local arr: Array<number> = xs; // error
+>arr : Array<number>
+>xs : number[]
+
+// Recursive T[] resolves without diverging.
+type J = J[];
+>J : J
+
+local j: J = {};
+>j : J
+>{} : {}
+
+local es = {first, f1, n, ys, j};
+>es : { 1: number; 2: string; 3: number; 4: readonly number[]; 5: J; }
+>{first, f1, n, ys, j} : { 1: number; 2: string; 3: number; 4: readonly number[]; 5: J; }
+>first : any
+>f1 : any
+>n : any
+>ys : any
+>j : any
+

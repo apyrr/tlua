@@ -1,0 +1,39 @@
+// === findAllReferences ===
+// === /a.tlua ===
+// function f(flag: boolean): number
+//     ::/*FIND ALL REFS*/[|top|]::
+//     if flag then goto [|top|] end
+//     do
+//         if flag then goto [|top|] end
+//     end
+//     return 0;
+// end
+// --- (line: 9) skipped ---
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// function f(flag: boolean): number
+//     ::[|top|]::
+//     if flag then goto /*FIND ALL REFS*/[|top|] end
+//     do
+//         if flag then goto [|top|] end
+//     end
+//     return 0;
+// end
+// --- (line: 9) skipped ---
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// function f(flag: boolean): number
+//     ::[|top|]::
+//     if flag then goto [|top|] end
+//     do
+//         if flag then goto /*FIND ALL REFS*/[|top|] end
+//     end
+//     return 0;
+// end
+// --- (line: 9) skipped ---

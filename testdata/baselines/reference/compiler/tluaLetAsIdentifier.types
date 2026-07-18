@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/tluaLetAsIdentifier.tlua] ////
+
+=== tluaLetAsIdentifier.tlua ===
+// The demoted declaration keywords are ordinary identifiers everywhere a name
+// can appear -- including the internally Let-flagged for-head lists and the
+// Const-desugared ambient-global form, which the deleted ES "let is not a
+// valid LexicalDeclaration name" rule used to reject.
+local let = 1;
+>let : number
+>1 : 1
+
+local const = let + 1;
+>const : number
+>let + 1 : number
+>let : number
+>1 : 1
+
+local var = const;
+>var : number
+>const : number
+
+for let = 1, 3 do
+>let : number
+>1 : 1
+>3 : 3
+
+  local sum = let + 1;
+>sum : number
+>let + 1 : number
+>let : number
+>1 : 1
+
+  print(sum);
+>print(sum) : void
+>print : (...: any) => void
+>sum : number
+
+end
+for let, using in pairs({ a = 1 }) do
+>let : "a"
+>using : number
+>pairs({ a = 1 }) : LuaPairsIterator<"a", number>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  print(let, using);
+>print(let, using) : void
+>print : (...: any) => void
+>let : "a"
+>using : number
+
+end
+declare letGlobal: number;
+>letGlobal : number
+
+print(letGlobal, var);
+>print(letGlobal, var) : void
+>print : (...: any) => void
+>letGlobal : number
+>var : number
+

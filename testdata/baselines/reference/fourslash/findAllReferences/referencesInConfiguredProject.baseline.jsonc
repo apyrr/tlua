@@ -1,0 +1,3 @@
+// === findAllReferences ===
+// === /home/src/workspaces/project/referencesForGlobals_2.tlua ===
+// local c = /*FIND ALL REFS*/globalClass();

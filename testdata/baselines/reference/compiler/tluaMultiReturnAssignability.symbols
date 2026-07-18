@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/tluaMultiReturnAssignability.tlua] ////
+
+=== tluaMultiReturnAssignability.tlua ===
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaMultiReturnAssignability.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+function triple(): (number, string, boolean)
+>triple : Symbol(triple, Decl(tluaMultiReturnAssignability.tlua, 2, 3))
+
+  return 1, "a", true;
+end
+
+function one(): number
+>one : Symbol(one, Decl(tluaMultiReturnAssignability.tlua, 6, 3))
+
+  return 1;
+end
+
+function onePlusOptional(): (number, string?)
+>onePlusOptional : Symbol(onePlusOptional, Decl(tluaMultiReturnAssignability.tlua, 10, 3))
+
+  return 1;
+end
+
+function allOptional(): (number?, string?)
+>allOptional : Symbol(allOptional, Decl(tluaMultiReturnAssignability.tlua, 14, 3))
+
+end
+
+function nothing(): void
+>nothing : Symbol(nothing, Decl(tluaMultiReturnAssignability.tlua, 17, 3))
+
+end
+
+// Extra returned values are dropped at call sites: assigning a many-valued
+// function where fewer values are consumed is sound.
+local toSingle: (() => number) = pair;
+>toSingle : Symbol(toSingle, Decl(tluaMultiReturnAssignability.tlua, 24, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnAssignability.tlua, 0, 0))
+
+local toPair: typeof pair = triple;
+>toPair : Symbol(toPair, Decl(tluaMultiReturnAssignability.tlua, 25, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnAssignability.tlua, 0, 0))
+>triple : Symbol(triple, Decl(tluaMultiReturnAssignability.tlua, 2, 3))
+
+// A one-valued function satisfies a pack whose tail is optional...
+local optOk: typeof onePlusOptional = one;
+>optOk : Symbol(optOk, Decl(tluaMultiReturnAssignability.tlua, 28, 5))
+>onePlusOptional : Symbol(onePlusOptional, Decl(tluaMultiReturnAssignability.tlua, 10, 3))
+>one : Symbol(one, Decl(tluaMultiReturnAssignability.tlua, 6, 3))
+
+// ...but not a pack that requires two values.
+local needTwo: typeof pair = one;
+>needTwo : Symbol(needTwo, Decl(tluaMultiReturnAssignability.tlua, 31, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnAssignability.tlua, 0, 0))
+>one : Symbol(one, Decl(tluaMultiReturnAssignability.tlua, 6, 3))
+
+// Zero values only satisfy packs that require none.
+local voidOk: typeof allOptional = nothing;
+>voidOk : Symbol(voidOk, Decl(tluaMultiReturnAssignability.tlua, 34, 5))
+>allOptional : Symbol(allOptional, Decl(tluaMultiReturnAssignability.tlua, 14, 3))
+>nothing : Symbol(nothing, Decl(tluaMultiReturnAssignability.tlua, 17, 3))
+
+local voidBad: typeof pair = nothing;
+>voidBad : Symbol(voidBad, Decl(tluaMultiReturnAssignability.tlua, 35, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnAssignability.tlua, 0, 0))
+>nothing : Symbol(nothing, Decl(tluaMultiReturnAssignability.tlua, 17, 3))
+
+local voidBadRequired: typeof onePlusOptional = nothing;
+>voidBadRequired : Symbol(voidBadRequired, Decl(tluaMultiReturnAssignability.tlua, 36, 5))
+>onePlusOptional : Symbol(onePlusOptional, Decl(tluaMultiReturnAssignability.tlua, 10, 3))
+>nothing : Symbol(nothing, Decl(tluaMultiReturnAssignability.tlua, 17, 3))
+
+// The first value must still match.
+local firstMismatch: (() => string) = pair;
+>firstMismatch : Symbol(firstMismatch, Decl(tluaMultiReturnAssignability.tlua, 39, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnAssignability.tlua, 0, 0))
+

@@ -1,0 +1,21 @@
+// @strict: true
+// @noEmit: true
+// @noUnusedParameters: true
+// @noUnusedLocals: true
+
+// A vararg is never an unused parameter. It has no name, so there is no `_`
+// prefix to opt out with and no zero-width span worth reporting on, and
+// accepting-and-ignoring `...` is ordinary Lua. Both of these are clean.
+function usesVararg(...: number): (number | nil)
+  local first = ...;
+  return first;
+end
+
+function ignoresVararg(...: number): void
+end
+
+// Ordinary parameters are still reported.
+function unusedOrdinary(a: number, ...: number): void
+end
+
+return { usesVararg = usesVararg, ignoresVararg = ignoresVararg, unusedOrdinary = unusedOrdinary };

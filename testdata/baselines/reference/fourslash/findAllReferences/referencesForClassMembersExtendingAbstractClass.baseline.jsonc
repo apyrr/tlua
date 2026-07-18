@@ -1,0 +1,71 @@
+// === findAllReferences ===
+// === /referencesForClassMembersExtendingAbstractClass.tlua ===
+// abstract class Base {
+//     abstract /*FIND ALL REFS*/a: number;
+//     abstract method(): void;
+// }
+// class MyClass extends Base {
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembersExtendingAbstractClass.tlua ===
+// abstract class Base {
+//     abstract a: number;
+//     abstract method(): void;
+// }
+// class MyClass extends Base {
+//     /*FIND ALL REFS*/a;
+//     method() { }
+// }
+// 
+// --- (line: 10) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembersExtendingAbstractClass.tlua ===
+// --- (line: 7) skipped ---
+// }
+// 
+// local c: MyClass;
+// c./*FIND ALL REFS*/a;
+// c.method();
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembersExtendingAbstractClass.tlua ===
+// abstract class Base {
+//     abstract a: number;
+//     abstract /*FIND ALL REFS*/method(): void;
+// }
+// class MyClass extends Base {
+//     a;
+// --- (line: 7) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembersExtendingAbstractClass.tlua ===
+// --- (line: 3) skipped ---
+// }
+// class MyClass extends Base {
+//     a;
+//     /*FIND ALL REFS*/method() { }
+// }
+// 
+// local c: MyClass;
+// c.a;
+// c.method();
+
+
+
+// === findAllReferences ===
+// === /referencesForClassMembersExtendingAbstractClass.tlua ===
+// --- (line: 8) skipped ---
+// 
+// local c: MyClass;
+// c.a;
+// c./*FIND ALL REFS*/method();

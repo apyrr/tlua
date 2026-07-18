@@ -1,0 +1,109 @@
+//// [tests/cases/compiler/tluaIndexKeyObject.tlua] ////
+
+=== tluaIndexKeyObject.tlua ===
+// Lua tables are keyed by identity as readily as by value: a table, a function, a
+// coroutine, a userdatum and a cdatum are all keys. None of them can name a property,
+// so none of them is expressible as anything but an index signature.
+
+interface Point { x: number; y: number }
+>x : number
+>y : number
+
+interface ByTable { [key: Point]: string }
+>key : Point
+
+interface ByFunction { [key: (a: number) => void]: string }
+>key : (a: number) => void
+>a : number
+
+interface ByThread { [key: LuaThread]: string }
+>key : LuaThread
+
+interface ByUserdata { [key: LuaUserdata]: string }
+>key : LuaUserdata
+
+interface ByCData { [key: LuaCData]: string }
+>key : LuaCData
+
+declare pt: Point;
+>pt : Point
+
+declare fn: (a: number) => void;
+>fn : (a: number) => void
+>a : number
+
+declare th: LuaThread;
+>th : LuaThread
+
+declare ud: LuaUserdata;
+>ud : LuaUserdata
+
+declare cd: LuaCData;
+>cd : LuaCData
+
+declare byTable: ByTable;
+>byTable : ByTable
+
+declare byFunction: ByFunction;
+>byFunction : ByFunction
+
+declare byThread: ByThread;
+>byThread : ByThread
+
+declare byUserdata: ByUserdata;
+>byUserdata : ByUserdata
+
+declare byCData: ByCData;
+>byCData : ByCData
+
+local s1: string = byTable[pt];
+>s1 : string
+>byTable[pt] : string
+>byTable : ByTable
+>pt : Point
+
+local s2: string = byFunction[fn];
+>s2 : string
+>byFunction[fn] : string
+>byFunction : ByFunction
+>fn : (a: number) => void
+
+local s3: string = byThread[th];
+>s3 : string
+>byThread[th] : string
+>byThread : ByThread
+>th : LuaThread
+
+local s4: string = byUserdata[ud];
+>s4 : string
+>byUserdata[ud] : string
+>byUserdata : ByUserdata
+>ud : LuaUserdata
+
+local s5: string = byCData[cd];
+>s5 : string
+>byCData[cd] : string
+>byCData : ByCData
+>cd : LuaCData
+
+// The key domains do not bleed into one another: a table key is not a string key.
+local bad1: string = byTable["x"];
+>bad1 : string
+>byTable["x"] : any
+>byTable : ByTable
+>"x" : "x"
+
+local bad2: string = byThread[pt];
+>bad2 : string
+>byThread[pt] : any
+>byThread : ByThread
+>pt : Point
+
+// keyof reports the object key.
+type K = keyof ByTable;
+>K : Point
+
+local k: K = pt;
+>k : Point
+>pt : Point
+

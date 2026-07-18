@@ -1,0 +1,54 @@
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(1,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(1,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(1,22): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(2,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(2,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(2,32): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(3,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(3,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(3,26): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(4,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(4,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(4,27): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(5,11): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(5,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+jsxEntityDecoderAfterNonEntityAmpersand.tsx(5,26): error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+
+
+==== jsxEntityDecoderAfterNonEntityAmpersand.tsx (15 errors) ====
+    local a = <div>&&amp;</div>;
+              ~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+               ~~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+                         ~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    local b = <div>a&b&amp;c&d&lt;e</div>;
+              ~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+               ~~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+                                   ~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    local c = <div>&amp;&amp;</div>;
+              ~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+               ~~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+                             ~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    local d = <div>&amp;&&amp;</div>;
+              ~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+               ~~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+                              ~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    local e = <div>a&b&c&amp;</div>;
+              ~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+               ~~~
+!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+                             ~~~~~~
+!!! error TS100051: JSX element implicitly has type 'any' because no interface 'JsxIntrinsicElements' exists.
+    

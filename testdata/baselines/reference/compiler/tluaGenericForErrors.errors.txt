@@ -1,0 +1,65 @@
+tluaGenericForErrors.tlua(3,12): error TS2349: This expression is not callable.
+tluaGenericForErrors.tlua(22,7): error TS2322: Type 'number' is not assignable to type 'boolean'.
+tluaGenericForErrors.tlua(29,9): error TS1005: 'in' expected.
+tluaGenericForErrors.tlua(29,9): error TS2304: Cannot find name 'of'.
+tluaGenericForErrors.tlua(36,20): error TS2349: This expression is not callable.
+tluaGenericForErrors.tlua(36,20): error TS2448: Block-scoped variable 'k' used before its declaration.
+tluaGenericForErrors.tlua(36,20): error TS2454: Variable 'k' is used before being assigned.
+
+
+==== tluaGenericForErrors.tlua (7 errors) ====
+    // Value 1 must be callable — reported once.
+    function notCallable(): void
+      for k in 42 do
+               ~~
+!!! error TS2349: This expression is not callable.
+        k;
+      end
+    end
+    
+    // An `any` iterator types the names as any, silently.
+    declare anything: any;
+    
+    function anyIterator(): void
+      for k, v in anything do
+        k;
+        v;
+      end
+    end
+    
+    // An annotation that rejects the positional value.
+    declare function iter(t: string[], i: number): (number, string?);
+    
+    function badAnnotation(t: string[]): void
+      for k: boolean in iter do
+          ~
+!!! error TS2322: Type 'number' is not assignable to type 'boolean'.
+        k;
+      end
+    end
+    
+    // Missing `in`.
+    function missingIn(): void
+      for k of do
+            ~~
+!!! error TS1005: 'in' expected.
+            ~~
+!!! error TS2304: Cannot find name 'of'.
+      end
+    end
+    
+    // Loop names are ordinary block-scoped variables: using one in its own
+    // header is a use-before-declaration error (like numeric-for).
+    function selfReference(): void
+      for k: string in k do
+                       ~
+!!! error TS2349: This expression is not callable.
+                       ~
+!!! error TS2448: Block-scoped variable 'k' used before its declaration.
+!!! related TS2728 tluaGenericForErrors.tlua:36:7: 'k' is declared here.
+                       ~
+!!! error TS2454: Variable 'k' is used before being assigned.
+        k;
+      end
+    end
+    

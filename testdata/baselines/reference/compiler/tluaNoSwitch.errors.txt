@@ -1,0 +1,33 @@
+tluaNoSwitch.tlua(13,1): error TS2554: Expected 2 arguments, but got 1.
+tluaNoSwitch.tlua(13,12): error TS1005: ';' expected.
+tluaNoSwitch.tlua(14,3): error TS1434: Unexpected keyword or identifier.
+tluaNoSwitch.tlua(14,9): error TS1005: ';' expected.
+
+
+==== tluaNoSwitch.tlua (4 errors) ====
+    // tlua has no switch statement: `switch` and `case` are ordinary identifiers,
+    // as in Lua.
+    local switch = function(self: {}, mode: string) return mode; end;
+    local case = "c";
+    local t = { switch = switch, case = 2 };
+    local a = t:switch("on");
+    local b = t.case;
+    
+    // A TS switch statement no longer parses as a statement: `switch (x)` is a
+    // call to whatever `switch` names, and the clause syntax behind it is a plain
+    // parse error.
+    declare x: 1 | 2;
+    switch (x) {
+    ~~~~~~
+!!! error TS2554: Expected 2 arguments, but got 1.
+!!! related TS6210 tluaNoSwitch.tlua:3:35: An argument for 'mode' was not provided.
+               ~
+!!! error TS1005: ';' expected.
+      case 1:
+      ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+            ~
+!!! error TS1005: ';' expected.
+        break;
+    }
+    

@@ -1,0 +1,61 @@
+//// [tests/cases/compiler/tluaLocalStatementPosition.tlua] ////
+
+=== tluaLocalStatementPosition.tlua ===
+// A `local` declared as the unbraced body of a TS-form control statement is
+// rejected: its list carries no block-scope flag, but without the error the
+// binder would hoist it into the ENCLOSING scope -- visible and typed after
+// the statement while the runtime value never escapes the body.
+declare cond: boolean;
+>cond : boolean
+
+if (cond) local a = 1;
+>cond : boolean
+>a : number
+>1 : 1
+
+while (cond) local b = 2;
+>cond : boolean
+>b : number
+>2 : 2
+
+// Braced and Lua-block bodies are real blocks; the declarations are fine and
+// stay contained.
+if (cond) {
+>cond : false
+
+  local ok1 = 1;
+>ok1 : number
+>1 : 1
+
+  print(ok1);
+>print(ok1) : void
+>print : (...: any) => void
+>ok1 : number
+}
+if cond then
+>cond : false
+
+  local ok2 = 2;
+>ok2 : number
+>2 : 2
+
+  print(ok2);
+>print(ok2) : void
+>print : (...: any) => void
+>ok2 : number
+
+end
+while cond do
+>cond : false
+
+  local ok3 = 3;
+>ok3 : number
+>3 : 3
+
+  print(ok3);
+>print(ok3) : void
+>print : (...: any) => void
+>ok3 : number
+
+end
+

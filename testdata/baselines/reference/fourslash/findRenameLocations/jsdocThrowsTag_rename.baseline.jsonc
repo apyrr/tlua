@@ -1,0 +1,7 @@
+// === findRenameLocations ===
+// === /jsdocThrowsTag_rename.tlua ===
+// class /*RENAME*/E extends Error {}
+// /**
+//  * @throws {E}
+//  */
+// function f() {}

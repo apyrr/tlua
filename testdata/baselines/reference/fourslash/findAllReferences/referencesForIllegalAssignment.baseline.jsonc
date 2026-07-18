@@ -1,0 +1,21 @@
+// === findAllReferences ===
+// === /referencesForIllegalAssignment.tlua ===
+// [|f/*FIND ALL REFS*/oo|] = [|foo|];
+// local bar = function() end;
+// bar = bar + 1;
+
+
+
+// === findAllReferences ===
+// === /referencesForIllegalAssignment.tlua ===
+// [|foo|] = [|fo/*FIND ALL REFS*/o|];
+// local bar = function() end;
+// bar = bar + 1;
+
+
+
+// === findAllReferences ===
+// === /referencesForIllegalAssignment.tlua ===
+// foo = foo;
+// local /*FIND ALL REFS*/[|bar|] = function() end;
+// [|bar|] = [|bar|] + 1;

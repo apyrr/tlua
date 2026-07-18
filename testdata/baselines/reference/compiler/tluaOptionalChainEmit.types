@@ -1,0 +1,127 @@
+//// [tests/cases/compiler/tluaOptionalChainEmit.tlua] ////
+
+=== tluaOptionalChainEmit.tlua ===
+// Optional chaining (`?.`) has no Lua equivalent. It lowers to `and`-guarded
+// access (Lua `and` returns the falsy operand, and a member-bearing base can
+// never be `false`, so truthiness == non-nil). Side-effecting receivers are
+// captured once into a preceding `local`; lazily-evaluated positions use a
+// single-eval IIFE; a discarded chain becomes `if base then access end`.
+
+type Inner = { c: number }
+>Inner : Inner
+>c : number
+
+type T = { b: Inner, m: () => number, get: () => (Inner | nil), [k: string]: unknown }
+>T : T
+>b : Inner
+>m : () => number
+>get : () => (Inner | nil)
+>k : string
+
+local function run(a: T | nil, getObj: () => (T | nil))
+>run : (a: T | nil, getObj: () => (T | nil)) => number | nil
+>a : T | nil
+>getObj : () => (T | nil)
+
+  // (A) copiable base, single optional link — pure `and`, no temp.
+  local a1 = a?.b
+>a1 : Inner | nil
+>a?.b : Inner | nil
+>a : T | nil
+>b : Inner | nil
+
+  local a2 = a?.b.c
+>a2 : number | nil
+>a?.b.c : number | nil
+>a?.b : Inner | nil
+>a : T | nil
+>b : Inner | nil
+>c : number | nil
+
+  local a3 = a?.m()
+>a3 : number | nil
+>a?.m() : number | nil
+>a?.m : (() => number) | nil
+>a : T | nil
+>m : (() => number) | nil
+
+  local a4 = a?.["b"] // element access
+>a4 : Inner | nil
+>a?.["b"] : Inner | nil
+>a : T | nil
+>"b" : "b"
+
+  // Multi-name local: no single operative slot, so each chain lowers in place
+  // (must not hoist — regression guard for the operativeChain nil case).
+  local m1, m2 = a?.b, getObj()?.b
+>m1 : Inner | nil
+>m2 : Inner | nil
+>a?.b, getObj()?.b : Inner | nil, Inner | nil
+>a?.b : Inner | nil
+>a : T | nil
+>b : Inner | nil
+>getObj()?.b : Inner | nil
+>getObj() : T | nil
+>getObj : () => (T | nil)
+>b : Inner | nil
+
+  // (B) side-effecting base / nested optional link, order-safe slot — hoist a
+  // `local`, guard with `and`.
+  local b1 = a?.b?.c
+>b1 : number | nil
+>a?.b?.c : number | nil
+>a?.b : Inner | nil
+>a : T | nil
+>b : Inner | nil
+>c : number | nil
+
+  local b2 = getObj()?.b
+>b2 : Inner | nil
+>getObj()?.b : Inner | nil
+>getObj() : T | nil
+>getObj : () => (T | nil)
+>b : Inner | nil
+
+  local b3 = a?.get()?.c
+>b3 : number | nil
+>a?.get()?.c : number | nil
+>a?.get() : Inner | nil
+>a?.get : (() => (Inner | nil)) | nil
+>a : T | nil
+>get : (() => (Inner | nil)) | nil
+>c : number | nil
+
+  // (C) lazily-evaluated position (RHS of `and`) — single-eval IIFE.
+  local c1 = true and getObj()?.b
+>c1 : Inner | nil
+>true and getObj()?.b : Inner | nil
+>true : true
+>getObj()?.b : Inner | nil
+>getObj() : T | nil
+>getObj : () => (T | nil)
+>b : Inner | nil
+
+  // Discarded chain in statement position — rewritten to `if ... then ... end`.
+  a?.m()
+>a?.m() : number | nil
+>a?.m : (() => number) | nil
+>a : T | nil
+>m : (() => number) | nil
+
+  getObj()?.m()
+>getObj()?.m() : number | nil
+>getObj()?.m : (() => number) | nil
+>getObj() : T | nil
+>getObj : () => (T | nil)
+>m : (() => number) | nil
+
+  // Order-safe `return` slot — hoisting is unnecessary here (copiable base).
+  return a?.b.c
+>a?.b.c : number | nil
+>a?.b : Inner | nil
+>a : T | nil
+>b : Inner | nil
+>c : number | nil
+
+end
+

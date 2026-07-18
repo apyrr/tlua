@@ -1,0 +1,18 @@
+// === goToImplementation ===
+// === /goToImplementationInterface_00.tlua ===
+// interface Fo/*GOTO IMPL*/o {
+//     hello: () => void
+// }
+// 
+// <|interface [|Baz|] extends Foo {}|>
+// 
+// local bar: Foo = [|{ hello: helloImpl /**0*/ }|];
+// local baz: Foo[] = [{ hello: helloImpl /**4*/ }];
+// 
+// function helloImpl () {}
+// 
+// function whatever(x: Foo = [|{ hello() {/**1*/} }|] ) {
+// }
+// 
+// class Bar {
+// --- (line: 16) skipped ---

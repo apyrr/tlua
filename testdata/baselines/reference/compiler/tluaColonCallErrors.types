@@ -1,0 +1,117 @@
+//// [tests/cases/compiler/tluaColonCallErrors.tlua] ////
+
+=== tluaColonCallErrors.tlua ===
+local M = { count = 0 };
+>M : { count: number; inc(self: any, by: number): number; }
+>{ count = 0 } : { count: number; inc(self: { count: number; inc(self: any, by: number): number; }, by: number): number; }
+>count : number
+>0 : 0
+
+function M:inc(by: number): number
+>M : { count: number; inc(self: any, by: number): number; }
+>inc : (self: { count: number; inc(self: any, by: number): number; }, by: number) => number
+>: : { count: number; inc(self: any, by: number): number; }
+>M : { count: number; inc(self: any, by: number): number; }
+>by : number
+
+  self.count = self.count + by;
+>self.count = self.count + by : number
+>self.count : number
+>self : { count: number; inc(self: any, by: number): number; }
+>count : number
+>self.count + by : number
+>self.count : number
+>self : { count: number; inc(self: any, by: number): number; }
+>count : number
+>by : number
+
+  return self.count;
+>self.count : number
+>self : { count: number; inc(self: any, by: number): number; }
+>count : number
+
+end
+
+interface Ops {
+  noSelf(a: number): number;
+>noSelf : (a: number) => number
+>a : number
+
+  tag: string;
+>tag : string
+}
+declare ops: Ops;
+>ops : Ops
+
+// Wrong argument type.
+M:inc("x");
+>M:inc("x") : number
+>M:inc : (self: { count: number; inc(self: any, by: number): number; }, by: number) => number
+>M : { count: number; inc(self: any, by: number): number; }
+>inc : (self: { count: number; inc(self: any, by: number): number; }, by: number) => number
+>"x" : "x"
+
+// Arity: the receiver fills the first parameter, so one explicit argument is
+// expected here.
+M:inc();
+>M:inc() : number
+>M:inc : (self: { count: number; inc(self: any, by: number): number; }, by: number) => number
+>M : { count: number; inc(self: any, by: number): number; }
+>inc : (self: { count: number; inc(self: any, by: number): number; }, by: number) => number
+
+M:inc(1, 2);
+>M:inc(1, 2) : number
+>M:inc : (self: { count: number; inc(self: any, by: number): number; }, by: number) => number
+>M : { count: number; inc(self: any, by: number): number; }
+>inc : (self: { count: number; inc(self: any, by: number): number; }, by: number) => number
+>1 : 1
+>2 : 2
+
+// The receiver is checked against the declared self parameter, and the error
+// lands on the receiver.
+interface Counter {
+  count: number;
+>count : number
+}
+interface Mislabeled {
+  count: string;
+>count : string
+
+  bump(self: Counter, by: number): number;
+>bump : (self: Counter, by: number) => number
+>self : Counter
+>by : number
+}
+declare mislabeled: Mislabeled;
+>mislabeled : Mislabeled
+
+mislabeled:bump(1);
+>mislabeled:bump(1) : number
+>mislabeled:bump : (self: Counter, by: number) => number
+>mislabeled : Mislabeled
+>bump : (self: Counter, by: number) => number
+>1 : 1
+
+// A member that does not take the receiver as its first parameter rejects the
+// colon form's receiver argument.
+ops:noSelf(1);
+>ops:noSelf(1) : number
+>ops:noSelf : (a: number) => number
+>ops : Ops
+>noSelf : (a: number) => number
+>1 : 1
+
+// Colon-calling a non-function member.
+ops:tag();
+>ops:tag() : any
+>ops:tag : string
+>ops : Ops
+>tag : string
+
+// Colon-calling an unknown member.
+M:absent();
+>M:absent() : any
+>M:absent : any
+>M : { count: number; inc(self: any, by: number): number; }
+>absent : any
+

@@ -1,0 +1,44 @@
+tluaNumberKeyIndexKeyof.tlua(4,7): error TS2322: Type 'number' is not assignable to type 'string'.
+tluaNumberKeyIndexKeyof.tlua(9,7): error TS2322: Type 'string' is not assignable to type 'number'.
+tluaNumberKeyIndexKeyof.tlua(29,7): error TS2322: Type 'number' is not assignable to type 'string'.
+
+
+==== tluaNumberKeyIndexKeyof.tlua (3 errors) ====
+    // keyof a string index signature is string only (not string | number).
+    type SK = keyof { [k: string]: boolean }; // string
+    local sk: SK = "x";
+    local skBad: SK = 1; // error: number not a string key
+          ~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.
+    
+    // keyof a number index signature is number.
+    type NK = keyof { [k: number]: boolean }; // number
+    local nk: NK = 1;
+    local nkBad: NK = "x"; // error: string not a number key
+          ~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
+    
+    // Both signatures: keyof is string | number.
+    type BK = keyof { [k: string]: boolean; [k: number]: boolean };
+    local bk1: BK = "x";
+    local bk2: BK = 1;
+    
+    // Mapped type over a string-indexed type only iterates string keys.
+    type M = { [K in keyof { [k: string]: number }]: boolean };
+    local m: M = { anything = true };
+    
+    // `${number}` is a string-pattern type and behaves as a string key.
+    type TplKey = keyof { [k: `${number}`]: boolean };
+    local tk: TplKey = "123";
+    
+    // A key-remapped mapped type over a string index is not widened to
+    // string | number either: keyof of the mapped type stays string.
+    type S2 = { [k: string]: number };
+    type M2 = { [K in keyof S2 as K]: S2[K] };
+    local m2Ok: keyof M2 = "x";
+    local m2Bad: keyof M2 = 1; // error: keyof M2 is string, not string | number
+          ~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.
+    
+    local es = {sk, skBad, nk, nkBad, bk1, bk2, m, tk, m2Ok, m2Bad};
+    

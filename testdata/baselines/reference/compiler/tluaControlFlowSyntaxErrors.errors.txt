@@ -1,0 +1,74 @@
+tluaControlFlowSyntaxErrors.tlua(2,7): error TS1359: Identifier expected. 'then' is a reserved word that cannot be used here.
+tluaControlFlowSyntaxErrors.tlua(2,12): error TS1128: Declaration or statement expected.
+tluaControlFlowSyntaxErrors.tlua(3,7): error TS1359: Identifier expected. 'until' is a reserved word that cannot be used here.
+tluaControlFlowSyntaxErrors.tlua(3,13): error TS1128: Declaration or statement expected.
+tluaControlFlowSyntaxErrors.tlua(4,9): error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaControlFlowSyntaxErrors.tlua(4,10): error TS1359: Identifier expected. 'repeat' is a reserved word that cannot be used here.
+tluaControlFlowSyntaxErrors.tlua(5,1): error TS1005: '=>' expected.
+tluaControlFlowSyntaxErrors.tlua(10,5): error TS1005: 'then' expected.
+tluaControlFlowSyntaxErrors.tlua(16,37): error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+tluaControlFlowSyntaxErrors.tlua(28,3): error TS1128: Declaration or statement expected.
+tluaControlFlowSyntaxErrors.tlua(28,17): error TS1005: ';' expected.
+tluaControlFlowSyntaxErrors.tlua(31,4): error TS1109: Expression expected.
+tluaControlFlowSyntaxErrors.tlua(32,1): error TS1005: 'end' expected.
+
+
+==== tluaControlFlowSyntaxErrors.tlua (13 errors) ====
+    // Reserved words cannot be binding names.
+    local then = 1;
+          ~~~~
+!!! error TS1359: Identifier expected. 'then' is a reserved word that cannot be used here.
+               ~
+!!! error TS1128: Declaration or statement expected.
+    local until = 2;
+          ~~~~~
+!!! error TS1359: Identifier expected. 'until' is a reserved word that cannot be used here.
+                ~
+!!! error TS1128: Declaration or statement expected.
+    function repeat(): void
+            
+!!! error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+             ~~~~~~
+!!! error TS1359: Identifier expected. 'repeat' is a reserved word that cannot be used here.
+    end
+    ~~~
+!!! error TS1005: '=>' expected.
+    
+    // Missing `then`.
+    function missingThen(flag: boolean): number
+      if flag
+        return 1;
+        ~~~~~~
+!!! error TS1005: 'then' expected.
+      end
+      return 0;
+    end
+    
+    // Missing `end`.
+    function missingEnd(flag: boolean): number
+                                        ~~~~~~
+!!! error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+      if flag then
+        return 1;
+      return 0;
+    end
+    
+    // elseif after else.
+    function elseifAfterElse(n: number): number
+      if n == 1 then
+        return 1;
+      else
+        return 2;
+      elseif n == 3 then
+      ~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                    ~~~~
+!!! error TS1005: ';' expected.
+        return 3;
+      end
+    end
+       
+!!! error TS1109: Expression expected.
+    
+    
+!!! error TS1005: 'end' expected.

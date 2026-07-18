@@ -1,0 +1,47 @@
+// === goToDefinition ===
+// === /goToDefinitionBuiltInValues.tlua ===
+// local u = /*GOTO DEF*/undefined;
+// local n = null;
+// local a = function() { return arguments; };
+// local t = true;
+// local f = false;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionBuiltInValues.tlua ===
+// local u = undefined;
+// local n = /*GOTO DEF*/null;
+// local a = function() { return arguments; };
+// local t = true;
+// local f = false;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionBuiltInValues.tlua ===
+// local u = undefined;
+// local n = null;
+// local a = function() { return /*GOTO DEF*/arguments; };
+// local t = true;
+// local f = false;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionBuiltInValues.tlua ===
+// local u = undefined;
+// local n = null;
+// local a = function() { return arguments; };
+// local t = /*GOTO DEF*/true;
+// local f = false;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionBuiltInValues.tlua ===
+// local u = undefined;
+// local n = null;
+// local a = function() { return arguments; };
+// local t = true;
+// local f = /*GOTO DEF*/false;

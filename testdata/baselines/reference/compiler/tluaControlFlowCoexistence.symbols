@@ -1,0 +1,91 @@
+//// [tests/cases/compiler/tluaControlFlowCoexistence.tlua] ////
+
+=== tluaControlFlowCoexistence.tlua ===
+// The remaining TS control-flow forms keep parsing unchanged.
+function tsForms(flag: boolean): number {
+>tsForms : Symbol(tsForms, Decl(tluaControlFlowCoexistence.tlua, 0, 0))
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+  if (flag) {
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+    return 1;
+  }
+  if (flag) return 2;
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+  if (flag) return 3; else return 4;
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+  while (flag) {
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+    flag = false;
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+  }
+  while (flag) flag = false;
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+  do {
+    flag = false;
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+  } while (flag);
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 1, 17))
+
+  return 0;
+}
+
+// TS statements inside Lua bodies.
+function tsInLua(flag: boolean): number
+>tsInLua : Symbol(tsInLua, Decl(tluaControlFlowCoexistence.tlua, 15, 1))
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 18, 17))
+
+  if flag then
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 18, 17))
+
+    return 1;
+  end
+  while flag do
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 18, 17))
+
+    do {
+      flag = false;
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 18, 17))
+
+    } while (flag);
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 18, 17))
+
+  end
+  return 0;
+end
+
+// Lua statements inside TS braces.
+function luaInTs(flag: boolean): number {
+>luaInTs : Symbol(luaInTs, Decl(tluaControlFlowCoexistence.tlua, 28, 3))
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 31, 17))
+
+  if (flag) {
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 31, 17))
+
+    if flag then
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 31, 17))
+
+      return 1;
+    end
+  }
+  while (flag) {
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 31, 17))
+
+    while flag do
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 31, 17))
+
+      flag = false;
+>flag : Symbol(flag, Decl(tluaControlFlowCoexistence.tlua, 31, 17))
+
+    end
+  }
+  return 0;
+}
+

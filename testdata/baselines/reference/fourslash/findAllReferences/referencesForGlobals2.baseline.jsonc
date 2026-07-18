@@ -1,0 +1,19 @@
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// /*FIND ALL REFS*/class globalClass {
+//     public f() { }
+// }
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_1.tlua ===
+// class /*FIND ALL REFS*/globalClass {
+//     public f() { }
+// }
+
+
+
+// === findAllReferences ===
+// === /referencesForGlobals_2.tlua ===
+// local c = /*FIND ALL REFS*/globalClass();

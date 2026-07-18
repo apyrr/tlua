@@ -1,0 +1,178 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsClass.tlua ===
+// class c {
+//       ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// }
+// local cInstance = new c();
+//       ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cInstance: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                       ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local cVal = c;
+//       ^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cVal: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//              ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 6,
+      "LSPosition": {
+        "line": 0,
+        "character": 6
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 7
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 18,
+      "LSPosition": {
+        "line": 2,
+        "character": 6
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cInstance: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 6
+        },
+        "end": {
+          "line": 2,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 34,
+      "LSPosition": {
+        "line": 2,
+        "character": 22
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 22
+        },
+        "end": {
+          "line": 2,
+          "character": 23
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 45,
+      "LSPosition": {
+        "line": 3,
+        "character": 6
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cVal: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 6
+        },
+        "end": {
+          "line": 3,
+          "character": 10
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 52,
+      "LSPosition": {
+        "line": 3,
+        "character": 13
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 13
+        },
+        "end": {
+          "line": 3,
+          "character": 14
+        }
+      }
+    }
+  }
+]

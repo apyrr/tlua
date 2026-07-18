@@ -1,0 +1,19 @@
+// === findRenameLocations ===
+// === /renameInheritedProperties2.tlua ===
+// class class1 extends class1 {
+//    /*RENAME*/doStuff() { }
+// }
+// 
+// local v: class1;
+// v.doStuff();
+
+
+
+// === findRenameLocations ===
+// === /renameInheritedProperties2.tlua ===
+// class class1 extends class1 {
+//    doStuff() { }
+// }
+// 
+// local v: class1;
+// v./*RENAME*/doStuff();

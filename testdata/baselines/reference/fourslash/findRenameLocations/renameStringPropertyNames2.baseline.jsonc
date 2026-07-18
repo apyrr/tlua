@@ -1,0 +1,10 @@
+// === findRenameLocations ===
+// === /renameStringPropertyNames2.tlua ===
+// type Props = {
+//   [|fooRENAME|]: boolean;
+// }
+// 
+// local { foo }: Props = null as any;
+// foo;
+// 
+// local asd: Props = { ["[|fooRENAME|]"/*RENAME*/] = true }; // rename foo here

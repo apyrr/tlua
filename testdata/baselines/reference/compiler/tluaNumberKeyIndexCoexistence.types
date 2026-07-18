@@ -1,0 +1,47 @@
+//// [tests/cases/compiler/tluaNumberKeyIndexCoexistence.tlua] ////
+
+=== tluaNumberKeyIndexCoexistence.tlua ===
+// Number keys and string keys are disjoint, including for index signatures:
+// a string index signature serves only string-key access, not number-key
+// access (t[5] != t["5"]).
+interface U {
+  [k: string]: string | number;
+>k : string
+
+  lit: number;
+>lit : number
+
+  1: string;
+>1 : string
+}
+declare u: U;
+>u : U
+
+// The number key resolves to the number-keyed member.
+local u1: string = u[1];
+>u1 : string
+>u[1] : string
+>u : U
+>1 : 1
+
+// A string-key access falls to the string index signature.
+local us: string | number = u["5"];
+>us : string | number
+>u["5"] : string | number
+>u : U
+>"5" : "5"
+
+// A number-key access is NOT covered by the string index signature: error.
+local un = u[5];
+>un : any
+>u[5] : any
+>u : U
+>5 : 5
+
+local es = {u1, us, un};
+>es : { 1: string; 2: string | number; 3: any; }
+>{u1, us, un} : { 1: string; 2: string | number; 3: any; }
+>u1 : any
+>us : any
+>un : any
+

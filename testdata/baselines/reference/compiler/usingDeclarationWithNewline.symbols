@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/usingDeclarationWithNewline.tlua] ////
+
+=== usingDeclarationWithNewline.tlua ===
+
+using
+identifier;
+

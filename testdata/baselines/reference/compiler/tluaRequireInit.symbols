@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/tluaRequireInit.tlua] ////
+
+=== main.tlua ===
+local pkg = require("pkg");
+>pkg : Symbol(pkg, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local v: number = pkg.version;
+>v : Symbol(v, Decl(main.tlua, 1, 5))
+>pkg.version : Symbol(version, Decl(init.tlua, 1, 8))
+>pkg : Symbol(pkg, Decl(main.tlua, 0, 5))
+>version : Symbol(version, Decl(init.tlua, 1, 8))
+
+v;
+>v : Symbol(v, Decl(main.tlua, 1, 5))
+
+=== pkg/init.tlua ===
+local version = 1;
+>version : Symbol(version, Decl(init.tlua, 0, 5))
+
+return { version = version };
+>version : Symbol(version, Decl(init.tlua, 1, 8))
+>version : Symbol(version, Decl(init.tlua, 0, 5))
+

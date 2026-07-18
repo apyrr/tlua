@@ -1,0 +1,4 @@
+// === goToType ===
+// === /goToTypeDefinition3.tlua ===
+// <|type [|T|] = string;|>
+// local x: /*GOTO TYPE*/T;

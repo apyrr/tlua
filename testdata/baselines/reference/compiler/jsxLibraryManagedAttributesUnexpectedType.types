@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/jsxLibraryManagedAttributesUnexpectedType.tsx] ////
+
+=== jsxLibraryManagedAttributesUnexpectedType.tsx ===
+type JsxLibraryManagedAttributes = number;
+>JsxLibraryManagedAttributes : number
+
+local C = nil as any as () => any;
+>C : () => any
+>nil as any as () => any : () => any
+>nil as any : any
+
+local x = <C />;
+>x : any
+><C /> : any
+>C : () => any
+

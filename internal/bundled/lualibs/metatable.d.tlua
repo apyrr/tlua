@@ -1,0 +1,21 @@
+interface LuaMetatable<T extends object> {
+    __index?: Table<any, any> | ((value: T, key: any) => any);
+    __newindex?: Table<any, any> | ((value: T, key: any, newValue: any) => void);
+    __call?: (value: T, ...: any) => (any?, ...any);
+    __tostring?: (value: T) => string;
+    __len?: (value: T) => number;
+    __unm?: (value: T) => any;
+    __add?: (left: T, right: any) => any;
+    __sub?: (left: T, right: any) => any;
+    __mul?: (left: T, right: any) => any;
+    __div?: (left: T, right: any) => any;
+    __mod?: (left: T, right: any) => any;
+    __pow?: (left: T, right: any) => any;
+    __concat?: (left: T, right: any) => any;
+    __eq?: (left: T, right: any) => boolean;
+    __lt?: (left: T, right: any) => boolean;
+    __le?: (left: T, right: any) => boolean;
+    __gc?: (value: T) => void;
+    __mode?: "k" | "v" | "kv";
+    __metatable?: any;
+}

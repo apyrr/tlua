@@ -1,0 +1,144 @@
+//// [tests/cases/compiler/tluaMetatableReplace.tlua] ////
+
+=== tluaMetatableReplace.tlua ===
+// setmetatable *replaces* a metatable. A table that already had one keeps only what it
+// holds itself: the old __index does not answer any more, whether or not a new one takes
+// its place.
+
+local First = { fromFirst = 1 };
+>First : { fromFirst: number; }
+>{ fromFirst = 1 } : { fromFirst: number; }
+>fromFirst : number
+>1 : 1
+
+local Second = { fromSecond = "s" };
+>Second : { fromSecond: string; }
+>{ fromSecond = "s" } : { fromSecond: string; }
+>fromSecond : string
+>"s" : "s"
+
+local obj = setmetatable({ own = true }, { __index = First });
+>obj : { fromFirst: number; own: boolean; }
+>setmetatable({ own = true }, { __index = First }) : { fromFirst: number; own: boolean; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ own = true } : { own: true; }
+>own : true
+>true : true
+>{ __index = First } : { __index: { fromFirst: number; }; }
+>__index : { fromFirst: number; }
+>First : { fromFirst: number; }
+
+local f1: number = obj.fromFirst;
+>f1 : number
+>obj.fromFirst : number
+>obj : { fromFirst: number; own: boolean; }
+>fromFirst : number
+
+local repaired = setmetatable(obj, { __index = Second });
+>repaired : { fromSecond: string; own: boolean; }
+>setmetatable(obj, { __index = Second }) : { fromSecond: string; own: boolean; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>obj : { fromFirst: number; own: boolean; }
+>{ __index = Second } : { __index: { fromSecond: string; }; }
+>__index : { fromSecond: string; }
+>Second : { fromSecond: string; }
+
+local s1: string = repaired.fromSecond;
+>s1 : string
+>repaired.fromSecond : string
+>repaired : { fromSecond: string; own: boolean; }
+>fromSecond : string
+
+local own1: boolean = repaired.own;
+>own1 : boolean
+>repaired.own : boolean
+>repaired : { fromSecond: string; own: boolean; }
+>own : boolean
+
+local gone = repaired.fromFirst;
+>gone : any
+>repaired.fromFirst : any
+>repaired : { fromSecond: string; own: boolean; }
+>fromFirst : any
+
+// `setmetatable(t, nil)` is how a metatable is detached.
+local detached = setmetatable(obj, nil);
+>detached : { own: boolean; }
+>setmetatable(obj, nil) : { own: boolean; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>obj : { fromFirst: number; own: boolean; }
+
+local own2: boolean = detached.own;
+>own2 : boolean
+>detached.own : boolean
+>detached : { own: boolean; }
+>own : boolean
+
+local gone2 = detached.fromFirst;
+>gone2 : any
+>detached.fromFirst : any
+>detached : { own: boolean; }
+>fromFirst : any
+
+// A metatable with no __index detaches the fallback just as thoroughly.
+local other = setmetatable(obj, { __tostring = function(t: object): string return "t"; end });
+>other : { own: boolean; }
+>setmetatable(obj, { __tostring = function(t: object): string return "t"; end }) : { own: boolean; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>obj : { fromFirst: number; own: boolean; }
+>{ __tostring = function(t: object): string return "t"; end } : { __tostring: (t: object) => string; }
+>__tostring : (t: object) => string
+>function(t: object): string return "t"; end : (t: object) => string
+>t : object
+>"t" : "t"
+
+local gone3 = other.fromFirst;
+>gone3 : any
+>other.fromFirst : any
+>other : { own: boolean; }
+>fromFirst : any
+
+// The metatable goes with it: nothing pairs these tables now.
+local dm = getmetatable(detached);
+>dm : any
+>getmetatable(detached) : any
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>detached : { own: boolean; }
+
+// A read still goes through the *current* metatable.
+local rm = getmetatable(repaired);
+>rm : { __index: { fromSecond: string; }; }
+>getmetatable(repaired) : { __index: { fromSecond: string; }; }
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>repaired : { fromSecond: string; own: boolean; }
+
+local back: string = rm.__index.fromSecond;
+>back : string
+>rm.__index.fromSecond : string
+>rm.__index : { fromSecond: string; }
+>rm : { __index: { fromSecond: string; }; }
+>__index : { fromSecond: string; }
+>fromSecond : string
+
+// The statement form -- how Lua mutates a table in place -- narrows the variable, so its
+// fallback is visible afterward. (tluaMetatableStatement covers this in full.)
+local plain = { n = 1 };
+>plain : { n: number; }
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+setmetatable(plain, { __index = First });
+>setmetatable(plain, { __index = First }) : { fromFirst: number; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>plain : { n: number; }
+>{ __index = First } : { __index: { fromFirst: number; }; }
+>__index : { fromFirst: number; }
+>First : { fromFirst: number; }
+
+local statementForm: boolean = plain.fromFirst;
+>statementForm : boolean
+>plain.fromFirst : number
+>plain : { fromFirst: number; n: number; }
+>fromFirst : number
+

@@ -1,0 +1,7 @@
+// === findRenameLocations ===
+// === /renameQuotedSingleCharacterPropertyName1.tlua ===
+// 
+// local obj = {
+//   ["[|'RENAME|]"/*RENAME*/] = 1,
+// }
+// 

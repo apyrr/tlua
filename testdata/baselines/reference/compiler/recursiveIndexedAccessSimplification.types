@@ -1,0 +1,42 @@
+//// [tests/cases/compiler/recursiveIndexedAccessSimplification.tlua] ////
+
+=== recursiveIndexedAccessSimplification.tlua ===
+// https://github.com/microsoft/TypeScript/issues/63270
+
+type Recur<T> =
+>Recur : any
+
+    (T extends  (unknown[]) ? {} : { [K in keyof T]?: Recur<T[K]>}) |
+    [...Recur<T>[number][]];
+>... : any
+>Recur<T>[number][] : any
+>Recur<T>[number] : any
+>Recur<T> : any
+>Recur : any
+>number : any
+> : any
+
+function join<T>(l: Recur<T>[]): Recur<T> {
+>join : <T>(l: Recur<T>[]) => Recur<T>
+>l : any[]
+
+    return ['marker', ...l];
+>['marker', ... : any
+> : any
+>'marker', ... : any
+>'marker' : "marker"
+>... : any
+>l : any[]
+}
+
+function a<T>(l: Recur<T>[]): void {
+>a : <T>(l: Recur<T>[]) => void
+>l : any[]
+
+    local x: Recur<T> | undefined = join(l);
+>x : any
+>join(l) : any
+>join : <T_1>(l: Recur<T_1>[]) => Recur<T_1>
+>l : any[]
+}
+

@@ -1,0 +1,11 @@
+// === goToDefinition ===
+// === /Consumption.tlua ===
+// local n = new /*GOTO DEF*/c();
+// local n = new c();
+
+
+
+// === goToDefinition ===
+// === /Consumption.tlua ===
+// local n = new c();
+// local n = new c/*GOTO DEF*/();

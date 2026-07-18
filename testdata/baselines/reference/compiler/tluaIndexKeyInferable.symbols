@@ -1,0 +1,110 @@
+//// [tests/cases/compiler/tluaIndexKeyInferable.tlua] ////
+
+=== tluaIndexKeyInferable.tlua ===
+// In Lua a record and an interface are both just tables, and iterating one with `pairs`
+// is idiomatic. TypeScript lets only object and type literals stand in for an index
+// signature they do not declare; tlua accepts every object type, or every
+// `Table<K, V>` signature in the standard library would reject named types forever.
+
+interface Point { x: number; y: number }
+>Point : Symbol(Point, Decl(tluaIndexKeyInferable.tlua, 0, 0))
+>x : Symbol(Point.x, Decl(tluaIndexKeyInferable.tlua, 5, 17))
+>y : Symbol(Point.y, Decl(tluaIndexKeyInferable.tlua, 5, 28))
+
+type Named = { first: string; last: string };
+>Named : Symbol(Named, Decl(tluaIndexKeyInferable.tlua, 5, 40))
+>first : Symbol(first, Decl(tluaIndexKeyInferable.tlua, 7, 14))
+>last : Symbol(last, Decl(tluaIndexKeyInferable.tlua, 7, 29))
+
+declare p: Point;
+>p : Symbol(p, Decl(tluaIndexKeyInferable.tlua, 9, 7))
+>Point : Symbol(Point, Decl(tluaIndexKeyInferable.tlua, 0, 0))
+
+declare nm: Named;
+>nm : Symbol(nm, Decl(tluaIndexKeyInferable.tlua, 10, 7))
+>Named : Symbol(Named, Decl(tluaIndexKeyInferable.tlua, 5, 40))
+
+for k, v in pairs(p) do
+>k : Symbol(k, Decl(tluaIndexKeyInferable.tlua, 12, 3))
+>v : Symbol(v, Decl(tluaIndexKeyInferable.tlua, 12, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>p : Symbol(p, Decl(tluaIndexKeyInferable.tlua, 9, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaIndexKeyInferable.tlua, 13, 7))
+>k : Symbol(k, Decl(tluaIndexKeyInferable.tlua, 12, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaIndexKeyInferable.tlua, 14, 7))
+>v : Symbol(v, Decl(tluaIndexKeyInferable.tlua, 12, 6))
+
+end
+
+for k, v in pairs(nm) do
+>k : Symbol(k, Decl(tluaIndexKeyInferable.tlua, 17, 3))
+>v : Symbol(v, Decl(tluaIndexKeyInferable.tlua, 17, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>nm : Symbol(nm, Decl(tluaIndexKeyInferable.tlua, 10, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaIndexKeyInferable.tlua, 18, 7))
+>k : Symbol(k, Decl(tluaIndexKeyInferable.tlua, 17, 3))
+
+  local value: string = v;
+>value : Symbol(value, Decl(tluaIndexKeyInferable.tlua, 19, 7))
+>v : Symbol(v, Decl(tluaIndexKeyInferable.tlua, 17, 6))
+
+end
+
+// A literal, which TypeScript already allowed.
+local lit = { a = 1, b = 2 };
+>lit : Symbol(lit, Decl(tluaIndexKeyInferable.tlua, 23, 5))
+>a : Symbol(a, Decl(tluaIndexKeyInferable.tlua, 23, 13))
+>b : Symbol(b, Decl(tluaIndexKeyInferable.tlua, 23, 20))
+
+for k, v in pairs(lit) do
+>k : Symbol(k, Decl(tluaIndexKeyInferable.tlua, 24, 3))
+>v : Symbol(v, Decl(tluaIndexKeyInferable.tlua, 24, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>lit : Symbol(lit, Decl(tluaIndexKeyInferable.tlua, 23, 5))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaIndexKeyInferable.tlua, 25, 7))
+>k : Symbol(k, Decl(tluaIndexKeyInferable.tlua, 24, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaIndexKeyInferable.tlua, 26, 7))
+>v : Symbol(v, Decl(tluaIndexKeyInferable.tlua, 24, 6))
+
+end
+
+local n: number | nil = rawget(p, "x");
+>n : Symbol(n, Decl(tluaIndexKeyInferable.tlua, 29, 5))
+>rawget : Symbol(rawget, Decl(lib.luajit.d.tlua, --, --))
+>p : Symbol(p, Decl(tluaIndexKeyInferable.tlua, 9, 7))
+
+local t: Table<string, number> = p;
+>t : Symbol(t, Decl(tluaIndexKeyInferable.tlua, 30, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>p : Symbol(p, Decl(tluaIndexKeyInferable.tlua, 9, 7))
+
+// A function is not a table: it has no keys to iterate.
+declare fn: (a: number) => void;
+>fn : Symbol(fn, Decl(tluaIndexKeyInferable.tlua, 33, 7))
+>a : Symbol(a, Decl(tluaIndexKeyInferable.tlua, 33, 13))
+
+local bad: Table<string, number> = fn;
+>bad : Symbol(bad, Decl(tluaIndexKeyInferable.tlua, 34, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>fn : Symbol(fn, Decl(tluaIndexKeyInferable.tlua, 33, 7))
+
+// A primitive is not a table either. Its apparent type is an interface -- `Number` --
+// whose members carry no table key at all, so nothing would be left to reject.
+declare num: number;
+>num : Symbol(num, Decl(tluaIndexKeyInferable.tlua, 38, 7))
+
+local alsoBad: Table<string, number> = num;
+>alsoBad : Symbol(alsoBad, Decl(tluaIndexKeyInferable.tlua, 39, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>num : Symbol(num, Decl(tluaIndexKeyInferable.tlua, 38, 7))
+

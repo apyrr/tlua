@@ -1,0 +1,36 @@
+// @strict: true
+// @noEmit: true
+
+// `T[]` denotes the number-key table type `{ [k: number]: T }`, so a table
+// constructor satisfies it and is indexed element-wise.
+local xs: number[] = {1, 2, 3};
+local first: number = xs[1];
+
+// A vararg has no name, so the pack is reached the Lua way: collect it into a
+// table with `{...}`, which is itself a number-key table and indexes
+// element-wise.
+function firstOf(...: string): string
+  local args: string[] = {...};
+  return args[1];
+end
+local f1: string = firstOf("a", "b", "c");
+
+// Generic vararg inference: T is inferred from the value arguments.
+function pickFirst<T>(...: T): T
+  local items: T[] = {...};
+  return items[1];
+end
+local n: number = pickFirst(1, 2, 3);
+
+// readonly T[] is the readonly number-key table.
+local ys: readonly number[] = {10, 20};
+
+// The global Array survives only as an inert, separately-nameable type: it is
+// distinct from T[], so a table is not assignable to it (missing length/methods).
+local arr: Array<number> = xs; // error
+
+// Recursive T[] resolves without diverging.
+type J = J[];
+local j: J = {};
+
+local es = {first, f1, n, ys, j};

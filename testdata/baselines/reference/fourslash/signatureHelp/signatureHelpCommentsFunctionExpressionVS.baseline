@@ -1,0 +1,288 @@
+// === SignatureHelp ===
+=== /signatureHelpCommentsFunctionExpressionVS.tlua ===
+// /** lambdaFoo local comment*/
+// local lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
+// local lambddaNoVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
+// lambdaFoo(10, 20);
+//           ^
+// | ----------------------------------------------------------------------
+// | lambdaFoo(**a: number**, b: number): number
+// | - `a: number`: param a
+// | this is lambda comment
+// | ----------------------------------------------------------------------
+//               ^
+// | ----------------------------------------------------------------------
+// | lambdaFoo(a: number, **b: number**): number
+// | - `b: number`: param b
+// | this is lambda comment
+// | ----------------------------------------------------------------------
+// function anotherFunc(a: number) {
+//     /** documentation
+//         @param b {string} inner parameter */
+//     local lambdaVar = /** inner docs */(b: string) => {
+//         local localVar = "Hello ";
+//         return localVar + b;
+//     }
+//     return lambdaVar("World") + a;
+// }
+// /**
+//  * On variable
+//  * @param s the first parameter!
+//  * @returns the parameter's length
+//  */
+// local assigned = /**
+//                 * Summary on expression
+//                 * @param s param on expression
+//                 * @returns return on expression
+//                 */function(/** On parameter */s: string) {
+//   return s.length;
+// }
+// assigned("hey");
+//          ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*18*/.
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 265,
+      "LSPosition": {
+        "line": 3,
+        "character": 10
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "lambdaFoo(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is lambda comment"
+          },
+          "parameters": [
+            {
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "param a"
+              }
+            },
+            {
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "param b"
+              }
+            }
+          ],
+          "activeParameter": 0,
+          "_vs_colorizedLabel": {
+            "Runs": [
+              {
+                "ClassificationTypeName": "local name",
+                "Text": "lambdaFoo",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": "(",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "parameter name",
+                "Text": "a",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ":",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "whitespace",
+                "Text": " ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "keyword",
+                "Text": "number",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ", ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "parameter name",
+                "Text": "b",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ":",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "whitespace",
+                "Text": " ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "keyword",
+                "Text": "number",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ")",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ": ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "keyword",
+                "Text": "number",
+                "_vs_type": "ClassifiedTextRun"
+              }
+            ],
+            "_vs_type": "ClassifiedTextElement"
+          }
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 269,
+      "LSPosition": {
+        "line": 3,
+        "character": 14
+      },
+      "Name": "6",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "lambdaFoo(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is lambda comment"
+          },
+          "parameters": [
+            {
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "param a"
+              }
+            },
+            {
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "param b"
+              }
+            }
+          ],
+          "activeParameter": 1,
+          "_vs_colorizedLabel": {
+            "Runs": [
+              {
+                "ClassificationTypeName": "local name",
+                "Text": "lambdaFoo",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": "(",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "parameter name",
+                "Text": "a",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ":",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "whitespace",
+                "Text": " ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "keyword",
+                "Text": "number",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ", ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "parameter name",
+                "Text": "b",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ":",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "whitespace",
+                "Text": " ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "keyword",
+                "Text": "number",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ")",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ": ",
+                "_vs_type": "ClassifiedTextRun"
+              },
+              {
+                "ClassificationTypeName": "keyword",
+                "Text": "number",
+                "_vs_type": "ClassifiedTextRun"
+              }
+            ],
+            "_vs_type": "ClassifiedTextElement"
+          }
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 874,
+      "LSPosition": {
+        "line": 25,
+        "character": 9
+      },
+      "Name": "18",
+      "Data": {}
+    },
+    "item": null
+  }
+]

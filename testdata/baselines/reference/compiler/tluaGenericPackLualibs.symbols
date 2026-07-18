@@ -1,0 +1,287 @@
+//// [tests/cases/compiler/tluaGenericPackLualibs.tlua] ////
+
+=== tluaGenericPackLualibs.tlua ===
+// The standard library correlates a call's arguments with its results now that
+// generic packs exist: pcall/xpcall/assert forward the callee's pack.
+
+declare function compute(a: number, b: string): (boolean, number);
+>compute : Symbol(compute, Decl(tluaGenericPackLualibs.tlua, 0, 0))
+>a : Symbol(a, Decl(tluaGenericPackLualibs.tlua, 3, 25))
+>b : Symbol(b, Decl(tluaGenericPackLualibs.tlua, 3, 35))
+
+declare function pure(x: number): string;
+>pure : Symbol(pure, Decl(tluaGenericPackLualibs.tlua, 3, 66))
+>x : Symbol(x, Decl(tluaGenericPackLualibs.tlua, 4, 22))
+
+// pcall: A is checked against compute's parameters, R becomes compute's results.
+local ok, flag, count = pcall(compute, 1, "x");
+>ok : Symbol(ok, Decl(tluaGenericPackLualibs.tlua, 7, 5))
+>flag : Symbol(flag, Decl(tluaGenericPackLualibs.tlua, 7, 9))
+>count : Symbol(count, Decl(tluaGenericPackLualibs.tlua, 7, 15))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>compute : Symbol(compute, Decl(tluaGenericPackLualibs.tlua, 0, 0))
+
+local okType: boolean = ok;
+>okType : Symbol(okType, Decl(tluaGenericPackLualibs.tlua, 8, 5))
+>ok : Symbol(ok, Decl(tluaGenericPackLualibs.tlua, 7, 5))
+
+local flagType: boolean = flag;
+>flagType : Symbol(flagType, Decl(tluaGenericPackLualibs.tlua, 9, 5))
+>flag : Symbol(flag, Decl(tluaGenericPackLualibs.tlua, 7, 9))
+
+local countType: number = count;
+>countType : Symbol(countType, Decl(tluaGenericPackLualibs.tlua, 10, 5))
+>count : Symbol(count, Decl(tluaGenericPackLualibs.tlua, 7, 15))
+
+// A wrong argument does NOT error: it fails the generic overload and falls
+// through to the erased fallback, whose results are `(boolean, ...any)`. That is
+// the deliberate trade-off for keeping every previously-legal pcall working
+// (overloaded callees, below); precise results reward the calls that match.
+local wok2, wres = pcall(compute, "wrong", "x"); // wres: any, not number
+>wok2 : Symbol(wok2, Decl(tluaGenericPackLualibs.tlua, 16, 5))
+>wres : Symbol(wres, Decl(tluaGenericPackLualibs.tlua, 16, 11))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>compute : Symbol(compute, Decl(tluaGenericPackLualibs.tlua, 0, 0))
+
+// A single-result callee correlates too.
+local pok, s = pcall(pure, 3);
+>pok : Symbol(pok, Decl(tluaGenericPackLualibs.tlua, 19, 5))
+>s : Symbol(s, Decl(tluaGenericPackLualibs.tlua, 19, 10))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>pure : Symbol(pure, Decl(tluaGenericPackLualibs.tlua, 3, 66))
+
+local sType: string = s;
+>sType : Symbol(sType, Decl(tluaGenericPackLualibs.tlua, 20, 5))
+>s : Symbol(s, Decl(tluaGenericPackLualibs.tlua, 19, 10))
+
+// xpcall forwards trailing arguments (LuaJIT) and correlates the result pack.
+local xok, xs = xpcall(pure, function(e: any) return e; end, 7);
+>xok : Symbol(xok, Decl(tluaGenericPackLualibs.tlua, 23, 5))
+>xs : Symbol(xs, Decl(tluaGenericPackLualibs.tlua, 23, 10))
+>xpcall : Symbol(xpcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>pure : Symbol(pure, Decl(tluaGenericPackLualibs.tlua, 3, 66))
+>e : Symbol(e, Decl(tluaGenericPackLualibs.tlua, 23, 38))
+>e : Symbol(e, Decl(tluaGenericPackLualibs.tlua, 23, 38))
+
+local xsType: string = xs;
+>xsType : Symbol(xsType, Decl(tluaGenericPackLualibs.tlua, 24, 5))
+>xs : Symbol(xs, Decl(tluaGenericPackLualibs.tlua, 23, 10))
+
+// assert returns everything it was passed; the first value is narrowed non-nil.
+declare maybe: number | nil;
+>maybe : Symbol(maybe, Decl(tluaGenericPackLualibs.tlua, 27, 7))
+
+local asserted, extra = assert(maybe, "message");
+>asserted : Symbol(asserted, Decl(tluaGenericPackLualibs.tlua, 28, 5))
+>extra : Symbol(extra, Decl(tluaGenericPackLualibs.tlua, 28, 15))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>maybe : Symbol(maybe, Decl(tluaGenericPackLualibs.tlua, 27, 7))
+
+local assertedType: number = asserted;
+>assertedType : Symbol(assertedType, Decl(tluaGenericPackLualibs.tlua, 29, 5))
+>asserted : Symbol(asserted, Decl(tluaGenericPackLualibs.tlua, 28, 5))
+
+local extraType: string = extra;
+>extraType : Symbol(extraType, Decl(tluaGenericPackLualibs.tlua, 30, 5))
+>extra : Symbol(extra, Decl(tluaGenericPackLualibs.tlua, 28, 15))
+
+// coroutine.wrap stays deliberately erased: a wrapped call exchanges values with
+// `yield` (the first call's results are the first yield's arguments), so packs
+// correlated with fn's parameters/returns would be wrong for every coroutine that
+// yields. The result is a plain LuaFunction.
+local wrapped = coroutine.wrap(compute);
+>wrapped : Symbol(wrapped, Decl(tluaGenericPackLualibs.tlua, 36, 5))
+>coroutine.wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>compute : Symbol(compute, Decl(tluaGenericPackLualibs.tlua, 0, 0))
+
+local wok = wrapped(2, "y");
+>wok : Symbol(wok, Decl(tluaGenericPackLualibs.tlua, 37, 5))
+>wrapped : Symbol(wrapped, Decl(tluaGenericPackLualibs.tlua, 36, 5))
+
+// An OVERLOADED callee cannot pin A to one signature, so pcall falls through to
+// the erased overload instead of mis-checking against the wrong one: select's
+// "#" form is legal here.
+local sok, count = pcall(select, "#", 1, 2);
+>sok : Symbol(sok, Decl(tluaGenericPackLualibs.tlua, 42, 5))
+>count : Symbol(count, Decl(tluaGenericPackLualibs.tlua, 42, 10))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+local sokType: boolean = sok;
+>sokType : Symbol(sokType, Decl(tluaGenericPackLualibs.tlua, 43, 5))
+>sok : Symbol(sok, Decl(tluaGenericPackLualibs.tlua, 42, 5))
+
+// The error-path approximation, pinned: pcall's result is `(boolean, ...R)`, so
+// on failure the second value reads as R's first element, not as the error value
+// (the true union `(true, ...R) | (false, error)` is inexpressible).
+local cok, cerr = pcall(compute, 1, "x");
+>cok : Symbol(cok, Decl(tluaGenericPackLualibs.tlua, 48, 5))
+>cerr : Symbol(cerr, Decl(tluaGenericPackLualibs.tlua, 48, 10))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>compute : Symbol(compute, Decl(tluaGenericPackLualibs.tlua, 0, 0))
+
+local cerrIsFirstResult: boolean = cerr;
+>cerrIsFirstResult : Symbol(cerrIsFirstResult, Decl(tluaGenericPackLualibs.tlua, 49, 5))
+>cerr : Symbol(cerr, Decl(tluaGenericPackLualibs.tlua, 48, 10))
+
+// select with a literal index slices the argument pack: select(2, ...) drops the
+// first value, so `first` is the second argument (a boolean), not the string.
+declare str: string;
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+
+declare bool: boolean;
+>bool : Symbol(bool, Decl(tluaGenericPackLualibs.tlua, 54, 7))
+
+declare num: number;
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+local first, rest = select(2, str, bool, num);
+>first : Symbol(first, Decl(tluaGenericPackLualibs.tlua, 56, 5))
+>rest : Symbol(rest, Decl(tluaGenericPackLualibs.tlua, 56, 12))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>bool : Symbol(bool, Decl(tluaGenericPackLualibs.tlua, 54, 7))
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+local firstIsBoolean: boolean = first;
+>firstIsBoolean : Symbol(firstIsBoolean, Decl(tluaGenericPackLualibs.tlua, 57, 5))
+>first : Symbol(first, Decl(tluaGenericPackLualibs.tlua, 56, 5))
+
+local restIsNumber: number = rest;
+>restIsNumber : Symbol(restIsNumber, Decl(tluaGenericPackLualibs.tlua, 58, 5))
+>rest : Symbol(rest, Decl(tluaGenericPackLualibs.tlua, 56, 12))
+
+// select("#", ...) counts the arguments.
+local argCount: number = select("#", str, bool, num);
+>argCount : Symbol(argCount, Decl(tluaGenericPackLualibs.tlua, 61, 5))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>bool : Symbol(bool, Decl(tluaGenericPackLualibs.tlua, 54, 7))
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+// A non-literal index cannot pin positions, so each selected slot is the sound
+// union of the values (or nil past the end).
+declare dynamicIndex: number;
+>dynamicIndex : Symbol(dynamicIndex, Decl(tluaGenericPackLualibs.tlua, 65, 7))
+
+local dyn = select(dynamicIndex, str, num);
+>dyn : Symbol(dyn, Decl(tluaGenericPackLualibs.tlua, 66, 5))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>dynamicIndex : Symbol(dynamicIndex, Decl(tluaGenericPackLualibs.tlua, 65, 7))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+local dynType: string | number | nil = dyn;
+>dynType : Symbol(dynType, Decl(tluaGenericPackLualibs.tlua, 67, 5))
+>dyn : Symbol(dyn, Decl(tluaGenericPackLualibs.tlua, 66, 5))
+
+// A slice of exactly one value in the tail of a value list stays a pack (not a
+// collapsed scalar): `select(3, ...)` here selects just `num`, and the list keeps
+// its arity.
+local one, two = str, select(3, str, bool, num);
+>one : Symbol(one, Decl(tluaGenericPackLualibs.tlua, 72, 5))
+>two : Symbol(two, Decl(tluaGenericPackLualibs.tlua, 72, 10))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>bool : Symbol(bool, Decl(tluaGenericPackLualibs.tlua, 54, 7))
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+local oneIsString: string = one;
+>oneIsString : Symbol(oneIsString, Decl(tluaGenericPackLualibs.tlua, 73, 5))
+>one : Symbol(one, Decl(tluaGenericPackLualibs.tlua, 72, 5))
+
+local twoIsNumber: number = two;
+>twoIsNumber : Symbol(twoIsNumber, Decl(tluaGenericPackLualibs.tlua, 74, 5))
+>two : Symbol(two, Decl(tluaGenericPackLualibs.tlua, 72, 10))
+
+// The same as a multiple-return tail.
+function sliceTail(): (string, number)
+>sliceTail : Symbol(sliceTail, Decl(tluaGenericPackLualibs.tlua, 74, 32))
+
+  return str, select(3, str, bool, num);
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>bool : Symbol(bool, Decl(tluaGenericPackLualibs.tlua, 54, 7))
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+end
+
+// A literal index with an open tail keeps the fixed positions and splices the
+// tail: values before the index never leak into the result.
+function literalWithTail(...: boolean): void
+>literalWithTail : Symbol(literalWithTail, Decl(tluaGenericPackLualibs.tlua, 79, 3))
+> : Symbol((Missing), Decl(tluaGenericPackLualibs.tlua, 83, 25))
+
+  local m, b = select(2, str, num, ...);
+>m : Symbol(m, Decl(tluaGenericPackLualibs.tlua, 84, 7))
+>b : Symbol(b, Decl(tluaGenericPackLualibs.tlua, 84, 10))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+  local mIsNumber: number = m;
+>mIsNumber : Symbol(mIsNumber, Decl(tluaGenericPackLualibs.tlua, 85, 7))
+>m : Symbol(m, Decl(tluaGenericPackLualibs.tlua, 84, 7))
+
+  local bIsBoolean: boolean | nil = b;
+>bIsBoolean : Symbol(bIsBoolean, Decl(tluaGenericPackLualibs.tlua, 86, 7))
+>b : Symbol(b, Decl(tluaGenericPackLualibs.tlua, 84, 10))
+
+end
+
+// A literal index landing inside the tail selects the tail's values only.
+function literalInsideTail(...: boolean): void
+>literalInsideTail : Symbol(literalInsideTail, Decl(tluaGenericPackLualibs.tlua, 87, 3))
+> : Symbol((Missing), Decl(tluaGenericPackLualibs.tlua, 90, 27))
+
+  local t = select(3, str, num, ...);
+>t : Symbol(t, Decl(tluaGenericPackLualibs.tlua, 91, 7))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>str : Symbol(str, Decl(tluaGenericPackLualibs.tlua, 53, 7))
+>num : Symbol(num, Decl(tluaGenericPackLualibs.tlua, 55, 7))
+
+  local tIsBoolean: boolean | nil = t;
+>tIsBoolean : Symbol(tIsBoolean, Decl(tluaGenericPackLualibs.tlua, 92, 7))
+>t : Symbol(t, Decl(tluaGenericPackLualibs.tlua, 91, 7))
+
+end
+
+// The tail may be a call through a union-typed function -- a union of packs.
+// (This crashed the checker before it distributed over the union.)
+declare function gPack(): (number, string);
+>gPack : Symbol(gPack, Decl(tluaGenericPackLualibs.tlua, 93, 3))
+
+declare function hPack(): (boolean, nil);
+>hPack : Symbol(hPack, Decl(tluaGenericPackLualibs.tlua, 97, 43))
+
+declare cond: boolean;
+>cond : Symbol(cond, Decl(tluaGenericPackLualibs.tlua, 99, 7))
+
+local packFn = cond and gPack or hPack;
+>packFn : Symbol(packFn, Decl(tluaGenericPackLualibs.tlua, 100, 5))
+>cond : Symbol(cond, Decl(tluaGenericPackLualibs.tlua, 99, 7))
+>gPack : Symbol(gPack, Decl(tluaGenericPackLualibs.tlua, 93, 3))
+>hPack : Symbol(hPack, Decl(tluaGenericPackLualibs.tlua, 97, 43))
+
+declare dynamic: number;
+>dynamic : Symbol(dynamic, Decl(tluaGenericPackLualibs.tlua, 101, 7))
+
+local u = select(dynamic, packFn());
+>u : Symbol(u, Decl(tluaGenericPackLualibs.tlua, 102, 5))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>dynamic : Symbol(dynamic, Decl(tluaGenericPackLualibs.tlua, 101, 7))
+>packFn : Symbol(packFn, Decl(tluaGenericPackLualibs.tlua, 100, 5))
+
+local uType: number | string | boolean | nil = u;
+>uType : Symbol(uType, Decl(tluaGenericPackLualibs.tlua, 103, 5))
+>u : Symbol(u, Decl(tluaGenericPackLualibs.tlua, 102, 5))
+
+// A literal slice keeps literal freshness: the annotation still accepts it.
+local exact: 5 = select(1, 5);
+>exact : Symbol(exact, Decl(tluaGenericPackLualibs.tlua, 106, 5))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+

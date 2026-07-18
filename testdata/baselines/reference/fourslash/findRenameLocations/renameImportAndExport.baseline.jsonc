@@ -1,0 +1,11 @@
+// === findRenameLocations ===
+// === /renameImportAndExport.tlua ===
+// import /*RENAME*/a from "module";
+// export { a };
+
+
+
+// === findRenameLocations ===
+// === /renameImportAndExport.tlua ===
+// import a from "module";
+// export { /*RENAME*/a };

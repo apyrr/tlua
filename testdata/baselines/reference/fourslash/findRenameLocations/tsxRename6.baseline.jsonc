@@ -1,0 +1,87 @@
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function /*RENAME*/[|OptRENAME|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|OptRENAME|] />;
+// local opt1 = <[|OptRENAME|] propx={100} propString />;
+// local opt2 = <[|OptRENAME|] propx={100} optional/>;
+// local opt3 = <[|OptRENAME|] wrong />;
+// local opt4 = <[|OptRENAME|] propx={100} propString="hi" />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|OptRENAME|](attributes: OptionPropBag): JSX.Element;
+// local opt = </*RENAME*/[|OptRENAME|] />;
+// local opt1 = <[|OptRENAME|] propx={100} propString />;
+// local opt2 = <[|OptRENAME|] propx={100} optional/>;
+// local opt3 = <[|OptRENAME|] wrong />;
+// local opt4 = <[|OptRENAME|] propx={100} propString="hi" />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|OptRENAME|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|OptRENAME|] />;
+// local opt1 = </*RENAME*/[|OptRENAME|] propx={100} propString />;
+// local opt2 = <[|OptRENAME|] propx={100} optional/>;
+// local opt3 = <[|OptRENAME|] wrong />;
+// local opt4 = <[|OptRENAME|] propx={100} propString="hi" />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|OptRENAME|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|OptRENAME|] />;
+// local opt1 = <[|OptRENAME|] propx={100} propString />;
+// local opt2 = </*RENAME*/[|OptRENAME|] propx={100} optional/>;
+// local opt3 = <[|OptRENAME|] wrong />;
+// local opt4 = <[|OptRENAME|] propx={100} propString="hi" />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|OptRENAME|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|OptRENAME|] />;
+// local opt1 = <[|OptRENAME|] propx={100} propString />;
+// local opt2 = <[|OptRENAME|] propx={100} optional/>;
+// local opt3 = </*RENAME*/[|OptRENAME|] wrong />;
+// local opt4 = <[|OptRENAME|] propx={100} propString="hi" />;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|OptRENAME|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|OptRENAME|] />;
+// local opt1 = <[|OptRENAME|] propx={100} propString />;
+// local opt2 = <[|OptRENAME|] propx={100} optional/>;
+// local opt3 = <[|OptRENAME|] wrong />;
+// local opt4 = </*RENAME*/[|OptRENAME|] propx={100} propString="hi" />;

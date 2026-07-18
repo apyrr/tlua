@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/tluaRequireTypesEntrypoint.tlua] ////
+
+=== main.tlua ===
+// A package's typed entrypoint (package.json "types") types the require.
+local pkg = require("pkg");
+>pkg : { answer: number; }
+>require("pkg") : { answer: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"pkg" : "pkg"
+
+local n: number = pkg.answer;
+>n : number
+>pkg.answer : number
+>pkg : { answer: number; }
+>answer : number
+
+n;
+>n : number
+
+=== node_modules/pkg/typed.tlua ===
+local answer = 42;
+>answer : number
+>42 : 42
+
+return { answer = answer };
+>{ answer = answer } : { answer: number; }
+>answer : number
+>answer : number
+

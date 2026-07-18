@@ -1,0 +1,11 @@
+// === documentHighlights ===
+// === /getOccurrencesReturn3.tlua ===
+// --- (line: 10) skipped ---
+//         })() || true;
+//     }
+// 
+//     local unusued = [1, 2, 3, 4].map(x => { /*HIGHLIGHTS*/[|return|] 4 })
+// 
+//     return;
+//     return true;
+// }

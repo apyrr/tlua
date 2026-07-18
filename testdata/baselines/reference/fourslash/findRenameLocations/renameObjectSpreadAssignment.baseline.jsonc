@@ -1,0 +1,37 @@
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.tlua ===
+// interface A1 { a: number };
+// interface A2 { a?: number };
+// local /*RENAME*/[|a1RENAME|]: A1;
+// local a2: A2;
+// local a12 = { ...a1, ...a2 };
+
+
+
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.tlua ===
+// interface A1 { a: number };
+// interface A2 { a?: number };
+// local a1: A1;
+// local a2: A2;
+// local a12 = { .../*RENAME*/a1, ...a2 };
+
+
+
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.tlua ===
+// interface A1 { a: number };
+// interface A2 { a?: number };
+// local a1: A1;
+// local /*RENAME*/[|a2RENAME|]: A2;
+// local a12 = { ...a1, ...a2 };
+
+
+
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.tlua ===
+// interface A1 { a: number };
+// interface A2 { a?: number };
+// local a1: A1;
+// local a2: A2;
+// local a12 = { ...a1, .../*RENAME*/a2 };

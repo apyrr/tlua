@@ -1,0 +1,69 @@
+//// [tests/cases/compiler/tluaColonFunctionNestedChains.tlua] ////
+
+=== tluaColonFunctionNestedChains.tlua ===
+local a = { b = {} };
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>{ b = {} } : { b: { f(self: { f(self: any, x: number): number; g(self: any): number; }, x: number): number; g(self: { f(self: any, x: number): number; g(self: any): number; }): number; }; }
+>b : { f(self: { f(self: any, x: number): number; g(self: any): number; }, x: number): number; g(self: { f(self: any, x: number): number; g(self: any): number; }): number; }
+>{} : { f(self: { f(self: any, x: number): number; g(self: any): number; }, x: number): number; g(self: { f(self: any, x: number): number; g(self: any): number; }): number; }
+
+// `self` takes the type of the whole chain before the colon, not of its root.
+function a.b:f(x: number): number
+>a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>b : { f(self: any, x: number): number; g(self: any): number; }
+>f : (self: { f(self: any, x: number): number; g(self: any): number; }, x: number) => number
+>: : { f(self: any, x: number): number; g(self: any): number; }
+>a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>b : { f(self: any, x: number): number; g(self: any): number; }
+>x : number
+
+  return x;
+>x : number
+
+end
+
+function a.b:g(): number
+>a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>b : { f(self: any, x: number): number; g(self: any): number; }
+>g : (self: { f(self: any, x: number): number; g(self: any): number; }) => number
+>: : { f(self: any, x: number): number; g(self: any): number; }
+>a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>b : { f(self: any, x: number): number; g(self: any): number; }
+
+  return self.f(self, 1);
+>self.f(self, 1) : number
+>self.f : (self: { f(self: any, x: number): number; g(self: any): number; }, x: number) => number
+>self : { f(self: any, x: number): number; g(self: any): number; }
+>f : (self: { f(self: any, x: number): number; g(self: any): number; }, x: number) => number
+>self : { f(self: any, x: number): number; g(self: any): number; }
+>1 : 1
+
+end
+
+local n = a.b.g(a.b);
+>n : number
+>a.b.g(a.b) : number
+>a.b.g : (self: { f(self: any, x: number): number; g(self: any): number; }) => number
+>a.b : { f(self: any, x: number): number; g(self: any): number; }
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>b : { f(self: any, x: number): number; g(self: any): number; }
+>g : (self: { f(self: any, x: number): number; g(self: any): number; }) => number
+>a.b : { f(self: any, x: number): number; g(self: any): number; }
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>b : { f(self: any, x: number): number; g(self: any): number; }
+
+// The root is not the receiver.
+a.b.f(a, 1);
+>a.b.f(a, 1) : number
+>a.b.f : (self: { f(self: any, x: number): number; g(self: any): number; }, x: number) => number
+>a.b : { f(self: any, x: number): number; g(self: any): number; }
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>b : { f(self: any, x: number): number; g(self: any): number; }
+>f : (self: { f(self: any, x: number): number; g(self: any): number; }, x: number) => number
+>a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
+>1 : 1
+

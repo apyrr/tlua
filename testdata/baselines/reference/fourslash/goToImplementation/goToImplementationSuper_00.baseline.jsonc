@@ -1,0 +1,9 @@
+// === goToImplementation ===
+// === /goToImplementationSuper_00.tlua ===
+// --- (line: 3) skipped ---
+// 
+// class Bar extends Foo {
+//     constructor() {
+//         su/*GOTO IMPL*/per();
+//     }
+// }

@@ -1,0 +1,30 @@
+//// [tests/cases/compiler/declareGlobalLuauStyleASI.tlua] ////
+
+=== declareGlobalLuauStyleASI.tlua ===
+// `declare` remains a valid identifier: without a same-line `name:` it is an
+// expression, and a line break after `declare` splits it into two statements.
+local declare = 1;
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 2, 5))
+
+local x = 2;
+>x : Symbol(x, Decl(declareGlobalLuauStyleASI.tlua, 3, 5))
+
+declare
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 2, 5))
+
+x;
+>x : Symbol(x, Decl(declareGlobalLuauStyleASI.tlua, 3, 5))
+
+declare = x;
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 2, 5))
+>x : Symbol(x, Decl(declareGlobalLuauStyleASI.tlua, 3, 5))
+
+local call = (declare: number) => declare;
+>call : Symbol(call, Decl(declareGlobalLuauStyleASI.tlua, 7, 5))
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 7, 14))
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 7, 14))
+
+call(declare);
+>call : Symbol(call, Decl(declareGlobalLuauStyleASI.tlua, 7, 5))
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 2, 5))
+

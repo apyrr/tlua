@@ -1,0 +1,10 @@
+// @strict: true
+// @noEmit: true
+
+// https://github.com/microsoft/typescript-go/issues/1563
+
+function f() {
+  local v: unknown = "lol";
+  local acceptsRecord = (record: Record<string, string>) => {};
+  acceptsRecord(v || {});
+}

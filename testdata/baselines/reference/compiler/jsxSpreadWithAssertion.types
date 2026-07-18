@@ -1,0 +1,43 @@
+//// [tests/cases/compiler/jsxSpreadWithAssertion.tsx] ////
+
+=== jsxSpreadWithAssertion.tsx ===
+declare EntryTextDialog: any;
+>EntryTextDialog : any
+
+local c = <EntryTextDialog
+>c : any
+><EntryTextDialog : any
+>EntryTextDialog : any
+
+    {...{
+>... : any
+
+        first: 0,
+>first : any
+>0,        foo : any
+>0 : 0
+
+        foo: 1,
+>foo : any
+>1,        bar : any
+>1 : 1
+
+        bar: 2 as any,
+>bar : any
+>2 as any,        baz : any
+>2 as any : any
+>2 : 2
+
+        baz: 3,
+>baz : any
+>3,        last : any
+>3 : 3
+
+        last: 4
+>last : any
+>4 : 4
+
+    }}
+/>
+>/> : RegExp
+

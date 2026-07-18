@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/expandoPropertyEmptyArrayWidening.tlua] ////
+
+=== expandoPropertyEmptyArrayWidening.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3976
+
+local example: {
+>example : Symbol(example, Decl(expandoPropertyEmptyArrayWidening.tlua, 2, 5))
+
+  (): void;
+  items?: string[];
+>items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
+
+} = () => undefined;
+example.items = [];
+>example.items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
+>example : Symbol(example, Decl(expandoPropertyEmptyArrayWidening.tlua, 2, 5))
+>items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
+
+function f1() {}
+>f1 : Symbol(f1, Decl(expandoPropertyEmptyArrayWidening.tlua, 6, 19))
+
+f1.a = [];  // Implicit any error
+>f1.a : Symbol(f1.a, Decl(expandoPropertyEmptyArrayWidening.tlua, 8, 16))
+>f1 : Symbol(f1, Decl(expandoPropertyEmptyArrayWidening.tlua, 6, 19))
+>a : Symbol(f1.a, Decl(expandoPropertyEmptyArrayWidening.tlua, 8, 16))
+
+local f2 = function() end;
+>f2 : Symbol(f2, Decl(expandoPropertyEmptyArrayWidening.tlua, 11, 5))
+
+f2.a = [];  // Implicit any error
+>f2 : Symbol(f2, Decl(expandoPropertyEmptyArrayWidening.tlua, 11, 5))
+
+local f3 = () => {};
+>f3 : Symbol(f3, Decl(expandoPropertyEmptyArrayWidening.tlua, 14, 5))
+
+f3.a = [];  // Implicit any error
+>f3 : Symbol(f3, Decl(expandoPropertyEmptyArrayWidening.tlua, 14, 5))
+
+local f4: { (): void, a: string[] } = () => {};
+>f4 : Symbol(f4, Decl(expandoPropertyEmptyArrayWidening.tlua, 17, 5))
+>a : Symbol(a, Decl(expandoPropertyEmptyArrayWidening.tlua, 17, 21))
+
+f4.a = [];
+>f4.a : Symbol(a, Decl(expandoPropertyEmptyArrayWidening.tlua, 17, 21))
+>f4 : Symbol(f4, Decl(expandoPropertyEmptyArrayWidening.tlua, 17, 5))
+>a : Symbol(a, Decl(expandoPropertyEmptyArrayWidening.tlua, 17, 21))
+
+local f5: { (): void, a: string[] } = function() end;
+>f5 : Symbol(f5, Decl(expandoPropertyEmptyArrayWidening.tlua, 20, 5))
+>a : Symbol(a, Decl(expandoPropertyEmptyArrayWidening.tlua, 20, 21))
+
+f5.a = [];
+>f5.a : Symbol(a, Decl(expandoPropertyEmptyArrayWidening.tlua, 20, 21))
+>f5 : Symbol(f5, Decl(expandoPropertyEmptyArrayWidening.tlua, 20, 5))
+>a : Symbol(a, Decl(expandoPropertyEmptyArrayWidening.tlua, 20, 21))
+

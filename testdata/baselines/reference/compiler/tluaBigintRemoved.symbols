@@ -1,0 +1,64 @@
+//// [tests/cases/compiler/tluaBigintRemoved.tlua] ////
+
+=== tluaBigintRemoved.tlua ===
+// bigint does not exist in tlua: Lua has a single `number` type. Neither the
+// `0n` literal nor the `bigint` type keyword survives. The `n` suffix no longer
+// scans as a bigint marker, so an `n` glued to a numeric literal is the ordinary
+// "identifier cannot immediately follow a numeric literal" error, and `bigint`
+// in a type position is just an unresolved name (`Cannot find name 'bigint'`).
+//
+// Each use also pins that the scanner/parser keep making progress: the stray `n`
+// is scanned as a separate identifier rather than re-entering forever.
+
+declare v: number;
+>v : Symbol(v, Decl(tluaBigintRemoved.tlua, 9, 7))
+
+// `0n` no longer scans as a bigint literal; the trailing `n` is rejected.
+local a = 0n;
+>a : Symbol(a, Decl(tluaBigintRemoved.tlua, 12, 5))
+
+local b = 123n;
+>b : Symbol(b, Decl(tluaBigintRemoved.tlua, 13, 5))
+
+local c = -5n;
+>c : Symbol(c, Decl(tluaBigintRemoved.tlua, 14, 5))
+
+// `bigint` is not a type keyword; it resolves to an unknown name.
+local t: bigint = 1;
+>t : Symbol(t, Decl(tluaBigintRemoved.tlua, 17, 5))
+>bigint : Symbol(bigint)
+
+type Alias = bigint;
+>Alias : Symbol(Alias, Decl(tluaBigintRemoved.tlua, 17, 20))
+>bigint : Symbol(bigint)
+
+declare function f(x: bigint): bigint;
+>f : Symbol(f, Decl(tluaBigintRemoved.tlua, 18, 20))
+>x : Symbol(x, Decl(tluaBigintRemoved.tlua, 19, 19))
+>bigint : Symbol(bigint)
+>bigint : Symbol(bigint)
+
+// `0n` in assorted expression positions.
+local obj = { key = 1n };
+>obj : Symbol(obj, Decl(tluaBigintRemoved.tlua, 22, 5))
+>key : Symbol(key, Decl(tluaBigintRemoved.tlua, 22, 13))
+
+if 0n then
+end
+
+// Plain number arithmetic still works and yields `number`.
+local sum: number = v + 1;
+>sum : Symbol(sum, Decl(tluaBigintRemoved.tlua, 27, 5))
+>v : Symbol(v, Decl(tluaBigintRemoved.tlua, 9, 7))
+
+local prod: number = v * 2;
+>prod : Symbol(prod, Decl(tluaBigintRemoved.tlua, 28, 5))
+>v : Symbol(v, Decl(tluaBigintRemoved.tlua, 9, 7))
+
+local neg: number = -v;
+>neg : Symbol(neg, Decl(tluaBigintRemoved.tlua, 29, 5))
+>v : Symbol(v, Decl(tluaBigintRemoved.tlua, 9, 7))
+
+local len: number = #"abc";
+>len : Symbol(len, Decl(tluaBigintRemoved.tlua, 30, 5))
+

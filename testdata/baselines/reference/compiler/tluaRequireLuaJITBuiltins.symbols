@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/tluaRequireLuaJITBuiltins.tlua] ////
+
+=== tluaRequireLuaJITBuiltins.tlua ===
+// A bare name is not a project file, so the declared overloads still type it.
+local bit = require("bit");
+>bit : Symbol(bit, Decl(tluaRequireLuaJITBuiltins.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local band: number = bit.band(1, 2);
+>band : Symbol(band, Decl(tluaRequireLuaJITBuiltins.tlua, 2, 5))
+>bit.band : Symbol(BitLib.band, Decl(lib.luajit.d.tlua, --, --))
+>bit : Symbol(bit, Decl(tluaRequireLuaJITBuiltins.tlua, 1, 5))
+>band : Symbol(BitLib.band, Decl(lib.luajit.d.tlua, --, --))
+
+local ffi = require("ffi");
+>ffi : Symbol(ffi, Decl(tluaRequireLuaJITBuiltins.tlua, 4, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local jit = require("jit");
+>jit : Symbol(jit, Decl(tluaRequireLuaJITBuiltins.tlua, 5, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local profile = require("jit.profile");
+>profile : Symbol(profile, Decl(tluaRequireLuaJITBuiltins.tlua, 6, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+// An unknown bare name falls to the `(module: string): any` overload.
+local unknown = require("nosuchlib");
+>unknown : Symbol(unknown, Decl(tluaRequireLuaJITBuiltins.tlua, 9, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+

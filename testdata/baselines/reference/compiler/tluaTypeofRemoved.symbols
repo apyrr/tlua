@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaTypeofRemoved.tlua] ////
+
+=== tluaTypeofRemoved.tlua ===
+// The `typeof` OPERATOR does not exist in tlua: `type(value)` is the Lua type
+// guard, and the operator has no AST node left to parse into. What follows is a
+// syntax error, not a checked expression.
+//
+// Each use below also pins that the parser keeps making progress: `typeof` does
+// not start an expression, so the statement list skips the token instead of
+// re-entering on it forever.
+
+declare v: string | number;
+>v : Symbol(v, Decl(tluaTypeofRemoved.tlua, 8, 7))
+
+declare function f(a: number): string;
+>f : Symbol(f, Decl(tluaTypeofRemoved.tlua, 8, 27))
+>a : Symbol(a, Decl(tluaTypeofRemoved.tlua, 9, 19))
+
+typeof v;
+>v : Symbol(v, Decl(tluaTypeofRemoved.tlua, 8, 7))
+
+local tag = typeof v;
+>tag : Symbol(tag, Decl(tluaTypeofRemoved.tlua, 13, 5))
+>v : Symbol(v, Decl(tluaTypeofRemoved.tlua, 8, 7))
+
+if typeof v == "string" then
+>v : Symbol(v, Decl(tluaTypeofRemoved.tlua, 8, 7))
+
+  local s: string = v;
+>s : Symbol(s, Decl(tluaTypeofRemoved.tlua, 16, 7))
+>v : Symbol(v, Decl(tluaTypeofRemoved.tlua, 8, 7))
+
+end
+
+// `typeof` TYPE QUERIES are static syntax with no runtime counterpart, and stay.
+local g: typeof f = f;
+>g : Symbol(g, Decl(tluaTypeofRemoved.tlua, 20, 5))
+>f : Symbol(f, Decl(tluaTypeofRemoved.tlua, 8, 27))
+>f : Symbol(f, Decl(tluaTypeofRemoved.tlua, 8, 27))
+
+type Q = typeof v;
+>Q : Symbol(Q, Decl(tluaTypeofRemoved.tlua, 20, 22))
+>v : Symbol(v, Decl(tluaTypeofRemoved.tlua, 8, 7))
+
+local r: string = g(1);
+>r : Symbol(r, Decl(tluaTypeofRemoved.tlua, 22, 5))
+>g : Symbol(g, Decl(tluaTypeofRemoved.tlua, 20, 5))
+

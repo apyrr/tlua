@@ -1,0 +1,47 @@
+// === documentHighlights ===
+// === /getOccurrencesAbstract02.tlua ===
+// --- (line: 3) skipped ---
+//     abstract makeSound(): void;
+// }
+// // abstract cannot appear here, won't get highlighted
+// local c = /*HIGHLIGHTS*/abstract class Foo {
+//     abstract foo(): void;
+//     abstract bar(): void;
+// }
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAbstract02.tlua ===
+// --- (line: 4) skipped ---
+// }
+// // abstract cannot appear here, won't get highlighted
+// local c = abstract class Foo {
+//     /*HIGHLIGHTS*/abstract foo(): void;
+//     abstract bar(): void;
+// }
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAbstract02.tlua ===
+// // Not valid TS (abstract methods can only appear in abstract classes)
+// class Animal {
+//     /*HIGHLIGHTS*/abstract walk(): void;
+//     abstract makeSound(): void;
+// }
+// // abstract cannot appear here, won't get highlighted
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAbstract02.tlua ===
+// // Not valid TS (abstract methods can only appear in abstract classes)
+// class Animal {
+//     abstract walk(): void;
+//     /*HIGHLIGHTS*/abstract makeSound(): void;
+// }
+// // abstract cannot appear here, won't get highlighted
+// local c = abstract class Foo {
+// --- (line: 8) skipped ---

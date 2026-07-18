@@ -1,0 +1,22 @@
+tluaTablePositionalErrors.tlua(3,17): error TS1005: '=' expected.
+tluaTablePositionalErrors.tlua(6,17): error TS1109: Expression expected.
+tluaTablePositionalErrors.tlua(9,13): error TS1136: Property assignment expected.
+
+
+==== tluaTablePositionalErrors.tlua (3 errors) ====
+    // A computed key without `=`/`:` is a natural error.
+    declare k: string;
+    local a = { [k] };
+                    ~
+!!! error TS1005: '=' expected.
+    
+    // A keyed form missing its value.
+    local b = { x = };
+                    ~
+!!! error TS1109: Expression expected.
+    
+    // A bare separator.
+    local c = { , };
+                ~
+!!! error TS1136: Property assignment expected.
+    

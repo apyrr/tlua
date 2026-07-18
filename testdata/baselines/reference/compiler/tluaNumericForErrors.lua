@@ -1,0 +1,107 @@
+//// [tests/cases/compiler/tluaNumericForErrors.tlua] ////
+
+//// [tluaNumericForErrors.tlua]
+// Non-number bounds and step.
+function badBounds(): void
+  for i = "a", 10 do
+    local n = i;
+    n;
+  end
+  for i = 1, true do
+    i;
+  end
+  for i = 1, 10, "step" do
+    i;
+  end
+end
+
+// Missing `to`.
+function missingTo(): void
+  for i = 1 do
+    i;
+  end
+end
+
+// More than three control expressions.
+function tooMany(): void
+  for i = 1, 10, 2, 3 do
+    i;
+  end
+end
+
+// An annotation that cannot hold a number.
+function badAnnotation(): void
+  for i: string = 1, 2 do
+    i;
+  end
+end
+
+// The control variable cannot be used in its own bounds.
+function selfReference(): void
+  for i = i, 10 do
+    i;
+  end
+end
+
+// Unused control variable; underscore is exempt.
+function unused(n: number): number
+  local total = 0;
+  for i = 1, n do
+    total = total + 1;
+  end
+  for _ = 1, n do
+    total = total + 1;
+  end
+  return total;
+end
+
+
+//// [tluaNumericForErrors.lua]
+-- Non-number bounds and step.
+function badBounds()
+    for i = "a", 10 do
+        local n = i;
+        n;
+    end
+    for i = 1, true do
+        i;
+    end
+    for i = 1, 10, "step" do
+        i;
+    end
+end
+-- Missing `to`.
+function missingTo()
+    for i = 1,  do
+        i;
+    end
+end
+-- More than three control expressions.
+function tooMany()
+    for i = 1, 10, 2 do
+        i;
+    end
+end
+-- An annotation that cannot hold a number.
+function badAnnotation()
+    for i = 1, 2 do
+        i;
+    end
+end
+-- The control variable cannot be used in its own bounds.
+function selfReference()
+    for i = i, 10 do
+        i;
+    end
+end
+-- Unused control variable; underscore is exempt.
+function unused(n)
+    local total = 0;
+    for i = 1, n do
+        total = total + 1;
+    end
+    for _ = 1, n do
+        total = total + 1;
+    end
+    return total;
+end

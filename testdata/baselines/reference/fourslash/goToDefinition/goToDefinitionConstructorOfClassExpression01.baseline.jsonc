@@ -1,0 +1,108 @@
+// === goToDefinition ===
+// === /goToDefinitionConstructorOfClassExpression01.tlua ===
+// local x = class C {
+//     constructor() {
+//         local other = new /*GOTO DEF*/C;
+//     }
+// }
+// 
+// --- (line: 7) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOfClassExpression01.tlua ===
+// --- (line: 6) skipped ---
+// local y = class C extends x {
+//     constructor() {
+//         super();
+//         local other = new /*GOTO DEF*/C;
+//     }
+// }
+// local z = class C extends x {
+// --- (line: 14) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOfClassExpression01.tlua ===
+// --- (line: 11) skipped ---
+// }
+// local z = class C extends x {
+//     m() {
+//         return new /*GOTO DEF*/C;
+//     }
+// }
+// 
+// --- (line: 19) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOfClassExpression01.tlua ===
+// --- (line: 15) skipped ---
+//     }
+// }
+// 
+// local x1 = new /*GOTO DEF*/C();
+// local x2 = new x();
+// local y1 = new y();
+// local z1 = new z();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOfClassExpression01.tlua ===
+// <|local [|x|] = class|> C {
+//     constructor() {
+//         local other = new C;
+//     }
+// --- (line: 5) skipped ---
+
+// --- (line: 16) skipped ---
+// }
+// 
+// local x1 = new C();
+// local x2 = new /*GOTO DEF*/x();
+// local y1 = new y();
+// local z1 = new z();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOfClassExpression01.tlua ===
+// --- (line: 3) skipped ---
+//     }
+// }
+// 
+// <|local [|y|] = class|> C extends x {
+//     constructor() {
+//         super();
+//         local other = new C;
+// --- (line: 11) skipped ---
+
+// --- (line: 17) skipped ---
+// 
+// local x1 = new C();
+// local x2 = new x();
+// local y1 = new /*GOTO DEF*/y();
+// local z1 = new z();
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionConstructorOfClassExpression01.tlua ===
+// --- (line: 9) skipped ---
+//         local other = new C;
+//     }
+// }
+// <|local [|z|] = class|> C extends x {
+//     m() {
+//         return new C;
+//     }
+// }
+// 
+// local x1 = new C();
+// local x2 = new x();
+// local y1 = new y();
+// local z1 = new /*GOTO DEF*/z();

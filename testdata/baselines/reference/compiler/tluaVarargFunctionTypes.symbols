@@ -1,0 +1,148 @@
+//// [tests/cases/compiler/tluaVarargFunctionTypes.tlua] ////
+
+=== tluaVarargFunctionTypes.tlua ===
+// Callable types spell the vararg the same way as declarations.
+type Annotated = (...: string) => void;
+>Annotated : Symbol(Annotated, Decl(tluaVarargFunctionTypes.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 1, 18))
+
+type Bare = (...) => void;
+>Bare : Symbol(Bare, Decl(tluaVarargFunctionTypes.tlua, 1, 39))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 2, 13))
+
+type Fixed = (a: string) => void;
+>Fixed : Symbol(Fixed, Decl(tluaVarargFunctionTypes.tlua, 2, 26))
+>a : Symbol(a, Decl(tluaVarargFunctionTypes.tlua, 3, 14))
+
+declare annotated: Annotated;
+>annotated : Symbol(annotated, Decl(tluaVarargFunctionTypes.tlua, 5, 7))
+>Annotated : Symbol(Annotated, Decl(tluaVarargFunctionTypes.tlua, 0, 0))
+
+declare bare: Bare;
+>bare : Symbol(bare, Decl(tluaVarargFunctionTypes.tlua, 6, 7))
+>Bare : Symbol(Bare, Decl(tluaVarargFunctionTypes.tlua, 1, 39))
+
+declare fixed: Fixed;
+>fixed : Symbol(fixed, Decl(tluaVarargFunctionTypes.tlua, 7, 7))
+>Fixed : Symbol(Fixed, Decl(tluaVarargFunctionTypes.tlua, 2, 26))
+
+// Assignability in both directions.
+local toBare: Bare = annotated;
+>toBare : Symbol(toBare, Decl(tluaVarargFunctionTypes.tlua, 10, 5))
+>Bare : Symbol(Bare, Decl(tluaVarargFunctionTypes.tlua, 1, 39))
+>annotated : Symbol(annotated, Decl(tluaVarargFunctionTypes.tlua, 5, 7))
+
+local toAnnotated: Annotated = bare;
+>toAnnotated : Symbol(toAnnotated, Decl(tluaVarargFunctionTypes.tlua, 11, 5))
+>Annotated : Symbol(Annotated, Decl(tluaVarargFunctionTypes.tlua, 0, 0))
+>bare : Symbol(bare, Decl(tluaVarargFunctionTypes.tlua, 6, 7))
+
+// A fixed-arity function does not accept a vararg caller's extra values, but a
+// vararg function can stand in for a fixed one.
+local fixedFromVararg: Fixed = annotated;
+>fixedFromVararg : Symbol(fixedFromVararg, Decl(tluaVarargFunctionTypes.tlua, 15, 5))
+>Fixed : Symbol(Fixed, Decl(tluaVarargFunctionTypes.tlua, 2, 26))
+>annotated : Symbol(annotated, Decl(tluaVarargFunctionTypes.tlua, 5, 7))
+
+local varargFromFixed: Annotated = fixed;
+>varargFromFixed : Symbol(varargFromFixed, Decl(tluaVarargFunctionTypes.tlua, 16, 5))
+>Annotated : Symbol(Annotated, Decl(tluaVarargFunctionTypes.tlua, 0, 0))
+>fixed : Symbol(fixed, Decl(tluaVarargFunctionTypes.tlua, 7, 7))
+
+// Contextual typing of a bare `...`. With leading fixed parameters in the
+// contextual signature the pack is heterogeneous -- positionally
+// `(number, string, ...boolean)` -- and must never silently fall back to `any`.
+type H = (a: number, b: string, ...: boolean) => void;
+>H : Symbol(H, Decl(tluaVarargFunctionTypes.tlua, 16, 41))
+>a : Symbol(a, Decl(tluaVarargFunctionTypes.tlua, 21, 10))
+>b : Symbol(b, Decl(tluaVarargFunctionTypes.tlua, 21, 20))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 21, 31))
+
+local contextual: H = function(...)
+>contextual : Symbol(contextual, Decl(tluaVarargFunctionTypes.tlua, 23, 5))
+>H : Symbol(H, Decl(tluaVarargFunctionTypes.tlua, 16, 41))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 23, 31))
+
+  local first, second, third, fourth = ...;
+>first : Symbol(first, Decl(tluaVarargFunctionTypes.tlua, 24, 7))
+>second : Symbol(second, Decl(tluaVarargFunctionTypes.tlua, 24, 14))
+>third : Symbol(third, Decl(tluaVarargFunctionTypes.tlua, 24, 22))
+>fourth : Symbol(fourth, Decl(tluaVarargFunctionTypes.tlua, 24, 29))
+
+  // A positive annotation cannot catch an `any` fallback (any assigns to
+  // everything), so assert negatively: if the pack is precise, the first value
+  // is a `number` and this is an error. If it degrades to `any`, it passes.
+  local wrong: string = ...;
+>wrong : Symbol(wrong, Decl(tluaVarargFunctionTypes.tlua, 29, 7))
+
+end;
+
+// Return-type position disambiguation. `(...)` after `:` opens a *callable
+// type*, so this is a function returning a function.
+function mk(): (...) => void
+>mk : Symbol(mk, Decl(tluaVarargFunctionTypes.tlua, 30, 4))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 34, 16))
+
+  return function(...): void end;
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 35, 18))
+
+end
+
+function mkAnnotated(): (...: string) => void
+>mkAnnotated : Symbol(mkAnnotated, Decl(tluaVarargFunctionTypes.tlua, 36, 3))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 38, 25))
+
+  return function(...: string): void end;
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 39, 18))
+
+end
+
+// A type start after `...` makes it a pure-variadic *return pack* instead.
+function g(): (...string)
+>g : Symbol(g, Decl(tluaVarargFunctionTypes.tlua, 40, 3))
+
+  return "a", "b";
+end
+
+function h(): (number, ...string)
+>h : Symbol(h, Decl(tluaVarargFunctionTypes.tlua, 45, 3))
+
+  return 1, "a", "b";
+end
+
+// An arrow with a bare vararg, including with a return-type annotation: the
+// `(...` lookahead must not mistake these for a parenthesized vararg expression.
+local arrowBare = (...) => 1;
+>arrowBare : Symbol(arrowBare, Decl(tluaVarargFunctionTypes.tlua, 53, 5))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 53, 19))
+
+local arrowTyped = (...): number => 1;
+>arrowTyped : Symbol(arrowTyped, Decl(tluaVarargFunctionTypes.tlua, 54, 5))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 54, 20))
+
+local arrowAnnotated = (...: string): number => 1;
+>arrowAnnotated : Symbol(arrowAnnotated, Decl(tluaVarargFunctionTypes.tlua, 55, 5))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 55, 24))
+
+// Every rest the *checker* synthesizes is a vararg too. An intersection of
+// signatures combines their parameters into a synthetic one whose elements have
+// no declarations to take labels from; the error below prints that signature, so
+// it pins the display: no `..._0` labels (unparseable), and the tail keeps `...`.
+type Fixed2 = (a: number, b: string) => void;
+>Fixed2 : Symbol(Fixed2, Decl(tluaVarargFunctionTypes.tlua, 55, 50))
+>a : Symbol(a, Decl(tluaVarargFunctionTypes.tlua, 61, 15))
+>b : Symbol(b, Decl(tluaVarargFunctionTypes.tlua, 61, 25))
+
+type VarargTail = (x: number, y: string, ...: boolean) => void;
+>VarargTail : Symbol(VarargTail, Decl(tluaVarargFunctionTypes.tlua, 61, 45))
+>x : Symbol(x, Decl(tluaVarargFunctionTypes.tlua, 62, 19))
+>y : Symbol(y, Decl(tluaVarargFunctionTypes.tlua, 62, 29))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 62, 40))
+
+local combined: Fixed2 & VarargTail = function(q: boolean, ...) end;
+>combined : Symbol(combined, Decl(tluaVarargFunctionTypes.tlua, 63, 5))
+>Fixed2 : Symbol(Fixed2, Decl(tluaVarargFunctionTypes.tlua, 55, 50))
+>VarargTail : Symbol(VarargTail, Decl(tluaVarargFunctionTypes.tlua, 61, 45))
+>q : Symbol(q, Decl(tluaVarargFunctionTypes.tlua, 63, 47))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 63, 58))
+

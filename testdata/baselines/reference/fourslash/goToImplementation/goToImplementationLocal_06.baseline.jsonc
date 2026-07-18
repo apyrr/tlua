@@ -1,0 +1,4 @@
+// === goToImplementation ===
+// === /goToImplementationLocal_06.tlua ===
+// <|declare [|someVar|]: string;|>
+// someVa/*GOTO IMPL*/r

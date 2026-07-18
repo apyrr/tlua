@@ -1,0 +1,188 @@
+//// [tests/cases/compiler/tluaAsyncContract.tlua] ////
+
+=== tluaAsyncContract.tlua ===
+// The tlua coroutine contract: an async function may only be called from an
+// async context. Async functions return their plain type (or pack), never
+// Promise<T>.
+
+declare function request(url: string): (boolean, any);
+>request : Symbol(request, Decl(tluaAsyncContract.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaAsyncContract.tlua, 4, 25))
+
+declare namespace coroutine {
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+
+  function create(f: (...: any) => any): any;
+>create : Symbol(create, Decl(tluaAsyncContract.tlua, 5, 29))
+>f : Symbol(f, Decl(tluaAsyncContract.tlua, 6, 18))
+> : Symbol((Missing), Decl(tluaAsyncContract.tlua, 6, 22))
+
+  function wrap(f: (...: any) => any): (...: any) => any;
+>wrap : Symbol(wrap, Decl(tluaAsyncContract.tlua, 6, 45))
+>f : Symbol(f, Decl(tluaAsyncContract.tlua, 7, 16))
+> : Symbol((Missing), Decl(tluaAsyncContract.tlua, 7, 20))
+> : Symbol((Missing), Decl(tluaAsyncContract.tlua, 7, 40))
+}
+
+async function fetchOk(url: string): (boolean, any)
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+>url : Symbol(url, Decl(tluaAsyncContract.tlua, 10, 23))
+
+  local ok, res = request(url);
+>ok : Symbol(ok, Decl(tluaAsyncContract.tlua, 11, 7))
+>res : Symbol(res, Decl(tluaAsyncContract.tlua, 11, 11))
+>request : Symbol(request, Decl(tluaAsyncContract.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaAsyncContract.tlua, 10, 23))
+
+  return ok, res;
+>ok : Symbol(ok, Decl(tluaAsyncContract.tlua, 11, 7))
+>res : Symbol(res, Decl(tluaAsyncContract.tlua, 11, 11))
+
+end
+
+// OK: direct call from an async context; the result is the plain pack.
+async function handler(): number
+>handler : Symbol(handler, Decl(tluaAsyncContract.tlua, 13, 3))
+
+  local ok, res = fetchOk("https://example.com");
+>ok : Symbol(ok, Decl(tluaAsyncContract.tlua, 17, 7))
+>res : Symbol(res, Decl(tluaAsyncContract.tlua, 17, 11))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+
+  if ok then
+>ok : Symbol(ok, Decl(tluaAsyncContract.tlua, 17, 7))
+
+    return 1;
+  end
+  return 0;
+end
+
+// Error: direct call from a sync function.
+function syncCaller(): void {
+>syncCaller : Symbol(syncCaller, Decl(tluaAsyncContract.tlua, 22, 3))
+
+  fetchOk("nope");
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+}
+
+// Error: call at top level.
+fetchOk("top");
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+
+// Error: inferred alias keeps the contract (the flag rides the signature).
+function aliasCaller(): void {
+>aliasCaller : Symbol(aliasCaller, Decl(tluaAsyncContract.tlua, 30, 15))
+
+  local f = fetchOk;
+>f : Symbol(f, Decl(tluaAsyncContract.tlua, 34, 7))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+
+  f("aliased");
+>f : Symbol(f, Decl(tluaAsyncContract.tlua, 34, 7))
+}
+
+// OK: alias called from an async context.
+async function aliasAsyncCaller(): void
+>aliasAsyncCaller : Symbol(aliasAsyncCaller, Decl(tluaAsyncContract.tlua, 36, 1))
+
+  local f = fetchOk;
+>f : Symbol(f, Decl(tluaAsyncContract.tlua, 40, 7))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+
+  f("aliased");
+>f : Symbol(f, Decl(tluaAsyncContract.tlua, 40, 7))
+
+end
+
+// OK: passing an async function as a value is not a call.
+coroutine.create(fetchOk);
+>coroutine.create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+
+local wrapped = coroutine.wrap(fetchOk);
+>wrapped : Symbol(wrapped, Decl(tluaAsyncContract.tlua, 46, 5))
+>coroutine.wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
+
+// OK: async recursion.
+async function pingpong(n: number): number
+>pingpong : Symbol(pingpong, Decl(tluaAsyncContract.tlua, 46, 40))
+>n : Symbol(n, Decl(tluaAsyncContract.tlua, 49, 24))
+
+  if n <= 0 then
+>n : Symbol(n, Decl(tluaAsyncContract.tlua, 49, 24))
+
+    return 0;
+  end
+  return pingpong(n - 1);
+>pingpong : Symbol(pingpong, Decl(tluaAsyncContract.tlua, 46, 40))
+>n : Symbol(n, Decl(tluaAsyncContract.tlua, 49, 24))
+
+end
+
+// Async arrow expressions participate too.
+local asyncArrow = async (): number => 42;
+>asyncArrow : Symbol(asyncArrow, Decl(tluaAsyncContract.tlua, 57, 5))
+
+function arrowSyncCaller(): void {
+>arrowSyncCaller : Symbol(arrowSyncCaller, Decl(tluaAsyncContract.tlua, 57, 42))
+
+  asyncArrow(); // error
+>asyncArrow : Symbol(asyncArrow, Decl(tluaAsyncContract.tlua, 57, 5))
+}
+async function arrowAsyncCaller(): number
+>arrowAsyncCaller : Symbol(arrowAsyncCaller, Decl(tluaAsyncContract.tlua, 60, 1))
+
+  return asyncArrow(); // OK
+>asyncArrow : Symbol(asyncArrow, Decl(tluaAsyncContract.tlua, 57, 5))
+
+end
+
+// Generic async functions keep the flag through instantiation.
+async function identityAsync<T>(x: T): T
+>identityAsync : Symbol(identityAsync, Decl(tluaAsyncContract.tlua, 63, 3))
+>T : Symbol(T, Decl(tluaAsyncContract.tlua, 66, 29))
+>x : Symbol(x, Decl(tluaAsyncContract.tlua, 66, 32))
+>T : Symbol(T, Decl(tluaAsyncContract.tlua, 66, 29))
+>T : Symbol(T, Decl(tluaAsyncContract.tlua, 66, 29))
+
+  return x;
+>x : Symbol(x, Decl(tluaAsyncContract.tlua, 66, 32))
+
+end
+function genericSyncCaller(): void {
+>genericSyncCaller : Symbol(genericSyncCaller, Decl(tluaAsyncContract.tlua, 68, 3))
+
+  identityAsync(1); // error
+>identityAsync : Symbol(identityAsync, Decl(tluaAsyncContract.tlua, 63, 3))
+}
+async function genericAsyncCaller(): number
+>genericAsyncCaller : Symbol(genericAsyncCaller, Decl(tluaAsyncContract.tlua, 71, 1))
+
+  return identityAsync(2); // OK
+>identityAsync : Symbol(identityAsync, Decl(tluaAsyncContract.tlua, 63, 3))
+
+end
+
+// The async return type is the plain type, not Promise<T>.
+async function plain(): number
+>plain : Symbol(plain, Decl(tluaAsyncContract.tlua, 74, 3))
+
+  return 3;
+end
+async function usePlain(): number
+>usePlain : Symbol(usePlain, Decl(tluaAsyncContract.tlua, 79, 3))
+
+  local n = plain();
+>n : Symbol(n, Decl(tluaAsyncContract.tlua, 81, 7))
+>plain : Symbol(plain, Decl(tluaAsyncContract.tlua, 74, 3))
+
+  return n + 1;
+>n : Symbol(n, Decl(tluaAsyncContract.tlua, 81, 7))
+
+end
+

@@ -1,0 +1,19 @@
+// === goToImplementation ===
+// === /goToImplementationClassMethod_01.tlua ===
+// --- (line: 6) skipped ---
+// }
+// 
+// function whatever(x: AbstractBar) {
+//     x.he/*GOTO IMPL*/llo();
+// }
+
+
+
+// === goToImplementation ===
+// === /goToImplementationClassMethod_01.tlua ===
+// abstract class AbstractBar {
+//     abstract he/*GOTO IMPL*/llo(): void;
+// }
+// 
+// class Bar extends AbstractBar{
+// --- (line: 6) skipped ---

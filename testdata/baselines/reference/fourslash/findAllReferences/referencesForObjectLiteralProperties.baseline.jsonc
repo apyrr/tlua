@@ -1,0 +1,37 @@
+// === findAllReferences ===
+// === /referencesForObjectLiteralProperties.tlua ===
+// local x = { /*FIND ALL REFS*/[|add|] = 0, b = "string" };
+// x["[|add|]"];
+// x.[|add|];
+// local y = x;
+// y.[|add|];
+
+
+
+// === findAllReferences ===
+// === /referencesForObjectLiteralProperties.tlua ===
+// local x = { [|add|] = 0, b = "string" };
+// x["/*FIND ALL REFS*/[|add|]"];
+// x.[|add|];
+// local y = x;
+// y.[|add|];
+
+
+
+// === findAllReferences ===
+// === /referencesForObjectLiteralProperties.tlua ===
+// local x = { [|add|] = 0, b = "string" };
+// x["[|add|]"];
+// x./*FIND ALL REFS*/[|add|];
+// local y = x;
+// y.[|add|];
+
+
+
+// === findAllReferences ===
+// === /referencesForObjectLiteralProperties.tlua ===
+// local x = { [|add|] = 0, b = "string" };
+// x["[|add|]"];
+// x.[|add|];
+// local y = x;
+// y./*FIND ALL REFS*/[|add|];

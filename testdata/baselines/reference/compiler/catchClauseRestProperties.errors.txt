@@ -1,0 +1,27 @@
+catchClauseRestProperties.tlua(3,10): error TS2571: Object is of type 'unknown'.
+catchClauseRestProperties.tlua(3,12): error TS1180: Property destructuring pattern expected.
+catchClauseRestProperties.tlua(3,15): error TS1005: ';' expected.
+catchClauseRestProperties.tlua(3,15): error TS2304: Cannot find name 'rest'.
+catchClauseRestProperties.tlua(3,20): error TS1128: Declaration or statement expected.
+catchClauseRestProperties.tlua(3,21): error TS1128: Declaration or statement expected.
+
+
+==== catchClauseRestProperties.tlua (6 errors) ====
+    try {
+      // ...
+    } catch ({ ...rest }) {
+             ~
+!!! error TS2571: Object is of type 'unknown'.
+               ~~~
+!!! error TS1180: Property destructuring pattern expected.
+                  ~~~~
+!!! error TS1005: ';' expected.
+                  ~~~~
+!!! error TS2304: Cannot find name 'rest'.
+                       ~
+!!! error TS1128: Declaration or statement expected.
+                        ~
+!!! error TS1128: Declaration or statement expected.
+      // ...
+    }
+    

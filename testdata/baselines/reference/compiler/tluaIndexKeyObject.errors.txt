@@ -1,0 +1,49 @@
+tluaIndexKeyObject.tlua(32,22): error TS7053: Element implicitly has an 'any' type because expression of type '"x"' can't be used to index type 'ByTable'.
+  Property 'x' does not exist on type 'ByTable'.
+tluaIndexKeyObject.tlua(33,22): error TS7053: Element implicitly has an 'any' type because expression of type 'Point' can't be used to index type 'ByThread'.
+
+
+==== tluaIndexKeyObject.tlua (2 errors) ====
+    // Lua tables are keyed by identity as readily as by value: a table, a function, a
+    // coroutine, a userdatum and a cdatum are all keys. None of them can name a property,
+    // so none of them is expressible as anything but an index signature.
+    
+    interface Point { x: number; y: number }
+    
+    interface ByTable { [key: Point]: string }
+    interface ByFunction { [key: (a: number) => void]: string }
+    interface ByThread { [key: LuaThread]: string }
+    interface ByUserdata { [key: LuaUserdata]: string }
+    interface ByCData { [key: LuaCData]: string }
+    
+    declare pt: Point;
+    declare fn: (a: number) => void;
+    declare th: LuaThread;
+    declare ud: LuaUserdata;
+    declare cd: LuaCData;
+    
+    declare byTable: ByTable;
+    declare byFunction: ByFunction;
+    declare byThread: ByThread;
+    declare byUserdata: ByUserdata;
+    declare byCData: ByCData;
+    
+    local s1: string = byTable[pt];
+    local s2: string = byFunction[fn];
+    local s3: string = byThread[th];
+    local s4: string = byUserdata[ud];
+    local s5: string = byCData[cd];
+    
+    // The key domains do not bleed into one another: a table key is not a string key.
+    local bad1: string = byTable["x"];
+                         ~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type '"x"' can't be used to index type 'ByTable'.
+!!! error TS7053:   Property 'x' does not exist on type 'ByTable'.
+    local bad2: string = byThread[pt];
+                         ~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'Point' can't be used to index type 'ByThread'.
+    
+    // keyof reports the object key.
+    type K = keyof ByTable;
+    local k: K = pt;
+    

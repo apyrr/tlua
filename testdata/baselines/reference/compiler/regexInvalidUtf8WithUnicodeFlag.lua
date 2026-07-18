@@ -1,0 +1,8 @@
+//// [tests/cases/compiler/regexInvalidUtf8WithUnicodeFlag.tlua] ////
+
+//// [regexInvalidUtf8WithUnicodeFlag.tlua]
+/€/u
+
+
+//// [regexInvalidUtf8WithUnicodeFlag.lua]
+/€/u;

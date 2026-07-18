@@ -1,0 +1,184 @@
+//// [tests/cases/compiler/tluaGlobalAugmentation.tlua] ////
+
+=== a.tlua ===
+G.x = 1;
+>G.x = 1 : 1
+>G.x : string | number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>x : string | number
+>1 : 1
+
+local gx: number | string = G.x;
+>gx : string | number
+>G.x : number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>x : number
+
+local n: number | string = N;
+>n : string | number
+>N : string | number
+
+=== b.tlua ===
+G = {};
+>G = {} : { x: string | number; double(value: number): number; triple(self: { x: string | number; double(value: number): number; triple(self: any, value: number): number; }, value: number): number; }
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>{} : { x: string | number; double(value: number): number; triple(self: { x: string | number; double(value: number): number; triple(self: any, value: number): number; }, value: number): number; }
+
+G.x = "two";
+>G.x = "two" : "two"
+>G.x : string | number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>x : string | number
+>"two" : "two"
+
+N = 1;
+>N = 1 : 1
+>N : string | number
+>1 : 1
+
+N = "two";
+>N = "two" : "two"
+>N : string | number
+>"two" : "two"
+
+=== c.tlua ===
+local G = {};
+>G : { localOnly: boolean; identity(value: number): number; }
+>{} : { localOnly: boolean; identity(value: number): number; }
+
+G.localOnly = true;
+>G.localOnly = true : true
+>G.localOnly : boolean
+>G : { localOnly: boolean; identity(value: number): number; }
+>localOnly : boolean
+>true : true
+
+local localOnly: boolean = G.localOnly;
+>localOnly : boolean
+>G.localOnly : true
+>G : { localOnly: boolean; identity(value: number): number; }
+>localOnly : true
+
+function G.identity(value: number): number
+>G : { localOnly: boolean; identity(value: number): number; }
+>identity : (value: number) => number
+>value : number
+
+  return value;
+>value : number
+
+end
+
+local localIdentity: number = G.identity(1);
+>localIdentity : number
+>G.identity(1) : number
+>G.identity : (value: number) => number
+>G : { localOnly: boolean; identity(value: number): number; }
+>identity : (value: number) => number
+>1 : 1
+
+=== d.tlua ===
+function G.double(value: number): number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>double : (value: number) => number
+>value : number
+
+  return value * 2;
+>value * 2 : number
+>value : number
+>2 : 2
+
+end
+
+local doubled: number = G.double(2);
+>doubled : number
+>G.double(2) : number
+>G.double : (value: number) => number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>double : (value: number) => number
+>2 : 2
+
+function G:triple(value: number): number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>triple : (self: { x: string | number; double(value: number): number; triple(self: any, value: number): number; }, value: number) => number
+>: : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>value : number
+
+  return value * 3;
+>value * 3 : number
+>value : number
+>3 : 3
+
+end
+
+local tripled: number = G.triple(G, 3);
+>tripled : number
+>G.triple(G, 3) : number
+>G.triple : (self: { x: string | number; double(value: number): number; triple(self: any, value: number): number; }, value: number) => number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>triple : (self: { x: string | number; double(value: number): number; triple(self: any, value: number): number; }, value: number) => number
+>G : { x: string | number; double(value: number): number; triple(self: any, value: number): number; }
+>3 : 3
+
+=== e.tlua ===
+Shadow = {};
+>Shadow = {} : { globalValue: number; }
+>Shadow : { globalValue: number; }
+>{} : { globalValue: number; }
+
+Shadow.globalValue = 1;
+>Shadow.globalValue = 1 : 1
+>Shadow.globalValue : number
+>Shadow : { globalValue: number; }
+>globalValue : number
+>1 : 1
+
+local globalValue: number = Shadow.globalValue;
+>globalValue : number
+>Shadow.globalValue : number
+>Shadow : { globalValue: number; }
+>globalValue : number
+
+local Shadow = {};
+>Shadow : { localValue: boolean; }
+>{} : { localValue: boolean; }
+
+Shadow.localValue = true;
+>Shadow.localValue = true : true
+>Shadow.localValue : boolean
+>Shadow : { localValue: boolean; }
+>localValue : boolean
+>true : true
+
+local localValue: boolean = Shadow.localValue;
+>localValue : boolean
+>Shadow.localValue : true
+>Shadow : { localValue: boolean; }
+>localValue : true
+
+ModuleGlobal = {};
+>ModuleGlobal = {} : { value: string; }
+>ModuleGlobal : { value: string; }
+>{} : { value: string; }
+
+ModuleGlobal.value = "module";
+>ModuleGlobal.value = "module" : "module"
+>ModuleGlobal.value : string
+>ModuleGlobal : { value: string; }
+>value : string
+>"module" : "module"
+
+=== f.tlua ===
+local moduleValue: string = ModuleGlobal.value;
+>moduleValue : string
+>ModuleGlobal.value : string
+>ModuleGlobal : { value: string; }
+>value : string
+
+local crossFileGlobalValue: number = Shadow.globalValue;
+>crossFileGlobalValue : number
+>Shadow.globalValue : number
+>Shadow : { globalValue: number; }
+>globalValue : number
+

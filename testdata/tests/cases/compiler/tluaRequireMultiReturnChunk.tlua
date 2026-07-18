@@ -1,0 +1,19 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: pair.tlua
+local first = { tag = "first" };
+local second = 2;
+// Lua's require keeps only the first value a chunk returns.
+return first, second;
+
+// @filename: forwarded.tlua
+declare multi: () => (string, number);
+return multi();
+
+// @filename: main.tlua
+local p = require("pair");
+local tag: string = p.tag;
+local f: string = require("forwarded");

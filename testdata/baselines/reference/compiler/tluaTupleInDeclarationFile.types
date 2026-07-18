@@ -1,0 +1,59 @@
+//// [tests/cases/compiler/tluaTupleInDeclarationFile.tlua] ////
+
+=== shapes.d.tlua ===
+declare pair: [number, string];
+>pair : [number, string]
+
+declare function makeTriple(): [boolean, number, string];
+>makeTriple : () => [boolean, number, string]
+
+declare nested: [[number, number], string];
+>nested : [[number, number], string]
+
+=== main.tlua ===
+local a: number = pair[0];
+>a : number
+>pair[0] : number
+>pair : [number, string]
+>0 : 0
+
+local b: string = pair[1];
+>b : string
+>pair[1] : string
+>pair : [number, string]
+>1 : 1
+
+local triple = makeTriple();
+>triple : [boolean, number, string]
+>makeTriple() : [boolean, number, string]
+>makeTriple : () => [boolean, number, string]
+
+local t0: boolean = triple[0];
+>t0 : boolean
+>triple[0] : boolean
+>triple : [boolean, number, string]
+>0 : 0
+
+local t2: string = triple[2];
+>t2 : string
+>triple[2] : string
+>triple : [boolean, number, string]
+>2 : 2
+
+local inner: number = nested[0][1];
+>inner : number
+>nested[0][1] : number
+>nested[0] : [number, number]
+>nested : [[number, number], string]
+>0 : 0
+>1 : 1
+
+local es = {a, b, t0, t2, inner};
+>es : { 1: number; 2: string; 3: boolean; 4: string; 5: number; }
+>{a, b, t0, t2, inner} : { 1: number; 2: string; 3: boolean; 4: string; 5: number; }
+>a : error
+>b : error
+>t0 : error
+>t2 : error
+>inner : error
+

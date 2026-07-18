@@ -1,0 +1,103 @@
+//// [tests/cases/compiler/tluaVarargMisplaced.tlua] ////
+
+=== tluaVarargMisplaced.tlua ===
+// A misplaced vararg gets exactly one error: the parameter list is wrong (a rest
+// must be last). The function still *declares* a vararg, so `...` in its body
+// binds to that vararg rather than cascading into "a '...' expression is only
+// allowed inside a vararg function" on a function that visibly has one.
+//
+// This lives in its own file because grammar errors are suppressed in a file
+// that already has parse errors, and tluaVarargErrors.tlua is full of them by
+// design.
+declare function notLast(...: number, a: number): void;
+>notLast : (...: any, a: number) => void
+> : number
+>a : number
+
+function notLastWithBody(...: number, a: number): void
+>notLastWithBody : (...: any, a: number) => void
+> : number
+>a : number
+
+  // Binds to the misplaced vararg: no second diagnostic here.
+  local first = ...;
+>first : number | nil
+>... : number | nil
+
+  local rest = {...};
+>rest : { [x: number]: number; }
+>{...} : { [x: number]: number; }
+>... : number | nil
+
+end
+
+// The misplaced vararg's annotation still means what it says: its symbol is
+// treated as a fixed parameter (never array-wrapped), and the body's `...`
+// still reads values of the ELEMENT type -- not `any`, and not the annotation
+// with a layer stripped.
+function annotationStillChecks(...: number, a: string): void
+>annotationStillChecks : (...: any, a: string) => void
+> : number
+>a : string
+
+  // `| nil` as for any single-value read of `...`: the pack may be empty.
+  local n: number | nil = ...;
+>n : number | nil
+>... : number | nil
+
+  local bad: string = ...; // error names number, not any
+>bad : string
+>... : number | nil
+
+end
+
+function arrayAnnotationKeepsItsLayer(...: string[], a: number): void
+>arrayAnnotationKeepsItsLayer : (...: string, a: number) => void
+> : string[]
+>a : number
+
+  // Each value is a whole string[]; unwrapping would leave `string`.
+  local arr: string[] | nil = (...);
+>arr : string[] | nil
+>(...) : string[] | nil
+>... : string[] | nil
+
+end
+
+// With two varargs the LAST one is the function's vararg -- it is the one in
+// (or nearest) the legal position.
+function lastVarargWins(...: number, ...: string): void
+>lastVarargWins : (...: any, ...: string) => void
+> : number
+> : string[]
+
+  local s: string | nil = ...;
+>s : string | nil
+>... : string | nil
+
+  local bad: number = ...; // error names string, not number's vararg
+>bad : number
+>... : string | nil
+
+end
+
+// A call with a misplaced-vararg tail keeps the tail arity treatment: the
+// `...` may pass more values, so only the rest-must-be-last error and the
+// per-position type errors apply.
+declare function takesTwo(a: number, b: number): void;
+>takesTwo : (a: number, b: number) => void
+>a : number
+>b : number
+
+function tailFromMisplaced(...: number, a: string): void
+>tailFromMisplaced : (...: any, a: string) => void
+> : number
+>a : string
+
+  takesTwo(...);
+>takesTwo(...) : void
+>takesTwo : (a: number, b: number) => void
+>... : number | nil
+
+end
+

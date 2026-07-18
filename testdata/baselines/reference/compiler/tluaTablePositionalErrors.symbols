@@ -1,0 +1,21 @@
+//// [tests/cases/compiler/tluaTablePositionalErrors.tlua] ////
+
+=== tluaTablePositionalErrors.tlua ===
+// A computed key without `=`/`:` is a natural error.
+declare k: string;
+>k : Symbol(k, Decl(tluaTablePositionalErrors.tlua, 1, 7))
+
+local a = { [k] };
+>a : Symbol(a, Decl(tluaTablePositionalErrors.tlua, 2, 5))
+>[k] : Symbol([k], Decl(tluaTablePositionalErrors.tlua, 2, 11))
+>k : Symbol(k, Decl(tluaTablePositionalErrors.tlua, 1, 7))
+
+// A keyed form missing its value.
+local b = { x = };
+>b : Symbol(b, Decl(tluaTablePositionalErrors.tlua, 5, 5))
+>x : Symbol(x, Decl(tluaTablePositionalErrors.tlua, 5, 11))
+
+// A bare separator.
+local c = { , };
+>c : Symbol(c, Decl(tluaTablePositionalErrors.tlua, 8, 5))
+

@@ -1,0 +1,87 @@
+// === QuickInfo ===
+=== /quickinfoVerbosityClassWithMixinBase.tlua ===
+// 
+// class Base {}
+// 
+// declare Mixin: new () => Base & { mixed: string };
+// 
+// class Derived extends Mixin {}
+//       ^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//       ^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 81,
+      "LSPosition": {
+        "line": 5,
+        "character": 13
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 5,
+            "character": 6
+          },
+          "end": {
+            "line": 5,
+            "character": 13
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 81,
+      "LSPosition": {
+        "line": 5,
+        "character": 13
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 5,
+            "character": 6
+          },
+          "end": {
+            "line": 5,
+            "character": 13
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  }
+]

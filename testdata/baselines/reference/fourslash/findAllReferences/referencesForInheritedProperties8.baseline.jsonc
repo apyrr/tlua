@@ -1,0 +1,27 @@
+// === findAllReferences ===
+// === /referencesForInheritedProperties8.tlua ===
+// interface C extends D {
+//     /*FIND ALL REFS*/[|propD|]: number;
+// }
+// interface D extends C {
+//     [|propD|]: string;
+//     propC: number;
+// }
+// local d: D;
+// d.[|propD|];
+// d.propC;
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties8.tlua ===
+// interface C extends D {
+//     propD: number;
+// }
+// interface D extends C {
+//     propD: string;
+//     /*FIND ALL REFS*/[|propC|]: number;
+// }
+// local d: D;
+// d.propD;
+// d.[|propC|];

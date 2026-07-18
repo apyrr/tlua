@@ -1,0 +1,118 @@
+tluaNoImportExport.tlua(3,1): error TS1128: Declaration or statement expected.
+tluaNoImportExport.tlua(3,10): error TS2304: Cannot find name 'named'.
+tluaNoImportExport.tlua(3,18): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(3,18): error TS2304: Cannot find name 'from'.
+tluaNoImportExport.tlua(4,1): error TS1128: Declaration or statement expected.
+tluaNoImportExport.tlua(4,8): error TS1109: Expression expected.
+tluaNoImportExport.tlua(4,10): error TS2304: Cannot find name 'as'.
+tluaNoImportExport.tlua(4,13): error TS1005: ';' expected.
+tluaNoImportExport.tlua(4,13): error TS2304: Cannot find name 'star'.
+tluaNoImportExport.tlua(4,18): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(4,18): error TS2304: Cannot find name 'from'.
+tluaNoImportExport.tlua(5,1): error TS1128: Declaration or statement expected.
+tluaNoImportExport.tlua(5,8): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(5,8): error TS2304: Cannot find name 'def'.
+tluaNoImportExport.tlua(5,12): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(5,12): error TS2304: Cannot find name 'from'.
+tluaNoImportExport.tlua(6,1): error TS1128: Declaration or statement expected.
+tluaNoImportExport.tlua(6,8): error TS2304: Cannot find name 'legacy'.
+tluaNoImportExport.tlua(7,1): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(7,1): error TS2304: Cannot find name 'export'.
+tluaNoImportExport.tlua(8,1): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(8,1): error TS2304: Cannot find name 'export'.
+tluaNoImportExport.tlua(8,8): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(8,8): error TS2304: Cannot find name 'default'.
+tluaNoImportExport.tlua(9,1): error TS2304: Cannot find name 'export'.
+tluaNoImportExport.tlua(10,1): error TS1434: Unexpected keyword or identifier.
+tluaNoImportExport.tlua(10,1): error TS2304: Cannot find name 'export'.
+tluaNoImportExport.tlua(11,1): error TS2304: Cannot find name 'export'.
+tluaNoImportExport.tlua(11,10): error TS2304: Cannot find name 'from'.
+tluaNoImportExport.tlua(11,15): error TS1005: ';' expected.
+tluaNoImportExport.tlua(14,17): error TS1109: Expression expected.
+tluaNoImportExport.tlua(15,14): error TS1109: Expression expected.
+tluaNoImportExport.tlua(15,20): error TS1128: Declaration or statement expected.
+
+
+==== tluaNoImportExport.tlua (33 errors) ====
+    // tlua has no TypeScript module syntax: a chunk loads its dependencies with
+    // `require` and returns its own value.
+    import { named } from "m";
+    ~~~~~~
+!!! error TS1128: Declaration or statement expected.
+             ~~~~~
+!!! error TS2304: Cannot find name 'named'.
+                     ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+                     ~~~~
+!!! error TS2304: Cannot find name 'from'.
+    import * as star from "m";
+    ~~~~~~
+!!! error TS1128: Declaration or statement expected.
+           ~
+!!! error TS1109: Expression expected.
+             ~~
+!!! error TS2304: Cannot find name 'as'.
+                ~~~~
+!!! error TS1005: ';' expected.
+                ~~~~
+!!! error TS2304: Cannot find name 'star'.
+                     ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+                     ~~~~
+!!! error TS2304: Cannot find name 'from'.
+    import def from "m";
+    ~~~~~~
+!!! error TS1128: Declaration or statement expected.
+           ~~~
+!!! error TS1434: Unexpected keyword or identifier.
+           ~~~
+!!! error TS2304: Cannot find name 'def'.
+               ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+               ~~~~
+!!! error TS2304: Cannot find name 'from'.
+    import legacy = require("m");
+    ~~~~~~
+!!! error TS1128: Declaration or statement expected.
+           ~~~~~~
+!!! error TS2304: Cannot find name 'legacy'.
+    export local value = 1;
+    ~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~~
+!!! error TS2304: Cannot find name 'export'.
+    export default value;
+    ~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~~
+!!! error TS2304: Cannot find name 'export'.
+           ~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+           ~~~~~~~
+!!! error TS2304: Cannot find name 'default'.
+    export = value;
+    ~~~~~~
+!!! error TS2304: Cannot find name 'export'.
+    export { value };
+    ~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~~
+!!! error TS2304: Cannot find name 'export'.
+    export * from "m";
+    ~~~~~~
+!!! error TS2304: Cannot find name 'export'.
+             ~~~~
+!!! error TS2304: Cannot find name 'from'.
+                  ~~~
+!!! error TS1005: ';' expected.
+    
+    // The dynamic forms are gone too.
+    local dynamic = import("m");
+                    ~~~~~~
+!!! error TS1109: Expression expected.
+    local meta = import.meta;
+                 ~~~~~~
+!!! error TS1109: Expression expected.
+                       ~
+!!! error TS1128: Declaration or statement expected.
+    

@@ -1,0 +1,44 @@
+tluaWhileFlow.tlua(23,3): error TS7027: Unreachable code detected.
+tluaWhileFlow.tlua(31,5): error TS7027: Unreachable code detected.
+
+
+==== tluaWhileFlow.tlua (2 errors) ====
+    // Assignment in the body is visible after the loop (loop-label join).
+    function joinAfterLoop(flag: boolean): number | string
+      local x: number | string = 1;
+      while flag do
+        x = "s";
+        flag = false;
+      end
+      return x;
+    end
+    
+    // Code after `while true do break end` is reachable.
+    function reachableAfterBreak(): number
+      while true do
+        break;
+      end
+      return 1;
+    end
+    
+    // Code after `while true do end` (no break) is unreachable.
+    function unreachableAfterInfinite(): number
+      while true do
+      end
+      return 1;
+      ~~~~~~~~~
+!!! error TS7027: Unreachable code detected.
+    end
+    
+    // Statements after break are unreachable inside the body.
+    function unreachableAfterBreakInBody(): number
+      local n = 0;
+      while true do
+        break;
+        n = 1;
+        ~~~~~~
+!!! error TS7027: Unreachable code detected.
+      end
+      return n;
+    end
+    

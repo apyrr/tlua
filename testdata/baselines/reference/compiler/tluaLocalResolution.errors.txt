@@ -1,0 +1,31 @@
+tluaLocalResolution.tlua(13,17): error TS2304: Cannot find name 'laterLocal'.
+
+
+==== tluaLocalResolution.tlua (1 errors) ====
+    local outer = 10;
+    
+    local same = outer;
+    same = same + 1;
+    
+    {
+      local blockValue = same;
+      blockValue = blockValue + 1;
+      local blockValue = blockValue + 1;
+      blockValue = blockValue + 1;
+    }
+    
+    local forward = laterLocal;
+                    ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'laterLocal'.
+    local laterLocal = 1;
+    
+    local outer = outer + 1;
+    outer = outer + 1;
+    
+    function flowForLuaLocal() {
+      local narrowed: string | number;
+      narrowed = 1;
+      local reader = () => narrowed;
+      reader();
+    }
+    

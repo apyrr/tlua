@@ -1,0 +1,72 @@
+//// [tests/cases/compiler/tluaGotoForwardDeadEdge.tlua] ////
+
+=== tluaGotoForwardDeadEdge.tlua ===
+// A label's entry is the join of the fall-through AND every forward goto. A
+// forward edge the checker later proves dead (here: behind a never call) must
+// not mask a live fall-through — only the goto itself is unreachable.
+declare function fail(): never;
+>fail : Symbol(fail, Decl(tluaGotoForwardDeadEdge.tlua, 0, 0))
+
+declare function log(n: number): void;
+>log : Symbol(log, Decl(tluaGotoForwardDeadEdge.tlua, 3, 31))
+>n : Symbol(n, Decl(tluaGotoForwardDeadEdge.tlua, 4, 21))
+
+function liveFallThroughDeadGoto(b: boolean): void
+>liveFallThroughDeadGoto : Symbol(liveFallThroughDeadGoto, Decl(tluaGotoForwardDeadEdge.tlua, 4, 38))
+>b : Symbol(b, Decl(tluaGotoForwardDeadEdge.tlua, 5, 33))
+
+    if b then
+>b : Symbol(b, Decl(tluaGotoForwardDeadEdge.tlua, 5, 33))
+
+        fail();
+>fail : Symbol(fail, Decl(tluaGotoForwardDeadEdge.tlua, 0, 0))
+
+        goto done
+    end
+    log(1);
+>log : Symbol(log, Decl(tluaGotoForwardDeadEdge.tlua, 3, 31))
+
+    ::done::
+    log(2);
+>log : Symbol(log, Decl(tluaGotoForwardDeadEdge.tlua, 3, 31))
+
+end
+
+// The mirror case: several forward gotos, the FIRST-bound one dead, a later one
+// live, fall-through dead. The label is still reachable through the live edge.
+function liveSecondGoto(b: boolean): number
+>liveSecondGoto : Symbol(liveSecondGoto, Decl(tluaGotoForwardDeadEdge.tlua, 13, 3))
+>b : Symbol(b, Decl(tluaGotoForwardDeadEdge.tlua, 17, 24))
+
+    if b then
+>b : Symbol(b, Decl(tluaGotoForwardDeadEdge.tlua, 17, 24))
+
+        fail();
+>fail : Symbol(fail, Decl(tluaGotoForwardDeadEdge.tlua, 0, 0))
+
+        goto out
+    end
+    goto out
+    ::out::
+    return 1;
+end
+
+// Narrowing still joins all live entries when a dead edge is among them.
+function narrowPastDeadEdge(x: string | nil): string
+>narrowPastDeadEdge : Symbol(narrowPastDeadEdge, Decl(tluaGotoForwardDeadEdge.tlua, 25, 3))
+>x : Symbol(x, Decl(tluaGotoForwardDeadEdge.tlua, 28, 28))
+
+    if x == nil then
+>x : Symbol(x, Decl(tluaGotoForwardDeadEdge.tlua, 28, 28))
+
+        fail();
+>fail : Symbol(fail, Decl(tluaGotoForwardDeadEdge.tlua, 0, 0))
+
+        goto has
+    end
+    ::has::
+    return x;
+>x : Symbol(x, Decl(tluaGotoForwardDeadEdge.tlua, 28, 28))
+
+end
+

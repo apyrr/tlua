@@ -1,0 +1,40 @@
+//// [tests/cases/compiler/tluaRequireUnresolved.tlua] ////
+
+=== main.tlua ===
+// A path-shaped specifier is not a Lua module name; it is an error.
+local missing = require("./nosuchfile");
+>missing : any
+>require("./nosuchfile") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"./nosuchfile" : "./nosuchfile"
+
+// An unresolved dotted name falls back to the ambient overloads (any):
+// it may be a runtime-provided package or a C module.
+local maybe = require("no.such.module");
+>maybe : any
+>require("no.such.module") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"no.such.module" : "no.such.module"
+
+local n: number = maybe;
+>n : number
+>maybe : any
+
+// A declaration file declares globals; it is not a chunk with a value, so
+// `defs` does not resolve to defs.d.tlua and stays the dynamic overload.
+local defs = require("defs");
+>defs : any
+>require("defs") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"defs" : "defs"
+
+// A computed specifier keeps the dynamic overload.
+declare name: string;
+>name : string
+
+local dynamic = require(name);
+>dynamic : any
+>require(name) : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>name : string
+

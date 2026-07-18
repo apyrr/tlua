@@ -1,0 +1,7 @@
+// === findAllReferences ===
+// === /findReferencesSeeTagInTs.tlua ===
+// function [|doStuffWithStuff|]/*FIND ALL REFS*/(stuff: { quantity: number }) {}
+// 
+// declare stuff: { quantity: number };
+// /** @see {[|doStuffWithStuff|]} */
+// if (stuff.quantity) {}

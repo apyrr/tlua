@@ -1,0 +1,23 @@
+// === Document Symbols ===
+// === /first.tlua ===
+// class A {
+//   #foo() {
+//     class B {
+//       #bar() {   
+//          <|function [|{| name: baz, kind: Function |}baz|] () {
+//          }|>
+//       }
+//     }
+//   }
+// --- (line: 10) skipped ---
+
+// === Details ===
+(Function) baz
+
+
+
+
+// === Document Symbols ===
+
+
+// === Details ===

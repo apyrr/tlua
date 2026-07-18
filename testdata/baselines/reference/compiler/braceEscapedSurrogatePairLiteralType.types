@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/braceEscapedSurrogatePairLiteralType.tlua] ////
+
+=== braceEscapedSurrogatePairLiteralType.tlua ===
+// In JavaScript, "\u{D83D}\u{DE00}", "\uD83D\uDE00", and "😀" are all the
+// same string, so they should all have the same string literal type.
+local literal = "😀" as const;
+>literal : "😀"
+>"😀" as const : "😀"
+>"😀" : "😀"
+
+local braceEscaped = "\u{D83D}\u{DE00}" as const;
+>braceEscaped : "😀"
+>"\u{D83D}\u{DE00}" as const : "😀"
+>"\u{D83D}\u{DE00}" : "😀"
+
+local adjacentEscaped = "\uD83D\uDE00" as const;
+>adjacentEscaped : "😀"
+>"\uD83D\uDE00" as const : "😀"
+>"\uD83D\uDE00" : "😀"
+
+local a: "😀" = braceEscaped;
+>a : "😀"
+>braceEscaped : "😀"
+
+local b: typeof literal = braceEscaped;
+>b : "😀"
+>literal : "😀"
+>braceEscaped : "😀"
+
+local c: typeof adjacentEscaped = braceEscaped;
+>c : "😀"
+>adjacentEscaped : "😀"
+>braceEscaped : "😀"
+

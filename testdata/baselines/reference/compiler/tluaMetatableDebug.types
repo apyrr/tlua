@@ -1,0 +1,139 @@
+//// [tests/cases/compiler/tluaMetatableDebug.tlua] ////
+
+=== tluaMetatableDebug.tlua ===
+// The debug library bypasses __metatable protection. debug.getmetatable returns the real
+// metatable, and debug.setmetatable replaces it, both regardless of protection.
+
+local guarded = setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "locked" });
+>guarded : { n: number; a: number; }
+>setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "locked" }) : { n: number; a: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __index = { a = 1 }, __metatable = "locked" } : { __index: { a: number; }; __metatable: string; }
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+>__metatable : string
+>"locked" : "locked"
+
+// debug.getmetatable sees the real metatable, not the sentinel.
+local real = debug.getmetatable(guarded);
+>real : { __index: { a: number; }; __metatable: string; }
+>debug.getmetatable(guarded) : { __index: { a: number; }; __metatable: string; }
+>debug.getmetatable : (value: any) => object | nil
+>debug : DebugLib
+>getmetatable : (value: any) => object | nil
+>guarded : { n: number; a: number; }
+
+local ra: number = real.__index.a;
+>ra : number
+>real.__index.a : number
+>real.__index : { a: number; }
+>real : { __index: { a: number; }; __metatable: string; }
+>__index : { a: number; }
+>a : number
+
+// debug.setmetatable replaces a protected pairing without error.
+local swapped = debug.setmetatable(guarded, { __index = { b = "s" } });
+>swapped : { n: number; b: string; }
+>debug.setmetatable(guarded, { __index = { b = "s" } }) : { n: number; b: string; }
+>debug.setmetatable : <T>(value: T, metatable: object | nil) => T
+>debug : DebugLib
+>setmetatable : <T>(value: T, metatable: object | nil) => T
+>guarded : { n: number; a: number; }
+>{ __index = { b = "s" } } : { __index: { b: string; }; }
+>__index : { b: string; }
+>{ b = "s" } : { b: string; }
+>b : string
+>"s" : "s"
+
+local sb: string = swapped.b;
+>sb : string
+>swapped.b : string
+>swapped : { n: number; b: string; }
+>b : string
+
+local goneA = swapped.a;
+>goneA : any
+>swapped.a : any
+>swapped : { n: number; b: string; }
+>a : any
+
+// A member call through anything but the debug global is not the protocol.
+local fake = { setmetatable = function(v: object, mt: object): object return v; end };
+>fake : { setmetatable: (v: object, mt: object) => object; }
+>{ setmetatable = function(v: object, mt: object): object return v; end } : { setmetatable: (v: object, mt: object) => object; }
+>setmetatable : (v: object, mt: object) => object
+>function(v: object, mt: object): object return v; end : (v: object, mt: object) => object
+>v : object
+>mt : object
+>v : object
+
+local aliased = fake.setmetatable(guarded, { __index = { c = 1 } });
+>aliased : object
+>fake.setmetatable(guarded, { __index = { c = 1 } }) : object
+>fake.setmetatable : (v: object, mt: object) => object
+>fake : { setmetatable: (v: object, mt: object) => object; }
+>setmetatable : (v: object, mt: object) => object
+>guarded : { n: number; a: number; }
+>{ __index = { c = 1 } } : { __index: { c: number; }; }
+>__index : { c: number; }
+>{ c = 1 } : { c: number; }
+>c : number
+>1 : 1
+
+local noC = aliased.c;
+>noC : any
+>aliased.c : any
+>aliased : object
+>c : any
+
+// The statement form bypasses protection too: debug.setmetatable narrows past a protected
+// antecedent where the global setmetatable would refuse.
+function stmtBypass(): void
+>stmtBypass : () => void
+
+  local prot = setmetatable({ y = 1 }, { __index = { base = 1 }, __metatable = "locked" });
+>prot : { y: number; base: number; }
+>setmetatable({ y = 1 }, { __index = { base = 1 }, __metatable = "locked" }) : { y: number; base: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ y = 1 } : { y: number; }
+>y : number
+>1 : 1
+>{ __index = { base = 1 }, __metatable = "locked" } : { __index: { base: number; }; __metatable: string; }
+>__index : { base: number; }
+>{ base = 1 } : { base: number; }
+>base : number
+>1 : 1
+>__metatable : string
+>"locked" : "locked"
+
+  debug.setmetatable(prot, { __index = { swapped = "s" } });
+>debug.setmetatable(prot, { __index = { swapped = "s" } }) : { y: number; swapped: string; }
+>debug.setmetatable : <T>(value: T, metatable: object | nil) => T
+>debug : DebugLib
+>setmetatable : <T>(value: T, metatable: object | nil) => T
+>prot : { y: number; base: number; }
+>{ __index = { swapped = "s" } } : { __index: { swapped: string; }; }
+>__index : { swapped: string; }
+>{ swapped = "s" } : { swapped: string; }
+>swapped : string
+>"s" : "s"
+
+  local s: string = prot.swapped;
+>s : string
+>prot.swapped : string
+>prot : { y: number; swapped: string; }
+>swapped : string
+
+  local goneBase = prot.base;
+>goneBase : any
+>prot.base : any
+>prot : { y: number; swapped: string; }
+>base : any
+
+end
+

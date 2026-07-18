@@ -1,0 +1,4 @@
+// === findAllReferences ===
+// === /referencesForIndexProperty2.tlua ===
+// local a;
+// a["/*FIND ALL REFS*/[|blah|]"];

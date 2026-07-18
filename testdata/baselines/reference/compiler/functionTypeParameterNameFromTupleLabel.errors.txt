@@ -1,0 +1,37 @@
+functionTypeParameterNameFromTupleLabel.tlua(1,16): error TS100034: A vararg parameter cannot have a name.
+functionTypeParameterNameFromTupleLabel.tlua(1,22): error TS1110: Type expected.
+functionTypeParameterNameFromTupleLabel.tlua(1,23): error TS2304: Cannot find name 'x'.
+functionTypeParameterNameFromTupleLabel.tlua(1,24): error TS1005: ']' expected.
+functionTypeParameterNameFromTupleLabel.tlua(1,26): error TS7051: Parameter has a name but no type. Did you mean 'arg1: number'?
+functionTypeParameterNameFromTupleLabel.tlua(1,32): error TS1005: ')' expected.
+functionTypeParameterNameFromTupleLabel.tlua(1,33): error TS1128: Declaration or statement expected.
+functionTypeParameterNameFromTupleLabel.tlua(1,35): error TS1128: Declaration or statement expected.
+functionTypeParameterNameFromTupleLabel.tlua(1,42): error TS1109: Expression expected.
+functionTypeParameterNameFromTupleLabel.tlua(3,1): error TS2588: Cannot assign to 'f' because it is a constant.
+
+
+==== functionTypeParameterNameFromTupleLabel.tlua (10 errors) ====
+    declare f: (...args: [x: number]) => void;
+                   ~~~~
+!!! error TS100034: A vararg parameter cannot have a name.
+                         ~
+!!! error TS1110: Type expected.
+                          ~
+!!! error TS2304: Cannot find name 'x'.
+                           ~
+!!! error TS1005: ']' expected.
+                             ~~~~~~
+!!! error TS7051: Parameter has a name but no type. Did you mean 'arg1: number'?
+                                   ~
+!!! error TS1005: ')' expected.
+                                    ~
+!!! error TS1128: Declaration or statement expected.
+                                      ~~
+!!! error TS1128: Declaration or statement expected.
+                                             ~
+!!! error TS1109: Expression expected.
+    declare g: (a: string) => void;
+    f = g;
+    ~
+!!! error TS2588: Cannot assign to 'f' because it is a constant.
+    

@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/tluaTablePositionalContextualTyping.tlua] ////
+
+=== tluaTablePositionalContextualTyping.tlua ===
+// Contextual typing by numeric-keyed members.
+interface Pair {
+>Pair : Symbol(Pair, Decl(tluaTablePositionalContextualTyping.tlua, 0, 0))
+
+    1: string;
+>1 : Symbol(Pair[1], Decl(tluaTablePositionalContextualTyping.tlua, 1, 16))
+
+    2: number;
+>2 : Symbol(Pair[2], Decl(tluaTablePositionalContextualTyping.tlua, 2, 14))
+}
+local p: Pair = { "a", 2 };
+>p : Symbol(p, Decl(tluaTablePositionalContextualTyping.tlua, 5, 5))
+>Pair : Symbol(Pair, Decl(tluaTablePositionalContextualTyping.tlua, 0, 0))
+
+local bad: Pair = { 1, "b" };
+>bad : Symbol(bad, Decl(tluaTablePositionalContextualTyping.tlua, 6, 5))
+>Pair : Symbol(Pair, Decl(tluaTablePositionalContextualTyping.tlua, 0, 0))
+
+// Contextual typing by a numeric index signature.
+local ns: { [i: number]: string } = { "a", "b" };
+>ns : Symbol(ns, Decl(tluaTablePositionalContextualTyping.tlua, 9, 5))
+>i : Symbol(i, Decl(tluaTablePositionalContextualTyping.tlua, 9, 13))
+
+local nbad: { [i: number]: string } = { "a", 1 };
+>nbad : Symbol(nbad, Decl(tluaTablePositionalContextualTyping.tlua, 10, 5))
+>i : Symbol(i, Decl(tluaTablePositionalContextualTyping.tlua, 10, 15))
+
+// Excess positional entry against a closed target.
+local excess: { 1: string } = { "a", "b" };
+>excess : Symbol(excess, Decl(tluaTablePositionalContextualTyping.tlua, 13, 5))
+>1 : Symbol(1, Decl(tluaTablePositionalContextualTyping.tlua, 13, 15))
+
+// Contextual parameter typing of a function-expression entry.
+local fns: { 1: (n: number) => number } = { function(n) return n; end };
+>fns : Symbol(fns, Decl(tluaTablePositionalContextualTyping.tlua, 16, 5))
+>1 : Symbol(1, Decl(tluaTablePositionalContextualTyping.tlua, 16, 12))
+>n : Symbol(n, Decl(tluaTablePositionalContextualTyping.tlua, 16, 17))
+>n : Symbol(n, Decl(tluaTablePositionalContextualTyping.tlua, 16, 53))
+>n : Symbol(n, Decl(tluaTablePositionalContextualTyping.tlua, 16, 53))
+
+local all = {p, bad, ns, nbad, excess, fns};
+>all : Symbol(all, Decl(tluaTablePositionalContextualTyping.tlua, 17, 5))
+

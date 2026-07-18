@@ -1,0 +1,37 @@
+// === goToDefinition ===
+// === /goToDefinition_super.tlua ===
+// --- (line: 4) skipped ---
+// class B extends A {}
+// class C extends B {
+//     constructor() {
+//         /*GOTO DEF*/super();
+//     }
+//     method() {
+//         super.x();
+// --- (line: 12) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinition_super.tlua ===
+// --- (line: 7) skipped ---
+//         super();
+//     }
+//     method() {
+//         /*GOTO DEF*/super.x();
+//     }
+// }
+// class D {
+// --- (line: 15) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinition_super.tlua ===
+// --- (line: 12) skipped ---
+// }
+// class D {
+//     constructor() {
+//         /*GOTO DEF*/super();
+//     }
+// }

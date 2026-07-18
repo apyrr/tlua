@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/tluaVarargBasics.tlua] ////
+
+=== tluaVarargBasics.tlua ===
+// A vararg parameter is a bare `...` in final position. It has no binding name,
+// and its annotation is the *element* type of the pack, not an array type.
+function annotated(...: number): void
+>annotated : Symbol(annotated, Decl(tluaVarargBasics.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargBasics.tlua, 2, 19))
+
+end
+
+// An unannotated vararg is an `any` pack.
+function bare(...): void
+>bare : Symbol(bare, Decl(tluaVarargBasics.tlua, 3, 3))
+> : Symbol((Missing), Decl(tluaVarargBasics.tlua, 6, 14))
+
+end
+
+// Varargs coexist with fixed parameters.
+function withFixed(label: string, ...: string): string
+>withFixed : Symbol(withFixed, Decl(tluaVarargBasics.tlua, 7, 3))
+>label : Symbol(label, Decl(tluaVarargBasics.tlua, 10, 19))
+> : Symbol((Missing), Decl(tluaVarargBasics.tlua, 10, 33))
+
+  return label;
+>label : Symbol(label, Decl(tluaVarargBasics.tlua, 10, 19))
+
+end
+
+// `...` expands in a value list, so both names bind. A rest-only pack may be
+// empty, so each name is `number | nil`.
+function twoNames(...: number): (number | nil, number | nil)
+>twoNames : Symbol(twoNames, Decl(tluaVarargBasics.tlua, 12, 3))
+> : Symbol((Missing), Decl(tluaVarargBasics.tlua, 16, 18))
+
+  local a, b = ...;
+>a : Symbol(a, Decl(tluaVarargBasics.tlua, 17, 7))
+>b : Symbol(b, Decl(tluaVarargBasics.tlua, 17, 10))
+
+  return a, b;
+>a : Symbol(a, Decl(tluaVarargBasics.tlua, 17, 7))
+>b : Symbol(b, Decl(tluaVarargBasics.tlua, 17, 10))
+
+end
+
+// A vararg function accepts zero or more trailing arguments.
+annotated();
+>annotated : Symbol(annotated, Decl(tluaVarargBasics.tlua, 0, 0))
+
+annotated(1, 2, 3);
+>annotated : Symbol(annotated, Decl(tluaVarargBasics.tlua, 0, 0))
+
+withFixed("x");
+>withFixed : Symbol(withFixed, Decl(tluaVarargBasics.tlua, 7, 3))
+
+withFixed("x", "y", "z");
+>withFixed : Symbol(withFixed, Decl(tluaVarargBasics.tlua, 7, 3))
+
+bare();
+>bare : Symbol(bare, Decl(tluaVarargBasics.tlua, 3, 3))
+
+bare(1, "two", true);
+>bare : Symbol(bare, Decl(tluaVarargBasics.tlua, 3, 3))
+
+// The element type is checked.
+annotated("nope");
+>annotated : Symbol(annotated, Decl(tluaVarargBasics.tlua, 0, 0))
+
+withFixed("x", 1);
+>withFixed : Symbol(withFixed, Decl(tluaVarargBasics.tlua, 7, 3))
+

@@ -1,0 +1,8 @@
+//// [tests/cases/compiler/reachabilityChecks10.tlua] ////
+
+=== reachabilityChecks10.tlua ===
+
+throw new Error("")
+console.log("1")
+console.log("2")
+

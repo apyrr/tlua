@@ -1,0 +1,8 @@
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 10) skipped ---
+//   }
+// }
+// 
+// <|local [|nn|]: {name?: string; size?: number};|>
+// local x = <MyClass {...n/*GOTO DEF*/n}></MyClass>;

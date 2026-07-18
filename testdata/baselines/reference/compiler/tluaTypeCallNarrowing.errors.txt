@@ -1,0 +1,119 @@
+tluaTypeCallNarrowing.tlua(9,11): error TS2322: Type 'LuaCData | { n: number; }' is not assignable to type '{ n: number; }'.
+  Property 'n' is missing in type 'LuaCData' but required in type '{ n: number; }'.
+tluaTypeCallNarrowing.tlua(18,11): error TS2322: Type 'Mixed' is not assignable to type 'LuaCData'.
+  Type 'nil' is not assignable to type 'LuaCData'.
+tluaTypeCallNarrowing.tlua(84,6): error TS2367: This comparison appears to be unintentional because the types '"boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"' and '"chair"' have no overlap.
+
+
+==== tluaTypeCallNarrowing.tlua (3 errors) ====
+    // `type(x)` is the Lua type guard. Every tag it can return narrows, including the
+    // three branded object kinds, which carry the same type facts as a plain table and
+    // therefore cannot be told apart by facts alone.
+    
+    type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
+    
+    function tags(v: Mixed): void {
+      if type(v) == "table" then
+        local table1: { n: number } = v; // the brands are not tables, and "table" excludes nil
+              ~~~~~~
+!!! error TS2322: Type 'LuaCData | { n: number; }' is not assignable to type '{ n: number; }'.
+!!! error TS2322:   Property 'n' is missing in type 'LuaCData' but required in type '{ n: number; }'.
+!!! related TS2728 tluaTypeCallNarrowing.tlua:9:21: 'n' is declared here.
+      end
+      if type(v) == "thread" then
+        local thread1: LuaThread = v;
+      end
+      if type(v) == "userdata" then
+        local userdata1: LuaUserdata = v;
+      end
+      if type(v) == "cdata" then
+        local cdata1: LuaCData = v;
+              ~~~~~~
+!!! error TS2322: Type 'Mixed' is not assignable to type 'LuaCData'.
+!!! error TS2322:   Type 'nil' is not assignable to type 'LuaCData'.
+      end
+      if type(v) == "function" then
+        local function1: (a: number) => void = v;
+      end
+      if type(v) == "string" then
+        local string1: string = v;
+      end
+      if type(v) == "number" then
+        local number1: number = v;
+      end
+      if type(v) == "boolean" then
+        local boolean1: boolean = v;
+      end
+      if type(v) == "nil" then
+        local nil1: nil = v;
+      end
+    }
+    
+    function negated(v: Mixed): void {
+      if type(v) ~= "table" then
+        local notTable: LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+      end
+      if type(v) ~= "thread" then
+        // A negated brand keeps every table: only the brand is ruled out.
+        local notThread: { n: number } | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+      end
+      if type(v) ~= "nil" then
+        local present: { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean = v;
+      end
+    }
+    
+    // The `and`/`or` idiom narrows the same way an if-statement does.
+    function idiom(v: string | number): string {
+      return type(v) == "string" and v or tostring(v);
+    }
+    
+    function tops(u: unknown, a: any): void {
+      if type(u) == "table" then
+        local o: object = u;
+      end
+      if type(u) == "thread" then
+        local t: LuaThread = u;
+      end
+      if type(u) == "string" then
+        local s: string = u;
+      end
+      if type(a) == "table" then
+        local stillAny: number = a; // `any` survives every tag
+      end
+    }
+    
+    function generic<T>(v: T): void {
+      if type(v) == "thread" then
+        local t: T & LuaThread = v;
+      end
+    }
+    
+    function constrained<T extends LuaThread | string>(v: T): void {
+      if type(v) ~= "thread" then
+        local s: string = v;
+      end
+    }
+    
+    // An unreachable tag: `type()` never reports it, so the true branch is uninhabited.
+    function unknownTag(v: string | number): void {
+      if type(v) == "chair" then
+         ~~~~~~~~~~~~~~~~~~
+!!! error TS2367: This comparison appears to be unintentional because the types '"boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"' and '"chair"' have no overlap.
+        local none: never = v;
+      end
+    }
+    
+    // The tags partition values, so a guard that is provably false is a dead branch:
+    // a concrete type unrelated to a brand narrows to never, not to an intersection.
+    function disjoint(x: { n: number }, u: { n: number } | string, s: string): void {
+      if type(x) == "thread" then
+        local dead: never = x;
+      end
+      if type(u) == "thread" then
+        local dead2: never = u;
+      end
+      if type(s) == "userdata" then
+        local dead3: never = s;
+      end
+    }
+    

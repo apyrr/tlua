@@ -1,0 +1,39 @@
+// === findRenameLocations ===
+// === /renameLocationsForClassExpression01.tlua ===
+// class Foo {
+// }
+// 
+// local x = class /*RENAME*/Foo {
+//     doIt() {
+//         return Foo;
+//     }
+// --- (line: 8) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /renameLocationsForClassExpression01.tlua ===
+// class Foo {
+// }
+// 
+// local x = class Foo {
+//     doIt() {
+//         return /*RENAME*/Foo;
+//     }
+// 
+//     static doItStatically() {
+// --- (line: 10) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /renameLocationsForClassExpression01.tlua ===
+// --- (line: 6) skipped ---
+//     }
+// 
+//     static doItStatically() {
+//         return /*RENAME*/Foo.y;
+//     }
+// }
+// 
+// --- (line: 14) skipped ---

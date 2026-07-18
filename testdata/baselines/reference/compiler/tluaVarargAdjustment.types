@@ -1,0 +1,565 @@
+//// [tests/cases/compiler/tluaVarargAdjustment.tlua] ////
+
+=== tluaVarargAdjustment.tlua ===
+declare function takesNumbers(...: number): void;
+>takesNumbers : (...: number) => void
+> : number[]
+
+declare function takesOne(a: number): void;
+>takesOne : (a: number) => void
+>a : number
+
+declare function takesOneNilable(a: number | nil): void;
+>takesOneNilable : (a: number | nil) => void
+>a : number | nil
+
+declare function takesTwo(a: number, b: number): void;
+>takesTwo : (a: number, b: number) => void
+>a : number
+>b : number
+
+declare function takesTwoNilable(a: number | nil, b: number): void;
+>takesTwoNilable : (a: number | nil, b: number) => void
+>a : number | nil
+>b : number
+
+declare function nothing(): void;
+>nothing : () => void
+
+declare function pair(): (number, string);
+>pair : () => (number, string)
+
+declare function midRest(): (number, ...string, boolean);
+>midRest : () => (number, ...string, boolean)
+
+declare function optionalTail(): (number, string?);
+>optionalTail : () => (number, string?)
+
+declare key: number;
+>key : number
+
+function callArguments(...: number): void
+>callArguments : (...: number) => void
+> : number[]
+
+  // Tail position expands to the full pack.
+  takesNumbers(...);
+>takesNumbers(...) : void
+>takesNumbers : (...: number) => void
+>... : number | nil
+
+  takesNumbers(1, ...);
+>takesNumbers(1, ...) : void
+>takesNumbers : (...: number) => void
+>1 : 1
+>... : number | nil
+
+  // Non-tail position adjusts to a single first value -- so this is two
+  // arguments, not "the pack then 1". A rest-only pack may be empty, so that
+  // value's type is `number | nil`, which the first parameter rejects.
+  takesTwoNilable(..., 1);
+>takesTwoNilable(..., 1) : void
+>takesTwoNilable : (a: number | nil, b: number) => void
+>... : number | nil
+>1 : 1
+
+  takesTwo(..., 1);
+>takesTwo(..., 1) : void
+>takesTwo : (a: number, b: number) => void
+>... : number | nil
+>1 : 1
+
+  // Parentheses make a vararg single-valued, with that same `number | nil`, so
+  // the truncation idiom only satisfies nil-accepting targets.
+  takesOneNilable((...));
+>takesOneNilable((...)) : void
+>takesOneNilable : (a: number | nil) => void
+>(...) : number | nil
+>... : number | nil
+
+  takesOne((...));
+>takesOne((...)) : void
+>takesOne : (a: number) => void
+>(...) : number | nil
+>... : number | nil
+
+  // A parenthesized call is one value too, so the second value is dropped.
+  local onlyFirst: number = (pair());
+>onlyFirst : number
+>(pair()) : number
+>pair() : number
+>pair : () => (number, string)
+
+  // A tail imposes no arity of its own: Lua neither pads nor complains. What it
+  // supplies is a type question -- a value it may not have is `number | nil`.
+  // So a required `number` rejects it...
+  takesOne(...);
+>takesOne(...) : void
+>takesOne : (a: number) => void
+>... : number | nil
+
+  takesTwo(...);
+>takesTwo(...) : void
+>takesTwo : (a: number, b: number) => void
+>... : number | nil
+
+  // ...while anything that accepts nil takes it, with no exception needed.
+  takesOneNilable(...);
+>takesOneNilable(...) : void
+>takesOneNilable : (a: number | nil) => void
+>... : number | nil
+
+  takesTwoNilable(...);
+>takesTwoNilable(...) : void
+>takesTwoNilable : (a: number | nil, b: number) => void
+>... : number | nil
+
+  // The one arity rule left: a tail that cannot contribute. Every parameter is
+  // already filled, so every value it produces would be discarded (100037).
+  takesOne(1, ...);
+>takesOne(1, ...) : void
+>takesOne : (a: number) => void
+>1 : 1
+>... : number | nil
+
+end
+
+declare function optionalOnly(a?: number): void;
+>optionalOnly : (a?: number) => void
+>a : number | nil
+
+declare function trailingOptional(a: number, b?: number): void;
+>trailingOptional : (a: number, b?: number) => void
+>a : number
+>b : number | nil
+
+declare function leadingFixed(prefix: string, ...: number): void;
+>leadingFixed : (prefix: string, ...: number) => void
+>prefix : string
+> : number[]
+
+function tailIntoParameters(...: number): void
+>tailIntoParameters : (...: number) => void
+> : number[]
+
+  // Every parameter the tail reaches may go without a value, so each receives
+  // `number | nil` -- which is exactly what makes these legal without a special
+  // case for optional parameters.
+  optionalOnly(...);
+>optionalOnly(...) : void
+>optionalOnly : (a?: number) => void
+>... : number | nil
+
+  trailingOptional(1, ...);
+>trailingOptional(1, ...) : void
+>trailingOptional : (a: number, b?: number) => void
+>1 : 1
+>... : number | nil
+
+  // A rest parameter absorbs whatever is left, however little, so it receives
+  // the element type unchanged -- no nil, no arity check.
+  takesNumbers(...);
+>takesNumbers(...) : void
+>takesNumbers : (...: number) => void
+>... : number | nil
+
+  leadingFixed("x", ...);
+>leadingFixed("x", ...) : void
+>leadingFixed : (prefix: string, ...: number) => void
+>"x" : "x"
+>... : number | nil
+
+  // But a fixed parameter ahead of the rest is still a fixed parameter.
+  leadingFixed(...);
+>leadingFixed(...) : void
+>leadingFixed : (prefix: string, ...: number) => void
+>... : number | nil
+
+end
+
+function parenthesizedOperand(...: number): void
+>parenthesizedOperand : (...: number) => void
+> : number[]
+
+  // `(...` opens an arrow parameter list only when a parameter continuation
+  // follows the `...`. An operator after it keeps the vararg an operand of a
+  // parenthesized expression, truncated to its first `number | nil` value.
+  local defaulted: number = (... or 0);
+>defaulted : number
+>(... or 0) : number
+>... or 0 : number
+>... : number | nil
+>0 : 0
+
+  local compared: boolean = (... == 1);
+>compared : boolean
+>(... == 1) : boolean
+>... == 1 : boolean
+>... : number | nil
+>1 : 1
+
+  // The arrow forms stay arrows.
+  local arrow = (...) => (... or 0);
+>arrow : (...: any) => any
+>(...) => (... or 0) : (...: any) => any
+> : any[]
+>(... or 0) : any
+>... or 0 : any
+>... : any
+>0 : 0
+
+  local annotated = (...: number) => 0;
+>annotated : (...: number) => number
+>(...: number) => 0 : (...: number) => number
+> : number[]
+>0 : 0
+
+end
+
+// Return value lists follow the same rules.
+function returnTail(...: string): (string, ...string)
+>returnTail : (...: string) => (string, ...string)
+> : string[]
+
+  return "first", ...;
+>"first", ... : string, ...string
+>"first" : "first"
+>... : string | nil
+
+end
+
+function returnTruncated(...: string): (string | nil, string)
+>returnTruncated : (...: string) => (string | nil, string)
+> : string[]
+
+  return ..., "last";
+>..., "last" : string | nil, string
+>... : string | nil
+>"last" : "last"
+
+end
+
+// An unbounded tail cannot fill a required fixed return value either.
+function returnUnderfilled(...: string): (string, string)
+>returnUnderfilled : (...: string) => (string, string)
+> : string[]
+
+  return ...;
+>... : string | nil
+
+end
+
+function localValueLists(...: number): void
+>localValueLists : (...: number) => void
+> : number[]
+
+  // Tail expansion: both names come out of the pack.
+  local a, b = ...;
+>a : number | nil
+>b : number | nil
+>... : number | nil
+
+  // A non-tail `...` contributes one value; the tail still expands.
+  local c, d = ..., 1;
+>c : number | nil
+>d : number
+>..., 1 : number | nil, number
+>... : number | nil
+>1 : 1
+
+  // Fixed value first, tail expands into the rest.
+  local e, f = 1, ...;
+>e : number
+>f : number | nil
+>1, ... : number, ...number
+>1 : 1
+>... : number | nil
+
+end
+
+function tableConstructors(...: number): void
+>tableConstructors : (...: number) => void
+> : number[]
+
+  // The last positional entry expands, so the tail lands in the number index.
+  local expanded = {1, ...};
+>expanded : { [x: number]: number; 1: number; }
+>{1, ...} : { [x: number]: number; 1: number; }
+>... : number | nil
+
+  // A non-tail `...` stores only its first value.
+  local truncated = {..., 1};
+>truncated : { 1: number | nil; 2: number; }
+>{..., 1} : { 1: number | nil; 2: number; }
+>... : number | nil
+
+  // A void pack in tail position contributes zero values, so this table is
+  // empty -- it is not `{ 1: void }`.
+  local voided = {nothing()};
+>voided : {}
+>{nothing()} : {}
+>nothing() : void
+>nothing : () => void
+
+  // Calls expand in the tail exactly like varargs.
+  local fromCall = {1, pair()};
+>fromCall : { 1: number; 2: number; 3: string; }
+>{1, pair()} : { 1: number; 2: number; 3: string; }
+>pair() : number
+>pair : () => (number, string)
+
+end
+
+function tableTailShapes(...: number): void
+>tableTailShapes : (...: number) => void
+> : number[]
+
+  // A fixed element *after* an unbounded one has no static index -- it sits
+  // wherever the rest ends -- so it joins the number index type instead of
+  // claiming index 2.
+  local mid = {midRest()};
+>mid : { [x: number]: string | number | boolean; 1: number; }
+>{midRest()} : { [x: number]: string | number | boolean; 1: number; }
+>midRest() : number
+>midRest : () => (number, ...string, boolean)
+
+  local notBoolean: boolean = mid[2];
+>notBoolean : boolean
+>mid[2] : string | number | boolean
+>mid : { [x: number]: string | number | boolean; 1: number; }
+>2 : 2
+
+  // An optional pack element may be absent, so the property it produces is
+  // optional and its type carries nil.
+  local opt = {optionalTail()};
+>opt : { 1: number; 2?: string | nil; }
+>{optionalTail()} : { 1: number; 2?: string | nil; }
+>optionalTail() : number
+>optionalTail : () => (number, string?)
+
+  local maybeMissing: string = opt[2];
+>maybeMissing : string
+>opt[2] : string | nil
+>opt : { 1: number; 2?: string | nil; }
+>2 : 2
+
+  // A computed number key and a pack tail share the number index domain: one
+  // signature covers both, so neither hides the other.
+  local mixed = { [key] = "s", ... };
+>mixed : { [x: number]: string | number; }
+>{ [key] = "s", ... } : { [x: number]: string | number; }
+>[key] : string
+>key : number
+>"s" : "s"
+>... : number | nil
+
+  local both: string | number = mixed[1];
+>both : string | number
+>mixed[1] : string | number
+>mixed : { [x: number]: string | number; }
+>1 : 1
+
+  local notJustNumber: number = mixed[1];
+>notJustNumber : number
+>mixed[1] : string | number
+>mixed : { [x: number]: string | number; }
+>1 : 1
+
+end
+
+// A union of packs is only reachable by INFERENCE. The annotation form does not
+// parse -- a parenthesized return list is committed to before the `|` is seen --
+// so writing `(number, ...number) | string` here would produce two parse errors
+// and a plain pack, quietly testing the opposite of what this section claims.
+function inferredUnionOfPacks(b: boolean, ...: number)
+>inferredUnionOfPacks : (b: boolean, ...: number) => "a" | (number, ...number)
+>b : boolean
+> : number[]
+
+  if b then
+>b : boolean
+
+    return 1, ...;
+>1, ... : number, ...number
+>1 : 1
+>... : number | nil
+
+  end
+  return "a";
+>"a" : "a"
+
+end
+
+function unionTail(b: boolean): void
+>unionTail : (b: boolean) => void
+>b : boolean
+
+  // A union of packs has no single positional shape, so the tail stays one value
+  // rather than expanding -- and must not be READ as a pack: TargetTupleType() on
+  // a union is a nil dereference, which is what used to crash the checker.
+  local t = {inferredUnionOfPacks(b, 1)};
+>t : { 1: string | number; }
+>{inferredUnionOfPacks(b, 1)} : { 1: string | number; }
+>inferredUnionOfPacks(b, 1) : number | "a"
+>inferredUnionOfPacks : (b: boolean, ...: number) => "a" | (number, ...number)
+>b : boolean
+>1 : 1
+
+  local single: string | number = t[1];
+>single : string | number
+>t[1] : string | number
+>t : { 1: string | number; }
+>1 : 1
+
+end
+
+function varargOperands(...: number): void
+>varargOperands : (...: number) => void
+> : number[]
+
+  // `...` is an operand like any other: Lua allows it under a unary operator,
+  // and a parenthesized cast is how you narrow the adjusted value.
+  local negated = not ...;
+>negated : boolean
+>not ... : boolean
+>... : number | nil
+
+  local defaulted: number = (... or 0);
+>defaulted : number
+>(... or 0) : number
+>... or 0 : number
+>... : number | nil
+>0 : 0
+
+  local cast = (... as number);
+>cast : number
+>(... as number) : number
+>... as number : number
+>... : number | nil
+
+end
+
+// A pack tail supplies a *type* per parameter position, and every consumer --
+// arity, inference and applicability -- must agree on what that type is. These
+// pin the three that used to disagree.
+
+declare function id<T>(x: T): T;
+>id : <T>(x: T) => T
+>x : T
+
+declare function bothOf<T>(a: T, b: T): T;
+>bothOf : <T>(a: T, b: T) => T
+>a : T
+>b : T
+
+function tailIntoGeneric(...: number): void
+>tailIntoGeneric : (...: number) => void
+> : number[]
+
+  // Inference must see what the applicability check sees. Inferring from the
+  // element type alone would fix T to `number` and then reject the `number | nil`
+  // the tail actually supplies -- making every generic callee uncallable with the
+  // canonical Lua forward.
+  local inferred: number | nil = id(...);
+>inferred : number | nil
+>id(...) : number | nil
+>id : <T>(x: T) => T
+>... : number | nil
+
+  local pairwise: number | nil = bothOf(...);
+>pairwise : number | nil
+>bothOf(...) : number | nil
+>bothOf : <T>(a: T, b: T) => T
+>... : number | nil
+
+  // A parenthesized tail is exactly one value, so it infers the same way.
+  local truncated: number | nil = id((...));
+>truncated : number | nil
+>id((...)) : number | nil
+>id : <T>(x: T) => T
+>(...) : number | nil
+>... : number | nil
+
+end
+
+declare function takesPair(x: number, y: string): void;
+>takesPair : (x: number, y: string) => void
+>x : number
+>y : string
+
+type PrefixedVararg = (a: number, b: string, ...: boolean) => void;
+>PrefixedVararg : PrefixedVararg
+>a : number
+>b : string
+> : boolean[]
+
+// A contextually-typed bare `...` takes its pack from the contextual signature,
+// so here the pack has a FIXED PREFIX: `(number, string, ...boolean)`.
+local tailWithFixedPrefix: PrefixedVararg = (...) =>
+>tailWithFixedPrefix : PrefixedVararg
+>(...) =>  // The prefix fills both of takesPair's parameters, so the tail is not "unable  // to contribute" and there is no arity error: only the *variable* part of the  // pack is discarded. Counting the prefix as filled-by-a-fixed-argument used to  // report 100037 here and mask any real type error underneath it.  takesPair(...) : (a: number, b: string, ...: boolean) => void
+> : [a: number, b: string, ...boolean[]]
+
+  // The prefix fills both of takesPair's parameters, so the tail is not "unable
+  // to contribute" and there is no arity error: only the *variable* part of the
+  // pack is discarded. Counting the prefix as filled-by-a-fixed-argument used to
+  // report 100037 here and mask any real type error underneath it.
+  takesPair(...);
+>takesPair(...) : void
+>takesPair : (x: number, y: string) => void
+>... : number
+
+function midRestIntoParameters(): void
+>midRestIntoParameters : () => void
+
+  // `(number, ...string, boolean)` always yields at least two values, so the
+  // second parameter can never go without one: it receives `string | boolean`,
+  // not `string | boolean | nil`.
+  takesNumberAndEither(midRest());
+>takesNumberAndEither(midRest()) : void
+>takesNumberAndEither : (a: number, b: string | boolean) => void
+>midRest() : number
+>midRest : () => (number, ...string, boolean)
+
+  // ...and the trailing fixed element is really checked: a `boolean` can land on
+  // the second parameter when the string run is empty.
+  takesNumberAndString(midRest());
+>takesNumberAndString(midRest()) : void
+>takesNumberAndString : (a: number, b: string | nil) => void
+>midRest() : number
+>midRest : () => (number, ...string, boolean)
+
+end
+
+declare function takesNumberAndEither(a: number, b: string | boolean): void;
+>takesNumberAndEither : (a: number, b: string | boolean) => void
+>a : number
+>b : string | boolean
+
+declare function takesNumberAndString(a: number, b: string | nil): void;
+>takesNumberAndString : (a: number, b: string | nil) => void
+>a : number
+>b : string | nil
+
+function voidTail(): void
+>voidTail : () => void
+
+  // A call that returns nothing contributes zero values in tail position, the
+  // same rule `{nothing()}` and `local a, b = nothing()` already follow.
+  takesNothing(nothing());
+>takesNothing(nothing()) : void
+>takesNothing : () => void
+>nothing() : void
+>nothing : () => void
+
+  takesNumbers(nothing());
+>takesNumbers(nothing()) : void
+>takesNumbers : (...: number) => void
+>nothing() : void
+>nothing : () => void
+
+end
+
+declare function takesNothing(): void;
+>takesNothing : () => void
+

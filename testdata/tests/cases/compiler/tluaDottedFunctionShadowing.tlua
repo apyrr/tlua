@@ -1,0 +1,19 @@
+// @target: esnext
+// @strict: true
+
+local M = {};
+
+function M.first(): number
+  return 1;
+end
+
+local firstOnly = M.first();
+
+local M = {};
+
+function M.second(): number
+  return 2;
+end
+
+local secondOnly = M.second();
+local gone = M.first();

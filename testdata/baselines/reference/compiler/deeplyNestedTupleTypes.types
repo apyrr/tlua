@@ -1,0 +1,74 @@
+//// [tests/cases/compiler/deeplyNestedTupleTypes.tlua] ////
+
+=== deeplyNestedTupleTypes.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3426
+
+type AOuter = {
+>AOuter : AOuter
+
+  inners: [AInner];
+>inners : any
+
+};
+type AInner = {
+>AInner : AInner
+
+  mids: [AMid];
+>mids : any
+
+};
+type AMid = {
+>AMid : AMid
+
+  leaves: [ALeaf];
+>leaves : any
+
+};
+type ALeaf = {
+>ALeaf : ALeaf
+
+  id: string;
+>id : string
+
+};
+
+type BOuter = {
+>BOuter : BOuter
+
+  inners: [BInner];
+>inners : any
+
+};
+type BInner = {
+>BInner : BInner
+
+  mids: [BMid];
+>mids : any
+
+};
+type BMid = {
+>BMid : BMid
+
+  leaves: [BLeaf];
+>leaves : any
+
+};
+type BLeaf = {
+>BLeaf : BLeaf
+
+  id: number;
+>id : number
+
+};
+
+function test(a: AOuter, b: BOuter) {
+>test : (a: AOuter, b: BOuter) => void
+>a : AOuter
+>b : BOuter
+
+  a = b;
+>a = b : BOuter
+>a : AOuter
+>b : BOuter
+}
+

@@ -1,0 +1,5 @@
+// === goToType ===
+// === /foo.tlua ===
+// local Foo: unresolved;
+// type Foo = { x: string };
+// /*GOTO TYPE*/Foo;

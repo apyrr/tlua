@@ -1,0 +1,93 @@
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport02.tlua ===
+// /*FIND ALL REFS*/export default function DefaultExportedFunction() {
+//     return DefaultExportedFunction;
+// }
+// 
+// --- (line: 5) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport02.tlua ===
+// export default function /*FIND ALL REFS*/[|DefaultExportedFunction|]() {
+//     return [|DefaultExportedFunction|];
+// }
+// 
+// local x: typeof [|DefaultExportedFunction|];
+// 
+// local y = [|DefaultExportedFunction|]();
+// 
+// namespace [|DefaultExportedFunction|] {
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport02.tlua ===
+// export default function [|DefaultExportedFunction|]() {
+//     return /*FIND ALL REFS*/[|DefaultExportedFunction|];
+// }
+// 
+// local x: typeof [|DefaultExportedFunction|];
+// 
+// local y = [|DefaultExportedFunction|]();
+// 
+// namespace [|DefaultExportedFunction|] {
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport02.tlua ===
+// export default function [|DefaultExportedFunction|]() {
+//     return [|DefaultExportedFunction|];
+// }
+// 
+// local x: typeof /*FIND ALL REFS*/[|DefaultExportedFunction|];
+// 
+// local y = [|DefaultExportedFunction|]();
+// 
+// namespace [|DefaultExportedFunction|] {
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport02.tlua ===
+// export default function [|DefaultExportedFunction|]() {
+//     return [|DefaultExportedFunction|];
+// }
+// 
+// local x: typeof [|DefaultExportedFunction|];
+// 
+// local y = /*FIND ALL REFS*/[|DefaultExportedFunction|]();
+// 
+// namespace [|DefaultExportedFunction|] {
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport02.tlua ===
+// --- (line: 5) skipped ---
+// 
+// local y = DefaultExportedFunction();
+// 
+// /*FIND ALL REFS*/namespace DefaultExportedFunction {
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport02.tlua ===
+// export default function [|DefaultExportedFunction|]() {
+//     return [|DefaultExportedFunction|];
+// }
+// 
+// local x: typeof [|DefaultExportedFunction|];
+// 
+// local y = [|DefaultExportedFunction|]();
+// 
+// namespace /*FIND ALL REFS*/[|DefaultExportedFunction|] {
+// }

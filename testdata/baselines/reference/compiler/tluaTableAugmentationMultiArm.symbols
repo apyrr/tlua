@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/tluaTableAugmentationMultiArm.tlua] ////
+
+=== a.tlua ===
+V = {};
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+V.m = "s";
+>V.m : Symbol(m, Decl(a.tlua, 0, 7))
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>m : Symbol(m, Decl(a.tlua, 0, 7))
+
+local va: string = V.m;
+>va : Symbol(va, Decl(a.tlua, 2, 5))
+>V.m : Symbol(m, Decl(a.tlua, 0, 7))
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>m : Symbol(m, Decl(a.tlua, 0, 7))
+
+=== b.tlua ===
+V = { b = 2 };
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>b : Symbol(b, Decl(b.tlua, 0, 5))
+
+local vm: string = V.m;
+>vm : Symbol(vm, Decl(b.tlua, 1, 5))
+>V.m : Symbol(m, Decl(a.tlua, 0, 7))
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>m : Symbol(m, Decl(a.tlua, 0, 7))
+
+local vb: number = V.b;
+>vb : Symbol(vb, Decl(b.tlua, 2, 5))
+>V.b : Symbol(b, Decl(b.tlua, 0, 5))
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>b : Symbol(b, Decl(b.tlua, 0, 5))
+
+=== c.tlua ===
+// Hover-visible union: records V's union type in the .types baseline.
+local v = V;
+>v : Symbol(v, Decl(c.tlua, 1, 5))
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+local cm: string = V.m;
+>cm : Symbol(cm, Decl(c.tlua, 2, 5))
+>V.m : Symbol(m, Decl(a.tlua, 0, 7))
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>m : Symbol(m, Decl(a.tlua, 0, 7))
+
+// `b` exists in only one arm's constructor. Read here on the un-narrowed
+// union to record whether a direct read is an error or union-with-nil.
+local cb = V.b;
+>cb : Symbol(cb, Decl(c.tlua, 6, 5))
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+V.b = 3;
+>V : Symbol(V, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+

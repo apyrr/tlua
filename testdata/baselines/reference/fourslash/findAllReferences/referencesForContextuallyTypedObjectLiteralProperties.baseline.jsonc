@@ -1,0 +1,26 @@
+// === findAllReferences ===
+// === /referencesForContextuallyTypedObjectLiteralProperties.tlua ===
+// interface IFoo { /*FIND ALL REFS*/[|xy|]: number; }
+// 
+// // Assignment
+// local a1: IFoo = { [|xy|] = 0 };
+// local a2: IFoo = { [|xy|] = 0 };
+// 
+// // Function call
+// function consumer(f: IFoo) { }
+// consumer({ [|xy|] = 1 });
+// 
+// // Type cast
+// local c = <IFoo>{ [|xy|] = 0 };
+// 
+// // Array literal
+// local ar: IFoo[] = [{ xy = 1 }, { xy = 2 }];
+// 
+// // Nested object literal
+// local ob: { ifoo: IFoo } = { ifoo = { [|xy|] = 0 } };
+// 
+// // Widened type
+// local w: IFoo = { [|xy|] = undefined };
+// 
+// // Untped -- should not be included
+// local u = { xy = 0 };

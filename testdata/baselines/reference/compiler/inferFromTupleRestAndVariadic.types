@@ -1,0 +1,89 @@
+//// [tests/cases/compiler/inferFromTupleRestAndVariadic.tlua] ////
+
+=== inferFromTupleRestAndVariadic.tlua ===
+// Crash when inferring from tuple types with rest and variadic elements
+// where the variadic element's constraint consumes all source tuple elements.
+// The pattern [...rest, ...T] where T is constrained by a fixed-size tuple
+// calls getElementTypeOfSliceOfTupleType which can return nil when the
+// source tuple is entirely consumed by T's implied arity.
+
+type SubTup<T> = T extends [
+>SubTup : any
+
+    ...(infer C)[],
+>... : any
+>(infer : any
+>infer : any
+>C : any
+
+    ...infer B extends [any, any]
+>... : any
+>infer : any
+>B : any
+>any, any : any
+>any : any
+>any : any
+
+] ? B : never;
+>B : any
+>never : any
+
+type Trigger = SubTup<[1, 2]>;
+>Trigger : any
+>2 : 2
+>> : boolean
+> : any
+> : any
+
+// Also test the [...T, ...rest] pattern
+type SubTup2<T> = T extends [
+>SubTup2 : any
+
+    ...infer A extends [any, any],
+>... : any
+>infer : any
+>A : any
+>any, any : any
+>any : any
+>any : any
+
+    ...(infer D)[],
+>... : any
+>(infer : any
+>infer : any
+>D : any
+
+] ? A : never;
+>A : any
+>never : any
+
+type Trigger2 = SubTup2<[1, 2]>;
+>Trigger2 : any
+>2 : 2
+>> : boolean
+> : any
+> : any
+
+// Test with more elements than implied arity (should work fine)
+type Trigger3 = SubTup<[1, 2, 3, 4]>;
+>Trigger3 : any
+>2, 3, 4 : 4
+>2, 3 : 3
+>2 : 2
+>3 : 3
+>4 : 4
+>> : boolean
+> : any
+> : any
+
+type Trigger4 = SubTup2<[1, 2, 3, 4]>;
+>Trigger4 : any
+>2, 3, 4 : 4
+>2, 3 : 3
+>2 : 2
+>3 : 3
+>4 : 4
+>> : boolean
+> : any
+> : any
+

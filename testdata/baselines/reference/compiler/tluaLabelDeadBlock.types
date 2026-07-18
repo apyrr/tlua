@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/tluaLabelDeadBlock.tlua] ////
+
+=== tluaLabelDeadBlock.tlua ===
+// A dead block still scopes its labels: an unused label inside one is reported
+// exactly like an unused label directly in the dead tail of a live block.
+function deadLabelBare(): number
+>deadLabelBare : () => number
+
+    return 1;
+>1 : 1
+
+    ::L1::
+>L1 : any
+
+end
+
+function deadLabelInBlock(): number {
+>deadLabelInBlock : () => number
+
+    return 1;
+>1 : 1
+
+    { ::L2:: }
+>L2 : any
+}
+
+// And a goto inside a dead block still marks its label referenced.
+function deadBlockGotoReferences(): number {
+>deadBlockGotoReferences : () => number
+
+    return 1;
+>1 : 1
+
+    { ::L3:: goto L3 }
+>L3 : any
+>L3 : any
+}
+

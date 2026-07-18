@@ -1,0 +1,63 @@
+tluaTableNoMethods.tlua(3,13): error TS2304: Cannot find name 'm'.
+tluaTableNoMethods.tlua(3,17): error TS1005: ',' expected.
+tluaTableNoMethods.tlua(3,19): error TS1109: Expression expected.
+tluaTableNoMethods.tlua(4,13): error TS2304: Cannot find name 'get'.
+tluaTableNoMethods.tlua(4,17): error TS1005: ',' expected.
+tluaTableNoMethods.tlua(4,17): error TS2304: Cannot find name 'p'.
+tluaTableNoMethods.tlua(4,21): error TS1005: ',' expected.
+tluaTableNoMethods.tlua(4,23): error TS1109: Expression expected.
+tluaTableNoMethods.tlua(5,13): error TS2304: Cannot find name 'set'.
+tluaTableNoMethods.tlua(5,17): error TS1005: ',' expected.
+tluaTableNoMethods.tlua(5,17): error TS2304: Cannot find name 'p'.
+tluaTableNoMethods.tlua(5,19): error TS2304: Cannot find name 'v'.
+tluaTableNoMethods.tlua(5,20): error TS1005: ',' expected.
+tluaTableNoMethods.tlua(5,22): error TS2693: 'number' only refers to a type, but is being used as a value here.
+tluaTableNoMethods.tlua(5,30): error TS1005: ',' expected.
+
+
+==== tluaTableNoMethods.tlua (15 errors) ====
+    // Object-literal methods and accessors are removed: they decompose into
+    // positional expressions with natural errors.
+    local m = { m() { return 1; } };
+                ~
+!!! error TS2304: Cannot find name 'm'.
+                    ~
+!!! error TS1005: ',' expected.
+                      ~~~~~~
+!!! error TS1109: Expression expected.
+    local g = { get p() { return 1; } };
+                ~~~
+!!! error TS2304: Cannot find name 'get'.
+                    ~
+!!! error TS1005: ',' expected.
+                    ~
+!!! error TS2304: Cannot find name 'p'.
+                        ~
+!!! error TS1005: ',' expected.
+                          ~~~~~~
+!!! error TS1109: Expression expected.
+    local s = { set p(v: number) { } };
+                ~~~
+!!! error TS2304: Cannot find name 'set'.
+                    ~
+!!! error TS1005: ',' expected.
+                    ~
+!!! error TS2304: Cannot find name 'p'.
+                      ~
+!!! error TS2304: Cannot find name 'v'.
+                       ~
+!!! error TS1005: ',' expected.
+                         ~~~~~~
+!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+                                 ~
+!!! error TS1005: ',' expected.
+    
+    // The replacement: functions are table values.
+    local fns = { run = function(): number return 1; end };
+    local one: number = fns.run();
+    
+    // Literal string/number keys use the bracket form.
+    local keyed = { [1] = "a", ["k"] = 2 };
+    local ka: string = keyed[1];
+    local kk: number = keyed.k;
+    

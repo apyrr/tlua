@@ -1,0 +1,139 @@
+//// [tests/cases/compiler/tluaMetatableImprecise.tlua] ////
+
+=== tluaMetatableImprecise.tlua ===
+// The pairing is only as precise as the metatable's type. A metatable that does not say
+// which fallback applies leaves the call returning the plain table rather than guessing at a
+// wrong one.
+
+// The declared parameter type is exactly that: LuaMetatable<T> names every metamethod and
+// commits to none.
+declare declared: LuaMetatable<{ n: number }>;
+>declared : Symbol(declared, Decl(tluaMetatableImprecise.tlua, 6, 7))
+>LuaMetatable : Symbol(LuaMetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 6, 32))
+
+local d = setmetatable({ n = 1 }, declared);
+>d : Symbol(d, Decl(tluaMetatableImprecise.tlua, 7, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 7, 24))
+>declared : Symbol(declared, Decl(tluaMetatableImprecise.tlua, 6, 7))
+
+local dn: number = d.n;
+>dn : Symbol(dn, Decl(tluaMetatableImprecise.tlua, 8, 5))
+>d.n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 7, 24))
+>d : Symbol(d, Decl(tluaMetatableImprecise.tlua, 7, 5))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 7, 24))
+
+local dbad = d.anything;
+>dbad : Symbol(dbad, Decl(tluaMetatableImprecise.tlua, 9, 5))
+>d : Symbol(d, Decl(tluaMetatableImprecise.tlua, 7, 5))
+
+// A __index that is either a table or a function does not say which read wins.
+declare unionIndex: { __index: { a: number } | ((t: object, k: any) => string) };
+>unionIndex : Symbol(unionIndex, Decl(tluaMetatableImprecise.tlua, 12, 7))
+>__index : Symbol(__index, Decl(tluaMetatableImprecise.tlua, 12, 21))
+>a : Symbol(a, Decl(tluaMetatableImprecise.tlua, 12, 32))
+>t : Symbol(t, Decl(tluaMetatableImprecise.tlua, 12, 49))
+>k : Symbol(k, Decl(tluaMetatableImprecise.tlua, 12, 59))
+
+local u = setmetatable({ n = 1 }, unionIndex);
+>u : Symbol(u, Decl(tluaMetatableImprecise.tlua, 13, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 13, 24))
+>unionIndex : Symbol(unionIndex, Decl(tluaMetatableImprecise.tlua, 12, 7))
+
+local ubad = u.a;
+>ubad : Symbol(ubad, Decl(tluaMetatableImprecise.tlua, 14, 5))
+>u : Symbol(u, Decl(tluaMetatableImprecise.tlua, 13, 5))
+
+// A metatable that may not be there at all.
+declare maybe: { __index: { a: number } } | nil;
+>maybe : Symbol(maybe, Decl(tluaMetatableImprecise.tlua, 17, 7))
+>__index : Symbol(__index, Decl(tluaMetatableImprecise.tlua, 17, 16))
+>a : Symbol(a, Decl(tluaMetatableImprecise.tlua, 17, 27))
+
+local m = setmetatable({ n = 1 }, maybe);
+>m : Symbol(m, Decl(tluaMetatableImprecise.tlua, 18, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 18, 24))
+>maybe : Symbol(maybe, Decl(tluaMetatableImprecise.tlua, 17, 7))
+
+local mbad = m.a;
+>mbad : Symbol(mbad, Decl(tluaMetatableImprecise.tlua, 19, 5))
+>m : Symbol(m, Decl(tluaMetatableImprecise.tlua, 18, 5))
+
+// `nil` says there is no metatable.
+local none = setmetatable({ n = 1 }, nil);
+>none : Symbol(none, Decl(tluaMetatableImprecise.tlua, 22, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 22, 27))
+
+local nn: number = none.n;
+>nn : Symbol(nn, Decl(tluaMetatableImprecise.tlua, 23, 5))
+>none.n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 22, 27))
+>none : Symbol(none, Decl(tluaMetatableImprecise.tlua, 22, 5))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 22, 27))
+
+local nbad = none.anything;
+>nbad : Symbol(nbad, Decl(tluaMetatableImprecise.tlua, 24, 5))
+>none : Symbol(none, Decl(tluaMetatableImprecise.tlua, 22, 5))
+
+// A metatable with no __index has no fallback to merge, and no pairing is kept for it.
+local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end });
+>noIndex : Symbol(noIndex, Decl(tluaMetatableImprecise.tlua, 27, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 27, 30))
+>__tostring : Symbol(__tostring, Decl(tluaMetatableImprecise.tlua, 27, 41))
+>t : Symbol(t, Decl(tluaMetatableImprecise.tlua, 27, 64))
+
+local xn: number = noIndex.n;
+>xn : Symbol(xn, Decl(tluaMetatableImprecise.tlua, 28, 5))
+>noIndex.n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 27, 30))
+>noIndex : Symbol(noIndex, Decl(tluaMetatableImprecise.tlua, 27, 5))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 27, 30))
+
+// A callable table would be indexed by Lua, but which half answers a read is not worth
+// guessing at.
+declare hybrid: { __index: { (t: object, k: any): string; extra: number } };
+>hybrid : Symbol(hybrid, Decl(tluaMetatableImprecise.tlua, 32, 7))
+>__index : Symbol(__index, Decl(tluaMetatableImprecise.tlua, 32, 17))
+>t : Symbol(t, Decl(tluaMetatableImprecise.tlua, 32, 30))
+>k : Symbol(k, Decl(tluaMetatableImprecise.tlua, 32, 40))
+>extra : Symbol(extra, Decl(tluaMetatableImprecise.tlua, 32, 57))
+
+local h = setmetatable({ n = 1 }, hybrid);
+>h : Symbol(h, Decl(tluaMetatableImprecise.tlua, 33, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 33, 24))
+>hybrid : Symbol(hybrid, Decl(tluaMetatableImprecise.tlua, 32, 7))
+
+local hbad = h.extra;
+>hbad : Symbol(hbad, Decl(tluaMetatableImprecise.tlua, 34, 5))
+>h : Symbol(h, Decl(tluaMetatableImprecise.tlua, 33, 5))
+
+// __index declared optional strips its nil arm: what is left names one fallback.
+declare optional: { __index?: { a: number } };
+>optional : Symbol(optional, Decl(tluaMetatableImprecise.tlua, 37, 7))
+>__index : Symbol(__index, Decl(tluaMetatableImprecise.tlua, 37, 19))
+>a : Symbol(a, Decl(tluaMetatableImprecise.tlua, 37, 31))
+
+local o = setmetatable({ n = 1 }, optional);
+>o : Symbol(o, Decl(tluaMetatableImprecise.tlua, 38, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 38, 24))
+>optional : Symbol(optional, Decl(tluaMetatableImprecise.tlua, 37, 7))
+
+local oa: number = o.a;
+>oa : Symbol(oa, Decl(tluaMetatableImprecise.tlua, 39, 5))
+>o.a : Symbol(a, Decl(tluaMetatableImprecise.tlua, 37, 31))
+>o : Symbol(o, Decl(tluaMetatableImprecise.tlua, 38, 5))
+>a : Symbol(a, Decl(tluaMetatableImprecise.tlua, 37, 31))
+
+// An error inside the metatable literal is reported once.
+local bad = setmetatable({ n = 1 }, { __index = { a = missingName } });
+>bad : Symbol(bad, Decl(tluaMetatableImprecise.tlua, 42, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 42, 26))
+>__index : Symbol(__index, Decl(tluaMetatableImprecise.tlua, 42, 37))
+>a : Symbol(a, Decl(tluaMetatableImprecise.tlua, 42, 49))
+

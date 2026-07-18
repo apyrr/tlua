@@ -1,0 +1,10 @@
+// === vsFindAllReferences ===
+// === /constructorFindAllReferences1VS.tlua ===
+// export class C {
+//     /*FIND ALL REFS*/public constructor() { }
+//     public foo() { }
+// }
+// 
+// new C().foo();
+
+[]

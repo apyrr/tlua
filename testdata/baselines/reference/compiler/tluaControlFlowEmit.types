@@ -1,0 +1,116 @@
+//// [tests/cases/compiler/tluaControlFlowEmit.tlua] ////
+
+=== main.tlua ===
+local m = require("m");
+>m : { N: number; done: boolean; counter: number; }
+>require("m") : { N: number; done: boolean; counter: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+local N, done = m.N, m.done;
+>N : number
+>done : boolean
+>m.N, m.done : number, boolean
+>m.N : number
+>m : { N: number; done: boolean; counter: number; }
+>N : number
+>m.done : boolean
+>m : { N: number; done: boolean; counter: number; }
+>done : boolean
+
+// Required values substitute in numeric-for bounds and until-conditions.
+function f(): number
+>f : () => number
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for i = 1, N do
+>i : number
+>1 : 1
+>N : number
+
+    total = total + i;
+>total = total + i : number
+>total : number
+>total + i : number
+>total : number
+>i : number
+
+  end
+  repeat
+    total = total + 1;
+>total = total + 1 : number
+>total : number
+>total + 1 : number
+>total : number
+>1 : 1
+
+  until done;
+>done : boolean
+
+  while done do
+>done : true
+
+    total = total - 1;
+>total = total - 1 : number
+>total : number
+>total - 1 : number
+>total : number
+>1 : 1
+
+  end
+  return total;
+>total : number
+
+end
+
+// Top-level Lua statements emit verbatim (no panic, no module wrapper).
+for i = 1, 2 do
+>i : number
+>1 : 1
+>2 : 2
+
+  f();
+>f() : number
+>f : () => number
+
+end
+repeat
+  f();
+>f() : number
+>f : () => number
+
+until true;
+>true : true
+
+do
+  f();
+>f() : number
+>f : () => number
+
+end
+
+=== m.tlua ===
+local N = 3;
+>N : number
+>3 : 3
+
+local done = false;
+>done : boolean
+>false : false
+
+local counter = 0;
+>counter : number
+>0 : 0
+
+return { N = N, done = done, counter = counter };
+>{ N = N, done = done, counter = counter } : { N: number; done: boolean; counter: number; }
+>N : number
+>N : number
+>done : boolean
+>done : false
+>counter : number
+>counter : number
+

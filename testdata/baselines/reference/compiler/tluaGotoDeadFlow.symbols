@@ -1,0 +1,47 @@
+//// [tests/cases/compiler/tluaGotoDeadFlow.tlua] ////
+
+=== tluaGotoDeadFlow.tlua ===
+// A label reached only through dead fall-through, then a backward goto to it,
+// used to hang the flow analysis: the label's loop node became its own only
+// antecedent, a cycle with no base. The label is now correctly unreachable, and
+// the compiler terminates.
+function selfGotoInDeadCode(): number
+>selfGotoInDeadCode : Symbol(selfGotoInDeadCode, Decl(tluaGotoDeadFlow.tlua, 0, 0))
+
+    return 1;
+    ::again::
+    goto again
+end
+
+// A label whose only goto sits in dead code is NOT unused: the goto still names
+// it, even though it wires no flow edge.
+function deadGotoStillReferences(): number
+>deadGotoStillReferences : Symbol(deadGotoStillReferences, Decl(tluaGotoDeadFlow.tlua, 8, 3))
+
+    ::x::
+    return 1;
+    goto x
+end
+
+// A label nothing references at all is unused.
+function trulyUnused(): number
+>trulyUnused : Symbol(trulyUnused, Decl(tluaGotoDeadFlow.tlua, 16, 3))
+
+    ::dead::
+    return 1;
+end
+
+// A live forward goto keeps a label — and the code after it — reachable, even
+// when the fall-through into the label is dead.
+function reachableViaGotoOnly(flag: boolean): number
+>reachableViaGotoOnly : Symbol(reachableViaGotoOnly, Decl(tluaGotoDeadFlow.tlua, 22, 3))
+>flag : Symbol(flag, Decl(tluaGotoDeadFlow.tlua, 26, 30))
+
+    if flag then goto tail end
+>flag : Symbol(flag, Decl(tluaGotoDeadFlow.tlua, 26, 30))
+
+    return 1;
+    ::tail::
+    return 2;
+end
+

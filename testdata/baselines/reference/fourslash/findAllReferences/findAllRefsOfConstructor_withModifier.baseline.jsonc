@@ -1,0 +1,6 @@
+// === findAllReferences ===
+// === /findAllRefsOfConstructor_withModifier.tlua ===
+// class X {
+//     public /*FIND ALL REFS*/constructor() {}
+// }
+// local x = new X();

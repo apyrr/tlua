@@ -1,0 +1,109 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsVarWithStringTypes01.tlua ===
+// local hello: "hello" | 'hello' = "hello";
+//       ^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local hello: "hello"
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local world: 'world' = "world";
+//       ^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local world: "world"
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local helloOrWorld: "hello" | 'world';
+//       ^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local helloOrWorld: "hello" | "world"
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 6,
+      "LSPosition": {
+        "line": 0,
+        "character": 6
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal hello: \"hello\"\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 11
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 48,
+      "LSPosition": {
+        "line": 1,
+        "character": 6
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal world: \"world\"\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 6
+        },
+        "end": {
+          "line": 1,
+          "character": 11
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 80,
+      "LSPosition": {
+        "line": 2,
+        "character": 6
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal helloOrWorld: \"hello\" | \"world\"\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 6
+        },
+        "end": {
+          "line": 2,
+          "character": 18
+        }
+      }
+    }
+  }
+]

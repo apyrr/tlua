@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/tluaTableDestructuringCoexistence.tlua] ////
+
+=== tluaTableDestructuringCoexistence.tlua ===
+// Destructuring assignment is deleted: `x = 1` inside braces has exactly one
+// meaning (a Lua keyed field), and an object literal on the left of `=` is an
+// ordinary assignment target that fails the reference check.
+declare obj: { x?: number; q?: number };
+>obj : Symbol(obj, Decl(tluaTableDestructuringCoexistence.tlua, 3, 7))
+>x : Symbol(x, Decl(tluaTableDestructuringCoexistence.tlua, 3, 14))
+>q : Symbol(q, Decl(tluaTableDestructuringCoexistence.tlua, 3, 26))
+
+local xv: number | nil;
+>xv : Symbol(xv, Decl(tluaTableDestructuringCoexistence.tlua, 4, 5))
+
+({ q = 7 } = obj);
+>q : Symbol(q, Decl(tluaTableDestructuringCoexistence.tlua, 5, 2))
+>obj : Symbol(obj, Decl(tluaTableDestructuringCoexistence.tlua, 3, 7))
+
+local sums = {xv};
+>sums : Symbol(sums, Decl(tluaTableDestructuringCoexistence.tlua, 6, 5))
+
+// Lua multiple assignment is the extraction idiom.
+declare src: { m: number; n: string };
+>src : Symbol(src, Decl(tluaTableDestructuringCoexistence.tlua, 9, 7))
+>m : Symbol(m, Decl(tluaTableDestructuringCoexistence.tlua, 9, 14))
+>n : Symbol(n, Decl(tluaTableDestructuringCoexistence.tlua, 9, 25))
+
+local m, n = src.m, src.n;
+>m : Symbol(m, Decl(tluaTableDestructuringCoexistence.tlua, 10, 5))
+>n : Symbol(n, Decl(tluaTableDestructuringCoexistence.tlua, 10, 8))
+>src.m : Symbol(m, Decl(tluaTableDestructuringCoexistence.tlua, 9, 14))
+>src : Symbol(src, Decl(tluaTableDestructuringCoexistence.tlua, 9, 7))
+>m : Symbol(m, Decl(tluaTableDestructuringCoexistence.tlua, 9, 14))
+>src.n : Symbol(n, Decl(tluaTableDestructuringCoexistence.tlua, 9, 25))
+>src : Symbol(src, Decl(tluaTableDestructuringCoexistence.tlua, 9, 7))
+>n : Symbol(n, Decl(tluaTableDestructuringCoexistence.tlua, 9, 25))
+
+local mn = {m, n};
+>mn : Symbol(mn, Decl(tluaTableDestructuringCoexistence.tlua, 11, 5))
+
+// A table with keyed fields is still just a table wherever it appears, and
+// the old `[k]:`/`name:` target spellings are parse errors.
+declare obj3: { k: boolean };
+>obj3 : Symbol(obj3, Decl(tluaTableDestructuringCoexistence.tlua, 15, 7))
+>k : Symbol(k, Decl(tluaTableDestructuringCoexistence.tlua, 15, 15))
+
+local z = ({ ["k"] = true }).k;
+>z : Symbol(z, Decl(tluaTableDestructuringCoexistence.tlua, 16, 5))
+>({ ["k"] = true }).k : Symbol(["k"], Decl(tluaTableDestructuringCoexistence.tlua, 16, 12))
+>["k"] : Symbol(["k"], Decl(tluaTableDestructuringCoexistence.tlua, 16, 12))
+>"k" : Symbol(["k"], Decl(tluaTableDestructuringCoexistence.tlua, 16, 12))
+>k : Symbol(["k"], Decl(tluaTableDestructuringCoexistence.tlua, 16, 12))
+
+local zz = z;
+>zz : Symbol(zz, Decl(tluaTableDestructuringCoexistence.tlua, 17, 5))
+>z : Symbol(z, Decl(tluaTableDestructuringCoexistence.tlua, 16, 5))
+

@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/tluaNumberKeyDeclarationEmit.tlua] ////
+
+=== defs.d.tlua ===
+// A hand-written declaration file: 1 is a number key, "1" a string key.
+declare d: { 1: number; "1": string };
+>d : { 1: number; "1": string; }
+>1 : number
+>"1" : string
+
+=== main.tlua ===
+local dn: number = d[1];
+>dn : number
+>d[1] : number
+>d : { 1: number; "1": string; }
+>1 : 1
+
+local ds: string = d["1"];
+>ds : string
+>d["1"] : string
+>d : { 1: number; "1": string; }
+>"1" : "1"
+
+// Number and string keys stay distinct in source table types too.
+local t = { [1] = 1, ["1"] = "s", x = true };
+>t : { 1: number; "1": string; x: boolean; }
+>{ [1] = 1, ["1"] = "s", x = true } : { 1: number; "1": string; x: boolean; }
+>[1] : number
+>1 : 1
+>1 : 1
+>["1"] : string
+>"1" : "1"
+>"s" : "s"
+>x : boolean
+>true : true
+
+local tn: number = t[1];
+>tn : number
+>t[1] : number
+>t : { 1: number; "1": string; x: boolean; }
+>1 : 1
+
+local ts: string = t["1"];
+>ts : string
+>t["1"] : string
+>t : { 1: number; "1": string; x: boolean; }
+>"1" : "1"
+
+return { t = t, dn = dn, ds = ds, tn = tn, ts = ts };
+>{ t = t, dn = dn, ds = ds, tn = tn, ts = ts } : { t: { 1: number; "1": string; x: boolean; }; dn: number; ds: string; tn: number; ts: string; }
+>t : { 1: number; "1": string; x: boolean; }
+>t : { 1: number; "1": string; x: boolean; }
+>dn : number
+>dn : number
+>ds : string
+>ds : string
+>tn : number
+>tn : number
+>ts : string
+>ts : string
+

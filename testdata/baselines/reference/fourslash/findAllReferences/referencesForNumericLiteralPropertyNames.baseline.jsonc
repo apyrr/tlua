@@ -1,0 +1,8 @@
+// === findAllReferences ===
+// === /referencesForNumericLiteralPropertyNames.tlua ===
+// class Foo {
+//     public /*FIND ALL REFS*/12: any;
+// }
+// 
+// local x: Foo;
+// --- (line: 6) skipped ---

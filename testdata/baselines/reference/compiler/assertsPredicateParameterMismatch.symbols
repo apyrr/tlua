@@ -1,0 +1,30 @@
+//// [tests/cases/compiler/assertsPredicateParameterMismatch.tlua] ////
+
+=== assertsPredicateParameterMismatch.tlua ===
+// This test verifies that the checker doesn't panic when an assertion predicate
+// references a parameter name that doesn't match any actual function parameter.
+// This specifically tests the code path in isReachableFlowNodeWorker.
+
+function assertCondition(
+>assertCondition : Symbol(assertCondition, Decl(assertsPredicateParameterMismatch.tlua, 0, 0))
+
+  _condition: boolean
+>_condition : Symbol(_condition, Decl(assertsPredicateParameterMismatch.tlua, 4, 25))
+
+): asserts condition {  // "condition" doesn't match parameter "_condition"
+  if (!_condition) {
+>_condition : Symbol(_condition, Decl(assertsPredicateParameterMismatch.tlua, 4, 25))
+
+    throw new Error('Condition failed');
+  }
+}
+
+function test(): void {
+>test : Symbol(test, Decl(assertsPredicateParameterMismatch.tlua, 10, 1))
+
+  assertCondition(false);
+>assertCondition : Symbol(assertCondition, Decl(assertsPredicateParameterMismatch.tlua, 0, 0))
+
+  console.log("unreachable");
+}
+

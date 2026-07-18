@@ -1,0 +1,5 @@
+// === goToDefinition ===
+// === /goToDefinition_filteringMappedType.tlua ===
+// local obj = { <|[|a|] = 1|>, b = 2 };
+// local filtered: { [P in keyof typeof obj as P extends 'b' ? never : P]: 0; } = { a = 0 };
+// filtered./*GOTO DEF*/a;

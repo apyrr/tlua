@@ -1,0 +1,195 @@
+//// [tests/cases/compiler/tluaNoThisCoexistence.tlua] ////
+
+=== tluaNoThisCoexistence.tlua ===
+// `this` is removed, but the constructs that neighbour it must keep working.
+// This file must stay zero-error.
+
+declare function use(x: unknown): void;
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaNoThisCoexistence.tlua, 3, 21))
+
+// Ordinary identifier type predicates still narrow. Only the `this is T` form
+// was removed, and it is a distinct branch of the predicate machinery.
+function isString(v: unknown): v is string {
+>isString : Symbol(isString, Decl(tluaNoThisCoexistence.tlua, 3, 39))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 7, 18))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 7, 18))
+
+  return type(v) == "string";
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 7, 18))
+}
+
+declare function assertString(v: unknown): asserts v is string;
+>assertString : Symbol(assertString, Decl(tluaNoThisCoexistence.tlua, 9, 1))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 11, 30))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 11, 30))
+
+function narrow(v: unknown): void {
+>narrow : Symbol(narrow, Decl(tluaNoThisCoexistence.tlua, 11, 63))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
+
+  if (isString(v)) {
+>isString : Symbol(isString, Decl(tluaNoThisCoexistence.tlua, 3, 39))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaNoThisCoexistence.tlua, 15, 9))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
+
+    use(s);
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>s : Symbol(s, Decl(tluaNoThisCoexistence.tlua, 15, 9))
+  }
+  assertString(v);
+>assertString : Symbol(assertString, Decl(tluaNoThisCoexistence.tlua, 9, 1))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
+
+  local t: string = v;
+>t : Symbol(t, Decl(tluaNoThisCoexistence.tlua, 19, 7))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
+
+  use(t);
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>t : Symbol(t, Decl(tluaNoThisCoexistence.tlua, 19, 7))
+}
+
+// Lua's global environment remains available independently of `this`.
+local g: typeof _G = _G;
+>g : Symbol(g, Decl(tluaNoThisCoexistence.tlua, 24, 5))
+>_G : Symbol(_G)
+>_G : Symbol(_G)
+
+// Colon methods supply the receiver as an ordinary `self` parameter, which is
+// what replaced `this`. The inert `Signature.thisParameter` never fills in.
+interface Counter {
+>Counter : Symbol(Counter, Decl(tluaNoThisCoexistence.tlua, 24, 24))
+
+  n: number;
+>n : Symbol(Counter.n, Decl(tluaNoThisCoexistence.tlua, 28, 19))
+
+  bump(self: Counter, by: number): number;
+>bump : Symbol(Counter.bump, Decl(tluaNoThisCoexistence.tlua, 29, 12))
+>self : Symbol(self, Decl(tluaNoThisCoexistence.tlua, 30, 7))
+>Counter : Symbol(Counter, Decl(tluaNoThisCoexistence.tlua, 24, 24))
+>by : Symbol(by, Decl(tluaNoThisCoexistence.tlua, 30, 21))
+}
+
+local counter: Counter = {
+>counter : Symbol(counter, Decl(tluaNoThisCoexistence.tlua, 33, 5))
+>Counter : Symbol(Counter, Decl(tluaNoThisCoexistence.tlua, 24, 24))
+
+  n = 0,
+>n : Symbol(n, Decl(tluaNoThisCoexistence.tlua, 33, 26))
+
+  bump = function(self: Counter, by: number) return self.n + by; end,
+>bump : Symbol(bump, Decl(tluaNoThisCoexistence.tlua, 34, 8))
+>self : Symbol(self, Decl(tluaNoThisCoexistence.tlua, 35, 18))
+>Counter : Symbol(Counter, Decl(tluaNoThisCoexistence.tlua, 24, 24))
+>by : Symbol(by, Decl(tluaNoThisCoexistence.tlua, 35, 32))
+>self.n : Symbol(Counter.n, Decl(tluaNoThisCoexistence.tlua, 28, 19))
+>self : Symbol(self, Decl(tluaNoThisCoexistence.tlua, 35, 18))
+>n : Symbol(Counter.n, Decl(tluaNoThisCoexistence.tlua, 28, 19))
+>by : Symbol(by, Decl(tluaNoThisCoexistence.tlua, 35, 32))
+
+};
+
+function counter:bump(by: number): number
+>counter : Symbol(counter, Decl(tluaNoThisCoexistence.tlua, 33, 5))
+>bump : Symbol(bump, Decl(tluaNoThisCoexistence.tlua, 36, 2))
+>: : Symbol(:, Decl(tluaNoThisCoexistence.tlua, 38, 16))
+>counter : Symbol(counter, Decl(tluaNoThisCoexistence.tlua, 33, 5))
+>by : Symbol(by, Decl(tluaNoThisCoexistence.tlua, 38, 22))
+
+  return self.n + by;
+>self.n : Symbol(Counter.n, Decl(tluaNoThisCoexistence.tlua, 28, 19))
+>self : Symbol(:, Decl(tluaNoThisCoexistence.tlua, 38, 16))
+>n : Symbol(Counter.n, Decl(tluaNoThisCoexistence.tlua, 28, 19))
+>by : Symbol(by, Decl(tluaNoThisCoexistence.tlua, 38, 22))
+
+end
+
+// Interfaces and generics still instantiate: the inert `InterfaceType.thisType`
+// type parameter does not perturb signature relations or inference.
+interface Box<T> {
+>Box : Symbol(Box, Decl(tluaNoThisCoexistence.tlua, 40, 3))
+>T : Symbol(T, Decl(tluaNoThisCoexistence.tlua, 44, 14))
+
+  value: T;
+>value : Symbol(Box.value, Decl(tluaNoThisCoexistence.tlua, 44, 18))
+>T : Symbol(T, Decl(tluaNoThisCoexistence.tlua, 44, 14))
+
+  map<U>(self: Box<T>, f: (v: T) => U): Box<U>;
+>map : Symbol(Box.map, Decl(tluaNoThisCoexistence.tlua, 45, 11))
+>U : Symbol(U, Decl(tluaNoThisCoexistence.tlua, 46, 6))
+>self : Symbol(self, Decl(tluaNoThisCoexistence.tlua, 46, 9))
+>Box : Symbol(Box, Decl(tluaNoThisCoexistence.tlua, 40, 3))
+>T : Symbol(T, Decl(tluaNoThisCoexistence.tlua, 44, 14))
+>f : Symbol(f, Decl(tluaNoThisCoexistence.tlua, 46, 22))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 46, 27))
+>T : Symbol(T, Decl(tluaNoThisCoexistence.tlua, 44, 14))
+>U : Symbol(U, Decl(tluaNoThisCoexistence.tlua, 46, 6))
+>Box : Symbol(Box, Decl(tluaNoThisCoexistence.tlua, 40, 3))
+>U : Symbol(U, Decl(tluaNoThisCoexistence.tlua, 46, 6))
+}
+
+declare box: Box<number>;
+>box : Symbol(box, Decl(tluaNoThisCoexistence.tlua, 49, 7))
+>Box : Symbol(Box, Decl(tluaNoThisCoexistence.tlua, 40, 3))
+
+declare function toStr(v: number): string;
+>toStr : Symbol(toStr, Decl(tluaNoThisCoexistence.tlua, 49, 25))
+>v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 50, 23))
+
+local mapped: Box<string> = box.map(box, toStr);
+>mapped : Symbol(mapped, Decl(tluaNoThisCoexistence.tlua, 52, 5))
+>Box : Symbol(Box, Decl(tluaNoThisCoexistence.tlua, 40, 3))
+>box.map : Symbol(Box.map, Decl(tluaNoThisCoexistence.tlua, 45, 11))
+>box : Symbol(box, Decl(tluaNoThisCoexistence.tlua, 49, 7))
+>map : Symbol(Box.map, Decl(tluaNoThisCoexistence.tlua, 45, 11))
+>box : Symbol(box, Decl(tluaNoThisCoexistence.tlua, 49, 7))
+>toStr : Symbol(toStr, Decl(tluaNoThisCoexistence.tlua, 49, 25))
+
+// Interface `extends` heritage and construct signatures are untouched.
+interface Base {
+>Base : Symbol(Base, Decl(tluaNoThisCoexistence.tlua, 52, 48))
+
+  b: number;
+>b : Symbol(Base.b, Decl(tluaNoThisCoexistence.tlua, 55, 16))
+}
+interface Derived extends Base {
+>Derived : Symbol(Derived, Decl(tluaNoThisCoexistence.tlua, 57, 1))
+>Base : Symbol(Base, Decl(tluaNoThisCoexistence.tlua, 52, 48))
+
+  d: number;
+>d : Symbol(Derived.d, Decl(tluaNoThisCoexistence.tlua, 58, 32))
+}
+declare K: { new (): Derived };
+>K : Symbol(K, Decl(tluaNoThisCoexistence.tlua, 61, 7))
+>Derived : Symbol(Derived, Decl(tluaNoThisCoexistence.tlua, 57, 1))
+
+local inst: Derived = new K();
+>inst : Symbol(inst, Decl(tluaNoThisCoexistence.tlua, 62, 5))
+>Derived : Symbol(Derived, Decl(tluaNoThisCoexistence.tlua, 57, 1))
+>K : Symbol(K, Decl(tluaNoThisCoexistence.tlua, 61, 7))
+
+use(narrow);
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>narrow : Symbol(narrow, Decl(tluaNoThisCoexistence.tlua, 11, 63))
+
+use(g);
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>g : Symbol(g, Decl(tluaNoThisCoexistence.tlua, 24, 5))
+
+use(counter);
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>counter : Symbol(counter, Decl(tluaNoThisCoexistence.tlua, 33, 5))
+
+use(mapped);
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>mapped : Symbol(mapped, Decl(tluaNoThisCoexistence.tlua, 52, 5))
+
+use(inst);
+>use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
+>inst : Symbol(inst, Decl(tluaNoThisCoexistence.tlua, 62, 5))
+

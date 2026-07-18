@@ -1,0 +1,90 @@
+//// [tests/cases/compiler/expandoPropertyEmptyArrayWidening.tlua] ////
+
+=== expandoPropertyEmptyArrayWidening.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3976
+
+local example: {
+>example : { (): void; items?: string[]; }
+
+  (): void;
+  items?: string[];
+>items : string[] | nil
+
+} = () => undefined;
+>() => undefined : () => nil
+
+example.items = [];
+>example.items = [] : any
+>example.items : string[] | nil
+>example : { (): void; items?: string[]; }
+>items : string[] | nil
+>[] : any
+> : any
+> : any
+
+function f1() {}
+>f1 : { (): void; a: any; }
+
+f1.a = [];  // Implicit any error
+>f1.a = [] : any
+>f1.a : any
+>f1 : { (): void; a: any; }
+>a : any
+>[] : any
+> : any
+> : any
+
+local f2 = function() end;
+>f2 : () => void
+>function() end : () => void
+
+f2.a = [];  // Implicit any error
+>f2.a = [] : any
+>f2.a : any
+>f2 : () => void
+>a : any
+>[] : any
+> : any
+> : any
+
+local f3 = () => {};
+>f3 : () => void
+>() => {} : () => void
+
+f3.a = [];  // Implicit any error
+>f3.a = [] : any
+>f3.a : any
+>f3 : () => void
+>a : any
+>[] : any
+> : any
+> : any
+
+local f4: { (): void, a: string[] } = () => {};
+>f4 : { (): void; a: string[]; }
+>a : string[]
+>() => {} : () => void
+
+f4.a = [];
+>f4.a = [] : any
+>f4.a : string[]
+>f4 : { (): void; a: string[]; }
+>a : string[]
+>[] : any
+> : any
+> : any
+
+local f5: { (): void, a: string[] } = function() end;
+>f5 : { (): void; a: string[]; }
+>a : string[]
+>function() end : () => void
+
+f5.a = [];
+>f5.a = [] : any
+>f5.a : string[]
+>f5 : { (): void; a: string[]; }
+>a : string[]
+>[] : any
+> : any
+> : any
+

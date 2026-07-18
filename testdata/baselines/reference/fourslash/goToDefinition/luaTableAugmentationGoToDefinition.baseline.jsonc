@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /a.tlua ===
+// G = {};
+// <|G.[|value|] = 1;|>
+
+// === /b.tlua ===
+// local v = G./*GOTO DEF*/value;

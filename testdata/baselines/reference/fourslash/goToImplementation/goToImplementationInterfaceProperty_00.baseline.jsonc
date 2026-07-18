@@ -1,0 +1,15 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceProperty_00.tlua ===
+// interface Foo {
+//     hello: number
+// }
+// 
+// local bar: Foo = { <|[|hello|] = 5|> };
+// 
+// 
+// function whatever(x: Foo = { <|[|hello|] = 5 * 9|> }) {
+//     x.he/*GOTO IMPL*/llo
+// }
+// 
+// class Bar {
+// --- (line: 13) skipped ---

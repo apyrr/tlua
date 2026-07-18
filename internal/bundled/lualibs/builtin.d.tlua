@@ -1,0 +1,138 @@
+// LuaJIT 2.x runtime declarations for tlua.
+
+interface Object {}
+interface Function {}
+interface CallableFunction extends Function {}
+interface NewableFunction extends Function {}
+interface IArguments {
+    readonly length: number;
+    [index: number]: any;
+}
+interface Boolean {}
+interface Number {}
+interface RegExp {}
+interface Array<T> {
+    readonly length: number;
+    [index: number]: T;
+}
+interface ReadonlyArray<T> {
+    readonly length: number;
+    readonly [index: number]: T;
+}
+
+type LuaFunction = (...: any) => (any?, ...any);
+
+// A Lua table: an open map from any non-nil key to a value. K is invariant -- it is an
+// input when the table is indexed and an output when it is iterated with `pairs` -- so
+// it is annotated rather than measured, which would report it contravariant.
+interface Table<in out K, V> {
+    [key: K]: V;
+}
+
+interface LuaThread {
+    readonly __luaThreadBrand: unique symbol;
+}
+interface LuaUserdata {
+    readonly __luaUserdataBrand: unique symbol;
+}
+
+// The key ends the iteration, so it is the only result that can be nil. The value is
+// not optional: a Lua table never stores a nil value, so a key the iterator yields
+// always has one, and the loop body does not run on the final `nil` key.
+interface LuaIPairsIterator<T> {
+    (values: Table<number, T>, index: number): (number | nil, T);
+}
+
+interface LuaPairsIterator<K, V> {
+    (values: Table<K, V>, key?: K): (K | nil, V);
+}
+
+// The compiler intrinsic that blocks inference sites; referenced by lib and
+// user signatures, resolved specially by the checker.
+type NoInfer<T> = intrinsic;
+
+// Inert Promise surface. tlua has no await and no Promise semantics; these
+// exist only so `import(...)` and the residual `async` modifier keep
+// type-checking. Deliberately member-poor.
+interface PromiseLike<T> {
+    then(onfulfilled?: (value: T) => any, onrejected?: (reason: any) => any): PromiseLike<T>;
+}
+
+interface Promise<T> {
+    then(onfulfilled?: (value: T) => any, onrejected?: (reason: any) => any): Promise<T>;
+}
+
+interface PromiseConstructor {
+    readonly prototype: Promise<any>;
+    new <T>(executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>;
+    resolve<T>(value: T | PromiseLike<T>): Promise<T>;
+    resolve(): Promise<void>;
+}
+declare Promise: PromiseConstructor;
+
+// The erasable type-operator utilities inherited from TypeScript. These are
+// pure type sugar over machinery the checker supports (mapped, conditional,
+// and intrinsic string types); no runtime surface.
+
+/** Make all properties in T optional */
+type Partial<T> = {
+    [P in keyof T]?: T[P];
+};
+
+/** Make all properties in T required */
+type Required<T> = {
+    [P in keyof T]-?: T[P];
+};
+
+/** Make all properties in T readonly */
+type Readonly<T> = {
+    readonly [P in keyof T]: T[P];
+};
+
+/** From T, pick a set of properties whose keys are in the union K */
+type Pick<T, K extends keyof T> = {
+    [P in K]: T[P];
+};
+
+/** Construct a type with a set of properties K of type T */
+type Record<K extends keyof any, T> = {
+    [P in K]: T;
+};
+
+/** Exclude from T those types that are assignable to U */
+type Exclude<T, U> = T extends U ? never : T;
+
+/** Extract from T those types that are assignable to U */
+type Extract<T, U> = T extends U ? T : never;
+
+/** Construct a type with the properties of T except for those in type K. */
+type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
+
+/** Exclude null and undefined from T */
+type NonNullable<T> = T & {};
+
+/** Obtain the return type of a function type */
+type ReturnType<T extends (...: any) => any> = T extends (...: any) => infer R ? R : any;
+
+/** Obtain the instance type of a constructor function type */
+type InstanceType<T extends new (...: any) => any> = T extends new (...: any) => infer R ? R : any;
+
+/** Recursively unwrap the value type of a thenable */
+type Awaited<T> = T extends null | undefined ? T :
+    T extends object & { then(onfulfilled: infer F, ...: infer _): any; } ?
+        F extends ((value: infer V, ...: infer _) => any) ?
+            Awaited<V> :
+        never :
+    T;
+
+/** Convert string literal type to uppercase */
+type Uppercase<S extends string> = intrinsic;
+
+/** Convert string literal type to lowercase */
+type Lowercase<S extends string> = intrinsic;
+
+/** Convert first character of string literal type to uppercase */
+type Capitalize<S extends string> = intrinsic;
+
+/** Convert first character of string literal type to lowercase */
+type Uncapitalize<S extends string> = intrinsic;

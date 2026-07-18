@@ -1,0 +1,19 @@
+// === Smart Selection ===
+/**
+ * @type {/**/string}
+ */
+local foo;
+
+          string ↲
+
+   @type {string}↲
+•  ↲
+
+/**
+ * @type {string}
+ */↲
+
+/**
+ * @type {string}
+ */
+local foo;

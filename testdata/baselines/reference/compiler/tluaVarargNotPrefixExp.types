@@ -1,0 +1,65 @@
+//// [tests/cases/compiler/tluaVarargNotPrefixExp.tlua] ////
+
+=== tluaVarargNotPrefixExp.tlua ===
+// In Lua `...` is not a prefixexp: it cannot be called, indexed, or
+// member-accessed. Each of these must be a parse error rather than quietly
+// reading as a call/index/property access on the pack -- the TS spread forms
+// `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+function f(...: number): void
+>f : (...: number) => void
+> : number[]
+
+  local called = ...(1);
+>called : number | nil
+>... : number | nil
+>(1) : 1
+>1 : 1
+
+  local indexed = ...[1];
+>indexed : number | nil
+>... : number | nil
+>1 : 1
+
+  local accessed = ....x;
+>accessed : number | nil
+>... : number | nil
+>x : any
+
+end
+
+// The same holds in a table constructor, where TS object spread used to live.
+function g(...: number): void
+>g : (...: number) => void
+> : number[]
+
+  local t = { ...({} as number) };
+>t : { 1: number | nil; 2: number; }
+>{ ...({} as number) } : { 1: number | nil; 2: number; }
+>... : number | nil
+>({} as number) : number
+>{} as number : number
+>{} : {}
+
+end
+
+// A bare `...` in each of those positions is still fine.
+function h(...: number): void
+>h : (...: number) => void
+> : number[]
+
+  local ok = ...;
+>ok : number | nil
+>... : number | nil
+
+  local t = { ... };
+>t : { [x: number]: number; }
+>{ ... } : { [x: number]: number; }
+>... : number | nil
+
+  f(...);
+>f(...) : void
+>f : (...: number) => void
+>... : number | nil
+
+end
+

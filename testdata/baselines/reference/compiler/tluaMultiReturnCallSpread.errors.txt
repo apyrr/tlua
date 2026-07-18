@@ -1,0 +1,39 @@
+tluaMultiReturnCallSpread.tlua(21,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'boolean'.
+tluaMultiReturnCallSpread.tlua(24,16): error TS2554: Expected 3 arguments, but got 2.
+tluaMultiReturnCallSpread.tlua(25,27): error TS2554: Expected 2 arguments, but got 3.
+
+
+==== tluaMultiReturnCallSpread.tlua (3 errors) ====
+    function pair(): (number, string)
+      return 1, "a";
+    end
+    
+    function takes2(a: number, b: string): boolean
+      return true;
+    end
+    
+    function takes3(a: boolean, b: number, c: string): number
+      return b;
+    end
+    
+    // The last argument expands its whole pack.
+    local expanded = takes2(pair());
+    local mixed = takes3(true, pair());
+    
+    // A non-tail call truncates to its first value.
+    local truncated = takes2(pair(), "x");
+    
+    // Truncation type mismatch: the first value is a number, not a boolean.
+    local wrongHead = takes3(pair(), 1, "y");
+                             ~~~~~~
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'boolean'.
+    
+    // Arity errors count the expanded values.
+    local tooFew = takes3(pair());
+                   ~~~~~~
+!!! error TS2554: Expected 3 arguments, but got 2.
+!!! related TS6210 tluaMultiReturnCallSpread.tlua:9:40: An argument for 'c' was not provided.
+    local tooMany = takes2(1, pair());
+                              ~~~~~~
+!!! error TS2554: Expected 2 arguments, but got 3.
+    

@@ -1,0 +1,45 @@
+// === goToDefinition ===
+// === /goToDefinitionFunctionOverloads.tlua ===
+// <|function [|functionOverload|](value: number);|>
+// function functionOverload(value: string);
+// function functionOverload() {}
+// 
+// /*GOTO DEF*/functionOverload(123);
+// functionOverload("123");
+// functionOverload({});
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionFunctionOverloads.tlua ===
+// function functionOverload(value: number);
+// <|function [|functionOverload|](value: string);|>
+// function functionOverload() {}
+// 
+// functionOverload(123);
+// /*GOTO DEF*/functionOverload("123");
+// functionOverload({});
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionFunctionOverloads.tlua ===
+// <|function [|functionOverload|](value: number);|>
+// function functionOverload(value: string);
+// function functionOverload() {}
+// 
+// functionOverload(123);
+// functionOverload("123");
+// /*GOTO DEF*/functionOverload({});
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionFunctionOverloads.tlua ===
+// <|function /*GOTO DEF*/[|functionOverload|](value: number);|>
+// <|function [|functionOverload|](value: string);|>
+// <|function [|functionOverload|]() {}|>
+// 
+// functionOverload(123);
+// functionOverload("123");
+// functionOverload({});

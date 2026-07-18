@@ -1,0 +1,40 @@
+// @strict: true
+// @noEmit: true
+
+// Any expression is a positional entry.
+local x = 10;
+declare function f(): number;
+declare o: { y: number };
+declare get: string;
+declare a: number;
+declare b: number;
+
+local t = {
+    x,                                        // identifier (TS shorthand is gone)
+    o.y,                                      // property access
+    f(),                                      // call
+    1 + 2,                                    // arithmetic
+    "str",                                    // string literal
+    `tpl${x}`,                                // template
+    function(n: number): number return n; end,// function expression
+    get,                                      // `get` is just a variable
+    a < b,                                    // comparison
+    a and b,                                  // logical
+    true, nil,                                // literals
+};
+local t1: number = t[1];
+local t8: string = t[8];
+local t9: boolean = t[9];
+local es = {t1, t8, t9};
+
+// A multireturn call in the tail expands; in any other position it truncates to
+// its first value. (Object spread `{ ...src, 9 }` is gone; `...` is the vararg.)
+declare function two(): (number, string);
+local tail = { 9, two() };
+local tail1: number = tail[1];
+local tail2: number = tail[2];
+local tail3: string = tail[3];
+local nonTail = { two(), 9 };
+local nt1: number = nonTail[1];
+local nt2: number = nonTail[2];
+local sps = {tail1, tail2, tail3, nt1, nt2};

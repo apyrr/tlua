@@ -1,0 +1,108 @@
+//// [tests/cases/compiler/tluaIndexKeyArguments.tlua] ////
+
+=== tluaIndexKeyArguments.tlua ===
+// An EXPLICIT type argument for an index-key type parameter is re-validated
+// against the key domain (any non-nil type) at the reference -- the same rule
+// the declaration site enforces with 100039.
+
+interface Dict<K, V> {
+>Dict : Symbol(Dict, Decl(tluaIndexKeyArguments.tlua, 0, 0))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 4, 15))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 4, 17))
+
+    [key: K]: V;
+>key : Symbol(key, Decl(tluaIndexKeyArguments.tlua, 5, 5))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 4, 15))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 4, 17))
+}
+
+// Arguments outside the key domain error at the reference, not as a confusing
+// structural mismatch later.
+type BadNil = Dict<nil, number>;
+>BadNil : Symbol(BadNil, Decl(tluaIndexKeyArguments.tlua, 6, 1))
+>Dict : Symbol(Dict, Decl(tluaIndexKeyArguments.tlua, 0, 0))
+
+type BadUnknown = Dict<unknown, number>;
+>BadUnknown : Symbol(BadUnknown, Decl(tluaIndexKeyArguments.tlua, 10, 32))
+>Dict : Symbol(Dict, Decl(tluaIndexKeyArguments.tlua, 0, 0))
+
+type BadUnion = Dict<string | nil, number>;
+>BadUnion : Symbol(BadUnion, Decl(tluaIndexKeyArguments.tlua, 11, 40))
+>Dict : Symbol(Dict, Decl(tluaIndexKeyArguments.tlua, 0, 0))
+
+local bad: Table<nil, number> | nil;
+>bad : Symbol(bad, Decl(tluaIndexKeyArguments.tlua, 13, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+// Legal arguments stay legal: a literal widens to its domain (the documented
+// precision loss), and a bare type parameter forwards untouched. `any` is
+// unchecked here as everywhere -- `Table<any, any>` is the only spelling of
+// "any table" under an invariant K, and LuaMetatable's __index uses it.
+type Narrow = Dict<"a", number>;
+>Narrow : Symbol(Narrow, Decl(tluaIndexKeyArguments.tlua, 13, 36))
+>Dict : Symbol(Dict, Decl(tluaIndexKeyArguments.tlua, 0, 0))
+
+type AnyKey = Dict<any, number>;
+>AnyKey : Symbol(AnyKey, Decl(tluaIndexKeyArguments.tlua, 19, 32))
+>Dict : Symbol(Dict, Decl(tluaIndexKeyArguments.tlua, 0, 0))
+
+local anyTable: Table<any, any> | nil;
+>anyTable : Symbol(anyTable, Decl(tluaIndexKeyArguments.tlua, 21, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+declare function get<K, V>(t: Table<K, V>, key: K): V;
+>get : Symbol(get, Decl(tluaIndexKeyArguments.tlua, 21, 38))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 22, 21))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 22, 23))
+>t : Symbol(t, Decl(tluaIndexKeyArguments.tlua, 22, 27))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 22, 21))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 22, 23))
+>key : Symbol(key, Decl(tluaIndexKeyArguments.tlua, 22, 42))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 22, 21))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 22, 23))
+
+declare function forward<K, V>(t: Dict<K, V>, key: K): V;
+>forward : Symbol(forward, Decl(tluaIndexKeyArguments.tlua, 22, 54))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 23, 25))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 23, 27))
+>t : Symbol(t, Decl(tluaIndexKeyArguments.tlua, 23, 31))
+>Dict : Symbol(Dict, Decl(tluaIndexKeyArguments.tlua, 0, 0))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 23, 25))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 23, 27))
+>key : Symbol(key, Decl(tluaIndexKeyArguments.tlua, 23, 45))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 23, 25))
+>V : Symbol(V, Decl(tluaIndexKeyArguments.tlua, 23, 27))
+
+local m: Table<string, number> | nil;
+>m : Symbol(m, Decl(tluaIndexKeyArguments.tlua, 24, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+// A parameter that never keys an index is not gated.
+interface Box<T> {
+>Box : Symbol(Box, Decl(tluaIndexKeyArguments.tlua, 24, 37))
+>T : Symbol(T, Decl(tluaIndexKeyArguments.tlua, 27, 14))
+
+    value: T;
+>value : Symbol(Box.value, Decl(tluaIndexKeyArguments.tlua, 27, 18))
+>T : Symbol(T, Decl(tluaIndexKeyArguments.tlua, 27, 14))
+}
+type NilBox = Box<nil>;
+>NilBox : Symbol(NilBox, Decl(tluaIndexKeyArguments.tlua, 29, 1))
+>Box : Symbol(Box, Decl(tluaIndexKeyArguments.tlua, 24, 37))
+
+// An alias whose target keys the index is gated too.
+type Assoc<K> = { [key: K]: boolean };
+>Assoc : Symbol(Assoc, Decl(tluaIndexKeyArguments.tlua, 30, 23))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 33, 11))
+>key : Symbol(key, Decl(tluaIndexKeyArguments.tlua, 33, 19))
+>K : Symbol(K, Decl(tluaIndexKeyArguments.tlua, 33, 11))
+
+type BadAlias = Assoc<nil>;
+>BadAlias : Symbol(BadAlias, Decl(tluaIndexKeyArguments.tlua, 33, 38))
+>Assoc : Symbol(Assoc, Decl(tluaIndexKeyArguments.tlua, 30, 23))
+
+type GoodAlias = Assoc<boolean>;
+>GoodAlias : Symbol(GoodAlias, Decl(tluaIndexKeyArguments.tlua, 34, 27))
+>Assoc : Symbol(Assoc, Decl(tluaIndexKeyArguments.tlua, 30, 23))
+

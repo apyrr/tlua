@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/tluaLocalTypeModulePrivate.tlua] ////
+
+=== a.tlua ===
+// `local` type/interface declarations are module-private: they live in this
+// file's scope but are NOT hoisted into the global type table.
+local type Secret = { code: number };
+>Secret : Symbol(Secret, Decl(a.tlua, 0, 0))
+>code : Symbol(code, Decl(a.tlua, 2, 21))
+
+local interface Hidden { tag: string };
+>Hidden : Symbol(Hidden, Decl(a.tlua, 2, 37))
+>tag : Symbol(Hidden.tag, Decl(a.tlua, 3, 24))
+
+// Bare top-level type/interface ARE global (tlua has no type-export syntax),
+// so another module can name them.
+type Shared = { id: number };
+>Shared : Symbol(Shared, Decl(a.tlua, 3, 39))
+>id : Symbol(id, Decl(a.tlua, 7, 15))
+
+interface Public { name: string };
+>Public : Symbol(Public, Decl(a.tlua, 7, 29))
+>name : Symbol(Public.name, Decl(a.tlua, 8, 18))
+
+// The local types resolve fine WITHIN their own module.
+local s: Secret = { code = 1 };
+>s : Symbol(s, Decl(a.tlua, 11, 5))
+>Secret : Symbol(Secret, Decl(a.tlua, 0, 0))
+>code : Symbol(code, Decl(a.tlua, 11, 19))
+
+local h: Hidden = { tag = "x" };
+>h : Symbol(h, Decl(a.tlua, 12, 5))
+>Hidden : Symbol(Hidden, Decl(a.tlua, 2, 37))
+>tag : Symbol(tag, Decl(a.tlua, 12, 19))
+
+=== b.tlua ===
+// Global types from a.tlua are visible here.
+local ok1: Shared = { id = 2 };
+>ok1 : Symbol(ok1, Decl(b.tlua, 1, 5))
+>Shared : Symbol(Shared, Decl(a.tlua, 3, 39))
+>id : Symbol(id, Decl(b.tlua, 1, 21))
+
+local ok2: Public = { name = "y" };
+>ok2 : Symbol(ok2, Decl(b.tlua, 2, 5))
+>Public : Symbol(Public, Decl(a.tlua, 7, 29))
+>name : Symbol(name, Decl(b.tlua, 2, 21))
+
+// Module-private types from a.tlua are NOT visible here.
+local bad1: Secret = { code = 3 };
+>bad1 : Symbol(bad1, Decl(b.tlua, 5, 5))
+>Secret : Symbol(Secret)
+>code : Symbol(code, Decl(b.tlua, 5, 22))
+
+local bad2: Hidden = { tag = "z" };
+>bad2 : Symbol(bad2, Decl(b.tlua, 6, 5))
+>Hidden : Symbol(Hidden)
+>tag : Symbol(tag, Decl(b.tlua, 6, 22))
+

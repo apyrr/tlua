@@ -1,0 +1,19 @@
+// === findRenameLocations ===
+// === /renamePrivateMethod.tlua ===
+// class Foo {
+//    /*RENAME*/#foo() { }
+//    callFoo() {
+//        return this.#foo();
+//    }
+// }
+
+
+
+// === findRenameLocations ===
+// === /renamePrivateMethod.tlua ===
+// class Foo {
+//    #foo() { }
+//    callFoo() {
+//        return this./*RENAME*/#foo();
+//    }
+// }

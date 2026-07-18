@@ -1,0 +1,13 @@
+// === goToImplementation ===
+// === /goToImplementationInterface_04.tlua ===
+// interface Fo/*GOTO IMPL*/o {
+//     (a: number): void
+// }
+// 
+// local bar: Foo = [|(a) => {/**0*/}|];
+// 
+// function whatever(x: Foo = [|(a) => {/**1*/}|] ) {
+// }
+// 
+// class Bar {
+// --- (line: 11) skipped ---

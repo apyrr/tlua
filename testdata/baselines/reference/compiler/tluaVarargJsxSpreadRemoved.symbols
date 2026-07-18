@@ -1,0 +1,61 @@
+//// [tests/cases/compiler/tluaVarargJsxSpreadRemoved.tsx] ////
+
+=== tluaVarargJsxSpreadRemoved.tsx ===
+interface JsxElement {}
+>JsxElement : Symbol(JsxElement, Decl(tluaVarargJsxSpreadRemoved.tsx, 0, 0))
+
+interface JsxElementChildrenAttribute { children: {}; }
+>JsxElementChildrenAttribute : Symbol(JsxElementChildrenAttribute, Decl(tluaVarargJsxSpreadRemoved.tsx, 0, 23))
+>children : Symbol(JsxElementChildrenAttribute.children, Decl(tluaVarargJsxSpreadRemoved.tsx, 1, 39))
+
+interface JsxIntrinsicElements {
+>JsxIntrinsicElements : Symbol(JsxIntrinsicElements, Decl(tluaVarargJsxSpreadRemoved.tsx, 1, 55))
+
+    div: { a?: number; b?: string; children?: any };
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+>a : Symbol(a, Decl(tluaVarargJsxSpreadRemoved.tsx, 3, 10))
+>b : Symbol(b, Decl(tluaVarargJsxSpreadRemoved.tsx, 3, 22))
+>children : Symbol(children, Decl(tluaVarargJsxSpreadRemoved.tsx, 3, 34))
+}
+
+declare props: { a: number; b: string };
+>props : Symbol(props, Decl(tluaVarargJsxSpreadRemoved.tsx, 6, 7))
+>a : Symbol(a, Decl(tluaVarargJsxSpreadRemoved.tsx, 6, 16))
+>b : Symbol(b, Decl(tluaVarargJsxSpreadRemoved.tsx, 6, 27))
+
+declare items: number[];
+>items : Symbol(items, Decl(tluaVarargJsxSpreadRemoved.tsx, 7, 7))
+
+// JSX is not a reason to keep spread: attribute spread is gone.
+local spreadAttribute = <div {...props} />;
+>spreadAttribute : Symbol(spreadAttribute, Decl(tluaVarargJsxSpreadRemoved.tsx, 10, 5))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+>props : Symbol(props, Decl(tluaVarargJsxSpreadRemoved.tsx, 6, 7))
+
+// Including when mixed with regular attributes.
+local spreadAndAttribute = <div a={1} {...props} />;
+>spreadAndAttribute : Symbol(spreadAndAttribute, Decl(tluaVarargJsxSpreadRemoved.tsx, 13, 5))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+>a : Symbol(a, Decl(tluaVarargJsxSpreadRemoved.tsx, 13, 31))
+>props : Symbol(props, Decl(tluaVarargJsxSpreadRemoved.tsx, 6, 7))
+
+// Children spread is gone too.
+local spreadChildren = <div>{...items}</div>;
+>spreadChildren : Symbol(spreadChildren, Decl(tluaVarargJsxSpreadRemoved.tsx, 16, 5))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+
+// Regular attributes and children still fold into the attributes type.
+local plain = <div a={1} b="x" />;
+>plain : Symbol(plain, Decl(tluaVarargJsxSpreadRemoved.tsx, 19, 5))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+>a : Symbol(a, Decl(tluaVarargJsxSpreadRemoved.tsx, 19, 18))
+>b : Symbol(b, Decl(tluaVarargJsxSpreadRemoved.tsx, 19, 24))
+
+local withChildren = <div a={1}>{items}</div>;
+>withChildren : Symbol(withChildren, Decl(tluaVarargJsxSpreadRemoved.tsx, 20, 5))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+>a : Symbol(a, Decl(tluaVarargJsxSpreadRemoved.tsx, 20, 25))
+>items : Symbol(items, Decl(tluaVarargJsxSpreadRemoved.tsx, 7, 7))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaVarargJsxSpreadRemoved.tsx, 2, 32))
+

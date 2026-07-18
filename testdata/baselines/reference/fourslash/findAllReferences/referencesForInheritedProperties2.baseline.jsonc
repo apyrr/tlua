@@ -1,0 +1,12 @@
+// === findAllReferences ===
+// === /referencesForInheritedProperties2.tlua ===
+// interface interface1 {
+//     /*FIND ALL REFS*/[|doStuff|](): void;
+// }
+// 
+// interface interface2 {
+//     [|doStuff|](): void;
+// }
+// 
+// interface interface2 extends interface1 {
+// --- (line: 10) skipped ---

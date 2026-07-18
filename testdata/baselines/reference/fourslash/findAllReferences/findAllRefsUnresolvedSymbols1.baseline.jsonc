@@ -1,0 +1,107 @@
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: /*FIND ALL REFS*/[|Bar|];
+// local b: [|Bar|]<string>;
+// local c: [|Bar|]<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: [|Bar|];
+// local b: /*FIND ALL REFS*/[|Bar|]<string>;
+// local c: [|Bar|]<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: [|Bar|];
+// local b: [|Bar|]<string>;
+// local c: /*FIND ALL REFS*/[|Bar|]<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: /*FIND ALL REFS*/[|Bar|].X;
+// local e: [|Bar|].X<string>;
+// local f: [|Bar|].X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: [|Bar|].X;
+// local e: /*FIND ALL REFS*/[|Bar|].X<string>;
+// local f: [|Bar|].X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: [|Bar|].X;
+// local e: [|Bar|].X<string>;
+// local f: /*FIND ALL REFS*/[|Bar|].X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: Bar./*FIND ALL REFS*/[|X|];
+// local e: Bar.[|X|]<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: Bar.[|X|];
+// local e: Bar./*FIND ALL REFS*/[|X|]<string>;
+// local f: Bar.X.Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar./*FIND ALL REFS*/[|X|].Y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsUnresolvedSymbols1.tlua ===
+// local a: Bar;
+// local b: Bar<string>;
+// local c: Bar<string, number>;
+// local d: Bar.X;
+// local e: Bar.X<string>;
+// local f: Bar.X./*FIND ALL REFS*/[|Y|];

@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/sameComputedNameError.tlua] ////
+
+=== sameComputedNameError.tlua ===
+declare s: unique symbol;
+>s : unique symbol
+
+class A {
+>class : any
+>A : any
+
+  [s]: number = 1;
+>s : unique symbol
+>number = 1 : 1
+>number : any
+>1 : 1
+}
+
+class B extends A {
+>class : any
+>B : any
+>A : any
+
+  [s]: string = "x";
+>s : unique symbol
+>string = "x" : "x"
+>string : any
+>"x" : "x"
+}
+

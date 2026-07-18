@@ -1,0 +1,132 @@
+tluaAsyncContract.tlua(6,1): error TS2304: Cannot find name 'declare'.
+tluaAsyncContract.tlua(6,9): error TS2304: Cannot find name 'namespace'.
+tluaAsyncContract.tlua(6,19): error TS2819: Namespace name cannot be 'coroutine'.
+tluaAsyncContract.tlua(7,12): error TS2391: Function implementation is missing or not immediately following the declaration.
+tluaAsyncContract.tlua(8,12): error TS2391: Function implementation is missing or not immediately following the declaration.
+tluaAsyncContract.tlua(27,3): error TS100023: An async function can only be called from an async context.
+tluaAsyncContract.tlua(31,1): error TS100023: An async function can only be called from an async context.
+tluaAsyncContract.tlua(36,3): error TS100023: An async function can only be called from an async context.
+tluaAsyncContract.tlua(46,18): error TS2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+  An async function is not assignable to a non-async function type.
+tluaAsyncContract.tlua(47,32): error TS2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+  An async function is not assignable to a non-async function type.
+tluaAsyncContract.tlua(60,3): error TS100023: An async function can only be called from an async context.
+tluaAsyncContract.tlua(71,3): error TS100023: An async function can only be called from an async context.
+
+
+==== tluaAsyncContract.tlua (12 errors) ====
+    // The tlua coroutine contract: an async function may only be called from an
+    // async context. Async functions return their plain type (or pack), never
+    // Promise<T>.
+    
+    declare function request(url: string): (boolean, any);
+    declare namespace coroutine {
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'declare'.
+            ~~~~~~~~~
+!!! error TS2304: Cannot find name 'namespace'.
+                      ~~~~~~~~~
+!!! error TS2819: Namespace name cannot be 'coroutine'.
+      function create(f: (...: any) => any): any;
+               ~~~~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+      function wrap(f: (...: any) => any): (...: any) => any;
+               ~~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+    }
+    
+    async function fetchOk(url: string): (boolean, any)
+      local ok, res = request(url);
+      return ok, res;
+    end
+    
+    // OK: direct call from an async context; the result is the plain pack.
+    async function handler(): number
+      local ok, res = fetchOk("https://example.com");
+      if ok then
+        return 1;
+      end
+      return 0;
+    end
+    
+    // Error: direct call from a sync function.
+    function syncCaller(): void {
+      fetchOk("nope");
+      ~~~~~~~
+!!! error TS100023: An async function can only be called from an async context.
+!!! related TS1356 tluaAsyncContract.tlua:26:10: Did you mean to mark this function as 'async'?
+    }
+    
+    // Error: call at top level.
+    fetchOk("top");
+    ~~~~~~~
+!!! error TS100023: An async function can only be called from an async context.
+    
+    // Error: inferred alias keeps the contract (the flag rides the signature).
+    function aliasCaller(): void {
+      local f = fetchOk;
+      f("aliased");
+      ~
+!!! error TS100023: An async function can only be called from an async context.
+!!! related TS1356 tluaAsyncContract.tlua:34:10: Did you mean to mark this function as 'async'?
+    }
+    
+    // OK: alias called from an async context.
+    async function aliasAsyncCaller(): void
+      local f = fetchOk;
+      f("aliased");
+    end
+    
+    // OK: passing an async function as a value is not a call.
+    coroutine.create(fetchOk);
+                     ~~~~~~~
+!!! error TS2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+!!! error TS2345:   An async function is not assignable to a non-async function type.
+    local wrapped = coroutine.wrap(fetchOk);
+                                   ~~~~~~~
+!!! error TS2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+!!! error TS2345:   An async function is not assignable to a non-async function type.
+    
+    // OK: async recursion.
+    async function pingpong(n: number): number
+      if n <= 0 then
+        return 0;
+      end
+      return pingpong(n - 1);
+    end
+    
+    // Async arrow expressions participate too.
+    local asyncArrow = async (): number => 42;
+    function arrowSyncCaller(): void {
+      asyncArrow(); // error
+      ~~~~~~~~~~
+!!! error TS100023: An async function can only be called from an async context.
+!!! related TS1356 tluaAsyncContract.tlua:59:10: Did you mean to mark this function as 'async'?
+    }
+    async function arrowAsyncCaller(): number
+      return asyncArrow(); // OK
+    end
+    
+    // Generic async functions keep the flag through instantiation.
+    async function identityAsync<T>(x: T): T
+      return x;
+    end
+    function genericSyncCaller(): void {
+      identityAsync(1); // error
+      ~~~~~~~~~~~~~
+!!! error TS100023: An async function can only be called from an async context.
+!!! related TS1356 tluaAsyncContract.tlua:70:10: Did you mean to mark this function as 'async'?
+    }
+    async function genericAsyncCaller(): number
+      return identityAsync(2); // OK
+    end
+    
+    // The async return type is the plain type, not Promise<T>.
+    async function plain(): number
+      return 3;
+    end
+    async function usePlain(): number
+      local n = plain();
+      return n + 1;
+    end
+    

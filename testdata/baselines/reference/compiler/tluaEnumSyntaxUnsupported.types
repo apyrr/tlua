@@ -1,0 +1,13 @@
+//// [tests/cases/compiler/tluaEnumSyntaxUnsupported.tlua] ////
+
+=== tluaEnumSyntaxUnsupported.tlua ===
+enum E {
+>enum : any
+>E : any
+
+    A,
+>A, : any
+>A : any
+}
+> : any
+

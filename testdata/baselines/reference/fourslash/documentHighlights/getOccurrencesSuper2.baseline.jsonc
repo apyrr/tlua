@@ -1,0 +1,39 @@
+// === documentHighlights ===
+// === /getOccurrencesSuper2.tlua ===
+// --- (line: 32) skipped ---
+//     }
+// 
+//     // Bad but still gets highlighted.
+//     public static statProp1 = /*HIGHLIGHTS*/super.superStaticMethod;
+// 
+//     public static staticMethod1() {
+//         return super.superStaticMethod();
+// --- (line: 40) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper2.tlua ===
+// --- (line: 35) skipped ---
+//     public static statProp1 = super.superStaticMethod;
+// 
+//     public static staticMethod1() {
+//         return /*HIGHLIGHTS*/super.superStaticMethod();
+//     }
+// 
+//     private static staticMethod2() {
+// --- (line: 43) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper2.tlua ===
+// --- (line: 39) skipped ---
+//     }
+// 
+//     private static staticMethod2() {
+//         return /*HIGHLIGHTS*/super.superStaticMethod();
+//     }
+// 
+//     // Are not actually 'super' keywords.
+// --- (line: 47) skipped ---

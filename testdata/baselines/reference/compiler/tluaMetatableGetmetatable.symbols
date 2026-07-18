@@ -1,0 +1,95 @@
+//// [tests/cases/compiler/tluaMetatableGetmetatable.tlua] ////
+
+=== tluaMetatableGetmetatable.tlua ===
+// getmetatable reads back the metatable a table was paired with, rather than the union its
+// declaration has to fall back on.
+
+local Helpers = { describe = function(self: object): string return "d"; end };
+>Helpers : Symbol(Helpers, Decl(tluaMetatableGetmetatable.tlua, 3, 5))
+>describe : Symbol(describe, Decl(tluaMetatableGetmetatable.tlua, 3, 17))
+>self : Symbol(self, Decl(tluaMetatableGetmetatable.tlua, 3, 38))
+
+local obj = setmetatable({ n = 1 }, { __index = Helpers });
+>obj : Symbol(obj, Decl(tluaMetatableGetmetatable.tlua, 4, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableGetmetatable.tlua, 4, 26))
+>__index : Symbol(__index, Decl(tluaMetatableGetmetatable.tlua, 4, 37))
+>Helpers : Symbol(Helpers, Decl(tluaMetatableGetmetatable.tlua, 3, 5))
+
+local mt = getmetatable(obj);
+>mt : Symbol(mt, Decl(tluaMetatableGetmetatable.tlua, 6, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>obj : Symbol(obj, Decl(tluaMetatableGetmetatable.tlua, 4, 5))
+
+local back: string = mt.__index.describe(obj);
+>back : Symbol(back, Decl(tluaMetatableGetmetatable.tlua, 7, 5))
+>mt.__index.describe : Symbol(describe, Decl(tluaMetatableGetmetatable.tlua, 3, 17))
+>mt.__index : Symbol(__index, Decl(tluaMetatableGetmetatable.tlua, 4, 37))
+>mt : Symbol(mt, Decl(tluaMetatableGetmetatable.tlua, 6, 5))
+>__index : Symbol(__index, Decl(tluaMetatableGetmetatable.tlua, 4, 37))
+>describe : Symbol(describe, Decl(tluaMetatableGetmetatable.tlua, 3, 17))
+>obj : Symbol(obj, Decl(tluaMetatableGetmetatable.tlua, 4, 5))
+
+// The printed type is the metatable itself.
+local shown: number = mt;
+>shown : Symbol(shown, Decl(tluaMetatableGetmetatable.tlua, 10, 5))
+>mt : Symbol(mt, Decl(tluaMetatableGetmetatable.tlua, 6, 5))
+
+// A table with no metatable the checker knows about keeps the declared result.
+local plain = getmetatable({ n = 1 });
+>plain : Symbol(plain, Decl(tluaMetatableGetmetatable.tlua, 13, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableGetmetatable.tlua, 13, 28))
+
+// A union of paired tables answers with the union of their metatables, which is to say a
+// member of one arm is readable only after narrowing, as it is for any other union.
+declare cond: boolean;
+>cond : Symbol(cond, Decl(tluaMetatableGetmetatable.tlua, 17, 7))
+
+local p1 = setmetatable({ n = 1 }, { __index = { a = 1 } });
+>p1 : Symbol(p1, Decl(tluaMetatableGetmetatable.tlua, 18, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableGetmetatable.tlua, 18, 25))
+>__index : Symbol(__index, Decl(tluaMetatableGetmetatable.tlua, 18, 36))
+>a : Symbol(a, Decl(tluaMetatableGetmetatable.tlua, 18, 48))
+
+local p2 = setmetatable({ s = "x" }, { __index = { b = "b" } });
+>p2 : Symbol(p2, Decl(tluaMetatableGetmetatable.tlua, 19, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>s : Symbol(s, Decl(tluaMetatableGetmetatable.tlua, 19, 25))
+>__index : Symbol(__index, Decl(tluaMetatableGetmetatable.tlua, 19, 38))
+>b : Symbol(b, Decl(tluaMetatableGetmetatable.tlua, 19, 50))
+
+local either = cond and p1 or p2;
+>either : Symbol(either, Decl(tluaMetatableGetmetatable.tlua, 20, 5))
+>cond : Symbol(cond, Decl(tluaMetatableGetmetatable.tlua, 17, 7))
+>p1 : Symbol(p1, Decl(tluaMetatableGetmetatable.tlua, 18, 5))
+>p2 : Symbol(p2, Decl(tluaMetatableGetmetatable.tlua, 19, 5))
+
+local em = getmetatable(either);
+>em : Symbol(em, Decl(tluaMetatableGetmetatable.tlua, 21, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>either : Symbol(either, Decl(tluaMetatableGetmetatable.tlua, 20, 5))
+
+local eshown: number = em;
+>eshown : Symbol(eshown, Decl(tluaMetatableGetmetatable.tlua, 22, 5))
+>em : Symbol(em, Decl(tluaMetatableGetmetatable.tlua, 21, 5))
+
+local ea = em.__index.a;
+>ea : Symbol(ea, Decl(tluaMetatableGetmetatable.tlua, 23, 5))
+>em.__index : Symbol(__index, Decl(tluaMetatableGetmetatable.tlua, 18, 36), Decl(tluaMetatableGetmetatable.tlua, 19, 38))
+>em : Symbol(em, Decl(tluaMetatableGetmetatable.tlua, 21, 5))
+>__index : Symbol(__index, Decl(tluaMetatableGetmetatable.tlua, 18, 36), Decl(tluaMetatableGetmetatable.tlua, 19, 38))
+
+// One arm with no metatable makes the whole union unknown: the value may be that arm.
+local mixed = cond and p1 or { s = "x" };
+>mixed : Symbol(mixed, Decl(tluaMetatableGetmetatable.tlua, 26, 5))
+>cond : Symbol(cond, Decl(tluaMetatableGetmetatable.tlua, 17, 7))
+>p1 : Symbol(p1, Decl(tluaMetatableGetmetatable.tlua, 18, 5))
+>s : Symbol(s, Decl(tluaMetatableGetmetatable.tlua, 26, 30))
+
+local mm = getmetatable(mixed);
+>mm : Symbol(mm, Decl(tluaMetatableGetmetatable.tlua, 27, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>mixed : Symbol(mixed, Decl(tluaMetatableGetmetatable.tlua, 26, 5))
+

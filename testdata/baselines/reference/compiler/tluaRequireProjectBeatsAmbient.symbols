@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/tluaRequireProjectBeatsAmbient.tlua] ////
+
+=== main.tlua ===
+// A resolved project file wins over the ambient require() overloads: this is
+// the project module, not the lualib JITProfileLib.
+local profile = require("jit.profile");
+>profile : Symbol(profile, Decl(main.tlua, 2, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local s: string = profile.marker;
+>s : Symbol(s, Decl(main.tlua, 3, 5))
+>profile.marker : Symbol(marker, Decl(profile.tlua, 2, 8))
+>profile : Symbol(profile, Decl(main.tlua, 2, 5))
+>marker : Symbol(marker, Decl(profile.tlua, 2, 8))
+
+// The unshadowed lualib names still hit their overloads.
+local util = require("jit.util");
+>util : Symbol(util, Decl(main.tlua, 6, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+util.funcinfo;
+>util.funcinfo : Symbol(JITUtilLib.funcinfo, Decl(lib.luajit.d.tlua, --, --))
+>util : Symbol(util, Decl(main.tlua, 6, 5))
+>funcinfo : Symbol(JITUtilLib.funcinfo, Decl(lib.luajit.d.tlua, --, --))
+
+=== jit/profile.tlua ===
+// A project file that shadows a lualib module name.
+local marker = "project";
+>marker : Symbol(marker, Decl(profile.tlua, 1, 5))
+
+return { marker = marker };
+>marker : Symbol(marker, Decl(profile.tlua, 2, 8))
+>marker : Symbol(marker, Decl(profile.tlua, 1, 5))
+

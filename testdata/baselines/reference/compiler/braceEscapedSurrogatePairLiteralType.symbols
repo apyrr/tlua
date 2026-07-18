@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/braceEscapedSurrogatePairLiteralType.tlua] ////
+
+=== braceEscapedSurrogatePairLiteralType.tlua ===
+// In JavaScript, "\u{D83D}\u{DE00}", "\uD83D\uDE00", and "😀" are all the
+// same string, so they should all have the same string literal type.
+local literal = "😀" as const;
+>literal : Symbol(literal, Decl(braceEscapedSurrogatePairLiteralType.tlua, 2, 5))
+>const : Symbol(const)
+
+local braceEscaped = "\u{D83D}\u{DE00}" as const;
+>braceEscaped : Symbol(braceEscaped, Decl(braceEscapedSurrogatePairLiteralType.tlua, 3, 5))
+>const : Symbol(const)
+
+local adjacentEscaped = "\uD83D\uDE00" as const;
+>adjacentEscaped : Symbol(adjacentEscaped, Decl(braceEscapedSurrogatePairLiteralType.tlua, 4, 5))
+>const : Symbol(const)
+
+local a: "😀" = braceEscaped;
+>a : Symbol(a, Decl(braceEscapedSurrogatePairLiteralType.tlua, 6, 5))
+>braceEscaped : Symbol(braceEscaped, Decl(braceEscapedSurrogatePairLiteralType.tlua, 3, 5))
+
+local b: typeof literal = braceEscaped;
+>b : Symbol(b, Decl(braceEscapedSurrogatePairLiteralType.tlua, 7, 5))
+>literal : Symbol(literal, Decl(braceEscapedSurrogatePairLiteralType.tlua, 2, 5))
+>braceEscaped : Symbol(braceEscaped, Decl(braceEscapedSurrogatePairLiteralType.tlua, 3, 5))
+
+local c: typeof adjacentEscaped = braceEscaped;
+>c : Symbol(c, Decl(braceEscapedSurrogatePairLiteralType.tlua, 8, 5))
+>adjacentEscaped : Symbol(adjacentEscaped, Decl(braceEscapedSurrogatePairLiteralType.tlua, 4, 5))
+>braceEscaped : Symbol(braceEscaped, Decl(braceEscapedSurrogatePairLiteralType.tlua, 3, 5))
+

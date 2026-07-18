@@ -1,0 +1,20 @@
+// === findAllReferences ===
+// === /findAllRefsForRest.tlua ===
+// interface Gen {
+//     x: number
+//     /*FIND ALL REFS*/[|parent|]: Gen;
+//     millenial: string;
+// }
+// local t: Gen;
+// local { x, ...rest } = t;
+// rest.parent;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForRest.tlua ===
+// --- (line: 4) skipped ---
+// }
+// local t: Gen;
+// local { x, ...rest } = t;
+// rest./*FIND ALL REFS*/parent;

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="TLua icon">
+    <mask id="typed-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+        <rect width="32" height="32" fill="white"/>
+        <path
+            d="M13 13.8 9.5 17.3 13 20.8M17.2 13.8l3.5 3.5-3.5 3.5"
+            fill="none"
+            stroke="black"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            />
+        </mask>
+
+        <g fill="#3178C6" mask="url(#typed-cutout)">
+            <circle cx="14.8" cy="17.3" r="9.2"/>
+            <circle cx="23.6" cy="8.4" r="2.6"/>
+        </g>
+    </svg>

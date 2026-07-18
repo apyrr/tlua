@@ -1,0 +1,109 @@
+//// [tests/cases/compiler/tluaGotoFlow.tlua] ////
+
+=== tluaGotoFlow.tlua ===
+// The narrowed type travels along the goto edge into the label.
+function narrowThroughGoto(x: string | nil): string
+>narrowThroughGoto : (x: string | nil) => string
+>x : string | nil
+
+    if x ~= nil then goto has end
+>x ~= nil : boolean
+>x : string | nil
+>has : any
+
+    return "";
+>"" : ""
+
+    ::has::
+>has : any
+
+    return x;
+>x : string
+
+end
+
+// The label is a join: its type is the union of every edge that reaches it.
+function joinAtLabel(x: string | number): string
+>joinAtLabel : (x: string | number) => string
+>x : string | number
+
+    if type(x) == "string" then goto stringify end
+>type(x) == "string" : boolean
+>type(x) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>x : string | number
+>"string" : "string"
+>stringify : any
+
+    x = "n";
+>x = "n" : "n"
+>x : string | number
+>"n" : "n"
+
+    ::stringify::
+>stringify : any
+
+    return x;
+>x : string
+
+end
+
+// Code between an unconditional goto and its label is unreachable.
+function unreachableAfterGoto(n: number): number
+>unreachableAfterGoto : (n: number) => number
+>n : number
+
+    goto skip
+>skip : any
+
+    n = n + 1;
+>n = n + 1 : number
+>n : number
+>n + 1 : number
+>n : number
+>1 : 1
+
+    ::skip::
+>skip : any
+
+    return n;
+>n : number
+
+end
+
+// A label reached only by a goto keeps the code after it reachable, even when
+// the fall-through into the label is dead.
+function reachableViaGotoOnly(flag: boolean): number
+>reachableViaGotoOnly : (flag: boolean) => number
+>flag : boolean
+
+    if flag then goto tail end
+>flag : boolean
+>tail : any
+
+    return 1;
+>1 : 1
+
+    ::tail::
+>tail : any
+
+    return 2;
+>2 : 2
+
+end
+
+// A label nothing jumps to and nothing falls into is unreachable.
+function deadLabel(): number
+>deadLabel : () => number
+
+    return 1;
+>1 : 1
+
+    ::never::
+>never : any
+
+    return 2;
+>2 : 2
+
+end
+

@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/removeComments.tlua] ////
+
+=== removeComments.tlua ===
+function t1() {
+>t1 : () => void
+
+    if (this.a < 2) { // comment after if
+> : any
+> : any
+>a < 2 : boolean
+>a : any
+>2 : 2
+
+        console.log('t1', this.a)
+>console.log('t1', this.a) : any
+>console.log : any
+>console : any
+>log : any
+>'t1' : "t1"
+>a : any
+
+        // comment after empty line in if block
+    }
+}
+
+function t2() {
+>t2 : () => void
+
+    console.log("t2");
+>console.log("t2") : any
+>console.log : any
+>console : any
+>log : any
+>"t2" : "t2"
+
+    local obj = // comment here
+>obj : { a: number; b: number; c: number; }
+    {
+>{        a = 1,   // comment a        b = 2,   // comment b        c = 3,   // comment c (removed)    } : { a: number; b: number; c: number; }
+
+        a = 1,   // comment a
+>a : number
+>1 : 1
+
+        b = 2,   // comment b
+>b : number
+>2 : 2
+
+        c = 3,   // comment c (removed)
+>c : number
+>3 : 3
+    }
+
+    console.log(
+>console.log(        "test", // comment 1        {            a = this.a,  // comment a            b = this.b,  // comment b            c = this.c,  // comment c (removed)        }, obj) : any
+>console.log : any
+>console : any
+>log : any
+
+        "test", // comment 1
+>"test" : "test"
+        {
+>{            a = this.a,  // comment a            b = this.b,  // comment b            c = this.c,  // comment c (removed)        } : { a: any; 1: any; 2: any; b: any; 3: any; 4: any; c: any; 5: any; 6: any; }
+
+            a = this.a,  // comment a
+>a : any
+> : any
+> : any
+>.a : any
+> : any
+>a : any
+
+            b = this.b,  // comment b
+>b : any
+> : any
+> : any
+>.b : any
+> : any
+>b : any
+
+            c = this.c,  // comment c (removed)
+>c : any
+> : any
+> : any
+>.c : any
+> : any
+>c : any
+
+        }, obj)
+>obj : { a: number; b: number; c: number; }
+}
+

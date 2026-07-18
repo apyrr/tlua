@@ -1,0 +1,46 @@
+tluaGotoDeadFlow.tlua(7,5): error TS7027: Unreachable code detected.
+tluaGotoDeadFlow.tlua(16,5): error TS7027: Unreachable code detected.
+tluaGotoDeadFlow.tlua(21,7): error TS7028: Unused label.
+
+
+==== tluaGotoDeadFlow.tlua (3 errors) ====
+    // A label reached only through dead fall-through, then a backward goto to it,
+    // used to hang the flow analysis: the label's loop node became its own only
+    // antecedent, a cycle with no base. The label is now correctly unreachable, and
+    // the compiler terminates.
+    function selfGotoInDeadCode(): number
+        return 1;
+        ::again::
+        ~~~~~~~~~
+        goto again
+    ~~~~~~~~~~~~~~
+!!! error TS7027: Unreachable code detected.
+    end
+    
+    // A label whose only goto sits in dead code is NOT unused: the goto still names
+    // it, even though it wires no flow edge.
+    function deadGotoStillReferences(): number
+        ::x::
+        return 1;
+        goto x
+        ~~~~~~
+!!! error TS7027: Unreachable code detected.
+    end
+    
+    // A label nothing references at all is unused.
+    function trulyUnused(): number
+        ::dead::
+          ~~~~
+!!! error TS7028: Unused label.
+        return 1;
+    end
+    
+    // A live forward goto keeps a label — and the code after it — reachable, even
+    // when the fall-through into the label is dead.
+    function reachableViaGotoOnly(flag: boolean): number
+        if flag then goto tail end
+        return 1;
+        ::tail::
+        return 2;
+    end
+    

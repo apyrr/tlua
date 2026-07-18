@@ -1,0 +1,32 @@
+// @target: esnext
+
+function maybePair(): (number, string?)
+  return 1;
+end
+
+// Every name in a list with a value list counts as initialized.
+local a, b = maybePair();
+
+function useBoth(): number
+  if (b != nil) {
+    return a + b.length;
+  }
+  return a;
+end
+
+// Without a value list, use-before-assignment still applies per name.
+local c, d;
+
+function useUnassigned(): number
+  return c;
+end
+
+// Narrowing works on positional values.
+local e, f = maybePair();
+
+function narrowed(): string {
+  if (f == nil) {
+    return "";
+  }
+  return f;
+}

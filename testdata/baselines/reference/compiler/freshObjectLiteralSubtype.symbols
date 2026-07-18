@@ -1,0 +1,111 @@
+//// [tests/cases/compiler/freshObjectLiteralSubtype.tlua] ////
+
+=== freshObjectLiteralSubtype.tlua ===
+function f1() {
+>f1 : Symbol(f1, Decl(freshObjectLiteralSubtype.tlua, 0, 0))
+
+    if (!!true) {
+        return { valid = true }
+>valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 2, 16))
+    }
+    return f2()
+>f2 : Symbol(f2, Decl(freshObjectLiteralSubtype.tlua, 7, 7))
+}
+
+declare f2: () => { valid: boolean, msg?: undefined }
+>f2 : Symbol(f2, Decl(freshObjectLiteralSubtype.tlua, 7, 7))
+>valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 7, 19))
+>msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 7, 35))
+
+f1().msg
+>f1().msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 7, 35))
+>f1 : Symbol(f1, Decl(freshObjectLiteralSubtype.tlua, 0, 0))
+>msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 7, 35))
+
+// Repro from https://github.com/microsoft/typescript-go/issues/1742
+
+function validate() {
+>validate : Symbol(validate, Decl(freshObjectLiteralSubtype.tlua, 9, 8))
+
+    if(Math.random() > 0.5) {
+        return utilValidate();
+>utilValidate : Symbol(utilValidate, Decl(freshObjectLiteralSubtype.tlua, 18, 2))
+    }
+    return { valid = true };
+>valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 17, 12))
+
+};
+
+
+declare function utilValidate(): {
+>utilValidate : Symbol(utilValidate, Decl(freshObjectLiteralSubtype.tlua, 18, 2))
+
+    valid: boolean;
+>valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 21, 34))
+
+    msg?: undefined;
+>msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 22, 19))
+
+} | {
+    valid: boolean;
+>valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 24, 5))
+
+    msg: string;
+>msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 25, 19))
+}
+
+validate().msg; // Error in TLUA
+>validate().msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 22, 19), Decl(freshObjectLiteralSubtype.tlua, 25, 19))
+>validate : Symbol(validate, Decl(freshObjectLiteralSubtype.tlua, 9, 8))
+>msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 22, 19), Decl(freshObjectLiteralSubtype.tlua, 25, 19))
+
+// https://github.com/microsoft/typescript-go/issues/1761
+
+function normalise_trace_logs([log]: any[]) {
+>normalise_trace_logs : Symbol(normalise_trace_logs, Decl(freshObjectLiteralSubtype.tlua, 29, 15))
+>log : Symbol(log, Decl(freshObjectLiteralSubtype.tlua, 33, 31))
+
+	local normalised = [];
+>normalised : Symbol(normalised, Decl(freshObjectLiteralSubtype.tlua, 34, 6))
+
+    if (typeof log == "string" && log.includes("%c")) {
+        normalised.push({ log, highlighted = log.includes("foo") });
+>normalised : Symbol(normalised, Decl(freshObjectLiteralSubtype.tlua, 34, 6))
+>highlighted : Symbol(highlighted, Decl(freshObjectLiteralSubtype.tlua, 36, 30))
+
+    } else {
+        normalised.push({ log });
+>normalised : Symbol(normalised, Decl(freshObjectLiteralSubtype.tlua, 34, 6))
+    }
+	return normalised;
+>normalised : Symbol(normalised, Decl(freshObjectLiteralSubtype.tlua, 34, 6))
+}
+
+function equal<T>(_actual: T, _expected: T): void {}
+>equal : Symbol(equal, Decl(freshObjectLiteralSubtype.tlua, 41, 1))
+>T : Symbol(T, Decl(freshObjectLiteralSubtype.tlua, 43, 15))
+>_actual : Symbol(_actual, Decl(freshObjectLiteralSubtype.tlua, 43, 18))
+>T : Symbol(T, Decl(freshObjectLiteralSubtype.tlua, 43, 15))
+>_expected : Symbol(_expected, Decl(freshObjectLiteralSubtype.tlua, 43, 29))
+>T : Symbol(T, Decl(freshObjectLiteralSubtype.tlua, 43, 15))
+
+equal(normalise_trace_logs([]), [
+>equal : Symbol(equal, Decl(freshObjectLiteralSubtype.tlua, 41, 1))
+>normalise_trace_logs : Symbol(normalise_trace_logs, Decl(freshObjectLiteralSubtype.tlua, 29, 15))
+
+    { log = 'effect' },
+>log : Symbol(log, Decl(freshObjectLiteralSubtype.tlua, 46, 5))
+
+    { log = '$derived', highlighted = true },
+>log : Symbol(log, Decl(freshObjectLiteralSubtype.tlua, 47, 5))
+>highlighted : Symbol(highlighted, Decl(freshObjectLiteralSubtype.tlua, 47, 23))
+
+    { log = 'double', highlighted = false },
+>log : Symbol(log, Decl(freshObjectLiteralSubtype.tlua, 48, 5))
+>highlighted : Symbol(highlighted, Decl(freshObjectLiteralSubtype.tlua, 48, 21))
+
+    { log = 4 },
+>log : Symbol(log, Decl(freshObjectLiteralSubtype.tlua, 49, 5))
+
+]);
+

@@ -1,0 +1,9 @@
+// === goToImplementation ===
+// === /a.tlua ===
+// interface /*GOTO IMPL*/I {
+// 	foo: string;
+// }
+// 
+// function f() {
+//     local foo = [|{ foo: '' }|] satisfies I;
+// }

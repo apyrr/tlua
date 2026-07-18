@@ -1,0 +1,83 @@
+//// [tests/cases/compiler/tluaAsyncFunctionType.tlua] ////
+
+=== tluaAsyncFunctionType.tlua ===
+// An `async` modifier is allowed on function *type* nodes (the parenthesized
+// `async (params) => T` form). It carries the coroutine contract: a call
+// through an async-typed slot is checked, and async-ness is visible in the
+// type display.
+
+declare function request(url: string): boolean;
+>request : Symbol(request, Decl(tluaAsyncFunctionType.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaAsyncFunctionType.tlua, 5, 25))
+
+async function fetchOk(url: string): boolean
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncFunctionType.tlua, 5, 47))
+>url : Symbol(url, Decl(tluaAsyncFunctionType.tlua, 7, 23))
+
+  return request(url);
+>request : Symbol(request, Decl(tluaAsyncFunctionType.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaAsyncFunctionType.tlua, 7, 23))
+
+end
+
+declare function plainOk(url: string): boolean;
+>plainOk : Symbol(plainOk, Decl(tluaAsyncFunctionType.tlua, 9, 3))
+>url : Symbol(url, Decl(tluaAsyncFunctionType.tlua, 11, 25))
+
+// OK: async fn into an async-typed slot; the slot keeps the contract.
+local g: async (url: string) => boolean = fetchOk;
+>g : Symbol(g, Decl(tluaAsyncFunctionType.tlua, 14, 5))
+>url : Symbol(url, Decl(tluaAsyncFunctionType.tlua, 14, 16))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncFunctionType.tlua, 5, 47))
+
+// OK: sync fn into an async-typed slot (a sync function may run in a coroutine).
+local h: async (url: string) => boolean = plainOk;
+>h : Symbol(h, Decl(tluaAsyncFunctionType.tlua, 17, 5))
+>url : Symbol(url, Decl(tluaAsyncFunctionType.tlua, 17, 16))
+>plainOk : Symbol(plainOk, Decl(tluaAsyncFunctionType.tlua, 9, 3))
+
+// Calling through the async-typed slot: error from a sync function, OK from an
+// async function.
+function sync1(): void {
+>sync1 : Symbol(sync1, Decl(tluaAsyncFunctionType.tlua, 17, 50))
+
+  g("a");
+>g : Symbol(g, Decl(tluaAsyncFunctionType.tlua, 14, 5))
+}
+async function ok(): void
+>ok : Symbol(ok, Decl(tluaAsyncFunctionType.tlua, 23, 1))
+
+  g("b");
+>g : Symbol(g, Decl(tluaAsyncFunctionType.tlua, 14, 5))
+
+end
+
+// Passing an async fn as a value into the "any function" top signature is fine
+// (it is how coroutine.create/wrap receive a suspendable function).
+declare namespace coroutine {
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+
+  function create(f: (...: any) => any): any;
+>create : Symbol(create, Decl(tluaAsyncFunctionType.tlua, 30, 29))
+>f : Symbol(f, Decl(tluaAsyncFunctionType.tlua, 31, 18))
+> : Symbol((Missing), Decl(tluaAsyncFunctionType.tlua, 31, 22))
+}
+coroutine.create(fetchOk);
+>coroutine.create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncFunctionType.tlua, 5, 47))
+
+// async function types are usable in ambient / declared positions.
+declare handler: async (url: string) => boolean;
+>handler : Symbol(handler, Decl(tluaAsyncFunctionType.tlua, 36, 7))
+>url : Symbol(url, Decl(tluaAsyncFunctionType.tlua, 36, 24))
+
+// `async` used as an ordinary type name is unaffected (no parenthesized head).
+type async = number;
+>async : Symbol(async, Decl(tluaAsyncFunctionType.tlua, 36, 48))
+
+local n: async = 1;
+>n : Symbol(n, Decl(tluaAsyncFunctionType.tlua, 40, 5))
+>async : Symbol(async, Decl(tluaAsyncFunctionType.tlua, 36, 48))
+

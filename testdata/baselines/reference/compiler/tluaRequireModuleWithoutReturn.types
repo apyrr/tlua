@@ -1,0 +1,32 @@
+//// [tests/cases/compiler/tluaRequireModuleWithoutReturn.tlua] ////
+
+=== main.tlua ===
+// Lua stores `true` in package.loaded for a chunk that returns nothing, and
+// require reports that.
+local a: true = require("sideEffect");
+>a : true
+>true : true
+>require("sideEffect") : true
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"sideEffect" : "sideEffect"
+
+local b: true = require("bare");
+>b : true
+>true : true
+>require("bare") : true
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"bare" : "bare"
+
+=== sideEffect.tlua ===
+X = 1;
+>X = 1 : 1
+>X : number
+>1 : 1
+
+=== bare.tlua ===
+local n = 1;
+>n : number
+>1 : 1
+
+return;
+

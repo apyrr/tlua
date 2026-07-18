@@ -1,0 +1,41 @@
+tluaGenericPackInference.tlua(11,26): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaGenericPackInference.tlua(12,1): error TS2554: Expected 3 arguments, but got 2.
+tluaGenericPackInference.tlua(25,13): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+
+
+==== tluaGenericPackInference.tlua (3 errors) ====
+    // A pack parameter shared between a callback and the trailing vararg correlates
+    // the two: the arguments are checked against the callback's parameters, and the
+    // callback's results become the call's results.
+    
+    declare function apply<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+    
+    declare function takesNumberString(a: number, b: string): (boolean, number);
+    
+    // Arguments must match the callback's parameters (A is pinned by f).
+    apply(takesNumberString, 1, "x");        // ok
+    apply(takesNumberString, "wrong", "x");  // error: string is not a number
+                             ~~~~~~~
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    apply(takesNumberString, 1);             // error: missing the second argument
+    ~~~~~
+!!! error TS2554: Expected 3 arguments, but got 2.
+    
+    // Forwarding a vararg pack into another correlated call: `...` carries the whole
+    // pack A, so `apply(g, ...)` type-checks against g's parameters.
+    function relay<...A, ...R>(g: (...: A) => (...R), ...: A): (...R)
+      return apply(g, ...);
+    end
+    
+    declare function g2(x: string, y: boolean): number;
+    local relayed: number = relay(g2, "s", true);
+    
+    // An open forward: the tail feeds the correlated parameter list.
+    function callWithNumbers(...: number): void
+      apply(g2, ...);  // error: number tail is not (string, boolean)
+                ~~~
+!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+!!! error TS2345:   Type 'nil' is not assignable to type 'string'.
+    end
+    

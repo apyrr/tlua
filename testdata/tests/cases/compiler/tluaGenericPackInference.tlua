@@ -1,0 +1,29 @@
+// @target: esnext
+// @strict: true
+
+// A pack parameter shared between a callback and the trailing vararg correlates
+// the two: the arguments are checked against the callback's parameters, and the
+// callback's results become the call's results.
+
+declare function apply<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+
+declare function takesNumberString(a: number, b: string): (boolean, number);
+
+// Arguments must match the callback's parameters (A is pinned by f).
+apply(takesNumberString, 1, "x");        // ok
+apply(takesNumberString, "wrong", "x");  // error: string is not a number
+apply(takesNumberString, 1);             // error: missing the second argument
+
+// Forwarding a vararg pack into another correlated call: `...` carries the whole
+// pack A, so `apply(g, ...)` type-checks against g's parameters.
+function relay<...A, ...R>(g: (...: A) => (...R), ...: A): (...R)
+  return apply(g, ...);
+end
+
+declare function g2(x: string, y: boolean): number;
+local relayed: number = relay(g2, "s", true);
+
+// An open forward: the tail feeds the correlated parameter list.
+function callWithNumbers(...: number): void
+  apply(g2, ...);  // error: number tail is not (string, boolean)
+end

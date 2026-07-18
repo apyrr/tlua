@@ -1,0 +1,11 @@
+// === findAllReferences ===
+// === /isDefinitionSingleReference.tlua ===
+// function /*FIND ALL REFS*/[|f|]() {}
+// [|f|]();
+
+
+
+// === findAllReferences ===
+// === /isDefinitionSingleReference.tlua ===
+// function [|f|]() {}
+// /*FIND ALL REFS*/[|f|]();

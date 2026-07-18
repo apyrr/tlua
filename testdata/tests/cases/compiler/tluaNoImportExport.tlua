@@ -1,0 +1,20 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// tlua has no TypeScript module syntax: a chunk loads its dependencies with
+// `require` and returns its own value.
+import { named } from "m";
+import * as star from "m";
+import def from "m";
+import legacy = require("m");
+export local value = 1;
+export default value;
+export = value;
+export { value };
+export * from "m";
+
+// The dynamic forms are gone too.
+local dynamic = import("m");
+local meta = import.meta;

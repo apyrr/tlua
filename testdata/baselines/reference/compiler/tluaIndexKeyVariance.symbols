@@ -1,0 +1,42 @@
+//// [tests/cases/compiler/tluaIndexKeyVariance.tlua] ////
+
+=== tluaIndexKeyVariance.tlua ===
+// `Table<in out K, V>` is invariant in its key: K is an input when the table is indexed
+// and an output when it is iterated. Measured structurally it would come out
+// contravariant, which accepts `Table<string | number, V>` where `Table<string, V>` is
+// wanted -- and `pairs` would then report a number key as a string.
+
+declare wide: Table<string | number, boolean>;
+>wide : Symbol(wide, Decl(tluaIndexKeyVariance.tlua, 5, 7))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+declare narrow: Table<string, boolean>;
+>narrow : Symbol(narrow, Decl(tluaIndexKeyVariance.tlua, 6, 7))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+local a: Table<string, boolean> = wide;
+>a : Symbol(a, Decl(tluaIndexKeyVariance.tlua, 8, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>wide : Symbol(wide, Decl(tluaIndexKeyVariance.tlua, 5, 7))
+
+local b: Table<string | number, boolean> = narrow;
+>b : Symbol(b, Decl(tluaIndexKeyVariance.tlua, 9, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>narrow : Symbol(narrow, Decl(tluaIndexKeyVariance.tlua, 6, 7))
+
+// Identical keys relate as before.
+local c: Table<string, boolean> = narrow;
+>c : Symbol(c, Decl(tluaIndexKeyVariance.tlua, 12, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>narrow : Symbol(narrow, Decl(tluaIndexKeyVariance.tlua, 6, 7))
+
+// A value-keyed table is still covariant in the value it holds.
+declare numbers: Table<string, number>;
+>numbers : Symbol(numbers, Decl(tluaIndexKeyVariance.tlua, 15, 7))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+local d: Table<string, number | string> = numbers;
+>d : Symbol(d, Decl(tluaIndexKeyVariance.tlua, 16, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>numbers : Symbol(numbers, Decl(tluaIndexKeyVariance.tlua, 15, 7))
+

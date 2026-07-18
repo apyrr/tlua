@@ -1,0 +1,143 @@
+//// [tests/cases/compiler/tluaTableAugmentationGuardDedupe.tlua] ////
+
+=== a.tlua ===
+Shared = Shared or {};
+>Shared = Shared or {} : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+>Shared or {} : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+>{} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
+
+Shared.fromA = 1;
+>Shared.fromA = 1 : 1
+>Shared.fromA : number
+>Shared : { fromA: number; fromB: string; self: any; }
+>fromA : number
+>1 : 1
+
+Nested = Nested or {};
+>Nested = Nested or {} : { sub: { value: boolean; }; }
+>Nested : { sub: { value: boolean; }; }
+>Nested or {} : { sub: { value: boolean; }; }
+>Nested : { sub: { value: boolean; }; }
+>{} : { sub: { value: boolean; }; }
+
+Nested.sub = Nested.sub or {};
+>Nested.sub = Nested.sub or {} : { value: boolean; }
+>Nested.sub : { value: boolean; }
+>Nested : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>Nested.sub or {} : { value: boolean; }
+>Nested.sub : { value: boolean; }
+>Nested : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>{} : { value: boolean; }
+
+=== b.tlua ===
+Shared = Shared or {};
+>Shared = Shared or {} : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+>Shared or {} : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+>{} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
+
+Shared.fromB = "b";
+>Shared.fromB = "b" : "b"
+>Shared.fromB : string
+>Shared : { fromA: number; fromB: string; self: any; }
+>fromB : string
+>"b" : "b"
+
+Shared.self = Shared;
+>Shared.self = Shared : { fromA: number; fromB: string; self: any; }
+>Shared.self : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+>self : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+
+Nested = Nested or {};
+>Nested = Nested or {} : { sub: { value: boolean; }; }
+>Nested : { sub: { value: boolean; }; }
+>Nested or {} : { sub: { value: boolean; }; }
+>Nested : { sub: { value: boolean; }; }
+>{} : { sub: { value: boolean; }; }
+
+Nested.sub = Nested.sub or {};
+>Nested.sub = Nested.sub or {} : { value: boolean; }
+>Nested.sub : { value: boolean; }
+>Nested : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>Nested.sub or {} : { value: boolean; }
+>Nested.sub : { value: boolean; }
+>Nested : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>{} : { value: boolean; }
+
+Nested.sub.value = true;
+>Nested.sub.value = true : true
+>Nested.sub.value : boolean
+>Nested.sub : { value: boolean; }
+>Nested : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>value : boolean
+>true : true
+
+// Independently declared constructor members stay as distinct arms even when
+// their text is identical.
+NonEmpty = NonEmpty or { seed = 1 };
+>NonEmpty = NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
+>NonEmpty : { seed: number; } | { seed: number; }
+>NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
+>NonEmpty : { seed: number; } | { seed: number; }
+>{ seed = 1 } : { seed: number; }
+>seed : number
+>1 : 1
+
+NonEmpty = NonEmpty or { seed = 1 };
+>NonEmpty = NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
+>NonEmpty : { seed: number; } | { seed: number; }
+>NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
+>NonEmpty : { seed: number; } | { seed: number; }
+>{ seed = 1 } : { seed: number; }
+>seed : number
+>1 : 1
+
+=== c.tlua ===
+local shared = Shared;
+>shared : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+
+local fromA: number = Shared.fromA;
+>fromA : number
+>Shared.fromA : number
+>Shared : { fromA: number; fromB: string; self: any; }
+>fromA : number
+
+local fromB: string = Shared.fromB;
+>fromB : string
+>Shared.fromB : string
+>Shared : { fromA: number; fromB: string; self: any; }
+>fromB : string
+
+local self = Shared.self;
+>self : { fromA: number; fromB: string; self: any; }
+>Shared.self : { fromA: number; fromB: string; self: any; }
+>Shared : { fromA: number; fromB: string; self: any; }
+>self : { fromA: number; fromB: string; self: any; }
+
+local nested = Nested;
+>nested : { sub: { value: boolean; }; }
+>Nested : { sub: { value: boolean; }; }
+
+local value: boolean = Nested.sub.value;
+>value : boolean
+>Nested.sub.value : boolean
+>Nested.sub : { value: boolean; }
+>Nested : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>value : boolean
+
+local nonEmpty = NonEmpty;
+>nonEmpty : { seed: number; } | { seed: number; }
+>NonEmpty : { seed: number; } | { seed: number; }
+

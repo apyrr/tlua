@@ -1,0 +1,148 @@
+//// [tests/cases/compiler/tluaIndexKeyObjectLiteral.tlua] ////
+
+=== tluaIndexKeyObjectLiteral.tlua ===
+// A table literal with a computed key synthesizes one index per distinct key type, in
+// first-appearance order -- not the string/number/symbol trichotomy TypeScript uses.
+
+declare b: boolean;
+>b : Symbol(b, Decl(tluaIndexKeyObjectLiteral.tlua, 3, 7))
+
+declare pt: { n: number };
+>pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
+>n : Symbol(n, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 13))
+
+declare s: string;
+>s : Symbol(s, Decl(tluaIndexKeyObjectLiteral.tlua, 5, 7))
+
+local byBool = { [b] = 1 };
+>byBool : Symbol(byBool, Decl(tluaIndexKeyObjectLiteral.tlua, 7, 5))
+>[b] : Symbol([b], Decl(tluaIndexKeyObjectLiteral.tlua, 7, 16))
+>b : Symbol(b, Decl(tluaIndexKeyObjectLiteral.tlua, 3, 7))
+
+local n1: number = byBool[true];
+>n1 : Symbol(n1, Decl(tluaIndexKeyObjectLiteral.tlua, 8, 5))
+>byBool : Symbol(byBool, Decl(tluaIndexKeyObjectLiteral.tlua, 7, 5))
+
+local byTable = { [pt] = "v" };
+>byTable : Symbol(byTable, Decl(tluaIndexKeyObjectLiteral.tlua, 10, 5))
+>[pt] : Symbol([pt], Decl(tluaIndexKeyObjectLiteral.tlua, 10, 17))
+>pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
+
+local s1: string = byTable[pt];
+>s1 : Symbol(s1, Decl(tluaIndexKeyObjectLiteral.tlua, 11, 5))
+>byTable : Symbol(byTable, Decl(tluaIndexKeyObjectLiteral.tlua, 10, 5))
+>pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
+
+// A literal key widens to its base type. An index signature may not be keyed by a
+// literal, so `{ [true] = 1 }` must synthesize `[key: boolean]`, never `[key: true]` --
+// which the grammar rejects and an emitted .d.tlua would not re-parse.
+local byTrue = { [true] = 1 };
+>byTrue : Symbol(byTrue, Decl(tluaIndexKeyObjectLiteral.tlua, 16, 5))
+>[true] : Symbol([true], Decl(tluaIndexKeyObjectLiteral.tlua, 16, 16))
+
+local n2: number = byTrue[false];
+>n2 : Symbol(n2, Decl(tluaIndexKeyObjectLiteral.tlua, 17, 5))
+>byTrue : Symbol(byTrue, Decl(tluaIndexKeyObjectLiteral.tlua, 16, 5))
+
+// Several key domains in one literal, each its own index.
+local mixed = { [b] = 1, [pt] = 2, [s] = 3 };
+>mixed : Symbol(mixed, Decl(tluaIndexKeyObjectLiteral.tlua, 20, 5))
+>[b] : Symbol([b], Decl(tluaIndexKeyObjectLiteral.tlua, 20, 15))
+>b : Symbol(b, Decl(tluaIndexKeyObjectLiteral.tlua, 3, 7))
+>[pt] : Symbol([pt], Decl(tluaIndexKeyObjectLiteral.tlua, 20, 24))
+>pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
+>[s] : Symbol([s], Decl(tluaIndexKeyObjectLiteral.tlua, 20, 34))
+>s : Symbol(s, Decl(tluaIndexKeyObjectLiteral.tlua, 5, 7))
+
+local n3: number = mixed[true];
+>n3 : Symbol(n3, Decl(tluaIndexKeyObjectLiteral.tlua, 21, 5))
+>mixed : Symbol(mixed, Decl(tluaIndexKeyObjectLiteral.tlua, 20, 5))
+
+local n4: number = mixed[pt];
+>n4 : Symbol(n4, Decl(tluaIndexKeyObjectLiteral.tlua, 22, 5))
+>mixed : Symbol(mixed, Decl(tluaIndexKeyObjectLiteral.tlua, 20, 5))
+>pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
+
+local n5: number = mixed["k"];
+>n5 : Symbol(n5, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 5))
+>mixed : Symbol(mixed, Decl(tluaIndexKeyObjectLiteral.tlua, 20, 5))
+
+// A computed key is contextually typed by the index it feeds.
+interface BoolIdx { [key: boolean]: number }
+>BoolIdx : Symbol(BoolIdx, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 30))
+>key : Symbol(key, Decl(tluaIndexKeyObjectLiteral.tlua, 26, 21))
+
+local ctx: BoolIdx = { [b] = 1 };
+>ctx : Symbol(ctx, Decl(tluaIndexKeyObjectLiteral.tlua, 27, 5))
+>BoolIdx : Symbol(BoolIdx, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 30))
+>[b] : Symbol([b], Decl(tluaIndexKeyObjectLiteral.tlua, 27, 22))
+>b : Symbol(b, Decl(tluaIndexKeyObjectLiteral.tlua, 3, 7))
+
+// A union key spans one index per constituent domain: the member is behind both
+// indexes, and the literal is indexable by the union itself.
+declare sn: string | number;
+>sn : Symbol(sn, Decl(tluaIndexKeyObjectLiteral.tlua, 31, 7))
+
+local byEither = { [sn] = 1 };
+>byEither : Symbol(byEither, Decl(tluaIndexKeyObjectLiteral.tlua, 32, 5))
+>[sn] : Symbol([sn], Decl(tluaIndexKeyObjectLiteral.tlua, 32, 18))
+>sn : Symbol(sn, Decl(tluaIndexKeyObjectLiteral.tlua, 31, 7))
+
+local n6: number = byEither[sn];
+>n6 : Symbol(n6, Decl(tluaIndexKeyObjectLiteral.tlua, 33, 5))
+>byEither : Symbol(byEither, Decl(tluaIndexKeyObjectLiteral.tlua, 32, 5))
+>sn : Symbol(sn, Decl(tluaIndexKeyObjectLiteral.tlua, 31, 7))
+
+local n7: number = byEither["x"];
+>n7 : Symbol(n7, Decl(tluaIndexKeyObjectLiteral.tlua, 34, 5))
+>byEither : Symbol(byEither, Decl(tluaIndexKeyObjectLiteral.tlua, 32, 5))
+
+local n8: number = byEither[1];
+>n8 : Symbol(n8, Decl(tluaIndexKeyObjectLiteral.tlua, 35, 5))
+>byEither : Symbol(byEither, Decl(tluaIndexKeyObjectLiteral.tlua, 32, 5))
+
+// A member whose key spans the string domain counts against a string index: the named
+// member cannot slip past it through a union-keyed side door.
+declare sb: string | boolean;
+>sb : Symbol(sb, Decl(tluaIndexKeyObjectLiteral.tlua, 39, 7))
+
+local bad: { [key: string]: number } = { [sb] = 1, a = "x" };
+>bad : Symbol(bad, Decl(tluaIndexKeyObjectLiteral.tlua, 40, 5))
+>key : Symbol(key, Decl(tluaIndexKeyObjectLiteral.tlua, 40, 14))
+>[sb] : Symbol([sb], Decl(tluaIndexKeyObjectLiteral.tlua, 40, 40))
+>sb : Symbol(sb, Decl(tluaIndexKeyObjectLiteral.tlua, 39, 7))
+>a : Symbol(a, Decl(tluaIndexKeyObjectLiteral.tlua, 40, 50))
+
+// A union-keyed member is contextually typed by the indexes it feeds.
+local fm: { [key: string]: (x: number) => number; [key: boolean]: (x: number) => number } = {
+>fm : Symbol(fm, Decl(tluaIndexKeyObjectLiteral.tlua, 43, 5))
+>key : Symbol(key, Decl(tluaIndexKeyObjectLiteral.tlua, 43, 13))
+>x : Symbol(x, Decl(tluaIndexKeyObjectLiteral.tlua, 43, 28))
+>key : Symbol(key, Decl(tluaIndexKeyObjectLiteral.tlua, 43, 51))
+>x : Symbol(x, Decl(tluaIndexKeyObjectLiteral.tlua, 43, 67))
+
+  [sb] = function(x) return x; end,
+>[sb] : Symbol([sb], Decl(tluaIndexKeyObjectLiteral.tlua, 43, 93))
+>sb : Symbol(sb, Decl(tluaIndexKeyObjectLiteral.tlua, 39, 7))
+>x : Symbol(x, Decl(tluaIndexKeyObjectLiteral.tlua, 44, 18))
+>x : Symbol(x, Decl(tluaIndexKeyObjectLiteral.tlua, 44, 18))
+
+};
+
+// An `any` key could be a key of any domain, so it feeds string and number alike.
+declare anyKey: any;
+>anyKey : Symbol(anyKey, Decl(tluaIndexKeyObjectLiteral.tlua, 48, 7))
+
+local viaAny = { [anyKey] = 5 };
+>viaAny : Symbol(viaAny, Decl(tluaIndexKeyObjectLiteral.tlua, 49, 5))
+>[anyKey] : Symbol([anyKey], Decl(tluaIndexKeyObjectLiteral.tlua, 49, 16))
+>anyKey : Symbol(anyKey, Decl(tluaIndexKeyObjectLiteral.tlua, 48, 7))
+
+local n9: number = viaAny["x"];
+>n9 : Symbol(n9, Decl(tluaIndexKeyObjectLiteral.tlua, 50, 5))
+>viaAny : Symbol(viaAny, Decl(tluaIndexKeyObjectLiteral.tlua, 49, 5))
+
+local n10: number = viaAny[1];
+>n10 : Symbol(n10, Decl(tluaIndexKeyObjectLiteral.tlua, 51, 5))
+>viaAny : Symbol(viaAny, Decl(tluaIndexKeyObjectLiteral.tlua, 49, 5))
+

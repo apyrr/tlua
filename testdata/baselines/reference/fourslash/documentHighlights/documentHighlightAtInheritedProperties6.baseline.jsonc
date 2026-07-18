@@ -1,0 +1,59 @@
+// === documentHighlights ===
+// === /file1.tlua ===
+// class C extends D {
+//     /*HIGHLIGHTS*/prop0: string;
+//     prop1: string;
+// }
+// 
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// class C extends D {
+//     prop0: string;
+//     /*HIGHLIGHTS*/prop1: string;
+// }
+// 
+// class D extends C {
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// class D extends C {
+//     /*HIGHLIGHTS*/prop0: string;
+//     prop1: string;
+// }
+// 
+// local d: D;
+// d.prop1;
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 4) skipped ---
+// 
+// class D extends C {
+//     prop0: string;
+//     /*HIGHLIGHTS*/prop1: string;
+// }
+// 
+// local d: D;
+// d.prop1;
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 8) skipped ---
+// }
+// 
+// local d: D;
+// d./*HIGHLIGHTS*/prop1;

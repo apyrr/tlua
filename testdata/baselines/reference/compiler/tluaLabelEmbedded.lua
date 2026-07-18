@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/tluaLabelEmbedded.tlua] ////
+
+//// [tluaLabelEmbedded.tlua]
+// Error: a label as the braceless body of an if is in no statement list, so no
+// goto could ever target it.
+declare function use(s: string): void;
+function embeddedInIf(b: boolean): void {
+    if (b) ::stray::;
+}
+
+// Error on the embedded label; the outer label is separately unused. The
+// embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
+// string at the assignment even though the if-arm made it nil.
+function noNameCapture(b: boolean): void {
+    local x: string | nil = "a";
+    ::l::
+    local y: string = x;
+    use(y);
+    if (b) { x = nil; }
+    if (b) ::l::;
+}
+
+// Error: a loop's braceless body is embedded position too.
+function embeddedInWhile(b: boolean): void {
+    while (b) ::spin::;
+}
+
+
+//// [tluaLabelEmbedded.lua]
+function embeddedInIf(b) {
+    if (b)
+        ::stray::
+    ;
+}
+-- Error on the embedded label; the outer label is separately unused. The
+-- embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
+-- string at the assignment even though the if-arm made it nil.
+function noNameCapture(b) {
+    local x = "a";
+    ::l::
+    local y = x;
+    use(y);
+    if (b) {
+        x = nil;
+    }
+    if (b)
+        ::l::
+    ;
+}
+-- Error: a loop's braceless body is embedded position too.
+function embeddedInWhile(b) {
+    while (b)
+        ::spin::
+    ;
+}

@@ -1,0 +1,6 @@
+// === Smart Selection ===
+local a = 1; //a b/**/c d
+
+               a bc d
+             //a bc d
+local a = 1; //a bc d

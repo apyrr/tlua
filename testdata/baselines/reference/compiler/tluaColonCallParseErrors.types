@@ -1,0 +1,64 @@
+//// [tests/cases/compiler/tluaColonCallParseErrors.tlua] ////
+
+=== tluaColonCallParseErrors.tlua ===
+local M = { ping = function(self: {}) return 1; end };
+>M : { ping: (self: {}) => number; }
+>{ ping = function(self: {}) return 1; end } : { ping: (self: {}) => number; }
+>ping : (self: {}) => number
+>function(self: {}) return 1; end : (self: {}) => number
+>self : {}
+>1 : 1
+
+// A colon access exists only as a call: Lua rejects `obj:f` without arguments.
+local f = M:ping;
+>f : { ping: (self: {}) => number; }
+>M : { ping: (self: {}) => number; }
+>ping : any
+
+// The colon needs a member name after it.
+local g = M:(1);
+>g : { ping: (self: {}) => number; }
+>M : { ping: (self: {}) => number; }
+>(1) : 1
+>1 : 1
+
+// Lua reserved words cannot name a colon call: committing on `M:end(` would
+// swallow the enclosing block terminator.
+local h = M:end();
+>h : { ping: (self: {}) => number; }
+>M : { ping: (self: {}) => number; }
+>() : any
+> : any
+
+// An instantiation expression cannot be followed by a colon call, matching the
+// dot form's diagnostic.
+declare id: <T>(self: {}, x: T) => T;
+>id : <T>(self: {}, x: T) => T
+>self : {}
+>x : T
+
+local i = id<number>:ping();
+>i : any
+>id<number>:ping() : any
+>id<number>:ping : any
+>id<number> : (self: {}, x: number) => number
+>id : <T>(self: {}, x: T) => T
+>ping : any
+
+// Error recovery: an annotation-shaped `ident : ident` in invalid code must
+// not swallow the declarations that follow it into a bogus argument list.
+local bad = (b: number);
+>bad : (b: number) => any
+>(b: number) : (b: number) => any
+>b : number
+> : any
+
+declare fine: (n: number) => void;
+>fine : (n: number) => void
+>n : number
+
+fine(1);
+>fine(1) : void
+>fine : (n: number) => void
+>1 : 1
+

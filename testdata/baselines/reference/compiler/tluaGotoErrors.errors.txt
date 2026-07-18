@@ -1,0 +1,54 @@
+tluaGotoErrors.tlua(3,10): error TS100025: No visible label 'nowhere' for goto.
+tluaGotoErrors.tlua(8,10): error TS100025: No visible label 'inner' for goto.
+tluaGotoErrors.tlua(18,14): error TS100025: No visible label 'here' for goto.
+tluaGotoErrors.tlua(26,7): error TS1114: Duplicate label 'a'.
+
+
+==== tluaGotoErrors.tlua (4 errors) ====
+    // Error: no such label anywhere.
+    function missing(): void
+        goto nowhere
+             ~~~~~~~
+!!! error TS100025: No visible label 'nowhere' for goto.
+    end
+    
+    // Error: a label in a nested block is not visible outside it.
+    function nestedNotVisible(): void
+        goto inner
+             ~~~~~
+!!! error TS100025: No visible label 'inner' for goto.
+        do
+            ::inner::
+        end
+    end
+    
+    // Error: a label never crosses a function boundary, so it is simply not visible.
+    function crossFunction(): void
+        ::here::
+        local function inner(): void
+            goto here
+                 ~~~~
+!!! error TS100025: No visible label 'here' for goto.
+        end
+        inner();
+    end
+    
+    // Error: two labels of the same name in one block.
+    function duplicate(): void
+        ::a::
+        ::a::
+          ~
+!!! error TS1114: Duplicate label 'a'.
+        goto a
+    end
+    
+    // Accepted: a nested block may shadow an enclosing label.
+    function shadowIsFine(): void
+        ::a::
+        do
+            ::a::
+            goto a
+        end
+        goto a
+    end
+    

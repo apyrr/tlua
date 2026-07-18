@@ -1,0 +1,46 @@
+// @target: esnext
+
+// The remaining TS control-flow forms keep parsing unchanged.
+function tsForms(flag: boolean): number {
+  if (flag) {
+    return 1;
+  }
+  if (flag) return 2;
+  if (flag) return 3; else return 4;
+  while (flag) {
+    flag = false;
+  }
+  while (flag) flag = false;
+  do {
+    flag = false;
+  } while (flag);
+  return 0;
+}
+
+// TS statements inside Lua bodies.
+function tsInLua(flag: boolean): number
+  if flag then
+    return 1;
+  end
+  while flag do
+    do {
+      flag = false;
+    } while (flag);
+  end
+  return 0;
+end
+
+// Lua statements inside TS braces.
+function luaInTs(flag: boolean): number {
+  if (flag) {
+    if flag then
+      return 1;
+    end
+  }
+  while (flag) {
+    while flag do
+      flag = false;
+    end
+  }
+  return 0;
+}

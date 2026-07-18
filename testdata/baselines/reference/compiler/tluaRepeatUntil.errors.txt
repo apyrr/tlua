@@ -1,0 +1,58 @@
+tluaRepeatUntil.tlua(17,10): error TS2304: Cannot find name 'secret'.
+
+
+==== tluaRepeatUntil.tlua (1 errors) ====
+    declare function poll(): number | nil;
+    
+    // Body locals are visible in the until-condition.
+    function bodyLocal(n: number): number
+      repeat
+        local step = n - 1;
+        n = step;
+      until step <= 0;
+      return n;
+    end
+    
+    // ...but not after the loop.
+    function afterLoop(): number
+      repeat
+        local secret = 1;
+      until true;
+      return secret;
+             ~~~~~~
+!!! error TS2304: Cannot find name 'secret'.
+    end
+    
+    // break exits; continue targets the condition.
+    function loops(n: number): number
+      local total = 0;
+      repeat
+        n = n - 1;
+        if n == 3 then
+          continue;
+        end
+        if n <= 0 then
+          break;
+        end
+        total = total + n;
+      until false;
+      return total;
+    end
+    
+    // One-liner form.
+    function once(): number
+      local n = 0;
+      repeat n = n + 1 until n > 0;
+      return n;
+    end
+    
+    // Nested repeat.
+    function nested(n: number): number
+      repeat
+        repeat
+          n = n - 1;
+        until n <= 10;
+      until n <= 0;
+      return n;
+    end
+    

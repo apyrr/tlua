@@ -1,0 +1,30 @@
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration3.tlua ===
+// class Foo {
+//     constructor(protected /*FIND ALL REFS*/protectedParam: number) {
+//         local localProtected = protectedParam;
+//         this.protectedParam += 10;
+//     }
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration3.tlua ===
+// class Foo {
+//     constructor(protected protectedParam: number) {
+//         local localProtected = /*FIND ALL REFS*/protectedParam;
+//         this.protectedParam += 10;
+//     }
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration3.tlua ===
+// class Foo {
+//     constructor(protected protectedParam: number) {
+//         local localProtected = protectedParam;
+//         this./*FIND ALL REFS*/protectedParam += 10;
+//     }
+// }

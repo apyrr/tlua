@@ -1,0 +1,74 @@
+//// [tests/cases/compiler/tluaTableContextualTyping.tlua] ////
+
+=== tluaTableContextualTyping.tlua ===
+// Contextual typing flows into `=` field initializers: `x` is inferred as
+// number.
+local ctx: { f: (x: number) => number } = { f = function(x) return x; end };
+>ctx : { f: (x: number) => number; }
+>f : (x: number) => number
+>x : number
+>{ f = function(x) return x; end } : { f: (x: number) => number; }
+>f : (x: number) => number
+>function(x) return x; end : (x: number) => number
+>x : number
+>x : number
+
+local applied = ctx.f(1);
+>applied : number
+>ctx.f(1) : number
+>ctx.f : (x: number) => number
+>ctx : { f: (x: number) => number; }
+>f : (x: number) => number
+>1 : 1
+
+// Excess property checking works through `=` fields.
+local excess: { a: number } = { b = 1 };
+>excess : { a: number; }
+>a : number
+>{ b = 1 } : { b: number; }
+>b : number
+>1 : 1
+
+// Assignability errors surface on the field.
+local wrong: { a: string } = { a = 1 };
+>wrong : { a: string; }
+>a : string
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+// Interface-typed tables.
+interface Box {
+    value: string;
+>value : string
+
+    size?: number;
+>size : number | nil
+}
+local box: Box = { value = "v" };
+>box : Box
+>{ value = "v" } : { value: string; }
+>value : string
+>"v" : "v"
+
+local sized: Box = { value = "v", size = 2 };
+>sized : Box
+>{ value = "v", size = 2 } : { value: string; size: number; }
+>value : string
+>"v" : "v"
+>size : number
+>2 : 2
+
+local bad: Box = { value = 1 };
+>bad : Box
+>{ value = 1 } : { value: number; }
+>value : number
+>1 : 1
+
+local boxes = {box, sized, bad};
+>boxes : { 1: Box; 2: Box; 3: Box; }
+>{box, sized, bad} : { 1: Box; 2: Box; 3: Box; }
+>box : any
+>sized : any
+>bad : any
+

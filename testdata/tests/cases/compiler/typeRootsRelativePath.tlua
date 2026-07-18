@@ -1,0 +1,5 @@
+// @typeRoots: t
+// @types: n
+// @noEmit: true
+
+local x = 1;

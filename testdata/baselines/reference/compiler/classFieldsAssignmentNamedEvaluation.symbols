@@ -1,0 +1,9 @@
+//// [tests/cases/compiler/classFieldsAssignmentNamedEvaluation.tlua] ////
+
+=== classFieldsAssignmentNamedEvaluation.tlua ===
+local x: any;
+>x : Symbol(x, Decl(classFieldsAssignmentNamedEvaluation.tlua, 0, 5))
+
+x = class { static #foo = 1; };
+>x : Symbol(x, Decl(classFieldsAssignmentNamedEvaluation.tlua, 0, 5))
+

@@ -1,0 +1,26 @@
+// @target: esnext
+// @strict: true
+
+// Unknown base.
+function Unknown.f(): void
+end
+
+// A function is not a table and cannot carry members.
+local function g(): void
+end
+
+function g.h(): void
+end
+
+// Duplicate members.
+local Dup = {};
+
+function Dup.f(): void
+end
+
+function Dup.f(): void
+end
+
+// `local function` takes a plain name.
+local function Bad.f(): void
+end

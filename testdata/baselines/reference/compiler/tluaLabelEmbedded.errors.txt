@@ -1,0 +1,39 @@
+tluaLabelEmbedded.tlua(5,14): error TS100027: A label cannot appear in a single-statement context.
+tluaLabelEmbedded.tlua(13,7): error TS7028: Unused label.
+tluaLabelEmbedded.tlua(17,14): error TS100027: A label cannot appear in a single-statement context.
+tluaLabelEmbedded.tlua(22,17): error TS100027: A label cannot appear in a single-statement context.
+
+
+==== tluaLabelEmbedded.tlua (4 errors) ====
+    // Error: a label as the braceless body of an if is in no statement list, so no
+    // goto could ever target it.
+    declare function use(s: string): void;
+    function embeddedInIf(b: boolean): void {
+        if (b) ::stray::;
+                 ~~~~~
+!!! error TS100027: A label cannot appear in a single-statement context.
+    }
+    
+    // Error on the embedded label; the outer label is separately unused. The
+    // embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
+    // string at the assignment even though the if-arm made it nil.
+    function noNameCapture(b: boolean): void {
+        local x: string | nil = "a";
+        ::l::
+          ~
+!!! error TS7028: Unused label.
+        local y: string = x;
+        use(y);
+        if (b) { x = nil; }
+        if (b) ::l::;
+                 ~
+!!! error TS100027: A label cannot appear in a single-statement context.
+    }
+    
+    // Error: a loop's braceless body is embedded position too.
+    function embeddedInWhile(b: boolean): void {
+        while (b) ::spin::;
+                    ~~~~
+!!! error TS100027: A label cannot appear in a single-statement context.
+    }
+    

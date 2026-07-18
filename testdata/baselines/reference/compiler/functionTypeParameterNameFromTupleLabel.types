@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/functionTypeParameterNameFromTupleLabel.tlua] ////
+
+=== functionTypeParameterNameFromTupleLabel.tlua ===
+declare f: (...args: [x: number]) => void;
+>f : (...args: [x], number: any) => any
+>args : any
+>number : any
+>void : nil
+> : any
+
+declare g: (a: string) => void;
+>g : (a: string) => void
+>a : string
+
+f = g;
+>f = g : (a: string) => void
+>f : any
+>g : (a: string) => void
+

@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/simpleTestMultiFile.tlua] ////
+
+=== /src/foo.tlua ===
+local x: number = "";
+>x : number
+>"" : ""
+
+=== /src/bar.tlua ===
+local y: string = 1;
+>y : string
+>1 : 1
+

@@ -1,0 +1,25 @@
+main.tlua(2,25): error TS2307: Cannot find module './nosuchfile' or its corresponding type declarations.
+
+
+==== main.tlua (1 errors) ====
+    // A path-shaped specifier is not a Lua module name; it is an error.
+    local missing = require("./nosuchfile");
+                            ~~~~~~~~~~~~~~
+!!! error TS2307: Cannot find module './nosuchfile' or its corresponding type declarations.
+    
+    // An unresolved dotted name falls back to the ambient overloads (any):
+    // it may be a runtime-provided package or a C module.
+    local maybe = require("no.such.module");
+    local n: number = maybe;
+    
+    // A declaration file declares globals; it is not a chunk with a value, so
+    // `defs` does not resolve to defs.d.tlua and stays the dynamic overload.
+    local defs = require("defs");
+    
+    // A computed specifier keeps the dynamic overload.
+    declare name: string;
+    local dynamic = require(name);
+    
+==== defs.d.tlua (0 errors) ====
+    declare helper: () => void;
+    

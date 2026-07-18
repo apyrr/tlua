@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/tluaControlFlowEmit.tlua] ////
+
+=== main.tlua ===
+local m = require("m");
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local N, done = m.N, m.done;
+>N : Symbol(N, Decl(main.tlua, 1, 5))
+>done : Symbol(done, Decl(main.tlua, 1, 8))
+>m.N : Symbol(N, Decl(m.tlua, 3, 8))
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>N : Symbol(N, Decl(m.tlua, 3, 8))
+>m.done : Symbol(done, Decl(m.tlua, 3, 15))
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>done : Symbol(done, Decl(m.tlua, 3, 15))
+
+// Required values substitute in numeric-for bounds and until-conditions.
+function f(): number
+>f : Symbol(f, Decl(main.tlua, 1, 28))
+
+  local total = 0;
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+
+  for i = 1, N do
+>i : Symbol(i, Decl(main.tlua, 6, 5))
+>N : Symbol(N, Decl(main.tlua, 1, 5))
+
+    total = total + i;
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+>i : Symbol(i, Decl(main.tlua, 6, 5))
+
+  end
+  repeat
+    total = total + 1;
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+
+  until done;
+>done : Symbol(done, Decl(main.tlua, 1, 8))
+
+  while done do
+>done : Symbol(done, Decl(main.tlua, 1, 8))
+
+    total = total - 1;
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+
+  end
+  return total;
+>total : Symbol(total, Decl(main.tlua, 5, 7))
+
+end
+
+// Top-level Lua statements emit verbatim (no panic, no module wrapper).
+for i = 1, 2 do
+>i : Symbol(i, Decl(main.tlua, 19, 3))
+
+  f();
+>f : Symbol(f, Decl(main.tlua, 1, 28))
+
+end
+repeat
+  f();
+>f : Symbol(f, Decl(main.tlua, 1, 28))
+
+until true;
+do
+  f();
+>f : Symbol(f, Decl(main.tlua, 1, 28))
+
+end
+
+=== m.tlua ===
+local N = 3;
+>N : Symbol(N, Decl(m.tlua, 0, 5))
+
+local done = false;
+>done : Symbol(done, Decl(m.tlua, 1, 5))
+
+local counter = 0;
+>counter : Symbol(counter, Decl(m.tlua, 2, 5))
+
+return { N = N, done = done, counter = counter };
+>N : Symbol(N, Decl(m.tlua, 3, 8))
+>N : Symbol(N, Decl(m.tlua, 0, 5))
+>done : Symbol(done, Decl(m.tlua, 3, 15))
+>done : Symbol(done, Decl(m.tlua, 1, 5))
+>counter : Symbol(counter, Decl(m.tlua, 3, 28))
+>counter : Symbol(counter, Decl(m.tlua, 2, 5))
+

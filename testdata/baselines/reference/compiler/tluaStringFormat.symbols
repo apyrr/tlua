@@ -1,0 +1,151 @@
+//// [tests/cases/compiler/tluaStringFormat.tlua] ////
+
+=== tluaStringFormat.tlua ===
+string.format("%d/%s", 1, "x");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%d", "notnum");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%s", "x", "extra");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%s %s", "only one");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+function formatVarargTail(...: any): string
+>formatVarargTail : Symbol(formatVarargTail, Decl(tluaStringFormat.tlua, 3, 35))
+> : Symbol((Missing), Decl(tluaStringFormat.tlua, 5, 26))
+
+  return string.format("%s %s", ...);
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+string.format("%-08.3f is %q", 1.5, "s");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("100%% done");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+// %s takes anything: LuaJIT applies tostring (and __tostring) to the value.
+string.format("%s", 42);
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%s", {});
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+// %q quotes a string; a number coerces, other values error at runtime.
+string.format("%q", 42);
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%q", true);
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%z", {});
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%*", {});
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("trailing %");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+local dynamicFormat: string = "%d";
+>dynamicFormat : Symbol(dynamicFormat, Decl(tluaStringFormat.tlua, 22, 5))
+
+string.format(dynamicFormat, "unchecked", "extra");
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>dynamicFormat : Symbol(dynamicFormat, Decl(tluaStringFormat.tlua, 22, 5))
+
+local methodFormat: "%d" = "%d";
+>methodFormat : Symbol(methodFormat, Decl(tluaStringFormat.tlua, 25, 5))
+
+local methodResult = methodFormat.format(2);
+>methodResult : Symbol(methodResult, Decl(tluaStringFormat.tlua, 26, 5))
+>methodFormat.format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+>methodFormat : Symbol(methodFormat, Decl(tluaStringFormat.tlua, 25, 5))
+>format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+
+methodFormat.format("notnum");
+>methodFormat.format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+>methodFormat : Symbol(methodFormat, Decl(tluaStringFormat.tlua, 25, 5))
+>format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+
+// The colon form prepends the receiver to the effective arguments; the
+// specifier check must still line up with the written arguments.
+local colonResult = methodFormat:format(2);
+>colonResult : Symbol(colonResult, Decl(tluaStringFormat.tlua, 31, 5))
+>methodFormat:format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+>methodFormat : Symbol(methodFormat, Decl(tluaStringFormat.tlua, 25, 5))
+>format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+
+methodFormat:format("notnum");
+>methodFormat:format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+>methodFormat : Symbol(methodFormat, Decl(tluaStringFormat.tlua, 25, 5))
+>format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+
+methodFormat:format(2, "extra");
+>methodFormat:format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+>methodFormat : Symbol(methodFormat, Decl(tluaStringFormat.tlua, 25, 5))
+>format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+
+local stringAlias = string;
+>stringAlias : Symbol(stringAlias, Decl(tluaStringFormat.tlua, 35, 5))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+
+stringAlias.format("%d", "aliased", "extra");
+>stringAlias.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>stringAlias : Symbol(stringAlias, Decl(tluaStringFormat.tlua, 35, 5))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+function shadowedString(): void
+>shadowedString : Symbol(shadowedString, Decl(tluaStringFormat.tlua, 36, 45))
+
+  local string = {
+>string : Symbol(string, Decl(tluaStringFormat.tlua, 39, 7))
+
+    format = function(format: string, ...: any): string return format; end,
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 39, 18))
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 40, 22))
+> : Symbol((Missing), Decl(tluaStringFormat.tlua, 40, 37))
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 40, 22))
+
+  };
+  string.format("%d", "shadowed", "extra");
+>string.format : Symbol(format, Decl(tluaStringFormat.tlua, 39, 18))
+>string : Symbol(string, Decl(tluaStringFormat.tlua, 39, 7))
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 39, 18))
+
+end
+

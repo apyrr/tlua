@@ -1,0 +1,67 @@
+//// [tests/cases/compiler/tluaNumberKeyKeyofTuples.tlua] ////
+
+=== tluaNumberKeyKeyofTuples.tlua ===
+// keyof separates number keys from string keys.
+type T = { 1: number; "1": string; x: boolean };
+>T : T
+>1 : number
+>"1" : string
+>x : boolean
+
+type K = keyof T; // 1 | "1" | "x"
+>K : keyof T
+
+local k1: K = 1;
+>k1 : keyof T
+>1 : 1
+
+local k2: K = "1";
+>k2 : keyof T
+>"1" : "1"
+
+local k3: K = "x";
+>k3 : keyof T
+>"x" : "x"
+
+// Indexed access distinguishes the namespaces too.
+type N = T[1];   // number
+>N : number
+
+type S = T["1"]; // string
+>S : string
+
+local n: N = 0;
+>n : number
+>0 : 0
+
+local s: S = "";
+>s : string
+>"" : ""
+
+// Multireturn packs are tuples under the hood; positional truncation still works.
+// (Tuple type syntax `[A, B]` is removed from tlua source, so packs are the
+// only way to spell a tuple now.)
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+local p: number = pair();
+>p : number
+>pair() : number
+>pair : () => (number, string)
+
+local es = {k1, k2, k3, n, s, p};
+>es : { 1: 1; 2: "1"; 3: "x"; 4: number; 5: string; 6: number; }
+>{k1, k2, k3, n, s, p} : { 1: 1; 2: "1"; 3: "x"; 4: number; 5: string; 6: number; }
+>k1 : error
+>k2 : error
+>k3 : error
+>n : error
+>s : error
+>p : error
+

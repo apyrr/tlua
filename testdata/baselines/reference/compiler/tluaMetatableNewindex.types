@@ -1,0 +1,109 @@
+//// [tests/cases/compiler/tluaMetatableNewindex.tlua] ////
+
+=== tluaMetatableNewindex.tlua ===
+// A write to a key the table does not have runs __newindex. Only a write consults it: a read of a
+// missing key still misses.
+
+// Function form: __newindex is called as (table, key, value), so its value parameter types the
+// write and its key parameter says which keys it answers.
+local logged = setmetatable({ n = 1 }, {
+>logged : { n: number; }
+>setmetatable({ n = 1 }, {  __newindex = function(t: object, k: string, v: number): void return; end,}) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  __newindex = function(t: object, k: string, v: number): void return; end,} : { __newindex: (t: object, k: string, v: number) => void; }
+
+  __newindex = function(t: object, k: string, v: number): void return; end,
+>__newindex : (t: object, k: string, v: number) => void
+>function(t: object, k: string, v: number): void return; end : (t: object, k: string, v: number) => void
+>t : object
+>k : string
+>v : number
+
+});
+logged.fresh = 2;
+>logged.fresh = 2 : 2
+>logged.fresh : number
+>logged : { n: number; }
+>fresh : number
+>2 : 2
+
+logged.fresh = "no";
+>logged.fresh = "no" : "no"
+>logged.fresh : number
+>logged : { n: number; }
+>fresh : number
+>"no" : "no"
+
+logged["dyn"] = 3;                  // the element-access write path too
+>logged["dyn"] = 3 : 3
+>logged["dyn"] : number
+>logged : { n: number; }
+>"dyn" : "dyn"
+>3 : 3
+
+local stillMissing = logged.fresh;  // a read never consults __newindex
+>stillMissing : any
+>logged.fresh : any
+>logged : { n: number; }
+>fresh : any
+
+logged.n = 5;                       // the merged shape has n, so this is a raw write
+>logged.n = 5 : 5
+>logged.n : number
+>logged : { n: number; }
+>n : number
+>5 : 5
+
+// Table form: the fallback table receives the write, so its index signature types it.
+local store: Table<string, number> = {};
+>store : Table<string, number>
+>{} : {}
+
+local proxied = setmetatable({ n = 1 }, { __newindex = store });
+>proxied : { n: number; }
+>setmetatable({ n = 1 }, { __newindex = store }) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __newindex = store } : { __newindex: Table<string, number>; }
+>__newindex : Table<string, number>
+>store : Table<string, number>
+
+proxied.other = 3;
+>proxied.other = 3 : 3
+>proxied.other : number
+>proxied : { n: number; }
+>other : number
+>3 : 3
+
+proxied.other = "no";
+>proxied.other = "no" : "no"
+>proxied.other : number
+>proxied : { n: number; }
+>other : number
+>"no" : "no"
+
+// A key outside the handler's domain is not answered.
+local numKeys = setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end });
+>numKeys : {}
+>setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end }) : {}
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{} : {}
+>{ __newindex = function(t: object, k: number, v: string): void return; end } : { __newindex: (t: object, k: number, v: string) => void; }
+>__newindex : (t: object, k: number, v: string) => void
+>function(t: object, k: number, v: string): void return; end : (t: object, k: number, v: string) => void
+>t : object
+>k : number
+>v : string
+
+numKeys.name = "x";
+>numKeys.name = "x" : "x"
+>numKeys.name : any
+>numKeys : {}
+>name : any
+>"x" : "x"
+

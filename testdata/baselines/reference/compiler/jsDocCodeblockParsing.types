@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/jsDocCodeblockParsing.tlua] ////
+
+=== jsDocCodeblockParsing.tlua ===
+/**
+ * text
+ * @example Foo
+ * ```
+ * @Embed[asfasdfasf]
+ * ```
+ * becomes
+ * ```html
+ * <div></div>
+ * ```
+ */
+local x = 1;
+>x : number
+>1 : 1
+
+/**
+ * Some text
+ * ```
+ * @tag inside code
+ * ```
+ * @param y - a number
+ */
+function foo(y: number) {}
+>foo : (y: number) => void
+>y : number
+

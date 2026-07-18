@@ -1,0 +1,34 @@
+tluaColonCallPackTail.tlua(15,13): error TS2554: Expected 1 arguments, but got 2.
+
+
+==== tluaColonCallPackTail.tlua (1 errors) ====
+    interface Reader {
+      pair(self: Reader): (number, string);
+      sum(self: Reader, ...: number): number;
+      one(self: Reader, n: number): number;
+    }
+    declare reader: Reader;
+    declare function takesNumberString(a: number, b: string): void;
+    declare function takesNumber(a: number): void;
+    declare function makeReader(): Reader;
+    
+    // A colon call in tail argument position contributes its full pack.
+    takesNumberString(reader:pair());
+    
+    // So a one-parameter target overflows on the expanded pack.
+    takesNumber(reader:pair());
+                ~~~~~~~~~~~~~
+!!! error TS2554: Expected 1 arguments, but got 2.
+    
+    // In non-tail position it adjusts to its single first value.
+    takesNumberString(reader:pair(), "s");
+    
+    // The vararg tail flows through the colon call's own argument list.
+    function forward(...: number): number
+      return reader:sum(...);
+    end
+    
+    // A call receiver adjusts to its single value before becoming the implicit
+    // first argument: `makeReader():one(1)` passes one Reader, not a pack.
+    local n = makeReader():one(1);
+    

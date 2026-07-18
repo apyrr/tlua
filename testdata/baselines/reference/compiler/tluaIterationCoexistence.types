@@ -1,0 +1,105 @@
+//// [tests/cases/compiler/tluaIterationCoexistence.tlua] ////
+
+=== tluaIterationCoexistence.tlua ===
+// TS iteration (`for..of`, array-literal spread, array destructuring) is
+// removed. Lua iteration remains: the generic-for drives an iterator function,
+// and a number-key table spreads and is indexed like a sequence.
+
+declare function iterStep(t: string[], i: number): (number, string?);
+>iterStep : (t: string[], i: number) => (number, string?)
+>t : string[]
+>i : number
+
+declare function ipairsLike(t: string[]): typeof iterStep;
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+>iterStep : (t: string[], i: number) => (number, string?)
+
+// Lua generic-for over an iterator function; the names take their positions
+// from the step function's return pack.
+function walk(t: string[]): number
+>walk : (t: string[]) => number
+>t : string[]
+
+  local count = 0;
+>count : number
+>0 : 0
+
+  for i, s in ipairsLike(t) do
+>i : number
+>s : string | nil
+>ipairsLike(t) : (t: string[], i: number) => (number, string?)
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+
+    count = count + i;
+>count = count + i : number
+>count : number
+>count + i : number
+>count : number
+>i : number
+
+  end
+  return count;
+>count : number
+
+end
+
+// A number-key table satisfies T[] and is indexed element-wise.
+function sum(xs: number[]): number
+>sum : (xs: number[]) => number
+>xs : number[]
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for i = 1, 3 do
+>i : number
+>1 : 1
+>3 : 3
+
+    total = total + xs[i];
+>total = total + xs[i] : number
+>total : number
+>total + xs[i] : number
+>total : number
+>xs[i] : number
+>xs : number[]
+>i : number
+
+  end
+  return total;
+>total : number
+
+end
+
+// A vararg pack collects into a number-key table with `{...}`.
+function join(sep: string, ...: string): string {
+>join : (sep: string, ...: string) => string
+>sep : string
+> : string[]
+
+  local parts: string[] = {...};
+>parts : string[]
+>{...} : { [x: number]: string; }
+>... : string | nil
+
+  return parts[1];
+>parts[1] : string
+>parts : string[]
+>1 : 1
+}
+function forward(a: string, b: string): string {
+>forward : (a: string, b: string) => string
+>a : string
+>b : string
+
+  return join(",", a, b);
+>join(",", a, b) : string
+>join : (sep: string, ...: string) => string
+>"," : ","
+>a : string
+>b : string
+}
+

@@ -1,0 +1,94 @@
+//// [tests/cases/compiler/tluaMultiReturnAssignability.tlua] ////
+
+=== tluaMultiReturnAssignability.tlua ===
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+function triple(): (number, string, boolean)
+>triple : () => (number, string, boolean)
+
+  return 1, "a", true;
+>1, "a", true : number, string, true
+>1 : 1
+>"a" : "a"
+>true : true
+
+end
+
+function one(): number
+>one : () => number
+
+  return 1;
+>1 : 1
+
+end
+
+function onePlusOptional(): (number, string?)
+>onePlusOptional : () => (number, string?)
+
+  return 1;
+>1 : 1
+
+end
+
+function allOptional(): (number?, string?)
+>allOptional : () => (number?, string?)
+
+end
+
+function nothing(): void
+>nothing : () => void
+
+end
+
+// Extra returned values are dropped at call sites: assigning a many-valued
+// function where fewer values are consumed is sound.
+local toSingle: (() => number) = pair;
+>toSingle : () => number
+>pair : () => (number, string)
+
+local toPair: typeof pair = triple;
+>toPair : () => (number, string)
+>pair : () => (number, string)
+>triple : () => (number, string, boolean)
+
+// A one-valued function satisfies a pack whose tail is optional...
+local optOk: typeof onePlusOptional = one;
+>optOk : () => (number, string?)
+>onePlusOptional : () => (number, string?)
+>one : () => number
+
+// ...but not a pack that requires two values.
+local needTwo: typeof pair = one;
+>needTwo : () => (number, string)
+>pair : () => (number, string)
+>one : () => number
+
+// Zero values only satisfy packs that require none.
+local voidOk: typeof allOptional = nothing;
+>voidOk : () => (number?, string?)
+>allOptional : () => (number?, string?)
+>nothing : () => void
+
+local voidBad: typeof pair = nothing;
+>voidBad : () => (number, string)
+>pair : () => (number, string)
+>nothing : () => void
+
+local voidBadRequired: typeof onePlusOptional = nothing;
+>voidBadRequired : () => (number, string?)
+>onePlusOptional : () => (number, string?)
+>nothing : () => void
+
+// The first value must still match.
+local firstMismatch: (() => string) = pair;
+>firstMismatch : () => string
+>pair : () => (number, string)
+

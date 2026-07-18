@@ -1,0 +1,10 @@
+// === findAllReferences ===
+// === /home/src/workspaces/project/a/a.tlua ===
+// /// <reference path="../b/b.tlua" />
+// /*FIND ALL REFS*/;
+
+
+
+// === findAllReferences ===
+// === /home/src/workspaces/project/b/b.tlua ===
+// /*FIND ALL REFS*/;

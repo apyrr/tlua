@@ -1,0 +1,44 @@
+//// [tests/cases/compiler/classExpressionWithComputedPropertyInLoop.tlua] ////
+
+=== classExpressionWithComputedPropertyInLoop.tlua ===
+// Class expression in a loop with a computed property name on an instance field.
+// The class temp variable should be block-scoped (let) to ensure each iteration
+// gets its own binding, matching the behavior when BlockScopedBindingInLoop is set.
+
+local array: any[] = [];
+>array : any[]
+>[] : any
+> : any
+> : any
+
+local key = "myKey";
+>key : string
+>"myKey" : "myKey"
+
+for i = 0, 2 do
+>i : number
+>0 : 0
+>2 : 2
+
+    array.push(class C {
+>array.push(class C {        [key] = i;        #field = i;    }) : any
+>array.push : any
+>array : any[]
+>push : any
+>class : any
+>C : any
+>{        [key] = i;        #field = i;    } : { [x: string]: number; 1: number; 2: number; }
+
+        [key] = i;
+>[key] : number
+>key : string
+>i : number
+
+        #field = i;
+>#field : number
+>field : any
+>i : any
+
+    });
+end
+

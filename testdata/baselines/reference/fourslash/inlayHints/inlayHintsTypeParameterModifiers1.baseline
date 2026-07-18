@@ -1,0 +1,47 @@
+// === Inlay Hints ===
+function test1() {
+                ^
+{
+  "position": {
+    "line": 0,
+    "character": 16
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "("
+    },
+    {
+      "value": ")"
+    },
+    {
+      "value": " => "
+    },
+    {
+      "value": "void"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+  return function <local T>(a: T) {};
+                   ^
+{
+  "position": {
+    "line": 1,
+    "character": 19
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "void"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}

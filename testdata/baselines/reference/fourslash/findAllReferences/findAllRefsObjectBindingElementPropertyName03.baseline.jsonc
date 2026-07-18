@@ -1,0 +1,19 @@
+// === findAllReferences ===
+// === /findAllRefsObjectBindingElementPropertyName03.tlua ===
+// interface I {
+//     /*FIND ALL REFS*/[|property1|]: number;
+//     property2: string;
+// }
+// 
+// local foo: I;
+// local [ { property1: prop1 }, { property1, property2 } ] = [foo, foo];
+
+
+
+// === findAllReferences ===
+// === /findAllRefsObjectBindingElementPropertyName03.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// local foo: I;
+// local [ { property1: prop1 }, { /*FIND ALL REFS*/property1, property2 } ] = [foo, foo];

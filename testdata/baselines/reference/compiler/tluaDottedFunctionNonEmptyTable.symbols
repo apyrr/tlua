@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/tluaDottedFunctionNonEmptyTable.tlua] ////
+
+=== tluaDottedFunctionNonEmptyTable.tlua ===
+local Counter = { count = 0, label = "hits" };
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+>label : Symbol(label, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 28))
+
+function Counter.bump(by: number): number
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 46))
+>by : Symbol(by, Decl(tluaDottedFunctionNonEmptyTable.tlua, 2, 22))
+
+  Counter.count = Counter.count + by;
+>Counter.count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+>Counter.count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+>by : Symbol(by, Decl(tluaDottedFunctionNonEmptyTable.tlua, 2, 22))
+
+  return Counter.count;
+>Counter.count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+
+end
+
+local total = Counter.bump(2) + Counter.count;
+>total : Symbol(total, Decl(tluaDottedFunctionNonEmptyTable.tlua, 7, 5))
+>Counter.bump : Symbol(bump, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 46))
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 46))
+>Counter.count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 17))
+
+local name = Counter.label;
+>name : Symbol(name, Decl(tluaDottedFunctionNonEmptyTable.tlua, 8, 5))
+>Counter.label : Symbol(label, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 28))
+>Counter : Symbol(Counter, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 5))
+>label : Symbol(label, Decl(tluaDottedFunctionNonEmptyTable.tlua, 0, 28))
+
+// A dotted declaration may not redeclare a field written in the table itself.
+local Clash = { run = 1 };
+>Clash : Symbol(Clash, Decl(tluaDottedFunctionNonEmptyTable.tlua, 11, 5))
+>run : Symbol(run, Decl(tluaDottedFunctionNonEmptyTable.tlua, 11, 15))
+
+function Clash.run(): void
+>Clash : Symbol(Clash, Decl(tluaDottedFunctionNonEmptyTable.tlua, 11, 5))
+>run : Symbol(run, Decl(tluaDottedFunctionNonEmptyTable.tlua, 11, 26))
+
+end
+

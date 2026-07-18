@@ -1,0 +1,108 @@
+//// [tests/cases/compiler/tluaVarargFunctionTypes.tlua] ////
+
+//// [tluaVarargFunctionTypes.tlua]
+// Callable types spell the vararg the same way as declarations.
+type Annotated = (...: string) => void;
+type Bare = (...) => void;
+type Fixed = (a: string) => void;
+
+declare annotated: Annotated;
+declare bare: Bare;
+declare fixed: Fixed;
+
+// Assignability in both directions.
+local toBare: Bare = annotated;
+local toAnnotated: Annotated = bare;
+
+// A fixed-arity function does not accept a vararg caller's extra values, but a
+// vararg function can stand in for a fixed one.
+local fixedFromVararg: Fixed = annotated;
+local varargFromFixed: Annotated = fixed;
+
+// Contextual typing of a bare `...`. With leading fixed parameters in the
+// contextual signature the pack is heterogeneous -- positionally
+// `(number, string, ...boolean)` -- and must never silently fall back to `any`.
+type H = (a: number, b: string, ...: boolean) => void;
+
+local contextual: H = function(...)
+  local first, second, third, fourth = ...;
+
+  // A positive annotation cannot catch an `any` fallback (any assigns to
+  // everything), so assert negatively: if the pack is precise, the first value
+  // is a `number` and this is an error. If it degrades to `any`, it passes.
+  local wrong: string = ...;
+end;
+
+// Return-type position disambiguation. `(...)` after `:` opens a *callable
+// type*, so this is a function returning a function.
+function mk(): (...) => void
+  return function(...): void end;
+end
+
+function mkAnnotated(): (...: string) => void
+  return function(...: string): void end;
+end
+
+// A type start after `...` makes it a pure-variadic *return pack* instead.
+function g(): (...string)
+  return "a", "b";
+end
+
+function h(): (number, ...string)
+  return 1, "a", "b";
+end
+
+// An arrow with a bare vararg, including with a return-type annotation: the
+// `(...` lookahead must not mistake these for a parenthesized vararg expression.
+local arrowBare = (...) => 1;
+local arrowTyped = (...): number => 1;
+local arrowAnnotated = (...: string): number => 1;
+
+// Every rest the *checker* synthesizes is a vararg too. An intersection of
+// signatures combines their parameters into a synthetic one whose elements have
+// no declarations to take labels from; the error below prints that signature, so
+// it pins the display: no `..._0` labels (unparseable), and the tail keeps `...`.
+type Fixed2 = (a: number, b: string) => void;
+type VarargTail = (x: number, y: string, ...: boolean) => void;
+local combined: Fixed2 & VarargTail = function(q: boolean, ...) end;
+
+
+//// [tluaVarargFunctionTypes.lua]
+-- Assignability in both directions.
+local toBare = annotated;
+local toAnnotated = bare;
+-- A fixed-arity function does not accept a vararg caller's extra values, but a
+-- vararg function can stand in for a fixed one.
+local fixedFromVararg = annotated;
+local varargFromFixed = fixed;
+local contextual = function(...)
+    local first, second, third, fourth = ...;
+    -- A positive annotation cannot catch an `any` fallback (any assigns to
+    -- everything), so assert negatively: if the pack is precise, the first value
+    -- is a `number` and this is an error. If it degrades to `any`, it passes.
+    local wrong = ...;
+end;
+-- Return-type position disambiguation. `(...)` after `:` opens a *callable
+-- type*, so this is a function returning a function.
+function mk()
+    return function(...)
+    end;
+end
+function mkAnnotated()
+    return function(...)
+    end;
+end
+-- A type start after `...` makes it a pure-variadic *return pack* instead.
+function g()
+    return "a", "b";
+end
+function h()
+    return 1, "a", "b";
+end
+-- An arrow with a bare vararg, including with a return-type annotation: the
+-- `(...` lookahead must not mistake these for a parenthesized vararg expression.
+local arrowBare = function(...) return 1 end;
+local arrowTyped = function(...) return 1 end;
+local arrowAnnotated = function(...) return 1 end;
+local combined = function(q, ...)
+end;

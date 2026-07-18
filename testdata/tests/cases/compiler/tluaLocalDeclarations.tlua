@@ -1,0 +1,15 @@
+// @strict: true
+// @target: esnext
+
+local plain;
+plain = 1;
+
+local typed: number;
+typed = plain;
+
+local initialized = typed;
+local typedInitialized: number = initialized;
+typedInitialized = typedInitialized + 1;
+
+local literal = "a";
+literal = "b";

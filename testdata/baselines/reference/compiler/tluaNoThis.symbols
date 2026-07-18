@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/tluaNoThis.tlua] ////
+
+=== tluaNoThis.tlua ===
+// The TypeScript `this` feature is removed from tlua source: Lua methods take
+// an explicit `self` parameter. Each form below decomposes into stock
+// parser-recovery errors (no tlua-specific diagnostic), exactly like the
+// class/array removals. Ordinary `x is T` predicates are unaffected.
+
+declare function use(x: unknown): void;
+>use : Symbol(use, Decl(tluaNoThis.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaNoThis.tlua, 5, 21))
+
+// `this` is not an expression; a colon method's receiver is named `self`.
+local x = this;
+>x : Symbol(x, Decl(tluaNoThis.tlua, 8, 5))
+
+// ...nor the base of a property access.
+local y = this.foo;
+>y : Symbol(y, Decl(tluaNoThis.tlua, 11, 5))
+
+// `this` parameters are gone; write an ordinary parameter instead.
+function f(this: number, a: string) {}
+>f : Symbol(f, Decl(tluaNoThis.tlua, 11, 19))
+>number : Symbol(number, Decl(tluaNoThis.tlua, 14, 16))
+>a : Symbol(a, Decl(tluaNoThis.tlua, 14, 24))
+
+// The polymorphic `this` type is gone.
+interface Poly {
+>Poly : Symbol(Poly, Decl(tluaNoThis.tlua, 14, 38))
+
+  m(): this;
+>m : Symbol(Poly.m, Decl(tluaNoThis.tlua, 17, 16))
+>this : Symbol(this)
+}
+
+// `this` in any other type position.
+type T = this;
+>T : Symbol(T, Decl(tluaNoThis.tlua, 19, 1))
+>this : Symbol(this)
+
+// `this is T` predicates are gone (ordinary `x is T` still works).
+interface Animal {
+>Animal : Symbol(Animal, Decl(tluaNoThis.tlua, 22, 14))
+
+  isDog(): this is Dog;
+>isDog : Symbol(Animal.isDog, Decl(tluaNoThis.tlua, 25, 18))
+>this : Symbol(this)
+}
+interface Dog extends Animal {
+>Dog : Symbol(Dog, Decl(tluaNoThis.tlua, 27, 1))
+>Animal : Symbol(Animal, Decl(tluaNoThis.tlua, 22, 14))
+
+  bark(): void;
+>bark : Symbol(Dog.bark, Decl(tluaNoThis.tlua, 28, 30))
+}
+
+// `asserts this is T` is gone too.
+declare function assertDog(): asserts this is Dog;
+>assertDog : Symbol(assertDog, Decl(tluaNoThis.tlua, 30, 1))
+>asserts : Symbol(asserts)
+
+// The `ThisType<T>` marker, `ThisParameterType`, and `OmitThisParameter` are
+// no longer part of the lib.
+type TT = ThisType<number>;
+>TT : Symbol(TT, Decl(tluaNoThis.tlua, 33, 50))
+>ThisType : Symbol(ThisType)
+
+type TPT = ThisParameterType<() => void>;
+>TPT : Symbol(TPT, Decl(tluaNoThis.tlua, 37, 27))
+>ThisParameterType : Symbol(ThisParameterType)
+
+type OTP = OmitThisParameter<() => void>;
+>OTP : Symbol(OTP, Decl(tluaNoThis.tlua, 38, 41))
+>OmitThisParameter : Symbol(OmitThisParameter)
+
+// `this` is not a value even in type queries: it resolves like any other
+// unresolvable name instead of typing as the receiver or global environment.
+type TQ = typeof this;
+>TQ : Symbol(TQ, Decl(tluaNoThis.tlua, 39, 41))
+
+type TQP = typeof this.foo;
+>TQP : Symbol(TQP, Decl(tluaNoThis.tlua, 43, 22))
+
+function q(self: number) {
+>q : Symbol(q, Decl(tluaNoThis.tlua, 44, 27))
+>self : Symbol(self, Decl(tluaNoThis.tlua, 45, 11))
+
+  local a: typeof this = self;
+>a : Symbol(a, Decl(tluaNoThis.tlua, 46, 7))
+>self : Symbol(self, Decl(tluaNoThis.tlua, 45, 11))
+
+  use(a);
+>use : Symbol(use, Decl(tluaNoThis.tlua, 0, 0))
+>a : Symbol(a, Decl(tluaNoThis.tlua, 46, 7))
+}
+
+use(x);
+>use : Symbol(use, Decl(tluaNoThis.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaNoThis.tlua, 8, 5))
+
+use(y);
+>use : Symbol(use, Decl(tluaNoThis.tlua, 0, 0))
+>y : Symbol(y, Decl(tluaNoThis.tlua, 11, 5))
+

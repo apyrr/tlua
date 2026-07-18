@@ -1,0 +1,434 @@
+currentDirectory::/home/src/workspaces/project
+useCaseSensitiveFileNames::true
+Input::
+//// [/home/src/tslibs/TS/Lib/lib.d.tlua] *new* 
+/// <reference no-default-lib="true"/>
+interface Boolean {}
+interface Function {}
+interface CallableFunction {}
+interface NewableFunction {}
+interface IArguments {}
+interface Number { toExponential: any; }
+interface Object {}
+interface RegExp {}
+interface String { charAt: any; }
+interface Array<T> { length: number; [n: number]: T; }
+interface ReadonlyArray<T> {}
+interface SymbolConstructor {
+    (desc?: string | number): symbol;
+    for(name: string): symbol;
+    readonly toStringTag: symbol;
+}
+declare Symbol: SymbolConstructor;
+interface Symbol {
+    readonly [Symbol.toStringTag]: string;
+}
+declare console: { log(msg: any): void; };
+declare function require(module: string): any;
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;
+//// [/home/src/workspaces/project/MessageablePerson.tlua] *new* 
+local Messageable = () => {
+    return {
+        message: 'hello' as string,
+    }
+};
+local wrapper = () => Messageable();
+type MessageablePerson = ReturnType<typeof wrapper>;
+//// [/home/src/workspaces/project/main.tlua] *new* 
+function logMessage( person: MessageablePerson ) {
+    console.log( person.message );
+}
+//// [/home/src/workspaces/project/tsconfig.json] *new* 
+{ 
+    "compilerOptions": { 
+        "module": "esnext"
+    }
+}
+
+tlua --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
+Output::
+[96mMessageablePerson.tlua[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m3[0m         message: 'hello' as string,
+[7m [0m [91m               ~[0m
+
+
+Found 1 error in MessageablePerson.tlua[90m:3[0m
+
+//// [/home/src/tslibs/TS/Lib/lib.luajit.d.tlua] *Lib*
+/// <reference no-default-lib="true"/>
+interface Boolean {}
+interface Function {}
+interface CallableFunction {}
+interface NewableFunction {}
+interface IArguments {}
+interface Number { toExponential: any; }
+interface Object {}
+interface RegExp {}
+interface String { charAt: any; }
+interface Array<T> { length: number; [n: number]: T; }
+interface ReadonlyArray<T> {}
+interface SymbolConstructor {
+    (desc?: string | number): symbol;
+    for(name: string): symbol;
+    readonly toStringTag: symbol;
+}
+declare Symbol: SymbolConstructor;
+interface Symbol {
+    readonly [Symbol.toStringTag]: string;
+}
+declare console: { log(msg: any): void; };
+declare function require(module: string): any;
+//// [/home/src/workspaces/project/MessageablePerson.lua] *new* 
+local Messageable = function()
+    return {
+        message, 'hello' as string,
+    };
+end;
+local wrapper = function() return (Messageable()) end;
+
+//// [/home/src/workspaces/project/main.lua] *new* 
+function logMessage(person) {
+    console.log(person.message);
+}
+
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
+{"version":"FakeTSVersion","errors":true,"root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./MessageablePerson.tlua","./main.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"2dfc7c7b63ae101bafb51e02252302ae-local Messageable = () => {\n    return {\n        message: 'hello' as string,\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;","0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"options":{"module":99},"semanticDiagnosticsPerFile":[1,2,3]}
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
+{
+  "version": "FakeTSVersion",
+  "errors": true,
+  "root": [
+    {
+      "files": [
+        "./MessageablePerson.tlua",
+        "./main.tlua"
+      ],
+      "original": [
+        2,
+        3
+      ]
+    }
+  ],
+  "fileNames": [
+    "lib.luajit.d.tlua",
+    "./MessageablePerson.tlua",
+    "./main.tlua"
+  ],
+  "fileInfos": [
+    {
+      "fileName": "lib.luajit.d.tlua",
+      "version": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+      "signature": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+      "affectsGlobalScope": true,
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+        "affectsGlobalScope": true,
+        "impliedNodeFormat": 1
+      }
+    },
+    {
+      "fileName": "./MessageablePerson.tlua",
+      "version": "2dfc7c7b63ae101bafb51e02252302ae-local Messageable = () => {\n    return {\n        message: 'hello' as string,\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;",
+      "signature": "2dfc7c7b63ae101bafb51e02252302ae-local Messageable = () => {\n    return {\n        message: 'hello' as string,\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;",
+      "impliedNodeFormat": "CommonJS"
+    },
+    {
+      "fileName": "./main.tlua",
+      "version": "0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
+      "signature": "0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
+      "impliedNodeFormat": "CommonJS"
+    }
+  ],
+  "options": {
+    "module": 99
+  },
+  "semanticDiagnosticsPerFile": [
+    "lib.luajit.d.tlua",
+    "./MessageablePerson.tlua",
+    "./main.tlua"
+  ],
+  "size": 1356
+}
+
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.luajit.d.tlua
+*not cached* /home/src/workspaces/project/MessageablePerson.tlua
+*not cached* /home/src/workspaces/project/main.tlua
+Signatures::
+
+
+Edit [0]:: no change
+
+tlua --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
+Output::
+[96mMessageablePerson.tlua[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m3[0m         message: 'hello' as string,
+[7m [0m [91m               ~[0m
+
+
+Found 1 error in MessageablePerson.tlua[90m:3[0m
+
+
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.luajit.d.tlua
+*not cached* /home/src/workspaces/project/MessageablePerson.tlua
+*not cached* /home/src/workspaces/project/main.tlua
+Signatures::
+
+
+Edit [1]:: narrow message to a literal type
+//// [/home/src/workspaces/project/MessageablePerson.tlua] *modified* 
+local Messageable = () => {
+    return {
+        message: 'hello' as 'hello',
+    }
+};
+local wrapper = () => Messageable();
+type MessageablePerson = ReturnType<typeof wrapper>;
+
+tlua --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
+Output::
+[96mMessageablePerson.tlua[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m3[0m         message: 'hello' as 'hello',
+[7m [0m [91m               ~[0m
+
+
+Found 1 error in MessageablePerson.tlua[90m:3[0m
+
+//// [/home/src/workspaces/project/MessageablePerson.lua] *modified* 
+local Messageable = function()
+    return {
+        message, 'hello' as 'hello',
+    };
+end;
+local wrapper = function() return (Messageable()) end;
+
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
+{"version":"FakeTSVersion","errors":true,"root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./MessageablePerson.tlua","./main.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"ac174b1cd471f4fd29b46b424fd87f8e-local Messageable = () => {\n    return {\n        message: 'hello' as 'hello',\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"options":{"module":99},"semanticDiagnosticsPerFile":[1,2,3]}
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
+{
+  "version": "FakeTSVersion",
+  "errors": true,
+  "root": [
+    {
+      "files": [
+        "./MessageablePerson.tlua",
+        "./main.tlua"
+      ],
+      "original": [
+        2,
+        3
+      ]
+    }
+  ],
+  "fileNames": [
+    "lib.luajit.d.tlua",
+    "./MessageablePerson.tlua",
+    "./main.tlua"
+  ],
+  "fileInfos": [
+    {
+      "fileName": "lib.luajit.d.tlua",
+      "version": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+      "signature": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+      "affectsGlobalScope": true,
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+        "affectsGlobalScope": true,
+        "impliedNodeFormat": 1
+      }
+    },
+    {
+      "fileName": "./MessageablePerson.tlua",
+      "version": "ac174b1cd471f4fd29b46b424fd87f8e-local Messageable = () => {\n    return {\n        message: 'hello' as 'hello',\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;",
+      "signature": "59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "ac174b1cd471f4fd29b46b424fd87f8e-local Messageable = () => {\n    return {\n        message: 'hello' as 'hello',\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;",
+        "signature": "59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
+        "impliedNodeFormat": 1
+      }
+    },
+    {
+      "fileName": "./main.tlua",
+      "version": "0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
+      "signature": "0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
+      "impliedNodeFormat": "CommonJS"
+    }
+  ],
+  "options": {
+    "module": 99
+  },
+  "semanticDiagnosticsPerFile": [
+    "lib.luajit.d.tlua",
+    "./MessageablePerson.tlua",
+    "./main.tlua"
+  ],
+  "size": 1524
+}
+
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.luajit.d.tlua
+*not cached* /home/src/workspaces/project/MessageablePerson.tlua
+*not cached* /home/src/workspaces/project/main.tlua
+Signatures::
+(computed .d.ts) /home/src/workspaces/project/MessageablePerson.tlua
+
+
+Edit [2]:: no change
+
+tlua --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
+Output::
+[96mMessageablePerson.tlua[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m3[0m         message: 'hello' as 'hello',
+[7m [0m [91m               ~[0m
+
+
+Found 1 error in MessageablePerson.tlua[90m:3[0m
+
+
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.luajit.d.tlua
+*not cached* /home/src/workspaces/project/MessageablePerson.tlua
+*not cached* /home/src/workspaces/project/main.tlua
+Signatures::
+
+
+Edit [3]:: widen message back to string
+//// [/home/src/workspaces/project/MessageablePerson.tlua] *modified* 
+local Messageable = () => {
+    return {
+        message: 'hello' as string,
+    }
+};
+local wrapper = () => Messageable();
+type MessageablePerson = ReturnType<typeof wrapper>;
+
+tlua --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
+Output::
+[96mMessageablePerson.tlua[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m3[0m         message: 'hello' as string,
+[7m [0m [91m               ~[0m
+
+
+Found 1 error in MessageablePerson.tlua[90m:3[0m
+
+//// [/home/src/workspaces/project/MessageablePerson.lua] *modified* 
+local Messageable = function()
+    return {
+        message, 'hello' as string,
+    };
+end;
+local wrapper = function() return (Messageable()) end;
+
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
+{"version":"FakeTSVersion","errors":true,"root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./MessageablePerson.tlua","./main.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"2dfc7c7b63ae101bafb51e02252302ae-local Messageable = () => {\n    return {\n        message: 'hello' as string,\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"options":{"module":99},"semanticDiagnosticsPerFile":[1,2,3]}
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
+{
+  "version": "FakeTSVersion",
+  "errors": true,
+  "root": [
+    {
+      "files": [
+        "./MessageablePerson.tlua",
+        "./main.tlua"
+      ],
+      "original": [
+        2,
+        3
+      ]
+    }
+  ],
+  "fileNames": [
+    "lib.luajit.d.tlua",
+    "./MessageablePerson.tlua",
+    "./main.tlua"
+  ],
+  "fileInfos": [
+    {
+      "fileName": "lib.luajit.d.tlua",
+      "version": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+      "signature": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+      "affectsGlobalScope": true,
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;",
+        "affectsGlobalScope": true,
+        "impliedNodeFormat": 1
+      }
+    },
+    {
+      "fileName": "./MessageablePerson.tlua",
+      "version": "2dfc7c7b63ae101bafb51e02252302ae-local Messageable = () => {\n    return {\n        message: 'hello' as string,\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;",
+      "signature": "59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "2dfc7c7b63ae101bafb51e02252302ae-local Messageable = () => {\n    return {\n        message: 'hello' as string,\n    }\n};\nlocal wrapper = () => Messageable();\ntype MessageablePerson = ReturnType<typeof wrapper>;",
+        "signature": "59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
+        "impliedNodeFormat": 1
+      }
+    },
+    {
+      "fileName": "./main.tlua",
+      "version": "0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
+      "signature": "0806657dce6b2dee513d74e4380386d0-function logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
+      "impliedNodeFormat": "CommonJS"
+    }
+  ],
+  "options": {
+    "module": 99
+  },
+  "semanticDiagnosticsPerFile": [
+    "lib.luajit.d.tlua",
+    "./MessageablePerson.tlua",
+    "./main.tlua"
+  ],
+  "size": 1523
+}
+
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.luajit.d.tlua
+*not cached* /home/src/workspaces/project/MessageablePerson.tlua
+*not cached* /home/src/workspaces/project/main.tlua
+Signatures::
+(computed .d.ts) /home/src/workspaces/project/MessageablePerson.tlua
+
+
+Edit [4]:: no change
+
+tlua --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
+Output::
+[96mMessageablePerson.tlua[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m3[0m         message: 'hello' as string,
+[7m [0m [91m               ~[0m
+
+
+Found 1 error in MessageablePerson.tlua[90m:3[0m
+
+
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.luajit.d.tlua
+*not cached* /home/src/workspaces/project/MessageablePerson.tlua
+*not cached* /home/src/workspaces/project/main.tlua
+Signatures::

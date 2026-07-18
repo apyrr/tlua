@@ -1,0 +1,7 @@
+// === goToImplementation ===
+// === /goToImplementationInterface_01.tlua ===
+// interface Fo/*GOTO IMPL*/o { hello(): void }
+// 
+// class SuperBar implements Foo {
+//     hello () {}
+// --- (line: 5) skipped ---

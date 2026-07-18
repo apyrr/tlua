@@ -1,0 +1,62 @@
+//// [tests/cases/compiler/tluaLocalTypeDisambiguation.tlua] ////
+
+=== vars.tlua ===
+// `local type` is only a type declaration when an identifier follows on the same
+// line. `type` is a contextual keyword, so it stays a plain variable name here.
+// (`interface` is a reserved word and can never be a variable, so there is no
+// analogous `local interface = ...` ambiguity to resolve.)
+local type = 5;
+>type : Symbol(type, Decl(vars.tlua, 4, 5))
+
+local n: number = type;
+>n : Symbol(n, Decl(vars.tlua, 5, 5))
+>type : Symbol(type, Decl(vars.tlua, 4, 5))
+
+// A type annotation after the name keeps it a variable, not a type alias.
+local type2: number = 7;
+>type2 : Symbol(type2, Decl(vars.tlua, 8, 5))
+
+// Names that merely start with `type`/`interface` are unaffected.
+local typeName = 1;
+>typeName : Symbol(typeName, Decl(vars.tlua, 11, 5))
+
+local interfaces = 2;
+>interfaces : Symbol(interfaces, Decl(vars.tlua, 12, 5))
+
+=== sameline.tlua ===
+// The identifier must be on the SAME line: with a line break the keyword is a
+// variable name and the next line is a separate statement.
+local type
+>type : Symbol(type, Decl(sameline.tlua, 2, 5))
+
+Name = 3;
+>Name : Symbol(Name, Decl(sameline.tlua, 2, 10))
+
+=== generics.tlua ===
+// Generic `local type`/`local interface` carry their type parameters through.
+local type Box<T> = { value: T };
+>Box : Symbol(Box, Decl(generics.tlua, 0, 0))
+>T : Symbol(T, Decl(generics.tlua, 1, 15))
+>value : Symbol(value, Decl(generics.tlua, 1, 21))
+>T : Symbol(T, Decl(generics.tlua, 1, 15))
+
+local interface Pair<A, B> { first: A, second: B };
+>Pair : Symbol(Pair, Decl(generics.tlua, 1, 33))
+>A : Symbol(A, Decl(generics.tlua, 2, 21))
+>B : Symbol(B, Decl(generics.tlua, 2, 23))
+>first : Symbol(Pair.first, Decl(generics.tlua, 2, 28))
+>A : Symbol(A, Decl(generics.tlua, 2, 21))
+>second : Symbol(Pair.second, Decl(generics.tlua, 2, 38))
+>B : Symbol(B, Decl(generics.tlua, 2, 23))
+
+local b: Box<number> = { value = 1 };
+>b : Symbol(b, Decl(generics.tlua, 3, 5))
+>Box : Symbol(Box, Decl(generics.tlua, 0, 0))
+>value : Symbol(value, Decl(generics.tlua, 3, 24))
+
+local p: Pair<number, string> = { first = 1, second = "x" };
+>p : Symbol(p, Decl(generics.tlua, 4, 5))
+>Pair : Symbol(Pair, Decl(generics.tlua, 1, 33))
+>first : Symbol(first, Decl(generics.tlua, 4, 33))
+>second : Symbol(second, Decl(generics.tlua, 4, 44))
+

@@ -1,0 +1,1307 @@
+// === QuickInfo ===
+=== /hoverOptionalMembers.tlua ===
+// 
+// type Foo1 = {
+//     x?: string;
+//     f?: (x: number) => void;
+//     g?: { (x: number): void; (x: string): void; }
+//     h?: ((x: number) => void) & ((x: string) => void);
+//     m?(x: number): void;
+//     m?(x: string): void;
+// }
+// 
+// interface Foo2 {
+//     x?: string;
+//     f?: (x: number) => void;
+//     g?: { (x: number): void; (x: string): void; }
+//     h?: ((x: number) => void) & ((x: string) => void);
+//     m?(x: number): void;
+//     m?(x: string): void;
+// }
+// 
+// class Foo3 {
+//     x?: string;
+//     f?: (x: number) => void;
+//     g?: { (x: number): void; (x: string): void; }
+//     h?: ((x: number) => void) & ((x: string) => void);
+//     m?(x: number): void;
+//     m?(x: string): void;
+// }
+// 
+// declare foo1: Foo1;
+// declare foo2: Foo2;
+// declare foo3: Foo3;
+// 
+// foo1.x
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) x?: string | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.f
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) f?: ((x: number) => void) | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.f?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) f?: (x: number) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.g
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) g?: {
+// |     (x: number): void;
+// |     (x: string): void;
+// | } | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.g?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) g?: (x: number) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.g?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) g?: (x: string) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.h
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) h?: (((x: number) => void) & ((x: string) => void)) | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.h?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) h?: (x: number) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.h?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) h?: (x: string) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.m
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) m?(x: number): void
+// | (method) m?(x: string): void
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.m?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) m?(x: number): void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo1.m?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) m?(x: string): void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+// foo2.x
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.x?: string | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.f
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.f?: ((x: number) => void) | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.f?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.f?: (x: number) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.g
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.g?: {
+// |     (x: number): void;
+// |     (x: string): void;
+// | } | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.g?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.g?: (x: number) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.g?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.g?: (x: string) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.h
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.h?: (((x: number) => void) & ((x: string) => void)) | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.h?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.h?: (x: number) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.h?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Foo2.h?: (x: string) => void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.m
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) Foo2.m?(x: number): void
+// | (method) Foo2.m?(x: string): void
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.m?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) Foo2.m?(x: number): void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo2.m?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) Foo2.m?(x: string): void | nil
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+// foo3.x
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.f
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.f?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.g
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.g?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.g?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.h
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.h?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.h?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.m
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.m?.(42)
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foo3.m?.("abc")
+//      ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 720,
+      "LSPosition": {
+        "line": 32,
+        "character": 5
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) x?: string | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 32,
+          "character": 5
+        },
+        "end": {
+          "line": 32,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 727,
+      "LSPosition": {
+        "line": 33,
+        "character": 5
+      },
+      "Name": "1a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) f?: ((x: number) => void) | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 33,
+          "character": 5
+        },
+        "end": {
+          "line": 33,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 734,
+      "LSPosition": {
+        "line": 34,
+        "character": 5
+      },
+      "Name": "1b",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) f?: (x: number) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 34,
+          "character": 5
+        },
+        "end": {
+          "line": 34,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 747,
+      "LSPosition": {
+        "line": 35,
+        "character": 5
+      },
+      "Name": "1c",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) g?: {\n    (x: number): void;\n    (x: string): void;\n} | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 35,
+          "character": 5
+        },
+        "end": {
+          "line": 35,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 754,
+      "LSPosition": {
+        "line": 36,
+        "character": 5
+      },
+      "Name": "1d",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) g?: (x: number) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 36,
+          "character": 5
+        },
+        "end": {
+          "line": 36,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 767,
+      "LSPosition": {
+        "line": 37,
+        "character": 5
+      },
+      "Name": "1e",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) g?: (x: string) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 37,
+          "character": 5
+        },
+        "end": {
+          "line": 37,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 783,
+      "LSPosition": {
+        "line": 38,
+        "character": 5
+      },
+      "Name": "1f",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) h?: (((x: number) => void) & ((x: string) => void)) | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 38,
+          "character": 5
+        },
+        "end": {
+          "line": 38,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 790,
+      "LSPosition": {
+        "line": 39,
+        "character": 5
+      },
+      "Name": "1g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) h?: (x: number) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 39,
+          "character": 5
+        },
+        "end": {
+          "line": 39,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 803,
+      "LSPosition": {
+        "line": 40,
+        "character": 5
+      },
+      "Name": "1h",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) h?: (x: string) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 40,
+          "character": 5
+        },
+        "end": {
+          "line": 40,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 819,
+      "LSPosition": {
+        "line": 41,
+        "character": 5
+      },
+      "Name": "1i",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) m?(x: number): void\n(method) m?(x: string): void\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 41,
+          "character": 5
+        },
+        "end": {
+          "line": 41,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 826,
+      "LSPosition": {
+        "line": 42,
+        "character": 5
+      },
+      "Name": "1j",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) m?(x: number): void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 42,
+          "character": 5
+        },
+        "end": {
+          "line": 42,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 839,
+      "LSPosition": {
+        "line": 43,
+        "character": 5
+      },
+      "Name": "1k",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) m?(x: string): void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 43,
+          "character": 5
+        },
+        "end": {
+          "line": 43,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 856,
+      "LSPosition": {
+        "line": 45,
+        "character": 5
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.x?: string | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 45,
+          "character": 5
+        },
+        "end": {
+          "line": 45,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 863,
+      "LSPosition": {
+        "line": 46,
+        "character": 5
+      },
+      "Name": "2a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.f?: ((x: number) => void) | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 46,
+          "character": 5
+        },
+        "end": {
+          "line": 46,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 870,
+      "LSPosition": {
+        "line": 47,
+        "character": 5
+      },
+      "Name": "2b",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.f?: (x: number) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 47,
+          "character": 5
+        },
+        "end": {
+          "line": 47,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 883,
+      "LSPosition": {
+        "line": 48,
+        "character": 5
+      },
+      "Name": "2c",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.g?: {\n    (x: number): void;\n    (x: string): void;\n} | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 48,
+          "character": 5
+        },
+        "end": {
+          "line": 48,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 890,
+      "LSPosition": {
+        "line": 49,
+        "character": 5
+      },
+      "Name": "2d",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.g?: (x: number) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 49,
+          "character": 5
+        },
+        "end": {
+          "line": 49,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 903,
+      "LSPosition": {
+        "line": 50,
+        "character": 5
+      },
+      "Name": "2e",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.g?: (x: string) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 50,
+          "character": 5
+        },
+        "end": {
+          "line": 50,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 919,
+      "LSPosition": {
+        "line": 51,
+        "character": 5
+      },
+      "Name": "2f",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.h?: (((x: number) => void) & ((x: string) => void)) | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 51,
+          "character": 5
+        },
+        "end": {
+          "line": 51,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 926,
+      "LSPosition": {
+        "line": 52,
+        "character": 5
+      },
+      "Name": "2g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.h?: (x: number) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 52,
+          "character": 5
+        },
+        "end": {
+          "line": 52,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 939,
+      "LSPosition": {
+        "line": 53,
+        "character": 5
+      },
+      "Name": "2h",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) Foo2.h?: (x: string) => void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 53,
+          "character": 5
+        },
+        "end": {
+          "line": 53,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 955,
+      "LSPosition": {
+        "line": 54,
+        "character": 5
+      },
+      "Name": "2i",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) Foo2.m?(x: number): void\n(method) Foo2.m?(x: string): void\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 54,
+          "character": 5
+        },
+        "end": {
+          "line": 54,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 962,
+      "LSPosition": {
+        "line": 55,
+        "character": 5
+      },
+      "Name": "2j",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) Foo2.m?(x: number): void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 55,
+          "character": 5
+        },
+        "end": {
+          "line": 55,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 975,
+      "LSPosition": {
+        "line": 56,
+        "character": 5
+      },
+      "Name": "2k",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) Foo2.m?(x: string): void | nil\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 56,
+          "character": 5
+        },
+        "end": {
+          "line": 56,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 992,
+      "LSPosition": {
+        "line": 58,
+        "character": 5
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 58,
+          "character": 5
+        },
+        "end": {
+          "line": 58,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 999,
+      "LSPosition": {
+        "line": 59,
+        "character": 5
+      },
+      "Name": "3a",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 59,
+          "character": 5
+        },
+        "end": {
+          "line": 59,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1006,
+      "LSPosition": {
+        "line": 60,
+        "character": 5
+      },
+      "Name": "3b",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 60,
+          "character": 5
+        },
+        "end": {
+          "line": 60,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1019,
+      "LSPosition": {
+        "line": 61,
+        "character": 5
+      },
+      "Name": "3c",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 61,
+          "character": 5
+        },
+        "end": {
+          "line": 61,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1026,
+      "LSPosition": {
+        "line": 62,
+        "character": 5
+      },
+      "Name": "3d",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 62,
+          "character": 5
+        },
+        "end": {
+          "line": 62,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1039,
+      "LSPosition": {
+        "line": 63,
+        "character": 5
+      },
+      "Name": "3e",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 63,
+          "character": 5
+        },
+        "end": {
+          "line": 63,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1055,
+      "LSPosition": {
+        "line": 64,
+        "character": 5
+      },
+      "Name": "3f",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 64,
+          "character": 5
+        },
+        "end": {
+          "line": 64,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1062,
+      "LSPosition": {
+        "line": 65,
+        "character": 5
+      },
+      "Name": "3g",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 65,
+          "character": 5
+        },
+        "end": {
+          "line": 65,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1075,
+      "LSPosition": {
+        "line": 66,
+        "character": 5
+      },
+      "Name": "3h",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 66,
+          "character": 5
+        },
+        "end": {
+          "line": 66,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1091,
+      "LSPosition": {
+        "line": 67,
+        "character": 5
+      },
+      "Name": "3i",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 67,
+          "character": 5
+        },
+        "end": {
+          "line": 67,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1098,
+      "LSPosition": {
+        "line": 68,
+        "character": 5
+      },
+      "Name": "3j",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 68,
+          "character": 5
+        },
+        "end": {
+          "line": 68,
+          "character": 6
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1111,
+      "LSPosition": {
+        "line": 69,
+        "character": 5
+      },
+      "Name": "3k",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 69,
+          "character": 5
+        },
+        "end": {
+          "line": 69,
+          "character": 6
+        }
+      }
+    }
+  }
+]

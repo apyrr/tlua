@@ -1,0 +1,754 @@
+//// [tests/cases/compiler/tluaGlobalTable.tlua] ////
+
+=== declarations.tlua ===
+declare global {
+>global : typeof global
+
+    function use(x: unknown): void;
+>use : (x: unknown) => void
+>x : unknown
+
+    function getMaybeNumber(): number | nil;
+>getMaybeNumber : () => number | nil
+
+    declare declared: number;
+>declared : number
+
+    declare existingFunction: (x: number) => number;
+>existingFunction : (x: number) => number
+>x : number
+
+    declare hidden: string | nil;
+>hidden : string | nil
+
+    namespace _G {
+>namespace : any
+>_G : typeof _G
+
+        declare rejectedEnvironmentMember: number;
+>rejectedEnvironmentMember : number
+    }
+}
+
+=== writes.tlua ===
+_G.fromDot = 1;
+>_G.fromDot = 1 : 1
+>_G.fromDot : number
+>_G : typeof _G
+>fromDot : number
+>1 : 1
+
+_G["fromElement"] = "text";
+>_G["fromElement"] = "text" : "text"
+>_G["fromElement"] : string
+>_G : typeof _G
+>"fromElement" : "fromElement"
+>"text" : "text"
+
+function _G.fromFunction(x: number): number
+>_G : typeof _G
+>fromFunction : (x: number) => number
+>x : number
+
+    return x;
+>x : number
+
+end
+
+// A type-only global can share its name with one implicit global function.
+interface pairedGlobal {}
+function _G.pairedGlobal(x: number): number
+>_G : typeof _G
+>pairedGlobal : (x: number) => number
+>x : number
+
+    return x;
+>x : number
+
+end
+
+function _G.existingFunction(x: string): string
+>_G : typeof _G
+>existingFunction : (x: string) => string
+>x : string
+
+    return x;
+>x : string
+
+end
+
+// Collisions with a type-only global recover on the final merged symbol.
+interface dup {}
+function _G.dup(): void end
+>_G : typeof _G
+>dup : any
+
+function _G.dup(): void end
+>_G : typeof _G
+>dup : any
+
+// Function syntax and ordinary assignment collide when they jointly declare
+// an otherwise missing global.
+function _G.mixedGlobal(): void end
+>_G : typeof _G
+>mixedGlobal : any
+
+_G.mixedGlobal = 1;
+>_G.mixedGlobal = 1 : 1
+>_G.mixedGlobal : any
+>_G : typeof _G
+>mixedGlobal : any
+>1 : 1
+
+bareTable = _G.bareTable or {};
+>bareTable = _G.bareTable or {} : { fromQualified: number; }
+>bareTable : { fromQualified: number; }
+>_G.bareTable or {} : { fromQualified: number; }
+>_G.bareTable : { fromQualified: number; }
+>_G : typeof _G
+>bareTable : { fromQualified: number; }
+>{} : { fromQualified: number; }
+
+_G.bareTable.fromQualified = 1;
+>_G.bareTable.fromQualified = 1 : 1
+>_G.bareTable.fromQualified : number
+>_G.bareTable : { fromQualified: number; }
+>_G : typeof _G
+>bareTable : { fromQualified: number; }
+>fromQualified : number
+>1 : 1
+
+qualifiedTable = _G.qualifiedTable or {};
+>qualifiedTable = _G.qualifiedTable or {} : { fromBare: string; }
+>qualifiedTable : { fromBare: string; }
+>_G.qualifiedTable or {} : { fromBare: string; }
+>_G.qualifiedTable : { fromBare: string; }
+>_G : typeof _G
+>qualifiedTable : { fromBare: string; }
+>{} : { fromBare: string; }
+
+qualifiedTable.fromBare = "text";
+>qualifiedTable.fromBare = "text" : "text"
+>qualifiedTable.fromBare : string
+>qualifiedTable : { fromBare: string; }
+>fromBare : string
+>"text" : "text"
+
+// Repeated environment self-access still reaches the canonical global table.
+_G._G.repeatedGlobal = 1;
+>_G._G.repeatedGlobal = 1 : 1
+>_G._G.repeatedGlobal : number
+>_G._G : typeof _G
+>_G : typeof _G
+>_G : typeof _G
+>repeatedGlobal : number
+>1 : 1
+
+function _G._G.repeatedFunction(x: number): number
+>_G._G : typeof _G
+>_G : typeof _G
+>_G : typeof _G
+>repeatedFunction : (x: number) => number
+>x : number
+
+    return x;
+>x : number
+
+end
+
+// Deep mixed-spelling guards describe the same canonical entity.
+deepTable = {};
+>deepTable = {} : { value: number; object: { member: string; }; }
+>deepTable : { value: number; object: { member: string; }; }
+>{} : { value: number; object: { member: string; }; }
+
+_G.deepTable.value = deepTable.value or 1;
+>_G.deepTable.value = deepTable.value or 1 : number
+>_G.deepTable.value : number
+>_G.deepTable : { value: number; object: { member: string; }; }
+>_G : typeof _G
+>deepTable : { value: number; object: { member: string; }; }
+>value : number
+>deepTable.value or 1 : number
+>deepTable.value : number
+>deepTable : { value: number; object: { member: string; }; }
+>value : number
+>1 : 1
+
+_G.deepTable.object = deepTable.object or {};
+>_G.deepTable.object = deepTable.object or {} : { member: string; }
+>_G.deepTable.object : { member: string; }
+>_G.deepTable : { value: number; object: { member: string; }; }
+>_G : typeof _G
+>deepTable : { value: number; object: { member: string; }; }
+>object : { member: string; }
+>deepTable.object or {} : { member: string; }
+>deepTable.object : { member: string; }
+>deepTable : { value: number; object: { member: string; }; }
+>object : { member: string; }
+>{} : { member: string; }
+
+_G.deepTable.object.member = "ok";
+>_G.deepTable.object.member = "ok" : "ok"
+>_G.deepTable.object.member : string
+>_G.deepTable.object : { member: string; }
+>_G.deepTable : { value: number; object: { member: string; }; }
+>_G : typeof _G
+>deepTable : { value: number; object: { member: string; }; }
+>object : { member: string; }
+>member : string
+>"ok" : "ok"
+
+// A same-named lexical local is not the global guard entity.
+local shadowedGuard = getMaybeNumber();
+>shadowedGuard : number | nil
+>getMaybeNumber() : number | nil
+>getMaybeNumber : () => number | nil
+
+_G.shadowedGuard = shadowedGuard or "default";
+>_G.shadowedGuard = shadowedGuard or "default" : number | "default"
+>_G.shadowedGuard : string | number
+>_G : typeof _G
+>shadowedGuard : string | number
+>shadowedGuard or "default" : number | "default"
+>shadowedGuard : number | nil
+>"default" : "default"
+
+local pending: string;
+>pending : string
+
+_G.pending = pending or "default";
+>_G.pending = pending or "default" : string
+>_G.pending : string
+>_G : typeof _G
+>pending : string
+>pending or "default" : string
+>pending : string
+>"default" : "default"
+
+=== reads.tlua ===
+local n: number = fromDot;
+>n : number
+>fromDot : number
+
+local s: string = fromElement;
+>s : string
+>fromElement : string
+
+local fnResult: number = fromFunction(1);
+>fnResult : number
+>fromFunction(1) : number
+>fromFunction : (x: number) => number
+>1 : 1
+
+local pairedResult: number = pairedGlobal(1);
+>pairedResult : number
+>pairedGlobal(1) : number
+>pairedGlobal : (x: number) => number
+>1 : 1
+
+local existingFnResult: number = existingFunction(1);
+>existingFnResult : number
+>existingFunction(1) : number
+>existingFunction : (x: number) => number
+>1 : 1
+
+local declaredValue: number = _G.declared;
+>declaredValue : number
+>_G.declared : any
+>_G : typeof _G
+>declared : any
+
+_G.declared = "wrong";
+>_G.declared = "wrong" : "wrong"
+>_G.declared : any
+>_G : typeof _G
+>declared : any
+>"wrong" : "wrong"
+
+_G = {};
+>_G = {} : {}
+>_G : any
+>{} : {}
+
+local qualifiedMember: number = bareTable.fromQualified;
+>qualifiedMember : number
+>bareTable.fromQualified : number
+>bareTable : { fromQualified: number; }
+>fromQualified : number
+
+local bareMember: string = _G.qualifiedTable.fromBare;
+>bareMember : string
+>_G.qualifiedTable.fromBare : string
+>_G.qualifiedTable : { fromBare: string; }
+>_G : typeof _G
+>qualifiedTable : { fromBare: string; }
+>fromBare : string
+
+local environment: typeof _G = _G._G;
+>environment : typeof _G
+>_G : typeof _G
+>_G._G : typeof _G
+>_G : typeof _G
+>_G : typeof _G
+
+local repeatedValue: number = repeatedGlobal;
+>repeatedValue : number
+>repeatedGlobal : number
+
+local repeatedFunctionResult: number = repeatedFunction(1);
+>repeatedFunctionResult : number
+>repeatedFunction(1) : number
+>repeatedFunction : (x: number) => number
+>1 : 1
+
+local deepValue: number = deepTable.value;
+>deepValue : number
+>deepTable.value : number
+>deepTable : { value: number; object: { member: string; }; }
+>value : number
+
+local deepMember: string = deepTable.object.member;
+>deepMember : string
+>deepTable.object.member : string
+>deepTable.object : { member: string; }
+>deepTable : { value: number; object: { member: string; }; }
+>object : { member: string; }
+>member : string
+
+local guardUnion: number | string = _G.shadowedGuard;
+>guardUnion : string | number
+>_G.shadowedGuard : string | number
+>_G : typeof _G
+>shadowedGuard : string | number
+
+local dupValue = dup;
+>dupValue : any
+>dup : any
+
+local mixedValue = mixedGlobal;
+>mixedValue : any
+>mixedGlobal : any
+
+local printFunction: () => void = _G.print;
+>printFunction : () => void
+>_G.print : (...: any) => void
+>_G : typeof _G
+>print : (...: any) => void
+
+use(_G.rejectedEnvironmentMember);
+>use(_G.rejectedEnvironmentMember) : void
+>use : (x: unknown) => void
+>_G.rejectedEnvironmentMember : any
+>_G : typeof _G
+>rejectedEnvironmentMember : any
+
+// A declared global is a property of the environment under both spellings,
+// and narrowing one spelling does not leak through a write to the other
+// (the write itself errors: declared globals are read-only).
+use(_G.hidden);
+>use(_G.hidden) : void
+>use : (x: unknown) => void
+>_G.hidden : any
+>_G : typeof _G
+>hidden : any
+
+use(_G["hidden"]);
+>use(_G["hidden"]) : void
+>use : (x: unknown) => void
+>_G["hidden"] : any
+>_G : typeof _G
+>"hidden" : "hidden"
+
+if hidden ~= nil then
+>hidden ~= nil : boolean
+>hidden : string | nil
+
+    _G.hidden = nil;
+>_G.hidden = nil : nil
+>_G.hidden : any
+>_G : typeof _G
+>hidden : any
+
+    local stillNarrowed: string = hidden;
+>stillNarrowed : string
+>hidden : string
+
+    use(stillNarrowed);
+>use(stillNarrowed) : void
+>use : (x: unknown) => void
+>stillNarrowed : string
+
+end
+
+// `globalThis` is no longer compiler-provided.
+use(globalThis);
+>use(globalThis) : void
+>use : (x: unknown) => void
+>globalThis : any
+
+type RemovedGlobalThis = typeof globalThis;
+>RemovedGlobalThis : any
+>globalThis : any
+
+// Deep writes require an existing canonical global root.
+_G.missing.member = 1;
+>_G.missing.member = 1 : 1
+>_G.missing.member : any
+>_G.missing : any
+>_G : typeof _G
+>missing : any
+>member : any
+>1 : 1
+
+// A lexical `_G` is an ordinary table and does not create globals.
+function shadow(): void
+>shadow : () => void
+
+    local _G = {};
+>_G : { localOnly: boolean; }
+>{} : { localOnly: boolean; }
+
+    _G.localOnly = true;
+>_G.localOnly = true : true
+>_G.localOnly : boolean
+>_G : { localOnly: boolean; }
+>localOnly : boolean
+>true : true
+
+end
+use(localOnly);
+>use(localOnly) : void
+>use : (x: unknown) => void
+>localOnly : any
+
+// Narrowing crosses bare and environment-qualified spellings.
+maybe = true as boolean | nil;
+>maybe = true as boolean | nil : boolean | nil
+>maybe : boolean | nil
+>true as boolean | nil : boolean | nil
+>true : true
+
+local globalKey: "maybe" = "maybe";
+>globalKey : "maybe"
+>"maybe" : "maybe"
+
+if _G.maybe ~= nil then
+>_G.maybe ~= nil : boolean
+>_G.maybe : boolean | nil
+>_G : typeof _G
+>maybe : boolean | nil
+
+    local narrowed: boolean = ((_G.maybe));
+>narrowed : boolean
+>((_G.maybe)) : boolean
+>(_G.maybe) : boolean
+>_G.maybe : boolean
+>_G : typeof _G
+>maybe : boolean
+
+    local narrowedThroughStaticKey: boolean = _G[globalKey];
+>narrowedThroughStaticKey : boolean
+>_G[globalKey] : boolean
+>_G : typeof _G
+>globalKey : "maybe"
+
+    _G[globalKey] = nil;
+>_G[globalKey] = nil : nil
+>_G[globalKey] : boolean | nil
+>_G : typeof _G
+>globalKey : "maybe"
+
+    local invalidated: boolean = _G.maybe;
+>invalidated : boolean
+>_G.maybe : nil
+>_G : typeof _G
+>maybe : nil
+
+    use(narrowed);
+>use(narrowed) : void
+>use : (x: unknown) => void
+>narrowed : boolean
+
+    use(narrowedThroughStaticKey);
+>use(narrowedThroughStaticKey) : void
+>use : (x: unknown) => void
+>narrowedThroughStaticKey : boolean
+
+    use(invalidated);
+>use(invalidated) : void
+>use : (x: unknown) => void
+>invalidated : boolean
+
+end
+
+// Static keys normalize even when the keyed spelling is the guard.
+reverseMaybe = true as boolean | nil;
+>reverseMaybe = true as boolean | nil : boolean | nil
+>reverseMaybe : boolean | nil
+>true as boolean | nil : boolean | nil
+>true : true
+
+local reverseGlobalKey: "reverseMaybe" = "reverseMaybe";
+>reverseGlobalKey : "reverseMaybe"
+>"reverseMaybe" : "reverseMaybe"
+
+if _G[reverseGlobalKey] ~= nil then
+>_G[reverseGlobalKey] ~= nil : boolean
+>_G[reverseGlobalKey] : boolean | nil
+>_G : typeof _G
+>reverseGlobalKey : "reverseMaybe"
+
+    local narrowedBare: boolean = reverseMaybe;
+>narrowedBare : boolean
+>reverseMaybe : boolean
+
+    reverseMaybe = nil;
+>reverseMaybe = nil : nil
+>reverseMaybe : boolean | nil
+
+    local invalidatedStaticKey: boolean = _G[reverseGlobalKey];
+>invalidatedStaticKey : boolean
+>_G[reverseGlobalKey] : nil
+>_G : typeof _G
+>reverseGlobalKey : "reverseMaybe"
+
+    use(narrowedBare);
+>use(narrowedBare) : void
+>use : (x: unknown) => void
+>narrowedBare : boolean
+
+    use(invalidatedStaticKey);
+>use(invalidatedStaticKey) : void
+>use : (x: unknown) => void
+>invalidatedStaticKey : boolean
+
+end
+
+// Repeated `_G` self-access has the same flow identity as the bare global.
+repeatedMaybe = true as boolean | nil;
+>repeatedMaybe = true as boolean | nil : boolean | nil
+>repeatedMaybe : boolean | nil
+>true as boolean | nil : boolean | nil
+>true : true
+
+if _G._G.repeatedMaybe ~= nil then
+>_G._G.repeatedMaybe ~= nil : boolean
+>_G._G.repeatedMaybe : boolean | nil
+>_G._G : typeof _G
+>_G : typeof _G
+>_G : typeof _G
+>repeatedMaybe : boolean | nil
+
+    local narrowedRepeatedBare: boolean = repeatedMaybe;
+>narrowedRepeatedBare : boolean
+>repeatedMaybe : boolean
+
+    repeatedMaybe = nil;
+>repeatedMaybe = nil : nil
+>repeatedMaybe : boolean | nil
+
+    local invalidatedRepeated: boolean = _G._G.repeatedMaybe;
+>invalidatedRepeated : boolean
+>_G._G.repeatedMaybe : nil
+>_G._G : typeof _G
+>_G : typeof _G
+>_G : typeof _G
+>repeatedMaybe : nil
+
+    use(narrowedRepeatedBare);
+>use(narrowedRepeatedBare) : void
+>use : (x: unknown) => void
+>narrowedRepeatedBare : boolean
+
+    use(invalidatedRepeated);
+>use(invalidatedRepeated) : void
+>use : (x: unknown) => void
+>invalidatedRepeated : boolean
+
+end
+
+// Assignments mint implicit globals whose narrowing spans both spellings and
+// shares one flow-cache key. (The var-declared initialized global and the
+// destructured binding global died with the TS declaration forms.)
+initializedBareFirst = 1;
+>initializedBareFirst = 1 : 1
+>initializedBareFirst : number
+>1 : 1
+
+local initializedBareFirstBare: number = initializedBareFirst;
+>initializedBareFirstBare : number
+>initializedBareFirst : number
+
+local initializedBareFirstQualified: number = _G.initializedBareFirst;
+>initializedBareFirstQualified : number
+>_G.initializedBareFirst : number
+>_G : typeof _G
+>initializedBareFirst : number
+
+initializedQualifiedFirst = 1;
+>initializedQualifiedFirst = 1 : 1
+>initializedQualifiedFirst : number
+>1 : 1
+
+local initializedQualifiedFirstQualified: number = _G.initializedQualifiedFirst;
+>initializedQualifiedFirstQualified : number
+>_G.initializedQualifiedFirst : number
+>_G : typeof _G
+>initializedQualifiedFirst : number
+
+local initializedQualifiedFirstBare: number = initializedQualifiedFirst;
+>initializedQualifiedFirstBare : number
+>initializedQualifiedFirst : number
+
+// Guard identity uses the same static-key resolution as flow identity.
+local guardGlobalKey: "guardTable" = "guardTable";
+>guardGlobalKey : "guardTable"
+>"guardTable" : "guardTable"
+
+guardTable = _G[guardGlobalKey] or {};
+>guardTable = _G[guardGlobalKey] or {} : { fromStaticGuard: number; }
+>guardTable : { fromStaticGuard: number; }
+>_G[guardGlobalKey] or {} : { fromStaticGuard: number; }
+>_G[guardGlobalKey] : { fromStaticGuard: number; }
+>_G : typeof _G
+>guardGlobalKey : "guardTable"
+>{} : { fromStaticGuard: number; }
+
+guardTable.fromStaticGuard = 1;
+>guardTable.fromStaticGuard = 1 : 1
+>guardTable.fromStaticGuard : number
+>guardTable : { fromStaticGuard: number; }
+>fromStaticGuard : number
+>1 : 1
+
+local staticGuardMember: number = _G.guardTable.fromStaticGuard;
+>staticGuardMember : number
+>_G.guardTable.fromStaticGuard : number
+>_G.guardTable : { fromStaticGuard: number; }
+>_G : typeof _G
+>guardTable : { fromStaticGuard: number; }
+>fromStaticGuard : number
+
+use(n);
+>use(n) : void
+>use : (x: unknown) => void
+>n : number
+
+use(s);
+>use(s) : void
+>use : (x: unknown) => void
+>s : string
+
+use(fnResult);
+>use(fnResult) : void
+>use : (x: unknown) => void
+>fnResult : number
+
+use(pairedResult);
+>use(pairedResult) : void
+>use : (x: unknown) => void
+>pairedResult : number
+
+use(existingFnResult);
+>use(existingFnResult) : void
+>use : (x: unknown) => void
+>existingFnResult : number
+
+use(declaredValue);
+>use(declaredValue) : void
+>use : (x: unknown) => void
+>declaredValue : number
+
+use(qualifiedMember);
+>use(qualifiedMember) : void
+>use : (x: unknown) => void
+>qualifiedMember : number
+
+use(bareMember);
+>use(bareMember) : void
+>use : (x: unknown) => void
+>bareMember : string
+
+use(environment);
+>use(environment) : void
+>use : (x: unknown) => void
+>environment : typeof _G
+
+use(repeatedValue);
+>use(repeatedValue) : void
+>use : (x: unknown) => void
+>repeatedValue : number
+
+use(repeatedFunctionResult);
+>use(repeatedFunctionResult) : void
+>use : (x: unknown) => void
+>repeatedFunctionResult : number
+
+use(deepValue);
+>use(deepValue) : void
+>use : (x: unknown) => void
+>deepValue : number
+
+use(deepMember);
+>use(deepMember) : void
+>use : (x: unknown) => void
+>deepMember : string
+
+use(guardUnion);
+>use(guardUnion) : void
+>use : (x: unknown) => void
+>guardUnion : string | number
+
+use(dupValue);
+>use(dupValue) : void
+>use : (x: unknown) => void
+>dupValue : any
+
+use(mixedValue);
+>use(mixedValue) : void
+>use : (x: unknown) => void
+>mixedValue : any
+
+use(printFunction);
+>use(printFunction) : void
+>use : (x: unknown) => void
+>printFunction : () => void
+
+use(initializedBareFirstBare);
+>use(initializedBareFirstBare) : void
+>use : (x: unknown) => void
+>initializedBareFirstBare : number
+
+use(initializedBareFirstQualified);
+>use(initializedBareFirstQualified) : void
+>use : (x: unknown) => void
+>initializedBareFirstQualified : number
+
+use(initializedQualifiedFirstQualified);
+>use(initializedQualifiedFirstQualified) : void
+>use : (x: unknown) => void
+>initializedQualifiedFirstQualified : number
+
+use(initializedQualifiedFirstBare);
+>use(initializedQualifiedFirstBare) : void
+>use : (x: unknown) => void
+>initializedQualifiedFirstBare : number
+
+use(staticGuardMember);
+>use(staticGuardMember) : void
+>use : (x: unknown) => void
+>staticGuardMember : number
+
+=== conflict.tlua ===
+// A source global cannot replace the built-in environment symbol.
+local _G = 1;
+>_G : number
+>1 : 1
+
+=== dottedFunctionConflict.tlua ===
+// Replacing the environment through its self-property is the same conflict.
+function _G._G(): void end
+>_G : typeof _G
+>_G : () => void
+

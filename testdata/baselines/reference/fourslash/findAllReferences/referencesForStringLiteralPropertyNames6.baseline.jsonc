@@ -1,0 +1,13 @@
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames6.tlua ===
+// local x = function() return 111111; end
+// x./*FIND ALL REFS*/someProperty = 5;
+// x["someProperty"] = 3;
+
+
+
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames6.tlua ===
+// local x = function() return 111111; end
+// x.someProperty = 5;
+// x["/*FIND ALL REFS*/[|someProperty|]"] = 3;

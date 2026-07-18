@@ -1,0 +1,97 @@
+//// [tests/cases/compiler/tluaColonCallMethodNames.tlua] ////
+
+=== tluaColonCallMethodNames.tlua ===
+// TS-only keywords are valid Lua method names (Lua's Name grammar reserves
+// only its own words), so the canonical constructor idiom parses, checks, and
+// emits — symmetric with what the dot path accepts.
+local Account = { balance = 0 };
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>balance : Symbol(balance, Decl(tluaColonCallMethodNames.tlua, 3, 17))
+
+function Account:new(): typeof Account
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>new : Symbol(new, Decl(tluaColonCallMethodNames.tlua, 3, 32))
+>: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 5, 16))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+
+  return self;
+>self : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 5, 16))
+
+end
+
+function Account:delete(): void
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>delete : Symbol(delete, Decl(tluaColonCallMethodNames.tlua, 7, 3))
+>: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 9, 16))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+
+  self.balance = 0;
+>self.balance : Symbol(balance, Decl(tluaColonCallMethodNames.tlua, 3, 17))
+>self : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 9, 16))
+>balance : Symbol(balance, Decl(tluaColonCallMethodNames.tlua, 3, 17))
+
+end
+
+function Account:type(): string
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>type : Symbol(type, Decl(tluaColonCallMethodNames.tlua, 11, 3))
+>: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 13, 16))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+
+  return "account";
+end
+
+local a = Account:new();
+>a : Symbol(a, Decl(tluaColonCallMethodNames.tlua, 17, 5))
+>Account:new : Symbol(new, Decl(tluaColonCallMethodNames.tlua, 3, 32))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>new : Symbol(new, Decl(tluaColonCallMethodNames.tlua, 3, 32))
+
+Account:delete();
+>Account:delete : Symbol(delete, Decl(tluaColonCallMethodNames.tlua, 7, 3))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>delete : Symbol(delete, Decl(tluaColonCallMethodNames.tlua, 7, 3))
+
+local kind = Account:type();
+>kind : Symbol(kind, Decl(tluaColonCallMethodNames.tlua, 19, 5))
+>Account:type : Symbol(type, Decl(tluaColonCallMethodNames.tlua, 11, 3))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>type : Symbol(type, Decl(tluaColonCallMethodNames.tlua, 11, 3))
+
+// The explicit dot form stays interchangeable.
+local b = Account.new(Account);
+>b : Symbol(b, Decl(tluaColonCallMethodNames.tlua, 22, 5))
+>Account.new : Symbol(new, Decl(tluaColonCallMethodNames.tlua, 3, 32))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>new : Symbol(new, Decl(tluaColonCallMethodNames.tlua, 3, 32))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+
+// `switch` and `case` are ordinary identifiers since the switch statement was
+// deleted, so they name methods too.
+function Account:switch(): void
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>switch : Symbol(switch, Decl(tluaColonCallMethodNames.tlua, 22, 31))
+>: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 26, 16))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+
+end
+
+function Account:case(): void
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>case : Symbol(case, Decl(tluaColonCallMethodNames.tlua, 27, 3))
+>: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 29, 16))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+
+end
+
+Account:switch();
+>Account:switch : Symbol(switch, Decl(tluaColonCallMethodNames.tlua, 22, 31))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>switch : Symbol(switch, Decl(tluaColonCallMethodNames.tlua, 22, 31))
+
+Account:case();
+>Account:case : Symbol(case, Decl(tluaColonCallMethodNames.tlua, 27, 3))
+>Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
+>case : Symbol(case, Decl(tluaColonCallMethodNames.tlua, 27, 3))
+

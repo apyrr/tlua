@@ -1,0 +1,48 @@
+// === findRenameLocations ===
+// === /renameDestructuringNestedBindingElement.tlua ===
+// interface MultiRobot {
+//     name: string;
+//     skills: {
+//         /*RENAME*/[|primaryRENAME|]: string;
+//         secondary: string;
+//     };
+// }
+// --- (line: 8) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringNestedBindingElement.tlua ===
+// --- (line: 5) skipped ---
+//     };
+// }
+// local multiRobots: MultiRobot[];
+// for (local { skills: {/*RENAME*/primary: primaryA, secondary: secondaryA } } of multiRobots) {
+//     console.log(primaryA);
+// }
+// for (local { skills: {primary, secondary } } of multiRobots) {
+//     console.log(primary);
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringNestedBindingElement.tlua ===
+// --- (line: 8) skipped ---
+// for (local { skills: {primary: primaryA, secondary: secondaryA } } of multiRobots) {
+//     console.log(primaryA);
+// }
+// for (local { skills: {/*RENAME*/primary, secondary } } of multiRobots) {
+//     console.log(primary);
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringNestedBindingElement.tlua ===
+// --- (line: 9) skipped ---
+//     console.log(primaryA);
+// }
+// for (local { skills: {primary, secondary } } of multiRobots) {
+//     console.log(/*RENAME*/primary);
+// }

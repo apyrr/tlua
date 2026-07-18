@@ -1,0 +1,11 @@
+// === documentHighlights ===
+// === /documentHighlightVarianceModifiers.tlua ===
+// type TFoo<Value> = { value: Value };
+// type TBar</*HIGHLIGHTS*/in out Value> = TFoo<Value>;
+
+
+
+// === documentHighlights ===
+// === /documentHighlightVarianceModifiers.tlua ===
+// type TFoo<Value> = { value: Value };
+// type TBar<in /*HIGHLIGHTS*/out Value> = TFoo<Value>;

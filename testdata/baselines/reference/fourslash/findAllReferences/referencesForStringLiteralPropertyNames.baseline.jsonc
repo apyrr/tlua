@@ -1,0 +1,11 @@
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames.tlua ===
+// class Foo {
+//     public "/*FIND ALL REFS*/[|ss|]": any;
+// }
+// 
+// local x: Foo;
+// x.ss;
+// x["[|ss|]"];
+// x = { "[|ss|]": 0 };
+// x = { ss: 0 };

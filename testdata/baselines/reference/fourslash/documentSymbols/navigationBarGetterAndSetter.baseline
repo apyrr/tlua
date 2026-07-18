@@ -1,0 +1,12 @@
+// === Document Symbols ===
+// === /navigationBarGetterAndSetter.tlua ===
+// class X {
+//     get x() {}
+//     set x(value) {
+//         // Inner declaration should make the setter top-level.
+//         <|function [|{| name: f, kind: Function |}f|]() {}|>
+//     }
+// }
+
+// === Details ===
+(Function) f

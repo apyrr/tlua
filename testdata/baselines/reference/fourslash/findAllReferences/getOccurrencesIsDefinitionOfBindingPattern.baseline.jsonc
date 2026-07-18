@@ -1,0 +1,18 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfBindingPattern.tlua ===
+// local { /*FIND ALL REFS*/x, y } = { x: 1, y: 2 };
+// local z = x;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfBindingPattern.tlua ===
+// local { x, y } = { /*FIND ALL REFS*/x: 1, y: 2 };
+// local z = x;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfBindingPattern.tlua ===
+// local { x, y } = { x: 1, y: 2 };
+// local z = /*FIND ALL REFS*/x;

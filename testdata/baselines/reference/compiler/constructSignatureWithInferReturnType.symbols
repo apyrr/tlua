@@ -1,0 +1,10 @@
+//// [tests/cases/compiler/constructSignatureWithInferReturnType.tlua] ////
+
+=== constructSignatureWithInferReturnType.tlua ===
+type ExtractReturn<T> = T extends { new(): infer R } ? R : never;
+>ExtractReturn : Symbol(ExtractReturn, Decl(constructSignatureWithInferReturnType.tlua, 0, 0))
+>T : Symbol(T, Decl(constructSignatureWithInferReturnType.tlua, 0, 19))
+>T : Symbol(T, Decl(constructSignatureWithInferReturnType.tlua, 0, 19))
+>R : Symbol(R, Decl(constructSignatureWithInferReturnType.tlua, 0, 48))
+>R : Symbol(R, Decl(constructSignatureWithInferReturnType.tlua, 0, 48))
+

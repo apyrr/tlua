@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/tluaTableNoMethods.tlua] ////
+
+=== tluaTableNoMethods.tlua ===
+// Object-literal methods and accessors are removed: they decompose into
+// positional expressions with natural errors.
+local m = { m() { return 1; } };
+>m : { 1: any; 2: { 1: any; 2: number; }; }
+>{ m() { return 1; } } : { 1: any; 2: { 1: any; 2: number; }; }
+>m() : any
+>m : any
+>{ return 1; } : { 1: any; 2: number; }
+> : any
+
+local g = { get p() { return 1; } };
+>g : { 1: any; 2: any; 3: { 1: any; 2: number; }; }
+>{ get p() { return 1; } } : { 1: any; 2: any; 3: { 1: any; 2: number; }; }
+>get : any
+>p() : any
+>p : any
+>{ return 1; } : { 1: any; 2: number; }
+> : any
+
+local s = { set p(v: number) { } };
+>s : { 1: any; 2: any; 3: {}; }
+>{ set p(v: number) { } } : { 1: any; 2: any; 3: {}; }
+>set : any
+>p(v: number) : any
+>p : any
+>v : any
+>number : any
+>{ } : {}
+
+// The replacement: functions are table values.
+local fns = { run = function(): number return 1; end };
+>fns : { run: () => number; }
+>{ run = function(): number return 1; end } : { run: () => number; }
+>run : () => number
+>function(): number return 1; end : () => number
+>1 : 1
+
+local one: number = fns.run();
+>one : number
+>fns.run() : number
+>fns.run : () => number
+>fns : { run: () => number; }
+>run : () => number
+
+// Literal string/number keys use the bracket form.
+local keyed = { [1] = "a", ["k"] = 2 };
+>keyed : { 1: string; k: number; }
+>{ [1] = "a", ["k"] = 2 } : { 1: string; k: number; }
+>[1] : string
+>1 : 1
+>"a" : "a"
+>["k"] : number
+>"k" : "k"
+>2 : 2
+
+local ka: string = keyed[1];
+>ka : string
+>keyed[1] : string
+>keyed : { 1: string; k: number; }
+>1 : 1
+
+local kk: number = keyed.k;
+>kk : number
+>keyed.k : number
+>keyed : { 1: string; k: number; }
+>k : number
+

@@ -1,0 +1,41 @@
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport01.tlua ===
+// /*FIND ALL REFS*/export default class DefaultExportedClass {
+// }
+// 
+// local x: DefaultExportedClass;
+// 
+// local y = new DefaultExportedClass;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport01.tlua ===
+// export default class /*FIND ALL REFS*/DefaultExportedClass {
+// }
+// 
+// local x: DefaultExportedClass;
+// 
+// local y = new DefaultExportedClass;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport01.tlua ===
+// export default class DefaultExportedClass {
+// }
+// 
+// local x: /*FIND ALL REFS*/[|DefaultExportedClass|];
+// 
+// local y = new DefaultExportedClass;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport01.tlua ===
+// export default class DefaultExportedClass {
+// }
+// 
+// local x: DefaultExportedClass;
+// 
+// local y = new /*FIND ALL REFS*/DefaultExportedClass;

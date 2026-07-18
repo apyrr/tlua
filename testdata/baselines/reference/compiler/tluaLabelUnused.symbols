@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/tluaLabelUnused.tlua] ////
+
+=== tluaLabelUnused.tlua ===
+// A label no goto targets is reported.
+function unused(): void
+>unused : Symbol(unused, Decl(tluaLabelUnused.tlua, 0, 0))
+
+    ::dead::
+end
+
+// A label a goto targets is silent.
+function used(): void
+>used : Symbol(used, Decl(tluaLabelUnused.tlua, 3, 3))
+
+    ::live::
+    goto live
+end
+

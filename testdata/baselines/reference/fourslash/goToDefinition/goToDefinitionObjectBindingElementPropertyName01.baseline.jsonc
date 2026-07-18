@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /goToDefinitionObjectBindingElementPropertyName01.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// local foo: I;
+// local { /*GOTO DEF*/property1: prop1 } = foo;

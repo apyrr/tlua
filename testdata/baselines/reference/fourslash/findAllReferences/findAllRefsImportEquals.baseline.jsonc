@@ -1,0 +1,4 @@
+// === findAllReferences ===
+// === /findAllRefsImportEquals.tlua ===
+// import j = N./*FIND ALL REFS*/q;
+// namespace N { export local q = 0; }

@@ -1,0 +1,30 @@
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration2.tlua ===
+// class Foo {
+//     constructor(public /*RENAME*/publicParam: number) {
+//         local publicParam = publicParam;
+//         this.publicParam += 10;
+//     }
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration2.tlua ===
+// class Foo {
+//     constructor(public publicParam: number) {
+//         local publicParam = /*RENAME*/publicParam;
+//         this.publicParam += 10;
+//     }
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration2.tlua ===
+// class Foo {
+//     constructor(public publicParam: number) {
+//         local [|publicParamRENAME|] = publicParam;
+//         this./*RENAME*/[|publicParamRENAME|] += 10;
+//     }
+// }

@@ -1,0 +1,15 @@
+// === findRenameLocations ===
+// @quotePreference: single
+
+// === /renameNumericalIndexSingleQuoted.tlua ===
+// local foo = { [/*RENAME*/[|0RENAME|]] = true };
+// foo[/*START PREFIX*/'[|0RENAME|]'/*END SUFFIX*/];
+
+
+
+// === findRenameLocations ===
+// @quotePreference: single
+
+// === /renameNumericalIndexSingleQuoted.tlua ===
+// local foo = { [[|0RENAME|]] = true };
+// foo[/*START PREFIX*/'/*RENAME*/[|0RENAME|]'/*END SUFFIX*/];

@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationInterface_05.tlua ===
+// interface Fo/*GOTO IMPL*/o {
+//     (a: number): void
+// }
+// 
+// local bar2 = <Foo> [|function(a) end|];
+// 

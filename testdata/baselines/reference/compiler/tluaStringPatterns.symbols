@@ -1,0 +1,396 @@
+//// [tests/cases/compiler/tluaStringPatterns.tlua] ////
+
+=== tluaStringPatterns.tlua ===
+local dateText: string = "2026-07";
+>dateText : Symbol(dateText, Decl(tluaStringPatterns.tlua, 0, 5))
+
+local d, m = dateText.match("(%d+)-(%d+)");
+>d : Symbol(d, Decl(tluaStringPatterns.tlua, 1, 5))
+>m : Symbol(m, Decl(tluaStringPatterns.tlua, 1, 8))
+>dateText.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>dateText : Symbol(dateText, Decl(tluaStringPatterns.tlua, 0, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+
+local day: string | nil = d;
+>day : Symbol(day, Decl(tluaStringPatterns.tlua, 2, 5))
+>d : Symbol(d, Decl(tluaStringPatterns.tlua, 1, 5))
+
+local month: string | nil = m;
+>month : Symbol(month, Decl(tluaStringPatterns.tlua, 3, 5))
+>m : Symbol(m, Decl(tluaStringPatterns.tlua, 1, 8))
+
+local xText: string = "x";
+>xText : Symbol(xText, Decl(tluaStringPatterns.tlua, 5, 5))
+
+local position = xText.match("()x");
+>position : Symbol(position, Decl(tluaStringPatterns.tlua, 6, 5))
+>xText.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>xText : Symbol(xText, Decl(tluaStringPatterns.tlua, 5, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+
+local positionOrNil: number | nil = position;
+>positionOrNil : Symbol(positionOrNil, Decl(tluaStringPatterns.tlua, 7, 5))
+>position : Symbol(position, Decl(tluaStringPatterns.tlua, 6, 5))
+
+local abcText: string = "abc";
+>abcText : Symbol(abcText, Decl(tluaStringPatterns.tlua, 9, 5))
+
+local whole, wholeExtra = abcText.match("%a+");
+>whole : Symbol(whole, Decl(tluaStringPatterns.tlua, 10, 5))
+>wholeExtra : Symbol(wholeExtra, Decl(tluaStringPatterns.tlua, 10, 12))
+>abcText.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>abcText : Symbol(abcText, Decl(tluaStringPatterns.tlua, 9, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+
+local wholeOrNil: string | nil = whole;
+>wholeOrNil : Symbol(wholeOrNil, Decl(tluaStringPatterns.tlua, 11, 5))
+>whole : Symbol(whole, Decl(tluaStringPatterns.tlua, 10, 5))
+
+local noWholeExtra: nil = wholeExtra;
+>noWholeExtra : Symbol(noWholeExtra, Decl(tluaStringPatterns.tlua, 12, 5))
+>wholeExtra : Symbol(wholeExtra, Decl(tluaStringPatterns.tlua, 10, 12))
+
+local nsCapture, nsPosition = string.match("a", "(%a)()");
+>nsCapture : Symbol(nsCapture, Decl(tluaStringPatterns.tlua, 14, 5))
+>nsPosition : Symbol(nsPosition, Decl(tluaStringPatterns.tlua, 14, 16))
+>string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+
+local nsCaptureType: string | nil = nsCapture;
+>nsCaptureType : Symbol(nsCaptureType, Decl(tluaStringPatterns.tlua, 15, 5))
+>nsCapture : Symbol(nsCapture, Decl(tluaStringPatterns.tlua, 14, 5))
+
+local nsPositionType: number | nil = nsPosition;
+>nsPositionType : Symbol(nsPositionType, Decl(tluaStringPatterns.tlua, 16, 5))
+>nsPosition : Symbol(nsPosition, Decl(tluaStringPatterns.tlua, 14, 16))
+
+local itemText: string = "item=42";
+>itemText : Symbol(itemText, Decl(tluaStringPatterns.tlua, 18, 5))
+
+local first, last, capture = itemText.find("=(%d+)");
+>first : Symbol(first, Decl(tluaStringPatterns.tlua, 19, 5))
+>last : Symbol(last, Decl(tluaStringPatterns.tlua, 19, 12))
+>capture : Symbol(capture, Decl(tluaStringPatterns.tlua, 19, 18))
+>itemText.find : Symbol(String.find, Decl(lib.luajit.d.tlua, --, --))
+>itemText : Symbol(itemText, Decl(tluaStringPatterns.tlua, 18, 5))
+>find : Symbol(String.find, Decl(lib.luajit.d.tlua, --, --))
+
+local firstType: number | nil = first;
+>firstType : Symbol(firstType, Decl(tluaStringPatterns.tlua, 20, 5))
+>first : Symbol(first, Decl(tluaStringPatterns.tlua, 19, 5))
+
+local lastType: number | nil = last;
+>lastType : Symbol(lastType, Decl(tluaStringPatterns.tlua, 21, 5))
+>last : Symbol(last, Decl(tluaStringPatterns.tlua, 19, 12))
+
+local findCaptureType: string | nil = capture;
+>findCaptureType : Symbol(findCaptureType, Decl(tluaStringPatterns.tlua, 22, 5))
+>capture : Symbol(capture, Decl(tluaStringPatterns.tlua, 19, 18))
+
+local nsFirst, nsLast, nsCaptureExtra = string.find("abc", "%a+");
+>nsFirst : Symbol(nsFirst, Decl(tluaStringPatterns.tlua, 24, 5))
+>nsLast : Symbol(nsLast, Decl(tluaStringPatterns.tlua, 24, 14))
+>nsCaptureExtra : Symbol(nsCaptureExtra, Decl(tluaStringPatterns.tlua, 24, 22))
+>string.find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+
+local nsFirstType: number | nil = nsFirst;
+>nsFirstType : Symbol(nsFirstType, Decl(tluaStringPatterns.tlua, 25, 5))
+>nsFirst : Symbol(nsFirst, Decl(tluaStringPatterns.tlua, 24, 5))
+
+local nsLastType: number | nil = nsLast;
+>nsLastType : Symbol(nsLastType, Decl(tluaStringPatterns.tlua, 26, 5))
+>nsLast : Symbol(nsLast, Decl(tluaStringPatterns.tlua, 24, 14))
+
+local noFindWholeMatch: nil = nsCaptureExtra;
+>noFindWholeMatch : Symbol(noFindWholeMatch, Decl(tluaStringPatterns.tlua, 27, 5))
+>nsCaptureExtra : Symbol(nsCaptureExtra, Decl(tluaStringPatterns.tlua, 24, 22))
+
+local numberText: string = "42";
+>numberText : Symbol(numberText, Decl(tluaStringPatterns.tlua, 29, 5))
+
+local plainFirst, plainLast, plainCapture = numberText.find("(%d+)", 1, true);
+>plainFirst : Symbol(plainFirst, Decl(tluaStringPatterns.tlua, 30, 5))
+>plainLast : Symbol(plainLast, Decl(tluaStringPatterns.tlua, 30, 17))
+>plainCapture : Symbol(plainCapture, Decl(tluaStringPatterns.tlua, 30, 28))
+>numberText.find : Symbol(String.find, Decl(lib.luajit.d.tlua, --, --))
+>numberText : Symbol(numberText, Decl(tluaStringPatterns.tlua, 29, 5))
+>find : Symbol(String.find, Decl(lib.luajit.d.tlua, --, --))
+
+local plainFirstType: number | nil = plainFirst;
+>plainFirstType : Symbol(plainFirstType, Decl(tluaStringPatterns.tlua, 31, 5))
+>plainFirst : Symbol(plainFirst, Decl(tluaStringPatterns.tlua, 30, 5))
+
+local plainLastType: number | nil = plainLast;
+>plainLastType : Symbol(plainLastType, Decl(tluaStringPatterns.tlua, 32, 5))
+>plainLast : Symbol(plainLast, Decl(tluaStringPatterns.tlua, 30, 17))
+
+local noPlainCapture: nil = plainCapture;
+>noPlainCapture : Symbol(noPlainCapture, Decl(tluaStringPatterns.tlua, 33, 5))
+>plainCapture : Symbol(plainCapture, Decl(tluaStringPatterns.tlua, 30, 28))
+
+local dynamicPlainPattern: string = "(%d+)";
+>dynamicPlainPattern : Symbol(dynamicPlainPattern, Decl(tluaStringPatterns.tlua, 35, 5))
+
+local dynamicFirst, dynamicLast, dynamicCapture = string.find("42", dynamicPlainPattern, 1, true);
+>dynamicFirst : Symbol(dynamicFirst, Decl(tluaStringPatterns.tlua, 36, 5))
+>dynamicLast : Symbol(dynamicLast, Decl(tluaStringPatterns.tlua, 36, 19))
+>dynamicCapture : Symbol(dynamicCapture, Decl(tluaStringPatterns.tlua, 36, 32))
+>string.find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>dynamicPlainPattern : Symbol(dynamicPlainPattern, Decl(tluaStringPatterns.tlua, 35, 5))
+
+local dynamicFirstType: number | nil = dynamicFirst;
+>dynamicFirstType : Symbol(dynamicFirstType, Decl(tluaStringPatterns.tlua, 37, 5))
+>dynamicFirst : Symbol(dynamicFirst, Decl(tluaStringPatterns.tlua, 36, 5))
+
+local dynamicLastType: number | nil = dynamicLast;
+>dynamicLastType : Symbol(dynamicLastType, Decl(tluaStringPatterns.tlua, 38, 5))
+>dynamicLast : Symbol(dynamicLast, Decl(tluaStringPatterns.tlua, 36, 19))
+
+local noDynamicCapture: nil = dynamicCapture;
+>noDynamicCapture : Symbol(noDynamicCapture, Decl(tluaStringPatterns.tlua, 39, 5))
+>dynamicCapture : Symbol(dynamicCapture, Decl(tluaStringPatterns.tlua, 36, 32))
+
+declare maybePlain: boolean;
+>maybePlain : Symbol(maybePlain, Decl(tluaStringPatterns.tlua, 41, 7))
+
+local maybeFirst, maybeLast, maybeCapture = string.find("42", "(%d+)", 1, maybePlain);
+>maybeFirst : Symbol(maybeFirst, Decl(tluaStringPatterns.tlua, 42, 5))
+>maybeLast : Symbol(maybeLast, Decl(tluaStringPatterns.tlua, 42, 17))
+>maybeCapture : Symbol(maybeCapture, Decl(tluaStringPatterns.tlua, 42, 28))
+>string.find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>maybePlain : Symbol(maybePlain, Decl(tluaStringPatterns.tlua, 41, 7))
+
+local maybeFirstType: number | nil = maybeFirst;
+>maybeFirstType : Symbol(maybeFirstType, Decl(tluaStringPatterns.tlua, 43, 5))
+>maybeFirst : Symbol(maybeFirst, Decl(tluaStringPatterns.tlua, 42, 5))
+
+local maybeLastType: number | nil = maybeLast;
+>maybeLastType : Symbol(maybeLastType, Decl(tluaStringPatterns.tlua, 44, 5))
+>maybeLast : Symbol(maybeLast, Decl(tluaStringPatterns.tlua, 42, 17))
+
+local maybeCaptureType: string | nil = maybeCapture;
+>maybeCaptureType : Symbol(maybeCaptureType, Decl(tluaStringPatterns.tlua, 45, 5))
+>maybeCapture : Symbol(maybeCapture, Decl(tluaStringPatterns.tlua, 42, 28))
+
+// A plain flag only known at runtime declines refinement entirely: a position
+// capture would refine to number | nil, but the declared ...string tail wins.
+local mpFirst, mpLast, mpPosition = string.find("42", "()4", 1, maybePlain);
+>mpFirst : Symbol(mpFirst, Decl(tluaStringPatterns.tlua, 49, 5))
+>mpLast : Symbol(mpLast, Decl(tluaStringPatterns.tlua, 49, 14))
+>mpPosition : Symbol(mpPosition, Decl(tluaStringPatterns.tlua, 49, 22))
+>string.find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>find : Symbol(StringLib.find, Decl(lib.luajit.d.tlua, --, --))
+>maybePlain : Symbol(maybePlain, Decl(tluaStringPatterns.tlua, 41, 7))
+
+local mpPositionType: string | nil = mpPosition;
+>mpPositionType : Symbol(mpPositionType, Decl(tluaStringPatterns.tlua, 50, 5))
+>mpPosition : Symbol(mpPosition, Decl(tluaStringPatterns.tlua, 49, 22))
+
+local pairText: string = "a=1";
+>pairText : Symbol(pairText, Decl(tluaStringPatterns.tlua, 52, 5))
+
+for key, value in pairText.gmatch("(%a+)=(%d+)") do
+>key : Symbol(key, Decl(tluaStringPatterns.tlua, 53, 3))
+>value : Symbol(value, Decl(tluaStringPatterns.tlua, 53, 8))
+>pairText.gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>pairText : Symbol(pairText, Decl(tluaStringPatterns.tlua, 52, 5))
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+
+  local keyType: string = key;
+>keyType : Symbol(keyType, Decl(tluaStringPatterns.tlua, 54, 7))
+>key : Symbol(key, Decl(tluaStringPatterns.tlua, 53, 3))
+
+  local valueType: string | nil = value;
+>valueType : Symbol(valueType, Decl(tluaStringPatterns.tlua, 55, 7))
+>value : Symbol(value, Decl(tluaStringPatterns.tlua, 53, 8))
+
+end
+
+for dynamicWord in pairText.gmatch(dynamicPlainPattern) do
+>dynamicWord : Symbol(dynamicWord, Decl(tluaStringPatterns.tlua, 58, 3))
+>pairText.gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>pairText : Symbol(pairText, Decl(tluaStringPatterns.tlua, 52, 5))
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>dynamicPlainPattern : Symbol(dynamicPlainPattern, Decl(tluaStringPatterns.tlua, 35, 5))
+
+  local dynamicWordType: string = dynamicWord;
+>dynamicWordType : Symbol(dynamicWordType, Decl(tluaStringPatterns.tlua, 59, 7))
+>dynamicWord : Symbol(dynamicWord, Decl(tluaStringPatterns.tlua, 58, 3))
+
+end
+
+for word in string.gmatch("one two", "(%a+)") do
+>word : Symbol(word, Decl(tluaStringPatterns.tlua, 62, 3))
+>string.gmatch : Symbol(StringLib.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>gmatch : Symbol(StringLib.gmatch, Decl(lib.luajit.d.tlua, --, --))
+
+  local wordType: string = word;
+>wordType : Symbol(wordType, Decl(tluaStringPatterns.tlua, 63, 7))
+>word : Symbol(word, Decl(tluaStringPatterns.tlua, 62, 3))
+
+end
+
+local dynamicPattern: string = "(%d+)";
+>dynamicPattern : Symbol(dynamicPattern, Decl(tluaStringPatterns.tlua, 66, 5))
+
+local fallbackFirst, fallbackSecond = string.match("42", dynamicPattern);
+>fallbackFirst : Symbol(fallbackFirst, Decl(tluaStringPatterns.tlua, 67, 5))
+>fallbackSecond : Symbol(fallbackSecond, Decl(tluaStringPatterns.tlua, 67, 20))
+>string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>dynamicPattern : Symbol(dynamicPattern, Decl(tluaStringPatterns.tlua, 66, 5))
+
+local fallbackFirstType: string | nil = fallbackFirst;
+>fallbackFirstType : Symbol(fallbackFirstType, Decl(tluaStringPatterns.tlua, 68, 5))
+>fallbackFirst : Symbol(fallbackFirst, Decl(tluaStringPatterns.tlua, 67, 5))
+
+local fallbackSecondType: string | nil = fallbackSecond;
+>fallbackSecondType : Symbol(fallbackSecondType, Decl(tluaStringPatterns.tlua, 69, 5))
+>fallbackSecond : Symbol(fallbackSecond, Decl(tluaStringPatterns.tlua, 67, 20))
+
+local invalidFirst, invalidSecond = string.match("x", "(unclosed");
+>invalidFirst : Symbol(invalidFirst, Decl(tluaStringPatterns.tlua, 71, 5))
+>invalidSecond : Symbol(invalidSecond, Decl(tluaStringPatterns.tlua, 71, 19))
+>string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+
+local invalidFirstType: string | nil = invalidFirst;
+>invalidFirstType : Symbol(invalidFirstType, Decl(tluaStringPatterns.tlua, 72, 5))
+>invalidFirst : Symbol(invalidFirst, Decl(tluaStringPatterns.tlua, 71, 5))
+
+local invalidSecondType: string | nil = invalidSecond;
+>invalidSecondType : Symbol(invalidSecondType, Decl(tluaStringPatterns.tlua, 73, 5))
+>invalidSecond : Symbol(invalidSecond, Decl(tluaStringPatterns.tlua, 71, 19))
+
+local invalidMethodText: "x" = "x";
+>invalidMethodText : Symbol(invalidMethodText, Decl(tluaStringPatterns.tlua, 75, 5))
+
+local invalidMethod = invalidMethodText.match("(unclosed");
+>invalidMethod : Symbol(invalidMethod, Decl(tluaStringPatterns.tlua, 76, 5))
+>invalidMethodText.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>invalidMethodText : Symbol(invalidMethodText, Decl(tluaStringPatterns.tlua, 75, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+
+local invalidSetFirst, invalidSetSecond = string.match("]", "[]");
+>invalidSetFirst : Symbol(invalidSetFirst, Decl(tluaStringPatterns.tlua, 78, 5))
+>invalidSetSecond : Symbol(invalidSetSecond, Decl(tluaStringPatterns.tlua, 78, 22))
+>string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+
+local invalidSetFirstType: string | nil = invalidSetFirst;
+>invalidSetFirstType : Symbol(invalidSetFirstType, Decl(tluaStringPatterns.tlua, 79, 5))
+>invalidSetFirst : Symbol(invalidSetFirst, Decl(tluaStringPatterns.tlua, 78, 5))
+
+local invalidSetSecondType: string | nil = invalidSetSecond;
+>invalidSetSecondType : Symbol(invalidSetSecondType, Decl(tluaStringPatterns.tlua, 80, 5))
+>invalidSetSecond : Symbol(invalidSetSecond, Decl(tluaStringPatterns.tlua, 78, 22))
+
+local parenText: string = "(";
+>parenText : Symbol(parenText, Decl(tluaStringPatterns.tlua, 82, 5))
+
+local setMatch, setCapture = parenText.match("[()]");
+>setMatch : Symbol(setMatch, Decl(tluaStringPatterns.tlua, 83, 5))
+>setCapture : Symbol(setCapture, Decl(tluaStringPatterns.tlua, 83, 15))
+>parenText.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>parenText : Symbol(parenText, Decl(tluaStringPatterns.tlua, 82, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+
+local setMatchType: string | nil = setMatch;
+>setMatchType : Symbol(setMatchType, Decl(tluaStringPatterns.tlua, 84, 5))
+>setMatch : Symbol(setMatch, Decl(tluaStringPatterns.tlua, 83, 5))
+
+local noSetCapture: nil = setCapture;
+>noSetCapture : Symbol(noSetCapture, Decl(tluaStringPatterns.tlua, 85, 5))
+>setCapture : Symbol(setCapture, Decl(tluaStringPatterns.tlua, 83, 15))
+
+local balancedText: string = "(x)";
+>balancedText : Symbol(balancedText, Decl(tluaStringPatterns.tlua, 87, 5))
+
+local balancedMatch, balancedCapture = balancedText.match("%b()");
+>balancedMatch : Symbol(balancedMatch, Decl(tluaStringPatterns.tlua, 88, 5))
+>balancedCapture : Symbol(balancedCapture, Decl(tluaStringPatterns.tlua, 88, 20))
+>balancedText.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>balancedText : Symbol(balancedText, Decl(tluaStringPatterns.tlua, 87, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+
+local balancedMatchType: string | nil = balancedMatch;
+>balancedMatchType : Symbol(balancedMatchType, Decl(tluaStringPatterns.tlua, 89, 5))
+>balancedMatch : Symbol(balancedMatch, Decl(tluaStringPatterns.tlua, 88, 5))
+
+local noBalancedCapture: nil = balancedCapture;
+>noBalancedCapture : Symbol(noBalancedCapture, Decl(tluaStringPatterns.tlua, 90, 5))
+>balancedCapture : Symbol(balancedCapture, Decl(tluaStringPatterns.tlua, 88, 20))
+
+local stringAlias = string;
+>stringAlias : Symbol(stringAlias, Decl(tluaStringPatterns.tlua, 92, 5))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+
+local aliasFirst, aliasSecond, aliasThird = stringAlias.match("42", "(%d+)-?(%d*)");
+>aliasFirst : Symbol(aliasFirst, Decl(tluaStringPatterns.tlua, 93, 5))
+>aliasSecond : Symbol(aliasSecond, Decl(tluaStringPatterns.tlua, 93, 17))
+>aliasThird : Symbol(aliasThird, Decl(tluaStringPatterns.tlua, 93, 30))
+>stringAlias.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>stringAlias : Symbol(stringAlias, Decl(tluaStringPatterns.tlua, 92, 5))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+
+local aliasFirstType: string | nil = aliasFirst;
+>aliasFirstType : Symbol(aliasFirstType, Decl(tluaStringPatterns.tlua, 94, 5))
+>aliasFirst : Symbol(aliasFirst, Decl(tluaStringPatterns.tlua, 93, 5))
+
+local aliasSecondType: string | nil = aliasSecond;
+>aliasSecondType : Symbol(aliasSecondType, Decl(tluaStringPatterns.tlua, 95, 5))
+>aliasSecond : Symbol(aliasSecond, Decl(tluaStringPatterns.tlua, 93, 17))
+
+local aliasThirdType: string | nil = aliasThird;
+>aliasThirdType : Symbol(aliasThirdType, Decl(tluaStringPatterns.tlua, 96, 5))
+>aliasThird : Symbol(aliasThird, Decl(tluaStringPatterns.tlua, 93, 30))
+
+function shadowedStringPattern(): void
+>shadowedStringPattern : Symbol(shadowedStringPattern, Decl(tluaStringPatterns.tlua, 96, 48))
+
+  local string = {
+>string : Symbol(string, Decl(tluaStringPatterns.tlua, 99, 7))
+
+    match = function(value: string, pattern: string): boolean return value == pattern; end,
+>match : Symbol(match, Decl(tluaStringPatterns.tlua, 99, 18))
+>value : Symbol(value, Decl(tluaStringPatterns.tlua, 100, 21))
+>pattern : Symbol(pattern, Decl(tluaStringPatterns.tlua, 100, 35))
+>value : Symbol(value, Decl(tluaStringPatterns.tlua, 100, 21))
+>pattern : Symbol(pattern, Decl(tluaStringPatterns.tlua, 100, 35))
+
+  };
+  local shadowed: boolean = string.match("x", "(%a+)");
+>shadowed : Symbol(shadowed, Decl(tluaStringPatterns.tlua, 102, 7))
+>string.match : Symbol(match, Decl(tluaStringPatterns.tlua, 99, 18))
+>string : Symbol(string, Decl(tluaStringPatterns.tlua, 99, 7))
+>match : Symbol(match, Decl(tluaStringPatterns.tlua, 99, 18))
+
+end
+
+local replaced, replacementCount = xText.gsub("(.)", {});
+>replaced : Symbol(replaced, Decl(tluaStringPatterns.tlua, 105, 5))
+>replacementCount : Symbol(replacementCount, Decl(tluaStringPatterns.tlua, 105, 15))
+>xText.gsub : Symbol(String.gsub, Decl(lib.luajit.d.tlua, --, --))
+>xText : Symbol(xText, Decl(tluaStringPatterns.tlua, 5, 5))
+>gsub : Symbol(String.gsub, Decl(lib.luajit.d.tlua, --, --))
+
+local replacedType: string = replaced;
+>replacedType : Symbol(replacedType, Decl(tluaStringPatterns.tlua, 106, 5))
+>replaced : Symbol(replaced, Decl(tluaStringPatterns.tlua, 105, 5))
+
+local replacementCountType: number = replacementCount;
+>replacementCountType : Symbol(replacementCountType, Decl(tluaStringPatterns.tlua, 107, 5))
+>replacementCount : Symbol(replacementCount, Decl(tluaStringPatterns.tlua, 105, 15))
+

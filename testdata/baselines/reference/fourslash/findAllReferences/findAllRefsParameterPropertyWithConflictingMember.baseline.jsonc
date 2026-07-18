@@ -1,0 +1,97 @@
+// === findAllReferences ===
+// === /c1.tlua ===
+// class C1 {
+//   /*FIND ALL REFS*/x() {}
+//   constructor(public x: number) {
+//     x++;
+//   }
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /c1.tlua ===
+// class C1 {
+//   x() {}
+//   constructor(public /*FIND ALL REFS*/x: number) {
+//     x++;
+//   }
+// }
+// new C1(1).x;
+// 
+
+
+
+// === findAllReferences ===
+// === /c1.tlua ===
+// class C1 {
+//   x() {}
+//   constructor(public x: number) {
+//     /*FIND ALL REFS*/x++;
+//   }
+// }
+// new C1(1).x;
+// 
+
+
+
+// === findAllReferences ===
+// === /c1.tlua ===
+// --- (line: 3) skipped ---
+//     x++;
+//   }
+// }
+// new C1(1)./*FIND ALL REFS*/x;
+// 
+
+
+
+// === findAllReferences ===
+// === /c2.tlua ===
+// interface C2 {
+//   get /*FIND ALL REFS*/[|x|](): void
+// }
+// class C2 {
+//   constructor(public x: number) {
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /c2.tlua ===
+// interface C2 {
+//   get x(): void
+// }
+// class C2 {
+//   constructor(public /*FIND ALL REFS*/x: number) {
+//     x++;
+//   }
+// }
+// new C2(1).x;
+// 
+
+
+
+// === findAllReferences ===
+// === /c2.tlua ===
+// interface C2 {
+//   get x(): void
+// }
+// class C2 {
+//   constructor(public x: number) {
+//     /*FIND ALL REFS*/x++;
+//   }
+// }
+// new C2(1).x;
+// 
+
+
+
+// === findAllReferences ===
+// === /c2.tlua ===
+// --- (line: 5) skipped ---
+//     x++;
+//   }
+// }
+// new C2(1)./*FIND ALL REFS*/x;
+// 

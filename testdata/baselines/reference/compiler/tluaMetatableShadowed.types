@@ -1,0 +1,110 @@
+//// [tests/cases/compiler/tluaMetatableShadowed.tlua] ////
+
+=== tluaMetatableShadowed.tlua ===
+// Only the real globals carry the protocol. A shadowing local, or a call through an alias,
+// resolves to a different symbol and keeps whatever it declares -- the rule the type()
+// narrowing builtins already follow.
+
+local Helpers = { describe = function(self: object): string return "d"; end };
+>Helpers : { describe: (self: object) => string; }
+>{ describe = function(self: object): string return "d"; end } : { describe: (self: object) => string; }
+>describe : (self: object) => string
+>function(self: object): string return "d"; end : (self: object) => string
+>self : object
+>"d" : "d"
+
+local mt = { __index = Helpers };
+>mt : { __index: { describe: (self: object) => string; }; }
+>{ __index = Helpers } : { __index: { describe: (self: object) => string; }; }
+>__index : { describe: (self: object) => string; }
+>Helpers : { describe: (self: object) => string; }
+
+function shadowed(): void
+>shadowed : () => void
+
+  local setmetatable = function(value: object, metatable: object): object return value; end;
+>setmetatable : (value: object, metatable: object) => object
+>function(value: object, metatable: object): object return value; end : (value: object, metatable: object) => object
+>value : object
+>metatable : object
+>value : object
+
+  local getmetatable = function(value: object): object return value; end;
+>getmetatable : (value: object) => object
+>function(value: object): object return value; end : (value: object) => object
+>value : object
+>value : object
+
+  local obj = setmetatable({ n = 1 }, mt);
+>obj : object
+>setmetatable({ n = 1 }, mt) : object
+>setmetatable : (value: object, metatable: object) => object
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>mt : { __index: { describe: (self: object) => string; }; }
+
+  local absent = obj.describe;
+>absent : any
+>obj.describe : any
+>obj : object
+>describe : any
+
+  local ownAbsent = obj.n;
+>ownAbsent : any
+>obj.n : any
+>obj : object
+>n : any
+
+  local back = getmetatable(obj);
+>back : object
+>getmetatable(obj) : object
+>getmetatable : (value: object) => object
+>obj : object
+
+end
+
+// An alias is a different symbol too.
+local alias = setmetatable;
+>alias : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+
+local aliased = alias({ n = 1 }, mt);
+>aliased : { n: number; }
+>alias({ n = 1 }, mt) : { n: number; }
+>alias : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>mt : { __index: { describe: (self: object) => string; }; }
+
+local aliasBad = aliased.describe;
+>aliasBad : any
+>aliased.describe : any
+>aliased : { n: number; }
+>describe : any
+
+local aliasOwn: number = aliased.n;
+>aliasOwn : number
+>aliased.n : number
+>aliased : { n: number; }
+>n : number
+
+// The globals themselves still work in the same file.
+local real = setmetatable({ n = 1 }, mt);
+>real : { describe: (self: object) => string; n: number; }
+>setmetatable({ n = 1 }, mt) : { describe: (self: object) => string; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>mt : { __index: { describe: (self: object) => string; }; }
+
+local d: string = real.describe(real);
+>d : string
+>real.describe(real) : string
+>real.describe : (self: object) => string
+>real : { describe: (self: object) => string; n: number; }
+>describe : (self: object) => string
+>real : { describe: (self: object) => string; n: number; }
+

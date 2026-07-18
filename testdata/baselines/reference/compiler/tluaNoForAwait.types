@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/tluaNoForAwait.tlua] ////
+
+=== tluaNoForAwait.tlua ===
+// `for await` is no longer supported syntax.
+async function f(xs: number[]): Promise<number> {
+>f : async (xs: number[]) => Promise<number>
+>xs : number[]
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for await (local x of xs) {
+>await : any
+>( : any
+> : any
+>x : any
+>of : any
+>xs : number[]
+
+    total += x;
+>total += x : any
+>total : number
+>x : nil
+  }
+  return total;
+>total : number
+}
+
+// `await` after `for` is an ordinary Lua loop-variable name.
+function awaitName(): number
+>awaitName : () => number
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for await = 1, 3 do
+>await : number
+>1 : 1
+>3 : 3
+
+    total = total + await;
+>total = total + await : number
+>total : number
+>total + await : number
+>total : number
+>await : number
+
+  end
+  return total;
+>total : number
+
+end
+

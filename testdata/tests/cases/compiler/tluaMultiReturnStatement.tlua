@@ -1,0 +1,51 @@
+// @target: esnext
+
+function pair(): (number, string)
+  return 1, "a";
+end
+
+// Inference: the return list infers a pack without an annotation.
+function inferredPair()
+  return 1, "a";
+end
+
+// Inference across mixed arities pads with nil.
+function mixed(cond: boolean) {
+  if (cond) {
+    return 1, "a";
+  }
+  return 2;
+}
+
+// A bare return contributes zero values.
+function maybeNothing(cond: boolean) {
+  if (cond) {
+    return;
+  }
+  return 1, "a";
+}
+
+// `return f()` forwards the whole pack.
+function forward(): (number, string)
+  return pair();
+end
+
+function forwardInferred()
+  return pair();
+end
+
+// A call anywhere in a single-value position truncates to the first value.
+local first = pair();
+local sum = pair() + 1;
+
+// The value list evaluates non-tail calls to a single value.
+function headTruncates()
+  return pair(), true;
+end
+
+local i = inferredPair();
+local m = mixed(true);
+local n = maybeNothing(false);
+local f = forward();
+local g = forwardInferred();
+local h = headTruncates();

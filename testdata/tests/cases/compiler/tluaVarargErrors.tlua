@@ -1,0 +1,81 @@
+// @strict: true
+// @noEmit: true
+
+// @filename: main.tlua
+declare function consume(a: number, b: number): void;
+declare nums: number[];
+declare obj: { a: number; b: number };
+
+// `...` outside any vararg function.
+function notVararg(): void
+  local x = ...;
+end
+
+// The same, as a *non-tail* call argument. This is the shape that made the v1
+// implementation panic: the pack probe must stay pure and report 100035 here
+// rather than returning an error type into the argument machinery.
+function nonTailArgument(): void
+  consume(1, ...);
+end
+
+// An illegal `...` as the whole argument list: 100035 only. The illegal tail
+// keeps the tail's arity treatment, so no "Expected 2 arguments, but got 1"
+// stacks on top of the one real error.
+function illegalTailOnly(): void
+  consume(...);
+end
+
+// A nested function does not capture the outer pack; the pack is not a
+// capturable local.
+function outer(...: number): void
+  local inner = function(): void
+    local y = ...;
+  end;
+end
+
+// Operand spread is gone in every position.
+function spreads(...: number): void
+  consume(...nums);
+  consume(...nums, 1);
+  consume(1, ...nums, 2);
+  consume(...nums, ...nums);
+  local spreadTable = {...obj};
+  local spreadThenField = {...obj, a = 1};
+end
+
+// Binding-pattern rest is gone.
+local { a, ...restOfObj } = obj;
+
+// @filename: grammar.tlua
+// The vararg parameter grammar. These are *checker* grammar rules, not parse
+// errors -- a parse error would suppress every semantic diagnostic in the whole
+// program -- so they live in a file that parses cleanly: grammarErrorOnNode is
+// itself suppressed in any file that has parse diagnostics, which is why main.tlua
+// cannot host them.
+
+// A vararg parameter must be last.
+declare function notLast(...: number, a: number): void;
+
+// A vararg parameter cannot be optional...
+declare function optionalVararg(...?: number): void;
+
+// ...nor carry an initializer. The span is the parameter, not its name: a
+// vararg's name is a zero-width synthetic identifier and would give no span.
+declare function initializedVararg(... = 1): void;
+
+// A vararg parameter cannot have a name: the legacy TS rest form is gone.
+declare function namedRest(...args: number[]): void;
+
+// A named rest is still parsed for recovery, so it is still held to the old rule
+// that its type is an array -- it is the one rest form that is not element-typed
+// and not array-wrapped.
+declare function namedRestNotArray(...args: number): void;
+
+// And a named rest in a callable type is a (rejected) parameter list, not a
+// pure-variadic return pack.
+declare function namedRestInReturn(): (...args: string[]) => void;
+
+// @filename: legacy.d.tlua
+// Named rest is rejected in declaration files too -- there is no carve-out.
+declare function fromDts(...args: string[]): void;
+declare fromDtsType: (...args: string[]) => void;

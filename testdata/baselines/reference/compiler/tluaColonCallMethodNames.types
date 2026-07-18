@@ -1,0 +1,109 @@
+//// [tests/cases/compiler/tluaColonCallMethodNames.tlua] ////
+
+=== tluaColonCallMethodNames.tlua ===
+// TS-only keywords are valid Lua method names (Lua's Name grammar reserves
+// only its own words), so the canonical constructor idiom parses, checks, and
+// emits — symmetric with what the dot path accepts.
+local Account = { balance = 0 };
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>{ balance = 0 } : { balance: number; "new"(self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }): { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }; delete(self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }): void; type(self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }): string; switch(self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }): void; case(self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }): void; }
+>balance : number
+>0 : 0
+
+function Account:new(): typeof Account
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>new : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+  return self;
+>self : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+end
+
+function Account:delete(): void
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>delete : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+>: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+  self.balance = 0;
+>self.balance = 0 : 0
+>self.balance : number
+>self : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>balance : number
+>0 : 0
+
+end
+
+function Account:type(): string
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>type : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => string
+>: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+  return "account";
+>"account" : "account"
+
+end
+
+local a = Account:new();
+>a : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account:new() : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account:new : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>new : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+Account:delete();
+>Account:delete() : void
+>Account:delete : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>delete : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+
+local kind = Account:type();
+>kind : string
+>Account:type() : string
+>Account:type : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => string
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>type : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => string
+
+// The explicit dot form stays interchangeable.
+local b = Account.new(Account);
+>b : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account.new(Account) : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account.new : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>new : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+// `switch` and `case` are ordinary identifiers since the switch statement was
+// deleted, so they name methods too.
+function Account:switch(): void
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>switch : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+>: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+end
+
+function Account:case(): void
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>case : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+>: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+
+end
+
+Account:switch();
+>Account:switch() : void
+>Account:switch : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>switch : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+
+Account:case();
+>Account:case() : void
+>Account:case : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+>Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
+>case : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
+

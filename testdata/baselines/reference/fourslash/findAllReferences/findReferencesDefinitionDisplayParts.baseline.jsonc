@@ -1,0 +1,43 @@
+// === findAllReferences ===
+// === /findReferencesDefinitionDisplayParts.tlua ===
+// class Gre/*FIND ALL REFS*/eter {
+//     someFunction() { this;  }
+// }
+// 
+// --- (line: 5) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findReferencesDefinitionDisplayParts.tlua ===
+// class Greeter {
+//     someFunction() { th/*FIND ALL REFS*/is;  }
+// }
+// 
+// type Options = "option 1" | "option 2";
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findReferencesDefinitionDisplayParts.tlua ===
+// class Greeter {
+//     someFunction() { this;  }
+// }
+// 
+// type Options = "[|opt/*FIND ALL REFS*/ion 1|]" | "option 2";
+// local myOption: Options = "[|option 1|]";
+// 
+// someLabel:
+// break someLabel;
+
+
+
+// === findAllReferences ===
+// === /findReferencesDefinitionDisplayParts.tlua ===
+// --- (line: 4) skipped ---
+// type Options = "option 1" | "option 2";
+// local myOption: Options = "option 1";
+// 
+// some/*FIND ALL REFS*/Label:
+// break someLabel;

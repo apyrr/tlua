@@ -1,0 +1,19 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: jit/profile.tlua
+// A project file that shadows a lualib module name.
+local marker = "project";
+return { marker = marker };
+
+// @filename: main.tlua
+// A resolved project file wins over the ambient require() overloads: this is
+// the project module, not the lualib JITProfileLib.
+local profile = require("jit.profile");
+local s: string = profile.marker;
+
+// The unshadowed lualib names still hit their overloads.
+local util = require("jit.util");
+util.funcinfo;

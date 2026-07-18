@@ -1,0 +1,12 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: util.tlua
+return { n = 1 };
+
+// @filename: main.tlua
+// A shadowing local is not the require global, so nothing resolves as a module.
+local require = function(name: string): number return 1; end;
+local shadowed: number = require("util");

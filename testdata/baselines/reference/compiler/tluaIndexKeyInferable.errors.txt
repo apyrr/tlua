@@ -1,0 +1,52 @@
+tluaIndexKeyInferable.tlua(35,7): error TS2322: Type '(a: number) => void' is not assignable to type 'Table<string, number>'.
+  Index signature for type 'string' is missing in type '(a: number) => void'.
+tluaIndexKeyInferable.tlua(40,7): error TS2322: Type 'number' is not assignable to type 'Table<string, number>'.
+
+
+==== tluaIndexKeyInferable.tlua (2 errors) ====
+    // In Lua a record and an interface are both just tables, and iterating one with `pairs`
+    // is idiomatic. TypeScript lets only object and type literals stand in for an index
+    // signature they do not declare; tlua accepts every object type, or every
+    // `Table<K, V>` signature in the standard library would reject named types forever.
+    
+    interface Point { x: number; y: number }
+    
+    type Named = { first: string; last: string };
+    
+    declare p: Point;
+    declare nm: Named;
+    
+    for k, v in pairs(p) do
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    for k, v in pairs(nm) do
+      local key: string = k;
+      local value: string = v;
+    end
+    
+    // A literal, which TypeScript already allowed.
+    local lit = { a = 1, b = 2 };
+    for k, v in pairs(lit) do
+      local key: string = k;
+      local value: number = v;
+    end
+    
+    local n: number | nil = rawget(p, "x");
+    local t: Table<string, number> = p;
+    
+    // A function is not a table: it has no keys to iterate.
+    declare fn: (a: number) => void;
+    local bad: Table<string, number> = fn;
+          ~~~
+!!! error TS2322: Type '(a: number) => void' is not assignable to type 'Table<string, number>'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '(a: number) => void'.
+    
+    // A primitive is not a table either. Its apparent type is an interface -- `Number` --
+    // whose members carry no table key at all, so nothing would be left to reject.
+    declare num: number;
+    local alsoBad: Table<string, number> = num;
+          ~~~~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'Table<string, number>'.
+    

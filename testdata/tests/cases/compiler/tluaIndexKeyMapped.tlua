@@ -1,0 +1,39 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A mapped type carries a Lua-only key over as an index of its own -- it cannot become
+// a property, and dropping it would make every Copy/Partial-style utility silently
+// strip boolean/table/thread-keyed indexes.
+
+interface Flags { [key: boolean]: string }
+interface Point { n: number }
+interface ByTable { [key: Point]: string }
+
+type Copy<T> = { [P in keyof T]: T[P] };
+
+declare cf: Copy<Flags>;
+local s1: string = cf[true];
+declare cb: Copy<ByTable>;
+declare pt: Point;
+local s2: string = cb[pt];
+
+// The modifiers still apply.
+type Ro<T> = { readonly [P in keyof T]: T[P] };
+declare ro: Ro<Flags>;
+local s3: string = ro[false];
+
+// Mixed domains map together.
+interface Mixed { [key: boolean]: string; named: number }
+declare cm: Copy<Mixed>;
+local s4: string = cm[true];
+local n1: number = cm.named;
+
+// The constraint check follows the table-key domain: a concrete boolean (or keyof of
+// a boolean-keyed type) maps directly, not only through a generic alias.
+type Direct = { [P in keyof Mixed]: number };
+declare dd: Direct;
+local n2: number = dd[true];
+declare mb: { [P in boolean]: string };
+local s5: string = mb[false];

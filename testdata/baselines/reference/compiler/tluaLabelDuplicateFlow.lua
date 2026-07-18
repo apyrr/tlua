@@ -1,0 +1,41 @@
+//// [tests/cases/compiler/tluaLabelDuplicateFlow.tlua] ////
+
+//// [tluaLabelDuplicateFlow.tlua]
+// A duplicate label is an error, but it must not merge its flow into the first
+// label's join: x stays narrowed to string at the assignment — the nil written
+// later cannot travel "back" through a shared label node.
+declare function use(s: string): void;
+function duplicateNoMerge(x: string | nil): void
+    if x == nil then return end
+    ::a::
+    local y: string = x;
+    use(y);
+    x = nil;
+    ::a::
+end
+
+// Adjacent duplicates must not make the label its own antecedent.
+function adjacentDuplicates(): number
+    ::b::
+    ::b::
+    return 1;
+end
+
+
+//// [tluaLabelDuplicateFlow.lua]
+function duplicateNoMerge(x)
+    if x == nil then
+        return;
+    end
+    ::a::
+    local y = x;
+    use(y);
+    x = nil;
+    ::a::
+end
+-- Adjacent duplicates must not make the label its own antecedent.
+function adjacentDuplicates()
+    ::b::
+    ::b::
+    return 1;
+end

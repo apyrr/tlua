@@ -1,0 +1,9 @@
+// @target: esnext
+// @filename: app/util.tlua
+local value = 42;
+return { value = value };
+
+// @filename: main.tlua
+local util = require("app.util");
+local n: number = util.value;
+n;

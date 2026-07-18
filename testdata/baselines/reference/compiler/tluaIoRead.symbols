@@ -1,0 +1,156 @@
+//// [tests/cases/compiler/tluaIoRead.tlua] ////
+
+=== tluaIoRead.tlua ===
+// A failed "*n" stops the read, so the trailing "*a" can be nil at runtime;
+// only the FIRST format can promise a value.
+local n, rest = io.read("*n", "*a");
+>n : Symbol(n, Decl(tluaIoRead.tlua, 2, 5))
+>rest : Symbol(rest, Decl(tluaIoRead.tlua, 2, 8))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+
+local nType: number | nil = n;
+>nType : Symbol(nType, Decl(tluaIoRead.tlua, 3, 5))
+>n : Symbol(n, Decl(tluaIoRead.tlua, 2, 5))
+
+local restType: string | nil = rest;
+>restType : Symbol(restType, Decl(tluaIoRead.tlua, 4, 5))
+>rest : Symbol(rest, Decl(tluaIoRead.tlua, 2, 8))
+
+local wholeFile = io.read("*a");
+>wholeFile : Symbol(wholeFile, Decl(tluaIoRead.tlua, 6, 5))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+
+local wholeFileType: string = wholeFile;
+>wholeFileType : Symbol(wholeFileType, Decl(tluaIoRead.tlua, 7, 5))
+>wholeFile : Symbol(wholeFile, Decl(tluaIoRead.tlua, 6, 5))
+
+local defaultLine = io.read();
+>defaultLine : Symbol(defaultLine, Decl(tluaIoRead.tlua, 9, 5))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+
+local defaultLineType: string | nil = defaultLine;
+>defaultLineType : Symbol(defaultLineType, Decl(tluaIoRead.tlua, 10, 5))
+>defaultLine : Symbol(defaultLine, Decl(tluaIoRead.tlua, 9, 5))
+
+local bytes = io.read(8);
+>bytes : Symbol(bytes, Decl(tluaIoRead.tlua, 12, 5))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+
+local bytesType: string | nil = bytes;
+>bytesType : Symbol(bytesType, Decl(tluaIoRead.tlua, 13, 5))
+>bytes : Symbol(bytes, Decl(tluaIoRead.tlua, 12, 5))
+
+declare f: LuaFile;
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+
+local fileNumber = f.read("*n");
+>fileNumber : Symbol(fileNumber, Decl(tluaIoRead.tlua, 16, 5))
+>f.read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+
+local fileNumberType: number | nil = fileNumber;
+>fileNumberType : Symbol(fileNumberType, Decl(tluaIoRead.tlua, 17, 5))
+>fileNumber : Symbol(fileNumber, Decl(tluaIoRead.tlua, 16, 5))
+
+for line in io.lines() do
+>line : Symbol(line, Decl(tluaIoRead.tlua, 19, 3))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+
+  local lineType: string = line;
+>lineType : Symbol(lineType, Decl(tluaIoRead.tlua, 20, 7))
+>line : Symbol(line, Decl(tluaIoRead.tlua, 19, 3))
+
+end
+
+for chunk in io.lines("file", "*a") do
+>chunk : Symbol(chunk, Decl(tluaIoRead.tlua, 23, 3))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+
+  local chunkType: string = chunk;
+>chunkType : Symbol(chunkType, Decl(tluaIoRead.tlua, 24, 7))
+>chunk : Symbol(chunk, Decl(tluaIoRead.tlua, 23, 3))
+
+end
+
+for filenameOnly in io.lines("*n") do
+>filenameOnly : Symbol(filenameOnly, Decl(tluaIoRead.tlua, 27, 3))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+
+  local filenameOnlyType: string = filenameOnly;
+>filenameOnlyType : Symbol(filenameOnlyType, Decl(tluaIoRead.tlua, 28, 7))
+>filenameOnly : Symbol(filenameOnly, Decl(tluaIoRead.tlua, 27, 3))
+
+end
+
+declare fmt: LuaReadFormat;
+>fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 31, 7))
+>LuaReadFormat : Symbol(LuaReadFormat, Decl(lib.luajit.d.tlua, --, --))
+
+local x = io.read(fmt);
+>x : Symbol(x, Decl(tluaIoRead.tlua, 32, 5))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 31, 7))
+
+local xType: any = x;
+>xType : Symbol(xType, Decl(tluaIoRead.tlua, 33, 5))
+>x : Symbol(x, Decl(tluaIoRead.tlua, 32, 5))
+
+// A literal prefix keeps its precision; the runtime-only formats become an
+// open any tail.
+local pn, px = io.read("*n", fmt);
+>pn : Symbol(pn, Decl(tluaIoRead.tlua, 37, 5))
+>px : Symbol(px, Decl(tluaIoRead.tlua, 37, 9))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 31, 7))
+
+local pnType: number | nil = pn;
+>pnType : Symbol(pnType, Decl(tluaIoRead.tlua, 38, 5))
+>pn : Symbol(pn, Decl(tluaIoRead.tlua, 37, 5))
+
+function shadowedIO(): void
+>shadowedIO : Symbol(shadowedIO, Decl(tluaIoRead.tlua, 38, 32))
+
+  local io = {
+>io : Symbol(io, Decl(tluaIoRead.tlua, 41, 7))
+
+    read = function(format: string): boolean return format == "*n"; end,
+>read : Symbol(read, Decl(tluaIoRead.tlua, 41, 14))
+>format : Symbol(format, Decl(tluaIoRead.tlua, 42, 20))
+>format : Symbol(format, Decl(tluaIoRead.tlua, 42, 20))
+
+  };
+  local shadowed: boolean = io.read("*n");
+>shadowed : Symbol(shadowed, Decl(tluaIoRead.tlua, 44, 7))
+>io.read : Symbol(read, Decl(tluaIoRead.tlua, 41, 14))
+>io : Symbol(io, Decl(tluaIoRead.tlua, 41, 7))
+>read : Symbol(read, Decl(tluaIoRead.tlua, 41, 14))
+
+end
+
+local wrong, wrongRest = io.read("*x");
+>wrong : Symbol(wrong, Decl(tluaIoRead.tlua, 47, 5))
+>wrongRest : Symbol(wrongRest, Decl(tluaIoRead.tlua, 47, 12))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+

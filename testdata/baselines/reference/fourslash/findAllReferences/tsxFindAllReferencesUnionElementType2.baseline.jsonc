@@ -1,0 +1,40 @@
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     }
+//     private method() { }
+// }
+// /*FIND ALL REFS*/local [|RCComp|] = RC1 || RC2;
+// <[|RCComp|] />
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     }
+//     private method() { }
+// }
+// local /*FIND ALL REFS*/[|RCComp|] = RC1 || RC2;
+// <[|RCComp|] />
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 9) skipped ---
+//     private method() { }
+// }
+// local RCComp = RC1 || RC2;
+// /*FIND ALL REFS*/<RCComp />
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     }
+//     private method() { }
+// }
+// local [|RCComp|] = RC1 || RC2;
+// </*FIND ALL REFS*/[|RCComp|] />

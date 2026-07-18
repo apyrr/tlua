@@ -1,0 +1,100 @@
+// === goToDefinition ===
+// === /goToDefinitionIndexSignature.tlua ===
+// interface I {
+//     [|[x: string]: boolean;|]
+// }
+// interface J {
+//     [x: string]: number;
+// }
+// interface K {
+//     [x: `a${string}`]: string;
+//     [x: `${string}b`]: string;
+// }
+// declare i: I;
+// i./*GOTO DEF*/foo;
+// declare ij: I | J;
+// ij.foo;
+// declare k: K;
+// --- (line: 16) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionIndexSignature.tlua ===
+// interface I {
+//     [|[x: string]: boolean;|]
+// }
+// interface J {
+//     [|[x: string]: number;|]
+// }
+// interface K {
+//     [x: `a${string}`]: string;
+//     [x: `${string}b`]: string;
+// }
+// declare i: I;
+// i.foo;
+// declare ij: I | J;
+// ij./*GOTO DEF*/foo;
+// declare k: K;
+// k.a;
+// k.b;
+// k.ab;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionIndexSignature.tlua ===
+// --- (line: 4) skipped ---
+//     [x: string]: number;
+// }
+// interface K {
+//     [|[x: `a${string}`]: string;|]
+//     [x: `${string}b`]: string;
+// }
+// declare i: I;
+// i.foo;
+// declare ij: I | J;
+// ij.foo;
+// declare k: K;
+// k./*GOTO DEF*/a;
+// k.b;
+// k.ab;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionIndexSignature.tlua ===
+// --- (line: 5) skipped ---
+// }
+// interface K {
+//     [x: `a${string}`]: string;
+//     [|[x: `${string}b`]: string;|]
+// }
+// declare i: I;
+// i.foo;
+// declare ij: I | J;
+// ij.foo;
+// declare k: K;
+// k.a;
+// k./*GOTO DEF*/b;
+// k.ab;
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionIndexSignature.tlua ===
+// --- (line: 4) skipped ---
+//     [x: string]: number;
+// }
+// interface K {
+//     [|[x: `a${string}`]: string;|]
+//     [|[x: `${string}b`]: string;|]
+// }
+// declare i: I;
+// i.foo;
+// declare ij: I | J;
+// ij.foo;
+// declare k: K;
+// k.a;
+// k.b;
+// k./*GOTO DEF*/ab;

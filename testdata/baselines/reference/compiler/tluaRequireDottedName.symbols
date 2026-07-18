@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/tluaRequireDottedName.tlua] ////
+
+=== main.tlua ===
+local util = require("app.util");
+>util : Symbol(util, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local n: number = util.value;
+>n : Symbol(n, Decl(main.tlua, 1, 5))
+>util.value : Symbol(value, Decl(util.tlua, 1, 8))
+>util : Symbol(util, Decl(main.tlua, 0, 5))
+>value : Symbol(value, Decl(util.tlua, 1, 8))
+
+n;
+>n : Symbol(n, Decl(main.tlua, 1, 5))
+
+=== app/util.tlua ===
+local value = 42;
+>value : Symbol(value, Decl(util.tlua, 0, 5))
+
+return { value = value };
+>value : Symbol(value, Decl(util.tlua, 1, 8))
+>value : Symbol(value, Decl(util.tlua, 0, 5))
+

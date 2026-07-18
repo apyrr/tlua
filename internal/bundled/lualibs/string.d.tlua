@@ -1,0 +1,34 @@
+interface String {
+    readonly length: number;
+    byte(i?: number, j?: number): (number?, ...number);
+    find(pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
+    format(...: any): string;
+    gmatch(pattern: string): () => string;
+    gsub(pattern: string, replacement: string | object | LuaFunction, n?: number): (string, number);
+    len(): number;
+    lower(): string;
+    match(pattern: string, init?: number): (string?, ...string);
+    rep(n: number): string;
+    reverse(): string;
+    sub(i: number, j?: number): string;
+    upper(): string;
+}
+
+interface StringLib {
+    byte(value: string, i?: number, j?: number): (number?, ...number);
+    char(...: number): string;
+    dump(fn: LuaFunction): string;
+    find(value: string, pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
+    format(format: string, ...: any): string;
+    gmatch(value: string, pattern: string): () => string;
+    gsub(value: string, pattern: string, replacement: string | object | LuaFunction, n?: number): (string, number);
+    len(value: string): number;
+    lower(value: string): string;
+    match(value: string, pattern: string, init?: number): (string?, ...string);
+    rep(value: string, n: number): string;
+    reverse(value: string): string;
+    sub(value: string, i: number, j?: number): string;
+    upper(value: string): string;
+}
+
+declare string: StringLib;

@@ -1,0 +1,10 @@
+// @target: esnext
+// @strict: true
+
+local M = {};
+M.value = 1;
+M.label = "label";
+
+Implicit = {};
+Implicit.hidden = true;
+

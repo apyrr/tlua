@@ -1,0 +1,59 @@
+// === findAllReferences ===
+// === /a.tlua ===
+// interface A {
+//     /*FIND ALL REFS*/[|foo|]: string;
+// }
+
+// === /b.tlua ===
+// ///<reference path='a.tlua'/>
+// 
+// function foo(x: A) {
+//     x.[|foo|]
+// }
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// interface A {
+//     [|foo|]: string;
+// }
+
+// === /b.tlua ===
+// ///<reference path='a.tlua'/>
+// 
+// function foo(x: A) {
+//     x./*FIND ALL REFS*/[|foo|]
+// }
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// interface A {
+//     /*FIND ALL REFS*/[|foo|]: string;
+// }
+
+// === /b.tlua ===
+// ///<reference path='a.tlua'/>
+// 
+// 
+// function foo(x: A) {
+//     x.[|foo|]
+// }
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// interface A {
+//     [|foo|]: string;
+// }
+
+// === /b.tlua ===
+// ///<reference path='a.tlua'/>
+// 
+// 
+// function foo(x: A) {
+//     x./*FIND ALL REFS*/[|foo|]
+// }

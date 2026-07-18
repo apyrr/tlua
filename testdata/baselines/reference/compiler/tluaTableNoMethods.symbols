@@ -1,0 +1,44 @@
+//// [tests/cases/compiler/tluaTableNoMethods.tlua] ////
+
+=== tluaTableNoMethods.tlua ===
+// Object-literal methods and accessors are removed: they decompose into
+// positional expressions with natural errors.
+local m = { m() { return 1; } };
+>m : Symbol(m, Decl(tluaTableNoMethods.tlua, 2, 5))
+
+local g = { get p() { return 1; } };
+>g : Symbol(g, Decl(tluaTableNoMethods.tlua, 3, 5))
+
+local s = { set p(v: number) { } };
+>s : Symbol(s, Decl(tluaTableNoMethods.tlua, 4, 5))
+
+// The replacement: functions are table values.
+local fns = { run = function(): number return 1; end };
+>fns : Symbol(fns, Decl(tluaTableNoMethods.tlua, 7, 5))
+>run : Symbol(run, Decl(tluaTableNoMethods.tlua, 7, 13))
+
+local one: number = fns.run();
+>one : Symbol(one, Decl(tluaTableNoMethods.tlua, 8, 5))
+>fns.run : Symbol(run, Decl(tluaTableNoMethods.tlua, 7, 13))
+>fns : Symbol(fns, Decl(tluaTableNoMethods.tlua, 7, 5))
+>run : Symbol(run, Decl(tluaTableNoMethods.tlua, 7, 13))
+
+// Literal string/number keys use the bracket form.
+local keyed = { [1] = "a", ["k"] = 2 };
+>keyed : Symbol(keyed, Decl(tluaTableNoMethods.tlua, 11, 5))
+>[1] : Symbol([1], Decl(tluaTableNoMethods.tlua, 11, 15))
+>1 : Symbol([1], Decl(tluaTableNoMethods.tlua, 11, 15))
+>["k"] : Symbol(["k"], Decl(tluaTableNoMethods.tlua, 11, 26))
+>"k" : Symbol(["k"], Decl(tluaTableNoMethods.tlua, 11, 26))
+
+local ka: string = keyed[1];
+>ka : Symbol(ka, Decl(tluaTableNoMethods.tlua, 12, 5))
+>keyed : Symbol(keyed, Decl(tluaTableNoMethods.tlua, 11, 5))
+>1 : Symbol([1], Decl(tluaTableNoMethods.tlua, 11, 15))
+
+local kk: number = keyed.k;
+>kk : Symbol(kk, Decl(tluaTableNoMethods.tlua, 13, 5))
+>keyed.k : Symbol(["k"], Decl(tluaTableNoMethods.tlua, 11, 26))
+>keyed : Symbol(keyed, Decl(tluaTableNoMethods.tlua, 11, 5))
+>k : Symbol(["k"], Decl(tluaTableNoMethods.tlua, 11, 26))
+

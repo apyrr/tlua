@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaNumberKeyContextual.tlua] ////
+
+=== tluaNumberKeyContextual.tlua ===
+// A number index signature contextually types number-key entries only.
+interface NumIdx {
+>NumIdx : Symbol(NumIdx, Decl(tluaNumberKeyContextual.tlua, 0, 0))
+
+  [k: number]: string;
+>k : Symbol(k, Decl(tluaNumberKeyContextual.tlua, 2, 3))
+}
+local ok: NumIdx = { [1] = "a", [2] = "b" };
+>ok : Symbol(ok, Decl(tluaNumberKeyContextual.tlua, 4, 5))
+>NumIdx : Symbol(NumIdx, Decl(tluaNumberKeyContextual.tlua, 0, 0))
+>[1] : Symbol([1], Decl(tluaNumberKeyContextual.tlua, 4, 20))
+>1 : Symbol([1], Decl(tluaNumberKeyContextual.tlua, 4, 20))
+>[2] : Symbol([2], Decl(tluaNumberKeyContextual.tlua, 4, 31))
+>2 : Symbol([2], Decl(tluaNumberKeyContextual.tlua, 4, 31))
+
+// A string-key entry is not covered by a number index signature: excess.
+local bad: NumIdx = { ["x"] = "a" }; // error
+>bad : Symbol(bad, Decl(tluaNumberKeyContextual.tlua, 7, 5))
+>NumIdx : Symbol(NumIdx, Decl(tluaNumberKeyContextual.tlua, 0, 0))
+>["x"] : Symbol(["x"], Decl(tluaNumberKeyContextual.tlua, 7, 21))
+>"x" : Symbol(["x"], Decl(tluaNumberKeyContextual.tlua, 7, 21))
+
+// A string index signature contextually types string-key entries only.
+interface StrIdx {
+>StrIdx : Symbol(StrIdx, Decl(tluaNumberKeyContextual.tlua, 7, 36))
+
+  [k: string]: number;
+>k : Symbol(k, Decl(tluaNumberKeyContextual.tlua, 11, 3))
+}
+local okS: StrIdx = { x = 1, y = 2 };
+>okS : Symbol(okS, Decl(tluaNumberKeyContextual.tlua, 13, 5))
+>StrIdx : Symbol(StrIdx, Decl(tluaNumberKeyContextual.tlua, 7, 36))
+>x : Symbol(x, Decl(tluaNumberKeyContextual.tlua, 13, 21))
+>y : Symbol(y, Decl(tluaNumberKeyContextual.tlua, 13, 28))
+
+// A number-key entry against a string index errors (disjoint).
+local badS: StrIdx = { [1] = 1 }; // error
+>badS : Symbol(badS, Decl(tluaNumberKeyContextual.tlua, 16, 5))
+>StrIdx : Symbol(StrIdx, Decl(tluaNumberKeyContextual.tlua, 7, 36))
+>[1] : Symbol([1], Decl(tluaNumberKeyContextual.tlua, 16, 22))
+>1 : Symbol([1], Decl(tluaNumberKeyContextual.tlua, 16, 22))
+
+local es = {ok, bad, okS, badS};
+>es : Symbol(es, Decl(tluaNumberKeyContextual.tlua, 18, 5))
+

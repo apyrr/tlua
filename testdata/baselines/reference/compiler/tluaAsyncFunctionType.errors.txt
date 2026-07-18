@@ -1,0 +1,66 @@
+tluaAsyncFunctionType.tlua(23,3): error TS100023: An async function can only be called from an async context.
+tluaAsyncFunctionType.tlua(31,1): error TS2304: Cannot find name 'declare'.
+tluaAsyncFunctionType.tlua(31,9): error TS2304: Cannot find name 'namespace'.
+tluaAsyncFunctionType.tlua(31,19): error TS2819: Namespace name cannot be 'coroutine'.
+tluaAsyncFunctionType.tlua(32,12): error TS2391: Function implementation is missing or not immediately following the declaration.
+tluaAsyncFunctionType.tlua(34,18): error TS2345: Argument of type 'async (url: string) => boolean' is not assignable to parameter of type 'LuaFunction'.
+  An async function is not assignable to a non-async function type.
+
+
+==== tluaAsyncFunctionType.tlua (6 errors) ====
+    // An `async` modifier is allowed on function *type* nodes (the parenthesized
+    // `async (params) => T` form). It carries the coroutine contract: a call
+    // through an async-typed slot is checked, and async-ness is visible in the
+    // type display.
+    
+    declare function request(url: string): boolean;
+    
+    async function fetchOk(url: string): boolean
+      return request(url);
+    end
+    
+    declare function plainOk(url: string): boolean;
+    
+    // OK: async fn into an async-typed slot; the slot keeps the contract.
+    local g: async (url: string) => boolean = fetchOk;
+    
+    // OK: sync fn into an async-typed slot (a sync function may run in a coroutine).
+    local h: async (url: string) => boolean = plainOk;
+    
+    // Calling through the async-typed slot: error from a sync function, OK from an
+    // async function.
+    function sync1(): void {
+      g("a");
+      ~
+!!! error TS100023: An async function can only be called from an async context.
+!!! related TS1356 tluaAsyncFunctionType.tlua:22:10: Did you mean to mark this function as 'async'?
+    }
+    async function ok(): void
+      g("b");
+    end
+    
+    // Passing an async fn as a value into the "any function" top signature is fine
+    // (it is how coroutine.create/wrap receive a suspendable function).
+    declare namespace coroutine {
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'declare'.
+            ~~~~~~~~~
+!!! error TS2304: Cannot find name 'namespace'.
+                      ~~~~~~~~~
+!!! error TS2819: Namespace name cannot be 'coroutine'.
+      function create(f: (...: any) => any): any;
+               ~~~~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+    }
+    coroutine.create(fetchOk);
+                     ~~~~~~~
+!!! error TS2345: Argument of type 'async (url: string) => boolean' is not assignable to parameter of type 'LuaFunction'.
+!!! error TS2345:   An async function is not assignable to a non-async function type.
+    
+    // async function types are usable in ambient / declared positions.
+    declare handler: async (url: string) => boolean;
+    
+    // `async` used as an ordinary type name is unaffected (no parenthesized head).
+    type async = number;
+    local n: async = 1;
+    

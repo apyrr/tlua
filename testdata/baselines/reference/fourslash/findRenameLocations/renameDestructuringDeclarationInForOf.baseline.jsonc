@@ -1,0 +1,46 @@
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.tlua ===
+// interface I {
+//     /*RENAME*/[|property1RENAME|]: number;
+//     property2: string;
+// }
+// local elems: I[];
+// --- (line: 6) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.tlua ===
+// --- (line: 6) skipped ---
+// for (local { property1 } of elems) {
+//     property1++;
+// }
+// for (local { /*RENAME*/property1: p2 } of elems) {
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.tlua ===
+// --- (line: 3) skipped ---
+// }
+// local elems: I[];
+// 
+// for (local { /*RENAME*/property1 } of elems) {
+//     property1++;
+// }
+// for (local { property1: p2 } of elems) {
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.tlua ===
+// --- (line: 4) skipped ---
+// local elems: I[];
+// 
+// for (local { property1 } of elems) {
+//     /*RENAME*/property1++;
+// }
+// for (local { property1: p2 } of elems) {
+// }

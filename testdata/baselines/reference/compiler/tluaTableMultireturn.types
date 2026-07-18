@@ -1,0 +1,151 @@
+//// [tests/cases/compiler/tluaTableMultireturn.tlua] ////
+
+=== tluaTableMultireturn.tlua ===
+// A multireturn call in the LAST positional entry expands into the table, like
+// any other Lua tail position. In any other position it truncates to one value.
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+function variadic(): (number, ...string)
+>variadic : () => (number, ...string)
+
+  return 1, "a", "b";
+>1, "a", "b" : number, string, string
+>1 : 1
+>"a" : "a"
+>"b" : "b"
+
+end
+
+declare function nothing(): void;
+>nothing : () => void
+
+local nonTail = { pair(), 2 };
+>nonTail : { 1: number; 2: number; }
+>{ pair(), 2 } : { 1: number; 2: number; }
+>pair() : number
+>pair : () => (number, string)
+
+local nt1: number = nonTail[1];
+>nt1 : number
+>nonTail[1] : number
+>nonTail : { 1: number; 2: number; }
+>1 : 1
+
+local nt2: number = nonTail[2];
+>nt2 : number
+>nonTail[2] : number
+>nonTail : { 1: number; 2: number; }
+>2 : 2
+
+// The pack's second value does not flow out of a non-tail entry: [3] is absent.
+local nt3: string = nonTail[3];
+>nt3 : string
+>nonTail[3] : any
+>nonTail : { 1: number; 2: number; }
+>3 : 3
+
+// The tail expands, so both of the pack's values land.
+local tail = { 0, pair() };
+>tail : { 1: number; 2: number; 3: string; }
+>{ 0, pair() } : { 1: number; 2: number; 3: string; }
+>pair() : number
+>pair : () => (number, string)
+
+local t2: number = tail[2];
+>t2 : number
+>tail[2] : number
+>tail : { 1: number; 2: number; 3: string; }
+>2 : 2
+
+local t3: string = tail[3];
+>t3 : string
+>tail[3] : string
+>tail : { 1: number; 2: number; 3: string; }
+>3 : 3
+
+// An unbounded tail has no statically known indices, so it lands in the number
+// index signature rather than in positional properties. The signature covers the
+// fixed entries before it too, so it is the union of everything the table holds.
+local unbounded = { 0, variadic() };
+>unbounded : { [x: number]: string | number; 1: number; 2: number; }
+>{ 0, variadic() } : { [x: number]: string | number; 1: number; 2: number; }
+>variadic() : number
+>variadic : () => (number, ...string)
+
+local u1: number = unbounded[1];
+>u1 : number
+>unbounded[1] : number
+>unbounded : { [x: number]: string | number; 1: number; 2: number; }
+>1 : 1
+
+local ufar: string | number = unbounded[99];
+>ufar : string | number
+>unbounded[99] : string | number
+>unbounded : { [x: number]: string | number; 1: number; 2: number; }
+>99 : 99
+
+// A void call in the tail contributes zero values: the table stays empty.
+local empty = { nothing() };
+>empty : {}
+>{ nothing() } : {}
+>nothing() : void
+>nothing : () => void
+
+// A parenthesized call is a single value, so it does not expand even in the tail.
+local paren = { 0, (pair()) };
+>paren : { 1: number; 2: number; }
+>{ 0, (pair()) } : { 1: number; 2: number; }
+>(pair()) : number
+>pair() : number
+>pair : () => (number, string)
+
+local p2: number = paren[2];
+>p2 : number
+>paren[2] : number
+>paren : { 1: number; 2: number; }
+>2 : 2
+
+local p3: string = paren[3];
+>p3 : string
+>paren[3] : any
+>paren : { 1: number; 2: number; }
+>3 : 3
+
+// A keyed entry never expands: it takes one value.
+local keyedCall = { [1] = pair() };
+>keyedCall : { 1: number; }
+>{ [1] = pair() } : { 1: number; }
+>[1] : number
+>1 : 1
+>pair() : number
+>pair : () => (number, string)
+
+local kc: number = keyedCall[1];
+>kc : number
+>keyedCall[1] : number
+>keyedCall : { 1: number; }
+>1 : 1
+
+local es = {nt1, nt2, nt3, t2, t3, u1, ufar, empty, p2, p3, kc};
+>es : { 1: number; 2: number; 3: string; 4: number; 5: string; 6: number; 7: string | number; 8: {}; 9: number; 10: string; 11: number; }
+>{nt1, nt2, nt3, t2, t3, u1, ufar, empty, p2, p3, kc} : { 1: number; 2: number; 3: string; 4: number; 5: string; 6: number; 7: string | number; 8: {}; 9: number; 10: string; 11: number; }
+>nt1 : any
+>nt2 : any
+>nt3 : any
+>t2 : any
+>t3 : any
+>u1 : any
+>ufar : any
+>empty : any
+>p2 : any
+>p3 : any
+>kc : any
+

@@ -1,0 +1,43 @@
+//// [tests/cases/compiler/tluaDottedFunctionErrors.tlua] ////
+
+=== tluaDottedFunctionErrors.tlua ===
+// Unknown base.
+function Unknown.f(): void
+>f : Symbol(f, Decl(tluaDottedFunctionErrors.tlua, 0, 0))
+
+end
+
+// A function is not a table and cannot carry members.
+local function g(): void
+>g : Symbol(g, Decl(tluaDottedFunctionErrors.tlua, 2, 3))
+
+end
+
+function g.h(): void
+>g : Symbol(g, Decl(tluaDottedFunctionErrors.tlua, 2, 3))
+>h : Symbol(h, Decl(tluaDottedFunctionErrors.tlua, 6, 3))
+
+end
+
+// Duplicate members.
+local Dup = {};
+>Dup : Symbol(Dup, Decl(tluaDottedFunctionErrors.tlua, 12, 5))
+
+function Dup.f(): void
+>Dup : Symbol(Dup, Decl(tluaDottedFunctionErrors.tlua, 12, 5))
+>f : Symbol(f, Decl(tluaDottedFunctionErrors.tlua, 12, 15), Decl(tluaDottedFunctionErrors.tlua, 15, 3))
+
+end
+
+function Dup.f(): void
+>Dup : Symbol(Dup, Decl(tluaDottedFunctionErrors.tlua, 12, 5))
+>f : Symbol(f, Decl(tluaDottedFunctionErrors.tlua, 12, 15), Decl(tluaDottedFunctionErrors.tlua, 15, 3))
+
+end
+
+// `local function` takes a plain name.
+local function Bad.f(): void
+>Bad : Symbol(Bad, Decl(tluaDottedFunctionErrors.tlua, 18, 3))
+
+end
+

@@ -1,0 +1,6 @@
+// === documentHighlights ===
+// filesToSearch:
+//   C:/a/b/c.tlua
+
+// === C:/a/b/c.tlua ===
+// local /*HIGHLIGHTS*/x = 1;

@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/privateNameTaggedTemplate.tlua] ////
+
+=== privateNameTaggedTemplate.tlua ===
+class Foo {
+>class : any
+>Foo : any
+
+  #x = 3;
+>#x : number
+>x : any
+>3 : 3
+
+  #y = null as any;
+>#y : number
+>y : any
+>null as any : any
+
+  func() {
+>func() : any
+>func : any
+
+    console.log(this.#y`->>${this.#x}<<-`);
+>console.log(this.#y`->>${this.#x : any
+>console.log : any
+>console : any
+>log : any
+>#y`->>${ : number
+>y`->>${ : any
+>y : any
+>`->>${ : string
+> : any
+>#x : number
+>x : any
+><<-`);  }} : () => any
+>-`);  }} : number
+>`);  }} : ");\n  }\n}\n"
+  }
+}
+

@@ -1,0 +1,133 @@
+//// [tests/cases/compiler/tluaMultiReturnStatement.tlua] ////
+
+=== tluaMultiReturnStatement.tlua ===
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+// Inference: the return list infers a pack without an annotation.
+function inferredPair()
+>inferredPair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+// Inference across mixed arities pads with nil.
+function mixed(cond: boolean) {
+>mixed : (cond: boolean) => (number, (string | nil)?)
+>cond : boolean
+
+  if (cond) {
+>cond : boolean
+
+    return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+  }
+  return 2;
+>2 : 2
+}
+
+// A bare return contributes zero values.
+function maybeNothing(cond: boolean) {
+>maybeNothing : (cond: boolean) => (number | nil, (string | nil)?)
+>cond : boolean
+
+  if (cond) {
+>cond : boolean
+
+    return;
+  }
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+}
+
+// `return f()` forwards the whole pack.
+function forward(): (number, string)
+>forward : () => (number, string)
+
+  return pair();
+>pair() : number
+>pair : () => (number, string)
+
+end
+
+function forwardInferred()
+>forwardInferred : () => (number, string)
+
+  return pair();
+>pair() : number
+>pair : () => (number, string)
+
+end
+
+// A call anywhere in a single-value position truncates to the first value.
+local first = pair();
+>first : number
+>pair() : number
+>pair : () => (number, string)
+
+local sum = pair() + 1;
+>sum : number
+>pair() + 1 : number
+>pair() : number
+>pair : () => (number, string)
+>1 : 1
+
+// The value list evaluates non-tail calls to a single value.
+function headTruncates()
+>headTruncates : () => (number, boolean)
+
+  return pair(), true;
+>pair(), true : number, boolean
+>pair() : number
+>pair : () => (number, string)
+>true : true
+
+end
+
+local i = inferredPair();
+>i : number
+>inferredPair() : number
+>inferredPair : () => (number, string)
+
+local m = mixed(true);
+>m : number
+>mixed(true) : number
+>mixed : (cond: boolean) => (number, (string | nil)?)
+>true : true
+
+local n = maybeNothing(false);
+>n : number | nil
+>maybeNothing(false) : number | nil
+>maybeNothing : (cond: boolean) => (number | nil, (string | nil)?)
+>false : false
+
+local f = forward();
+>f : number
+>forward() : number
+>forward : () => (number, string)
+
+local g = forwardInferred();
+>g : number
+>forwardInferred() : number
+>forwardInferred : () => (number, string)
+
+local h = headTruncates();
+>h : number
+>headTruncates() : number
+>headTruncates : () => (number, boolean)
+

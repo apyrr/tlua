@@ -1,0 +1,28 @@
+typePredicateParameterMismatch.tlua(10,4): error TS1225: Cannot find parameter 'value'.
+typePredicateParameterMismatch.tlua(16,5): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+
+
+==== typePredicateParameterMismatch.tlua (2 errors) ====
+    // This test verifies that the checker doesn't panic when a type predicate
+    // references a parameter name that doesn't match any actual function parameter.
+    
+    type TypeA = { kind: 'a' };
+    type TypeB = { kind: 'b' };
+    type UnionType = TypeA | TypeB;
+    
+    function isTypeA(
+      _value: UnionType
+    ): value is TypeA {  // "value" doesn't match parameter "_value"
+       ~~~~~
+!!! error TS1225: Cannot find parameter 'value'.
+      return true;
+    }
+    
+    function test(input: UnionType): void {
+      if (isTypeA(input)) {
+        console.log(input.kind);
+        ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+      }
+    }
+    

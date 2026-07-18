@@ -1,0 +1,40 @@
+//// [tests/cases/compiler/tluaRequirePathShaped.tlua] ////
+
+=== main.tlua ===
+local a = require("./m");
+>a : any
+>require("./m") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"./m" : "./m"
+
+local b = require("../up");
+>b : any
+>require("../up") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"../up" : "../up"
+
+local c = require("dir/m");
+>c : any
+>require("dir/m") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"dir/m" : "dir/m"
+
+local ok = require("m");
+>ok : { x: number; }
+>require("m") : { x: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+ok;
+>ok : { x: number; }
+
+=== m.tlua ===
+local x = 1;
+>x : number
+>1 : 1
+
+return { x = x };
+>{ x = x } : { x: number; }
+>x : number
+>x : number
+

@@ -1,0 +1,123 @@
+//// [tests/cases/compiler/tluaVarargForwarding.tlua] ////
+
+=== tluaVarargForwarding.tlua ===
+declare function target(a: number, ...: string): void;
+>target : Symbol(target, Decl(tluaVarargForwarding.tlua, 0, 0))
+>a : Symbol(a, Decl(tluaVarargForwarding.tlua, 0, 24))
+> : Symbol((Missing), Decl(tluaVarargForwarding.tlua, 0, 34))
+
+function forward(...: any): void
+>forward : Symbol(forward, Decl(tluaVarargForwarding.tlua, 0, 54))
+> : Symbol((Missing), Decl(tluaVarargForwarding.tlua, 2, 17))
+
+  // Forwarding into a rest parameter, in tail position.
+  print(...);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+
+  print("x", ...);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+
+  target(1, ...);
+>target : Symbol(target, Decl(tluaVarargForwarding.tlua, 0, 0))
+
+  // The Lua libraries take the pack through their own rest tails.
+  local ok = pcall(forward, ...);
+>ok : Symbol(ok, Decl(tluaVarargForwarding.tlua, 9, 7))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>forward : Symbol(forward, Decl(tluaVarargForwarding.tlua, 0, 54))
+
+  local count = select("#", ...);
+>count : Symbol(count, Decl(tluaVarargForwarding.tlua, 10, 7))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  // Forwarding into a fixed parameter passes `any | nil`, because the tail may
+  // run out before it. `tostring(value: any)` accepts nil -- and so does Lua,
+  // where `tostring(nil)` is "nil" -- so this is legal, and no arity rule is
+  // involved.
+  tostring(...);
+>tostring : Symbol(tostring, Decl(lib.luajit.d.tlua, --, --))
+
+  // Parenthesized truncation says "exactly one value" explicitly. Same result.
+  tostring((...));
+>tostring : Symbol(tostring, Decl(lib.luajit.d.tlua, --, --))
+
+  // `error()` takes no argument in Lua, and its parameters are optional here, so
+  // a possibly-empty tail forwards cleanly.
+  error(...);
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+declare function needsString(value: string): void;
+>needsString : Symbol(needsString, Decl(tluaVarargForwarding.tlua, 24, 3))
+>value : Symbol(value, Decl(tluaVarargForwarding.tlua, 26, 29))
+
+function forwardIntoRequired(...: number): void
+>forwardIntoRequired : Symbol(forwardIntoRequired, Decl(tluaVarargForwarding.tlua, 26, 50))
+> : Symbol((Missing), Decl(tluaVarargForwarding.tlua, 28, 29))
+
+  // The tail's value may be absent, so a parameter that cannot hold nil rejects
+  // it -- an ordinary assignability error naming the real type, not an arity
+  // rule. This is the check that keeps a maybe-empty tail out of a slot that
+  // needs a value.
+  needsString(...);
+>needsString : Symbol(needsString, Decl(tluaVarargForwarding.tlua, 24, 3))
+
+end
+
+// Lib sanity assertions on the inherited-lib rest rewrite.
+declare function twoArgs(a: number, b: string): number;
+>twoArgs : Symbol(twoArgs, Decl(tluaVarargForwarding.tlua, 34, 3))
+>a : Symbol(a, Decl(tluaVarargForwarding.tlua, 37, 25))
+>b : Symbol(b, Decl(tluaVarargForwarding.tlua, 37, 35))
+
+// `ReturnType<T>` still resolves: its `(...: any) => infer R` survived the
+// rewrite with `R` bound. The negative assertion is the real gate -- if the
+// rewrite ate the `infer`, `R` degrades to `any` and only a *mismatch* can
+// detect it, since `any` satisfies every positive annotation.
+type Ret = ReturnType<typeof twoArgs>;
+>Ret : Symbol(Ret, Decl(tluaVarargForwarding.tlua, 37, 55))
+>ReturnType : Symbol(ReturnType, Decl(lib.luajit.d.tlua, --, --))
+>twoArgs : Symbol(twoArgs, Decl(tluaVarargForwarding.tlua, 34, 3))
+
+local ret: Ret = 1;
+>ret : Symbol(ret, Decl(tluaVarargForwarding.tlua, 44, 5))
+>Ret : Symbol(Ret, Decl(tluaVarargForwarding.tlua, 37, 55))
+
+local badRet: Ret = "a";
+>badRet : Symbol(badRet, Decl(tluaVarargForwarding.tlua, 45, 5))
+>Ret : Symbol(Ret, Decl(tluaVarargForwarding.tlua, 37, 55))
+
+// `Awaited<T>` matches a thenable through `then(onfulfilled: infer F, ...: infer _)`.
+// The `infer` sits in a vararg annotation, so it infers the pack's *element* type
+// and must carry no implicit `unknown[]` constraint -- with one, no element
+// candidate can satisfy it, `then` never matches, and Awaited silently stops
+// unwrapping (resolving to Promise<number> rather than number).
+type Unwrapped = Awaited<Promise<number>>;
+>Unwrapped : Symbol(Unwrapped, Decl(tluaVarargForwarding.tlua, 45, 24))
+>Awaited : Symbol(Awaited, Decl(lib.luajit.d.tlua, --, --))
+>Promise : Symbol(Promise, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+local unwrapped: Unwrapped = 1;
+>unwrapped : Symbol(unwrapped, Decl(tluaVarargForwarding.tlua, 53, 5))
+>Unwrapped : Symbol(Unwrapped, Decl(tluaVarargForwarding.tlua, 45, 24))
+
+local badUnwrapped: Unwrapped = "a";
+>badUnwrapped : Symbol(badUnwrapped, Decl(tluaVarargForwarding.tlua, 54, 5))
+>Unwrapped : Symbol(Unwrapped, Decl(tluaVarargForwarding.tlua, 45, 24))
+
+// `Parameters<T>` and `ConstructorParameters<T>` are deliberately removed from
+// the libs: they are built on `...args: infer P`, which only works because a TS
+// rest parameter's type IS the parameter tuple. A vararg's annotation is the
+// pack's element type, so the tuple is unreachable -- and with operand spread
+// gone, no tlua program could consume it anyway. Restoring them is Stage 2.
+type Params = Parameters<typeof twoArgs>;
+>Params : Symbol(Params, Decl(tluaVarargForwarding.tlua, 54, 36))
+>Parameters : Symbol(Parameters)
+>twoArgs : Symbol(twoArgs, Decl(tluaVarargForwarding.tlua, 34, 3))
+
+type CtorParams = ConstructorParameters<typeof twoArgs>;
+>CtorParams : Symbol(CtorParams, Decl(tluaVarargForwarding.tlua, 61, 41))
+>ConstructorParameters : Symbol(ConstructorParameters)
+>twoArgs : Symbol(twoArgs, Decl(tluaVarargForwarding.tlua, 34, 3))
+

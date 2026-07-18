@@ -1,0 +1,114 @@
+//// [tests/cases/compiler/tluaIfStatement.tlua] ////
+
+=== tluaIfStatement.tlua ===
+function basic(n: number): string
+>basic : (n: number) => string
+>n : number
+
+  if n < 0 then
+>n < 0 : boolean
+>n : number
+>0 : 0
+
+    return "neg";
+>"neg" : "neg"
+
+  end
+  return "other";
+>"other" : "other"
+
+end
+
+function withElse(flag: boolean): number
+>withElse : (flag: boolean) => number
+>flag : boolean
+
+  if flag then
+>flag : boolean
+
+    return 1;
+>1 : 1
+
+  else
+    return 2;
+>2 : 2
+
+  end
+end
+
+// Parenthesized conditions are ordinary expressions.
+function parens(flag: boolean): number
+>parens : (flag: boolean) => number
+>flag : boolean
+
+  if (flag) then
+>(flag) : boolean
+>flag : boolean
+
+    return 1;
+>1 : 1
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+// The condition may extend past an opening paren.
+function pastParens(a: boolean, b: boolean): number
+>pastParens : (a: boolean, b: boolean) => number
+>a : boolean
+>b : boolean
+
+  if (a) == b then
+>(a) == b : boolean
+>(a) : boolean
+>a : boolean
+>b : boolean
+
+    return 1;
+>1 : 1
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+// Empty arms are fine.
+function emptyArms(flag: boolean): void
+>emptyArms : (flag: boolean) => void
+>flag : boolean
+
+  if flag then
+>flag : boolean
+
+  else
+  end
+end
+
+// Nested Lua ifs, each with its own end.
+function nested(a: boolean, b: boolean): number
+>nested : (a: boolean, b: boolean) => number
+>a : boolean
+>b : boolean
+
+  if a then
+>a : boolean
+
+    if b then
+>b : boolean
+
+      return 3;
+>3 : 3
+
+    end
+    return 2;
+>2 : 2
+
+  end
+  return 1;
+>1 : 1
+
+end
+

@@ -1,0 +1,22 @@
+// @strict: true
+// @noEmit: true
+
+// A number index signature contextually types number-key entries only.
+interface NumIdx {
+  [k: number]: string;
+}
+local ok: NumIdx = { [1] = "a", [2] = "b" };
+
+// A string-key entry is not covered by a number index signature: excess.
+local bad: NumIdx = { ["x"] = "a" }; // error
+
+// A string index signature contextually types string-key entries only.
+interface StrIdx {
+  [k: string]: number;
+}
+local okS: StrIdx = { x = 1, y = 2 };
+
+// A number-key entry against a string index errors (disjoint).
+local badS: StrIdx = { [1] = 1 }; // error
+
+local es = {ok, bad, okS, badS};

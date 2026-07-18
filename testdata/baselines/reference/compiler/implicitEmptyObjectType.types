@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/implicitEmptyObjectType.tlua] ////
+
+=== implicitEmptyObjectType.tlua ===
+// https://github.com/microsoft/typescript-go/issues/1563
+
+function f() {
+>f : () => void
+
+  local v: unknown = "lol";
+>v : unknown
+>"lol" : "lol"
+
+  local acceptsRecord = (record: Record<string, string>) => {};
+>acceptsRecord : (record: Record<string, string>) => void
+>(record: Record<string, string>) => {} : (record: Record<string, string>) => void
+>record : Record<string, string>
+
+  acceptsRecord(v || {});
+>acceptsRecord(v || {}) : void
+>acceptsRecord : (record: Record<string, string>) => void
+>v || {} : {}
+>v : unknown
+>{} : {}
+}
+

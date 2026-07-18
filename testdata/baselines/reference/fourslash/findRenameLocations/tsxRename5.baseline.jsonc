@@ -1,0 +1,19 @@
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 9) skipped ---
+//     size?: number;
+// }
+// 
+// local /*RENAME*/[|nnRENAME|]: string;
+// local x = <MyClass name={[|nnRENAME|]}></MyClass>;
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+// --- (line: 9) skipped ---
+//     size?: number;
+// }
+// 
+// local [|nnRENAME|]: string;
+// local x = <MyClass name={/*RENAME*/[|nnRENAME|]}></MyClass>;

@@ -1,0 +1,17 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: sideEffect.tlua
+X = 1;
+
+// @filename: bare.tlua
+local n = 1;
+return;
+
+// @filename: main.tlua
+// Lua stores `true` in package.loaded for a chunk that returns nothing, and
+// require reports that.
+local a: true = require("sideEffect");
+local b: true = require("bare");

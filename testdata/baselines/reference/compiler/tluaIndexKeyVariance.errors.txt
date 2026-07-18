@@ -1,0 +1,35 @@
+tluaIndexKeyVariance.tlua(9,7): error TS2322: Type 'Table<string | number, boolean>' is not assignable to type 'Table<string, boolean>'.
+  Type 'string | number' is not assignable to type 'string'.
+    Type 'number' is not assignable to type 'string'.
+tluaIndexKeyVariance.tlua(10,7): error TS2322: Type 'Table<string, boolean>' is not assignable to type 'Table<string | number, boolean>'.
+  Type 'string | number' is not assignable to type 'string'.
+    Type 'number' is not assignable to type 'string'.
+
+
+==== tluaIndexKeyVariance.tlua (2 errors) ====
+    // `Table<in out K, V>` is invariant in its key: K is an input when the table is indexed
+    // and an output when it is iterated. Measured structurally it would come out
+    // contravariant, which accepts `Table<string | number, V>` where `Table<string, V>` is
+    // wanted -- and `pairs` would then report a number key as a string.
+    
+    declare wide: Table<string | number, boolean>;
+    declare narrow: Table<string, boolean>;
+    
+    local a: Table<string, boolean> = wide;
+          ~
+!!! error TS2322: Type 'Table<string | number, boolean>' is not assignable to type 'Table<string, boolean>'.
+!!! error TS2322:   Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+    local b: Table<string | number, boolean> = narrow;
+          ~
+!!! error TS2322: Type 'Table<string, boolean>' is not assignable to type 'Table<string | number, boolean>'.
+!!! error TS2322:   Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+    
+    // Identical keys relate as before.
+    local c: Table<string, boolean> = narrow;
+    
+    // A value-keyed table is still covariant in the value it holds.
+    declare numbers: Table<string, number>;
+    local d: Table<string, number | string> = numbers;
+    

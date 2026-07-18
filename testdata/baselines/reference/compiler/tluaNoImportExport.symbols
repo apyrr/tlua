@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/tluaNoImportExport.tlua] ////
+
+=== tluaNoImportExport.tlua ===
+// tlua has no TypeScript module syntax: a chunk loads its dependencies with
+// `require` and returns its own value.
+import { named } from "m";
+import * as star from "m";
+import def from "m";
+import legacy = require("m");
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+export local value = 1;
+>value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
+
+export default value;
+>value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
+
+export = value;
+>value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
+
+export { value };
+>value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
+
+export * from "m";
+
+// The dynamic forms are gone too.
+local dynamic = import("m");
+>dynamic : Symbol(dynamic, Decl(tluaNoImportExport.tlua, 13, 5))
+
+local meta = import.meta;
+>meta : Symbol(meta, Decl(tluaNoImportExport.tlua, 14, 5))
+>meta : Symbol(meta, Decl(tluaNoImportExport.tlua, 14, 5))
+

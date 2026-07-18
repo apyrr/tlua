@@ -1,0 +1,119 @@
+tluaMetatableStatement.tlua(22,18): error TS2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
+tluaMetatableStatement.tlua(29,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(36,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(45,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(54,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(67,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+
+
+==== tluaMetatableStatement.tlua (7 errors) ====
+    // `setmetatable(t, mt);` as a statement -- how Lua actually attaches a metatable, mutating in
+    // place -- narrows its table operand to the paired type, the way an assertion narrows its
+    // argument.
+    
+    local Helpers = { describe = function(self: object): string return "d"; end };
+    local Counters = { count = function(self: object): number return 1; end };
+    local mt = { __index = Helpers };
+    local mt2 = { __index = Counters };
+    
+    function basic(): void
+      local t = { n = 1 };
+      setmetatable(t, mt);
+      local d: string = t.describe(t);  // the fallback is visible after the statement
+      local n: number = t.n;            // the own member is intact
+    end
+    
+    function replaced(): void
+      local t = { n = 1 };
+      setmetatable(t, mt);
+      setmetatable(t, mt2);             // replacement: unpair, then re-pair
+      local c: number = t.count(t);
+      local gone = t.describe;          // the old pairing is gone
+                     ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
+    end
+    
+    function detached(): void
+      local t = { n = 1 };
+      setmetatable(t, mt);
+      setmetatable(t, nil);             // nil detaches
+      local gone = t.describe;
+                     ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+    end
+    
+    function invalidated(): void
+      local t = { n = 1 };
+      setmetatable(t, mt);
+      t = { n = 2 };                    // an assignment kills the narrowing
+      local gone = t.describe;
+                     ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+    end
+    
+    function inLoop(cond: boolean): void
+      local t = { n = 1 };
+      while cond do
+        setmetatable(t, mt);
+        local d: string = t.describe(t);
+      end
+      local gone = t.describe;          // the never-ran arm keeps t unpaired
+                     ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+    end
+    
+    function inConditional(cond: boolean): void
+      local t = { n = 1 };
+      if cond then
+        setmetatable(t, mt);
+        local d: string = t.describe(t);
+      end
+      local gone = t.describe;          // the join keeps the unpaired arm
+                     ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+    end
+    
+    function propertyTarget(): void
+      local holder = { field = { n = 1 } };
+      setmetatable(holder.field, mt);   // a property-access target narrows too
+      local d: string = holder.field.describe(holder.field);
+    end
+    
+    function shadowed(): void
+      local setmetatable = function(value: object, metatable: object): object return value; end;
+      local t = { n = 1 };
+      setmetatable(t, mt);              // not the global, so no narrowing
+      local gone = t.describe;
+                     ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+    end
+    
+    function constCapture(): void
+      local t = { n = 1 };
+      setmetatable(t, mt);
+      local f = function(): void
+        // t is never reassigned, so the narrowing reaches into the closure, as an assertion's does.
+        local d: string = t.describe(t);
+      end;
+    end
+    
+    function assignForm(): void
+      local t = { n = 1 };
+      local r = setmetatable(t, mt);    // the assign form types the result, not the argument
+      local rd: string = r.describe(r);
+      local gone = t.describe;
+                     ~~~~~~~~
+!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+    end
+    
+    // The metatable argument references the table through the same statement, inside a loop: the
+    // re-entrancy must terminate (the inner query simply sees the unpaired table).
+    function selfReferential(cond: boolean): void
+      local t = { n = 1, mt = mt };
+      while cond do
+        setmetatable(t, t.mt);
+      end
+      local after: number = t.n;
+    end
+    

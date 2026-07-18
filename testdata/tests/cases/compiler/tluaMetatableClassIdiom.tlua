@@ -1,0 +1,47 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// The Lua class idiom: a method table behind __index, and a constructor that pairs a fresh
+// table with it. The constructor's result satisfies the interface only because of the
+// fallback -- the table it builds has a balance and nothing else.
+
+interface Account {
+  balance: number;
+  deposit: (self: Account, amount: number) => void;
+  withdraw: (self: Account, amount: number) => boolean;
+}
+
+local AccountClass = {
+  deposit = function(self: Account, amount: number) self.balance = self.balance + amount; end,
+  withdraw = function(self: Account, amount: number): boolean
+    if self.balance < amount then
+      return false;
+    end
+    self.balance = self.balance - amount;
+    return true;
+  end,
+};
+
+local AccountMeta = { __index = AccountClass };
+
+function newAccount(balance: number): Account
+  return setmetatable({ balance = balance }, AccountMeta);
+end
+
+local account = newAccount(100);
+account.deposit(account, 50);
+local ok: boolean = account.withdraw(account, 20);
+local balance: number = account.balance;
+
+// Without the pairing, the same table does not.
+function missingMethods(balance: number): Account
+  return { balance = balance };
+end
+
+// A table paired with the method table is still a table: pairs iterates it.
+local paired = setmetatable({ balance = 1 }, AccountMeta);
+for k, v in pairs(paired) do
+  local key: string = k;
+end

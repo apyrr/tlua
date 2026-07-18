@@ -1,0 +1,54 @@
+//// [tests/cases/compiler/tluaTypeofRemoved.tlua] ////
+
+=== tluaTypeofRemoved.tlua ===
+// The `typeof` OPERATOR does not exist in tlua: `type(value)` is the Lua type
+// guard, and the operator has no AST node left to parse into. What follows is a
+// syntax error, not a checked expression.
+//
+// Each use below also pins that the parser keeps making progress: `typeof` does
+// not start an expression, so the statement list skips the token instead of
+// re-entering on it forever.
+
+declare v: string | number;
+>v : string | number
+
+declare function f(a: number): string;
+>f : (a: number) => string
+>a : number
+
+typeof v;
+>v : string | number
+
+local tag = typeof v;
+>tag : any
+> : any
+>v : string | number
+
+if typeof v == "string" then
+> : any
+>v == "string" : boolean
+>v : string | number
+>"string" : "string"
+
+  local s: string = v;
+>s : string
+>v : string | number
+
+end
+
+// `typeof` TYPE QUERIES are static syntax with no runtime counterpart, and stay.
+local g: typeof f = f;
+>g : (a: number) => string
+>f : (a: number) => string
+>f : (a: number) => string
+
+type Q = typeof v;
+>Q : string | number
+>v : string | number
+
+local r: string = g(1);
+>r : string
+>g(1) : string
+>g : (a: number) => string
+>1 : 1
+

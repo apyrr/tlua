@@ -1,0 +1,354 @@
+// === QuickInfo ===
+=== /quickInfoJsDocGetterSetter.tlua ===
+// class A {
+//     /**
+//      * getter A
+//      * @returns return A
+//      */
+//     get x(): string {
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         return "";
+//     }
+//     /**
+//      * setter A
+//      * @param value foo A
+//      * @todo empty jsdoc
+//      */
+//     set x(value) { }
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// }
+// // override both getter and setter
+// class B extends A {
+//     /**
+//      * getter B
+//      * @returns return B
+//      */
+//     get x(): string {
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         return "";
+//     }
+//     /**
+//      * setter B
+//      * @param value foo B
+//      */
+//     set x(vale) { }
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// }
+// // not override
+// class C extends A { }
+// // only override setter
+// class D extends A {
+//     /**
+//      * setter D
+//      * @param value foo D
+//      */
+//     set x(val: string) { }
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// }
+// new A().x = "1";
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// new B().x = "1";
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// new C().x = "1";
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// new D().x = "1";
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 75,
+      "LSPosition": {
+        "line": 5,
+        "character": 8
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 8
+        },
+        "end": {
+          "line": 5,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 205,
+      "LSPosition": {
+        "line": 13,
+        "character": 8
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 13,
+          "character": 8
+        },
+        "end": {
+          "line": 13,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 340,
+      "LSPosition": {
+        "line": 21,
+        "character": 8
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 21,
+          "character": 8
+        },
+        "end": {
+          "line": 21,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 445,
+      "LSPosition": {
+        "line": 28,
+        "character": 8
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 28,
+          "character": 8
+        },
+        "end": {
+          "line": 28,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 607,
+      "LSPosition": {
+        "line": 38,
+        "character": 8
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 38,
+          "character": 8
+        },
+        "end": {
+          "line": 38,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 636,
+      "LSPosition": {
+        "line": 40,
+        "character": 8
+      },
+      "Name": "6",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 40,
+          "character": 8
+        },
+        "end": {
+          "line": 40,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 653,
+      "LSPosition": {
+        "line": 41,
+        "character": 8
+      },
+      "Name": "7",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 41,
+          "character": 8
+        },
+        "end": {
+          "line": 41,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 670,
+      "LSPosition": {
+        "line": 42,
+        "character": 8
+      },
+      "Name": "8",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 42,
+          "character": 8
+        },
+        "end": {
+          "line": 42,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 687,
+      "LSPosition": {
+        "line": 43,
+        "character": 8
+      },
+      "Name": "9",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 43,
+          "character": 8
+        },
+        "end": {
+          "line": 43,
+          "character": 9
+        }
+      }
+    }
+  }
+]

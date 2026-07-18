@@ -1,0 +1,85 @@
+//// [tests/cases/compiler/tluaTableAugmentationEdges.tlua] ////
+
+=== a.tlua ===
+interface Shape {
+>Shape : Symbol(Shape, Decl(a.tlua, 0, 0), Decl(a.tlua, 2, 1))
+
+  x: number;
+>x : Symbol(Shape.x, Decl(a.tlua, 0, 17))
+}
+Shape = {};
+>Shape : Symbol(Shape, Decl(a.tlua, 0, 0), Decl(a.tlua, 2, 1))
+
+Shape.tag = 1;
+>Shape : Symbol(Shape, Decl(a.tlua, 0, 0), Decl(a.tlua, 2, 1))
+
+local s: Shape = { x = 1 };
+>s : Symbol(s, Decl(a.tlua, 5, 5))
+>Shape : Symbol(Shape, Decl(a.tlua, 0, 0), Decl(a.tlua, 2, 1))
+>x : Symbol(x, Decl(a.tlua, 5, 18))
+
+// A non-constructor arm in any file closes an implicit global program-wide.
+=== b.tlua ===
+G = {};
+>G : Symbol(G, Decl(b.tlua, 0, 0), Decl(c.tlua, 2, 3))
+
+G.x = 1;
+>G : Symbol(G, Decl(b.tlua, 0, 0), Decl(c.tlua, 2, 3))
+
+U = {};
+>U : Symbol(U, Decl(b.tlua, 1, 8), Decl(c.tlua, 7, 23))
+
+=== c.tlua ===
+local function make(): { y: number }
+>make : Symbol(make, Decl(c.tlua, 0, 0))
+>y : Symbol(y, Decl(c.tlua, 0, 24))
+
+  return { y = 2 };
+>y : Symbol(y, Decl(c.tlua, 1, 10))
+
+end
+G = make();
+>G : Symbol(G, Decl(b.tlua, 0, 0), Decl(c.tlua, 2, 3))
+>make : Symbol(make, Decl(c.tlua, 0, 0))
+
+// A member written in only one arm's constructor needs narrowing: before the
+// assignment below narrows U, the read sees the whole union.
+local ua: number = U.a;
+>ua : Symbol(ua, Decl(c.tlua, 7, 5))
+>U.a : Symbol(a, Decl(c.tlua, 9, 5), Decl(c.tlua, 9, 5))
+>U : Symbol(U, Decl(b.tlua, 1, 8), Decl(c.tlua, 7, 23))
+>a : Symbol(a, Decl(c.tlua, 9, 5), Decl(c.tlua, 9, 5))
+
+U = { a = 1 };
+>U : Symbol(U, Decl(b.tlua, 1, 8), Decl(c.tlua, 7, 23))
+>a : Symbol(a, Decl(c.tlua, 9, 5))
+
+local narrowed: number = U.a;
+>narrowed : Symbol(narrowed, Decl(c.tlua, 10, 5))
+>U.a : Symbol(a, Decl(c.tlua, 9, 5))
+>U : Symbol(U, Decl(b.tlua, 1, 8), Decl(c.tlua, 7, 23))
+>a : Symbol(a, Decl(c.tlua, 9, 5))
+
+// A dotted function colliding with a constructor field is a duplicate no
+// matter where it sits in the group; assignments to that field stay ordinary
+// checked writes.
+=== d.tlua ===
+local t = { member = 1 };
+>t : Symbol(t, Decl(d.tlua, 0, 5))
+>member : Symbol(member, Decl(d.tlua, 0, 11))
+
+function t.member(): void
+>t : Symbol(t, Decl(d.tlua, 0, 5))
+>member : Symbol(member, Decl(d.tlua, 0, 25))
+
+end
+t.member = 2;
+>t.member : Symbol(member, Decl(d.tlua, 0, 11))
+>t : Symbol(t, Decl(d.tlua, 0, 5))
+>member : Symbol(member, Decl(d.tlua, 0, 11))
+
+t.member = "no";
+>t.member : Symbol(member, Decl(d.tlua, 0, 11))
+>t : Symbol(t, Decl(d.tlua, 0, 5))
+>member : Symbol(member, Decl(d.tlua, 0, 11))
+

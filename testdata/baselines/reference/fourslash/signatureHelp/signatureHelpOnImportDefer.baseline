@@ -1,0 +1,21 @@
+// === SignatureHelp ===
+=== /signatureHelpOnImportDefer.tlua ===
+// local m = import.defer()
+//                        ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /**/.
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 23,
+      "LSPosition": {
+        "line": 0,
+        "character": 23
+      },
+      "Name": "",
+      "Data": {}
+    },
+    "item": null
+  }
+]

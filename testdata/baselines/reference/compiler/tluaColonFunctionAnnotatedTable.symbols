@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/tluaColonFunctionAnnotatedTable.tlua] ////
+
+=== tluaColonFunctionAnnotatedTable.tlua ===
+interface Ops {
+>Ops : Symbol(Ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 0, 0))
+
+  good(self: Ops, a: number): number;
+>good : Symbol(Ops.good, Decl(tluaColonFunctionAnnotatedTable.tlua, 0, 15))
+>self : Symbol(self, Decl(tluaColonFunctionAnnotatedTable.tlua, 1, 7))
+>Ops : Symbol(Ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 0, 0))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 1, 17))
+
+  noSelf(a: number): number;
+>noSelf : Symbol(Ops.noSelf, Decl(tluaColonFunctionAnnotatedTable.tlua, 1, 37))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 2, 9))
+}
+
+local ops: Ops = {
+>ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
+>Ops : Symbol(Ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 0, 0))
+
+  good = function(self: Ops, a: number) return a; end,
+>good : Symbol(good, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 18))
+>self : Symbol(self, Decl(tluaColonFunctionAnnotatedTable.tlua, 6, 18))
+>Ops : Symbol(Ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 0, 0))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 6, 28))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 6, 28))
+
+  noSelf = function(a: number) return a; end,
+>noSelf : Symbol(noSelf, Decl(tluaColonFunctionAnnotatedTable.tlua, 6, 54))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 7, 20))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 7, 20))
+
+};
+
+// An annotated table gets an assignability check against the declared member,
+// and the colon form supplies the receiver the interface asks for.
+function ops:good(a: number): number
+>ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
+>good : Symbol(good, Decl(tluaColonFunctionAnnotatedTable.tlua, 8, 2))
+>: : Symbol(:, Decl(tluaColonFunctionAnnotatedTable.tlua, 12, 12))
+>ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 12, 18))
+
+  return a;
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 12, 18))
+
+end
+
+// `noSelf` takes no receiver, so the colon form does not fit it.
+function ops:noSelf(a: number): number
+>ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
+>noSelf : Symbol(noSelf, Decl(tluaColonFunctionAnnotatedTable.tlua, 14, 3))
+>: : Symbol(:, Decl(tluaColonFunctionAnnotatedTable.tlua, 17, 12))
+>ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 17, 20))
+
+  return a;
+>a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 17, 20))
+
+end
+
+function ops:absent(): void
+>ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
+>absent : Symbol(absent, Decl(tluaColonFunctionAnnotatedTable.tlua, 19, 3))
+>: : Symbol(:, Decl(tluaColonFunctionAnnotatedTable.tlua, 21, 12))
+>ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
+
+end
+

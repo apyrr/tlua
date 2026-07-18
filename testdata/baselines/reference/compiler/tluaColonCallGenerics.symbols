@@ -1,0 +1,108 @@
+//// [tests/cases/compiler/tluaColonCallGenerics.tlua] ////
+
+=== tluaColonCallGenerics.tlua ===
+// The receiver participates in inference like any other argument.
+interface Boxer {
+>Boxer : Symbol(Boxer, Decl(tluaColonCallGenerics.tlua, 0, 0))
+
+  wrap<T>(self: Boxer, value: T): { value: T };
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>T : Symbol(T, Decl(tluaColonCallGenerics.tlua, 2, 7))
+>self : Symbol(self, Decl(tluaColonCallGenerics.tlua, 2, 10))
+>Boxer : Symbol(Boxer, Decl(tluaColonCallGenerics.tlua, 0, 0))
+>value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 2, 22))
+>T : Symbol(T, Decl(tluaColonCallGenerics.tlua, 2, 7))
+>value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 2, 35))
+>T : Symbol(T, Decl(tluaColonCallGenerics.tlua, 2, 7))
+
+  same<S>(self: S): S;
+>same : Symbol(Boxer.same, Decl(tluaColonCallGenerics.tlua, 2, 47))
+>S : Symbol(S, Decl(tluaColonCallGenerics.tlua, 3, 7))
+>self : Symbol(self, Decl(tluaColonCallGenerics.tlua, 3, 10))
+>S : Symbol(S, Decl(tluaColonCallGenerics.tlua, 3, 7))
+>S : Symbol(S, Decl(tluaColonCallGenerics.tlua, 3, 7))
+}
+declare boxer: Boxer;
+>boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
+>Boxer : Symbol(Boxer, Decl(tluaColonCallGenerics.tlua, 0, 0))
+
+local wrapped = boxer:wrap(1);
+>wrapped : Symbol(wrapped, Decl(tluaColonCallGenerics.tlua, 7, 5))
+>boxer:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+
+local n: number = wrapped.value;
+>n : Symbol(n, Decl(tluaColonCallGenerics.tlua, 8, 5))
+>wrapped.value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 2, 35))
+>wrapped : Symbol(wrapped, Decl(tluaColonCallGenerics.tlua, 7, 5))
+>value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 2, 35))
+
+local s: string = wrapped.value;
+>s : Symbol(s, Decl(tluaColonCallGenerics.tlua, 9, 5))
+>wrapped.value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 2, 35))
+>wrapped : Symbol(wrapped, Decl(tluaColonCallGenerics.tlua, 7, 5))
+>value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 2, 35))
+
+// A self-generic member infers the receiver's own type.
+local again = boxer:same();
+>again : Symbol(again, Decl(tluaColonCallGenerics.tlua, 12, 5))
+>boxer:same : Symbol(Boxer.same, Decl(tluaColonCallGenerics.tlua, 2, 47))
+>boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
+>same : Symbol(Boxer.same, Decl(tluaColonCallGenerics.tlua, 2, 47))
+
+local w2 = again:wrap("s");
+>w2 : Symbol(w2, Decl(tluaColonCallGenerics.tlua, 13, 5))
+>again:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>again : Symbol(again, Decl(tluaColonCallGenerics.tlua, 12, 5))
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+
+// Explicit type arguments still slot after the name.
+local w3 = boxer:wrap<string>("x");
+>w3 : Symbol(w3, Decl(tluaColonCallGenerics.tlua, 16, 5))
+>boxer:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+
+local w4 = boxer:wrap<string>(1);
+>w4 : Symbol(w4, Decl(tluaColonCallGenerics.tlua, 17, 5))
+>boxer:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+
+// A parenthesized colon call is not an arrow parameter list, with or without
+// explicit type arguments.
+local w5 = (boxer:wrap(1));
+>w5 : Symbol(w5, Decl(tluaColonCallGenerics.tlua, 21, 5))
+>boxer:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+
+local w6 = (boxer:wrap<string>("x"));
+>w6 : Symbol(w6, Decl(tluaColonCallGenerics.tlua, 22, 5))
+>boxer:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+
+local arrow = (b: Boxer) => b:wrap(1);
+>arrow : Symbol(arrow, Decl(tluaColonCallGenerics.tlua, 23, 5))
+>b : Symbol(b, Decl(tluaColonCallGenerics.tlua, 23, 15))
+>Boxer : Symbol(Boxer, Decl(tluaColonCallGenerics.tlua, 0, 0))
+>b:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+>b : Symbol(b, Decl(tluaColonCallGenerics.tlua, 23, 15))
+>wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
+
+type Wrapped<T> = { value: T };
+>Wrapped : Symbol(Wrapped, Decl(tluaColonCallGenerics.tlua, 23, 38))
+>T : Symbol(T, Decl(tluaColonCallGenerics.tlua, 24, 13))
+>value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 24, 19))
+>T : Symbol(T, Decl(tluaColonCallGenerics.tlua, 24, 13))
+
+local arrowGeneric = (w: Wrapped<string>) => w.value;
+>arrowGeneric : Symbol(arrowGeneric, Decl(tluaColonCallGenerics.tlua, 25, 5))
+>w : Symbol(w, Decl(tluaColonCallGenerics.tlua, 25, 22))
+>Wrapped : Symbol(Wrapped, Decl(tluaColonCallGenerics.tlua, 23, 38))
+>w.value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 24, 19))
+>w : Symbol(w, Decl(tluaColonCallGenerics.tlua, 25, 22))
+>value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 24, 19))
+

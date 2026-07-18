@@ -1,0 +1,35 @@
+// === findAllReferences ===
+// === /findAllRefsForComputedProperties2.tlua ===
+// interface I {
+//     [/*FIND ALL REFS*/[|42|]](): void;
+// }
+// 
+// class C implements I {
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForComputedProperties2.tlua ===
+// interface I {
+//     [42](): void;
+// }
+// 
+// class C implements I {
+//     [/*FIND ALL REFS*/42]: any;
+// }
+// 
+// local x: I = {
+//     ["42"]: function () { }
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForComputedProperties2.tlua ===
+// --- (line: 6) skipped ---
+// }
+// 
+// local x: I = {
+//     ["/*FIND ALL REFS*/[|42|]"]: function () { }
+// }

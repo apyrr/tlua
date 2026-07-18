@@ -1,0 +1,5 @@
+// === goToDefinition ===
+// === /a.tlua ===
+// class A {
+//     private z/*GOTO DEF*/: string;
+// }

@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/tluaNoAwait.tlua] ////
+
+=== tluaNoAwait.tlua ===
+// `await` is removed: it is an ordinary identifier everywhere — including
+// async function bodies and module top level — and async functions emit as
+// plain functions (no __awaiter, no transform).
+
+declare function compute(): number;
+>compute : () => number
+
+async function f(): number
+>f : async () => number
+
+  local await = compute();
+>await : number
+>compute() : number
+>compute : () => number
+
+  return await;
+>await : number
+
+end
+
+// `await expr` no longer parses as a unary operator.
+async function g(): number
+>g : async () => number
+
+  return await f();
+>await : any
+>f() : number
+>f : async () => number
+
+end
+
+// Ordinary identifier at top level of a module.
+local await = 1;
+>await : number
+>1 : 1
+
+local usesAwait = await + 1;
+>usesAwait : number
+>await + 1 : number
+>await : number
+>1 : 1
+
+// `await using` is removed with it.
+function h(): void {
+>h : () => void
+
+  await using r = compute();
+>await : number
+>using : any
+>r = compute() : number
+>r : any
+>compute() : number
+>compute : () => number
+}
+

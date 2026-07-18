@@ -1,0 +1,7 @@
+// === Document Symbols ===
+// === /navigationBarItemsClass2.tlua ===
+// class Foo {}
+// <|function [|{| name: Foo, kind: Function |}Foo|]() {}|>
+
+// === Details ===
+(Function) Foo

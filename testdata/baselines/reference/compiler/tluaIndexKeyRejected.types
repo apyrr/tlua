@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/tluaIndexKeyRejected.tlua] ////
+
+=== tluaIndexKeyRejected.tlua ===
+// Two rules survive the widening.
+
+// A key must not be nil: `t[nil]` is an error in Lua, not a lookup (100039).
+interface NilKey { [key: nil]: string }
+>key : nil
+
+interface MaybeNilKey { [key: string | nil]: string }
+>key : string | nil
+
+interface UnknownKey { [key: unknown]: string }
+>key : unknown
+
+interface AnyKey { [key: any]: string }
+>key : any
+
+// A key must not be a literal: one key is a named property, or a mapped type (100036).
+// This is the half of TypeScript's rule that stays -- the *generic* half is gone.
+interface StringLiteralKey { [key: "a"]: string }
+>key : "a"
+
+interface NumberLiteralKey { [key: 1]: string }
+>key : 1
+
+interface BooleanLiteralKey { [key: true]: string }
+>key : true
+>true : true
+
+interface UnionOfLiteralsKey { [key: "a" | "b"]: string }
+>key : "a" | "b"
+
+// A table key cannot be nil either (100040), and `unknown` may be nil.
+declare k: string;
+>k : string
+
+local ok = { [k] = 1 };
+>ok : { [k]: number; }
+>{ [k] = 1 } : { [k]: number; }
+>[k] : number
+>k : string
+>1 : 1
+
+local bad = { [nil] = 1 };
+>bad : {}
+>{ [nil] = 1 } : {}
+>[nil] : number
+>1 : 1
+
+declare u: unknown;
+>u : unknown
+
+local bad2 = { [u] = 1 };
+>bad2 : {}
+>{ [u] = 1 } : {}
+>[u] : number
+>u : unknown
+>1 : 1
+
+// Pattern literal keys remain valid: they denote a set of string keys, not one.
+interface PatternKey { [key: `id-${string}`]: number }
+>key : `id-${string}`
+
+declare p: PatternKey;
+>p : PatternKey
+
+local n: number = p["id-1"];
+>n : number
+>p["id-1"] : number
+>p : PatternKey
+>"id-1" : "id-1"
+
+// A literal that arrives through instantiation widens to its domain rather than
+// keying an index nothing can represent: a template key completed by a type argument
+// becomes a string index, and a literal type argument a string one.
+interface Prefixed<T extends string> { [key: `a${T}`]: number }
+>key : `a${T}`
+
+declare pre: Prefixed<"x">;
+>pre : Prefixed<"x">
+
+local n2: number = pre["ax"];
+>n2 : number
+>pre["ax"] : number
+>pre : Prefixed<"x">
+>"ax" : "ax"
+
+type PK = keyof Prefixed<"x">;
+>PK : string
+
+local pk: PK = "anything";
+>pk : string
+>"anything" : "anything"
+
+declare tl: Table<"a", number>;
+>tl : Table<"a", number>
+
+local n3: number = tl["b"];
+>n3 : number
+>tl["b"] : number
+>tl : Table<"a", number>
+>"b" : "b"
+

@@ -1,0 +1,21 @@
+// === goToDefinition ===
+// === /goToDefinitionAwait3.tlua ===
+// class C {
+//     notAsync() {
+//       /*GOTO DEF*/await Promise.resolve(0);
+//     }
+// 
+//     async foo() {
+// --- (line: 7) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionAwait3.tlua ===
+// --- (line: 3) skipped ---
+//     }
+// 
+//     async foo() {
+//       /*GOTO DEF*/await Promise.resolve(0);
+//     }
+// }

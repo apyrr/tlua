@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaMetatableConcatLen.tlua] ////
+
+=== tluaMetatableConcatLen.tlua ===
+// `..` dispatches __concat and `#` dispatches __len on a paired operand, exactly as the other
+// operator metamethods do: the handler's parameters check the operands and its return type is
+// the expression's type.
+
+local Str = {
+>Str : Symbol(Str, Decl(tluaMetatableConcatLen.tlua, 4, 5))
+
+  // Lua passes __concat whichever operand is not the table, so its arguments are arbitrary.
+  __concat = function(a: any, b: any): string return "s"; end,
+>__concat : Symbol(__concat, Decl(tluaMetatableConcatLen.tlua, 4, 13))
+>a : Symbol(a, Decl(tluaMetatableConcatLen.tlua, 6, 22))
+>b : Symbol(b, Decl(tluaMetatableConcatLen.tlua, 6, 29))
+
+  // A multi-return handler adjusts to its first value.
+  __len = function(a: { n: number }): (number, string) return a.n, "w"; end,
+>__len : Symbol(__len, Decl(tluaMetatableConcatLen.tlua, 6, 62))
+>a : Symbol(a, Decl(tluaMetatableConcatLen.tlua, 8, 19))
+>n : Symbol(n, Decl(tluaMetatableConcatLen.tlua, 8, 23))
+>a.n : Symbol(n, Decl(tluaMetatableConcatLen.tlua, 8, 23))
+>a : Symbol(a, Decl(tluaMetatableConcatLen.tlua, 8, 19))
+>n : Symbol(n, Decl(tluaMetatableConcatLen.tlua, 8, 23))
+
+};
+
+local v = setmetatable({ n = 3 }, Str);
+>v : Symbol(v, Decl(tluaMetatableConcatLen.tlua, 11, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableConcatLen.tlua, 11, 24))
+>Str : Symbol(Str, Decl(tluaMetatableConcatLen.tlua, 4, 5))
+
+local c1: string = v .. "z";       // __concat, v on the left
+>c1 : Symbol(c1, Decl(tluaMetatableConcatLen.tlua, 13, 5))
+>v : Symbol(v, Decl(tluaMetatableConcatLen.tlua, 11, 5))
+
+local c2: string = "z" .. v;       // __concat, v on the right (still receives operands in order)
+>c2 : Symbol(c2, Decl(tluaMetatableConcatLen.tlua, 14, 5))
+>v : Symbol(v, Decl(tluaMetatableConcatLen.tlua, 11, 5))
+
+local l1: number = #v;             // __len, adjusted to its first value
+>l1 : Symbol(l1, Decl(tluaMetatableConcatLen.tlua, 15, 5))
+>v : Symbol(v, Decl(tluaMetatableConcatLen.tlua, 11, 5))
+
+// getmetatable is precise for a metatable that commits only to __concat/__len -- they are
+// interpreted metamethods, so the pairing triggers.
+local mt = getmetatable(v);
+>mt : Symbol(mt, Decl(tluaMetatableConcatLen.tlua, 19, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaMetatableConcatLen.tlua, 11, 5))
+
+local h: (a: any, b: any) => string = mt.__concat;
+>h : Symbol(h, Decl(tluaMetatableConcatLen.tlua, 20, 5))
+>a : Symbol(a, Decl(tluaMetatableConcatLen.tlua, 20, 10))
+>b : Symbol(b, Decl(tluaMetatableConcatLen.tlua, 20, 17))
+>mt.__concat : Symbol(__concat, Decl(tluaMetatableConcatLen.tlua, 4, 13))
+>mt : Symbol(mt, Decl(tluaMetatableConcatLen.tlua, 19, 5))
+>__concat : Symbol(__concat, Decl(tluaMetatableConcatLen.tlua, 4, 13))
+
+// A __concat handler whose parameter rejects the operand is an error.
+local Strict = {
+>Strict : Symbol(Strict, Decl(tluaMetatableConcatLen.tlua, 23, 5))
+
+  __concat = function(a: { tag: string }, b: { tag: string }): string return "s"; end,
+>__concat : Symbol(__concat, Decl(tluaMetatableConcatLen.tlua, 23, 16))
+>a : Symbol(a, Decl(tluaMetatableConcatLen.tlua, 24, 22))
+>tag : Symbol(tag, Decl(tluaMetatableConcatLen.tlua, 24, 26))
+>b : Symbol(b, Decl(tluaMetatableConcatLen.tlua, 24, 41))
+>tag : Symbol(tag, Decl(tluaMetatableConcatLen.tlua, 24, 46))
+
+};
+local p = setmetatable({ tag = "p" }, Strict);
+>p : Symbol(p, Decl(tluaMetatableConcatLen.tlua, 26, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>tag : Symbol(tag, Decl(tluaMetatableConcatLen.tlua, 26, 24))
+>Strict : Symbol(Strict, Decl(tluaMetatableConcatLen.tlua, 23, 5))
+
+local badConcat = p .. 5;
+>badConcat : Symbol(badConcat, Decl(tluaMetatableConcatLen.tlua, 27, 5))
+>p : Symbol(p, Decl(tluaMetatableConcatLen.tlua, 26, 5))
+
+// A table with no __concat still errors on `..`, while `#` without __len falls back to
+// the structural rule, which measures any table -- a plain record included.
+local plain = { n = 1 };
+>plain : Symbol(plain, Decl(tluaMetatableConcatLen.tlua, 31, 5))
+>n : Symbol(n, Decl(tluaMetatableConcatLen.tlua, 31, 15))
+
+local noConcat = plain .. "x";
+>noConcat : Symbol(noConcat, Decl(tluaMetatableConcatLen.tlua, 32, 5))
+>plain : Symbol(plain, Decl(tluaMetatableConcatLen.tlua, 31, 5))
+
+local noLen: number = #plain;
+>noLen : Symbol(noLen, Decl(tluaMetatableConcatLen.tlua, 33, 5))
+>plain : Symbol(plain, Decl(tluaMetatableConcatLen.tlua, 31, 5))
+

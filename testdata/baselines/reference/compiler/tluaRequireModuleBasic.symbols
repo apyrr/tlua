@@ -1,0 +1,59 @@
+//// [tests/cases/compiler/tluaRequireModuleBasic.tlua] ////
+
+=== main.tlua ===
+// A chunk's top-level return is its module value; require reports it.
+local util = require("util");
+>util : Symbol(util, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local n = util.clamp(5, 1, 3);
+>n : Symbol(n, Decl(main.tlua, 2, 5))
+>util.clamp : Symbol(clamp, Decl(util.tlua, 0, 13))
+>util : Symbol(util, Decl(main.tlua, 1, 5))
+>clamp : Symbol(clamp, Decl(util.tlua, 0, 13))
+
+local s: string = util.name;
+>s : Symbol(s, Decl(main.tlua, 3, 5))
+>util.name : Symbol(name, Decl(util.tlua, 6, 3))
+>util : Symbol(util, Decl(main.tlua, 1, 5))
+>name : Symbol(name, Decl(util.tlua, 6, 3))
+
+// The extension is implicit, as in Lua's module names.
+local missing = util.nope;
+>missing : Symbol(missing, Decl(main.tlua, 6, 5))
+>util : Symbol(util, Decl(main.tlua, 1, 5))
+
+=== util.tlua ===
+local M = {};
+>M : Symbol(M, Decl(util.tlua, 0, 5))
+
+function M.clamp(n: number, lo: number, hi: number): number
+>M : Symbol(M, Decl(util.tlua, 0, 5))
+>clamp : Symbol(clamp, Decl(util.tlua, 0, 13))
+>n : Symbol(n, Decl(util.tlua, 2, 17))
+>lo : Symbol(lo, Decl(util.tlua, 2, 27))
+>hi : Symbol(hi, Decl(util.tlua, 2, 39))
+
+  if n < lo then return lo end
+>n : Symbol(n, Decl(util.tlua, 2, 17))
+>lo : Symbol(lo, Decl(util.tlua, 2, 27))
+>lo : Symbol(lo, Decl(util.tlua, 2, 27))
+
+  if n > hi then return hi end
+>n : Symbol(n, Decl(util.tlua, 2, 17))
+>hi : Symbol(hi, Decl(util.tlua, 2, 39))
+>hi : Symbol(hi, Decl(util.tlua, 2, 39))
+
+  return n;
+>n : Symbol(n, Decl(util.tlua, 2, 17))
+
+end
+
+M.name = "util";
+>M.name : Symbol(name, Decl(util.tlua, 6, 3))
+>M : Symbol(M, Decl(util.tlua, 0, 5))
+>name : Symbol(name, Decl(util.tlua, 6, 3))
+
+return M;
+>M : Symbol(M, Decl(util.tlua, 0, 5))
+

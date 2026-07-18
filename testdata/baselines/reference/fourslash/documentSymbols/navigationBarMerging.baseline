@@ -1,0 +1,61 @@
+// === Document Symbols ===
+// === /file1.tlua ===
+// namespace a {
+//     <|function [|{| name: foo, kind: Function |}foo|]() {}|>
+// }
+// namespace b {
+//     <|function [|{| name: foo, kind: Function |}foo|]() {}|>
+// }
+// namespace a {
+//     <|function [|{| name: bar, kind: Function |}bar|]() {}|>
+// }
+
+// === Details ===
+(Function) foo
+(Function) foo
+(Function) bar
+
+
+
+
+// === Document Symbols ===
+// === /file2.tlua ===
+// namespace a {}
+// <|function [|{| name: a, kind: Function |}a|]() {}|>
+
+// === Details ===
+(Function) a
+
+
+
+
+// === Document Symbols ===
+// === /file3.tlua ===
+// namespace a {
+//     <|interface [|{| name: A, kind: Interface |}A|] {
+//         <|[|{| name: foo, kind: Property |}foo|]: number;|>
+//     }|>
+// }
+// namespace a {
+//     <|interface [|{| name: A, kind: Interface |}A|] {
+//         <|[|{| name: bar, kind: Property |}bar|]: number;|>
+//     }|>
+// }
+
+// === Details ===
+(Interface) A
+  (Property) foo
+(Interface) A
+  (Property) bar
+
+
+
+
+// === Document Symbols ===
+// === /file4.tlua ===
+// namespace A { export local <|[|{| name: x, kind: Variable |}x|]|>; }
+// namespace A.B { export local <|[|{| name: y, kind: Variable |}y|]|>; }
+
+// === Details ===
+(Variable) x
+(Variable) y

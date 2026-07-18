@@ -1,0 +1,183 @@
+//// [tests/cases/compiler/tluaMetatableOperators.tlua] ////
+
+=== tluaMetatableOperators.tlua ===
+// An operator on a paired operand dispatches to the metamethod its metatable commits to. The
+// metamethod's return type is the expression's type; its parameters check the operands.
+
+local Ops = {
+>Ops : Symbol(Ops, Decl(tluaMetatableOperators.tlua, 3, 5))
+
+  __add = function(a: { x: number }, b: { x: number } | number): { x: number } return a; end,
+>__add : Symbol(__add, Decl(tluaMetatableOperators.tlua, 3, 13))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 4, 19))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 4, 23))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 4, 36))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 4, 41))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 4, 66))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 4, 19))
+
+  __mul = function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end,
+>__mul : Symbol(__mul, Decl(tluaMetatableOperators.tlua, 4, 93))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 5, 19))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 5, 23))
+>s : Symbol(s, Decl(tluaMetatableOperators.tlua, 5, 36))
+>a.x : Symbol(x, Decl(tluaMetatableOperators.tlua, 5, 23))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 5, 19))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 5, 23))
+>s : Symbol(s, Decl(tluaMetatableOperators.tlua, 5, 36))
+
+  __lt = function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end,
+>__lt : Symbol(__lt, Decl(tluaMetatableOperators.tlua, 5, 91))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 6, 18))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 6, 22))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 6, 35))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 6, 40))
+>a.x : Symbol(x, Decl(tluaMetatableOperators.tlua, 6, 22))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 6, 18))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 6, 22))
+>b.x : Symbol(x, Decl(tluaMetatableOperators.tlua, 6, 40))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 6, 35))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 6, 40))
+
+  __le = function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end,
+>__le : Symbol(__le, Decl(tluaMetatableOperators.tlua, 6, 85))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 7, 18))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 7, 22))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 7, 35))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 7, 40))
+>a.x : Symbol(x, Decl(tluaMetatableOperators.tlua, 7, 22))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 7, 18))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 7, 22))
+>b.x : Symbol(x, Decl(tluaMetatableOperators.tlua, 7, 40))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 7, 35))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 7, 40))
+
+  __eq = function(a: object, b: object): boolean return true; end,
+>__eq : Symbol(__eq, Decl(tluaMetatableOperators.tlua, 7, 86))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 8, 18))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 8, 28))
+
+  __unm = function(a: { x: number }): { x: number } return a; end,
+>__unm : Symbol(__unm, Decl(tluaMetatableOperators.tlua, 8, 66))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 9, 19))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 9, 23))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 9, 39))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 9, 19))
+
+  __pow = function(a: { x: number }, n: number): { x: number } return a; end,
+>__pow : Symbol(__pow, Decl(tluaMetatableOperators.tlua, 9, 66))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 10, 19))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 10, 23))
+>n : Symbol(n, Decl(tluaMetatableOperators.tlua, 10, 36))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 10, 50))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 10, 19))
+
+};
+
+local v = setmetatable({ x = 1 }, Ops);
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 13, 24))
+>Ops : Symbol(Ops, Decl(tluaMetatableOperators.tlua, 3, 5))
+
+local w = setmetatable({ x = 2 }, Ops);
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 14, 24))
+>Ops : Symbol(Ops, Decl(tluaMetatableOperators.tlua, 3, 5))
+
+local sum: { x: number } = v + w;
+>sum : Symbol(sum, Decl(tluaMetatableOperators.tlua, 16, 5))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 16, 12))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+local first: number = v * 2;        // a multi-return metamethod adjusts to its first value
+>first : Symbol(first, Decl(tluaMetatableOperators.tlua, 17, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+
+local powed: { x: number } = v ^ 2; // ^ is Lua's __pow
+>powed : Symbol(powed, Decl(tluaMetatableOperators.tlua, 18, 5))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 18, 14))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+
+local neg: { x: number } = -v;      // unary minus is __unm
+>neg : Symbol(neg, Decl(tluaMetatableOperators.tlua, 19, 5))
+>x : Symbol(x, Decl(tluaMetatableOperators.tlua, 19, 12))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+
+local lt: boolean = v < w;
+>lt : Symbol(lt, Decl(tluaMetatableOperators.tlua, 20, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+local gt: boolean = v > w;          // a > b runs __lt(b, a)
+>gt : Symbol(gt, Decl(tluaMetatableOperators.tlua, 21, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+local le: boolean = v <= w;
+>le : Symbol(le, Decl(tluaMetatableOperators.tlua, 22, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+local ge: boolean = v >= w;
+>ge : Symbol(ge, Decl(tluaMetatableOperators.tlua, 23, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+local eq: boolean = v == w;         // the no-overlap error is suppressed
+>eq : Symbol(eq, Decl(tluaMetatableOperators.tlua, 24, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+local ne: boolean = v ~= w;
+>ne : Symbol(ne, Decl(tluaMetatableOperators.tlua, 25, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+// A compound assignment runs the same metamethod its operator does and checks the result back
+// into the target.
+v += w;
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+>w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
+
+// An operand the metamethod's parameter does not admit is an error.
+local badOperand = v * "s";
+>badOperand : Symbol(badOperand, Decl(tluaMetatableOperators.tlua, 32, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+
+// A handler found on the right operand still receives the left as its first argument: `2 ^ v`
+// checks 2 against __pow's { x: number } first parameter and v against its number second.
+local badLeft = 2 ^ v;
+>badLeft : Symbol(badLeft, Decl(tluaMetatableOperators.tlua, 36, 5))
+>v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
+
+// A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
+// has no handler for is still an error. `+` reports that its own way.
+local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end });
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableOperators.tlua, 40, 29))
+>__eq : Symbol(__eq, Decl(tluaMetatableOperators.tlua, 40, 40))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 40, 57))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 40, 67))
+
+local eqOk: boolean = eqOnly == eqOnly;
+>eqOk : Symbol(eqOk, Decl(tluaMetatableOperators.tlua, 41, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+
+local noAdd = eqOnly + eqOnly;
+>noAdd : Symbol(noAdd, Decl(tluaMetatableOperators.tlua, 42, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+
+// Unary minus is arithmetic now: a non-numeric operand is rejected whether or not it is paired.
+local minusString = -"abc";
+>minusString : Symbol(minusString, Decl(tluaMetatableOperators.tlua, 45, 5))
+
+local minusTable = -eqOnly;
+>minusTable : Symbol(minusTable, Decl(tluaMetatableOperators.tlua, 46, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+

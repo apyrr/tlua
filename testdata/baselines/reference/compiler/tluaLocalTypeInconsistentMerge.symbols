@@ -1,0 +1,44 @@
+//// [tests/cases/compiler/tluaLocalTypeInconsistentMerge.tlua] ////
+
+=== iface.tlua ===
+// A `local interface` merging with a bare `interface` of the same name is an
+// inconsistent-modifier error: the `local` prefix decides whether the whole
+// merged symbol is module-private, so a mismatched prefix is ambiguous. The error
+// points at the inconsistent `local` declaration, not whichever came first.
+interface Mixed { a: number };
+>Mixed : Symbol(Mixed, Decl(iface.tlua, 0, 0), Decl(iface.tlua, 4, 30))
+>a : Symbol(Mixed.a, Decl(iface.tlua, 4, 17))
+
+local interface Mixed { b: number };
+>Mixed : Symbol(Mixed, Decl(iface.tlua, 0, 0), Decl(iface.tlua, 4, 30))
+>b : Symbol(Mixed.b, Decl(iface.tlua, 5, 23))
+
+=== iface-local-first.tlua ===
+// The same, with the `local` declaration first: the error now anchors on the bare
+// declaration (the one that differs from the local primary), regardless of order.
+local interface Flipped { a: number };
+>Flipped : Symbol(Flipped, Decl(iface-local-first.tlua, 0, 0), Decl(iface-local-first.tlua, 2, 38))
+>a : Symbol(Flipped.a, Decl(iface-local-first.tlua, 2, 25))
+
+interface Flipped { b: number };
+>Flipped : Symbol(Flipped, Decl(iface-local-first.tlua, 0, 0), Decl(iface-local-first.tlua, 2, 38))
+>b : Symbol(Flipped.b, Decl(iface-local-first.tlua, 3, 19))
+
+=== shadow-a.tlua ===
+// A module-private `local type` and a bare global `type` of the same name live
+// in different scopes across modules and do NOT collide: each module sees its own.
+local type Name = number;
+>Name : Symbol(Name, Decl(shadow-a.tlua, 0, 0))
+
+local va: Name = 1;
+>va : Symbol(va, Decl(shadow-a.tlua, 3, 5))
+>Name : Symbol(Name, Decl(shadow-a.tlua, 0, 0))
+
+=== shadow-b.tlua ===
+type Name = string;
+>Name : Symbol(Name, Decl(shadow-b.tlua, 0, 0))
+
+local vb: Name = "x";
+>vb : Symbol(vb, Decl(shadow-b.tlua, 1, 5))
+>Name : Symbol(Name, Decl(shadow-b.tlua, 0, 0))
+

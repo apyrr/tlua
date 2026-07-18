@@ -1,0 +1,183 @@
+//// [tests/cases/compiler/tluaGenericFor.tlua] ////
+
+=== tluaGenericFor.tlua ===
+declare function iterStep(t: string[], i: number): (number, string?);
+>iterStep : (t: string[], i: number) => (number, string?)
+>t : string[]
+>i : number
+
+declare function ipairsLike(t: string[]): typeof iterStep;
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+>iterStep : (t: string[], i: number) => (number, string?)
+
+// The first name drops nil (a nil first value ends the loop); the second
+// keeps the iterator's declared nil-ability and narrows normally.
+function walk(t: string[]): number
+>walk : (t: string[]) => number
+>t : string[]
+
+  local count = 0;
+>count : number
+>0 : 0
+
+  for i, s in ipairsLike(t) do
+>i : number
+>s : string | nil
+>ipairsLike(t) : (t: string[], i: number) => (number, string?)
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+
+    count = count + i;
+>count = count + i : number
+>count : number
+>count + i : number
+>count : number
+>i : number
+
+    if s ~= nil then
+>s ~= nil : boolean
+>s : string | nil
+
+      count = count + s.length;
+>count = count + s.length : number
+>count : number
+>count + s.length : number
+>count : number
+>s.length : number
+>s : string
+>length : number
+
+    end
+  end
+  return count;
+>count : number
+
+end
+
+// Single-name form.
+function keys(t: string[]): number
+>keys : (t: string[]) => number
+>t : string[]
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for i in ipairsLike(t) do
+>i : number
+>ipairsLike(t) : (t: string[], i: number) => (number, string?)
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+
+    total = total + i;
+>total = total + i : number
+>total : number
+>total + i : number
+>total : number
+>i : number
+
+  end
+  return total;
+>total : number
+
+end
+
+// Explist form: iterator, state, control.
+declare function next(t: string[], k: number | nil): (number, string?);
+>next : (t: string[], k: number | nil) => (number, string?)
+>t : string[]
+>k : number | nil
+
+function explist(t: string[]): number
+>explist : (t: string[]) => number
+>t : string[]
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for k, v in next, t, nil do
+>k : number
+>v : string | nil
+>next, t, nil : (t: string[], k: number | nil) => (number, string?), string[], nil
+>next : (t: string[], k: number | nil) => (number, string?)
+>t : string[]
+
+    total = total + k;
+>total = total + k : number
+>total : number
+>total + k : number
+>total : number
+>k : number
+
+  end
+  return total;
+>total : number
+
+end
+
+// Names past the iterator's values read as nil.
+function extraName(t: string[]): void
+>extraName : (t: string[]) => void
+>t : string[]
+
+  for i, s, extra in ipairsLike(t) do
+>i : number
+>s : string | nil
+>extra : nil
+>ipairsLike(t) : (t: string[], i: number) => (number, string?)
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+
+    local x: nil = extra;
+>x : nil
+>extra : nil
+
+    x;
+>x : nil
+
+  end
+end
+
+// Annotated names check against their positional value.
+function annotated(t: string[]): void
+>annotated : (t: string[]) => void
+>t : string[]
+
+  for i: number, s: string | nil in ipairsLike(t) do
+>i : number
+>s : string | nil
+>ipairsLike(t) : (t: string[], i: number) => (number, string?)
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+
+    i;
+>i : number
+
+    s;
+>s : string | nil
+
+  end
+end
+
+// break and TS statements inside the body.
+function firstKey(t: string[]): number
+>firstKey : (t: string[]) => number
+>t : string[]
+
+  for i in ipairsLike(t) do
+>i : number
+>ipairsLike(t) : (t: string[], i: number) => (number, string?)
+>ipairsLike : (t: string[]) => typeof iterStep
+>t : string[]
+
+    return i;
+>i : number
+
+  end
+  return 0;
+>0 : 0
+
+end
+

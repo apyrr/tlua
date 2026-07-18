@@ -1,0 +1,90 @@
+//// [tests/cases/compiler/tluaLengthOperator.tlua] ////
+
+=== tluaLengthOperator.tlua ===
+// Lua's `#` is a unary length operator: a string or a table yields a number.
+
+local ls: number = #"abc";
+>ls : Symbol(ls, Decl(tluaLengthOperator.tlua, 2, 5))
+
+// `#` composes like any prefix operator.
+local sum: number = #"ab" + #"cd";
+>sum : Symbol(sum, Decl(tluaLengthOperator.tlua, 5, 5))
+
+// A table works when its type carries a numeric index: an array type or an explicit index
+// signature both qualify.
+function lenArr(arr: number[]): number
+>lenArr : Symbol(lenArr, Decl(tluaLengthOperator.tlua, 5, 34))
+>arr : Symbol(arr, Decl(tluaLengthOperator.tlua, 9, 16))
+
+  return #arr;
+>arr : Symbol(arr, Decl(tluaLengthOperator.tlua, 9, 16))
+
+end
+function lenIndex(t: { [i: number]: number }): number
+>lenIndex : Symbol(lenIndex, Decl(tluaLengthOperator.tlua, 11, 3))
+>t : Symbol(t, Decl(tluaLengthOperator.tlua, 12, 18))
+>i : Symbol(i, Decl(tluaLengthOperator.tlua, 12, 24))
+
+  return #t;
+>t : Symbol(t, Decl(tluaLengthOperator.tlua, 12, 18))
+
+end
+
+// Errors: a number, a boolean, or a function has no length.
+local e1 = #5;
+>e1 : Symbol(e1, Decl(tluaLengthOperator.tlua, 17, 5))
+
+local e2 = #true;
+>e2 : Symbol(e2, Decl(tluaLengthOperator.tlua, 18, 5))
+
+function fn(): void end
+>fn : Symbol(fn, Decl(tluaLengthOperator.tlua, 18, 17))
+
+local e3 = #fn;
+>e3 : Symbol(e3, Decl(tluaLengthOperator.tlua, 20, 5))
+>fn : Symbol(fn, Decl(tluaLengthOperator.tlua, 18, 17))
+
+// A record with no numeric index measures too: Lua returns a border (0 for no
+// array part) for ANY table, so only non-tables reject.
+local rec = { x = 1 };
+>rec : Symbol(rec, Decl(tluaLengthOperator.tlua, 24, 5))
+>x : Symbol(x, Decl(tluaLengthOperator.tlua, 24, 13))
+
+local recLen: number = #rec;
+>recLen : Symbol(recLen, Decl(tluaLengthOperator.tlua, 25, 5))
+>rec : Symbol(rec, Decl(tluaLengthOperator.tlua, 24, 5))
+
+// A union measures when every arm does; a non-table arm rejects the whole.
+declare arrOrRec: number[] | { x: number };
+>arrOrRec : Symbol(arrOrRec, Decl(tluaLengthOperator.tlua, 28, 7))
+>x : Symbol(x, Decl(tluaLengthOperator.tlua, 28, 30))
+
+local unionLen: number = #arrOrRec;
+>unionLen : Symbol(unionLen, Decl(tluaLengthOperator.tlua, 29, 5))
+>arrOrRec : Symbol(arrOrRec, Decl(tluaLengthOperator.tlua, 28, 7))
+
+declare strOrRec: string | { x: number };
+>strOrRec : Symbol(strOrRec, Decl(tluaLengthOperator.tlua, 30, 7))
+>x : Symbol(x, Decl(tluaLengthOperator.tlua, 30, 28))
+
+local mixedLen: number = #strOrRec;
+>mixedLen : Symbol(mixedLen, Decl(tluaLengthOperator.tlua, 31, 5))
+>strOrRec : Symbol(strOrRec, Decl(tluaLengthOperator.tlua, 30, 7))
+
+declare numOrRec: number | { x: number };
+>numOrRec : Symbol(numOrRec, Decl(tluaLengthOperator.tlua, 32, 7))
+>x : Symbol(x, Decl(tluaLengthOperator.tlua, 32, 28))
+
+local e4 = #numOrRec;
+>e4 : Symbol(e4, Decl(tluaLengthOperator.tlua, 33, 5))
+>numOrRec : Symbol(numOrRec, Decl(tluaLengthOperator.tlua, 32, 7))
+
+// Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
+declare th: LuaThread;
+>th : Symbol(th, Decl(tluaLengthOperator.tlua, 36, 7))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+
+local e5 = #th;
+>e5 : Symbol(e5, Decl(tluaLengthOperator.tlua, 37, 5))
+>th : Symbol(th, Decl(tluaLengthOperator.tlua, 36, 7))
+

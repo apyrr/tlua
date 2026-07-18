@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/tluaNumberKeyDistinct.tlua] ////
+
+=== tluaNumberKeyDistinct.tlua ===
+// Lua distinguishes number keys from string keys: t[1] and t["1"] are
+// different slots.
+local t = { [1] = "a", ["1"] = 1 };
+>t : Symbol(t, Decl(tluaNumberKeyDistinct.tlua, 2, 5))
+>[1] : Symbol([1], Decl(tluaNumberKeyDistinct.tlua, 2, 11))
+>1 : Symbol([1], Decl(tluaNumberKeyDistinct.tlua, 2, 11))
+>["1"] : Symbol(["1"], Decl(tluaNumberKeyDistinct.tlua, 2, 22))
+>"1" : Symbol(["1"], Decl(tluaNumberKeyDistinct.tlua, 2, 22))
+
+local n: string = t[1];
+>n : Symbol(n, Decl(tluaNumberKeyDistinct.tlua, 3, 5))
+>t : Symbol(t, Decl(tluaNumberKeyDistinct.tlua, 2, 5))
+>1 : Symbol([1], Decl(tluaNumberKeyDistinct.tlua, 2, 11))
+
+local s: number = t["1"];
+>s : Symbol(s, Decl(tluaNumberKeyDistinct.tlua, 4, 5))
+>t : Symbol(t, Decl(tluaNumberKeyDistinct.tlua, 2, 5))
+>"1" : Symbol(["1"], Decl(tluaNumberKeyDistinct.tlua, 2, 22))
+
+// Cross-access errors: the other namespace's type does not match.
+local bad1: number = t[1];
+>bad1 : Symbol(bad1, Decl(tluaNumberKeyDistinct.tlua, 7, 5))
+>t : Symbol(t, Decl(tluaNumberKeyDistinct.tlua, 2, 5))
+>1 : Symbol([1], Decl(tluaNumberKeyDistinct.tlua, 2, 11))
+
+local bad2: string = t["1"];
+>bad2 : Symbol(bad2, Decl(tluaNumberKeyDistinct.tlua, 8, 5))
+>t : Symbol(t, Decl(tluaNumberKeyDistinct.tlua, 2, 5))
+>"1" : Symbol(["1"], Decl(tluaNumberKeyDistinct.tlua, 2, 22))
+
+// Same distinction in type position: 1 is a number key, "1" a string key.
+interface I {
+>I : Symbol(I, Decl(tluaNumberKeyDistinct.tlua, 8, 28))
+
+  1: number;
+>1 : Symbol(I[1], Decl(tluaNumberKeyDistinct.tlua, 11, 13))
+
+  "1": string;
+>"1" : Symbol(I["1"], Decl(tluaNumberKeyDistinct.tlua, 12, 12))
+}
+declare i: I;
+>i : Symbol(i, Decl(tluaNumberKeyDistinct.tlua, 15, 7))
+>I : Symbol(I, Decl(tluaNumberKeyDistinct.tlua, 8, 28))
+
+local in1: number = i[1];
+>in1 : Symbol(in1, Decl(tluaNumberKeyDistinct.tlua, 16, 5))
+>i : Symbol(i, Decl(tluaNumberKeyDistinct.tlua, 15, 7))
+>1 : Symbol(I[1], Decl(tluaNumberKeyDistinct.tlua, 11, 13))
+
+local is1: string = i["1"];
+>is1 : Symbol(is1, Decl(tluaNumberKeyDistinct.tlua, 17, 5))
+>i : Symbol(i, Decl(tluaNumberKeyDistinct.tlua, 15, 7))
+>"1" : Symbol(I["1"], Decl(tluaNumberKeyDistinct.tlua, 12, 12))
+
+local es = {n, s, bad1, bad2, in1, is1};
+>es : Symbol(es, Decl(tluaNumberKeyDistinct.tlua, 19, 5))
+

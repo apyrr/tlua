@@ -1,0 +1,44 @@
+//// [tests/cases/compiler/tluaRequireLuaJITBuiltins.tlua] ////
+
+=== tluaRequireLuaJITBuiltins.tlua ===
+// A bare name is not a project file, so the declared overloads still type it.
+local bit = require("bit");
+>bit : BitLib
+>require("bit") : BitLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"bit" : "bit"
+
+local band: number = bit.band(1, 2);
+>band : number
+>bit.band(1, 2) : number
+>bit.band : (left: number, right: number, ...: number) => number
+>bit : BitLib
+>band : (left: number, right: number, ...: number) => number
+>1 : 1
+>2 : 2
+
+local ffi = require("ffi");
+>ffi : FFILib
+>require("ffi") : FFILib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"ffi" : "ffi"
+
+local jit = require("jit");
+>jit : JITLib
+>require("jit") : JITLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"jit" : "jit"
+
+local profile = require("jit.profile");
+>profile : JITProfileLib
+>require("jit.profile") : JITProfileLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"jit.profile" : "jit.profile"
+
+// An unknown bare name falls to the `(module: string): any` overload.
+local unknown = require("nosuchlib");
+>unknown : any
+>require("nosuchlib") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"nosuchlib" : "nosuchlib"
+

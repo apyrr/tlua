@@ -1,0 +1,71 @@
+tluaIndexKeyRejected.tlua(4,21): error TS100039: An index signature parameter type cannot include 'nil'.
+tluaIndexKeyRejected.tlua(5,26): error TS100039: An index signature parameter type cannot include 'nil'.
+tluaIndexKeyRejected.tlua(6,25): error TS100039: An index signature parameter type cannot include 'nil'.
+tluaIndexKeyRejected.tlua(7,21): error TS100039: An index signature parameter type cannot include 'nil'.
+tluaIndexKeyRejected.tlua(11,31): error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+tluaIndexKeyRejected.tlua(12,31): error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+tluaIndexKeyRejected.tlua(13,32): error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+tluaIndexKeyRejected.tlua(14,33): error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+tluaIndexKeyRejected.tlua(19,15): error TS100040: A table key cannot be 'nil'.
+tluaIndexKeyRejected.tlua(21,16): error TS100040: A table key cannot be 'nil'.
+
+
+==== tluaIndexKeyRejected.tlua (10 errors) ====
+    // Two rules survive the widening.
+    
+    // A key must not be nil: `t[nil]` is an error in Lua, not a lookup (100039).
+    interface NilKey { [key: nil]: string }
+                        ~~~
+!!! error TS100039: An index signature parameter type cannot include 'nil'.
+    interface MaybeNilKey { [key: string | nil]: string }
+                             ~~~
+!!! error TS100039: An index signature parameter type cannot include 'nil'.
+    interface UnknownKey { [key: unknown]: string }
+                            ~~~
+!!! error TS100039: An index signature parameter type cannot include 'nil'.
+    interface AnyKey { [key: any]: string }
+                        ~~~
+!!! error TS100039: An index signature parameter type cannot include 'nil'.
+    
+    // A key must not be a literal: one key is a named property, or a mapped type (100036).
+    // This is the half of TypeScript's rule that stays -- the *generic* half is gone.
+    interface StringLiteralKey { [key: "a"]: string }
+                                  ~~~
+!!! error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+    interface NumberLiteralKey { [key: 1]: string }
+                                  ~~~
+!!! error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+    interface BooleanLiteralKey { [key: true]: string }
+                                   ~~~
+!!! error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+    interface UnionOfLiteralsKey { [key: "a" | "b"]: string }
+                                    ~~~
+!!! error TS100036: An index signature parameter type cannot be a literal type. Consider using a mapped object type instead.
+    
+    // A table key cannot be nil either (100040), and `unknown` may be nil.
+    declare k: string;
+    local ok = { [k] = 1 };
+    local bad = { [nil] = 1 };
+                  ~~~~~
+!!! error TS100040: A table key cannot be 'nil'.
+    declare u: unknown;
+    local bad2 = { [u] = 1 };
+                   ~~~
+!!! error TS100040: A table key cannot be 'nil'.
+    
+    // Pattern literal keys remain valid: they denote a set of string keys, not one.
+    interface PatternKey { [key: `id-${string}`]: number }
+    declare p: PatternKey;
+    local n: number = p["id-1"];
+    
+    // A literal that arrives through instantiation widens to its domain rather than
+    // keying an index nothing can represent: a template key completed by a type argument
+    // becomes a string index, and a literal type argument a string one.
+    interface Prefixed<T extends string> { [key: `a${T}`]: number }
+    declare pre: Prefixed<"x">;
+    local n2: number = pre["ax"];
+    type PK = keyof Prefixed<"x">;
+    local pk: PK = "anything";
+    declare tl: Table<"a", number>;
+    local n3: number = tl["b"];
+    

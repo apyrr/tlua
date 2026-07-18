@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/tluaTableDestructuringCoexistence.tlua] ////
+
+=== tluaTableDestructuringCoexistence.tlua ===
+// Destructuring assignment is deleted: `x = 1` inside braces has exactly one
+// meaning (a Lua keyed field), and an object literal on the left of `=` is an
+// ordinary assignment target that fails the reference check.
+declare obj: { x?: number; q?: number };
+>obj : { x?: number; q?: number; }
+>x : number | nil
+>q : number | nil
+
+local xv: number | nil;
+>xv : number | nil
+
+({ q = 7 } = obj);
+>({ q = 7 } = obj) : { x?: number; q?: number; }
+>{ q = 7 } = obj : { x?: number; q?: number; }
+>{ q = 7 } : { q: number; }
+>q : number
+>7 : 7
+>obj : { x?: number; q?: number; }
+
+local sums = {xv};
+>sums : { 1: number | nil; }
+>{xv} : { 1: number | nil; }
+>xv : any
+
+// Lua multiple assignment is the extraction idiom.
+declare src: { m: number; n: string };
+>src : { m: number; n: string; }
+>m : number
+>n : string
+
+local m, n = src.m, src.n;
+>m : number
+>n : string
+>src.m, src.n : number, string
+>src.m : number
+>src : { m: number; n: string; }
+>m : number
+>src.n : string
+>src : { m: number; n: string; }
+>n : string
+
+local mn = {m, n};
+>mn : { 1: number; 2: string; }
+>{m, n} : { 1: number; 2: string; }
+>m : any
+>n : any
+
+// A table with keyed fields is still just a table wherever it appears, and
+// the old `[k]:`/`name:` target spellings are parse errors.
+declare obj3: { k: boolean };
+>obj3 : { k: boolean; }
+>k : boolean
+
+local z = ({ ["k"] = true }).k;
+>z : boolean
+>({ ["k"] = true }).k : boolean
+>({ ["k"] = true }) : { k: boolean; }
+>{ ["k"] = true } : { k: boolean; }
+>["k"] : boolean
+>"k" : "k"
+>true : true
+>k : boolean
+
+local zz = z;
+>zz : boolean
+>z : boolean
+

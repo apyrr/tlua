@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/tluaColonCallGenerics.tlua] ////
+
+=== tluaColonCallGenerics.tlua ===
+// The receiver participates in inference like any other argument.
+interface Boxer {
+  wrap<T>(self: Boxer, value: T): { value: T };
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>self : Boxer
+>value : T
+>value : T
+
+  same<S>(self: S): S;
+>same : <S>(self: S) => S
+>self : S
+}
+declare boxer: Boxer;
+>boxer : Boxer
+
+local wrapped = boxer:wrap(1);
+>wrapped : { value: number; }
+>boxer:wrap(1) : { value: number; }
+>boxer:wrap : <T>(self: Boxer, value: T) => { value: T; }
+>boxer : Boxer
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>1 : 1
+
+local n: number = wrapped.value;
+>n : number
+>wrapped.value : number
+>wrapped : { value: number; }
+>value : number
+
+local s: string = wrapped.value;
+>s : string
+>wrapped.value : number
+>wrapped : { value: number; }
+>value : number
+
+// A self-generic member infers the receiver's own type.
+local again = boxer:same();
+>again : Boxer
+>boxer:same() : Boxer
+>boxer:same : <S>(self: S) => S
+>boxer : Boxer
+>same : <S>(self: S) => S
+
+local w2 = again:wrap("s");
+>w2 : { value: string; }
+>again:wrap("s") : { value: string; }
+>again:wrap : <T>(self: Boxer, value: T) => { value: T; }
+>again : Boxer
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>"s" : "s"
+
+// Explicit type arguments still slot after the name.
+local w3 = boxer:wrap<string>("x");
+>w3 : { value: string; }
+>boxer:wrap<string>("x") : { value: string; }
+>boxer:wrap : <T>(self: Boxer, value: T) => { value: T; }
+>boxer : Boxer
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>"x" : "x"
+
+local w4 = boxer:wrap<string>(1);
+>w4 : { value: string; }
+>boxer:wrap<string>(1) : { value: string; }
+>boxer:wrap : <T>(self: Boxer, value: T) => { value: T; }
+>boxer : Boxer
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>1 : 1
+
+// A parenthesized colon call is not an arrow parameter list, with or without
+// explicit type arguments.
+local w5 = (boxer:wrap(1));
+>w5 : { value: number; }
+>(boxer:wrap(1)) : { value: number; }
+>boxer:wrap(1) : { value: number; }
+>boxer:wrap : <T>(self: Boxer, value: T) => { value: T; }
+>boxer : Boxer
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>1 : 1
+
+local w6 = (boxer:wrap<string>("x"));
+>w6 : { value: string; }
+>(boxer:wrap<string>("x")) : { value: string; }
+>boxer:wrap<string>("x") : { value: string; }
+>boxer:wrap : <T>(self: Boxer, value: T) => { value: T; }
+>boxer : Boxer
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>"x" : "x"
+
+local arrow = (b: Boxer) => b:wrap(1);
+>arrow : (b: Boxer) => { value: number; }
+>(b: Boxer) => b:wrap(1) : (b: Boxer) => { value: number; }
+>b : Boxer
+>b:wrap(1) : { value: number; }
+>b:wrap : <T>(self: Boxer, value: T) => { value: T; }
+>b : Boxer
+>wrap : <T>(self: Boxer, value: T) => { value: T; }
+>1 : 1
+
+type Wrapped<T> = { value: T };
+>Wrapped : Wrapped<T>
+>value : T
+
+local arrowGeneric = (w: Wrapped<string>) => w.value;
+>arrowGeneric : (w: Wrapped<string>) => string
+>(w: Wrapped<string>) => w.value : (w: Wrapped<string>) => string
+>w : Wrapped<string>
+>w.value : string
+>w : Wrapped<string>
+>value : string
+

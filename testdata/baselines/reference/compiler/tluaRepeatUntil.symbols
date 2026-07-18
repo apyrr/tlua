@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/tluaRepeatUntil.tlua] ////
+
+=== tluaRepeatUntil.tlua ===
+declare function poll(): number | nil;
+>poll : Symbol(poll, Decl(tluaRepeatUntil.tlua, 0, 0))
+
+// Body locals are visible in the until-condition.
+function bodyLocal(n: number): number
+>bodyLocal : Symbol(bodyLocal, Decl(tluaRepeatUntil.tlua, 0, 38))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 3, 19))
+
+  repeat
+    local step = n - 1;
+>step : Symbol(step, Decl(tluaRepeatUntil.tlua, 5, 9))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 3, 19))
+
+    n = step;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 3, 19))
+>step : Symbol(step, Decl(tluaRepeatUntil.tlua, 5, 9))
+
+  until step <= 0;
+>step : Symbol(step, Decl(tluaRepeatUntil.tlua, 5, 9))
+
+  return n;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 3, 19))
+
+end
+
+// ...but not after the loop.
+function afterLoop(): number
+>afterLoop : Symbol(afterLoop, Decl(tluaRepeatUntil.tlua, 9, 3))
+
+  repeat
+    local secret = 1;
+>secret : Symbol(secret, Decl(tluaRepeatUntil.tlua, 14, 9))
+
+  until true;
+  return secret;
+end
+
+// break exits; continue targets the condition.
+function loops(n: number): number
+>loops : Symbol(loops, Decl(tluaRepeatUntil.tlua, 17, 3))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 20, 15))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaRepeatUntil.tlua, 21, 7))
+
+  repeat
+    n = n - 1;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 20, 15))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 20, 15))
+
+    if n == 3 then
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 20, 15))
+
+      continue;
+    end
+    if n <= 0 then
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 20, 15))
+
+      break;
+    end
+    total = total + n;
+>total : Symbol(total, Decl(tluaRepeatUntil.tlua, 21, 7))
+>total : Symbol(total, Decl(tluaRepeatUntil.tlua, 21, 7))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 20, 15))
+
+  until false;
+  return total;
+>total : Symbol(total, Decl(tluaRepeatUntil.tlua, 21, 7))
+
+end
+
+// One-liner form.
+function once(): number
+>once : Symbol(once, Decl(tluaRepeatUntil.tlua, 33, 3))
+
+  local n = 0;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 37, 7))
+
+  repeat n = n + 1 until n > 0;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 37, 7))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 37, 7))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 37, 7))
+
+  return n;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 37, 7))
+
+end
+
+// Nested repeat.
+function nested(n: number): number
+>nested : Symbol(nested, Decl(tluaRepeatUntil.tlua, 40, 3))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 43, 16))
+
+  repeat
+    repeat
+      n = n - 1;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 43, 16))
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 43, 16))
+
+    until n <= 10;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 43, 16))
+
+  until n <= 0;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 43, 16))
+
+  return n;
+>n : Symbol(n, Decl(tluaRepeatUntil.tlua, 43, 16))
+
+end
+

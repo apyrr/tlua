@@ -1,0 +1,19 @@
+// === documentHighlights ===
+// === /getOccurrencesIsWriteAccess.tlua ===
+// local /*HIGHLIGHTS*/[|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;

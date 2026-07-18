@@ -1,0 +1,16 @@
+// @noTypesAndSymbols: true
+// @noEmit: true
+
+// String-named ambient modules are deleted from the grammar; `require` is
+// typed through overloads instead. The form fails with generic parse errors,
+// not a bespoke diagnostic.
+
+// @Filename: ambient.tlua
+declare module "some.native.module" {
+  local x: number;
+}
+
+// @Filename: importAlias.tlua
+declare module Foo {
+  local y: number;
+}

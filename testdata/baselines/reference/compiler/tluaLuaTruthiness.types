@@ -1,0 +1,241 @@
+//// [tests/cases/compiler/tluaLuaTruthiness.tlua] ////
+
+=== tluaLuaTruthiness.tlua ===
+// In Lua only `nil` and `false` are falsy. `0`, `""` and NaN are truthy.
+
+declare s: string;
+>s : string
+
+declare n: number;
+>n : number
+
+declare empty: "";
+>empty : ""
+
+declare zero: 0;
+>zero : 0
+
+declare maybe: string | nil;
+>maybe : string | nil
+
+declare flag: boolean;
+>flag : boolean
+
+// A string is always truthy, so testing one narrows nothing and the else branch
+// is unreachable.
+function narrowString(): void
+>narrowString : () => void
+
+  if s then
+>s : string
+
+    local inThen: string = s;
+>inThen : string
+>s : string
+
+  else
+    local inElse: never = s;
+>inElse : never
+>s : never
+
+  end
+end
+
+// Same for numbers: `0 | 1` keeps both constituents.
+function narrowNumber(x: 0 | 1): void
+>narrowNumber : (x: 0 | 1) => void
+>x : 0 | 1
+
+  if x then
+>x : 0 | 1
+
+    local kept: 0 | 1 = x;
+>kept : 0 | 1
+>x : 0 | 1
+
+  end
+end
+
+// `nil` is still falsy, so absence still narrows.
+function narrowNil(): void
+>narrowNil : () => void
+
+  if maybe then
+>maybe : string | nil
+
+    local present: string = maybe;
+>present : string
+>maybe : string
+
+  end
+end
+
+// `false` is still falsy.
+function narrowBoolean(): void
+>narrowBoolean : () => void
+
+  if flag then
+>flag : boolean
+
+    local t: true = flag;
+>t : true
+>true : true
+>flag : true
+
+  else
+    local f: false = flag;
+>f : false
+>false : false
+>flag : false
+
+  end
+end
+
+// `not` on a truthy value is `false`.
+local notZero: false = not zero;
+>notZero : false
+>false : false
+>not zero : false
+>zero : 0
+
+local notEmpty: false = not empty;
+>notEmpty : false
+>false : false
+>not empty : false
+>empty : ""
+
+local notString: false = not s;
+>notString : false
+>false : false
+>not s : false
+>s : string
+
+local notFalse: true = not false;
+>notFalse : true
+>true : true
+>not false : true
+>false : false
+
+// Through a name, so the syntactic always-falsy check does not fire on the
+// `nil` literal itself.
+declare nothing: nil;
+>nothing : nil
+
+local notNil: true = not nothing;
+>notNil : true
+>true : true
+>not nothing : true
+>nothing : nil
+
+// `and` yields its right operand whenever the left is always truthy.
+local and1: number = zero and n;
+>and1 : number
+>zero and n : number
+>zero : 0
+>n : number
+
+local and2: number = empty and n;
+>and2 : number
+>empty and n : number
+>empty : ""
+>n : number
+
+local and3: string | false = flag and s;
+>and3 : string | false
+>false : false
+>flag and s : string | false
+>flag : boolean
+>s : string
+
+// `or` yields its left operand whenever that operand is always truthy.
+local or1: "" = empty or n;
+>or1 : ""
+>empty or n : ""
+>empty : ""
+>n : number
+
+local or2: 0 = zero or s;
+>or2 : 0
+>zero or s : 0
+>zero : 0
+>s : string
+
+local or3: string = maybe or s;
+>or3 : string
+>maybe or s : string
+>maybe : string | nil
+>s : string
+
+// `??` is unaffected: it tests for absence, not falsiness.
+local nullish1: "" = empty ?? "other";
+>nullish1 : ""
+>empty ?? "other" : ""
+>empty : ""
+>"other" : "other"
+
+local nullish2: 0 = zero ?? 1;
+>nullish2 : 0
+>zero ?? 1 : 0
+>zero : 0
+>1 : 1
+
+local nullish3: string = maybe ?? "other";
+>nullish3 : string
+>maybe ?? "other" : string
+>maybe : string | nil
+>"other" : "other"
+
+// A `while` over a number can only be left by `break`, since no number is falsy.
+function loopExit(x: number): number
+>loopExit : (x: number) => number
+>x : number
+
+  while x do
+>x : number
+
+    if x == 3 then
+>x == 3 : boolean
+>x : number
+>3 : 3
+
+      break;
+    end
+    if x == 5 then
+>x == 5 : boolean
+>x : number
+>5 : 5
+
+      break;
+    end
+  end
+  // Only the values it broke on survive.
+  local after: 3 | 5 = x;
+>after : 3 | 5
+>x : 3 | 5
+
+  return after;
+>after : 3 | 5
+
+end
+
+// Literal conditions: the JS-era `while(0)`/`while(1)` exemption is retired.
+// `0` no longer means "loop never", so a numeric literal condition is reported
+// always-truthy exactly like a string literal.
+function literalConditions(): void
+>literalConditions : () => void
+
+  while 1 do
+>1 : 1
+
+    break;
+  end
+  if 0 then
+>0 : 0
+
+  end
+  if "" then
+>"" : ""
+
+  end
+end
+

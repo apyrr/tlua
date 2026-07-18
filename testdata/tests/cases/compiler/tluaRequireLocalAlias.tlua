@@ -1,0 +1,11 @@
+// @target: esnext
+// @filename: m.tlua
+local value = 42;
+return { value = value };
+
+// @filename: main.tlua
+// The standard Lua caching idiom keeps require's module typing.
+local require = require;
+local m = require("m");
+local n: number = m.value;
+n;

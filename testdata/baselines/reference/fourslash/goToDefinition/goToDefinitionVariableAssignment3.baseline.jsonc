@@ -1,0 +1,5 @@
+// === goToDefinition ===
+// === /foo.tlua ===
+// local Foo = module.[|exports|] = <|function() end|>
+// Foo.prototype.bar = function() end
+// new Foo/*GOTO DEF*/();

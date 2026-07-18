@@ -1,0 +1,11 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfNumberNamedProperty.tlua ===
+// local o = { [/*FIND ALL REFS*/[|1|]] = 12 };
+// local y = o[[|1|]];
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfNumberNamedProperty.tlua ===
+// local o = { [[|1|]] = 12 };
+// local y = o[/*FIND ALL REFS*/[|1|]];

@@ -1,0 +1,33 @@
+// === findRenameLocations ===
+// === /renameInheritedProperties8.tlua ===
+// class C implements D {
+//     /*RENAME*/prop1: string;
+// }
+// 
+// interface D extends C {
+// --- (line: 6) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /renameInheritedProperties8.tlua ===
+// class C implements D {
+//     prop1: string;
+// }
+// 
+// interface D extends C {
+//     /*RENAME*/[|prop1RENAME|]: string;
+// }
+// 
+// local c: C;
+// c.prop1;
+
+
+
+// === findRenameLocations ===
+// === /renameInheritedProperties8.tlua ===
+// --- (line: 6) skipped ---
+// }
+// 
+// local c: C;
+// c./*RENAME*/prop1;

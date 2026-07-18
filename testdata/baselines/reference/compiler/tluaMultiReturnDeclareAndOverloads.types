@@ -1,0 +1,65 @@
+//// [tests/cases/compiler/tluaMultiReturnDeclareAndOverloads.tlua] ////
+
+=== tluaMultiReturnDeclareAndOverloads.tlua ===
+// Ambient declarations take bare return-type lists.
+declare function ambient(): (number, string);
+>ambient : () => (number, string)
+
+declare function ambientVariadic(n: number): (number, ...string);
+>ambientVariadic : (n: number) => (number, ...string)
+>n : number
+
+// Overload signatures terminate with `;`, so the list grammar is unambiguous.
+function over(a: number): (number, string);
+>over : { (a: number): (number, string); (a: string): (string, number); }
+>a : number
+
+function over(a: string): (string, number);
+>over : { (a: number): (number, string); (a: string): (string, number); }
+>a : string
+
+function over(a: number | string): (number | string, string | number) {
+>over : { (a: number): (number, string); (a: string): (string, number); }
+>a : string | number
+
+  if (type(a) == "number") {
+>type(a) == "number" : boolean
+>type(a) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>a : string | number
+>"number" : "number"
+
+    return a, "n";
+>a, "n" : number, string
+>a : number
+>"n" : "n"
+  }
+  return a, 0;
+>a, 0 : string, number
+>a : string
+>0 : 0
+}
+
+local a = ambient();
+>a : number
+>ambient() : number
+>ambient : () => (number, string)
+
+local v = ambientVariadic(1);
+>v : number
+>ambientVariadic(1) : number
+>ambientVariadic : (n: number) => (number, ...string)
+>1 : 1
+
+local o1 = over(1);
+>o1 : number
+>over(1) : number
+>over : { (a: number): (number, string); (a: string): (string, number); }
+>1 : 1
+
+local o2 = over("x");
+>o2 : string
+>over("x") : string
+>over : { (a: number): (number, string); (a: string): (string, number); }
+>"x" : "x"
+

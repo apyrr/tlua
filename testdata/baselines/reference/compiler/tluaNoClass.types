@@ -1,0 +1,77 @@
+//// [tests/cases/compiler/tluaNoClass.tlua] ////
+
+=== tluaNoClass.tlua ===
+// Classes are removed in tlua: `class` is an ordinary identifier (Lua has no
+// `class` keyword) and class declarations/expressions no longer parse. Each form
+// below produces natural parse errors (no tlua-specific diagnostic).
+
+class C {}
+>class : any
+>C : any
+
+class D extends C {}
+>class : any
+>D : any
+>C : any
+
+abstract class E {}
+>abstract : any
+>class : any
+>E : any
+
+class F {}
+>class : any
+>F : any
+
+local g = class {};
+>g : any
+>class : any
+
+class WithMembers {
+>class : any
+>WithMembers : any
+
+  x = 1;
+>x = 1 : 1
+>x : any
+>1 : 1
+
+  m() {}
+>m() : any
+>m : any
+
+  constructor() {}
+>constructor() : any
+>constructor : any
+
+  static s() {}
+>s() : any
+>s : any
+
+  #p = 2;
+>#p : number
+>p : any
+>2 : 2
+
+  get a() {
+>get : any
+>a() : any
+>a : any
+
+    return 1;
+>1 : 1
+  }
+}
+
+// `class` is now an ordinary identifier.
+function usesClassName(): number {
+>usesClassName : () => number
+
+  local class = 3;
+>class : number
+>3 : 3
+
+  return class;
+>class : number
+}
+

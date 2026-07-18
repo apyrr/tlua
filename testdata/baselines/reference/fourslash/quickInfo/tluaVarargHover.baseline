@@ -1,0 +1,191 @@
+// === QuickInfo ===
+=== /tluaVarargHover.tlua ===
+// 
+// declare function annotated(...: number): number;
+//                  ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | function annotated(...: number): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// declare function bare(...): void;
+//                  ^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | function bare(...: any): void
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// declare function withFixed(label: string, ...: string): string;
+//                  ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | function withFixed(label: string, ...: string): string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+// type Callable = (...: boolean) => void;
+//      ^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | type Callable = (...: boolean) => void
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+// // Each arm of a union of function types prints its own vararg. (This does NOT
+// // reach combineUnionOrIntersectionParameters -- hover shows the union, not a
+// // combined signature. The checker-minted rest, which must also print as `...`
+// // rather than `...args: string[]`, is locked by tluaVarargSignatureHelp and by
+// // the tluaVarargFunctionTypes compiler baseline.)
+// declare cond: boolean;
+// declare function fixedArity(a: number, b: boolean): void;
+// declare function varargArity(...: string): void;
+// local combined = cond and fixedArity or varargArity;
+//       ^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local combined: ((a: number, b: boolean) => void) | ((...: string) => void)
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 18,
+      "LSPosition": {
+        "line": 1,
+        "character": 17
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nfunction annotated(...: number): number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 17
+        },
+        "end": {
+          "line": 1,
+          "character": 26
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 67,
+      "LSPosition": {
+        "line": 2,
+        "character": 17
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nfunction bare(...: any): void\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 17
+        },
+        "end": {
+          "line": 2,
+          "character": 21
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 101,
+      "LSPosition": {
+        "line": 3,
+        "character": 17
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nfunction withFixed(label: string, ...: string): string\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 17
+        },
+        "end": {
+          "line": 3,
+          "character": 26
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 154,
+      "LSPosition": {
+        "line": 5,
+        "character": 5
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\ntype Callable = (...: boolean) => void\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 5
+        },
+        "end": {
+          "line": 5,
+          "character": 13
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 693,
+      "LSPosition": {
+        "line": 15,
+        "character": 6
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal combined: ((a: number, b: boolean) => void) | ((...: string) => void)\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 15,
+          "character": 6
+        },
+        "end": {
+          "line": 15,
+          "character": 14
+        }
+      }
+    }
+  }
+]

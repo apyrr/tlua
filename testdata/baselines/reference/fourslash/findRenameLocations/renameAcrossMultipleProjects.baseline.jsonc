@@ -1,0 +1,17 @@
+// === findRenameLocations ===
+// === /a.tlua ===
+// local /*RENAME*/[|xRENAME|]: number;
+
+
+
+// === findRenameLocations ===
+// === /b.tlua ===
+// /// <reference path="a.tlua" />
+// /*RENAME*/x++;
+
+
+
+// === findRenameLocations ===
+// === /c.tlua ===
+// /// <reference path="a.tlua" />
+// /*RENAME*/x++;

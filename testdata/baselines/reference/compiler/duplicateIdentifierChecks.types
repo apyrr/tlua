@@ -1,0 +1,683 @@
+//// [tests/cases/compiler/duplicateIdentifierChecks.tlua] ////
+
+=== duplicateIdentifierChecks.tlua ===
+// Every member declaration in the following should produce a duplicate identifier error.
+
+interface I1 {
+    get x(): number;
+>x : number
+
+    get x(): number;
+>x : number
+}
+
+interface I2 {
+    set x(value: number);
+>x : number
+>value : number
+
+    set x(value: number);
+>x : number
+>value : number
+}
+
+interface I3 {
+    get x(): number;
+>x : number
+
+    set x(value: number);
+>x : number
+>value : number
+
+    get x(): number;
+>x : number
+}
+
+interface I4 {
+    set x(value: number);
+>x : number
+>value : number
+
+    get x(): number;
+>x : number
+
+    set x(value: number);
+>x : number
+>value : number
+}
+
+interface I5 {
+    get x(): number;
+>x : number
+
+    x: number;
+>x : number
+
+    set x(value: number);
+>x : number
+>value : number
+}
+
+interface I6 {
+    set x(value: number);
+>x : number
+>value : number
+
+    x: number;
+>x : number
+
+    get x(): number;
+>x : number
+}
+
+interface I7 {
+    get x(): number;
+>x : number
+
+    x(): number;
+>x : () => number
+
+    set x(value: number);
+>x : number
+>value : number
+}
+
+interface I8 {
+    set x(value: number);
+>x : number
+>value : number
+
+    x(): number;
+>x : () => number
+
+    get x(): number;
+>x : number
+}
+
+declare class C1 {
+>declare : any
+>class : any
+>C1 : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+}
+
+declare class C2 {
+>declare : any
+>class : any
+>C2 : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+}
+
+declare class C3 {
+>declare : any
+>class : any
+>C3 : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+
+    accessor x: number;
+>x : any
+>number : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+}
+
+declare class C4 {
+>declare : any
+>class : any
+>C4 : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+
+    accessor x: number;
+>x : any
+>number : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+}
+
+declare class C5 {
+>declare : any
+>class : any
+>C5 : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+
+    x: number;
+>x : any
+>number : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+}
+
+declare class C6 {
+>declare : any
+>class : any
+>C6 : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+
+    x: number;
+>x : any
+>number : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+}
+
+declare class C7 {
+>declare : any
+>class : any
+>C7 : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+
+    x(): number;
+>x() : any
+>x : any
+>number : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+}
+
+declare class C8 {
+>declare : any
+>class : any
+>C8 : any
+
+    set x(value: number);
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+
+    x(): number;
+>x() : any
+>x : any
+>number : any
+
+    get x(): number;
+>get : any
+>x() : any
+>x : any
+>number : any
+}
+
+local o1 = {
+>o1 : { 1: any; 2: any; 3: { 1: any; 2: number; }; 4: any; 5: any; 6: { 1: any; 2: number; }; }
+>{    get x() { return 0 },    get x() { return 0 }} : { 1: any; 2: any; 3: { 1: any; 2: number; }; 4: any; 5: any; 6: { 1: any; 2: number; }; }
+
+    get x() { return 0 },
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+
+    get x() { return 0 }
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+}
+
+local o2 = {
+>o2 : { 1: any; 2: any; 3: {}; 4: any; 5: any; 6: {}; }
+>{    set x(value: number) { },    set x(value: number) { }} : { 1: any; 2: any; 3: {}; 4: any; 5: any; 6: {}; }
+
+    set x(value: number) { },
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+
+    set x(value: number) { }
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+}
+
+local o3 = {
+>o3 : { 1: any; 2: any; 3: { 1: any; 2: number; }; 4: any; 5: any; 6: {}; 7: any; 8: any; 9: { 1: any; 2: number; }; }
+>{    get x() { return 0 },    set x(value: number) { },    get x() { return 0 }} : { 1: any; 2: any; 3: { 1: any; 2: number; }; 4: any; 5: any; 6: {}; 7: any; 8: any; 9: { 1: any; 2: number; }; }
+
+    get x() { return 0 },
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+
+    set x(value: number) { },
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+
+    get x() { return 0 }
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+}
+
+local o4 = {
+>o4 : { 1: any; 2: any; 3: {}; 4: any; 5: any; 6: { 1: any; 2: number; }; 7: any; 8: any; 9: {}; }
+>{    set x(value: number) { },    get x() { return 0 },    set x(value: number) { }} : { 1: any; 2: any; 3: {}; 4: any; 5: any; 6: { 1: any; 2: number; }; 7: any; 8: any; 9: {}; }
+
+    set x(value: number) { },
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+
+    get x() { return 0 },
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+
+    set x(value: number) { }
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+}
+
+local o5 = {
+>o5 : { 1: any; 2: any; 3: { 1: any; 2: number; }; x: number; 4: any; 5: any; 6: {}; }
+>{    get x() { return 0 },    x = 0,    set x(value: number) { }} : { 1: any; 2: any; 3: { 1: any; 2: number; }; x: number; 4: any; 5: any; 6: {}; }
+
+    get x() { return 0 },
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+
+    x = 0,
+>x : number
+>0 : 0
+
+    set x(value: number) { }
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+}
+
+local o6 = {
+>o6 : { 1: any; 2: any; 3: {}; x: number; 4: any; 5: any; 6: { 1: any; 2: number; }; }
+>{    set x(value: number) { },    x = 0,    get x() { return 0 }} : { 1: any; 2: any; 3: {}; x: number; 4: any; 5: any; 6: { 1: any; 2: number; }; }
+
+    set x(value: number) { },
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+
+    x = 0,
+>x : number
+>0 : 0
+
+    get x() { return 0 }
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+}
+
+local o7 = {
+>o7 : { 1: any; 2: any; 3: { 1: any; 2: number; }; 4: any; 5: { 1: any; 2: number; }; 6: any; 7: any; 8: {}; }
+>{    get x() { return 0 },    x() { return 0 },    set x(value: number) { }} : { 1: any; 2: any; 3: { 1: any; 2: number; }; 4: any; 5: { 1: any; 2: number; }; 6: any; 7: any; 8: {}; }
+
+    get x() { return 0 },
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+
+    x() { return 0 },
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+
+    set x(value: number) { }
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+}
+
+local o8 = {
+>o8 : { 1: any; 2: any; 3: {}; 4: any; 5: { 1: any; 2: number; }; 6: any; 7: any; 8: { 1: any; 2: number; }; }
+>{    set x(value: number) { },    x() { return 0 },    get x() { return 0 }} : { 1: any; 2: any; 3: {}; 4: any; 5: { 1: any; 2: number; }; 6: any; 7: any; 8: { 1: any; 2: number; }; }
+
+    set x(value: number) { },
+>set : any
+>x(value: number) : any
+>x : any
+>value : any
+>number : any
+>{ } : {}
+
+    x() { return 0 },
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+
+    get x() { return 0 }
+>get : any
+>x() : any
+>x : any
+>{ return 0 } : { 1: any; 2: number; }
+> : any
+}
+
+local foo = "foo"
+>foo : string
+>"foo" : "foo"
+
+interface I10 {
+    get [foo](): number;
+>[foo] : number
+>foo : string
+
+    [foo]: number;
+>[foo] : number
+>foo : string
+
+    set [foo](value: number);
+>[foo] : number
+>foo : string
+>value : number
+}
+
+interface I11 {
+    get [foo](): number;
+>[foo] : number
+>foo : string
+
+    foo: number;
+>foo : number
+
+    set [foo](value: number);
+>[foo] : number
+>foo : string
+>value : number
+}
+
+interface I12 {
+    get foo(): number;
+>foo : number
+
+    set [foo](value: number);
+>[foo] : number
+>foo : string
+>value : number
+
+    set foo(value: number);
+>foo : number
+>value : number
+}
+
+interface I13 {
+    foo: number;
+>foo : number
+
+    [foo]: number;
+>[foo] : number
+>foo : string
+}
+
+interface I14 {
+    foo: number;
+>foo : number
+
+    foo: number;
+>foo : number
+
+    [foo]: number;
+>[foo] : number
+>foo : string
+}
+
+interface I15 {
+    foo: number;
+>foo : number
+
+    [foo]: number;
+>[foo] : number
+>foo : string
+
+    [foo]: number;
+>[foo] : number
+>foo : string
+}
+
+declare class C10 {
+>declare : any
+>class : any
+>C10 : any
+
+    get [foo](): number;
+>get [foo]() : any
+>get [foo] : any
+>get : any
+>foo : string
+>number : any
+
+    [foo]: number;
+>foo : string
+>number : any
+
+    set [foo](value: number);
+>set [foo](value: number) : any
+>set [foo] : any
+>set : any
+>foo : string
+>value : any
+>number : any
+}
+
+declare class C11 {
+>declare : any
+>class : any
+>C11 : any
+
+    [foo]: number;
+>foo : string
+>number : any
+
+    get [foo](): number;
+>get [foo]() : any
+>get [foo] : any
+>get : any
+>foo : string
+>number : any
+
+    set [foo](value: number);
+>set [foo](value: number) : any
+>set [foo] : any
+>set : any
+>foo : string
+>value : any
+>number : any
+}
+
+declare class C12 {
+>declare : any
+>class : any
+>C12 : any
+
+    get [foo](): number;
+>get [foo]() : any
+>get [foo] : any
+>get : any
+>foo : string
+>number : any
+
+    set [foo](value: number);
+>set [foo](value: number) : any
+>set [foo] : any
+>set : any
+>foo : string
+>value : any
+>number : any
+
+    [foo]: number;
+>foo : string
+>number : any
+}
+
+local sym = Symbol();
+>sym : any
+>Symbol() : any
+>Symbol : any
+
+interface I20 {
+    get [sym](): number;
+>[sym] : number
+>sym : any
+
+    [sym]: number;
+>[sym] : number
+>sym : any
+
+    set [sym](value: number);
+>[sym] : number
+>sym : any
+>value : number
+}
+
+declare class C20 {
+>declare : any
+>class : any
+>C20 : any
+
+    get [sym](): number;
+>get [sym]() : any
+>get [sym] : any
+>get : any
+>sym : any
+>number : any
+
+    [sym]: number;
+>sym : any
+>number : any
+
+    set [sym](value: number);
+>set [sym](value: number) : any
+>set [sym] : any
+>set : any
+>sym : any
+>value : any
+>number : any
+}
+

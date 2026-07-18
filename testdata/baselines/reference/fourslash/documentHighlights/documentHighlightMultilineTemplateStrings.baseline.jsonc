@@ -1,0 +1,7 @@
+// === documentHighlights ===
+// === /documentHighlightMultilineTemplateStrings.tlua ===
+// local foo = `
+//     a
+//     /*HIGHLIGHTS*/b
+//     c
+// `

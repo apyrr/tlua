@@ -1,0 +1,18 @@
+interface JITOptLib {
+    start(...: string | number): void;
+}
+
+interface JITLib {
+    readonly version: string;
+    readonly version_num: number;
+    readonly os: "Windows" | "Linux" | "OSX" | "BSD" | "POSIX" | "Other";
+    readonly arch: string;
+    on(fn?: LuaFunction | boolean, recursive?: boolean): void;
+    off(fn?: LuaFunction | boolean, recursive?: boolean): void;
+    flush(fn?: LuaFunction | boolean, recursive?: boolean): void;
+    flush(trace: number): void;
+    status(): (boolean, ...string);
+    readonly opt: JITOptLib;
+}
+
+declare jit: JITLib;

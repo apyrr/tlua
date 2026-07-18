@@ -1,0 +1,99 @@
+//// [tests/cases/compiler/ifElseExhaustiveNarrowing.tlua] ////
+
+=== ifElseExhaustiveNarrowing.tlua ===
+interface ClientSource {
+  type: "client";
+>type : "client"
+}
+
+interface ServiceSource {
+  type: "service";
+>type : "service"
+}
+
+// An if/elseif chain over a discriminant with a never-typed sink in the final
+// else is the exhaustiveness idiom now that switch is gone.
+function isDisplaySource(source: ClientSource | ServiceSource | nil): boolean
+>isDisplaySource : (source: ClientSource | ServiceSource | nil) => boolean
+>source : ClientSource | ServiceSource | nil
+
+  if source == nil then
+>source == nil : boolean
+>source : ClientSource | ServiceSource | nil
+
+    return false;
+>false : false
+
+  elseif source.type == "client" then
+>source.type == "client" : boolean
+>source.type : "client" | "service"
+>source : ClientSource | ServiceSource
+>type : "client" | "service"
+>"client" : "client"
+
+    return true;
+>true : true
+
+  elseif source.type == "service" then
+>source.type == "service" : boolean
+>source.type : "service"
+>source : ServiceSource
+>type : "service"
+>"service" : "service"
+
+    return false;
+>false : false
+
+  else
+    neverReached(source);
+>neverReached(source) : void
+>neverReached : (_v: never) => void
+>source : never
+
+    return false;
+>false : false
+
+  end
+end
+
+// The optional-chain discriminant works too when the nil arm comes last: each
+// arm re-evaluates the chain against the narrowed receiver.
+function viaChain(source: ClientSource | ServiceSource | nil): boolean
+>viaChain : (source: ClientSource | ServiceSource | nil) => boolean
+>source : ClientSource | ServiceSource | nil
+
+  if source?.type == "client" then
+>source?.type == "client" : boolean
+>source?.type : "client" | "service" | nil
+>source : ClientSource | ServiceSource | nil
+>type : "client" | "service" | nil
+>"client" : "client"
+
+    return true;
+>true : true
+
+  elseif source?.type == "service" then
+>source?.type == "service" : boolean
+>source?.type : "service" | nil
+>source : ServiceSource | nil
+>type : "service" | nil
+>"service" : "service"
+
+    return false;
+>false : false
+
+  else
+    local rest: nil = source;
+>rest : nil
+>source : nil
+
+    return false;
+>false : false
+
+  end
+end
+
+function neverReached(_v: never): void {}
+>neverReached : (_v: never) => void
+>_v : never
+

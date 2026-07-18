@@ -1,0 +1,9 @@
+// @target: es2015
+// @jsx: preserve
+
+// @filename: test.tsx
+  interface JsxIntrinsicElements { div: any; }
+
+async function f() {
+  return <div arguments={42} />;
+}

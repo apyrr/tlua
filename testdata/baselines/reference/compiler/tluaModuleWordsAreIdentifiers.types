@@ -1,0 +1,84 @@
+//// [tests/cases/compiler/tluaModuleWordsAreIdentifiers.tlua] ////
+
+=== tluaModuleWordsAreIdentifiers.tlua ===
+// With the module syntax deleted, its words are ordinary Lua names.
+local export = 1;
+>export : number
+>1 : 1
+
+local from = "f";
+>from : string
+>"f" : "f"
+
+local default = { n = 1 };
+>default : { n: number; }
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+local t = { export = export, from = from, default = default.n };
+>t : { export: number; from: string; default: number; }
+>{ export = export, from = from, default = default.n } : { export: number; from: string; default: number; }
+>export : number
+>export : number
+>from : string
+>from : string
+>default : number
+>default.n : number
+>default : { n: number; }
+>n : number
+
+function M_from(self: {}, mode: string): string
+>M_from : (self: {}, mode: string) => string
+>self : {}
+>mode : string
+
+  return mode;
+>mode : string
+
+end
+
+local obj = { from = M_from, default = 2, export = 3 };
+>obj : { from: (self: {}, mode: string) => string; default: number; export: number; }
+>{ from = M_from, default = 2, export = 3 } : { from: (self: {}, mode: string) => string; default: number; export: number; }
+>from : (self: {}, mode: string) => string
+>M_from : (self: {}, mode: string) => string
+>default : number
+>2 : 2
+>export : number
+>3 : 3
+
+local a = obj:from("on");
+>a : string
+>obj:from("on") : string
+>obj:from : (self: {}, mode: string) => string
+>obj : { from: (self: {}, mode: string) => string; default: number; export: number; }
+>from : (self: {}, mode: string) => string
+>"on" : "on"
+
+local b = obj.default;
+>b : number
+>obj.default : number
+>obj : { from: (self: {}, mode: string) => string; default: number; export: number; }
+>default : number
+
+local c = obj.export;
+>c : number
+>obj.export : number
+>obj : { from: (self: {}, mode: string) => string; default: number; export: number; }
+>export : number
+
+// `require` is an ordinary global function, so it can be shadowed or aliased.
+local alias = require;
+>alias : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+
+local viaAlias = alias("bit");
+>viaAlias : BitLib
+>alias("bit") : BitLib
+>alias : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"bit" : "bit"
+
+return t;
+>t : { export: number; from: string; default: number; }
+

@@ -1,0 +1,9 @@
+// === Smart Selection ===
+local a = 'a';
+local b = /**/'b';
+
+          'b' 
+local b = 'b';
+
+local a = 'a';
+local b = 'b';

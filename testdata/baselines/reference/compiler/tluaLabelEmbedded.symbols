@@ -1,0 +1,53 @@
+//// [tests/cases/compiler/tluaLabelEmbedded.tlua] ////
+
+=== tluaLabelEmbedded.tlua ===
+// Error: a label as the braceless body of an if is in no statement list, so no
+// goto could ever target it.
+declare function use(s: string): void;
+>use : Symbol(use, Decl(tluaLabelEmbedded.tlua, 0, 0))
+>s : Symbol(s, Decl(tluaLabelEmbedded.tlua, 2, 21))
+
+function embeddedInIf(b: boolean): void {
+>embeddedInIf : Symbol(embeddedInIf, Decl(tluaLabelEmbedded.tlua, 2, 38))
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 3, 22))
+
+    if (b) ::stray::;
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 3, 22))
+}
+
+// Error on the embedded label; the outer label is separately unused. The
+// embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
+// string at the assignment even though the if-arm made it nil.
+function noNameCapture(b: boolean): void {
+>noNameCapture : Symbol(noNameCapture, Decl(tluaLabelEmbedded.tlua, 5, 1))
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 10, 23))
+
+    local x: string | nil = "a";
+>x : Symbol(x, Decl(tluaLabelEmbedded.tlua, 11, 9))
+
+    ::l::
+    local y: string = x;
+>y : Symbol(y, Decl(tluaLabelEmbedded.tlua, 13, 9))
+>x : Symbol(x, Decl(tluaLabelEmbedded.tlua, 11, 9))
+
+    use(y);
+>use : Symbol(use, Decl(tluaLabelEmbedded.tlua, 0, 0))
+>y : Symbol(y, Decl(tluaLabelEmbedded.tlua, 13, 9))
+
+    if (b) { x = nil; }
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 10, 23))
+>x : Symbol(x, Decl(tluaLabelEmbedded.tlua, 11, 9))
+
+    if (b) ::l::;
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 10, 23))
+}
+
+// Error: a loop's braceless body is embedded position too.
+function embeddedInWhile(b: boolean): void {
+>embeddedInWhile : Symbol(embeddedInWhile, Decl(tluaLabelEmbedded.tlua, 17, 1))
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 20, 25))
+
+    while (b) ::spin::;
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 20, 25))
+}
+

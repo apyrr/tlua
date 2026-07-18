@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/tluaNumberKeyDiagnosticDisplay.tlua] ////
+
+=== tluaNumberKeyDiagnosticDisplay.tlua ===
+// A number key must render as its decimal text in diagnostics, never as the
+// internal "\xFEn:" mangled symbol name.
+
+// A duplicate number key is reported as '1', not as a mangled name. (This used
+// to be exercised through a spread override, `{ [1] = "a", ...src }`; object spread
+// is gone, so the duplicate is written directly.)
+local dup = { [1] = "a", [1] = "b" }; // error: duplicate '1'
+>dup : { 1: string; }
+>{ [1] = "a", [1] = "b" } : { 1: string; }
+>[1] : string
+>1 : 1
+>"a" : "a"
+>[1] : string
+>1 : 1
+>"b" : "b"
+
+// A missing number-key element access displays the key as '1' (a mangled name
+// must not reach the "Property ... does not exist" diagnostic).
+interface Near { l: string }
+>l : string
+
+declare n: Near;
+>n : Near
+
+local miss = n[1]; // error: Property '1' does not exist on type 'Near'
+>miss : any
+>n[1] : any
+>n : Near
+>1 : 1
+
+local es = {dup, miss};
+>es : { 1: { 1: string; }; 2: any; }
+>{dup, miss} : { 1: { 1: string; }; 2: any; }
+>dup : any
+>miss : any
+

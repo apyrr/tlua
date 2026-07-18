@@ -1,0 +1,4 @@
+// === goToImplementation ===
+// === /goToImplementationLocal_00.tlua ===
+// he/*GOTO IMPL*/llo();
+// <|function [|hello|]() {}|>

@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/jsxNumericEntityLoneSurrogate.tsx] ////
+
+=== file.tsx ===
+	interface JsxElement {}
+	interface JsxIntrinsicElements {
+		[s: string]: any;
+>s : string
+	}
+declare React: any;
+>React : any
+
+// Numeric character references for lone surrogates should be preserved, not
+// corrupted to U+FFFD. "\uD800" is a lone high surrogate; "\uDC00" a lone low.
+local text = <div>&#xD800;a&#xDC00;</div>;
+>text : JsxElement
+><div>&#xD800;a&#xDC00;</div> : JsxElement
+>div : any
+>div : any
+
+local attr = <div title="&#xD800;"></div>;
+>attr : JsxElement
+><div title="&#xD800;"></div> : JsxElement
+>div : any
+>title : string
+>div : any
+
+// A non-BMP code point reference is a single supplementary character.
+local supplementary = <div>&#x1F600;</div>;
+>supplementary : JsxElement
+><div>&#x1F600;</div> : JsxElement
+>div : any
+>div : any
+

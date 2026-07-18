@@ -1,0 +1,6 @@
+// === goToDefinition ===
+// === /goToDefinitionShadowVariableInsideModule.tlua ===
+// namespace shdModule {
+//     <|local [|shdVar|];|>
+//     /*GOTO DEF*/shdVar = 1;
+// }

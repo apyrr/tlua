@@ -1,0 +1,81 @@
+declare _VERSION: "Lua 5.1";
+declare arg: string[];
+
+// `assert` returns everything it was passed when the first value is truthy, so a
+// pack `...M` carries the trailing arguments through unchanged; the first result is
+// the value narrowed to its non-nil part.
+declare function assert<T, ...M>(value: T | nil, ...: M): (T, ...M);
+declare function collectgarbage(option?: "collect" | "stop" | "restart" | "count" | "step" | "setpause" | "setstepmul", argument?: number): any;
+declare function dofile(filename?: string): (any?, ...any);
+// `error()` with no arguments is legal Lua (it raises a nil error), so `message`
+// is optional. This matters now that forwarding a possibly-empty `...` into a
+// required parameter is an error: `error(...)` has to keep working.
+declare function error(message?: any, level?: number): never;
+declare function getfenv(target?: number | LuaFunction): object;
+declare function getmetatable<T extends object>(value: T): LuaMetatable<T> | any | nil;
+declare function ipairs<T>(value: Table<number, T>): (LuaIPairsIterator<T>, Table<number, T>, number);
+declare function load(reader: () => string | nil, chunkname?: string): (LuaFunction?, string?);
+declare function loadfile(filename?: string): (LuaFunction?, string?);
+declare function loadstring(source: string, chunkname?: string): (LuaFunction?, string?);
+declare function module(name: string, ...: LuaFunction): void;
+declare function newproxy(prototype?: boolean | LuaUserdata): LuaUserdata;
+// next is the pairs iteration protocol, so its value is non-optional for the same
+// reason LuaPairsIterator's is: a key it yields always has one.
+declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V);
+declare function pairs<K, V>(value: Table<K, V>): (LuaPairsIterator<K, V>, Table<K, V>, nil);
+// `pcall` correlates the callee's arguments and results: A is inferred from the
+// trailing arguments and checked against `fn`'s parameters, and the success results
+// become the pack `...R`. The true/false result is approximated as `(boolean, ...R)`:
+// the real `(true, ...R) | (false, error)` union is inexpressible (Luau approximates
+// it the same way), so on the error path the second value reads as R's first element.
+// The second overload is the erased fallback: an OVERLOADED callee cannot pin A to
+// one signature (inference reads a single signature), so `pcall(select, "#", 1, 2)`
+// falls through to it instead of mis-checking against the wrong overload.
+declare function pcall<...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R);
+declare function pcall(fn: LuaFunction, ...: any): (boolean, ...any);
+declare function print(...: any): void;
+declare function rawequal(left: any, right: any): boolean;
+declare function rawget<K, V>(value: Table<K, V>, index: K): V | nil;
+declare function rawset<K, V>(value: Table<K, V>, index: K, item: V): Table<K, V>;
+declare function select(index: "#", ...: any): number;
+// A call to the *global* select is refined by the checker to the slice of the
+// argument pack the literal index selects (a value-dependent slice generics cannot
+// spell -- see internal/checker/luaselect.go). This declared type is the safe
+// fallback for a shadowed or aliased select the refinement does not reach.
+declare function select(index: number, ...: any): (any?, ...any);
+declare function setfenv(target: number | LuaFunction, environment: object): LuaFunction;
+declare function setmetatable<T extends object>(value: T, metatable: LuaMetatable<T> | nil): T;
+declare function tonumber(value: any, base?: number): number | nil;
+declare function tostring(value: any): string;
+declare function type(value: any): "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata";
+declare function unpack<T>(values: Table<number, T>, i?: number, j?: number): (T?, ...T);
+// LuaJIT's `xpcall` forwards trailing arguments to `fn` (a 5.2 extension), so it
+// correlates like `pcall`. The handler's own results are not expressible alongside
+// the success pack, so the result is approximated as `(boolean, ...R)`.
+// The erased second overload catches overloaded callees, as pcall's does.
+declare function xpcall<...A, ...R>(fn: (...: A) => (...R), handler: (message: any) => any, ...: A): (boolean, ...R);
+declare function xpcall(fn: LuaFunction, handler: (message: any) => any, ...: any): (boolean, ...any);
+
+/*
+ * Generic pack parameters (`<...A>`) now correlate arguments and results for
+ * assert, pcall, and xpcall above. `select`'s literal-index slice is a
+ * value-dependent choice generics cannot spell, so the checker refines it (like
+ * `type`/`io.type` narrowing). `unpack` already correlates through the ordinary
+ * generic `T`. The whole coroutine module stays erased: resume/yield because a
+ * `LuaThread` is opaque and carries no packs (Luau makes the same call), and wrap
+ * because a wrapped call exchanges values with `yield`, not with fn's packs.
+ *
+ * The signatures of setmetatable and getmetatable stay deliberately plain: the
+ * checker pairs a table with its metatable itself. A call to the *global*
+ * setmetatable returns the table carrying the metatable it commits to -- __index
+ * reads, __newindex writes to a missing key, __call, __metatable protection, and
+ * the operator metamethods (__eq __lt __le __unm __len __add __sub __mul __div
+ * __mod __pow __concat) -- and getmetatable reads that metatable back;
+ * setmetatable as a statement narrows its table argument the same way.
+ * debug.setmetatable and debug.getmetatable bypass __metatable protection. A
+ * shadowed local of either name keeps whatever it declares. Both signatures still
+ * carry the contract this file can express: the parameter type is what validates a
+ * metatable's metamethods, and precision comes from the metatable a call passes,
+ * since LuaMetatable<T> | nil names no particular fallback. Still uninterpreted:
+ * __tostring and ffi.metatype.
+ */

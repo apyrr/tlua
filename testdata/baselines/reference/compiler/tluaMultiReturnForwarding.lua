@@ -1,0 +1,66 @@
+//// [tests/cases/compiler/tluaMultiReturnForwarding.tlua] ////
+
+//// [tluaMultiReturnForwarding.tlua]
+function pair(): (number, string)
+  return 1, "a";
+end
+
+function variadic(): (number, ...string)
+  return 1, "a", "b";
+end
+
+function rest(a: number, ...: string): number
+  return a;
+end
+
+function takes2(a: number, b: string): boolean
+  return true;
+end
+
+// A variadic tail forwards into a rest parameter.
+local restForward = rest(variadic());
+
+// An unbounded tail may produce no value for the parameter it reaches, so what
+// it passes there is `string | nil` -- which a required `string` rejects.
+local unbounded = takes2(variadic());
+
+// Packs forward through nested calls.
+function wrap(): (number, string)
+  return pair();
+end
+
+local nested = takes2(wrap());
+
+// The tail expands inside a call used as a value list tail.
+function both(): (boolean, number)
+  return takes2(pair()), 2;
+end
+
+
+//// [tluaMultiReturnForwarding.lua]
+function pair()
+    return 1, "a";
+end
+function variadic()
+    return 1, "a", "b";
+end
+function rest(a, ...)
+    return a;
+end
+function takes2(a, b)
+    return true;
+end
+-- A variadic tail forwards into a rest parameter.
+local restForward = rest(variadic());
+-- An unbounded tail may produce no value for the parameter it reaches, so what
+-- it passes there is `string | nil` -- which a required `string` rejects.
+local unbounded = takes2(variadic());
+-- Packs forward through nested calls.
+function wrap()
+    return pair();
+end
+local nested = takes2(wrap());
+-- The tail expands inside a call used as a value list tail.
+function both()
+    return takes2(pair()), 2;
+end

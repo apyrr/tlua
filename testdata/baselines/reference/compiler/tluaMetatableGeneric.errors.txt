@@ -1,0 +1,38 @@
+tluaMetatableGeneric.tlua(14,7): error TS2322: Type 'string' is not assignable to type 'number'.
+tluaMetatableGeneric.tlua(25,7): error TS2322: Type 'number' is not assignable to type 'string'.
+
+
+==== tluaMetatableGeneric.tlua (2 errors) ====
+    // A pairing resolves its members eagerly, so it can only hold concrete types. A generic
+    // table falls back to the intersection, which is less precise about collisions but does
+    // instantiate -- the same trade a generic spread makes.
+    
+    local helpers = { describe = function(self: object): string return "d"; end };
+    
+    function withHelpers<T extends object>(value: T)
+      return setmetatable(value, { __index = helpers });
+    end
+    
+    local w = withHelpers({ own = "o" });
+    local o1: string = w.own;
+    local d1: string = w.describe(w);
+    local wbad: number = w.own;
+          ~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
+    
+    // A concrete table whose *member* type mentions a type parameter still pairs, and the
+    // pairing instantiates with it.
+    function box<T>(value: T)
+      return setmetatable({ value = value }, { __index = helpers });
+    end
+    
+    local b = box(42);
+    local v: number = b.value;
+    local d2: string = b.describe(b);
+    local bbad: string = b.value;
+          ~~~~
+!!! error TS2322: Type 'number' is not assignable to type 'string'.
+    
+    local bs = box("s");
+    local sv: string = bs.value;
+    

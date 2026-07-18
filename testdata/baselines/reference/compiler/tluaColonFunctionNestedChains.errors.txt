@@ -1,0 +1,22 @@
+tluaColonFunctionNestedChains.tlua(15,7): error TS2739: Type '{ b: { f(self: any, x: number): number; g(self: any): number; }; }' is missing the following properties from type '{ f(self: any, x: number): number; g(self: any): number; }': f, g
+
+
+==== tluaColonFunctionNestedChains.tlua (1 errors) ====
+    local a = { b = {} };
+    
+    // `self` takes the type of the whole chain before the colon, not of its root.
+    function a.b:f(x: number): number
+      return x;
+    end
+    
+    function a.b:g(): number
+      return self.f(self, 1);
+    end
+    
+    local n = a.b.g(a.b);
+    
+    // The root is not the receiver.
+    a.b.f(a, 1);
+          ~
+!!! error TS2739: Type '{ b: { f(self: any, x: number): number; g(self: any): number; }; }' is missing the following properties from type '{ f(self: any, x: number): number; g(self: any): number; }': f, g
+    

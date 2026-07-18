@@ -1,0 +1,135 @@
+//// [tests/cases/compiler/tluaTypeCallIfExhaustive.tlua] ////
+
+=== tluaTypeCallIfExhaustive.tlua ===
+type Mixed = { n: number } | LuaThread | ((a: number) => void) | string | nil;
+>Mixed : Symbol(Mixed, Decl(tluaTypeCallIfExhaustive.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaTypeCallIfExhaustive.tlua, 0, 14))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTypeCallIfExhaustive.tlua, 0, 43))
+
+function clauses(v: Mixed): string
+>clauses : Symbol(clauses, Decl(tluaTypeCallIfExhaustive.tlua, 0, 78))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+>Mixed : Symbol(Mixed, Decl(tluaTypeCallIfExhaustive.tlua, 0, 0))
+
+  if type(v) == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeCallIfExhaustive.tlua, 4, 9))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+
+    return s;
+>s : Symbol(s, Decl(tluaTypeCallIfExhaustive.tlua, 4, 9))
+
+  elseif type(v) == "table" or type(v) == "function" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+
+    // An or-grouped condition narrows to the union of its tags.
+    local tf: { n: number } | ((a: number) => void) = v;
+>tf : Symbol(tf, Decl(tluaTypeCallIfExhaustive.tlua, 8, 9))
+>n : Symbol(n, Decl(tluaTypeCallIfExhaustive.tlua, 8, 15))
+>a : Symbol(a, Decl(tluaTypeCallIfExhaustive.tlua, 8, 32))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+
+    return "tf";
+  elseif type(v) == "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+
+    local th: LuaThread = v;
+>th : Symbol(th, Decl(tluaTypeCallIfExhaustive.tlua, 11, 9))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+
+    return "thread";
+  else
+    // The final else is left with what no other arm handled.
+    local rest: nil = v;
+>rest : Symbol(rest, Decl(tluaTypeCallIfExhaustive.tlua, 15, 9))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
+
+    return "nil";
+  end
+end
+
+// Handling every tag in arms without a final else still leaves the fall-out
+// path: the exhaustive-switch return inference did not survive switch's
+// deletion, so the return type gains nil.
+function allTagsNoElse(u: unknown)
+>allTagsNoElse : Symbol(allTagsNoElse, Decl(tluaTypeCallIfExhaustive.tlua, 18, 3))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  if type(u) == "nil" then return 1
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "boolean" then return 2
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "number" then return 3
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "string" then return 4
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "table" then return 5
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "function" then return 6
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "thread" then return 7
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "userdata" then return 8
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  elseif type(u) == "cdata" then return 9
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaTypeCallIfExhaustive.tlua, 23, 23))
+
+  end
+end
+
+local widened: number = allTagsNoElse(1); // error: number | nil
+>widened : Symbol(widened, Decl(tluaTypeCallIfExhaustive.tlua, 36, 5))
+>allTagsNoElse : Symbol(allTagsNoElse, Decl(tluaTypeCallIfExhaustive.tlua, 18, 3))
+
+// The final else of a chain covering a concrete union narrows to never, so an
+// else-based exhaustiveness check types clean.
+function coveredUnion(v: string | LuaThread): number
+>coveredUnion : Symbol(coveredUnion, Decl(tluaTypeCallIfExhaustive.tlua, 36, 41))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 40, 22))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+
+  if type(v) == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 40, 22))
+
+    return 1;
+  elseif type(v) == "thread" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 40, 22))
+
+    return 2;
+  else
+    local n: never = v;
+>n : Symbol(n, Decl(tluaTypeCallIfExhaustive.tlua, 46, 9))
+>v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 40, 22))
+
+    return 3;
+  end
+end
+

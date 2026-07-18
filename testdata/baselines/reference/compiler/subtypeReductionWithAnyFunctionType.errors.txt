@@ -1,0 +1,43 @@
+subtypeReductionWithAnyFunctionType.tlua(10,16): error TS7006: Parameter 'x' implicitly has an 'any' type.
+subtypeReductionWithAnyFunctionType.tlua(23,23): error TS1135: Argument expression expected.
+subtypeReductionWithAnyFunctionType.tlua(23,37): error TS2554: Expected 1 arguments, but got 2.
+subtypeReductionWithAnyFunctionType.tlua(23,46): error TS7006: Parameter 'v' implicitly has an 'any' type.
+subtypeReductionWithAnyFunctionType.tlua(23,55): error TS1005: ',' expected.
+
+
+==== subtypeReductionWithAnyFunctionType.tlua (5 errors) ====
+    // https://github.com/microsoft/typescript-go/issues/849
+    
+    declare function useMemo<T>(func: () => T): T;
+    
+    function getPredicate(alwaysTrue: boolean) {
+        local predicate: (input: string) => boolean = useMemo(() => {
+            if (alwaysTrue) {
+                return () => true;
+            }
+            return x => x.length > 0;
+                   ~
+!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
+        });
+        return predicate;
+    }
+    
+    // https://github.com/microsoft/typescript-go/issues/1016
+    
+    declare function compact<T>(array: T[]): T[];
+    declare function makeFooer(): Fooer;
+    interface Fooer {
+        foo: (v: string) => string;
+    }
+    function f() {
+        local _ = compact([makeFooer(), { foo = (v) => v }]);
+                          ~
+!!! error TS1135: Argument expression expected.
+                                        ~~~~~~~~~~~~~~~~~~
+!!! error TS2554: Expected 1 arguments, but got 2.
+                                                 ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+                                                          ~
+!!! error TS1005: ',' expected.
+    }
+    

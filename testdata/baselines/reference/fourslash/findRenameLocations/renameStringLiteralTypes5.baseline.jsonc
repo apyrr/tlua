@@ -1,0 +1,9 @@
+// === findRenameLocations ===
+// === /renameStringLiteralTypes5.tlua ===
+// type T = {
+//     "[|Prop 1RENAME|]": string;
+// }
+// 
+// declare fn: <K extends keyof T>(p: K) => void
+// 
+// fn("[|Prop 1RENAME|]"/*RENAME*/)

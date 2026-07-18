@@ -1,0 +1,280 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsArrowFunctionExpression.tlua ===
+// local x = a => 10;
+//       ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local x: (a: any) => number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//           ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (parameter) a: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local y = (a, b) => 10;
+//       ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local y: (a: any, b: any) => number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//            ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (parameter) a: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//               ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (parameter) b: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local z = (a: number) => 10;
+//       ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local z: (a: number) => number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//            ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (parameter) a: number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local z2 = () => 10;
+//       ^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local z2: () => number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 6,
+      "LSPosition": {
+        "line": 0,
+        "character": 6
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal x: (a: any) => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 7
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 10,
+      "LSPosition": {
+        "line": 0,
+        "character": 10
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(parameter) a: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 11
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 25,
+      "LSPosition": {
+        "line": 1,
+        "character": 6
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal y: (a: any, b: any) => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 6
+        },
+        "end": {
+          "line": 1,
+          "character": 7
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 30,
+      "LSPosition": {
+        "line": 1,
+        "character": 11
+      },
+      "Name": "6",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(parameter) a: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 11
+        },
+        "end": {
+          "line": 1,
+          "character": 12
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 33,
+      "LSPosition": {
+        "line": 1,
+        "character": 14
+      },
+      "Name": "7",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(parameter) b: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 14
+        },
+        "end": {
+          "line": 1,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 49,
+      "LSPosition": {
+        "line": 2,
+        "character": 6
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal z: (a: number) => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 6
+        },
+        "end": {
+          "line": 2,
+          "character": 7
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 54,
+      "LSPosition": {
+        "line": 2,
+        "character": 11
+      },
+      "Name": "8",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(parameter) a: number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 11
+        },
+        "end": {
+          "line": 2,
+          "character": 12
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 78,
+      "LSPosition": {
+        "line": 3,
+        "character": 6
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal z2: () => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 6
+        },
+        "end": {
+          "line": 3,
+          "character": 8
+        }
+      }
+    }
+  }
+]

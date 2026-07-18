@@ -1,0 +1,124 @@
+//// [tests/cases/compiler/tluaMetatableConcatLen.tlua] ////
+
+=== tluaMetatableConcatLen.tlua ===
+// `..` dispatches __concat and `#` dispatches __len on a paired operand, exactly as the other
+// operator metamethods do: the handler's parameters check the operands and its return type is
+// the expression's type.
+
+local Str = {
+>Str : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
+>{  // Lua passes __concat whichever operand is not the table, so its arguments are arbitrary.  __concat = function(a: any, b: any): string return "s"; end,  // A multi-return handler adjusts to its first value.  __len = function(a: { n: number }): (number, string) return a.n, "w"; end,} : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
+
+  // Lua passes __concat whichever operand is not the table, so its arguments are arbitrary.
+  __concat = function(a: any, b: any): string return "s"; end,
+>__concat : (a: any, b: any) => string
+>function(a: any, b: any): string return "s"; end : (a: any, b: any) => string
+>a : any
+>b : any
+>"s" : "s"
+
+  // A multi-return handler adjusts to its first value.
+  __len = function(a: { n: number }): (number, string) return a.n, "w"; end,
+>__len : (a: { n: number; }) => (number, string)
+>function(a: { n: number }): (number, string) return a.n, "w"; end : (a: { n: number; }) => (number, string)
+>a : { n: number; }
+>n : number
+>a.n, "w" : number, string
+>a.n : number
+>a : { n: number; }
+>n : number
+>"w" : "w"
+
+};
+
+local v = setmetatable({ n = 3 }, Str);
+>v : { n: number; }
+>setmetatable({ n = 3 }, Str) : { n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 3 } : { n: number; }
+>n : number
+>3 : 3
+>Str : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
+
+local c1: string = v .. "z";       // __concat, v on the left
+>c1 : string
+>v .. "z" : string
+>v : { n: number; }
+>"z" : "z"
+
+local c2: string = "z" .. v;       // __concat, v on the right (still receives operands in order)
+>c2 : string
+>"z" .. v : string
+>"z" : "z"
+>v : { n: number; }
+
+local l1: number = #v;             // __len, adjusted to its first value
+>l1 : number
+>#v : number
+>v : { n: number; }
+
+// getmetatable is precise for a metatable that commits only to __concat/__len -- they are
+// interpreted metamethods, so the pairing triggers.
+local mt = getmetatable(v);
+>mt : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
+>getmetatable(v) : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>v : { n: number; }
+
+local h: (a: any, b: any) => string = mt.__concat;
+>h : (a: any, b: any) => string
+>a : any
+>b : any
+>mt.__concat : (a: any, b: any) => string
+>mt : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
+>__concat : (a: any, b: any) => string
+
+// A __concat handler whose parameter rejects the operand is an error.
+local Strict = {
+>Strict : { __concat: (a: { tag: string; }, b: { tag: string; }) => string; }
+>{  __concat = function(a: { tag: string }, b: { tag: string }): string return "s"; end,} : { __concat: (a: { tag: string; }, b: { tag: string; }) => string; }
+
+  __concat = function(a: { tag: string }, b: { tag: string }): string return "s"; end,
+>__concat : (a: { tag: string; }, b: { tag: string; }) => string
+>function(a: { tag: string }, b: { tag: string }): string return "s"; end : (a: { tag: string; }, b: { tag: string; }) => string
+>a : { tag: string; }
+>tag : string
+>b : { tag: string; }
+>tag : string
+>"s" : "s"
+
+};
+local p = setmetatable({ tag = "p" }, Strict);
+>p : { tag: string; }
+>setmetatable({ tag = "p" }, Strict) : { tag: string; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ tag = "p" } : { tag: string; }
+>tag : string
+>"p" : "p"
+>Strict : { __concat: (a: { tag: string; }, b: { tag: string; }) => string; }
+
+local badConcat = p .. 5;
+>badConcat : string
+>p .. 5 : string
+>p : { tag: string; }
+>5 : 5
+
+// A table with no __concat still errors on `..`, while `#` without __len falls back to
+// the structural rule, which measures any table -- a plain record included.
+local plain = { n = 1 };
+>plain : { n: number; }
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+local noConcat = plain .. "x";
+>noConcat : string
+>plain .. "x" : string
+>plain : { n: number; }
+>"x" : "x"
+
+local noLen: number = #plain;
+>noLen : number
+>#plain : number
+>plain : { n: number; }
+

@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/tluaRepeatFlow.tlua] ////
+
+=== tluaRepeatFlow.tlua ===
+declare function poll(): number | nil;
+>poll : Symbol(poll, Decl(tluaRepeatFlow.tlua, 0, 0))
+
+// The until-condition narrows: true exits the loop, so the post-loop flow
+// keeps the condition's facts.
+function narrowAfter(): number
+>narrowAfter : Symbol(narrowAfter, Decl(tluaRepeatFlow.tlua, 0, 38))
+
+  local x: number | nil = nil;
+>x : Symbol(x, Decl(tluaRepeatFlow.tlua, 5, 7))
+
+  repeat
+    x = poll();
+>x : Symbol(x, Decl(tluaRepeatFlow.tlua, 5, 7))
+>poll : Symbol(poll, Decl(tluaRepeatFlow.tlua, 0, 0))
+
+  until x ~= nil;
+>x : Symbol(x, Decl(tluaRepeatFlow.tlua, 5, 7))
+
+  return x;
+>x : Symbol(x, Decl(tluaRepeatFlow.tlua, 5, 7))
+
+end
+
+// `return` inside repeat participates in return-type inference.
+function inferred(cond: boolean)
+>inferred : Symbol(inferred, Decl(tluaRepeatFlow.tlua, 10, 3))
+>cond : Symbol(cond, Decl(tluaRepeatFlow.tlua, 13, 18))
+
+  repeat
+    if cond then
+>cond : Symbol(cond, Decl(tluaRepeatFlow.tlua, 13, 18))
+
+      return 1;
+    end
+  until cond;
+>cond : Symbol(cond, Decl(tluaRepeatFlow.tlua, 13, 18))
+
+  return "done";
+end
+
+// Unreachable code after break is reported.
+function unreachable(): number
+>unreachable : Symbol(unreachable, Decl(tluaRepeatFlow.tlua, 20, 3))
+
+  local n = 0;
+>n : Symbol(n, Decl(tluaRepeatFlow.tlua, 24, 7))
+
+  repeat
+    break;
+    n = 1;
+>n : Symbol(n, Decl(tluaRepeatFlow.tlua, 24, 7))
+
+  until true;
+  return n;
+>n : Symbol(n, Decl(tluaRepeatFlow.tlua, 24, 7))
+
+end
+
+// A body assignment is visible in the condition and after the loop.
+function assignedInBody(): number
+>assignedInBody : Symbol(assignedInBody, Decl(tluaRepeatFlow.tlua, 30, 3))
+
+  local total: number | nil = nil;
+>total : Symbol(total, Decl(tluaRepeatFlow.tlua, 34, 7))
+
+  repeat
+    total = 1;
+>total : Symbol(total, Decl(tluaRepeatFlow.tlua, 34, 7))
+
+  until total ~= nil;
+>total : Symbol(total, Decl(tluaRepeatFlow.tlua, 34, 7))
+
+  return total;
+>total : Symbol(total, Decl(tluaRepeatFlow.tlua, 34, 7))
+
+end
+

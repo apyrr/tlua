@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/tluaNoSwitch.tlua] ////
+
+=== tluaNoSwitch.tlua ===
+// tlua has no switch statement: `switch` and `case` are ordinary identifiers,
+// as in Lua.
+local switch = function(self: {}, mode: string) return mode; end;
+>switch : (self: {}, mode: string) => string
+>function(self: {}, mode: string) return mode; end : (self: {}, mode: string) => string
+>self : {}
+>mode : string
+>mode : string
+
+local case = "c";
+>case : string
+>"c" : "c"
+
+local t = { switch = switch, case = 2 };
+>t : { switch: (self: {}, mode: string) => string; case: number; }
+>{ switch = switch, case = 2 } : { switch: (self: {}, mode: string) => string; case: number; }
+>switch : (self: {}, mode: string) => string
+>switch : (self: {}, mode: string) => string
+>case : number
+>2 : 2
+
+local a = t:switch("on");
+>a : string
+>t:switch("on") : string
+>t:switch : (self: {}, mode: string) => string
+>t : { switch: (self: {}, mode: string) => string; case: number; }
+>switch : (self: {}, mode: string) => string
+>"on" : "on"
+
+local b = t.case;
+>b : number
+>t.case : number
+>t : { switch: (self: {}, mode: string) => string; case: number; }
+>case : number
+
+// A TS switch statement no longer parses as a statement: `switch (x)` is a
+// call to whatever `switch` names, and the clause syntax behind it is a plain
+// parse error.
+declare x: 1 | 2;
+>x : 1 | 2
+
+switch (x) {
+>switch (x) : string
+>switch : (self: {}, mode: string) => string
+>x : 1 | 2
+
+  case 1:
+>case : string
+>1 : 1
+
+    break;
+}
+

@@ -1,0 +1,37 @@
+// === findAllReferences ===
+// === /findAllRefsPrimitiveJsDoc.tlua ===
+// /**
+//  * @param {/*FIND ALL REFS*/[|number|]} n
+//  * @returns {[|number|]}
+//  */
+// function f(n: [|number|]): [|number|] {}
+
+
+
+// === findAllReferences ===
+// === /findAllRefsPrimitiveJsDoc.tlua ===
+// /**
+//  * @param {[|number|]} n
+//  * @returns {/*FIND ALL REFS*/[|number|]}
+//  */
+// function f(n: [|number|]): [|number|] {}
+
+
+
+// === findAllReferences ===
+// === /findAllRefsPrimitiveJsDoc.tlua ===
+// /**
+//  * @param {[|number|]} n
+//  * @returns {[|number|]}
+//  */
+// function f(n: /*FIND ALL REFS*/[|number|]): [|number|] {}
+
+
+
+// === findAllReferences ===
+// === /findAllRefsPrimitiveJsDoc.tlua ===
+// /**
+//  * @param {[|number|]} n
+//  * @returns {[|number|]}
+//  */
+// function f(n: [|number|]): /*FIND ALL REFS*/[|number|] {}

@@ -1,0 +1,82 @@
+//// [tests/cases/compiler/tluaGenericForErrors.tlua] ////
+
+=== tluaGenericForErrors.tlua ===
+// Value 1 must be callable — reported once.
+function notCallable(): void
+>notCallable : Symbol(notCallable, Decl(tluaGenericForErrors.tlua, 0, 0))
+
+  for k in 42 do
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 2, 5))
+
+    k;
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 2, 5))
+
+  end
+end
+
+// An `any` iterator types the names as any, silently.
+declare anything: any;
+>anything : Symbol(anything, Decl(tluaGenericForErrors.tlua, 8, 7))
+
+function anyIterator(): void
+>anyIterator : Symbol(anyIterator, Decl(tluaGenericForErrors.tlua, 8, 22))
+
+  for k, v in anything do
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 11, 5))
+>v : Symbol(v, Decl(tluaGenericForErrors.tlua, 11, 8))
+>anything : Symbol(anything, Decl(tluaGenericForErrors.tlua, 8, 7))
+
+    k;
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 11, 5))
+
+    v;
+>v : Symbol(v, Decl(tluaGenericForErrors.tlua, 11, 8))
+
+  end
+end
+
+// An annotation that rejects the positional value.
+declare function iter(t: string[], i: number): (number, string?);
+>iter : Symbol(iter, Decl(tluaGenericForErrors.tlua, 15, 3))
+>t : Symbol(t, Decl(tluaGenericForErrors.tlua, 18, 22))
+>i : Symbol(i, Decl(tluaGenericForErrors.tlua, 18, 34))
+
+function badAnnotation(t: string[]): void
+>badAnnotation : Symbol(badAnnotation, Decl(tluaGenericForErrors.tlua, 18, 65))
+>t : Symbol(t, Decl(tluaGenericForErrors.tlua, 20, 23))
+
+  for k: boolean in iter do
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 21, 5))
+>iter : Symbol(iter, Decl(tluaGenericForErrors.tlua, 15, 3))
+
+    k;
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 21, 5))
+
+  end
+end
+
+// Missing `in`.
+function missingIn(): void
+>missingIn : Symbol(missingIn, Decl(tluaGenericForErrors.tlua, 24, 3))
+
+  for k of do
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 28, 5))
+
+  end
+end
+
+// Loop names are ordinary block-scoped variables: using one in its own
+// header is a use-before-declaration error (like numeric-for).
+function selfReference(): void
+>selfReference : Symbol(selfReference, Decl(tluaGenericForErrors.tlua, 30, 3))
+
+  for k: string in k do
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 35, 5))
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 35, 5))
+
+    k;
+>k : Symbol(k, Decl(tluaGenericForErrors.tlua, 35, 5))
+
+  end
+end
+

@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaTableAugmentationDeclarationEmit.tlua] ////
+
+=== tluaTableAugmentationDeclarationEmit.tlua ===
+local M = {};
+>M : Symbol(M, Decl(tluaTableAugmentationDeclarationEmit.tlua, 0, 5))
+
+M.value = 1;
+>M.value : Symbol(value, Decl(tluaTableAugmentationDeclarationEmit.tlua, 0, 13))
+>M : Symbol(M, Decl(tluaTableAugmentationDeclarationEmit.tlua, 0, 5))
+>value : Symbol(value, Decl(tluaTableAugmentationDeclarationEmit.tlua, 0, 13))
+
+M.label = "label";
+>M.label : Symbol(label, Decl(tluaTableAugmentationDeclarationEmit.tlua, 1, 12))
+>M : Symbol(M, Decl(tluaTableAugmentationDeclarationEmit.tlua, 0, 5))
+>label : Symbol(label, Decl(tluaTableAugmentationDeclarationEmit.tlua, 1, 12))
+
+Implicit = {};
+>Implicit : Symbol(Implicit, Decl(tluaTableAugmentationDeclarationEmit.tlua, 2, 18))
+
+Implicit.hidden = true;
+>Implicit.hidden : Symbol(hidden, Decl(tluaTableAugmentationDeclarationEmit.tlua, 4, 14))
+>Implicit : Symbol(Implicit, Decl(tluaTableAugmentationDeclarationEmit.tlua, 2, 18))
+>hidden : Symbol(hidden, Decl(tluaTableAugmentationDeclarationEmit.tlua, 4, 14))
+
+

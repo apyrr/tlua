@@ -1,0 +1,33 @@
+// === findRenameLocations ===
+// === /renameStringLiteralOk.tlua ===
+// interface Foo {
+//     f: '/*RENAME*/[|fooRENAME|]' | 'bar'
+// }
+// local d: 'foo' = 'foo'
+// declare f: Foo
+// f.f = '[|fooRENAME|]'
+// f.f = `[|fooRENAME|]`
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralOk.tlua ===
+// interface Foo {
+//     f: '[|fooRENAME|]' | 'bar'
+// }
+// local d: 'foo' = 'foo'
+// declare f: Foo
+// f.f = '/*RENAME*/[|fooRENAME|]'
+// f.f = `[|fooRENAME|]`
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralOk.tlua ===
+// interface Foo {
+//     f: '[|fooRENAME|]' | 'bar'
+// }
+// local d: 'foo' = 'foo'
+// declare f: Foo
+// f.f = '[|fooRENAME|]'
+// f.f = `/*RENAME*/[|fooRENAME|]`

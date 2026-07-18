@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaMetatableChained.tlua] ////
+
+=== tluaMetatableChained.tlua ===
+// A metatable's __index may be a table that has a metatable of its own, and Lua keeps
+// walking. Nothing special is needed for that: each pairing already carries the members it
+// inherited, so a chain merges one link at a time.
+
+local base = { fromBase = true };
+>base : Symbol(base, Decl(tluaMetatableChained.tlua, 4, 5))
+>fromBase : Symbol(fromBase, Decl(tluaMetatableChained.tlua, 4, 14))
+
+local mid = setmetatable({ fromMid = 1 }, { __index = base });
+>mid : Symbol(mid, Decl(tluaMetatableChained.tlua, 5, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>fromMid : Symbol(fromMid, Decl(tluaMetatableChained.tlua, 5, 26))
+>__index : Symbol(__index, Decl(tluaMetatableChained.tlua, 5, 43))
+>base : Symbol(base, Decl(tluaMetatableChained.tlua, 4, 5))
+
+local top = setmetatable({ fromTop = "t" }, { __index = mid });
+>top : Symbol(top, Decl(tluaMetatableChained.tlua, 6, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>fromTop : Symbol(fromTop, Decl(tluaMetatableChained.tlua, 6, 26))
+>__index : Symbol(__index, Decl(tluaMetatableChained.tlua, 6, 45))
+>mid : Symbol(mid, Decl(tluaMetatableChained.tlua, 5, 5))
+
+local t1: string = top.fromTop;
+>t1 : Symbol(t1, Decl(tluaMetatableChained.tlua, 8, 5))
+>top.fromTop : Symbol(fromTop, Decl(tluaMetatableChained.tlua, 6, 26))
+>top : Symbol(top, Decl(tluaMetatableChained.tlua, 6, 5))
+>fromTop : Symbol(fromTop, Decl(tluaMetatableChained.tlua, 6, 26))
+
+local m1: number = top.fromMid;
+>m1 : Symbol(m1, Decl(tluaMetatableChained.tlua, 9, 5))
+>top.fromMid : Symbol(fromMid, Decl(tluaMetatableChained.tlua, 5, 26))
+>top : Symbol(top, Decl(tluaMetatableChained.tlua, 6, 5))
+>fromMid : Symbol(fromMid, Decl(tluaMetatableChained.tlua, 5, 26))
+
+local b1: boolean = top.fromBase;
+>b1 : Symbol(b1, Decl(tluaMetatableChained.tlua, 10, 5))
+>top.fromBase : Symbol(fromBase, Decl(tluaMetatableChained.tlua, 4, 14))
+>top : Symbol(top, Decl(tluaMetatableChained.tlua, 6, 5))
+>fromBase : Symbol(fromBase, Decl(tluaMetatableChained.tlua, 4, 14))
+
+local absent = top.nowhere;
+>absent : Symbol(absent, Decl(tluaMetatableChained.tlua, 11, 5))
+>top : Symbol(top, Decl(tluaMetatableChained.tlua, 6, 5))
+
+// Three deep, and the nearest link still wins a collision.
+local deep = setmetatable({ own = 1 }, { __index = top });
+>deep : Symbol(deep, Decl(tluaMetatableChained.tlua, 14, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>own : Symbol(own, Decl(tluaMetatableChained.tlua, 14, 27))
+>__index : Symbol(__index, Decl(tluaMetatableChained.tlua, 14, 40))
+>top : Symbol(top, Decl(tluaMetatableChained.tlua, 6, 5))
+
+local d1: number = deep.own;
+>d1 : Symbol(d1, Decl(tluaMetatableChained.tlua, 15, 5))
+>deep.own : Symbol(own, Decl(tluaMetatableChained.tlua, 14, 27))
+>deep : Symbol(deep, Decl(tluaMetatableChained.tlua, 14, 5))
+>own : Symbol(own, Decl(tluaMetatableChained.tlua, 14, 27))
+
+local d2: boolean = deep.fromBase;
+>d2 : Symbol(d2, Decl(tluaMetatableChained.tlua, 16, 5))
+>deep.fromBase : Symbol(fromBase, Decl(tluaMetatableChained.tlua, 4, 14))
+>deep : Symbol(deep, Decl(tluaMetatableChained.tlua, 14, 5))
+>fromBase : Symbol(fromBase, Decl(tluaMetatableChained.tlua, 4, 14))
+
+local shadowBase = { v = "base" };
+>shadowBase : Symbol(shadowBase, Decl(tluaMetatableChained.tlua, 18, 5))
+>v : Symbol(v, Decl(tluaMetatableChained.tlua, 18, 20))
+
+local shadowMid = setmetatable({ v = 1 }, { __index = shadowBase });
+>shadowMid : Symbol(shadowMid, Decl(tluaMetatableChained.tlua, 19, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaMetatableChained.tlua, 19, 32))
+>__index : Symbol(__index, Decl(tluaMetatableChained.tlua, 19, 43))
+>shadowBase : Symbol(shadowBase, Decl(tluaMetatableChained.tlua, 18, 5))
+
+local shadowTop = setmetatable({ }, { __index = shadowMid });
+>shadowTop : Symbol(shadowTop, Decl(tluaMetatableChained.tlua, 20, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableChained.tlua, 20, 37))
+>shadowMid : Symbol(shadowMid, Decl(tluaMetatableChained.tlua, 19, 5))
+
+local s1: number = shadowTop.v;
+>s1 : Symbol(s1, Decl(tluaMetatableChained.tlua, 21, 5))
+>shadowTop.v : Symbol(v, Decl(tluaMetatableChained.tlua, 19, 32))
+>shadowTop : Symbol(shadowTop, Decl(tluaMetatableChained.tlua, 20, 5))
+>v : Symbol(v, Decl(tluaMetatableChained.tlua, 19, 32))
+
+local s2: string = shadowTop.v;
+>s2 : Symbol(s2, Decl(tluaMetatableChained.tlua, 22, 5))
+>shadowTop.v : Symbol(v, Decl(tluaMetatableChained.tlua, 19, 32))
+>shadowTop : Symbol(shadowTop, Decl(tluaMetatableChained.tlua, 20, 5))
+>v : Symbol(v, Decl(tluaMetatableChained.tlua, 19, 32))
+

@@ -1,0 +1,30 @@
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         foo: string;
+//     }
+// }
+// local x = <My/*GOTO DEF*/Class />;
+// local y = <MyClass foo= 'hello' />;
+// local z = <MyClass wrong= 'hello' />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     }
+// }
+// local x = <MyClass />;
+// local y = <MyClass <|[|f/*GOTO DEF*/oo|]= 'hello'|> />;
+// local z = <MyClass wrong= 'hello' />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 9) skipped ---
+// }
+// local x = <MyClass />;
+// local y = <MyClass foo= 'hello' />;
+// local z = <MyCl/*GOTO DEF*/ass wrong= 'hello' />;

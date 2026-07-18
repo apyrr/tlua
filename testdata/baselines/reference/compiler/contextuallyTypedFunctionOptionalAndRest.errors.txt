@@ -1,0 +1,11 @@
+contextuallyTypedFunctionOptionalAndRest.tlua(1,24): error TS7006: Parameter 'a' implicitly has an 'any' type.
+contextuallyTypedFunctionOptionalAndRest.tlua(1,31): error TS100034: A vararg parameter cannot have a name.
+
+
+==== contextuallyTypedFunctionOptionalAndRest.tlua (2 errors) ====
+    local f: () => void = (a?, ...b) => {};
+                           ~~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                                  ~
+!!! error TS100034: A vararg parameter cannot have a name.
+    

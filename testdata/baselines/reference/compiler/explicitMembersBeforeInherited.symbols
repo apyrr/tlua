@@ -1,0 +1,76 @@
+//// [tests/cases/compiler/explicitMembersBeforeInherited.tlua] ////
+
+=== explicitMembersBeforeInherited.tlua ===
+// https://github.com/microsoft/typescript-go/issues/1968
+
+type IndentationTree<L> = TopNode<L> | VirtualNode<L> | LineNode<L> | BlankNode<L>;
+>IndentationTree : Symbol(IndentationTree, Decl(explicitMembersBeforeInherited.tlua, 0, 0))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 2, 21))
+>TopNode : Symbol(TopNode, Decl(explicitMembersBeforeInherited.tlua, 11, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 2, 21))
+>VirtualNode : Symbol(VirtualNode, Decl(explicitMembersBeforeInherited.tlua, 7, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 2, 21))
+>LineNode : Symbol(LineNode, Decl(explicitMembersBeforeInherited.tlua, 15, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 2, 21))
+>BlankNode : Symbol(BlankNode, Decl(explicitMembersBeforeInherited.tlua, 19, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 2, 21))
+
+type IndentationSubTree<L> = Exclude<IndentationTree<L>, TopNode<L>>;
+>IndentationSubTree : Symbol(IndentationSubTree, Decl(explicitMembersBeforeInherited.tlua, 2, 83))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 3, 24))
+>Exclude : Symbol(Exclude, Decl(lib.luajit.d.tlua, --, --))
+>IndentationTree : Symbol(IndentationTree, Decl(explicitMembersBeforeInherited.tlua, 0, 0))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 3, 24))
+>TopNode : Symbol(TopNode, Decl(explicitMembersBeforeInherited.tlua, 11, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 3, 24))
+
+interface NodeBase<L> {
+>NodeBase : Symbol(NodeBase, Decl(explicitMembersBeforeInherited.tlua, 3, 69))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 5, 19))
+
+	subs: IndentationSubTree<L>[];
+>subs : Symbol(NodeBase.subs, Decl(explicitMembersBeforeInherited.tlua, 5, 23))
+>IndentationSubTree : Symbol(IndentationSubTree, Decl(explicitMembersBeforeInherited.tlua, 2, 83))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 5, 19))
+}
+
+interface VirtualNode<L> extends NodeBase<L> {
+>VirtualNode : Symbol(VirtualNode, Decl(explicitMembersBeforeInherited.tlua, 7, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 9, 22))
+>NodeBase : Symbol(NodeBase, Decl(explicitMembersBeforeInherited.tlua, 3, 69))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 9, 22))
+
+	type: 'virtual';
+>type : Symbol(VirtualNode.type, Decl(explicitMembersBeforeInherited.tlua, 9, 46))
+}
+
+interface TopNode<L> extends NodeBase<L> {
+>TopNode : Symbol(TopNode, Decl(explicitMembersBeforeInherited.tlua, 11, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 13, 18))
+>NodeBase : Symbol(NodeBase, Decl(explicitMembersBeforeInherited.tlua, 3, 69))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 13, 18))
+
+	type: 'top';
+>type : Symbol(TopNode.type, Decl(explicitMembersBeforeInherited.tlua, 13, 42))
+}
+
+interface LineNode<L> extends NodeBase<L> {
+>LineNode : Symbol(LineNode, Decl(explicitMembersBeforeInherited.tlua, 15, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 17, 19))
+>NodeBase : Symbol(NodeBase, Decl(explicitMembersBeforeInherited.tlua, 3, 69))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 17, 19))
+
+	type: 'line';
+>type : Symbol(LineNode.type, Decl(explicitMembersBeforeInherited.tlua, 17, 43))
+}
+
+interface BlankNode<L> extends NodeBase<L> {
+>BlankNode : Symbol(BlankNode, Decl(explicitMembersBeforeInherited.tlua, 19, 1))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 21, 20))
+>NodeBase : Symbol(NodeBase, Decl(explicitMembersBeforeInherited.tlua, 3, 69))
+>L : Symbol(L, Decl(explicitMembersBeforeInherited.tlua, 21, 20))
+
+	type: 'blank';
+>type : Symbol(BlankNode.type, Decl(explicitMembersBeforeInherited.tlua, 21, 44))
+}
+

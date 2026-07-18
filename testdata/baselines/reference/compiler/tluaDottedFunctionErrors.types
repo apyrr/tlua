@@ -1,0 +1,49 @@
+//// [tests/cases/compiler/tluaDottedFunctionErrors.tlua] ////
+
+=== tluaDottedFunctionErrors.tlua ===
+// Unknown base.
+function Unknown.f(): void
+>Unknown : any
+>f : () => void
+
+end
+
+// A function is not a table and cannot carry members.
+local function g(): void
+>g : () => void
+
+end
+
+function g.h(): void
+>g : () => void
+>h : () => void
+
+end
+
+// Duplicate members.
+local Dup = {};
+>Dup : { f: any; }
+>{} : { f: any; }
+
+function Dup.f(): void
+>Dup : { f: any; }
+>f : any
+
+end
+
+function Dup.f(): void
+>Dup : { f: any; }
+>f : any
+
+end
+
+// `local function` takes a plain name.
+local function Bad.f(): void
+>Bad : () => void
+>f() : any
+>f : any
+>void : nil
+
+end
+> : any
+

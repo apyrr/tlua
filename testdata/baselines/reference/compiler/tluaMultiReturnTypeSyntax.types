@@ -1,0 +1,175 @@
+//// [tests/cases/compiler/tluaMultiReturnTypeSyntax.tlua] ////
+
+=== tluaMultiReturnTypeSyntax.tlua ===
+// Bare multi-return type lists on declaration headers.
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+function triple(): (number, string, boolean)
+>triple : () => (number, string, boolean)
+
+  return 1, "a", true;
+>1, "a", true : number, string, true
+>1 : 1
+>"a" : "a"
+>true : true
+
+end
+
+local function localPair(): (number, string)
+>localPair : () => (number, string)
+
+  return 2, "b";
+>2, "b" : number, string
+>2 : 2
+>"b" : "b"
+
+end
+
+function bracePair(): (number, string) {
+>bracePair : () => (number, string)
+
+  return 3, "c";
+>3, "c" : number, string
+>3 : 3
+>"c" : "c"
+}
+
+local exprPair = function(): (number, string)
+>exprPair : () => (number, string)
+>function(): (number, string)  return 4, "d";end : () => (number, string)
+
+  return 4, "d";
+>4, "d" : number, string
+>4 : 4
+>"d" : "d"
+
+end;
+
+// Single-type returns are unchanged by the list grammar.
+function single(): number
+>single : () => number
+
+  return 5;
+>5 : 5
+
+end
+
+function explicitPair(): (number, string)
+>explicitPair : () => (number, string)
+
+  return 6, "f";
+>6, "f" : number, string
+>6 : 6
+>"f" : "f"
+
+end
+
+local p = pair();
+>p : number
+>pair() : number
+>pair : () => (number, string)
+
+local t = triple();
+>t : number
+>triple() : number
+>triple : () => (number, string, boolean)
+
+local l = localPair();
+>l : number
+>localPair() : number
+>localPair : () => (number, string)
+
+local b = bracePair();
+>b : number
+>bracePair() : number
+>bracePair : () => (number, string)
+
+local e = exprPair();
+>e : number
+>exprPair() : number
+>exprPair : () => (number, string)
+
+local s = single();
+>s : number
+>single() : number
+>single : () => number
+
+local x = explicitPair();
+>x : number
+>explicitPair() : number
+>explicitPair : () => (number, string)
+
+// Callable types use an explicitly parenthesized return-pack syntax.
+type PairFunction = () => (number, string);
+>PairFunction : PairFunction
+
+declare pairFunction: PairFunction;
+>pairFunction : PairFunction
+
+local pairAlias: PairFunction = pair;
+>pairAlias : PairFunction
+>pair : () => (number, string)
+
+interface PairCallable {
+  (): (number, string);
+  pair(): (number, string);
+>pair : () => (number, string)
+}
+declare pairCallable: PairCallable;
+>pairCallable : PairCallable
+
+local function consumePair(value: number, label: string) end
+>consumePair : (value: number, label: string) => void
+>value : number
+>label : string
+
+consumePair(pairFunction());
+>consumePair(pairFunction()) : void
+>consumePair : (value: number, label: string) => void
+>pairFunction() : number
+>pairFunction : PairFunction
+
+consumePair(pairCallable());
+>consumePair(pairCallable()) : void
+>consumePair : (value: number, label: string) => void
+>pairCallable() : number
+>pairCallable : PairCallable
+
+consumePair(pairCallable.pair());
+>consumePair(pairCallable.pair()) : void
+>consumePair : (value: number, label: string) => void
+>pairCallable.pair() : number
+>pairCallable.pair : () => (number, string)
+>pairCallable : PairCallable
+>pair : () => (number, string)
+
+local function takesCallback(callback: () => (number, string), label: string)
+>takesCallback : (callback: () => (number, string), label: string) => (number, string)
+>callback : () => (number, string)
+>label : string
+
+  return callback(), label;
+>callback(), label : number, string
+>callback() : number
+>callback : () => (number, string)
+>label : string
+
+end
+
+type Wrapped = Map<() => (number, string), string>;
+>Wrapped : Map<() => (number, string), string>
+
+type Nested = () => (() => (number, string), boolean);
+>Nested : Nested
+
+type Complex<T> = () => (T extends string ? number : boolean, (string | nil)?, ...number);
+>Complex : Complex<T>
+

@@ -1,0 +1,61 @@
+checkInheritedProperty.tlua(1,1): error TS1434: Unexpected keyword or identifier.
+checkInheritedProperty.tlua(1,1): error TS2304: Cannot find name 'class'.
+checkInheritedProperty.tlua(1,7): error TS1434: Unexpected keyword or identifier.
+checkInheritedProperty.tlua(1,7): error TS2304: Cannot find name 'Base'.
+checkInheritedProperty.tlua(4,31): error TS2304: Cannot find name 'Base'.
+checkInheritedProperty.tlua(6,1): error TS1434: Unexpected keyword or identifier.
+checkInheritedProperty.tlua(6,1): error TS2304: Cannot find name 'class'.
+checkInheritedProperty.tlua(6,7): error TS1434: Unexpected keyword or identifier.
+checkInheritedProperty.tlua(6,7): error TS2304: Cannot find name 'Derived'.
+checkInheritedProperty.tlua(6,15): error TS1128: Declaration or statement expected.
+checkInheritedProperty.tlua(6,23): error TS1434: Unexpected keyword or identifier.
+checkInheritedProperty.tlua(7,5): error TS2304: Cannot find name 'a'.
+checkInheritedProperty.tlua(7,9): error TS1109: Expression expected.
+checkInheritedProperty.tlua(7,13): error TS1128: Declaration or statement expected.
+checkInheritedProperty.tlua(7,14): error TS2304: Cannot find name 'b'.
+checkInheritedProperty.tlua(8,5): error TS2304: Cannot find name 'b'.
+
+
+==== checkInheritedProperty.tlua (16 errors) ====
+    class Base {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~~
+!!! error TS2304: Cannot find name 'Base'.
+    }
+    
+    declare BaseFactory: new() => Base & { c: string }
+                                  ~~~~
+!!! error TS2304: Cannot find name 'Base'.
+    
+    class Derived extends BaseFactory {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~~~~~
+!!! error TS2304: Cannot find name 'Derived'.
+                  ~~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                          ~~~~~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+        a = this.b
+        ~
+!!! error TS2304: Cannot find name 'a'.
+            ~~~~
+!!! error TS1109: Expression expected.
+                ~
+!!! error TS1128: Declaration or statement expected.
+                 ~
+!!! error TS2304: Cannot find name 'b'.
+        b = "abc"
+        ~
+!!! error TS2304: Cannot find name 'b'.
+    }
+    

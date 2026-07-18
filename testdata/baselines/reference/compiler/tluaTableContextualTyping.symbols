@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/tluaTableContextualTyping.tlua] ////
+
+=== tluaTableContextualTyping.tlua ===
+// Contextual typing flows into `=` field initializers: `x` is inferred as
+// number.
+local ctx: { f: (x: number) => number } = { f = function(x) return x; end };
+>ctx : Symbol(ctx, Decl(tluaTableContextualTyping.tlua, 2, 5))
+>f : Symbol(f, Decl(tluaTableContextualTyping.tlua, 2, 12))
+>x : Symbol(x, Decl(tluaTableContextualTyping.tlua, 2, 17))
+>f : Symbol(f, Decl(tluaTableContextualTyping.tlua, 2, 43))
+>x : Symbol(x, Decl(tluaTableContextualTyping.tlua, 2, 57))
+>x : Symbol(x, Decl(tluaTableContextualTyping.tlua, 2, 57))
+
+local applied = ctx.f(1);
+>applied : Symbol(applied, Decl(tluaTableContextualTyping.tlua, 3, 5))
+>ctx.f : Symbol(f, Decl(tluaTableContextualTyping.tlua, 2, 12))
+>ctx : Symbol(ctx, Decl(tluaTableContextualTyping.tlua, 2, 5))
+>f : Symbol(f, Decl(tluaTableContextualTyping.tlua, 2, 12))
+
+// Excess property checking works through `=` fields.
+local excess: { a: number } = { b = 1 };
+>excess : Symbol(excess, Decl(tluaTableContextualTyping.tlua, 6, 5))
+>a : Symbol(a, Decl(tluaTableContextualTyping.tlua, 6, 15))
+>b : Symbol(b, Decl(tluaTableContextualTyping.tlua, 6, 31))
+
+// Assignability errors surface on the field.
+local wrong: { a: string } = { a = 1 };
+>wrong : Symbol(wrong, Decl(tluaTableContextualTyping.tlua, 9, 5))
+>a : Symbol(a, Decl(tluaTableContextualTyping.tlua, 9, 14))
+>a : Symbol(a, Decl(tluaTableContextualTyping.tlua, 9, 30))
+
+// Interface-typed tables.
+interface Box {
+>Box : Symbol(Box, Decl(tluaTableContextualTyping.tlua, 9, 39))
+
+    value: string;
+>value : Symbol(Box.value, Decl(tluaTableContextualTyping.tlua, 12, 15))
+
+    size?: number;
+>size : Symbol(Box.size, Decl(tluaTableContextualTyping.tlua, 13, 18))
+}
+local box: Box = { value = "v" };
+>box : Symbol(box, Decl(tluaTableContextualTyping.tlua, 16, 5))
+>Box : Symbol(Box, Decl(tluaTableContextualTyping.tlua, 9, 39))
+>value : Symbol(value, Decl(tluaTableContextualTyping.tlua, 16, 18))
+
+local sized: Box = { value = "v", size = 2 };
+>sized : Symbol(sized, Decl(tluaTableContextualTyping.tlua, 17, 5))
+>Box : Symbol(Box, Decl(tluaTableContextualTyping.tlua, 9, 39))
+>value : Symbol(value, Decl(tluaTableContextualTyping.tlua, 17, 20))
+>size : Symbol(size, Decl(tluaTableContextualTyping.tlua, 17, 33))
+
+local bad: Box = { value = 1 };
+>bad : Symbol(bad, Decl(tluaTableContextualTyping.tlua, 18, 5))
+>Box : Symbol(Box, Decl(tluaTableContextualTyping.tlua, 9, 39))
+>value : Symbol(value, Decl(tluaTableContextualTyping.tlua, 18, 18))
+
+local boxes = {box, sized, bad};
+>boxes : Symbol(boxes, Decl(tluaTableContextualTyping.tlua, 19, 5))
+

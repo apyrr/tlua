@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/tluaRequireCanonicalName.tlua] ////
+
+=== main.tlua ===
+local a = require("pkg");
+>a : Symbol(a, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local b = require("pkg.init");
+>b : Symbol(b, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+a; b;
+>a : Symbol(a, Decl(main.tlua, 0, 5))
+>b : Symbol(b, Decl(main.tlua, 1, 5))
+
+=== pkg/init.tlua ===
+local v = 1;
+>v : Symbol(v, Decl(init.tlua, 0, 5))
+
+return { v = v };
+>v : Symbol(v, Decl(init.tlua, 1, 8))
+>v : Symbol(v, Decl(init.tlua, 0, 5))
+

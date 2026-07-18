@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/exactOptionalPropertyTypesArgumentError.tlua] ////
+
+=== exactOptionalPropertyTypesArgumentError.tlua ===
+declare function f(o: { y?: string }): void;
+>f : Symbol(f, Decl(exactOptionalPropertyTypesArgumentError.tlua, 0, 0))
+>o : Symbol(o, Decl(exactOptionalPropertyTypesArgumentError.tlua, 0, 19))
+>y : Symbol(y, Decl(exactOptionalPropertyTypesArgumentError.tlua, 0, 23))
+
+f({ y = undefined });
+>f : Symbol(f, Decl(exactOptionalPropertyTypesArgumentError.tlua, 0, 0))
+>y : Symbol(y, Decl(exactOptionalPropertyTypesArgumentError.tlua, 1, 3))
+

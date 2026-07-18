@@ -1,0 +1,23 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_10.tlua ===
+// --- (line: 31) skipped ---
+// }
+// 
+// function someFunction(x: Foo | Bar) {
+// 	 x.he/*GOTO IMPL*/llo();
+// }
+// 
+// function anotherFunction(x: Foo & Bar) {
+// 	 x.hello();
+// }
+
+
+
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_10.tlua ===
+// --- (line: 35) skipped ---
+// }
+// 
+// function anotherFunction(x: Foo & Bar) {
+// 	 x.he/*GOTO IMPL*/llo();
+// }

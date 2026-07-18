@@ -1,0 +1,55 @@
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames3.tlua ===
+// class Foo2 {
+//     /*FIND ALL REFS*/get "42"() { return 0; }
+//     set 42(n) { }
+// }
+// 
+// local y: Foo2;
+// y[42];
+
+
+
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames3.tlua ===
+// class Foo2 {
+//     get "/*FIND ALL REFS*/[|42|]"() { return 0; }
+//     set 42(n) { }
+// }
+// 
+// local y: Foo2;
+// y[42];
+
+
+
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames3.tlua ===
+// class Foo2 {
+//     get "42"() { return 0; }
+//     /*FIND ALL REFS*/set 42(n) { }
+// }
+// 
+// local y: Foo2;
+// y[42];
+
+
+
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames3.tlua ===
+// class Foo2 {
+//     get "42"() { return 0; }
+//     set /*FIND ALL REFS*/42(n) { }
+// }
+// 
+// local y: Foo2;
+// y[42];
+
+
+
+// === findAllReferences ===
+// === /referencesForStringLiteralPropertyNames3.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// local y: Foo2;
+// y[/*FIND ALL REFS*/42];

@@ -1,0 +1,34 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// `boolean` is interned as the union `false | true`, so iterating an index key without
+// care shreds it into two *literal* keys -- which the literal rule then rejects,
+// leaving the signature with no index at all. It must stay whole.
+
+interface Flags {
+  [key: boolean]: string;
+}
+
+declare f: Flags;
+local yes: string = f[true];
+local no: string = f[false];
+declare b: boolean;
+local either: string = f[b];
+
+// keyof reports the key as `boolean`, not `true | false`.
+type K = keyof Flags;
+local k: K = true;
+
+// A boolean key coexists with the other domains: they are disjoint.
+interface Mixed {
+  [key: boolean]: string;
+  [key: number]: number;
+  named: object;
+}
+
+declare m: Mixed;
+local s: string = m[true];
+local n: number = m[1];
+local o: object = m.named;

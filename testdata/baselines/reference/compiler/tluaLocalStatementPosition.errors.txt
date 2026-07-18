@@ -1,0 +1,32 @@
+tluaLocalStatementPosition.tlua(6,11): error TS1156: 'local' declarations can only be declared inside a block.
+tluaLocalStatementPosition.tlua(7,14): error TS1156: 'local' declarations can only be declared inside a block.
+
+
+==== tluaLocalStatementPosition.tlua (2 errors) ====
+    // A `local` declared as the unbraced body of a TS-form control statement is
+    // rejected: its list carries no block-scope flag, but without the error the
+    // binder would hoist it into the ENCLOSING scope -- visible and typed after
+    // the statement while the runtime value never escapes the body.
+    declare cond: boolean;
+    if (cond) local a = 1;
+              ~~~~~~~~~~~~
+!!! error TS1156: 'local' declarations can only be declared inside a block.
+    while (cond) local b = 2;
+                 ~~~~~~~~~~~~
+!!! error TS1156: 'local' declarations can only be declared inside a block.
+    
+    // Braced and Lua-block bodies are real blocks; the declarations are fine and
+    // stay contained.
+    if (cond) {
+      local ok1 = 1;
+      print(ok1);
+    }
+    if cond then
+      local ok2 = 2;
+      print(ok2);
+    end
+    while cond do
+      local ok3 = 3;
+      print(ok3);
+    end
+    

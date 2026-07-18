@@ -1,0 +1,57 @@
+tluaTableMultireturn.tlua(17,21): error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+  Property '3' does not exist on type '{ 1: number; 2: number; }'.
+tluaTableMultireturn.tlua(37,20): error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+  Property '3' does not exist on type '{ 1: number; 2: number; }'.
+
+
+==== tluaTableMultireturn.tlua (2 errors) ====
+    // A multireturn call in the LAST positional entry expands into the table, like
+    // any other Lua tail position. In any other position it truncates to one value.
+    function pair(): (number, string)
+      return 1, "a";
+    end
+    
+    function variadic(): (number, ...string)
+      return 1, "a", "b";
+    end
+    
+    declare function nothing(): void;
+    
+    local nonTail = { pair(), 2 };
+    local nt1: number = nonTail[1];
+    local nt2: number = nonTail[2];
+    // The pack's second value does not flow out of a non-tail entry: [3] is absent.
+    local nt3: string = nonTail[3];
+                        ~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+!!! error TS7053:   Property '3' does not exist on type '{ 1: number; 2: number; }'.
+    
+    // The tail expands, so both of the pack's values land.
+    local tail = { 0, pair() };
+    local t2: number = tail[2];
+    local t3: string = tail[3];
+    
+    // An unbounded tail has no statically known indices, so it lands in the number
+    // index signature rather than in positional properties. The signature covers the
+    // fixed entries before it too, so it is the union of everything the table holds.
+    local unbounded = { 0, variadic() };
+    local u1: number = unbounded[1];
+    local ufar: string | number = unbounded[99];
+    
+    // A void call in the tail contributes zero values: the table stays empty.
+    local empty = { nothing() };
+    
+    // A parenthesized call is a single value, so it does not expand even in the tail.
+    local paren = { 0, (pair()) };
+    local p2: number = paren[2];
+    local p3: string = paren[3];
+                       ~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+!!! error TS7053:   Property '3' does not exist on type '{ 1: number; 2: number; }'.
+    
+    // A keyed entry never expands: it takes one value.
+    local keyedCall = { [1] = pair() };
+    local kc: number = keyedCall[1];
+    
+    local es = {nt1, nt2, nt3, t2, t3, u1, ufar, empty, p2, p3, kc};
+    

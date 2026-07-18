@@ -1,0 +1,48 @@
+// @strict: true
+// @noEmit: true
+
+// A misplaced vararg gets exactly one error: the parameter list is wrong (a rest
+// must be last). The function still *declares* a vararg, so `...` in its body
+// binds to that vararg rather than cascading into "a '...' expression is only
+// allowed inside a vararg function" on a function that visibly has one.
+//
+// This lives in its own file because grammar errors are suppressed in a file
+// that already has parse errors, and tluaVarargErrors.tlua is full of them by
+// design.
+declare function notLast(...: number, a: number): void;
+
+function notLastWithBody(...: number, a: number): void
+  // Binds to the misplaced vararg: no second diagnostic here.
+  local first = ...;
+  local rest = {...};
+end
+
+// The misplaced vararg's annotation still means what it says: its symbol is
+// treated as a fixed parameter (never array-wrapped), and the body's `...`
+// still reads values of the ELEMENT type -- not `any`, and not the annotation
+// with a layer stripped.
+function annotationStillChecks(...: number, a: string): void
+  // `| nil` as for any single-value read of `...`: the pack may be empty.
+  local n: number | nil = ...;
+  local bad: string = ...; // error names number, not any
+end
+
+function arrayAnnotationKeepsItsLayer(...: string[], a: number): void
+  // Each value is a whole string[]; unwrapping would leave `string`.
+  local arr: string[] | nil = (...);
+end
+
+// With two varargs the LAST one is the function's vararg -- it is the one in
+// (or nearest) the legal position.
+function lastVarargWins(...: number, ...: string): void
+  local s: string | nil = ...;
+  local bad: number = ...; // error names string, not number's vararg
+end
+
+// A call with a misplaced-vararg tail keeps the tail arity treatment: the
+// `...` may pass more values, so only the rest-must-be-last error and the
+// per-position type errors apply.
+declare function takesTwo(a: number, b: number): void;
+function tailFromMisplaced(...: number, a: string): void
+  takesTwo(...);
+end

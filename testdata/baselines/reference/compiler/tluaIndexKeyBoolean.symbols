@@ -1,0 +1,75 @@
+//// [tests/cases/compiler/tluaIndexKeyBoolean.tlua] ////
+
+=== tluaIndexKeyBoolean.tlua ===
+// `boolean` is interned as the union `false | true`, so iterating an index key without
+// care shreds it into two *literal* keys -- which the literal rule then rejects,
+// leaving the signature with no index at all. It must stay whole.
+
+interface Flags {
+>Flags : Symbol(Flags, Decl(tluaIndexKeyBoolean.tlua, 0, 0))
+
+  [key: boolean]: string;
+>key : Symbol(key, Decl(tluaIndexKeyBoolean.tlua, 5, 3))
+}
+
+declare f: Flags;
+>f : Symbol(f, Decl(tluaIndexKeyBoolean.tlua, 8, 7))
+>Flags : Symbol(Flags, Decl(tluaIndexKeyBoolean.tlua, 0, 0))
+
+local yes: string = f[true];
+>yes : Symbol(yes, Decl(tluaIndexKeyBoolean.tlua, 9, 5))
+>f : Symbol(f, Decl(tluaIndexKeyBoolean.tlua, 8, 7))
+
+local no: string = f[false];
+>no : Symbol(no, Decl(tluaIndexKeyBoolean.tlua, 10, 5))
+>f : Symbol(f, Decl(tluaIndexKeyBoolean.tlua, 8, 7))
+
+declare b: boolean;
+>b : Symbol(b, Decl(tluaIndexKeyBoolean.tlua, 11, 7))
+
+local either: string = f[b];
+>either : Symbol(either, Decl(tluaIndexKeyBoolean.tlua, 12, 5))
+>f : Symbol(f, Decl(tluaIndexKeyBoolean.tlua, 8, 7))
+>b : Symbol(b, Decl(tluaIndexKeyBoolean.tlua, 11, 7))
+
+// keyof reports the key as `boolean`, not `true | false`.
+type K = keyof Flags;
+>K : Symbol(K, Decl(tluaIndexKeyBoolean.tlua, 12, 28))
+>Flags : Symbol(Flags, Decl(tluaIndexKeyBoolean.tlua, 0, 0))
+
+local k: K = true;
+>k : Symbol(k, Decl(tluaIndexKeyBoolean.tlua, 16, 5))
+>K : Symbol(K, Decl(tluaIndexKeyBoolean.tlua, 12, 28))
+
+// A boolean key coexists with the other domains: they are disjoint.
+interface Mixed {
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyBoolean.tlua, 16, 18))
+
+  [key: boolean]: string;
+>key : Symbol(key, Decl(tluaIndexKeyBoolean.tlua, 20, 3))
+
+  [key: number]: number;
+>key : Symbol(key, Decl(tluaIndexKeyBoolean.tlua, 21, 3))
+
+  named: object;
+>named : Symbol(Mixed.named, Decl(tluaIndexKeyBoolean.tlua, 21, 24))
+}
+
+declare m: Mixed;
+>m : Symbol(m, Decl(tluaIndexKeyBoolean.tlua, 25, 7))
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyBoolean.tlua, 16, 18))
+
+local s: string = m[true];
+>s : Symbol(s, Decl(tluaIndexKeyBoolean.tlua, 26, 5))
+>m : Symbol(m, Decl(tluaIndexKeyBoolean.tlua, 25, 7))
+
+local n: number = m[1];
+>n : Symbol(n, Decl(tluaIndexKeyBoolean.tlua, 27, 5))
+>m : Symbol(m, Decl(tluaIndexKeyBoolean.tlua, 25, 7))
+
+local o: object = m.named;
+>o : Symbol(o, Decl(tluaIndexKeyBoolean.tlua, 28, 5))
+>m.named : Symbol(Mixed.named, Decl(tluaIndexKeyBoolean.tlua, 21, 24))
+>m : Symbol(m, Decl(tluaIndexKeyBoolean.tlua, 25, 7))
+>named : Symbol(Mixed.named, Decl(tluaIndexKeyBoolean.tlua, 21, 24))
+

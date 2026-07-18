@@ -1,0 +1,8 @@
+// === goToDefinition ===
+// === /test.tsx ===
+// interface FC<P = {}> {
+//     (props: P, context?: any): string;
+// }
+// 
+// <|local [|Thing|]: FC = (props) => <div></div>;|>
+// local HelloWorld = () => </*GOTO DEF*/Thing />;

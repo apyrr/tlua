@@ -1,0 +1,66 @@
+//// [tests/cases/compiler/tluaColonFunctionErrors.tlua] ////
+
+=== tluaColonFunctionErrors.tlua ===
+local M = {};
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+
+function M:bar(v: number): number
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>bar : Symbol(bar, Decl(tluaColonFunctionErrors.tlua, 0, 13))
+>: : Symbol(:, Decl(tluaColonFunctionErrors.tlua, 2, 10))
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>v : Symbol(v, Decl(tluaColonFunctionErrors.tlua, 2, 15))
+
+  return v;
+>v : Symbol(v, Decl(tluaColonFunctionErrors.tlua, 2, 15))
+
+end
+
+// The colon call form supplies the receiver implicitly.
+M:bar(1);
+>M:bar : Symbol(bar, Decl(tluaColonFunctionErrors.tlua, 0, 13))
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>bar : Symbol(bar, Decl(tluaColonFunctionErrors.tlua, 0, 13))
+
+// `self` is already declared by the colon.
+function M:clash(self: number): void
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>clash : Symbol(clash, Decl(tluaColonFunctionErrors.tlua, 7, 9))
+>: : Symbol(:, Decl(tluaColonFunctionErrors.tlua, 10, 10))
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>self : Symbol(self, Decl(tluaColonFunctionErrors.tlua, 10, 17))
+
+end
+
+// At most one colon segment, and nothing may follow it.
+function M:deep.f(): void
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>deep : Symbol(deep, Decl(tluaColonFunctionErrors.tlua, 11, 3))
+>: : Symbol(:, Decl(tluaColonFunctionErrors.tlua, 14, 10))
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+
+end
+
+function M:a:b(): void
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>a : Symbol(a, Decl(tluaColonFunctionErrors.tlua, 15, 3))
+>: : Symbol(:, Decl(tluaColonFunctionErrors.tlua, 17, 10))
+>M : Symbol(M, Decl(tluaColonFunctionErrors.tlua, 0, 5))
+>b : Symbol(b)
+
+end
+
+// `local function` takes a plain name.
+local function Bad:f(): void
+>Bad : Symbol(Bad, Decl(tluaColonFunctionErrors.tlua, 18, 3))
+>f : Symbol(f)
+
+end
+
+// Unknown base.
+function Unknown:f(): void
+>f : Symbol(f, Decl(tluaColonFunctionErrors.tlua, 22, 3))
+>: : Symbol(:, Decl(tluaColonFunctionErrors.tlua, 25, 16))
+
+end
+

@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/tluaAsyncFunctionTypeErrors.tlua] ////
+
+=== tluaAsyncFunctionTypeErrors.tlua ===
+// Strict async assignability: an async function is not assignable to a plain
+// (non-async) function type. This closes the laundering hole — async-ness can
+// no longer be silently erased by annotating a sync function type.
+
+declare function request(url: string): boolean;
+>request : Symbol(request, Decl(tluaAsyncFunctionTypeErrors.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaAsyncFunctionTypeErrors.tlua, 4, 25))
+
+async function fetchOk(url: string): boolean
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncFunctionTypeErrors.tlua, 4, 47))
+>url : Symbol(url, Decl(tluaAsyncFunctionTypeErrors.tlua, 6, 23))
+
+  return request(url);
+>request : Symbol(request, Decl(tluaAsyncFunctionTypeErrors.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaAsyncFunctionTypeErrors.tlua, 6, 23))
+
+end
+
+// Error: async fn laundered through a plain (sync) function-typed slot.
+local bad: (url: string) => boolean = fetchOk;
+>bad : Symbol(bad, Decl(tluaAsyncFunctionTypeErrors.tlua, 11, 5))
+>url : Symbol(url, Decl(tluaAsyncFunctionTypeErrors.tlua, 11, 12))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncFunctionTypeErrors.tlua, 4, 47))
+
+// Error: async fn passed to a specific sync-typed callback parameter.
+declare function run(cb: (url: string) => boolean): void;
+>run : Symbol(run, Decl(tluaAsyncFunctionTypeErrors.tlua, 11, 46))
+>cb : Symbol(cb, Decl(tluaAsyncFunctionTypeErrors.tlua, 14, 21))
+>url : Symbol(url, Decl(tluaAsyncFunctionTypeErrors.tlua, 14, 26))
+
+run(fetchOk);
+>run : Symbol(run, Decl(tluaAsyncFunctionTypeErrors.tlua, 11, 46))
+>fetchOk : Symbol(fetchOk, Decl(tluaAsyncFunctionTypeErrors.tlua, 4, 47))
+

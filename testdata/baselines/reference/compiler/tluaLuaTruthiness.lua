@@ -1,0 +1,174 @@
+//// [tests/cases/compiler/tluaLuaTruthiness.tlua] ////
+
+//// [tluaLuaTruthiness.tlua]
+// In Lua only `nil` and `false` are falsy. `0`, `""` and NaN are truthy.
+
+declare s: string;
+declare n: number;
+declare empty: "";
+declare zero: 0;
+declare maybe: string | nil;
+declare flag: boolean;
+
+// A string is always truthy, so testing one narrows nothing and the else branch
+// is unreachable.
+function narrowString(): void
+  if s then
+    local inThen: string = s;
+  else
+    local inElse: never = s;
+  end
+end
+
+// Same for numbers: `0 | 1` keeps both constituents.
+function narrowNumber(x: 0 | 1): void
+  if x then
+    local kept: 0 | 1 = x;
+  end
+end
+
+// `nil` is still falsy, so absence still narrows.
+function narrowNil(): void
+  if maybe then
+    local present: string = maybe;
+  end
+end
+
+// `false` is still falsy.
+function narrowBoolean(): void
+  if flag then
+    local t: true = flag;
+  else
+    local f: false = flag;
+  end
+end
+
+// `not` on a truthy value is `false`.
+local notZero: false = not zero;
+local notEmpty: false = not empty;
+local notString: false = not s;
+local notFalse: true = not false;
+// Through a name, so the syntactic always-falsy check does not fire on the
+// `nil` literal itself.
+declare nothing: nil;
+local notNil: true = not nothing;
+
+// `and` yields its right operand whenever the left is always truthy.
+local and1: number = zero and n;
+local and2: number = empty and n;
+local and3: string | false = flag and s;
+
+// `or` yields its left operand whenever that operand is always truthy.
+local or1: "" = empty or n;
+local or2: 0 = zero or s;
+local or3: string = maybe or s;
+
+// `??` is unaffected: it tests for absence, not falsiness.
+local nullish1: "" = empty ?? "other";
+local nullish2: 0 = zero ?? 1;
+local nullish3: string = maybe ?? "other";
+
+// A `while` over a number can only be left by `break`, since no number is falsy.
+function loopExit(x: number): number
+  while x do
+    if x == 3 then
+      break;
+    end
+    if x == 5 then
+      break;
+    end
+  end
+  // Only the values it broke on survive.
+  local after: 3 | 5 = x;
+  return after;
+end
+
+// Literal conditions: the JS-era `while(0)`/`while(1)` exemption is retired.
+// `0` no longer means "loop never", so a numeric literal condition is reported
+// always-truthy exactly like a string literal.
+function literalConditions(): void
+  while 1 do
+    break;
+  end
+  if 0 then
+  end
+  if "" then
+  end
+end
+
+
+//// [tluaLuaTruthiness.lua]
+-- In Lua only `nil` and `false` are falsy. `0`, `""` and NaN are truthy.
+-- A string is always truthy, so testing one narrows nothing and the else branch
+-- is unreachable.
+function narrowString()
+    if s then
+        local inThen = s;
+    else
+        local inElse = s;
+    end
+end
+-- Same for numbers: `0 | 1` keeps both constituents.
+function narrowNumber(x)
+    if x then
+        local kept = x;
+    end
+end
+-- `nil` is still falsy, so absence still narrows.
+function narrowNil()
+    if maybe then
+        local present = maybe;
+    end
+end
+-- `false` is still falsy.
+function narrowBoolean()
+    if flag then
+        local t = flag;
+    else
+        local f = flag;
+    end
+end
+-- `not` on a truthy value is `false`.
+local notZero = !zero;
+local notEmpty = !empty;
+local notString = !s;
+local notFalse = !false;
+local notNil = !nothing;
+-- `and` yields its right operand whenever the left is always truthy.
+local and1 = zero and n;
+local and2 = empty and n;
+local and3 = flag and s;
+-- `or` yields its left operand whenever that operand is always truthy.
+local or1 = empty or n;
+local or2 = zero or s;
+local or3 = maybe or s;
+-- `??` is unaffected: it tests for absence, not falsiness.
+local nullish1 = empty ?? "other";
+local nullish2 = zero ?? 1;
+local nullish3 = maybe ?? "other";
+-- A `while` over a number can only be left by `break`, since no number is falsy.
+function loopExit(x)
+    while x do
+        if x == 3 then
+            break;
+        end
+        if x == 5 then
+            break;
+        end
+    end
+    -- Only the values it broke on survive.
+    local after = x;
+    return after;
+end
+-- Literal conditions: the JS-era `while(0)`/`while(1)` exemption is retired.
+-- `0` no longer means "loop never", so a numeric literal condition is reported
+-- always-truthy exactly like a string literal.
+function literalConditions()
+    while 1 do
+        break;
+    end
+    if 0 then
+    end
+    if "" then
+    end
+end

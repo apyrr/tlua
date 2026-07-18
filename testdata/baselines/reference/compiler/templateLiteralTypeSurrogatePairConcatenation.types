@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/templateLiteralTypeSurrogatePairConcatenation.tlua] ////
+
+=== templateLiteralTypeSurrogatePairConcatenation.tlua ===
+// Concatenating a lone high surrogate and a lone low surrogate across template
+// literal type fragments forms a surrogate pair, exactly as in a JavaScript
+// string: "\uD83D" + "\uDE00" === "😀". The combined literal type should be
+// "😀", with no leftover lone surrogates.
+type Hi = "\uD83D";
+>Hi : "\xed\xa0\xbd"
+
+type Lo = "\uDE00";
+>Lo : "\xed\xb8\x80"
+
+type Pair = `${Hi}${Lo}`;
+>Pair : "😀"
+
+local p: Pair = "😀";
+>p : "😀"
+>"😀" : "😀"
+
+local q: "😀" = "x" as unknown as Pair;
+>q : "😀"
+>"x" as unknown as Pair : "😀"
+>"x" as unknown : unknown
+>"x" : "x"
+
+// A non-adjacent boundary must NOT combine: the gap keeps the halves lone.
+type Gapped = `${Hi}-${Lo}`;
+>Gapped : "\xed\xa0\xbd-\xed\xb8\x80"
+
+local g: Gapped = "\uD83D-\uDE00";
+>g : "\xed\xa0\xbd-\xed\xb8\x80"
+>"\uD83D-\uDE00" : "\xed\xa0\xbd-\xed\xb8\x80"
+

@@ -1,0 +1,97 @@
+//// [tests/cases/compiler/tluaGenericForPack.tlua] ////
+
+=== tluaGenericForPack.tlua ===
+// Overloaded iterators union their return packs.
+declare function overloaded(s: string, c: number): (number, string);
+>overloaded : Symbol(overloaded, Decl(tluaGenericForPack.tlua, 0, 0), Decl(tluaGenericForPack.tlua, 1, 68))
+>s : Symbol(s, Decl(tluaGenericForPack.tlua, 1, 28))
+>c : Symbol(c, Decl(tluaGenericForPack.tlua, 1, 38))
+
+declare function overloaded(s: string, c: string): (string, number);
+>overloaded : Symbol(overloaded, Decl(tluaGenericForPack.tlua, 0, 0), Decl(tluaGenericForPack.tlua, 1, 68))
+>s : Symbol(s, Decl(tluaGenericForPack.tlua, 2, 28))
+>c : Symbol(c, Decl(tluaGenericForPack.tlua, 2, 38))
+
+function useOverloaded(): void
+>useOverloaded : Symbol(useOverloaded, Decl(tluaGenericForPack.tlua, 2, 68))
+
+  for k, v in overloaded do
+>k : Symbol(k, Decl(tluaGenericForPack.tlua, 5, 5))
+>v : Symbol(v, Decl(tluaGenericForPack.tlua, 5, 8))
+>overloaded : Symbol(overloaded, Decl(tluaGenericForPack.tlua, 0, 0), Decl(tluaGenericForPack.tlua, 1, 68))
+
+    k;
+>k : Symbol(k, Decl(tluaGenericForPack.tlua, 5, 5))
+
+    v;
+>v : Symbol(v, Decl(tluaGenericForPack.tlua, 5, 8))
+
+  end
+end
+
+// A variadic pack tail projects with nil.
+declare function variadicIter(s: void, c: number): (number, ...string);
+>variadicIter : Symbol(variadicIter, Decl(tluaGenericForPack.tlua, 9, 3))
+>s : Symbol(s, Decl(tluaGenericForPack.tlua, 12, 30))
+>c : Symbol(c, Decl(tluaGenericForPack.tlua, 12, 38))
+
+function useVariadic(): void
+>useVariadic : Symbol(useVariadic, Decl(tluaGenericForPack.tlua, 12, 71))
+
+  for k, v, w in variadicIter do
+>k : Symbol(k, Decl(tluaGenericForPack.tlua, 15, 5))
+>v : Symbol(v, Decl(tluaGenericForPack.tlua, 15, 8))
+>w : Symbol(w, Decl(tluaGenericForPack.tlua, 15, 11))
+>variadicIter : Symbol(variadicIter, Decl(tluaGenericForPack.tlua, 9, 3))
+
+    k;
+>k : Symbol(k, Decl(tluaGenericForPack.tlua, 15, 5))
+
+    v;
+>v : Symbol(v, Decl(tluaGenericForPack.tlua, 15, 8))
+
+    w;
+>w : Symbol(w, Decl(tluaGenericForPack.tlua, 15, 11))
+
+  end
+end
+
+// Definite assignment: the names are assigned by the loop.
+declare function pair(t: number[], i: number): (number, number?);
+>pair : Symbol(pair, Decl(tluaGenericForPack.tlua, 20, 3))
+>t : Symbol(t, Decl(tluaGenericForPack.tlua, 23, 22))
+>i : Symbol(i, Decl(tluaGenericForPack.tlua, 23, 34))
+
+function defAssign(t: number[]): number
+>defAssign : Symbol(defAssign, Decl(tluaGenericForPack.tlua, 23, 65))
+>t : Symbol(t, Decl(tluaGenericForPack.tlua, 25, 19))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaGenericForPack.tlua, 26, 7))
+
+  for k, v in pair, t, nil do
+>k : Symbol(k, Decl(tluaGenericForPack.tlua, 27, 5))
+>v : Symbol(v, Decl(tluaGenericForPack.tlua, 27, 8))
+>pair : Symbol(pair, Decl(tluaGenericForPack.tlua, 20, 3))
+>t : Symbol(t, Decl(tluaGenericForPack.tlua, 25, 19))
+
+    total = total + k;
+>total : Symbol(total, Decl(tluaGenericForPack.tlua, 26, 7))
+>total : Symbol(total, Decl(tluaGenericForPack.tlua, 26, 7))
+>k : Symbol(k, Decl(tluaGenericForPack.tlua, 27, 5))
+
+    if v ~= nil then
+>v : Symbol(v, Decl(tluaGenericForPack.tlua, 27, 8))
+
+      total = total + v;
+>total : Symbol(total, Decl(tluaGenericForPack.tlua, 26, 7))
+>total : Symbol(total, Decl(tluaGenericForPack.tlua, 26, 7))
+>v : Symbol(v, Decl(tluaGenericForPack.tlua, 27, 8))
+
+    end
+  end
+  return total;
+>total : Symbol(total, Decl(tluaGenericForPack.tlua, 26, 7))
+
+end
+

@@ -1,0 +1,101 @@
+//// [tests/cases/compiler/tluaMultiReturnStatement.tlua] ////
+
+=== tluaMultiReturnStatement.tlua ===
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaMultiReturnStatement.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+// Inference: the return list infers a pack without an annotation.
+function inferredPair()
+>inferredPair : Symbol(inferredPair, Decl(tluaMultiReturnStatement.tlua, 2, 3))
+
+  return 1, "a";
+end
+
+// Inference across mixed arities pads with nil.
+function mixed(cond: boolean) {
+>mixed : Symbol(mixed, Decl(tluaMultiReturnStatement.tlua, 7, 3))
+>cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 10, 15))
+
+  if (cond) {
+>cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 10, 15))
+
+    return 1, "a";
+  }
+  return 2;
+}
+
+// A bare return contributes zero values.
+function maybeNothing(cond: boolean) {
+>maybeNothing : Symbol(maybeNothing, Decl(tluaMultiReturnStatement.tlua, 15, 1))
+>cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 18, 22))
+
+  if (cond) {
+>cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 18, 22))
+
+    return;
+  }
+  return 1, "a";
+}
+
+// `return f()` forwards the whole pack.
+function forward(): (number, string)
+>forward : Symbol(forward, Decl(tluaMultiReturnStatement.tlua, 23, 1))
+
+  return pair();
+>pair : Symbol(pair, Decl(tluaMultiReturnStatement.tlua, 0, 0))
+
+end
+
+function forwardInferred()
+>forwardInferred : Symbol(forwardInferred, Decl(tluaMultiReturnStatement.tlua, 28, 3))
+
+  return pair();
+>pair : Symbol(pair, Decl(tluaMultiReturnStatement.tlua, 0, 0))
+
+end
+
+// A call anywhere in a single-value position truncates to the first value.
+local first = pair();
+>first : Symbol(first, Decl(tluaMultiReturnStatement.tlua, 35, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnStatement.tlua, 0, 0))
+
+local sum = pair() + 1;
+>sum : Symbol(sum, Decl(tluaMultiReturnStatement.tlua, 36, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnStatement.tlua, 0, 0))
+
+// The value list evaluates non-tail calls to a single value.
+function headTruncates()
+>headTruncates : Symbol(headTruncates, Decl(tluaMultiReturnStatement.tlua, 36, 23))
+
+  return pair(), true;
+>pair : Symbol(pair, Decl(tluaMultiReturnStatement.tlua, 0, 0))
+
+end
+
+local i = inferredPair();
+>i : Symbol(i, Decl(tluaMultiReturnStatement.tlua, 43, 5))
+>inferredPair : Symbol(inferredPair, Decl(tluaMultiReturnStatement.tlua, 2, 3))
+
+local m = mixed(true);
+>m : Symbol(m, Decl(tluaMultiReturnStatement.tlua, 44, 5))
+>mixed : Symbol(mixed, Decl(tluaMultiReturnStatement.tlua, 7, 3))
+
+local n = maybeNothing(false);
+>n : Symbol(n, Decl(tluaMultiReturnStatement.tlua, 45, 5))
+>maybeNothing : Symbol(maybeNothing, Decl(tluaMultiReturnStatement.tlua, 15, 1))
+
+local f = forward();
+>f : Symbol(f, Decl(tluaMultiReturnStatement.tlua, 46, 5))
+>forward : Symbol(forward, Decl(tluaMultiReturnStatement.tlua, 23, 1))
+
+local g = forwardInferred();
+>g : Symbol(g, Decl(tluaMultiReturnStatement.tlua, 47, 5))
+>forwardInferred : Symbol(forwardInferred, Decl(tluaMultiReturnStatement.tlua, 28, 3))
+
+local h = headTruncates();
+>h : Symbol(h, Decl(tluaMultiReturnStatement.tlua, 48, 5))
+>headTruncates : Symbol(headTruncates, Decl(tluaMultiReturnStatement.tlua, 36, 23))
+

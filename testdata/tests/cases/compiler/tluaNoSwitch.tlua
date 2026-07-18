@@ -1,0 +1,20 @@
+// @target: esnext
+// @strict: true
+// @noEmit: true
+
+// tlua has no switch statement: `switch` and `case` are ordinary identifiers,
+// as in Lua.
+local switch = function(self: {}, mode: string) return mode; end;
+local case = "c";
+local t = { switch = switch, case = 2 };
+local a = t:switch("on");
+local b = t.case;
+
+// A TS switch statement no longer parses as a statement: `switch (x)` is a
+// call to whatever `switch` names, and the clause syntax behind it is a plain
+// parse error.
+declare x: 1 | 2;
+switch (x) {
+  case 1:
+    break;
+}

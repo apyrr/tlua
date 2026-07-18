@@ -1,0 +1,65 @@
+// === findAllReferences ===
+// === /findAllRefsDestructureGetter.tlua ===
+// class Test {
+//     get /*FIND ALL REFS*/x() { return 0; }
+// 
+//     set y(a: number) {}
+// }
+// local { x, y } = new Test();
+// x; y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDestructureGetter.tlua ===
+// class Test {
+//     get x() { return 0; }
+// 
+//     set y(a: number) {}
+// }
+// local { /*FIND ALL REFS*/x, y } = new Test();
+// x; y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDestructureGetter.tlua ===
+// --- (line: 3) skipped ---
+//     set y(a: number) {}
+// }
+// local { x, y } = new Test();
+// /*FIND ALL REFS*/x; y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDestructureGetter.tlua ===
+// class Test {
+//     get x() { return 0; }
+// 
+//     set /*FIND ALL REFS*/y(a: number) {}
+// }
+// local { x, y } = new Test();
+// x; y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDestructureGetter.tlua ===
+// class Test {
+//     get x() { return 0; }
+// 
+//     set y(a: number) {}
+// }
+// local { x, /*FIND ALL REFS*/y } = new Test();
+// x; y;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDestructureGetter.tlua ===
+// --- (line: 3) skipped ---
+//     set y(a: number) {}
+// }
+// local { x, y } = new Test();
+// x; /*FIND ALL REFS*/y;

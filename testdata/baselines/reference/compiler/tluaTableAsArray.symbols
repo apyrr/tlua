@@ -1,0 +1,73 @@
+//// [tests/cases/compiler/tluaTableAsArray.tlua] ////
+
+=== tluaTableAsArray.tlua ===
+// `T[]` denotes the number-key table type `{ [k: number]: T }`, so a table
+// constructor satisfies it and is indexed element-wise.
+local xs: number[] = {1, 2, 3};
+>xs : Symbol(xs, Decl(tluaTableAsArray.tlua, 2, 5))
+
+local first: number = xs[1];
+>first : Symbol(first, Decl(tluaTableAsArray.tlua, 3, 5))
+>xs : Symbol(xs, Decl(tluaTableAsArray.tlua, 2, 5))
+
+// A vararg has no name, so the pack is reached the Lua way: collect it into a
+// table with `{...}`, which is itself a number-key table and indexes
+// element-wise.
+function firstOf(...: string): string
+>firstOf : Symbol(firstOf, Decl(tluaTableAsArray.tlua, 3, 28))
+> : Symbol((Missing), Decl(tluaTableAsArray.tlua, 8, 17))
+
+  local args: string[] = {...};
+>args : Symbol(args, Decl(tluaTableAsArray.tlua, 9, 7))
+
+  return args[1];
+>args : Symbol(args, Decl(tluaTableAsArray.tlua, 9, 7))
+
+end
+local f1: string = firstOf("a", "b", "c");
+>f1 : Symbol(f1, Decl(tluaTableAsArray.tlua, 12, 5))
+>firstOf : Symbol(firstOf, Decl(tluaTableAsArray.tlua, 3, 28))
+
+// Generic vararg inference: T is inferred from the value arguments.
+function pickFirst<T>(...: T): T
+>pickFirst : Symbol(pickFirst, Decl(tluaTableAsArray.tlua, 12, 42))
+>T : Symbol(T, Decl(tluaTableAsArray.tlua, 15, 19))
+> : Symbol((Missing), Decl(tluaTableAsArray.tlua, 15, 22))
+>T : Symbol(T, Decl(tluaTableAsArray.tlua, 15, 19))
+>T : Symbol(T, Decl(tluaTableAsArray.tlua, 15, 19))
+
+  local items: T[] = {...};
+>items : Symbol(items, Decl(tluaTableAsArray.tlua, 16, 7))
+>T : Symbol(T, Decl(tluaTableAsArray.tlua, 15, 19))
+
+  return items[1];
+>items : Symbol(items, Decl(tluaTableAsArray.tlua, 16, 7))
+
+end
+local n: number = pickFirst(1, 2, 3);
+>n : Symbol(n, Decl(tluaTableAsArray.tlua, 19, 5))
+>pickFirst : Symbol(pickFirst, Decl(tluaTableAsArray.tlua, 12, 42))
+
+// readonly T[] is the readonly number-key table.
+local ys: readonly number[] = {10, 20};
+>ys : Symbol(ys, Decl(tluaTableAsArray.tlua, 22, 5))
+
+// The global Array survives only as an inert, separately-nameable type: it is
+// distinct from T[], so a table is not assignable to it (missing length/methods).
+local arr: Array<number> = xs; // error
+>arr : Symbol(arr, Decl(tluaTableAsArray.tlua, 26, 5))
+>Array : Symbol(Array, Decl(lib.luajit.d.tlua, --, --))
+>xs : Symbol(xs, Decl(tluaTableAsArray.tlua, 2, 5))
+
+// Recursive T[] resolves without diverging.
+type J = J[];
+>J : Symbol(J, Decl(tluaTableAsArray.tlua, 26, 30))
+>J : Symbol(J, Decl(tluaTableAsArray.tlua, 26, 30))
+
+local j: J = {};
+>j : Symbol(j, Decl(tluaTableAsArray.tlua, 30, 5))
+>J : Symbol(J, Decl(tluaTableAsArray.tlua, 26, 30))
+
+local es = {first, f1, n, ys, j};
+>es : Symbol(es, Decl(tluaTableAsArray.tlua, 32, 5))
+

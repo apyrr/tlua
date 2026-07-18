@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/protectedAccessibilityCheck.tlua] ////
+
+=== protectedAccessibilityCheck.tlua ===
+class C {
+>class : any
+>C : any
+
+  protected constructor() {}
+>constructor() : any
+>constructor : any
+}
+
+class B<T = any> extends C {}
+>class : any
+>B<T : boolean
+>B : any
+>T : any
+>any> : boolean
+>any : any
+> : any
+>C : any
+
+class A extends B {
+>class : any
+>A : any
+>B : any
+
+  f() {
+>f() : any
+>f : any
+
+    new A();
+>new A() : any
+>A : any
+  }
+}
+

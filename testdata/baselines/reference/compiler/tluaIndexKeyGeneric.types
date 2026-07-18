@@ -1,0 +1,229 @@
+//// [tests/cases/compiler/tluaIndexKeyGeneric.tlua] ////
+
+=== tluaIndexKeyGeneric.tlua ===
+// A Lua table is keyed by any non-nil value, so an index signature may be keyed by a
+// type parameter. This is what makes `Table<K, V>` -- and every standard library
+// signature built on it -- mean anything.
+
+interface Map2<K, V> {
+  [key: K]: V;
+>key : K
+}
+
+// The key instantiates along with the value.
+declare byName: Map2<string, number>;
+>byName : Map2<string, number>
+
+local n: number = byName["a"];
+>n : number
+>byName["a"] : number
+>byName : Map2<string, number>
+>"a" : "a"
+
+declare byPoint: Map2<{ x: number }, string>;
+>byPoint : Map2<{ x: number; }, string>
+>x : number
+
+declare pt: { x: number };
+>pt : { x: number; }
+>x : number
+
+local s: string = byPoint[pt];
+>s : string
+>byPoint[pt] : string
+>byPoint : Map2<{ x: number; }, string>
+>pt : { x: number; }
+
+// keyof yields the key itself, not string | number | symbol.
+type K1 = keyof Map2<string, number>;
+>K1 : string
+
+local k1: K1 = "a";
+>k1 : string
+>"a" : "a"
+
+type K2 = keyof Map2<boolean, number>;
+>K2 : boolean
+
+local k2: K2 = true;
+>k2 : boolean
+>true : true
+
+// The index resolves inside a generic body: `Table<K, V>[K]` is `V`, never a deferred
+// indexed access nothing can simplify.
+function get<K, V>(t: Table<K, V>, k: K): V
+>get : <K, V>(t: Table<K, V>, k: K) => V
+>t : Table<K, V>
+>k : K
+
+  return t[k];
+>t[k] : Table<K, V>[K]
+>t : Table<K, V>
+>k : K
+
+end
+
+function set<K, V>(t: Table<K, V>, k: K, v: V): void
+>set : <K, V>(t: Table<K, V>, k: K, v: V) => void
+>t : Table<K, V>
+>k : K
+>v : V
+
+  t[k] = v;
+>t[k] = v : V
+>t[k] : Table<K, V>[K]
+>t : Table<K, V>
+>k : K
+>v : V
+
+end
+
+// A readonly index stays readonly in a generic body.
+interface ReadonlyTable<K, V> { readonly [key: K]: V }
+>key : K
+
+function readOk<K, V>(t: ReadonlyTable<K, V>, k: K): V
+>readOk : <K, V>(t: ReadonlyTable<K, V>, k: K) => V
+>t : ReadonlyTable<K, V>
+>k : K
+
+  return t[k];
+>t[k] : ReadonlyTable<K, V>[K]
+>t : ReadonlyTable<K, V>
+>k : K
+
+end
+function writeNotOk<K, V>(t: ReadonlyTable<K, V>, k: K, v: V): void
+>writeNotOk : <K, V>(t: ReadonlyTable<K, V>, k: K, v: V) => void
+>t : ReadonlyTable<K, V>
+>k : K
+>v : V
+
+  t[k] = v;
+>t[k] = v : V
+>t[k] : ReadonlyTable<K, V>[K]
+>t : ReadonlyTable<K, V>
+>k : K
+>v : V
+
+end
+
+// A union key still simplifies when every index carries the same value.
+function getEither<K, V>(t: Table<K | string, V>, k: K): V
+>getEither : <K, V>(t: Table<K | string, V>, k: K) => V
+>t : Table<string | K, V>
+>k : K
+
+  return t[k];
+>t[k] : Table<string | K, V>[K]
+>t : Table<string | K, V>
+>k : K
+
+end
+
+// A union key instantiates to two disjoint indexes, not one union-keyed index.
+declare both: Map2<string | number, boolean>;
+>both : Map2<string | number, boolean>
+
+local b1: boolean = both["a"];
+>b1 : boolean
+>both["a"] : boolean
+>both : Map2<string | number, boolean>
+>"a" : "a"
+
+local b2: boolean = both[1];
+>b2 : boolean
+>both[1] : boolean
+>both : Map2<string | number, boolean>
+>1 : 1
+
+// The whole point: the standard library comes alive. The key keeps its literal names --
+// `"a" | "b"`, exactly what `keyof m` reports -- rather than widening to string.
+local m = { a = 1, b = 2 };
+>m : { a: number; b: number; }
+>{ a = 1, b = 2 } : { a: number; b: number; }
+>a : number
+>1 : 1
+>b : number
+>2 : 2
+
+for k, v in pairs(m) do
+>k : "a" | "b"
+>v : number
+>pairs(m) : LuaPairsIterator<"a" | "b", number>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>m : { a: number; b: number; }
+
+  local key: "a" | "b" = k;
+>key : "a" | "b"
+>k : "a" | "b"
+
+  local alsoAString: string = k;
+>alsoAString : string
+>k : "a" | "b"
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+local got: number | nil = rawget(m, "a");
+>got : number | nil
+>rawget(m, "a") : number | nil
+>rawget : <K, V>(value: Table<K, V>, index: K) => V | nil
+>m : { a: number; b: number; }
+>"a" : "a"
+
+// A supplied key wins over the table's own keys (it is inferred at the priority a
+// mapped type constraint uses), so adding a key a table does not have yet -- rawset is
+// how a key is added, in any domain -- always type-checks: a Lua table is open.
+rawset(m, "c", 3);
+>rawset(m, "c", 3) : Table<string, number>
+>rawset : <K, V>(value: Table<K, V>, index: K, item: V) => Table<K, V>
+>m : { a: number; b: number; }
+>"c" : "c"
+>3 : 3
+
+rawset(m, 5, 3);
+>rawset(m, 5, 3) : Table<number, number>
+>rawset : <K, V>(value: Table<K, V>, index: K, item: V) => Table<K, V>
+>m : { a: number; b: number; }
+>5 : 5
+>3 : 3
+
+// A recursive table type, spelled by name.
+type RecTable = Table<string, RecTable | number>;
+>RecTable : RecTable
+
+declare rt: RecTable;
+>rt : RecTable
+
+local rec = rt["x"];
+>rec : number | RecTable
+>rt["x"] : number | RecTable
+>rt : RecTable
+>"x" : "x"
+
+// A number-keyed table iterates with ipairs.
+local arr = { 10, 20, 30 };
+>arr : { 1: number; 2: number; 3: number; }
+>{ 10, 20, 30 } : { 1: number; 2: number; 3: number; }
+
+for i, v in ipairs(arr) do
+>i : number
+>v : number
+>ipairs(arr) : LuaIPairsIterator<number>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>arr : { 1: number; 2: number; 3: number; }
+
+  local index: number = i;
+>index : number
+>i : number
+
+  local element: number = v;
+>element : number
+>v : number
+
+end
+

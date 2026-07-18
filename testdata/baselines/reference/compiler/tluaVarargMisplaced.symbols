@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/tluaVarargMisplaced.tlua] ////
+
+=== tluaVarargMisplaced.tlua ===
+// A misplaced vararg gets exactly one error: the parameter list is wrong (a rest
+// must be last). The function still *declares* a vararg, so `...` in its body
+// binds to that vararg rather than cascading into "a '...' expression is only
+// allowed inside a vararg function" on a function that visibly has one.
+//
+// This lives in its own file because grammar errors are suppressed in a file
+// that already has parse errors, and tluaVarargErrors.tlua is full of them by
+// design.
+declare function notLast(...: number, a: number): void;
+>notLast : Symbol(notLast, Decl(tluaVarargMisplaced.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargMisplaced.tlua, 8, 25))
+>a : Symbol(a, Decl(tluaVarargMisplaced.tlua, 8, 37))
+
+function notLastWithBody(...: number, a: number): void
+>notLastWithBody : Symbol(notLastWithBody, Decl(tluaVarargMisplaced.tlua, 8, 55))
+> : Symbol((Missing), Decl(tluaVarargMisplaced.tlua, 10, 25))
+>a : Symbol(a, Decl(tluaVarargMisplaced.tlua, 10, 37))
+
+  // Binds to the misplaced vararg: no second diagnostic here.
+  local first = ...;
+>first : Symbol(first, Decl(tluaVarargMisplaced.tlua, 12, 7))
+
+  local rest = {...};
+>rest : Symbol(rest, Decl(tluaVarargMisplaced.tlua, 13, 7))
+
+end
+
+// The misplaced vararg's annotation still means what it says: its symbol is
+// treated as a fixed parameter (never array-wrapped), and the body's `...`
+// still reads values of the ELEMENT type -- not `any`, and not the annotation
+// with a layer stripped.
+function annotationStillChecks(...: number, a: string): void
+>annotationStillChecks : Symbol(annotationStillChecks, Decl(tluaVarargMisplaced.tlua, 14, 3))
+> : Symbol((Missing), Decl(tluaVarargMisplaced.tlua, 20, 31))
+>a : Symbol(a, Decl(tluaVarargMisplaced.tlua, 20, 43))
+
+  // `| nil` as for any single-value read of `...`: the pack may be empty.
+  local n: number | nil = ...;
+>n : Symbol(n, Decl(tluaVarargMisplaced.tlua, 22, 7))
+
+  local bad: string = ...; // error names number, not any
+>bad : Symbol(bad, Decl(tluaVarargMisplaced.tlua, 23, 7))
+
+end
+
+function arrayAnnotationKeepsItsLayer(...: string[], a: number): void
+>arrayAnnotationKeepsItsLayer : Symbol(arrayAnnotationKeepsItsLayer, Decl(tluaVarargMisplaced.tlua, 24, 3))
+> : Symbol((Missing), Decl(tluaVarargMisplaced.tlua, 26, 38))
+>a : Symbol(a, Decl(tluaVarargMisplaced.tlua, 26, 52))
+
+  // Each value is a whole string[]; unwrapping would leave `string`.
+  local arr: string[] | nil = (...);
+>arr : Symbol(arr, Decl(tluaVarargMisplaced.tlua, 28, 7))
+
+end
+
+// With two varargs the LAST one is the function's vararg -- it is the one in
+// (or nearest) the legal position.
+function lastVarargWins(...: number, ...: string): void
+>lastVarargWins : Symbol(lastVarargWins, Decl(tluaVarargMisplaced.tlua, 29, 3))
+> : Symbol((Missing), Decl(tluaVarargMisplaced.tlua, 33, 24))
+> : Symbol((Missing), Decl(tluaVarargMisplaced.tlua, 33, 36))
+
+  local s: string | nil = ...;
+>s : Symbol(s, Decl(tluaVarargMisplaced.tlua, 34, 7))
+
+  local bad: number = ...; // error names string, not number's vararg
+>bad : Symbol(bad, Decl(tluaVarargMisplaced.tlua, 35, 7))
+
+end
+
+// A call with a misplaced-vararg tail keeps the tail arity treatment: the
+// `...` may pass more values, so only the rest-must-be-last error and the
+// per-position type errors apply.
+declare function takesTwo(a: number, b: number): void;
+>takesTwo : Symbol(takesTwo, Decl(tluaVarargMisplaced.tlua, 36, 3))
+>a : Symbol(a, Decl(tluaVarargMisplaced.tlua, 41, 26))
+>b : Symbol(b, Decl(tluaVarargMisplaced.tlua, 41, 36))
+
+function tailFromMisplaced(...: number, a: string): void
+>tailFromMisplaced : Symbol(tailFromMisplaced, Decl(tluaVarargMisplaced.tlua, 41, 54))
+> : Symbol((Missing), Decl(tluaVarargMisplaced.tlua, 42, 27))
+>a : Symbol(a, Decl(tluaVarargMisplaced.tlua, 42, 39))
+
+  takesTwo(...);
+>takesTwo : Symbol(takesTwo, Decl(tluaVarargMisplaced.tlua, 36, 3))
+
+end
+

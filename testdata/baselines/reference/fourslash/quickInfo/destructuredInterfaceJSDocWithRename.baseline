@@ -1,0 +1,84 @@
+// === QuickInfo ===
+=== /destructuredInterfaceJSDocWithRename.tlua ===
+// 
+// interface FooBar {
+//     /** foo comment */
+//     foo: number;
+//     /** bar comment */
+//     bar: string;
+// }
+// 
+// declare fubar: FooBar;
+// 
+// local {foo: myFoo, bar: myBar} = fubar;
+//             ^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                         ^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 139,
+      "LSPosition": {
+        "line": 10,
+        "character": 12
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 10,
+          "character": 12
+        },
+        "end": {
+          "line": 10,
+          "character": 17
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 151,
+      "LSPosition": {
+        "line": 10,
+        "character": 24
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 10,
+          "character": 24
+        },
+        "end": {
+          "line": 10,
+          "character": 29
+        }
+      }
+    }
+  }
+]

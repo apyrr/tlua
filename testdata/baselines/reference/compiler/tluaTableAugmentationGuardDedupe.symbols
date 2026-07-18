@@ -1,0 +1,110 @@
+//// [tests/cases/compiler/tluaTableAugmentationGuardDedupe.tlua] ////
+
+=== a.tlua ===
+Shared = Shared or {};
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+Shared.fromA = 1;
+>Shared.fromA : Symbol(fromA, Decl(a.tlua, 0, 22))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromA : Symbol(fromA, Decl(a.tlua, 0, 22))
+
+Nested = Nested or {};
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+
+Nested.sub = Nested.sub or {};
+>Nested.sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested.sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+
+=== b.tlua ===
+Shared = Shared or {};
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+Shared.fromB = "b";
+>Shared.fromB : Symbol(fromB, Decl(b.tlua, 0, 22))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromB : Symbol(fromB, Decl(b.tlua, 0, 22))
+
+Shared.self = Shared;
+>Shared.self : Symbol(self, Decl(b.tlua, 1, 19))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>self : Symbol(self, Decl(b.tlua, 1, 19))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+Nested = Nested or {};
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+
+Nested.sub = Nested.sub or {};
+>Nested.sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested.sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+
+Nested.sub.value = true;
+>Nested.sub.value : Symbol(value, Decl(b.tlua, 5, 30))
+>Nested.sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>value : Symbol(value, Decl(b.tlua, 5, 30))
+
+// Independently declared constructor members stay as distinct arms even when
+// their text is identical.
+NonEmpty = NonEmpty or { seed = 1 };
+>NonEmpty : Symbol(NonEmpty, Decl(b.tlua, 6, 24), Decl(b.tlua, 10, 36))
+>NonEmpty : Symbol(NonEmpty, Decl(b.tlua, 6, 24), Decl(b.tlua, 10, 36))
+>seed : Symbol(seed, Decl(b.tlua, 10, 24))
+
+NonEmpty = NonEmpty or { seed = 1 };
+>NonEmpty : Symbol(NonEmpty, Decl(b.tlua, 6, 24), Decl(b.tlua, 10, 36))
+>NonEmpty : Symbol(NonEmpty, Decl(b.tlua, 6, 24), Decl(b.tlua, 10, 36))
+>seed : Symbol(seed, Decl(b.tlua, 11, 24))
+
+=== c.tlua ===
+local shared = Shared;
+>shared : Symbol(shared, Decl(c.tlua, 0, 5))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+
+local fromA: number = Shared.fromA;
+>fromA : Symbol(fromA, Decl(c.tlua, 1, 5))
+>Shared.fromA : Symbol(fromA, Decl(a.tlua, 0, 22))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromA : Symbol(fromA, Decl(a.tlua, 0, 22))
+
+local fromB: string = Shared.fromB;
+>fromB : Symbol(fromB, Decl(c.tlua, 2, 5))
+>Shared.fromB : Symbol(fromB, Decl(b.tlua, 0, 22))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>fromB : Symbol(fromB, Decl(b.tlua, 0, 22))
+
+local self = Shared.self;
+>self : Symbol(self, Decl(c.tlua, 3, 5))
+>Shared.self : Symbol(self, Decl(b.tlua, 1, 19))
+>Shared : Symbol(Shared, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
+>self : Symbol(self, Decl(b.tlua, 1, 19))
+
+local nested = Nested;
+>nested : Symbol(nested, Decl(c.tlua, 5, 5))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+
+local value: boolean = Nested.sub.value;
+>value : Symbol(value, Decl(c.tlua, 6, 5))
+>Nested.sub.value : Symbol(value, Decl(b.tlua, 5, 30))
+>Nested.sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>Nested : Symbol(Nested, Decl(a.tlua, 1, 17), Decl(b.tlua, 2, 21))
+>sub : Symbol(sub, Decl(a.tlua, 3, 22), Decl(b.tlua, 4, 22))
+>value : Symbol(value, Decl(b.tlua, 5, 30))
+
+local nonEmpty = NonEmpty;
+>nonEmpty : Symbol(nonEmpty, Decl(c.tlua, 8, 5))
+>NonEmpty : Symbol(NonEmpty, Decl(b.tlua, 6, 24), Decl(b.tlua, 10, 36))
+

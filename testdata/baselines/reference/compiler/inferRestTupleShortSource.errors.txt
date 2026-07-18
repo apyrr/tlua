@@ -1,0 +1,60 @@
+inferRestTupleShortSource.tlua(3,10): error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+inferRestTupleShortSource.tlua(3,22): error TS1110: Type expected.
+inferRestTupleShortSource.tlua(3,38): error TS1110: Type expected.
+inferRestTupleShortSource.tlua(3,39): error TS1110: Type expected.
+inferRestTupleShortSource.tlua(3,39): error TS7019: Rest parameter 'string' implicitly has an 'any[]' type.
+inferRestTupleShortSource.tlua(3,42): error TS100034: A vararg parameter cannot have a name.
+inferRestTupleShortSource.tlua(3,48): error TS1005: ',' expected.
+inferRestTupleShortSource.tlua(3,49): error TS1005: ')' expected.
+inferRestTupleShortSource.tlua(3,50): error TS1128: Declaration or statement expected.
+inferRestTupleShortSource.tlua(3,55): error TS1005: ';' expected.
+inferRestTupleShortSource.tlua(3,55): error TS2304: Cannot find name 'T'.
+inferRestTupleShortSource.tlua(3,56): error TS1128: Declaration or statement expected.
+inferRestTupleShortSource.tlua(3,57): error TS1128: Declaration or statement expected.
+inferRestTupleShortSource.tlua(7,1): error TS2555: Expected at least 1 arguments, but got 0.
+inferRestTupleShortSource.tlua(7,3): error TS1135: Argument expression expected.
+inferRestTupleShortSource.tlua(7,4): error TS1135: Argument expression expected.
+
+
+==== inferRestTupleShortSource.tlua (16 errors) ====
+    // Regression test: tlua panics when inferring [...rest, ...T] from a tuple shorter than fixed-arity constraint
+    
+    function f<T extends [string]>(args: [...string[], ...T]) {
+             ~
+!!! error TS7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
+                         ~
+!!! error TS1110: Type expected.
+                                         ~
+!!! error TS1110: Type expected.
+                                          ~~~
+!!! error TS1110: Type expected.
+                                          ~~~~~~~~~
+!!! error TS7019: Rest parameter 'string' implicitly has an 'any[]' type.
+                                             ~~~~~~
+!!! error TS100034: A vararg parameter cannot have a name.
+                                                   ~
+!!! error TS1005: ',' expected.
+                                                    ~
+!!! error TS1005: ')' expected.
+                                                     ~
+!!! error TS1128: Declaration or statement expected.
+                                                          ~
+!!! error TS1005: ';' expected.
+                                                          ~
+!!! error TS2304: Cannot find name 'T'.
+                                                           ~
+!!! error TS1128: Declaration or statement expected.
+                                                            ~
+!!! error TS1128: Declaration or statement expected.
+      // ...
+    }
+    
+    f([])
+    ~
+!!! error TS2555: Expected at least 1 arguments, but got 0.
+!!! related TS6210 inferRestTupleShortSource.tlua:3:32: An argument for 'args' was not provided.
+      ~
+!!! error TS1135: Argument expression expected.
+       ~
+!!! error TS1135: Argument expression expected.
+    

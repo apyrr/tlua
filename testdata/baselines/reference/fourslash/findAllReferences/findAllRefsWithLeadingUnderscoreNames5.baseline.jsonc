@@ -1,0 +1,34 @@
+// === findAllReferences ===
+// === /findAllRefsWithLeadingUnderscoreNames5.tlua ===
+// class Foo {
+//     public _bar;
+//     public __bar;
+//     /*FIND ALL REFS*/public ___bar;
+//     public ____bar;
+// }
+// 
+// --- (line: 8) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsWithLeadingUnderscoreNames5.tlua ===
+// class Foo {
+//     public _bar;
+//     public __bar;
+//     public /*FIND ALL REFS*/___bar;
+//     public ____bar;
+// }
+// 
+// --- (line: 8) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsWithLeadingUnderscoreNames5.tlua ===
+// --- (line: 7) skipped ---
+// local x: Foo;
+// x._bar;
+// x.__bar;
+// x./*FIND ALL REFS*/___bar;
+// x.____bar;

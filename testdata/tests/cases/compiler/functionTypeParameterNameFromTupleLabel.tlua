@@ -1,0 +1,6 @@
+// @strictFunctionTypes: true
+// @noEmit: true
+
+declare f: (...args: [x: number]) => void;
+declare g: (a: string) => void;
+f = g;

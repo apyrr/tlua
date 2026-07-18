@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/simpleTestSingleFile.tlua] ////
+
+=== simpleTestSingleFile.tlua ===
+local x: number = "";
+>x : Symbol(x, Decl(simpleTestSingleFile.tlua, 0, 5))
+

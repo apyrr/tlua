@@ -1,0 +1,469 @@
+//// [tests/cases/compiler/tluaStringPatterns.tlua] ////
+
+=== tluaStringPatterns.tlua ===
+local dateText: string = "2026-07";
+>dateText : string
+>"2026-07" : "2026-07"
+
+local d, m = dateText.match("(%d+)-(%d+)");
+>d : string | nil
+>m : string | nil
+>dateText.match("(%d+)-(%d+)") : string | nil
+>dateText.match : (pattern: string, init?: number) => (string?, ...string)
+>dateText : string
+>match : (pattern: string, init?: number) => (string?, ...string)
+>"(%d+)-(%d+)" : "(%d+)-(%d+)"
+
+local day: string | nil = d;
+>day : string | nil
+>d : string | nil
+
+local month: string | nil = m;
+>month : string | nil
+>m : string | nil
+
+local xText: string = "x";
+>xText : string
+>"x" : "x"
+
+local position = xText.match("()x");
+>position : number | nil
+>xText.match("()x") : number | nil
+>xText.match : (pattern: string, init?: number) => (string?, ...string)
+>xText : string
+>match : (pattern: string, init?: number) => (string?, ...string)
+>"()x" : "()x"
+
+local positionOrNil: number | nil = position;
+>positionOrNil : number | nil
+>position : number | nil
+
+local abcText: string = "abc";
+>abcText : string
+>"abc" : "abc"
+
+local whole, wholeExtra = abcText.match("%a+");
+>whole : string | nil
+>wholeExtra : nil
+>abcText.match("%a+") : string | nil
+>abcText.match : (pattern: string, init?: number) => (string?, ...string)
+>abcText : string
+>match : (pattern: string, init?: number) => (string?, ...string)
+>"%a+" : "%a+"
+
+local wholeOrNil: string | nil = whole;
+>wholeOrNil : string | nil
+>whole : string | nil
+
+local noWholeExtra: nil = wholeExtra;
+>noWholeExtra : nil
+>wholeExtra : nil
+
+local nsCapture, nsPosition = string.match("a", "(%a)()");
+>nsCapture : string | nil
+>nsPosition : number | nil
+>string.match("a", "(%a)()") : string | nil
+>string.match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>string : StringLib
+>match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>"a" : "a"
+>"(%a)()" : "(%a)()"
+
+local nsCaptureType: string | nil = nsCapture;
+>nsCaptureType : string | nil
+>nsCapture : string | nil
+
+local nsPositionType: number | nil = nsPosition;
+>nsPositionType : number | nil
+>nsPosition : number | nil
+
+local itemText: string = "item=42";
+>itemText : string
+>"item=42" : "item=42"
+
+local first, last, capture = itemText.find("=(%d+)");
+>first : number | nil
+>last : number | nil
+>capture : string | nil
+>itemText.find("=(%d+)") : number | nil
+>itemText.find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>itemText : string
+>find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>"=(%d+)" : "=(%d+)"
+
+local firstType: number | nil = first;
+>firstType : number | nil
+>first : number | nil
+
+local lastType: number | nil = last;
+>lastType : number | nil
+>last : number | nil
+
+local findCaptureType: string | nil = capture;
+>findCaptureType : string | nil
+>capture : string | nil
+
+local nsFirst, nsLast, nsCaptureExtra = string.find("abc", "%a+");
+>nsFirst : number | nil
+>nsLast : number | nil
+>nsCaptureExtra : nil
+>string.find("abc", "%a+") : number | nil
+>string.find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>string : StringLib
+>find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>"abc" : "abc"
+>"%a+" : "%a+"
+
+local nsFirstType: number | nil = nsFirst;
+>nsFirstType : number | nil
+>nsFirst : number | nil
+
+local nsLastType: number | nil = nsLast;
+>nsLastType : number | nil
+>nsLast : number | nil
+
+local noFindWholeMatch: nil = nsCaptureExtra;
+>noFindWholeMatch : nil
+>nsCaptureExtra : nil
+
+local numberText: string = "42";
+>numberText : string
+>"42" : "42"
+
+local plainFirst, plainLast, plainCapture = numberText.find("(%d+)", 1, true);
+>plainFirst : number | nil
+>plainLast : number | nil
+>plainCapture : nil
+>numberText.find("(%d+)", 1, true) : number | nil
+>numberText.find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>numberText : string
+>find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>"(%d+)" : "(%d+)"
+>1 : 1
+>true : true
+
+local plainFirstType: number | nil = plainFirst;
+>plainFirstType : number | nil
+>plainFirst : number | nil
+
+local plainLastType: number | nil = plainLast;
+>plainLastType : number | nil
+>plainLast : number | nil
+
+local noPlainCapture: nil = plainCapture;
+>noPlainCapture : nil
+>plainCapture : nil
+
+local dynamicPlainPattern: string = "(%d+)";
+>dynamicPlainPattern : string
+>"(%d+)" : "(%d+)"
+
+local dynamicFirst, dynamicLast, dynamicCapture = string.find("42", dynamicPlainPattern, 1, true);
+>dynamicFirst : number | nil
+>dynamicLast : number | nil
+>dynamicCapture : nil
+>string.find("42", dynamicPlainPattern, 1, true) : number | nil
+>string.find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>string : StringLib
+>find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>"42" : "42"
+>dynamicPlainPattern : string
+>1 : 1
+>true : true
+
+local dynamicFirstType: number | nil = dynamicFirst;
+>dynamicFirstType : number | nil
+>dynamicFirst : number | nil
+
+local dynamicLastType: number | nil = dynamicLast;
+>dynamicLastType : number | nil
+>dynamicLast : number | nil
+
+local noDynamicCapture: nil = dynamicCapture;
+>noDynamicCapture : nil
+>dynamicCapture : nil
+
+declare maybePlain: boolean;
+>maybePlain : boolean
+
+local maybeFirst, maybeLast, maybeCapture = string.find("42", "(%d+)", 1, maybePlain);
+>maybeFirst : number | nil
+>maybeLast : number | nil
+>maybeCapture : string | nil
+>string.find("42", "(%d+)", 1, maybePlain) : number | nil
+>string.find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>string : StringLib
+>find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>"42" : "42"
+>"(%d+)" : "(%d+)"
+>1 : 1
+>maybePlain : boolean
+
+local maybeFirstType: number | nil = maybeFirst;
+>maybeFirstType : number | nil
+>maybeFirst : number | nil
+
+local maybeLastType: number | nil = maybeLast;
+>maybeLastType : number | nil
+>maybeLast : number | nil
+
+local maybeCaptureType: string | nil = maybeCapture;
+>maybeCaptureType : string | nil
+>maybeCapture : string | nil
+
+// A plain flag only known at runtime declines refinement entirely: a position
+// capture would refine to number | nil, but the declared ...string tail wins.
+local mpFirst, mpLast, mpPosition = string.find("42", "()4", 1, maybePlain);
+>mpFirst : number | nil
+>mpLast : number | nil
+>mpPosition : string | nil
+>string.find("42", "()4", 1, maybePlain) : number | nil
+>string.find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>string : StringLib
+>find : (value: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>"42" : "42"
+>"()4" : "()4"
+>1 : 1
+>maybePlain : boolean
+
+local mpPositionType: string | nil = mpPosition;
+>mpPositionType : string | nil
+>mpPosition : string | nil
+
+local pairText: string = "a=1";
+>pairText : string
+>"a=1" : "a=1"
+
+for key, value in pairText.gmatch("(%a+)=(%d+)") do
+>key : string
+>value : string | nil
+>pairText.gmatch("(%a+)=(%d+)") : () => (string | nil, string | nil)
+>pairText.gmatch : (pattern: string) => () => string
+>pairText : string
+>gmatch : (pattern: string) => () => string
+>"(%a+)=(%d+)" : "(%a+)=(%d+)"
+
+  local keyType: string = key;
+>keyType : string
+>key : string
+
+  local valueType: string | nil = value;
+>valueType : string | nil
+>value : string | nil
+
+end
+
+for dynamicWord in pairText.gmatch(dynamicPlainPattern) do
+>dynamicWord : string
+>pairText.gmatch(dynamicPlainPattern) : () => string
+>pairText.gmatch : (pattern: string) => () => string
+>pairText : string
+>gmatch : (pattern: string) => () => string
+>dynamicPlainPattern : string
+
+  local dynamicWordType: string = dynamicWord;
+>dynamicWordType : string
+>dynamicWord : string
+
+end
+
+for word in string.gmatch("one two", "(%a+)") do
+>word : string
+>string.gmatch("one two", "(%a+)") : () => (string | nil)
+>string.gmatch : (value: string, pattern: string) => () => string
+>string : StringLib
+>gmatch : (value: string, pattern: string) => () => string
+>"one two" : "one two"
+>"(%a+)" : "(%a+)"
+
+  local wordType: string = word;
+>wordType : string
+>word : string
+
+end
+
+local dynamicPattern: string = "(%d+)";
+>dynamicPattern : string
+>"(%d+)" : "(%d+)"
+
+local fallbackFirst, fallbackSecond = string.match("42", dynamicPattern);
+>fallbackFirst : string | nil
+>fallbackSecond : string | nil
+>string.match("42", dynamicPattern) : string | nil
+>string.match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>string : StringLib
+>match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>"42" : "42"
+>dynamicPattern : string
+
+local fallbackFirstType: string | nil = fallbackFirst;
+>fallbackFirstType : string | nil
+>fallbackFirst : string | nil
+
+local fallbackSecondType: string | nil = fallbackSecond;
+>fallbackSecondType : string | nil
+>fallbackSecond : string | nil
+
+local invalidFirst, invalidSecond = string.match("x", "(unclosed");
+>invalidFirst : string | nil
+>invalidSecond : string | nil
+>string.match("x", "(unclosed") : string | nil
+>string.match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>string : StringLib
+>match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>"x" : "x"
+>"(unclosed" : "(unclosed"
+
+local invalidFirstType: string | nil = invalidFirst;
+>invalidFirstType : string | nil
+>invalidFirst : string | nil
+
+local invalidSecondType: string | nil = invalidSecond;
+>invalidSecondType : string | nil
+>invalidSecond : string | nil
+
+local invalidMethodText: "x" = "x";
+>invalidMethodText : "x"
+>"x" : "x"
+
+local invalidMethod = invalidMethodText.match("(unclosed");
+>invalidMethod : string | nil
+>invalidMethodText.match("(unclosed") : string | nil
+>invalidMethodText.match : (pattern: string, init?: number) => (string?, ...string)
+>invalidMethodText : "x"
+>match : (pattern: string, init?: number) => (string?, ...string)
+>"(unclosed" : "(unclosed"
+
+local invalidSetFirst, invalidSetSecond = string.match("]", "[]");
+>invalidSetFirst : string | nil
+>invalidSetSecond : string | nil
+>string.match("]", "[]") : string | nil
+>string.match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>string : StringLib
+>match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>"]" : "]"
+>"[]" : "[]"
+
+local invalidSetFirstType: string | nil = invalidSetFirst;
+>invalidSetFirstType : string | nil
+>invalidSetFirst : string | nil
+
+local invalidSetSecondType: string | nil = invalidSetSecond;
+>invalidSetSecondType : string | nil
+>invalidSetSecond : string | nil
+
+local parenText: string = "(";
+>parenText : string
+>"(" : "("
+
+local setMatch, setCapture = parenText.match("[()]");
+>setMatch : string | nil
+>setCapture : nil
+>parenText.match("[()]") : string | nil
+>parenText.match : (pattern: string, init?: number) => (string?, ...string)
+>parenText : string
+>match : (pattern: string, init?: number) => (string?, ...string)
+>"[()]" : "[()]"
+
+local setMatchType: string | nil = setMatch;
+>setMatchType : string | nil
+>setMatch : string | nil
+
+local noSetCapture: nil = setCapture;
+>noSetCapture : nil
+>setCapture : nil
+
+local balancedText: string = "(x)";
+>balancedText : string
+>"(x)" : "(x)"
+
+local balancedMatch, balancedCapture = balancedText.match("%b()");
+>balancedMatch : string | nil
+>balancedCapture : nil
+>balancedText.match("%b()") : string | nil
+>balancedText.match : (pattern: string, init?: number) => (string?, ...string)
+>balancedText : string
+>match : (pattern: string, init?: number) => (string?, ...string)
+>"%b()" : "%b()"
+
+local balancedMatchType: string | nil = balancedMatch;
+>balancedMatchType : string | nil
+>balancedMatch : string | nil
+
+local noBalancedCapture: nil = balancedCapture;
+>noBalancedCapture : nil
+>balancedCapture : nil
+
+local stringAlias = string;
+>stringAlias : StringLib
+>string : StringLib
+
+local aliasFirst, aliasSecond, aliasThird = stringAlias.match("42", "(%d+)-?(%d*)");
+>aliasFirst : string | nil
+>aliasSecond : string | nil
+>aliasThird : string | nil
+>stringAlias.match("42", "(%d+)-?(%d*)") : string | nil
+>stringAlias.match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>stringAlias : StringLib
+>match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>"42" : "42"
+>"(%d+)-?(%d*)" : "(%d+)-?(%d*)"
+
+local aliasFirstType: string | nil = aliasFirst;
+>aliasFirstType : string | nil
+>aliasFirst : string | nil
+
+local aliasSecondType: string | nil = aliasSecond;
+>aliasSecondType : string | nil
+>aliasSecond : string | nil
+
+local aliasThirdType: string | nil = aliasThird;
+>aliasThirdType : string | nil
+>aliasThird : string | nil
+
+function shadowedStringPattern(): void
+>shadowedStringPattern : () => void
+
+  local string = {
+>string : { match: (value: string, pattern: string) => boolean; }
+>{    match = function(value: string, pattern: string): boolean return value == pattern; end,  } : { match: (value: string, pattern: string) => boolean; }
+
+    match = function(value: string, pattern: string): boolean return value == pattern; end,
+>match : (value: string, pattern: string) => boolean
+>function(value: string, pattern: string): boolean return value == pattern; end : (value: string, pattern: string) => boolean
+>value : string
+>pattern : string
+>value == pattern : boolean
+>value : string
+>pattern : string
+
+  };
+  local shadowed: boolean = string.match("x", "(%a+)");
+>shadowed : boolean
+>string.match("x", "(%a+)") : boolean
+>string.match : (value: string, pattern: string) => boolean
+>string : { match: (value: string, pattern: string) => boolean; }
+>match : (value: string, pattern: string) => boolean
+>"x" : "x"
+>"(%a+)" : "(%a+)"
+
+end
+
+local replaced, replacementCount = xText.gsub("(.)", {});
+>replaced : string
+>replacementCount : number
+>xText.gsub("(.)", {}) : string
+>xText.gsub : (pattern: string, replacement: string | object | LuaFunction, n?: number) => (string, number)
+>xText : string
+>gsub : (pattern: string, replacement: string | object | LuaFunction, n?: number) => (string, number)
+>"(.)" : "(.)"
+>{} : {}
+
+local replacedType: string = replaced;
+>replacedType : string
+>replaced : string
+
+local replacementCountType: number = replacementCount;
+>replacementCountType : number
+>replacementCount : number
+

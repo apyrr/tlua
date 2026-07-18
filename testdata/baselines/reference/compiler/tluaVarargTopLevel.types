@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/tluaVarargTopLevel.tlua] ////
+
+=== tluaVarargTopLevel.tlua ===
+declare function takesAny(...: any): void;
+>takesAny : (...: any) => void
+> : any[]
+
+declare function takesNumbers(...: number): void;
+>takesNumbers : (...: number) => void
+> : number[]
+
+// The main chunk is itself a vararg function, so top-level `...` is legal and
+// its pack is `(...any)`. This is not the 100035 error case.
+local first = ...;
+>first : any
+>... : any
+
+local a, b = ...;
+>a : any
+>b : any
+>... : any
+
+// It expands in a table constructor tail like any other pack.
+local args = {...};
+>args : { [x: number]: any; }
+>{...} : { [x: number]: any; }
+>... : any
+
+// And forwards into a rest parameter.
+takesAny(...);
+>takesAny(...) : void
+>takesAny : (...: any) => void
+>... : any
+
+takesAny("x", ...);
+>takesAny("x", ...) : void
+>takesAny : (...: any) => void
+>"x" : "x"
+>... : any
+
+// The chunk pack is `any`, so it satisfies any element type.
+takesNumbers(...);
+>takesNumbers(...) : void
+>takesNumbers : (...: number) => void
+>... : any
+
+// A nested function does not capture the chunk's pack: only the directly
+// enclosing vararg function may use `...`.
+function inner(): void
+>inner : () => void
+
+  local nope = ...;
+>nope : any
+>... : any
+
+end
+

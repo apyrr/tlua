@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/reachabilityChecks11.tlua] ////
+
+=== reachabilityChecks11.tlua ===
+// while (true);
+local x = 1;
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 1, 5))
+
+namespace A {
+    while (true);
+    local x;
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 5, 9))
+}
+
+namespace A1 {
+    do {} while(true);
+    namespace A {
+        interface F {}
+>F : Symbol(F, Decl(reachabilityChecks11.tlua, 10, 17))
+    }
+}
+
+namespace A2 {
+    while (true);
+    namespace A {
+        local x = 1;
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 18, 13))
+    }
+}
+
+namespace A3 {
+    while (true);
+    type T = string;
+>T : Symbol(T, Decl(reachabilityChecks11.tlua, 23, 17))
+}
+
+namespace A4 {
+    while (true);
+    namespace A {
+        local x = 1;
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 30, 13))
+    }
+}
+
+function f1(x) {
+>f1 : Symbol(f1, Decl(reachabilityChecks11.tlua, 32, 1))
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 34, 12))
+
+    if (x) {
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 34, 12))
+
+        return;
+    }
+    else {
+        throw new Error("123");
+    }
+    local x;
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 41, 9))
+}
+
+function f2() {
+>f2 : Symbol(f2, Decl(reachabilityChecks11.tlua, 42, 1))
+
+    return;
+    class A {
+    }
+}
+
+namespace B {
+    while (true);
+    namespace C {
+    }
+}
+
+function f3() {
+>f3 : Symbol(f3, Decl(reachabilityChecks11.tlua, 54, 1))
+
+    do {
+    } while (true);
+    local x = 1;
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 59, 9))
+}
+
+function f4() {
+>f4 : Symbol(f4, Decl(reachabilityChecks11.tlua, 60, 1))
+
+    if (true) {
+        throw new Error();
+    }
+    local x = 1;
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 66, 9))
+}
+

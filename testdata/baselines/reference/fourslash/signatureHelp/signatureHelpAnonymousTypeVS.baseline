@@ -1,0 +1,23 @@
+// === SignatureHelp ===
+=== /signatureHelpAnonymousTypeVS.tlua ===
+// local comparers: Array<(a: any, b: any) => boolean> = [];
+// 
+// comparers.push((a, b) => true);
+//                   ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /**/.
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 77,
+      "LSPosition": {
+        "line": 2,
+        "character": 18
+      },
+      "Name": "",
+      "Data": {}
+    },
+    "item": null
+  }
+]

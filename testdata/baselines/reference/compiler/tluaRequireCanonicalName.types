@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/tluaRequireCanonicalName.tlua] ////
+
+=== main.tlua ===
+local a = require("pkg");
+>a : { v: number; }
+>require("pkg") : { v: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"pkg" : "pkg"
+
+local b = require("pkg.init");
+>b : { v: number; }
+>require("pkg.init") : { v: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"pkg.init" : "pkg.init"
+
+a; b;
+>a : { v: number; }
+>b : { v: number; }
+
+=== pkg/init.tlua ===
+local v = 1;
+>v : number
+>1 : 1
+
+return { v = v };
+>{ v = v } : { v: number; }
+>v : number
+>v : number
+

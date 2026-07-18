@@ -1,0 +1,24 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: defs.d.tlua
+declare helper: () => void;
+
+// @filename: main.tlua
+// A path-shaped specifier is not a Lua module name; it is an error.
+local missing = require("./nosuchfile");
+
+// An unresolved dotted name falls back to the ambient overloads (any):
+// it may be a runtime-provided package or a C module.
+local maybe = require("no.such.module");
+local n: number = maybe;
+
+// A declaration file declares globals; it is not a chunk with a value, so
+// `defs` does not resolve to defs.d.tlua and stays the dynamic overload.
+local defs = require("defs");
+
+// A computed specifier keeps the dynamic overload.
+declare name: string;
+local dynamic = require(name);

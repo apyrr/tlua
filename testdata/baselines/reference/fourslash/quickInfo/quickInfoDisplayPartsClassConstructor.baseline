@@ -1,0 +1,914 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsClassConstructor.tlua ===
+// class c {
+//     constructor() {
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+// }
+// local cInstance = new c();
+//       ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cInstance: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                       ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local cVal = c;
+//       ^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cVal: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//              ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// class cWithOverloads {
+//     constructor(x: string);
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: number);
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: any) {
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+// }
+// local cWithOverloadsInstance = new cWithOverloads("hello");
+//       ^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cWithOverloadsInstance: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                    ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local cWithOverloadsInstance2 = new cWithOverloads(10);
+//       ^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cWithOverloadsInstance2: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                     ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local cWithOverloadsVal = cWithOverloads;
+//       ^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cWithOverloadsVal: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                           ^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// class cWithMultipleOverloads {
+//     constructor(x: string);
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: number);
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: boolean);
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: any) {
+//     ^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+// }
+// local cWithMultipleOverloadsInstance = new cWithMultipleOverloads("hello");
+//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cWithMultipleOverloadsInstance: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                            ^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local cWithMultipleOverloadsInstance2 = new cWithMultipleOverloads(10);
+//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cWithMultipleOverloadsInstance2: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                             ^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local cWithMultipleOverloadsInstance3 = new cWithMultipleOverloads(true);
+//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cWithMultipleOverloadsInstance3: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                             ^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local cWithMultipleOverloadsVal = cWithMultipleOverloads;
+//       ^^^^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local cWithMultipleOverloadsVal: any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                   ^^^^^^^^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 14,
+      "LSPosition": {
+        "line": 1,
+        "character": 4
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 4
+        },
+        "end": {
+          "line": 1,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 44,
+      "LSPosition": {
+        "line": 4,
+        "character": 6
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cInstance: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 6
+        },
+        "end": {
+          "line": 4,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 60,
+      "LSPosition": {
+        "line": 4,
+        "character": 22
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 22
+        },
+        "end": {
+          "line": 4,
+          "character": 23
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 71,
+      "LSPosition": {
+        "line": 5,
+        "character": 6
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cVal: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 6
+        },
+        "end": {
+          "line": 5,
+          "character": 10
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 78,
+      "LSPosition": {
+        "line": 5,
+        "character": 13
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 13
+        },
+        "end": {
+          "line": 5,
+          "character": 14
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 108,
+      "LSPosition": {
+        "line": 7,
+        "character": 4
+      },
+      "Name": "6",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 4
+        },
+        "end": {
+          "line": 7,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 136,
+      "LSPosition": {
+        "line": 8,
+        "character": 4
+      },
+      "Name": "7",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 4
+        },
+        "end": {
+          "line": 8,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 164,
+      "LSPosition": {
+        "line": 9,
+        "character": 4
+      },
+      "Name": "8",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 4
+        },
+        "end": {
+          "line": 9,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 200,
+      "LSPosition": {
+        "line": 12,
+        "character": 6
+      },
+      "Name": "9",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cWithOverloadsInstance: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 6
+        },
+        "end": {
+          "line": 12,
+          "character": 28
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 229,
+      "LSPosition": {
+        "line": 12,
+        "character": 35
+      },
+      "Name": "10",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 35
+        },
+        "end": {
+          "line": 12,
+          "character": 49
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 260,
+      "LSPosition": {
+        "line": 13,
+        "character": 6
+      },
+      "Name": "11",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cWithOverloadsInstance2: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 13,
+          "character": 6
+        },
+        "end": {
+          "line": 13,
+          "character": 29
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 290,
+      "LSPosition": {
+        "line": 13,
+        "character": 36
+      },
+      "Name": "12",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 13,
+          "character": 36
+        },
+        "end": {
+          "line": 13,
+          "character": 50
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 316,
+      "LSPosition": {
+        "line": 14,
+        "character": 6
+      },
+      "Name": "13",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cWithOverloadsVal: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 14,
+          "character": 6
+        },
+        "end": {
+          "line": 14,
+          "character": 23
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 336,
+      "LSPosition": {
+        "line": 14,
+        "character": 26
+      },
+      "Name": "14",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 14,
+          "character": 26
+        },
+        "end": {
+          "line": 14,
+          "character": 40
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 387,
+      "LSPosition": {
+        "line": 16,
+        "character": 4
+      },
+      "Name": "15",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 16,
+          "character": 4
+        },
+        "end": {
+          "line": 16,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 415,
+      "LSPosition": {
+        "line": 17,
+        "character": 4
+      },
+      "Name": "16",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 17,
+          "character": 4
+        },
+        "end": {
+          "line": 17,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 443,
+      "LSPosition": {
+        "line": 18,
+        "character": 4
+      },
+      "Name": "17",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 18,
+          "character": 4
+        },
+        "end": {
+          "line": 18,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 472,
+      "LSPosition": {
+        "line": 19,
+        "character": 4
+      },
+      "Name": "18",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 19,
+          "character": 4
+        },
+        "end": {
+          "line": 19,
+          "character": 15
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 508,
+      "LSPosition": {
+        "line": 22,
+        "character": 6
+      },
+      "Name": "19",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cWithMultipleOverloadsInstance: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 22,
+          "character": 6
+        },
+        "end": {
+          "line": 22,
+          "character": 36
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 545,
+      "LSPosition": {
+        "line": 22,
+        "character": 43
+      },
+      "Name": "20",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 22,
+          "character": 43
+        },
+        "end": {
+          "line": 22,
+          "character": 65
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 584,
+      "LSPosition": {
+        "line": 23,
+        "character": 6
+      },
+      "Name": "21",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cWithMultipleOverloadsInstance2: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 23,
+          "character": 6
+        },
+        "end": {
+          "line": 23,
+          "character": 37
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 622,
+      "LSPosition": {
+        "line": 23,
+        "character": 44
+      },
+      "Name": "22",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 23,
+          "character": 44
+        },
+        "end": {
+          "line": 23,
+          "character": 66
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 656,
+      "LSPosition": {
+        "line": 24,
+        "character": 6
+      },
+      "Name": "23",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cWithMultipleOverloadsInstance3: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 24,
+          "character": 6
+        },
+        "end": {
+          "line": 24,
+          "character": 37
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 694,
+      "LSPosition": {
+        "line": 24,
+        "character": 44
+      },
+      "Name": "24",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 24,
+          "character": 44
+        },
+        "end": {
+          "line": 24,
+          "character": 66
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 730,
+      "LSPosition": {
+        "line": 25,
+        "character": 6
+      },
+      "Name": "25",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal cWithMultipleOverloadsVal: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 25,
+          "character": 6
+        },
+        "end": {
+          "line": 25,
+          "character": 31
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 758,
+      "LSPosition": {
+        "line": 25,
+        "character": 34
+      },
+      "Name": "26",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 25,
+          "character": 34
+        },
+        "end": {
+          "line": 25,
+          "character": 56
+        }
+      }
+    }
+  }
+]

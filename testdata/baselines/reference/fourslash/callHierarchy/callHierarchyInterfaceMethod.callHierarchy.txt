@@ -1,0 +1,48 @@
+// === Call Hierarchy ===
+╭ name: foo
+├ kind: method
+├ file: /callHierarchyInterfaceMethod.tlua
+├ span:
+│ ╭ /callHierarchyInterfaceMethod.tlua:2:5-2:17
+│ │ 2:     foo(): void;
+│ │        ^^^^^^^^^^^^
+│ ╰
+├ selectionSpan:
+│ ╭ /callHierarchyInterfaceMethod.tlua:2:5-2:8
+│ │ 2:     foo(): void;
+│ │        ^^^
+│ ╰
+├ incoming:
+│ ╭ from:
+│ │ ╭ name: /callHierarchyInterfaceMethod.tlua
+│ │ ├ kind: module
+│ │ ├ file: /callHierarchyInterfaceMethod.tlua
+│ │ ├ span:
+│ │ │ ╭ /callHierarchyInterfaceMethod.tlua:1:1-7:11
+│ │ │ │ 1: interface I {
+│ │ │ │    ^^^^^^^^^^^^^
+│ │ │ │ 2:     foo(): void;
+│ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ │ 3: }
+│ │ │ │    ^
+│ │ │ │ 4:
+│ │ │ │    ^
+│ │ │ │ 5: local obj: I = { foo() {} };
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 6:
+│ │ │ │    ^
+│ │ │ │ 7: obj.foo();
+│ │ │ │    ^^^^^^^^^^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /callHierarchyInterfaceMethod.tlua:1:1-1:1
+│ │ │ │ 1: interface I {
+│ │ │ │    <
+│ │ │ ╰
+│ │ ╰ incoming: none
+│ ├ fromSpans:
+│ │ ╭ /callHierarchyInterfaceMethod.tlua:7:5-7:8
+│ │ │ 7: obj.foo();
+│ │ │        ^^^
+│ ╰ ╰
+╰ outgoing: none

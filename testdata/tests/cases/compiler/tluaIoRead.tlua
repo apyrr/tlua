@@ -1,0 +1,52 @@
+// @strict: true
+// @lib: luajit
+// @noEmit: true
+
+// A failed "*n" stops the read, so the trailing "*a" can be nil at runtime;
+// only the FIRST format can promise a value.
+local n, rest = io.read("*n", "*a");
+local nType: number | nil = n;
+local restType: string | nil = rest;
+
+local wholeFile = io.read("*a");
+local wholeFileType: string = wholeFile;
+
+local defaultLine = io.read();
+local defaultLineType: string | nil = defaultLine;
+
+local bytes = io.read(8);
+local bytesType: string | nil = bytes;
+
+declare f: LuaFile;
+local fileNumber = f.read("*n");
+local fileNumberType: number | nil = fileNumber;
+
+for line in io.lines() do
+  local lineType: string = line;
+end
+
+for chunk in io.lines("file", "*a") do
+  local chunkType: string = chunk;
+end
+
+for filenameOnly in io.lines("*n") do
+  local filenameOnlyType: string = filenameOnly;
+end
+
+declare fmt: LuaReadFormat;
+local x = io.read(fmt);
+local xType: any = x;
+
+// A literal prefix keeps its precision; the runtime-only formats become an
+// open any tail.
+local pn, px = io.read("*n", fmt);
+local pnType: number | nil = pn;
+
+function shadowedIO(): void
+  local io = {
+    read = function(format: string): boolean return format == "*n"; end,
+  };
+  local shadowed: boolean = io.read("*n");
+end
+
+local wrong, wrongRest = io.read("*x");

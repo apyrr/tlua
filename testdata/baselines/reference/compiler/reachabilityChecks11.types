@@ -1,0 +1,148 @@
+//// [tests/cases/compiler/reachabilityChecks11.tlua] ////
+
+=== reachabilityChecks11.tlua ===
+// while (true);
+local x = 1;
+>x : number
+>1 : 1
+
+namespace A {
+>namespace : any
+>A : any
+
+    while (true);
+>true : true
+
+    local x;
+>x : any
+}
+
+namespace A1 {
+>namespace : any
+>A1 : any
+
+    do {} while(true);
+>true : true
+
+    namespace A {
+>namespace : any
+>A : any
+
+        interface F {}
+    }
+}
+
+namespace A2 {
+>namespace : any
+>A2 : any
+
+    while (true);
+>true : true
+
+    namespace A {
+>namespace : any
+>A : any
+
+        local x = 1;
+>x : number
+>1 : 1
+    }
+}
+
+namespace A3 {
+>namespace : any
+>A3 : any
+
+    while (true);
+>true : true
+
+    type T = string;
+>T : string
+}
+
+namespace A4 {
+>namespace : any
+>A4 : any
+
+    while (true);
+>true : true
+
+    namespace A {
+>namespace : any
+>A : any
+
+        local x = 1;
+>x : number
+>1 : 1
+    }
+}
+
+function f1(x) {
+>f1 : (x: any) => void
+>x : any
+
+    if (x) {
+>x : any
+
+        return;
+    }
+    else {
+        throw new Error("123");
+>new Error("123") : any
+>Error : any
+>"123" : "123"
+    }
+    local x;
+>x : any
+}
+
+function f2() {
+>f2 : () => void
+
+    return;
+    class A {
+>class : any
+>A : any
+    }
+}
+
+namespace B {
+>namespace : any
+>B : any
+
+    while (true);
+>true : true
+
+    namespace C {
+>namespace : any
+>C : any
+    }
+}
+
+function f3() {
+>f3 : () => void
+
+    do {
+    } while (true);
+>true : true
+
+    local x = 1;
+>x : number
+>1 : 1
+}
+
+function f4() {
+>f4 : () => void
+
+    if (true) {
+>true : true
+
+        throw new Error();
+>new Error() : any
+>Error : any
+    }
+    local x = 1;
+>x : number
+>1 : 1
+}
+

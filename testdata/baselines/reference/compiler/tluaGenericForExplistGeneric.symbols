@@ -1,0 +1,226 @@
+//// [tests/cases/compiler/tluaGenericForExplistGeneric.tlua] ////
+
+=== tluaGenericForExplistGeneric.tlua ===
+interface Rec {
+>Rec : Symbol(Rec, Decl(tluaGenericForExplistGeneric.tlua, 0, 0))
+
+  [key: string]: number;
+>key : Symbol(key, Decl(tluaGenericForExplistGeneric.tlua, 1, 3))
+}
+
+declare t: Rec;
+>t : Symbol(t, Decl(tluaGenericForExplistGeneric.tlua, 4, 7))
+>Rec : Symbol(Rec, Decl(tluaGenericForExplistGeneric.tlua, 0, 0))
+
+for k, v in next, t do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 6, 3))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 6, 6))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaGenericForExplistGeneric.tlua, 4, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaGenericForExplistGeneric.tlua, 7, 7))
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 6, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 8, 7))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 6, 6))
+
+end
+
+for k, v in next, t, "seed" do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 11, 3))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 11, 6))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaGenericForExplistGeneric.tlua, 4, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaGenericForExplistGeneric.tlua, 12, 7))
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 11, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 13, 7))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 11, 6))
+
+end
+
+declare c: string | nil;
+>c : Symbol(c, Decl(tluaGenericForExplistGeneric.tlua, 16, 7))
+
+for k, v in next, t, c do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 18, 3))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 18, 6))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaGenericForExplistGeneric.tlua, 4, 7))
+>c : Symbol(c, Decl(tluaGenericForExplistGeneric.tlua, 16, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaGenericForExplistGeneric.tlua, 19, 7))
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 18, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 20, 7))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 18, 6))
+
+end
+
+for k, v in pairs(t) do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 23, 3))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 23, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaGenericForExplistGeneric.tlua, 4, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaGenericForExplistGeneric.tlua, 24, 7))
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 23, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 25, 7))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 23, 6))
+
+end
+
+declare function step<T>(state: T[], i: number | nil): (number | nil, T);
+>step : Symbol(step, Decl(tluaGenericForExplistGeneric.tlua, 26, 3))
+>T : Symbol(T, Decl(tluaGenericForExplistGeneric.tlua, 28, 22))
+>state : Symbol(state, Decl(tluaGenericForExplistGeneric.tlua, 28, 25))
+>T : Symbol(T, Decl(tluaGenericForExplistGeneric.tlua, 28, 22))
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 28, 36))
+>T : Symbol(T, Decl(tluaGenericForExplistGeneric.tlua, 28, 22))
+
+declare arr: { name: string }[];
+>arr : Symbol(arr, Decl(tluaGenericForExplistGeneric.tlua, 29, 7))
+>name : Symbol(name, Decl(tluaGenericForExplistGeneric.tlua, 29, 14))
+
+for i, x in step, arr, nil do
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 31, 3))
+>x : Symbol(x, Decl(tluaGenericForExplistGeneric.tlua, 31, 6))
+>step : Symbol(step, Decl(tluaGenericForExplistGeneric.tlua, 26, 3))
+>arr : Symbol(arr, Decl(tluaGenericForExplistGeneric.tlua, 29, 7))
+
+  local index: number = i;
+>index : Symbol(index, Decl(tluaGenericForExplistGeneric.tlua, 32, 7))
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 31, 3))
+
+  local element: { name: string } = x;
+>element : Symbol(element, Decl(tluaGenericForExplistGeneric.tlua, 33, 7))
+>name : Symbol(name, Decl(tluaGenericForExplistGeneric.tlua, 33, 18))
+>x : Symbol(x, Decl(tluaGenericForExplistGeneric.tlua, 31, 6))
+
+end
+
+declare function ov(state: string[], i: nil): (number | nil, string);
+>ov : Symbol(ov, Decl(tluaGenericForExplistGeneric.tlua, 34, 3), Decl(tluaGenericForExplistGeneric.tlua, 36, 69))
+>state : Symbol(state, Decl(tluaGenericForExplistGeneric.tlua, 36, 20))
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 36, 36))
+
+declare function ov(state: number[], i: nil): (number | nil, boolean);
+>ov : Symbol(ov, Decl(tluaGenericForExplistGeneric.tlua, 34, 3), Decl(tluaGenericForExplistGeneric.tlua, 36, 69))
+>state : Symbol(state, Decl(tluaGenericForExplistGeneric.tlua, 37, 20))
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 37, 36))
+
+declare strings: string[];
+>strings : Symbol(strings, Decl(tluaGenericForExplistGeneric.tlua, 38, 7))
+
+for i, value in ov, strings, nil do
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 40, 3))
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 40, 6))
+>ov : Symbol(ov, Decl(tluaGenericForExplistGeneric.tlua, 34, 3), Decl(tluaGenericForExplistGeneric.tlua, 36, 69))
+>strings : Symbol(strings, Decl(tluaGenericForExplistGeneric.tlua, 38, 7))
+
+  local index: number = i;
+>index : Symbol(index, Decl(tluaGenericForExplistGeneric.tlua, 41, 7))
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 40, 3))
+
+  local element: string = value;
+>element : Symbol(element, Decl(tluaGenericForExplistGeneric.tlua, 42, 7))
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 40, 6))
+
+end
+
+for i, value in ov, 42, nil do
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 45, 3))
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 45, 6))
+>ov : Symbol(ov, Decl(tluaGenericForExplistGeneric.tlua, 34, 3), Decl(tluaGenericForExplistGeneric.tlua, 36, 69))
+
+  local index: number = i;
+>index : Symbol(index, Decl(tluaGenericForExplistGeneric.tlua, 46, 7))
+>i : Symbol(i, Decl(tluaGenericForExplistGeneric.tlua, 45, 3))
+
+  local element: string | boolean = value;
+>element : Symbol(element, Decl(tluaGenericForExplistGeneric.tlua, 47, 7))
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 45, 6))
+
+end
+
+declare function each<K, V>(state: Table<K, V>): (K?, V);
+>each : Symbol(each, Decl(tluaGenericForExplistGeneric.tlua, 48, 3))
+>K : Symbol(K, Decl(tluaGenericForExplistGeneric.tlua, 50, 22))
+>V : Symbol(V, Decl(tluaGenericForExplistGeneric.tlua, 50, 24))
+>state : Symbol(state, Decl(tluaGenericForExplistGeneric.tlua, 50, 28))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaGenericForExplistGeneric.tlua, 50, 22))
+>V : Symbol(V, Decl(tluaGenericForExplistGeneric.tlua, 50, 24))
+>K : Symbol(K, Decl(tluaGenericForExplistGeneric.tlua, 50, 22))
+>V : Symbol(V, Decl(tluaGenericForExplistGeneric.tlua, 50, 24))
+
+for k, v in each, t, "oops" do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 52, 3))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 52, 6))
+>each : Symbol(each, Decl(tluaGenericForExplistGeneric.tlua, 48, 3))
+>t : Symbol(t, Decl(tluaGenericForExplistGeneric.tlua, 4, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaGenericForExplistGeneric.tlua, 53, 7))
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 52, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 54, 7))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 52, 6))
+
+end
+
+declare function requiredControl(state: Rec, control: string): (string | nil, number);
+>requiredControl : Symbol(requiredControl, Decl(tluaGenericForExplistGeneric.tlua, 55, 3))
+>state : Symbol(state, Decl(tluaGenericForExplistGeneric.tlua, 57, 33))
+>Rec : Symbol(Rec, Decl(tluaGenericForExplistGeneric.tlua, 0, 0))
+>control : Symbol(control, Decl(tluaGenericForExplistGeneric.tlua, 57, 44))
+
+for k, v in requiredControl, t, nil do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 59, 3))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 59, 6))
+>requiredControl : Symbol(requiredControl, Decl(tluaGenericForExplistGeneric.tlua, 55, 3))
+>t : Symbol(t, Decl(tluaGenericForExplistGeneric.tlua, 4, 7))
+
+  local key: string = k;
+>key : Symbol(key, Decl(tluaGenericForExplistGeneric.tlua, 60, 7))
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 59, 3))
+
+  local value: number = v;
+>value : Symbol(value, Decl(tluaGenericForExplistGeneric.tlua, 61, 7))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 59, 6))
+
+end
+
+for k, v in next, 42 do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 64, 3))
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 64, 6))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+
+  k;
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 64, 3))
+
+  v;
+>v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 64, 6))
+
+end
+
+for k in next do
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 69, 3))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+
+  k;
+>k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 69, 3))
+
+end
+

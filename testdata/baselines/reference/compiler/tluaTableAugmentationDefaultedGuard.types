@@ -1,0 +1,297 @@
+//// [tests/cases/compiler/tluaTableAugmentationDefaultedGuard.tlua] ////
+
+=== a.tlua ===
+G = G or {};
+>G = G or {} : { fromA: number; fromB: string; }
+>G : { fromA: number; fromB: string; }
+>G or {} : { fromA: number; fromB: string; }
+>G : { fromA: number; fromB: string; }
+>{} : { fromA: number; fromB: string; }
+
+G.fromA = 1;
+>G.fromA = 1 : 1
+>G.fromA : number
+>G : { fromA: number; fromB: string; }
+>fromA : number
+>1 : 1
+
+local fromB: string = G.fromB;
+>fromB : string
+>G.fromB : string
+>G : { fromA: number; fromB: string; }
+>fromB : string
+
+local M = {};
+>M : { sub: { value: boolean; }; }
+>{} : { sub: { value: boolean; }; }
+
+M.sub = M.sub or {};
+>M.sub = M.sub or {} : { value: boolean; }
+>M.sub : { value: boolean; }
+>M : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>M.sub or {} : { value: boolean; }
+>M.sub : { value: boolean; }
+>M : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>{} : { value: boolean; }
+
+M.sub.value = true;
+>M.sub.value = true : true
+>M.sub.value : boolean
+>M.sub : { value: boolean; }
+>M : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>value : boolean
+>true : true
+
+local value: boolean = M.sub.value;
+>value : boolean
+>M.sub.value : true
+>M.sub : { value: boolean; }
+>M : { sub: { value: boolean; }; }
+>sub : { value: boolean; }
+>value : true
+
+local A = {};
+>A : { k: { value: number; }; }
+>{} : { k: { value: number; }; }
+
+A.k = A["k"] or {};
+>A.k = A["k"] or {} : { value: number; }
+>A.k : { value: number; }
+>A : { k: { value: number; }; }
+>k : { value: number; }
+>A["k"] or {} : { value: number; }
+>A["k"] : { value: number; }
+>A : { k: { value: number; }; }
+>"k" : "k"
+>{} : { value: number; }
+
+A.k.value = 1;
+>A.k.value = 1 : 1
+>A.k.value : number
+>A.k : { value: number; }
+>A : { k: { value: number; }; }
+>k : { value: number; }
+>value : number
+>1 : 1
+
+local mixedKey: number = A["k"].value;
+>mixedKey : number
+>A["k"].value : number
+>A["k"] : { value: number; }
+>A : { k: { value: number; }; }
+>"k" : "k"
+>value : number
+
+Mixed = Mixed or {};
+>Mixed = Mixed or {} : {}
+>Mixed : {}
+>Mixed or {} : {}
+>Mixed : {}
+>{} : {}
+
+Mixed.extra = 1;
+>Mixed.extra = 1 : 1
+>Mixed.extra : any
+>Mixed : {}
+>extra : any
+>1 : 1
+
+// An implicit global as the base of a nested member guard: the base read
+// `GNested` inside `GNested.sub` must resolve like any other global, not
+// trip used-before-assigned.
+GNested = {};
+>GNested = {} : { sub: { deep: number; }; }
+>GNested : { sub: { deep: number; }; }
+>{} : { sub: { deep: number; }; }
+
+GNested.sub = GNested.sub or {};
+>GNested.sub = GNested.sub or {} : { deep: number; }
+>GNested.sub : { deep: number; }
+>GNested : { sub: { deep: number; }; }
+>sub : { deep: number; }
+>GNested.sub or {} : { deep: number; }
+>GNested.sub : { deep: number; }
+>GNested : { sub: { deep: number; }; }
+>sub : { deep: number; }
+>{} : { deep: number; }
+
+GNested.sub.deep = 1;
+>GNested.sub.deep = 1 : 1
+>GNested.sub.deep : number
+>GNested.sub : { deep: number; }
+>GNested : { sub: { deep: number; }; }
+>sub : { deep: number; }
+>deep : number
+>1 : 1
+
+local deep: number = GNested.sub.deep;
+>deep : number
+>GNested.sub.deep : number
+>GNested.sub : { deep: number; }
+>GNested : { sub: { deep: number; }; }
+>sub : { deep: number; }
+>deep : number
+
+=== b.tlua ===
+G = G ?? {};
+>G = G ?? {} : { fromA: number; fromB: string; }
+>G : { fromA: number; fromB: string; }
+>G ?? {} : { fromA: number; fromB: string; }
+>G : { fromA: number; fromB: string; }
+>{} : { fromA: number; fromB: string; }
+
+G.fromB = "b";
+>G.fromB = "b" : "b"
+>G.fromB : string
+>G : { fromA: number; fromB: string; }
+>fromB : string
+>"b" : "b"
+
+local fromA: number = G.fromA;
+>fromA : number
+>G.fromA : number
+>G : { fromA: number; fromB: string; }
+>fromA : number
+
+local function make(): { fixed: number }
+>make : () => { fixed: number; }
+>fixed : number
+
+  return { fixed = 1 };
+>{ fixed = 1 } : { fixed: number; }
+>fixed : number
+>1 : 1
+
+end
+
+Closed = Closed or make();
+>Closed = Closed or make() : { fixed: number; }
+>Closed : { fixed: number; }
+>Closed or make() : { fixed: number; }
+>Closed : { fixed: number; }
+>make() : { fixed: number; }
+>make : () => { fixed: number; }
+
+Closed.extra = true;
+>Closed.extra = true : true
+>Closed.extra : any
+>Closed : { fixed: number; }
+>extra : any
+>true : true
+
+Mixed = make();
+>Mixed = make() : { fixed: number; }
+>Mixed : {}
+>make() : { fixed: number; }
+>make : () => { fixed: number; }
+
+// Parentheses make this an ordinary self-referential assignment rather than
+// the exact defaulted-guard idiom.
+Paren = (Paren) or {};
+>Paren = (Paren) or {} : any
+>Paren : any
+>(Paren) or {} : any
+>(Paren) : any
+>Paren : any
+>{} : {}
+
+local Numeric = {};
+>Numeric : { 1: any; }
+>{} : { 1: any; }
+
+Numeric[1] = Numeric["1"] or {};
+>Numeric[1] = Numeric["1"] or {} : any
+>Numeric[1] : any
+>Numeric : { 1: any; }
+>1 : 1
+>Numeric["1"] or {} : any
+>Numeric["1"] : any
+>Numeric : { 1: any; }
+>"1" : "1"
+>{} : {}
+
+local Other = {};
+>Other : {}
+>{} : {}
+
+Chain = Chain or Other or {};
+>Chain = Chain or Other or {} : any
+>Chain : any
+>Chain or Other or {} : any
+>Chain or Other : any
+>Chain : any
+>Other : {}
+>{} : {}
+
+Different = Other or {};
+>Different = Other or {} : {}
+>Different : {}
+>Other or {} : {}
+>Other : {}
+>{} : {}
+
+Different.extra = true;
+>Different.extra = true : true
+>Different.extra : any
+>Different : {}
+>extra : any
+>true : true
+
+local function keep(value: any): {}
+>keep : (value: any) => {}
+>value : any
+
+  return {};
+>{} : {}
+
+end
+ReadInside = ReadInside or keep(ReadInside);
+>ReadInside = ReadInside or keep(ReadInside) : any
+>ReadInside : any
+>ReadInside or keep(ReadInside) : any
+>ReadInside : any
+>keep(ReadInside) : {}
+>keep : (value: any) => {}
+>ReadInside : any
+
+local LocalSelf = LocalSelf or {};
+>LocalSelf : any
+>LocalSelf or {} : any
+>LocalSelf : any
+>{} : {}
+
+local Declared: {};
+>Declared : {}
+
+Declared = Declared or {};
+>Declared = Declared or {} : {}
+>Declared : {}
+>Declared or {} : {}
+>Declared : {}
+>{} : {}
+
+local Outer = { base = 1 };
+>Outer : { base: number; }
+>{ base = 1 } : { base: number; }
+>base : number
+>1 : 1
+
+do
+  local Outer = Outer or {};
+>Outer : { base: number; }
+>Outer or {} : { base: number; }
+>Outer : { base: number; }
+>{} : {}
+
+  Outer.extra = true;
+>Outer.extra = true : true
+>Outer.extra : any
+>Outer : { base: number; }
+>extra : any
+>true : true
+
+end
+

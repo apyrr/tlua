@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaGotoIntoLetScope.tlua] ////
+
+=== tluaGotoIntoLetScope.tlua ===
+// The jump-into-local-scope rule covers the transitional let/const/local forms
+// too: they declare names that compile to Lua locals.
+declare function log(n: number): void;
+>log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaGotoIntoLetScope.tlua, 2, 21))
+
+function intoLetScope(): void {
+>intoLetScope : Symbol(intoLetScope, Decl(tluaGotoIntoLetScope.tlua, 2, 38))
+
+    goto done
+    local x = 1;
+>x : Symbol(x, Decl(tluaGotoIntoLetScope.tlua, 5, 9))
+
+    ::done::
+    log(x);
+>log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaGotoIntoLetScope.tlua, 5, 9))
+}
+
+function intoConstScope(): void {
+>intoConstScope : Symbol(intoConstScope, Decl(tluaGotoIntoLetScope.tlua, 8, 1))
+
+    goto done
+    local c = 1;
+>c : Symbol(c, Decl(tluaGotoIntoLetScope.tlua, 12, 9))
+
+    ::done::
+    log(c);
+>log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
+>c : Symbol(c, Decl(tluaGotoIntoLetScope.tlua, 12, 9))
+}
+
+function intoVarScope(): void {
+>intoVarScope : Symbol(intoVarScope, Decl(tluaGotoIntoLetScope.tlua, 15, 1))
+
+    goto done
+    local v = 1;
+>v : Symbol(v, Decl(tluaGotoIntoLetScope.tlua, 19, 9))
+
+    ::done::
+    log(v);
+>log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
+>v : Symbol(v, Decl(tluaGotoIntoLetScope.tlua, 19, 9))
+}
+

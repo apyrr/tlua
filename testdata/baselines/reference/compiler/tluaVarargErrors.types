@@ -1,0 +1,182 @@
+//// [tests/cases/compiler/tluaVarargErrors.tlua] ////
+
+=== main.tlua ===
+declare function consume(a: number, b: number): void;
+>consume : (a: number, b: number) => void
+>a : number
+>b : number
+
+declare nums: number[];
+>nums : number[]
+
+declare obj: { a: number; b: number };
+>obj : { a: number; b: number; }
+>a : number
+>b : number
+
+// `...` outside any vararg function.
+function notVararg(): void
+>notVararg : () => void
+
+  local x = ...;
+>x : any
+>... : any
+
+end
+
+// The same, as a *non-tail* call argument. This is the shape that made the v1
+// implementation panic: the pack probe must stay pure and report 100035 here
+// rather than returning an error type into the argument machinery.
+function nonTailArgument(): void
+>nonTailArgument : () => void
+
+  consume(1, ...);
+>consume(1, ...) : void
+>consume : (a: number, b: number) => void
+>1 : 1
+>... : any
+
+end
+
+// An illegal `...` as the whole argument list: 100035 only. The illegal tail
+// keeps the tail's arity treatment, so no "Expected 2 arguments, but got 1"
+// stacks on top of the one real error.
+function illegalTailOnly(): void
+>illegalTailOnly : () => void
+
+  consume(...);
+>consume(...) : void
+>consume : (a: number, b: number) => void
+>... : any
+
+end
+
+// A nested function does not capture the outer pack; the pack is not a
+// capturable local.
+function outer(...: number): void
+>outer : (...: number) => void
+> : number[]
+
+  local inner = function(): void
+>inner : () => void
+>function(): void    local y = ...;  end : () => void
+
+    local y = ...;
+>y : any
+>... : any
+
+  end;
+end
+
+// Operand spread is gone in every position.
+function spreads(...: number): void
+>spreads : (...: number) => void
+> : number[]
+
+  consume(...nums);
+>consume(...nums) : void
+>consume : (a: number, b: number) => void
+>... : number | nil
+>nums : number[]
+
+  consume(...nums, 1);
+>consume(...nums, 1) : void
+>consume : (a: number, b: number) => void
+>... : number | nil
+>nums : number[]
+>1 : 1
+
+  consume(1, ...nums, 2);
+>consume(1, ...nums, 2) : void
+>consume : (a: number, b: number) => void
+>1 : 1
+>... : number | nil
+>nums : number[]
+>2 : 2
+
+  consume(...nums, ...nums);
+>consume(...nums, ...nums) : void
+>consume : (a: number, b: number) => void
+>... : number | nil
+>nums : number[]
+>... : number | nil
+>nums : number[]
+
+  local spreadTable = {...obj};
+>spreadTable : { 1: number | nil; 2: { a: number; b: number; }; }
+>{...obj} : { 1: number | nil; 2: { a: number; b: number; }; }
+>... : number | nil
+>obj : any
+
+  local spreadThenField = {...obj, a = 1};
+>spreadThenField : { 1: number | nil; 2: { a: number; b: number; }; a: number; }
+>{...obj, a = 1} : { 1: number | nil; 2: { a: number; b: number; }; a: number; }
+>... : number | nil
+>obj : any
+>a : number
+>1 : 1
+
+end
+
+// Binding-pattern rest is gone.
+local { a, ...restOfObj } = obj;
+> : any
+>a, ... : any
+>a : any
+>... : any
+>restOfObj : any
+>obj : { a: number; b: number; }
+
+=== grammar.tlua ===
+// The vararg parameter grammar. These are *checker* grammar rules, not parse
+// errors -- a parse error would suppress every semantic diagnostic in the whole
+// program -- so they live in a file that parses cleanly: grammarErrorOnNode is
+// itself suppressed in any file that has parse diagnostics, which is why main.tlua
+// cannot host them.
+
+// A vararg parameter must be last.
+declare function notLast(...: number, a: number): void;
+>notLast : (...: any, a: number) => void
+> : number
+>a : number
+
+// A vararg parameter cannot be optional...
+declare function optionalVararg(...?: number): void;
+>optionalVararg : (...: number) => void
+> : number[]
+
+// ...nor carry an initializer. The span is the parameter, not its name: a
+// vararg's name is a zero-width synthetic identifier and would give no span.
+declare function initializedVararg(... = 1): void;
+>initializedVararg : (...: any) => void
+> : number
+>1 : 1
+
+// A vararg parameter cannot have a name: the legacy TS rest form is gone.
+declare function namedRest(...args: number[]): void;
+>namedRest : (...args: number[]) => void
+>args : number[]
+
+// A named rest is still parsed for recovery, so it is still held to the old rule
+// that its type is an array -- it is the one rest form that is not element-typed
+// and not array-wrapped.
+declare function namedRestNotArray(...args: number): void;
+>namedRestNotArray : (...args: number) => void
+>args : number
+
+// And a named rest in a callable type is a (rejected) parameter list, not a
+// pure-variadic return pack.
+declare function namedRestInReturn(): (...args: string[]) => void;
+>namedRestInReturn : () => (...args: string[]) => void
+>args : string[]
+
+=== legacy.d.tlua ===
+// Named rest is rejected in declaration files too -- there is no carve-out.
+declare function fromDts(...args: string[]): void;
+>fromDts : (...args: string[]) => void
+>args : string[]
+
+declare fromDtsType: (...args: string[]) => void;
+>fromDtsType : (...args: string[]) => void
+>args : string[]
+

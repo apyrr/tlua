@@ -1,0 +1,143 @@
+tluaAndOrNotReserved.tlua(8,16): error TS1003: Identifier expected.
+tluaAndOrNotReserved.tlua(8,19): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(9,16): error TS1003: Identifier expected.
+tluaAndOrNotReserved.tlua(9,18): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(10,16): error TS1003: Identifier expected.
+tluaAndOrNotReserved.tlua(10,19): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(13,14): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(13,18): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(14,14): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(14,17): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(15,18): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(18,7): error TS1003: Identifier expected.
+tluaAndOrNotReserved.tlua(18,11): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(19,7): error TS1003: Identifier expected.
+tluaAndOrNotReserved.tlua(19,10): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(20,7): error TS1003: Identifier expected.
+tluaAndOrNotReserved.tlua(20,11): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(23,9): error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaAndOrNotReserved.tlua(23,10): error TS1003: Identifier expected.
+tluaAndOrNotReserved.tlua(23,13): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(23,15): error TS1005: ';' expected.
+tluaAndOrNotReserved.tlua(29,18): error TS1005: ';' expected.
+tluaAndOrNotReserved.tlua(29,21): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(30,10): error TS1005: ';' expected.
+tluaAndOrNotReserved.tlua(30,13): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(30,15): error TS2693: 'number' only refers to a type, but is being used as a value here.
+tluaAndOrNotReserved.tlua(33,9): error TS1005: ';' expected.
+tluaAndOrNotReserved.tlua(33,10): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(33,12): error TS2693: 'number' only refers to a type, but is being used as a value here.
+tluaAndOrNotReserved.tlua(39,18): error TS1005: ';' expected.
+tluaAndOrNotReserved.tlua(39,21): error TS1109: Expression expected.
+tluaAndOrNotReserved.tlua(40,11): error TS1110: Type expected.
+tluaAndOrNotReserved.tlua(40,15): error TS2693: 'number' only refers to a type, but is being used as a value here.
+
+
+==== tluaAndOrNotReserved.tlua (33 errors) ====
+    // `and`, `or` and `not` are keywords, so they are reserved. Every use as a name
+    // falls into stock recovery, as with the class, decorator, array and this
+    // removals. Lua reserves them too, so `t.and` is invalid there as well.
+    
+    local obj = { x = 1 };
+    
+    // Member names.
+    local a1 = obj.and;
+                   ~~~
+!!! error TS1003: Identifier expected.
+                      ~
+!!! error TS1109: Expression expected.
+    local a2 = obj.or;
+                   ~~
+!!! error TS1003: Identifier expected.
+                     ~
+!!! error TS1109: Expression expected.
+    local a3 = obj.not;
+                   ~~~
+!!! error TS1003: Identifier expected.
+                      ~
+!!! error TS1109: Expression expected.
+    
+    // Property names in an object literal.
+    local o1 = { and = 1 };
+                 ~~~
+!!! error TS1109: Expression expected.
+                     ~
+!!! error TS1109: Expression expected.
+    local o2 = { or = 1 };
+                 ~~
+!!! error TS1109: Expression expected.
+                    ~
+!!! error TS1109: Expression expected.
+    local o3 = { not = 1 };
+                     ~
+!!! error TS1109: Expression expected.
+    
+    // Binding names.
+    local and = 1;
+          ~~~
+!!! error TS1003: Identifier expected.
+              ~
+!!! error TS1109: Expression expected.
+    local or = 2;
+          ~~
+!!! error TS1003: Identifier expected.
+             ~
+!!! error TS1109: Expression expected.
+    local not = 3;
+          ~~~
+!!! error TS1003: Identifier expected.
+              ~
+!!! error TS1109: Expression expected.
+    
+    // Declaration names.
+    function or() {}
+            
+!!! error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+             ~~
+!!! error TS1003: Identifier expected.
+                ~
+!!! error TS1109: Expression expected.
+                  ~
+!!! error TS1005: ';' expected.
+    
+    // `not` shares KindExclamationToken with `!`, but only the punctuation spelling
+    // is the non-null and definite-assignment operator. Accepting the word in those
+    // roles would silently suppress a nil check.
+    declare maybe: number | nil;
+    local n1 = maybe not;
+                     ~~~
+!!! error TS1005: ';' expected.
+                        ~
+!!! error TS1109: Expression expected.
+    local n2 not: number;
+             ~~~
+!!! error TS1005: ';' expected.
+                ~
+!!! error TS1109: Expression expected.
+                  ~~~~~~
+!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+    // The punctuation spelling keeps both roles.
+    local n3 = maybe!;
+    local n4!: number;
+            ~
+!!! error TS1005: ';' expected.
+             ~
+!!! error TS1109: Expression expected.
+               ~~~~~~
+!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+    // And the word keeps its own: prefix negation.
+    local n5 = not maybe;
+    
+    // The type-position `!` (the JSDoc non-nullable operator) is punctuation-only
+    // as well: the word `not` never silently becomes a type operator.
+    local n6: number not;
+                     ~~~
+!!! error TS1005: ';' expected.
+                        ~
+!!! error TS1109: Expression expected.
+    type N7 = not number;
+              ~~~
+!!! error TS1110: Type expected.
+                  ~~~~~~
+!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+    

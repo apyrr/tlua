@@ -1,0 +1,122 @@
+//// [tests/cases/compiler/tluaIndexKeyObject.tlua] ////
+
+=== tluaIndexKeyObject.tlua ===
+// Lua tables are keyed by identity as readily as by value: a table, a function, a
+// coroutine, a userdatum and a cdatum are all keys. None of them can name a property,
+// so none of them is expressible as anything but an index signature.
+
+interface Point { x: number; y: number }
+>Point : Symbol(Point, Decl(tluaIndexKeyObject.tlua, 0, 0))
+>x : Symbol(Point.x, Decl(tluaIndexKeyObject.tlua, 4, 17))
+>y : Symbol(Point.y, Decl(tluaIndexKeyObject.tlua, 4, 28))
+
+interface ByTable { [key: Point]: string }
+>ByTable : Symbol(ByTable, Decl(tluaIndexKeyObject.tlua, 4, 40))
+>key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 6, 21))
+>Point : Symbol(Point, Decl(tluaIndexKeyObject.tlua, 0, 0))
+
+interface ByFunction { [key: (a: number) => void]: string }
+>ByFunction : Symbol(ByFunction, Decl(tluaIndexKeyObject.tlua, 6, 42))
+>key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 7, 24))
+>a : Symbol(a, Decl(tluaIndexKeyObject.tlua, 7, 30))
+
+interface ByThread { [key: LuaThread]: string }
+>ByThread : Symbol(ByThread, Decl(tluaIndexKeyObject.tlua, 7, 59))
+>key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 8, 22))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+
+interface ByUserdata { [key: LuaUserdata]: string }
+>ByUserdata : Symbol(ByUserdata, Decl(tluaIndexKeyObject.tlua, 8, 47))
+>key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 9, 24))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+
+interface ByCData { [key: LuaCData]: string }
+>ByCData : Symbol(ByCData, Decl(tluaIndexKeyObject.tlua, 9, 51))
+>key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 10, 21))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+
+declare pt: Point;
+>pt : Symbol(pt, Decl(tluaIndexKeyObject.tlua, 12, 7))
+>Point : Symbol(Point, Decl(tluaIndexKeyObject.tlua, 0, 0))
+
+declare fn: (a: number) => void;
+>fn : Symbol(fn, Decl(tluaIndexKeyObject.tlua, 13, 7))
+>a : Symbol(a, Decl(tluaIndexKeyObject.tlua, 13, 13))
+
+declare th: LuaThread;
+>th : Symbol(th, Decl(tluaIndexKeyObject.tlua, 14, 7))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+
+declare ud: LuaUserdata;
+>ud : Symbol(ud, Decl(tluaIndexKeyObject.tlua, 15, 7))
+>LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
+
+declare cd: LuaCData;
+>cd : Symbol(cd, Decl(tluaIndexKeyObject.tlua, 16, 7))
+>LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
+
+declare byTable: ByTable;
+>byTable : Symbol(byTable, Decl(tluaIndexKeyObject.tlua, 18, 7))
+>ByTable : Symbol(ByTable, Decl(tluaIndexKeyObject.tlua, 4, 40))
+
+declare byFunction: ByFunction;
+>byFunction : Symbol(byFunction, Decl(tluaIndexKeyObject.tlua, 19, 7))
+>ByFunction : Symbol(ByFunction, Decl(tluaIndexKeyObject.tlua, 6, 42))
+
+declare byThread: ByThread;
+>byThread : Symbol(byThread, Decl(tluaIndexKeyObject.tlua, 20, 7))
+>ByThread : Symbol(ByThread, Decl(tluaIndexKeyObject.tlua, 7, 59))
+
+declare byUserdata: ByUserdata;
+>byUserdata : Symbol(byUserdata, Decl(tluaIndexKeyObject.tlua, 21, 7))
+>ByUserdata : Symbol(ByUserdata, Decl(tluaIndexKeyObject.tlua, 8, 47))
+
+declare byCData: ByCData;
+>byCData : Symbol(byCData, Decl(tluaIndexKeyObject.tlua, 22, 7))
+>ByCData : Symbol(ByCData, Decl(tluaIndexKeyObject.tlua, 9, 51))
+
+local s1: string = byTable[pt];
+>s1 : Symbol(s1, Decl(tluaIndexKeyObject.tlua, 24, 5))
+>byTable : Symbol(byTable, Decl(tluaIndexKeyObject.tlua, 18, 7))
+>pt : Symbol(pt, Decl(tluaIndexKeyObject.tlua, 12, 7))
+
+local s2: string = byFunction[fn];
+>s2 : Symbol(s2, Decl(tluaIndexKeyObject.tlua, 25, 5))
+>byFunction : Symbol(byFunction, Decl(tluaIndexKeyObject.tlua, 19, 7))
+>fn : Symbol(fn, Decl(tluaIndexKeyObject.tlua, 13, 7))
+
+local s3: string = byThread[th];
+>s3 : Symbol(s3, Decl(tluaIndexKeyObject.tlua, 26, 5))
+>byThread : Symbol(byThread, Decl(tluaIndexKeyObject.tlua, 20, 7))
+>th : Symbol(th, Decl(tluaIndexKeyObject.tlua, 14, 7))
+
+local s4: string = byUserdata[ud];
+>s4 : Symbol(s4, Decl(tluaIndexKeyObject.tlua, 27, 5))
+>byUserdata : Symbol(byUserdata, Decl(tluaIndexKeyObject.tlua, 21, 7))
+>ud : Symbol(ud, Decl(tluaIndexKeyObject.tlua, 15, 7))
+
+local s5: string = byCData[cd];
+>s5 : Symbol(s5, Decl(tluaIndexKeyObject.tlua, 28, 5))
+>byCData : Symbol(byCData, Decl(tluaIndexKeyObject.tlua, 22, 7))
+>cd : Symbol(cd, Decl(tluaIndexKeyObject.tlua, 16, 7))
+
+// The key domains do not bleed into one another: a table key is not a string key.
+local bad1: string = byTable["x"];
+>bad1 : Symbol(bad1, Decl(tluaIndexKeyObject.tlua, 31, 5))
+>byTable : Symbol(byTable, Decl(tluaIndexKeyObject.tlua, 18, 7))
+
+local bad2: string = byThread[pt];
+>bad2 : Symbol(bad2, Decl(tluaIndexKeyObject.tlua, 32, 5))
+>byThread : Symbol(byThread, Decl(tluaIndexKeyObject.tlua, 20, 7))
+>pt : Symbol(pt, Decl(tluaIndexKeyObject.tlua, 12, 7))
+
+// keyof reports the object key.
+type K = keyof ByTable;
+>K : Symbol(K, Decl(tluaIndexKeyObject.tlua, 32, 34))
+>ByTable : Symbol(ByTable, Decl(tluaIndexKeyObject.tlua, 4, 40))
+
+local k: K = pt;
+>k : Symbol(k, Decl(tluaIndexKeyObject.tlua, 36, 5))
+>K : Symbol(K, Decl(tluaIndexKeyObject.tlua, 32, 34))
+>pt : Symbol(pt, Decl(tluaIndexKeyObject.tlua, 12, 7))
+

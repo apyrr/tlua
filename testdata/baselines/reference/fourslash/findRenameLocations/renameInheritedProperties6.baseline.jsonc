@@ -1,0 +1,23 @@
+// === findRenameLocations ===
+// === /renameInheritedProperties6.tlua ===
+// interface C extends D {
+//     propD: number;
+// }
+// interface D extends C {
+//     /*RENAME*/[|propCRENAME|]: number;
+// }
+// local d: D;
+// d.[|propCRENAME|];
+
+
+
+// === findRenameLocations ===
+// === /renameInheritedProperties6.tlua ===
+// interface C extends D {
+//     propD: number;
+// }
+// interface D extends C {
+//     [|propCRENAME|]: number;
+// }
+// local d: D;
+// d./*RENAME*/[|propCRENAME|];

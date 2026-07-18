@@ -1,0 +1,40 @@
+//// [tests/cases/compiler/tluaVarargUnused.tlua] ////
+
+=== tluaVarargUnused.tlua ===
+// A vararg is never an unused parameter. It has no name, so there is no `_`
+// prefix to opt out with and no zero-width span worth reporting on, and
+// accepting-and-ignoring `...` is ordinary Lua. Both of these are clean.
+function usesVararg(...: number): (number | nil)
+>usesVararg : Symbol(usesVararg, Decl(tluaVarargUnused.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargUnused.tlua, 3, 20))
+
+  local first = ...;
+>first : Symbol(first, Decl(tluaVarargUnused.tlua, 4, 7))
+
+  return first;
+>first : Symbol(first, Decl(tluaVarargUnused.tlua, 4, 7))
+
+end
+
+function ignoresVararg(...: number): void
+>ignoresVararg : Symbol(ignoresVararg, Decl(tluaVarargUnused.tlua, 6, 3))
+> : Symbol((Missing), Decl(tluaVarargUnused.tlua, 8, 23))
+
+end
+
+// Ordinary parameters are still reported.
+function unusedOrdinary(a: number, ...: number): void
+>unusedOrdinary : Symbol(unusedOrdinary, Decl(tluaVarargUnused.tlua, 9, 3))
+>a : Symbol(a, Decl(tluaVarargUnused.tlua, 12, 24))
+> : Symbol((Missing), Decl(tluaVarargUnused.tlua, 12, 34))
+
+end
+
+return { usesVararg = usesVararg, ignoresVararg = ignoresVararg, unusedOrdinary = unusedOrdinary };
+>usesVararg : Symbol(usesVararg, Decl(tluaVarargUnused.tlua, 15, 8))
+>usesVararg : Symbol(usesVararg, Decl(tluaVarargUnused.tlua, 0, 0))
+>ignoresVararg : Symbol(ignoresVararg, Decl(tluaVarargUnused.tlua, 15, 33))
+>ignoresVararg : Symbol(ignoresVararg, Decl(tluaVarargUnused.tlua, 6, 3))
+>unusedOrdinary : Symbol(unusedOrdinary, Decl(tluaVarargUnused.tlua, 15, 64))
+>unusedOrdinary : Symbol(unusedOrdinary, Decl(tluaVarargUnused.tlua, 9, 3))
+

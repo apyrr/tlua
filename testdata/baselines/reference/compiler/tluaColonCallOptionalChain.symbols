@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/tluaColonCallOptionalChain.tlua] ////
+
+=== tluaColonCallOptionalChain.tlua ===
+local W = { n = 1 };
+>W : Symbol(W, Decl(tluaColonCallOptionalChain.tlua, 0, 5))
+>n : Symbol(n, Decl(tluaColonCallOptionalChain.tlua, 0, 11))
+
+function W:bump(): number
+>W : Symbol(W, Decl(tluaColonCallOptionalChain.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallOptionalChain.tlua, 0, 20))
+>: : Symbol(:, Decl(tluaColonCallOptionalChain.tlua, 2, 10))
+>W : Symbol(W, Decl(tluaColonCallOptionalChain.tlua, 0, 5))
+
+  return self.n;
+>self.n : Symbol(n, Decl(tluaColonCallOptionalChain.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallOptionalChain.tlua, 2, 10))
+>n : Symbol(n, Decl(tluaColonCallOptionalChain.tlua, 0, 11))
+
+end
+
+local maybe: { inner: typeof W } | nil = { inner = W };
+>maybe : Symbol(maybe, Decl(tluaColonCallOptionalChain.tlua, 6, 5))
+>inner : Symbol(inner, Decl(tluaColonCallOptionalChain.tlua, 6, 14))
+>W : Symbol(W, Decl(tluaColonCallOptionalChain.tlua, 0, 5))
+>inner : Symbol(inner, Decl(tluaColonCallOptionalChain.tlua, 6, 42))
+>W : Symbol(W, Decl(tluaColonCallOptionalChain.tlua, 0, 5))
+
+// The `?.` guard narrows the receiver, so the implicit first argument is not
+// nil — and the downleveled chain keeps the colon on the call segment.
+local y = maybe?.inner:bump();
+>y : Symbol(y, Decl(tluaColonCallOptionalChain.tlua, 10, 5))
+>maybe?.inner:bump : Symbol(bump, Decl(tluaColonCallOptionalChain.tlua, 0, 20))
+>maybe?.inner : Symbol(inner, Decl(tluaColonCallOptionalChain.tlua, 6, 14))
+>maybe : Symbol(maybe, Decl(tluaColonCallOptionalChain.tlua, 6, 5))
+>inner : Symbol(inner, Decl(tluaColonCallOptionalChain.tlua, 6, 14))
+>bump : Symbol(bump, Decl(tluaColonCallOptionalChain.tlua, 0, 20))
+

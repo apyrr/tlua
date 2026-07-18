@@ -1,0 +1,30 @@
+//// [tests/cases/compiler/tluaTableSyntaxErrors.tlua] ////
+
+=== tluaTableSyntaxErrors.tlua ===
+// Missing values: natural expression-expected errors.
+local a = { x = };
+>a : Symbol(a, Decl(tluaTableSyntaxErrors.tlua, 1, 5))
+>x : Symbol(x, Decl(tluaTableSyntaxErrors.tlua, 1, 11))
+
+local b = { ["k"] = };
+>b : Symbol(b, Decl(tluaTableSyntaxErrors.tlua, 2, 5))
+>["k"] : Symbol(["k"], Decl(tluaTableSyntaxErrors.tlua, 2, 11))
+>"k" : Symbol(["k"], Decl(tluaTableSyntaxErrors.tlua, 2, 11))
+
+// Literal string/number keys must use the bracket form (`["s"] = 1`,
+// `[1] = 2`): a bare string/number key is a natural recovery error.
+local c = { "s" = 1 };
+>c : Symbol(c, Decl(tluaTableSyntaxErrors.tlua, 6, 5))
+
+local d = { 1 = 2 };
+>d : Symbol(d, Decl(tluaTableSyntaxErrors.tlua, 7, 5))
+
+// Stray separators: natural recovery errors.
+local e = { ; };
+>e : Symbol(e, Decl(tluaTableSyntaxErrors.tlua, 10, 5))
+
+local f = { g = 1;; h = 2 };
+>f : Symbol(f, Decl(tluaTableSyntaxErrors.tlua, 11, 5))
+>g : Symbol(g, Decl(tluaTableSyntaxErrors.tlua, 11, 11))
+>h : Symbol(h, Decl(tluaTableSyntaxErrors.tlua, 11, 19))
+

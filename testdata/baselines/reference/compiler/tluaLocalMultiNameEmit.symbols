@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/tluaLocalMultiNameEmit.tlua] ////
+
+=== tluaLocalMultiNameEmit.tlua ===
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaLocalMultiNameEmit.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+local a, b = pair();
+>a : Symbol(a, Decl(tluaLocalMultiNameEmit.tlua, 4, 5))
+>b : Symbol(b, Decl(tluaLocalMultiNameEmit.tlua, 4, 8))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameEmit.tlua, 0, 0))
+
+local c, d = 1, "x";
+>c : Symbol(c, Decl(tluaLocalMultiNameEmit.tlua, 5, 5))
+>d : Symbol(d, Decl(tluaLocalMultiNameEmit.tlua, 5, 8))
+
+local e, f, g = pair(), true;
+>e : Symbol(e, Decl(tluaLocalMultiNameEmit.tlua, 6, 5))
+>f : Symbol(f, Decl(tluaLocalMultiNameEmit.tlua, 6, 8))
+>g : Symbol(g, Decl(tluaLocalMultiNameEmit.tlua, 6, 11))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameEmit.tlua, 0, 0))
+
+local h, i;
+>h : Symbol(h, Decl(tluaLocalMultiNameEmit.tlua, 7, 5))
+>i : Symbol(i, Decl(tluaLocalMultiNameEmit.tlua, 7, 8))
+
+local j: number, k: string = pair();
+>j : Symbol(j, Decl(tluaLocalMultiNameEmit.tlua, 8, 5))
+>k : Symbol(k, Decl(tluaLocalMultiNameEmit.tlua, 8, 16))
+>pair : Symbol(pair, Decl(tluaLocalMultiNameEmit.tlua, 0, 0))
+
+// A parenthesized comma expression keeps its parens (it is one value).
+local l, m = (0, 1), 2;
+>l : Symbol(l, Decl(tluaLocalMultiNameEmit.tlua, 11, 5))
+>m : Symbol(m, Decl(tluaLocalMultiNameEmit.tlua, 11, 8))
+

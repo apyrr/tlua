@@ -1,0 +1,12 @@
+b.tlua(1,1): error TS2304: Cannot find name 'chunkValue'.
+
+
+==== a.tlua (0 errors) ====
+    local chunkValue = 1;
+    chunkValue;
+    
+==== b.tlua (1 errors) ====
+    chunkValue;
+    ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'chunkValue'.
+    

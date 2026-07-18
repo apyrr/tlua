@@ -1,0 +1,16 @@
+expandoFunctionAsAssertion.tlua(5,15): error TS2304: Cannot find name 'Error'.
+
+
+==== expandoFunctionAsAssertion.tlua (1 errors) ====
+    function example() {}
+    
+    example.isFoo = function(value: string): asserts value is 'foo'
+      if (value ~= 'foo') {
+        throw new Error('Not foo');
+                  ~~~~~
+!!! error TS2304: Cannot find name 'Error'.
+      }
+    end;
+    
+    example.isFoo('test');
+    

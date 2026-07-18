@@ -1,0 +1,18 @@
+jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx(5,19): error TS2558: Expected 0 type arguments, but got 1.
+jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx(8,5): error TS2558: Expected 0 type arguments, but got 1.
+
+
+==== jsxIntrinsicElementsTypeArgumentErrorSkipsTrivia.tsx (2 errors) ====
+    interface JsxElement {}
+    interface JsxIntrinsicElements { div: { children?: any }; }
+    declare React: { createElement: any };
+    
+    local a = <div<   number> />;
+                      ~~~~~~
+!!! error TS2558: Expected 0 type arguments, but got 1.
+    
+    local b = <div<
+        number> />;
+        ~~~~~~
+!!! error TS2558: Expected 0 type arguments, but got 1.
+    

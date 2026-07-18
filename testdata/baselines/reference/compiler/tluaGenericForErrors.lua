@@ -1,0 +1,74 @@
+//// [tests/cases/compiler/tluaGenericForErrors.tlua] ////
+
+//// [tluaGenericForErrors.tlua]
+// Value 1 must be callable — reported once.
+function notCallable(): void
+  for k in 42 do
+    k;
+  end
+end
+
+// An `any` iterator types the names as any, silently.
+declare anything: any;
+
+function anyIterator(): void
+  for k, v in anything do
+    k;
+    v;
+  end
+end
+
+// An annotation that rejects the positional value.
+declare function iter(t: string[], i: number): (number, string?);
+
+function badAnnotation(t: string[]): void
+  for k: boolean in iter do
+    k;
+  end
+end
+
+// Missing `in`.
+function missingIn(): void
+  for k of do
+  end
+end
+
+// Loop names are ordinary block-scoped variables: using one in its own
+// header is a use-before-declaration error (like numeric-for).
+function selfReference(): void
+  for k: string in k do
+    k;
+  end
+end
+
+
+//// [tluaGenericForErrors.lua]
+-- Value 1 must be callable — reported once.
+function notCallable()
+    for k in 42 do
+        k;
+    end
+end
+function anyIterator()
+    for k, v in anything do
+        k;
+        v;
+    end
+end
+function badAnnotation(t)
+    for k in iter do
+        k;
+    end
+end
+-- Missing `in`.
+function missingIn()
+    for k in of do
+    end
+end
+-- Loop names are ordinary block-scoped variables: using one in its own
+-- header is a use-before-declaration error (like numeric-for).
+function selfReference()
+    for k in k do
+        k;
+    end
+end

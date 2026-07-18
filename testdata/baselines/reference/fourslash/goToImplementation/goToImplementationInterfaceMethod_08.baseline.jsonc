@@ -1,0 +1,12 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_08.tlua ===
+// --- (line: 6) skipped ---
+// }
+// 
+// class Bar extends SuperBar {
+//    whatever() { this.he/*GOTO IMPL*/llo(); }
+// }
+// 
+// class SubBar extends Bar {
+//    hello() {}
+// }

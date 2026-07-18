@@ -1,0 +1,111 @@
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// local n = 43;
+// 
+// class foo {
+//     /*FIND ALL REFS*/static n = '';
+// 
+//     public bar() {
+//         foo.n = "'";
+// --- (line: 8) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// local [|n|] = 43;
+// 
+// class foo {
+//     static /*FIND ALL REFS*/[|n|] = '';
+// 
+//     public bar() {
+//         foo.n = "'";
+// --- (line: 8) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// --- (line: 3) skipped ---
+//     static n = '';
+// 
+//     public bar() {
+//         foo./*FIND ALL REFS*/n = "'";
+//         if(foo.n) {
+//             local x = foo.n;
+//         }
+// --- (line: 11) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// --- (line: 4) skipped ---
+// 
+//     public bar() {
+//         foo.n = "'";
+//         if(foo./*FIND ALL REFS*/n) {
+//             local x = foo.n;
+//         }
+//     }
+// --- (line: 12) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// --- (line: 5) skipped ---
+//     public bar() {
+//         foo.n = "'";
+//         if(foo.n) {
+//             local x = foo./*FIND ALL REFS*/n;
+//         }
+//     }
+// }
+// --- (line: 13) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// --- (line: 11) skipped ---
+// }
+// 
+// class foo2 {
+//     private x = foo./*FIND ALL REFS*/n;
+//     constructor() {
+//         foo.n = x;
+//     }
+// --- (line: 19) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// --- (line: 13) skipped ---
+// class foo2 {
+//     private x = foo.n;
+//     constructor() {
+//         foo./*FIND ALL REFS*/n = x;
+//     }
+// 
+//     function b(n) {
+// --- (line: 21) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_1.tlua ===
+// --- (line: 17) skipped ---
+//     }
+// 
+//     function b(n) {
+//         n = foo./*FIND ALL REFS*/n;
+//     }
+// }
+
+
+
+// === findAllReferences ===
+// === /referencesOnStatic_2.tlua ===
+// local q = foo./*FIND ALL REFS*/n;

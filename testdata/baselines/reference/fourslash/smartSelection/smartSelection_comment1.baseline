@@ -1,0 +1,6 @@
+// === Smart Selection ===
+local a = 1; ///**/comment content
+
+               comment content
+             //comment content
+local a = 1; //comment content

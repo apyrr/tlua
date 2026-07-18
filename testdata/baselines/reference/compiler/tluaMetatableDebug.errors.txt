@@ -1,0 +1,40 @@
+tluaMetatableDebug.tlua(13,23): error TS2339: Property 'a' does not exist on type '{ n: number; b: string; }'.
+tluaMetatableDebug.tlua(18,21): error TS2339: Property 'c' does not exist on type 'object'.
+tluaMetatableDebug.tlua(26,25): error TS2339: Property 'base' does not exist on type '{ y: number; swapped: string; }'.
+
+
+==== tluaMetatableDebug.tlua (3 errors) ====
+    // The debug library bypasses __metatable protection. debug.getmetatable returns the real
+    // metatable, and debug.setmetatable replaces it, both regardless of protection.
+    
+    local guarded = setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "locked" });
+    
+    // debug.getmetatable sees the real metatable, not the sentinel.
+    local real = debug.getmetatable(guarded);
+    local ra: number = real.__index.a;
+    
+    // debug.setmetatable replaces a protected pairing without error.
+    local swapped = debug.setmetatable(guarded, { __index = { b = "s" } });
+    local sb: string = swapped.b;
+    local goneA = swapped.a;
+                          ~
+!!! error TS2339: Property 'a' does not exist on type '{ n: number; b: string; }'.
+    
+    // A member call through anything but the debug global is not the protocol.
+    local fake = { setmetatable = function(v: object, mt: object): object return v; end };
+    local aliased = fake.setmetatable(guarded, { __index = { c = 1 } });
+    local noC = aliased.c;
+                        ~
+!!! error TS2339: Property 'c' does not exist on type 'object'.
+    
+    // The statement form bypasses protection too: debug.setmetatable narrows past a protected
+    // antecedent where the global setmetatable would refuse.
+    function stmtBypass(): void
+      local prot = setmetatable({ y = 1 }, { __index = { base = 1 }, __metatable = "locked" });
+      debug.setmetatable(prot, { __index = { swapped = "s" } });
+      local s: string = prot.swapped;
+      local goneBase = prot.base;
+                            ~~~~
+!!! error TS2339: Property 'base' does not exist on type '{ y: number; swapped: string; }'.
+    end
+    

@@ -1,0 +1,18 @@
+// === goToDefinition ===
+// === /Foo.lua ===
+// --- (line: 5) skipped ---
+//    method() { return this.alpha; }
+// }
+// local x = new Foo();
+// x.alpha/*GOTO DEF*/;
+// x.beta;
+
+
+
+// === goToDefinition ===
+// === /Foo.lua ===
+// --- (line: 6) skipped ---
+// }
+// local x = new Foo();
+// x.alpha;
+// x.beta/*GOTO DEF*/;

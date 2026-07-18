@@ -1,0 +1,115 @@
+// === SignatureHelp ===
+=== /luaColonCallSignatureHelp.tlua ===
+// local T = { n = 0 };
+// function T:add(x: number, y: number): number
+//   return self.n + x + y;
+// end
+// T:add(1, 2);
+//       ^
+// | ----------------------------------------------------------------------
+// | add(self: { n: number; add(self: ..., **x: number**, y: number): number; }, x: number, y: number): number
+// | ----------------------------------------------------------------------
+//          ^
+// | ----------------------------------------------------------------------
+// | add(self: { n: number; add(self: ..., x: number, **y: number**): number; }, x: number, y: number): number
+// | ----------------------------------------------------------------------
+// T.add(T, 3, 4);
+//          ^
+// | ----------------------------------------------------------------------
+// | add(self: { n: number; add(self: ..., **x: number**, y: number): number; }, x: number, y: number): number
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 101,
+      "LSPosition": {
+        "line": 4,
+        "character": 6
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "add(self: { n: number; add(self: ..., x: number, y: number): number; }, x: number, y: number): number",
+          "parameters": [
+            {
+              "label": "self: { n: number; add(self: ..., x: number, y: number): number; }"
+            },
+            {
+              "label": "x: number"
+            },
+            {
+              "label": "y: number"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 104,
+      "LSPosition": {
+        "line": 4,
+        "character": 9
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "add(self: { n: number; add(self: ..., x: number, y: number): number; }, x: number, y: number): number",
+          "parameters": [
+            {
+              "label": "self: { n: number; add(self: ..., x: number, y: number): number; }"
+            },
+            {
+              "label": "x: number"
+            },
+            {
+              "label": "y: number"
+            }
+          ],
+          "activeParameter": 2
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 117,
+      "LSPosition": {
+        "line": 5,
+        "character": 9
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "add(self: { n: number; add(self: ..., x: number, y: number): number; }, x: number, y: number): number",
+          "parameters": [
+            {
+              "label": "self: { n: number; add(self: ..., x: number, y: number): number; }"
+            },
+            {
+              "label": "x: number"
+            },
+            {
+              "label": "y: number"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]

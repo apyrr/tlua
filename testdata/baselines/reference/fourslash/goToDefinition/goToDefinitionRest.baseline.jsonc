@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /goToDefinitionRest.tlua ===
+// --- (line: 4) skipped ---
+// }
+// local t: Gen;
+// local { x, ...rest } = t;
+// rest./*GOTO DEF*/parent;

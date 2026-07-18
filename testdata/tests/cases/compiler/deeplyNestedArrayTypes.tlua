@@ -1,0 +1,33 @@
+// @noEmit: true
+
+// https://github.com/microsoft/typescript-go/issues/3426
+
+type AOuter = {
+    inners: AInner[];
+}
+type AInner = {
+    mids: AMid[];
+}
+type AMid = {
+    leaves: ALeaf[];
+}
+type ALeaf = {
+    id: string;
+}
+
+type BOuter = {
+    inners: BInner[];
+}
+type BInner = {
+    mids: BMid[];
+}
+type BMid = {
+    leaves: BLeaf[];
+}
+type BLeaf = {
+    id: number;
+}
+
+function test(a: AOuter, b: BOuter) {
+    a = b
+}

@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/tluaGotoErrors.tlua] ////
+
+=== tluaGotoErrors.tlua ===
+// Error: no such label anywhere.
+function missing(): void
+>missing : Symbol(missing, Decl(tluaGotoErrors.tlua, 0, 0))
+
+    goto nowhere
+end
+
+// Error: a label in a nested block is not visible outside it.
+function nestedNotVisible(): void
+>nestedNotVisible : Symbol(nestedNotVisible, Decl(tluaGotoErrors.tlua, 3, 3))
+
+    goto inner
+    do
+        ::inner::
+    end
+end
+
+// Error: a label never crosses a function boundary, so it is simply not visible.
+function crossFunction(): void
+>crossFunction : Symbol(crossFunction, Decl(tluaGotoErrors.tlua, 11, 3))
+
+    ::here::
+    local function inner(): void
+>inner : Symbol(inner, Decl(tluaGotoErrors.tlua, 15, 12))
+
+        goto here
+    end
+    inner();
+>inner : Symbol(inner, Decl(tluaGotoErrors.tlua, 15, 12))
+
+end
+
+// Error: two labels of the same name in one block.
+function duplicate(): void
+>duplicate : Symbol(duplicate, Decl(tluaGotoErrors.tlua, 20, 3))
+
+    ::a::
+    ::a::
+    goto a
+end
+
+// Accepted: a nested block may shadow an enclosing label.
+function shadowIsFine(): void
+>shadowIsFine : Symbol(shadowIsFine, Decl(tluaGotoErrors.tlua, 27, 3))
+
+    ::a::
+    do
+        ::a::
+        goto a
+    end
+    goto a
+end
+

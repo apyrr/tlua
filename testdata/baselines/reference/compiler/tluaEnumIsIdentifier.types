@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/tluaEnumIsIdentifier.tlua] ////
+
+=== tluaEnumIsIdentifier.tlua ===
+local enum = 1
+>enum : number
+>1 : 1
+
+enum = enum + 1
+>enum = enum + 1 : number
+>enum : number
+>enum + 1 : number
+>enum : number
+>1 : 1
+
+local value: number = enum
+>value : number
+>enum : number
+

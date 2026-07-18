@@ -1,0 +1,47 @@
+// === findRenameLocations ===
+// === /Foo.lua ===
+// class Foo {
+//    constructor() {
+//        this./*RENAME*/union = 'foo';
+//        this.union = 100;
+//    }
+//    method() { return this.union; }
+// --- (line: 7) skipped ---
+
+
+
+// === findRenameLocations ===
+// === /Foo.lua ===
+// class Foo {
+//    constructor() {
+//        this.union = 'foo';
+//        this./*RENAME*/union = 100;
+//    }
+//    method() { return this.union; }
+// }
+// local x = new Foo();
+// x.union;
+
+
+
+// === findRenameLocations ===
+// === /Foo.lua ===
+// class Foo {
+//    constructor() {
+//        this.union = 'foo';
+//        this.union = 100;
+//    }
+//    method() { return this./*RENAME*/union; }
+// }
+// local x = new Foo();
+// x.union;
+
+
+
+// === findRenameLocations ===
+// === /Foo.lua ===
+// --- (line: 5) skipped ---
+//    method() { return this.union; }
+// }
+// local x = new Foo();
+// x./*RENAME*/union;

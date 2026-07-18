@@ -1,0 +1,49 @@
+// === QuickInfo ===
+=== /destructuredIntersectionJSDocVariable.tlua ===
+// 
+// type X = {
+//     /** Description of a. */
+//     a: {}
+// }
+// 
+// type Y = X & { a: {} }
+// 
+// declare y: Y;
+// local { a } = y;
+//         ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 100,
+      "LSPosition": {
+        "line": 9,
+        "character": 8
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 8
+        },
+        "end": {
+          "line": 9,
+          "character": 9
+        }
+      }
+    }
+  }
+]

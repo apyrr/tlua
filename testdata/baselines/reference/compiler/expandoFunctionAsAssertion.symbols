@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/expandoFunctionAsAssertion.tlua] ////
+
+=== expandoFunctionAsAssertion.tlua ===
+function example() {}
+>example : Symbol(example, Decl(expandoFunctionAsAssertion.tlua, 0, 0))
+
+example.isFoo = function(value: string): asserts value is 'foo'
+>example.isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+>example : Symbol(example, Decl(expandoFunctionAsAssertion.tlua, 0, 0))
+>isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+>value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
+>value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
+
+  if (value ~= 'foo') {
+>value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
+
+    throw new Error('Not foo');
+  }
+end;
+
+example.isFoo('test');
+>example.isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+>example : Symbol(example, Decl(expandoFunctionAsAssertion.tlua, 0, 0))
+>isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+

@@ -1,0 +1,21 @@
+// === SignatureHelp ===
+=== /signatureHelpWithUnknownVS.tlua ===
+// eval(\
+//       ^
+// | ----------------------------------------------------------------------
+// | No signaturehelp at /*1*/.
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 6,
+      "LSPosition": {
+        "line": 0,
+        "character": 6
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": null
+  }
+]

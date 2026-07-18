@@ -1,0 +1,112 @@
+// @strict: true
+// @lib: luajit
+// @noEmit: true
+
+local dateText: string = "2026-07";
+local d, m = dateText.match("(%d+)-(%d+)");
+local day: string | nil = d;
+local month: string | nil = m;
+
+local xText: string = "x";
+local position = xText.match("()x");
+local positionOrNil: number | nil = position;
+
+local abcText: string = "abc";
+local whole, wholeExtra = abcText.match("%a+");
+local wholeOrNil: string | nil = whole;
+local noWholeExtra: nil = wholeExtra;
+
+local nsCapture, nsPosition = string.match("a", "(%a)()");
+local nsCaptureType: string | nil = nsCapture;
+local nsPositionType: number | nil = nsPosition;
+
+local itemText: string = "item=42";
+local first, last, capture = itemText.find("=(%d+)");
+local firstType: number | nil = first;
+local lastType: number | nil = last;
+local findCaptureType: string | nil = capture;
+
+local nsFirst, nsLast, nsCaptureExtra = string.find("abc", "%a+");
+local nsFirstType: number | nil = nsFirst;
+local nsLastType: number | nil = nsLast;
+local noFindWholeMatch: nil = nsCaptureExtra;
+
+local numberText: string = "42";
+local plainFirst, plainLast, plainCapture = numberText.find("(%d+)", 1, true);
+local plainFirstType: number | nil = plainFirst;
+local plainLastType: number | nil = plainLast;
+local noPlainCapture: nil = plainCapture;
+
+local dynamicPlainPattern: string = "(%d+)";
+local dynamicFirst, dynamicLast, dynamicCapture = string.find("42", dynamicPlainPattern, 1, true);
+local dynamicFirstType: number | nil = dynamicFirst;
+local dynamicLastType: number | nil = dynamicLast;
+local noDynamicCapture: nil = dynamicCapture;
+
+declare maybePlain: boolean;
+local maybeFirst, maybeLast, maybeCapture = string.find("42", "(%d+)", 1, maybePlain);
+local maybeFirstType: number | nil = maybeFirst;
+local maybeLastType: number | nil = maybeLast;
+local maybeCaptureType: string | nil = maybeCapture;
+
+// A plain flag only known at runtime declines refinement entirely: a position
+// capture would refine to number | nil, but the declared ...string tail wins.
+local mpFirst, mpLast, mpPosition = string.find("42", "()4", 1, maybePlain);
+local mpPositionType: string | nil = mpPosition;
+
+local pairText: string = "a=1";
+for key, value in pairText.gmatch("(%a+)=(%d+)") do
+  local keyType: string = key;
+  local valueType: string | nil = value;
+end
+
+for dynamicWord in pairText.gmatch(dynamicPlainPattern) do
+  local dynamicWordType: string = dynamicWord;
+end
+
+for word in string.gmatch("one two", "(%a+)") do
+  local wordType: string = word;
+end
+
+local dynamicPattern: string = "(%d+)";
+local fallbackFirst, fallbackSecond = string.match("42", dynamicPattern);
+local fallbackFirstType: string | nil = fallbackFirst;
+local fallbackSecondType: string | nil = fallbackSecond;
+
+local invalidFirst, invalidSecond = string.match("x", "(unclosed");
+local invalidFirstType: string | nil = invalidFirst;
+local invalidSecondType: string | nil = invalidSecond;
+
+local invalidMethodText: "x" = "x";
+local invalidMethod = invalidMethodText.match("(unclosed");
+
+local invalidSetFirst, invalidSetSecond = string.match("]", "[]");
+local invalidSetFirstType: string | nil = invalidSetFirst;
+local invalidSetSecondType: string | nil = invalidSetSecond;
+
+local parenText: string = "(";
+local setMatch, setCapture = parenText.match("[()]");
+local setMatchType: string | nil = setMatch;
+local noSetCapture: nil = setCapture;
+
+local balancedText: string = "(x)";
+local balancedMatch, balancedCapture = balancedText.match("%b()");
+local balancedMatchType: string | nil = balancedMatch;
+local noBalancedCapture: nil = balancedCapture;
+
+local stringAlias = string;
+local aliasFirst, aliasSecond, aliasThird = stringAlias.match("42", "(%d+)-?(%d*)");
+local aliasFirstType: string | nil = aliasFirst;
+local aliasSecondType: string | nil = aliasSecond;
+local aliasThirdType: string | nil = aliasThird;
+
+function shadowedStringPattern(): void
+  local string = {
+    match = function(value: string, pattern: string): boolean return value == pattern; end,
+  };
+  local shadowed: boolean = string.match("x", "(%a+)");
+end
+
+local replaced, replacementCount = xText.gsub("(.)", {});
+local replacedType: string = replaced;
+local replacementCountType: number = replacementCount;

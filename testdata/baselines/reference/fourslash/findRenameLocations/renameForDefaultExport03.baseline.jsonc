@@ -1,0 +1,102 @@
+// === findRenameLocations ===
+// === /renameForDefaultExport03.tlua ===
+// function /*RENAME*/[|fRENAME|]() {
+//     return 100;
+// }
+// 
+// export default [|fRENAME|];
+// 
+// local x: typeof [|fRENAME|];
+// 
+// local y = [|fRENAME|]();
+// 
+// /**
+//  *  Commenting f
+//  */
+// namespace [|fRENAME|] {
+//     local localValue = 100;
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameForDefaultExport03.tlua ===
+// function [|fRENAME|]() {
+//     return 100;
+// }
+// 
+// export default /*RENAME*/[|fRENAME|];
+// 
+// local x: typeof [|fRENAME|];
+// 
+// local y = [|fRENAME|]();
+// 
+// /**
+//  *  Commenting f
+//  */
+// namespace [|fRENAME|] {
+//     local localValue = 100;
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameForDefaultExport03.tlua ===
+// function [|fRENAME|]() {
+//     return 100;
+// }
+// 
+// export default [|fRENAME|];
+// 
+// local x: typeof /*RENAME*/[|fRENAME|];
+// 
+// local y = [|fRENAME|]();
+// 
+// /**
+//  *  Commenting f
+//  */
+// namespace [|fRENAME|] {
+//     local localValue = 100;
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameForDefaultExport03.tlua ===
+// function [|fRENAME|]() {
+//     return 100;
+// }
+// 
+// export default [|fRENAME|];
+// 
+// local x: typeof [|fRENAME|];
+// 
+// local y = /*RENAME*/[|fRENAME|]();
+// 
+// /**
+//  *  Commenting f
+//  */
+// namespace [|fRENAME|] {
+//     local localValue = 100;
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameForDefaultExport03.tlua ===
+// function [|fRENAME|]() {
+//     return 100;
+// }
+// 
+// export default [|fRENAME|];
+// 
+// local x: typeof [|fRENAME|];
+// 
+// local y = [|fRENAME|]();
+// 
+// /**
+//  *  Commenting f
+//  */
+// namespace /*RENAME*/[|fRENAME|] {
+//     local localValue = 100;
+// }

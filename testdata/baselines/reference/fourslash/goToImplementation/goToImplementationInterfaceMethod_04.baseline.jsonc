@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_04.tlua ===
+// --- (line: 14) skipped ---
+// }
+// 
+// function (x: SuperBar) {
+//     x.he/*GOTO IMPL*/llo()
+// }

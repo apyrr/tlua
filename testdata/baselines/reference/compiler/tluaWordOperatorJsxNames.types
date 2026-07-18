@@ -1,0 +1,88 @@
+//// [tests/cases/compiler/tluaWordOperatorJsxNames.tsx] ////
+
+=== tluaWordOperatorJsxNames.tsx ===
+// A JSX name is an IdentifierName position, so the word-spelled operators are
+// ordinary names there. Unlike the member name `t.and`, which must be written
+// `t["and"]`, a JSX tag or attribute name has no alternative spelling.
+
+interface JsxElement {}
+interface JsxIntrinsicElements {
+    // Member names, so the word operators are quoted here.
+    div: { "and"?: boolean; "or"?: boolean; "not"?: boolean; "not-dashed"?: number };
+>div : { "and"?: boolean; "or"?: boolean; "not"?: boolean; "not-dashed"?: number; }
+>"and" : boolean | nil
+>"or" : boolean | nil
+>"not" : boolean | nil
+>"not-dashed" : number | nil
+
+    "or": { "and"?: boolean };
+>"or" : { "and"?: boolean; }
+>"and" : boolean | nil
+}
+
+declare p: boolean;
+>p : boolean
+
+declare q: boolean;
+>q : boolean
+
+// Attribute names.
+local attrs = <div and={p} or={q} not={p} />;
+>attrs : JsxElement
+><div and={p} or={q} not={p} /> : JsxElement
+>div : any
+>and : boolean
+>p : boolean
+>or : boolean
+>q : boolean
+>not : boolean
+>p : boolean
+
+// A dash resumes the name after the word, so `not-dashed` is one attribute.
+local dashed = <div not-dashed={1} />;
+>dashed : JsxElement
+><div not-dashed={1} /> : JsxElement
+>div : any
+>not-dashed : number
+>1 : 1
+
+// Tag name, including the closing tag.
+local tag = <or and={p}></or>;
+>tag : JsxElement
+><or and={p}></or> : JsxElement
+>or : any
+>and : boolean
+>p : boolean
+>or : any
+
+// The operators still operate inside an expression container.
+local operators = <div and={p and q} or={p or q} not={not p} />;
+>operators : JsxElement
+><div and={p and q} or={p or q} not={not p} /> : JsxElement
+>div : any
+>and : boolean
+>p and q : boolean
+>p : boolean
+>q : boolean
+>or : boolean
+>p or q : boolean
+>p : boolean
+>q : boolean
+>not : boolean
+>not p : boolean
+>p : boolean
+
+// A word operator after a dot is a member name, so it stays an error, exactly
+// as `t.and` does.
+declare Ns: { "and": () => JsxElement };
+>Ns : { "and": () => JsxElement; }
+>"and" : () => JsxElement
+
+local dotted = <Ns.and />;
+>dotted : JsxElement
+><Ns.and /> : JsxElement
+>Ns. : any
+>Ns : { "and": () => JsxElement; }
+> : any
+>and : true
+

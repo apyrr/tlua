@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/tluaMultiReturnForwarding.tlua] ////
+
+=== tluaMultiReturnForwarding.tlua ===
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaMultiReturnForwarding.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+function variadic(): (number, ...string)
+>variadic : Symbol(variadic, Decl(tluaMultiReturnForwarding.tlua, 2, 3))
+
+  return 1, "a", "b";
+end
+
+function rest(a: number, ...: string): number
+>rest : Symbol(rest, Decl(tluaMultiReturnForwarding.tlua, 6, 3))
+>a : Symbol(a, Decl(tluaMultiReturnForwarding.tlua, 8, 14))
+> : Symbol((Missing), Decl(tluaMultiReturnForwarding.tlua, 8, 24))
+
+  return a;
+>a : Symbol(a, Decl(tluaMultiReturnForwarding.tlua, 8, 14))
+
+end
+
+function takes2(a: number, b: string): boolean
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnForwarding.tlua, 10, 3))
+>a : Symbol(a, Decl(tluaMultiReturnForwarding.tlua, 12, 16))
+>b : Symbol(b, Decl(tluaMultiReturnForwarding.tlua, 12, 26))
+
+  return true;
+end
+
+// A variadic tail forwards into a rest parameter.
+local restForward = rest(variadic());
+>restForward : Symbol(restForward, Decl(tluaMultiReturnForwarding.tlua, 17, 5))
+>rest : Symbol(rest, Decl(tluaMultiReturnForwarding.tlua, 6, 3))
+>variadic : Symbol(variadic, Decl(tluaMultiReturnForwarding.tlua, 2, 3))
+
+// An unbounded tail may produce no value for the parameter it reaches, so what
+// it passes there is `string | nil` -- which a required `string` rejects.
+local unbounded = takes2(variadic());
+>unbounded : Symbol(unbounded, Decl(tluaMultiReturnForwarding.tlua, 21, 5))
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnForwarding.tlua, 10, 3))
+>variadic : Symbol(variadic, Decl(tluaMultiReturnForwarding.tlua, 2, 3))
+
+// Packs forward through nested calls.
+function wrap(): (number, string)
+>wrap : Symbol(wrap, Decl(tluaMultiReturnForwarding.tlua, 21, 37))
+
+  return pair();
+>pair : Symbol(pair, Decl(tluaMultiReturnForwarding.tlua, 0, 0))
+
+end
+
+local nested = takes2(wrap());
+>nested : Symbol(nested, Decl(tluaMultiReturnForwarding.tlua, 28, 5))
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnForwarding.tlua, 10, 3))
+>wrap : Symbol(wrap, Decl(tluaMultiReturnForwarding.tlua, 21, 37))
+
+// The tail expands inside a call used as a value list tail.
+function both(): (boolean, number)
+>both : Symbol(both, Decl(tluaMultiReturnForwarding.tlua, 28, 30))
+
+  return takes2(pair()), 2;
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnForwarding.tlua, 10, 3))
+>pair : Symbol(pair, Decl(tluaMultiReturnForwarding.tlua, 0, 0))
+
+end
+

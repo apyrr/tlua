@@ -1,0 +1,323 @@
+//// [tests/cases/compiler/tluaMetatableStatement.tlua] ////
+
+=== tluaMetatableStatement.tlua ===
+// `setmetatable(t, mt);` as a statement -- how Lua actually attaches a metatable, mutating in
+// place -- narrows its table operand to the paired type, the way an assertion narrows its
+// argument.
+
+local Helpers = { describe = function(self: object): string return "d"; end };
+>Helpers : Symbol(Helpers, Decl(tluaMetatableStatement.tlua, 4, 5))
+>describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>self : Symbol(self, Decl(tluaMetatableStatement.tlua, 4, 38))
+
+local Counters = { count = function(self: object): number return 1; end };
+>Counters : Symbol(Counters, Decl(tluaMetatableStatement.tlua, 5, 5))
+>count : Symbol(count, Decl(tluaMetatableStatement.tlua, 5, 18))
+>self : Symbol(self, Decl(tluaMetatableStatement.tlua, 5, 36))
+
+local mt = { __index = Helpers };
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+>__index : Symbol(__index, Decl(tluaMetatableStatement.tlua, 6, 12))
+>Helpers : Symbol(Helpers, Decl(tluaMetatableStatement.tlua, 4, 5))
+
+local mt2 = { __index = Counters };
+>mt2 : Symbol(mt2, Decl(tluaMetatableStatement.tlua, 7, 5))
+>__index : Symbol(__index, Decl(tluaMetatableStatement.tlua, 7, 13))
+>Counters : Symbol(Counters, Decl(tluaMetatableStatement.tlua, 5, 5))
+
+function basic(): void
+>basic : Symbol(basic, Decl(tluaMetatableStatement.tlua, 7, 35))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 10, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 10, 13))
+
+  setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 10, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  local d: string = t.describe(t);  // the fallback is visible after the statement
+>d : Symbol(d, Decl(tluaMetatableStatement.tlua, 12, 7))
+>t.describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 10, 7))
+>describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 10, 7))
+
+  local n: number = t.n;            // the own member is intact
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 13, 7))
+>t.n : Symbol(n, Decl(tluaMetatableStatement.tlua, 10, 13))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 10, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 10, 13))
+
+end
+
+function replaced(): void
+>replaced : Symbol(replaced, Decl(tluaMetatableStatement.tlua, 14, 3))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 17, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 17, 13))
+
+  setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 17, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  setmetatable(t, mt2);             // replacement: unpair, then re-pair
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 17, 7))
+>mt2 : Symbol(mt2, Decl(tluaMetatableStatement.tlua, 7, 5))
+
+  local c: number = t.count(t);
+>c : Symbol(c, Decl(tluaMetatableStatement.tlua, 20, 7))
+>t.count : Symbol(count, Decl(tluaMetatableStatement.tlua, 5, 18))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 17, 7))
+>count : Symbol(count, Decl(tluaMetatableStatement.tlua, 5, 18))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 17, 7))
+
+  local gone = t.describe;          // the old pairing is gone
+>gone : Symbol(gone, Decl(tluaMetatableStatement.tlua, 21, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 17, 7))
+
+end
+
+function detached(): void
+>detached : Symbol(detached, Decl(tluaMetatableStatement.tlua, 22, 3))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 25, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 25, 13))
+
+  setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 25, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  setmetatable(t, nil);             // nil detaches
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 25, 7))
+
+  local gone = t.describe;
+>gone : Symbol(gone, Decl(tluaMetatableStatement.tlua, 28, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 25, 7))
+
+end
+
+function invalidated(): void
+>invalidated : Symbol(invalidated, Decl(tluaMetatableStatement.tlua, 29, 3))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 32, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 32, 13))
+
+  setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 32, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  t = { n = 2 };                    // an assignment kills the narrowing
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 32, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 34, 7))
+
+  local gone = t.describe;
+>gone : Symbol(gone, Decl(tluaMetatableStatement.tlua, 35, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 32, 7))
+
+end
+
+function inLoop(cond: boolean): void
+>inLoop : Symbol(inLoop, Decl(tluaMetatableStatement.tlua, 36, 3))
+>cond : Symbol(cond, Decl(tluaMetatableStatement.tlua, 38, 16))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 39, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 39, 13))
+
+  while cond do
+>cond : Symbol(cond, Decl(tluaMetatableStatement.tlua, 38, 16))
+
+    setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 39, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+    local d: string = t.describe(t);
+>d : Symbol(d, Decl(tluaMetatableStatement.tlua, 42, 9))
+>t.describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 39, 7))
+>describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 39, 7))
+
+  end
+  local gone = t.describe;          // the never-ran arm keeps t unpaired
+>gone : Symbol(gone, Decl(tluaMetatableStatement.tlua, 44, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 39, 7))
+
+end
+
+function inConditional(cond: boolean): void
+>inConditional : Symbol(inConditional, Decl(tluaMetatableStatement.tlua, 45, 3))
+>cond : Symbol(cond, Decl(tluaMetatableStatement.tlua, 47, 23))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 48, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 48, 13))
+
+  if cond then
+>cond : Symbol(cond, Decl(tluaMetatableStatement.tlua, 47, 23))
+
+    setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 48, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+    local d: string = t.describe(t);
+>d : Symbol(d, Decl(tluaMetatableStatement.tlua, 51, 9))
+>t.describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 48, 7))
+>describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 48, 7))
+
+  end
+  local gone = t.describe;          // the join keeps the unpaired arm
+>gone : Symbol(gone, Decl(tluaMetatableStatement.tlua, 53, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 48, 7))
+
+end
+
+function propertyTarget(): void
+>propertyTarget : Symbol(propertyTarget, Decl(tluaMetatableStatement.tlua, 54, 3))
+
+  local holder = { field = { n = 1 } };
+>holder : Symbol(holder, Decl(tluaMetatableStatement.tlua, 57, 7))
+>field : Symbol(field, Decl(tluaMetatableStatement.tlua, 57, 18))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 57, 28))
+
+  setmetatable(holder.field, mt);   // a property-access target narrows too
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>holder.field : Symbol(field, Decl(tluaMetatableStatement.tlua, 57, 18))
+>holder : Symbol(holder, Decl(tluaMetatableStatement.tlua, 57, 7))
+>field : Symbol(field, Decl(tluaMetatableStatement.tlua, 57, 18))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  local d: string = holder.field.describe(holder.field);
+>d : Symbol(d, Decl(tluaMetatableStatement.tlua, 59, 7))
+>holder.field.describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>holder.field : Symbol(field, Decl(tluaMetatableStatement.tlua, 57, 18))
+>holder : Symbol(holder, Decl(tluaMetatableStatement.tlua, 57, 7))
+>field : Symbol(field, Decl(tluaMetatableStatement.tlua, 57, 18))
+>describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>holder.field : Symbol(field, Decl(tluaMetatableStatement.tlua, 57, 18))
+>holder : Symbol(holder, Decl(tluaMetatableStatement.tlua, 57, 7))
+>field : Symbol(field, Decl(tluaMetatableStatement.tlua, 57, 18))
+
+end
+
+function shadowed(): void
+>shadowed : Symbol(shadowed, Decl(tluaMetatableStatement.tlua, 60, 3))
+
+  local setmetatable = function(value: object, metatable: object): object return value; end;
+>setmetatable : Symbol(setmetatable, Decl(tluaMetatableStatement.tlua, 63, 7))
+>value : Symbol(value, Decl(tluaMetatableStatement.tlua, 63, 32))
+>metatable : Symbol(metatable, Decl(tluaMetatableStatement.tlua, 63, 46))
+>value : Symbol(value, Decl(tluaMetatableStatement.tlua, 63, 32))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 64, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 64, 13))
+
+  setmetatable(t, mt);              // not the global, so no narrowing
+>setmetatable : Symbol(setmetatable, Decl(tluaMetatableStatement.tlua, 63, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 64, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  local gone = t.describe;
+>gone : Symbol(gone, Decl(tluaMetatableStatement.tlua, 66, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 64, 7))
+
+end
+
+function constCapture(): void
+>constCapture : Symbol(constCapture, Decl(tluaMetatableStatement.tlua, 67, 3))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 70, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 70, 13))
+
+  setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 70, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  local f = function(): void
+>f : Symbol(f, Decl(tluaMetatableStatement.tlua, 72, 7))
+
+    // t is never reassigned, so the narrowing reaches into the closure, as an assertion's does.
+    local d: string = t.describe(t);
+>d : Symbol(d, Decl(tluaMetatableStatement.tlua, 74, 9))
+>t.describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 70, 7))
+>describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 70, 7))
+
+  end;
+end
+
+function assignForm(): void
+>assignForm : Symbol(assignForm, Decl(tluaMetatableStatement.tlua, 76, 3))
+
+  local t = { n = 1 };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 79, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 79, 13))
+
+  local r = setmetatable(t, mt);    // the assign form types the result, not the argument
+>r : Symbol(r, Decl(tluaMetatableStatement.tlua, 80, 7))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 79, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  local rd: string = r.describe(r);
+>rd : Symbol(rd, Decl(tluaMetatableStatement.tlua, 81, 7))
+>r.describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>r : Symbol(r, Decl(tluaMetatableStatement.tlua, 80, 7))
+>describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
+>r : Symbol(r, Decl(tluaMetatableStatement.tlua, 80, 7))
+
+  local gone = t.describe;
+>gone : Symbol(gone, Decl(tluaMetatableStatement.tlua, 82, 7))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 79, 7))
+
+end
+
+// The metatable argument references the table through the same statement, inside a loop: the
+// re-entrancy must terminate (the inner query simply sees the unpaired table).
+function selfReferential(cond: boolean): void
+>selfReferential : Symbol(selfReferential, Decl(tluaMetatableStatement.tlua, 83, 3))
+>cond : Symbol(cond, Decl(tluaMetatableStatement.tlua, 87, 25))
+
+  local t = { n = 1, mt = mt };
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 88, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 88, 13))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 88, 20))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 6, 5))
+
+  while cond do
+>cond : Symbol(cond, Decl(tluaMetatableStatement.tlua, 87, 25))
+
+    setmetatable(t, t.mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 88, 7))
+>t.mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 88, 20))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 88, 7))
+>mt : Symbol(mt, Decl(tluaMetatableStatement.tlua, 88, 20))
+
+  end
+  local after: number = t.n;
+>after : Symbol(after, Decl(tluaMetatableStatement.tlua, 92, 7))
+>t.n : Symbol(n, Decl(tluaMetatableStatement.tlua, 88, 13))
+>t : Symbol(t, Decl(tluaMetatableStatement.tlua, 88, 7))
+>n : Symbol(n, Decl(tluaMetatableStatement.tlua, 88, 13))
+
+end
+

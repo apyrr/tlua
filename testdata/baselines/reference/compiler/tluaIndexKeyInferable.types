@@ -1,0 +1,112 @@
+//// [tests/cases/compiler/tluaIndexKeyInferable.tlua] ////
+
+=== tluaIndexKeyInferable.tlua ===
+// In Lua a record and an interface are both just tables, and iterating one with `pairs`
+// is idiomatic. TypeScript lets only object and type literals stand in for an index
+// signature they do not declare; tlua accepts every object type, or every
+// `Table<K, V>` signature in the standard library would reject named types forever.
+
+interface Point { x: number; y: number }
+>x : number
+>y : number
+
+type Named = { first: string; last: string };
+>Named : Named
+>first : string
+>last : string
+
+declare p: Point;
+>p : Point
+
+declare nm: Named;
+>nm : Named
+
+for k, v in pairs(p) do
+>k : keyof Point
+>v : number
+>pairs(p) : LuaPairsIterator<keyof Point, number>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>p : Point
+
+  local key: string = k;
+>key : string
+>k : keyof Point
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+for k, v in pairs(nm) do
+>k : keyof Named
+>v : string
+>pairs(nm) : LuaPairsIterator<keyof Named, string>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>nm : Named
+
+  local key: string = k;
+>key : string
+>k : keyof Named
+
+  local value: string = v;
+>value : string
+>v : string
+
+end
+
+// A literal, which TypeScript already allowed.
+local lit = { a = 1, b = 2 };
+>lit : { a: number; b: number; }
+>{ a = 1, b = 2 } : { a: number; b: number; }
+>a : number
+>1 : 1
+>b : number
+>2 : 2
+
+for k, v in pairs(lit) do
+>k : "a" | "b"
+>v : number
+>pairs(lit) : LuaPairsIterator<"a" | "b", number>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>lit : { a: number; b: number; }
+
+  local key: string = k;
+>key : string
+>k : "a" | "b"
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+local n: number | nil = rawget(p, "x");
+>n : number | nil
+>rawget(p, "x") : number | nil
+>rawget : <K, V>(value: Table<K, V>, index: K) => V | nil
+>p : Point
+>"x" : "x"
+
+local t: Table<string, number> = p;
+>t : Table<string, number>
+>p : Point
+
+// A function is not a table: it has no keys to iterate.
+declare fn: (a: number) => void;
+>fn : (a: number) => void
+>a : number
+
+local bad: Table<string, number> = fn;
+>bad : Table<string, number>
+>fn : (a: number) => void
+
+// A primitive is not a table either. Its apparent type is an interface -- `Number` --
+// whose members carry no table key at all, so nothing would be left to reject.
+declare num: number;
+>num : number
+
+local alsoBad: Table<string, number> = num;
+>alsoBad : Table<string, number>
+>num : number
+

@@ -1,0 +1,25 @@
+// @strict: true
+// @noEmit: true
+
+// keyof separates number keys from string keys.
+type T = { 1: number; "1": string; x: boolean };
+type K = keyof T; // 1 | "1" | "x"
+local k1: K = 1;
+local k2: K = "1";
+local k3: K = "x";
+
+// Indexed access distinguishes the namespaces too.
+type N = T[1];   // number
+type S = T["1"]; // string
+local n: N = 0;
+local s: S = "";
+
+// Multireturn packs are tuples under the hood; positional truncation still works.
+// (Tuple type syntax `[A, B]` is removed from tlua source, so packs are the
+// only way to spell a tuple now.)
+function pair(): (number, string)
+  return 1, "a";
+end
+local p: number = pair();
+
+local es = {k1, k2, k3, n, s, p};

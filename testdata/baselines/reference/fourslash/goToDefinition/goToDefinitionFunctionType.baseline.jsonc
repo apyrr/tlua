@@ -1,0 +1,33 @@
+// === goToDefinition ===
+// === /goToDefinitionFunctionType.tlua ===
+// <|local [|c|]: () => void;|>
+// /*GOTO DEF*/c();
+// function test(cb: () => void) {
+//     cb();
+// }
+// --- (line: 6) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionFunctionType.tlua ===
+// local c: () => void;
+// c();
+// function test(<|[|cb|]: () => void|>) {
+//     /*GOTO DEF*/cb();
+// }
+// class C {
+//     prop: () => void;
+// --- (line: 8) skipped ---
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionFunctionType.tlua ===
+// --- (line: 5) skipped ---
+// class C {
+//     prop: () => void;
+//     m() {
+//         this./*GOTO DEF*/prop();
+//     }
+// }

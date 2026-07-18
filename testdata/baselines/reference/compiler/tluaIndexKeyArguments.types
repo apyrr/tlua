@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/tluaIndexKeyArguments.tlua] ////
+
+=== tluaIndexKeyArguments.tlua ===
+// An EXPLICIT type argument for an index-key type parameter is re-validated
+// against the key domain (any non-nil type) at the reference -- the same rule
+// the declaration site enforces with 100039.
+
+interface Dict<K, V> {
+    [key: K]: V;
+>key : K
+}
+
+// Arguments outside the key domain error at the reference, not as a confusing
+// structural mismatch later.
+type BadNil = Dict<nil, number>;
+>BadNil : BadNil
+
+type BadUnknown = Dict<unknown, number>;
+>BadUnknown : BadUnknown
+
+type BadUnion = Dict<string | nil, number>;
+>BadUnion : BadUnion
+
+local bad: Table<nil, number> | nil;
+>bad : Table<nil, number> | nil
+
+// Legal arguments stay legal: a literal widens to its domain (the documented
+// precision loss), and a bare type parameter forwards untouched. `any` is
+// unchecked here as everywhere -- `Table<any, any>` is the only spelling of
+// "any table" under an invariant K, and LuaMetatable's __index uses it.
+type Narrow = Dict<"a", number>;
+>Narrow : Narrow
+
+type AnyKey = Dict<any, number>;
+>AnyKey : AnyKey
+
+local anyTable: Table<any, any> | nil;
+>anyTable : Table<any, any> | nil
+
+declare function get<K, V>(t: Table<K, V>, key: K): V;
+>get : <K, V>(t: Table<K, V>, key: K) => V
+>t : Table<K, V>
+>key : K
+
+declare function forward<K, V>(t: Dict<K, V>, key: K): V;
+>forward : <K, V>(t: Dict<K, V>, key: K) => V
+>t : Dict<K, V>
+>key : K
+
+local m: Table<string, number> | nil;
+>m : Table<string, number> | nil
+
+// A parameter that never keys an index is not gated.
+interface Box<T> {
+    value: T;
+>value : T
+}
+type NilBox = Box<nil>;
+>NilBox : NilBox
+
+// An alias whose target keys the index is gated too.
+type Assoc<K> = { [key: K]: boolean };
+>Assoc : Assoc<K>
+>key : K
+
+type BadAlias = Assoc<nil>;
+>BadAlias : BadAlias
+
+type GoodAlias = Assoc<boolean>;
+>GoodAlias : GoodAlias
+

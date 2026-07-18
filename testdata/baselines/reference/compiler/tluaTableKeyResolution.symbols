@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/tluaTableKeyResolution.tlua] ////
+
+=== tluaTableKeyResolution.tlua ===
+// The name in `x = 1` is a property key, not a value reference: no `x`
+// needs to be in scope.
+local a = { x = 1 };
+>a : Symbol(a, Decl(tluaTableKeyResolution.tlua, 2, 5))
+>x : Symbol(x, Decl(tluaTableKeyResolution.tlua, 2, 11))
+
+local ax = a.x;
+>ax : Symbol(ax, Decl(tluaTableKeyResolution.tlua, 3, 5))
+>a.x : Symbol(x, Decl(tluaTableKeyResolution.tlua, 2, 11))
+>a : Symbol(a, Decl(tluaTableKeyResolution.tlua, 2, 5))
+>x : Symbol(x, Decl(tluaTableKeyResolution.tlua, 2, 11))
+
+// A key spelling a local's name is not a *use* of that local.
+local unused = 1;
+>unused : Symbol(unused, Decl(tluaTableKeyResolution.tlua, 6, 5))
+
+local u = { unused = 2 };
+>u : Symbol(u, Decl(tluaTableKeyResolution.tlua, 7, 5))
+>unused : Symbol(unused, Decl(tluaTableKeyResolution.tlua, 7, 11))
+
+local uu = u.unused;
+>uu : Symbol(uu, Decl(tluaTableKeyResolution.tlua, 8, 5))
+>u.unused : Symbol(unused, Decl(tluaTableKeyResolution.tlua, 7, 11))
+>u : Symbol(u, Decl(tluaTableKeyResolution.tlua, 7, 5))
+>unused : Symbol(unused, Decl(tluaTableKeyResolution.tlua, 7, 11))
+
+// Duplicate keys error across spellings (identifier vs bracket string).
+local d1 = { dup = 1, dup = 2 };
+>d1 : Symbol(d1, Decl(tluaTableKeyResolution.tlua, 11, 5))
+>dup : Symbol(dup, Decl(tluaTableKeyResolution.tlua, 11, 12), Decl(tluaTableKeyResolution.tlua, 11, 21))
+>dup : Symbol(dup, Decl(tluaTableKeyResolution.tlua, 11, 12), Decl(tluaTableKeyResolution.tlua, 11, 21))
+
+local d2 = { dup = 1, ["dup"] = 2 };
+>d2 : Symbol(d2, Decl(tluaTableKeyResolution.tlua, 12, 5))
+>dup : Symbol(dup, Decl(tluaTableKeyResolution.tlua, 12, 12), Decl(tluaTableKeyResolution.tlua, 12, 21))
+>["dup"] : Symbol(dup, Decl(tluaTableKeyResolution.tlua, 12, 12), Decl(tluaTableKeyResolution.tlua, 12, 21))
+>"dup" : Symbol(dup, Decl(tluaTableKeyResolution.tlua, 12, 12), Decl(tluaTableKeyResolution.tlua, 12, 21))
+
+local d3 = { ["dup"] = 1, dup = 2 };
+>d3 : Symbol(d3, Decl(tluaTableKeyResolution.tlua, 13, 5))
+>["dup"] : Symbol(["dup"], Decl(tluaTableKeyResolution.tlua, 13, 12), Decl(tluaTableKeyResolution.tlua, 13, 25))
+>"dup" : Symbol(["dup"], Decl(tluaTableKeyResolution.tlua, 13, 12), Decl(tluaTableKeyResolution.tlua, 13, 25))
+>dup : Symbol(["dup"], Decl(tluaTableKeyResolution.tlua, 13, 12), Decl(tluaTableKeyResolution.tlua, 13, 25))
+
+local ds = {d1, d2, d3};
+>ds : Symbol(ds, Decl(tluaTableKeyResolution.tlua, 14, 5))
+
+return { ax = ax, uu = uu, ds = ds };
+>ax : Symbol(ax, Decl(tluaTableKeyResolution.tlua, 16, 8))
+>ax : Symbol(ax, Decl(tluaTableKeyResolution.tlua, 3, 5))
+>uu : Symbol(uu, Decl(tluaTableKeyResolution.tlua, 16, 17))
+>uu : Symbol(uu, Decl(tluaTableKeyResolution.tlua, 8, 5))
+>ds : Symbol(ds, Decl(tluaTableKeyResolution.tlua, 16, 26))
+>ds : Symbol(ds, Decl(tluaTableKeyResolution.tlua, 14, 5))
+

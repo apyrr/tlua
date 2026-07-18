@@ -1,0 +1,5 @@
+// === documentHighlights ===
+// === /Foo.lua ===
+// /*HIGHLIGHTS*/[|module|].exports = {
+// 
+// }

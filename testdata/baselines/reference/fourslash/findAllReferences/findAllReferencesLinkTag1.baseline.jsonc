@@ -1,0 +1,135 @@
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// class C {
+//     m/*FIND ALL REFS*/() { }
+//     n = 1
+//     static s() { }
+//     /**
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// class C {
+//     m() { }
+//     n/*FIND ALL REFS*/ = 1
+//     static s() { }
+//     /**
+//      * {@link m}
+// --- (line: 7) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// class C {
+//     m() { }
+//     n = 1
+//     static s/*FIND ALL REFS*/() { }
+//     /**
+//      * {@link m}
+//      * @see {m}
+// --- (line: 8) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// --- (line: 33) skipped ---
+// }
+// 
+// interface I {
+//     [|a|]/*FIND ALL REFS*/()
+//     b: 1
+//     /**
+//      * {@link [|a|]}
+//      * @see {[|a|]}
+//      * {@link I.[|a|]}
+//      * @see {I.[|a|]}
+//      * {@link I#a}
+//      * @see {I#a}
+//      */
+// --- (line: 47) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// --- (line: 34) skipped ---
+// 
+// interface I {
+//     a()
+//     [|b|]/*FIND ALL REFS*/: 1
+//     /**
+//      * {@link a}
+//      * @see {a}
+// --- (line: 42) skipped ---
+
+// --- (line: 45) skipped ---
+//      */
+//     c()
+//     /**
+//      * {@link [|b|]}
+//      * @see {[|b|]}
+//      * {@link I.[|b|]}
+//      * @see {I.[|b|]}
+//      */
+//     d()
+// }
+// --- (line: 56) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// --- (line: 54) skipped ---
+// }
+// 
+// function nestor() {
+//     /** {@link [|r2|]} */
+//     function ref() { }
+//     /** @see {[|r2|]} */
+//     function d3() { }
+//     function [|r2|]/*FIND ALL REFS*/() { }
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// class C/*FIND ALL REFS*/ {
+//     m() { }
+//     n = 1
+//     static s() { }
+// --- (line: 5) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllReferencesLinkTag1.tlua ===
+// --- (line: 32) skipped ---
+//     r() { }
+// }
+// 
+// interface [|I|]/*FIND ALL REFS*/ {
+//     a()
+//     b: 1
+//     /**
+//      * {@link a}
+//      * @see {a}
+//      * {@link [|I|].a}
+//      * @see {[|I|].a}
+//      * {@link [|I|]#a}
+//      * @see {[|I|]#a}
+//      */
+//     c()
+//     /**
+//      * {@link b}
+//      * @see {b}
+//      * {@link [|I|].b}
+//      * @see {[|I|].b}
+//      */
+//     d()
+// }
+// --- (line: 56) skipped ---

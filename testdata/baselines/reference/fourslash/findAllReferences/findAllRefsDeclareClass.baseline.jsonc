@@ -1,0 +1,13 @@
+// === findAllReferences ===
+// === /findAllRefsDeclareClass.tlua ===
+// /*FIND ALL REFS*/declare class C {
+//     static m(): void;
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsDeclareClass.tlua ===
+// declare class /*FIND ALL REFS*/C {
+//     static m(): void;
+// }

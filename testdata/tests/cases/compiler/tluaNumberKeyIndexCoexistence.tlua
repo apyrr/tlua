@@ -1,0 +1,23 @@
+// @strict: true
+// @noEmit: true
+
+// Number keys and string keys are disjoint, including for index signatures:
+// a string index signature serves only string-key access, not number-key
+// access (t[5] != t["5"]).
+interface U {
+  [k: string]: string | number;
+  lit: number;
+  1: string;
+}
+declare u: U;
+
+// The number key resolves to the number-keyed member.
+local u1: string = u[1];
+
+// A string-key access falls to the string index signature.
+local us: string | number = u["5"];
+
+// A number-key access is NOT covered by the string index signature: error.
+local un = u[5];
+
+local es = {u1, us, un};

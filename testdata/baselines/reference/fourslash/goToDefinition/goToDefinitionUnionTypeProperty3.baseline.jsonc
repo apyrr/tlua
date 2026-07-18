@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /goToDefinitionUnionTypeProperty3.tlua ===
+// --- (line: 4) skipped ---
+// local strings: string[];
+// local numbers: number[];
+// 
+// local x = (strings || numbers)./*GOTO DEF*/specialPop()

@@ -1,0 +1,220 @@
+//// [tests/cases/compiler/tluaStringFormat.tlua] ////
+
+=== tluaStringFormat.tlua ===
+string.format("%d/%s", 1, "x");
+>string.format("%d/%s", 1, "x") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%d/%s" : "%d/%s"
+>1 : 1
+>"x" : "x"
+
+string.format("%d", "notnum");
+>string.format("%d", "notnum") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%d" : "%d"
+>"notnum" : "notnum"
+
+string.format("%s", "x", "extra");
+>string.format("%s", "x", "extra") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%s" : "%s"
+>"x" : "x"
+>"extra" : "extra"
+
+string.format("%s %s", "only one");
+>string.format("%s %s", "only one") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%s %s" : "%s %s"
+>"only one" : "only one"
+
+function formatVarargTail(...: any): string
+>formatVarargTail : (...: any) => string
+> : any[]
+
+  return string.format("%s %s", ...);
+>string.format("%s %s", ...) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%s %s" : "%s %s"
+>... : any
+
+end
+
+string.format("%-08.3f is %q", 1.5, "s");
+>string.format("%-08.3f is %q", 1.5, "s") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%-08.3f is %q" : "%-08.3f is %q"
+>1.5 : 1.5
+>"s" : "s"
+
+string.format("100%% done");
+>string.format("100%% done") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"100%% done" : "100%% done"
+
+// %s takes anything: LuaJIT applies tostring (and __tostring) to the value.
+string.format("%s", 42);
+>string.format("%s", 42) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%s" : "%s"
+>42 : 42
+
+string.format("%s", {});
+>string.format("%s", {}) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%s" : "%s"
+>{} : {}
+
+// %q quotes a string; a number coerces, other values error at runtime.
+string.format("%q", 42);
+>string.format("%q", 42) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%q" : "%q"
+>42 : 42
+
+string.format("%q", true);
+>string.format("%q", true) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%q" : "%q"
+>true : true
+
+string.format("%z", {});
+>string.format("%z", {}) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%z" : "%z"
+>{} : {}
+
+string.format("%*", {});
+>string.format("%*", {}) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%*" : "%*"
+>{} : {}
+
+string.format("trailing %");
+>string.format("trailing %") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"trailing %" : "trailing %"
+
+local dynamicFormat: string = "%d";
+>dynamicFormat : string
+>"%d" : "%d"
+
+string.format(dynamicFormat, "unchecked", "extra");
+>string.format(dynamicFormat, "unchecked", "extra") : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>dynamicFormat : string
+>"unchecked" : "unchecked"
+>"extra" : "extra"
+
+local methodFormat: "%d" = "%d";
+>methodFormat : "%d"
+>"%d" : "%d"
+
+local methodResult = methodFormat.format(2);
+>methodResult : string
+>methodFormat.format(2) : string
+>methodFormat.format : (...: any) => string
+>methodFormat : "%d"
+>format : (...: any) => string
+>2 : 2
+
+methodFormat.format("notnum");
+>methodFormat.format("notnum") : string
+>methodFormat.format : (...: any) => string
+>methodFormat : "%d"
+>format : (...: any) => string
+>"notnum" : "notnum"
+
+// The colon form prepends the receiver to the effective arguments; the
+// specifier check must still line up with the written arguments.
+local colonResult = methodFormat:format(2);
+>colonResult : string
+>methodFormat:format(2) : string
+>methodFormat:format : (...: any) => string
+>methodFormat : "%d"
+>format : (...: any) => string
+>2 : 2
+
+methodFormat:format("notnum");
+>methodFormat:format("notnum") : string
+>methodFormat:format : (...: any) => string
+>methodFormat : "%d"
+>format : (...: any) => string
+>"notnum" : "notnum"
+
+methodFormat:format(2, "extra");
+>methodFormat:format(2, "extra") : string
+>methodFormat:format : (...: any) => string
+>methodFormat : "%d"
+>format : (...: any) => string
+>2 : 2
+>"extra" : "extra"
+
+local stringAlias = string;
+>stringAlias : StringLib
+>string : StringLib
+
+stringAlias.format("%d", "aliased", "extra");
+>stringAlias.format("%d", "aliased", "extra") : string
+>stringAlias.format : (format: string, ...: any) => string
+>stringAlias : StringLib
+>format : (format: string, ...: any) => string
+>"%d" : "%d"
+>"aliased" : "aliased"
+>"extra" : "extra"
+
+function shadowedString(): void
+>shadowedString : () => void
+
+  local string = {
+>string : { format: (format: string, ...: any) => string; }
+>{    format = function(format: string, ...: any): string return format; end,  } : { format: (format: string, ...: any) => string; }
+
+    format = function(format: string, ...: any): string return format; end,
+>format : (format: string, ...: any) => string
+>function(format: string, ...: any): string return format; end : (format: string, ...: any) => string
+>format : string
+> : any[]
+>format : string
+
+  };
+  string.format("%d", "shadowed", "extra");
+>string.format("%d", "shadowed", "extra") : string
+>string.format : (format: string, ...: any) => string
+>string : { format: (format: string, ...: any) => string; }
+>format : (format: string, ...: any) => string
+>"%d" : "%d"
+>"shadowed" : "shadowed"
+>"extra" : "extra"
+
+end
+

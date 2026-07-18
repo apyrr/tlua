@@ -1,0 +1,20 @@
+reachabilityChecks10.tlua(1,11): error TS2304: Cannot find name 'Error'.
+reachabilityChecks10.tlua(2,1): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+reachabilityChecks10.tlua(2,1): error TS7027: Unreachable code detected.
+reachabilityChecks10.tlua(3,1): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+
+
+==== reachabilityChecks10.tlua (4 errors) ====
+    throw new Error("")
+              ~~~~~
+!!! error TS2304: Cannot find name 'Error'.
+    console.log("1")
+    ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+    ~~~~~~~~~~~~~~~~
+    console.log("2")
+    ~~~~~~~~~~~~~~~~
+!!! error TS7027: Unreachable code detected.
+    ~~~~~~~
+!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+    

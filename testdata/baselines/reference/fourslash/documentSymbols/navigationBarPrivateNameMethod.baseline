@@ -1,0 +1,15 @@
+// === Document Symbols ===
+// === /navigationBarPrivateNameMethod.tlua ===
+// class A {
+//   #foo() {
+//     class B {
+//       #bar() {
+//          <|function [|{| name: baz, kind: Function |}baz|] () {
+//          }|>
+//       }
+//     }
+//   }
+// }
+
+// === Details ===
+(Function) baz

@@ -1,0 +1,91 @@
+//// [tests/cases/compiler/tluaVarargLualibs.tlua] ////
+
+=== tluaVarargLualibs.tlua ===
+// How the Lua standard library behaves under the tail rule. A tail supplies
+// `E | nil` to every fixed parameter it reaches, so a lualib whose signature has
+// a REQUIRED LEADING PARAMETER before its vararg cannot be called with a bare
+// tail. That is a Stage 1 expressiveness gap -- a pack cannot say "at least one
+// value" -- and NOT a bug in the signatures: `math.max()` with no arguments is a
+// Lua runtime error, so the required parameter is correct and the call really is
+// unsound. Pinned here so it stays a decision rather than drifting.
+
+function pureTails(...: string): void
+>pureTails : Symbol(pureTails, Decl(tluaVarargLualibs.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargLualibs.tlua, 8, 19))
+
+  // A pure vararg parameter absorbs a tail with no nil in sight.
+  print(...);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+
+  local formatted = string.format("%s", ...);
+>formatted : Symbol(formatted, Decl(tluaVarargLualibs.tlua, 11, 7))
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+function requiredLeadingParameter(...: number): void
+>requiredLeadingParameter : Symbol(requiredLeadingParameter, Decl(tluaVarargLualibs.tlua, 12, 3))
+> : Symbol((Missing), Decl(tluaVarargLualibs.tlua, 14, 34))
+
+  // Errors: the tail may be empty, so it supplies `number | nil` to `value`.
+  local biggest = math.max(...);
+>biggest : Symbol(biggest, Decl(tluaVarargLualibs.tlua, 16, 7))
+>math.max : Symbol(MathLib.max, Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>max : Symbol(MathLib.max, Decl(lib.luajit.d.tlua, --, --))
+
+  local smallest = math.min(...);
+>smallest : Symbol(smallest, Decl(tluaVarargLualibs.tlua, 17, 7))
+>math.min : Symbol(MathLib.min, Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>min : Symbol(MathLib.min, Decl(lib.luajit.d.tlua, --, --))
+
+  // Parenthesizing does not help -- `(...)` is exactly one value, and an empty
+  // vararg makes that value nil.
+  local alsoErrors = math.max((...));
+>alsoErrors : Symbol(alsoErrors, Decl(tluaVarargLualibs.tlua, 21, 7))
+>math.max : Symbol(MathLib.max, Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>max : Symbol(MathLib.max, Decl(lib.luajit.d.tlua, --, --))
+
+  // The workaround: supply the required value yourself, and the tail then only
+  // has to satisfy the rest parameter.
+  local fine = math.max(-math.huge, ...);
+>fine : Symbol(fine, Decl(tluaVarargLualibs.tlua, 25, 7))
+>math.max : Symbol(MathLib.max, Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>max : Symbol(MathLib.max, Decl(lib.luajit.d.tlua, --, --))
+>math.huge : Symbol(MathLib.huge, Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>huge : Symbol(MathLib.huge, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+function selectAndPcall(...: number): void
+>selectAndPcall : Symbol(selectAndPcall, Decl(tluaVarargLualibs.tlua, 26, 3))
+> : Symbol((Missing), Decl(tluaVarargLualibs.tlua, 28, 24))
+
+  // Generic packs (Stage 2) correlate these now: `pcall` infers the number tail
+  // as `print`'s arguments and returns `(boolean, ...print's results)` -- print
+  // returns nothing, so just `boolean`. `select("#", ...)` still counts.
+  local count = select("#", ...);
+>count : Symbol(count, Decl(tluaVarargLualibs.tlua, 32, 7))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  local isCount: number = count;
+>isCount : Symbol(isCount, Decl(tluaVarargLualibs.tlua, 33, 7))
+>count : Symbol(count, Decl(tluaVarargLualibs.tlua, 32, 7))
+
+  local ok = pcall(print, ...);
+>ok : Symbol(ok, Decl(tluaVarargLualibs.tlua, 34, 7))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+
+  local isOk: boolean = ok;
+>isOk : Symbol(isOk, Decl(tluaVarargLualibs.tlua, 35, 7))
+>ok : Symbol(ok, Decl(tluaVarargLualibs.tlua, 34, 7))
+
+end
+

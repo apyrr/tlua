@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/tluaDottedFunctionNestedChains.tlua] ////
+
+=== tluaDottedFunctionNestedChains.tlua ===
+local a = { b = {} };
+>a : { b: { deep(x: number): number; }; }
+>{ b = {} } : { b: { deep(x: number): number; }; }
+>b : { deep(x: number): number; }
+>{} : { deep(x: number): number; }
+
+function a.b.deep(x: number): number
+>a.b : { deep(x: number): number; }
+>a : { b: { deep(x: number): number; }; }
+>b : { deep(x: number): number; }
+>deep : (x: number) => number
+>x : number
+
+  return x;
+>x : number
+
+end
+
+local viaChain = a.b.deep(1);
+>viaChain : number
+>a.b.deep(1) : number
+>a.b.deep : (x: number) => number
+>a.b : { deep(x: number): number; }
+>a : { b: { deep(x: number): number; }; }
+>b : { deep(x: number): number; }
+>deep : (x: number) => number
+>1 : 1
+
+local outer = {};
+>outer : { mid(): void; }
+>{} : { mid(): void; }
+
+function outer.mid(): void
+>outer : { mid(): void; }
+>mid : () => void
+
+end
+
+// The intermediate link is a function, not a table, so it cannot be extended.
+local host = { fn = 0 };
+>host : { fn: number; }
+>{ fn = 0 } : { fn: number; }
+>fn : number
+>0 : 0
+
+function host.fn.nested(): void
+>host.fn : number
+>host : { fn: number; }
+>fn : number
+>nested : () => void
+
+end
+

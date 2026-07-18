@@ -1,0 +1,17 @@
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration5.tlua ===
+// class Foo {
+//     constructor(protected [ /*RENAME*/protectedParam ]) {
+//         local myProtectedParam = protectedParam;
+//     }
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration5.tlua ===
+// class Foo {
+//     constructor(protected [ protectedParam ]) {
+//         local myProtectedParam = /*RENAME*/protectedParam;
+//     }
+// }

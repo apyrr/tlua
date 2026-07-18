@@ -1,0 +1,7 @@
+// @noEmit: true
+// @noTypesAndSymbols: true
+
+local end = 1;
+
+local function missingEnd(): void
+  return;

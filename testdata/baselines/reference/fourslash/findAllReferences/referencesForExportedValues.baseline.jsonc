@@ -1,0 +1,46 @@
+// === findAllReferences ===
+// === /referencesForExportedValues.tlua ===
+// namespace M {
+//     /*FIND ALL REFS*/export local variable = 0;
+// 
+//     // local use
+//     local x = variable;
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForExportedValues.tlua ===
+// namespace M {
+//     export local /*FIND ALL REFS*/[|variable|] = 0;
+// 
+//     // local use
+//     local x = [|variable|];
+// }
+// 
+// // external use
+// M.variable
+
+
+
+// === findAllReferences ===
+// === /referencesForExportedValues.tlua ===
+// namespace M {
+//     export local [|variable|] = 0;
+// 
+//     // local use
+//     local x = /*FIND ALL REFS*/[|variable|];
+// }
+// 
+// // external use
+// M.variable
+
+
+
+// === findAllReferences ===
+// === /referencesForExportedValues.tlua ===
+// --- (line: 5) skipped ---
+// }
+// 
+// // external use
+// M./*FIND ALL REFS*/variable

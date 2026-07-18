@@ -1,0 +1,4 @@
+// === findAllReferences ===
+// === /findAllRefsForVariableInImplementsClause01.tlua ===
+// local [|Base|] = class { };
+// class C extends [|Base|] implements /*FIND ALL REFS*/[|Base|] { }

@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/tluaNoGenerators.tlua] ////
+
+=== tluaNoGenerators.tlua ===
+// Generators are removed in tlua: `function*`, `yield`, `yield*`, and async
+// generators no longer parse. Use the Lua coroutine library directly instead.
+
+function* gen(): unknown {
+> : Symbol((Missing), Decl(tluaNoGenerators.tlua, 0, 0), Decl(tluaNoGenerators.tlua, 6, 1))
+
+  yield 1;
+  yield* more;
+}
+
+async function* asyncGen(): unknown {
+> : Symbol((Missing), Decl(tluaNoGenerators.tlua, 0, 0), Decl(tluaNoGenerators.tlua, 6, 1))
+
+  yield 4;
+}
+
+local obj = {
+>obj : Symbol(obj, Decl(tluaNoGenerators.tlua, 12, 5))
+
+  *method() {
+    yield 5;
+  },
+};
+
+// `yield` is now an ordinary identifier.
+function usesYieldName(): number {
+>usesYieldName : Symbol(usesYieldName, Decl(tluaNoGenerators.tlua, 16, 2))
+
+  local yield = 7;
+>yield : Symbol(yield, Decl(tluaNoGenerators.tlua, 20, 7))
+
+  return yield;
+>yield : Symbol(yield, Decl(tluaNoGenerators.tlua, 20, 7))
+}
+

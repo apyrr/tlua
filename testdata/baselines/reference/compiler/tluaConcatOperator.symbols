@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/tluaConcatOperator.tlua] ////
+
+=== tluaConcatOperator.tlua ===
+// Lua's `..` concatenates strings and numbers (a number coerces to its string form) and
+// always yields a string. It binds below `+`/`-` and above comparison, and is
+// right-associative.
+
+local s1: string = "a" .. "b";
+>s1 : Symbol(s1, Decl(tluaConcatOperator.tlua, 4, 5))
+
+// A number coerces; the result is still a string.
+local n = 42;
+>n : Symbol(n, Decl(tluaConcatOperator.tlua, 7, 5))
+
+local s2: string = n .. "!";
+>s2 : Symbol(s2, Decl(tluaConcatOperator.tlua, 8, 5))
+>n : Symbol(n, Decl(tluaConcatOperator.tlua, 7, 5))
+
+local s3: string = "count=" .. n;
+>s3 : Symbol(s3, Decl(tluaConcatOperator.tlua, 9, 5))
+>n : Symbol(n, Decl(tluaConcatOperator.tlua, 7, 5))
+
+// Right-associative chain.
+local s4: string = "a" .. "b" .. "c";
+>s4 : Symbol(s4, Decl(tluaConcatOperator.tlua, 12, 5))
+
+// `+` binds tighter than `..`: this is `"n=" .. (1 + 2)`. If `..` bound tighter it would
+// be `("n=" .. 1) + 2`, a string `+` number error -- so the clean assignment pins the
+// precedence.
+local s5: string = "n=" .. 1 + 2;
+>s5 : Symbol(s5, Decl(tluaConcatOperator.tlua, 17, 5))
+
+local s6: string = 1 + 2 .. "=n";
+>s6 : Symbol(s6, Decl(tluaConcatOperator.tlua, 18, 5))
+
+// `..` binds tighter than comparison: `("a" .. b) < c` is a string comparison.
+local b = "b";
+>b : Symbol(b, Decl(tluaConcatOperator.tlua, 21, 5))
+
+local c = "c";
+>c : Symbol(c, Decl(tluaConcatOperator.tlua, 22, 5))
+
+local cmp: boolean = "a" .. b < c;
+>cmp : Symbol(cmp, Decl(tluaConcatOperator.tlua, 23, 5))
+>b : Symbol(b, Decl(tluaConcatOperator.tlua, 21, 5))
+>c : Symbol(c, Decl(tluaConcatOperator.tlua, 22, 5))
+
+// Errors: a table or a boolean operand without a __concat metamethod.
+local e1 = {} .. "a";
+>e1 : Symbol(e1, Decl(tluaConcatOperator.tlua, 26, 5))
+
+local e2 = true .. "b";
+>e2 : Symbol(e2, Decl(tluaConcatOperator.tlua, 27, 5))
+
+local e3 = "a" .. {};
+>e3 : Symbol(e3, Decl(tluaConcatOperator.tlua, 28, 5))
+

@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/tluaBigintRemoved.tlua] ////
+
+=== tluaBigintRemoved.tlua ===
+// bigint does not exist in tlua: Lua has a single `number` type. Neither the
+// `0n` literal nor the `bigint` type keyword survives. The `n` suffix no longer
+// scans as a bigint marker, so an `n` glued to a numeric literal is the ordinary
+// "identifier cannot immediately follow a numeric literal" error, and `bigint`
+// in a type position is just an unresolved name (`Cannot find name 'bigint'`).
+//
+// Each use also pins that the scanner/parser keep making progress: the stray `n`
+// is scanned as a separate identifier rather than re-entering forever.
+
+declare v: number;
+>v : number
+
+// `0n` no longer scans as a bigint literal; the trailing `n` is rejected.
+local a = 0n;
+>a : number
+>0 : 0
+>n : any
+
+local b = 123n;
+>b : number
+>123 : 123
+>n : any
+
+local c = -5n;
+>c : number
+>-5 : -5
+>5 : 5
+>n : any
+
+// `bigint` is not a type keyword; it resolves to an unknown name.
+local t: bigint = 1;
+>t : bigint
+>1 : 1
+
+type Alias = bigint;
+>Alias : bigint
+
+declare function f(x: bigint): bigint;
+>f : (x: bigint) => bigint
+>x : bigint
+
+// `0n` in assorted expression positions.
+local obj = { key = 1n };
+>obj : { key: number; 1: any; }
+>{ key = 1n } : { key: number; 1: any; }
+>key : number
+>1 : 1
+>n : any
+
+if 0n then
+>0 : 0
+>n : any
+
+end
+
+// Plain number arithmetic still works and yields `number`.
+local sum: number = v + 1;
+>sum : number
+>v + 1 : number
+>v : number
+>1 : 1
+
+local prod: number = v * 2;
+>prod : number
+>v * 2 : number
+>v : number
+>2 : 2
+
+local neg: number = -v;
+>neg : number
+>-v : number
+>v : number
+
+local len: number = #"abc";
+>len : number
+>#"abc" : number
+>"abc" : "abc"
+

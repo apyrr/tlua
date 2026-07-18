@@ -1,0 +1,11 @@
+// === findAllReferences ===
+// === /a.tlua ===
+// interface Foo {
+//     property: /*FIND ALL REFS*/"[|foo|]";
+// }
+// /**
+//  * @type {{ property: "foo"}}
+//  */
+// local obj: Foo = {
+//     property = "[|foo|]",
+// }

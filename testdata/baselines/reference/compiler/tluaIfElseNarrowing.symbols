@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/tluaIfElseNarrowing.tlua] ////
+
+=== tluaIfElseNarrowing.tlua ===
+function narrowNil(x: number | nil): number
+>narrowNil : Symbol(narrowNil, Decl(tluaIfElseNarrowing.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 0, 19))
+
+  if x ~= nil then
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 0, 19))
+
+    return x;
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 0, 19))
+
+  end
+  return 0;
+end
+
+function narrowElse(x: number | nil): number
+>narrowElse : Symbol(narrowElse, Decl(tluaIfElseNarrowing.tlua, 5, 3))
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 7, 20))
+
+  if x == nil then
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 7, 20))
+
+    return 0;
+  else
+    return x;
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 7, 20))
+
+  end
+end
+
+function narrowElseifChain(x: number | string | nil): string
+>narrowElseifChain : Symbol(narrowElseifChain, Decl(tluaIfElseNarrowing.tlua, 13, 3))
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 15, 27))
+
+  if x == nil then
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 15, 27))
+
+    return "nil";
+  elseif type(x) == "number" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 15, 27))
+
+    return "" + x;
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 15, 27))
+
+  else
+    return x;
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 15, 27))
+
+  end
+end
+
+// A function-typed condition is always truthy — existing diagnostic fires.
+function alwaysTruthy(f: () => void): number
+>alwaysTruthy : Symbol(alwaysTruthy, Decl(tluaIfElseNarrowing.tlua, 23, 3))
+>f : Symbol(f, Decl(tluaIfElseNarrowing.tlua, 26, 22))
+
+  if f then
+>f : Symbol(f, Decl(tluaIfElseNarrowing.tlua, 26, 22))
+
+    return 1;
+  end
+  return 0;
+end
+
+// Narrowing persists into while bodies.
+function whileNarrow(x: number | nil): number
+>whileNarrow : Symbol(whileNarrow, Decl(tluaIfElseNarrowing.tlua, 31, 3))
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 34, 21))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaIfElseNarrowing.tlua, 35, 7))
+
+  while x ~= nil do
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 34, 21))
+
+    total = total + x;
+>total : Symbol(total, Decl(tluaIfElseNarrowing.tlua, 35, 7))
+>total : Symbol(total, Decl(tluaIfElseNarrowing.tlua, 35, 7))
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 34, 21))
+
+    x = nil;
+>x : Symbol(x, Decl(tluaIfElseNarrowing.tlua, 34, 21))
+
+  end
+  return total;
+>total : Symbol(total, Decl(tluaIfElseNarrowing.tlua, 35, 7))
+
+end
+

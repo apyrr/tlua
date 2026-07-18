@@ -1,0 +1,6 @@
+// === goToType ===
+// === /goToTypeDefinition_typeReference.tlua ===
+// type User = { name: string };
+// type Box<T> = [|{ value: T }|];
+// declare boxedUser: Box<User>
+// /*GOTO TYPE*/boxedUser

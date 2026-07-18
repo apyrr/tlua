@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/objectSubtypeReduction.tlua] ////
+
+=== objectSubtypeReduction.tlua ===
+// https://github.com/microsoft/typescript-go/issues/1164
+
+function foo(x?: object) {
+>foo : Symbol(foo, Decl(objectSubtypeReduction.tlua, 0, 0))
+>x : Symbol(x, Decl(objectSubtypeReduction.tlua, 2, 13))
+
+    return Object.entries(x || {})
+>x : Symbol(x, Decl(objectSubtypeReduction.tlua, 2, 13))
+
+        .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name));
+}
+

@@ -1,0 +1,21 @@
+//// [tests/cases/compiler/jsxPragmaAfterTags.tsx] ////
+
+=== jsxPragmaAfterTags.tsx ===
+/**
+ * @fileoverview comment
+ * @jsx h
+ */
+declare h: any;
+>h : Symbol(h, Decl(jsxPragmaAfterTags.tsx, 4, 7))
+
+declare Fragment: any;
+>Fragment : Symbol(Fragment, Decl(jsxPragmaAfterTags.tsx, 5, 7))
+
+interface JsxElement {}
+>JsxElement : Symbol(JsxElement, Decl(jsxPragmaAfterTags.tsx, 5, 22))
+
+local x = <Fragment></Fragment>;
+>x : Symbol(x, Decl(jsxPragmaAfterTags.tsx, 8, 5))
+>Fragment : Symbol(Fragment, Decl(jsxPragmaAfterTags.tsx, 5, 7))
+>Fragment : Symbol(Fragment, Decl(jsxPragmaAfterTags.tsx, 5, 7))
+

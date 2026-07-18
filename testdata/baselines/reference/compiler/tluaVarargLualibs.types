@@ -1,0 +1,111 @@
+//// [tests/cases/compiler/tluaVarargLualibs.tlua] ////
+
+=== tluaVarargLualibs.tlua ===
+// How the Lua standard library behaves under the tail rule. A tail supplies
+// `E | nil` to every fixed parameter it reaches, so a lualib whose signature has
+// a REQUIRED LEADING PARAMETER before its vararg cannot be called with a bare
+// tail. That is a Stage 1 expressiveness gap -- a pack cannot say "at least one
+// value" -- and NOT a bug in the signatures: `math.max()` with no arguments is a
+// Lua runtime error, so the required parameter is correct and the call really is
+// unsound. Pinned here so it stays a decision rather than drifting.
+
+function pureTails(...: string): void
+>pureTails : (...: string) => void
+> : string[]
+
+  // A pure vararg parameter absorbs a tail with no nil in sight.
+  print(...);
+>print(...) : void
+>print : (...: any) => void
+>... : string | nil
+
+  local formatted = string.format("%s", ...);
+>formatted : string
+>string.format("%s", ...) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%s" : "%s"
+>... : string | nil
+
+end
+
+function requiredLeadingParameter(...: number): void
+>requiredLeadingParameter : (...: number) => void
+> : number[]
+
+  // Errors: the tail may be empty, so it supplies `number | nil` to `value`.
+  local biggest = math.max(...);
+>biggest : number
+>math.max(...) : number
+>math.max : (value: number, ...: number) => number
+>math : MathLib
+>max : (value: number, ...: number) => number
+>... : number | nil
+
+  local smallest = math.min(...);
+>smallest : number
+>math.min(...) : number
+>math.min : (value: number, ...: number) => number
+>math : MathLib
+>min : (value: number, ...: number) => number
+>... : number | nil
+
+  // Parenthesizing does not help -- `(...)` is exactly one value, and an empty
+  // vararg makes that value nil.
+  local alsoErrors = math.max((...));
+>alsoErrors : number
+>math.max((...)) : number
+>math.max : (value: number, ...: number) => number
+>math : MathLib
+>max : (value: number, ...: number) => number
+>(...) : number | nil
+>... : number | nil
+
+  // The workaround: supply the required value yourself, and the tail then only
+  // has to satisfy the rest parameter.
+  local fine = math.max(-math.huge, ...);
+>fine : number
+>math.max(-math.huge, ...) : number
+>math.max : (value: number, ...: number) => number
+>math : MathLib
+>max : (value: number, ...: number) => number
+>-math.huge : number
+>math.huge : number
+>math : MathLib
+>huge : number
+>... : number | nil
+
+end
+
+function selectAndPcall(...: number): void
+>selectAndPcall : (...: number) => void
+> : number[]
+
+  // Generic packs (Stage 2) correlate these now: `pcall` infers the number tail
+  // as `print`'s arguments and returns `(boolean, ...print's results)` -- print
+  // returns nothing, so just `boolean`. `select("#", ...)` still counts.
+  local count = select("#", ...);
+>count : number
+>select("#", ...) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>"#" : "#"
+>... : number | nil
+
+  local isCount: number = count;
+>isCount : number
+>count : number
+
+  local ok = pcall(print, ...);
+>ok : boolean
+>pcall(print, ...) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>print : (...: any) => void
+>... : number | nil
+
+  local isOk: boolean = ok;
+>isOk : boolean
+>ok : boolean
+
+end
+

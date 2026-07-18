@@ -1,0 +1,111 @@
+//// [tests/cases/compiler/tluaTableAugmentationEdges.tlua] ////
+
+=== a.tlua ===
+interface Shape {
+  x: number;
+>x : number
+}
+Shape = {};
+>Shape = {} : {}
+>Shape : {}
+>{} : {}
+
+Shape.tag = 1;
+>Shape.tag = 1 : 1
+>Shape.tag : any
+>Shape : {}
+>tag : any
+>1 : 1
+
+local s: Shape = { x = 1 };
+>s : Shape
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+// A non-constructor arm in any file closes an implicit global program-wide.
+=== b.tlua ===
+G = {};
+>G = {} : {}
+>G : {}
+>{} : {}
+
+G.x = 1;
+>G.x = 1 : 1
+>G.x : any
+>G : {}
+>x : any
+>1 : 1
+
+U = {};
+>U = {} : {}
+>U : { a?: nil; } | { a: number; }
+>{} : {}
+
+=== c.tlua ===
+local function make(): { y: number }
+>make : () => { y: number; }
+>y : number
+
+  return { y = 2 };
+>{ y = 2 } : { y: number; }
+>y : number
+>2 : 2
+
+end
+G = make();
+>G = make() : { y: number; }
+>G : {}
+>make() : { y: number; }
+>make : () => { y: number; }
+
+// A member written in only one arm's constructor needs narrowing: before the
+// assignment below narrows U, the read sees the whole union.
+local ua: number = U.a;
+>ua : number
+>U.a : number | nil
+>U : { a?: nil; } | { a: number; }
+>a : number | nil
+
+U = { a = 1 };
+>U = { a = 1 } : { a: number; }
+>U : { a?: nil; } | { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+local narrowed: number = U.a;
+>narrowed : number
+>U.a : number
+>U : { a: number; }
+>a : number
+
+// A dotted function colliding with a constructor field is a duplicate no
+// matter where it sits in the group; assignments to that field stay ordinary
+// checked writes.
+=== d.tlua ===
+local t = { member = 1 };
+>t : { member: number; }
+>{ member = 1 } : { member: number; }
+>member : number
+>1 : 1
+
+function t.member(): void
+>t : { member: number; }
+>member : () => void
+
+end
+t.member = 2;
+>t.member = 2 : 2
+>t.member : number
+>t : { member: number; }
+>member : number
+>2 : 2
+
+t.member = "no";
+>t.member = "no" : "no"
+>t.member : number
+>t : { member: number; }
+>member : number
+>"no" : "no"
+

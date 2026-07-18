@@ -1,0 +1,97 @@
+//// [tests/cases/compiler/tluaColonCallEmit.tlua] ////
+
+=== tluaColonCallEmit.tlua ===
+local T = { n = 0 };
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
+
+function T:bump(): number
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>: : Symbol(:, Decl(tluaColonCallEmit.tlua, 2, 10))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+
+  self.n = self.n + 1;
+>self.n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallEmit.tlua, 2, 10))
+>n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
+>self.n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallEmit.tlua, 2, 10))
+>n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
+
+  return self.n;
+>self.n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallEmit.tlua, 2, 10))
+>n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
+
+end
+
+// Colon calls round-trip through the emitter.
+T:bump();
+>T:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+
+local a = T:bump() + T:bump();
+>a : Symbol(a, Decl(tluaColonCallEmit.tlua, 9, 5))
+>T:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>T:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+
+// A parenthesized receiver keeps its parentheses.
+local b = (T):bump();
+>b : Symbol(b, Decl(tluaColonCallEmit.tlua, 12, 5))
+>(T):bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+
+// Parentheses around the whole call truncate it to one value.
+local c = (T:bump());
+>c : Symbol(c, Decl(tluaColonCallEmit.tlua, 15, 5))
+>T:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+
+// Chains keep every colon.
+local d = { u = T };
+>d : Symbol(d, Decl(tluaColonCallEmit.tlua, 18, 5))
+>u : Symbol(u, Decl(tluaColonCallEmit.tlua, 18, 11))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+
+d.u:bump();
+>d.u:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>d.u : Symbol(u, Decl(tluaColonCallEmit.tlua, 18, 11))
+>d : Symbol(d, Decl(tluaColonCallEmit.tlua, 18, 5))
+>u : Symbol(u, Decl(tluaColonCallEmit.tlua, 18, 11))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+
+// Return- and throw-position colon calls keep their colon: the no-ASI
+// parenthesizer must not rebuild the callee as a dot access.
+function T:twice(): number
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>twice : Symbol(twice, Decl(tluaColonCallEmit.tlua, 19, 11))
+>: : Symbol(:, Decl(tluaColonCallEmit.tlua, 23, 10))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+
+  return self:bump() + self:bump();
+>self:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>self : Symbol(:, Decl(tluaColonCallEmit.tlua, 23, 10))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>self:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>self : Symbol(:, Decl(tluaColonCallEmit.tlua, 23, 10))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+
+end
+
+function raise(): never {
+>raise : Symbol(raise, Decl(tluaColonCallEmit.tlua, 25, 3))
+
+  throw T:bump();
+>T:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+>T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
+>bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
+}
+

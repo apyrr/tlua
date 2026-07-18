@@ -1,0 +1,30 @@
+// === findAllReferences ===
+// === /findAllRefsMappedType.tlua ===
+// interface T { /*FIND ALL REFS*/[|a|]: number; }
+// type U = { readonly [K in keyof T]?: string };
+// declare t: T;
+// t.[|a|];
+// declare u: U;
+// u.[|a|];
+
+
+
+// === findAllReferences ===
+// === /findAllRefsMappedType.tlua ===
+// interface T { [|a|]: number; }
+// type U = { readonly [K in keyof T]?: string };
+// declare t: T;
+// t./*FIND ALL REFS*/[|a|];
+// declare u: U;
+// u.[|a|];
+
+
+
+// === findAllReferences ===
+// === /findAllRefsMappedType.tlua ===
+// interface T { [|a|]: number; }
+// type U = { readonly [K in keyof T]?: string };
+// declare t: T;
+// t.[|a|];
+// declare u: U;
+// u./*FIND ALL REFS*/[|a|];

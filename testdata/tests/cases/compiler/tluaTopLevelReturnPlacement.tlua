@@ -1,0 +1,18 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: early.tlua
+// A chunk returns its value as its last statement; an earlier return is not
+// the module value.
+local M = {};
+return M;
+local after = 1;
+
+// @filename: nested.tlua
+declare flag: boolean;
+if flag then
+  return 1;
+end
+return 2;

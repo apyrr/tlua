@@ -1,0 +1,85 @@
+//// [tests/cases/compiler/tluaMultiReturnCallSpread.tlua] ////
+
+=== tluaMultiReturnCallSpread.tlua ===
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+function takes2(a: number, b: string): boolean
+>takes2 : (a: number, b: string) => boolean
+>a : number
+>b : string
+
+  return true;
+>true : true
+
+end
+
+function takes3(a: boolean, b: number, c: string): number
+>takes3 : (a: boolean, b: number, c: string) => number
+>a : boolean
+>b : number
+>c : string
+
+  return b;
+>b : number
+
+end
+
+// The last argument expands its whole pack.
+local expanded = takes2(pair());
+>expanded : boolean
+>takes2(pair()) : boolean
+>takes2 : (a: number, b: string) => boolean
+>pair() : number
+>pair : () => (number, string)
+
+local mixed = takes3(true, pair());
+>mixed : number
+>takes3(true, pair()) : number
+>takes3 : (a: boolean, b: number, c: string) => number
+>true : true
+>pair() : number
+>pair : () => (number, string)
+
+// A non-tail call truncates to its first value.
+local truncated = takes2(pair(), "x");
+>truncated : boolean
+>takes2(pair(), "x") : boolean
+>takes2 : (a: number, b: string) => boolean
+>pair() : number
+>pair : () => (number, string)
+>"x" : "x"
+
+// Truncation type mismatch: the first value is a number, not a boolean.
+local wrongHead = takes3(pair(), 1, "y");
+>wrongHead : number
+>takes3(pair(), 1, "y") : number
+>takes3 : (a: boolean, b: number, c: string) => number
+>pair() : number
+>pair : () => (number, string)
+>1 : 1
+>"y" : "y"
+
+// Arity errors count the expanded values.
+local tooFew = takes3(pair());
+>tooFew : number
+>takes3(pair()) : number
+>takes3 : (a: boolean, b: number, c: string) => number
+>pair() : number
+>pair : () => (number, string)
+
+local tooMany = takes2(1, pair());
+>tooMany : boolean
+>takes2(1, pair()) : boolean
+>takes2 : (a: number, b: string) => boolean
+>1 : 1
+>pair() : number
+>pair : () => (number, string)
+

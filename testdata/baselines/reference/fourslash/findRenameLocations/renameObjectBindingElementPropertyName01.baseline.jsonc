@@ -1,0 +1,19 @@
+// === findRenameLocations ===
+// === /renameObjectBindingElementPropertyName01.tlua ===
+// interface I {
+//     /*RENAME*/[|property1RENAME|]: number;
+//     property2: string;
+// }
+// 
+// local foo: I;
+// local { property1: prop1 } = foo;
+
+
+
+// === findRenameLocations ===
+// === /renameObjectBindingElementPropertyName01.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// local foo: I;
+// local { /*RENAME*/property1: prop1 } = foo;

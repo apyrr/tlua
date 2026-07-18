@@ -1,0 +1,41 @@
+//// [tests/cases/compiler/tluaColonCallOptionalChain.tlua] ////
+
+=== tluaColonCallOptionalChain.tlua ===
+local W = { n = 1 };
+>W : { n: number; bump(self: any): number; }
+>{ n = 1 } : { n: number; bump(self: { n: number; bump(self: any): number; }): number; }
+>n : number
+>1 : 1
+
+function W:bump(): number
+>W : { n: number; bump(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; }) => number
+>: : { n: number; bump(self: any): number; }
+>W : { n: number; bump(self: any): number; }
+
+  return self.n;
+>self.n : number
+>self : { n: number; bump(self: any): number; }
+>n : number
+
+end
+
+local maybe: { inner: typeof W } | nil = { inner = W };
+>maybe : { inner: { n: number; bump(self: any): number; }; } | nil
+>inner : { n: number; bump(self: any): number; }
+>W : { n: number; bump(self: any): number; }
+>{ inner = W } : { inner: { n: number; bump(self: any): number; }; }
+>inner : { n: number; bump(self: any): number; }
+>W : { n: number; bump(self: any): number; }
+
+// The `?.` guard narrows the receiver, so the implicit first argument is not
+// nil — and the downleveled chain keeps the colon on the call segment.
+local y = maybe?.inner:bump();
+>y : number
+>maybe?.inner:bump() : number
+>maybe?.inner:bump : (self: { n: number; bump(self: any): number; }) => number
+>maybe?.inner : { n: number; bump(self: any): number; }
+>maybe : { inner: { n: number; bump(self: any): number; }; }
+>inner : { n: number; bump(self: any): number; }
+>bump : (self: { n: number; bump(self: any): number; }) => number
+

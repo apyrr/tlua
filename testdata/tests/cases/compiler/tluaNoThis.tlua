@@ -1,0 +1,54 @@
+// @target: esnext
+
+// The TypeScript `this` feature is removed from tlua source: Lua methods take
+// an explicit `self` parameter. Each form below decomposes into stock
+// parser-recovery errors (no tlua-specific diagnostic), exactly like the
+// class/array removals. Ordinary `x is T` predicates are unaffected.
+
+declare function use(x: unknown): void;
+
+// `this` is not an expression; a colon method's receiver is named `self`.
+local x = this;
+
+// ...nor the base of a property access.
+local y = this.foo;
+
+// `this` parameters are gone; write an ordinary parameter instead.
+function f(this: number, a: string) {}
+
+// The polymorphic `this` type is gone.
+interface Poly {
+  m(): this;
+}
+
+// `this` in any other type position.
+type T = this;
+
+// `this is T` predicates are gone (ordinary `x is T` still works).
+interface Animal {
+  isDog(): this is Dog;
+}
+interface Dog extends Animal {
+  bark(): void;
+}
+
+// `asserts this is T` is gone too.
+declare function assertDog(): asserts this is Dog;
+
+// The `ThisType<T>` marker, `ThisParameterType`, and `OmitThisParameter` are
+// no longer part of the lib.
+type TT = ThisType<number>;
+type TPT = ThisParameterType<() => void>;
+type OTP = OmitThisParameter<() => void>;
+
+// `this` is not a value even in type queries: it resolves like any other
+// unresolvable name instead of typing as the receiver or global environment.
+type TQ = typeof this;
+type TQP = typeof this.foo;
+function q(self: number) {
+  local a: typeof this = self;
+  use(a);
+}
+
+use(x);
+use(y);

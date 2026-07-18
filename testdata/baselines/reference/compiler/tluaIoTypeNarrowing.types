@@ -1,0 +1,194 @@
+//// [tests/cases/compiler/tluaIoTypeNarrowing.tlua] ////
+
+=== tluaIoTypeNarrowing.tlua ===
+// `io.type(x)` reports "file" for an open handle, "closed file" for a closed one,
+// and nil for anything that is not a file handle.
+
+declare v: LuaFile | string | nil;
+>v : string | LuaFile | nil
+
+function comparisons(): void {
+>comparisons : () => void
+
+  if io.type(v) == "file" then
+>io.type(v) == "file" : boolean
+>io.type(v) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | LuaFile | nil
+>"file" : "file"
+
+    local open: LuaFile = v;
+>open : LuaFile
+>v : LuaFile
+
+  end
+  if io.type(v) == "closed file" then
+>io.type(v) == "closed file" : boolean
+>io.type(v) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | LuaFile | nil
+>"closed file" : "closed file"
+
+    local closed: LuaFile = v;
+>closed : LuaFile
+>v : LuaFile
+
+  end
+  if io.type(v) ~= nil then
+>io.type(v) ~= nil : boolean
+>io.type(v) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | LuaFile | nil
+
+    local handle: LuaFile = v;
+>handle : LuaFile
+>v : LuaFile
+
+  end
+  if io.type(v) == nil then
+>io.type(v) == nil : boolean
+>io.type(v) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | LuaFile | nil
+
+    local notAFile: string | nil = v;
+>notAFile : string | nil
+>v : string | nil
+
+  end
+}
+
+// The call is truthy exactly for file handles.
+function truthiness(): void {
+>truthiness : () => void
+
+  if io.type(v) then
+>io.type(v) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | LuaFile | nil
+
+    local handle: LuaFile = v;
+>handle : LuaFile
+>v : LuaFile
+
+  else
+    local notAFile: string | nil = v;
+>notAFile : string | nil
+>v : string | nil
+
+  end
+}
+
+// Grouping both file tags with `or` narrows the then-branch, but the else
+// cannot rule LuaFile out: each equality's false branch still admits the
+// other tag. (Switch fallthrough groups excluded the tag set at once; that
+// died with switch. The truthiness form above covers the disjoint case.)
+function grouped(): void {
+>grouped : () => void
+
+  if io.type(v) == "file" or io.type(v) == "closed file" then
+>io.type(v) == "file" or io.type(v) == "closed file" : boolean
+>io.type(v) == "file" : boolean
+>io.type(v) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | LuaFile | nil
+>"file" : "file"
+>io.type(v) == "closed file" : boolean
+>io.type(v) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | LuaFile | nil
+>"closed file" : "closed file"
+
+    local handle: LuaFile = v;
+>handle : LuaFile
+>v : LuaFile
+
+  else
+    local rest: LuaFile | string | nil = v;
+>rest : string | LuaFile | nil
+>v : string | LuaFile | nil
+
+  end
+}
+
+// A file handle is userdata in Lua, so `type` reports it as such and never as a table.
+function fileIsUserdata(x: LuaFile | { n: number }): void {
+>fileIsUserdata : (x: LuaFile | { n: number; }) => void
+>x : LuaFile | { n: number; }
+>n : number
+
+  if type(x) == "userdata" then
+>type(x) == "userdata" : boolean
+>type(x) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>x : LuaFile | { n: number; }
+>"userdata" : "userdata"
+
+    local handle: LuaFile = x;
+>handle : LuaFile
+>x : LuaFile
+
+  end
+  if type(x) == "table" then
+>type(x) == "table" : boolean
+>type(x) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>x : LuaFile | { n: number; }
+>"table" : "table"
+
+    local table1: { n: number } = x;
+>table1 : { n: number; }
+>n : number
+>x : { n: number; }
+
+  end
+}
+
+// A table is never a file handle, so the guard is a dead branch.
+function disjoint(x: { n: number }): void {
+>disjoint : (x: { n: number; }) => void
+>x : { n: number; }
+>n : number
+
+  if io.type(x) == "file" then
+>io.type(x) == "file" : boolean
+>io.type(x) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>x : { n: number; }
+>"file" : "file"
+
+    local dead: never = x;
+>dead : never
+>x : never
+
+  end
+  if io.type(x) then
+>io.type(x) : "closed file" | "file" | nil
+>io.type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>x : { n: number; }
+
+    local dead2: never = x;
+>dead2 : never
+>x : never
+
+  end
+}
+

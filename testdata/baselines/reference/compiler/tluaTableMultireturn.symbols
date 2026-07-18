@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/tluaTableMultireturn.tlua] ////
+
+=== tluaTableMultireturn.tlua ===
+// A multireturn call in the LAST positional entry expands into the table, like
+// any other Lua tail position. In any other position it truncates to one value.
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaTableMultireturn.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+function variadic(): (number, ...string)
+>variadic : Symbol(variadic, Decl(tluaTableMultireturn.tlua, 4, 3))
+
+  return 1, "a", "b";
+end
+
+declare function nothing(): void;
+>nothing : Symbol(nothing, Decl(tluaTableMultireturn.tlua, 8, 3))
+
+local nonTail = { pair(), 2 };
+>nonTail : Symbol(nonTail, Decl(tluaTableMultireturn.tlua, 12, 5))
+>pair : Symbol(pair, Decl(tluaTableMultireturn.tlua, 0, 0))
+
+local nt1: number = nonTail[1];
+>nt1 : Symbol(nt1, Decl(tluaTableMultireturn.tlua, 13, 5))
+>nonTail : Symbol(nonTail, Decl(tluaTableMultireturn.tlua, 12, 5))
+>1 : Symbol(1, Decl(tluaTableMultireturn.tlua, 12, 17))
+
+local nt2: number = nonTail[2];
+>nt2 : Symbol(nt2, Decl(tluaTableMultireturn.tlua, 14, 5))
+>nonTail : Symbol(nonTail, Decl(tluaTableMultireturn.tlua, 12, 5))
+>2 : Symbol(2, Decl(tluaTableMultireturn.tlua, 12, 25))
+
+// The pack's second value does not flow out of a non-tail entry: [3] is absent.
+local nt3: string = nonTail[3];
+>nt3 : Symbol(nt3, Decl(tluaTableMultireturn.tlua, 16, 5))
+>nonTail : Symbol(nonTail, Decl(tluaTableMultireturn.tlua, 12, 5))
+
+// The tail expands, so both of the pack's values land.
+local tail = { 0, pair() };
+>tail : Symbol(tail, Decl(tluaTableMultireturn.tlua, 19, 5))
+>pair : Symbol(pair, Decl(tluaTableMultireturn.tlua, 0, 0))
+
+local t2: number = tail[2];
+>t2 : Symbol(t2, Decl(tluaTableMultireturn.tlua, 20, 5))
+>tail : Symbol(tail, Decl(tluaTableMultireturn.tlua, 19, 5))
+>2 : Symbol(2, Decl(tluaTableMultireturn.tlua, 19, 17))
+
+local t3: string = tail[3];
+>t3 : Symbol(t3, Decl(tluaTableMultireturn.tlua, 21, 5))
+>tail : Symbol(tail, Decl(tluaTableMultireturn.tlua, 19, 5))
+>3 : Symbol(3, Decl(tluaTableMultireturn.tlua, 19, 17))
+
+// An unbounded tail has no statically known indices, so it lands in the number
+// index signature rather than in positional properties. The signature covers the
+// fixed entries before it too, so it is the union of everything the table holds.
+local unbounded = { 0, variadic() };
+>unbounded : Symbol(unbounded, Decl(tluaTableMultireturn.tlua, 26, 5))
+>variadic : Symbol(variadic, Decl(tluaTableMultireturn.tlua, 4, 3))
+
+local u1: number = unbounded[1];
+>u1 : Symbol(u1, Decl(tluaTableMultireturn.tlua, 27, 5))
+>unbounded : Symbol(unbounded, Decl(tluaTableMultireturn.tlua, 26, 5))
+>1 : Symbol(1, Decl(tluaTableMultireturn.tlua, 26, 19))
+
+local ufar: string | number = unbounded[99];
+>ufar : Symbol(ufar, Decl(tluaTableMultireturn.tlua, 28, 5))
+>unbounded : Symbol(unbounded, Decl(tluaTableMultireturn.tlua, 26, 5))
+
+// A void call in the tail contributes zero values: the table stays empty.
+local empty = { nothing() };
+>empty : Symbol(empty, Decl(tluaTableMultireturn.tlua, 31, 5))
+>nothing : Symbol(nothing, Decl(tluaTableMultireturn.tlua, 8, 3))
+
+// A parenthesized call is a single value, so it does not expand even in the tail.
+local paren = { 0, (pair()) };
+>paren : Symbol(paren, Decl(tluaTableMultireturn.tlua, 34, 5))
+>pair : Symbol(pair, Decl(tluaTableMultireturn.tlua, 0, 0))
+
+local p2: number = paren[2];
+>p2 : Symbol(p2, Decl(tluaTableMultireturn.tlua, 35, 5))
+>paren : Symbol(paren, Decl(tluaTableMultireturn.tlua, 34, 5))
+>2 : Symbol(2, Decl(tluaTableMultireturn.tlua, 34, 18))
+
+local p3: string = paren[3];
+>p3 : Symbol(p3, Decl(tluaTableMultireturn.tlua, 36, 5))
+>paren : Symbol(paren, Decl(tluaTableMultireturn.tlua, 34, 5))
+
+// A keyed entry never expands: it takes one value.
+local keyedCall = { [1] = pair() };
+>keyedCall : Symbol(keyedCall, Decl(tluaTableMultireturn.tlua, 39, 5))
+>[1] : Symbol([1], Decl(tluaTableMultireturn.tlua, 39, 19))
+>1 : Symbol([1], Decl(tluaTableMultireturn.tlua, 39, 19))
+>pair : Symbol(pair, Decl(tluaTableMultireturn.tlua, 0, 0))
+
+local kc: number = keyedCall[1];
+>kc : Symbol(kc, Decl(tluaTableMultireturn.tlua, 40, 5))
+>keyedCall : Symbol(keyedCall, Decl(tluaTableMultireturn.tlua, 39, 5))
+>1 : Symbol([1], Decl(tluaTableMultireturn.tlua, 39, 19))
+
+local es = {nt1, nt2, nt3, t2, t3, u1, ufar, empty, p2, p3, kc};
+>es : Symbol(es, Decl(tluaTableMultireturn.tlua, 42, 5))
+

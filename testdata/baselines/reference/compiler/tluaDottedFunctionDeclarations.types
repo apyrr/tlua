@@ -1,0 +1,68 @@
+//// [tests/cases/compiler/tluaDottedFunctionDeclarations.tlua] ////
+
+=== tluaDottedFunctionDeclarations.tlua ===
+local M = {};
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>{} : { identity(a: number): number; add(a: number, b: number): number; }
+
+function M.identity(a: number): number
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>identity : (a: number) => number
+>a : number
+
+  return a;
+>a : number
+
+end
+
+function M.add(a: number, b: number): number
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>add : (a: number, b: number) => number
+>a : number
+>b : number
+
+  return M.identity(a) + b;
+>M.identity(a) + b : number
+>M.identity(a) : number
+>M.identity : (a: number) => number
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>identity : (a: number) => number
+>a : number
+>b : number
+
+end
+
+local early = M.add(1, 2);
+>early : number
+>M.add(1, 2) : number
+>M.add : (a: number, b: number) => number
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>add : (a: number, b: number) => number
+>1 : 1
+>2 : 2
+
+local late = M.identity(3);
+>late : number
+>M.identity(3) : number
+>M.identity : (a: number) => number
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>identity : (a: number) => number
+>3 : 3
+
+local bad = M.add("nope", 2);
+>bad : number
+>M.add("nope", 2) : number
+>M.add : (a: number, b: number) => number
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>add : (a: number, b: number) => number
+>"nope" : "nope"
+>2 : 2
+
+local missing = M.nonexistent(1);
+>missing : any
+>M.nonexistent(1) : any
+>M.nonexistent : any
+>M : { identity(a: number): number; add(a: number, b: number): number; }
+>nonexistent : any
+>1 : 1
+

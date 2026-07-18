@@ -1,0 +1,118 @@
+//// [tests/cases/compiler/tluaOptionalChainEmit.tlua] ////
+
+=== tluaOptionalChainEmit.tlua ===
+// Optional chaining (`?.`) has no Lua equivalent. It lowers to `and`-guarded
+// access (Lua `and` returns the falsy operand, and a member-bearing base can
+// never be `false`, so truthiness == non-nil). Side-effecting receivers are
+// captured once into a preceding `local`; lazily-evaluated positions use a
+// single-eval IIFE; a discarded chain becomes `if base then access end`.
+
+type Inner = { c: number }
+>Inner : Symbol(Inner, Decl(tluaOptionalChainEmit.tlua, 0, 0))
+>c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+
+type T = { b: Inner, m: () => number, get: () => (Inner | nil), [k: string]: unknown }
+>T : Symbol(T, Decl(tluaOptionalChainEmit.tlua, 6, 26))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>Inner : Symbol(Inner, Decl(tluaOptionalChainEmit.tlua, 0, 0))
+>m : Symbol(m, Decl(tluaOptionalChainEmit.tlua, 7, 20))
+>get : Symbol(get, Decl(tluaOptionalChainEmit.tlua, 7, 37))
+>Inner : Symbol(Inner, Decl(tluaOptionalChainEmit.tlua, 0, 0))
+>k : Symbol(k, Decl(tluaOptionalChainEmit.tlua, 7, 65))
+
+local function run(a: T | nil, getObj: () => (T | nil))
+>run : Symbol(run, Decl(tluaOptionalChainEmit.tlua, 7, 86))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>T : Symbol(T, Decl(tluaOptionalChainEmit.tlua, 6, 26))
+>getObj : Symbol(getObj, Decl(tluaOptionalChainEmit.tlua, 9, 30))
+>T : Symbol(T, Decl(tluaOptionalChainEmit.tlua, 6, 26))
+
+  // (A) copiable base, single optional link — pure `and`, no temp.
+  local a1 = a?.b
+>a1 : Symbol(a1, Decl(tluaOptionalChainEmit.tlua, 11, 7))
+>a?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+
+  local a2 = a?.b.c
+>a2 : Symbol(a2, Decl(tluaOptionalChainEmit.tlua, 12, 7))
+>a?.b.c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+>a?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+
+  local a3 = a?.m()
+>a3 : Symbol(a3, Decl(tluaOptionalChainEmit.tlua, 13, 7))
+>a?.m : Symbol(m, Decl(tluaOptionalChainEmit.tlua, 7, 20))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>m : Symbol(m, Decl(tluaOptionalChainEmit.tlua, 7, 20))
+
+  local a4 = a?.["b"] // element access
+>a4 : Symbol(a4, Decl(tluaOptionalChainEmit.tlua, 14, 7))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+
+  // Multi-name local: no single operative slot, so each chain lowers in place
+  // (must not hoist — regression guard for the operativeChain nil case).
+  local m1, m2 = a?.b, getObj()?.b
+>m1 : Symbol(m1, Decl(tluaOptionalChainEmit.tlua, 18, 7))
+>m2 : Symbol(m2, Decl(tluaOptionalChainEmit.tlua, 18, 11))
+>a?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>getObj()?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>getObj : Symbol(getObj, Decl(tluaOptionalChainEmit.tlua, 9, 30))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+
+  // (B) side-effecting base / nested optional link, order-safe slot — hoist a
+  // `local`, guard with `and`.
+  local b1 = a?.b?.c
+>b1 : Symbol(b1, Decl(tluaOptionalChainEmit.tlua, 22, 7))
+>a?.b?.c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+>a?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+
+  local b2 = getObj()?.b
+>b2 : Symbol(b2, Decl(tluaOptionalChainEmit.tlua, 23, 7))
+>getObj()?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>getObj : Symbol(getObj, Decl(tluaOptionalChainEmit.tlua, 9, 30))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+
+  local b3 = a?.get()?.c
+>b3 : Symbol(b3, Decl(tluaOptionalChainEmit.tlua, 24, 7))
+>a?.get()?.c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+>a?.get : Symbol(get, Decl(tluaOptionalChainEmit.tlua, 7, 37))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>get : Symbol(get, Decl(tluaOptionalChainEmit.tlua, 7, 37))
+>c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+
+  // (C) lazily-evaluated position (RHS of `and`) — single-eval IIFE.
+  local c1 = true and getObj()?.b
+>c1 : Symbol(c1, Decl(tluaOptionalChainEmit.tlua, 27, 7))
+>getObj()?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>getObj : Symbol(getObj, Decl(tluaOptionalChainEmit.tlua, 9, 30))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+
+  // Discarded chain in statement position — rewritten to `if ... then ... end`.
+  a?.m()
+>a?.m : Symbol(m, Decl(tluaOptionalChainEmit.tlua, 7, 20))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>m : Symbol(m, Decl(tluaOptionalChainEmit.tlua, 7, 20))
+
+  getObj()?.m()
+>getObj()?.m : Symbol(m, Decl(tluaOptionalChainEmit.tlua, 7, 20))
+>getObj : Symbol(getObj, Decl(tluaOptionalChainEmit.tlua, 9, 30))
+>m : Symbol(m, Decl(tluaOptionalChainEmit.tlua, 7, 20))
+
+  // Order-safe `return` slot — hoisting is unnecessary here (copiable base).
+  return a?.b.c
+>a?.b.c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+>a?.b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>a : Symbol(a, Decl(tluaOptionalChainEmit.tlua, 9, 19))
+>b : Symbol(b, Decl(tluaOptionalChainEmit.tlua, 7, 10))
+>c : Symbol(c, Decl(tluaOptionalChainEmit.tlua, 6, 14))
+
+end
+

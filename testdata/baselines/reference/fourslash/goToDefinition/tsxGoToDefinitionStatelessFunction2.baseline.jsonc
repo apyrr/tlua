@@ -1,0 +1,104 @@
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// <|declare function [|MainButton|](buttonProps: ButtonProps): JSX.Element;|>
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <Main/*GOTO DEF*/Button />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// <|declare function [|MainButton|](buttonProps: ButtonProps): JSX.Element;|>
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <Main/*GOTO DEF*/Button children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// <|declare function [|MainButton|](buttonProps: ButtonProps): JSX.Element;|>
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <Main/*GOTO DEF*/Button onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// <|declare function [|MainButton|](buttonProps: ButtonProps): JSX.Element;|>
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <Main/*GOTO DEF*/Button onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 14) skipped ---
+//     goTo: string;
+// }
+// declare function MainButton(buttonProps: ButtonProps): JSX.Element;
+// <|declare function [|MainButton|](linkProps: LinkProps): JSX.Element;|>
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <Main/*GOTO DEF*/Button goTo="goTo" />;
+// local opt = <MainButton wrong />;
+
+
+
+// === goToDefinition ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// interface LinkProps extends ClickableProps {
+//     goTo: string;
+// }
+// <|declare function [|MainButton|](buttonProps: ButtonProps): JSX.Element;|>
+// declare function MainButton(linkProps: LinkProps): JSX.Element;
+// declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
+// local opt = <MainButton />;
+// local opt = <MainButton children="chidlren" />;
+// local opt = <MainButton onClick={()=>{}} />;
+// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton goTo="goTo" />;
+// local opt = <Main/*GOTO DEF*/Button wrong />;

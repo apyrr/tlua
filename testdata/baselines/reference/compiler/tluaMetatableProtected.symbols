@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/tluaMetatableProtected.tlua] ////
+
+=== tluaMetatableProtected.tlua ===
+// A __metatable member protects the metatable: getmetatable shows the sentinel instead, and
+// setmetatable refuses to change it -- the runtime raises, so the old pairing stands, the one
+// place setmetatable does not replace.
+
+local guarded = setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "locked" });
+>guarded : Symbol(guarded, Decl(tluaMetatableProtected.tlua, 4, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableProtected.tlua, 4, 30))
+>__index : Symbol(__index, Decl(tluaMetatableProtected.tlua, 4, 41))
+>a : Symbol(a, Decl(tluaMetatableProtected.tlua, 4, 53))
+>__metatable : Symbol(__metatable, Decl(tluaMetatableProtected.tlua, 4, 62))
+
+// getmetatable answers with the __metatable sentinel, not the real metatable.
+local shown: string = getmetatable(guarded);
+>shown : Symbol(shown, Decl(tluaMetatableProtected.tlua, 7, 5))
+>getmetatable : Symbol(getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>guarded : Symbol(guarded, Decl(tluaMetatableProtected.tlua, 4, 5))
+
+// A re-setmetatable is an error, and the old pairing survives it.
+local again = setmetatable(guarded, { __index = { b = 2 } });
+>again : Symbol(again, Decl(tluaMetatableProtected.tlua, 10, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>guarded : Symbol(guarded, Decl(tluaMetatableProtected.tlua, 4, 5))
+>__index : Symbol(__index, Decl(tluaMetatableProtected.tlua, 10, 37))
+>b : Symbol(b, Decl(tluaMetatableProtected.tlua, 10, 49))
+
+local survives: number = again.a;
+>survives : Symbol(survives, Decl(tluaMetatableProtected.tlua, 11, 5))
+>again.a : Symbol(a, Decl(tluaMetatableProtected.tlua, 4, 53))
+>again : Symbol(again, Decl(tluaMetatableProtected.tlua, 10, 5))
+>a : Symbol(a, Decl(tluaMetatableProtected.tlua, 4, 53))
+
+// An unprotected table replaces normally.
+local unprotected = setmetatable({ n = 1 }, { __index = { a = 1 } });
+>unprotected : Symbol(unprotected, Decl(tluaMetatableProtected.tlua, 14, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableProtected.tlua, 14, 34))
+>__index : Symbol(__index, Decl(tluaMetatableProtected.tlua, 14, 45))
+>a : Symbol(a, Decl(tluaMetatableProtected.tlua, 14, 57))
+
+local replaced = setmetatable(unprotected, { __index = { b = 2 } });
+>replaced : Symbol(replaced, Decl(tluaMetatableProtected.tlua, 15, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>unprotected : Symbol(unprotected, Decl(tluaMetatableProtected.tlua, 14, 5))
+>__index : Symbol(__index, Decl(tluaMetatableProtected.tlua, 15, 44))
+>b : Symbol(b, Decl(tluaMetatableProtected.tlua, 15, 56))
+
+local b: number = replaced.b;
+>b : Symbol(b, Decl(tluaMetatableProtected.tlua, 16, 5))
+>replaced.b : Symbol(b, Decl(tluaMetatableProtected.tlua, 15, 56))
+>replaced : Symbol(replaced, Decl(tluaMetatableProtected.tlua, 15, 5))
+>b : Symbol(b, Decl(tluaMetatableProtected.tlua, 15, 56))
+
+local goneA = replaced.a;
+>goneA : Symbol(goneA, Decl(tluaMetatableProtected.tlua, 17, 5))
+>replaced : Symbol(replaced, Decl(tluaMetatableProtected.tlua, 15, 5))
+

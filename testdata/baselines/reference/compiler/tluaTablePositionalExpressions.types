@@ -1,0 +1,153 @@
+//// [tests/cases/compiler/tluaTablePositionalExpressions.tlua] ////
+
+=== tluaTablePositionalExpressions.tlua ===
+// Any expression is a positional entry.
+local x = 10;
+>x : number
+>10 : 10
+
+declare function f(): number;
+>f : () => number
+
+declare o: { y: number };
+>o : { y: number; }
+>y : number
+
+declare get: string;
+>get : string
+
+declare a: number;
+>a : number
+
+declare b: number;
+>b : number
+
+local t = {
+>t : { 1: number; 2: number; 3: number; 4: number; 5: string; 6: string; 7: (n: number) => number; 8: string; 9: boolean; 10: number; 11: boolean; 12: nil; }
+>{    x,                                        // identifier (TS shorthand is gone)    o.y,                                      // property access    f(),                                      // call    1 + 2,                                    // arithmetic    "str",                                    // string literal    `tpl${x}`,                                // template    function(n: number): number return n; end,// function expression    get,                                      // `get` is just a variable    a < b,                                    // comparison    a and b,                                  // logical    true, nil,                                // literals} : { 1: number; 2: number; 3: number; 4: number; 5: string; 6: string; 7: (n: number) => number; 8: string; 9: boolean; 10: number; 11: boolean; 12: nil; }
+
+    x,                                        // identifier (TS shorthand is gone)
+>x : error
+
+    o.y,                                      // property access
+>o.y : number
+>o : { y: number; }
+>y : number
+
+    f(),                                      // call
+>f() : number
+>f : () => number
+
+    1 + 2,                                    // arithmetic
+>1 + 2 : number
+>1 : 1
+>2 : 2
+
+    "str",                                    // string literal
+    `tpl${x}`,                                // template
+>`tpl${x}` : string
+>x : number
+
+    function(n: number): number return n; end,// function expression
+>function(n: number): number return n; end : (n: number) => number
+>n : number
+>n : number
+
+    get,                                      // `get` is just a variable
+>get : error
+
+    a < b,                                    // comparison
+>a < b : boolean
+>a : number
+>b : number
+
+    a and b,                                  // logical
+>a and b : number
+>a : number
+>b : number
+
+    true, nil,                                // literals
+>true : true
+
+};
+local t1: number = t[1];
+>t1 : number
+>t[1] : number
+>t : { 1: number; 2: number; 3: number; 4: number; 5: string; 6: string; 7: (n: number) => number; 8: string; 9: boolean; 10: number; 11: boolean; 12: nil; }
+>1 : 1
+
+local t8: string = t[8];
+>t8 : string
+>t[8] : string
+>t : { 1: number; 2: number; 3: number; 4: number; 5: string; 6: string; 7: (n: number) => number; 8: string; 9: boolean; 10: number; 11: boolean; 12: nil; }
+>8 : 8
+
+local t9: boolean = t[9];
+>t9 : boolean
+>t[9] : boolean
+>t : { 1: number; 2: number; 3: number; 4: number; 5: string; 6: string; 7: (n: number) => number; 8: string; 9: boolean; 10: number; 11: boolean; 12: nil; }
+>9 : 9
+
+local es = {t1, t8, t9};
+>es : { 1: number; 2: string; 3: boolean; }
+>{t1, t8, t9} : { 1: number; 2: string; 3: boolean; }
+>t1 : error
+>t8 : error
+>t9 : error
+
+// A multireturn call in the tail expands; in any other position it truncates to
+// its first value. (Object spread `{ ...src, 9 }` is gone; `...` is the vararg.)
+declare function two(): (number, string);
+>two : () => (number, string)
+
+local tail = { 9, two() };
+>tail : { 1: number; 2: number; 3: string; }
+>{ 9, two() } : { 1: number; 2: number; 3: string; }
+>two() : number
+>two : () => (number, string)
+
+local tail1: number = tail[1];
+>tail1 : number
+>tail[1] : number
+>tail : { 1: number; 2: number; 3: string; }
+>1 : 1
+
+local tail2: number = tail[2];
+>tail2 : number
+>tail[2] : number
+>tail : { 1: number; 2: number; 3: string; }
+>2 : 2
+
+local tail3: string = tail[3];
+>tail3 : string
+>tail[3] : string
+>tail : { 1: number; 2: number; 3: string; }
+>3 : 3
+
+local nonTail = { two(), 9 };
+>nonTail : { 1: number; 2: number; }
+>{ two(), 9 } : { 1: number; 2: number; }
+>two() : number
+>two : () => (number, string)
+
+local nt1: number = nonTail[1];
+>nt1 : number
+>nonTail[1] : number
+>nonTail : { 1: number; 2: number; }
+>1 : 1
+
+local nt2: number = nonTail[2];
+>nt2 : number
+>nonTail[2] : number
+>nonTail : { 1: number; 2: number; }
+>2 : 2
+
+local sps = {tail1, tail2, tail3, nt1, nt2};
+>sps : { 1: number; 2: number; 3: string; 4: number; 5: number; }
+>{tail1, tail2, tail3, nt1, nt2} : { 1: number; 2: number; 3: string; 4: number; 5: number; }
+>tail1 : error
+>tail2 : error
+>tail3 : error
+>nt1 : error
+>nt2 : error
+

@@ -1,0 +1,103 @@
+//// [tests/cases/compiler/tluaTypeGuardIdentity.tlua] ////
+
+=== tluaTypeGuardIdentity.tlua ===
+// Only a call to the real global `type` narrows. The binder matches the call by
+// spelling, so every one of these shapes reaches the checker and is turned down
+// there; each unnarrowed use below is an error.
+
+declare v: string | number;
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+declare function use(x: unknown): void;
+>use : Symbol(use, Decl(tluaTypeGuardIdentity.tlua, 4, 27))
+>x : Symbol(x, Decl(tluaTypeGuardIdentity.tlua, 5, 21))
+
+function shadowed(): void {
+>shadowed : Symbol(shadowed, Decl(tluaTypeGuardIdentity.tlua, 5, 39))
+
+  local type = function(value: any) return "string"; end;
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 8, 7))
+>value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 8, 24))
+
+  if type(v) == "string" then
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 8, 7))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 10, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+  end
+}
+
+function aliased(): void {
+>aliased : Symbol(aliased, Decl(tluaTypeGuardIdentity.tlua, 12, 1))
+
+  local t = type;
+>t : Symbol(t, Decl(tluaTypeGuardIdentity.tlua, 15, 7))
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+
+  if t(v) == "string" then
+>t : Symbol(t, Decl(tluaTypeGuardIdentity.tlua, 15, 7))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 17, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+  end
+}
+
+declare holder: { type: (value: any) => string };
+>holder : Symbol(holder, Decl(tluaTypeGuardIdentity.tlua, 21, 7))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 21, 17))
+>value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 21, 25))
+
+function member(): void {
+>member : Symbol(member, Decl(tluaTypeGuardIdentity.tlua, 21, 49))
+
+  if holder.type(v) == "string" then
+>holder.type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 21, 17))
+>holder : Symbol(holder, Decl(tluaTypeGuardIdentity.tlua, 21, 7))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 21, 17))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 25, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+  end
+}
+
+function wrongArity(): void {
+>wrongArity : Symbol(wrongArity, Decl(tluaTypeGuardIdentity.tlua, 27, 1))
+
+  if type() == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 31, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+  end
+}
+
+// The global still narrows in the same file, once the shadow is out of scope.
+function global(): void {
+>global : Symbol(global, Decl(tluaTypeGuardIdentity.tlua, 33, 1))
+
+  if type(v) == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 38, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+
+    use(s);
+>use : Symbol(use, Decl(tluaTypeGuardIdentity.tlua, 4, 27))
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 38, 9))
+
+  end
+}
+

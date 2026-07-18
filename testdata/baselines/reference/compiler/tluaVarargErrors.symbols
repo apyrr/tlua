@@ -1,0 +1,150 @@
+//// [tests/cases/compiler/tluaVarargErrors.tlua] ////
+
+=== main.tlua ===
+declare function consume(a: number, b: number): void;
+>consume : Symbol(consume, Decl(main.tlua, 0, 0))
+>a : Symbol(a, Decl(main.tlua, 0, 25))
+>b : Symbol(b, Decl(main.tlua, 0, 35))
+
+declare nums: number[];
+>nums : Symbol(nums, Decl(main.tlua, 1, 7))
+
+declare obj: { a: number; b: number };
+>obj : Symbol(obj, Decl(main.tlua, 2, 7))
+>a : Symbol(a, Decl(main.tlua, 2, 14))
+>b : Symbol(b, Decl(main.tlua, 2, 25))
+
+// `...` outside any vararg function.
+function notVararg(): void
+>notVararg : Symbol(notVararg, Decl(main.tlua, 2, 38))
+
+  local x = ...;
+>x : Symbol(x, Decl(main.tlua, 6, 7))
+
+end
+
+// The same, as a *non-tail* call argument. This is the shape that made the v1
+// implementation panic: the pack probe must stay pure and report 100035 here
+// rather than returning an error type into the argument machinery.
+function nonTailArgument(): void
+>nonTailArgument : Symbol(nonTailArgument, Decl(main.tlua, 7, 3))
+
+  consume(1, ...);
+>consume : Symbol(consume, Decl(main.tlua, 0, 0))
+
+end
+
+// An illegal `...` as the whole argument list: 100035 only. The illegal tail
+// keeps the tail's arity treatment, so no "Expected 2 arguments, but got 1"
+// stacks on top of the one real error.
+function illegalTailOnly(): void
+>illegalTailOnly : Symbol(illegalTailOnly, Decl(main.tlua, 14, 3))
+
+  consume(...);
+>consume : Symbol(consume, Decl(main.tlua, 0, 0))
+
+end
+
+// A nested function does not capture the outer pack; the pack is not a
+// capturable local.
+function outer(...: number): void
+>outer : Symbol(outer, Decl(main.tlua, 21, 3))
+> : Symbol((Missing), Decl(main.tlua, 25, 15))
+
+  local inner = function(): void
+>inner : Symbol(inner, Decl(main.tlua, 26, 7))
+
+    local y = ...;
+>y : Symbol(y, Decl(main.tlua, 27, 9))
+
+  end;
+end
+
+// Operand spread is gone in every position.
+function spreads(...: number): void
+>spreads : Symbol(spreads, Decl(main.tlua, 29, 3))
+> : Symbol((Missing), Decl(main.tlua, 32, 17))
+
+  consume(...nums);
+>consume : Symbol(consume, Decl(main.tlua, 0, 0))
+>nums : Symbol(nums, Decl(main.tlua, 1, 7))
+
+  consume(...nums, 1);
+>consume : Symbol(consume, Decl(main.tlua, 0, 0))
+>nums : Symbol(nums, Decl(main.tlua, 1, 7))
+
+  consume(1, ...nums, 2);
+>consume : Symbol(consume, Decl(main.tlua, 0, 0))
+>nums : Symbol(nums, Decl(main.tlua, 1, 7))
+
+  consume(...nums, ...nums);
+>consume : Symbol(consume, Decl(main.tlua, 0, 0))
+>nums : Symbol(nums, Decl(main.tlua, 1, 7))
+>nums : Symbol(nums, Decl(main.tlua, 1, 7))
+
+  local spreadTable = {...obj};
+>spreadTable : Symbol(spreadTable, Decl(main.tlua, 37, 7))
+
+  local spreadThenField = {...obj, a = 1};
+>spreadThenField : Symbol(spreadThenField, Decl(main.tlua, 38, 7))
+>a : Symbol(a, Decl(main.tlua, 38, 34))
+
+end
+
+// Binding-pattern rest is gone.
+local { a, ...restOfObj } = obj;
+> : Symbol((Missing), Decl(main.tlua, 42, 5))
+>obj : Symbol(obj, Decl(main.tlua, 2, 7))
+
+=== grammar.tlua ===
+// The vararg parameter grammar. These are *checker* grammar rules, not parse
+// errors -- a parse error would suppress every semantic diagnostic in the whole
+// program -- so they live in a file that parses cleanly: grammarErrorOnNode is
+// itself suppressed in any file that has parse diagnostics, which is why main.tlua
+// cannot host them.
+
+// A vararg parameter must be last.
+declare function notLast(...: number, a: number): void;
+>notLast : Symbol(notLast, Decl(grammar.tlua, 0, 0))
+> : Symbol((Missing), Decl(grammar.tlua, 7, 25))
+>a : Symbol(a, Decl(grammar.tlua, 7, 37))
+
+// A vararg parameter cannot be optional...
+declare function optionalVararg(...?: number): void;
+>optionalVararg : Symbol(optionalVararg, Decl(grammar.tlua, 7, 55))
+> : Symbol((Missing), Decl(grammar.tlua, 10, 32))
+
+// ...nor carry an initializer. The span is the parameter, not its name: a
+// vararg's name is a zero-width synthetic identifier and would give no span.
+declare function initializedVararg(... = 1): void;
+>initializedVararg : Symbol(initializedVararg, Decl(grammar.tlua, 10, 52))
+> : Symbol((Missing), Decl(grammar.tlua, 14, 35))
+
+// A vararg parameter cannot have a name: the legacy TS rest form is gone.
+declare function namedRest(...args: number[]): void;
+>namedRest : Symbol(namedRest, Decl(grammar.tlua, 14, 50))
+>args : Symbol(args, Decl(grammar.tlua, 17, 27))
+
+// A named rest is still parsed for recovery, so it is still held to the old rule
+// that its type is an array -- it is the one rest form that is not element-typed
+// and not array-wrapped.
+declare function namedRestNotArray(...args: number): void;
+>namedRestNotArray : Symbol(namedRestNotArray, Decl(grammar.tlua, 17, 52))
+>args : Symbol(args, Decl(grammar.tlua, 22, 35))
+
+// And a named rest in a callable type is a (rejected) parameter list, not a
+// pure-variadic return pack.
+declare function namedRestInReturn(): (...args: string[]) => void;
+>namedRestInReturn : Symbol(namedRestInReturn, Decl(grammar.tlua, 22, 58))
+>args : Symbol(args, Decl(grammar.tlua, 26, 39))
+
+=== legacy.d.tlua ===
+// Named rest is rejected in declaration files too -- there is no carve-out.
+declare function fromDts(...args: string[]): void;
+>fromDts : Symbol(fromDts, Decl(legacy.d.tlua, 0, 0))
+>args : Symbol(args, Decl(legacy.d.tlua, 1, 25))
+
+declare fromDtsType: (...args: string[]) => void;
+>fromDtsType : Symbol(fromDtsType, Decl(legacy.d.tlua, 2, 7))
+>args : Symbol(args, Decl(legacy.d.tlua, 2, 22))
+

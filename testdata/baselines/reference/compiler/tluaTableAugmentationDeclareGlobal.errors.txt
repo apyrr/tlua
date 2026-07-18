@@ -1,0 +1,17 @@
+use.tlua(2,7): error TS2339: Property 'tag' does not exist on type '{}'.
+
+
+==== decl.tlua (0 errors) ====
+    declare global {
+      interface Shape {
+        x: number;
+      }
+    }
+    
+==== use.tlua (1 errors) ====
+    Shape = {};
+    Shape.tag = 1;
+          ~~~
+!!! error TS2339: Property 'tag' does not exist on type '{}'.
+    local s: Shape = { x = 1 };
+    

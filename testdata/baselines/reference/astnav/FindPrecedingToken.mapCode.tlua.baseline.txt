@@ -1,0 +1,343 @@
+〚Positions: [1, 6]〛
+【TS: Identifier [0, 5)】
+《Go: LocalKeyword [0, 5)》
+1 │《【l〚ocal】》 t〛s = require("namespaces.ts");
+2 │local ChangeTracker = require("textChanges").ChangeTracker;
+3 │
+
+
+〚Positions: [38, 43]〛
+【TS: Identifier [36, 42)】
+《Go: LocalKeyword [36, 42)》
+1 │local ts = require("namespaces.ts");《【
+2 │l〚ocal】》 C〛hangeTracker = require("textChanges").ChangeTracker;
+3 │
+4 │/** @internal */
+
+
+〚Positions: [116, 124]〛
+【TS: FunctionKeyword [96, 123)】
+《Go: FunctionKeyword [114, 123)》
+1 │local ts = require("namespaces.ts");
+2 │local ChangeTracker = require("textChanges").ChangeTracker;【
+3 │
+4 │/** @internal */《
+5 │f〚unction】》 m〛apCode(
+6 │    sourceFile: SourceFile,
+7 │    contents: string[],
+
+
+〚Positions: [221, 229]〛
+【TS: UndefinedKeyword [219, 229)】
+《Go: NilKeyword [219, 229)》
+6 │    sourceFile: SourceFile,
+7 │    contents: string[],
+8 │    focusLocations: TextSpan[][] |《【 u〚ndefined】》,〛
+9 │    host: LanguageServiceHost,
+10 │    formatContext: formatting.FormatContext,
+
+
+〚Positions: [493, 498]〛
+【TS: Identifier [479, 497)】
+《Go: LocalKeyword [479, 497)》
+13 │    return textChanges.ChangeTracker.with(
+14 │        { host, formatContext, preferences },
+15 │        changeTracker => {《【
+16 │            l〚ocal】》 p〛arsed = contents.map(c => parse(sourceFile, c));
+17 │            local flattenedLocations = focusLocations && flatten(focusLocations);
+18 │            for (local nodes of parsed) {
+
+
+〚Positions: [561, 566]〛
+【TS: Identifier [547, 565)】
+《Go: LocalKeyword [547, 565)》
+14 │        { host, formatContext, preferences },
+15 │        changeTracker => {
+16 │            local parsed = contents.map(c => parse(sourceFile, c));《【
+17 │            l〚ocal】》 f〛lattenedLocations = focusLocations && flatten(focusLocations);
+18 │            for (local nodes of parsed) {
+19 │                placeNodeGroup(
+
+
+〚Positions: [648, 653]〛
+【TS: Identifier [647, 652)】
+《Go: LocalKeyword [647, 652)》
+16 │            local parsed = contents.map(c => parse(sourceFile, c));
+17 │            local flattenedLocations = focusLocations && flatten(focusLocations);
+18 │            for (《【l〚ocal】》 n〛odes of parsed) {
+19 │                placeNodeGroup(
+20 │                    sourceFile,
+
+
+〚Positions: [1011, 1012]〛
+【TS: JSDoc [892, 1011)】
+《Go: JSDoc [890, 1011)》
+26 │        },
+27 │    );
+28 │}《
+29 │
+30 │【/**
+31 │ * Tries to parse something into either "top-level" statements, or into blocks
+32 │ * of class-context definitions.
+33 │ */】》〚
+34 │f〛unction parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+
+
+〚Positions: [1013, 1021]〛
+【TS: FunctionKeyword [890, 1020)】
+《Go: FunctionKeyword [1011, 1020)》
+26 │        },
+27 │    );
+28 │}【
+29 │
+30 │/**
+31 │ * Tries to parse something into either "top-level" statements, or into blocks
+32 │ * of class-context definitions.
+33 │ */《
+34 │f〚unction】》 p〛arse(sourceFile: SourceFile, content: string): NodeArray<Node> {
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+
+
+〚Positions: [1281, 1286]〛
+【TS: Identifier [1086, 1285)】
+《Go: LocalKeyword [1086, 1285)》
+32 │ * of class-context definitions.
+33 │ */
+34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {《【
+35 │    // We're going to speculatively parse different kinds of contexts to see
+36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+37 │    // this as lazily as possible.
+38 │    l〚ocal】》 n〛odeKinds = [
+39 │        {
+40 │            parse: () =>
+
+
+〚Positions: [2119, 2124]〛
+【TS: Identifier [2112, 2123)】
+《Go: LocalKeyword [2112, 2123)》
+59 │            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+60 │        },
+61 │    ];《【
+62 │
+63 │    l〚ocal】》 p〛arsedNodes = [];
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+
+
+〚Positions: [2152, 2157]〛
+【TS: Identifier [2151, 2156)】
+《Go: LocalKeyword [2151, 2156)》
+62 │
+63 │    local parsedNodes = [];
+64 │    for (《【l〚ocal】》 {〛 parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();
+66 │        local bod = body(sourceFile);
+
+
+〚Positions: [2198, 2203]〛
+【TS: Identifier [2188, 2202)】
+《Go: LocalKeyword [2188, 2202)》
+62 │
+63 │    local parsedNodes = [];
+64 │    for (local { parse, body } of nodeKinds) {《【
+65 │        l〚ocal】》 s〛ourceFile = parse();
+66 │        local bod = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+
+
+〚Positions: [2234, 2239]〛
+【TS: Identifier [2224, 2238)】
+《Go: LocalKeyword [2224, 2238)》
+63 │    local parsedNodes = [];
+64 │    for (local { parse, body } of nodeKinds) {
+65 │        local sourceFile = parse();《【
+66 │        l〚ocal】》 b〛od = body(sourceFile);
+67 │        if (bod.length && sourceFile.parseDiagnostics.length == 0) {
+68 │            // If we run into a case with no parse errors, this is likely the right kind.
+
+
+〚Positions: [2906, 2911]〛
+【TS: Identifier [2900, 2910)】
+《Go: LocalKeyword [2900, 2910)》
+80 │            a.sourceFile.parseDiagnostics.length -
+81 │            b.sourceFile.parseDiagnostics.length,
+82 │    );《【
+83 │    l〚ocal】》 {〛 body } = parsedNodes[0];
+84 │    return body;
+85 │}
+
+
+〚Positions: [3737, 3742]〛
+【TS: Identifier [3731, 3741)】
+《Go: LocalKeyword [3731, 3741)》
+114 │    changes: NodeArray<ClassElement> | NodeArray<TypeElement>,
+115 │    focusLocations?: TextSpan[],
+116 │) {《【
+117 │    l〚ocal】》 c〛lassOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
+
+
+〚Positions: [3871, 3872]〛
+【TS: Identifier [3869, 3872)】
+《Go: BarBarToken [3869, 3872)》
+117 │    local classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface = find(originalFile.statements,《【 o〚r】》(〛isClassLike, isInterfaceDeclaration));
+120 │    }
+121 │    else {
+
+
+〚Positions: [4101, 4102]〛
+【TS: Identifier [4083, 4102)】
+《Go: BarBarToken [4083, 4102)》
+122 │        classOrInterface = forEach(focusLocations, location =>
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),《【
+125 │                o〚r】》(〛isClassLike, isInterfaceDeclaration),
+126 │            ));
+127 │    }
+
+
+〚Positions: [4256, 4261]〛
+【TS: Identifier [4249, 4260)】
+《Go: LocalKeyword [4249, 4260)》
+130 │        // No class? don't insert.
+131 │        return;
+132 │    }《【
+133 │
+134 │    l〚ocal】》 f〛irstMatch = classOrInterface.members.find(member => changes.some(change => matchNode(change, member)));
+135 │    if (firstMatch) {
+136 │        // can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [4475, 4480]〛
+【TS: Identifier [4387, 4479)】
+《Go: LocalKeyword [4387, 4479)》
+133 │
+134 │    local firstMatch = classOrInterface.members.find(member => changes.some(change => matchNode(change, member)));
+135 │    if (firstMatch) {《【
+136 │        // can't be undefined here, since we know we have at least one match.
+137 │        l〚ocal】》 l〛astMatch = findLast(
+138 │            classOrInterface.members as NodeArray<ClassElement | TypeElement>,
+139 │            member => changes.some(change => matchNode(change, member)),
+
+
+〚Positions: [5442, 5447]〛
+【TS: Identifier [5441, 5446)】
+《Go: LocalKeyword [5441, 5446)》
+173 │    }
+174 │
+175 │    for (《【l〚ocal】》 l〛ocation of focusLocations) {
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+
+
+〚Positions: [5486, 5491]〛
+【TS: Identifier [5476, 5490)】
+《Go: LocalKeyword [5476, 5490)》
+173 │    }
+174 │
+175 │    for (local location of focusLocations) {《【
+176 │        l〚ocal】》 s〛cope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>
+
+
+〚Positions: [5644, 5645]〛
+【TS: Identifier [5626, 5645)】
+《Go: BarBarToken [5626, 5645)》
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            (block): block is Block | SourceFile =>《【
+179 │                o〚r】》(〛isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+181 │        );
+
+
+〚Positions: [5831, 5836]〛
+【TS: Identifier [5817, 5835)】
+《Go: LocalKeyword [5817, 5835)》
+180 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+181 │        );
+182 │        if (scope) {《【
+183 │            l〚ocal】》 s〛tart = scope.statements.find(stmt => changes.some(node => matchNode(node, stmt)));
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [6048, 6053]〛
+【TS: Identifier [5944, 6052)】
+《Go: LocalKeyword [5944, 6052)》
+182 │        if (scope) {
+183 │            local start = scope.statements.find(stmt => changes.some(node => matchNode(node, stmt)));
+184 │            if (start) {《【
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                l〚ocal】》 f〛in = findLast(scope.statements, stmt => changes.some(node => matchNode(node, stmt)))!;
+187 │                forEach(changes, wipeNode);
+188 │                changeTracker.replaceNodeRangeWithNodes(
+
+
+〚Positions: [6436, 6441]〛
+【TS: Identifier [6429, 6440)】
+《Go: LocalKeyword [6429, 6440)》
+195 │            }
+196 │        }
+197 │    }《【
+198 │
+199 │    l〚ocal】》 s〛copeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+
+
+〚Positions: [6516, 6521]〛
+【TS: Identifier [6515, 6520)】
+《Go: LocalKeyword [6515, 6520)》
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (《【l〚ocal】》 l〛ocation of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+
+
+〚Positions: [6560, 6565]〛
+【TS: Identifier [6550, 6564)】
+《Go: LocalKeyword [6550, 6564)》
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {《【
+201 │        l〚ocal】》 b〛lock = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+203 │            isBlock,
+
+
+〚Positions: [7019, 7019]〛
+【TS: TildeToken [7017, 7019)】
+《Go: TildeEqualsToken [7017, 7020)》
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+219 │    if (a.kind《【 ~】〚=〛》 b.kind) {
+220 │        return false;
+221 │    }
+
+
+〚Positions: [7020, 7021]〛
+【TS: EqualsToken [7019, 7020)】
+《Go: TildeEqualsToken [7017, 7020)》
+217 │
+218 │function matchNode(a: Node, b: Node): boolean {
+219 │    if (a.kind《 ~【=】》〚 b〛.kind) {
+220 │        return false;
+221 │    }
+
+
+〚Positions: [8642, 8650]〛
+【TS: Identifier [8640, 8650)】
+《Go: NilKeyword [8640, 8650)》
+277 │function wipeNode(node: Mutable<Node>) {
+278 │    resetNodePositions(node);
+279 │    node.parent =《【 u〚ndefined】》!〛;
+280 │}
+281 │

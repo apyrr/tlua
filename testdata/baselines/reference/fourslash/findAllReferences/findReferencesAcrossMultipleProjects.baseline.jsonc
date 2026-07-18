@@ -1,0 +1,23 @@
+// === findAllReferences ===
+// === /a.tlua ===
+// /*FIND ALL REFS*/local [|x|]: number;
+
+
+
+// === findAllReferences ===
+// === /a.tlua ===
+// local /*FIND ALL REFS*/[|x|]: number;
+
+
+
+// === findAllReferences ===
+// === /b.tlua ===
+// /// <reference path="a.tlua" />
+// /*FIND ALL REFS*/x++;
+
+
+
+// === findAllReferences ===
+// === /c.tlua ===
+// /// <reference path="a.tlua" />
+// /*FIND ALL REFS*/x++;

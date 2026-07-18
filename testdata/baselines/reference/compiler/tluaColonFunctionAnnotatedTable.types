@@ -1,0 +1,68 @@
+//// [tests/cases/compiler/tluaColonFunctionAnnotatedTable.tlua] ////
+
+=== tluaColonFunctionAnnotatedTable.tlua ===
+interface Ops {
+  good(self: Ops, a: number): number;
+>good : (self: Ops, a: number) => number
+>self : Ops
+>a : number
+
+  noSelf(a: number): number;
+>noSelf : (a: number) => number
+>a : number
+}
+
+local ops: Ops = {
+>ops : Ops
+>{  good = function(self: Ops, a: number) return a; end,  noSelf = function(a: number) return a; end,} : { good: (self: Ops, a: number) => number; noSelf: (a: number) => number; }
+
+  good = function(self: Ops, a: number) return a; end,
+>good : (self: Ops, a: number) => number
+>function(self: Ops, a: number) return a; end : (self: Ops, a: number) => number
+>self : Ops
+>a : number
+>a : number
+
+  noSelf = function(a: number) return a; end,
+>noSelf : (a: number) => number
+>function(a: number) return a; end : (a: number) => number
+>a : number
+>a : number
+
+};
+
+// An annotated table gets an assignability check against the declared member,
+// and the colon form supplies the receiver the interface asks for.
+function ops:good(a: number): number
+>ops : Ops
+>good : (self: Ops, a: number) => number
+>: : Ops
+>ops : Ops
+>a : number
+
+  return a;
+>a : number
+
+end
+
+// `noSelf` takes no receiver, so the colon form does not fit it.
+function ops:noSelf(a: number): number
+>ops : Ops
+>noSelf : (self: Ops, a: number) => number
+>: : Ops
+>ops : Ops
+>a : number
+
+  return a;
+>a : number
+
+end
+
+function ops:absent(): void
+>ops : Ops
+>absent : (self: Ops) => void
+>: : Ops
+>ops : Ops
+
+end
+

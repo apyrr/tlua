@@ -1,0 +1,93 @@
+//// [tests/cases/compiler/tluaLambdaEmit.tlua] ////
+
+=== tluaLambdaEmit.tlua ===
+// A lambda compiles to the Lua function constructor. An expression body
+// becomes a single-line `function(x) return x + 1 end`; a braced body inlines
+// its statements before `end`.
+local function two(): (number, string)
+>two : () => (number, string)
+
+  return 1, "s"
+>1, "s" : number, string
+>1 : 1
+>"s" : "s"
+
+end
+local add = (x: number, y: number) => x + y
+>add : (x: number, y: number) => number
+>(x: number, y: number) => x + y : (x: number, y: number) => number
+>x : number
+>y : number
+>x + y : number
+>x : number
+>y : number
+
+local block = (x: number) => { return x * 2; }
+>block : (x: number) => number
+>(x: number) => { return x * 2; } : (x: number) => number
+>x : number
+>x * 2 : number
+>x : number
+>2 : 2
+
+local nested = (x: number) => (y: number) => x + y
+>nested : (x: number) => (y: number) => number
+>(x: number) => (y: number) => x + y : (x: number) => (y: number) => number
+>x : number
+>(y: number) => x + y : (y: number) => number
+>y : number
+>x + y : number
+>x : number
+>y : number
+
+local noParams = () => 42
+>noParams : () => number
+>() => 42 : () => number
+>42 : 42
+
+// A concise body is typed as one value, but a direct call in Lua tail
+// position would propagate its whole pack -- the emit parenthesizes it so the
+// runtime truncates to the value the type names.
+local truncated = () => two()
+>truncated : () => number
+>() => two() : () => number
+>two() : number
+>two : () => (number, string)
+
+local one: number = truncated()
+>one : number
+>truncated() : number
+>truncated : () => number
+
+// A parenthesized object-literal body keeps its parens; `return { ... } end`
+// would also be valid Lua, but the source spelling round-trips.
+local table = () => ({ k = 1 })
+>table : () => { k: number; }
+>() => ({ k = 1 }) : () => { k: number; }
+>({ k = 1 }) : { k: number; }
+>{ k = 1 } : { k: number; }
+>k : number
+>1 : 1
+
+print(add(1, 2), block(2), nested(1)(2), noParams(), table().k)
+>print(add(1, 2), block(2), nested(1)(2), noParams(), table().k) : void
+>print : (...: any) => void
+>add(1, 2) : number
+>add : (x: number, y: number) => number
+>1 : 1
+>2 : 2
+>block(2) : number
+>block : (x: number) => number
+>2 : 2
+>nested(1)(2) : number
+>nested(1) : (y: number) => number
+>nested : (x: number) => (y: number) => number
+>1 : 1
+>2 : 2
+>noParams() : number
+>noParams : () => number
+>table().k : number
+>table() : { k: number; }
+>table : () => { k: number; }
+>k : number
+

@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/tluaRequireMultiReturnChunk.tlua] ////
+
+=== main.tlua ===
+local p = require("pair");
+>p : { tag: string; }
+>require("pair") : { tag: string; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"pair" : "pair"
+
+local tag: string = p.tag;
+>tag : string
+>p.tag : string
+>p : { tag: string; }
+>tag : string
+
+local f: string = require("forwarded");
+>f : string
+>require("forwarded") : string
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"forwarded" : "forwarded"
+
+=== pair.tlua ===
+local first = { tag = "first" };
+>first : { tag: string; }
+>{ tag = "first" } : { tag: string; }
+>tag : string
+>"first" : "first"
+
+local second = 2;
+>second : number
+>2 : 2
+
+// Lua's require keeps only the first value a chunk returns.
+return first, second;
+>first, second : { tag: string; }, number
+>first : { tag: string; }
+>second : number
+
+=== forwarded.tlua ===
+declare multi: () => (string, number);
+>multi : () => (string, number)
+
+return multi();
+>multi() : string
+>multi : () => (string, number)
+

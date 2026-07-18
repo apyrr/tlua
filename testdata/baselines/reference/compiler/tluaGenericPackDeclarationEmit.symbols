@@ -1,0 +1,35 @@
+//// [tests/cases/compiler/tluaGenericPackDeclarationEmit.tlua] ////
+
+=== tluaGenericPackDeclarationEmit.tlua ===
+// A generic pack signature round-trips through declaration emit as `<...A>` and
+// `...: A` / `...R`, the same spelling the source uses.
+
+declare function apply<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+>apply : Symbol(apply, Decl(tluaGenericPackDeclarationEmit.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 23))
+>R : Symbol(R, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 28))
+>f : Symbol(f, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 35))
+> : Symbol((Missing), Decl(tluaGenericPackDeclarationEmit.tlua, 3, 39))
+>A : Symbol(A, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 23))
+>R : Symbol(R, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 28))
+> : Symbol((Missing), Decl(tluaGenericPackDeclarationEmit.tlua, 3, 57))
+>A : Symbol(A, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 23))
+>R : Symbol(R, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 28))
+
+function wrap<...A, ...R>(f: (...: A) => (...R)): (...: A) => (...R)
+>wrap : Symbol(wrap, Decl(tluaGenericPackDeclarationEmit.tlua, 3, 74))
+>A : Symbol(A, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 14))
+>R : Symbol(R, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 19))
+>f : Symbol(f, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 26))
+> : Symbol((Missing), Decl(tluaGenericPackDeclarationEmit.tlua, 5, 30))
+>A : Symbol(A, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 14))
+>R : Symbol(R, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 19))
+> : Symbol((Missing), Decl(tluaGenericPackDeclarationEmit.tlua, 5, 51))
+>A : Symbol(A, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 14))
+>R : Symbol(R, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 19))
+
+  return f;
+>f : Symbol(f, Decl(tluaGenericPackDeclarationEmit.tlua, 5, 26))
+
+end
+

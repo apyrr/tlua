@@ -1,0 +1,49 @@
+// @target: esnext
+
+function sumTo(n: number): number
+  local total = 0;
+  for i = 1, n do
+    total = total + i;
+  end
+  return total;
+end
+
+// Optional step; the control variable may be assigned.
+function countDown(n: number): number
+  local last = 0;
+  for i = n, 1, -1 do
+    last = i;
+    i = i - 1;
+  end
+  return last;
+end
+
+// An annotation is allowed when it accepts a number.
+function annotated(n: number): number
+  local total = 0;
+  for i: number = 1, n do
+    total = total + i;
+  end
+  return total;
+end
+
+// break works; nesting works; TS body statements work.
+function nested(w: number, h: number): number
+  local count = 0;
+  for x = 1, w do
+    for y = 1, h do
+      if (count > 100) {
+        break;
+      }
+      count = count + 1;
+    end
+  end
+  return count;
+end
+
+// The control variable is scoped to the loop.
+function scoped(n: number): number
+  for i = 1, n do
+  end
+  return i;
+end

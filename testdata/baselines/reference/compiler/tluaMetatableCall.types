@@ -1,0 +1,91 @@
+//// [tests/cases/compiler/tluaMetatableCall.tlua] ////
+
+=== tluaMetatableCall.tlua ===
+// __call makes a paired table callable. Lua passes the table itself as the metamethod's first
+// argument, so a call site supplies the arguments from the second parameter on.
+
+local callable = setmetatable({ n = 1 }, {
+>callable : { (x: number): string; n: number; }
+>setmetatable({ n = 1 }, {  __call = function(self: object, x: number): string return "s"; end,}) : { (x: number): string; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  __call = function(self: object, x: number): string return "s"; end,} : { __call: (self: object, x: number) => string; }
+
+  __call = function(self: object, x: number): string return "s"; end,
+>__call : (self: object, x: number) => string
+>function(self: object, x: number): string return "s"; end : (self: object, x: number) => string
+>self : object
+>x : number
+>"s" : "s"
+
+});
+
+local r: string = callable(2);
+>r : string
+>callable(2) : string
+>callable : { (x: number): string; n: number; }
+>2 : 2
+
+local n: number = callable.n;       // the table's own members still read
+>n : number
+>callable.n : number
+>callable : { (x: number): string; n: number; }
+>n : number
+
+// The receiver is implicit, so passing it back is one argument too many.
+local tooMany = callable(callable, 2);
+>tooMany : string
+>callable(callable, 2) : string
+>callable : { (x: number): string; n: number; }
+>callable : { (x: number): string; n: number; }
+>2 : 2
+
+local wrongArg = callable("x");
+>wrongArg : string
+>callable("x") : string
+>callable : { (x: number): string; n: number; }
+>"x" : "x"
+
+// A callable pairing is still a table: pairs iterates it.
+for k, v in pairs(callable) do
+>k : "n"
+>v : number
+>pairs(callable) : LuaPairsIterator<"n", number>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>callable : { (x: number): string; n: number; }
+
+  local key: string = k;
+>key : string
+>k : "n"
+
+end
+
+// A __call whose only parameter is a rest keeps it -- the rest absorbs the receiver and the
+// arguments alike.
+local rest = setmetatable({}, { __call = function(...: any): number return 1; end });
+>rest : (...: any) => number
+>setmetatable({}, { __call = function(...: any): number return 1; end }) : (...: any) => number
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{} : {}
+>{ __call = function(...: any): number return 1; end } : { __call: (...: any) => number; }
+>__call : (...: any) => number
+>function(...: any): number return 1; end : (...: any) => number
+> : any[]
+>1 : 1
+
+local rr: number = rest(1, "x");
+>rr : number
+>rest(1, "x") : number
+>rest : (...: any) => number
+>1 : 1
+>"x" : "x"
+
+// A __call-only metatable is enough to pair, so getmetatable answers for it.
+local mt = getmetatable(callable);
+>mt : { __call: (self: object, x: number) => string; }
+>getmetatable(callable) : { __call: (self: object, x: number) => string; }
+>getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>callable : { (x: number): string; n: number; }
+

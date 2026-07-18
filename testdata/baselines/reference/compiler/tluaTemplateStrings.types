@@ -1,0 +1,73 @@
+//// [tests/cases/compiler/tluaTemplateStrings.tlua] ////
+
+=== tluaTemplateStrings.tlua ===
+// Template literals have no Lua equivalent, so they lower to `..` concatenation.
+// Each substitution is wrapped in tostring() to coerce like JS String()/Luau interp.
+
+local a: number = 5
+>a : number
+>5 : 5
+
+local b: string = "hi"
+>b : string
+>"hi" : "hi"
+
+// No substitutions: just a plain Lua string.
+local plain = `hello world`
+>plain : string
+>`hello world` : "hello world"
+
+// Leading and trailing text around substitutions.
+local s1 = `x${a}y${b}z`
+>s1 : string
+>`x${a}y${b}z` : string
+>a : number
+>b : string
+
+// Substitution only, empty head and tail.
+local s2 = `${a}`
+>s2 : string
+>`${a}` : string
+>a : number
+
+// Adjacent substitutions, no text between.
+local s3 = `${a}${b}`
+>s3 : string
+>`${a}${b}` : string
+>a : number
+>b : string
+
+// Text that needs escaping in a Lua string.
+local s4 = `line "one"
+>s4 : string
+>`line "one"line two ${a}` : string
+
+line two ${a}`
+>a : number
+
+// Nested template inside a substitution.
+local s5 = `outer ${`inner ${a}`} end`
+>s5 : string
+>`outer ${`inner ${a}`} end` : string
+>`inner ${a}` : string
+>a : number
+
+// An expression substitution.
+local s6 = `sum is ${a + a}`
+>s6 : string
+>`sum is ${a + a}` : string
+>a + a : number
+>a : number
+>a : number
+
+// Control characters must use Lua's `\ddd` decimal escape, not JS `\uXXXX` (invalid Lua).
+// Here \x1b is an ANSI escape (ESC, 0x1B) and \u{2028} is a non-ASCII separator kept raw.
+local s7 = `color ${a}\x1b[0m`
+>s7 : string
+>`color ${a}\x1b[0m` : string
+>a : number
+
+local s8 = `\u{2028}sep`
+>s8 : string
+>`\u{2028}sep` : " sep"
+

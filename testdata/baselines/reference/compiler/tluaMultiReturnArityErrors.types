@@ -1,0 +1,76 @@
+//// [tests/cases/compiler/tluaMultiReturnArityErrors.tlua] ////
+
+=== tluaMultiReturnArityErrors.tlua ===
+function need2(): (number, string)
+>need2 : () => (number, string)
+
+  return 1;
+>1 : 1
+
+end
+
+function allows2(): (number, string)
+>allows2 : () => (number, string)
+
+  return 1, "a", true;
+>1, "a", true : number, string, boolean
+>1 : 1
+>"a" : "a"
+>true : true
+
+end
+
+function wrongTypes(): (number, string)
+>wrongTypes : () => (number, string)
+
+  return "a", 1;
+>"a", 1 : string, number
+>"a" : "a"
+>1 : 1
+
+end
+
+function single(): number
+>single : () => number
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+// A bare return provides zero values against a pack that requires two.
+function bareReturn(): (number, string)
+>bareReturn : () => (number, string)
+
+  return;
+end
+
+// An all-optional pack allows returning nothing at all.
+function allOptional(): (number?, string?)
+>allOptional : () => (number?, string?)
+
+end
+
+// A pack with required values must return.
+function mustReturn(): (number, string?)
+>mustReturn : () => (number, string?)
+
+end
+
+// A type predicate cannot start a multiple return type.
+function badPredicate(x: unknown): (x is string, number) {
+>badPredicate : (x: unknown) => (x is string, number)
+>x : unknown
+
+  return type(x) == "string", 1;
+>type(x) == "string", 1 : boolean, number
+>type(x) == "string" : boolean
+>type(x) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>x : unknown
+>"string" : "string"
+>1 : 1
+}
+

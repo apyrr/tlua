@@ -1,0 +1,42 @@
+// === QuickInfo ===
+=== /quickInfoLink7.tlua ===
+// /**
+//  * See {@link |       } instead
+//  */
+// local B = 456;
+//       ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local B: number
+// | ```
+// | See | instead
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 46,
+      "LSPosition": {
+        "line": 3,
+        "character": 6
+      },
+      "Name": "",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal B: number\n```\nSee | instead"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 6
+        },
+        "end": {
+          "line": 3,
+          "character": 7
+        }
+      }
+    }
+  }
+]

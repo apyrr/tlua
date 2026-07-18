@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/tluaNotCallableErrors.tlua] ////
+
+=== tluaNotCallableErrors.tlua ===
+// Calling a value with no call signatures must error. TypeScript's
+// "untyped call" escape hatch keyed on Function-assignability, which is
+// meaningless against tlua's empty Function interface — every value was
+// Function-assignable and not-callable errors vanished.
+local notCallable = 1;
+>notCallable : number
+>1 : 1
+
+notCallable();
+>notCallable() : any
+>notCallable : number
+
+local emptyObject = {};
+>emptyObject : {}
+>{} : {}
+
+emptyObject();
+>emptyObject() : any
+>emptyObject : {}
+
+declare legacyFunction: Function;
+>legacyFunction : Function
+
+legacyFunction();
+>legacyFunction() : any
+>legacyFunction : Function
+
+declare untypedValue: any;
+>untypedValue : any
+
+untypedValue(); // any stays callable
+>untypedValue() : any
+>untypedValue : any
+

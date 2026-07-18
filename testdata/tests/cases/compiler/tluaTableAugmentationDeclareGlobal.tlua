@@ -1,0 +1,20 @@
+// @target: esnext
+// @strict: true
+
+// A type-only global contributed by `declare global` from an external module
+// must behave like a same-file interface: it merges with the implicit global
+// and, being a non-constructor arm, closes the table to augmentation. This
+// pins the initialization order — Lua augmentation eligibility runs after
+// global-scope augmentations merge.
+
+// @filename: decl.tlua
+declare global {
+  interface Shape {
+    x: number;
+  }
+}
+
+// @filename: use.tlua
+Shape = {};
+Shape.tag = 1;
+local s: Shape = { x = 1 };

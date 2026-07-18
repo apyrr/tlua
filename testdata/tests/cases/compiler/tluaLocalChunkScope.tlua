@@ -1,0 +1,10 @@
+// @strict: true
+// @target: esnext
+// @noEmit: true
+
+// @filename: a.tlua
+local chunkValue = 1;
+chunkValue;
+
+// @filename: b.tlua
+chunkValue;

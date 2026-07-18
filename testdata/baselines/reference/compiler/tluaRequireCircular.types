@@ -1,0 +1,52 @@
+//// [tests/cases/compiler/tluaRequireCircular.tlua] ////
+
+=== main.tlua ===
+local a = require("a");
+>a : { name: string; callB(): string; }
+>require("a") : { name: string; callB(): string; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"a" : "a"
+
+local s: string = a.callB();
+>s : string
+>a.callB() : string
+>a.callB : () => string
+>a : { name: string; callB(): string; }
+>callB : () => string
+
+=== a.tlua ===
+local b = require("b");
+>b : { name: string; }
+>require("b") : { name: string; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"b" : "b"
+
+local A = { name = "a" };
+>A : { name: string; callB(): string; }
+>{ name = "a" } : { name: string; callB(): string; }
+>name : string
+>"a" : "a"
+
+function A.callB(): string
+>A : { name: string; callB(): string; }
+>callB : () => string
+
+  return b.name;
+>b.name : string
+>b : { name: string; }
+>name : string
+
+end
+return A;
+>A : { name: string; callB(): string; }
+
+=== b.tlua ===
+local B = { name = "b" };
+>B : { name: string; }
+>{ name = "b" } : { name: string; }
+>name : string
+>"b" : "b"
+
+return B;
+>B : { name: string; }
+

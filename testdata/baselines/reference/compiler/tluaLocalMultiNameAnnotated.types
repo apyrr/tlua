@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/tluaLocalMultiNameAnnotated.tlua] ////
+
+=== tluaLocalMultiNameAnnotated.tlua ===
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+// Annotations check their positional value.
+local a: number, b: string = pair();
+>a : number
+>b : string
+>pair() : number
+>pair : () => (number, string)
+
+// Position 0 mismatch.
+local c: string, d = pair();
+>c : string
+>d : string
+>pair() : number
+>pair : () => (number, string)
+
+// Position 1 mismatch.
+local e, f: boolean = pair();
+>e : number
+>f : boolean
+>pair() : number
+>pair : () => (number, string)
+
+// A name past the values must accept nil.
+local g: number, h: string, i: boolean = pair();
+>g : number
+>h : string
+>i : boolean
+>pair() : number
+>pair : () => (number, string)
+
+// nil-accepting annotations are fine past the end.
+local j: number, k: string, l: boolean | nil = pair();
+>j : number
+>k : string
+>l : boolean | nil
+>pair() : number
+>pair : () => (number, string)
+
+// Mixed annotated and inferred names.
+local m, n: string = pair();
+>m : number
+>n : string
+>pair() : number
+>pair : () => (number, string)
+

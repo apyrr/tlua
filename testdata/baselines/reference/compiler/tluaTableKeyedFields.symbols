@@ -1,0 +1,109 @@
+//// [tests/cases/compiler/tluaTableKeyedFields.tlua] ////
+
+=== tluaTableKeyedFields.tlua ===
+// Lua keyed fields: `name = value` is equivalent to `name: value`.
+local t = { x = 1, y = "s" };
+>t : Symbol(t, Decl(tluaTableKeyedFields.tlua, 1, 5))
+>x : Symbol(x, Decl(tluaTableKeyedFields.tlua, 1, 11))
+>y : Symbol(y, Decl(tluaTableKeyedFields.tlua, 1, 18))
+
+local tx: number = t.x;
+>tx : Symbol(tx, Decl(tluaTableKeyedFields.tlua, 2, 5))
+>t.x : Symbol(x, Decl(tluaTableKeyedFields.tlua, 1, 11))
+>t : Symbol(t, Decl(tluaTableKeyedFields.tlua, 1, 5))
+>x : Symbol(x, Decl(tluaTableKeyedFields.tlua, 1, 11))
+
+local ty: string = t.y;
+>ty : Symbol(ty, Decl(tluaTableKeyedFields.tlua, 3, 5))
+>t.y : Symbol(y, Decl(tluaTableKeyedFields.tlua, 1, 18))
+>t : Symbol(t, Decl(tluaTableKeyedFields.tlua, 1, 5))
+>y : Symbol(y, Decl(tluaTableKeyedFields.tlua, 1, 18))
+
+// Bracket keys with `=`: literal, dynamic, and numeric.
+local key = "dyn";
+>key : Symbol(key, Decl(tluaTableKeyedFields.tlua, 6, 5))
+
+local u = { ["lit"] = 1, [key] = 2, [1] = "one" };
+>u : Symbol(u, Decl(tluaTableKeyedFields.tlua, 7, 5))
+>["lit"] : Symbol(["lit"], Decl(tluaTableKeyedFields.tlua, 7, 11))
+>"lit" : Symbol(["lit"], Decl(tluaTableKeyedFields.tlua, 7, 11))
+>[key] : Symbol([key], Decl(tluaTableKeyedFields.tlua, 7, 24))
+>key : Symbol(key, Decl(tluaTableKeyedFields.tlua, 6, 5))
+>[1] : Symbol([1], Decl(tluaTableKeyedFields.tlua, 7, 35))
+>1 : Symbol([1], Decl(tluaTableKeyedFields.tlua, 7, 35))
+
+local ulit: number = u.lit;
+>ulit : Symbol(ulit, Decl(tluaTableKeyedFields.tlua, 8, 5))
+>u.lit : Symbol(["lit"], Decl(tluaTableKeyedFields.tlua, 7, 11))
+>u : Symbol(u, Decl(tluaTableKeyedFields.tlua, 7, 5))
+>lit : Symbol(["lit"], Decl(tluaTableKeyedFields.tlua, 7, 11))
+
+local uone: string = u[1];
+>uone : Symbol(uone, Decl(tluaTableKeyedFields.tlua, 9, 5))
+>u : Symbol(u, Decl(tluaTableKeyedFields.tlua, 7, 5))
+>1 : Symbol([1], Decl(tluaTableKeyedFields.tlua, 7, 35))
+
+// Nested tables.
+local nested = { a = { b = 2 } };
+>nested : Symbol(nested, Decl(tluaTableKeyedFields.tlua, 12, 5))
+>a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 12, 16))
+>b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 12, 22))
+
+local nb: number = nested.a.b;
+>nb : Symbol(nb, Decl(tluaTableKeyedFields.tlua, 13, 5))
+>nested.a.b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 12, 22))
+>nested.a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 12, 16))
+>nested : Symbol(nested, Decl(tluaTableKeyedFields.tlua, 12, 5))
+>a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 12, 16))
+>b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 12, 22))
+
+// Identifier and bracket keys coexist in one literal.
+local both = { a = 1, b = 2, ["c"] = 3, ["d"] = 4 };
+>both : Symbol(both, Decl(tluaTableKeyedFields.tlua, 16, 5))
+>a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 16, 14))
+>b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 16, 21))
+>["c"] : Symbol(["c"], Decl(tluaTableKeyedFields.tlua, 16, 28))
+>"c" : Symbol(["c"], Decl(tluaTableKeyedFields.tlua, 16, 28))
+>["d"] : Symbol(["d"], Decl(tluaTableKeyedFields.tlua, 16, 39))
+>"d" : Symbol(["d"], Decl(tluaTableKeyedFields.tlua, 16, 39))
+
+local bsum: number = both.a + both.b + both.c + both.d;
+>bsum : Symbol(bsum, Decl(tluaTableKeyedFields.tlua, 17, 5))
+>both.a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 16, 14))
+>both : Symbol(both, Decl(tluaTableKeyedFields.tlua, 16, 5))
+>a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 16, 14))
+>both.b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 16, 21))
+>both : Symbol(both, Decl(tluaTableKeyedFields.tlua, 16, 5))
+>b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 16, 21))
+>both.c : Symbol(["c"], Decl(tluaTableKeyedFields.tlua, 16, 28))
+>both : Symbol(both, Decl(tluaTableKeyedFields.tlua, 16, 5))
+>c : Symbol(["c"], Decl(tluaTableKeyedFields.tlua, 16, 28))
+>both.d : Symbol(["d"], Decl(tluaTableKeyedFields.tlua, 16, 39))
+>both : Symbol(both, Decl(tluaTableKeyedFields.tlua, 16, 5))
+>d : Symbol(["d"], Decl(tluaTableKeyedFields.tlua, 16, 39))
+
+// Inference and widening behave exactly like `:` fields.
+local widened = { n = 0 };
+>widened : Symbol(widened, Decl(tluaTableKeyedFields.tlua, 20, 5))
+>n : Symbol(n, Decl(tluaTableKeyedFields.tlua, 20, 17))
+
+widened.n = 42;
+>widened.n : Symbol(n, Decl(tluaTableKeyedFields.tlua, 20, 17))
+>widened : Symbol(widened, Decl(tluaTableKeyedFields.tlua, 20, 5))
+>n : Symbol(n, Decl(tluaTableKeyedFields.tlua, 20, 17))
+
+// Table fields holding functions (brace-bodied function expressions).
+local fns = { add = function(a: number, b: number): number return a + b; end };
+>fns : Symbol(fns, Decl(tluaTableKeyedFields.tlua, 24, 5))
+>add : Symbol(add, Decl(tluaTableKeyedFields.tlua, 24, 13))
+>a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 24, 29))
+>b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 24, 39))
+>a : Symbol(a, Decl(tluaTableKeyedFields.tlua, 24, 29))
+>b : Symbol(b, Decl(tluaTableKeyedFields.tlua, 24, 39))
+
+local three: number = fns.add(1, 2);
+>three : Symbol(three, Decl(tluaTableKeyedFields.tlua, 25, 5))
+>fns.add : Symbol(add, Decl(tluaTableKeyedFields.tlua, 24, 13))
+>fns : Symbol(fns, Decl(tluaTableKeyedFields.tlua, 24, 5))
+>add : Symbol(add, Decl(tluaTableKeyedFields.tlua, 24, 13))
+

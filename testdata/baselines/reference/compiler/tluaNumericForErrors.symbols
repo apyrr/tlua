@@ -1,0 +1,118 @@
+//// [tests/cases/compiler/tluaNumericForErrors.tlua] ////
+
+=== tluaNumericForErrors.tlua ===
+// Non-number bounds and step.
+function badBounds(): void
+>badBounds : Symbol(badBounds, Decl(tluaNumericForErrors.tlua, 0, 0))
+
+  for i = "a", 10 do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 2, 5))
+
+    local n = i;
+>n : Symbol(n, Decl(tluaNumericForErrors.tlua, 3, 9))
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 2, 5))
+
+    n;
+>n : Symbol(n, Decl(tluaNumericForErrors.tlua, 3, 9))
+
+  end
+  for i = 1, true do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 6, 5))
+
+    i;
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 6, 5))
+
+  end
+  for i = 1, 10, "step" do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 9, 5))
+
+    i;
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 9, 5))
+
+  end
+end
+
+// Missing `to`.
+function missingTo(): void
+>missingTo : Symbol(missingTo, Decl(tluaNumericForErrors.tlua, 12, 3))
+
+  for i = 1 do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 16, 5))
+
+    i;
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 16, 5))
+
+  end
+end
+
+// More than three control expressions.
+function tooMany(): void
+>tooMany : Symbol(tooMany, Decl(tluaNumericForErrors.tlua, 19, 3))
+
+  for i = 1, 10, 2, 3 do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 23, 5))
+
+    i;
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 23, 5))
+
+  end
+end
+
+// An annotation that cannot hold a number.
+function badAnnotation(): void
+>badAnnotation : Symbol(badAnnotation, Decl(tluaNumericForErrors.tlua, 26, 3))
+
+  for i: string = 1, 2 do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 30, 5))
+
+    i;
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 30, 5))
+
+  end
+end
+
+// The control variable cannot be used in its own bounds.
+function selfReference(): void
+>selfReference : Symbol(selfReference, Decl(tluaNumericForErrors.tlua, 33, 3))
+
+  for i = i, 10 do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 37, 5))
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 37, 5))
+
+    i;
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 37, 5))
+
+  end
+end
+
+// Unused control variable; underscore is exempt.
+function unused(n: number): number
+>unused : Symbol(unused, Decl(tluaNumericForErrors.tlua, 40, 3))
+>n : Symbol(n, Decl(tluaNumericForErrors.tlua, 43, 16))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaNumericForErrors.tlua, 44, 7))
+
+  for i = 1, n do
+>i : Symbol(i, Decl(tluaNumericForErrors.tlua, 45, 5))
+>n : Symbol(n, Decl(tluaNumericForErrors.tlua, 43, 16))
+
+    total = total + 1;
+>total : Symbol(total, Decl(tluaNumericForErrors.tlua, 44, 7))
+>total : Symbol(total, Decl(tluaNumericForErrors.tlua, 44, 7))
+
+  end
+  for _ = 1, n do
+>_ : Symbol(_, Decl(tluaNumericForErrors.tlua, 48, 5))
+>n : Symbol(n, Decl(tluaNumericForErrors.tlua, 43, 16))
+
+    total = total + 1;
+>total : Symbol(total, Decl(tluaNumericForErrors.tlua, 44, 7))
+>total : Symbol(total, Decl(tluaNumericForErrors.tlua, 44, 7))
+
+  end
+  return total;
+>total : Symbol(total, Decl(tluaNumericForErrors.tlua, 44, 7))
+
+end
+

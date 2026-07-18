@@ -1,0 +1,77 @@
+//// [tests/cases/compiler/tluaColonFunctionErrors.tlua] ////
+
+=== tluaColonFunctionErrors.tlua ===
+local M = {};
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>{} : { bar(self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }, v: number): number; clash(self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }, self: number): void; deep(self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }): any; a(self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }): b; }
+
+function M:bar(v: number): number
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>bar : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }, v: number) => number
+>: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>v : number
+
+  return v;
+>v : number
+
+end
+
+// The colon call form supplies the receiver implicitly.
+M:bar(1);
+>M:bar(1) : number
+>M:bar : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }, v: number) => number
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>bar : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }, v: number) => number
+>1 : 1
+
+// `self` is already declared by the colon.
+function M:clash(self: number): void
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>clash : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }, self: number) => void
+>: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>self : number
+
+end
+
+// At most one colon segment, and nothing may follow it.
+function M:deep.f(): void
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>deep : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }) => any
+>: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>f() : any
+>f : any
+>void : nil
+
+end
+> : any
+
+function M:a:b(): void
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>a : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }) => b
+>: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): any; a(self: any): b; }
+>(): void : () => void
+
+end
+> : any
+
+// `local function` takes a plain name.
+local function Bad:f(): void
+>Bad : () => f
+>(): void : () => void
+
+end
+> : any
+
+// Unknown base.
+function Unknown:f(): void
+>Unknown : any
+>f : (self: typeof Unknown) => void
+>: : any
+>Unknown : any
+
+end
+

@@ -1,0 +1,51 @@
+//// [tests/cases/compiler/tluaDottedFunctionAnnotatedTable.tlua] ////
+
+=== tluaDottedFunctionAnnotatedTable.tlua ===
+interface Ops {
+  good(a: number): number;
+>good : (a: number) => number
+>a : number
+
+  wrong(a: number): number;
+>wrong : (a: number) => number
+>a : number
+}
+
+local ops: Ops = { good = function(a: number) return a; end, wrong = function(a: number) return a; end };
+>ops : Ops
+>{ good = function(a: number) return a; end, wrong = function(a: number) return a; end } : { good: (a: number) => number; wrong: (a: number) => number; }
+>good : (a: number) => number
+>function(a: number) return a; end : (a: number) => number
+>a : number
+>a : number
+>wrong : (a: number) => number
+>function(a: number) return a; end : (a: number) => number
+>a : number
+>a : number
+
+function ops.good(a: number): number
+>ops : Ops
+>good : (a: number) => number
+>a : number
+
+  return a;
+>a : number
+
+end
+
+function ops.wrong(a: string): string
+>ops : Ops
+>wrong : (a: string) => string
+>a : string
+
+  return a;
+>a : string
+
+end
+
+function ops.absent(): void
+>ops : Ops
+>absent : () => void
+
+end
+

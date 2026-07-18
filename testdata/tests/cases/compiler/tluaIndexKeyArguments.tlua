@@ -1,0 +1,40 @@
+// @strict: true
+// @lib: luajit
+// @noEmit: true
+
+// An EXPLICIT type argument for an index-key type parameter is re-validated
+// against the key domain (any non-nil type) at the reference -- the same rule
+// the declaration site enforces with 100039.
+
+interface Dict<K, V> {
+    [key: K]: V;
+}
+
+// Arguments outside the key domain error at the reference, not as a confusing
+// structural mismatch later.
+type BadNil = Dict<nil, number>;
+type BadUnknown = Dict<unknown, number>;
+type BadUnion = Dict<string | nil, number>;
+local bad: Table<nil, number> | nil;
+
+// Legal arguments stay legal: a literal widens to its domain (the documented
+// precision loss), and a bare type parameter forwards untouched. `any` is
+// unchecked here as everywhere -- `Table<any, any>` is the only spelling of
+// "any table" under an invariant K, and LuaMetatable's __index uses it.
+type Narrow = Dict<"a", number>;
+type AnyKey = Dict<any, number>;
+local anyTable: Table<any, any> | nil;
+declare function get<K, V>(t: Table<K, V>, key: K): V;
+declare function forward<K, V>(t: Dict<K, V>, key: K): V;
+local m: Table<string, number> | nil;
+
+// A parameter that never keys an index is not gated.
+interface Box<T> {
+    value: T;
+}
+type NilBox = Box<nil>;
+
+// An alias whose target keys the index is gated too.
+type Assoc<K> = { [key: K]: boolean };
+type BadAlias = Assoc<nil>;
+type GoodAlias = Assoc<boolean>;

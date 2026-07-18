@@ -1,0 +1,42 @@
+tluaConcatOperator.tlua(27,12): error TS2365: Operator '..' cannot be applied to types '{}' and 'string'.
+tluaConcatOperator.tlua(28,12): error TS2365: Operator '..' cannot be applied to types 'boolean' and 'string'.
+tluaConcatOperator.tlua(29,12): error TS2365: Operator '..' cannot be applied to types 'string' and '{}'.
+
+
+==== tluaConcatOperator.tlua (3 errors) ====
+    // Lua's `..` concatenates strings and numbers (a number coerces to its string form) and
+    // always yields a string. It binds below `+`/`-` and above comparison, and is
+    // right-associative.
+    
+    local s1: string = "a" .. "b";
+    
+    // A number coerces; the result is still a string.
+    local n = 42;
+    local s2: string = n .. "!";
+    local s3: string = "count=" .. n;
+    
+    // Right-associative chain.
+    local s4: string = "a" .. "b" .. "c";
+    
+    // `+` binds tighter than `..`: this is `"n=" .. (1 + 2)`. If `..` bound tighter it would
+    // be `("n=" .. 1) + 2`, a string `+` number error -- so the clean assignment pins the
+    // precedence.
+    local s5: string = "n=" .. 1 + 2;
+    local s6: string = 1 + 2 .. "=n";
+    
+    // `..` binds tighter than comparison: `("a" .. b) < c` is a string comparison.
+    local b = "b";
+    local c = "c";
+    local cmp: boolean = "a" .. b < c;
+    
+    // Errors: a table or a boolean operand without a __concat metamethod.
+    local e1 = {} .. "a";
+               ~~~~~~~~~
+!!! error TS2365: Operator '..' cannot be applied to types '{}' and 'string'.
+    local e2 = true .. "b";
+               ~~~~~~~~~~~
+!!! error TS2365: Operator '..' cannot be applied to types 'boolean' and 'string'.
+    local e3 = "a" .. {};
+               ~~~~~~~~~
+!!! error TS2365: Operator '..' cannot be applied to types 'string' and '{}'.
+    

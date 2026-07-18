@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/tluaTableAugmentationContextualWrite.tlua] ////
+
+//// [tluaTableAugmentationContextualWrite.tlua]
+// The binder stamps a candidate symbol on every member assignment, not just
+// genuine augmentations. An ordinary checked write to an already
+// constructor-declared member must still contextually type its RHS from the
+// member's existing type — only real augmentations suppress that.
+
+// Base is an identifier (`t`): exercises the KindIdentifier branch.
+local t = { cb = function(x: number): number return x; end };
+t.cb = function(x) return x + 1; end;
+
+// Base is a property access (`nested.inner`): exercises the
+// KindPropertyAccessExpression branch.
+local nested = { inner = { cb = function(y: number): number return y; end } };
+nested.inner.cb = function(y) return y + 1; end;
+
+
+//// [tluaTableAugmentationContextualWrite.lua]
+-- The binder stamps a candidate symbol on every member assignment, not just
+-- genuine augmentations. An ordinary checked write to an already
+-- constructor-declared member must still contextually type its RHS from the
+-- member's existing type — only real augmentations suppress that.
+-- Base is an identifier (`t`): exercises the KindIdentifier branch.
+local t = { cb = function(x)
+        return x;
+    end };
+t.cb = function(x)
+    return x + 1;
+end;
+-- Base is a property access (`nested.inner`): exercises the
+-- KindPropertyAccessExpression branch.
+local nested = { inner = { cb = function(y)
+            return y;
+        end } };
+nested.inner.cb = function(y)
+    return y + 1;
+end;

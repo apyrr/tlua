@@ -1,0 +1,75 @@
+//// [tests/cases/compiler/tluaGotoFlow.tlua] ////
+
+=== tluaGotoFlow.tlua ===
+// The narrowed type travels along the goto edge into the label.
+function narrowThroughGoto(x: string | nil): string
+>narrowThroughGoto : Symbol(narrowThroughGoto, Decl(tluaGotoFlow.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaGotoFlow.tlua, 1, 27))
+
+    if x ~= nil then goto has end
+>x : Symbol(x, Decl(tluaGotoFlow.tlua, 1, 27))
+
+    return "";
+    ::has::
+    return x;
+>x : Symbol(x, Decl(tluaGotoFlow.tlua, 1, 27))
+
+end
+
+// The label is a join: its type is the union of every edge that reaches it.
+function joinAtLabel(x: string | number): string
+>joinAtLabel : Symbol(joinAtLabel, Decl(tluaGotoFlow.tlua, 6, 3))
+>x : Symbol(x, Decl(tluaGotoFlow.tlua, 9, 21))
+
+    if type(x) == "string" then goto stringify end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaGotoFlow.tlua, 9, 21))
+
+    x = "n";
+>x : Symbol(x, Decl(tluaGotoFlow.tlua, 9, 21))
+
+    ::stringify::
+    return x;
+>x : Symbol(x, Decl(tluaGotoFlow.tlua, 9, 21))
+
+end
+
+// Code between an unconditional goto and its label is unreachable.
+function unreachableAfterGoto(n: number): number
+>unreachableAfterGoto : Symbol(unreachableAfterGoto, Decl(tluaGotoFlow.tlua, 14, 3))
+>n : Symbol(n, Decl(tluaGotoFlow.tlua, 17, 30))
+
+    goto skip
+    n = n + 1;
+>n : Symbol(n, Decl(tluaGotoFlow.tlua, 17, 30))
+>n : Symbol(n, Decl(tluaGotoFlow.tlua, 17, 30))
+
+    ::skip::
+    return n;
+>n : Symbol(n, Decl(tluaGotoFlow.tlua, 17, 30))
+
+end
+
+// A label reached only by a goto keeps the code after it reachable, even when
+// the fall-through into the label is dead.
+function reachableViaGotoOnly(flag: boolean): number
+>reachableViaGotoOnly : Symbol(reachableViaGotoOnly, Decl(tluaGotoFlow.tlua, 22, 3))
+>flag : Symbol(flag, Decl(tluaGotoFlow.tlua, 26, 30))
+
+    if flag then goto tail end
+>flag : Symbol(flag, Decl(tluaGotoFlow.tlua, 26, 30))
+
+    return 1;
+    ::tail::
+    return 2;
+end
+
+// A label nothing jumps to and nothing falls into is unreachable.
+function deadLabel(): number
+>deadLabel : Symbol(deadLabel, Decl(tluaGotoFlow.tlua, 31, 3))
+
+    return 1;
+    ::never::
+    return 2;
+end
+

@@ -1,0 +1,24 @@
+// === documentHighlights ===
+// === /getOccurrencesSetAndGet3.tlua ===
+// --- (line: 12) skipped ---
+//         return undefined;
+//     }
+// 
+//     public /*HIGHLIGHTS*/set get(g: any) {
+//     }
+// 
+//     public get get(): any {
+// --- (line: 20) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSetAndGet3.tlua ===
+// --- (line: 15) skipped ---
+//     public set get(g: any) {
+//     }
+// 
+//     public /*HIGHLIGHTS*/get get(): any {
+//         return undefined;
+//     }
+// }

@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/tluaLocalUnused.tlua] ////
+
+=== tluaLocalUnused.tlua ===
+local scriptLet = 1;
+>scriptLet : Symbol(scriptLet, Decl(tluaLocalUnused.tlua, 0, 5))
+
+local unusedLua = 1;
+>unusedLua : Symbol(unusedLua, Decl(tluaLocalUnused.tlua, 1, 5))
+
+local usedLua = 1;
+>usedLua : Symbol(usedLua, Decl(tluaLocalUnused.tlua, 2, 5))
+
+usedLua;
+>usedLua : Symbol(usedLua, Decl(tluaLocalUnused.tlua, 2, 5))
+

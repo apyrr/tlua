@@ -1,0 +1,13 @@
+interface TableLib {
+    concat<T>(values: Table<number, T>, separator?: string, i?: number, j?: number): string;
+    foreach<K, V>(values: Table<K, V>, fn: (key: K, value: V) => any): any;
+    foreachi<T>(values: Table<number, T>, fn: (index: number, value: T) => any): any;
+    getn<T>(values: Table<number, T>): number;
+    insert<T>(values: Table<number, T>, value: T): void;
+    insert<T>(values: Table<number, T>, position: number, value: T): void;
+    maxn(values: Table<number, any>): number;
+    remove<T>(values: Table<number, T>, position?: number): T | nil;
+    sort<T>(values: Table<number, T>, compare?: (left: T, right: T) => boolean): void;
+}
+
+declare table: TableLib;

@@ -1,0 +1,24 @@
+// === Syntax and Semantic Diagnostics ===
+/enumSyntaxUnsupported.tlua(1,1): error TS1434: Unexpected keyword or identifier.
+/enumSyntaxUnsupported.tlua(1,1): error TS2304: Cannot find name 'enum'.
+/enumSyntaxUnsupported.tlua(1,6): error TS1434: Unexpected keyword or identifier.
+/enumSyntaxUnsupported.tlua(1,6): error TS2304: Cannot find name 'E'.
+/enumSyntaxUnsupported.tlua(1,10): error TS2304: Cannot find name 'A'.
+/enumSyntaxUnsupported.tlua(2,15): error TS2304: Cannot find name 'E'.
+
+
+==== /enumSyntaxUnsupported.tlua (6 errors) ====
+    enum E { A }
+    ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~
+!!! error TS2304: Cannot find name 'enum'.
+         ~
+!!! error TS1434: Unexpected keyword or identifier.
+         ~
+!!! error TS2304: Cannot find name 'E'.
+             ~
+!!! error TS2304: Cannot find name 'A'.
+    local value = E.A
+                  ~
+!!! error TS2304: Cannot find name 'E'.

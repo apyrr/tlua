@@ -1,0 +1,62 @@
+//// [tests/cases/compiler/tluaTableIntraExpressionInference.tlua] ////
+
+=== tluaTableIntraExpressionInference.tlua ===
+// A context-sensitive function expression in LAST positional-entry position
+// must register an intra-expression inference site like any other entry: its
+// inferred type fixes T for context-sensitive consumers checked later in the
+// same containing expression. The and/or chain is the standard Lua ternary
+// idiom, so "later in the same expression" is ordinary code. A member's
+// position in the table must not decide whether it participates.
+declare function pick<T>(t: { 1: (n: number) => T } | ((v: T) => void)): void;
+>pick : Symbol(pick, Decl(tluaTableIntraExpressionInference.tlua, 0, 0))
+>T : Symbol(T, Decl(tluaTableIntraExpressionInference.tlua, 6, 22))
+>t : Symbol(t, Decl(tluaTableIntraExpressionInference.tlua, 6, 25))
+>1 : Symbol(1, Decl(tluaTableIntraExpressionInference.tlua, 6, 29))
+>n : Symbol(n, Decl(tluaTableIntraExpressionInference.tlua, 6, 34))
+>T : Symbol(T, Decl(tluaTableIntraExpressionInference.tlua, 6, 22))
+>v : Symbol(v, Decl(tluaTableIntraExpressionInference.tlua, 6, 56))
+>T : Symbol(T, Decl(tluaTableIntraExpressionInference.tlua, 6, 22))
+
+declare function pick2<T>(t: { 1: (n: number) => T, 2?: string } | ((v: T) => void)): void;
+>pick2 : Symbol(pick2, Decl(tluaTableIntraExpressionInference.tlua, 6, 78))
+>T : Symbol(T, Decl(tluaTableIntraExpressionInference.tlua, 7, 23))
+>t : Symbol(t, Decl(tluaTableIntraExpressionInference.tlua, 7, 26))
+>1 : Symbol(1, Decl(tluaTableIntraExpressionInference.tlua, 7, 30))
+>n : Symbol(n, Decl(tluaTableIntraExpressionInference.tlua, 7, 35))
+>T : Symbol(T, Decl(tluaTableIntraExpressionInference.tlua, 7, 23))
+>2 : Symbol(2, Decl(tluaTableIntraExpressionInference.tlua, 7, 51))
+>v : Symbol(v, Decl(tluaTableIntraExpressionInference.tlua, 7, 69))
+>T : Symbol(T, Decl(tluaTableIntraExpressionInference.tlua, 7, 23))
+
+declare cond: boolean;
+>cond : Symbol(cond, Decl(tluaTableIntraExpressionInference.tlua, 8, 7))
+
+// The producer entry is last (and the table's only entry): T infers number,
+// so the consumer's `v` is number.
+pick((cond and { function(n) return n; end }) or function(v)
+>pick : Symbol(pick, Decl(tluaTableIntraExpressionInference.tlua, 0, 0))
+>cond : Symbol(cond, Decl(tluaTableIntraExpressionInference.tlua, 8, 7))
+>n : Symbol(n, Decl(tluaTableIntraExpressionInference.tlua, 12, 26))
+>n : Symbol(n, Decl(tluaTableIntraExpressionInference.tlua, 12, 26))
+>v : Symbol(v, Decl(tluaTableIntraExpressionInference.tlua, 12, 58))
+
+  local ok: number = v;
+>ok : Symbol(ok, Decl(tluaTableIntraExpressionInference.tlua, 13, 7))
+>v : Symbol(v, Decl(tluaTableIntraExpressionInference.tlua, 12, 58))
+
+end);
+
+// Control: the same producer in non-last position behaves identically.
+pick2((cond and { function(n) return n; end, "pad" }) or function(v)
+>pick2 : Symbol(pick2, Decl(tluaTableIntraExpressionInference.tlua, 6, 78))
+>cond : Symbol(cond, Decl(tluaTableIntraExpressionInference.tlua, 8, 7))
+>n : Symbol(n, Decl(tluaTableIntraExpressionInference.tlua, 17, 27))
+>n : Symbol(n, Decl(tluaTableIntraExpressionInference.tlua, 17, 27))
+>v : Symbol(v, Decl(tluaTableIntraExpressionInference.tlua, 17, 66))
+
+  local ok: number = v;
+>ok : Symbol(ok, Decl(tluaTableIntraExpressionInference.tlua, 18, 7))
+>v : Symbol(v, Decl(tluaTableIntraExpressionInference.tlua, 17, 66))
+
+end);
+

@@ -1,0 +1,10 @@
+//// [tests/cases/compiler/catchClauseRestProperties.tlua] ////
+
+=== catchClauseRestProperties.tlua ===
+
+try {
+  // ...
+} catch ({ ...rest }) {
+  // ...
+}
+

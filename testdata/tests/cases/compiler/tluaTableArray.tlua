@@ -1,0 +1,19 @@
+// @strict: true
+// @noEmit: true
+
+// Positional entries: keys 1..n, exactly as if written `[i] = v`.
+local a = { 1, 2, 3 };
+local a1: number = a[1];
+local a3: number = a[3];
+
+// Equivalence with explicit bracket keys.
+local b = { [1] = 1, [2] = 2, [3] = 3 };
+local eq: typeof b = a;
+local es = {a1, a3, eq};
+
+// Element types are per-position, like `[i] = v`.
+local mixed = { 1, "two", true };
+local m1: number = mixed[1];
+local m2: string = mixed[2];
+local m3: boolean = mixed[3];
+local ms = {m1, m2, m3};

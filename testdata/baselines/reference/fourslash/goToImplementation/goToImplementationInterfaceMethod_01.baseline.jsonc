@@ -1,0 +1,21 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_01.tlua ===
+// --- (line: 8) skipped ---
+// }
+// 
+// function whatever(a: Foo) {
+//     a.he/*GOTO IMPL*/llo();
+// }
+// 
+// whatever(new Bar());
+
+
+
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_01.tlua ===
+// interface Foo {
+//     hel/*GOTO IMPL*/lo(): void;
+//     okay?: number;
+// }
+// 
+// --- (line: 6) skipped ---

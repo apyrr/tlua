@@ -1,0 +1,65 @@
+tluaMetatableImprecise.tlua(10,16): error TS2339: Property 'anything' does not exist on type '{ n: number; }'.
+tluaMetatableImprecise.tlua(15,16): error TS2339: Property 'a' does not exist on type '{ n: number; }'.
+tluaMetatableImprecise.tlua(20,16): error TS2339: Property 'a' does not exist on type '{ n: number; }'.
+tluaMetatableImprecise.tlua(25,19): error TS2339: Property 'anything' does not exist on type '{ n: number; }'.
+tluaMetatableImprecise.tlua(35,16): error TS2339: Property 'extra' does not exist on type '{ n: number; }'.
+tluaMetatableImprecise.tlua(43,55): error TS2304: Cannot find name 'missingName'.
+
+
+==== tluaMetatableImprecise.tlua (6 errors) ====
+    // The pairing is only as precise as the metatable's type. A metatable that does not say
+    // which fallback applies leaves the call returning the plain table rather than guessing at a
+    // wrong one.
+    
+    // The declared parameter type is exactly that: LuaMetatable<T> names every metamethod and
+    // commits to none.
+    declare declared: LuaMetatable<{ n: number }>;
+    local d = setmetatable({ n = 1 }, declared);
+    local dn: number = d.n;
+    local dbad = d.anything;
+                   ~~~~~~~~
+!!! error TS2339: Property 'anything' does not exist on type '{ n: number; }'.
+    
+    // A __index that is either a table or a function does not say which read wins.
+    declare unionIndex: { __index: { a: number } | ((t: object, k: any) => string) };
+    local u = setmetatable({ n = 1 }, unionIndex);
+    local ubad = u.a;
+                   ~
+!!! error TS2339: Property 'a' does not exist on type '{ n: number; }'.
+    
+    // A metatable that may not be there at all.
+    declare maybe: { __index: { a: number } } | nil;
+    local m = setmetatable({ n = 1 }, maybe);
+    local mbad = m.a;
+                   ~
+!!! error TS2339: Property 'a' does not exist on type '{ n: number; }'.
+    
+    // `nil` says there is no metatable.
+    local none = setmetatable({ n = 1 }, nil);
+    local nn: number = none.n;
+    local nbad = none.anything;
+                      ~~~~~~~~
+!!! error TS2339: Property 'anything' does not exist on type '{ n: number; }'.
+    
+    // A metatable with no __index has no fallback to merge, and no pairing is kept for it.
+    local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end });
+    local xn: number = noIndex.n;
+    
+    // A callable table would be indexed by Lua, but which half answers a read is not worth
+    // guessing at.
+    declare hybrid: { __index: { (t: object, k: any): string; extra: number } };
+    local h = setmetatable({ n = 1 }, hybrid);
+    local hbad = h.extra;
+                   ~~~~~
+!!! error TS2339: Property 'extra' does not exist on type '{ n: number; }'.
+    
+    // __index declared optional strips its nil arm: what is left names one fallback.
+    declare optional: { __index?: { a: number } };
+    local o = setmetatable({ n = 1 }, optional);
+    local oa: number = o.a;
+    
+    // An error inside the metatable literal is reported once.
+    local bad = setmetatable({ n = 1 }, { __index = { a = missingName } });
+                                                          ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'missingName'.
+    

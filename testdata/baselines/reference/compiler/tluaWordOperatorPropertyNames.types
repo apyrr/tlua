@@ -1,0 +1,97 @@
+//// [tests/cases/compiler/tluaWordOperatorPropertyNames.tlua] ////
+
+=== tluaWordOperatorPropertyNames.tlua ===
+// A property may be *named* `and`, `or` or `not` -- only the bare member syntax
+// is unavailable, exactly as in Lua, where `t["and"]` works and `t.and` does not.
+// So the type printer must quote these names: an emitted `and: number` would not
+// parse back in. Ordinary keywords like `while` stay bare when *printed* as a
+// member, even though a reserved word still needs the bracket key form in a
+// table literal.
+
+local t = { ["and"] = 1, ["or"] = 2, ["not"] = 3, ["while"] = 4, plain = 5 };
+>t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>{ ["and"] = 1, ["or"] = 2, ["not"] = 3, ["while"] = 4, plain = 5 } : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>["and"] : number
+>"and" : "and"
+>1 : 1
+>["or"] : number
+>"or" : "or"
+>2 : 2
+>["not"] : number
+>"not" : "not"
+>3 : 3
+>["while"] : number
+>"while" : "while"
+>4 : 4
+>plain : number
+>5 : 5
+
+// Reading them back requires the bracket form.
+local readAnd = t["and"];
+>readAnd : number
+>t["and"] : number
+>t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>"and" : "and"
+
+local readOr = t["or"];
+>readOr : number
+>t["or"] : number
+>t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>"or" : "or"
+
+local readNot = t["not"];
+>readNot : number
+>t["not"] : number
+>t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>"not" : "not"
+
+local readWhile = t.while;
+>readWhile : number
+>t.while : number
+>t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>while : number
+
+// Interfaces declare them the same way.
+interface Bits {
+  "and"(v: number): number;
+>"and" : (v: number) => number
+>v : number
+
+  "or"(v: number): number;
+>"or" : (v: number) => number
+>v : number
+
+  while: number;
+>while : number
+}
+declare bits: Bits;
+>bits : Bits
+
+local banded = bits["and"](1);
+>banded : number
+>bits["and"](1) : number
+>bits["and"] : (v: number) => number
+>bits : Bits
+>"and" : "and"
+>1 : 1
+
+// An expando member named `and` is skipped by declaration emit rather than
+// emitted as the bare alias `export { ... as and }`, which would not parse.
+function A(): string { return "A"; }
+>A : { (): string; "and": { "and": number; "or": number; "not": number; while: number; plain: number; }; ok: { "and": number; "or": number; "not": number; while: number; plain: number; }; }
+>"A" : "A"
+
+A["and"] = t;
+>A["and"] = t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>A["and"] : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>A : { (): string; "and": { "and": number; "or": number; "not": number; while: number; plain: number; }; ok: { "and": number; "or": number; "not": number; while: number; plain: number; }; }
+>"and" : "and"
+>t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+
+A["ok"] = t;
+>A["ok"] = t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>A["ok"] : { "and": number; "or": number; "not": number; while: number; plain: number; }
+>A : { (): string; "and": { "and": number; "or": number; "not": number; while: number; plain: number; }; ok: { "and": number; "or": number; "not": number; while: number; plain: number; }; }
+>"ok" : "ok"
+>t : { "and": number; "or": number; "not": number; while: number; plain: number; }
+

@@ -1,0 +1,124 @@
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// local x = class C {
+//     public x;
+//     public y;
+//     public z;
+//     constructor() {
+//         /*HIGHLIGHTS*/this;
+//         this.x;
+//         this.y;
+//         this.z;
+// --- (line: 10) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 3) skipped ---
+//     public z;
+//     constructor() {
+//         this;
+//         /*HIGHLIGHTS*/this.x;
+//         this.y;
+//         this.z;
+//     }
+// --- (line: 11) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 4) skipped ---
+//     constructor() {
+//         this;
+//         this.x;
+//         /*HIGHLIGHTS*/this.y;
+//         this.z;
+//     }
+//     foo() {
+// --- (line: 12) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 5) skipped ---
+//         this;
+//         this.x;
+//         this.y;
+//         /*HIGHLIGHTS*/this.z;
+//     }
+//     foo() {
+//         this;
+// --- (line: 13) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 8) skipped ---
+//         this.z;
+//     }
+//     foo() {
+//         /*HIGHLIGHTS*/this;
+//         () => this;
+//         () => {
+//             if (this) {
+// --- (line: 16) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 9) skipped ---
+//     }
+//     foo() {
+//         this;
+//         () => /*HIGHLIGHTS*/this;
+//         () => {
+//             if (this) {
+//                 this;
+// --- (line: 17) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 11) skipped ---
+//         this;
+//         () => this;
+//         () => {
+//             if (/*HIGHLIGHTS*/this) {
+//                 this;
+//             }
+//         }
+// --- (line: 19) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 12) skipped ---
+//         () => this;
+//         () => {
+//             if (this) {
+//                 /*HIGHLIGHTS*/this;
+//             }
+//         }
+//         function inside() {
+// --- (line: 20) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesClassExpressionThis.tlua ===
+// --- (line: 21) skipped ---
+//                 this;
+//             })(this);
+//         }
+//         return /*HIGHLIGHTS*/this.x;
+//     }
+// 
+//     static bar() {
+// --- (line: 29) skipped ---

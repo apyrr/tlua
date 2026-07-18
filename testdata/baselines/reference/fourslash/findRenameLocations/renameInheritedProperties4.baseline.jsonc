@@ -1,0 +1,19 @@
+// === findRenameLocations ===
+// === /renameInheritedProperties4.tlua ===
+// interface interface1 extends interface1 {
+//    /*RENAME*/[|doStuffRENAME|](): string;
+// }
+// 
+// local v: interface1;
+// v.[|doStuffRENAME|]();
+
+
+
+// === findRenameLocations ===
+// === /renameInheritedProperties4.tlua ===
+// interface interface1 extends interface1 {
+//    [|doStuffRENAME|](): string;
+// }
+// 
+// local v: interface1;
+// v./*RENAME*/[|doStuffRENAME|]();

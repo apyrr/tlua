@@ -1,0 +1,95 @@
+//// [tests/cases/compiler/tluaGenericPackTailCall.tlua] ////
+
+=== tluaGenericPackTailCall.tlua ===
+declare function two(): (number, string);
+>two : () => (number, string)
+
+declare function sinkNumber(...: any): number;
+>sinkNumber : (...: any) => number
+> : any[]
+
+declare function sink3(a: boolean, b: number, c: string): void;
+>sink3 : (a: boolean, b: number, c: string) => void
+>a : boolean
+>b : number
+>c : string
+
+// A generic, overloaded tail call expands its resolved result pack.
+local r = sinkNumber(pcall(two));
+>r : number
+>sinkNumber(pcall(two)) : number
+>sinkNumber : (...: any) => number
+>pcall(two) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>two : () => (number, string)
+
+sink3(pcall(two));
+>sink3(pcall(two)) : void
+>sink3 : (a: boolean, b: number, c: string) => void
+>pcall(two) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>two : () => (number, string)
+
+// A non-generic tail call keeps the existing expansion path.
+declare function sink2(a: number, b: string): void;
+>sink2 : (a: number, b: string) => void
+>a : number
+>b : string
+
+sink2(two());
+>sink2(two()) : void
+>sink2 : (a: number, b: string) => void
+>two() : number
+>two : () => (number, string)
+
+// A generic scalar return still declines tail expansion, allowing the outer
+// parameter type to contextually type the function passed through id.
+declare function id<T>(x: T): T;
+>id : <T>(x: T) => T
+>x : T
+
+declare function outer(callback: (value: number) => number): void;
+>outer : (callback: (value: number) => number) => void
+>callback : (value: number) => number
+>value : number
+
+outer(id(function(value) return value; end));
+>outer(id(function(value) return value; end)) : void
+>outer : (callback: (value: number) => number) => void
+>id(function(value) return value; end) : (value: number) => number
+>id : <T>(x: T) => T
+>function(value) return value; end : (value: number) => number
+>value : number
+>value : number
+
+// Passing overloaded pcall as a value is separate from tail-pack expansion.
+local nestedOk, nestedInnerOk, nestedValue = pcall(pcall, two);
+>nestedOk : boolean
+>nestedInnerOk : boolean
+>nestedValue : any
+>pcall(pcall, two) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>two : () => (number, string)
+
+// A failed overload resolution must not treat its synthetic intersection
+// return as a pack.
+declare function f(x: number): (number, string);
+>f : { (x: number): (number, string); (x: string): (boolean, number); }
+>x : number
+
+declare function f(x: string): (boolean, number);
+>f : { (x: number): (number, string); (x: string): (boolean, number); }
+>x : string
+
+declare function sink(...: any): void;
+>sink : (...: any) => void
+> : any[]
+
+sink(f(true));
+>sink(f(true)) : void
+>sink : (...: any) => void
+>f(true) : never
+>f : { (x: number): (number, string); (x: string): (boolean, number); }
+>true : true
+

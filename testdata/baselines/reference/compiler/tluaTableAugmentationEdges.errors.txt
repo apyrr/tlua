@@ -1,0 +1,57 @@
+a.tlua(5,7): error TS2339: Property 'tag' does not exist on type '{}'.
+b.tlua(2,3): error TS2339: Property 'x' does not exist on type '{}'.
+c.tlua(8,7): error TS2322: Type 'number | nil' is not assignable to type 'number'.
+  Type 'nil' is not assignable to type 'number'.
+d.tlua(2,12): error TS2300: Duplicate identifier 'member'.
+d.tlua(5,1): error TS2322: Type 'string' is not assignable to type 'number'.
+
+
+==== a.tlua (1 errors) ====
+    interface Shape {
+      x: number;
+    }
+    Shape = {};
+    Shape.tag = 1;
+          ~~~
+!!! error TS2339: Property 'tag' does not exist on type '{}'.
+    local s: Shape = { x = 1 };
+    
+    // A non-constructor arm in any file closes an implicit global program-wide.
+==== b.tlua (1 errors) ====
+    G = {};
+    G.x = 1;
+      ~
+!!! error TS2339: Property 'x' does not exist on type '{}'.
+    
+    U = {};
+    
+==== c.tlua (1 errors) ====
+    local function make(): { y: number }
+      return { y = 2 };
+    end
+    G = make();
+    
+    // A member written in only one arm's constructor needs narrowing: before the
+    // assignment below narrows U, the read sees the whole union.
+    local ua: number = U.a;
+          ~~
+!!! error TS2322: Type 'number | nil' is not assignable to type 'number'.
+!!! error TS2322:   Type 'nil' is not assignable to type 'number'.
+    
+    U = { a = 1 };
+    local narrowed: number = U.a;
+    
+    // A dotted function colliding with a constructor field is a duplicate no
+    // matter where it sits in the group; assignments to that field stay ordinary
+    // checked writes.
+==== d.tlua (2 errors) ====
+    local t = { member = 1 };
+    function t.member(): void
+               ~~~~~~
+!!! error TS2300: Duplicate identifier 'member'.
+    end
+    t.member = 2;
+    t.member = "no";
+    ~~~~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
+    

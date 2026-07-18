@@ -1,0 +1,19 @@
+// @strict: true
+// @noEmit: true
+
+// The demoted declaration keywords are ordinary identifiers everywhere a name
+// can appear -- including the internally Let-flagged for-head lists and the
+// Const-desugared ambient-global form, which the deleted ES "let is not a
+// valid LexicalDeclaration name" rule used to reject.
+local let = 1;
+local const = let + 1;
+local var = const;
+for let = 1, 3 do
+  local sum = let + 1;
+  print(sum);
+end
+for let, using in pairs({ a = 1 }) do
+  print(let, using);
+end
+declare letGlobal: number;
+print(letGlobal, var);

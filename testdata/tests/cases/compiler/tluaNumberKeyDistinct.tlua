@@ -1,0 +1,23 @@
+// @strict: true
+// @noEmit: true
+
+// Lua distinguishes number keys from string keys: t[1] and t["1"] are
+// different slots.
+local t = { [1] = "a", ["1"] = 1 };
+local n: string = t[1];
+local s: number = t["1"];
+
+// Cross-access errors: the other namespace's type does not match.
+local bad1: number = t[1];
+local bad2: string = t["1"];
+
+// Same distinction in type position: 1 is a number key, "1" a string key.
+interface I {
+  1: number;
+  "1": string;
+}
+declare i: I;
+local in1: number = i[1];
+local is1: string = i["1"];
+
+local es = {n, s, bad1, bad2, in1, is1};

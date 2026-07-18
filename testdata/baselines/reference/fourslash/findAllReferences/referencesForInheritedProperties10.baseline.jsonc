@@ -1,0 +1,49 @@
+// === findAllReferences ===
+// === /referencesForInheritedProperties10.tlua ===
+// interface IFeedbackHandler {
+//   /*FIND ALL REFS*/[|handleAccept|]?(): void;
+//   handleReject?(): void;
+// }
+// 
+// --- (line: 6) skipped ---
+
+// --- (line: 15) skipped ---
+// }
+// 
+// function foo(handler: IFeedbackHandler) {
+//   handler.[|handleAccept|]?.();
+//   handler.handleReject?.();
+// }
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties10.tlua ===
+// --- (line: 5) skipped ---
+// abstract class AbstractFeedbackHandler implements IFeedbackHandler {}
+// 
+// class FeedbackHandler extends AbstractFeedbackHandler {
+//   /*FIND ALL REFS*/handleAccept(): void {
+//     console.log("Feedback accepted");
+//   }
+// 
+// --- (line: 13) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties10.tlua ===
+// interface IFeedbackHandler {
+//   [|handleAccept|]?(): void;
+//   handleReject?(): void;
+// }
+// 
+// --- (line: 6) skipped ---
+
+// --- (line: 15) skipped ---
+// }
+// 
+// function foo(handler: IFeedbackHandler) {
+//   handler./*FIND ALL REFS*/[|handleAccept|]?.();
+//   handler.handleReject?.();
+// }

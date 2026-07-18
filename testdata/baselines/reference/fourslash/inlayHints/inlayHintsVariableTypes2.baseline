@@ -1,0 +1,207 @@
+// === Inlay Hints ===
+local object = { foo = 1, bar = 2 }
+            ^
+{
+  "position": {
+    "line": 0,
+    "character": 12
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "{"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "foo",
+      "location": {
+        "uri": "file:///inlayHintsVariableTypes2.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 17
+          },
+          "end": {
+            "line": 0,
+            "character": 20
+          }
+        }
+      }
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    },
+    {
+      "value": "; "
+    },
+    {
+      "value": "bar",
+      "location": {
+        "uri": "file:///inlayHintsVariableTypes2.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 26
+          },
+          "end": {
+            "line": 0,
+            "character": 29
+          }
+        }
+      }
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "}"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local array = [1, 2]
+           ^
+{
+  "position": {
+    "line": 1,
+    "character": 11
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local a = object;
+       ^
+{
+  "position": {
+    "line": 2,
+    "character": 7
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "{"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "foo",
+      "location": {
+        "uri": "file:///inlayHintsVariableTypes2.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 17
+          },
+          "end": {
+            "line": 0,
+            "character": 20
+          }
+        }
+      }
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    },
+    {
+      "value": "; "
+    },
+    {
+      "value": "bar",
+      "location": {
+        "uri": "file:///inlayHintsVariableTypes2.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 26
+          },
+          "end": {
+            "line": 0,
+            "character": 29
+          }
+        }
+      }
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "}"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local b = array;
+       ^
+{
+  "position": {
+    "line": 5,
+    "character": 7
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local x = foo(1)
+       ^
+{
+  "position": {
+    "line": 9,
+    "character": 7
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "1"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}

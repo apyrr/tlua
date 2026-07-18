@@ -1,0 +1,42 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// Two rules survive the widening.
+
+// A key must not be nil: `t[nil]` is an error in Lua, not a lookup (100039).
+interface NilKey { [key: nil]: string }
+interface MaybeNilKey { [key: string | nil]: string }
+interface UnknownKey { [key: unknown]: string }
+interface AnyKey { [key: any]: string }
+
+// A key must not be a literal: one key is a named property, or a mapped type (100036).
+// This is the half of TypeScript's rule that stays -- the *generic* half is gone.
+interface StringLiteralKey { [key: "a"]: string }
+interface NumberLiteralKey { [key: 1]: string }
+interface BooleanLiteralKey { [key: true]: string }
+interface UnionOfLiteralsKey { [key: "a" | "b"]: string }
+
+// A table key cannot be nil either (100040), and `unknown` may be nil.
+declare k: string;
+local ok = { [k] = 1 };
+local bad = { [nil] = 1 };
+declare u: unknown;
+local bad2 = { [u] = 1 };
+
+// Pattern literal keys remain valid: they denote a set of string keys, not one.
+interface PatternKey { [key: `id-${string}`]: number }
+declare p: PatternKey;
+local n: number = p["id-1"];
+
+// A literal that arrives through instantiation widens to its domain rather than
+// keying an index nothing can represent: a template key completed by a type argument
+// becomes a string index, and a literal type argument a string one.
+interface Prefixed<T extends string> { [key: `a${T}`]: number }
+declare pre: Prefixed<"x">;
+local n2: number = pre["ax"];
+type PK = keyof Prefixed<"x">;
+local pk: PK = "anything";
+declare tl: Table<"a", number>;
+local n3: number = tl["b"];

@@ -1,0 +1,84 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A Lua table is keyed by any non-nil value, so an index signature may be keyed by a
+// type parameter. This is what makes `Table<K, V>` -- and every standard library
+// signature built on it -- mean anything.
+
+interface Map2<K, V> {
+  [key: K]: V;
+}
+
+// The key instantiates along with the value.
+declare byName: Map2<string, number>;
+local n: number = byName["a"];
+
+declare byPoint: Map2<{ x: number }, string>;
+declare pt: { x: number };
+local s: string = byPoint[pt];
+
+// keyof yields the key itself, not string | number | symbol.
+type K1 = keyof Map2<string, number>;
+local k1: K1 = "a";
+type K2 = keyof Map2<boolean, number>;
+local k2: K2 = true;
+
+// The index resolves inside a generic body: `Table<K, V>[K]` is `V`, never a deferred
+// indexed access nothing can simplify.
+function get<K, V>(t: Table<K, V>, k: K): V
+  return t[k];
+end
+
+function set<K, V>(t: Table<K, V>, k: K, v: V): void
+  t[k] = v;
+end
+
+// A readonly index stays readonly in a generic body.
+interface ReadonlyTable<K, V> { readonly [key: K]: V }
+function readOk<K, V>(t: ReadonlyTable<K, V>, k: K): V
+  return t[k];
+end
+function writeNotOk<K, V>(t: ReadonlyTable<K, V>, k: K, v: V): void
+  t[k] = v;
+end
+
+// A union key still simplifies when every index carries the same value.
+function getEither<K, V>(t: Table<K | string, V>, k: K): V
+  return t[k];
+end
+
+// A union key instantiates to two disjoint indexes, not one union-keyed index.
+declare both: Map2<string | number, boolean>;
+local b1: boolean = both["a"];
+local b2: boolean = both[1];
+
+// The whole point: the standard library comes alive. The key keeps its literal names --
+// `"a" | "b"`, exactly what `keyof m` reports -- rather than widening to string.
+local m = { a = 1, b = 2 };
+for k, v in pairs(m) do
+  local key: "a" | "b" = k;
+  local alsoAString: string = k;
+  local value: number = v;
+end
+
+local got: number | nil = rawget(m, "a");
+
+// A supplied key wins over the table's own keys (it is inferred at the priority a
+// mapped type constraint uses), so adding a key a table does not have yet -- rawset is
+// how a key is added, in any domain -- always type-checks: a Lua table is open.
+rawset(m, "c", 3);
+rawset(m, 5, 3);
+
+// A recursive table type, spelled by name.
+type RecTable = Table<string, RecTable | number>;
+declare rt: RecTable;
+local rec = rt["x"];
+
+// A number-keyed table iterates with ipairs.
+local arr = { 10, 20, 30 };
+for i, v in ipairs(arr) do
+  local index: number = i;
+  local element: number = v;
+end

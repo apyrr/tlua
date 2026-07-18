@@ -1,0 +1,121 @@
+//// [tests/cases/compiler/tluaMetatableChained.tlua] ////
+
+=== tluaMetatableChained.tlua ===
+// A metatable's __index may be a table that has a metatable of its own, and Lua keeps
+// walking. Nothing special is needed for that: each pairing already carries the members it
+// inherited, so a chain merges one link at a time.
+
+local base = { fromBase = true };
+>base : { fromBase: boolean; }
+>{ fromBase = true } : { fromBase: boolean; }
+>fromBase : boolean
+>true : true
+
+local mid = setmetatable({ fromMid = 1 }, { __index = base });
+>mid : { fromBase: boolean; fromMid: number; }
+>setmetatable({ fromMid = 1 }, { __index = base }) : { fromBase: boolean; fromMid: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ fromMid = 1 } : { fromMid: number; }
+>fromMid : number
+>1 : 1
+>{ __index = base } : { __index: { fromBase: boolean; }; }
+>__index : { fromBase: boolean; }
+>base : { fromBase: boolean; }
+
+local top = setmetatable({ fromTop = "t" }, { __index = mid });
+>top : { fromBase: boolean; fromMid: number; fromTop: string; }
+>setmetatable({ fromTop = "t" }, { __index = mid }) : { fromBase: boolean; fromMid: number; fromTop: string; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ fromTop = "t" } : { fromTop: string; }
+>fromTop : string
+>"t" : "t"
+>{ __index = mid } : { __index: { fromBase: boolean; fromMid: number; }; }
+>__index : { fromBase: boolean; fromMid: number; }
+>mid : { fromBase: boolean; fromMid: number; }
+
+local t1: string = top.fromTop;
+>t1 : string
+>top.fromTop : string
+>top : { fromBase: boolean; fromMid: number; fromTop: string; }
+>fromTop : string
+
+local m1: number = top.fromMid;
+>m1 : number
+>top.fromMid : number
+>top : { fromBase: boolean; fromMid: number; fromTop: string; }
+>fromMid : number
+
+local b1: boolean = top.fromBase;
+>b1 : boolean
+>top.fromBase : boolean
+>top : { fromBase: boolean; fromMid: number; fromTop: string; }
+>fromBase : boolean
+
+local absent = top.nowhere;
+>absent : any
+>top.nowhere : any
+>top : { fromBase: boolean; fromMid: number; fromTop: string; }
+>nowhere : any
+
+// Three deep, and the nearest link still wins a collision.
+local deep = setmetatable({ own = 1 }, { __index = top });
+>deep : { fromBase: boolean; fromMid: number; fromTop: string; own: number; }
+>setmetatable({ own = 1 }, { __index = top }) : { fromBase: boolean; fromMid: number; fromTop: string; own: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ own = 1 } : { own: number; }
+>own : number
+>1 : 1
+>{ __index = top } : { __index: { fromBase: boolean; fromMid: number; fromTop: string; }; }
+>__index : { fromBase: boolean; fromMid: number; fromTop: string; }
+>top : { fromBase: boolean; fromMid: number; fromTop: string; }
+
+local d1: number = deep.own;
+>d1 : number
+>deep.own : number
+>deep : { fromBase: boolean; fromMid: number; fromTop: string; own: number; }
+>own : number
+
+local d2: boolean = deep.fromBase;
+>d2 : boolean
+>deep.fromBase : boolean
+>deep : { fromBase: boolean; fromMid: number; fromTop: string; own: number; }
+>fromBase : boolean
+
+local shadowBase = { v = "base" };
+>shadowBase : { v: string; }
+>{ v = "base" } : { v: string; }
+>v : string
+>"base" : "base"
+
+local shadowMid = setmetatable({ v = 1 }, { __index = shadowBase });
+>shadowMid : { v: number; }
+>setmetatable({ v = 1 }, { __index = shadowBase }) : { v: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ v = 1 } : { v: number; }
+>v : number
+>1 : 1
+>{ __index = shadowBase } : { __index: { v: string; }; }
+>__index : { v: string; }
+>shadowBase : { v: string; }
+
+local shadowTop = setmetatable({ }, { __index = shadowMid });
+>shadowTop : { v: number; }
+>setmetatable({ }, { __index = shadowMid }) : { v: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ } : {}
+>{ __index = shadowMid } : { __index: { v: number; }; }
+>__index : { v: number; }
+>shadowMid : { v: number; }
+
+local s1: number = shadowTop.v;
+>s1 : number
+>shadowTop.v : number
+>shadowTop : { v: number; }
+>v : number
+
+local s2: string = shadowTop.v;
+>s2 : string
+>shadowTop.v : number
+>shadowTop : { v: number; }
+>v : number
+

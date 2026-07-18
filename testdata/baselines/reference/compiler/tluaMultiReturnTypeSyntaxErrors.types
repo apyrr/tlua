@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaMultiReturnTypeSyntaxErrors.tlua] ////
+
+=== tluaMultiReturnTypeSyntaxErrors.tlua ===
+// Ordinary callable return types do not consume enclosing commas.
+type H = Map<() => number, string>;
+>H : Map<() => number, string>
+
+type ParenthesizedSingle = () => (string)[];
+>ParenthesizedSingle : ParenthesizedSingle
+
+type ConditionalSingle<T> = () => (T extends string ? number : boolean);
+>ConditionalSingle : ConditionalSingle<T>
+
+type BadPredicate = (value: unknown) => (value is string, number);
+>BadPredicate : BadPredicate
+>value : unknown
+
+function takesCallback(cb: () => number, more: string) {
+>takesCallback : (cb: () => number, more: string) => number
+>cb : () => number
+>more : string
+
+  return cb() + more.length;
+>cb() + more.length : number
+>cb() : number
+>cb : () => number
+>more.length : number
+>more : string
+>length : number
+}
+
+function trailingCallback(cb: () => number,) {
+>trailingCallback : (cb: () => number) => number
+>cb : () => number
+
+  return cb();
+>cb() : number
+>cb : () => number
+}
+
+// An arrow return type in a call argument list does not swallow the comma.
+function twoArgs(a: (x: number) => number, b: number) {
+>twoArgs : (a: (x: number) => number, b: number) => number
+>a : (x: number) => number
+>x : number
+>b : number
+
+  return a(b);
+>a(b) : number
+>a : (x: number) => number
+>b : number
+}
+local r = twoArgs((x): number => x, 1);
+>r : number
+>twoArgs((x): number => x, 1) : number
+>twoArgs : (a: (x: number) => number, b: number) => number
+>(x): number => x : (x: number) => number
+>x : number
+>x : number
+>1 : 1
+
+// A bare multiple return type must be parenthesized; the list is still
+// parsed for recovery, so the pack itself checks normally.
+function barePair(): number, string {
+>barePair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+}
+declare function bareAmbient(): number, ...string;
+>bareAmbient : () => (number, ...string)
+
+local function bareLocal(): number, string?
+>bareLocal : () => (number, string?)
+
+  return 1, nil;
+>1, nil : number, nil
+>1 : 1
+
+end
+local a, b = barePair();
+>a : number
+>b : string
+>barePair() : number
+>barePair : () => (number, string)
+
+local n: number = a;
+>n : number
+>a : number
+
+local s: string = b;
+>s : string
+>b : string
+

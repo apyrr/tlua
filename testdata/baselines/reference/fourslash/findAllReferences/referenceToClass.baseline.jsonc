@@ -1,0 +1,75 @@
+// === findAllReferences ===
+// === /referenceToClass_1.tlua ===
+// class /*FIND ALL REFS*/foo {
+//     public n: foo;
+//     public foo: number;
+// }
+// --- (line: 5) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referenceToClass_1.tlua ===
+// class foo {
+//     public n: /*FIND ALL REFS*/foo;
+//     public foo: number;
+// }
+// 
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referenceToClass_1.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// class bar {
+//     public n: /*FIND ALL REFS*/foo;
+//     public k = new foo();
+// }
+// 
+// --- (line: 11) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referenceToClass_1.tlua ===
+// --- (line: 4) skipped ---
+// 
+// class bar {
+//     public n: foo;
+//     public k = new /*FIND ALL REFS*/foo();
+// }
+// 
+// namespace mod {
+//     local k: foo = null;
+// }
+
+
+
+// === findAllReferences ===
+// === /referenceToClass_1.tlua ===
+// --- (line: 8) skipped ---
+// }
+// 
+// namespace mod {
+//     local k: /*FIND ALL REFS*/[|foo|] = null;
+// }
+
+// === /referenceToClass_2.tlua ===
+// local k: [|foo|];
+
+
+
+// === findAllReferences ===
+// === /referenceToClass_1.tlua ===
+// --- (line: 8) skipped ---
+// }
+// 
+// namespace mod {
+//     local k: [|foo|] = null;
+// }
+
+// === /referenceToClass_2.tlua ===
+// local k: /*FIND ALL REFS*/[|foo|];

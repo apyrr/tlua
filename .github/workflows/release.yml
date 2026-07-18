@@ -1,0 +1,75 @@
+name: Release
+
+# Publishes a rolling prerelease of the npm packages on every merge to main
+# (the `next` dist-tag baked into each package's publishConfig).
+#
+# The version is dev.0.<run_number>, which is unique and monotonic per run.
+# For stable `latest` releases, add a separate tag/release-triggered job and
+# adjust getVersion()/getPublishTag() in Herebyfile.mjs.
+#
+# Extension (VSIX) publishing is omitted: the VS Code Marketplace requires an
+# Azure subscription. To add it, build VSIXes with `tlua:pack-extensions` and
+# publish via `vsce publish` (Marketplace) and/or `ovsx publish` (Open VSX).
+
+on:
+  push:
+    branches: [main]
+    # Don't publish a new version for docs-only changes.
+    paths-ignore:
+      - '**/*.md'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+# Never run two publishes at once; let an in-flight one finish.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Guard so forks of this repo don't try to publish (they lack the secrets).
+    if: ${{ github.repository_owner == 'apyrr' }}
+    steps:
+      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          dotnet: false
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          submodules: true
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+      - uses: ./.github/actions/setup-go
+
+      - run: npm ci
+
+      # Build + pack the npm packages (no extension/VSIX).
+      - name: Build npm packages
+        run: npx hereby tlua:build-packages tlua:pack-packages --forRelease --setPrerelease dev.0.${{ github.run_number }}
+
+      # 1) npm — publish in the order recorded by pack-packages: platform
+      #    packages first, then the main package that depends on them.
+      #    access/dist-tag come from each package's baked-in publishConfig.
+      - name: Publish to npm
+        working-directory: built/npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          jq -c '.stages[]' publish-manifest.json | while read -r stage; do
+            echo "$stage" | jq -r '.[].filename' | while read -r f; do
+              echo "npm publish $f"
+              npm publish "$f"
+            done
+          done

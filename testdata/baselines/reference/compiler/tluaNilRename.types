@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/tluaNilRename.tlua] ////
+
+=== tluaNilRename.tlua ===
+// `nil` works as a type and a value.
+local a: nil = nil;
+>a : nil
+
+local b = nil;
+>b : any
+
+// `undefined` is a transitional alias for the same keyword/type/value.
+local c: undefined = undefined;
+>c : nil
+
+local d = undefined;
+>d : any
+
+// `nil` and `undefined` are the same type, so they are interchangeable.
+local e: nil = undefined;
+>e : nil
+
+local f: undefined = nil;
+>f : nil
+
+// Optional properties surface as `nil`.
+interface Box {
+	value?: number;
+>value : number | nil
+}
+local g: Box = {};
+>g : Box
+>{} : {}
+
+local h = g.value;
+>h : number | nil
+>g.value : number | nil
+>g : Box
+>value : number | nil
+

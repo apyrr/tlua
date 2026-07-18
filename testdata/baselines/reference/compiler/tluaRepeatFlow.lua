@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/tluaRepeatFlow.tlua] ////
+
+//// [tluaRepeatFlow.tlua]
+declare function poll(): number | nil;
+
+// The until-condition narrows: true exits the loop, so the post-loop flow
+// keeps the condition's facts.
+function narrowAfter(): number
+  local x: number | nil = nil;
+  repeat
+    x = poll();
+  until x ~= nil;
+  return x;
+end
+
+// `return` inside repeat participates in return-type inference.
+function inferred(cond: boolean)
+  repeat
+    if cond then
+      return 1;
+    end
+  until cond;
+  return "done";
+end
+
+// Unreachable code after break is reported.
+function unreachable(): number
+  local n = 0;
+  repeat
+    break;
+    n = 1;
+  until true;
+  return n;
+end
+
+// A body assignment is visible in the condition and after the loop.
+function assignedInBody(): number
+  local total: number | nil = nil;
+  repeat
+    total = 1;
+  until total ~= nil;
+  return total;
+end
+
+
+//// [tluaRepeatFlow.lua]
+-- The until-condition narrows: true exits the loop, so the post-loop flow
+-- keeps the condition's facts.
+function narrowAfter()
+    local x = nil;
+    repeat
+        x = poll();
+    until x ~= nil;
+    return x;
+end
+-- `return` inside repeat participates in return-type inference.
+function inferred(cond)
+    repeat
+        if cond then
+            return 1;
+        end
+    until cond;
+    return "done";
+end
+-- Unreachable code after break is reported.
+function unreachable()
+    local n = 0;
+    repeat
+        break;
+        n = 1;
+    until true;
+    return n;
+end
+-- A body assignment is visible in the condition and after the loop.
+function assignedInBody()
+    local total = nil;
+    repeat
+        total = 1;
+    until total ~= nil;
+    return total;
+end

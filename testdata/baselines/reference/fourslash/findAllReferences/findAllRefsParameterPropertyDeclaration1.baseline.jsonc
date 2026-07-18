@@ -1,0 +1,8 @@
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration1.tlua ===
+// class Foo {
+//     constructor(private /*FIND ALL REFS*/privateParam: number) {
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+//     }
+// }

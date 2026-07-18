@@ -1,0 +1,33 @@
+// === findAllReferences ===
+// === /referencesForContextuallyTypedUnionProperties2.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// interface B {
+//     /*FIND ALL REFS*/[|b|]: number;
+//     common: number;
+// }
+// 
+// // Assignment
+// local v1: A | B = { a = 0, common = "" };
+// local v2: A | B = { [|b|] = 0, common = 3 };
+// 
+// // Function call
+// function consumer(f:  A | B) { }
+// consumer({ a = 0, [|b|] = 0, common = 1 });
+// 
+// // Type cast
+// local c = <A | B> { common = 0, [|b|] = 0 };
+// 
+// // Array literal
+// local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
+// 
+// // Nested object literal
+// local ob: { aorb: A|B } = { aorb = { [|b|] = 0, common = 0 } };
+// 
+// // Widened type
+// local w: A|B = { [|b|] = undefined, common = undefined };
+// 
+// // Untped -- should not be included
+// local u1 = { a = 0, b = 0, common = "" };
+// local u2 = { b = 0, common = 0 };

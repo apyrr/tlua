@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/checkInheritedProperty.tlua] ////
+
+=== checkInheritedProperty.tlua ===
+class Base {
+>class : any
+>Base : any
+}
+
+declare BaseFactory: new() => Base & { c: string }
+>BaseFactory : new () => Base & { c: string; }
+>c : string
+
+class Derived extends BaseFactory {
+>class : any
+>Derived : any
+>BaseFactory : new () => Base & { c: string; }
+
+    a = this.b
+>a = : any
+>a : any
+> : any
+>b : any
+
+    b = "abc"
+>b = "abc" : "abc"
+>b : any
+>"abc" : "abc"
+}
+

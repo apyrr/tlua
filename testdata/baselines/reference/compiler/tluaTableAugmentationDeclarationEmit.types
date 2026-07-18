@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/tluaTableAugmentationDeclarationEmit.tlua] ////
+
+=== tluaTableAugmentationDeclarationEmit.tlua ===
+local M = {};
+>M : { value: number; label: string; }
+>{} : { value: number; label: string; }
+
+M.value = 1;
+>M.value = 1 : 1
+>M.value : number
+>M : { value: number; label: string; }
+>value : number
+>1 : 1
+
+M.label = "label";
+>M.label = "label" : "label"
+>M.label : string
+>M : { value: number; label: string; }
+>label : string
+>"label" : "label"
+
+Implicit = {};
+>Implicit = {} : { hidden: boolean; }
+>Implicit : { hidden: boolean; }
+>{} : { hidden: boolean; }
+
+Implicit.hidden = true;
+>Implicit.hidden = true : true
+>Implicit.hidden : boolean
+>Implicit : { hidden: boolean; }
+>hidden : boolean
+>true : true
+
+

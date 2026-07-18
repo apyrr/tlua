@@ -1,0 +1,12 @@
+usingDeclarationWithNewline.tlua(1,1): error TS2304: Cannot find name 'using'.
+usingDeclarationWithNewline.tlua(2,1): error TS2304: Cannot find name 'identifier'.
+
+
+==== usingDeclarationWithNewline.tlua (2 errors) ====
+    using
+    ~~~~~
+!!! error TS2304: Cannot find name 'using'.
+    identifier;
+    ~~~~~~~~~~
+!!! error TS2304: Cannot find name 'identifier'.
+    

@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/tluaYieldIdentifier.tlua] ////
+
+=== tluaYieldIdentifier.tlua ===
+// `yield` is freed as an ordinary identifier in tlua: generators are removed,
+// so it is not a reserved word even though modules are always strict. None of
+// these uses should produce a reserved-word diagnostic (upstream TS reports
+// TS1212/TS1213 here).
+
+local yield = 1;
+>yield : number
+>1 : 1
+
+local sum = yield + 1;
+>sum : number
+>yield + 1 : number
+>yield : number
+>1 : 1
+
+function useYield(yield: number): number
+>useYield : (yield: number) => number
+>yield : number
+
+  return yield;
+>yield : number
+
+end
+
+local exportedYield = yield;
+>exportedYield : number
+>yield : number
+

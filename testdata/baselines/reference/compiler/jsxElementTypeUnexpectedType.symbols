@@ -1,0 +1,13 @@
+//// [tests/cases/compiler/jsxElementTypeUnexpectedType.tsx] ////
+
+=== jsxElementTypeUnexpectedType.tsx ===
+type JsxElementType = number;
+>JsxElementType : Symbol(JsxElementType, Decl(jsxElementTypeUnexpectedType.tsx, 0, 0))
+
+local C = nil as any as () => any;
+>C : Symbol(C, Decl(jsxElementTypeUnexpectedType.tsx, 2, 5))
+
+local x = <C />;
+>x : Symbol(x, Decl(jsxElementTypeUnexpectedType.tsx, 4, 5))
+>C : Symbol(C, Decl(jsxElementTypeUnexpectedType.tsx, 2, 5))
+

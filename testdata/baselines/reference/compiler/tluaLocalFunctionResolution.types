@@ -1,0 +1,111 @@
+//// [tests/cases/compiler/tluaLocalFunctionResolution.tlua] ////
+
+=== tluaLocalFunctionResolution.tlua ===
+local function factorial(n: number): number
+>factorial : (n: number) => number
+>n : number
+
+  if (n <= 1) {
+>n <= 1 : boolean
+>n : number
+>1 : 1
+
+    return 1;
+>1 : 1
+  }
+  return n * factorial(n - 1);
+>n * factorial(n - 1) : number
+>n : number
+>factorial(n - 1) : number
+>factorial : (n: number) => number
+>n - 1 : number
+>n : number
+>1 : 1
+
+end
+factorial(3);
+>factorial(3) : number
+>factorial : (n: number) => number
+>3 : 3
+
+local function recursiveOnly(n: number): number
+>recursiveOnly : (n: number) => number
+>n : number
+
+  if (n <= 0) {
+>n <= 0 : boolean
+>n : number
+>0 : 0
+
+    return 0;
+>0 : 0
+  }
+  return recursiveOnly(n - 1);
+>recursiveOnly(n - 1) : number
+>recursiveOnly : (n: number) => number
+>n - 1 : number
+>n : number
+>1 : 1
+
+end
+
+beforeLocal();
+>beforeLocal() : any
+>beforeLocal : any
+
+local function beforeLocal(): void
+>beforeLocal : () => void
+
+end
+beforeLocal();
+>beforeLocal() : void
+>beforeLocal : () => void
+
+local function mutable(): number
+>mutable : () => number
+
+  return 1;
+>1 : 1
+
+end
+mutable = function(): number
+>mutable = function(): number  return 2;end : () => number
+>mutable : () => number
+>function(): number  return 2;end : () => number
+
+  return 2;
+>2 : 2
+
+end;
+mutable();
+>mutable() : number
+>mutable : () => number
+
+local function shadow(): number
+>shadow : () => number
+
+  return 1;
+>1 : 1
+
+end
+shadow();
+>shadow() : number
+>shadow : () => number
+
+{
+  local function shadow(): number
+>shadow : () => number
+
+    return 2;
+>2 : 2
+
+  end
+  shadow();
+>shadow() : number
+>shadow : () => number
+}
+
+shadow();
+>shadow() : number
+>shadow : () => number
+

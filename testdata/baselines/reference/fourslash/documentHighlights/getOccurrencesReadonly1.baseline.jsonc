@@ -1,0 +1,5 @@
+// === documentHighlights ===
+// === /getOccurrencesReadonly1.tlua ===
+// interface I {
+//   /*HIGHLIGHTS*/[|readonly|] prop: string;
+// }

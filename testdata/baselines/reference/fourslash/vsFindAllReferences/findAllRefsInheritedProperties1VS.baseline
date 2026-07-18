@@ -1,0 +1,50 @@
+// === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.tlua ===
+// class class1 extends class1 {
+//    /*FIND ALL REFS*/doStuff() { }
+//    propName: string;
+// }
+// 
+// --- (line: 6) skipped ---
+
+[]
+
+
+
+// === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.tlua ===
+// class class1 extends class1 {
+//    doStuff() { }
+//    /*FIND ALL REFS*/propName: string;
+// }
+// 
+// local v: class1;
+// v.doStuff();
+// v.propName;
+
+[]
+
+
+
+// === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.tlua ===
+// --- (line: 3) skipped ---
+// }
+// 
+// local v: class1;
+// v./*FIND ALL REFS*/doStuff();
+// v.propName;
+
+[]
+
+
+
+// === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.tlua ===
+// --- (line: 4) skipped ---
+// 
+// local v: class1;
+// v.doStuff();
+// v./*FIND ALL REFS*/propName;
+
+[]

@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/tluaLabelUnusedAllowed.tlua] ////
+
+=== tluaLabelUnusedAllowed.tlua ===
+// allowUnusedLabels suppresses the report for a label no goto targets.
+function unused(): void
+>unused : () => void
+
+    ::dead::
+>dead : any
+
+end
+

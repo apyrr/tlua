@@ -1,0 +1,42 @@
+// === Call Hierarchy ===
+╭ name: foo
+├ kind: function
+├ file: /callHierarchyFile.tlua
+├ span:
+│ ╭ /callHierarchyFile.tlua:2:1-3:2
+│ │ 2: function foo() {
+│ │    ^^^^^^^^^^^^^^^^
+│ │ 3: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /callHierarchyFile.tlua:2:10-2:13
+│ │ 2: function foo() {
+│ │             ^^^
+│ ╰
+├ incoming:
+│ ╭ from:
+│ │ ╭ name: /callHierarchyFile.tlua
+│ │ ├ kind: module
+│ │ ├ file: /callHierarchyFile.tlua
+│ │ ├ span:
+│ │ │ ╭ /callHierarchyFile.tlua:1:1-3:2
+│ │ │ │ 1: foo();
+│ │ │ │    ^^^^^^
+│ │ │ │ 2: function foo() {
+│ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ │ 3: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /callHierarchyFile.tlua:1:1-1:1
+│ │ │ │ 1: foo();
+│ │ │ │    <
+│ │ │ ╰
+│ │ ╰ incoming: none
+│ ├ fromSpans:
+│ │ ╭ /callHierarchyFile.tlua:1:1-1:4
+│ │ │ 1: foo();
+│ │ │    ^^^
+│ ╰ ╰
+╰ outgoing: none

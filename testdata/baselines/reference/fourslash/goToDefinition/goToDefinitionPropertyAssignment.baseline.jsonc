@@ -1,0 +1,19 @@
+// === goToDefinition ===
+// === /goToDefinitionPropertyAssignment.tlua ===
+// export <|local [|Component|] = () => { return "OK"}|>
+// Component.displayName = 'Component'
+// 
+// /*GOTO DEF*/Component
+// 
+// Component.displayName
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionPropertyAssignment.tlua ===
+// export local Component = () => { return "OK"}
+// Component.displayName = 'Component'
+// 
+// Component
+// 
+// Component./*GOTO DEF*/displayName

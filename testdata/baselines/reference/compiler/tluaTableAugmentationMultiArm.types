@@ -1,0 +1,68 @@
+//// [tests/cases/compiler/tluaTableAugmentationMultiArm.tlua] ////
+
+=== a.tlua ===
+V = {};
+>V = {} : { m: string; }
+>V : { m: string; } | { m: string; b: number; }
+>{} : { m: string; }
+
+V.m = "s";
+>V.m = "s" : "s"
+>V.m : string
+>V : { m: string; }
+>m : string
+>"s" : "s"
+
+local va: string = V.m;
+>va : string
+>V.m : string
+>V : { m: string; }
+>m : string
+
+=== b.tlua ===
+V = { b = 2 };
+>V = { b = 2 } : { m: string; b: number; }
+>V : { m: string; } | { m: string; b: number; }
+>{ b = 2 } : { m: string; b: number; }
+>b : number
+>2 : 2
+
+local vm: string = V.m;
+>vm : string
+>V.m : string
+>V : { m: string; b: number; }
+>m : string
+
+local vb: number = V.b;
+>vb : number
+>V.b : number
+>V : { m: string; b: number; }
+>b : number
+
+=== c.tlua ===
+// Hover-visible union: records V's union type in the .types baseline.
+local v = V;
+>v : { m: string; } | { m: string; b: number; }
+>V : { m: string; } | { m: string; b: number; }
+
+local cm: string = V.m;
+>cm : string
+>V.m : string
+>V : { m: string; } | { m: string; b: number; }
+>m : string
+
+// `b` exists in only one arm's constructor. Read here on the un-narrowed
+// union to record whether a direct read is an error or union-with-nil.
+local cb = V.b;
+>cb : any
+>V.b : any
+>V : { m: string; } | { m: string; b: number; }
+>b : any
+
+V.b = 3;
+>V.b = 3 : 3
+>V.b : any
+>V : { m: string; } | { m: string; b: number; }
+>b : any
+>3 : 3
+

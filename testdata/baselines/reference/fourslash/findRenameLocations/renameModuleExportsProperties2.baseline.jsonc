@@ -1,0 +1,11 @@
+// === findRenameLocations ===
+// === /renameModuleExportsProperties2.tlua ===
+// class /*RENAME*/A {}
+// module.exports = { B: A }
+
+
+
+// === findRenameLocations ===
+// === /renameModuleExportsProperties2.tlua ===
+// class A {}
+// module.exports = { B: /*RENAME*/A }

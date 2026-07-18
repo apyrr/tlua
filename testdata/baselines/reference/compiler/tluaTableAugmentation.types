@@ -1,0 +1,181 @@
+//// [tests/cases/compiler/tluaTableAugmentation.tlua] ////
+
+=== tluaTableAugmentation.tlua ===
+local M = {};
+>M : { x: string | number; }
+>{} : { x: string | number; }
+
+local before: number | string = M.x;
+>before : string | number
+>M.x : string | number
+>M : { x: string | number; }
+>x : string | number
+
+M.x = 1;
+>M.x = 1 : 1
+>M.x : string | number
+>M : { x: string | number; }
+>x : string | number
+>1 : 1
+
+M.x = "two";
+>M.x = "two" : "two"
+>M.x : string | number
+>M : { x: string | number; }
+>x : string | number
+>"two" : "two"
+
+local x: number | string = M.x;
+>x : string | number
+>M.x : string
+>M : { x: string | number; }
+>x : string
+
+local nested = {};
+>nested : { sub: { value: number; }; }
+>{} : { sub: { value: number; }; }
+
+nested.sub = {};
+>nested.sub = {} : { value: number; }
+>nested.sub : { value: number; }
+>nested : { sub: { value: number; }; }
+>sub : { value: number; }
+>{} : { value: number; }
+
+nested.sub.value = 1;
+>nested.sub.value = 1 : 1
+>nested.sub.value : number
+>nested.sub : { value: number; }
+>nested : { sub: { value: number; }; }
+>sub : { value: number; }
+>value : number
+>1 : 1
+
+local value: number = nested.sub.value;
+>value : number
+>nested.sub.value : number
+>nested.sub : { value: number; }
+>nested : { sub: { value: number; }; }
+>sub : { value: number; }
+>value : number
+
+local keyed = {};
+>keyed : { name: boolean; 1: string; }
+>{} : { name: boolean; 1: string; }
+
+keyed["name"] = true;
+>keyed["name"] = true : true
+>keyed["name"] : boolean
+>keyed : { name: boolean; 1: string; }
+>"name" : "name"
+>true : true
+
+keyed[1] = "one";
+>keyed[1] = "one" : "one"
+>keyed[1] : string
+>keyed : { name: boolean; 1: string; }
+>1 : 1
+>"one" : "one"
+
+local name: boolean = keyed.name;
+>name : boolean
+>keyed.name : true
+>keyed : { name: boolean; 1: string; }
+>name : true
+
+local one: string = keyed[1];
+>one : string
+>keyed[1] : string
+>keyed : { name: boolean; 1: string; }
+>1 : 1
+
+local fixed = { x = 1 };
+>fixed : { x: number; }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+fixed.x = "no";
+>fixed.x = "no" : "no"
+>fixed.x : number
+>fixed : { x: number; }
+>x : number
+>"no" : "no"
+
+local annotated: { x: number } = { x = 1 };
+>annotated : { x: number; }
+>x : number
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+annotated.y = 2;
+>annotated.y = 2 : 2
+>annotated.y : any
+>annotated : { x: number; }
+>y : any
+>2 : 2
+
+local dynamic = {};
+>dynamic : {}
+>{} : {}
+
+local key = "key";
+>key : string
+>"key" : "key"
+
+dynamic[key] = 1;
+>dynamic[key] = 1 : 1
+>dynamic[key] : any
+>dynamic : {}
+>key : string
+>1 : 1
+
+local closed = true and {} or {};
+>closed : {}
+>true and {} or {} : {}
+>true and {} : {}
+>true : true
+>{} : {}
+>{} : {}
+
+closed.x = 1;
+>closed.x = 1 : 1
+>closed.x : any
+>closed : {}
+>x : any
+>1 : 1
+
+local collision = {};
+>collision : { member: any; }
+>{} : { member: any; }
+
+collision.member = 1;
+>collision.member = 1 : 1
+>collision.member : any
+>collision : { member: any; }
+>member : any
+>1 : 1
+
+function collision.member(): void
+>collision : { member: any; }
+>member : any
+
+end
+
+local reverseCollision = {};
+>reverseCollision : { member: any; }
+>{} : { member: any; }
+
+function reverseCollision.member(): void
+>reverseCollision : { member: any; }
+>member : any
+
+end
+reverseCollision.member = 1;
+>reverseCollision.member = 1 : 1
+>reverseCollision.member : any
+>reverseCollision : { member: any; }
+>member : any
+>1 : 1
+

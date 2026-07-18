@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/tluaMultiReturnForwarding.tlua] ////
+
+=== tluaMultiReturnForwarding.tlua ===
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+function variadic(): (number, ...string)
+>variadic : () => (number, ...string)
+
+  return 1, "a", "b";
+>1, "a", "b" : number, string, string
+>1 : 1
+>"a" : "a"
+>"b" : "b"
+
+end
+
+function rest(a: number, ...: string): number
+>rest : (a: number, ...: string) => number
+>a : number
+> : string[]
+
+  return a;
+>a : number
+
+end
+
+function takes2(a: number, b: string): boolean
+>takes2 : (a: number, b: string) => boolean
+>a : number
+>b : string
+
+  return true;
+>true : true
+
+end
+
+// A variadic tail forwards into a rest parameter.
+local restForward = rest(variadic());
+>restForward : number
+>rest(variadic()) : number
+>rest : (a: number, ...: string) => number
+>variadic() : number
+>variadic : () => (number, ...string)
+
+// An unbounded tail may produce no value for the parameter it reaches, so what
+// it passes there is `string | nil` -- which a required `string` rejects.
+local unbounded = takes2(variadic());
+>unbounded : boolean
+>takes2(variadic()) : boolean
+>takes2 : (a: number, b: string) => boolean
+>variadic() : number
+>variadic : () => (number, ...string)
+
+// Packs forward through nested calls.
+function wrap(): (number, string)
+>wrap : () => (number, string)
+
+  return pair();
+>pair() : number
+>pair : () => (number, string)
+
+end
+
+local nested = takes2(wrap());
+>nested : boolean
+>takes2(wrap()) : boolean
+>takes2 : (a: number, b: string) => boolean
+>wrap() : number
+>wrap : () => (number, string)
+
+// The tail expands inside a call used as a value list tail.
+function both(): (boolean, number)
+>both : () => (boolean, number)
+
+  return takes2(pair()), 2;
+>takes2(pair()), 2 : boolean, number
+>takes2(pair()) : boolean
+>takes2 : (a: number, b: string) => boolean
+>pair() : number
+>pair : () => (number, string)
+>2 : 2
+
+end
+

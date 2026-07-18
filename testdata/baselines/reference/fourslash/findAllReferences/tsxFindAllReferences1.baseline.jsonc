@@ -1,0 +1,30 @@
+// === findAllReferences ===
+// === /file.tsx ===
+// declare namespace JSX {
+//     interface Element { }
+//     interface IntrinsicElements {
+//         /*FIND ALL REFS*/[|div|]: {
+//             name?: string;
+//             isOpen?: boolean;
+//         };
+// --- (line: 8) skipped ---
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         span: { n: string; };
+//     }
+// }
+// local x = /*FIND ALL REFS*/<div />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         span: { n: string; };
+//     }
+// }
+// local x = </*FIND ALL REFS*/div />;

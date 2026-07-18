@@ -1,0 +1,139 @@
+//// [tests/cases/compiler/tluaTableKeyedFields.tlua] ////
+
+=== tluaTableKeyedFields.tlua ===
+// Lua keyed fields: `name = value` is equivalent to `name: value`.
+local t = { x = 1, y = "s" };
+>t : { x: number; y: string; }
+>{ x = 1, y = "s" } : { x: number; y: string; }
+>x : number
+>1 : 1
+>y : string
+>"s" : "s"
+
+local tx: number = t.x;
+>tx : number
+>t.x : number
+>t : { x: number; y: string; }
+>x : number
+
+local ty: string = t.y;
+>ty : string
+>t.y : string
+>t : { x: number; y: string; }
+>y : string
+
+// Bracket keys with `=`: literal, dynamic, and numeric.
+local key = "dyn";
+>key : string
+>"dyn" : "dyn"
+
+local u = { ["lit"] = 1, [key] = 2, [1] = "one" };
+>u : { [x: string]: number; lit: number; 1: string; }
+>{ ["lit"] = 1, [key] = 2, [1] = "one" } : { [x: string]: number; lit: number; 1: string; }
+>["lit"] : number
+>"lit" : "lit"
+>1 : 1
+>[key] : number
+>key : string
+>2 : 2
+>[1] : string
+>1 : 1
+>"one" : "one"
+
+local ulit: number = u.lit;
+>ulit : number
+>u.lit : number
+>u : { [x: string]: number; lit: number; 1: string; }
+>lit : number
+
+local uone: string = u[1];
+>uone : string
+>u[1] : string
+>u : { [x: string]: number; lit: number; 1: string; }
+>1 : 1
+
+// Nested tables.
+local nested = { a = { b = 2 } };
+>nested : { a: { b: number; }; }
+>{ a = { b = 2 } } : { a: { b: number; }; }
+>a : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+local nb: number = nested.a.b;
+>nb : number
+>nested.a.b : number
+>nested.a : { b: number; }
+>nested : { a: { b: number; }; }
+>a : { b: number; }
+>b : number
+
+// Identifier and bracket keys coexist in one literal.
+local both = { a = 1, b = 2, ["c"] = 3, ["d"] = 4 };
+>both : { a: number; b: number; c: number; d: number; }
+>{ a = 1, b = 2, ["c"] = 3, ["d"] = 4 } : { a: number; b: number; c: number; d: number; }
+>a : number
+>1 : 1
+>b : number
+>2 : 2
+>["c"] : number
+>"c" : "c"
+>3 : 3
+>["d"] : number
+>"d" : "d"
+>4 : 4
+
+local bsum: number = both.a + both.b + both.c + both.d;
+>bsum : number
+>both.a + both.b + both.c + both.d : number
+>both.a + both.b + both.c : number
+>both.a + both.b : number
+>both.a : number
+>both : { a: number; b: number; c: number; d: number; }
+>a : number
+>both.b : number
+>both : { a: number; b: number; c: number; d: number; }
+>b : number
+>both.c : number
+>both : { a: number; b: number; c: number; d: number; }
+>c : number
+>both.d : number
+>both : { a: number; b: number; c: number; d: number; }
+>d : number
+
+// Inference and widening behave exactly like `:` fields.
+local widened = { n = 0 };
+>widened : { n: number; }
+>{ n = 0 } : { n: number; }
+>n : number
+>0 : 0
+
+widened.n = 42;
+>widened.n = 42 : 42
+>widened.n : number
+>widened : { n: number; }
+>n : number
+>42 : 42
+
+// Table fields holding functions (brace-bodied function expressions).
+local fns = { add = function(a: number, b: number): number return a + b; end };
+>fns : { add: (a: number, b: number) => number; }
+>{ add = function(a: number, b: number): number return a + b; end } : { add: (a: number, b: number) => number; }
+>add : (a: number, b: number) => number
+>function(a: number, b: number): number return a + b; end : (a: number, b: number) => number
+>a : number
+>b : number
+>a + b : number
+>a : number
+>b : number
+
+local three: number = fns.add(1, 2);
+>three : number
+>fns.add(1, 2) : number
+>fns.add : (a: number, b: number) => number
+>fns : { add: (a: number, b: number) => number; }
+>add : (a: number, b: number) => number
+>1 : 1
+>2 : 2
+

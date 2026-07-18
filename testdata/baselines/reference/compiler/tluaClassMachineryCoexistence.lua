@@ -1,0 +1,52 @@
+//// [tests/cases/compiler/tluaClassMachineryCoexistence.tlua] ////
+
+//// [tluaClassMachineryCoexistence.tlua]
+// Class *declarations* are gone, but the shared type machinery that classes
+// relied on must keep working, because interfaces, the DOM libs, and Lua
+// tables all use it: interface `extends` heritage, constructor types / construct
+// signatures, `new`, `instanceof`, `typeof`, and the class-adjacent utility
+// types. (Object-literal `super` died with object-literal methods in the table
+// slice — `super` has no legal home left. Polymorphic `this` died with the
+// `this` slice — see tluaNoThis.tlua.)
+
+interface Base {
+  b: number;
+}
+
+// interface `extends` heritage
+interface Derived extends Base {
+  d: number;
+}
+
+// constructor types (parenthesized `new` / `abstract new`)
+type Ctor = new () => Derived;
+type ACtor = abstract new () => Base;
+
+// construct signature on an interface
+interface HasCtor {
+  new (x: number): Derived;
+}
+
+declare K: { new (): Derived };
+
+local inst = new K(); // `new X()`
+local isK = inst instanceof K; // `instanceof`
+type TK = typeof K; // `typeof Ctor`
+
+// class-adjacent utility types (defined in lib.es5.d.tlua via construct signatures).
+// `ConstructorParameters` is gone: it is built on `...args: infer P`, which needs
+// a rest parameter whose type IS the parameter tuple, and a vararg's annotation is
+// the pack's element type. See the vararg slice.
+type Inst = InstanceType<TK>;
+
+
+//// [tluaClassMachineryCoexistence.lua]
+-- Class *declarations* are gone, but the shared type machinery that classes
+-- relied on must keep working, because interfaces, the DOM libs, and Lua
+-- tables all use it: interface `extends` heritage, constructor types / construct
+-- signatures, `new`, `instanceof`, `typeof`, and the class-adjacent utility
+-- types. (Object-literal `super` died with object-literal methods in the table
+-- slice — `super` has no legal home left. Polymorphic `this` died with the
+-- `this` slice — see tluaNoThis.tlua.)
+local inst = new K(); -- `new X()`
+local isK = inst instanceof K; -- `instanceof`

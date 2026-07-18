@@ -1,0 +1,70 @@
+tluaTypeGuardIdentity.tlua(11,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(18,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(26,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(31,6): error TS2554: Expected 1 arguments, but got 0.
+tluaTypeGuardIdentity.tlua(32,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+
+
+==== tluaTypeGuardIdentity.tlua (5 errors) ====
+    // Only a call to the real global `type` narrows. The binder matches the call by
+    // spelling, so every one of these shapes reaches the checker and is turned down
+    // there; each unnarrowed use below is an error.
+    
+    declare v: string | number;
+    declare function use(x: unknown): void;
+    
+    function shadowed(): void {
+      local type = function(value: any) return "string"; end;
+      if type(v) == "string" then
+        local s: string = v;
+              ~
+!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+      end
+    }
+    
+    function aliased(): void {
+      local t = type;
+      if t(v) == "string" then
+        local s: string = v;
+              ~
+!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+      end
+    }
+    
+    declare holder: { type: (value: any) => string };
+    
+    function member(): void {
+      if holder.type(v) == "string" then
+        local s: string = v;
+              ~
+!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+      end
+    }
+    
+    function wrongArity(): void {
+      if type() == "string" then
+         ~~~~
+!!! error TS2554: Expected 1 arguments, but got 0.
+!!! related TS6210 lib.luajit.d.tlua:212:23: An argument for 'value' was not provided.
+        local s: string = v;
+              ~
+!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+      end
+    }
+    
+    // The global still narrows in the same file, once the shadow is out of scope.
+    function global(): void {
+      if type(v) == "string" then
+        local s: string = v;
+        use(s);
+      end
+    }
+    

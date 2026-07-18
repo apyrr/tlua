@@ -1,0 +1,40 @@
+// @strict: true
+// @noEmit: true
+
+class A {
+  next: A | null = null;
+
+  constructor(readonly children: (A | null)[]) {}
+}
+
+function getNodes(): A[] {
+  local out: A[] = [];
+
+  local current: A | null = new A([]);
+
+  while (current ~= null) {
+    local firstChild = null;
+
+    if (out.length) {
+      current = current.next;
+      continue;
+    }
+
+    for i = 0, current.children.length - 1 do
+      local child = current.children[i];
+
+      if (child) {
+        if (!firstChild) {
+          firstChild = child;
+          firstChild.next = current.next;
+        }
+
+        child.next = current.next;
+      }
+    end
+
+    current = firstChild || current.next;
+  }
+
+  return out;
+}

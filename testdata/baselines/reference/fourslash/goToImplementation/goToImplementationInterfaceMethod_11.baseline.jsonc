@@ -1,0 +1,8 @@
+// === goToImplementation ===
+// === /goToImplementationInterfaceMethod_11.tlua ===
+// interface Foo {
+//    hel/*GOTO IMPL*/lo(): void;
+// }
+// 
+// local x = <Foo> { <|[|hello|] = () => {}|> };
+// local y = <Foo> (((({ <|[|hello|] = () => {}|> }))));

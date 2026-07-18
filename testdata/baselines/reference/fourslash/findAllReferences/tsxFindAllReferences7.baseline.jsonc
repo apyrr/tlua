@@ -1,0 +1,15 @@
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 4) skipped ---
+//     interface ElementAttributesProperty { props; }
+// }
+// interface OptionPropBag {
+//     /*FIND ALL REFS*/[|propx|]: number
+//     propString: string
+//     optional?: boolean
+// }
+// declare function Opt(attributes: OptionPropBag): JSX.Element;
+// local opt = <Opt />;
+// local opt1 = <Opt [|propx|]={100} propString />;
+// local opt2 = <Opt [|propx|]={100} optional/>;
+// local opt3 = <Opt wrong />;

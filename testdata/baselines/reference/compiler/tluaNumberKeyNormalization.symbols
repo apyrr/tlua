@@ -1,0 +1,36 @@
+//// [tests/cases/compiler/tluaNumberKeyNormalization.tlua] ////
+
+=== tluaNumberKeyNormalization.tlua ===
+// Every spelling of a numeric value names the same key.
+local t = { [0x10] = "hex", [1e2] = "exp", [1.5] = "frac", [-1] = "neg" };
+>t : Symbol(t, Decl(tluaNumberKeyNormalization.tlua, 1, 5))
+>[0x10] : Symbol([0x10], Decl(tluaNumberKeyNormalization.tlua, 1, 11))
+>0x10 : Symbol([0x10], Decl(tluaNumberKeyNormalization.tlua, 1, 11))
+>[1e2] : Symbol([1e2], Decl(tluaNumberKeyNormalization.tlua, 1, 27))
+>1e2 : Symbol([1e2], Decl(tluaNumberKeyNormalization.tlua, 1, 27))
+>[1.5] : Symbol([1.5], Decl(tluaNumberKeyNormalization.tlua, 1, 42))
+>1.5 : Symbol([1.5], Decl(tluaNumberKeyNormalization.tlua, 1, 42))
+>[-1] : Symbol([-1], Decl(tluaNumberKeyNormalization.tlua, 1, 58))
+
+local hex: string = t[16];
+>hex : Symbol(hex, Decl(tluaNumberKeyNormalization.tlua, 2, 5))
+>t : Symbol(t, Decl(tluaNumberKeyNormalization.tlua, 1, 5))
+>16 : Symbol([0x10], Decl(tluaNumberKeyNormalization.tlua, 1, 11))
+
+local exp: string = t[100];
+>exp : Symbol(exp, Decl(tluaNumberKeyNormalization.tlua, 3, 5))
+>t : Symbol(t, Decl(tluaNumberKeyNormalization.tlua, 1, 5))
+>100 : Symbol([1e2], Decl(tluaNumberKeyNormalization.tlua, 1, 27))
+
+local frac: string = t[1.5];
+>frac : Symbol(frac, Decl(tluaNumberKeyNormalization.tlua, 4, 5))
+>t : Symbol(t, Decl(tluaNumberKeyNormalization.tlua, 1, 5))
+>1.5 : Symbol([1.5], Decl(tluaNumberKeyNormalization.tlua, 1, 42))
+
+local neg: string = t[-1];
+>neg : Symbol(neg, Decl(tluaNumberKeyNormalization.tlua, 5, 5))
+>t : Symbol(t, Decl(tluaNumberKeyNormalization.tlua, 1, 5))
+
+local es = {hex, exp, frac, neg};
+>es : Symbol(es, Decl(tluaNumberKeyNormalization.tlua, 6, 5))
+

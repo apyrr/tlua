@@ -1,0 +1,21 @@
+// === goToDefinition ===
+// === /goToDefinitionYield1.tlua ===
+// function* gen() {
+//     /*GOTO DEF*/yield 0;
+// }
+// 
+// local genFunction = function()
+//     yield 0;
+// end
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionYield1.tlua ===
+// function* gen() {
+//     yield 0;
+// }
+// 
+// local genFunction = function()
+//     /*GOTO DEF*/yield 0;
+// end

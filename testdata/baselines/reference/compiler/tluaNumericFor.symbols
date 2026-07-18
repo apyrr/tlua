@@ -1,0 +1,120 @@
+//// [tests/cases/compiler/tluaNumericFor.tlua] ////
+
+=== tluaNumericFor.tlua ===
+function sumTo(n: number): number
+>sumTo : Symbol(sumTo, Decl(tluaNumericFor.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 0, 15))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 1, 7))
+
+  for i = 1, n do
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 2, 5))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 0, 15))
+
+    total = total + i;
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 1, 7))
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 1, 7))
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 2, 5))
+
+  end
+  return total;
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 1, 7))
+
+end
+
+// Optional step; the control variable may be assigned.
+function countDown(n: number): number
+>countDown : Symbol(countDown, Decl(tluaNumericFor.tlua, 6, 3))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 9, 19))
+
+  local last = 0;
+>last : Symbol(last, Decl(tluaNumericFor.tlua, 10, 7))
+
+  for i = n, 1, -1 do
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 11, 5))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 9, 19))
+
+    last = i;
+>last : Symbol(last, Decl(tluaNumericFor.tlua, 10, 7))
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 11, 5))
+
+    i = i - 1;
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 11, 5))
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 11, 5))
+
+  end
+  return last;
+>last : Symbol(last, Decl(tluaNumericFor.tlua, 10, 7))
+
+end
+
+// An annotation is allowed when it accepts a number.
+function annotated(n: number): number
+>annotated : Symbol(annotated, Decl(tluaNumericFor.tlua, 16, 3))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 19, 19))
+
+  local total = 0;
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 20, 7))
+
+  for i: number = 1, n do
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 21, 5))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 19, 19))
+
+    total = total + i;
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 20, 7))
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 20, 7))
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 21, 5))
+
+  end
+  return total;
+>total : Symbol(total, Decl(tluaNumericFor.tlua, 20, 7))
+
+end
+
+// break works; nesting works; TS body statements work.
+function nested(w: number, h: number): number
+>nested : Symbol(nested, Decl(tluaNumericFor.tlua, 25, 3))
+>w : Symbol(w, Decl(tluaNumericFor.tlua, 28, 16))
+>h : Symbol(h, Decl(tluaNumericFor.tlua, 28, 26))
+
+  local count = 0;
+>count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))
+
+  for x = 1, w do
+>x : Symbol(x, Decl(tluaNumericFor.tlua, 30, 5))
+>w : Symbol(w, Decl(tluaNumericFor.tlua, 28, 16))
+
+    for y = 1, h do
+>y : Symbol(y, Decl(tluaNumericFor.tlua, 31, 7))
+>h : Symbol(h, Decl(tluaNumericFor.tlua, 28, 26))
+
+      if (count > 100) {
+>count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))
+
+        break;
+      }
+      count = count + 1;
+>count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))
+>count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))
+
+    end
+  end
+  return count;
+>count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))
+
+end
+
+// The control variable is scoped to the loop.
+function scoped(n: number): number
+>scoped : Symbol(scoped, Decl(tluaNumericFor.tlua, 39, 3))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 42, 16))
+
+  for i = 1, n do
+>i : Symbol(i, Decl(tluaNumericFor.tlua, 43, 5))
+>n : Symbol(n, Decl(tluaNumericFor.tlua, 42, 16))
+
+  end
+  return i;
+end
+

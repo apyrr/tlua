@@ -1,0 +1,68 @@
+//// [tests/cases/compiler/jsxFunctionTypeChildren.tsx] ////
+
+=== jsxFunctionTypeChildren.tsx ===
+// https://github.com/microsoft/typescript-go/issues/2703
+
+interface JsxElement {}
+interface JsxElementChildrenAttribute { children: {}; }
+>children : {}
+
+interface JsxIntrinsicElements { div: { children?: any }; }
+>div : { children?: any; }
+>children : any
+
+type ReactNode = JsxElement | string | null;
+>ReactNode : ReactNode
+
+type BaseProps = { locale: string };
+>BaseProps : BaseProps
+>locale : string
+
+type Props<T extends BaseProps> = {
+>Props : Props<T>
+
+    children: (props: T) => ReactNode;
+>children : (props: T) => ReactNode
+>props : T
+
+} & T;
+
+declare function Comp<T extends BaseProps>(props: Props<T>): JsxElement;
+>Comp : <T extends BaseProps>(props: Props<T>) => JsxElement
+>props : Props<T>
+
+// Error in ts-go: Type '(props: ...) => Element' is not assignable to
+// type '((props: ...) => ReactNode) & {}'.
+local el = <Comp locale={'en'}>{(props) => <div>{props.locale}</div>}</Comp>;
+>el : JsxElement
+><Comp locale={'en'}>{(props) => <div>{props.locale}</div>}</Comp> : JsxElement
+>Comp : <T extends BaseProps>(props: Props<T>) => JsxElement
+>locale : string
+>'en' : "en"
+>(props) => <div>{props.locale}</div> : (props: BaseProps) => JsxElement
+>props : BaseProps
+><div>{props.locale}</div> : JsxElement
+>div : any
+>props.locale : string
+>props : BaseProps
+>locale : string
+>div : any
+>Comp : <T extends BaseProps>(props: Props<T>) => JsxElement
+
+// But the equivalent non-JSX call works fine:
+Comp({ locale = 'en', children = (props) => <div>{props.locale}</div> });
+>Comp({ locale = 'en', children = (props) => <div>{props.locale}</div> }) : JsxElement
+>Comp : <T extends BaseProps>(props: Props<T>) => JsxElement
+>{ locale = 'en', children = (props) => <div>{props.locale}</div> } : { locale: string; children: (props: BaseProps) => JsxElement; }
+>locale : string
+>'en' : "en"
+>children : (props: BaseProps) => JsxElement
+>(props) => <div>{props.locale}</div> : (props: BaseProps) => JsxElement
+>props : BaseProps
+><div>{props.locale}</div> : JsxElement
+>div : any
+>props.locale : string
+>props : BaseProps
+>locale : string
+>div : any
+

@@ -1,0 +1,7 @@
+// === findAllReferences ===
+// === /findAllRefsForMappedType.tlua ===
+// interface T { /*FIND ALL REFS*/[|a|]: number };
+// type U = { [K in keyof T]: string };
+// type V = { [K in keyof U]: boolean };
+// local u: U = { [|a|] = "" }
+// local v: V = { [|a|] = true }

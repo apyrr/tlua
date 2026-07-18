@@ -1,0 +1,48 @@
+// === documentHighlights ===
+// === /luaLoopBreakContinueOccurrences.tlua ===
+// /*HIGHLIGHTS*/[|while|] true do
+//     if false then
+//         [|break|];
+//     end
+//     for i = 1, 10 do
+//         if i > 5 then
+//             break;
+//         end
+//         continue;
+//     end
+//     [|continue|];
+// end
+
+
+
+// === documentHighlights ===
+// === /luaLoopBreakContinueOccurrences.tlua ===
+// [|while|] true do
+//     if false then
+//         /*HIGHLIGHTS*/[|break|];
+//     end
+//     for i = 1, 10 do
+//         if i > 5 then
+//             break;
+//         end
+//         continue;
+//     end
+//     [|continue|];
+// end
+
+
+
+// === documentHighlights ===
+// === /luaLoopBreakContinueOccurrences.tlua ===
+// [|while|] true do
+//     if false then
+//         [|break|];
+//     end
+//     for i = 1, 10 do
+//         if i > 5 then
+//             break;
+//         end
+//         continue;
+//     end
+//     /*HIGHLIGHTS*/[|continue|];
+// end

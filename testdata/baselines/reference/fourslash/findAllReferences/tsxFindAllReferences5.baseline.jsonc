@@ -1,0 +1,162 @@
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// /*FIND ALL REFS*/declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|Opt|] />;
+// local opt1 = <[|Opt|] propx={100} propString />;
+// local opt2 = <[|Opt|] propx={100} optional/>;
+// local opt3 = <[|Opt|] wrong />;
+// local opt4 = <[|Opt|] propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function /*FIND ALL REFS*/[|Opt|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|Opt|] />;
+// local opt1 = <[|Opt|] propx={100} propString />;
+// local opt2 = <[|Opt|] propx={100} optional/>;
+// local opt3 = <[|Opt|] wrong />;
+// local opt4 = <[|Opt|] propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 9) skipped ---
+//     optional?: boolean
+// }
+// declare function Opt(attributes: OptionPropBag): JSX.Element;
+// local opt = /*FIND ALL REFS*/<Opt />;
+// local opt1 = <Opt propx={100} propString />;
+// local opt2 = <Opt propx={100} optional/>;
+// local opt3 = <Opt wrong />;
+// local opt4 = <Opt propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// local opt = </*FIND ALL REFS*/[|Opt|] />;
+// local opt1 = <[|Opt|] propx={100} propString />;
+// local opt2 = <[|Opt|] propx={100} optional/>;
+// local opt3 = <[|Opt|] wrong />;
+// local opt4 = <[|Opt|] propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 10) skipped ---
+// }
+// declare function Opt(attributes: OptionPropBag): JSX.Element;
+// local opt = <Opt />;
+// local opt1 = /*FIND ALL REFS*/<Opt propx={100} propString />;
+// local opt2 = <Opt propx={100} optional/>;
+// local opt3 = <Opt wrong />;
+// local opt4 = <Opt propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|Opt|] />;
+// local opt1 = </*FIND ALL REFS*/[|Opt|] propx={100} propString />;
+// local opt2 = <[|Opt|] propx={100} optional/>;
+// local opt3 = <[|Opt|] wrong />;
+// local opt4 = <[|Opt|] propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 11) skipped ---
+// declare function Opt(attributes: OptionPropBag): JSX.Element;
+// local opt = <Opt />;
+// local opt1 = <Opt propx={100} propString />;
+// local opt2 = /*FIND ALL REFS*/<Opt propx={100} optional/>;
+// local opt3 = <Opt wrong />;
+// local opt4 = <Opt propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|Opt|] />;
+// local opt1 = <[|Opt|] propx={100} propString />;
+// local opt2 = </*FIND ALL REFS*/[|Opt|] propx={100} optional/>;
+// local opt3 = <[|Opt|] wrong />;
+// local opt4 = <[|Opt|] propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 12) skipped ---
+// local opt = <Opt />;
+// local opt1 = <Opt propx={100} propString />;
+// local opt2 = <Opt propx={100} optional/>;
+// local opt3 = /*FIND ALL REFS*/<Opt wrong />;
+// local opt4 = <Opt propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|Opt|] />;
+// local opt1 = <[|Opt|] propx={100} propString />;
+// local opt2 = <[|Opt|] propx={100} optional/>;
+// local opt3 = </*FIND ALL REFS*/[|Opt|] wrong />;
+// local opt4 = <[|Opt|] propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 13) skipped ---
+// local opt1 = <Opt propx={100} propString />;
+// local opt2 = <Opt propx={100} optional/>;
+// local opt3 = <Opt wrong />;
+// local opt4 = /*FIND ALL REFS*/<Opt propx={100} propString="hi" />;
+
+
+
+// === findAllReferences ===
+// === /file.tsx ===
+// --- (line: 8) skipped ---
+//     propString: string
+//     optional?: boolean
+// }
+// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// local opt = <[|Opt|] />;
+// local opt1 = <[|Opt|] propx={100} propString />;
+// local opt2 = <[|Opt|] propx={100} optional/>;
+// local opt3 = <[|Opt|] wrong />;
+// local opt4 = </*FIND ALL REFS*/[|Opt|] propx={100} propString="hi" />;

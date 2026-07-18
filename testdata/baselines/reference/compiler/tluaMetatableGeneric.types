@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/tluaMetatableGeneric.tlua] ////
+
+=== tluaMetatableGeneric.tlua ===
+// A pairing resolves its members eagerly, so it can only hold concrete types. A generic
+// table falls back to the intersection, which is less precise about collisions but does
+// instantiate -- the same trade a generic spread makes.
+
+local helpers = { describe = function(self: object): string return "d"; end };
+>helpers : { describe: (self: object) => string; }
+>{ describe = function(self: object): string return "d"; end } : { describe: (self: object) => string; }
+>describe : (self: object) => string
+>function(self: object): string return "d"; end : (self: object) => string
+>self : object
+>"d" : "d"
+
+function withHelpers<T extends object>(value: T)
+>withHelpers : <T extends object>(value: T) => T & { describe: (self: object) => string; }
+>value : T
+
+  return setmetatable(value, { __index = helpers });
+>setmetatable(value, { __index = helpers }) : T & { describe: (self: object) => string; }
+>setmetatable : <T_1 extends object>(value: T_1, metatable: LuaMetatable<T_1> | nil) => T_1
+>value : T
+>{ __index = helpers } : { __index: { describe: (self: object) => string; }; }
+>__index : { describe: (self: object) => string; }
+>helpers : { describe: (self: object) => string; }
+
+end
+
+local w = withHelpers({ own = "o" });
+>w : { own: string; } & { describe: (self: object) => string; }
+>withHelpers({ own = "o" }) : { own: string; } & { describe: (self: object) => string; }
+>withHelpers : <T extends object>(value: T) => T & { describe: (self: object) => string; }
+>{ own = "o" } : { own: string; }
+>own : string
+>"o" : "o"
+
+local o1: string = w.own;
+>o1 : string
+>w.own : string
+>w : { own: string; } & { describe: (self: object) => string; }
+>own : string
+
+local d1: string = w.describe(w);
+>d1 : string
+>w.describe(w) : string
+>w.describe : (self: object) => string
+>w : { own: string; } & { describe: (self: object) => string; }
+>describe : (self: object) => string
+>w : { own: string; } & { describe: (self: object) => string; }
+
+local wbad: number = w.own;
+>wbad : number
+>w.own : string
+>w : { own: string; } & { describe: (self: object) => string; }
+>own : string
+
+// A concrete table whose *member* type mentions a type parameter still pairs, and the
+// pairing instantiates with it.
+function box<T>(value: T)
+>box : <T>(value: T) => { describe: (self: object) => string; value: T; }
+>value : T
+
+  return setmetatable({ value = value }, { __index = helpers });
+>setmetatable({ value = value }, { __index = helpers }) : { describe: (self: object) => string; value: T; }
+>setmetatable : <T_1 extends object>(value: T_1, metatable: LuaMetatable<T_1> | nil) => T_1
+>{ value = value } : { value: T; }
+>value : T
+>value : T
+>{ __index = helpers } : { __index: { describe: (self: object) => string; }; }
+>__index : { describe: (self: object) => string; }
+>helpers : { describe: (self: object) => string; }
+
+end
+
+local b = box(42);
+>b : { describe: (self: object) => string; value: number; }
+>box(42) : { describe: (self: object) => string; value: number; }
+>box : <T>(value: T) => { describe: (self: object) => string; value: T; }
+>42 : 42
+
+local v: number = b.value;
+>v : number
+>b.value : number
+>b : { describe: (self: object) => string; value: number; }
+>value : number
+
+local d2: string = b.describe(b);
+>d2 : string
+>b.describe(b) : string
+>b.describe : (self: object) => string
+>b : { describe: (self: object) => string; value: number; }
+>describe : (self: object) => string
+>b : { describe: (self: object) => string; value: number; }
+
+local bbad: string = b.value;
+>bbad : string
+>b.value : number
+>b : { describe: (self: object) => string; value: number; }
+>value : number
+
+local bs = box("s");
+>bs : { describe: (self: object) => string; value: string; }
+>box("s") : { describe: (self: object) => string; value: string; }
+>box : <T>(value: T) => { describe: (self: object) => string; value: T; }
+>"s" : "s"
+
+local sv: string = bs.value;
+>sv : string
+>bs.value : string
+>bs : { describe: (self: object) => string; value: string; }
+>value : string
+

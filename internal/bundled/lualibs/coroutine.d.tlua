@@ -1,0 +1,15 @@
+interface CoroutineLib {
+    create(fn: LuaFunction): LuaThread;
+    resume(thread: LuaThread, ...: any): (boolean, ...any);
+    running(): LuaThread | nil;
+    status(thread: LuaThread): "running" | "suspended" | "normal" | "dead";
+    // Deliberately erased, like resume/yield: a wrapped coroutine's calls exchange
+    // values with `yield` -- the first call's results are the first yield's
+    // arguments, later calls feed yield's results -- so correlating them with fn's
+    // parameter/return packs would assert types that are wrong for every coroutine
+    // that yields, which is what wrap is for.
+    wrap(fn: LuaFunction): LuaFunction;
+    yield(...: any): (any?, ...any);
+}
+
+declare coroutine: CoroutineLib;

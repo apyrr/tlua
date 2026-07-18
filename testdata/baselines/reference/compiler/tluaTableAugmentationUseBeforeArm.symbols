@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/tluaTableAugmentationUseBeforeArm.tlua] ////
+
+=== tluaTableAugmentationUseBeforeArm.tlua ===
+// Augmentation is resolved at initialization, so a member's type exists
+// program-wide; flow analysis then decides what each read sees.
+
+// A read before the global's only constructor arm is flagged as
+// used-before-assigned rather than silently typed from the future write.
+local beforeArm = Early.member;
+>beforeArm : Symbol(beforeArm, Decl(tluaTableAugmentationUseBeforeArm.tlua, 5, 5))
+>Early.member : Symbol(member, Decl(tluaTableAugmentationUseBeforeArm.tlua, 6, 11))
+>Early : Symbol(Early, Decl(tluaTableAugmentationUseBeforeArm.tlua, 5, 31))
+>member : Symbol(member, Decl(tluaTableAugmentationUseBeforeArm.tlua, 6, 11))
+
+Early = {};
+>Early : Symbol(Early, Decl(tluaTableAugmentationUseBeforeArm.tlua, 5, 31))
+
+Early.member = 1;
+>Early.member : Symbol(member, Decl(tluaTableAugmentationUseBeforeArm.tlua, 6, 11))
+>Early : Symbol(Early, Decl(tluaTableAugmentationUseBeforeArm.tlua, 5, 31))
+>member : Symbol(member, Decl(tluaTableAugmentationUseBeforeArm.tlua, 6, 11))
+
+local afterArm: number = Early.member;
+>afterArm : Symbol(afterArm, Decl(tluaTableAugmentationUseBeforeArm.tlua, 8, 5))
+>Early.member : Symbol(member, Decl(tluaTableAugmentationUseBeforeArm.tlua, 6, 11))
+>Early : Symbol(Early, Decl(tluaTableAugmentationUseBeforeArm.tlua, 5, 31))
+>member : Symbol(member, Decl(tluaTableAugmentationUseBeforeArm.tlua, 6, 11))
+
+// A read between the constructor arm and the member write is not flagged:
+// once the table exists, the member read sees the merged member type.
+Mid = {};
+>Mid : Symbol(Mid, Decl(tluaTableAugmentationUseBeforeArm.tlua, 8, 38))
+
+local betweenWrites = Mid.value;
+>betweenWrites : Symbol(betweenWrites, Decl(tluaTableAugmentationUseBeforeArm.tlua, 13, 5))
+>Mid.value : Symbol(value, Decl(tluaTableAugmentationUseBeforeArm.tlua, 13, 32))
+>Mid : Symbol(Mid, Decl(tluaTableAugmentationUseBeforeArm.tlua, 8, 38))
+>value : Symbol(value, Decl(tluaTableAugmentationUseBeforeArm.tlua, 13, 32))
+
+Mid.value = "v";
+>Mid.value : Symbol(value, Decl(tluaTableAugmentationUseBeforeArm.tlua, 13, 32))
+>Mid : Symbol(Mid, Decl(tluaTableAugmentationUseBeforeArm.tlua, 8, 38))
+>value : Symbol(value, Decl(tluaTableAugmentationUseBeforeArm.tlua, 13, 32))
+
+local afterWrite: string = Mid.value;
+>afterWrite : Symbol(afterWrite, Decl(tluaTableAugmentationUseBeforeArm.tlua, 15, 5))
+>Mid.value : Symbol(value, Decl(tluaTableAugmentationUseBeforeArm.tlua, 13, 32))
+>Mid : Symbol(Mid, Decl(tluaTableAugmentationUseBeforeArm.tlua, 8, 38))
+>value : Symbol(value, Decl(tluaTableAugmentationUseBeforeArm.tlua, 13, 32))
+
+// Same shape on a local table.
+local t = {};
+>t : Symbol(t, Decl(tluaTableAugmentationUseBeforeArm.tlua, 18, 5))
+
+local beforeLocalWrite = t.flag;
+>beforeLocalWrite : Symbol(beforeLocalWrite, Decl(tluaTableAugmentationUseBeforeArm.tlua, 19, 5))
+>t.flag : Symbol(flag, Decl(tluaTableAugmentationUseBeforeArm.tlua, 19, 32))
+>t : Symbol(t, Decl(tluaTableAugmentationUseBeforeArm.tlua, 18, 5))
+>flag : Symbol(flag, Decl(tluaTableAugmentationUseBeforeArm.tlua, 19, 32))
+
+t.flag = true;
+>t.flag : Symbol(flag, Decl(tluaTableAugmentationUseBeforeArm.tlua, 19, 32))
+>t : Symbol(t, Decl(tluaTableAugmentationUseBeforeArm.tlua, 18, 5))
+>flag : Symbol(flag, Decl(tluaTableAugmentationUseBeforeArm.tlua, 19, 32))
+
+local afterLocalWrite: boolean = t.flag;
+>afterLocalWrite : Symbol(afterLocalWrite, Decl(tluaTableAugmentationUseBeforeArm.tlua, 21, 5))
+>t.flag : Symbol(flag, Decl(tluaTableAugmentationUseBeforeArm.tlua, 19, 32))
+>t : Symbol(t, Decl(tluaTableAugmentationUseBeforeArm.tlua, 18, 5))
+>flag : Symbol(flag, Decl(tluaTableAugmentationUseBeforeArm.tlua, 19, 32))
+

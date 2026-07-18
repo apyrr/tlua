@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/simpleTestSingleFile.tlua] ////
+
+=== simpleTestSingleFile.tlua ===
+local x: number = "";
+>x : number
+>"" : ""
+

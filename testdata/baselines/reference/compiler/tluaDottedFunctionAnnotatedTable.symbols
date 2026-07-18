@@ -1,0 +1,51 @@
+//// [tests/cases/compiler/tluaDottedFunctionAnnotatedTable.tlua] ////
+
+=== tluaDottedFunctionAnnotatedTable.tlua ===
+interface Ops {
+>Ops : Symbol(Ops, Decl(tluaDottedFunctionAnnotatedTable.tlua, 0, 0))
+
+  good(a: number): number;
+>good : Symbol(Ops.good, Decl(tluaDottedFunctionAnnotatedTable.tlua, 0, 15))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 1, 7))
+
+  wrong(a: number): number;
+>wrong : Symbol(Ops.wrong, Decl(tluaDottedFunctionAnnotatedTable.tlua, 1, 26))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 2, 8))
+}
+
+local ops: Ops = { good = function(a: number) return a; end, wrong = function(a: number) return a; end };
+>ops : Symbol(ops, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 5))
+>Ops : Symbol(Ops, Decl(tluaDottedFunctionAnnotatedTable.tlua, 0, 0))
+>good : Symbol(good, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 18))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 35))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 35))
+>wrong : Symbol(wrong, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 60))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 78))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 78))
+
+function ops.good(a: number): number
+>ops : Symbol(ops, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 5))
+>good : Symbol(good, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 105))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 7, 18))
+
+  return a;
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 7, 18))
+
+end
+
+function ops.wrong(a: string): string
+>ops : Symbol(ops, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 5))
+>wrong : Symbol(wrong, Decl(tluaDottedFunctionAnnotatedTable.tlua, 9, 3))
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 11, 19))
+
+  return a;
+>a : Symbol(a, Decl(tluaDottedFunctionAnnotatedTable.tlua, 11, 19))
+
+end
+
+function ops.absent(): void
+>ops : Symbol(ops, Decl(tluaDottedFunctionAnnotatedTable.tlua, 5, 5))
+>absent : Symbol(absent, Decl(tluaDottedFunctionAnnotatedTable.tlua, 13, 3))
+
+end
+

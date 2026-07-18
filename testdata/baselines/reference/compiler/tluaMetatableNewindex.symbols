@@ -1,0 +1,68 @@
+//// [tests/cases/compiler/tluaMetatableNewindex.tlua] ////
+
+=== tluaMetatableNewindex.tlua ===
+// A write to a key the table does not have runs __newindex. Only a write consults it: a read of a
+// missing key still misses.
+
+// Function form: __newindex is called as (table, key, value), so its value parameter types the
+// write and its key parameter says which keys it answers.
+local logged = setmetatable({ n = 1 }, {
+>logged : Symbol(logged, Decl(tluaMetatableNewindex.tlua, 5, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableNewindex.tlua, 5, 29))
+
+  __newindex = function(t: object, k: string, v: number): void return; end,
+>__newindex : Symbol(__newindex, Decl(tluaMetatableNewindex.tlua, 5, 40))
+>t : Symbol(t, Decl(tluaMetatableNewindex.tlua, 6, 24))
+>k : Symbol(k, Decl(tluaMetatableNewindex.tlua, 6, 34))
+>v : Symbol(v, Decl(tluaMetatableNewindex.tlua, 6, 45))
+
+});
+logged.fresh = 2;
+>logged : Symbol(logged, Decl(tluaMetatableNewindex.tlua, 5, 5))
+
+logged.fresh = "no";
+>logged : Symbol(logged, Decl(tluaMetatableNewindex.tlua, 5, 5))
+
+logged["dyn"] = 3;                  // the element-access write path too
+>logged : Symbol(logged, Decl(tluaMetatableNewindex.tlua, 5, 5))
+
+local stillMissing = logged.fresh;  // a read never consults __newindex
+>stillMissing : Symbol(stillMissing, Decl(tluaMetatableNewindex.tlua, 11, 5))
+>logged : Symbol(logged, Decl(tluaMetatableNewindex.tlua, 5, 5))
+
+logged.n = 5;                       // the merged shape has n, so this is a raw write
+>logged.n : Symbol(n, Decl(tluaMetatableNewindex.tlua, 5, 29))
+>logged : Symbol(logged, Decl(tluaMetatableNewindex.tlua, 5, 5))
+>n : Symbol(n, Decl(tluaMetatableNewindex.tlua, 5, 29))
+
+// Table form: the fallback table receives the write, so its index signature types it.
+local store: Table<string, number> = {};
+>store : Symbol(store, Decl(tluaMetatableNewindex.tlua, 15, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+local proxied = setmetatable({ n = 1 }, { __newindex = store });
+>proxied : Symbol(proxied, Decl(tluaMetatableNewindex.tlua, 16, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableNewindex.tlua, 16, 30))
+>__newindex : Symbol(__newindex, Decl(tluaMetatableNewindex.tlua, 16, 41))
+>store : Symbol(store, Decl(tluaMetatableNewindex.tlua, 15, 5))
+
+proxied.other = 3;
+>proxied : Symbol(proxied, Decl(tluaMetatableNewindex.tlua, 16, 5))
+
+proxied.other = "no";
+>proxied : Symbol(proxied, Decl(tluaMetatableNewindex.tlua, 16, 5))
+
+// A key outside the handler's domain is not answered.
+local numKeys = setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end });
+>numKeys : Symbol(numKeys, Decl(tluaMetatableNewindex.tlua, 21, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__newindex : Symbol(__newindex, Decl(tluaMetatableNewindex.tlua, 21, 34))
+>t : Symbol(t, Decl(tluaMetatableNewindex.tlua, 21, 57))
+>k : Symbol(k, Decl(tluaMetatableNewindex.tlua, 21, 67))
+>v : Symbol(v, Decl(tluaMetatableNewindex.tlua, 21, 78))
+
+numKeys.name = "x";
+>numKeys : Symbol(numKeys, Decl(tluaMetatableNewindex.tlua, 21, 5))
+

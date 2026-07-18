@@ -1,0 +1,69 @@
+jsxSpreadWithAssertion.tsx(3,11): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+jsxSpreadWithAssertion.tsx(4,5): error TS1003: Identifier expected.
+jsxSpreadWithAssertion.tsx(4,9): error TS1005: ';' expected.
+jsxSpreadWithAssertion.tsx(5,9): error TS1434: Unexpected keyword or identifier.
+jsxSpreadWithAssertion.tsx(5,9): error TS2304: Cannot find name 'first'.
+jsxSpreadWithAssertion.tsx(5,14): error TS1128: Declaration or statement expected.
+jsxSpreadWithAssertion.tsx(5,16): error TS2695: Left side of comma operator is unused and has no side effects.
+jsxSpreadWithAssertion.tsx(6,9): error TS2304: Cannot find name 'foo'.
+jsxSpreadWithAssertion.tsx(6,12): error TS1005: ';' expected.
+jsxSpreadWithAssertion.tsx(6,14): error TS2695: Left side of comma operator is unused and has no side effects.
+jsxSpreadWithAssertion.tsx(7,9): error TS2304: Cannot find name 'bar'.
+jsxSpreadWithAssertion.tsx(7,12): error TS1005: ';' expected.
+jsxSpreadWithAssertion.tsx(8,9): error TS2304: Cannot find name 'baz'.
+jsxSpreadWithAssertion.tsx(8,12): error TS1005: ';' expected.
+jsxSpreadWithAssertion.tsx(8,14): error TS2695: Left side of comma operator is unused and has no side effects.
+jsxSpreadWithAssertion.tsx(9,9): error TS2304: Cannot find name 'last'.
+jsxSpreadWithAssertion.tsx(9,13): error TS1005: ';' expected.
+jsxSpreadWithAssertion.tsx(11,1): error TS1161: Unterminated regular expression literal.
+
+
+==== jsxSpreadWithAssertion.tsx (18 errors) ====
+    declare EntryTextDialog: any;
+    
+    local c = <EntryTextDialog
+              ~~~~~~~~~~~~~~~~
+!!! error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+        {...{
+        ~
+!!! error TS1003: Identifier expected.
+            ~
+!!! error TS1005: ';' expected.
+            first: 0,
+            ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+            ~~~~~
+!!! error TS2304: Cannot find name 'first'.
+                 ~
+!!! error TS1128: Declaration or statement expected.
+                   ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+            foo: 1,
+            ~~~
+!!! error TS2304: Cannot find name 'foo'.
+               ~
+!!! error TS1005: ';' expected.
+                 ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+            bar: 2 as any,
+            ~~~
+!!! error TS2304: Cannot find name 'bar'.
+               ~
+!!! error TS1005: ';' expected.
+            baz: 3,
+            ~~~
+!!! error TS2304: Cannot find name 'baz'.
+               ~
+!!! error TS1005: ';' expected.
+                 ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+            last: 4
+            ~~~~
+!!! error TS2304: Cannot find name 'last'.
+                ~
+!!! error TS1005: ';' expected.
+        }}
+    />
+    ~~
+!!! error TS1161: Unterminated regular expression literal.
+    

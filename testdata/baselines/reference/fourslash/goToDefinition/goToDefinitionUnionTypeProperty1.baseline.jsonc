@@ -1,0 +1,16 @@
+// === goToDefinition ===
+// === /goToDefinitionUnionTypeProperty1.tlua ===
+// interface One {
+//     <|[|commonProperty|]: number;|>
+//     commonFunction(): number;
+// }
+// 
+// interface Two {
+//     <|[|commonProperty|]: string|>
+//     commonFunction(): number;
+// }
+// 
+// local x : One | Two;
+// 
+// x./*GOTO DEF*/commonProperty;
+// x.commonFunction;

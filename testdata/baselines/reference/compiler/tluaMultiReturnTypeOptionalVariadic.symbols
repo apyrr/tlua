@@ -1,0 +1,75 @@
+//// [tests/cases/compiler/tluaMultiReturnTypeOptionalVariadic.tlua] ////
+
+=== tluaMultiReturnTypeOptionalVariadic.tlua ===
+// Optional elements: an absent value reads as nil.
+function opt(): (number, string?)
+>opt : Symbol(opt, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 0, 0))
+
+  return 1;
+end
+
+function optBoth(): (number, string?)
+>optBoth : Symbol(optBoth, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 3, 3))
+
+  return 1, "a";
+end
+
+// The trailing `?` must parse before a brace body (eager `?` consumption).
+function optBrace(): (number, string?) {
+>optBrace : Symbol(optBrace, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 7, 3))
+
+  return 2;
+}
+
+// ... and before a same-line Lua statement.
+function optSameLine(cond: boolean): (number, boolean?) local x = cond;
+>optSameLine : Symbol(optSameLine, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 12, 1))
+>cond : Symbol(cond, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 15, 21))
+>x : Symbol(x, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 15, 61))
+>cond : Symbol(cond, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 15, 21))
+
+  return 3, x;
+>x : Symbol(x, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 15, 61))
+
+end
+
+// Variadic tail: any number of trailing values.
+function variadic(): (number, ...string)
+>variadic : Symbol(variadic, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 17, 3))
+
+  return 1, "a", "b", "c";
+end
+
+function variadicEmptyTail(): (number, ...string)
+>variadicEmptyTail : Symbol(variadicEmptyTail, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 22, 3))
+
+  return 1;
+end
+
+// Optional element in the middle position, before a required-of-rest layout.
+function optFirstOfTail(): (boolean, number?, ...string)
+>optFirstOfTail : Symbol(optFirstOfTail, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 26, 3))
+
+  return true, 1, "x";
+end
+
+local a = opt();
+>a : Symbol(a, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 33, 5))
+>opt : Symbol(opt, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 0, 0))
+
+local b = optBoth();
+>b : Symbol(b, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 34, 5))
+>optBoth : Symbol(optBoth, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 3, 3))
+
+local c = optBrace();
+>c : Symbol(c, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 35, 5))
+>optBrace : Symbol(optBrace, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 7, 3))
+
+local d = optSameLine(true);
+>d : Symbol(d, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 36, 5))
+>optSameLine : Symbol(optSameLine, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 12, 1))
+
+local e = variadic();
+>e : Symbol(e, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 37, 5))
+>variadic : Symbol(variadic, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 17, 3))
+

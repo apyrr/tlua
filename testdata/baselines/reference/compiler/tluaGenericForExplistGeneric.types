@@ -1,0 +1,226 @@
+//// [tests/cases/compiler/tluaGenericForExplistGeneric.tlua] ////
+
+=== tluaGenericForExplistGeneric.tlua ===
+interface Rec {
+  [key: string]: number;
+>key : string
+}
+
+declare t: Rec;
+>t : Rec
+
+for k, v in next, t do
+>k : string
+>v : number
+>next, t : <K, V>(value: Table<K, V>, index?: K) => (K?, V), Rec
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>t : Rec
+
+  local key: string = k;
+>key : string
+>k : string
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+for k, v in next, t, "seed" do
+>k : string
+>v : number
+>next, t, "seed" : <K, V>(value: Table<K, V>, index?: K) => (K?, V), Rec, string
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>t : Rec
+>"seed" : "seed"
+
+  local key: string = k;
+>key : string
+>k : string
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+declare c: string | nil;
+>c : string | nil
+
+for k, v in next, t, c do
+>k : string
+>v : number
+>next, t, c : <K, V>(value: Table<K, V>, index?: K) => (K?, V), Rec, string | nil
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>t : Rec
+>c : string | nil
+
+  local key: string = k;
+>key : string
+>k : string
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+for k, v in pairs(t) do
+>k : string
+>v : number
+>pairs(t) : LuaPairsIterator<string, number>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>t : Rec
+
+  local key: string = k;
+>key : string
+>k : string
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+declare function step<T>(state: T[], i: number | nil): (number | nil, T);
+>step : <T>(state: T[], i: number | nil) => (number | nil, T)
+>state : T[]
+>i : number | nil
+
+declare arr: { name: string }[];
+>arr : { name: string; }[]
+>name : string
+
+for i, x in step, arr, nil do
+>i : number
+>x : { name: string; }
+>step, arr, nil : <T>(state: T[], i: number | nil) => (number | nil, T), { name: string; }[], nil
+>step : <T>(state: T[], i: number | nil) => (number | nil, T)
+>arr : { name: string; }[]
+
+  local index: number = i;
+>index : number
+>i : number
+
+  local element: { name: string } = x;
+>element : { name: string; }
+>name : string
+>x : { name: string; }
+
+end
+
+declare function ov(state: string[], i: nil): (number | nil, string);
+>ov : { (state: string[], i: nil): (number | nil, string); (state: number[], i: nil): (number | nil, boolean); }
+>state : string[]
+>i : nil
+
+declare function ov(state: number[], i: nil): (number | nil, boolean);
+>ov : { (state: string[], i: nil): (number | nil, string); (state: number[], i: nil): (number | nil, boolean); }
+>state : number[]
+>i : nil
+
+declare strings: string[];
+>strings : string[]
+
+for i, value in ov, strings, nil do
+>i : number
+>value : string
+>ov, strings, nil : { (state: string[], i: nil): (number | nil, string); (state: number[], i: nil): (number | nil, boolean); }, string[], nil
+>ov : { (state: string[], i: nil): (number | nil, string); (state: number[], i: nil): (number | nil, boolean); }
+>strings : string[]
+
+  local index: number = i;
+>index : number
+>i : number
+
+  local element: string = value;
+>element : string
+>value : string
+
+end
+
+for i, value in ov, 42, nil do
+>i : number
+>value : string | boolean
+>ov, 42, nil : { (state: string[], i: nil): (number | nil, string); (state: number[], i: nil): (number | nil, boolean); }, number, nil
+>ov : { (state: string[], i: nil): (number | nil, string); (state: number[], i: nil): (number | nil, boolean); }
+>42 : 42
+
+  local index: number = i;
+>index : number
+>i : number
+
+  local element: string | boolean = value;
+>element : string | boolean
+>value : string | boolean
+
+end
+
+declare function each<K, V>(state: Table<K, V>): (K?, V);
+>each : <K, V>(state: Table<K, V>) => (K?, V)
+>state : Table<K, V>
+
+for k, v in each, t, "oops" do
+>k : string
+>v : number
+>each, t, "oops" : <K, V>(state: Table<K, V>) => (K?, V), Rec, string
+>each : <K, V>(state: Table<K, V>) => (K?, V)
+>t : Rec
+>"oops" : "oops"
+
+  local key: string = k;
+>key : string
+>k : string
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+declare function requiredControl(state: Rec, control: string): (string | nil, number);
+>requiredControl : (state: Rec, control: string) => (string | nil, number)
+>state : Rec
+>control : string
+
+for k, v in requiredControl, t, nil do
+>k : string
+>v : number
+>requiredControl, t, nil : (state: Rec, control: string) => (string | nil, number), Rec, nil
+>requiredControl : (state: Rec, control: string) => (string | nil, number)
+>t : Rec
+
+  local key: string = k;
+>key : string
+>k : string
+
+  local value: number = v;
+>value : number
+>v : number
+
+end
+
+for k, v in next, 42 do
+>k : never
+>v : unknown
+>next, 42 : <K, V>(value: Table<K, V>, index?: K) => (K?, V), number
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>42 : 42
+
+  k;
+>k : never
+
+  v;
+>v : unknown
+
+end
+
+for k in next do
+>k : {}
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+
+  k;
+>k : {}
+
+end
+

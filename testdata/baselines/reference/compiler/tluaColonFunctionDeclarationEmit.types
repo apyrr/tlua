@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/tluaColonFunctionDeclarationEmit.tlua] ////
+
+=== tluaColonFunctionDeclarationEmit.tlua ===
+local Exported = {};
+>Exported : { visible(self: any, a: number): number; }
+>{} : { visible(self: { visible(self: any, a: number): number; }, a: number): number; }
+
+function Exported:visible(a: number): number
+>Exported : { visible(self: any, a: number): number; }
+>visible : (self: { visible(self: any, a: number): number; }, a: number) => number
+>: : { visible(self: any, a: number): number; }
+>Exported : { visible(self: any, a: number): number; }
+>a : number
+
+  return a;
+>a : number
+
+end
+
+local Hidden = {};
+>Hidden : { invisible(self: any): void; }
+>{} : { invisible(self: { invisible(self: any): void; }): void; }
+
+function Hidden:invisible(): void
+>Hidden : { invisible(self: any): void; }
+>invisible : (self: { invisible(self: any): void; }) => void
+>: : { invisible(self: any): void; }
+>Hidden : { invisible(self: any): void; }
+
+  self.invisible(self);
+>self.invisible(self) : void
+>self.invisible : (self: { invisible(self: any): void; }) => void
+>self : { invisible(self: any): void; }
+>invisible : (self: { invisible(self: any): void; }) => void
+>self : { invisible(self: any): void; }
+
+end
+

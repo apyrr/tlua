@@ -1,0 +1,47 @@
+//// [tests/cases/compiler/tluaTableAugmentationUseBeforeArm.tlua] ////
+
+//// [tluaTableAugmentationUseBeforeArm.tlua]
+// Augmentation is resolved at initialization, so a member's type exists
+// program-wide; flow analysis then decides what each read sees.
+
+// A read before the global's only constructor arm is flagged as
+// used-before-assigned rather than silently typed from the future write.
+local beforeArm = Early.member;
+Early = {};
+Early.member = 1;
+local afterArm: number = Early.member;
+
+// A read between the constructor arm and the member write is not flagged:
+// once the table exists, the member read sees the merged member type.
+Mid = {};
+local betweenWrites = Mid.value;
+Mid.value = "v";
+local afterWrite: string = Mid.value;
+
+// Same shape on a local table.
+local t = {};
+local beforeLocalWrite = t.flag;
+t.flag = true;
+local afterLocalWrite: boolean = t.flag;
+
+
+//// [tluaTableAugmentationUseBeforeArm.lua]
+-- Augmentation is resolved at initialization, so a member's type exists
+-- program-wide; flow analysis then decides what each read sees.
+-- A read before the global's only constructor arm is flagged as
+-- used-before-assigned rather than silently typed from the future write.
+local beforeArm = Early.member;
+Early = {};
+Early.member = 1;
+local afterArm = Early.member;
+-- A read between the constructor arm and the member write is not flagged:
+-- once the table exists, the member read sees the merged member type.
+Mid = {};
+local betweenWrites = Mid.value;
+Mid.value = "v";
+local afterWrite = Mid.value;
+-- Same shape on a local table.
+local t = {};
+local beforeLocalWrite = t.flag;
+t.flag = true;
+local afterLocalWrite = t.flag;

@@ -1,0 +1,95 @@
+// === documentHighlights ===
+// === /getOccurrencesSuper.tlua ===
+// --- (line: 7) skipped ---
+// }
+// 
+// class SubType extends SuperType {
+//     public  prop1 = /*HIGHLIGHTS*/super.superMethod;
+//     private prop2 = super.superMethod;
+// 
+//     constructor() {
+// --- (line: 15) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper.tlua ===
+// --- (line: 8) skipped ---
+// 
+// class SubType extends SuperType {
+//     public  prop1 = super.superMethod;
+//     private prop2 = /*HIGHLIGHTS*/super.superMethod;
+// 
+//     constructor() {
+//         super();
+// --- (line: 16) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper.tlua ===
+// --- (line: 11) skipped ---
+//     private prop2 = super.superMethod;
+// 
+//     constructor() {
+//         /*HIGHLIGHTS*/super();
+//     }
+// 
+//     public method1() {
+// --- (line: 19) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper.tlua ===
+// --- (line: 15) skipped ---
+//     }
+// 
+//     public method1() {
+//         return /*HIGHLIGHTS*/super.superMethod();
+//     }
+// 
+//     private method2() {
+// --- (line: 23) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper.tlua ===
+// --- (line: 19) skipped ---
+//     }
+// 
+//     private method2() {
+//         return /*HIGHLIGHTS*/super.superMethod();
+//     }
+// 
+//     public method3() {
+// --- (line: 27) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper.tlua ===
+// --- (line: 23) skipped ---
+//     }
+// 
+//     public method3() {
+//         local x = () => /*HIGHLIGHTS*/super.superMethod();
+// 
+//         // Bad but still gets highlighted
+//         function f() {
+// --- (line: 31) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesSuper.tlua ===
+// --- (line: 27) skipped ---
+// 
+//         // Bad but still gets highlighted
+//         function f() {
+//             /*HIGHLIGHTS*/super.superMethod();
+//         }
+//     }
+// 
+// --- (line: 35) skipped ---

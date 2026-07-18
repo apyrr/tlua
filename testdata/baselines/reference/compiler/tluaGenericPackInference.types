@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/tluaGenericPackInference.tlua] ////
+
+=== tluaGenericPackInference.tlua ===
+// A pack parameter shared between a callback and the trailing vararg correlates
+// the two: the arguments are checked against the callback's parameters, and the
+// callback's results become the call's results.
+
+declare function apply<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+>apply : <...A, ...R>(f: (...: A) => (...R), ...: A) => (...R)
+>f : (...: A) => (...R)
+> : A
+> : A
+
+declare function takesNumberString(a: number, b: string): (boolean, number);
+>takesNumberString : (a: number, b: string) => (boolean, number)
+>a : number
+>b : string
+
+// Arguments must match the callback's parameters (A is pinned by f).
+apply(takesNumberString, 1, "x");        // ok
+>apply(takesNumberString, 1, "x") : boolean
+>apply : <...A, ...R>(f: (...: A) => (...R), ...: A) => (...R)
+>takesNumberString : (a: number, b: string) => (boolean, number)
+>1 : 1
+>"x" : "x"
+
+apply(takesNumberString, "wrong", "x");  // error: string is not a number
+>apply(takesNumberString, "wrong", "x") : boolean
+>apply : <...A, ...R>(f: (...: A) => (...R), ...: A) => (...R)
+>takesNumberString : (a: number, b: string) => (boolean, number)
+>"wrong" : "wrong"
+>"x" : "x"
+
+apply(takesNumberString, 1);             // error: missing the second argument
+>apply(takesNumberString, 1) : boolean
+>apply : <...A, ...R>(f: (...: A) => (...R), ...: A) => (...R)
+>takesNumberString : (a: number, b: string) => (boolean, number)
+>1 : 1
+
+// Forwarding a vararg pack into another correlated call: `...` carries the whole
+// pack A, so `apply(g, ...)` type-checks against g's parameters.
+function relay<...A, ...R>(g: (...: A) => (...R), ...: A): (...R)
+>relay : <...A, ...R>(g: (...: A) => (...R), ...: A) => (...R)
+>g : (...: A) => (...R)
+> : A
+> : A
+
+  return apply(g, ...);
+>apply(g, ...) : R[number] | nil
+>apply : <...A_1, ...R_1>(f: (...: A_1) => (...R_1), ...: A_1) => (...R_1)
+>g : (...: A) => (...R)
+>... : A[number] | nil
+
+end
+
+declare function g2(x: string, y: boolean): number;
+>g2 : (x: string, y: boolean) => number
+>x : string
+>y : boolean
+
+local relayed: number = relay(g2, "s", true);
+>relayed : number
+>relay(g2, "s", true) : number
+>relay : <...A, ...R>(g: (...: A) => (...R), ...: A) => (...R)
+>g2 : (x: string, y: boolean) => number
+>"s" : "s"
+>true : true
+
+// An open forward: the tail feeds the correlated parameter list.
+function callWithNumbers(...: number): void
+>callWithNumbers : (...: number) => void
+> : number[]
+
+  apply(g2, ...);  // error: number tail is not (string, boolean)
+>apply(g2, ...) : number
+>apply : <...A, ...R>(f: (...: A) => (...R), ...: A) => (...R)
+>g2 : (x: string, y: boolean) => number
+>... : number | nil
+
+end
+

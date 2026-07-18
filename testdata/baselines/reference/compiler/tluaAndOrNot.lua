@@ -1,0 +1,78 @@
+//// [tests/cases/compiler/tluaAndOrNot.tlua] ////
+
+//// [tluaAndOrNot.tlua]
+// `and`, `or` and `not` are Lua's spellings of `&&`, `||` and `!`. They are
+// aliases -- the same token kinds -- so the two spellings parse, check and emit
+// identically, and the words are canonical on the way out. `not` is the one
+// exception: its token kind is shared with the non-null and definite-assignment
+// `!`, which must stay punctuation, so `not x` emits as `!x`.
+
+declare s: string;
+declare n: number;
+declare b: boolean;
+declare maybe: string | nil;
+
+// Both spellings, same meaning.
+local w1 = s and n;
+local p1 = s && n;
+local w2 = s or n;
+local p2 = s || n;
+local w3 = not b;
+local p3 = !b;
+// Mixed within one expression.
+local m1 = (s and n) || (n and s);
+local m2 = not b && b;
+
+// Precedence agrees between the languages: comparison binds tighter than `and`,
+// which binds tighter than `or`. All four spell the same tree.
+local prec1 = n > 1 and n < 5 or b;
+local prec2 = n > 1 && n < 5 || b;
+local prec3 = (n > 1 and n < 5) or b;
+local prec4 = ((n > 1) && (n < 5)) || b;
+
+// `not` does not disturb the other uses of `!`.
+local nonNull = maybe!.length;
+local doubleNot = not not maybe;
+
+// Optional chaining lowers to an `and`-guard; nullish coalescing is untouched.
+local chain = maybe?.length;
+local coalesce = maybe ?? "fallback";
+
+// The words are reserved, so a table key must be quoted, as in Lua.
+declare t: { [k: string]: number };
+local byIndex = t["and"];
+local byIndex2 = t["or"];
+local byIndex3 = t["not"];
+
+
+//// [tluaAndOrNot.lua]
+-- `and`, `or` and `not` are Lua's spellings of `&&`, `||` and `!`. They are
+-- aliases -- the same token kinds -- so the two spellings parse, check and emit
+-- identically, and the words are canonical on the way out. `not` is the one
+-- exception: its token kind is shared with the non-null and definite-assignment
+-- `!`, which must stay punctuation, so `not x` emits as `!x`.
+-- Both spellings, same meaning.
+local w1 = s and n;
+local p1 = s and n;
+local w2 = s or n;
+local p2 = s or n;
+local w3 = !b;
+local p3 = !b;
+-- Mixed within one expression.
+local m1 = (s and n) or (n and s);
+local m2 = !b and b;
+-- Precedence agrees between the languages: comparison binds tighter than `and`,
+-- which binds tighter than `or`. All four spell the same tree.
+local prec1 = n > 1 and n < 5 or b;
+local prec2 = n > 1 and n < 5 or b;
+local prec3 = (n > 1 and n < 5) or b;
+local prec4 = ((n > 1) and (n < 5)) or b;
+-- `not` does not disturb the other uses of `!`.
+local nonNull = maybe.length;
+local doubleNot = !!maybe;
+-- Optional chaining lowers to an `and`-guard; nullish coalescing is untouched.
+local chain = maybe and maybe.length;
+local coalesce = maybe ?? "fallback";
+local byIndex = t["and"];
+local byIndex2 = t["or"];
+local byIndex3 = t["not"];

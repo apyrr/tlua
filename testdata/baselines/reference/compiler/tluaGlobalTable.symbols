@@ -1,0 +1,613 @@
+//// [tests/cases/compiler/tluaGlobalTable.tlua] ////
+
+=== declarations.tlua ===
+declare global {
+>global : Symbol(global, Decl(declarations.tlua, 0, 0))
+
+    function use(x: unknown): void;
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>x : Symbol(x, Decl(declarations.tlua, 1, 17))
+
+    function getMaybeNumber(): number | nil;
+>getMaybeNumber : Symbol(getMaybeNumber, Decl(declarations.tlua, 1, 35))
+
+    declare declared: number;
+>declared : Symbol(declared, Decl(declarations.tlua, 3, 11))
+
+    declare existingFunction: (x: number) => number;
+>existingFunction : Symbol(existingFunction, Decl(declarations.tlua, 4, 11))
+>x : Symbol(x, Decl(declarations.tlua, 4, 31))
+
+    declare hidden: string | nil;
+>hidden : Symbol(hidden, Decl(declarations.tlua, 5, 11))
+
+    namespace _G {
+>_G : Symbol(_G)
+
+        declare rejectedEnvironmentMember: number;
+>rejectedEnvironmentMember : Symbol(rejectedEnvironmentMember, Decl(declarations.tlua, 7, 15))
+    }
+}
+
+=== writes.tlua ===
+_G.fromDot = 1;
+>_G.fromDot : Symbol(fromDot, Decl(writes.tlua, 0, 0))
+>_G : Symbol(_G)
+>fromDot : Symbol(fromDot, Decl(writes.tlua, 0, 0))
+
+_G["fromElement"] = "text";
+>_G : Symbol(_G)
+>"fromElement" : Symbol("fromElement", Decl(writes.tlua, 0, 15))
+
+function _G.fromFunction(x: number): number
+>_G : Symbol(_G)
+>fromFunction : Symbol(fromFunction, Decl(writes.tlua, 1, 27))
+>x : Symbol(x, Decl(writes.tlua, 2, 25))
+
+    return x;
+>x : Symbol(x, Decl(writes.tlua, 2, 25))
+
+end
+
+// A type-only global can share its name with one implicit global function.
+interface pairedGlobal {}
+>pairedGlobal : Symbol(pairedGlobal, Decl(writes.tlua, 4, 3), Decl(writes.tlua, 7, 25))
+
+function _G.pairedGlobal(x: number): number
+>_G : Symbol(_G)
+>pairedGlobal : Symbol(pairedGlobal, Decl(writes.tlua, 4, 3), Decl(writes.tlua, 7, 25))
+>x : Symbol(x, Decl(writes.tlua, 8, 25))
+
+    return x;
+>x : Symbol(x, Decl(writes.tlua, 8, 25))
+
+end
+
+function _G.existingFunction(x: string): string
+>_G : Symbol(_G)
+>existingFunction : Symbol(existingFunction, Decl(writes.tlua, 10, 3))
+>x : Symbol(x, Decl(writes.tlua, 12, 29))
+
+    return x;
+>x : Symbol(x, Decl(writes.tlua, 12, 29))
+
+end
+
+// Collisions with a type-only global recover on the final merged symbol.
+interface dup {}
+>dup : Symbol(dup, Decl(writes.tlua, 14, 3), Decl(writes.tlua, 17, 16), Decl(writes.tlua, 18, 27))
+
+function _G.dup(): void end
+>_G : Symbol(_G)
+>dup : Symbol(dup, Decl(writes.tlua, 14, 3), Decl(writes.tlua, 17, 16), Decl(writes.tlua, 18, 27))
+
+function _G.dup(): void end
+>_G : Symbol(_G)
+>dup : Symbol(dup, Decl(writes.tlua, 14, 3), Decl(writes.tlua, 17, 16), Decl(writes.tlua, 18, 27))
+
+// Function syntax and ordinary assignment collide when they jointly declare
+// an otherwise missing global.
+function _G.mixedGlobal(): void end
+>_G : Symbol(_G)
+>mixedGlobal : Symbol(mixedGlobal, Decl(writes.tlua, 19, 27), Decl(writes.tlua, 23, 35))
+
+_G.mixedGlobal = 1;
+>_G.mixedGlobal : Symbol(mixedGlobal, Decl(writes.tlua, 19, 27), Decl(writes.tlua, 23, 35))
+>_G : Symbol(_G)
+>mixedGlobal : Symbol(mixedGlobal, Decl(writes.tlua, 19, 27), Decl(writes.tlua, 23, 35))
+
+bareTable = _G.bareTable or {};
+>bareTable : Symbol(bareTable, Decl(writes.tlua, 24, 19))
+>_G.bareTable : Symbol(bareTable, Decl(writes.tlua, 24, 19))
+>_G : Symbol(_G)
+>bareTable : Symbol(bareTable, Decl(writes.tlua, 24, 19))
+
+_G.bareTable.fromQualified = 1;
+>_G.bareTable.fromQualified : Symbol(fromQualified, Decl(writes.tlua, 26, 31))
+>_G.bareTable : Symbol(bareTable, Decl(writes.tlua, 24, 19))
+>_G : Symbol(_G)
+>bareTable : Symbol(bareTable, Decl(writes.tlua, 24, 19))
+>fromQualified : Symbol(fromQualified, Decl(writes.tlua, 26, 31))
+
+qualifiedTable = _G.qualifiedTable or {};
+>qualifiedTable : Symbol(qualifiedTable, Decl(writes.tlua, 27, 31))
+>_G.qualifiedTable : Symbol(qualifiedTable, Decl(writes.tlua, 27, 31))
+>_G : Symbol(_G)
+>qualifiedTable : Symbol(qualifiedTable, Decl(writes.tlua, 27, 31))
+
+qualifiedTable.fromBare = "text";
+>qualifiedTable.fromBare : Symbol(fromBare, Decl(writes.tlua, 29, 41))
+>qualifiedTable : Symbol(qualifiedTable, Decl(writes.tlua, 27, 31))
+>fromBare : Symbol(fromBare, Decl(writes.tlua, 29, 41))
+
+// Repeated environment self-access still reaches the canonical global table.
+_G._G.repeatedGlobal = 1;
+>_G._G.repeatedGlobal : Symbol(repeatedGlobal, Decl(writes.tlua, 30, 33))
+>_G._G : Symbol(_G)
+>_G : Symbol(_G)
+>_G : Symbol(_G)
+>repeatedGlobal : Symbol(repeatedGlobal, Decl(writes.tlua, 30, 33))
+
+function _G._G.repeatedFunction(x: number): number
+>_G._G : Symbol(_G)
+>_G : Symbol(_G)
+>_G : Symbol(_G)
+>repeatedFunction : Symbol(repeatedFunction, Decl(writes.tlua, 33, 25))
+>x : Symbol(x, Decl(writes.tlua, 34, 32))
+
+    return x;
+>x : Symbol(x, Decl(writes.tlua, 34, 32))
+
+end
+
+// Deep mixed-spelling guards describe the same canonical entity.
+deepTable = {};
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+
+_G.deepTable.value = deepTable.value or 1;
+>_G.deepTable.value : Symbol(value, Decl(writes.tlua, 39, 15))
+>_G.deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>_G : Symbol(_G)
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>value : Symbol(value, Decl(writes.tlua, 39, 15))
+>deepTable.value : Symbol(value, Decl(writes.tlua, 39, 15))
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>value : Symbol(value, Decl(writes.tlua, 39, 15))
+
+_G.deepTable.object = deepTable.object or {};
+>_G.deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+>_G.deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>_G : Symbol(_G)
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>object : Symbol(object, Decl(writes.tlua, 40, 42))
+>deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>object : Symbol(object, Decl(writes.tlua, 40, 42))
+
+_G.deepTable.object.member = "ok";
+>_G.deepTable.object.member : Symbol(member, Decl(writes.tlua, 41, 45))
+>_G.deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+>_G.deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>_G : Symbol(_G)
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>object : Symbol(object, Decl(writes.tlua, 40, 42))
+>member : Symbol(member, Decl(writes.tlua, 41, 45))
+
+// A same-named lexical local is not the global guard entity.
+local shadowedGuard = getMaybeNumber();
+>shadowedGuard : Symbol(shadowedGuard, Decl(writes.tlua, 45, 5))
+>getMaybeNumber : Symbol(getMaybeNumber, Decl(declarations.tlua, 1, 35))
+
+_G.shadowedGuard = shadowedGuard or "default";
+>_G.shadowedGuard : Symbol(shadowedGuard, Decl(writes.tlua, 45, 39))
+>_G : Symbol(_G)
+>shadowedGuard : Symbol(shadowedGuard, Decl(writes.tlua, 45, 39))
+>shadowedGuard : Symbol(shadowedGuard, Decl(writes.tlua, 45, 5))
+
+local pending: string;
+>pending : Symbol(pending, Decl(writes.tlua, 47, 5))
+
+_G.pending = pending or "default";
+>_G.pending : Symbol(pending, Decl(writes.tlua, 47, 22))
+>_G : Symbol(_G)
+>pending : Symbol(pending, Decl(writes.tlua, 47, 22))
+>pending : Symbol(pending, Decl(writes.tlua, 47, 5))
+
+=== reads.tlua ===
+local n: number = fromDot;
+>n : Symbol(n, Decl(reads.tlua, 0, 5))
+>fromDot : Symbol(fromDot, Decl(writes.tlua, 0, 0))
+
+local s: string = fromElement;
+>s : Symbol(s, Decl(reads.tlua, 1, 5))
+>fromElement : Symbol("fromElement", Decl(writes.tlua, 0, 15))
+
+local fnResult: number = fromFunction(1);
+>fnResult : Symbol(fnResult, Decl(reads.tlua, 2, 5))
+>fromFunction : Symbol(fromFunction, Decl(writes.tlua, 1, 27))
+
+local pairedResult: number = pairedGlobal(1);
+>pairedResult : Symbol(pairedResult, Decl(reads.tlua, 3, 5))
+>pairedGlobal : Symbol(pairedGlobal, Decl(writes.tlua, 4, 3), Decl(writes.tlua, 7, 25))
+
+local existingFnResult: number = existingFunction(1);
+>existingFnResult : Symbol(existingFnResult, Decl(reads.tlua, 4, 5))
+>existingFunction : Symbol(existingFunction, Decl(declarations.tlua, 4, 11))
+
+local declaredValue: number = _G.declared;
+>declaredValue : Symbol(declaredValue, Decl(reads.tlua, 5, 5))
+>_G : Symbol(_G)
+
+_G.declared = "wrong";
+>_G : Symbol(_G)
+
+_G = {};
+>_G : Symbol(_G)
+
+local qualifiedMember: number = bareTable.fromQualified;
+>qualifiedMember : Symbol(qualifiedMember, Decl(reads.tlua, 8, 5))
+>bareTable.fromQualified : Symbol(fromQualified, Decl(writes.tlua, 26, 31))
+>bareTable : Symbol(bareTable, Decl(writes.tlua, 24, 19))
+>fromQualified : Symbol(fromQualified, Decl(writes.tlua, 26, 31))
+
+local bareMember: string = _G.qualifiedTable.fromBare;
+>bareMember : Symbol(bareMember, Decl(reads.tlua, 9, 5))
+>_G.qualifiedTable.fromBare : Symbol(fromBare, Decl(writes.tlua, 29, 41))
+>_G.qualifiedTable : Symbol(qualifiedTable, Decl(writes.tlua, 27, 31))
+>_G : Symbol(_G)
+>qualifiedTable : Symbol(qualifiedTable, Decl(writes.tlua, 27, 31))
+>fromBare : Symbol(fromBare, Decl(writes.tlua, 29, 41))
+
+local environment: typeof _G = _G._G;
+>environment : Symbol(environment, Decl(reads.tlua, 10, 5))
+>_G : Symbol(_G)
+>_G._G : Symbol(_G)
+>_G : Symbol(_G)
+>_G : Symbol(_G)
+
+local repeatedValue: number = repeatedGlobal;
+>repeatedValue : Symbol(repeatedValue, Decl(reads.tlua, 11, 5))
+>repeatedGlobal : Symbol(repeatedGlobal, Decl(writes.tlua, 30, 33))
+
+local repeatedFunctionResult: number = repeatedFunction(1);
+>repeatedFunctionResult : Symbol(repeatedFunctionResult, Decl(reads.tlua, 12, 5))
+>repeatedFunction : Symbol(repeatedFunction, Decl(writes.tlua, 33, 25))
+
+local deepValue: number = deepTable.value;
+>deepValue : Symbol(deepValue, Decl(reads.tlua, 13, 5))
+>deepTable.value : Symbol(value, Decl(writes.tlua, 39, 15))
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>value : Symbol(value, Decl(writes.tlua, 39, 15))
+
+local deepMember: string = deepTable.object.member;
+>deepMember : Symbol(deepMember, Decl(reads.tlua, 14, 5))
+>deepTable.object.member : Symbol(member, Decl(writes.tlua, 41, 45))
+>deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+>deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
+>object : Symbol(object, Decl(writes.tlua, 40, 42))
+>member : Symbol(member, Decl(writes.tlua, 41, 45))
+
+local guardUnion: number | string = _G.shadowedGuard;
+>guardUnion : Symbol(guardUnion, Decl(reads.tlua, 15, 5))
+>_G.shadowedGuard : Symbol(shadowedGuard, Decl(writes.tlua, 45, 39))
+>_G : Symbol(_G)
+>shadowedGuard : Symbol(shadowedGuard, Decl(writes.tlua, 45, 39))
+
+local dupValue = dup;
+>dupValue : Symbol(dupValue, Decl(reads.tlua, 16, 5))
+>dup : Symbol(dup, Decl(writes.tlua, 14, 3), Decl(writes.tlua, 17, 16), Decl(writes.tlua, 18, 27))
+
+local mixedValue = mixedGlobal;
+>mixedValue : Symbol(mixedValue, Decl(reads.tlua, 17, 5))
+>mixedGlobal : Symbol(mixedGlobal, Decl(writes.tlua, 19, 27), Decl(writes.tlua, 23, 35))
+
+local printFunction: () => void = _G.print;
+>printFunction : Symbol(printFunction, Decl(reads.tlua, 18, 5))
+>_G.print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>_G : Symbol(_G)
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+
+use(_G.rejectedEnvironmentMember);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>_G : Symbol(_G)
+
+// A declared global is a property of the environment under both spellings,
+// and narrowing one spelling does not leak through a write to the other
+// (the write itself errors: declared globals are read-only).
+use(_G.hidden);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>_G : Symbol(_G)
+
+use(_G["hidden"]);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>_G : Symbol(_G)
+
+if hidden ~= nil then
+>hidden : Symbol(hidden, Decl(declarations.tlua, 5, 11))
+
+    _G.hidden = nil;
+>_G : Symbol(_G)
+
+    local stillNarrowed: string = hidden;
+>stillNarrowed : Symbol(stillNarrowed, Decl(reads.tlua, 28, 9))
+>hidden : Symbol(hidden, Decl(declarations.tlua, 5, 11))
+
+    use(stillNarrowed);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>stillNarrowed : Symbol(stillNarrowed, Decl(reads.tlua, 28, 9))
+
+end
+
+// `globalThis` is no longer compiler-provided.
+use(globalThis);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+
+type RemovedGlobalThis = typeof globalThis;
+>RemovedGlobalThis : Symbol(RemovedGlobalThis, Decl(reads.tlua, 33, 16))
+
+// Deep writes require an existing canonical global root.
+_G.missing.member = 1;
+>_G : Symbol(_G)
+
+// A lexical `_G` is an ordinary table and does not create globals.
+function shadow(): void
+>shadow : Symbol(shadow, Decl(reads.tlua, 37, 22))
+
+    local _G = {};
+>_G : Symbol(_G, Decl(reads.tlua, 41, 9))
+
+    _G.localOnly = true;
+>_G.localOnly : Symbol(localOnly, Decl(reads.tlua, 41, 18))
+>_G : Symbol(_G, Decl(reads.tlua, 41, 9))
+>localOnly : Symbol(localOnly, Decl(reads.tlua, 41, 18))
+
+end
+use(localOnly);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+
+// Narrowing crosses bare and environment-qualified spellings.
+maybe = true as boolean | nil;
+>maybe : Symbol(maybe, Decl(reads.tlua, 44, 15))
+
+local globalKey: "maybe" = "maybe";
+>globalKey : Symbol(globalKey, Decl(reads.tlua, 48, 5))
+
+if _G.maybe ~= nil then
+>_G.maybe : Symbol(maybe, Decl(reads.tlua, 44, 15))
+>_G : Symbol(_G)
+>maybe : Symbol(maybe, Decl(reads.tlua, 44, 15))
+
+    local narrowed: boolean = ((_G.maybe));
+>narrowed : Symbol(narrowed, Decl(reads.tlua, 50, 9))
+>_G.maybe : Symbol(maybe, Decl(reads.tlua, 44, 15))
+>_G : Symbol(_G)
+>maybe : Symbol(maybe, Decl(reads.tlua, 44, 15))
+
+    local narrowedThroughStaticKey: boolean = _G[globalKey];
+>narrowedThroughStaticKey : Symbol(narrowedThroughStaticKey, Decl(reads.tlua, 51, 9))
+>_G : Symbol(_G)
+>globalKey : Symbol(globalKey, Decl(reads.tlua, 48, 5))
+
+    _G[globalKey] = nil;
+>_G : Symbol(_G)
+>globalKey : Symbol(globalKey, Decl(reads.tlua, 48, 5))
+
+    local invalidated: boolean = _G.maybe;
+>invalidated : Symbol(invalidated, Decl(reads.tlua, 53, 9))
+>_G.maybe : Symbol(maybe, Decl(reads.tlua, 44, 15))
+>_G : Symbol(_G)
+>maybe : Symbol(maybe, Decl(reads.tlua, 44, 15))
+
+    use(narrowed);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>narrowed : Symbol(narrowed, Decl(reads.tlua, 50, 9))
+
+    use(narrowedThroughStaticKey);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>narrowedThroughStaticKey : Symbol(narrowedThroughStaticKey, Decl(reads.tlua, 51, 9))
+
+    use(invalidated);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>invalidated : Symbol(invalidated, Decl(reads.tlua, 53, 9))
+
+end
+
+// Static keys normalize even when the keyed spelling is the guard.
+reverseMaybe = true as boolean | nil;
+>reverseMaybe : Symbol(reverseMaybe, Decl(reads.tlua, 57, 3), Decl(reads.tlua, 63, 47))
+
+local reverseGlobalKey: "reverseMaybe" = "reverseMaybe";
+>reverseGlobalKey : Symbol(reverseGlobalKey, Decl(reads.tlua, 61, 5))
+
+if _G[reverseGlobalKey] ~= nil then
+>_G : Symbol(_G)
+>reverseGlobalKey : Symbol(reverseGlobalKey, Decl(reads.tlua, 61, 5))
+
+    local narrowedBare: boolean = reverseMaybe;
+>narrowedBare : Symbol(narrowedBare, Decl(reads.tlua, 63, 9))
+>reverseMaybe : Symbol(reverseMaybe, Decl(reads.tlua, 57, 3), Decl(reads.tlua, 63, 47))
+
+    reverseMaybe = nil;
+>reverseMaybe : Symbol(reverseMaybe, Decl(reads.tlua, 57, 3), Decl(reads.tlua, 63, 47))
+
+    local invalidatedStaticKey: boolean = _G[reverseGlobalKey];
+>invalidatedStaticKey : Symbol(invalidatedStaticKey, Decl(reads.tlua, 65, 9))
+>_G : Symbol(_G)
+>reverseGlobalKey : Symbol(reverseGlobalKey, Decl(reads.tlua, 61, 5))
+
+    use(narrowedBare);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>narrowedBare : Symbol(narrowedBare, Decl(reads.tlua, 63, 9))
+
+    use(invalidatedStaticKey);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>invalidatedStaticKey : Symbol(invalidatedStaticKey, Decl(reads.tlua, 65, 9))
+
+end
+
+// Repeated `_G` self-access has the same flow identity as the bare global.
+repeatedMaybe = true as boolean | nil;
+>repeatedMaybe : Symbol(repeatedMaybe, Decl(reads.tlua, 68, 3), Decl(reads.tlua, 73, 56))
+
+if _G._G.repeatedMaybe ~= nil then
+>_G._G.repeatedMaybe : Symbol(repeatedMaybe, Decl(reads.tlua, 68, 3), Decl(reads.tlua, 73, 56))
+>_G._G : Symbol(_G)
+>_G : Symbol(_G)
+>_G : Symbol(_G)
+>repeatedMaybe : Symbol(repeatedMaybe, Decl(reads.tlua, 68, 3), Decl(reads.tlua, 73, 56))
+
+    local narrowedRepeatedBare: boolean = repeatedMaybe;
+>narrowedRepeatedBare : Symbol(narrowedRepeatedBare, Decl(reads.tlua, 73, 9))
+>repeatedMaybe : Symbol(repeatedMaybe, Decl(reads.tlua, 68, 3), Decl(reads.tlua, 73, 56))
+
+    repeatedMaybe = nil;
+>repeatedMaybe : Symbol(repeatedMaybe, Decl(reads.tlua, 68, 3), Decl(reads.tlua, 73, 56))
+
+    local invalidatedRepeated: boolean = _G._G.repeatedMaybe;
+>invalidatedRepeated : Symbol(invalidatedRepeated, Decl(reads.tlua, 75, 9))
+>_G._G.repeatedMaybe : Symbol(repeatedMaybe, Decl(reads.tlua, 68, 3), Decl(reads.tlua, 73, 56))
+>_G._G : Symbol(_G)
+>_G : Symbol(_G)
+>_G : Symbol(_G)
+>repeatedMaybe : Symbol(repeatedMaybe, Decl(reads.tlua, 68, 3), Decl(reads.tlua, 73, 56))
+
+    use(narrowedRepeatedBare);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>narrowedRepeatedBare : Symbol(narrowedRepeatedBare, Decl(reads.tlua, 73, 9))
+
+    use(invalidatedRepeated);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>invalidatedRepeated : Symbol(invalidatedRepeated, Decl(reads.tlua, 75, 9))
+
+end
+
+// Assignments mint implicit globals whose narrowing spans both spellings and
+// shares one flow-cache key. (The var-declared initialized global and the
+// destructured binding global died with the TS declaration forms.)
+initializedBareFirst = 1;
+>initializedBareFirst : Symbol(initializedBareFirst, Decl(reads.tlua, 78, 3))
+
+local initializedBareFirstBare: number = initializedBareFirst;
+>initializedBareFirstBare : Symbol(initializedBareFirstBare, Decl(reads.tlua, 84, 5))
+>initializedBareFirst : Symbol(initializedBareFirst, Decl(reads.tlua, 78, 3))
+
+local initializedBareFirstQualified: number = _G.initializedBareFirst;
+>initializedBareFirstQualified : Symbol(initializedBareFirstQualified, Decl(reads.tlua, 85, 5))
+>_G.initializedBareFirst : Symbol(initializedBareFirst, Decl(reads.tlua, 78, 3))
+>_G : Symbol(_G)
+>initializedBareFirst : Symbol(initializedBareFirst, Decl(reads.tlua, 78, 3))
+
+initializedQualifiedFirst = 1;
+>initializedQualifiedFirst : Symbol(initializedQualifiedFirst, Decl(reads.tlua, 85, 70))
+
+local initializedQualifiedFirstQualified: number = _G.initializedQualifiedFirst;
+>initializedQualifiedFirstQualified : Symbol(initializedQualifiedFirstQualified, Decl(reads.tlua, 87, 5))
+>_G.initializedQualifiedFirst : Symbol(initializedQualifiedFirst, Decl(reads.tlua, 85, 70))
+>_G : Symbol(_G)
+>initializedQualifiedFirst : Symbol(initializedQualifiedFirst, Decl(reads.tlua, 85, 70))
+
+local initializedQualifiedFirstBare: number = initializedQualifiedFirst;
+>initializedQualifiedFirstBare : Symbol(initializedQualifiedFirstBare, Decl(reads.tlua, 88, 5))
+>initializedQualifiedFirst : Symbol(initializedQualifiedFirst, Decl(reads.tlua, 85, 70))
+
+// Guard identity uses the same static-key resolution as flow identity.
+local guardGlobalKey: "guardTable" = "guardTable";
+>guardGlobalKey : Symbol(guardGlobalKey, Decl(reads.tlua, 91, 5))
+
+guardTable = _G[guardGlobalKey] or {};
+>guardTable : Symbol(guardTable, Decl(reads.tlua, 91, 50))
+>_G : Symbol(_G)
+>guardGlobalKey : Symbol(guardGlobalKey, Decl(reads.tlua, 91, 5))
+
+guardTable.fromStaticGuard = 1;
+>guardTable.fromStaticGuard : Symbol(fromStaticGuard, Decl(reads.tlua, 92, 38))
+>guardTable : Symbol(guardTable, Decl(reads.tlua, 91, 50))
+>fromStaticGuard : Symbol(fromStaticGuard, Decl(reads.tlua, 92, 38))
+
+local staticGuardMember: number = _G.guardTable.fromStaticGuard;
+>staticGuardMember : Symbol(staticGuardMember, Decl(reads.tlua, 94, 5))
+>_G.guardTable.fromStaticGuard : Symbol(fromStaticGuard, Decl(reads.tlua, 92, 38))
+>_G.guardTable : Symbol(guardTable, Decl(reads.tlua, 91, 50))
+>_G : Symbol(_G)
+>guardTable : Symbol(guardTable, Decl(reads.tlua, 91, 50))
+>fromStaticGuard : Symbol(fromStaticGuard, Decl(reads.tlua, 92, 38))
+
+use(n);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>n : Symbol(n, Decl(reads.tlua, 0, 5))
+
+use(s);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>s : Symbol(s, Decl(reads.tlua, 1, 5))
+
+use(fnResult);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>fnResult : Symbol(fnResult, Decl(reads.tlua, 2, 5))
+
+use(pairedResult);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>pairedResult : Symbol(pairedResult, Decl(reads.tlua, 3, 5))
+
+use(existingFnResult);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>existingFnResult : Symbol(existingFnResult, Decl(reads.tlua, 4, 5))
+
+use(declaredValue);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>declaredValue : Symbol(declaredValue, Decl(reads.tlua, 5, 5))
+
+use(qualifiedMember);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>qualifiedMember : Symbol(qualifiedMember, Decl(reads.tlua, 8, 5))
+
+use(bareMember);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>bareMember : Symbol(bareMember, Decl(reads.tlua, 9, 5))
+
+use(environment);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>environment : Symbol(environment, Decl(reads.tlua, 10, 5))
+
+use(repeatedValue);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>repeatedValue : Symbol(repeatedValue, Decl(reads.tlua, 11, 5))
+
+use(repeatedFunctionResult);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>repeatedFunctionResult : Symbol(repeatedFunctionResult, Decl(reads.tlua, 12, 5))
+
+use(deepValue);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>deepValue : Symbol(deepValue, Decl(reads.tlua, 13, 5))
+
+use(deepMember);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>deepMember : Symbol(deepMember, Decl(reads.tlua, 14, 5))
+
+use(guardUnion);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>guardUnion : Symbol(guardUnion, Decl(reads.tlua, 15, 5))
+
+use(dupValue);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>dupValue : Symbol(dupValue, Decl(reads.tlua, 16, 5))
+
+use(mixedValue);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>mixedValue : Symbol(mixedValue, Decl(reads.tlua, 17, 5))
+
+use(printFunction);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>printFunction : Symbol(printFunction, Decl(reads.tlua, 18, 5))
+
+use(initializedBareFirstBare);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>initializedBareFirstBare : Symbol(initializedBareFirstBare, Decl(reads.tlua, 84, 5))
+
+use(initializedBareFirstQualified);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>initializedBareFirstQualified : Symbol(initializedBareFirstQualified, Decl(reads.tlua, 85, 5))
+
+use(initializedQualifiedFirstQualified);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>initializedQualifiedFirstQualified : Symbol(initializedQualifiedFirstQualified, Decl(reads.tlua, 87, 5))
+
+use(initializedQualifiedFirstBare);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>initializedQualifiedFirstBare : Symbol(initializedQualifiedFirstBare, Decl(reads.tlua, 88, 5))
+
+use(staticGuardMember);
+>use : Symbol(use, Decl(declarations.tlua, 0, 16))
+>staticGuardMember : Symbol(staticGuardMember, Decl(reads.tlua, 94, 5))
+
+=== conflict.tlua ===
+// A source global cannot replace the built-in environment symbol.
+local _G = 1;
+>_G : Symbol(_G, Decl(conflict.tlua, 1, 5))
+
+=== dottedFunctionConflict.tlua ===
+// Replacing the environment through its self-property is the same conflict.
+function _G._G(): void end
+>_G : Symbol(_G)
+>_G : Symbol(_G, Decl(dottedFunctionConflict.tlua, 0, 0))
+

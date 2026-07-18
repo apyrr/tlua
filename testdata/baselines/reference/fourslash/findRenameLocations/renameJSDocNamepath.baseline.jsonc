@@ -1,0 +1,7 @@
+// === findRenameLocations ===
+// === /renameJSDocNamepath.tlua ===
+// /**
+//  * @type {module:foo/A} x
+//  */
+// local x = 1
+// local /*RENAME*/[|ARENAME|] = 0;

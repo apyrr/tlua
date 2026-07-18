@@ -1,0 +1,11 @@
+// @strict: true
+// @noEmit: true
+
+// https://github.com/microsoft/TypeScript/issues/62920
+
+local Foo = class {
+    constructor() {
+        this.bar = this.bar + 1;
+    }
+    abstract bar;
+};

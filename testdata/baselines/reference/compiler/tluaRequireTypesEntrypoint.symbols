@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaRequireTypesEntrypoint.tlua] ////
+
+=== main.tlua ===
+// A package's typed entrypoint (package.json "types") types the require.
+local pkg = require("pkg");
+>pkg : Symbol(pkg, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local n: number = pkg.answer;
+>n : Symbol(n, Decl(main.tlua, 2, 5))
+>pkg.answer : Symbol(answer, Decl(typed.tlua, 1, 8))
+>pkg : Symbol(pkg, Decl(main.tlua, 1, 5))
+>answer : Symbol(answer, Decl(typed.tlua, 1, 8))
+
+n;
+>n : Symbol(n, Decl(main.tlua, 2, 5))
+
+=== node_modules/pkg/typed.tlua ===
+local answer = 42;
+>answer : Symbol(answer, Decl(typed.tlua, 0, 5))
+
+return { answer = answer };
+>answer : Symbol(answer, Decl(typed.tlua, 1, 8))
+>answer : Symbol(answer, Decl(typed.tlua, 0, 5))
+

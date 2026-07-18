@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/tluaGenericPackBasics.tlua] ////
+
+=== tluaGenericPackBasics.tlua ===
+// A generic pack parameter, declared `<...A>`, binds a whole value pack. It is
+// spread with `...A` in a multiple-return position and `...: A` as a vararg
+// parameter, so a function can forward its arguments and correlate results.
+
+// The canonical forwarder: pass the pack straight through.
+declare function apply<...A, ...R>(f: (...: A) => (...R), ...: A): (...R);
+>apply : Symbol(apply, Decl(tluaGenericPackBasics.tlua, 0, 0))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 5, 23))
+>R : Symbol(R, Decl(tluaGenericPackBasics.tlua, 5, 28))
+>f : Symbol(f, Decl(tluaGenericPackBasics.tlua, 5, 35))
+> : Symbol((Missing), Decl(tluaGenericPackBasics.tlua, 5, 39))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 5, 23))
+>R : Symbol(R, Decl(tluaGenericPackBasics.tlua, 5, 28))
+> : Symbol((Missing), Decl(tluaGenericPackBasics.tlua, 5, 57))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 5, 23))
+>R : Symbol(R, Decl(tluaGenericPackBasics.tlua, 5, 28))
+
+declare function f2(a: number, b: string): (boolean, string);
+>f2 : Symbol(f2, Decl(tluaGenericPackBasics.tlua, 5, 74))
+>a : Symbol(a, Decl(tluaGenericPackBasics.tlua, 7, 20))
+>b : Symbol(b, Decl(tluaGenericPackBasics.tlua, 7, 30))
+
+declare function f0(): number;
+>f0 : Symbol(f0, Decl(tluaGenericPackBasics.tlua, 7, 61))
+
+// R is inferred from f's return pack; A is inferred from the trailing arguments.
+local ok, msg = apply(f2, 1, "x");
+>ok : Symbol(ok, Decl(tluaGenericPackBasics.tlua, 11, 5))
+>msg : Symbol(msg, Decl(tluaGenericPackBasics.tlua, 11, 9))
+>apply : Symbol(apply, Decl(tluaGenericPackBasics.tlua, 0, 0))
+>f2 : Symbol(f2, Decl(tluaGenericPackBasics.tlua, 5, 74))
+
+local okType: boolean = ok;
+>okType : Symbol(okType, Decl(tluaGenericPackBasics.tlua, 12, 5))
+>ok : Symbol(ok, Decl(tluaGenericPackBasics.tlua, 11, 5))
+
+local msgType: string = msg;
+>msgType : Symbol(msgType, Decl(tluaGenericPackBasics.tlua, 13, 5))
+>msg : Symbol(msg, Decl(tluaGenericPackBasics.tlua, 11, 9))
+
+// A single-result callee: the pack collapses to one value.
+local single: number = apply(f0);
+>single : Symbol(single, Decl(tluaGenericPackBasics.tlua, 16, 5))
+>apply : Symbol(apply, Decl(tluaGenericPackBasics.tlua, 0, 0))
+>f0 : Symbol(f0, Decl(tluaGenericPackBasics.tlua, 7, 61))
+
+// A pack parameter reused across the function and callback correlates the two.
+declare function forward<...A>(f: (...: A) => void, ...: A): void;
+>forward : Symbol(forward, Decl(tluaGenericPackBasics.tlua, 16, 33))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 19, 25))
+>f : Symbol(f, Decl(tluaGenericPackBasics.tlua, 19, 31))
+> : Symbol((Missing), Decl(tluaGenericPackBasics.tlua, 19, 35))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 19, 25))
+> : Symbol((Missing), Decl(tluaGenericPackBasics.tlua, 19, 51))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 19, 25))
+
+forward(f2, 1, "x");
+>forward : Symbol(forward, Decl(tluaGenericPackBasics.tlua, 16, 33))
+>f2 : Symbol(f2, Decl(tluaGenericPackBasics.tlua, 5, 74))
+

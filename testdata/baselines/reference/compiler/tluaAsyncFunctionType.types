@@ -1,0 +1,91 @@
+//// [tests/cases/compiler/tluaAsyncFunctionType.tlua] ////
+
+=== tluaAsyncFunctionType.tlua ===
+// An `async` modifier is allowed on function *type* nodes (the parenthesized
+// `async (params) => T` form). It carries the coroutine contract: a call
+// through an async-typed slot is checked, and async-ness is visible in the
+// type display.
+
+declare function request(url: string): boolean;
+>request : (url: string) => boolean
+>url : string
+
+async function fetchOk(url: string): boolean
+>fetchOk : async (url: string) => boolean
+>url : string
+
+  return request(url);
+>request(url) : boolean
+>request : (url: string) => boolean
+>url : string
+
+end
+
+declare function plainOk(url: string): boolean;
+>plainOk : (url: string) => boolean
+>url : string
+
+// OK: async fn into an async-typed slot; the slot keeps the contract.
+local g: async (url: string) => boolean = fetchOk;
+>g : async (url: string) => boolean
+>url : string
+>fetchOk : async (url: string) => boolean
+
+// OK: sync fn into an async-typed slot (a sync function may run in a coroutine).
+local h: async (url: string) => boolean = plainOk;
+>h : async (url: string) => boolean
+>url : string
+>plainOk : (url: string) => boolean
+
+// Calling through the async-typed slot: error from a sync function, OK from an
+// async function.
+function sync1(): void {
+>sync1 : () => void
+
+  g("a");
+>g("a") : boolean
+>g : async (url: string) => boolean
+>"a" : "a"
+}
+async function ok(): void
+>ok : async () => void
+
+  g("b");
+>g("b") : boolean
+>g : async (url: string) => boolean
+>"b" : "b"
+
+end
+
+// Passing an async fn as a value into the "any function" top signature is fine
+// (it is how coroutine.create/wrap receive a suspendable function).
+declare namespace coroutine {
+>declare : any
+>namespace : any
+>coroutine : CoroutineLib
+
+  function create(f: (...: any) => any): any;
+>create : (f: (...: any) => any) => any
+>f : (...: any) => any
+> : any[]
+}
+coroutine.create(fetchOk);
+>coroutine.create(fetchOk) : LuaThread
+>coroutine.create : (fn: LuaFunction) => LuaThread
+>coroutine : CoroutineLib
+>create : (fn: LuaFunction) => LuaThread
+>fetchOk : async (url: string) => boolean
+
+// async function types are usable in ambient / declared positions.
+declare handler: async (url: string) => boolean;
+>handler : async (url: string) => boolean
+>url : string
+
+// `async` used as an ordinary type name is unaffected (no parenthesized head).
+type async = number;
+>async : number
+
+local n: async = 1;
+>n : number
+>1 : 1
+

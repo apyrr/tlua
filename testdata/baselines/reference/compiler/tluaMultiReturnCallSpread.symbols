@@ -1,0 +1,62 @@
+//// [tests/cases/compiler/tluaMultiReturnCallSpread.tlua] ////
+
+=== tluaMultiReturnCallSpread.tlua ===
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaMultiReturnCallSpread.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+function takes2(a: number, b: string): boolean
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnCallSpread.tlua, 2, 3))
+>a : Symbol(a, Decl(tluaMultiReturnCallSpread.tlua, 4, 16))
+>b : Symbol(b, Decl(tluaMultiReturnCallSpread.tlua, 4, 26))
+
+  return true;
+end
+
+function takes3(a: boolean, b: number, c: string): number
+>takes3 : Symbol(takes3, Decl(tluaMultiReturnCallSpread.tlua, 6, 3))
+>a : Symbol(a, Decl(tluaMultiReturnCallSpread.tlua, 8, 16))
+>b : Symbol(b, Decl(tluaMultiReturnCallSpread.tlua, 8, 27))
+>c : Symbol(c, Decl(tluaMultiReturnCallSpread.tlua, 8, 38))
+
+  return b;
+>b : Symbol(b, Decl(tluaMultiReturnCallSpread.tlua, 8, 27))
+
+end
+
+// The last argument expands its whole pack.
+local expanded = takes2(pair());
+>expanded : Symbol(expanded, Decl(tluaMultiReturnCallSpread.tlua, 13, 5))
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnCallSpread.tlua, 2, 3))
+>pair : Symbol(pair, Decl(tluaMultiReturnCallSpread.tlua, 0, 0))
+
+local mixed = takes3(true, pair());
+>mixed : Symbol(mixed, Decl(tluaMultiReturnCallSpread.tlua, 14, 5))
+>takes3 : Symbol(takes3, Decl(tluaMultiReturnCallSpread.tlua, 6, 3))
+>pair : Symbol(pair, Decl(tluaMultiReturnCallSpread.tlua, 0, 0))
+
+// A non-tail call truncates to its first value.
+local truncated = takes2(pair(), "x");
+>truncated : Symbol(truncated, Decl(tluaMultiReturnCallSpread.tlua, 17, 5))
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnCallSpread.tlua, 2, 3))
+>pair : Symbol(pair, Decl(tluaMultiReturnCallSpread.tlua, 0, 0))
+
+// Truncation type mismatch: the first value is a number, not a boolean.
+local wrongHead = takes3(pair(), 1, "y");
+>wrongHead : Symbol(wrongHead, Decl(tluaMultiReturnCallSpread.tlua, 20, 5))
+>takes3 : Symbol(takes3, Decl(tluaMultiReturnCallSpread.tlua, 6, 3))
+>pair : Symbol(pair, Decl(tluaMultiReturnCallSpread.tlua, 0, 0))
+
+// Arity errors count the expanded values.
+local tooFew = takes3(pair());
+>tooFew : Symbol(tooFew, Decl(tluaMultiReturnCallSpread.tlua, 23, 5))
+>takes3 : Symbol(takes3, Decl(tluaMultiReturnCallSpread.tlua, 6, 3))
+>pair : Symbol(pair, Decl(tluaMultiReturnCallSpread.tlua, 0, 0))
+
+local tooMany = takes2(1, pair());
+>tooMany : Symbol(tooMany, Decl(tluaMultiReturnCallSpread.tlua, 24, 5))
+>takes2 : Symbol(takes2, Decl(tluaMultiReturnCallSpread.tlua, 2, 3))
+>pair : Symbol(pair, Decl(tluaMultiReturnCallSpread.tlua, 0, 0))
+

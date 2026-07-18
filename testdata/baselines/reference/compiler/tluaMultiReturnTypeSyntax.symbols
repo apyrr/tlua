@@ -1,0 +1,141 @@
+//// [tests/cases/compiler/tluaMultiReturnTypeSyntax.tlua] ////
+
+=== tluaMultiReturnTypeSyntax.tlua ===
+// Bare multi-return type lists on declaration headers.
+function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaMultiReturnTypeSyntax.tlua, 0, 0))
+
+  return 1, "a";
+end
+
+function triple(): (number, string, boolean)
+>triple : Symbol(triple, Decl(tluaMultiReturnTypeSyntax.tlua, 3, 3))
+
+  return 1, "a", true;
+end
+
+local function localPair(): (number, string)
+>localPair : Symbol(localPair, Decl(tluaMultiReturnTypeSyntax.tlua, 7, 3))
+
+  return 2, "b";
+end
+
+function bracePair(): (number, string) {
+>bracePair : Symbol(bracePair, Decl(tluaMultiReturnTypeSyntax.tlua, 11, 3))
+
+  return 3, "c";
+}
+
+local exprPair = function(): (number, string)
+>exprPair : Symbol(exprPair, Decl(tluaMultiReturnTypeSyntax.tlua, 17, 5))
+
+  return 4, "d";
+end;
+
+// Single-type returns are unchanged by the list grammar.
+function single(): number
+>single : Symbol(single, Decl(tluaMultiReturnTypeSyntax.tlua, 19, 4))
+
+  return 5;
+end
+
+function explicitPair(): (number, string)
+>explicitPair : Symbol(explicitPair, Decl(tluaMultiReturnTypeSyntax.tlua, 24, 3))
+
+  return 6, "f";
+end
+
+local p = pair();
+>p : Symbol(p, Decl(tluaMultiReturnTypeSyntax.tlua, 30, 5))
+>pair : Symbol(pair, Decl(tluaMultiReturnTypeSyntax.tlua, 0, 0))
+
+local t = triple();
+>t : Symbol(t, Decl(tluaMultiReturnTypeSyntax.tlua, 31, 5))
+>triple : Symbol(triple, Decl(tluaMultiReturnTypeSyntax.tlua, 3, 3))
+
+local l = localPair();
+>l : Symbol(l, Decl(tluaMultiReturnTypeSyntax.tlua, 32, 5))
+>localPair : Symbol(localPair, Decl(tluaMultiReturnTypeSyntax.tlua, 7, 3))
+
+local b = bracePair();
+>b : Symbol(b, Decl(tluaMultiReturnTypeSyntax.tlua, 33, 5))
+>bracePair : Symbol(bracePair, Decl(tluaMultiReturnTypeSyntax.tlua, 11, 3))
+
+local e = exprPair();
+>e : Symbol(e, Decl(tluaMultiReturnTypeSyntax.tlua, 34, 5))
+>exprPair : Symbol(exprPair, Decl(tluaMultiReturnTypeSyntax.tlua, 17, 5))
+
+local s = single();
+>s : Symbol(s, Decl(tluaMultiReturnTypeSyntax.tlua, 35, 5))
+>single : Symbol(single, Decl(tluaMultiReturnTypeSyntax.tlua, 19, 4))
+
+local x = explicitPair();
+>x : Symbol(x, Decl(tluaMultiReturnTypeSyntax.tlua, 36, 5))
+>explicitPair : Symbol(explicitPair, Decl(tluaMultiReturnTypeSyntax.tlua, 24, 3))
+
+// Callable types use an explicitly parenthesized return-pack syntax.
+type PairFunction = () => (number, string);
+>PairFunction : Symbol(PairFunction, Decl(tluaMultiReturnTypeSyntax.tlua, 36, 25))
+
+declare pairFunction: PairFunction;
+>pairFunction : Symbol(pairFunction, Decl(tluaMultiReturnTypeSyntax.tlua, 40, 7))
+>PairFunction : Symbol(PairFunction, Decl(tluaMultiReturnTypeSyntax.tlua, 36, 25))
+
+local pairAlias: PairFunction = pair;
+>pairAlias : Symbol(pairAlias, Decl(tluaMultiReturnTypeSyntax.tlua, 41, 5))
+>PairFunction : Symbol(PairFunction, Decl(tluaMultiReturnTypeSyntax.tlua, 36, 25))
+>pair : Symbol(pair, Decl(tluaMultiReturnTypeSyntax.tlua, 0, 0))
+
+interface PairCallable {
+>PairCallable : Symbol(PairCallable, Decl(tluaMultiReturnTypeSyntax.tlua, 41, 37))
+
+  (): (number, string);
+  pair(): (number, string);
+>pair : Symbol(PairCallable.pair, Decl(tluaMultiReturnTypeSyntax.tlua, 44, 23))
+}
+declare pairCallable: PairCallable;
+>pairCallable : Symbol(pairCallable, Decl(tluaMultiReturnTypeSyntax.tlua, 47, 7))
+>PairCallable : Symbol(PairCallable, Decl(tluaMultiReturnTypeSyntax.tlua, 41, 37))
+
+local function consumePair(value: number, label: string) end
+>consumePair : Symbol(consumePair, Decl(tluaMultiReturnTypeSyntax.tlua, 47, 35))
+>value : Symbol(value, Decl(tluaMultiReturnTypeSyntax.tlua, 49, 27))
+>label : Symbol(label, Decl(tluaMultiReturnTypeSyntax.tlua, 49, 41))
+
+consumePair(pairFunction());
+>consumePair : Symbol(consumePair, Decl(tluaMultiReturnTypeSyntax.tlua, 47, 35))
+>pairFunction : Symbol(pairFunction, Decl(tluaMultiReturnTypeSyntax.tlua, 40, 7))
+
+consumePair(pairCallable());
+>consumePair : Symbol(consumePair, Decl(tluaMultiReturnTypeSyntax.tlua, 47, 35))
+>pairCallable : Symbol(pairCallable, Decl(tluaMultiReturnTypeSyntax.tlua, 47, 7))
+
+consumePair(pairCallable.pair());
+>consumePair : Symbol(consumePair, Decl(tluaMultiReturnTypeSyntax.tlua, 47, 35))
+>pairCallable.pair : Symbol(PairCallable.pair, Decl(tluaMultiReturnTypeSyntax.tlua, 44, 23))
+>pairCallable : Symbol(pairCallable, Decl(tluaMultiReturnTypeSyntax.tlua, 47, 7))
+>pair : Symbol(PairCallable.pair, Decl(tluaMultiReturnTypeSyntax.tlua, 44, 23))
+
+local function takesCallback(callback: () => (number, string), label: string)
+>takesCallback : Symbol(takesCallback, Decl(tluaMultiReturnTypeSyntax.tlua, 52, 33))
+>callback : Symbol(callback, Decl(tluaMultiReturnTypeSyntax.tlua, 54, 29))
+>label : Symbol(label, Decl(tluaMultiReturnTypeSyntax.tlua, 54, 62))
+
+  return callback(), label;
+>callback : Symbol(callback, Decl(tluaMultiReturnTypeSyntax.tlua, 54, 29))
+>label : Symbol(label, Decl(tluaMultiReturnTypeSyntax.tlua, 54, 62))
+
+end
+
+type Wrapped = Map<() => (number, string), string>;
+>Wrapped : Symbol(Wrapped, Decl(tluaMultiReturnTypeSyntax.tlua, 56, 3))
+>Map : Symbol(Map)
+
+type Nested = () => (() => (number, string), boolean);
+>Nested : Symbol(Nested, Decl(tluaMultiReturnTypeSyntax.tlua, 58, 51))
+
+type Complex<T> = () => (T extends string ? number : boolean, (string | nil)?, ...number);
+>Complex : Symbol(Complex, Decl(tluaMultiReturnTypeSyntax.tlua, 60, 54))
+>T : Symbol(T, Decl(tluaMultiReturnTypeSyntax.tlua, 61, 13))
+>T : Symbol(T, Decl(tluaMultiReturnTypeSyntax.tlua, 61, 13))
+

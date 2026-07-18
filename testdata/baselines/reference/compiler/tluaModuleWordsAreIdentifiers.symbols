@@ -1,0 +1,72 @@
+//// [tests/cases/compiler/tluaModuleWordsAreIdentifiers.tlua] ////
+
+=== tluaModuleWordsAreIdentifiers.tlua ===
+// With the module syntax deleted, its words are ordinary Lua names.
+local export = 1;
+>export : Symbol(export, Decl(tluaModuleWordsAreIdentifiers.tlua, 1, 5))
+
+local from = "f";
+>from : Symbol(from, Decl(tluaModuleWordsAreIdentifiers.tlua, 2, 5))
+
+local default = { n = 1 };
+>default : Symbol(default, Decl(tluaModuleWordsAreIdentifiers.tlua, 3, 5))
+>n : Symbol(n, Decl(tluaModuleWordsAreIdentifiers.tlua, 3, 17))
+
+local t = { export = export, from = from, default = default.n };
+>t : Symbol(t, Decl(tluaModuleWordsAreIdentifiers.tlua, 4, 5))
+>export : Symbol(export, Decl(tluaModuleWordsAreIdentifiers.tlua, 4, 11))
+>export : Symbol(export, Decl(tluaModuleWordsAreIdentifiers.tlua, 1, 5))
+>from : Symbol(from, Decl(tluaModuleWordsAreIdentifiers.tlua, 4, 28))
+>from : Symbol(from, Decl(tluaModuleWordsAreIdentifiers.tlua, 2, 5))
+>default : Symbol(default, Decl(tluaModuleWordsAreIdentifiers.tlua, 4, 41))
+>default.n : Symbol(n, Decl(tluaModuleWordsAreIdentifiers.tlua, 3, 17))
+>default : Symbol(default, Decl(tluaModuleWordsAreIdentifiers.tlua, 3, 5))
+>n : Symbol(n, Decl(tluaModuleWordsAreIdentifiers.tlua, 3, 17))
+
+function M_from(self: {}, mode: string): string
+>M_from : Symbol(M_from, Decl(tluaModuleWordsAreIdentifiers.tlua, 4, 64))
+>self : Symbol(self, Decl(tluaModuleWordsAreIdentifiers.tlua, 6, 16))
+>mode : Symbol(mode, Decl(tluaModuleWordsAreIdentifiers.tlua, 6, 25))
+
+  return mode;
+>mode : Symbol(mode, Decl(tluaModuleWordsAreIdentifiers.tlua, 6, 25))
+
+end
+
+local obj = { from = M_from, default = 2, export = 3 };
+>obj : Symbol(obj, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 5))
+>from : Symbol(from, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 13))
+>M_from : Symbol(M_from, Decl(tluaModuleWordsAreIdentifiers.tlua, 4, 64))
+>default : Symbol(default, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 28))
+>export : Symbol(export, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 41))
+
+local a = obj:from("on");
+>a : Symbol(a, Decl(tluaModuleWordsAreIdentifiers.tlua, 11, 5))
+>obj:from : Symbol(from, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 13))
+>obj : Symbol(obj, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 5))
+>from : Symbol(from, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 13))
+
+local b = obj.default;
+>b : Symbol(b, Decl(tluaModuleWordsAreIdentifiers.tlua, 12, 5))
+>obj.default : Symbol(default, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 28))
+>obj : Symbol(obj, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 5))
+>default : Symbol(default, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 28))
+
+local c = obj.export;
+>c : Symbol(c, Decl(tluaModuleWordsAreIdentifiers.tlua, 13, 5))
+>obj.export : Symbol(export, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 41))
+>obj : Symbol(obj, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 5))
+>export : Symbol(export, Decl(tluaModuleWordsAreIdentifiers.tlua, 10, 41))
+
+// `require` is an ordinary global function, so it can be shadowed or aliased.
+local alias = require;
+>alias : Symbol(alias, Decl(tluaModuleWordsAreIdentifiers.tlua, 16, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local viaAlias = alias("bit");
+>viaAlias : Symbol(viaAlias, Decl(tluaModuleWordsAreIdentifiers.tlua, 17, 5))
+>alias : Symbol(alias, Decl(tluaModuleWordsAreIdentifiers.tlua, 16, 5))
+
+return t;
+>t : Symbol(t, Decl(tluaModuleWordsAreIdentifiers.tlua, 4, 5))
+

@@ -1,0 +1,341 @@
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// /*FIND ALL REFS*/local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local /*FIND ALL REFS*/[|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = /*FIND ALL REFS*/[|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + /*FIND ALL REFS*/[|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// /*FIND ALL REFS*/[|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// /*FIND ALL REFS*/[|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = /*FIND ALL REFS*/[|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + /*FIND ALL REFS*/[|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// /*FIND ALL REFS*/[|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// /*FIND ALL REFS*/[|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++/*FIND ALL REFS*/[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = /*FIND ALL REFS*/[|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// --- (line: 9) skipped ---
+// 
+// local preIncrement = ++x;
+// local postIncrement = x++;
+// local preDecrement = --/*FIND ALL REFS*/x;
+// local postDecrement = x--;
+// 
+// x += 1;
+// x <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = /*FIND ALL REFS*/[|x|]--;
+// 
+// [|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// /*FIND ALL REFS*/[|x|] += 1;
+// [|x|] <<= 1;
+
+
+
+// === findAllReferences ===
+// === /getOccurrencesIsDefinitionOfVariable.tlua ===
+// local [|x|] = 0;
+// local assignmentRightHandSide = [|x|];
+// local assignmentRightHandSide2 = 1 + [|x|];
+// 
+// [|x|] = 1;
+// [|x|] = [|x|] + [|x|];
+// 
+// [|x|] == 1;
+// [|x|] <= 1;
+// 
+// local preIncrement = ++[|x|];
+// local postIncrement = [|x|]++;
+// local preDecrement = --x;
+// local postDecrement = [|x|]--;
+// 
+// [|x|] += 1;
+// /*FIND ALL REFS*/[|x|] <<= 1;

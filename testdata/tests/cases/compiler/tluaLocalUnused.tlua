@@ -1,0 +1,7 @@
+// @noUnusedLocals: true
+// @noEmit: true
+
+local scriptLet = 1;
+local unusedLua = 1;
+local usedLua = 1;
+usedLua;

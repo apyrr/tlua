@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /e.tlua ===
+// /// <reference path="a.tlua" />
+// /// <reference path="b.tlua" />
+// /// <reference path="c.tlua" />
+// /// <reference path="d.tlua" />
+// /*GOTO DEF*/x++;

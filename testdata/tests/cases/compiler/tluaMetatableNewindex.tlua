@@ -1,0 +1,28 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A write to a key the table does not have runs __newindex. Only a write consults it: a read of a
+// missing key still misses.
+
+// Function form: __newindex is called as (table, key, value), so its value parameter types the
+// write and its key parameter says which keys it answers.
+local logged = setmetatable({ n = 1 }, {
+  __newindex = function(t: object, k: string, v: number): void return; end,
+});
+logged.fresh = 2;
+logged.fresh = "no";
+logged["dyn"] = 3;                  // the element-access write path too
+local stillMissing = logged.fresh;  // a read never consults __newindex
+logged.n = 5;                       // the merged shape has n, so this is a raw write
+
+// Table form: the fallback table receives the write, so its index signature types it.
+local store: Table<string, number> = {};
+local proxied = setmetatable({ n = 1 }, { __newindex = store });
+proxied.other = 3;
+proxied.other = "no";
+
+// A key outside the handler's domain is not answered.
+local numKeys = setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end });
+numKeys.name = "x";

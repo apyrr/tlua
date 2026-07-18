@@ -1,0 +1,18 @@
+// @strict: true
+// @noEmit: true
+
+// Mixed array/hash parts: positional entries count only positional entries,
+// interleaved keyed entries do not consume indices (Lua semantics).
+declare k: string;
+local m = { "r", mode = 1, [k] = true, "s"; 3 };
+local r: string = m[1];
+local s: string = m[2];
+local three: number = m[3];
+local mode: number = m.mode;
+local all = {r, s, three, mode};
+
+// Nested tables mixing both parts.
+local nested = { { 1, 2 }, cols = { "a"; "b" } };
+local n11: number = nested[1][1];
+local nc2: string = nested.cols[2];
+local ns = {n11, nc2};

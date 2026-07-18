@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/tluaLocalMultiNameEmit.tlua] ////
+
+=== tluaLocalMultiNameEmit.tlua ===
+function pair(): (number, string)
+>pair : () => (number, string)
+
+  return 1, "a";
+>1, "a" : number, string
+>1 : 1
+>"a" : "a"
+
+end
+
+local a, b = pair();
+>a : number
+>b : string
+>pair() : number
+>pair : () => (number, string)
+
+local c, d = 1, "x";
+>c : number
+>d : string
+>1, "x" : number, string
+>1 : 1
+>"x" : "x"
+
+local e, f, g = pair(), true;
+>e : number
+>f : boolean
+>g : nil
+>pair(), true : number, boolean
+>pair() : number
+>pair : () => (number, string)
+>true : true
+
+local h, i;
+>h : any
+>i : any
+
+local j: number, k: string = pair();
+>j : number
+>k : string
+>pair() : number
+>pair : () => (number, string)
+
+// A parenthesized comma expression keeps its parens (it is one value).
+local l, m = (0, 1), 2;
+>l : number
+>m : number
+>(0, 1), 2 : number, number
+>(0, 1) : 1
+>0, 1 : 1
+>0 : 0
+>1 : 1
+>2 : 2
+

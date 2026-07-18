@@ -1,0 +1,324 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsInterfaceMembers.tlua ===
+// interface I {
+//     property: string;
+//     ^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) I.property: string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     method(): string;
+//     ^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) I.method(): string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     (): string;
+//     new (): I;
+// }
+// local iInstance: I;
+// iInstance.property = iInstance.method();
+// ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local iInstance: I
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//           ^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) I.property: string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                      ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local iInstance: I
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                ^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) I.method(): string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// iInstance();
+// ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local iInstance: () => string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// local anotherInstance = new iInstance();
+//       ^^^^^^^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local anotherInstance: I
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                             ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | local iInstance: new () => I
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 18,
+      "LSPosition": {
+        "line": 1,
+        "character": 4
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) I.property: string\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 4
+        },
+        "end": {
+          "line": 1,
+          "character": 12
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 40,
+      "LSPosition": {
+        "line": 2,
+        "character": 4
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) I.method(): string\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 4
+        },
+        "end": {
+          "line": 2,
+          "character": 10
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 111,
+      "LSPosition": {
+        "line": 7,
+        "character": 0
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal iInstance: I\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 0
+        },
+        "end": {
+          "line": 7,
+          "character": 9
+        }
+      },
+      "canIncreaseVerbosity": true
+    }
+  },
+  {
+    "marker": {
+      "Position": 121,
+      "LSPosition": {
+        "line": 7,
+        "character": 10
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(property) I.property: string\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 10
+        },
+        "end": {
+          "line": 7,
+          "character": 18
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 132,
+      "LSPosition": {
+        "line": 7,
+        "character": 21
+      },
+      "Name": "5",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal iInstance: I\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 21
+        },
+        "end": {
+          "line": 7,
+          "character": 30
+        }
+      },
+      "canIncreaseVerbosity": true
+    }
+  },
+  {
+    "marker": {
+      "Position": 142,
+      "LSPosition": {
+        "line": 7,
+        "character": 31
+      },
+      "Name": "6",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(method) I.method(): string\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 31
+        },
+        "end": {
+          "line": 7,
+          "character": 37
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 152,
+      "LSPosition": {
+        "line": 8,
+        "character": 0
+      },
+      "Name": "7",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal iInstance: () => string\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 0
+        },
+        "end": {
+          "line": 8,
+          "character": 9
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 171,
+      "LSPosition": {
+        "line": 9,
+        "character": 6
+      },
+      "Name": "8",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal anotherInstance: I\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 6
+        },
+        "end": {
+          "line": 9,
+          "character": 21
+        }
+      },
+      "canIncreaseVerbosity": true
+    }
+  },
+  {
+    "marker": {
+      "Position": 193,
+      "LSPosition": {
+        "line": 9,
+        "character": 28
+      },
+      "Name": "9",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nlocal iInstance: new () => I\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 28
+        },
+        "end": {
+          "line": 9,
+          "character": 37
+        }
+      },
+      "canIncreaseVerbosity": true
+    }
+  }
+]

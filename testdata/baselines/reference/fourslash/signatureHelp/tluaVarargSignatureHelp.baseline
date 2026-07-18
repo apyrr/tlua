@@ -1,0 +1,47 @@
+// === SignatureHelp ===
+=== /tluaVarargSignatureHelp.tlua ===
+// 
+// declare cond: boolean;
+// declare function fixedArity(a: number, b: boolean): void;
+// declare function varargArity(...: string): void;
+// 
+// local combined = cond and fixedArity or varargArity;
+// combined();
+//          ^
+// | ----------------------------------------------------------------------
+// | combined(**arg0: never**, b: never, ...: string): void
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 194,
+      "LSPosition": {
+        "line": 6,
+        "character": 9
+      },
+      "Name": "",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "combined(arg0: never, b: never, ...: string): void",
+          "parameters": [
+            {
+              "label": "arg0: never"
+            },
+            {
+              "label": "b: never"
+            },
+            {
+              "label": "...: string"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]

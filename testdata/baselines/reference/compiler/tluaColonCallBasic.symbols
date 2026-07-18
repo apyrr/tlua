@@ -1,0 +1,148 @@
+//// [tests/cases/compiler/tluaColonCallBasic.tlua] ////
+
+=== tluaColonCallBasic.tlua ===
+local M = { count = 0 };
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+
+function M:inc(by: number): number
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonCallBasic.tlua, 0, 24))
+>: : Symbol(:, Decl(tluaColonCallBasic.tlua, 2, 10))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>by : Symbol(by, Decl(tluaColonCallBasic.tlua, 2, 15))
+
+  self.count = self.count + by;
+>self.count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallBasic.tlua, 2, 10))
+>count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+>self.count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallBasic.tlua, 2, 10))
+>count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+>by : Symbol(by, Decl(tluaColonCallBasic.tlua, 2, 15))
+
+  return self.count;
+>self.count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallBasic.tlua, 2, 10))
+>count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+
+end
+
+function M:read(): number
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>read : Symbol(read, Decl(tluaColonCallBasic.tlua, 5, 3))
+>: : Symbol(:, Decl(tluaColonCallBasic.tlua, 7, 10))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+
+  return self.count;
+>self.count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+>self : Symbol(:, Decl(tluaColonCallBasic.tlua, 7, 10))
+>count : Symbol(count, Decl(tluaColonCallBasic.tlua, 0, 11))
+
+end
+
+// The colon call passes the receiver as the implicit first argument.
+local a = M:inc(1);
+>a : Symbol(a, Decl(tluaColonCallBasic.tlua, 12, 5))
+>M:inc : Symbol(inc, Decl(tluaColonCallBasic.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonCallBasic.tlua, 0, 24))
+
+local b = M:read();
+>b : Symbol(b, Decl(tluaColonCallBasic.tlua, 13, 5))
+>M:read : Symbol(read, Decl(tluaColonCallBasic.tlua, 5, 3))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>read : Symbol(read, Decl(tluaColonCallBasic.tlua, 5, 3))
+
+// It is interchangeable with the explicit form.
+local c = M.inc(M, 1);
+>c : Symbol(c, Decl(tluaColonCallBasic.tlua, 16, 5))
+>M.inc : Symbol(inc, Decl(tluaColonCallBasic.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>inc : Symbol(inc, Decl(tluaColonCallBasic.tlua, 0, 24))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+
+// A dotted target chains: `a.b:c()` calls through the member table.
+local outer = { inner = M };
+>outer : Symbol(outer, Decl(tluaColonCallBasic.tlua, 19, 5))
+>inner : Symbol(inner, Decl(tluaColonCallBasic.tlua, 19, 15))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+
+local d = outer.inner:inc(2);
+>d : Symbol(d, Decl(tluaColonCallBasic.tlua, 20, 5))
+>outer.inner:inc : Symbol(inc, Decl(tluaColonCallBasic.tlua, 0, 24))
+>outer.inner : Symbol(inner, Decl(tluaColonCallBasic.tlua, 19, 15))
+>outer : Symbol(outer, Decl(tluaColonCallBasic.tlua, 19, 5))
+>inner : Symbol(inner, Decl(tluaColonCallBasic.tlua, 19, 15))
+>inc : Symbol(inc, Decl(tluaColonCallBasic.tlua, 0, 24))
+
+// Chained colon calls: each link is its own receiver.
+interface Chain {
+>Chain : Symbol(Chain, Decl(tluaColonCallBasic.tlua, 20, 29))
+
+  next(self: Chain): Chain;
+>next : Symbol(Chain.next, Decl(tluaColonCallBasic.tlua, 23, 17))
+>self : Symbol(self, Decl(tluaColonCallBasic.tlua, 24, 7))
+>Chain : Symbol(Chain, Decl(tluaColonCallBasic.tlua, 20, 29))
+>Chain : Symbol(Chain, Decl(tluaColonCallBasic.tlua, 20, 29))
+
+  value(self: Chain): number;
+>value : Symbol(Chain.value, Decl(tluaColonCallBasic.tlua, 24, 27))
+>self : Symbol(self, Decl(tluaColonCallBasic.tlua, 25, 8))
+>Chain : Symbol(Chain, Decl(tluaColonCallBasic.tlua, 20, 29))
+}
+declare chain: Chain;
+>chain : Symbol(chain, Decl(tluaColonCallBasic.tlua, 27, 7))
+>Chain : Symbol(Chain, Decl(tluaColonCallBasic.tlua, 20, 29))
+
+local e = chain:next():next():value();
+>e : Symbol(e, Decl(tluaColonCallBasic.tlua, 28, 5))
+>chain:next():next():value : Symbol(Chain.value, Decl(tluaColonCallBasic.tlua, 24, 27))
+>chain:next():next : Symbol(Chain.next, Decl(tluaColonCallBasic.tlua, 23, 17))
+>chain:next : Symbol(Chain.next, Decl(tluaColonCallBasic.tlua, 23, 17))
+>chain : Symbol(chain, Decl(tluaColonCallBasic.tlua, 27, 7))
+>next : Symbol(Chain.next, Decl(tluaColonCallBasic.tlua, 23, 17))
+>next : Symbol(Chain.next, Decl(tluaColonCallBasic.tlua, 23, 17))
+>value : Symbol(Chain.value, Decl(tluaColonCallBasic.tlua, 24, 27))
+
+// The colon form also fits an explicit self-typed member on a table value.
+local t = {
+>t : Symbol(t, Decl(tluaColonCallBasic.tlua, 31, 5))
+
+  base = 10,
+>base : Symbol(base, Decl(tluaColonCallBasic.tlua, 31, 11))
+
+  plus = function(self: { base: number }, n: number) return self.base + n; end,
+>plus : Symbol(plus, Decl(tluaColonCallBasic.tlua, 32, 12))
+>self : Symbol(self, Decl(tluaColonCallBasic.tlua, 33, 18))
+>base : Symbol(base, Decl(tluaColonCallBasic.tlua, 33, 25))
+>n : Symbol(n, Decl(tluaColonCallBasic.tlua, 33, 41))
+>self.base : Symbol(base, Decl(tluaColonCallBasic.tlua, 33, 25))
+>self : Symbol(self, Decl(tluaColonCallBasic.tlua, 33, 18))
+>base : Symbol(base, Decl(tluaColonCallBasic.tlua, 33, 25))
+>n : Symbol(n, Decl(tluaColonCallBasic.tlua, 33, 41))
+
+};
+local f = t:plus(5);
+>f : Symbol(f, Decl(tluaColonCallBasic.tlua, 35, 5))
+>t:plus : Symbol(plus, Decl(tluaColonCallBasic.tlua, 32, 12))
+>t : Symbol(t, Decl(tluaColonCallBasic.tlua, 31, 5))
+>plus : Symbol(plus, Decl(tluaColonCallBasic.tlua, 32, 12))
+
+// A receiver that survived its `?.` guards is not nil at call time: the
+// implicit first argument carries the narrowed type, so no spurious mismatch.
+local maybe: { inner: typeof M } | nil = { inner = M };
+>maybe : Symbol(maybe, Decl(tluaColonCallBasic.tlua, 39, 5))
+>inner : Symbol(inner, Decl(tluaColonCallBasic.tlua, 39, 14))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+>inner : Symbol(inner, Decl(tluaColonCallBasic.tlua, 39, 42))
+>M : Symbol(M, Decl(tluaColonCallBasic.tlua, 0, 5))
+
+local g = maybe?.inner:read();
+>g : Symbol(g, Decl(tluaColonCallBasic.tlua, 40, 5))
+>maybe?.inner:read : Symbol(read, Decl(tluaColonCallBasic.tlua, 5, 3))
+>maybe?.inner : Symbol(inner, Decl(tluaColonCallBasic.tlua, 39, 14))
+>maybe : Symbol(maybe, Decl(tluaColonCallBasic.tlua, 39, 5))
+>inner : Symbol(inner, Decl(tluaColonCallBasic.tlua, 39, 14))
+>read : Symbol(read, Decl(tluaColonCallBasic.tlua, 5, 3))
+

@@ -1,0 +1,33 @@
+// === findAllReferences ===
+// === /referencesForInheritedProperties9.tlua ===
+// class D extends C {
+//     /*FIND ALL REFS*/prop1: string;
+// }
+// 
+// class C extends D {
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties9.tlua ===
+// class D extends C {
+//     prop1: string;
+// }
+// 
+// class C extends D {
+//     /*FIND ALL REFS*/prop1: string;
+// }
+// 
+// local c: C;
+// c.prop1;
+
+
+
+// === findAllReferences ===
+// === /referencesForInheritedProperties9.tlua ===
+// --- (line: 6) skipped ---
+// }
+// 
+// local c: C;
+// c./*FIND ALL REFS*/prop1;

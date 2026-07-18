@@ -1,0 +1,30 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// Only the real globals carry the protocol. A shadowing local, or a call through an alias,
+// resolves to a different symbol and keeps whatever it declares -- the rule the type()
+// narrowing builtins already follow.
+
+local Helpers = { describe = function(self: object): string return "d"; end };
+local mt = { __index = Helpers };
+
+function shadowed(): void
+  local setmetatable = function(value: object, metatable: object): object return value; end;
+  local getmetatable = function(value: object): object return value; end;
+  local obj = setmetatable({ n = 1 }, mt);
+  local absent = obj.describe;
+  local ownAbsent = obj.n;
+  local back = getmetatable(obj);
+end
+
+// An alias is a different symbol too.
+local alias = setmetatable;
+local aliased = alias({ n = 1 }, mt);
+local aliasBad = aliased.describe;
+local aliasOwn: number = aliased.n;
+
+// The globals themselves still work in the same file.
+local real = setmetatable({ n = 1 }, mt);
+local d: string = real.describe(real);

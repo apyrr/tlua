@@ -1,0 +1,47 @@
+//// [tests/cases/compiler/removeComments.tlua] ////
+
+=== removeComments.tlua ===
+function t1() {
+>t1 : Symbol(t1, Decl(removeComments.tlua, 0, 0))
+
+    if (this.a < 2) { // comment after if
+        console.log('t1', this.a)
+
+        // comment after empty line in if block
+    }
+}
+
+function t2() {
+>t2 : Symbol(t2, Decl(removeComments.tlua, 6, 1))
+
+    console.log("t2");
+
+    local obj = // comment here
+>obj : Symbol(obj, Decl(removeComments.tlua, 11, 9))
+    {
+        a = 1,   // comment a
+>a : Symbol(a, Decl(removeComments.tlua, 12, 5))
+
+        b = 2,   // comment b
+>b : Symbol(b, Decl(removeComments.tlua, 13, 14))
+
+        c = 3,   // comment c (removed)
+>c : Symbol(c, Decl(removeComments.tlua, 14, 14))
+    }
+
+    console.log(
+        "test", // comment 1
+        {
+            a = this.a,  // comment a
+>a : Symbol(a, Decl(removeComments.tlua, 20, 9))
+
+            b = this.b,  // comment b
+>b : Symbol(b, Decl(removeComments.tlua, 21, 23))
+
+            c = this.c,  // comment c (removed)
+>c : Symbol(c, Decl(removeComments.tlua, 22, 23))
+
+        }, obj)
+>obj : Symbol(obj, Decl(removeComments.tlua, 11, 9))
+}
+

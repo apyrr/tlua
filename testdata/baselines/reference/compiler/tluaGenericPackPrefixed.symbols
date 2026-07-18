@@ -1,0 +1,94 @@
+//// [tests/cases/compiler/tluaGenericPackPrefixed.tlua] ////
+
+=== tluaGenericPackPrefixed.tlua ===
+// Prefixed packs: this file pins the boundary between what generic packs
+// support and the one shape that is fundamentally ambiguous. tlua matches
+// upstream TypeScript (variadicTuples `curry` vs `curry2`) and Luau here.
+
+// 1. A fixed element before a LONE pack correlates -- the shipped `pcall`/
+//    `assert` shape `(boolean, ...R)` / `(T, ...M)`. The split point is
+//    unambiguous because the single variadic consumes everything after the
+//    fixed prefix.
+declare function prepend<T, ...A>(head: T, ...: A): (T, ...A);
+>prepend : Symbol(prepend, Decl(tluaGenericPackPrefixed.tlua, 0, 0))
+>T : Symbol(T, Decl(tluaGenericPackPrefixed.tlua, 8, 25))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 8, 27))
+>head : Symbol(head, Decl(tluaGenericPackPrefixed.tlua, 8, 34))
+>T : Symbol(T, Decl(tluaGenericPackPrefixed.tlua, 8, 25))
+> : Symbol((Missing), Decl(tluaGenericPackPrefixed.tlua, 8, 42))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 8, 27))
+>T : Symbol(T, Decl(tluaGenericPackPrefixed.tlua, 8, 25))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 8, 27))
+
+local a, b, c = prepend(true, 1, "x");
+>a : Symbol(a, Decl(tluaGenericPackPrefixed.tlua, 9, 5))
+>b : Symbol(b, Decl(tluaGenericPackPrefixed.tlua, 9, 8))
+>c : Symbol(c, Decl(tluaGenericPackPrefixed.tlua, 9, 11))
+>prepend : Symbol(prepend, Decl(tluaGenericPackPrefixed.tlua, 0, 0))
+
+// a: boolean, b: number, c: string
+
+// 2. Two ADJACENT packs correlate when each is inferred from its OWN source:
+//    every pack has a definite arity, so there is no split to guess.
+declare function both<...A, ...B>(
+>both : Symbol(both, Decl(tluaGenericPackPrefixed.tlua, 9, 38))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 14, 22))
+>B : Symbol(B, Decl(tluaGenericPackPrefixed.tlua, 14, 27))
+
+    f: (...: A) => (...A),
+>f : Symbol(f, Decl(tluaGenericPackPrefixed.tlua, 14, 34))
+> : Symbol((Missing), Decl(tluaGenericPackPrefixed.tlua, 15, 8))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 14, 22))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 14, 22))
+
+    g: (...: B) => (...B),
+>g : Symbol(g, Decl(tluaGenericPackPrefixed.tlua, 15, 26))
+> : Symbol((Missing), Decl(tluaGenericPackPrefixed.tlua, 16, 8))
+>B : Symbol(B, Decl(tluaGenericPackPrefixed.tlua, 14, 27))
+>B : Symbol(B, Decl(tluaGenericPackPrefixed.tlua, 14, 27))
+
+): (...A, ...B);
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 14, 22))
+>B : Symbol(B, Decl(tluaGenericPackPrefixed.tlua, 14, 27))
+
+local x, y = both(
+>x : Symbol(x, Decl(tluaGenericPackPrefixed.tlua, 18, 5))
+>y : Symbol(y, Decl(tluaGenericPackPrefixed.tlua, 18, 8))
+>both : Symbol(both, Decl(tluaGenericPackPrefixed.tlua, 9, 38))
+
+    function(n: number): (number) return n; end,
+>n : Symbol(n, Decl(tluaGenericPackPrefixed.tlua, 19, 13))
+>n : Symbol(n, Decl(tluaGenericPackPrefixed.tlua, 19, 13))
+
+    function(s: string): (string) return s; end,
+>s : Symbol(s, Decl(tluaGenericPackPrefixed.tlua, 20, 13))
+>s : Symbol(s, Decl(tluaGenericPackPrefixed.tlua, 20, 13))
+
+);
+// x: number, y: string
+
+// 3. Inferring the split of two adjacent packs from a SINGLE source pack is
+//    ambiguous -- nothing says where A ends and B begins. tlua declines
+//    (the packs degrade to the open `(...any)`), exactly as upstream declines
+//    `curry2`. This is the documented limitation, pinned so a future change to
+//    variadic-tuple inference is a deliberate decision, not an accident.
+declare function split<...A, ...B>(source: () => (...A, ...B)): (...A);
+>split : Symbol(split, Decl(tluaGenericPackPrefixed.tlua, 21, 2))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 29, 23))
+>B : Symbol(B, Decl(tluaGenericPackPrefixed.tlua, 29, 28))
+>source : Symbol(source, Decl(tluaGenericPackPrefixed.tlua, 29, 35))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 29, 23))
+>B : Symbol(B, Decl(tluaGenericPackPrefixed.tlua, 29, 28))
+>A : Symbol(A, Decl(tluaGenericPackPrefixed.tlua, 29, 23))
+
+declare function pair(): (number, string);
+>pair : Symbol(pair, Decl(tluaGenericPackPrefixed.tlua, 29, 71))
+
+local p, q = split(pair);
+>p : Symbol(p, Decl(tluaGenericPackPrefixed.tlua, 31, 5))
+>q : Symbol(q, Decl(tluaGenericPackPrefixed.tlua, 31, 8))
+>split : Symbol(split, Decl(tluaGenericPackPrefixed.tlua, 21, 2))
+>pair : Symbol(pair, Decl(tluaGenericPackPrefixed.tlua, 29, 71))
+
+// p: any, q: any -- the ambiguous split, not (number)
+

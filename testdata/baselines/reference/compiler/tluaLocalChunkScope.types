@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/tluaLocalChunkScope.tlua] ////
+
+=== a.tlua ===
+local chunkValue = 1;
+>chunkValue : number
+>1 : 1
+
+chunkValue;
+>chunkValue : number
+
+=== b.tlua ===
+chunkValue;
+>chunkValue : any
+

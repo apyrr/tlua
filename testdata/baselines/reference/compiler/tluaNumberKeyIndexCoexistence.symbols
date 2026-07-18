@@ -1,0 +1,41 @@
+//// [tests/cases/compiler/tluaNumberKeyIndexCoexistence.tlua] ////
+
+=== tluaNumberKeyIndexCoexistence.tlua ===
+// Number keys and string keys are disjoint, including for index signatures:
+// a string index signature serves only string-key access, not number-key
+// access (t[5] != t["5"]).
+interface U {
+>U : Symbol(U, Decl(tluaNumberKeyIndexCoexistence.tlua, 0, 0))
+
+  [k: string]: string | number;
+>k : Symbol(k, Decl(tluaNumberKeyIndexCoexistence.tlua, 4, 3))
+
+  lit: number;
+>lit : Symbol(U.lit, Decl(tluaNumberKeyIndexCoexistence.tlua, 4, 31))
+
+  1: string;
+>1 : Symbol(U[1], Decl(tluaNumberKeyIndexCoexistence.tlua, 5, 14))
+}
+declare u: U;
+>u : Symbol(u, Decl(tluaNumberKeyIndexCoexistence.tlua, 8, 7))
+>U : Symbol(U, Decl(tluaNumberKeyIndexCoexistence.tlua, 0, 0))
+
+// The number key resolves to the number-keyed member.
+local u1: string = u[1];
+>u1 : Symbol(u1, Decl(tluaNumberKeyIndexCoexistence.tlua, 11, 5))
+>u : Symbol(u, Decl(tluaNumberKeyIndexCoexistence.tlua, 8, 7))
+>1 : Symbol(U[1], Decl(tluaNumberKeyIndexCoexistence.tlua, 5, 14))
+
+// A string-key access falls to the string index signature.
+local us: string | number = u["5"];
+>us : Symbol(us, Decl(tluaNumberKeyIndexCoexistence.tlua, 14, 5))
+>u : Symbol(u, Decl(tluaNumberKeyIndexCoexistence.tlua, 8, 7))
+
+// A number-key access is NOT covered by the string index signature: error.
+local un = u[5];
+>un : Symbol(un, Decl(tluaNumberKeyIndexCoexistence.tlua, 17, 5))
+>u : Symbol(u, Decl(tluaNumberKeyIndexCoexistence.tlua, 8, 7))
+
+local es = {u1, us, un};
+>es : Symbol(es, Decl(tluaNumberKeyIndexCoexistence.tlua, 19, 5))
+

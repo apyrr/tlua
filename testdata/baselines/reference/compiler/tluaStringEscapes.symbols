@@ -1,0 +1,26 @@
+//// [tests/cases/compiler/tluaStringEscapes.tlua] ////
+
+=== tluaStringEscapes.tlua ===
+// String literals emit as valid Lua: JS-only escapes (\u{..}, \uXXXX) never appear —
+// control bytes use \xHH, and the author's quote style is preserved.
+
+// \u{1b} (ESC) and \x41 (A) cook, then re-emit in Lua form: "\x1bA".
+local esc = "\u{1b}\x41"
+>esc : Symbol(esc, Decl(tluaStringEscapes.tlua, 4, 5))
+
+// A non-ASCII separator (U+2028) is valid UTF-8 and stays raw.
+local sep = "a\u{2028}b"
+>sep : Symbol(sep, Decl(tluaStringEscapes.tlua, 7, 5))
+
+// Single-quoted strings keep their quote; the embedded quote is escaped.
+local sq = 'it\'s a "test"'
+>sq : Symbol(sq, Decl(tluaStringEscapes.tlua, 10, 5))
+
+// Readable whitespace escapes are preserved.
+local ws = "tab\tnl\ncr\r"
+>ws : Symbol(ws, Decl(tluaStringEscapes.tlua, 13, 5))
+
+// A NUL byte becomes \x00 (never a bare \0 that could swallow a following digit).
+local nul = "\u{0}0"
+>nul : Symbol(nul, Decl(tluaStringEscapes.tlua, 16, 5))
+

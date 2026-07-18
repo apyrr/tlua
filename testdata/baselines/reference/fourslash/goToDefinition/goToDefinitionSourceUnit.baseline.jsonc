@@ -1,0 +1,22 @@
+// === goToDefinition ===
+// === /a.tlua ===
+// //MyFile Comments
+// //more comments
+// /// <reference path="so/*GOTO DEF*/mePath.tlua" />
+// /// <reference path="b.tlua" />
+// 
+// class clsInOverload {
+// --- (line: 7) skipped ---
+
+
+
+// === goToDefinition ===
+// === /a.tlua ===
+// //MyFile Comments
+// //more comments
+// /// <reference path="somePath.tlua" />
+// /// <reference path="b/*GOTO DEF*/.tlua" />
+// 
+// class clsInOverload {
+//     static fnOverload();
+// --- (line: 8) skipped ---

@@ -1,0 +1,77 @@
+//// [tests/cases/compiler/tluaGotoForwardBackward.tlua] ////
+
+=== tluaGotoForwardBackward.tlua ===
+// A forward jump skips the statements between it and the label.
+function forward(n: number): number
+>forward : Symbol(forward, Decl(tluaGotoForwardBackward.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 1, 17))
+
+    local total = 0;
+>total : Symbol(total, Decl(tluaGotoForwardBackward.tlua, 2, 9))
+
+    if n > 0 then goto done end
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 1, 17))
+
+    total = 1;
+>total : Symbol(total, Decl(tluaGotoForwardBackward.tlua, 2, 9))
+
+    ::done::
+    return total;
+>total : Symbol(total, Decl(tluaGotoForwardBackward.tlua, 2, 9))
+
+end
+
+// A backward jump re-enters the block, so the label needs a loop edge.
+function backward(n: number): number
+>backward : Symbol(backward, Decl(tluaGotoForwardBackward.tlua, 7, 3))
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 10, 18))
+
+    ::top::
+    n = n - 1;
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 10, 18))
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 10, 18))
+
+    if n > 0 then goto top end
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 10, 18))
+
+    return n;
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 10, 18))
+
+end
+
+// A label is visible in nested blocks, and an inner label shadows an outer one.
+function shadow(flag: boolean): number
+>shadow : Symbol(shadow, Decl(tluaGotoForwardBackward.tlua, 15, 3))
+>flag : Symbol(flag, Decl(tluaGotoForwardBackward.tlua, 18, 16))
+
+    ::same::
+    do
+        ::same::
+        if flag then goto same end
+>flag : Symbol(flag, Decl(tluaGotoForwardBackward.tlua, 18, 16))
+
+    end
+    return 0;
+end
+
+// A goto in a loop body targeting a label after the loop leaves the loop.
+function outOfLoop(n: number): string
+>outOfLoop : Symbol(outOfLoop, Decl(tluaGotoForwardBackward.tlua, 25, 3))
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 28, 19))
+
+    while n > 0 do
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 28, 19))
+
+        n = n - 1;
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 28, 19))
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 28, 19))
+
+        if n == 2 then goto found end
+>n : Symbol(n, Decl(tluaGotoForwardBackward.tlua, 28, 19))
+
+    end
+    return "none";
+    ::found::
+    return "found";
+end
+

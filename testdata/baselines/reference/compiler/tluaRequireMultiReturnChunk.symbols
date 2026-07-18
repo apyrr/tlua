@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/tluaRequireMultiReturnChunk.tlua] ////
+
+=== main.tlua ===
+local p = require("pair");
+>p : Symbol(p, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local tag: string = p.tag;
+>tag : Symbol(tag, Decl(main.tlua, 1, 5))
+>p.tag : Symbol(tag, Decl(pair.tlua, 0, 15))
+>p : Symbol(p, Decl(main.tlua, 0, 5))
+>tag : Symbol(tag, Decl(pair.tlua, 0, 15))
+
+local f: string = require("forwarded");
+>f : Symbol(f, Decl(main.tlua, 2, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+=== pair.tlua ===
+local first = { tag = "first" };
+>first : Symbol(first, Decl(pair.tlua, 0, 5))
+>tag : Symbol(tag, Decl(pair.tlua, 0, 15))
+
+local second = 2;
+>second : Symbol(second, Decl(pair.tlua, 1, 5))
+
+// Lua's require keeps only the first value a chunk returns.
+return first, second;
+>first : Symbol(first, Decl(pair.tlua, 0, 5))
+>second : Symbol(second, Decl(pair.tlua, 1, 5))
+
+=== forwarded.tlua ===
+declare multi: () => (string, number);
+>multi : Symbol(multi, Decl(forwarded.tlua, 0, 7))
+
+return multi();
+>multi : Symbol(multi, Decl(forwarded.tlua, 0, 7))
+

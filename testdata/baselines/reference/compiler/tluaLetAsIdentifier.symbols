@@ -1,0 +1,50 @@
+//// [tests/cases/compiler/tluaLetAsIdentifier.tlua] ////
+
+=== tluaLetAsIdentifier.tlua ===
+// The demoted declaration keywords are ordinary identifiers everywhere a name
+// can appear -- including the internally Let-flagged for-head lists and the
+// Const-desugared ambient-global form, which the deleted ES "let is not a
+// valid LexicalDeclaration name" rule used to reject.
+local let = 1;
+>let : Symbol(let, Decl(tluaLetAsIdentifier.tlua, 4, 5))
+
+local const = let + 1;
+>const : Symbol(const, Decl(tluaLetAsIdentifier.tlua, 5, 5))
+>let : Symbol(let, Decl(tluaLetAsIdentifier.tlua, 4, 5))
+
+local var = const;
+>var : Symbol(var, Decl(tluaLetAsIdentifier.tlua, 6, 5))
+>const : Symbol(const, Decl(tluaLetAsIdentifier.tlua, 5, 5))
+
+for let = 1, 3 do
+>let : Symbol(let, Decl(tluaLetAsIdentifier.tlua, 7, 3))
+
+  local sum = let + 1;
+>sum : Symbol(sum, Decl(tluaLetAsIdentifier.tlua, 8, 7))
+>let : Symbol(let, Decl(tluaLetAsIdentifier.tlua, 7, 3))
+
+  print(sum);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>sum : Symbol(sum, Decl(tluaLetAsIdentifier.tlua, 8, 7))
+
+end
+for let, using in pairs({ a = 1 }) do
+>let : Symbol(let, Decl(tluaLetAsIdentifier.tlua, 11, 3))
+>using : Symbol(using, Decl(tluaLetAsIdentifier.tlua, 11, 8))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaLetAsIdentifier.tlua, 11, 25))
+
+  print(let, using);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>let : Symbol(let, Decl(tluaLetAsIdentifier.tlua, 11, 3))
+>using : Symbol(using, Decl(tluaLetAsIdentifier.tlua, 11, 8))
+
+end
+declare letGlobal: number;
+>letGlobal : Symbol(letGlobal, Decl(tluaLetAsIdentifier.tlua, 14, 7))
+
+print(letGlobal, var);
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>letGlobal : Symbol(letGlobal, Decl(tluaLetAsIdentifier.tlua, 14, 7))
+>var : Symbol(var, Decl(tluaLetAsIdentifier.tlua, 6, 5))
+

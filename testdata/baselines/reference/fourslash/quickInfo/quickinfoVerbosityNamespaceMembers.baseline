@@ -1,0 +1,99 @@
+// === QuickInfo ===
+=== /quickinfoVerbosityNamespaceMembers.tlua ===
+// 
+// declare namespace NS {
+//                   ^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//                   ^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | any
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+//     type StringAlias = string;
+//     type Pair<T> = { first: T; second: T };
+// 
+//     class MyClass {
+//         name: string;
+//         greet(): void;
+//     }
+// 
+//     interface MyInterface {
+//         id: number;
+//         label: string;
+//     }
+// 
+//     local value: number;
+//     function doSomething(x: string): boolean;
+// }
+// 
+[
+  {
+    "marker": {
+      "Position": 21,
+      "LSPosition": {
+        "line": 1,
+        "character": 20
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 18
+          },
+          "end": {
+            "line": 1,
+            "character": 20
+          }
+        }
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 21,
+      "LSPosition": {
+        "line": 1,
+        "character": 20
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\nany\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 18
+          },
+          "end": {
+            "line": 1,
+            "character": 20
+          }
+        }
+      },
+      "verbosityLevel": 1
+    }
+  }
+]

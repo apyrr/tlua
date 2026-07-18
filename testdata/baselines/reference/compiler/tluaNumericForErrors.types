@@ -1,0 +1,142 @@
+//// [tests/cases/compiler/tluaNumericForErrors.tlua] ////
+
+=== tluaNumericForErrors.tlua ===
+// Non-number bounds and step.
+function badBounds(): void
+>badBounds : () => void
+
+  for i = "a", 10 do
+>i : number
+>"a" : "a"
+>10 : 10
+
+    local n = i;
+>n : number
+>i : number
+
+    n;
+>n : number
+
+  end
+  for i = 1, true do
+>i : number
+>1 : 1
+>true : true
+
+    i;
+>i : number
+
+  end
+  for i = 1, 10, "step" do
+>i : number
+>1 : 1
+>10 : 10
+>"step" : "step"
+
+    i;
+>i : number
+
+  end
+end
+
+// Missing `to`.
+function missingTo(): void
+>missingTo : () => void
+
+  for i = 1 do
+>i : number
+>1 : 1
+> : any
+
+    i;
+>i : number
+
+  end
+end
+
+// More than three control expressions.
+function tooMany(): void
+>tooMany : () => void
+
+  for i = 1, 10, 2, 3 do
+>i : number
+>1 : 1
+>10 : 10
+>2 : 2
+
+    i;
+>i : number
+
+  end
+end
+
+// An annotation that cannot hold a number.
+function badAnnotation(): void
+>badAnnotation : () => void
+
+  for i: string = 1, 2 do
+>i : string
+>1 : 1
+>2 : 2
+
+    i;
+>i : string
+
+  end
+end
+
+// The control variable cannot be used in its own bounds.
+function selfReference(): void
+>selfReference : () => void
+
+  for i = i, 10 do
+>i : number
+>i : number
+>10 : 10
+
+    i;
+>i : number
+
+  end
+end
+
+// Unused control variable; underscore is exempt.
+function unused(n: number): number
+>unused : (n: number) => number
+>n : number
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for i = 1, n do
+>i : number
+>1 : 1
+>n : number
+
+    total = total + 1;
+>total = total + 1 : number
+>total : number
+>total + 1 : number
+>total : number
+>1 : 1
+
+  end
+  for _ = 1, n do
+>_ : number
+>1 : 1
+>n : number
+
+    total = total + 1;
+>total = total + 1 : number
+>total : number
+>total + 1 : number
+>total : number
+>1 : 1
+
+  end
+  return total;
+>total : number
+
+end
+

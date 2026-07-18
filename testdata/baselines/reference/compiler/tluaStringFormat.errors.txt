@@ -1,0 +1,69 @@
+tluaStringFormat.tlua(2,21): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaStringFormat.tlua(3,1): error TS2554: Expected 2 arguments, but got 3.
+tluaStringFormat.tlua(4,1): error TS2554: Expected 3 arguments, but got 2.
+tluaStringFormat.tlua(18,21): error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'string | number'.
+tluaStringFormat.tlua(28,21): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaStringFormat.tlua(33,21): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaStringFormat.tlua(34,1): error TS2554: Expected 2 arguments, but got 3.
+
+
+==== tluaStringFormat.tlua (7 errors) ====
+    string.format("%d/%s", 1, "x");
+    string.format("%d", "notnum");
+                        ~~~~~~~~
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    string.format("%s", "x", "extra");
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2554: Expected 2 arguments, but got 3.
+    string.format("%s %s", "only one");
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2554: Expected 3 arguments, but got 2.
+    
+    function formatVarargTail(...: any): string
+      return string.format("%s %s", ...);
+    end
+    
+    string.format("%-08.3f is %q", 1.5, "s");
+    string.format("100%% done");
+    
+    // %s takes anything: LuaJIT applies tostring (and __tostring) to the value.
+    string.format("%s", 42);
+    string.format("%s", {});
+    // %q quotes a string; a number coerces, other values error at runtime.
+    string.format("%q", 42);
+    string.format("%q", true);
+                        ~~~~
+!!! error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'string | number'.
+    string.format("%z", {});
+    string.format("%*", {});
+    string.format("trailing %");
+    
+    local dynamicFormat: string = "%d";
+    string.format(dynamicFormat, "unchecked", "extra");
+    
+    local methodFormat: "%d" = "%d";
+    local methodResult = methodFormat.format(2);
+    methodFormat.format("notnum");
+                        ~~~~~~~~
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    
+    // The colon form prepends the receiver to the effective arguments; the
+    // specifier check must still line up with the written arguments.
+    local colonResult = methodFormat:format(2);
+    methodFormat:format("notnum");
+                        ~~~~~~~~
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    methodFormat:format(2, "extra");
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2554: Expected 2 arguments, but got 3.
+    
+    local stringAlias = string;
+    stringAlias.format("%d", "aliased", "extra");
+    
+    function shadowedString(): void
+      local string = {
+        format = function(format: string, ...: any): string return format; end,
+      };
+      string.format("%d", "shadowed", "extra");
+    end
+    

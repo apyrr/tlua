@@ -1,0 +1,9 @@
+// === findAllReferences ===
+// === /findAllRefsBadImport.tlua ===
+// import { /*FIND ALL REFS*/ab as cd } from "doesNotExist";
+
+
+
+// === findAllReferences ===
+// === /findAllRefsBadImport.tlua ===
+// import { ab as /*FIND ALL REFS*/[|cd|] } from "doesNotExist";

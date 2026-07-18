@@ -1,0 +1,93 @@
+propertyAndAccessorMerging.tlua(21,1): error TS1434: Unexpected keyword or identifier.
+propertyAndAccessorMerging.tlua(21,1): error TS2304: Cannot find name 'class'.
+propertyAndAccessorMerging.tlua(21,7): error TS1434: Unexpected keyword or identifier.
+propertyAndAccessorMerging.tlua(21,7): error TS2693: 'Foo1' only refers to a type, but is being used as a value here.
+propertyAndAccessorMerging.tlua(22,5): error TS1128: Declaration or statement expected.
+propertyAndAccessorMerging.tlua(22,14): error TS1434: Unexpected keyword or identifier.
+propertyAndAccessorMerging.tlua(22,14): error TS2304: Cannot find name 'x'.
+propertyAndAccessorMerging.tlua(22,15): error TS1128: Declaration or statement expected.
+propertyAndAccessorMerging.tlua(22,17): error TS2588: Cannot assign to 'string' because it is a constant.
+propertyAndAccessorMerging.tlua(33,1): error TS1434: Unexpected keyword or identifier.
+propertyAndAccessorMerging.tlua(33,1): error TS2304: Cannot find name 'class'.
+propertyAndAccessorMerging.tlua(33,7): error TS1434: Unexpected keyword or identifier.
+propertyAndAccessorMerging.tlua(33,7): error TS2693: 'Foo2' only refers to a type, but is being used as a value here.
+propertyAndAccessorMerging.tlua(34,5): error TS1128: Declaration or statement expected.
+propertyAndAccessorMerging.tlua(34,14): error TS1434: Unexpected keyword or identifier.
+propertyAndAccessorMerging.tlua(34,14): error TS2304: Cannot find name 'x'.
+propertyAndAccessorMerging.tlua(34,15): error TS1128: Declaration or statement expected.
+propertyAndAccessorMerging.tlua(34,17): error TS2588: Cannot assign to 'string' because it is a constant.
+
+
+==== propertyAndAccessorMerging.tlua (18 errors) ====
+    // https://github.com/microsoft/typescript-go/issues/3613
+    
+    interface EntityMetadata1 {
+        get tableName(): string;
+        set tableName(name: string);
+    }
+    
+    interface EntityMetadata1 {
+        tableName: string;
+    }
+    
+    interface EntityMetadata2 {
+        tableName: string;
+    }
+    
+    interface EntityMetadata2 {
+        get tableName(): string;
+        set tableName(name: string);
+    }
+    
+    class Foo1 {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~~
+!!! error TS2693: 'Foo1' only refers to a type, but is being used as a value here.
+        accessor x: string = "abc"
+        ~~~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                 ~
+!!! error TS1434: Unexpected keyword or identifier.
+                 ~
+!!! error TS2304: Cannot find name 'x'.
+                  ~
+!!! error TS1128: Declaration or statement expected.
+                    ~~~~~~
+!!! error TS2588: Cannot assign to 'string' because it is a constant.
+    }
+    
+    interface Foo1 {
+        x: string
+    }
+    
+    interface Foo2 {
+        x: string
+    }
+    
+    class Foo2 {
+    ~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TS2304: Cannot find name 'class'.
+          ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+          ~~~~
+!!! error TS2693: 'Foo2' only refers to a type, but is being used as a value here.
+        accessor x: string = "abc"
+        ~~~~~~~~
+!!! error TS1128: Declaration or statement expected.
+                 ~
+!!! error TS1434: Unexpected keyword or identifier.
+                 ~
+!!! error TS2304: Cannot find name 'x'.
+                  ~
+!!! error TS1128: Declaration or statement expected.
+                    ~~~~~~
+!!! error TS2588: Cannot assign to 'string' because it is a constant.
+    }
+    

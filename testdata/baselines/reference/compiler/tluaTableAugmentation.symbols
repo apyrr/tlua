@@ -1,0 +1,133 @@
+//// [tests/cases/compiler/tluaTableAugmentation.tlua] ////
+
+=== tluaTableAugmentation.tlua ===
+local M = {};
+>M : Symbol(M, Decl(tluaTableAugmentation.tlua, 0, 5))
+
+local before: number | string = M.x;
+>before : Symbol(before, Decl(tluaTableAugmentation.tlua, 1, 5))
+>M.x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+>M : Symbol(M, Decl(tluaTableAugmentation.tlua, 0, 5))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+
+M.x = 1;
+>M.x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+>M : Symbol(M, Decl(tluaTableAugmentation.tlua, 0, 5))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+
+M.x = "two";
+>M.x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+>M : Symbol(M, Decl(tluaTableAugmentation.tlua, 0, 5))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+
+local x: number | string = M.x;
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 4, 5))
+>M.x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+>M : Symbol(M, Decl(tluaTableAugmentation.tlua, 0, 5))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 1, 36), Decl(tluaTableAugmentation.tlua, 2, 8))
+
+local nested = {};
+>nested : Symbol(nested, Decl(tluaTableAugmentation.tlua, 6, 5))
+
+nested.sub = {};
+>nested.sub : Symbol(sub, Decl(tluaTableAugmentation.tlua, 6, 18))
+>nested : Symbol(nested, Decl(tluaTableAugmentation.tlua, 6, 5))
+>sub : Symbol(sub, Decl(tluaTableAugmentation.tlua, 6, 18))
+
+nested.sub.value = 1;
+>nested.sub.value : Symbol(value, Decl(tluaTableAugmentation.tlua, 7, 16))
+>nested.sub : Symbol(sub, Decl(tluaTableAugmentation.tlua, 6, 18))
+>nested : Symbol(nested, Decl(tluaTableAugmentation.tlua, 6, 5))
+>sub : Symbol(sub, Decl(tluaTableAugmentation.tlua, 6, 18))
+>value : Symbol(value, Decl(tluaTableAugmentation.tlua, 7, 16))
+
+local value: number = nested.sub.value;
+>value : Symbol(value, Decl(tluaTableAugmentation.tlua, 9, 5))
+>nested.sub.value : Symbol(value, Decl(tluaTableAugmentation.tlua, 7, 16))
+>nested.sub : Symbol(sub, Decl(tluaTableAugmentation.tlua, 6, 18))
+>nested : Symbol(nested, Decl(tluaTableAugmentation.tlua, 6, 5))
+>sub : Symbol(sub, Decl(tluaTableAugmentation.tlua, 6, 18))
+>value : Symbol(value, Decl(tluaTableAugmentation.tlua, 7, 16))
+
+local keyed = {};
+>keyed : Symbol(keyed, Decl(tluaTableAugmentation.tlua, 11, 5))
+
+keyed["name"] = true;
+>keyed : Symbol(keyed, Decl(tluaTableAugmentation.tlua, 11, 5))
+>"name" : Symbol("name", Decl(tluaTableAugmentation.tlua, 11, 17))
+
+keyed[1] = "one";
+>keyed : Symbol(keyed, Decl(tluaTableAugmentation.tlua, 11, 5))
+>1 : Symbol(1, Decl(tluaTableAugmentation.tlua, 12, 21))
+
+local name: boolean = keyed.name;
+>name : Symbol(name, Decl(tluaTableAugmentation.tlua, 14, 5))
+>keyed.name : Symbol("name", Decl(tluaTableAugmentation.tlua, 11, 17))
+>keyed : Symbol(keyed, Decl(tluaTableAugmentation.tlua, 11, 5))
+>name : Symbol("name", Decl(tluaTableAugmentation.tlua, 11, 17))
+
+local one: string = keyed[1];
+>one : Symbol(one, Decl(tluaTableAugmentation.tlua, 15, 5))
+>keyed : Symbol(keyed, Decl(tluaTableAugmentation.tlua, 11, 5))
+>1 : Symbol(1, Decl(tluaTableAugmentation.tlua, 12, 21))
+
+local fixed = { x = 1 };
+>fixed : Symbol(fixed, Decl(tluaTableAugmentation.tlua, 17, 5))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 17, 15))
+
+fixed.x = "no";
+>fixed.x : Symbol(x, Decl(tluaTableAugmentation.tlua, 17, 15))
+>fixed : Symbol(fixed, Decl(tluaTableAugmentation.tlua, 17, 5))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 17, 15))
+
+local annotated: { x: number } = { x = 1 };
+>annotated : Symbol(annotated, Decl(tluaTableAugmentation.tlua, 20, 5))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 20, 18))
+>x : Symbol(x, Decl(tluaTableAugmentation.tlua, 20, 34))
+
+annotated.y = 2;
+>annotated : Symbol(annotated, Decl(tluaTableAugmentation.tlua, 20, 5))
+
+local dynamic = {};
+>dynamic : Symbol(dynamic, Decl(tluaTableAugmentation.tlua, 23, 5))
+
+local key = "key";
+>key : Symbol(key, Decl(tluaTableAugmentation.tlua, 24, 5))
+
+dynamic[key] = 1;
+>dynamic : Symbol(dynamic, Decl(tluaTableAugmentation.tlua, 23, 5))
+>key : Symbol(key, Decl(tluaTableAugmentation.tlua, 24, 5))
+
+local closed = true and {} or {};
+>closed : Symbol(closed, Decl(tluaTableAugmentation.tlua, 27, 5))
+
+closed.x = 1;
+>closed : Symbol(closed, Decl(tluaTableAugmentation.tlua, 27, 5))
+
+local collision = {};
+>collision : Symbol(collision, Decl(tluaTableAugmentation.tlua, 30, 5))
+
+collision.member = 1;
+>collision.member : Symbol(member, Decl(tluaTableAugmentation.tlua, 31, 21), Decl(tluaTableAugmentation.tlua, 30, 21))
+>collision : Symbol(collision, Decl(tluaTableAugmentation.tlua, 30, 5))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 31, 21), Decl(tluaTableAugmentation.tlua, 30, 21))
+
+function collision.member(): void
+>collision : Symbol(collision, Decl(tluaTableAugmentation.tlua, 30, 5))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 31, 21), Decl(tluaTableAugmentation.tlua, 30, 21))
+
+end
+
+local reverseCollision = {};
+>reverseCollision : Symbol(reverseCollision, Decl(tluaTableAugmentation.tlua, 35, 5))
+
+function reverseCollision.member(): void
+>reverseCollision : Symbol(reverseCollision, Decl(tluaTableAugmentation.tlua, 35, 5))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 35, 28), Decl(tluaTableAugmentation.tlua, 37, 3))
+
+end
+reverseCollision.member = 1;
+>reverseCollision.member : Symbol(member, Decl(tluaTableAugmentation.tlua, 35, 28), Decl(tluaTableAugmentation.tlua, 37, 3))
+>reverseCollision : Symbol(reverseCollision, Decl(tluaTableAugmentation.tlua, 35, 5))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 35, 28), Decl(tluaTableAugmentation.tlua, 37, 3))
+

@@ -1,0 +1,114 @@
+//// [tests/cases/compiler/tluaGotoForwardBackward.tlua] ////
+
+=== tluaGotoForwardBackward.tlua ===
+// A forward jump skips the statements between it and the label.
+function forward(n: number): number
+>forward : (n: number) => number
+>n : number
+
+    local total = 0;
+>total : number
+>0 : 0
+
+    if n > 0 then goto done end
+>n > 0 : boolean
+>n : number
+>0 : 0
+>done : any
+
+    total = 1;
+>total = 1 : 1
+>total : number
+>1 : 1
+
+    ::done::
+>done : any
+
+    return total;
+>total : number
+
+end
+
+// A backward jump re-enters the block, so the label needs a loop edge.
+function backward(n: number): number
+>backward : (n: number) => number
+>n : number
+
+    ::top::
+>top : any
+
+    n = n - 1;
+>n = n - 1 : number
+>n : number
+>n - 1 : number
+>n : number
+>1 : 1
+
+    if n > 0 then goto top end
+>n > 0 : boolean
+>n : number
+>0 : 0
+>top : any
+
+    return n;
+>n : number
+
+end
+
+// A label is visible in nested blocks, and an inner label shadows an outer one.
+function shadow(flag: boolean): number
+>shadow : (flag: boolean) => number
+>flag : boolean
+
+    ::same::
+>same : any
+
+    do
+        ::same::
+>same : any
+
+        if flag then goto same end
+>flag : boolean
+>same : any
+
+    end
+    return 0;
+>0 : 0
+
+end
+
+// A goto in a loop body targeting a label after the loop leaves the loop.
+function outOfLoop(n: number): string
+>outOfLoop : (n: number) => string
+>n : number
+
+    while n > 0 do
+>n > 0 : boolean
+>n : number
+>0 : 0
+
+        n = n - 1;
+>n = n - 1 : number
+>n : number
+>n - 1 : number
+>n : number
+>1 : 1
+
+        if n == 2 then goto found end
+>n == 2 : boolean
+>n : number
+>2 : 2
+>found : any
+
+    end
+    return "none";
+>"none" : "none"
+
+    ::found::
+>found : any
+
+    return "found";
+>"found" : "found"
+
+end
+

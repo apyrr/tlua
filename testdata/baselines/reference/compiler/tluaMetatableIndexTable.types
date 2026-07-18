@@ -1,0 +1,222 @@
+//// [tests/cases/compiler/tluaMetatableIndexTable.tlua] ////
+
+=== tluaMetatableIndexTable.tlua ===
+// setmetatable pairs a table with its metatable: a read the table misses falls through to
+// the metatable's __index, so the call cannot keep returning the plain table it was given.
+
+local Helpers = {
+>Helpers : { describe: (self: object) => string; count: number; }
+>{  describe = function(self: object): string return "d"; end,  count = 0,} : { describe: (self: object) => string; count: number; }
+
+  describe = function(self: object): string return "d"; end,
+>describe : (self: object) => string
+>function(self: object): string return "d"; end : (self: object) => string
+>self : object
+>"d" : "d"
+
+  count = 0,
+>count : number
+>0 : 0
+
+};
+
+local mt = { __index = Helpers };
+>mt : { __index: { describe: (self: object) => string; count: number; }; }
+>{ __index = Helpers } : { __index: { describe: (self: object) => string; count: number; }; }
+>__index : { describe: (self: object) => string; count: number; }
+>Helpers : { describe: (self: object) => string; count: number; }
+
+local obj = setmetatable({ n = 1 }, mt);
+>obj : { describe: (self: object) => string; count: number; n: number; }
+>setmetatable({ n = 1 }, mt) : { describe: (self: object) => string; count: number; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>mt : { __index: { describe: (self: object) => string; count: number; }; }
+
+// The table's own members stay.
+local n: number = obj.n;
+>n : number
+>obj.n : number
+>obj : { describe: (self: object) => string; count: number; n: number; }
+>n : number
+
+// A missing member is found behind __index.
+local d: string = obj.describe(obj);
+>d : string
+>obj.describe(obj) : string
+>obj.describe : (self: object) => string
+>obj : { describe: (self: object) => string; count: number; n: number; }
+>describe : (self: object) => string
+>obj : { describe: (self: object) => string; count: number; n: number; }
+
+local c: number = obj.count;
+>c : number
+>obj.count : number
+>obj : { describe: (self: object) => string; count: number; n: number; }
+>count : number
+
+// What neither has is still missing.
+local absent = obj.nothing;
+>absent : any
+>obj.nothing : any
+>obj : { describe: (self: object) => string; count: number; n: number; }
+>nothing : any
+
+// The table wins a collision: a raw read hits it before the metatable ever runs.
+local collide = setmetatable({ v = 1 }, { __index = { v = "str" } });
+>collide : { v: number; }
+>setmetatable({ v = 1 }, { __index = { v = "str" } }) : { v: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ v = 1 } : { v: number; }
+>v : number
+>1 : 1
+>{ __index = { v = "str" } } : { __index: { v: string; }; }
+>__index : { v: string; }
+>{ v = "str" } : { v: string; }
+>v : string
+>"str" : "str"
+
+local cn: number = collide.v;
+>cn : number
+>collide.v : number
+>collide : { v: number; }
+>v : number
+
+local cs: string = collide.v;
+>cs : string
+>collide.v : number
+>collide : { v: number; }
+>v : number
+
+// A fallback member is writable at its own type -- a Lua write raw-sets the table, which
+// shadows the metatable's copy from then on.
+obj.count = 2;
+>obj.count = 2 : 2
+>obj.count : number
+>obj : { describe: (self: object) => string; count: number; n: number; }
+>count : number
+>2 : 2
+
+obj.count = "two";
+>obj.count = "two" : "two"
+>obj.count : number
+>obj : { describe: (self: object) => string; count: number; n: number; }
+>count : number
+>"two" : "two"
+
+// An index signature behind __index carries over.
+declare idxMt: { __index: { [key: string]: number } };
+>idxMt : { __index: { [key: string]: number; }; }
+>__index : { [key: string]: number; }
+>key : string
+
+local ix = setmetatable({ n = 1 }, idxMt);
+>ix : { [key: string]: number; n: number; }
+>setmetatable({ n = 1 }, idxMt) : { [key: string]: number; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>idxMt : { __index: { [key: string]: number; }; }
+
+local iv: number = ix["anything"];
+>iv : number
+>ix["anything"] : number
+>ix : { [key: string]: number; n: number; }
+>"anything" : "anything"
+
+// The table only wins while it *answers*: a key that is absent or nil is exactly what makes
+// Lua run the metatable, so a member that admits nil reads as its own non-nil half or the
+// fallback's value. Defaults behind __index -- the reason this matters -- work.
+declare partial: { name?: string; id: number };
+>partial : { name?: string; id: number; }
+>name : string | nil
+>id : number
+
+local defaulted = setmetatable(partial, { __index = { name = "anonymous" } });
+>defaulted : { name: string; id: number; }
+>setmetatable(partial, { __index = { name = "anonymous" } }) : { name: string; id: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>partial : { name?: string; id: number; }
+>{ __index = { name = "anonymous" } } : { __index: { name: string; }; }
+>__index : { name: string; }
+>{ name = "anonymous" } : { name: string; }
+>name : string
+>"anonymous" : "anonymous"
+
+local always: string = defaulted.name;
+>always : string
+>defaulted.name : string
+>defaulted : { name: string; id: number; }
+>name : string
+
+declare nilable: { v: number | nil };
+>nilable : { v: number | nil; }
+>v : number | nil
+
+local either = setmetatable(nilable, { __index = { v = "str" } });
+>either : { v: string | number; }
+>setmetatable(nilable, { __index = { v = "str" } }) : { v: string | number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>nilable : { v: number | nil; }
+>{ __index = { v = "str" } } : { __index: { v: string; }; }
+>__index : { v: string; }
+>{ v = "str" } : { v: string; }
+>v : string
+>"str" : "str"
+
+local both: number | string = either.v;
+>both : string | number
+>either.v : string | number
+>either : { v: string | number; }
+>v : string | number
+
+local notJustNumber: number = either.v;
+>notJustNumber : number
+>either.v : string | number
+>either : { v: string | number; }
+>v : string | number
+
+// An intersection still says what its __index is.
+declare interMt: { __index: { a: number } } & { __tostring: () => string };
+>interMt : { __index: { a: number; }; } & { __tostring: () => string; }
+>__index : { a: number; }
+>a : number
+>__tostring : () => string
+
+local inter = setmetatable({ n = 1 }, interMt);
+>inter : { a: number; n: number; }
+>setmetatable({ n = 1 }, interMt) : { a: number; n: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>interMt : { __index: { a: number; }; } & { __tostring: () => string; }
+
+local ia: number = inter.a;
+>ia : number
+>inter.a : number
+>inter : { a: number; n: number; }
+>a : number
+
+// The result is still the table it was built from.
+interface HasN { n: number }
+>n : number
+
+local asTable: HasN = obj;
+>asTable : HasN
+>obj : { describe: (self: object) => string; count: number; n: number; }
+
+// ...and a named interface that also spells the fallback out.
+interface Described { n: number; describe: (self: object) => string; count: number }
+>n : number
+>describe : (self: object) => string
+>self : object
+>count : number
+
+local asDescribed: Described = obj;
+>asDescribed : Described
+>obj : { describe: (self: object) => string; count: number; n: number; }
+

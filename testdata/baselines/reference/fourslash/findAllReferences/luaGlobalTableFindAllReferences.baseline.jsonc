@@ -1,0 +1,23 @@
+// === findAllReferences ===
+// === /write.tlua ===
+// _G./*FIND ALL REFS*/[|shared|] = 1;
+
+
+
+// === findAllReferences ===
+// === /write.tlua ===
+// _G.[|shared|] = 1;
+
+// === /read.tlua ===
+// local bare = /*FIND ALL REFS*/shared;
+// local qualified = _G.shared;
+
+
+
+// === findAllReferences ===
+// === /write.tlua ===
+// _G.[|shared|] = 1;
+
+// === /read.tlua ===
+// local bare = shared;
+// local qualified = _G./*FIND ALL REFS*/shared;

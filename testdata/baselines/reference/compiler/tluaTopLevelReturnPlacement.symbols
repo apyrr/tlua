@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaTopLevelReturnPlacement.tlua] ////
+
+=== early.tlua ===
+// A chunk returns its value as its last statement; an earlier return is not
+// the module value.
+local M = {};
+>M : Symbol(M, Decl(early.tlua, 2, 5))
+
+return M;
+>M : Symbol(M, Decl(early.tlua, 2, 5))
+
+local after = 1;
+>after : Symbol(after, Decl(early.tlua, 4, 5))
+
+=== nested.tlua ===
+declare flag: boolean;
+>flag : Symbol(flag, Decl(nested.tlua, 0, 7))
+
+if flag then
+>flag : Symbol(flag, Decl(nested.tlua, 0, 7))
+
+  return 1;
+end
+return 2;
+

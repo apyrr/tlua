@@ -1,0 +1,28 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// The `typeof` OPERATOR does not exist in tlua: `type(value)` is the Lua type
+// guard, and the operator has no AST node left to parse into. What follows is a
+// syntax error, not a checked expression.
+//
+// Each use below also pins that the parser keeps making progress: `typeof` does
+// not start an expression, so the statement list skips the token instead of
+// re-entering on it forever.
+
+declare v: string | number;
+declare function f(a: number): string;
+
+typeof v;
+
+local tag = typeof v;
+
+if typeof v == "string" then
+  local s: string = v;
+end
+
+// `typeof` TYPE QUERIES are static syntax with no runtime counterpart, and stay.
+local g: typeof f = f;
+type Q = typeof v;
+local r: string = g(1);

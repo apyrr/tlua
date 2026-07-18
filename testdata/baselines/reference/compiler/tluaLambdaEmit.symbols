@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/tluaLambdaEmit.tlua] ////
+
+=== tluaLambdaEmit.tlua ===
+// A lambda compiles to the Lua function constructor. An expression body
+// becomes a single-line `function(x) return x + 1 end`; a braced body inlines
+// its statements before `end`.
+local function two(): (number, string)
+>two : Symbol(two, Decl(tluaLambdaEmit.tlua, 0, 0))
+
+  return 1, "s"
+end
+local add = (x: number, y: number) => x + y
+>add : Symbol(add, Decl(tluaLambdaEmit.tlua, 6, 5))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 6, 13))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 6, 23))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 6, 13))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 6, 23))
+
+local block = (x: number) => { return x * 2; }
+>block : Symbol(block, Decl(tluaLambdaEmit.tlua, 7, 5))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 7, 15))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 7, 15))
+
+local nested = (x: number) => (y: number) => x + y
+>nested : Symbol(nested, Decl(tluaLambdaEmit.tlua, 8, 5))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 8, 16))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 8, 31))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 8, 16))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 8, 31))
+
+local noParams = () => 42
+>noParams : Symbol(noParams, Decl(tluaLambdaEmit.tlua, 9, 5))
+
+// A concise body is typed as one value, but a direct call in Lua tail
+// position would propagate its whole pack -- the emit parenthesizes it so the
+// runtime truncates to the value the type names.
+local truncated = () => two()
+>truncated : Symbol(truncated, Decl(tluaLambdaEmit.tlua, 14, 5))
+>two : Symbol(two, Decl(tluaLambdaEmit.tlua, 0, 0))
+
+local one: number = truncated()
+>one : Symbol(one, Decl(tluaLambdaEmit.tlua, 15, 5))
+>truncated : Symbol(truncated, Decl(tluaLambdaEmit.tlua, 14, 5))
+
+// A parenthesized object-literal body keeps its parens; `return { ... } end`
+// would also be valid Lua, but the source spelling round-trips.
+local table = () => ({ k = 1 })
+>table : Symbol(table, Decl(tluaLambdaEmit.tlua, 19, 5))
+>k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 22))
+
+print(add(1, 2), block(2), nested(1)(2), noParams(), table().k)
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>add : Symbol(add, Decl(tluaLambdaEmit.tlua, 6, 5))
+>block : Symbol(block, Decl(tluaLambdaEmit.tlua, 7, 5))
+>nested : Symbol(nested, Decl(tluaLambdaEmit.tlua, 8, 5))
+>noParams : Symbol(noParams, Decl(tluaLambdaEmit.tlua, 9, 5))
+>table().k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 22))
+>table : Symbol(table, Decl(tluaLambdaEmit.tlua, 19, 5))
+>k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 22))
+

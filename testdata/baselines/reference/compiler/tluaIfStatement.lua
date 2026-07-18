@@ -1,0 +1,97 @@
+//// [tests/cases/compiler/tluaIfStatement.tlua] ////
+
+//// [tluaIfStatement.tlua]
+function basic(n: number): string
+  if n < 0 then
+    return "neg";
+  end
+  return "other";
+end
+
+function withElse(flag: boolean): number
+  if flag then
+    return 1;
+  else
+    return 2;
+  end
+end
+
+// Parenthesized conditions are ordinary expressions.
+function parens(flag: boolean): number
+  if (flag) then
+    return 1;
+  end
+  return 0;
+end
+
+// The condition may extend past an opening paren.
+function pastParens(a: boolean, b: boolean): number
+  if (a) == b then
+    return 1;
+  end
+  return 0;
+end
+
+// Empty arms are fine.
+function emptyArms(flag: boolean): void
+  if flag then
+  else
+  end
+end
+
+// Nested Lua ifs, each with its own end.
+function nested(a: boolean, b: boolean): number
+  if a then
+    if b then
+      return 3;
+    end
+    return 2;
+  end
+  return 1;
+end
+
+
+//// [tluaIfStatement.lua]
+function basic(n)
+    if n < 0 then
+        return "neg";
+    end
+    return "other";
+end
+function withElse(flag)
+    if flag then
+        return 1;
+    else
+        return 2;
+    end
+end
+-- Parenthesized conditions are ordinary expressions.
+function parens(flag)
+    if (flag) then
+        return 1;
+    end
+    return 0;
+end
+-- The condition may extend past an opening paren.
+function pastParens(a, b)
+    if (a) == b then
+        return 1;
+    end
+    return 0;
+end
+-- Empty arms are fine.
+function emptyArms(flag)
+    if flag then
+    else
+    end
+end
+-- Nested Lua ifs, each with its own end.
+function nested(a, b)
+    if a then
+        if b then
+            return 3;
+        end
+        return 2;
+    end
+    return 1;
+end

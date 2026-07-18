@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/tluaTemplateStrings.tlua] ////
+
+=== tluaTemplateStrings.tlua ===
+// Template literals have no Lua equivalent, so they lower to `..` concatenation.
+// Each substitution is wrapped in tostring() to coerce like JS String()/Luau interp.
+
+local a: number = 5
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+
+local b: string = "hi"
+>b : Symbol(b, Decl(tluaTemplateStrings.tlua, 4, 5))
+
+// No substitutions: just a plain Lua string.
+local plain = `hello world`
+>plain : Symbol(plain, Decl(tluaTemplateStrings.tlua, 7, 5))
+
+// Leading and trailing text around substitutions.
+local s1 = `x${a}y${b}z`
+>s1 : Symbol(s1, Decl(tluaTemplateStrings.tlua, 10, 5))
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+>b : Symbol(b, Decl(tluaTemplateStrings.tlua, 4, 5))
+
+// Substitution only, empty head and tail.
+local s2 = `${a}`
+>s2 : Symbol(s2, Decl(tluaTemplateStrings.tlua, 13, 5))
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+
+// Adjacent substitutions, no text between.
+local s3 = `${a}${b}`
+>s3 : Symbol(s3, Decl(tluaTemplateStrings.tlua, 16, 5))
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+>b : Symbol(b, Decl(tluaTemplateStrings.tlua, 4, 5))
+
+// Text that needs escaping in a Lua string.
+local s4 = `line "one"
+>s4 : Symbol(s4, Decl(tluaTemplateStrings.tlua, 19, 5))
+
+line two ${a}`
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+
+// Nested template inside a substitution.
+local s5 = `outer ${`inner ${a}`} end`
+>s5 : Symbol(s5, Decl(tluaTemplateStrings.tlua, 23, 5))
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+
+// An expression substitution.
+local s6 = `sum is ${a + a}`
+>s6 : Symbol(s6, Decl(tluaTemplateStrings.tlua, 26, 5))
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+
+// Control characters must use Lua's `\ddd` decimal escape, not JS `\uXXXX` (invalid Lua).
+// Here \x1b is an ANSI escape (ESC, 0x1B) and \u{2028} is a non-ASCII separator kept raw.
+local s7 = `color ${a}\x1b[0m`
+>s7 : Symbol(s7, Decl(tluaTemplateStrings.tlua, 30, 5))
+>a : Symbol(a, Decl(tluaTemplateStrings.tlua, 3, 5))
+
+local s8 = `\u{2028}sep`
+>s8 : Symbol(s8, Decl(tluaTemplateStrings.tlua, 31, 5))
+

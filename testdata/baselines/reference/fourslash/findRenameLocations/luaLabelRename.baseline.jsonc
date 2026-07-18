@@ -1,0 +1,7 @@
+// === findRenameLocations ===
+// === /a.tlua ===
+// function f(flag: boolean): number
+//     ::/*RENAME*/[|topRENAME|]::
+//     if flag then goto [|topRENAME|] end
+//     return 0;
+// end

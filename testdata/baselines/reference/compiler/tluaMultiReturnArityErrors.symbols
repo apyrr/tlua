@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/tluaMultiReturnArityErrors.tlua] ////
+
+=== tluaMultiReturnArityErrors.tlua ===
+function need2(): (number, string)
+>need2 : Symbol(need2, Decl(tluaMultiReturnArityErrors.tlua, 0, 0))
+
+  return 1;
+end
+
+function allows2(): (number, string)
+>allows2 : Symbol(allows2, Decl(tluaMultiReturnArityErrors.tlua, 2, 3))
+
+  return 1, "a", true;
+end
+
+function wrongTypes(): (number, string)
+>wrongTypes : Symbol(wrongTypes, Decl(tluaMultiReturnArityErrors.tlua, 6, 3))
+
+  return "a", 1;
+end
+
+function single(): number
+>single : Symbol(single, Decl(tluaMultiReturnArityErrors.tlua, 10, 3))
+
+  return 1, "a";
+end
+
+// A bare return provides zero values against a pack that requires two.
+function bareReturn(): (number, string)
+>bareReturn : Symbol(bareReturn, Decl(tluaMultiReturnArityErrors.tlua, 14, 3))
+
+  return;
+end
+
+// An all-optional pack allows returning nothing at all.
+function allOptional(): (number?, string?)
+>allOptional : Symbol(allOptional, Decl(tluaMultiReturnArityErrors.tlua, 19, 3))
+
+end
+
+// A pack with required values must return.
+function mustReturn(): (number, string?)
+>mustReturn : Symbol(mustReturn, Decl(tluaMultiReturnArityErrors.tlua, 23, 3))
+
+end
+
+// A type predicate cannot start a multiple return type.
+function badPredicate(x: unknown): (x is string, number) {
+>badPredicate : Symbol(badPredicate, Decl(tluaMultiReturnArityErrors.tlua, 27, 3))
+>x : Symbol(x, Decl(tluaMultiReturnArityErrors.tlua, 30, 22))
+>x : Symbol(x, Decl(tluaMultiReturnArityErrors.tlua, 30, 22))
+
+  return type(x) == "string", 1;
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaMultiReturnArityErrors.tlua, 30, 22))
+}
+

@@ -1,0 +1,4 @@
+// === findRenameLocations ===
+// === /file1.tlua ===
+// local /*RENAME*/[|testRENAME|] = "foo";
+// console.log([|testRENAME|]);

@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/tluaLocalDeclarations.tlua] ////
+
+=== tluaLocalDeclarations.tlua ===
+local plain;
+>plain : Symbol(plain, Decl(tluaLocalDeclarations.tlua, 0, 5))
+
+plain = 1;
+>plain : Symbol(plain, Decl(tluaLocalDeclarations.tlua, 0, 5))
+
+local typed: number;
+>typed : Symbol(typed, Decl(tluaLocalDeclarations.tlua, 3, 5))
+
+typed = plain;
+>typed : Symbol(typed, Decl(tluaLocalDeclarations.tlua, 3, 5))
+>plain : Symbol(plain, Decl(tluaLocalDeclarations.tlua, 0, 5))
+
+local initialized = typed;
+>initialized : Symbol(initialized, Decl(tluaLocalDeclarations.tlua, 6, 5))
+>typed : Symbol(typed, Decl(tluaLocalDeclarations.tlua, 3, 5))
+
+local typedInitialized: number = initialized;
+>typedInitialized : Symbol(typedInitialized, Decl(tluaLocalDeclarations.tlua, 7, 5))
+>initialized : Symbol(initialized, Decl(tluaLocalDeclarations.tlua, 6, 5))
+
+typedInitialized = typedInitialized + 1;
+>typedInitialized : Symbol(typedInitialized, Decl(tluaLocalDeclarations.tlua, 7, 5))
+>typedInitialized : Symbol(typedInitialized, Decl(tluaLocalDeclarations.tlua, 7, 5))
+
+local literal = "a";
+>literal : Symbol(literal, Decl(tluaLocalDeclarations.tlua, 10, 5))
+
+literal = "b";
+>literal : Symbol(literal, Decl(tluaLocalDeclarations.tlua, 10, 5))
+

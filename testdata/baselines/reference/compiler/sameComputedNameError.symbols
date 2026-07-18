@@ -1,0 +1,17 @@
+//// [tests/cases/compiler/sameComputedNameError.tlua] ////
+
+=== sameComputedNameError.tlua ===
+declare s: unique symbol;
+>s : Symbol(s, Decl(sameComputedNameError.tlua, 0, 7))
+
+class A {
+  [s]: number = 1;
+>s : Symbol(s, Decl(sameComputedNameError.tlua, 0, 7))
+}
+
+class B extends A {
+  [s]: string = "x";
+>s : Symbol(s, Decl(sameComputedNameError.tlua, 0, 7))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+}
+

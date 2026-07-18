@@ -1,0 +1,53 @@
+//// [tests/cases/compiler/tluaDottedFunctionDeclarations.tlua] ////
+
+=== tluaDottedFunctionDeclarations.tlua ===
+local M = {};
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+
+function M.identity(a: number): number
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+>identity : Symbol(identity, Decl(tluaDottedFunctionDeclarations.tlua, 0, 13))
+>a : Symbol(a, Decl(tluaDottedFunctionDeclarations.tlua, 2, 20))
+
+  return a;
+>a : Symbol(a, Decl(tluaDottedFunctionDeclarations.tlua, 2, 20))
+
+end
+
+function M.add(a: number, b: number): number
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+>add : Symbol(add, Decl(tluaDottedFunctionDeclarations.tlua, 4, 3))
+>a : Symbol(a, Decl(tluaDottedFunctionDeclarations.tlua, 6, 15))
+>b : Symbol(b, Decl(tluaDottedFunctionDeclarations.tlua, 6, 25))
+
+  return M.identity(a) + b;
+>M.identity : Symbol(identity, Decl(tluaDottedFunctionDeclarations.tlua, 0, 13))
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+>identity : Symbol(identity, Decl(tluaDottedFunctionDeclarations.tlua, 0, 13))
+>a : Symbol(a, Decl(tluaDottedFunctionDeclarations.tlua, 6, 15))
+>b : Symbol(b, Decl(tluaDottedFunctionDeclarations.tlua, 6, 25))
+
+end
+
+local early = M.add(1, 2);
+>early : Symbol(early, Decl(tluaDottedFunctionDeclarations.tlua, 10, 5))
+>M.add : Symbol(add, Decl(tluaDottedFunctionDeclarations.tlua, 4, 3))
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+>add : Symbol(add, Decl(tluaDottedFunctionDeclarations.tlua, 4, 3))
+
+local late = M.identity(3);
+>late : Symbol(late, Decl(tluaDottedFunctionDeclarations.tlua, 11, 5))
+>M.identity : Symbol(identity, Decl(tluaDottedFunctionDeclarations.tlua, 0, 13))
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+>identity : Symbol(identity, Decl(tluaDottedFunctionDeclarations.tlua, 0, 13))
+
+local bad = M.add("nope", 2);
+>bad : Symbol(bad, Decl(tluaDottedFunctionDeclarations.tlua, 13, 5))
+>M.add : Symbol(add, Decl(tluaDottedFunctionDeclarations.tlua, 4, 3))
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+>add : Symbol(add, Decl(tluaDottedFunctionDeclarations.tlua, 4, 3))
+
+local missing = M.nonexistent(1);
+>missing : Symbol(missing, Decl(tluaDottedFunctionDeclarations.tlua, 14, 5))
+>M : Symbol(M, Decl(tluaDottedFunctionDeclarations.tlua, 0, 5))
+

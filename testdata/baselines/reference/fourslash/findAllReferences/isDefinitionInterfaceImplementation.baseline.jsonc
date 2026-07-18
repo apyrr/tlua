@@ -1,0 +1,27 @@
+// === findAllReferences ===
+// === /isDefinitionInterfaceImplementation.tlua ===
+// interface I {
+//     /*FIND ALL REFS*/[|M|](): void;
+// }
+// 
+// class C implements I {
+//     M() { }
+// }
+// 
+// ({} as I).[|M|]();
+// ({} as C).M();
+
+
+
+// === findAllReferences ===
+// === /isDefinitionInterfaceImplementation.tlua ===
+// interface I {
+//     M(): void;
+// }
+// 
+// class C implements I {
+//     /*FIND ALL REFS*/M() { }
+// }
+// 
+// ({} as I).M();
+// ({} as C).M();

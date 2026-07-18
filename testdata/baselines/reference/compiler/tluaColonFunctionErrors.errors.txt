@@ -1,0 +1,76 @@
+tluaColonFunctionErrors.tlua(11,11): error TS2300: Duplicate identifier ':'.
+tluaColonFunctionErrors.tlua(11,18): error TS2300: Duplicate identifier 'self'.
+tluaColonFunctionErrors.tlua(15,12): error TS7010: 'deep', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaColonFunctionErrors.tlua(15,16): error TS1005: '(' expected.
+tluaColonFunctionErrors.tlua(15,17): error TS2304: Cannot find name 'f'.
+tluaColonFunctionErrors.tlua(15,20): error TS1005: ';' expected.
+tluaColonFunctionErrors.tlua(16,1): error TS1109: Expression expected.
+tluaColonFunctionErrors.tlua(18,13): error TS1005: '(' expected.
+tluaColonFunctionErrors.tlua(18,14): error TS2304: Cannot find name 'b'.
+tluaColonFunctionErrors.tlua(18,15): error TS1144: '{' or ';' expected.
+tluaColonFunctionErrors.tlua(19,1): error TS1005: '=>' expected.
+tluaColonFunctionErrors.tlua(22,19): error TS1005: '(' expected.
+tluaColonFunctionErrors.tlua(22,20): error TS2304: Cannot find name 'f'.
+tluaColonFunctionErrors.tlua(23,1): error TS1005: '=>' expected.
+tluaColonFunctionErrors.tlua(26,10): error TS2304: Cannot find name 'Unknown'.
+
+
+==== tluaColonFunctionErrors.tlua (15 errors) ====
+    local M = {};
+    
+    function M:bar(v: number): number
+      return v;
+    end
+    
+    // The colon call form supplies the receiver implicitly.
+    M:bar(1);
+    
+    // `self` is already declared by the colon.
+    function M:clash(self: number): void
+              ~
+!!! error TS2300: Duplicate identifier ':'.
+                     ~~~~
+!!! error TS2300: Duplicate identifier 'self'.
+    end
+    
+    // At most one colon segment, and nothing may follow it.
+    function M:deep.f(): void
+               ~~~~
+!!! error TS7010: 'deep', which lacks return-type annotation, implicitly has an 'any' return type.
+                   ~
+!!! error TS1005: '(' expected.
+                    ~
+!!! error TS2304: Cannot find name 'f'.
+                       ~
+!!! error TS1005: ';' expected.
+    end
+    ~~~
+!!! error TS1109: Expression expected.
+    
+    function M:a:b(): void
+                ~
+!!! error TS1005: '(' expected.
+                 ~
+!!! error TS2304: Cannot find name 'b'.
+                  ~
+!!! error TS1144: '{' or ';' expected.
+    end
+    ~~~
+!!! error TS1005: '=>' expected.
+    
+    // `local function` takes a plain name.
+    local function Bad:f(): void
+                      ~
+!!! error TS1005: '(' expected.
+                       ~
+!!! error TS2304: Cannot find name 'f'.
+    end
+    ~~~
+!!! error TS1005: '=>' expected.
+    
+    // Unknown base.
+    function Unknown:f(): void
+             ~~~~~~~
+!!! error TS2304: Cannot find name 'Unknown'.
+    end
+    

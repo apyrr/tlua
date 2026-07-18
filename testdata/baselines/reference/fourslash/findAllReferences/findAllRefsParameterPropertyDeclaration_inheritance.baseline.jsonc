@@ -1,0 +1,45 @@
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration_inheritance.tlua ===
+// class C {
+// 	constructor(public /*FIND ALL REFS*/x: string) {
+// 		x;
+// 	}
+// }
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration_inheritance.tlua ===
+// class C {
+// 	constructor(public x: string) {
+// 		/*FIND ALL REFS*/x;
+// 	}
+// }
+// class D extends C {
+// --- (line: 7) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration_inheritance.tlua ===
+// --- (line: 3) skipped ---
+// 	}
+// }
+// class D extends C {
+// 	constructor(public /*FIND ALL REFS*/x: string) {
+// 		super(x);
+// 	}
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsParameterPropertyDeclaration_inheritance.tlua ===
+// --- (line: 4) skipped ---
+// }
+// class D extends C {
+// 	constructor(public x: string) {
+// 		super(/*FIND ALL REFS*/x);
+// 	}
+// }

@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaNoAwait.tlua] ////
+
+=== tluaNoAwait.tlua ===
+// `await` is removed: it is an ordinary identifier everywhere — including
+// async function bodies and module top level — and async functions emit as
+// plain functions (no __awaiter, no transform).
+
+declare function compute(): number;
+>compute : Symbol(compute, Decl(tluaNoAwait.tlua, 0, 0))
+
+async function f(): number
+>f : Symbol(f, Decl(tluaNoAwait.tlua, 4, 35))
+
+  local await = compute();
+>await : Symbol(await, Decl(tluaNoAwait.tlua, 7, 7))
+>compute : Symbol(compute, Decl(tluaNoAwait.tlua, 0, 0))
+
+  return await;
+>await : Symbol(await, Decl(tluaNoAwait.tlua, 7, 7))
+
+end
+
+// `await expr` no longer parses as a unary operator.
+async function g(): number
+>g : Symbol(g, Decl(tluaNoAwait.tlua, 9, 3))
+
+  return await f();
+>f : Symbol(f, Decl(tluaNoAwait.tlua, 4, 35))
+
+end
+
+// Ordinary identifier at top level of a module.
+local await = 1;
+>await : Symbol(await, Decl(tluaNoAwait.tlua, 17, 5))
+
+local usesAwait = await + 1;
+>usesAwait : Symbol(usesAwait, Decl(tluaNoAwait.tlua, 18, 5))
+>await : Symbol(await, Decl(tluaNoAwait.tlua, 17, 5))
+
+// `await using` is removed with it.
+function h(): void {
+>h : Symbol(h, Decl(tluaNoAwait.tlua, 18, 28))
+
+  await using r = compute();
+>await : Symbol(await, Decl(tluaNoAwait.tlua, 17, 5))
+>compute : Symbol(compute, Decl(tluaNoAwait.tlua, 0, 0))
+}
+

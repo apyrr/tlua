@@ -1,0 +1,41 @@
+// === findAllReferences ===
+// === /findAllRefsForObjectLiteralProperties.tlua ===
+// local x = {
+//     /*FIND ALL REFS*/[|property|] = {}
+// };
+// 
+// x.[|property|];
+// 
+// local {property: pVar} = x;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForObjectLiteralProperties.tlua ===
+// local x = {
+//     [|property|] = {}
+// };
+// 
+// x./*FIND ALL REFS*/[|property|];
+// 
+// local {property: pVar} = x;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForObjectLiteralProperties.tlua ===
+// --- (line: 3) skipped ---
+// 
+// x.property;
+// 
+// /*FIND ALL REFS*/local {property: pVar} = x;
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForObjectLiteralProperties.tlua ===
+// --- (line: 3) skipped ---
+// 
+// x.property;
+// 
+// local {/*FIND ALL REFS*/property: pVar} = x;

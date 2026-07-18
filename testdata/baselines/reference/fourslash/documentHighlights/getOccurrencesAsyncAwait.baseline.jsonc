@@ -1,0 +1,56 @@
+// === documentHighlights ===
+// === /getOccurrencesAsyncAwait.tlua ===
+// /*HIGHLIGHTS*/[|async|] function f() {
+//  await 100;
+//  await await 200;
+// class Foo {
+// --- (line: 5) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAsyncAwait.tlua ===
+// async function f() {
+//  /*HIGHLIGHTS*/await 100;
+//  await await 200;
+// class Foo {
+//     async memberFunction() {
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAsyncAwait.tlua ===
+// async function f() {
+//  await 100;
+//  /*HIGHLIGHTS*/await await 200;
+// class Foo {
+//     async memberFunction() {
+//         await 1;
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAsyncAwait.tlua ===
+// async function f() {
+//  await 100;
+//  await /*HIGHLIGHTS*/await 200;
+// class Foo {
+//     async memberFunction() {
+//         await 1;
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /getOccurrencesAsyncAwait.tlua ===
+// --- (line: 5) skipped ---
+//         await 1;
+//     }
+// }
+//  return /*HIGHLIGHTS*/await async function () {
+//    await 300;
+//  }
+// }
+// --- (line: 13) skipped ---

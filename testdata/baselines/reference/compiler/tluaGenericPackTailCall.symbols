@@ -1,0 +1,85 @@
+//// [tests/cases/compiler/tluaGenericPackTailCall.tlua] ////
+
+=== tluaGenericPackTailCall.tlua ===
+declare function two(): (number, string);
+>two : Symbol(two, Decl(tluaGenericPackTailCall.tlua, 0, 0))
+
+declare function sinkNumber(...: any): number;
+>sinkNumber : Symbol(sinkNumber, Decl(tluaGenericPackTailCall.tlua, 0, 41))
+> : Symbol((Missing), Decl(tluaGenericPackTailCall.tlua, 1, 28))
+
+declare function sink3(a: boolean, b: number, c: string): void;
+>sink3 : Symbol(sink3, Decl(tluaGenericPackTailCall.tlua, 1, 46))
+>a : Symbol(a, Decl(tluaGenericPackTailCall.tlua, 2, 23))
+>b : Symbol(b, Decl(tluaGenericPackTailCall.tlua, 2, 34))
+>c : Symbol(c, Decl(tluaGenericPackTailCall.tlua, 2, 45))
+
+// A generic, overloaded tail call expands its resolved result pack.
+local r = sinkNumber(pcall(two));
+>r : Symbol(r, Decl(tluaGenericPackTailCall.tlua, 5, 5))
+>sinkNumber : Symbol(sinkNumber, Decl(tluaGenericPackTailCall.tlua, 0, 41))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>two : Symbol(two, Decl(tluaGenericPackTailCall.tlua, 0, 0))
+
+sink3(pcall(two));
+>sink3 : Symbol(sink3, Decl(tluaGenericPackTailCall.tlua, 1, 46))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>two : Symbol(two, Decl(tluaGenericPackTailCall.tlua, 0, 0))
+
+// A non-generic tail call keeps the existing expansion path.
+declare function sink2(a: number, b: string): void;
+>sink2 : Symbol(sink2, Decl(tluaGenericPackTailCall.tlua, 6, 18))
+>a : Symbol(a, Decl(tluaGenericPackTailCall.tlua, 9, 23))
+>b : Symbol(b, Decl(tluaGenericPackTailCall.tlua, 9, 33))
+
+sink2(two());
+>sink2 : Symbol(sink2, Decl(tluaGenericPackTailCall.tlua, 6, 18))
+>two : Symbol(two, Decl(tluaGenericPackTailCall.tlua, 0, 0))
+
+// A generic scalar return still declines tail expansion, allowing the outer
+// parameter type to contextually type the function passed through id.
+declare function id<T>(x: T): T;
+>id : Symbol(id, Decl(tluaGenericPackTailCall.tlua, 10, 13))
+>T : Symbol(T, Decl(tluaGenericPackTailCall.tlua, 14, 20))
+>x : Symbol(x, Decl(tluaGenericPackTailCall.tlua, 14, 23))
+>T : Symbol(T, Decl(tluaGenericPackTailCall.tlua, 14, 20))
+>T : Symbol(T, Decl(tluaGenericPackTailCall.tlua, 14, 20))
+
+declare function outer(callback: (value: number) => number): void;
+>outer : Symbol(outer, Decl(tluaGenericPackTailCall.tlua, 14, 32))
+>callback : Symbol(callback, Decl(tluaGenericPackTailCall.tlua, 15, 23))
+>value : Symbol(value, Decl(tluaGenericPackTailCall.tlua, 15, 34))
+
+outer(id(function(value) return value; end));
+>outer : Symbol(outer, Decl(tluaGenericPackTailCall.tlua, 14, 32))
+>id : Symbol(id, Decl(tluaGenericPackTailCall.tlua, 10, 13))
+>value : Symbol(value, Decl(tluaGenericPackTailCall.tlua, 16, 18))
+>value : Symbol(value, Decl(tluaGenericPackTailCall.tlua, 16, 18))
+
+// Passing overloaded pcall as a value is separate from tail-pack expansion.
+local nestedOk, nestedInnerOk, nestedValue = pcall(pcall, two);
+>nestedOk : Symbol(nestedOk, Decl(tluaGenericPackTailCall.tlua, 19, 5))
+>nestedInnerOk : Symbol(nestedInnerOk, Decl(tluaGenericPackTailCall.tlua, 19, 15))
+>nestedValue : Symbol(nestedValue, Decl(tluaGenericPackTailCall.tlua, 19, 30))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>two : Symbol(two, Decl(tluaGenericPackTailCall.tlua, 0, 0))
+
+// A failed overload resolution must not treat its synthetic intersection
+// return as a pack.
+declare function f(x: number): (number, string);
+>f : Symbol(f, Decl(tluaGenericPackTailCall.tlua, 19, 63), Decl(tluaGenericPackTailCall.tlua, 23, 48))
+>x : Symbol(x, Decl(tluaGenericPackTailCall.tlua, 23, 19))
+
+declare function f(x: string): (boolean, number);
+>f : Symbol(f, Decl(tluaGenericPackTailCall.tlua, 19, 63), Decl(tluaGenericPackTailCall.tlua, 23, 48))
+>x : Symbol(x, Decl(tluaGenericPackTailCall.tlua, 24, 19))
+
+declare function sink(...: any): void;
+>sink : Symbol(sink, Decl(tluaGenericPackTailCall.tlua, 24, 49))
+> : Symbol((Missing), Decl(tluaGenericPackTailCall.tlua, 25, 22))
+
+sink(f(true));
+>sink : Symbol(sink, Decl(tluaGenericPackTailCall.tlua, 24, 49))
+>f : Symbol(f, Decl(tluaGenericPackTailCall.tlua, 19, 63), Decl(tluaGenericPackTailCall.tlua, 23, 48))
+

@@ -1,0 +1,39 @@
+// @strict: true
+// @noEmit: true
+
+// Number and string index signatures are fully independent and may coexist
+// with no "number index must be assignable to string index" constraint.
+interface Both {
+  [k: number]: string;
+  [k: string]: number;
+}
+declare b: Both;
+local n: string = b[1];    // number index → string
+local s: number = b["x"];  // string index → number
+
+// A number index signature serves number-key access.
+interface NumOnly {
+  [k: number]: boolean;
+}
+local nb: boolean = (({} as NumOnly))[0];
+
+// A string-only index does NOT serve number-key access (disjoint).
+interface StrOnly {
+  [k: string]: boolean;
+}
+declare so: StrOnly;
+local bad = so[0]; // error: number key not covered by string index
+local okStr: boolean = so["x"];
+
+// Value-type mismatches between the two signatures are independent, not
+// forced to agree (TS requires the number value assignable to the string
+// value; tlua does not).
+interface Mixed {
+  [k: number]: string;
+  [k: string]: boolean;
+}
+declare m: Mixed;
+local mn: string = m[0];
+local ms: boolean = m["x"];
+
+local es = {n, s, nb, bad, okStr, mn, ms};

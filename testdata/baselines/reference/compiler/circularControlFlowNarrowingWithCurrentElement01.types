@@ -1,0 +1,125 @@
+//// [tests/cases/compiler/circularControlFlowNarrowingWithCurrentElement01.tlua] ////
+
+=== circularControlFlowNarrowingWithCurrentElement01.tlua ===
+class A {
+>class : any
+>A : any
+
+  next: A | null = null;
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>A : any
+>null = null : nil
+
+  constructor(readonly children: (A | null)[]) {}
+>constructor(readonly children: (A | null)[] : any
+>constructor(readonly children: (A | null) : any
+>constructor : any
+>readonly : any
+>children : any
+>(A : any
+>A : any
+> : any
+}
+
+function getNodes(): A[] {
+>getNodes : () => A[]
+
+  local out: A[] = [];
+>out : A[]
+>[] : any
+> : any
+> : any
+
+  local current: A | null = new A([]);
+>current : any
+>new A([]) : any
+>A : any
+
+  while (current ~= null) {
+>current ~= null : boolean
+>current : any
+
+    local firstChild = null;
+>firstChild : any
+
+    if (out.length) {
+>out.length : any
+>out : A[]
+>length : any
+
+      current = current.next;
+>current = current.next : any
+>current : any
+>current.next : any
+>current : any
+>next : any
+
+      continue;
+    }
+
+    for i = 0, current.children.length - 1 do
+>i : number
+>0 : 0
+>current.children.length - 1 : number
+>current.children.length : any
+>current.children : any
+>current : any
+>children : any
+>length : any
+>1 : 1
+
+      local child = current.children[i];
+>child : any
+>current.children[i] : any
+>current.children : any
+>current : any
+>children : any
+>i : number
+
+      if (child) {
+>child : any
+
+        if (!firstChild) {
+>!firstChild : boolean
+>firstChild : any
+
+          firstChild = child;
+>firstChild = child : any
+>firstChild : any
+>child : any
+
+          firstChild.next = current.next;
+>firstChild.next = current.next : any
+>firstChild.next : any
+>firstChild : any
+>next : any
+>current.next : any
+>current : any
+>next : any
+        }
+
+        child.next = current.next;
+>child.next = current.next : any
+>child.next : any
+>child : any
+>next : any
+>current.next : any
+>current : any
+>next : any
+      }
+    end
+
+    current = firstChild || current.next;
+>current = firstChild || current.next : any
+>current : any
+>firstChild || current.next : any
+>firstChild : any
+>current.next : any
+>current : any
+>next : any
+  }
+
+  return out;
+>out : A[]
+}
+

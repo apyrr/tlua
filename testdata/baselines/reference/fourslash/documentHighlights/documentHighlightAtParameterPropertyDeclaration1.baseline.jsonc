@@ -1,0 +1,116 @@
+// === documentHighlights ===
+// === /file1.tlua ===
+// class Foo {
+//     constructor(private /*HIGHLIGHTS*/privateParam: number,
+//         public publicParam: string,
+//         protected protectedParam: boolean) {
+// 
+// --- (line: 6) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// class Foo {
+//     constructor(private privateParam: number,
+//         public /*HIGHLIGHTS*/publicParam: string,
+//         protected protectedParam: boolean) {
+// 
+//         local localPrivate = privateParam;
+// --- (line: 7) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// class Foo {
+//     constructor(private privateParam: number,
+//         public publicParam: string,
+//         protected /*HIGHLIGHTS*/protectedParam: boolean) {
+// 
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// --- (line: 8) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// class Foo {
+//     constructor(private privateParam: number,
+//         public publicParam: string,
+//         protected protectedParam: boolean) {
+// 
+//         local localPrivate = /*HIGHLIGHTS*/privateParam;
+//         this.privateParam += 10;
+// 
+//         local localPublic = publicParam;
+// --- (line: 10) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 3) skipped ---
+//         protected protectedParam: boolean) {
+// 
+//         local localPrivate = privateParam;
+//         this./*HIGHLIGHTS*/privateParam += 10;
+// 
+//         local localPublic = publicParam;
+//         this.publicParam += " Hello!";
+// --- (line: 11) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 5) skipped ---
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// 
+//         local localPublic = /*HIGHLIGHTS*/publicParam;
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = protectedParam;
+// --- (line: 13) skipped ---
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 6) skipped ---
+//         this.privateParam += 10;
+// 
+//         local localPublic = publicParam;
+//         this./*HIGHLIGHTS*/publicParam += " Hello!";
+// 
+//         local localProtected = protectedParam;
+//         this.protectedParam = false;
+//     }
+// }
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 8) skipped ---
+//         local localPublic = publicParam;
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = /*HIGHLIGHTS*/protectedParam;
+//         this.protectedParam = false;
+//     }
+// }
+
+
+
+// === documentHighlights ===
+// === /file1.tlua ===
+// --- (line: 9) skipped ---
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = protectedParam;
+//         this./*HIGHLIGHTS*/protectedParam = false;
+//     }
+// }

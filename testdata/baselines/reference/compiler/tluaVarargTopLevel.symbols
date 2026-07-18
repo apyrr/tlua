@@ -1,0 +1,45 @@
+//// [tests/cases/compiler/tluaVarargTopLevel.tlua] ////
+
+=== tluaVarargTopLevel.tlua ===
+declare function takesAny(...: any): void;
+>takesAny : Symbol(takesAny, Decl(tluaVarargTopLevel.tlua, 0, 0))
+> : Symbol((Missing), Decl(tluaVarargTopLevel.tlua, 0, 26))
+
+declare function takesNumbers(...: number): void;
+>takesNumbers : Symbol(takesNumbers, Decl(tluaVarargTopLevel.tlua, 0, 42))
+> : Symbol((Missing), Decl(tluaVarargTopLevel.tlua, 1, 30))
+
+// The main chunk is itself a vararg function, so top-level `...` is legal and
+// its pack is `(...any)`. This is not the 100035 error case.
+local first = ...;
+>first : Symbol(first, Decl(tluaVarargTopLevel.tlua, 5, 5))
+
+local a, b = ...;
+>a : Symbol(a, Decl(tluaVarargTopLevel.tlua, 6, 5))
+>b : Symbol(b, Decl(tluaVarargTopLevel.tlua, 6, 8))
+
+// It expands in a table constructor tail like any other pack.
+local args = {...};
+>args : Symbol(args, Decl(tluaVarargTopLevel.tlua, 9, 5))
+
+// And forwards into a rest parameter.
+takesAny(...);
+>takesAny : Symbol(takesAny, Decl(tluaVarargTopLevel.tlua, 0, 0))
+
+takesAny("x", ...);
+>takesAny : Symbol(takesAny, Decl(tluaVarargTopLevel.tlua, 0, 0))
+
+// The chunk pack is `any`, so it satisfies any element type.
+takesNumbers(...);
+>takesNumbers : Symbol(takesNumbers, Decl(tluaVarargTopLevel.tlua, 0, 42))
+
+// A nested function does not capture the chunk's pack: only the directly
+// enclosing vararg function may use `...`.
+function inner(): void
+>inner : Symbol(inner, Decl(tluaVarargTopLevel.tlua, 16, 18))
+
+  local nope = ...;
+>nope : Symbol(nope, Decl(tluaVarargTopLevel.tlua, 21, 7))
+
+end
+

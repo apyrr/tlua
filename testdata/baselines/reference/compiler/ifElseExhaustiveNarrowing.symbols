@@ -1,0 +1,83 @@
+//// [tests/cases/compiler/ifElseExhaustiveNarrowing.tlua] ////
+
+=== ifElseExhaustiveNarrowing.tlua ===
+interface ClientSource {
+>ClientSource : Symbol(ClientSource, Decl(ifElseExhaustiveNarrowing.tlua, 0, 0))
+
+  type: "client";
+>type : Symbol(ClientSource.type, Decl(ifElseExhaustiveNarrowing.tlua, 0, 24))
+}
+
+interface ServiceSource {
+>ServiceSource : Symbol(ServiceSource, Decl(ifElseExhaustiveNarrowing.tlua, 2, 1))
+
+  type: "service";
+>type : Symbol(ServiceSource.type, Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+}
+
+// An if/elseif chain over a discriminant with a never-typed sink in the final
+// else is the exhaustiveness idiom now that switch is gone.
+function isDisplaySource(source: ClientSource | ServiceSource | nil): boolean
+>isDisplaySource : Symbol(isDisplaySource, Decl(ifElseExhaustiveNarrowing.tlua, 6, 1))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 10, 25))
+>ClientSource : Symbol(ClientSource, Decl(ifElseExhaustiveNarrowing.tlua, 0, 0))
+>ServiceSource : Symbol(ServiceSource, Decl(ifElseExhaustiveNarrowing.tlua, 2, 1))
+
+  if source == nil then
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 10, 25))
+
+    return false;
+  elseif source.type == "client" then
+>source.type : Symbol(type, Decl(ifElseExhaustiveNarrowing.tlua, 0, 24), Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 10, 25))
+>type : Symbol(type, Decl(ifElseExhaustiveNarrowing.tlua, 0, 24), Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+
+    return true;
+  elseif source.type == "service" then
+>source.type : Symbol(ServiceSource.type, Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 10, 25))
+>type : Symbol(ServiceSource.type, Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+
+    return false;
+  else
+    neverReached(source);
+>neverReached : Symbol(neverReached, Decl(ifElseExhaustiveNarrowing.tlua, 34, 3))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 10, 25))
+
+    return false;
+  end
+end
+
+// The optional-chain discriminant works too when the nil arm comes last: each
+// arm re-evaluates the chain against the narrowed receiver.
+function viaChain(source: ClientSource | ServiceSource | nil): boolean
+>viaChain : Symbol(viaChain, Decl(ifElseExhaustiveNarrowing.tlua, 21, 3))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 25, 18))
+>ClientSource : Symbol(ClientSource, Decl(ifElseExhaustiveNarrowing.tlua, 0, 0))
+>ServiceSource : Symbol(ServiceSource, Decl(ifElseExhaustiveNarrowing.tlua, 2, 1))
+
+  if source?.type == "client" then
+>source?.type : Symbol(type, Decl(ifElseExhaustiveNarrowing.tlua, 0, 24), Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 25, 18))
+>type : Symbol(type, Decl(ifElseExhaustiveNarrowing.tlua, 0, 24), Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+
+    return true;
+  elseif source?.type == "service" then
+>source?.type : Symbol(ServiceSource.type, Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 25, 18))
+>type : Symbol(ServiceSource.type, Decl(ifElseExhaustiveNarrowing.tlua, 4, 25))
+
+    return false;
+  else
+    local rest: nil = source;
+>rest : Symbol(rest, Decl(ifElseExhaustiveNarrowing.tlua, 31, 9))
+>source : Symbol(source, Decl(ifElseExhaustiveNarrowing.tlua, 25, 18))
+
+    return false;
+  end
+end
+
+function neverReached(_v: never): void {}
+>neverReached : Symbol(neverReached, Decl(ifElseExhaustiveNarrowing.tlua, 34, 3))
+>_v : Symbol(_v, Decl(ifElseExhaustiveNarrowing.tlua, 36, 22))
+

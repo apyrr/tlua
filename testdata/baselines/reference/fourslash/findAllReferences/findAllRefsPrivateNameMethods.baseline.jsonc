@@ -1,0 +1,47 @@
+// === findAllReferences ===
+// === /findAllRefsPrivateNameMethods.tlua ===
+// class C {
+//     /*FIND ALL REFS*/#foo(){ }
+//     constructor() {
+//         this.#foo();
+//     }
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsPrivateNameMethods.tlua ===
+// class C {
+//     #foo(){ }
+//     constructor() {
+//         this./*FIND ALL REFS*/#foo();
+//     }
+// }
+// class D extends C {
+// --- (line: 8) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsPrivateNameMethods.tlua ===
+// --- (line: 10) skipped ---
+//     }
+// }
+// class E {
+//     /*FIND ALL REFS*/#foo(){ }
+//     constructor() {
+//         this.#foo();
+//     }
+// }
+
+
+
+// === findAllReferences ===
+// === /findAllRefsPrivateNameMethods.tlua ===
+// --- (line: 12) skipped ---
+// class E {
+//     #foo(){ }
+//     constructor() {
+//         this./*FIND ALL REFS*/#foo();
+//     }
+// }

@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/tluaGenericForPack.tlua] ////
+
+=== tluaGenericForPack.tlua ===
+// Overloaded iterators union their return packs.
+declare function overloaded(s: string, c: number): (number, string);
+>overloaded : { (s: string, c: number): (number, string); (s: string, c: string): (string, number); }
+>s : string
+>c : number
+
+declare function overloaded(s: string, c: string): (string, number);
+>overloaded : { (s: string, c: number): (number, string); (s: string, c: string): (string, number); }
+>s : string
+>c : string
+
+function useOverloaded(): void
+>useOverloaded : () => void
+
+  for k, v in overloaded do
+>k : string | number
+>v : string | number
+>overloaded : { (s: string, c: number): (number, string); (s: string, c: string): (string, number); }
+
+    k;
+>k : string | number
+
+    v;
+>v : string | number
+
+  end
+end
+
+// A variadic pack tail projects with nil.
+declare function variadicIter(s: void, c: number): (number, ...string);
+>variadicIter : (s: void, c: number) => (number, ...string)
+>s : void
+>c : number
+
+function useVariadic(): void
+>useVariadic : () => void
+
+  for k, v, w in variadicIter do
+>k : number
+>v : string | nil
+>w : string | nil
+>variadicIter : (s: void, c: number) => (number, ...string)
+
+    k;
+>k : number
+
+    v;
+>v : string | nil
+
+    w;
+>w : string | nil
+
+  end
+end
+
+// Definite assignment: the names are assigned by the loop.
+declare function pair(t: number[], i: number): (number, number?);
+>pair : (t: number[], i: number) => (number, number?)
+>t : number[]
+>i : number
+
+function defAssign(t: number[]): number
+>defAssign : (t: number[]) => number
+>t : number[]
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  for k, v in pair, t, nil do
+>k : number
+>v : number | nil
+>pair, t, nil : (t: number[], i: number) => (number, number?), number[], nil
+>pair : (t: number[], i: number) => (number, number?)
+>t : number[]
+
+    total = total + k;
+>total = total + k : number
+>total : number
+>total + k : number
+>total : number
+>k : number
+
+    if v ~= nil then
+>v ~= nil : boolean
+>v : number | nil
+
+      total = total + v;
+>total = total + v : number
+>total : number
+>total + v : number
+>total : number
+>v : number
+
+    end
+  end
+  return total;
+>total : number
+
+end
+

@@ -1,0 +1,74 @@
+tluaColonCallErrors.tlua(15,7): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaColonCallErrors.tlua(19,3): error TS2554: Expected 2 arguments, but got 1.
+tluaColonCallErrors.tlua(20,10): error TS2554: Expected 2 arguments, but got 3.
+tluaColonCallErrors.tlua(32,1): error TS2345: Argument of type 'Mislabeled' is not assignable to parameter of type 'Counter'.
+  Types of property 'count' are incompatible.
+    Type 'string' is not assignable to type 'number'.
+tluaColonCallErrors.tlua(36,12): error TS2554: Expected 1 arguments, but got 2.
+tluaColonCallErrors.tlua(39,5): error TS2349: This expression is not callable.
+  Type 'String' has no call signatures.
+tluaColonCallErrors.tlua(42,3): error TS2339: Property 'absent' does not exist on type '{ count: number; inc(self: any, by: number): number; }'.
+
+
+==== tluaColonCallErrors.tlua (7 errors) ====
+    local M = { count = 0 };
+    
+    function M:inc(by: number): number
+      self.count = self.count + by;
+      return self.count;
+    end
+    
+    interface Ops {
+      noSelf(a: number): number;
+      tag: string;
+    }
+    declare ops: Ops;
+    
+    // Wrong argument type.
+    M:inc("x");
+          ~~~
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    
+    // Arity: the receiver fills the first parameter, so one explicit argument is
+    // expected here.
+    M:inc();
+      ~~~
+!!! error TS2554: Expected 2 arguments, but got 1.
+!!! related TS6210 tluaColonCallErrors.tlua:3:16: An argument for 'by' was not provided.
+    M:inc(1, 2);
+             ~
+!!! error TS2554: Expected 2 arguments, but got 3.
+    
+    // The receiver is checked against the declared self parameter, and the error
+    // lands on the receiver.
+    interface Counter {
+      count: number;
+    }
+    interface Mislabeled {
+      count: string;
+      bump(self: Counter, by: number): number;
+    }
+    declare mislabeled: Mislabeled;
+    mislabeled:bump(1);
+    ~~~~~~~~~~
+!!! error TS2345: Argument of type 'Mislabeled' is not assignable to parameter of type 'Counter'.
+!!! error TS2345:   Types of property 'count' are incompatible.
+!!! error TS2345:     Type 'string' is not assignable to type 'number'.
+    
+    // A member that does not take the receiver as its first parameter rejects the
+    // colon form's receiver argument.
+    ops:noSelf(1);
+               ~
+!!! error TS2554: Expected 1 arguments, but got 2.
+    
+    // Colon-calling a non-function member.
+    ops:tag();
+        ~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'String' has no call signatures.
+    
+    // Colon-calling an unknown member.
+    M:absent();
+      ~~~~~~
+!!! error TS2339: Property 'absent' does not exist on type '{ count: number; inc(self: any, by: number): number; }'.
+    

@@ -1,0 +1,87 @@
+//// [tests/cases/compiler/deeplyNestedTupleTypes.tlua] ////
+
+=== deeplyNestedTupleTypes.tlua ===
+// https://github.com/microsoft/typescript-go/issues/3426
+
+type AOuter = {
+>AOuter : Symbol(AOuter, Decl(deeplyNestedTupleTypes.tlua, 0, 0))
+
+  inners: [AInner];
+>inners : Symbol(inners, Decl(deeplyNestedTupleTypes.tlua, 2, 15))
+> : Symbol(unknown)
+>AInner : Symbol(AInner, Decl(deeplyNestedTupleTypes.tlua, 4, 2))
+
+};
+type AInner = {
+>AInner : Symbol(AInner, Decl(deeplyNestedTupleTypes.tlua, 4, 2))
+
+  mids: [AMid];
+>mids : Symbol(mids, Decl(deeplyNestedTupleTypes.tlua, 5, 15))
+> : Symbol(unknown)
+>AMid : Symbol(AMid, Decl(deeplyNestedTupleTypes.tlua, 7, 2))
+
+};
+type AMid = {
+>AMid : Symbol(AMid, Decl(deeplyNestedTupleTypes.tlua, 7, 2))
+
+  leaves: [ALeaf];
+>leaves : Symbol(leaves, Decl(deeplyNestedTupleTypes.tlua, 8, 13))
+> : Symbol(unknown)
+>ALeaf : Symbol(ALeaf, Decl(deeplyNestedTupleTypes.tlua, 10, 2))
+
+};
+type ALeaf = {
+>ALeaf : Symbol(ALeaf, Decl(deeplyNestedTupleTypes.tlua, 10, 2))
+
+  id: string;
+>id : Symbol(id, Decl(deeplyNestedTupleTypes.tlua, 11, 14))
+
+};
+
+type BOuter = {
+>BOuter : Symbol(BOuter, Decl(deeplyNestedTupleTypes.tlua, 13, 2))
+
+  inners: [BInner];
+>inners : Symbol(inners, Decl(deeplyNestedTupleTypes.tlua, 15, 15))
+> : Symbol(unknown)
+>BInner : Symbol(BInner, Decl(deeplyNestedTupleTypes.tlua, 17, 2))
+
+};
+type BInner = {
+>BInner : Symbol(BInner, Decl(deeplyNestedTupleTypes.tlua, 17, 2))
+
+  mids: [BMid];
+>mids : Symbol(mids, Decl(deeplyNestedTupleTypes.tlua, 18, 15))
+> : Symbol(unknown)
+>BMid : Symbol(BMid, Decl(deeplyNestedTupleTypes.tlua, 20, 2))
+
+};
+type BMid = {
+>BMid : Symbol(BMid, Decl(deeplyNestedTupleTypes.tlua, 20, 2))
+
+  leaves: [BLeaf];
+>leaves : Symbol(leaves, Decl(deeplyNestedTupleTypes.tlua, 21, 13))
+> : Symbol(unknown)
+>BLeaf : Symbol(BLeaf, Decl(deeplyNestedTupleTypes.tlua, 23, 2))
+
+};
+type BLeaf = {
+>BLeaf : Symbol(BLeaf, Decl(deeplyNestedTupleTypes.tlua, 23, 2))
+
+  id: number;
+>id : Symbol(id, Decl(deeplyNestedTupleTypes.tlua, 24, 14))
+
+};
+
+function test(a: AOuter, b: BOuter) {
+>test : Symbol(test, Decl(deeplyNestedTupleTypes.tlua, 26, 2))
+>a : Symbol(a, Decl(deeplyNestedTupleTypes.tlua, 28, 14))
+>AOuter : Symbol(AOuter, Decl(deeplyNestedTupleTypes.tlua, 0, 0))
+>b : Symbol(b, Decl(deeplyNestedTupleTypes.tlua, 28, 24))
+>BOuter : Symbol(BOuter, Decl(deeplyNestedTupleTypes.tlua, 13, 2))
+
+  a = b;
+>a : Symbol(a, Decl(deeplyNestedTupleTypes.tlua, 28, 14))
+>b : Symbol(b, Decl(deeplyNestedTupleTypes.tlua, 28, 24))
+}
+

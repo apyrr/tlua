@@ -1,0 +1,89 @@
+//// [tests/cases/compiler/tluaNoArray.tlua] ////
+
+=== tluaNoArray.tlua ===
+// The TypeScript array/tuple/iteration syntax is removed from tlua source.
+// Each form below decomposes into stock parser-recovery errors (no
+// tlua-specific diagnostic), exactly like the class/generator removals.
+
+declare function pair(): (number, string);
+>pair : () => (number, string)
+
+declare items: number[];
+>items : number[]
+
+declare function use(x: unknown): void;
+>use : (x: unknown) => void
+>x : unknown
+
+// Array literals no longer parse in expression position; use a table `{...}`.
+local lit = [1, 2, 3];
+>lit : any
+>[1, 2, 3] : any
+> : any
+>1, 2, 3 : 3
+>1, 2 : 2
+>1 : 1
+>2 : 2
+>3 : 3
+
+// Array-literal spread. Every spread form is gone; `...` is the Lua vararg, so
+// the `...` here reads as a vararg expression (legal in the main chunk) and the
+// operand that follows is the error.
+local spread = [0, ...items];
+>spread : any
+>[0, ... : any
+> : any
+>0, ... : any
+>0 : 0
+>... : any
+>items : number[]
+
+// Array binding patterns; use a Lua name list `local a, b = f()`.
+local [a, b] = pair();
+> : any
+>a, b : any
+>a : any
+>b : any
+>pair() : number
+>pair : () => (number, string)
+
+// Array destructuring assignment.
+[a, b] = pair();
+>a, b : any
+>a : any
+>b : any
+>pair() : number
+>pair : () => (number, string)
+
+// `for..of`; use a Lua generic-for `for _, v in ipairs(t) do`.
+for (local v of items) {
+> : any
+>( : any
+> : any
+>v : any
+>of : any
+>items : number[]
+
+  use(v);
+>use(v) : void
+>use : (x: unknown) => void
+>v : nil
+}
+
+// Tuple type syntax in source; multireturn return-lists spell packs instead.
+local t: [number, string] = pair();
+>t : any
+>string : any
+>pair() : number
+>pair : () => (number, string)
+
+// `of` is an ordinary identifier again.
+local of = 3;
+>of : number
+>3 : 3
+
+use(of);
+>use(of) : void
+>use : (x: unknown) => void
+>of : number
+

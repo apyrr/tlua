@@ -1,0 +1,51 @@
+// === findAllReferences ===
+// === /findAllRefsForStaticInstanceMethodInheritance.tlua ===
+// class X{
+// 	/*FIND ALL REFS*/foo(): void{}
+// }
+// 
+// class Y extends X{
+// --- (line: 6) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForStaticInstanceMethodInheritance.tlua ===
+// class X{
+// 	foo(): void{}
+// }
+// 
+// class Y extends X{
+// 	static /*FIND ALL REFS*/foo(): void{}
+// }
+// 
+// class Z extends Y{
+// --- (line: 10) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForStaticInstanceMethodInheritance.tlua ===
+// --- (line: 6) skipped ---
+// }
+// 
+// class Z extends Y{
+// 	static /*FIND ALL REFS*/foo(): void{}
+// 	foo(): void{}
+// }
+// 
+// --- (line: 14) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForStaticInstanceMethodInheritance.tlua ===
+// --- (line: 7) skipped ---
+// 
+// class Z extends Y{
+// 	static foo(): void{}
+// 	/*FIND ALL REFS*/foo(): void{}
+// }
+// 
+// local x = new X();
+// --- (line: 15) skipped ---

@@ -1,0 +1,4 @@
+// === findAllReferences ===
+// === /findAllRefsJsDocTypeDef.tlua ===
+// /** @typedef {Object} /*FIND ALL REFS*/T */
+// function foo() {}

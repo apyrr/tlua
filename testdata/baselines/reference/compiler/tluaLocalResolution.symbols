@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/tluaLocalResolution.tlua] ////
+
+=== tluaLocalResolution.tlua ===
+local outer = 10;
+>outer : Symbol(outer, Decl(tluaLocalResolution.tlua, 0, 5))
+
+local same = outer;
+>same : Symbol(same, Decl(tluaLocalResolution.tlua, 2, 5))
+>outer : Symbol(outer, Decl(tluaLocalResolution.tlua, 0, 5))
+
+same = same + 1;
+>same : Symbol(same, Decl(tluaLocalResolution.tlua, 2, 5))
+>same : Symbol(same, Decl(tluaLocalResolution.tlua, 2, 5))
+
+{
+  local blockValue = same;
+>blockValue : Symbol(blockValue, Decl(tluaLocalResolution.tlua, 6, 7))
+>same : Symbol(same, Decl(tluaLocalResolution.tlua, 2, 5))
+
+  blockValue = blockValue + 1;
+>blockValue : Symbol(blockValue, Decl(tluaLocalResolution.tlua, 6, 7))
+>blockValue : Symbol(blockValue, Decl(tluaLocalResolution.tlua, 6, 7))
+
+  local blockValue = blockValue + 1;
+>blockValue : Symbol(blockValue, Decl(tluaLocalResolution.tlua, 8, 7))
+>blockValue : Symbol(blockValue, Decl(tluaLocalResolution.tlua, 6, 7))
+
+  blockValue = blockValue + 1;
+>blockValue : Symbol(blockValue, Decl(tluaLocalResolution.tlua, 8, 7))
+>blockValue : Symbol(blockValue, Decl(tluaLocalResolution.tlua, 8, 7))
+}
+
+local forward = laterLocal;
+>forward : Symbol(forward, Decl(tluaLocalResolution.tlua, 12, 5))
+
+local laterLocal = 1;
+>laterLocal : Symbol(laterLocal, Decl(tluaLocalResolution.tlua, 13, 5))
+
+local outer = outer + 1;
+>outer : Symbol(outer, Decl(tluaLocalResolution.tlua, 15, 5))
+>outer : Symbol(outer, Decl(tluaLocalResolution.tlua, 0, 5))
+
+outer = outer + 1;
+>outer : Symbol(outer, Decl(tluaLocalResolution.tlua, 15, 5))
+>outer : Symbol(outer, Decl(tluaLocalResolution.tlua, 15, 5))
+
+function flowForLuaLocal() {
+>flowForLuaLocal : Symbol(flowForLuaLocal, Decl(tluaLocalResolution.tlua, 16, 18))
+
+  local narrowed: string | number;
+>narrowed : Symbol(narrowed, Decl(tluaLocalResolution.tlua, 19, 7))
+
+  narrowed = 1;
+>narrowed : Symbol(narrowed, Decl(tluaLocalResolution.tlua, 19, 7))
+
+  local reader = () => narrowed;
+>reader : Symbol(reader, Decl(tluaLocalResolution.tlua, 21, 7))
+>narrowed : Symbol(narrowed, Decl(tluaLocalResolution.tlua, 19, 7))
+
+  reader();
+>reader : Symbol(reader, Decl(tluaLocalResolution.tlua, 21, 7))
+}
+

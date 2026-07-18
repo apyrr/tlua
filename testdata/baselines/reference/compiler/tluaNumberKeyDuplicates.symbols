@@ -1,0 +1,45 @@
+//// [tests/cases/compiler/tluaNumberKeyDuplicates.tlua] ////
+
+=== tluaNumberKeyDuplicates.tlua ===
+// [1] written twice names the same number key: duplicate.
+local dup1 = { [1] = 1, [1] = 2 };
+>dup1 : Symbol(dup1, Decl(tluaNumberKeyDuplicates.tlua, 1, 5))
+>[1] : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 1, 14), Decl(tluaNumberKeyDuplicates.tlua, 1, 23))
+>1 : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 1, 14), Decl(tluaNumberKeyDuplicates.tlua, 1, 23))
+>[1] : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 1, 14), Decl(tluaNumberKeyDuplicates.tlua, 1, 23))
+>1 : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 1, 14), Decl(tluaNumberKeyDuplicates.tlua, 1, 23))
+
+// Number key 1 and string key "1" are distinct keys: no duplicate.
+local ok1 = { [1] = 1, ["1"] = 2 };
+>ok1 : Symbol(ok1, Decl(tluaNumberKeyDuplicates.tlua, 4, 5))
+>[1] : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 4, 13))
+>1 : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 4, 13))
+>["1"] : Symbol(["1"], Decl(tluaNumberKeyDuplicates.tlua, 4, 22))
+>"1" : Symbol(["1"], Decl(tluaNumberKeyDuplicates.tlua, 4, 22))
+
+local ok2 = { [1] = 1, ["1"] = 2 };
+>ok2 : Symbol(ok2, Decl(tluaNumberKeyDuplicates.tlua, 5, 5))
+>[1] : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 5, 13))
+>1 : Symbol([1], Decl(tluaNumberKeyDuplicates.tlua, 5, 13))
+>["1"] : Symbol(["1"], Decl(tluaNumberKeyDuplicates.tlua, 5, 22))
+>"1" : Symbol(["1"], Decl(tluaNumberKeyDuplicates.tlua, 5, 22))
+
+// Spelling canonicalization: 0x10 and 16 name the same key.
+local dup2 = { [0x10] = 1, [16] = 2 };
+>dup2 : Symbol(dup2, Decl(tluaNumberKeyDuplicates.tlua, 8, 5))
+>[0x10] : Symbol([0x10], Decl(tluaNumberKeyDuplicates.tlua, 8, 14), Decl(tluaNumberKeyDuplicates.tlua, 8, 26))
+>0x10 : Symbol([0x10], Decl(tluaNumberKeyDuplicates.tlua, 8, 14), Decl(tluaNumberKeyDuplicates.tlua, 8, 26))
+>[16] : Symbol([0x10], Decl(tluaNumberKeyDuplicates.tlua, 8, 14), Decl(tluaNumberKeyDuplicates.tlua, 8, 26))
+>16 : Symbol([0x10], Decl(tluaNumberKeyDuplicates.tlua, 8, 14), Decl(tluaNumberKeyDuplicates.tlua, 8, 26))
+
+// 1.0 and 1 name the same key.
+local dup3 = { [1.0] = 1, [1] = 2 };
+>dup3 : Symbol(dup3, Decl(tluaNumberKeyDuplicates.tlua, 11, 5))
+>[1.0] : Symbol([1.0], Decl(tluaNumberKeyDuplicates.tlua, 11, 14), Decl(tluaNumberKeyDuplicates.tlua, 11, 25))
+>1.0 : Symbol([1.0], Decl(tluaNumberKeyDuplicates.tlua, 11, 14), Decl(tluaNumberKeyDuplicates.tlua, 11, 25))
+>[1] : Symbol([1.0], Decl(tluaNumberKeyDuplicates.tlua, 11, 14), Decl(tluaNumberKeyDuplicates.tlua, 11, 25))
+>1 : Symbol([1.0], Decl(tluaNumberKeyDuplicates.tlua, 11, 14), Decl(tluaNumberKeyDuplicates.tlua, 11, 25))
+
+local es = {dup1, ok1, ok2, dup2, dup3};
+>es : Symbol(es, Decl(tluaNumberKeyDuplicates.tlua, 13, 5))
+

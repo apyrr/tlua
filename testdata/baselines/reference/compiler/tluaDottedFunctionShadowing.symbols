@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/tluaDottedFunctionShadowing.tlua] ////
+
+=== tluaDottedFunctionShadowing.tlua ===
+local M = {};
+>M : Symbol(M, Decl(tluaDottedFunctionShadowing.tlua, 0, 5))
+
+function M.first(): number
+>M : Symbol(M, Decl(tluaDottedFunctionShadowing.tlua, 0, 5))
+>first : Symbol(first, Decl(tluaDottedFunctionShadowing.tlua, 0, 13))
+
+  return 1;
+end
+
+local firstOnly = M.first();
+>firstOnly : Symbol(firstOnly, Decl(tluaDottedFunctionShadowing.tlua, 6, 5))
+>M.first : Symbol(first, Decl(tluaDottedFunctionShadowing.tlua, 0, 13))
+>M : Symbol(M, Decl(tluaDottedFunctionShadowing.tlua, 0, 5))
+>first : Symbol(first, Decl(tluaDottedFunctionShadowing.tlua, 0, 13))
+
+local M = {};
+>M : Symbol(M, Decl(tluaDottedFunctionShadowing.tlua, 8, 5))
+
+function M.second(): number
+>M : Symbol(M, Decl(tluaDottedFunctionShadowing.tlua, 8, 5))
+>second : Symbol(second, Decl(tluaDottedFunctionShadowing.tlua, 8, 13))
+
+  return 2;
+end
+
+local secondOnly = M.second();
+>secondOnly : Symbol(secondOnly, Decl(tluaDottedFunctionShadowing.tlua, 14, 5))
+>M.second : Symbol(second, Decl(tluaDottedFunctionShadowing.tlua, 8, 13))
+>M : Symbol(M, Decl(tluaDottedFunctionShadowing.tlua, 8, 5))
+>second : Symbol(second, Decl(tluaDottedFunctionShadowing.tlua, 8, 13))
+
+local gone = M.first();
+>gone : Symbol(gone, Decl(tluaDottedFunctionShadowing.tlua, 15, 5))
+>M : Symbol(M, Decl(tluaDottedFunctionShadowing.tlua, 8, 5))
+

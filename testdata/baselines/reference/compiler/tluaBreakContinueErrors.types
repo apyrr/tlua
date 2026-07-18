@@ -1,0 +1,86 @@
+//// [tests/cases/compiler/tluaBreakContinueErrors.tlua] ////
+
+=== tluaBreakContinueErrors.tlua ===
+// break outside any loop is a grammar error.
+function breakOutside(): void
+>breakOutside : () => void
+
+  break;
+end
+
+// continue outside any loop is a grammar error.
+function continueOutside(): void
+>continueOutside : () => void
+
+  continue;
+end
+
+// break nested in a Lua if inside a Lua while is fine.
+function breakNested(flag: boolean): number
+>breakNested : (flag: boolean) => number
+>flag : boolean
+
+  while true do
+>true : true
+
+    if flag then
+>flag : boolean
+
+      break;
+    end
+    flag = true;
+>flag = true : true
+>flag : boolean
+>true : true
+
+  end
+  return 1;
+>1 : 1
+
+end
+
+// continue keeps working inside Lua loops (TS keyword, no rejection guard).
+function continueInLua(n: number): number
+>continueInLua : (n: number) => number
+>n : number
+
+  local i = 0;
+>i : number
+>0 : 0
+
+  local total = 0;
+>total : number
+>0 : 0
+
+  while i < n do
+>i < n : boolean
+>i : number
+>n : number
+
+    i = i + 1;
+>i = i + 1 : number
+>i : number
+>i + 1 : number
+>i : number
+>1 : 1
+
+    if i == 2 then
+>i == 2 : boolean
+>i : number
+>2 : 2
+
+      continue;
+    end
+    total = total + i;
+>total = total + i : number
+>total : number
+>total + i : number
+>total : number
+>i : number
+
+  end
+  return total;
+>total : number
+
+end
+
