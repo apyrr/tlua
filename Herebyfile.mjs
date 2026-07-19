@@ -66,6 +66,7 @@ const { values: rawOptions } = parseArgs({
 
         setBuild: { type: "string" },
         hostOnly: { type: "boolean" },
+        platform: { type: "string" },
         forRelease: { type: "boolean" },
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
@@ -1361,59 +1362,72 @@ function nodeToGOARCH(arch, os) {
     }
 }
 
+/**
+ * @param {Platform} p
+ */
+function toPlatformInfo({ os, arch, vsix, alpine }) {
+    const packageBaseName = "tlua";
+    const npmDirName = `${packageBaseName}-${os}-${arch}`;
+    const npmDir = path.join(builtNpm, npmDirName);
+    const npmTarball = `${npmDir}.tgz`;
+    const npmPackageName = `@tlua/${npmDirName}`;
+
+    /** @type {VsixExtension[]} */
+    let extensions = [];
+    if (vsix) {
+        /** @type {string[]} */
+        const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
+        if (alpine) {
+            vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
+        }
+
+        extensions = vscodeTargets.flatMap(vscodeTarget =>
+            vsixExtensionPackages.map(({ name: packageName, sourceDir }) => {
+                const extensionDir = path.join(builtVsix, `${packageName}-${vscodeTarget}`);
+                const vsixPath = extensionDir + ".vsix";
+                return {
+                    vscodeTarget,
+                    sourceDir,
+                    extensionDir,
+                    vsixPath,
+                };
+            })
+        );
+    }
+
+    return {
+        nodeOs: os,
+        nodeArch: arch,
+        goos: nodeToGOOS(os),
+        goarch: nodeToGOARCH(arch, os),
+        npmPackageName,
+        npmDirName,
+        npmDir,
+        npmTarball,
+        extensions,
+    };
+}
+
+// The full set of publishable platforms, unfiltered. Used for the main package's
+// optionalDependencies so a single-platform (matrix) build still lists them all.
+const getAllReleasePlatforms = memoize(() => platforms.map(toPlatformInfo));
+
 const getPlatforms = memoize(() => {
     let supportedPlatforms = platforms;
 
-    // Local dev builds only the host platform. `--hostOnly` forces that same
-    // single-platform build in release mode too (used for the fast PR smoke
-    // test, where the multi-platform artifacts are never published).
+    // Local dev builds only the host platform; `--hostOnly` forces that in
+    // release mode too (the fast PR smoke). `--platform <os>-<arch>` builds a
+    // single named platform — one leg of the release build matrix.
     if (!options.forRelease || options.hostOnly) {
         supportedPlatforms = supportedPlatforms.filter(({ os, arch }) => os === process.platform && arch === process.arch);
         assert.equal(supportedPlatforms.length, 1, "No supported platforms found");
     }
+    else if (options.platform) {
+        supportedPlatforms = supportedPlatforms.filter(({ os, arch }) => `${os}-${arch}` === options.platform);
+        assert.equal(supportedPlatforms.length, 1, `No platform matching --platform '${options.platform}'`);
+    }
 
-    return supportedPlatforms.map(({ os, arch, vsix, alpine }) => {
-        const packageBaseName = "tlua";
-        const npmDirName = `${packageBaseName}-${os}-${arch}`;
-        const npmDir = path.join(builtNpm, npmDirName);
-        const npmTarball = `${npmDir}.tgz`;
-        const npmPackageName = `@tlua/${npmDirName}`;
-
-        /** @type {VsixExtension[]} */
-        let extensions = [];
-        if (vsix) {
-            /** @type {string[]} */
-            const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
-            if (alpine) {
-                vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
-            }
-
-            extensions = vscodeTargets.flatMap(vscodeTarget =>
-                vsixExtensionPackages.map(({ name: packageName, sourceDir }) => {
-                    const extensionDir = path.join(builtVsix, `${packageName}-${vscodeTarget}`);
-                    const vsixPath = extensionDir + ".vsix";
-                    return {
-                        vscodeTarget,
-                        sourceDir,
-                        extensionDir,
-                        vsixPath,
-                    };
-                })
-            );
-        }
-
-        return {
-            nodeOs: os,
-            nodeArch: arch,
-            goos: nodeToGOOS(os),
-            goarch: nodeToGOARCH(arch, os),
-            npmPackageName,
-            npmDirName,
-            npmDir,
-            npmTarball,
-            extensions,
-        };
-    });
+    return supportedPlatforms.map(toPlatformInfo);
 });
 
 export const checkPlatforms = task({
@@ -1585,7 +1599,7 @@ async function runBuildTluaPackages() {
     const mainPackage = {
         ...inputPackageJson,
         name: mainTluaPackage.npmPackageName,
-        optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
+        optionalDependencies: Object.fromEntries(getAllReleasePlatforms().map(p => [p.npmPackageName, getVersion()])),
     };
 
     const mainPackageDir = mainTluaPackage.npmDir;
@@ -1668,18 +1682,11 @@ async function runBuildTluaPackages() {
         });
     });
 
-    if (isCI) {
-        for (const build of platformBuilders) {
-            await build();
-            // Build machines have too little space.
-            // Clear the Go build cache between platforms.
-            await $`go clean -cache`;
-        }
-    }
-    else {
-        const buildLimit = pLimit(os.availableParallelism());
-        await Promise.all(platformBuilders.map(f => buildLimit(f)));
-    }
+    // Build the platform binaries in parallel. The release build runs one
+    // platform per runner (the release.yml matrix), so a single invocation
+    // usually builds just one target; a full local build overlaps all of them.
+    const buildLimit = pLimit(os.availableParallelism());
+    await Promise.all(platformBuilders.map(f => buildLimit(f)));
 }
 
 /**

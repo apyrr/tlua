@@ -1,10 +1,14 @@
 name: Release
 
 # On each push to main: re-runs the full check suite (the reusable ci.yml
-# workflow) in parallel with a full multi-platform build, then publishes the npm
-# packages to the `latest` dist-tag — but only if the checks pass. Version is
+# workflow) in parallel with the release build, then publishes the npm packages
+# to the `latest` dist-tag — but only if the checks pass. Version is
 # 0.0.<run_number>, a plain monotonic version, so `npm install @tlua/cli`
 # resolves to the newest build. Every release is validated on its own.
+#
+# The release build is a matrix: each platform is cross-compiled on its own
+# runner (in parallel), then a single `pack` job assembles the tarballs + VSIX
+# and `publish` uploads them to npm.
 #
 # VSIX publishing to the VS Code Marketplace is omitted (it needs an Azure
 # subscription); the VSIX ships as the `vsix-extensions` run artifact instead.
@@ -36,11 +40,23 @@ jobs:
     if: ${{ github.repository_owner == 'apyrr' }}
     uses: ./.github/workflows/ci.yml
 
-  # Build every platform once, in parallel with `checks`; `publish` gates on both.
+  # Cross-compile one platform per runner, in parallel. Each leg uploads its
+  # platform package dir; the native-arch leg also uploads the (platform-
+  # independent) main package. `pack` reassembles them.
   release-build:
     # Skip on forks (they lack the NPM_TOKEN secret used by `publish`).
     if: ${{ github.repository_owner == 'apyrr' }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - win32-x64
+          - win32-arm64
+          - linux-x64
+          - linux-arm
+          - linux-arm64
+          - darwin-x64
+          - darwin-arm64
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -55,7 +71,55 @@ jobs:
 
       - run: npm ci
 
-      - run: npx hereby tlua:release --forRelease --setBuild ${{ github.run_number }}
+      - run: npx hereby tlua:build-packages --forRelease --setBuild ${{ github.run_number }} --platform ${{ matrix.platform }}
+
+      # Artifact name == package dir name, so `pack`'s download reconstructs the
+      # built/npm tree.
+      - name: Upload platform package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tlua-${{ matrix.platform }}
+          path: built/npm/tlua-${{ matrix.platform }}
+          if-no-files-found: error
+
+      # Every leg builds an identical main package (JS API + the full
+      # optionalDependencies); upload it once, from the native-arch leg.
+      - name: Upload main package
+        if: ${{ matrix.platform == 'linux-x64' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tlua
+          path: built/npm/tlua
+          if-no-files-found: error
+
+  # Reassemble every package into tarballs (+ VSIX) once all platforms are built.
+  # No Go build here — just packaging.
+  pack:
+    needs: [release-build]
+    if: ${{ github.repository_owner == 'apyrr' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 'lts/*'
+
+      - run: npm ci
+
+      # Reconstruct built/npm/{tlua,tlua-<os>-<arch>}/ from the per-leg artifacts.
+      - name: Download package dirs
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: tlua*
+          path: built/npm
+
+      # upload-artifact drops the executable bit; restore it on the native
+      # binaries so `npm pack` bakes it into the published tarballs.
+      - name: Restore binary permissions
+        run: find built/npm -type f -path '*/lib/tlua' -exec chmod +x {} +
+
+      - run: npx hereby tlua:pack-packages --forRelease --setBuild ${{ github.run_number }}
+      - run: npx hereby tlua:pack-extensions --forRelease --setBuild ${{ github.run_number }}
 
       - name: Upload npm package tarballs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -75,9 +139,9 @@ jobs:
           if-no-files-found: error
 
   # Publish the exact tarballs built above — build once, publish those bytes —
-  # only after both the checks and the build succeed.
+  # only after both the checks and the build+pack succeed.
   publish:
-    needs: [checks, release-build]
+    needs: [checks, pack]
     if: ${{ github.repository_owner == 'apyrr' }}
     runs-on: ubuntu-latest
     steps:
