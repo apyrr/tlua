@@ -110,13 +110,24 @@ func generateEmbedded(libs []lib) {
 	code.WriteString("_ \"embed\"\n")
 	code.WriteString(")\n\n")
 
-	code.WriteString("var (\n")
-	for i, lib := range libs {
-		varName := libVarNames[i]
-		code.WriteString("//go:embed libs/" + lib.target + "\n")
-		code.WriteString("" + varName + " string\n")
+	// gofumpt (used by `hereby format`) unwraps a single-declaration `var (…)`
+	// block into the bare `var x string` form, while gofmt (used here) keeps the
+	// block. Emit the bare form directly for a single lib so the generator output
+	// already matches gofumpt — otherwise the `generate` and `check:format` CI
+	// jobs disagree and the file flip-flops. Multiple libs stay grouped, which
+	// gofumpt also leaves alone.
+	if len(libs) == 1 {
+		code.WriteString("//go:embed libs/" + libs[0].target + "\n")
+		code.WriteString("var " + libVarNames[0] + " string\n\n")
+	} else {
+		code.WriteString("var (\n")
+		for i, lib := range libs {
+			varName := libVarNames[i]
+			code.WriteString("//go:embed libs/" + lib.target + "\n")
+			code.WriteString("" + varName + " string\n")
+		}
+		code.WriteString(")\n\n")
 	}
-	code.WriteString(")\n\n")
 
 	code.WriteString("var embeddedContents = map[string]string{\n")
 	for i, lib := range libs {
