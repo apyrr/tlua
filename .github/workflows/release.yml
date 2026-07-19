@@ -37,12 +37,6 @@ jobs:
     # Guard so forks of this repo don't try to publish (they lack the secrets).
     if: ${{ github.repository_owner == 'apyrr' }}
     steps:
-      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
-        with:
-          large-packages: false
-          docker-images: false
-          swap-storage: false
-          dotnet: false
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: true
