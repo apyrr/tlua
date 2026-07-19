@@ -65,6 +65,7 @@ const { values: rawOptions } = parseArgs({
         release: { type: "boolean" },
 
         setBuild: { type: "string" },
+        hostOnly: { type: "boolean" },
         forRelease: { type: "boolean" },
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
@@ -1363,7 +1364,10 @@ function nodeToGOARCH(arch, os) {
 const getPlatforms = memoize(() => {
     let supportedPlatforms = platforms;
 
-    if (!options.forRelease) {
+    // Local dev builds only the host platform. `--hostOnly` forces that same
+    // single-platform build in release mode too (used for the fast PR smoke
+    // test, where the multi-platform artifacts are never published).
+    if (!options.forRelease || options.hostOnly) {
         supportedPlatforms = supportedPlatforms.filter(({ os, arch }) => os === process.platform && arch === process.arch);
         assert.equal(supportedPlatforms.length, 1, "No supported platforms found");
     }
