@@ -1219,7 +1219,9 @@ function cpWithoutNodeModulesOrTsconfig(src, dest) {
 }
 
 const mainTluaPackage = {
-    npmPackageName: "tlua",
+    // Published name, scoped under `@tlua`. The `tlua` CLI binary name is
+    // unaffected (see the package's `bin`).
+    npmPackageName: "@tlua/cli",
     npmDir: path.join(builtNpm, "tlua"),
     npmTarball: path.join(builtNpm, "tlua.tgz"),
 };
