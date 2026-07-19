@@ -103,13 +103,13 @@ describe("astnav", () => {
         api = new API({
             cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
             fs: createVirtualFileSystem({
-                "/tsconfig.json": JSON.stringify({ files: ["/src/testFile.tlua"] }),
+                "/tluaconfig.json": JSON.stringify({ files: ["/src/testFile.tlua"] }),
                 "/src/testFile.tlua": fileText,
             }),
         });
 
-        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const sf = project.program.getSourceFile("/src/testFile.tlua");
         assert.ok(sf, "Failed to get source file from API");
         sourceFile = sf;

@@ -88,16 +88,16 @@ export interface ConfigResponse {
 export interface LSPUpdateSnapshotParams {
     /**
      * @deprecated Use {@link openProjects} instead.
-     * Path to a tsconfig.json file to open in the new snapshot.
+     * Path to a tluaconfig.json file to open in the new snapshot.
      */
     openProject?: string;
     /**
-     * tsconfig.json files to open/load in the new snapshot. Opens are ref-counted
+     * tluaconfig.json files to open/load in the new snapshot. Opens are ref-counted
      * and persist across snapshots until closed via {@link closeProjects}.
      */
     openProjects?: DocumentIdentifier[];
     /**
-     * tsconfig.json files to release in the new snapshot. A project is only unloaded
+     * tluaconfig.json files to release in the new snapshot. A project is only unloaded
      * once every API client that opened it closes it.
      */
     closeProjects?: DocumentIdentifier[];

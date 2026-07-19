@@ -74,7 +74,7 @@ import { fileURLToPath } from "node:url";
 import { runBenchmarks } from "./api.bench.ts";
 
 const defaultFiles = {
-    "/tsconfig.json": "{}",
+    "/tluaconfig.json": "{}",
     "/src/index.tlua": `local foo = require('src.foo').foo;`,
     "/src/foo.tlua": `local foo = 42;\nreturn { foo = foo };`,
 };
@@ -83,9 +83,9 @@ describe("API", () => {
     test("parseConfigFile", async () => {
         const api = spawnAPI();
         try {
-            const config = await api.parseConfigFile("/tsconfig.json");
+            const config = await api.parseConfigFile("/tluaconfig.json");
             assert.deepEqual(config.fileNames, ["/src/index.tlua", "/src/foo.tlua"]);
-            assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
+            assert.deepEqual(config.options, { configFilePath: "/tluaconfig.json" });
         }
         finally {
             await api.close();
@@ -97,11 +97,11 @@ describe("Snapshot", () => {
     test("updateSnapshot returns snapshot with projects", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
             assert.ok(snapshot);
             assert.ok(snapshot.id);
             assert.ok(snapshot.getProjects().length > 0);
-            assert.ok(snapshot.getProject("/tsconfig.json"));
+            assert.ok(snapshot.getProject("/tluaconfig.json"));
         }
         finally {
             await api.close();
@@ -111,8 +111,8 @@ describe("Snapshot", () => {
     test("getSymbolAtPosition", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const symbol = await project.checker.getSymbolAtPosition("/src/index.tlua", 7);
             assert.ok(symbol);
             assert.equal(symbol.name, "foo");
@@ -126,8 +126,8 @@ describe("Snapshot", () => {
     test("getSymbolAtLocation", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
             const node = cast(
@@ -148,8 +148,8 @@ describe("Snapshot", () => {
     test("getTypeOfSymbol", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const symbol = await project.checker.getSymbolAtPosition("/src/index.tlua", 7);
             assert.ok(symbol);
             const type = await project.checker.getTypeOfSymbol(symbol);
@@ -166,12 +166,12 @@ describe("Snapshot", () => {
 describe("Checker - getApparentType", () => {
     test("returns the apparent type of a literal type", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local x = "hello" as const;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = `local x = "hello" as const;`.indexOf("x =");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -193,12 +193,12 @@ describe("Checker - getApparentType", () => {
 describe("Checker - getMemberInModuleExports", () => {
     test("returns a named export when present", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/index.tlua": `local direct = 1;\nreturn { direct = direct };`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
             const moduleSymbol = await project.checker.getSymbolAtLocation(sourceFile);
@@ -221,7 +221,7 @@ describe("Checker - getMemberInModuleExports", () => {
 describe("SourceFile", () => {
     test("getSourceFileNames returns all program files, not just root files", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({
+            "/tluaconfig.json": JSON.stringify({
                 compilerOptions: {
                     noLib: true,
                 },
@@ -232,8 +232,8 @@ describe("SourceFile", () => {
             "/node_modules/my-lib/index.tlua": `local bar: number = 1;\nreturn { bar = bar };`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const fileNames = await project.program.getSourceFileNames();
             assert.deepEqual(fileNames, [
                 "/src/foo.tlua",
@@ -248,7 +248,7 @@ describe("SourceFile", () => {
 
     test("source file metadata identifies external library and default library files", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({
+            "/tluaconfig.json": JSON.stringify({
                 compilerOptions: {},
             }),
             "/src/index.tlua": `local mylib = require("my-lib");\nlocal result = 1;`,
@@ -256,8 +256,8 @@ describe("SourceFile", () => {
             "/node_modules/my-lib/index.tlua": `local bar: number = 1;\nreturn { bar = bar };`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const program = project.program;
 
             const index = await program.getSourceFile("/src/index.tlua");
@@ -284,7 +284,7 @@ describe("SourceFile", () => {
 
     test("source file metadata reports implied node format", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({
+            "/tluaconfig.json": JSON.stringify({
                 compilerOptions: {
                     module: "nodenext",
                 },
@@ -294,8 +294,8 @@ describe("SourceFile", () => {
             "/esm/index.tlua": `local m = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const program = snapshot.getProject("/tsconfig.json")!.program;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const program = snapshot.getProject("/tluaconfig.json")!.program;
 
             // A plain .ts file with no nearby `"type": "module"` is CommonJS.
             const index = await program.getSourceFile("/src/index.tlua");
@@ -316,8 +316,8 @@ describe("SourceFile", () => {
     test("file properties", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
 
             assert.ok(sourceFile);
@@ -332,8 +332,8 @@ describe("SourceFile", () => {
     test("extended data", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
 
             assert.ok(sourceFile);
@@ -369,12 +369,12 @@ describe("SourceFile", () => {
 
     test("forEachChild with visitList does not visit array children twice", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ files: ["/input.tlua"] }),
+            "/tluaconfig.json": JSON.stringify({ files: ["/input.tlua"] }),
             "/input.tlua": `local arrow = () => {}`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/input.tlua");
 
             assert.ok(sourceFile);
@@ -407,14 +407,14 @@ describe("SourceFile", () => {
 
 test("unicode escapes", async () => {
     const api = spawnAPI({
-        "/tsconfig.json": "{}",
+        "/tluaconfig.json": "{}",
         "/src/1.tlua": `"😃"`,
         "/src/2.tlua": `"\\ud83d\\ude03"`,
         "/src/3.tlua": `"\\ud800a\\udc00"`,
     });
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const expectedTexts = new Map([
             ["/src/1.tlua", "😃"],
             ["/src/2.tlua", "😃"],
@@ -440,12 +440,12 @@ test("unicode escapes", async () => {
 
 test("template unicode escapes", async () => {
     const api = spawnAPI({
-        "/tsconfig.json": "{}",
+        "/tluaconfig.json": "{}",
         "/src/index.tlua": "`\\ud800${0}\\udc00`",
     });
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert.ok(sourceFile);
 
@@ -473,8 +473,8 @@ test("template unicode escapes", async () => {
 test("Object equality", async () => {
     const api = spawnAPI();
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         // Same symbol returned from same snapshot's checker
         assert.strictEqual(
             await project.checker.getSymbolAtPosition("/src/index.tlua", 6),
@@ -489,8 +489,8 @@ test("Object equality", async () => {
 test("Snapshot dispose", async () => {
     const api = spawnAPI();
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const symbol = await project.checker.getSymbolAtPosition("/src/index.tlua", 7);
         assert.ok(symbol);
 
@@ -501,7 +501,7 @@ test("Snapshot dispose", async () => {
 
         // After dispose, snapshot methods should throw
         assert.throws(() => {
-            snapshot.getProject("/tsconfig.json");
+            snapshot.getProject("/tluaconfig.json");
         }, {
             name: "Error",
             message: "Snapshot is disposed",
@@ -516,12 +516,12 @@ describe("Multiple snapshots", () => {
     test("two snapshots work independently", async () => {
         const api = spawnAPI();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const snap2 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const snap2 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
 
             // Both can fetch source files
-            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
-            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const sf1 = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const sf2 = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
             assert.ok(sf1);
             assert.ok(sf2);
 
@@ -531,7 +531,7 @@ describe("Multiple snapshots", () => {
             assert.ok(!snap2.isDisposed());
 
             // snap2 still works after snap1 is disposed
-            const symbol = await snap2.getProject("/tsconfig.json")!.checker.getSymbolAtPosition("/src/index.tlua", 7);
+            const symbol = await snap2.getProject("/tluaconfig.json")!.checker.getSymbolAtPosition("/src/index.tlua", 7);
             assert.ok(symbol);
             assert.equal(symbol.name, "foo");
         }
@@ -543,10 +543,10 @@ describe("Multiple snapshots", () => {
     test("each snapshot has its own server-side lifecycle", async () => {
         const { api, fs } = spawnAPIWithFS();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
 
             // Verify initial state
-            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+            const sf1 = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
             assert.ok(sf1);
             assert.equal(sf1.text, `local foo = 42;\nreturn { foo = foo };`);
 
@@ -557,7 +557,7 @@ describe("Multiple snapshots", () => {
             });
 
             // snap2 should reflect the updated content
-            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+            const sf2 = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
             assert.ok(sf2);
             assert.equal(sf2.text, `local foo = "changed";\nreturn { foo = foo };`);
 
@@ -567,14 +567,14 @@ describe("Multiple snapshots", () => {
             await snap1.dispose();
 
             // snap2 still works independently after snap1 is disposed
-            const symbol = await snap2.getProject("/tsconfig.json")!.checker.getSymbolAtPosition("/src/index.tlua", 7);
+            const symbol = await snap2.getProject("/tluaconfig.json")!.checker.getSymbolAtPosition("/src/index.tlua", 7);
             assert.ok(symbol);
 
             await snap2.dispose();
 
             // Both are disposed, new snapshot works fine with latest content
             const snap3 = await api.updateSnapshot();
-            const sf3 = await snap3.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+            const sf3 = await snap3.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
             assert.ok(sf3);
             assert.equal(sf3.text, `local foo = "changed";\nreturn { foo = foo };`);
         }
@@ -586,7 +586,7 @@ describe("Multiple snapshots", () => {
     test("adding a new file is reflected in the next snapshot", async () => {
         const { api, fs } = spawnAPIWithFS();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
 
             // Add a brand new file
             fs.writeFile!("/src/bar.tlua", `local bar = true;\nreturn { bar = bar };`);
@@ -594,12 +594,12 @@ describe("Multiple snapshots", () => {
                 fileChanges: { created: ["/src/bar.tlua"] },
             });
 
-            const sf = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/bar.tlua");
+            const sf = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/bar.tlua");
             assert.ok(sf);
             assert.equal(sf.text, `local bar = true;\nreturn { bar = bar };`);
 
             // Original snapshot shouldn't have the new file
-            const sfOld = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/bar.tlua");
+            const sfOld = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/bar.tlua");
             assert.equal(sfOld, undefined);
         }
         finally {
@@ -610,7 +610,7 @@ describe("Multiple snapshots", () => {
     test("multiple sequential edits produce correct snapshots", async () => {
         const { api, fs } = spawnAPIWithFS();
         try {
-            await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/tluaconfig.json" });
 
             const versions = [
                 `local foo = 1;\nreturn { foo = foo };`,
@@ -623,7 +623,7 @@ describe("Multiple snapshots", () => {
                 const snap = await api.updateSnapshot({
                     fileChanges: { changed: ["/src/foo.tlua"] },
                 });
-                const sf = await snap.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+                const sf = await snap.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
                 assert.ok(sf);
                 assert.equal(sf.text, version);
             }
@@ -638,8 +638,8 @@ describe("Source file caching", () => {
     test("same file from same snapshot returns cached object", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sf1 = await project.program.getSourceFile("/src/index.tlua");
             const sf2 = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sf1);
@@ -653,11 +653,11 @@ describe("Source file caching", () => {
     test("same file from two snapshots (same content) returns cached object", async () => {
         const api = spawnAPI();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const snap2 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const snap2 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
             // Fetch from snap1 first (populates cache), then snap2 (cache hit via hash)
-            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
-            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const sf1 = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const sf2 = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
             assert.ok(sf1);
             assert.ok(sf2);
             // Same content hash → cache hit → same object
@@ -671,8 +671,8 @@ describe("Source file caching", () => {
     test("modified file returns a different source file object", async () => {
         const { api, fs } = spawnAPIWithFS();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const sf1 = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
             assert.ok(sf1);
             assert.equal(sf1.text, `local foo = 42;\nreturn { foo = foo };`);
 
@@ -683,7 +683,7 @@ describe("Source file caching", () => {
             const snap2 = await api.updateSnapshot({
                 fileChanges: { changed: ["/src/foo.tlua"] },
             });
-            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+            const sf2 = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
             assert.ok(sf2);
             assert.equal(sf2.text, `local foo = 100;\nreturn { foo = foo };`);
 
@@ -698,8 +698,8 @@ describe("Source file caching", () => {
     test("unmodified file retains cached object across file change notification", async () => {
         const { api, fs } = spawnAPIWithFS();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const sf1 = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
             assert.ok(sf1);
 
             // Mutate a different file
@@ -709,7 +709,7 @@ describe("Source file caching", () => {
             const snap2 = await api.updateSnapshot({
                 fileChanges: { changed: ["/src/foo.tlua"] },
             });
-            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const sf2 = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
             assert.ok(sf2);
 
             // index.ts wasn't changed — should still get cached object
@@ -723,19 +723,19 @@ describe("Source file caching", () => {
     test("cache entries survive when one of two snapshots is disposed", async () => {
         const api = spawnAPI();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
             // Fetch from snap1 to populate cache
-            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const sf1 = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
             assert.ok(sf1);
 
             // snap2 retains snap1's cache refs for unchanged files via snapshot changes
-            const snap2 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snap2 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
 
             // Dispose snap1 — snap2 still holds a ref, so the entry survives
             await snap1.dispose();
 
             // Fetching from snap2 should still return the cached object
-            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/index.tlua");
+            const sf2 = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/index.tlua");
             assert.ok(sf2);
             assert.strictEqual(sf1, sf2, "Cache entry should survive when retained by the next snapshot");
         }
@@ -747,8 +747,8 @@ describe("Source file caching", () => {
     test("invalidateAll causes all files to be re-fetched", async () => {
         const { api, fs } = spawnAPIWithFS();
         try {
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const sf1 = await snap1.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const sf1 = await snap1.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
             assert.ok(sf1);
             assert.equal(sf1.text, `local foo = 42;\nreturn { foo = foo };`);
 
@@ -759,7 +759,7 @@ describe("Source file caching", () => {
             const snap2 = await api.updateSnapshot({
                 fileChanges: { invalidateAll: true },
             });
-            const sf2 = await snap2.getProject("/tsconfig.json")!.program.getSourceFile("/src/foo.tlua");
+            const sf2 = await snap2.getProject("/tluaconfig.json")!.program.getSourceFile("/src/foo.tlua");
             assert.ok(sf2);
             assert.equal(sf2.text, `local foo = "hello";\nreturn { foo = foo };`);
             assert.notStrictEqual(sf1, sf2, "invalidateAll should produce new source file objects");
@@ -771,14 +771,14 @@ describe("Source file caching", () => {
 
     test("node handles from a cached source file should be valid in a new snapshot", async () => {
         const { api, fs } = spawnAPIWithFS({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function foo(x: number) {}\nfoo(42);`,
             "/src/other.tlua": `local x = 1;\nreturn { x = x };`,
         });
         try {
             // Snapshot 1: get a node and verify getContextualType works
-            const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const proj1 = snap1.getProject("/tsconfig.json")!;
+            const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const proj1 = snap1.getProject("/tluaconfig.json")!;
 
             const sf1 = await proj1.program.getSourceFile("/src/main.tlua");
             assert.ok(sf1);
@@ -799,7 +799,7 @@ describe("Source file caching", () => {
             const snap2 = await api.updateSnapshot({
                 fileChanges: { changed: ["/src/other.tlua"] },
             });
-            const proj2 = snap2.getProject("/tsconfig.json")!;
+            const proj2 = snap2.getProject("/tluaconfig.json")!;
 
             // main.ts is unchanged — client returns the cached SourceFile (same object)
             const sf2 = await proj2.program.getSourceFile("/src/main.tlua");
@@ -829,7 +829,7 @@ describe("Snapshot disposal", () => {
     test("dispose is idempotent", async () => {
         const api = spawnAPI();
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
             await snapshot.dispose();
             assert.ok(snapshot.isDisposed());
             // Second dispose should not throw
@@ -843,8 +843,8 @@ describe("Snapshot disposal", () => {
 
     test("api.close disposes all active snapshots", async () => {
         const api = spawnAPI();
-        const snap1 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const snap2 = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const snap1 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const snap2 = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
         assert.ok(!snap1.isDisposed());
         assert.ok(!snap2.isDisposed());
         await api.close();
@@ -864,7 +864,7 @@ describe("Source file cache keying across projects", () => {
         "/package.json": JSON.stringify({ type: "module" }),
         "/src/shared.tlua": `local x = 1;\nreturn { x = x };`,
         // Project A – bundler, auto detection (default)
-        "/projectA/tsconfig.json": JSON.stringify({
+        "/projectA/tluaconfig.json": JSON.stringify({
             compilerOptions: {
                 module: "esnext",
                 strict: true,
@@ -872,7 +872,7 @@ describe("Source file cache keying across projects", () => {
             files: ["../src/shared.tlua"],
         }),
         // Project B – bundler
-        "/projectB/tsconfig.json": JSON.stringify({
+        "/projectB/tluaconfig.json": JSON.stringify({
             compilerOptions: {
                 module: "esnext",
                 strict: true,
@@ -880,7 +880,7 @@ describe("Source file cache keying across projects", () => {
             files: ["../src/shared.tlua"],
         }),
         // Project C – nodenext (type:module → module)
-        "/projectC/tsconfig.json": JSON.stringify({
+        "/projectC/tluaconfig.json": JSON.stringify({
             compilerOptions: {
                 module: "nodenext",
                 strict: true,
@@ -893,13 +893,13 @@ describe("Source file cache keying across projects", () => {
         const api = spawnAPI(multiProjectFiles);
         try {
             // Open all three projects
-            await api.updateSnapshot({ openProject: "/projectA/tsconfig.json" });
-            await api.updateSnapshot({ openProject: "/projectB/tsconfig.json" });
-            const snapshot = await api.updateSnapshot({ openProject: "/projectC/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/projectA/tluaconfig.json" });
+            await api.updateSnapshot({ openProject: "/projectB/tluaconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/projectC/tluaconfig.json" });
 
-            const projectA = snapshot.getProject("/projectA/tsconfig.json")!;
-            const projectB = snapshot.getProject("/projectB/tsconfig.json")!;
-            const projectC = snapshot.getProject("/projectC/tsconfig.json")!;
+            const projectA = snapshot.getProject("/projectA/tluaconfig.json")!;
+            const projectB = snapshot.getProject("/projectB/tluaconfig.json")!;
+            const projectC = snapshot.getProject("/projectC/tluaconfig.json")!;
             assert.ok(projectA, "projectA should exist");
             assert.ok(projectB, "projectB should exist");
             assert.ok(projectC, "projectC should exist");
@@ -924,19 +924,19 @@ describe("Source file cache keying across projects", () => {
 
 describe("Checker - symbol identity across projects", () => {
     const sharedSymbolFiles = {
-        "/projectA/tsconfig.json": JSON.stringify({ files: ["../src/shared.tlua"] }),
-        "/projectB/tsconfig.json": JSON.stringify({ files: ["../src/shared.tlua"] }),
+        "/projectA/tluaconfig.json": JSON.stringify({ files: ["../src/shared.tlua"] }),
+        "/projectB/tluaconfig.json": JSON.stringify({ files: ["../src/shared.tlua"] }),
         "/src/shared.tlua": `local sharedVar = 42;\nreturn { sharedVar = sharedVar };`,
     };
 
     test("getSymbolAtPosition returns same Symbol instance across projects", async () => {
         const api = spawnAPI(sharedSymbolFiles);
         try {
-            await api.updateSnapshot({ openProject: "/projectA/tsconfig.json" });
-            const snapshot = await api.updateSnapshot({ openProject: "/projectB/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/projectA/tluaconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/projectB/tluaconfig.json" });
 
-            const projectA = snapshot.getProject("/projectA/tsconfig.json")!;
-            const projectB = snapshot.getProject("/projectB/tsconfig.json")!;
+            const projectA = snapshot.getProject("/projectA/tluaconfig.json")!;
+            const projectB = snapshot.getProject("/projectB/tluaconfig.json")!;
             assert.ok(projectA, "projectA should exist");
             assert.ok(projectB, "projectB should exist");
 
@@ -961,7 +961,7 @@ describe("Checker - symbol identity across projects", () => {
 
 describe("Checker - types and signatures", () => {
     const checkerFiles = {
-        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/main.tlua": `
 local x = 42 as const;
 function add(a: number, b: number, ...rest: number[]): number { return a + b; }
@@ -980,8 +980,8 @@ local holder = {
     test("getTypeAtPosition", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const xPos = src.indexOf("x = 42");
             const type = await project.checker.getTypeAtPosition("/src/main.tlua", xPos);
@@ -996,8 +996,8 @@ local holder = {
     test("getTypeAtPosition batched", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const xPos = src.indexOf("x = 42");
             const addPos = src.indexOf("add(");
@@ -1014,8 +1014,8 @@ local holder = {
     test("getTypeAtLocation", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const firstVarDecl = sourceFile.statements[2]; // "interface Widget"
@@ -1030,7 +1030,7 @@ local holder = {
 
     test("getTypeAtLocation returns property type for parenthesized and chained access (issue #3938)", async () => {
         const files = {
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface A {
     a: number;
@@ -1045,8 +1045,8 @@ local c = obj.b.c;
 
         const api = spawnAPI(files);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
 
@@ -1077,7 +1077,7 @@ local c = obj.b.c;
 
     test("getTypeAtLocation returns call result type for a call expression (issue #4041)", async () => {
         const files = {
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true, target: "esnext" } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true, target: "esnext" } }),
             "/src/main.tlua": `
 type Result = { readonly value: string };
 
@@ -1093,8 +1093,8 @@ function run(): Result {
 
         const api = spawnAPI(files);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
 
@@ -1134,8 +1134,8 @@ function run(): Result {
     test("getSignaturesOfType - call signatures", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const addPos = src.indexOf("add(");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", addPos);
@@ -1159,8 +1159,8 @@ function run(): Result {
     test("getSignaturesOfType - construct signatures", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const classPos = src.indexOf("MyClass");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", classPos);
@@ -1180,8 +1180,8 @@ function run(): Result {
     test("Signature declaration can be resolved", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const addPos = src.indexOf("add(");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", addPos);
@@ -1226,12 +1226,12 @@ function run(): Result {
             }
             `;
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": mainFile,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const liftPos = mainFile.indexOf("lift");
             const type = await project.checker.getTypeAtPosition("/src/main.tlua", liftPos);
             assert.ok(type);
@@ -1254,8 +1254,8 @@ function run(): Result {
     test("Signature.getParameters() returns parameter symbols with correct names", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("add("));
             assert.ok(symbol);
@@ -1278,8 +1278,8 @@ function run(): Result {
     test("Signature.getThisParameter() returns undefined when no explicit this parameter", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("add("));
             assert.ok(symbol);
@@ -1298,8 +1298,8 @@ function run(): Result {
     test("Signature.getTarget() returns undefined for a non-instantiated signature", async () => {
         const api = spawnAPI(checkerFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = checkerFiles["/src/main.tlua"];
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("add("));
             assert.ok(symbol);
@@ -1321,12 +1321,12 @@ function run(): Result {
             identity<string>("hello");
         `;
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             let callNode: Node | undefined;
@@ -1350,7 +1350,7 @@ function run(): Result {
 
 describe("Symbol - parent, members, exports", () => {
     const symbolFiles = {
-        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/mod.tlua": `
 interface Animal {
     name: string;
@@ -1364,8 +1364,8 @@ return { value = value };
     test("getMembers returns interface members", async () => {
         const api = spawnAPI(symbolFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = symbolFiles["/src/mod.tlua"];
             const animalPos = src.indexOf("Animal");
             const symbol = await project.checker.getSymbolAtPosition("/src/mod.tlua", animalPos);
@@ -1384,8 +1384,8 @@ return { value = value };
     test("getExports returns module exports via sourceFile symbol", async () => {
         const api = spawnAPI(symbolFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/mod.tlua");
             assert.ok(sourceFile);
             const moduleSymbol = await project.checker.getSymbolAtLocation(sourceFile);
@@ -1405,8 +1405,8 @@ return { value = value };
     test("getParent returns containing symbol", async () => {
         const api = spawnAPI(symbolFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = symbolFiles["/src/mod.tlua"];
             const namePos = src.indexOf("name:");
             const nameSymbol = await project.checker.getSymbolAtPosition("/src/mod.tlua", namePos);
@@ -1425,7 +1425,7 @@ return { value = value };
 describe("Type - getSymbol", () => {
     test("getSymbol returns the symbol of a type", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/types.d.tlua": `
 interface Foo {
     x: number;
@@ -1434,8 +1434,8 @@ declare instance: Foo;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ninterface Foo {\n    x: number;\n}\ndeclare instance: Foo;\n`;
             const instancePos = src.indexOf("instance");
             const symbol = await project.checker.getSymbolAtPosition("/src/types.d.tlua", instancePos);
@@ -1454,7 +1454,7 @@ declare instance: Foo;
 
 describe("Type - sub-property fetchers", () => {
     const typeFiles = {
-        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true, target: "esnext" } }),
+        "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true, target: "esnext" } }),
         "/src/types.d.tlua": `
 declare arr: Array<number>;
 declare union: string | number;
@@ -1469,8 +1469,8 @@ declare tuple: readonly [number, string?, ...boolean[]];
     };
 
     async function getTypeAtName(api: API, name: string) {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const src = typeFiles["/src/types.d.tlua"];
         const pos = src.indexOf(name);
         assert.ok(pos >= 0, `Could not find "${name}" in source`);
@@ -1530,12 +1530,12 @@ declare tuple: readonly [number, string?, ...boolean[]];
     test("UnionOrIntersectionType.getTypes() on a wrongly-cast type returns undefined without hitting the server", async () => {
         const src = `local s: string = ""; local u: string | number = "";`;
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
 
             // `string` is neither a union/intersection nor a template literal type,
             // so it has no constituent types. The client guards on the type's flags
@@ -1561,8 +1561,8 @@ declare tuple: readonly [number, string?, ...boolean[]];
     test("IndexType.getTarget() returns the target type", async () => {
         const api = spawnAPI(typeFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const symbol = await project.checker.resolveName("KeyOf", SymbolFlags.TypeAlias, { document: "/src/types.d.tlua", position: 0 });
             assert.ok(symbol);
             const type = await project.checker.getDeclaredTypeOfSymbol(symbol);
@@ -1581,8 +1581,8 @@ declare tuple: readonly [number, string?, ...boolean[]];
     test("IndexedAccessType.getObjectType() and getIndexType()", async () => {
         const api = spawnAPI(typeFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const symbol = await project.checker.resolveName("Lookup", SymbolFlags.TypeAlias, { document: "/src/types.d.tlua", position: 0 });
             assert.ok(symbol);
             const type = await project.checker.getDeclaredTypeOfSymbol(symbol);
@@ -1603,8 +1603,8 @@ declare tuple: readonly [number, string?, ...boolean[]];
     test("ConditionalType.getCheckType() and getExtendsType()", async () => {
         const api = spawnAPI(typeFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const symbol = await project.checker.resolveName("Cond", SymbolFlags.TypeAlias, { document: "/src/types.d.tlua", position: 0 });
             assert.ok(symbol);
             const type = await project.checker.getDeclaredTypeOfSymbol(symbol);
@@ -1625,8 +1625,8 @@ declare tuple: readonly [number, string?, ...boolean[]];
     test("ConditionalType.getTrueType() and getFalseType()", async () => {
         const api = spawnAPI(typeFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const symbol = await project.checker.resolveName("Cond", SymbolFlags.TypeAlias, { document: "/src/types.d.tlua", position: 0 });
             assert.ok(symbol);
             const type = await project.checker.getDeclaredTypeOfSymbol(symbol);
@@ -1667,8 +1667,8 @@ declare tuple: readonly [number, string?, ...boolean[]];
     test("StringMappingType.getTarget() returns the mapped type", async () => {
         const api = spawnAPI(typeFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = typeFiles["/src/types.d.tlua"];
             const pos = src.indexOf("Upper");
             const symbol = await project.checker.getSymbolAtPosition("/src/types.d.tlua", pos);
@@ -1706,15 +1706,15 @@ declare tuple: readonly [number, string?, ...boolean[]];
 
 describe("Checker - intrinsic type getters", () => {
     const intrinsicFiles = {
-        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/main.tlua": `local x = 1;\nreturn { x = x };`,
     };
 
     test("getAnyType returns a type with Any flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getAnyType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Any);
@@ -1727,8 +1727,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getStringType returns a type with String flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getStringType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.String);
@@ -1741,8 +1741,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getNumberType returns a type with Number flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getNumberType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Number);
@@ -1755,8 +1755,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getBooleanType returns a type with Boolean flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getBooleanType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Boolean);
@@ -1769,8 +1769,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getVoidType returns a type with Void flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getVoidType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Void);
@@ -1783,8 +1783,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getUndefinedType returns a type with Nil flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getUndefinedType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Nil);
@@ -1797,8 +1797,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getNullType returns a type with Nil flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getNullType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Nil);
@@ -1811,8 +1811,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getNeverType returns a type with Never flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getNeverType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Never);
@@ -1825,8 +1825,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getUnknownType returns a type with Unknown flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getUnknownType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.Unknown);
@@ -1839,8 +1839,8 @@ describe("Checker - intrinsic type getters", () => {
     test("getESSymbolType returns a type with ESSymbol flag", async () => {
         const api = spawnAPI(intrinsicFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const type = await project.checker.getESSymbolType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.ESSymbol);
@@ -1854,22 +1854,22 @@ describe("Checker - intrinsic type getters", () => {
 describe("Checker - multi-project type ID uniqueness", () => {
     test("intrinsic types from 3 projects in the same snapshot have non-colliding IDs", async () => {
         const api = spawnAPI({
-            "/proj1/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj1/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/proj1/src/index.tlua": `local x = 1;\nreturn { x = x };`,
-            "/proj2/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj2/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/proj2/src/index.tlua": `local y = "hello";\nreturn { y = y };`,
-            "/proj3/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj3/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/proj3/src/index.tlua": `local z = true;\nreturn { z = z };`,
         });
         try {
             // Open all 3 projects — each updateSnapshot accumulates open projects
-            await api.updateSnapshot({ openProject: "/proj1/tsconfig.json" });
-            await api.updateSnapshot({ openProject: "/proj2/tsconfig.json" });
-            const snapshot = await api.updateSnapshot({ openProject: "/proj3/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/proj1/tluaconfig.json" });
+            await api.updateSnapshot({ openProject: "/proj2/tluaconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/proj3/tluaconfig.json" });
 
-            const proj1 = snapshot.getProject("/proj1/tsconfig.json")!;
-            const proj2 = snapshot.getProject("/proj2/tsconfig.json")!;
-            const proj3 = snapshot.getProject("/proj3/tsconfig.json")!;
+            const proj1 = snapshot.getProject("/proj1/tluaconfig.json")!;
+            const proj2 = snapshot.getProject("/proj2/tluaconfig.json")!;
+            const proj3 = snapshot.getProject("/proj3/tluaconfig.json")!;
             assert.ok(proj1, "proj1 should be in final snapshot");
             assert.ok(proj2, "proj2 should be in final snapshot");
             assert.ok(proj3, "proj3 should be in final snapshot");
@@ -1911,21 +1911,21 @@ describe("Checker - multi-project type ID uniqueness", () => {
 
     test("symbol and signature handles from 3 projects in the same snapshot have non-colliding IDs", async () => {
         const api = spawnAPI({
-            "/proj1/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj1/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/proj1/src/index.tlua": `function add(a: number, b: number): number { return a + b; }`,
-            "/proj2/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj2/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/proj2/src/index.tlua": `function greet(name: string): string { return "hello " + name; }`,
-            "/proj3/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj3/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/proj3/src/index.tlua": `function toggle(b: boolean): boolean { return !b; }`,
         });
         try {
-            await api.updateSnapshot({ openProject: "/proj1/tsconfig.json" });
-            await api.updateSnapshot({ openProject: "/proj2/tsconfig.json" });
-            const snapshot = await api.updateSnapshot({ openProject: "/proj3/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/proj1/tluaconfig.json" });
+            await api.updateSnapshot({ openProject: "/proj2/tluaconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/proj3/tluaconfig.json" });
 
-            const proj1 = snapshot.getProject("/proj1/tsconfig.json")!;
-            const proj2 = snapshot.getProject("/proj2/tsconfig.json")!;
-            const proj3 = snapshot.getProject("/proj3/tsconfig.json")!;
+            const proj1 = snapshot.getProject("/proj1/tluaconfig.json")!;
+            const proj2 = snapshot.getProject("/proj2/tluaconfig.json")!;
+            const proj3 = snapshot.getProject("/proj3/tluaconfig.json")!;
 
             // Get a symbol from each project (exercises symbol registry)
             const src1 = `function add(a: number, b: number): number { return a + b; }`;
@@ -1969,12 +1969,12 @@ describe("Checker - multi-project type ID uniqueness", () => {
 describe("Checker - getBaseTypeOfLiteralType", () => {
     test("number literal widens to number", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local x = 42 as const;\nreturn { x = x };`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `local x = 42 as const;\nreturn { x = x };`;
             const pos = src.indexOf("x =");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -1993,12 +1993,12 @@ describe("Checker - getBaseTypeOfLiteralType", () => {
 
     test("string literal widens to string", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local s = "hello" as const;\nreturn { s = s };`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `local s = "hello" as const;\nreturn { s = s };`;
             const pos = src.indexOf("s ");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2019,15 +2019,15 @@ describe("Checker - getBaseTypeOfLiteralType", () => {
 describe("Checker - getContextualType", () => {
     test("contextual type from function parameter", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 function foo(x: number) {}
 foo(42);
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
 
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
@@ -2059,7 +2059,7 @@ describe("Checker - getTypeOfSymbolAtLocation", () => {
     test("narrowed type via type() check", async () => {
         const api = spawnAPI({
             // `type` is a lualib global, so the LuaJIT declarations must be in the program.
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true, lib: ["esnext", "luajit"] } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true, lib: ["esnext", "luajit"] } }),
             "/src/main.tlua": `
 function check(x: string | number) {
     if (type(x) == "string") {
@@ -2070,8 +2070,8 @@ function check(x: string | number) {
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\nfunction check(x: string | number) {\n    if (type(x) == "string") {\n        return x;\n    }\n    return x;\n}\n`;
 
             // Get the symbol for parameter "x"
@@ -2118,7 +2118,7 @@ function check(x: string | number) {
 describe("readFile callback semantics", () => {
     test("readFile: string returns content, null blocks fallback, undefined falls through to real FS", async () => {
         const virtualFiles: Record<string, string> = {
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/index.tlua": `local x: number = 1;`,
         };
         const vfs = createVirtualFileSystem(virtualFiles);
@@ -2143,8 +2143,8 @@ describe("readFile callback semantics", () => {
         });
 
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
 
             // 1. String content: virtual file is found
             const sf = await project.program.getSourceFile("/src/index.tlua");
@@ -2173,12 +2173,12 @@ describe("readFile callback semantics", () => {
 describe("Checker - isArrayType / isTupleType", () => {
     test("number[] is array, not tuple", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local xs: number[] = [];`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `local xs: number[] = [];`;
             const pos = src.indexOf("xs");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2195,12 +2195,12 @@ describe("Checker - isArrayType / isTupleType", () => {
 
     test("readonly number[] is array", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local xs: readonly number[] = [];`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `local xs: readonly number[] = [];`;
             const pos = src.indexOf("xs");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2217,12 +2217,12 @@ describe("Checker - isArrayType / isTupleType", () => {
 
     test("Array<number> is distinct from the T[] table type", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local xs: Array<number> = [];`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `local xs: Array<number> = [];`;
             const pos = src.indexOf("xs");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2240,13 +2240,13 @@ describe("Checker - isArrayType / isTupleType", () => {
 
     test("[number, string] is tuple, not array", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             // Tuple type syntax parses only in declaration files after the removal.
             "/src/shapes.d.tlua": `declare tup: [number, string];`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `declare tup: [number, string];`;
             const pos = src.indexOf("tup");
             const symbol = await project.checker.getSymbolAtPosition("/src/shapes.d.tlua", pos);
@@ -2263,13 +2263,13 @@ describe("Checker - isArrayType / isTupleType", () => {
 
     test("readonly [number, string] is tuple, not array", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             // Tuple type syntax parses only in declaration files after the removal.
             "/src/shapes.d.tlua": `declare tup: readonly [number, string];`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `declare tup: readonly [number, string];`;
             const pos = src.indexOf("tup");
             const symbol = await project.checker.getSymbolAtPosition("/src/shapes.d.tlua", pos);
@@ -2286,12 +2286,12 @@ describe("Checker - isArrayType / isTupleType", () => {
 
     test("string is neither array nor tuple", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local str: string = "";`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `local str: string = "";`;
             const pos = src.indexOf("str");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2310,12 +2310,12 @@ describe("Checker - isArrayType / isTupleType", () => {
 describe("Checker - getReturnTypeOfSignature", () => {
     test("returns the return type of a function signature", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function add(a: number, b: number): number { return a + b; }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `function add(a: number, b: number): number { return a + b; }`;
             const pos = src.indexOf("add(");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2337,12 +2337,12 @@ describe("Checker - getReturnTypeOfSignature", () => {
 describe("Checker - getRestTypeOfSignature", () => {
     test("returns the rest type of a signature with rest parameter", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function sum(...nums: number[]): number { return nums.reduce((a, b) => a + b, 0); }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `function sum(...nums: number[]): number { return nums.reduce((a, b) => a + b, 0); }`;
             const pos = src.indexOf("sum(");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2364,12 +2364,12 @@ describe("Checker - getRestTypeOfSignature", () => {
 describe("Checker - getTypePredicateOfSignature", () => {
     test("returns type predicate for 'x is T' guard", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function isString(x: unknown): x is string { return typeof x === "string"; }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `function isString(x: unknown): x is string { return typeof x === "string"; }`;
             const pos = src.indexOf("isString(");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2393,12 +2393,12 @@ describe("Checker - getTypePredicateOfSignature", () => {
 
     test("returns type predicate for 'asserts x is T'", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function assertIsString(x: unknown): asserts x is string { if (typeof x !== "string") throw new Error(); }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `function assertIsString(x: unknown): asserts x is string { if (typeof x !== "string") throw new Error(); }`;
             const pos = src.indexOf("assertIsString(");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2422,12 +2422,12 @@ describe("Checker - getTypePredicateOfSignature", () => {
 
     test("returns undefined for signature without type predicate", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function add(a: number, b: number): number { return a + b; }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `function add(a: number, b: number): number { return a + b; }`;
             const pos = src.indexOf("add(");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2450,7 +2450,7 @@ describe("Checker - getBaseTypes", () => {
     // the interface case below, which exercises the same InterfaceType path.
     test("returns base types of an interface", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface Animal {
     name: string;
@@ -2461,8 +2461,8 @@ interface Dog extends Animal {
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ninterface Animal {\n    name: string;\n}\ninterface Dog extends Animal {\n    bark(): void;\n}\n`;
             const pos = src.indexOf("Dog");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2482,7 +2482,7 @@ interface Dog extends Animal {
 
     test("does not panic for a type alias to a generic interface instantiation", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface Box<T> {
     value: T;
@@ -2491,8 +2491,8 @@ type BoxOfString = Box<string>;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const typeAlias = sourceFile.statements.find(isTypeAliasDeclaration);
@@ -2513,7 +2513,7 @@ type BoxOfString = Box<string>;
 describe("Type - getBaseTypes", () => {
     test("returns base types for a class/interface type and undefined for a non-class/interface", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface Base {
     x: number;
@@ -2525,8 +2525,8 @@ local n: number = 0;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ninterface Base {\n    x: number;\n}\ninterface Derived extends Base {\n    y: string;\n}\nlocal n: number = 0;\n`;
 
             const derivedSymbol = await project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("Derived"));
@@ -2555,15 +2555,15 @@ local n: number = 0;
 describe("Type - isErrorType", () => {
     test("identifies the error type from an unresolvable annotation", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 declare local good: string;
 declare local bad: ThisTypeDoesNotExist;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ndeclare local good: string;\ndeclare local bad: ThisTypeDoesNotExist;\n`;
 
             const badSymbol = await project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("bad"));
@@ -2589,15 +2589,15 @@ declare local bad: ThisTypeDoesNotExist;
 describe("Checker - well-known symbols", () => {
     test("isUnknownSymbol identifies the aliased unknown symbol", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 local value = 1;
 type Alias = typeof value;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\nlocal value = 1;\ntype Alias = typeof value;\n`;
 
             // A real symbol is not the unknown/undefined symbol.
@@ -2621,12 +2621,12 @@ local notCallable = 1;
 notCallable();
 `;
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const calls: Node[] = [];
@@ -2653,7 +2653,7 @@ notCallable();
 describe("Symbol - escaped names and tables", () => {
     test("getExports/getMembers return a cached Map keyed by escaped name", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface Animal {
     name: string;
@@ -2664,8 +2664,8 @@ return { value = value };
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const moduleSymbol = await project.checker.getSymbolAtLocation(sourceFile);
@@ -2698,14 +2698,14 @@ return { value = value };
 
     test("anonymous type symbol has a __-escaped name, never the \\xFE sentinel", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 local obj: { a: number } = { a = 1 };
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\nlocal obj: { a: number } = { a = 1 };\n`;
             const objSymbol = await project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("obj"));
             assert.ok(objSymbol);
@@ -2738,7 +2738,7 @@ describe("ast - escapeLeadingUnderscores", () => {
 describe("ast - getJSDocTags", () => {
     test("returns a node's own tags, and inherited @param / @template tags", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 /**
  * Adds two numbers.
@@ -2763,8 +2763,8 @@ local total = add(1, 2);
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const functions = [...sourceFile.statements].filter(isFunctionDeclaration);
@@ -2817,7 +2817,7 @@ local total = add(1, 2);
 
     test("a function-expression parameter inherits @param tags from the variable statement", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: {} }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: {} }),
             "/src/main.tlua": `
 /**
  * @param {string} name a name
@@ -2829,8 +2829,8 @@ local measure = function (name) {
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const variable = sourceFile.statements.find(isVariableStatement);
@@ -2859,7 +2859,7 @@ local measure = function (name) {
 
     test("a @type cast tag is owned by its parenthesized expression, not the declaration", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: {} }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: {} }),
             "/src/main.tlua": `
 /** @type {string} */
 local value = "hello";
@@ -2868,8 +2868,8 @@ local cast = /** @type {number} */ (someValue);
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const statements = [...sourceFile.statements].filter(isVariableStatement);
@@ -2892,7 +2892,7 @@ local cast = /** @type {number} */ (someValue);
 describe("Checker - getPropertiesOfType", () => {
     test("returns properties of an object type", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface Person {
     name: string;
@@ -2903,8 +2903,8 @@ declare p: Person;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ninterface Person {\n    name: string;\n    age: number;\n    greet(): void;\n}\ndeclare p: Person;\n`;
             const pos = src.indexOf("p: Person");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2927,7 +2927,7 @@ declare p: Person;
 describe("Checker - getIndexInfosOfType", () => {
     test("returns index signatures of an indexed type", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface StringMap {
     [key: string]: number;
@@ -2936,8 +2936,8 @@ declare m: StringMap;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ninterface StringMap {\n    [key: string]: number;\n}\ndeclare m: StringMap;\n`;
             const pos = src.indexOf("m: StringMap");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2960,7 +2960,7 @@ declare m: StringMap;
 
     test("readonly index signature reports isReadonly true", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface ReadonlyMap {
     readonly [key: string]: number;
@@ -2969,8 +2969,8 @@ declare m: ReadonlyMap;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ninterface ReadonlyMap {\n    readonly [key: string]: number;\n}\ndeclare m: ReadonlyMap;\n`;
             const pos = src.indexOf("m: ReadonlyMap");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -2990,12 +2990,12 @@ declare m: ReadonlyMap;
 describe("Checker - getConstraintOfTypeParameter", () => {
     test("returns constraint of a type parameter", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function identity<T extends string>(x: T): T { return x; }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `function identity<T extends string>(x: T): T { return x; }`;
             const pos = src.indexOf("identity<");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -3019,12 +3019,12 @@ describe("Checker - getConstraintOfTypeParameter", () => {
 describe("Checker - getTypeArguments", () => {
     test("returns type arguments of a generic instantiation", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `declare arr: Array<number>;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `declare arr: Array<number>;`;
             const pos = src.indexOf("arr:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -3043,12 +3043,12 @@ describe("Checker - getTypeArguments", () => {
     test("a wrongly-typed call throws on the client without taking down the server", async () => {
         const src = `local s: string = ""; local arr: Array<number> = [1];`;
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
 
             // `string` is not a type reference. When getTypeArguments is reached
             // with one, the server panics, but the per-request panic recovery
@@ -3076,12 +3076,12 @@ describe("Checker - getTypeArguments", () => {
 describe("Checker - getBaseConstraintOfType", () => {
     test("returns the base constraint of a type parameter", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function identity<T extends string>(x: T): T { return x; }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `function identity<T extends string>(x: T): T { return x; }`;
             const pos = src.indexOf("identity<");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -3102,12 +3102,12 @@ describe("Checker - getBaseConstraintOfType", () => {
 
     test("returns undefined for a non-instantiable type", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local x: number = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = `local x: number = 1;`.indexOf("x:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3125,7 +3125,7 @@ describe("Checker - getBaseConstraintOfType", () => {
 describe("Checker - getPropertyOfType", () => {
     test("returns a named property symbol of a type", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
 interface Person {
     name: string;
@@ -3135,8 +3135,8 @@ declare p: Person;
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\ninterface Person {\n    name: string;\n    age: number;\n}\ndeclare p: Person;\n`;
             const pos = src.indexOf("p: Person");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
@@ -3158,12 +3158,12 @@ declare p: Person;
 describe("Checker - getSignatureFromDeclaration", () => {
     test("returns the signature of a function declaration", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `function add(a: number, b: number): number { return a + b; }`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             let funcDecl: Node | undefined;
@@ -3188,13 +3188,13 @@ describe("Checker - getSignatureFromDeclaration", () => {
 describe("Checker - getAliasedSymbol", () => {
     test("resolves the top-level return alias to its target symbol", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/foo.tlua": `local foo = 42;\nreturn { foo = foo };`,
             "/src/main.tlua": `local m = require("src.foo");\nreturn m;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             const moduleSymbol = await project.checker.getSymbolAtLocation(sourceFile);
@@ -3217,7 +3217,7 @@ describe("Checker - getAliasedSymbol", () => {
 describe("Checker - getExportsOfModule", () => {
     test("returns the export= symbol of a Lua module", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/inner.tlua": `local innerValue = 1;\nreturn { innerValue = innerValue };`,
             "/src/index.tlua": `
 local direct = 1;
@@ -3226,8 +3226,8 @@ return { direct = direct, innerValue = inner.innerValue };
 `,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
             const moduleSymbol = await project.checker.getSymbolAtLocation(sourceFile);
@@ -3248,7 +3248,7 @@ return { direct = direct, innerValue = inner.innerValue };
 
 describe("Symbol - getDocumentationComment and getJsDocTags", () => {
     const docFiles = {
-        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/main.tlua": `
 /**
  * Adds two numbers together.
@@ -3262,8 +3262,8 @@ function add(a: number, b: number): number { return a + b; }
     test("getDocumentationComment returns the leading comment text", async () => {
         const api = spawnAPI(docFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = docFiles["/src/main.tlua"].indexOf("add(a");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3279,8 +3279,8 @@ function add(a: number, b: number): number { return a + b; }
     test("getJsDocTags returns structured tag name/text pairs", async () => {
         const api = spawnAPI(docFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = docFiles["/src/main.tlua"].indexOf("add(a");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3304,12 +3304,12 @@ describe("TypeParameter - isThisType", () => {
     test("isThisType is absent for a regular generic type parameter", async () => {
         const src = `\nfunction identity<T>(x: T): T { return x; }\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             // Point to 'T' in the type parameter declaration '<T>' — getTypeAtPosition
             // on a type annotation reference doesn't resolve to TypeParameter, but
             // the declaration position does.
@@ -3330,12 +3330,12 @@ describe("Type - getAliasTypeArguments", () => {
     test("returns the type arguments of a single-param generic type alias", async () => {
         const src = `\ntype Box<T> = { value: T };\nlocal x: Box<string> = { value: "hi" };\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("x:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3353,12 +3353,12 @@ describe("Type - getAliasTypeArguments", () => {
     test("returns multiple type arguments for a multi-param generic type alias", async () => {
         const src = `\ntype Pair<A, B> = { first: A; second: B };\nlocal p: Pair<string, number> = { first: "hello", second: 42 };\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("p:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3377,12 +3377,12 @@ describe("Type - getAliasTypeArguments", () => {
     test("returns empty array for a non-alias generic type", async () => {
         const src = `\nlocal arr: Array<string> = ["hello"];\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("arr:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3402,12 +3402,12 @@ describe("Type - getAliasSymbol", () => {
         // Object-type aliases preserve aliasSymbol; primitive aliases (type Foo = string) do not.
         const src = `\ntype Point = { x: number; y: number };\nlocal p: Point = { x: 1, y: 2 };\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("p:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3425,12 +3425,12 @@ describe("Type - getAliasSymbol", () => {
     test("returns the symbol for a generic type alias", async () => {
         const src = `\ntype Container<T> = { item: T };\nlocal c: Container<number> = { item: 42 };\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("c:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3448,12 +3448,12 @@ describe("Type - getAliasSymbol", () => {
     test("returns undefined for a non-alias type", async () => {
         const src = `\nlocal str: string = "test";\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("str:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3472,12 +3472,12 @@ describe("IntrinsicType - intrinsicName", () => {
     test("intrinsicName matches the primitive type name", async () => {
         const src = `\nlocal x: string = "hello";\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const stringType = await project.checker.getStringType();
             assert.equal((stringType as IntrinsicType).intrinsicName, "string");
             const anyType = await project.checker.getAnyType();
@@ -3502,12 +3502,12 @@ describe("FreshableType - getFreshType and getRegularType", () => {
     test("LiteralType.value is empty string for the empty-string literal type", async () => {
         const src = `\nlocal empty: "" = "";\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("empty:"));
             assert.ok(symbol);
             const type = await project.checker.getTypeOfSymbol(symbol);
@@ -3524,12 +3524,12 @@ describe("FreshableType - getFreshType and getRegularType", () => {
     test("LiteralType.value is accessible via the FreshableType hierarchy", async () => {
         const src = `\nlocal greeting: "hello" = "hello";\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("greeting:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3547,12 +3547,12 @@ describe("FreshableType - getFreshType and getRegularType", () => {
     test("getFreshType() returns a fresh twin with matching value", async () => {
         const src = `\nlocal greeting: "hello" = "hello";\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("greeting:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3579,12 +3579,12 @@ describe("FreshableType - getFreshType and getRegularType", () => {
         // always includes its regularType in its own response.
         const src = `\nlocal greeting: "hello" = "hello";\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("greeting:");
             const symbol = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3609,12 +3609,12 @@ describe("FreshableType - getFreshType and getRegularType", () => {
 describe("Checker - isContextSensitive", () => {
     test("arrow function with no type annotation is context sensitive", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local fn = (x) => x;\nreturn { fn = fn };`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             // Find the arrow function node
@@ -3638,12 +3638,12 @@ describe("Checker - isContextSensitive", () => {
 describe("Checker - isTypeAssignableTo", () => {
     test("returns true when source is assignable to target", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": `local nothing = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const stringType = await project.checker.getStringType();
             const anyType = await project.checker.getAnyType();
             const neverType = await project.checker.getNeverType();
@@ -3658,12 +3658,12 @@ describe("Checker - isTypeAssignableTo", () => {
 
     test("returns false when source is not assignable to target", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": `local nothing = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const stringType = await project.checker.getStringType();
             const numberType = await project.checker.getNumberType();
             assert.ok(!await project.checker.isTypeAssignableTo(numberType, stringType), "number not assignable to string");
@@ -3677,12 +3677,12 @@ describe("Checker - isTypeAssignableTo", () => {
     test("a string literal type is assignable to string but not number", async () => {
         const src = `\nlocal x: "hello" = "hello";\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("x:");
             const sym = await project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(sym);
@@ -3704,12 +3704,12 @@ describe("Checker - getCompletionsAtPosition", () => {
     test("returns member completions after a dot", async () => {
         const src = `\nlocal obj = { name = "hello", age = 42 };\nobj.\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             // Position right after "obj." — member completion trigger
             const pos = src.indexOf("obj.") + "obj.".length;
             const completions = await project.checker.getCompletionsAtPosition("/src/main.tlua", pos, { triggerCharacter: "." });
@@ -3727,12 +3727,12 @@ describe("Checker - getCompletionsAtPosition", () => {
     test("completion entries include sortText", async () => {
         const src = `\nlocal obj = { value: 1 };\nobj.\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("obj.") + "obj.".length;
             const completions = await project.checker.getCompletionsAtPosition("/src/main.tlua", pos, { triggerCharacter: "." });
             assert.ok(completions);
@@ -3746,12 +3746,12 @@ describe("Checker - getCompletionsAtPosition", () => {
 
     test("returns undefined for a non-existent file", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": `local nothing = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const completions = await project.checker.getCompletionsAtPosition("/src/does-not-exist.tlua", 0);
             assert.equal(completions, undefined, "Expected undefined for non-existent file");
         }
@@ -3763,12 +3763,12 @@ describe("Checker - getCompletionsAtPosition", () => {
     test("includeSymbol: true populates symbol on property completions", async () => {
         const src = `\nlocal obj = { name = "hello", age = 42 };\nobj.\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const pos = src.indexOf("obj.") + "obj.".length;
             const completions = await project.checker.getCompletionsAtPosition("/src/main.tlua", pos, { triggerCharacter: ".", includeSymbol: true });
             assert.ok(completions, "Expected completions");
@@ -3785,7 +3785,7 @@ describe("Checker - getCompletionsAtPosition", () => {
 
 describe("Emitter - printNode", () => {
     const emitterFiles = {
-        "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+        "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/main.tlua": `
 local x = 42;
 function greet(name: string): string { return name; }
@@ -3797,8 +3797,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("printNode with factory-created keyword type", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const node = createKeywordTypeNode(SyntaxKind.StringKeyword);
             const text = await project.emitter.printNode(node);
             assert.strictEqual(text, "string");
@@ -3811,8 +3811,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("printNode with factory-created union type", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const node = createUnionTypeNode([
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
                 createKeywordTypeNode(SyntaxKind.NumberKeyword),
@@ -3828,8 +3828,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("printNode with factory-created function type", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const param = createParameterDeclaration(
                 undefined,
                 undefined,
@@ -3855,8 +3855,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("printNode with factory-created type reference", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const node = createTypeReferenceNode(createIdentifier("Array"), [
                 createKeywordTypeNode(SyntaxKind.StringKeyword),
             ]);
@@ -3871,8 +3871,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("printNode with factory-created array type", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const node = createArrayTypeNode(createKeywordTypeNode(SyntaxKind.NumberKeyword));
             const text = await project.emitter.printNode(node);
             assert.strictEqual(text, "number[]");
@@ -3885,8 +3885,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("typeToTypeNode + printNode round-trip", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const { checker, emitter } = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const { checker, emitter } = snapshot.getProject("/tluaconfig.json")!;
             const src = emitterFiles["/src/main.tlua"];
 
             const greetPos = src.indexOf("greet(");
@@ -3908,8 +3908,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("visitEachChild on typeToTypeNode result with keyword types", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const { checker } = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const { checker } = snapshot.getProject("/tluaconfig.json")!;
             const src = emitterFiles["/src/main.tlua"];
             const objPos = src.indexOf("obj");
             const symbol = await checker.getSymbolAtPosition("/src/main.tlua", objPos);
@@ -3959,8 +3959,8 @@ local obj = { m = 1, s = "hi", b = true };
     test("typeToString", async () => {
         const api = spawnAPI(emitterFiles);
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const { checker } = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const { checker } = snapshot.getProject("/tluaconfig.json")!;
             const src = emitterFiles["/src/main.tlua"];
 
             const greetPos = src.indexOf("greet(");
@@ -3978,12 +3978,12 @@ local obj = { m = 1, s = "hi", b = true };
 
     test("printNode with terminateUnterminatedLiterals option", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `local foo = /asdfasf;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
 
@@ -4015,12 +4015,12 @@ local obj = { m = 1, s = "hi", b = true };
 describe("modifierFlags", () => {
     test("async function has Async flag", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `async function foo() {}`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
@@ -4042,12 +4042,12 @@ describe("modifierFlags", () => {
 
     test("node without modifiers has ModifierFlags.None", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `function bar() {}`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
@@ -4070,12 +4070,12 @@ describe("modifierFlags", () => {
 describe("Checker - getResolvedSymbol", () => {
     test("resolves variable reference to its declaration symbol", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `local x = 1;\nlocal y = x;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
@@ -4103,12 +4103,12 @@ describe("Checker - getResolvedSymbol", () => {
 describe("VariableDeclarationList - BlockScoped flags", () => {
     test("local declaration has LuaLocal flag", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `local x = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
@@ -4132,12 +4132,12 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
         // with LuaLocal (block-scoped via the Lua-local binder path), not with
         // the Let/Const scope bits that the old let/const declarations carried.
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `local x = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
@@ -4160,12 +4160,12 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
 
 test("TypeOperator operator kind", async () => {
     const api = spawnAPI({
-        "/tsconfig.json": "{}",
+        "/tluaconfig.json": "{}",
         "/src/index.tlua": `function test(arg: readonly number[]) { }\n`,
     });
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert(sourceFile);
         const param = (sourceFile.statements[0] as import("@tlua/compiler/unstable/ast").FunctionDeclaration).parameters[0];
@@ -4184,12 +4184,12 @@ test("TypeOperator operator kind", async () => {
 
 test("VarargExpression roundtrip", async () => {
     const api = spawnAPI({
-        "/tsconfig.json": "{}",
+        "/tluaconfig.json": "{}",
         "/src/index.tlua": `local thing = { ... };\n`,
     });
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert(sourceFile);
         const stmt = sourceFile.statements[0] as import("@tlua/compiler/unstable/ast").VariableStatement;
@@ -4210,12 +4210,12 @@ test("VarargExpression roundtrip", async () => {
 
 test("VariableDeclarationList local flag clone", async () => {
     const api = spawnAPI({
-        "/tsconfig.json": "{}",
+        "/tluaconfig.json": "{}",
         "/src/index.tlua": `local thing = 123;\n`,
     });
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert(sourceFile);
         {
@@ -4239,7 +4239,7 @@ test("VariableDeclarationList local flag clone", async () => {
 
 test("JSDoc before ExpressionStatement allowed", async () => {
     const api = spawnAPI({
-        "/tsconfig.json": "{}",
+        "/tluaconfig.json": "{}",
         "/src/index.tlua": `
 /**
  * A doc.
@@ -4248,8 +4248,8 @@ doThing();
         `,
     });
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert(sourceFile);
         const printed = await project.emitter.printNode(sourceFile);
@@ -4265,8 +4265,8 @@ doThing();
 test("Factory ModifierList auto-conversion", async () => {
     const api = spawnAPI();
     try {
-        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-        const project = snapshot.getProject("/tsconfig.json")!;
+        const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+        const project = snapshot.getProject("/tluaconfig.json")!;
         const node = createTypeAliasDeclaration(
             [createToken(SyntaxKind.ExportKeyword)],
             createIdentifier("Test"),
@@ -4343,12 +4343,12 @@ describe("Program - diagnostics", () => {
     test("getSyntacticDiagnostics", async () => {
         const source = `local x: = 1;`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": source,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getSyntacticDiagnostics("/src/index.tlua");
             assert.deepEqual(diags, [{
                 fileName: "/src/index.tlua",
@@ -4366,12 +4366,12 @@ describe("Program - diagnostics", () => {
     test("getSemanticDiagnostics with messageChain and relatedInformation", async () => {
         const source = `interface Props { callback: (x: string) => void }\nlocal p: Props = { callback = (x: number) => {} };`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": source,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getSemanticDiagnostics("/src/index.tlua");
             const declRange = rangeOf(source, "callback", 0);
             const assignRange = rangeOf(source, "callback", 1);
@@ -4412,12 +4412,12 @@ describe("Program - diagnostics", () => {
     test("getSuggestionDiagnostics", async () => {
         const source = `function f() { local x = 1; return x; }\nlocal _unused = 1;\nreturn { f = f };\n`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": source,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getSuggestionDiagnostics("/src/index.tlua");
             assert.deepEqual(diags, [{
                 fileName: "/src/index.tlua",
@@ -4436,15 +4436,15 @@ describe("Program - diagnostics", () => {
     test("getConfigFileParsingDiagnostics", async () => {
         const config = `{ "compilerOptions": { "target": "invalid" } }`;
         const api = spawnAPI({
-            "/tsconfig.json": config,
+            "/tluaconfig.json": config,
             "/src/index.tlua": `local x = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getConfigFileParsingDiagnostics();
             assert.deepEqual(diags, [{
-                fileName: "/tsconfig.json",
+                fileName: "/tluaconfig.json",
                 ...rangeOf(config, `"invalid"`),
                 code: 6046,
                 category: DiagnosticCategory.Error,
@@ -4458,12 +4458,12 @@ describe("Program - diagnostics", () => {
 
     test("getDeclarationDiagnostics", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": `{ "compilerOptions": { "declaration": true } }`,
+            "/tluaconfig.json": `{ "compilerOptions": { "declaration": true } }`,
             "/src/index.tlua": `local x: number = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getDeclarationDiagnostics("/src/index.tlua");
             // Declaration emit is not supported for a Lua module yet.
             assert.equal(diags.length, 1);
@@ -4477,12 +4477,12 @@ describe("Program - diagnostics", () => {
     test("getBindDiagnostics", async () => {
         const source = `declare x: number;\ndeclare x: number;`;
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": source,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getBindDiagnostics("/src/index.tlua");
             assert.deepEqual(diags, [
                 {
@@ -4509,16 +4509,16 @@ describe("Program - diagnostics", () => {
     test("getProgramDiagnostics", async () => {
         const config = `{ "compilerOptions": { "strictPropertyInitialization": true, "strictNullChecks": false } }`;
         const api = spawnAPI({
-            "/tsconfig.json": config,
+            "/tluaconfig.json": config,
             "/src/index.tlua": `local x = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getProgramDiagnostics();
             assert.deepEqual(diags, [
                 {
-                    fileName: "/tsconfig.json",
+                    fileName: "/tluaconfig.json",
                     ...rangeOf(config, `"strictPropertyInitialization"`),
                     code: 5052,
                     category: DiagnosticCategory.Error,
@@ -4533,12 +4533,12 @@ describe("Program - diagnostics", () => {
 
     test("getGlobalDiagnostics", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `local x = 1;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getGlobalDiagnostics();
             assert.deepEqual(diags, []);
         }
@@ -4549,12 +4549,12 @@ describe("Program - diagnostics", () => {
 
     test("getGlobalDiagnostics returns file-less diagnostics from the checker", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": `{ "compilerOptions": { "noLib": true } }`,
+            "/tluaconfig.json": `{ "compilerOptions": { "noLib": true } }`,
             "/src/index.tlua": `local x = [1, 2, 3];\nreturn { x = x };`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const diags = await project.program.getGlobalDiagnostics();
             // With noLib, the checker reports "Cannot find global type" diagnostics that
             // are not associated with any source file.
@@ -4578,12 +4578,12 @@ describe("Program - diagnostics", () => {
 describe("Checker - getReferencedSymbolsForNode", () => {
     test("getReferencedSymbolsForNode", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `function greet(name: string) { return name; }\ngreet("world");`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
             const funcDecl = cast(sourceFile.statements[0], isFunctionDeclaration);
@@ -4604,12 +4604,12 @@ describe("Checker - getReferencedSymbolsForNode", () => {
 describe("Checker - getSignatureUsage", () => {
     test("getSignatureUsage", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/index.tlua": `function greet(name: string) { return name; }\ngreet("world");`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
             const funcDecl = cast(sourceFile.statements[0], isFunctionDeclaration);
@@ -4628,14 +4628,14 @@ describe("Checker - getSignatureUsage", () => {
 describe("getDefaultProjectForFile", () => {
     test("finds inferred project for d.ts in node_modules after openFiles", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/index.tlua": `local x = 1;`,
             "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
             "/node_modules/my-lib/index.d.tlua": `declare foo: string;`,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
 
             // The d.ts is not imported, so it is not in the project's program
             const dtsSf = await project.program.getSourceFile("/node_modules/my-lib/index.d.tlua");
@@ -4662,7 +4662,7 @@ describe("getDefaultProjectForFile", () => {
 
     test("keeps previously opened files open across subsequent openFiles calls", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/index.tlua": `local x = 1;`,
             "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
             "/node_modules/my-lib/index.d.tlua": `declare foo: string;`,
@@ -4670,7 +4670,7 @@ describe("getDefaultProjectForFile", () => {
             "/node_modules/other-lib/index.d.tlua": `declare bar: number;`,
         });
         try {
-            await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/tluaconfig.json" });
             await api.updateSnapshot({ openFiles: ["/node_modules/my-lib/index.d.tlua"] });
 
             // Opening a second file in a later snapshot must not close the first one.
@@ -4688,7 +4688,7 @@ describe("getDefaultProjectForFile", () => {
 
     test("opening a file resolves to a configured project via ancestor search", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/index.tlua": `local x = 1;`,
         });
         try {
@@ -4699,7 +4699,7 @@ describe("getDefaultProjectForFile", () => {
             assert.ok(defaultProject, "should find a project for the opened file");
             assert.equal(
                 defaultProject.configFileName,
-                "/tsconfig.json",
+                "/tluaconfig.json",
                 "opened file should resolve to the containing configured project, not the inferred project",
             );
         }
@@ -4710,16 +4710,16 @@ describe("getDefaultProjectForFile", () => {
 
     test("closeProjects releases a project opened via openProjects", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/index.tlua": `local x = 1;`,
         });
         try {
-            const opened = await api.updateSnapshot({ openProjects: ["/tsconfig.json"] });
-            assert.ok(opened.getProject("/tsconfig.json"), "project should be open after openProjects");
+            const opened = await api.updateSnapshot({ openProjects: ["/tluaconfig.json"] });
+            assert.ok(opened.getProject("/tluaconfig.json"), "project should be open after openProjects");
 
-            const closed = await api.updateSnapshot({ closeProjects: ["/tsconfig.json"] });
+            const closed = await api.updateSnapshot({ closeProjects: ["/tluaconfig.json"] });
             assert.equal(
-                closed.getProject("/tsconfig.json"),
+                closed.getProject("/tluaconfig.json"),
                 undefined,
                 "project should be unloaded after closeProjects",
             );
@@ -4731,13 +4731,13 @@ describe("getDefaultProjectForFile", () => {
 
     test("closeFiles releases a file opened via openFiles", async () => {
         const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/index.tlua": `local x = 1;`,
             "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
             "/node_modules/my-lib/index.d.tlua": `declare foo: string;`,
         });
         try {
-            await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const opened = await api.updateSnapshot({ openFiles: ["/node_modules/my-lib/index.d.tlua"] });
             assert.ok(
                 await opened.getDefaultProjectForFile("/node_modules/my-lib/index.d.tlua"),
@@ -4776,8 +4776,8 @@ describe("Timing", () => {
             assert.equal(info.recentRequests.length, 0);
 
             // Exercise a JSON request and a binary source-file request.
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
@@ -4839,8 +4839,8 @@ describe("Timing", () => {
             collectTiming: true,
         });
         try {
-            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
+            const snapshot = await api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
@@ -4894,7 +4894,7 @@ describe("Timing", () => {
     test("is disabled by default", async () => {
         const api = spawnAPI();
         try {
-            await api.parseConfigFile("/tsconfig.json");
+            await api.parseConfigFile("/tluaconfig.json");
             const info = await api.getTimingInfo();
             assert.equal(info.enabled, false);
             assert.equal(info.totals.requestCount, 0);

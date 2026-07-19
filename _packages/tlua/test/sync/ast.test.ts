@@ -509,7 +509,7 @@ describe("visitor transformation", () => {
 // ---------------------------------------------------------------------------
 
 function spawnAPI(files: Record<string, string> = {
-    "/tsconfig.json": "{}",
+    "/tluaconfig.json": "{}",
     "/src/index.tlua": `local foo = require('src.foo');\nlocal x = 1;\n`,
     "/src/foo.tlua": `local foo = 42;\nreturn { foo = foo };`,
 }) {
@@ -530,7 +530,7 @@ describe("RemoteNode + cloneNode", () => {
     test("cloneNode produces a NodeObject from a RemoteNode", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/foo.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/foo.tlua");
             const clone = cloneNode(sf);
             assert.notStrictEqual(clone, sf);
             assert.ok(clone instanceof NodeObject);
@@ -561,7 +561,7 @@ describe("RemoteNode + cloneNode", () => {
     test("cloneNode clones a remote require statement", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/index.tlua");
             const requireStmt = sf.statements[0];
             assert.ok(isVariableStatement(requireStmt));
 
@@ -579,7 +579,7 @@ describe("RemoteNode + cloneNode", () => {
     test("cloneNode preserves text on remote identifier", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/index.tlua");
             const requireStmt = sf.statements[0];
             assert.ok(isVariableStatement(requireStmt));
             const fooName = requireStmt.declarationList.declarations[0].name;
@@ -598,7 +598,7 @@ describe("RemoteNode + visitEachChild", () => {
     test("identity visitor returns same remote node", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/foo.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/foo.tlua");
             const firstStmt = sf.statements[0];
             assert.ok(firstStmt);
 
@@ -614,7 +614,7 @@ describe("RemoteNode + visitEachChild", () => {
     test("visitor can transform remote tree into NodeObject tree", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/index.tlua");
             const requireStmt = sf.statements[0];
             assert.ok(isVariableStatement(requireStmt));
 
@@ -646,7 +646,7 @@ describe("RemoteNodeList inherited array methods", () => {
     test("filter/map/slice return plain arrays without throwing", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/index.tlua");
             const statements = sf.statements;
             assert.strictEqual(statements.length, 2);
 
@@ -679,7 +679,7 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
     test("deep clones a remote require statement", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/index.tlua");
             const requireStmt = sf.statements[0];
             assert.ok(isVariableStatement(requireStmt));
 
@@ -699,7 +699,7 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
     test("deep clone of remote tree produces independent NodeObject tree", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/foo.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/foo.tlua");
             const firstStmt = sf.statements[0];
             assert.ok(firstStmt);
 
@@ -722,7 +722,7 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
     test("deep clone of remote SourceFile preserves top-level metadata references", () => {
         const api = spawnAPI();
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/foo.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/foo.tlua");
             const referencedFiles = sf.referencedFiles;
             const typeReferenceDirectives = sf.typeReferenceDirectives;
             const libReferenceDirectives = sf.libReferenceDirectives;
@@ -785,14 +785,14 @@ function assertGetterInvariants(node: Node, sf: SourceFile) {
 describe("RemoteNode + position/text getters", () => {
     const source = "/* lead */ local value = 123;";
     const files = {
-        "/tsconfig.json": "{}",
+        "/tluaconfig.json": "{}",
         "/src/getters.tlua": source,
     };
 
     test("position and text getters on a parsed statement", () => {
         const api = spawnAPI(files);
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/getters.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/getters.tlua");
             const stmt = sf.statements[0];
             assert.ok(stmt);
 
@@ -821,7 +821,7 @@ describe("RemoteNode + position/text getters", () => {
     test("getText/getFullText on a nested node", () => {
         const api = spawnAPI(files);
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/getters.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/getters.tlua");
             const stmt = sf.statements[0] as VariableStatement;
             const name = stmt.declarationList.declarations[0].name;
 
@@ -838,11 +838,11 @@ describe("RemoteNode + position/text getters", () => {
     test("getStart can include leading JSDoc comments", () => {
         const docSource = "/** doc */\nfunction f() {}\n";
         const api = spawnAPI({
-            "/tsconfig.json": "{}",
+            "/tluaconfig.json": "{}",
             "/src/doc.tlua": docSource,
         });
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/doc.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/doc.tlua");
             const fn = sf.statements[0];
             assert.ok(fn);
 
@@ -859,9 +859,9 @@ describe("RemoteNode + position/text getters", () => {
     });
 
     test("a node without leading trivia has zero leading trivia width", () => {
-        const api = spawnAPI({ "/tsconfig.json": "{}", "/src/plain.tlua": "local x = 1;\n" });
+        const api = spawnAPI({ "/tluaconfig.json": "{}", "/src/plain.tlua": "local x = 1;\n" });
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/plain.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/plain.tlua");
             const stmt = sf.statements[0];
             assert.ok(stmt);
 
@@ -878,9 +878,9 @@ describe("RemoteNode + position/text getters", () => {
 
     test("the SourceFile node spans the whole file text", () => {
         const text = "/* head */ local y = 2;\n";
-        const api = spawnAPI({ "/tsconfig.json": "{}", "/src/whole.tlua": text });
+        const api = spawnAPI({ "/tluaconfig.json": "{}", "/src/whole.tlua": text });
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/whole.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/whole.tlua");
 
             assert.strictEqual(sf.getFullStart(), 0);
             assert.strictEqual(sf.getFullText(), sf.text);
@@ -906,9 +906,9 @@ describe("RemoteNode + position/text getters", () => {
             `local obj = { x: 1, y: "two" };`,
             ``,
         ].join("\n");
-        const api = spawnAPI({ "/tsconfig.json": "{}", "/src/tree.tlua": treeSource });
+        const api = spawnAPI({ "/tluaconfig.json": "{}", "/src/tree.tlua": treeSource });
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/tree.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/tree.tlua");
             assertGetterInvariants(sf, sf);
         }
         finally {
@@ -920,9 +920,9 @@ describe("RemoteNode + position/text getters", () => {
         // Error recovery produces zero-width / missing nodes; the getters must
         // still satisfy their invariants and must not throw.
         const malformed = "local a = b +;\nfunction (";
-        const api = spawnAPI({ "/tsconfig.json": "{}", "/src/broken.tlua": malformed });
+        const api = spawnAPI({ "/tluaconfig.json": "{}", "/src/broken.tlua": malformed });
         try {
-            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/broken.tlua");
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/broken.tlua");
             assertGetterInvariants(sf, sf);
         }
         finally {
