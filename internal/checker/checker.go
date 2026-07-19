@@ -4135,13 +4135,13 @@ func (c *Checker) checkTestingKnownTruthyTypes(condExpr *ast.Node, condType *Typ
 
 func (c *Checker) checkTestingKnownTruthyType(condExpr *ast.Node, condType *Type, body *ast.Node) {
 	location := condExpr
-	if ast.IsLogicalOrCoalescingBinaryExpression(condExpr) {
+	if ast.IsLogicalBinaryExpression(condExpr) {
 		location = ast.SkipParentheses(condExpr.AsBinaryExpression().Right)
 	}
 	if ast.IsModuleExportsAccessExpression(location) {
 		return
 	}
-	if ast.IsLogicalOrCoalescingBinaryExpression(location) {
+	if ast.IsLogicalBinaryExpression(location) {
 		c.checkTestingKnownTruthyTypes(location, condType, body)
 		return
 	}
@@ -10967,9 +10967,9 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 	// (TS2364) like any other non-reference target.
 	leftType := c.checkExpressionEx(left, checkMode)
 	rightType := c.checkExpressionEx(right, checkMode)
-	if ast.IsLogicalOrCoalescingBinaryOperator(operator) {
+	if ast.IsLogicalBinaryOperator(operator) {
 		parent := left.Parent.Parent
-		for ast.IsParenthesizedExpression(parent) || ast.IsLogicalOrCoalescingBinaryExpression(parent) {
+		for ast.IsParenthesizedExpression(parent) || ast.IsLogicalBinaryExpression(parent) {
 			parent = parent.Parent
 		}
 		if operator == ast.KindAmpersandAmpersandToken || ast.IsIfStatement(parent) {

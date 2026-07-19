@@ -1774,7 +1774,7 @@ func (b *Binder) bindIterativeStatement(node *ast.Node, breakTarget *ast.FlowLab
 }
 
 func isLogicalAssignmentExpression(node *ast.Node) bool {
-	return ast.IsLogicalOrCoalescingAssignmentExpression(ast.SkipParentheses(node))
+	return ast.IsLogicalAssignmentExpression(ast.SkipParentheses(node))
 }
 
 func (b *Binder) bindAssignmentTargetFlow(node *ast.Node) {
@@ -2145,7 +2145,7 @@ func (b *Binder) bindDestructuringAssignmentFlow(node *ast.Node) {
 func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 	expr := node.AsBinaryExpression()
 	operator := expr.OperatorToken.Kind
-	if ast.IsLogicalOrCoalescingBinaryOperator(operator) || ast.IsLogicalOrCoalescingAssignmentOperator(operator) {
+	if ast.IsLogicalBinaryOperator(operator) || ast.IsLogicalAssignmentOperator(operator) {
 		if isTopLevelLogicalExpression(node) {
 			postExpressionLabel := b.createBranchLabel()
 			saveCurrentFlow := b.currentFlow
@@ -2194,7 +2194,7 @@ func (b *Binder) bindLogicalLikeExpression(node *ast.Node, trueTarget *ast.FlowL
 	}
 	b.currentFlow = b.finishFlowLabel(preRightLabel)
 	b.bind(expr.OperatorToken)
-	if ast.IsLogicalOrCoalescingAssignmentOperator(expr.OperatorToken.Kind) {
+	if ast.IsLogicalAssignmentOperator(expr.OperatorToken.Kind) {
 		b.doWithConditionalBranches((*Binder).bind, expr.Right, trueTarget, falseTarget)
 		b.bindAssignmentTargetFlow(expr.Left)
 		b.addAntecedent(trueTarget, b.createFlowCondition(ast.FlowFlagsTrueCondition, b.currentFlow, node))

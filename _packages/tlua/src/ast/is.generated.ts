@@ -176,9 +176,9 @@ import type {
     LiteralLikeNode,
     LiteralToken,
     LiteralTypeNode,
+    LogicalAssignmentOperator,
     LogicalOperator,
     LogicalOperatorOrHigher,
-    LogicalOrCoalescingAssignmentOperator,
     MappedTypeNode,
     MemberName,
     MetaProperty,
@@ -1492,7 +1492,7 @@ export function isAssignmentOperatorOrHigher(kind: SyntaxKind): kind is Assignme
         || isAssignmentOperator(kind);
 }
 
-export function isLogicalOrCoalescingAssignmentOperator(kind: SyntaxKind): kind is LogicalOrCoalescingAssignmentOperator {
+export function isLogicalAssignmentOperator(kind: SyntaxKind): kind is LogicalAssignmentOperator {
     return kind === SyntaxKind.AmpersandAmpersandEqualsToken
         || kind === SyntaxKind.BarBarEqualsToken;
 }

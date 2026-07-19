@@ -9677,7 +9677,7 @@ func IsAssignmentOperatorOrHigher(kind Kind) bool {
 	return false
 }
 
-func IsLogicalOrCoalescingAssignmentOperator(kind Kind) bool {
+func IsLogicalAssignmentOperator(kind Kind) bool {
 	switch kind {
 	case KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken:
 		return true

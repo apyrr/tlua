@@ -351,7 +351,7 @@ export type LogicalOperator = SyntaxKind.AmpersandAmpersandToken | SyntaxKind.Ba
 export type LogicalOperatorOrHigher = EqualityOperatorOrHigher | LogicalOperator;
 export type CompoundAssignmentOperator = SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken;
 export type AssignmentOperatorOrHigher = LogicalOperatorOrHigher | AssignmentOperator;
-export type LogicalOrCoalescingAssignmentOperator = SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.BarBarEqualsToken;
+export type LogicalAssignmentOperator = SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.BarBarEqualsToken;
 
 export interface NodeBase extends Node {
     readonly flags: NodeFlags;

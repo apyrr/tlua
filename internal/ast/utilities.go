@@ -276,16 +276,12 @@ func IsLogicalBinaryOperator(token Kind) bool {
 	return token == KindBarBarToken || token == KindAmpersandAmpersandToken
 }
 
-func IsLogicalOrCoalescingBinaryOperator(token Kind) bool {
-	return IsLogicalBinaryOperator(token)
+func IsLogicalBinaryExpression(expr *Node) bool {
+	return IsBinaryExpression(expr) && IsLogicalBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
-func IsLogicalOrCoalescingBinaryExpression(expr *Node) bool {
-	return IsBinaryExpression(expr) && IsLogicalOrCoalescingBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
-}
-
-func IsLogicalOrCoalescingAssignmentExpression(expr *Node) bool {
-	return IsBinaryExpression(expr) && IsLogicalOrCoalescingAssignmentOperator(expr.AsBinaryExpression().OperatorToken.Kind)
+func IsLogicalAssignmentExpression(expr *Node) bool {
+	return IsBinaryExpression(expr) && IsLogicalAssignmentOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
 func IsLogicalExpression(node *Node) bool {
@@ -295,7 +291,7 @@ func IsLogicalExpression(node *Node) bool {
 		} else if node.Kind == KindPrefixUnaryExpression && node.AsPrefixUnaryExpression().Operator == KindExclamationToken {
 			node = node.AsPrefixUnaryExpression().Operand
 		} else {
-			return IsLogicalOrCoalescingBinaryExpression(node)
+			return IsLogicalBinaryExpression(node)
 		}
 	}
 }
