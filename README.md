@@ -12,7 +12,7 @@ the checker and language-service architecture and replaces the language.
 ## Install
 
 ```sh
-npm install --save-dev tlua
+npm install --save-dev @tlua/cli
 npx tlua --help
 ```
 

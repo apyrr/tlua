@@ -8,7 +8,7 @@ TypeScript compiler architecture.
 Install the package and run the compiler:
 
 ```sh
-npm install --save-dev tlua
+npm install --save-dev @tlua/cli
 npx tlua --help
 ```
 
@@ -17,7 +17,7 @@ architecture through an optional `@tlua/tlua-<platform>` dependency.
 
 ## JavaScript API
 
-The experimental JavaScript API is available through the `tlua/unstable/*`
+The experimental JavaScript API is available through the `@tlua/cli/unstable/*`
 exports. These APIs may change between releases.
 
 ## Issues and feedback
