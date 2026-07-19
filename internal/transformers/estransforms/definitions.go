@@ -16,8 +16,10 @@ var (
 	NewES2021Transformer = transformers.Chain(newLogicalAssignmentTransformer)
 	// Optional chaining is lowered to Lua by NewLuaOptionalChainTransformer, which
 	// runs unconditionally in the emit pipeline (Lua is always the target), so it
-	// is intentionally absent from this target-gated JS downlevel chain.
-	NewES2020Transformer = transformers.Chain(NewES2021Transformer, newNullishCoalescingTransformer)
+	// is intentionally absent from this target-gated JS downlevel chain. Nullish
+	// coalescing (`??`) is removed from tlua entirely, so ES2020 adds no JS
+	// downlevel over ES2021.
+	NewES2020Transformer = NewES2021Transformer
 	NewES2019Transformer = transformers.Chain(NewES2020Transformer, newOptionalCatchTransformer)
 	// The object rest/spread downlevel transform is removed in tlua: spread
 	// elements, spread assignments, and binding-pattern rests no longer parse,

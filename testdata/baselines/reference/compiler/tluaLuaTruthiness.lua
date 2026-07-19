@@ -63,11 +63,6 @@ local or1: "" = empty or n;
 local or2: 0 = zero or s;
 local or3: string = maybe or s;
 
-// `??` is unaffected: it tests for absence, not falsiness.
-local nullish1: "" = empty ?? "other";
-local nullish2: 0 = zero ?? 1;
-local nullish3: string = maybe ?? "other";
-
 // A `while` over a number can only be left by `break`, since no number is falsy.
 function loopExit(x: number): number
   while x do
@@ -142,10 +137,6 @@ local and3 = flag and s;
 local or1 = empty or n;
 local or2 = zero or s;
 local or3 = maybe or s;
--- `??` is unaffected: it tests for absence, not falsiness.
-local nullish1 = empty ?? "other";
-local nullish2 = zero ?? 1;
-local nullish3 = maybe ?? "other";
 -- A `while` over a number can only be left by `break`, since no number is falsy.
 function loopExit(x)
     while x do

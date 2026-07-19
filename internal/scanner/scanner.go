@@ -169,7 +169,6 @@ var textToToken = func() map[string]ast.Kind {
 		"&&":  ast.KindAmpersandAmpersandToken,
 		"||":  ast.KindBarBarToken,
 		"?":   ast.KindQuestionToken,
-		"??":  ast.KindQuestionQuestionToken,
 		"?.":  ast.KindQuestionDotToken,
 		":":   ast.KindColonToken,
 		"::":  ast.KindColonColonToken,
@@ -181,7 +180,6 @@ var textToToken = func() map[string]ast.Kind {
 		"%=":  ast.KindPercentEqualsToken,
 		"||=": ast.KindBarBarEqualsToken,
 		"&&=": ast.KindAmpersandAmpersandEqualsToken,
-		"??=": ast.KindQuestionQuestionEqualsToken,
 		"@":   ast.KindAtToken,
 		"#":   ast.KindHashToken,
 		"`":   ast.KindBacktickToken,
@@ -855,14 +853,6 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '.' && !stringutil.IsDigit(s.charAt(2)) {
 				s.pos += 2
 				s.token = ast.KindQuestionDotToken
-			} else if s.charAt(1) == '?' {
-				if s.charAt(2) == '=' {
-					s.pos += 3
-					s.token = ast.KindQuestionQuestionEqualsToken
-				} else {
-					s.pos += 2
-					s.token = ast.KindQuestionQuestionToken
-				}
 			} else {
 				s.pos++
 				s.token = ast.KindQuestionToken
@@ -1282,15 +1272,6 @@ func (s *Scanner) ReScanHashToken() ast.Kind {
 		s.pos = s.tokenStart + 1
 		s.token = ast.KindHashToken
 	}
-	return s.token
-}
-
-func (s *Scanner) ReScanQuestionToken() ast.Kind {
-	if s.token != ast.KindQuestionQuestionToken {
-		panic("'reScanQuestionToken' should only be called on a '??'")
-	}
-	s.pos = s.tokenStart + 1
-	s.token = ast.KindQuestionToken
 	return s.token
 }
 

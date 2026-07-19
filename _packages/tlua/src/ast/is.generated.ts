@@ -1484,20 +1484,17 @@ export function isCompoundAssignmentOperator(kind: SyntaxKind): kind is Compound
         || kind === SyntaxKind.SlashEqualsToken
         || kind === SyntaxKind.PercentEqualsToken
         || kind === SyntaxKind.BarBarEqualsToken
-        || kind === SyntaxKind.AmpersandAmpersandEqualsToken
-        || kind === SyntaxKind.QuestionQuestionEqualsToken;
+        || kind === SyntaxKind.AmpersandAmpersandEqualsToken;
 }
 
 export function isAssignmentOperatorOrHigher(kind: SyntaxKind): kind is AssignmentOperatorOrHigher {
-    return kind === SyntaxKind.QuestionQuestionToken
-        || isLogicalOperatorOrHigher(kind)
+    return isLogicalOperatorOrHigher(kind)
         || isAssignmentOperator(kind);
 }
 
 export function isLogicalOrCoalescingAssignmentOperator(kind: SyntaxKind): kind is LogicalOrCoalescingAssignmentOperator {
     return kind === SyntaxKind.AmpersandAmpersandEqualsToken
-        || kind === SyntaxKind.BarBarEqualsToken
-        || kind === SyntaxKind.QuestionQuestionEqualsToken;
+        || kind === SyntaxKind.BarBarEqualsToken;
 }
 
 export function isLiteralKind(kind: SyntaxKind): boolean {

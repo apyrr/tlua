@@ -1392,7 +1392,6 @@ type LanguageFeatureMinimumTargetMap struct {
 	ObjectSpreadRest                  core.ScriptTarget
 	RegularExpressionFlagsDotAll      core.ScriptTarget
 	BindinglessCatch                  core.ScriptTarget
-	NullishCoalesce                   core.ScriptTarget
 	OptionalChaining                  core.ScriptTarget
 	LogicalAssignment                 core.ScriptTarget
 	ClassFields                       core.ScriptTarget
@@ -1408,7 +1407,6 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	ObjectSpreadRest:                  core.ScriptTargetES2018,
 	RegularExpressionFlagsDotAll:      core.ScriptTargetES2018,
 	BindinglessCatch:                  core.ScriptTargetES2019,
-	NullishCoalesce:                   core.ScriptTargetES2020,
 	OptionalChaining:                  core.ScriptTargetES2020,
 	LogicalAssignment:                 core.ScriptTargetES2021,
 	ClassFields:                       core.ScriptTargetES2022,

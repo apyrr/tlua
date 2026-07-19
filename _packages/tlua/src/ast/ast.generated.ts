@@ -48,7 +48,6 @@ export type PunctuationSyntaxKind =
     | SyntaxKind.ColonToken
     | SyntaxKind.ColonColonToken
     | SyntaxKind.AtToken
-    | SyntaxKind.QuestionQuestionToken
     | SyntaxKind.BacktickToken
     | SyntaxKind.HashToken
     | SyntaxKind.EqualsToken
@@ -58,8 +57,7 @@ export type PunctuationSyntaxKind =
     | SyntaxKind.SlashEqualsToken
     | SyntaxKind.PercentEqualsToken
     | SyntaxKind.BarBarEqualsToken
-    | SyntaxKind.AmpersandAmpersandEqualsToken
-    | SyntaxKind.QuestionQuestionEqualsToken;
+    | SyntaxKind.AmpersandAmpersandEqualsToken;
 export type KeywordSyntaxKind =
     | SyntaxKind.BreakKeyword
     | SyntaxKind.CatchKeyword
@@ -200,7 +198,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.ColonToken
     | SyntaxKind.ColonColonToken
     | SyntaxKind.AtToken
-    | SyntaxKind.QuestionQuestionToken
     | SyntaxKind.BacktickToken
     | SyntaxKind.HashToken
     | SyntaxKind.EqualsToken
@@ -211,7 +208,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.PercentEqualsToken
     | SyntaxKind.BarBarEqualsToken
     | SyntaxKind.AmpersandAmpersandEqualsToken
-    | SyntaxKind.QuestionQuestionEqualsToken
     | SyntaxKind.Identifier
     | SyntaxKind.PrivateIdentifier
     | SyntaxKind.JSDocCommentTextToken
@@ -353,9 +349,9 @@ export type EqualityOperator = SyntaxKind.EqualsEqualsToken | SyntaxKind.TildeEq
 export type EqualityOperatorOrHigher = RelationalOperatorOrHigher | EqualityOperator;
 export type LogicalOperator = SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken;
 export type LogicalOperatorOrHigher = EqualityOperatorOrHigher | LogicalOperator;
-export type CompoundAssignmentOperator = SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.QuestionQuestionEqualsToken;
-export type AssignmentOperatorOrHigher = SyntaxKind.QuestionQuestionToken | LogicalOperatorOrHigher | AssignmentOperator;
-export type LogicalOrCoalescingAssignmentOperator = SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.QuestionQuestionEqualsToken;
+export type CompoundAssignmentOperator = SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken;
+export type AssignmentOperatorOrHigher = LogicalOperatorOrHigher | AssignmentOperator;
+export type LogicalOrCoalescingAssignmentOperator = SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.BarBarEqualsToken;
 
 export interface NodeBase extends Node {
     readonly flags: NodeFlags;

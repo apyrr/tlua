@@ -98,31 +98,27 @@ local doubleNot = not not maybe;
 >doubleNot : Symbol(doubleNot, Decl(tluaAndOrNot.tlua, 31, 5))
 >maybe : Symbol(maybe, Decl(tluaAndOrNot.tlua, 9, 7))
 
-// Optional chaining lowers to an `and`-guard; nullish coalescing is untouched.
+// Optional chaining lowers to an `and`-guard.
 local chain = maybe?.length;
 >chain : Symbol(chain, Decl(tluaAndOrNot.tlua, 34, 5))
 >maybe?.length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
 >maybe : Symbol(maybe, Decl(tluaAndOrNot.tlua, 9, 7))
 >length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
 
-local coalesce = maybe ?? "fallback";
->coalesce : Symbol(coalesce, Decl(tluaAndOrNot.tlua, 35, 5))
->maybe : Symbol(maybe, Decl(tluaAndOrNot.tlua, 9, 7))
-
 // The words are reserved, so a table key must be quoted, as in Lua.
 declare t: { [k: string]: number };
->t : Symbol(t, Decl(tluaAndOrNot.tlua, 38, 7))
->k : Symbol(k, Decl(tluaAndOrNot.tlua, 38, 14))
+>t : Symbol(t, Decl(tluaAndOrNot.tlua, 37, 7))
+>k : Symbol(k, Decl(tluaAndOrNot.tlua, 37, 14))
 
 local byIndex = t["and"];
->byIndex : Symbol(byIndex, Decl(tluaAndOrNot.tlua, 39, 5))
->t : Symbol(t, Decl(tluaAndOrNot.tlua, 38, 7))
+>byIndex : Symbol(byIndex, Decl(tluaAndOrNot.tlua, 38, 5))
+>t : Symbol(t, Decl(tluaAndOrNot.tlua, 37, 7))
 
 local byIndex2 = t["or"];
->byIndex2 : Symbol(byIndex2, Decl(tluaAndOrNot.tlua, 40, 5))
->t : Symbol(t, Decl(tluaAndOrNot.tlua, 38, 7))
+>byIndex2 : Symbol(byIndex2, Decl(tluaAndOrNot.tlua, 39, 5))
+>t : Symbol(t, Decl(tluaAndOrNot.tlua, 37, 7))
 
 local byIndex3 = t["not"];
->byIndex3 : Symbol(byIndex3, Decl(tluaAndOrNot.tlua, 41, 5))
->t : Symbol(t, Decl(tluaAndOrNot.tlua, 38, 7))
+>byIndex3 : Symbol(byIndex3, Decl(tluaAndOrNot.tlua, 40, 5))
+>t : Symbol(t, Decl(tluaAndOrNot.tlua, 37, 7))
 

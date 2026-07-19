@@ -27,7 +27,7 @@ GNested.sub.deep = 1;
 local deep: number = GNested.sub.deep;
 
 //// [b.tlua]
-G = G ?? {};
+G = G or {};
 G.fromB = "b";
 local fromA: number = G.fromA;
 
@@ -92,7 +92,7 @@ GNested.sub = GNested.sub or {};
 GNested.sub.deep = 1;
 local deep = GNested.sub.deep;
 //// [b.lua]
-G = G ?? {};
+G = G or {};
 G.fromB = "b";
 local fromA = G.fromA;
 local function make()

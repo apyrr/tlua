@@ -28,7 +28,7 @@ GNested.sub.deep = 1;
 local deep: number = GNested.sub.deep;
 
 // @filename: b.tlua
-G = G ?? {};
+G = G or {};
 G.fromB = "b";
 local fromA: number = G.fromA;
 

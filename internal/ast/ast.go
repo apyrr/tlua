@@ -1592,11 +1592,9 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsLexicalThis
 	case KindAsteriskAsteriskToken:
 		return SubtreeContainsExponentiationOperator
-	case KindQuestionQuestionToken:
-		return SubtreeContainsNullishCoalescing
 	case KindQuestionDotToken:
 		return SubtreeContainsOptionalChaining
-	case KindQuestionQuestionEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
+	case KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
 		return SubtreeContainsLogicalAssignments
 	}
 	return SubtreeFactsNone

@@ -413,7 +413,7 @@ func (c *Checker) getTypeAtFlowCondition(f *FlowState, flow *ast.FlowNode) FlowT
 // will be a subtype or the same type as the argument.
 func (c *Checker) narrowType(f *FlowState, t *Type, expr *ast.Node, assumeTrue bool) *Type {
 	// for `a?.b`, we emulate a synthetic `a !== null && a !== undefined` condition for `a`
-	if ast.IsExpressionOfOptionalChainRoot(expr) || ast.IsBinaryExpression(expr.Parent) && (expr.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindQuestionQuestionToken || expr.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindQuestionQuestionEqualsToken) && expr.Parent.AsBinaryExpression().Left == expr {
+	if ast.IsExpressionOfOptionalChainRoot(expr) {
 		return c.narrowTypeByOptionality(f, t, expr, assumeTrue)
 	}
 	switch expr.Kind {
@@ -510,7 +510,7 @@ func (c *Checker) narrowTypeByCallExpression(f *FlowState, t *Type, callExpressi
 
 func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.BinaryExpression, assumeTrue bool) *Type {
 	switch expr.OperatorToken.Kind {
-	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindQuestionQuestionEqualsToken:
+	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken:
 		return c.narrowTypeByTruthiness(f, c.narrowType(f, t, expr.Right, assumeTrue), expr.Left, assumeTrue)
 	case ast.KindEqualsEqualsToken, ast.KindTildeEqualsToken:
 		operator := expr.OperatorToken.Kind
@@ -1669,7 +1669,7 @@ func (c *Checker) getReferenceCandidate(node *ast.Node) *ast.Node {
 		return c.getReferenceCandidate(node.Expression())
 	case ast.KindBinaryExpression:
 		switch node.AsBinaryExpression().OperatorToken.Kind {
-		case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindQuestionQuestionEqualsToken:
+		case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken:
 			return c.getReferenceCandidate(node.AsBinaryExpression().Left)
 		case ast.KindCommaToken:
 			return c.getReferenceCandidate(node.AsBinaryExpression().Right)

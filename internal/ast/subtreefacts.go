@@ -16,7 +16,6 @@ const (
 	SubtreeContainsClassStaticBlocks
 	SubtreeContainsESClassFields
 	SubtreeContainsLogicalAssignments
-	SubtreeContainsNullishCoalescing
 	SubtreeContainsOptionalChaining
 	SubtreeContainsMissingCatchClauseVariable
 	SubtreeContainsESObjectRestOrSpread // subtree has a `...` somewhere inside it, never cleared
@@ -46,7 +45,7 @@ const (
 	SubtreeContainsESNext = SubtreeContainsUsing
 	SubtreeContainsES2022 = SubtreeContainsClassStaticBlocks | SubtreeContainsESClassFields
 	SubtreeContainsES2021 = SubtreeContainsLogicalAssignments
-	SubtreeContainsES2020 = SubtreeContainsNullishCoalescing | SubtreeContainsOptionalChaining
+	SubtreeContainsES2020 = SubtreeContainsOptionalChaining
 	SubtreeContainsES2019 = SubtreeContainsMissingCatchClauseVariable
 	SubtreeContainsES2018 = SubtreeContainsESObjectRestOrSpread | SubtreeContainsForAwaitOrAsyncGenerator | SubtreeContainsInvalidTemplateEscape
 	SubtreeContainsES2017 = SubtreeContainsAnyAwait

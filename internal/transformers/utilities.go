@@ -331,8 +331,6 @@ func GetNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
 		return ast.KindBarBarToken
 	case ast.KindAmpersandAmpersandEqualsToken:
 		return ast.KindAmpersandAmpersandToken
-	case ast.KindQuestionQuestionEqualsToken:
-		return ast.KindQuestionQuestionToken
 	}
 	return kind
 }

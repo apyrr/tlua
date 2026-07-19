@@ -2180,10 +2180,6 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		fallthrough
 	case ast.KindAsteriskToken:
 		return p.parseJSDocAllType()
-	case ast.KindQuestionQuestionToken:
-		// If there is '??', treat it as prefix-'?' in JSDoc type.
-		p.scanner.ReScanQuestionToken()
-		fallthrough
 	case ast.KindQuestionToken:
 		return p.parseJSDocNullableType()
 	case ast.KindExclamationToken:

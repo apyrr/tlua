@@ -154,15 +154,6 @@ const (
 	OperatorPrecedenceLowest        = OperatorPrecedenceComma
 	OperatorPrecedenceHighest       = OperatorPrecedenceParentheses
 	OperatorPrecedenceDisallowComma = OperatorPrecedenceYield
-	// ShortCircuitExpression:
-	//     LogicalORExpression
-	//     CoalesceExpression
-	// CoalesceExpression:
-	//     CoalesceExpressionHead `??` EqualityExpression
-	// CoalesceExpressionHead:
-	//     CoalesceExpression
-	//     EqualityExpression
-	OperatorPrecedenceCoalesce = OperatorPrecedenceLogicalOR
 	// -1 is lower than all other precedences. Returning it will cause binary expression
 	// parsing to stop.
 	OperatorPrecedenceInvalid OperatorPrecedence = -1
@@ -224,8 +215,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 			KindSlashEqualsToken,
 			KindPercentEqualsToken,
 			KindBarBarEqualsToken,
-			KindAmpersandAmpersandEqualsToken,
-			KindQuestionQuestionEqualsToken:
+			KindAmpersandAmpersandEqualsToken:
 			return OperatorPrecedenceAssignment
 
 		default:
@@ -304,8 +294,6 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 // Gets the precedence of a binary operator
 func GetBinaryOperatorPrecedence(operatorKind Kind) OperatorPrecedence {
 	switch operatorKind {
-	case KindQuestionQuestionToken:
-		return OperatorPrecedenceCoalesce
 	case KindBarBarToken:
 		return OperatorPrecedenceLogicalOR
 	case KindAmpersandAmpersandToken:

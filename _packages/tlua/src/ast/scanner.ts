@@ -198,7 +198,6 @@ const textToToken = new Map(Object.entries({
     "&&": SyntaxKind.AmpersandAmpersandToken,
     "||": SyntaxKind.BarBarToken,
     "?": SyntaxKind.QuestionToken,
-    "??": SyntaxKind.QuestionQuestionToken,
     "?.": SyntaxKind.QuestionDotToken,
     ":": SyntaxKind.ColonToken,
     "=": SyntaxKind.EqualsToken,
@@ -209,7 +208,6 @@ const textToToken = new Map(Object.entries({
     "%=": SyntaxKind.PercentEqualsToken,
     "||=": SyntaxKind.BarBarEqualsToken,
     "&&=": SyntaxKind.AmpersandAmpersandEqualsToken,
-    "??=": SyntaxKind.QuestionQuestionEqualsToken,
     "@": SyntaxKind.AtToken,
     "#": SyntaxKind.HashToken,
     "`": SyntaxKind.BacktickToken,
@@ -1880,12 +1878,6 @@ export function createScanner(
                 case CharacterCodes.question:
                     if (charCodeUnchecked(pos + 1) === CharacterCodes.dot && !isDigit(charCodeUnchecked(pos + 2))) {
                         return pos += 2, token = SyntaxKind.QuestionDotToken;
-                    }
-                    if (charCodeUnchecked(pos + 1) === CharacterCodes.question) {
-                        if (charCodeUnchecked(pos + 2) === CharacterCodes.equals) {
-                            return pos += 3, token = SyntaxKind.QuestionQuestionEqualsToken;
-                        }
-                        return pos += 2, token = SyntaxKind.QuestionQuestionToken;
                     }
                     pos++;
                     return token = SyntaxKind.QuestionToken;

@@ -776,7 +776,7 @@ func (f *isolatedDeclarationsFixer) extractBindingElements(
 }
 
 // emitBindingElementVariable creates a variable declaration for a single binding element,
-// handling default initializers with `accessExpr ?? default`.
+// handling default initializers with `accessExpr || default`.
 func (f *isolatedDeclarationsFixer) emitBindingElementVariable(
 	factory *ast.NodeFactory,
 	name *ast.Node,
@@ -789,15 +789,18 @@ func (f *isolatedDeclarationsFixer) emitBindingElementVariable(
 	variableInitializer := accessExpr
 
 	if be.Initializer != nil {
-		// The inserted text has to parse as tlua, which has no conditional
-		// expression, so the upstream `temp === undefined ? default : temp`
-		// becomes `??`. It evaluates its left operand once, so the temp spill
-		// the ternary needed is unnecessary.
+		// The inserted text has to parse as tlua, which has neither a conditional
+		// expression nor `??`, so the upstream `temp === undefined ? default : temp`
+		// becomes `temp || default` — the Lua default idiom. It evaluates its left
+		// operand once, so the temp spill the ternary needed is unnecessary. Note
+		// `||` is Lua-truthy, so unlike the upstream undefined-only default this also
+		// substitutes when the property is `false`; that is accepted, since tlua has
+		// no nil-only coalescing form to preserve the narrower semantics.
 		variableInitializer = factory.NewBinaryExpression(
 			nil,
 			variableInitializer,
 			nil,
-			factory.NewToken(ast.KindQuestionQuestionToken),
+			factory.NewToken(ast.KindBarBarToken),
 			be.Initializer,
 		)
 	}

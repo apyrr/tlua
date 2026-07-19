@@ -771,7 +771,7 @@ func isLogicalOperatorOrHigher(kind ast.Kind) bool {
 }
 
 func isAssignmentOperatorOrHigher(kind ast.Kind) bool {
-	return kind == ast.KindQuestionQuestionToken || isLogicalOperatorOrHigher(kind) || ast.IsAssignmentOperator(kind)
+	return isLogicalOperatorOrHigher(kind) || ast.IsAssignmentOperator(kind)
 }
 
 func isBinaryOperator(kind ast.Kind) bool {

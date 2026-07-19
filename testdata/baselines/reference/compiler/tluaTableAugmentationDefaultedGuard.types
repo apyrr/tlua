@@ -136,10 +136,10 @@ local deep: number = GNested.sub.deep;
 >deep : number
 
 === b.tlua ===
-G = G ?? {};
->G = G ?? {} : { fromA: number; fromB: string; }
+G = G or {};
+>G = G or {} : { fromA: number; fromB: string; }
 >G : { fromA: number; fromB: string; }
->G ?? {} : { fromA: number; fromB: string; }
+>G or {} : { fromA: number; fromB: string; }
 >G : { fromA: number; fromB: string; }
 >{} : { fromA: number; fromB: string; }
 

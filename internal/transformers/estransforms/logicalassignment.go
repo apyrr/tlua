@@ -28,8 +28,6 @@ func (ch *logicalAssignmentTransformer) visitBinaryExpression(node *ast.BinaryEx
 		nonAssignmentOperator = ast.KindBarBarToken
 	case ast.KindAmpersandAmpersandEqualsToken:
 		nonAssignmentOperator = ast.KindAmpersandAmpersandToken
-	case ast.KindQuestionQuestionEqualsToken:
-		nonAssignmentOperator = ast.KindQuestionQuestionToken
 	default:
 		return ch.Visitor().VisitEachChild(node.AsNode())
 	}

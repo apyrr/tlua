@@ -103,7 +103,7 @@ local deep: number = GNested.sub.deep;
 >deep : Symbol(deep, Decl(a.tlua, 21, 32))
 
 === b.tlua ===
-G = G ?? {};
+G = G or {};
 >G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
 >G : Symbol(G, Decl(a.tlua, 0, 0), Decl(b.tlua, 0, 0))
 

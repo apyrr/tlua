@@ -146,45 +146,32 @@ local or3: string = maybe or s;
 >maybe : Symbol(maybe, Decl(tluaLuaTruthiness.tlua, 6, 7))
 >s : Symbol(s, Decl(tluaLuaTruthiness.tlua, 2, 7))
 
-// `??` is unaffected: it tests for absence, not falsiness.
-local nullish1: "" = empty ?? "other";
->nullish1 : Symbol(nullish1, Decl(tluaLuaTruthiness.tlua, 63, 5))
->empty : Symbol(empty, Decl(tluaLuaTruthiness.tlua, 4, 7))
-
-local nullish2: 0 = zero ?? 1;
->nullish2 : Symbol(nullish2, Decl(tluaLuaTruthiness.tlua, 64, 5))
->zero : Symbol(zero, Decl(tluaLuaTruthiness.tlua, 5, 7))
-
-local nullish3: string = maybe ?? "other";
->nullish3 : Symbol(nullish3, Decl(tluaLuaTruthiness.tlua, 65, 5))
->maybe : Symbol(maybe, Decl(tluaLuaTruthiness.tlua, 6, 7))
-
 // A `while` over a number can only be left by `break`, since no number is falsy.
 function loopExit(x: number): number
->loopExit : Symbol(loopExit, Decl(tluaLuaTruthiness.tlua, 65, 42))
->x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+>loopExit : Symbol(loopExit, Decl(tluaLuaTruthiness.tlua, 60, 31))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 63, 18))
 
   while x do
->x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 63, 18))
 
     if x == 3 then
->x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 63, 18))
 
       break;
     end
     if x == 5 then
->x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 63, 18))
 
       break;
     end
   end
   // Only the values it broke on survive.
   local after: 3 | 5 = x;
->after : Symbol(after, Decl(tluaLuaTruthiness.tlua, 78, 7))
->x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 68, 18))
+>after : Symbol(after, Decl(tluaLuaTruthiness.tlua, 73, 7))
+>x : Symbol(x, Decl(tluaLuaTruthiness.tlua, 63, 18))
 
   return after;
->after : Symbol(after, Decl(tluaLuaTruthiness.tlua, 78, 7))
+>after : Symbol(after, Decl(tluaLuaTruthiness.tlua, 73, 7))
 
 end
 
@@ -192,7 +179,7 @@ end
 // `0` no longer means "loop never", so a numeric literal condition is reported
 // always-truthy exactly like a string literal.
 function literalConditions(): void
->literalConditions : Symbol(literalConditions, Decl(tluaLuaTruthiness.tlua, 80, 3))
+>literalConditions : Symbol(literalConditions, Decl(tluaLuaTruthiness.tlua, 75, 3))
 
   while 1 do
     break;

@@ -33,9 +33,8 @@ local prec4 = ((n > 1) && (n < 5)) || b;
 local nonNull = maybe!.length;
 local doubleNot = not not maybe;
 
-// Optional chaining lowers to an `and`-guard; nullish coalescing is untouched.
+// Optional chaining lowers to an `and`-guard.
 local chain = maybe?.length;
-local coalesce = maybe ?? "fallback";
 
 // The words are reserved, so a table key must be quoted, as in Lua.
 declare t: { [k: string]: number };

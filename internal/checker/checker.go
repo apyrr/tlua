@@ -1767,7 +1767,7 @@ func (c *Checker) luaDefaultedAugmentationInitializer(target *ast.Node, initiali
 		return initializer
 	}
 	binary := initializer.AsBinaryExpression()
-	if !ast.NodeKindIs(binary.OperatorToken, ast.KindBarBarToken, ast.KindQuestionQuestionToken) || !c.luaSameEntityName(target, binary.Left) {
+	if binary.OperatorToken.Kind != ast.KindBarBarToken || !c.luaSameEntityName(target, binary.Left) {
 		return initializer
 	}
 	return binary.Right
@@ -4127,7 +4127,7 @@ func (c *Checker) checkTestingKnownTruthyCallableOrAwaitableType(condExpr *ast.N
 func (c *Checker) checkTestingKnownTruthyTypes(condExpr *ast.Node, condType *Type, body *ast.Node) {
 	condExpr = ast.SkipParentheses(condExpr)
 	c.checkTestingKnownTruthyType(condExpr, condType, body)
-	for ast.IsBinaryExpression(condExpr) && (condExpr.AsBinaryExpression().OperatorToken.Kind == ast.KindBarBarToken || condExpr.AsBinaryExpression().OperatorToken.Kind == ast.KindQuestionQuestionToken) {
+	for ast.IsBinaryExpression(condExpr) && condExpr.AsBinaryExpression().OperatorToken.Kind == ast.KindBarBarToken {
 		condExpr = ast.SkipParentheses(condExpr.AsBinaryExpression().Left)
 		c.checkTestingKnownTruthyType(condExpr, condType, body)
 	}
@@ -9925,7 +9925,7 @@ func (c *Checker) isLuaDefaultedGuardReference(node *ast.Node) bool {
 		return false
 	}
 	guard := node.Parent.AsBinaryExpression()
-	if guard.Left != node || !ast.NodeKindIs(guard.OperatorToken, ast.KindBarBarToken, ast.KindQuestionQuestionToken) || !ast.IsBinaryExpression(node.Parent.Parent) {
+	if guard.Left != node || guard.OperatorToken.Kind != ast.KindBarBarToken || !ast.IsBinaryExpression(node.Parent.Parent) {
 		return false
 	}
 	assignment := node.Parent.Parent.AsBinaryExpression()
@@ -11118,18 +11118,6 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
 		}
 		return resultType
-	case ast.KindQuestionQuestionToken, ast.KindQuestionQuestionEqualsToken:
-		if operator == ast.KindQuestionQuestionToken {
-			c.checkNullishCoalesceOperands(left, right)
-		}
-		resultType := leftType
-		if c.hasTypeFacts(leftType, TypeFactsEQUndefinedOrNull) {
-			resultType = c.getUnionTypeEx([]*Type{c.GetNonNullableType(leftType), rightType}, UnionReductionSubtype, nil, nil)
-		}
-		if operator == ast.KindQuestionQuestionEqualsToken {
-			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
-		}
-		return resultType
 	case ast.KindEqualsToken:
 		c.checkAssignmentOperator(left, operator, right, leftType, rightType)
 		return rightType
@@ -11336,92 +11324,6 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 		}
 	}
 	return PredicateSemanticsSometimes
-}
-
-func (c *Checker) checkNullishCoalesceOperands(left *ast.Node, right *ast.Node) {
-	if ast.IsBinaryExpression(left.Parent.Parent) {
-		grandparentLeft := left.Parent.Parent.AsBinaryExpression().Left
-		grandparentOperatorToken := left.Parent.Parent.AsBinaryExpression().OperatorToken
-		if ast.IsBinaryExpression(grandparentLeft) && grandparentOperatorToken.Kind == ast.KindBarBarToken {
-			c.grammarErrorOnNode(grandparentLeft, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(grandparentOperatorToken.Kind))
-		}
-	} else if ast.IsBinaryExpression(left) {
-		operatorToken := left.AsBinaryExpression().OperatorToken
-		if operatorToken.Kind == ast.KindBarBarToken || operatorToken.Kind == ast.KindAmpersandAmpersandToken {
-			c.grammarErrorOnNode(left, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(operatorToken.Kind), scanner.TokenToString(ast.KindQuestionQuestionToken))
-		}
-	} else if ast.IsBinaryExpression(right) {
-		operatorToken := right.AsBinaryExpression().OperatorToken
-		if operatorToken.Kind == ast.KindAmpersandAmpersandToken {
-			c.grammarErrorOnNode(right, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(operatorToken.Kind))
-		}
-	}
-	c.checkNullishCoalesceOperandLeft(left)
-}
-
-func (c *Checker) checkNullishCoalesceOperandLeft(left *ast.Node) {
-	leftTarget := ast.SkipOuterExpressions(left, ast.OEKAll)
-	nullishSemantics := c.getSyntacticNullishnessSemantics(leftTarget)
-	if nullishSemantics != PredicateSemanticsSometimes {
-		if nullishSemantics == PredicateSemanticsAlways {
-			c.error(leftTarget, diagnostics.This_expression_is_always_nullish)
-		} else {
-			c.error(leftTarget, diagnostics.Right_operand_of_is_unreachable_because_the_left_operand_is_never_nullish)
-		}
-	}
-}
-
-func (c *Checker) getSyntacticNullishnessSemantics(node *ast.Node) PredicateSemantics {
-	node = ast.SkipOuterExpressions(node, ast.OEKAll)
-	switch node.Kind {
-	case ast.KindCallExpression,
-		ast.KindTaggedTemplateExpression,
-		ast.KindElementAccessExpression,
-		ast.KindMetaProperty,
-		ast.KindNewExpression,
-		ast.KindPropertyAccessExpression,
-		ast.KindThisKeyword:
-		return PredicateSemanticsSometimes
-	case ast.KindBinaryExpression:
-		// List of operators that can produce null/undefined:
-		// || ||= && &&= ?? ??=
-		switch node.AsBinaryExpression().OperatorToken.Kind {
-		case ast.KindBarBarToken,
-			ast.KindBarBarEqualsToken,
-			ast.KindAmpersandAmpersandToken,
-			ast.KindAmpersandAmpersandEqualsToken:
-			return PredicateSemanticsSometimes
-		// For these operator kinds, the right operand is effectively controlling
-		case ast.KindCommaToken,
-			ast.KindEqualsToken:
-			return c.getSyntacticNullishnessSemantics(node.AsBinaryExpression().Right)
-		// For nullish coalescing: result is the left operand when left is non-null,
-		// or the right operand when left is null/undefined. The nullishness of the
-		// result combines both paths: the left's non-null path contributes Never,
-		// and when left can be null, the right's semantics are also included.
-		case ast.KindQuestionQuestionToken,
-			ast.KindQuestionQuestionEqualsToken:
-			leftSemantics := c.getSyntacticNullishnessSemantics(node.AsBinaryExpression().Left)
-			// The non-null path (left is non-null): left branch taken, result has Never bit
-			result := leftSemantics & PredicateSemanticsNever
-			// The null path (left is null/undefined): right branch taken, result inherits right's semantics
-			if leftSemantics&PredicateSemanticsAlways != 0 {
-				result |= c.getSyntacticNullishnessSemantics(node.AsBinaryExpression().Right)
-			}
-			return result
-		}
-		return PredicateSemanticsNever
-	case ast.KindConditionalExpression:
-		return c.getSyntacticNullishnessSemantics(node.AsConditionalExpression().WhenTrue) | c.getSyntacticNullishnessSemantics(node.AsConditionalExpression().WhenFalse)
-	case ast.KindNilKeyword:
-		return PredicateSemanticsAlways
-	case ast.KindIdentifier:
-		if c.getResolvedSymbol(node) == c.nilSymbol {
-			return PredicateSemanticsAlways
-		}
-		return PredicateSemanticsSometimes
-	}
-	return PredicateSemanticsNever
 }
 
 /**
@@ -27580,7 +27482,7 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 		return c.getTypeFromTypeNode(t)
 	}
 	switch binary.OperatorToken.Kind {
-	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken, ast.KindQuestionQuestionEqualsToken:
+	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken:
 		// In an assignment expression, the right operand is contextually typed by the type of the left operand
 		// unless it's an assignment declaration.
 		if node == binary.Right {
@@ -27589,7 +27491,7 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 				return c.getContextualTypeForAssignmentExpression(binary)
 			}
 		}
-	case ast.KindBarBarToken, ast.KindQuestionQuestionToken:
+	case ast.KindBarBarToken:
 		// When an || expression has a contextual type, the operands are contextually typed by that type, except
 		// when that type originates in a binding pattern, the right operand is contextually typed by the type of
 		// the left operand. When an || expression has no contextual type, the right operand is contextually typed
@@ -28414,7 +28316,7 @@ func (c *Checker) isContextSensitive(node *ast.Node) bool {
 		return c.isContextSensitive(node.AsConditionalExpression().WhenTrue) || c.isContextSensitive(node.AsConditionalExpression().WhenFalse)
 	case ast.KindBinaryExpression:
 		binary := node.AsBinaryExpression()
-		return ast.NodeKindIs(binary.OperatorToken, ast.KindBarBarToken, ast.KindQuestionQuestionToken) && (c.isContextSensitive(binary.Left) || c.isContextSensitive(binary.Right))
+		return binary.OperatorToken.Kind == ast.KindBarBarToken && (c.isContextSensitive(binary.Left) || c.isContextSensitive(binary.Right))
 	case ast.KindPropertyAssignment:
 		return c.isContextSensitive(node.Initializer())
 	case ast.KindTableEntry, ast.KindParenthesizedExpression:

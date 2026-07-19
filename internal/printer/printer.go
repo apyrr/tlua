@@ -2845,12 +2845,6 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 
 func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 	leftPrec, rightPrec := p.getBinaryExpressionPrecedence(node)
-	if emittedLeft := ast.SkipPartiallyEmittedExpressions(node.Left); ast.NodeIsSynthesized(emittedLeft) && emittedLeft.Kind == ast.KindBinaryExpression && mixingBinaryOperatorsRequiresParentheses(node.OperatorToken.Kind, emittedLeft.AsBinaryExpression().OperatorToken.Kind) {
-		leftPrec = ast.OperatorPrecedenceHighest
-	}
-	if emittedRight := ast.SkipPartiallyEmittedExpressions(node.Right); ast.NodeIsSynthesized(emittedRight) && emittedRight.Kind == ast.KindBinaryExpression && mixingBinaryOperatorsRequiresParentheses(node.OperatorToken.Kind, emittedRight.AsBinaryExpression().OperatorToken.Kind) {
-		rightPrec = ast.OperatorPrecedenceHighest
-	}
 	state := p.enterNode(node.AsNode())
 	p.emitExpression(node.Left, leftPrec)
 	linesBeforeOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
@@ -2865,11 +2859,7 @@ func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 }
 
 func (p *Printer) emitShortCircuitExpression(node *ast.Expression) {
-	if isBinaryOperation(ast.SkipPartiallyEmittedExpressions(node), ast.KindQuestionQuestionToken) {
-		p.emitExpression(node, ast.OperatorPrecedenceCoalesce)
-	} else {
-		p.emitExpression(node, ast.OperatorPrecedenceLogicalOR)
-	}
+	p.emitExpression(node, ast.OperatorPrecedenceLogicalOR)
 }
 
 func (p *Printer) emitConditionalExpression(node *ast.ConditionalExpression) {

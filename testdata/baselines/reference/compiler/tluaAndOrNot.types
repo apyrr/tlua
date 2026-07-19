@@ -142,18 +142,12 @@ local doubleNot = not not maybe;
 >not maybe : boolean
 >maybe : string | nil
 
-// Optional chaining lowers to an `and`-guard; nullish coalescing is untouched.
+// Optional chaining lowers to an `and`-guard.
 local chain = maybe?.length;
 >chain : number | nil
 >maybe?.length : number | nil
 >maybe : string | nil
 >length : number | nil
-
-local coalesce = maybe ?? "fallback";
->coalesce : string
->maybe ?? "fallback" : string
->maybe : string | nil
->"fallback" : "fallback"
 
 // The words are reserved, so a table key must be quoted, as in Lua.
 declare t: { [k: string]: number };

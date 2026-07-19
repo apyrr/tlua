@@ -60,7 +60,6 @@
             "ColonToken",
             "ColonColonToken",
             "AtToken",
-            "QuestionQuestionToken",
             {
                 "comment": "Only the JSDoc scanner produces BacktickToken. The normal scanner produces NoSubstitutionTemplateLiteral and related kinds."
             },
@@ -80,7 +79,6 @@
             "PercentEqualsToken",
             "BarBarEqualsToken",
             "AmpersandAmpersandEqualsToken",
-            "QuestionQuestionEqualsToken",
             {
                 "comment": "Identifiers and PrivateIdentifier"
             },
@@ -427,7 +425,7 @@
             },
             {
                 "name": "LastAssignment",
-                "value": "QuestionQuestionEqualsToken"
+                "value": "AmpersandAmpersandEqualsToken"
             },
             {
                 "name": "FirstCompoundAssignment",
@@ -435,7 +433,7 @@
             },
             {
                 "name": "LastCompoundAssignment",
-                "value": "QuestionQuestionEqualsToken"
+                "value": "AmpersandAmpersandEqualsToken"
             },
             {
                 "name": "FirstReservedWord",
@@ -475,7 +473,7 @@
             },
             {
                 "name": "LastPunctuation",
-                "value": "QuestionQuestionEqualsToken"
+                "value": "AmpersandAmpersandEqualsToken"
             },
             {
                 "name": "FirstToken",
@@ -507,7 +505,7 @@
             },
             {
                 "name": "LastBinaryOperator",
-                "value": "QuestionQuestionEqualsToken"
+                "value": "AmpersandAmpersandEqualsToken"
             },
             {
                 "name": "FirstStatement",
@@ -727,18 +725,15 @@
                 "SlashEqualsToken",
                 "PercentEqualsToken",
                 "BarBarEqualsToken",
-                "AmpersandAmpersandEqualsToken",
-                "QuestionQuestionEqualsToken"
+                "AmpersandAmpersandEqualsToken"
             ],
             "AssignmentOperatorOrHigher": [
-                "QuestionQuestionToken",
                 "LogicalOperatorOrHigher",
                 "AssignmentOperator"
             ],
             "LogicalOrCoalescingAssignmentOperator": [
                 "AmpersandAmpersandEqualsToken",
-                "BarBarEqualsToken",
-                "QuestionQuestionEqualsToken"
+                "BarBarEqualsToken"
             ]
         }
     },

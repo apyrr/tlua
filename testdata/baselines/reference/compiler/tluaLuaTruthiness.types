@@ -166,25 +166,6 @@ local or3: string = maybe or s;
 >maybe : string | nil
 >s : string
 
-// `??` is unaffected: it tests for absence, not falsiness.
-local nullish1: "" = empty ?? "other";
->nullish1 : ""
->empty ?? "other" : ""
->empty : ""
->"other" : "other"
-
-local nullish2: 0 = zero ?? 1;
->nullish2 : 0
->zero ?? 1 : 0
->zero : 0
->1 : 1
-
-local nullish3: string = maybe ?? "other";
->nullish3 : string
->maybe ?? "other" : string
->maybe : string | nil
->"other" : "other"
-
 // A `while` over a number can only be left by `break`, since no number is falsy.
 function loopExit(x: number): number
 >loopExit : (x: number) => number

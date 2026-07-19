@@ -277,7 +277,7 @@ func IsLogicalBinaryOperator(token Kind) bool {
 }
 
 func IsLogicalOrCoalescingBinaryOperator(token Kind) bool {
-	return IsLogicalBinaryOperator(token) || token == KindQuestionQuestionToken
+	return IsLogicalBinaryOperator(token)
 }
 
 func IsLogicalOrCoalescingBinaryExpression(expr *Node) bool {
@@ -429,10 +429,6 @@ func IsOutermostOptionalChain(node *Expression) bool {
 // Determines whether a node is the expression preceding an optional chain (i.e. `a` in `a?.b`).
 func IsExpressionOfOptionalChainRoot(node *Node) bool {
 	return IsOptionalChainRoot(node.Parent) && node.Parent.Expression() == node
-}
-
-func IsNullishCoalesce(node *Node) bool {
-	return node.Kind == KindBinaryExpression && node.AsBinaryExpression().OperatorToken.Kind == KindQuestionQuestionToken
 }
 
 func IsAssertionExpression(node *Node) bool {
@@ -4491,7 +4487,7 @@ func IsNamedEvaluationSource(node *Node) bool {
 		return node.Initializer() != nil
 	case KindBinaryExpression:
 		switch node.AsBinaryExpression().OperatorToken.Kind {
-		case KindEqualsToken, KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken, KindQuestionQuestionEqualsToken:
+		case KindEqualsToken, KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken:
 			return IsIdentifier(node.AsBinaryExpression().Left)
 		}
 	case KindExportAssignment:

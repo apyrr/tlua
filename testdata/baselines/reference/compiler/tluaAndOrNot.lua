@@ -34,9 +34,8 @@ local prec4 = ((n > 1) && (n < 5)) || b;
 local nonNull = maybe!.length;
 local doubleNot = not not maybe;
 
-// Optional chaining lowers to an `and`-guard; nullish coalescing is untouched.
+// Optional chaining lowers to an `and`-guard.
 local chain = maybe?.length;
-local coalesce = maybe ?? "fallback";
 
 // The words are reserved, so a table key must be quoted, as in Lua.
 declare t: { [k: string]: number };
@@ -70,9 +69,8 @@ local prec4 = ((n > 1) and (n < 5)) or b;
 -- `not` does not disturb the other uses of `!`.
 local nonNull = maybe.length;
 local doubleNot = !!maybe;
--- Optional chaining lowers to an `and`-guard; nullish coalescing is untouched.
+-- Optional chaining lowers to an `and`-guard.
 local chain = maybe and maybe.length;
-local coalesce = maybe ?? "fallback";
 local byIndex = t["and"];
 local byIndex2 = t["or"];
 local byIndex3 = t["not"];

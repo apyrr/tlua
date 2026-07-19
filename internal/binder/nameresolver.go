@@ -350,7 +350,7 @@ func (r *NameResolver) requiresScopeChangeWorker(node *ast.Node) bool {
 		}
 		return r.requiresScopeChangeWorker(node.AsPropertyDeclaration().Name())
 	default:
-		if ast.IsNullishCoalesce(node) || ast.IsOptionalChain(node) {
+		if ast.IsOptionalChain(node) {
 			return r.CompilerOptions.GetEmitScriptTarget() < core.ScriptTargetES2020
 		}
 		if ast.IsBindingElement(node) && node.AsBindingElement().DotDotDotToken != nil && ast.IsObjectBindingPattern(node.Parent) {
