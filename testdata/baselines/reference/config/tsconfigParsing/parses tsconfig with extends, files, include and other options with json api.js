@@ -11,7 +11,7 @@ Fs::
 //// [/src/index.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
 				"extends": "./tsconfigWithExtends.json",
 				"compilerOptions": {
@@ -35,13 +35,13 @@ Fs::
 }
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
   "noImplicitAny": true,
   "outDir": "/dist",
   "strict": true,
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::

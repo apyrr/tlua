@@ -11,7 +11,7 @@
 // function CC() {
 //          ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function CC(): void
 // | ```
 // | C
@@ -38,7 +38,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction CC(): void\n```\nC\n\n*@wat* — Makes a C. A default one.\nC ()\nC |postfix text\nunformatted postfix text\n\n*@see* — C its great"
+        "value": "```tlua\nfunction CC(): void\n```\nC\n\n*@wat* — Makes a C. A default one.\nC ()\nC |postfix text\nunformatted postfix text\n\n*@see* — C its great"
       },
       "range": {
         "start": {

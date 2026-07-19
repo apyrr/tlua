@@ -1,4 +1,4 @@
-distributiveConditionalBaseConstraint.tlua(59,32): error TS1110: Type expected.
+distributiveConditionalBaseConstraint.tlua(59,32): error TLUA1110: Type expected.
 
 
 ==== distributiveConditionalBaseConstraint.tlua (1 errors) ====
@@ -62,7 +62,7 @@ distributiveConditionalBaseConstraint.tlua(59,32): error TS1110: Type expected.
     type RecurseOnAllOfSchema<SUB_SCHEMAS extends readonly JSONSchema[]> =
       SUB_SCHEMAS extends readonly [infer SUB_SCHEMAS_HEAD]
                                    ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
         ? SUB_SCHEMAS_HEAD extends JSONSchema
           ? ParseSchema<MergeSubSchema<SUB_SCHEMAS_HEAD>>
           : never

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/apyrr/tlua/internal/bundled"
-	"github.com/apyrr/tlua/internal/execute/tsc"
+	"github.com/apyrr/tlua/internal/execute/tlua"
 	"github.com/apyrr/tlua/internal/tspath"
 	"github.com/apyrr/tlua/internal/vfs"
 	"github.com/apyrr/tlua/internal/vfs/osvfs"
@@ -63,7 +63,7 @@ func newSystem() *osSys {
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-		os.Exit(int(tsc.ExitStatusInvalidProject_OutputsSkipped))
+		os.Exit(int(tlua.ExitStatusInvalidProject_OutputsSkipped))
 	}
 
 	return &osSys{

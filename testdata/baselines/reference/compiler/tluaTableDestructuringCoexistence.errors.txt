@@ -1,4 +1,4 @@
-tluaTableDestructuringCoexistence.tlua(6,2): error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+tluaTableDestructuringCoexistence.tlua(6,2): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 
 
 ==== tluaTableDestructuringCoexistence.tlua (1 errors) ====
@@ -9,7 +9,7 @@ tluaTableDestructuringCoexistence.tlua(6,2): error TS2364: The left-hand side of
     local xv: number | nil;
     ({ q = 7 } = obj);
      ~~~~~~~~~
-!!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
     local sums = {xv};
     
     // Lua multiple assignment is the extraction idiom.

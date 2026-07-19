@@ -1,4 +1,4 @@
-typeParameterComparableRelation.tlua(6,5): error TS2352: Conversion of type 'T' to type 'A' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+typeParameterComparableRelation.tlua(6,5): error TLUA2352: Conversion of type 'T' to type 'A' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
   'A' could be instantiated with an arbitrary type which could be unrelated to 'T'.
 
 
@@ -10,7 +10,7 @@ typeParameterComparableRelation.tlua(6,5): error TS2352: Conversion of type 'T' 
     function func<A, B, T extends StringOrT<B>>(thing: T): void {
         thing as A; // Error
         ~~~~~~~~~~
-!!! error TS2352: Conversion of type 'T' to type 'A' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-!!! error TS2352:   'A' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+!!! error TLUA2352: Conversion of type 'T' to type 'A' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+!!! error TLUA2352:   'A' could be instantiated with an arbitrary type which could be unrelated to 'T'.
     }
     

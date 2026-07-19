@@ -1,7 +1,7 @@
-tluaMetatableGetmetatable.tlua(11,7): error TS2322: Type '{ __index: { describe: (self: object) => string; }; }' is not assignable to type 'number'.
-tluaMetatableGetmetatable.tlua(23,7): error TS2322: Type '{ __index: { a: number; }; } | { __index: { b: string; }; }' is not assignable to type 'number'.
+tluaMetatableGetmetatable.tlua(11,7): error TLUA2322: Type '{ __index: { describe: (self: object) => string; }; }' is not assignable to type 'number'.
+tluaMetatableGetmetatable.tlua(23,7): error TLUA2322: Type '{ __index: { a: number; }; } | { __index: { b: string; }; }' is not assignable to type 'number'.
   Type '{ __index: { a: number; }; }' is not assignable to type 'number'.
-tluaMetatableGetmetatable.tlua(24,23): error TS2339: Property 'a' does not exist on type '{ a: number; } | { b: string; }'.
+tluaMetatableGetmetatable.tlua(24,23): error TLUA2339: Property 'a' does not exist on type '{ a: number; } | { b: string; }'.
   Property 'a' does not exist on type '{ b: string; }'.
 
 
@@ -18,7 +18,7 @@ tluaMetatableGetmetatable.tlua(24,23): error TS2339: Property 'a' does not exist
     // The printed type is the metatable itself.
     local shown: number = mt;
           ~~~~~
-!!! error TS2322: Type '{ __index: { describe: (self: object) => string; }; }' is not assignable to type 'number'.
+!!! error TLUA2322: Type '{ __index: { describe: (self: object) => string; }; }' is not assignable to type 'number'.
     
     // A table with no metatable the checker knows about keeps the declared result.
     local plain = getmetatable({ n = 1 });
@@ -32,12 +32,12 @@ tluaMetatableGetmetatable.tlua(24,23): error TS2339: Property 'a' does not exist
     local em = getmetatable(either);
     local eshown: number = em;
           ~~~~~~
-!!! error TS2322: Type '{ __index: { a: number; }; } | { __index: { b: string; }; }' is not assignable to type 'number'.
-!!! error TS2322:   Type '{ __index: { a: number; }; }' is not assignable to type 'number'.
+!!! error TLUA2322: Type '{ __index: { a: number; }; } | { __index: { b: string; }; }' is not assignable to type 'number'.
+!!! error TLUA2322:   Type '{ __index: { a: number; }; }' is not assignable to type 'number'.
     local ea = em.__index.a;
                           ~
-!!! error TS2339: Property 'a' does not exist on type '{ a: number; } | { b: string; }'.
-!!! error TS2339:   Property 'a' does not exist on type '{ b: string; }'.
+!!! error TLUA2339: Property 'a' does not exist on type '{ a: number; } | { b: string; }'.
+!!! error TLUA2339:   Property 'a' does not exist on type '{ b: string; }'.
     
     // One arm with no metatable makes the whole union unknown: the value may be that arm.
     local mixed = cond and p1 or { s = "x" };

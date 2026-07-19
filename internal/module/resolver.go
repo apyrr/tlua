@@ -80,7 +80,7 @@ type resolutionState struct {
 
 	// state fields
 	// candidateEndingIsFromConfig is set when the candidate file extension originated from
-	// configuration (package.json fields, tsconfig.json paths entries, or wildcard substitutions)
+	// configuration (package.json fields, tluaconfig.json paths entries, or wildcard substitutions)
 	// rather than from the module specifier written in source code. When true, resolvedUsingTsExtension
 	// is suppressed so the checker does not attempt to extract a TS extension from the original specifier.
 	candidateEndingIsFromConfig bool

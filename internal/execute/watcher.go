@@ -12,7 +12,7 @@ import (
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/execute/incremental"
-	"github.com/apyrr/tlua/internal/execute/tsc"
+	"github.com/apyrr/tlua/internal/execute/tlua"
 	"github.com/apyrr/tlua/internal/execute/watchmanager"
 	"github.com/apyrr/tlua/internal/fswatch"
 	"github.com/apyrr/tlua/internal/tsoptions"
@@ -55,18 +55,18 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 }
 
 type Watcher struct {
-	sys                            tsc.System
+	sys                            tlua.System
 	configFileName                 string
 	config                         *tsoptions.ParsedCommandLine
 	compilerOptionsFromCommandLine *core.CompilerOptions
 	commandLineRaw                 *collections.OrderedMap[string, any]
-	reportDiagnostic               tsc.DiagnosticReporter
-	reportErrorSummary             tsc.DiagnosticsReporter
-	reportWatchStatus              tsc.DiagnosticReporter
-	testing                        tsc.CommandLineTesting
+	reportDiagnostic               tlua.DiagnosticReporter
+	reportErrorSummary             tlua.DiagnosticsReporter
+	reportWatchStatus              tlua.DiagnosticReporter
+	testing                        tlua.CommandLineTesting
 
 	program             *incremental.Program
-	extendedConfigCache *tsc.ExtendedConfigCache
+	extendedConfigCache *tlua.ExtendedConfigCache
 	configModified      bool
 	configHasErrors     bool
 	configFilePaths     []string
@@ -78,16 +78,16 @@ type Watcher struct {
 	configMtimes map[string]time.Time
 }
 
-var _ tsc.Watcher = (*Watcher)(nil)
+var _ tlua.Watcher = (*Watcher)(nil)
 
 func createWatcher(
-	sys tsc.System,
+	sys tlua.System,
 	configParseResult *tsoptions.ParsedCommandLine,
 	compilerOptionsFromCommandLine *core.CompilerOptions,
 	commandLineRaw *collections.OrderedMap[string, any],
-	reportDiagnostic tsc.DiagnosticReporter,
-	reportErrorSummary tsc.DiagnosticsReporter,
-	testing tsc.CommandLineTesting,
+	reportDiagnostic tlua.DiagnosticReporter,
+	reportErrorSummary tlua.DiagnosticsReporter,
+	testing tlua.CommandLineTesting,
 ) *Watcher {
 	wm := watchmanager.NewWatchManager(sys.Writer(), sys.FS().DirectoryExists)
 	if t, ok := testing.(watchmanager.CommandLineTestingWithWatchBackend); ok {
@@ -100,7 +100,7 @@ func createWatcher(
 		commandLineRaw:                 commandLineRaw,
 		reportDiagnostic:               reportDiagnostic,
 		reportErrorSummary:             reportErrorSummary,
-		reportWatchStatus:              tsc.CreateWatchStatusReporter(sys, configParseResult.Locale(), configParseResult.CompilerOptions(), testing),
+		reportWatchStatus:              tlua.CreateWatchStatusReporter(sys, configParseResult.Locale(), configParseResult.CompilerOptions(), testing),
 		testing:                        testing,
 		sourceFileCache:                &collections.SyncMap[tspath.Path, *cachedSourceFile]{},
 		wm:                             wm,
@@ -113,7 +113,7 @@ func createWatcher(
 
 func (w *Watcher) start(ctx context.Context) {
 	w.wm.Lock()
-	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
+	w.extendedConfigCache = &tlua.ExtendedConfigCache{}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
 
@@ -367,8 +367,8 @@ func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventK
 	}
 }
 
-func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
-	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
+func (w *Watcher) compileAndEmit() tlua.CompileAndEmitResult {
+	return tlua.EmitFilesAndReportErrors(tlua.EmitInput{
 		Sys:                w.sys,
 		ProgramLike:        w.program,
 		Program:            w.program.GetProgram(),
@@ -376,7 +376,7 @@ func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 		ReportDiagnostic:   w.reportDiagnostic,
 		ReportErrorSummary: w.reportErrorSummary,
 		Writer:             w.sys.Writer(),
-		CompileTimes:       &tsc.CompileTimes{},
+		CompileTimes:       &tlua.CompileTimes{},
 		Testing:            w.testing,
 	})
 }
@@ -423,7 +423,7 @@ func (w *Watcher) recheckTsConfig() bool {
 }
 
 func (w *Watcher) parseConfigFile() *tsoptions.ParsedCommandLine {
-	extendedConfigCache := &tsc.ExtendedConfigCache{}
+	extendedConfigCache := &tlua.ExtendedConfigCache{}
 	configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, w.commandLineRaw, w.sys, extendedConfigCache)
 	if len(errors) > 0 {
 		for _, e := range errors {

@@ -1,15 +1,15 @@
-error TS2318: Cannot find global type 'TemplateStringsArray'.
-taggedTemplateNestedInvalidEscape.tlua(1,32): error TS2304: Cannot find name 'TemplateStringsArray'.
-taggedTemplateNestedInvalidEscape.tlua(1,57): error TS100034: A vararg parameter cannot have a name.
+error TLUA2318: Cannot find global type 'TemplateStringsArray'.
+taggedTemplateNestedInvalidEscape.tlua(1,32): error TLUA2304: Cannot find name 'TemplateStringsArray'.
+taggedTemplateNestedInvalidEscape.tlua(1,57): error TLUA100034: A vararg parameter cannot have a name.
 
 
-!!! error TS2318: Cannot find global type 'TemplateStringsArray'.
+!!! error TLUA2318: Cannot find global type 'TemplateStringsArray'.
 ==== taggedTemplateNestedInvalidEscape.tlua (2 errors) ====
     declare function tag(template: TemplateStringsArray, ...substitutions: any[]): string;
                                    ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'TemplateStringsArray'.
+!!! error TLUA2304: Cannot find name 'TemplateStringsArray'.
                                                             ~~~~~~~~~~~~~
-!!! error TS100034: A vararg parameter cannot have a name.
+!!! error TLUA100034: A vararg parameter cannot have a name.
     
     // The outer tagged template should NOT be rewritten with __makeTemplateObject
     // because only the inner tagged template contains an invalid escape.

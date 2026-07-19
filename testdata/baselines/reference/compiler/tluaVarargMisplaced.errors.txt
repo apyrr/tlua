@@ -1,14 +1,14 @@
-tluaVarargMisplaced.tlua(9,26): error TS1014: A rest parameter must be last in a parameter list.
-tluaVarargMisplaced.tlua(11,26): error TS1014: A rest parameter must be last in a parameter list.
-tluaVarargMisplaced.tlua(21,32): error TS1014: A rest parameter must be last in a parameter list.
-tluaVarargMisplaced.tlua(24,9): error TS2322: Type 'number | nil' is not assignable to type 'string'.
+tluaVarargMisplaced.tlua(9,26): error TLUA1014: A rest parameter must be last in a parameter list.
+tluaVarargMisplaced.tlua(11,26): error TLUA1014: A rest parameter must be last in a parameter list.
+tluaVarargMisplaced.tlua(21,32): error TLUA1014: A rest parameter must be last in a parameter list.
+tluaVarargMisplaced.tlua(24,9): error TLUA2322: Type 'number | nil' is not assignable to type 'string'.
   Type 'nil' is not assignable to type 'string'.
-tluaVarargMisplaced.tlua(27,39): error TS1014: A rest parameter must be last in a parameter list.
-tluaVarargMisplaced.tlua(34,25): error TS1014: A rest parameter must be last in a parameter list.
-tluaVarargMisplaced.tlua(36,9): error TS2322: Type 'string | nil' is not assignable to type 'number'.
+tluaVarargMisplaced.tlua(27,39): error TLUA1014: A rest parameter must be last in a parameter list.
+tluaVarargMisplaced.tlua(34,25): error TLUA1014: A rest parameter must be last in a parameter list.
+tluaVarargMisplaced.tlua(36,9): error TLUA2322: Type 'string | nil' is not assignable to type 'number'.
   Type 'nil' is not assignable to type 'number'.
-tluaVarargMisplaced.tlua(43,28): error TS1014: A rest parameter must be last in a parameter list.
-tluaVarargMisplaced.tlua(44,12): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+tluaVarargMisplaced.tlua(43,28): error TLUA1014: A rest parameter must be last in a parameter list.
+tluaVarargMisplaced.tlua(44,12): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
   Type 'nil' is not assignable to type 'number'.
 
 
@@ -23,11 +23,11 @@ tluaVarargMisplaced.tlua(44,12): error TS2345: Argument of type 'number | nil' i
     // design.
     declare function notLast(...: number, a: number): void;
                              ~~~
-!!! error TS1014: A rest parameter must be last in a parameter list.
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
     
     function notLastWithBody(...: number, a: number): void
                              ~~~
-!!! error TS1014: A rest parameter must be last in a parameter list.
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
       // Binds to the misplaced vararg: no second diagnostic here.
       local first = ...;
       local rest = {...};
@@ -39,18 +39,18 @@ tluaVarargMisplaced.tlua(44,12): error TS2345: Argument of type 'number | nil' i
     // with a layer stripped.
     function annotationStillChecks(...: number, a: string): void
                                    ~~~
-!!! error TS1014: A rest parameter must be last in a parameter list.
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
       // `| nil` as for any single-value read of `...`: the pack may be empty.
       local n: number | nil = ...;
       local bad: string = ...; // error names number, not any
             ~~~
-!!! error TS2322: Type 'number | nil' is not assignable to type 'string'.
-!!! error TS2322:   Type 'nil' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
     end
     
     function arrayAnnotationKeepsItsLayer(...: string[], a: number): void
                                           ~~~
-!!! error TS1014: A rest parameter must be last in a parameter list.
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
       // Each value is a whole string[]; unwrapping would leave `string`.
       local arr: string[] | nil = (...);
     end
@@ -59,12 +59,12 @@ tluaVarargMisplaced.tlua(44,12): error TS2345: Argument of type 'number | nil' i
     // (or nearest) the legal position.
     function lastVarargWins(...: number, ...: string): void
                             ~~~
-!!! error TS1014: A rest parameter must be last in a parameter list.
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
       local s: string | nil = ...;
       local bad: number = ...; // error names string, not number's vararg
             ~~~
-!!! error TS2322: Type 'string | nil' is not assignable to type 'number'.
-!!! error TS2322:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string | nil' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'number'.
     end
     
     // A call with a misplaced-vararg tail keeps the tail arity treatment: the
@@ -73,10 +73,10 @@ tluaVarargMisplaced.tlua(44,12): error TS2345: Argument of type 'number | nil' i
     declare function takesTwo(a: number, b: number): void;
     function tailFromMisplaced(...: number, a: string): void
                                ~~~
-!!! error TS1014: A rest parameter must be last in a parameter list.
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
       takesTwo(...);
                ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'number'.
     end
     

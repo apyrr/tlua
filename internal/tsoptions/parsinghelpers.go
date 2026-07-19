@@ -538,7 +538,7 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 	var explicitNullFields collections.Set[string]
 	if rawSource != nil {
 		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok && rawMap != nil {
-			// Options are nested under "compilerOptions" in both tsconfig.json and wrapped command line options
+			// Options are nested under "compilerOptions" in both tluaconfig.json and wrapped command line options
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
 				if compilerOptionsMap, ok := compilerOptionsRaw.(*collections.OrderedMap[string, any]); ok {
 					for key, value := range compilerOptionsMap.Entries() {

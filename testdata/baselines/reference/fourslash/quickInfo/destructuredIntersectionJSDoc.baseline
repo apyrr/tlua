@@ -11,7 +11,7 @@
 // declare function f({ a }: Y): void
 //                      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: {}
 // | ```
 // | Description of a.
@@ -31,7 +31,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: {}\n```\nDescription of a."
+        "value": "```tlua\n(parameter) a: {}\n```\nDescription of a."
       },
       "range": {
         "start": {

@@ -867,7 +867,7 @@ func (b *ProjectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			}
 			configs.Store(configFilePath, config)
 			if len(config.FileNames()) == 0 {
-				// Likely a solution tsconfig.json - the search will fan out to its references.
+				// Likely a solution tluaconfig.json - the search will fan out to its references.
 				node.logger.Log("Project does not contain file (no root files)")
 				return false, false
 			}
@@ -950,8 +950,8 @@ func (b *ProjectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 		}
 	}
 
-	// Look for tsconfig.json files higher up the directory tree and do the same. This handles
-	// the common case where a higher-level "solution" tsconfig.json contains all projects in a
+	// Look for tluaconfig.json files higher up the directory tree and do the same. This handles
+	// the common case where a higher-level "solution" tluaconfig.json contains all projects in a
 	// workspace.
 	if config, ok := configs.Load(b.toPath(configFileName)); ok && config.CompilerOptions().DisableSolutionSearching.IsTrue() {
 		if fallback != nil {

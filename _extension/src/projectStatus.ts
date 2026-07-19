@@ -37,7 +37,7 @@ namespace ProjectInfoState {
 }
 
 /**
- * Shows which tsconfig/jsconfig the current file belongs to.
+ * Shows which tluaconfig/jsconfig the current file belongs to.
  */
 export class ProjectStatus implements vscode.Disposable {
     private statusItem?: vscode.LanguageStatusItem;
@@ -122,7 +122,7 @@ export class ProjectStatus implements vscode.Disposable {
                 break;
             }
             case ProjectInfoState.Type.Resolved: {
-                const noConfigFileText = vscode.l10n.t("No tsconfig");
+                const noConfigFileText = vscode.l10n.t("No tluaconfig");
 
                 const rootPath = this.getWorkspaceRootForResource(this.state.resource);
                 if (!rootPath) {

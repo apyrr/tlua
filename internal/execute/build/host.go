@@ -8,7 +8,7 @@ import (
 	"github.com/apyrr/tlua/internal/compiler"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/execute/incremental"
-	"github.com/apyrr/tlua/internal/execute/tsc"
+	"github.com/apyrr/tlua/internal/execute/tlua"
 	"github.com/apyrr/tlua/internal/tsoptions"
 	"github.com/apyrr/tlua/internal/tspath"
 	"github.com/apyrr/tlua/internal/vfs"
@@ -19,7 +19,7 @@ type host struct {
 	host         compiler.CompilerHost
 
 	// Caches that last only for build cycle and then cleared out
-	extendedConfigCache tsc.ExtendedConfigCache
+	extendedConfigCache tlua.ExtendedConfigCache
 	sourceFiles         parseCache[ast.SourceFileParseOptions, *ast.SourceFile]
 	configTimes         collections.SyncMap[tspath.Path, time.Duration]
 
@@ -61,7 +61,7 @@ func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
 	return h.resolvedReferences.loadOrStore(path, func(path tspath.Path) *tsoptions.ParsedCommandLine {
 		configStart := h.orchestrator.opts.Sys.Now()
-		// Wrap command line options in "compilerOptions" key to match tsconfig.json structure
+		// Wrap command line options in "compilerOptions" key to match tluaconfig.json structure
 		var commandLineRaw *collections.OrderedMap[string, any]
 		if raw, ok := h.orchestrator.opts.Command.Raw.(*collections.OrderedMap[string, any]); ok {
 			wrapped := &collections.OrderedMap[string, any]{}

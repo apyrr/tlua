@@ -1,5 +1,5 @@
-tluaLocalFunctionResolution.tlua(9,16): error TS6133: 'recursiveOnly' is declared but its value is never read.
-tluaLocalFunctionResolution.tlua(16,1): error TS2304: Cannot find name 'beforeLocal'.
+tluaLocalFunctionResolution.tlua(9,16): error TLUA6133: 'recursiveOnly' is declared but its value is never read.
+tluaLocalFunctionResolution.tlua(16,1): error TLUA2304: Cannot find name 'beforeLocal'.
 
 
 ==== tluaLocalFunctionResolution.tlua (2 errors) ====
@@ -13,7 +13,7 @@ tluaLocalFunctionResolution.tlua(16,1): error TS2304: Cannot find name 'beforeLo
     
     local function recursiveOnly(n: number): number
                    ~~~~~~~~~~~~~
-!!! error TS6133: 'recursiveOnly' is declared but its value is never read.
+!!! error TLUA6133: 'recursiveOnly' is declared but its value is never read.
       if (n <= 0) {
         return 0;
       }
@@ -22,7 +22,7 @@ tluaLocalFunctionResolution.tlua(16,1): error TS2304: Cannot find name 'beforeLo
     
     beforeLocal();
     ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'beforeLocal'.
+!!! error TLUA2304: Cannot find name 'beforeLocal'.
     local function beforeLocal(): void
     end
     beforeLocal();

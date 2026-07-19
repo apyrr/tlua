@@ -386,7 +386,7 @@ func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) cha
 }
 
 func (c *configFileRegistryBuilder) isConfigBaseName(baseName string) bool {
-	return baseName == "tsconfig.json" || baseName == "jsconfig.json" ||
+	return baseName == "tluaconfig.json" || baseName == "jsconfig.json" ||
 		(c.customConfigFileName != "" && baseName == c.customConfigFileName)
 }
 
@@ -468,7 +468,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		}
 	}
 
-	// Handle created/deleted files named "tsconfig.json" or "jsconfig.json"
+	// Handle created/deleted files named "tluaconfig.json" or "jsconfig.json"
 	for path := range createdOrDeletedConfigFiles {
 		if hasExcessiveChanges {
 			return c.invalidateCache(logger)
@@ -603,13 +603,13 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 
 	// When searching for ancestor of a config file, determine which config types to skip
 	// in the starting directory. This matches TSServer's forEachConfigFileLocation behavior:
-	// - For ancestor of tsconfig.json: skip tsconfig.json but still check jsconfig.json
-	// - For ancestor of jsconfig.json: skip both tsconfig.json and jsconfig.json
+	// - For ancestor of tluaconfig.json: skip tluaconfig.json but still check jsconfig.json
+	// - For ancestor of jsconfig.json: skip both tluaconfig.json and jsconfig.json
 	skipTsconfig := skipSearchInDirectoryOfFile
-	skipJsconfig := skipSearchInDirectoryOfFile && !strings.HasSuffix(fileName, "/tsconfig.json")
+	skipJsconfig := skipSearchInDirectoryOfFile && !strings.HasSuffix(fileName, "/tluaconfig.json")
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		if !skipTsconfig {
-			tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
+			tsconfigPath := tspath.CombinePaths(directory, "tluaconfig.json")
 			if c.FS().FileExists(tsconfigPath) {
 				return tsconfigPath, true
 			}

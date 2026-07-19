@@ -11,4 +11,4 @@ Projects::
 .
 
 Errors::
-error TS6370: Options 'clean' and 'verbose' cannot be combined.
+error TLUA6370: Options 'clean' and 'verbose' cannot be combined.

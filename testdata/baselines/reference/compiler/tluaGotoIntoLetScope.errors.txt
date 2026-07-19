@@ -1,9 +1,9 @@
-tluaGotoIntoLetScope.tlua(5,5): error TS100026: Cannot jump into the scope of local 'x'.
-tluaGotoIntoLetScope.tlua(8,9): error TS2454: Variable 'x' is used before being assigned.
-tluaGotoIntoLetScope.tlua(12,5): error TS100026: Cannot jump into the scope of local 'c'.
-tluaGotoIntoLetScope.tlua(15,9): error TS2454: Variable 'c' is used before being assigned.
-tluaGotoIntoLetScope.tlua(19,5): error TS100026: Cannot jump into the scope of local 'v'.
-tluaGotoIntoLetScope.tlua(22,9): error TS2454: Variable 'v' is used before being assigned.
+tluaGotoIntoLetScope.tlua(5,5): error TLUA100026: Cannot jump into the scope of local 'x'.
+tluaGotoIntoLetScope.tlua(8,9): error TLUA2454: Variable 'x' is used before being assigned.
+tluaGotoIntoLetScope.tlua(12,5): error TLUA100026: Cannot jump into the scope of local 'c'.
+tluaGotoIntoLetScope.tlua(15,9): error TLUA2454: Variable 'c' is used before being assigned.
+tluaGotoIntoLetScope.tlua(19,5): error TLUA100026: Cannot jump into the scope of local 'v'.
+tluaGotoIntoLetScope.tlua(22,9): error TLUA2454: Variable 'v' is used before being assigned.
 
 
 ==== tluaGotoIntoLetScope.tlua (6 errors) ====
@@ -13,33 +13,33 @@ tluaGotoIntoLetScope.tlua(22,9): error TS2454: Variable 'v' is used before being
     function intoLetScope(): void {
         goto done
         ~~~~~~~~~
-!!! error TS100026: Cannot jump into the scope of local 'x'.
+!!! error TLUA100026: Cannot jump into the scope of local 'x'.
         local x = 1;
         ::done::
         log(x);
             ~
-!!! error TS2454: Variable 'x' is used before being assigned.
+!!! error TLUA2454: Variable 'x' is used before being assigned.
     }
     
     function intoConstScope(): void {
         goto done
         ~~~~~~~~~
-!!! error TS100026: Cannot jump into the scope of local 'c'.
+!!! error TLUA100026: Cannot jump into the scope of local 'c'.
         local c = 1;
         ::done::
         log(c);
             ~
-!!! error TS2454: Variable 'c' is used before being assigned.
+!!! error TLUA2454: Variable 'c' is used before being assigned.
     }
     
     function intoVarScope(): void {
         goto done
         ~~~~~~~~~
-!!! error TS100026: Cannot jump into the scope of local 'v'.
+!!! error TLUA100026: Cannot jump into the scope of local 'v'.
         local v = 1;
         ::done::
         log(v);
             ~
-!!! error TS2454: Variable 'v' is used before being assigned.
+!!! error TLUA2454: Variable 'v' is used before being assigned.
     }
     

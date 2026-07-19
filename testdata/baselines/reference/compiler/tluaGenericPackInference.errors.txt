@@ -1,6 +1,6 @@
-tluaGenericPackInference.tlua(11,26): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaGenericPackInference.tlua(12,1): error TS2554: Expected 3 arguments, but got 2.
-tluaGenericPackInference.tlua(25,13): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+tluaGenericPackInference.tlua(11,26): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaGenericPackInference.tlua(12,1): error TLUA2554: Expected 3 arguments, but got 2.
+tluaGenericPackInference.tlua(25,13): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
   Type 'nil' is not assignable to type 'string'.
 
 
@@ -17,10 +17,10 @@ tluaGenericPackInference.tlua(25,13): error TS2345: Argument of type 'number | n
     apply(takesNumberString, 1, "x");        // ok
     apply(takesNumberString, "wrong", "x");  // error: string is not a number
                              ~~~~~~~
-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     apply(takesNumberString, 1);             // error: missing the second argument
     ~~~~~
-!!! error TS2554: Expected 3 arguments, but got 2.
+!!! error TLUA2554: Expected 3 arguments, but got 2.
     
     // Forwarding a vararg pack into another correlated call: `...` carries the whole
     // pack A, so `apply(g, ...)` type-checks against g's parameters.
@@ -35,7 +35,7 @@ tluaGenericPackInference.tlua(25,13): error TS2345: Argument of type 'number | n
     function callWithNumbers(...: number): void
       apply(g2, ...);  // error: number tail is not (string, boolean)
                 ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'string'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'string'.
     end
     

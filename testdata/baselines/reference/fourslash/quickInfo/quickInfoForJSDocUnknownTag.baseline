@@ -9,13 +9,13 @@
 // function foo() {
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo(): string
 // | ```
 // | 
 // | 
 // | *@example*
-// | ```tsx
+// | ```tlua
 // | if (true) {
 // |     foo()
 // | }
@@ -33,13 +33,13 @@
 // function foo2() {
 //          ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo2(): string
 // | ```
 // | 
 // | 
 // | *@example*
-// | ```tsx
+// | ```tlua
 // | {
 // |     foo()
 // | }
@@ -57,13 +57,13 @@
 // function moo() {
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function moo(): string
 // | ```
 // | 
 // | 
 // | *@example*
-// | ```tsx
+// | ```tlua
 // |   x y
 // |   12345
 // |      b
@@ -82,7 +82,7 @@
 // function boo() {
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function boo(): string
 // | ```
 // | 
@@ -90,7 +90,7 @@
 // | *@func*
 // | 
 // | *@example*
-// | ```tsx
+// | ```tlua
 // |   x y
 // |   12345
 // |      b
@@ -108,7 +108,7 @@
 // function goo() {
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function goo(): string
 // | ```
 // | 
@@ -116,7 +116,7 @@
 // | *@func*
 // | 
 // | *@example*
-// | ```tsx
+// | ```tlua
 // | x y
 // | 12345
 // |    b
@@ -139,7 +139,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(): string\n```\n\n\n*@example*\n```tsx\nif (true) {\n    foo()\n}\n```\n"
+        "value": "```tlua\nfunction foo(): string\n```\n\n\n*@example*\n```tlua\nif (true) {\n    foo()\n}\n```\n"
       },
       "range": {
         "start": {
@@ -166,7 +166,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo2(): string\n```\n\n\n*@example*\n```tsx\n{\n    foo()\n}\n```\n"
+        "value": "```tlua\nfunction foo2(): string\n```\n\n\n*@example*\n```tlua\n{\n    foo()\n}\n```\n"
       },
       "range": {
         "start": {
@@ -193,7 +193,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction moo(): string\n```\n\n\n*@example*\n```tsx\n  x y\n  12345\n     b\n```\n"
+        "value": "```tlua\nfunction moo(): string\n```\n\n\n*@example*\n```tlua\n  x y\n  12345\n     b\n```\n"
       },
       "range": {
         "start": {
@@ -220,7 +220,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction boo(): string\n```\n\n\n*@func*\n\n*@example*\n```tsx\n  x y\n  12345\n     b\n```\n"
+        "value": "```tlua\nfunction boo(): string\n```\n\n\n*@func*\n\n*@example*\n```tlua\n  x y\n  12345\n     b\n```\n"
       },
       "range": {
         "start": {
@@ -247,7 +247,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction goo(): string\n```\n\n\n*@func*\n\n*@example*\n```tsx\nx y\n12345\n   b\n```\n"
+        "value": "```tlua\nfunction goo(): string\n```\n\n\n*@func*\n\n*@example*\n```tlua\nx y\n12345\n   b\n```\n"
       },
       "range": {
         "start": {

@@ -19,7 +19,7 @@ func TestRenameInConfiguredProject(t *testing.T) {
 [|local [|{| "contextRangeIndex": 0 |}globalName|] = 0;|]
 // @Filename: referencesForGlobals_2.tlua
 local y = [|globalName|];
-// @Filename: tsconfig.json
+// @Filename: tluaconfig.json
 { "files": ["referencesForGlobals_1.tlua", "referencesForGlobals_2.tlua"], "compilerOptions": { "lib": ["es5"] } }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -15,7 +15,7 @@
 //     /** Comment on bar destructuring. */ bar,
 //                                          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -23,7 +23,7 @@
 //     /** Comment on baz destructuring. */ baz
 //                                          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -44,7 +44,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -71,7 +71,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

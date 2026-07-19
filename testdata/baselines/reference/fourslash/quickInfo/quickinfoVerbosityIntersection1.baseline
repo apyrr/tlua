@@ -6,7 +6,7 @@
 //     local obj: Foo & Bar = { a: "a" };
 //           ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local obj: {
 // |     a: "a" | "c";
 // | } & {
@@ -18,7 +18,7 @@
 // | ----------------------------------------------------------------------
 //           ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local obj: Foo & Bar
 // | ```
 // | 
@@ -31,7 +31,7 @@
 //     local obj: Foo & Bar = { a: "" };
 //           ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local obj: never
 // | ```
 // | 
@@ -45,7 +45,7 @@
 //     local obj: Never = { a: "" };
 //           ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local obj: never
 // | ```
 // | 
@@ -67,7 +67,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal obj: Foo & Bar\n```\n"
+          "value": "```tlua\nlocal obj: Foo & Bar\n```\n"
         },
         "range": {
           "start": {
@@ -98,7 +98,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal obj: {\n    a: \"a\" | \"c\";\n} & {\n    a: \"a\" | \"b\";\n}\n```\n"
+          "value": "```tlua\nlocal obj: {\n    a: \"a\" | \"c\";\n} & {\n    a: \"a\" | \"b\";\n}\n```\n"
         },
         "range": {
           "start": {
@@ -128,7 +128,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal obj: never\n```\n"
+          "value": "```tlua\nlocal obj: never\n```\n"
         },
         "range": {
           "start": {
@@ -158,7 +158,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal obj: never\n```\n"
+          "value": "```tlua\nlocal obj: never\n```\n"
         },
         "range": {
           "start": {

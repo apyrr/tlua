@@ -1,8 +1,8 @@
-tluaNotCallableErrors.tlua(6,1): error TS2349: This expression is not callable.
+tluaNotCallableErrors.tlua(6,1): error TLUA2349: This expression is not callable.
   Type 'Number' has no call signatures.
-tluaNotCallableErrors.tlua(9,1): error TS2349: This expression is not callable.
+tluaNotCallableErrors.tlua(9,1): error TLUA2349: This expression is not callable.
   Type '{}' has no call signatures.
-tluaNotCallableErrors.tlua(12,1): error TS2349: This expression is not callable.
+tluaNotCallableErrors.tlua(12,1): error TLUA2349: This expression is not callable.
   Type 'Function' has no call signatures.
 
 
@@ -14,20 +14,20 @@ tluaNotCallableErrors.tlua(12,1): error TS2349: This expression is not callable.
     local notCallable = 1;
     notCallable();
     ~~~~~~~~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'Number' has no call signatures.
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type 'Number' has no call signatures.
     
     local emptyObject = {};
     emptyObject();
     ~~~~~~~~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type '{}' has no call signatures.
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type '{}' has no call signatures.
     
     declare legacyFunction: Function;
     legacyFunction();
     ~~~~~~~~~~~~~~
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'Function' has no call signatures.
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type 'Function' has no call signatures.
     
     declare untypedValue: any;
     untypedValue(); // any stays callable

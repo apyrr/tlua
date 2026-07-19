@@ -1,9 +1,9 @@
-unicodeSpellingSuggestions.tlua(3,1): error TS1434: Unexpected keyword or identifier.
-unicodeSpellingSuggestions.tlua(3,1): error TS2304: Cannot find name 'classAé'.
-unicodeSpellingSuggestions.tlua(6,1): error TS1434: Unexpected keyword or identifier.
-unicodeSpellingSuggestions.tlua(6,1): error TS2304: Cannot find name 'classAéé'.
-unicodeSpellingSuggestions.tlua(9,1): error TS1434: Unexpected keyword or identifier.
-unicodeSpellingSuggestions.tlua(9,1): error TS2304: Cannot find name 'classAééé'.
+unicodeSpellingSuggestions.tlua(3,1): error TLUA1434: Unexpected keyword or identifier.
+unicodeSpellingSuggestions.tlua(3,1): error TLUA2304: Cannot find name 'classAé'.
+unicodeSpellingSuggestions.tlua(6,1): error TLUA1434: Unexpected keyword or identifier.
+unicodeSpellingSuggestions.tlua(6,1): error TLUA2304: Cannot find name 'classAéé'.
+unicodeSpellingSuggestions.tlua(9,1): error TLUA1434: Unexpected keyword or identifier.
+unicodeSpellingSuggestions.tlua(9,1): error TLUA2304: Cannot find name 'classAééé'.
 
 
 ==== unicodeSpellingSuggestions.tlua (6 errors) ====
@@ -11,22 +11,22 @@ unicodeSpellingSuggestions.tlua(9,1): error TS2304: Cannot find name 'classAéé
     
     classAé {
     ~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~~
-!!! error TS2304: Cannot find name 'classAé'.
+!!! error TLUA2304: Cannot find name 'classAé'.
     }
     
     classAéé {
     ~~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~~~
-!!! error TS2304: Cannot find name 'classAéé'.
+!!! error TLUA2304: Cannot find name 'classAéé'.
     }
     
     classAééé {
     ~~~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~~~~
-!!! error TS2304: Cannot find name 'classAééé'.
+!!! error TLUA2304: Cannot find name 'classAééé'.
     }
     

@@ -186,13 +186,13 @@ type SymlinkSpec struct {
 // The structure is:
 //
 //	root/
-//	├── tsconfig.json (base config)
+//	├── tluaconfig.json (base config)
 //	├── package.json
 //	├── node_modules/
 //	│   └── <rootNodeModuleCount packages>
 //	└── packages/
 //	    ├── package-a/
-//	    │   ├── tsconfig.json
+//	    │   ├── tluaconfig.json
 //	    │   ├── package.json
 //	    │   ├── node_modules/
 //	    │   │   └── <package-specific packages>
@@ -209,8 +209,8 @@ func SetupMonorepoLifecycleSession(t *testing.T, config MonorepoSetupConfig) *Mo
 		monorepoName = "monorepo"
 	}
 
-	// Add root tsconfig.json
-	rootTSConfigPath := tspath.CombinePaths(monorepoRoot, "tsconfig.json")
+	// Add root tluaconfig.json
+	rootTSConfigPath := tspath.CombinePaths(monorepoRoot, "tluaconfig.json")
 	rootTSConfigContent := "{\n  \"compilerOptions\": {\n    \"module\": \"esnext\",\n    \"target\": \"esnext\",\n    \"strict\": true\n  }\n}\n"
 	builder.AddTextFile(rootTSConfigPath, rootTSConfigContent)
 	rootTSConfig := FileHandle{fileName: rootTSConfigPath, content: rootTSConfigContent}
@@ -465,7 +465,7 @@ func (b *fileMapBuilder) AddLocalProject(projectDir string, fileCount int) {
 	dir := normalizeAbsolutePath(projectDir)
 	record := b.ensureProjectRecord(dir)
 	b.nextProjectID++
-	tsConfigPath := tspath.CombinePaths(dir, "tsconfig.json")
+	tsConfigPath := tspath.CombinePaths(dir, "tluaconfig.json")
 	tsConfigContent := "{\n  \"compilerOptions\": {\n    \"module\": \"esnext\",\n    \"target\": \"esnext\",\n    \"strict\": true\n  }\n}\n"
 	b.files[tsConfigPath] = tsConfigContent
 	record.tsconfig = FileHandle{fileName: tsConfigPath, content: tsConfigContent}

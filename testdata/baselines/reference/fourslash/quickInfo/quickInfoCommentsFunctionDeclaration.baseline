@@ -4,7 +4,7 @@
 // function foo() {
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo(): void
 // | ```
 // | This comment should appear for foo
@@ -13,7 +13,7 @@
 // foo();
 // ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo(): void
 // | ```
 // | This comment should appear for foo
@@ -22,7 +22,7 @@
 // function fooWithParameters(/** this is comment about a*/a: string,
 //          ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function fooWithParameters(a: string, b: number): void
 // | ```
 // | This is comment for function signature
@@ -32,7 +32,7 @@
 //     local d = a;
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local d: string
 // | ```
 // | 
@@ -41,7 +41,7 @@
 // fooWithParameters("a",10);
 // ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function fooWithParameters(a: string, b: number): void
 // | ```
 // | This is comment for function signature
@@ -66,7 +66,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(): void\n```\nThis comment should appear for foo"
+        "value": "```tlua\nfunction foo(): void\n```\nThis comment should appear for foo"
       },
       "range": {
         "start": {
@@ -93,7 +93,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(): void\n```\nThis comment should appear for foo"
+        "value": "```tlua\nfunction foo(): void\n```\nThis comment should appear for foo"
       },
       "range": {
         "start": {
@@ -120,7 +120,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction fooWithParameters(a: string, b: number): void\n```\nThis is comment for function signature"
+        "value": "```tlua\nfunction fooWithParameters(a: string, b: number): void\n```\nThis is comment for function signature"
       },
       "range": {
         "start": {
@@ -147,7 +147,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal d: string\n```\n"
+        "value": "```tlua\nlocal d: string\n```\n"
       },
       "range": {
         "start": {
@@ -174,7 +174,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction fooWithParameters(a: string, b: number): void\n```\nThis is comment for function signature"
+        "value": "```tlua\nfunction fooWithParameters(a: string, b: number): void\n```\nThis is comment for function signature"
       },
       "range": {
         "start": {

@@ -1,4 +1,4 @@
-tluaVarargUnused.tlua(13,25): error TS6133: 'a' is declared but its value is never read.
+tluaVarargUnused.tlua(13,25): error TLUA6133: 'a' is declared but its value is never read.
 
 
 ==== tluaVarargUnused.tlua (1 errors) ====
@@ -16,7 +16,7 @@ tluaVarargUnused.tlua(13,25): error TS6133: 'a' is declared but its value is nev
     // Ordinary parameters are still reported.
     function unusedOrdinary(a: number, ...: number): void
                             ~
-!!! error TS6133: 'a' is declared but its value is never read.
+!!! error TLUA6133: 'a' is declared but its value is never read.
     end
     
     return { usesVararg = usesVararg, ignoresVararg = ignoresVararg, unusedOrdinary = unusedOrdinary };

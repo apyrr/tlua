@@ -6,7 +6,7 @@
 // local a = () => 1;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local a: () => number
 // | ```
 // | start [end](https://vscode.dev/)
@@ -25,7 +25,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal a: () => number\n```\nstart [end](https://vscode.dev/)"
+        "value": "```tlua\nlocal a: () => number\n```\nstart [end](https://vscode.dev/)"
       },
       "range": {
         "start": {

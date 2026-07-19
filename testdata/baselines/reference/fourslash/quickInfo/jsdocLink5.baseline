@@ -10,7 +10,7 @@
 // f()
 // ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function f(x: any): void
 // | ```
 // | [g()](file:///jsdocLink5.tlua#1,10-1,11) [g()](file:///jsdocLink5.tlua#1,10-1,11) [g()](file:///jsdocLink5.tlua#1,10-1,11) [0](file:///jsdocLink5.tlua#1,10-1,11) [1](file:///jsdocLink5.tlua#1,10-1,11) [2](file:///jsdocLink5.tlua#1,10-1,11)
@@ -30,7 +30,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction f(x: any): void\n```\n[g()](file:///jsdocLink5.tlua#1,10-1,11) [g()](file:///jsdocLink5.tlua#1,10-1,11) [g()](file:///jsdocLink5.tlua#1,10-1,11) [0](file:///jsdocLink5.tlua#1,10-1,11) [1](file:///jsdocLink5.tlua#1,10-1,11) [2](file:///jsdocLink5.tlua#1,10-1,11)\nu () u () u () u () 0 u ()1 u () 2"
+        "value": "```tlua\nfunction f(x: any): void\n```\n[g()](file:///jsdocLink5.tlua#1,10-1,11) [g()](file:///jsdocLink5.tlua#1,10-1,11) [g()](file:///jsdocLink5.tlua#1,10-1,11) [0](file:///jsdocLink5.tlua#1,10-1,11) [1](file:///jsdocLink5.tlua#1,10-1,11) [2](file:///jsdocLink5.tlua#1,10-1,11)\nu () u () u () u () 0 u ()1 u () 2"
       },
       "range": {
         "start": {

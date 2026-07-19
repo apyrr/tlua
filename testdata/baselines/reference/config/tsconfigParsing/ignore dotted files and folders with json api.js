@@ -11,14 +11,14 @@ Fs::
 //// [/apath/test.tlua]
 
 
-//// [/apath/tsconfig.json]
+//// [/apath/tluaconfig.json]
 {}
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/apath/tsconfig.json"
+  "configFilePath": "/apath/tluaconfig.json"
 }
 
 TypeAcquisition::

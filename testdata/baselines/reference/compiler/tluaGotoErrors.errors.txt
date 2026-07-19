@@ -1,7 +1,7 @@
-tluaGotoErrors.tlua(3,10): error TS100025: No visible label 'nowhere' for goto.
-tluaGotoErrors.tlua(8,10): error TS100025: No visible label 'inner' for goto.
-tluaGotoErrors.tlua(18,14): error TS100025: No visible label 'here' for goto.
-tluaGotoErrors.tlua(26,7): error TS1114: Duplicate label 'a'.
+tluaGotoErrors.tlua(3,10): error TLUA100025: No visible label 'nowhere' for goto.
+tluaGotoErrors.tlua(8,10): error TLUA100025: No visible label 'inner' for goto.
+tluaGotoErrors.tlua(18,14): error TLUA100025: No visible label 'here' for goto.
+tluaGotoErrors.tlua(26,7): error TLUA1114: Duplicate label 'a'.
 
 
 ==== tluaGotoErrors.tlua (4 errors) ====
@@ -9,14 +9,14 @@ tluaGotoErrors.tlua(26,7): error TS1114: Duplicate label 'a'.
     function missing(): void
         goto nowhere
              ~~~~~~~
-!!! error TS100025: No visible label 'nowhere' for goto.
+!!! error TLUA100025: No visible label 'nowhere' for goto.
     end
     
     // Error: a label in a nested block is not visible outside it.
     function nestedNotVisible(): void
         goto inner
              ~~~~~
-!!! error TS100025: No visible label 'inner' for goto.
+!!! error TLUA100025: No visible label 'inner' for goto.
         do
             ::inner::
         end
@@ -28,7 +28,7 @@ tluaGotoErrors.tlua(26,7): error TS1114: Duplicate label 'a'.
         local function inner(): void
             goto here
                  ~~~~
-!!! error TS100025: No visible label 'here' for goto.
+!!! error TLUA100025: No visible label 'here' for goto.
         end
         inner();
     end
@@ -38,7 +38,7 @@ tluaGotoErrors.tlua(26,7): error TS1114: Duplicate label 'a'.
         ::a::
         ::a::
           ~
-!!! error TS1114: Duplicate label 'a'.
+!!! error TLUA1114: Duplicate label 'a'.
         goto a
     end
     

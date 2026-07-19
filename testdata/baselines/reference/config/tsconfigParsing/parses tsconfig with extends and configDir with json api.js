@@ -11,7 +11,7 @@ Fs::
 //// [/src/index.tlua]
 
 
-//// [/tsconfig.base.json]
+//// [/tluaconfig.base.json]
 {
   "compilerOptions": {
     "outFile": "${configDir}/outFile",
@@ -22,13 +22,13 @@ Fs::
   }
 }
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
-				"extends": "./tsconfig.base.json"
+				"extends": "./tluaconfig.base.json"
 			}
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
   "declarationDir": "/declarationDir",
@@ -36,7 +36,7 @@ CompilerOptions::
   "rootDir": "/rootDir",
   "tsBuildInfoFile": "/tsBuildInfoFile",
   "outFile": "/outFile",
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::

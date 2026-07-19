@@ -16,5 +16,5 @@ func ResolveConfigFileNameOfProjectReference(path string) string {
 	if tspath.FileExtensionIs(path, tspath.ExtensionJson) {
 		return path
 	}
-	return tspath.CombinePaths(path, "tsconfig.json")
+	return tspath.CombinePaths(path, "tluaconfig.json")
 }

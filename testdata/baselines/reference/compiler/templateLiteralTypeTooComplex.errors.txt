@@ -1,4 +1,4 @@
-templateLiteralTypeTooComplex.tlua(3,10): error TS2590: Expression produces a union type that is too complex to represent.
+templateLiteralTypeTooComplex.tlua(3,10): error TLUA2590: Expression produces a union type that is too complex to represent.
 
 
 ==== templateLiteralTypeTooComplex.tlua (1 errors) ====
@@ -6,5 +6,5 @@ templateLiteralTypeTooComplex.tlua(3,10): error TS2590: Expression produces a un
     type N = 0 | 1 | 2 | 3;
     type T = `${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}${N}`;
              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2590: Expression produces a union type that is too complex to represent.
+!!! error TLUA2590: Expression produces a union type that is too complex to represent.
     

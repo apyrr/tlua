@@ -3,7 +3,7 @@
 // class c {
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -12,14 +12,14 @@
 // type t1 = c;
 //      ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type t1 = c
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type c = --[[unresolved]] any
 // | ```
 // | 
@@ -27,21 +27,21 @@
 // local cInstance: t1 = new c();
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cInstance: c
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                  ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type t1 = c
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -60,7 +60,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -87,7 +87,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\ntype t1 = c\n```\n"
+        "value": "```tlua\ntype t1 = c\n```\n"
       },
       "range": {
         "start": {
@@ -114,7 +114,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\ntype c = --[[unresolved]] any\n```\n"
+        "value": "```tlua\ntype c = --[[unresolved]] any\n```\n"
       },
       "range": {
         "start": {
@@ -141,7 +141,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cInstance: c\n```\n"
+        "value": "```tlua\nlocal cInstance: c\n```\n"
       },
       "range": {
         "start": {
@@ -168,7 +168,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\ntype t1 = c\n```\n"
+        "value": "```tlua\ntype t1 = c\n```\n"
       },
       "range": {
         "start": {
@@ -195,7 +195,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

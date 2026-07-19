@@ -8,7 +8,7 @@
 // local b: typeof a = { color: "green", weight: 120 };
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local b: {
 // |     color: string;
 // |     weight: number;
@@ -19,7 +19,7 @@
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local b: Apple
 // | ```
 // | 
@@ -34,7 +34,7 @@
 // local c: typeof Banana = Banana;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local c: any
 // | ```
 // | 
@@ -42,7 +42,7 @@
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local c: any
 // | ```
 // | 
@@ -63,7 +63,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal b: Apple\n```\n"
+          "value": "```tlua\nlocal b: Apple\n```\n"
         },
         "range": {
           "start": {
@@ -94,7 +94,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal b: {\n    color: string;\n    weight: number;\n}\n```\n"
+          "value": "```tlua\nlocal b: {\n    color: string;\n    weight: number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -124,7 +124,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal c: any\n```\n"
+          "value": "```tlua\nlocal c: any\n```\n"
         },
         "range": {
           "start": {
@@ -154,7 +154,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal c: any\n```\n"
+          "value": "```tlua\nlocal c: any\n```\n"
         },
         "range": {
           "start": {

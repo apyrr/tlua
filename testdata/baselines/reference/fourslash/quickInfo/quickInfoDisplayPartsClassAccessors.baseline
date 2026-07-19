@@ -4,7 +4,7 @@
 //     public get publicProperty() { return ""; }
 //                ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -12,7 +12,7 @@
 //     public set publicProperty(x: string) { }
 //                ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -20,7 +20,7 @@
 //     private get privateProperty() { return ""; }
 //                 ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -28,7 +28,7 @@
 //     private set privateProperty(x: string) { }
 //                 ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -36,7 +36,7 @@
 //     protected get protectedProperty() { return ""; }
 //                   ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -44,7 +44,7 @@
 //     protected set protectedProperty(x: string) { }
 //                   ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -52,7 +52,7 @@
 //     static get staticProperty() { return ""; }
 //                ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -60,7 +60,7 @@
 //     static set staticProperty(x: string) { }
 //                ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -68,7 +68,7 @@
 //     private static get  privateStaticProperty() { return ""; }
 //                         ^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -76,7 +76,7 @@
 //     private static set privateStaticProperty(x: string) { }
 //                        ^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -84,7 +84,7 @@
 //     protected static get protectedStaticProperty() { return ""; }
 //                          ^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -92,7 +92,7 @@
 //     protected static set protectedStaticProperty(x: string) { }
 //                          ^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -102,7 +102,7 @@
 //         x = this.publicProperty;
 //                  ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -110,7 +110,7 @@
 //         x = this.privateProperty;
 //                  ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -118,7 +118,7 @@
 //         x = this.protectedProperty;
 //                  ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -126,7 +126,7 @@
 //         x = c.staticProperty;
 //               ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -134,7 +134,7 @@
 //         x = c.privateStaticProperty;
 //               ^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -142,7 +142,7 @@
 //         x = c.protectedStaticProperty;
 //               ^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -150,7 +150,7 @@
 //         this.publicProperty = "";
 //              ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -158,7 +158,7 @@
 //         this.privateProperty = "";
 //              ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -166,7 +166,7 @@
 //         this.protectedProperty = "";
 //              ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -174,7 +174,7 @@
 //         c.staticProperty = "";
 //           ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -182,7 +182,7 @@
 //         c.privateStaticProperty = "";
 //           ^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -190,7 +190,7 @@
 //         c.protectedStaticProperty = "";
 //           ^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -202,14 +202,14 @@
 // y = cInstance.publicProperty;
 //     ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cInstance: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //               ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -217,14 +217,14 @@
 // y = c.staticProperty;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //       ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -232,14 +232,14 @@
 // cInstance.publicProperty = y;
 // ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cInstance: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //           ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -247,14 +247,14 @@
 // c.staticProperty = y;
 // ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //   ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -273,7 +273,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -300,7 +300,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -327,7 +327,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -354,7 +354,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -381,7 +381,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -408,7 +408,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -435,7 +435,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -462,7 +462,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -489,7 +489,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -516,7 +516,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -543,7 +543,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -570,7 +570,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -597,7 +597,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -624,7 +624,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -651,7 +651,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -678,7 +678,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -705,7 +705,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -732,7 +732,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -759,7 +759,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -786,7 +786,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -813,7 +813,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -840,7 +840,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -867,7 +867,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -894,7 +894,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -921,7 +921,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cInstance: any\n```\n"
+        "value": "```tlua\nlocal cInstance: any\n```\n"
       },
       "range": {
         "start": {
@@ -948,7 +948,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -975,7 +975,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1002,7 +1002,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1029,7 +1029,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cInstance: any\n```\n"
+        "value": "```tlua\nlocal cInstance: any\n```\n"
       },
       "range": {
         "start": {
@@ -1056,7 +1056,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1083,7 +1083,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1110,7 +1110,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

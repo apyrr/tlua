@@ -15,7 +15,7 @@ const (
 	ExtensionJs          = ".lua"
 	ExtensionJsx         = ".jsx"
 	ExtensionJson        = ".json"
-	ExtensionTsBuildInfo = ".tsbuildinfo"
+	ExtensionTsBuildInfo = ".tluabuildinfo"
 )
 
 var (

@@ -1,6 +1,6 @@
-tluaIndexKeyInferable.tlua(35,7): error TS2322: Type '(a: number) => void' is not assignable to type 'Table<string, number>'.
+tluaIndexKeyInferable.tlua(35,7): error TLUA2322: Type '(a: number) => void' is not assignable to type 'Table<string, number>'.
   Index signature for type 'string' is missing in type '(a: number) => void'.
-tluaIndexKeyInferable.tlua(40,7): error TS2322: Type 'number' is not assignable to type 'Table<string, number>'.
+tluaIndexKeyInferable.tlua(40,7): error TLUA2322: Type 'number' is not assignable to type 'Table<string, number>'.
 
 
 ==== tluaIndexKeyInferable.tlua (2 errors) ====
@@ -40,13 +40,13 @@ tluaIndexKeyInferable.tlua(40,7): error TS2322: Type 'number' is not assignable 
     declare fn: (a: number) => void;
     local bad: Table<string, number> = fn;
           ~~~
-!!! error TS2322: Type '(a: number) => void' is not assignable to type 'Table<string, number>'.
-!!! error TS2322:   Index signature for type 'string' is missing in type '(a: number) => void'.
+!!! error TLUA2322: Type '(a: number) => void' is not assignable to type 'Table<string, number>'.
+!!! error TLUA2322:   Index signature for type 'string' is missing in type '(a: number) => void'.
     
     // A primitive is not a table either. Its apparent type is an interface -- `Number` --
     // whose members carry no table key at all, so nothing would be left to reject.
     declare num: number;
     local alsoBad: Table<string, number> = num;
           ~~~~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'Table<string, number>'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'Table<string, number>'.
     

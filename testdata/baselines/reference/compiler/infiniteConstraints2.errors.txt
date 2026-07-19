@@ -1,6 +1,6 @@
-infiniteConstraints2.tlua(5,17): error TS100034: A vararg parameter cannot have a name.
-infiniteConstraints2.tlua(5,48): error TS100034: A vararg parameter cannot have a name.
-infiniteConstraints2.tlua(10,8): error TS1110: Type expected.
+infiniteConstraints2.tlua(5,17): error TLUA100034: A vararg parameter cannot have a name.
+infiniteConstraints2.tlua(5,48): error TLUA100034: A vararg parameter cannot have a name.
+infiniteConstraints2.tlua(10,8): error TLUA1110: Type expected.
 
 
 ==== infiniteConstraints2.tlua (3 errors) ====
@@ -10,16 +10,16 @@ infiniteConstraints2.tlua(10,8): error TS1110: Type expected.
      T extends unknown ?
      ((arg: Elm, ...rest: T) => void) extends ((...args: infer T2) => void) ? T2 : 
                     ~~~~
-!!! error TS100034: A vararg parameter cannot have a name.
+!!! error TLUA100034: A vararg parameter cannot have a name.
                                                    ~~~~
-!!! error TS100034: A vararg parameter cannot have a name.
+!!! error TLUA100034: A vararg parameter cannot have a name.
      never :
      never;
     type ExactExtract<T, U> = (T extends U ? U extends T ? T : never : never) & string;
     type Conv<T, U = T> = {
         0: [T];
            ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
         1: Prepend<T, Conv<ExactExtract<U, T>, {a: number}>>;
     }[U extends T ? 0 : 1];
     

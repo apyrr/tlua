@@ -3,7 +3,7 @@
 // type T = [
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type T = any
 // | ```
 // | 
@@ -11,7 +11,7 @@
 // | ----------------------------------------------------------------------
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type T = any
 // | ```
 // | 
@@ -51,7 +51,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype T = any\n```\n"
+          "value": "```tlua\ntype T = any\n```\n"
         },
         "range": {
           "start": {
@@ -81,7 +81,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype T = any\n```\n"
+          "value": "```tlua\ntype T = any\n```\n"
         },
         "range": {
           "start": {

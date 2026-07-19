@@ -17,14 +17,14 @@ func TestProjectCollectionDefaultProject(t *testing.T) {
 	}
 
 	// Project 1 references project 2, which does not have open files.
-	// File project1/dist/index.d.tlua does not belong to any tsconfig.json, but is included in programs for
+	// File project1/dist/index.d.tlua does not belong to any tluaconfig.json, but is included in programs for
 	// projects 3 and 4 via a triple-slash path reference to project 1's output.
 	// When looking for a default project for project1/dist/index.d.tlua,
 	// we should not try to unconditionally access project 2,
 	// which isn't loaded because of `disableReferencedProjectLoad`.
 	files := map[string]any{
-		"/project1/tsconfig.json": `{
-			"extends": "../tsconfig.json",
+		"/project1/tluaconfig.json": `{
+			"extends": "../tluaconfig.json",
 			"files": [],
 			"include": ["src/**/*"],
 			"references": [
@@ -43,8 +43,8 @@ func TestProjectCollectionDefaultProject(t *testing.T) {
 		"/project1/dist/index.d.tlua": `type Bar = {
 				a: string;
 			};`,
-		"/project2/tsconfig.json": `{
-			"extends": "../tsconfig.json",
+		"/project2/tluaconfig.json": `{
+			"extends": "../tluaconfig.json",
 			"files": [],
 			"include": ["src/**/*"],
 			"compilerOptions": {
@@ -53,8 +53,8 @@ func TestProjectCollectionDefaultProject(t *testing.T) {
 				"rootDir": "./src"
 			}
 		}`,
-		"/project3/tsconfig.json": `{
-			"extends": "../tsconfig.json",
+		"/project3/tluaconfig.json": `{
+			"extends": "../tluaconfig.json",
 			"files": [],
 			"include": ["src/**/*"],
 			"references": [
@@ -70,8 +70,8 @@ func TestProjectCollectionDefaultProject(t *testing.T) {
 		}`,
 		"/project3/src/index.tlua": `/// <reference path="../../project1/dist/index.d.tlua"/>
 			local x: Bar = { a: "s" };`,
-		"/project4/tsconfig.json": `{
-			"extends": "../tsconfig.json",
+		"/project4/tluaconfig.json": `{
+			"extends": "../tluaconfig.json",
 			"files": [],
 			"include": ["src/**/*"],
 			"references": [
@@ -87,7 +87,7 @@ func TestProjectCollectionDefaultProject(t *testing.T) {
 		}`,
 		"/project4/src/index.tlua": `/// <reference path="../../project1/dist/index.d.tlua"/>
 local x: Bar = { a: "s" };`,
-		"/tsconfig.json": `{
+		"/tluaconfig.json": `{
 			"compilerOptions": {
 				"disableReferencedProjectLoad": true,
 				"disableSolutionSearching": true,

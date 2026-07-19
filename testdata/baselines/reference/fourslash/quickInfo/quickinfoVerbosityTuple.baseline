@@ -10,7 +10,7 @@
 // type TwoFruits = [Orange, Apple];
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type TwoFruits = any
 // | ```
 // | 
@@ -18,7 +18,7 @@
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type TwoFruits = any
 // | ```
 // | 
@@ -26,7 +26,7 @@
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type TwoFruits = any
 // | ```
 // | 
@@ -35,7 +35,7 @@
 // local tf: TwoFruits = [
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local tf: any
 // | ```
 // | 
@@ -43,7 +43,7 @@
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local tf: any
 // | ```
 // | 
@@ -51,7 +51,7 @@
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local tf: any
 // | ```
 // | 
@@ -59,7 +59,7 @@
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local tf: any
 // | ```
 // | 
@@ -71,7 +71,7 @@
 // local tf2: [Orange, Apple] = [
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local tf2: any
 // | ```
 // | 
@@ -79,7 +79,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local tf2: any
 // | ```
 // | 
@@ -87,7 +87,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local tf2: any
 // | ```
 // | 
@@ -99,7 +99,7 @@
 // type ManyFruits = (Orange | Apple)[];
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type ManyFruits = {
 // |     [x: number]: {
 // |         color: string;
@@ -114,7 +114,7 @@
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type ManyFruits = {
 // |     [x: number]: Apple | Orange;
 // | }
@@ -124,7 +124,7 @@
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type ManyFruits = (Apple | Orange)[]
 // | ```
 // | 
@@ -133,7 +133,7 @@
 // local mf: ManyFruits = [];
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local mf: {
 // |     [x: number]: {
 // |         color: string;
@@ -148,7 +148,7 @@
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local mf: {
 // |     [x: number]: Apple | Orange;
 // | }
@@ -158,7 +158,7 @@
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local mf: (Apple | Orange)[]
 // | ```
 // | 
@@ -166,7 +166,7 @@
 // | ----------------------------------------------------------------------
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local mf: ManyFruits
 // | ```
 // | 
@@ -187,7 +187,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype TwoFruits = any\n```\n"
+          "value": "```tlua\ntype TwoFruits = any\n```\n"
         },
         "range": {
           "start": {
@@ -217,7 +217,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype TwoFruits = any\n```\n"
+          "value": "```tlua\ntype TwoFruits = any\n```\n"
         },
         "range": {
           "start": {
@@ -247,7 +247,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype TwoFruits = any\n```\n"
+          "value": "```tlua\ntype TwoFruits = any\n```\n"
         },
         "range": {
           "start": {
@@ -277,7 +277,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: any\n```\n"
         },
         "range": {
           "start": {
@@ -307,7 +307,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: any\n```\n"
         },
         "range": {
           "start": {
@@ -337,7 +337,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: any\n```\n"
         },
         "range": {
           "start": {
@@ -367,7 +367,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: any\n```\n"
         },
         "range": {
           "start": {
@@ -397,7 +397,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal tf2: any\n```\n"
+          "value": "```tlua\nlocal tf2: any\n```\n"
         },
         "range": {
           "start": {
@@ -427,7 +427,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal tf2: any\n```\n"
+          "value": "```tlua\nlocal tf2: any\n```\n"
         },
         "range": {
           "start": {
@@ -457,7 +457,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal tf2: any\n```\n"
+          "value": "```tlua\nlocal tf2: any\n```\n"
         },
         "range": {
           "start": {
@@ -487,7 +487,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype ManyFruits = (Apple | Orange)[]\n```\n"
+          "value": "```tlua\ntype ManyFruits = (Apple | Orange)[]\n```\n"
         },
         "range": {
           "start": {
@@ -518,7 +518,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype ManyFruits = {\n    [x: number]: Apple | Orange;\n}\n```\n"
+          "value": "```tlua\ntype ManyFruits = {\n    [x: number]: Apple | Orange;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -549,7 +549,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype ManyFruits = {\n    [x: number]: {\n        color: string;\n        other: Orange;\n    } | {\n        color: string;\n    };\n}\n```\n"
+          "value": "```tlua\ntype ManyFruits = {\n    [x: number]: {\n        color: string;\n        other: Orange;\n    } | {\n        color: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -580,7 +580,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal mf: ManyFruits\n```\n"
+          "value": "```tlua\nlocal mf: ManyFruits\n```\n"
         },
         "range": {
           "start": {
@@ -611,7 +611,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal mf: (Apple | Orange)[]\n```\n"
+          "value": "```tlua\nlocal mf: (Apple | Orange)[]\n```\n"
         },
         "range": {
           "start": {
@@ -642,7 +642,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal mf: {\n    [x: number]: Apple | Orange;\n}\n```\n"
+          "value": "```tlua\nlocal mf: {\n    [x: number]: Apple | Orange;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -673,7 +673,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal mf: {\n    [x: number]: {\n        color: string;\n        other: Orange;\n    } | {\n        color: string;\n    };\n}\n```\n"
+          "value": "```tlua\nlocal mf: {\n    [x: number]: {\n        color: string;\n        other: Orange;\n    } | {\n        color: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {

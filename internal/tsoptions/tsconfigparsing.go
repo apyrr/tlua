@@ -311,7 +311,7 @@ func convertConfigFileToObject(
 		rootExpression = sourceFile.Statements.Nodes[0].Expression()
 	}
 	if rootExpression != nil && rootExpression.Kind != ast.KindObjectLiteralExpression {
-		baseFileName := "tsconfig.json"
+		baseFileName := "tluaconfig.json"
 		if tspath.GetBaseFileName(sourceFile.FileName()) == "jsconfig.json" {
 			baseFileName = "jsconfig.json"
 		}
@@ -570,7 +570,7 @@ func getExtendsConfigPath(
 	}
 	// If the path isn't a rooted or relative path, resolve like a module
 	resolverHost := &resolverHost{host}
-	if resolved := module.ResolveConfig(extendedConfig, tspath.CombinePaths(basePath, "tsconfig.json"), resolverHost); resolved.IsResolved() {
+	if resolved := module.ResolveConfig(extendedConfig, tspath.CombinePaths(basePath, "tluaconfig.json"), resolverHost); resolved.IsResolved() {
 		return resolved.ResolvedFileName, errors
 	}
 	if extendedConfig == "" {
@@ -697,7 +697,7 @@ func directoryOfCombinedPath(fileName string, basePath string) string {
 	return tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(fileName, basePath))
 }
 
-// ParseConfigFileTextToJson parses the text of the tsconfig.json file
+// ParseConfigFileTextToJson parses the text of the tluaconfig.json file
 // fileName is the path to the config file
 // jsonText is the text of the config file
 func ParseConfigFileTextToJson(fileName string, path tspath.Path, jsonText string) (any, []*ast.Diagnostic) {
@@ -759,7 +759,7 @@ func convertObjectLiteralExpressionToJson(
 		}
 
 		if token := element.QuestionToken(); token != nil {
-			errors = append(errors, ast.NewDiagnostic(sourceFile, token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
+			errors = append(errors, ast.NewDiagnostic(sourceFile, token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_tlua_files, "?"))
 		}
 		textOfKey := ""
 		if !ast.IsComputedNonLiteralName(element.Name()) {
@@ -866,7 +866,7 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 	return nil, errors
 }
 
-// ParseJsonConfigFileContent parses the contents of a config file (tsconfig.json).
+// ParseJsonConfigFileContent parses the contents of a config file (tluaconfig.json).
 // jsonNode: The contents of the config file to parse
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
@@ -1167,7 +1167,7 @@ type propOfRaw struct {
 	wrongValue string
 }
 
-// parseJsonConfigFileContentWorker parses the contents of a config file from json or json source file (tsconfig.json).
+// parseJsonConfigFileContentWorker parses the contents of a config file from json or json source file (tluaconfig.json).
 // json: The contents of the config file to parse
 // sourceFile: sourceFile corresponding to the Json
 // host: Instance of ParseConfigHost used to enumerate files in folder.
@@ -1234,7 +1234,7 @@ func parseJsonConfigFileContentWorker(
 				if configFileName != "" {
 					fileName = configFileName
 				} else {
-					fileName = "tsconfig.json"
+					fileName = "tluaconfig.json"
 				}
 				diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
 				nodeValue := ForEachTsConfigPropArray(sourceFile.SourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
@@ -1677,15 +1677,15 @@ func getFileNamesFromConfigSpecs(
 	extraFileExtensions = []FileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
-	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
+	// Literal file names (provided via the "files" array in tluaconfig.json) are stored in a
 	// file map with a possibly case insensitive key. We use this map later when when including
 	// wildcard paths.
 	var literalFileMap collections.OrderedMap[string, string]
-	// Wildcard paths (provided via the "includes" array in tsconfig.json) are stored in a
+	// Wildcard paths (provided via the "includes" array in tluaconfig.json) are stored in a
 	// file map with a possibly case insensitive key. We use this map to store paths matched
 	// via wildcard, and to handle extension priority.
 	var wildcardFileMap collections.OrderedMap[string, string]
-	// Wildcard paths of json files (provided via the "includes" array in tsconfig.json) are stored in a
+	// Wildcard paths of json files (provided via the "includes" array in tluaconfig.json) are stored in a
 	// file map with a possibly case insensitive key. We use this map to store paths matched
 	// via wildcard of *.json kind
 	var wildCardJsonFileMap collections.OrderedMap[string, string]

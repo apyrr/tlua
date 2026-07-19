@@ -1,12 +1,12 @@
-tluaTableAugmentation.tlua(19,1): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaTableAugmentation.tlua(22,11): error TS2339: Property 'y' does not exist on type '{ x: number; }'.
-tluaTableAugmentation.tlua(26,1): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+tluaTableAugmentation.tlua(19,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaTableAugmentation.tlua(22,11): error TLUA2339: Property 'y' does not exist on type '{ x: number; }'.
+tluaTableAugmentation.tlua(26,1): error TLUA7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
   No index signature with a parameter of type 'string' was found on type '{}'.
-tluaTableAugmentation.tlua(29,8): error TS2339: Property 'x' does not exist on type '{}'.
-tluaTableAugmentation.tlua(32,11): error TS2300: Duplicate identifier 'member'.
-tluaTableAugmentation.tlua(33,20): error TS2300: Duplicate identifier 'member'.
-tluaTableAugmentation.tlua(37,27): error TS2300: Duplicate identifier 'member'.
-tluaTableAugmentation.tlua(39,18): error TS2300: Duplicate identifier 'member'.
+tluaTableAugmentation.tlua(29,8): error TLUA2339: Property 'x' does not exist on type '{}'.
+tluaTableAugmentation.tlua(32,11): error TLUA2300: Duplicate identifier 'member'.
+tluaTableAugmentation.tlua(33,20): error TLUA2300: Duplicate identifier 'member'.
+tluaTableAugmentation.tlua(37,27): error TLUA2300: Duplicate identifier 'member'.
+tluaTableAugmentation.tlua(39,18): error TLUA2300: Duplicate identifier 'member'.
 
 
 ==== tluaTableAugmentation.tlua (8 errors) ====
@@ -30,44 +30,44 @@ tluaTableAugmentation.tlua(39,18): error TS2300: Duplicate identifier 'member'.
     local fixed = { x = 1 };
     fixed.x = "no";
     ~~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     local annotated: { x: number } = { x = 1 };
     annotated.y = 2;
               ~
-!!! error TS2339: Property 'y' does not exist on type '{ x: number; }'.
+!!! error TLUA2339: Property 'y' does not exist on type '{ x: number; }'.
     
     local dynamic = {};
     local key = "key";
     dynamic[key] = 1;
     ~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
-!!! error TS7053:   No index signature with a parameter of type 'string' was found on type '{}'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+!!! error TLUA7053:   No index signature with a parameter of type 'string' was found on type '{}'.
     
     local closed = true and {} or {};
     closed.x = 1;
            ~
-!!! error TS2339: Property 'x' does not exist on type '{}'.
+!!! error TLUA2339: Property 'x' does not exist on type '{}'.
     
     local collision = {};
     collision.member = 1;
               ~~~~~~
-!!! error TS2300: Duplicate identifier 'member'.
-!!! related TS6203 tluaTableAugmentation.tlua:33:20: 'member' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'member'.
+!!! related TLUA6203 tluaTableAugmentation.tlua:33:20: 'member' was also declared here.
     function collision.member(): void
                        ~~~~~~
-!!! error TS2300: Duplicate identifier 'member'.
-!!! related TS6203 tluaTableAugmentation.tlua:32:11: 'member' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'member'.
+!!! related TLUA6203 tluaTableAugmentation.tlua:32:11: 'member' was also declared here.
     end
     
     local reverseCollision = {};
     function reverseCollision.member(): void
                               ~~~~~~
-!!! error TS2300: Duplicate identifier 'member'.
-!!! related TS6203 tluaTableAugmentation.tlua:39:18: 'member' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'member'.
+!!! related TLUA6203 tluaTableAugmentation.tlua:39:18: 'member' was also declared here.
     end
     reverseCollision.member = 1;
                      ~~~~~~
-!!! error TS2300: Duplicate identifier 'member'.
-!!! related TS6203 tluaTableAugmentation.tlua:37:27: 'member' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'member'.
+!!! related TLUA6203 tluaTableAugmentation.tlua:37:27: 'member' was also declared here.
     

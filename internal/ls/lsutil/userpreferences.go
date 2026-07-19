@@ -188,7 +188,7 @@ type UserPreferences struct {
 
 	// ------- Project Configuration -------
 
-	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
+	// CustomConfigFileName specifies a custom config file name to use before defaulting to tluaconfig.json/jsconfig.json.
 	CustomConfigFileName string `raw:"customConfigFileName" config:"customConfigFileName"`
 }
 

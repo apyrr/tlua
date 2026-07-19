@@ -19,7 +19,7 @@ Settings live under the `tlua.*` namespace. A few useful ones:
 {
     // Point at a directory containing a local tlua binary instead of the
     // bundled one (e.g. a local build).
-    "tlua.tsdk.path": "./built/local",
+    "tlua.sdk.path": "./built/local",
 
     // Trace language server communication ("off" | "messages" | "verbose").
     "tlua.trace.server": "off"

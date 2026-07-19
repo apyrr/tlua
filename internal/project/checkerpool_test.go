@@ -24,8 +24,8 @@ func setupCheckerPoolSession(t *testing.T, opts CheckerPoolOptions) (*Session, *
 	}
 
 	files := map[string]any{
-		"/src/tsconfig.json": `{ "compilerOptions": { "noLib": true } }`,
-		"/src/index.tlua":    "export local x: number = 1;",
+		"/src/tluaconfig.json": `{ "compilerOptions": { "noLib": true } }`,
+		"/src/index.tlua":      "export local x: number = 1;",
 	}
 	fs := bundled.WrapFS(vfstest.FromMap(files, false))
 	session := NewSession(&SessionInit{
@@ -44,7 +44,7 @@ func setupCheckerPoolSession(t *testing.T, opts CheckerPoolOptions) (*Session, *
 	session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, "export local x: number = 1;", lsproto.LanguageKindTypeScript)
 
 	snapshot := session.Snapshot()
-	project := snapshot.ProjectCollection.ConfiguredProject("/src/tsconfig.json")
+	project := snapshot.ProjectCollection.ConfiguredProject("/src/tluaconfig.json")
 	assert.Assert(t, project != nil, "expected configured project")
 	assert.Assert(t, project.checkerPool != nil, "expected checker pool")
 	return session, project.checkerPool

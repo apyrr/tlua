@@ -1,6 +1,6 @@
-tluaLocalMultiNameAnnotated.tlua(9,7): error TS2322: Type 'number' is not assignable to type 'string'.
-tluaLocalMultiNameAnnotated.tlua(12,10): error TS2322: Type 'string' is not assignable to type 'boolean'.
-tluaLocalMultiNameAnnotated.tlua(15,29): error TS2322: Type 'nil' is not assignable to type 'boolean'.
+tluaLocalMultiNameAnnotated.tlua(9,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaLocalMultiNameAnnotated.tlua(12,10): error TLUA2322: Type 'string' is not assignable to type 'boolean'.
+tluaLocalMultiNameAnnotated.tlua(15,29): error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
 
 
 ==== tluaLocalMultiNameAnnotated.tlua (3 errors) ====
@@ -14,17 +14,17 @@ tluaLocalMultiNameAnnotated.tlua(15,29): error TS2322: Type 'nil' is not assigna
     // Position 0 mismatch.
     local c: string, d = pair();
           ~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     
     // Position 1 mismatch.
     local e, f: boolean = pair();
              ~
-!!! error TS2322: Type 'string' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'boolean'.
     
     // A name past the values must accept nil.
     local g: number, h: string, i: boolean = pair();
                                 ~
-!!! error TS2322: Type 'nil' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
     
     // nil-accepting annotations are fine past the end.
     local j: number, k: string, l: boolean | nil = pair();

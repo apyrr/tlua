@@ -140,7 +140,7 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic Diagnostic
 	}
 
 	writeWithStyleAndReset(output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
-	fmt.Fprintf(output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
+	fmt.Fprintf(output, "%s TLUA%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine, formatOpts.Locale)
 
 	if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
@@ -472,7 +472,7 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic Diagnostic, formatOpts *
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, int(character)+1)
 	}
 
-	fmt.Fprintf(output, "%s TS%d: ", diagnostic.Category().Name(), diagnostic.Code())
+	fmt.Fprintf(output, "%s TLUA%d: ", diagnostic.Category().Name(), diagnostic.Code())
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine, formatOpts.Locale)
 	fmt.Fprint(output, formatOpts.NewLine)
 }

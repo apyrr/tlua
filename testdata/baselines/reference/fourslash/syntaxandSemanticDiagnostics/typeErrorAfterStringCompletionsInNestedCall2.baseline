@@ -1,5 +1,5 @@
 // === Syntax and Semantic Diagnostics ===
-/typeErrorAfterStringCompletionsInNestedCall2.tlua(41,5): error TS2322: Type '{ ({ event }: { event: { type: "FOO"; }; }): void; _out_TEvent?: { type: "BARx"; } | nil; }' is not assignable to type 'ActionFunction<{ type: "FOO"; }, { type: "FOO"; } | { type: "BAR"; }>'.
+/typeErrorAfterStringCompletionsInNestedCall2.tlua(41,5): error TLUA2322: Type '{ ({ event }: { event: { type: "FOO"; }; }): void; _out_TEvent?: { type: "BARx"; } | nil; }' is not assignable to type 'ActionFunction<{ type: "FOO"; }, { type: "FOO"; } | { type: "BAR"; }>'.
   Types of property '_out_TEvent' are incompatible.
     Type '{ type: "BARx"; } | nil' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; } | nil'.
       Type '{ type: "BARx"; }' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; } | nil'.
@@ -52,15 +52,15 @@
       on = {
         FOO = raise(({ event }) => {
         ~~~
-!!! error TS2322: Type '{ ({ event }: { event: { type: "FOO"; }; }): void; _out_TEvent?: { type: "BARx"; } | nil; }' is not assignable to type 'ActionFunction<{ type: "FOO"; }, { type: "FOO"; } | { type: "BAR"; }>'.
-!!! error TS2322:   Types of property '_out_TEvent' are incompatible.
-!!! error TS2322:     Type '{ type: "BARx"; } | nil' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; } | nil'.
-!!! error TS2322:       Type '{ type: "BARx"; }' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; } | nil'.
-!!! error TS2322:         Type '{ type: "BARx"; }' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; }'.
-!!! error TS2322:           Type '{ type: "BARx"; }' is not assignable to type '{ type: "BAR"; }'.
-!!! error TS2322:             Types of property 'type' are incompatible.
-!!! error TS2322:               Type '"BARx"' is not assignable to type '"BAR"'.
-!!! related TS2322 /typeErrorAfterStringCompletionsInNestedCall2.tlua:14:7: The expected type comes from property 'FOO' which is declared here on type '{ BAR?: ActionFunction<{ type: "BAR"; }, { type: "FOO"; } | { type: "BAR"; }> | nil; FOO?: ActionFunction<{ type: "FOO"; }, { type: "FOO"; } | { type: "BAR"; }> | nil; }'
+!!! error TLUA2322: Type '{ ({ event }: { event: { type: "FOO"; }; }): void; _out_TEvent?: { type: "BARx"; } | nil; }' is not assignable to type 'ActionFunction<{ type: "FOO"; }, { type: "FOO"; } | { type: "BAR"; }>'.
+!!! error TLUA2322:   Types of property '_out_TEvent' are incompatible.
+!!! error TLUA2322:     Type '{ type: "BARx"; } | nil' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; } | nil'.
+!!! error TLUA2322:       Type '{ type: "BARx"; }' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; } | nil'.
+!!! error TLUA2322:         Type '{ type: "BARx"; }' is not assignable to type '{ type: "FOO"; } | { type: "BAR"; }'.
+!!! error TLUA2322:           Type '{ type: "BARx"; }' is not assignable to type '{ type: "BAR"; }'.
+!!! error TLUA2322:             Types of property 'type' are incompatible.
+!!! error TLUA2322:               Type '"BARx"' is not assignable to type '"BAR"'.
+!!! related TLUA2322 /typeErrorAfterStringCompletionsInNestedCall2.tlua:14:7: The expected type comes from property 'FOO' which is declared here on type '{ BAR?: ActionFunction<{ type: "BAR"; }, { type: "FOO"; } | { type: "BAR"; }> | nil; FOO?: ActionFunction<{ type: "FOO"; }, { type: "FOO"; } | { type: "BAR"; }> | nil; }'
           return {
             type = "BARx" as const,
           };

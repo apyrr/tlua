@@ -7,7 +7,7 @@
 //     local f = new Foo();
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -15,7 +15,7 @@
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -33,7 +33,7 @@
 //     local f = new Foo("");
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -41,7 +41,7 @@
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -49,7 +49,7 @@
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -60,7 +60,7 @@
 //     class Bar {
 //           ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -68,7 +68,7 @@
 // | ----------------------------------------------------------------------
 //           ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -85,7 +85,7 @@
 //     local f = new Foo();
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -93,7 +93,7 @@
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -111,7 +111,7 @@
 //     local b = new Bar();
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local b: any
 // | ```
 // | 
@@ -119,7 +119,7 @@
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local b: any
 // | ```
 // | 
@@ -128,7 +128,7 @@
 //     local f = new Foo();
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -136,7 +136,7 @@
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local f: any
 // | ```
 // | 
@@ -151,7 +151,7 @@
 //     local noname = new (class extends Bar<"foo"> {
 //           ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local noname: any
 // | ```
 // | 
@@ -159,7 +159,7 @@
 // | ----------------------------------------------------------------------
 //           ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local noname: any
 // | ```
 // | 
@@ -173,7 +173,7 @@
 //     local k = new klass();
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local k: any
 // | ```
 // | 
@@ -181,7 +181,7 @@
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local k: any
 // | ```
 // | 
@@ -203,7 +203,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -233,7 +233,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -263,7 +263,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -293,7 +293,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -323,7 +323,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -353,7 +353,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nany\n```\n"
+          "value": "```tlua\nany\n```\n"
         },
         "range": {
           "start": {
@@ -383,7 +383,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nany\n```\n"
+          "value": "```tlua\nany\n```\n"
         },
         "range": {
           "start": {
@@ -413,7 +413,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -443,7 +443,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -473,7 +473,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal b: any\n```\n"
+          "value": "```tlua\nlocal b: any\n```\n"
         },
         "range": {
           "start": {
@@ -503,7 +503,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal b: any\n```\n"
+          "value": "```tlua\nlocal b: any\n```\n"
         },
         "range": {
           "start": {
@@ -533,7 +533,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -563,7 +563,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal f: any\n```\n"
+          "value": "```tlua\nlocal f: any\n```\n"
         },
         "range": {
           "start": {
@@ -593,7 +593,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal noname: any\n```\n"
+          "value": "```tlua\nlocal noname: any\n```\n"
         },
         "range": {
           "start": {
@@ -623,7 +623,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal noname: any\n```\n"
+          "value": "```tlua\nlocal noname: any\n```\n"
         },
         "range": {
           "start": {
@@ -653,7 +653,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal k: any\n```\n"
+          "value": "```tlua\nlocal k: any\n```\n"
         },
         "range": {
           "start": {
@@ -683,7 +683,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal k: any\n```\n"
+          "value": "```tlua\nlocal k: any\n```\n"
         },
         "range": {
           "start": {

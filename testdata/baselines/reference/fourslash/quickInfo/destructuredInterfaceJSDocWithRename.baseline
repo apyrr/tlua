@@ -13,14 +13,14 @@
 // local {foo: myFoo, bar: myBar} = fubar;
 //             ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                         ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -40,7 +40,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -67,7 +67,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

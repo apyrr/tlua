@@ -1,4 +1,4 @@
-tluaNumberKeyIndexDisjoint.tlua(22,13): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'StrOnly'.
+tluaNumberKeyIndexDisjoint.tlua(22,13): error TLUA7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'StrOnly'.
   Property '0' does not exist on type 'StrOnly'.
 
 
@@ -26,8 +26,8 @@ tluaNumberKeyIndexDisjoint.tlua(22,13): error TS7053: Element implicitly has an 
     declare so: StrOnly;
     local bad = so[0]; // error: number key not covered by string index
                 ~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'StrOnly'.
-!!! error TS7053:   Property '0' does not exist on type 'StrOnly'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'StrOnly'.
+!!! error TLUA7053:   Property '0' does not exist on type 'StrOnly'.
     local okStr: boolean = so["x"];
     
     // Value-type mismatches between the two signatures are independent, not

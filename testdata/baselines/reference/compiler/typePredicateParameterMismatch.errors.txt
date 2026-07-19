@@ -1,5 +1,5 @@
-typePredicateParameterMismatch.tlua(10,4): error TS1225: Cannot find parameter 'value'.
-typePredicateParameterMismatch.tlua(16,5): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+typePredicateParameterMismatch.tlua(10,4): error TLUA1225: Cannot find parameter 'value'.
+typePredicateParameterMismatch.tlua(16,5): error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
 
 
 ==== typePredicateParameterMismatch.tlua (2 errors) ====
@@ -14,7 +14,7 @@ typePredicateParameterMismatch.tlua(16,5): error TS2584: Cannot find name 'conso
       _value: UnionType
     ): value is TypeA {  // "value" doesn't match parameter "_value"
        ~~~~~
-!!! error TS1225: Cannot find parameter 'value'.
+!!! error TLUA1225: Cannot find parameter 'value'.
       return true;
     }
     
@@ -22,7 +22,7 @@ typePredicateParameterMismatch.tlua(16,5): error TS2584: Cannot find name 'conso
       if (isTypeA(input)) {
         console.log(input.kind);
         ~~~~~~~
-!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+!!! error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
       }
     }
     

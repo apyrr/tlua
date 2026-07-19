@@ -1,4 +1,4 @@
-tluaLabelUnused.tlua(3,7): error TS7028: Unused label.
+tluaLabelUnused.tlua(3,7): error TLUA7028: Unused label.
 
 
 ==== tluaLabelUnused.tlua (1 errors) ====
@@ -6,7 +6,7 @@ tluaLabelUnused.tlua(3,7): error TS7028: Unused label.
     function unused(): void
         ::dead::
           ~~~~
-!!! error TS7028: Unused label.
+!!! error TLUA7028: Unused label.
     end
     
     // A label a goto targets is silent.

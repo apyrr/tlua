@@ -1,8 +1,8 @@
-tluaGotoIntoLocalScope.tlua(3,5): error TS100026: Cannot jump into the scope of local 'x'.
-tluaGotoIntoLocalScope.tlua(6,12): error TS2454: Variable 'x' is used before being assigned.
-tluaGotoIntoLocalScope.tlua(11,5): error TS100026: Cannot jump into the scope of local 'helper'.
-tluaGotoIntoLocalScope.tlua(39,5): error TS100026: Cannot jump into the scope of local 'a'.
-tluaGotoIntoLocalScope.tlua(42,12): error TS2454: Variable 'b' is used before being assigned.
+tluaGotoIntoLocalScope.tlua(3,5): error TLUA100026: Cannot jump into the scope of local 'x'.
+tluaGotoIntoLocalScope.tlua(6,12): error TLUA2454: Variable 'x' is used before being assigned.
+tluaGotoIntoLocalScope.tlua(11,5): error TLUA100026: Cannot jump into the scope of local 'helper'.
+tluaGotoIntoLocalScope.tlua(39,5): error TLUA100026: Cannot jump into the scope of local 'a'.
+tluaGotoIntoLocalScope.tlua(42,12): error TLUA2454: Variable 'b' is used before being assigned.
 
 
 ==== tluaGotoIntoLocalScope.tlua (5 errors) ====
@@ -10,19 +10,19 @@ tluaGotoIntoLocalScope.tlua(42,12): error TS2454: Variable 'b' is used before be
     function intoScope(): number
         goto done
         ~~~~~~~~~
-!!! error TS100026: Cannot jump into the scope of local 'x'.
+!!! error TLUA100026: Cannot jump into the scope of local 'x'.
         local x = 1;
         ::done::
         return x;
                ~
-!!! error TS2454: Variable 'x' is used before being assigned.
+!!! error TLUA2454: Variable 'x' is used before being assigned.
     end
     
     // Error: a `local function` declares a local too.
     function intoFunctionScope(): void
         goto done
         ~~~~~~~~~
-!!! error TS100026: Cannot jump into the scope of local 'helper'.
+!!! error TLUA100026: Cannot jump into the scope of local 'helper'.
         local function helper(): void
         end
         ::done::
@@ -52,12 +52,12 @@ tluaGotoIntoLocalScope.tlua(42,12): error TS2454: Variable 'b' is used before be
     function intoMultiNameScope(): number
         goto done
         ~~~~~~~~~
-!!! error TS100026: Cannot jump into the scope of local 'a'.
+!!! error TLUA100026: Cannot jump into the scope of local 'a'.
         local a, b = 1, 2;
         ::done::
         return b;
                ~
-!!! error TS2454: Variable 'b' is used before being assigned.
+!!! error TLUA2454: Variable 'b' is used before being assigned.
     end
     
     // Accepted: a backward jump leaves scopes, it never enters one.

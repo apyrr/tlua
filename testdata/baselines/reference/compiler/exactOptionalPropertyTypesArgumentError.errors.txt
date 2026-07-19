@@ -1,4 +1,4 @@
-exactOptionalPropertyTypesArgumentError.tlua(2,3): error TS2379: Argument of type '{ y: nil; }' is not assignable to parameter of type '{ y?: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+exactOptionalPropertyTypesArgumentError.tlua(2,3): error TLUA2379: Argument of type '{ y: nil; }' is not assignable to parameter of type '{ y?: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
   Types of property 'y' are incompatible.
     Type 'nil' is not assignable to type 'string'.
 
@@ -7,7 +7,7 @@ exactOptionalPropertyTypesArgumentError.tlua(2,3): error TS2379: Argument of typ
     declare function f(o: { y?: string }): void;
     f({ y = undefined });
       ~~~~~~~~~~~~~~~~~
-!!! error TS2379: Argument of type '{ y: nil; }' is not assignable to parameter of type '{ y?: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
-!!! error TS2379:   Types of property 'y' are incompatible.
-!!! error TS2379:     Type 'nil' is not assignable to type 'string'.
+!!! error TLUA2379: Argument of type '{ y: nil; }' is not assignable to parameter of type '{ y?: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+!!! error TLUA2379:   Types of property 'y' are incompatible.
+!!! error TLUA2379:     Type 'nil' is not assignable to type 'string'.
     

@@ -27,7 +27,7 @@
 // x.language
 //   ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) language?: string | nil
 // | ```
 // | 
@@ -46,7 +46,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) language?: string | nil\n```\n"
+        "value": "```tlua\n(property) language?: string | nil\n```\n"
       },
       "range": {
         "start": {

@@ -1,19 +1,19 @@
-strictBestCommonSupertype.tlua(3,1): error TS1434: Unexpected keyword or identifier.
-strictBestCommonSupertype.tlua(3,1): error TS2304: Cannot find name 'class'.
-strictBestCommonSupertype.tlua(3,7): error TS2304: Cannot find name 'Store'.
-strictBestCommonSupertype.tlua(3,13): error TS2304: Cannot find name 'T'.
-strictBestCommonSupertype.tlua(3,15): error TS1005: ';' expected.
-strictBestCommonSupertype.tlua(3,17): error TS2304: Cannot find name 'object'.
-strictBestCommonSupertype.tlua(4,12): error TS2304: Cannot find name 'K'.
-strictBestCommonSupertype.tlua(4,12): error TS2558: Expected 0 type arguments, but got 1.
-strictBestCommonSupertype.tlua(4,15): error TS2304: Cannot find name 'mapFn'.
-strictBestCommonSupertype.tlua(4,20): error TS1005: ',' expected.
-strictBestCommonSupertype.tlua(4,30): error TS2304: Cannot find name 'T'.
-strictBestCommonSupertype.tlua(4,36): error TS2304: Cannot find name 'K'.
-strictBestCommonSupertype.tlua(4,39): error TS1005: ',' expected.
-strictBestCommonSupertype.tlua(7,14): error TS2304: Cannot find name 'Store'.
-strictBestCommonSupertype.tlua(7,29): error TS2304: Cannot find name 'Store'.
-strictBestCommonSupertype.tlua(14,13): error TS100034: A vararg parameter cannot have a name.
+strictBestCommonSupertype.tlua(3,1): error TLUA1434: Unexpected keyword or identifier.
+strictBestCommonSupertype.tlua(3,1): error TLUA2304: Cannot find name 'class'.
+strictBestCommonSupertype.tlua(3,7): error TLUA2304: Cannot find name 'Store'.
+strictBestCommonSupertype.tlua(3,13): error TLUA2304: Cannot find name 'T'.
+strictBestCommonSupertype.tlua(3,15): error TLUA1005: ';' expected.
+strictBestCommonSupertype.tlua(3,17): error TLUA2304: Cannot find name 'object'.
+strictBestCommonSupertype.tlua(4,12): error TLUA2304: Cannot find name 'K'.
+strictBestCommonSupertype.tlua(4,12): error TLUA2558: Expected 0 type arguments, but got 1.
+strictBestCommonSupertype.tlua(4,15): error TLUA2304: Cannot find name 'mapFn'.
+strictBestCommonSupertype.tlua(4,20): error TLUA1005: ',' expected.
+strictBestCommonSupertype.tlua(4,30): error TLUA2304: Cannot find name 'T'.
+strictBestCommonSupertype.tlua(4,36): error TLUA2304: Cannot find name 'K'.
+strictBestCommonSupertype.tlua(4,39): error TLUA1005: ',' expected.
+strictBestCommonSupertype.tlua(7,14): error TLUA2304: Cannot find name 'Store'.
+strictBestCommonSupertype.tlua(7,29): error TLUA2304: Cannot find name 'Store'.
+strictBestCommonSupertype.tlua(14,13): error TLUA100034: A vararg parameter cannot have a name.
 
 
 ==== strictBestCommonSupertype.tlua (16 errors) ====
@@ -21,39 +21,39 @@ strictBestCommonSupertype.tlua(14,13): error TS100034: A vararg parameter cannot
     
     class Store<T = object> {
     ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
           ~~~~~
-!!! error TS2304: Cannot find name 'Store'.
+!!! error TLUA2304: Cannot find name 'Store'.
                 ~
-!!! error TS2304: Cannot find name 'T'.
+!!! error TLUA2304: Cannot find name 'T'.
                   ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                     ~~~~~~
-!!! error TS2304: Cannot find name 'object'.
+!!! error TLUA2304: Cannot find name 'object'.
         select<K>(mapFn: (state: T) => K) {};
                ~
-!!! error TS2304: Cannot find name 'K'.
+!!! error TLUA2304: Cannot find name 'K'.
                ~
-!!! error TS2558: Expected 0 type arguments, but got 1.
+!!! error TLUA2558: Expected 0 type arguments, but got 1.
                   ~~~~~
-!!! error TS2304: Cannot find name 'mapFn'.
+!!! error TLUA2304: Cannot find name 'mapFn'.
                        ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
                                  ~
-!!! error TS2304: Cannot find name 'T'.
+!!! error TLUA2304: Cannot find name 'T'.
                                        ~
-!!! error TS2304: Cannot find name 'K'.
+!!! error TLUA2304: Cannot find name 'K'.
                                           ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
     }
     
     local store: Store = inject(Store);
                  ~~~~~
-!!! error TS2304: Cannot find name 'Store'.
+!!! error TLUA2304: Cannot find name 'Store'.
                                 ~~~~~
-!!! error TS2304: Cannot find name 'Store'.
+!!! error TLUA2304: Cannot find name 'Store'.
     
     function inject<T>(token: ProviderToken<T>): T {
         return {} as T;
@@ -62,7 +62,7 @@ strictBestCommonSupertype.tlua(14,13): error TS100034: A vararg parameter cannot
     interface Type<T> extends Function {
         new (...args: any[]): T;
                 ~~~~
-!!! error TS100034: A vararg parameter cannot have a name.
+!!! error TLUA100034: A vararg parameter cannot have a name.
     }
     
     type ProviderToken<T> = Type<T> | AbstractType<T>;

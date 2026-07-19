@@ -10,7 +10,7 @@
 // function f(options, callback = null) {
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function f(options: any, callback?: nil): void
 // | ```
 // | 
@@ -36,7 +36,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction f(options: any, callback?: nil): void\n```\n\n\n*@param* `options` — the args object\n\n*@param* `callback` — the callback function\n\n*@returns*"
+        "value": "```tlua\nfunction f(options: any, callback?: nil): void\n```\n\n\n*@param* `options` — the args object\n\n*@param* `callback` — the callback function\n\n*@returns*"
       },
       "range": {
         "start": {

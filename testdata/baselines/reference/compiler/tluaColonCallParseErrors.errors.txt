@@ -1,12 +1,12 @@
-tluaColonCallParseErrors.tlua(4,12): error TS1005: ';' expected.
-tluaColonCallParseErrors.tlua(4,13): error TS2304: Cannot find name 'ping'.
-tluaColonCallParseErrors.tlua(7,12): error TS1005: ';' expected.
-tluaColonCallParseErrors.tlua(11,12): error TS1005: ';' expected.
-tluaColonCallParseErrors.tlua(11,13): error TS1128: Declaration or statement expected.
-tluaColonCallParseErrors.tlua(11,17): error TS1109: Expression expected.
-tluaColonCallParseErrors.tlua(16,13): error TS1477: An instantiation expression cannot be followed by a property access.
-tluaColonCallParseErrors.tlua(16,22): error TS2339: Property 'ping' does not exist on type '(self: {}, x: number) => number'.
-tluaColonCallParseErrors.tlua(20,24): error TS1005: '=>' expected.
+tluaColonCallParseErrors.tlua(4,12): error TLUA1005: ';' expected.
+tluaColonCallParseErrors.tlua(4,13): error TLUA2304: Cannot find name 'ping'.
+tluaColonCallParseErrors.tlua(7,12): error TLUA1005: ';' expected.
+tluaColonCallParseErrors.tlua(11,12): error TLUA1005: ';' expected.
+tluaColonCallParseErrors.tlua(11,13): error TLUA1128: Declaration or statement expected.
+tluaColonCallParseErrors.tlua(11,17): error TLUA1109: Expression expected.
+tluaColonCallParseErrors.tlua(16,13): error TLUA1477: An instantiation expression cannot be followed by a property access.
+tluaColonCallParseErrors.tlua(16,22): error TLUA2339: Property 'ping' does not exist on type '(self: {}, x: number) => number'.
+tluaColonCallParseErrors.tlua(20,24): error TLUA1005: '=>' expected.
 
 
 ==== tluaColonCallParseErrors.tlua (9 errors) ====
@@ -15,39 +15,39 @@ tluaColonCallParseErrors.tlua(20,24): error TS1005: '=>' expected.
     // A colon access exists only as a call: Lua rejects `obj:f` without arguments.
     local f = M:ping;
                ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                 ~~~~
-!!! error TS2304: Cannot find name 'ping'.
+!!! error TLUA2304: Cannot find name 'ping'.
     
     // The colon needs a member name after it.
     local g = M:(1);
                ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     
     // Lua reserved words cannot name a colon call: committing on `M:end(` would
     // swallow the enclosing block terminator.
     local h = M:end();
                ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                 ~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                     ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     
     // An instantiation expression cannot be followed by a colon call, matching the
     // dot form's diagnostic.
     declare id: <T>(self: {}, x: T) => T;
     local i = id<number>:ping();
                 ~~~~~~~~
-!!! error TS1477: An instantiation expression cannot be followed by a property access.
+!!! error TLUA1477: An instantiation expression cannot be followed by a property access.
                          ~~~~
-!!! error TS2339: Property 'ping' does not exist on type '(self: {}, x: number) => number'.
+!!! error TLUA2339: Property 'ping' does not exist on type '(self: {}, x: number) => number'.
     
     // Error recovery: an annotation-shaped `ident : ident` in invalid code must
     // not swallow the declarations that follow it into a bogus argument list.
     local bad = (b: number);
                            ~
-!!! error TS1005: '=>' expected.
+!!! error TLUA1005: '=>' expected.
     declare fine: (n: number) => void;
     fine(1);
     

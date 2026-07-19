@@ -1,6 +1,6 @@
-main.tlua(3,1): error TS2588: Cannot assign to 'version' because it is a constant.
-main.tlua(4,1): error TS2588: Cannot assign to 'limits' because it is a constant.
-main.tlua(5,7): error TS2322: Type 'string' is not assignable to type 'boolean'.
+main.tlua(3,1): error TLUA2588: Cannot assign to 'version' because it is a constant.
+main.tlua(4,1): error TLUA2588: Cannot assign to 'limits' because it is a constant.
+main.tlua(5,7): error TLUA2322: Type 'string' is not assignable to type 'boolean'.
 
 
 ==== globals.d.tlua (0 errors) ====
@@ -12,11 +12,11 @@ main.tlua(5,7): error TS2322: Type 'string' is not assignable to type 'boolean'.
     local s: string = version;
     version = "overwritten"; // error: constant
     ~~~~~~~
-!!! error TS2588: Cannot assign to 'version' because it is a constant.
+!!! error TLUA2588: Cannot assign to 'version' because it is a constant.
     limits = { min = 0, max = 1 }; // error: constant
     ~~~~~~
-!!! error TS2588: Cannot assign to 'limits' because it is a constant.
+!!! error TLUA2588: Cannot assign to 'limits' because it is a constant.
     local bad: boolean = version; // error: string not boolean
           ~~~
-!!! error TS2322: Type 'string' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'boolean'.
     

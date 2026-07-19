@@ -14,14 +14,14 @@ Fs::
 //// [/node_modules/a.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {}
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::

@@ -264,7 +264,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 							b.WriteString(commentText)
 							b.WriteString("\n")
 						} else {
-							writeCode(&b, "tsx", commentText)
+							writeCode(&b, "tlua", commentText)
 						}
 					} else if tag.Kind == ast.KindJSDocSeeTag && tag.AsJSDocSeeTag().NameExpression != nil {
 						b.WriteString(" — ")
@@ -297,7 +297,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 func formatQuickInfo(quickInfo string) string {
 	var b strings.Builder
 	b.Grow(32)
-	writeCode(&b, "typescript", quickInfo)
+	writeCode(&b, "tlua", quickInfo)
 	return b.String()
 }
 

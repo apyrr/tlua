@@ -1,5 +1,5 @@
 Args::
-["--tsBuildInfoFile", "build.tsbuildinfo", "tests"]
+["--tsBuildInfoFile", "build.tluabuildinfo", "tests"]
 
 buildOptions::
 {}
@@ -8,7 +8,7 @@ compilerOptions::
 {}
 
 Projects::
-build.tsbuildinfo,tests
+build.tluabuildinfo,tests
 
 Errors::
-error TS5094: Compiler option '--tsBuildInfoFile' may not be used with '--build'.
+error TLUA5094: Compiler option '--tsBuildInfoFile' may not be used with '--build'.

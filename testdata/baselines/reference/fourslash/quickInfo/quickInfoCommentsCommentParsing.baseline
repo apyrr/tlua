@@ -7,7 +7,7 @@
 // simple( );
 // ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function simple(): void
 // | ```
 // | 
@@ -21,7 +21,7 @@
 // multiLine( );
 // ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function multiLine(): void
 // | ```
 // | 
@@ -33,7 +33,7 @@
 // jsDocSingleLine();
 // ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocSingleLine(): void
 // | ```
 // | this is eg of single line jsdoc style comment
@@ -48,7 +48,7 @@
 // jsDocMultiLine();
 // ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMultiLine(): void
 // | ```
 // | this is multiple line jsdoc stule comment
@@ -66,7 +66,7 @@
 // jsDocMultiLineMerge();
 // ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMultiLineMerge(): void
 // | ```
 // | Another this one too
@@ -80,7 +80,7 @@
 // jsDocMixedComments1();
 // ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMixedComments1(): void
 // | ```
 // | jsdoc comment
@@ -93,7 +93,7 @@
 // jsDocMixedComments2();
 // ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMixedComments2(): void
 // | ```
 // | another jsDocComment
@@ -106,7 +106,7 @@
 // jsDocMixedComments3();
 // ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMixedComments3(): void
 // | ```
 // | * triplestar jsDocComment
@@ -120,7 +120,7 @@
 // jsDocMixedComments4();
 // ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMixedComments4(): void
 // | ```
 // | another jsDocComment
@@ -135,7 +135,7 @@
 // jsDocMixedComments5();
 // ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMixedComments5(): void
 // | ```
 // | another jsDocComment
@@ -151,7 +151,7 @@
 // jsDocMixedComments6();
 // ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocMixedComments6(): void
 // | ```
 // | jsdoc comment
@@ -163,7 +163,7 @@
 // noHelpComment1();
 // ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function noHelpComment1(): void
 // | ```
 // | 
@@ -175,7 +175,7 @@
 // noHelpComment2();
 // ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function noHelpComment2(): void
 // | ```
 // | 
@@ -186,7 +186,7 @@
 // noHelpComment3();
 // ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function noHelpComment3(): void
 // | ```
 // | 
@@ -198,14 +198,14 @@
 // function sum(a: number, b: number) {
 //              ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | first number
 // | ----------------------------------------------------------------------
 //                         ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: number
 // | ```
 // | second number
@@ -215,7 +215,7 @@
 // sum(10, 20);
 // ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function sum(a: number, b: number): number
 // | ```
 // | Adds two integers and returns the result
@@ -234,35 +234,35 @@
 // function multiply(a: number, b: number, c?: number, d?, e?) {
 //                   ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | first number
 // | ----------------------------------------------------------------------
 //                              ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                         ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) c: number | nil
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                                     ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) d: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                                         ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) e: any
 // | ```
 // | LastParam
@@ -271,7 +271,7 @@
 // multiply(10, 20, 30, 40, 50);
 // ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function multiply(a: number, b: number, c?: number, d?: any, e?: any): void
 // | ```
 // | This is multiplication function
@@ -298,7 +298,7 @@
 // function f1(a: number);
 //             ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | 
@@ -306,7 +306,7 @@
 // function f1(b: string);
 //             ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: string
 // | ```
 // | about b
@@ -318,7 +318,7 @@
 // f1(10);
 // ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function f1(a: number): any
 // | ```
 // | fn f1 with number
@@ -328,7 +328,7 @@
 // f1("hello");
 // ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function f1(b: string): any
 // | ```
 // | fn f1 with number
@@ -347,42 +347,42 @@
 // function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string) {
 //                   ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                              ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: number
 // | ```
 // | this is about b
 // | ----------------------------------------------------------------------
 //                                         ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) c: (() => string) | nil
 // | ```
 // | this is optional param c
 // | ----------------------------------------------------------------------
 //                                                           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) d: (() => string) | nil
 // | ```
 // | this is optional param d
 // | ----------------------------------------------------------------------
 //                                                                             ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) e: (() => string) | nil
 // | ```
 // | this is optional param e
 // | ----------------------------------------------------------------------
 //                                                                                               ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) f: (() => string) | nil
 // | ```
 // | 
@@ -391,7 +391,7 @@
 // subtract(10,  20,  null,  null,  null, null);
 // ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
 // | ```
 // | This is subtract function
@@ -416,7 +416,7 @@
 // function square(a: number) {
 //                 ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | this is input number
@@ -426,7 +426,7 @@
 // square(10);
 // ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function square(a: number): number
 // | ```
 // | this is square function
@@ -445,14 +445,14 @@
 // function divide(a: number, b: number) {
 //                 ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | this is a
 // | ----------------------------------------------------------------------
 //                            ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: number
 // | ```
 // | this is b
@@ -461,7 +461,7 @@
 // divide(10, 20);
 // ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function divide(a: number, b: number): void
 // | ```
 // | this is divide function
@@ -480,14 +480,14 @@
 // function fooBar(foo: string, bar: string) {
 //                 ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) foo: string
 // | ```
 // | is string
 // | ----------------------------------------------------------------------
 //                              ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) bar: string
 // | ```
 // | is second string
@@ -497,7 +497,7 @@
 // fooBar("foo","bar");
 // ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function fooBar(foo: string, bar: string): string
 // | ```
 // | Function returns string concat of foo and bar
@@ -519,28 +519,28 @@
 // function jsDocParamTest(/** this is inline comment for a */a: number, /** this is inline comment for b*/ b: number, c: number, d: number) {
 //                                                            ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | this is inline comment for a
 // | ----------------------------------------------------------------------
 //                                                                                                          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: number
 // | ```
 // | this is inline comment for b
 // | ----------------------------------------------------------------------
 //                                                                                                                     ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) c: number
 // | ```
 // | it is third parameter
 // | ----------------------------------------------------------------------
 //                                                                                                                                ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) d: number
 // | ```
 // | 
@@ -550,7 +550,7 @@
 // jsDocParamTest(30, 40, 50, 60);
 // ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocParamTest(a: number, b: number, c: number, d: number): number
 // | ```
 // | this is jsdoc style function with param tag as well as inline parameter help
@@ -567,7 +567,7 @@
 // jsDocCommentAlignmentTest1();
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocCommentAlignmentTest1(): void
 // | ```
 // | This is function comment
@@ -581,7 +581,7 @@
 // jsDocCommentAlignmentTest2();
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocCommentAlignmentTest2(): void
 // | ```
 // | This is function comment
@@ -601,7 +601,7 @@
 // function jsDocCommentAlignmentTest3(a: string, b, c) {
 //                                     ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: string
 // | ```
 // | this is info about a
@@ -609,7 +609,7 @@
 // | ----------------------------------------------------------------------
 //                                                ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: any
 // | ```
 // | this is info about b
@@ -619,7 +619,7 @@
 // | ----------------------------------------------------------------------
 //                                                   ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) c: any
 // | ```
 // | this is info about b
@@ -629,7 +629,7 @@
 // jsDocCommentAlignmentTest3("hello",1, 2);
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function jsDocCommentAlignmentTest3(a: string, b: any, c: any): void
 // | ```
 // | This is function comment
@@ -654,7 +654,7 @@
 // class NoQuickInfoClass {
 //       ^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -674,7 +674,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction simple(): void\n```\n"
+        "value": "```tlua\nfunction simple(): void\n```\n"
       },
       "range": {
         "start": {
@@ -701,7 +701,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction multiLine(): void\n```\n"
+        "value": "```tlua\nfunction multiLine(): void\n```\n"
       },
       "range": {
         "start": {
@@ -728,7 +728,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocSingleLine(): void\n```\nthis is eg of single line jsdoc style comment"
+        "value": "```tlua\nfunction jsDocSingleLine(): void\n```\nthis is eg of single line jsdoc style comment"
       },
       "range": {
         "start": {
@@ -755,7 +755,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMultiLine(): void\n```\nthis is multiple line jsdoc stule comment\nNew line1\nNew Line2"
+        "value": "```tlua\nfunction jsDocMultiLine(): void\n```\nthis is multiple line jsdoc stule comment\nNew line1\nNew Line2"
       },
       "range": {
         "start": {
@@ -782,7 +782,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMultiLineMerge(): void\n```\nAnother this one too"
+        "value": "```tlua\nfunction jsDocMultiLineMerge(): void\n```\nAnother this one too"
       },
       "range": {
         "start": {
@@ -809,7 +809,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMixedComments1(): void\n```\njsdoc comment"
+        "value": "```tlua\nfunction jsDocMixedComments1(): void\n```\njsdoc comment"
       },
       "range": {
         "start": {
@@ -836,7 +836,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMixedComments2(): void\n```\nanother jsDocComment"
+        "value": "```tlua\nfunction jsDocMixedComments2(): void\n```\nanother jsDocComment"
       },
       "range": {
         "start": {
@@ -863,7 +863,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMixedComments3(): void\n```\n* triplestar jsDocComment"
+        "value": "```tlua\nfunction jsDocMixedComments3(): void\n```\n* triplestar jsDocComment"
       },
       "range": {
         "start": {
@@ -890,7 +890,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMixedComments4(): void\n```\nanother jsDocComment"
+        "value": "```tlua\nfunction jsDocMixedComments4(): void\n```\nanother jsDocComment"
       },
       "range": {
         "start": {
@@ -917,7 +917,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMixedComments5(): void\n```\nanother jsDocComment"
+        "value": "```tlua\nfunction jsDocMixedComments5(): void\n```\nanother jsDocComment"
       },
       "range": {
         "start": {
@@ -944,7 +944,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocMixedComments6(): void\n```\njsdoc comment"
+        "value": "```tlua\nfunction jsDocMixedComments6(): void\n```\njsdoc comment"
       },
       "range": {
         "start": {
@@ -971,7 +971,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction noHelpComment1(): void\n```\n"
+        "value": "```tlua\nfunction noHelpComment1(): void\n```\n"
       },
       "range": {
         "start": {
@@ -998,7 +998,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction noHelpComment2(): void\n```\n"
+        "value": "```tlua\nfunction noHelpComment2(): void\n```\n"
       },
       "range": {
         "start": {
@@ -1025,7 +1025,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction noHelpComment3(): void\n```\n"
+        "value": "```tlua\nfunction noHelpComment3(): void\n```\n"
       },
       "range": {
         "start": {
@@ -1052,7 +1052,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\nfirst number"
+        "value": "```tlua\n(parameter) a: number\n```\nfirst number"
       },
       "range": {
         "start": {
@@ -1079,7 +1079,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: number\n```\nsecond number"
+        "value": "```tlua\n(parameter) b: number\n```\nsecond number"
       },
       "range": {
         "start": {
@@ -1106,7 +1106,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction sum(a: number, b: number): number\n```\nAdds two integers and returns the result\n\n*@param* `a` — first number\n\n*@param* `b` — second number"
+        "value": "```tlua\nfunction sum(a: number, b: number): number\n```\nAdds two integers and returns the result\n\n*@param* `a` — first number\n\n*@param* `b` — second number"
       },
       "range": {
         "start": {
@@ -1133,7 +1133,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\nfirst number"
+        "value": "```tlua\n(parameter) a: number\n```\nfirst number"
       },
       "range": {
         "start": {
@@ -1160,7 +1160,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: number\n```\n"
+        "value": "```tlua\n(parameter) b: number\n```\n"
       },
       "range": {
         "start": {
@@ -1187,7 +1187,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) c: number | nil\n```\n"
+        "value": "```tlua\n(parameter) c: number | nil\n```\n"
       },
       "range": {
         "start": {
@@ -1214,7 +1214,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) d: any\n```\n"
+        "value": "```tlua\n(parameter) d: any\n```\n"
       },
       "range": {
         "start": {
@@ -1241,7 +1241,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) e: any\n```\nLastParam"
+        "value": "```tlua\n(parameter) e: any\n```\nLastParam"
       },
       "range": {
         "start": {
@@ -1268,7 +1268,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction multiply(a: number, b: number, c?: number, d?: any, e?: any): void\n```\nThis is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam\n\n*@anotherTag*"
+        "value": "```tlua\nfunction multiply(a: number, b: number, c?: number, d?: any, e?: any): void\n```\nThis is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam\n\n*@anotherTag*"
       },
       "range": {
         "start": {
@@ -1295,7 +1295,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\n"
+        "value": "```tlua\n(parameter) a: number\n```\n"
       },
       "range": {
         "start": {
@@ -1322,7 +1322,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: string\n```\nabout b"
+        "value": "```tlua\n(parameter) b: string\n```\nabout b"
       },
       "range": {
         "start": {
@@ -1349,7 +1349,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction f1(a: number): any\n```\nfn f1 with number\n\n*@param* `b` — about b"
+        "value": "```tlua\nfunction f1(a: number): any\n```\nfn f1 with number\n\n*@param* `b` — about b"
       },
       "range": {
         "start": {
@@ -1376,7 +1376,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction f1(b: string): any\n```\nfn f1 with number\n\n*@param* `b` — about b"
+        "value": "```tlua\nfunction f1(b: string): any\n```\nfn f1 with number\n\n*@param* `b` — about b"
       },
       "range": {
         "start": {
@@ -1403,7 +1403,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\n"
+        "value": "```tlua\n(parameter) a: number\n```\n"
       },
       "range": {
         "start": {
@@ -1430,7 +1430,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: number\n```\nthis is about b"
+        "value": "```tlua\n(parameter) b: number\n```\nthis is about b"
       },
       "range": {
         "start": {
@@ -1457,7 +1457,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) c: (() => string) | nil\n```\nthis is optional param c"
+        "value": "```tlua\n(parameter) c: (() => string) | nil\n```\nthis is optional param c"
       },
       "range": {
         "start": {
@@ -1484,7 +1484,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) d: (() => string) | nil\n```\nthis is optional param d"
+        "value": "```tlua\n(parameter) d: (() => string) | nil\n```\nthis is optional param d"
       },
       "range": {
         "start": {
@@ -1511,7 +1511,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) e: (() => string) | nil\n```\nthis is optional param e"
+        "value": "```tlua\n(parameter) e: (() => string) | nil\n```\nthis is optional param e"
       },
       "range": {
         "start": {
@@ -1538,7 +1538,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) f: (() => string) | nil\n```\n"
+        "value": "```tlua\n(parameter) f: (() => string) | nil\n```\n"
       },
       "range": {
         "start": {
@@ -1565,7 +1565,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void\n```\nThis is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n*@param* `c` — this is optional param c\n\n*@param* `d` — this is optional param d\n\n*@param* `e` — this is optional param e\n\n*@param* `` — { () => string; } } f this is optional param f"
+        "value": "```tlua\nfunction subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void\n```\nThis is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n*@param* `c` — this is optional param c\n\n*@param* `d` — this is optional param d\n\n*@param* `e` — this is optional param e\n\n*@param* `` — { () => string; } } f this is optional param f"
       },
       "range": {
         "start": {
@@ -1592,7 +1592,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\nthis is input number"
+        "value": "```tlua\n(parameter) a: number\n```\nthis is input number"
       },
       "range": {
         "start": {
@@ -1619,7 +1619,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction square(a: number): number\n```\nthis is square function\n\n*@paramTag* — { number } a this is input number of paramTag\n\n*@param* `a` — this is input number\n\n*@returnType* — { number } it is return type"
+        "value": "```tlua\nfunction square(a: number): number\n```\nthis is square function\n\n*@paramTag* — { number } a this is input number of paramTag\n\n*@param* `a` — this is input number\n\n*@returnType* — { number } it is return type"
       },
       "range": {
         "start": {
@@ -1646,7 +1646,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\nthis is a"
+        "value": "```tlua\n(parameter) a: number\n```\nthis is a"
       },
       "range": {
         "start": {
@@ -1673,7 +1673,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: number\n```\nthis is b"
+        "value": "```tlua\n(parameter) b: number\n```\nthis is b"
       },
       "range": {
         "start": {
@@ -1700,7 +1700,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction divide(a: number, b: number): void\n```\nthis is divide function\n\n*@param* `a` — this is a\n\n*@paramTag* — { number } g this is optional param g\n\n*@param* `b` — this is b"
+        "value": "```tlua\nfunction divide(a: number, b: number): void\n```\nthis is divide function\n\n*@param* `a` — this is a\n\n*@paramTag* — { number } g this is optional param g\n\n*@param* `b` — this is b"
       },
       "range": {
         "start": {
@@ -1727,7 +1727,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) foo: string\n```\nis string"
+        "value": "```tlua\n(parameter) foo: string\n```\nis string"
       },
       "range": {
         "start": {
@@ -1754,7 +1754,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) bar: string\n```\nis second string"
+        "value": "```tlua\n(parameter) bar: string\n```\nis second string"
       },
       "range": {
         "start": {
@@ -1781,7 +1781,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction fooBar(foo: string, bar: string): string\n```\nFunction returns string concat of foo and bar\n\n*@param* `foo` — is string\n\n*@param* `bar` — is second string"
+        "value": "```tlua\nfunction fooBar(foo: string, bar: string): string\n```\nFunction returns string concat of foo and bar\n\n*@param* `foo` — is string\n\n*@param* `bar` — is second string"
       },
       "range": {
         "start": {
@@ -1808,7 +1808,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\nthis is inline comment for a"
+        "value": "```tlua\n(parameter) a: number\n```\nthis is inline comment for a"
       },
       "range": {
         "start": {
@@ -1835,7 +1835,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: number\n```\nthis is inline comment for b"
+        "value": "```tlua\n(parameter) b: number\n```\nthis is inline comment for b"
       },
       "range": {
         "start": {
@@ -1862,7 +1862,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) c: number\n```\nit is third parameter"
+        "value": "```tlua\n(parameter) c: number\n```\nit is third parameter"
       },
       "range": {
         "start": {
@@ -1889,7 +1889,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) d: number\n```\n"
+        "value": "```tlua\n(parameter) d: number\n```\n"
       },
       "range": {
         "start": {
@@ -1916,7 +1916,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocParamTest(a: number, b: number, c: number, d: number): number\n```\nthis is jsdoc style function with param tag as well as inline parameter help\n\n*@param* `a` — it is first parameter\n\n*@param* `c` — it is third parameter"
+        "value": "```tlua\nfunction jsDocParamTest(a: number, b: number, c: number, d: number): number\n```\nthis is jsdoc style function with param tag as well as inline parameter help\n\n*@param* `a` — it is first parameter\n\n*@param* `c` — it is third parameter"
       },
       "range": {
         "start": {
@@ -1943,7 +1943,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocCommentAlignmentTest1(): void\n```\nThis is function comment\nAnd properly aligned comment"
+        "value": "```tlua\nfunction jsDocCommentAlignmentTest1(): void\n```\nThis is function comment\nAnd properly aligned comment"
       },
       "range": {
         "start": {
@@ -1970,7 +1970,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocCommentAlignmentTest2(): void\n```\nThis is function comment\n    And aligned with 4 space char margin"
+        "value": "```tlua\nfunction jsDocCommentAlignmentTest2(): void\n```\nThis is function comment\n    And aligned with 4 space char margin"
       },
       "range": {
         "start": {
@@ -1997,7 +1997,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: string\n```\nthis is info about a\nspanning on two lines and aligned perfectly"
+        "value": "```tlua\n(parameter) a: string\n```\nthis is info about a\nspanning on two lines and aligned perfectly"
       },
       "range": {
         "start": {
@@ -2024,7 +2024,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: any\n```\nthis is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin"
+        "value": "```tlua\n(parameter) b: any\n```\nthis is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin"
       },
       "range": {
         "start": {
@@ -2051,7 +2051,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) c: any\n```\nthis is info about b\nnot aligned text about parameter will eat only one space"
+        "value": "```tlua\n(parameter) c: any\n```\nthis is info about b\nnot aligned text about parameter will eat only one space"
       },
       "range": {
         "start": {
@@ -2078,7 +2078,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction jsDocCommentAlignmentTest3(a: string, b: any, c: any): void\n```\nThis is function comment\n    And aligned with 4 space char margin\n\n*@param* `a` — this is info about a\nspanning on two lines and aligned perfectly\n\n*@param* `b` — this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n\n*@param* `c` — this is info about b\nnot aligned text about parameter will eat only one space"
+        "value": "```tlua\nfunction jsDocCommentAlignmentTest3(a: string, b: any, c: any): void\n```\nThis is function comment\n    And aligned with 4 space char margin\n\n*@param* `a` — this is info about a\nspanning on two lines and aligned perfectly\n\n*@param* `b` — this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n\n*@param* `c` — this is info about b\nnot aligned text about parameter will eat only one space"
       },
       "range": {
         "start": {
@@ -2117,7 +2117,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

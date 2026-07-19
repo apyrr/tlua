@@ -1,8 +1,8 @@
 Args::
-["--tsBuildInfoFile", "build.tsbuildinfo", "0.ts"]
+["--tsBuildInfoFile", "build.tluabuildinfo", "0.ts"]
 
 CompilerOptions::
-{"tsBuildInfoFile":"build.tsbuildinfo"}
+{"tsBuildInfoFile":"build.tluabuildinfo"}
 
 FileNames::
 0.ts

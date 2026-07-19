@@ -8,5 +8,5 @@ FileNames::
 
 
 Errors::
-error TS5023: Unknown compiler option '--declarations'.
-error TS5023: Unknown compiler option '--allowTS'.
+error TLUA5023: Unknown compiler option '--declarations'.
+error TLUA5023: Unknown compiler option '--allowTS'.

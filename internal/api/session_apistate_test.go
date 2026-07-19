@@ -23,7 +23,7 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 
 	t.Run("project opens are idempotent and released on close", func(t *testing.T) {
 		t.Parallel()
-		const configFileName = "/home/projects/p/tsconfig.json"
+		const configFileName = "/home/projects/p/tluaconfig.json"
 		files := map[string]any{
 			configFileName:                    `{ "compilerOptions": { "strict": true } }`,
 			"/home/projects/p/src/index.tlua": `export local x = 1;`,
@@ -56,7 +56,7 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 
 	t.Run("explicit close releases the project ref", func(t *testing.T) {
 		t.Parallel()
-		const configFileName = "/home/projects/p/tsconfig.json"
+		const configFileName = "/home/projects/p/tluaconfig.json"
 		files := map[string]any{
 			configFileName:                    `{ "compilerOptions": { "strict": true } }`,
 			"/home/projects/p/src/index.tlua": `export local x = 1;`,
@@ -93,8 +93,8 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		t.Parallel()
 		const fileName = "/home/projects/p/src/index.tlua"
 		files := map[string]any{
-			"/home/projects/p/tsconfig.json": `{ "compilerOptions": { "strict": true } }`,
-			fileName:                         `export local x = 1;`,
+			"/home/projects/p/tluaconfig.json": `{ "compilerOptions": { "strict": true } }`,
+			fileName:                           `export local x = 1;`,
 		}
 		projectSession, _ := projecttestutil.Setup(files)
 		defer projectSession.Close()
@@ -114,7 +114,7 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		assert.Equal(t, session.openFiles.Len(), 1)
 
 		// The file should resolve to the configured project via ancestor search.
-		assert.Assert(t, projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/p/tsconfig.json")) != nil)
+		assert.Assert(t, projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/p/tluaconfig.json")) != nil)
 
 		// Closing a file we don't hold is a no-op (never over-releases).
 		_, err = session.handleUpdateSnapshot(context.Background(), &UpdateSnapshotParams{
@@ -133,7 +133,7 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		// Closing the file also tears down the configured project that was
 		// auto-loaded to serve it, instead of leaking it.
 		assert.Assert(t,
-			projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/p/tsconfig.json")) == nil,
+			projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/p/tluaconfig.json")) == nil,
 			"configured project auto-loaded for the API-opened file should be unloaded after close",
 		)
 
@@ -146,8 +146,8 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		// The project session's current directory is "/", so a relative path
 		// resolves to the corresponding absolute path.
 		files := map[string]any{
-			"/src/tsconfig.json": `{ "compilerOptions": { "strict": true } }`,
-			"/src/index.tlua":    `export local x = 1;`,
+			"/src/tluaconfig.json": `{ "compilerOptions": { "strict": true } }`,
+			"/src/index.tlua":      `export local x = 1;`,
 		}
 		projectSession, _ := projecttestutil.Setup(files)
 		defer projectSession.Close()
@@ -162,7 +162,7 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Equal(t, session.openFiles.Len(), 1)
 		assert.Assert(t, session.openFiles.Has(tspath.Path("/src/index.tlua")))
-		assert.Assert(t, projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json")) != nil)
+		assert.Assert(t, projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/src/tluaconfig.json")) != nil)
 
 		// getDefaultProjectForFile must also resolve a relative path to the same
 		// configured project (it builds a URI from the identifier internally).
@@ -172,7 +172,7 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		})
 		assert.NilError(t, err)
 		assert.Assert(t, proj != nil, "relative path should resolve to a default project")
-		assert.Equal(t, proj.ConfigFileName, "/src/tsconfig.json")
+		assert.Equal(t, proj.ConfigFileName, "/src/tluaconfig.json")
 
 		// Re-opening via the absolute path must match the relative open (no new ref).
 		_, err = session.handleUpdateSnapshot(context.Background(), &UpdateSnapshotParams{
@@ -188,7 +188,7 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Equal(t, session.openFiles.Len(), 0)
 		assert.Assert(t,
-			projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json")) == nil,
+			projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/src/tluaconfig.json")) == nil,
 			"configured project should be unloaded after closing the relatively-pathed file",
 		)
 	})
@@ -206,8 +206,8 @@ func TestUpdateSnapshotResponseSkipsUnloadedAncestorProject(t *testing.T) {
 	}
 
 	const (
-		nestedConfigFileName   = "/repo/packages/app/tsconfig.json"
-		ancestorConfigFileName = "/repo/packages/tsconfig.json"
+		nestedConfigFileName   = "/repo/packages/app/tluaconfig.json"
+		ancestorConfigFileName = "/repo/packages/tluaconfig.json"
 		fileName               = "/repo/packages/app/src/index.tlua"
 	)
 	files := map[string]any{

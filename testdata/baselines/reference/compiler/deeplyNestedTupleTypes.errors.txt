@@ -1,9 +1,9 @@
-deeplyNestedTupleTypes.tlua(4,11): error TS1110: Type expected.
-deeplyNestedTupleTypes.tlua(7,9): error TS1110: Type expected.
-deeplyNestedTupleTypes.tlua(10,11): error TS1110: Type expected.
-deeplyNestedTupleTypes.tlua(17,11): error TS1110: Type expected.
-deeplyNestedTupleTypes.tlua(20,9): error TS1110: Type expected.
-deeplyNestedTupleTypes.tlua(23,11): error TS1110: Type expected.
+deeplyNestedTupleTypes.tlua(4,11): error TLUA1110: Type expected.
+deeplyNestedTupleTypes.tlua(7,9): error TLUA1110: Type expected.
+deeplyNestedTupleTypes.tlua(10,11): error TLUA1110: Type expected.
+deeplyNestedTupleTypes.tlua(17,11): error TLUA1110: Type expected.
+deeplyNestedTupleTypes.tlua(20,9): error TLUA1110: Type expected.
+deeplyNestedTupleTypes.tlua(23,11): error TLUA1110: Type expected.
 
 
 ==== deeplyNestedTupleTypes.tlua (6 errors) ====
@@ -12,17 +12,17 @@ deeplyNestedTupleTypes.tlua(23,11): error TS1110: Type expected.
     type AOuter = {
       inners: [AInner];
               ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     };
     type AInner = {
       mids: [AMid];
             ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     };
     type AMid = {
       leaves: [ALeaf];
               ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     };
     type ALeaf = {
       id: string;
@@ -31,17 +31,17 @@ deeplyNestedTupleTypes.tlua(23,11): error TS1110: Type expected.
     type BOuter = {
       inners: [BInner];
               ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     };
     type BInner = {
       mids: [BMid];
             ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     };
     type BMid = {
       leaves: [BLeaf];
               ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     };
     type BLeaf = {
       id: number;

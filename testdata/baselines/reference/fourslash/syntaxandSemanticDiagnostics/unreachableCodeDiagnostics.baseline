@@ -1,14 +1,14 @@
 // === Syntax and Semantic Diagnostics ===
-/unreachableCodeDiagnostics.tlua(1,11): error TS2304: Cannot find name 'Error'.
-/unreachableCodeDiagnostics.tlua(3,1): warning TS7027: Unreachable code detected.
+/unreachableCodeDiagnostics.tlua(1,11): error TLUA2304: Cannot find name 'Error'.
+/unreachableCodeDiagnostics.tlua(3,1): warning TLUA7027: Unreachable code detected.
 
 
 ==== /unreachableCodeDiagnostics.tlua (2 errors) ====
     throw new Error();
               ~~~~~
-!!! error TS2304: Cannot find name 'Error'.
+!!! error TLUA2304: Cannot find name 'Error'.
     	
     (() => {})();
     ~~~~~~~~~~~~~
-!!! warning TS7027: Unreachable code detected.
+!!! warning TLUA7027: Unreachable code detected.
     	

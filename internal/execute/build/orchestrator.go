@@ -15,7 +15,7 @@ import (
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/execute/incremental"
-	"github.com/apyrr/tlua/internal/execute/tsc"
+	"github.com/apyrr/tlua/internal/execute/tlua"
 	"github.com/apyrr/tlua/internal/execute/watchmanager"
 	"github.com/apyrr/tlua/internal/fswatch"
 	"github.com/apyrr/tlua/internal/tsoptions"
@@ -24,15 +24,15 @@ import (
 )
 
 type Options struct {
-	Sys     tsc.System
+	Sys     tlua.System
 	Command *tsoptions.ParsedBuildCommandLine
-	Testing tsc.CommandLineTesting
+	Testing tlua.CommandLineTesting
 }
 
 type orchestratorResult struct {
-	result        tsc.CommandLineResult
+	result        tlua.CommandLineResult
 	errors        []*ast.Diagnostic
-	statistics    tsc.Statistics
+	statistics    tlua.Statistics
 	filesToDelete []string
 }
 
@@ -69,14 +69,14 @@ type Orchestrator struct {
 	order  []string
 	errors []*ast.Diagnostic
 
-	errorSummaryReporter tsc.DiagnosticsReporter
-	watchStatusReporter  tsc.DiagnosticReporter
+	errorSummaryReporter tlua.DiagnosticsReporter
+	watchStatusReporter  tlua.DiagnosticReporter
 
 	// fswatch event-based watching
 	wm *watchmanager.WatchManager
 }
 
-var _ tsc.Watcher = (*Orchestrator)(nil)
+var _ tlua.Watcher = (*Orchestrator)(nil)
 
 func (o *Orchestrator) relativeFileName(fileName string) string {
 	return tspath.ConvertToRelativePath(fileName, o.comparePathsOptions)
@@ -224,7 +224,7 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 	}
 }
 
-func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
+func (o *Orchestrator) Start(ctx context.Context) tlua.CommandLineResult {
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}
@@ -274,7 +274,7 @@ func (o *Orchestrator) resetCaches() {
 	// Clean out all the caches
 	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
 	cachesVfs.ClearCache()
-	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
+	o.host.extendedConfigCache = tlua.ExtendedConfigCache{}
 	o.host.sourceFiles.reset()
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
 }
@@ -588,7 +588,7 @@ func (o *Orchestrator) DoCycle() {
 	o.resetCaches()
 }
 
-func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
+func (o *Orchestrator) buildOrClean() tlua.CommandLineResult {
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() && o.opts.Command.BuildOptions.Verbose.IsTrue() {
 		o.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
 			diagnostics.Projects_in_this_build_Colon_0,
@@ -605,7 +605,7 @@ func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 		})
 	} else {
 		// Circularity errors prevent any project from being built
-		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
+		buildResult.result.Status = tlua.ExitStatusProjectReferenceCycle_OutputsSkipped
 		reportDiagnostic := o.createDiagnosticReporter(nil)
 		for _, err := range o.errors {
 			reportDiagnostic(err)
@@ -671,12 +671,12 @@ func (o *Orchestrator) getWriter(task *BuildTask) io.Writer {
 	return &task.result.builder
 }
 
-func (o *Orchestrator) createBuilderStatusReporter(task *BuildTask) tsc.DiagnosticReporter {
-	return tsc.CreateBuilderStatusReporter(o.opts.Sys, o.getWriter(task), o.opts.Command.Locale(), o.opts.Command.CompilerOptions, o.opts.Testing)
+func (o *Orchestrator) createBuilderStatusReporter(task *BuildTask) tlua.DiagnosticReporter {
+	return tlua.CreateBuilderStatusReporter(o.opts.Sys, o.getWriter(task), o.opts.Command.Locale(), o.opts.Command.CompilerOptions, o.opts.Testing)
 }
 
-func (o *Orchestrator) createDiagnosticReporter(task *BuildTask) tsc.DiagnosticReporter {
-	return tsc.CreateDiagnosticReporter(o.opts.Sys, o.getWriter(task), o.opts.Command.Locale(), o.opts.Command.CompilerOptions)
+func (o *Orchestrator) createDiagnosticReporter(task *BuildTask) tlua.DiagnosticReporter {
+	return tlua.CreateDiagnosticReporter(o.opts.Sys, o.getWriter(task), o.opts.Command.Locale(), o.opts.Command.CompilerOptions)
 }
 
 func NewOrchestrator(opts Options) *Orchestrator {
@@ -702,12 +702,12 @@ func NewOrchestrator(opts Options) *Orchestrator {
 		mTimes: &collections.SyncMap[tspath.Path, time.Time]{},
 	}
 	if opts.Command.CompilerOptions.Watch.IsTrue() {
-		orchestrator.watchStatusReporter = tsc.CreateWatchStatusReporter(opts.Sys, opts.Command.Locale(), opts.Command.CompilerOptions, opts.Testing)
+		orchestrator.watchStatusReporter = tlua.CreateWatchStatusReporter(opts.Sys, opts.Command.Locale(), opts.Command.CompilerOptions, opts.Testing)
 		if t, ok := opts.Testing.(watchmanager.CommandLineTestingWithWatchBackend); ok {
 			wm.SetBackend(t.WatchBackend())
 		}
 	} else {
-		orchestrator.errorSummaryReporter = tsc.CreateReportErrorSummary(opts.Sys, opts.Command.Locale(), opts.Command.CompilerOptions)
+		orchestrator.errorSummaryReporter = tlua.CreateReportErrorSummary(opts.Sys, opts.Command.Locale(), opts.Command.CompilerOptions)
 	}
 	return orchestrator
 }

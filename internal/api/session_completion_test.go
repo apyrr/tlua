@@ -32,8 +32,8 @@ func TestCompletionSymbolTypeIsResolvable(t *testing.T) {
 	const content = "declare local people: { push(item: string): number; length: number };\npeople."
 
 	files := map[string]any{
-		"/home/projects/p/tsconfig.json": `{ "compilerOptions": { "strict": true } }`,
-		fileName:                         content,
+		"/home/projects/p/tluaconfig.json": `{ "compilerOptions": { "strict": true } }`,
+		fileName:                           content,
 	}
 	projectSession, _ := projecttestutil.Setup(files)
 	defer projectSession.Close()
@@ -89,7 +89,7 @@ func TestCompletionSymbolTypeIsResolvable(t *testing.T) {
 }
 
 // TestCompletionOnInferredProject reproduces a crash where requesting completions
-// for a loose file — one not part of any tsconfig.json, so it resolves to an
+// for a loose file — one not part of any tluaconfig.json, so it resolves to an
 // inferred project — panicked with "ConfigFilePath called on non-configured
 // project".
 //
@@ -102,7 +102,7 @@ func TestCompletionOnInferredProject(t *testing.T) {
 		t.Skip("bundled files are not embedded")
 	}
 
-	// No tsconfig.json anywhere, so this file belongs to an inferred project.
+	// No tluaconfig.json anywhere, so this file belongs to an inferred project.
 	const fileName = "/home/projects/p/src/index.tlua"
 	const content = "declare local people: { push(item: string): number; length: number };\npeople."
 

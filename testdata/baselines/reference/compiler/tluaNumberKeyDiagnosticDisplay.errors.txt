@@ -1,5 +1,5 @@
-tluaNumberKeyDiagnosticDisplay.tlua(7,26): error TS1117: An object literal cannot have multiple properties with the same name.
-tluaNumberKeyDiagnosticDisplay.tlua(13,14): error TS7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'Near'.
+tluaNumberKeyDiagnosticDisplay.tlua(7,26): error TLUA1117: An object literal cannot have multiple properties with the same name.
+tluaNumberKeyDiagnosticDisplay.tlua(13,14): error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'Near'.
   Property '1' does not exist on type 'Near'.
 
 
@@ -12,7 +12,7 @@ tluaNumberKeyDiagnosticDisplay.tlua(13,14): error TS7053: Element implicitly has
     // is gone, so the duplicate is written directly.)
     local dup = { [1] = "a", [1] = "b" }; // error: duplicate '1'
                              ~~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
+!!! error TLUA1117: An object literal cannot have multiple properties with the same name.
     
     // A missing number-key element access displays the key as '1' (a mangled name
     // must not reach the "Property ... does not exist" diagnostic).
@@ -20,8 +20,8 @@ tluaNumberKeyDiagnosticDisplay.tlua(13,14): error TS7053: Element implicitly has
     declare n: Near;
     local miss = n[1]; // error: Property '1' does not exist on type 'Near'
                  ~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'Near'.
-!!! error TS7053:   Property '1' does not exist on type 'Near'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'Near'.
+!!! error TLUA7053:   Property '1' does not exist on type 'Near'.
     
     local es = {dup, miss};
     

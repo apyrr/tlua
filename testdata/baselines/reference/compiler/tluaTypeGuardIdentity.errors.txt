@@ -1,11 +1,11 @@
-tluaTypeGuardIdentity.tlua(11,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(11,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
-tluaTypeGuardIdentity.tlua(18,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(18,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
-tluaTypeGuardIdentity.tlua(26,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(26,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
-tluaTypeGuardIdentity.tlua(31,6): error TS2554: Expected 1 arguments, but got 0.
-tluaTypeGuardIdentity.tlua(32,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(31,6): error TLUA2554: Expected 1 arguments, but got 0.
+tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
 
 
@@ -22,8 +22,8 @@ tluaTypeGuardIdentity.tlua(32,11): error TS2322: Type 'string | number' is not a
       if type(v) == "string" then
         local s: string = v;
               ~
-!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
-!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
     }
     
@@ -32,8 +32,8 @@ tluaTypeGuardIdentity.tlua(32,11): error TS2322: Type 'string | number' is not a
       if t(v) == "string" then
         local s: string = v;
               ~
-!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
-!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
     }
     
@@ -43,20 +43,20 @@ tluaTypeGuardIdentity.tlua(32,11): error TS2322: Type 'string | number' is not a
       if holder.type(v) == "string" then
         local s: string = v;
               ~
-!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
-!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
     }
     
     function wrongArity(): void {
       if type() == "string" then
          ~~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 lib.luajit.d.tlua:212:23: An argument for 'value' was not provided.
+!!! error TLUA2554: Expected 1 arguments, but got 0.
+!!! related TLUA6210 lib.luajit.d.tlua:212:23: An argument for 'value' was not provided.
         local s: string = v;
               ~
-!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
-!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
     }
     

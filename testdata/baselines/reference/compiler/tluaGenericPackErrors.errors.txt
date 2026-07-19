@@ -1,11 +1,11 @@
-tluaGenericPackErrors.tlua(5,33): error TS100043: A generic type parameter cannot follow a generic pack parameter.
-tluaGenericPackErrors.tlua(9,35): error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
-tluaGenericPackErrors.tlua(10,36): error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
-tluaGenericPackErrors.tlua(11,43): error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
-tluaGenericPackErrors.tlua(15,17): error TS100045: A generic pack parameter is only allowed on a function or a type alias.
-tluaGenericPackErrors.tlua(27,43): error TS100046: A generic pack parameter cannot have a constraint or a default.
-tluaGenericPackErrors.tlua(28,35): error TS100046: A generic pack parameter cannot have a constraint or a default.
-tluaGenericPackErrors.tlua(41,12): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaGenericPackErrors.tlua(5,33): error TLUA100043: A generic type parameter cannot follow a generic pack parameter.
+tluaGenericPackErrors.tlua(9,35): error TLUA100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+tluaGenericPackErrors.tlua(10,36): error TLUA100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+tluaGenericPackErrors.tlua(11,43): error TLUA100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+tluaGenericPackErrors.tlua(15,17): error TLUA100045: A generic pack parameter is only allowed on a function or a type alias.
+tluaGenericPackErrors.tlua(27,43): error TLUA100046: A generic pack parameter cannot have a constraint or a default.
+tluaGenericPackErrors.tlua(28,35): error TLUA100046: A generic pack parameter cannot have a constraint or a default.
+tluaGenericPackErrors.tlua(41,12): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 
 
 ==== tluaGenericPackErrors.tlua (8 errors) ====
@@ -15,25 +15,25 @@ tluaGenericPackErrors.tlua(41,12): error TS2345: Argument of type 'string' is no
     // A pack parameter must trail the plain ones: a plain parameter cannot follow it.
     declare function ordering<...A, T>(...: A): T;
                                     ~
-!!! error TS100043: A generic type parameter cannot follow a generic pack parameter.
+!!! error TLUA100043: A generic type parameter cannot follow a generic pack parameter.
     
     // A pack parameter names several values, so it cannot stand in a single-value
     // position: as a plain annotation, a tuple/return element, or a value type.
     declare function asValue<...A>(x: A): void;
                                       ~
-!!! error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+!!! error TLUA100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
     declare function asReturn<...A>(): A;
                                        ~
-!!! error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+!!! error TLUA100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
     declare function inList<...A>(): (number, A);
                                               ~
-!!! error TS100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
+!!! error TLUA100044: A generic pack parameter can only be used in a vararg parameter or a multiple-return position.
     
     // A pack parameter is allowed on an alias, but not an interface or class.
     type Alias<...A> = number;
     interface Iface<...A> {}
                     ~~~~
-!!! error TS100045: A generic pack parameter is only allowed on a function or a type alias.
+!!! error TLUA100045: A generic pack parameter is only allowed on a function or a type alias.
     
     // Any function-shaped signature carries one, though: an interface METHOD or call
     // signature is a function, so neither of these errors.
@@ -47,10 +47,10 @@ tluaGenericPackErrors.tlua(41,12): error TS2345: Argument of type 'string' is no
     // enforce nothing.
     declare function constrained<...A extends string>(...: A): void;
                                               ~~~~~~
-!!! error TS100046: A generic pack parameter cannot have a constraint or a default.
+!!! error TLUA100046: A generic pack parameter cannot have a constraint or a default.
     declare function defaulted<...A = string>(...: A): void;
                                       ~~~~~~
-!!! error TS100046: A generic pack parameter cannot have a constraint or a default.
+!!! error TLUA100046: A generic pack parameter cannot have a constraint or a default.
     
     // `...T` where T is an ordinary (non-pack) type parameter stays a homogeneous
     // pack of element T -- this is the Stage 1 form and is NOT an error.
@@ -65,5 +65,5 @@ tluaGenericPackErrors.tlua(41,12): error TS2345: Argument of type 'string' is no
     declare function id<...A>(...: A): (...A);
     id<number>("s");
                ~~~
-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     

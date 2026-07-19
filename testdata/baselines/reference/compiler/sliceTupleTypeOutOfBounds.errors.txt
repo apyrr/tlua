@@ -1,60 +1,60 @@
-sliceTupleTypeOutOfBounds.tlua(1,28): error TS1110: Type expected.
-sliceTupleTypeOutOfBounds.tlua(1,29): error TS2538: Type 'unknown' cannot be used as an index type.
-sliceTupleTypeOutOfBounds.tlua(1,36): error TS1005: ']' expected.
-sliceTupleTypeOutOfBounds.tlua(1,42): error TS1005: ';' expected.
-sliceTupleTypeOutOfBounds.tlua(1,42): error TS2304: Cannot find name 'infer'.
-sliceTupleTypeOutOfBounds.tlua(1,48): error TS2304: Cannot find name 'X'.
-sliceTupleTypeOutOfBounds.tlua(1,48): error TS2695: Left side of comma operator is unused and has no side effects.
-sliceTupleTypeOutOfBounds.tlua(1,51): error TS2693: 'unknown' only refers to a type, but is being used as a value here.
-sliceTupleTypeOutOfBounds.tlua(1,58): error TS1005: ';' expected.
-sliceTupleTypeOutOfBounds.tlua(1,60): error TS1128: Declaration or statement expected.
-sliceTupleTypeOutOfBounds.tlua(1,62): error TS1434: Unexpected keyword or identifier.
-sliceTupleTypeOutOfBounds.tlua(1,62): error TS2304: Cannot find name 'X'.
-sliceTupleTypeOutOfBounds.tlua(1,63): error TS1128: Declaration or statement expected.
-sliceTupleTypeOutOfBounds.tlua(1,65): error TS2693: 'never' only refers to a type, but is being used as a value here.
-sliceTupleTypeOutOfBounds.tlua(2,16): error TS2314: Generic type 'Middle' requires 1 type argument(s).
-sliceTupleTypeOutOfBounds.tlua(2,23): error TS1005: '>' expected.
-sliceTupleTypeOutOfBounds.tlua(2,26): error TS1005: ';' expected.
-sliceTupleTypeOutOfBounds.tlua(2,27): error TS1109: Expression expected.
+sliceTupleTypeOutOfBounds.tlua(1,28): error TLUA1110: Type expected.
+sliceTupleTypeOutOfBounds.tlua(1,29): error TLUA2538: Type 'unknown' cannot be used as an index type.
+sliceTupleTypeOutOfBounds.tlua(1,36): error TLUA1005: ']' expected.
+sliceTupleTypeOutOfBounds.tlua(1,42): error TLUA1005: ';' expected.
+sliceTupleTypeOutOfBounds.tlua(1,42): error TLUA2304: Cannot find name 'infer'.
+sliceTupleTypeOutOfBounds.tlua(1,48): error TLUA2304: Cannot find name 'X'.
+sliceTupleTypeOutOfBounds.tlua(1,48): error TLUA2695: Left side of comma operator is unused and has no side effects.
+sliceTupleTypeOutOfBounds.tlua(1,51): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
+sliceTupleTypeOutOfBounds.tlua(1,58): error TLUA1005: ';' expected.
+sliceTupleTypeOutOfBounds.tlua(1,60): error TLUA1128: Declaration or statement expected.
+sliceTupleTypeOutOfBounds.tlua(1,62): error TLUA1434: Unexpected keyword or identifier.
+sliceTupleTypeOutOfBounds.tlua(1,62): error TLUA2304: Cannot find name 'X'.
+sliceTupleTypeOutOfBounds.tlua(1,63): error TLUA1128: Declaration or statement expected.
+sliceTupleTypeOutOfBounds.tlua(1,65): error TLUA2693: 'never' only refers to a type, but is being used as a value here.
+sliceTupleTypeOutOfBounds.tlua(2,16): error TLUA2314: Generic type 'Middle' requires 1 type argument(s).
+sliceTupleTypeOutOfBounds.tlua(2,23): error TLUA1005: '>' expected.
+sliceTupleTypeOutOfBounds.tlua(2,26): error TLUA1005: ';' expected.
+sliceTupleTypeOutOfBounds.tlua(2,27): error TLUA1109: Expression expected.
 
 
 ==== sliceTupleTypeOutOfBounds.tlua (18 errors) ====
     type Middle<T> = T extends [unknown, ... infer X, unknown] ? X: never;
                                ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
                                 ~~~~~~~
-!!! error TS2538: Type 'unknown' cannot be used as an index type.
+!!! error TLUA2538: Type 'unknown' cannot be used as an index type.
                                        ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                                              ~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                              ~~~~~
-!!! error TS2304: Cannot find name 'infer'.
+!!! error TLUA2304: Cannot find name 'infer'.
                                                    ~
-!!! error TS2304: Cannot find name 'X'.
+!!! error TLUA2304: Cannot find name 'X'.
                                                    ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                                       ~~~~~~~
-!!! error TS2693: 'unknown' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
                                                              ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                                ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                                  ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                                                                  ~
-!!! error TS2304: Cannot find name 'X'.
+!!! error TLUA2304: Cannot find name 'X'.
                                                                   ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                                     ~~~~~
-!!! error TS2693: 'never' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'never' only refers to a type, but is being used as a value here.
     type Example = Middle<[1]>;
                    ~~~~~~~
-!!! error TS2314: Generic type 'Middle' requires 1 type argument(s).
+!!! error TLUA2314: Generic type 'Middle' requires 1 type argument(s).
                           ~
-!!! error TS1005: '>' expected.
+!!! error TLUA1005: '>' expected.
                              ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                               ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     

@@ -780,7 +780,7 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 	configFileName := "other"
 	if project.Kind == KindConfigured {
 		baseName := tspath.GetBaseFileName(project.configFileName)
-		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+		if baseName == "tluaconfig.json" || baseName == "jsconfig.json" {
 			configFileName = baseName
 		}
 	}

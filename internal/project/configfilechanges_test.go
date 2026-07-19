@@ -19,14 +19,14 @@ func TestConfigFileChanges(t *testing.T) {
 	}
 
 	files := map[string]any{
-		"/tsconfig.more-base.json": `{}`,
-		"/tsconfig.base.json":      `{"extends": "../tsconfig.more-base.json", "compilerOptions": {"strict": true}}`,
-		"/src/tsconfig.json":       `{"extends": "../tsconfig.base.json", "compilerOptions": {"target": "es6"}, "references": [{"path": "../utils"}]}`,
-		"/src/index.tlua":          `console.log("Hello, world!");`,
-		"/src/subfolder/foo.tlua":  `export local foo = "bar";`,
+		"/tluaconfig.more-base.json": `{}`,
+		"/tluaconfig.base.json":      `{"extends": "../tluaconfig.more-base.json", "compilerOptions": {"strict": true}}`,
+		"/src/tluaconfig.json":       `{"extends": "../tluaconfig.base.json", "compilerOptions": {"target": "es6"}, "references": [{"path": "../utils"}]}`,
+		"/src/index.tlua":            `console.log("Hello, world!");`,
+		"/src/subfolder/foo.tlua":    `export local foo = "bar";`,
 
-		"/utils/tsconfig.json": `{"compilerOptions": {"composite": true}}`,
-		"/utils/index.tlua":    `console.log("Hello, test!");`,
+		"/utils/tluaconfig.json": `{"compilerOptions": {"composite": true}}`,
+		"/utils/index.tlua":      `console.log("Hello, test!");`,
 	}
 
 	t.Run("should update program options on config file change", func(t *testing.T) {
@@ -34,11 +34,11 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 
-		err := utils.FS().WriteFile("/src/tsconfig.json", `{"extends": "../tsconfig.base.json", "compilerOptions": {"target": "esnext"}, "references": [{"path": "../utils"}]}`)
+		err := utils.FS().WriteFile("/src/tluaconfig.json", `{"extends": "../tluaconfig.base.json", "compilerOptions": {"target": "esnext"}, "references": [{"path": "../utils"}]}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
+				Uri:  lsproto.DocumentUri("file:///src/tluaconfig.json"),
 				Type: lsproto.FileChangeTypeChanged,
 			},
 		})
@@ -53,11 +53,11 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 
-		err := utils.FS().WriteFile("/tsconfig.base.json", `{"compilerOptions": {"strict": false}}`)
+		err := utils.FS().WriteFile("/tluaconfig.base.json", `{"compilerOptions": {"strict": false}}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///tsconfig.base.json"),
+				Uri:  lsproto.DocumentUri("file:///tluaconfig.base.json"),
 				Type: lsproto.FileChangeTypeChanged,
 			},
 		})
@@ -72,11 +72,11 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 
-		err := utils.FS().WriteFile("/tsconfig.more-base.json", `{"compilerOptions": {"skipLibCheck": true}}`)
+		err := utils.FS().WriteFile("/tluaconfig.more-base.json", `{"compilerOptions": {"skipLibCheck": true}}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///tsconfig.more-base.json"),
+				Uri:  lsproto.DocumentUri("file:///tluaconfig.more-base.json"),
 				Type: lsproto.FileChangeTypeChanged,
 			},
 		})
@@ -92,11 +92,11 @@ func TestConfigFileChanges(t *testing.T) {
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 		snapshotBefore := session.Snapshot()
 
-		err := utils.FS().WriteFile("/utils/tsconfig.json", `{"compilerOptions": {"composite": true, "target": "esnext"}}`)
+		err := utils.FS().WriteFile("/utils/tluaconfig.json", `{"compilerOptions": {"composite": true, "target": "esnext"}}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///utils/tsconfig.json"),
+				Uri:  lsproto.DocumentUri("file:///utils/tluaconfig.json"),
 				Type: lsproto.FileChangeTypeChanged,
 			},
 		})
@@ -112,11 +112,11 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 
-		err := utils.FS().Remove("/src/tsconfig.json")
+		err := utils.FS().Remove("/src/tluaconfig.json")
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
+				Uri:  lsproto.DocumentUri("file:///src/tluaconfig.json"),
 				Type: lsproto.FileChangeTypeDeleted,
 			},
 		})
@@ -133,11 +133,11 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/subfolder/foo.tlua", 1, files["/src/subfolder/foo.tlua"].(string), lsproto.LanguageKindTypeScript)
 
-		err := utils.FS().WriteFile("/src/subfolder/tsconfig.json", `{}`)
+		err := utils.FS().WriteFile("/src/subfolder/tluaconfig.json", `{}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),
+				Uri:  lsproto.DocumentUri("file:///src/subfolder/tluaconfig.json"),
 				Type: lsproto.FileChangeTypeCreated,
 			},
 		})
@@ -146,13 +146,13 @@ func TestConfigFileChanges(t *testing.T) {
 		assert.NilError(t, err)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
-		assert.Equal(t, snapshot.GetDefaultProject(lsproto.DocumentUri("file:///src/subfolder/foo.tlua")).Name(), "/src/subfolder/tsconfig.json")
+		assert.Equal(t, snapshot.GetDefaultProject(lsproto.DocumentUri("file:///src/subfolder/foo.tlua")).Name(), "/src/subfolder/tluaconfig.json")
 
-		err = utils.FS().Remove("/src/subfolder/tsconfig.json")
+		err = utils.FS().Remove("/src/subfolder/tluaconfig.json")
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),
+				Uri:  lsproto.DocumentUri("file:///src/subfolder/tluaconfig.json"),
 				Type: lsproto.FileChangeTypeDeleted,
 			},
 		})
@@ -160,7 +160,7 @@ func TestConfigFileChanges(t *testing.T) {
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/subfolder/foo.tlua"))
 		assert.NilError(t, err)
 		snapshot = session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(lsproto.DocumentUri("file:///src/subfolder/foo.tlua")).Name(), "/src/tsconfig.json")
+		assert.Equal(t, snapshot.GetDefaultProject(lsproto.DocumentUri("file:///src/subfolder/foo.tlua")).Name(), "/src/tluaconfig.json")
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2) // Old project will be cleaned up on next file open
 
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -173,7 +173,7 @@ func TestConfigFileChanges(t *testing.T) {
 		// Start with a project whose tsconfig extends a base config that doesn't exist yet
 		missingBaseFiles := map[string]any{}
 		for k, v := range files {
-			if k == "/tsconfig.base.json" {
+			if k == "/tluaconfig.base.json" {
 				continue
 			}
 			missingBaseFiles[k] = v
@@ -182,12 +182,12 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(missingBaseFiles)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, missingBaseFiles["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 
-		// Create the previously-missing base config file that is extended by /src/tsconfig.json
-		err := utils.FS().WriteFile("/tsconfig.base.json", `{"compilerOptions": {"strict": true}}`)
+		// Create the previously-missing base config file that is extended by /src/tluaconfig.json
+		err := utils.FS().WriteFile("/tluaconfig.base.json", `{"compilerOptions": {"strict": true}}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
-				Uri:  lsproto.DocumentUri("file:///tsconfig.base.json"),
+				Uri:  lsproto.DocumentUri("file:///tluaconfig.base.json"),
 				Type: lsproto.FileChangeTypeCreated,
 			},
 		})

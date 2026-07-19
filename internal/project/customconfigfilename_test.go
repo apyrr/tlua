@@ -19,9 +19,9 @@ func TestCustomConfigFileName(t *testing.T) {
 	}
 
 	files := map[string]any{
-		"/src/tsconfig.json":     `{"compilerOptions": {"strict": false}}`,
-		"/src/tsconfig.all.json": `{"compilerOptions": {"strict": true}}`,
-		"/src/index.tlua":        `export local x = 1;`,
+		"/src/tluaconfig.json":     `{"compilerOptions": {"strict": false}}`,
+		"/src/tluaconfig.all.json": `{"compilerOptions": {"strict": true}}`,
+		"/src/index.tlua":          `export local x = 1;`,
 	}
 	uri := lsproto.DocumentUri("file:///src/index.tlua")
 
@@ -34,22 +34,22 @@ func TestCustomConfigFileName(t *testing.T) {
 		assert.NilError(t, err)
 
 		snapshot := session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tluaconfig.json")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse)
 
 		prefs := lsutil.NewDefaultUserPreferences()
-		prefs.CustomConfigFileName = "tsconfig.all.json"
+		prefs.CustomConfigFileName = "tluaconfig.all.json"
 		session.Configure(prefs)
 
 		ls, err = session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 
 		snapshot = session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.all.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tluaconfig.all.json")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSTrue)
 	})
 
-	t.Run("uses tsconfig.json when customConfigFileName is empty", func(t *testing.T) {
+	t.Run("uses tluaconfig.json when customConfigFileName is empty", func(t *testing.T) {
 		t.Parallel()
 		session, _ := projecttestutil.Setup(files)
 
@@ -63,15 +63,15 @@ func TestCustomConfigFileName(t *testing.T) {
 		assert.NilError(t, err)
 
 		snapshot := session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tluaconfig.json")
 	})
 
-	t.Run("falls back to tsconfig.json when custom config missing", func(t *testing.T) {
+	t.Run("falls back to tluaconfig.json when custom config missing", func(t *testing.T) {
 		t.Parallel()
 		session, _ := projecttestutil.Setup(files)
 
 		prefs := lsutil.NewDefaultUserPreferences()
-		prefs.CustomConfigFileName = "tsconfig.nonexistent.json"
+		prefs.CustomConfigFileName = "tluaconfig.nonexistent.json"
 		session.Configure(prefs)
 
 		session.DidOpenFile(context.Background(), uri, 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -79,35 +79,35 @@ func TestCustomConfigFileName(t *testing.T) {
 		assert.NilError(t, err)
 
 		snapshot := session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tluaconfig.json")
 	})
 
-	t.Run("reverts to tsconfig.json when custom config preference is cleared", func(t *testing.T) {
+	t.Run("reverts to tluaconfig.json when custom config preference is cleared", func(t *testing.T) {
 		t.Parallel()
 		session, _ := projecttestutil.Setup(files)
 
-		// Step 1: Open file, verify it uses tsconfig.json (strict: false)
+		// Step 1: Open file, verify it uses tluaconfig.json (strict: false)
 		session.DidOpenFile(context.Background(), uri, 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 		ls, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 
 		snapshot := session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tluaconfig.json")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse)
 
 		// Step 2: Switch to custom config (strict: true)
 		prefs := lsutil.NewDefaultUserPreferences()
-		prefs.CustomConfigFileName = "tsconfig.all.json"
+		prefs.CustomConfigFileName = "tluaconfig.all.json"
 		session.Configure(prefs)
 
 		ls, err = session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 
 		snapshot = session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.all.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tluaconfig.all.json")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSTrue)
 
-		// Step 3: Clear custom config preference, should revert to tsconfig.json (strict: false)
+		// Step 3: Clear custom config preference, should revert to tluaconfig.json (strict: false)
 		prefs = lsutil.NewDefaultUserPreferences()
 		prefs.CustomConfigFileName = ""
 		session.Configure(prefs)
@@ -116,7 +116,7 @@ func TestCustomConfigFileName(t *testing.T) {
 		assert.NilError(t, err)
 
 		snapshot = session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tsconfig.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uri).Name(), "/src/tluaconfig.json")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse)
 	})
 
@@ -137,7 +137,7 @@ func TestCustomConfigFileName(t *testing.T) {
 
 		// Change the custom config preference
 		prefs := lsutil.NewDefaultUserPreferences()
-		prefs.CustomConfigFileName = "tsconfig.all.json"
+		prefs.CustomConfigFileName = "tluaconfig.all.json"
 		session.Configure(prefs)
 
 		// GetLanguageService triggers the snapshot update with the new config
@@ -157,10 +157,10 @@ func TestCustomConfigFileName(t *testing.T) {
 		t.Parallel()
 		for _, invalidName := range []string{
 			"/etc/passwd",
-			"../tsconfig.json",
-			"configs/tsconfig.all.json",
-			"..\\tsconfig.json",
-			"sub\\dir\\tsconfig.json",
+			"../tluaconfig.json",
+			"configs/tluaconfig.all.json",
+			"..\\tluaconfig.json",
+			"sub\\dir\\tluaconfig.json",
 			"..",
 			".",
 		} {
@@ -177,8 +177,8 @@ func TestCustomConfigFileName(t *testing.T) {
 	t.Run("accepts plain base file names in customConfigFileName", func(t *testing.T) {
 		t.Parallel()
 		for _, validName := range []string{
-			"tsconfig.all.json",
-			"tsconfig.editor.json",
+			"tluaconfig.all.json",
+			"tluaconfig.editor.json",
 			"jsconfig.custom.json",
 		} {
 			prefs := lsutil.ParseUserPreferences(map[string]any{
@@ -194,12 +194,12 @@ func TestCustomConfigFileName(t *testing.T) {
 	t.Run("cleans up inferred project when custom config covers file", func(t *testing.T) {
 		t.Parallel()
 
-		// Start without any tsconfig.json so file goes into inferred project, then
+		// Start without any tluaconfig.json so file goes into inferred project, then
 		// add a custom config that covers the file and verify it moves out of the
 		// inferred project (not just getting a new default, but actually cleaned up).
 		filesNoConfig := map[string]any{
-			"/src/tsconfig.all.json": `{"compilerOptions": {"strict": true}, "include": ["./**/*"]}`,
-			"/src/index.tlua":        `export local x = 1;`,
+			"/src/tluaconfig.all.json": `{"compilerOptions": {"strict": true}, "include": ["./**/*"]}`,
+			"/src/index.tlua":          `export local x = 1;`,
 		}
 		uriLocal := lsproto.DocumentUri("file:///src/index.tlua")
 		session, _ := projecttestutil.Setup(filesNoConfig)
@@ -214,9 +214,9 @@ func TestCustomConfigFileName(t *testing.T) {
 		projects := snapshot.GetProjectsContainingFile(uriLocal)
 		assert.Equal(t, len(projects), 1, "expected file to be in exactly 1 project before config change, got %d", len(projects))
 
-		// Now set custom config to pick up tsconfig.all.json
+		// Now set custom config to pick up tluaconfig.all.json
 		prefs := lsutil.NewDefaultUserPreferences()
-		prefs.CustomConfigFileName = "tsconfig.all.json"
+		prefs.CustomConfigFileName = "tluaconfig.all.json"
 		session.Configure(prefs)
 
 		_, err = session.GetLanguageService(context.Background(), uriLocal)
@@ -224,7 +224,7 @@ func TestCustomConfigFileName(t *testing.T) {
 
 		// File should now be in the configured project only, not duplicated in inferred.
 		snapshot = session.Snapshot()
-		assert.Equal(t, snapshot.GetDefaultProject(uriLocal).Name(), "/src/tsconfig.all.json")
+		assert.Equal(t, snapshot.GetDefaultProject(uriLocal).Name(), "/src/tluaconfig.all.json")
 		projects = snapshot.GetProjectsContainingFile(uriLocal)
 		assert.Equal(t, len(projects), 1, "expected file to be in exactly 1 project after config change, got %d", len(projects))
 	})

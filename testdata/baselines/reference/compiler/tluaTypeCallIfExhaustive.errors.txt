@@ -1,4 +1,4 @@
-tluaTypeCallIfExhaustive.tlua(37,7): error TS2322: Type 'number | nil' is not assignable to type 'number'.
+tluaTypeCallIfExhaustive.tlua(37,7): error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
   Type 'nil' is not assignable to type 'number'.
 
 
@@ -41,8 +41,8 @@ tluaTypeCallIfExhaustive.tlua(37,7): error TS2322: Type 'number | nil' is not as
     
     local widened: number = allTagsNoElse(1); // error: number | nil
           ~~~~~~~
-!!! error TS2322: Type 'number | nil' is not assignable to type 'number'.
-!!! error TS2322:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'number'.
     
     // The final else of a chain covering a concrete union narrows to never, so an
     // else-based exhaustiveness check types clean.

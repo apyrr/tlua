@@ -14,7 +14,7 @@ func TestGetEditsForFileRename_tsconfig_include_noChange(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /src/tsconfig.json
+	const content = `// @Filename: /src/tluaconfig.json
 {
     "include": ["dir"],
 }

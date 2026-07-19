@@ -1,9 +1,9 @@
-tluaNoAwait.tlua(14,10): error TS2304: Cannot find name 'await'.
-tluaNoAwait.tlua(14,16): error TS1005: ';' expected.
-tluaNoAwait.tlua(23,3): error TS1434: Unexpected keyword or identifier.
-tluaNoAwait.tlua(23,9): error TS1434: Unexpected keyword or identifier.
-tluaNoAwait.tlua(23,9): error TS2304: Cannot find name 'using'.
-tluaNoAwait.tlua(23,15): error TS2304: Cannot find name 'r'.
+tluaNoAwait.tlua(14,10): error TLUA2304: Cannot find name 'await'.
+tluaNoAwait.tlua(14,16): error TLUA1005: ';' expected.
+tluaNoAwait.tlua(23,3): error TLUA1434: Unexpected keyword or identifier.
+tluaNoAwait.tlua(23,9): error TLUA1434: Unexpected keyword or identifier.
+tluaNoAwait.tlua(23,9): error TLUA2304: Cannot find name 'using'.
+tluaNoAwait.tlua(23,15): error TLUA2304: Cannot find name 'r'.
 
 
 ==== tluaNoAwait.tlua (6 errors) ====
@@ -22,9 +22,9 @@ tluaNoAwait.tlua(23,15): error TS2304: Cannot find name 'r'.
     async function g(): number
       return await f();
              ~~~~~
-!!! error TS2304: Cannot find name 'await'.
+!!! error TLUA2304: Cannot find name 'await'.
                    ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     end
     
     // Ordinary identifier at top level of a module.
@@ -35,12 +35,12 @@ tluaNoAwait.tlua(23,15): error TS2304: Cannot find name 'r'.
     function h(): void {
       await using r = compute();
       ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
             ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
             ~~~~~
-!!! error TS2304: Cannot find name 'using'.
+!!! error TLUA2304: Cannot find name 'using'.
                   ~
-!!! error TS2304: Cannot find name 'r'.
+!!! error TLUA2304: Cannot find name 'r'.
     }
     

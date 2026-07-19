@@ -1,6 +1,6 @@
-tluaGotoForwardDeadEdge.tlua(9,9): error TS7027: Unreachable code detected.
-tluaGotoForwardDeadEdge.tlua(21,9): error TS7027: Unreachable code detected.
-tluaGotoForwardDeadEdge.tlua(32,9): error TS7027: Unreachable code detected.
+tluaGotoForwardDeadEdge.tlua(9,9): error TLUA7027: Unreachable code detected.
+tluaGotoForwardDeadEdge.tlua(21,9): error TLUA7027: Unreachable code detected.
+tluaGotoForwardDeadEdge.tlua(32,9): error TLUA7027: Unreachable code detected.
 
 
 ==== tluaGotoForwardDeadEdge.tlua (3 errors) ====
@@ -14,7 +14,7 @@ tluaGotoForwardDeadEdge.tlua(32,9): error TS7027: Unreachable code detected.
             fail();
             goto done
             ~~~~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
         end
         log(1);
         ::done::
@@ -28,7 +28,7 @@ tluaGotoForwardDeadEdge.tlua(32,9): error TS7027: Unreachable code detected.
             fail();
             goto out
             ~~~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
         end
         goto out
         ::out::
@@ -41,7 +41,7 @@ tluaGotoForwardDeadEdge.tlua(32,9): error TS7027: Unreachable code detected.
             fail();
             goto has
             ~~~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
         end
         ::has::
         return x;

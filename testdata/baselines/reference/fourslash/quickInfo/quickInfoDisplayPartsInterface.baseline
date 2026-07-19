@@ -3,7 +3,7 @@
 // interface i {
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | interface i
 // | ```
 // | 
@@ -12,14 +12,14 @@
 // local iInstance: i;
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local iInstance: i
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                  ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | interface i
 // | ```
 // | 
@@ -38,7 +38,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\ninterface i\n```\n"
+        "value": "```tlua\ninterface i\n```\n"
       },
       "range": {
         "start": {
@@ -66,7 +66,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal iInstance: i\n```\n"
+        "value": "```tlua\nlocal iInstance: i\n```\n"
       },
       "range": {
         "start": {
@@ -94,7 +94,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\ninterface i\n```\n"
+        "value": "```tlua\ninterface i\n```\n"
       },
       "range": {
         "start": {

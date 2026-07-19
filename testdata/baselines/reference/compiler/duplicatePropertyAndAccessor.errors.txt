@@ -1,16 +1,16 @@
-duplicatePropertyAndAccessor.tlua(3,1): error TS1434: Unexpected keyword or identifier.
-duplicatePropertyAndAccessor.tlua(3,1): error TS2304: Cannot find name 'class'.
-duplicatePropertyAndAccessor.tlua(3,7): error TS1434: Unexpected keyword or identifier.
-duplicatePropertyAndAccessor.tlua(3,7): error TS2304: Cannot find name 'C'.
-duplicatePropertyAndAccessor.tlua(4,3): error TS1434: Unexpected keyword or identifier.
-duplicatePropertyAndAccessor.tlua(4,3): error TS2304: Cannot find name 'y'.
-duplicatePropertyAndAccessor.tlua(4,4): error TS1128: Declaration or statement expected.
-duplicatePropertyAndAccessor.tlua(4,6): error TS2693: 'number' only refers to a type, but is being used as a value here.
-duplicatePropertyAndAccessor.tlua(5,3): error TS1128: Declaration or statement expected.
-duplicatePropertyAndAccessor.tlua(5,12): error TS1434: Unexpected keyword or identifier.
-duplicatePropertyAndAccessor.tlua(5,12): error TS2304: Cannot find name 'y'.
-duplicatePropertyAndAccessor.tlua(5,13): error TS1128: Declaration or statement expected.
-duplicatePropertyAndAccessor.tlua(5,15): error TS2693: 'number' only refers to a type, but is being used as a value here.
+duplicatePropertyAndAccessor.tlua(3,1): error TLUA1434: Unexpected keyword or identifier.
+duplicatePropertyAndAccessor.tlua(3,1): error TLUA2304: Cannot find name 'class'.
+duplicatePropertyAndAccessor.tlua(3,7): error TLUA1434: Unexpected keyword or identifier.
+duplicatePropertyAndAccessor.tlua(3,7): error TLUA2304: Cannot find name 'C'.
+duplicatePropertyAndAccessor.tlua(4,3): error TLUA1434: Unexpected keyword or identifier.
+duplicatePropertyAndAccessor.tlua(4,3): error TLUA2304: Cannot find name 'y'.
+duplicatePropertyAndAccessor.tlua(4,4): error TLUA1128: Declaration or statement expected.
+duplicatePropertyAndAccessor.tlua(4,6): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
+duplicatePropertyAndAccessor.tlua(5,3): error TLUA1128: Declaration or statement expected.
+duplicatePropertyAndAccessor.tlua(5,12): error TLUA1434: Unexpected keyword or identifier.
+duplicatePropertyAndAccessor.tlua(5,12): error TLUA2304: Cannot find name 'y'.
+duplicatePropertyAndAccessor.tlua(5,13): error TLUA1128: Declaration or statement expected.
+duplicatePropertyAndAccessor.tlua(5,15): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 
 
 ==== duplicatePropertyAndAccessor.tlua (13 errors) ====
@@ -18,32 +18,32 @@ duplicatePropertyAndAccessor.tlua(5,15): error TS2693: 'number' only refers to a
     
     class C {
     ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
           ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
           ~
-!!! error TS2304: Cannot find name 'C'.
+!!! error TLUA2304: Cannot find name 'C'.
       y: number = 2;
       ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
       ~
-!!! error TS2304: Cannot find name 'y'.
+!!! error TLUA2304: Cannot find name 'y'.
        ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
          ~~~~~~
-!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
       accessor y: number = 3;
       ~~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                ~
-!!! error TS2304: Cannot find name 'y'.
+!!! error TLUA2304: Cannot find name 'y'.
                 ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                   ~~~~~~
-!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
     }
     

@@ -15,7 +15,7 @@
 // function foo(x) {}
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo(x: any): void
 // | ```
 // | 
@@ -34,7 +34,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(x: any): void\n```\n"
+        "value": "```tlua\nfunction foo(x: any): void\n```\n"
       },
       "range": {
         "start": {

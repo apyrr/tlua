@@ -1,12 +1,12 @@
-classExpressionWithComputedPropertyInLoop.tlua(5,22): error TS1109: Expression expected.
-classExpressionWithComputedPropertyInLoop.tlua(5,23): error TS1011: An element access expression should take an argument.
-classExpressionWithComputedPropertyInLoop.tlua(8,11): error TS2339: Property 'push' does not exist on type 'any[]'.
-classExpressionWithComputedPropertyInLoop.tlua(8,16): error TS2304: Cannot find name 'class'.
-classExpressionWithComputedPropertyInLoop.tlua(8,22): error TS1005: ',' expected.
-classExpressionWithComputedPropertyInLoop.tlua(8,22): error TS2304: Cannot find name 'C'.
-classExpressionWithComputedPropertyInLoop.tlua(8,24): error TS1005: ',' expected.
-classExpressionWithComputedPropertyInLoop.tlua(10,10): error TS2304: Cannot find name 'field'.
-classExpressionWithComputedPropertyInLoop.tlua(10,16): error TS1005: ',' expected.
+classExpressionWithComputedPropertyInLoop.tlua(5,22): error TLUA1109: Expression expected.
+classExpressionWithComputedPropertyInLoop.tlua(5,23): error TLUA1011: An element access expression should take an argument.
+classExpressionWithComputedPropertyInLoop.tlua(8,11): error TLUA2339: Property 'push' does not exist on type 'any[]'.
+classExpressionWithComputedPropertyInLoop.tlua(8,16): error TLUA2304: Cannot find name 'class'.
+classExpressionWithComputedPropertyInLoop.tlua(8,22): error TLUA1005: ',' expected.
+classExpressionWithComputedPropertyInLoop.tlua(8,22): error TLUA2304: Cannot find name 'C'.
+classExpressionWithComputedPropertyInLoop.tlua(8,24): error TLUA1005: ',' expected.
+classExpressionWithComputedPropertyInLoop.tlua(10,10): error TLUA2304: Cannot find name 'field'.
+classExpressionWithComputedPropertyInLoop.tlua(10,16): error TLUA1005: ',' expected.
 
 
 ==== classExpressionWithComputedPropertyInLoop.tlua (9 errors) ====
@@ -16,28 +16,28 @@ classExpressionWithComputedPropertyInLoop.tlua(10,16): error TS1005: ',' expecte
     
     local array: any[] = [];
                          ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                           
-!!! error TS1011: An element access expression should take an argument.
+!!! error TLUA1011: An element access expression should take an argument.
     local key = "myKey";
     for i = 0, 2 do
         array.push(class C {
               ~~~~
-!!! error TS2339: Property 'push' does not exist on type 'any[]'.
+!!! error TLUA2339: Property 'push' does not exist on type 'any[]'.
                    ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
                          ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
                          ~
-!!! error TS2304: Cannot find name 'C'.
+!!! error TLUA2304: Cannot find name 'C'.
                            ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
             [key] = i;
             #field = i;
              ~~~~~
-!!! error TS2304: Cannot find name 'field'.
+!!! error TLUA2304: Cannot find name 'field'.
                    ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
         });
     end
     

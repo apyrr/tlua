@@ -1,4 +1,4 @@
-tluaLocalMultiNameFlow.tlua(19,3): error TS2322: Type 'nil' is not assignable to type 'number'.
+tluaLocalMultiNameFlow.tlua(19,3): error TLUA2322: Type 'nil' is not assignable to type 'number'.
 
 
 ==== tluaLocalMultiNameFlow.tlua (1 errors) ====
@@ -22,7 +22,7 @@ tluaLocalMultiNameFlow.tlua(19,3): error TS2322: Type 'nil' is not assignable to
     function useUnassigned(): number
       return c;
       ~~~~~~
-!!! error TS2322: Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'nil' is not assignable to type 'number'.
     end
     
     // Narrowing works on positional values.

@@ -1,28 +1,28 @@
-tluaEnumSyntaxUnsupported.tlua(1,1): error TS1434: Unexpected keyword or identifier.
-tluaEnumSyntaxUnsupported.tlua(1,1): error TS2304: Cannot find name 'enum'.
-tluaEnumSyntaxUnsupported.tlua(1,6): error TS1434: Unexpected keyword or identifier.
-tluaEnumSyntaxUnsupported.tlua(1,6): error TS2304: Cannot find name 'E'.
-tluaEnumSyntaxUnsupported.tlua(2,5): error TS2304: Cannot find name 'A'.
-tluaEnumSyntaxUnsupported.tlua(2,5): error TS2695: Left side of comma operator is unused and has no side effects.
-tluaEnumSyntaxUnsupported.tlua(3,1): error TS1109: Expression expected.
+tluaEnumSyntaxUnsupported.tlua(1,1): error TLUA1434: Unexpected keyword or identifier.
+tluaEnumSyntaxUnsupported.tlua(1,1): error TLUA2304: Cannot find name 'enum'.
+tluaEnumSyntaxUnsupported.tlua(1,6): error TLUA1434: Unexpected keyword or identifier.
+tluaEnumSyntaxUnsupported.tlua(1,6): error TLUA2304: Cannot find name 'E'.
+tluaEnumSyntaxUnsupported.tlua(2,5): error TLUA2304: Cannot find name 'A'.
+tluaEnumSyntaxUnsupported.tlua(2,5): error TLUA2695: Left side of comma operator is unused and has no side effects.
+tluaEnumSyntaxUnsupported.tlua(3,1): error TLUA1109: Expression expected.
 
 
 ==== tluaEnumSyntaxUnsupported.tlua (7 errors) ====
     enum E {
     ~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~
-!!! error TS2304: Cannot find name 'enum'.
+!!! error TLUA2304: Cannot find name 'enum'.
          ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
          ~
-!!! error TS2304: Cannot find name 'E'.
+!!! error TLUA2304: Cannot find name 'E'.
         A,
         ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
         ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
     }
     ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     

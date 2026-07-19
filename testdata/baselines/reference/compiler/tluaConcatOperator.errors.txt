@@ -1,6 +1,6 @@
-tluaConcatOperator.tlua(27,12): error TS2365: Operator '..' cannot be applied to types '{}' and 'string'.
-tluaConcatOperator.tlua(28,12): error TS2365: Operator '..' cannot be applied to types 'boolean' and 'string'.
-tluaConcatOperator.tlua(29,12): error TS2365: Operator '..' cannot be applied to types 'string' and '{}'.
+tluaConcatOperator.tlua(27,12): error TLUA2365: Operator '..' cannot be applied to types '{}' and 'string'.
+tluaConcatOperator.tlua(28,12): error TLUA2365: Operator '..' cannot be applied to types 'boolean' and 'string'.
+tluaConcatOperator.tlua(29,12): error TLUA2365: Operator '..' cannot be applied to types 'string' and '{}'.
 
 
 ==== tluaConcatOperator.tlua (3 errors) ====
@@ -32,11 +32,11 @@ tluaConcatOperator.tlua(29,12): error TS2365: Operator '..' cannot be applied to
     // Errors: a table or a boolean operand without a __concat metamethod.
     local e1 = {} .. "a";
                ~~~~~~~~~
-!!! error TS2365: Operator '..' cannot be applied to types '{}' and 'string'.
+!!! error TLUA2365: Operator '..' cannot be applied to types '{}' and 'string'.
     local e2 = true .. "b";
                ~~~~~~~~~~~
-!!! error TS2365: Operator '..' cannot be applied to types 'boolean' and 'string'.
+!!! error TLUA2365: Operator '..' cannot be applied to types 'boolean' and 'string'.
     local e3 = "a" .. {};
                ~~~~~~~~~
-!!! error TS2365: Operator '..' cannot be applied to types 'string' and '{}'.
+!!! error TLUA2365: Operator '..' cannot be applied to types 'string' and '{}'.
     

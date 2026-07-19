@@ -1,8 +1,8 @@
-tluaTableShorthandRemoved.tlua(6,28): error TS2353: Object literal may only specify known properties, and '1' does not exist in type '{ x: number; }'.
-tluaTableShorthandRemoved.tlua(13,2): error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
-tluaTableShorthandRemoved.tlua(13,4): error TS2454: Variable 'q' is used before being assigned.
-tluaTableShorthandRemoved.tlua(18,2): error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
-tluaTableShorthandRemoved.tlua(24,14): error TS2454: Variable 'q' is used before being assigned.
+tluaTableShorthandRemoved.tlua(6,28): error TLUA2353: Object literal may only specify known properties, and '1' does not exist in type '{ x: number; }'.
+tluaTableShorthandRemoved.tlua(13,2): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
+tluaTableShorthandRemoved.tlua(13,4): error TLUA2454: Variable 'q' is used before being assigned.
+tluaTableShorthandRemoved.tlua(18,2): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
+tluaTableShorthandRemoved.tlua(24,14): error TLUA2454: Variable 'q' is used before being assigned.
 
 
 ==== tluaTableShorthandRemoved.tlua (5 errors) ====
@@ -13,7 +13,7 @@ tluaTableShorthandRemoved.tlua(24,14): error TS2454: Variable 'q' is used before
     // ... so it is not assignable where a property `x` is required.
     local s: { x: number } = { x };
                                ~
-!!! error TS2353: Object literal may only specify known properties, and '1' does not exist in type '{ x: number; }'.
+!!! error TLUA2353: Object literal may only specify known properties, and '1' does not exist in type '{ x: number; }'.
     local es = {t1, s};
     
     // Destructuring assignment is gone with it: an object literal on the left of
@@ -22,16 +22,16 @@ tluaTableShorthandRemoved.tlua(24,14): error TS2454: Variable 'q' is used before
     local q: number;
     ({ q } = obj);
      ~~~~~
-!!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
        ~
-!!! error TS2454: Variable 'q' is used before being assigned.
+!!! error TLUA2454: Variable 'q' is used before being assigned.
     
     // ... and `{ w = 5 }` has exactly one meaning -- a Lua keyed field -- so the
     // old cover-grammar destructuring reading is an error too.
     local w: number | nil;
     ({ w = 5 } = obj);
      ~~~~~~~~~
-!!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
     
     // Lua spells the extraction with member access ...
     local q3 = obj.q;
@@ -39,7 +39,7 @@ tluaTableShorthandRemoved.tlua(24,14): error TS2454: Variable 'q' is used before
     function take({ q: q4 }: { q: number }): number { return q4; }
     local all = {q, w, q3, take};
                  ~
-!!! error TS2454: Variable 'q' is used before being assigned.
+!!! error TLUA2454: Variable 'q' is used before being assigned.
     
     // `export {x}` is different syntax, untouched.
     { x };

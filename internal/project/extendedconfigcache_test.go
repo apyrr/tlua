@@ -133,18 +133,18 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		// Expected behavior: ExtendedSourceFiles() is deduped, so the shared root should only
 		// be ref'd once for this config.
 		files := map[string]any{
-			"/project/tsconfig.json": `{
-				"extends": ["./tsconfig.base1.json", "./tsconfig.base2.json"]
+			"/project/tluaconfig.json": `{
+				"extends": ["./tluaconfig.base1.json", "./tluaconfig.base2.json"]
 			}`,
-			"/project/tsconfig.base1.json": `{
-				"extends": "./tsconfig.root.json",
+			"/project/tluaconfig.base1.json": `{
+				"extends": "./tluaconfig.root.json",
 				"compilerOptions": {"strict": true}
 			}`,
-			"/project/tsconfig.base2.json": `{
-				"extends": "./tsconfig.root.json",
+			"/project/tluaconfig.base2.json": `{
+				"extends": "./tluaconfig.root.json",
 				"compilerOptions": {"noImplicitAny": true}
 			}`,
-			"/project/tsconfig.root.json": `{
+			"/project/tluaconfig.root.json": `{
 				"compilerOptions": {"target": "ES2020"}
 			}`,
 			"/project/src/main.tlua": "export local x = 1;",
@@ -154,12 +154,12 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///project/src/main.tlua"), 1, files["/project/src/main.tlua"].(string), lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 
-		config := snapshot.ConfigFileRegistry.GetConfig("/project/tsconfig.json")
+		config := snapshot.ConfigFileRegistry.GetConfig("/project/tluaconfig.json")
 		assert.Assert(t, config != nil)
 		// Shared root should only appear once in the flattened list.
 		var rootCount int
 		for _, f := range config.ExtendedSourceFiles() {
-			if f == "/project/tsconfig.root.json" {
+			if f == "/project/tluaconfig.root.json" {
 				rootCount++
 			}
 		}
@@ -169,9 +169,9 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		assertExtendedOwnerCountsMatchRegistry(t, session, snapshot)
 
 		flushCloseProject(session, lsproto.DocumentUri("file:///project/src/main.tlua"))
-		assertNoEntry(t, session, "/project/tsconfig.base1.json")
-		assertNoEntry(t, session, "/project/tsconfig.base2.json")
-		assertNoEntry(t, session, "/project/tsconfig.root.json")
+		assertNoEntry(t, session, "/project/tluaconfig.base1.json")
+		assertNoEntry(t, session, "/project/tluaconfig.base2.json")
+		assertNoEntry(t, session, "/project/tluaconfig.root.json")
 	})
 
 	t.Run("ExtendedSourceFiles can contain same path twice (case-insensitive)", func(t *testing.T) {
@@ -181,7 +181,7 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		// but is here to show that while the problem exists in the underlying config parsing
 		// API, it doesn't disrupt cache ownership.
 		files := map[string]any{
-			"/project/tsconfig.json": `{
+			"/project/tluaconfig.json": `{
 				"extends": ["./Shared.json", "./shared.json"]
 			}`,
 			"/project/shared.json": `{
@@ -197,7 +197,7 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 
 		// Minimal ParseConfigHost implementation.
 		h := &testParseConfigHost{fs: fs, cwd: "/"}
-		cmd, diags := tsoptions.GetParsedCommandLineOfConfigFile("/project/tsconfig.json", nil, nil, h, nil /*extendedConfigCache*/)
+		cmd, diags := tsoptions.GetParsedCommandLineOfConfigFile("/project/tluaconfig.json", nil, nil, h, nil /*extendedConfigCache*/)
 		assert.Equal(t, len(diags), 0)
 		assert.Assert(t, cmd != nil)
 
@@ -211,7 +211,7 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		t.Parallel()
 
 		files := map[string]any{
-			"/project/tsconfig.json": `{
+			"/project/tluaconfig.json": `{
 				"extends": ["./Shared.json", "./shared.json"]
 			}`,
 			"/project/shared.json": `{
@@ -224,7 +224,7 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///project/src/main.tlua"), 1, files["/project/src/main.tlua"].(string), lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 
-		config := snapshot.ConfigFileRegistry.GetConfig("/project/tsconfig.json")
+		config := snapshot.ConfigFileRegistry.GetConfig("/project/tluaconfig.json")
 		assert.Assert(t, config != nil)
 		extended := config.ExtendedSourceFiles()
 		assert.Equal(t, len(extended), 1)
@@ -237,25 +237,25 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		// Scenario: transitive extends chain where a new project reuses a cached
 		// extended config without reparsing it, which should still acquire the transitive deps.
 		//
-		// projectA/tsconfig.json extends shared/tsconfig.base.json extends shared/tsconfig.common.json
-		// projectB/tsconfig.json extends shared/tsconfig.base.json extends shared/tsconfig.common.json
+		// projectA/tluaconfig.json extends shared/tluaconfig.base.json extends shared/tluaconfig.common.json
+		// projectB/tluaconfig.json extends shared/tluaconfig.base.json extends shared/tluaconfig.common.json
 		//
-		// When projectB is opened AFTER projectA, tsconfig.base.json is retrieved from cache
-		// (not reparsed), so tsconfig.common.json still needs projectB's snapshot ownership.
+		// When projectB is opened AFTER projectA, tluaconfig.base.json is retrieved from cache
+		// (not reparsed), so tluaconfig.common.json still needs projectB's snapshot ownership.
 		files := map[string]any{
-			"/user/username/projects/shared/tsconfig.common.json": `{
+			"/user/username/projects/shared/tluaconfig.common.json": `{
 					"compilerOptions": { "strict": true }
 				}`,
-			"/user/username/projects/shared/tsconfig.base.json": `{
-					"extends": "./tsconfig.common.json",
+			"/user/username/projects/shared/tluaconfig.base.json": `{
+					"extends": "./tluaconfig.common.json",
 					"compilerOptions": { "target": "ES2020" }
 				}`,
-			"/user/username/projects/projectA/tsconfig.json": `{
-					"extends": "../shared/tsconfig.base.json"
+			"/user/username/projects/projectA/tluaconfig.json": `{
+					"extends": "../shared/tluaconfig.base.json"
 				}`,
 			"/user/username/projects/projectA/src/main.tlua": "local a = 1;",
-			"/user/username/projects/projectB/tsconfig.json": `{
-					"extends": "../shared/tsconfig.base.json"
+			"/user/username/projects/projectB/tluaconfig.json": `{
+					"extends": "../shared/tluaconfig.base.json"
 				}`,
 			"/user/username/projects/projectB/src/main.tlua": "local b = 2;",
 			"/user/username/projects/other/src/main.tlua":    "local other = 3;",
@@ -267,15 +267,15 @@ func TestExtendedConfigCacheOwnership(t *testing.T) {
 		session.DidOpenFile(context.Background(), "file:///user/username/projects/projectA/src/main.tlua", 1, files["/user/username/projects/projectA/src/main.tlua"].(string), lsproto.LanguageKindTypeScript)
 
 		// Verify extended configs are in cache with correct owner counts
-		baseEntry, baseOk := session.extendedConfigCache.entries.Load("/user/username/projects/shared/tsconfig.base.json")
-		commonEntry, commonOk := session.extendedConfigCache.entries.Load("/user/username/projects/shared/tsconfig.common.json")
-		assert.Assert(t, baseOk, "tsconfig.base.json should be in cache")
-		assert.Assert(t, commonOk, "tsconfig.common.json should be in cache")
+		baseEntry, baseOk := session.extendedConfigCache.entries.Load("/user/username/projects/shared/tluaconfig.base.json")
+		commonEntry, commonOk := session.extendedConfigCache.entries.Load("/user/username/projects/shared/tluaconfig.common.json")
+		assert.Assert(t, baseOk, "tluaconfig.base.json should be in cache")
+		assert.Assert(t, commonOk, "tluaconfig.common.json should be in cache")
 		assert.Equal(t, len(baseEntry.owners), 1)
 		assert.Equal(t, len(commonEntry.owners), 1)
 
-		// Step 2: Open file in projectB - this should acquire tsconfig.base.json from cache
-		// (not reparse it), and should also acquire tsconfig.common.json.
+		// Step 2: Open file in projectB - this should acquire tluaconfig.base.json from cache
+		// (not reparse it), and should also acquire tluaconfig.common.json.
 		session.DidOpenFile(context.Background(), "file:///user/username/projects/projectB/src/main.tlua", 1, files["/user/username/projects/projectB/src/main.tlua"].(string), lsproto.LanguageKindTypeScript)
 
 		// Step 3: Close projectA file and open an unrelated file to force projectA cleanup

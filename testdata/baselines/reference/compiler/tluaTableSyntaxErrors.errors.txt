@@ -1,34 +1,34 @@
-tluaTableSyntaxErrors.tlua(2,17): error TS1109: Expression expected.
-tluaTableSyntaxErrors.tlua(3,21): error TS1109: Expression expected.
-tluaTableSyntaxErrors.tlua(7,13): error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
-tluaTableSyntaxErrors.tlua(8,13): error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
-tluaTableSyntaxErrors.tlua(11,13): error TS1136: Property assignment expected.
-tluaTableSyntaxErrors.tlua(12,19): error TS1136: Property assignment expected.
+tluaTableSyntaxErrors.tlua(2,17): error TLUA1109: Expression expected.
+tluaTableSyntaxErrors.tlua(3,21): error TLUA1109: Expression expected.
+tluaTableSyntaxErrors.tlua(7,13): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
+tluaTableSyntaxErrors.tlua(8,13): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
+tluaTableSyntaxErrors.tlua(11,13): error TLUA1136: Property assignment expected.
+tluaTableSyntaxErrors.tlua(12,19): error TLUA1136: Property assignment expected.
 
 
 ==== tluaTableSyntaxErrors.tlua (6 errors) ====
     // Missing values: natural expression-expected errors.
     local a = { x = };
                     ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     local b = { ["k"] = };
                         ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     
     // Literal string/number keys must use the bracket form (`["s"] = 1`,
     // `[1] = 2`): a bare string/number key is a natural recovery error.
     local c = { "s" = 1 };
                 ~~~
-!!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
     local d = { 1 = 2 };
                 ~
-!!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
     
     // Stray separators: natural recovery errors.
     local e = { ; };
                 ~
-!!! error TS1136: Property assignment expected.
+!!! error TLUA1136: Property assignment expected.
     local f = { g = 1;; h = 2 };
                       ~
-!!! error TS1136: Property assignment expected.
+!!! error TLUA1136: Property assignment expected.
     

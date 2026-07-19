@@ -2,7 +2,7 @@ Fs::
 //// [/app.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
 			    "compilerOptions": {
 				"sourcemap": true,
@@ -19,10 +19,10 @@ Fs::
 			}
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -31,52 +31,52 @@ TypeAcquisition::
 FileNames::
 /app.tlua
 Errors::
-[96mtsconfig.json[0m:[93m3[0m:[93m5[0m - [91merror[0m[90m TS5025: [0mUnknown compiler option 'sourcemap'. Did you mean 'sourceMap'?
+[96mtluaconfig.json[0m:[93m3[0m:[93m5[0m - [91merror[0m[90m TLUA5025: [0mUnknown compiler option 'sourcemap'. Did you mean 'sourceMap'?
 
 [7m3[0m     "sourcemap": true,
 [7m [0m [91m    ~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m4[0m:[93m5[0m - [91merror[0m[90m TS5025: [0mUnknown compiler option 'declarationmap'. Did you mean 'declarationMap'?
+[96mtluaconfig.json[0m:[93m4[0m:[93m5[0m - [91merror[0m[90m TLUA5025: [0mUnknown compiler option 'declarationmap'. Did you mean 'declarationMap'?
 
 [7m4[0m     "declarationmap": true,
 [7m [0m [91m    ~~~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS5025: [0mUnknown compiler option 'nouncheckedindexedaccess'. Did you mean 'noUncheckedIndexedAccess'?
+[96mtluaconfig.json[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TLUA5025: [0mUnknown compiler option 'nouncheckedindexedaccess'. Did you mean 'noUncheckedIndexedAccess'?
 
 [7m5[0m     "nouncheckedindexedaccess": true,
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m6[0m:[93m5[0m - [91merror[0m[90m TS5025: [0mUnknown compiler option 'exactoptionalpropertytypes'. Did you mean 'exactOptionalPropertyTypes'?
+[96mtluaconfig.json[0m:[93m6[0m:[93m5[0m - [91merror[0m[90m TLUA5025: [0mUnknown compiler option 'exactoptionalpropertytypes'. Did you mean 'exactOptionalPropertyTypes'?
 
 [7m6[0m     "exactoptionalpropertytypes": true,
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m7[0m:[93m5[0m - [91merror[0m[90m TS5023: [0mUnknown compiler option 'verbatimmodulesyntax'.
+[96mtluaconfig.json[0m:[93m7[0m:[93m5[0m - [91merror[0m[90m TLUA5023: [0mUnknown compiler option 'verbatimmodulesyntax'.
 
 [7m7[0m     "verbatimmodulesyntax": true,
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS5025: [0mUnknown compiler option 'isolatedmodules'. Did you mean 'isolatedModules'?
+[96mtluaconfig.json[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TLUA5025: [0mUnknown compiler option 'isolatedmodules'. Did you mean 'isolatedModules'?
 
 [7m8[0m     "isolatedmodules": true,
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m9[0m:[93m5[0m - [91merror[0m[90m TS5025: [0mUnknown compiler option 'nouncheckedsideeffectimports'. Did you mean 'noUncheckedSideEffectImports'?
+[96mtluaconfig.json[0m:[93m9[0m:[93m5[0m - [91merror[0m[90m TLUA5025: [0mUnknown compiler option 'nouncheckedsideeffectimports'. Did you mean 'noUncheckedSideEffectImports'?
 
 [7m9[0m     "nouncheckedsideeffectimports": true,
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m10[0m:[93m5[0m - [91merror[0m[90m TS5023: [0mUnknown compiler option 'moduledetection'.
+[96mtluaconfig.json[0m:[93m10[0m:[93m5[0m - [91merror[0m[90m TLUA5023: [0mUnknown compiler option 'moduledetection'.
 
 [7m10[0m     "moduledetection": "force",
 [7m  [0m [91m    ~~~~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS5025: [0mUnknown compiler option 'skiplibcheck'. Did you mean 'skipLibCheck'?
+[96mtluaconfig.json[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TLUA5025: [0mUnknown compiler option 'skiplibcheck'. Did you mean 'skipLibCheck'?
 
 [7m11[0m     "skiplibcheck": true,
 [7m  [0m [91m    ~~~~~~~~~~~~~~[0m
 
-[96mtsconfig.json[0m:[93m12[0m:[93m5[0m - [91merror[0m[90m TS5023: [0mUnknown compiler option 'checkjs'.
+[96mtluaconfig.json[0m:[93m12[0m:[93m5[0m - [91merror[0m[90m TLUA5023: [0mUnknown compiler option 'checkjs'.
 
 [7m12[0m     "checkjs": true
 [7m  [0m [91m    ~~~~~~~~~[0m

@@ -4,7 +4,7 @@
 // local foo: FooType = 1;
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local foo: string | number
 // | ```
 // | 
@@ -12,7 +12,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local foo: FooType
 // | ```
 // | 
@@ -22,7 +22,7 @@
 // local bar: BarType = 1;
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local bar: boolean | (string | number)
 // | ```
 // | 
@@ -30,7 +30,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local bar: boolean | FooType
 // | ```
 // | 
@@ -38,7 +38,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local bar: BarType
 // | ```
 // | 
@@ -59,7 +59,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal foo: FooType\n```\n"
+          "value": "```tlua\nlocal foo: FooType\n```\n"
         },
         "range": {
           "start": {
@@ -90,7 +90,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal foo: string | number\n```\n"
+          "value": "```tlua\nlocal foo: string | number\n```\n"
         },
         "range": {
           "start": {
@@ -120,7 +120,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal bar: BarType\n```\n"
+          "value": "```tlua\nlocal bar: BarType\n```\n"
         },
         "range": {
           "start": {
@@ -151,7 +151,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal bar: boolean | FooType\n```\n"
+          "value": "```tlua\nlocal bar: boolean | FooType\n```\n"
         },
         "range": {
           "start": {
@@ -182,7 +182,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal bar: boolean | (string | number)\n```\n"
+          "value": "```tlua\nlocal bar: boolean | (string | number)\n```\n"
         },
         "range": {
           "start": {

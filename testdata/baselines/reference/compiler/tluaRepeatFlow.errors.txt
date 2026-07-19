@@ -1,4 +1,4 @@
-tluaRepeatFlow.tlua(28,5): error TS7027: Unreachable code detected.
+tluaRepeatFlow.tlua(28,5): error TLUA7027: Unreachable code detected.
 
 
 ==== tluaRepeatFlow.tlua (1 errors) ====
@@ -31,7 +31,7 @@ tluaRepeatFlow.tlua(28,5): error TS7027: Unreachable code detected.
         break;
         n = 1;
         ~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
       until true;
       return n;
     end

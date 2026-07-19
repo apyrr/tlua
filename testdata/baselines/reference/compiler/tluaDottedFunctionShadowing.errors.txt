@@ -1,4 +1,4 @@
-tluaDottedFunctionShadowing.tlua(16,16): error TS2339: Property 'first' does not exist on type '{ second(): number; }'.
+tluaDottedFunctionShadowing.tlua(16,16): error TLUA2339: Property 'first' does not exist on type '{ second(): number; }'.
 
 
 ==== tluaDottedFunctionShadowing.tlua (1 errors) ====
@@ -19,5 +19,5 @@ tluaDottedFunctionShadowing.tlua(16,16): error TS2339: Property 'first' does not
     local secondOnly = M.second();
     local gone = M.first();
                    ~~~~~
-!!! error TS2339: Property 'first' does not exist on type '{ second(): number; }'.
+!!! error TLUA2339: Property 'first' does not exist on type '{ second(): number; }'.
     

@@ -2,7 +2,7 @@ Fs::
 //// [/app.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
 			    "compilerOptions": {
 				"unknown": true
@@ -10,10 +10,10 @@ Fs::
 			}
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -22,4 +22,4 @@ TypeAcquisition::
 FileNames::
 /app.tlua
 Errors::
-[91merror[0m[90m TS5023: [0mUnknown compiler option 'unknown'.
+[91merror[0m[90m TLUA5023: [0mUnknown compiler option 'unknown'.

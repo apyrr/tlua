@@ -1,5 +1,5 @@
-tluaNumberKeyDistinct.tlua(8,7): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaNumberKeyDistinct.tlua(9,7): error TS2322: Type 'number' is not assignable to type 'string'.
+tluaNumberKeyDistinct.tlua(8,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaNumberKeyDistinct.tlua(9,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
 ==== tluaNumberKeyDistinct.tlua (2 errors) ====
@@ -12,10 +12,10 @@ tluaNumberKeyDistinct.tlua(9,7): error TS2322: Type 'number' is not assignable t
     // Cross-access errors: the other namespace's type does not match.
     local bad1: number = t[1];
           ~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     local bad2: string = t["1"];
           ~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     
     // Same distinction in type position: 1 is a number key, "1" a string key.
     interface I {

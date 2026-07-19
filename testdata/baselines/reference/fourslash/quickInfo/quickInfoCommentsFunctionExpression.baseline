@@ -4,7 +4,7 @@
 // local lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local lambdaFoo: (a: number, b: number) => number
 // | ```
 // | lambdaFoo local comment
@@ -12,7 +12,7 @@
 // local lambddaNoVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
 //       ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local lambddaNoVarComment: (a: number, b: number) => number
 // | ```
 // | 
@@ -21,7 +21,7 @@
 // function anotherFunc(a: number) {
 //          ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function anotherFunc(a: number): string
 // | ```
 // | 
@@ -31,7 +31,7 @@
 //     local lambdaVar = /** inner docs */(b: string) => {
 //           ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local lambdaVar: (b: string) => string
 // | ```
 // | documentation
@@ -40,7 +40,7 @@
 // | ----------------------------------------------------------------------
 //                                         ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: string
 // | ```
 // | 
@@ -48,7 +48,7 @@
 //         local localVar = "Hello ";
 //               ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local localVar: string
 // | ```
 // | 
@@ -56,14 +56,14 @@
 //         return localVar + b;
 //                ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local localVar: string
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: string
 // | ```
 // | 
@@ -72,7 +72,7 @@
 //     return lambdaVar("World") + a;
 //            ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local lambdaVar: (b: string) => string
 // | ```
 // | documentation
@@ -88,7 +88,7 @@
 // local assigned = /**
 //       ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local assigned: (s: string) => number
 // | ```
 // | On variable
@@ -106,7 +106,7 @@
 // assigned("hey");
 // ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -125,7 +125,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal lambdaFoo: (a: number, b: number) => number\n```\nlambdaFoo local comment"
+        "value": "```tlua\nlocal lambdaFoo: (a: number, b: number) => number\n```\nlambdaFoo local comment"
       },
       "range": {
         "start": {
@@ -152,7 +152,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal lambddaNoVarComment: (a: number, b: number) => number\n```\n"
+        "value": "```tlua\nlocal lambddaNoVarComment: (a: number, b: number) => number\n```\n"
       },
       "range": {
         "start": {
@@ -179,7 +179,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction anotherFunc(a: number): string\n```\n"
+        "value": "```tlua\nfunction anotherFunc(a: number): string\n```\n"
       },
       "range": {
         "start": {
@@ -206,7 +206,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter"
+        "value": "```tlua\nlocal lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter"
       },
       "range": {
         "start": {
@@ -233,7 +233,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: string\n```\n"
+        "value": "```tlua\n(parameter) b: string\n```\n"
       },
       "range": {
         "start": {
@@ -260,7 +260,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal localVar: string\n```\n"
+        "value": "```tlua\nlocal localVar: string\n```\n"
       },
       "range": {
         "start": {
@@ -287,7 +287,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal localVar: string\n```\n"
+        "value": "```tlua\nlocal localVar: string\n```\n"
       },
       "range": {
         "start": {
@@ -314,7 +314,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: string\n```\n"
+        "value": "```tlua\n(parameter) b: string\n```\n"
       },
       "range": {
         "start": {
@@ -341,7 +341,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter"
+        "value": "```tlua\nlocal lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter"
       },
       "range": {
         "start": {
@@ -368,7 +368,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n*@returns* — the parameter's length"
+        "value": "```tlua\nlocal assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n*@returns* — the parameter's length"
       },
       "range": {
         "start": {
@@ -395,7 +395,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

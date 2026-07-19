@@ -1,25 +1,25 @@
-tluaVarargAdjustment.tlua(21,12): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+tluaVarargAdjustment.tlua(21,12): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
   Type 'nil' is not assignable to type 'number'.
-tluaVarargAdjustment.tlua(26,13): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+tluaVarargAdjustment.tlua(26,13): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
   Type 'nil' is not assignable to type 'number'.
-tluaVarargAdjustment.tlua(34,12): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+tluaVarargAdjustment.tlua(34,12): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
   Type 'nil' is not assignable to type 'number'.
-tluaVarargAdjustment.tlua(35,12): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+tluaVarargAdjustment.tlua(35,12): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
   Type 'nil' is not assignable to type 'number'.
-tluaVarargAdjustment.tlua(39,19): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+tluaVarargAdjustment.tlua(39,19): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
   Type 'nil' is not assignable to type 'number'.
-tluaVarargAdjustment.tlua(43,15): error TS100037: Expected at most 1 arguments, but a tail may pass more.
-tluaVarargAdjustment.tlua(63,16): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+tluaVarargAdjustment.tlua(43,15): error TLUA100037: Expected at most 1 arguments, but a tail may pass more.
+tluaVarargAdjustment.tlua(63,16): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
   Type 'nil' is not assignable to type 'string'.
-tluaVarargAdjustment.tlua(89,3): error TS2322: Type '...string' is not assignable to type 'string, string'.
+tluaVarargAdjustment.tlua(89,3): error TLUA2322: Type '...string' is not assignable to type 'string, string'.
   Target requires 2 element(s) but source may have fewer.
-tluaVarargAdjustment.tlua(123,9): error TS2322: Type 'string | number | boolean' is not assignable to type 'boolean'.
+tluaVarargAdjustment.tlua(123,9): error TLUA2322: Type 'string | number | boolean' is not assignable to type 'boolean'.
   Type 'string' is not assignable to type 'boolean'.
-tluaVarargAdjustment.tlua(128,9): error TS2322: Type 'string | nil' is not assignable to type 'string'.
+tluaVarargAdjustment.tlua(128,9): error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
   Type 'nil' is not assignable to type 'string'.
-tluaVarargAdjustment.tlua(134,9): error TS2322: Type 'string | number' is not assignable to type 'number'.
+tluaVarargAdjustment.tlua(134,9): error TLUA2322: Type 'string | number' is not assignable to type 'number'.
   Type 'string' is not assignable to type 'number'.
-tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | boolean' is not assignable to parameter of type 'string | nil'.
+tluaVarargAdjustment.tlua(202,24): error TLUA2345: Argument of type 'string | boolean' is not assignable to parameter of type 'string | nil'.
   Type 'boolean' is not assignable to type 'string'.
 
 
@@ -46,16 +46,16 @@ tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | bool
       takesTwoNilable(..., 1);
       takesTwo(..., 1);
                ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'number'.
     
       // Parentheses make a vararg single-valued, with that same `number | nil`, so
       // the truncation idiom only satisfies nil-accepting targets.
       takesOneNilable((...));
       takesOne((...));
                 ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'number'.
     
       // A parenthesized call is one value too, so the second value is dropped.
       local onlyFirst: number = (pair());
@@ -65,25 +65,25 @@ tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | bool
       // So a required `number` rejects it...
       takesOne(...);
                ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'number'.
       takesTwo(...);
                ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'number'.
     
       // ...while anything that accepts nil takes it, with no exception needed.
       takesOneNilable(...);
       takesTwoNilable(...);
                       ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'number'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'number'.
     
       // The one arity rule left: a tail that cannot contribute. Every parameter is
       // already filled, so every value it produces would be discarded (100037).
       takesOne(1, ...);
                   ~~~
-!!! error TS100037: Expected at most 1 arguments, but a tail may pass more.
+!!! error TLUA100037: Expected at most 1 arguments, but a tail may pass more.
     end
     
     declare function optionalOnly(a?: number): void;
@@ -105,8 +105,8 @@ tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | bool
       // But a fixed parameter ahead of the rest is still a fixed parameter.
       leadingFixed(...);
                    ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'string'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'string'.
     end
     
     function parenthesizedOperand(...: number): void
@@ -134,8 +134,8 @@ tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | bool
     function returnUnderfilled(...: string): (string, string)
       return ...;
       ~~~~~~
-!!! error TS2322: Type '...string' is not assignable to type 'string, string'.
-!!! error TS2322:   Target requires 2 element(s) but source may have fewer.
+!!! error TLUA2322: Type '...string' is not assignable to type 'string, string'.
+!!! error TLUA2322:   Target requires 2 element(s) but source may have fewer.
     end
     
     function localValueLists(...: number): void
@@ -171,16 +171,16 @@ tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | bool
       local mid = {midRest()};
       local notBoolean: boolean = mid[2];
             ~~~~~~~~~~
-!!! error TS2322: Type 'string | number | boolean' is not assignable to type 'boolean'.
-!!! error TS2322:   Type 'string' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'string | number | boolean' is not assignable to type 'boolean'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'boolean'.
     
       // An optional pack element may be absent, so the property it produces is
       // optional and its type carries nil.
       local opt = {optionalTail()};
       local maybeMissing: string = opt[2];
             ~~~~~~~~~~~~
-!!! error TS2322: Type 'string | nil' is not assignable to type 'string'.
-!!! error TS2322:   Type 'nil' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
     
       // A computed number key and a pack tail share the number index domain: one
       // signature covers both, so neither hides the other.
@@ -188,8 +188,8 @@ tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | bool
       local both: string | number = mixed[1];
       local notJustNumber: number = mixed[1];
             ~~~~~~~~~~~~~
-!!! error TS2322: Type 'string | number' is not assignable to type 'number'.
-!!! error TS2322:   Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
     end
     
     // A union of packs is only reachable by INFERENCE. The annotation form does not
@@ -259,8 +259,8 @@ tluaVarargAdjustment.tlua(202,24): error TS2345: Argument of type 'string | bool
       // the second parameter when the string run is empty.
       takesNumberAndString(midRest());
                            ~~~~~~~~~
-!!! error TS2345: Argument of type 'string | boolean' is not assignable to parameter of type 'string | nil'.
-!!! error TS2345:   Type 'boolean' is not assignable to type 'string'.
+!!! error TLUA2345: Argument of type 'string | boolean' is not assignable to parameter of type 'string | nil'.
+!!! error TLUA2345:   Type 'boolean' is not assignable to type 'string'.
     end
     
     declare function takesNumberAndEither(a: number, b: string | boolean): void;

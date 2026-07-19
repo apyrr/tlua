@@ -309,10 +309,10 @@ type APIFileChanges struct {
 // UpdateSnapshotParams are the parameters for creating a new snapshot.
 // All fields are optional. With no fields set, the server adopts the latest LSP state.
 type UpdateSnapshotParams struct {
-	// OpenProjects lists tsconfig.json files to open/load in the new snapshot.
+	// OpenProjects lists tluaconfig.json files to open/load in the new snapshot.
 	// Opens are ref-counted and persist across snapshots until closed.
 	OpenProjects []DocumentIdentifier `json:"openProjects,omitempty"`
-	// CloseProjects lists tsconfig.json files to release in the new snapshot.
+	// CloseProjects lists tluaconfig.json files to release in the new snapshot.
 	// A project is only unloaded once every API client that opened it closes it.
 	CloseProjects []DocumentIdentifier `json:"closeProjects,omitempty"`
 	// FileChanges describes file system changes since the last snapshot.

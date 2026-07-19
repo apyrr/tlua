@@ -14,12 +14,12 @@ func TestReferencesInEmptyFileWithMultipleProjects(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /home/src/workspaces/project/a/tsconfig.json
+	const content = `// @Filename: /home/src/workspaces/project/a/tluaconfig.json
 { "files": ["a.tlua"], "compilerOptions": { "lib": ["es5"] } }
 // @Filename: /home/src/workspaces/project/a/a.tlua
 /// <reference path="../b/b.tlua" />
 /*1*/;
-// @Filename: /home/src/workspaces/project/b/tsconfig.json
+// @Filename: /home/src/workspaces/project/b/tluaconfig.json
 { "files": ["b.tlua"], "compilerOptions": { "lib": ["es5"] } }
 // @Filename: /home/src/workspaces/project/b/b.tlua
 /*2*/;`

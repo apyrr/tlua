@@ -1089,7 +1089,7 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 	return NewProjectResponse(proj), nil
 }
 
-// handleParseConfigFile parses a tsconfig.json file and returns its contents.
+// handleParseConfigFile parses a tluaconfig.json file and returns its contents.
 func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfigFileParams) (*ConfigFileResponse, error) {
 	configFileName := params.File.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
 	configFileContent, ok := s.projectSession.FS().ReadFile(configFileName)

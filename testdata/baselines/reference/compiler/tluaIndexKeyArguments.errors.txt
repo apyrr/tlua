@@ -1,8 +1,8 @@
-tluaIndexKeyArguments.tlua(11,20): error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
-tluaIndexKeyArguments.tlua(12,24): error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
-tluaIndexKeyArguments.tlua(13,22): error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
-tluaIndexKeyArguments.tlua(14,18): error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
-tluaIndexKeyArguments.tlua(35,23): error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
+tluaIndexKeyArguments.tlua(11,20): error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
+tluaIndexKeyArguments.tlua(12,24): error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
+tluaIndexKeyArguments.tlua(13,22): error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
+tluaIndexKeyArguments.tlua(14,18): error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
+tluaIndexKeyArguments.tlua(35,23): error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
 
 
 ==== tluaIndexKeyArguments.tlua (5 errors) ====
@@ -18,16 +18,16 @@ tluaIndexKeyArguments.tlua(35,23): error TS100048: A type argument for an index-
     // structural mismatch later.
     type BadNil = Dict<nil, number>;
                        ~~~
-!!! error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
+!!! error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
     type BadUnknown = Dict<unknown, number>;
                            ~~~~~~~
-!!! error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
+!!! error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
     type BadUnion = Dict<string | nil, number>;
                          ~~~~~~~~~~~~
-!!! error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
+!!! error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
     local bad: Table<nil, number> | nil;
                      ~~~
-!!! error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
+!!! error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
     
     // Legal arguments stay legal: a literal widens to its domain (the documented
     // precision loss), and a bare type parameter forwards untouched. `any` is
@@ -50,6 +50,6 @@ tluaIndexKeyArguments.tlua(35,23): error TS100048: A type argument for an index-
     type Assoc<K> = { [key: K]: boolean };
     type BadAlias = Assoc<nil>;
                           ~~~
-!!! error TS100048: A type argument for an index-key type parameter cannot include 'nil'.
+!!! error TLUA100048: A type argument for an index-key type parameter cannot include 'nil'.
     type GoodAlias = Assoc<boolean>;
     

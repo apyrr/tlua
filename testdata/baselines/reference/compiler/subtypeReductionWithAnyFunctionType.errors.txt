@@ -1,8 +1,8 @@
-subtypeReductionWithAnyFunctionType.tlua(10,16): error TS7006: Parameter 'x' implicitly has an 'any' type.
-subtypeReductionWithAnyFunctionType.tlua(23,23): error TS1135: Argument expression expected.
-subtypeReductionWithAnyFunctionType.tlua(23,37): error TS2554: Expected 1 arguments, but got 2.
-subtypeReductionWithAnyFunctionType.tlua(23,46): error TS7006: Parameter 'v' implicitly has an 'any' type.
-subtypeReductionWithAnyFunctionType.tlua(23,55): error TS1005: ',' expected.
+subtypeReductionWithAnyFunctionType.tlua(10,16): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+subtypeReductionWithAnyFunctionType.tlua(23,23): error TLUA1135: Argument expression expected.
+subtypeReductionWithAnyFunctionType.tlua(23,37): error TLUA2554: Expected 1 arguments, but got 2.
+subtypeReductionWithAnyFunctionType.tlua(23,46): error TLUA7006: Parameter 'v' implicitly has an 'any' type.
+subtypeReductionWithAnyFunctionType.tlua(23,55): error TLUA1005: ',' expected.
 
 
 ==== subtypeReductionWithAnyFunctionType.tlua (5 errors) ====
@@ -17,7 +17,7 @@ subtypeReductionWithAnyFunctionType.tlua(23,55): error TS1005: ',' expected.
             }
             return x => x.length > 0;
                    ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
+!!! error TLUA7006: Parameter 'x' implicitly has an 'any' type.
         });
         return predicate;
     }
@@ -32,12 +32,12 @@ subtypeReductionWithAnyFunctionType.tlua(23,55): error TS1005: ',' expected.
     function f() {
         local _ = compact([makeFooer(), { foo = (v) => v }]);
                           ~
-!!! error TS1135: Argument expression expected.
+!!! error TLUA1135: Argument expression expected.
                                         ~~~~~~~~~~~~~~~~~~
-!!! error TS2554: Expected 1 arguments, but got 2.
+!!! error TLUA2554: Expected 1 arguments, but got 2.
                                                  ~
-!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+!!! error TLUA7006: Parameter 'v' implicitly has an 'any' type.
                                                           ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
     }
     

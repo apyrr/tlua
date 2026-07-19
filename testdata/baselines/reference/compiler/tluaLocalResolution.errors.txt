@@ -1,4 +1,4 @@
-tluaLocalResolution.tlua(13,17): error TS2304: Cannot find name 'laterLocal'.
+tluaLocalResolution.tlua(13,17): error TLUA2304: Cannot find name 'laterLocal'.
 
 
 ==== tluaLocalResolution.tlua (1 errors) ====
@@ -16,7 +16,7 @@ tluaLocalResolution.tlua(13,17): error TS2304: Cannot find name 'laterLocal'.
     
     local forward = laterLocal;
                     ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'laterLocal'.
+!!! error TLUA2304: Cannot find name 'laterLocal'.
     local laterLocal = 1;
     
     local outer = outer + 1;

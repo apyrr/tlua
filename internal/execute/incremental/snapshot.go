@@ -433,7 +433,7 @@ func (s *snapshot) computeHash(text string) string {
 
 func (s *snapshot) canUseIncrementalState() bool {
 	if !s.options.IsIncremental() && s.options.Build.IsTrue() {
-		// If not incremental build (with tsc -b), we don't need to track state except diagnostics per file so we can use it
+		// If not incremental build (with tlua -b), we don't need to track state except diagnostics per file so we can use it
 		return false
 	}
 	return true

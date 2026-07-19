@@ -10,7 +10,7 @@
 //     x;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) x: T extends {
 // |     color: string;
 // | } ? "one apple" : any
@@ -20,7 +20,7 @@
 // | ----------------------------------------------------------------------
 //     ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) x: T extends {
 // |     color: string;
 // | } ? "one apple" : any
@@ -30,7 +30,7 @@
 // | ----------------------------------------------------------------------
 //     ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) x: T1<T>
 // | ```
 // | 
@@ -52,7 +52,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\n(parameter) x: T1<T>\n```\n"
+          "value": "```tlua\n(parameter) x: T1<T>\n```\n"
         },
         "range": {
           "start": {
@@ -83,7 +83,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\n(parameter) x: T extends {\n    color: string;\n} ? \"one apple\" : any\n```\n"
+          "value": "```tlua\n(parameter) x: T extends {\n    color: string;\n} ? \"one apple\" : any\n```\n"
         },
         "range": {
           "start": {
@@ -113,7 +113,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\n(parameter) x: T extends {\n    color: string;\n} ? \"one apple\" : any\n```\n"
+          "value": "```tlua\n(parameter) x: T extends {\n    color: string;\n} ? \"one apple\" : any\n```\n"
         },
         "range": {
           "start": {

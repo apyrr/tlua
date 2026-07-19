@@ -32,9 +32,9 @@ func TestSemanticTokensCRLF(t *testing.T) {
 	fileFromEditor := strings.ReplaceAll(fileOnDisk, "\n", "\r\n")
 
 	files := map[string]string{
-		"/home/projects/tsconfig.json": `{}`,
-		"/home/projects/test.tlua":     fileOnDisk,
-		"/home/projects/other.tlua":    "export {}",
+		"/home/projects/tluaconfig.json": `{}`,
+		"/home/projects/test.tlua":       fileOnDisk,
+		"/home/projects/other.tlua":      "export {}",
 	}
 	fs := bundled.WrapFS(vfstest.FromMap(files, false))
 

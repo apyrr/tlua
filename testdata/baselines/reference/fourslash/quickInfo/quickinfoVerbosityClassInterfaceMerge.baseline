@@ -4,7 +4,7 @@
 // declare class Foo {
 //               ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -12,7 +12,7 @@
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -26,7 +26,7 @@
 // local f: Foo = { x: 1, y: "hello" };
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | interface Foo {
 // |     y: string;
 // | }
@@ -36,7 +36,7 @@
 // | ----------------------------------------------------------------------
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | interface Foo
 // | ```
 // | 
@@ -58,7 +58,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nany\n```\n"
+          "value": "```tlua\nany\n```\n"
         },
         "range": {
           "start": {
@@ -88,7 +88,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nany\n```\n"
+          "value": "```tlua\nany\n```\n"
         },
         "range": {
           "start": {
@@ -118,7 +118,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ninterface Foo\n```\n"
+          "value": "```tlua\ninterface Foo\n```\n"
         },
         "range": {
           "start": {
@@ -149,7 +149,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ninterface Foo {\n    y: string;\n}\n```\n"
+          "value": "```tlua\ninterface Foo {\n    y: string;\n}\n```\n"
         },
         "range": {
           "start": {

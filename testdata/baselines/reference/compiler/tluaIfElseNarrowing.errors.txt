@@ -1,4 +1,4 @@
-tluaIfElseNarrowing.tlua(28,6): error TS2774: This condition will always return true since this function is always defined. Did you mean to call it instead?
+tluaIfElseNarrowing.tlua(28,6): error TLUA2774: This condition will always return true since this function is always defined. Did you mean to call it instead?
 
 
 ==== tluaIfElseNarrowing.tlua (1 errors) ====
@@ -31,7 +31,7 @@ tluaIfElseNarrowing.tlua(28,6): error TS2774: This condition will always return 
     function alwaysTruthy(f: () => void): number
       if f then
          ~
-!!! error TS2774: This condition will always return true since this function is always defined. Did you mean to call it instead?
+!!! error TLUA2774: This condition will always return true since this function is always defined. Did you mean to call it instead?
         return 1;
       end
       return 0;

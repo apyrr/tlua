@@ -1,9 +1,9 @@
-a.tlua(5,7): error TS2339: Property 'tag' does not exist on type '{}'.
-b.tlua(2,3): error TS2339: Property 'x' does not exist on type '{}'.
-c.tlua(8,7): error TS2322: Type 'number | nil' is not assignable to type 'number'.
+a.tlua(5,7): error TLUA2339: Property 'tag' does not exist on type '{}'.
+b.tlua(2,3): error TLUA2339: Property 'x' does not exist on type '{}'.
+c.tlua(8,7): error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
   Type 'nil' is not assignable to type 'number'.
-d.tlua(2,12): error TS2300: Duplicate identifier 'member'.
-d.tlua(5,1): error TS2322: Type 'string' is not assignable to type 'number'.
+d.tlua(2,12): error TLUA2300: Duplicate identifier 'member'.
+d.tlua(5,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
 
 
 ==== a.tlua (1 errors) ====
@@ -13,7 +13,7 @@ d.tlua(5,1): error TS2322: Type 'string' is not assignable to type 'number'.
     Shape = {};
     Shape.tag = 1;
           ~~~
-!!! error TS2339: Property 'tag' does not exist on type '{}'.
+!!! error TLUA2339: Property 'tag' does not exist on type '{}'.
     local s: Shape = { x = 1 };
     
     // A non-constructor arm in any file closes an implicit global program-wide.
@@ -21,7 +21,7 @@ d.tlua(5,1): error TS2322: Type 'string' is not assignable to type 'number'.
     G = {};
     G.x = 1;
       ~
-!!! error TS2339: Property 'x' does not exist on type '{}'.
+!!! error TLUA2339: Property 'x' does not exist on type '{}'.
     
     U = {};
     
@@ -35,8 +35,8 @@ d.tlua(5,1): error TS2322: Type 'string' is not assignable to type 'number'.
     // assignment below narrows U, the read sees the whole union.
     local ua: number = U.a;
           ~~
-!!! error TS2322: Type 'number | nil' is not assignable to type 'number'.
-!!! error TS2322:   Type 'nil' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'number'.
     
     U = { a = 1 };
     local narrowed: number = U.a;
@@ -48,10 +48,10 @@ d.tlua(5,1): error TS2322: Type 'string' is not assignable to type 'number'.
     local t = { member = 1 };
     function t.member(): void
                ~~~~~~
-!!! error TS2300: Duplicate identifier 'member'.
+!!! error TLUA2300: Duplicate identifier 'member'.
     end
     t.member = 2;
     t.member = "no";
     ~~~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     

@@ -2,7 +2,7 @@ Fs::
 //// [/apath/a.tlua]
 
 
-//// [/apath/tsconfig.json]
+//// [/apath/tluaconfig.json]
 {
   "files": [
     {
@@ -15,10 +15,10 @@ Fs::
 }
 
 
-configFileName:: /apath/tsconfig.json
+configFileName:: /apath/tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/apath/tsconfig.json"
+  "configFilePath": "/apath/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -27,7 +27,7 @@ TypeAcquisition::
 FileNames::
 
 Errors::
-[96mtsconfig.json[0m:[93m3[0m:[93m5[0m - [91merror[0m[90m TS5024: [0mCompiler option 'files' requires a value of type string.
+[96mtluaconfig.json[0m:[93m3[0m:[93m5[0m - [91merror[0m[90m TLUA5024: [0mCompiler option 'files' requires a value of type string.
 
 [7m  3[0m     {
 [7m   [0m [91m    ~[0m

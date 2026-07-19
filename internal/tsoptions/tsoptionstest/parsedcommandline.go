@@ -8,7 +8,7 @@ import (
 
 func GetParsedCommandLine(t assert.TestingT, jsonText string, files map[string]string, currentDirectory string, useCaseSensitiveFileNames bool) *tsoptions.ParsedCommandLine {
 	host := NewVFSParseConfigHost(files, currentDirectory, useCaseSensitiveFileNames)
-	configFileName := tspath.CombinePaths(currentDirectory, "tsconfig.json")
+	configFileName := tspath.CombinePaths(currentDirectory, "tluaconfig.json")
 	tsconfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, currentDirectory, useCaseSensitiveFileNames), jsonText)
 	return tsoptions.ParseJsonSourceFileConfigFileContent(tsconfigSourceFile, host, currentDirectory, nil, nil, configFileName, nil, nil, nil)
 }

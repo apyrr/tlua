@@ -9080,7 +9080,7 @@ func (s *ProjectInfoParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 // Result for the custom/projectInfo request.
 type ProjectInfoResult struct {
-	// The absolute path to the config file (e.g. /path/to/tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.
+	// The absolute path to the config file (e.g. /path/to/tluaconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.
 	ConfigFilePath string `json:"configFilePath" lsp:"required"`
 }
 
@@ -10989,7 +10989,7 @@ const (
 	MethodCustomStopCPUProfile Method = "custom/stopCPUProfile"
 	// Custom request to initialize an API session.
 	MethodCustomInitializeAPISession Method = "custom/initializeAPISession"
-	// Returns project information (e.g. the tsconfig.json path) for a given text document.
+	// Returns project information (e.g. the tluaconfig.json path) for a given text document.
 	MethodCustomProjectInfo Method = "custom/projectInfo"
 	// Request to get source definitions for a position.
 	MethodCustomTextDocumentSourceDefinition Method = "custom/textDocument/sourceDefinition"

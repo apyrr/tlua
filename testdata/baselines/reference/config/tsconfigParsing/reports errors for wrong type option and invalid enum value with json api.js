@@ -2,7 +2,7 @@ Fs::
 //// [/app.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
 			    "compilerOptions": {
 				"target": "invalid value",
@@ -12,10 +12,10 @@ Fs::
 			}
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -24,4 +24,4 @@ TypeAcquisition::
 FileNames::
 /app.tlua
 Errors::
-[91merror[0m[90m TS5024: [0mCompiler option 'removeComments' requires a value of type boolean.
+[91merror[0m[90m TLUA5024: [0mCompiler option 'removeComments' requires a value of type boolean.

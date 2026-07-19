@@ -71,7 +71,7 @@ func ParseBuildCommandLine(
 	compilerOptions := &core.CompilerOptions{}
 	for key, value := range parser.options.Entries() {
 		buildOption := BuildNameMap.Get(key)
-		if buildOption == &TscBuildOption || buildOption == CompilerNameMap.Get(key) {
+		if buildOption == &TluaBuildOption || buildOption == CompilerNameMap.Get(key) {
 			ParseCompilerOptions(key, value, compilerOptions)
 		}
 	}
@@ -90,7 +90,7 @@ func ParseBuildCommandLine(
 	}
 
 	if len(result.Projects) == 0 {
-		// tsc -b invoked with no extra arguments; act as if invoked with "tsc -b ."
+		// tlua -b invoked with no extra arguments; act as if invoked with "tlua -b ."
 		result.Projects = append(result.Projects, ".")
 	}
 
@@ -248,10 +248,10 @@ func (p *commandLineParser) parseOptionValue(
 				if optValue == "true" {
 					i++
 				}
-				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line, opt.Name))
+				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line, opt.Name))
 			}
 		} else {
-			p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line, opt.Name))
+			p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_null_on_command_line, opt.Name))
 			if len(optValue) != 0 && !strings.HasPrefix(optValue, "-") {
 				i++
 			}

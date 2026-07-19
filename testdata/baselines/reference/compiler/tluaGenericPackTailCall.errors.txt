@@ -1,4 +1,4 @@
-tluaGenericPackTailCall.tlua(27,8): error TS2769: No overload matches this call.
+tluaGenericPackTailCall.tlua(27,8): error TLUA2769: No overload matches this call.
   The last overload gave the following error.
     Argument of type 'boolean' is not assignable to parameter of type 'string'.
 
@@ -32,8 +32,8 @@ tluaGenericPackTailCall.tlua(27,8): error TS2769: No overload matches this call.
     declare function sink(...: any): void;
     sink(f(true));
            ~~~~
-!!! error TS2769: No overload matches this call.
-!!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type 'boolean' is not assignable to parameter of type 'string'.
-!!! related TS2771 tluaGenericPackTailCall.tlua:25:18: The last overload is declared here.
+!!! error TLUA2769: No overload matches this call.
+!!! error TLUA2769:   The last overload gave the following error.
+!!! error TLUA2769:     Argument of type 'boolean' is not assignable to parameter of type 'string'.
+!!! related TLUA2771 tluaGenericPackTailCall.tlua:25:18: The last overload is declared here.
     

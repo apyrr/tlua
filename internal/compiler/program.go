@@ -838,7 +838,7 @@ func (p *Program) verifyCompilerOptions() {
 	}
 
 	if options.TsBuildInfoFile == "" && options.Incremental.IsTrue() && options.ConfigFilePath == "" {
-		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided)
+		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_is_only_valid_with_a_known_configuration_file_like_tluaconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided)
 	}
 
 	p.verifyProjectReferences()
@@ -1037,7 +1037,7 @@ func (p *Program) verifyCompilerOptions() {
 					diag := ast.NewCompilerDiagnostic(diagnostics.Cannot_write_file_0_because_it_would_overwrite_input_file, emitFileName)
 					if configFilePath() == "" {
 						// The program is from either an inferred project or an external project
-						diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig))
+						diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig))
 					}
 					p.blockEmittingOfFile(emitFileName, diag)
 				}
@@ -1109,7 +1109,7 @@ func (p *Program) verifyProjectReferences() {
 			}
 		}
 		if buildInfoFileName != "" && buildInfoFileName == config.GetBuildInfoFileName() {
-			createDiagnosticForReference(parent, index, diagnostics.Cannot_write_file_0_because_it_will_overwrite_tsbuildinfo_file_generated_by_referenced_project_1, buildInfoFileName, ref.Path)
+			createDiagnosticForReference(parent, index, diagnostics.Cannot_write_file_0_because_it_will_overwrite_tluabuildinfo_file_generated_by_referenced_project_1, buildInfoFileName, ref.Path)
 			p.hasEmitBlockingDiagnostics.Add(p.toPath(buildInfoFileName))
 		}
 		return true

@@ -1,7 +1,7 @@
-tluaIndexKeyVariance.tlua(9,7): error TS2322: Type 'Table<string | number, boolean>' is not assignable to type 'Table<string, boolean>'.
+tluaIndexKeyVariance.tlua(9,7): error TLUA2322: Type 'Table<string | number, boolean>' is not assignable to type 'Table<string, boolean>'.
   Type 'string | number' is not assignable to type 'string'.
     Type 'number' is not assignable to type 'string'.
-tluaIndexKeyVariance.tlua(10,7): error TS2322: Type 'Table<string, boolean>' is not assignable to type 'Table<string | number, boolean>'.
+tluaIndexKeyVariance.tlua(10,7): error TLUA2322: Type 'Table<string, boolean>' is not assignable to type 'Table<string | number, boolean>'.
   Type 'string | number' is not assignable to type 'string'.
     Type 'number' is not assignable to type 'string'.
 
@@ -17,14 +17,14 @@ tluaIndexKeyVariance.tlua(10,7): error TS2322: Type 'Table<string, boolean>' is 
     
     local a: Table<string, boolean> = wide;
           ~
-!!! error TS2322: Type 'Table<string | number, boolean>' is not assignable to type 'Table<string, boolean>'.
-!!! error TS2322:   Type 'string | number' is not assignable to type 'string'.
-!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'Table<string | number, boolean>' is not assignable to type 'Table<string, boolean>'.
+!!! error TLUA2322:   Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:     Type 'number' is not assignable to type 'string'.
     local b: Table<string | number, boolean> = narrow;
           ~
-!!! error TS2322: Type 'Table<string, boolean>' is not assignable to type 'Table<string | number, boolean>'.
-!!! error TS2322:   Type 'string | number' is not assignable to type 'string'.
-!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'Table<string, boolean>' is not assignable to type 'Table<string | number, boolean>'.
+!!! error TLUA2322:   Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:     Type 'number' is not assignable to type 'string'.
     
     // Identical keys relate as before.
     local c: Table<string, boolean> = narrow;

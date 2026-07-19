@@ -1,44 +1,44 @@
-tluaNoClass.tlua(5,1): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(5,1): error TS2304: Cannot find name 'class'.
-tluaNoClass.tlua(5,7): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(5,7): error TS2304: Cannot find name 'C'.
-tluaNoClass.tlua(7,1): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(7,1): error TS2304: Cannot find name 'class'.
-tluaNoClass.tlua(7,7): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(7,7): error TS2304: Cannot find name 'D'.
-tluaNoClass.tlua(7,9): error TS1128: Declaration or statement expected.
-tluaNoClass.tlua(7,17): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(7,17): error TS2304: Cannot find name 'C'.
-tluaNoClass.tlua(9,1): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(9,1): error TS2304: Cannot find name 'abstract'.
-tluaNoClass.tlua(9,10): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(9,10): error TS2304: Cannot find name 'class'.
-tluaNoClass.tlua(9,16): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(9,16): error TS2304: Cannot find name 'E'.
-tluaNoClass.tlua(11,1): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(11,1): error TS2304: Cannot find name 'class'.
-tluaNoClass.tlua(11,7): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(11,7): error TS2304: Cannot find name 'F'.
-tluaNoClass.tlua(13,11): error TS2304: Cannot find name 'class'.
-tluaNoClass.tlua(13,17): error TS1005: ';' expected.
-tluaNoClass.tlua(15,1): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(15,1): error TS2304: Cannot find name 'class'.
-tluaNoClass.tlua(15,7): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(15,7): error TS2304: Cannot find name 'WithMembers'.
-tluaNoClass.tlua(16,3): error TS2304: Cannot find name 'x'.
-tluaNoClass.tlua(17,3): error TS2304: Cannot find name 'm'.
-tluaNoClass.tlua(17,7): error TS1005: ';' expected.
-tluaNoClass.tlua(18,3): error TS2304: Cannot find name 'constructor'.
-tluaNoClass.tlua(18,17): error TS1005: ';' expected.
-tluaNoClass.tlua(19,3): error TS1128: Declaration or statement expected.
-tluaNoClass.tlua(19,10): error TS2304: Cannot find name 's'.
-tluaNoClass.tlua(19,14): error TS1005: ';' expected.
-tluaNoClass.tlua(20,4): error TS2304: Cannot find name 'p'.
-tluaNoClass.tlua(20,6): error TS1005: ';' expected.
-tluaNoClass.tlua(21,3): error TS1434: Unexpected keyword or identifier.
-tluaNoClass.tlua(21,3): error TS2304: Cannot find name 'get'.
-tluaNoClass.tlua(21,7): error TS2304: Cannot find name 'a'.
-tluaNoClass.tlua(21,11): error TS1005: ';' expected.
+tluaNoClass.tlua(5,1): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(5,1): error TLUA2304: Cannot find name 'class'.
+tluaNoClass.tlua(5,7): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(5,7): error TLUA2304: Cannot find name 'C'.
+tluaNoClass.tlua(7,1): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(7,1): error TLUA2304: Cannot find name 'class'.
+tluaNoClass.tlua(7,7): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(7,7): error TLUA2304: Cannot find name 'D'.
+tluaNoClass.tlua(7,9): error TLUA1128: Declaration or statement expected.
+tluaNoClass.tlua(7,17): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(7,17): error TLUA2304: Cannot find name 'C'.
+tluaNoClass.tlua(9,1): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(9,1): error TLUA2304: Cannot find name 'abstract'.
+tluaNoClass.tlua(9,10): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(9,10): error TLUA2304: Cannot find name 'class'.
+tluaNoClass.tlua(9,16): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(9,16): error TLUA2304: Cannot find name 'E'.
+tluaNoClass.tlua(11,1): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(11,1): error TLUA2304: Cannot find name 'class'.
+tluaNoClass.tlua(11,7): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(11,7): error TLUA2304: Cannot find name 'F'.
+tluaNoClass.tlua(13,11): error TLUA2304: Cannot find name 'class'.
+tluaNoClass.tlua(13,17): error TLUA1005: ';' expected.
+tluaNoClass.tlua(15,1): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(15,1): error TLUA2304: Cannot find name 'class'.
+tluaNoClass.tlua(15,7): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(15,7): error TLUA2304: Cannot find name 'WithMembers'.
+tluaNoClass.tlua(16,3): error TLUA2304: Cannot find name 'x'.
+tluaNoClass.tlua(17,3): error TLUA2304: Cannot find name 'm'.
+tluaNoClass.tlua(17,7): error TLUA1005: ';' expected.
+tluaNoClass.tlua(18,3): error TLUA2304: Cannot find name 'constructor'.
+tluaNoClass.tlua(18,17): error TLUA1005: ';' expected.
+tluaNoClass.tlua(19,3): error TLUA1128: Declaration or statement expected.
+tluaNoClass.tlua(19,10): error TLUA2304: Cannot find name 's'.
+tluaNoClass.tlua(19,14): error TLUA1005: ';' expected.
+tluaNoClass.tlua(20,4): error TLUA2304: Cannot find name 'p'.
+tluaNoClass.tlua(20,6): error TLUA1005: ';' expected.
+tluaNoClass.tlua(21,3): error TLUA1434: Unexpected keyword or identifier.
+tluaNoClass.tlua(21,3): error TLUA2304: Cannot find name 'get'.
+tluaNoClass.tlua(21,7): error TLUA2304: Cannot find name 'a'.
+tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
 
 
 ==== tluaNoClass.tlua (41 errors) ====
@@ -48,103 +48,103 @@ tluaNoClass.tlua(21,11): error TS1005: ';' expected.
     
     class C {}
     ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
           ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
           ~
-!!! error TS2304: Cannot find name 'C'.
+!!! error TLUA2304: Cannot find name 'C'.
     
     class D extends C {}
     ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
           ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
           ~
-!!! error TS2304: Cannot find name 'D'.
+!!! error TLUA2304: Cannot find name 'D'.
             ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                     ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                     ~
-!!! error TS2304: Cannot find name 'C'.
+!!! error TLUA2304: Cannot find name 'C'.
     
     abstract class E {}
     ~~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~~~
-!!! error TS2304: Cannot find name 'abstract'.
+!!! error TLUA2304: Cannot find name 'abstract'.
              ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
              ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
                    ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                    ~
-!!! error TS2304: Cannot find name 'E'.
+!!! error TLUA2304: Cannot find name 'E'.
     
     class F {}
     ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
           ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
           ~
-!!! error TS2304: Cannot find name 'F'.
+!!! error TLUA2304: Cannot find name 'F'.
     
     local g = class {};
               ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
                     ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     
     class WithMembers {
     ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
           ~~~~~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
           ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'WithMembers'.
+!!! error TLUA2304: Cannot find name 'WithMembers'.
       x = 1;
       ~
-!!! error TS2304: Cannot find name 'x'.
+!!! error TLUA2304: Cannot find name 'x'.
       m() {}
       ~
-!!! error TS2304: Cannot find name 'm'.
+!!! error TLUA2304: Cannot find name 'm'.
           ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
       constructor() {}
       ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'constructor'.
+!!! error TLUA2304: Cannot find name 'constructor'.
                     ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
       static s() {}
       ~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
              ~
-!!! error TS2304: Cannot find name 's'.
+!!! error TLUA2304: Cannot find name 's'.
                  ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
       #p = 2;
        ~
-!!! error TS2304: Cannot find name 'p'.
+!!! error TLUA2304: Cannot find name 'p'.
          ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
       get a() {
       ~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
       ~~~
-!!! error TS2304: Cannot find name 'get'.
+!!! error TLUA2304: Cannot find name 'get'.
           ~
-!!! error TS2304: Cannot find name 'a'.
+!!! error TLUA2304: Cannot find name 'a'.
               ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
         return 1;
       }
     }

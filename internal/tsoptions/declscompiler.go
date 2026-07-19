@@ -74,7 +74,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		Kind:                     CommandLineOptionTypeBoolean,
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Output_Formatting,
-		Description:              diagnostics.Enable_color_and_formatting_in_TypeScript_s_output_to_make_compiler_errors_easier_to_read,
+		Description:              diagnostics.Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read,
 		DefaultValueDescription:  true,
 	},
 	{
@@ -119,7 +119,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		ShortName:               "i",
 		Kind:                    CommandLineOptionTypeBoolean,
 		Category:                diagnostics.Projects,
-		Description:             diagnostics.Save_tsbuildinfo_files_to_allow_for_incremental_compilation_of_projects,
+		Description:             diagnostics.Save_tluabuildinfo_files_to_allow_for_incremental_compilation_of_projects,
 		transpileOptionValue:    core.TSUnknown,
 		DefaultValueDescription: diagnostics.X_false_unless_composite_is_set,
 	},
@@ -132,7 +132,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Emit,
 		transpileOptionValue:     core.TSUnknown,
-		Description:              diagnostics.Generate_d_ts_files_from_TypeScript_and_JavaScript_files_in_your_project,
+		Description:              diagnostics.Generate_d_ts_files_from_Lua_and_JavaScript_files_in_your_project,
 		DefaultValueDescription:  diagnostics.X_false_unless_composite_is_set,
 	},
 	{
@@ -217,7 +217,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		Kind:                    CommandLineOptionTypeString,
 		Category:                diagnostics.Command_line_Options,
 		IsCommandLineOnly:       true,
-		Description:             diagnostics.Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit,
+		Description:             diagnostics.Set_the_language_of_the_messaging_from_tlua_This_does_not_affect_emit,
 		DefaultValueDescription: diagnostics.Platform_specific,
 		extraValidation:         extraValidationLocale,
 	},
@@ -278,7 +278,7 @@ var optionsForCompiler = []*CommandLineOption{
 		Kind:                     CommandLineOptionTypeBoolean,
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Command_line_Options,
-		Description:              diagnostics.Initializes_a_TypeScript_project_and_creates_a_tsconfig_json_file,
+		Description:              diagnostics.Initializes_a_tlua_project_and_creates_a_tluaconfig_json_file,
 		DefaultValueDescription:  false,
 	},
 	{
@@ -288,7 +288,7 @@ var optionsForCompiler = []*CommandLineOption{
 		IsFilePath:               true,
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Command_line_Options,
-		Description:              diagnostics.Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tsconfig_json,
+		Description:              diagnostics.Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tluaconfig_json,
 	},
 	{
 		Name:                     "showConfig",
@@ -313,7 +313,7 @@ var optionsForCompiler = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Command_line_Options,
 		IsCommandLineOnly:        true,
-		Description:              diagnostics.Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files,
+		Description:              diagnostics.Ignore_the_tluaconfig_found_and_build_with_commandline_options_and_files,
 		DefaultValueDescription:  false,
 	},
 
@@ -419,7 +419,7 @@ var optionsForCompiler = []*CommandLineOption{
 		Category:                diagnostics.Projects,
 		transpileOptionValue:    core.TSUnknown,
 		DefaultValueDescription: false,
-		Description:             diagnostics.Enable_constraints_that_allow_a_TypeScript_project_to_be_used_with_project_references,
+		Description:             diagnostics.Enable_constraints_that_allow_a_tlua_project_to_be_used_with_project_references,
 	},
 	{
 		Name:                    "tsBuildInfoFile",
@@ -429,8 +429,8 @@ var optionsForCompiler = []*CommandLineOption{
 		IsFilePath:              true,
 		Category:                diagnostics.Projects,
 		transpileOptionValue:    core.TSUnknown,
-		DefaultValueDescription: ".tsbuildinfo",
-		Description:             diagnostics.Specify_the_path_to_tsbuildinfo_incremental_compilation_file,
+		DefaultValueDescription: ".tluabuildinfo",
+		Description:             diagnostics.Specify_the_path_to_tluabuildinfo_incremental_compilation_file,
 	},
 	{
 		Name:                     "removeComments",
@@ -821,7 +821,7 @@ var optionsForCompiler = []*CommandLineOption{
 		// We need to store these to determine whether `lib` files need to be rechecked
 		AffectsBuildInfo:        true,
 		Category:                diagnostics.Completeness,
-		Description:             diagnostics.Skip_type_checking_d_ts_files_that_are_included_with_TypeScript,
+		Description:             diagnostics.Skip_type_checking_d_ts_files_that_are_included_with_tlua,
 		DefaultValueDescription: false,
 	},
 	{
@@ -867,7 +867,7 @@ var optionsForCompiler = []*CommandLineOption{
 		Kind:                    CommandLineOptionTypeBoolean,
 		AffectsModuleResolution: true,
 		Category:                diagnostics.Modules,
-		Description:             diagnostics.Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_TypeScript_should_add_to_a_project,
+		Description:             diagnostics.Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_tlua_should_add_to_a_project,
 		// We are not doing a full typecheck, we are not resolving the whole context,
 		// so pass --noResolve to avoid reporting missing file errors.
 		transpileOptionValue:    core.TSTrue,
@@ -887,7 +887,7 @@ var optionsForCompiler = []*CommandLineOption{
 		Kind:                    CommandLineOptionTypeBoolean,
 		AffectsProgramStructure: true,
 		Category:                diagnostics.Editor_Support,
-		Description:             diagnostics.Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_TypeScript_language_server,
+		Description:             diagnostics.Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_tlua_language_server,
 		DefaultValueDescription: false,
 	},
 	{
@@ -911,7 +911,7 @@ var optionsForCompiler = []*CommandLineOption{
 		Kind:                    CommandLineOptionTypeBoolean,
 		IsTSConfigOnly:          true,
 		Category:                diagnostics.Projects,
-		Description:             diagnostics.Reduce_the_number_of_projects_loaded_automatically_by_TypeScript,
+		Description:             diagnostics.Reduce_the_number_of_projects_loaded_automatically_by_tlua,
 		DefaultValueDescription: false,
 	},
 	{

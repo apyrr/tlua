@@ -1,5 +1,5 @@
-collision.tlua(3,12): error TS2300: Duplicate identifier 'Dup'.
-collision.tlua(4,6): error TS2300: Duplicate identifier 'Dup'.
+collision.tlua(3,12): error TLUA2300: Duplicate identifier 'Dup'.
+collision.tlua(4,6): error TLUA2300: Duplicate identifier 'Dup'.
 
 
 ==== merge.tlua (0 errors) ====
@@ -15,10 +15,10 @@ collision.tlua(4,6): error TS2300: Duplicate identifier 'Dup'.
     // a duplicate identifier: both land in the module's local scope.
     local type Dup = number;
                ~~~
-!!! error TS2300: Duplicate identifier 'Dup'.
+!!! error TLUA2300: Duplicate identifier 'Dup'.
     type Dup = string;
          ~~~
-!!! error TS2300: Duplicate identifier 'Dup'.
+!!! error TLUA2300: Duplicate identifier 'Dup'.
     
 ==== nested.tlua (0 errors) ====
     // `local type` nested in a block is redundant with bare nested types (both scope

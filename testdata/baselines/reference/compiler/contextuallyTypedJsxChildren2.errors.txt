@@ -1,5 +1,5 @@
-contextuallyTypedJsxChildren2.tsx(25,30): error TS2304: Cannot find name 'Math'.
-contextuallyTypedJsxChildren2.tsx(31,42): error TS2304: Cannot find name 'Math'.
+contextuallyTypedJsxChildren2.tsx(25,30): error TLUA2304: Cannot find name 'Math'.
+contextuallyTypedJsxChildren2.tsx(31,42): error TLUA2304: Cannot find name 'Math'.
 
 
 ==== contextuallyTypedJsxChildren2.tsx (2 errors) ====
@@ -29,7 +29,7 @@ contextuallyTypedJsxChildren2.tsx(31,42): error TS2304: Cannot find name 'Math'.
           <TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>
             {(selected) => <div>{Math.max(selected, 0)}</div>}
                                  ~~~~
-!!! error TS2304: Cannot find name 'Math'.
+!!! error TLUA2304: Cannot find name 'Math'.
           </TestComponentWithChildren>
     
           <TestComponentWithoutChildren
@@ -37,7 +37,7 @@ contextuallyTypedJsxChildren2.tsx(31,42): error TS2304: Cannot find name 'Math'.
             selector={(state) => state.foo}
             notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}
                                              ~~~~
-!!! error TS2304: Cannot find name 'Math'.
+!!! error TLUA2304: Cannot find name 'Math'.
           />
         </>
       );

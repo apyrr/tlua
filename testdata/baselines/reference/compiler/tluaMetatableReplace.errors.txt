@@ -1,7 +1,7 @@
-tluaMetatableReplace.tlua(14,23): error TS2339: Property 'fromFirst' does not exist on type '{ fromSecond: string; own: boolean; }'.
-tluaMetatableReplace.tlua(19,24): error TS2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
-tluaMetatableReplace.tlua(23,21): error TS2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
-tluaMetatableReplace.tlua(36,7): error TS2322: Type 'number' is not assignable to type 'boolean'.
+tluaMetatableReplace.tlua(14,23): error TLUA2339: Property 'fromFirst' does not exist on type '{ fromSecond: string; own: boolean; }'.
+tluaMetatableReplace.tlua(19,24): error TLUA2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
+tluaMetatableReplace.tlua(23,21): error TLUA2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
+tluaMetatableReplace.tlua(36,7): error TLUA2322: Type 'number' is not assignable to type 'boolean'.
 
 
 ==== tluaMetatableReplace.tlua (4 errors) ====
@@ -20,20 +20,20 @@ tluaMetatableReplace.tlua(36,7): error TS2322: Type 'number' is not assignable t
     local own1: boolean = repaired.own;
     local gone = repaired.fromFirst;
                           ~~~~~~~~~
-!!! error TS2339: Property 'fromFirst' does not exist on type '{ fromSecond: string; own: boolean; }'.
+!!! error TLUA2339: Property 'fromFirst' does not exist on type '{ fromSecond: string; own: boolean; }'.
     
     // `setmetatable(t, nil)` is how a metatable is detached.
     local detached = setmetatable(obj, nil);
     local own2: boolean = detached.own;
     local gone2 = detached.fromFirst;
                            ~~~~~~~~~
-!!! error TS2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
+!!! error TLUA2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
     
     // A metatable with no __index detaches the fallback just as thoroughly.
     local other = setmetatable(obj, { __tostring = function(t: object): string return "t"; end });
     local gone3 = other.fromFirst;
                         ~~~~~~~~~
-!!! error TS2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
+!!! error TLUA2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
     
     // The metatable goes with it: nothing pairs these tables now.
     local dm = getmetatable(detached);
@@ -48,5 +48,5 @@ tluaMetatableReplace.tlua(36,7): error TS2322: Type 'number' is not assignable t
     setmetatable(plain, { __index = First });
     local statementForm: boolean = plain.fromFirst;
           ~~~~~~~~~~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'boolean'.
     

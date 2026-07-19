@@ -88,9 +88,9 @@
                             "experimental"
                         ]
                     },
-                    "tlua.tsdk.path": {
+                    "tlua.sdk.path": {
                         "type": "string",
-                        "description": "%tlua.tsdk.description%",
+                        "description": "%tlua.sdk.description%",
                         "scope": "window",
                         "tags": [
                             "experimental"

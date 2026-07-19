@@ -1,5 +1,5 @@
-tluaMetatableConcatLen.tlua(28,24): error TS2322: Type 'number' is not assignable to type '{ tag: string; }'.
-tluaMetatableConcatLen.tlua(33,18): error TS2365: Operator '..' cannot be applied to types '{ n: number; }' and 'string'.
+tluaMetatableConcatLen.tlua(28,24): error TLUA2322: Type 'number' is not assignable to type '{ tag: string; }'.
+tluaMetatableConcatLen.tlua(33,18): error TLUA2365: Operator '..' cannot be applied to types '{ n: number; }' and 'string'.
 
 
 ==== tluaMetatableConcatLen.tlua (2 errors) ====
@@ -32,13 +32,13 @@ tluaMetatableConcatLen.tlua(33,18): error TS2365: Operator '..' cannot be applie
     local p = setmetatable({ tag = "p" }, Strict);
     local badConcat = p .. 5;
                            ~
-!!! error TS2322: Type 'number' is not assignable to type '{ tag: string; }'.
+!!! error TLUA2322: Type 'number' is not assignable to type '{ tag: string; }'.
     
     // A table with no __concat still errors on `..`, while `#` without __len falls back to
     // the structural rule, which measures any table -- a plain record included.
     local plain = { n = 1 };
     local noConcat = plain .. "x";
                      ~~~~~~~~~~~~
-!!! error TS2365: Operator '..' cannot be applied to types '{ n: number; }' and 'string'.
+!!! error TLUA2365: Operator '..' cannot be applied to types '{ n: number; }' and 'string'.
     local noLen: number = #plain;
     

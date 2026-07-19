@@ -25,8 +25,8 @@ func TestUpdateTemporarySnapshot(t *testing.T) {
 	const content = "local x: number = 1;"
 
 	files := map[string]any{
-		"/home/projects/p/tsconfig.json": `{ "compilerOptions": { "strict": true } }`,
-		fileName:                         content,
+		"/home/projects/p/tluaconfig.json": `{ "compilerOptions": { "strict": true } }`,
+		fileName:                           content,
 	}
 	projectSession, _ := projecttestutil.Setup(files)
 	defer projectSession.Close()
@@ -109,8 +109,8 @@ func TestUpdateTemporarySnapshotAddsUnopenedFile(t *testing.T) {
 	const existingFileName = "/home/projects/p/src/index.tlua"
 	const temporaryFileName = "/home/projects/p/src/temporary.tlua"
 	files := map[string]any{
-		"/home/projects/p/tsconfig.json": `{ "include": ["src/**/*.tlua"] }`,
-		existingFileName:                 "local existing = 1;",
+		"/home/projects/p/tluaconfig.json": `{ "include": ["src/**/*.tlua"] }`,
+		existingFileName:                   "local existing = 1;",
 	}
 	projectSession, _ := projecttestutil.Setup(files)
 	defer projectSession.Close()
@@ -171,8 +171,8 @@ func TestUpdateTemporarySnapshotUsesClientSnapshotAsBase(t *testing.T) {
 	const fileName = "/home/projects/p/src/index.tlua"
 	const laterFileName = "/home/projects/p/src/later.tlua"
 	files := map[string]any{
-		"/home/projects/p/tsconfig.json": `{ "include": ["src/**/*.tlua"] }`,
-		fileName:                         "local existing = 1;",
+		"/home/projects/p/tluaconfig.json": `{ "include": ["src/**/*.tlua"] }`,
+		fileName:                           "local existing = 1;",
 	}
 	projectSession, _ := projecttestutil.Setup(files)
 	defer projectSession.Close()

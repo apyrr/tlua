@@ -8,7 +8,7 @@ import (
 
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/execute/build"
-	"github.com/apyrr/tlua/internal/execute/tsctests"
+	"github.com/apyrr/tlua/internal/execute/tluatests"
 	"github.com/apyrr/tlua/internal/tsoptions"
 	"gotest.tools/v3/assert"
 )
@@ -39,12 +39,12 @@ type buildOrderTestCase struct {
 }
 
 func (b *buildOrderTestCase) configName(project string) string {
-	return fmt.Sprintf("/home/src/workspaces/project/%s/tsconfig.json", project)
+	return fmt.Sprintf("/home/src/workspaces/project/%s/tluaconfig.json", project)
 }
 
 func (b *buildOrderTestCase) projectName(config string) string {
 	str := strings.TrimPrefix(config, "/home/src/workspaces/project/")
-	str = strings.TrimSuffix(str, "/tsconfig.json")
+	str = strings.TrimSuffix(str, "/tluaconfig.json")
 	return str
 }
 
@@ -108,7 +108,7 @@ func (b *buildOrderTestCase) run(t *testing.T) {
             }`, project, referencesStr)
 		}
 
-		sys := tsctests.NewTscSystem(files, true, "/home/src/workspaces/project")
+		sys := tluatests.NewTscSystem(files, true, "/home/src/workspaces/project")
 		args := append([]string{"--build", "--dry"}, b.projects...)
 		buildCommand := tsoptions.ParseBuildCommandLine(args, sys)
 		orchestrator := build.NewOrchestrator(build.Options{

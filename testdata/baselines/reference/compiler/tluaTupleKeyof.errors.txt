@@ -1,5 +1,5 @@
-main.tlua(4,7): error TS2322: Type '"push"' is not assignable to type 'keyof [string, boolean]'.
-shapes.d.tlua(6,72): error TS2344: Type 'string' does not satisfy the constraint 'keyof [number, ...T]'.
+main.tlua(4,7): error TLUA2322: Type '"push"' is not assignable to type 'keyof [string, boolean]'.
+shapes.d.tlua(6,72): error TLUA2344: Type 'string' does not satisfy the constraint 'keyof [number, ...T]'.
   Type '"push"' is not assignable to type 'number | "length"'.
 
 
@@ -11,8 +11,8 @@ shapes.d.tlua(6,72): error TS2344: Type 'string' does not satisfy the constraint
     // member, so this default is not a valid key of the tuple.
     interface KeyBox<T extends unknown[], K extends keyof [number, ...T] = "push"> {
                                                                            ~~~~~~
-!!! error TS2344: Type 'string' does not satisfy the constraint 'keyof [number, ...T]'.
-!!! error TS2344:   Type '"push"' is not assignable to type 'number | "length"'.
+!!! error TLUA2344: Type 'string' does not satisfy the constraint 'keyof [number, ...T]'.
+!!! error TLUA2344:   Type '"push"' is not assignable to type 'number | "length"'.
       key: K;
     }
     
@@ -22,7 +22,7 @@ shapes.d.tlua(6,72): error TS2344: Type 'string' does not satisfy the constraint
     local okLen: keyof typeof pair = "length";
     local bad: keyof typeof pair = "push";
           ~~~
-!!! error TS2322: Type '"push"' is not assignable to type 'keyof [string, boolean]'.
+!!! error TLUA2322: Type '"push"' is not assignable to type 'keyof [string, boolean]'.
     
     local es = {ok0, okLen};
     

@@ -1,4 +1,4 @@
-jsxLibraryManagedAttributesUnexpectedType.tsx(5,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+jsxLibraryManagedAttributesUnexpectedType.tsx(5,12): error TLUA2874: This JSX tag requires 'React' to be in scope, but it could not be found.
 
 
 ==== jsxLibraryManagedAttributesUnexpectedType.tsx (1 errors) ====
@@ -8,5 +8,5 @@ jsxLibraryManagedAttributesUnexpectedType.tsx(5,12): error TS2874: This JSX tag 
     
     local x = <C />;
                ~
-!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+!!! error TLUA2874: This JSX tag requires 'React' to be in scope, but it could not be found.
     

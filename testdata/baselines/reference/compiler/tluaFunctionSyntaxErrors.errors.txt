@@ -1,17 +1,17 @@
-tluaFunctionSyntaxErrors.tlua(1,7): error TS1359: Identifier expected. 'end' is a reserved word that cannot be used here.
-tluaFunctionSyntaxErrors.tlua(1,11): error TS1128: Declaration or statement expected.
-tluaFunctionSyntaxErrors.tlua(5,1): error TS1005: 'end' expected.
+tluaFunctionSyntaxErrors.tlua(1,7): error TLUA1359: Identifier expected. 'end' is a reserved word that cannot be used here.
+tluaFunctionSyntaxErrors.tlua(1,11): error TLUA1128: Declaration or statement expected.
+tluaFunctionSyntaxErrors.tlua(5,1): error TLUA1005: 'end' expected.
 
 
 ==== tluaFunctionSyntaxErrors.tlua (3 errors) ====
     local end = 1;
           ~~~
-!!! error TS1359: Identifier expected. 'end' is a reserved word that cannot be used here.
+!!! error TLUA1359: Identifier expected. 'end' is a reserved word that cannot be used here.
               ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
     
     local function missingEnd(): void
       return;
     
     
-!!! error TS1005: 'end' expected.
+!!! error TLUA1005: 'end' expected.

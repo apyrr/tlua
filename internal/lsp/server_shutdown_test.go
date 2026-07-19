@@ -29,8 +29,8 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 	}
 
 	fs := bundled.WrapFS(vfstest.FromMap(map[string]string{
-		"/test/tsconfig.json": "{}",
-		"/test/index.tlua":    "local x = 1;",
+		"/test/tluaconfig.json": "{}",
+		"/test/index.tlua":      "local x = 1;",
 	}, false))
 
 	server := NewServer(&ServerOptions{

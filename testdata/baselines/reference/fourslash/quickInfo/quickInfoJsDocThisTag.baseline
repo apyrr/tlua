@@ -4,7 +4,7 @@
 // function f() {
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function f(): void
 // | ```
 // | 
@@ -27,7 +27,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction f(): void\n```\n\n\n*@this*"
+        "value": "```tlua\nfunction f(): void\n```\n\n\n*@this*"
       },
       "range": {
         "start": {

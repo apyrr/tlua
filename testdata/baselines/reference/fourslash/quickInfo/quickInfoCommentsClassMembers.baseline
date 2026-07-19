@@ -4,7 +4,7 @@
 // class c1 {
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -13,7 +13,7 @@
 //     public p1: number;
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -22,7 +22,7 @@
 //     public p2(/** number to add*/b: number) {
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -33,7 +33,7 @@
 //     public get p3() {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -41,7 +41,7 @@
 //         return this.p2(this.p1);
 //                     ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -51,7 +51,7 @@
 //     public set p3(/** this is value*/value: number) {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -59,7 +59,7 @@
 //         this.p1 = this.p2(value);
 //                        ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -69,7 +69,7 @@
 //     private pp1: number;
 //             ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -78,7 +78,7 @@
 //     private pp2(/** number to add*/b: number) {
 //             ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -89,7 +89,7 @@
 //     private get pp3() {
 //                 ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -97,7 +97,7 @@
 //         return this.pp2(this.pp1);
 //                     ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -107,7 +107,7 @@
 //     private set pp3( /** this is value*/value: number) {
 //                 ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -115,7 +115,7 @@
 //         this.pp1 = this.pp2(value);
 //                         ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -125,7 +125,7 @@
 //     constructor() {
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -135,7 +135,7 @@
 //     static s1: number;
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -144,7 +144,7 @@
 //     static s2(/** number to add*/b: number) {
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -155,7 +155,7 @@
 //     static get s3() {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -163,7 +163,7 @@
 //         return c1.s2(c1.s1);
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -173,7 +173,7 @@
 //     static set s3( /** this is value*/value: number) {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -181,7 +181,7 @@
 //         c1.s1 = c1.s2(value);
 //                    ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -190,7 +190,7 @@
 //     public nc_p1: number;
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -198,7 +198,7 @@
 //     public nc_p2(b: number) {
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -208,7 +208,7 @@
 //     public get nc_p3() {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -216,7 +216,7 @@
 //         return this.nc_p2(this.nc_p1);
 //                     ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -225,7 +225,7 @@
 //     public set nc_p3(value: number) {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -233,7 +233,7 @@
 //         this.nc_p1 = this.nc_p2(value);
 //                           ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -242,7 +242,7 @@
 //     private nc_pp1: number;
 //             ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -250,7 +250,7 @@
 //     private nc_pp2(b: number) {
 //             ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -260,7 +260,7 @@
 //     private get nc_pp3() {
 //                 ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -268,7 +268,7 @@
 //         return this.nc_pp2(this.nc_pp1);
 //                     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -277,7 +277,7 @@
 //     private set nc_pp3(value: number) {
 //                 ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -285,7 +285,7 @@
 //         this.nc_pp1 = this.nc_pp2(value);
 //                            ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -294,7 +294,7 @@
 //     static nc_s1: number;
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -302,7 +302,7 @@
 //     static nc_s2(b: number) {
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -312,7 +312,7 @@
 //     static get nc_s3() {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -320,7 +320,7 @@
 //         return c1.nc_s2(c1.nc_s1);
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -329,7 +329,7 @@
 //     static set nc_s3(value: number) {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -337,7 +337,7 @@
 //         c1.nc_s1 = c1.nc_s2(value);
 //                       ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -347,14 +347,14 @@
 // local i1 = new c1();
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -362,7 +362,7 @@
 // local i1_p = i1.p1;
 //       ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_p: any
 // | ```
 // | 
@@ -370,14 +370,14 @@
 // local i1_f = i1.p2;
 //       ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_f: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                 ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -385,14 +385,14 @@
 // local i1_r = i1.p2(20);
 //       ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_r: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                 ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -400,14 +400,14 @@
 // local i1_prop = i1.p3;
 //       ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_prop: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                    ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -415,14 +415,14 @@
 // i1.p3 = i1_prop;
 //    ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //         ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_prop: any
 // | ```
 // | 
@@ -430,14 +430,14 @@
 // local i1_nc_p = i1.nc_p1;
 //       ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_nc_p: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                    ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -445,14 +445,14 @@
 // local i1_ncf = i1.nc_p2;
 //       ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_ncf: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -460,14 +460,14 @@
 // local i1_ncr = i1.nc_p2(20);
 //       ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_ncr: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -475,14 +475,14 @@
 // local i1_ncprop = i1.nc_p3;
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_ncprop: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                      ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -490,14 +490,14 @@
 // i1.nc_p3 = i1_ncprop;
 //    ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //            ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_ncprop: any
 // | ```
 // | 
@@ -505,21 +505,21 @@
 // local i1_s_p = c1.s1;
 //       ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_p: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -527,14 +527,14 @@
 // local i1_s_f = c1.s2;
 //       ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_f: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -542,14 +542,14 @@
 // local i1_s_r = c1.s2(20);
 //       ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_r: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -557,14 +557,14 @@
 // local i1_s_prop = c1.s3;
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_prop: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                      ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -572,14 +572,14 @@
 // c1.s3 = i1_s_prop;
 //    ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //         ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_prop: any
 // | ```
 // | 
@@ -587,14 +587,14 @@
 // local i1_s_nc_p = c1.nc_s1;
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_nc_p: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                      ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -602,14 +602,14 @@
 // local i1_s_ncf = c1.nc_s2;
 //       ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_ncf: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                     ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -617,14 +617,14 @@
 // local i1_s_ncr = c1.nc_s2(20);
 //       ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_ncr: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                     ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -632,14 +632,14 @@
 // local i1_s_ncprop = c1.nc_s3;
 //       ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_ncprop: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                        ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -647,14 +647,14 @@
 // c1.nc_s3 = i1_s_ncprop;
 //    ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //            ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_s_ncprop: any
 // | ```
 // | 
@@ -662,14 +662,14 @@
 // local i1_c = c1;
 //       ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local i1_c: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //              ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -696,14 +696,14 @@
 // cProperties_i.p2 = cProperties_i.p1;
 //               ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                  ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -711,14 +711,14 @@
 // cProperties_i.nc_p2 = cProperties_i.nc_p1;
 //               ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                     ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -731,7 +731,7 @@
 //     constructor(/**more info about a*/public a: number) {
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -739,7 +739,7 @@
 //         local bbbb = 10;
 //               ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local bbbb: number
 // | ```
 // | 
@@ -747,28 +747,28 @@
 //         this.a = a + 2 + bbbb;
 //         ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                  ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                          ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local bbbb: number
 // | ```
 // | 
@@ -789,7 +789,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -816,7 +816,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -843,7 +843,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -870,7 +870,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -897,7 +897,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -924,7 +924,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -951,7 +951,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -978,7 +978,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1005,7 +1005,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1032,7 +1032,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1059,7 +1059,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1086,7 +1086,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1113,7 +1113,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1140,7 +1140,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1167,7 +1167,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1194,7 +1194,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1221,7 +1221,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1248,7 +1248,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1275,7 +1275,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1302,7 +1302,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1329,7 +1329,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1356,7 +1356,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1383,7 +1383,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1410,7 +1410,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1437,7 +1437,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1464,7 +1464,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1491,7 +1491,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1518,7 +1518,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1545,7 +1545,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1572,7 +1572,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1599,7 +1599,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1626,7 +1626,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1653,7 +1653,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1680,7 +1680,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1707,7 +1707,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1734,7 +1734,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1761,7 +1761,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1788,7 +1788,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1815,7 +1815,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1: any\n```\n"
+        "value": "```tlua\nlocal i1: any\n```\n"
       },
       "range": {
         "start": {
@@ -1842,7 +1842,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1869,7 +1869,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_p: any\n```\n"
+        "value": "```tlua\nlocal i1_p: any\n```\n"
       },
       "range": {
         "start": {
@@ -1896,7 +1896,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_f: any\n```\n"
+        "value": "```tlua\nlocal i1_f: any\n```\n"
       },
       "range": {
         "start": {
@@ -1923,7 +1923,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1950,7 +1950,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_r: any\n```\n"
+        "value": "```tlua\nlocal i1_r: any\n```\n"
       },
       "range": {
         "start": {
@@ -1977,7 +1977,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2004,7 +2004,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_prop: any\n```\n"
+        "value": "```tlua\nlocal i1_prop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2031,7 +2031,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2058,7 +2058,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2085,7 +2085,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_prop: any\n```\n"
+        "value": "```tlua\nlocal i1_prop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2112,7 +2112,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_nc_p: any\n```\n"
+        "value": "```tlua\nlocal i1_nc_p: any\n```\n"
       },
       "range": {
         "start": {
@@ -2139,7 +2139,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2166,7 +2166,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_ncf: any\n```\n"
+        "value": "```tlua\nlocal i1_ncf: any\n```\n"
       },
       "range": {
         "start": {
@@ -2193,7 +2193,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2220,7 +2220,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_ncr: any\n```\n"
+        "value": "```tlua\nlocal i1_ncr: any\n```\n"
       },
       "range": {
         "start": {
@@ -2247,7 +2247,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2274,7 +2274,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_ncprop: any\n```\n"
+        "value": "```tlua\nlocal i1_ncprop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2301,7 +2301,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2328,7 +2328,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2355,7 +2355,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_ncprop: any\n```\n"
+        "value": "```tlua\nlocal i1_ncprop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2382,7 +2382,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_p: any\n```\n"
+        "value": "```tlua\nlocal i1_s_p: any\n```\n"
       },
       "range": {
         "start": {
@@ -2409,7 +2409,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2436,7 +2436,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2463,7 +2463,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_f: any\n```\n"
+        "value": "```tlua\nlocal i1_s_f: any\n```\n"
       },
       "range": {
         "start": {
@@ -2490,7 +2490,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2517,7 +2517,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_r: any\n```\n"
+        "value": "```tlua\nlocal i1_s_r: any\n```\n"
       },
       "range": {
         "start": {
@@ -2544,7 +2544,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2571,7 +2571,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_prop: any\n```\n"
+        "value": "```tlua\nlocal i1_s_prop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2598,7 +2598,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2625,7 +2625,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2652,7 +2652,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_prop: any\n```\n"
+        "value": "```tlua\nlocal i1_s_prop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2679,7 +2679,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_nc_p: any\n```\n"
+        "value": "```tlua\nlocal i1_s_nc_p: any\n```\n"
       },
       "range": {
         "start": {
@@ -2706,7 +2706,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2733,7 +2733,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_ncf: any\n```\n"
+        "value": "```tlua\nlocal i1_s_ncf: any\n```\n"
       },
       "range": {
         "start": {
@@ -2760,7 +2760,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2787,7 +2787,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_ncr: any\n```\n"
+        "value": "```tlua\nlocal i1_s_ncr: any\n```\n"
       },
       "range": {
         "start": {
@@ -2814,7 +2814,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2841,7 +2841,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_ncprop: any\n```\n"
+        "value": "```tlua\nlocal i1_s_ncprop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2868,7 +2868,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2895,7 +2895,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -2922,7 +2922,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_s_ncprop: any\n```\n"
+        "value": "```tlua\nlocal i1_s_ncprop: any\n```\n"
       },
       "range": {
         "start": {
@@ -2949,7 +2949,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal i1_c: any\n```\n"
+        "value": "```tlua\nlocal i1_c: any\n```\n"
       },
       "range": {
         "start": {
@@ -2976,7 +2976,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3003,7 +3003,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3030,7 +3030,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3057,7 +3057,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3084,7 +3084,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3111,7 +3111,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3138,7 +3138,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal bbbb: number\n```\n"
+        "value": "```tlua\nlocal bbbb: number\n```\n"
       },
       "range": {
         "start": {
@@ -3165,7 +3165,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3192,7 +3192,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3219,7 +3219,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -3246,7 +3246,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal bbbb: number\n```\n"
+        "value": "```tlua\nlocal bbbb: number\n```\n"
       },
       "range": {
         "start": {

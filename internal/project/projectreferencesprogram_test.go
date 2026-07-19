@@ -223,7 +223,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		// later deleted and the referenced config subsequently changed, the stale entry
 		// named a project that no longer existed, crashing markProjectsAffectedByConfigChanges.
 		files := map[string]any{
-			"/user/username/projects/myproject/main/tsconfig.json": `{
+			"/user/username/projects/myproject/main/tluaconfig.json": `{
 				"compilerOptions": {
 					"composite": true,
 					"rootDir": ".."
@@ -234,7 +234,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 				local fns = require("dependency.fns");
 				fns.fn1();
 			`,
-			"/user/username/projects/myproject/dependency/tsconfig.json": `{
+			"/user/username/projects/myproject/dependency/tluaconfig.json": `{
 				"compilerOptions": {
 					"composite": true
 				}
@@ -243,7 +243,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 				function fn1() { }
 				return { fn1 = fn1 };
 			`,
-			"/user/username/projects/myproject/other/tsconfig.json": `{
+			"/user/username/projects/myproject/other/tluaconfig.json": `{
 				"compilerOptions": {
 					"composite": true
 				}
@@ -265,11 +265,11 @@ func TestProjectReferencesProgram(t *testing.T) {
 		session.WaitForBackgroundTasks()
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/user/username/projects/myproject/dependency/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/user/username/projects/myproject/dependency/tluaconfig.json")) != nil)
 
-		// 2. Remove the project reference from main/tsconfig.json and rebuild.
+		// 2. Remove the project reference from main/tluaconfig.json and rebuild.
 		//    The new program no longer references dependency.
-		err := utils.FS().WriteFile("/user/username/projects/myproject/main/tsconfig.json", `{
+		err := utils.FS().WriteFile("/user/username/projects/myproject/main/tluaconfig.json", `{
 			"compilerOptions": {
 				"composite": true,
 				"rootDir": ".."
@@ -279,7 +279,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Type: lsproto.FileChangeTypeChanged,
-				Uri:  "file:///user/username/projects/myproject/main/tsconfig.json",
+				Uri:  "file:///user/username/projects/myproject/main/tluaconfig.json",
 			},
 		})
 		_, err = session.GetLanguageService(context.Background(), mainURI)
@@ -291,16 +291,16 @@ func TestProjectReferencesProgram(t *testing.T) {
 		session.DidOpenFile(context.Background(), otherURI, 1, otherContent, lsproto.LanguageKindTypeScript)
 		session.WaitForBackgroundTasks()
 		snapshot = session.Snapshot()
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/main/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/main/tluaconfig.json")) == nil)
 		// Dropping the reference releases main from dependency's retainingProjects,
 		// so the now-unreferenced dependency config is cleaned up and no stale entry
 		// survives to crash a later config change.
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/user/username/projects/myproject/dependency/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/user/username/projects/myproject/dependency/tluaconfig.json")) == nil)
 
-		// 4. Change dependency/tsconfig.json and flush. This used to copy the stale
+		// 4. Change dependency/tluaconfig.json and flush. This used to copy the stale
 		//    retainingProjects into affectedProjects and crash
 		//    markProjectsAffectedByConfigChanges loading the deleted main project.
-		err = utils.FS().WriteFile("/user/username/projects/myproject/dependency/tsconfig.json", `{
+		err = utils.FS().WriteFile("/user/username/projects/myproject/dependency/tluaconfig.json", `{
 			"compilerOptions": {
 				"composite": true,
 				"strict": true
@@ -310,7 +310,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Type: lsproto.FileChangeTypeChanged,
-				Uri:  "file:///user/username/projects/myproject/dependency/tsconfig.json",
+				Uri:  "file:///user/username/projects/myproject/dependency/tluaconfig.json",
 			},
 		})
 		_, err = session.GetLanguageService(context.Background(), otherURI)
@@ -321,7 +321,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 
 func filesForReferencedProjectProgram(disableSourceOfProjectReferenceRedirect bool) map[string]any {
 	return map[string]any{
-		"/user/username/projects/myproject/main/tsconfig.json": fmt.Sprintf(`{
+		"/user/username/projects/myproject/main/tluaconfig.json": fmt.Sprintf(`{
 			"compilerOptions": {
 				"composite": true,
 				"rootDir": ".."%s
@@ -336,7 +336,7 @@ func filesForReferencedProjectProgram(disableSourceOfProjectReferenceRedirect bo
 			fns.fn4();
 			fns.fn5();
 		`,
-		"/user/username/projects/myproject/dependency/tsconfig.json": `{
+		"/user/username/projects/myproject/dependency/tluaconfig.json": `{
 			"compilerOptions": {
 				"composite": true,
 				"declarationDir": "../decls"
@@ -432,7 +432,7 @@ func addConfigForPackage(files map[string]any, packageName string, preserveSymli
 			"path": ref,
 		})
 	}
-	files[fmt.Sprintf("/user/username/projects/myproject/packages/%s/tsconfig.json", packageName)] = core.Must(core.StringifyJson(map[string]any{
+	files[fmt.Sprintf("/user/username/projects/myproject/packages/%s/tluaconfig.json", packageName)] = core.Must(core.StringifyJson(map[string]any{
 		"compilerOptions": compilerOptions,
 		"include":         []string{"src"},
 		"references":      referencesToAdd,

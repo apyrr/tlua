@@ -9,7 +9,7 @@
 // function foo() {
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo(): string
 // | ```
 // | 
@@ -31,13 +31,13 @@
 // function boo() {
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function boo(): string
 // | ```
 // | 
 // | 
 // | *@example*
-// | ```tsx
+// | ```tlua
 // | ``
 // | 1 + 2
 // | `
@@ -60,7 +60,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(): string\n```\n\n\n*@example*\n```\n1 + 2\n```\n"
+        "value": "```tlua\nfunction foo(): string\n```\n\n\n*@example*\n```\n1 + 2\n```\n"
       },
       "range": {
         "start": {
@@ -87,7 +87,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction boo(): string\n```\n\n\n*@example*\n```tsx\n``\n1 + 2\n`\n```\n"
+        "value": "```tlua\nfunction boo(): string\n```\n\n\n*@example*\n```tlua\n``\n1 + 2\n`\n```\n"
       },
       "range": {
         "start": {

@@ -68,7 +68,7 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	}
 	parseConfigHost := tsoptionstest.NewVFSParseConfigHost(allFiles, currentDirectory, true /*useCaseSensitiveFileNames*/)
 
-	// check if project has tsconfig.json in the list of files
+	// check if project has tluaconfig.json in the list of files
 	var tsConfig *tsoptions.ParsedCommandLine
 	var tsConfigFileUnitData *testUnit
 	for i, data := range testUnits {

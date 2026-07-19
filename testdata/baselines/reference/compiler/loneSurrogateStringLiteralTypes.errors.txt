@@ -1,8 +1,8 @@
-loneSurrogateStringLiteralTypes.tlua(1,7): error TS2322: Type '"\xed\xb0\x80"' is not assignable to type '"\xed\xa0\x80"'.
+loneSurrogateStringLiteralTypes.tlua(1,7): error TLUA2322: Type '"\xed\xb0\x80"' is not assignable to type '"\xed\xa0\x80"'.
 
 
 ==== loneSurrogateStringLiteralTypes.tlua (1 errors) ====
     local x: "\uD800" = "\uDC00";
           ~
-!!! error TS2322: Type '"\xed\xb0\x80"' is not assignable to type '"\xed\xa0\x80"'.
+!!! error TLUA2322: Type '"\xed\xb0\x80"' is not assignable to type '"\xed\xa0\x80"'.
     

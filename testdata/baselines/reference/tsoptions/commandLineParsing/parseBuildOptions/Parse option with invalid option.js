@@ -11,4 +11,4 @@ Projects::
 .
 
 Errors::
-error TS5072: Unknown build option '--invalidOption'.
+error TLUA5072: Unknown build option '--invalidOption'.

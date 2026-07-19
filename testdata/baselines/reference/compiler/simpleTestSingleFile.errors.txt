@@ -1,7 +1,7 @@
-simpleTestSingleFile.tlua(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+simpleTestSingleFile.tlua(1,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
 
 
 ==== simpleTestSingleFile.tlua (1 errors) ====
     local x: number = "";
           ~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.

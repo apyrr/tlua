@@ -1,4 +1,4 @@
-tluaDoBlock.tlua(17,10): error TS2304: Cannot find name 'hidden'.
+tluaDoBlock.tlua(17,10): error TLUA2304: Cannot find name 'hidden'.
 
 
 ==== tluaDoBlock.tlua (1 errors) ====
@@ -20,7 +20,7 @@ tluaDoBlock.tlua(17,10): error TS2304: Cannot find name 'hidden'.
       end
       return hidden;
              ~~~~~~
-!!! error TS2304: Cannot find name 'hidden'.
+!!! error TLUA2304: Cannot find name 'hidden'.
     end
     
     // Nested do-blocks; TS statements inside.

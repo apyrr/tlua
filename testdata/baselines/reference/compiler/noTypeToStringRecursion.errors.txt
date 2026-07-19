@@ -1,4 +1,4 @@
-noTypeToStringRecursion.tlua(3,37): error TS2304: Cannot find name 'f'.
+noTypeToStringRecursion.tlua(3,37): error TLUA2304: Cannot find name 'f'.
 
 
 ==== noTypeToStringRecursion.tlua (1 errors) ====
@@ -6,5 +6,5 @@ noTypeToStringRecursion.tlua(3,37): error TS2304: Cannot find name 'f'.
     
     local f = () => 42 satisfies typeof f;
                                         ~
-!!! error TS2304: Cannot find name 'f'.
+!!! error TLUA2304: Cannot find name 'f'.
     

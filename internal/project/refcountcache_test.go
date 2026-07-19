@@ -355,10 +355,10 @@ func TestRefCountingCaches(t *testing.T) {
 
 	t.Run("extendedConfigCache", func(t *testing.T) {
 		files := map[string]any{
-			"/user/username/projects/myproject/tsconfig.json": `{
-				"extends": "./tsconfig.base.json"
+			"/user/username/projects/myproject/tluaconfig.json": `{
+				"extends": "./tluaconfig.base.json"
 			}`,
-			"/user/username/projects/myproject/tsconfig.base.json": `{
+			"/user/username/projects/myproject/tluaconfig.base.json": `{
 				"compilerOptions": {}
 			}`,
 			"/user/username/projects/myproject/src/main.tlua": "local x = 1;",
@@ -370,15 +370,15 @@ func TestRefCountingCaches(t *testing.T) {
 			session := setup(files)
 			session.DidOpenFile(context.Background(), "file:///user/username/projects/myproject/src/main.tlua", 1, files["/user/username/projects/myproject/src/main.tlua"].(string), lsproto.LanguageKindTypeScript)
 			snapshot := session.Snapshot()
-			config := snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json")
-			assert.Equal(t, config.ExtendedSourceFiles()[0], "/user/username/projects/myproject/tsconfig.base.json")
-			extendedConfigEntry, _ := session.extendedConfigCache.entries.Load("/user/username/projects/myproject/tsconfig.base.json")
+			config := snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json")
+			assert.Equal(t, config.ExtendedSourceFiles()[0], "/user/username/projects/myproject/tluaconfig.base.json")
+			extendedConfigEntry, _ := session.extendedConfigCache.entries.Load("/user/username/projects/myproject/tluaconfig.base.json")
 			assert.Equal(t, len(extendedConfigEntry.owners), 1)
 
 			session.DidCloseFile(context.Background(), "file:///user/username/projects/myproject/src/main.tlua")
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
 			session.WaitForBackgroundTasks()
-			_, ok := session.extendedConfigCache.entries.Load("/user/username/projects/myproject/tsconfig.base.json")
+			_, ok := session.extendedConfigCache.entries.Load("/user/username/projects/myproject/tluaconfig.base.json")
 			assert.Equal(t, ok, false)
 		})
 
@@ -388,7 +388,7 @@ func TestRefCountingCaches(t *testing.T) {
 			session := setup(files)
 			uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.tlua")
 			baseSnapshot := session.Snapshot()
-			extendedConfigPath := tspath.Path("/user/username/projects/myproject/tsconfig.base.json")
+			extendedConfigPath := tspath.Path("/user/username/projects/myproject/tluaconfig.base.json")
 			clone := baseSnapshot.Clone(context.Background(), SnapshotChange{
 				reason: UpdateReasonRequestedLanguageServiceProjectNotLoaded,
 				ResourceRequest: ResourceRequest{

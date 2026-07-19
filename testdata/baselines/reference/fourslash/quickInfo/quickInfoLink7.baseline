@@ -6,7 +6,7 @@
 // local B = 456;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local B: number
 // | ```
 // | See | instead
@@ -25,7 +25,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal B: number\n```\nSee | instead"
+        "value": "```tlua\nlocal B: number\n```\nSee | instead"
       },
       "range": {
         "start": {

@@ -1,4 +1,4 @@
-shorthandPropertyAssignmentNoCrash.tlua(5,6): error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+shorthandPropertyAssignmentNoCrash.tlua(5,6): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 
 
 ==== shorthandPropertyAssignmentNoCrash.tlua (1 errors) ====
@@ -8,6 +8,6 @@ shorthandPropertyAssignmentNoCrash.tlua(5,6): error TS2364: The left-hand side o
         local g;
         ({ g = (x: any, y: any) => x + y } = f);
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
     }
     

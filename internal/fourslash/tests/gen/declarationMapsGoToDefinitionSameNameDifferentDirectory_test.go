@@ -43,7 +43,7 @@ class /*2*/Control{
       "declarationMap": true
     }
   }
-// @Filename: buttonClass/tsconfig.json
+// @Filename: buttonClass/tluaconfig.json
 {
     "extends": "../tsbase.json",
     "compilerOptions": {

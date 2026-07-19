@@ -1,26 +1,26 @@
-tluaNoGenerators.tlua(4,9): error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
-tluaNoGenerators.tlua(4,9): error TS1003: Identifier expected.
-tluaNoGenerators.tlua(4,11): error TS2304: Cannot find name 'gen'.
-tluaNoGenerators.tlua(4,16): error TS1005: ';' expected.
-tluaNoGenerators.tlua(4,18): error TS1434: Unexpected keyword or identifier.
-tluaNoGenerators.tlua(4,18): error TS2693: 'unknown' only refers to a type, but is being used as a value here.
-tluaNoGenerators.tlua(5,3): error TS1434: Unexpected keyword or identifier.
-tluaNoGenerators.tlua(5,3): error TS2304: Cannot find name 'yield'.
-tluaNoGenerators.tlua(6,3): error TS2304: Cannot find name 'yield'.
-tluaNoGenerators.tlua(6,10): error TS2304: Cannot find name 'more'.
-tluaNoGenerators.tlua(9,15): error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
-tluaNoGenerators.tlua(9,15): error TS1003: Identifier expected.
-tluaNoGenerators.tlua(9,17): error TS2304: Cannot find name 'asyncGen'.
-tluaNoGenerators.tlua(9,27): error TS1005: ';' expected.
-tluaNoGenerators.tlua(9,29): error TS1434: Unexpected keyword or identifier.
-tluaNoGenerators.tlua(9,29): error TS2693: 'unknown' only refers to a type, but is being used as a value here.
-tluaNoGenerators.tlua(10,3): error TS1434: Unexpected keyword or identifier.
-tluaNoGenerators.tlua(10,3): error TS2304: Cannot find name 'yield'.
-tluaNoGenerators.tlua(14,3): error TS1109: Expression expected.
-tluaNoGenerators.tlua(14,4): error TS2304: Cannot find name 'method'.
-tluaNoGenerators.tlua(14,13): error TS1005: ',' expected.
-tluaNoGenerators.tlua(15,5): error TS2304: Cannot find name 'yield'.
-tluaNoGenerators.tlua(15,11): error TS1005: ',' expected.
+tluaNoGenerators.tlua(4,9): error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaNoGenerators.tlua(4,9): error TLUA1003: Identifier expected.
+tluaNoGenerators.tlua(4,11): error TLUA2304: Cannot find name 'gen'.
+tluaNoGenerators.tlua(4,16): error TLUA1005: ';' expected.
+tluaNoGenerators.tlua(4,18): error TLUA1434: Unexpected keyword or identifier.
+tluaNoGenerators.tlua(4,18): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
+tluaNoGenerators.tlua(5,3): error TLUA1434: Unexpected keyword or identifier.
+tluaNoGenerators.tlua(5,3): error TLUA2304: Cannot find name 'yield'.
+tluaNoGenerators.tlua(6,3): error TLUA2304: Cannot find name 'yield'.
+tluaNoGenerators.tlua(6,10): error TLUA2304: Cannot find name 'more'.
+tluaNoGenerators.tlua(9,15): error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaNoGenerators.tlua(9,15): error TLUA1003: Identifier expected.
+tluaNoGenerators.tlua(9,17): error TLUA2304: Cannot find name 'asyncGen'.
+tluaNoGenerators.tlua(9,27): error TLUA1005: ';' expected.
+tluaNoGenerators.tlua(9,29): error TLUA1434: Unexpected keyword or identifier.
+tluaNoGenerators.tlua(9,29): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
+tluaNoGenerators.tlua(10,3): error TLUA1434: Unexpected keyword or identifier.
+tluaNoGenerators.tlua(10,3): error TLUA2304: Cannot find name 'yield'.
+tluaNoGenerators.tlua(14,3): error TLUA1109: Expression expected.
+tluaNoGenerators.tlua(14,4): error TLUA2304: Cannot find name 'method'.
+tluaNoGenerators.tlua(14,13): error TLUA1005: ',' expected.
+tluaNoGenerators.tlua(15,5): error TLUA2304: Cannot find name 'yield'.
+tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 
 
 ==== tluaNoGenerators.tlua (23 errors) ====
@@ -29,62 +29,62 @@ tluaNoGenerators.tlua(15,11): error TS1005: ',' expected.
     
     function* gen(): unknown {
             
-!!! error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+!!! error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
             ~
-!!! error TS1003: Identifier expected.
+!!! error TLUA1003: Identifier expected.
               ~~~
-!!! error TS2304: Cannot find name 'gen'.
+!!! error TLUA2304: Cannot find name 'gen'.
                    ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                      ~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                      ~~~~~~~
-!!! error TS2693: 'unknown' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
       yield 1;
       ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
       ~~~~~
-!!! error TS2304: Cannot find name 'yield'.
+!!! error TLUA2304: Cannot find name 'yield'.
       yield* more;
       ~~~~~
-!!! error TS2304: Cannot find name 'yield'.
+!!! error TLUA2304: Cannot find name 'yield'.
              ~~~~
-!!! error TS2304: Cannot find name 'more'.
+!!! error TLUA2304: Cannot find name 'more'.
     }
     
     async function* asyncGen(): unknown {
                   
-!!! error TS7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+!!! error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
                   ~
-!!! error TS1003: Identifier expected.
+!!! error TLUA1003: Identifier expected.
                     ~~~~~~~~
-!!! error TS2304: Cannot find name 'asyncGen'.
+!!! error TLUA2304: Cannot find name 'asyncGen'.
                               ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                 ~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                                 ~~~~~~~
-!!! error TS2693: 'unknown' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
       yield 4;
       ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
       ~~~~~
-!!! error TS2304: Cannot find name 'yield'.
+!!! error TLUA2304: Cannot find name 'yield'.
     }
     
     local obj = {
       *method() {
       ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
        ~~~~~~
-!!! error TS2304: Cannot find name 'method'.
+!!! error TLUA2304: Cannot find name 'method'.
                 ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
         yield 5;
         ~~~~~
-!!! error TS2304: Cannot find name 'yield'.
+!!! error TLUA2304: Cannot find name 'yield'.
               ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
       },
     };
     

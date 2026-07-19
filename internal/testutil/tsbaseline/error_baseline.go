@@ -101,7 +101,7 @@ func iterateErrorBaseline[T diagnosticwriter.Diagnostic](t *testing.T, inputFile
 			if len(line) == 0 {
 				continue
 			}
-			out := fmt.Sprintf("!!! %s TS%d: %s", diag.Category().Name(), diag.Code(), line)
+			out := fmt.Sprintf("!!! %s TLUA%d: %s", diag.Category().Name(), diag.Code(), line)
 			errLines = append(errLines, out)
 		}
 
@@ -114,7 +114,7 @@ func iterateErrorBaseline[T diagnosticwriter.Diagnostic](t *testing.T, inputFile
 			if len(location) > 0 && isDefaultLibraryFile(info.File().FileName()) {
 				location = diagnosticsLocationPattern.ReplaceAllString(location, "$1:--:--")
 			}
-			errLines = append(errLines, fmt.Sprintf("!!! related TS%d%s: %s", info.Code(), location, diagnosticwriter.FlattenDiagnosticMessage(info, harnessNewLine, locale.Default)))
+			errLines = append(errLines, fmt.Sprintf("!!! related TLUA%d%s: %s", info.Code(), location, diagnosticwriter.FlattenDiagnosticMessage(info, harnessNewLine, locale.Default)))
 		}
 
 		for _, e := range errLines {

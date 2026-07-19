@@ -1,9 +1,9 @@
-tluaMetatableOperators.tlua(33,24): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaMetatableOperators.tlua(37,17): error TS2322: Type 'number' is not assignable to type '{ x: number; }'.
-tluaMetatableOperators.tlua(37,21): error TS2322: Type '{ x: number; }' is not assignable to type 'number'.
-tluaMetatableOperators.tlua(43,15): error TS2365: Operator '+' cannot be applied to types '{ n: number; }' and '{ n: number; }'.
-tluaMetatableOperators.tlua(46,22): error TS100028: An arithmetic operand must be of type 'any' or 'number'.
-tluaMetatableOperators.tlua(47,21): error TS100028: An arithmetic operand must be of type 'any' or 'number'.
+tluaMetatableOperators.tlua(33,24): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMetatableOperators.tlua(37,17): error TLUA2322: Type 'number' is not assignable to type '{ x: number; }'.
+tluaMetatableOperators.tlua(37,21): error TLUA2322: Type '{ x: number; }' is not assignable to type 'number'.
+tluaMetatableOperators.tlua(43,15): error TLUA2365: Operator '+' cannot be applied to types '{ n: number; }' and '{ n: number; }'.
+tluaMetatableOperators.tlua(46,22): error TLUA100028: An arithmetic operand must be of type 'any' or 'number'.
+tluaMetatableOperators.tlua(47,21): error TLUA100028: An arithmetic operand must be of type 'any' or 'number'.
 
 
 ==== tluaMetatableOperators.tlua (6 errors) ====
@@ -41,15 +41,15 @@ tluaMetatableOperators.tlua(47,21): error TS100028: An arithmetic operand must b
     // An operand the metamethod's parameter does not admit is an error.
     local badOperand = v * "s";
                            ~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // A handler found on the right operand still receives the left as its first argument: `2 ^ v`
     // checks 2 against __pow's { x: number } first parameter and v against its number second.
     local badLeft = 2 ^ v;
                     ~
-!!! error TS2322: Type 'number' is not assignable to type '{ x: number; }'.
+!!! error TLUA2322: Type 'number' is not assignable to type '{ x: number; }'.
                         ~
-!!! error TS2322: Type '{ x: number; }' is not assignable to type 'number'.
+!!! error TLUA2322: Type '{ x: number; }' is not assignable to type 'number'.
     
     // A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
     // has no handler for is still an error. `+` reports that its own way.
@@ -57,13 +57,13 @@ tluaMetatableOperators.tlua(47,21): error TS100028: An arithmetic operand must b
     local eqOk: boolean = eqOnly == eqOnly;
     local noAdd = eqOnly + eqOnly;
                   ~~~~~~~~~~~~~~~
-!!! error TS2365: Operator '+' cannot be applied to types '{ n: number; }' and '{ n: number; }'.
+!!! error TLUA2365: Operator '+' cannot be applied to types '{ n: number; }' and '{ n: number; }'.
     
     // Unary minus is arithmetic now: a non-numeric operand is rejected whether or not it is paired.
     local minusString = -"abc";
                          ~~~~~
-!!! error TS100028: An arithmetic operand must be of type 'any' or 'number'.
+!!! error TLUA100028: An arithmetic operand must be of type 'any' or 'number'.
     local minusTable = -eqOnly;
                         ~~~~~~
-!!! error TS100028: An arithmetic operand must be of type 'any' or 'number'.
+!!! error TLUA100028: An arithmetic operand must be of type 'any' or 'number'.
     

@@ -331,7 +331,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(param: string, optionalParam?: string, paramWithInitializer?: string, ...restParam: string[]): void;\n```\n"
+        "value": "```tlua\nfunction foo(param: string, optionalParam?: string, paramWithInitializer?: string, ...restParam: string[]): void;\n```\n"
       },
       "range": {
         "start": {
@@ -552,7 +552,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowithoverload(a: string): string;\n```\n"
+        "value": "```tlua\nfunction foowithoverload(a: string): string;\n```\n"
       },
       "range": {
         "start": {
@@ -658,7 +658,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowithoverload(a: number): number;\n```\n"
+        "value": "```tlua\nfunction foowithoverload(a: number): number;\n```\n"
       },
       "range": {
         "start": {
@@ -764,7 +764,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowithoverload(a: any): any;\n```\n"
+        "value": "```tlua\nfunction foowithoverload(a: any): any;\n```\n"
       },
       "range": {
         "start": {
@@ -870,7 +870,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowith3overload(a: string): string;\n```\n"
+        "value": "```tlua\nfunction foowith3overload(a: string): string;\n```\n"
       },
       "range": {
         "start": {
@@ -976,7 +976,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowith3overload(a: number): number;\n```\n"
+        "value": "```tlua\nfunction foowith3overload(a: number): number;\n```\n"
       },
       "range": {
         "start": {
@@ -1082,7 +1082,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowith3overload(a: boolean): boolean;\n```\n"
+        "value": "```tlua\nfunction foowith3overload(a: boolean): boolean;\n```\n"
       },
       "range": {
         "start": {
@@ -1188,7 +1188,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowith3overload(a: any): any;\n```\n"
+        "value": "```tlua\nfunction foowith3overload(a: any): any;\n```\n"
       },
       "range": {
         "start": {
@@ -1294,7 +1294,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(param: string, optionalParam?: string, paramWithInitializer?: string, ...restParam: string[]): void;\n```\n"
+        "value": "```tlua\nfunction foo(param: string, optionalParam?: string, paramWithInitializer?: string, ...restParam: string[]): void;\n```\n"
       },
       "range": {
         "start": {
@@ -1515,7 +1515,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowithoverload(a: string): string;\n```\n"
+        "value": "```tlua\nfunction foowithoverload(a: string): string;\n```\n"
       },
       "range": {
         "start": {
@@ -1621,7 +1621,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowithoverload(a: number): number;\n```\n"
+        "value": "```tlua\nfunction foowithoverload(a: number): number;\n```\n"
       },
       "range": {
         "start": {
@@ -1727,7 +1727,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowith3overload(a: string): string;\n```\n"
+        "value": "```tlua\nfunction foowith3overload(a: string): string;\n```\n"
       },
       "range": {
         "start": {
@@ -1833,7 +1833,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowith3overload(a: number): number;\n```\n"
+        "value": "```tlua\nfunction foowith3overload(a: number): number;\n```\n"
       },
       "range": {
         "start": {
@@ -1939,7 +1939,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foowith3overload(a: boolean): boolean;\n```\n"
+        "value": "```tlua\nfunction foowith3overload(a: boolean): boolean;\n```\n"
       },
       "range": {
         "start": {

@@ -1,14 +1,14 @@
-tluaLocalUnused.tlua(1,7): error TS6133: 'scriptLet' is declared but its value is never read.
-tluaLocalUnused.tlua(2,7): error TS6133: 'unusedLua' is declared but its value is never read.
+tluaLocalUnused.tlua(1,7): error TLUA6133: 'scriptLet' is declared but its value is never read.
+tluaLocalUnused.tlua(2,7): error TLUA6133: 'unusedLua' is declared but its value is never read.
 
 
 ==== tluaLocalUnused.tlua (2 errors) ====
     local scriptLet = 1;
           ~~~~~~~~~
-!!! error TS6133: 'scriptLet' is declared but its value is never read.
+!!! error TLUA6133: 'scriptLet' is declared but its value is never read.
     local unusedLua = 1;
           ~~~~~~~~~
-!!! error TS6133: 'unusedLua' is declared but its value is never read.
+!!! error TLUA6133: 'unusedLua' is declared but its value is never read.
     local usedLua = 1;
     usedLua;
     

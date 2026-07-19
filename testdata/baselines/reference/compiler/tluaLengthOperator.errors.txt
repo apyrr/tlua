@@ -1,8 +1,8 @@
-tluaLengthOperator.tlua(18,13): error TS100042: The '#' operator can only be applied to a string or a table.
-tluaLengthOperator.tlua(19,13): error TS100042: The '#' operator can only be applied to a string or a table.
-tluaLengthOperator.tlua(21,13): error TS100042: The '#' operator can only be applied to a string or a table.
-tluaLengthOperator.tlua(34,13): error TS100042: The '#' operator can only be applied to a string or a table.
-tluaLengthOperator.tlua(38,13): error TS100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(18,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(19,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(21,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(34,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(38,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
 
 
 ==== tluaLengthOperator.tlua (5 errors) ====
@@ -25,14 +25,14 @@ tluaLengthOperator.tlua(38,13): error TS100042: The '#' operator can only be app
     // Errors: a number, a boolean, or a function has no length.
     local e1 = #5;
                 ~
-!!! error TS100042: The '#' operator can only be applied to a string or a table.
+!!! error TLUA100042: The '#' operator can only be applied to a string or a table.
     local e2 = #true;
                 ~~~~
-!!! error TS100042: The '#' operator can only be applied to a string or a table.
+!!! error TLUA100042: The '#' operator can only be applied to a string or a table.
     function fn(): void end
     local e3 = #fn;
                 ~~
-!!! error TS100042: The '#' operator can only be applied to a string or a table.
+!!! error TLUA100042: The '#' operator can only be applied to a string or a table.
     
     // A record with no numeric index measures too: Lua returns a border (0 for no
     // array part) for ANY table, so only non-tables reject.
@@ -47,11 +47,11 @@ tluaLengthOperator.tlua(38,13): error TS100042: The '#' operator can only be app
     declare numOrRec: number | { x: number };
     local e4 = #numOrRec;
                 ~~~~~~~~
-!!! error TS100042: The '#' operator can only be applied to a string or a table.
+!!! error TLUA100042: The '#' operator can only be applied to a string or a table.
     
     // Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
     declare th: LuaThread;
     local e5 = #th;
                 ~~
-!!! error TS100042: The '#' operator can only be applied to a string or a table.
+!!! error TLUA100042: The '#' operator can only be applied to a string or a table.
     

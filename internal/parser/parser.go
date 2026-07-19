@@ -5007,7 +5007,7 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 	case ast.KindOpenParenToken:
 		return p.parseParenthesizedExpression()
 	case ast.KindOpenBracketToken:
-		// Array literals exist only in JSON (tsconfig.json etc.); tlua source
+		// Array literals exist only in JSON (tluaconfig.json etc.); tlua source
 		// uses table constructors `{...}`. In TS source `[` falls through to
 		// the Expression_expected recovery below.
 		if p.scriptKind == core.ScriptKindJSON {
@@ -6071,77 +6071,77 @@ func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration:
 		if token := node.QuestionToken(); token != nil && token.Flags&ast.NodeFlagsReparsed == 0 && ast.IsQuestionToken(token) {
-			p.jsErrorAtRange(token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?")
+			p.jsErrorAtRange(token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_tlua_files, "?")
 		}
 		fallthrough
 	case ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionExpression,
 		ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindVariableDeclaration, ast.KindIndexSignature:
 		if ast.IsFunctionLike(node) && node.Body() == nil {
-			p.jsErrorAtRange(node.Loc, diagnostics.Signature_declarations_can_only_be_used_in_TypeScript_files)
+			p.jsErrorAtRange(node.Loc, diagnostics.Signature_declarations_can_only_be_used_in_tlua_files)
 		} else if t := node.Type(); t != nil && t.Flags&ast.NodeFlagsReparsed == 0 {
-			p.jsErrorAtRange(t.Loc, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files)
+			p.jsErrorAtRange(t.Loc, diagnostics.Type_annotations_can_only_be_used_in_tlua_files)
 		}
 	case ast.KindImportDeclaration:
 		if clause := node.ImportClause(); clause != nil && clause.IsTypeOnly() {
-			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import type")
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_tlua_files, "import type")
 		}
 	case ast.KindExportDeclaration:
 		if node.IsTypeOnly() {
-			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export type")
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_tlua_files, "export type")
 		}
 	case ast.KindImportSpecifier:
 		if node.IsTypeOnly() {
-			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import...type")
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_tlua_files, "import...type")
 		}
 	case ast.KindExportSpecifier:
 		if node.IsTypeOnly() {
-			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export...type")
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_tlua_files, "export...type")
 		}
 	case ast.KindImportEqualsDeclaration:
-		p.jsErrorAtRange(node.Loc, diagnostics.X_import_can_only_be_used_in_TypeScript_files)
+		p.jsErrorAtRange(node.Loc, diagnostics.X_import_can_only_be_used_in_tlua_files)
 	case ast.KindExportAssignment:
 		if node.AsExportAssignment().IsExportEquals {
-			p.jsErrorAtRange(node.Loc, diagnostics.X_export_can_only_be_used_in_TypeScript_files)
+			p.jsErrorAtRange(node.Loc, diagnostics.X_export_can_only_be_used_in_tlua_files)
 		}
 	case ast.KindHeritageClause:
 		if node.AsHeritageClause().Token == ast.KindImplementsKeyword {
-			p.jsErrorAtRange(node.Loc, diagnostics.X_implements_clauses_can_only_be_used_in_TypeScript_files)
+			p.jsErrorAtRange(node.Loc, diagnostics.X_implements_clauses_can_only_be_used_in_tlua_files)
 		}
 	case ast.KindInterfaceDeclaration:
-		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface")
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_tlua_files, "interface")
 	case ast.KindModuleDeclaration:
-		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.AsModuleDeclaration().Keyword))
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_tlua_files, scanner.TokenToString(node.AsModuleDeclaration().Keyword))
 	case ast.KindTypeAliasDeclaration:
-		p.jsErrorAtRange(node.Name().Loc, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files)
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.Type_aliases_can_only_be_used_in_tlua_files)
 	case ast.KindNonNullExpression:
-		p.jsErrorAtRange(node.Loc, diagnostics.Non_null_assertions_can_only_be_used_in_TypeScript_files)
+		p.jsErrorAtRange(node.Loc, diagnostics.Non_null_assertions_can_only_be_used_in_tlua_files)
 	case ast.KindAsExpression:
-		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_assertion_expressions_can_only_be_used_in_TypeScript_files)
+		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_assertion_expressions_can_only_be_used_in_tlua_files)
 	case ast.KindSatisfiesExpression:
-		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files)
+		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_satisfaction_expressions_can_only_be_used_in_tlua_files)
 	}
 	// Check absence of type parameters, type arguments and non-JavaScript modifiers
 	switch node.Kind {
 	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindMethodDeclaration, ast.KindConstructor, ast.KindGetAccessor,
 		ast.KindSetAccessor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction:
 		if list := node.TypeParameterList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
-			p.jsErrorAtRange(list.Loc, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files)
+			p.jsErrorAtRange(list.Loc, diagnostics.Type_parameter_declarations_can_only_be_used_in_tlua_files)
 		}
 		fallthrough
 	case ast.KindVariableStatement, ast.KindPropertyDeclaration:
 		for _, modifier := range node.ModifierNodes() {
 			if modifier.Flags&ast.NodeFlagsReparsed == 0 && ast.ModifierToFlag(modifier.Kind)&ast.ModifierFlagsJavaScript == 0 {
-				p.jsErrorAtRange(modifier.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(modifier.Kind))
+				p.jsErrorAtRange(modifier.Loc, diagnostics.The_0_modifier_can_only_be_used_in_tlua_files, scanner.TokenToString(modifier.Kind))
 			}
 		}
 	case ast.KindParameter:
 		if core.Some(node.ModifierNodes(), ast.IsModifier) {
-			p.jsErrorAtRange(node.Modifiers().Loc, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files)
+			p.jsErrorAtRange(node.Modifiers().Loc, diagnostics.Parameter_modifiers_can_only_be_used_in_tlua_files)
 		}
 	case ast.KindCallExpression, ast.KindNewExpression, ast.KindExpressionWithTypeArguments, ast.KindJsxSelfClosingElement,
 		ast.KindJsxOpeningElement, ast.KindTaggedTemplateExpression:
 		if list := node.TypeArgumentList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
-			p.jsErrorAtRange(list.Loc, diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files)
+			p.jsErrorAtRange(list.Loc, diagnostics.Type_arguments_can_only_be_used_in_tlua_files)
 		}
 	}
 	return node

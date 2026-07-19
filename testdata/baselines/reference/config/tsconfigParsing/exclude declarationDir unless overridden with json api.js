@@ -5,7 +5,7 @@ Fs::
 //// [/declarations/a.d.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
                 "compilerOptions": {
                     "declarationDir": "declarations"
@@ -13,11 +13,11 @@ Fs::
             }
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
   "declarationDir": "/declarations",
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -35,7 +35,7 @@ Fs::
 //// [/declarations/a.d.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
                 "compilerOptions": {
                     "declarationDir": "declarations"
@@ -44,11 +44,11 @@ Fs::
             }
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
   "declarationDir": "/declarations",
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::

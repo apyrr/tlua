@@ -1,7 +1,7 @@
-nestedSpreadsAndWidening.tlua(34,6): error TS1005: ',' expected.
-nestedSpreadsAndWidening.tlua(35,19): error TS1005: ',' expected.
-nestedSpreadsAndWidening.tlua(35,47): error TS1005: ',' expected.
-nestedSpreadsAndWidening.tlua(35,72): error TS1109: Expression expected.
+nestedSpreadsAndWidening.tlua(34,6): error TLUA1005: ',' expected.
+nestedSpreadsAndWidening.tlua(35,19): error TLUA1005: ',' expected.
+nestedSpreadsAndWidening.tlua(35,47): error TLUA1005: ',' expected.
+nestedSpreadsAndWidening.tlua(35,72): error TLUA1109: Expression expected.
 
 
 ==== nestedSpreadsAndWidening.tlua (4 errors) ====
@@ -40,13 +40,13 @@ nestedSpreadsAndWidening.tlua(35,72): error TS1109: Expression expected.
     read({
       ...step,
          ~~~~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
       settings = { ...step.settings, input = { ...step.settings.input, k = ['5'] } },
                       ~~~~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
                                                   ~~~~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
                                                                            ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     });
     

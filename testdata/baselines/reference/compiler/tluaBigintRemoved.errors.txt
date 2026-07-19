@@ -1,19 +1,19 @@
-tluaBigintRemoved.tlua(13,12): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-tluaBigintRemoved.tlua(13,12): error TS2304: Cannot find name 'n'.
-tluaBigintRemoved.tlua(14,14): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-tluaBigintRemoved.tlua(14,14): error TS2304: Cannot find name 'n'.
-tluaBigintRemoved.tlua(15,13): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-tluaBigintRemoved.tlua(15,13): error TS2304: Cannot find name 'n'.
-tluaBigintRemoved.tlua(18,10): error TS2304: Cannot find name 'bigint'.
-tluaBigintRemoved.tlua(19,14): error TS2304: Cannot find name 'bigint'.
-tluaBigintRemoved.tlua(20,23): error TS2304: Cannot find name 'bigint'.
-tluaBigintRemoved.tlua(20,32): error TS2304: Cannot find name 'bigint'.
-tluaBigintRemoved.tlua(23,22): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-tluaBigintRemoved.tlua(23,22): error TS2304: Cannot find name 'n'.
-tluaBigintRemoved.tlua(24,4): error TS2872: This kind of expression is always truthy.
-tluaBigintRemoved.tlua(24,5): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-tluaBigintRemoved.tlua(24,5): error TS2304: Cannot find name 'n'.
-tluaBigintRemoved.tlua(24,7): error TS1128: Declaration or statement expected.
+tluaBigintRemoved.tlua(13,12): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaBigintRemoved.tlua(13,12): error TLUA2304: Cannot find name 'n'.
+tluaBigintRemoved.tlua(14,14): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaBigintRemoved.tlua(14,14): error TLUA2304: Cannot find name 'n'.
+tluaBigintRemoved.tlua(15,13): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaBigintRemoved.tlua(15,13): error TLUA2304: Cannot find name 'n'.
+tluaBigintRemoved.tlua(18,10): error TLUA2304: Cannot find name 'bigint'.
+tluaBigintRemoved.tlua(19,14): error TLUA2304: Cannot find name 'bigint'.
+tluaBigintRemoved.tlua(20,23): error TLUA2304: Cannot find name 'bigint'.
+tluaBigintRemoved.tlua(20,32): error TLUA2304: Cannot find name 'bigint'.
+tluaBigintRemoved.tlua(23,22): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaBigintRemoved.tlua(23,22): error TLUA2304: Cannot find name 'n'.
+tluaBigintRemoved.tlua(24,4): error TLUA2872: This kind of expression is always truthy.
+tluaBigintRemoved.tlua(24,5): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaBigintRemoved.tlua(24,5): error TLUA2304: Cannot find name 'n'.
+tluaBigintRemoved.tlua(24,7): error TLUA1128: Declaration or statement expected.
 
 
 ==== tluaBigintRemoved.tlua (16 errors) ====
@@ -31,48 +31,48 @@ tluaBigintRemoved.tlua(24,7): error TS1128: Declaration or statement expected.
     // `0n` no longer scans as a bigint literal; the trailing `n` is rejected.
     local a = 0n;
                ~
-!!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
                ~
-!!! error TS2304: Cannot find name 'n'.
+!!! error TLUA2304: Cannot find name 'n'.
     local b = 123n;
                  ~
-!!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
                  ~
-!!! error TS2304: Cannot find name 'n'.
+!!! error TLUA2304: Cannot find name 'n'.
     local c = -5n;
                 ~
-!!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
                 ~
-!!! error TS2304: Cannot find name 'n'.
+!!! error TLUA2304: Cannot find name 'n'.
     
     // `bigint` is not a type keyword; it resolves to an unknown name.
     local t: bigint = 1;
              ~~~~~~
-!!! error TS2304: Cannot find name 'bigint'.
+!!! error TLUA2304: Cannot find name 'bigint'.
     type Alias = bigint;
                  ~~~~~~
-!!! error TS2304: Cannot find name 'bigint'.
+!!! error TLUA2304: Cannot find name 'bigint'.
     declare function f(x: bigint): bigint;
                           ~~~~~~
-!!! error TS2304: Cannot find name 'bigint'.
+!!! error TLUA2304: Cannot find name 'bigint'.
                                    ~~~~~~
-!!! error TS2304: Cannot find name 'bigint'.
+!!! error TLUA2304: Cannot find name 'bigint'.
     
     // `0n` in assorted expression positions.
     local obj = { key = 1n };
                          ~
-!!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
                          ~
-!!! error TS2304: Cannot find name 'n'.
+!!! error TLUA2304: Cannot find name 'n'.
     if 0n then
        ~
-!!! error TS2872: This kind of expression is always truthy.
+!!! error TLUA2872: This kind of expression is always truthy.
         ~
-!!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
         ~
-!!! error TS2304: Cannot find name 'n'.
+!!! error TLUA2304: Cannot find name 'n'.
           ~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
     end
     
     // Plain number arithmetic still works and yields `number`.

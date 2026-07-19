@@ -6,7 +6,7 @@
 // function f() { }
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function f(): void
 // | ```
 // | 
@@ -19,7 +19,7 @@
 // function g() { }
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function g(): void
 // | ```
 // | 
@@ -33,7 +33,7 @@
 // function h() { }
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function h(): void
 // | ```
 // | 
@@ -55,7 +55,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction f(): void\n```\n\n\n*@return* — Don't @ me"
+        "value": "```tlua\nfunction f(): void\n```\n\n\n*@return* — Don't @ me"
       },
       "range": {
         "start": {
@@ -82,7 +82,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction g(): void\n```\n\n\n*@return* — One final @"
+        "value": "```tlua\nfunction g(): void\n```\n\n\n*@return* — One final @"
       },
       "range": {
         "start": {
@@ -109,7 +109,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction h(): void\n```\n\n\n*@return* — An @\nBut another line"
+        "value": "```tlua\nfunction h(): void\n```\n\n\n*@return* — An @\nBut another line"
       },
       "range": {
         "start": {

@@ -1,4 +1,4 @@
-tluaLocalMultiNameEmit.tlua(12,15): error TS2695: Left side of comma operator is unused and has no side effects.
+tluaLocalMultiNameEmit.tlua(12,15): error TLUA2695: Left side of comma operator is unused and has no side effects.
 
 
 ==== tluaLocalMultiNameEmit.tlua (1 errors) ====
@@ -15,5 +15,5 @@ tluaLocalMultiNameEmit.tlua(12,15): error TS2695: Left side of comma operator is
     // A parenthesized comma expression keeps its parens (it is one value).
     local l, m = (0, 1), 2;
                   ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
     

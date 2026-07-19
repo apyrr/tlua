@@ -462,7 +462,7 @@ func (b *BuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
 type BuildInfo struct {
 	Version string `json:"version,omitzero"`
 
-	// Common between incremental and tsc -b buildinfo for non incremental programs
+	// Common between incremental and tlua -b buildinfo for non incremental programs
 	Errors              bool             `json:"errors,omitzero"`
 	CheckPending        bool             `json:"checkPending,omitzero"`
 	Root                []*BuildInfoRoot `json:"root,omitzero"`

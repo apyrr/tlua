@@ -11,7 +11,7 @@
 //     foo;
 //     ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) foo: string
 // | ```
 // | A description of foo
@@ -31,7 +31,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) foo: string\n```\nA description of foo"
+        "value": "```tlua\n(parameter) foo: string\n```\nA description of foo"
       },
       "range": {
         "start": {

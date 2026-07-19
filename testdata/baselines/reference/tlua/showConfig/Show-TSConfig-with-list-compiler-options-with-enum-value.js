@@ -1,0 +1,10 @@
+currentDirectory::/home/src/workspaces/project
+useCaseSensitiveFileNames::true
+Input::
+
+tlua --showConfig --lib es5,es2015.core
+ExitStatus:: DiagnosticsPresent_OutputsSkipped
+Output::
+[91merror[0m[90m TLUA6046: [0mArgument for '--lib' option must be: 'luajit'.
+[91merror[0m[90m TLUA6046: [0mArgument for '--lib' option must be: 'luajit'.
+

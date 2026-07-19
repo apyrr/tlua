@@ -1,6 +1,6 @@
-tluaNumberKeyIndexKeyof.tlua(4,7): error TS2322: Type 'number' is not assignable to type 'string'.
-tluaNumberKeyIndexKeyof.tlua(9,7): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaNumberKeyIndexKeyof.tlua(29,7): error TS2322: Type 'number' is not assignable to type 'string'.
+tluaNumberKeyIndexKeyof.tlua(4,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaNumberKeyIndexKeyof.tlua(9,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaNumberKeyIndexKeyof.tlua(29,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
 ==== tluaNumberKeyIndexKeyof.tlua (3 errors) ====
@@ -9,14 +9,14 @@ tluaNumberKeyIndexKeyof.tlua(29,7): error TS2322: Type 'number' is not assignabl
     local sk: SK = "x";
     local skBad: SK = 1; // error: number not a string key
           ~~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     
     // keyof a number index signature is number.
     type NK = keyof { [k: number]: boolean }; // number
     local nk: NK = 1;
     local nkBad: NK = "x"; // error: string not a number key
           ~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // Both signatures: keyof is string | number.
     type BK = keyof { [k: string]: boolean; [k: number]: boolean };
@@ -38,7 +38,7 @@ tluaNumberKeyIndexKeyof.tlua(29,7): error TS2322: Type 'number' is not assignabl
     local m2Ok: keyof M2 = "x";
     local m2Bad: keyof M2 = 1; // error: keyof M2 is string, not string | number
           ~~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     
     local es = {sk, skBad, nk, nkBad, bk1, bk2, m, tk, m2Ok, m2Bad};
     

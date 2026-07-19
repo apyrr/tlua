@@ -5,7 +5,7 @@
 //      * Text before {@link a} text after
 //                           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | 
@@ -27,7 +27,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\n"
+        "value": "```tlua\n(parameter) a: number\n```\n"
       },
       "range": {
         "start": {

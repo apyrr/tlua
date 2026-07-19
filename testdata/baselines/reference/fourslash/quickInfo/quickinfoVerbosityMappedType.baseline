@@ -12,7 +12,7 @@
 // local x: F<Bar> = { banana: 'hello' };
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local x: {
 // |     banana: string;
 // | }
@@ -22,7 +22,7 @@
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local x: F<Bar>
 // | ```
 // | 
@@ -30,7 +30,7 @@
 // | ----------------------------------------------------------------------
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type F<T> = { [K in keyof T as T[K] extends number | boolean ? never : K]: T[K]; }
 // | ```
 // | 
@@ -38,7 +38,7 @@
 // | ----------------------------------------------------------------------
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type F<T> = { [K in keyof T as T[K] extends Apple ? never : K]: T[K]; }
 // | ```
 // | 
@@ -47,7 +47,7 @@
 // local y: { [K in keyof Bar]?: Bar[K] } = { banana: 'hello' };
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local y: {
 // |     banana?: string | nil;
 // |     apple?: boolean | nil;
@@ -62,7 +62,7 @@
 // local z: G<Bar> = { banana: 'hello', apple: true };
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type G<T> = { [K in keyof T]: T[K] & (number | boolean); }
 // | ```
 // | 
@@ -70,7 +70,7 @@
 // | ----------------------------------------------------------------------
 //          ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type G<T> = { [K in keyof T]: T[K] & Apple; }
 // | ```
 // | 
@@ -91,7 +91,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal x: F<Bar>\n```\n"
+          "value": "```tlua\nlocal x: F<Bar>\n```\n"
         },
         "range": {
           "start": {
@@ -122,7 +122,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal x: {\n    banana: string;\n}\n```\n"
+          "value": "```tlua\nlocal x: {\n    banana: string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -152,7 +152,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype F<T> = { [K in keyof T as T[K] extends Apple ? never : K]: T[K]; }\n```\n"
+          "value": "```tlua\ntype F<T> = { [K in keyof T as T[K] extends Apple ? never : K]: T[K]; }\n```\n"
         },
         "range": {
           "start": {
@@ -183,7 +183,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype F<T> = { [K in keyof T as T[K] extends number | boolean ? never : K]: T[K]; }\n```\n"
+          "value": "```tlua\ntype F<T> = { [K in keyof T as T[K] extends number | boolean ? never : K]: T[K]; }\n```\n"
         },
         "range": {
           "start": {
@@ -213,7 +213,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal y: {\n    banana?: string | nil;\n    apple?: boolean | nil;\n}\n```\n"
+          "value": "```tlua\nlocal y: {\n    banana?: string | nil;\n    apple?: boolean | nil;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -243,7 +243,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype G<T> = { [K in keyof T]: T[K] & Apple; }\n```\n"
+          "value": "```tlua\ntype G<T> = { [K in keyof T]: T[K] & Apple; }\n```\n"
         },
         "range": {
           "start": {
@@ -274,7 +274,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype G<T> = { [K in keyof T]: T[K] & (number | boolean); }\n```\n"
+          "value": "```tlua\ntype G<T> = { [K in keyof T]: T[K] & (number | boolean); }\n```\n"
         },
         "range": {
           "start": {

@@ -2,7 +2,7 @@ Fs::
 //// [/app.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
 			    "compilerOptions": {
 					"types": []
@@ -10,11 +10,11 @@ Fs::
 			}
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
   "types": [],
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::

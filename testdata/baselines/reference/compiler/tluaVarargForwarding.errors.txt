@@ -1,9 +1,9 @@
-tluaVarargForwarding.tlua(34,15): error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+tluaVarargForwarding.tlua(34,15): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
   Type 'nil' is not assignable to type 'string'.
-tluaVarargForwarding.tlua(46,7): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaVarargForwarding.tlua(55,7): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaVarargForwarding.tlua(62,15): error TS2304: Cannot find name 'Parameters'.
-tluaVarargForwarding.tlua(63,19): error TS2304: Cannot find name 'ConstructorParameters'.
+tluaVarargForwarding.tlua(46,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaVarargForwarding.tlua(55,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaVarargForwarding.tlua(62,15): error TLUA2304: Cannot find name 'Parameters'.
+tluaVarargForwarding.tlua(63,19): error TLUA2304: Cannot find name 'ConstructorParameters'.
 
 
 ==== tluaVarargForwarding.tlua (5 errors) ====
@@ -42,8 +42,8 @@ tluaVarargForwarding.tlua(63,19): error TS2304: Cannot find name 'ConstructorPar
       // needs a value.
       needsString(...);
                   ~~~
-!!! error TS2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
-!!! error TS2345:   Type 'nil' is not assignable to type 'string'.
+!!! error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
+!!! error TLUA2345:   Type 'nil' is not assignable to type 'string'.
     end
     
     // Lib sanity assertions on the inherited-lib rest rewrite.
@@ -57,7 +57,7 @@ tluaVarargForwarding.tlua(63,19): error TS2304: Cannot find name 'ConstructorPar
     local ret: Ret = 1;
     local badRet: Ret = "a";
           ~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // `Awaited<T>` matches a thenable through `then(onfulfilled: infer F, ...: infer _)`.
     // The `infer` sits in a vararg annotation, so it infers the pack's *element* type
@@ -68,7 +68,7 @@ tluaVarargForwarding.tlua(63,19): error TS2304: Cannot find name 'ConstructorPar
     local unwrapped: Unwrapped = 1;
     local badUnwrapped: Unwrapped = "a";
           ~~~~~~~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // `Parameters<T>` and `ConstructorParameters<T>` are deliberately removed from
     // the libs: they are built on `...args: infer P`, which only works because a TS
@@ -77,8 +77,8 @@ tluaVarargForwarding.tlua(63,19): error TS2304: Cannot find name 'ConstructorPar
     // gone, no tlua program could consume it anyway. Restoring them is Stage 2.
     type Params = Parameters<typeof twoArgs>;
                   ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'Parameters'.
+!!! error TLUA2304: Cannot find name 'Parameters'.
     type CtorParams = ConstructorParameters<typeof twoArgs>;
                       ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'ConstructorParameters'.
+!!! error TLUA2304: Cannot find name 'ConstructorParameters'.
     

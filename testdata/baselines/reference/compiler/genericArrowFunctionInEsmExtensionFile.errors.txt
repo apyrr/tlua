@@ -1,11 +1,11 @@
-error TS6054: File 'a.mts' has an unsupported extension. The only supported extensions are '.tlua', '.tsx', '.d.tlua'.
+error TLUA6054: File 'a.mts' has an unsupported extension. The only supported extensions are '.tlua', '.tsx', '.d.tlua'.
   The file is in the program because:
     Root file specified for compilation
 
 
-!!! error TS6054: File 'a.mts' has an unsupported extension. The only supported extensions are '.tlua', '.tsx', '.d.tlua'.
-!!! error TS6054:   The file is in the program because:
-!!! error TS6054:     Root file specified for compilation
+!!! error TLUA6054: File 'a.mts' has an unsupported extension. The only supported extensions are '.tlua', '.tsx', '.d.tlua'.
+!!! error TLUA6054:   The file is in the program because:
+!!! error TLUA6054:     Root file specified for compilation
 ==== a.mts (0 errors) ====
     // @see https://github.com/microsoft/TypeScript/issues/44442
     local a = <T,>(arg: T): T => {

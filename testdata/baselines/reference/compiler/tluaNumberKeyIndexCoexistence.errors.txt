@@ -1,4 +1,4 @@
-tluaNumberKeyIndexCoexistence.tlua(18,12): error TS7053: Element implicitly has an 'any' type because expression of type '5' can't be used to index type 'U'.
+tluaNumberKeyIndexCoexistence.tlua(18,12): error TLUA7053: Element implicitly has an 'any' type because expression of type '5' can't be used to index type 'U'.
   Property '5' does not exist on type 'U'.
 
 
@@ -22,8 +22,8 @@ tluaNumberKeyIndexCoexistence.tlua(18,12): error TS7053: Element implicitly has 
     // A number-key access is NOT covered by the string index signature: error.
     local un = u[5];
                ~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type '5' can't be used to index type 'U'.
-!!! error TS7053:   Property '5' does not exist on type 'U'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '5' can't be used to index type 'U'.
+!!! error TLUA7053:   Property '5' does not exist on type 'U'.
     
     local es = {u1, us, un};
     

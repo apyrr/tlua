@@ -1,6 +1,6 @@
-tluaColonFunctionDeclarations.tlua(24,7): error TS2345: Argument of type 'number' is not assignable to parameter of type '{ count: number; inc(self: any, by: number): number; read(self: any): number; double(self: any): number; }'.
-tluaColonFunctionDeclarations.tlua(25,10): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaColonFunctionDeclarations.tlua(28,3): error TS2554: Expected 2 arguments, but got 1.
+tluaColonFunctionDeclarations.tlua(24,7): error TLUA2345: Argument of type 'number' is not assignable to parameter of type '{ count: number; inc(self: any, by: number): number; read(self: any): number; double(self: any): number; }'.
+tluaColonFunctionDeclarations.tlua(25,10): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaColonFunctionDeclarations.tlua(28,3): error TLUA2554: Expected 2 arguments, but got 1.
 
 
 ==== tluaColonFunctionDeclarations.tlua (3 errors) ====
@@ -29,14 +29,14 @@ tluaColonFunctionDeclarations.tlua(28,3): error TS2554: Expected 2 arguments, bu
     // The receiver is checked like any other parameter.
     M.inc(1, 1);
           ~
-!!! error TS2345: Argument of type 'number' is not assignable to parameter of type '{ count: number; inc(self: any, by: number): number; read(self: any): number; double(self: any): number; }'.
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type '{ count: number; inc(self: any, by: number): number; read(self: any): number; double(self: any): number; }'.
     M.inc(M, "x");
              ~~~
-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     
     // And it is not optional.
     M.inc(1);
       ~~~
-!!! error TS2554: Expected 2 arguments, but got 1.
-!!! related TS6210 tluaColonFunctionDeclarations.tlua:5:16: An argument for 'by' was not provided.
+!!! error TLUA2554: Expected 2 arguments, but got 1.
+!!! related TLUA6210 tluaColonFunctionDeclarations.tlua:5:16: An argument for 'by' was not provided.
     

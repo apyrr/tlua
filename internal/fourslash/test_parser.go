@@ -181,7 +181,7 @@ func hasUnsupportedGlobalOptionsWithConfig(globalOptions map[string]string) bool
 
 func isConfigFile(fileName string) bool {
 	fileName = strings.ToLower(fileName)
-	return strings.HasSuffix(fileName, "tsconfig.json") || strings.HasSuffix(fileName, "jsconfig.json")
+	return strings.HasSuffix(fileName, "tluaconfig.json") || strings.HasSuffix(fileName, "jsconfig.json")
 }
 
 type locationInformation struct {

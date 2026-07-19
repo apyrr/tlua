@@ -1,5 +1,5 @@
-tluaGotoFlow.tlua(20,5): error TS7027: Unreachable code detected.
-tluaGotoFlow.tlua(37,5): error TS7027: Unreachable code detected.
+tluaGotoFlow.tlua(20,5): error TLUA7027: Unreachable code detected.
+tluaGotoFlow.tlua(37,5): error TLUA7027: Unreachable code detected.
 
 
 ==== tluaGotoFlow.tlua (2 errors) ====
@@ -24,7 +24,7 @@ tluaGotoFlow.tlua(37,5): error TS7027: Unreachable code detected.
         goto skip
         n = n + 1;
         ~~~~~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
         ::skip::
         return n;
     end
@@ -45,6 +45,6 @@ tluaGotoFlow.tlua(37,5): error TS7027: Unreachable code detected.
         ~~~~~~~~~
         return 2;
     ~~~~~~~~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
     end
     

@@ -3,7 +3,7 @@
 // local hello: "hello" | 'hello' = "hello";
 //       ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local hello: "hello"
 // | ```
 // | 
@@ -11,7 +11,7 @@
 // local world: 'world' = "world";
 //       ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local world: "world"
 // | ```
 // | 
@@ -19,7 +19,7 @@
 // local helloOrWorld: "hello" | 'world';
 //       ^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local helloOrWorld: "hello" | "world"
 // | ```
 // | 
@@ -38,7 +38,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal hello: \"hello\"\n```\n"
+        "value": "```tlua\nlocal hello: \"hello\"\n```\n"
       },
       "range": {
         "start": {
@@ -65,7 +65,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal world: \"world\"\n```\n"
+        "value": "```tlua\nlocal world: \"world\"\n```\n"
       },
       "range": {
         "start": {
@@ -92,7 +92,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal helloOrWorld: \"hello\" | \"world\"\n```\n"
+        "value": "```tlua\nlocal helloOrWorld: \"hello\" | \"world\"\n```\n"
       },
       "range": {
         "start": {

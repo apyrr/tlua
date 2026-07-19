@@ -1,10 +1,10 @@
-tluaGenericForErrors.tlua(3,12): error TS2349: This expression is not callable.
-tluaGenericForErrors.tlua(22,7): error TS2322: Type 'number' is not assignable to type 'boolean'.
-tluaGenericForErrors.tlua(29,9): error TS1005: 'in' expected.
-tluaGenericForErrors.tlua(29,9): error TS2304: Cannot find name 'of'.
-tluaGenericForErrors.tlua(36,20): error TS2349: This expression is not callable.
-tluaGenericForErrors.tlua(36,20): error TS2448: Block-scoped variable 'k' used before its declaration.
-tluaGenericForErrors.tlua(36,20): error TS2454: Variable 'k' is used before being assigned.
+tluaGenericForErrors.tlua(3,12): error TLUA2349: This expression is not callable.
+tluaGenericForErrors.tlua(22,7): error TLUA2322: Type 'number' is not assignable to type 'boolean'.
+tluaGenericForErrors.tlua(29,9): error TLUA1005: 'in' expected.
+tluaGenericForErrors.tlua(29,9): error TLUA2304: Cannot find name 'of'.
+tluaGenericForErrors.tlua(36,20): error TLUA2349: This expression is not callable.
+tluaGenericForErrors.tlua(36,20): error TLUA2448: Block-scoped variable 'k' used before its declaration.
+tluaGenericForErrors.tlua(36,20): error TLUA2454: Variable 'k' is used before being assigned.
 
 
 ==== tluaGenericForErrors.tlua (7 errors) ====
@@ -12,7 +12,7 @@ tluaGenericForErrors.tlua(36,20): error TS2454: Variable 'k' is used before bein
     function notCallable(): void
       for k in 42 do
                ~~
-!!! error TS2349: This expression is not callable.
+!!! error TLUA2349: This expression is not callable.
         k;
       end
     end
@@ -33,7 +33,7 @@ tluaGenericForErrors.tlua(36,20): error TS2454: Variable 'k' is used before bein
     function badAnnotation(t: string[]): void
       for k: boolean in iter do
           ~
-!!! error TS2322: Type 'number' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'boolean'.
         k;
       end
     end
@@ -42,9 +42,9 @@ tluaGenericForErrors.tlua(36,20): error TS2454: Variable 'k' is used before bein
     function missingIn(): void
       for k of do
             ~~
-!!! error TS1005: 'in' expected.
+!!! error TLUA1005: 'in' expected.
             ~~
-!!! error TS2304: Cannot find name 'of'.
+!!! error TLUA2304: Cannot find name 'of'.
       end
     end
     
@@ -53,12 +53,12 @@ tluaGenericForErrors.tlua(36,20): error TS2454: Variable 'k' is used before bein
     function selfReference(): void
       for k: string in k do
                        ~
-!!! error TS2349: This expression is not callable.
+!!! error TLUA2349: This expression is not callable.
                        ~
-!!! error TS2448: Block-scoped variable 'k' used before its declaration.
-!!! related TS2728 tluaGenericForErrors.tlua:36:7: 'k' is declared here.
+!!! error TLUA2448: Block-scoped variable 'k' used before its declaration.
+!!! related TLUA2728 tluaGenericForErrors.tlua:36:7: 'k' is declared here.
                        ~
-!!! error TS2454: Variable 'k' is used before being assigned.
+!!! error TLUA2454: Variable 'k' is used before being assigned.
         k;
       end
     end

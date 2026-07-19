@@ -24,7 +24,7 @@ func TestATA(t *testing.T) {
 
 		files := map[string]any{
 			"/user/username/projects/project/app.lua": ``,
-			"/user/username/projects/project/tsconfig.json": `{
+			"/user/username/projects/project/tluaconfig.json": `{
 				"compilerOptions": { "allowJs": true },
 				"typeAcquisition": { "enable": true },
 			}`,

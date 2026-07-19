@@ -1161,7 +1161,7 @@ func computeFileBasedTestConfigurationVariationsWorker(
 
 func GetConfigNameFromFileName(filename string) string {
 	basenameLower := strings.ToLower(tspath.GetBaseFileName(filename))
-	if basenameLower == "tsconfig.json" || basenameLower == "jsconfig.json" {
+	if basenameLower == "tluaconfig.json" || basenameLower == "jsconfig.json" {
 		return basenameLower
 	}
 	return ""

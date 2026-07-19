@@ -1,5 +1,5 @@
-tluaLocalStatementPosition.tlua(6,11): error TS1156: 'local' declarations can only be declared inside a block.
-tluaLocalStatementPosition.tlua(7,14): error TS1156: 'local' declarations can only be declared inside a block.
+tluaLocalStatementPosition.tlua(6,11): error TLUA1156: 'local' declarations can only be declared inside a block.
+tluaLocalStatementPosition.tlua(7,14): error TLUA1156: 'local' declarations can only be declared inside a block.
 
 
 ==== tluaLocalStatementPosition.tlua (2 errors) ====
@@ -10,10 +10,10 @@ tluaLocalStatementPosition.tlua(7,14): error TS1156: 'local' declarations can on
     declare cond: boolean;
     if (cond) local a = 1;
               ~~~~~~~~~~~~
-!!! error TS1156: 'local' declarations can only be declared inside a block.
+!!! error TLUA1156: 'local' declarations can only be declared inside a block.
     while (cond) local b = 2;
                  ~~~~~~~~~~~~
-!!! error TS1156: 'local' declarations can only be declared inside a block.
+!!! error TLUA1156: 'local' declarations can only be declared inside a block.
     
     // Braced and Lua-block bodies are real blocks; the declarations are fine and
     // stay contained.

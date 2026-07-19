@@ -8,7 +8,7 @@
 // x;
 // ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | const x: {
 // |     parent: Container<{
 // |         parent: Container;
@@ -33,7 +33,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst x: {\n    parent: Container<{\n        parent: Container;\n    }>;\n}\n```\n"
+          "value": "```tlua\nconst x: {\n    parent: Container<{\n        parent: Container;\n    }>;\n}\n```\n"
         },
         "range": {
           "start": {

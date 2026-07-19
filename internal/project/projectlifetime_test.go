@@ -21,7 +21,7 @@ func TestProjectLifetime(t *testing.T) {
 	t.Run("configured project", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": `{
+			"/home/projects/TS/p1/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -32,7 +32,7 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p1/src/index.tlua": `local x = require("src.x");`,
 			"/home/projects/TS/p1/src/x.tlua":     `local x = 1; return { x = x };`,
 			"/home/projects/TS/p1/config.tlua":    `local x = 1, y = 2;`,
-			"/home/projects/TS/p2/tsconfig.json": `{
+			"/home/projects/TS/p2/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -43,7 +43,7 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p2/src/index.tlua": `local x = require("src.x");`,
 			"/home/projects/TS/p2/src/x.tlua":     `local x = 1; return { x = x };`,
 			"/home/projects/TS/p2/config.tlua":    `local x = 1, y = 2;`,
-			"/home/projects/TS/p3/tsconfig.json": `{
+			"/home/projects/TS/p3/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -67,11 +67,11 @@ func TestProjectLifetime(t *testing.T) {
 		session.WaitForBackgroundTasks()
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tluaconfig.json")) != nil)
 		assert.Equal(t, len(utils.Client().WatchFilesCalls()), 1)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tluaconfig.json")) != nil)
 
 		// Close p1 file and open p3 file
 		session.DidCloseFile(context.Background(), uri1)
@@ -81,12 +81,12 @@ func TestProjectLifetime(t *testing.T) {
 		// Should still have two projects, but p1 replaced by p3
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p3/tsconfig.json")) != nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tluaconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p3/tluaconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tluaconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tluaconfig.json")) != nil)
 		assert.Equal(t, len(utils.Client().WatchFilesCalls()), 1)
 		assert.Equal(t, len(utils.Client().UnwatchFilesCalls()), 0)
 
@@ -98,10 +98,10 @@ func TestProjectLifetime(t *testing.T) {
 		// Should have one project (p1)
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tluaconfig.json")) == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tluaconfig.json")) == nil)
 		assert.Equal(t, len(utils.Client().WatchFilesCalls()), 1)
 		assert.Equal(t, len(utils.Client().UnwatchFilesCalls()), 0)
 	})
@@ -159,7 +159,7 @@ func TestProjectLifetime(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
 			"/home/projects/ts/node_modules/foolib/init.tlua": `local foo = 1; return { foo = foo };`,
-			"/home/projects/ts/p1/tsconfig.json": `{
+			"/home/projects/ts/p1/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -180,9 +180,9 @@ func TestProjectLifetime(t *testing.T) {
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) == nil)
 
-		// Now open main.tlua - should trigger discovery of tsconfig.json and move foo.tlua to configured project
+		// Now open main.tlua - should trigger discovery of tluaconfig.json and move foo.tlua to configured project
 		mainUri := lsproto.DocumentUri("file:///home/projects/ts/p1/main.tlua")
 		session.DidOpenFile(context.Background(), mainUri, 1, files["/home/projects/ts/p1/main.tlua"].(string), lsproto.LanguageKindTypeScript)
 
@@ -190,29 +190,29 @@ func TestProjectLifetime(t *testing.T) {
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
 
 		// Config file should be present
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
 
 		// Close main.tlua - configured project should remain because foo.tlua is still open
 		session.DidCloseFile(context.Background(), mainUri)
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
 
 		// Close foo.tlua - configured project should be retained until next file open
 		session.DidCloseFile(context.Background(), fooUri)
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
 	})
 
 	t.Run("file move from inferred to configured via didOpen/didClose sequence", func(t *testing.T) {
 		t.Parallel()
-		// Start with tsconfig.json that includes "src" but file is at root level
+		// Start with tluaconfig.json that includes "src" but file is at root level
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": `{
+			"/home/projects/TS/p1/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true
 				},
@@ -231,7 +231,7 @@ func TestProjectLifetime(t *testing.T) {
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) == nil)
 
 		// Simulate file move: create src/index.tlua on disk
 		err := utils.FS().WriteFile("/home/projects/TS/p1/src/index.tlua", files["/home/projects/TS/p1/index.tlua"].(string))
@@ -273,7 +273,7 @@ func TestProjectLifetime(t *testing.T) {
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
 	})
 
 	// Regression test for https://github.com/microsoft/typescript-go/issues/3733
@@ -289,14 +289,14 @@ func TestProjectLifetime(t *testing.T) {
 	// watch event arrived, so both orderings are covered.
 	runNewFileScenario := func(t *testing.T, openBeforeCreateEvent bool) {
 		files := map[string]any{
-			"/home/projects/TS/monorepo/tsconfig.json": `{
+			"/home/projects/TS/monorepo/tluaconfig.json": `{
 				"compilerOptions": {
 					"target": "ES2015",
 					"lib": ["DOM"]
 				},
 				"include": ["apps"]
 			}`,
-			"/home/projects/TS/monorepo/apps/web/tsconfig.json": `{
+			"/home/projects/TS/monorepo/apps/web/tluaconfig.json": `{
 				"compilerOptions": {
 					"target": "ESNext",
 					"lib": ["ESNext"]
@@ -356,9 +356,9 @@ func TestProjectLifetime(t *testing.T) {
 
 	t.Run("tsconfig move from subdirectory to parent via didChangeWatchedFiles", func(t *testing.T) {
 		t.Parallel()
-		// Start with tsconfig.json in src/ that includes "src" - file won't be included initially
+		// Start with tluaconfig.json in src/ that includes "src" - file won't be included initially
 		files := map[string]any{
-			"/home/projects/TS/p1/src/tsconfig.json": `{
+			"/home/projects/TS/p1/src/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true
 				},
@@ -368,27 +368,27 @@ func TestProjectLifetime(t *testing.T) {
 		}
 		session, utils := projecttestutil.Setup(files)
 
-		// Open src/index.tlua - should create inferred project since tsconfig.json includes "src"
+		// Open src/index.tlua - should create inferred project since tluaconfig.json includes "src"
 		// relative to its location (src/src/ which doesn't exist)
 		indexUri := lsproto.DocumentUri("file:///home/projects/TS/p1/src/index.tlua")
 		session.DidOpenFile(context.Background(), indexUri, 1, files["/home/projects/TS/p1/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 
-		// Should have one inferred project only (file is not included by tsconfig at src/tsconfig.json)
+		// Should have one inferred project only (file is not included by tsconfig at src/tluaconfig.json)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/src/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/src/tluaconfig.json")) == nil)
 
-		// Simulate tsconfig.json move: create tsconfig.json at parent level, delete from src/
-		tsconfigContent := files["/home/projects/TS/p1/src/tsconfig.json"].(string)
-		err := utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", tsconfigContent)
+		// Simulate tluaconfig.json move: create tluaconfig.json at parent level, delete from src/
+		tsconfigContent := files["/home/projects/TS/p1/src/tluaconfig.json"].(string)
+		err := utils.FS().WriteFile("/home/projects/TS/p1/tluaconfig.json", tsconfigContent)
 		assert.NilError(t, err)
-		err = utils.FS().Remove("/home/projects/TS/p1/src/tsconfig.json")
+		err = utils.FS().Remove("/home/projects/TS/p1/src/tluaconfig.json")
 		assert.NilError(t, err)
 
 		// Simulate file move via didChangeWatchedFiles
-		newTsconfigUri := lsproto.DocumentUri("file:///home/projects/TS/p1/tsconfig.json")
-		oldTsconfigUri := lsproto.DocumentUri("file:///home/projects/TS/p1/src/tsconfig.json")
+		newTsconfigUri := lsproto.DocumentUri("file:///home/projects/TS/p1/tluaconfig.json")
+		oldTsconfigUri := lsproto.DocumentUri("file:///home/projects/TS/p1/src/tluaconfig.json")
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  newTsconfigUri,
@@ -400,13 +400,13 @@ func TestProjectLifetime(t *testing.T) {
 			},
 		})
 
-		// Should now have one configured project only (tsconfig.json now includes src/index.tlua)
+		// Should now have one configured project only (tluaconfig.json now includes src/index.tlua)
 		_, err = session.GetLanguageService(context.Background(), indexUri)
 		assert.NilError(t, err)
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")) != nil)
 	})
 
 	t.Run("deleted open file remains in project until closed", func(t *testing.T) {
@@ -420,7 +420,7 @@ func TestProjectLifetime(t *testing.T) {
 		// 6. On next LS request, the project should exclude the deleted file
 
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": `{
+			"/home/projects/TS/p1/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true
 				},

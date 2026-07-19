@@ -14,7 +14,7 @@ func TestNgProxy4(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: tsconfig.json
+	const content = `// @Filename: tluaconfig.json
 {
     "compilerOptions": {
         "lib": ["es5"],

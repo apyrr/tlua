@@ -490,7 +490,7 @@ var ECMAScript_module_syntax_is_not_allowed_in_a_CommonJS_module_when_module_is_
 
 var This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled = &Message{code: 1294, category: CategoryError, key: "This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled_1294", text: "This syntax is not allowed when 'erasableSyntaxOnly' is enabled."}
 
-var ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjust_the_type_field_in_the_nearest_package_json_to_make_this_file_an_ECMAScript_module_or_adjust_your_verbatimModuleSyntax_module_and_moduleResolution_settings_in_TypeScript = &Message{code: 1295, category: CategoryError, key: "ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjus_1295", text: "ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript."}
+var ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjust_the_type_field_in_the_nearest_package_json_to_make_this_file_an_ECMAScript_module_or_adjust_your_verbatimModuleSyntax_module_and_moduleResolution_settings_in_tlua = &Message{code: 1295, category: CategoryError, key: "ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjus_1295", text: "ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in tlua."}
 
 var X_with_statements_are_not_allowed_in_an_async_function_block = &Message{code: 1300, category: CategoryError, key: "with_statements_are_not_allowed_in_an_async_function_block_1300", text: "'with' statements are not allowed in an async function block."}
 
@@ -672,7 +672,7 @@ var Matched_by_include_pattern_0_in_1 = &Message{code: 1407, category: CategoryM
 
 var File_is_matched_by_include_pattern_specified_here = &Message{code: 1408, category: CategoryMessage, key: "File_is_matched_by_include_pattern_specified_here_1408", text: "File is matched by include pattern specified here."}
 
-var Part_of_files_list_in_tsconfig_json = &Message{code: 1409, category: CategoryMessage, key: "Part_of_files_list_in_tsconfig_json_1409", text: "Part of 'files' list in tsconfig.json"}
+var Part_of_files_list_in_tluaconfig_json = &Message{code: 1409, category: CategoryMessage, key: "Part_of_files_list_in_tluaconfig_json_1409", text: "Part of 'files' list in tluaconfig.json"}
 
 var File_is_matched_by_files_list_specified_here = &Message{code: 1410, category: CategoryMessage, key: "File_is_matched_by_files_list_specified_here_1410", text: "File is matched by 'files' list specified here."}
 
@@ -930,7 +930,7 @@ var X_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_conta
 
 var X_await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block = &Message{code: 1548, category: CategoryError, key: "await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block_1548", text: "'await using' declarations are not allowed in 'case' or 'default' clauses unless contained within a block."}
 
-var Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files = &Message{code: 1549, category: CategoryMessage, key: "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549", text: "Ignore the tsconfig found and build with commandline options and files."}
+var Ignore_the_tluaconfig_found_and_build_with_commandline_options_and_files = &Message{code: 1549, category: CategoryMessage, key: "Ignore_the_tluaconfig_found_and_build_with_commandline_options_and_files_1549", text: "Ignore the tluaconfig found and build with commandline options and files."}
 
 var The_types_of_0_are_incompatible_between_these_types = &Message{code: 2200, category: CategoryError, key: "The_types_of_0_are_incompatible_between_these_types_2200", text: "The types of '{0}' are incompatible between these types."}
 
@@ -1480,11 +1480,11 @@ var Type_instantiation_is_excessively_deep_and_possibly_infinite = &Message{code
 
 var Expression_produces_a_union_type_that_is_too_complex_to_represent = &Message{code: 2590, category: CategoryError, key: "Expression_produces_a_union_type_that_is_too_complex_to_represent_2590", text: "Expression produces a union type that is too complex to represent."}
 
-var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tsconfig = &Message{code: 2591, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashno_2591", text: "Cannot find name '{0}'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig."}
+var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tluaconfig = &Message{code: 2591, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashno_2591", text: "Cannot find name '{0}'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tluaconfig."}
 
-var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slashjquery_and_then_add_jquery_to_the_types_field_in_your_tsconfig = &Message{code: 2592, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slash_2592", text: "Cannot find name '{0}'. Do you need to install type definitions for jQuery? Try `npm i --save-dev @types/jquery` and then add 'jquery' to the types field in your tsconfig."}
+var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slashjquery_and_then_add_jquery_to_the_types_field_in_your_tluaconfig = &Message{code: 2592, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slash_2592", text: "Cannot find name '{0}'. Do you need to install type definitions for jQuery? Try `npm i --save-dev @types/jquery` and then add 'jquery' to the types field in your tluaconfig."}
 
-var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_types_Slashjest_or_npm_i_save_dev_types_Slashmocha_and_then_add_jest_or_mocha_to_the_types_field_in_your_tsconfig = &Message{code: 2593, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_type_2593", text: "Cannot find name '{0}'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig."}
+var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_types_Slashjest_or_npm_i_save_dev_types_Slashmocha_and_then_add_jest_or_mocha_to_the_types_field_in_your_tluaconfig = &Message{code: 2593, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_type_2593", text: "Cannot find name '{0}'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tluaconfig."}
 
 var This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag = &Message{code: 2594, category: CategoryError, key: "This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag_2594", text: "This module is declared with 'export =', and can only be used with a default import when using the '{0}' flag."}
 
@@ -1978,7 +1978,7 @@ var Import_0_conflicts_with_global_value_used_in_this_file_so_must_be_declared_w
 
 var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun = &Message{code: 2867, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_2867", text: "Cannot find name '{0}'. Do you need to install type definitions for Bun? Try `npm i --save-dev @types/bun`."}
 
-var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_and_then_add_bun_to_the_types_field_in_your_tsconfig = &Message{code: 2868, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_2868", text: "Cannot find name '{0}'. Do you need to install type definitions for Bun? Try `npm i --save-dev @types/bun` and then add 'bun' to the types field in your tsconfig."}
+var Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_and_then_add_bun_to_the_types_field_in_your_tluaconfig = &Message{code: 2868, category: CategoryError, key: "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_2868", text: "Cannot find name '{0}'. Do you need to install type definitions for Bun? Try `npm i --save-dev @types/bun` and then add 'bun' to the types field in your tluaconfig."}
 
 var Right_operand_of_is_unreachable_because_the_left_operand_is_never_nullish = &Message{code: 2869, category: CategoryError, key: "Right_operand_of_is_unreachable_because_the_left_operand_is_never_nullish_2869", text: "Right operand of ?? is unreachable because the left operand is never nullish."}
 
@@ -1996,7 +1996,7 @@ var This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Mak
 
 var This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0 = &Message{code: 2876, category: CategoryError, key: "This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolv_2876", text: "This relative import path is unsafe to rewrite because it looks like a file name, but actually resolves to \"{0}\"."}
 
-var This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path = &Message{code: 2877, category: CategoryError, key: "This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_duri_2877", text: "This import uses a '{0}' extension to resolve to an input TypeScript file, but will not be rewritten during emit because it is not a relative path."}
+var This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path = &Message{code: 2877, category: CategoryError, key: "This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emi_2877", text: "This import uses a '{0}' extension to resolve to an input tlua file, but will not be rewritten during emit because it is not a relative path."}
 
 var This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_between_the_projects_output_files_is_not_the_same_as_the_relative_path_between_its_input_files = &Message{code: 2878, category: CategoryError, key: "This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_b_2878", text: "This import path is unsafe to rewrite because it resolves to another project, and the relative path between the projects' output files is not the same as the relative path between its input files."}
 
@@ -2222,7 +2222,7 @@ var This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_n
 
 var This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_not_declared_in_the_base_class_0_Did_you_mean_1 = &Message{code: 4123, category: CategoryError, key: "This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_not_declared_in_the_base__4123", text: "This member cannot have a JSDoc comment with an 'override' tag because it is not declared in the base class '{0}'. Did you mean '{1}'?"}
 
-var Compiler_option_0_of_value_1_is_unstable_Use_nightly_TypeScript_to_silence_this_error_Try_updating_with_npm_install_D_typescript_next = &Message{code: 4124, category: CategoryError, key: "Compiler_option_0_of_value_1_is_unstable_Use_nightly_TypeScript_to_silence_this_error_Try_updating_w_4124", text: "Compiler option '{0}' of value '{1}' is unstable. Use nightly TypeScript to silence this error. Try updating with 'npm install -D typescript@next'."}
+var Compiler_option_0_of_value_1_is_unstable_Use_nightly_tlua_to_silence_this_error_Try_updating_with_npm_install_D_typescript_next = &Message{code: 4124, category: CategoryError, key: "Compiler_option_0_of_value_1_is_unstable_Use_nightly_tlua_to_silence_this_error_Try_updating_with_np_4124", text: "Compiler option '{0}' of value '{1}' is unstable. Use nightly tlua to silence this error. Try updating with 'npm install -D typescript@next'."}
 
 var Each_declaration_of_0_1_differs_in_its_value_where_2_was_expected_but_3_was_given = &Message{code: 4125, category: CategoryError, key: "Each_declaration_of_0_1_differs_in_its_value_where_2_was_expected_but_3_was_given_4125", text: "Each declaration of '{0}.{1}' differs in its value, where '{2}' was expected but '{3}' was given."}
 
@@ -2262,13 +2262,13 @@ var Option_0_cannot_be_specified_without_specifying_option_1 = &Message{code: 50
 
 var Option_0_cannot_be_specified_with_option_1 = &Message{code: 5053, category: CategoryError, key: "Option_0_cannot_be_specified_with_option_1_5053", text: "Option '{0}' cannot be specified with option '{1}'."}
 
-var A_tsconfig_json_file_is_already_defined_at_Colon_0 = &Message{code: 5054, category: CategoryError, key: "A_tsconfig_json_file_is_already_defined_at_Colon_0_5054", text: "A 'tsconfig.json' file is already defined at: '{0}'."}
+var A_tluaconfig_json_file_is_already_defined_at_Colon_0 = &Message{code: 5054, category: CategoryError, key: "A_tluaconfig_json_file_is_already_defined_at_Colon_0_5054", text: "A 'tluaconfig.json' file is already defined at: '{0}'."}
 
 var Cannot_write_file_0_because_it_would_overwrite_input_file = &Message{code: 5055, category: CategoryError, key: "Cannot_write_file_0_because_it_would_overwrite_input_file_5055", text: "Cannot write file '{0}' because it would overwrite input file."}
 
 var Cannot_write_file_0_because_it_would_be_overwritten_by_multiple_input_files = &Message{code: 5056, category: CategoryError, key: "Cannot_write_file_0_because_it_would_be_overwritten_by_multiple_input_files_5056", text: "Cannot write file '{0}' because it would be overwritten by multiple input files."}
 
-var Cannot_find_a_tsconfig_json_file_at_the_specified_directory_Colon_0 = &Message{code: 5057, category: CategoryError, key: "Cannot_find_a_tsconfig_json_file_at_the_specified_directory_Colon_0_5057", text: "Cannot find a tsconfig.json file at the specified directory: '{0}'."}
+var Cannot_find_a_tluaconfig_json_file_at_the_specified_directory_Colon_0 = &Message{code: 5057, category: CategoryError, key: "Cannot_find_a_tluaconfig_json_file_at_the_specified_directory_Colon_0_5057", text: "Cannot find a tluaconfig.json file at the specified directory: '{0}'."}
 
 var The_specified_path_does_not_exist_Colon_0 = &Message{code: 5058, category: CategoryError, key: "The_specified_path_does_not_exist_Colon_0_5058", text: "The specified path does not exist: '{0}'."}
 
@@ -2288,7 +2288,7 @@ var Substitutions_for_pattern_0_shouldn_t_be_an_empty_array = &Message{code: 506
 
 var Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name = &Message{code: 5067, category: CategoryError, key: "Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name_5067", text: "Invalid value for 'jsxFactory'. '{0}' is not a valid identifier or qualified-name."}
 
-var Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig = &Message{code: 5068, category: CategoryError, key: "Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript__5068", text: "Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig."}
+var Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig = &Message{code: 5068, category: CategoryError, key: "Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_5068", text: "Adding a tluaconfig.json file will help organize projects that contain both Lua and JavaScript files. Learn more at https://aka.ms/tsconfig."}
 
 var Option_0_cannot_be_specified_without_specifying_option_1_or_option_2 = &Message{code: 5069, category: CategoryError, key: "Option_0_cannot_be_specified_without_specifying_option_1_or_option_2_5069", text: "Option '{0}' cannot be specified without specifying option '{1}' or option '{2}'."}
 
@@ -2300,7 +2300,7 @@ var Unknown_build_option_0 = &Message{code: 5072, category: CategoryError, key: 
 
 var Build_option_0_requires_a_value_of_type_1 = &Message{code: 5073, category: CategoryError, key: "Build_option_0_requires_a_value_of_type_1_5073", text: "Build option '{0}' requires a value of type {1}."}
 
-var Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided = &Message{code: 5074, category: CategoryError, key: "Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildI_5074", text: "Option '--incremental' is only valid with a known configuration file (like 'tsconfig.json') or when '--tsBuildInfoFile' is explicitly provided."}
+var Option_incremental_is_only_valid_with_a_known_configuration_file_like_tluaconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided = &Message{code: 5074, category: CategoryError, key: "Option_incremental_is_only_valid_with_a_known_configuration_file_like_tluaconfig_json_or_when_tsBuil_5074", text: "Option '--incremental' is only valid with a known configuration file (like 'tluaconfig.json') or when '--tsBuildInfoFile' is explicitly provided."}
 
 var X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2 = &Message{code: 5075, category: CategoryError, key: "_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_5075", text: "'{0}' is assignable to the constraint of type '{1}', but '{1}' could be instantiated with a different subtype of constraint '{2}'."}
 
@@ -2314,7 +2314,7 @@ var Unknown_watch_option_0_Did_you_mean_1 = &Message{code: 5079, category: Categ
 
 var Watch_option_0_requires_a_value_of_type_1 = &Message{code: 5080, category: CategoryError, key: "Watch_option_0_requires_a_value_of_type_1_5080", text: "Watch option '{0}' requires a value of type {1}."}
 
-var Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0 = &Message{code: 5081, category: CategoryError, key: "Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0_5081", text: "Cannot find a tsconfig.json file at the current directory: {0}."}
+var Cannot_find_a_tluaconfig_json_file_at_the_current_directory_Colon_0 = &Message{code: 5081, category: CategoryError, key: "Cannot_find_a_tluaconfig_json_file_at_the_current_directory_Colon_0_5081", text: "Cannot find a tluaconfig.json file at the current directory: {0}."}
 
 var X_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1 = &Message{code: 5082, category: CategoryError, key: "_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1_5082", text: "'{0}' could be instantiated with an arbitrary type which could be unrelated to '{1}'."}
 
@@ -2348,7 +2348,7 @@ var An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensio
 
 var Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler = &Message{code: 5098, category: CategoryError, key: "Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler_5098", text: "Option '{0}' can only be used when 'moduleResolution' is set to 'node16', 'nodenext', or 'bundler'."}
 
-var Option_0_is_deprecated_and_will_stop_functioning_in_TypeScript_1_Specify_compilerOption_ignoreDeprecations_Colon_2_to_silence_this_error = &Message{code: 5101, category: CategoryError, key: "Option_0_is_deprecated_and_will_stop_functioning_in_TypeScript_1_Specify_compilerOption_ignoreDeprec_5101", text: "Option '{0}' is deprecated and will stop functioning in TypeScript {1}. Specify compilerOption '\"ignoreDeprecations\": \"{2}\"' to silence this error."}
+var Option_0_is_deprecated_and_will_stop_functioning_in_tlua_1_Specify_compilerOption_ignoreDeprecations_Colon_2_to_silence_this_error = &Message{code: 5101, category: CategoryError, key: "Option_0_is_deprecated_and_will_stop_functioning_in_tlua_1_Specify_compilerOption_ignoreDeprecations_5101", text: "Option '{0}' is deprecated and will stop functioning in tlua {1}. Specify compilerOption '\"ignoreDeprecations\": \"{2}\"' to silence this error."}
 
 var Option_0_has_been_removed_Please_remove_it_from_your_configuration = &Message{code: 5102, category: CategoryError, key: "Option_0_has_been_removed_Please_remove_it_from_your_configuration_5102", text: "Option '{0}' has been removed. Please remove it from your configuration."}
 
@@ -2360,7 +2360,7 @@ var Option_verbatimModuleSyntax_cannot_be_used_when_module_is_set_to_UMD_AMD_or_
 
 var Use_0_instead = &Message{code: 5106, category: CategoryMessage, key: "Use_0_instead_5106", text: "Use '{0}' instead."}
 
-var Option_0_1_is_deprecated_and_will_stop_functioning_in_TypeScript_2_Specify_compilerOption_ignoreDeprecations_Colon_3_to_silence_this_error = &Message{code: 5107, category: CategoryError, key: "Option_0_1_is_deprecated_and_will_stop_functioning_in_TypeScript_2_Specify_compilerOption_ignoreDepr_5107", text: "Option '{0}={1}' is deprecated and will stop functioning in TypeScript {2}. Specify compilerOption '\"ignoreDeprecations\": \"{3}\"' to silence this error."}
+var Option_0_1_is_deprecated_and_will_stop_functioning_in_tlua_2_Specify_compilerOption_ignoreDeprecations_Colon_3_to_silence_this_error = &Message{code: 5107, category: CategoryError, key: "Option_0_1_is_deprecated_and_will_stop_functioning_in_tlua_2_Specify_compilerOption_ignoreDeprecatio_5107", text: "Option '{0}={1}' is deprecated and will stop functioning in tlua {2}. Specify compilerOption '\"ignoreDeprecations\": \"{3}\"' to silence this error."}
 
 var Option_0_1_has_been_removed_Please_remove_it_from_your_configuration = &Message{code: 5108, category: CategoryError, key: "Option_0_1_has_been_removed_Please_remove_it_from_your_configuration_5108", text: "Option '{0}={1}' has been removed. Please remove it from your configuration."}
 
@@ -2370,7 +2370,7 @@ var Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1 = &M
 
 var Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information = &Message{code: 5111, category: CategoryMessage, key: "Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information_5111", text: "Visit https://aka.ms/ts6 for migration information."}
 
-var X_tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error = &Message{code: 5112, category: CategoryError, key: "tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConf_5112", text: "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error."}
+var X_tluaconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error = &Message{code: 5112, category: CategoryError, key: "tluaconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreCo_5112", text: "tluaconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error."}
 
 var Generates_a_sourcemap_for_each_corresponding_d_ts_file = &Message{code: 6000, category: CategoryMessage, key: "Generates_a_sourcemap_for_each_corresponding_d_ts_file_6000", text: "Generates a sourcemap for each corresponding '.d.ts' file."}
 
@@ -2378,7 +2378,7 @@ var Concatenate_and_emit_output_to_single_file = &Message{code: 6001, category: 
 
 var Generates_corresponding_d_ts_file = &Message{code: 6002, category: CategoryMessage, key: "Generates_corresponding_d_ts_file_6002", text: "Generates corresponding '.d.ts' file."}
 
-var Specify_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations = &Message{code: 6004, category: CategoryMessage, key: "Specify_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations_6004", text: "Specify the location where debugger should locate TypeScript files instead of source locations."}
+var Specify_the_location_where_debugger_should_locate_tlua_files_instead_of_source_locations = &Message{code: 6004, category: CategoryMessage, key: "Specify_the_location_where_debugger_should_locate_tlua_files_instead_of_source_locations_6004", text: "Specify the location where debugger should locate tlua files instead of source locations."}
 
 var Watch_input_files = &Message{code: 6005, category: CategoryMessage, key: "Watch_input_files_6005", text: "Watch input files."}
 
@@ -2408,7 +2408,7 @@ var Print_this_message = &Message{code: 6017, category: CategoryMessage, key: "P
 
 var Print_the_compiler_s_version = &Message{code: 6019, category: CategoryMessage, key: "Print_the_compiler_s_version_6019", text: "Print the compiler's version."}
 
-var Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tsconfig_json = &Message{code: 6020, category: CategoryMessage, key: "Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tsconfig_json_6020", text: "Compile the project given the path to its configuration file, or to a folder with a 'tsconfig.json'."}
+var Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tluaconfig_json = &Message{code: 6020, category: CategoryMessage, key: "Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tluaconfig_json_6020", text: "Compile the project given the path to its configuration file, or to a folder with a 'tluaconfig.json'."}
 
 var Syntax_Colon_0 = &Message{code: 6023, category: CategoryMessage, key: "Syntax_Colon_0_6023", text: "Syntax: {0}"}
 
@@ -2476,15 +2476,15 @@ var Specify_the_end_of_line_sequence_to_be_used_when_emitting_files_Colon_CRLF_d
 
 var NEWLINE = &Message{code: 6061, category: CategoryMessage, key: "NEWLINE_6061", text: "NEWLINE"}
 
-var Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line = &Message{code: 6064, category: CategoryError, key: "Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line_6064", text: "Option '{0}' can only be specified in 'tsconfig.json' file or set to 'null' on command line."}
+var Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_null_on_command_line = &Message{code: 6064, category: CategoryError, key: "Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_null_on_command_line_6064", text: "Option '{0}' can only be specified in 'tluaconfig.json' file or set to 'null' on command line."}
 
 var Enables_experimental_support_for_ES7_decorators = &Message{code: 6065, category: CategoryMessage, key: "Enables_experimental_support_for_ES7_decorators_6065", text: "Enables experimental support for ES7 decorators."}
 
 var Enables_experimental_support_for_emitting_type_metadata_for_decorators = &Message{code: 6066, category: CategoryMessage, key: "Enables_experimental_support_for_emitting_type_metadata_for_decorators_6066", text: "Enables experimental support for emitting type metadata for decorators."}
 
-var Initializes_a_TypeScript_project_and_creates_a_tsconfig_json_file = &Message{code: 6070, category: CategoryMessage, key: "Initializes_a_TypeScript_project_and_creates_a_tsconfig_json_file_6070", text: "Initializes a TypeScript project and creates a tsconfig.json file."}
+var Initializes_a_tlua_project_and_creates_a_tluaconfig_json_file = &Message{code: 6070, category: CategoryMessage, key: "Initializes_a_tlua_project_and_creates_a_tluaconfig_json_file_6070", text: "Initializes a tlua project and creates a tluaconfig.json file."}
 
-var Successfully_created_a_tsconfig_json_file = &Message{code: 6071, category: CategoryMessage, key: "Successfully_created_a_tsconfig_json_file_6071", text: "Successfully created a tsconfig.json file."}
+var Successfully_created_a_tluaconfig_json_file = &Message{code: 6071, category: CategoryMessage, key: "Successfully_created_a_tluaconfig_json_file_6071", text: "Successfully created a tluaconfig.json file."}
 
 var Suppress_excess_property_checks_for_object_literals = &Message{code: 6072, category: CategoryMessage, key: "Suppress_excess_property_checks_for_object_literals_6072", text: "Suppress excess property checks for object literals."}
 
@@ -2766,7 +2766,7 @@ var Specify_strategy_for_creating_a_polling_watch_when_it_fails_to_create_using_
 
 var Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3 = &Message{code: 6229, category: CategoryError, key: "Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3_6229", text: "Tag '{0}' expects at least '{1}' arguments, but the JSX factory '{2}' provides at most '{3}'."}
 
-var Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line = &Message{code: 6230, category: CategoryError, key: "Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line_6230", text: "Option '{0}' can only be specified in 'tsconfig.json' file or set to 'false' or 'null' on command line."}
+var Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line = &Message{code: 6230, category: CategoryError, key: "Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line_6230", text: "Option '{0}' can only be specified in 'tluaconfig.json' file or set to 'false' or 'null' on command line."}
 
 var Could_not_resolve_the_path_0_with_the_extensions_Colon_1 = &Message{code: 6231, category: CategoryError, key: "Could_not_resolve_the_path_0_with_the_extensions_Colon_1_6231", text: "Could not resolve the path '{0}' with the extensions: {1}."}
 
@@ -2938,7 +2938,7 @@ var Updating_unchanged_output_timestamps_of_project_0 = &Message{code: 6371, cat
 
 var A_non_dry_build_would_update_timestamps_for_output_of_project_0 = &Message{code: 6374, category: CategoryMessage, key: "A_non_dry_build_would_update_timestamps_for_output_of_project_0_6374", text: "A non-dry build would update timestamps for output of project '{0}'"}
 
-var Cannot_write_file_0_because_it_will_overwrite_tsbuildinfo_file_generated_by_referenced_project_1 = &Message{code: 6377, category: CategoryError, key: "Cannot_write_file_0_because_it_will_overwrite_tsbuildinfo_file_generated_by_referenced_project_1_6377", text: "Cannot write file '{0}' because it will overwrite '.tsbuildinfo' file generated by referenced project '{1}'"}
+var Cannot_write_file_0_because_it_will_overwrite_tluabuildinfo_file_generated_by_referenced_project_1 = &Message{code: 6377, category: CategoryError, key: "Cannot_write_file_0_because_it_will_overwrite_tluabuildinfo_file_generated_by_referenced_project_1_6377", text: "Cannot write file '{0}' because it will overwrite '.tluabuildinfo' file generated by referenced project '{1}'"}
 
 var Composite_projects_may_not_disable_incremental_compilation = &Message{code: 6379, category: CategoryError, key: "Composite_projects_may_not_disable_incremental_compilation_6379", text: "Composite projects may not disable incremental compilation."}
 
@@ -2996,7 +2996,7 @@ var Saw_non_matching_condition_0 = &Message{code: 6405, category: CategoryMessag
 
 var Project_0_is_out_of_date_because_buildinfo_file_1_indicates_there_is_change_in_compilerOptions = &Message{code: 6406, category: CategoryMessage, key: "Project_0_is_out_of_date_because_buildinfo_file_1_indicates_there_is_change_in_compilerOptions_6406", text: "Project '{0}' is out of date because buildinfo file '{1}' indicates there is change in compilerOptions"}
 
-var Allow_imports_to_include_TypeScript_file_extensions_Requires_moduleResolution_bundler_and_either_noEmit_or_emitDeclarationOnly_to_be_set = &Message{code: 6407, category: CategoryMessage, key: "Allow_imports_to_include_TypeScript_file_extensions_Requires_moduleResolution_bundler_and_either_noE_6407", text: "Allow imports to include TypeScript file extensions. Requires '--moduleResolution bundler' and either '--noEmit' or '--emitDeclarationOnly' to be set."}
+var Allow_imports_to_include_tlua_file_extensions_Requires_moduleResolution_bundler_and_either_noEmit_or_emitDeclarationOnly_to_be_set = &Message{code: 6407, category: CategoryMessage, key: "Allow_imports_to_include_tlua_file_extensions_Requires_moduleResolution_bundler_and_either_noEmit_or_6407", text: "Allow imports to include tlua file extensions. Requires '--moduleResolution bundler' and either '--noEmit' or '--emitDeclarationOnly' to be set."}
 
 var Use_the_package_json_exports_field_when_resolving_package_imports = &Message{code: 6408, category: CategoryMessage, key: "Use_the_package_json_exports_field_when_resolving_package_imports_6408", text: "Use the package.json 'exports' field when resolving package imports."}
 
@@ -3066,9 +3066,9 @@ var No_longer_supported_In_early_versions_manually_set_the_text_encoding_for_rea
 
 var Enable_error_reporting_in_type_checked_JavaScript_files = &Message{code: 6609, category: CategoryMessage, key: "Enable_error_reporting_in_type_checked_JavaScript_files_6609", text: "Enable error reporting in type-checked JavaScript files."}
 
-var Enable_constraints_that_allow_a_TypeScript_project_to_be_used_with_project_references = &Message{code: 6611, category: CategoryMessage, key: "Enable_constraints_that_allow_a_TypeScript_project_to_be_used_with_project_references_6611", text: "Enable constraints that allow a TypeScript project to be used with project references."}
+var Enable_constraints_that_allow_a_tlua_project_to_be_used_with_project_references = &Message{code: 6611, category: CategoryMessage, key: "Enable_constraints_that_allow_a_tlua_project_to_be_used_with_project_references_6611", text: "Enable constraints that allow a tlua project to be used with project references."}
 
-var Generate_d_ts_files_from_TypeScript_and_JavaScript_files_in_your_project = &Message{code: 6612, category: CategoryMessage, key: "Generate_d_ts_files_from_TypeScript_and_JavaScript_files_in_your_project_6612", text: "Generate .d.ts files from TypeScript and JavaScript files in your project."}
+var Generate_d_ts_files_from_Lua_and_JavaScript_files_in_your_project = &Message{code: 6612, category: CategoryMessage, key: "Generate_d_ts_files_from_Lua_and_JavaScript_files_in_your_project_6612", text: "Generate .d.ts files from Lua and JavaScript files in your project."}
 
 var Specify_the_output_directory_for_generated_declaration_files = &Message{code: 6613, category: CategoryMessage, key: "Specify_the_output_directory_for_generated_declaration_files_6613", text: "Specify the output directory for generated declaration files."}
 
@@ -3078,9 +3078,9 @@ var Output_compiler_performance_information_after_building = &Message{code: 6615
 
 var Disables_inference_for_type_acquisition_by_looking_at_filenames_in_a_project = &Message{code: 6616, category: CategoryMessage, key: "Disables_inference_for_type_acquisition_by_looking_at_filenames_in_a_project_6616", text: "Disables inference for type acquisition by looking at filenames in a project."}
 
-var Reduce_the_number_of_projects_loaded_automatically_by_TypeScript = &Message{code: 6617, category: CategoryMessage, key: "Reduce_the_number_of_projects_loaded_automatically_by_TypeScript_6617", text: "Reduce the number of projects loaded automatically by TypeScript."}
+var Reduce_the_number_of_projects_loaded_automatically_by_tlua = &Message{code: 6617, category: CategoryMessage, key: "Reduce_the_number_of_projects_loaded_automatically_by_tlua_6617", text: "Reduce the number of projects loaded automatically by tlua."}
 
-var Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_TypeScript_language_server = &Message{code: 6618, category: CategoryMessage, key: "Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_TypeScript_language_server_6618", text: "Remove the 20mb cap on total source code size for JavaScript files in the TypeScript language server."}
+var Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_tlua_language_server = &Message{code: 6618, category: CategoryMessage, key: "Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_tlua_language_server_6618", text: "Remove the 20mb cap on total source code size for JavaScript files in the tlua language server."}
 
 var Opt_a_project_out_of_multi_project_reference_checking_when_editing = &Message{code: 6619, category: CategoryMessage, key: "Opt_a_project_out_of_multi_project_reference_checking_when_editing_6619", text: "Opt a project out of multi-project reference checking when editing."}
 
@@ -3128,7 +3128,7 @@ var Skip_building_downstream_projects_on_error_in_upstream_project = &Message{co
 
 var Specify_a_list_of_glob_patterns_that_match_files_to_be_included_in_compilation = &Message{code: 6641, category: CategoryMessage, key: "Specify_a_list_of_glob_patterns_that_match_files_to_be_included_in_compilation_6641", text: "Specify a list of glob patterns that match files to be included in compilation."}
 
-var Save_tsbuildinfo_files_to_allow_for_incremental_compilation_of_projects = &Message{code: 6642, category: CategoryMessage, key: "Save_tsbuildinfo_files_to_allow_for_incremental_compilation_of_projects_6642", text: "Save .tsbuildinfo files to allow for incremental compilation of projects."}
+var Save_tluabuildinfo_files_to_allow_for_incremental_compilation_of_projects = &Message{code: 6642, category: CategoryMessage, key: "Save_tluabuildinfo_files_to_allow_for_incremental_compilation_of_projects_6642", text: "Save .tluabuildinfo files to allow for incremental compilation of projects."}
 
 var Include_sourcemap_files_inside_the_emitted_JavaScript = &Message{code: 6643, category: CategoryMessage, key: "Include_sourcemap_files_inside_the_emitted_JavaScript_6643", text: "Include sourcemap files inside the emitted JavaScript."}
 
@@ -3152,7 +3152,7 @@ var Print_the_names_of_emitted_files_after_a_compilation = &Message{code: 6652, 
 
 var Print_all_of_the_files_read_during_the_compilation = &Message{code: 6653, category: CategoryMessage, key: "Print_all_of_the_files_read_during_the_compilation_6653", text: "Print all of the files read during the compilation."}
 
-var Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit = &Message{code: 6654, category: CategoryMessage, key: "Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit_6654", text: "Set the language of the messaging from TypeScript. This does not affect emit."}
+var Set_the_language_of_the_messaging_from_tlua_This_does_not_affect_emit = &Message{code: 6654, category: CategoryMessage, key: "Set_the_language_of_the_messaging_from_tlua_This_does_not_affect_emit_6654", text: "Set the language of the messaging from tlua. This does not affect emit."}
 
 var Specify_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations = &Message{code: 6655, category: CategoryMessage, key: "Specify_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations_6655", text: "Specify the location where debugger should locate map files instead of generated locations."}
 
@@ -3160,7 +3160,7 @@ var Specify_the_maximum_folder_depth_used_for_checking_JavaScript_files_from_nod
 
 var Specify_what_module_code_is_generated = &Message{code: 6657, category: CategoryMessage, key: "Specify_what_module_code_is_generated_6657", text: "Specify what module code is generated."}
 
-var Specify_how_TypeScript_looks_up_a_file_from_a_given_module_specifier = &Message{code: 6658, category: CategoryMessage, key: "Specify_how_TypeScript_looks_up_a_file_from_a_given_module_specifier_6658", text: "Specify how TypeScript looks up a file from a given module specifier."}
+var Specify_how_tlua_looks_up_a_file_from_a_given_module_specifier = &Message{code: 6658, category: CategoryMessage, key: "Specify_how_tlua_looks_up_a_file_from_a_given_module_specifier_6658", text: "Specify how tlua looks up a file from a given module specifier."}
 
 var Set_the_newline_character_for_emitting_files = &Message{code: 6659, category: CategoryMessage, key: "Set_the_newline_character_for_emitting_files_6659", text: "Set the newline character for emitting files."}
 
@@ -3188,7 +3188,7 @@ var Disable_including_any_library_files_including_the_default_lib_d_ts = &Messag
 
 var Enforces_using_indexed_accessors_for_keys_declared_using_an_indexed_type = &Message{code: 6671, category: CategoryMessage, key: "Enforces_using_indexed_accessors_for_keys_declared_using_an_indexed_type_6671", text: "Enforces using indexed accessors for keys declared using an indexed type."}
 
-var Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_TypeScript_should_add_to_a_project = &Message{code: 6672, category: CategoryMessage, key: "Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_TypeScript_should_add__6672", text: "Disallow 'import's, 'require's or '<reference>'s from expanding the number of files TypeScript should add to a project."}
+var Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_tlua_should_add_to_a_project = &Message{code: 6672, category: CategoryMessage, key: "Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_tlua_should_add_to_a_p_6672", text: "Disallow 'import's, 'require's or '<reference>'s from expanding the number of files tlua should add to a project."}
 
 var Disable_strict_checking_of_generic_signatures_in_function_types = &Message{code: 6673, category: CategoryMessage, key: "Disable_strict_checking_of_generic_signatures_in_function_types_6673", text: "Disable strict checking of generic signatures in function types."}
 
@@ -3214,7 +3214,7 @@ var Disable_resolving_symlinks_to_their_realpath_This_correlates_to_the_same_fla
 
 var Disable_wiping_the_console_in_watch_mode = &Message{code: 6684, category: CategoryMessage, key: "Disable_wiping_the_console_in_watch_mode_6684", text: "Disable wiping the console in watch mode."}
 
-var Enable_color_and_formatting_in_TypeScript_s_output_to_make_compiler_errors_easier_to_read = &Message{code: 6685, category: CategoryMessage, key: "Enable_color_and_formatting_in_TypeScript_s_output_to_make_compiler_errors_easier_to_read_6685", text: "Enable color and formatting in TypeScript's output to make compiler errors easier to read."}
+var Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read = &Message{code: 6685, category: CategoryMessage, key: "Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read_6685", text: "Enable color and formatting in tlua's output to make compiler errors easier to read."}
 
 var Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit = &Message{code: 6686, category: CategoryMessage, key: "Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit_6686", text: "Specify the object invoked for 'createElement'. This only applies when targeting 'react' JSX emit."}
 
@@ -3228,7 +3228,7 @@ var Specify_the_root_folder_within_your_source_files = &Message{code: 6690, cate
 
 var Allow_multiple_folders_to_be_treated_as_one_when_resolving_modules = &Message{code: 6691, category: CategoryMessage, key: "Allow_multiple_folders_to_be_treated_as_one_when_resolving_modules_6691", text: "Allow multiple folders to be treated as one when resolving modules."}
 
-var Skip_type_checking_d_ts_files_that_are_included_with_TypeScript = &Message{code: 6692, category: CategoryMessage, key: "Skip_type_checking_d_ts_files_that_are_included_with_TypeScript_6692", text: "Skip type checking .d.ts files that are included with TypeScript."}
+var Skip_type_checking_d_ts_files_that_are_included_with_tlua = &Message{code: 6692, category: CategoryMessage, key: "Skip_type_checking_d_ts_files_that_are_included_with_tlua_6692", text: "Skip type checking .d.ts files that are included with tlua."}
 
 var Skip_type_checking_all_d_ts_files = &Message{code: 6693, category: CategoryMessage, key: "Skip_type_checking_all_d_ts_files_6693", text: "Skip type checking all .d.ts files."}
 
@@ -3256,7 +3256,7 @@ var Set_the_JavaScript_language_version_for_emitted_JavaScript_and_include_compa
 
 var Log_paths_used_during_the_moduleResolution_process = &Message{code: 6706, category: CategoryMessage, key: "Log_paths_used_during_the_moduleResolution_process_6706", text: "Log paths used during the 'moduleResolution' process."}
 
-var Specify_the_path_to_tsbuildinfo_incremental_compilation_file = &Message{code: 6707, category: CategoryMessage, key: "Specify_the_path_to_tsbuildinfo_incremental_compilation_file_6707", text: "Specify the path to .tsbuildinfo incremental compilation file."}
+var Specify_the_path_to_tluabuildinfo_incremental_compilation_file = &Message{code: 6707, category: CategoryMessage, key: "Specify_the_path_to_tluabuildinfo_incremental_compilation_file_6707", text: "Specify the path to .tluabuildinfo incremental compilation file."}
 
 var Specify_options_for_automatic_acquisition_of_declaration_files = &Message{code: 6709, category: CategoryMessage, key: "Specify_options_for_automatic_acquisition_of_declaration_files_6709", text: "Specify options for automatic acquisition of declaration files."}
 
@@ -3270,7 +3270,7 @@ var Enable_verbose_logging = &Message{code: 6713, category: CategoryMessage, key
 
 var Specify_how_directories_are_watched_on_systems_that_lack_recursive_file_watching_functionality = &Message{code: 6714, category: CategoryMessage, key: "Specify_how_directories_are_watched_on_systems_that_lack_recursive_file_watching_functionality_6714", text: "Specify how directories are watched on systems that lack recursive file-watching functionality."}
 
-var Specify_how_the_TypeScript_watch_mode_works = &Message{code: 6715, category: CategoryMessage, key: "Specify_how_the_TypeScript_watch_mode_works_6715", text: "Specify how the TypeScript watch mode works."}
+var Specify_how_the_tlua_watch_mode_works = &Message{code: 6715, category: CategoryMessage, key: "Specify_how_the_tlua_watch_mode_works_6715", text: "Specify how the tlua watch mode works."}
 
 var Require_undeclared_properties_from_index_signatures_to_use_element_accesses = &Message{code: 6717, category: CategoryMessage, key: "Require_undeclared_properties_from_index_signatures_to_use_element_accesses_6717", text: "Require undeclared properties from index signatures to use element accesses."}
 
@@ -3322,7 +3322,7 @@ var You_can_learn_about_all_of_the_compiler_options_at_0 = &Message{code: 6913, 
 
 var Including_watch_w_will_start_watching_the_current_project_for_the_file_changes_Once_set_you_can_config_watch_mode_with_Colon = &Message{code: 6914, category: CategoryMessage, key: "Including_watch_w_will_start_watching_the_current_project_for_the_file_changes_Once_set_you_can_conf_6914", text: "Including --watch, -w will start watching the current project for the file changes. Once set, you can config watch mode with:"}
 
-var Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0 = &Message{code: 6915, category: CategoryMessage, key: "Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_tr_6915", text: "Using --build, -b will make tsc behave more like a build orchestrator than a compiler. This is used to trigger building composite projects which you can learn more about at {0}"}
+var Using_build_b_will_make_tlua_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0 = &Message{code: 6915, category: CategoryMessage, key: "Using_build_b_will_make_tlua_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_t_6915", text: "Using --build, -b will make tlua behave more like a build orchestrator than a compiler. This is used to trigger building composite projects which you can learn more about at {0}"}
 
 var COMMON_COMMANDS = &Message{code: 6916, category: CategoryMessage, key: "COMMON_COMMANDS_6916", text: "COMMON COMMANDS"}
 
@@ -3336,17 +3336,17 @@ var COMMON_COMPILER_OPTIONS = &Message{code: 6920, category: CategoryMessage, ke
 
 var COMMAND_LINE_FLAGS = &Message{code: 6921, category: CategoryMessage, key: "COMMAND_LINE_FLAGS_6921", text: "COMMAND LINE FLAGS"}
 
-var X_tsc_Colon_The_TypeScript_Compiler = &Message{code: 6922, category: CategoryMessage, key: "tsc_Colon_The_TypeScript_Compiler_6922", text: "tsc: The TypeScript Compiler"}
+var X_tlua_Colon_The_Lua_Compiler = &Message{code: 6922, category: CategoryMessage, key: "tlua_Colon_The_Lua_Compiler_6922", text: "tlua: The Lua Compiler"}
 
-var Compiles_the_current_project_tsconfig_json_in_the_working_directory = &Message{code: 6923, category: CategoryMessage, key: "Compiles_the_current_project_tsconfig_json_in_the_working_directory_6923", text: "Compiles the current project (tsconfig.json in the working directory.)"}
+var Compiles_the_current_project_tluaconfig_json_in_the_working_directory = &Message{code: 6923, category: CategoryMessage, key: "Compiles_the_current_project_tluaconfig_json_in_the_working_directory_6923", text: "Compiles the current project (tluaconfig.json in the working directory.)"}
 
-var Ignoring_tsconfig_json_compiles_the_specified_files_with_default_compiler_options = &Message{code: 6924, category: CategoryMessage, key: "Ignoring_tsconfig_json_compiles_the_specified_files_with_default_compiler_options_6924", text: "Ignoring tsconfig.json, compiles the specified files with default compiler options."}
+var Ignoring_tluaconfig_json_compiles_the_specified_files_with_default_compiler_options = &Message{code: 6924, category: CategoryMessage, key: "Ignoring_tluaconfig_json_compiles_the_specified_files_with_default_compiler_options_6924", text: "Ignoring tluaconfig.json, compiles the specified files with default compiler options."}
 
 var Build_a_composite_project_in_the_working_directory = &Message{code: 6925, category: CategoryMessage, key: "Build_a_composite_project_in_the_working_directory_6925", text: "Build a composite project in the working directory."}
 
-var Creates_a_tsconfig_json_with_the_recommended_settings_in_the_working_directory = &Message{code: 6926, category: CategoryMessage, key: "Creates_a_tsconfig_json_with_the_recommended_settings_in_the_working_directory_6926", text: "Creates a tsconfig.json with the recommended settings in the working directory."}
+var Creates_a_tluaconfig_json_with_the_recommended_settings_in_the_working_directory = &Message{code: 6926, category: CategoryMessage, key: "Creates_a_tluaconfig_json_with_the_recommended_settings_in_the_working_directory_6926", text: "Creates a tluaconfig.json with the recommended settings in the working directory."}
 
-var Compiles_the_TypeScript_project_located_at_the_specified_path = &Message{code: 6927, category: CategoryMessage, key: "Compiles_the_TypeScript_project_located_at_the_specified_path_6927", text: "Compiles the TypeScript project located at the specified path."}
+var Compiles_the_Lua_project_located_at_the_specified_path = &Message{code: 6927, category: CategoryMessage, key: "Compiles_the_Lua_project_located_at_the_specified_path_6927", text: "Compiles the Lua project located at the specified path."}
 
 var An_expanded_version_of_this_information_showing_all_possible_compiler_options = &Message{code: 6928, category: CategoryMessage, key: "An_expanded_version_of_this_information_showing_all_possible_compiler_options_6928", text: "An expanded version of this information, showing all possible compiler options"}
 
@@ -3470,33 +3470,33 @@ var A_mapped_type_may_not_declare_properties_or_methods = &Message{code: 7061, c
 
 var You_cannot_rename_this_element = &Message{code: 8000, category: CategoryError, key: "You_cannot_rename_this_element_8000", text: "You cannot rename this element."}
 
-var You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library = &Message{code: 8001, category: CategoryError, key: "You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library_8001", text: "You cannot rename elements that are defined in the standard TypeScript library."}
+var You_cannot_rename_elements_that_are_defined_in_the_standard_tlua_library = &Message{code: 8001, category: CategoryError, key: "You_cannot_rename_elements_that_are_defined_in_the_standard_tlua_library_8001", text: "You cannot rename elements that are defined in the standard tlua library."}
 
-var X_import_can_only_be_used_in_TypeScript_files = &Message{code: 8002, category: CategoryError, key: "import_can_only_be_used_in_TypeScript_files_8002", text: "'import ... =' can only be used in TypeScript files."}
+var X_import_can_only_be_used_in_tlua_files = &Message{code: 8002, category: CategoryError, key: "import_can_only_be_used_in_tlua_files_8002", text: "'import ... =' can only be used in tlua files."}
 
-var X_export_can_only_be_used_in_TypeScript_files = &Message{code: 8003, category: CategoryError, key: "export_can_only_be_used_in_TypeScript_files_8003", text: "'export =' can only be used in TypeScript files."}
+var X_export_can_only_be_used_in_tlua_files = &Message{code: 8003, category: CategoryError, key: "export_can_only_be_used_in_tlua_files_8003", text: "'export =' can only be used in tlua files."}
 
-var Type_parameter_declarations_can_only_be_used_in_TypeScript_files = &Message{code: 8004, category: CategoryError, key: "Type_parameter_declarations_can_only_be_used_in_TypeScript_files_8004", text: "Type parameter declarations can only be used in TypeScript files."}
+var Type_parameter_declarations_can_only_be_used_in_tlua_files = &Message{code: 8004, category: CategoryError, key: "Type_parameter_declarations_can_only_be_used_in_tlua_files_8004", text: "Type parameter declarations can only be used in tlua files."}
 
-var X_implements_clauses_can_only_be_used_in_TypeScript_files = &Message{code: 8005, category: CategoryError, key: "implements_clauses_can_only_be_used_in_TypeScript_files_8005", text: "'implements' clauses can only be used in TypeScript files."}
+var X_implements_clauses_can_only_be_used_in_tlua_files = &Message{code: 8005, category: CategoryError, key: "implements_clauses_can_only_be_used_in_tlua_files_8005", text: "'implements' clauses can only be used in tlua files."}
 
-var X_0_declarations_can_only_be_used_in_TypeScript_files = &Message{code: 8006, category: CategoryError, key: "_0_declarations_can_only_be_used_in_TypeScript_files_8006", text: "'{0}' declarations can only be used in TypeScript files."}
+var X_0_declarations_can_only_be_used_in_tlua_files = &Message{code: 8006, category: CategoryError, key: "_0_declarations_can_only_be_used_in_tlua_files_8006", text: "'{0}' declarations can only be used in tlua files."}
 
-var Type_aliases_can_only_be_used_in_TypeScript_files = &Message{code: 8008, category: CategoryError, key: "Type_aliases_can_only_be_used_in_TypeScript_files_8008", text: "Type aliases can only be used in TypeScript files."}
+var Type_aliases_can_only_be_used_in_tlua_files = &Message{code: 8008, category: CategoryError, key: "Type_aliases_can_only_be_used_in_tlua_files_8008", text: "Type aliases can only be used in tlua files."}
 
-var The_0_modifier_can_only_be_used_in_TypeScript_files = &Message{code: 8009, category: CategoryError, key: "The_0_modifier_can_only_be_used_in_TypeScript_files_8009", text: "The '{0}' modifier can only be used in TypeScript files."}
+var The_0_modifier_can_only_be_used_in_tlua_files = &Message{code: 8009, category: CategoryError, key: "The_0_modifier_can_only_be_used_in_tlua_files_8009", text: "The '{0}' modifier can only be used in tlua files."}
 
-var Type_annotations_can_only_be_used_in_TypeScript_files = &Message{code: 8010, category: CategoryError, key: "Type_annotations_can_only_be_used_in_TypeScript_files_8010", text: "Type annotations can only be used in TypeScript files."}
+var Type_annotations_can_only_be_used_in_tlua_files = &Message{code: 8010, category: CategoryError, key: "Type_annotations_can_only_be_used_in_tlua_files_8010", text: "Type annotations can only be used in tlua files."}
 
-var Type_arguments_can_only_be_used_in_TypeScript_files = &Message{code: 8011, category: CategoryError, key: "Type_arguments_can_only_be_used_in_TypeScript_files_8011", text: "Type arguments can only be used in TypeScript files."}
+var Type_arguments_can_only_be_used_in_tlua_files = &Message{code: 8011, category: CategoryError, key: "Type_arguments_can_only_be_used_in_tlua_files_8011", text: "Type arguments can only be used in tlua files."}
 
-var Parameter_modifiers_can_only_be_used_in_TypeScript_files = &Message{code: 8012, category: CategoryError, key: "Parameter_modifiers_can_only_be_used_in_TypeScript_files_8012", text: "Parameter modifiers can only be used in TypeScript files."}
+var Parameter_modifiers_can_only_be_used_in_tlua_files = &Message{code: 8012, category: CategoryError, key: "Parameter_modifiers_can_only_be_used_in_tlua_files_8012", text: "Parameter modifiers can only be used in tlua files."}
 
-var Non_null_assertions_can_only_be_used_in_TypeScript_files = &Message{code: 8013, category: CategoryError, key: "Non_null_assertions_can_only_be_used_in_TypeScript_files_8013", text: "Non-null assertions can only be used in TypeScript files."}
+var Non_null_assertions_can_only_be_used_in_tlua_files = &Message{code: 8013, category: CategoryError, key: "Non_null_assertions_can_only_be_used_in_tlua_files_8013", text: "Non-null assertions can only be used in tlua files."}
 
-var Type_assertion_expressions_can_only_be_used_in_TypeScript_files = &Message{code: 8016, category: CategoryError, key: "Type_assertion_expressions_can_only_be_used_in_TypeScript_files_8016", text: "Type assertion expressions can only be used in TypeScript files."}
+var Type_assertion_expressions_can_only_be_used_in_tlua_files = &Message{code: 8016, category: CategoryError, key: "Type_assertion_expressions_can_only_be_used_in_tlua_files_8016", text: "Type assertion expressions can only be used in tlua files."}
 
-var Signature_declarations_can_only_be_used_in_TypeScript_files = &Message{code: 8017, category: CategoryError, key: "Signature_declarations_can_only_be_used_in_TypeScript_files_8017", text: "Signature declarations can only be used in TypeScript files."}
+var Signature_declarations_can_only_be_used_in_tlua_files = &Message{code: 8017, category: CategoryError, key: "Signature_declarations_can_only_be_used_in_tlua_files_8017", text: "Signature declarations can only be used in tlua files."}
 
 var Report_errors_in_js_files = &Message{code: 8019, category: CategoryMessage, key: "Report_errors_in_js_files_8019", text: "Report errors in .js files."}
 
@@ -3534,7 +3534,7 @@ var You_cannot_rename_elements_that_are_defined_in_a_node_modules_folder = &Mess
 
 var You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder = &Message{code: 8036, category: CategoryError, key: "You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder_8036", text: "You cannot rename elements that are defined in another 'node_modules' folder."}
 
-var Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files = &Message{code: 8037, category: CategoryError, key: "Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files_8037", text: "Type satisfaction expressions can only be used in TypeScript files."}
+var Type_satisfaction_expressions_can_only_be_used_in_tlua_files = &Message{code: 8037, category: CategoryError, key: "Type_satisfaction_expressions_can_only_be_used_in_tlua_files_8037", text: "Type satisfaction expressions can only be used in tlua files."}
 
 var Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export = &Message{code: 8038, category: CategoryError, key: "Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export_8038", text: "Decorators may not appear after 'export' or 'export default' if they also appear before 'export'."}
 
@@ -3646,9 +3646,9 @@ var An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments = 
 
 var Unknown_type_acquisition_option_0_Did_you_mean_1 = &Message{code: 17018, category: CategoryError, key: "Unknown_type_acquisition_option_0_Did_you_mean_1_17018", text: "Unknown type acquisition option '{0}'. Did you mean '{1}'?"}
 
-var X_0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1 = &Message{code: 17019, category: CategoryError, key: "_0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1_17019", text: "'{0}' at the end of a type is not valid TypeScript syntax. Did you mean to write '{1}'?"}
+var X_0_at_the_end_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1 = &Message{code: 17019, category: CategoryError, key: "_0_at_the_end_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1_17019", text: "'{0}' at the end of a type is not valid tlua syntax. Did you mean to write '{1}'?"}
 
-var X_0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1 = &Message{code: 17020, category: CategoryError, key: "_0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1_17020", text: "'{0}' at the start of a type is not valid TypeScript syntax. Did you mean to write '{1}'?"}
+var X_0_at_the_start_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1 = &Message{code: 17020, category: CategoryError, key: "_0_at_the_start_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1_17020", text: "'{0}' at the start of a type is not valid tlua syntax. Did you mean to write '{1}'?"}
 
 var Unicode_escape_sequence_cannot_appear_here = &Message{code: 17021, category: CategoryError, key: "Unicode_escape_sequence_cannot_appear_here_17021", text: "Unicode escape sequence cannot appear here."}
 
@@ -3764,7 +3764,7 @@ var This_constructor_function_may_be_converted_to_a_class_declaration = &Message
 
 var Import_may_be_converted_to_a_default_import = &Message{code: 80003, category: CategorySuggestion, key: "Import_may_be_converted_to_a_default_import_80003", text: "Import may be converted to a default import."}
 
-var JSDoc_types_may_be_moved_to_TypeScript_types = &Message{code: 80004, category: CategorySuggestion, key: "JSDoc_types_may_be_moved_to_TypeScript_types_80004", text: "JSDoc types may be moved to TypeScript types."}
+var JSDoc_types_may_be_moved_to_tlua_types = &Message{code: 80004, category: CategorySuggestion, key: "JSDoc_types_may_be_moved_to_tlua_types_80004", text: "JSDoc types may be moved to tlua types."}
 
 var X_require_call_may_be_converted_to_an_import = &Message{code: 80005, category: CategorySuggestion, key: "require_call_may_be_converted_to_an_import_80005", text: "'require' call may be converted to an import."}
 
@@ -3774,9 +3774,9 @@ var X_await_has_no_effect_on_the_type_of_this_expression = &Message{code: 80007,
 
 var Numeric_literals_with_absolute_values_equal_to_2_53_or_greater_are_too_large_to_be_represented_accurately_as_integers = &Message{code: 80008, category: CategorySuggestion, key: "Numeric_literals_with_absolute_values_equal_to_2_53_or_greater_are_too_large_to_be_represented_accur_80008", text: "Numeric literals with absolute values equal to 2^53 or greater are too large to be represented accurately as integers."}
 
-var JSDoc_typedef_may_be_converted_to_TypeScript_type = &Message{code: 80009, category: CategorySuggestion, key: "JSDoc_typedef_may_be_converted_to_TypeScript_type_80009", text: "JSDoc typedef may be converted to TypeScript type."}
+var JSDoc_typedef_may_be_converted_to_tlua_type = &Message{code: 80009, category: CategorySuggestion, key: "JSDoc_typedef_may_be_converted_to_tlua_type_80009", text: "JSDoc typedef may be converted to tlua type."}
 
-var JSDoc_typedefs_may_be_converted_to_TypeScript_types = &Message{code: 80010, category: CategorySuggestion, key: "JSDoc_typedefs_may_be_converted_to_TypeScript_types_80010", text: "JSDoc typedefs may be converted to TypeScript types."}
+var JSDoc_typedefs_may_be_converted_to_tlua_types = &Message{code: 80010, category: CategorySuggestion, key: "JSDoc_typedefs_may_be_converted_to_tlua_types_80010", text: "JSDoc typedefs may be converted to tlua types."}
 
 var Add_missing_super_call = &Message{code: 90001, category: CategoryMessage, key: "Add_missing_super_call_90001", text: "Add missing 'super()' call"}
 
@@ -3942,9 +3942,9 @@ var Add_definite_assignment_assertions_to_all_uninitialized_properties = &Messag
 
 var Add_undefined_type_to_all_uninitialized_properties = &Message{code: 95029, category: CategoryMessage, key: "Add_undefined_type_to_all_uninitialized_properties_95029", text: "Add undefined type to all uninitialized properties"}
 
-var Change_all_jsdoc_style_types_to_TypeScript = &Message{code: 95030, category: CategoryMessage, key: "Change_all_jsdoc_style_types_to_TypeScript_95030", text: "Change all jsdoc-style types to TypeScript"}
+var Change_all_jsdoc_style_types_to_tlua = &Message{code: 95030, category: CategoryMessage, key: "Change_all_jsdoc_style_types_to_tlua_95030", text: "Change all jsdoc-style types to tlua"}
 
-var Change_all_jsdoc_style_types_to_TypeScript_and_add_undefined_to_nullable_types = &Message{code: 95031, category: CategoryMessage, key: "Change_all_jsdoc_style_types_to_TypeScript_and_add_undefined_to_nullable_types_95031", text: "Change all jsdoc-style types to TypeScript (and add '| undefined' to nullable types)"}
+var Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types = &Message{code: 95031, category: CategoryMessage, key: "Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types_95031", text: "Change all jsdoc-style types to tlua (and add '| undefined' to nullable types)"}
 
 var Implement_all_unimplemented_interfaces = &Message{code: 95032, category: CategoryMessage, key: "Implement_all_unimplemented_interfaces_95032", text: "Implement all unimplemented interfaces"}
 
@@ -4228,9 +4228,9 @@ var Use_0 = &Message{code: 95174, category: CategoryMessage, key: "Use_0_95174",
 
 var Use_Number_isNaN_in_all_conditions = &Message{code: 95175, category: CategoryMessage, key: "Use_Number_isNaN_in_all_conditions_95175", text: "Use `Number.isNaN` in all conditions."}
 
-var Convert_typedef_to_TypeScript_type = &Message{code: 95176, category: CategoryMessage, key: "Convert_typedef_to_TypeScript_type_95176", text: "Convert typedef to TypeScript type."}
+var Convert_typedef_to_tlua_type = &Message{code: 95176, category: CategoryMessage, key: "Convert_typedef_to_tlua_type_95176", text: "Convert typedef to tlua type."}
 
-var Convert_all_typedef_to_TypeScript_types = &Message{code: 95177, category: CategoryMessage, key: "Convert_all_typedef_to_TypeScript_types_95177", text: "Convert all typedef to TypeScript types."}
+var Convert_all_typedef_to_tlua_types = &Message{code: 95177, category: CategoryMessage, key: "Convert_all_typedef_to_tlua_types_95177", text: "Convert all typedef to tlua types."}
 
 var Move_to_file = &Message{code: 95178, category: CategoryMessage, key: "Move_to_file_95178", text: "Move to file"}
 
@@ -4873,7 +4873,7 @@ func keyToMessage(key Key) *Message {
 	case "This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled_1294":
 		return This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled
 	case "ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjus_1295":
-		return ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjust_the_type_field_in_the_nearest_package_json_to_make_this_file_an_ECMAScript_module_or_adjust_your_verbatimModuleSyntax_module_and_moduleResolution_settings_in_TypeScript
+		return ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjust_the_type_field_in_the_nearest_package_json_to_make_this_file_an_ECMAScript_module_or_adjust_your_verbatimModuleSyntax_module_and_moduleResolution_settings_in_tlua
 	case "with_statements_are_not_allowed_in_an_async_function_block_1300":
 		return X_with_statements_are_not_allowed_in_an_async_function_block
 	case "await_expressions_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules_1308":
@@ -5054,8 +5054,8 @@ func keyToMessage(key Key) *Message {
 		return Matched_by_include_pattern_0_in_1
 	case "File_is_matched_by_include_pattern_specified_here_1408":
 		return File_is_matched_by_include_pattern_specified_here
-	case "Part_of_files_list_in_tsconfig_json_1409":
-		return Part_of_files_list_in_tsconfig_json
+	case "Part_of_files_list_in_tluaconfig_json_1409":
+		return Part_of_files_list_in_tluaconfig_json
 	case "File_is_matched_by_files_list_specified_here_1410":
 		return File_is_matched_by_files_list_specified_here
 	case "Output_from_referenced_project_0_included_because_1_specified_1411":
@@ -5312,8 +5312,8 @@ func keyToMessage(key Key) *Message {
 		return X_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block
 	case "await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block_1548":
 		return X_await_using_declarations_are_not_allowed_in_case_or_default_clauses_unless_contained_within_a_block
-	case "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549":
-		return Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files
+	case "Ignore_the_tluaconfig_found_and_build_with_commandline_options_and_files_1549":
+		return Ignore_the_tluaconfig_found_and_build_with_commandline_options_and_files
 	case "The_types_of_0_are_incompatible_between_these_types_2200":
 		return The_types_of_0_are_incompatible_between_these_types
 	case "The_types_returned_by_0_are_incompatible_between_these_types_2201":
@@ -5863,11 +5863,11 @@ func keyToMessage(key Key) *Message {
 	case "Expression_produces_a_union_type_that_is_too_complex_to_represent_2590":
 		return Expression_produces_a_union_type_that_is_too_complex_to_represent
 	case "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashno_2591":
-		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tsconfig
+		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tluaconfig
 	case "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slash_2592":
-		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slashjquery_and_then_add_jquery_to_the_types_field_in_your_tsconfig
+		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slashjquery_and_then_add_jquery_to_the_types_field_in_your_tluaconfig
 	case "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_type_2593":
-		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_types_Slashjest_or_npm_i_save_dev_types_Slashmocha_and_then_add_jest_or_mocha_to_the_types_field_in_your_tsconfig
+		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_types_Slashjest_or_npm_i_save_dev_types_Slashmocha_and_then_add_jest_or_mocha_to_the_types_field_in_your_tluaconfig
 	case "This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag_2594":
 		return This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag
 	case "_0_can_only_be_imported_by_using_a_default_import_2595":
@@ -6361,7 +6361,7 @@ func keyToMessage(key Key) *Message {
 	case "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_2867":
 		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun
 	case "Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_2868":
-		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_and_then_add_bun_to_the_types_field_in_your_tsconfig
+		return Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_and_then_add_bun_to_the_types_field_in_your_tluaconfig
 	case "Right_operand_of_is_unreachable_because_the_left_operand_is_never_nullish_2869":
 		return Right_operand_of_is_unreachable_because_the_left_operand_is_never_nullish
 	case "This_binary_expression_is_never_nullish_Are_you_missing_parentheses_2870":
@@ -6378,8 +6378,8 @@ func keyToMessage(key Key) *Message {
 		return This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Make_sure_you_have_types_for_the_appropriate_package_installed
 	case "This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolv_2876":
 		return This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0
-	case "This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_duri_2877":
-		return This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path
+	case "This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emi_2877":
+		return This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path
 	case "This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_b_2878":
 		return This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_between_the_projects_output_files_is_not_the_same_as_the_relative_path_between_its_input_files
 	case "Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found_2879":
@@ -6604,8 +6604,8 @@ func keyToMessage(key Key) *Message {
 		return This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_not_declared_in_the_base_class_0
 	case "This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_not_declared_in_the_base__4123":
 		return This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_not_declared_in_the_base_class_0_Did_you_mean_1
-	case "Compiler_option_0_of_value_1_is_unstable_Use_nightly_TypeScript_to_silence_this_error_Try_updating_w_4124":
-		return Compiler_option_0_of_value_1_is_unstable_Use_nightly_TypeScript_to_silence_this_error_Try_updating_with_npm_install_D_typescript_next
+	case "Compiler_option_0_of_value_1_is_unstable_Use_nightly_tlua_to_silence_this_error_Try_updating_with_np_4124":
+		return Compiler_option_0_of_value_1_is_unstable_Use_nightly_tlua_to_silence_this_error_Try_updating_with_npm_install_D_typescript_next
 	case "Each_declaration_of_0_1_differs_in_its_value_where_2_was_expected_but_3_was_given_4125":
 		return Each_declaration_of_0_1_differs_in_its_value_where_2_was_expected_but_3_was_given
 	case "One_value_of_0_1_is_the_string_2_and_the_other_is_assumed_to_be_an_unknown_numeric_value_4126":
@@ -6644,14 +6644,14 @@ func keyToMessage(key Key) *Message {
 		return Option_0_cannot_be_specified_without_specifying_option_1
 	case "Option_0_cannot_be_specified_with_option_1_5053":
 		return Option_0_cannot_be_specified_with_option_1
-	case "A_tsconfig_json_file_is_already_defined_at_Colon_0_5054":
-		return A_tsconfig_json_file_is_already_defined_at_Colon_0
+	case "A_tluaconfig_json_file_is_already_defined_at_Colon_0_5054":
+		return A_tluaconfig_json_file_is_already_defined_at_Colon_0
 	case "Cannot_write_file_0_because_it_would_overwrite_input_file_5055":
 		return Cannot_write_file_0_because_it_would_overwrite_input_file
 	case "Cannot_write_file_0_because_it_would_be_overwritten_by_multiple_input_files_5056":
 		return Cannot_write_file_0_because_it_would_be_overwritten_by_multiple_input_files
-	case "Cannot_find_a_tsconfig_json_file_at_the_specified_directory_Colon_0_5057":
-		return Cannot_find_a_tsconfig_json_file_at_the_specified_directory_Colon_0
+	case "Cannot_find_a_tluaconfig_json_file_at_the_specified_directory_Colon_0_5057":
+		return Cannot_find_a_tluaconfig_json_file_at_the_specified_directory_Colon_0
 	case "The_specified_path_does_not_exist_Colon_0_5058":
 		return The_specified_path_does_not_exist_Colon_0
 	case "Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier_5059":
@@ -6670,8 +6670,8 @@ func keyToMessage(key Key) *Message {
 		return Substitutions_for_pattern_0_shouldn_t_be_an_empty_array
 	case "Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name_5067":
 		return Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name
-	case "Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript__5068":
-		return Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig
+	case "Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_5068":
+		return Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig
 	case "Option_0_cannot_be_specified_without_specifying_option_1_or_option_2_5069":
 		return Option_0_cannot_be_specified_without_specifying_option_1_or_option_2
 	case "Option_resolveJsonModule_cannot_be_specified_when_moduleResolution_is_set_to_classic_5070":
@@ -6682,8 +6682,8 @@ func keyToMessage(key Key) *Message {
 		return Unknown_build_option_0
 	case "Build_option_0_requires_a_value_of_type_1_5073":
 		return Build_option_0_requires_a_value_of_type_1
-	case "Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildI_5074":
-		return Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided
+	case "Option_incremental_is_only_valid_with_a_known_configuration_file_like_tluaconfig_json_or_when_tsBuil_5074":
+		return Option_incremental_is_only_valid_with_a_known_configuration_file_like_tluaconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided
 	case "_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_5075":
 		return X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2
 	case "_0_and_1_operations_cannot_be_mixed_without_parentheses_5076":
@@ -6696,8 +6696,8 @@ func keyToMessage(key Key) *Message {
 		return Unknown_watch_option_0_Did_you_mean_1
 	case "Watch_option_0_requires_a_value_of_type_1_5080":
 		return Watch_option_0_requires_a_value_of_type_1
-	case "Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0_5081":
-		return Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0
+	case "Cannot_find_a_tluaconfig_json_file_at_the_current_directory_Colon_0_5081":
+		return Cannot_find_a_tluaconfig_json_file_at_the_current_directory_Colon_0
 	case "_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1_5082":
 		return X_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1
 	case "Cannot_read_file_0_5083":
@@ -6730,8 +6730,8 @@ func keyToMessage(key Key) *Message {
 		return An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled
 	case "Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler_5098":
 		return Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler
-	case "Option_0_is_deprecated_and_will_stop_functioning_in_TypeScript_1_Specify_compilerOption_ignoreDeprec_5101":
-		return Option_0_is_deprecated_and_will_stop_functioning_in_TypeScript_1_Specify_compilerOption_ignoreDeprecations_Colon_2_to_silence_this_error
+	case "Option_0_is_deprecated_and_will_stop_functioning_in_tlua_1_Specify_compilerOption_ignoreDeprecations_5101":
+		return Option_0_is_deprecated_and_will_stop_functioning_in_tlua_1_Specify_compilerOption_ignoreDeprecations_Colon_2_to_silence_this_error
 	case "Option_0_has_been_removed_Please_remove_it_from_your_configuration_5102":
 		return Option_0_has_been_removed_Please_remove_it_from_your_configuration
 	case "Invalid_value_for_ignoreDeprecations_5103":
@@ -6742,8 +6742,8 @@ func keyToMessage(key Key) *Message {
 		return Option_verbatimModuleSyntax_cannot_be_used_when_module_is_set_to_UMD_AMD_or_System
 	case "Use_0_instead_5106":
 		return Use_0_instead
-	case "Option_0_1_is_deprecated_and_will_stop_functioning_in_TypeScript_2_Specify_compilerOption_ignoreDepr_5107":
-		return Option_0_1_is_deprecated_and_will_stop_functioning_in_TypeScript_2_Specify_compilerOption_ignoreDeprecations_Colon_3_to_silence_this_error
+	case "Option_0_1_is_deprecated_and_will_stop_functioning_in_tlua_2_Specify_compilerOption_ignoreDeprecatio_5107":
+		return Option_0_1_is_deprecated_and_will_stop_functioning_in_tlua_2_Specify_compilerOption_ignoreDeprecations_Colon_3_to_silence_this_error
 	case "Option_0_1_has_been_removed_Please_remove_it_from_your_configuration_5108":
 		return Option_0_1_has_been_removed_Please_remove_it_from_your_configuration
 	case "Option_moduleResolution_must_be_set_to_0_or_left_unspecified_when_option_module_is_set_to_1_5109":
@@ -6752,16 +6752,16 @@ func keyToMessage(key Key) *Message {
 		return Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1
 	case "Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information_5111":
 		return Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information
-	case "tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConf_5112":
-		return X_tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error
+	case "tluaconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreCo_5112":
+		return X_tluaconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error
 	case "Generates_a_sourcemap_for_each_corresponding_d_ts_file_6000":
 		return Generates_a_sourcemap_for_each_corresponding_d_ts_file
 	case "Concatenate_and_emit_output_to_single_file_6001":
 		return Concatenate_and_emit_output_to_single_file
 	case "Generates_corresponding_d_ts_file_6002":
 		return Generates_corresponding_d_ts_file
-	case "Specify_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations_6004":
-		return Specify_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations
+	case "Specify_the_location_where_debugger_should_locate_tlua_files_instead_of_source_locations_6004":
+		return Specify_the_location_where_debugger_should_locate_tlua_files_instead_of_source_locations
 	case "Watch_input_files_6005":
 		return Watch_input_files
 	case "Redirect_output_structure_to_the_directory_6006":
@@ -6790,8 +6790,8 @@ func keyToMessage(key Key) *Message {
 		return Print_this_message
 	case "Print_the_compiler_s_version_6019":
 		return Print_the_compiler_s_version
-	case "Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tsconfig_json_6020":
-		return Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tsconfig_json
+	case "Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tluaconfig_json_6020":
+		return Compile_the_project_given_the_path_to_its_configuration_file_or_to_a_folder_with_a_tluaconfig_json
 	case "Syntax_Colon_0_6023":
 		return Syntax_Colon_0
 	case "options_6024":
@@ -6858,16 +6858,16 @@ func keyToMessage(key Key) *Message {
 		return Specify_the_end_of_line_sequence_to_be_used_when_emitting_files_Colon_CRLF_dos_or_LF_unix
 	case "NEWLINE_6061":
 		return NEWLINE
-	case "Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line_6064":
-		return Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line
+	case "Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_null_on_command_line_6064":
+		return Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_null_on_command_line
 	case "Enables_experimental_support_for_ES7_decorators_6065":
 		return Enables_experimental_support_for_ES7_decorators
 	case "Enables_experimental_support_for_emitting_type_metadata_for_decorators_6066":
 		return Enables_experimental_support_for_emitting_type_metadata_for_decorators
-	case "Initializes_a_TypeScript_project_and_creates_a_tsconfig_json_file_6070":
-		return Initializes_a_TypeScript_project_and_creates_a_tsconfig_json_file
-	case "Successfully_created_a_tsconfig_json_file_6071":
-		return Successfully_created_a_tsconfig_json_file
+	case "Initializes_a_tlua_project_and_creates_a_tluaconfig_json_file_6070":
+		return Initializes_a_tlua_project_and_creates_a_tluaconfig_json_file
+	case "Successfully_created_a_tluaconfig_json_file_6071":
+		return Successfully_created_a_tluaconfig_json_file
 	case "Suppress_excess_property_checks_for_object_literals_6072":
 		return Suppress_excess_property_checks_for_object_literals
 	case "Stylize_errors_and_messages_using_color_and_context_experimental_6073":
@@ -7148,8 +7148,8 @@ func keyToMessage(key Key) *Message {
 		return Specify_strategy_for_creating_a_polling_watch_when_it_fails_to_create_using_file_system_events_Colon_FixedInterval_default_PriorityInterval_DynamicPriority_FixedChunkSize
 	case "Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3_6229":
 		return Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3
-	case "Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line_6230":
-		return Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line
+	case "Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line_6230":
+		return Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line
 	case "Could_not_resolve_the_path_0_with_the_extensions_Colon_1_6231":
 		return Could_not_resolve_the_path_0_with_the_extensions_Colon_1
 	case "Declaration_augments_declaration_in_another_file_This_cannot_be_serialized_6232":
@@ -7320,8 +7320,8 @@ func keyToMessage(key Key) *Message {
 		return Updating_unchanged_output_timestamps_of_project_0
 	case "A_non_dry_build_would_update_timestamps_for_output_of_project_0_6374":
 		return A_non_dry_build_would_update_timestamps_for_output_of_project_0
-	case "Cannot_write_file_0_because_it_will_overwrite_tsbuildinfo_file_generated_by_referenced_project_1_6377":
-		return Cannot_write_file_0_because_it_will_overwrite_tsbuildinfo_file_generated_by_referenced_project_1
+	case "Cannot_write_file_0_because_it_will_overwrite_tluabuildinfo_file_generated_by_referenced_project_1_6377":
+		return Cannot_write_file_0_because_it_will_overwrite_tluabuildinfo_file_generated_by_referenced_project_1
 	case "Composite_projects_may_not_disable_incremental_compilation_6379":
 		return Composite_projects_may_not_disable_incremental_compilation
 	case "Specify_file_to_store_incremental_compilation_information_6380":
@@ -7378,8 +7378,8 @@ func keyToMessage(key Key) *Message {
 		return Saw_non_matching_condition_0
 	case "Project_0_is_out_of_date_because_buildinfo_file_1_indicates_there_is_change_in_compilerOptions_6406":
 		return Project_0_is_out_of_date_because_buildinfo_file_1_indicates_there_is_change_in_compilerOptions
-	case "Allow_imports_to_include_TypeScript_file_extensions_Requires_moduleResolution_bundler_and_either_noE_6407":
-		return Allow_imports_to_include_TypeScript_file_extensions_Requires_moduleResolution_bundler_and_either_noEmit_or_emitDeclarationOnly_to_be_set
+	case "Allow_imports_to_include_tlua_file_extensions_Requires_moduleResolution_bundler_and_either_noEmit_or_6407":
+		return Allow_imports_to_include_tlua_file_extensions_Requires_moduleResolution_bundler_and_either_noEmit_or_emitDeclarationOnly_to_be_set
 	case "Use_the_package_json_exports_field_when_resolving_package_imports_6408":
 		return Use_the_package_json_exports_field_when_resolving_package_imports
 	case "Use_the_package_json_imports_field_when_resolving_imports_6409":
@@ -7448,10 +7448,10 @@ func keyToMessage(key Key) *Message {
 		return No_longer_supported_In_early_versions_manually_set_the_text_encoding_for_reading_files
 	case "Enable_error_reporting_in_type_checked_JavaScript_files_6609":
 		return Enable_error_reporting_in_type_checked_JavaScript_files
-	case "Enable_constraints_that_allow_a_TypeScript_project_to_be_used_with_project_references_6611":
-		return Enable_constraints_that_allow_a_TypeScript_project_to_be_used_with_project_references
-	case "Generate_d_ts_files_from_TypeScript_and_JavaScript_files_in_your_project_6612":
-		return Generate_d_ts_files_from_TypeScript_and_JavaScript_files_in_your_project
+	case "Enable_constraints_that_allow_a_tlua_project_to_be_used_with_project_references_6611":
+		return Enable_constraints_that_allow_a_tlua_project_to_be_used_with_project_references
+	case "Generate_d_ts_files_from_Lua_and_JavaScript_files_in_your_project_6612":
+		return Generate_d_ts_files_from_Lua_and_JavaScript_files_in_your_project
 	case "Specify_the_output_directory_for_generated_declaration_files_6613":
 		return Specify_the_output_directory_for_generated_declaration_files
 	case "Create_sourcemaps_for_d_ts_files_6614":
@@ -7460,10 +7460,10 @@ func keyToMessage(key Key) *Message {
 		return Output_compiler_performance_information_after_building
 	case "Disables_inference_for_type_acquisition_by_looking_at_filenames_in_a_project_6616":
 		return Disables_inference_for_type_acquisition_by_looking_at_filenames_in_a_project
-	case "Reduce_the_number_of_projects_loaded_automatically_by_TypeScript_6617":
-		return Reduce_the_number_of_projects_loaded_automatically_by_TypeScript
-	case "Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_TypeScript_language_server_6618":
-		return Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_TypeScript_language_server
+	case "Reduce_the_number_of_projects_loaded_automatically_by_tlua_6617":
+		return Reduce_the_number_of_projects_loaded_automatically_by_tlua
+	case "Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_tlua_language_server_6618":
+		return Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_tlua_language_server
 	case "Opt_a_project_out_of_multi_project_reference_checking_when_editing_6619":
 		return Opt_a_project_out_of_multi_project_reference_checking_when_editing
 	case "Disable_preferring_source_files_instead_of_declaration_files_when_referencing_composite_projects_6620":
@@ -7510,8 +7510,8 @@ func keyToMessage(key Key) *Message {
 		return Skip_building_downstream_projects_on_error_in_upstream_project
 	case "Specify_a_list_of_glob_patterns_that_match_files_to_be_included_in_compilation_6641":
 		return Specify_a_list_of_glob_patterns_that_match_files_to_be_included_in_compilation
-	case "Save_tsbuildinfo_files_to_allow_for_incremental_compilation_of_projects_6642":
-		return Save_tsbuildinfo_files_to_allow_for_incremental_compilation_of_projects
+	case "Save_tluabuildinfo_files_to_allow_for_incremental_compilation_of_projects_6642":
+		return Save_tluabuildinfo_files_to_allow_for_incremental_compilation_of_projects
 	case "Include_sourcemap_files_inside_the_emitted_JavaScript_6643":
 		return Include_sourcemap_files_inside_the_emitted_JavaScript
 	case "Include_source_code_in_the_sourcemaps_inside_the_emitted_JavaScript_6644":
@@ -7534,16 +7534,16 @@ func keyToMessage(key Key) *Message {
 		return Print_the_names_of_emitted_files_after_a_compilation
 	case "Print_all_of_the_files_read_during_the_compilation_6653":
 		return Print_all_of_the_files_read_during_the_compilation
-	case "Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit_6654":
-		return Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit
+	case "Set_the_language_of_the_messaging_from_tlua_This_does_not_affect_emit_6654":
+		return Set_the_language_of_the_messaging_from_tlua_This_does_not_affect_emit
 	case "Specify_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations_6655":
 		return Specify_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations
 	case "Specify_the_maximum_folder_depth_used_for_checking_JavaScript_files_from_node_modules_Only_applicabl_6656":
 		return Specify_the_maximum_folder_depth_used_for_checking_JavaScript_files_from_node_modules_Only_applicable_with_allowJs
 	case "Specify_what_module_code_is_generated_6657":
 		return Specify_what_module_code_is_generated
-	case "Specify_how_TypeScript_looks_up_a_file_from_a_given_module_specifier_6658":
-		return Specify_how_TypeScript_looks_up_a_file_from_a_given_module_specifier
+	case "Specify_how_tlua_looks_up_a_file_from_a_given_module_specifier_6658":
+		return Specify_how_tlua_looks_up_a_file_from_a_given_module_specifier
 	case "Set_the_newline_character_for_emitting_files_6659":
 		return Set_the_newline_character_for_emitting_files
 	case "Disable_emitting_files_from_a_compilation_6660":
@@ -7570,8 +7570,8 @@ func keyToMessage(key Key) *Message {
 		return Disable_including_any_library_files_including_the_default_lib_d_ts
 	case "Enforces_using_indexed_accessors_for_keys_declared_using_an_indexed_type_6671":
 		return Enforces_using_indexed_accessors_for_keys_declared_using_an_indexed_type
-	case "Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_TypeScript_should_add__6672":
-		return Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_TypeScript_should_add_to_a_project
+	case "Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_tlua_should_add_to_a_p_6672":
+		return Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_tlua_should_add_to_a_project
 	case "Disable_strict_checking_of_generic_signatures_in_function_types_6673":
 		return Disable_strict_checking_of_generic_signatures_in_function_types
 	case "Add_undefined_to_a_type_when_accessed_using_an_index_6674":
@@ -7596,8 +7596,8 @@ func keyToMessage(key Key) *Message {
 		return Disable_resolving_symlinks_to_their_realpath_This_correlates_to_the_same_flag_in_node
 	case "Disable_wiping_the_console_in_watch_mode_6684":
 		return Disable_wiping_the_console_in_watch_mode
-	case "Enable_color_and_formatting_in_TypeScript_s_output_to_make_compiler_errors_easier_to_read_6685":
-		return Enable_color_and_formatting_in_TypeScript_s_output_to_make_compiler_errors_easier_to_read
+	case "Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read_6685":
+		return Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read
 	case "Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit_6686":
 		return Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit
 	case "Specify_an_array_of_objects_that_specify_paths_for_projects_Used_in_project_references_6687":
@@ -7610,8 +7610,8 @@ func keyToMessage(key Key) *Message {
 		return Specify_the_root_folder_within_your_source_files
 	case "Allow_multiple_folders_to_be_treated_as_one_when_resolving_modules_6691":
 		return Allow_multiple_folders_to_be_treated_as_one_when_resolving_modules
-	case "Skip_type_checking_d_ts_files_that_are_included_with_TypeScript_6692":
-		return Skip_type_checking_d_ts_files_that_are_included_with_TypeScript
+	case "Skip_type_checking_d_ts_files_that_are_included_with_tlua_6692":
+		return Skip_type_checking_d_ts_files_that_are_included_with_tlua
 	case "Skip_type_checking_all_d_ts_files_6693":
 		return Skip_type_checking_all_d_ts_files
 	case "Create_source_map_files_for_emitted_JavaScript_files_6694":
@@ -7638,8 +7638,8 @@ func keyToMessage(key Key) *Message {
 		return Set_the_JavaScript_language_version_for_emitted_JavaScript_and_include_compatible_library_declarations
 	case "Log_paths_used_during_the_moduleResolution_process_6706":
 		return Log_paths_used_during_the_moduleResolution_process
-	case "Specify_the_path_to_tsbuildinfo_incremental_compilation_file_6707":
-		return Specify_the_path_to_tsbuildinfo_incremental_compilation_file
+	case "Specify_the_path_to_tluabuildinfo_incremental_compilation_file_6707":
+		return Specify_the_path_to_tluabuildinfo_incremental_compilation_file
 	case "Specify_options_for_automatic_acquisition_of_declaration_files_6709":
 		return Specify_options_for_automatic_acquisition_of_declaration_files
 	case "Specify_multiple_folders_that_act_like_Slashnode_modules_Slash_types_6710":
@@ -7652,8 +7652,8 @@ func keyToMessage(key Key) *Message {
 		return Enable_verbose_logging
 	case "Specify_how_directories_are_watched_on_systems_that_lack_recursive_file_watching_functionality_6714":
 		return Specify_how_directories_are_watched_on_systems_that_lack_recursive_file_watching_functionality
-	case "Specify_how_the_TypeScript_watch_mode_works_6715":
-		return Specify_how_the_TypeScript_watch_mode_works
+	case "Specify_how_the_tlua_watch_mode_works_6715":
+		return Specify_how_the_tlua_watch_mode_works
 	case "Require_undeclared_properties_from_index_signatures_to_use_element_accesses_6717":
 		return Require_undeclared_properties_from_index_signatures_to_use_element_accesses
 	case "Specify_emit_Slashchecking_behavior_for_imports_that_are_only_used_for_types_6718":
@@ -7704,8 +7704,8 @@ func keyToMessage(key Key) *Message {
 		return You_can_learn_about_all_of_the_compiler_options_at_0
 	case "Including_watch_w_will_start_watching_the_current_project_for_the_file_changes_Once_set_you_can_conf_6914":
 		return Including_watch_w_will_start_watching_the_current_project_for_the_file_changes_Once_set_you_can_config_watch_mode_with_Colon
-	case "Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_tr_6915":
-		return Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0
+	case "Using_build_b_will_make_tlua_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_t_6915":
+		return Using_build_b_will_make_tlua_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0
 	case "COMMON_COMMANDS_6916":
 		return COMMON_COMMANDS
 	case "ALL_COMPILER_OPTIONS_6917":
@@ -7718,18 +7718,18 @@ func keyToMessage(key Key) *Message {
 		return COMMON_COMPILER_OPTIONS
 	case "COMMAND_LINE_FLAGS_6921":
 		return COMMAND_LINE_FLAGS
-	case "tsc_Colon_The_TypeScript_Compiler_6922":
-		return X_tsc_Colon_The_TypeScript_Compiler
-	case "Compiles_the_current_project_tsconfig_json_in_the_working_directory_6923":
-		return Compiles_the_current_project_tsconfig_json_in_the_working_directory
-	case "Ignoring_tsconfig_json_compiles_the_specified_files_with_default_compiler_options_6924":
-		return Ignoring_tsconfig_json_compiles_the_specified_files_with_default_compiler_options
+	case "tlua_Colon_The_Lua_Compiler_6922":
+		return X_tlua_Colon_The_Lua_Compiler
+	case "Compiles_the_current_project_tluaconfig_json_in_the_working_directory_6923":
+		return Compiles_the_current_project_tluaconfig_json_in_the_working_directory
+	case "Ignoring_tluaconfig_json_compiles_the_specified_files_with_default_compiler_options_6924":
+		return Ignoring_tluaconfig_json_compiles_the_specified_files_with_default_compiler_options
 	case "Build_a_composite_project_in_the_working_directory_6925":
 		return Build_a_composite_project_in_the_working_directory
-	case "Creates_a_tsconfig_json_with_the_recommended_settings_in_the_working_directory_6926":
-		return Creates_a_tsconfig_json_with_the_recommended_settings_in_the_working_directory
-	case "Compiles_the_TypeScript_project_located_at_the_specified_path_6927":
-		return Compiles_the_TypeScript_project_located_at_the_specified_path
+	case "Creates_a_tluaconfig_json_with_the_recommended_settings_in_the_working_directory_6926":
+		return Creates_a_tluaconfig_json_with_the_recommended_settings_in_the_working_directory
+	case "Compiles_the_Lua_project_located_at_the_specified_path_6927":
+		return Compiles_the_Lua_project_located_at_the_specified_path
 	case "An_expanded_version_of_this_information_showing_all_possible_compiler_options_6928":
 		return An_expanded_version_of_this_information_showing_all_possible_compiler_options
 	case "Compiles_the_current_project_with_additional_settings_6929":
@@ -7852,34 +7852,34 @@ func keyToMessage(key Key) *Message {
 		return A_mapped_type_may_not_declare_properties_or_methods
 	case "You_cannot_rename_this_element_8000":
 		return You_cannot_rename_this_element
-	case "You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library_8001":
-		return You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library
-	case "import_can_only_be_used_in_TypeScript_files_8002":
-		return X_import_can_only_be_used_in_TypeScript_files
-	case "export_can_only_be_used_in_TypeScript_files_8003":
-		return X_export_can_only_be_used_in_TypeScript_files
-	case "Type_parameter_declarations_can_only_be_used_in_TypeScript_files_8004":
-		return Type_parameter_declarations_can_only_be_used_in_TypeScript_files
-	case "implements_clauses_can_only_be_used_in_TypeScript_files_8005":
-		return X_implements_clauses_can_only_be_used_in_TypeScript_files
-	case "_0_declarations_can_only_be_used_in_TypeScript_files_8006":
-		return X_0_declarations_can_only_be_used_in_TypeScript_files
-	case "Type_aliases_can_only_be_used_in_TypeScript_files_8008":
-		return Type_aliases_can_only_be_used_in_TypeScript_files
-	case "The_0_modifier_can_only_be_used_in_TypeScript_files_8009":
-		return The_0_modifier_can_only_be_used_in_TypeScript_files
-	case "Type_annotations_can_only_be_used_in_TypeScript_files_8010":
-		return Type_annotations_can_only_be_used_in_TypeScript_files
-	case "Type_arguments_can_only_be_used_in_TypeScript_files_8011":
-		return Type_arguments_can_only_be_used_in_TypeScript_files
-	case "Parameter_modifiers_can_only_be_used_in_TypeScript_files_8012":
-		return Parameter_modifiers_can_only_be_used_in_TypeScript_files
-	case "Non_null_assertions_can_only_be_used_in_TypeScript_files_8013":
-		return Non_null_assertions_can_only_be_used_in_TypeScript_files
-	case "Type_assertion_expressions_can_only_be_used_in_TypeScript_files_8016":
-		return Type_assertion_expressions_can_only_be_used_in_TypeScript_files
-	case "Signature_declarations_can_only_be_used_in_TypeScript_files_8017":
-		return Signature_declarations_can_only_be_used_in_TypeScript_files
+	case "You_cannot_rename_elements_that_are_defined_in_the_standard_tlua_library_8001":
+		return You_cannot_rename_elements_that_are_defined_in_the_standard_tlua_library
+	case "import_can_only_be_used_in_tlua_files_8002":
+		return X_import_can_only_be_used_in_tlua_files
+	case "export_can_only_be_used_in_tlua_files_8003":
+		return X_export_can_only_be_used_in_tlua_files
+	case "Type_parameter_declarations_can_only_be_used_in_tlua_files_8004":
+		return Type_parameter_declarations_can_only_be_used_in_tlua_files
+	case "implements_clauses_can_only_be_used_in_tlua_files_8005":
+		return X_implements_clauses_can_only_be_used_in_tlua_files
+	case "_0_declarations_can_only_be_used_in_tlua_files_8006":
+		return X_0_declarations_can_only_be_used_in_tlua_files
+	case "Type_aliases_can_only_be_used_in_tlua_files_8008":
+		return Type_aliases_can_only_be_used_in_tlua_files
+	case "The_0_modifier_can_only_be_used_in_tlua_files_8009":
+		return The_0_modifier_can_only_be_used_in_tlua_files
+	case "Type_annotations_can_only_be_used_in_tlua_files_8010":
+		return Type_annotations_can_only_be_used_in_tlua_files
+	case "Type_arguments_can_only_be_used_in_tlua_files_8011":
+		return Type_arguments_can_only_be_used_in_tlua_files
+	case "Parameter_modifiers_can_only_be_used_in_tlua_files_8012":
+		return Parameter_modifiers_can_only_be_used_in_tlua_files
+	case "Non_null_assertions_can_only_be_used_in_tlua_files_8013":
+		return Non_null_assertions_can_only_be_used_in_tlua_files
+	case "Type_assertion_expressions_can_only_be_used_in_tlua_files_8016":
+		return Type_assertion_expressions_can_only_be_used_in_tlua_files
+	case "Signature_declarations_can_only_be_used_in_tlua_files_8017":
+		return Signature_declarations_can_only_be_used_in_tlua_files
 	case "Report_errors_in_js_files_8019":
 		return Report_errors_in_js_files
 	case "JSDoc_types_can_only_be_used_inside_documentation_comments_8020":
@@ -7916,8 +7916,8 @@ func keyToMessage(key Key) *Message {
 		return You_cannot_rename_elements_that_are_defined_in_a_node_modules_folder
 	case "You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder_8036":
 		return You_cannot_rename_elements_that_are_defined_in_another_node_modules_folder
-	case "Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files_8037":
-		return Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files
+	case "Type_satisfaction_expressions_can_only_be_used_in_tlua_files_8037":
+		return Type_satisfaction_expressions_can_only_be_used_in_tlua_files
 	case "Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export_8038":
 		return Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export
 	case "A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag_8039":
@@ -8028,10 +8028,10 @@ func keyToMessage(key Key) *Message {
 		return An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments
 	case "Unknown_type_acquisition_option_0_Did_you_mean_1_17018":
 		return Unknown_type_acquisition_option_0_Did_you_mean_1
-	case "_0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1_17019":
-		return X_0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1
-	case "_0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1_17020":
-		return X_0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1
+	case "_0_at_the_end_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1_17019":
+		return X_0_at_the_end_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1
+	case "_0_at_the_start_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1_17020":
+		return X_0_at_the_start_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1
 	case "Unicode_escape_sequence_cannot_appear_here_17021":
 		return Unicode_escape_sequence_cannot_appear_here
 	case "Circularity_detected_while_resolving_configuration_Colon_0_18000":
@@ -8146,8 +8146,8 @@ func keyToMessage(key Key) *Message {
 		return This_constructor_function_may_be_converted_to_a_class_declaration
 	case "Import_may_be_converted_to_a_default_import_80003":
 		return Import_may_be_converted_to_a_default_import
-	case "JSDoc_types_may_be_moved_to_TypeScript_types_80004":
-		return JSDoc_types_may_be_moved_to_TypeScript_types
+	case "JSDoc_types_may_be_moved_to_tlua_types_80004":
+		return JSDoc_types_may_be_moved_to_tlua_types
 	case "require_call_may_be_converted_to_an_import_80005":
 		return X_require_call_may_be_converted_to_an_import
 	case "This_may_be_converted_to_an_async_function_80006":
@@ -8156,10 +8156,10 @@ func keyToMessage(key Key) *Message {
 		return X_await_has_no_effect_on_the_type_of_this_expression
 	case "Numeric_literals_with_absolute_values_equal_to_2_53_or_greater_are_too_large_to_be_represented_accur_80008":
 		return Numeric_literals_with_absolute_values_equal_to_2_53_or_greater_are_too_large_to_be_represented_accurately_as_integers
-	case "JSDoc_typedef_may_be_converted_to_TypeScript_type_80009":
-		return JSDoc_typedef_may_be_converted_to_TypeScript_type
-	case "JSDoc_typedefs_may_be_converted_to_TypeScript_types_80010":
-		return JSDoc_typedefs_may_be_converted_to_TypeScript_types
+	case "JSDoc_typedef_may_be_converted_to_tlua_type_80009":
+		return JSDoc_typedef_may_be_converted_to_tlua_type
+	case "JSDoc_typedefs_may_be_converted_to_tlua_types_80010":
+		return JSDoc_typedefs_may_be_converted_to_tlua_types
 	case "Add_missing_super_call_90001":
 		return Add_missing_super_call
 	case "Make_super_call_the_first_statement_in_the_constructor_90002":
@@ -8324,10 +8324,10 @@ func keyToMessage(key Key) *Message {
 		return Add_definite_assignment_assertions_to_all_uninitialized_properties
 	case "Add_undefined_type_to_all_uninitialized_properties_95029":
 		return Add_undefined_type_to_all_uninitialized_properties
-	case "Change_all_jsdoc_style_types_to_TypeScript_95030":
-		return Change_all_jsdoc_style_types_to_TypeScript
-	case "Change_all_jsdoc_style_types_to_TypeScript_and_add_undefined_to_nullable_types_95031":
-		return Change_all_jsdoc_style_types_to_TypeScript_and_add_undefined_to_nullable_types
+	case "Change_all_jsdoc_style_types_to_tlua_95030":
+		return Change_all_jsdoc_style_types_to_tlua
+	case "Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types_95031":
+		return Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types
 	case "Implement_all_unimplemented_interfaces_95032":
 		return Implement_all_unimplemented_interfaces
 	case "Install_all_missing_types_packages_95033":
@@ -8610,10 +8610,10 @@ func keyToMessage(key Key) *Message {
 		return Use_0
 	case "Use_Number_isNaN_in_all_conditions_95175":
 		return Use_Number_isNaN_in_all_conditions
-	case "Convert_typedef_to_TypeScript_type_95176":
-		return Convert_typedef_to_TypeScript_type
-	case "Convert_all_typedef_to_TypeScript_types_95177":
-		return Convert_all_typedef_to_TypeScript_types
+	case "Convert_typedef_to_tlua_type_95176":
+		return Convert_typedef_to_tlua_type
+	case "Convert_all_typedef_to_tlua_types_95177":
+		return Convert_all_typedef_to_tlua_types
 	case "Move_to_file_95178":
 		return Move_to_file
 	case "Cannot_move_to_file_selected_file_is_invalid_95179":

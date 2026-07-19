@@ -1,5 +1,5 @@
-tluaWhileFlow.tlua(23,3): error TS7027: Unreachable code detected.
-tluaWhileFlow.tlua(31,5): error TS7027: Unreachable code detected.
+tluaWhileFlow.tlua(23,3): error TLUA7027: Unreachable code detected.
+tluaWhileFlow.tlua(31,5): error TLUA7027: Unreachable code detected.
 
 
 ==== tluaWhileFlow.tlua (2 errors) ====
@@ -27,7 +27,7 @@ tluaWhileFlow.tlua(31,5): error TS7027: Unreachable code detected.
       end
       return 1;
       ~~~~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
     end
     
     // Statements after break are unreachable inside the body.
@@ -37,7 +37,7 @@ tluaWhileFlow.tlua(31,5): error TS7027: Unreachable code detected.
         break;
         n = 1;
         ~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
       end
       return n;
     end

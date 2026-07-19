@@ -1,5 +1,5 @@
-tluaVarargBasics.tlua(31,11): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaVarargBasics.tlua(32,16): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tluaVarargBasics.tlua(31,11): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaVarargBasics.tlua(32,16): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
 
 
 ==== tluaVarargBasics.tlua (2 errors) ====
@@ -35,8 +35,8 @@ tluaVarargBasics.tlua(32,16): error TS2345: Argument of type 'number' is not ass
     // The element type is checked.
     annotated("nope");
               ~~~~~~
-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     withFixed("x", 1);
                    ~
-!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
     

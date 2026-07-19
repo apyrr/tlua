@@ -1,5 +1,5 @@
-missingDiscriminants2.tlua(32,23): error TS2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
-missingDiscriminants2.tlua(33,35): error TS2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
+missingDiscriminants2.tlua(32,23): error TLUA2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
+missingDiscriminants2.tlua(33,35): error TLUA2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
 
 
 ==== missingDiscriminants2.tlua (2 errors) ====
@@ -36,8 +36,8 @@ missingDiscriminants2.tlua(33,35): error TS2353: Object literal may only specify
     
     local item1: Item = { subkind = 1, kind = "b" } // Error, type "b" not assignable to type "a"
                           ~~~~~~~
-!!! error TS2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
+!!! error TLUA2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
     local item2: Item = { kind = "b", subkind = 1 } // Error, 'subkind' isn't a known property
                                       ~~~~~~~
-!!! error TS2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
+!!! error TLUA2353: Object literal may only specify known properties, and 'subkind' does not exist in type '{ kind: "b"; }'.
     

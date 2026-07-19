@@ -282,8 +282,8 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(path tspath.Path,
 		fallback = search.Path[0]
 	}
 
-	// Look for tsconfig.json files higher up the directory tree and do the same. This handles
-	// the common case where a higher-level "solution" tsconfig.json contains all projects in a
+	// Look for tluaconfig.json files higher up the directory tree and do the same. This handles
+	// the common case where a higher-level "solution" tluaconfig.json contains all projects in a
 	// workspace.
 	if config := c.configFileRegistry.GetConfig(path); config != nil && config.CompilerOptions().DisableSolutionSearching.IsTrue() {
 		return fallback

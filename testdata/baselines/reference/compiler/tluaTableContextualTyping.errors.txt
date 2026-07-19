@@ -1,6 +1,6 @@
-tluaTableContextualTyping.tlua(7,33): error TS2353: Object literal may only specify known properties, and 'b' does not exist in type '{ a: number; }'.
-tluaTableContextualTyping.tlua(10,32): error TS2322: Type 'number' is not assignable to type 'string'.
-tluaTableContextualTyping.tlua(19,20): error TS2322: Type 'number' is not assignable to type 'string'.
+tluaTableContextualTyping.tlua(7,33): error TLUA2353: Object literal may only specify known properties, and 'b' does not exist in type '{ a: number; }'.
+tluaTableContextualTyping.tlua(10,32): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaTableContextualTyping.tlua(19,20): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
 ==== tluaTableContextualTyping.tlua (3 errors) ====
@@ -12,13 +12,13 @@ tluaTableContextualTyping.tlua(19,20): error TS2322: Type 'number' is not assign
     // Excess property checking works through `=` fields.
     local excess: { a: number } = { b = 1 };
                                     ~
-!!! error TS2353: Object literal may only specify known properties, and 'b' does not exist in type '{ a: number; }'.
+!!! error TLUA2353: Object literal may only specify known properties, and 'b' does not exist in type '{ a: number; }'.
     
     // Assignability errors surface on the field.
     local wrong: { a: string } = { a = 1 };
                                    ~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
-!!! related TS6500 tluaTableContextualTyping.tlua:10:16: The expected type comes from property 'a' which is declared here on type '{ a: string; }'
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+!!! related TLUA6500 tluaTableContextualTyping.tlua:10:16: The expected type comes from property 'a' which is declared here on type '{ a: string; }'
     
     // Interface-typed tables.
     interface Box {
@@ -29,7 +29,7 @@ tluaTableContextualTyping.tlua(19,20): error TS2322: Type 'number' is not assign
     local sized: Box = { value = "v", size = 2 };
     local bad: Box = { value = 1 };
                        ~~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
-!!! related TS6500 tluaTableContextualTyping.tlua:14:5: The expected type comes from property 'value' which is declared here on type 'Box'
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+!!! related TLUA6500 tluaTableContextualTyping.tlua:14:5: The expected type comes from property 'value' which is declared here on type 'Box'
     local boxes = {box, sized, bad};
     

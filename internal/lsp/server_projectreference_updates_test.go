@@ -72,11 +72,11 @@ func TestReferencesAfterAncestorProjectConfigDeletion1(t *testing.T) {
 	}
 
 	client, fs := initMutableLSPClient(t, map[string]string{
-		"/root/tsconfig.json": `{
+		"/root/tluaconfig.json": `{
 			"files": [],
 			"references": [{ "path": "./project" }]
 		}`,
-		"/root/project/tsconfig.json": `{
+		"/root/project/tluaconfig.json": `{
 			"compilerOptions": { "composite": true },
 			"include": ["src/**/*.tlua"]
 		}`,
@@ -95,10 +95,10 @@ func TestReferencesAfterAncestorProjectConfigDeletion1(t *testing.T) {
 	assert.Assert(t, ok, "expected response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
 
-	assert.NilError(t, fs.Remove("root/tsconfig.json"))
+	assert.NilError(t, fs.Remove("root/tluaconfig.json"))
 	lsptestutil.SendNotification(t, client, lsproto.WorkspaceDidChangeWatchedFilesInfo, &lsproto.DidChangeWatchedFilesParams{
 		Changes: []*lsproto.FileEvent{{
-			Uri:  lsconv.FileNameToDocumentURI("/root/tsconfig.json"),
+			Uri:  lsconv.FileNameToDocumentURI("/root/tluaconfig.json"),
 			Type: lsproto.FileChangeTypeDeleted,
 		}},
 	})

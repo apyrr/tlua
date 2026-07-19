@@ -4,7 +4,7 @@
 // declare abstract class Shape {
 //                        ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -12,7 +12,7 @@
 // | ----------------------------------------------------------------------
 //                        ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -38,7 +38,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nany\n```\n"
+          "value": "```tlua\nany\n```\n"
         },
         "range": {
           "start": {
@@ -68,7 +68,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nany\n```\n"
+          "value": "```tlua\nany\n```\n"
         },
         "range": {
           "start": {

@@ -1,4 +1,4 @@
-tluaRepeatUntil.tlua(17,10): error TS2304: Cannot find name 'secret'.
+tluaRepeatUntil.tlua(17,10): error TLUA2304: Cannot find name 'secret'.
 
 
 ==== tluaRepeatUntil.tlua (1 errors) ====
@@ -20,7 +20,7 @@ tluaRepeatUntil.tlua(17,10): error TS2304: Cannot find name 'secret'.
       until true;
       return secret;
              ~~~~~~
-!!! error TS2304: Cannot find name 'secret'.
+!!! error TLUA2304: Cannot find name 'secret'.
     end
     
     // break exits; continue targets the condition.

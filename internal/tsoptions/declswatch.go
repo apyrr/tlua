@@ -23,7 +23,7 @@ var OptionsForWatch = []*CommandLineOption{
 		//     usefseventsonparentdirectory: WatchFileKind.UseFsEventsOnParentDirectory,
 		// })),
 		Category:                diagnostics.Watch_and_Build_Modes,
-		Description:             diagnostics.Specify_how_the_TypeScript_watch_mode_works,
+		Description:             diagnostics.Specify_how_the_tlua_watch_mode_works,
 		DefaultValueDescription: core.WatchFileKindUseFsEvents,
 	},
 	{

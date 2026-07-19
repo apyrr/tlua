@@ -1,7 +1,7 @@
-tluaMetatableIndexFunction.tlua(16,20): error TS2339: Property 'missing' does not exist on type '{ [x: number]: boolean; n: number; }'.
-tluaMetatableIndexFunction.tlua(35,7): error TS2322: Type 'string | number' is not assignable to type 'number'.
+tluaMetatableIndexFunction.tlua(16,20): error TLUA2339: Property 'missing' does not exist on type '{ [x: number]: boolean; n: number; }'.
+tluaMetatableIndexFunction.tlua(35,7): error TLUA2322: Type 'string | number' is not assignable to type 'number'.
   Type 'string' is not assignable to type 'number'.
-tluaMetatableIndexFunction.tlua(40,7): error TS2322: Type 'number' is not assignable to type 'string'.
+tluaMetatableIndexFunction.tlua(40,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
 ==== tluaMetatableIndexFunction.tlua (3 errors) ====
@@ -22,7 +22,7 @@ tluaMetatableIndexFunction.tlua(40,7): error TS2322: Type 'number' is not assign
     local b1: boolean = num[3];
     local absent = num.missing;
                        ~~~~~~~
-!!! error TS2339: Property 'missing' does not exist on type '{ [x: number]: boolean; n: number; }'.
+!!! error TLUA2339: Property 'missing' does not exist on type '{ [x: number]: boolean; n: number; }'.
     
     // A literal key widens to its domain, because an index signature may not be keyed by a
     // literal -- the same widening a computed key gets.
@@ -43,15 +43,15 @@ tluaMetatableIndexFunction.tlua(40,7): error TS2322: Type 'number' is not assign
     local either: number | string = ov.b;
     local notJustNumber: number = ov.b;
           ~~~~~~~~~~~~~
-!!! error TS2322: Type 'string | number' is not assignable to type 'number'.
-!!! error TS2322:   Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
     
     // The table's own members still win: a function __index only runs on a miss.
     local own = setmetatable({ n = 1 }, anyMt);
     local o1: number = own.n;
     local o2: string = own.n;
           ~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     
     // ...unless the member can be nil, which is the miss.
     declare partial: { v?: number };

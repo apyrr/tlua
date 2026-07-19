@@ -18,7 +18,7 @@
 // local instance = f("hello");
 //                  ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function f<string>(x: string): any
 // | ```
 // | 
@@ -26,14 +26,14 @@
 // local b1 = new Box(instance);
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local b1: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -41,7 +41,7 @@
 // declare b2: Box<typeof instance>;
 //         ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | const b2: Box<any>
 // | ```
 // | 
@@ -61,7 +61,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction f<string>(x: string): any\n```\n"
+        "value": "```tlua\nfunction f<string>(x: string): any\n```\n"
       },
       "range": {
         "start": {
@@ -88,7 +88,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal b1: any\n```\n"
+        "value": "```tlua\nlocal b1: any\n```\n"
       },
       "range": {
         "start": {
@@ -115,7 +115,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -142,7 +142,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nconst b2: Box<any>\n```\n"
+        "value": "```tlua\nconst b2: Box<any>\n```\n"
       },
       "range": {
         "start": {

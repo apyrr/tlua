@@ -1,5 +1,5 @@
-tluaTableAugmentationUseBeforeArm.tlua(6,19): error TS2454: Variable 'Early' is used before being assigned.
-tluaTableAugmentationUseBeforeArm.tlua(6,25): error TS2565: Property 'member' is used before being assigned.
+tluaTableAugmentationUseBeforeArm.tlua(6,19): error TLUA2454: Variable 'Early' is used before being assigned.
+tluaTableAugmentationUseBeforeArm.tlua(6,25): error TLUA2565: Property 'member' is used before being assigned.
 
 
 ==== tluaTableAugmentationUseBeforeArm.tlua (2 errors) ====
@@ -10,9 +10,9 @@ tluaTableAugmentationUseBeforeArm.tlua(6,25): error TS2565: Property 'member' is
     // used-before-assigned rather than silently typed from the future write.
     local beforeArm = Early.member;
                       ~~~~~
-!!! error TS2454: Variable 'Early' is used before being assigned.
+!!! error TLUA2454: Variable 'Early' is used before being assigned.
                             ~~~~~~
-!!! error TS2565: Property 'member' is used before being assigned.
+!!! error TLUA2565: Property 'member' is used before being assigned.
     Early = {};
     Early.member = 1;
     local afterArm: number = Early.member;

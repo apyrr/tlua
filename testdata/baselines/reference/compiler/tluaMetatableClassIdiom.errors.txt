@@ -1,4 +1,4 @@
-tluaMetatableClassIdiom.tlua(35,3): error TS2739: Type '{ balance: number; }' is missing the following properties from type 'Account': deposit, withdraw
+tluaMetatableClassIdiom.tlua(35,3): error TLUA2739: Type '{ balance: number; }' is missing the following properties from type 'Account': deposit, withdraw
 
 
 ==== tluaMetatableClassIdiom.tlua (1 errors) ====
@@ -38,7 +38,7 @@ tluaMetatableClassIdiom.tlua(35,3): error TS2739: Type '{ balance: number; }' is
     function missingMethods(balance: number): Account
       return { balance = balance };
       ~~~~~~
-!!! error TS2739: Type '{ balance: number; }' is missing the following properties from type 'Account': deposit, withdraw
+!!! error TLUA2739: Type '{ balance: number; }' is missing the following properties from type 'Account': deposit, withdraw
     end
     
     // A table paired with the method table is still a table: pairs iterates it.

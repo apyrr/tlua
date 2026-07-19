@@ -1,10 +1,10 @@
-tluaMetatableStatement.tlua(22,18): error TS2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
-tluaMetatableStatement.tlua(29,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
-tluaMetatableStatement.tlua(36,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
-tluaMetatableStatement.tlua(45,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
-tluaMetatableStatement.tlua(54,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
-tluaMetatableStatement.tlua(67,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
-tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(22,18): error TLUA2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
+tluaMetatableStatement.tlua(29,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(36,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(45,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(54,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(67,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableStatement.tlua(83,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
 
 
 ==== tluaMetatableStatement.tlua (7 errors) ====
@@ -31,7 +31,7 @@ tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not e
       local c: number = t.count(t);
       local gone = t.describe;          // the old pairing is gone
                      ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
     end
     
     function detached(): void
@@ -40,7 +40,7 @@ tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not e
       setmetatable(t, nil);             // nil detaches
       local gone = t.describe;
                      ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
     end
     
     function invalidated(): void
@@ -49,7 +49,7 @@ tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not e
       t = { n = 2 };                    // an assignment kills the narrowing
       local gone = t.describe;
                      ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
     end
     
     function inLoop(cond: boolean): void
@@ -60,7 +60,7 @@ tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not e
       end
       local gone = t.describe;          // the never-ran arm keeps t unpaired
                      ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
     end
     
     function inConditional(cond: boolean): void
@@ -71,7 +71,7 @@ tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not e
       end
       local gone = t.describe;          // the join keeps the unpaired arm
                      ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
     end
     
     function propertyTarget(): void
@@ -86,7 +86,7 @@ tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not e
       setmetatable(t, mt);              // not the global, so no narrowing
       local gone = t.describe;
                      ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
     end
     
     function constCapture(): void
@@ -104,7 +104,7 @@ tluaMetatableStatement.tlua(83,18): error TS2339: Property 'describe' does not e
       local rd: string = r.describe(r);
       local gone = t.describe;
                      ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
     end
     
     // The metatable argument references the table through the same statement, inside a loop: the

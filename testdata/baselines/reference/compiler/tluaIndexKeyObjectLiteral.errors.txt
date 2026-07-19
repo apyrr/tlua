@@ -1,4 +1,4 @@
-tluaIndexKeyObjectLiteral.tlua(41,52): error TS2322: Type 'string' is not assignable to type 'number'.
+tluaIndexKeyObjectLiteral.tlua(41,52): error TLUA2322: Type 'string' is not assignable to type 'number'.
 
 
 ==== tluaIndexKeyObjectLiteral.tlua (1 errors) ====
@@ -44,8 +44,8 @@ tluaIndexKeyObjectLiteral.tlua(41,52): error TS2322: Type 'string' is not assign
     declare sb: string | boolean;
     local bad: { [key: string]: number } = { [sb] = 1, a = "x" };
                                                        ~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
-!!! related TS6501 tluaIndexKeyObjectLiteral.tlua:41:14: The expected type comes from this index signature.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+!!! related TLUA6501 tluaIndexKeyObjectLiteral.tlua:41:14: The expected type comes from this index signature.
     
     // A union-keyed member is contextually typed by the indexes it feeds.
     local fm: { [key: string]: (x: number) => number; [key: boolean]: (x: number) => number } = {

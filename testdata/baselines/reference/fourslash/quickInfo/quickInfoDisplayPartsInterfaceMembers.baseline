@@ -4,7 +4,7 @@
 //     property: string;
 //     ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) I.property: string
 // | ```
 // | 
@@ -12,7 +12,7 @@
 //     method(): string;
 //     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) I.method(): string
 // | ```
 // | 
@@ -24,28 +24,28 @@
 // iInstance.property = iInstance.method();
 // ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local iInstance: I
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //           ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) I.property: string
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                      ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local iInstance: I
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) I.method(): string
 // | ```
 // | 
@@ -53,7 +53,7 @@
 // iInstance();
 // ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local iInstance: () => string
 // | ```
 // | 
@@ -61,14 +61,14 @@
 // local anotherInstance = new iInstance();
 //       ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local anotherInstance: I
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                             ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local iInstance: new () => I
 // | ```
 // | 
@@ -87,7 +87,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) I.property: string\n```\n"
+        "value": "```tlua\n(property) I.property: string\n```\n"
       },
       "range": {
         "start": {
@@ -114,7 +114,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) I.method(): string\n```\n"
+        "value": "```tlua\n(method) I.method(): string\n```\n"
       },
       "range": {
         "start": {
@@ -141,7 +141,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal iInstance: I\n```\n"
+        "value": "```tlua\nlocal iInstance: I\n```\n"
       },
       "range": {
         "start": {
@@ -169,7 +169,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) I.property: string\n```\n"
+        "value": "```tlua\n(property) I.property: string\n```\n"
       },
       "range": {
         "start": {
@@ -196,7 +196,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal iInstance: I\n```\n"
+        "value": "```tlua\nlocal iInstance: I\n```\n"
       },
       "range": {
         "start": {
@@ -224,7 +224,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) I.method(): string\n```\n"
+        "value": "```tlua\n(method) I.method(): string\n```\n"
       },
       "range": {
         "start": {
@@ -251,7 +251,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal iInstance: () => string\n```\n"
+        "value": "```tlua\nlocal iInstance: () => string\n```\n"
       },
       "range": {
         "start": {
@@ -278,7 +278,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal anotherInstance: I\n```\n"
+        "value": "```tlua\nlocal anotherInstance: I\n```\n"
       },
       "range": {
         "start": {
@@ -306,7 +306,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal iInstance: new () => I\n```\n"
+        "value": "```tlua\nlocal iInstance: new () => I\n```\n"
       },
       "range": {
         "start": {

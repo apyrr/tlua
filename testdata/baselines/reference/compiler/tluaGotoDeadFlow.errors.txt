@@ -1,6 +1,6 @@
-tluaGotoDeadFlow.tlua(7,5): error TS7027: Unreachable code detected.
-tluaGotoDeadFlow.tlua(16,5): error TS7027: Unreachable code detected.
-tluaGotoDeadFlow.tlua(21,7): error TS7028: Unused label.
+tluaGotoDeadFlow.tlua(7,5): error TLUA7027: Unreachable code detected.
+tluaGotoDeadFlow.tlua(16,5): error TLUA7027: Unreachable code detected.
+tluaGotoDeadFlow.tlua(21,7): error TLUA7028: Unused label.
 
 
 ==== tluaGotoDeadFlow.tlua (3 errors) ====
@@ -14,7 +14,7 @@ tluaGotoDeadFlow.tlua(21,7): error TS7028: Unused label.
         ~~~~~~~~~
         goto again
     ~~~~~~~~~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
     end
     
     // A label whose only goto sits in dead code is NOT unused: the goto still names
@@ -24,14 +24,14 @@ tluaGotoDeadFlow.tlua(21,7): error TS7028: Unused label.
         return 1;
         goto x
         ~~~~~~
-!!! error TS7027: Unreachable code detected.
+!!! error TLUA7027: Unreachable code detected.
     end
     
     // A label nothing references at all is unused.
     function trulyUnused(): number
         ::dead::
           ~~~~
-!!! error TS7028: Unused label.
+!!! error TLUA7028: Unused label.
         return 1;
     end
     

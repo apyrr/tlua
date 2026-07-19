@@ -26,7 +26,7 @@ export function isSupportedLanguageMode(doc: vscode.TextDocument): boolean {
     return tluaLanguageModes.includes(doc.languageId);
 }
 
-const configRegex = /^tsconfig\.(.+\.)?json$/i;
+const configRegex = /^tluaconfig\.(.+\.)?json$/i;
 export function isTsConfigFileName(fileName: string): boolean {
     return configRegex.test(path.basename(fileName));
 }
@@ -117,21 +117,21 @@ function workspaceResolve(relativePath: string): vscode.Uri {
 }
 
 /**
- * Memento used to control whether the user has opted into using a tsdk location defined
+ * Memento used to control whether the user has opted into using a sdk location defined
  * in workspace settings. This is *not* a trust boundary - workspace trust is required
  * before the extension will prompt to set this memento to true. It provides users a way
- * to opt out of using the workspace-provided tsdk without changing committed workspace
+ * to opt out of using the workspace-provided sdk without changing committed workspace
  * settings. Since the stored value is only a boolean, it does not protect against
- * executing a different tsdk than the one the user originally opted into if the workspace
+ * executing a different sdk than the one the user originally opted into if the workspace
  * settings or node_modules content changes - that's why workspace trust is always
  * required, and why the prompts that set this value should not be interpreted as
- * indicating trust for a specific tsdk installation.
+ * indicating trust for a specific sdk installation.
  */
-const useWorkspaceTsdkStorageKey = "tlua.useWorkspaceTsdk";
+const useWorkspaceSdkStorageKey = "tlua.useWorkspaceSdk";
 
 export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo> {
-    for (const candidate of getTrustedTsdkCandidates(context, await getTsdkCandidates())) {
-        const exe = await resolveTsdkPathToExe(candidate.value);
+    for (const candidate of getTrustedSdkCandidates(context, await getSdkCandidates())) {
+        const exe = await resolveSdkPathToExe(candidate.value);
         if (exe) {
             return exe;
         }
@@ -140,16 +140,16 @@ export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo>
     return getBuiltinExePath(context);
 }
 
-function getTrustedTsdkCandidates(context: vscode.ExtensionContext, tsdkCandidates: ExplicitConfigValue<string>[]): ExplicitConfigValue<string>[] {
-    // If tsdk is set at the workspace level, require both workspace trust and
+function getTrustedSdkCandidates(context: vscode.ExtensionContext, sdkCandidates: ExplicitConfigValue<string>[]): ExplicitConfigValue<string>[] {
+    // If sdk is set at the workspace level, require both workspace trust and
     // explicit user opt-in. Workspace trust can be revoked after the memento is
     // set, so we must always check both.
-    if (tsdkCandidates.some(candidate => candidate.target !== vscode.ConfigurationTarget.Global)) {
-        if (!vscode.workspace.isTrusted || !context.workspaceState.get<boolean>(useWorkspaceTsdkStorageKey, false)) {
-            return tsdkCandidates.filter(candidate => candidate.target === vscode.ConfigurationTarget.Global);
+    if (sdkCandidates.some(candidate => candidate.target !== vscode.ConfigurationTarget.Global)) {
+        if (!vscode.workspace.isTrusted || !context.workspaceState.get<boolean>(useWorkspaceSdkStorageKey, false)) {
+            return sdkCandidates.filter(candidate => candidate.target === vscode.ConfigurationTarget.Global);
         }
     }
-    return tsdkCandidates;
+    return sdkCandidates;
 }
 
 interface ExplicitConfigValue<T> {
@@ -194,15 +194,15 @@ function compareExplicitConfigValues<T>(a: ExplicitConfigValue<T>, b: ExplicitCo
     return b.target - a.target || a.order - b.order;
 }
 
-async function getTsdkCandidates(): Promise<ExplicitConfigValue<string>[]> {
-    // A single source: `tlua.tsdk.path`. Points at a directory containing a tlua
+async function getSdkCandidates(): Promise<ExplicitConfigValue<string>[]> {
+    // A single source: `tlua.sdk.path`. Points at a directory containing a tlua
     // binary (or an installed package that ships one).
-    return getExplicitConfigValues<string>("tlua", "tsdk.path")
+    return getExplicitConfigValues<string>("tlua", "sdk.path")
         .filter(candidate => typeof candidate.value === "string" && !!candidate.value);
 }
 
-async function resolveTsdkPathToExe(tsdkPath: string): Promise<ExeInfo | undefined> {
-    const resolved = workspaceResolve(tsdkPath);
+async function resolveSdkPathToExe(sdkPath: string): Promise<ExeInfo | undefined> {
+    const resolved = workspaceResolve(sdkPath);
     for (const packagePath of [resolved, vscode.Uri.joinPath(resolved, "..")]) {
         try {
             const packageJsonPath = vscode.Uri.joinPath(packagePath, "package.json");

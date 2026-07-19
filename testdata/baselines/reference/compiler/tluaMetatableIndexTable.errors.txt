@@ -1,7 +1,7 @@
-tluaMetatableIndexTable.tlua(21,20): error TS2339: Property 'nothing' does not exist on type '{ describe: (self: object) => string; count: number; n: number; }'.
-tluaMetatableIndexTable.tlua(26,7): error TS2322: Type 'number' is not assignable to type 'string'.
-tluaMetatableIndexTable.tlua(31,1): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaMetatableIndexTable.tlua(48,7): error TS2322: Type 'string | number' is not assignable to type 'number'.
+tluaMetatableIndexTable.tlua(21,20): error TLUA2339: Property 'nothing' does not exist on type '{ describe: (self: object) => string; count: number; n: number; }'.
+tluaMetatableIndexTable.tlua(26,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMetatableIndexTable.tlua(31,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMetatableIndexTable.tlua(48,7): error TLUA2322: Type 'string | number' is not assignable to type 'number'.
   Type 'string' is not assignable to type 'number'.
 
 
@@ -28,21 +28,21 @@ tluaMetatableIndexTable.tlua(48,7): error TS2322: Type 'string | number' is not 
     // What neither has is still missing.
     local absent = obj.nothing;
                        ~~~~~~~
-!!! error TS2339: Property 'nothing' does not exist on type '{ describe: (self: object) => string; count: number; n: number; }'.
+!!! error TLUA2339: Property 'nothing' does not exist on type '{ describe: (self: object) => string; count: number; n: number; }'.
     
     // The table wins a collision: a raw read hits it before the metatable ever runs.
     local collide = setmetatable({ v = 1 }, { __index = { v = "str" } });
     local cn: number = collide.v;
     local cs: string = collide.v;
           ~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     
     // A fallback member is writable at its own type -- a Lua write raw-sets the table, which
     // shadows the metatable's copy from then on.
     obj.count = 2;
     obj.count = "two";
     ~~~~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // An index signature behind __index carries over.
     declare idxMt: { __index: { [key: string]: number } };
@@ -61,8 +61,8 @@ tluaMetatableIndexTable.tlua(48,7): error TS2322: Type 'string | number' is not 
     local both: number | string = either.v;
     local notJustNumber: number = either.v;
           ~~~~~~~~~~~~~
-!!! error TS2322: Type 'string | number' is not assignable to type 'number'.
-!!! error TS2322:   Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
     
     // An intersection still says what its __index is.
     declare interMt: { __index: { a: number } } & { __tostring: () => string };

@@ -4,7 +4,7 @@
 // declare function annotated(...: number): number;
 //                  ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function annotated(...: number): number
 // | ```
 // | 
@@ -12,7 +12,7 @@
 // declare function bare(...): void;
 //                  ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function bare(...: any): void
 // | ```
 // | 
@@ -20,7 +20,7 @@
 // declare function withFixed(label: string, ...: string): string;
 //                  ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function withFixed(label: string, ...: string): string
 // | ```
 // | 
@@ -29,7 +29,7 @@
 // type Callable = (...: boolean) => void;
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | type Callable = (...: boolean) => void
 // | ```
 // | 
@@ -46,7 +46,7 @@
 // local combined = cond and fixedArity or varargArity;
 //       ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local combined: ((a: number, b: boolean) => void) | ((...: string) => void)
 // | ```
 // | 
@@ -66,7 +66,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction annotated(...: number): number\n```\n"
+        "value": "```tlua\nfunction annotated(...: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -93,7 +93,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction bare(...: any): void\n```\n"
+        "value": "```tlua\nfunction bare(...: any): void\n```\n"
       },
       "range": {
         "start": {
@@ -120,7 +120,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction withFixed(label: string, ...: string): string\n```\n"
+        "value": "```tlua\nfunction withFixed(label: string, ...: string): string\n```\n"
       },
       "range": {
         "start": {
@@ -147,7 +147,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\ntype Callable = (...: boolean) => void\n```\n"
+        "value": "```tlua\ntype Callable = (...: boolean) => void\n```\n"
       },
       "range": {
         "start": {
@@ -174,7 +174,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal combined: ((a: number, b: boolean) => void) | ((...: string) => void)\n```\n"
+        "value": "```tlua\nlocal combined: ((a: number, b: boolean) => void) | ((...: string) => void)\n```\n"
       },
       "range": {
         "start": {

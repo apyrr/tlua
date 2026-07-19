@@ -22,8 +22,8 @@ func TestProgressNotificationsEndToEnd(t *testing.T) {
 	}
 
 	fs := bundled.WrapFS(vfstest.FromMap(map[string]string{
-		"/home/projects/tsconfig.json": `{}`,
-		"/home/projects/index.tlua":    "export local x = 1;",
+		"/home/projects/tluaconfig.json": `{}`,
+		"/home/projects/index.tlua":      "export local x = 1;",
 	}, false))
 
 	// Collect $/progress notifications. Signal when "end" arrives.
@@ -93,7 +93,7 @@ func TestProgressNotificationsEndToEnd(t *testing.T) {
 	})
 	assert.Assert(t, ok, "expected a response")
 	assert.Assert(t, msg.AsResponse().Error == nil)
-	assert.Equal(t, resp.ConfigFilePath, "/home/projects/tsconfig.json")
+	assert.Equal(t, resp.ConfigFilePath, "/home/projects/tluaconfig.json")
 
 	// Wait for the "end" progress notification before reading.
 	select {

@@ -14,7 +14,7 @@ import (
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/execute/incremental"
-	"github.com/apyrr/tlua/internal/execute/tsc"
+	"github.com/apyrr/tlua/internal/execute/tlua"
 	"github.com/apyrr/tlua/internal/tsoptions"
 	"github.com/apyrr/tlua/internal/tspath"
 )
@@ -40,10 +40,10 @@ type buildInfoEntry struct {
 
 type taskResult struct {
 	builder            strings.Builder
-	reportStatus       tsc.DiagnosticReporter
-	diagnosticReporter tsc.DiagnosticReporter
-	exitStatus         tsc.ExitStatus
-	statistics         *tsc.Statistics
+	reportStatus       tlua.DiagnosticReporter
+	diagnosticReporter tlua.DiagnosticReporter
+	exitStatus         tlua.ExitStatus
+	statistics         *tlua.Statistics
 	program            *incremental.Program
 	buildKind          buildKind
 	filesToDelete      []string
@@ -136,7 +136,7 @@ func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 				}
 			}
 			if len(t.errors) > 0 {
-				t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
+				t.result.exitStatus = tlua.ExitStatusDiagnosticsPresent_OutputsSkipped
 			}
 		}
 	} else {
@@ -194,7 +194,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	}
 
 	// Real build
-	var compileTimes tsc.CompileTimes
+	var compileTimes tlua.CompileTimes
 	configTime, _ := orchestrator.host.configTimes.Load(path)
 	compileTimes.ConfigTime = configTime
 	buildInfoReadStart := orchestrator.opts.Sys.Now()
@@ -208,7 +208,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 		Config: t.resolved,
 		Host: &compilerHost{
 			host:  orchestrator.host,
-			trace: tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
+			trace: tlua.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
 		},
 	})
 	compileTimes.ParseTime = orchestrator.opts.Sys.Now().Sub(parseStart)
@@ -216,13 +216,13 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	t.result.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Testing != nil)
 	compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
 
-	result, statistics := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, statistics := tlua.EmitAndReportStatistics(tlua.EmitInput{
 		Sys:                orchestrator.opts.Sys,
 		ProgramLike:        t.result.program,
 		Program:            program,
 		Config:             t.resolved,
 		ReportDiagnostic:   t.reportDiagnostic,
-		ReportErrorSummary: tsc.QuietDiagnosticsReporter,
+		ReportErrorSummary: tlua.QuietDiagnosticsReporter,
 		Writer:             &t.result.builder,
 		WriteFile: func(fileName, text string, data *compiler.WriteFileData) error {
 			return t.writeFile(orchestrator, fileName, text, data)
@@ -240,7 +240,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 		t.updateTimeStamps(orchestrator, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
 	}
 	t.result.buildKind = buildKindProgram
-	if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
+	if result.Status == tlua.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tlua.ExitStatusDiagnosticsPresent_OutputsGenerated {
 		t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 	} else {
 		var oldestOutputFileName string
@@ -497,7 +497,7 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 			continue
 		}
 
-		// Check if tsbuildinfo path is shared, then we need to rebuild
+		// Check if tluabuildinfo path is shared, then we need to rebuild
 		if t.hasConflictingBuildInfo(orchestrator, upstream.task) {
 			// We have an output older than an upstream output - we are out of date
 			return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{t.resolved.ProjectReferences()[upstream.refIndex].Path, oldestOutputFileAndTime.file}}
@@ -717,7 +717,7 @@ func (t *BuildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 func (t *BuildTask) cleanProject(orchestrator *Orchestrator, path tspath.Path) {
 	if t.resolved == nil {
 		t.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, t.config))
-		t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
+		t.result.exitStatus = tlua.ExitStatusDiagnosticsPresent_OutputsSkipped
 		return
 	}
 

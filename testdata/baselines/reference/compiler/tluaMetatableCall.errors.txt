@@ -1,5 +1,5 @@
-tluaMetatableCall.tlua(12,36): error TS2554: Expected 1 arguments, but got 2.
-tluaMetatableCall.tlua(13,27): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaMetatableCall.tlua(12,36): error TLUA2554: Expected 1 arguments, but got 2.
+tluaMetatableCall.tlua(13,27): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 
 
 ==== tluaMetatableCall.tlua (2 errors) ====
@@ -16,10 +16,10 @@ tluaMetatableCall.tlua(13,27): error TS2345: Argument of type 'string' is not as
     // The receiver is implicit, so passing it back is one argument too many.
     local tooMany = callable(callable, 2);
                                        ~
-!!! error TS2554: Expected 1 arguments, but got 2.
+!!! error TLUA2554: Expected 1 arguments, but got 2.
     local wrongArg = callable("x");
                               ~~~
-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     
     // A callable pairing is still a table: pairs iterates it.
     for k, v in pairs(callable) do

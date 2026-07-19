@@ -10,7 +10,7 @@
 // 	local value: T[K2] = undefined as any;
 //        ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local value: T["any key" | "string key"]
 // | ```
 // | 
@@ -18,7 +18,7 @@
 // | ----------------------------------------------------------------------
 //        ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local value: T[K2]
 // | ```
 // | 
@@ -29,7 +29,7 @@
 //     local value: T2[K] = undefined as any;;
 //           ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local value: {
 // |     "string key": string;
 // |     "number key": number;
@@ -41,7 +41,7 @@
 // | ----------------------------------------------------------------------
 //           ^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local value: T2[K]
 // | ```
 // | 
@@ -63,7 +63,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal value: T[K2]\n```\n"
+          "value": "```tlua\nlocal value: T[K2]\n```\n"
         },
         "range": {
           "start": {
@@ -94,7 +94,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal value: T[\"any key\" | \"string key\"]\n```\n"
+          "value": "```tlua\nlocal value: T[\"any key\" | \"string key\"]\n```\n"
         },
         "range": {
           "start": {
@@ -124,7 +124,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal value: T2[K]\n```\n"
+          "value": "```tlua\nlocal value: T2[K]\n```\n"
         },
         "range": {
           "start": {
@@ -155,7 +155,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal value: {\n    \"string key\": string;\n    \"number key\": number;\n    \"any key\": string | number | symbol;\n}[K]\n```\n"
+          "value": "```tlua\nlocal value: {\n    \"string key\": string;\n    \"number key\": number;\n    \"any key\": string | number | symbol;\n}[K]\n```\n"
         },
         "range": {
           "start": {

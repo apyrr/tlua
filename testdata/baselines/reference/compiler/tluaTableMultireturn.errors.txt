@@ -1,6 +1,6 @@
-tluaTableMultireturn.tlua(17,21): error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+tluaTableMultireturn.tlua(17,21): error TLUA7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
   Property '3' does not exist on type '{ 1: number; 2: number; }'.
-tluaTableMultireturn.tlua(37,20): error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+tluaTableMultireturn.tlua(37,20): error TLUA7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
   Property '3' does not exist on type '{ 1: number; 2: number; }'.
 
 
@@ -23,8 +23,8 @@ tluaTableMultireturn.tlua(37,20): error TS7053: Element implicitly has an 'any' 
     // The pack's second value does not flow out of a non-tail entry: [3] is absent.
     local nt3: string = nonTail[3];
                         ~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
-!!! error TS7053:   Property '3' does not exist on type '{ 1: number; 2: number; }'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+!!! error TLUA7053:   Property '3' does not exist on type '{ 1: number; 2: number; }'.
     
     // The tail expands, so both of the pack's values land.
     local tail = { 0, pair() };
@@ -46,8 +46,8 @@ tluaTableMultireturn.tlua(37,20): error TS7053: Element implicitly has an 'any' 
     local p2: number = paren[2];
     local p3: string = paren[3];
                        ~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
-!!! error TS7053:   Property '3' does not exist on type '{ 1: number; 2: number; }'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '3' can't be used to index type '{ 1: number; 2: number; }'.
+!!! error TLUA7053:   Property '3' does not exist on type '{ 1: number; 2: number; }'.
     
     // A keyed entry never expands: it takes one value.
     local keyedCall = { [1] = pair() };

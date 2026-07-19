@@ -5,7 +5,7 @@ Fs::
 //// [/bin/a.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
   "extends": "./tsconfigWithoutConfigDir.json"
 }
@@ -18,11 +18,11 @@ Fs::
 }
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
   "outDir": "/bin",
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -40,7 +40,7 @@ Fs::
 //// [/bin/a.tlua]
 
 
-//// [/tsconfig.json]
+//// [/tluaconfig.json]
 {
   "extends": "./tsconfigWithConfigDir.json"
 }
@@ -53,11 +53,11 @@ Fs::
 }
 
 
-configFileName:: tsconfig.json
+configFileName:: tluaconfig.json
 CompilerOptions::
 {
   "outDir": "/bin",
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tluaconfig.json"
 }
 
 TypeAcquisition::

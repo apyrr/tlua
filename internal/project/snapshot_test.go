@@ -38,8 +38,8 @@ func TestSnapshot(t *testing.T) {
 	t.Run("compilerHost gets frozen with snapshot's FS only once", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": "{}",
-			"/home/projects/TS/p1/index.tlua":    "console.log('Hello, world!');",
+			"/home/projects/TS/p1/tluaconfig.json": "{}",
+			"/home/projects/TS/p1/index.tlua":      "console.log('Hello, world!');",
 		}
 		session := setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.tlua", 1, files["/home/projects/TS/p1/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -62,7 +62,7 @@ func TestSnapshot(t *testing.T) {
 		snapshotAfter := session.Snapshot()
 
 		// Configured project was updated by a clone
-		assert.Equal(t, snapshotAfter.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")).ProgramUpdateKind, ProgramUpdateKindCloned)
+		assert.Equal(t, snapshotAfter.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json")).ProgramUpdateKind, ProgramUpdateKindCloned)
 		// Inferred project wasn't updated last snapshot change, so its program update kind is still NewFiles
 		assert.Equal(t, snapshotBefore.ProjectCollection.InferredProject(), snapshotAfter.ProjectCollection.InferredProject())
 		assert.Equal(t, snapshotAfter.ProjectCollection.InferredProject().ProgramUpdateKind, ProgramUpdateKindNewFiles)
@@ -73,12 +73,12 @@ func TestSnapshot(t *testing.T) {
 	t.Run("cached disk files are cleaned up", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": "{}",
-			"/home/projects/TS/p1/index.tlua":    "import { a } from './a'; console.log(a);",
-			"/home/projects/TS/p1/a.tlua":        "export local a = 1;",
-			"/home/projects/TS/p2/tsconfig.json": "{}",
-			"/home/projects/TS/p2/index.tlua":    "import { b } from './b'; console.log(b);",
-			"/home/projects/TS/p2/b.tlua":        "export local b = 2;",
+			"/home/projects/TS/p1/tluaconfig.json": "{}",
+			"/home/projects/TS/p1/index.tlua":      "import { a } from './a'; console.log(a);",
+			"/home/projects/TS/p1/a.tlua":          "export local a = 1;",
+			"/home/projects/TS/p2/tluaconfig.json": "{}",
+			"/home/projects/TS/p2/index.tlua":      "import { b } from './b'; console.log(b);",
+			"/home/projects/TS/p2/b.tlua":          "export local b = 2;",
 		}
 		session := setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.tlua", 1, files["/home/projects/TS/p1/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -103,8 +103,8 @@ func TestSnapshot(t *testing.T) {
 	t.Run("GetFile returns nil for non-existent files", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": "{}",
-			"/home/projects/TS/p1/index.tlua":    "console.log('Hello, world!');",
+			"/home/projects/TS/p1/tluaconfig.json": "{}",
+			"/home/projects/TS/p1/index.tlua":      "console.log('Hello, world!');",
 		}
 		session := setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.tlua", 1, files["/home/projects/TS/p1/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -121,7 +121,7 @@ func TestSnapshot(t *testing.T) {
 	t.Run("program change loads node_modules dependency and auto-imports includes it", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/otherproject/tsconfig.json": `{
+			"/home/projects/otherproject/tluaconfig.json": `{
 				"compilerOptions": {
 					"module": "commonjs"
 				}
@@ -214,9 +214,9 @@ func TestSnapshot(t *testing.T) {
 	t.Run("auto-import snapshot is adopted when session snapshot is unchanged", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": "{}",
-			"/home/projects/TS/p1/index.tlua":    "local value = foo;",
-			"/home/projects/TS/p1/foo.tlua":      "export local foo = 1;",
+			"/home/projects/TS/p1/tluaconfig.json": "{}",
+			"/home/projects/TS/p1/index.tlua":      "local value = foo;",
+			"/home/projects/TS/p1/foo.tlua":        "export local foo = 1;",
 		}
 		session := setup(files)
 		t.Cleanup(session.Close)
@@ -238,15 +238,15 @@ func TestSnapshot(t *testing.T) {
 	t.Run("no-op watch change does not rebuild program", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": "{}",
-			"/home/projects/TS/p1/index.tlua":    "import { a } from './a'; console.log(a);",
-			"/home/projects/TS/p1/a.tlua":        "export local a = 1;",
+			"/home/projects/TS/p1/tluaconfig.json": "{}",
+			"/home/projects/TS/p1/index.tlua":      "import { a } from './a'; console.log(a);",
+			"/home/projects/TS/p1/a.tlua":          "export local a = 1;",
 		}
 		session := setup(files)
 		t.Cleanup(session.Close)
 		ctx := context.Background()
 		uri := lsproto.DocumentUri("file:///home/projects/TS/p1/index.tlua")
-		configPath := tspath.Path("/home/projects/ts/p1/tsconfig.json")
+		configPath := tspath.Path("/home/projects/ts/p1/tluaconfig.json")
 
 		session.DidOpenFile(ctx, uri, 1, files["/home/projects/TS/p1/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 		_, err := session.GetLanguageService(ctx, uri)
@@ -295,9 +295,9 @@ func BenchmarkSnapshotCloneRefCost(b *testing.B) {
 		b.Run(fmt.Sprintf("largeProject_%d_files", largeProjectSize), func(b *testing.B) {
 			files := map[string]any{
 				// Small project: 100 files
-				"/small/tsconfig.json": `{"compilerOptions": {"strict": true}}`,
+				"/small/tluaconfig.json": `{"compilerOptions": {"strict": true}}`,
 				// Large project: variable number of files
-				"/large/tsconfig.json": `{"compilerOptions": {"strict": true}}`,
+				"/large/tluaconfig.json": `{"compilerOptions": {"strict": true}}`,
 			}
 
 			// Generate small project files
@@ -351,14 +351,14 @@ func BenchmarkSnapshotCloneRefCost(b *testing.B) {
 				} else {
 					tsconfigContent = `{"compilerOptions": {"strict": false}}`
 				}
-				err := session.fs.fs.WriteFile("/small/tsconfig.json", tsconfigContent)
+				err := session.fs.fs.WriteFile("/small/tluaconfig.json", tsconfigContent)
 				if err != nil {
 					b.Fatal(err)
 				}
 				session.pendingFileChangesMu.Lock()
 				session.pendingFileChanges = append(session.pendingFileChanges, FileChange{
 					Kind: FileChangeKindWatchChange,
-					URI:  "file:///small/tsconfig.json",
+					URI:  "file:///small/tluaconfig.json",
 				})
 				session.pendingFileChangesMu.Unlock()
 				_, err = session.GetLanguageService(context.Background(), "file:///small/file0.tlua")

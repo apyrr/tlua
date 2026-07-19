@@ -51,7 +51,7 @@ func TestCommandLineParseResult(t *testing.T) {
 		{"Parse non boolean argument after boolean flag", []string{"--noImplicitAny", "t", "0.ts"}},
 		{"Parse implicit boolean flag value", []string{"--strictNullChecks"}},
 		{"parse --incremental", []string{"--incremental", "0.ts"}},
-		{"parse --tsBuildInfoFile", []string{"--tsBuildInfoFile", "build.tsbuildinfo", "0.ts"}},
+		{"parse --tsBuildInfoFile", []string{"--tsBuildInfoFile", "build.tluabuildinfo", "0.ts"}},
 		{"allows tsconfig only option to be set to null", []string{"--composite", "null", "-tsBuildInfoFile", "null", "0.ts"}},
 
 		// ****** Watch Options ******
@@ -110,7 +110,7 @@ func TestCustomConditionsNullOverride(t *testing.T) {
 	t.Parallel()
 
 	files := map[string]string{
-		"/project/tsconfig.json": `{
+		"/project/tluaconfig.json": `{
   "compilerOptions": {
     "customConditions": ["condition1", "condition2"]
   }
@@ -133,11 +133,11 @@ func TestCustomConditionsNullOverride(t *testing.T) {
 	}
 
 	// Now parse the config file with the command line options
-	// Wrap command line options in "compilerOptions" key to match tsconfig.json structure
+	// Wrap command line options in "compilerOptions" key to match tluaconfig.json structure
 	wrappedRaw := &collections.OrderedMap[string, any]{}
 	wrappedRaw.Set("compilerOptions", cmdLine.Raw.(*collections.OrderedMap[string, any]))
 	parsedConfig, errors := tsoptions.GetParsedCommandLineOfConfigFile(
-		"/project/tsconfig.json",
+		"/project/tluaconfig.json",
 		cmdLine.CompilerOptions(),
 		wrappedRaw,
 		host,
@@ -500,7 +500,7 @@ func TestParseBuildCommandLine(t *testing.T) {
 		{"Parse multiple flags with input projects in the beginning", []string{"src", "tests", "--force", "--verbose"}},
 		{"parse build with --incremental", []string{"--incremental", "tests"}},
 		{"parse build with --locale en-us", []string{"--locale", "en-us", "src"}},
-		{"parse build with --tsBuildInfoFile", []string{"--tsBuildInfoFile", "build.tsbuildinfo", "tests"}},
+		{"parse build with --tsBuildInfoFile", []string{"--tsBuildInfoFile", "build.tluabuildinfo", "tests"}},
 		{"reports other common may not be used with --build flags", []string{"--strict"}},
 		{`--clean and --force together is invalid`, []string{"--clean", "--force"}},
 		{`--clean and --verbose together is invalid`, []string{"--clean", "--verbose"}},

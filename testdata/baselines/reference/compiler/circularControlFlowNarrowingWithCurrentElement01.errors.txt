@@ -1,105 +1,105 @@
-circularControlFlowNarrowingWithCurrentElement01.tlua(1,1): error TS1434: Unexpected keyword or identifier.
-circularControlFlowNarrowingWithCurrentElement01.tlua(1,1): error TS2304: Cannot find name 'class'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(1,7): error TS1434: Unexpected keyword or identifier.
-circularControlFlowNarrowingWithCurrentElement01.tlua(1,7): error TS2304: Cannot find name 'A'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(2,3): error TS1434: Unexpected keyword or identifier.
-circularControlFlowNarrowingWithCurrentElement01.tlua(2,7): error TS1128: Declaration or statement expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(2,9): error TS1434: Unexpected keyword or identifier.
-circularControlFlowNarrowingWithCurrentElement01.tlua(2,9): error TS2304: Cannot find name 'A'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(2,11): error TS1128: Declaration or statement expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(2,13): error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,3): error TS2304: Cannot find name 'constructor'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,15): error TS2304: Cannot find name 'readonly'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,24): error TS1005: ',' expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,24): error TS2304: Cannot find name 'children'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,32): error TS1005: ',' expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,35): error TS2304: Cannot find name 'A'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,37): error TS1005: ')' expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,45): error TS1011: An element access expression should take an argument.
-circularControlFlowNarrowingWithCurrentElement01.tlua(4,46): error TS1005: ';' expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(7,22): error TS2304: Cannot find name 'A'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(8,14): error TS2304: Cannot find name 'A'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(8,20): error TS1109: Expression expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(8,21): error TS1011: An element access expression should take an argument.
-circularControlFlowNarrowingWithCurrentElement01.tlua(10,18): error TS2304: Cannot find name 'A'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(10,33): error TS2304: Cannot find name 'A'.
-circularControlFlowNarrowingWithCurrentElement01.tlua(10,35): error TS1135: Argument expression expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(10,36): error TS1135: Argument expression expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(15,13): error TS2339: Property 'length' does not exist on type 'A[]'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(1,1): error TLUA1434: Unexpected keyword or identifier.
+circularControlFlowNarrowingWithCurrentElement01.tlua(1,1): error TLUA2304: Cannot find name 'class'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
+circularControlFlowNarrowingWithCurrentElement01.tlua(1,7): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(2,3): error TLUA1434: Unexpected keyword or identifier.
+circularControlFlowNarrowingWithCurrentElement01.tlua(2,7): error TLUA1128: Declaration or statement expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(2,9): error TLUA1434: Unexpected keyword or identifier.
+circularControlFlowNarrowingWithCurrentElement01.tlua(2,9): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(2,11): error TLUA1128: Declaration or statement expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(2,13): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,3): error TLUA2304: Cannot find name 'constructor'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,15): error TLUA2304: Cannot find name 'readonly'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,24): error TLUA1005: ',' expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,24): error TLUA2304: Cannot find name 'children'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,32): error TLUA1005: ',' expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,35): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,37): error TLUA1005: ')' expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,45): error TLUA1011: An element access expression should take an argument.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,46): error TLUA1005: ';' expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(7,22): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(8,14): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(8,20): error TLUA1109: Expression expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(8,21): error TLUA1011: An element access expression should take an argument.
+circularControlFlowNarrowingWithCurrentElement01.tlua(10,18): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(10,33): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(10,35): error TLUA1135: Argument expression expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(10,36): error TLUA1135: Argument expression expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(15,13): error TLUA2339: Property 'length' does not exist on type 'A[]'.
 
 
 ==== circularControlFlowNarrowingWithCurrentElement01.tlua (28 errors) ====
     class A {
     ~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
           ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
           ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
       next: A | null = null;
       ~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
           ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
             ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
             ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
               ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                 ~~~~
-!!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
     
       constructor(readonly children: (A | null)[]) {}
       ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'constructor'.
+!!! error TLUA2304: Cannot find name 'constructor'.
                   ~~~~~~~~
-!!! error TS2304: Cannot find name 'readonly'.
+!!! error TLUA2304: Cannot find name 'readonly'.
                            ~~~~~~~~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
                            ~~~~~~~~
-!!! error TS2304: Cannot find name 'children'.
+!!! error TLUA2304: Cannot find name 'children'.
                                    ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
                                       ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
                                         ~
-!!! error TS1005: ')' expected.
+!!! error TLUA1005: ')' expected.
                                                 
-!!! error TS1011: An element access expression should take an argument.
+!!! error TLUA1011: An element access expression should take an argument.
                                                  ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     }
     
     function getNodes(): A[] {
                          ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
       local out: A[] = [];
                  ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
                        ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                         
-!!! error TS1011: An element access expression should take an argument.
+!!! error TLUA1011: An element access expression should take an argument.
     
       local current: A | null = new A([]);
                      ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
                                     ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
                                       ~
-!!! error TS1135: Argument expression expected.
+!!! error TLUA1135: Argument expression expected.
                                        ~
-!!! error TS1135: Argument expression expected.
+!!! error TLUA1135: Argument expression expected.
     
       while (current ~= null) {
         local firstChild = null;
     
         if (out.length) {
                 ~~~~~~
-!!! error TS2339: Property 'length' does not exist on type 'A[]'.
+!!! error TLUA2339: Property 'length' does not exist on type 'A[]'.
           current = current.next;
           continue;
         }

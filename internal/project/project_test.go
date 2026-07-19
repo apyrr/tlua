@@ -46,15 +46,15 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Run("NewFiles on initial build", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": "{}",
-			"/src/index.tlua":    "export local x = 1;",
+			"/src/tluaconfig.json": "{}",
+			"/src/index.tlua":      "export local x = 1;",
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.tlua"))
 		assert.NilError(t, err)
 		snapshot := session.Snapshot()
-		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tluaconfig.json"))
 		assert.Assert(t, configured != nil)
 		assert.Equal(t, configured.ProgramUpdateKind, project.ProgramUpdateKindNewFiles)
 	})
@@ -62,8 +62,8 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Run("Cloned on single-file change", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": "{}",
-			"/src/index.tlua":    "console.log('Hello');",
+			"/src/tluaconfig.json": "{}",
+			"/src/index.tlua":      "console.log('Hello');",
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -75,7 +75,7 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.tlua"))
 		assert.NilError(t, err)
 		snapshot := session.Snapshot()
-		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tluaconfig.json"))
 		assert.Assert(t, configured != nil)
 		assert.Equal(t, configured.ProgramUpdateKind, project.ProgramUpdateKindCloned)
 	})
@@ -83,20 +83,20 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Run("SameFileNames on config change without root changes", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": `{"compilerOptions": {"strict": true}}`,
-			"/src/index.tlua":    "export local x = 1;",
+			"/src/tluaconfig.json": `{"compilerOptions": {"strict": true}}`,
+			"/src/index.tlua":      "export local x = 1;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.tlua"))
 		assert.NilError(t, err)
-		err = utils.FS().WriteFile("/src/tsconfig.json", `{"compilerOptions": {"strict": false}}`)
+		err = utils.FS().WriteFile("/src/tluaconfig.json", `{"compilerOptions": {"strict": false}}`)
 		assert.NilError(t, err)
-		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/tsconfig.json"), Type: lsproto.FileChangeTypeChanged}})
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/tluaconfig.json"), Type: lsproto.FileChangeTypeChanged}})
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.tlua"))
 		assert.NilError(t, err)
 		snapshot := session.Snapshot()
-		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tluaconfig.json"))
 		assert.Assert(t, configured != nil)
 		assert.Equal(t, configured.ProgramUpdateKind, project.ProgramUpdateKindSameFileNames)
 	})
@@ -104,8 +104,8 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Run("NewFiles on root addition", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": "{}",
-			"/src/index.tlua":    "export {}",
+			"/src/tluaconfig.json": "{}",
+			"/src/index.tlua":      "export {}",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -119,7 +119,7 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/newfile.tlua"))
 		assert.NilError(t, err)
 		snapshot := session.Snapshot()
-		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tluaconfig.json"))
 		assert.Assert(t, configured != nil)
 		assert.Equal(t, configured.ProgramUpdateKind, project.ProgramUpdateKindNewFiles)
 	})
@@ -127,9 +127,9 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Run("SameFileNames when adding an unresolvable import with multi-file change", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": "{}",
-			"/src/index.tlua":    "local x = 1;",
-			"/src/other.tlua":    "local z = 3;",
+			"/src/tluaconfig.json": "{}",
+			"/src/index.tlua":      "local x = 1;",
+			"/src/other.tlua":      "local z = 3;",
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -142,7 +142,7 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.tlua"))
 		assert.NilError(t, err)
 		snapshot := session.Snapshot()
-		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json"))
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/src/tluaconfig.json"))
 		assert.Assert(t, configured != nil)
 		assert.Equal(t, configured.ProgramUpdateKind, project.ProgramUpdateKindSameFileNames)
 	})
@@ -265,17 +265,17 @@ func TestProject(t *testing.T) {
 
 		// 3) Queue two pending changes that will be flushed together in the next snapshot:
 		//    - a content change to a.lua (marks the inferred project dirty -> first program build)
-		//    - creation of a tsconfig.json that captures b.tlua (moves it out of the inferred
+		//    - creation of a tluaconfig.json that captures b.tlua (moves it out of the inferred
 		//      project, so cleanupInferredProject shrinks the inferred roots between builds).
 		session.DidChangeFile(context.Background(), aURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: `// changed`}},
 		})
-		err = utils.FS().WriteFile("/user/username/projects/project1/tsconfig.json", `{"compilerOptions":{},"files":["b.tlua"]}`)
+		err = utils.FS().WriteFile("/user/username/projects/project1/tluaconfig.json", `{"compilerOptions":{},"files":["b.tlua"]}`)
 		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Type: lsproto.FileChangeTypeCreated,
-				Uri:  "file:///user/username/projects/project1/tsconfig.json",
+				Uri:  "file:///user/username/projects/project1/tluaconfig.json",
 			},
 		})
 
@@ -301,8 +301,8 @@ func TestPushDiagnostics(t *testing.T) {
 	t.Run("publishes program diagnostics on initial program creation", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
-			"/src/index.tlua":    "export local x = 1;",
+			"/src/tluaconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.tlua":      "export local x = 1;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -314,25 +314,25 @@ func TestPushDiagnostics(t *testing.T) {
 		calls := utils.Client().PublishDiagnosticsCalls()
 		assert.Assert(t, len(calls) > 0, "expected at least one PublishDiagnostics call")
 
-		// Find the call for tsconfig.json
+		// Find the call for tluaconfig.json
 		var tsconfigCall *struct {
 			Ctx    context.Context
 			Params *lsproto.PublishDiagnosticsParams
 		}
 		for i := range calls {
-			if calls[i].Params.Uri == "file:///src/tsconfig.json" {
+			if calls[i].Params.Uri == "file:///src/tluaconfig.json" {
 				tsconfigCall = &calls[i]
 				break
 			}
 		}
-		assert.Assert(t, tsconfigCall != nil, "expected PublishDiagnostics call for tsconfig.json")
+		assert.Assert(t, tsconfigCall != nil, "expected PublishDiagnostics call for tluaconfig.json")
 		assert.Assert(t, len(tsconfigCall.Params.Diagnostics) > 0, "expected at least one diagnostic")
 	})
 
 	t.Run("publishes config parsing diagnostics on initial program creation", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": `{
+			"/src/tluaconfig.json": `{
 				"compilerOptions": {
 					"target": "nope"
 				}
@@ -347,23 +347,23 @@ func TestPushDiagnostics(t *testing.T) {
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()
-		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
-		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json")
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tluaconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tluaconfig.json")
 		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
 
 		expectedMessage := "Argument for '--target' option must be:"
 		assert.Assert(t, slices.ContainsFunc(lastTsconfigCall.Params.Diagnostics, func(diag *lsproto.Diagnostic) bool {
 			return strings.Contains(diag.Message.AsString(), expectedMessage)
-		}), "expected invalid target diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
+		}), "expected invalid target diagnostic on tluaconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
 	})
 
 	t.Run("clears diagnostics when project is removed", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json":  `{"compilerOptions": {"baseUrl": "."}}`,
-			"/src/index.tlua":     "export local x = 1;",
-			"/src2/tsconfig.json": `{"compilerOptions": {}}`,
-			"/src2/index.tlua":    "export local y = 2;",
+			"/src/tluaconfig.json":  `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.tlua":       "export local x = 1;",
+			"/src2/tluaconfig.json": `{"compilerOptions": {}}`,
+			"/src2/index.tlua":      "export local y = 2;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -386,7 +386,7 @@ func TestPushDiagnostics(t *testing.T) {
 			Params *lsproto.PublishDiagnosticsParams
 		}
 		for i := range calls {
-			if calls[i].Params.Uri == "file:///src/tsconfig.json" {
+			if calls[i].Params.Uri == "file:///src/tluaconfig.json" {
 				firstProjectCalls = append(firstProjectCalls, calls[i])
 			}
 		}
@@ -399,8 +399,8 @@ func TestPushDiagnostics(t *testing.T) {
 	t.Run("updates diagnostics when program changes", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
-			"/src/index.tlua":    "export local x = 1;",
+			"/src/tluaconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.tlua":      "export local x = 1;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -411,9 +411,9 @@ func TestPushDiagnostics(t *testing.T) {
 		initialCallCount := len(utils.Client().PublishDiagnosticsCalls())
 
 		// Change the tsconfig to remove baseUrl
-		err = utils.FS().WriteFile("/src/tsconfig.json", `{"compilerOptions": {}}`)
+		err = utils.FS().WriteFile("/src/tluaconfig.json", `{"compilerOptions": {}}`)
 		assert.NilError(t, err)
-		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/tsconfig.json"), Type: lsproto.FileChangeTypeChanged}})
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/tluaconfig.json"), Type: lsproto.FileChangeTypeChanged}})
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.tlua"))
 		assert.NilError(t, err)
 		session.WaitForBackgroundTasks()
@@ -421,18 +421,18 @@ func TestPushDiagnostics(t *testing.T) {
 		calls := utils.Client().PublishDiagnosticsCalls()
 		assert.Assert(t, len(calls) > initialCallCount, "expected additional PublishDiagnostics call after change")
 
-		// Find the last call for tsconfig.json
+		// Find the last call for tluaconfig.json
 		var lastTsconfigCall *struct {
 			Ctx    context.Context
 			Params *lsproto.PublishDiagnosticsParams
 		}
 		for i := len(calls) - 1; i >= 0; i-- {
-			if calls[i].Params.Uri == "file:///src/tsconfig.json" {
+			if calls[i].Params.Uri == "file:///src/tluaconfig.json" {
 				lastTsconfigCall = &calls[i]
 				break
 			}
 		}
-		assert.Assert(t, lastTsconfigCall != nil, "expected PublishDiagnostics call for tsconfig.json")
+		assert.Assert(t, lastTsconfigCall != nil, "expected PublishDiagnostics call for tluaconfig.json")
 		// After fixing the error, there should be no program diagnostics
 		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected no diagnostics after removing baseUrl option")
 	})
@@ -449,14 +449,14 @@ func TestPushDiagnostics(t *testing.T) {
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()
-		// Should not have any calls since inferred projects don't have tsconfig.json
+		// Should not have any calls since inferred projects don't have tluaconfig.json
 		assert.Equal(t, len(calls), 0, "expected no PublishDiagnostics calls for inferred projects")
 	})
 
 	t.Run("does not publish when validation is disabled", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": `{
+			"/src/tluaconfig.json": `{
 				"compilerOptions": {
 					"target": "nope"
 				}
@@ -481,7 +481,7 @@ func TestPushDiagnostics(t *testing.T) {
 	t.Run("clears diagnostics when validation is disabled", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": `{
+			"/src/tluaconfig.json": `{
 				"compilerOptions": {
 					"target": "nope"
 				}
@@ -495,8 +495,8 @@ func TestPushDiagnostics(t *testing.T) {
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()
-		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
-		assert.Assert(t, len(tsconfigCalls) > 0, "expected initial PublishDiagnostics call for tsconfig.json")
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tluaconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected initial PublishDiagnostics call for tluaconfig.json")
 		assert.Assert(t, len(tsconfigCalls[len(tsconfigCalls)-1].Params.Diagnostics) > 0, "expected initial diagnostics")
 
 		prefs := lsutil.NewDefaultUserPreferences()
@@ -507,9 +507,9 @@ func TestPushDiagnostics(t *testing.T) {
 		session.WaitForBackgroundTasks()
 
 		calls = utils.Client().PublishDiagnosticsCalls()
-		tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", len(calls)-1)
+		tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tluaconfig.json", len(calls)-1)
 		if len(tsconfigCalls) == 0 {
-			tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+			tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tluaconfig.json", 0)
 		}
 		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
 		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected diagnostics to be cleared when validation is disabled")
@@ -522,7 +522,7 @@ func TestPushDiagnostics(t *testing.T) {
 		// global diagnostic during checking, which should be accumulated and
 		// published on the tsconfig URI.
 		files := map[string]any{
-			"/src/tsconfig.json": `{
+			"/src/tluaconfig.json": `{
 				"compilerOptions": {
 					"target": "es2020"
 				}
@@ -547,18 +547,18 @@ use(s);`,
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()
-		// Find the last call for tsconfig.json
+		// Find the last call for tluaconfig.json
 		var lastTsconfigCall *struct {
 			Ctx    context.Context
 			Params *lsproto.PublishDiagnosticsParams
 		}
 		for i := len(calls) - 1; i >= 0; i-- {
-			if calls[i].Params.Uri == "file:///src/tsconfig.json" {
+			if calls[i].Params.Uri == "file:///src/tluaconfig.json" {
 				lastTsconfigCall = &calls[i]
 				break
 			}
 		}
-		assert.Assert(t, lastTsconfigCall != nil, "expected PublishDiagnostics call for tsconfig.json")
+		assert.Assert(t, lastTsconfigCall != nil, "expected PublishDiagnostics call for tluaconfig.json")
 		// Should have global diagnostics (e.g., Cannot find global type 'Disposable')
 		hasGlobalDiag := false
 		for _, diag := range lastTsconfigCall.Params.Diagnostics {
@@ -567,14 +567,14 @@ use(s);`,
 				break
 			}
 		}
-		assert.Assert(t, hasGlobalDiag, "expected a 'Cannot find global' diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
+		assert.Assert(t, hasGlobalDiag, "expected a 'Cannot find global' diagnostic on tluaconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
 	})
 
 	t.Run("cleans tsconfig diagnostics after TS files close and restores them after TS file is reopened", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
-			"/src/index.tlua":    "export local x = 1;",
+			"/src/tluaconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.tlua":      "export local x = 1;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///src/index.tlua")
@@ -584,9 +584,9 @@ use(s);`,
 		session.WaitForBackgroundTasks()
 
 		calls := utils.Client().PublishDiagnosticsCalls()
-		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
-		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after opening file")
-		assert.Equal(t, len(tsconfigCalls[0].Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after opening file")
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tluaconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tluaconfig.json after opening file")
+		assert.Equal(t, len(tsconfigCalls[0].Params.Diagnostics), 1, "expected one diagnostic on tluaconfig.json after opening file")
 
 		callsBeforeClose := len(calls)
 
@@ -595,8 +595,8 @@ use(s);`,
 
 		// Cleans up diagnostics after close
 		calls = utils.Client().PublishDiagnosticsCalls()
-		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeClose)
-		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after project close")
+		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tluaconfig.json", callsBeforeClose)
+		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tluaconfig.json after project close")
 		lastClearCall := clearCalls[len(clearCalls)-1]
 		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after project close")
 
@@ -609,10 +609,10 @@ use(s);`,
 
 		// Restores diagnostics after reopen
 		calls = utils.Client().PublishDiagnosticsCalls()
-		reopenedCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeReopen)
-		assert.Assert(t, len(reopenedCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after reopening file")
+		reopenedCalls := filterDiagnosticsByURI(calls, "file:///src/tluaconfig.json", callsBeforeReopen)
+		assert.Assert(t, len(reopenedCalls) > 0, "expected PublishDiagnostics call for tluaconfig.json after reopening file")
 		lastReopenedCall := reopenedCalls[len(reopenedCalls)-1]
-		assert.Equal(t, len(lastReopenedCall.Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after reopening file")
+		assert.Equal(t, len(lastReopenedCall.Params.Diagnostics), 1, "expected one diagnostic on tluaconfig.json after reopening file")
 	})
 }
 
@@ -625,8 +625,8 @@ func TestDisplayName(t *testing.T) {
 	t.Run("configured project returns relative config path", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/tsconfig.json": `{}`,
-			"/home/projects/index.tlua":    "export local x = 1;",
+			"/home/projects/tluaconfig.json": `{}`,
+			"/home/projects/index.tlua":      "export local x = 1;",
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/index.tlua", 1, "export local x = 1;", lsproto.LanguageKindTypeScript)
@@ -634,16 +634,16 @@ func TestDisplayName(t *testing.T) {
 		assert.NilError(t, err)
 
 		snapshot := session.Snapshot()
-		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/tsconfig.json"))
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/tluaconfig.json"))
 		assert.Assert(t, configured != nil)
-		assert.Equal(t, configured.DisplayName("/home/projects"), "tsconfig.json")
+		assert.Equal(t, configured.DisplayName("/home/projects"), "tluaconfig.json")
 	})
 
 	t.Run("configured project with nested config", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/sub/tsconfig.json": `{}`,
-			"/home/projects/sub/index.tlua":    "export local x = 1;",
+			"/home/projects/sub/tluaconfig.json": `{}`,
+			"/home/projects/sub/index.tlua":      "export local x = 1;",
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/sub/index.tlua", 1, "export local x = 1;", lsproto.LanguageKindTypeScript)
@@ -651,9 +651,9 @@ func TestDisplayName(t *testing.T) {
 		assert.NilError(t, err)
 
 		snapshot := session.Snapshot()
-		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/sub/tsconfig.json"))
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/sub/tluaconfig.json"))
 		assert.Assert(t, configured != nil)
-		assert.Equal(t, configured.DisplayName("/home/projects"), "sub/tsconfig.json")
+		assert.Equal(t, configured.DisplayName("/home/projects"), "sub/tluaconfig.json")
 	})
 
 	t.Run("inferred project returns directory base name", func(t *testing.T) {
@@ -690,8 +690,8 @@ func TestProgressNotifications(t *testing.T) {
 	t.Run("emits progress for configured project loading", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/tsconfig.json": `{}`,
-			"/home/projects/index.tlua":    "export local x = 1;",
+			"/home/projects/tluaconfig.json": `{}`,
+			"/home/projects/index.tlua":      "export local x = 1;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/index.tlua", 1, "export local x = 1;", lsproto.LanguageKindTypeScript)
@@ -752,9 +752,9 @@ func TestProgressNotifications(t *testing.T) {
 	t.Run("each start has a matching finish", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/tsconfig.json": `{}`,
-			"/home/projects/a.tlua":        "export local a = 1;",
-			"/home/projects/b.tlua":        "export local b = 2;",
+			"/home/projects/tluaconfig.json": `{}`,
+			"/home/projects/a.tlua":          "export local a = 1;",
+			"/home/projects/b.tlua":          "export local b = 2;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///home/projects/a.tlua", 1, "export local a = 1;", lsproto.LanguageKindTypeScript)

@@ -2,7 +2,7 @@ Fs::
 //// [/apath/a.tlua]
 
 
-//// [/apath/tsconfig.json]
+//// [/apath/tluaconfig.json]
 {
   "compilerOptions": {
     "help": true
@@ -10,10 +10,10 @@ Fs::
 }
 
 
-configFileName:: /apath/tsconfig.json
+configFileName:: /apath/tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/apath/tsconfig.json"
+  "configFilePath": "/apath/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -22,4 +22,4 @@ TypeAcquisition::
 FileNames::
 /apath/a.tlua
 Errors::
-[91merror[0m[90m TS6266: [0mOption 'help' can only be specified on command line.
+[91merror[0m[90m TLUA6266: [0mOption 'help' can only be specified on command line.

@@ -1,9 +1,9 @@
 {
     "description": "Typed Lua (tlua) language support, powered by the native tlua language server.",
-    "tlua.customConfigFileName.description": "Custom config file name to use e.g. 'tsconfig.all.json', before defaulting to tsconfig.json.",
+    "tlua.customConfigFileName.description": "Custom config file name to use e.g. 'tluaconfig.all.json', before defaulting to tluaconfig.json.",
     "tlua.trace.server.description": "Trace tlua language server communication.",
     "tlua.pprofDir.description": "Directory to write pprof profiles to.",
-    "tlua.tsdk.description": "Path to a directory containing a tlua binary (or a package that ships one). If not specified, the extension uses the bundled binary.",
+    "tlua.sdk.description": "Path to a directory containing a tlua binary (or a package that ships one). If not specified, the extension uses the bundled binary.",
     "tlua.showDebugInfo.description": "Show debug information (PID, executable path) in the server menu.",
     "tlua.goMemLimit.description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
     "tlua.goMemLimit.error": "Must be a valid memory limit (e.g., '2048MiB', '4GiB').",

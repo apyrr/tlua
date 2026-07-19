@@ -16,7 +16,7 @@ func TestGetEditsForFileRename_tsconfig_empty_include(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a/foo.tlua
 local x = 1
-// @Filename: /a/tsconfig.json
+// @Filename: /a/tluaconfig.json
 { "include": [] }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

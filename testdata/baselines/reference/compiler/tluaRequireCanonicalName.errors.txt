@@ -1,11 +1,11 @@
-main.tlua(2,19): error TS100055: Module name 'pkg.init' resolves to the same file as 'pkg'; a module has one canonical name.
+main.tlua(2,19): error TLUA100055: Module name 'pkg.init' resolves to the same file as 'pkg'; a module has one canonical name.
 
 
 ==== main.tlua (1 errors) ====
     local a = require("pkg");
     local b = require("pkg.init");
                       ~~~~~~~~~~
-!!! error TS100055: Module name 'pkg.init' resolves to the same file as 'pkg'; a module has one canonical name.
+!!! error TLUA100055: Module name 'pkg.init' resolves to the same file as 'pkg'; a module has one canonical name.
     a; b;
     
 ==== pkg/init.tlua (0 errors) ====

@@ -1,5 +1,5 @@
-tluaLabelDuplicateFlow.tlua(11,7): error TS1114: Duplicate label 'a'.
-tluaLabelDuplicateFlow.tlua(17,7): error TS1114: Duplicate label 'b'.
+tluaLabelDuplicateFlow.tlua(11,7): error TLUA1114: Duplicate label 'a'.
+tluaLabelDuplicateFlow.tlua(17,7): error TLUA1114: Duplicate label 'b'.
 
 
 ==== tluaLabelDuplicateFlow.tlua (2 errors) ====
@@ -15,7 +15,7 @@ tluaLabelDuplicateFlow.tlua(17,7): error TS1114: Duplicate label 'b'.
         x = nil;
         ::a::
           ~
-!!! error TS1114: Duplicate label 'a'.
+!!! error TLUA1114: Duplicate label 'a'.
     end
     
     // Adjacent duplicates must not make the label its own antecedent.
@@ -23,7 +23,7 @@ tluaLabelDuplicateFlow.tlua(17,7): error TS1114: Duplicate label 'b'.
         ::b::
         ::b::
           ~
-!!! error TS1114: Duplicate label 'b'.
+!!! error TLUA1114: Duplicate label 'b'.
         return 1;
     end
     

@@ -1,5 +1,5 @@
-tluaMetatableProtected.tlua(11,15): error TS100041: Cannot change a protected metatable.
-tluaMetatableProtected.tlua(18,24): error TS2339: Property 'a' does not exist on type '{ n: number; b: number; }'.
+tluaMetatableProtected.tlua(11,15): error TLUA100041: Cannot change a protected metatable.
+tluaMetatableProtected.tlua(18,24): error TLUA2339: Property 'a' does not exist on type '{ n: number; b: number; }'.
 
 
 ==== tluaMetatableProtected.tlua (2 errors) ====
@@ -15,7 +15,7 @@ tluaMetatableProtected.tlua(18,24): error TS2339: Property 'a' does not exist on
     // A re-setmetatable is an error, and the old pairing survives it.
     local again = setmetatable(guarded, { __index = { b = 2 } });
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS100041: Cannot change a protected metatable.
+!!! error TLUA100041: Cannot change a protected metatable.
     local survives: number = again.a;
     
     // An unprotected table replaces normally.
@@ -24,5 +24,5 @@ tluaMetatableProtected.tlua(18,24): error TS2339: Property 'a' does not exist on
     local b: number = replaced.b;
     local goneA = replaced.a;
                            ~
-!!! error TS2339: Property 'a' does not exist on type '{ n: number; b: number; }'.
+!!! error TLUA2339: Property 'a' does not exist on type '{ n: number; b: number; }'.
     

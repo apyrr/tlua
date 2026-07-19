@@ -2,17 +2,17 @@ Fs::
 //// [/apath/a.tlua]
 
 
-//// [/apath/tsconfig.json]
+//// [/apath/tluaconfig.json]
 {
                 "files": [],
                 "references": []
             }
 
 
-configFileName:: /apath/tsconfig.json
+configFileName:: /apath/tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/apath/tsconfig.json"
+  "configFilePath": "/apath/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -21,4 +21,4 @@ TypeAcquisition::
 FileNames::
 
 Errors::
-[91merror[0m[90m TS18002: [0mThe 'files' list in config file '/apath/tsconfig.json' is empty.
+[91merror[0m[90m TLUA18002: [0mThe 'files' list in config file '/apath/tluaconfig.json' is empty.

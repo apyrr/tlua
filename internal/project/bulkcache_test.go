@@ -22,7 +22,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 
 	// Base file structure for testing
 	baseFiles := map[string]any{
-		"/project/tsconfig.json": `{
+		"/project/tluaconfig.json": `{
 			"compilerOptions": {
 				"strict": true,
 				"target": "es2015",
@@ -58,8 +58,8 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			snapshotBefore := session.Snapshot()
 			configBefore := snapshotBefore.ConfigFileRegistry
 
-			// Update tsconfig.json on disk to test that configs don't get reloaded
-			err = utils.FS().WriteFile("/project/tsconfig.json", `{
+			// Update tluaconfig.json on disk to test that configs don't get reloaded
+			err = utils.FS().WriteFile("/project/tluaconfig.json", `{
 			"compilerOptions": {
 				"strict": true,
 				"target": "esnext",
@@ -132,8 +132,8 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			assert.NilError(t, err)
 			assert.Equal(t, ls.GetProgram().Options().Target, core.ScriptTargetES2015)
 
-			// Update tsconfig.json on disk
-			err = utils.FS().WriteFile("/project/tsconfig.json", `{
+			// Update tluaconfig.json on disk
+			err = utils.FS().WriteFile("/project/tluaconfig.json", `{
 			"compilerOptions": {
 				"strict": true,
 				"target": "esnext",
@@ -186,7 +186,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		// Initially, the file should use the root project (strict mode)
 		snapshot := session.Snapshot()
 		initialProject := snapshot.GetDefaultProject("file:///project/src/utils/lib.tlua")
-		assert.Equal(t, initialProject.Name(), "/project/tsconfig.json", "Should initially use root tsconfig")
+		assert.Equal(t, initialProject.Name(), "/project/tluaconfig.json", "Should initially use root tsconfig")
 
 		// Get language service to verify initial strict mode
 		ls, err := session.GetLanguageService(context.Background(), "file:///project/src/utils/lib.tlua")
@@ -194,7 +194,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSTrue, "Should initially use strict mode from root config")
 
 		// Now create the nested tsconfig (this would normally be detected, but we'll simulate a missed event)
-		err = utils.FS().WriteFile("/project/src/utils/tsconfig.json", `{
+		err = utils.FS().WriteFile("/project/src/utils/tluaconfig.json", `{
 			"compilerOptions": {
 				"strict": false,
 				"target": "esnext"
@@ -216,7 +216,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		newProject := snapshot.GetDefaultProject("file:///project/src/utils/lib.tlua")
 
 		// The file should now use the nested tsconfig
-		assert.Equal(t, newProject.Name(), "/project/src/utils/tsconfig.json", "Should now use nested tsconfig after bulk invalidation")
+		assert.Equal(t, newProject.Name(), "/project/src/utils/tluaconfig.json", "Should now use nested tsconfig after bulk invalidation")
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse, "Should now use non-strict mode from nested config")
 		assert.Equal(t, ls.GetProgram().Options().Target, core.ScriptTargetESNext, "Should use esnext target from nested config")
 	})
@@ -237,7 +237,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			assert.Equal(t, snapshot.GetDefaultProject("file:///project/src/index.tlua").Kind, project.KindInferred)
 
 			// Create a tsconfig that would affect this file (simulating a missed creation event)
-			err := utils.FS().WriteFile("/project/tsconfig.json", `{
+			err := utils.FS().WriteFile("/project/tluaconfig.json", `{
 		"compilerOptions": {
 			"strict": true
 		},
@@ -259,7 +259,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			if expectConfigDiscovery {
 				// Should now use configured project instead of inferred
 				assert.Equal(t, newProject.Kind, project.KindConfigured, "Should now use configured project after cache invalidation")
-				assert.Equal(t, newProject.Name(), "/project/tsconfig.json", "Should use the newly discovered tsconfig")
+				assert.Equal(t, newProject.Name(), "/project/tluaconfig.json", "Should use the newly discovered tsconfig")
 			} else {
 				// Should still use inferred project (config file names cache not cleared)
 				assert.Assert(t, newProject == snapshot.ProjectCollection.InferredProject(), "Should still use inferred project after node_modules-only changes")
@@ -275,9 +275,9 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		t.Run("excessive changes outside node_modules clears config file names cache", func(t *testing.T) {
 			t.Parallel()
 			fileEvents := generateFileEvents(1001, "file:///project/src/generated/file%d.tlua", lsproto.FileChangeTypeCreated)
-			// Presence of any tsconfig.json file event triggers rediscovery for config for all open files
+			// Presence of any tluaconfig.json file event triggers rediscovery for config for all open files
 			fileEvents = append(fileEvents, &lsproto.FileEvent{
-				Uri:  lsproto.DocumentUri("file:///project/src/generated/tsconfig.json"),
+				Uri:  lsproto.DocumentUri("file:///project/src/generated/tluaconfig.json"),
 				Type: lsproto.FileChangeTypeCreated,
 			})
 			test(t, fileEvents, true, "non-node_modules changes should clear config cache")
@@ -300,7 +300,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 
 		// Create a tsconfig that would affect this file (simulating a missed creation event)
 		// This should NOT be discovered after dist-folder changes
-		err := utils.FS().WriteFile("/project/tsconfig.json", `{
+		err := utils.FS().WriteFile("/project/tluaconfig.json", `{
 			"compilerOptions": {
 				"strict": true
 			},
@@ -342,8 +342,8 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			"include": ["**/*"]
 		}`
 		files := map[string]any{
-			// Solution config references ./app, but app/tsconfig.json does not exist.
-			"/project/tsconfig.json": `{
+			// Solution config references ./app, but app/tluaconfig.json does not exist.
+			"/project/tluaconfig.json": `{
 				"compilerOptions": { "composite": true },
 				"files": [],
 				"references": [{ "path": "./app" }]
@@ -354,7 +354,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 
 		// Open a file in the (non-existent) referenced project. The default project
-		// search fans out to app/tsconfig.json, creating a retained config entry
+		// search fans out to app/tluaconfig.json, creating a retained config entry
 		// with commandLine == nil and pendingReload == None.
 		session.DidOpenFile(context.Background(), "file:///project/app/main.tlua", 1, files["/project/app/main.tlua"].(string), lsproto.LanguageKindTypeScript)
 		_, err := session.GetLanguageService(context.Background(), "file:///project/app/main.tlua")
@@ -363,7 +363,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		// Create the referenced config on disk WITHOUT notifying, so the
 		// nil-commandLine entry is not reloaded (pendingReload stays None) but the
 		// file becomes readable.
-		err = utils.FS().WriteFile("/project/app/tsconfig.json", appConfig)
+		err = utils.FS().WriteFile("/project/app/tluaconfig.json", appConfig)
 		assert.NilError(t, err)
 
 		// Trigger a bulk cache invalidation with an excessive number of watch events.
@@ -372,7 +372,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		// whose commandLine is nil -- and used to crash.
 		fileEvents := generateFileEvents(1001, "file:///project/app/generated/file%d.tlua", lsproto.FileChangeTypeCreated)
 		fileEvents = append(fileEvents, &lsproto.FileEvent{
-			Uri:  "file:///project/newdir/tsconfig.json",
+			Uri:  "file:///project/newdir/tluaconfig.json",
 			Type: lsproto.FileChangeTypeCreated,
 		})
 		session.DidChangeWatchedFiles(context.Background(), fileEvents)

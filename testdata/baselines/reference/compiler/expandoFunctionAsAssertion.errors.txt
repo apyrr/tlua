@@ -1,4 +1,4 @@
-expandoFunctionAsAssertion.tlua(5,15): error TS2304: Cannot find name 'Error'.
+expandoFunctionAsAssertion.tlua(5,15): error TLUA2304: Cannot find name 'Error'.
 
 
 ==== expandoFunctionAsAssertion.tlua (1 errors) ====
@@ -8,7 +8,7 @@ expandoFunctionAsAssertion.tlua(5,15): error TS2304: Cannot find name 'Error'.
       if (value ~= 'foo') {
         throw new Error('Not foo');
                   ~~~~~
-!!! error TS2304: Cannot find name 'Error'.
+!!! error TLUA2304: Cannot find name 'Error'.
       }
     end;
     

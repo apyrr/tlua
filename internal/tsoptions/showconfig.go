@@ -58,7 +58,7 @@ type TSConfig struct {
 // matching the behavior of TypeScript's convertToTSConfig function.
 func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName string) *TSConfig {
 	if configFileName == "" {
-		configFileName = "tsconfig.json"
+		configFileName = "tluaconfig.json"
 	}
 	normalizedConfigPath := tspath.GetNormalizedAbsolutePath(configFileName, configParseResult.GetCurrentDirectory())
 	comparePathsOptions := tspath.ComparePathsOptions{
@@ -156,7 +156,7 @@ func getNameOfCompilerOptionValue(value any, enumMap *collections.OrderedMap[str
 
 // serializeCompilerOptions converts CompilerOptions to an ordered map with
 // string names as keys and serialized values (enums as strings, paths as
-// relative paths, etc.) matching the output of tsc --showConfig.
+// relative paths, etc.) matching the output of tlua --showConfig.
 func serializeCompilerOptions(options *core.CompilerOptions, configFilePath string, comparePathsOptions tspath.ComparePathsOptions) *collections.OrderedMap[string, any] {
 	result := collections.NewOrderedMapWithSizeHint[string, any](32)
 	configDir := tspath.GetDirectoryPath(configFilePath)

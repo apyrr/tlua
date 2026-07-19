@@ -11,7 +11,7 @@ import (
 func TestTsconfigComputedPropertyError(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @filename: tsconfig.json
+	const content = `// @filename: tluaconfig.json
 {
     [|["oops!" + 42]|]: "true",
     "compilerOptions": { "lib": ["es5"] },

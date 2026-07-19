@@ -1,4 +1,4 @@
-tluaDottedFunctionNestedChains.tlua(17,18): error TS2339: Property 'nested' does not exist on type 'number'.
+tluaDottedFunctionNestedChains.tlua(17,18): error TLUA2339: Property 'nested' does not exist on type 'number'.
 
 
 ==== tluaDottedFunctionNestedChains.tlua (1 errors) ====
@@ -20,6 +20,6 @@ tluaDottedFunctionNestedChains.tlua(17,18): error TS2339: Property 'nested' does
     
     function host.fn.nested(): void
                      ~~~~~~
-!!! error TS2339: Property 'nested' does not exist on type 'number'.
+!!! error TLUA2339: Property 'nested' does not exist on type 'number'.
     end
     

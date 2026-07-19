@@ -1,4 +1,4 @@
-tluaColonCallPackTail.tlua(15,13): error TS2554: Expected 1 arguments, but got 2.
+tluaColonCallPackTail.tlua(15,13): error TLUA2554: Expected 1 arguments, but got 2.
 
 
 ==== tluaColonCallPackTail.tlua (1 errors) ====
@@ -18,7 +18,7 @@ tluaColonCallPackTail.tlua(15,13): error TS2554: Expected 1 arguments, but got 2
     // So a one-parameter target overflows on the expanded pack.
     takesNumber(reader:pair());
                 ~~~~~~~~~~~~~
-!!! error TS2554: Expected 1 arguments, but got 2.
+!!! error TLUA2554: Expected 1 arguments, but got 2.
     
     // In non-tail position it adjusts to its single first value.
     takesNumberString(reader:pair(), "s");

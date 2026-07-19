@@ -1,26 +1,26 @@
-declarations.tlua(7,5): error TS2304: Cannot find name 'namespace'.
-declarations.tlua(7,15): error TS2819: Namespace name cannot be '_G'.
-dottedFunctionConflict.tlua(2,13): error TS2397: Declaration name conflicts with built-in global identifier '_G'.
-reads.tlua(6,34): error TS2339: Property 'declared' does not exist on type 'typeof _G'.
-reads.tlua(7,4): error TS2339: Property 'declared' does not exist on type 'typeof _G'.
-reads.tlua(8,1): error TS2631: Cannot assign to '_G' because it is a namespace.
-reads.tlua(20,8): error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
-reads.tlua(25,8): error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
-reads.tlua(26,5): error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
-reads.tlua(28,8): error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
-reads.tlua(34,5): error TS2304: Cannot find name 'globalThis'.
-reads.tlua(35,33): error TS2304: Cannot find name 'globalThis'.
-reads.tlua(38,4): error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
-reads.tlua(45,5): error TS2304: Cannot find name 'localOnly'.
-reads.tlua(54,11): error TS2322: Type 'nil' is not assignable to type 'boolean'.
-reads.tlua(66,11): error TS2322: Type 'nil' is not assignable to type 'boolean'.
-reads.tlua(76,11): error TS2322: Type 'nil' is not assignable to type 'boolean'.
-writes.tlua(13,13): error TS2339: Property 'existingFunction' does not exist on type 'typeof _G'.
-writes.tlua(19,13): error TS2300: Duplicate identifier 'dup'.
-writes.tlua(20,13): error TS2300: Duplicate identifier 'dup'.
-writes.tlua(24,13): error TS2300: Duplicate identifier 'mixedGlobal'.
-writes.tlua(25,4): error TS2300: Duplicate identifier 'mixedGlobal'.
-writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assigned.
+declarations.tlua(7,5): error TLUA2304: Cannot find name 'namespace'.
+declarations.tlua(7,15): error TLUA2819: Namespace name cannot be '_G'.
+dottedFunctionConflict.tlua(2,13): error TLUA2397: Declaration name conflicts with built-in global identifier '_G'.
+reads.tlua(6,34): error TLUA2339: Property 'declared' does not exist on type 'typeof _G'.
+reads.tlua(7,4): error TLUA2339: Property 'declared' does not exist on type 'typeof _G'.
+reads.tlua(8,1): error TLUA2631: Cannot assign to '_G' because it is a namespace.
+reads.tlua(20,8): error TLUA7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+reads.tlua(25,8): error TLUA2339: Property 'hidden' does not exist on type 'typeof _G'.
+reads.tlua(26,5): error TLUA2339: Property 'hidden' does not exist on type 'typeof _G'.
+reads.tlua(28,8): error TLUA2339: Property 'hidden' does not exist on type 'typeof _G'.
+reads.tlua(34,5): error TLUA2304: Cannot find name 'globalThis'.
+reads.tlua(35,33): error TLUA2304: Cannot find name 'globalThis'.
+reads.tlua(38,4): error TLUA7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+reads.tlua(45,5): error TLUA2304: Cannot find name 'localOnly'.
+reads.tlua(54,11): error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
+reads.tlua(66,11): error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
+reads.tlua(76,11): error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
+writes.tlua(13,13): error TLUA2339: Property 'existingFunction' does not exist on type 'typeof _G'.
+writes.tlua(19,13): error TLUA2300: Duplicate identifier 'dup'.
+writes.tlua(20,13): error TLUA2300: Duplicate identifier 'dup'.
+writes.tlua(24,13): error TLUA2300: Duplicate identifier 'mixedGlobal'.
+writes.tlua(25,4): error TLUA2300: Duplicate identifier 'mixedGlobal'.
+writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assigned.
 
 
 ==== declarations.tlua (2 errors) ====
@@ -32,9 +32,9 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
         declare hidden: string | nil;
         namespace _G {
         ~~~~~~~~~
-!!! error TS2304: Cannot find name 'namespace'.
+!!! error TLUA2304: Cannot find name 'namespace'.
                   ~~
-!!! error TS2819: Namespace name cannot be '_G'.
+!!! error TLUA2819: Namespace name cannot be '_G'.
             declare rejectedEnvironmentMember: number;
         }
     }
@@ -54,7 +54,7 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     
     function _G.existingFunction(x: string): string
                 ~~~~~~~~~~~~~~~~
-!!! error TS2339: Property 'existingFunction' does not exist on type 'typeof _G'.
+!!! error TLUA2339: Property 'existingFunction' does not exist on type 'typeof _G'.
         return x;
     end
     
@@ -62,23 +62,23 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     interface dup {}
     function _G.dup(): void end
                 ~~~
-!!! error TS2300: Duplicate identifier 'dup'.
-!!! related TS6203 writes.tlua:20:13: 'dup' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'dup'.
+!!! related TLUA6203 writes.tlua:20:13: 'dup' was also declared here.
     function _G.dup(): void end
                 ~~~
-!!! error TS2300: Duplicate identifier 'dup'.
-!!! related TS6203 writes.tlua:19:13: 'dup' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'dup'.
+!!! related TLUA6203 writes.tlua:19:13: 'dup' was also declared here.
     
     // Function syntax and ordinary assignment collide when they jointly declare
     // an otherwise missing global.
     function _G.mixedGlobal(): void end
                 ~~~~~~~~~~~
-!!! error TS2300: Duplicate identifier 'mixedGlobal'.
-!!! related TS6203 writes.tlua:25:4: 'mixedGlobal' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'mixedGlobal'.
+!!! related TLUA6203 writes.tlua:25:4: 'mixedGlobal' was also declared here.
     _G.mixedGlobal = 1;
        ~~~~~~~~~~~
-!!! error TS2300: Duplicate identifier 'mixedGlobal'.
-!!! related TS6203 writes.tlua:24:13: 'mixedGlobal' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'mixedGlobal'.
+!!! related TLUA6203 writes.tlua:24:13: 'mixedGlobal' was also declared here.
     
     bareTable = _G.bareTable or {};
     _G.bareTable.fromQualified = 1;
@@ -104,7 +104,7 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     local pending: string;
     _G.pending = pending or "default";
                  ~~~~~~~
-!!! error TS2454: Variable 'pending' is used before being assigned.
+!!! error TLUA2454: Variable 'pending' is used before being assigned.
     
 ==== reads.tlua (14 errors) ====
     local n: number = fromDot;
@@ -114,13 +114,13 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     local existingFnResult: number = existingFunction(1);
     local declaredValue: number = _G.declared;
                                      ~~~~~~~~
-!!! error TS2339: Property 'declared' does not exist on type 'typeof _G'.
+!!! error TLUA2339: Property 'declared' does not exist on type 'typeof _G'.
     _G.declared = "wrong";
        ~~~~~~~~
-!!! error TS2339: Property 'declared' does not exist on type 'typeof _G'.
+!!! error TLUA2339: Property 'declared' does not exist on type 'typeof _G'.
     _G = {};
     ~~
-!!! error TS2631: Cannot assign to '_G' because it is a namespace.
+!!! error TLUA2631: Cannot assign to '_G' because it is a namespace.
     local qualifiedMember: number = bareTable.fromQualified;
     local bareMember: string = _G.qualifiedTable.fromBare;
     local environment: typeof _G = _G._G;
@@ -134,21 +134,21 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     local printFunction: () => void = _G.print;
     use(_G.rejectedEnvironmentMember);
            ~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+!!! error TLUA7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
     
     // A declared global is a property of the environment under both spellings,
     // and narrowing one spelling does not leak through a write to the other
     // (the write itself errors: declared globals are read-only).
     use(_G.hidden);
            ~~~~~~
-!!! error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+!!! error TLUA2339: Property 'hidden' does not exist on type 'typeof _G'.
     use(_G["hidden"]);
         ~~~~~~~~~~~~
-!!! error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+!!! error TLUA2339: Property 'hidden' does not exist on type 'typeof _G'.
     if hidden ~= nil then
         _G.hidden = nil;
            ~~~~~~
-!!! error TS2339: Property 'hidden' does not exist on type 'typeof _G'.
+!!! error TLUA2339: Property 'hidden' does not exist on type 'typeof _G'.
         local stillNarrowed: string = hidden;
         use(stillNarrowed);
     end
@@ -156,15 +156,15 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     // `globalThis` is no longer compiler-provided.
     use(globalThis);
         ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'globalThis'.
+!!! error TLUA2304: Cannot find name 'globalThis'.
     type RemovedGlobalThis = typeof globalThis;
                                     ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'globalThis'.
+!!! error TLUA2304: Cannot find name 'globalThis'.
     
     // Deep writes require an existing canonical global root.
     _G.missing.member = 1;
        ~~~~~~~
-!!! error TS7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
+!!! error TLUA7017: Element implicitly has an 'any' type because type 'typeof _G' has no index signature.
     
     // A lexical `_G` is an ordinary table and does not create globals.
     function shadow(): void
@@ -173,7 +173,7 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     end
     use(localOnly);
         ~~~~~~~~~
-!!! error TS2304: Cannot find name 'localOnly'.
+!!! error TLUA2304: Cannot find name 'localOnly'.
     
     // Narrowing crosses bare and environment-qualified spellings.
     maybe = true as boolean | nil;
@@ -184,7 +184,7 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
         _G[globalKey] = nil;
         local invalidated: boolean = _G.maybe;
               ~~~~~~~~~~~
-!!! error TS2322: Type 'nil' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
         use(narrowed);
         use(narrowedThroughStaticKey);
         use(invalidated);
@@ -198,7 +198,7 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
         reverseMaybe = nil;
         local invalidatedStaticKey: boolean = _G[reverseGlobalKey];
               ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type 'nil' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
         use(narrowedBare);
         use(invalidatedStaticKey);
     end
@@ -210,7 +210,7 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
         repeatedMaybe = nil;
         local invalidatedRepeated: boolean = _G._G.repeatedMaybe;
               ~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type 'nil' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
         use(narrowedRepeatedBare);
         use(invalidatedRepeated);
     end
@@ -262,5 +262,5 @@ writes.tlua(49,14): error TS2454: Variable 'pending' is used before being assign
     // Replacing the environment through its self-property is the same conflict.
     function _G._G(): void end
                 ~~
-!!! error TS2397: Declaration name conflicts with built-in global identifier '_G'.
+!!! error TLUA2397: Declaration name conflicts with built-in global identifier '_G'.
     

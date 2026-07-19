@@ -35,7 +35,7 @@
 // foo1.x
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) x?: string | nil
 // | ```
 // | 
@@ -43,7 +43,7 @@
 // foo1.f
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) f?: ((x: number) => void) | nil
 // | ```
 // | 
@@ -51,7 +51,7 @@
 // foo1.f?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) f?: (x: number) => void | nil
 // | ```
 // | 
@@ -59,7 +59,7 @@
 // foo1.g
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) g?: {
 // |     (x: number): void;
 // |     (x: string): void;
@@ -70,7 +70,7 @@
 // foo1.g?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) g?: (x: number) => void | nil
 // | ```
 // | 
@@ -78,7 +78,7 @@
 // foo1.g?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) g?: (x: string) => void | nil
 // | ```
 // | 
@@ -86,7 +86,7 @@
 // foo1.h
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) h?: (((x: number) => void) & ((x: string) => void)) | nil
 // | ```
 // | 
@@ -94,7 +94,7 @@
 // foo1.h?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) h?: (x: number) => void | nil
 // | ```
 // | 
@@ -102,7 +102,7 @@
 // foo1.h?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) h?: (x: string) => void | nil
 // | ```
 // | 
@@ -110,7 +110,7 @@
 // foo1.m
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) m?(x: number): void
 // | (method) m?(x: string): void
 // | ```
@@ -119,7 +119,7 @@
 // foo1.m?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) m?(x: number): void | nil
 // | ```
 // | 
@@ -127,7 +127,7 @@
 // foo1.m?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) m?(x: string): void | nil
 // | ```
 // | 
@@ -136,7 +136,7 @@
 // foo2.x
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.x?: string | nil
 // | ```
 // | 
@@ -144,7 +144,7 @@
 // foo2.f
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.f?: ((x: number) => void) | nil
 // | ```
 // | 
@@ -152,7 +152,7 @@
 // foo2.f?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.f?: (x: number) => void | nil
 // | ```
 // | 
@@ -160,7 +160,7 @@
 // foo2.g
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.g?: {
 // |     (x: number): void;
 // |     (x: string): void;
@@ -171,7 +171,7 @@
 // foo2.g?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.g?: (x: number) => void | nil
 // | ```
 // | 
@@ -179,7 +179,7 @@
 // foo2.g?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.g?: (x: string) => void | nil
 // | ```
 // | 
@@ -187,7 +187,7 @@
 // foo2.h
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.h?: (((x: number) => void) & ((x: string) => void)) | nil
 // | ```
 // | 
@@ -195,7 +195,7 @@
 // foo2.h?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.h?: (x: number) => void | nil
 // | ```
 // | 
@@ -203,7 +203,7 @@
 // foo2.h?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (property) Foo2.h?: (x: string) => void | nil
 // | ```
 // | 
@@ -211,7 +211,7 @@
 // foo2.m
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) Foo2.m?(x: number): void
 // | (method) Foo2.m?(x: string): void
 // | ```
@@ -220,7 +220,7 @@
 // foo2.m?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) Foo2.m?(x: number): void | nil
 // | ```
 // | 
@@ -228,7 +228,7 @@
 // foo2.m?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (method) Foo2.m?(x: string): void | nil
 // | ```
 // | 
@@ -237,7 +237,7 @@
 // foo3.x
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -245,7 +245,7 @@
 // foo3.f
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -253,7 +253,7 @@
 // foo3.f?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -261,7 +261,7 @@
 // foo3.g
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -269,7 +269,7 @@
 // foo3.g?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -277,7 +277,7 @@
 // foo3.g?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -285,7 +285,7 @@
 // foo3.h
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -293,7 +293,7 @@
 // foo3.h?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -301,7 +301,7 @@
 // foo3.h?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -309,7 +309,7 @@
 // foo3.m
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -317,7 +317,7 @@
 // foo3.m?.(42)
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -325,7 +325,7 @@
 // foo3.m?.("abc")
 //      ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -345,7 +345,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) x?: string | nil\n```\n"
+        "value": "```tlua\n(property) x?: string | nil\n```\n"
       },
       "range": {
         "start": {
@@ -372,7 +372,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) f?: ((x: number) => void) | nil\n```\n"
+        "value": "```tlua\n(property) f?: ((x: number) => void) | nil\n```\n"
       },
       "range": {
         "start": {
@@ -399,7 +399,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) f?: (x: number) => void | nil\n```\n"
+        "value": "```tlua\n(property) f?: (x: number) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -426,7 +426,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) g?: {\n    (x: number): void;\n    (x: string): void;\n} | nil\n```\n"
+        "value": "```tlua\n(property) g?: {\n    (x: number): void;\n    (x: string): void;\n} | nil\n```\n"
       },
       "range": {
         "start": {
@@ -453,7 +453,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) g?: (x: number) => void | nil\n```\n"
+        "value": "```tlua\n(property) g?: (x: number) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -480,7 +480,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) g?: (x: string) => void | nil\n```\n"
+        "value": "```tlua\n(property) g?: (x: string) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -507,7 +507,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) h?: (((x: number) => void) & ((x: string) => void)) | nil\n```\n"
+        "value": "```tlua\n(property) h?: (((x: number) => void) & ((x: string) => void)) | nil\n```\n"
       },
       "range": {
         "start": {
@@ -534,7 +534,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) h?: (x: number) => void | nil\n```\n"
+        "value": "```tlua\n(property) h?: (x: number) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -561,7 +561,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) h?: (x: string) => void | nil\n```\n"
+        "value": "```tlua\n(property) h?: (x: string) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -588,7 +588,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) m?(x: number): void\n(method) m?(x: string): void\n```\n"
+        "value": "```tlua\n(method) m?(x: number): void\n(method) m?(x: string): void\n```\n"
       },
       "range": {
         "start": {
@@ -615,7 +615,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) m?(x: number): void | nil\n```\n"
+        "value": "```tlua\n(method) m?(x: number): void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -642,7 +642,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) m?(x: string): void | nil\n```\n"
+        "value": "```tlua\n(method) m?(x: string): void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -669,7 +669,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.x?: string | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.x?: string | nil\n```\n"
       },
       "range": {
         "start": {
@@ -696,7 +696,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.f?: ((x: number) => void) | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.f?: ((x: number) => void) | nil\n```\n"
       },
       "range": {
         "start": {
@@ -723,7 +723,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.f?: (x: number) => void | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.f?: (x: number) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -750,7 +750,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.g?: {\n    (x: number): void;\n    (x: string): void;\n} | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.g?: {\n    (x: number): void;\n    (x: string): void;\n} | nil\n```\n"
       },
       "range": {
         "start": {
@@ -777,7 +777,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.g?: (x: number) => void | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.g?: (x: number) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -804,7 +804,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.g?: (x: string) => void | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.g?: (x: string) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -831,7 +831,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.h?: (((x: number) => void) & ((x: string) => void)) | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.h?: (((x: number) => void) & ((x: string) => void)) | nil\n```\n"
       },
       "range": {
         "start": {
@@ -858,7 +858,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.h?: (x: number) => void | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.h?: (x: number) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -885,7 +885,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(property) Foo2.h?: (x: string) => void | nil\n```\n"
+        "value": "```tlua\n(property) Foo2.h?: (x: string) => void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -912,7 +912,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) Foo2.m?(x: number): void\n(method) Foo2.m?(x: string): void\n```\n"
+        "value": "```tlua\n(method) Foo2.m?(x: number): void\n(method) Foo2.m?(x: string): void\n```\n"
       },
       "range": {
         "start": {
@@ -939,7 +939,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) Foo2.m?(x: number): void | nil\n```\n"
+        "value": "```tlua\n(method) Foo2.m?(x: number): void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -966,7 +966,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) Foo2.m?(x: string): void | nil\n```\n"
+        "value": "```tlua\n(method) Foo2.m?(x: string): void | nil\n```\n"
       },
       "range": {
         "start": {
@@ -993,7 +993,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1020,7 +1020,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1047,7 +1047,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1074,7 +1074,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1101,7 +1101,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1128,7 +1128,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1155,7 +1155,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1182,7 +1182,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1209,7 +1209,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1236,7 +1236,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1263,7 +1263,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -1290,7 +1290,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

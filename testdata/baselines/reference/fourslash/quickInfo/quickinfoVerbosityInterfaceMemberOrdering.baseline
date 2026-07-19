@@ -4,7 +4,7 @@
 // interface Callable {
 //           ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | interface Callable {
 // |     [key: string]: any;
 // |     new (x: string): Callable;
@@ -17,7 +17,7 @@
 // | ----------------------------------------------------------------------
 //           ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | interface Callable
 // | ```
 // | 
@@ -44,7 +44,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ninterface Callable\n```\n"
+          "value": "```tlua\ninterface Callable\n```\n"
         },
         "range": {
           "start": {
@@ -75,7 +75,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ninterface Callable {\n    [key: string]: any;\n    new (x: string): Callable;\n    (x: string): boolean;\n    name: string;\n}\n```\n"
+          "value": "```tlua\ninterface Callable {\n    [key: string]: any;\n    new (x: string): Callable;\n    (x: string): boolean;\n    name: string;\n}\n```\n"
         },
         "range": {
           "start": {

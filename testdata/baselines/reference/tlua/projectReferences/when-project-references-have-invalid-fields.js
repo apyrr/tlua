@@ -1,0 +1,91 @@
+currentDirectory::/home/src/workspaces/solution
+useCaseSensitiveFileNames::true
+Input::
+//// [/home/src/workspaces/solution/project/index.tlua] *new* 
+local x = 10;
+//// [/home/src/workspaces/solution/project/tluaconfig.json] *new* 
+{
+    "compilerOptions": {
+        "noEmit": true
+    },
+    "files": ["index.tlua"],
+    "references": [
+        { "path": true },
+        { "circular": true },
+        { "path": "../utils", "circular": "yes" },
+        { "path": "" },
+        { "path": "../valid", "circular": true }
+    ]
+}
+//// [/home/src/workspaces/solution/utils/index.d.tlua] *new* 
+declare y: number;
+//// [/home/src/workspaces/solution/utils/index.tlua] *new* 
+local y = 10;
+//// [/home/src/workspaces/solution/utils/tluaconfig.json] *new* 
+{
+    "compilerOptions": {
+        "composite": true
+    }
+}
+//// [/home/src/workspaces/solution/valid/index.d.tlua] *new* 
+declare z: number;
+//// [/home/src/workspaces/solution/valid/index.tlua] *new* 
+local z = 10;
+//// [/home/src/workspaces/solution/valid/tluaconfig.json] *new* 
+{
+    "compilerOptions": {
+        "composite": true
+    }
+}
+
+tlua --p project
+ExitStatus:: DiagnosticsPresent_OutputsSkipped
+Output::
+[96mproject/tluaconfig.json[0m:[93m7[0m:[93m19[0m - [91merror[0m[90m TLUA5024: [0mCompiler option 'reference.path' requires a value of type string.
+
+[7m7[0m         { "path": true },
+[7m [0m [91m                  ~~~~[0m
+
+[96mproject/tluaconfig.json[0m:[93m8[0m:[93m9[0m - [91merror[0m[90m TLUA5024: [0mCompiler option 'reference.path' requires a value of type string.
+
+[7m8[0m         { "circular": true },
+[7m [0m [91m        ~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mproject/tluaconfig.json[0m:[93m9[0m:[93m43[0m - [91merror[0m[90m TLUA5024: [0mCompiler option 'reference.circular' requires a value of type boolean.
+
+[7m9[0m         { "path": "../utils", "circular": "yes" },
+[7m [0m [91m                                          ~~~~~[0m
+
+[96mproject/tluaconfig.json[0m:[93m10[0m:[93m19[0m - [91merror[0m[90m TLUA18051: [0mCompiler option 'reference.path' cannot be given an empty string.
+
+[7m10[0m         { "path": "" },
+[7m  [0m [91m                  ~~[0m
+
+
+Found 4 errors in the same file, starting at: project/tluaconfig.json[90m:7[0m
+
+//// [/home/src/tslibs/TS/Lib/lib.luajit.d.tlua] *Lib*
+/// <reference no-default-lib="true"/>
+interface Boolean {}
+interface Function {}
+interface CallableFunction {}
+interface NewableFunction {}
+interface IArguments {}
+interface Number { toExponential: any; }
+interface Object {}
+interface RegExp {}
+interface String { charAt: any; }
+interface Array<T> { length: number; [n: number]: T; }
+interface ReadonlyArray<T> {}
+interface SymbolConstructor {
+    (desc?: string | number): symbol;
+    for(name: string): symbol;
+    readonly toStringTag: symbol;
+}
+declare Symbol: SymbolConstructor;
+interface Symbol {
+    readonly [Symbol.toStringTag]: string;
+}
+declare console: { log(msg: any): void; };
+declare function require(module: string): any;
+

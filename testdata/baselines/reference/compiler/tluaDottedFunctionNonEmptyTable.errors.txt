@@ -1,4 +1,4 @@
-tluaDottedFunctionNonEmptyTable.tlua(14,16): error TS2300: Duplicate identifier 'run'.
+tluaDottedFunctionNonEmptyTable.tlua(14,16): error TLUA2300: Duplicate identifier 'run'.
 
 
 ==== tluaDottedFunctionNonEmptyTable.tlua (1 errors) ====
@@ -17,6 +17,6 @@ tluaDottedFunctionNonEmptyTable.tlua(14,16): error TS2300: Duplicate identifier 
     
     function Clash.run(): void
                    ~~~
-!!! error TS2300: Duplicate identifier 'run'.
+!!! error TLUA2300: Duplicate identifier 'run'.
     end
     

@@ -162,7 +162,7 @@ func nodeIsEligibleForRename(node *ast.Node) bool {
 func (l *LanguageService) renameBlockedReason(sourceFile *ast.SourceFile, node *ast.Node, symbol *ast.Symbol, ch *checker.Checker, program *compiler.Program) *diagnostics.Message {
 	for _, declaration := range symbol.Declarations {
 		if isDefinedInLibraryFile(program, declaration) {
-			return diagnostics.You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library
+			return diagnostics.You_cannot_rename_elements_that_are_defined_in_the_standard_tlua_library
 		}
 	}
 

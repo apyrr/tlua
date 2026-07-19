@@ -6,7 +6,7 @@ import (
 	"github.com/apyrr/tlua/internal/diagnostics"
 )
 
-var TscBuildOption = CommandLineOption{
+var TluaBuildOption = CommandLineOption{
 	Name:                     "build",
 	Kind:                     "boolean",
 	ShortName:                "b",
@@ -17,7 +17,7 @@ var TscBuildOption = CommandLineOption{
 }
 
 var OptionsForBuild = []*CommandLineOption{
-	&TscBuildOption,
+	&TluaBuildOption,
 	{
 		Name:                    "verbose",
 		ShortName:               "v",

@@ -319,13 +319,13 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 	var source *string
 	if opts.visualStudio {
 		code = &lsproto.IntegerOrString{
-			String: new(fmt.Sprintf("TS%d", diagnostic.Code())),
+			String: new(fmt.Sprintf("TLUA%d", diagnostic.Code())),
 		}
 	} else {
 		code = &lsproto.IntegerOrString{
 			Integer: new(diagnostic.Code()),
 		}
-		source = new("ts")
+		source = new("tlua")
 	}
 
 	return &lsproto.Diagnostic{

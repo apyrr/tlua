@@ -29,4 +29,4 @@ TypeAcquisition::
 FileNames::
 /apath/a.tlua,/apath/b.tlua
 Errors::
-[91merror[0m[90m TS17010: [0mUnknown type acquisition option 'enableAutoDiscovy'.
+[91merror[0m[90m TLUA17010: [0mUnknown type acquisition option 'enableAutoDiscovy'.

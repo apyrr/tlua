@@ -22,7 +22,7 @@ func TestUpdateWatchTimeoutAndRollback(t *testing.T) {
 	}
 
 	files := map[string]any{
-		"/home/projects/TS/p1/tsconfig.json": `{
+		"/home/projects/TS/p1/tluaconfig.json": `{
 			"compilerOptions": { "noLib": true, "strict": true }
 		}`,
 		"/home/projects/TS/p1/src/index.tlua": `export local x = 1;`,

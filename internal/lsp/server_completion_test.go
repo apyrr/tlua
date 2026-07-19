@@ -96,9 +96,9 @@ func TestCompletionAfterFileClose(t *testing.T) {
 		IncludeCompletionsForImportStatements: core.TSTrue,
 	}
 	client := initCompletionClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-		"/home/projects/a.tlua":        "export local someVar = 10;",
-		"/home/projects/b.tlua":        "s",
+		"/home/projects/tluaconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.tlua":          "export local someVar = 10;",
+		"/home/projects/b.tlua":          "s",
 	}, prefs)
 
 	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.tlua")
@@ -142,9 +142,9 @@ func TestCompletionWithConcurrentFileClose(t *testing.T) {
 		IncludeCompletionsForImportStatements: core.TSTrue,
 	}
 	client := initCompletionClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-		"/home/projects/a.tlua":        "export local someVar = 10;",
-		"/home/projects/b.tlua":        "s",
+		"/home/projects/tluaconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.tlua":          "export local someVar = 10;",
+		"/home/projects/b.tlua":          "s",
 	}, prefs)
 
 	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.tlua")
@@ -184,8 +184,8 @@ func TestCompletionForUnopenedFile(t *testing.T) {
 
 	prefs := &lsutil.UserPreferences{}
 	client := initCompletionClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-		"/home/projects/c.tlua":        "local xyz = 1;\nxy",
+		"/home/projects/tluaconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/c.tlua":          "local xyz = 1;\nxy",
 	}, prefs)
 
 	cURI := lsconv.FileNameToDocumentURI("/home/projects/c.tlua")
@@ -212,9 +212,9 @@ func TestAutoImportCompletionForUnopenedFile(t *testing.T) {
 		IncludeCompletionsForImportStatements: core.TSTrue,
 	}
 	client := initCompletionClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-		"/home/projects/a.tlua":        "export local someVar = 10;",
-		"/home/projects/c.tlua":        "s",
+		"/home/projects/tluaconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.tlua":          "export local someVar = 10;",
+		"/home/projects/c.tlua":          "s",
 	}, prefs)
 
 	cURI := lsconv.FileNameToDocumentURI("/home/projects/c.tlua")
@@ -248,9 +248,9 @@ func TestCompletionSnapshotFreezing(t *testing.T) {
 		IncludeCompletionsForImportStatements: core.TSTrue,
 	}
 	client := initCompletionClient(t, map[string]string{
-		"/home/projects/tsconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
-		"/home/projects/a.tlua":        "export local someVar = 10;",
-		"/home/projects/b.tlua":        "someV",
+		"/home/projects/tluaconfig.json": `{"compilerOptions": {"module": "esnext", "target": "esnext"}}`,
+		"/home/projects/a.tlua":          "export local someVar = 10;",
+		"/home/projects/b.tlua":          "someV",
 	}, prefs)
 
 	aURI := lsconv.FileNameToDocumentURI("/home/projects/a.tlua")

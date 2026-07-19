@@ -1,5 +1,5 @@
-tluaVarargParenAmbiguity.tlua(12,16): error TS2695: Left side of comma operator is unused and has no side effects.
-tluaVarargParenAmbiguity.tlua(23,27): error TS1014: A rest parameter must be last in a parameter list.
+tluaVarargParenAmbiguity.tlua(12,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
+tluaVarargParenAmbiguity.tlua(23,27): error TLUA1014: A rest parameter must be last in a parameter list.
 
 
 ==== tluaVarargParenAmbiguity.tlua (2 errors) ====
@@ -16,7 +16,7 @@ tluaVarargParenAmbiguity.tlua(23,27): error TS1014: A rest parameter must be las
     // inside it.
     local plain = (1, 2);
                    ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
     local withVararg = (..., 2);
     
     // Still arrows: a bare vararg parameter list, one with the (ambiguous) return
@@ -29,7 +29,7 @@ tluaVarargParenAmbiguity.tlua(23,27): error TS1014: A rest parameter must be las
     // grammar reports it precisely (a rest parameter must be last).
     local misplacedInArrow = (..., x: number) => x;
                               ~~~
-!!! error TS1014: A rest parameter must be last in a parameter list.
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
     
     // Without the `=>` the same shape is an expression list, not a mangled arrow.
     local notAnArrow = (..., n);

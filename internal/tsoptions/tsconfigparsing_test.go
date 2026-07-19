@@ -137,7 +137,7 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 				baselineContent.WriteString("Input::\n")
 				baselineContent.WriteString(jsonText)
 				baselineContent.WriteString("\n")
-				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", jsonText)
+				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tluaconfig.json", "/apath", jsonText)
 				baselineContent.WriteString("Config::\n")
 				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
 				baselineContent.WriteString("\n")
@@ -170,7 +170,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		title: "ignore dotted files and folders",
 		input: []testConfig{{
 			jsonText:       `{}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/test.tlua": "", "/apath/.git/a.tlua": "", "/apath/.b.tlua": "", "/apath/..c.tlua": ""},
 		}},
@@ -181,7 +181,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			jsonText: `{
                     "files": ["/apath/.git/a.tlua", "/apath/.b.tlua", "/apath/..c.tlua"]
                 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/test.tlua": "", "/apath/.git/a.tlua": "", "/apath/.b.tlua": "", "/apath/..c.tlua": ""},
 		}},
@@ -190,7 +190,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		title: "implicitly exclude common package folders",
 		input: []testConfig{{
 			jsonText:       `{}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/node_modules/a.tlua": "", "/bower_components/b.tlua": "", "/jspm_packages/c.tlua": "", "/d.tlua": "", "/folder/e.tlua": ""},
 		}},
@@ -201,7 +201,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			jsonText: `{
                 "files": []
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -213,7 +213,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                 "files": [],
                 "references": []
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -223,7 +223,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		input: []testConfig{{
 			jsonText: `{
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.lua": ""},
 		}},
@@ -234,7 +234,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			jsonText: `{
                 "include": []
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "tests/cases/unittests",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -245,7 +245,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			jsonText: `{
                 "include": ["**/../*.tlua"]
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/main.tlua": ""},
 		}},
@@ -267,7 +267,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
   "include": ["/apath/src/**/*"],
   "exclude": ["/apath/node_modules", "/apath/dist"]
 }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/src/index.tlua": "", "/apath/src/app.tlua": "", "/apath/node_modules/module.tlua": "", "/apath/dist/output.lua": ""},
 		}},
@@ -280,7 +280,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     "help": true
   }
 }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -292,7 +292,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                 "files": [],
                 "references": [{ "path": "/apath" }]
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -305,7 +305,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                     "outDir": "bin"
                 }
             }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/bin/a.tlua": "", "/b.tlua": ""},
 		}, {
@@ -315,7 +315,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                 },
                 "exclude": [ "obj" ]
             }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/bin/a.tlua": "", "/b.tlua": ""},
 		}},
@@ -328,7 +328,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                     "declarationDir": "declarations"
                 }
             }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/declarations/a.d.tlua": "", "/a.tlua": ""},
 		}, {
@@ -338,7 +338,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                 },
                 "exclude": [ "types" ]
             }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/declarations/a.d.tlua": "", "/a.tlua": ""},
 		}},
@@ -351,7 +351,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                     "allowJs": true
                 }
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{},
 		}},
@@ -365,7 +365,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                 },
                 "include": ["**/*"]
             }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -380,7 +380,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     ]
   ]
 }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -398,7 +398,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     }
   ]
 }`,
-			configFileName: "/apath/tsconfig.json",
+			configFileName: "/apath/tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/a.tlua": ""},
 		}},
@@ -410,7 +410,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 				jsonText: `{
   "extends": "./tsconfigWithoutConfigDir.json"
 }`,
-				configFileName: "tsconfig.json",
+				configFileName: "tluaconfig.json",
 				basePath:       "/",
 				allFileList: map[string]string{
 					"/tsconfigWithoutConfigDir.json": tsconfigWithoutConfigDir,
@@ -422,7 +422,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 				jsonText: `{
   "extends": "./tsconfigWithConfigDir.json"
 }`,
-				configFileName: "tsconfig.json",
+				configFileName: "tluaconfig.json",
 				basePath:       "/",
 				allFileList: map[string]string{
 					"/tsconfigWithConfigDir.json": tsconfigWithConfigDir,
@@ -443,7 +443,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
                         "foge.tlua"
                     ]
                 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/apath",
 			allFileList:    map[string]string{"/apath/test.tlua": "", "/apath/foge.tlua": ""},
 		}},
@@ -459,7 +459,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     				"noImplicitAny": true,
 				},
 			}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/tsconfigWithExtends.json": tsconfigWithExtends, "/src/index.tlua": "", "/src/app.tlua": "", "/node_modules/module.tlua": "", "/dist/output.lua": ""},
 		}},
@@ -468,11 +468,11 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		title: "parses tsconfig with extends and configDir",
 		input: []testConfig{{
 			jsonText: `{
-				"extends": "./tsconfig.base.json"
+				"extends": "./tluaconfig.base.json"
 			}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
-			allFileList:    map[string]string{"/tsconfig.base.json": tsconfigWithExtendsAndConfigDir, "/src/index.tlua": "", "/src/app.tlua": "", "/node_modules/module.tlua": "", "/dist/output.lua": ""},
+			allFileList:    map[string]string{"/tluaconfig.base.json": tsconfigWithExtendsAndConfigDir, "/src/index.tlua": "", "/src/app.tlua": "", "/node_modules/module.tlua": "", "/dist/output.lua": ""},
 		}},
 	},
 	{
@@ -483,7 +483,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 				"unknown": true
 			    }
 			}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/app.tlua": ""},
 		}},
@@ -498,7 +498,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 				"jsx": "invalid value"
 			    }
 			}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/app.tlua": ""},
 		}},
@@ -520,7 +520,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 				"checkjs": true
 			    }
 			}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/app.tlua": ""},
 		}},
@@ -533,7 +533,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 					"types": []
 				}
 			}`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList:    map[string]string{"/app.tlua": ""},
 		}},
@@ -542,7 +542,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		title: "issue 1267 scenario - extended files not picked up",
 		input: []testConfig{{
 			jsonText: `{
-  "extends": "./tsconfig-base/backend.json",
+  "extends": "./tluaconfig-base/backend.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"
@@ -550,10 +550,10 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
   "exclude": ["node_modules", "dist"],
   "include": ["src/**/*"]
 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList: map[string]string{
-				"/tsconfig-base/backend.json": `{
+				"/tluaconfig-base/backend.json": `{
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Backend",
   "compilerOptions": {
@@ -584,19 +584,19 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     "files": true
   }
 }`,
-				"/tsconfig-base/types/ical2json.d.tlua":             "export {}",
-				"/tsconfig-base/types/express.d.tlua":               "export {}",
-				"/tsconfig-base/types/multer.d.tlua":                "export {}",
-				"/tsconfig-base/types/reset.d.tlua":                 "export {}",
-				"/tsconfig-base/types/stripe-custom-typings.d.tlua": "export {}",
-				"/tsconfig-base/types/nestjs-modules.d.tlua":        "export {}",
-				"/tsconfig-base/types/luxon.d.tlua": `declare module 'luxon' {
+				"/tluaconfig-base/types/ical2json.d.tlua":             "export {}",
+				"/tluaconfig-base/types/express.d.tlua":               "export {}",
+				"/tluaconfig-base/types/multer.d.tlua":                "export {}",
+				"/tluaconfig-base/types/reset.d.tlua":                 "export {}",
+				"/tluaconfig-base/types/stripe-custom-typings.d.tlua": "export {}",
+				"/tluaconfig-base/types/nestjs-modules.d.tlua":        "export {}",
+				"/tluaconfig-base/types/luxon.d.tlua": `declare module 'luxon' {
   interface TSSettings {
     throwOnInvalid: true
   }
 }
 export {}`,
-				"/tsconfig-base/types/nestjs-pino.d.tlua": "export {}",
+				"/tluaconfig-base/types/nestjs-pino.d.tlua": "export {}",
 				"/src/main.tlua":  "export {}",
 				"/src/utils.tlua": "export {}",
 			},
@@ -606,17 +606,17 @@ export {}`,
 		title: "null overrides in extended tsconfig - array fields",
 		input: []testConfig{{
 			jsonText: `{
-  "extends": "./tsconfig-base.json",
+  "extends": "./tluaconfig-base.json",
   "compilerOptions": {
     "types": null,
     "lib": null,
     "typeRoots": null
   }
 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList: map[string]string{
-				"/tsconfig-base.json": `{
+				"/tluaconfig-base.json": `{
   "compilerOptions": {
     "types": ["node", "@types/jest"],
     "lib": ["es2020", "dom"],
@@ -631,16 +631,16 @@ export {}`,
 		title: "null overrides in extended tsconfig - string fields",
 		input: []testConfig{{
 			jsonText: `{
-  "extends": "./tsconfig-base.json",
+  "extends": "./tluaconfig-base.json",
   "compilerOptions": {
     "outDir": null,
     "rootDir": null
   }
 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList: map[string]string{
-				"/tsconfig-base.json": `{
+				"/tluaconfig-base.json": `{
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"
@@ -654,7 +654,7 @@ export {}`,
 		title: "null overrides in extended tsconfig - mixed field types",
 		input: []testConfig{{
 			jsonText: `{
-  "extends": "./tsconfig-base.json",
+  "extends": "./tluaconfig-base.json",
   "compilerOptions": {
     "types": null,
     "outDir": null,
@@ -663,10 +663,10 @@ export {}`,
     "allowJs": null
   }
 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList: map[string]string{
-				"/tsconfig-base.json": `{
+				"/tluaconfig-base.json": `{
   "compilerOptions": {
     "types": ["node"],
     "lib": ["es2020", "dom"],
@@ -684,23 +684,23 @@ export {}`,
 		title: "null overrides with multiple extends levels",
 		input: []testConfig{{
 			jsonText: `{
-  "extends": "./tsconfig-middle.json",
+  "extends": "./tluaconfig-middle.json",
   "compilerOptions": {
     "types": null,
     "lib": null
   }
 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList: map[string]string{
-				"/tsconfig-middle.json": `{
-  "extends": "./tsconfig-base.json",
+				"/tluaconfig-middle.json": `{
+  "extends": "./tluaconfig-base.json",
   "compilerOptions": {
     "types": ["jest"],
     "outDir": "./build"
   }
 }`,
-				"/tsconfig-base.json": `{
+				"/tluaconfig-base.json": `{
   "compilerOptions": {
     "types": ["node"],
     "lib": ["es2020"],
@@ -716,23 +716,23 @@ export {}`,
 		title: "null overrides in middle level of extends chain",
 		input: []testConfig{{
 			jsonText: `{
-  "extends": "./tsconfig-middle.json",
+  "extends": "./tluaconfig-middle.json",
   "compilerOptions": {
     "outDir": "./final"
   }
 }`,
-			configFileName: "tsconfig.json",
+			configFileName: "tluaconfig.json",
 			basePath:       "/",
 			allFileList: map[string]string{
-				"/tsconfig-middle.json": `{
-  "extends": "./tsconfig-base.json",
+				"/tluaconfig-middle.json": `{
+  "extends": "./tluaconfig-base.json",
   "compilerOptions": {
     "types": null,
     "lib": null,
     "outDir": "./middle"
   }
 }`,
-				"/tsconfig-base.json": `{
+				"/tluaconfig-base.json": `{
   "compilerOptions": {
     "types": ["node"],
     "lib": ["es2020"],
@@ -821,7 +821,7 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *testing.T) {
 	t.Parallel()
 	files := map[string]string{
-		"/project/tsconfig.json": `{
+		"/project/tluaconfig.json": `{
   "extends": "./bad.json"
 }`,
 		// The parser recovers from this as object-like JSON, producing expected-token
@@ -834,7 +834,7 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 		"/project/main.tlua": "export local x = 1;",
 	}
 	host := tsoptionstest.NewVFSParseConfigHost(files, "/project", true /*useCaseSensitiveFileNames*/)
-	configFileName := "/project/tsconfig.json"
+	configFileName := "/project/tluaconfig.json"
 	configFile := tsoptions.NewTsconfigSourceFileFromFilePath(
 		configFileName,
 		tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()),
@@ -872,14 +872,14 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 func TestParseJsonSourceFileConfigFileContentWithEmptyExtendedConfig(t *testing.T) {
 	t.Parallel()
 	files := map[string]string{
-		"/project/tsconfig.json": `{
+		"/project/tluaconfig.json": `{
   "extends": "./base.json"
 }`,
 		"/project/base.json": "",
 		"/project/main.tlua": "export local x = 1;",
 	}
 	host := tsoptionstest.NewVFSParseConfigHost(files, "/project", true /*useCaseSensitiveFileNames*/)
-	configFileName := "/project/tsconfig.json"
+	configFileName := "/project/tluaconfig.json"
 	configFile := tsoptions.NewTsconfigSourceFileFromFilePath(
 		configFileName,
 		tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()),
@@ -937,7 +937,7 @@ func TestParseJsonSourceFileConfigFileContentReportsQuestionTokenDiagnostics(t *
 
 	var questionTokenDiagnostics []*ast.Diagnostic
 	for _, diagnostic := range parsed.GetConfigFileParsingDiagnostics() {
-		if diagnostic.Code() == diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files.Code() {
+		if diagnostic.Code() == diagnostics.The_0_modifier_can_only_be_used_in_tlua_files.Code() {
 			questionTokenDiagnostics = append(questionTokenDiagnostics, diagnostic)
 		}
 	}
@@ -966,7 +966,7 @@ func TestParseNullEnumCompilerOptions(t *testing.T) {
 				"module": null
 			}
 		}`,
-		configFileName: "tsconfig.json",
+		configFileName: "tluaconfig.json",
 		basePath:       "/",
 		allFileList:    map[string]string{"/app.tlua": ""},
 	}
@@ -979,7 +979,7 @@ func TestParseNullEnumCompilerOptions(t *testing.T) {
 
 			allFileLists := make(map[string]string, len(config.allFileList)+1)
 			maps.Copy(allFileLists, config.allFileList)
-			allFileLists["/tsconfig.json"] = config.jsonText
+			allFileLists["/tluaconfig.json"] = config.jsonText
 			host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
 			parsedConfigFileContent := getParsed(config, host, config.basePath)
 			assert.Equal(t, len(parsedConfigFileContent.Errors), 0)
@@ -1077,7 +1077,7 @@ func TestParseTypeAcquisition(t *testing.T) {
 		config     string
 	}{
 		{
-			title: "Convert correctly format tsconfig.json to typeAcquisition ",
+			title: "Convert correctly format tluaconfig.json to typeAcquisition ",
 			config: `{
 	"typeAcquisition": {
 		"enable": true,
@@ -1085,27 +1085,27 @@ func TestParseTypeAcquisition(t *testing.T) {
 		"exclude": ["0.lua", "1.lua"],
 	},
 }`,
-			configName: "tsconfig.json",
+			configName: "tluaconfig.json",
 		},
 		{
-			title: "Convert incorrect format tsconfig.json to typeAcquisition ",
+			title: "Convert incorrect format tluaconfig.json to typeAcquisition ",
 			config: `{
 	"typeAcquisition": {
 		"enableAutoDiscovy": true,
 	}
-}`, configName: "tsconfig.json",
+}`, configName: "tluaconfig.json",
 		},
 		{
-			title:  "Convert default tsconfig.json to typeAcquisition ",
-			config: `{}`, configName: "tsconfig.json",
+			title:  "Convert default tluaconfig.json to typeAcquisition ",
+			config: `{}`, configName: "tluaconfig.json",
 		},
 		{
-			title: "Convert tsconfig.json with only enable property to typeAcquisition ",
+			title: "Convert tluaconfig.json with only enable property to typeAcquisition ",
 			config: `{
 	"typeAcquisition": {
 		"enable": true,
 	},
-}`, configName: "tsconfig.json",
+}`, configName: "tluaconfig.json",
 		},
 
 		// jsconfig.json
@@ -1189,7 +1189,7 @@ func TestParseSrcCompiler(t *testing.T) {
 	repo.SkipIfNoTypeScriptSubmodule(t)
 
 	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
-	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
+	tsconfigFileName := tspath.CombinePaths(compilerDir, "tluaconfig.json")
 
 	fs := osvfs.FS()
 	host := &tsoptionstest.VfsParseConfigHost{
@@ -1287,7 +1287,7 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 
 	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
-	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
+	tsconfigFileName := tspath.CombinePaths(compilerDir, "tluaconfig.json")
 
 	fs := osvfs.FS()
 	host := &tsoptionstest.VfsParseConfigHost{
@@ -1350,7 +1350,7 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 	t.Run("single config parsed twice", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]string{
-			"/tsconfig.json": `{
+			"/tluaconfig.json": `{
   "extends": "./base.json"
 }`,
 			// 'excludes' instead of 'exclude' triggers diagnostic
@@ -1383,9 +1383,9 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 		}
 
 		cache := &memoCache{}
-		first := parseConfig("/tsconfig.json", cache)
+		first := parseConfig("/tluaconfig.json", cache)
 		assert.Assert(t, len(first.Errors) > 0, "expected diagnostics on first parse, got 0")
-		second := parseConfig("/tsconfig.json", cache)
+		second := parseConfig("/tluaconfig.json", cache)
 		assert.Assert(t, len(second.Errors) > 0, "expected diagnostics on second parse (cache hit), got 0")
 	})
 
@@ -1395,10 +1395,10 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 			"/base.json": `{
   "excludes": ["**/*.tlua"]
 }`,
-			"/projA/tsconfig.json": `{
+			"/projA/tluaconfig.json": `{
   "extends": "../base.json"
 }`,
-			"/projB/tsconfig.json": `{
+			"/projB/tluaconfig.json": `{
   "extends": "../base.json"
 }`,
 			"/projA/app.tlua": "export {}",
@@ -1428,9 +1428,9 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 		}
 
 		cache := &memoCache{}
-		first := parseConfig("/projA/tsconfig.json", cache)
+		first := parseConfig("/projA/tluaconfig.json", cache)
 		assert.Assert(t, len(first.Errors) > 0, "expected diagnostics for projA parse, got 0")
-		second := parseConfig("/projB/tsconfig.json", cache)
+		second := parseConfig("/projB/tluaconfig.json", cache)
 		assert.Assert(t, len(second.Errors) > 0, "expected diagnostics for projB parse (cache hit on base), got 0")
 	})
 }

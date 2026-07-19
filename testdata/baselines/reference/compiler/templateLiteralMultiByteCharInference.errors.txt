@@ -1,11 +1,11 @@
-templateLiteralMultiByteCharInference.tlua(6,74): error TS2304: Cannot find name 'Head'.
-templateLiteralMultiByteCharInference.tlua(6,74): error TS2538: Type 'Head' cannot be used as an index type.
-templateLiteralMultiByteCharInference.tlua(6,78): error TS1005: ']' expected.
-templateLiteralMultiByteCharInference.tlua(6,80): error TS1434: Unexpected keyword or identifier.
-templateLiteralMultiByteCharInference.tlua(6,80): error TS2304: Cannot find name 'Rest'.
-templateLiteralMultiByteCharInference.tlua(6,84): error TS1128: Declaration or statement expected.
-templateLiteralMultiByteCharInference.tlua(6,86): error TS1128: Declaration or statement expected.
-templateLiteralMultiByteCharInference.tlua(6,88): error TS2693: 'never' only refers to a type, but is being used as a value here.
+templateLiteralMultiByteCharInference.tlua(6,74): error TLUA2304: Cannot find name 'Head'.
+templateLiteralMultiByteCharInference.tlua(6,74): error TLUA2538: Type 'Head' cannot be used as an index type.
+templateLiteralMultiByteCharInference.tlua(6,78): error TLUA1005: ']' expected.
+templateLiteralMultiByteCharInference.tlua(6,80): error TLUA1434: Unexpected keyword or identifier.
+templateLiteralMultiByteCharInference.tlua(6,80): error TLUA2304: Cannot find name 'Rest'.
+templateLiteralMultiByteCharInference.tlua(6,84): error TLUA1128: Declaration or statement expected.
+templateLiteralMultiByteCharInference.tlua(6,86): error TLUA1128: Declaration or statement expected.
+templateLiteralMultiByteCharInference.tlua(6,88): error TLUA2693: 'never' only refers to a type, but is being used as a value here.
 
 
 ==== templateLiteralMultiByteCharInference.tlua (8 errors) ====
@@ -16,21 +16,21 @@ templateLiteralMultiByteCharInference.tlua(6,88): error TS2693: 'never' only ref
     type GetRest<S extends string> = S extends `${string}${infer Rest}` ? Rest : never;
     type Split<S extends string> = S extends `${infer Head}${infer Rest}` ? [Head, Rest] : never;
                                                                              ~~~~
-!!! error TS2304: Cannot find name 'Head'.
+!!! error TLUA2304: Cannot find name 'Head'.
                                                                              ~~~~
-!!! error TS2538: Type 'Head' cannot be used as an index type.
+!!! error TLUA2538: Type 'Head' cannot be used as an index type.
                                                                                  ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                                                                                    ~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                                                                                    ~~~~
-!!! error TS2304: Cannot find name 'Rest'.
+!!! error TLUA2304: Cannot find name 'Rest'.
                                                                                        ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                                                          ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                                                            ~~~~~
-!!! error TS2693: 'never' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'never' only refers to a type, but is being used as a value here.
     
     // Single-byte (ASCII) characters
     type A = GetFirst<"ABC">;  // "A"

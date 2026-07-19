@@ -34,7 +34,7 @@
   "Enter directory path for profile output": "Enter directory path for profile output",
   "Directory path is required": "Directory path is required",
   "Loading project info...": "Loading project info...",
-  "No tsconfig": "No tsconfig",
+  "No tluaconfig": "No tluaconfig",
   "No opened folders": "No opened folders",
   "File is not part of opened folders": "File is not part of opened folders",
   "Open Config File": "Open Config File",

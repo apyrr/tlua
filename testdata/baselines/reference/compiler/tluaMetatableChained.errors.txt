@@ -1,5 +1,5 @@
-tluaMetatableChained.tlua(12,20): error TS2339: Property 'nowhere' does not exist on type '{ fromBase: boolean; fromMid: number; fromTop: string; }'.
-tluaMetatableChained.tlua(23,7): error TS2322: Type 'number' is not assignable to type 'string'.
+tluaMetatableChained.tlua(12,20): error TLUA2339: Property 'nowhere' does not exist on type '{ fromBase: boolean; fromMid: number; fromTop: string; }'.
+tluaMetatableChained.tlua(23,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
 ==== tluaMetatableChained.tlua (2 errors) ====
@@ -16,7 +16,7 @@ tluaMetatableChained.tlua(23,7): error TS2322: Type 'number' is not assignable t
     local b1: boolean = top.fromBase;
     local absent = top.nowhere;
                        ~~~~~~~
-!!! error TS2339: Property 'nowhere' does not exist on type '{ fromBase: boolean; fromMid: number; fromTop: string; }'.
+!!! error TLUA2339: Property 'nowhere' does not exist on type '{ fromBase: boolean; fromMid: number; fromTop: string; }'.
     
     // Three deep, and the nearest link still wins a collision.
     local deep = setmetatable({ own = 1 }, { __index = top });
@@ -29,5 +29,5 @@ tluaMetatableChained.tlua(23,7): error TS2322: Type 'number' is not assignable t
     local s1: number = shadowTop.v;
     local s2: string = shadowTop.v;
           ~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     

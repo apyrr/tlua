@@ -1,4 +1,4 @@
-tluaVarargTopLevel.tlua(22,16): error TS100035: A '...' expression is only allowed inside a vararg function.
+tluaVarargTopLevel.tlua(22,16): error TLUA100035: A '...' expression is only allowed inside a vararg function.
 
 
 ==== tluaVarargTopLevel.tlua (1 errors) ====
@@ -25,6 +25,6 @@ tluaVarargTopLevel.tlua(22,16): error TS100035: A '...' expression is only allow
     function inner(): void
       local nope = ...;
                    ~~~
-!!! error TS100035: A '...' expression is only allowed inside a vararg function.
+!!! error TLUA100035: A '...' expression is only allowed inside a vararg function.
     end
     

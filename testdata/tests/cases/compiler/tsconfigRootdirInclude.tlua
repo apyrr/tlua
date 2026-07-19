@@ -1,4 +1,4 @@
-// @filename: tsconfig.json
+// @filename: tluaconfig.json
 {
     "compilerOptions": {
         "target": "es2020",

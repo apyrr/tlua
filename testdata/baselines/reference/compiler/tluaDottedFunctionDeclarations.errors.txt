@@ -1,5 +1,5 @@
-tluaDottedFunctionDeclarations.tlua(14,19): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaDottedFunctionDeclarations.tlua(15,19): error TS2339: Property 'nonexistent' does not exist on type '{ identity(a: number): number; add(a: number, b: number): number; }'.
+tluaDottedFunctionDeclarations.tlua(14,19): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaDottedFunctionDeclarations.tlua(15,19): error TLUA2339: Property 'nonexistent' does not exist on type '{ identity(a: number): number; add(a: number, b: number): number; }'.
 
 
 ==== tluaDottedFunctionDeclarations.tlua (2 errors) ====
@@ -18,8 +18,8 @@ tluaDottedFunctionDeclarations.tlua(15,19): error TS2339: Property 'nonexistent'
     
     local bad = M.add("nope", 2);
                       ~~~~~~
-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     local missing = M.nonexistent(1);
                       ~~~~~~~~~~~
-!!! error TS2339: Property 'nonexistent' does not exist on type '{ identity(a: number): number; add(a: number, b: number): number; }'.
+!!! error TLUA2339: Property 'nonexistent' does not exist on type '{ identity(a: number): number; add(a: number, b: number): number; }'.
     

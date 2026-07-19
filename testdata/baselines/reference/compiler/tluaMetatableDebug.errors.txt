@@ -1,6 +1,6 @@
-tluaMetatableDebug.tlua(13,23): error TS2339: Property 'a' does not exist on type '{ n: number; b: string; }'.
-tluaMetatableDebug.tlua(18,21): error TS2339: Property 'c' does not exist on type 'object'.
-tluaMetatableDebug.tlua(26,25): error TS2339: Property 'base' does not exist on type '{ y: number; swapped: string; }'.
+tluaMetatableDebug.tlua(13,23): error TLUA2339: Property 'a' does not exist on type '{ n: number; b: string; }'.
+tluaMetatableDebug.tlua(18,21): error TLUA2339: Property 'c' does not exist on type 'object'.
+tluaMetatableDebug.tlua(26,25): error TLUA2339: Property 'base' does not exist on type '{ y: number; swapped: string; }'.
 
 
 ==== tluaMetatableDebug.tlua (3 errors) ====
@@ -18,14 +18,14 @@ tluaMetatableDebug.tlua(26,25): error TS2339: Property 'base' does not exist on 
     local sb: string = swapped.b;
     local goneA = swapped.a;
                           ~
-!!! error TS2339: Property 'a' does not exist on type '{ n: number; b: string; }'.
+!!! error TLUA2339: Property 'a' does not exist on type '{ n: number; b: string; }'.
     
     // A member call through anything but the debug global is not the protocol.
     local fake = { setmetatable = function(v: object, mt: object): object return v; end };
     local aliased = fake.setmetatable(guarded, { __index = { c = 1 } });
     local noC = aliased.c;
                         ~
-!!! error TS2339: Property 'c' does not exist on type 'object'.
+!!! error TLUA2339: Property 'c' does not exist on type 'object'.
     
     // The statement form bypasses protection too: debug.setmetatable narrows past a protected
     // antecedent where the global setmetatable would refuse.
@@ -35,6 +35,6 @@ tluaMetatableDebug.tlua(26,25): error TS2339: Property 'base' does not exist on 
       local s: string = prot.swapped;
       local goneBase = prot.base;
                             ~~~~
-!!! error TS2339: Property 'base' does not exist on type '{ y: number; swapped: string; }'.
+!!! error TLUA2339: Property 'base' does not exist on type '{ y: number; swapped: string; }'.
     end
     

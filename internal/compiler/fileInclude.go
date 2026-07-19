@@ -167,7 +167,7 @@ func (r *FileIncludeReason) computeDiagnostic(program *Program, toFileName func(
 			config := program.opts.Config
 			fileName := tspath.GetNormalizedAbsolutePath(config.FileNames()[r.asIndex()], program.GetCurrentDirectory())
 			if matchedFileSpec := config.GetMatchedFileSpec(fileName); matchedFileSpec != "" {
-				return ast.NewCompilerDiagnostic(diagnostics.Part_of_files_list_in_tsconfig_json, matchedFileSpec, toFileName(fileName))
+				return ast.NewCompilerDiagnostic(diagnostics.Part_of_files_list_in_tluaconfig_json, matchedFileSpec, toFileName(fileName))
 			} else if matchedIncludeSpec, isDefaultIncludeSpec := config.GetMatchedIncludeSpec(fileName); matchedIncludeSpec != "" {
 				if isDefaultIncludeSpec {
 					return ast.NewCompilerDiagnostic(diagnostics.Matched_by_default_include_pattern_Asterisk_Asterisk_Slash_Asterisk)

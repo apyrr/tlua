@@ -1,199 +1,199 @@
-varianceComputationNoCrash.tlua(7,19): error TS1110: Type expected.
-varianceComputationNoCrash.tlua(7,31): error TS1110: Type expected.
-varianceComputationNoCrash.tlua(28,64): error TS1005: '?' expected.
-varianceComputationNoCrash.tlua(28,66): error TS1110: Type expected.
-varianceComputationNoCrash.tlua(40,11): error TS1110: Type expected.
-varianceComputationNoCrash.tlua(40,12): error TS1110: Type expected.
-varianceComputationNoCrash.tlua(40,15): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(40,15): error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(40,29): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(40,46): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(40,46): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(40,66): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(40,87): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(40,95): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(41,9): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(41,11): error TS1434: Unexpected keyword or identifier.
-varianceComputationNoCrash.tlua(41,11): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(41,25): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(42,13): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(42,15): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(42,35): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(42,56): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(42,65): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(42,81): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(43,13): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(43,15): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(43,16): error TS2695: Left side of comma operator is unused and has no side effects.
-varianceComputationNoCrash.tlua(43,27): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(43,29): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(43,37): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(43,38): error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(43,48): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(43,64): error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(43,74): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(43,89): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(44,17): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(44,19): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(44,45): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(45,21): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(45,23): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(45,27): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(45,27): error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(45,41): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(45,58): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(45,58): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(45,78): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(45,99): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(45,108): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(45,124): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(45,139): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(46,21): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(46,23): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(46,43): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(46,64): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(46,73): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(46,92): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(46,106): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(47,17): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(47,19): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(47,20): error TS2695: Left side of comma operator is unused and has no side effects.
-varianceComputationNoCrash.tlua(47,31): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(47,33): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(47,41): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(47,42): error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(47,52): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(47,68): error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(47,78): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(47,93): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(48,21): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(48,23): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(48,49): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(49,25): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(49,27): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(49,31): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(49,31): error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(49,45): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(49,62): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(49,62): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(49,82): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(49,103): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(49,112): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(49,128): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(49,143): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(50,25): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(50,27): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(50,47): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(50,68): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(50,77): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(50,96): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(50,110): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(51,21): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(51,23): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(51,24): error TS2695: Left side of comma operator is unused and has no side effects.
-varianceComputationNoCrash.tlua(51,34): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(51,36): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(51,44): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(51,45): error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(51,55): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(51,71): error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(51,81): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(51,96): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(52,25): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(52,27): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(52,47): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(52,68): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(52,77): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(52,96): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(52,110): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(53,25): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(53,27): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(53,28): error TS2695: Left side of comma operator is unused and has no side effects.
-varianceComputationNoCrash.tlua(53,38): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(53,40): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(53,48): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(53,49): error TS2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(53,61): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(53,77): error TS2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(53,89): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(53,104): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(54,29): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(54,31): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(54,35): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(54,35): error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(54,49): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(54,66): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(54,66): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(54,86): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(54,107): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(54,116): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(54,132): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(54,147): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(55,29): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(55,31): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(55,32): error TS2695: Left side of comma operator is unused and has no side effects.
-varianceComputationNoCrash.tlua(55,42): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(55,44): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(55,52): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(55,53): error TS2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(55,65): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(55,81): error TS2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(55,93): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(55,108): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(56,33): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(56,35): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(56,39): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(56,39): error TS2693: 'RemoveLastCharacter' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(56,59): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(56,72): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(56,91): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(56,91): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(56,111): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(56,132): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(56,141): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(56,160): error TS2304: Cannot find name 'LastCharacter'.
-varianceComputationNoCrash.tlua(56,176): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(56,193): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(57,33): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(57,35): error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(57,55): error TS2304: Cannot find name 'RemainingCharacters'.
-varianceComputationNoCrash.tlua(57,76): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(57,85): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(57,104): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(57,118): error TS2304: Cannot find name 'FirstCharacter'.
-varianceComputationNoCrash.tlua(58,5): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(58,7): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(58,11): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(58,11): error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(58,25): error TS2304: Cannot find name 'CurrentWord'.
-varianceComputationNoCrash.tlua(58,37): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(70,15): error TS1110: Type expected.
-varianceComputationNoCrash.tlua(70,46): error TS1005: ']' expected.
-varianceComputationNoCrash.tlua(70,51): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(70,51): error TS2304: Cannot find name 'infer'.
-varianceComputationNoCrash.tlua(70,57): error TS1434: Unexpected keyword or identifier.
-varianceComputationNoCrash.tlua(70,57): error TS2304: Cannot find name 'RemainingWords'.
-varianceComputationNoCrash.tlua(70,72): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(70,80): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'StringLib'.
-varianceComputationNoCrash.tlua(70,87): error TS1011: An element access expression should take an argument.
-varianceComputationNoCrash.tlua(70,88): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(71,5): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(71,7): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(71,47): error TS1005: ';' expected.
-varianceComputationNoCrash.tlua(72,9): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(72,14): error TS2693: 'Capitalize' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(72,25): error TS2304: Cannot find name 'FirstWord'.
-varianceComputationNoCrash.tlua(72,38): error TS2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(72,57): error TS2304: Cannot find name 'RemainingWords'.
-varianceComputationNoCrash.tlua(72,73): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(73,9): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(73,14): error TS2693: 'Capitalize' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(73,35): error TS2304: Cannot find name 'FirstWord'.
-varianceComputationNoCrash.tlua(73,49): error TS2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
-varianceComputationNoCrash.tlua(73,68): error TS2304: Cannot find name 'RemainingWords'.
-varianceComputationNoCrash.tlua(73,84): error TS2304: Cannot find name 'Options'.
-varianceComputationNoCrash.tlua(74,5): error TS1128: Declaration or statement expected.
-varianceComputationNoCrash.tlua(74,7): error TS2304: Cannot find name 'OutputString'.
+varianceComputationNoCrash.tlua(7,19): error TLUA1110: Type expected.
+varianceComputationNoCrash.tlua(7,31): error TLUA1110: Type expected.
+varianceComputationNoCrash.tlua(28,64): error TLUA1005: '?' expected.
+varianceComputationNoCrash.tlua(28,66): error TLUA1110: Type expected.
+varianceComputationNoCrash.tlua(40,11): error TLUA1110: Type expected.
+varianceComputationNoCrash.tlua(40,12): error TLUA1110: Type expected.
+varianceComputationNoCrash.tlua(40,15): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(40,15): error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(40,29): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(40,46): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(40,46): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(40,66): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(40,87): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(40,95): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(41,9): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(41,11): error TLUA1434: Unexpected keyword or identifier.
+varianceComputationNoCrash.tlua(41,11): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(41,25): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(42,13): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(42,15): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(42,35): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(42,56): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(42,65): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(42,81): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(43,13): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(43,15): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(43,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
+varianceComputationNoCrash.tlua(43,27): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(43,29): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(43,37): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(43,38): error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(43,48): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(43,64): error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(43,74): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(43,89): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(44,17): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(44,19): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(44,45): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(45,21): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(45,23): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(45,27): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(45,27): error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(45,41): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(45,58): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(45,58): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(45,78): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(45,99): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(45,108): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(45,124): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(45,139): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(46,21): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(46,23): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(46,43): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(46,64): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(46,73): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(46,92): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(46,106): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(47,17): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(47,19): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(47,20): error TLUA2695: Left side of comma operator is unused and has no side effects.
+varianceComputationNoCrash.tlua(47,31): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(47,33): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(47,41): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(47,42): error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(47,52): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(47,68): error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(47,78): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(47,93): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(48,21): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(48,23): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(48,49): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(49,25): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(49,27): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(49,31): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(49,31): error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(49,45): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(49,62): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(49,62): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(49,82): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(49,103): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(49,112): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(49,128): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(49,143): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(50,25): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(50,27): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(50,47): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(50,68): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(50,77): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(50,96): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(50,110): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(51,21): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(51,23): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(51,24): error TLUA2695: Left side of comma operator is unused and has no side effects.
+varianceComputationNoCrash.tlua(51,34): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(51,36): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(51,44): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(51,45): error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(51,55): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(51,71): error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(51,81): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(51,96): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(52,25): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(52,27): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(52,47): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(52,68): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(52,77): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(52,96): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(52,110): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(53,25): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(53,27): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(53,28): error TLUA2695: Left side of comma operator is unused and has no side effects.
+varianceComputationNoCrash.tlua(53,38): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(53,40): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(53,48): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(53,49): error TLUA2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(53,61): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(53,77): error TLUA2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(53,89): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(53,104): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(54,29): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(54,31): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(54,35): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(54,35): error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(54,49): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(54,66): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(54,66): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(54,86): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(54,107): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(54,116): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(54,132): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(54,147): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(55,29): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(55,31): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(55,32): error TLUA2695: Left side of comma operator is unused and has no side effects.
+varianceComputationNoCrash.tlua(55,42): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(55,44): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(55,52): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(55,53): error TLUA2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(55,65): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(55,81): error TLUA2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(55,93): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(55,108): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(56,33): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(56,35): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(56,39): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(56,39): error TLUA2693: 'RemoveLastCharacter' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(56,59): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(56,72): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(56,91): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(56,91): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(56,111): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(56,132): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(56,141): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(56,160): error TLUA2304: Cannot find name 'LastCharacter'.
+varianceComputationNoCrash.tlua(56,176): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(56,193): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(57,33): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(57,35): error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(57,55): error TLUA2304: Cannot find name 'RemainingCharacters'.
+varianceComputationNoCrash.tlua(57,76): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(57,85): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(57,104): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(57,118): error TLUA2304: Cannot find name 'FirstCharacter'.
+varianceComputationNoCrash.tlua(58,5): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(58,7): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(58,11): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(58,11): error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(58,25): error TLUA2304: Cannot find name 'CurrentWord'.
+varianceComputationNoCrash.tlua(58,37): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(70,15): error TLUA1110: Type expected.
+varianceComputationNoCrash.tlua(70,46): error TLUA1005: ']' expected.
+varianceComputationNoCrash.tlua(70,51): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(70,51): error TLUA2304: Cannot find name 'infer'.
+varianceComputationNoCrash.tlua(70,57): error TLUA1434: Unexpected keyword or identifier.
+varianceComputationNoCrash.tlua(70,57): error TLUA2304: Cannot find name 'RemainingWords'.
+varianceComputationNoCrash.tlua(70,72): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(70,80): error TLUA7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'StringLib'.
+varianceComputationNoCrash.tlua(70,87): error TLUA1011: An element access expression should take an argument.
+varianceComputationNoCrash.tlua(70,88): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(71,5): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(71,7): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(71,47): error TLUA1005: ';' expected.
+varianceComputationNoCrash.tlua(72,9): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(72,14): error TLUA2693: 'Capitalize' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(72,25): error TLUA2304: Cannot find name 'FirstWord'.
+varianceComputationNoCrash.tlua(72,38): error TLUA2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(72,57): error TLUA2304: Cannot find name 'RemainingWords'.
+varianceComputationNoCrash.tlua(72,73): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(73,9): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(73,14): error TLUA2693: 'Capitalize' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(73,35): error TLUA2304: Cannot find name 'FirstWord'.
+varianceComputationNoCrash.tlua(73,49): error TLUA2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
+varianceComputationNoCrash.tlua(73,68): error TLUA2304: Cannot find name 'RemainingWords'.
+varianceComputationNoCrash.tlua(73,84): error TLUA2304: Cannot find name 'Options'.
+varianceComputationNoCrash.tlua(74,5): error TLUA1128: Declaration or statement expected.
+varianceComputationNoCrash.tlua(74,7): error TLUA2304: Cannot find name 'OutputString'.
 
 
 ==== varianceComputationNoCrash.tlua (196 errors) ====
@@ -205,9 +205,9 @@ varianceComputationNoCrash.tlua(74,7): error TS2304: Cannot find name 'OutputStr
     type IsAny<T> = 0 extends 1 & T ? true : false;
     type IsNever<T> = [T] extends [never] ? true : false;
                       ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
                                   ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = IsAny<T> extends true ? TypeIfAny : TypeIfNotAny;
     type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = IsNever<T> extends true ? TypeIfNever : TypeIfNotNever;
     type RequiredKeysOf<BaseType extends object> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
@@ -230,9 +230,9 @@ varianceComputationNoCrash.tlua(74,7): error TS2304: Cannot find name 'OutputStr
     
     type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
                                                                    ~
-!!! error TS1005: '?' expected.
+!!! error TLUA1005: '?' expected.
                                                                      ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
     type RemoveLastCharacter<Sentence extends string, Character extends string> = Sentence extends `${infer LeftSide}${Character}` ? SkipEmptyWord<LeftSide> : never;
     type WordsOptions = { splitOnNumbers?: boolean };
     type DefaultWordsOptions = { splitOnNumbers: true };
@@ -246,353 +246,353 @@ varianceComputationNoCrash.tlua(74,7): error TS2304: Cannot find name 'OutputStr
         ? FirstCharacter extends WordSeparators
             ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options>]
               ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
                ~~~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
                   ~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                   ~~~~~~~~~~~~~
-!!! error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
                                 ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                  ~~~~~~~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                  ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                                      ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                                           ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                                   ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
             : LastCharacter extends ''
             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
               ~~~~~~~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
               ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                             ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                 ? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
                 ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                   ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                       ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                            ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                     ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                     ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                 : [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
                 ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                   ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                    ~~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                               ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                 ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                          ~~~~~~~~~
-!!! error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
                                                    ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                                                                    ~~~~~~~~~
-!!! error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
                                                                              ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                             ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                     ? Options['splitOnNumbers'] extends true
                     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                       ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                 ~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                         ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
                         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                           ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                               ~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                               ~~~~~~~~~~~~~
-!!! error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
                                             ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                              ~~~~~~~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                              ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                                                  ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                                                       ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                                                ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                               ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                         : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
                         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                           ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                               ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                    ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                             ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                                                                              ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                     : [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
                     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                       ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                        ~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                   ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                     ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                              ~~~~~~~~~
-!!! error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
                                                        ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                                                                        ~~~~~~~~~
-!!! error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
                                                                                  ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                 ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                         ? Options['splitOnNumbers'] extends true
                         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                           ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                     ~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                             ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
                             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                               ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                   ~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                   ~~~~~~~~~~~~~
-!!! error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
                                                 ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                                  ~~~~~~~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                                  ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                                                      ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                                                           ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                                                    ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                    ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                                   ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                             : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
                             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                               ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                   ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                        ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                 ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                    ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                                                                                  ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                         : [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
                         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                           ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                            ~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                      ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                        ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                 ~~~~~~~~~
-!!! error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
                                                           ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                                                                           ~~~~~~~~~
-!!! error TS2693: 'IsNumeric' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsNumeric' only refers to a type, but is being used as a value here.
                                                                                     ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                    ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                             ? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
                             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                               ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                   ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                        ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                 ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                    ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                                                                                  ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                             : [true, true] extends [IsLowerCase<LastCharacter>, IsUpperCase<FirstCharacter>]
                             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                               ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                ~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                          ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                            ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                    ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                     ~~~~~~~~~~~
-!!! error TS2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
                                                                 ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                                                                                 ~~~~~~~~~~~
-!!! error TS2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
                                                                                             ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                            ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                 ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
                                 ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                   ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                       ~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                       ~~~~~~~~~~~~~
-!!! error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
                                                     ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                                      ~~~~~~~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                                      ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                                                          ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                                                               ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                                                        ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                        ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                                       ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                 : [true, true] extends [IsUpperCase<LastCharacter>, IsLowerCase<FirstCharacter>]
                                 ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                   ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                    ~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                              ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                        ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                         ~~~~~~~~~~~
-!!! error TS2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsUpperCase' only refers to a type, but is being used as a value here.
                                                                     ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                                                                                     ~~~~~~~~~~~
-!!! error TS2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'IsLowerCase' only refers to a type, but is being used as a value here.
                                                                                                 ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                     ? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
                                     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                       ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                           ~~~~~~~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                           ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'RemoveLastCharacter' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'RemoveLastCharacter' only refers to a type, but is being used as a value here.
                                                               ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                                            ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                                                                                               ~~~~~~~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                                                               ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                                                                                   ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                                                                                        ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                                                                                 ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                                                    ~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'LastCharacter'.
+!!! error TLUA2304: Cannot find name 'LastCharacter'.
                                                                                                                                                                                    ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                                                                                                                     ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                     : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
                                     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                       ~~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'WordsImplementation' only refers to a type, but is being used as a value here.
                                                           ~~~~~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingCharacters'.
+!!! error TLUA2304: Cannot find name 'RemainingCharacters'.
                                                                                ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                                                         ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
                                                                                                            ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                                                                                                          ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstCharacter'.
+!!! error TLUA2304: Cannot find name 'FirstCharacter'.
         : [...SkipEmptyWord<CurrentWord>];
         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
           ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
               ~~~~~~~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
               ~~~~~~~~~~~~~
-!!! error TS2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'SkipEmptyWord' only refers to a type, but is being used as a value here.
                             ~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'CurrentWord'.
+!!! error TLUA2304: Cannot find name 'CurrentWord'.
                                         ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     
     type Words<Sentence extends string, Options extends WordsOptions = {}> =
         WordsImplementation<Sentence, ApplyDefaultOptions<WordsOptions, DefaultWordsOptions, Options>>;
@@ -606,63 +606,63 @@ varianceComputationNoCrash.tlua(74,7): error TS2304: Cannot find name 'OutputStr
         OutputString extends string = '',
     > = W extends [infer FirstWord extends string, ...infer RemainingWords extends string[]]
                   ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
                                                  ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                                                       ~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                                       ~~~~~
-!!! error TS2304: Cannot find name 'infer'.
+!!! error TLUA2304: Cannot find name 'infer'.
                                                             ~~~~~~~~~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                                                             ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingWords'.
+!!! error TLUA2304: Cannot find name 'RemainingWords'.
                                                                            ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                                                                    ~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'StringLib'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'StringLib'.
                                                                                           
-!!! error TS1011: An element access expression should take an argument.
+!!! error TLUA1011: An element access expression should take an argument.
                                                                                            ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
         ? Options['preserveConsecutiveUppercase'] extends true
         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
           ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
                                                   ~~~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
             ? `${Capitalize<FirstWord>}${CamelCaseFromArray<RemainingWords, Options>}`
             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                  ~~~~~~~~~~
-!!! error TS2693: 'Capitalize' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'Capitalize' only refers to a type, but is being used as a value here.
                             ~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstWord'.
+!!! error TLUA2304: Cannot find name 'FirstWord'.
                                          ~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
                                                             ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingWords'.
+!!! error TLUA2304: Cannot find name 'RemainingWords'.
                                                                             ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
             : `${Capitalize<Lowercase<FirstWord>>}${CamelCaseFromArray<RemainingWords, Options>}`
             ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                  ~~~~~~~~~~
-!!! error TS2693: 'Capitalize' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'Capitalize' only refers to a type, but is being used as a value here.
                                       ~~~~~~~~~
-!!! error TS2304: Cannot find name 'FirstWord'.
+!!! error TLUA2304: Cannot find name 'FirstWord'.
                                                     ~~~~~~~~~~~~~~~~~~
-!!! error TS2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'CamelCaseFromArray' only refers to a type, but is being used as a value here.
                                                                        ~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'RemainingWords'.
+!!! error TLUA2304: Cannot find name 'RemainingWords'.
                                                                                        ~~~~~~~
-!!! error TS2304: Cannot find name 'Options'.
+!!! error TLUA2304: Cannot find name 'Options'.
         : OutputString;
         ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
           ~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'OutputString'.
+!!! error TLUA2304: Cannot find name 'OutputString'.
     
     type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
         ? string extends Type

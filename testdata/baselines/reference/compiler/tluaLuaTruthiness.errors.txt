@@ -1,6 +1,6 @@
-tluaLuaTruthiness.tlua(82,9): error TS2872: This kind of expression is always truthy.
-tluaLuaTruthiness.tlua(85,6): error TS2872: This kind of expression is always truthy.
-tluaLuaTruthiness.tlua(87,6): error TS2872: This kind of expression is always truthy.
+tluaLuaTruthiness.tlua(82,9): error TLUA2872: This kind of expression is always truthy.
+tluaLuaTruthiness.tlua(85,6): error TLUA2872: This kind of expression is always truthy.
+tluaLuaTruthiness.tlua(87,6): error TLUA2872: This kind of expression is always truthy.
 
 
 ==== tluaLuaTruthiness.tlua (3 errors) ====
@@ -87,16 +87,16 @@ tluaLuaTruthiness.tlua(87,6): error TS2872: This kind of expression is always tr
     function literalConditions(): void
       while 1 do
             ~
-!!! error TS2872: This kind of expression is always truthy.
+!!! error TLUA2872: This kind of expression is always truthy.
         break;
       end
       if 0 then
          ~
-!!! error TS2872: This kind of expression is always truthy.
+!!! error TLUA2872: This kind of expression is always truthy.
       end
       if "" then
          ~~
-!!! error TS2872: This kind of expression is always truthy.
+!!! error TLUA2872: This kind of expression is always truthy.
       end
     end
     

@@ -1,5 +1,5 @@
-b.tlua(6,13): error TS2304: Cannot find name 'Secret'.
-b.tlua(7,13): error TS2304: Cannot find name 'Hidden'.
+b.tlua(6,13): error TLUA2304: Cannot find name 'Secret'.
+b.tlua(7,13): error TLUA2304: Cannot find name 'Hidden'.
 
 
 ==== a.tlua (0 errors) ====
@@ -25,8 +25,8 @@ b.tlua(7,13): error TS2304: Cannot find name 'Hidden'.
     // Module-private types from a.tlua are NOT visible here.
     local bad1: Secret = { code = 3 };
                 ~~~~~~
-!!! error TS2304: Cannot find name 'Secret'.
+!!! error TLUA2304: Cannot find name 'Secret'.
     local bad2: Hidden = { tag = "z" };
                 ~~~~~~
-!!! error TS2304: Cannot find name 'Hidden'.
+!!! error TLUA2304: Cannot find name 'Hidden'.
     

@@ -25,7 +25,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 
 	t.Run("when project found is solution referencing default project directly", func(t *testing.T) {
 		t.Parallel()
-		files := filesForSolutionConfigFile([]string{"./tsconfig-src.json"}, "", nil)
+		files := filesForSolutionConfigFile([]string{"./tluaconfig-src.json"}, "", nil)
 		session, _ := projecttestutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.tlua")
 		content := files["/user/username/projects/myproject/src/main.tlua"].(string)
@@ -34,7 +34,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tluaconfig-src.json")) != nil)
 
 		// Ensure request can use existing snapshot
 		_, err := session.GetLanguageService(context.Background(), uri)
@@ -43,8 +43,8 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, requestSnapshot, snapshot)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") != nil, "solution config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") != nil, "direct reference should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") != nil, "solution config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") != nil, "direct reference should be present")
 
 		// Close the file and open one in an inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -55,13 +55,13 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should have been released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil)
 	})
 
 	t.Run("when project found is solution referencing default project indirectly", func(t *testing.T) {
 		t.Parallel()
-		files := filesForSolutionConfigFile([]string{"./tsconfig-indirect1.json", "./tsconfig-indirect2.json"}, "", nil)
+		files := filesForSolutionConfigFile([]string{"./tluaconfig-indirect1.json", "./tluaconfig-indirect2.json"}, "", nil)
 		applyIndirectProjectFiles(files, 1, "")
 		applyIndirectProjectFiles(files, 2, "")
 		session, _ := projecttestutil.Setup(files)
@@ -72,7 +72,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		srcProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json"))
+		srcProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tluaconfig-src.json"))
 		assert.Assert(t, srcProject != nil)
 
 		// Verify the default project is the source project
@@ -80,9 +80,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, defaultProject, srcProject)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") != nil, "solution config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect1.json") != nil, "direct reference should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") != nil, "indirect reference should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") != nil, "solution config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect1.json") != nil, "direct reference should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") != nil, "indirect reference should be present")
 
 		// Close the file and open one in an inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -93,15 +93,15 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should be released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect1.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect2.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect1.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect2.json") == nil)
 	})
 
 	t.Run("when project found is solution with disableReferencedProjectLoad referencing default project directly", func(t *testing.T) {
 		t.Parallel()
-		files := filesForSolutionConfigFile([]string{"./tsconfig-src.json"}, `"disableReferencedProjectLoad": true`, nil)
+		files := filesForSolutionConfigFile([]string{"./tluaconfig-src.json"}, `"disableReferencedProjectLoad": true`, nil)
 		session, _ := projecttestutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.tlua")
 		content := files["/user/username/projects/myproject/src/main.tlua"].(string)
@@ -110,7 +110,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tluaconfig-src.json")) == nil)
 
 		// Should use inferred project instead
 		defaultProject := snapshot.GetDefaultProject(uri)
@@ -118,8 +118,8 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, defaultProject.Kind, project.KindInferred)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") != nil, "solution config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil, "direct reference should not be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") != nil, "solution config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil, "direct reference should not be present")
 
 		// Close the file and open another one in the inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -130,13 +130,13 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should be released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil)
 	})
 
 	t.Run("when project found is solution referencing default project indirectly through disableReferencedProjectLoad", func(t *testing.T) {
 		t.Parallel()
-		files := filesForSolutionConfigFile([]string{"./tsconfig-indirect1.json"}, "", nil)
+		files := filesForSolutionConfigFile([]string{"./tluaconfig-indirect1.json"}, "", nil)
 		applyIndirectProjectFiles(files, 1, `"disableReferencedProjectLoad": true`)
 		session, _ := projecttestutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.tlua")
@@ -146,7 +146,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tluaconfig-src.json")) == nil)
 
 		// Should use inferred project instead
 		defaultProject := snapshot.GetDefaultProject(uri)
@@ -154,9 +154,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, defaultProject.Kind, project.KindInferred)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") != nil, "solution config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect1.json") != nil, "solution direct reference should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil, "indirect reference should not be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") != nil, "solution config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect1.json") != nil, "solution direct reference should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil, "indirect reference should not be present")
 
 		// Close the file and open another one in the inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -167,14 +167,14 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should be released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect1.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect1.json") == nil)
 	})
 
 	t.Run("when project found is solution referencing default project indirectly through disableReferencedProjectLoad in one but without it in another", func(t *testing.T) {
 		t.Parallel()
-		files := filesForSolutionConfigFile([]string{"./tsconfig-indirect1.json", "./tsconfig-indirect2.json"}, "", nil)
+		files := filesForSolutionConfigFile([]string{"./tluaconfig-indirect1.json", "./tluaconfig-indirect2.json"}, "", nil)
 		applyIndirectProjectFiles(files, 1, `"disableReferencedProjectLoad": true`)
 		applyIndirectProjectFiles(files, 2, "")
 		session, _ := projecttestutil.Setup(files)
@@ -185,7 +185,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
-		srcProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json"))
+		srcProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tluaconfig-src.json"))
 		assert.Assert(t, srcProject != nil)
 
 		// Verify the default project is the source project (found through indirect2, not indirect1)
@@ -193,10 +193,10 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, defaultProject, srcProject)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") != nil, "solution config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect1.json") != nil, "direct reference 1 should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect2.json") != nil, "direct reference 2 should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") != nil, "indirect reference should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") != nil, "solution config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect1.json") != nil, "direct reference 1 should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect2.json") != nil, "direct reference 2 should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") != nil, "indirect reference should be present")
 
 		// Close the file and open another one in the inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -207,15 +207,15 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should be released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect1.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-indirect2.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect1.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-indirect2.json") == nil)
 	})
 
 	t.Run("when project found is project with own files referencing the file from referenced project", func(t *testing.T) {
 		t.Parallel()
-		files := filesForSolutionConfigFile([]string{"./tsconfig-src.json"}, "", []string{`"./own/main.tlua"`})
+		files := filesForSolutionConfigFile([]string{"./tluaconfig-src.json"}, "", []string{`"./own/main.tlua"`})
 		files["/user/username/projects/myproject/own/main.tlua"] = `
 			local main = require("src.main");
 			local bar = main.foo;
@@ -229,9 +229,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
-		srcProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json"))
+		srcProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tluaconfig-src.json"))
 		assert.Assert(t, srcProject != nil)
-		ancestorProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig.json"))
+		ancestorProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tluaconfig.json"))
 		assert.Assert(t, ancestorProject != nil)
 
 		// Verify the default project is the source project
@@ -239,8 +239,8 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, defaultProject, srcProject)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") != nil, "solution config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") != nil, "direct reference should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") != nil, "solution config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") != nil, "direct reference should be present")
 
 		// Close the file and open another one in the inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -251,8 +251,8 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should be released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tluaconfig-src.json") == nil)
 	})
 
 	t.Run("when file is not part of first config tree found, looks into ancestor folder and its references to find default project", func(t *testing.T) {
@@ -264,7 +264,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
                 return { demo = demo };
             `,
 			"/home/src/projects/project/app/Component.tlua": `local Component = 1; return { Component = Component };`,
-			"/home/src/projects/project/app/tsconfig.json": `{
+			"/home/src/projects/project/app/tluaconfig.json": `{
 				"compilerOptions": {
 					"composite": true,
 					"outDir": "../app-dist/",
@@ -273,7 +273,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 				"exclude": ["**/*-demos.*"],
 			}`,
 			"/home/src/projects/project/demos/helpers.tlua": "local foo = 1; return { foo = foo };",
-			"/home/src/projects/project/demos/tsconfig.json": `{
+			"/home/src/projects/project/demos/tluaconfig.json": `{
 				"compilerOptions": {
 					"composite": true,
 					"rootDir": "../",
@@ -284,13 +284,13 @@ func TestProjectCollectionBuilder(t *testing.T) {
 					"../app/**/*-demos.*",
 				],
 			}`,
-			"/home/src/projects/project/tsconfig.json": `{
+			"/home/src/projects/project/tluaconfig.json": `{
 				"compilerOptions": {
 					"outDir": "./dist/",
 				},
 				"references": [
-					{ "path": "./demos/tsconfig.json" },
-					{ "path": "./app/tsconfig.json" },
+					{ "path": "./demos/tluaconfig.json" },
+					{ "path": "./app/tluaconfig.json" },
 				],
 				"files": []
 			}`,
@@ -303,9 +303,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
-		demoProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/src/projects/project/demos/tsconfig.json"))
+		demoProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/src/projects/project/demos/tluaconfig.json"))
 		assert.Assert(t, demoProject != nil)
-		solutionProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/src/projects/project/tsconfig.json"))
+		solutionProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/src/projects/project/tluaconfig.json"))
 		assert.Assert(t, solutionProject != nil)
 
 		// Verify the default project is the demos project (not the app project that excludes demos files)
@@ -313,9 +313,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, defaultProject, demoProject)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/app/tsconfig.json") != nil, "app config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/demos/tsconfig.json") != nil, "demos config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tsconfig.json") != nil, "solution config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/app/tluaconfig.json") != nil, "app config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/demos/tluaconfig.json") != nil, "demos config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tluaconfig.json") != nil, "solution config should be present")
 
 		// Close the file and open another one in the inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -326,9 +326,9 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should be released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/app/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/demos/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tsconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/app/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/demos/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tluaconfig.json") == nil)
 	})
 
 	t.Run("when dts file is next to ts file and included as root in referenced project", func(t *testing.T) {
@@ -343,13 +343,13 @@ func TestProjectCollectionBuilder(t *testing.T) {
                 }
             `,
 			"/home/src/projects/project/src/index.tlua": `local api = {}`,
-			"/home/src/projects/project/tsconfig.json": `{
+			"/home/src/projects/project/tluaconfig.json": `{
 				"include": [
 					"src/*.d.tlua",
 				],
-				"references": [{ "path": "./tsconfig.node.json" }],
+				"references": [{ "path": "./tluaconfig.node.json" }],
 			}`,
-			"/home/src/projects/project/tsconfig.node.json": `{
+			"/home/src/projects/project/tluaconfig.node.json": `{
 				"include": ["src/**/*"],
                 "compilerOptions": {
                     "composite": true,
@@ -364,7 +364,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
 		snapshot := session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
-		rootProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/src/projects/project/tsconfig.json"))
+		rootProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/src/projects/project/tluaconfig.json"))
 		assert.Assert(t, rootProject != nil)
 
 		// Verify the default project is inferred
@@ -373,8 +373,8 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Equal(t, defaultProject.Kind, project.KindInferred)
 
 		// Searched configs should be present while file is open
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tsconfig.json") != nil, "root config should be present")
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tsconfig.node.json") != nil, "node config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tluaconfig.json") != nil, "root config should be present")
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tluaconfig.node.json") != nil, "node config should be present")
 
 		// Close the file and open another one in the inferred project
 		session.DidCloseFile(context.Background(), uri)
@@ -385,19 +385,19 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Config files should be released
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tsconfig.json") == nil)
-		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tsconfig.node.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tluaconfig.json") == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig("/home/src/projects/project/tluaconfig.node.json") == nil)
 	})
 
 	t.Run("#1630", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/project/lib/tsconfig.json": `{
+			"/project/lib/tluaconfig.json": `{
 				"files": ["a.tlua"]
 			}`,
 			"/project/lib/a.tlua": `local a = 1;`,
 			"/project/lib/b.tlua": `local b = 1;`,
-			"/project/tsconfig.json": `{
+			"/project/tluaconfig.json": `{
 				"files": [],
 				"references": [{ "path": "./lib" }],
 				"compilerOptions": {
@@ -409,13 +409,13 @@ func TestProjectCollectionBuilder(t *testing.T) {
 
 		session, _ := projecttestutil.Setup(files)
 
-		// opening b.tlua puts /project/lib/tsconfig.json in the config file registry and creates the project,
+		// opening b.tlua puts /project/lib/tluaconfig.json in the config file registry and creates the project,
 		// but the project is ultimately not a match
 		session.DidOpenFile(context.Background(), "file:///project/lib/b.tlua", 1, files["/project/lib/b.tlua"].(string), lsproto.LanguageKindTypeScript)
-		// opening an unrelated file triggers cleanup of /project/lib/tsconfig.json since no open file is part of that project,
+		// opening an unrelated file triggers cleanup of /project/lib/tluaconfig.json since no open file is part of that project,
 		// but will keep the config file in the registry since lib/b.tlua is still open
 		session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
-		// Opening index.tlua searches /project/tsconfig.json and then checks /project/lib/tsconfig.json without opening it.
+		// Opening index.tlua searches /project/tluaconfig.json and then checks /project/lib/tluaconfig.json without opening it.
 		// No early return on config file existence means we try to find an already open project, which returns nil,
 		// triggering a crash.
 		session.DidOpenFile(context.Background(), "file:///project/index.tlua", 1, files["/project/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -453,7 +453,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 	t.Run("project lookup terminates", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/tsconfig.json": `{
+			"/tluaconfig.json": `{
 				"files": [],
 				"references": [
 					{
@@ -464,7 +464,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 					},
 				]
 			}`,
-			"/packages/pkg1/tsconfig.json": `{
+			"/packages/pkg1/tluaconfig.json": `{
 				"include": ["src/**/*.tlua"],
 				"compilerOptions": {
 					"composite": true,
@@ -475,7 +475,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 					},
 				]
 			}`,
-			"/packages/pkg2/tsconfig.json": `{
+			"/packages/pkg2/tluaconfig.json": `{
 				"include": ["src/**/*.tlua"],
 				"compilerOptions": {
 					"composite": true,
@@ -499,7 +499,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		// for it is deleted from the project root, requesting language service for the
 		// dependency correctly moves it to an inferred project.
 		files := map[string]any{
-			"/project/tsconfig.json":              `{"compilerOptions": {"strict": true}}`,
+			"/project/tluaconfig.json":            `{"compilerOptions": {"strict": true}}`,
 			"/project/index.tlua":                 `local dep = require("dep");`,
 			"/project/node_modules/dep/init.tlua": `local helper = 1; return { helper = helper };`,
 		}
@@ -516,7 +516,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		session.DidOpenFile(context.Background(), depUri, 1, files["/project/node_modules/dep/init.tlua"].(string), lsproto.LanguageKindTypeScript)
 
 		snapshot := session.Snapshot()
-		configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/project/tsconfig.json"))
+		configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/project/tluaconfig.json"))
 		assert.Assert(t, configuredProject != nil, "configured project should exist")
 		defaultProject := snapshot.GetDefaultProject(depUri)
 		assert.Equal(t, defaultProject, configuredProject, "dependency should be in the configured project initially")
@@ -547,7 +547,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		// declared overloads and never produces a checker diagnostic, so resolution
 		// is observed through program membership.)
 		packageJsonFiles := map[string]any{
-			"/home/projects/myproject/tsconfig.json": `{
+			"/home/projects/myproject/tluaconfig.json": `{
 				"compilerOptions": {
 					"module": "nodenext",
 					"noLib": true,
@@ -606,7 +606,7 @@ func filesForSolutionConfigFile(solutionRefs []string, compilerOptions string, o
 		ownFilesStr = strings.Join(ownFiles, ",")
 	}
 	files := map[string]any{
-		"/user/username/projects/myproject/tsconfig.json": fmt.Sprintf(`{
+		"/user/username/projects/myproject/tluaconfig.json": fmt.Sprintf(`{
 			%s
 			"files": [%s],
 			"references": [
@@ -615,7 +615,7 @@ func filesForSolutionConfigFile(solutionRefs []string, compilerOptions string, o
 		}`, compilerOptionsStr, ownFilesStr, strings.Join(core.Map(solutionRefs, func(ref string) string {
 			return fmt.Sprintf(`{ "path": "%s" }`, ref)
 		}), ",")),
-		"/user/username/projects/myproject/tsconfig-src.json": `{
+		"/user/username/projects/myproject/tluaconfig-src.json": `{
 			"compilerOptions": {
 				"composite": true,
 				"outDir": "./target",
@@ -636,7 +636,7 @@ func applyIndirectProjectFiles(files map[string]any, projectIndex int, compilerO
 
 func filesForIndirectProject(projectIndex int, compilerOptions string) map[string]any {
 	files := map[string]any{
-		fmt.Sprintf("/user/username/projects/myproject/tsconfig-indirect%d.json", projectIndex): fmt.Sprintf(`{
+		fmt.Sprintf("/user/username/projects/myproject/tluaconfig-indirect%d.json", projectIndex): fmt.Sprintf(`{
 			"compilerOptions": {
 				"composite": true,
 				"outDir": "./target/",
@@ -647,7 +647,7 @@ func filesForIndirectProject(projectIndex int, compilerOptions string) map[strin
 			],
 			"references": [
 				{
-				"path": "./tsconfig-src.json"
+				"path": "./tluaconfig-src.json"
 				}
 			]
 		}`, compilerOptions, projectIndex),

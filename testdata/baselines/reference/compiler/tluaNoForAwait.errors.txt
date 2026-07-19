@@ -1,44 +1,44 @@
-tluaNoForAwait.tlua(2,33): error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
-tluaNoForAwait.tlua(4,13): error TS1005: 'in' expected.
-tluaNoForAwait.tlua(4,14): error TS1109: Expression expected.
-tluaNoForAwait.tlua(4,22): error TS1005: ';' expected.
-tluaNoForAwait.tlua(4,22): error TS2304: Cannot find name 'of'.
-tluaNoForAwait.tlua(4,25): error TS1434: Unexpected keyword or identifier.
-tluaNoForAwait.tlua(4,27): error TS1128: Declaration or statement expected.
-tluaNoForAwait.tlua(5,14): error TS18048: 'x' is possibly 'undefined'.
-tluaNoForAwait.tlua(7,3): error TS2322: Type 'number' is not assignable to type 'Promise<number>'.
-tluaNoForAwait.tlua(8,1): error TS1128: Declaration or statement expected.
+tluaNoForAwait.tlua(2,33): error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+tluaNoForAwait.tlua(4,13): error TLUA1005: 'in' expected.
+tluaNoForAwait.tlua(4,14): error TLUA1109: Expression expected.
+tluaNoForAwait.tlua(4,22): error TLUA1005: ';' expected.
+tluaNoForAwait.tlua(4,22): error TLUA2304: Cannot find name 'of'.
+tluaNoForAwait.tlua(4,25): error TLUA1434: Unexpected keyword or identifier.
+tluaNoForAwait.tlua(4,27): error TLUA1128: Declaration or statement expected.
+tluaNoForAwait.tlua(5,14): error TLUA18048: 'x' is possibly 'undefined'.
+tluaNoForAwait.tlua(7,3): error TLUA2322: Type 'number' is not assignable to type 'Promise<number>'.
+tluaNoForAwait.tlua(8,1): error TLUA1128: Declaration or statement expected.
 
 
 ==== tluaNoForAwait.tlua (10 errors) ====
     // `for await` is no longer supported syntax.
     async function f(xs: number[]): Promise<number> {
                                     ~~~~~~~~~~~~~~~
-!!! error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+!!! error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
       local total = 0;
       for await (local x of xs) {
                 ~
-!!! error TS1005: 'in' expected.
+!!! error TLUA1005: 'in' expected.
                  ~~~~~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                          ~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                          ~~
-!!! error TS2304: Cannot find name 'of'.
+!!! error TLUA2304: Cannot find name 'of'.
                             ~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                               ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
         total += x;
                  ~
-!!! error TS18048: 'x' is possibly 'undefined'.
+!!! error TLUA18048: 'x' is possibly 'undefined'.
       }
       return total;
       ~~~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'Promise<number>'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'Promise<number>'.
     }
     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
     
     // `await` after `for` is an ordinary Lua loop-variable name.
     function awaitName(): number

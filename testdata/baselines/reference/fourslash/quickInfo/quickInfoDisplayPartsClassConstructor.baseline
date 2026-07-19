@@ -4,7 +4,7 @@
 //     constructor() {
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -14,14 +14,14 @@
 // local cInstance = new c();
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cInstance: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -29,14 +29,14 @@
 // local cVal = c;
 //       ^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cVal: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -45,7 +45,7 @@
 //     constructor(x: string);
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -53,7 +53,7 @@
 //     constructor(x: number);
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -61,7 +61,7 @@
 //     constructor(x: any) {
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -71,14 +71,14 @@
 // local cWithOverloadsInstance = new cWithOverloads("hello");
 //       ^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cWithOverloadsInstance: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                    ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -86,14 +86,14 @@
 // local cWithOverloadsInstance2 = new cWithOverloads(10);
 //       ^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cWithOverloadsInstance2: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                     ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -101,14 +101,14 @@
 // local cWithOverloadsVal = cWithOverloads;
 //       ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cWithOverloadsVal: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                           ^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -117,7 +117,7 @@
 //     constructor(x: string);
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -125,7 +125,7 @@
 //     constructor(x: number);
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -133,7 +133,7 @@
 //     constructor(x: boolean);
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -141,7 +141,7 @@
 //     constructor(x: any) {
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -151,14 +151,14 @@
 // local cWithMultipleOverloadsInstance = new cWithMultipleOverloads("hello");
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cWithMultipleOverloadsInstance: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                            ^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -166,14 +166,14 @@
 // local cWithMultipleOverloadsInstance2 = new cWithMultipleOverloads(10);
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cWithMultipleOverloadsInstance2: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                             ^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -181,14 +181,14 @@
 // local cWithMultipleOverloadsInstance3 = new cWithMultipleOverloads(true);
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cWithMultipleOverloadsInstance3: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                             ^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -196,14 +196,14 @@
 // local cWithMultipleOverloadsVal = cWithMultipleOverloads;
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local cWithMultipleOverloadsVal: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                   ^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | any
 // | ```
 // | 
@@ -222,7 +222,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -249,7 +249,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cInstance: any\n```\n"
+        "value": "```tlua\nlocal cInstance: any\n```\n"
       },
       "range": {
         "start": {
@@ -276,7 +276,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -303,7 +303,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cVal: any\n```\n"
+        "value": "```tlua\nlocal cVal: any\n```\n"
       },
       "range": {
         "start": {
@@ -330,7 +330,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -357,7 +357,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -384,7 +384,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -411,7 +411,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -438,7 +438,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cWithOverloadsInstance: any\n```\n"
+        "value": "```tlua\nlocal cWithOverloadsInstance: any\n```\n"
       },
       "range": {
         "start": {
@@ -465,7 +465,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -492,7 +492,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cWithOverloadsInstance2: any\n```\n"
+        "value": "```tlua\nlocal cWithOverloadsInstance2: any\n```\n"
       },
       "range": {
         "start": {
@@ -519,7 +519,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -546,7 +546,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cWithOverloadsVal: any\n```\n"
+        "value": "```tlua\nlocal cWithOverloadsVal: any\n```\n"
       },
       "range": {
         "start": {
@@ -573,7 +573,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -600,7 +600,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -627,7 +627,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -654,7 +654,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -681,7 +681,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -708,7 +708,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cWithMultipleOverloadsInstance: any\n```\n"
+        "value": "```tlua\nlocal cWithMultipleOverloadsInstance: any\n```\n"
       },
       "range": {
         "start": {
@@ -735,7 +735,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -762,7 +762,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cWithMultipleOverloadsInstance2: any\n```\n"
+        "value": "```tlua\nlocal cWithMultipleOverloadsInstance2: any\n```\n"
       },
       "range": {
         "start": {
@@ -789,7 +789,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -816,7 +816,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cWithMultipleOverloadsInstance3: any\n```\n"
+        "value": "```tlua\nlocal cWithMultipleOverloadsInstance3: any\n```\n"
       },
       "range": {
         "start": {
@@ -843,7 +843,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -870,7 +870,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal cWithMultipleOverloadsVal: any\n```\n"
+        "value": "```tlua\nlocal cWithMultipleOverloadsVal: any\n```\n"
       },
       "range": {
         "start": {
@@ -897,7 +897,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nany\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {

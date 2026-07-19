@@ -1,15 +1,15 @@
-recursiveIndexedAccessSimplification.tlua(5,5): error TS1110: Type expected.
-recursiveIndexedAccessSimplification.tlua(5,9): error TS1005: ';' expected.
-recursiveIndexedAccessSimplification.tlua(5,9): error TS2693: 'Recur' only refers to a type, but is being used as a value here.
-recursiveIndexedAccessSimplification.tlua(5,15): error TS2304: Cannot find name 'T'.
-recursiveIndexedAccessSimplification.tlua(5,18): error TS2693: 'number' only refers to a type, but is being used as a value here.
-recursiveIndexedAccessSimplification.tlua(5,26): error TS1011: An element access expression should take an argument.
-recursiveIndexedAccessSimplification.tlua(5,27): error TS1005: ';' expected.
-recursiveIndexedAccessSimplification.tlua(8,12): error TS1109: Expression expected.
-recursiveIndexedAccessSimplification.tlua(8,13): error TS2695: Left side of comma operator is unused and has no side effects.
-recursiveIndexedAccessSimplification.tlua(8,23): error TS100035: A '...' expression is only allowed inside a vararg function.
-recursiveIndexedAccessSimplification.tlua(8,26): error TS1005: ']' expected.
-recursiveIndexedAccessSimplification.tlua(8,27): error TS1128: Declaration or statement expected.
+recursiveIndexedAccessSimplification.tlua(5,5): error TLUA1110: Type expected.
+recursiveIndexedAccessSimplification.tlua(5,9): error TLUA1005: ';' expected.
+recursiveIndexedAccessSimplification.tlua(5,9): error TLUA2693: 'Recur' only refers to a type, but is being used as a value here.
+recursiveIndexedAccessSimplification.tlua(5,15): error TLUA2304: Cannot find name 'T'.
+recursiveIndexedAccessSimplification.tlua(5,18): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
+recursiveIndexedAccessSimplification.tlua(5,26): error TLUA1011: An element access expression should take an argument.
+recursiveIndexedAccessSimplification.tlua(5,27): error TLUA1005: ';' expected.
+recursiveIndexedAccessSimplification.tlua(8,12): error TLUA1109: Expression expected.
+recursiveIndexedAccessSimplification.tlua(8,13): error TLUA2695: Left side of comma operator is unused and has no side effects.
+recursiveIndexedAccessSimplification.tlua(8,23): error TLUA100035: A '...' expression is only allowed inside a vararg function.
+recursiveIndexedAccessSimplification.tlua(8,26): error TLUA1005: ']' expected.
+recursiveIndexedAccessSimplification.tlua(8,27): error TLUA1128: Declaration or statement expected.
 
 
 ==== recursiveIndexedAccessSimplification.tlua (12 errors) ====
@@ -19,32 +19,32 @@ recursiveIndexedAccessSimplification.tlua(8,27): error TS1128: Declaration or st
         (T extends  (unknown[]) ? {} : { [K in keyof T]?: Recur<T[K]>}) |
         [...Recur<T>[number][]];
         ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
             ~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
             ~~~~~
-!!! error TS2693: 'Recur' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'Recur' only refers to a type, but is being used as a value here.
                   ~
-!!! error TS2304: Cannot find name 'T'.
+!!! error TLUA2304: Cannot find name 'T'.
                      ~~~~~~
-!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
                              
-!!! error TS1011: An element access expression should take an argument.
+!!! error TLUA1011: An element access expression should take an argument.
                               ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     
     function join<T>(l: Recur<T>[]): Recur<T> {
         return ['marker', ...l];
                ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                 ~~~~~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                           ~~~
-!!! error TS100035: A '...' expression is only allowed inside a vararg function.
+!!! error TLUA100035: A '...' expression is only allowed inside a vararg function.
                              ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                               ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
     }
     
     function a<T>(l: Recur<T>[]): void {

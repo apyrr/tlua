@@ -1,7 +1,7 @@
-tluaNoSwitch.tlua(13,1): error TS2554: Expected 2 arguments, but got 1.
-tluaNoSwitch.tlua(13,12): error TS1005: ';' expected.
-tluaNoSwitch.tlua(14,3): error TS1434: Unexpected keyword or identifier.
-tluaNoSwitch.tlua(14,9): error TS1005: ';' expected.
+tluaNoSwitch.tlua(13,1): error TLUA2554: Expected 2 arguments, but got 1.
+tluaNoSwitch.tlua(13,12): error TLUA1005: ';' expected.
+tluaNoSwitch.tlua(14,3): error TLUA1434: Unexpected keyword or identifier.
+tluaNoSwitch.tlua(14,9): error TLUA1005: ';' expected.
 
 
 ==== tluaNoSwitch.tlua (4 errors) ====
@@ -19,15 +19,15 @@ tluaNoSwitch.tlua(14,9): error TS1005: ';' expected.
     declare x: 1 | 2;
     switch (x) {
     ~~~~~~
-!!! error TS2554: Expected 2 arguments, but got 1.
-!!! related TS6210 tluaNoSwitch.tlua:3:35: An argument for 'mode' was not provided.
+!!! error TLUA2554: Expected 2 arguments, but got 1.
+!!! related TLUA6210 tluaNoSwitch.tlua:3:35: An argument for 'mode' was not provided.
                ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
       case 1:
       ~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
             ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
         break;
     }
     

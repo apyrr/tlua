@@ -1,6 +1,6 @@
-assertsPredicateParameterMismatch.tlua(7,12): error TS1225: Cannot find parameter 'condition'.
-assertsPredicateParameterMismatch.tlua(9,15): error TS2304: Cannot find name 'Error'.
-assertsPredicateParameterMismatch.tlua(15,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+assertsPredicateParameterMismatch.tlua(7,12): error TLUA1225: Cannot find parameter 'condition'.
+assertsPredicateParameterMismatch.tlua(9,15): error TLUA2304: Cannot find name 'Error'.
+assertsPredicateParameterMismatch.tlua(15,3): error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
 
 
 ==== assertsPredicateParameterMismatch.tlua (3 errors) ====
@@ -12,11 +12,11 @@ assertsPredicateParameterMismatch.tlua(15,3): error TS2584: Cannot find name 'co
       _condition: boolean
     ): asserts condition {  // "condition" doesn't match parameter "_condition"
                ~~~~~~~~~
-!!! error TS1225: Cannot find parameter 'condition'.
+!!! error TLUA1225: Cannot find parameter 'condition'.
       if (!_condition) {
         throw new Error('Condition failed');
                   ~~~~~
-!!! error TS2304: Cannot find name 'Error'.
+!!! error TLUA2304: Cannot find name 'Error'.
       }
     }
     
@@ -24,6 +24,6 @@ assertsPredicateParameterMismatch.tlua(15,3): error TS2584: Cannot find name 'co
       assertCondition(false);
       console.log("unreachable");
       ~~~~~~~
-!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+!!! error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
     }
     

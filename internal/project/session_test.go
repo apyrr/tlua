@@ -26,7 +26,7 @@ func TestSession(t *testing.T) {
 	}
 
 	defaultFiles := map[string]any{
-		"/home/projects/TS/p1/tsconfig.json": `{
+		"/home/projects/TS/p1/tluaconfig.json": `{
 			"compilerOptions": {
 				"noLib": true,
 				"module": "nodenext",
@@ -52,7 +52,7 @@ func TestSession(t *testing.T) {
 			snapshot = session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 
-			configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json"))
+			configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json"))
 			assert.Assert(t, configuredProject != nil)
 
 			// Get language service to access the program
@@ -73,8 +73,8 @@ func TestSession(t *testing.T) {
 			snapshot := session.Snapshot()
 			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 
-			// Should have both configured project (for tsconfig.json) and inferred project
-			configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json"))
+			// Should have both configured project (for tluaconfig.json) and inferred project
+			configuredProject := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tluaconfig.json"))
 			inferredProject := snapshot.ProjectCollection.InferredProject()
 			assert.Assert(t, configuredProject != nil)
 			assert.Assert(t, inferredProject != nil)
@@ -116,7 +116,7 @@ func TestSession(t *testing.T) {
 	t.Run("watchChange and didOpen in same batch rebuilds program", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/home/projects/TS/p1/tsconfig.json": `{
+			"/home/projects/TS/p1/tluaconfig.json": `{
 				"compilerOptions": {
 					"noLib": true,
 					"strict": true
@@ -314,7 +314,7 @@ func TestSession(t *testing.T) {
 		t.Run("single-file change followed by config change reloads program", func(t *testing.T) {
 			t.Parallel()
 			files := maps.Clone(defaultFiles)
-			files["/home/projects/TS/p1/tsconfig.json"] = `{
+			files["/home/projects/TS/p1/tluaconfig.json"] = `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -349,7 +349,7 @@ func TestSession(t *testing.T) {
 				},
 			})
 
-			err = utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", `{
+			err = utils.FS().WriteFile("/home/projects/TS/p1/tluaconfig.json", `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -362,7 +362,7 @@ func TestSession(t *testing.T) {
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
-					Uri:  "file:///home/projects/TS/p1/tsconfig.json",
+					Uri:  "file:///home/projects/TS/p1/tluaconfig.json",
 				},
 			})
 
@@ -411,7 +411,7 @@ func TestSession(t *testing.T) {
 			t.Run("delete a file, close it, recreate it", func(t *testing.T) {
 				t.Parallel()
 				files := maps.Clone(defaultFiles)
-				delete(files, "/home/projects/TS/p1/tsconfig.json")
+				delete(files, "/home/projects/TS/p1/tluaconfig.json")
 				session, utils := projecttestutil.Setup(files)
 
 				session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.tlua", 1, files["/home/projects/TS/p1/src/x.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -512,7 +512,7 @@ func TestSession(t *testing.T) {
 		t.Run("projects with similar options share source files", func(t *testing.T) {
 			t.Parallel()
 			files := maps.Clone(defaultFiles)
-			files["/home/projects/TS/p2/tsconfig.json"] = `{
+			files["/home/projects/TS/p2/tluaconfig.json"] = `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -609,7 +609,7 @@ func TestSession(t *testing.T) {
 				t.Run("workspaceDir="+strings.ReplaceAll(workspaceDir, "/", "_"), func(t *testing.T) {
 					t.Parallel()
 					files := map[string]any{
-						"/home/projects/TS/p1/tsconfig.json": `{
+						"/home/projects/TS/p1/tluaconfig.json": `{
 							"compilerOptions": {
 								"noLib": true,
 								"module": "nodenext",
@@ -657,7 +657,7 @@ func TestSession(t *testing.T) {
 		t.Run("change config file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true,
 						"strict": false
@@ -676,7 +676,7 @@ func TestSession(t *testing.T) {
 			program := ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.tlua"))), 0)
 
-			err = utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", `{
+			err = utils.FS().WriteFile("/home/projects/TS/p1/tluaconfig.json", `{
 				"compilerOptions": {
 					"noLib": false,
 					"strict": true
@@ -687,7 +687,7 @@ func TestSession(t *testing.T) {
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
-					Uri:  "file:///home/projects/TS/p1/tsconfig.json",
+					Uri:  "file:///home/projects/TS/p1/tluaconfig.json",
 				},
 			})
 
@@ -700,7 +700,7 @@ func TestSession(t *testing.T) {
 		t.Run("delete explicitly included file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -751,7 +751,7 @@ local y: string = x.x;`,
 		t.Run("delete wildcard included file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -797,7 +797,7 @@ local y: string = x.x;`,
 		t.Run("delete directory with wildcard included files", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -847,7 +847,7 @@ local y: string = x.x;`,
 		t.Run("delete directory with program-only files", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -895,7 +895,7 @@ local y: string = x.x;`,
 		t.Run("delete sibling folder schedules diagnostics refresh", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -938,7 +938,7 @@ return { value = value };`,
 		t.Run("delete sibling folder schedules diagnostics refresh after opening third file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -983,7 +983,7 @@ return { value = value };`,
 		t.Run("create explicitly included file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -1028,7 +1028,7 @@ local s: string = y.y;`,
 		t.Run("create failed lookup location", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -1073,7 +1073,7 @@ local s: string = z.z;`,
 		t.Run("create wildcard included file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -1114,7 +1114,7 @@ local s: string = z.z;`,
 		t.Run("irrelevant extension changes are filtered out", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -1165,12 +1165,12 @@ local s: string = z.z;`,
 				"/home/projects/pnpm/pnpm-workspace.yaml": `packages:
   - 'packages/*'`,
 				"/home/projects/pnpm/packages/alpha/package.json": `{ "name": "repo-alpha", "main": "index.tlua" }`,
-				"/home/projects/pnpm/packages/alpha/tsconfig.json": `{
+				"/home/projects/pnpm/packages/alpha/tluaconfig.json": `{
 					"compilerOptions": { "noLib": true, "composite": true }
 				}`,
 				"/home/projects/pnpm/packages/alpha/index.tlua":  `local alpha = 1; return { alpha = alpha };`,
 				"/home/projects/pnpm/packages/beta/package.json": `{ "name": "repo-beta" }`,
-				"/home/projects/pnpm/packages/beta/tsconfig.json": `{
+				"/home/projects/pnpm/packages/beta/tluaconfig.json": `{
 					"compilerOptions": { "noLib": true }
 				}`,
 				"/home/projects/pnpm/packages/beta/index.tlua": `local alpha = require("repo-alpha");`,
@@ -1215,7 +1215,7 @@ local s: string = z.z;`,
 			// Set up a project that requires a symlinked node_modules package.
 			// The package resolves via "main" in package.json to dist/index.lua.
 			files := map[string]any{
-				"/home/projects/myproject/tsconfig.json": `{
+				"/home/projects/myproject/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true,
 						"module": "nodenext"
@@ -1284,7 +1284,7 @@ local s: string = z.z;`,
 		t.Run("create file in non-existent directory", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -1329,7 +1329,7 @@ local s: string = helper.helper;`,
 		t.Run("create symlink directory matching include pattern", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
@@ -1377,8 +1377,8 @@ local s: string = helper.helper;`,
 	t.Run("refreshes code lenses and inlay hints when relevant user preferences change", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": "{}",
-			"/src/index.tlua":    "local x = 1;",
+			"/src/tluaconfig.json": "{}",
+			"/src/index.tlua":      "local x = 1;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -1402,8 +1402,8 @@ local s: string = helper.helper;`,
 	t.Run("schedules diagnostics refresh when reportStyleChecksAsWarnings changes", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": "{}",
-			"/src/index.tlua":    "local x = 1;",
+			"/src/tluaconfig.json": "{}",
+			"/src/index.tlua":      "local x = 1;",
 		}
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -1429,8 +1429,8 @@ local s: string = helper.helper;`,
 	t.Run("config parsing", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
-			"/src/tsconfig.json": "{}",
-			"/src/index.tlua":    "local x = 1;",
+			"/src/tluaconfig.json": "{}",
+			"/src/index.tlua":      "local x = 1;",
 		}
 		session, _ := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
@@ -1483,7 +1483,7 @@ local s: string = helper.helper;`,
 			// Requesting language service for a file covered by that tsconfig should
 			// work even though the file was never opened via didOpen.
 			files := map[string]any{
-				"/home/projects/TS/p1/tsconfig.json": `{
+				"/home/projects/TS/p1/tluaconfig.json": `{
 					"compilerOptions": {
 						"noLib": true,
 						"strict": true

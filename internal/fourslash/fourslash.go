@@ -17,7 +17,7 @@ import (
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/diagnosticwriter"
-	"github.com/apyrr/tlua/internal/execute/tsctests"
+	"github.com/apyrr/tlua/internal/execute/tluatests"
 	"github.com/apyrr/tlua/internal/json"
 	"github.com/apyrr/tlua/internal/jsonrpc"
 	"github.com/apyrr/tlua/internal/locale"
@@ -164,9 +164,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 	harnessOptions := harnessutil.HarnessOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: rootDir}
 	harnessutil.SetOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, &harnessOptions, rootDir, true /*allowUnknownOptions*/)
-	if commandLines := testData.GlobalOptions["tsc"]; commandLines != "" {
+	if commandLines := testData.GlobalOptions["tlua"]; commandLines != "" {
 		for commandLine := range strings.SplitSeq(commandLines, ",") {
-			tsctests.GetFileMapWithBuild(testfs, strings.Split(commandLine, " "))
+			tluatests.GetFileMapWithBuild(testfs, strings.Split(commandLine, " "))
 		}
 	}
 

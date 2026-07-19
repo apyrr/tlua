@@ -1,6 +1,6 @@
-jsxElementTypeUnexpectedType.tsx(5,12): error TS2786: 'C' cannot be used as a JSX component.
+jsxElementTypeUnexpectedType.tsx(5,12): error TLUA2786: 'C' cannot be used as a JSX component.
   Its type '() => any' is not a valid JSX element type.
-jsxElementTypeUnexpectedType.tsx(5,12): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+jsxElementTypeUnexpectedType.tsx(5,12): error TLUA2874: This JSX tag requires 'React' to be in scope, but it could not be found.
 
 
 ==== jsxElementTypeUnexpectedType.tsx (2 errors) ====
@@ -10,8 +10,8 @@ jsxElementTypeUnexpectedType.tsx(5,12): error TS2874: This JSX tag requires 'Rea
     
     local x = <C />;
                ~
-!!! error TS2786: 'C' cannot be used as a JSX component.
-!!! error TS2786:   Its type '() => any' is not a valid JSX element type.
+!!! error TLUA2786: 'C' cannot be used as a JSX component.
+!!! error TLUA2786:   Its type '() => any' is not a valid JSX element type.
                ~
-!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+!!! error TLUA2874: This JSX tag requires 'React' to be in scope, but it could not be found.
     

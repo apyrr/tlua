@@ -1,11 +1,11 @@
-main.tlua(2,25): error TS2307: Cannot find module './nosuchfile' or its corresponding type declarations.
+main.tlua(2,25): error TLUA2307: Cannot find module './nosuchfile' or its corresponding type declarations.
 
 
 ==== main.tlua (1 errors) ====
     // A path-shaped specifier is not a Lua module name; it is an error.
     local missing = require("./nosuchfile");
                             ~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module './nosuchfile' or its corresponding type declarations.
+!!! error TLUA2307: Cannot find module './nosuchfile' or its corresponding type declarations.
     
     // An unresolved dotted name falls back to the ambient overloads (any):
     // it may be a runtime-provided package or a C module.

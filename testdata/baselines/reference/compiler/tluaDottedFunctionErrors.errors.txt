@@ -1,18 +1,18 @@
-tluaDottedFunctionErrors.tlua(2,10): error TS2304: Cannot find name 'Unknown'.
-tluaDottedFunctionErrors.tlua(9,12): error TS2339: Property 'h' does not exist on type '() => void'.
-tluaDottedFunctionErrors.tlua(15,14): error TS2300: Duplicate identifier 'f'.
-tluaDottedFunctionErrors.tlua(18,14): error TS2300: Duplicate identifier 'f'.
-tluaDottedFunctionErrors.tlua(22,19): error TS1005: '(' expected.
-tluaDottedFunctionErrors.tlua(22,20): error TS2304: Cannot find name 'f'.
-tluaDottedFunctionErrors.tlua(22,23): error TS1005: ';' expected.
-tluaDottedFunctionErrors.tlua(23,1): error TS1109: Expression expected.
+tluaDottedFunctionErrors.tlua(2,10): error TLUA2304: Cannot find name 'Unknown'.
+tluaDottedFunctionErrors.tlua(9,12): error TLUA2339: Property 'h' does not exist on type '() => void'.
+tluaDottedFunctionErrors.tlua(15,14): error TLUA2300: Duplicate identifier 'f'.
+tluaDottedFunctionErrors.tlua(18,14): error TLUA2300: Duplicate identifier 'f'.
+tluaDottedFunctionErrors.tlua(22,19): error TLUA1005: '(' expected.
+tluaDottedFunctionErrors.tlua(22,20): error TLUA2304: Cannot find name 'f'.
+tluaDottedFunctionErrors.tlua(22,23): error TLUA1005: ';' expected.
+tluaDottedFunctionErrors.tlua(23,1): error TLUA1109: Expression expected.
 
 
 ==== tluaDottedFunctionErrors.tlua (8 errors) ====
     // Unknown base.
     function Unknown.f(): void
              ~~~~~~~
-!!! error TS2304: Cannot find name 'Unknown'.
+!!! error TLUA2304: Cannot find name 'Unknown'.
     end
     
     // A function is not a table and cannot carry members.
@@ -21,7 +21,7 @@ tluaDottedFunctionErrors.tlua(23,1): error TS1109: Expression expected.
     
     function g.h(): void
                ~
-!!! error TS2339: Property 'h' does not exist on type '() => void'.
+!!! error TLUA2339: Property 'h' does not exist on type '() => void'.
     end
     
     // Duplicate members.
@@ -29,25 +29,25 @@ tluaDottedFunctionErrors.tlua(23,1): error TS1109: Expression expected.
     
     function Dup.f(): void
                  ~
-!!! error TS2300: Duplicate identifier 'f'.
-!!! related TS6203 tluaDottedFunctionErrors.tlua:18:14: 'f' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'f'.
+!!! related TLUA6203 tluaDottedFunctionErrors.tlua:18:14: 'f' was also declared here.
     end
     
     function Dup.f(): void
                  ~
-!!! error TS2300: Duplicate identifier 'f'.
-!!! related TS6203 tluaDottedFunctionErrors.tlua:15:14: 'f' was also declared here.
+!!! error TLUA2300: Duplicate identifier 'f'.
+!!! related TLUA6203 tluaDottedFunctionErrors.tlua:15:14: 'f' was also declared here.
     end
     
     // `local function` takes a plain name.
     local function Bad.f(): void
                       ~
-!!! error TS1005: '(' expected.
+!!! error TLUA1005: '(' expected.
                        ~
-!!! error TS2304: Cannot find name 'f'.
+!!! error TLUA2304: Cannot find name 'f'.
                           ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     end
     ~~~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     

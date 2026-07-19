@@ -2931,8 +2931,8 @@ func (c *Checker) checkJSDocTypeIsInJsFile(node *ast.Node) {
 			token := core.IfElse(ast.IsJSDocNonNullableType(node), "!", "?")
 			postfix := node.Pos() == node.Type().Pos()
 			message := core.IfElse(postfix,
-				diagnostics.X_0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1,
-				diagnostics.X_0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1)
+				diagnostics.X_0_at_the_end_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1,
+				diagnostics.X_0_at_the_start_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1)
 			t := c.getTypeFromTypeNode(node.Type())
 			if ast.IsJSDocNullableType(node) && t != c.neverType && t != c.voidType {
 				t = c.getNullableType(t, core.IfElse(postfix, TypeFlagsNil, TypeFlagsNullable))
@@ -12249,19 +12249,19 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 	case "$":
 		return core.IfElse(c.compilerOptions.UsesWildcardTypes(),
 			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slashjquery,
-			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slashjquery_and_then_add_jquery_to_the_types_field_in_your_tsconfig)
+			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slashjquery_and_then_add_jquery_to_the_types_field_in_your_tluaconfig)
 	case "beforeEach", "describe", "suite", "it", "test":
 		return core.IfElse(c.compilerOptions.UsesWildcardTypes(),
 			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_types_Slashjest_or_npm_i_save_dev_types_Slashmocha,
-			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_types_Slashjest_or_npm_i_save_dev_types_Slashmocha_and_then_add_jest_or_mocha_to_the_types_field_in_your_tsconfig)
+			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_types_Slashjest_or_npm_i_save_dev_types_Slashmocha_and_then_add_jest_or_mocha_to_the_types_field_in_your_tluaconfig)
 	case "process", "require", "Buffer", "module", "NodeJS":
 		return core.IfElse(c.compilerOptions.UsesWildcardTypes(),
 			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode,
-			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tsconfig)
+			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tluaconfig)
 	case "Bun":
 		return core.IfElse(c.compilerOptions.UsesWildcardTypes(),
 			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun,
-			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_and_then_add_bun_to_the_types_field_in_your_tsconfig)
+			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_and_then_add_bun_to_the_types_field_in_your_tluaconfig)
 	case "Map", "Set", "Promise", "ast.Symbol", "WeakMap", "WeakSet", "Iterator", "AsyncIterator", "SharedArrayBuffer", "Atomics", "AsyncIterable",
 		"AsyncIterableIterator", "AsyncGenerator", "AsyncGeneratorFunction", "BigInt", "Reflect", "BigInt64Array", "BigUint64Array":
 		return diagnostics.Cannot_find_name_0_Do_you_need_to_change_your_target_library_Try_changing_the_lib_compiler_option_to_1_or_later
@@ -13363,7 +13363,7 @@ func (c *Checker) getCannotResolveModuleNameErrorForSpecificModule(moduleName *a
 			if c.compilerOptions.UsesWildcardTypes() {
 				return diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode
 			}
-			return diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tsconfig
+			return diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tluaconfig
 		}
 	}
 	return nil

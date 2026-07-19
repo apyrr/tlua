@@ -3,7 +3,7 @@
 // declare function foo(): void;
 //                  ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo(): void
 // | ```
 // | 
@@ -16,7 +16,7 @@
 // declare function foo(x: number): void
 //                  ^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function foo(x: number): void
 // | ```
 // | Doc foo overloaded
@@ -37,7 +37,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(): void\n```\n"
+        "value": "```tlua\nfunction foo(): void\n```\n"
       },
       "range": {
         "start": {
@@ -64,7 +64,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nfunction foo(x: number): void\n```\nDoc foo overloaded\n\n*@tag* — Tag text"
+        "value": "```tlua\nfunction foo(x: number): void\n```\nDoc foo overloaded\n\n*@tag* — Tag text"
       },
       "range": {
         "start": {

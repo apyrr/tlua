@@ -1,7 +1,7 @@
-tluaMetatableNewindex.tlua(10,1): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaMetatableNewindex.tlua(12,29): error TS2339: Property 'fresh' does not exist on type '{ n: number; }'.
-tluaMetatableNewindex.tlua(19,1): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaMetatableNewindex.tlua(23,9): error TS2339: Property 'name' does not exist on type '{}'.
+tluaMetatableNewindex.tlua(10,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMetatableNewindex.tlua(12,29): error TLUA2339: Property 'fresh' does not exist on type '{ n: number; }'.
+tluaMetatableNewindex.tlua(19,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMetatableNewindex.tlua(23,9): error TLUA2339: Property 'name' does not exist on type '{}'.
 
 
 ==== tluaMetatableNewindex.tlua (4 errors) ====
@@ -16,11 +16,11 @@ tluaMetatableNewindex.tlua(23,9): error TS2339: Property 'name' does not exist o
     logged.fresh = 2;
     logged.fresh = "no";
     ~~~~~~~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     logged["dyn"] = 3;                  // the element-access write path too
     local stillMissing = logged.fresh;  // a read never consults __newindex
                                 ~~~~~
-!!! error TS2339: Property 'fresh' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'fresh' does not exist on type '{ n: number; }'.
     logged.n = 5;                       // the merged shape has n, so this is a raw write
     
     // Table form: the fallback table receives the write, so its index signature types it.
@@ -29,11 +29,11 @@ tluaMetatableNewindex.tlua(23,9): error TS2339: Property 'name' does not exist o
     proxied.other = 3;
     proxied.other = "no";
     ~~~~~~~~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // A key outside the handler's domain is not answered.
     local numKeys = setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end });
     numKeys.name = "x";
             ~~~~
-!!! error TS2339: Property 'name' does not exist on type '{}'.
+!!! error TLUA2339: Property 'name' does not exist on type '{}'.
     

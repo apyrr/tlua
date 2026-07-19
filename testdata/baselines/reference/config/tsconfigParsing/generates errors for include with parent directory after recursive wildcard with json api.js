@@ -2,16 +2,16 @@ Fs::
 //// [/apath/main.tlua]
 
 
-//// [/apath/tsconfig.json]
+//// [/apath/tluaconfig.json]
 {
                 "include": ["**/../*.tlua"]
             }
 
 
-configFileName:: /apath/tsconfig.json
+configFileName:: /apath/tluaconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/apath/tsconfig.json"
+  "configFilePath": "/apath/tluaconfig.json"
 }
 
 TypeAcquisition::
@@ -20,5 +20,5 @@ TypeAcquisition::
 FileNames::
 
 Errors::
-[91merror[0m[90m TS5065: [0mFile specification cannot contain a parent directory ('..') that appears after a recursive directory wildcard ('**'): '**/../*.tlua'.
-[91merror[0m[90m TS18003: [0mNo inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '["**/../*.tlua"]' and 'exclude' paths were '[]'.
+[91merror[0m[90m TLUA5065: [0mFile specification cannot contain a parent directory ('..') that appears after a recursive directory wildcard ('**'): '**/../*.tlua'.
+[91merror[0m[90m TLUA18003: [0mNo inputs were found in config file '/apath/tluaconfig.json'. Specified 'include' paths were '["**/../*.tlua"]' and 'exclude' paths were '[]'.

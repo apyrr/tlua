@@ -1,4 +1,4 @@
-tluaMultiReturnTypeSyntax.tlua(59,16): error TS2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
+tluaMultiReturnTypeSyntax.tlua(59,16): error TLUA2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
 
 
 ==== tluaMultiReturnTypeSyntax.tlua (1 errors) ====
@@ -62,7 +62,7 @@ tluaMultiReturnTypeSyntax.tlua(59,16): error TS2583: Cannot find name 'Map'. Do 
     
     type Wrapped = Map<() => (number, string), string>;
                    ~~~
-!!! error TS2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
+!!! error TLUA2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
     
     type Nested = () => (() => (number, string), boolean);
     type Complex<T> = () => (T extends string ? number : boolean, (string | nil)?, ...number);

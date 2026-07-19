@@ -1,6 +1,6 @@
-tluaMetatableShadowed.tlua(12,22): error TS2339: Property 'describe' does not exist on type 'object'.
-tluaMetatableShadowed.tlua(13,25): error TS2339: Property 'n' does not exist on type 'object'.
-tluaMetatableShadowed.tlua(20,26): error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableShadowed.tlua(12,22): error TLUA2339: Property 'describe' does not exist on type 'object'.
+tluaMetatableShadowed.tlua(13,25): error TLUA2339: Property 'n' does not exist on type 'object'.
+tluaMetatableShadowed.tlua(20,26): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
 
 
 ==== tluaMetatableShadowed.tlua (3 errors) ====
@@ -17,10 +17,10 @@ tluaMetatableShadowed.tlua(20,26): error TS2339: Property 'describe' does not ex
       local obj = setmetatable({ n = 1 }, mt);
       local absent = obj.describe;
                          ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type 'object'.
+!!! error TLUA2339: Property 'describe' does not exist on type 'object'.
       local ownAbsent = obj.n;
                             ~
-!!! error TS2339: Property 'n' does not exist on type 'object'.
+!!! error TLUA2339: Property 'n' does not exist on type 'object'.
       local back = getmetatable(obj);
     end
     
@@ -29,7 +29,7 @@ tluaMetatableShadowed.tlua(20,26): error TS2339: Property 'describe' does not ex
     local aliased = alias({ n = 1 }, mt);
     local aliasBad = aliased.describe;
                              ~~~~~~~~
-!!! error TS2339: Property 'describe' does not exist on type '{ n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
     local aliasOwn: number = aliased.n;
     
     // The globals themselves still work in the same file.

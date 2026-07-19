@@ -1,4 +1,4 @@
-tluaIoRead.tlua(48,34): error TS2345: Argument of type '"*x"' is not assignable to parameter of type 'LuaReadFormat'.
+tluaIoRead.tlua(48,34): error TLUA2345: Argument of type '"*x"' is not assignable to parameter of type 'LuaReadFormat'.
 
 
 ==== tluaIoRead.tlua (1 errors) ====
@@ -51,5 +51,5 @@ tluaIoRead.tlua(48,34): error TS2345: Argument of type '"*x"' is not assignable 
     
     local wrong, wrongRest = io.read("*x");
                                      ~~~~
-!!! error TS2345: Argument of type '"*x"' is not assignable to parameter of type 'LuaReadFormat'.
+!!! error TLUA2345: Argument of type '"*x"' is not assignable to parameter of type 'LuaReadFormat'.
     

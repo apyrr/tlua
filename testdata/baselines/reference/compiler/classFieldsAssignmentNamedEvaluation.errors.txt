@@ -1,24 +1,24 @@
-classFieldsAssignmentNamedEvaluation.tlua(2,5): error TS2304: Cannot find name 'class'.
-classFieldsAssignmentNamedEvaluation.tlua(2,11): error TS1005: ';' expected.
-classFieldsAssignmentNamedEvaluation.tlua(2,13): error TS1434: Unexpected keyword or identifier.
-classFieldsAssignmentNamedEvaluation.tlua(2,13): error TS2304: Cannot find name 'static'.
-classFieldsAssignmentNamedEvaluation.tlua(2,21): error TS2304: Cannot find name 'foo'.
-classFieldsAssignmentNamedEvaluation.tlua(2,25): error TS1005: ';' expected.
+classFieldsAssignmentNamedEvaluation.tlua(2,5): error TLUA2304: Cannot find name 'class'.
+classFieldsAssignmentNamedEvaluation.tlua(2,11): error TLUA1005: ';' expected.
+classFieldsAssignmentNamedEvaluation.tlua(2,13): error TLUA1434: Unexpected keyword or identifier.
+classFieldsAssignmentNamedEvaluation.tlua(2,13): error TLUA2304: Cannot find name 'static'.
+classFieldsAssignmentNamedEvaluation.tlua(2,21): error TLUA2304: Cannot find name 'foo'.
+classFieldsAssignmentNamedEvaluation.tlua(2,25): error TLUA1005: ';' expected.
 
 
 ==== classFieldsAssignmentNamedEvaluation.tlua (6 errors) ====
     local x: any;
     x = class { static #foo = 1; };
         ~~~~~
-!!! error TS2304: Cannot find name 'class'.
+!!! error TLUA2304: Cannot find name 'class'.
               ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                 ~~~~~~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                 ~~~~~~
-!!! error TS2304: Cannot find name 'static'.
+!!! error TLUA2304: Cannot find name 'static'.
                         ~~~
-!!! error TS2304: Cannot find name 'foo'.
+!!! error TLUA2304: Cannot find name 'foo'.
                             ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     

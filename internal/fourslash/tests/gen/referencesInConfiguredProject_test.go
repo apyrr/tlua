@@ -20,7 +20,7 @@ class /*0*/globalClass {
 }
 // @Filename: /home/src/workspaces/project/referencesForGlobals_2.tlua
 local c = /*1*/globalClass();
-// @Filename: /home/src/workspaces/project/tsconfig.json
+// @Filename: /home/src/workspaces/project/tluaconfig.json
 { "files": ["referencesForGlobals_1.tlua", "referencesForGlobals_2.tlua"], "compilerOptions": { "lib": ["es5"] } }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

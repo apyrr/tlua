@@ -188,8 +188,8 @@ type configFileNames struct {
 	// For example, if `/a`, `/a/b`, and `/a/b/c` all contain config files,
 	// the fully loaded map will look like:
 	//		{
-	//			"/a/b/c/tsconfig.json": "/a/b/tsconfig.json",
-	//			"/a/b/tsconfig.json": "/a/tsconfig.json"
+	//			"/a/b/c/tluaconfig.json": "/a/b/tluaconfig.json",
+	//			"/a/b/tluaconfig.json": "/a/tluaconfig.json"
 	//		}
 	ancestors map[string]string
 }

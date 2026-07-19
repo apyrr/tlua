@@ -1,5 +1,5 @@
-tluaMetatableGeneric.tlua(14,7): error TS2322: Type 'string' is not assignable to type 'number'.
-tluaMetatableGeneric.tlua(25,7): error TS2322: Type 'number' is not assignable to type 'string'.
+tluaMetatableGeneric.tlua(14,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMetatableGeneric.tlua(25,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
 ==== tluaMetatableGeneric.tlua (2 errors) ====
@@ -18,7 +18,7 @@ tluaMetatableGeneric.tlua(25,7): error TS2322: Type 'number' is not assignable t
     local d1: string = w.describe(w);
     local wbad: number = w.own;
           ~~~~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // A concrete table whose *member* type mentions a type parameter still pairs, and the
     // pairing instantiates with it.
@@ -31,7 +31,7 @@ tluaMetatableGeneric.tlua(25,7): error TS2322: Type 'number' is not assignable t
     local d2: string = b.describe(b);
     local bbad: string = b.value;
           ~~~~
-!!! error TS2322: Type 'number' is not assignable to type 'string'.
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
     
     local bs = box("s");
     local sv: string = bs.value;

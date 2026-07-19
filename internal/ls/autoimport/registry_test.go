@@ -103,7 +103,7 @@ func TestRegistryLifecycle(t *testing.T) {
 		t.Parallel()
 		projectRoot := "/home/src/explicit-files-project"
 		files := map[string]any{
-			projectRoot + "/tsconfig.json": `{
+			projectRoot + "/tluaconfig.json": `{
 				"compilerOptions": {
 					"module": "esnext",
 					"target": "esnext",
@@ -517,7 +517,7 @@ return { foo = foo, bar = bar };`,
 
 		files := map[string]any{
 			// project-b: the library package
-			tspath.CombinePaths(projectBDir, "tsconfig.json"): `{
+			tspath.CombinePaths(projectBDir, "tluaconfig.json"): `{
 				"compilerOptions": {
 					"composite": true,
 					"outDir": "./dist",
@@ -548,7 +548,7 @@ export declare local projectBValue: number;`,
 			tspath.CombinePaths(otherPkgDir, "index.d.tlua"): `export declare function otherFunction(): void;
 export declare local otherValue: string;`,
 			// project-a: the consumer package
-			tspath.CombinePaths(projectADir, "tsconfig.json"): `{
+			tspath.CombinePaths(projectADir, "tluaconfig.json"): `{
 				"compilerOptions": {
 					"module": "esnext",
 					"strict": true,
@@ -646,7 +646,7 @@ export declare local otherValue: string;`,
 
 		files := map[string]any{
 			// project-b: a local workspace package
-			tspath.CombinePaths(projectBDir, "tsconfig.json"): `{
+			tspath.CombinePaths(projectBDir, "tluaconfig.json"): `{
 				"compilerOptions": {
 					"composite": true,
 					"outDir": "./dist",
@@ -677,7 +677,7 @@ export declare local projectBValue: number;`,
 			otherPkgIndex: `export declare function otherFunction(): void;
 export declare local otherValue: string;`,
 			// project-a: the consumer package
-			tspath.CombinePaths(projectADir, "tsconfig.json"): `{
+			tspath.CombinePaths(projectADir, "tluaconfig.json"): `{
 				"compilerOptions": {
 					"module": "esnext",
 					"strict": true,
@@ -849,7 +849,7 @@ export declare local otherValue: string;`,
 				"private": true,
 				"dependencies": { "shared": "*" }
 			}`,
-			tspath.CombinePaths(repoRoot, "tsconfig.json"): `{
+			tspath.CombinePaths(repoRoot, "tluaconfig.json"): `{
 				"compilerOptions": {
 					"module": "esnext",
 					"target": "esnext",
@@ -862,7 +862,7 @@ export declare local otherValue: string;`,
 				"private": true,
 				"dependencies": { "shared": "*" }
 			}`,
-			tspath.CombinePaths(appDir, "tsconfig.json"): `{
+			tspath.CombinePaths(appDir, "tluaconfig.json"): `{
 				"compilerOptions": {
 					"module": "esnext",
 					"target": "esnext",
@@ -917,7 +917,7 @@ func TestHiddenDirectoriesInNodeModules(t *testing.T) {
 		pkgStoreDir := storeDir + "/some-pkg-npm-1.0.0-abc123/package"
 
 		files := map[string]any{
-			projectRoot + "/tsconfig.json": `{
+			projectRoot + "/tluaconfig.json": `{
 				"compilerOptions": {
 					"module": "commonjs",
 					"target": "es2020",
@@ -989,7 +989,7 @@ func TestAutoImportEntrypointDirectorySearch(t *testing.T) {
 	pkgDir := nodeModulesDir + "/my-pkg"
 
 	files := map[string]any{
-		projectRoot + "/tsconfig.json": `{
+		projectRoot + "/tluaconfig.json": `{
 			"compilerOptions": {
 				"module": "commonjs",
 				"target": "es2020"
@@ -1142,7 +1142,7 @@ func TestUpdateIndexesConcurrentMapSafety(t *testing.T) {
 	const packageCount = 40
 
 	files := map[string]any{
-		projectRoot + "/tsconfig.json": `{
+		projectRoot + "/tluaconfig.json": `{
 			"compilerOptions": { "module": "esnext", "target": "esnext", "strict": true }
 		}`,
 		projectRoot + "/index.tlua": "local unused = 1;\n",

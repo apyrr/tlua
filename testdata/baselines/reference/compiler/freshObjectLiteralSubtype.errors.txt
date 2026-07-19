@@ -1,28 +1,28 @@
-freshObjectLiteralSubtype.tlua(15,8): error TS2304: Cannot find name 'Math'.
-freshObjectLiteralSubtype.tlua(34,10): error TS7010: 'normalise_trace_logs', which lacks return-type annotation, implicitly has an 'any' return type.
-freshObjectLiteralSubtype.tlua(34,31): error TS1138: Parameter declaration expected.
-freshObjectLiteralSubtype.tlua(34,32): error TS7006: Parameter 'log' implicitly has an 'any' type.
-freshObjectLiteralSubtype.tlua(34,35): error TS1005: ')' expected.
-freshObjectLiteralSubtype.tlua(34,36): error TS1128: Declaration or statement expected.
-freshObjectLiteralSubtype.tlua(34,38): error TS2693: 'any' only refers to a type, but is being used as a value here.
-freshObjectLiteralSubtype.tlua(34,42): error TS1011: An element access expression should take an argument.
-freshObjectLiteralSubtype.tlua(34,43): error TS1005: ';' expected.
-freshObjectLiteralSubtype.tlua(35,21): error TS1109: Expression expected.
-freshObjectLiteralSubtype.tlua(35,22): error TS1011: An element access expression should take an argument.
-freshObjectLiteralSubtype.tlua(36,9): error TS1109: Expression expected.
-freshObjectLiteralSubtype.tlua(36,16): error TS2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(36,35): error TS2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(36,53): error TS1005: ';' expected.
-freshObjectLiteralSubtype.tlua(37,27): error TS2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(37,46): error TS2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(38,7): error TS1128: Declaration or statement expected.
-freshObjectLiteralSubtype.tlua(39,27): error TS2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(46,7): error TS2554: Expected 1 arguments, but got 0.
-freshObjectLiteralSubtype.tlua(46,28): error TS1135: Argument expression expected.
-freshObjectLiteralSubtype.tlua(46,29): error TS1135: Argument expression expected.
-freshObjectLiteralSubtype.tlua(46,33): error TS1135: Argument expression expected.
-freshObjectLiteralSubtype.tlua(48,5): error TS2554: Expected 2 arguments, but got 5.
-freshObjectLiteralSubtype.tlua(51,1): error TS1135: Argument expression expected.
+freshObjectLiteralSubtype.tlua(15,8): error TLUA2304: Cannot find name 'Math'.
+freshObjectLiteralSubtype.tlua(34,10): error TLUA7010: 'normalise_trace_logs', which lacks return-type annotation, implicitly has an 'any' return type.
+freshObjectLiteralSubtype.tlua(34,31): error TLUA1138: Parameter declaration expected.
+freshObjectLiteralSubtype.tlua(34,32): error TLUA7006: Parameter 'log' implicitly has an 'any' type.
+freshObjectLiteralSubtype.tlua(34,35): error TLUA1005: ')' expected.
+freshObjectLiteralSubtype.tlua(34,36): error TLUA1128: Declaration or statement expected.
+freshObjectLiteralSubtype.tlua(34,38): error TLUA2693: 'any' only refers to a type, but is being used as a value here.
+freshObjectLiteralSubtype.tlua(34,42): error TLUA1011: An element access expression should take an argument.
+freshObjectLiteralSubtype.tlua(34,43): error TLUA1005: ';' expected.
+freshObjectLiteralSubtype.tlua(35,21): error TLUA1109: Expression expected.
+freshObjectLiteralSubtype.tlua(35,22): error TLUA1011: An element access expression should take an argument.
+freshObjectLiteralSubtype.tlua(36,9): error TLUA1109: Expression expected.
+freshObjectLiteralSubtype.tlua(36,16): error TLUA2304: Cannot find name 'log'.
+freshObjectLiteralSubtype.tlua(36,35): error TLUA2304: Cannot find name 'log'.
+freshObjectLiteralSubtype.tlua(36,53): error TLUA1005: ';' expected.
+freshObjectLiteralSubtype.tlua(37,27): error TLUA2304: Cannot find name 'log'.
+freshObjectLiteralSubtype.tlua(37,46): error TLUA2304: Cannot find name 'log'.
+freshObjectLiteralSubtype.tlua(38,7): error TLUA1128: Declaration or statement expected.
+freshObjectLiteralSubtype.tlua(39,27): error TLUA2304: Cannot find name 'log'.
+freshObjectLiteralSubtype.tlua(46,7): error TLUA2554: Expected 1 arguments, but got 0.
+freshObjectLiteralSubtype.tlua(46,28): error TLUA1135: Argument expression expected.
+freshObjectLiteralSubtype.tlua(46,29): error TLUA1135: Argument expression expected.
+freshObjectLiteralSubtype.tlua(46,33): error TLUA1135: Argument expression expected.
+freshObjectLiteralSubtype.tlua(48,5): error TLUA2554: Expected 2 arguments, but got 5.
+freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expected.
 
 
 ==== freshObjectLiteralSubtype.tlua (25 errors) ====
@@ -42,7 +42,7 @@ freshObjectLiteralSubtype.tlua(51,1): error TS1135: Argument expression expected
     function validate() {
         if(Math.random() > 0.5) {
            ~~~~
-!!! error TS2304: Cannot find name 'Math'.
+!!! error TLUA2304: Cannot find name 'Math'.
             return utilValidate();
         }
         return { valid = true };
@@ -63,46 +63,46 @@ freshObjectLiteralSubtype.tlua(51,1): error TS1135: Argument expression expected
     
     function normalise_trace_logs([log]: any[]) {
              ~~~~~~~~~~~~~~~~~~~~
-!!! error TS7010: 'normalise_trace_logs', which lacks return-type annotation, implicitly has an 'any' return type.
+!!! error TLUA7010: 'normalise_trace_logs', which lacks return-type annotation, implicitly has an 'any' return type.
                                   ~
-!!! error TS1138: Parameter declaration expected.
+!!! error TLUA1138: Parameter declaration expected.
                                    ~~~
-!!! error TS7006: Parameter 'log' implicitly has an 'any' type.
+!!! error TLUA7006: Parameter 'log' implicitly has an 'any' type.
                                       ~
-!!! error TS1005: ')' expected.
+!!! error TLUA1005: ')' expected.
                                        ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                                          ~~~
-!!! error TS2693: 'any' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'any' only refers to a type, but is being used as a value here.
                                              
-!!! error TS1011: An element access expression should take an argument.
+!!! error TLUA1011: An element access expression should take an argument.
                                               ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     	local normalised = [];
     	                   ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     	                    
-!!! error TS1011: An element access expression should take an argument.
+!!! error TLUA1011: An element access expression should take an argument.
         if (typeof log == "string" && log.includes("%c")) {
             ~~~~~~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                    ~~~
-!!! error TS2304: Cannot find name 'log'.
+!!! error TLUA2304: Cannot find name 'log'.
                                       ~~~
-!!! error TS2304: Cannot find name 'log'.
+!!! error TLUA2304: Cannot find name 'log'.
                                                         ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
             normalised.push({ log, highlighted = log.includes("foo") });
                               ~~~
-!!! error TS2304: Cannot find name 'log'.
+!!! error TLUA2304: Cannot find name 'log'.
                                                  ~~~
-!!! error TS2304: Cannot find name 'log'.
+!!! error TLUA2304: Cannot find name 'log'.
         } else {
           ~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
             normalised.push({ log });
                               ~~~
-!!! error TS2304: Cannot find name 'log'.
+!!! error TLUA2304: Cannot find name 'log'.
         }
     	return normalised;
     }
@@ -111,14 +111,14 @@ freshObjectLiteralSubtype.tlua(51,1): error TS1135: Argument expression expected
     
     equal(normalise_trace_logs([]), [
           ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2554: Expected 1 arguments, but got 0.
-!!! related TS6210 freshObjectLiteralSubtype.tlua:34:32: An argument for 'log' was not provided.
+!!! error TLUA2554: Expected 1 arguments, but got 0.
+!!! related TLUA6210 freshObjectLiteralSubtype.tlua:34:32: An argument for 'log' was not provided.
                                ~
-!!! error TS1135: Argument expression expected.
+!!! error TLUA1135: Argument expression expected.
                                 ~
-!!! error TS1135: Argument expression expected.
+!!! error TLUA1135: Argument expression expected.
                                     ~
-!!! error TS1135: Argument expression expected.
+!!! error TLUA1135: Argument expression expected.
         { log = 'effect' },
         { log = '$derived', highlighted = true },
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,8 +126,8 @@ freshObjectLiteralSubtype.tlua(51,1): error TS1135: Argument expression expected
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         { log = 4 },
     ~~~~~~~~~~~~~~~
-!!! error TS2554: Expected 2 arguments, but got 5.
+!!! error TLUA2554: Expected 2 arguments, but got 5.
     ]);
     ~
-!!! error TS1135: Argument expression expected.
+!!! error TLUA1135: Argument expression expected.
     

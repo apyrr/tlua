@@ -14,7 +14,7 @@ func TestGetEditsForFileRename_tsconfig_include_add(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /src/tsconfig.json
+	const content = `// @Filename: /src/tluaconfig.json
 {
     "include": ["dir"],
 }
@@ -23,7 +23,7 @@ func TestGetEditsForFileRename_tsconfig_include_add(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyWillRenameFilesEdits(t, "/src/dir/a.tlua", "/src/newDir/b.tlua", map[string]string{
-		"/src/tsconfig.json": `{
+		"/src/tluaconfig.json": `{
     "include": ["dir", "newDir/b.tlua"],
 }`,
 	}, nil /*preferences*/)

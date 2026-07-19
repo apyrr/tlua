@@ -1,5 +1,5 @@
-iface-local-first.tlua(4,11): error TS2687: All declarations of 'Flipped' must have identical modifiers.
-iface.tlua(6,17): error TS2687: All declarations of 'Mixed' must have identical modifiers.
+iface-local-first.tlua(4,11): error TLUA2687: All declarations of 'Flipped' must have identical modifiers.
+iface.tlua(6,17): error TLUA2687: All declarations of 'Mixed' must have identical modifiers.
 
 
 ==== iface.tlua (1 errors) ====
@@ -10,7 +10,7 @@ iface.tlua(6,17): error TS2687: All declarations of 'Mixed' must have identical 
     interface Mixed { a: number };
     local interface Mixed { b: number };
                     ~~~~~
-!!! error TS2687: All declarations of 'Mixed' must have identical modifiers.
+!!! error TLUA2687: All declarations of 'Mixed' must have identical modifiers.
     
 ==== iface-local-first.tlua (1 errors) ====
     // The same, with the `local` declaration first: the error now anchors on the bare
@@ -18,7 +18,7 @@ iface.tlua(6,17): error TS2687: All declarations of 'Mixed' must have identical 
     local interface Flipped { a: number };
     interface Flipped { b: number };
               ~~~~~~~
-!!! error TS2687: All declarations of 'Flipped' must have identical modifiers.
+!!! error TLUA2687: All declarations of 'Flipped' must have identical modifiers.
     
 ==== shadow-a.tlua (0 errors) ====
     // A module-private `local type` and a bare global `type` of the same name live

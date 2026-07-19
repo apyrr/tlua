@@ -1,9 +1,9 @@
-tluaVarargNotPrefixExp.tlua(6,21): error TS1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(7,22): error TS1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(7,24): error TS1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(8,23): error TS1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(8,24): error TS2304: Cannot find name 'x'.
-tluaVarargNotPrefixExp.tlua(13,18): error TS1005: ',' expected.
+tluaVarargNotPrefixExp.tlua(6,21): error TLUA1005: ';' expected.
+tluaVarargNotPrefixExp.tlua(7,22): error TLUA1005: ';' expected.
+tluaVarargNotPrefixExp.tlua(7,24): error TLUA1005: ';' expected.
+tluaVarargNotPrefixExp.tlua(8,23): error TLUA1005: ';' expected.
+tluaVarargNotPrefixExp.tlua(8,24): error TLUA2304: Cannot find name 'x'.
+tluaVarargNotPrefixExp.tlua(13,18): error TLUA1005: ',' expected.
 
 
 ==== tluaVarargNotPrefixExp.tlua (6 errors) ====
@@ -14,24 +14,24 @@ tluaVarargNotPrefixExp.tlua(13,18): error TS1005: ',' expected.
     function f(...: number): void
       local called = ...(1);
                         ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
       local indexed = ...[1];
                          ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                            ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
       local accessed = ....x;
                           ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                            ~
-!!! error TS2304: Cannot find name 'x'.
+!!! error TLUA2304: Cannot find name 'x'.
     end
     
     // The same holds in a table constructor, where TS object spread used to live.
     function g(...: number): void
       local t = { ...({} as number) };
                      ~
-!!! error TS1005: ',' expected.
+!!! error TLUA1005: ',' expected.
     end
     
     // A bare `...` in each of those positions is still fine.

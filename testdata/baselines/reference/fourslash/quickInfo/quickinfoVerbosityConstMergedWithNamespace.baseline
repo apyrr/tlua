@@ -4,7 +4,7 @@
 // declare function create(x: string): number;
 //                  ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function create(x: string): number
 // | ```
 // | 
@@ -12,7 +12,7 @@
 // | ----------------------------------------------------------------------
 //                  ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function create(x: string): number
 // | ```
 // | 
@@ -21,7 +21,7 @@
 // declare namespace create {
 //                   ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function create(x: string): number
 // | ```
 // | 
@@ -29,7 +29,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function create(x: string): number
 // | ```
 // | 
@@ -54,7 +54,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction create(x: string): number\n```\n"
+          "value": "```tlua\nfunction create(x: string): number\n```\n"
         },
         "range": {
           "start": {
@@ -84,7 +84,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction create(x: string): number\n```\n"
+          "value": "```tlua\nfunction create(x: string): number\n```\n"
         },
         "range": {
           "start": {
@@ -114,7 +114,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction create(x: string): number\n```\n"
+          "value": "```tlua\nfunction create(x: string): number\n```\n"
         },
         "range": {
           "start": {
@@ -144,7 +144,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction create(x: string): number\n```\n"
+          "value": "```tlua\nfunction create(x: string): number\n```\n"
         },
         "range": {
           "start": {

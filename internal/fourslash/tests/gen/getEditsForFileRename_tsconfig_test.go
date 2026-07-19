@@ -14,7 +14,7 @@ func TestGetEditsForFileRename_tsconfig(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /src/tsconfig.json
+	const content = `// @Filename: /src/tluaconfig.json
 {
     "compilerOptions": {
         "rootDir": "old",
@@ -29,7 +29,7 @@ func TestGetEditsForFileRename_tsconfig(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyWillRenameFilesEdits(t, "/src/old", "/src/new", map[string]string{
-		"/src/tsconfig.json": `{
+		"/src/tluaconfig.json": `{
     "compilerOptions": {
         "rootDir": "new",
         "typeRoots": ["new"],

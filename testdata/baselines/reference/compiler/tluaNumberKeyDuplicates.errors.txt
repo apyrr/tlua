@@ -1,13 +1,13 @@
-tluaNumberKeyDuplicates.tlua(2,25): error TS1117: An object literal cannot have multiple properties with the same name.
-tluaNumberKeyDuplicates.tlua(9,28): error TS1117: An object literal cannot have multiple properties with the same name.
-tluaNumberKeyDuplicates.tlua(12,27): error TS1117: An object literal cannot have multiple properties with the same name.
+tluaNumberKeyDuplicates.tlua(2,25): error TLUA1117: An object literal cannot have multiple properties with the same name.
+tluaNumberKeyDuplicates.tlua(9,28): error TLUA1117: An object literal cannot have multiple properties with the same name.
+tluaNumberKeyDuplicates.tlua(12,27): error TLUA1117: An object literal cannot have multiple properties with the same name.
 
 
 ==== tluaNumberKeyDuplicates.tlua (3 errors) ====
     // [1] written twice names the same number key: duplicate.
     local dup1 = { [1] = 1, [1] = 2 };
                             ~~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
+!!! error TLUA1117: An object literal cannot have multiple properties with the same name.
     
     // Number key 1 and string key "1" are distinct keys: no duplicate.
     local ok1 = { [1] = 1, ["1"] = 2 };
@@ -16,12 +16,12 @@ tluaNumberKeyDuplicates.tlua(12,27): error TS1117: An object literal cannot have
     // Spelling canonicalization: 0x10 and 16 name the same key.
     local dup2 = { [0x10] = 1, [16] = 2 };
                                ~~~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
+!!! error TLUA1117: An object literal cannot have multiple properties with the same name.
     
     // 1.0 and 1 name the same key.
     local dup3 = { [1.0] = 1, [1] = 2 };
                               ~~~
-!!! error TS1117: An object literal cannot have multiple properties with the same name.
+!!! error TLUA1117: An object literal cannot have multiple properties with the same name.
     
     local es = {dup1, ok1, ok2, dup2, dup3};
     

@@ -3,14 +3,14 @@
 // local x = a => 10;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local x: (a: any) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: any
 // | ```
 // | 
@@ -18,21 +18,21 @@
 // local y = (a, b) => 10;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local y: (a: any, b: any) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //            ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //               ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) b: any
 // | ```
 // | 
@@ -40,14 +40,14 @@
 // local z = (a: number) => 10;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local z: (a: number) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //            ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (parameter) a: number
 // | ```
 // | 
@@ -55,7 +55,7 @@
 // local z2 = () => 10;
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local z2: () => number
 // | ```
 // | 
@@ -74,7 +74,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal x: (a: any) => number\n```\n"
+        "value": "```tlua\nlocal x: (a: any) => number\n```\n"
       },
       "range": {
         "start": {
@@ -101,7 +101,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: any\n```\n"
+        "value": "```tlua\n(parameter) a: any\n```\n"
       },
       "range": {
         "start": {
@@ -128,7 +128,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal y: (a: any, b: any) => number\n```\n"
+        "value": "```tlua\nlocal y: (a: any, b: any) => number\n```\n"
       },
       "range": {
         "start": {
@@ -155,7 +155,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: any\n```\n"
+        "value": "```tlua\n(parameter) a: any\n```\n"
       },
       "range": {
         "start": {
@@ -182,7 +182,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) b: any\n```\n"
+        "value": "```tlua\n(parameter) b: any\n```\n"
       },
       "range": {
         "start": {
@@ -209,7 +209,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal z: (a: number) => number\n```\n"
+        "value": "```tlua\nlocal z: (a: number) => number\n```\n"
       },
       "range": {
         "start": {
@@ -236,7 +236,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(parameter) a: number\n```\n"
+        "value": "```tlua\n(parameter) a: number\n```\n"
       },
       "range": {
         "start": {
@@ -263,7 +263,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\nlocal z2: () => number\n```\n"
+        "value": "```tlua\nlocal z2: () => number\n```\n"
       },
       "range": {
         "start": {

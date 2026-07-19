@@ -1,84 +1,84 @@
-inferFromTupleRestAndVariadic.tlua(7,28): error TS1110: Type expected.
-inferFromTupleRestAndVariadic.tlua(8,5): error TS1110: Type expected.
-inferFromTupleRestAndVariadic.tlua(8,8): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(8,9): error TS2304: Cannot find name 'infer'.
-inferFromTupleRestAndVariadic.tlua(8,15): error TS1005: ')' expected.
-inferFromTupleRestAndVariadic.tlua(8,15): error TS2304: Cannot find name 'C'.
-inferFromTupleRestAndVariadic.tlua(8,16): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(8,17): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(8,18): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(8,19): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(9,8): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(9,8): error TS2304: Cannot find name 'infer'.
-inferFromTupleRestAndVariadic.tlua(9,14): error TS1434: Unexpected keyword or identifier.
-inferFromTupleRestAndVariadic.tlua(9,14): error TS2304: Cannot find name 'B'.
-inferFromTupleRestAndVariadic.tlua(9,16): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(9,24): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(9,25): error TS2693: 'any' only refers to a type, but is being used as a value here.
-inferFromTupleRestAndVariadic.tlua(9,25): error TS2695: Left side of comma operator is unused and has no side effects.
-inferFromTupleRestAndVariadic.tlua(9,30): error TS2693: 'any' only refers to a type, but is being used as a value here.
-inferFromTupleRestAndVariadic.tlua(9,33): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(10,1): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(10,3): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(10,5): error TS1434: Unexpected keyword or identifier.
-inferFromTupleRestAndVariadic.tlua(10,5): error TS2304: Cannot find name 'B'.
-inferFromTupleRestAndVariadic.tlua(10,7): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(10,9): error TS2693: 'never' only refers to a type, but is being used as a value here.
-inferFromTupleRestAndVariadic.tlua(11,16): error TS2314: Generic type 'SubTup' requires 1 type argument(s).
-inferFromTupleRestAndVariadic.tlua(11,23): error TS1005: '>' expected.
-inferFromTupleRestAndVariadic.tlua(11,25): error TS1005: ']' expected.
-inferFromTupleRestAndVariadic.tlua(11,28): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(11,29): error TS1109: Expression expected.
-inferFromTupleRestAndVariadic.tlua(11,30): error TS1109: Expression expected.
-inferFromTupleRestAndVariadic.tlua(14,29): error TS1110: Type expected.
-inferFromTupleRestAndVariadic.tlua(15,5): error TS1110: Type expected.
-inferFromTupleRestAndVariadic.tlua(15,8): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(15,8): error TS2304: Cannot find name 'infer'.
-inferFromTupleRestAndVariadic.tlua(15,14): error TS1434: Unexpected keyword or identifier.
-inferFromTupleRestAndVariadic.tlua(15,14): error TS2304: Cannot find name 'A'.
-inferFromTupleRestAndVariadic.tlua(15,16): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(15,24): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(15,25): error TS2693: 'any' only refers to a type, but is being used as a value here.
-inferFromTupleRestAndVariadic.tlua(15,25): error TS2695: Left side of comma operator is unused and has no side effects.
-inferFromTupleRestAndVariadic.tlua(15,30): error TS2693: 'any' only refers to a type, but is being used as a value here.
-inferFromTupleRestAndVariadic.tlua(15,33): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(15,34): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(16,8): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(16,9): error TS2304: Cannot find name 'infer'.
-inferFromTupleRestAndVariadic.tlua(16,15): error TS1005: ')' expected.
-inferFromTupleRestAndVariadic.tlua(16,15): error TS2304: Cannot find name 'D'.
-inferFromTupleRestAndVariadic.tlua(16,16): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(16,17): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(16,18): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(16,19): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(17,1): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(17,3): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(17,5): error TS1434: Unexpected keyword or identifier.
-inferFromTupleRestAndVariadic.tlua(17,5): error TS2304: Cannot find name 'A'.
-inferFromTupleRestAndVariadic.tlua(17,7): error TS1128: Declaration or statement expected.
-inferFromTupleRestAndVariadic.tlua(17,9): error TS2693: 'never' only refers to a type, but is being used as a value here.
-inferFromTupleRestAndVariadic.tlua(18,17): error TS2314: Generic type 'SubTup2' requires 1 type argument(s).
-inferFromTupleRestAndVariadic.tlua(18,25): error TS1005: '>' expected.
-inferFromTupleRestAndVariadic.tlua(18,27): error TS1005: ']' expected.
-inferFromTupleRestAndVariadic.tlua(18,30): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(18,31): error TS1109: Expression expected.
-inferFromTupleRestAndVariadic.tlua(18,32): error TS1109: Expression expected.
-inferFromTupleRestAndVariadic.tlua(21,17): error TS2314: Generic type 'SubTup' requires 1 type argument(s).
-inferFromTupleRestAndVariadic.tlua(21,24): error TS1005: '>' expected.
-inferFromTupleRestAndVariadic.tlua(21,26): error TS1005: ']' expected.
-inferFromTupleRestAndVariadic.tlua(21,28): error TS2695: Left side of comma operator is unused and has no side effects.
-inferFromTupleRestAndVariadic.tlua(21,28): error TS2695: Left side of comma operator is unused and has no side effects.
-inferFromTupleRestAndVariadic.tlua(21,35): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(21,36): error TS1109: Expression expected.
-inferFromTupleRestAndVariadic.tlua(21,37): error TS1109: Expression expected.
-inferFromTupleRestAndVariadic.tlua(22,17): error TS2314: Generic type 'SubTup2' requires 1 type argument(s).
-inferFromTupleRestAndVariadic.tlua(22,25): error TS1005: '>' expected.
-inferFromTupleRestAndVariadic.tlua(22,27): error TS1005: ']' expected.
-inferFromTupleRestAndVariadic.tlua(22,29): error TS2695: Left side of comma operator is unused and has no side effects.
-inferFromTupleRestAndVariadic.tlua(22,29): error TS2695: Left side of comma operator is unused and has no side effects.
-inferFromTupleRestAndVariadic.tlua(22,36): error TS1005: ';' expected.
-inferFromTupleRestAndVariadic.tlua(22,37): error TS1109: Expression expected.
-inferFromTupleRestAndVariadic.tlua(22,38): error TS1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(7,28): error TLUA1110: Type expected.
+inferFromTupleRestAndVariadic.tlua(8,5): error TLUA1110: Type expected.
+inferFromTupleRestAndVariadic.tlua(8,8): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(8,9): error TLUA2304: Cannot find name 'infer'.
+inferFromTupleRestAndVariadic.tlua(8,15): error TLUA1005: ')' expected.
+inferFromTupleRestAndVariadic.tlua(8,15): error TLUA2304: Cannot find name 'C'.
+inferFromTupleRestAndVariadic.tlua(8,16): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(8,17): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(8,18): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(8,19): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(9,8): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(9,8): error TLUA2304: Cannot find name 'infer'.
+inferFromTupleRestAndVariadic.tlua(9,14): error TLUA1434: Unexpected keyword or identifier.
+inferFromTupleRestAndVariadic.tlua(9,14): error TLUA2304: Cannot find name 'B'.
+inferFromTupleRestAndVariadic.tlua(9,16): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(9,24): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(9,25): error TLUA2693: 'any' only refers to a type, but is being used as a value here.
+inferFromTupleRestAndVariadic.tlua(9,25): error TLUA2695: Left side of comma operator is unused and has no side effects.
+inferFromTupleRestAndVariadic.tlua(9,30): error TLUA2693: 'any' only refers to a type, but is being used as a value here.
+inferFromTupleRestAndVariadic.tlua(9,33): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(10,1): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(10,3): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(10,5): error TLUA1434: Unexpected keyword or identifier.
+inferFromTupleRestAndVariadic.tlua(10,5): error TLUA2304: Cannot find name 'B'.
+inferFromTupleRestAndVariadic.tlua(10,7): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(10,9): error TLUA2693: 'never' only refers to a type, but is being used as a value here.
+inferFromTupleRestAndVariadic.tlua(11,16): error TLUA2314: Generic type 'SubTup' requires 1 type argument(s).
+inferFromTupleRestAndVariadic.tlua(11,23): error TLUA1005: '>' expected.
+inferFromTupleRestAndVariadic.tlua(11,25): error TLUA1005: ']' expected.
+inferFromTupleRestAndVariadic.tlua(11,28): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(11,29): error TLUA1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(11,30): error TLUA1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(14,29): error TLUA1110: Type expected.
+inferFromTupleRestAndVariadic.tlua(15,5): error TLUA1110: Type expected.
+inferFromTupleRestAndVariadic.tlua(15,8): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(15,8): error TLUA2304: Cannot find name 'infer'.
+inferFromTupleRestAndVariadic.tlua(15,14): error TLUA1434: Unexpected keyword or identifier.
+inferFromTupleRestAndVariadic.tlua(15,14): error TLUA2304: Cannot find name 'A'.
+inferFromTupleRestAndVariadic.tlua(15,16): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(15,24): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(15,25): error TLUA2693: 'any' only refers to a type, but is being used as a value here.
+inferFromTupleRestAndVariadic.tlua(15,25): error TLUA2695: Left side of comma operator is unused and has no side effects.
+inferFromTupleRestAndVariadic.tlua(15,30): error TLUA2693: 'any' only refers to a type, but is being used as a value here.
+inferFromTupleRestAndVariadic.tlua(15,33): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(15,34): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(16,8): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(16,9): error TLUA2304: Cannot find name 'infer'.
+inferFromTupleRestAndVariadic.tlua(16,15): error TLUA1005: ')' expected.
+inferFromTupleRestAndVariadic.tlua(16,15): error TLUA2304: Cannot find name 'D'.
+inferFromTupleRestAndVariadic.tlua(16,16): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(16,17): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(16,18): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(16,19): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(17,1): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(17,3): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(17,5): error TLUA1434: Unexpected keyword or identifier.
+inferFromTupleRestAndVariadic.tlua(17,5): error TLUA2304: Cannot find name 'A'.
+inferFromTupleRestAndVariadic.tlua(17,7): error TLUA1128: Declaration or statement expected.
+inferFromTupleRestAndVariadic.tlua(17,9): error TLUA2693: 'never' only refers to a type, but is being used as a value here.
+inferFromTupleRestAndVariadic.tlua(18,17): error TLUA2314: Generic type 'SubTup2' requires 1 type argument(s).
+inferFromTupleRestAndVariadic.tlua(18,25): error TLUA1005: '>' expected.
+inferFromTupleRestAndVariadic.tlua(18,27): error TLUA1005: ']' expected.
+inferFromTupleRestAndVariadic.tlua(18,30): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(18,31): error TLUA1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(18,32): error TLUA1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(21,17): error TLUA2314: Generic type 'SubTup' requires 1 type argument(s).
+inferFromTupleRestAndVariadic.tlua(21,24): error TLUA1005: '>' expected.
+inferFromTupleRestAndVariadic.tlua(21,26): error TLUA1005: ']' expected.
+inferFromTupleRestAndVariadic.tlua(21,28): error TLUA2695: Left side of comma operator is unused and has no side effects.
+inferFromTupleRestAndVariadic.tlua(21,28): error TLUA2695: Left side of comma operator is unused and has no side effects.
+inferFromTupleRestAndVariadic.tlua(21,35): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(21,36): error TLUA1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(21,37): error TLUA1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(22,17): error TLUA2314: Generic type 'SubTup2' requires 1 type argument(s).
+inferFromTupleRestAndVariadic.tlua(22,25): error TLUA1005: '>' expected.
+inferFromTupleRestAndVariadic.tlua(22,27): error TLUA1005: ']' expected.
+inferFromTupleRestAndVariadic.tlua(22,29): error TLUA2695: Left side of comma operator is unused and has no side effects.
+inferFromTupleRestAndVariadic.tlua(22,29): error TLUA2695: Left side of comma operator is unused and has no side effects.
+inferFromTupleRestAndVariadic.tlua(22,36): error TLUA1005: ';' expected.
+inferFromTupleRestAndVariadic.tlua(22,37): error TLUA1109: Expression expected.
+inferFromTupleRestAndVariadic.tlua(22,38): error TLUA1109: Expression expected.
 
 
 ==== inferFromTupleRestAndVariadic.tlua (81 errors) ====
@@ -90,180 +90,180 @@ inferFromTupleRestAndVariadic.tlua(22,38): error TS1109: Expression expected.
     
     type SubTup<T> = T extends [
                                ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
         ...(infer C)[],
         ~~~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
            ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
             ~~~~~
-!!! error TS2304: Cannot find name 'infer'.
+!!! error TLUA2304: Cannot find name 'infer'.
                   ~
-!!! error TS1005: ')' expected.
+!!! error TLUA1005: ')' expected.
                   ~
-!!! error TS2304: Cannot find name 'C'.
+!!! error TLUA2304: Cannot find name 'C'.
                    ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                      ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                       ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
         ...infer B extends [any, any]
            ~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
            ~~~~~
-!!! error TS2304: Cannot find name 'infer'.
+!!! error TLUA2304: Cannot find name 'infer'.
                  ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                  ~
-!!! error TS2304: Cannot find name 'B'.
+!!! error TLUA2304: Cannot find name 'B'.
                    ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                            ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                             ~~~
-!!! error TS2693: 'any' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'any' only refers to a type, but is being used as a value here.
                             ~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                  ~~~
-!!! error TS2693: 'any' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'any' only refers to a type, but is being used as a value here.
                                     ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
     ] ? B : never;
     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
       ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
         ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
         ~
-!!! error TS2304: Cannot find name 'B'.
+!!! error TLUA2304: Cannot find name 'B'.
           ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
             ~~~~~
-!!! error TS2693: 'never' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'never' only refers to a type, but is being used as a value here.
     type Trigger = SubTup<[1, 2]>;
                    ~~~~~~~
-!!! error TS2314: Generic type 'SubTup' requires 1 type argument(s).
+!!! error TLUA2314: Generic type 'SubTup' requires 1 type argument(s).
                           ~
-!!! error TS1005: '>' expected.
+!!! error TLUA1005: '>' expected.
                             ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                                ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                 ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                                  ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     
     // Also test the [...T, ...rest] pattern
     type SubTup2<T> = T extends [
                                 ~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
         ...infer A extends [any, any],
         ~~~
-!!! error TS1110: Type expected.
+!!! error TLUA1110: Type expected.
            ~~~~~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
            ~~~~~
-!!! error TS2304: Cannot find name 'infer'.
+!!! error TLUA2304: Cannot find name 'infer'.
                  ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
                  ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
                    ~~~~~~~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                            ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                             ~~~
-!!! error TS2693: 'any' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'any' only refers to a type, but is being used as a value here.
                             ~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                  ~~~
-!!! error TS2693: 'any' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'any' only refers to a type, but is being used as a value here.
                                     ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                      ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
         ...(infer D)[],
            ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
             ~~~~~
-!!! error TS2304: Cannot find name 'infer'.
+!!! error TLUA2304: Cannot find name 'infer'.
                   ~
-!!! error TS1005: ')' expected.
+!!! error TLUA1005: ')' expected.
                   ~
-!!! error TS2304: Cannot find name 'D'.
+!!! error TLUA2304: Cannot find name 'D'.
                    ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                      ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
                       ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
     ] ? A : never;
     ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
       ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
         ~
-!!! error TS1434: Unexpected keyword or identifier.
+!!! error TLUA1434: Unexpected keyword or identifier.
         ~
-!!! error TS2304: Cannot find name 'A'.
+!!! error TLUA2304: Cannot find name 'A'.
           ~
-!!! error TS1128: Declaration or statement expected.
+!!! error TLUA1128: Declaration or statement expected.
             ~~~~~
-!!! error TS2693: 'never' only refers to a type, but is being used as a value here.
+!!! error TLUA2693: 'never' only refers to a type, but is being used as a value here.
     type Trigger2 = SubTup2<[1, 2]>;
                     ~~~~~~~~
-!!! error TS2314: Generic type 'SubTup2' requires 1 type argument(s).
+!!! error TLUA2314: Generic type 'SubTup2' requires 1 type argument(s).
                             ~
-!!! error TS1005: '>' expected.
+!!! error TLUA1005: '>' expected.
                               ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                                  ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                   ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                                    ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     
     // Test with more elements than implied arity (should work fine)
     type Trigger3 = SubTup<[1, 2, 3, 4]>;
                     ~~~~~~~
-!!! error TS2314: Generic type 'SubTup' requires 1 type argument(s).
+!!! error TLUA2314: Generic type 'SubTup' requires 1 type argument(s).
                            ~
-!!! error TS1005: '>' expected.
+!!! error TLUA1005: '>' expected.
                              ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                                ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                ~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                       ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                        ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                                         ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     type Trigger4 = SubTup2<[1, 2, 3, 4]>;
                     ~~~~~~~~
-!!! error TS2314: Generic type 'SubTup2' requires 1 type argument(s).
+!!! error TLUA2314: Generic type 'SubTup2' requires 1 type argument(s).
                             ~
-!!! error TS1005: '>' expected.
+!!! error TLUA1005: '>' expected.
                               ~
-!!! error TS1005: ']' expected.
+!!! error TLUA1005: ']' expected.
                                 ~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                 ~~~~
-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                        ~
-!!! error TS1005: ';' expected.
+!!! error TLUA1005: ';' expected.
                                         ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
                                          ~
-!!! error TS1109: Expression expected.
+!!! error TLUA1109: Expression expected.
     

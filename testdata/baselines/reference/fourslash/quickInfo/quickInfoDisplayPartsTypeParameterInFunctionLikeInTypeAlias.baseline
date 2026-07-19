@@ -3,14 +3,14 @@
 // type MixinCtor<A> = new () => A & { constructor: MixinCtor<A> };
 //                               ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (type parameter) A in type MixinCtor<A>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                                            ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (type parameter) A in type MixinCtor<A>
 // | ```
 // | 
@@ -18,7 +18,7 @@
 // type MixinCtor<A> = new () => A & { constructor: { constructor: MixinCtor<A> } };
 //                                                                           ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | (type parameter) A in type MixinCtor<A>
 // | ```
 // | 
@@ -37,7 +37,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(type parameter) A in type MixinCtor<A>\n```\n"
+        "value": "```tlua\n(type parameter) A in type MixinCtor<A>\n```\n"
       },
       "range": {
         "start": {
@@ -64,7 +64,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(type parameter) A in type MixinCtor<A>\n```\n"
+        "value": "```tlua\n(type parameter) A in type MixinCtor<A>\n```\n"
       },
       "range": {
         "start": {
@@ -91,7 +91,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(type parameter) A in type MixinCtor<A>\n```\n"
+        "value": "```tlua\n(type parameter) A in type MixinCtor<A>\n```\n"
       },
       "range": {
         "start": {

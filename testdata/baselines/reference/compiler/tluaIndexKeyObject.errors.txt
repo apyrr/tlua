@@ -1,6 +1,6 @@
-tluaIndexKeyObject.tlua(32,22): error TS7053: Element implicitly has an 'any' type because expression of type '"x"' can't be used to index type 'ByTable'.
+tluaIndexKeyObject.tlua(32,22): error TLUA7053: Element implicitly has an 'any' type because expression of type '"x"' can't be used to index type 'ByTable'.
   Property 'x' does not exist on type 'ByTable'.
-tluaIndexKeyObject.tlua(33,22): error TS7053: Element implicitly has an 'any' type because expression of type 'Point' can't be used to index type 'ByThread'.
+tluaIndexKeyObject.tlua(33,22): error TLUA7053: Element implicitly has an 'any' type because expression of type 'Point' can't be used to index type 'ByThread'.
 
 
 ==== tluaIndexKeyObject.tlua (2 errors) ====
@@ -37,11 +37,11 @@ tluaIndexKeyObject.tlua(33,22): error TS7053: Element implicitly has an 'any' ty
     // The key domains do not bleed into one another: a table key is not a string key.
     local bad1: string = byTable["x"];
                          ~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type '"x"' can't be used to index type 'ByTable'.
-!!! error TS7053:   Property 'x' does not exist on type 'ByTable'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '"x"' can't be used to index type 'ByTable'.
+!!! error TLUA7053:   Property 'x' does not exist on type 'ByTable'.
     local bad2: string = byThread[pt];
                          ~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'Point' can't be used to index type 'ByThread'.
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type 'Point' can't be used to index type 'ByThread'.
     
     // keyof reports the object key.
     type K = keyof ByTable;

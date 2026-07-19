@@ -12,7 +12,7 @@
 // local o: Orchard = {} as any;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local o: {
 // |     takeOneApple(a: {
 // |         color: string;
@@ -32,7 +32,7 @@
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local o: {
 // |     takeOneApple(a: Apple): void;
 // |     getApple(): Apple;
@@ -44,7 +44,7 @@
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | local o: Orchard
 // | ```
 // | 
@@ -53,7 +53,7 @@
 // declare function isApple(x: unknown): x is Apple;
 //                  ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function isApple(x: unknown): x is {
 // |     color: string;
 // |     size: number;
@@ -64,7 +64,7 @@
 // | ----------------------------------------------------------------------
 //                  ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function isApple(x: unknown): x is Apple
 // | ```
 // | 
@@ -79,7 +79,7 @@
 // someFun.what = 'what';
 // ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function someFun(a: {
 // |     prop1: string;
 // | }): {
@@ -91,7 +91,7 @@
 // | ----------------------------------------------------------------------
 // ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```typescript
+// | ```tlua
 // | function someFun(a: SomeType): SomeType
 // | ```
 // | 
@@ -112,7 +112,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal o: Orchard\n```\n"
+          "value": "```tlua\nlocal o: Orchard\n```\n"
         },
         "range": {
           "start": {
@@ -143,7 +143,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal o: {\n    takeOneApple(a: Apple): void;\n    getApple(): Apple;\n    getApple(size: number): Apple[];\n}\n```\n"
+          "value": "```tlua\nlocal o: {\n    takeOneApple(a: Apple): void;\n    getApple(): Apple;\n    getApple(size: number): Apple[];\n}\n```\n"
         },
         "range": {
           "start": {
@@ -174,7 +174,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nlocal o: {\n    takeOneApple(a: {\n        color: string;\n        size: number;\n    }): void;\n    getApple(): {\n        color: string;\n        size: number;\n    };\n    getApple(size: number): {\n        [x: number]: Apple;\n    };\n}\n```\n"
+          "value": "```tlua\nlocal o: {\n    takeOneApple(a: {\n        color: string;\n        size: number;\n    }): void;\n    getApple(): {\n        color: string;\n        size: number;\n    };\n    getApple(size: number): {\n        [x: number]: Apple;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
@@ -205,7 +205,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction isApple(x: unknown): x is Apple\n```\n"
+          "value": "```tlua\nfunction isApple(x: unknown): x is Apple\n```\n"
         },
         "range": {
           "start": {
@@ -236,7 +236,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction isApple(x: unknown): x is {\n    color: string;\n    size: number;\n}\n```\n"
+          "value": "```tlua\nfunction isApple(x: unknown): x is {\n    color: string;\n    size: number;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -266,7 +266,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction someFun(a: SomeType): SomeType\n```\n"
+          "value": "```tlua\nfunction someFun(a: SomeType): SomeType\n```\n"
         },
         "range": {
           "start": {
@@ -297,7 +297,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nfunction someFun(a: {\n    prop1: string;\n}): {\n    prop1: string;\n}\n```\n"
+          "value": "```tlua\nfunction someFun(a: {\n    prop1: string;\n}): {\n    prop1: string;\n}\n```\n"
         },
         "range": {
           "start": {
