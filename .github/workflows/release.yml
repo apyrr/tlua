@@ -44,7 +44,7 @@ jobs:
   # platform package dir; the native-arch leg also uploads the (platform-
   # independent) main package. `pack` reassembles them.
   release-build:
-    # Skip on forks (they lack the NPM_TOKEN secret used by `publish`).
+    # Skip on forks: only the upstream repo is a configured npm trusted publisher.
     if: ${{ github.repository_owner == 'apyrr' }}
     runs-on: ubuntu-latest
     strategy:
@@ -144,6 +144,14 @@ jobs:
     needs: [checks, pack]
     if: ${{ github.repository_owner == 'apyrr' }}
     runs-on: ubuntu-latest
+    # Authenticate to npm via Trusted Publishing (OIDC): npm mints a short-lived
+    # token from this workflow's identity, so there's no long-lived NPM_TOKEN
+    # secret. `id-token: write` lets the runner request the OIDC token; the
+    # trusted-publisher must be configured on npmjs.com for each package (repo +
+    # this workflow filename). Provenance attestations are emitted automatically.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -158,11 +166,10 @@ jobs:
 
       # npm — publish in the order recorded by pack-packages: platform packages
       # first, then the main package that depends on them. access/dist-tag come
-      # from each package's baked-in publishConfig.
+      # from each package's baked-in publishConfig. No token: npm exchanges the
+      # OIDC identity for a publish token automatically.
       - name: Publish to npm
         working-directory: built/npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
           jq -c '.stages[]' publish-manifest.json | while read -r stage; do
