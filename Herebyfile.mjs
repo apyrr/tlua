@@ -64,7 +64,7 @@ const { values: rawOptions } = parseArgs({
         dirty: { type: "boolean" },
         release: { type: "boolean" },
 
-        setPrerelease: { type: "string" },
+        setBuild: { type: "string" },
         forRelease: { type: "boolean" },
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
@@ -83,8 +83,8 @@ const { values: rawOptions } = parseArgs({
  */
 const options = /** @type {Options} */ (rawOptions);
 
-if (options.forRelease && !options.setPrerelease) {
-    throw new Error("forRelease requires setPrerelease");
+if (options.forRelease && options.setBuild === undefined) {
+    throw new Error("forRelease requires setBuild");
 }
 
 const defaultGoBuildTags = [
@@ -1174,8 +1174,12 @@ const getVersion = memoize(() => {
     }
 
     let version = match[1];
-    if (options.setPrerelease) {
-        version += `-${options.setPrerelease}`;
+    if (options.setBuild !== undefined) {
+        // Release build: replace the patch component with the CI build number,
+        // producing a plain (non-prerelease) <major>.<minor>.<build> version
+        // that is unique and monotonic per run and publishes to `latest`.
+        const [major, minor] = version.split(".");
+        version = `${major}.${minor}.${options.setBuild}`;
     }
     else if (match[2]) {
         version += match[2];
@@ -1185,8 +1189,8 @@ const getVersion = memoize(() => {
 });
 
 function getPublishTag() {
-    const match = getVersion().match(/-(dev|beta|rc)(?:[.-]|$)/);
-    if (match?.[1]) return match[1] === "dev" ? "next" : match[1];
+    // Rolling releases publish plain <major>.<minor>.<build> versions straight
+    // to `latest`; there is no separate prerelease channel.
     return "latest";
 }
 
@@ -1617,7 +1621,7 @@ async function runBuildTluaPackages() {
         throw new Error(`Found external imports in .d.ts files:\n${importErrors.map(e => "  " + e).join("\n")}`);
     }
 
-    const extraFlags = getReleaseBuildFlags(options.setPrerelease ? getVersion() : undefined);
+    const extraFlags = getReleaseBuildFlags(options.setBuild !== undefined ? getVersion() : undefined);
 
     const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
         const packageJson = {
@@ -1737,18 +1741,8 @@ async function runPackVsixExtensions() {
 
     let version = "0.0.0";
     if (options.forRelease) {
-        // No real semver prerelease versioning.
-        // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-        assert(options.setPrerelease, "forRelease is true but setPrerelease is not set");
-        const prerelease = options.setPrerelease;
-        assert(typeof prerelease === "string", "setPrerelease is not a string");
-        // parse `dev.<number>.<number>`.
-        const match = prerelease.match(/dev\.(\d+)\.(\d+)/);
-        if (!match) {
-            throw new Error(`Prerelease version should be in the form of dev.<number>.<number>, but got ${prerelease}`);
-        }
-        // Set version to `0.<number>.<number>`.
-        version = `0.${match[1]}.${match[2]}`;
+        assert(options.setBuild !== undefined, "forRelease is true but setBuild is not set");
+        version = getVersion();
     }
 
     console.log("Version:", version);
@@ -1777,8 +1771,8 @@ export const tluaRelease = task({
     name: "tlua:release",
     hiddenFromTaskList: true,
     run: async () => {
-        if (!options.forRelease || !options.setPrerelease) {
-            throw new Error("tlua:release requires --forRelease and --setPrerelease flags. Example: npx hereby tlua:release --forRelease --setPrerelease=dev.1.0");
+        if (!options.forRelease || options.setBuild === undefined) {
+            throw new Error("tlua:release requires --forRelease and --setBuild flags. Example: npx hereby tlua:release --forRelease --setBuild=42");
         }
         await runBuildTluaPackages();
         await runPackTluaPackages();

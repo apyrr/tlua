@@ -10,6 +10,8 @@ on:
   merge_group:
     branches:
       - main
+  # Allow manually triggering a run (and, on main, a publish).
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -61,7 +63,28 @@ jobs:
 
       - run: npm ci
 
-      - run: npx hereby tlua:release --forRelease --setPrerelease dev.0.0
+      - run: npx hereby tlua:release --forRelease --setBuild ${{ github.run_number }}
+
+      # Make the packed npm tarballs and VSIX extensions downloadable from the
+      # run. (Publishing the npm packages to the registry happens in `publish`;
+      # the VS Code Marketplace needs an Azure subscription, so the VSIX ships
+      # only as a run artifact for now.)
+      - name: Upload npm package tarballs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: npm-packages
+          # Include publish-manifest.json so the `publish` job can publish these
+          # exact tarballs (in order) without rebuilding.
+          path: |
+            built/npm/*.tgz
+            built/npm/publish-manifest.json
+          if-no-files-found: error
+      - name: Upload VSIX extensions
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: vsix-extensions
+          path: built/vsix/*.vsix
+          if-no-files-found: error
 
   extension:
     runs-on: ubuntu-latest
@@ -296,3 +319,52 @@ jobs:
           NEEDS: ${{ toJson(needs) }}
         run: |
           ! echo $NEEDS | jq -e 'to_entries[] | { job: .key, result: .value.result } | select((.result == "success" or .result == "skipped") | not)'
+
+  # Publishes a rolling release of the npm packages to the `latest` dist-tag on
+  # every merge to main, gated on all checks above passing (needs: required). It
+  # publishes the exact tarballs built by `release-build` (downloaded as the
+  # `npm-packages` artifact) instead of rebuilding — build once, publish those
+  # bytes. The version is 0.0.<run_number>, a plain monotonic version, so
+  # `npm install @tlua/compiler` always resolves to the newest build.
+  #
+  # VSIX publishing to the VS Code Marketplace is omitted (it needs an Azure
+  # subscription); the VSIX ships as the `vsix-extensions` run artifact instead.
+  publish:
+    runs-on: ubuntu-latest
+    needs: [required]
+    # Only on a push/dispatch to main, and only in the canonical repo (forks lack
+    # the NPM_TOKEN secret). `needs: required` gates on green checks and ensures
+    # release-build (which produced the npm-packages artifact) finished first.
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && github.repository_owner == 'apyrr' }}
+    # Never run two publishes at once; let an in-flight one finish.
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+
+      # The exact tarballs + publish-manifest.json built by release-build.
+      - name: Download npm packages
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: npm-packages
+          path: built/npm
+
+      # npm — publish in the order recorded by pack-packages: platform packages
+      # first, then the main package that depends on them. access/dist-tag come
+      # from each package's baked-in publishConfig.
+      - name: Publish to npm
+        working-directory: built/npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          jq -c '.stages[]' publish-manifest.json | while read -r stage; do
+            echo "$stage" | jq -r '.[].filename' | while read -r f; do
+              echo "npm publish $f"
+              npm publish "$f"
+            done
+          done
