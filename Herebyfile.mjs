@@ -1238,8 +1238,11 @@ const vsixExtensionPackages = [
 
 /**
  * npm package platforms supported by the tlua release.
- * BSD targets that are not in Node's supported-platforms table are best-effort
- * and limited to mainstream 64-bit x64/arm64 architectures.
+ * The release ships mainstream desktop/server targets only. The exotic targets
+ * (BSDs, illumos, AIX, and non-mainstream Linux arches) are commented out below
+ * rather than deleted so they are easy to re-enable; while commented out, their
+ * Go targets must stay listed in `ignoredGoTargets` so `tlua:check-platforms`
+ * remains in sync with `go tool dist list`.
  * alpine is set only for the subset that also produces Alpine VSIXes.
  * @type {Platform[]}
  */
@@ -1251,23 +1254,39 @@ const platforms = [
     { os: "linux", arch: "arm64", vsix: true, alpine: true },
     { os: "darwin", arch: "x64", vsix: true },
     { os: "darwin", arch: "arm64", vsix: true },
-    { os: "aix", arch: "ppc64" },
-    { os: "freebsd", arch: "arm64" },
-    { os: "freebsd", arch: "x64" },
-    { os: "linux", arch: "loong64" },
-    { os: "linux", arch: "mips64el" },
-    { os: "linux", arch: "ppc64" },
-    { os: "linux", arch: "riscv64" },
-    { os: "linux", arch: "s390x" },
-    { os: "netbsd", arch: "arm64" },
-    { os: "netbsd", arch: "x64" },
-    { os: "openbsd", arch: "arm64" },
-    { os: "openbsd", arch: "x64" },
-    { os: "sunos", arch: "x64" },
+    // Descoped from the release (also excluded in `ignoredGoTargets`):
+    // { os: "aix", arch: "ppc64" },
+    // { os: "freebsd", arch: "arm64" },
+    // { os: "freebsd", arch: "x64" },
+    // { os: "linux", arch: "loong64" },
+    // { os: "linux", arch: "mips64el" },
+    // { os: "linux", arch: "ppc64" },
+    // { os: "linux", arch: "riscv64" },
+    // { os: "linux", arch: "s390x" },
+    // { os: "netbsd", arch: "arm64" },
+    // { os: "netbsd", arch: "x64" },
+    // { os: "openbsd", arch: "arm64" },
+    // { os: "openbsd", arch: "x64" },
+    // { os: "sunos", arch: "x64" },
     // Wasm?
 ];
 
 const ignoredGoTargets = new Map([
+    // Descoped from the release (see the commented-out `platforms` entries): the
+    // release ships mainstream desktop/server targets only.
+    ["aix/ppc64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["freebsd/amd64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["freebsd/arm64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["illumos/amd64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["linux/loong64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["linux/mips64le", "Descoped from the release; mainstream desktop/server targets only"],
+    ["linux/ppc64le", "Descoped from the release; mainstream desktop/server targets only"],
+    ["linux/riscv64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["linux/s390x", "Descoped from the release; mainstream desktop/server targets only"],
+    ["netbsd/amd64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["netbsd/arm64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["openbsd/amd64", "Descoped from the release; mainstream desktop/server targets only"],
+    ["openbsd/arm64", "Descoped from the release; mainstream desktop/server targets only"],
     ["android/386", "Android is not a Node runtime target TypeScript supports"],
     ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
     ["android/arm", "Android is not a Node runtime target TypeScript supports"],
