@@ -118,7 +118,6 @@ jobs:
     runs-on: ${{ matrix.config.os }}
 
     permissions:
-      id-token: write
       contents: read
 
     env:
