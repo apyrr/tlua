@@ -1,15 +1,12 @@
 package encoder_test
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/apyrr/tlua/internal/api/encoder"
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/parser"
-	"github.com/apyrr/tlua/internal/repo"
 	"gotest.tools/v3/assert"
 )
 
@@ -352,15 +349,9 @@ func TestDecodeSourceFile_PrefixUnaryOperator(t *testing.T) {
 }
 
 func BenchmarkDecodeSourceFile(b *testing.B) {
-	repo.SkipIfNoTypeScriptSubmodule(b)
-	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
-	fileContent, err := os.ReadFile(filePath)
-	assert.NilError(b, err)
-	code := string(fileContent)
-	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/checker.tlua",
-		Path:     "/checker.tlua",
-	}, code, core.ScriptKindTS)
+	// See parseBenchCorpus for the in-repo benchmark input.
+	sourceFile := parseBenchCorpus(b)
+	code := sourceFile.Text()
 
 	buf, _, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(b, err)
@@ -368,8 +359,8 @@ func BenchmarkDecodeSourceFile(b *testing.B) {
 	b.Run("parse", func(b *testing.B) {
 		for b.Loop() {
 			parser.ParseSourceFile(ast.SourceFileParseOptions{
-				FileName: "/checker.tlua",
-				Path:     "/checker.tlua",
+				FileName: "/lib.luajit.d.tlua",
+				Path:     "/lib.luajit.d.tlua",
 			}, code, core.ScriptKindTS)
 		}
 	})

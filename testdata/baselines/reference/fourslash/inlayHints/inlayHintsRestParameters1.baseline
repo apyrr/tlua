@@ -104,17 +104,49 @@ foo2(1, 2, 3)
   },
   "label": [
     {
-      "value": "...args",
+      "value": "a",
       "location": {
         "uri": "file:///inlayHintsRestParameters1.tlua",
         "range": {
           "start": {
-            "line": 3,
-            "character": 36
+            "line": 2,
+            "character": 14
           },
           "end": {
-            "line": 3,
-            "character": 40
+            "line": 2,
+            "character": 15
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
+  "kind": 2,
+  "paddingRight": true
+}
+
+foo2(1, 2, 3)
+           ^
+{
+  "position": {
+    "line": 4,
+    "character": 11
+  },
+  "label": [
+    {
+      "value": "b",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters1.tlua",
+        "range": {
+          "start": {
+            "line": 2,
+            "character": 25
+          },
+          "end": {
+            "line": 2,
+            "character": 26
           }
         }
       }
@@ -147,38 +179,6 @@ foo3(1, 2, 3)
           "end": {
             "line": 6,
             "character": 23
-          }
-        }
-      }
-    },
-    {
-      "value": ":"
-    }
-  ],
-  "kind": 2,
-  "paddingRight": true
-}
-
-foo3(1, 2, 3)
-        ^
-{
-  "position": {
-    "line": 7,
-    "character": 8
-  },
-  "label": [
-    {
-      "value": "...args",
-      "location": {
-        "uri": "file:///inlayHintsRestParameters1.tlua",
-        "range": {
-          "start": {
-            "line": 6,
-            "character": 36
-          },
-          "end": {
-            "line": 6,
-            "character": 40
           }
         }
       }

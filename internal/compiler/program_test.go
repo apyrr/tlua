@@ -2,7 +2,6 @@ package compiler_test
 
 import (
 	"fmt"
-	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -10,10 +9,7 @@ import (
 	"github.com/apyrr/tlua/internal/bundled"
 	"github.com/apyrr/tlua/internal/compiler"
 	"github.com/apyrr/tlua/internal/core"
-	"github.com/apyrr/tlua/internal/repo"
 	"github.com/apyrr/tlua/internal/tsoptions"
-	"github.com/apyrr/tlua/internal/tspath"
-	"github.com/apyrr/tlua/internal/vfs/osvfs"
 	"github.com/apyrr/tlua/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -249,27 +245,4 @@ func BenchmarkNewProgram(b *testing.B) {
 			}
 		})
 	}
-
-	b.Run("compiler", func(b *testing.B) {
-		repo.SkipIfNoTypeScriptSubmodule(b)
-
-		rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
-
-		fs := osvfs.FS()
-		fs = bundled.WrapFS(fs)
-
-		host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
-
-		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tluaconfig.json"), nil, nil, host, nil)
-		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
-
-		opts := compiler.ProgramOptions{
-			Config: parsed,
-			Host:   host,
-		}
-
-		for b.Loop() {
-			compiler.NewProgram(opts)
-		}
-	})
 }

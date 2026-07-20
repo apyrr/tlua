@@ -5,8 +5,6 @@ import (
 	"io"
 	"io/fs"
 	"maps"
-	"path/filepath"
-	"slices"
 	"strings"
 	"testing"
 
@@ -15,17 +13,13 @@ import (
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/diagnosticwriter"
 	"github.com/apyrr/tlua/internal/json"
-	"github.com/apyrr/tlua/internal/locale"
 	"github.com/apyrr/tlua/internal/parser"
-	"github.com/apyrr/tlua/internal/repo"
 	"github.com/apyrr/tlua/internal/scanner"
 	"github.com/apyrr/tlua/internal/testutil/baseline"
 	"github.com/apyrr/tlua/internal/tsoptions"
 	"github.com/apyrr/tlua/internal/tsoptions/tsoptionstest"
 	"github.com/apyrr/tlua/internal/tspath"
 	"github.com/apyrr/tlua/internal/vfs"
-	"github.com/apyrr/tlua/internal/vfs/osvfs"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"gotest.tools/v3/assert"
 )
 
@@ -128,7 +122,6 @@ var parseConfigFileTextToJsonTests = []struct {
 
 func TestParseConfigFileTextToJson(t *testing.T) {
 	t.Parallel()
-	repo.SkipIfNoTypeScriptSubmodule(t)
 	for _, rec := range parseConfigFileTextToJsonTests {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
@@ -154,15 +147,16 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 					baselineContent.WriteString("\n")
 				}
 			}
-			baseline.RunAgainstSubmodule(t, rec.title+" jsonParse.js", baselineContent.String(), baseline.Options{Subfolder: "config/tsconfigParsing"})
+			// The upstream jsonParse baselines lived in the TypeScript
+			// submodule; these are now tracked as in-repo baselines.
+			baseline.Run(t, rec.title+" jsonParse.js", baselineContent.String(), baseline.Options{Subfolder: "config/tsconfigParsing"})
 		})
 	}
 }
 
 type parseJsonConfigTestCase struct {
-	title               string
-	noSubmoduleBaseline bool
-	input               []testConfig
+	title string
+	input []testConfig
 }
 
 var parseJsonConfigFileTests = []parseJsonConfigTestCase{
@@ -782,7 +776,6 @@ var tsconfigWithExtendsAndConfigDir = `{
 
 func TestParseJsonConfigFileContent(t *testing.T) {
 	t.Parallel()
-	repo.SkipIfNoTypeScriptSubmodule(t)
 	for _, rec := range parseJsonConfigFileTests {
 		t.Run(rec.title+" with json api", func(t *testing.T) {
 			t.Parallel()
@@ -809,7 +802,6 @@ func getParsedWithJsonApi(config testConfig, host tsoptions.ParseConfigHost, bas
 
 func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 	t.Parallel()
-	repo.SkipIfNoTypeScriptSubmodule(t)
 	for _, rec := range parseJsonConfigFileTests {
 		t.Run(rec.title+" with jsonSourceFile api", func(t *testing.T) {
 			t.Parallel()
@@ -1070,7 +1062,6 @@ func writeJsonReadableText(output io.Writer, input any) error {
 
 func TestParseTypeAcquisition(t *testing.T) {
 	t.Parallel()
-	// repo.SkipIfNoTypeScriptSubmodule(t)
 	cases := []struct {
 		title      string
 		configName string
@@ -1183,125 +1174,36 @@ func printFS(output io.Writer, files vfs.FS, root string) error {
 	})
 }
 
-func TestParseSrcCompiler(t *testing.T) {
-	t.Parallel()
+// BenchmarkParseTsconfigProject parses a representative tsconfig over a
+// synthetic project tree, exercising option validation and include-glob
+// file enumeration.
+func BenchmarkParseTsconfigProject(b *testing.B) {
+	compilerDir := "/project"
+	tsconfigFileName := "/project/tluaconfig.json"
+	jsonText := `{
+    "compilerOptions": {
+        "outDir": "../built/local",
+        "rootDir": ".",
+        "declaration": true,
+        "sourceMap": true,
+        "composite": true,
+        "strict": true
+    },
+    "include": ["**/*.tlua"]
+}`
 
-	repo.SkipIfNoTypeScriptSubmodule(t)
-
-	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
-	tsconfigFileName := tspath.CombinePaths(compilerDir, "tluaconfig.json")
-
-	fs := osvfs.FS()
-	host := &tsoptionstest.VfsParseConfigHost{
-		Vfs:              fs,
-		CurrentDirectory: compilerDir,
+	files := map[string]string{tsconfigFileName: jsonText}
+	for i := range 100 {
+		files[fmt.Sprintf("/project/dir%d/file%d.tlua", i%10, i)] = ""
 	}
+	host := tsoptionstest.NewVFSParseConfigHost(files, compilerDir, true /*useCaseSensitiveFileNames*/)
 
-	jsonText, ok := fs.ReadFile(tsconfigFileName)
-	assert.Assert(t, ok)
-	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
+	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, host.FS().UseCaseSensitiveFileNames())
 	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: tsconfigFileName,
 		Path:     tsconfigPath,
 	}, jsonText, core.ScriptKindJSON)
-
-	if len(parsed.Diagnostics()) > 0 {
-		for _, error := range parsed.Diagnostics() {
-			t.Log(error.Localize(locale.Default))
-		}
-		t.FailNow()
-	}
-
-	tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
-		SourceFile: parsed,
-	}
-
-	parseConfigFileContent := tsoptions.ParseJsonSourceFileConfigFileContent(
-		tsConfigSourceFile,
-		host,
-		host.GetCurrentDirectory(),
-		nil,
-		nil,
-		tsconfigFileName,
-		/*resolutionStack*/ nil,
-		/*extraFileExtensions*/ nil,
-		/*extendedConfigCache*/ nil,
-	)
-
-	// Three errors: the "es2020" lib value (which no longer exists now that the
-	// TS libraries are removed) and two unknown compiler options (the upstream
-	// tsconfig sets both a preexisting unknown option and "moduleResolution",
-	// which is no longer a recognized option).
-	assert.Equal(t, len(parseConfigFileContent.Errors), 3)
-	errorCodes := make([]int32, 0, len(parseConfigFileContent.Errors))
-	for _, err := range parseConfigFileContent.Errors {
-		errorCodes = append(errorCodes, err.Code())
-	}
-	assert.Assert(t, slices.Contains(errorCodes, diagnostics.Unknown_compiler_option_0.Code()))
-	assert.Assert(t, slices.Contains(errorCodes, diagnostics.Argument_for_0_option_must_be_Colon_1.Code()))
-
-	opts := parseConfigFileContent.CompilerOptions()
-	assert.DeepEqual(t, opts, &core.CompilerOptions{
-		Lib:                        []string{},
-		Module:                     core.ModuleKindNodeNext,
-		NewLine:                    core.NewLineKindLF,
-		OutDir:                     tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "built", "local")),
-		Target:                     core.ScriptTargetES2020,
-		Types:                      []string{"node"},
-		ConfigFilePath:             tsconfigFileName,
-		Declaration:                core.TSTrue,
-		DeclarationMap:             core.TSTrue,
-		EmitDeclarationOnly:        core.TSTrue,
-		AlwaysStrict:               core.TSTrue,
-		Composite:                  core.TSTrue,
-		IsolatedDeclarations:       core.TSTrue,
-		NoImplicitOverride:         core.TSTrue,
-		RootDir:                    tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src")),
-		SkipLibCheck:               core.TSTrue,
-		Strict:                     core.TSTrue,
-		StrictBindCallApply:        core.TSFalse,
-		SourceMap:                  core.TSTrue,
-		UseUnknownInCatchVariables: core.TSFalse,
-		Pretty:                     core.TSTrue,
-	}, cmpopts.IgnoreUnexported(core.CompilerOptions{}))
-
-	fileNames := parseConfigFileContent.ParsedConfig.FileNames
-	relativePaths := make([]string, 0, len(fileNames))
-	for _, fileName := range fileNames {
-		if strings.Contains(fileName, ".generated.") {
-			continue
-		}
-
-		relativePaths = append(relativePaths, tspath.ConvertToRelativePath(fileName, tspath.ComparePathsOptions{
-			CurrentDirectory:          compilerDir,
-			UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
-		}))
-	}
-
-	// .tlua is no longer a supported source extension (tlua sources are .tlua),
-	// so the include globs over the upstream src/compiler tree match nothing.
-	assert.Equal(t, len(relativePaths), 0)
-}
-
-func BenchmarkParseSrcCompiler(b *testing.B) {
-	repo.SkipIfNoTypeScriptSubmodule(b)
-
-	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
-	tsconfigFileName := tspath.CombinePaths(compilerDir, "tluaconfig.json")
-
-	fs := osvfs.FS()
-	host := &tsoptionstest.VfsParseConfigHost{
-		Vfs:              fs,
-		CurrentDirectory: compilerDir,
-	}
-
-	jsonText, ok := fs.ReadFile(tsconfigFileName)
-	assert.Assert(b, ok)
-	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
-	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: tsconfigFileName,
-		Path:     tsconfigPath,
-	}, jsonText, core.ScriptKindJSON)
+	assert.Equal(b, len(parsed.Diagnostics()), 0)
 
 	b.ReportAllocs()
 

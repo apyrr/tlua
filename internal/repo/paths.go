@@ -73,15 +73,3 @@ var typeScriptSubmoduleExists = sync.OnceValue(func() bool {
 func TypeScriptSubmoduleExists() bool {
 	return typeScriptSubmoduleExists()
 }
-
-type SkippableTest interface {
-	Helper()
-	Skipf(format string, args ...any)
-}
-
-func SkipIfNoTypeScriptSubmodule(t SkippableTest) {
-	t.Helper()
-	if !typeScriptSubmoduleExists() {
-		t.Skipf("TypeScript submodule does not exist")
-	}
-}

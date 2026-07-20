@@ -9,7 +9,6 @@ const scriptsDir = import.meta.dirname;
 const manualTestsPath = path.join(scriptsDir, "manualTests.txt");
 const genDir = path.join(scriptsDir, "../", "tests", "gen");
 const manualDir = path.join(scriptsDir, "../", "tests", "manual");
-const submoduleDir = path.join(scriptsDir, "../../../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
 
 function main() {
     const args = process.argv.slice(2);
@@ -18,42 +17,25 @@ function main() {
         console.error("Please provide the name of the generated test file.");
         process.exit(1);
     }
-    const testNames = [];
-    for (const arg of args) {
-        const testName = arg;
-        const testFileName = testName;
-        const genTestFile = path.join(genDir, testFileName + "_test.go");
-        const submoduleTestFile = path.join(submoduleDir, testFileName + ".ts");
-        const submoduleServerTestFile = path.join(submoduleDir, "server", testFileName + ".ts");
-        let testKind: "gen" | "submodule" | "submoduleServer" | undefined;
-        if (fs.existsSync(genTestFile)) {
-            testKind = "gen";
-        }
-        else if (fs.existsSync(submoduleTestFile)) {
-            testKind = "submodule";
-        }
-        else if (fs.existsSync(submoduleServerTestFile)) {
-            testKind = "submoduleServer";
-        }
-
-        if (!testKind) {
-            console.error(
-                `Could not find test neither as '${genTestFile}', nor as '${submoduleTestFile}' or '${submoduleServerTestFile}'.` +
-                    `Make sure the test exists in the gen directory or in the submodule.`,
-            );
+    // Validate every name BEFORE mutating anything, so a bad name in a
+    // multi-name invocation cannot leave earlier tests moved but unregistered.
+    const moves: { testName: string; genTestFile: string; manualTestFile: string; }[] = [];
+    for (const testName of args) {
+        // The TypeScript submodule is retired in this fork, so gen tests are
+        // the only source a manual test can be made from.
+        const genTestFile = path.join(genDir, testName + "_test.go");
+        if (!fs.existsSync(genTestFile)) {
+            console.error(`Could not find '${genTestFile}'. Make sure the test exists in the gen directory.`);
             process.exit(1);
         }
+        moves.push({ testName, genTestFile, manualTestFile: path.join(manualDir, path.basename(genTestFile)) });
+    }
 
-        if (!fs.existsSync(manualDir)) {
-            fs.mkdirSync(manualDir, { recursive: true });
-        }
-
-        if (testKind === "gen") {
-            const manualTestFile = path.join(manualDir, path.basename(genTestFile));
-            markAsManual(genTestFile, manualTestFile);
-        }
-
-        testNames.push(testName);
+    if (!fs.existsSync(manualDir)) {
+        fs.mkdirSync(manualDir, { recursive: true });
+    }
+    for (const move of moves) {
+        markAsManual(move.genTestFile, move.manualTestFile);
     }
 
     let manualTests: string[] = [];
@@ -62,13 +44,30 @@ function main() {
         manualTests = content.split("\n").map(line => line.trim()).filter(line => line.length > 0);
     }
 
-    for (const testName of testNames) {
+    for (const { testName } of moves) {
         if (!manualTests.includes(testName)) {
             manualTests.push(testName);
         }
     }
     manualTests.sort((a, b) => a.localeCompare(b, "en-US"));
     fs.writeFileSync(manualTestsPath, [...manualTests, ""].join("\n"), "utf-8");
+
+    // A moved test no longer calls SkipIfFailing, so a stale quarantine entry
+    // would be inert -- and if the test still fails, the default suite goes
+    // red immediately. Prune the entries and tell the user what happened.
+    const failingTestsPath = path.join(scriptsDir, "failingTests.txt");
+    if (fs.existsSync(failingTestsPath)) {
+        const failing = fs.readFileSync(failingTestsPath, "utf-8").split("\n");
+        // Mirror convertFourslash's Go-identifier sanitization (dashes become
+        // underscores, other non-alphanumerics are stripped), or dashed test
+        // names would never match their quarantine entries.
+        const moved = new Set(moves.map(({ testName }) => "Test" + (testName[0].toUpperCase() + testName.slice(1)).replaceAll("-", "_").replaceAll(/[^a-zA-Z0-9_]/g, "")));
+        const kept = failing.filter(line => !moved.has(line.trim()));
+        if (kept.length !== failing.length) {
+            fs.writeFileSync(failingTestsPath, kept.join("\n"), "utf-8");
+            console.log("Removed moved test(s) from failingTests.txt; they now always run. If one still fails, fix it or it will fail the suite.");
+        }
+    }
 }
 
 function markAsManual(genFilePath: string, manualFilePath: string) {

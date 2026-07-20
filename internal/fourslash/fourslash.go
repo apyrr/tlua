@@ -27,7 +27,6 @@ import (
 	"github.com/apyrr/tlua/internal/lsp"
 	"github.com/apyrr/tlua/internal/lsp/lsproto"
 	"github.com/apyrr/tlua/internal/project"
-	"github.com/apyrr/tlua/internal/repo"
 	"github.com/apyrr/tlua/internal/stringutil"
 	"github.com/apyrr/tlua/internal/testutil/baseline"
 	"github.com/apyrr/tlua/internal/testutil/harnessutil"
@@ -131,7 +130,9 @@ var parseCache = project.NewParseCache(
 )
 
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
-	repo.SkipIfNoTypeScriptSubmodule(t)
+	// No TypeScript-submodule gate: the submodule is retired in this fork and
+	// every fourslash test carries its content inline, so the suite runs
+	// everywhere (the upstream gate had silently skipped it all).
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
 		// Just skip this for now.
@@ -4077,7 +4078,8 @@ func (f *FourslashTest) verifyHoverMarkdown(
 	expectedDocumentation string,
 	prefix string,
 ) {
-	expected := fmt.Sprintf("```typescript\n%s\n```\n%s", expectedText, expectedDocumentation)
+	// The LS fences hover code blocks as tlua (see internal/ls/hover.go).
+	expected := fmt.Sprintf("```tlua\n%s\n```\n%s", expectedText, expectedDocumentation)
 	assertDeepEqual(t, actual, expected, prefix+"Hover markdown content mismatch")
 }
 

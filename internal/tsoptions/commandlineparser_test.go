@@ -1,7 +1,6 @@
 package tsoptions_test
 
 import (
-	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -11,20 +10,16 @@ import (
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/diagnosticwriter"
 	"github.com/apyrr/tlua/internal/json"
-	"github.com/apyrr/tlua/internal/repo"
 	"github.com/apyrr/tlua/internal/testutil/baseline"
-	"github.com/apyrr/tlua/internal/testutil/filefixture"
 	"github.com/apyrr/tlua/internal/tsoptions"
 	"github.com/apyrr/tlua/internal/tsoptions/tsoptionstest"
 	"github.com/apyrr/tlua/internal/tspath"
 	"github.com/apyrr/tlua/internal/vfs/osvfs"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"gotest.tools/v3/assert"
 )
 
 func TestCommandLineParseResult(t *testing.T) {
 	t.Parallel()
-	repo.SkipIfNoTypeScriptSubmodule(t)
 
 	parseCommandLineSubScenarios := []*subScenarioInput{
 		// The upstream library-flag scenarios are gone: tlua's lib set (luajit
@@ -153,7 +148,6 @@ func TestCustomConditionsNullOverride(t *testing.T) {
 
 func TestParseCommandLineVerifyNull(t *testing.T) {
 	t.Parallel()
-	repo.SkipIfNoTypeScriptSubmodule(t)
 
 	// run test for boolean
 	subScenarioInput{"allows setting option type boolean to false", []string{"--composite", "false", "0.ts"}}.createSubScenario("parseCommandLine").assertParseResult(t)
@@ -223,62 +217,28 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 	t.Helper()
 	t.Run(f.testName, func(t *testing.T) {
 		t.Parallel()
-		originalBaseline := f.baseline.ReadFile(t)
-		tsBaseline := parseExistingCompilerBaseline(t, originalBaseline)
-
-		// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
+		// The upstream TypeScript baselines are gone with the submodule, so
+		// results are asserted only against the in-repo baselines below.
 		parsed := tsoptions.ParseCommandLineTestWorker(f.optDecls, f.commandLine, osvfs.FS(), t.TempDir())
 
 		newBaselineFileNames := strings.Join(parsed.FileNames, ",")
-		assert.Equal(t, tsBaseline.fileNames, newBaselineFileNames)
 
 		o, _ := json.Marshal(parsed.Options)
+		// Sanity-check that the marshalled options round-trip.
 		newParsedCompilerOptions := &core.CompilerOptions{}
 		e := json.Unmarshal(o, newParsedCompilerOptions)
 		assert.NilError(t, e)
-		assert.DeepEqual(t, tsBaseline.options, newParsedCompilerOptions, cmpopts.IgnoreUnexported(core.CompilerOptions{}))
 
 		newParsedWatchOptions := core.WatchOptions{}
 		e = json.Unmarshal(o, &newParsedWatchOptions)
 		assert.NilError(t, e)
 
-		// !!! useful for debugging but will not pass due to `none` as enum options
-		// assert.DeepEqual(t, tsBaseline.watchoptions, newParsedWatchOptions)
-
 		var formattedErrors strings.Builder
 		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, diagnosticwriter.FromASTDiagnostics(parsed.Errors), &diagnosticwriter.FormattingOptions{NewLine: "\n"})
 		newBaselineErrors := formattedErrors.String()
 
-		// !!!
-		// useful for debugging--compares the new errors with the old errors. currently will NOT pass because of unimplemented options, not completely identical enum options, etc
-		// assert.Equal(t, tsBaseline.errors, newBaselineErrors)
-
 		baseline.Run(t, f.testName+".js", formatNewBaseline(f.commandLine, o, newBaselineFileNames, newBaselineErrors), baseline.Options{Subfolder: "tsoptions/commandLineParsing"})
 	})
-}
-
-func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLineParser {
-	_, rest, _ := strings.Cut(baseline, "CompilerOptions::\n")
-	compilerOptions, rest, watchFound := strings.Cut(rest, "\nWatchOptions::\n")
-	watchOptions, rest, _ := strings.Cut(rest, "\nFileNames::\n")
-	fileNames, errors, _ := strings.Cut(rest, "\nErrors::\n")
-
-	baselineCompilerOptions := &core.CompilerOptions{}
-	e := json.Unmarshal([]byte(compilerOptions), &baselineCompilerOptions)
-	assert.NilError(t, e)
-
-	baselineWatchOptions := &core.WatchOptions{}
-	if watchFound && watchOptions != "" {
-		e2 := json.Unmarshal([]byte(watchOptions), &baselineWatchOptions)
-		assert.NilError(t, e2)
-	}
-
-	return &TestCommandLineParser{
-		options:      baselineCompilerOptions,
-		watchoptions: baselineWatchOptions,
-		fileNames:    fileNames,
-		errors:       errors,
-	}
 }
 
 func formatNewBaseline(
@@ -312,95 +272,41 @@ func formatNewBaseline(
 
 func (f commandLineSubScenario) assertBuildParseResult(t *testing.T) {
 	t.Helper()
-	f.assertBuildParseResultWithTsBaseline(t, func() *TestCommandLineParserBuild {
-		originalBaseline := f.baseline.ReadFile(t)
-		return parseExistingCompilerBaselineBuild(t, originalBaseline)
-	})
-}
-
-func (f commandLineSubScenario) assertBuildParseResultWithTsBaseline(t *testing.T, getTsBaseline func() *TestCommandLineParserBuild) {
-	t.Helper()
 	t.Run(f.testName, func(t *testing.T) {
 		t.Parallel()
 
-		var tsBaseline *TestCommandLineParserBuild
-		if getTsBaseline != nil {
-			tsBaseline = getTsBaseline()
-		}
-
-		// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
+		// The upstream TypeScript baselines are gone with the submodule, so
+		// results are asserted only against the in-repo baselines below. The
+		// current directory is irrelevant to the baseline output (projects
+		// stay as written on the command line), so any temp dir works.
 		parsed := tsoptions.ParseBuildCommandLine(f.commandLine, &tsoptionstest.VfsParseConfigHost{
 			Vfs:              osvfs.FS(),
-			CurrentDirectory: tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath()),
+			CurrentDirectory: tspath.NormalizeSlashes(t.TempDir()),
 		})
 
 		newBaselineProjects := strings.Join(parsed.Projects, ",")
-		if getTsBaseline != nil {
-			assert.Equal(t, tsBaseline.projects, newBaselineProjects)
-		}
 
 		o, _ := json.Marshal(parsed.BuildOptions)
+		// Sanity-check that the marshalled options round-trip.
 		newParsedBuildOptions := &core.BuildOptions{}
 		e := json.Unmarshal(o, newParsedBuildOptions)
 		assert.NilError(t, e)
-		if getTsBaseline != nil {
-			assert.DeepEqual(t, tsBaseline.options, newParsedBuildOptions, cmpopts.IgnoreUnexported(core.BuildOptions{}))
-		}
 
 		compilerOpts, _ := json.Marshal(parsed.CompilerOptions)
 		newParsedCompilerOptions := &core.CompilerOptions{}
 		e = json.Unmarshal(compilerOpts, newParsedCompilerOptions)
 		assert.NilError(t, e)
-		if getTsBaseline != nil {
-			assert.DeepEqual(t, tsBaseline.compilerOptions, newParsedCompilerOptions, cmpopts.IgnoreUnexported(core.CompilerOptions{}))
-		}
 
 		newParsedWatchOptions := core.WatchOptions{}
 		e = json.Unmarshal(o, &newParsedWatchOptions)
 		assert.NilError(t, e)
 
-		// !!! useful for debugging but will not pass due to `none` as enum options
-		// assert.DeepEqual(t, tsBaseline.watchoptions, newParsedWatchOptions)
-
 		var formattedErrors strings.Builder
 		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, diagnosticwriter.FromASTDiagnostics(parsed.Errors), &diagnosticwriter.FormattingOptions{NewLine: "\n"})
 		newBaselineErrors := formattedErrors.String()
 
-		// !!!
-		// useful for debugging--compares the new errors with the old errors. currently will NOT pass because of unimplemented options, not completely identical enum options, etc
-		// assert.Equal(t, tsBaseline.errors, newBaselineErrors)
-
 		baseline.Run(t, f.testName+".js", formatNewBaselineBuild(f.commandLine, o, compilerOpts, newBaselineProjects, newBaselineErrors), baseline.Options{Subfolder: "tsoptions/commandLineParsing"})
 	})
-}
-
-func parseExistingCompilerBaselineBuild(t *testing.T, baseline string) *TestCommandLineParserBuild {
-	_, rest, _ := strings.Cut(baseline, "buildOptions::\n")
-	buildOptions, rest, watchFound := strings.Cut(rest, "\nWatchOptions::\n")
-	watchOptions, rest, _ := strings.Cut(rest, "\nProjects::\n")
-	projects, errors, _ := strings.Cut(rest, "\nErrors::\n")
-
-	baselineBuildOptions := &core.BuildOptions{}
-	e := json.Unmarshal([]byte(buildOptions), &baselineBuildOptions)
-	assert.NilError(t, e)
-
-	baselineCompilerOptions := &core.CompilerOptions{}
-	e = json.Unmarshal([]byte(buildOptions), &baselineCompilerOptions)
-	assert.NilError(t, e)
-
-	baselineWatchOptions := &core.WatchOptions{}
-	if watchFound && watchOptions != "" {
-		e2 := json.Unmarshal([]byte(watchOptions), &baselineWatchOptions)
-		assert.NilError(t, e2)
-	}
-
-	return &TestCommandLineParserBuild{
-		options:         baselineBuildOptions,
-		compilerOptions: baselineCompilerOptions,
-		watchoptions:    baselineWatchOptions,
-		projects:        projects,
-		errors:          errors,
-	}
 }
 
 func formatNewBaselineBuild(
@@ -437,10 +343,8 @@ func formatNewBaselineBuild(
 
 func createSubScenario(scenarioKind string, subScenarioName string, commandline []string, opts ...[]*tsoptions.CommandLineOption) *commandLineSubScenario {
 	subScenarioName = scenarioKind + "/" + subScenarioName
-	baselineFileName := "tests/baselines/reference/config/commandLineParsing/" + subScenarioName + ".js"
 
 	result := &commandLineSubScenario{
-		filefixture.FromFile(subScenarioName, filepath.Join(repo.TypeScriptSubmodulePath(), baselineFileName)),
 		subScenarioName,
 		commandline,
 		nil,
@@ -461,7 +365,6 @@ func (f subScenarioInput) createSubScenario(scenarioKind string) *commandLineSub
 }
 
 type commandLineSubScenario struct {
-	baseline    filefixture.Fixture
 	testName    string
 	commandLine []string
 	optDecls    []*tsoptions.CommandLineOption
@@ -474,22 +377,8 @@ type verifyNull struct {
 	optDecls     []*tsoptions.CommandLineOption
 }
 
-type TestCommandLineParser struct {
-	options           *core.CompilerOptions
-	watchoptions      *core.WatchOptions
-	fileNames, errors string
-}
-
-type TestCommandLineParserBuild struct {
-	options          *core.BuildOptions
-	compilerOptions  *core.CompilerOptions
-	watchoptions     *core.WatchOptions
-	projects, errors string
-}
-
 func TestParseBuildCommandLine(t *testing.T) {
 	t.Parallel()
-	repo.SkipIfNoTypeScriptSubmodule(t)
 
 	parseCommandLineSubScenarios := []*subScenarioInput{
 		{"parse build without any options ", []string{}},
@@ -529,7 +418,7 @@ func TestParseBuildCommandLine(t *testing.T) {
 	}
 
 	for _, testCase := range extraScenarios {
-		testCase.createSubScenario("parseBuildOptions").assertBuildParseResultWithTsBaseline(t, nil)
+		testCase.createSubScenario("parseBuildOptions").assertBuildParseResult(t)
 	}
 }
 

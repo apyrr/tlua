@@ -75,6 +75,13 @@ export async function main() {
         inputFileSet = new Set(inputFiles);
     }
 
+    // The generated corpus can only be rebuilt from the TypeScript submodule,
+    // which this fork has retired. Refuse to delete tests/gen without a source
+    // to regenerate from -- otherwise this script wipes ~5k tests and crashes.
+    if (!fs.existsSync(stradaFourslashPath)) {
+        console.error(`Fourslash source corpus not found at ${stradaFourslashPath}; refusing to delete ${outputDir}. The TypeScript submodule is retired -- adapt individual tests with "npm run makemanual <name>" instead.`);
+        process.exit(1);
+    }
     fs.rmSync(outputDir, { recursive: true, force: true });
     fs.mkdirSync(outputDir, { recursive: true });
 

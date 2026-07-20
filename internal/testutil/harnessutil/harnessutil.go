@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/fs"
 	"maps"
 	"os"
 	"path/filepath"
@@ -12,7 +11,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"sync"
 	"testing"
 	"testing/fstest"
 
@@ -129,10 +127,11 @@ func CompileFilesEx(
 		}
 	}
 
-	// Avoid copying in the /.lib folder unless the test references it.
-	includeLibDir := core.Some(inputFiles, func(file *TestFile) bool { return strings.Contains(file.Content, testLibFolder+"/") })
-	if includeLibDir {
-		repo.SkipIfNoTypeScriptSubmodule(t)
+	// The /.lib test-folder corpus was retired with the TypeScript submodule
+	// and no in-repo test uses it. Fail loudly rather than silently skipping
+	// if one ever appears.
+	if core.Some(inputFiles, func(file *TestFile) bool { return strings.Contains(file.Content, testLibFolder+"/") }) {
+		t.Fatalf("test references %s/, whose corpus was retired with the TypeScript submodule", testLibFolder)
 	}
 
 	// !!!
@@ -176,10 +175,6 @@ func CompileFilesEx(
 		testfs[srcFileName] = vfstest.Symlink(targetFileName)
 	}
 
-	if includeLibDir {
-		maps.Copy(testfs, testLibFolderMap())
-	}
-
 	fs := vfstest.FromMap(testfs, harnessOptions.UseCaseSensitiveFileNames)
 	fs = bundled.WrapFS(fs)
 	fs = NewOutputRecorderFS(fs)
@@ -209,31 +204,6 @@ func CompileFilesEx(
 	}
 	return result
 }
-
-var testLibFolderMap = sync.OnceValue(func() map[string]any {
-	testfs := make(map[string]any)
-	libfs := os.DirFS(filepath.Join(repo.TypeScriptSubmodulePath(), "tests", "lib"))
-	err := fs.WalkDir(libfs, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
-			return nil
-		}
-		content, err := fs.ReadFile(libfs, path)
-		if err != nil {
-			return err
-		}
-		testfs[testLibFolder+"/"+path] = &fstest.MapFile{
-			Data: content,
-		}
-		return nil
-	})
-	if err != nil {
-		panic(fmt.Sprintf("Failed to read lib dir: %v", err))
-	}
-	return testfs
-})
 
 func SetOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions, currentDirectory string, allowUnknownOptions bool) {
 	for name, value := range testConfig {

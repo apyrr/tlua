@@ -24,7 +24,7 @@ func Run(t *testing.T, fileName string, actual string, opts Options) {
 	// Record this baseline for tracking unused baselines
 	recordBaseline(t, filepath.Join(opts.Subfolder, fileName))
 
-	writeComparison(t, actual, localPath, referencePath, false)
+	writeComparison(t, actual, localPath, referencePath)
 }
 
 func DiffText(oldName string, newName string, expected string, actual string) string {
@@ -37,16 +37,7 @@ func DiffText(oldName string, newName string, expected string, actual string) st
 	})
 }
 
-func RunAgainstSubmodule(t *testing.T, fileName string, actual string, opts Options) {
-	// Record this baseline for tracking unused baselines
-	recordBaseline(t, filepath.Join(opts.Subfolder, fileName))
-
-	local := filepath.Join(localRoot, opts.Subfolder, fileName)
-	reference := filepath.Join(submoduleReferenceRoot, opts.Subfolder, fileName)
-	writeComparison(t, actual, local, reference, true)
-}
-
-func writeComparison(t *testing.T, actualContent string, local, reference string, comparingAgainstSubmodule bool) {
+func writeComparison(t *testing.T, actualContent string, local, reference string) {
 	if actualContent == "" {
 		panic("the generated content was \"\". Return 'baseline.NoContent' if no baselining is required.")
 	}
@@ -84,13 +75,7 @@ func writeComparison(t *testing.T, actualContent string, local, reference string
 		}
 
 		if _, err := os.Stat(reference); err != nil {
-			if comparingAgainstSubmodule {
-				t.Errorf("the baseline file %s does not exist in the TypeScript submodule", reference)
-			} else {
-				t.Errorf("new baseline created at %s.", local)
-			}
-		} else if comparingAgainstSubmodule {
-			t.Errorf("the baseline file %s does not match the reference in the TypeScript submodule", reference)
+			t.Errorf("new baseline created at %s.", local)
 		} else {
 			t.Errorf("the baseline file %s has changed. (Run `hereby baseline-accept` if the new baseline is correct.)", reference)
 		}
@@ -98,7 +83,6 @@ func writeComparison(t *testing.T, actualContent string, local, reference string
 }
 
 var (
-	localRoot              = filepath.Join(repo.TestDataPath(), "baselines", "local")
-	referenceRoot          = filepath.Join(repo.TestDataPath(), "baselines", "reference")
-	submoduleReferenceRoot = filepath.Join(repo.TypeScriptSubmodulePath(), "tests", "baselines", "reference")
+	localRoot     = filepath.Join(repo.TestDataPath(), "baselines", "local")
+	referenceRoot = filepath.Join(repo.TestDataPath(), "baselines", "reference")
 )

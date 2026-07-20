@@ -1,6 +1,15 @@
 #!/usr/bin/env -S node --experimental-strip-types --no-warnings
 
 // Usage: node --experimental-strip-types --no-warnings updateFailing.mts
+//
+// CAUTION: this rewrites failingTests.txt WHOLESALE from one suite run, and
+// SKIPPED tests count as not-failing. Running it under any skip condition
+// (missing embedded libs, @lib-gated tests, a partial -run filter) silently
+// un-quarantines tests that never executed, which then fail the suite when
+// they become runnable. Prefer regenerating from a full clean run:
+//   TLUA_FOURSLASH_IGNORE_FAILING=1 go test ./internal/fourslash/...
+// and writing exactly the FAILING test names; single-name additions and
+// removals are safest done by hand.
 
 import * as cp from "child_process";
 import * as fs from "fs";

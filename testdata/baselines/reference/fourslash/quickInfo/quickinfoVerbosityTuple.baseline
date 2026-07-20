@@ -11,7 +11,14 @@
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | type TwoFruits = any
+// | type TwoFruits = [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -19,7 +26,12 @@
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | type TwoFruits = any
+// | type TwoFruits = [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -27,7 +39,7 @@
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | type TwoFruits = any
+// | type TwoFruits = [Orange, Apple]
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -36,7 +48,14 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local tf: any
+// | local tf: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
 // | (verbosity level: 3)
@@ -44,7 +63,12 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local tf: any
+// | local tf: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -52,7 +76,7 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local tf: any
+// | local tf: [Orange, Apple]
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -60,7 +84,7 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local tf: any
+// | local tf: TwoFruits
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -72,7 +96,14 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local tf2: any
+// | local tf2: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -80,7 +111,12 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local tf2: any
+// | local tf2: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -88,7 +124,7 @@
 //       ^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local tf2: any
+// | local tf2: [Orange, Apple]
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -187,7 +223,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\ntype TwoFruits = any\n```\n"
+          "value": "```tlua\ntype TwoFruits = [Orange, Apple]\n```\n"
         },
         "range": {
           "start": {
@@ -198,7 +234,8 @@
             "line": 7,
             "character": 14
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -217,7 +254,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\ntype TwoFruits = any\n```\n"
+          "value": "```tlua\ntype TwoFruits = [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -228,7 +265,8 @@
             "line": 7,
             "character": 14
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -247,7 +285,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\ntype TwoFruits = any\n```\n"
+          "value": "```tlua\ntype TwoFruits = [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -277,7 +315,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: TwoFruits\n```\n"
         },
         "range": {
           "start": {
@@ -288,7 +326,8 @@
             "line": 8,
             "character": 8
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -307,7 +346,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: [Orange, Apple]\n```\n"
         },
         "range": {
           "start": {
@@ -318,7 +357,8 @@
             "line": 8,
             "character": 8
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -337,7 +377,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -348,7 +388,8 @@
             "line": 8,
             "character": 8
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 2
     }
@@ -367,7 +408,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\nlocal tf: any\n```\n"
+          "value": "```tlua\nlocal tf: [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -397,7 +438,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\nlocal tf2: any\n```\n"
+          "value": "```tlua\nlocal tf2: [Orange, Apple]\n```\n"
         },
         "range": {
           "start": {
@@ -408,7 +449,8 @@
             "line": 12,
             "character": 9
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 0
     }
@@ -427,7 +469,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\nlocal tf2: any\n```\n"
+          "value": "```tlua\nlocal tf2: [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -438,7 +480,8 @@
             "line": 12,
             "character": 9
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -457,7 +500,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\nlocal tf2: any\n```\n"
+          "value": "```tlua\nlocal tf2: [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {

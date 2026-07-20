@@ -37,7 +37,7 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 func TestFormat(t *testing.T) {
 	t.Parallel()
 
-	t.Run("format checker.tlua", func(t *testing.T) {
+	t.Run("format lib.luajit.d.tlua", func(t *testing.T) {
 		t.Parallel()
 		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
@@ -51,20 +51,42 @@ func TestFormat(t *testing.T) {
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
-		repo.SkipIfNoTypeScriptSubmodule(t)
-		filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
-		fileContent, err := os.ReadFile(filePath)
-		assert.NilError(t, err)
-		text := string(fileContent)
+		// The upstream checker.ts corpus went away with the TypeScript
+		// submodule; the largest bundled lib is the in-repo replacement. A
+		// deliberately misformatted prefix keeps the must-edit assertion
+		// below independent of whether the shipped lib happens to be
+		// formatter-clean.
+		text := "local   unformatted=1;\n" + readFormatCorpus(t)
 		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-			FileName: "/checker.tlua",
-			Path:     "/checker.tlua",
+			FileName: "/lib.luajit.d.tlua",
+			Path:     "/lib.luajit.d.tlua",
 		}, text, core.ScriptKindTS)
 		edits := format.FormatDocument(ctx, sourceFile)
+		// The corpus is known to need reformatting, so a silently inert
+		// formatter (zero edits) must fail here, not pass by idempotency.
+		assert.Assert(t, len(edits) > 0)
 		newText := applyBulkEdits(text, edits)
 		assert.Assert(t, len(newText) > 0)
-		assert.Assert(t, text != newText)
+
+		// Formatting must be idempotent: reformatting the formatted output
+		// produces no further changes.
+		reformattedFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/lib.luajit.d.tlua",
+			Path:     "/lib.luajit.d.tlua",
+		}, newText, core.ScriptKindTS)
+		reformatted := applyBulkEdits(newText, format.FormatDocument(ctx, reformattedFile))
+		assert.Equal(t, reformatted, newText)
 	})
+}
+
+// readFormatCorpus reads the large in-repo declaration file used as the
+// formatting corpus.
+func readFormatCorpus(tb testing.TB) string {
+	tb.Helper()
+	filePath := filepath.Join(repo.RootPath(), "internal", "bundled", "libs", "lib.luajit.d.tlua")
+	fileContent, err := os.ReadFile(filePath)
+	assert.NilError(tb, err)
+	return string(fileContent)
 }
 
 func BenchmarkFormat(b *testing.B) {
@@ -80,17 +102,13 @@ func BenchmarkFormat(b *testing.B) {
 		},
 		InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 	}, "\n")
-	repo.SkipIfNoTypeScriptSubmodule(b)
-	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
-	fileContent, err := os.ReadFile(filePath)
-	assert.NilError(b, err)
-	text := string(fileContent)
+	text := readFormatCorpus(b)
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/checker.tlua",
-		Path:     "/checker.tlua",
+		FileName: "/lib.luajit.d.tlua",
+		Path:     "/lib.luajit.d.tlua",
 	}, text, core.ScriptKindTS)
 
-	b.Run("format checker.tlua", func(b *testing.B) {
+	b.Run("format lib.luajit.d.tlua", func(b *testing.B) {
 		for b.Loop() {
 			edits := format.FormatDocument(ctx, sourceFile)
 			newText := applyBulkEdits(text, edits)
@@ -98,15 +116,14 @@ func BenchmarkFormat(b *testing.B) {
 		}
 	})
 
-	b.Run("format checker.tlua (no edit application)", func(b *testing.B) { // for comparison (how long does applying many edits take?)
+	b.Run("format lib.luajit.d.tlua (no edit application)", func(b *testing.B) { // for comparison (how long does applying many edits take?)
 		for b.Loop() {
-			edits := format.FormatDocument(ctx, sourceFile)
-			assert.Assert(b, len(edits) > 0)
+			format.FormatDocument(ctx, sourceFile)
 		}
 	})
 
 	p := printer.NewPrinter(printer.PrinterOptions{}, printer.PrintHandlers{}, printer.NewEmitContext())
-	b.Run("pretty print checker.tlua", func(b *testing.B) { // for comparison
+	b.Run("pretty print lib.luajit.d.tlua", func(b *testing.B) { // for comparison
 		for b.Loop() {
 			newText := p.EmitSourceFile(sourceFile)
 			assert.Assert(b, len(newText) > 0)

@@ -78,14 +78,6 @@ func allParsableFiles(tb testing.TB, root string) iter.Seq[parsableFile] {
 }
 
 func FuzzParser(f *testing.F) {
-	repo.SkipIfNoTypeScriptSubmodule(f)
-
-	tests := []string{
-		"src",
-		"scripts",
-		"Herebyfile.mjs",
-	}
-
 	var extensions collections.Set[string]
 	for _, es := range tspath.AllSupportedExtensionsWithJson {
 		for _, e := range es {
@@ -93,21 +85,10 @@ func FuzzParser(f *testing.F) {
 		}
 	}
 
-	for _, test := range tests {
-		root := filepath.Join(repo.TypeScriptSubmodulePath(), test)
-
-		for file := range allParsableFiles(f, root) {
-			sourceText, err := os.ReadFile(file.path)
-			assert.NilError(f, err)
-			extension := tspath.TryGetExtensionFromPath(file.path)
-			f.Add(extension, string(sourceText), false, false)
-		}
-	}
-
+	// The upstream TypeScript sources and test corpus went away with the
+	// submodule; the in-repo compiler test cases seed the fuzzer instead.
 	testDirs := []string{
-		filepath.Join(repo.TypeScriptSubmodulePath(), "tests/cases/compiler"),
-		filepath.Join(repo.TypeScriptSubmodulePath(), "tests/cases/conformance"),
-		filepath.Join(repo.TestDataPath(), "tests/cases/compiler"),
+		filepath.Join(repo.TestDataPath(), "tests/cases"),
 	}
 
 	for _, testDir := range testDirs {

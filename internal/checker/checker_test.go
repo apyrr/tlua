@@ -8,10 +8,7 @@ import (
 	"github.com/apyrr/tlua/internal/checker"
 	"github.com/apyrr/tlua/internal/compiler"
 	"github.com/apyrr/tlua/internal/core"
-	"github.com/apyrr/tlua/internal/repo"
 	"github.com/apyrr/tlua/internal/tsoptions"
-	"github.com/apyrr/tlua/internal/tspath"
-	"github.com/apyrr/tlua/internal/vfs/osvfs"
 	"github.com/apyrr/tlua/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -62,14 +59,23 @@ foo.bar;`
 }
 
 func BenchmarkNewChecker(b *testing.B) {
-	repo.SkipIfNoTypeScriptSubmodule(b)
-	fs := osvfs.FS()
+	fs := vfstest.FromMap(map[string]string{
+		"/foo.tlua": `interface Foo {
+  bar: string;
+}
+declare foo: Foo;
+foo.bar;`,
+		"/tluaconfig.json": `
+				{
+					"compilerOptions": {},
+					"files": ["foo.tlua"]
+				}
+			`,
+	}, false /*useCaseSensitiveFileNames*/)
 	fs = bundled.WrapFS(fs)
 
-	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath()), "src", "compiler")
-
-	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
-	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tluaconfig.json"), &core.CompilerOptions{}, nil, host, nil)
+	host := compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil)
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tluaconfig.json", &core.CompilerOptions{}, nil, host, nil)
 	assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 	p := compiler.NewProgram(compiler.ProgramOptions{
 		Config: parsed,

@@ -85,15 +85,21 @@ func TestBuildNodeIndexTableMatchesEncode(t *testing.T) {
 	}
 }
 
-func BenchmarkEncodeSourceFile(b *testing.B) {
-	repo.SkipIfNoTypeScriptSubmodule(b)
-	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
+// parseBenchCorpus parses the largest bundled lib as the benchmark input;
+// the upstream checker.ts corpus went away with the TypeScript submodule.
+func parseBenchCorpus(b *testing.B) *ast.SourceFile {
+	b.Helper()
+	filePath := filepath.Join(repo.RootPath(), "internal", "bundled", "libs", "lib.luajit.d.tlua")
 	fileContent, err := os.ReadFile(filePath)
 	assert.NilError(b, err)
-	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/checker.tlua",
-		Path:     "/checker.tlua",
+	return parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/lib.luajit.d.tlua",
+		Path:     "/lib.luajit.d.tlua",
 	}, string(fileContent), core.ScriptKindTS)
+}
+
+func BenchmarkEncodeSourceFile(b *testing.B) {
+	sourceFile := parseBenchCorpus(b)
 
 	for b.Loop() {
 		_, _, err := encoder.EncodeSourceFile(sourceFile)
@@ -102,14 +108,7 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 }
 
 func BenchmarkBuildNodeIndexTable(b *testing.B) {
-	repo.SkipIfNoTypeScriptSubmodule(b)
-	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
-	fileContent, err := os.ReadFile(filePath)
-	assert.NilError(b, err)
-	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/checker.tlua",
-		Path:     "/checker.tlua",
-	}, string(fileContent), core.ScriptKindTS)
+	sourceFile := parseBenchCorpus(b)
 
 	for b.Loop() {
 		encoder.BuildNodeIndexTable(sourceFile)
