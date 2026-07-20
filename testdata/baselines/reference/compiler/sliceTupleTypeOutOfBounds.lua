@@ -6,9 +6,3 @@ type Example = Middle<[1]>;
 
 
 //// [sliceTupleTypeOutOfBounds.lua]
-...;
-infer;
-X, unknown;
-X;
-never;
- > ;

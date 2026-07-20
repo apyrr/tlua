@@ -12,9 +12,7 @@ f([])
 
 //// [inferRestTupleShortSource.lua]
 -- Regression test: tlua panics when inferring [...rest, ...T] from a tuple shorter than fixed-arity constraint
-...;
-T;
-{
+function f(args) {
     -- ...
 }
 f();

@@ -97,7 +97,7 @@ type MergeSubSchema<
 // The failing site: MergeSubSchema<SUB_SCHEMAS_HEAD> is rejected as not satisfying
 // the `extends JSONSchema` constraint on ParseSchema.
 type RecurseOnAllOfSchema<SUB_SCHEMAS extends readonly JSONSchema[]> =
->RecurseOnAllOfSchema : any
+>RecurseOnAllOfSchema : RecurseOnAllOfSchema<SUB_SCHEMAS>
 
   SUB_SCHEMAS extends readonly [infer SUB_SCHEMAS_HEAD]
     ? SUB_SCHEMAS_HEAD extends JSONSchema

@@ -1,0 +1,24 @@
+main.tlua(10,18): error TLUA2493: Tuple type '[number, string]' of length '2' has no element at index '0'.
+
+
+==== shapes.d.tlua (0 errors) ====
+    declare pair: [number, string];
+    declare function makeTriple(): [boolean, number, string];
+    declare nested: [[number, number], string];
+    
+==== main.tlua (1 errors) ====
+    local a: number = pair[1];
+    local b: string = pair[2];
+    
+    local triple = makeTriple();
+    local t1: boolean = triple[1];
+    local t3: string = triple[3];
+    
+    local inner: number = nested[1][2];
+    
+    local oob = pair[0];
+                     ~
+!!! error TLUA2493: Tuple type '[number, string]' of length '2' has no element at index '0'.
+    
+    local es = {a, b, t1, t3, inner};
+    

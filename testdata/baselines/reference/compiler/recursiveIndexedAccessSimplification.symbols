@@ -16,8 +16,8 @@ type Recur<T> =
 >K : Symbol(K, Decl(recursiveIndexedAccessSimplification.tlua, 3, 38))
 
     [...Recur<T>[number][]];
-> : Symbol(unknown)
->T : Symbol(T)
+>Recur : Symbol(Recur, Decl(recursiveIndexedAccessSimplification.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveIndexedAccessSimplification.tlua, 2, 11))
 
 function join<T>(l: Recur<T>[]): Recur<T> {
 >join : Symbol(join, Decl(recursiveIndexedAccessSimplification.tlua, 4, 28))

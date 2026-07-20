@@ -1,6 +1,6 @@
 infiniteConstraints2.tlua(5,17): error TLUA100034: A vararg parameter cannot have a name.
 infiniteConstraints2.tlua(5,48): error TLUA100034: A vararg parameter cannot have a name.
-infiniteConstraints2.tlua(10,8): error TLUA1110: Type expected.
+infiniteConstraints2.tlua(11,8): error TLUA2589: Type instantiation is excessively deep and possibly infinite.
 
 
 ==== infiniteConstraints2.tlua (3 errors) ====
@@ -18,8 +18,8 @@ infiniteConstraints2.tlua(10,8): error TLUA1110: Type expected.
     type ExactExtract<T, U> = (T extends U ? U extends T ? T : never : never) & string;
     type Conv<T, U = T> = {
         0: [T];
-           ~
-!!! error TLUA1110: Type expected.
         1: Prepend<T, Conv<ExactExtract<U, T>, {a: number}>>;
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2589: Type instantiation is excessively deep and possibly infinite.
     }[U extends T ? 0 : 1];
     

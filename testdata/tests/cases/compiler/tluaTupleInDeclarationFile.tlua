@@ -1,9 +1,8 @@
 // @strict: true
 // @noEmit: true
 
-// Tuple type syntax `[A, B]` is removed from tlua source but still parses in
-// declaration files (the bundled libs and emitted declarations use it). A
-// tuple declared in a .d.tlua flows into .tlua source and is indexed positionally.
+// A tuple declared in a .d.tlua flows into .tlua source and is indexed at the
+// 1-based Lua sequence keys; key 0 is out of range.
 
 // @filename: shapes.d.tlua
 declare pair: [number, string];
@@ -11,13 +10,15 @@ declare function makeTriple(): [boolean, number, string];
 declare nested: [[number, number], string];
 
 // @filename: main.tlua
-local a: number = pair[0];
-local b: string = pair[1];
+local a: number = pair[1];
+local b: string = pair[2];
 
 local triple = makeTriple();
-local t0: boolean = triple[0];
-local t2: string = triple[2];
+local t1: boolean = triple[1];
+local t3: string = triple[3];
 
-local inner: number = nested[0][1];
+local inner: number = nested[1][2];
 
-local es = {a, b, t0, t2, inner};
+local oob = pair[0];
+
+local es = {a, b, t1, t3, inner};

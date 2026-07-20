@@ -2607,6 +2607,14 @@ func isNarrowableOperand(expr *ast.Node) bool {
 	switch expr.Kind {
 	case ast.KindParenthesizedExpression:
 		return isNarrowableOperand(expr.Expression())
+	case ast.KindPrefixUnaryExpression:
+		// `#ref == n` narrows a union of tuples by arity (the checker's
+		// narrowTupleTypeByArity), so a length expression is narrowable
+		// when its operand is.
+		if expr.AsPrefixUnaryExpression().Operator == ast.KindHashToken {
+			return isNarrowableOperand(expr.AsPrefixUnaryExpression().Operand)
+		}
+		return false
 	case ast.KindBinaryExpression:
 		binary := expr.AsBinaryExpression()
 		switch binary.OperatorToken.Kind {

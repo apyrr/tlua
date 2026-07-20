@@ -1,0 +1,70 @@
+// @strict: true
+// @noEmit: true
+
+// `#` on an all-fixed tuple types as the arity literal, and `#t == n` / `~=`
+// narrows a union of tuples by arity -- the Lua-native analog of TypeScript's
+// length narrowing (tlua tuples have no length property). keyof an all-fixed
+// tuple is exactly its element key literals; variadic tuples widen to number.
+
+type Pair = [string, number];
+declare p: Pair;
+local two: 2 = #p;
+
+declare vt: [boolean, ...string[]];
+local vlen: number = #vt;
+
+type U = [number] | [string, string];
+declare u: U;
+if #u == 1 then
+    local first: number = u[1];
+else
+    local pairv: [string, string] = u;
+end
+if #u ~= 2 then
+    local one: [number] = u;
+end
+
+// A variable-length member survives any feasible arity check, and an
+// infeasible arity empties the union.
+type V = [number] | [string, ...string[]];
+declare v: V;
+if #v == 3 then
+    local rest: [string, ...string[]] = v;
+end
+if #v == 0 then
+    local imp: never = v;
+end
+
+// Optional trailing elements make the border a range: `#` is the literal
+// union, a guard keeps the tuple for any feasible arity, and the false
+// branch drops a tuple only when its border is uniquely n.
+type Opt = [number, number?];
+declare o: Opt;
+local lo: 1 | 2 = #o;
+local lbad: 2 = #o;
+type W = Opt | [string, string, string];
+declare w: W;
+if #w == 1 then
+    local onlyOpt: Opt = w;
+end
+if #w == 3 then
+    local three: [string, string, string] = w;
+end
+if #w ~= 3 then
+    local nthree: Opt = w;
+end
+if #w ~= 1 then
+    local still: Opt | [string, string, string] = w;
+end
+
+// keyof precision.
+type PK = keyof Pair;
+local k1: PK = 1;
+local k2: PK = 2;
+local k0: PK = 0;
+local kn: PK = 3;
+declare anyNum: number;
+local kdyn: PK = anyNum;
+
+type VK = keyof [boolean, ...string[]];
+local vkOk: VK = 99;

@@ -11,15 +11,16 @@ type SubTup<T> = T extends [
 >SubTup : Symbol(SubTup, Decl(inferFromTupleRestAndVariadic.tlua, 0, 0))
 >T : Symbol(T, Decl(inferFromTupleRestAndVariadic.tlua, 6, 12))
 >T : Symbol(T, Decl(inferFromTupleRestAndVariadic.tlua, 6, 12))
-> : Symbol(unknown)
 
     ...(infer C)[],
-> : Symbol(unknown)
-> : Symbol(unknown)
-> : Symbol(unknown)
+>C : Symbol(C, Decl(inferFromTupleRestAndVariadic.tlua, 7, 13))
 
     ...infer B extends [any, any]
+>B : Symbol(B, Decl(inferFromTupleRestAndVariadic.tlua, 8, 12))
+
 ] ? B : never;
+>B : Symbol(B, Decl(inferFromTupleRestAndVariadic.tlua, 8, 12))
+
 type Trigger = SubTup<[1, 2]>;
 >Trigger : Symbol(Trigger, Decl(inferFromTupleRestAndVariadic.tlua, 9, 14))
 >SubTup : Symbol(SubTup, Decl(inferFromTupleRestAndVariadic.tlua, 0, 0))
@@ -29,15 +30,16 @@ type SubTup2<T> = T extends [
 >SubTup2 : Symbol(SubTup2, Decl(inferFromTupleRestAndVariadic.tlua, 10, 30))
 >T : Symbol(T, Decl(inferFromTupleRestAndVariadic.tlua, 13, 13))
 >T : Symbol(T, Decl(inferFromTupleRestAndVariadic.tlua, 13, 13))
-> : Symbol(unknown)
 
     ...infer A extends [any, any],
-> : Symbol(unknown)
-> : Symbol(unknown)
-> : Symbol(unknown)
+>A : Symbol(A, Decl(inferFromTupleRestAndVariadic.tlua, 14, 12))
 
     ...(infer D)[],
+>D : Symbol(D, Decl(inferFromTupleRestAndVariadic.tlua, 15, 13))
+
 ] ? A : never;
+>A : Symbol(A, Decl(inferFromTupleRestAndVariadic.tlua, 14, 12))
+
 type Trigger2 = SubTup2<[1, 2]>;
 >Trigger2 : Symbol(Trigger2, Decl(inferFromTupleRestAndVariadic.tlua, 16, 14))
 >SubTup2 : Symbol(SubTup2, Decl(inferFromTupleRestAndVariadic.tlua, 10, 30))

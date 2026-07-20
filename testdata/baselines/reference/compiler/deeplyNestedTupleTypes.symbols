@@ -8,7 +8,6 @@ type AOuter = {
 
   inners: [AInner];
 >inners : Symbol(inners, Decl(deeplyNestedTupleTypes.tlua, 2, 15))
-> : Symbol(unknown)
 >AInner : Symbol(AInner, Decl(deeplyNestedTupleTypes.tlua, 4, 2))
 
 };
@@ -17,7 +16,6 @@ type AInner = {
 
   mids: [AMid];
 >mids : Symbol(mids, Decl(deeplyNestedTupleTypes.tlua, 5, 15))
-> : Symbol(unknown)
 >AMid : Symbol(AMid, Decl(deeplyNestedTupleTypes.tlua, 7, 2))
 
 };
@@ -26,7 +24,6 @@ type AMid = {
 
   leaves: [ALeaf];
 >leaves : Symbol(leaves, Decl(deeplyNestedTupleTypes.tlua, 8, 13))
-> : Symbol(unknown)
 >ALeaf : Symbol(ALeaf, Decl(deeplyNestedTupleTypes.tlua, 10, 2))
 
 };
@@ -43,7 +40,6 @@ type BOuter = {
 
   inners: [BInner];
 >inners : Symbol(inners, Decl(deeplyNestedTupleTypes.tlua, 15, 15))
-> : Symbol(unknown)
 >BInner : Symbol(BInner, Decl(deeplyNestedTupleTypes.tlua, 17, 2))
 
 };
@@ -52,7 +48,6 @@ type BInner = {
 
   mids: [BMid];
 >mids : Symbol(mids, Decl(deeplyNestedTupleTypes.tlua, 18, 15))
-> : Symbol(unknown)
 >BMid : Symbol(BMid, Decl(deeplyNestedTupleTypes.tlua, 20, 2))
 
 };
@@ -61,7 +56,6 @@ type BMid = {
 
   leaves: [BLeaf];
 >leaves : Symbol(leaves, Decl(deeplyNestedTupleTypes.tlua, 21, 13))
-> : Symbol(unknown)
 >BLeaf : Symbol(BLeaf, Decl(deeplyNestedTupleTypes.tlua, 23, 2))
 
 };

@@ -7097,7 +7097,7 @@ func (c *Checker) checkArrayLiteral(node *ast.Node, checkMode CheckMode) *Type {
 	inConstContext := c.isConstContext(node)
 	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
 	inTupleContext := contextualType != nil && someType(contextualType, func(t *Type) bool {
-		return c.isTupleLikeType(t) || c.isGenericMappedType(t) && t.AsMappedType().nameType == nil && c.getHomomorphicTypeVariable(core.OrElse(t.AsMappedType().target, t)) != nil
+		return c.isTupleLikeType(t) || c.isHomomorphicMappedTupleContext(t)
 	})
 	hasOmittedExpression := false
 	for i, e := range elements {
@@ -7110,7 +7110,7 @@ func (c *Checker) checkArrayLiteral(node *ast.Node, checkMode CheckMode) *Type {
 			t := c.checkExpressionForMutableLocation(e, checkMode)
 			elementTypes[i] = c.addOptionalityEx(t, true /*isProperty*/, hasOmittedExpression)
 			elementInfos[i] = TupleElementInfo{flags: core.IfElse(hasOmittedExpression, ElementFlagsOptional, ElementFlagsRequired)}
-			if inTupleContext && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(e) {
+			if inTupleContext && c.isIntraExpressionInferenceCandidate(checkMode, e) {
 				inferenceContext := c.getInferenceContext(node)
 				// In CheckMode.Inferential we should always have an inference context
 				c.addIntraExpressionInferenceSite(inferenceContext, e, t)
@@ -9719,7 +9719,21 @@ func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
 		if !everyType(checkedType, c.isLuaLengthOperandType) {
 			c.error(expr.Operand, diagnostics.The_operator_can_only_be_applied_to_a_string_or_a_table)
 		}
-		return c.numberType
+		// An all-fixed tuple's border is its arity -- a range when trailing
+		// elements are optional -- so `#t` types as the literal union over
+		// minLength..fixedLength (a union operand distributes, enabling
+		// `#t == n` checks).
+		return c.mapType(checkedType, func(t *Type) *Type {
+			if isTupleType(t) && t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
+				tt := t.TargetTupleType()
+				lits := make([]*Type, 0, tt.fixedLength-tt.minLength+1)
+				for n := tt.minLength; n <= tt.fixedLength; n++ {
+					lits = append(lits, c.getNumberLiteralType(jsnum.Number(n)))
+				}
+				return c.getUnionType(lits)
+			}
+			return c.numberType
+		})
 	case ast.KindExclamationToken:
 		c.checkTruthinessOfType(operandType, expr.Operand)
 		facts := c.getTypeFacts(operandType, TypeFactsTruthy|TypeFactsFalsy)
@@ -11485,6 +11499,25 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	var propertiesArray []*ast.Symbol
 	c.pushCachedContextualType(node)
 	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
+	// An all-positional table constructor in a tuple context types as a fresh
+	// tuple, so fixed, optional and rest elements check positionally instead of
+	// property-wise against an anonymous number-keyed object (which could not
+	// satisfy a rest element). Only a real tuple (or a homomorphic mapped type,
+	// for array-constrained inference) forces this: a merely tuple-*like*
+	// context -- an interface with numeric-keyed members -- keeps the object
+	// path and its excess-entry checking. That rule is per-UNION, not
+	// per-member: when a union mixes a tuple with a tuple-like interface, the
+	// object path wins, because a fresh tuple source would satisfy the open
+	// interface member without any excess-entry check.
+	if contextualType != nil && core.Every(node.Properties(), ast.IsTableEntry) && someType(contextualType, func(t *Type) bool {
+		return isTupleType(t) || c.isHomomorphicMappedTupleContext(t)
+	}) && !someType(contextualType, func(t *Type) bool {
+		return !isTupleType(t) && c.hasNumberKeyProperty(t)
+	}) {
+		result := c.checkTableConstructorAsTuple(node, checkMode, contextualType)
+		c.popContextualType()
+		return result
+	}
 	var contextualTypeHasPattern bool
 	if contextualType != nil {
 		if pattern := c.patternForType[contextualType]; pattern != nil && (ast.IsObjectBindingPattern(pattern) || ast.IsObjectLiteralExpression(pattern)) {
@@ -11586,7 +11619,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	// table-tail path register through here: a member's position in the literal
 	// must not decide whether it participates in inference.
 	registerInferenceSite := func(memberDecl *ast.Node, t *Type) {
-		if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && (ast.IsPropertyAssignment(memberDecl) || ast.IsTableEntry(memberDecl) || ast.IsMethodDeclaration(memberDecl)) && c.isContextSensitive(memberDecl) {
+		if contextualType != nil && (ast.IsPropertyAssignment(memberDecl) || ast.IsTableEntry(memberDecl) || ast.IsMethodDeclaration(memberDecl)) && c.isIntraExpressionInferenceCandidate(checkMode, memberDecl) {
 			inferenceContext := c.getInferenceContext(node)
 			// In CheckMode.Inferential we should always have an inference context
 			inferenceNode := memberDecl
@@ -11612,15 +11645,8 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 		if ast.IsTableEntry(memberDecl) && i == len(properties)-1 {
 			t := c.checkTableEntry(memberDecl, checkMode)
 			registerInferenceSite(memberDecl, t)
-			if packType := c.getCallPackType(memberDecl.Expression(), checkMode); packType != nil {
-				if packType.flags&TypeFlagsVoid != 0 {
-					// Zero values: `{nothing()}` is the empty table, not `{ 1: void }`.
-					continue
-				}
-				// A union of packs (`if b then return 1, ... end return "a"`) has no
-				// single positional shape, so it stays one value -- the same call the
-				// argument-list tail makes in getEffectiveCallArguments.
-				if isPackType(packType) {
+			if packType, kind := c.classifyTailPack(memberDecl.Expression(), checkMode); kind != tailPackNone {
+				if kind == tailPackSpread {
 					// The fixed prefix (everything before the first unbounded element,
 					// which is what fixedLength counts) gets positional properties. From
 					// the first unbounded element on, nothing has a statically known
@@ -11635,8 +11661,11 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 					if target.fixedLength < len(elementTypes) {
 						numberIndexTailType = c.getPackValuesFromOffset(packType, target.fixedLength)
 					}
-					continue
 				}
+				// Both pack kinds consume the entry: spread was spliced above,
+				// void contributes zero values (`{nothing()}` is the empty
+				// table, not `{ 1: void }`).
+				continue
 			}
 			addPositionalProperty(member, t, false /*optional*/)
 			continue
@@ -12004,6 +12033,86 @@ func (c *Checker) checkPropertyAssignment(node *ast.Node, checkMode CheckMode) *
 	return initializerType
 }
 
+// isHomomorphicMappedTupleContext reports whether a contextual type is a
+// homomorphic mapped type over an array/tuple type variable -- a context in
+// which a literal should produce a tuple so inference can walk it
+// element-wise. Shared by checkArrayLiteral and checkObjectLiteral so both
+// literal forms classify contexts identically.
+func (c *Checker) isHomomorphicMappedTupleContext(t *Type) bool {
+	return c.isGenericMappedType(t) && t.AsMappedType().nameType == nil && c.getHomomorphicTypeVariable(core.OrElse(t.AsMappedType().target, t)) != nil
+}
+
+// isIntraExpressionInferenceCandidate reports whether a member checked under
+// an inferential CheckMode should register an intra-expression inference site,
+// so its checked type can fix type parameters for context-sensitive siblings
+// evaluated later in the same containing expression.
+func (c *Checker) isIntraExpressionInferenceCandidate(checkMode CheckMode, node *ast.Node) bool {
+	return checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(node)
+}
+
+// tailPackKind classifies what a value-list tail expression contributes.
+type tailPackKind int
+
+const (
+	tailPackNone   tailPackKind = iota // a single value (including a union of packs)
+	tailPackVoid                       // zero values
+	tailPackSpread                     // the pack's whole positional shape
+)
+
+// classifyTailPack applies the shared Lua tail rule: the LAST expression of a
+// value list expands its pack. A void pack contributes zero values; a union of
+// packs (`if b then return 1, ... end return "a"`) has no single positional
+// shape, so it contributes one value like any non-pack expression -- the same
+// call the argument-list tail makes in getEffectiveCallArguments. (Return
+// lists are the outlier: checkExpressionList splices even a union of packs.)
+func (c *Checker) classifyTailPack(expr *ast.Node, checkMode CheckMode) (*Type, tailPackKind) {
+	packType := c.getCallPackType(expr, checkMode)
+	switch {
+	case packType == nil:
+		return nil, tailPackNone
+	case packType.flags&TypeFlagsVoid != 0:
+		return nil, tailPackVoid
+	case isPackType(packType):
+		return packType, tailPackSpread
+	}
+	return nil, tailPackNone
+}
+
+// checkTableConstructorAsTuple types an all-positional table constructor in a
+// tuple context as a fresh tuple type. The last entry expands its pack
+// (`{1, f()}` stores every value f returns; `{1, ...}` every vararg), the same
+// tail rule the object-literal path applies to its number-keyed properties.
+func (c *Checker) checkTableConstructorAsTuple(node *ast.Node, checkMode CheckMode, contextualType *Type) *Type {
+	entries := node.Properties()
+	elementTypes := make([]*Type, 0, len(entries))
+	elementInfos := make([]TupleElementInfo, 0, len(entries))
+	for i, entry := range entries {
+		t := c.checkTableEntry(entry, checkMode)
+		// Same intra-expression inference rule as the object path's
+		// registerInferenceSite.
+		if c.isIntraExpressionInferenceCandidate(checkMode, entry) {
+			c.addIntraExpressionInferenceSite(c.getInferenceContext(node), entry.Expression(), t)
+		}
+		if i == len(entries)-1 {
+			if packType, kind := c.classifyTailPack(entry.Expression(), checkMode); kind != tailPackNone {
+				if kind == tailPackSpread {
+					// Splice the pack's whole shape in as a variadic element;
+					// tuple normalization flattens its fixed prefix and rest.
+					elementTypes = append(elementTypes, packType)
+					elementInfos = append(elementInfos, TupleElementInfo{flags: ElementFlagsVariadic})
+				}
+				// Both pack kinds consume the entry: spread was spliced above,
+				// void contributes zero values (`{nothing()}` is the empty tuple).
+				continue
+			}
+		}
+		elementTypes = append(elementTypes, t)
+		elementInfos = append(elementInfos, TupleElementInfo{flags: ElementFlagsRequired})
+	}
+	readonly := c.isConstContext(node) && !someType(contextualType, c.isMutableArrayLikeType)
+	return c.createArrayLiteralType(c.createTupleTypeEx(elementTypes, elementInfos, readonly))
+}
+
 // checkTableEntry types a Lua positional table entry: the entry's type is its
 // expression's type; the property name (the 1-based positional index) is
 // synthesized by checkObjectLiteral.
@@ -12060,11 +12169,15 @@ func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *ast.Node, igno
 	}) != nil
 }
 
+// getNarrowedTypeOfSymbol narrows a binding element through its pattern.
+// (TypeScript's second arm here -- dependent-parameter narrowing for a
+// signature whose single rest parameter is a union of tuples -- has no tlua
+// analog: an annotated vararg `...: T` types each vararg VALUE as T, so its
+// symbol is T[], never a union of tuples.)
 func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node) *Type {
 	t := c.getTypeOfSymbol(symbol)
 	declaration := symbol.ValueDeclaration
 	if declaration != nil {
-		switch {
 		// If we have a non-rest binding element with no initializer declared as a const variable or a const-like
 		// parameter (a parameter for which there are no assignments in the function body), and if the parent type
 		// for the destructuring is a union type, one or more of the binding elements may represent discriminant
@@ -12088,7 +12201,7 @@ func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node
 		// the binding pattern AST instance for '{ kind, payload }' as a pseudo-reference and narrow this reference
 		// as if it occurred in the specified location. We then recompute the narrowed binding element type by
 		// destructuring from the narrowed parent type.
-		case ast.IsBindingElement(declaration) && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) && len(declaration.Parent.Elements()) >= 2:
+		if ast.IsBindingElement(declaration) && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) && len(declaration.Parent.Elements()) >= 2 {
 			parent := declaration.Parent.Parent
 			rootDeclaration := ast.GetRootDeclaration(parent)
 			if ast.IsVariableDeclaration(rootDeclaration) && c.getCombinedNodeFlagsCached(rootDeclaration)&ast.NodeFlagsConst != 0 || ast.IsParameterDeclaration(rootDeclaration) {
@@ -12113,44 +12226,6 @@ func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node
 						}
 					}
 					links.flags &^= NodeCheckFlagsInCheckIdentifier
-				}
-			}
-		// If we have a const-like parameter with no type annotation or initializer, and if the parameter is contextually
-		// typed by a signature with a single rest parameter of a union of tuple types, one or more of the parameters may
-		// represent discriminant tuple elements, and we want the effects of conditional checks on such discriminants to
-		// affect the types of other parameters in the same parameter list. Consider:
-		//
-		//   type Action = [kind: 'A', payload: number] | [kind: 'B', payload: string];
-		//
-		//   const f: (...args: Action) => void = (kind, payload) => {
-		//       if (kind === 'A') {
-		//           payload.toFixed();
-		//       }
-		//       if (kind === 'B') {
-		//           payload.toUpperCase();
-		//       }
-		//   }
-		//
-		// Above, we want the conditional checks on 'kind' to affect the type of 'payload'. To facilitate this, we use
-		// the arrow function AST node for '(kind, payload) => ...' as a pseudo-reference and narrow this reference as
-		// if it occurred in the specified location. We then recompute the narrowed parameter type by indexing into the
-		// narrowed tuple type.
-		case ast.IsParameterDeclaration(declaration) && declaration.Type() == nil && declaration.Initializer() == nil && !hasDotDotDotToken(declaration):
-			fn := declaration.Parent
-			if len(fn.Parameters()) >= 2 && c.isContextSensitiveFunctionOrObjectLiteralMethod(fn) {
-				contextualSignature := c.getContextualSignature(fn)
-				if contextualSignature != nil && len(contextualSignature.parameters) == 1 && signatureHasRestParameter(contextualSignature) {
-					var mapper *TypeMapper
-					context := c.getInferenceContext(fn)
-					if context != nil {
-						mapper = context.nonFixingMapper
-					}
-					restType := c.getReducedApparentType(c.instantiateType(c.getTypeOfSymbol(contextualSignature.parameters[0]), mapper))
-					if restType.flags&TypeFlagsUnion != 0 && everyType(restType, isTupleType) && !core.Some(fn.Parameters(), c.isSomeSymbolAssigned) {
-						narrowedType := c.getFlowTypeOfReferenceEx(fn, restType, restType, nil /*flowContainer*/, getFlowNodeOfNode(location))
-						index := slices.Index(fn.Parameters(), declaration) - core.IfElse(ast.GetThisParameter(fn) != nil, 1, 0)
-						t = c.getIndexedAccessType(narrowedType, c.getNumberLiteralType(jsnum.Number(index)))
-					}
 				}
 			}
 		}
@@ -15914,7 +15989,7 @@ func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, par
 		elementType := c.checkIteratedTypeOrElementType(IterationUseDestructuring|IterationUsePossiblyOutOfBounds, parentType, c.nilType, pattern)
 		index := slices.Index(pattern.Elements(), declaration)
 		if c.isArrayLikeType(parentType) {
-			indexType := c.getNumberLiteralType(jsnum.Number(index))
+			indexType := c.getNumberLiteralTypeForPosition(index)
 			declaredType := core.OrElse(c.getIndexedAccessTypeOrUndefined(parentType, indexType, accessFlags, declaration.Name(), nil), c.errorType)
 			t = c.getFlowTypeOfDestructuring(declaration, declaredType)
 		} else {
@@ -20594,7 +20669,7 @@ func (c *Checker) instantiateMappedTupleType(tupleType *Type, mappedType *Type, 
 	// for the remaining elements. For example
 	//
 	//   type Keys<T> = { [K in keyof T]: K };
-	//   type Foo<T extends any[]> = Keys<[string, string, ...T, string]>; // ["0", "1", ...Keys<T>, number]
+	//   type Foo<T extends any[]> = Keys<[string, string, ...T, string]>; // [1, 2, ...Keys<T>, number]
 	//
 	elementInfos := tupleType.TargetTupleType().elementInfos
 	fixedLength := tupleType.TargetTupleType().fixedLength
@@ -20611,8 +20686,8 @@ func (c *Checker) instantiateMappedTupleType(tupleType *Type, mappedType *Type, 
 		var mapped *Type
 		switch {
 		case i < fixedLength:
-			// Tuple keys are number keys, so mapped-tuple key types are number literals.
-			mapped = c.instantiateMappedTypeTemplate(mappedType, c.getNumberLiteralType(jsnum.Number(i)), flags&ElementFlagsOptional != 0, fixedMapper)
+			// Mapped-tuple key types are the elements' 1-based number keys.
+			mapped = c.instantiateMappedTypeTemplate(mappedType, c.getNumberLiteralTypeForPosition(i), flags&ElementFlagsOptional != 0, fixedMapper)
 		case flags&ElementFlagsVariadic != 0:
 			mapped = c.instantiateType(mappedType, prependTypeMapping(typeVariable, e, m))
 		default:
@@ -20729,6 +20804,12 @@ func (c *Checker) forEachMappedTypePropertyKeyTypeAndIndexSignatureKeyType(t *Ty
 		cb(c.stringType)
 	} else {
 		for _, info := range c.getIndexInfosOfType(t) {
+			// Same rule as getLiteralTypeFromProperties: an all-fixed tuple's
+			// number index (from its table base) must not widen its keys to
+			// `number` -- the element literals were contributed above.
+			if isTupleType(t) && t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 && info.keyType == c.numberType {
+				continue
+			}
 			if !stringsOnly || info.keyType.flags&(TypeFlagsString|TypeFlagsTemplateLiteral) != 0 {
 				cb(info.keyType)
 			}
@@ -21613,16 +21694,45 @@ func (c *Checker) isEmptyLiteralType(t *Type) bool {
 	return t == c.implicitNeverType
 }
 
-func (c *Checker) isTupleLikeType(t *Type) bool {
-	if isTupleType(t) || c.getPropertyOfType(t, ast.NumberKeyNameFromInt(0)) != nil {
-		return true
-	}
-	if c.isArrayLikeType(t) {
-		if lengthType := c.getTypeOfPropertyOfType(t, "length"); lengthType != nil {
-			return everyType(lengthType, func(t *Type) bool { return t.flags&TypeFlagsNumberLiteral != 0 })
+// hasNumberKeyProperty reports whether a type declares any number-keyed
+// property. Broader than isTupleLikeType (which probes only the first
+// element key): the tuple-path union gate must also yield to SPARSE
+// numeric-keyed members like `{2: string}`, or their excess-entry checking
+// would be silently lost behind a fresh tuple source.
+func (c *Checker) hasNumberKeyProperty(t *Type) bool {
+	for _, prop := range c.getPropertiesOfType(t) {
+		if ast.IsNumberKeyName(prop.Name) {
+			return true
 		}
 	}
 	return false
+}
+
+// isTupleElementKey reports whether a numeric key can address a tuple
+// element: Lua sequences are 1-based with integer keys. Sub-1 and non-integer
+// keys are never elements (though they may still key the table's number index
+// signature). The single source of truth for the access and contextual paths.
+func isTupleElementKey(key jsnum.Number) bool {
+	return key >= 1 && key.Floor() == key
+}
+
+// tupleAdmitsNumberKey reports whether a tuple type has an element at the
+// numeric key: element keys are integers >= 1, bounded by the fixed length
+// when the tuple is all-fixed (a variable-length tuple's variable part covers
+// every element key past its prefix). The single spelling of the rule shared
+// by excess-property checking, elaboration, and object-to-tuple relations.
+func tupleAdmitsNumberKey(t *Type, key jsnum.Number) bool {
+	if !isTupleElementKey(key) {
+		return false
+	}
+	tt := t.TargetTupleType()
+	return tt.combinedFlags&ElementFlagsVariable != 0 || key <= jsnum.Number(tt.fixedLength)
+}
+
+func (c *Checker) isTupleLikeType(t *Type) bool {
+	// No length-literal fallback: a plain field named `length` is not a
+	// sequence signal in Lua (tuples themselves have no length property).
+	return isTupleType(t) || c.getPropertyOfType(t, ast.NumberKeyNameFromPosition(0)) != nil
 }
 
 func (c *Checker) isArrayOrTupleLikeType(t *Type) bool {
@@ -21634,7 +21744,7 @@ func (c *Checker) isArrayOrTupleOrIntersection(t *Type) bool {
 }
 
 func (c *Checker) getTupleElementType(t *Type, index int) *Type {
-	propType := c.getTypeOfPropertyOfType(t, ast.NumberKeyNameFromInt(index))
+	propType := c.getTypeOfPropertyOfType(t, ast.NumberKeyNameFromPosition(index))
 	if propType != nil {
 		return propType
 	}
@@ -22863,7 +22973,7 @@ func (c *Checker) packElementForIndex(t *Type, index int) *Type {
 	return c.mapType(t, func(s *Type) *Type {
 		switch {
 		case isPackType(s):
-			if propType := c.getTypeOfPropertyOfType(s, ast.NumberKeyNameFromInt(index)); propType != nil {
+			if propType := c.getTypeOfPropertyOfType(s, ast.NumberKeyNameFromPosition(index)); propType != nil {
 				return propType // fixed element
 			}
 			// Variable part or past the end: nil joins in.
@@ -23137,10 +23247,33 @@ func (c *Checker) getTupleTargetType(elementInfos []TupleElementInfo, readonly b
 	return t
 }
 
+// getNumberLiteralTypeForPosition returns the number-literal key type for the
+// 0-based element position pos: Lua sequences are 1-based, so position pos
+// occupies key pos+1. The literal-type companion of ast.NumberKeyNameFromPosition;
+// position-to-key conversions must use one of the two (or state their own +1).
+func (c *Checker) getNumberLiteralTypeForPosition(pos int) *Type {
+	return c.getNumberLiteralType(jsnum.Number(pos + 1))
+}
+
+// GetTupleLabelDeclaration returns the NamedTupleMember (or labeled parameter)
+// declaration behind a labeled tuple element property symbol, following
+// instantiation targets; nil for unlabeled elements and non-tuple symbols.
+func (c *Checker) GetTupleLabelDeclaration(symbol *ast.Symbol) *ast.Node {
+	for symbol != nil {
+		links := c.valueSymbolLinks.Get(symbol)
+		if links.tupleLabelDeclaration != nil {
+			return links.tupleLabelDeclaration
+		}
+		symbol = links.target
+	}
+	return nil
+}
+
 // We represent tuple types as type references to synthesized generic interface types created by
-// this function. The types are of the form:
+// this function. The types are of the form (1-based number keys, no Array base
+// and no length property -- a tuple value is a plain Lua table):
 //
-//	interface Tuple<T0, T1, T2, ...> extends Array<T0 | T1 | T2 | ...> { 0: T0, 1: T1, 2: T2, ... }
+//	interface Tuple<T0, T1, T2, ...> { 1: T0, 2: T1, 3: T2, ... } plus a T0|T1|T2 number index
 //
 // Note that the generic type created by this function has no symbol associated with it. The same
 // is true for each of the synthesized type parameters.
@@ -23160,26 +23293,26 @@ func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonl
 			flags := elementInfos[i].flags
 			combinedFlags |= flags
 			if combinedFlags&ElementFlagsVariable == 0 {
-				// Tuple element names live in the number-key namespace.
-				property := c.newSymbolEx(ast.SymbolFlagsProperty|core.IfElse(flags&ElementFlagsOptional != 0, ast.SymbolFlagsOptional, 0), ast.NumberKeyNameFromInt(i), core.IfElse(readonly, ast.CheckFlagsReadonly, 0))
+				// Tuple element names live in the number-key namespace at the
+				// 1-based Lua sequence keys.
+				property := c.newSymbolEx(ast.SymbolFlagsProperty|core.IfElse(flags&ElementFlagsOptional != 0, ast.SymbolFlagsOptional, 0), ast.NumberKeyNameFromPosition(i), core.IfElse(readonly, ast.CheckFlagsReadonly, 0))
 				c.valueSymbolLinks.Get(property).resolvedType = typeParameter
-				// c.valueSymbolLinks.get(property).tupleLabelDeclaration = elementInfos[i].labeledDeclaration
+				if decl := elementInfos[i].labeledDeclaration; decl != nil {
+					// Surface labeled members in the LS via the link only:
+					// putting the declaration in property.Declarations would
+					// make the label displace the number key as the symbol's
+					// display name.
+					c.valueSymbolLinks.Get(property).tupleLabelDeclaration = decl
+				}
 				members[property.Name] = property
 			}
 		}
 	}
 	fixedLength := len(members)
-	lengthSymbol := c.newSymbolEx(ast.SymbolFlagsProperty, "length", core.IfElse(readonly, ast.CheckFlagsReadonly, 0))
-	if combinedFlags&ElementFlagsVariable != 0 {
-		c.valueSymbolLinks.Get(lengthSymbol).resolvedType = c.numberType
-	} else {
-		var literalTypes []*Type
-		for i := minLength; i <= arity; i++ {
-			literalTypes = append(literalTypes, c.getNumberLiteralType(jsnum.Number(i)))
-		}
-		c.valueSymbolLinks.Get(lengthSymbol).resolvedType = c.getUnionType(literalTypes)
-	}
-	members[lengthSymbol.Name] = lengthSymbol
+	// No `length` property: a tuple value is a plain Lua table with nothing at
+	// the "length" string key -- `#t` is an operator, not a field. Arity is
+	// enforced positionally through elementInfos, so table constructors
+	// (which never produce a length member) can satisfy tuple types.
 	t := c.newObjectType(ObjectFlagsTuple|ObjectFlagsReference, nil)
 	c.initSyntheticGenericTarget(t, typeParameters)
 	d := t.AsTupleType()
@@ -24258,6 +24391,12 @@ func (c *Checker) removeSubtypes(types []*Type, hasObjectTypes bool) []*Type {
 					if c.isTypeRelatedTo(source, target, c.strictSubtypeRelation) && (c.getTargetType(source).objectFlags&ObjectFlagsClass == 0 ||
 						c.getTargetType(target).objectFlags&ObjectFlagsClass == 0 ||
 						c.isTypeDerivedFrom(source, target)) {
+						// Note: a fixed tuple is a strict subtype of an
+						// exactly-in-range number-keyed object (never the
+						// reverse -- the object lacks the tuple's number index
+						// signature), so `[A, B] | {1: A, 2: B}` reduces to
+						// the object deterministically. That is set-correct;
+						// tluaTupleTypes locks it.
 						types = slices.Delete(types, i, i+1)
 						break
 					}
@@ -24933,6 +25072,14 @@ func (c *Checker) getLiteralTypeFromProperties(t *Type, include TypeFlags, index
 		types = append(types, c.getLiteralTypeFromProperty(prop, include, false))
 	}
 	for _, info := range indexInfos {
+		// An all-fixed tuple's number index signature (from its table base)
+		// must not widen keyof to `number`: the tuple admits only the element
+		// keys 1..arity (tupleAdmitsNumberKey), which the property loop above
+		// already contributed as literals. Variable-length tuples keep the
+		// widening -- their element keys are unbounded.
+		if isTupleType(t) && t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 && info.keyType == c.numberType {
+			continue
+		}
 		if c.isKeyTypeIncluded(info.keyType, include, indexFlags) {
 			// A string index signature covers only string keys (number keys
 			// are disjoint in tlua), so keyof is not widened to string|number.
@@ -25274,23 +25421,36 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			}
 		}
 		if index, isNumberKey := ast.NumberKeyNumber(propName); isNumberKey && everyType(objectType, isTupleType) {
-			if accessNode != nil && everyType(objectType, func(t *Type) bool {
-				return t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0
-			}) && accessFlags&AccessFlagsAllowMissing == 0 {
-				indexNode := getIndexNodeForAccessExpression(accessNode)
-				if isTupleType(objectType) {
-					if index < 0 {
-						c.error(indexNode, diagnostics.A_tuple_type_cannot_be_indexed_with_a_negative_value)
-						return c.nilType
+			// Only element keys (see isTupleElementKey) address tuple slots.
+			// On a checked access (accessNode present, AllowMissing unset)
+			// every other numeric key errors: negatives with the dedicated
+			// diagnostic (returning nil outright), key 0/fractionals with
+			// has-no-element (known arity) or property-does-not-exist before
+			// resolving through the number index signature like any table
+			// key. Past-the-end element keys error only when the arity is
+			// known (no variable part). AllowMissing accesses (binding-element
+			// defaults) stay silent by design.
+			if accessNode != nil && accessFlags&AccessFlagsAllowMissing == 0 {
+				if index < 0 {
+					c.error(getIndexNodeForAccessExpression(accessNode), diagnostics.A_tuple_type_cannot_be_indexed_with_a_negative_value)
+					return c.nilType
+				}
+				allFixed := everyType(objectType, func(t *Type) bool {
+					return t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0
+				})
+				if allFixed || !isTupleElementKey(index) {
+					indexNode := getIndexNodeForAccessExpression(accessNode)
+					if isTupleType(objectType) && allFixed {
+						c.error(indexNode, diagnostics.Tuple_type_0_of_length_1_has_no_element_at_index_2, c.TypeToString(objectType), c.getTypeReferenceArity(objectType), index.String())
+					} else {
+						c.error(indexNode, diagnostics.Property_0_does_not_exist_on_type_1, index.String(), c.TypeToString(objectType))
 					}
-					c.error(indexNode, diagnostics.Tuple_type_0_of_length_1_has_no_element_at_index_2, c.TypeToString(objectType), c.getTypeReferenceArity(objectType), index.String())
-				} else {
-					c.error(indexNode, diagnostics.Property_0_does_not_exist_on_type_1, index.String(), c.TypeToString(objectType))
 				}
 			}
-			if index >= 0 {
+			if isTupleElementKey(index) {
 				c.errorIfWritingToReadonlyIndex(c.getIndexInfoOfType(objectType, c.numberType), objectType, accessExpression)
-				return c.getTupleElementTypeOutOfStartCount(objectType, index, core.IfElse(accessFlags&AccessFlagsIncludeUndefined != 0, c.missingType, nil))
+				// Lua key index addresses 0-based element position index-1.
+				return c.getTupleElementTypeOutOfStartCount(objectType, index-1, core.IfElse(accessFlags&AccessFlagsIncludeUndefined != 0, c.missingType, nil))
 			}
 		}
 	}
@@ -27329,7 +27489,7 @@ func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount in
 			if isTupleType(restType) {
 				contextualType = core.OrElse(c.getContextualTypeForElementExpression(restType, i-index, argCount-index), c.unknownType)
 			} else {
-				contextualType = c.getIndexedAccessTypeEx(restType, c.getNumberLiteralType(jsnum.Number(i-index)), AccessFlagsContextual, nil, nil)
+				contextualType = c.getIndexedAccessTypeEx(restType, c.getNumberLiteralTypeForPosition(i-index), AccessFlagsContextual, nil, nil)
 			}
 			argType := c.checkExpressionWithContextualType(arg, contextualType, context, checkMode)
 			hasPrimitiveContextualType := c.maybeTypeOfKind(contextualType, TypeFlagsPrimitive|TypeFlagsIndex|TypeFlagsTemplateLiteral|TypeFlagsStringMapping)
@@ -27471,7 +27631,7 @@ func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argI
 	}
 	restIndex := len(signature.parameters) - 1
 	if signatureHasRestParameter(signature) && argIndex >= restIndex {
-		return c.getIndexedAccessTypeEx(c.getTypeOfSymbol(signature.parameters[restIndex]), c.getNumberLiteralType(jsnum.Number(argIndex-restIndex)), AccessFlagsContextual, nil, nil)
+		return c.getIndexedAccessTypeEx(c.getTypeOfSymbol(signature.parameters[restIndex]), c.getNumberLiteralTypeForPosition(argIndex-restIndex), AccessFlagsContextual, nil, nil)
 	}
 	return c.getTypeAtPosition(signature, argIndex)
 }
@@ -27704,9 +27864,10 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 			// Return a union of the possible contextual element types with no subtype reduction.
 			return c.getElementTypeOfSliceOfTupleType(t, t.TargetTupleType().fixedLength, fixedEndLength, false /*writing*/, true /*noReductions*/)
 		}
-		// If a contextual property with the element's name exists, return it. Otherwise return the
-		// iterated or element type of the contextual type.
-		propType := c.getTypeOfPropertyOfContextualType(t, ast.NumberKeyNameFromInt(index))
+		// If a contextual property with the element's name (its 1-based Lua key)
+		// exists, return it. Otherwise return the iterated or element type of the
+		// contextual type.
+		propType := c.getTypeOfPropertyOfContextualType(t, ast.NumberKeyNameFromPosition(index))
 		if propType != nil {
 			return propType
 		}
@@ -28057,7 +28218,10 @@ func (c *Checker) getTypeOfConcretePropertyOfContextualType(t *Type, name string
 }
 
 func (c *Checker) getTypeFromIndexInfosOfContextualType(t *Type, name string, nameType *Type) *Type {
-	if n, ok := ast.NumberKeyNumber(name); ok && isTupleType(t) && n >= 0 {
+	// Only element keys can sit in a tuple's rest part; anything else (key 0,
+	// fractional keys) is no element and falls through to plain index-info
+	// resolution, matching the access path's isTupleElementKey rule.
+	if n, ok := ast.NumberKeyNumber(name); ok && isTupleType(t) && isTupleElementKey(n) {
 		restType := c.getElementTypeOfSliceOfTupleType(t, t.TargetTupleType().fixedLength, 0 /*endSkipCount*/, false /*writing*/, true /*noReductions*/)
 		if restType != nil {
 			return restType

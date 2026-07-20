@@ -24,9 +24,8 @@ type Split<S extends string> = S extends `${infer Head}${infer Rest}` ? [Head, R
 >S : Symbol(S, Decl(templateLiteralMultiByteCharInference.tlua, 5, 11))
 >Head : Symbol(Head, Decl(templateLiteralMultiByteCharInference.tlua, 5, 49))
 >Rest : Symbol(Rest, Decl(templateLiteralMultiByteCharInference.tlua, 5, 62))
->Head : Symbol(Head)
-> : Symbol(unknown)
-> : Symbol(unknown)
+>Head : Symbol(Head, Decl(templateLiteralMultiByteCharInference.tlua, 5, 49))
+>Rest : Symbol(Rest, Decl(templateLiteralMultiByteCharInference.tlua, 5, 62))
 
 // Single-byte (ASCII) characters
 type A = GetFirst<"ABC">;  // "A"

@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaTupleJsxChildren.tsx] ////
+
+=== tluaTupleJsxChildren.tsx ===
+// Extra JSX children against a fixed-tuple children prop report the tuple
+// arity error, not a per-child error against the phantom `nil` an
+// out-of-range tuple element resolves to (the elaboration guard lives in
+// getBestMatchIndexedAccessTypeOrUndefined, shared with table entries).
+
+interface JsxElement {}
+interface JsxElementChildrenAttribute { children: {}; }
+>children : {}
+
+interface JsxIntrinsicElements { div: { children?: any }; }
+>div : { children?: any; }
+>children : any
+
+declare React: { createElement: any, Fragment: any };
+>React : { createElement: any; Fragment: any; }
+>createElement : any
+>Fragment : any
+
+declare Comp: (props: { children: [JsxElement, JsxElement] }) => JsxElement;
+>Comp : (props: { children: [JsxElement, JsxElement]; }) => JsxElement
+>props : { children: [JsxElement, JsxElement]; }
+>children : [JsxElement, JsxElement]
+
+local ok = <Comp><div/><div/></Comp>;
+>ok : JsxElement
+><Comp><div/><div/></Comp> : JsxElement
+>Comp : (props: { children: [JsxElement, JsxElement]; }) => JsxElement
+><div/> : JsxElement
+>div : any
+><div/> : JsxElement
+>div : any
+>Comp : (props: { children: [JsxElement, JsxElement]; }) => JsxElement
+
+local bad = <Comp><div/><div/><div/></Comp>;
+>bad : JsxElement
+><Comp><div/><div/><div/></Comp> : JsxElement
+>Comp : (props: { children: [JsxElement, JsxElement]; }) => JsxElement
+><div/> : JsxElement
+>div : any
+><div/> : JsxElement
+>div : any
+><div/> : JsxElement
+>div : any
+>Comp : (props: { children: [JsxElement, JsxElement]; }) => JsxElement
+

@@ -1,0 +1,315 @@
+//// [tests/cases/compiler/tluaTupleTypes.tlua] ////
+
+=== tluaTupleTypes.tlua ===
+// Tuple types `[A, B]` in .tlua source: a fixed-shape table whose elements
+// live at the 1-based Lua sequence keys. Values are ordinary table
+// constructors; arity and element types check positionally.
+
+type Pair = [string, number];
+>Pair : Symbol(Pair, Decl(tluaTupleTypes.tlua, 0, 0))
+
+local p: Pair = {"a", 1};
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+>Pair : Symbol(Pair, Decl(tluaTupleTypes.tlua, 0, 0))
+
+local s: string = p[1];
+>s : Symbol(s, Decl(tluaTupleTypes.tlua, 7, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+>1 : Symbol(1)
+
+local n: number = p[2];
+>n : Symbol(n, Decl(tluaTupleTypes.tlua, 8, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+>2 : Symbol(2)
+
+// Out-of-range keys: 0 and past-the-end error, and a tuple value is a plain
+// table with no `length` field (`#t` is the operator).
+local oob = p[3];
+>oob : Symbol(oob, Decl(tluaTupleTypes.tlua, 12, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+
+local zero = p[0];
+>zero : Symbol(zero, Decl(tluaTupleTypes.tlua, 13, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+
+local nolen = p.length;
+>nolen : Symbol(nolen, Decl(tluaTupleTypes.tlua, 14, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+
+local hash: number = #p;
+>hash : Symbol(hash, Decl(tluaTupleTypes.tlua, 15, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+
+// Element-type and arity mismatches.
+local bad: Pair = {1, "a"};
+>bad : Symbol(bad, Decl(tluaTupleTypes.tlua, 18, 5))
+>Pair : Symbol(Pair, Decl(tluaTupleTypes.tlua, 0, 0))
+
+local excess: Pair = {"a", 1, true};
+>excess : Symbol(excess, Decl(tluaTupleTypes.tlua, 19, 5))
+>Pair : Symbol(Pair, Decl(tluaTupleTypes.tlua, 0, 0))
+
+local short: Pair = {"a"};
+>short : Symbol(short, Decl(tluaTupleTypes.tlua, 20, 5))
+>Pair : Symbol(Pair, Decl(tluaTupleTypes.tlua, 0, 0))
+
+// Optional and rest elements.
+type Trail = [string, number?, ...boolean[]];
+>Trail : Symbol(Trail, Decl(tluaTupleTypes.tlua, 20, 26))
+
+local t1: Trail = {"x"};
+>t1 : Symbol(t1, Decl(tluaTupleTypes.tlua, 24, 5))
+>Trail : Symbol(Trail, Decl(tluaTupleTypes.tlua, 20, 26))
+
+local t2: Trail = {"x", 2, true, false};
+>t2 : Symbol(t2, Decl(tluaTupleTypes.tlua, 25, 5))
+>Trail : Symbol(Trail, Decl(tluaTupleTypes.tlua, 20, 26))
+
+local restRead: boolean | nil = t2[3];
+>restRead : Symbol(restRead, Decl(tluaTupleTypes.tlua, 26, 5))
+>t2 : Symbol(t2, Decl(tluaTupleTypes.tlua, 25, 5))
+
+// Sub-1 and non-integer keys are never elements, on every tuple shape:
+// negatives get the dedicated diagnostic (unions included), key 0 and
+// fractional keys report no-such-element/property and then resolve through
+// the number index signature like any table key.
+local vzero = t2[0];
+>vzero : Symbol(vzero, Decl(tluaTupleTypes.tlua, 32, 5))
+>t2 : Symbol(t2, Decl(tluaTupleTypes.tlua, 25, 5))
+
+local vneg = t2[-1];
+>vneg : Symbol(vneg, Decl(tluaTupleTypes.tlua, 33, 5))
+>t2 : Symbol(t2, Decl(tluaTupleTypes.tlua, 25, 5))
+
+local pneg = p[-1];
+>pneg : Symbol(pneg, Decl(tluaTupleTypes.tlua, 34, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+
+local pfrac = p[1.5];
+>pfrac : Symbol(pfrac, Decl(tluaTupleTypes.tlua, 35, 5))
+>p : Symbol(p, Decl(tluaTupleTypes.tlua, 6, 5))
+
+local vfrac = t2[1.5];
+>vfrac : Symbol(vfrac, Decl(tluaTupleTypes.tlua, 36, 5))
+>t2 : Symbol(t2, Decl(tluaTupleTypes.tlua, 25, 5))
+
+declare u: [number, string] | [boolean];
+>u : Symbol(u, Decl(tluaTupleTypes.tlua, 37, 7))
+
+local uneg = u[-1];
+>uneg : Symbol(uneg, Decl(tluaTupleTypes.tlua, 38, 5))
+>u : Symbol(u, Decl(tluaTupleTypes.tlua, 37, 7))
+
+// An excess entry against a tuple-LIKE object with a number index signature
+// still elaborates at the entry (the index signature types the key).
+local mixed: { 1: string, [n: number]: string } = {"a", 5};
+>mixed : Symbol(mixed, Decl(tluaTupleTypes.tlua, 42, 5))
+>1 : Symbol(1, Decl(tluaTupleTypes.tlua, 42, 14))
+>n : Symbol(n, Decl(tluaTupleTypes.tlua, 42, 27))
+
+// Entries in a variadic tuple's rest part keep precise per-entry elaboration
+// (they have no property symbol, but the rest slice types them).
+local restBad: Trail = {"x", 2, true, "no"};
+>restBad : Symbol(restBad, Decl(tluaTupleTypes.tlua, 46, 5))
+>Trail : Symbol(Trail, Decl(tluaTupleTypes.tlua, 20, 26))
+
+// A union mixing a tuple with a tuple-like interface keeps the object path,
+// so neither member's checking is lost: excess entries still error.
+interface ClosedPair {
+>ClosedPair : Symbol(ClosedPair, Decl(tluaTupleTypes.tlua, 46, 44))
+
+    1: string;
+>1 : Symbol(ClosedPair[1], Decl(tluaTupleTypes.tlua, 50, 22))
+
+    2: string;
+>2 : Symbol(ClosedPair[2], Decl(tluaTupleTypes.tlua, 51, 14))
+}
+type TupleOrLike = [string, string] | ClosedPair;
+>TupleOrLike : Symbol(TupleOrLike, Decl(tluaTupleTypes.tlua, 53, 1))
+>ClosedPair : Symbol(ClosedPair, Decl(tluaTupleTypes.tlua, 46, 44))
+
+local okUnion: TupleOrLike = {"x", "y"};
+>okUnion : Symbol(okUnion, Decl(tluaTupleTypes.tlua, 55, 5))
+>TupleOrLike : Symbol(TupleOrLike, Decl(tluaTupleTypes.tlua, 53, 1))
+
+local excessUnion: TupleOrLike = {"x", "y", "z"};
+>excessUnion : Symbol(excessUnion, Decl(tluaTupleTypes.tlua, 56, 5))
+>TupleOrLike : Symbol(TupleOrLike, Decl(tluaTupleTypes.tlua, 53, 1))
+
+local wrongUnion: TupleOrLike = {"x", "y", true};
+>wrongUnion : Symbol(wrongUnion, Decl(tluaTupleTypes.tlua, 57, 5))
+>TupleOrLike : Symbol(TupleOrLike, Decl(tluaTupleTypes.tlua, 53, 1))
+
+// A non-sequence object satisfies a variadic tuple when its prefix matches
+// property-wise and every key past the prefix satisfies the rest slice;
+// elements required after the variable part are unverifiable and reject.
+declare objIn: { 1: number, 2: number };
+>objIn : Symbol(objIn, Decl(tluaTupleTypes.tlua, 62, 7))
+>1 : Symbol(1, Decl(tluaTupleTypes.tlua, 62, 16))
+>2 : Symbol(2, Decl(tluaTupleTypes.tlua, 62, 27))
+
+declare objBad: { 1: number, 5: string };
+>objBad : Symbol(objBad, Decl(tluaTupleTypes.tlua, 63, 7))
+>1 : Symbol(1, Decl(tluaTupleTypes.tlua, 63, 17))
+>5 : Symbol(5, Decl(tluaTupleTypes.tlua, 63, 28))
+
+type Vari = [number, ...number[]];
+>Vari : Symbol(Vari, Decl(tluaTupleTypes.tlua, 63, 41))
+
+local vOk: Vari = objIn;
+>vOk : Symbol(vOk, Decl(tluaTupleTypes.tlua, 65, 5))
+>Vari : Symbol(Vari, Decl(tluaTupleTypes.tlua, 63, 41))
+>objIn : Symbol(objIn, Decl(tluaTupleTypes.tlua, 62, 7))
+
+local vBad: Vari = objBad;
+>vBad : Symbol(vBad, Decl(tluaTupleTypes.tlua, 66, 5))
+>Vari : Symbol(Vari, Decl(tluaTupleTypes.tlua, 63, 41))
+>objBad : Symbol(objBad, Decl(tluaTupleTypes.tlua, 63, 7))
+
+type TrailReq = [number, ...string[], boolean];
+>TrailReq : Symbol(TrailReq, Decl(tluaTupleTypes.tlua, 66, 26))
+
+local vReq: TrailReq = objIn;
+>vReq : Symbol(vReq, Decl(tluaTupleTypes.tlua, 68, 5))
+>TrailReq : Symbol(TrailReq, Decl(tluaTupleTypes.tlua, 66, 26))
+>objIn : Symbol(objIn, Decl(tluaTupleTypes.tlua, 62, 7))
+
+// A union mixing a tuple with a plain (non-tuple-like) object: excess
+// entries surface the union's relation error, not a phantom-nil per-entry
+// error via the best-matching tuple constituent.
+declare mixedU: [number, number] | { kind: string };
+>mixedU : Symbol(mixedU, Decl(tluaTupleTypes.tlua, 73, 7))
+>kind : Symbol(kind, Decl(tluaTupleTypes.tlua, 73, 36))
+
+local mu: typeof mixedU = {1, 2, 3};
+>mu : Symbol(mu, Decl(tluaTupleTypes.tlua, 74, 5))
+>mixedU : Symbol(mixedU, Decl(tluaTupleTypes.tlua, 73, 7))
+
+// A SPARSE numeric-keyed union member (no key 1) also forces the object
+// path, keeping its excess-entry checking.
+interface Sparse {
+>Sparse : Symbol(Sparse, Decl(tluaTupleTypes.tlua, 74, 36))
+
+    2: string;
+>2 : Symbol(Sparse[2], Decl(tluaTupleTypes.tlua, 78, 18))
+}
+type SparseU = [string] | Sparse;
+>SparseU : Symbol(SparseU, Decl(tluaTupleTypes.tlua, 80, 1))
+>Sparse : Symbol(Sparse, Decl(tluaTupleTypes.tlua, 74, 36))
+
+local sOk: SparseU = {"x"};
+>sOk : Symbol(sOk, Decl(tluaTupleTypes.tlua, 82, 5))
+>SparseU : Symbol(SparseU, Decl(tluaTupleTypes.tlua, 80, 1))
+
+local sAlso: SparseU = {"x", "y"};
+>sAlso : Symbol(sAlso, Decl(tluaTupleTypes.tlua, 83, 5))
+>SparseU : Symbol(SparseU, Decl(tluaTupleTypes.tlua, 80, 1))
+
+local sBad: SparseU = {"x", "y", true};
+>sBad : Symbol(sBad, Decl(tluaTupleTypes.tlua, 84, 5))
+>SparseU : Symbol(SparseU, Decl(tluaTupleTypes.tlua, 80, 1))
+
+// Union subtype reduction: a fixed tuple is a strict subtype of the
+// exactly-in-range object (never the reverse), so the object survives --
+// deterministic and set-correct.
+declare cond: boolean;
+>cond : Symbol(cond, Decl(tluaTupleTypes.tlua, 89, 7))
+
+declare oPair: { 1: number, 2: number };
+>oPair : Symbol(oPair, Decl(tluaTupleTypes.tlua, 90, 7))
+>1 : Symbol(1, Decl(tluaTupleTypes.tlua, 90, 16))
+>2 : Symbol(2, Decl(tluaTupleTypes.tlua, 90, 27))
+
+function pickShape()
+>pickShape : Symbol(pickShape, Decl(tluaTupleTypes.tlua, 90, 40))
+
+    if cond then
+>cond : Symbol(cond, Decl(tluaTupleTypes.tlua, 89, 7))
+
+        local t: [number, number] = {1, 2};
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 93, 13))
+
+        return t;
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 93, 13))
+
+    end
+    return oPair;
+>oPair : Symbol(oPair, Decl(tluaTupleTypes.tlua, 90, 7))
+
+end
+local picked = pickShape();
+>picked : Symbol(picked, Decl(tluaTupleTypes.tlua, 98, 5))
+>pickShape : Symbol(pickShape, Decl(tluaTupleTypes.tlua, 90, 40))
+
+// The last entry expands its pack, like every value-list tail.
+declare function two(): (number, string);
+>two : Symbol(two, Decl(tluaTupleTypes.tlua, 98, 27))
+
+local packed: [boolean, number, string] = {true, two()};
+>packed : Symbol(packed, Decl(tluaTupleTypes.tlua, 102, 5))
+>two : Symbol(two, Decl(tluaTupleTypes.tlua, 98, 27))
+
+// Inference from a table constructor through a tuple parameter.
+declare function first<A, B>(pair: [A, B]): A;
+>first : Symbol(first, Decl(tluaTupleTypes.tlua, 102, 56))
+>A : Symbol(A, Decl(tluaTupleTypes.tlua, 105, 23))
+>B : Symbol(B, Decl(tluaTupleTypes.tlua, 105, 25))
+>pair : Symbol(pair, Decl(tluaTupleTypes.tlua, 105, 29))
+>A : Symbol(A, Decl(tluaTupleTypes.tlua, 105, 23))
+>B : Symbol(B, Decl(tluaTupleTypes.tlua, 105, 25))
+>A : Symbol(A, Decl(tluaTupleTypes.tlua, 105, 23))
+
+local inferred: string = first({"x", 10});
+>inferred : Symbol(inferred, Decl(tluaTupleTypes.tlua, 106, 5))
+>first : Symbol(first, Decl(tluaTupleTypes.tlua, 102, 56))
+
+// Variadic composition and indexed access.
+type Concat<A extends unknown[], B extends unknown[]> = [...A, ...B];
+>Concat : Symbol(Concat, Decl(tluaTupleTypes.tlua, 106, 42))
+>A : Symbol(A, Decl(tluaTupleTypes.tlua, 109, 12))
+>B : Symbol(B, Decl(tluaTupleTypes.tlua, 109, 32))
+>A : Symbol(A, Decl(tluaTupleTypes.tlua, 109, 12))
+>B : Symbol(B, Decl(tluaTupleTypes.tlua, 109, 32))
+
+local cat: Concat<[1, 2], [3]> = {1, 2, 3};
+>cat : Symbol(cat, Decl(tluaTupleTypes.tlua, 110, 5))
+>Concat : Symbol(Concat, Decl(tluaTupleTypes.tlua, 106, 42))
+
+type Second<T extends [unknown, unknown, ...unknown[]]> = T[2];
+>Second : Symbol(Second, Decl(tluaTupleTypes.tlua, 110, 43))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 111, 12))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 111, 12))
+
+local second: Second<Pair> = 5;
+>second : Symbol(second, Decl(tluaTupleTypes.tlua, 112, 5))
+>Second : Symbol(Second, Decl(tluaTupleTypes.tlua, 110, 43))
+>Pair : Symbol(Pair, Decl(tluaTupleTypes.tlua, 0, 0))
+
+// Mapped types walk tuples element-wise with 1-based key literals.
+type Boxed<T> = { [K in keyof T]: { value: T[K] } };
+>Boxed : Symbol(Boxed, Decl(tluaTupleTypes.tlua, 112, 31))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 115, 11))
+>K : Symbol(K, Decl(tluaTupleTypes.tlua, 115, 19))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 115, 11))
+>value : Symbol(value, Decl(tluaTupleTypes.tlua, 115, 35))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 115, 11))
+>K : Symbol(K, Decl(tluaTupleTypes.tlua, 115, 19))
+
+local boxed: Boxed<Pair> = { {value = "a"}, {value = 2} };
+>boxed : Symbol(boxed, Decl(tluaTupleTypes.tlua, 116, 5))
+>Boxed : Symbol(Boxed, Decl(tluaTupleTypes.tlua, 112, 31))
+>Pair : Symbol(Pair, Decl(tluaTupleTypes.tlua, 0, 0))
+>value : Symbol(value, Decl(tluaTupleTypes.tlua, 116, 30))
+>value : Symbol(value, Decl(tluaTupleTypes.tlua, 116, 45))
+
+local bv: string = boxed[1].value;
+>bv : Symbol(bv, Decl(tluaTupleTypes.tlua, 117, 5))
+>boxed[1].value : Symbol(value, Decl(tluaTupleTypes.tlua, 115, 35))
+>boxed : Symbol(boxed, Decl(tluaTupleTypes.tlua, 116, 5))
+>1 : Symbol(1)
+>value : Symbol(value, Decl(tluaTupleTypes.tlua, 115, 35))
+
+// A tuple in a union context still forces the tuple literal path.
+local u: [number] | [string, string] = {"a", "b"};
+>u : Symbol(u, Decl(tluaTupleTypes.tlua, 120, 5))
+

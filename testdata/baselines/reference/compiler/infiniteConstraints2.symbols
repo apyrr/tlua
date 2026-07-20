@@ -40,7 +40,6 @@ type Conv<T, U = T> = {
 
     0: [T];
 >0 : Symbol(0, Decl(infiniteConstraints2.tlua, 8, 23))
-> : Symbol(unknown)
 >T : Symbol(T, Decl(infiniteConstraints2.tlua, 8, 10))
 
     1: Prepend<T, Conv<ExactExtract<U, T>, {a: number}>>;

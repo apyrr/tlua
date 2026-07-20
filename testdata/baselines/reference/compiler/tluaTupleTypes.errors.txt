@@ -1,0 +1,201 @@
+tluaTupleTypes.tlua(13,15): error TLUA2493: Tuple type 'Pair' of length '2' has no element at index '3'.
+tluaTupleTypes.tlua(14,16): error TLUA2493: Tuple type 'Pair' of length '2' has no element at index '0'.
+tluaTupleTypes.tlua(15,17): error TLUA2339: Property 'length' does not exist on type 'Pair'.
+tluaTupleTypes.tlua(19,20): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaTupleTypes.tlua(19,23): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaTupleTypes.tlua(20,7): error TLUA2322: Type '[string, number, boolean]' is not assignable to type 'Pair'.
+  Source has 3 element(s) but target allows only 2.
+tluaTupleTypes.tlua(21,7): error TLUA2322: Type '[string]' is not assignable to type 'Pair'.
+  Source has 1 element(s) but target requires 2.
+tluaTupleTypes.tlua(33,18): error TLUA2339: Property '0' does not exist on type 'Trail'.
+tluaTupleTypes.tlua(34,17): error TLUA2514: A tuple type cannot be indexed with a negative value.
+tluaTupleTypes.tlua(35,16): error TLUA2514: A tuple type cannot be indexed with a negative value.
+tluaTupleTypes.tlua(36,17): error TLUA2493: Tuple type 'Pair' of length '2' has no element at index '1.5'.
+tluaTupleTypes.tlua(37,18): error TLUA2339: Property '1.5' does not exist on type 'Trail'.
+tluaTupleTypes.tlua(39,16): error TLUA2514: A tuple type cannot be indexed with a negative value.
+tluaTupleTypes.tlua(43,57): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaTupleTypes.tlua(47,39): error TLUA2322: Type 'string' is not assignable to type 'boolean'.
+tluaTupleTypes.tlua(57,45): error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'TupleOrLike'.
+tluaTupleTypes.tlua(58,44): error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'TupleOrLike'.
+tluaTupleTypes.tlua(67,7): error TLUA2322: Type '{ 1: number; 5: string; }' is not assignable to type 'Vari'.
+  Type 'string' is not assignable to type 'number'.
+tluaTupleTypes.tlua(69,7): error TLUA2322: Type '{ 1: number; 2: number; }' is not assignable to type 'TrailReq'.
+  Source provides no match for required element at position 3 in target.
+tluaTupleTypes.tlua(75,7): error TLUA2322: Type '[number, number, number]' is not assignable to type '{ kind: string; } | [number, number]'.
+  Type '[number, number, number]' is not assignable to type '[number, number]'.
+    Source has 3 element(s) but target allows only 2.
+tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'SparseU'.
+
+
+==== tluaTupleTypes.tlua (21 errors) ====
+    // Tuple types `[A, B]` in .tlua source: a fixed-shape table whose elements
+    // live at the 1-based Lua sequence keys. Values are ordinary table
+    // constructors; arity and element types check positionally.
+    
+    type Pair = [string, number];
+    
+    local p: Pair = {"a", 1};
+    local s: string = p[1];
+    local n: number = p[2];
+    
+    // Out-of-range keys: 0 and past-the-end error, and a tuple value is a plain
+    // table with no `length` field (`#t` is the operator).
+    local oob = p[3];
+                  ~
+!!! error TLUA2493: Tuple type 'Pair' of length '2' has no element at index '3'.
+    local zero = p[0];
+                   ~
+!!! error TLUA2493: Tuple type 'Pair' of length '2' has no element at index '0'.
+    local nolen = p.length;
+                    ~~~~~~
+!!! error TLUA2339: Property 'length' does not exist on type 'Pair'.
+    local hash: number = #p;
+    
+    // Element-type and arity mismatches.
+    local bad: Pair = {1, "a"};
+                       ~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+                          ~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    local excess: Pair = {"a", 1, true};
+          ~~~~~~
+!!! error TLUA2322: Type '[string, number, boolean]' is not assignable to type 'Pair'.
+!!! error TLUA2322:   Source has 3 element(s) but target allows only 2.
+    local short: Pair = {"a"};
+          ~~~~~
+!!! error TLUA2322: Type '[string]' is not assignable to type 'Pair'.
+!!! error TLUA2322:   Source has 1 element(s) but target requires 2.
+    
+    // Optional and rest elements.
+    type Trail = [string, number?, ...boolean[]];
+    local t1: Trail = {"x"};
+    local t2: Trail = {"x", 2, true, false};
+    local restRead: boolean | nil = t2[3];
+    
+    // Sub-1 and non-integer keys are never elements, on every tuple shape:
+    // negatives get the dedicated diagnostic (unions included), key 0 and
+    // fractional keys report no-such-element/property and then resolve through
+    // the number index signature like any table key.
+    local vzero = t2[0];
+                     ~
+!!! error TLUA2339: Property '0' does not exist on type 'Trail'.
+    local vneg = t2[-1];
+                    ~~
+!!! error TLUA2514: A tuple type cannot be indexed with a negative value.
+    local pneg = p[-1];
+                   ~~
+!!! error TLUA2514: A tuple type cannot be indexed with a negative value.
+    local pfrac = p[1.5];
+                    ~~~
+!!! error TLUA2493: Tuple type 'Pair' of length '2' has no element at index '1.5'.
+    local vfrac = t2[1.5];
+                     ~~~
+!!! error TLUA2339: Property '1.5' does not exist on type 'Trail'.
+    declare u: [number, string] | [boolean];
+    local uneg = u[-1];
+                   ~~
+!!! error TLUA2514: A tuple type cannot be indexed with a negative value.
+    
+    // An excess entry against a tuple-LIKE object with a number index signature
+    // still elaborates at the entry (the index signature types the key).
+    local mixed: { 1: string, [n: number]: string } = {"a", 5};
+                                                            ~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+!!! related TLUA6501 tluaTupleTypes.tlua:43:27: The expected type comes from this index signature.
+    
+    // Entries in a variadic tuple's rest part keep precise per-entry elaboration
+    // (they have no property symbol, but the rest slice types them).
+    local restBad: Trail = {"x", 2, true, "no"};
+                                          ~~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'boolean'.
+    
+    // A union mixing a tuple with a tuple-like interface keeps the object path,
+    // so neither member's checking is lost: excess entries still error.
+    interface ClosedPair {
+        1: string;
+        2: string;
+    }
+    type TupleOrLike = [string, string] | ClosedPair;
+    local okUnion: TupleOrLike = {"x", "y"};
+    local excessUnion: TupleOrLike = {"x", "y", "z"};
+                                                ~~~
+!!! error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'TupleOrLike'.
+    local wrongUnion: TupleOrLike = {"x", "y", true};
+                                               ~~~~
+!!! error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'TupleOrLike'.
+    
+    // A non-sequence object satisfies a variadic tuple when its prefix matches
+    // property-wise and every key past the prefix satisfies the rest slice;
+    // elements required after the variable part are unverifiable and reject.
+    declare objIn: { 1: number, 2: number };
+    declare objBad: { 1: number, 5: string };
+    type Vari = [number, ...number[]];
+    local vOk: Vari = objIn;
+    local vBad: Vari = objBad;
+          ~~~~
+!!! error TLUA2322: Type '{ 1: number; 5: string; }' is not assignable to type 'Vari'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
+    type TrailReq = [number, ...string[], boolean];
+    local vReq: TrailReq = objIn;
+          ~~~~
+!!! error TLUA2322: Type '{ 1: number; 2: number; }' is not assignable to type 'TrailReq'.
+!!! error TLUA2322:   Source provides no match for required element at position 3 in target.
+    
+    // A union mixing a tuple with a plain (non-tuple-like) object: excess
+    // entries surface the union's relation error, not a phantom-nil per-entry
+    // error via the best-matching tuple constituent.
+    declare mixedU: [number, number] | { kind: string };
+    local mu: typeof mixedU = {1, 2, 3};
+          ~~
+!!! error TLUA2322: Type '[number, number, number]' is not assignable to type '{ kind: string; } | [number, number]'.
+!!! error TLUA2322:   Type '[number, number, number]' is not assignable to type '[number, number]'.
+!!! error TLUA2322:     Source has 3 element(s) but target allows only 2.
+    
+    // A SPARSE numeric-keyed union member (no key 1) also forces the object
+    // path, keeping its excess-entry checking.
+    interface Sparse {
+        2: string;
+    }
+    type SparseU = [string] | Sparse;
+    local sOk: SparseU = {"x"};
+    local sAlso: SparseU = {"x", "y"};
+    local sBad: SparseU = {"x", "y", true};
+                                     ~~~~
+!!! error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'SparseU'.
+    
+    // Union subtype reduction: a fixed tuple is a strict subtype of the
+    // exactly-in-range object (never the reverse), so the object survives --
+    // deterministic and set-correct.
+    declare cond: boolean;
+    declare oPair: { 1: number, 2: number };
+    function pickShape()
+        if cond then
+            local t: [number, number] = {1, 2};
+            return t;
+        end
+        return oPair;
+    end
+    local picked = pickShape();
+    
+    // The last entry expands its pack, like every value-list tail.
+    declare function two(): (number, string);
+    local packed: [boolean, number, string] = {true, two()};
+    
+    // Inference from a table constructor through a tuple parameter.
+    declare function first<A, B>(pair: [A, B]): A;
+    local inferred: string = first({"x", 10});
+    
+    // Variadic composition and indexed access.
+    type Concat<A extends unknown[], B extends unknown[]> = [...A, ...B];
+    local cat: Concat<[1, 2], [3]> = {1, 2, 3};
+    type Second<T extends [unknown, unknown, ...unknown[]]> = T[2];
+    local second: Second<Pair> = 5;
+    
+    // Mapped types walk tuples element-wise with 1-based key literals.
+    type Boxed<T> = { [K in keyof T]: { value: T[K] } };
+    local boxed: Boxed<Pair> = { {value = "a"}, {value = 2} };
+    local bv: string = boxed[1].value;
+    
+    // A tuple in a union context still forces the tuple literal path.
+    local u: [number] | [string, string] = {"a", "b"};
+    

@@ -3,7 +3,7 @@ tluaMultiReturnArityErrors.tlua(2,3): error TLUA2322: Type '1' is not assignable
 tluaMultiReturnArityErrors.tlua(6,3): error TLUA2322: Type 'number, string, boolean' is not assignable to type 'number, string'.
   Source has 3 element(s) but target allows only 2.
 tluaMultiReturnArityErrors.tlua(10,3): error TLUA2322: Type 'string, number' is not assignable to type 'number, string'.
-  Type at position 0 in source is not compatible with type at position 0 in target.
+  Type at position 1 in source is not compatible with type at position 1 in target.
     Type 'string' is not assignable to type 'number'.
 tluaMultiReturnArityErrors.tlua(14,3): error TLUA2322: Type 'number, string' is not assignable to type 'number'.
 tluaMultiReturnArityErrors.tlua(19,3): error TLUA2322: Type 'void' is not assignable to type 'number, string'.
@@ -32,7 +32,7 @@ tluaMultiReturnArityErrors.tlua(31,37): error TLUA100021: A type predicate canno
       return "a", 1;
       ~~~~~~
 !!! error TLUA2322: Type 'string, number' is not assignable to type 'number, string'.
-!!! error TLUA2322:   Type at position 0 in source is not compatible with type at position 0 in target.
+!!! error TLUA2322:   Type at position 1 in source is not compatible with type at position 1 in target.
 !!! error TLUA2322:     Type 'string' is not assignable to type 'number'.
     end
     

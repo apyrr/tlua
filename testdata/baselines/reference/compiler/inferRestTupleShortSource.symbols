@@ -6,11 +6,8 @@
 function f<T extends [string]>(args: [...string[], ...T]) {
 >f : Symbol(f, Decl(inferRestTupleShortSource.tlua, 0, 0))
 >T : Symbol(T, Decl(inferRestTupleShortSource.tlua, 2, 11))
-> : Symbol(unknown)
 >args : Symbol(args, Decl(inferRestTupleShortSource.tlua, 2, 31))
-> : Symbol(unknown)
-> : Symbol(unknown)
->string : Symbol(string, Decl(inferRestTupleShortSource.tlua, 2, 38))
+>T : Symbol(T, Decl(inferRestTupleShortSource.tlua, 2, 11))
 
   // ...
 }

@@ -1,35 +1,11 @@
 functionTypeParameterNameFromTupleLabel.tlua(1,16): error TLUA100034: A vararg parameter cannot have a name.
-functionTypeParameterNameFromTupleLabel.tlua(1,22): error TLUA1110: Type expected.
-functionTypeParameterNameFromTupleLabel.tlua(1,23): error TLUA2304: Cannot find name 'x'.
-functionTypeParameterNameFromTupleLabel.tlua(1,24): error TLUA1005: ']' expected.
-functionTypeParameterNameFromTupleLabel.tlua(1,26): error TLUA7051: Parameter has a name but no type. Did you mean 'arg1: number'?
-functionTypeParameterNameFromTupleLabel.tlua(1,32): error TLUA1005: ')' expected.
-functionTypeParameterNameFromTupleLabel.tlua(1,33): error TLUA1128: Declaration or statement expected.
-functionTypeParameterNameFromTupleLabel.tlua(1,35): error TLUA1128: Declaration or statement expected.
-functionTypeParameterNameFromTupleLabel.tlua(1,42): error TLUA1109: Expression expected.
 functionTypeParameterNameFromTupleLabel.tlua(3,1): error TLUA2588: Cannot assign to 'f' because it is a constant.
 
 
-==== functionTypeParameterNameFromTupleLabel.tlua (10 errors) ====
+==== functionTypeParameterNameFromTupleLabel.tlua (2 errors) ====
     declare f: (...args: [x: number]) => void;
                    ~~~~
 !!! error TLUA100034: A vararg parameter cannot have a name.
-                         ~
-!!! error TLUA1110: Type expected.
-                          ~
-!!! error TLUA2304: Cannot find name 'x'.
-                           ~
-!!! error TLUA1005: ']' expected.
-                             ~~~~~~
-!!! error TLUA7051: Parameter has a name but no type. Did you mean 'arg1: number'?
-                                   ~
-!!! error TLUA1005: ')' expected.
-                                    ~
-!!! error TLUA1128: Declaration or statement expected.
-                                      ~~
-!!! error TLUA1128: Declaration or statement expected.
-                                             ~
-!!! error TLUA1109: Expression expected.
     declare g: (a: string) => void;
     f = g;
     ~

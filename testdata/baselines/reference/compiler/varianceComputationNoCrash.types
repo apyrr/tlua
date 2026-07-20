@@ -18,7 +18,7 @@ type IsAny<T> = 0 extends 1 & T ? true : false;
 >false : false
 
 type IsNever<T> = [T] extends [never] ? true : false;
->IsNever : any
+>IsNever : IsNever<T>
 >true : true
 >false : false
 
@@ -29,7 +29,7 @@ type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = IsAny<T> extends true ? 
 >true : true
 
 type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = IsNever<T> extends true ? TypeIfNever : TypeIfNotNever;
->IfNever : any
+>IfNever : IfNever<T, TypeIfNever, TypeIfNotNever>
 >true : true
 >false : false
 >true : true
@@ -78,7 +78,7 @@ type IsNumeric<T extends string> = T extends `${number}` ? Trim<T> extends T ? t
 >false : false
 
 type ApplyDefaultOptions<
->ApplyDefaultOptions : any
+>ApplyDefaultOptions : IfNever<SpecifiedOptions, Defaults, ((PickIndexSignature<Defaults> extends infer T_2 ? { [Key in keyof T_2 as Key extends keyof PickIndexSignature<{ [Key_1 in keyof SpecifiedOptions as Key_1 extends Exclude<{ [Key_2 in keyof Options]: Options extends Record<Key_2, Options[Key_2]> ? never : Key_2; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key_1] ? never : Key_1 : Key_1]: SpecifiedOptions[Key_1]; }> ? never : Key]: T_2[Key]; } : never) & PickIndexSignature<{ [Key in keyof SpecifiedOptions as Key extends Exclude<{ [Key_1 in keyof Options]: Options extends Record<Key_1, Options[Key_1]> ? never : Key_1; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]; }> & (OmitIndexSignature<Defaults> extends infer T_3 ? { [Key in keyof T_3 as Key extends keyof OmitIndexSignature<{ [Key_1 in keyof SpecifiedOptions as Key_1 extends Exclude<{ [Key_2 in keyof Options]: Options extends Record<Key_2, Options[Key_2]> ? never : Key_2; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key_1] ? never : Key_1 : Key_1]: SpecifiedOptions[Key_1]; }> ? never : Key]: T_3[Key]; } : never) & OmitIndexSignature<{ [Key in keyof SpecifiedOptions as Key extends Exclude<{ [Key_1 in keyof Options]: Options extends Record<Key_1, Options[Key_1]> ? never : Key_1; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]; }> extends infer T_1 ? { [KeyType in keyof T_1]: T_1[KeyType]; } : never) & Required<Options> extends infer T ? { [KeyType in keyof T]: T[KeyType]; } : never>
 
     Options extends object,
     Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
@@ -110,140 +110,43 @@ type WordsImplementation<
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
     ? FirstCharacter extends WordSeparators
         ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options>]
->... : any
->SkipEmptyWord<CurrentWord>, ... : any
->SkipEmptyWord<CurrentWord> : any
->SkipEmptyWord : any
->... : any
->WordsImplementation<RemainingCharacters, Options> : any
->WordsImplementation : any
-
         : LastCharacter extends ''
->LastCharacter : any
->'' : ""
-
             ? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter> : any
->WordsImplementation : any
-
             : [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
->false, true : true
 >false : false
 >true : true
->IsNumeric<LastCharacter>, IsNumeric<FirstCharacter> : any
->IsNumeric<LastCharacter> : any
->IsNumeric : any
->IsNumeric<FirstCharacter> : any
->IsNumeric : any
 
                 ? Options['splitOnNumbers'] extends true
->Options['splitOnNumbers'] : any
->Options : any
->'splitOnNumbers' : "splitOnNumbers"
 >true : true
 
                     ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
->... : any
->SkipEmptyWord<CurrentWord>, ... : any
->SkipEmptyWord<CurrentWord> : any
->SkipEmptyWord : any
->... : any
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter> : any
->WordsImplementation : any
-
                     : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`> : any
->WordsImplementation : any
-
                 : [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
->true, false : false
 >true : true
 >false : false
->IsNumeric<LastCharacter>, IsNumeric<FirstCharacter> : any
->IsNumeric<LastCharacter> : any
->IsNumeric : any
->IsNumeric<FirstCharacter> : any
->IsNumeric : any
 
                     ? Options['splitOnNumbers'] extends true
->Options['splitOnNumbers'] : any
->Options : any
->'splitOnNumbers' : "splitOnNumbers"
 >true : true
 
                         ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
->... : any
->SkipEmptyWord<CurrentWord>, ... : any
->SkipEmptyWord<CurrentWord> : any
->SkipEmptyWord : any
->... : any
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter> : any
->WordsImplementation : any
-
                         : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`> : any
->WordsImplementation : any
-
                     : [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
->true, true : true
 >true : true
 >true : true
->IsNumeric<LastCharacter>, IsNumeric<FirstCharacter> : any
->IsNumeric<LastCharacter> : any
->IsNumeric : any
->IsNumeric<FirstCharacter> : any
->IsNumeric : any
 
                         ? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`> : any
->WordsImplementation : any
-
                         : [true, true] extends [IsLowerCase<LastCharacter>, IsUpperCase<FirstCharacter>]
->true, true : true
 >true : true
 >true : true
->IsLowerCase<LastCharacter>, IsUpperCase<FirstCharacter> : any
->IsLowerCase<LastCharacter> : any
->IsLowerCase : any
->IsUpperCase<FirstCharacter> : any
->IsUpperCase : any
 
                             ? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
->... : any
->SkipEmptyWord<CurrentWord>, ... : any
->SkipEmptyWord<CurrentWord> : any
->SkipEmptyWord : any
->... : any
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter> : any
->WordsImplementation : any
-
                             : [true, true] extends [IsUpperCase<LastCharacter>, IsLowerCase<FirstCharacter>]
->true, true : true
 >true : true
 >true : true
->IsUpperCase<LastCharacter>, IsLowerCase<FirstCharacter> : any
->IsUpperCase<LastCharacter> : any
->IsUpperCase : any
->IsLowerCase<FirstCharacter> : any
->IsLowerCase : any
 
                                 ? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
->... : any
->RemoveLastCharacter<CurrentWord, LastCharacter>, ... : any
->RemoveLastCharacter<CurrentWord, LastCharacter> : any
->RemoveLastCharacter : any
->... : any
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`> : any
->WordsImplementation : any
-
                                 : WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
->WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`> : any
->WordsImplementation : any
-
     : [...SkipEmptyWord<CurrentWord>];
->... : any
->SkipEmptyWord<CurrentWord> : any
->SkipEmptyWord : any
 
 type Words<Sentence extends string, Options extends WordsOptions = {}> =
 >Words : Words<Sentence, Options>
@@ -260,41 +163,18 @@ type DefaultCamelCaseOptions = { preserveConsecutiveUppercase: true };
 >true : true
 
 type CamelCaseFromArray<
->CamelCaseFromArray : any
+>CamelCaseFromArray : CamelCaseFromArray<W, Options, OutputString>
 
     W extends string[],
     Options extends Required<CamelCaseOptions>,
     OutputString extends string = '',
 > = W extends [infer FirstWord extends string, ...infer RemainingWords extends string[]]
->... : any
->infer : any
->RemainingWords : any
->string[] : any
->string : StringLib
-> : any
-
     ? Options['preserveConsecutiveUppercase'] extends true
->Options['preserveConsecutiveUppercase'] : any
->Options : any
->'preserveConsecutiveUppercase' : "preserveConsecutiveUppercase"
 >true : true
 
         ? `${Capitalize<FirstWord>}${CamelCaseFromArray<RemainingWords, Options>}`
->`${Capitalize<FirstWord>}${CamelCaseFromArray<RemainingWords, Options>}` : string
->Capitalize<FirstWord> : any
->Capitalize : any
->CamelCaseFromArray<RemainingWords, Options> : any
->CamelCaseFromArray : any
-
         : `${Capitalize<Lowercase<FirstWord>>}${CamelCaseFromArray<RemainingWords, Options>}`
->`${Capitalize<Lowercase<FirstWord>>}${CamelCaseFromArray<RemainingWords, Options>}` : string
->Capitalize<Lowercase<FirstWord>> : any
->Capitalize : any
->CamelCaseFromArray<RemainingWords, Options> : any
->CamelCaseFromArray : any
-
     : OutputString;
->OutputString : any
 
 type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
 >CamelCase : CamelCase<Type, Options>

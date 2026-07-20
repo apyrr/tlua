@@ -21,7 +21,7 @@ type Conv<T, U = T> = {
 >Conv : Conv<T, U>
 
     0: [T];
->0 : any
+>0 : [T]
 
     1: Prepend<T, Conv<ExactExtract<U, T>, {a: number}>>;
 >1 : Prepend<T, Conv<ExactExtract<U, T>, { a: number; }>>

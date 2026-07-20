@@ -1,0 +1,180 @@
+//// [tests/cases/compiler/tluaTupleLengthKeyof.tlua] ////
+
+=== tluaTupleLengthKeyof.tlua ===
+// `#` on an all-fixed tuple types as the arity literal, and `#t == n` / `~=`
+// narrows a union of tuples by arity -- the Lua-native analog of TypeScript's
+// length narrowing (tlua tuples have no length property). keyof an all-fixed
+// tuple is exactly its element key literals; variadic tuples widen to number.
+
+type Pair = [string, number];
+>Pair : Symbol(Pair, Decl(tluaTupleLengthKeyof.tlua, 0, 0))
+
+declare p: Pair;
+>p : Symbol(p, Decl(tluaTupleLengthKeyof.tlua, 6, 7))
+>Pair : Symbol(Pair, Decl(tluaTupleLengthKeyof.tlua, 0, 0))
+
+local two: 2 = #p;
+>two : Symbol(two, Decl(tluaTupleLengthKeyof.tlua, 7, 5))
+>p : Symbol(p, Decl(tluaTupleLengthKeyof.tlua, 6, 7))
+
+declare vt: [boolean, ...string[]];
+>vt : Symbol(vt, Decl(tluaTupleLengthKeyof.tlua, 9, 7))
+
+local vlen: number = #vt;
+>vlen : Symbol(vlen, Decl(tluaTupleLengthKeyof.tlua, 10, 5))
+>vt : Symbol(vt, Decl(tluaTupleLengthKeyof.tlua, 9, 7))
+
+type U = [number] | [string, string];
+>U : Symbol(U, Decl(tluaTupleLengthKeyof.tlua, 10, 25))
+
+declare u: U;
+>u : Symbol(u, Decl(tluaTupleLengthKeyof.tlua, 13, 7))
+>U : Symbol(U, Decl(tluaTupleLengthKeyof.tlua, 10, 25))
+
+if #u == 1 then
+>u : Symbol(u, Decl(tluaTupleLengthKeyof.tlua, 13, 7))
+
+    local first: number = u[1];
+>first : Symbol(first, Decl(tluaTupleLengthKeyof.tlua, 15, 9))
+>u : Symbol(u, Decl(tluaTupleLengthKeyof.tlua, 13, 7))
+>1 : Symbol(1)
+
+else
+    local pairv: [string, string] = u;
+>pairv : Symbol(pairv, Decl(tluaTupleLengthKeyof.tlua, 17, 9))
+>u : Symbol(u, Decl(tluaTupleLengthKeyof.tlua, 13, 7))
+
+end
+if #u ~= 2 then
+>u : Symbol(u, Decl(tluaTupleLengthKeyof.tlua, 13, 7))
+
+    local one: [number] = u;
+>one : Symbol(one, Decl(tluaTupleLengthKeyof.tlua, 20, 9))
+>u : Symbol(u, Decl(tluaTupleLengthKeyof.tlua, 13, 7))
+
+end
+
+// A variable-length member survives any feasible arity check, and an
+// infeasible arity empties the union.
+type V = [number] | [string, ...string[]];
+>V : Symbol(V, Decl(tluaTupleLengthKeyof.tlua, 21, 3))
+
+declare v: V;
+>v : Symbol(v, Decl(tluaTupleLengthKeyof.tlua, 26, 7))
+>V : Symbol(V, Decl(tluaTupleLengthKeyof.tlua, 21, 3))
+
+if #v == 3 then
+>v : Symbol(v, Decl(tluaTupleLengthKeyof.tlua, 26, 7))
+
+    local rest: [string, ...string[]] = v;
+>rest : Symbol(rest, Decl(tluaTupleLengthKeyof.tlua, 28, 9))
+>v : Symbol(v, Decl(tluaTupleLengthKeyof.tlua, 26, 7))
+
+end
+if #v == 0 then
+>v : Symbol(v, Decl(tluaTupleLengthKeyof.tlua, 26, 7))
+
+    local imp: never = v;
+>imp : Symbol(imp, Decl(tluaTupleLengthKeyof.tlua, 31, 9))
+>v : Symbol(v, Decl(tluaTupleLengthKeyof.tlua, 26, 7))
+
+end
+
+// Optional trailing elements make the border a range: `#` is the literal
+// union, a guard keeps the tuple for any feasible arity, and the false
+// branch drops a tuple only when its border is uniquely n.
+type Opt = [number, number?];
+>Opt : Symbol(Opt, Decl(tluaTupleLengthKeyof.tlua, 32, 3))
+
+declare o: Opt;
+>o : Symbol(o, Decl(tluaTupleLengthKeyof.tlua, 38, 7))
+>Opt : Symbol(Opt, Decl(tluaTupleLengthKeyof.tlua, 32, 3))
+
+local lo: 1 | 2 = #o;
+>lo : Symbol(lo, Decl(tluaTupleLengthKeyof.tlua, 39, 5))
+>o : Symbol(o, Decl(tluaTupleLengthKeyof.tlua, 38, 7))
+
+local lbad: 2 = #o;
+>lbad : Symbol(lbad, Decl(tluaTupleLengthKeyof.tlua, 40, 5))
+>o : Symbol(o, Decl(tluaTupleLengthKeyof.tlua, 38, 7))
+
+type W = Opt | [string, string, string];
+>W : Symbol(W, Decl(tluaTupleLengthKeyof.tlua, 40, 19))
+>Opt : Symbol(Opt, Decl(tluaTupleLengthKeyof.tlua, 32, 3))
+
+declare w: W;
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+>W : Symbol(W, Decl(tluaTupleLengthKeyof.tlua, 40, 19))
+
+if #w == 1 then
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+    local onlyOpt: Opt = w;
+>onlyOpt : Symbol(onlyOpt, Decl(tluaTupleLengthKeyof.tlua, 44, 9))
+>Opt : Symbol(Opt, Decl(tluaTupleLengthKeyof.tlua, 32, 3))
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+end
+if #w == 3 then
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+    local three: [string, string, string] = w;
+>three : Symbol(three, Decl(tluaTupleLengthKeyof.tlua, 47, 9))
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+end
+if #w ~= 3 then
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+    local nthree: Opt = w;
+>nthree : Symbol(nthree, Decl(tluaTupleLengthKeyof.tlua, 50, 9))
+>Opt : Symbol(Opt, Decl(tluaTupleLengthKeyof.tlua, 32, 3))
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+end
+if #w ~= 1 then
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+    local still: Opt | [string, string, string] = w;
+>still : Symbol(still, Decl(tluaTupleLengthKeyof.tlua, 53, 9))
+>Opt : Symbol(Opt, Decl(tluaTupleLengthKeyof.tlua, 32, 3))
+>w : Symbol(w, Decl(tluaTupleLengthKeyof.tlua, 42, 7))
+
+end
+
+// keyof precision.
+type PK = keyof Pair;
+>PK : Symbol(PK, Decl(tluaTupleLengthKeyof.tlua, 54, 3))
+>Pair : Symbol(Pair, Decl(tluaTupleLengthKeyof.tlua, 0, 0))
+
+local k1: PK = 1;
+>k1 : Symbol(k1, Decl(tluaTupleLengthKeyof.tlua, 58, 5))
+>PK : Symbol(PK, Decl(tluaTupleLengthKeyof.tlua, 54, 3))
+
+local k2: PK = 2;
+>k2 : Symbol(k2, Decl(tluaTupleLengthKeyof.tlua, 59, 5))
+>PK : Symbol(PK, Decl(tluaTupleLengthKeyof.tlua, 54, 3))
+
+local k0: PK = 0;
+>k0 : Symbol(k0, Decl(tluaTupleLengthKeyof.tlua, 60, 5))
+>PK : Symbol(PK, Decl(tluaTupleLengthKeyof.tlua, 54, 3))
+
+local kn: PK = 3;
+>kn : Symbol(kn, Decl(tluaTupleLengthKeyof.tlua, 61, 5))
+>PK : Symbol(PK, Decl(tluaTupleLengthKeyof.tlua, 54, 3))
+
+declare anyNum: number;
+>anyNum : Symbol(anyNum, Decl(tluaTupleLengthKeyof.tlua, 62, 7))
+
+local kdyn: PK = anyNum;
+>kdyn : Symbol(kdyn, Decl(tluaTupleLengthKeyof.tlua, 63, 5))
+>PK : Symbol(PK, Decl(tluaTupleLengthKeyof.tlua, 54, 3))
+>anyNum : Symbol(anyNum, Decl(tluaTupleLengthKeyof.tlua, 62, 7))
+
+type VK = keyof [boolean, ...string[]];
+>VK : Symbol(VK, Decl(tluaTupleLengthKeyof.tlua, 63, 24))
+
+local vkOk: VK = 99;
+>vkOk : Symbol(vkOk, Decl(tluaTupleLengthKeyof.tlua, 66, 5))
+>VK : Symbol(VK, Decl(tluaTupleLengthKeyof.tlua, 63, 24))
+

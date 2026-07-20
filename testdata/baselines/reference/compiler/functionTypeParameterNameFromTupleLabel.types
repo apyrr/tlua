@@ -2,11 +2,8 @@
 
 === functionTypeParameterNameFromTupleLabel.tlua ===
 declare f: (...args: [x: number]) => void;
->f : (...args: [x], number: any) => any
->args : any
->number : any
->void : nil
-> : any
+>f : (x: number) => void
+>args : [x: number]
 
 declare g: (a: string) => void;
 >g : (a: string) => void

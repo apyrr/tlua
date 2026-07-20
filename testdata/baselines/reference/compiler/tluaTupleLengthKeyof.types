@@ -1,0 +1,198 @@
+//// [tests/cases/compiler/tluaTupleLengthKeyof.tlua] ////
+
+=== tluaTupleLengthKeyof.tlua ===
+// `#` on an all-fixed tuple types as the arity literal, and `#t == n` / `~=`
+// narrows a union of tuples by arity -- the Lua-native analog of TypeScript's
+// length narrowing (tlua tuples have no length property). keyof an all-fixed
+// tuple is exactly its element key literals; variadic tuples widen to number.
+
+type Pair = [string, number];
+>Pair : Pair
+
+declare p: Pair;
+>p : Pair
+
+local two: 2 = #p;
+>two : 2
+>#p : 2
+>p : Pair
+
+declare vt: [boolean, ...string[]];
+>vt : [boolean, ...string[]]
+
+local vlen: number = #vt;
+>vlen : number
+>#vt : number
+>vt : [boolean, ...string[]]
+
+type U = [number] | [string, string];
+>U : U
+
+declare u: U;
+>u : U
+
+if #u == 1 then
+>#u == 1 : boolean
+>#u : 1 | 2
+>u : U
+>1 : 1
+
+    local first: number = u[1];
+>first : number
+>u[1] : number
+>u : [number]
+>1 : 1
+
+else
+    local pairv: [string, string] = u;
+>pairv : [string, string]
+>u : [string, string]
+
+end
+if #u ~= 2 then
+>#u ~= 2 : boolean
+>#u : 1 | 2
+>u : U
+>2 : 2
+
+    local one: [number] = u;
+>one : [number]
+>u : [number]
+
+end
+
+// A variable-length member survives any feasible arity check, and an
+// infeasible arity empties the union.
+type V = [number] | [string, ...string[]];
+>V : V
+
+declare v: V;
+>v : V
+
+if #v == 3 then
+>#v == 3 : boolean
+>#v : number
+>v : V
+>3 : 3
+
+    local rest: [string, ...string[]] = v;
+>rest : [string, ...string[]]
+>v : [string, ...string[]]
+
+end
+if #v == 0 then
+>#v == 0 : boolean
+>#v : number
+>v : V
+>0 : 0
+
+    local imp: never = v;
+>imp : never
+>v : never
+
+end
+
+// Optional trailing elements make the border a range: `#` is the literal
+// union, a guard keeps the tuple for any feasible arity, and the false
+// branch drops a tuple only when its border is uniquely n.
+type Opt = [number, number?];
+>Opt : Opt
+
+declare o: Opt;
+>o : Opt
+
+local lo: 1 | 2 = #o;
+>lo : 1 | 2
+>#o : 1 | 2
+>o : Opt
+
+local lbad: 2 = #o;
+>lbad : 2
+>#o : 1 | 2
+>o : Opt
+
+type W = Opt | [string, string, string];
+>W : W
+
+declare w: W;
+>w : W
+
+if #w == 1 then
+>#w == 1 : boolean
+>#w : 1 | 2 | 3
+>w : W
+>1 : 1
+
+    local onlyOpt: Opt = w;
+>onlyOpt : Opt
+>w : Opt
+
+end
+if #w == 3 then
+>#w == 3 : boolean
+>#w : 1 | 2 | 3
+>w : W
+>3 : 3
+
+    local three: [string, string, string] = w;
+>three : [string, string, string]
+>w : [string, string, string]
+
+end
+if #w ~= 3 then
+>#w ~= 3 : boolean
+>#w : 1 | 2 | 3
+>w : W
+>3 : 3
+
+    local nthree: Opt = w;
+>nthree : Opt
+>w : Opt
+
+end
+if #w ~= 1 then
+>#w ~= 1 : boolean
+>#w : 1 | 2 | 3
+>w : W
+>1 : 1
+
+    local still: Opt | [string, string, string] = w;
+>still : Opt | [string, string, string]
+>w : W
+
+end
+
+// keyof precision.
+type PK = keyof Pair;
+>PK : keyof Pair
+
+local k1: PK = 1;
+>k1 : keyof Pair
+>1 : 1
+
+local k2: PK = 2;
+>k2 : keyof Pair
+>2 : 2
+
+local k0: PK = 0;
+>k0 : keyof Pair
+>0 : 0
+
+local kn: PK = 3;
+>kn : keyof Pair
+>3 : 3
+
+declare anyNum: number;
+>anyNum : number
+
+local kdyn: PK = anyNum;
+>kdyn : keyof Pair
+>anyNum : number
+
+type VK = keyof [boolean, ...string[]];
+>VK : number
+
+local vkOk: VK = 99;
+>vkOk : number
+>99 : 99
+

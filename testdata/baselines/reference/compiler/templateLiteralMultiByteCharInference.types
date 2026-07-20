@@ -12,8 +12,6 @@ type GetRest<S extends string> = S extends `${string}${infer Rest}` ? Rest : nev
 
 type Split<S extends string> = S extends `${infer Head}${infer Rest}` ? [Head, Rest] : never;
 >Split : Split<S>
->Rest : any
->never : any
 
 // Single-byte (ASCII) characters
 type A = GetFirst<"ABC">;  // "A"
@@ -23,7 +21,7 @@ type BC = GetRest<"ABC">;  // "BC"
 >BC : "BC"
 
 type ABC_Split = Split<"ABC">;  // ["A", "BC"]
->ABC_Split : any
+>ABC_Split : ["A", "BC"]
 
 // Multi-byte characters (Japanese, 3 bytes in UTF-8, 1 code unit in UTF-16)
 type Ah = GetFirst<"あいう">;  // "あ"
@@ -33,7 +31,7 @@ type IU = GetRest<"あいう">;  // "いう"
 >IU : "いう"
 
 type AIU_Split = Split<"あいう">;  // ["あ", "いう"]
->AIU_Split : any
+>AIU_Split : ["あ", "いう"]
 
 // Mixed single-byte and multi-byte
 type M1 = GetFirst<"aあ">;  // "a"

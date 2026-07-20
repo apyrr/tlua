@@ -84,9 +84,11 @@ func NumberKeyName(value jsnum.Number) string {
 }
 
 // numberKeyNameSmall caches the names for the small non-negative indexes that
-// dominate tuple/array element access, avoiding a per-lookup allocation.
-var numberKeyNameSmall = func() [32]string {
-	var names [32]string
+// dominate tuple/array element access, avoiding a per-lookup allocation. 33
+// entries cover keys 0..32, so a 32-element tuple's last key (1-based) still
+// hits the cache.
+var numberKeyNameSmall = func() [33]string {
+	var names [33]string
 	for i := range names {
 		names[i] = numberKeyPrefix + strconv.Itoa(i)
 	}
@@ -102,6 +104,15 @@ func NumberKeyNameFromInt(i int) string {
 		return numberKeyNameSmall[i]
 	}
 	return numberKeyPrefix + strconv.Itoa(i)
+}
+
+// NumberKeyNameFromPosition returns the number-key name for the 0-based element
+// position pos: Lua sequences are 1-based, so position pos occupies key pos+1.
+// Every conversion from an element/parameter/argument position to a number key
+// must go through here (or state its own +1 explicitly); a bare
+// NumberKeyNameFromInt(pos) at such a site is an off-by-one bug.
+func NumberKeyNameFromPosition(pos int) string {
+	return NumberKeyNameFromInt(pos + 1)
 }
 
 // NumberKeyNameFromText canonicalizes numeric-literal source text through ES

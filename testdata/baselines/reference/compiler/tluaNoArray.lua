@@ -1,9 +1,10 @@
 //// [tests/cases/compiler/tluaNoArray.tlua] ////
 
 //// [tluaNoArray.tlua]
-// The TypeScript array/tuple/iteration syntax is removed from tlua source.
+// The TypeScript array-literal/iteration syntax is removed from tlua source.
 // Each form below decomposes into stock parser-recovery errors (no
 // tlua-specific diagnostic), exactly like the class/generator removals.
+// (Tuple *type* syntax `[A, B]` is legal — see the tluaTuple tests.)
 
 declare function pair(): (number, string);
 declare items: number[];
@@ -28,7 +29,8 @@ for (local v of items) {
   use(v);
 }
 
-// Tuple type syntax in source; multireturn return-lists spell packs instead.
+// Tuple types parse in source, and a multireturn is not a tuple value: only
+// the first value survives outside a value-list tail, so this is an error.
 local t: [number, string] = pair();
 
 // `of` is an ordinary identifier again.
@@ -37,9 +39,10 @@ use(of);
 
 
 //// [tluaNoArray.lua]
--- The TypeScript array/tuple/iteration syntax is removed from tlua source.
+-- The TypeScript array-literal/iteration syntax is removed from tlua source.
 -- Each form below decomposes into stock parser-recovery errors (no
 -- tlua-specific diagnostic), exactly like the class/generator removals.
+-- (Tuple *type* syntax `[A, B]` is legal — see the tluaTuple tests.)
 -- Array literals no longer parse in expression position; use a table `{...}`.
 local lit = [1, 2, 3];
 -- Array-literal spread. Every spread form is gone; `...` is the Lua vararg, so
@@ -62,9 +65,9 @@ for  in () do
     {
         use(v);
     }
-    -- Tuple type syntax in source; multireturn return-lists spell packs instead.
-    local t, string;
-    pair();
+    -- Tuple types parse in source, and a multireturn is not a tuple value: only
+    -- the first value survives outside a value-list tail, so this is an error.
+    local t = pair();
     -- `of` is an ordinary identifier again.
     local of = 3;
     use(of);

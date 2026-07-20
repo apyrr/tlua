@@ -13,14 +13,14 @@ interface KeyBox<T extends unknown[], K extends keyof [number, ...T] = "push"> {
 }
 
 === main.tlua ===
-// Numeric indices and `length` are keys of the tuple; Array method names are not.
-local ok0: keyof typeof pair = 0;
->ok0 : keyof [string, boolean]
+// Numeric indices are keys of the tuple; `length` and Array method names are not.
+local ok1: keyof typeof pair = 1;
+>ok1 : keyof [string, boolean]
 >pair : [string, boolean]
->0 : 0
+>1 : 1
 
-local okLen: keyof typeof pair = "length";
->okLen : keyof [string, boolean]
+local badLen: keyof typeof pair = "length";
+>badLen : keyof [string, boolean]
 >pair : [string, boolean]
 >"length" : "length"
 
@@ -29,9 +29,9 @@ local bad: keyof typeof pair = "push";
 >pair : [string, boolean]
 >"push" : "push"
 
-local es = {ok0, okLen};
->es : { 1: number; 2: "length"; }
->{ok0, okLen} : { 1: number; 2: "length"; }
->ok0 : any
->okLen : any
+local es = {ok1, badLen};
+>es : { 1: 1; 2: keyof [string, boolean]; }
+>{ok1, badLen} : { 1: 1; 2: keyof [string, boolean]; }
+>ok1 : any
+>badLen : any
 

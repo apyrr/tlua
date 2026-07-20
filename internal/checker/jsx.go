@@ -9,7 +9,6 @@ import (
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/debug"
 	"github.com/apyrr/tlua/internal/diagnostics"
-	"github.com/apyrr/tlua/internal/jsnum"
 	"github.com/apyrr/tlua/internal/parser"
 	"github.com/apyrr/tlua/internal/scanner"
 )
@@ -255,7 +254,7 @@ func (c *Checker) getContextualTypeForChildJsxExpression(node *ast.Node, child *
 	}
 	return c.mapTypeEx(childFieldType, func(t *Type) *Type {
 		if c.isArrayLikeType(t) {
-			return c.getIndexedAccessType(t, c.getNumberLiteralType(jsnum.Number(childIndex)))
+			return c.getIndexedAccessType(t, c.getNumberLiteralTypeForPosition(childIndex))
 		}
 		return t
 	}, true /*noReductions*/)
@@ -378,7 +377,7 @@ func (c *Checker) generateJsxChildren(node *ast.Node, getInvalidTextDiagnostic f
 	return func(yield func(JsxElaborationElement) bool) {
 		memberOffset := 0
 		for i, child := range node.Children().Nodes {
-			nameType := c.getNumberLiteralType(jsnum.Number(i - memberOffset))
+			nameType := c.getNumberLiteralTypeForPosition(i - memberOffset)
 			e := c.getElaborationElementForJsxChild(child, nameType, getInvalidTextDiagnostic)
 			if e.errorNode != nil {
 				if !yield(e) {

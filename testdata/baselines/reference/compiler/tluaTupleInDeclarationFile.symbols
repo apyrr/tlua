@@ -11,36 +11,40 @@ declare nested: [[number, number], string];
 >nested : Symbol(nested, Decl(shapes.d.tlua, 2, 7))
 
 === main.tlua ===
-local a: number = pair[0];
+local a: number = pair[1];
 >a : Symbol(a, Decl(main.tlua, 0, 5))
 >pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
->0 : Symbol(0)
+>1 : Symbol(1)
 
-local b: string = pair[1];
+local b: string = pair[2];
 >b : Symbol(b, Decl(main.tlua, 1, 5))
 >pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
->1 : Symbol(1)
+>2 : Symbol(2)
 
 local triple = makeTriple();
 >triple : Symbol(triple, Decl(main.tlua, 3, 5))
 >makeTriple : Symbol(makeTriple, Decl(shapes.d.tlua, 0, 31))
 
-local t0: boolean = triple[0];
->t0 : Symbol(t0, Decl(main.tlua, 4, 5))
+local t1: boolean = triple[1];
+>t1 : Symbol(t1, Decl(main.tlua, 4, 5))
 >triple : Symbol(triple, Decl(main.tlua, 3, 5))
->0 : Symbol(0)
-
-local t2: string = triple[2];
->t2 : Symbol(t2, Decl(main.tlua, 5, 5))
->triple : Symbol(triple, Decl(main.tlua, 3, 5))
->2 : Symbol(2)
-
-local inner: number = nested[0][1];
->inner : Symbol(inner, Decl(main.tlua, 7, 5))
->nested : Symbol(nested, Decl(shapes.d.tlua, 2, 7))
->0 : Symbol(0)
 >1 : Symbol(1)
 
-local es = {a, b, t0, t2, inner};
->es : Symbol(es, Decl(main.tlua, 9, 5))
+local t3: string = triple[3];
+>t3 : Symbol(t3, Decl(main.tlua, 5, 5))
+>triple : Symbol(triple, Decl(main.tlua, 3, 5))
+>3 : Symbol(3)
+
+local inner: number = nested[1][2];
+>inner : Symbol(inner, Decl(main.tlua, 7, 5))
+>nested : Symbol(nested, Decl(shapes.d.tlua, 2, 7))
+>1 : Symbol(1)
+>2 : Symbol(2)
+
+local oob = pair[0];
+>oob : Symbol(oob, Decl(main.tlua, 9, 5))
+>pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
+
+local es = {a, b, t1, t3, inner};
+>es : Symbol(es, Decl(main.tlua, 11, 5))
 

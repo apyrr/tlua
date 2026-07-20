@@ -154,6 +154,14 @@ func (l *LanguageService) getDocumentationForSymbol(c *checker.Checker, symbol *
 		return documentation
 	}
 
+	// A labeled tuple element has no declaration of its own; its JSDoc lives
+	// on the NamedTupleMember behind the label link.
+	if labelDecl := c.GetTupleLabelDeclaration(symbol); labelDecl != nil {
+		if documentation = l.getDocumentationFromDeclaration(c, symbol, labelDecl, node, contentFormat, commentOnly); documentation != "" {
+			return documentation
+		}
+	}
+
 	return l.documentationFromAlias(c, symbol, node, contentFormat, commentOnly)
 }
 
@@ -635,6 +643,13 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				} else {
 					writeTypeClassified(t, container, typeFormatFlags)
 				}
+			}
+			if labelDecl := c.GetTupleLabelDeclaration(symbol); labelDecl != nil && labelDecl.Name() != nil {
+				// A labeled tuple element shows its label after the type,
+				// e.g. `(property) 1: number (lbl1)`.
+				dpw.WritePunctuation(" (")
+				dpw.Write(labelDecl.Name().Text())
+				dpw.WritePunctuation(")")
 			}
 			setDeclaration(symbol.ValueDeclaration)
 		}

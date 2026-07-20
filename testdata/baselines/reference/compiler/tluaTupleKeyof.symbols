@@ -19,19 +19,19 @@ interface KeyBox<T extends unknown[], K extends keyof [number, ...T] = "push"> {
 }
 
 === main.tlua ===
-// Numeric indices and `length` are keys of the tuple; Array method names are not.
-local ok0: keyof typeof pair = 0;
->ok0 : Symbol(ok0, Decl(main.tlua, 1, 5))
+// Numeric indices are keys of the tuple; `length` and Array method names are not.
+local ok1: keyof typeof pair = 1;
+>ok1 : Symbol(ok1, Decl(main.tlua, 1, 5))
 >pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
 
-local okLen: keyof typeof pair = "length";
->okLen : Symbol(okLen, Decl(main.tlua, 2, 5))
+local badLen: keyof typeof pair = "length";
+>badLen : Symbol(badLen, Decl(main.tlua, 2, 5))
 >pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
 
 local bad: keyof typeof pair = "push";
 >bad : Symbol(bad, Decl(main.tlua, 3, 5))
 >pair : Symbol(pair, Decl(shapes.d.tlua, 0, 7))
 
-local es = {ok0, okLen};
+local es = {ok1, badLen};
 >es : Symbol(es, Decl(main.tlua, 5, 5))
 

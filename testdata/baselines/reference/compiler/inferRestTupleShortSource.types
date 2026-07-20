@@ -4,16 +4,13 @@
 // Regression test: tlua panics when inferring [...rest, ...T] from a tuple shorter than fixed-arity constraint
 
 function f<T extends [string]>(args: [...string[], ...T]) {
->f : <T extends [string]>(args: [any], ...string: any[]) => any
->args : any
->string : any[]
->... : any
->T : any
+>f : <T extends [string]>(args: [...string[], ...T]) => void
+>args : [...string[], ...T]
 
   // ...
 }
 
 f([])
->f([]) : any
->f : <T extends [string]>(args: [any], ...string: any[]) => any
+>f([]) : void
+>f : <T extends [string]>(args: [...string[], ...T]) => void
 

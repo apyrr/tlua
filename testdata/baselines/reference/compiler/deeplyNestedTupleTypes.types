@@ -7,21 +7,21 @@ type AOuter = {
 >AOuter : AOuter
 
   inners: [AInner];
->inners : any
+>inners : [AInner]
 
 };
 type AInner = {
 >AInner : AInner
 
   mids: [AMid];
->mids : any
+>mids : [AMid]
 
 };
 type AMid = {
 >AMid : AMid
 
   leaves: [ALeaf];
->leaves : any
+>leaves : [ALeaf]
 
 };
 type ALeaf = {
@@ -36,21 +36,21 @@ type BOuter = {
 >BOuter : BOuter
 
   inners: [BInner];
->inners : any
+>inners : [BInner]
 
 };
 type BInner = {
 >BInner : BInner
 
   mids: [BMid];
->mids : any
+>mids : [BMid]
 
 };
 type BMid = {
 >BMid : BMid
 
   leaves: [BLeaf];
->leaves : any
+>leaves : [BLeaf]
 
 };
 type BLeaf = {

@@ -42,8 +42,8 @@ local s: S = "";
 >S : Symbol(S, Decl(tluaNumberKeyKeyofTuples.tlua, 8, 14))
 
 // Multireturn packs are tuples under the hood; positional truncation still works.
-// (Tuple type syntax `[A, B]` is removed from tlua source, so packs are the
-// only way to spell a tuple now.)
+// (Packs share the tuple machinery with source-level `[A, B]` tuple types,
+// but a multireturn is not a tuple value -- see tluaTupleTypes.)
 function pair(): (number, string)
 >pair : Symbol(pair, Decl(tluaNumberKeyKeyofTuples.tlua, 11, 16))
 

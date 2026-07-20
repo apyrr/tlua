@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaTupleJsxChildren.tsx] ////
+
+=== tluaTupleJsxChildren.tsx ===
+// Extra JSX children against a fixed-tuple children prop report the tuple
+// arity error, not a per-child error against the phantom `nil` an
+// out-of-range tuple element resolves to (the elaboration guard lives in
+// getBestMatchIndexedAccessTypeOrUndefined, shared with table entries).
+
+interface JsxElement {}
+>JsxElement : Symbol(JsxElement, Decl(tluaTupleJsxChildren.tsx, 0, 0))
+
+interface JsxElementChildrenAttribute { children: {}; }
+>JsxElementChildrenAttribute : Symbol(JsxElementChildrenAttribute, Decl(tluaTupleJsxChildren.tsx, 5, 23))
+>children : Symbol(JsxElementChildrenAttribute.children, Decl(tluaTupleJsxChildren.tsx, 6, 39))
+
+interface JsxIntrinsicElements { div: { children?: any }; }
+>JsxIntrinsicElements : Symbol(JsxIntrinsicElements, Decl(tluaTupleJsxChildren.tsx, 6, 55))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaTupleJsxChildren.tsx, 7, 32))
+>children : Symbol(children, Decl(tluaTupleJsxChildren.tsx, 7, 39))
+
+declare React: { createElement: any, Fragment: any };
+>React : Symbol(React, Decl(tluaTupleJsxChildren.tsx, 8, 7))
+>createElement : Symbol(createElement, Decl(tluaTupleJsxChildren.tsx, 8, 16))
+>Fragment : Symbol(Fragment, Decl(tluaTupleJsxChildren.tsx, 8, 36))
+
+declare Comp: (props: { children: [JsxElement, JsxElement] }) => JsxElement;
+>Comp : Symbol(Comp, Decl(tluaTupleJsxChildren.tsx, 10, 7))
+>props : Symbol(props, Decl(tluaTupleJsxChildren.tsx, 10, 15))
+>children : Symbol(children, Decl(tluaTupleJsxChildren.tsx, 10, 23))
+>JsxElement : Symbol(JsxElement, Decl(tluaTupleJsxChildren.tsx, 0, 0))
+>JsxElement : Symbol(JsxElement, Decl(tluaTupleJsxChildren.tsx, 0, 0))
+>JsxElement : Symbol(JsxElement, Decl(tluaTupleJsxChildren.tsx, 0, 0))
+
+local ok = <Comp><div/><div/></Comp>;
+>ok : Symbol(ok, Decl(tluaTupleJsxChildren.tsx, 12, 5))
+>Comp : Symbol(Comp, Decl(tluaTupleJsxChildren.tsx, 10, 7))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaTupleJsxChildren.tsx, 7, 32))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaTupleJsxChildren.tsx, 7, 32))
+>Comp : Symbol(Comp, Decl(tluaTupleJsxChildren.tsx, 10, 7))
+
+local bad = <Comp><div/><div/><div/></Comp>;
+>bad : Symbol(bad, Decl(tluaTupleJsxChildren.tsx, 13, 5))
+>Comp : Symbol(Comp, Decl(tluaTupleJsxChildren.tsx, 10, 7))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaTupleJsxChildren.tsx, 7, 32))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaTupleJsxChildren.tsx, 7, 32))
+>div : Symbol(JsxIntrinsicElements.div, Decl(tluaTupleJsxChildren.tsx, 7, 32))
+>Comp : Symbol(Comp, Decl(tluaTupleJsxChildren.tsx, 10, 7))
+

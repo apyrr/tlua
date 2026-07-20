@@ -5,9 +5,8 @@ type Middle<T> = T extends [unknown, ... infer X, unknown] ? X: never;
 >Middle : Symbol(Middle, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 0))
 >T : Symbol(T, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 12))
 >T : Symbol(T, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 12))
-> : Symbol(unknown)
-> : Symbol(unknown)
-> : Symbol(unknown)
+>X : Symbol(X, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 46))
+>X : Symbol(X, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 46))
 
 type Example = Middle<[1]>;
 >Example : Symbol(Example, Decl(sliceTupleTypeOutOfBounds.tlua, 0, 70))

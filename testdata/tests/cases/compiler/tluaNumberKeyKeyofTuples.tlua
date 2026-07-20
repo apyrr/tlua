@@ -15,8 +15,8 @@ local n: N = 0;
 local s: S = "";
 
 // Multireturn packs are tuples under the hood; positional truncation still works.
-// (Tuple type syntax `[A, B]` is removed from tlua source, so packs are the
-// only way to spell a tuple now.)
+// (Packs share the tuple machinery with source-level `[A, B]` tuple types,
+// but a multireturn is not a tuple value -- see tluaTupleTypes.)
 function pair(): (number, string)
   return 1, "a";
 end

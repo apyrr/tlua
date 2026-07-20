@@ -1,0 +1,335 @@
+//// [tests/cases/compiler/tluaTupleTypes.tlua] ////
+
+=== tluaTupleTypes.tlua ===
+// Tuple types `[A, B]` in .tlua source: a fixed-shape table whose elements
+// live at the 1-based Lua sequence keys. Values are ordinary table
+// constructors; arity and element types check positionally.
+
+type Pair = [string, number];
+>Pair : Pair
+
+local p: Pair = {"a", 1};
+>p : Pair
+>{"a", 1} : [string, number]
+
+local s: string = p[1];
+>s : string
+>p[1] : string
+>p : Pair
+>1 : 1
+
+local n: number = p[2];
+>n : number
+>p[2] : number
+>p : Pair
+>2 : 2
+
+// Out-of-range keys: 0 and past-the-end error, and a tuple value is a plain
+// table with no `length` field (`#t` is the operator).
+local oob = p[3];
+>oob : nil
+>p[3] : nil
+>p : Pair
+>3 : 3
+
+local zero = p[0];
+>zero : string | number
+>p[0] : string | number
+>p : Pair
+>0 : 0
+
+local nolen = p.length;
+>nolen : any
+>p.length : any
+>p : Pair
+>length : any
+
+local hash: number = #p;
+>hash : number
+>#p : 2
+>p : Pair
+
+// Element-type and arity mismatches.
+local bad: Pair = {1, "a"};
+>bad : Pair
+>{1, "a"} : [number, string]
+
+local excess: Pair = {"a", 1, true};
+>excess : Pair
+>{"a", 1, true} : [string, number, boolean]
+>true : true
+
+local short: Pair = {"a"};
+>short : Pair
+>{"a"} : [string]
+
+// Optional and rest elements.
+type Trail = [string, number?, ...boolean[]];
+>Trail : Trail
+
+local t1: Trail = {"x"};
+>t1 : Trail
+>{"x"} : [string]
+
+local t2: Trail = {"x", 2, true, false};
+>t2 : Trail
+>{"x", 2, true, false} : [string, number, true, false]
+>true : true
+>false : false
+
+local restRead: boolean | nil = t2[3];
+>restRead : boolean | nil
+>t2[3] : boolean
+>t2 : Trail
+>3 : 3
+
+// Sub-1 and non-integer keys are never elements, on every tuple shape:
+// negatives get the dedicated diagnostic (unions included), key 0 and
+// fractional keys report no-such-element/property and then resolve through
+// the number index signature like any table key.
+local vzero = t2[0];
+>vzero : string | number | boolean | nil
+>t2[0] : string | number | boolean | nil
+>t2 : Trail
+>0 : 0
+
+local vneg = t2[-1];
+>vneg : nil
+>t2[-1] : nil
+>t2 : Trail
+>-1 : -1
+>1 : 1
+
+local pneg = p[-1];
+>pneg : nil
+>p[-1] : nil
+>p : Pair
+>-1 : -1
+>1 : 1
+
+local pfrac = p[1.5];
+>pfrac : string | number
+>p[1.5] : string | number
+>p : Pair
+>1.5 : 1.5
+
+local vfrac = t2[1.5];
+>vfrac : string | number | boolean | nil
+>t2[1.5] : string | number | boolean | nil
+>t2 : Trail
+>1.5 : 1.5
+
+declare u: [number, string] | [boolean];
+>u : [boolean] | [number, string]
+
+local uneg = u[-1];
+>uneg : nil
+>u[-1] : nil
+>u : [boolean] | [number, string]
+>-1 : -1
+>1 : 1
+
+// An excess entry against a tuple-LIKE object with a number index signature
+// still elaborates at the entry (the index signature types the key).
+local mixed: { 1: string, [n: number]: string } = {"a", 5};
+>mixed : { [n: number]: string; 1: string; }
+>1 : string
+>n : number
+>{"a", 5} : { 1: string; 2: number; }
+
+// Entries in a variadic tuple's rest part keep precise per-entry elaboration
+// (they have no property symbol, but the rest slice types them).
+local restBad: Trail = {"x", 2, true, "no"};
+>restBad : Trail
+>{"x", 2, true, "no"} : [string, number, true, string]
+>true : true
+
+// A union mixing a tuple with a tuple-like interface keeps the object path,
+// so neither member's checking is lost: excess entries still error.
+interface ClosedPair {
+    1: string;
+>1 : string
+
+    2: string;
+>2 : string
+}
+type TupleOrLike = [string, string] | ClosedPair;
+>TupleOrLike : TupleOrLike
+
+local okUnion: TupleOrLike = {"x", "y"};
+>okUnion : TupleOrLike
+>{"x", "y"} : { 1: string; 2: string; }
+
+local excessUnion: TupleOrLike = {"x", "y", "z"};
+>excessUnion : TupleOrLike
+>{"x", "y", "z"} : { 1: string; 2: string; 3: string; }
+
+local wrongUnion: TupleOrLike = {"x", "y", true};
+>wrongUnion : TupleOrLike
+>{"x", "y", true} : { 1: string; 2: string; 3: boolean; }
+>true : true
+
+// A non-sequence object satisfies a variadic tuple when its prefix matches
+// property-wise and every key past the prefix satisfies the rest slice;
+// elements required after the variable part are unverifiable and reject.
+declare objIn: { 1: number, 2: number };
+>objIn : { 1: number; 2: number; }
+>1 : number
+>2 : number
+
+declare objBad: { 1: number, 5: string };
+>objBad : { 1: number; 5: string; }
+>1 : number
+>5 : string
+
+type Vari = [number, ...number[]];
+>Vari : Vari
+
+local vOk: Vari = objIn;
+>vOk : Vari
+>objIn : { 1: number; 2: number; }
+
+local vBad: Vari = objBad;
+>vBad : Vari
+>objBad : { 1: number; 5: string; }
+
+type TrailReq = [number, ...string[], boolean];
+>TrailReq : TrailReq
+
+local vReq: TrailReq = objIn;
+>vReq : TrailReq
+>objIn : { 1: number; 2: number; }
+
+// A union mixing a tuple with a plain (non-tuple-like) object: excess
+// entries surface the union's relation error, not a phantom-nil per-entry
+// error via the best-matching tuple constituent.
+declare mixedU: [number, number] | { kind: string };
+>mixedU : { kind: string; } | [number, number]
+>kind : string
+
+local mu: typeof mixedU = {1, 2, 3};
+>mu : { kind: string; } | [number, number]
+>mixedU : { kind: string; } | [number, number]
+>{1, 2, 3} : [number, number, number]
+
+// A SPARSE numeric-keyed union member (no key 1) also forces the object
+// path, keeping its excess-entry checking.
+interface Sparse {
+    2: string;
+>2 : string
+}
+type SparseU = [string] | Sparse;
+>SparseU : SparseU
+
+local sOk: SparseU = {"x"};
+>sOk : SparseU
+>{"x"} : { 1: string; }
+
+local sAlso: SparseU = {"x", "y"};
+>sAlso : SparseU
+>{"x", "y"} : { 1: string; 2: string; }
+
+local sBad: SparseU = {"x", "y", true};
+>sBad : SparseU
+>{"x", "y", true} : { 1: string; 2: string; 3: boolean; }
+>true : true
+
+// Union subtype reduction: a fixed tuple is a strict subtype of the
+// exactly-in-range object (never the reverse), so the object survives --
+// deterministic and set-correct.
+declare cond: boolean;
+>cond : boolean
+
+declare oPair: { 1: number, 2: number };
+>oPair : { 1: number; 2: number; }
+>1 : number
+>2 : number
+
+function pickShape()
+>pickShape : () => { 1: number; 2: number; }
+
+    if cond then
+>cond : boolean
+
+        local t: [number, number] = {1, 2};
+>t : [number, number]
+>{1, 2} : [number, number]
+
+        return t;
+>t : [number, number]
+
+    end
+    return oPair;
+>oPair : { 1: number; 2: number; }
+
+end
+local picked = pickShape();
+>picked : { 1: number; 2: number; }
+>pickShape() : { 1: number; 2: number; }
+>pickShape : () => { 1: number; 2: number; }
+
+// The last entry expands its pack, like every value-list tail.
+declare function two(): (number, string);
+>two : () => (number, string)
+
+local packed: [boolean, number, string] = {true, two()};
+>packed : [boolean, number, string]
+>{true, two()} : [true, number, string]
+>true : true
+>two() : number
+>two : () => (number, string)
+
+// Inference from a table constructor through a tuple parameter.
+declare function first<A, B>(pair: [A, B]): A;
+>first : <A, B>(pair: [A, B]) => A
+>pair : [A, B]
+
+local inferred: string = first({"x", 10});
+>inferred : string
+>first({"x", 10}) : string
+>first : <A, B>(pair: [A, B]) => A
+>{"x", 10} : [string, number]
+
+// Variadic composition and indexed access.
+type Concat<A extends unknown[], B extends unknown[]> = [...A, ...B];
+>Concat : [...A, ...B]
+
+local cat: Concat<[1, 2], [3]> = {1, 2, 3};
+>cat : [1, 2, 3]
+>{1, 2, 3} : [1, 2, 3]
+
+type Second<T extends [unknown, unknown, ...unknown[]]> = T[2];
+>Second : Second<T>
+
+local second: Second<Pair> = 5;
+>second : number
+>5 : 5
+
+// Mapped types walk tuples element-wise with 1-based key literals.
+type Boxed<T> = { [K in keyof T]: { value: T[K] } };
+>Boxed : Boxed<T>
+>value : T[K]
+
+local boxed: Boxed<Pair> = { {value = "a"}, {value = 2} };
+>boxed : [{ value: string; }, { value: number; }]
+>{ {value = "a"}, {value = 2} } : [{ value: string; }, { value: number; }]
+>{value = "a"} : { value: string; }
+>value : string
+>"a" : "a"
+>{value = 2} : { value: number; }
+>value : number
+>2 : 2
+
+local bv: string = boxed[1].value;
+>bv : string
+>boxed[1].value : string
+>boxed[1] : { value: string; }
+>boxed : [{ value: string; }, { value: number; }]
+>1 : 1
+>value : string
+
+// A tuple in a union context still forces the tuple literal path.
+local u: [number] | [string, string] = {"a", "b"};
+>u : [number] | [string, string]
+>{"a", "b"} : [string, string]
+

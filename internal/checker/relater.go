@@ -413,6 +413,9 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 		if ast.IsTableEntry(prop) {
 			// A Lua positional entry elaborates like an array element, keyed
 			// by its 1-based index (the binder symbol has no usable name).
+			// Out-of-range keys on tuple targets are dropped inside
+			// getBestMatchIndexedAccessTypeOrUndefined so the relation's own
+			// arity diagnostic surfaces.
 			indexNameType := c.getNumberLiteralType(jsnum.Number(tableEntryLuaIndex(prop)))
 			reportedError = c.elaborateElement(source, target, relation, prop, prop.Expression(), indexNameType, nil, nil, diagnosticOutput) || reportedError
 			continue
@@ -446,10 +449,11 @@ func (c *Checker) elaborateArrayLiteral(node *ast.Node, source *Type, target *Ty
 	}
 	reportedError := false
 	for i, element := range node.Elements() {
-		if ast.IsOmittedExpression(element) || c.isTupleLikeType(target) && c.getPropertyOfType(target, ast.NumberKeyNameFromInt(i)) == nil {
+		// Element position i lives at the 1-based number key i+1.
+		if ast.IsOmittedExpression(element) || c.isTupleLikeType(target) && c.getPropertyOfType(target, ast.NumberKeyNameFromPosition(i)) == nil {
 			continue
 		}
-		nameType := c.getNumberLiteralType(jsnum.Number(i))
+		nameType := c.getNumberLiteralTypeForPosition(i)
 		checkNode := c.getEffectiveCheckNode(element)
 		reportedError = c.elaborateElement(source, target, relation, checkNode, checkNode, nameType, nil, nil, diagnosticOutput) || reportedError
 	}
@@ -534,6 +538,23 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 }
 
 func (c *Checker) getBestMatchIndexedAccessTypeOrUndefined(source *Type, target *Type, nameType *Type) *Type {
+	// A number key no tuple constituent admits (see tupleAdmitsNumberKey) has
+	// no match: the tuple relation's own diagnostics report it, and resolving
+	// the access would surface the phantom `nil` an out-of-range tuple read
+	// produces, manufacturing nonsense per-element errors. Table entries,
+	// array literals and JSX children all elaborate through here, so the rule
+	// lives in this one place. Keys in a variable part ARE admitted -- they
+	// keep precise per-entry elaboration against the rest slice -- and
+	// non-tuple targets keep full resolution: an applicable number index
+	// signature still elaborates at the entry.
+	isNumberKey := nameType.flags&TypeFlagsNumberLiteral != 0
+	var key jsnum.Number
+	if isNumberKey {
+		key = nameType.AsLiteralType().value.(jsnum.Number)
+		if everyType(target, isTupleType) && everyType(target, func(t *Type) bool { return !tupleAdmitsNumberKey(t, key) }) {
+			return nil
+		}
+	}
 	idx := c.getIndexedAccessTypeOrUndefined(target, nameType, AccessFlagsNone, nil, nil)
 	if idx != nil {
 		return idx
@@ -541,6 +562,13 @@ func (c *Checker) getBestMatchIndexedAccessTypeOrUndefined(source *Type, target 
 	if target.flags&TypeFlagsUnion != 0 {
 		best := c.getBestMatchingType(source, target, c.compareTypesAssignableSimple)
 		if best != nil {
+			// The same screening applies to the best-matching constituent of
+			// a mixed union: an out-of-range tuple read resolves to a phantom
+			// `nil` and must not manufacture a per-entry error (the union's
+			// own relation diagnostic reports the mismatch).
+			if isNumberKey && isTupleType(best) && !tupleAdmitsNumberKey(best, key) {
+				return nil
+			}
 			return c.getIndexedAccessTypeOrUndefined(best, nameType, AccessFlagsNone, nil, nil)
 		}
 	}
@@ -633,6 +661,16 @@ func (c *Checker) hasCommonProperties(source *Type, target *Type, isComparingJsx
  */
 func (c *Checker) isKnownProperty(targetType *Type, name string, isComparingJsxAttributes bool) bool {
 	if targetType.flags&TypeFlagsObject != 0 {
+		// A tuple knows only its element keys (see tupleAdmitsNumberKey): the
+		// number index signature inherited from its table base must not admit
+		// out-of-range or non-element keys here, or excess entries would count
+		// as "known" and slip through excess-property checks (e.g. via a tuple
+		// member of a union target).
+		if isTupleType(targetType) && ast.IsNumberKeyName(name) {
+			if n, ok := ast.NumberKeyNumber(name); ok {
+				return tupleAdmitsNumberKey(targetType, n)
+			}
+		}
 		// For backwards compatibility a symbol-named property is satisfied by a string index signature. This
 		// is incorrect and inconsistent with element access expressions, where it is an error, so eventually
 		// we should remove this exception.
@@ -1723,7 +1761,7 @@ func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
 		restType := c.getTypeOfSymbol(signature.parameters[paramCount])
 		index := pos - paramCount
 		if !isTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 || index < restType.TargetTupleType().fixedLength {
-			return c.getIndexedAccessType(restType, c.getNumberLiteralType(jsnum.Number(index)))
+			return c.getIndexedAccessType(restType, c.getNumberLiteralTypeForPosition(index))
 		}
 	}
 	return nil
@@ -1865,17 +1903,23 @@ func (c *Checker) sliceTupleType(t *Type, index int, endSkipCount int) *Type {
 
 func (c *Checker) getKnownKeysOfTupleType(t *Type) *Type {
 	fixedLength := t.TargetTupleType().fixedLength
-	keys := make([]*Type, fixedLength+1)
-	for i := range fixedLength {
-		// Tuple keys are number keys.
-		keys[i] = c.getNumberLiteralType(jsnum.Number(i))
+	allFixed := t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0
+	size := fixedLength
+	if !allFixed {
+		size++
 	}
-	// Beyond the fixed numeric indices, a tuple's keys are the `number` index
-	// signature contributed by its `T[]` table base plus the synthesized
-	// `length` property. Previously this unioned in `keyof Array`, but tlua
-	// tuples no longer inherit the inert global Array's methods (push/pop/...),
-	// so those names must not appear as keys of a generic variadic tuple.
-	keys[fixedLength] = c.getUnionType([]*Type{c.numberType, c.getStringLiteralType("length")})
+	keys := make([]*Type, size)
+	for i := range fixedLength {
+		keys[i] = c.getNumberLiteralTypeForPosition(i)
+	}
+	// An all-fixed tuple's keys are exactly its element literals 1..arity
+	// (tupleAdmitsNumberKey); only a variable-length tuple widens to the
+	// `number` index of its `T[]` table base. Neither unions in `keyof Array`
+	// or a `length` property: tlua tuples have no Array methods and no length
+	// field (a tuple value is a plain table; `#t` is an operator).
+	if !allFixed {
+		keys[fixedLength] = c.numberType
+	}
 	return c.getUnionType(keys)
 }
 
@@ -4079,6 +4123,20 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	}
 	result := TernaryTrue
 	if isTupleType(target) {
+		// A non-sequence source relates to a tuple target only if it carries
+		// no numeric key the tuple does not admit (tupleAdmitsNumberKey): with
+		// no length property, out-of-range keys are what distinguish a longer
+		// sequence from the tuple's shape.
+		if !r.c.isArrayOrTupleType(source) {
+			for _, prop := range r.c.getPropertiesOfType(source) {
+				if key, ok := ast.NumberKeyNumber(prop.Name); ok && !tupleAdmitsNumberKey(target, key) {
+					if reportErrors {
+						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(prop), r.c.TypeToString(target))
+					}
+					return TernaryFalse
+				}
+			}
+		}
 		if r.c.isArrayOrTupleType(source) {
 			if !target.TargetTupleType().readonly && (r.c.isReadonlyArrayType(source) || isTupleType(source) && source.TargetTupleType().readonly) {
 				return TernaryFalse
@@ -4144,21 +4202,23 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				if targetPosition >= 0 {
 					targetFlags = target.TargetTupleType().elementInfos[targetPosition].flags
 				}
+				// Diagnostics print element positions as their 1-based keys,
+				// matching every other tuple surface (t[1] is the first element).
 				if targetFlags&ElementFlagsVariadic != 0 && sourceFlags&ElementFlagsVariadic == 0 {
 					if reportErrors {
-						r.reportError(diagnostics.Source_provides_no_match_for_variadic_element_at_position_0_in_target, targetPosition)
+						r.reportError(diagnostics.Source_provides_no_match_for_variadic_element_at_position_0_in_target, targetPosition+1)
 					}
 					return TernaryFalse
 				}
 				if sourceFlags&ElementFlagsVariadic != 0 && targetFlags&ElementFlagsVariable == 0 {
 					if reportErrors {
-						r.reportError(diagnostics.Variadic_element_at_position_0_in_source_does_not_match_element_at_position_1_in_target, sourcePosition, targetPosition)
+						r.reportError(diagnostics.Variadic_element_at_position_0_in_source_does_not_match_element_at_position_1_in_target, sourcePosition+1, targetPosition+1)
 					}
 					return TernaryFalse
 				}
 				if targetFlags&ElementFlagsRequired != 0 && sourceFlags&ElementFlagsRequired == 0 {
 					if reportErrors {
-						r.reportError(diagnostics.Source_provides_no_match_for_required_element_at_position_0_in_target, targetPosition)
+						r.reportError(diagnostics.Source_provides_no_match_for_required_element_at_position_0_in_target, targetPosition+1)
 					}
 					return TernaryFalse
 				}
@@ -4167,7 +4227,8 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 					if sourceFlags&ElementFlagsVariable != 0 || targetFlags&ElementFlagsVariable != 0 {
 						canExcludeDiscriminants = false
 					}
-					if canExcludeDiscriminants && excludedProperties.Has(ast.NumberKeyNameFromInt(sourcePosition)) {
+					// Element positions are excluded under their 1-based number keys.
+					if canExcludeDiscriminants && excludedProperties.Has(ast.NumberKeyNameFromPosition(sourcePosition)) {
 						continue
 					}
 				}
@@ -4183,9 +4244,9 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				if related == TernaryFalse {
 					if reportErrors && (targetArity > 1 || sourceArity > 1) {
 						if targetHasRestElement && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount != sourceArity-targetEndCount-1 {
-							r.reportError(diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount, sourceArity-targetEndCount-1, targetPosition)
+							r.reportError(diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount+1, sourceArity-targetEndCount, targetPosition+1)
 						} else {
-							r.reportError(diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition, targetPosition)
+							r.reportError(diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition+1, targetPosition+1)
 						}
 					}
 					return TernaryFalse
@@ -4195,7 +4256,34 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			return result
 		}
 		if target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 {
-			return TernaryFalse
+			// A non-sequence source can satisfy a variable-length tuple: the
+			// fixed prefix relates property-wise below, and every numeric key
+			// past the prefix (already vetted by the guard above) must satisfy
+			// the variable part's element union. Elements REQUIRED after the
+			// variable part are unverifiable on a source with no known arity,
+			// so those targets still reject.
+			tt := target.TargetTupleType()
+			firstVariable := slices.IndexFunc(tt.elementInfos, func(info TupleElementInfo) bool {
+				return info.flags&ElementFlagsVariable != 0
+			})
+			for pos := firstVariable + 1; pos < len(tt.elementInfos); pos++ {
+				if tt.elementInfos[pos].flags&ElementFlagsRequired != 0 {
+					if reportErrors {
+						r.reportError(diagnostics.Source_provides_no_match_for_required_element_at_position_0_in_target, pos+1)
+					}
+					return TernaryFalse
+				}
+			}
+			restSlice := r.c.getElementTypeOfSliceOfTupleType(target, tt.fixedLength, 0 /*endSkipCount*/, false /*writing*/, false /*noReductions*/)
+			for _, prop := range r.c.getPropertiesOfType(source) {
+				if key, ok := ast.NumberKeyNumber(prop.Name); ok && key > jsnum.Number(tt.fixedLength) {
+					related := r.isRelatedToEx(r.c.getTypeOfSymbol(prop), restSlice, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+					if related == TernaryFalse {
+						return TernaryFalse
+					}
+					result &= related
+				}
+			}
 		}
 	}
 	requireOptionalProperties := (r.relation == r.c.subtypeRelation || r.relation == r.c.strictSubtypeRelation) && !isObjectLiteralType(source) && !r.c.isEmptyArrayLiteralType(source) && !isTupleType(source)
@@ -4222,7 +4310,9 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	numericNamesOnly := isTupleType(source) && isTupleType(target)
 	for _, targetProp := range excludeProperties(properties, excludedProperties) {
 		name := targetProp.Name
-		if targetProp.Flags&ast.SymbolFlagsPrototype == 0 && (!numericNamesOnly || ast.IsNumberKeyName(name) || name == "length") && (!optionalsOnly || targetProp.Flags&ast.SymbolFlagsOptional != 0) {
+		// numericNamesOnly admits only number keys: tlua tuples have no
+		// `length` property, so upstream's length allowance is gone.
+		if targetProp.Flags&ast.SymbolFlagsPrototype == 0 && (!numericNamesOnly || ast.IsNumberKeyName(name)) && (!optionalsOnly || targetProp.Flags&ast.SymbolFlagsOptional != 0) {
 			sourceProp := r.c.getPropertyOfType(source, name)
 			if sourceProp != nil && sourceProp != targetProp {
 				related := r.propertyRelatedTo(source, target, sourceProp, targetProp, r.c.getNonMissingTypeOfSymbol, reportErrors, intersectionState, r.relation == r.c.comparableRelation)

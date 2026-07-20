@@ -4,10 +4,6 @@
 declare f: (...args: [x: number]) => void;
 >f : Symbol(f, Decl(functionTypeParameterNameFromTupleLabel.tlua, 0, 7))
 >args : Symbol(args, Decl(functionTypeParameterNameFromTupleLabel.tlua, 0, 12))
-> : Symbol(unknown)
->x : Symbol(x)
->number : Symbol(number, Decl(functionTypeParameterNameFromTupleLabel.tlua, 0, 24))
-> : Symbol(unknown)
 
 declare g: (a: string) => void;
 >g : Symbol(g, Decl(functionTypeParameterNameFromTupleLabel.tlua, 1, 7))

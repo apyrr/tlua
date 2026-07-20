@@ -191,7 +191,6 @@ type RecurseOnAllOfSchema<SUB_SCHEMAS extends readonly JSONSchema[]> =
 
   SUB_SCHEMAS extends readonly [infer SUB_SCHEMAS_HEAD]
 >SUB_SCHEMAS : Symbol(SUB_SCHEMAS, Decl(distributiveConditionalBaseConstraint.tlua, 57, 26))
-> : Symbol(unknown)
 >SUB_SCHEMAS_HEAD : Symbol(SUB_SCHEMAS_HEAD, Decl(distributiveConditionalBaseConstraint.tlua, 58, 37))
 
     ? SUB_SCHEMAS_HEAD extends JSONSchema

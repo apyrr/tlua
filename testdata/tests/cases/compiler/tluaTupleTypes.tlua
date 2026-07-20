@@ -1,0 +1,124 @@
+// @strict: true
+// @noEmit: true
+
+// Tuple types `[A, B]` in .tlua source: a fixed-shape table whose elements
+// live at the 1-based Lua sequence keys. Values are ordinary table
+// constructors; arity and element types check positionally.
+
+type Pair = [string, number];
+
+local p: Pair = {"a", 1};
+local s: string = p[1];
+local n: number = p[2];
+
+// Out-of-range keys: 0 and past-the-end error, and a tuple value is a plain
+// table with no `length` field (`#t` is the operator).
+local oob = p[3];
+local zero = p[0];
+local nolen = p.length;
+local hash: number = #p;
+
+// Element-type and arity mismatches.
+local bad: Pair = {1, "a"};
+local excess: Pair = {"a", 1, true};
+local short: Pair = {"a"};
+
+// Optional and rest elements.
+type Trail = [string, number?, ...boolean[]];
+local t1: Trail = {"x"};
+local t2: Trail = {"x", 2, true, false};
+local restRead: boolean | nil = t2[3];
+
+// Sub-1 and non-integer keys are never elements, on every tuple shape:
+// negatives get the dedicated diagnostic (unions included), key 0 and
+// fractional keys report no-such-element/property and then resolve through
+// the number index signature like any table key.
+local vzero = t2[0];
+local vneg = t2[-1];
+local pneg = p[-1];
+local pfrac = p[1.5];
+local vfrac = t2[1.5];
+declare u: [number, string] | [boolean];
+local uneg = u[-1];
+
+// An excess entry against a tuple-LIKE object with a number index signature
+// still elaborates at the entry (the index signature types the key).
+local mixed: { 1: string, [n: number]: string } = {"a", 5};
+
+// Entries in a variadic tuple's rest part keep precise per-entry elaboration
+// (they have no property symbol, but the rest slice types them).
+local restBad: Trail = {"x", 2, true, "no"};
+
+// A union mixing a tuple with a tuple-like interface keeps the object path,
+// so neither member's checking is lost: excess entries still error.
+interface ClosedPair {
+    1: string;
+    2: string;
+}
+type TupleOrLike = [string, string] | ClosedPair;
+local okUnion: TupleOrLike = {"x", "y"};
+local excessUnion: TupleOrLike = {"x", "y", "z"};
+local wrongUnion: TupleOrLike = {"x", "y", true};
+
+// A non-sequence object satisfies a variadic tuple when its prefix matches
+// property-wise and every key past the prefix satisfies the rest slice;
+// elements required after the variable part are unverifiable and reject.
+declare objIn: { 1: number, 2: number };
+declare objBad: { 1: number, 5: string };
+type Vari = [number, ...number[]];
+local vOk: Vari = objIn;
+local vBad: Vari = objBad;
+type TrailReq = [number, ...string[], boolean];
+local vReq: TrailReq = objIn;
+
+// A union mixing a tuple with a plain (non-tuple-like) object: excess
+// entries surface the union's relation error, not a phantom-nil per-entry
+// error via the best-matching tuple constituent.
+declare mixedU: [number, number] | { kind: string };
+local mu: typeof mixedU = {1, 2, 3};
+
+// A SPARSE numeric-keyed union member (no key 1) also forces the object
+// path, keeping its excess-entry checking.
+interface Sparse {
+    2: string;
+}
+type SparseU = [string] | Sparse;
+local sOk: SparseU = {"x"};
+local sAlso: SparseU = {"x", "y"};
+local sBad: SparseU = {"x", "y", true};
+
+// Union subtype reduction: a fixed tuple is a strict subtype of the
+// exactly-in-range object (never the reverse), so the object survives --
+// deterministic and set-correct.
+declare cond: boolean;
+declare oPair: { 1: number, 2: number };
+function pickShape()
+    if cond then
+        local t: [number, number] = {1, 2};
+        return t;
+    end
+    return oPair;
+end
+local picked = pickShape();
+
+// The last entry expands its pack, like every value-list tail.
+declare function two(): (number, string);
+local packed: [boolean, number, string] = {true, two()};
+
+// Inference from a table constructor through a tuple parameter.
+declare function first<A, B>(pair: [A, B]): A;
+local inferred: string = first({"x", 10});
+
+// Variadic composition and indexed access.
+type Concat<A extends unknown[], B extends unknown[]> = [...A, ...B];
+local cat: Concat<[1, 2], [3]> = {1, 2, 3};
+type Second<T extends [unknown, unknown, ...unknown[]]> = T[2];
+local second: Second<Pair> = 5;
+
+// Mapped types walk tuples element-wise with 1-based key literals.
+type Boxed<T> = { [K in keyof T]: { value: T[K] } };
+local boxed: Boxed<Pair> = { {value = "a"}, {value = 2} };
+local bv: string = boxed[1].value;
+
+// A tuple in a union context still forces the tuple literal path.
+local u: [number] | [string, string] = {"a", "b"};

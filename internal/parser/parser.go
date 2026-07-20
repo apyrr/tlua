@@ -1645,11 +1645,11 @@ func (p *Parser) parseIdentifierOrPattern() *ast.Node {
 // isArrayBindingPatternStart reports whether the current `[` token begins an
 // array binding pattern. Array binding patterns (`local [a, b] = x`) are
 // removed from tlua source — Lua uses a name list (`local a, b = f()`) — but
-// survive in declaration files, where the bundled libs still use them (e.g.
-// the iterator `next(...[value]: [] | [TNext])` signatures). Keeping the rule
-// in one predicate ensures every binding-start lookahead and the parse entry
-// point agree; otherwise `.d.ts` function types with array-pattern parameters
-// misparse.
+// still parse in declaration files so ported .d.ts function types with
+// non-vararg pattern parameters (`([k, v]: [string, number]) => ...`) keep
+// their shape. (No bundled lib uses them; vararg patterns are TLUA100034
+// even in declaration files.) Keeping the rule in one predicate ensures
+// every binding-start lookahead and the parse entry point agree.
 func (p *Parser) isArrayBindingPatternStart() bool {
 	return p.token == ast.KindOpenBracketToken && p.isDeclarationFile
 }
@@ -2210,14 +2210,10 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		}
 		return p.parseTypeLiteral()
 	case ast.KindOpenBracketToken:
-		// Tuple type syntax `[A, B]` is removed from tlua source; it survives
-		// only in declaration files, where the bundled libs and emitted
-		// declarations (multireturn packs serialize as `[A, B]`) still use it.
-		// In .ts source `[` in type position falls through to stock recovery.
-		if p.isDeclarationFile {
-			return p.parseTupleType()
-		}
-		return p.parseTypeReference()
+		// Tuple type syntax `[A, B]`: a fixed-shape table whose elements live
+		// at the 1-based number keys. Values are ordinary table constructors
+		// (`{a, b}`); only the type syntax uses brackets.
+		return p.parseTupleType()
 	case ast.KindOpenParenToken:
 		return p.parseParenthesizedType()
 	case ast.KindImportKeyword:
@@ -5632,8 +5628,12 @@ func (p *Parser) isStartOfType(inStartOfParameter bool) bool {
 		// starts no type at all.
 		return p.tokenIsExclamationPunctuation()
 	case ast.KindOpenBracketToken:
-		// `[` starts a type (tuple) only in declaration files.
-		return p.isDeclarationFile
+		// `[` starts a tuple type -- except when deciding whether a token
+		// begins a PARAMETER: array binding patterns are declaration-file
+		// only (isArrayBindingPatternStart handles them there), so treating
+		// `[` as a parameter start in source would manufacture a phantom
+		// nameless parameter out of recovery on removed syntax.
+		return !inStartOfParameter
 	case ast.KindFunctionKeyword:
 		return !inStartOfParameter
 	case ast.KindMinusToken:

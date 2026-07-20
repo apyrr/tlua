@@ -4,21 +4,14 @@
 // https://github.com/microsoft/TypeScript/issues/63270
 
 type Recur<T> =
->Recur : any
+>Recur : Recur<T>
 
     (T extends  (unknown[]) ? {} : { [K in keyof T]?: Recur<T[K]>}) |
     [...Recur<T>[number][]];
->... : any
->Recur<T>[number][] : any
->Recur<T>[number] : any
->Recur<T> : any
->Recur : any
->number : any
-> : any
 
 function join<T>(l: Recur<T>[]): Recur<T> {
 >join : <T>(l: Recur<T>[]) => Recur<T>
->l : any[]
+>l : Recur<T>[]
 
     return ['marker', ...l];
 >['marker', ... : any
@@ -26,17 +19,17 @@ function join<T>(l: Recur<T>[]): Recur<T> {
 >'marker', ... : any
 >'marker' : "marker"
 >... : any
->l : any[]
+>l : Recur<T>[]
 }
 
 function a<T>(l: Recur<T>[]): void {
 >a : <T>(l: Recur<T>[]) => void
->l : any[]
+>l : Recur<T>[]
 
     local x: Recur<T> | undefined = join(l);
->x : any
->join(l) : any
+>x : Recur<T> | nil
+>join(l) : Recur<T>
 >join : <T_1>(l: Recur<T_1>[]) => Recur<T_1>
->l : any[]
+>l : Recur<T>[]
 }
 

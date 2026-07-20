@@ -9,6 +9,7 @@ import (
 	"github.com/apyrr/tlua/internal/binder"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
+	"github.com/apyrr/tlua/internal/jsnum"
 	"github.com/apyrr/tlua/internal/scanner"
 	"github.com/apyrr/tlua/internal/tracing"
 	"github.com/zeebo/xxh3"
@@ -528,6 +529,15 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 		if c.isMatchingReference(f.reference, right) {
 			return c.narrowTypeByEquality(t, operator, left, assumeTrue)
 		}
+		// `#ref == n` (or ~=) narrows a union of tuples by arity -- the
+		// Lua-native analog of TypeScript's length narrowing (tlua tuples
+		// have no length property).
+		if operand := luaLengthOperand(left); operand != nil && c.isMatchingReference(f.reference, operand) && ast.IsNumericLiteral(right) {
+			return c.narrowTupleTypeByArity(t, right, assumeTrue != (operator == ast.KindTildeEqualsToken))
+		}
+		if operand := luaLengthOperand(right); operand != nil && c.isMatchingReference(f.reference, operand) && ast.IsNumericLiteral(left) {
+			return c.narrowTupleTypeByArity(t, left, assumeTrue != (operator == ast.KindTildeEqualsToken))
+		}
 		if c.optionalChainContainsReference(left, f.reference) {
 			t = c.narrowTypeByOptionalChainContainment(f, t, operator, right, assumeTrue)
 		} else if c.optionalChainContainsReference(right, f.reference) {
@@ -591,6 +601,43 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 		return c.narrowType(f, c.narrowType(f, t, expr.Left, false /*assumeTrue*/), expr.Right, false /*assumeTrue*/)
 	}
 	return t
+}
+
+// luaLengthOperand returns the operand of a `#` length expression, or nil.
+func luaLengthOperand(node *ast.Node) *ast.Node {
+	if ast.IsPrefixUnaryExpression(node) && node.AsPrefixUnaryExpression().Operator == ast.KindHashToken {
+		return node.AsPrefixUnaryExpression().Operand
+	}
+	return nil
+}
+
+// narrowTupleTypeByArity narrows a union by a `#ref == n` length guard: an
+// all-fixed tuple can have border n iff its arity is n; a variable-length
+// tuple iff n is an integer >= its minimum length -- and it survives the
+// false branch too, since its actual arity is not statically known. Non-tuple
+// constituents (strings, plain tables) always survive: their border proves
+// nothing.
+func (c *Checker) narrowTupleTypeByArity(t *Type, value *ast.Node, assumeTrue bool) *Type {
+	n := jsnum.FromString(value.Text())
+	return c.filterType(t, func(s *Type) bool {
+		if !isTupleType(s) {
+			return true
+		}
+		tt := s.TargetTupleType()
+		if tt.combinedFlags&ElementFlagsVariable != 0 {
+			canMatch := n.Floor() == n && n >= jsnum.Number(tt.minLength)
+			return !assumeTrue || canMatch
+		}
+		// All-fixed: the border ranges over minLength..fixedLength when
+		// trailing elements are optional.
+		canMatch := n.Floor() == n && n >= jsnum.Number(tt.minLength) && n <= jsnum.Number(tt.fixedLength)
+		if assumeTrue {
+			return canMatch
+		}
+		// The false branch excludes a tuple only when its border is
+		// uniquely n; an optional range may still differ from n.
+		return !(canMatch && tt.minLength == tt.fixedLength)
+	})
 }
 
 func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.Node, assumeTrue bool) *Type {
@@ -1547,8 +1594,8 @@ func (c *Checker) getAccessedPropertyName(access *ast.Node) (string, bool) {
 	}
 	if ast.IsParameterDeclaration(access) {
 		// Parameter positions index into synthetic tuples whose element
-		// names live in the number-key namespace.
-		return ast.NumberKeyNameFromInt(slices.Index(access.Parent.Parameters(), access)), true
+		// names live in the number-key namespace at 1-based keys.
+		return ast.NumberKeyNameFromPosition(slices.Index(access.Parent.Parameters(), access)), true
 	}
 	return "", false
 }
@@ -1602,8 +1649,9 @@ func (c *Checker) getDestructuringPropertyName(node *ast.Node) (string, bool) {
 		return c.getLiteralPropertyNameText(node.Name())
 	}
 	if ast.IsArrayLiteralExpression(parent) || ast.IsArrayBindingPattern(parent) {
-		// Array element positions are number keys (matching tuple element names).
-		return ast.NumberKeyNameFromInt(slices.Index(parent.Elements(), node)), true
+		// Array element positions are 1-based number keys (matching tuple
+		// element names).
+		return ast.NumberKeyNameFromPosition(slices.Index(parent.Elements(), node)), true
 	}
 	return "", false
 }

@@ -157,7 +157,8 @@ type ValueSymbolLinks struct {
 	target                       *ast.Symbol
 	mapper                       *TypeMapper
 	nameType                     *Type
-	containingType               *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	containingType               *Type     // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	tupleLabelDeclaration        *ast.Node // NamedTupleMember behind a labeled tuple element property
 	functionOrConstructorChecked bool
 }
 

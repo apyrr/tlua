@@ -1186,10 +1186,10 @@ func (c *Checker) getLimitedConstraint(t *Type) *Type {
 }
 
 func (c *Checker) replaceIndexedAccess(instantiable *Type, t *Type, replacement *Type) *Type {
-	// map type.indexType to 0
+	// map type.indexType to the 1-tuple's element key (1)
 	// map type.objectType to `[TReplacement]`
-	// thus making the indexed access `[TReplacement][0]` or `TReplacement`
-	return c.instantiateType(instantiable, newTypeMapper([]*Type{t.AsIndexedAccessType().indexType, t.AsIndexedAccessType().objectType}, []*Type{c.getNumberLiteralType(0), c.createTupleType([]*Type{replacement})}))
+	// thus making the indexed access `[TReplacement][1]` or `TReplacement`
+	return c.instantiateType(instantiable, newTypeMapper([]*Type{t.AsIndexedAccessType().indexType, t.AsIndexedAccessType().objectType}, []*Type{c.getNumberLiteralTypeForPosition(0), c.createTupleType([]*Type{replacement})}))
 }
 
 func (c *Checker) typesDefinitelyUnrelated(source *Type, target *Type) bool {

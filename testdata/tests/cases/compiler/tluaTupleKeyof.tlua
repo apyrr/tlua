@@ -1,13 +1,14 @@
 // @strict: true
 // @noEmit: true
 
-// `keyof` over a tuple yields its numeric indices, the `number` index of the
-// underlying table, and `length` — but NOT the members of the inert global
-// `Array` (push/pop/map/...), which tlua tuples no longer inherit. This holds
-// for concrete tuples (resolved from their members) and, crucially, for
-// generic variadic tuples, whose known keys flow through the relater
-// (getKnownKeysOfTupleType). Tuple type syntax `[A, B]` lives only in
-// declaration files, so the tuples are declared in a .d.tlua.
+// `keyof` over an all-fixed tuple yields exactly its element key literals
+// (1 | 2 | ...); only a variable-length tuple widens to the `number` index of
+// the underlying table. Neither includes `length` (a tuple value is a plain
+// table with no length field; `#t` is an operator) nor the members of the
+// inert global `Array` (push/pop/map/...), which tlua tuples no longer
+// inherit. This holds for concrete tuples (resolved from their members) and,
+// crucially, for generic variadic tuples, whose known keys flow through the
+// relater (getKnownKeysOfTupleType).
 
 // @filename: shapes.d.tlua
 declare pair: [string, boolean];
@@ -20,9 +21,9 @@ interface KeyBox<T extends unknown[], K extends keyof [number, ...T] = "push"> {
 }
 
 // @filename: main.tlua
-// Numeric indices and `length` are keys of the tuple; Array method names are not.
-local ok0: keyof typeof pair = 0;
-local okLen: keyof typeof pair = "length";
+// Numeric indices are keys of the tuple; `length` and Array method names are not.
+local ok1: keyof typeof pair = 1;
+local badLen: keyof typeof pair = "length";
 local bad: keyof typeof pair = "push";
 
-local es = {ok0, okLen};
+local es = {ok1, badLen};

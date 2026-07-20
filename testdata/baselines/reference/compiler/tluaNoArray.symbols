@@ -1,34 +1,35 @@
 //// [tests/cases/compiler/tluaNoArray.tlua] ////
 
 === tluaNoArray.tlua ===
-// The TypeScript array/tuple/iteration syntax is removed from tlua source.
+// The TypeScript array-literal/iteration syntax is removed from tlua source.
 // Each form below decomposes into stock parser-recovery errors (no
 // tlua-specific diagnostic), exactly like the class/generator removals.
+// (Tuple *type* syntax `[A, B]` is legal — see the tluaTuple tests.)
 
 declare function pair(): (number, string);
 >pair : Symbol(pair, Decl(tluaNoArray.tlua, 0, 0))
 
 declare items: number[];
->items : Symbol(items, Decl(tluaNoArray.tlua, 5, 7))
+>items : Symbol(items, Decl(tluaNoArray.tlua, 6, 7))
 
 declare function use(x: unknown): void;
->use : Symbol(use, Decl(tluaNoArray.tlua, 5, 24))
->x : Symbol(x, Decl(tluaNoArray.tlua, 6, 21))
+>use : Symbol(use, Decl(tluaNoArray.tlua, 6, 24))
+>x : Symbol(x, Decl(tluaNoArray.tlua, 7, 21))
 
 // Array literals no longer parse in expression position; use a table `{...}`.
 local lit = [1, 2, 3];
->lit : Symbol(lit, Decl(tluaNoArray.tlua, 9, 5))
+>lit : Symbol(lit, Decl(tluaNoArray.tlua, 10, 5))
 
 // Array-literal spread. Every spread form is gone; `...` is the Lua vararg, so
 // the `...` here reads as a vararg expression (legal in the main chunk) and the
 // operand that follows is the error.
 local spread = [0, ...items];
->spread : Symbol(spread, Decl(tluaNoArray.tlua, 14, 5))
->items : Symbol(items, Decl(tluaNoArray.tlua, 5, 7))
+>spread : Symbol(spread, Decl(tluaNoArray.tlua, 15, 5))
+>items : Symbol(items, Decl(tluaNoArray.tlua, 6, 7))
 
 // Array binding patterns; use a Lua name list `local a, b = f()`.
 local [a, b] = pair();
-> : Symbol((Missing), Decl(tluaNoArray.tlua, 17, 5))
+> : Symbol((Missing), Decl(tluaNoArray.tlua, 18, 5))
 >pair : Symbol(pair, Decl(tluaNoArray.tlua, 0, 0))
 
 // Array destructuring assignment.
@@ -37,27 +38,26 @@ local [a, b] = pair();
 
 // `for..of`; use a Lua generic-for `for _, v in ipairs(t) do`.
 for (local v of items) {
-> : Symbol((Missing), Decl(tluaNoArray.tlua, 23, 3))
->v : Symbol(v, Decl(tluaNoArray.tlua, 23, 10))
->items : Symbol(items, Decl(tluaNoArray.tlua, 5, 7))
+> : Symbol((Missing), Decl(tluaNoArray.tlua, 24, 3))
+>v : Symbol(v, Decl(tluaNoArray.tlua, 24, 10))
+>items : Symbol(items, Decl(tluaNoArray.tlua, 6, 7))
 
   use(v);
->use : Symbol(use, Decl(tluaNoArray.tlua, 5, 24))
->v : Symbol(v, Decl(tluaNoArray.tlua, 23, 10))
+>use : Symbol(use, Decl(tluaNoArray.tlua, 6, 24))
+>v : Symbol(v, Decl(tluaNoArray.tlua, 24, 10))
 }
 
-// Tuple type syntax in source; multireturn return-lists spell packs instead.
+// Tuple types parse in source, and a multireturn is not a tuple value: only
+// the first value survives outside a value-list tail, so this is an error.
 local t: [number, string] = pair();
->t : Symbol(t, Decl(tluaNoArray.tlua, 28, 5))
-> : Symbol(unknown)
->string : Symbol(string, Decl(tluaNoArray.tlua, 28, 17))
+>t : Symbol(t, Decl(tluaNoArray.tlua, 30, 5))
 >pair : Symbol(pair, Decl(tluaNoArray.tlua, 0, 0))
 
 // `of` is an ordinary identifier again.
 local of = 3;
->of : Symbol(of, Decl(tluaNoArray.tlua, 31, 5))
+>of : Symbol(of, Decl(tluaNoArray.tlua, 33, 5))
 
 use(of);
->use : Symbol(use, Decl(tluaNoArray.tlua, 5, 24))
->of : Symbol(of, Decl(tluaNoArray.tlua, 31, 5))
+>use : Symbol(use, Decl(tluaNoArray.tlua, 6, 24))
+>of : Symbol(of, Decl(tluaNoArray.tlua, 33, 5))
 
