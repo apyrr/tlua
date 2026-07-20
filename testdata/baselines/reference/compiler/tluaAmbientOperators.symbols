@@ -1,0 +1,566 @@
+//// [tests/cases/compiler/tluaAmbientOperators.tlua] ////
+
+=== tluaAmbientOperators.tlua ===
+// Ambient operator overloading: a declared type states its metatable behavior as
+// metamethod-named members, and operators dispatch to them with no setmetatable in
+// sight -- the userdata convention (GMod's Vector). The handler's parameters check
+// the operands and its return type is the expression's type.
+
+interface Vector {
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    x: number;
+>x : Symbol(Vector.x, Decl(tluaAmbientOperators.tlua, 5, 18))
+
+    y: number;
+>y : Symbol(Vector.y, Decl(tluaAmbientOperators.tlua, 6, 14))
+
+    z: number;
+>z : Symbol(Vector.z, Decl(tluaAmbientOperators.tlua, 7, 14))
+
+    __add(l: Vector, r: Vector): Vector;
+>__add : Symbol(Vector.__add, Decl(tluaAmbientOperators.tlua, 8, 14))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 9, 10))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 9, 20))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    __sub(l: Vector, r: Vector): Vector;
+>__sub : Symbol(Vector.__sub, Decl(tluaAmbientOperators.tlua, 9, 40))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 10, 10))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 10, 20))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    __mul(l: Vector, r: number | Vector): Vector;
+>__mul : Symbol(Vector.__mul, Decl(tluaAmbientOperators.tlua, 10, 40), Decl(tluaAmbientOperators.tlua, 11, 49))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 11, 10))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 11, 20))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    __mul(l: number, r: Vector): Vector;
+>__mul : Symbol(Vector.__mul, Decl(tluaAmbientOperators.tlua, 10, 40), Decl(tluaAmbientOperators.tlua, 11, 49))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 12, 10))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 12, 20))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    __div(l: Vector, r: number | Vector): Vector;
+>__div : Symbol(Vector.__div, Decl(tluaAmbientOperators.tlua, 12, 40))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 13, 10))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 13, 20))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    __unm(v: Vector): Vector;
+>__unm : Symbol(Vector.__unm, Decl(tluaAmbientOperators.tlua, 13, 49))
+>v : Symbol(v, Decl(tluaAmbientOperators.tlua, 14, 10))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+}
+
+declare a: Vector;
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+declare b: Vector;
+>b : Symbol(b, Decl(tluaAmbientOperators.tlua, 18, 7))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+local sum: Vector = a + b;
+>sum : Symbol(sum, Decl(tluaAmbientOperators.tlua, 20, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+>b : Symbol(b, Decl(tluaAmbientOperators.tlua, 18, 7))
+
+local diff: Vector = a - b;
+>diff : Symbol(diff, Decl(tluaAmbientOperators.tlua, 21, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+>b : Symbol(b, Decl(tluaAmbientOperators.tlua, 18, 7))
+
+local scaled: Vector = a * 2;
+>scaled : Symbol(scaled, Decl(tluaAmbientOperators.tlua, 22, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+local hadamard: Vector = a * b;
+>hadamard : Symbol(hadamard, Decl(tluaAmbientOperators.tlua, 23, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+>b : Symbol(b, Decl(tluaAmbientOperators.tlua, 18, 7))
+
+local halved: Vector = a / 2;
+>halved : Symbol(halved, Decl(tluaAmbientOperators.tlua, 24, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+local neg: Vector = -a;
+>neg : Symbol(neg, Decl(tluaAmbientOperators.tlua, 25, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+// A handler found on the right operand still receives the left first: the second
+// __mul overload admits (number, Vector).
+local reversed: Vector = 2 * a;
+>reversed : Symbol(reversed, Decl(tluaAmbientOperators.tlua, 29, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+// A compound assignment runs the same metamethod its operator does.
+local acc = a;
+>acc : Symbol(acc, Decl(tluaAmbientOperators.tlua, 32, 5))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+acc += b;
+>acc : Symbol(acc, Decl(tluaAmbientOperators.tlua, 32, 5))
+>b : Symbol(b, Decl(tluaAmbientOperators.tlua, 18, 7))
+
+// A metamethod member is still an ordinary property.
+local handler: (l: Vector, r: Vector) => Vector = a.__add;
+>handler : Symbol(handler, Decl(tluaAmbientOperators.tlua, 36, 5))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 36, 16))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 36, 26))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a.__add : Symbol(Vector.__add, Decl(tluaAmbientOperators.tlua, 8, 14))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+>__add : Symbol(Vector.__add, Decl(tluaAmbientOperators.tlua, 8, 14))
+
+// Cross-type results: VMatrix * Vector yields Vector.
+interface VMatrix {
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+
+    __add(l: VMatrix, r: VMatrix): VMatrix;
+>__add : Symbol(VMatrix.__add, Decl(tluaAmbientOperators.tlua, 39, 19))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 40, 10))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 40, 21))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+
+    __mul(l: VMatrix, r: VMatrix): VMatrix;
+>__mul : Symbol(VMatrix.__mul, Decl(tluaAmbientOperators.tlua, 40, 43), Decl(tluaAmbientOperators.tlua, 41, 43))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 41, 10))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 41, 21))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+
+    __mul(l: VMatrix, r: Vector): Vector;
+>__mul : Symbol(VMatrix.__mul, Decl(tluaAmbientOperators.tlua, 40, 43), Decl(tluaAmbientOperators.tlua, 41, 43))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 42, 10))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 42, 21))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+}
+declare m: VMatrix;
+>m : Symbol(m, Decl(tluaAmbientOperators.tlua, 44, 7))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+
+declare m2: VMatrix;
+>m2 : Symbol(m2, Decl(tluaAmbientOperators.tlua, 45, 7))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+
+local mm: VMatrix = m * m2;
+>mm : Symbol(mm, Decl(tluaAmbientOperators.tlua, 46, 5))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+>m : Symbol(m, Decl(tluaAmbientOperators.tlua, 44, 7))
+>m2 : Symbol(m2, Decl(tluaAmbientOperators.tlua, 45, 7))
+
+local mv: Vector = m * a;
+>mv : Symbol(mv, Decl(tluaAmbientOperators.tlua, 47, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>m : Symbol(m, Decl(tluaAmbientOperators.tlua, 44, 7))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+// Comparison, equality, concat, length, mod, pow all dispatch ambiently.
+interface Span {
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    n: number;
+>n : Symbol(Span.n, Decl(tluaAmbientOperators.tlua, 50, 16))
+
+    __lt(l: Span, r: Span): boolean;
+>__lt : Symbol(Span.__lt, Decl(tluaAmbientOperators.tlua, 51, 14))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 52, 9))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 52, 17))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    __le(l: Span, r: Span): boolean;
+>__le : Symbol(Span.__le, Decl(tluaAmbientOperators.tlua, 52, 36))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 53, 9))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 53, 17))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    __eq(l: Span, r: Span): boolean;
+>__eq : Symbol(Span.__eq, Decl(tluaAmbientOperators.tlua, 53, 36))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 54, 9))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 54, 17))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    __concat(l: Span | string, r: Span | string): string;
+>__concat : Symbol(Span.__concat, Decl(tluaAmbientOperators.tlua, 54, 36))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 55, 13))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 55, 30))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    __len(s: Span): number;
+>__len : Symbol(Span.__len, Decl(tluaAmbientOperators.tlua, 55, 57))
+>s : Symbol(s, Decl(tluaAmbientOperators.tlua, 56, 10))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    __mod(l: Span, r: number): Span;
+>__mod : Symbol(Span.__mod, Decl(tluaAmbientOperators.tlua, 56, 27))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 57, 10))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 57, 18))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    __pow(l: Span, r: number): Span;
+>__pow : Symbol(Span.__pow, Decl(tluaAmbientOperators.tlua, 57, 36))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 58, 10))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 58, 18))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+}
+declare s1: Span;
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+declare s2: Span;
+>s2 : Symbol(s2, Decl(tluaAmbientOperators.tlua, 61, 7))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+local lt: boolean = s1 < s2;
+>lt : Symbol(lt, Decl(tluaAmbientOperators.tlua, 62, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+>s2 : Symbol(s2, Decl(tluaAmbientOperators.tlua, 61, 7))
+
+local gt: boolean = s1 > s2;        // a > b runs __lt(b, a)
+>gt : Symbol(gt, Decl(tluaAmbientOperators.tlua, 63, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+>s2 : Symbol(s2, Decl(tluaAmbientOperators.tlua, 61, 7))
+
+local le: boolean = s1 <= s2;
+>le : Symbol(le, Decl(tluaAmbientOperators.tlua, 64, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+>s2 : Symbol(s2, Decl(tluaAmbientOperators.tlua, 61, 7))
+
+local ge: boolean = s1 >= s2;
+>ge : Symbol(ge, Decl(tluaAmbientOperators.tlua, 65, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+>s2 : Symbol(s2, Decl(tluaAmbientOperators.tlua, 61, 7))
+
+local cat: string = s1 .. "!";
+>cat : Symbol(cat, Decl(tluaAmbientOperators.tlua, 66, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+
+local tac: string = "(" .. s1;      // right-operand __concat, left checked first
+>tac : Symbol(tac, Decl(tluaAmbientOperators.tlua, 67, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+
+local len: number = #s1;
+>len : Symbol(len, Decl(tluaAmbientOperators.tlua, 68, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+
+local moded: Span = s1 % 3;
+>moded : Symbol(moded, Decl(tluaAmbientOperators.tlua, 69, 5))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+
+local powed: Span = s1 ^ 2;
+>powed : Symbol(powed, Decl(tluaAmbientOperators.tlua, 70, 5))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+
+// A committed __eq suppresses the no-overlap comparison error...
+declare unrelated: { tag: string };
+>unrelated : Symbol(unrelated, Decl(tluaAmbientOperators.tlua, 73, 7))
+>tag : Symbol(tag, Decl(tluaAmbientOperators.tlua, 73, 20))
+
+local eq: boolean = s1 == unrelated;
+>eq : Symbol(eq, Decl(tluaAmbientOperators.tlua, 74, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+>unrelated : Symbol(unrelated, Decl(tluaAmbientOperators.tlua, 73, 7))
+
+local ne: boolean = s1 ~= unrelated;
+>ne : Symbol(ne, Decl(tluaAmbientOperators.tlua, 75, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+>unrelated : Symbol(unrelated, Decl(tluaAmbientOperators.tlua, 73, 7))
+
+// ...but not against a peer Lua would never consult __eq for: a primitive keeps
+// the error.
+local eqPrim = s1 == "str";
+>eqPrim : Symbol(eqPrim, Decl(tluaAmbientOperators.tlua, 79, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+
+local eqNum = s1 ~= 3;
+>eqNum : Symbol(eqNum, Decl(tluaAmbientOperators.tlua, 80, 5))
+>s1 : Symbol(s1, Decl(tluaAmbientOperators.tlua, 60, 7))
+
+// A type-parameter peer answers by its constraint: a primitive-constrained T can
+// never hold a table, so the error stays; a table-constrained (or unconstrained)
+// T could, so the handler suppresses it.
+function cmpStr<T extends string>(t: T, s: Span)
+>cmpStr : Symbol(cmpStr, Decl(tluaAmbientOperators.tlua, 80, 22))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 85, 16))
+>t : Symbol(t, Decl(tluaAmbientOperators.tlua, 85, 34))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 85, 16))
+>s : Symbol(s, Decl(tluaAmbientOperators.tlua, 85, 39))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    local x = s == t;
+>x : Symbol(x, Decl(tluaAmbientOperators.tlua, 86, 9))
+>s : Symbol(s, Decl(tluaAmbientOperators.tlua, 85, 39))
+>t : Symbol(t, Decl(tluaAmbientOperators.tlua, 85, 34))
+
+end
+function cmpVec<T extends Vector>(t: T, s: Span)
+>cmpVec : Symbol(cmpVec, Decl(tluaAmbientOperators.tlua, 87, 3))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 88, 16))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>t : Symbol(t, Decl(tluaAmbientOperators.tlua, 88, 34))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 88, 16))
+>s : Symbol(s, Decl(tluaAmbientOperators.tlua, 88, 39))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    local y = s == t;
+>y : Symbol(y, Decl(tluaAmbientOperators.tlua, 89, 9))
+>s : Symbol(s, Decl(tluaAmbientOperators.tlua, 88, 39))
+>t : Symbol(t, Decl(tluaAmbientOperators.tlua, 88, 34))
+
+end
+function cmpAny<T>(t: T, s: Span)
+>cmpAny : Symbol(cmpAny, Decl(tluaAmbientOperators.tlua, 90, 3))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 91, 16))
+>t : Symbol(t, Decl(tluaAmbientOperators.tlua, 91, 19))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 91, 16))
+>s : Symbol(s, Decl(tluaAmbientOperators.tlua, 91, 24))
+>Span : Symbol(Span, Decl(tluaAmbientOperators.tlua, 47, 25))
+
+    local z = s == t;
+>z : Symbol(z, Decl(tluaAmbientOperators.tlua, 92, 9))
+>s : Symbol(s, Decl(tluaAmbientOperators.tlua, 91, 24))
+>t : Symbol(t, Decl(tluaAmbientOperators.tlua, 91, 19))
+
+end
+
+// Dispatch reaches through a type parameter's constraint.
+function addAll<T extends Vector>(p: T, q: T): Vector
+>addAll : Symbol(addAll, Decl(tluaAmbientOperators.tlua, 93, 3))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 96, 16))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>p : Symbol(p, Decl(tluaAmbientOperators.tlua, 96, 34))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 96, 16))
+>q : Symbol(q, Decl(tluaAmbientOperators.tlua, 96, 39))
+>T : Symbol(T, Decl(tluaAmbientOperators.tlua, 96, 16))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    return p + q;
+>p : Symbol(p, Decl(tluaAmbientOperators.tlua, 96, 34))
+>q : Symbol(q, Decl(tluaAmbientOperators.tlua, 96, 39))
+
+end
+
+// Interface merging can bolt an operator onto an existing type.
+interface Vector {
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+    __pow(l: Vector, r: number): Vector;
+>__pow : Symbol(Vector.__pow, Decl(tluaAmbientOperators.tlua, 101, 18))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 102, 10))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 102, 20))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+}
+local vpow: Vector = a ^ 3;
+>vpow : Symbol(vpow, Decl(tluaAmbientOperators.tlua, 104, 5))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+// An operand the handler does not admit errors at that operand; with overloads the
+// first signature names the mismatch.
+local badOperand = a + 1;
+>badOperand : Symbol(badOperand, Decl(tluaAmbientOperators.tlua, 108, 5))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+local badString = a * "s";
+>badString : Symbol(badString, Decl(tluaAmbientOperators.tlua, 109, 5))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+// A type with no metamethod members still gets the arithmetic errors.
+declare plain: { p: number };
+>plain : Symbol(plain, Decl(tluaAmbientOperators.tlua, 112, 7))
+>p : Symbol(p, Decl(tluaAmbientOperators.tlua, 112, 16))
+
+local noAdd = plain + plain;
+>noAdd : Symbol(noAdd, Decl(tluaAmbientOperators.tlua, 113, 5))
+>plain : Symbol(plain, Decl(tluaAmbientOperators.tlua, 112, 7))
+>plain : Symbol(plain, Decl(tluaAmbientOperators.tlua, 112, 7))
+
+// A non-callable member of the right name never dispatches.
+declare weird: { __add: number };
+>weird : Symbol(weird, Decl(tluaAmbientOperators.tlua, 116, 7))
+>__add : Symbol(__add, Decl(tluaAmbientOperators.tlua, 116, 16))
+
+local weirdSum = weird + weird;
+>weirdSum : Symbol(weirdSum, Decl(tluaAmbientOperators.tlua, 117, 5))
+>weird : Symbol(weird, Decl(tluaAmbientOperators.tlua, 116, 7))
+>weird : Symbol(weird, Decl(tluaAmbientOperators.tlua, 116, 7))
+
+// An OPTIONAL metamethod member commits to nothing...
+interface MaybeOps {
+>MaybeOps : Symbol(MaybeOps, Decl(tluaAmbientOperators.tlua, 117, 31))
+
+    __add?: (l: MaybeOps, r: MaybeOps) => MaybeOps;
+>__add : Symbol(MaybeOps.__add, Decl(tluaAmbientOperators.tlua, 120, 20))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 121, 13))
+>MaybeOps : Symbol(MaybeOps, Decl(tluaAmbientOperators.tlua, 117, 31))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 121, 25))
+>MaybeOps : Symbol(MaybeOps, Decl(tluaAmbientOperators.tlua, 117, 31))
+>MaybeOps : Symbol(MaybeOps, Decl(tluaAmbientOperators.tlua, 117, 31))
+}
+declare mo: MaybeOps;
+>mo : Symbol(mo, Decl(tluaAmbientOperators.tlua, 123, 7))
+>MaybeOps : Symbol(MaybeOps, Decl(tluaAmbientOperators.tlua, 117, 31))
+
+local moSum = mo + mo;
+>moSum : Symbol(moSum, Decl(tluaAmbientOperators.tlua, 124, 5))
+>mo : Symbol(mo, Decl(tluaAmbientOperators.tlua, 123, 7))
+>mo : Symbol(mo, Decl(tluaAmbientOperators.tlua, 123, 7))
+
+// ...which keeps a LuaMetatable<T>-typed value itself inert.
+declare lm: LuaMetatable<{ q: number }>;
+>lm : Symbol(lm, Decl(tluaAmbientOperators.tlua, 127, 7))
+>LuaMetatable : Symbol(LuaMetatable, Decl(lib.luajit.d.tlua, --, --))
+>q : Symbol(q, Decl(tluaAmbientOperators.tlua, 127, 26))
+
+local lmSum = lm + lm;
+>lmSum : Symbol(lmSum, Decl(tluaAmbientOperators.tlua, 128, 5))
+>lm : Symbol(lm, Decl(tluaAmbientOperators.tlua, 127, 7))
+>lm : Symbol(lm, Decl(tluaAmbientOperators.tlua, 127, 7))
+
+// A nilable operand is rejected by the strict nil check before any dispatch.
+declare vn: Vector | nil;
+>vn : Symbol(vn, Decl(tluaAmbientOperators.tlua, 131, 7))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+
+local nilSum = vn + a;
+>nilSum : Symbol(nilSum, Decl(tluaAmbientOperators.tlua, 132, 5))
+>vn : Symbol(vn, Decl(tluaAmbientOperators.tlua, 131, 7))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+// A union carries no ambient metamethods -- which arm would dispatch is exactly
+// what it does not say -- so the plain operator error stands.
+declare uu: Vector | VMatrix;
+>uu : Symbol(uu, Decl(tluaAmbientOperators.tlua, 136, 7))
+>Vector : Symbol(Vector, Decl(tluaAmbientOperators.tlua, 0, 0), Decl(tluaAmbientOperators.tlua, 98, 3))
+>VMatrix : Symbol(VMatrix, Decl(tluaAmbientOperators.tlua, 36, 58))
+
+local uSum = uu + uu;
+>uSum : Symbol(uSum, Decl(tluaAmbientOperators.tlua, 137, 5))
+>uu : Symbol(uu, Decl(tluaAmbientOperators.tlua, 136, 7))
+>uu : Symbol(uu, Decl(tluaAmbientOperators.tlua, 136, 7))
+
+// A handler signature that does not declare an operand's position cannot check
+// it: an under-arity handler commits to nothing and never dispatches.
+interface Short {
+>Short : Symbol(Short, Decl(tluaAmbientOperators.tlua, 137, 21))
+
+    __add(self: Short): Short;
+>__add : Symbol(Short.__add, Decl(tluaAmbientOperators.tlua, 141, 17))
+>self : Symbol(self, Decl(tluaAmbientOperators.tlua, 142, 10))
+>Short : Symbol(Short, Decl(tluaAmbientOperators.tlua, 137, 21))
+>Short : Symbol(Short, Decl(tluaAmbientOperators.tlua, 137, 21))
+}
+declare sh: Short;
+>sh : Symbol(sh, Decl(tluaAmbientOperators.tlua, 144, 7))
+>Short : Symbol(Short, Decl(tluaAmbientOperators.tlua, 137, 21))
+
+local shSum = sh + sh;
+>shSum : Symbol(shSum, Decl(tluaAmbientOperators.tlua, 145, 5))
+>sh : Symbol(sh, Decl(tluaAmbientOperators.tlua, 144, 7))
+>sh : Symbol(sh, Decl(tluaAmbientOperators.tlua, 144, 7))
+
+// Only operator metamethods dispatch ambiently: __call and __index members keep
+// meaning only what a real pairing's metatable says.
+interface Fake {
+>Fake : Symbol(Fake, Decl(tluaAmbientOperators.tlua, 145, 22))
+
+    __call(self: Fake, n: number): number;
+>__call : Symbol(Fake.__call, Decl(tluaAmbientOperators.tlua, 149, 16))
+>self : Symbol(self, Decl(tluaAmbientOperators.tlua, 150, 11))
+>Fake : Symbol(Fake, Decl(tluaAmbientOperators.tlua, 145, 22))
+>n : Symbol(n, Decl(tluaAmbientOperators.tlua, 150, 22))
+
+    __index(t: Fake, k: string): number;
+>__index : Symbol(Fake.__index, Decl(tluaAmbientOperators.tlua, 150, 42))
+>t : Symbol(t, Decl(tluaAmbientOperators.tlua, 151, 12))
+>Fake : Symbol(Fake, Decl(tluaAmbientOperators.tlua, 145, 22))
+>k : Symbol(k, Decl(tluaAmbientOperators.tlua, 151, 20))
+}
+declare fake: Fake;
+>fake : Symbol(fake, Decl(tluaAmbientOperators.tlua, 153, 7))
+>Fake : Symbol(Fake, Decl(tluaAmbientOperators.tlua, 145, 22))
+
+local notCalled = fake(1);
+>notCalled : Symbol(notCalled, Decl(tluaAmbientOperators.tlua, 154, 5))
+>fake : Symbol(fake, Decl(tluaAmbientOperators.tlua, 153, 7))
+
+local notIndexed = fake.missing;
+>notIndexed : Symbol(notIndexed, Decl(tluaAmbientOperators.tlua, 155, 5))
+>fake : Symbol(fake, Decl(tluaAmbientOperators.tlua, 153, 7))
+
+// setmetatable REPLACES dispatch: the new pairing reads its metatable only, so a
+// value whose declared type carried ambient operators loses them unless the new
+// metatable re-declares them.
+local repaired = setmetatable(a,
+>repaired : Symbol(repaired, Decl(tluaAmbientOperators.tlua, 160, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
+
+    { __eq = function(l: object, r: object): boolean return true; end });
+>__eq : Symbol(__eq, Decl(tluaAmbientOperators.tlua, 161, 5))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 161, 22))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 161, 32))
+
+local lostAdd = repaired + repaired;
+>lostAdd : Symbol(lostAdd, Decl(tluaAmbientOperators.tlua, 162, 5))
+>repaired : Symbol(repaired, Decl(tluaAmbientOperators.tlua, 160, 5))
+>repaired : Symbol(repaired, Decl(tluaAmbientOperators.tlua, 160, 5))
+
+// A paired table dispatches only through its metatable: its own __add member is a
+// field, and a field never answers an operator.
+local fielded = setmetatable(
+>fielded : Symbol(fielded, Decl(tluaAmbientOperators.tlua, 166, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+    { __add = function(l: object, r: object): object return l; end, k = 1 },
+>__add : Symbol(__add, Decl(tluaAmbientOperators.tlua, 167, 5))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 167, 23))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 167, 33))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 167, 23))
+>k : Symbol(k, Decl(tluaAmbientOperators.tlua, 167, 67))
+
+    { __eq = function(l: object, r: object): boolean return true; end });
+>__eq : Symbol(__eq, Decl(tluaAmbientOperators.tlua, 168, 5))
+>l : Symbol(l, Decl(tluaAmbientOperators.tlua, 168, 22))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 168, 32))
+
+local fieldedSum = fielded + fielded;
+>fieldedSum : Symbol(fieldedSum, Decl(tluaAmbientOperators.tlua, 169, 5))
+>fielded : Symbol(fielded, Decl(tluaAmbientOperators.tlua, 166, 5))
+>fielded : Symbol(fielded, Decl(tluaAmbientOperators.tlua, 166, 5))
+

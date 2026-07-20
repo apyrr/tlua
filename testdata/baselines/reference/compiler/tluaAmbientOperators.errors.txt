@@ -1,0 +1,224 @@
+tluaAmbientOperators.tlua(80,16): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'string' have no overlap.
+tluaAmbientOperators.tlua(81,15): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'number' have no overlap.
+tluaAmbientOperators.tlua(87,15): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'T' have no overlap.
+tluaAmbientOperators.tlua(109,24): error TLUA2322: Type 'number' is not assignable to type 'Vector'.
+tluaAmbientOperators.tlua(110,23): error TLUA2322: Type 'string' is not assignable to type 'number | Vector'.
+tluaAmbientOperators.tlua(114,15): error TLUA2365: Operator '+' cannot be applied to types '{ p: number; }' and '{ p: number; }'.
+tluaAmbientOperators.tlua(118,18): error TLUA2365: Operator '+' cannot be applied to types '{ __add: number; }' and '{ __add: number; }'.
+tluaAmbientOperators.tlua(125,15): error TLUA2365: Operator '+' cannot be applied to types 'MaybeOps' and 'MaybeOps'.
+tluaAmbientOperators.tlua(129,15): error TLUA2365: Operator '+' cannot be applied to types 'LuaMetatable<{ q: number; }>' and 'LuaMetatable<{ q: number; }>'.
+tluaAmbientOperators.tlua(133,16): error TLUA18048: 'vn' is possibly 'undefined'.
+tluaAmbientOperators.tlua(138,14): error TLUA2365: Operator '+' cannot be applied to types 'VMatrix | Vector' and 'VMatrix | Vector'.
+tluaAmbientOperators.tlua(146,15): error TLUA2365: Operator '+' cannot be applied to types 'Short' and 'Short'.
+tluaAmbientOperators.tlua(155,19): error TLUA2349: This expression is not callable.
+  Type 'Fake' has no call signatures.
+tluaAmbientOperators.tlua(156,25): error TLUA2339: Property 'missing' does not exist on type 'Fake'.
+tluaAmbientOperators.tlua(163,17): error TLUA2365: Operator '+' cannot be applied to types '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }' and '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }'.
+tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: object, r: object) => object; k: number; }' and '{ __add: (l: object, r: object) => object; k: number; }'.
+
+
+==== tluaAmbientOperators.tlua (16 errors) ====
+    // Ambient operator overloading: a declared type states its metatable behavior as
+    // metamethod-named members, and operators dispatch to them with no setmetatable in
+    // sight -- the userdata convention (GMod's Vector). The handler's parameters check
+    // the operands and its return type is the expression's type.
+    
+    interface Vector {
+        x: number;
+        y: number;
+        z: number;
+        __add(l: Vector, r: Vector): Vector;
+        __sub(l: Vector, r: Vector): Vector;
+        __mul(l: Vector, r: number | Vector): Vector;
+        __mul(l: number, r: Vector): Vector;
+        __div(l: Vector, r: number | Vector): Vector;
+        __unm(v: Vector): Vector;
+    }
+    
+    declare a: Vector;
+    declare b: Vector;
+    
+    local sum: Vector = a + b;
+    local diff: Vector = a - b;
+    local scaled: Vector = a * 2;
+    local hadamard: Vector = a * b;
+    local halved: Vector = a / 2;
+    local neg: Vector = -a;
+    
+    // A handler found on the right operand still receives the left first: the second
+    // __mul overload admits (number, Vector).
+    local reversed: Vector = 2 * a;
+    
+    // A compound assignment runs the same metamethod its operator does.
+    local acc = a;
+    acc += b;
+    
+    // A metamethod member is still an ordinary property.
+    local handler: (l: Vector, r: Vector) => Vector = a.__add;
+    
+    // Cross-type results: VMatrix * Vector yields Vector.
+    interface VMatrix {
+        __add(l: VMatrix, r: VMatrix): VMatrix;
+        __mul(l: VMatrix, r: VMatrix): VMatrix;
+        __mul(l: VMatrix, r: Vector): Vector;
+    }
+    declare m: VMatrix;
+    declare m2: VMatrix;
+    local mm: VMatrix = m * m2;
+    local mv: Vector = m * a;
+    
+    // Comparison, equality, concat, length, mod, pow all dispatch ambiently.
+    interface Span {
+        n: number;
+        __lt(l: Span, r: Span): boolean;
+        __le(l: Span, r: Span): boolean;
+        __eq(l: Span, r: Span): boolean;
+        __concat(l: Span | string, r: Span | string): string;
+        __len(s: Span): number;
+        __mod(l: Span, r: number): Span;
+        __pow(l: Span, r: number): Span;
+    }
+    declare s1: Span;
+    declare s2: Span;
+    local lt: boolean = s1 < s2;
+    local gt: boolean = s1 > s2;        // a > b runs __lt(b, a)
+    local le: boolean = s1 <= s2;
+    local ge: boolean = s1 >= s2;
+    local cat: string = s1 .. "!";
+    local tac: string = "(" .. s1;      // right-operand __concat, left checked first
+    local len: number = #s1;
+    local moded: Span = s1 % 3;
+    local powed: Span = s1 ^ 2;
+    
+    // A committed __eq suppresses the no-overlap comparison error...
+    declare unrelated: { tag: string };
+    local eq: boolean = s1 == unrelated;
+    local ne: boolean = s1 ~= unrelated;
+    
+    // ...but not against a peer Lua would never consult __eq for: a primitive keeps
+    // the error.
+    local eqPrim = s1 == "str";
+                   ~~~~~~~~~~~
+!!! error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'string' have no overlap.
+    local eqNum = s1 ~= 3;
+                  ~~~~~~~
+!!! error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'number' have no overlap.
+    
+    // A type-parameter peer answers by its constraint: a primitive-constrained T can
+    // never hold a table, so the error stays; a table-constrained (or unconstrained)
+    // T could, so the handler suppresses it.
+    function cmpStr<T extends string>(t: T, s: Span)
+        local x = s == t;
+                  ~~~~~~
+!!! error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'T' have no overlap.
+    end
+    function cmpVec<T extends Vector>(t: T, s: Span)
+        local y = s == t;
+    end
+    function cmpAny<T>(t: T, s: Span)
+        local z = s == t;
+    end
+    
+    // Dispatch reaches through a type parameter's constraint.
+    function addAll<T extends Vector>(p: T, q: T): Vector
+        return p + q;
+    end
+    
+    // Interface merging can bolt an operator onto an existing type.
+    interface Vector {
+        __pow(l: Vector, r: number): Vector;
+    }
+    local vpow: Vector = a ^ 3;
+    
+    // An operand the handler does not admit errors at that operand; with overloads the
+    // first signature names the mismatch.
+    local badOperand = a + 1;
+                           ~
+!!! error TLUA2322: Type 'number' is not assignable to type 'Vector'.
+    local badString = a * "s";
+                          ~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number | Vector'.
+    
+    // A type with no metamethod members still gets the arithmetic errors.
+    declare plain: { p: number };
+    local noAdd = plain + plain;
+                  ~~~~~~~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types '{ p: number; }' and '{ p: number; }'.
+    
+    // A non-callable member of the right name never dispatches.
+    declare weird: { __add: number };
+    local weirdSum = weird + weird;
+                     ~~~~~~~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types '{ __add: number; }' and '{ __add: number; }'.
+    
+    // An OPTIONAL metamethod member commits to nothing...
+    interface MaybeOps {
+        __add?: (l: MaybeOps, r: MaybeOps) => MaybeOps;
+    }
+    declare mo: MaybeOps;
+    local moSum = mo + mo;
+                  ~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types 'MaybeOps' and 'MaybeOps'.
+    
+    // ...which keeps a LuaMetatable<T>-typed value itself inert.
+    declare lm: LuaMetatable<{ q: number }>;
+    local lmSum = lm + lm;
+                  ~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types 'LuaMetatable<{ q: number; }>' and 'LuaMetatable<{ q: number; }>'.
+    
+    // A nilable operand is rejected by the strict nil check before any dispatch.
+    declare vn: Vector | nil;
+    local nilSum = vn + a;
+                   ~~
+!!! error TLUA18048: 'vn' is possibly 'undefined'.
+    
+    // A union carries no ambient metamethods -- which arm would dispatch is exactly
+    // what it does not say -- so the plain operator error stands.
+    declare uu: Vector | VMatrix;
+    local uSum = uu + uu;
+                 ~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types 'VMatrix | Vector' and 'VMatrix | Vector'.
+    
+    // A handler signature that does not declare an operand's position cannot check
+    // it: an under-arity handler commits to nothing and never dispatches.
+    interface Short {
+        __add(self: Short): Short;
+    }
+    declare sh: Short;
+    local shSum = sh + sh;
+                  ~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types 'Short' and 'Short'.
+    
+    // Only operator metamethods dispatch ambiently: __call and __index members keep
+    // meaning only what a real pairing's metatable says.
+    interface Fake {
+        __call(self: Fake, n: number): number;
+        __index(t: Fake, k: string): number;
+    }
+    declare fake: Fake;
+    local notCalled = fake(1);
+                      ~~~~
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type 'Fake' has no call signatures.
+    local notIndexed = fake.missing;
+                            ~~~~~~~
+!!! error TLUA2339: Property 'missing' does not exist on type 'Fake'.
+    
+    // setmetatable REPLACES dispatch: the new pairing reads its metatable only, so a
+    // value whose declared type carried ambient operators loses them unless the new
+    // metatable re-declares them.
+    local repaired = setmetatable(a,
+        { __eq = function(l: object, r: object): boolean return true; end });
+    local lostAdd = repaired + repaired;
+                    ~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }' and '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }'.
+    
+    // A paired table dispatches only through its metatable: its own __add member is a
+    // field, and a field never answers an operator.
+    local fielded = setmetatable(
+        { __add = function(l: object, r: object): object return l; end, k = 1 },
+        { __eq = function(l: object, r: object): boolean return true; end });
+    local fieldedSum = fielded + fielded;
+                       ~~~~~~~~~~~~~~~~~
+!!! error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: object, r: object) => object; k: number; }' and '{ __add: (l: object, r: object) => object; k: number; }'.
+    

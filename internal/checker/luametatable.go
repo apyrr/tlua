@@ -172,9 +172,8 @@ func (c *Checker) getUnpairedTableType(t *Type) *Type {
 	})
 }
 
-// luaOperatorMetamethods are the operator metamethods the checker dispatches. __concat and __len
-// wait for the `..` and `#` operators to exist in the grammar; __tostring, __gc and __mode never
-// change a value's type, so none of the three is worth a pairing on its own.
+// luaOperatorMetamethods are the operator metamethods the checker dispatches. __tostring, __gc
+// and __mode never change a value's type, so none of the three is worth a pairing on its own.
 var luaOperatorMetamethods = []string{
 	"__eq", "__lt", "__le", "__unm", "__len",
 	"__add", "__sub", "__mul", "__div", "__mod", "__pow", "__concat",
@@ -187,7 +186,9 @@ var luaOperatorMetamethods = []string{
 // is unaffected. __index is the exception -- its optional form types the defaults idiom -- and
 // reads through optionality on its own path.
 func (c *Checker) getMetatableHandlerType(metatableType *Type, name string) *Type {
-	prop := c.getPropertyOfType(metatableType, name)
+	// Metamethods never live on the global Object/Function augmentations, so the lookup skips
+	// them -- and a merged `interface Object { __add: ... }` cannot inject an operator everywhere.
+	prop := c.getPropertyOfTypeEx(metatableType, name, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
 	if prop == nil || prop.Flags&ast.SymbolFlagsOptional != 0 {
 		return nil
 	}
@@ -204,7 +205,7 @@ func (c *Checker) getMetatableHandlerType(metatableType *Type, name string) *Typ
 // which half of it answers a lookup is not worth guessing at. __index reads through optionality
 // (the defaults idiom); every other metamethod does not.
 func (c *Checker) getMetatableSource(metatableType *Type, name string, allowOptional bool) (*Type, bool) {
-	prop := c.getPropertyOfType(metatableType, name)
+	prop := c.getPropertyOfTypeEx(metatableType, name, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
 	if prop == nil || !allowOptional && prop.Flags&ast.SymbolFlagsOptional != 0 {
 		return nil, false
 	}
@@ -259,6 +260,9 @@ func (c *Checker) getSetmetatableResultType(tableType *Type, metatableType *Type
 		// A pairing resolves its members eagerly, so it can only hold concrete types. A generic
 		// one falls back to the intersection of table and __index, as a generic spread does:
 		// less precise about collisions, blind to every other metamethod, but it instantiates.
+		// The imprecision cuts the other way too: as a plain intersection it exposes the __index
+		// source's metamethod-named members to ambient operator dispatch, which a real pairing
+		// refuses (Lua does not inherit metamethods through __index). Accepted with the rest.
 		if indexSource == nil || indexIsFunction {
 			return tableType
 		}
@@ -301,6 +305,15 @@ func (c *Checker) getSetmetatableResultType(tableType *Type, metatableType *Type
 // cannot -- which of its arms answers a read is exactly what it does not say.
 func (c *Checker) canCarryMetatableMembers(t *Type) bool {
 	return t.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0
+}
+
+// canCarryAmbientMetamethods reports whether an unpaired operand type can carry ambient
+// metamethod members: the same structured shapes getMetatableSource reads from. Primitives never
+// carry one -- the number/string operator fast paths stay free of property walks -- and a union
+// answers nothing here as everywhere (canCarryMetatableMembers): which arm would dispatch is
+// exactly what it does not say.
+func canCarryAmbientMetamethods(t *Type) bool {
+	return t.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) != 0
 }
 
 // instantiateMetatableType instantiates a pairing's operands and re-pairs them. The pairing is
@@ -487,26 +500,51 @@ func luaMetamethodForOperator(operator ast.Kind) (string, bool) {
 	return "", false
 }
 
-// getLuaMetamethodSignatures returns the call signatures of a committed metamethod behind an
-// operand's pairing. Only a MetatableType carries one: a plain table, a union, and the generic
-// intersection fallback dispatch nothing.
+// getLuaMetamethodSignatures returns the call signatures of the metamethod an operand's type
+// commits to. A pairing reads the handler off its metatable and off nothing else -- setmetatable
+// told the checker exactly where dispatch goes. Any other type that can carry ambient
+// metamethods reads a metamethod-NAMED member off the type itself: the ambient-operator
+// convention, by which a declared userdata type (GMod's Vector) states its metatable behavior as
+// `__add`-style members that no visible setmetatable ever attaches. Optionality commits to
+// nothing on either path, so a LuaMetatable<T>-typed value stays inert. Only OPERATOR
+// metamethods dispatch ambiently -- __index, __newindex and __call keep meaning only what a
+// real pairing's metatable says.
 func (c *Checker) getLuaMetamethodSignatures(operandType *Type, name string) []*Signature {
-	if !isMetatableType(operandType) {
+	carrier := operandType
+	if isMetatableType(operandType) {
+		carrier = operandType.AsMetatableType().metatableType
+	} else if !canCarryAmbientMetamethods(operandType) {
 		return nil
 	}
-	handler := c.getMetatableHandlerType(operandType.AsMetatableType().metatableType, name)
+	handler := c.getMetatableHandlerType(carrier, name)
 	if handler == nil {
 		return nil
 	}
 	return c.getSignaturesOfType(handler, SignatureKindCall)
 }
 
-// hasLuaEqualityMetamethod reports whether either operand carries an __eq handler. Lua only
-// consults __eq between two tables, and the equality paths already yield boolean, so the presence
-// of a handler is all that suppresses the no-overlap error -- no parameter check.
+// hasLuaEqualityMetamethod reports whether either operand carries an __eq handler against a
+// peer that could dispatch it. Lua only consults __eq between two tables (or two userdata), so a
+// handler suppresses the no-overlap error only when the other operand could hold a table --
+// `span == "hello"` stays flagged. A union peer counts when some arm could dispatch. The
+// equality paths already yield boolean, so presence is all that matters -- no parameter check.
 func (c *Checker) hasLuaEqualityMetamethod(leftType *Type, rightType *Type) bool {
-	return len(c.getLuaMetamethodSignatures(leftType, "__eq")) != 0 ||
-		len(c.getLuaMetamethodSignatures(rightType, "__eq")) != 0
+	return len(c.getLuaMetamethodSignatures(leftType, "__eq")) != 0 && someType(rightType, c.typeMayBeLuaTable) ||
+		len(c.getLuaMetamethodSignatures(rightType, "__eq")) != 0 && someType(leftType, c.typeMayBeLuaTable)
+}
+
+// typeMayBeLuaTable reports whether a value of this type could be a table (or userdata) at
+// runtime -- the shapes an __eq dispatch needs on BOTH sides. A type variable answers by its
+// base constraint, not its own non-primitive flag: `T extends string` never holds a table, while
+// an unconstrained T might.
+func (c *Checker) typeMayBeLuaTable(t *Type) bool {
+	if t.flags&TypeFlagsInstantiableNonPrimitive != 0 {
+		if constraint := c.getBaseConstraintOfType(t); constraint != nil {
+			return someType(constraint, c.typeMayBeLuaTable)
+		}
+		return true
+	}
+	return t.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0
 }
 
 // checkLuaBinaryMetamethod dispatches a binary operator to a paired operand's metamethod, or
@@ -529,6 +567,15 @@ func (c *Checker) checkLuaBinaryMetamethod(operator ast.Kind, left *ast.Node, ri
 	if len(signatures) == 0 {
 		signatures = c.getLuaMetamethodSignatures(rightType, name)
 	}
+	// A handler receives both operands whatever it declares, but a signature that does not name
+	// an operand's position cannot check it: an under-arity handler commits to nothing (the
+	// out-of-range position would read as `any` and admit every operand vacuously), and ordinary
+	// operand checking stands. Deliberately AFTER the left-then-right selection: Lua would still
+	// run the left operand's handler at runtime, so an under-arity left refuses dispatch outright
+	// rather than falling through to a right handler that would never be consulted.
+	signatures = core.Filter(signatures, func(s *Signature) bool {
+		return c.tryGetTypeAtPosition(s, 0) != nil && c.tryGetTypeAtPosition(s, 1) != nil
+	})
 	if len(signatures) == 0 {
 		return nil
 	}
@@ -544,9 +591,12 @@ func (c *Checker) checkLuaBinaryMetamethod(operator ast.Kind, left *ast.Node, ri
 	return c.adjustMultiReturn(c.getReturnTypeOfSignature(signature))
 }
 
-// checkLuaUnaryMetamethod dispatches unary minus to a paired operand's __unm.
+// checkLuaUnaryMetamethod dispatches a unary operator to an operand's metamethod. An
+// under-arity handler commits to nothing, as at the binary sites.
 func (c *Checker) checkLuaUnaryMetamethod(operandType *Type, name string) *Type {
-	signatures := c.getLuaMetamethodSignatures(operandType, name)
+	signatures := core.Filter(c.getLuaMetamethodSignatures(operandType, name), func(s *Signature) bool {
+		return c.tryGetTypeAtPosition(s, 0) != nil
+	})
 	if len(signatures) == 0 {
 		return nil
 	}

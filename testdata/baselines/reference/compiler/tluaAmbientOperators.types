@@ -1,0 +1,528 @@
+//// [tests/cases/compiler/tluaAmbientOperators.tlua] ////
+
+=== tluaAmbientOperators.tlua ===
+// Ambient operator overloading: a declared type states its metatable behavior as
+// metamethod-named members, and operators dispatch to them with no setmetatable in
+// sight -- the userdata convention (GMod's Vector). The handler's parameters check
+// the operands and its return type is the expression's type.
+
+interface Vector {
+    x: number;
+>x : number
+
+    y: number;
+>y : number
+
+    z: number;
+>z : number
+
+    __add(l: Vector, r: Vector): Vector;
+>__add : (l: Vector, r: Vector) => Vector
+>l : Vector
+>r : Vector
+
+    __sub(l: Vector, r: Vector): Vector;
+>__sub : (l: Vector, r: Vector) => Vector
+>l : Vector
+>r : Vector
+
+    __mul(l: Vector, r: number | Vector): Vector;
+>__mul : { (l: Vector, r: number | Vector): Vector; (l: number, r: Vector): Vector; }
+>l : Vector
+>r : number | Vector
+
+    __mul(l: number, r: Vector): Vector;
+>__mul : { (l: Vector, r: number | Vector): Vector; (l: number, r: Vector): Vector; }
+>l : number
+>r : Vector
+
+    __div(l: Vector, r: number | Vector): Vector;
+>__div : (l: Vector, r: number | Vector) => Vector
+>l : Vector
+>r : number | Vector
+
+    __unm(v: Vector): Vector;
+>__unm : (v: Vector) => Vector
+>v : Vector
+}
+
+declare a: Vector;
+>a : Vector
+
+declare b: Vector;
+>b : Vector
+
+local sum: Vector = a + b;
+>sum : Vector
+>a + b : Vector
+>a : Vector
+>b : Vector
+
+local diff: Vector = a - b;
+>diff : Vector
+>a - b : Vector
+>a : Vector
+>b : Vector
+
+local scaled: Vector = a * 2;
+>scaled : Vector
+>a * 2 : Vector
+>a : Vector
+>2 : 2
+
+local hadamard: Vector = a * b;
+>hadamard : Vector
+>a * b : Vector
+>a : Vector
+>b : Vector
+
+local halved: Vector = a / 2;
+>halved : Vector
+>a / 2 : Vector
+>a : Vector
+>2 : 2
+
+local neg: Vector = -a;
+>neg : Vector
+>-a : Vector
+>a : Vector
+
+// A handler found on the right operand still receives the left first: the second
+// __mul overload admits (number, Vector).
+local reversed: Vector = 2 * a;
+>reversed : Vector
+>2 * a : Vector
+>2 : 2
+>a : Vector
+
+// A compound assignment runs the same metamethod its operator does.
+local acc = a;
+>acc : Vector
+>a : Vector
+
+acc += b;
+>acc += b : Vector
+>acc : Vector
+>b : Vector
+
+// A metamethod member is still an ordinary property.
+local handler: (l: Vector, r: Vector) => Vector = a.__add;
+>handler : (l: Vector, r: Vector) => Vector
+>l : Vector
+>r : Vector
+>a.__add : (l: Vector, r: Vector) => Vector
+>a : Vector
+>__add : (l: Vector, r: Vector) => Vector
+
+// Cross-type results: VMatrix * Vector yields Vector.
+interface VMatrix {
+    __add(l: VMatrix, r: VMatrix): VMatrix;
+>__add : (l: VMatrix, r: VMatrix) => VMatrix
+>l : VMatrix
+>r : VMatrix
+
+    __mul(l: VMatrix, r: VMatrix): VMatrix;
+>__mul : { (l: VMatrix, r: VMatrix): VMatrix; (l: VMatrix, r: Vector): Vector; }
+>l : VMatrix
+>r : VMatrix
+
+    __mul(l: VMatrix, r: Vector): Vector;
+>__mul : { (l: VMatrix, r: VMatrix): VMatrix; (l: VMatrix, r: Vector): Vector; }
+>l : VMatrix
+>r : Vector
+}
+declare m: VMatrix;
+>m : VMatrix
+
+declare m2: VMatrix;
+>m2 : VMatrix
+
+local mm: VMatrix = m * m2;
+>mm : VMatrix
+>m * m2 : VMatrix
+>m : VMatrix
+>m2 : VMatrix
+
+local mv: Vector = m * a;
+>mv : Vector
+>m * a : Vector
+>m : VMatrix
+>a : Vector
+
+// Comparison, equality, concat, length, mod, pow all dispatch ambiently.
+interface Span {
+    n: number;
+>n : number
+
+    __lt(l: Span, r: Span): boolean;
+>__lt : (l: Span, r: Span) => boolean
+>l : Span
+>r : Span
+
+    __le(l: Span, r: Span): boolean;
+>__le : (l: Span, r: Span) => boolean
+>l : Span
+>r : Span
+
+    __eq(l: Span, r: Span): boolean;
+>__eq : (l: Span, r: Span) => boolean
+>l : Span
+>r : Span
+
+    __concat(l: Span | string, r: Span | string): string;
+>__concat : (l: Span | string, r: Span | string) => string
+>l : string | Span
+>r : string | Span
+
+    __len(s: Span): number;
+>__len : (s: Span) => number
+>s : Span
+
+    __mod(l: Span, r: number): Span;
+>__mod : (l: Span, r: number) => Span
+>l : Span
+>r : number
+
+    __pow(l: Span, r: number): Span;
+>__pow : (l: Span, r: number) => Span
+>l : Span
+>r : number
+}
+declare s1: Span;
+>s1 : Span
+
+declare s2: Span;
+>s2 : Span
+
+local lt: boolean = s1 < s2;
+>lt : boolean
+>s1 < s2 : boolean
+>s1 : Span
+>s2 : Span
+
+local gt: boolean = s1 > s2;        // a > b runs __lt(b, a)
+>gt : boolean
+>s1 > s2 : boolean
+>s1 : Span
+>s2 : Span
+
+local le: boolean = s1 <= s2;
+>le : boolean
+>s1 <= s2 : boolean
+>s1 : Span
+>s2 : Span
+
+local ge: boolean = s1 >= s2;
+>ge : boolean
+>s1 >= s2 : boolean
+>s1 : Span
+>s2 : Span
+
+local cat: string = s1 .. "!";
+>cat : string
+>s1 .. "!" : string
+>s1 : Span
+>"!" : "!"
+
+local tac: string = "(" .. s1;      // right-operand __concat, left checked first
+>tac : string
+>"(" .. s1 : string
+>"(" : "("
+>s1 : Span
+
+local len: number = #s1;
+>len : number
+>#s1 : number
+>s1 : Span
+
+local moded: Span = s1 % 3;
+>moded : Span
+>s1 % 3 : Span
+>s1 : Span
+>3 : 3
+
+local powed: Span = s1 ^ 2;
+>powed : Span
+>s1 ^ 2 : Span
+>s1 : Span
+>2 : 2
+
+// A committed __eq suppresses the no-overlap comparison error...
+declare unrelated: { tag: string };
+>unrelated : { tag: string; }
+>tag : string
+
+local eq: boolean = s1 == unrelated;
+>eq : boolean
+>s1 == unrelated : boolean
+>s1 : Span
+>unrelated : { tag: string; }
+
+local ne: boolean = s1 ~= unrelated;
+>ne : boolean
+>s1 ~= unrelated : boolean
+>s1 : Span
+>unrelated : { tag: string; }
+
+// ...but not against a peer Lua would never consult __eq for: a primitive keeps
+// the error.
+local eqPrim = s1 == "str";
+>eqPrim : boolean
+>s1 == "str" : boolean
+>s1 : Span
+>"str" : "str"
+
+local eqNum = s1 ~= 3;
+>eqNum : boolean
+>s1 ~= 3 : boolean
+>s1 : Span
+>3 : 3
+
+// A type-parameter peer answers by its constraint: a primitive-constrained T can
+// never hold a table, so the error stays; a table-constrained (or unconstrained)
+// T could, so the handler suppresses it.
+function cmpStr<T extends string>(t: T, s: Span)
+>cmpStr : <T extends string>(t: T, s: Span) => void
+>t : T
+>s : Span
+
+    local x = s == t;
+>x : boolean
+>s == t : boolean
+>s : Span
+>t : T
+
+end
+function cmpVec<T extends Vector>(t: T, s: Span)
+>cmpVec : <T extends Vector>(t: T, s: Span) => void
+>t : T
+>s : Span
+
+    local y = s == t;
+>y : boolean
+>s == t : boolean
+>s : Span
+>t : T
+
+end
+function cmpAny<T>(t: T, s: Span)
+>cmpAny : <T>(t: T, s: Span) => void
+>t : T
+>s : Span
+
+    local z = s == t;
+>z : boolean
+>s == t : boolean
+>s : Span
+>t : T
+
+end
+
+// Dispatch reaches through a type parameter's constraint.
+function addAll<T extends Vector>(p: T, q: T): Vector
+>addAll : <T extends Vector>(p: T, q: T) => Vector
+>p : T
+>q : T
+
+    return p + q;
+>p + q : Vector
+>p : T
+>q : T
+
+end
+
+// Interface merging can bolt an operator onto an existing type.
+interface Vector {
+    __pow(l: Vector, r: number): Vector;
+>__pow : (l: Vector, r: number) => Vector
+>l : Vector
+>r : number
+}
+local vpow: Vector = a ^ 3;
+>vpow : Vector
+>a ^ 3 : Vector
+>a : Vector
+>3 : 3
+
+// An operand the handler does not admit errors at that operand; with overloads the
+// first signature names the mismatch.
+local badOperand = a + 1;
+>badOperand : Vector
+>a + 1 : Vector
+>a : Vector
+>1 : 1
+
+local badString = a * "s";
+>badString : Vector
+>a * "s" : Vector
+>a : Vector
+>"s" : "s"
+
+// A type with no metamethod members still gets the arithmetic errors.
+declare plain: { p: number };
+>plain : { p: number; }
+>p : number
+
+local noAdd = plain + plain;
+>noAdd : any
+>plain + plain : any
+>plain : { p: number; }
+>plain : { p: number; }
+
+// A non-callable member of the right name never dispatches.
+declare weird: { __add: number };
+>weird : { __add: number; }
+>__add : number
+
+local weirdSum = weird + weird;
+>weirdSum : any
+>weird + weird : any
+>weird : { __add: number; }
+>weird : { __add: number; }
+
+// An OPTIONAL metamethod member commits to nothing...
+interface MaybeOps {
+    __add?: (l: MaybeOps, r: MaybeOps) => MaybeOps;
+>__add : ((l: MaybeOps, r: MaybeOps) => MaybeOps) | nil
+>l : MaybeOps
+>r : MaybeOps
+}
+declare mo: MaybeOps;
+>mo : MaybeOps
+
+local moSum = mo + mo;
+>moSum : any
+>mo + mo : any
+>mo : MaybeOps
+>mo : MaybeOps
+
+// ...which keeps a LuaMetatable<T>-typed value itself inert.
+declare lm: LuaMetatable<{ q: number }>;
+>lm : LuaMetatable<{ q: number; }>
+>q : number
+
+local lmSum = lm + lm;
+>lmSum : any
+>lm + lm : any
+>lm : LuaMetatable<{ q: number; }>
+>lm : LuaMetatable<{ q: number; }>
+
+// A nilable operand is rejected by the strict nil check before any dispatch.
+declare vn: Vector | nil;
+>vn : Vector | nil
+
+local nilSum = vn + a;
+>nilSum : Vector
+>vn + a : Vector
+>vn : Vector | nil
+>a : Vector
+
+// A union carries no ambient metamethods -- which arm would dispatch is exactly
+// what it does not say -- so the plain operator error stands.
+declare uu: Vector | VMatrix;
+>uu : VMatrix | Vector
+
+local uSum = uu + uu;
+>uSum : any
+>uu + uu : any
+>uu : VMatrix | Vector
+>uu : VMatrix | Vector
+
+// A handler signature that does not declare an operand's position cannot check
+// it: an under-arity handler commits to nothing and never dispatches.
+interface Short {
+    __add(self: Short): Short;
+>__add : (self: Short) => Short
+>self : Short
+}
+declare sh: Short;
+>sh : Short
+
+local shSum = sh + sh;
+>shSum : any
+>sh + sh : any
+>sh : Short
+>sh : Short
+
+// Only operator metamethods dispatch ambiently: __call and __index members keep
+// meaning only what a real pairing's metatable says.
+interface Fake {
+    __call(self: Fake, n: number): number;
+>__call : (self: Fake, n: number) => number
+>self : Fake
+>n : number
+
+    __index(t: Fake, k: string): number;
+>__index : (t: Fake, k: string) => number
+>t : Fake
+>k : string
+}
+declare fake: Fake;
+>fake : Fake
+
+local notCalled = fake(1);
+>notCalled : any
+>fake(1) : any
+>fake : Fake
+>1 : 1
+
+local notIndexed = fake.missing;
+>notIndexed : any
+>fake.missing : any
+>fake : Fake
+>missing : any
+
+// setmetatable REPLACES dispatch: the new pairing reads its metatable only, so a
+// value whose declared type carried ambient operators loses them unless the new
+// metatable re-declares them.
+local repaired = setmetatable(a,
+>repaired : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
+>setmetatable(a,    { __eq = function(l: object, r: object): boolean return true; end }) : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>a : Vector
+
+    { __eq = function(l: object, r: object): boolean return true; end });
+>{ __eq = function(l: object, r: object): boolean return true; end } : { __eq: (l: object, r: object) => boolean; }
+>__eq : (l: object, r: object) => boolean
+>function(l: object, r: object): boolean return true; end : (l: object, r: object) => boolean
+>l : object
+>r : object
+>true : true
+
+local lostAdd = repaired + repaired;
+>lostAdd : any
+>repaired + repaired : any
+>repaired : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
+>repaired : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
+
+// A paired table dispatches only through its metatable: its own __add member is a
+// field, and a field never answers an operator.
+local fielded = setmetatable(
+>fielded : { __add: (l: object, r: object) => object; k: number; }
+>setmetatable(    { __add = function(l: object, r: object): object return l; end, k = 1 },    { __eq = function(l: object, r: object): boolean return true; end }) : { __add: (l: object, r: object) => object; k: number; }
+>setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+
+    { __add = function(l: object, r: object): object return l; end, k = 1 },
+>{ __add = function(l: object, r: object): object return l; end, k = 1 } : { __add: (l: object, r: object) => object; k: number; }
+>__add : (l: object, r: object) => object
+>function(l: object, r: object): object return l; end : (l: object, r: object) => object
+>l : object
+>r : object
+>l : object
+>k : number
+>1 : 1
+
+    { __eq = function(l: object, r: object): boolean return true; end });
+>{ __eq = function(l: object, r: object): boolean return true; end } : { __eq: (l: object, r: object) => boolean; }
+>__eq : (l: object, r: object) => boolean
+>function(l: object, r: object): boolean return true; end : (l: object, r: object) => boolean
+>l : object
+>r : object
+>true : true
+
+local fieldedSum = fielded + fielded;
+>fieldedSum : any
+>fielded + fielded : any
+>fielded : { __add: (l: object, r: object) => object; k: number; }
+>fielded : { __add: (l: object, r: object) => object; k: number; }
+

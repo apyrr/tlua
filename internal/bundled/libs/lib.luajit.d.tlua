@@ -233,7 +233,11 @@ declare function xpcall(fn: LuaFunction, handler: (message: any) => any, ...: an
  * reads, __newindex writes to a missing key, __call, __metatable protection, and
  * the operator metamethods (__eq __lt __le __unm __len __add __sub __mul __div
  * __mod __pow __concat) -- and getmetatable reads that metatable back;
- * setmetatable as a statement narrows its table argument the same way.
+ * setmetatable as a statement narrows its table argument the same way. Operator
+ * metamethods also dispatch ambiently: a declared type that states them as
+ * `__add`-style members (a userdata class like GMod's Vector) overloads the
+ * operators with no setmetatable in sight; __index, __newindex and __call stay
+ * pairing-only.
  * debug.setmetatable and debug.getmetatable bypass __metatable protection. A
  * shadowed local of either name keeps whatever it declares. Both signatures still
  * carry the contract this file can express: the parameter type is what validates a
