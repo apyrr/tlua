@@ -5,7 +5,7 @@
 // internal "\xFEn:" mangled symbol name.
 
 // A duplicate number key is reported as '1', not as a mangled name. (This used
-// to be exercised through a spread override, `{ [1] = "a", ...src }`; object spread
+// to be exercised through a spread override, `{ [1] = "a", ...src }`; table spread
 // is gone, so the duplicate is written directly.)
 local dup = { [1] = "a", [1] = "b" }; // error: duplicate '1'
 

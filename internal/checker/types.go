@@ -1094,10 +1094,9 @@ type MetatableType struct {
 
 type UnionOrIntersectionType struct {
 	StructuredType
-	types                                       []*Type
-	propertyCache                               ast.SymbolTable
-	propertyCacheWithoutFunctionPropertyAugment ast.SymbolTable
-	resolvedProperties                          []*ast.Symbol
+	types              []*Type
+	propertyCache      ast.SymbolTable
+	resolvedProperties []*ast.Symbol
 }
 
 func (t *UnionOrIntersectionType) AsUnionOrIntersectionType() *UnionOrIntersectionType { return t }

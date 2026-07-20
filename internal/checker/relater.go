@@ -190,7 +190,10 @@ func (c *Checker) isTypeRelatedTo(source *Type, target *Type, relation *Relation
 			return true
 		}
 	}
-	if source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsObject != 0 {
+	// NonPrimitive targets are included so repeated x-vs-`table` probes (common since the
+	// tightened rule makes failures possible) hit the stored verdict instead of re-running
+	// the full check.
+	if source.flags&TypeFlagsObject != 0 && target.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0 {
 		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false)
 		related := relation.get(id)
 		if related != RelationComparisonResultNone {
@@ -231,7 +234,11 @@ func (c *Checker) isSimpleTypeRelatedTo(source *Type, target *Type, relation *Re
 	if s&TypeFlagsNil != 0 && t&(TypeFlagsNil|TypeFlagsVoid) != 0 {
 		return true
 	}
-	if s&TypeFlagsObject != 0 && t&TypeFlagsNonPrimitive != 0 && !(relation == c.strictSubtypeRelation && c.IsEmptyAnonymousObjectType(source) && source.objectFlags&ObjectFlagsFreshLiteral == 0) {
+	// `table` (the non-primitive intrinsic) admits plain tables only: not functions, not the
+	// branded thread/userdata/cdata kinds -- the same partition `type(x) == "table"` narrows by.
+	if s&TypeFlagsObject != 0 && t&TypeFlagsNonPrimitive != 0 &&
+		!(relation == c.strictSubtypeRelation && c.IsEmptyAnonymousObjectType(source) && source.objectFlags&ObjectFlagsFreshLiteral == 0) &&
+		c.isLuaTableType(source) {
 		return true
 	}
 	if relation == c.assignableRelation || relation == c.comparableRelation {
@@ -1039,7 +1046,7 @@ func (c *Checker) findDiscriminantProperties(sourceProperties []*ast.Symbol, tar
 
 func (c *Checker) isDiscriminantProperty(t *Type, name string) bool {
 	if t != nil && t.flags&TypeFlagsUnion != 0 {
-		prop := c.getUnionOrIntersectionProperty(t, name, false /*skipObjectFunctionPropertyAugment*/)
+		prop := c.getUnionOrIntersectionProperty(t, name)
 		if prop != nil && prop.CheckFlags&ast.CheckFlagsSyntheticProperty != 0 {
 			if prop.CheckFlags&ast.CheckFlagsIsDiscriminantComputed == 0 {
 				prop.CheckFlags |= ast.CheckFlagsIsDiscriminantComputed
@@ -2699,7 +2706,7 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 		}
 		isPerformingCommonPropertyChecks := (r.relation != r.c.comparableRelation || isUnitType(source)) &&
 			intersectionState&IntersectionStateTarget == 0 &&
-			source.flags&(TypeFlagsPrimitive|TypeFlagsObject|TypeFlagsIntersection) != 0 && source != r.c.globalObjectType &&
+			source.flags&(TypeFlagsPrimitive|TypeFlagsObject|TypeFlagsIntersection) != 0 &&
 			target.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && r.c.isWeakType(target) && (len(r.c.getPropertiesOfType(source)) > 0 || r.c.typeHasCallOrConstructSignatures(source))
 		isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
 		if isPerformingCommonPropertyChecks && !r.c.hasCommonProperties(source, target, isComparingJsxAttributes) {
@@ -2742,7 +2749,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 		return false
 	}
 	isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
-	if (r.relation == r.c.assignableRelation || r.relation == r.c.comparableRelation) && (r.c.isTypeSubsetOf(r.c.globalObjectType, target) || (!isComparingJsxAttributes && r.c.isEmptyObjectType(target))) {
+	if (r.relation == r.c.assignableRelation || r.relation == r.c.comparableRelation) && !isComparingJsxAttributes && r.c.isEmptyObjectType(target) {
 		return false
 	}
 	reducedTarget := target
@@ -2834,7 +2841,7 @@ func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
 	t = c.getApparentType(t)
 	var prop *ast.Symbol
 	if t.flags&TypeFlagsUnionOrIntersection != 0 {
-		prop = c.getPropertyOfUnionOrIntersectionType(t, name, false)
+		prop = c.getPropertyOfUnionOrIntersectionType(t, name)
 	} else {
 		prop = c.getPropertyOfObjectType(t, name)
 	}
@@ -2933,6 +2940,13 @@ func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, repor
 				return r.isRelatedTo(target, source, RecursionFlagsSource, false /*reportErrors*/)
 			}
 		}
+	}
+	// The `table` partition is not upward-closed under intersection: one plain-table
+	// constituent must not vouch for a partner that carries a call signature or a brand
+	// member, so the whole intersection decides -- the same verdict `type(x) == "table"`
+	// narrowing reaches -- instead of the any-constituent rule below.
+	if target.flags&TypeFlagsNonPrimitive != 0 && r.relation != r.c.identityRelation {
+		return core.IfElse(r.c.isLuaTableType(source), TernaryTrue, TernaryFalse)
 	}
 	// Check to see if any constituents of the intersection are immediately related to the target.
 	// Don't report errors though. Elaborating on whether a source constituent is related to the target is
@@ -4790,8 +4804,8 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 	switch {
 	case source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsPrimitive != 0:
 		r.tryElaborateErrorsForPrimitivesAndObjects(source, target)
-	case source.symbol != nil && source.flags&TypeFlagsObject != 0 && r.c.globalObjectType == source:
-		r.reportError(diagnostics.The_Object_type_is_assignable_to_very_few_other_types_Did_you_mean_to_use_the_any_type_instead)
+	// The upstream "Object type is assignable to very few other types" elaboration is gone
+	// with the Object global: the sentinel has no symbol and no declaration can alias it.
 	case source.objectFlags&ObjectFlagsJsxAttributes != 0 && target.flags&TypeFlagsIntersection != 0:
 		targetTypes := target.Types()
 		intrinsicAttributes := r.c.getJsxType(JsxNames.IntrinsicAttributes, r.errorNode)
@@ -5053,6 +5067,9 @@ func (c *Checker) isTypeDerivedFrom(source *Type, target *Type) bool {
 		}
 		return c.isTypeDerivedFrom(constraint, target)
 	case c.IsEmptyAnonymousObjectType(target):
+		// The Object/Function sentinels never match this case: IsEmptyAnonymousObjectType
+		// carves them out by identity, so their cases below stay reachable in any order
+		// (upstream's order is kept for diffability).
 		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0
 	case target == c.globalObjectType:
 		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0 && !c.IsEmptyAnonymousObjectType(source)

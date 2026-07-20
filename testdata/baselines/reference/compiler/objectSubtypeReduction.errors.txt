@@ -1,4 +1,4 @@
-objectSubtypeReduction.tlua(4,12): error TLUA2693: 'Object' only refers to a type, but is being used as a value here.
+objectSubtypeReduction.tlua(4,12): error TLUA2304: Cannot find name 'Object'.
 objectSubtypeReduction.tlua(5,16): error TLUA1109: Expression expected.
 objectSubtypeReduction.tlua(5,17): error TLUA2304: Cannot find name 'k1'.
 objectSubtypeReduction.tlua(5,17): error TLUA2695: Left side of comma operator is unused and has no side effects.
@@ -15,10 +15,10 @@ objectSubtypeReduction.tlua(5,61): error TLUA2304: Cannot find name 'v2'.
 ==== objectSubtypeReduction.tlua (12 errors) ====
     // https://github.com/microsoft/typescript-go/issues/1164
     
-    function foo(x?: object) {
+    function foo(x?: table) {
         return Object.entries(x || {})
                ~~~~~~
-!!! error TLUA2693: 'Object' only refers to a type, but is being used as a value here.
+!!! error TLUA2304: Cannot find name 'Object'.
             .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name));
                    ~
 !!! error TLUA1109: Expression expected.

@@ -1,0 +1,84 @@
+tluaFunctionType.tlua(31,7): error TLUA2322: Type '{ n: number; }' is not assignable to type 'function'.
+  Type '{ n: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
+tluaFunctionType.tlua(32,14): error TLUA2304: Cannot find name 'LuaFunction'.
+tluaFunctionType.tlua(53,16): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaFunctionType.tlua(57,6): error TLUA2457: Type alias name cannot be 'function'.
+tluaFunctionType.tlua(57,14): error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaFunctionType.tlua(57,15): error TLUA1003: Identifier expected.
+tluaFunctionType.tlua(57,17): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
+
+
+==== tluaFunctionType.tlua (7 errors) ====
+    // `function` is the keyword type for the runtime tag `type(x) == "function"`:
+    // the top of every Lua function -- variadic parameters, any results. It replaced
+    // the LuaFunction lib alias, which no longer exists.
+    
+    local f: function = function(): number return 1; end;
+    declare withParams: (a: number, b: string) => boolean;
+    local f2: function = withParams;
+    
+    // Everywhere a type goes: unions, type arguments, tuples, returns, parameters.
+    declare maybeFn: function | nil;
+    declare fnTable: Table<string, function>;
+    declare fnPair: [function, number];
+    declare function pick(chooser: function): function;
+    local picked: function = pick(f);
+    
+    // Calling a `function`-typed value yields the any results it promises, and the
+    // rest parameter admits any argument list.
+    local first, second = f();
+    local one: number | nil = first;
+    local viaArgs = f(1, "x", true);
+    local a2, b2 = f2(nil, { n = 1 });
+    
+    // A declared non-callable can never be "function": the guard narrows to never.
+    declare plainT: { n: number };
+    if type(plainT) == "function" then
+        local imp: never = plainT;
+    end
+    
+    // A table is not a function, and the old alias name is gone.
+    declare tbl: { n: number };
+    local notFn: function = tbl;
+          ~~~~~
+!!! error TLUA2322: Type '{ n: number; }' is not assignable to type 'function'.
+!!! error TLUA2322:   Type '{ n: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
+    declare old: LuaFunction;
+                 ~~~~~~~~~~~
+!!! error TLUA2304: Cannot find name 'LuaFunction'.
+    
+    // `type(x) == "function"` narrows to the keyword type and displays as such.
+    declare u: unknown;
+    if type(u) == "function" then
+        local uf: function = u;
+    end
+    
+    // Narrowing makes a bare type parameter callable (T & function)...
+    function apply<T>(v: T): number
+        if type(v) == "function" then
+            return v(1);
+        end
+        return 0;
+    end
+    
+    // ...while declared signatures keep their precision instead of widening to the
+    // all-any top type.
+    declare fnOrString: ((a: number) => void) | string;
+    if type(fnOrString) == "function" then
+        fnOrString(1);
+        fnOrString("x");
+                   ~~~
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    end
+    
+    // The spelling is a hard keyword: it cannot name a type alias.
+    type function = number;
+         ~~~~~~~~
+!!! error TLUA2457: Type alias name cannot be 'function'.
+                 
+!!! error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+                  ~
+!!! error TLUA1003: Identifier expected.
+                    ~~~~~~
+!!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
+    

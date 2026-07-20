@@ -18,7 +18,7 @@ local noParams = () => 42
 local truncated = () => two()
 local one: number = truncated()
 
-// A parenthesized object-literal body keeps its parens; `return { ... } end`
+// A parenthesized table-literal body keeps its parens; `return { ... } end`
 // would also be valid Lua, but the source spelling round-trips.
 local table = () => ({ k = 1 })
 print(add(1, 2), block(2), nested(1)(2), noParams(), table().k)
@@ -42,7 +42,7 @@ local noParams = function() return 42 end;
 -- runtime truncates to the value the type names.
 local truncated = function() return (two()) end;
 local one = truncated();
--- A parenthesized object-literal body keeps its parens; `return { ... } end`
+-- A parenthesized table-literal body keeps its parens; `return { ... } end`
 -- would also be valid Lua, but the source spelling round-trips.
 local table = function() return ({ k = 1 }) end;
 print(add(1, 2), block(2), nested(1)(2), noParams(), table().k);

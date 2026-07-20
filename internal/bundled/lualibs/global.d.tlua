@@ -11,13 +11,13 @@ declare function dofile(filename?: string): (any?, ...any);
 // is optional. This matters now that forwarding a possibly-empty `...` into a
 // required parameter is an error: `error(...)` has to keep working.
 declare function error(message?: any, level?: number): never;
-declare function getfenv(target?: number | LuaFunction): object;
-declare function getmetatable<T extends object>(value: T): LuaMetatable<T> | any | nil;
+declare function getfenv(target?: number | function): table;
+declare function getmetatable<T extends table>(value: T): LuaMetatable<T> | any | nil;
 declare function ipairs<T>(value: Table<number, T>): (LuaIPairsIterator<T>, Table<number, T>, number);
-declare function load(reader: () => string | nil, chunkname?: string): (LuaFunction?, string?);
-declare function loadfile(filename?: string): (LuaFunction?, string?);
-declare function loadstring(source: string, chunkname?: string): (LuaFunction?, string?);
-declare function module(name: string, ...: LuaFunction): void;
+declare function load(reader: () => string | nil, chunkname?: string): (function?, string?);
+declare function loadfile(filename?: string): (function?, string?);
+declare function loadstring(source: string, chunkname?: string): (function?, string?);
+declare function module(name: string, ...: function): void;
 declare function newproxy(prototype?: boolean | LuaUserdata): LuaUserdata;
 // next is the pairs iteration protocol, so its value is non-optional for the same
 // reason LuaPairsIterator's is: a key it yields always has one.
@@ -32,7 +32,7 @@ declare function pairs<K, V>(value: Table<K, V>): (LuaPairsIterator<K, V>, Table
 // one signature (inference reads a single signature), so `pcall(select, "#", 1, 2)`
 // falls through to it instead of mis-checking against the wrong overload.
 declare function pcall<...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R);
-declare function pcall(fn: LuaFunction, ...: any): (boolean, ...any);
+declare function pcall(fn: function, ...: any): (boolean, ...any);
 declare function print(...: any): void;
 declare function rawequal(left: any, right: any): boolean;
 declare function rawget<K, V>(value: Table<K, V>, index: K): V | nil;
@@ -43,8 +43,8 @@ declare function select(index: "#", ...: any): number;
 // spell -- see internal/checker/luaselect.go). This declared type is the safe
 // fallback for a shadowed or aliased select the refinement does not reach.
 declare function select(index: number, ...: any): (any?, ...any);
-declare function setfenv(target: number | LuaFunction, environment: object): LuaFunction;
-declare function setmetatable<T extends object>(value: T, metatable: LuaMetatable<T> | nil): T;
+declare function setfenv(target: number | function, environment: table): function;
+declare function setmetatable<T extends table>(value: T, metatable: LuaMetatable<T> | nil): T;
 declare function tonumber(value: any, base?: number): number | nil;
 declare function tostring(value: any): string;
 declare function type(value: any): "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata";
@@ -54,7 +54,7 @@ declare function unpack<T>(values: Table<number, T>, i?: number, j?: number): (T
 // the success pack, so the result is approximated as `(boolean, ...R)`.
 // The erased second overload catches overloaded callees, as pcall's does.
 declare function xpcall<...A, ...R>(fn: (...: A) => (...R), handler: (message: any) => any, ...: A): (boolean, ...R);
-declare function xpcall(fn: LuaFunction, handler: (message: any) => any, ...: any): (boolean, ...any);
+declare function xpcall(fn: function, handler: (message: any) => any, ...: any): (boolean, ...any);
 
 /*
  * Generic pack parameters (`<...A>`) now correlate arguments and results for

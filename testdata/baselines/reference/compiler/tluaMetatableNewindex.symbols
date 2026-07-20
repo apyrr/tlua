@@ -11,11 +11,11 @@ local logged = setmetatable({ n = 1 }, {
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 >n : Symbol(n, Decl(tluaMetatableNewindex.tlua, 5, 29))
 
-  __newindex = function(t: object, k: string, v: number): void return; end,
+  __newindex = function(t: table, k: string, v: number): void return; end,
 >__newindex : Symbol(__newindex, Decl(tluaMetatableNewindex.tlua, 5, 40))
 >t : Symbol(t, Decl(tluaMetatableNewindex.tlua, 6, 24))
->k : Symbol(k, Decl(tluaMetatableNewindex.tlua, 6, 34))
->v : Symbol(v, Decl(tluaMetatableNewindex.tlua, 6, 45))
+>k : Symbol(k, Decl(tluaMetatableNewindex.tlua, 6, 33))
+>v : Symbol(v, Decl(tluaMetatableNewindex.tlua, 6, 44))
 
 });
 logged.fresh = 2;
@@ -55,13 +55,13 @@ proxied.other = "no";
 >proxied : Symbol(proxied, Decl(tluaMetatableNewindex.tlua, 16, 5))
 
 // A key outside the handler's domain is not answered.
-local numKeys = setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end });
+local numKeys = setmetatable({}, { __newindex = function(t: table, k: number, v: string): void return; end });
 >numKeys : Symbol(numKeys, Decl(tluaMetatableNewindex.tlua, 21, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 >__newindex : Symbol(__newindex, Decl(tluaMetatableNewindex.tlua, 21, 34))
 >t : Symbol(t, Decl(tluaMetatableNewindex.tlua, 21, 57))
->k : Symbol(k, Decl(tluaMetatableNewindex.tlua, 21, 67))
->v : Symbol(v, Decl(tluaMetatableNewindex.tlua, 21, 78))
+>k : Symbol(k, Decl(tluaMetatableNewindex.tlua, 21, 66))
+>v : Symbol(v, Decl(tluaMetatableNewindex.tlua, 21, 77))
 
 numKeys.name = "x";
 >numKeys : Symbol(numKeys, Decl(tluaMetatableNewindex.tlua, 21, 5))

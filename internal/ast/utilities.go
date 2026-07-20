@@ -878,12 +878,18 @@ func IsCatchClauseVariableDeclarationOrBindingElement(declaration *Node) bool {
 	return node.Kind == KindVariableDeclaration && node.Parent.Kind == KindCatchClause
 }
 
+// The keyword TYPE kinds below are also enumerated (with deliberate local variations) in
+// parser.parseNonArrayType, IsPartOfTypeNode, GetTypeNodePrecedence, Token.computeSubtreeFacts
+// and printer.emitTypeNode, and canonically in ast.json's KeywordTypeSyntaxKind (regenerate
+// after changing it). Kept as literal lists to stay diffable against upstream -- when adding a
+// keyword type, update every site.
 func IsTypeNodeKind(kind Kind) bool {
 	switch kind {
 	case KindAnyKeyword,
 		KindUnknownKeyword,
 		KindNumberKeyword,
 		KindObjectKeyword,
+		KindFunctionKeyword,
 		KindBooleanKeyword,
 		KindStringKeyword,
 		KindSymbolKeyword,
@@ -2192,6 +2198,15 @@ func IsInExpressionContext(node *Node) bool {
 	}
 }
 
+// IsFunctionKeywordTypeNode reports whether a KindFunctionKeyword node is the keyword TYPE
+// (`declare f: function`) rather than the hard keyword introducing a function declaration or
+// expression. Under a function-like parent only the return type annotation is the type node
+// (`function f(): function`). Every consumer that must tell the two roles apart routes
+// through this one predicate.
+func IsFunctionKeywordTypeNode(node *Node) bool {
+	return node.Parent == nil || !IsFunctionLike(node.Parent) || node.Parent.Type() == node
+}
+
 func IsPartOfTypeNode(node *Node) bool {
 	kind := node.Kind
 	if kind >= KindFirstTypeNode && kind <= KindLastTypeNode {
@@ -2199,11 +2214,13 @@ func IsPartOfTypeNode(node *Node) bool {
 	}
 	switch node.Kind {
 	case KindAnyKeyword, KindUnknownKeyword, KindNumberKeyword, KindStringKeyword,
-		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword, KindNilKeyword,
-		KindNeverKeyword:
+		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword,
+		KindNilKeyword, KindNeverKeyword:
 		return true
 	case KindVoidKeyword:
 		return node.Parent.Kind != KindVoidExpression
+	case KindFunctionKeyword:
+		return IsFunctionKeywordTypeNode(node)
 	case KindExpressionWithTypeArguments:
 		return isPartOfTypeExpressionWithTypeArguments(node)
 	case KindTypeParameter:

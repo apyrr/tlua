@@ -1,4 +1,4 @@
-tluaMetatableGetmetatable.tlua(11,7): error TLUA2322: Type '{ __index: { describe: (self: object) => string; }; }' is not assignable to type 'number'.
+tluaMetatableGetmetatable.tlua(11,7): error TLUA2322: Type '{ __index: { describe: (self: table) => string; }; }' is not assignable to type 'number'.
 tluaMetatableGetmetatable.tlua(23,7): error TLUA2322: Type '{ __index: { a: number; }; } | { __index: { b: string; }; }' is not assignable to type 'number'.
   Type '{ __index: { a: number; }; }' is not assignable to type 'number'.
 tluaMetatableGetmetatable.tlua(24,23): error TLUA2339: Property 'a' does not exist on type '{ a: number; } | { b: string; }'.
@@ -9,7 +9,7 @@ tluaMetatableGetmetatable.tlua(24,23): error TLUA2339: Property 'a' does not exi
     // getmetatable reads back the metatable a table was paired with, rather than the union its
     // declaration has to fall back on.
     
-    local Helpers = { describe = function(self: object): string return "d"; end };
+    local Helpers = { describe = function(self: table): string return "d"; end };
     local obj = setmetatable({ n = 1 }, { __index = Helpers });
     
     local mt = getmetatable(obj);
@@ -18,7 +18,7 @@ tluaMetatableGetmetatable.tlua(24,23): error TLUA2339: Property 'a' does not exi
     // The printed type is the metatable itself.
     local shown: number = mt;
           ~~~~~
-!!! error TLUA2322: Type '{ __index: { describe: (self: object) => string; }; }' is not assignable to type 'number'.
+!!! error TLUA2322: Type '{ __index: { describe: (self: table) => string; }; }' is not assignable to type 'number'.
     
     // A table with no metatable the checker knows about keeps the declared result.
     local plain = getmetatable({ n = 1 });

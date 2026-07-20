@@ -1,9 +1,5 @@
 // LuaJIT 2.x runtime declarations for tlua.
 
-interface Object {}
-interface Function {}
-interface CallableFunction extends Function {}
-interface NewableFunction extends Function {}
 interface IArguments {
     readonly length: number;
     [index: number]: any;
@@ -20,7 +16,6 @@ interface ReadonlyArray<T> {
     readonly [index: number]: T;
 }
 
-type LuaFunction = (...: any) => (any?, ...any);
 
 // A Lua table: an open map from any non-nil key to a value. K is invariant -- it is an
 // input when the table is indexed and an output when it is iterated with `pairs` -- so
@@ -119,7 +114,7 @@ type InstanceType<T extends new (...: any) => any> = T extends new (...: any) =>
 
 /** Recursively unwrap the value type of a thenable */
 type Awaited<T> = T extends null | undefined ? T :
-    T extends object & { then(onfulfilled: infer F, ...: infer _): any; } ?
+    T extends table & { then(onfulfilled: infer F, ...: infer _): any; } ?
         F extends ((value: infer V, ...: infer _) => any) ?
             Awaited<V> :
         never :

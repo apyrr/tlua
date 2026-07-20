@@ -7,7 +7,7 @@
 // the metatable's __index, so the call cannot keep returning the plain table it was given.
 
 local Helpers = {
-  describe = function(self: object): string return "d"; end,
+  describe = function(self: table): string return "d"; end,
   count = 0,
 };
 
@@ -62,5 +62,5 @@ interface HasN { n: number }
 local asTable: HasN = obj;
 
 // ...and a named interface that also spells the fallback out.
-interface Described { n: number; describe: (self: object) => string; count: number }
+interface Described { n: number; describe: (self: table) => string; count: number }
 local asDescribed: Described = obj;

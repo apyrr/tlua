@@ -48,6 +48,7 @@ completionsPathsJsonModule
 completionsPathsRelativeJsonModule
 completionsSelfDeclaring1
 completionsTuple
+completionsTypeKeywords
 completionsWithDeprecatedTag4
 completionsWithStringReplacementMode1
 docCommentTemplateNamespacesAndModules01

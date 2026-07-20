@@ -30,7 +30,7 @@ local es = {t1, s};
 >t1 : any
 >s : any
 
-// Destructuring assignment is gone with it: an object literal on the left of
+// Destructuring assignment is gone with it: a table literal on the left of
 // `=` is an ordinary (erroneous) assignment target ...
 declare obj: { q: number; w?: number };
 >obj : { q: number; w?: number; }

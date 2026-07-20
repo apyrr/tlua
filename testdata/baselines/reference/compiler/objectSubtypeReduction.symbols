@@ -3,7 +3,7 @@
 === objectSubtypeReduction.tlua ===
 // https://github.com/microsoft/typescript-go/issues/1164
 
-function foo(x?: object) {
+function foo(x?: table) {
 >foo : Symbol(foo, Decl(objectSubtypeReduction.tlua, 0, 0))
 >x : Symbol(x, Decl(objectSubtypeReduction.tlua, 2, 13))
 

@@ -1311,6 +1311,12 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 		if node.Kind == ast.KindReadonlyKeyword && !isReadonlyTypeOperator(node) {
 			return nil
 		}
+
+		// The hard `function` keyword of a declaration or expression is not special;
+		// the `function` type keyword is.
+		if isFunctionDeclarationKeyword(node) {
+			return nil
+		}
 		// Likewise, when we *are* looking for a special keyword, make sure we
 		// *don't* include readonly member modifiers.
 		return getAllReferencesForKeyword(
@@ -1504,12 +1510,21 @@ func getAllReferencesForImportMeta(sourceFiles []*ast.SourceFile) []*SymbolAndEn
 	return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: references[0].node}, references: references}}
 }
 
+// isFunctionDeclarationKeyword reports whether a `function` token is the hard keyword of a
+// declaration or expression rather than the keyword type; such a token is not a type
+// reference.
+func isFunctionDeclarationKeyword(node *ast.Node) bool {
+	return node.Kind == ast.KindFunctionKeyword && !ast.IsFunctionKeywordTypeNode(node)
+}
+
 func getAllReferencesForKeyword(sourceFiles []*ast.SourceFile, keywordKind ast.Kind, filterReadOnlyTypeOperator bool) []*SymbolAndEntries {
 	// references is a list of NodeEntry
 	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*ReferenceEntry {
 		// cancellationToken.throwIfCancellationRequested();
 		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, scanner.TokenToString(keywordKind), sourceFile.AsNode()), func(referenceLocation *ast.Node) *ReferenceEntry {
-			if referenceLocation.Kind == keywordKind && (!filterReadOnlyTypeOperator || isReadonlyTypeOperator(referenceLocation)) {
+			// The harvest matches by token kind, so the hard `function` keyword of every
+			// declaration and expression would flood a type-keyword search without this filter.
+			if referenceLocation.Kind == keywordKind && (!filterReadOnlyTypeOperator || isReadonlyTypeOperator(referenceLocation)) && !isFunctionDeclarationKeyword(referenceLocation) {
 				return newNodeEntry(referenceLocation)
 			}
 			return nil

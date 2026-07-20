@@ -72,12 +72,9 @@ local memory: LuaCData = ffiLib.new(ctype);
 local argumentsObject: IArguments;
 >argumentsObject : IArguments
 
-local constructorFunction: NewableFunction;
->constructorFunction : NewableFunction
-
-local presized: object = newTable(8, 4);
->presized : object
->newTable(8, 4) : object
+local presized: table = newTable(8, 4);
+>presized : table
+>newTable(8, 4) : table
 >newTable : TableNew
 >8 : 8
 >4 : 4
@@ -88,7 +85,7 @@ local encoded: string = buffer.encode(presized);
 >buffer.encode : (value: any) => string
 >buffer : StringBufferLib
 >encode : (value: any) => string
->presized : object
+>presized : table
 
 local randomValue: number = math.random(1, 10);
 >randomValue : number
@@ -210,8 +207,8 @@ string.rep("a", 2, ",");
 local notUserdata: LuaUserdata = coroutine.create(function() end);
 >notUserdata : LuaUserdata
 >coroutine.create(function() end) : LuaThread
->coroutine.create : (fn: LuaFunction) => LuaThread
+>coroutine.create : (fn: function) => LuaThread
 >coroutine : CoroutineLib
->create : (fn: LuaFunction) => LuaThread
+>create : (fn: function) => LuaThread
 >function() end : () => void
 

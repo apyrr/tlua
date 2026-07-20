@@ -18,7 +18,7 @@ local sb: string = swapped.b;
 local goneA = swapped.a;
 
 // A member call through anything but the debug global is not the protocol.
-local fake = { setmetatable = function(v: object, mt: object): object return v; end };
+local fake = { setmetatable = function(v: table, mt: table): table return v; end };
 local aliased = fake.setmetatable(guarded, { __index = { c = 1 } });
 local noC = aliased.c;
 

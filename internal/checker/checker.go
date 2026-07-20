@@ -546,7 +546,6 @@ type Checker struct {
 	isInferencePartiallyBlocked            bool
 	emitStandardClassFields                bool
 	strictFunctionTypes                    bool
-	strictBindCallApply                    bool
 	strictPropertyInitialization           bool
 	strictBuiltinIteratorReturn            bool
 	noImplicitAny                          bool
@@ -706,8 +705,6 @@ type Checker struct {
 	anyBaseTypeIndexInfo           *IndexInfo
 	globalObjectType               *Type
 	globalFunctionType             *Type
-	globalCallableFunctionType     *Type
-	globalNewableFunctionType      *Type
 	globalArrayType                *Type
 	globalReadonlyArrayType        *Type
 	// luaTableType / luaReadonlyTableType are the synthesized generic targets
@@ -807,8 +804,11 @@ type Checker struct {
 	getLuaThreadType                            func() *Type
 	getLuaUserdataType                          func() *Type
 	getLuaCDataType                             func() *Type
+	getLuaFunctionType                          func() *Type
 	getLuaFileType                              func() *Type
 	getLuaBrandTypes                            func() []*Type
+	getLuaBrandMembers                          func() map[string]*Type
+	luaTableTypeResults                         map[*Type]bool
 	syncIterationTypesResolver                  *IterationTypesResolver
 	asyncIterationTypesResolver                 *IterationTypesResolver
 	isPrimitiveOrObjectOrEmptyType              func(*Type) bool
@@ -853,7 +853,6 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.moduleResolutionKind = c.compilerOptions.GetModuleResolutionKind()
 	c.emitStandardClassFields = c.compilerOptions.GetEmitStandardClassFields()
 	c.strictFunctionTypes = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictFunctionTypes)
-	c.strictBindCallApply = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictBindCallApply)
 	c.strictPropertyInitialization = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictPropertyInitialization)
 	c.strictBuiltinIteratorReturn = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictBuiltinIteratorReturn)
 	c.noImplicitAny = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.NoImplicitAny)
@@ -941,7 +940,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.silentNeverType = c.newIntrinsicTypeEx(TypeFlagsNever, "never", ObjectFlagsNonInferrableType)
 	c.implicitNeverType = c.newIntrinsicType(TypeFlagsNever, "never")
 	c.unreachableNeverType = c.newIntrinsicType(TypeFlagsNever, "never")
-	c.nonPrimitiveType = c.newIntrinsicType(TypeFlagsNonPrimitive, "object")
+	c.nonPrimitiveType = c.newIntrinsicType(TypeFlagsNonPrimitive, "table")
 	c.stringNumberSymbolType = c.getUnionType([]*Type{c.stringType, c.numberType, c.esSymbolType})
 	c.stringOrNilType = c.getUnionType([]*Type{c.stringType, c.nilType})
 	c.numberOrNilType = c.getUnionType([]*Type{c.numberType, c.nilType})
@@ -1031,18 +1030,50 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.getLuaDebugGlobalSymbol = c.getGlobalValueSymbolResolver("debug", false /*reportErrors*/)
 	c.getLuaThreadType = c.getLuaBrandTypeResolver("LuaThread")
 	c.getLuaUserdataType = c.getLuaBrandTypeResolver("LuaUserdata")
-	c.getLuaCDataType = core.Memoize(func() *Type {
-		// cdata is declared inside the `ffi` namespace rather than globally.
-		ffi := c.getGlobalSymbol("ffi", ast.SymbolFlagsNamespace, nil)
-		if ffi == nil {
-			return nil
-		}
-		return c.getLuaBrandType(c.getSymbol(c.getExportsOfSymbol(ffi), "cdata", ast.SymbolFlagsType))
+	c.getLuaFunctionType = core.Memoize(func() *Type {
+		// The `function` keyword type: the top of every Lua function -- variadic any
+		// parameters, any results, `(...: any) => (any?, ...any)`. Built here rather than
+		// declared in a lib so no program-visible name aliases it; the node builder prints
+		// it back as the keyword.
+		restParam := c.newSymbol(ast.SymbolFlagsFunctionScopedVariable, ast.VarargParameterName)
+		c.valueSymbolLinks.Get(restParam).resolvedType = c.anyArrayType
+		// The result is a return-list PACK, not a tuple: single-value uses adjust to the
+		// first element and scalar returns relate against it, as for any written `(A, ...B)`.
+		packTarget := c.getTupleTargetType(
+			[]TupleElementInfo{{flags: ElementFlagsOptional}, {flags: ElementFlagsRest}},
+			false /*readonly*/, true, /*isPack*/
+		)
+		returnType := c.createNormalizedTupleTypeEx(packTarget, []*Type{c.anyType, c.anyType}, ObjectFlagsNone)
+		signature := c.newSignature(SignatureFlagsHasRestParameter, nil /*declaration*/, nil, /*typeParameters*/
+			nil /*thisParameter*/, []*ast.Symbol{restParam}, returnType, nil /*resolvedTypePredicate*/, 0 /*minArgumentCount*/)
+		return c.newAnonymousType(nil /*symbol*/, nil, []*Signature{signature}, nil, nil)
 	})
+	// LuaCData is a global interface like the other brands: the old `ffi` NAMESPACE lookup
+	// went stale when namespaces were deleted (ffi is a plain global value now), which left
+	// the cdata brand unresolvable -- "cdata" tag narrowing silently narrowed nothing.
+	c.getLuaCDataType = c.getLuaBrandTypeResolver("LuaCData")
 	c.getLuaFileType = c.getLuaBrandTypeResolver("LuaFile")
 	c.getLuaBrandTypes = core.Memoize(func() []*Type {
 		return core.Filter([]*Type{c.getLuaThreadType(), c.getLuaUserdataType(), c.getLuaCDataType()}, func(t *Type) bool { return t != nil })
 	})
+	c.getLuaBrandMembers = core.Memoize(func() map[string]*Type {
+		// Derived from the brand TYPES so the two stay one source of truth: each brand
+		// interface marks itself with a unique-symbol member, and that member's IDENTITY --
+		// the interned unique-symbol type, not just its name -- is what excludes a carrier
+		// from `table`, so a lookalike field of another type stays a plain table. LuaCType
+		// and LuaCallback need no entries of their own -- a ctype is callable and a
+		// callback extends cdata.
+		members := make(map[string]*Type)
+		for _, brand := range c.getLuaBrandTypes() {
+			for _, prop := range c.getPropertiesOfType(brand) {
+				if propType := c.getTypeOfSymbol(prop); propType.flags&TypeFlagsUniqueESSymbol != 0 {
+					members[prop.Name] = propType
+				}
+			}
+		}
+		return members
+	})
+	c.luaTableTypeResults = make(map[*Type]bool)
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()
@@ -1337,10 +1368,13 @@ func (c *Checker) initializeChecker() {
 	c.valueSymbolLinks.Get(c.luaGlobalsSymbol).resolvedType = c.newObjectType(ObjectFlagsAnonymous, c.luaGlobalsSymbol)
 	// Initialize special types
 	c.globalArrayType = c.getGlobalType("Array", 1 /*arity*/, true /*reportErrors*/)
-	c.globalObjectType = c.getGlobalType("Object", 0 /*arity*/, true /*reportErrors*/)
-	c.globalFunctionType = c.getGlobalType("Function", 0 /*arity*/, true /*reportErrors*/)
-	c.globalCallableFunctionType = c.getGlobalStrictFunctionType("CallableFunction")
-	c.globalNewableFunctionType = c.getGlobalStrictFunctionType("NewableFunction")
+	// tlua's libs declare no Object or Function globals: a Lua value has no JS prototype
+	// surface. The inherited plumbing still reads these two as identity sentinels (the
+	// instanceof gates via isTypeDerivedFrom), so each is a distinct empty synthetic that
+	// no declaration can name, merge into, or alias. IsEmptyAnonymousObjectType carves
+	// them out by identity, so nothing mistakes them for a plain `{}`.
+	c.globalObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
+	c.globalFunctionType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.globalStringType = c.getGlobalType("String", 0 /*arity*/, true /*reportErrors*/)
 	c.globalNumberType = c.getGlobalType("Number", 0 /*arity*/, true /*reportErrors*/)
 	c.globalBooleanType = c.getGlobalType("Boolean", 0 /*arity*/, true /*reportErrors*/)
@@ -2143,7 +2177,6 @@ var primitiveTypeAliasSuggestions = sync.OnceValue(func() map[string]*ast.Symbol
 		{"string", "String"},
 		{"number", "Number"},
 		{"boolean", "Boolean"},
-		{"object", "Object"},
 		{"symbol", "Symbol"},
 	} {
 		sym := &ast.Symbol{}
@@ -6090,7 +6123,7 @@ func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.M
 	// TS 1.0 spec (April 2014): 3.6.1
 	// The predefined type keywords are reserved and cannot be used as names of user defined types.
 	switch name.Text() {
-	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "object", "undefined":
+	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "table", "undefined":
 		c.error(name, message, name.Text())
 	}
 }
@@ -7745,7 +7778,10 @@ func (c *Checker) resolveInstanceofExpression(node *ast.Node, candidatesOutArray
 			if len(callSignatures) != 0 {
 				return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
 			}
-		} else if !(c.typeHasCallOrConstructSignatures(rightType) || c.isTypeSubtypeOf(rightType, c.globalFunctionType)) {
+		} else if !(c.typeHasCallOrConstructSignatures(rightType) || c.isTypeDerivedFrom(rightType, c.globalFunctionType)) {
+			// isTypeDerivedFrom (not a structural subtype check, which the empty sentinel
+			// would make vacuous) so a non-callable right-hand side is still an error,
+			// while unions, intersections and constrained type parameters distribute.
 			c.error(right, diagnostics.The_right_hand_side_of_an_instanceof_expression_must_be_either_of_type_any_a_class_function_or_other_type_assignable_to_the_Function_interface_type_or_an_object_type_with_a_Symbol_hasInstance_method)
 			return c.resolveErrorCall(node)
 		}
@@ -10071,7 +10107,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 			}
 			return apparentType
 		}
-		prop = c.getPropertyOfTypeEx(apparentType, right.Text(), false /*skipObjectFunctionPropertyAugment*/, node.Kind == ast.KindQualifiedName /*includeTypeOnlyMembers*/)
+		prop = c.getPropertyOfTypeEx(apparentType, right.Text(), node.Kind == ast.KindQualifiedName /*includeTypeOnlyMembers*/)
 	}
 	c.markLinkedReferences(node, ReferenceHintProperty, prop, leftType)
 	var propType *Type
@@ -12979,7 +13015,7 @@ func (c *Checker) resolveExportByName(moduleSymbol *ast.Symbol, name string, sou
 	exportValue := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
 	var exportSymbol *ast.Symbol
 	if exportValue != nil {
-		exportSymbol = c.getPropertyOfTypeEx(c.getTypeOfSymbol(exportValue), name, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
+		exportSymbol = c.getPropertyOfTypeEx(c.getTypeOfSymbol(exportValue), name, false /*includeTypeOnlyMembers*/)
 	} else {
 		exportSymbol = moduleSymbol.Exports[name]
 	}
@@ -13029,7 +13065,7 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 			var symbolFromVariable *ast.Symbol
 			// First check if module was specified with "export=". If so, get the member from the resolved type
 			if moduleSymbol != nil && moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil {
-				symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(targetSymbol), nameText, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
+				symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(targetSymbol), nameText, false /*includeTypeOnlyMembers*/)
 			} else {
 				symbolFromVariable = c.getPropertyOfVariable(targetSymbol, nameText)
 			}
@@ -13817,7 +13853,7 @@ func (c *Checker) resolveESModuleSymbol(moduleSymbol *ast.Symbol, node *ast.Node
 			}
 
 			isEsmCjsRef := targetFile != nil && isESMFormatImportImportingCommonjsFormatFile(usageMode, c.program.GetImpliedNodeFormatForEmit(targetFile.AsSourceFile()))
-			if c.hasSignatures(typ) || c.getPropertyOfTypeEx(typ, ast.InternalSymbolNameDefault, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/) != nil || isEsmCjsRef {
+			if c.hasSignatures(typ) || c.getPropertyOfTypeEx(typ, ast.InternalSymbolNameDefault, false /*includeTypeOnlyMembers*/) != nil || isEsmCjsRef {
 				var moduleType *Type
 				if typ.Flags()&TypeFlagsStructuredType != 0 {
 					moduleType = c.getTypeWithSyntheticDefaultImportType(typ, symbol, moduleSymbol, reference)
@@ -14066,7 +14102,7 @@ func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *as
 			if ast.IsQualifiedName(name) {
 				containingQualifiedName = getContainingQualifiedNameNode(name)
 			}
-			canSuggestTypeof := c.globalObjectType != nil && meaning&ast.SymbolFlagsType != 0 && containingQualifiedName != nil && c.tryGetQualifiedNameAsValue(containingQualifiedName) != nil
+			canSuggestTypeof := meaning&ast.SymbolFlagsType != 0 && containingQualifiedName != nil && c.tryGetQualifiedNameAsValue(containingQualifiedName) != nil
 			if canSuggestTypeof {
 				c.error(containingQualifiedName, diagnostics.X_0_refers_to_a_value_but_is_being_used_as_a_type_here_Did_you_mean_typeof_0, entityNameToString(containingQualifiedName))
 				return nil
@@ -17048,7 +17084,7 @@ func (c *Checker) getPropertiesOfUnionOrIntersectionType(t *Type) []*ast.Symbol 
 			for _, prop := range c.getPropertiesOfType(current) {
 				if !checked.Has(prop.Name) {
 					checked.Add(prop.Name)
-					combinedProp := c.getPropertyOfUnionOrIntersectionType(t, prop.Name, t.flags&TypeFlagsIntersection != 0 /*skipObjectFunctionPropertyAugment*/)
+					combinedProp := c.getPropertyOfUnionOrIntersectionType(t, prop.Name)
 					if combinedProp != nil {
 						props = append(props, combinedProp)
 					}
@@ -17066,7 +17102,7 @@ func (c *Checker) getPropertiesOfUnionOrIntersectionType(t *Type) []*ast.Symbol 
 }
 
 func (c *Checker) getPropertyOfType(t *Type, name string) *ast.Symbol {
-	return c.getPropertyOfTypeEx(t, name, false /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
+	return c.getPropertyOfTypeEx(t, name, false /*includeTypeOnlyMembers*/)
 }
 
 /**
@@ -17077,7 +17113,7 @@ func (c *Checker) getPropertyOfType(t *Type, name string) *ast.Symbol {
  * @param type a type to look up property from
  * @param name a name of property to look up in a given type
  */
-func (c *Checker) getPropertyOfTypeEx(t *Type, name string, skipObjectFunctionPropertyAugment bool, includeTypeOnlyMembers bool) *ast.Symbol {
+func (c *Checker) getPropertyOfTypeEx(t *Type, name string, includeTypeOnlyMembers bool) *ast.Symbol {
 	t = c.getReducedApparentType(t)
 	switch {
 	case t.flags&TypeFlagsObject != 0:
@@ -17094,36 +17130,13 @@ func (c *Checker) getPropertyOfTypeEx(t *Type, name string, skipObjectFunctionPr
 				return symbol
 			}
 		}
-		if skipObjectFunctionPropertyAugment {
-			return nil
-		}
-		var functionType *Type
-		switch {
-		case t == c.anyFunctionType:
-			functionType = c.globalFunctionType
-		case len(resolved.CallSignatures()) != 0:
-			functionType = c.globalCallableFunctionType
-		case len(resolved.ConstructSignatures()) != 0:
-			functionType = c.globalNewableFunctionType
-		}
-		if functionType != nil {
-			symbol = c.getPropertyOfObjectType(functionType, name)
-			if symbol != nil {
-				return symbol
-			}
-		}
-		return c.getPropertyOfObjectType(c.globalObjectType, name)
-	case t.flags&TypeFlagsIntersection != 0:
-		prop := c.getPropertyOfUnionOrIntersectionType(t, name, true /*skipObjectFunctionPropertyAugment*/)
-		if prop != nil {
-			return prop
-		}
-		if !skipObjectFunctionPropertyAugment {
-			return c.getPropertyOfUnionOrIntersectionType(t, name, skipObjectFunctionPropertyAugment)
-		}
+		// No Object/Function prototype augmentation: tlua's globals for them are gone and
+		// the sentinel types are empty by construction, so there is nothing to walk.
 		return nil
+	case t.flags&TypeFlagsIntersection != 0:
+		return c.getPropertyOfUnionOrIntersectionType(t, name)
 	case t.flags&TypeFlagsUnion != 0:
-		return c.getPropertyOfUnionOrIntersectionType(t, name, skipObjectFunctionPropertyAugment)
+		return c.getPropertyOfUnionOrIntersectionType(t, name)
 	}
 	return nil
 }
@@ -18857,7 +18870,8 @@ func isThislessVariableLikeDeclaration(node *ast.Node) bool {
 func isThislessType(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword, ast.KindBooleanKeyword,
-		ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindVoidKeyword, ast.KindNilKeyword, ast.KindNeverKeyword, ast.KindLiteralType:
+		ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindFunctionKeyword, ast.KindVoidKeyword, ast.KindNilKeyword,
+		ast.KindNeverKeyword, ast.KindLiteralType:
 		return true
 	case ast.KindArrayType:
 		return isThislessType(node.AsArrayTypeNode().ElementType)
@@ -19090,9 +19104,6 @@ func (c *Checker) resolveUnionTypeMembers(t *Type) {
 	// The members and properties collections are empty for union types. To get all properties of a union
 	// type use getPropertiesOfType (only the language service uses this).
 	callSignatures := c.getUnionSignatures(core.Map(t.Types(), func(t *Type) []*Signature {
-		if t == c.globalFunctionType {
-			return []*Signature{c.unknownSignature}
-		}
 		return c.getSignaturesOfType(t, SignatureKindCall)
 	}))
 	if len(callSignatures) == 0 {
@@ -19462,8 +19473,8 @@ func (c *Checker) getPropertyOfObjectType(t *Type, name string) *ast.Symbol {
 	return nil
 }
 
-func (c *Checker) getPropertyOfUnionOrIntersectionType(t *Type, name string, skipObjectFunctionPropertyAugment bool) *ast.Symbol {
-	prop := c.getUnionOrIntersectionProperty(t, name, skipObjectFunctionPropertyAugment)
+func (c *Checker) getPropertyOfUnionOrIntersectionType(t *Type, name string) *ast.Symbol {
+	prop := c.getUnionOrIntersectionProperty(t, name)
 	// We need to filter out partial properties in union types
 	if prop != nil && prop.CheckFlags&ast.CheckFlagsReadPartial != 0 {
 		return nil
@@ -19476,31 +19487,19 @@ func (c *Checker) getPropertyOfUnionOrIntersectionType(t *Type, name string, ski
 // constituents, in which case the isPartial flag is set when the containing type is union type. We need
 // these partial properties when identifying discriminant properties, but otherwise they are filtered out
 // and do not appear to be present in the union type.
-func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjectFunctionPropertyAugment bool) *ast.Symbol {
-	var cache ast.SymbolTable
-	if skipObjectFunctionPropertyAugment {
-		cache = ast.GetSymbolTable(&t.AsUnionOrIntersectionType().propertyCacheWithoutFunctionPropertyAugment)
-	} else {
-		cache = ast.GetSymbolTable(&t.AsUnionOrIntersectionType().propertyCache)
-	}
+func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string) *ast.Symbol {
+	cache := ast.GetSymbolTable(&t.AsUnionOrIntersectionType().propertyCache)
 	if prop := cache[name]; prop != nil {
 		return prop
 	}
-	prop := c.createUnionOrIntersectionProperty(t, name, skipObjectFunctionPropertyAugment)
+	prop := c.createUnionOrIntersectionProperty(t, name)
 	if prop != nil {
 		cache[name] = prop
-		// Propagate an entry from the non-augmented cache to the augmented cache unless the property is partial.
-		if skipObjectFunctionPropertyAugment && prop.CheckFlags&ast.CheckFlagsPartial == 0 {
-			augmentedCache := ast.GetSymbolTable(&t.AsUnionOrIntersectionType().propertyCache)
-			if augmentedCache[name] == nil {
-				augmentedCache[name] = prop
-			}
-		}
 	}
 	return prop
 }
 
-func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name string, skipObjectFunctionPropertyAugment bool) *ast.Symbol {
+func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name string) *ast.Symbol {
 	propFlags := ast.SymbolFlagsNone
 	var singleProp *ast.Symbol
 	var propSet collections.OrderedSet[*ast.Symbol]
@@ -19518,7 +19517,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	for _, current := range containingType.Types() {
 		t := c.getApparentType(current)
 		if !c.isErrorType(t) && t.flags&TypeFlagsNever == 0 {
-			prop := c.getPropertyOfTypeEx(t, name, skipObjectFunctionPropertyAugment, false)
+			prop := c.getPropertyOfTypeEx(t, name, false)
 			var modifiers ast.ModifierFlags
 			if prop != nil {
 				modifiers = getDeclarationModifierFlagsFromSymbol(prop)
@@ -20962,6 +20961,8 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.neverType
 	case ast.KindObjectKeyword:
 		return c.nonPrimitiveType
+	case ast.KindFunctionKeyword:
+		return c.getLuaFunctionType()
 	case ast.KindIntrinsicKeyword:
 		return c.intrinsicMarkerType
 	case ast.KindLiteralType:
@@ -21136,7 +21137,9 @@ func (c *Checker) getIntendedTypeFromJSDocTypeReference(node *ast.Node) *Type {
 				return c.nilType
 			case "Function", "function":
 				c.checkNoTypeArguments(node, nil)
-				return c.globalFunctionType
+				// The keyword type, not the empty sentinel: a JSDoc "function" means a
+				// callable value.
+				return c.getLuaFunctionType()
 			case "array":
 				if len(typeArgs) == 0 && !c.noImplicitAny {
 					return c.anyArrayType
@@ -22651,7 +22654,7 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 				var symbolFromVariable *ast.Symbol
 				var symbolFromModule *ast.Symbol
 				if n.IsTypeOf {
-					symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(mergedResolvedSymbol), current.Text(), false /*skipObjectFunctionPropertyAugment*/, true /*includeTypeOnlyMembers*/)
+					symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(mergedResolvedSymbol), current.Text(), true /*includeTypeOnlyMembers*/)
 				} else {
 					symbolFromModule = c.getSymbol(c.getExportsOfSymbol(mergedResolvedSymbol), current.Text(), meaning)
 					if symbolFromModule == nil {
@@ -22715,13 +22718,6 @@ func (c *Checker) createTypeFromGenericGlobalType(genericGlobalType *Type, typeA
 		return c.createTypeReference(genericGlobalType, typeArguments)
 	}
 	return c.emptyObjectType
-}
-
-func (c *Checker) getGlobalStrictFunctionType(name string) *Type {
-	if c.strictBindCallApply {
-		return c.getGlobalType(name, 0 /*arity*/, true /*reportErrors*/)
-	}
-	return c.globalFunctionType
 }
 
 func (c *Checker) getGlobalImportMetaExpressionType() *Type {
@@ -24831,6 +24827,12 @@ func (c *Checker) filterTypes(types []*Type, predicate func(*Type) bool) {
 }
 
 func (c *Checker) IsEmptyAnonymousObjectType(t *Type) bool {
+	// The Object/Function sentinels are empty anonymous synthetics, but treating them as a
+	// plain `{}` would defeat their identity roles (isTypeDerivedFrom's instanceof gates),
+	// so they are carved out here the way isEmptyResolvedType carves out anyFunctionType.
+	if t == c.globalObjectType || t == c.globalFunctionType {
+		return false
+	}
 	return t.objectFlags&ObjectFlagsAnonymous != 0 && (t.objectFlags&ObjectFlagsMembersResolved != 0 && c.isEmptyResolvedType(t.AsStructuredType()) ||
 		t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsTypeLiteral != 0 && len(c.getMembersOfSymbol(t.symbol)) == 0)
 }
@@ -28632,10 +28634,15 @@ func (c *Checker) isFunctionObjectType(t *Type) bool {
 	if t.objectFlags&ObjectFlagsEvolvingArray != 0 {
 		return false
 	}
-	// We do a quick check for a "bind" property before performing the more expensive subtype
-	// check. This gives us a quicker out in the common case where an object type is not a function.
-	resolved := c.resolveStructuredTypeMembers(t)
-	return len(resolved.signatures) != 0 || resolved.members["bind"] != nil && c.isTypeSubtypeOf(t, c.globalFunctionType)
+	// A setmetatable pairing stays a table even when __call makes it callable: `type()`
+	// reports "table", so its facts must be object facts, not function facts.
+	if isMetatableType(t) {
+		return false
+	}
+	// Call or construct signatures are the only function-ness Lua has. The JS-era `bind`
+	// member fast path went with the Function stub: against the empty sentinel its subtype
+	// guard was vacuous, misclassifying any table with a `bind` field.
+	return len(c.resolveStructuredTypeMembers(t).signatures) != 0
 }
 
 func (c *Checker) getTypeWithFacts(t *Type, include TypeFacts) *Type {

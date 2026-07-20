@@ -1,0 +1,102 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// `table` is the non-primitive keyword type: what `type(x) == "table"` reports.
+// Plain tables satisfy it; functions and the branded thread/userdata/cdata kinds
+// do not. The JS-era `object` spelling is gone -- an ordinary identifier now.
+
+local t: table = { x = 1 };
+declare iface: { n: number };
+local t2: table = iface;
+
+// A function is not a table.
+local fn: table = function(): number return 1; end;
+declare lf: function;
+local fn2: table = lf;
+
+// The branded non-table kinds are not tables either.
+declare th: LuaThread;
+local notThread: table = th;
+declare ud: LuaUserdata;
+local notUserdata: table = ud;
+declare cd: LuaCData;
+local notCData: table = cd;
+
+// A setmetatable pairing is a real table by construction, even a callable one.
+local callable = setmetatable({ n = 1 },
+    { __call = function(self: table, x: number): number return x; end });
+local pairedIsTable: table = callable;
+
+// The partition survives intersection: one plain-table constituent must not
+// vouch for a callable or branded partner...
+declare callableMix: { a: number } & (() => void);
+local notMix: table = callableMix;
+declare threadMix: LuaThread & { a: number };
+local notThreadMix: table = threadMix;
+// ...and a union needs every constituent to be a table.
+declare fnOrTable: (() => void) | { a: number };
+local notUnion: table = fnOrTable;
+// A pairing constituent keeps an intersection a real table.
+declare pairedMix: typeof callable & { extra: number };
+local stillPaired: table = pairedMix;
+// A primitive constituent means the value IS that primitive at runtime: the
+// branded-string idiom is never a table.
+declare brandedStr: string & { tag: number };
+local notBranded: table = brandedStr;
+
+// Narrowing agrees a callable pairing is a table: the true-"table" branch keeps
+// it live, and the "function" branch is dead (type() reports "table").
+if type(callable) == "table" then
+    local liveN: number = callable.n;
+end
+if type(callable) == "function" then
+    local deadPairing: never = callable;
+end
+
+// A brand member excludes by IDENTITY: a lookalike field of another type is
+// just a field, and the carrier stays a plain table.
+declare lookalike: { __luaThreadBrand: number, n: number };
+local lookalikeIsTable: table = lookalike;
+
+// A `bind` field is just a field too (the JS Function heuristic is gone):
+// the value narrows as a table, not to never.
+declare withBind: { bind: string } | number;
+if type(withBind) == "table" then
+    local wb: table = withBind;
+    local wbn: number = withBind;
+end
+
+// `type(x) == "table"` narrowing and the keyword agree: the narrowed value
+// satisfies the annotation.
+declare mixed: string | { k: number } | LuaThread;
+if type(mixed) == "table" then
+    local narrowed: table = mixed;
+end
+
+// The keyword is reserved as a type name...
+type table = number;
+
+// ...but stays an ordinary identifier in value positions: the table library and
+// shadowing locals are untouched.
+local joined: string = table.concat({ "a", "b" }, ",");
+function shadow(): number
+    local table = { 1, 2 };
+    return table[1];
+end
+
+// `object` is just an identifier now, in both value and type positions.
+local dead = object;
+type Obj = object;
+
+// The JS Object/Function stubs are gone from the libs entirely.
+type O2 = Object;
+type F2 = Function;
+
+// `type(x) == "function"` on unknown narrows to function (the stand-in when
+// there is no declared constituent to keep).
+declare u: unknown;
+if type(u) == "function" then
+    local lf2: function = u;
+end

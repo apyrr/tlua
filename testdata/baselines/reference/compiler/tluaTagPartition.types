@@ -1,0 +1,302 @@
+//// [tests/cases/compiler/tluaTagPartition.tlua] ////
+
+=== tluaTagPartition.tlua ===
+// The runtime-tag partition, locked as one truth table so its three encodings
+// (assignability via isLuaTableType, facts via isFunctionObjectType, narrowing
+// by tag) cannot drift apart silently. Every value kind is checked against both
+// keyword types AND both guards; type() reports exactly one tag per value.
+
+// The kinds under test.
+declare plainTable: { n: number };
+>plainTable : { n: number; }
+>n : number
+
+declare fn: () => void;
+>fn : () => void
+
+local pairing = setmetatable({ n = 1 },
+>pairing : { (x: number): number; n: number; }
+>setmetatable({ n = 1 },    { __call = function(self: table, x: number): number return x; end }) : { (x: number): number; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+    { __call = function(self: table, x: number): number return x; end });
+>{ __call = function(self: table, x: number): number return x; end } : { __call: (self: table, x: number) => number; }
+>__call : (self: table, x: number) => number
+>function(self: table, x: number): number return x; end : (self: table, x: number) => number
+>self : table
+>x : number
+>x : number
+
+declare brandedPrim: string & { tag: number };
+>brandedPrim : string & { tag: number; }
+>tag : number
+
+declare thread: LuaThread;
+>thread : LuaThread
+
+declare lookalike: { __luaThreadBrand: number };
+>lookalike : { __luaThreadBrand: number; }
+>__luaThreadBrand : number
+
+declare callableMix: { a: number } & (() => void);
+>callableMix : { a: number; } & (() => void)
+>a : number
+
+declare threadMix: LuaThread & { a: number };
+>threadMix : LuaThread & { a: number; }
+>a : number
+
+// Column 1: assignable to `table`?
+local t1: table = plainTable;
+>t1 : table
+>plainTable : { n: number; }
+
+local t2: table = fn;
+>t2 : table
+>fn : () => void
+
+local t3: table = pairing;
+>t3 : table
+>pairing : { (x: number): number; n: number; }
+
+local t4: table = brandedPrim;
+>t4 : table
+>brandedPrim : string & { tag: number; }
+
+local t5: table = thread;
+>t5 : table
+>thread : LuaThread
+
+local t6: table = lookalike;
+>t6 : table
+>lookalike : { __luaThreadBrand: number; }
+
+local t7: table = callableMix;
+>t7 : table
+>callableMix : { a: number; } & (() => void)
+
+local t8: table = threadMix;
+>t8 : table
+>threadMix : LuaThread & { a: number; }
+
+// Column 2: assignable to `function`? Structural: anything callable is admitted,
+// so a callable pairing or intersection passes even though type() says "table".
+local f1: function = plainTable;
+>f1 : function
+>plainTable : { n: number; }
+
+local f2: function = fn;
+>f2 : function
+>fn : () => void
+
+local f3: function = pairing;
+>f3 : function
+>pairing : { (x: number): number; n: number; }
+
+local f4: function = brandedPrim;
+>f4 : function
+>brandedPrim : string & { tag: number; }
+
+local f5: function = thread;
+>f5 : function
+>thread : LuaThread
+
+local f6: function = lookalike;
+>f6 : function
+>lookalike : { __luaThreadBrand: number; }
+
+local f7: function = callableMix;
+>f7 : function
+>callableMix : { a: number; } & (() => void)
+
+local f8: function = threadMix;
+>f8 : function
+>threadMix : LuaThread & { a: number; }
+
+// Column 3: `type(x) == "table"` narrowing (union with number; a `never` local
+// locks exclusion, a deliberate number-mismatch locks a kept constituent).
+declare uPlain: { n: number } | number;
+>uPlain : number | { n: number; }
+>n : number
+
+if type(uPlain) == "table" then local k1: table = uPlain; local e1: number = uPlain; end
+>type(uPlain) == "table" : boolean
+>type(uPlain) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uPlain : number | { n: number; }
+>"table" : "table"
+>k1 : table
+>uPlain : { n: number; }
+>e1 : number
+>uPlain : { n: number; }
+
+declare uFn: (() => void) | number;
+>uFn : number | (() => void)
+
+if type(uFn) == "table" then local d2: never = uFn; end
+>type(uFn) == "table" : boolean
+>type(uFn) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uFn : number | (() => void)
+>"table" : "table"
+>d2 : never
+>uFn : never
+
+declare uPairing: typeof pairing | number;
+>uPairing : number | { (x: number): number; n: number; }
+>pairing : { (x: number): number; n: number; }
+
+if type(uPairing) == "table" then local k3: table = uPairing; local e3: number = uPairing.n; end
+>type(uPairing) == "table" : boolean
+>type(uPairing) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uPairing : number | { (x: number): number; n: number; }
+>"table" : "table"
+>k3 : table
+>uPairing : { (x: number): number; n: number; }
+>e3 : number
+>uPairing.n : number
+>uPairing : { (x: number): number; n: number; }
+>n : number
+
+declare uBranded: (string & { tag: number }) | number;
+>uBranded : number | (string & { tag: number; })
+>tag : number
+
+if type(uBranded) == "table" then local d4: never = uBranded; end
+>type(uBranded) == "table" : boolean
+>type(uBranded) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uBranded : number | (string & { tag: number; })
+>"table" : "table"
+>d4 : never
+>uBranded : never
+
+declare uThread: LuaThread | number;
+>uThread : number | LuaThread
+
+if type(uThread) == "table" then local d5: never = uThread; end
+>type(uThread) == "table" : boolean
+>type(uThread) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uThread : number | LuaThread
+>"table" : "table"
+>d5 : never
+>uThread : never
+
+declare uLookalike: { __luaThreadBrand: number } | number;
+>uLookalike : number | { __luaThreadBrand: number; }
+>__luaThreadBrand : number
+
+if type(uLookalike) == "table" then local k6: table = uLookalike; end
+>type(uLookalike) == "table" : boolean
+>type(uLookalike) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uLookalike : number | { __luaThreadBrand: number; }
+>"table" : "table"
+>k6 : table
+>uLookalike : { __luaThreadBrand: number; }
+
+declare uCallableMix: ({ a: number } & (() => void)) | number;
+>uCallableMix : number | ({ a: number; } & (() => void))
+>a : number
+
+if type(uCallableMix) == "table" then local d7: never = uCallableMix; end
+>type(uCallableMix) == "table" : boolean
+>type(uCallableMix) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uCallableMix : number | ({ a: number; } & (() => void))
+>"table" : "table"
+>d7 : never
+>uCallableMix : never
+
+declare uThreadMix: (LuaThread & { a: number }) | number;
+>uThreadMix : number | (LuaThread & { a: number; })
+>a : number
+
+if type(uThreadMix) == "table" then local d8: never = uThreadMix; end
+>type(uThreadMix) == "table" : boolean
+>type(uThreadMix) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uThreadMix : number | (LuaThread & { a: number; })
+>"table" : "table"
+>d8 : never
+>uThreadMix : never
+
+// Column 4: `type(x) == "function"` narrowing. A callable pairing is dead here
+// (its runtime tag is "table"); a callable intersection is kept.
+if type(uPlain) == "function" then local g1: never = uPlain; end
+>type(uPlain) == "function" : boolean
+>type(uPlain) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uPlain : number | { n: number; }
+>"function" : "function"
+>g1 : never
+>uPlain : never
+
+if type(uFn) == "function" then uFn(); end
+>type(uFn) == "function" : boolean
+>type(uFn) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uFn : number | (() => void)
+>"function" : "function"
+>uFn() : void
+>uFn : () => void
+
+if type(uPairing) == "function" then local g3: never = uPairing; end
+>type(uPairing) == "function" : boolean
+>type(uPairing) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uPairing : number | { (x: number): number; n: number; }
+>"function" : "function"
+>g3 : never
+>uPairing : never
+
+if type(uBranded) == "function" then local g4: never = uBranded; end
+>type(uBranded) == "function" : boolean
+>type(uBranded) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uBranded : number | (string & { tag: number; })
+>"function" : "function"
+>g4 : never
+>uBranded : never
+
+if type(uThread) == "function" then local g5: never = uThread; end
+>type(uThread) == "function" : boolean
+>type(uThread) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uThread : number | LuaThread
+>"function" : "function"
+>g5 : never
+>uThread : never
+
+if type(uLookalike) == "function" then local g6: never = uLookalike; end
+>type(uLookalike) == "function" : boolean
+>type(uLookalike) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uLookalike : number | { __luaThreadBrand: number; }
+>"function" : "function"
+>g6 : never
+>uLookalike : never
+
+if type(uCallableMix) == "function" then uCallableMix(); end
+>type(uCallableMix) == "function" : boolean
+>type(uCallableMix) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uCallableMix : number | ({ a: number; } & (() => void))
+>"function" : "function"
+>uCallableMix() : void
+>uCallableMix : { a: number; } & (() => void)
+
+if type(uThreadMix) == "function" then local g8: never = uThreadMix; end
+>type(uThreadMix) == "function" : boolean
+>type(uThreadMix) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>uThreadMix : number | (LuaThread & { a: number; })
+>"function" : "function"
+>g8 : never
+>uThreadMix : never
+

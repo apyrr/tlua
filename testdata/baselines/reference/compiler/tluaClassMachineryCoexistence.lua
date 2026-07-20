@@ -5,7 +5,7 @@
 // relied on must keep working, because interfaces, the DOM libs, and Lua
 // tables all use it: interface `extends` heritage, constructor types / construct
 // signatures, `new`, `instanceof`, `typeof`, and the class-adjacent utility
-// types. (Object-literal `super` died with object-literal methods in the table
+// types. (Object-literal `super` died with table-literal methods in the table
 // slice — `super` has no legal home left. Polymorphic `this` died with the
 // `this` slice — see tluaNoThis.tlua.)
 
@@ -33,6 +33,13 @@ local inst = new K(); // `new X()`
 local isK = inst instanceof K; // `instanceof`
 type TK = typeof K; // `typeof Ctor`
 
+// A non-callable right-hand side is still an error: the check runs through
+// isTypeDerivedFrom, not a structural subtype test the empty Function sentinel
+// would make vacuous.
+declare notCallable: { area: number };
+local bad1 = inst instanceof notCallable;
+local bad2 = inst instanceof 3;
+
 // class-adjacent utility types (defined in lib.es5.d.tlua via construct signatures).
 // `ConstructorParameters` is gone: it is built on `...args: infer P`, which needs
 // a rest parameter whose type IS the parameter tuple, and a vararg's annotation is
@@ -45,8 +52,10 @@ type Inst = InstanceType<TK>;
 -- relied on must keep working, because interfaces, the DOM libs, and Lua
 -- tables all use it: interface `extends` heritage, constructor types / construct
 -- signatures, `new`, `instanceof`, `typeof`, and the class-adjacent utility
--- types. (Object-literal `super` died with object-literal methods in the table
+-- types. (Object-literal `super` died with table-literal methods in the table
 -- slice — `super` has no legal home left. Polymorphic `this` died with the
 -- `this` slice — see tluaNoThis.tlua.)
 local inst = new K(); -- `new X()`
 local isK = inst instanceof K; -- `instanceof`
+local bad1 = inst instanceof notCallable;
+local bad2 = inst instanceof 3;

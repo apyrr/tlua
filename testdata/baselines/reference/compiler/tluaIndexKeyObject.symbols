@@ -110,7 +110,7 @@ local bad2: string = byThread[pt];
 >byThread : Symbol(byThread, Decl(tluaIndexKeyObject.tlua, 20, 7))
 >pt : Symbol(pt, Decl(tluaIndexKeyObject.tlua, 12, 7))
 
-// keyof reports the object key.
+// keyof reports the table key.
 type K = keyof ByTable;
 >K : Symbol(K, Decl(tluaIndexKeyObject.tlua, 32, 34))
 >ByTable : Symbol(ByTable, Decl(tluaIndexKeyObject.tlua, 4, 40))

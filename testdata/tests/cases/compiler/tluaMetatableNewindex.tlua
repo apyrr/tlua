@@ -9,7 +9,7 @@
 // Function form: __newindex is called as (table, key, value), so its value parameter types the
 // write and its key parameter says which keys it answers.
 local logged = setmetatable({ n = 1 }, {
-  __newindex = function(t: object, k: string, v: number): void return; end,
+  __newindex = function(t: table, k: string, v: number): void return; end,
 });
 logged.fresh = 2;
 logged.fresh = "no";
@@ -24,5 +24,5 @@ proxied.other = 3;
 proxied.other = "no";
 
 // A key outside the handler's domain is not answered.
-local numKeys = setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end });
+local numKeys = setmetatable({}, { __newindex = function(t: table, k: number, v: string): void return; end });
 numKeys.name = "x";

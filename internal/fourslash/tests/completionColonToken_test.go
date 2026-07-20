@@ -25,7 +25,19 @@ function c(enum: /*c*/) {}
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	for _, marker := range f.Ranges() {
+	// A stray top-level colon still offers the ordinary global list; the parameter
+	// annotations after the no-longer-reserved names offer type completions.
+	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{"assert", "setmetatable", "print"},
+		},
+	})
+	for _, marker := range []string{"b", "c"} {
 		f.VerifyCompletions(t, marker, &fourslash.CompletionsExpectedList{
 			IsIncomplete: false,
 			ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -33,7 +45,7 @@ function c(enum: /*c*/) {}
 				EditRange:        Ignored,
 			},
 			Items: &fourslash.CompletionsExpectedItems{
-				Includes: CompletionGlobals,
+				Includes: CompletionTypeKeywords,
 			},
 		})
 	}

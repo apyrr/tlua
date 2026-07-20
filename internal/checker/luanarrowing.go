@@ -121,7 +121,24 @@ func (c *Checker) narrowTypeByLuaTag(t *Type, guard luaGuardKind, tag string, as
 			if t.flags&TypeFlagsAny != 0 {
 				return t
 			}
-			return c.narrowTypeByTypeFacts(t, c.globalFunctionType, TypeFactsTypeofEQFunction)
+			// The facts filter keeps a union's own function constituents with their
+			// declared signatures; the `function` top type only stands in where nothing
+			// declared can be kept -- unknown says nothing to filter, and a bare
+			// instantiable (a type parameter) gains callability only by intersection.
+			// narrowTypeByTypeFacts is unusable here: its candidate-substitution arm
+			// replaces precise signatures with the all-any top type.
+			if t.flags&TypeFlagsUnknown != 0 {
+				return c.getLuaFunctionType()
+			}
+			return c.mapType(t, func(s *Type) *Type {
+				if !c.hasTypeFacts(s, TypeFactsTypeofEQFunction) {
+					return c.neverType
+				}
+				if s.flags&TypeFlagsInstantiable != 0 && !c.isTypeSubtypeOf(s, c.getLuaFunctionType()) {
+					return c.getIntersectionType([]*Type{s, c.getLuaFunctionType()})
+				}
+				return s
+			})
 		}
 		return c.getAdjustedTypeWithFacts(t, TypeFactsTypeofNEFunction)
 	case "table":
@@ -172,6 +189,67 @@ func (c *Checker) narrowTypeByLuaBrand(t *Type, brand *Type, assumeTrue bool) *T
 
 func (c *Checker) narrowTypeByLuaFile(t *Type, assumeTrue bool) *Type {
 	return c.narrowTypeByLuaBrand(t, c.getLuaFileType(), assumeTrue)
+}
+
+// isLuaTableType reports whether an object- or intersection-flagged type is a plain Lua
+// table -- what the `table` keyword type admits. A setmetatable pairing always is: a real
+// table by construction, even when __call makes it callable. Anything else must be
+// non-callable (a function is not a table) and carry no brand member (a thread, userdata or
+// cdata is not a table either), matching what `type(x) == "table"` narrowing believes. An
+// intersection answers as a whole: one plain-table constituent must not vouch for a callable
+// or branded partner. The verdict is cached per type because a repeat probe would re-pay the
+// member resolution.
+func (c *Checker) isLuaTableType(source *Type) bool {
+	if isMetatableType(source) {
+		return true
+	}
+	// A reference instantiation shares its generic target's verdict: instantiation maps
+	// members one-to-one and cannot add call/construct signatures or brand members, so one
+	// probe per generic serves every instantiation. A generic interface's declared type is
+	// a reference to ITSELF -- that one probes directly.
+	if source.objectFlags&ObjectFlagsReference != 0 {
+		if target := source.Target(); target != source {
+			return c.isLuaTableType(target)
+		}
+	}
+	if source.flags&TypeFlagsIntersection != 0 {
+		// A setmetatable pairing constituent makes the intersection a real table by
+		// construction, whatever else it is intersected with...
+		if core.Some(source.Types(), isMetatableType) {
+			return true
+		}
+		// ...while a primitive constituent (the branded-string idiom `string & { tag }`)
+		// means the value is that primitive at runtime -- `type()` never says "table".
+		if core.Some(source.Types(), func(t *Type) bool { return t.flags&TypeFlagsPrimitive != 0 }) {
+			return false
+		}
+	}
+	if cached, ok := c.luaTableTypeResults[source]; ok {
+		return cached
+	}
+	result := !c.typeHasCallOrConstructSignatures(source) && !c.hasLuaBrandMember(source)
+	// A type queried mid-resolution answers from a partial member snapshot; caching that
+	// would make the transient answer permanent (the hazard PropertiesTypesKey folds into
+	// its cache key).
+	if source.objectFlags&ObjectFlagsUnresolvedMembers == 0 {
+		c.luaTableTypeResults[source] = result
+	}
+	return result
+}
+
+// hasLuaBrandMember reports whether the type carries one of the unique-symbol brand members
+// that mark the branded non-table object kinds. Exclusion works by member IDENTITY: the
+// interned unique-symbol type survives inheritance, while a lookalike field of another type
+// stays a plain table. Unlike isLuaBrandedType's subtype checks, a property lookup plus
+// pointer compare cannot re-enter the relation machinery this is called from.
+func (c *Checker) hasLuaBrandMember(source *Type) bool {
+	for name, brandType := range c.getLuaBrandMembers() {
+		prop := c.getPropertyOfTypeEx(source, name, false /*includeTypeOnlyMembers*/)
+		if prop != nil && c.getTypeOfSymbol(prop) == brandType {
+			return true
+		}
+	}
+	return false
 }
 
 // isLuaBrandedType reports whether s is one of the branded non-table object kinds

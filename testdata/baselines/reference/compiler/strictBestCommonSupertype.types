@@ -3,13 +3,13 @@
 === strictBestCommonSupertype.tlua ===
 // https://github.com/microsoft/typescript-go/issues/1222
 
-class Store<T = object> {
+class Store<T = table> {
 >class : any
 >Store<T : boolean
 >Store : any
 >T : any
->object> {    select<K>(mapFn: (state: T) => K) {};} : boolean
->object : any
+>table> {    select<K>(mapFn: (state: T) => K) {};} : boolean
+>table : TableLib
 >{    select<K>(mapFn: (state: T) => K) {};} : { 1: number & (any?, ...any); 2: {}; }
 
     select<K>(mapFn: (state: T) => K) {};
@@ -37,7 +37,7 @@ function inject<T>(token: ProviderToken<T>): T {
 >{} : {}
 }
 
-interface Type<T> extends Function {
+interface Type<T> {
     new (...args: any[]): T;
 >args : any[]
 }
@@ -45,7 +45,7 @@ interface Type<T> extends Function {
 type ProviderToken<T> = Type<T> | AbstractType<T>;
 >ProviderToken : ProviderToken<T>
 
-interface AbstractType<T> extends Function {
+interface AbstractType<T> {
     prototype: T;
 >prototype : T
 }

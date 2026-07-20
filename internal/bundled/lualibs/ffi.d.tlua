@@ -12,7 +12,7 @@ interface LuaCType {
 interface LuaCallback extends LuaCData {
     readonly __ffiCallbackBrand: unique symbol;
     free(): void;
-    set(fn: LuaFunction): void;
+    set(fn: function): void;
 }
 
 interface LuaCNamespace {
@@ -30,8 +30,8 @@ interface FFILib {
     "new": (type: LuaCTypeSpec, ...: any) => LuaCData;
     "typeof": (type: LuaCTypeSpec, ...: any) => LuaCType;
     cast(type: LuaCTypeSpec, initializer: any): LuaCData;
-    metatype(type: LuaCTypeSpec, metatable: object): LuaCType;
-    gc(value: LuaCData, finalizer?: LuaFunction): LuaCData;
+    metatype(type: LuaCTypeSpec, metatable: table): LuaCType;
+    gc(value: LuaCData, finalizer?: function): LuaCData;
     sizeof(type: LuaCTypeSpec, count?: number): number | nil;
     alignof(type: LuaCTypeSpec): number;
     offsetof(type: LuaCTypeSpec, field: string): (number, number?, number?);

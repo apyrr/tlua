@@ -14,7 +14,7 @@ declare declared: LuaMetatable<{ n: number }>;
 local d = setmetatable({ n = 1 }, declared);
 >d : { n: number; }
 >setmetatable({ n = 1 }, declared) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -33,21 +33,21 @@ local dbad = d.anything;
 >anything : any
 
 // A __index that is either a table or a function does not say which read wins.
-declare unionIndex: { __index: { a: number } | ((t: object, k: any) => string) };
->unionIndex : { __index: { a: number; } | ((t: object, k: any) => string); }
->__index : { a: number; } | ((t: object, k: any) => string)
+declare unionIndex: { __index: { a: number } | ((t: table, k: any) => string) };
+>unionIndex : { __index: { a: number; } | ((t: table, k: any) => string); }
+>__index : { a: number; } | ((t: table, k: any) => string)
 >a : number
->t : object
+>t : table
 >k : any
 
 local u = setmetatable({ n = 1 }, unionIndex);
 >u : { n: number; }
 >setmetatable({ n = 1 }, unionIndex) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->unionIndex : { __index: { a: number; } | ((t: object, k: any) => string); }
+>unionIndex : { __index: { a: number; } | ((t: table, k: any) => string); }
 
 local ubad = u.a;
 >ubad : any
@@ -64,7 +64,7 @@ declare maybe: { __index: { a: number } } | nil;
 local m = setmetatable({ n = 1 }, maybe);
 >m : { n: number; }
 >setmetatable({ n = 1 }, maybe) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -80,7 +80,7 @@ local mbad = m.a;
 local none = setmetatable({ n = 1 }, nil);
 >none : { n: number; }
 >setmetatable({ n = 1 }, nil) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -98,17 +98,17 @@ local nbad = none.anything;
 >anything : any
 
 // A metatable with no __index has no fallback to merge, and no pairing is kept for it.
-local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end });
+local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: table): string return "t"; end });
 >noIndex : { n: number; }
->setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end }) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable({ n = 1 }, { __tostring = function(t: table): string return "t"; end }) : { n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->{ __tostring = function(t: object): string return "t"; end } : { __tostring: (t: object) => string; }
->__tostring : (t: object) => string
->function(t: object): string return "t"; end : (t: object) => string
->t : object
+>{ __tostring = function(t: table): string return "t"; end } : { __tostring: (t: table) => string; }
+>__tostring : (t: table) => string
+>function(t: table): string return "t"; end : (t: table) => string
+>t : table
 >"t" : "t"
 
 local xn: number = noIndex.n;
@@ -119,21 +119,21 @@ local xn: number = noIndex.n;
 
 // A callable table would be indexed by Lua, but which half answers a read is not worth
 // guessing at.
-declare hybrid: { __index: { (t: object, k: any): string; extra: number } };
->hybrid : { __index: { (t: object, k: any): string; extra: number; }; }
->__index : { (t: object, k: any): string; extra: number; }
->t : object
+declare hybrid: { __index: { (t: table, k: any): string; extra: number } };
+>hybrid : { __index: { (t: table, k: any): string; extra: number; }; }
+>__index : { (t: table, k: any): string; extra: number; }
+>t : table
 >k : any
 >extra : number
 
 local h = setmetatable({ n = 1 }, hybrid);
 >h : { n: number; }
 >setmetatable({ n = 1 }, hybrid) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->hybrid : { __index: { (t: object, k: any): string; extra: number; }; }
+>hybrid : { __index: { (t: table, k: any): string; extra: number; }; }
 
 local hbad = h.extra;
 >hbad : any
@@ -150,7 +150,7 @@ declare optional: { __index?: { a: number } };
 local o = setmetatable({ n = 1 }, optional);
 >o : { a: number; n: number; }
 >setmetatable({ n = 1 }, optional) : { a: number; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -166,7 +166,7 @@ local oa: number = o.a;
 local bad = setmetatable({ n = 1 }, { __index = { a = missingName } });
 >bad : { n: number; a: any; }
 >setmetatable({ n = 1 }, { __index = { a = missingName } }) : { n: number; a: any; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1

@@ -3345,6 +3345,12 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		b.ctx.approximateLength += 6
 		return b.f.NewKeywordTypeNode(ast.KindObjectKeyword)
 	}
+	// The `function` keyword type is a checker-built structural type with no nameable
+	// alias; print it back as the keyword it was written as.
+	if t == b.ch.getLuaFunctionType() {
+		b.ctx.approximateLength += 8
+		return b.f.NewKeywordTypeNode(ast.KindFunctionKeyword)
+	}
 	if inTypeAlias == 0 && t.alias != nil && (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 || b.ch.IsTypeSymbolAccessible(t.alias.Symbol(), b.ctx.enclosingDeclaration)) {
 		// If we should expand this type alias, skip the alias and fall through to expand the underlying type
 		if !b.shouldExpandType(t, true /*isAlias*/) {

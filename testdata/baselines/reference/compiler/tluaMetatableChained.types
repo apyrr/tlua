@@ -14,7 +14,7 @@ local base = { fromBase = true };
 local mid = setmetatable({ fromMid = 1 }, { __index = base });
 >mid : { fromBase: boolean; fromMid: number; }
 >setmetatable({ fromMid = 1 }, { __index = base }) : { fromBase: boolean; fromMid: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ fromMid = 1 } : { fromMid: number; }
 >fromMid : number
 >1 : 1
@@ -25,7 +25,7 @@ local mid = setmetatable({ fromMid = 1 }, { __index = base });
 local top = setmetatable({ fromTop = "t" }, { __index = mid });
 >top : { fromBase: boolean; fromMid: number; fromTop: string; }
 >setmetatable({ fromTop = "t" }, { __index = mid }) : { fromBase: boolean; fromMid: number; fromTop: string; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ fromTop = "t" } : { fromTop: string; }
 >fromTop : string
 >"t" : "t"
@@ -61,7 +61,7 @@ local absent = top.nowhere;
 local deep = setmetatable({ own = 1 }, { __index = top });
 >deep : { fromBase: boolean; fromMid: number; fromTop: string; own: number; }
 >setmetatable({ own = 1 }, { __index = top }) : { fromBase: boolean; fromMid: number; fromTop: string; own: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ own = 1 } : { own: number; }
 >own : number
 >1 : 1
@@ -90,7 +90,7 @@ local shadowBase = { v = "base" };
 local shadowMid = setmetatable({ v = 1 }, { __index = shadowBase });
 >shadowMid : { v: number; }
 >setmetatable({ v = 1 }, { __index = shadowBase }) : { v: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ v = 1 } : { v: number; }
 >v : number
 >1 : 1
@@ -101,7 +101,7 @@ local shadowMid = setmetatable({ v = 1 }, { __index = shadowBase });
 local shadowTop = setmetatable({ }, { __index = shadowMid });
 >shadowTop : { v: number; }
 >setmetatable({ }, { __index = shadowMid }) : { v: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ } : {}
 >{ __index = shadowMid } : { __index: { v: number; }; }
 >__index : { v: number; }

@@ -34,7 +34,7 @@ local Str = {
 local v = setmetatable({ n = 3 }, Str);
 >v : { n: number; }
 >setmetatable({ n = 3 }, Str) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 3 } : { n: number; }
 >n : number
 >3 : 3
@@ -62,7 +62,7 @@ local l1: number = #v;             // __len, adjusted to its first value
 local mt = getmetatable(v);
 >mt : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
 >getmetatable(v) : { __concat: (a: any, b: any) => string; __len: (a: { n: number; }) => (number, string); }
->getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>getmetatable : <T extends table>(value: T) => LuaMetatable<T> | any | nil
 >v : { n: number; }
 
 local h: (a: any, b: any) => string = mt.__concat;
@@ -91,7 +91,7 @@ local Strict = {
 local p = setmetatable({ tag = "p" }, Strict);
 >p : { tag: string; }
 >setmetatable({ tag = "p" }, Strict) : { tag: string; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ tag = "p" } : { tag: string; }
 >tag : string
 >"p" : "p"

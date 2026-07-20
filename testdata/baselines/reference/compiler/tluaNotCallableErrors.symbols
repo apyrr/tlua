@@ -2,9 +2,9 @@
 
 === tluaNotCallableErrors.tlua ===
 // Calling a value with no call signatures must error. TypeScript's
-// "untyped call" escape hatch keyed on Function-assignability, which is
-// meaningless against tlua's empty Function interface — every value was
-// Function-assignable and not-callable errors vanished.
+// "untyped call" escape hatch keyed on assignability to the global Function
+// interface — an empty stub in this fork (since deleted outright), so every
+// value was Function-assignable and not-callable errors vanished.
 local notCallable = 1;
 >notCallable : Symbol(notCallable, Decl(tluaNotCallableErrors.tlua, 4, 5))
 
@@ -17,16 +17,10 @@ local emptyObject = {};
 emptyObject();
 >emptyObject : Symbol(emptyObject, Decl(tluaNotCallableErrors.tlua, 7, 5))
 
-declare legacyFunction: Function;
->legacyFunction : Symbol(legacyFunction, Decl(tluaNotCallableErrors.tlua, 10, 7))
->Function : Symbol(Function, Decl(lib.luajit.d.tlua, --, --))
-
-legacyFunction();
->legacyFunction : Symbol(legacyFunction, Decl(tluaNotCallableErrors.tlua, 10, 7))
 
 declare untypedValue: any;
->untypedValue : Symbol(untypedValue, Decl(tluaNotCallableErrors.tlua, 13, 7))
+>untypedValue : Symbol(untypedValue, Decl(tluaNotCallableErrors.tlua, 11, 7))
 
 untypedValue(); // any stays callable
->untypedValue : Symbol(untypedValue, Decl(tluaNotCallableErrors.tlua, 13, 7))
+>untypedValue : Symbol(untypedValue, Decl(tluaNotCallableErrors.tlua, 11, 7))
 

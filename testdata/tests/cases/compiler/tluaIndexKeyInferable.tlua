@@ -4,8 +4,8 @@
 // @noEmit: true
 
 // In Lua a record and an interface are both just tables, and iterating one with `pairs`
-// is idiomatic. TypeScript lets only object and type literals stand in for an index
-// signature they do not declare; tlua accepts every object type, or every
+// is idiomatic. TypeScript lets only table and type literals stand in for an index
+// signature they do not declare; tlua accepts every table type, or every
 // `Table<K, V>` signature in the standard library would reject named types forever.
 
 interface Point { x: number; y: number }

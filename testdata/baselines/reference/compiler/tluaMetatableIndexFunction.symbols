@@ -6,11 +6,11 @@
 
 // An `any` key could be a key of any domain, so it feeds string and number alike -- the
 // rule a computed table key already follows.
-local anyMt = { __index = function(t: object, k: any): string return "x"; end };
+local anyMt = { __index = function(t: table, k: any): string return "x"; end };
 >anyMt : Symbol(anyMt, Decl(tluaMetatableIndexFunction.tlua, 5, 5))
 >__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 5, 15))
 >t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 5, 35))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 5, 45))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 5, 44))
 
 local a = setmetatable({ n = 1 }, anyMt);
 >a : Symbol(a, Decl(tluaMetatableIndexFunction.tlua, 6, 5))
@@ -33,11 +33,11 @@ local n1: number = a.n;
 >n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 6, 24))
 
 // A concrete key domain keeps to itself: this table answers number keys only.
-local numMt = { __index = function(t: object, k: number): boolean return true; end };
+local numMt = { __index = function(t: table, k: number): boolean return true; end };
 >numMt : Symbol(numMt, Decl(tluaMetatableIndexFunction.tlua, 12, 5))
 >__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 12, 15))
 >t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 12, 35))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 12, 45))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 12, 44))
 
 local num = setmetatable({ n = 1 }, numMt);
 >num : Symbol(num, Decl(tluaMetatableIndexFunction.tlua, 13, 5))
@@ -55,11 +55,11 @@ local absent = num.missing;
 
 // A literal key widens to its domain, because an index signature may not be keyed by a
 // literal -- the same widening a computed key gets.
-local litMt = { __index = function(t: object, k: "a"): number return 1; end };
+local litMt = { __index = function(t: table, k: "a"): number return 1; end };
 >litMt : Symbol(litMt, Decl(tluaMetatableIndexFunction.tlua, 19, 5))
 >__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 19, 15))
 >t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 19, 35))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 19, 45))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 19, 44))
 
 local lit = setmetatable({ n = 1 }, litMt);
 >lit : Symbol(lit, Decl(tluaMetatableIndexFunction.tlua, 20, 5))
@@ -73,11 +73,11 @@ local l1: number = lit["zzz"];
 
 // A multi-return __index truncates to its first value at the call boundary, as every other
 // call does.
-local packMt = { __index = function(t: object, k: any): (string, number) return "x", 1; end };
+local packMt = { __index = function(t: table, k: any): (string, number) return "x", 1; end };
 >packMt : Symbol(packMt, Decl(tluaMetatableIndexFunction.tlua, 25, 5))
 >__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 25, 16))
 >t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 25, 36))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 25, 46))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 25, 45))
 
 local pack = setmetatable({ n = 1 }, packMt);
 >pack : Symbol(pack, Decl(tluaMetatableIndexFunction.tlua, 26, 5))
@@ -91,13 +91,13 @@ local p1: string = pack.anything;
 
 // Overloads that answer the same key domain both apply: a read of such a key gets whichever
 // one Lua dispatches to.
-declare overloaded: { __index: { (t: object, k: "a"): number; (t: object, k: "b"): string } };
+declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string } };
 >overloaded : Symbol(overloaded, Decl(tluaMetatableIndexFunction.tlua, 31, 7))
 >__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 31, 21))
 >t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 31, 34))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 31, 44))
->t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 31, 63))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 31, 73))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 31, 43))
+>t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 31, 62))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 31, 71))
 
 local ov = setmetatable({ n = 1 }, overloaded);
 >ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 32, 5))

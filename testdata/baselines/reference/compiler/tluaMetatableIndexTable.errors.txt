@@ -1,4 +1,4 @@
-tluaMetatableIndexTable.tlua(21,20): error TLUA2339: Property 'nothing' does not exist on type '{ describe: (self: object) => string; count: number; n: number; }'.
+tluaMetatableIndexTable.tlua(21,20): error TLUA2339: Property 'nothing' does not exist on type '{ describe: (self: table) => string; count: number; n: number; }'.
 tluaMetatableIndexTable.tlua(26,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 tluaMetatableIndexTable.tlua(31,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
 tluaMetatableIndexTable.tlua(48,7): error TLUA2322: Type 'string | number' is not assignable to type 'number'.
@@ -10,7 +10,7 @@ tluaMetatableIndexTable.tlua(48,7): error TLUA2322: Type 'string | number' is no
     // the metatable's __index, so the call cannot keep returning the plain table it was given.
     
     local Helpers = {
-      describe = function(self: object): string return "d"; end,
+      describe = function(self: table): string return "d"; end,
       count = 0,
     };
     
@@ -28,7 +28,7 @@ tluaMetatableIndexTable.tlua(48,7): error TLUA2322: Type 'string | number' is no
     // What neither has is still missing.
     local absent = obj.nothing;
                        ~~~~~~~
-!!! error TLUA2339: Property 'nothing' does not exist on type '{ describe: (self: object) => string; count: number; n: number; }'.
+!!! error TLUA2339: Property 'nothing' does not exist on type '{ describe: (self: table) => string; count: number; n: number; }'.
     
     // The table wins a collision: a raw read hits it before the metatable ever runs.
     local collide = setmetatable({ v = 1 }, { __index = { v = "str" } });
@@ -74,6 +74,6 @@ tluaMetatableIndexTable.tlua(48,7): error TLUA2322: Type 'string | number' is no
     local asTable: HasN = obj;
     
     // ...and a named interface that also spells the fallback out.
-    interface Described { n: number; describe: (self: object) => string; count: number }
+    interface Described { n: number; describe: (self: table) => string; count: number }
     local asDescribed: Described = obj;
     

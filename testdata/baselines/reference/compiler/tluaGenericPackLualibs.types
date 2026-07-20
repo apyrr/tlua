@@ -19,7 +19,7 @@ local ok, flag, count = pcall(compute, 1, "x");
 >flag : boolean
 >count : number
 >pcall(compute, 1, "x") : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >compute : (a: number, b: string) => (boolean, number)
 >1 : 1
 >"x" : "x"
@@ -44,7 +44,7 @@ local wok2, wres = pcall(compute, "wrong", "x"); // wres: any, not number
 >wok2 : boolean
 >wres : any
 >pcall(compute, "wrong", "x") : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >compute : (a: number, b: string) => (boolean, number)
 >"wrong" : "wrong"
 >"x" : "x"
@@ -54,7 +54,7 @@ local pok, s = pcall(pure, 3);
 >pok : boolean
 >s : string
 >pcall(pure, 3) : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >pure : (x: number) => string
 >3 : 3
 
@@ -67,7 +67,7 @@ local xok, xs = xpcall(pure, function(e: any) return e; end, 7);
 >xok : boolean
 >xs : string
 >xpcall(pure, function(e: any) return e; end, 7) : boolean
->xpcall : { <...A, ...R>(fn: (...: A) => (...R), handler: (message: any) => any, ...: A): (boolean, ...R); (fn: LuaFunction, handler: (message: any) => any, ...: any): (boolean, ...any); }
+>xpcall : { <...A, ...R>(fn: (...: A) => (...R), handler: (message: any) => any, ...: A): (boolean, ...R); (fn: function, handler: (message: any) => any, ...: any): (boolean, ...any); }
 >pure : (x: number) => string
 >function(e: any) return e; end : (e: any) => any
 >e : any
@@ -101,19 +101,19 @@ local extraType: string = extra;
 // coroutine.wrap stays deliberately erased: a wrapped call exchanges values with
 // `yield` (the first call's results are the first yield's arguments), so packs
 // correlated with fn's parameters/returns would be wrong for every coroutine that
-// yields. The result is a plain LuaFunction.
+// yields. The result is a plain function.
 local wrapped = coroutine.wrap(compute);
->wrapped : LuaFunction
->coroutine.wrap(compute) : LuaFunction
->coroutine.wrap : (fn: LuaFunction) => LuaFunction
+>wrapped : function
+>coroutine.wrap(compute) : function
+>coroutine.wrap : (fn: function) => function
 >coroutine : CoroutineLib
->wrap : (fn: LuaFunction) => LuaFunction
+>wrap : (fn: function) => function
 >compute : (a: number, b: string) => (boolean, number)
 
 local wok = wrapped(2, "y");
 >wok : any
 >wrapped(2, "y") : any
->wrapped : LuaFunction
+>wrapped : function
 >2 : 2
 >"y" : "y"
 
@@ -124,7 +124,7 @@ local sok, count = pcall(select, "#", 1, 2);
 >sok : boolean
 >count : any
 >pcall(select, "#", 1, 2) : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
 >"#" : "#"
 >1 : 1
@@ -141,7 +141,7 @@ local cok, cerr = pcall(compute, 1, "x");
 >cok : boolean
 >cerr : boolean
 >pcall(compute, 1, "x") : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >compute : (a: number, b: string) => (boolean, number)
 >1 : 1
 >"x" : "x"

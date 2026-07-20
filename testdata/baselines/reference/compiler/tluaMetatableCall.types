@@ -6,17 +6,17 @@
 
 local callable = setmetatable({ n = 1 }, {
 >callable : { (x: number): string; n: number; }
->setmetatable({ n = 1 }, {  __call = function(self: object, x: number): string return "s"; end,}) : { (x: number): string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable({ n = 1 }, {  __call = function(self: table, x: number): string return "s"; end,}) : { (x: number): string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->{  __call = function(self: object, x: number): string return "s"; end,} : { __call: (self: object, x: number) => string; }
+>{  __call = function(self: table, x: number): string return "s"; end,} : { __call: (self: table, x: number) => string; }
 
-  __call = function(self: object, x: number): string return "s"; end,
->__call : (self: object, x: number) => string
->function(self: object, x: number): string return "s"; end : (self: object, x: number) => string
->self : object
+  __call = function(self: table, x: number): string return "s"; end,
+>__call : (self: table, x: number) => string
+>function(self: table, x: number): string return "s"; end : (self: table, x: number) => string
+>self : table
 >x : number
 >"s" : "s"
 
@@ -67,7 +67,7 @@ end
 local rest = setmetatable({}, { __call = function(...: any): number return 1; end });
 >rest : (...: any) => number
 >setmetatable({}, { __call = function(...: any): number return 1; end }) : (...: any) => number
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{} : {}
 >{ __call = function(...: any): number return 1; end } : { __call: (...: any) => number; }
 >__call : (...: any) => number
@@ -84,8 +84,8 @@ local rr: number = rest(1, "x");
 
 // A __call-only metatable is enough to pair, so getmetatable answers for it.
 local mt = getmetatable(callable);
->mt : { __call: (self: object, x: number) => string; }
->getmetatable(callable) : { __call: (self: object, x: number) => string; }
->getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>mt : { __call: (self: table, x: number) => string; }
+>getmetatable(callable) : { __call: (self: table, x: number) => string; }
+>getmetatable : <T extends table>(value: T) => LuaMetatable<T> | any | nil
 >callable : { (x: number): string; n: number; }
 

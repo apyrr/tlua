@@ -66,7 +66,7 @@ local gone2 = detached.fromFirst;
 >detached : Symbol(detached, Decl(tluaMetatableReplace.tlua, 16, 5))
 
 // A metatable with no __index detaches the fallback just as thoroughly.
-local other = setmetatable(obj, { __tostring = function(t: object): string return "t"; end });
+local other = setmetatable(obj, { __tostring = function(t: table): string return "t"; end });
 >other : Symbol(other, Decl(tluaMetatableReplace.tlua, 21, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 >obj : Symbol(obj, Decl(tluaMetatableReplace.tlua, 7, 5))

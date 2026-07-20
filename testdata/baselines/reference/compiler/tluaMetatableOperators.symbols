@@ -52,13 +52,13 @@ local Ops = {
 >b : Symbol(b, Decl(tluaMetatableOperators.tlua, 7, 35))
 >x : Symbol(x, Decl(tluaMetatableOperators.tlua, 7, 40))
 
-  __eq = function(a: object, b: object): boolean return true; end,
+  __eq = function(a: table, b: table): boolean return true; end,
 >__eq : Symbol(__eq, Decl(tluaMetatableOperators.tlua, 7, 86))
 >a : Symbol(a, Decl(tluaMetatableOperators.tlua, 8, 18))
->b : Symbol(b, Decl(tluaMetatableOperators.tlua, 8, 28))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 8, 27))
 
   __unm = function(a: { x: number }): { x: number } return a; end,
->__unm : Symbol(__unm, Decl(tluaMetatableOperators.tlua, 8, 66))
+>__unm : Symbol(__unm, Decl(tluaMetatableOperators.tlua, 8, 64))
 >a : Symbol(a, Decl(tluaMetatableOperators.tlua, 9, 19))
 >x : Symbol(x, Decl(tluaMetatableOperators.tlua, 9, 23))
 >x : Symbol(x, Decl(tluaMetatableOperators.tlua, 9, 39))
@@ -155,13 +155,13 @@ local badLeft = 2 ^ v;
 
 // A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
 // has no handler for is still an error. `+` reports that its own way.
-local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end });
+local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: table, b: table): boolean return true; end });
 >eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 >n : Symbol(n, Decl(tluaMetatableOperators.tlua, 40, 29))
 >__eq : Symbol(__eq, Decl(tluaMetatableOperators.tlua, 40, 40))
 >a : Symbol(a, Decl(tluaMetatableOperators.tlua, 40, 57))
->b : Symbol(b, Decl(tluaMetatableOperators.tlua, 40, 67))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 40, 66))
 
 local eqOk: boolean = eqOnly == eqOnly;
 >eqOk : Symbol(eqOk, Decl(tluaMetatableOperators.tlua, 41, 5))

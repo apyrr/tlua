@@ -7,12 +7,12 @@
 local Helpers = {
 >Helpers : Symbol(Helpers, Decl(tluaMetatableIndexTable.tlua, 3, 5))
 
-  describe = function(self: object): string return "d"; end,
+  describe = function(self: table): string return "d"; end,
 >describe : Symbol(describe, Decl(tluaMetatableIndexTable.tlua, 3, 17))
 >self : Symbol(self, Decl(tluaMetatableIndexTable.tlua, 4, 22))
 
   count = 0,
->count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 59))
 
 };
 
@@ -44,9 +44,9 @@ local d: string = obj.describe(obj);
 
 local c: number = obj.count;
 >c : Symbol(c, Decl(tluaMetatableIndexTable.tlua, 17, 5))
->obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 59))
 >obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
->count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 59))
 
 // What neither has is still missing.
 local absent = obj.nothing;
@@ -76,14 +76,14 @@ local cs: string = collide.v;
 // A fallback member is writable at its own type -- a Lua write raw-sets the table, which
 // shadows the metatable's copy from then on.
 obj.count = 2;
->obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 59))
 >obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
->count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 59))
 
 obj.count = "two";
->obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>obj.count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 59))
 >obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
->count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 60))
+>count : Symbol(count, Decl(tluaMetatableIndexTable.tlua, 4, 59))
 
 // An index signature behind __index carries over.
 declare idxMt: { __index: { [key: string]: number } };
@@ -175,12 +175,12 @@ local asTable: HasN = obj;
 >obj : Symbol(obj, Decl(tluaMetatableIndexTable.tlua, 10, 5))
 
 // ...and a named interface that also spells the fallback out.
-interface Described { n: number; describe: (self: object) => string; count: number }
+interface Described { n: number; describe: (self: table) => string; count: number }
 >Described : Symbol(Described, Decl(tluaMetatableIndexTable.tlua, 56, 26))
 >n : Symbol(Described.n, Decl(tluaMetatableIndexTable.tlua, 59, 21))
 >describe : Symbol(Described.describe, Decl(tluaMetatableIndexTable.tlua, 59, 32))
 >self : Symbol(self, Decl(tluaMetatableIndexTable.tlua, 59, 44))
->count : Symbol(Described.count, Decl(tluaMetatableIndexTable.tlua, 59, 68))
+>count : Symbol(Described.count, Decl(tluaMetatableIndexTable.tlua, 59, 67))
 
 local asDescribed: Described = obj;
 >asDescribed : Symbol(asDescribed, Decl(tluaMetatableIndexTable.tlua, 60, 5))

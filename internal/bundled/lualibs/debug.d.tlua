@@ -8,29 +8,29 @@ interface LuaDebugInfo {
     name?: string;
     namewhat?: string;
     nups?: number;
-    func?: LuaFunction;
+    func?: function;
     activelines?: {[line: number]: boolean};
 }
 
 interface DebugLib {
     debug(): void;
-    getfenv(value: any): object;
-    gethook(): (LuaFunction?, string?, number?);
-    gethook(thread: LuaThread): (LuaFunction?, string?, number?);
-    getinfo(fn: number | LuaFunction, what?: string): LuaDebugInfo | nil;
-    getinfo(thread: LuaThread, fn: number | LuaFunction, what?: string): LuaDebugInfo | nil;
+    getfenv(value: any): table;
+    gethook(): (function?, string?, number?);
+    gethook(thread: LuaThread): (function?, string?, number?);
+    getinfo(fn: number | function, what?: string): LuaDebugInfo | nil;
+    getinfo(thread: LuaThread, fn: number | function, what?: string): LuaDebugInfo | nil;
     getlocal(level: number, localIndex: number): (string?, any);
     getlocal(thread: LuaThread, level: number, localIndex: number): (string?, any);
-    getmetatable(value: any): object | nil;
-    getregistry(): object;
-    getupvalue(fn: LuaFunction, index: number): (string?, any);
-    setfenv(value: any, environment: object): any;
-    sethook(hook?: LuaFunction, mask?: string, count?: number): void;
-    sethook(thread: LuaThread, hook?: LuaFunction, mask?: string, count?: number): void;
+    getmetatable(value: any): table | nil;
+    getregistry(): table;
+    getupvalue(fn: function, index: number): (string?, any);
+    setfenv(value: any, environment: table): any;
+    sethook(hook?: function, mask?: string, count?: number): void;
+    sethook(thread: LuaThread, hook?: function, mask?: string, count?: number): void;
     setlocal(level: number, localIndex: number, value: any): string | nil;
     setlocal(thread: LuaThread, level: number, localIndex: number, value: any): string | nil;
-    setmetatable<T>(value: T, metatable: object | nil): T;
-    setupvalue(fn: LuaFunction, index: number, value: any): string | nil;
+    setmetatable<T>(value: T, metatable: table | nil): T;
+    setupvalue(fn: function, index: number, value: any): string | nil;
     traceback(message?: any, level?: number): string;
     traceback(thread: LuaThread, message?: any, level?: number): string;
 }

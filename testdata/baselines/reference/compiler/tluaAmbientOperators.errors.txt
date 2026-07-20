@@ -14,7 +14,7 @@ tluaAmbientOperators.tlua(155,19): error TLUA2349: This expression is not callab
   Type 'Fake' has no call signatures.
 tluaAmbientOperators.tlua(156,25): error TLUA2339: Property 'missing' does not exist on type 'Fake'.
 tluaAmbientOperators.tlua(163,17): error TLUA2365: Operator '+' cannot be applied to types '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }' and '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }'.
-tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: object, r: object) => object; k: number; }' and '{ __add: (l: object, r: object) => object; k: number; }'.
+tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: table, r: table) => table; k: number; }' and '{ __add: (l: table, r: table) => table; k: number; }'.
 
 
 ==== tluaAmbientOperators.tlua (16 errors) ====
@@ -208,7 +208,7 @@ tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applie
     // value whose declared type carried ambient operators loses them unless the new
     // metatable re-declares them.
     local repaired = setmetatable(a,
-        { __eq = function(l: object, r: object): boolean return true; end });
+        { __eq = function(l: table, r: table): boolean return true; end });
     local lostAdd = repaired + repaired;
                     ~~~~~~~~~~~~~~~~~~~
 !!! error TLUA2365: Operator '+' cannot be applied to types '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }' and '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }'.
@@ -216,9 +216,9 @@ tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applie
     // A paired table dispatches only through its metatable: its own __add member is a
     // field, and a field never answers an operator.
     local fielded = setmetatable(
-        { __add = function(l: object, r: object): object return l; end, k = 1 },
-        { __eq = function(l: object, r: object): boolean return true; end });
+        { __add = function(l: table, r: table): table return l; end, k = 1 },
+        { __eq = function(l: table, r: table): boolean return true; end });
     local fieldedSum = fielded + fielded;
                        ~~~~~~~~~~~~~~~~~
-!!! error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: object, r: object) => object; k: number; }' and '{ __add: (l: object, r: object) => object; k: number; }'.
+!!! error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: table, r: table) => table; k: number; }' and '{ __add: (l: table, r: table) => table; k: number; }'.
     

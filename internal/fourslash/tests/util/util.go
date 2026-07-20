@@ -74,11 +74,6 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "Function",
-		Kind:     new(lsproto.CompletionItemKindVariable),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
 		Label:    "Infinity",
 		Kind:     new(lsproto.CompletionItemKindVariable),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -120,11 +115,6 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "Number",
-		Kind:     new(lsproto.CompletionItemKindVariable),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "Object",
 		Kind:     new(lsproto.CompletionItemKindVariable),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -444,7 +434,7 @@ var CompletionGlobalKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "object",
+		Label:    "table",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -582,26 +572,6 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "Object",
-		Kind:     new(lsproto.CompletionItemKindVariable),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "ObjectConstructor",
-		Kind:     new(lsproto.CompletionItemKindInterface),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "Function",
-		Kind:     new(lsproto.CompletionItemKindVariable),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "FunctionConstructor",
-		Kind:     new(lsproto.CompletionItemKindInterface),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
 		Label:    "ThisParameterType",
 		Kind:     new(lsproto.CompletionItemKindClass),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -609,16 +579,6 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "OmitThisParameter",
 		Kind:     new(lsproto.CompletionItemKindClass),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "CallableFunction",
-		Kind:     new(lsproto.CompletionItemKindInterface),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "NewableFunction",
-		Kind:     new(lsproto.CompletionItemKindInterface),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
@@ -1181,6 +1141,11 @@ var CompletionTypeKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "function",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "infer",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -1201,7 +1166,7 @@ var CompletionTypeKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "object",
+		Label:    "table",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -1417,7 +1382,7 @@ func getInJSKeywords(keywords []fourslash.CompletionsExpectedItem) []fourslash.C
 			switch label {
 			case "enum", "interface", "implements", "private", "protected", "public", "abstract",
 				"any", "boolean", "declare", "infer", "is", "keyof", "module", "namespace", "never",
-				"readonly", "number", "object", "string", "symbol", "type", "unique", "override",
+				"readonly", "number", "table", "string", "symbol", "type", "unique", "override",
 				"unknown", "global":
 				return false
 			default:

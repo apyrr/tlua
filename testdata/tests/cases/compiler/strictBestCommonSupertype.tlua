@@ -3,7 +3,7 @@
 
 // https://github.com/microsoft/typescript-go/issues/1222
 
-class Store<T = object> {
+class Store<T = table> {
     select<K>(mapFn: (state: T) => K) {};
 }
 
@@ -13,12 +13,12 @@ function inject<T>(token: ProviderToken<T>): T {
     return {} as T;
 }
 
-interface Type<T> extends Function {
+interface Type<T> {
     new (...args: any[]): T;
 }
 
 type ProviderToken<T> = Type<T> | AbstractType<T>;
 
-interface AbstractType<T> extends Function {
+interface AbstractType<T> {
     prototype: T;
 }

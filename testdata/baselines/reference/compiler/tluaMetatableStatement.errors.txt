@@ -1,4 +1,4 @@
-tluaMetatableStatement.tlua(22,18): error TLUA2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
+tluaMetatableStatement.tlua(22,18): error TLUA2339: Property 'describe' does not exist on type '{ count: (self: table) => number; n: number; }'.
 tluaMetatableStatement.tlua(29,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
 tluaMetatableStatement.tlua(36,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
 tluaMetatableStatement.tlua(45,18): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
@@ -12,8 +12,8 @@ tluaMetatableStatement.tlua(83,18): error TLUA2339: Property 'describe' does not
     // place -- narrows its table operand to the paired type, the way an assertion narrows its
     // argument.
     
-    local Helpers = { describe = function(self: object): string return "d"; end };
-    local Counters = { count = function(self: object): number return 1; end };
+    local Helpers = { describe = function(self: table): string return "d"; end };
+    local Counters = { count = function(self: table): number return 1; end };
     local mt = { __index = Helpers };
     local mt2 = { __index = Counters };
     
@@ -31,7 +31,7 @@ tluaMetatableStatement.tlua(83,18): error TLUA2339: Property 'describe' does not
       local c: number = t.count(t);
       local gone = t.describe;          // the old pairing is gone
                      ~~~~~~~~
-!!! error TLUA2339: Property 'describe' does not exist on type '{ count: (self: object) => number; n: number; }'.
+!!! error TLUA2339: Property 'describe' does not exist on type '{ count: (self: table) => number; n: number; }'.
     end
     
     function detached(): void
@@ -81,7 +81,7 @@ tluaMetatableStatement.tlua(83,18): error TLUA2339: Property 'describe' does not
     end
     
     function shadowed(): void
-      local setmetatable = function(value: object, metatable: object): object return value; end;
+      local setmetatable = function(value: table, metatable: table): table return value; end;
       local t = { n = 1 };
       setmetatable(t, mt);              // not the global, so no narrowing
       local gone = t.describe;

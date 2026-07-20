@@ -7,9 +7,9 @@ interface JITLib {
     readonly version_num: number;
     readonly os: "Windows" | "Linux" | "OSX" | "BSD" | "POSIX" | "Other";
     readonly arch: string;
-    on(fn?: LuaFunction | boolean, recursive?: boolean): void;
-    off(fn?: LuaFunction | boolean, recursive?: boolean): void;
-    flush(fn?: LuaFunction | boolean, recursive?: boolean): void;
+    on(fn?: function | boolean, recursive?: boolean): void;
+    off(fn?: function | boolean, recursive?: boolean): void;
+    flush(fn?: function | boolean, recursive?: boolean): void;
     flush(trace: number): void;
     status(): (boolean, ...string);
     readonly opt: JITOptLib;

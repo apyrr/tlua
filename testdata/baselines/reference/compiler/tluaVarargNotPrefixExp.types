@@ -27,7 +27,7 @@ function f(...: number): void
 
 end
 
-// The same holds in a table constructor, where TS object spread used to live.
+// The same holds in a table constructor, where TS table spread used to live.
 function g(...: number): void
 >g : (...: number) => void
 > : number[]

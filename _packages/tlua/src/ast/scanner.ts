@@ -130,7 +130,7 @@ export const textToKeywordObj: Record<string, KeywordSyntaxKind> = {
     new: SyntaxKind.NewKeyword,
     null: SyntaxKind.NilKeyword,
     number: SyntaxKind.NumberKeyword,
-    object: SyntaxKind.ObjectKeyword,
+    table: SyntaxKind.ObjectKeyword,
     package: SyntaxKind.PackageKeyword,
     private: SyntaxKind.PrivateKeyword,
     protected: SyntaxKind.ProtectedKeyword,

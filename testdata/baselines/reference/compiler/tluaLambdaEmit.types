@@ -59,7 +59,7 @@ local one: number = truncated()
 >truncated() : number
 >truncated : () => number
 
-// A parenthesized object-literal body keeps its parens; `return { ... } end`
+// A parenthesized table-literal body keeps its parens; `return { ... } end`
 // would also be valid Lua, but the source spelling round-trips.
 local table = () => ({ k = 1 })
 >table : () => { k: number; }

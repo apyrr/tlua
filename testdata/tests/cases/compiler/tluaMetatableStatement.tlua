@@ -7,8 +7,8 @@
 // place -- narrows its table operand to the paired type, the way an assertion narrows its
 // argument.
 
-local Helpers = { describe = function(self: object): string return "d"; end };
-local Counters = { count = function(self: object): number return 1; end };
+local Helpers = { describe = function(self: table): string return "d"; end };
+local Counters = { count = function(self: table): number return 1; end };
 local mt = { __index = Helpers };
 local mt2 = { __index = Counters };
 
@@ -66,7 +66,7 @@ function propertyTarget(): void
 end
 
 function shadowed(): void
-  local setmetatable = function(value: object, metatable: object): object return value; end;
+  local setmetatable = function(value: table, metatable: table): table return value; end;
   local t = { n = 1 };
   setmetatable(t, mt);              // not the global, so no narrowing
   local gone = t.describe;

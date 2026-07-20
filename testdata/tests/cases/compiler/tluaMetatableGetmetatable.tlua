@@ -6,7 +6,7 @@
 // getmetatable reads back the metatable a table was paired with, rather than the union its
 // declaration has to fall back on.
 
-local Helpers = { describe = function(self: object): string return "d"; end };
+local Helpers = { describe = function(self: table): string return "d"; end };
 local obj = setmetatable({ n = 1 }, { __index = Helpers });
 
 local mt = getmetatable(obj);

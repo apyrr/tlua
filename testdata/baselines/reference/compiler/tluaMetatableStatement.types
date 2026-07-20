@@ -5,33 +5,33 @@
 // place -- narrows its table operand to the paired type, the way an assertion narrows its
 // argument.
 
-local Helpers = { describe = function(self: object): string return "d"; end };
->Helpers : { describe: (self: object) => string; }
->{ describe = function(self: object): string return "d"; end } : { describe: (self: object) => string; }
->describe : (self: object) => string
->function(self: object): string return "d"; end : (self: object) => string
->self : object
+local Helpers = { describe = function(self: table): string return "d"; end };
+>Helpers : { describe: (self: table) => string; }
+>{ describe = function(self: table): string return "d"; end } : { describe: (self: table) => string; }
+>describe : (self: table) => string
+>function(self: table): string return "d"; end : (self: table) => string
+>self : table
 >"d" : "d"
 
-local Counters = { count = function(self: object): number return 1; end };
->Counters : { count: (self: object) => number; }
->{ count = function(self: object): number return 1; end } : { count: (self: object) => number; }
->count : (self: object) => number
->function(self: object): number return 1; end : (self: object) => number
->self : object
+local Counters = { count = function(self: table): number return 1; end };
+>Counters : { count: (self: table) => number; }
+>{ count = function(self: table): number return 1; end } : { count: (self: table) => number; }
+>count : (self: table) => number
+>function(self: table): number return 1; end : (self: table) => number
+>self : table
 >1 : 1
 
 local mt = { __index = Helpers };
->mt : { __index: { describe: (self: object) => string; }; }
->{ __index = Helpers } : { __index: { describe: (self: object) => string; }; }
->__index : { describe: (self: object) => string; }
->Helpers : { describe: (self: object) => string; }
+>mt : { __index: { describe: (self: table) => string; }; }
+>{ __index = Helpers } : { __index: { describe: (self: table) => string; }; }
+>__index : { describe: (self: table) => string; }
+>Helpers : { describe: (self: table) => string; }
 
 local mt2 = { __index = Counters };
->mt2 : { __index: { count: (self: object) => number; }; }
->{ __index = Counters } : { __index: { count: (self: object) => number; }; }
->__index : { count: (self: object) => number; }
->Counters : { count: (self: object) => number; }
+>mt2 : { __index: { count: (self: table) => number; }; }
+>{ __index = Counters } : { __index: { count: (self: table) => number; }; }
+>__index : { count: (self: table) => number; }
+>Counters : { count: (self: table) => number; }
 
 function basic(): void
 >basic : () => void
@@ -43,23 +43,23 @@ function basic(): void
 >1 : 1
 
   setmetatable(t, mt);
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   local d: string = t.describe(t);  // the fallback is visible after the statement
 >d : string
 >t.describe(t) : string
->t.describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
->describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
+>t.describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
 
   local n: number = t.n;            // the own member is intact
 >n : number
 >t.n : number
->t : { describe: (self: object) => string; n: number; }
+>t : { describe: (self: table) => string; n: number; }
 >n : number
 
 end
@@ -74,29 +74,29 @@ function replaced(): void
 >1 : 1
 
   setmetatable(t, mt);
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   setmetatable(t, mt2);             // replacement: unpair, then re-pair
->setmetatable(t, mt2) : { count: (self: object) => number; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
->t : { describe: (self: object) => string; n: number; }
->mt2 : { __index: { count: (self: object) => number; }; }
+>setmetatable(t, mt2) : { count: (self: table) => number; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>t : { describe: (self: table) => string; n: number; }
+>mt2 : { __index: { count: (self: table) => number; }; }
 
   local c: number = t.count(t);
 >c : number
 >t.count(t) : number
->t.count : (self: object) => number
->t : { count: (self: object) => number; n: number; }
->count : (self: object) => number
->t : { count: (self: object) => number; n: number; }
+>t.count : (self: table) => number
+>t : { count: (self: table) => number; n: number; }
+>count : (self: table) => number
+>t : { count: (self: table) => number; n: number; }
 
   local gone = t.describe;          // the old pairing is gone
 >gone : any
 >t.describe : any
->t : { count: (self: object) => number; n: number; }
+>t : { count: (self: table) => number; n: number; }
 >describe : any
 
 end
@@ -111,15 +111,15 @@ function detached(): void
 >1 : 1
 
   setmetatable(t, mt);
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   setmetatable(t, nil);             // nil detaches
 >setmetatable(t, nil) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
->t : { describe: (self: object) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>t : { describe: (self: table) => string; n: number; }
 
   local gone = t.describe;
 >gone : any
@@ -139,10 +139,10 @@ function invalidated(): void
 >1 : 1
 
   setmetatable(t, mt);
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   t = { n = 2 };                    // an assignment kills the narrowing
 >t = { n = 2 } : { n: number; }
@@ -173,18 +173,18 @@ function inLoop(cond: boolean): void
 >cond : boolean
 
     setmetatable(t, mt);
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
     local d: string = t.describe(t);
 >d : string
 >t.describe(t) : string
->t.describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
->describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
+>t.describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
 
   end
   local gone = t.describe;          // the never-ran arm keeps t unpaired
@@ -209,18 +209,18 @@ function inConditional(cond: boolean): void
 >cond : boolean
 
     setmetatable(t, mt);
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
     local d: string = t.describe(t);
 >d : string
 >t.describe(t) : string
->t.describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
->describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
+>t.describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
 
   end
   local gone = t.describe;          // the join keeps the unpaired arm
@@ -243,36 +243,36 @@ function propertyTarget(): void
 >1 : 1
 
   setmetatable(holder.field, mt);   // a property-access target narrows too
->setmetatable(holder.field, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(holder.field, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >holder.field : { n: number; }
 >holder : { field: { n: number; }; }
 >field : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   local d: string = holder.field.describe(holder.field);
 >d : string
 >holder.field.describe(holder.field) : string
->holder.field.describe : (self: object) => string
->holder.field : { describe: (self: object) => string; n: number; }
+>holder.field.describe : (self: table) => string
+>holder.field : { describe: (self: table) => string; n: number; }
 >holder : { field: { n: number; }; }
->field : { describe: (self: object) => string; n: number; }
->describe : (self: object) => string
->holder.field : { describe: (self: object) => string; n: number; }
+>field : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>holder.field : { describe: (self: table) => string; n: number; }
 >holder : { field: { n: number; }; }
->field : { describe: (self: object) => string; n: number; }
+>field : { describe: (self: table) => string; n: number; }
 
 end
 
 function shadowed(): void
 >shadowed : () => void
 
-  local setmetatable = function(value: object, metatable: object): object return value; end;
->setmetatable : (value: object, metatable: object) => object
->function(value: object, metatable: object): object return value; end : (value: object, metatable: object) => object
->value : object
->metatable : object
->value : object
+  local setmetatable = function(value: table, metatable: table): table return value; end;
+>setmetatable : (value: table, metatable: table) => table
+>function(value: table, metatable: table): table return value; end : (value: table, metatable: table) => table
+>value : table
+>metatable : table
+>value : table
 
   local t = { n = 1 };
 >t : { n: number; }
@@ -281,10 +281,10 @@ function shadowed(): void
 >1 : 1
 
   setmetatable(t, mt);              // not the global, so no narrowing
->setmetatable(t, mt) : object
->setmetatable : (value: object, metatable: object) => object
+>setmetatable(t, mt) : table
+>setmetatable : (value: table, metatable: table) => table
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   local gone = t.describe;
 >gone : any
@@ -304,10 +304,10 @@ function constCapture(): void
 >1 : 1
 
   setmetatable(t, mt);
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   local f = function(): void
 >f : () => void
@@ -317,10 +317,10 @@ function constCapture(): void
     local d: string = t.describe(t);
 >d : string
 >t.describe(t) : string
->t.describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
->describe : (self: object) => string
->t : { describe: (self: object) => string; n: number; }
+>t.describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
 
   end;
 end
@@ -335,19 +335,19 @@ function assignForm(): void
 >1 : 1
 
   local r = setmetatable(t, mt);    // the assign form types the result, not the argument
->r : { describe: (self: object) => string; n: number; }
->setmetatable(t, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>r : { describe: (self: table) => string; n: number; }
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >t : { n: number; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   local rd: string = r.describe(r);
 >rd : string
 >r.describe(r) : string
->r.describe : (self: object) => string
->r : { describe: (self: object) => string; n: number; }
->describe : (self: object) => string
->r : { describe: (self: object) => string; n: number; }
+>r.describe : (self: table) => string
+>r : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>r : { describe: (self: table) => string; n: number; }
 
   local gone = t.describe;
 >gone : any
@@ -364,29 +364,29 @@ function selfReferential(cond: boolean): void
 >cond : boolean
 
   local t = { n = 1, mt = mt };
->t : { n: number; mt: { __index: { describe: (self: object) => string; }; }; }
->{ n = 1, mt = mt } : { n: number; mt: { __index: { describe: (self: object) => string; }; }; }
+>t : { n: number; mt: { __index: { describe: (self: table) => string; }; }; }
+>{ n = 1, mt = mt } : { n: number; mt: { __index: { describe: (self: table) => string; }; }; }
 >n : number
 >1 : 1
->mt : { __index: { describe: (self: object) => string; }; }
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   while cond do
 >cond : boolean
 
     setmetatable(t, t.mt);
->setmetatable(t, t.mt) : { describe: (self: object) => string; n: number; mt: { __index: { describe: (self: object) => string; }; }; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
->t : { n: number; mt: { __index: { describe: (self: object) => string; }; }; }
->t.mt : { __index: { describe: (self: object) => string; }; }
->t : { n: number; mt: { __index: { describe: (self: object) => string; }; }; }
->mt : { __index: { describe: (self: object) => string; }; }
+>setmetatable(t, t.mt) : { describe: (self: table) => string; n: number; mt: { __index: { describe: (self: table) => string; }; }; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>t : { n: number; mt: { __index: { describe: (self: table) => string; }; }; }
+>t.mt : { __index: { describe: (self: table) => string; }; }
+>t : { n: number; mt: { __index: { describe: (self: table) => string; }; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   end
   local after: number = t.n;
 >after : number
 >t.n : number
->t : { n: number; mt: { __index: { describe: (self: object) => string; }; }; }
+>t : { n: number; mt: { __index: { describe: (self: table) => string; }; }; }
 >n : number
 
 end

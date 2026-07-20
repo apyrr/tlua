@@ -7,12 +7,12 @@
 // resolves to a different symbol and keeps whatever it declares -- the rule the type()
 // narrowing builtins already follow.
 
-local Helpers = { describe = function(self: object): string return "d"; end };
+local Helpers = { describe = function(self: table): string return "d"; end };
 local mt = { __index = Helpers };
 
 function shadowed(): void
-  local setmetatable = function(value: object, metatable: object): object return value; end;
-  local getmetatable = function(value: object): object return value; end;
+  local setmetatable = function(value: table, metatable: table): table return value; end;
+  local getmetatable = function(value: table): table return value; end;
   local obj = setmetatable({ n = 1 }, mt);
   local absent = obj.describe;
   local ownAbsent = obj.n;

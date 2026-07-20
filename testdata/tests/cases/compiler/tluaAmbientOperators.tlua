@@ -164,12 +164,12 @@ local notIndexed = fake.missing;
 // value whose declared type carried ambient operators loses them unless the new
 // metatable re-declares them.
 local repaired = setmetatable(a,
-    { __eq = function(l: object, r: object): boolean return true; end });
+    { __eq = function(l: table, r: table): boolean return true; end });
 local lostAdd = repaired + repaired;
 
 // A paired table dispatches only through its metatable: its own __add member is a
 // field, and a field never answers an operator.
 local fielded = setmetatable(
-    { __add = function(l: object, r: object): object return l; end, k = 1 },
-    { __eq = function(l: object, r: object): boolean return true; end });
+    { __add = function(l: table, r: table): table return l; end, k = 1 },
+    { __eq = function(l: table, r: table): boolean return true; end });
 local fieldedSum = fielded + fielded;

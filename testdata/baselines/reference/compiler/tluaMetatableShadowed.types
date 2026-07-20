@@ -5,78 +5,78 @@
 // resolves to a different symbol and keeps whatever it declares -- the rule the type()
 // narrowing builtins already follow.
 
-local Helpers = { describe = function(self: object): string return "d"; end };
->Helpers : { describe: (self: object) => string; }
->{ describe = function(self: object): string return "d"; end } : { describe: (self: object) => string; }
->describe : (self: object) => string
->function(self: object): string return "d"; end : (self: object) => string
->self : object
+local Helpers = { describe = function(self: table): string return "d"; end };
+>Helpers : { describe: (self: table) => string; }
+>{ describe = function(self: table): string return "d"; end } : { describe: (self: table) => string; }
+>describe : (self: table) => string
+>function(self: table): string return "d"; end : (self: table) => string
+>self : table
 >"d" : "d"
 
 local mt = { __index = Helpers };
->mt : { __index: { describe: (self: object) => string; }; }
->{ __index = Helpers } : { __index: { describe: (self: object) => string; }; }
->__index : { describe: (self: object) => string; }
->Helpers : { describe: (self: object) => string; }
+>mt : { __index: { describe: (self: table) => string; }; }
+>{ __index = Helpers } : { __index: { describe: (self: table) => string; }; }
+>__index : { describe: (self: table) => string; }
+>Helpers : { describe: (self: table) => string; }
 
 function shadowed(): void
 >shadowed : () => void
 
-  local setmetatable = function(value: object, metatable: object): object return value; end;
->setmetatable : (value: object, metatable: object) => object
->function(value: object, metatable: object): object return value; end : (value: object, metatable: object) => object
->value : object
->metatable : object
->value : object
+  local setmetatable = function(value: table, metatable: table): table return value; end;
+>setmetatable : (value: table, metatable: table) => table
+>function(value: table, metatable: table): table return value; end : (value: table, metatable: table) => table
+>value : table
+>metatable : table
+>value : table
 
-  local getmetatable = function(value: object): object return value; end;
->getmetatable : (value: object) => object
->function(value: object): object return value; end : (value: object) => object
->value : object
->value : object
+  local getmetatable = function(value: table): table return value; end;
+>getmetatable : (value: table) => table
+>function(value: table): table return value; end : (value: table) => table
+>value : table
+>value : table
 
   local obj = setmetatable({ n = 1 }, mt);
->obj : object
->setmetatable({ n = 1 }, mt) : object
->setmetatable : (value: object, metatable: object) => object
+>obj : table
+>setmetatable({ n = 1 }, mt) : table
+>setmetatable : (value: table, metatable: table) => table
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
   local absent = obj.describe;
 >absent : any
 >obj.describe : any
->obj : object
+>obj : table
 >describe : any
 
   local ownAbsent = obj.n;
 >ownAbsent : any
 >obj.n : any
->obj : object
+>obj : table
 >n : any
 
   local back = getmetatable(obj);
->back : object
->getmetatable(obj) : object
->getmetatable : (value: object) => object
->obj : object
+>back : table
+>getmetatable(obj) : table
+>getmetatable : (value: table) => table
+>obj : table
 
 end
 
 // An alias is a different symbol too.
 local alias = setmetatable;
->alias : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>alias : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 
 local aliased = alias({ n = 1 }, mt);
 >aliased : { n: number; }
 >alias({ n = 1 }, mt) : { n: number; }
->alias : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>alias : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
 local aliasBad = aliased.describe;
 >aliasBad : any
@@ -92,19 +92,19 @@ local aliasOwn: number = aliased.n;
 
 // The globals themselves still work in the same file.
 local real = setmetatable({ n = 1 }, mt);
->real : { describe: (self: object) => string; n: number; }
->setmetatable({ n = 1 }, mt) : { describe: (self: object) => string; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>real : { describe: (self: table) => string; n: number; }
+>setmetatable({ n = 1 }, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->mt : { __index: { describe: (self: object) => string; }; }
+>mt : { __index: { describe: (self: table) => string; }; }
 
 local d: string = real.describe(real);
 >d : string
 >real.describe(real) : string
->real.describe : (self: object) => string
->real : { describe: (self: object) => string; n: number; }
->describe : (self: object) => string
->real : { describe: (self: object) => string; n: number; }
+>real.describe : (self: table) => string
+>real : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>real : { describe: (self: table) => string; n: number; }
 

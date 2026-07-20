@@ -23,9 +23,9 @@ local util = require("jit.util");
 >"jit.util" : "jit.util"
 
 util.funcinfo;
->util.funcinfo : (fn: LuaFunction, pc?: number) => JITFunctionInfo
+>util.funcinfo : (fn: function, pc?: number) => JITFunctionInfo
 >util : JITUtilLib
->funcinfo : (fn: LuaFunction, pc?: number) => JITFunctionInfo
+>funcinfo : (fn: function, pc?: number) => JITFunctionInfo
 
 === jit/profile.tlua ===
 // A project file that shadows a lualib module name.

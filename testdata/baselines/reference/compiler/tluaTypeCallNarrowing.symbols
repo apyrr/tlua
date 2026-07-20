@@ -2,7 +2,7 @@
 
 === tluaTypeCallNarrowing.tlua ===
 // `type(x)` is the Lua type guard. Every tag it can return narrows, including the
-// three branded object kinds, which carry the same type facts as a plain table and
+// three branded non-table kinds, which carry the same type facts as a plain table and
 // therefore cannot be told apart by facts alone.
 
 type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
@@ -176,7 +176,7 @@ function tops(u: unknown, a: any): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
 
-    local o: object = u;
+    local o: table = u;
 >o : Symbol(o, Decl(tluaTypeCallNarrowing.tlua, 56, 9))
 >u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
 

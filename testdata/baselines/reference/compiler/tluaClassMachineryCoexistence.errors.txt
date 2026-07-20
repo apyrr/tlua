@@ -1,0 +1,54 @@
+tluaClassMachineryCoexistence.tlua(37,30): error TLUA2359: The right-hand side of an 'instanceof' expression must be either of type 'any', a class, function, or other type assignable to the 'Function' interface type, or an object type with a 'Symbol.hasInstance' method.
+tluaClassMachineryCoexistence.tlua(38,30): error TLUA2359: The right-hand side of an 'instanceof' expression must be either of type 'any', a class, function, or other type assignable to the 'Function' interface type, or an object type with a 'Symbol.hasInstance' method.
+
+
+==== tluaClassMachineryCoexistence.tlua (2 errors) ====
+    // Class *declarations* are gone, but the shared type machinery that classes
+    // relied on must keep working, because interfaces, the DOM libs, and Lua
+    // tables all use it: interface `extends` heritage, constructor types / construct
+    // signatures, `new`, `instanceof`, `typeof`, and the class-adjacent utility
+    // types. (Object-literal `super` died with table-literal methods in the table
+    // slice — `super` has no legal home left. Polymorphic `this` died with the
+    // `this` slice — see tluaNoThis.tlua.)
+    
+    interface Base {
+      b: number;
+    }
+    
+    // interface `extends` heritage
+    interface Derived extends Base {
+      d: number;
+    }
+    
+    // constructor types (parenthesized `new` / `abstract new`)
+    type Ctor = new () => Derived;
+    type ACtor = abstract new () => Base;
+    
+    // construct signature on an interface
+    interface HasCtor {
+      new (x: number): Derived;
+    }
+    
+    declare K: { new (): Derived };
+    
+    local inst = new K(); // `new X()`
+    local isK = inst instanceof K; // `instanceof`
+    type TK = typeof K; // `typeof Ctor`
+    
+    // A non-callable right-hand side is still an error: the check runs through
+    // isTypeDerivedFrom, not a structural subtype test the empty Function sentinel
+    // would make vacuous.
+    declare notCallable: { area: number };
+    local bad1 = inst instanceof notCallable;
+                                 ~~~~~~~~~~~
+!!! error TLUA2359: The right-hand side of an 'instanceof' expression must be either of type 'any', a class, function, or other type assignable to the 'Function' interface type, or an object type with a 'Symbol.hasInstance' method.
+    local bad2 = inst instanceof 3;
+                                 ~
+!!! error TLUA2359: The right-hand side of an 'instanceof' expression must be either of type 'any', a class, function, or other type assignable to the 'Function' interface type, or an object type with a 'Symbol.hasInstance' method.
+    
+    // class-adjacent utility types (defined in lib.es5.d.tlua via construct signatures).
+    // `ConstructorParameters` is gone: it is built on `...args: infer P`, which needs
+    // a rest parameter whose type IS the parameter tuple, and a vararg's annotation is
+    // the pack's element type. See the vararg slice.
+    type Inst = InstanceType<TK>;
+    

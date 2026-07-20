@@ -351,8 +351,7 @@ func (c *Checker) getTypeAtLuaSetmetatableCall(f *FlowState, flow *ast.FlowNode,
 }
 
 func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *TypePredicate, callExpression *ast.Node, assumeTrue bool) *Type {
-	// Don't narrow from 'any' if the predicate type is exactly 'Object' or 'Function'
-	if predicate.t != nil && !(IsTypeAny(t) && (predicate.t == c.globalObjectType || predicate.t == c.globalFunctionType)) {
+	if predicate.t != nil {
 		predicateArgument := c.getTypePredicateArgument(predicate, callExpression)
 		if predicateArgument != nil {
 			if c.isMatchingReference(f.reference, predicateArgument) {
@@ -788,13 +787,13 @@ func (c *Checker) narrowTypeByConstructor(t *Type, operator ast.Kind, identifier
 	if prototypeProperty == nil {
 		return t
 	}
-	// Get the type of the prototype, if it is undefined, or the global `Object` or `Function` types then do not narrow.
+	// Get the type of the prototype; if it is any then do not narrow.
 	prototypeType := c.getTypeOfSymbol(prototypeProperty)
 	var candidate *Type
 	if !IsTypeAny(prototypeType) {
 		candidate = prototypeType
 	}
-	if candidate == nil || candidate == c.globalObjectType || candidate == c.globalFunctionType {
+	if candidate == nil {
 		return t
 	}
 	// If the type that is being narrowed is `any` then just return the `candidate` type since every type is a subtype of `any`.
@@ -851,9 +850,8 @@ func (c *Checker) narrowTypeByInstanceof(f *FlowState, t *Type, expr *ast.Binary
 		return t
 	}
 	instanceType := c.mapType(rightType, c.getInstanceType)
-	// Don't narrow from `any` if the target type is exactly `Object` or `Function`, and narrow
-	// in the false branch only if the target is a non-empty object type.
-	if IsTypeAny(t) && (instanceType == c.globalObjectType || instanceType == c.globalFunctionType) || !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.IsEmptyAnonymousObjectType(instanceType)) {
+	// Narrow in the false branch only if the target is a non-empty object type.
+	if !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.IsEmptyAnonymousObjectType(instanceType)) {
 		return t
 	}
 	return c.getNarrowedType(t, instanceType, assumeTrue, true /*checkDerived*/)

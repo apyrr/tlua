@@ -5,8 +5,8 @@
 // metamethod's return type is the expression's type; its parameters check the operands.
 
 local Ops = {
->Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
->{  __add = function(a: { x: number }, b: { x: number } | number): { x: number } return a; end,  __mul = function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end,  __lt = function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end,  __le = function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end,  __eq = function(a: object, b: object): boolean return true; end,  __unm = function(a: { x: number }): { x: number } return a; end,  __pow = function(a: { x: number }, n: number): { x: number } return a; end,} : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+>Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: table, b: table) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+>{  __add = function(a: { x: number }, b: { x: number } | number): { x: number } return a; end,  __mul = function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end,  __lt = function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end,  __le = function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end,  __eq = function(a: table, b: table): boolean return true; end,  __unm = function(a: { x: number }): { x: number } return a; end,  __pow = function(a: { x: number }, n: number): { x: number } return a; end,} : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: table, b: table) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
 
   __add = function(a: { x: number }, b: { x: number } | number): { x: number } return a; end,
 >__add : (a: { x: number; }, b: { x: number; } | number) => { x: number; }
@@ -62,11 +62,11 @@ local Ops = {
 >b : { x: number; }
 >x : number
 
-  __eq = function(a: object, b: object): boolean return true; end,
->__eq : (a: object, b: object) => boolean
->function(a: object, b: object): boolean return true; end : (a: object, b: object) => boolean
->a : object
->b : object
+  __eq = function(a: table, b: table): boolean return true; end,
+>__eq : (a: table, b: table) => boolean
+>function(a: table, b: table): boolean return true; end : (a: table, b: table) => boolean
+>a : table
+>b : table
 >true : true
 
   __unm = function(a: { x: number }): { x: number } return a; end,
@@ -91,20 +91,20 @@ local Ops = {
 local v = setmetatable({ x = 1 }, Ops);
 >v : { x: number; }
 >setmetatable({ x = 1 }, Ops) : { x: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ x = 1 } : { x: number; }
 >x : number
 >1 : 1
->Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+>Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: table, b: table) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
 
 local w = setmetatable({ x = 2 }, Ops);
 >w : { x: number; }
 >setmetatable({ x = 2 }, Ops) : { x: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ x = 2 } : { x: number; }
 >x : number
 >2 : 2
->Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: object, b: object) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
+>Ops : { __add: (a: { x: number; }, b: { x: number; } | number) => { x: number; }; __mul: (a: { x: number; }, s: number) => (number, string); __lt: (a: { x: number; }, b: { x: number; }) => boolean; __le: (a: { x: number; }, b: { x: number; }) => boolean; __eq: (a: table, b: table) => boolean; __unm: (a: { x: number; }) => { x: number; }; __pow: (a: { x: number; }, n: number) => { x: number; }; }
 
 local sum: { x: number } = v + w;
 >sum : { x: number; }
@@ -192,18 +192,18 @@ local badLeft = 2 ^ v;
 
 // A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
 // has no handler for is still an error. `+` reports that its own way.
-local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end });
+local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: table, b: table): boolean return true; end });
 >eqOnly : { n: number; }
->setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end }) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable({ n = 1 }, { __eq = function(a: table, b: table): boolean return true; end }) : { n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->{ __eq = function(a: object, b: object): boolean return true; end } : { __eq: (a: object, b: object) => boolean; }
->__eq : (a: object, b: object) => boolean
->function(a: object, b: object): boolean return true; end : (a: object, b: object) => boolean
->a : object
->b : object
+>{ __eq = function(a: table, b: table): boolean return true; end } : { __eq: (a: table, b: table) => boolean; }
+>__eq : (a: table, b: table) => boolean
+>function(a: table, b: table): boolean return true; end : (a: table, b: table) => boolean
+>a : table
+>b : table
 >true : true
 
 local eqOk: boolean = eqOnly == eqOnly;

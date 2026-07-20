@@ -48,36 +48,36 @@ type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = IsNever<T> extends
 >TypeIfNever : Symbol(TypeIfNever, Decl(varianceComputationNoCrash.tlua, 8, 15))
 >TypeIfNotNever : Symbol(TypeIfNotNever, Decl(varianceComputationNoCrash.tlua, 8, 35))
 
-type RequiredKeysOf<BaseType extends object> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
+type RequiredKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
 >RequiredKeysOf : Symbol(RequiredKeysOf, Decl(varianceComputationNoCrash.tlua, 8, 117))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
 >Exclude : Symbol(Exclude, Decl(lib.luajit.d.tlua, --, --))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 56))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
 >Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 56))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 56))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 9, 56))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 9, 20))
 
-type OptionalKeysOf<BaseType extends object> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], undefined>;
->OptionalKeysOf : Symbol(OptionalKeysOf, Decl(varianceComputationNoCrash.tlua, 9, 168))
+type OptionalKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], undefined>;
+>OptionalKeysOf : Symbol(OptionalKeysOf, Decl(varianceComputationNoCrash.tlua, 9, 167))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
 >Exclude : Symbol(Exclude, Decl(lib.luajit.d.tlua, --, --))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 56))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
 >Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 56))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
->Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 57))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 56))
+>Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 10, 56))
 >BaseType : Symbol(BaseType, Decl(varianceComputationNoCrash.tlua, 10, 20))
 
 type OmitIndexSignature<ObjectType> = {[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown> ? never : KeyType]: ObjectType[KeyType]};
->OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 168))
+>OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 167))
 >ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 11, 24))
 >KeyType : Symbol(KeyType, Decl(varianceComputationNoCrash.tlua, 11, 40))
 >ObjectType : Symbol(ObjectType, Decl(varianceComputationNoCrash.tlua, 11, 24))
@@ -122,9 +122,9 @@ type Merge<Destination, Source> = Simplify<SimpleMerge<PickIndexSignature<Destin
 >PickIndexSignature : Symbol(PickIndexSignature, Decl(varianceComputationNoCrash.tlua, 11, 148))
 >Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 14, 23))
 >SimpleMerge : Symbol(SimpleMerge, Decl(varianceComputationNoCrash.tlua, 12, 148))
->OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 168))
+>OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 167))
 >Destination : Symbol(Destination, Decl(varianceComputationNoCrash.tlua, 14, 11))
->OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 168))
+>OmitIndexSignature : Symbol(OmitIndexSignature, Decl(varianceComputationNoCrash.tlua, 10, 167))
 >Source : Symbol(Source, Decl(varianceComputationNoCrash.tlua, 14, 23))
 
 type TrimLeft<V extends string> = V extends `${Whitespace}${infer R}` ? TrimLeft<R> : V;
@@ -179,11 +179,11 @@ type IsNumeric<T extends string> = T extends `${number}` ? Trim<T> extends T ? t
 type ApplyDefaultOptions<
 >ApplyDefaultOptions : Symbol(ApplyDefaultOptions, Decl(varianceComputationNoCrash.tlua, 20, 100))
 
-    Options extends object,
+    Options extends table,
 >Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
 
     Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
->Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 26))
 >Simplify : Symbol(Simplify, Decl(varianceComputationNoCrash.tlua, 3, 45))
 >Omit : Symbol(Omit, Decl(lib.luajit.d.tlua, --, --))
 >Required : Symbol(Required, Decl(lib.luajit.d.tlua, --, --))
@@ -202,17 +202,17 @@ type ApplyDefaultOptions<
 > = IfAny<SpecifiedOptions, Defaults, IfNever<SpecifiedOptions, Defaults, Simplify<Merge<Defaults, {[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]}> & Required<Options>>>>;
 >IfAny : Symbol(IfAny, Decl(varianceComputationNoCrash.tlua, 6, 53))
 >SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
->Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 26))
 >IfNever : Symbol(IfNever, Decl(varianceComputationNoCrash.tlua, 7, 105))
 >SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
->Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 26))
 >Simplify : Symbol(Simplify, Decl(varianceComputationNoCrash.tlua, 3, 45))
 >Merge : Symbol(Merge, Decl(varianceComputationNoCrash.tlua, 13, 138))
->Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 27))
+>Defaults : Symbol(Defaults, Decl(varianceComputationNoCrash.tlua, 22, 26))
 >Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
 >SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
 >Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))
->OptionalKeysOf : Symbol(OptionalKeysOf, Decl(varianceComputationNoCrash.tlua, 9, 168))
+>OptionalKeysOf : Symbol(OptionalKeysOf, Decl(varianceComputationNoCrash.tlua, 9, 167))
 >Options : Symbol(Options, Decl(varianceComputationNoCrash.tlua, 21, 25))
 >SpecifiedOptions : Symbol(SpecifiedOptions, Decl(varianceComputationNoCrash.tlua, 23, 130))
 >Key : Symbol(Key, Decl(varianceComputationNoCrash.tlua, 25, 101))

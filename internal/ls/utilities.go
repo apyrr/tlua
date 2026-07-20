@@ -317,6 +317,7 @@ var typeKeywords *collections.Set[ast.Kind] = collections.NewSetFromItems(
 	ast.KindNilKeyword,
 	ast.KindNumberKeyword,
 	ast.KindObjectKeyword,
+	ast.KindFunctionKeyword,
 	ast.KindReadonlyKeyword,
 	ast.KindStringKeyword,
 	ast.KindSymbolKeyword,
@@ -450,7 +451,9 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		case ast.KindClassKeyword:
 			return ast.IsClassDeclaration(parent) || ast.IsClassExpression(node)
 		case ast.KindFunctionKeyword:
-			return ast.IsFunctionDeclaration(parent) || ast.IsFunctionExpression(node)
+			// A `function` RETURN-type annotation shares the declaration parent with the
+			// introducing keyword; only the introducing keyword adjusts to the name.
+			return (ast.IsFunctionDeclaration(parent) || ast.IsFunctionExpression(node)) && !ast.IsFunctionKeywordTypeNode(node)
 		case ast.KindInterfaceKeyword:
 			return ast.IsInterfaceDeclaration(parent)
 		case ast.KindTypeKeyword:

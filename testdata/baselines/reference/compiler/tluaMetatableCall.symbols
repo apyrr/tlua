@@ -9,10 +9,10 @@ local callable = setmetatable({ n = 1 }, {
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 >n : Symbol(n, Decl(tluaMetatableCall.tlua, 3, 31))
 
-  __call = function(self: object, x: number): string return "s"; end,
+  __call = function(self: table, x: number): string return "s"; end,
 >__call : Symbol(__call, Decl(tluaMetatableCall.tlua, 3, 42))
 >self : Symbol(self, Decl(tluaMetatableCall.tlua, 4, 20))
->x : Symbol(x, Decl(tluaMetatableCall.tlua, 4, 33))
+>x : Symbol(x, Decl(tluaMetatableCall.tlua, 4, 32))
 
 });
 

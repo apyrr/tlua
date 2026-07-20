@@ -74,9 +74,9 @@ local fileNumberType: number | nil = fileNumber;
 for line in io.lines() do
 >line : string
 >io.lines() : () => (string | nil)
->io.lines : (filename?: string, ...: LuaReadFormat) => LuaFunction
+>io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
->lines : (filename?: string, ...: LuaReadFormat) => LuaFunction
+>lines : (filename?: string, ...: LuaReadFormat) => function
 
   local lineType: string = line;
 >lineType : string
@@ -87,9 +87,9 @@ end
 for chunk in io.lines("file", "*a") do
 >chunk : string
 >io.lines("file", "*a") : () => (string)
->io.lines : (filename?: string, ...: LuaReadFormat) => LuaFunction
+>io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
->lines : (filename?: string, ...: LuaReadFormat) => LuaFunction
+>lines : (filename?: string, ...: LuaReadFormat) => function
 >"file" : "file"
 >"*a" : "*a"
 
@@ -102,9 +102,9 @@ end
 for filenameOnly in io.lines("*n") do
 >filenameOnly : string
 >io.lines("*n") : () => (string | nil)
->io.lines : (filename?: string, ...: LuaReadFormat) => LuaFunction
+>io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
->lines : (filename?: string, ...: LuaReadFormat) => LuaFunction
+>lines : (filename?: string, ...: LuaReadFormat) => function
 >"*n" : "*n"
 
   local filenameOnlyType: string = filenameOnly;

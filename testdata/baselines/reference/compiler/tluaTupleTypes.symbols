@@ -100,7 +100,7 @@ local uneg = u[-1];
 >uneg : Symbol(uneg, Decl(tluaTupleTypes.tlua, 38, 5))
 >u : Symbol(u, Decl(tluaTupleTypes.tlua, 37, 7))
 
-// An excess entry against a tuple-LIKE object with a number index signature
+// An excess entry against a tuple-LIKE table with a number index signature
 // still elaborates at the entry (the index signature types the key).
 local mixed: { 1: string, [n: number]: string } = {"a", 5};
 >mixed : Symbol(mixed, Decl(tluaTupleTypes.tlua, 42, 5))
@@ -113,7 +113,7 @@ local restBad: Trail = {"x", 2, true, "no"};
 >restBad : Symbol(restBad, Decl(tluaTupleTypes.tlua, 46, 5))
 >Trail : Symbol(Trail, Decl(tluaTupleTypes.tlua, 20, 26))
 
-// A union mixing a tuple with a tuple-like interface keeps the object path,
+// A union mixing a tuple with a tuple-like interface keeps the table path,
 // so neither member's checking is lost: excess entries still error.
 interface ClosedPair {
 >ClosedPair : Symbol(ClosedPair, Decl(tluaTupleTypes.tlua, 46, 44))
@@ -140,7 +140,7 @@ local wrongUnion: TupleOrLike = {"x", "y", true};
 >wrongUnion : Symbol(wrongUnion, Decl(tluaTupleTypes.tlua, 57, 5))
 >TupleOrLike : Symbol(TupleOrLike, Decl(tluaTupleTypes.tlua, 53, 1))
 
-// A non-sequence object satisfies a variadic tuple when its prefix matches
+// A non-sequence table satisfies a variadic tuple when its prefix matches
 // property-wise and every key past the prefix satisfies the rest slice;
 // elements required after the variable part are unverifiable and reject.
 declare objIn: { 1: number, 2: number };
@@ -174,7 +174,7 @@ local vReq: TrailReq = objIn;
 >TrailReq : Symbol(TrailReq, Decl(tluaTupleTypes.tlua, 66, 26))
 >objIn : Symbol(objIn, Decl(tluaTupleTypes.tlua, 62, 7))
 
-// A union mixing a tuple with a plain (non-tuple-like) object: excess
+// A union mixing a tuple with a plain (non-tuple-like) table: excess
 // entries surface the union's relation error, not a phantom-nil per-entry
 // error via the best-matching tuple constituent.
 declare mixedU: [number, number] | { kind: string };
@@ -185,7 +185,7 @@ local mu: typeof mixedU = {1, 2, 3};
 >mu : Symbol(mu, Decl(tluaTupleTypes.tlua, 74, 5))
 >mixedU : Symbol(mixedU, Decl(tluaTupleTypes.tlua, 73, 7))
 
-// A SPARSE numeric-keyed union member (no key 1) also forces the object
+// A SPARSE numeric-keyed union member (no key 1) also forces the table
 // path, keeping its excess-entry checking.
 interface Sparse {
 >Sparse : Symbol(Sparse, Decl(tluaTupleTypes.tlua, 74, 36))
@@ -210,7 +210,7 @@ local sBad: SparseU = {"x", "y", true};
 >SparseU : Symbol(SparseU, Decl(tluaTupleTypes.tlua, 80, 1))
 
 // Union subtype reduction: a fixed tuple is a strict subtype of the
-// exactly-in-range object (never the reverse), so the object survives --
+// exactly-in-range table (never the reverse), so the table survives --
 // deterministic and set-correct.
 declare cond: boolean;
 >cond : Symbol(cond, Decl(tluaTupleTypes.tlua, 89, 7))

@@ -11,7 +11,7 @@ local Ops = {
   __mul = function(a: { x: number }, s: number): (number, string) return a.x * s, "w"; end,
   __lt = function(a: { x: number }, b: { x: number }): boolean return a.x < b.x; end,
   __le = function(a: { x: number }, b: { x: number }): boolean return a.x <= b.x; end,
-  __eq = function(a: object, b: object): boolean return true; end,
+  __eq = function(a: table, b: table): boolean return true; end,
   __unm = function(a: { x: number }): { x: number } return a; end,
   __pow = function(a: { x: number }, n: number): { x: number } return a; end,
 };
@@ -43,7 +43,7 @@ local badLeft = 2 ^ v;
 
 // A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
 // has no handler for is still an error. `+` reports that its own way.
-local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: object, b: object): boolean return true; end });
+local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: table, b: table): boolean return true; end });
 local eqOk: boolean = eqOnly == eqOnly;
 local noAdd = eqOnly + eqOnly;
 

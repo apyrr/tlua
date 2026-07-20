@@ -1,5 +1,5 @@
 interface CoroutineLib {
-    create(fn: LuaFunction): LuaThread;
+    create(fn: function): LuaThread;
     resume(thread: LuaThread, ...: any): (boolean, ...any);
     running(): LuaThread | nil;
     status(thread: LuaThread): "running" | "suspended" | "normal" | "dead";
@@ -8,7 +8,7 @@ interface CoroutineLib {
     // arguments, later calls feed yield's results -- so correlating them with fn's
     // parameter/return packs would assert types that are wrong for every coroutine
     // that yields, which is what wrap is for.
-    wrap(fn: LuaFunction): LuaFunction;
+    wrap(fn: function): function;
     yield(...: any): (any?, ...any);
 }
 

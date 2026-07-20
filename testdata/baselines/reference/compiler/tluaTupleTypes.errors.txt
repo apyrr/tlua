@@ -96,7 +96,7 @@ tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify know
                    ~~
 !!! error TLUA2514: A tuple type cannot be indexed with a negative value.
     
-    // An excess entry against a tuple-LIKE object with a number index signature
+    // An excess entry against a tuple-LIKE table with a number index signature
     // still elaborates at the entry (the index signature types the key).
     local mixed: { 1: string, [n: number]: string } = {"a", 5};
                                                             ~
@@ -109,7 +109,7 @@ tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify know
                                           ~~~~
 !!! error TLUA2322: Type 'string' is not assignable to type 'boolean'.
     
-    // A union mixing a tuple with a tuple-like interface keeps the object path,
+    // A union mixing a tuple with a tuple-like interface keeps the table path,
     // so neither member's checking is lost: excess entries still error.
     interface ClosedPair {
         1: string;
@@ -124,7 +124,7 @@ tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify know
                                                ~~~~
 !!! error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'TupleOrLike'.
     
-    // A non-sequence object satisfies a variadic tuple when its prefix matches
+    // A non-sequence table satisfies a variadic tuple when its prefix matches
     // property-wise and every key past the prefix satisfies the rest slice;
     // elements required after the variable part are unverifiable and reject.
     declare objIn: { 1: number, 2: number };
@@ -141,7 +141,7 @@ tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify know
 !!! error TLUA2322: Type '{ 1: number; 2: number; }' is not assignable to type 'TrailReq'.
 !!! error TLUA2322:   Source provides no match for required element at position 3 in target.
     
-    // A union mixing a tuple with a plain (non-tuple-like) object: excess
+    // A union mixing a tuple with a plain (non-tuple-like) table: excess
     // entries surface the union's relation error, not a phantom-nil per-entry
     // error via the best-matching tuple constituent.
     declare mixedU: [number, number] | { kind: string };
@@ -151,7 +151,7 @@ tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify know
 !!! error TLUA2322:   Type '[number, number, number]' is not assignable to type '[number, number]'.
 !!! error TLUA2322:     Source has 3 element(s) but target allows only 2.
     
-    // A SPARSE numeric-keyed union member (no key 1) also forces the object
+    // A SPARSE numeric-keyed union member (no key 1) also forces the table
     // path, keeping its excess-entry checking.
     interface Sparse {
         2: string;
@@ -164,7 +164,7 @@ tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify know
 !!! error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'SparseU'.
     
     // Union subtype reduction: a fixed tuple is a strict subtype of the
-    // exactly-in-range object (never the reverse), so the object survives --
+    // exactly-in-range table (never the reverse), so the table survives --
     // deterministic and set-correct.
     declare cond: boolean;
     declare oPair: { 1: number, 2: number };

@@ -9,7 +9,7 @@ local t1: number = t[1];
 local s: { x: number } = { x };
 local es = {t1, s};
 
-// Destructuring assignment is gone with it: an object literal on the left of
+// Destructuring assignment is gone with it: a table literal on the left of
 // `=` is an ordinary (erroneous) assignment target ...
 declare obj: { q: number; w?: number };
 local q: number;

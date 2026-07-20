@@ -158,44 +158,44 @@ end
 
 // Deep mixed-spelling guards describe the same canonical entity.
 deepTable = {};
->deepTable = {} : { value: number; object: { member: string; }; }
->deepTable : { value: number; object: { member: string; }; }
->{} : { value: number; object: { member: string; }; }
+>deepTable = {} : { value: number; table: { member: string; }; }
+>deepTable : { value: number; table: { member: string; }; }
+>{} : { value: number; table: { member: string; }; }
 
 _G.deepTable.value = deepTable.value or 1;
 >_G.deepTable.value = deepTable.value or 1 : number
 >_G.deepTable.value : number
->_G.deepTable : { value: number; object: { member: string; }; }
+>_G.deepTable : { value: number; table: { member: string; }; }
 >_G : typeof _G
->deepTable : { value: number; object: { member: string; }; }
+>deepTable : { value: number; table: { member: string; }; }
 >value : number
 >deepTable.value or 1 : number
 >deepTable.value : number
->deepTable : { value: number; object: { member: string; }; }
+>deepTable : { value: number; table: { member: string; }; }
 >value : number
 >1 : 1
 
-_G.deepTable.object = deepTable.object or {};
->_G.deepTable.object = deepTable.object or {} : { member: string; }
->_G.deepTable.object : { member: string; }
->_G.deepTable : { value: number; object: { member: string; }; }
+_G.deepTable.table = deepTable.table or {};
+>_G.deepTable.table = deepTable.table or {} : { member: string; }
+>_G.deepTable.table : { member: string; }
+>_G.deepTable : { value: number; table: { member: string; }; }
 >_G : typeof _G
->deepTable : { value: number; object: { member: string; }; }
->object : { member: string; }
->deepTable.object or {} : { member: string; }
->deepTable.object : { member: string; }
->deepTable : { value: number; object: { member: string; }; }
->object : { member: string; }
+>deepTable : { value: number; table: { member: string; }; }
+>table : { member: string; }
+>deepTable.table or {} : { member: string; }
+>deepTable.table : { member: string; }
+>deepTable : { value: number; table: { member: string; }; }
+>table : { member: string; }
 >{} : { member: string; }
 
-_G.deepTable.object.member = "ok";
->_G.deepTable.object.member = "ok" : "ok"
->_G.deepTable.object.member : string
->_G.deepTable.object : { member: string; }
->_G.deepTable : { value: number; object: { member: string; }; }
+_G.deepTable.table.member = "ok";
+>_G.deepTable.table.member = "ok" : "ok"
+>_G.deepTable.table.member : string
+>_G.deepTable.table : { member: string; }
+>_G.deepTable : { value: number; table: { member: string; }; }
 >_G : typeof _G
->deepTable : { value: number; object: { member: string; }; }
->object : { member: string; }
+>deepTable : { value: number; table: { member: string; }; }
+>table : { member: string; }
 >member : string
 >"ok" : "ok"
 
@@ -305,15 +305,15 @@ local repeatedFunctionResult: number = repeatedFunction(1);
 local deepValue: number = deepTable.value;
 >deepValue : number
 >deepTable.value : number
->deepTable : { value: number; object: { member: string; }; }
+>deepTable : { value: number; table: { member: string; }; }
 >value : number
 
-local deepMember: string = deepTable.object.member;
+local deepMember: string = deepTable.table.member;
 >deepMember : string
->deepTable.object.member : string
->deepTable.object : { member: string; }
->deepTable : { value: number; object: { member: string; }; }
->object : { member: string; }
+>deepTable.table.member : string
+>deepTable.table : { member: string; }
+>deepTable : { value: number; table: { member: string; }; }
+>table : { member: string; }
 >member : string
 
 local guardUnion: number | string = _G.shadowedGuard;

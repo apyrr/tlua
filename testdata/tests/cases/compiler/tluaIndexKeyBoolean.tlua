@@ -25,10 +25,10 @@ local k: K = true;
 interface Mixed {
   [key: boolean]: string;
   [key: number]: number;
-  named: object;
+  named: table;
 }
 
 declare m: Mixed;
 local s: string = m[true];
 local n: number = m[1];
-local o: object = m.named;
+local o: table = m.named;

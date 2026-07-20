@@ -15,7 +15,7 @@ local dn: number = d.n;
 local dbad = d.anything;
 
 // A __index that is either a table or a function does not say which read wins.
-declare unionIndex: { __index: { a: number } | ((t: object, k: any) => string) };
+declare unionIndex: { __index: { a: number } | ((t: table, k: any) => string) };
 local u = setmetatable({ n = 1 }, unionIndex);
 local ubad = u.a;
 
@@ -30,12 +30,12 @@ local nn: number = none.n;
 local nbad = none.anything;
 
 // A metatable with no __index has no fallback to merge, and no pairing is kept for it.
-local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end });
+local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: table): string return "t"; end });
 local xn: number = noIndex.n;
 
 // A callable table would be indexed by Lua, but which half answers a read is not worth
 // guessing at.
-declare hybrid: { __index: { (t: object, k: any): string; extra: number } };
+declare hybrid: { __index: { (t: table, k: any): string; extra: number } };
 local h = setmetatable({ n = 1 }, hybrid);
 local hbad = h.extra;
 

@@ -188,7 +188,7 @@ var luaOperatorMetamethods = []string{
 func (c *Checker) getMetatableHandlerType(metatableType *Type, name string) *Type {
 	// Metamethods never live on the global Object/Function augmentations, so the lookup skips
 	// them -- and a merged `interface Object { __add: ... }` cannot inject an operator everywhere.
-	prop := c.getPropertyOfTypeEx(metatableType, name, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
+	prop := c.getPropertyOfTypeEx(metatableType, name, false /*includeTypeOnlyMembers*/)
 	if prop == nil || prop.Flags&ast.SymbolFlagsOptional != 0 {
 		return nil
 	}
@@ -205,7 +205,7 @@ func (c *Checker) getMetatableHandlerType(metatableType *Type, name string) *Typ
 // which half of it answers a lookup is not worth guessing at. __index reads through optionality
 // (the defaults idiom); every other metamethod does not.
 func (c *Checker) getMetatableSource(metatableType *Type, name string, allowOptional bool) (*Type, bool) {
-	prop := c.getPropertyOfTypeEx(metatableType, name, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
+	prop := c.getPropertyOfTypeEx(metatableType, name, false /*includeTypeOnlyMembers*/)
 	if prop == nil || !allowOptional && prop.Flags&ast.SymbolFlagsOptional != 0 {
 		return nil, false
 	}

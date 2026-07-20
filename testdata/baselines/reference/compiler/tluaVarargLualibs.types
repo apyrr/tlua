@@ -99,7 +99,7 @@ function selectAndPcall(...: number): void
   local ok = pcall(print, ...);
 >ok : boolean
 >pcall(print, ...) : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >print : (...: any) => void
 >... : number | nil
 

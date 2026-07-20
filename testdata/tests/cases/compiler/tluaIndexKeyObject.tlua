@@ -37,6 +37,6 @@ local s5: string = byCData[cd];
 local bad1: string = byTable["x"];
 local bad2: string = byThread[pt];
 
-// keyof reports the object key.
+// keyof reports the table key.
 type K = keyof ByTable;
 local k: K = pt;

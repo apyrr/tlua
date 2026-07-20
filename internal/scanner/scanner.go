@@ -98,7 +98,7 @@ var textToKeyword = map[string]ast.Kind{
 	"not":        ast.KindExclamationToken,
 	"null":       ast.KindNilKeyword,
 	"number":     ast.KindNumberKeyword,
-	"object":     ast.KindObjectKeyword,
+	"table":      ast.KindObjectKeyword,
 	"or":         ast.KindBarBarToken,
 	"package":    ast.KindPackageKeyword,
 	"private":    ast.KindPrivateKeyword,

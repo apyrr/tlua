@@ -30,7 +30,7 @@ tluaMetatableReplace.tlua(36,7): error TLUA2322: Type 'number' is not assignable
 !!! error TLUA2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.
     
     // A metatable with no __index detaches the fallback just as thoroughly.
-    local other = setmetatable(obj, { __tostring = function(t: object): string return "t"; end });
+    local other = setmetatable(obj, { __tostring = function(t: table): string return "t"; end });
     local gone3 = other.fromFirst;
                         ~~~~~~~~~
 !!! error TLUA2339: Property 'fromFirst' does not exist on type '{ own: boolean; }'.

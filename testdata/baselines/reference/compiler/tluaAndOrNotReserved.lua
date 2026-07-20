@@ -12,7 +12,7 @@ local a1 = obj.and;
 local a2 = obj.or;
 local a3 = obj.not;
 
-// Property names in an object literal.
+// Property names in a table literal.
 local o1 = { and = 1 };
 local o2 = { or = 1 };
 local o3 = { not = 1 };
@@ -53,7 +53,7 @@ local a1 = obj. and ;
 local a2 = obj. or ;
 local a3 = obj.;
 !;
--- Property names in an object literal.
+-- Property names in a table literal.
 local o1 = {  and , 1 };
 local o2 = {  or , 1 };
 local o3 = { !, 1 };

@@ -16,7 +16,7 @@ func TestCompletionListInTypeLiteralInTypeParameter1(t *testing.T) {
     two: number;
     333: symbol;
     '4four': boolean;
-    '5 five': object;
+    '5 five': table;
     number: string;
     Object: number;
 }

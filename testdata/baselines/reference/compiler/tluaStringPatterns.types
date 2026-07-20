@@ -453,9 +453,9 @@ local replaced, replacementCount = xText.gsub("(.)", {});
 >replaced : string
 >replacementCount : number
 >xText.gsub("(.)", {}) : string
->xText.gsub : (pattern: string, replacement: string | object | LuaFunction, n?: number) => (string, number)
+>xText.gsub : (pattern: string, replacement: string | table | function, n?: number) => (string, number)
 >xText : string
->gsub : (pattern: string, replacement: string | object | LuaFunction, n?: number) => (string, number)
+>gsub : (pattern: string, replacement: string | table | function, n?: number) => (string, number)
 >"(.)" : "(.)"
 >{} : {}
 

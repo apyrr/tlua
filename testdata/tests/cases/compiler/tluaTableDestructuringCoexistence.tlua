@@ -2,7 +2,7 @@
 // @noEmit: true
 
 // Destructuring assignment is deleted: `x = 1` inside braces has exactly one
-// meaning (a Lua keyed field), and an object literal on the left of `=` is an
+// meaning (a Lua keyed field), and a table literal on the left of `=` is an
 // ordinary assignment target that fails the reference check.
 declare obj: { x?: number; q?: number };
 local xv: number | nil;

@@ -1,13 +1,9 @@
-tluaTypeCallNarrowing.tlua(9,11): error TLUA2322: Type 'LuaCData | { n: number; }' is not assignable to type '{ n: number; }'.
-  Property 'n' is missing in type 'LuaCData' but required in type '{ n: number; }'.
-tluaTypeCallNarrowing.tlua(18,11): error TLUA2322: Type 'Mixed' is not assignable to type 'LuaCData'.
-  Type 'nil' is not assignable to type 'LuaCData'.
 tluaTypeCallNarrowing.tlua(84,6): error TLUA2367: This comparison appears to be unintentional because the types '"boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"' and '"chair"' have no overlap.
 
 
-==== tluaTypeCallNarrowing.tlua (3 errors) ====
+==== tluaTypeCallNarrowing.tlua (1 errors) ====
     // `type(x)` is the Lua type guard. Every tag it can return narrows, including the
-    // three branded object kinds, which carry the same type facts as a plain table and
+    // three branded non-table kinds, which carry the same type facts as a plain table and
     // therefore cannot be told apart by facts alone.
     
     type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
@@ -15,10 +11,6 @@ tluaTypeCallNarrowing.tlua(84,6): error TLUA2367: This comparison appears to be 
     function tags(v: Mixed): void {
       if type(v) == "table" then
         local table1: { n: number } = v; // the brands are not tables, and "table" excludes nil
-              ~~~~~~
-!!! error TLUA2322: Type 'LuaCData | { n: number; }' is not assignable to type '{ n: number; }'.
-!!! error TLUA2322:   Property 'n' is missing in type 'LuaCData' but required in type '{ n: number; }'.
-!!! related TLUA2728 tluaTypeCallNarrowing.tlua:9:21: 'n' is declared here.
       end
       if type(v) == "thread" then
         local thread1: LuaThread = v;
@@ -28,9 +20,6 @@ tluaTypeCallNarrowing.tlua(84,6): error TLUA2367: This comparison appears to be 
       end
       if type(v) == "cdata" then
         local cdata1: LuaCData = v;
-              ~~~~~~
-!!! error TLUA2322: Type 'Mixed' is not assignable to type 'LuaCData'.
-!!! error TLUA2322:   Type 'nil' is not assignable to type 'LuaCData'.
       end
       if type(v) == "function" then
         local function1: (a: number) => void = v;
@@ -69,7 +58,7 @@ tluaTypeCallNarrowing.tlua(84,6): error TLUA2367: This comparison appears to be 
     
     function tops(u: unknown, a: any): void {
       if type(u) == "table" then
-        local o: object = u;
+        local o: table = u;
       end
       if type(u) == "thread" then
         local t: LuaThread = u;

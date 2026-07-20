@@ -22,7 +22,7 @@ local a3 = obj.not;
 >a3 : Symbol(a3, Decl(tluaAndOrNotReserved.tlua, 9, 5))
 >obj : Symbol(obj, Decl(tluaAndOrNotReserved.tlua, 4, 5))
 
-// Property names in an object literal.
+// Property names in a table literal.
 local o1 = { and = 1 };
 >o1 : Symbol(o1, Decl(tluaAndOrNotReserved.tlua, 12, 5))
 

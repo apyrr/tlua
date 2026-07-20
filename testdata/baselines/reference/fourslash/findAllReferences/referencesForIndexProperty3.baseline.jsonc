@@ -8,7 +8,7 @@
 // y.[|toMyString|]();
 // 
 // local x = {};
-// x["[|toMyString|]"]();
+// x["toMyString"]();
 
 
 
@@ -22,18 +22,14 @@
 // y./*FIND ALL REFS*/[|toMyString|]();
 // 
 // local x = {};
-// x["[|toMyString|]"]();
+// x["toMyString"]();
 
 
 
 // === findAllReferences ===
 // === /referencesForIndexProperty3.tlua ===
-// interface Object {
-//     [|toMyString|]();
-// }
-// 
-// local y: Object;
-// y.[|toMyString|]();
+// --- (line: 5) skipped ---
+// y.toMyString();
 // 
 // local x = {};
 // x["/*FIND ALL REFS*/[|toMyString|]"]();

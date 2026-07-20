@@ -127,12 +127,8 @@ ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Array'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Boolean'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'CallableFunction'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Function'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'IArguments'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'NewableFunction'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Number'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Object'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'RegExp'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'String'.
 [96mproject1/file.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -173,7 +169,7 @@ project1/utils.d.tlua
 project1/typeroot1/sometype/index.d.tlua
    Matched by default include pattern '**/*'
 
-Found 15 errors in 4 files.
+Found 11 errors in 4 files.
 
 Errors  Files
      1  project1/file.tlua[90m:1[0m

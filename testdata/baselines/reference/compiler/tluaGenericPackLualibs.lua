@@ -36,7 +36,7 @@ local extraType: string = extra;
 // coroutine.wrap stays deliberately erased: a wrapped call exchanges values with
 // `yield` (the first call's results are the first yield's arguments), so packs
 // correlated with fn's parameters/returns would be wrong for every coroutine that
-// yields. The result is a plain LuaFunction.
+// yields. The result is a plain function.
 local wrapped = coroutine.wrap(compute);
 local wok = wrapped(2, "y");
 
@@ -137,7 +137,7 @@ local extraType = extra;
 -- coroutine.wrap stays deliberately erased: a wrapped call exchanges values with
 -- `yield` (the first call's results are the first yield's arguments), so packs
 -- correlated with fn's parameters/returns would be wrong for every coroutine that
--- yields. The result is a plain LuaFunction.
+-- yields. The result is a plain function.
 local wrapped = coroutine.wrap(compute);
 local wok = wrapped(2, "y");
 -- An OVERLOADED callee cannot pin A to one signature, so pcall falls through to

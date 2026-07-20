@@ -52,7 +52,7 @@ tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not
       if type() == "string" then
          ~~~~
 !!! error TLUA2554: Expected 1 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:212:23: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:207:23: An argument for 'value' was not provided.
         local s: string = v;
               ~
 !!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.

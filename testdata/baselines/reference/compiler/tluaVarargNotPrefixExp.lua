@@ -11,7 +11,7 @@ function f(...: number): void
   local accessed = ....x;
 end
 
-// The same holds in a table constructor, where TS object spread used to live.
+// The same holds in a table constructor, where TS table spread used to live.
 function g(...: number): void
   local t = { ...({} as number) };
 end
@@ -38,7 +38,7 @@ function f(...)
     local accessed = ...;
     x;
 end
--- The same holds in a table constructor, where TS object spread used to live.
+-- The same holds in a table constructor, where TS table spread used to live.
 function g(...)
     local t = { ..., ({} as number) };
 end

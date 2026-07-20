@@ -1,1 +1,1 @@
-type TableClear = (value: object) => void;
+type TableClear = (value: table) => void;

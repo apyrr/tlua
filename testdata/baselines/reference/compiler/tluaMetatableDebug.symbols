@@ -49,11 +49,11 @@ local goneA = swapped.a;
 >swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 10, 5))
 
 // A member call through anything but the debug global is not the protocol.
-local fake = { setmetatable = function(v: object, mt: object): object return v; end };
+local fake = { setmetatable = function(v: table, mt: table): table return v; end };
 >fake : Symbol(fake, Decl(tluaMetatableDebug.tlua, 15, 5))
 >setmetatable : Symbol(setmetatable, Decl(tluaMetatableDebug.tlua, 15, 14))
 >v : Symbol(v, Decl(tluaMetatableDebug.tlua, 15, 39))
->mt : Symbol(mt, Decl(tluaMetatableDebug.tlua, 15, 49))
+>mt : Symbol(mt, Decl(tluaMetatableDebug.tlua, 15, 48))
 >v : Symbol(v, Decl(tluaMetatableDebug.tlua, 15, 39))
 
 local aliased = fake.setmetatable(guarded, { __index = { c = 1 } });

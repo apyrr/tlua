@@ -34,10 +34,10 @@ type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = IsNever<T> extends
 >false : false
 >true : true
 
-type RequiredKeysOf<BaseType extends object> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
+type RequiredKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
 >RequiredKeysOf : RequiredKeysOf<BaseType>
 
-type OptionalKeysOf<BaseType extends object> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], undefined>;
+type OptionalKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], undefined>;
 >OptionalKeysOf : OptionalKeysOf<BaseType>
 
 type OmitIndexSignature<ObjectType> = {[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown> ? never : KeyType]: ObjectType[KeyType]};
@@ -80,7 +80,7 @@ type IsNumeric<T extends string> = T extends `${number}` ? Trim<T> extends T ? t
 type ApplyDefaultOptions<
 >ApplyDefaultOptions : IfNever<SpecifiedOptions, Defaults, ((PickIndexSignature<Defaults> extends infer T_2 ? { [Key in keyof T_2 as Key extends keyof PickIndexSignature<{ [Key_1 in keyof SpecifiedOptions as Key_1 extends Exclude<{ [Key_2 in keyof Options]: Options extends Record<Key_2, Options[Key_2]> ? never : Key_2; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key_1] ? never : Key_1 : Key_1]: SpecifiedOptions[Key_1]; }> ? never : Key]: T_2[Key]; } : never) & PickIndexSignature<{ [Key in keyof SpecifiedOptions as Key extends Exclude<{ [Key_1 in keyof Options]: Options extends Record<Key_1, Options[Key_1]> ? never : Key_1; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]; }> & (OmitIndexSignature<Defaults> extends infer T_3 ? { [Key in keyof T_3 as Key extends keyof OmitIndexSignature<{ [Key_1 in keyof SpecifiedOptions as Key_1 extends Exclude<{ [Key_2 in keyof Options]: Options extends Record<Key_2, Options[Key_2]> ? never : Key_2; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key_1] ? never : Key_1 : Key_1]: SpecifiedOptions[Key_1]; }> ? never : Key]: T_3[Key]; } : never) & OmitIndexSignature<{ [Key in keyof SpecifiedOptions as Key extends Exclude<{ [Key_1 in keyof Options]: Options extends Record<Key_1, Options[Key_1]> ? never : Key_1; }[keyof Options], nil> ? nil extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]; }> extends infer T_1 ? { [KeyType in keyof T_1]: T_1[KeyType]; } : never) & Required<Options> extends infer T ? { [KeyType in keyof T]: T[KeyType]; } : never>
 
-    Options extends object,
+    Options extends table,
     Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
     SpecifiedOptions extends Options,
 > = IfAny<SpecifiedOptions, Defaults, IfNever<SpecifiedOptions, Defaults, Simplify<Merge<Defaults, {[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]}> & Required<Options>>>>;

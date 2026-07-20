@@ -531,10 +531,10 @@ local repaired = setmetatable(a,
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 >a : Symbol(a, Decl(tluaAmbientOperators.tlua, 17, 7))
 
-    { __eq = function(l: object, r: object): boolean return true; end });
+    { __eq = function(l: table, r: table): boolean return true; end });
 >__eq : Symbol(__eq, Decl(tluaAmbientOperators.tlua, 161, 5))
 >l : Symbol(l, Decl(tluaAmbientOperators.tlua, 161, 22))
->r : Symbol(r, Decl(tluaAmbientOperators.tlua, 161, 32))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 161, 31))
 
 local lostAdd = repaired + repaired;
 >lostAdd : Symbol(lostAdd, Decl(tluaAmbientOperators.tlua, 162, 5))
@@ -547,17 +547,17 @@ local fielded = setmetatable(
 >fielded : Symbol(fielded, Decl(tluaAmbientOperators.tlua, 166, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 
-    { __add = function(l: object, r: object): object return l; end, k = 1 },
+    { __add = function(l: table, r: table): table return l; end, k = 1 },
 >__add : Symbol(__add, Decl(tluaAmbientOperators.tlua, 167, 5))
 >l : Symbol(l, Decl(tluaAmbientOperators.tlua, 167, 23))
->r : Symbol(r, Decl(tluaAmbientOperators.tlua, 167, 33))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 167, 32))
 >l : Symbol(l, Decl(tluaAmbientOperators.tlua, 167, 23))
->k : Symbol(k, Decl(tluaAmbientOperators.tlua, 167, 67))
+>k : Symbol(k, Decl(tluaAmbientOperators.tlua, 167, 64))
 
-    { __eq = function(l: object, r: object): boolean return true; end });
+    { __eq = function(l: table, r: table): boolean return true; end });
 >__eq : Symbol(__eq, Decl(tluaAmbientOperators.tlua, 168, 5))
 >l : Symbol(l, Decl(tluaAmbientOperators.tlua, 168, 22))
->r : Symbol(r, Decl(tluaAmbientOperators.tlua, 168, 32))
+>r : Symbol(r, Decl(tluaAmbientOperators.tlua, 168, 31))
 
 local fieldedSum = fielded + fielded;
 >fieldedSum : Symbol(fieldedSum, Decl(tluaAmbientOperators.tlua, 169, 5))

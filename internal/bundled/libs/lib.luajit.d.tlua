@@ -1,10 +1,6 @@
 
 // LuaJIT 2.x runtime declarations for tlua.
 
-interface Object {}
-interface Function {}
-interface CallableFunction extends Function {}
-interface NewableFunction extends Function {}
 interface IArguments {
     readonly length: number;
     [index: number]: any;
@@ -21,7 +17,6 @@ interface ReadonlyArray<T> {
     readonly [index: number]: T;
 }
 
-type LuaFunction = (...: any) => (any?, ...any);
 
 // A Lua table: an open map from any non-nil key to a value. K is invariant -- it is an
 // input when the table is indexed and an output when it is iterated with `pairs` -- so
@@ -120,7 +115,7 @@ type InstanceType<T extends new (...: any) => any> = T extends new (...: any) =>
 
 /** Recursively unwrap the value type of a thenable */
 type Awaited<T> = T extends null | undefined ? T :
-    T extends object & { then(onfulfilled: infer F, ...: infer _): any; } ?
+    T extends table & { then(onfulfilled: infer F, ...: infer _): any; } ?
         F extends ((value: infer V, ...: infer _) => any) ?
             Awaited<V> :
         never :
@@ -138,7 +133,7 @@ type Capitalize<S extends string> = intrinsic;
 /** Convert first character of string literal type to lowercase */
 type Uncapitalize<S extends string> = intrinsic;
 
-interface LuaMetatable<T extends object> {
+interface LuaMetatable<T extends table> {
     __index?: Table<any, any> | ((value: T, key: any) => any);
     __newindex?: Table<any, any> | ((value: T, key: any, newValue: any) => void);
     __call?: (value: T, ...: any) => (any?, ...any);
@@ -173,13 +168,13 @@ declare function dofile(filename?: string): (any?, ...any);
 // is optional. This matters now that forwarding a possibly-empty `...` into a
 // required parameter is an error: `error(...)` has to keep working.
 declare function error(message?: any, level?: number): never;
-declare function getfenv(target?: number | LuaFunction): object;
-declare function getmetatable<T extends object>(value: T): LuaMetatable<T> | any | nil;
+declare function getfenv(target?: number | function): table;
+declare function getmetatable<T extends table>(value: T): LuaMetatable<T> | any | nil;
 declare function ipairs<T>(value: Table<number, T>): (LuaIPairsIterator<T>, Table<number, T>, number);
-declare function load(reader: () => string | nil, chunkname?: string): (LuaFunction?, string?);
-declare function loadfile(filename?: string): (LuaFunction?, string?);
-declare function loadstring(source: string, chunkname?: string): (LuaFunction?, string?);
-declare function module(name: string, ...: LuaFunction): void;
+declare function load(reader: () => string | nil, chunkname?: string): (function?, string?);
+declare function loadfile(filename?: string): (function?, string?);
+declare function loadstring(source: string, chunkname?: string): (function?, string?);
+declare function module(name: string, ...: function): void;
 declare function newproxy(prototype?: boolean | LuaUserdata): LuaUserdata;
 // next is the pairs iteration protocol, so its value is non-optional for the same
 // reason LuaPairsIterator's is: a key it yields always has one.
@@ -194,7 +189,7 @@ declare function pairs<K, V>(value: Table<K, V>): (LuaPairsIterator<K, V>, Table
 // one signature (inference reads a single signature), so `pcall(select, "#", 1, 2)`
 // falls through to it instead of mis-checking against the wrong overload.
 declare function pcall<...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R);
-declare function pcall(fn: LuaFunction, ...: any): (boolean, ...any);
+declare function pcall(fn: function, ...: any): (boolean, ...any);
 declare function print(...: any): void;
 declare function rawequal(left: any, right: any): boolean;
 declare function rawget<K, V>(value: Table<K, V>, index: K): V | nil;
@@ -205,8 +200,8 @@ declare function select(index: "#", ...: any): number;
 // spell -- see internal/checker/luaselect.go). This declared type is the safe
 // fallback for a shadowed or aliased select the refinement does not reach.
 declare function select(index: number, ...: any): (any?, ...any);
-declare function setfenv(target: number | LuaFunction, environment: object): LuaFunction;
-declare function setmetatable<T extends object>(value: T, metatable: LuaMetatable<T> | nil): T;
+declare function setfenv(target: number | function, environment: table): function;
+declare function setmetatable<T extends table>(value: T, metatable: LuaMetatable<T> | nil): T;
 declare function tonumber(value: any, base?: number): number | nil;
 declare function tostring(value: any): string;
 declare function type(value: any): "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata";
@@ -216,7 +211,7 @@ declare function unpack<T>(values: Table<number, T>, i?: number, j?: number): (T
 // the success pack, so the result is approximated as `(boolean, ...R)`.
 // The erased second overload catches overloaded callees, as pcall's does.
 declare function xpcall<...A, ...R>(fn: (...: A) => (...R), handler: (message: any) => any, ...: A): (boolean, ...R);
-declare function xpcall(fn: LuaFunction, handler: (message: any) => any, ...: any): (boolean, ...any);
+declare function xpcall(fn: function, handler: (message: any) => any, ...: any): (boolean, ...any);
 
 /*
  * Generic pack parameters (`<...A>`) now correlate arguments and results for
@@ -247,7 +242,7 @@ declare function xpcall(fn: LuaFunction, handler: (message: any) => any, ...: an
  */
 
 interface CoroutineLib {
-    create(fn: LuaFunction): LuaThread;
+    create(fn: function): LuaThread;
     resume(thread: LuaThread, ...: any): (boolean, ...any);
     running(): LuaThread | nil;
     status(thread: LuaThread): "running" | "suspended" | "normal" | "dead";
@@ -256,7 +251,7 @@ interface CoroutineLib {
     // arguments, later calls feed yield's results -- so correlating them with fn's
     // parameter/return packs would assert types that are wrong for every coroutine
     // that yields, which is what wrap is for.
-    wrap(fn: LuaFunction): LuaFunction;
+    wrap(fn: function): function;
     yield(...: any): (any?, ...any);
 }
 
@@ -268,7 +263,7 @@ interface String {
     find(pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
     format(...: any): string;
     gmatch(pattern: string): () => string;
-    gsub(pattern: string, replacement: string | object | LuaFunction, n?: number): (string, number);
+    gsub(pattern: string, replacement: string | table | function, n?: number): (string, number);
     len(): number;
     lower(): string;
     match(pattern: string, init?: number): (string?, ...string);
@@ -281,11 +276,11 @@ interface String {
 interface StringLib {
     byte(value: string, i?: number, j?: number): (number?, ...number);
     char(...: number): string;
-    dump(fn: LuaFunction): string;
+    dump(fn: function): string;
     find(value: string, pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
     format(format: string, ...: any): string;
     gmatch(value: string, pattern: string): () => string;
-    gsub(value: string, pattern: string, replacement: string | object | LuaFunction, n?: number): (string, number);
+    gsub(value: string, pattern: string, replacement: string | table | function, n?: number): (string, number);
     len(value: string): number;
     lower(value: string): string;
     match(value: string, pattern: string, init?: number): (string?, ...string);
@@ -354,7 +349,7 @@ type LuaReadFormat = "*n" | "*a" | "*l" | number;
 interface LuaFile extends LuaUserdata {
     close(): (boolean | nil, string?);
     flush(): (boolean | nil, string?);
-    lines(...: LuaReadFormat): LuaFunction;
+    lines(...: LuaReadFormat): function;
     read(...: LuaReadFormat): (any, ...any);
     seek(whence?: "set" | "cur" | "end", offset?: number): (number | nil, string?);
     setvbuf(mode: "no" | "full" | "line", size?: number): (boolean | nil, string?);
@@ -368,7 +363,7 @@ interface IOLib {
     close(file?: LuaFile): (boolean | nil, string?);
     flush(): (boolean | nil, string?);
     input(file?: string | LuaFile): LuaFile;
-    lines(filename?: string, ...: LuaReadFormat): LuaFunction;
+    lines(filename?: string, ...: LuaReadFormat): function;
     open(filename: string, mode?: string): (LuaFile?, string?);
     output(file?: string | LuaFile): LuaFile;
     popen(command: string, mode?: "r" | "w"): (LuaFile?, string?);
@@ -423,13 +418,13 @@ interface PackageLib {
     readonly config: string;
     readonly cpath: string;
     readonly loaded: {[name: string]: any};
-    readonly loaders: ((name: string) => LuaFunction | string)[];
+    readonly loaders: ((name: string) => function | string)[];
     readonly path: string;
-    readonly preload: {[name: string]: LuaFunction};
-    readonly searchers: ((name: string) => LuaFunction | string)[];
-    loadlib(library: string, functionName: string): (LuaFunction | nil, string?);
+    readonly preload: {[name: string]: function};
+    readonly searchers: ((name: string) => function | string)[];
+    loadlib(library: string, functionName: string): (function | nil, string?);
     searchpath(name: string, path: string, separator?: string, replacement?: string): (string?, string?);
-    seeall(module: object): void;
+    seeall(module: table): void;
 }
 
 declare package: PackageLib;
@@ -444,29 +439,29 @@ interface LuaDebugInfo {
     name?: string;
     namewhat?: string;
     nups?: number;
-    func?: LuaFunction;
+    func?: function;
     activelines?: {[line: number]: boolean};
 }
 
 interface DebugLib {
     debug(): void;
-    getfenv(value: any): object;
-    gethook(): (LuaFunction?, string?, number?);
-    gethook(thread: LuaThread): (LuaFunction?, string?, number?);
-    getinfo(fn: number | LuaFunction, what?: string): LuaDebugInfo | nil;
-    getinfo(thread: LuaThread, fn: number | LuaFunction, what?: string): LuaDebugInfo | nil;
+    getfenv(value: any): table;
+    gethook(): (function?, string?, number?);
+    gethook(thread: LuaThread): (function?, string?, number?);
+    getinfo(fn: number | function, what?: string): LuaDebugInfo | nil;
+    getinfo(thread: LuaThread, fn: number | function, what?: string): LuaDebugInfo | nil;
     getlocal(level: number, localIndex: number): (string?, any);
     getlocal(thread: LuaThread, level: number, localIndex: number): (string?, any);
-    getmetatable(value: any): object | nil;
-    getregistry(): object;
-    getupvalue(fn: LuaFunction, index: number): (string?, any);
-    setfenv(value: any, environment: object): any;
-    sethook(hook?: LuaFunction, mask?: string, count?: number): void;
-    sethook(thread: LuaThread, hook?: LuaFunction, mask?: string, count?: number): void;
+    getmetatable(value: any): table | nil;
+    getregistry(): table;
+    getupvalue(fn: function, index: number): (string?, any);
+    setfenv(value: any, environment: table): any;
+    sethook(hook?: function, mask?: string, count?: number): void;
+    sethook(thread: LuaThread, hook?: function, mask?: string, count?: number): void;
     setlocal(level: number, localIndex: number, value: any): string | nil;
     setlocal(thread: LuaThread, level: number, localIndex: number, value: any): string | nil;
-    setmetatable<T>(value: T, metatable: object | nil): T;
-    setupvalue(fn: LuaFunction, index: number, value: any): string | nil;
+    setmetatable<T>(value: T, metatable: table | nil): T;
+    setupvalue(fn: function, index: number, value: any): string | nil;
     traceback(message?: any, level?: number): string;
     traceback(thread: LuaThread, message?: any, level?: number): string;
 }
@@ -499,9 +494,9 @@ interface JITLib {
     readonly version_num: number;
     readonly os: "Windows" | "Linux" | "OSX" | "BSD" | "POSIX" | "Other";
     readonly arch: string;
-    on(fn?: LuaFunction | boolean, recursive?: boolean): void;
-    off(fn?: LuaFunction | boolean, recursive?: boolean): void;
-    flush(fn?: LuaFunction | boolean, recursive?: boolean): void;
+    on(fn?: function | boolean, recursive?: boolean): void;
+    off(fn?: function | boolean, recursive?: boolean): void;
+    flush(fn?: function | boolean, recursive?: boolean): void;
     flush(trace: number): void;
     status(): (boolean, ...string);
     readonly opt: JITOptLib;
@@ -523,7 +518,7 @@ interface LuaCType {
 interface LuaCallback extends LuaCData {
     readonly __ffiCallbackBrand: unique symbol;
     free(): void;
-    set(fn: LuaFunction): void;
+    set(fn: function): void;
 }
 
 interface LuaCNamespace {
@@ -541,8 +536,8 @@ interface FFILib {
     "new": (type: LuaCTypeSpec, ...: any) => LuaCData;
     "typeof": (type: LuaCTypeSpec, ...: any) => LuaCType;
     cast(type: LuaCTypeSpec, initializer: any): LuaCData;
-    metatype(type: LuaCTypeSpec, metatable: object): LuaCType;
-    gc(value: LuaCData, finalizer?: LuaFunction): LuaCData;
+    metatype(type: LuaCTypeSpec, metatable: table): LuaCType;
+    gc(value: LuaCData, finalizer?: function): LuaCData;
     sizeof(type: LuaCTypeSpec, count?: number): number | nil;
     alignof(type: LuaCTypeSpec): number;
     offsetof(type: LuaCTypeSpec, field: string): (number, number?, number?);
@@ -591,10 +586,10 @@ interface JITTraceInfo {
 }
 
 interface JITUtilLib {
-    funcinfo(fn: LuaFunction, pc?: number): JITFunctionInfo;
-    funcbc(fn: LuaFunction, pc: number): (number?, number?);
-    funck(fn: LuaFunction, index: number): any;
-    funcuvname(fn: LuaFunction, index: number): string | nil;
+    funcinfo(fn: function, pc?: number): JITFunctionInfo;
+    funcbc(fn: function, pc: number): (number?, number?);
+    funck(fn: function, index: number): any;
+    funcuvname(fn: function, index: number): string | nil;
     traceinfo(trace: number): JITTraceInfo | nil;
     traceir(trace: number, reference: number): (number?, number?, number?, number?, number?);
     tracek(trace: number, index: number): (any?, number?, number?);
@@ -606,8 +601,8 @@ interface JITUtilLib {
 }
 
 interface LuaStringBuffer {
-    put(value: string | number | object, ...: string | number | object): LuaStringBuffer;
-    putf(format: string, ...: string | number | object): LuaStringBuffer;
+    put(value: string | number | table, ...: string | number | table): LuaStringBuffer;
+    putf(format: string, ...: string | number | table): LuaStringBuffer;
     putcdata(value: LuaCData, length: number): LuaStringBuffer;
     set(value: string | LuaCData, length?: number): LuaStringBuffer;
     reset(): LuaStringBuffer;
@@ -624,7 +619,7 @@ interface LuaStringBuffer {
 
 interface StringBufferOptions {
     dict?: string[];
-    metatable?: object[];
+    metatable?: table[];
 }
 
 interface StringBufferLib {
@@ -634,9 +629,9 @@ interface StringBufferLib {
     decode(value: string): any;
 }
 
-type TableClear = (value: object) => void;
+type TableClear = (value: table) => void;
 
-type TableNew = (arraySize: number, hashSize: number) => object;
+type TableNew = (arraySize: number, hashSize: number) => table;
 
 declare function require(module: "bit"): BitLib;
 declare function require(module: "jit"): JITLib;

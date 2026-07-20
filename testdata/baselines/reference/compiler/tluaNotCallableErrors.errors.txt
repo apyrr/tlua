@@ -2,15 +2,13 @@ tluaNotCallableErrors.tlua(6,1): error TLUA2349: This expression is not callable
   Type 'Number' has no call signatures.
 tluaNotCallableErrors.tlua(9,1): error TLUA2349: This expression is not callable.
   Type '{}' has no call signatures.
-tluaNotCallableErrors.tlua(12,1): error TLUA2349: This expression is not callable.
-  Type 'Function' has no call signatures.
 
 
-==== tluaNotCallableErrors.tlua (3 errors) ====
+==== tluaNotCallableErrors.tlua (2 errors) ====
     // Calling a value with no call signatures must error. TypeScript's
-    // "untyped call" escape hatch keyed on Function-assignability, which is
-    // meaningless against tlua's empty Function interface — every value was
-    // Function-assignable and not-callable errors vanished.
+    // "untyped call" escape hatch keyed on assignability to the global Function
+    // interface — an empty stub in this fork (since deleted outright), so every
+    // value was Function-assignable and not-callable errors vanished.
     local notCallable = 1;
     notCallable();
     ~~~~~~~~~~~
@@ -23,11 +21,6 @@ tluaNotCallableErrors.tlua(12,1): error TLUA2349: This expression is not callabl
 !!! error TLUA2349: This expression is not callable.
 !!! error TLUA2349:   Type '{}' has no call signatures.
     
-    declare legacyFunction: Function;
-    legacyFunction();
-    ~~~~~~~~~~~~~~
-!!! error TLUA2349: This expression is not callable.
-!!! error TLUA2349:   Type 'Function' has no call signatures.
     
     declare untypedValue: any;
     untypedValue(); // any stays callable

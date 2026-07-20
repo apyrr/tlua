@@ -32,7 +32,7 @@ function forward(...: any): void
   local ok = pcall(forward, ...);
 >ok : boolean
 >pcall(forward, ...) : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >forward : (...: any) => void
 >... : any
 

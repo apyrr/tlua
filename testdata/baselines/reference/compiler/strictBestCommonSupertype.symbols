@@ -3,7 +3,9 @@
 === strictBestCommonSupertype.tlua ===
 // https://github.com/microsoft/typescript-go/issues/1222
 
-class Store<T = object> {
+class Store<T = table> {
+>table : Symbol(table, Decl(lib.luajit.d.tlua, --, --))
+
     select<K>(mapFn: (state: T) => K) {};
 >select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 >K : Symbol(K)
@@ -28,10 +30,9 @@ function inject<T>(token: ProviderToken<T>): T {
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 8, 16))
 }
 
-interface Type<T> extends Function {
+interface Type<T> {
 >Type : Symbol(Type, Decl(strictBestCommonSupertype.tlua, 10, 1))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 12, 15))
->Function : Symbol(Function, Decl(lib.luajit.d.tlua, --, --))
 
     new (...args: any[]): T;
 >args : Symbol(args, Decl(strictBestCommonSupertype.tlua, 13, 9))
@@ -46,13 +47,12 @@ type ProviderToken<T> = Type<T> | AbstractType<T>;
 >AbstractType : Symbol(AbstractType, Decl(strictBestCommonSupertype.tlua, 16, 50))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 16, 19))
 
-interface AbstractType<T> extends Function {
+interface AbstractType<T> {
 >AbstractType : Symbol(AbstractType, Decl(strictBestCommonSupertype.tlua, 16, 50))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 18, 23))
->Function : Symbol(Function, Decl(lib.luajit.d.tlua, --, --))
 
     prototype: T;
->prototype : Symbol(AbstractType.prototype, Decl(strictBestCommonSupertype.tlua, 18, 44))
+>prototype : Symbol(AbstractType.prototype, Decl(strictBestCommonSupertype.tlua, 18, 27))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 18, 23))
 }
 

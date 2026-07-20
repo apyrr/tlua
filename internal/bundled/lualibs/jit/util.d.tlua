@@ -25,10 +25,10 @@ interface JITTraceInfo {
 }
 
 interface JITUtilLib {
-    funcinfo(fn: LuaFunction, pc?: number): JITFunctionInfo;
-    funcbc(fn: LuaFunction, pc: number): (number?, number?);
-    funck(fn: LuaFunction, index: number): any;
-    funcuvname(fn: LuaFunction, index: number): string | nil;
+    funcinfo(fn: function, pc?: number): JITFunctionInfo;
+    funcbc(fn: function, pc: number): (number?, number?);
+    funck(fn: function, index: number): any;
+    funcuvname(fn: function, index: number): string | nil;
     traceinfo(trace: number): JITTraceInfo | nil;
     traceir(trace: number, reference: number): (number?, number?, number?, number?, number?);
     tracek(trace: number, index: number): (any?, number?, number?);

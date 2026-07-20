@@ -16,7 +16,7 @@ tluaTableShorthandRemoved.tlua(24,14): error TLUA2454: Variable 'q' is used befo
 !!! error TLUA2353: Object literal may only specify known properties, and '1' does not exist in type '{ x: number; }'.
     local es = {t1, s};
     
-    // Destructuring assignment is gone with it: an object literal on the left of
+    // Destructuring assignment is gone with it: a table literal on the left of
     // `=` is an ordinary (erroneous) assignment target ...
     declare obj: { q: number; w?: number };
     local q: number;

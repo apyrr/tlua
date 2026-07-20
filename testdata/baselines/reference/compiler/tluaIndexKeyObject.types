@@ -99,7 +99,7 @@ local bad2: string = byThread[pt];
 >byThread : ByThread
 >pt : Point
 
-// keyof reports the object key.
+// keyof reports the table key.
 type K = keyof ByTable;
 >K : Point
 

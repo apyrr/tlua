@@ -137,12 +137,8 @@ Output::
 
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Array'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Boolean'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'CallableFunction'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Function'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'IArguments'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'NewableFunction'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Number'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Object'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'RegExp'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'String'.
 [96mproject1/file.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -188,12 +184,8 @@ project1/typeroot1/sometype/index.d.tlua
 
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Array'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Boolean'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'CallableFunction'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Function'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'IArguments'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'NewableFunction'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Number'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Object'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'RegExp'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'String'.
 [96mproject2/index.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -221,12 +213,8 @@ project2/utils.d.tlua
 
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Array'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Boolean'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'CallableFunction'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Function'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'IArguments'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'NewableFunction'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Number'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Object'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'RegExp'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'String'.
 [96mproject3/index.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -254,12 +242,8 @@ project3/utils.d.tlua
 
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Array'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Boolean'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'CallableFunction'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Function'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'IArguments'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'NewableFunction'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Number'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Object'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'RegExp'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'String'.
 [96mproject4/index.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -287,7 +271,7 @@ project4/index.tlua
 project4/utils.d.tlua
    Matched by default include pattern '**/*'
 
-Found 55 errors in 10 files.
+Found 39 errors in 10 files.
 
 Errors  Files
      1  project1/file.tlua[90m:1[0m

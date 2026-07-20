@@ -2,7 +2,7 @@
 
 === tluaTypeCallNarrowing.tlua ===
 // `type(x)` is the Lua type guard. Every tag it can return narrows, including the
-// three branded object kinds, which carry the same type facts as a plain table and
+// three branded non-table kinds, which carry the same type facts as a plain table and
 // therefore cannot be told apart by facts alone.
 
 type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
@@ -24,7 +24,7 @@ function tags(v: Mixed): void {
     local table1: { n: number } = v; // the brands are not tables, and "table" excludes nil
 >table1 : { n: number; }
 >n : number
->v : LuaCData | { n: number; }
+>v : { n: number; }
 
   end
   if type(v) == "thread" then
@@ -60,7 +60,7 @@ function tags(v: Mixed): void {
 
     local cdata1: LuaCData = v;
 >cdata1 : LuaCData
->v : Mixed
+>v : LuaCData
 
   end
   if type(v) == "function" then
@@ -140,7 +140,7 @@ function negated(v: Mixed): void {
     local notTable: LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
 >notTable : string | number | boolean | LuaCData | LuaThread | LuaUserdata | ((a: number) => void) | nil
 >a : number
->v : string | number | boolean | LuaThread | LuaUserdata | ((a: number) => void) | nil
+>v : string | number | boolean | LuaCData | LuaThread | LuaUserdata | ((a: number) => void) | nil
 
   end
   if type(v) ~= "thread" then
@@ -205,9 +205,9 @@ function tops(u: unknown, a: any): void {
 >u : unknown
 >"table" : "table"
 
-    local o: object = u;
->o : object
->u : object
+    local o: table = u;
+>o : table
+>u : table
 
   end
   if type(u) == "thread" then

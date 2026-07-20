@@ -9,7 +9,9 @@
 /** @type {Foo} */
 local foo;
 
-              number   ↲
+
+             {number} c↲
+•  ↲
 
    @property {number} c↲
 •  ↲

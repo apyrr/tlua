@@ -85,7 +85,7 @@ function newAccount(balance: number): Account
 
   return setmetatable({ balance = balance }, AccountMeta);
 >setmetatable({ balance = balance }, AccountMeta) : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ balance = balance } : { balance: number; }
 >balance : number
 >balance : number
@@ -138,7 +138,7 @@ end
 local paired = setmetatable({ balance = 1 }, AccountMeta);
 >paired : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
 >setmetatable({ balance = 1 }, AccountMeta) : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ balance = 1 } : { balance: number; }
 >balance : number
 >1 : 1

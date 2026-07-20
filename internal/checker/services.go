@@ -219,7 +219,7 @@ func (c *Checker) GetAllPossiblePropertiesOfTypes(types []*Type) []*ast.Symbol {
 		augmentedProps := c.getAugmentedPropertiesOfType(memberType)
 		for _, p := range augmentedProps {
 			if _, ok := props[p.Name]; !ok {
-				prop := c.createUnionOrIntersectionProperty(unionType, p.Name, false /*skipObjectFunctionPropertyAugment*/)
+				prop := c.createUnionOrIntersectionProperty(unionType, p.Name)
 				// May be undefined if the property is private
 				if prop != nil {
 					props[p.Name] = prop
@@ -272,24 +272,12 @@ func (c *Checker) GetApparentProperties(t *Type) []*ast.Symbol {
 }
 
 func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
+	// No Object/Function prototype augmentation in tlua; the apparent members are all
+	// there is.
 	t = c.getApparentType(t)
 	propsByName := createSymbolTable(c.getPropertiesOfType(t))
-	var functionType *Type
-	if len(c.getSignaturesOfType(t, SignatureKindCall)) > 0 {
-		functionType = c.globalCallableFunctionType
-	} else if len(c.getSignaturesOfType(t, SignatureKindConstruct)) > 0 {
-		functionType = c.globalNewableFunctionType
-	}
-
 	if propsByName == nil {
 		propsByName = make(ast.SymbolTable)
-	}
-	if functionType != nil {
-		for _, p := range c.getPropertiesOfType(functionType) {
-			if _, ok := propsByName[p.Name]; !ok {
-				propsByName[p.Name] = p
-			}
-		}
 	}
 	return c.getNamedMembers(propsByName, nil)
 }

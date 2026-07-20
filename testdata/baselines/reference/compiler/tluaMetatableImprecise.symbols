@@ -29,12 +29,12 @@ local dbad = d.anything;
 >d : Symbol(d, Decl(tluaMetatableImprecise.tlua, 7, 5))
 
 // A __index that is either a table or a function does not say which read wins.
-declare unionIndex: { __index: { a: number } | ((t: object, k: any) => string) };
+declare unionIndex: { __index: { a: number } | ((t: table, k: any) => string) };
 >unionIndex : Symbol(unionIndex, Decl(tluaMetatableImprecise.tlua, 12, 7))
 >__index : Symbol(__index, Decl(tluaMetatableImprecise.tlua, 12, 21))
 >a : Symbol(a, Decl(tluaMetatableImprecise.tlua, 12, 32))
 >t : Symbol(t, Decl(tluaMetatableImprecise.tlua, 12, 49))
->k : Symbol(k, Decl(tluaMetatableImprecise.tlua, 12, 59))
+>k : Symbol(k, Decl(tluaMetatableImprecise.tlua, 12, 58))
 
 local u = setmetatable({ n = 1 }, unionIndex);
 >u : Symbol(u, Decl(tluaMetatableImprecise.tlua, 13, 5))
@@ -79,7 +79,7 @@ local nbad = none.anything;
 >none : Symbol(none, Decl(tluaMetatableImprecise.tlua, 22, 5))
 
 // A metatable with no __index has no fallback to merge, and no pairing is kept for it.
-local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: object): string return "t"; end });
+local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: table): string return "t"; end });
 >noIndex : Symbol(noIndex, Decl(tluaMetatableImprecise.tlua, 27, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 >n : Symbol(n, Decl(tluaMetatableImprecise.tlua, 27, 30))
@@ -94,12 +94,12 @@ local xn: number = noIndex.n;
 
 // A callable table would be indexed by Lua, but which half answers a read is not worth
 // guessing at.
-declare hybrid: { __index: { (t: object, k: any): string; extra: number } };
+declare hybrid: { __index: { (t: table, k: any): string; extra: number } };
 >hybrid : Symbol(hybrid, Decl(tluaMetatableImprecise.tlua, 32, 7))
 >__index : Symbol(__index, Decl(tluaMetatableImprecise.tlua, 32, 17))
 >t : Symbol(t, Decl(tluaMetatableImprecise.tlua, 32, 30))
->k : Symbol(k, Decl(tluaMetatableImprecise.tlua, 32, 40))
->extra : Symbol(extra, Decl(tluaMetatableImprecise.tlua, 32, 57))
+>k : Symbol(k, Decl(tluaMetatableImprecise.tlua, 32, 39))
+>extra : Symbol(extra, Decl(tluaMetatableImprecise.tlua, 32, 56))
 
 local h = setmetatable({ n = 1 }, hybrid);
 >h : Symbol(h, Decl(tluaMetatableImprecise.tlua, 33, 5))

@@ -27,7 +27,7 @@ tluaVarargNotPrefixExp.tlua(13,18): error TLUA1005: ',' expected.
 !!! error TLUA2304: Cannot find name 'x'.
     end
     
-    // The same holds in a table constructor, where TS object spread used to live.
+    // The same holds in a table constructor, where TS table spread used to live.
     function g(...: number): void
       local t = { ...({} as number) };
                      ~

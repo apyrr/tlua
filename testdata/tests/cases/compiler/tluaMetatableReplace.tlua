@@ -24,7 +24,7 @@ local own2: boolean = detached.own;
 local gone2 = detached.fromFirst;
 
 // A metatable with no __index detaches the fallback just as thoroughly.
-local other = setmetatable(obj, { __tostring = function(t: object): string return "t"; end });
+local other = setmetatable(obj, { __tostring = function(t: table): string return "t"; end });
 local gone3 = other.fromFirst;
 
 // The metatable goes with it: nothing pairs these tables now.

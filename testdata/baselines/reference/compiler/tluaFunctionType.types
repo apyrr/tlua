@@ -1,0 +1,171 @@
+//// [tests/cases/compiler/tluaFunctionType.tlua] ////
+
+=== tluaFunctionType.tlua ===
+// `function` is the keyword type for the runtime tag `type(x) == "function"`:
+// the top of every Lua function -- variadic parameters, any results. It replaced
+// the LuaFunction lib alias, which no longer exists.
+
+local f: function = function(): number return 1; end;
+>f : function
+>function(): number return 1; end : () => number
+>1 : 1
+
+declare withParams: (a: number, b: string) => boolean;
+>withParams : (a: number, b: string) => boolean
+>a : number
+>b : string
+
+local f2: function = withParams;
+>f2 : function
+>withParams : (a: number, b: string) => boolean
+
+// Everywhere a type goes: unions, type arguments, tuples, returns, parameters.
+declare maybeFn: function | nil;
+>maybeFn : function | nil
+
+declare fnTable: Table<string, function>;
+>fnTable : Table<string, function>
+
+declare fnPair: [function, number];
+>fnPair : [function, number]
+
+declare function pick(chooser: function): function;
+>pick : (chooser: function) => function
+>chooser : function
+
+local picked: function = pick(f);
+>picked : function
+>pick(f) : function
+>pick : (chooser: function) => function
+>f : function
+
+// Calling a `function`-typed value yields the any results it promises, and the
+// rest parameter admits any argument list.
+local first, second = f();
+>first : any
+>second : any
+>f() : any
+>f : function
+
+local one: number | nil = first;
+>one : number | nil
+>first : any
+
+local viaArgs = f(1, "x", true);
+>viaArgs : any
+>f(1, "x", true) : any
+>f : function
+>1 : 1
+>"x" : "x"
+>true : true
+
+local a2, b2 = f2(nil, { n = 1 });
+>a2 : any
+>b2 : any
+>f2(nil, { n = 1 }) : any
+>f2 : function
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+// A declared non-callable can never be "function": the guard narrows to never.
+declare plainT: { n: number };
+>plainT : { n: number; }
+>n : number
+
+if type(plainT) == "function" then
+>type(plainT) == "function" : boolean
+>type(plainT) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>plainT : { n: number; }
+>"function" : "function"
+
+    local imp: never = plainT;
+>imp : never
+>plainT : never
+
+end
+
+// A table is not a function, and the old alias name is gone.
+declare tbl: { n: number };
+>tbl : { n: number; }
+>n : number
+
+local notFn: function = tbl;
+>notFn : function
+>tbl : { n: number; }
+
+declare old: LuaFunction;
+>old : LuaFunction
+
+// `type(x) == "function"` narrows to the keyword type and displays as such.
+declare u: unknown;
+>u : unknown
+
+if type(u) == "function" then
+>type(u) == "function" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : unknown
+>"function" : "function"
+
+    local uf: function = u;
+>uf : function
+>u : function
+
+end
+
+// Narrowing makes a bare type parameter callable (T & function)...
+function apply<T>(v: T): number
+>apply : <T>(v: T) => number
+>v : T
+
+    if type(v) == "function" then
+>type(v) == "function" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : T
+>"function" : "function"
+
+        return v(1);
+>v(1) : any
+>v : T & function
+>1 : 1
+
+    end
+    return 0;
+>0 : 0
+
+end
+
+// ...while declared signatures keep their precision instead of widening to the
+// all-any top type.
+declare fnOrString: ((a: number) => void) | string;
+>fnOrString : string | ((a: number) => void)
+>a : number
+
+if type(fnOrString) == "function" then
+>type(fnOrString) == "function" : boolean
+>type(fnOrString) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>fnOrString : string | ((a: number) => void)
+>"function" : "function"
+
+    fnOrString(1);
+>fnOrString(1) : void
+>fnOrString : (a: number) => void
+>1 : 1
+
+    fnOrString("x");
+>fnOrString("x") : void
+>fnOrString : (a: number) => void
+>"x" : "x"
+
+end
+
+// The spelling is a hard keyword: it cannot name a type alias.
+type function = number;
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+> : () => any
+>number : any
+

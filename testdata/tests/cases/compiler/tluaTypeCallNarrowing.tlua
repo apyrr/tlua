@@ -4,7 +4,7 @@
 // @noEmit: true
 
 // `type(x)` is the Lua type guard. Every tag it can return narrows, including the
-// three branded object kinds, which carry the same type facts as a plain table and
+// three branded non-table kinds, which carry the same type facts as a plain table and
 // therefore cannot be told apart by facts alone.
 
 type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
@@ -59,7 +59,7 @@ function idiom(v: string | number): string {
 
 function tops(u: unknown, a: any): void {
   if type(u) == "table" then
-    local o: object = u;
+    local o: table = u;
   end
   if type(u) == "thread" then
     local t: LuaThread = u;

@@ -31,7 +31,7 @@ tluaTableAsArray.tlua(27,7): error TLUA2741: Property 'length' is missing in typ
     local arr: Array<number> = xs; // error
           ~~~
 !!! error TLUA2741: Property 'length' is missing in type 'number[]' but required in type 'Array<number>'.
-!!! related TLUA2728 lib.luajit.d.tlua:16:14: 'length' is declared here.
+!!! related TLUA2728 lib.luajit.d.tlua:12:14: 'length' is declared here.
     
     // Recursive T[] resolves without diverging.
     type J = J[];

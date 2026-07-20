@@ -20,14 +20,14 @@ local r = sinkNumber(pcall(two));
 >sinkNumber(pcall(two)) : number
 >sinkNumber : (...: any) => number
 >pcall(two) : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >two : () => (number, string)
 
 sink3(pcall(two));
 >sink3(pcall(two)) : void
 >sink3 : (a: boolean, b: number, c: string) => void
 >pcall(two) : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >two : () => (number, string)
 
 // A non-generic tail call keeps the existing expansion path.
@@ -68,8 +68,8 @@ local nestedOk, nestedInnerOk, nestedValue = pcall(pcall, two);
 >nestedInnerOk : boolean
 >nestedValue : any
 >pcall(pcall, two) : boolean
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
->pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: LuaFunction, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >two : () => (number, string)
 
 // A failed overload resolution must not treat its synthetic intersection

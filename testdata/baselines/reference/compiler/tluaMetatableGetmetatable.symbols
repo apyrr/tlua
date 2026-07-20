@@ -4,7 +4,7 @@
 // getmetatable reads back the metatable a table was paired with, rather than the union its
 // declaration has to fall back on.
 
-local Helpers = { describe = function(self: object): string return "d"; end };
+local Helpers = { describe = function(self: table): string return "d"; end };
 >Helpers : Symbol(Helpers, Decl(tluaMetatableGetmetatable.tlua, 3, 5))
 >describe : Symbol(describe, Decl(tluaMetatableGetmetatable.tlua, 3, 17))
 >self : Symbol(self, Decl(tluaMetatableGetmetatable.tlua, 3, 38))

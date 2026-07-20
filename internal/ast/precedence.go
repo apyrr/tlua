@@ -639,6 +639,7 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 		KindNilKeyword,
 		KindNeverKeyword,
 		KindObjectKeyword,
+		KindFunctionKeyword,
 		KindIntrinsicKeyword,
 		KindVoidKeyword,
 		KindJSDocAllType,

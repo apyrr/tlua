@@ -477,16 +477,16 @@ local notIndexed = fake.missing;
 // metatable re-declares them.
 local repaired = setmetatable(a,
 >repaired : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
->setmetatable(a,    { __eq = function(l: object, r: object): boolean return true; end }) : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable(a,    { __eq = function(l: table, r: table): boolean return true; end }) : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >a : Vector
 
-    { __eq = function(l: object, r: object): boolean return true; end });
->{ __eq = function(l: object, r: object): boolean return true; end } : { __eq: (l: object, r: object) => boolean; }
->__eq : (l: object, r: object) => boolean
->function(l: object, r: object): boolean return true; end : (l: object, r: object) => boolean
->l : object
->r : object
+    { __eq = function(l: table, r: table): boolean return true; end });
+>{ __eq = function(l: table, r: table): boolean return true; end } : { __eq: (l: table, r: table) => boolean; }
+>__eq : (l: table, r: table) => boolean
+>function(l: table, r: table): boolean return true; end : (l: table, r: table) => boolean
+>l : table
+>r : table
 >true : true
 
 local lostAdd = repaired + repaired;
@@ -498,31 +498,31 @@ local lostAdd = repaired + repaired;
 // A paired table dispatches only through its metatable: its own __add member is a
 // field, and a field never answers an operator.
 local fielded = setmetatable(
->fielded : { __add: (l: object, r: object) => object; k: number; }
->setmetatable(    { __add = function(l: object, r: object): object return l; end, k = 1 },    { __eq = function(l: object, r: object): boolean return true; end }) : { __add: (l: object, r: object) => object; k: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>fielded : { __add: (l: table, r: table) => table; k: number; }
+>setmetatable(    { __add = function(l: table, r: table): table return l; end, k = 1 },    { __eq = function(l: table, r: table): boolean return true; end }) : { __add: (l: table, r: table) => table; k: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 
-    { __add = function(l: object, r: object): object return l; end, k = 1 },
->{ __add = function(l: object, r: object): object return l; end, k = 1 } : { __add: (l: object, r: object) => object; k: number; }
->__add : (l: object, r: object) => object
->function(l: object, r: object): object return l; end : (l: object, r: object) => object
->l : object
->r : object
->l : object
+    { __add = function(l: table, r: table): table return l; end, k = 1 },
+>{ __add = function(l: table, r: table): table return l; end, k = 1 } : { __add: (l: table, r: table) => table; k: number; }
+>__add : (l: table, r: table) => table
+>function(l: table, r: table): table return l; end : (l: table, r: table) => table
+>l : table
+>r : table
+>l : table
 >k : number
 >1 : 1
 
-    { __eq = function(l: object, r: object): boolean return true; end });
->{ __eq = function(l: object, r: object): boolean return true; end } : { __eq: (l: object, r: object) => boolean; }
->__eq : (l: object, r: object) => boolean
->function(l: object, r: object): boolean return true; end : (l: object, r: object) => boolean
->l : object
->r : object
+    { __eq = function(l: table, r: table): boolean return true; end });
+>{ __eq = function(l: table, r: table): boolean return true; end } : { __eq: (l: table, r: table) => boolean; }
+>__eq : (l: table, r: table) => boolean
+>function(l: table, r: table): boolean return true; end : (l: table, r: table) => boolean
+>l : table
+>r : table
 >true : true
 
 local fieldedSum = fielded + fielded;
 >fieldedSum : any
 >fielded + fielded : any
->fielded : { __add: (l: object, r: object) => object; k: number; }
->fielded : { __add: (l: object, r: object) => object; k: number; }
+>fielded : { __add: (l: table, r: table) => table; k: number; }
+>fielded : { __add: (l: table, r: table) => table; k: number; }
 

@@ -50,8 +50,8 @@ interface Mixed {
   [key: number]: number;
 >key : number
 
-  named: object;
->named : object
+  named: table;
+>named : table
 }
 
 declare m: Mixed;
@@ -69,9 +69,9 @@ local n: number = m[1];
 >m : Mixed
 >1 : 1
 
-local o: object = m.named;
->o : object
->m.named : object
+local o: table = m.named;
+>o : table
+>m.named : table
 >m : Mixed
->named : object
+>named : table
 

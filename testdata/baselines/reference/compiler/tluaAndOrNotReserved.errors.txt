@@ -57,7 +57,7 @@ tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type
                       ~
 !!! error TLUA1109: Expression expected.
     
-    // Property names in an object literal.
+    // Property names in a table literal.
     local o1 = { and = 1 };
                  ~~~
 !!! error TLUA1109: Expression expected.

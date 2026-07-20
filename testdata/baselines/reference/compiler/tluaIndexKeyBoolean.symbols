@@ -51,7 +51,7 @@ interface Mixed {
   [key: number]: number;
 >key : Symbol(key, Decl(tluaIndexKeyBoolean.tlua, 21, 3))
 
-  named: object;
+  named: table;
 >named : Symbol(Mixed.named, Decl(tluaIndexKeyBoolean.tlua, 21, 24))
 }
 
@@ -67,7 +67,7 @@ local n: number = m[1];
 >n : Symbol(n, Decl(tluaIndexKeyBoolean.tlua, 27, 5))
 >m : Symbol(m, Decl(tluaIndexKeyBoolean.tlua, 25, 7))
 
-local o: object = m.named;
+local o: table = m.named;
 >o : Symbol(o, Decl(tluaIndexKeyBoolean.tlua, 28, 5))
 >m.named : Symbol(Mixed.named, Decl(tluaIndexKeyBoolean.tlua, 21, 24))
 >m : Symbol(m, Decl(tluaIndexKeyBoolean.tlua, 25, 7))

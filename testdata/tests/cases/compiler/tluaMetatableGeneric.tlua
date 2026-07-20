@@ -7,9 +7,9 @@
 // table falls back to the intersection, which is less precise about collisions but does
 // instantiate -- the same trade a generic spread makes.
 
-local helpers = { describe = function(self: object): string return "d"; end };
+local helpers = { describe = function(self: table): string return "d"; end };
 
-function withHelpers<T extends object>(value: T)
+function withHelpers<T extends table>(value: T)
   return setmetatable(value, { __index = helpers });
 end
 

@@ -19,12 +19,8 @@ ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Array'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Boolean'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'CallableFunction'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Function'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'IArguments'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'NewableFunction'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Number'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Object'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'RegExp'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'String'.
 [96mb.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -38,7 +34,7 @@ Output::
 [7m [0m [91m                ~~~~~[0m
 
 
-Found 12 errors in 2 files.
+Found 8 errors in 2 files.
 
 Errors  Files
      1  b.tlua[90m:1[0m
@@ -125,12 +121,8 @@ ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Array'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Boolean'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'CallableFunction'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Function'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'IArguments'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'NewableFunction'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'Number'.
-[91merror[0m[90m TLUA2318: [0mCannot find global type 'Object'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'RegExp'.
 [91merror[0m[90m TLUA2318: [0mCannot find global type 'String'.
 [96mb.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -149,7 +141,7 @@ Output::
 [7m [0m [91m                ~~~~~[0m
 
 
-Found 13 errors in 2 files.
+Found 9 errors in 2 files.
 
 Errors  Files
      1  b.tlua[90m:1[0m

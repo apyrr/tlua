@@ -6,9 +6,9 @@ tluaAsyncContract.tlua(8,12): error TLUA2391: Function implementation is missing
 tluaAsyncContract.tlua(27,3): error TLUA100023: An async function can only be called from an async context.
 tluaAsyncContract.tlua(31,1): error TLUA100023: An async function can only be called from an async context.
 tluaAsyncContract.tlua(36,3): error TLUA100023: An async function can only be called from an async context.
-tluaAsyncContract.tlua(46,18): error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+tluaAsyncContract.tlua(46,18): error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'function'.
   An async function is not assignable to a non-async function type.
-tluaAsyncContract.tlua(47,32): error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+tluaAsyncContract.tlua(47,32): error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'function'.
   An async function is not assignable to a non-async function type.
 tluaAsyncContract.tlua(60,3): error TLUA100023: An async function can only be called from an async context.
 tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be called from an async context.
@@ -80,11 +80,11 @@ tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be ca
     // OK: passing an async function as a value is not a call.
     coroutine.create(fetchOk);
                      ~~~~~~~
-!!! error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+!!! error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'function'.
 !!! error TLUA2345:   An async function is not assignable to a non-async function type.
     local wrapped = coroutine.wrap(fetchOk);
                                    ~~~~~~~
-!!! error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'LuaFunction'.
+!!! error TLUA2345: Argument of type 'async (url: string) => (boolean, any)' is not assignable to parameter of type 'function'.
 !!! error TLUA2345:   An async function is not assignable to a non-async function type.
     
     // OK: async recursion.

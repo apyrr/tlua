@@ -3,7 +3,7 @@ tluaAsyncFunctionType.tlua(31,1): error TLUA2304: Cannot find name 'declare'.
 tluaAsyncFunctionType.tlua(31,9): error TLUA2304: Cannot find name 'namespace'.
 tluaAsyncFunctionType.tlua(31,19): error TLUA2819: Namespace name cannot be 'coroutine'.
 tluaAsyncFunctionType.tlua(32,12): error TLUA2391: Function implementation is missing or not immediately following the declaration.
-tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url: string) => boolean' is not assignable to parameter of type 'LuaFunction'.
+tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url: string) => boolean' is not assignable to parameter of type 'function'.
   An async function is not assignable to a non-async function type.
 
 
@@ -54,7 +54,7 @@ tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url:
     }
     coroutine.create(fetchOk);
                      ~~~~~~~
-!!! error TLUA2345: Argument of type 'async (url: string) => boolean' is not assignable to parameter of type 'LuaFunction'.
+!!! error TLUA2345: Argument of type 'async (url: string) => boolean' is not assignable to parameter of type 'function'.
 !!! error TLUA2345:   An async function is not assignable to a non-async function type.
     
     // async function types are usable in ambient / declared positions.

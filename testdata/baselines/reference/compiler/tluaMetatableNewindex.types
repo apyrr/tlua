@@ -8,17 +8,17 @@
 // write and its key parameter says which keys it answers.
 local logged = setmetatable({ n = 1 }, {
 >logged : { n: number; }
->setmetatable({ n = 1 }, {  __newindex = function(t: object, k: string, v: number): void return; end,}) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable({ n = 1 }, {  __newindex = function(t: table, k: string, v: number): void return; end,}) : { n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->{  __newindex = function(t: object, k: string, v: number): void return; end,} : { __newindex: (t: object, k: string, v: number) => void; }
+>{  __newindex = function(t: table, k: string, v: number): void return; end,} : { __newindex: (t: table, k: string, v: number) => void; }
 
-  __newindex = function(t: object, k: string, v: number): void return; end,
->__newindex : (t: object, k: string, v: number) => void
->function(t: object, k: string, v: number): void return; end : (t: object, k: string, v: number) => void
->t : object
+  __newindex = function(t: table, k: string, v: number): void return; end,
+>__newindex : (t: table, k: string, v: number) => void
+>function(t: table, k: string, v: number): void return; end : (t: table, k: string, v: number) => void
+>t : table
 >k : string
 >v : number
 
@@ -65,7 +65,7 @@ local store: Table<string, number> = {};
 local proxied = setmetatable({ n = 1 }, { __newindex = store });
 >proxied : { n: number; }
 >setmetatable({ n = 1 }, { __newindex = store }) : { n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -88,15 +88,15 @@ proxied.other = "no";
 >"no" : "no"
 
 // A key outside the handler's domain is not answered.
-local numKeys = setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end });
+local numKeys = setmetatable({}, { __newindex = function(t: table, k: number, v: string): void return; end });
 >numKeys : {}
->setmetatable({}, { __newindex = function(t: object, k: number, v: string): void return; end }) : {}
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable({}, { __newindex = function(t: table, k: number, v: string): void return; end }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{} : {}
->{ __newindex = function(t: object, k: number, v: string): void return; end } : { __newindex: (t: object, k: number, v: string) => void; }
->__newindex : (t: object, k: number, v: string) => void
->function(t: object, k: number, v: string): void return; end : (t: object, k: number, v: string) => void
->t : object
+>{ __newindex = function(t: table, k: number, v: string): void return; end } : { __newindex: (t: table, k: number, v: string) => void; }
+>__newindex : (t: table, k: number, v: string) => void
+>function(t: table, k: number, v: string): void return; end : (t: table, k: number, v: string) => void
+>t : table
 >k : number
 >v : string
 

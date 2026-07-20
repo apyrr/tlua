@@ -1,9 +1,9 @@
-tluaLibLuaJIT.tlua(29,13): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaLibLuaJIT.tlua(30,7): error TLUA2322: Type 'number | nil' is not assignable to type 'string'.
+tluaLibLuaJIT.tlua(28,13): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaLibLuaJIT.tlua(29,7): error TLUA2322: Type 'number | nil' is not assignable to type 'string'.
   Type 'nil' is not assignable to type 'string'.
-tluaLibLuaJIT.tlua(31,13): error TLUA2554: Expected 1 arguments, but got 2.
-tluaLibLuaJIT.tlua(32,20): error TLUA2554: Expected 2 arguments, but got 3.
-tluaLibLuaJIT.tlua(33,7): error TLUA2741: Property '__luaUserdataBrand' is missing in type 'LuaThread' but required in type 'LuaUserdata'.
+tluaLibLuaJIT.tlua(30,13): error TLUA2554: Expected 1 arguments, but got 2.
+tluaLibLuaJIT.tlua(31,20): error TLUA2554: Expected 2 arguments, but got 3.
+tluaLibLuaJIT.tlua(32,7): error TLUA2741: Property '__luaUserdataBrand' is missing in type 'LuaThread' but required in type 'LuaUserdata'.
 
 
 ==== tluaLibLuaJIT.tlua (5 errors) ====
@@ -19,8 +19,7 @@ tluaLibLuaJIT.tlua(33,7): error TLUA2741: Property '__luaUserdataBrand' is missi
     local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
     local memory: LuaCData = ffiLib.new(ctype);
     local argumentsObject: IArguments;
-    local constructorFunction: NewableFunction;
-    local presized: object = newTable(8, 4);
+    local presized: table = newTable(8, 4);
     local encoded: string = buffer.encode(presized);
     local randomValue: number = math.random(1, 10);
     local date: LuaDateTable = os.date("*t");
@@ -51,5 +50,5 @@ tluaLibLuaJIT.tlua(33,7): error TLUA2741: Property '__luaUserdataBrand' is missi
     local notUserdata: LuaUserdata = coroutine.create(function() end);
           ~~~~~~~~~~~
 !!! error TLUA2741: Property '__luaUserdataBrand' is missing in type 'LuaThread' but required in type 'LuaUserdata'.
-!!! related TLUA2728 lib.luajit.d.tlua:37:14: '__luaUserdataBrand' is declared here.
+!!! related TLUA2728 lib.luajit.d.tlua:32:14: '__luaUserdataBrand' is declared here.
     

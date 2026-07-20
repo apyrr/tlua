@@ -8,7 +8,7 @@
 local guarded = setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "locked" });
 >guarded : { n: number; a: number; }
 >setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "locked" }) : { n: number; a: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -24,14 +24,14 @@ local guarded = setmetatable({ n = 1 }, { __index = { a = 1 }, __metatable = "lo
 local shown: string = getmetatable(guarded);
 >shown : string
 >getmetatable(guarded) : string
->getmetatable : <T extends object>(value: T) => LuaMetatable<T> | any | nil
+>getmetatable : <T extends table>(value: T) => LuaMetatable<T> | any | nil
 >guarded : { n: number; a: number; }
 
 // A re-setmetatable is an error, and the old pairing survives it.
 local again = setmetatable(guarded, { __index = { b = 2 } });
 >again : { n: number; a: number; }
 >setmetatable(guarded, { __index = { b = 2 } }) : { n: number; a: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >guarded : { n: number; a: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -49,7 +49,7 @@ local survives: number = again.a;
 local unprotected = setmetatable({ n = 1 }, { __index = { a = 1 } });
 >unprotected : { n: number; a: number; }
 >setmetatable({ n = 1 }, { __index = { a = 1 } }) : { n: number; a: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -62,7 +62,7 @@ local unprotected = setmetatable({ n = 1 }, { __index = { a = 1 } });
 local replaced = setmetatable(unprotected, { __index = { b = 2 } });
 >replaced : { n: number; b: number; }
 >setmetatable(unprotected, { __index = { b = 2 } }) : { n: number; b: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >unprotected : { n: number; a: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }

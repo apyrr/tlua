@@ -62,6 +62,7 @@ func getAllRules() []ruleSpec {
 		ast.KindAssertsKeyword,
 		ast.KindBooleanKeyword,
 		ast.KindFalseKeyword,
+		ast.KindFunctionKeyword,
 		ast.KindInferKeyword,
 		ast.KindKeyOfKeyword,
 		ast.KindNeverKeyword,
@@ -74,7 +75,6 @@ func getAllRules() []ruleSpec {
 		ast.KindTypeOfKeyword,
 		ast.KindTrueKeyword,
 		ast.KindVoidKeyword,
-		ast.KindNilKeyword,
 		ast.KindUniqueKeyword,
 		ast.KindUnknownKeyword,
 	}
@@ -140,7 +140,11 @@ func getAllRules() []ruleSpec {
 		rule("NoSpaceBetweenFunctionKeywordAndStar", ast.KindFunctionKeyword, ast.KindAsteriskToken, []contextPredicate{isFunctionDeclarationOrFunctionExpressionContext}, ruleActionDeleteSpace),
 		rule("SpaceAfterStarInGeneratorDeclaration", ast.KindAsteriskToken, ast.KindIdentifier, []contextPredicate{isFunctionDeclarationOrFunctionExpressionContext}, ruleActionInsertSpace),
 
-		rule("SpaceAfterFunctionInFuncDecl", ast.KindFunctionKeyword, anyToken, []contextPredicate{isFunctionDeclContext}, ruleActionInsertSpace),
+		// Right side is the declared NAME only: `function` is also a keyword TYPE
+		// (`f: function`), and in type position the tokens that follow (`)`, `,`, `|`,
+		// `>` ...) must keep their own spacing; the anonymous `function(` pair has its
+		// dedicated rules below.
+		rule("SpaceAfterFunctionInFuncDecl", ast.KindFunctionKeyword, ast.KindIdentifier, []contextPredicate{isFunctionDeclContext}, ruleActionInsertSpace),
 		// Insert new line after { and before } in multi-line contexts.
 		rule("NewLineAfterOpenBraceInBlockContext", ast.KindOpenBraceToken, anyToken, []contextPredicate{isMultilineBlockContext}, ruleActionInsertNewLine),
 

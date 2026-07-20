@@ -1,0 +1,143 @@
+//// [tests/cases/compiler/tluaFunctionType.tlua] ////
+
+=== tluaFunctionType.tlua ===
+// `function` is the keyword type for the runtime tag `type(x) == "function"`:
+// the top of every Lua function -- variadic parameters, any results. It replaced
+// the LuaFunction lib alias, which no longer exists.
+
+local f: function = function(): number return 1; end;
+>f : Symbol(f, Decl(tluaFunctionType.tlua, 4, 5))
+
+declare withParams: (a: number, b: string) => boolean;
+>withParams : Symbol(withParams, Decl(tluaFunctionType.tlua, 5, 7))
+>a : Symbol(a, Decl(tluaFunctionType.tlua, 5, 21))
+>b : Symbol(b, Decl(tluaFunctionType.tlua, 5, 31))
+
+local f2: function = withParams;
+>f2 : Symbol(f2, Decl(tluaFunctionType.tlua, 6, 5))
+>withParams : Symbol(withParams, Decl(tluaFunctionType.tlua, 5, 7))
+
+// Everywhere a type goes: unions, type arguments, tuples, returns, parameters.
+declare maybeFn: function | nil;
+>maybeFn : Symbol(maybeFn, Decl(tluaFunctionType.tlua, 9, 7))
+
+declare fnTable: Table<string, function>;
+>fnTable : Symbol(fnTable, Decl(tluaFunctionType.tlua, 10, 7))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+declare fnPair: [function, number];
+>fnPair : Symbol(fnPair, Decl(tluaFunctionType.tlua, 11, 7))
+
+declare function pick(chooser: function): function;
+>pick : Symbol(pick, Decl(tluaFunctionType.tlua, 11, 35))
+>chooser : Symbol(chooser, Decl(tluaFunctionType.tlua, 12, 22))
+
+local picked: function = pick(f);
+>picked : Symbol(picked, Decl(tluaFunctionType.tlua, 13, 5))
+>pick : Symbol(pick, Decl(tluaFunctionType.tlua, 11, 35))
+>f : Symbol(f, Decl(tluaFunctionType.tlua, 4, 5))
+
+// Calling a `function`-typed value yields the any results it promises, and the
+// rest parameter admits any argument list.
+local first, second = f();
+>first : Symbol(first, Decl(tluaFunctionType.tlua, 17, 5))
+>second : Symbol(second, Decl(tluaFunctionType.tlua, 17, 12))
+>f : Symbol(f, Decl(tluaFunctionType.tlua, 4, 5))
+
+local one: number | nil = first;
+>one : Symbol(one, Decl(tluaFunctionType.tlua, 18, 5))
+>first : Symbol(first, Decl(tluaFunctionType.tlua, 17, 5))
+
+local viaArgs = f(1, "x", true);
+>viaArgs : Symbol(viaArgs, Decl(tluaFunctionType.tlua, 19, 5))
+>f : Symbol(f, Decl(tluaFunctionType.tlua, 4, 5))
+
+local a2, b2 = f2(nil, { n = 1 });
+>a2 : Symbol(a2, Decl(tluaFunctionType.tlua, 20, 5))
+>b2 : Symbol(b2, Decl(tluaFunctionType.tlua, 20, 9))
+>f2 : Symbol(f2, Decl(tluaFunctionType.tlua, 6, 5))
+>n : Symbol(n, Decl(tluaFunctionType.tlua, 20, 24))
+
+// A declared non-callable can never be "function": the guard narrows to never.
+declare plainT: { n: number };
+>plainT : Symbol(plainT, Decl(tluaFunctionType.tlua, 23, 7))
+>n : Symbol(n, Decl(tluaFunctionType.tlua, 23, 17))
+
+if type(plainT) == "function" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>plainT : Symbol(plainT, Decl(tluaFunctionType.tlua, 23, 7))
+
+    local imp: never = plainT;
+>imp : Symbol(imp, Decl(tluaFunctionType.tlua, 25, 9))
+>plainT : Symbol(plainT, Decl(tluaFunctionType.tlua, 23, 7))
+
+end
+
+// A table is not a function, and the old alias name is gone.
+declare tbl: { n: number };
+>tbl : Symbol(tbl, Decl(tluaFunctionType.tlua, 29, 7))
+>n : Symbol(n, Decl(tluaFunctionType.tlua, 29, 14))
+
+local notFn: function = tbl;
+>notFn : Symbol(notFn, Decl(tluaFunctionType.tlua, 30, 5))
+>tbl : Symbol(tbl, Decl(tluaFunctionType.tlua, 29, 7))
+
+declare old: LuaFunction;
+>old : Symbol(old, Decl(tluaFunctionType.tlua, 31, 7))
+>LuaFunction : Symbol(LuaFunction)
+
+// `type(x) == "function"` narrows to the keyword type and displays as such.
+declare u: unknown;
+>u : Symbol(u, Decl(tluaFunctionType.tlua, 34, 7))
+
+if type(u) == "function" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>u : Symbol(u, Decl(tluaFunctionType.tlua, 34, 7))
+
+    local uf: function = u;
+>uf : Symbol(uf, Decl(tluaFunctionType.tlua, 36, 9))
+>u : Symbol(u, Decl(tluaFunctionType.tlua, 34, 7))
+
+end
+
+// Narrowing makes a bare type parameter callable (T & function)...
+function apply<T>(v: T): number
+>apply : Symbol(apply, Decl(tluaFunctionType.tlua, 37, 3))
+>T : Symbol(T, Decl(tluaFunctionType.tlua, 40, 15))
+>v : Symbol(v, Decl(tluaFunctionType.tlua, 40, 18))
+>T : Symbol(T, Decl(tluaFunctionType.tlua, 40, 15))
+
+    if type(v) == "function" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaFunctionType.tlua, 40, 18))
+
+        return v(1);
+>v : Symbol(v, Decl(tluaFunctionType.tlua, 40, 18))
+
+    end
+    return 0;
+end
+
+// ...while declared signatures keep their precision instead of widening to the
+// all-any top type.
+declare fnOrString: ((a: number) => void) | string;
+>fnOrString : Symbol(fnOrString, Decl(tluaFunctionType.tlua, 49, 7))
+>a : Symbol(a, Decl(tluaFunctionType.tlua, 49, 22))
+
+if type(fnOrString) == "function" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>fnOrString : Symbol(fnOrString, Decl(tluaFunctionType.tlua, 49, 7))
+
+    fnOrString(1);
+>fnOrString : Symbol(fnOrString, Decl(tluaFunctionType.tlua, 49, 7))
+
+    fnOrString("x");
+>fnOrString : Symbol(fnOrString, Decl(tluaFunctionType.tlua, 49, 7))
+
+end
+
+// The spelling is a hard keyword: it cannot name a type alias.
+type function = number;
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+> : Symbol((Missing), Decl(tluaFunctionType.tlua, 56, 4))
+

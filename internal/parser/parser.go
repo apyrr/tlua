@@ -2165,7 +2165,8 @@ func (p *Parser) nextIsStartOfType() bool {
 func (p *Parser) parseNonArrayType() *ast.Node {
 	switch p.token {
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword,
-		ast.KindSymbolKeyword, ast.KindBooleanKeyword, ast.KindNilKeyword, ast.KindNeverKeyword, ast.KindObjectKeyword:
+		ast.KindSymbolKeyword, ast.KindBooleanKeyword, ast.KindNilKeyword, ast.KindNeverKeyword, ast.KindObjectKeyword,
+		ast.KindFunctionKeyword:
 		state := p.mark()
 		keywordTypeNode := p.parseKeywordTypeNode()
 		// If these are followed by a dot then parse these out as a dotted type reference instead

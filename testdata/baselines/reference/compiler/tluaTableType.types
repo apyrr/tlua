@@ -1,0 +1,268 @@
+//// [tests/cases/compiler/tluaTableType.tlua] ////
+
+=== tluaTableType.tlua ===
+// `table` is the non-primitive keyword type: what `type(x) == "table"` reports.
+// Plain tables satisfy it; functions and the branded thread/userdata/cdata kinds
+// do not. The JS-era `object` spelling is gone -- an ordinary identifier now.
+
+local t: table = { x = 1 };
+>t : table
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+declare iface: { n: number };
+>iface : { n: number; }
+>n : number
+
+local t2: table = iface;
+>t2 : table
+>iface : { n: number; }
+
+// A function is not a table.
+local fn: table = function(): number return 1; end;
+>fn : table
+>function(): number return 1; end : () => number
+>1 : 1
+
+declare lf: function;
+>lf : function
+
+local fn2: table = lf;
+>fn2 : table
+>lf : function
+
+// The branded non-table kinds are not tables either.
+declare th: LuaThread;
+>th : LuaThread
+
+local notThread: table = th;
+>notThread : table
+>th : LuaThread
+
+declare ud: LuaUserdata;
+>ud : LuaUserdata
+
+local notUserdata: table = ud;
+>notUserdata : table
+>ud : LuaUserdata
+
+declare cd: LuaCData;
+>cd : LuaCData
+
+local notCData: table = cd;
+>notCData : table
+>cd : LuaCData
+
+// A setmetatable pairing is a real table by construction, even a callable one.
+local callable = setmetatable({ n = 1 },
+>callable : { (x: number): number; n: number; }
+>setmetatable({ n = 1 },    { __call = function(self: table, x: number): number return x; end }) : { (x: number): number; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+    { __call = function(self: table, x: number): number return x; end });
+>{ __call = function(self: table, x: number): number return x; end } : { __call: (self: table, x: number) => number; }
+>__call : (self: table, x: number) => number
+>function(self: table, x: number): number return x; end : (self: table, x: number) => number
+>self : table
+>x : number
+>x : number
+
+local pairedIsTable: table = callable;
+>pairedIsTable : table
+>callable : { (x: number): number; n: number; }
+
+// The partition survives intersection: one plain-table constituent must not
+// vouch for a callable or branded partner...
+declare callableMix: { a: number } & (() => void);
+>callableMix : { a: number; } & (() => void)
+>a : number
+
+local notMix: table = callableMix;
+>notMix : table
+>callableMix : { a: number; } & (() => void)
+
+declare threadMix: LuaThread & { a: number };
+>threadMix : LuaThread & { a: number; }
+>a : number
+
+local notThreadMix: table = threadMix;
+>notThreadMix : table
+>threadMix : LuaThread & { a: number; }
+
+// ...and a union needs every constituent to be a table.
+declare fnOrTable: (() => void) | { a: number };
+>fnOrTable : (() => void) | { a: number; }
+>a : number
+
+local notUnion: table = fnOrTable;
+>notUnion : table
+>fnOrTable : (() => void) | { a: number; }
+
+// A pairing constituent keeps an intersection a real table.
+declare pairedMix: typeof callable & { extra: number };
+>pairedMix : { (x: number): number; n: number; } & { extra: number; }
+>callable : { (x: number): number; n: number; }
+>extra : number
+
+local stillPaired: table = pairedMix;
+>stillPaired : table
+>pairedMix : { (x: number): number; n: number; } & { extra: number; }
+
+// A primitive constituent means the value IS that primitive at runtime: the
+// branded-string idiom is never a table.
+declare brandedStr: string & { tag: number };
+>brandedStr : string & { tag: number; }
+>tag : number
+
+local notBranded: table = brandedStr;
+>notBranded : table
+>brandedStr : string & { tag: number; }
+
+// Narrowing agrees a callable pairing is a table: the true-"table" branch keeps
+// it live, and the "function" branch is dead (type() reports "table").
+if type(callable) == "table" then
+>type(callable) == "table" : boolean
+>type(callable) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>callable : { (x: number): number; n: number; }
+>"table" : "table"
+
+    local liveN: number = callable.n;
+>liveN : number
+>callable.n : number
+>callable : { (x: number): number; n: number; }
+>n : number
+
+end
+if type(callable) == "function" then
+>type(callable) == "function" : boolean
+>type(callable) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>callable : { (x: number): number; n: number; }
+>"function" : "function"
+
+    local deadPairing: never = callable;
+>deadPairing : never
+>callable : never
+
+end
+
+// A brand member excludes by IDENTITY: a lookalike field of another type is
+// just a field, and the carrier stays a plain table.
+declare lookalike: { __luaThreadBrand: number, n: number };
+>lookalike : { __luaThreadBrand: number; n: number; }
+>__luaThreadBrand : number
+>n : number
+
+local lookalikeIsTable: table = lookalike;
+>lookalikeIsTable : table
+>lookalike : { __luaThreadBrand: number; n: number; }
+
+// A `bind` field is just a field too (the JS Function heuristic is gone):
+// the value narrows as a table, not to never.
+declare withBind: { bind: string } | number;
+>withBind : number | { bind: string; }
+>bind : string
+
+if type(withBind) == "table" then
+>type(withBind) == "table" : boolean
+>type(withBind) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>withBind : number | { bind: string; }
+>"table" : "table"
+
+    local wb: table = withBind;
+>wb : table
+>withBind : { bind: string; }
+
+    local wbn: number = withBind;
+>wbn : number
+>withBind : { bind: string; }
+
+end
+
+// `type(x) == "table"` narrowing and the keyword agree: the narrowed value
+// satisfies the annotation.
+declare mixed: string | { k: number } | LuaThread;
+>mixed : string | LuaThread | { k: number; }
+>k : number
+
+if type(mixed) == "table" then
+>type(mixed) == "table" : boolean
+>type(mixed) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>mixed : string | LuaThread | { k: number; }
+>"table" : "table"
+
+    local narrowed: table = mixed;
+>narrowed : table
+>mixed : { k: number; }
+
+end
+
+// The keyword is reserved as a type name...
+type table = number;
+>table : number
+
+// ...but stays an ordinary identifier in value positions: the table library and
+// shadowing locals are untouched.
+local joined: string = table.concat({ "a", "b" }, ",");
+>joined : string
+>table.concat({ "a", "b" }, ",") : string
+>table.concat : <T>(values: Table<number, T>, separator?: string, i?: number, j?: number) => string
+>table : TableLib
+>concat : <T>(values: Table<number, T>, separator?: string, i?: number, j?: number) => string
+>{ "a", "b" } : { 1: string; 2: string; }
+>"," : ","
+
+function shadow(): number
+>shadow : () => number
+
+    local table = { 1, 2 };
+>table : { 1: number; 2: number; }
+>{ 1, 2 } : { 1: number; 2: number; }
+
+    return table[1];
+>table[1] : number
+>table : { 1: number; 2: number; }
+>1 : 1
+
+end
+
+// `object` is just an identifier now, in both value and type positions.
+local dead = object;
+>dead : any
+>object : any
+
+type Obj = object;
+>Obj : object
+
+// The JS Object/Function stubs are gone from the libs entirely.
+type O2 = Object;
+>O2 : Object
+
+type F2 = Function;
+>F2 : Function
+
+// `type(x) == "function"` on unknown narrows to function (the stand-in when
+// there is no declared constituent to keep).
+declare u: unknown;
+>u : unknown
+
+if type(u) == "function" then
+>type(u) == "function" : boolean
+>type(u) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>u : unknown
+>"function" : "function"
+
+    local lf2: function = u;
+>lf2 : function
+>u : function
+
+end
+

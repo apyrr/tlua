@@ -42,7 +42,7 @@ local one: number = truncated()
 >one : Symbol(one, Decl(tluaLambdaEmit.tlua, 15, 5))
 >truncated : Symbol(truncated, Decl(tluaLambdaEmit.tlua, 14, 5))
 
-// A parenthesized object-literal body keeps its parens; `return { ... } end`
+// A parenthesized table-literal body keeps its parens; `return { ... } end`
 // would also be valid Lua, but the source spelling round-trips.
 local table = () => ({ k = 1 })
 >table : Symbol(table, Decl(tluaLambdaEmit.tlua, 19, 5))

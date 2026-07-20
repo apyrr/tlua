@@ -54,8 +54,8 @@ end
 // Deep mixed-spelling guards describe the same canonical entity.
 deepTable = {};
 _G.deepTable.value = deepTable.value or 1;
-_G.deepTable.object = deepTable.object or {};
-_G.deepTable.object.member = "ok";
+_G.deepTable.table = deepTable.table or {};
+_G.deepTable.table.member = "ok";
 
 // A same-named lexical local is not the global guard entity.
 local shadowedGuard = getMaybeNumber();
@@ -78,7 +78,7 @@ local environment: typeof _G = _G._G;
 local repeatedValue: number = repeatedGlobal;
 local repeatedFunctionResult: number = repeatedFunction(1);
 local deepValue: number = deepTable.value;
-local deepMember: string = deepTable.object.member;
+local deepMember: string = deepTable.table.member;
 local guardUnion: number | string = _G.shadowedGuard;
 local dupValue = dup;
 local mixedValue = mixedGlobal;
@@ -226,8 +226,8 @@ end
 -- Deep mixed-spelling guards describe the same canonical entity.
 deepTable = {};
 _G.deepTable.value = deepTable.value or 1;
-_G.deepTable.object = deepTable.object or {};
-_G.deepTable.object.member = "ok";
+_G.deepTable.table = deepTable.table or {};
+_G.deepTable.table.member = "ok";
 -- A same-named lexical local is not the global guard entity.
 local shadowedGuard = getMaybeNumber();
 _G.shadowedGuard = shadowedGuard or "default";
@@ -248,7 +248,7 @@ local environment = _G._G;
 local repeatedValue = repeatedGlobal;
 local repeatedFunctionResult = repeatedFunction(1);
 local deepValue = deepTable.value;
-local deepMember = deepTable.object.member;
+local deepMember = deepTable.table.member;
 local guardUnion = _G.shadowedGuard;
 local dupValue = dup;
 local mixedValue = mixedGlobal;

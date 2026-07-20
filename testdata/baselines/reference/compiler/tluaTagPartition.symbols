@@ -1,0 +1,251 @@
+//// [tests/cases/compiler/tluaTagPartition.tlua] ////
+
+=== tluaTagPartition.tlua ===
+// The runtime-tag partition, locked as one truth table so its three encodings
+// (assignability via isLuaTableType, facts via isFunctionObjectType, narrowing
+// by tag) cannot drift apart silently. Every value kind is checked against both
+// keyword types AND both guards; type() reports exactly one tag per value.
+
+// The kinds under test.
+declare plainTable: { n: number };
+>plainTable : Symbol(plainTable, Decl(tluaTagPartition.tlua, 6, 7))
+>n : Symbol(n, Decl(tluaTagPartition.tlua, 6, 21))
+
+declare fn: () => void;
+>fn : Symbol(fn, Decl(tluaTagPartition.tlua, 7, 7))
+
+local pairing = setmetatable({ n = 1 },
+>pairing : Symbol(pairing, Decl(tluaTagPartition.tlua, 8, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaTagPartition.tlua, 8, 30))
+
+    { __call = function(self: table, x: number): number return x; end });
+>__call : Symbol(__call, Decl(tluaTagPartition.tlua, 9, 5))
+>self : Symbol(self, Decl(tluaTagPartition.tlua, 9, 24))
+>x : Symbol(x, Decl(tluaTagPartition.tlua, 9, 36))
+>x : Symbol(x, Decl(tluaTagPartition.tlua, 9, 36))
+
+declare brandedPrim: string & { tag: number };
+>brandedPrim : Symbol(brandedPrim, Decl(tluaTagPartition.tlua, 10, 7))
+>tag : Symbol(tag, Decl(tluaTagPartition.tlua, 10, 31))
+
+declare thread: LuaThread;
+>thread : Symbol(thread, Decl(tluaTagPartition.tlua, 11, 7))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+
+declare lookalike: { __luaThreadBrand: number };
+>lookalike : Symbol(lookalike, Decl(tluaTagPartition.tlua, 12, 7))
+>__luaThreadBrand : Symbol(__luaThreadBrand, Decl(tluaTagPartition.tlua, 12, 20))
+
+declare callableMix: { a: number } & (() => void);
+>callableMix : Symbol(callableMix, Decl(tluaTagPartition.tlua, 13, 7))
+>a : Symbol(a, Decl(tluaTagPartition.tlua, 13, 22))
+
+declare threadMix: LuaThread & { a: number };
+>threadMix : Symbol(threadMix, Decl(tluaTagPartition.tlua, 14, 7))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTagPartition.tlua, 14, 32))
+
+// Column 1: assignable to `table`?
+local t1: table = plainTable;
+>t1 : Symbol(t1, Decl(tluaTagPartition.tlua, 17, 5))
+>plainTable : Symbol(plainTable, Decl(tluaTagPartition.tlua, 6, 7))
+
+local t2: table = fn;
+>t2 : Symbol(t2, Decl(tluaTagPartition.tlua, 18, 5))
+>fn : Symbol(fn, Decl(tluaTagPartition.tlua, 7, 7))
+
+local t3: table = pairing;
+>t3 : Symbol(t3, Decl(tluaTagPartition.tlua, 19, 5))
+>pairing : Symbol(pairing, Decl(tluaTagPartition.tlua, 8, 5))
+
+local t4: table = brandedPrim;
+>t4 : Symbol(t4, Decl(tluaTagPartition.tlua, 20, 5))
+>brandedPrim : Symbol(brandedPrim, Decl(tluaTagPartition.tlua, 10, 7))
+
+local t5: table = thread;
+>t5 : Symbol(t5, Decl(tluaTagPartition.tlua, 21, 5))
+>thread : Symbol(thread, Decl(tluaTagPartition.tlua, 11, 7))
+
+local t6: table = lookalike;
+>t6 : Symbol(t6, Decl(tluaTagPartition.tlua, 22, 5))
+>lookalike : Symbol(lookalike, Decl(tluaTagPartition.tlua, 12, 7))
+
+local t7: table = callableMix;
+>t7 : Symbol(t7, Decl(tluaTagPartition.tlua, 23, 5))
+>callableMix : Symbol(callableMix, Decl(tluaTagPartition.tlua, 13, 7))
+
+local t8: table = threadMix;
+>t8 : Symbol(t8, Decl(tluaTagPartition.tlua, 24, 5))
+>threadMix : Symbol(threadMix, Decl(tluaTagPartition.tlua, 14, 7))
+
+// Column 2: assignable to `function`? Structural: anything callable is admitted,
+// so a callable pairing or intersection passes even though type() says "table".
+local f1: function = plainTable;
+>f1 : Symbol(f1, Decl(tluaTagPartition.tlua, 28, 5))
+>plainTable : Symbol(plainTable, Decl(tluaTagPartition.tlua, 6, 7))
+
+local f2: function = fn;
+>f2 : Symbol(f2, Decl(tluaTagPartition.tlua, 29, 5))
+>fn : Symbol(fn, Decl(tluaTagPartition.tlua, 7, 7))
+
+local f3: function = pairing;
+>f3 : Symbol(f3, Decl(tluaTagPartition.tlua, 30, 5))
+>pairing : Symbol(pairing, Decl(tluaTagPartition.tlua, 8, 5))
+
+local f4: function = brandedPrim;
+>f4 : Symbol(f4, Decl(tluaTagPartition.tlua, 31, 5))
+>brandedPrim : Symbol(brandedPrim, Decl(tluaTagPartition.tlua, 10, 7))
+
+local f5: function = thread;
+>f5 : Symbol(f5, Decl(tluaTagPartition.tlua, 32, 5))
+>thread : Symbol(thread, Decl(tluaTagPartition.tlua, 11, 7))
+
+local f6: function = lookalike;
+>f6 : Symbol(f6, Decl(tluaTagPartition.tlua, 33, 5))
+>lookalike : Symbol(lookalike, Decl(tluaTagPartition.tlua, 12, 7))
+
+local f7: function = callableMix;
+>f7 : Symbol(f7, Decl(tluaTagPartition.tlua, 34, 5))
+>callableMix : Symbol(callableMix, Decl(tluaTagPartition.tlua, 13, 7))
+
+local f8: function = threadMix;
+>f8 : Symbol(f8, Decl(tluaTagPartition.tlua, 35, 5))
+>threadMix : Symbol(threadMix, Decl(tluaTagPartition.tlua, 14, 7))
+
+// Column 3: `type(x) == "table"` narrowing (union with number; a `never` local
+// locks exclusion, a deliberate number-mismatch locks a kept constituent).
+declare uPlain: { n: number } | number;
+>uPlain : Symbol(uPlain, Decl(tluaTagPartition.tlua, 39, 7))
+>n : Symbol(n, Decl(tluaTagPartition.tlua, 39, 17))
+
+if type(uPlain) == "table" then local k1: table = uPlain; local e1: number = uPlain; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uPlain : Symbol(uPlain, Decl(tluaTagPartition.tlua, 39, 7))
+>k1 : Symbol(k1, Decl(tluaTagPartition.tlua, 40, 37))
+>uPlain : Symbol(uPlain, Decl(tluaTagPartition.tlua, 39, 7))
+>e1 : Symbol(e1, Decl(tluaTagPartition.tlua, 40, 63))
+>uPlain : Symbol(uPlain, Decl(tluaTagPartition.tlua, 39, 7))
+
+declare uFn: (() => void) | number;
+>uFn : Symbol(uFn, Decl(tluaTagPartition.tlua, 41, 7))
+
+if type(uFn) == "table" then local d2: never = uFn; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uFn : Symbol(uFn, Decl(tluaTagPartition.tlua, 41, 7))
+>d2 : Symbol(d2, Decl(tluaTagPartition.tlua, 42, 34))
+>uFn : Symbol(uFn, Decl(tluaTagPartition.tlua, 41, 7))
+
+declare uPairing: typeof pairing | number;
+>uPairing : Symbol(uPairing, Decl(tluaTagPartition.tlua, 43, 7))
+>pairing : Symbol(pairing, Decl(tluaTagPartition.tlua, 8, 5))
+
+if type(uPairing) == "table" then local k3: table = uPairing; local e3: number = uPairing.n; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uPairing : Symbol(uPairing, Decl(tluaTagPartition.tlua, 43, 7))
+>k3 : Symbol(k3, Decl(tluaTagPartition.tlua, 44, 39))
+>uPairing : Symbol(uPairing, Decl(tluaTagPartition.tlua, 43, 7))
+>e3 : Symbol(e3, Decl(tluaTagPartition.tlua, 44, 67))
+>uPairing.n : Symbol(n, Decl(tluaTagPartition.tlua, 8, 30))
+>uPairing : Symbol(uPairing, Decl(tluaTagPartition.tlua, 43, 7))
+>n : Symbol(n, Decl(tluaTagPartition.tlua, 8, 30))
+
+declare uBranded: (string & { tag: number }) | number;
+>uBranded : Symbol(uBranded, Decl(tluaTagPartition.tlua, 45, 7))
+>tag : Symbol(tag, Decl(tluaTagPartition.tlua, 45, 29))
+
+if type(uBranded) == "table" then local d4: never = uBranded; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uBranded : Symbol(uBranded, Decl(tluaTagPartition.tlua, 45, 7))
+>d4 : Symbol(d4, Decl(tluaTagPartition.tlua, 46, 39))
+>uBranded : Symbol(uBranded, Decl(tluaTagPartition.tlua, 45, 7))
+
+declare uThread: LuaThread | number;
+>uThread : Symbol(uThread, Decl(tluaTagPartition.tlua, 47, 7))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+
+if type(uThread) == "table" then local d5: never = uThread; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uThread : Symbol(uThread, Decl(tluaTagPartition.tlua, 47, 7))
+>d5 : Symbol(d5, Decl(tluaTagPartition.tlua, 48, 38))
+>uThread : Symbol(uThread, Decl(tluaTagPartition.tlua, 47, 7))
+
+declare uLookalike: { __luaThreadBrand: number } | number;
+>uLookalike : Symbol(uLookalike, Decl(tluaTagPartition.tlua, 49, 7))
+>__luaThreadBrand : Symbol(__luaThreadBrand, Decl(tluaTagPartition.tlua, 49, 21))
+
+if type(uLookalike) == "table" then local k6: table = uLookalike; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uLookalike : Symbol(uLookalike, Decl(tluaTagPartition.tlua, 49, 7))
+>k6 : Symbol(k6, Decl(tluaTagPartition.tlua, 50, 41))
+>uLookalike : Symbol(uLookalike, Decl(tluaTagPartition.tlua, 49, 7))
+
+declare uCallableMix: ({ a: number } & (() => void)) | number;
+>uCallableMix : Symbol(uCallableMix, Decl(tluaTagPartition.tlua, 51, 7))
+>a : Symbol(a, Decl(tluaTagPartition.tlua, 51, 24))
+
+if type(uCallableMix) == "table" then local d7: never = uCallableMix; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uCallableMix : Symbol(uCallableMix, Decl(tluaTagPartition.tlua, 51, 7))
+>d7 : Symbol(d7, Decl(tluaTagPartition.tlua, 52, 43))
+>uCallableMix : Symbol(uCallableMix, Decl(tluaTagPartition.tlua, 51, 7))
+
+declare uThreadMix: (LuaThread & { a: number }) | number;
+>uThreadMix : Symbol(uThreadMix, Decl(tluaTagPartition.tlua, 53, 7))
+>LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaTagPartition.tlua, 53, 34))
+
+if type(uThreadMix) == "table" then local d8: never = uThreadMix; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uThreadMix : Symbol(uThreadMix, Decl(tluaTagPartition.tlua, 53, 7))
+>d8 : Symbol(d8, Decl(tluaTagPartition.tlua, 54, 41))
+>uThreadMix : Symbol(uThreadMix, Decl(tluaTagPartition.tlua, 53, 7))
+
+// Column 4: `type(x) == "function"` narrowing. A callable pairing is dead here
+// (its runtime tag is "table"); a callable intersection is kept.
+if type(uPlain) == "function" then local g1: never = uPlain; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uPlain : Symbol(uPlain, Decl(tluaTagPartition.tlua, 39, 7))
+>g1 : Symbol(g1, Decl(tluaTagPartition.tlua, 58, 40))
+>uPlain : Symbol(uPlain, Decl(tluaTagPartition.tlua, 39, 7))
+
+if type(uFn) == "function" then uFn(); end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uFn : Symbol(uFn, Decl(tluaTagPartition.tlua, 41, 7))
+>uFn : Symbol(uFn, Decl(tluaTagPartition.tlua, 41, 7))
+
+if type(uPairing) == "function" then local g3: never = uPairing; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uPairing : Symbol(uPairing, Decl(tluaTagPartition.tlua, 43, 7))
+>g3 : Symbol(g3, Decl(tluaTagPartition.tlua, 60, 42))
+>uPairing : Symbol(uPairing, Decl(tluaTagPartition.tlua, 43, 7))
+
+if type(uBranded) == "function" then local g4: never = uBranded; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uBranded : Symbol(uBranded, Decl(tluaTagPartition.tlua, 45, 7))
+>g4 : Symbol(g4, Decl(tluaTagPartition.tlua, 61, 42))
+>uBranded : Symbol(uBranded, Decl(tluaTagPartition.tlua, 45, 7))
+
+if type(uThread) == "function" then local g5: never = uThread; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uThread : Symbol(uThread, Decl(tluaTagPartition.tlua, 47, 7))
+>g5 : Symbol(g5, Decl(tluaTagPartition.tlua, 62, 41))
+>uThread : Symbol(uThread, Decl(tluaTagPartition.tlua, 47, 7))
+
+if type(uLookalike) == "function" then local g6: never = uLookalike; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uLookalike : Symbol(uLookalike, Decl(tluaTagPartition.tlua, 49, 7))
+>g6 : Symbol(g6, Decl(tluaTagPartition.tlua, 63, 44))
+>uLookalike : Symbol(uLookalike, Decl(tluaTagPartition.tlua, 49, 7))
+
+if type(uCallableMix) == "function" then uCallableMix(); end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uCallableMix : Symbol(uCallableMix, Decl(tluaTagPartition.tlua, 51, 7))
+>uCallableMix : Symbol(uCallableMix, Decl(tluaTagPartition.tlua, 51, 7))
+
+if type(uThreadMix) == "function" then local g8: never = uThreadMix; end
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>uThreadMix : Symbol(uThreadMix, Decl(tluaTagPartition.tlua, 53, 7))
+>g8 : Symbol(g8, Decl(tluaTagPartition.tlua, 65, 44))
+>uThreadMix : Symbol(uThreadMix, Decl(tluaTagPartition.tlua, 53, 7))
+

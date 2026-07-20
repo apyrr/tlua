@@ -3,9 +3,9 @@
 === objectSubtypeReduction.tlua ===
 // https://github.com/microsoft/typescript-go/issues/1164
 
-function foo(x?: object) {
->foo : (x?: object) => any
->x : object | nil
+function foo(x?: table) {
+>foo : (x?: table) => any
+>x : table | nil
 
     return Object.entries(x || {})
 >Object.entries(x || {})        .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name)) : any
@@ -14,8 +14,8 @@ function foo(x?: object) {
 >Object.entries : any
 >Object : any
 >entries : any
->x || {} : object
->x : object | nil
+>x || {} : table
+>x : table | nil
 >{} : {}
 
         .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name));

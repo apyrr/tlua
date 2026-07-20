@@ -5,12 +5,12 @@
 // place -- narrows its table operand to the paired type, the way an assertion narrows its
 // argument.
 
-local Helpers = { describe = function(self: object): string return "d"; end };
+local Helpers = { describe = function(self: table): string return "d"; end };
 >Helpers : Symbol(Helpers, Decl(tluaMetatableStatement.tlua, 4, 5))
 >describe : Symbol(describe, Decl(tluaMetatableStatement.tlua, 4, 17))
 >self : Symbol(self, Decl(tluaMetatableStatement.tlua, 4, 38))
 
-local Counters = { count = function(self: object): number return 1; end };
+local Counters = { count = function(self: table): number return 1; end };
 >Counters : Symbol(Counters, Decl(tluaMetatableStatement.tlua, 5, 5))
 >count : Symbol(count, Decl(tluaMetatableStatement.tlua, 5, 18))
 >self : Symbol(self, Decl(tluaMetatableStatement.tlua, 5, 36))
@@ -217,10 +217,10 @@ end
 function shadowed(): void
 >shadowed : Symbol(shadowed, Decl(tluaMetatableStatement.tlua, 60, 3))
 
-  local setmetatable = function(value: object, metatable: object): object return value; end;
+  local setmetatable = function(value: table, metatable: table): table return value; end;
 >setmetatable : Symbol(setmetatable, Decl(tluaMetatableStatement.tlua, 63, 7))
 >value : Symbol(value, Decl(tluaMetatableStatement.tlua, 63, 32))
->metatable : Symbol(metatable, Decl(tluaMetatableStatement.tlua, 63, 46))
+>metatable : Symbol(metatable, Decl(tluaMetatableStatement.tlua, 63, 45))
 >value : Symbol(value, Decl(tluaMetatableStatement.tlua, 63, 32))
 
   local t = { n = 1 };

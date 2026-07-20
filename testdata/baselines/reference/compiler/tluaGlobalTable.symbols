@@ -154,24 +154,24 @@ _G.deepTable.value = deepTable.value or 1;
 >deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
 >value : Symbol(value, Decl(writes.tlua, 39, 15))
 
-_G.deepTable.object = deepTable.object or {};
->_G.deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+_G.deepTable.table = deepTable.table or {};
+>_G.deepTable.table : Symbol(table, Decl(writes.tlua, 40, 42))
 >_G.deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
 >_G : Symbol(_G)
 >deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
->object : Symbol(object, Decl(writes.tlua, 40, 42))
->deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+>table : Symbol(table, Decl(writes.tlua, 40, 42))
+>deepTable.table : Symbol(table, Decl(writes.tlua, 40, 42))
 >deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
->object : Symbol(object, Decl(writes.tlua, 40, 42))
+>table : Symbol(table, Decl(writes.tlua, 40, 42))
 
-_G.deepTable.object.member = "ok";
->_G.deepTable.object.member : Symbol(member, Decl(writes.tlua, 41, 45))
->_G.deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+_G.deepTable.table.member = "ok";
+>_G.deepTable.table.member : Symbol(member, Decl(writes.tlua, 41, 43))
+>_G.deepTable.table : Symbol(table, Decl(writes.tlua, 40, 42))
 >_G.deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
 >_G : Symbol(_G)
 >deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
->object : Symbol(object, Decl(writes.tlua, 40, 42))
->member : Symbol(member, Decl(writes.tlua, 41, 45))
+>table : Symbol(table, Decl(writes.tlua, 40, 42))
+>member : Symbol(member, Decl(writes.tlua, 41, 43))
 
 // A same-named lexical local is not the global guard entity.
 local shadowedGuard = getMaybeNumber();
@@ -259,13 +259,13 @@ local deepValue: number = deepTable.value;
 >deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
 >value : Symbol(value, Decl(writes.tlua, 39, 15))
 
-local deepMember: string = deepTable.object.member;
+local deepMember: string = deepTable.table.member;
 >deepMember : Symbol(deepMember, Decl(reads.tlua, 14, 5))
->deepTable.object.member : Symbol(member, Decl(writes.tlua, 41, 45))
->deepTable.object : Symbol(object, Decl(writes.tlua, 40, 42))
+>deepTable.table.member : Symbol(member, Decl(writes.tlua, 41, 43))
+>deepTable.table : Symbol(table, Decl(writes.tlua, 40, 42))
 >deepTable : Symbol(deepTable, Decl(writes.tlua, 36, 3))
->object : Symbol(object, Decl(writes.tlua, 40, 42))
->member : Symbol(member, Decl(writes.tlua, 41, 45))
+>table : Symbol(table, Decl(writes.tlua, 40, 42))
+>member : Symbol(member, Decl(writes.tlua, 41, 43))
 
 local guardUnion: number | string = _G.shadowedGuard;
 >guardUnion : Symbol(guardUnion, Decl(reads.tlua, 15, 5))

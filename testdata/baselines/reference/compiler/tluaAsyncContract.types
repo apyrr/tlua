@@ -115,17 +115,17 @@ end
 // OK: passing an async function as a value is not a call.
 coroutine.create(fetchOk);
 >coroutine.create(fetchOk) : LuaThread
->coroutine.create : (fn: LuaFunction) => LuaThread
+>coroutine.create : (fn: function) => LuaThread
 >coroutine : CoroutineLib
->create : (fn: LuaFunction) => LuaThread
+>create : (fn: function) => LuaThread
 >fetchOk : async (url: string) => (boolean, any)
 
 local wrapped = coroutine.wrap(fetchOk);
->wrapped : LuaFunction
->coroutine.wrap(fetchOk) : LuaFunction
->coroutine.wrap : (fn: LuaFunction) => LuaFunction
+>wrapped : function
+>coroutine.wrap(fetchOk) : function
+>coroutine.wrap : (fn: function) => function
 >coroutine : CoroutineLib
->wrap : (fn: LuaFunction) => LuaFunction
+>wrap : (fn: function) => function
 >fetchOk : async (url: string) => (boolean, any)
 
 // OK: async recursion.

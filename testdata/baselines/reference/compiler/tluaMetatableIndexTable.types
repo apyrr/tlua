@@ -5,13 +5,13 @@
 // the metatable's __index, so the call cannot keep returning the plain table it was given.
 
 local Helpers = {
->Helpers : { describe: (self: object) => string; count: number; }
->{  describe = function(self: object): string return "d"; end,  count = 0,} : { describe: (self: object) => string; count: number; }
+>Helpers : { describe: (self: table) => string; count: number; }
+>{  describe = function(self: table): string return "d"; end,  count = 0,} : { describe: (self: table) => string; count: number; }
 
-  describe = function(self: object): string return "d"; end,
->describe : (self: object) => string
->function(self: object): string return "d"; end : (self: object) => string
->self : object
+  describe = function(self: table): string return "d"; end,
+>describe : (self: table) => string
+>function(self: table): string return "d"; end : (self: table) => string
+>self : table
 >"d" : "d"
 
   count = 0,
@@ -21,54 +21,54 @@ local Helpers = {
 };
 
 local mt = { __index = Helpers };
->mt : { __index: { describe: (self: object) => string; count: number; }; }
->{ __index = Helpers } : { __index: { describe: (self: object) => string; count: number; }; }
->__index : { describe: (self: object) => string; count: number; }
->Helpers : { describe: (self: object) => string; count: number; }
+>mt : { __index: { describe: (self: table) => string; count: number; }; }
+>{ __index = Helpers } : { __index: { describe: (self: table) => string; count: number; }; }
+>__index : { describe: (self: table) => string; count: number; }
+>Helpers : { describe: (self: table) => string; count: number; }
 
 local obj = setmetatable({ n = 1 }, mt);
->obj : { describe: (self: object) => string; count: number; n: number; }
->setmetatable({ n = 1 }, mt) : { describe: (self: object) => string; count: number; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>obj : { describe: (self: table) => string; count: number; n: number; }
+>setmetatable({ n = 1 }, mt) : { describe: (self: table) => string; count: number; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->mt : { __index: { describe: (self: object) => string; count: number; }; }
+>mt : { __index: { describe: (self: table) => string; count: number; }; }
 
 // The table's own members stay.
 local n: number = obj.n;
 >n : number
 >obj.n : number
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj : { describe: (self: table) => string; count: number; n: number; }
 >n : number
 
 // A missing member is found behind __index.
 local d: string = obj.describe(obj);
 >d : string
 >obj.describe(obj) : string
->obj.describe : (self: object) => string
->obj : { describe: (self: object) => string; count: number; n: number; }
->describe : (self: object) => string
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj.describe : (self: table) => string
+>obj : { describe: (self: table) => string; count: number; n: number; }
+>describe : (self: table) => string
+>obj : { describe: (self: table) => string; count: number; n: number; }
 
 local c: number = obj.count;
 >c : number
 >obj.count : number
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj : { describe: (self: table) => string; count: number; n: number; }
 >count : number
 
 // What neither has is still missing.
 local absent = obj.nothing;
 >absent : any
 >obj.nothing : any
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj : { describe: (self: table) => string; count: number; n: number; }
 >nothing : any
 
 // The table wins a collision: a raw read hits it before the metatable ever runs.
 local collide = setmetatable({ v = 1 }, { __index = { v = "str" } });
 >collide : { v: number; }
 >setmetatable({ v = 1 }, { __index = { v = "str" } }) : { v: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ v = 1 } : { v: number; }
 >v : number
 >1 : 1
@@ -95,14 +95,14 @@ local cs: string = collide.v;
 obj.count = 2;
 >obj.count = 2 : 2
 >obj.count : number
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj : { describe: (self: table) => string; count: number; n: number; }
 >count : number
 >2 : 2
 
 obj.count = "two";
 >obj.count = "two" : "two"
 >obj.count : number
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj : { describe: (self: table) => string; count: number; n: number; }
 >count : number
 >"two" : "two"
 
@@ -115,7 +115,7 @@ declare idxMt: { __index: { [key: string]: number } };
 local ix = setmetatable({ n = 1 }, idxMt);
 >ix : { [key: string]: number; n: number; }
 >setmetatable({ n = 1 }, idxMt) : { [key: string]: number; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -138,7 +138,7 @@ declare partial: { name?: string; id: number };
 local defaulted = setmetatable(partial, { __index = { name = "anonymous" } });
 >defaulted : { name: string; id: number; }
 >setmetatable(partial, { __index = { name = "anonymous" } }) : { name: string; id: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >partial : { name?: string; id: number; }
 >{ __index = { name = "anonymous" } } : { __index: { name: string; }; }
 >__index : { name: string; }
@@ -159,7 +159,7 @@ declare nilable: { v: number | nil };
 local either = setmetatable(nilable, { __index = { v = "str" } });
 >either : { v: string | number; }
 >setmetatable(nilable, { __index = { v = "str" } }) : { v: string | number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >nilable : { v: number | nil; }
 >{ __index = { v = "str" } } : { __index: { v: string; }; }
 >__index : { v: string; }
@@ -189,7 +189,7 @@ declare interMt: { __index: { a: number } } & { __tostring: () => string };
 local inter = setmetatable({ n = 1 }, interMt);
 >inter : { a: number; n: number; }
 >setmetatable({ n = 1 }, interMt) : { a: number; n: number; }
->setmetatable : <T extends object>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -207,16 +207,16 @@ interface HasN { n: number }
 
 local asTable: HasN = obj;
 >asTable : HasN
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj : { describe: (self: table) => string; count: number; n: number; }
 
 // ...and a named interface that also spells the fallback out.
-interface Described { n: number; describe: (self: object) => string; count: number }
+interface Described { n: number; describe: (self: table) => string; count: number }
 >n : number
->describe : (self: object) => string
->self : object
+>describe : (self: table) => string
+>self : table
 >count : number
 
 local asDescribed: Described = obj;
 >asDescribed : Described
->obj : { describe: (self: object) => string; count: number; n: number; }
+>obj : { describe: (self: table) => string; count: number; n: number; }
 

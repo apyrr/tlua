@@ -1,4 +1,4 @@
-interface LuaMetatable<T extends object> {
+interface LuaMetatable<T extends table> {
     __index?: Table<any, any> | ((value: T, key: any) => any);
     __newindex?: Table<any, any> | ((value: T, key: any, newValue: any) => void);
     __call?: (value: T, ...: any) => (any?, ...any);

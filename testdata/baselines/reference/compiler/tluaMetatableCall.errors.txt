@@ -7,7 +7,7 @@ tluaMetatableCall.tlua(13,27): error TLUA2345: Argument of type 'string' is not 
     // argument, so a call site supplies the arguments from the second parameter on.
     
     local callable = setmetatable({ n = 1 }, {
-      __call = function(self: object, x: number): string return "s"; end,
+      __call = function(self: table, x: number): string return "s"; end,
     });
     
     local r: string = callable(2);

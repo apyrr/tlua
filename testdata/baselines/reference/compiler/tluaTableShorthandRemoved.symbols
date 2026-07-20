@@ -21,7 +21,7 @@ local s: { x: number } = { x };
 local es = {t1, s};
 >es : Symbol(es, Decl(tluaTableShorthandRemoved.tlua, 6, 5))
 
-// Destructuring assignment is gone with it: an object literal on the left of
+// Destructuring assignment is gone with it: a table literal on the left of
 // `=` is an ordinary (erroneous) assignment target ...
 declare obj: { q: number; w?: number };
 >obj : Symbol(obj, Decl(tluaTableShorthandRemoved.tlua, 10, 7))
