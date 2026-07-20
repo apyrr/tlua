@@ -258,6 +258,25 @@ func TestDecodeSourceFile_KeywordExpressions(t *testing.T) {
 	assert.Assert(t, keywordExpr.AsKeywordExpression() != nil)
 }
 
+func TestDecodeSourceFile_KeywordTypeNodes(t *testing.T) {
+	t.Parallel()
+	// A keyword type must decode as KeywordTypeNode, not Token, or the printer
+	// panics. `function` is the newest keyword type and the one that regressed
+	// when ast.json lagged behind the parser.
+	sf := parseSourceFile("local x: function = print;")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	decl := decoded.Statements.Nodes[0].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
+	fnType := decl.Type
+	assert.Equal(t, fnType.Kind, ast.KindFunctionKeyword)
+	// This would panic if decoded as Token instead of KeywordTypeNode
+	assert.Assert(t, fnType.AsKeywordTypeNode() != nil)
+}
+
 func TestDecodeSourceFile_EmptyModuleBlock(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile(`declare global { }`)

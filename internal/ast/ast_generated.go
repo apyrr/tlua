@@ -4785,7 +4785,7 @@ func (node *KeywordTypeNode) Clone(f NodeFactoryCoercible) *Node {
 
 func IsKeywordTypeNode(node *Node) bool {
 	switch node.Kind {
-	case KindAnyKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindNilKeyword, KindUnknownKeyword, KindVoidKeyword:
+	case KindAnyKeyword, KindBooleanKeyword, KindFunctionKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindNilKeyword, KindUnknownKeyword, KindVoidKeyword:
 		return true
 	}
 	return false
@@ -9495,7 +9495,7 @@ func IsModifierKind(kind Kind) bool {
 
 func IsKeywordTypeKind(kind Kind) bool {
 	switch kind {
-	case KindAnyKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindNilKeyword, KindUnknownKeyword, KindVoidKeyword:
+	case KindAnyKeyword, KindBooleanKeyword, KindFunctionKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindNilKeyword, KindUnknownKeyword, KindVoidKeyword:
 		return true
 	}
 	return false

@@ -143,7 +143,7 @@ export type KeywordSyntaxKind =
     | SyntaxKind.OfKeyword
     | SyntaxKind.DeferKeyword;
 export type ModifierSyntaxKind = SyntaxKind.AbstractKeyword | SyntaxKind.AccessorKeyword | SyntaxKind.AsyncKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.ExportKeyword | SyntaxKind.InKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.OutKeyword | SyntaxKind.OverrideKeyword | SyntaxKind.StaticKeyword;
-export type KeywordTypeSyntaxKind = SyntaxKind.AnyKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.IntrinsicKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.StringKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.NilKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VoidKeyword;
+export type KeywordTypeSyntaxKind = SyntaxKind.AnyKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.FunctionKeyword | SyntaxKind.IntrinsicKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.StringKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.NilKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VoidKeyword;
 export type KeywordExpressionSyntaxKind = SyntaxKind.NilKeyword | SyntaxKind.TrueKeyword | SyntaxKind.FalseKeyword | SyntaxKind.ThisKeyword | SyntaxKind.SuperKeyword | SyntaxKind.ImportKeyword;
 export type TokenSyntaxKind =
     | SyntaxKind.Unknown

@@ -67,6 +67,7 @@ function isTypeNodeKind(kind: SyntaxKind): boolean {
         || kind === SyntaxKind.UnknownKeyword
         || kind === SyntaxKind.NumberKeyword
         || kind === SyntaxKind.ObjectKeyword
+        || kind === SyntaxKind.FunctionKeyword
         || kind === SyntaxKind.BooleanKeyword
         || kind === SyntaxKind.StringKeyword
         || kind === SyntaxKind.SymbolKeyword

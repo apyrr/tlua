@@ -140,7 +140,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindExtendsKeyword,
 		ast.KindFinallyKeyword,
 		ast.KindForKeyword,
-		ast.KindFunctionKeyword,
 		ast.KindGotoKeyword,
 		ast.KindIfKeyword,
 		ast.KindInKeyword,
@@ -664,7 +663,8 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeNode := d.nodeAt(it.nextIf(mask, 0))
 		expression := d.nodeAt(it.nextIf(mask, 1))
 		return d.factory.NewTypeAssertion(typeNode, expression), nil
-	case ast.KindVoidKeyword,
+	case ast.KindFunctionKeyword,
+		ast.KindVoidKeyword,
 		ast.KindAnyKeyword,
 		ast.KindBooleanKeyword,
 		ast.KindIntrinsicKeyword,

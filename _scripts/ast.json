@@ -606,6 +606,7 @@
             "KeywordTypeSyntaxKind": [
                 "AnyKeyword",
                 "BooleanKeyword",
+                "FunctionKeyword",
                 "IntrinsicKeyword",
                 "NeverKeyword",
                 "NumberKeyword",

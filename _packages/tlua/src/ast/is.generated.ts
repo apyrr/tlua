@@ -1357,6 +1357,7 @@ export function isModifierKind(kind: SyntaxKind): kind is ModifierSyntaxKind {
 export function isKeywordTypeKind(kind: SyntaxKind): kind is KeywordTypeSyntaxKind {
     return kind === SyntaxKind.AnyKeyword
         || kind === SyntaxKind.BooleanKeyword
+        || kind === SyntaxKind.FunctionKeyword
         || kind === SyntaxKind.IntrinsicKeyword
         || kind === SyntaxKind.NeverKeyword
         || kind === SyntaxKind.NumberKeyword
