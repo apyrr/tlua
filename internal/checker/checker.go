@@ -27969,7 +27969,10 @@ func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 			// A receiver that survived its `?.` guards is not nil at call time,
 			// so strip the optional marker exactly as checkPropertyAccessChain
 			// did when it looked up the method.
-			receiver := node.Expression().AsPropertyAccessExpression().Expression
+			// (Flow narrowing keeps the RAW receiver instead -- see
+			// getTypePredicateArgument -- because reference matching cannot
+			// see through this synthetic.)
+			receiver := ast.LuaColonCallReceiver(node)
 			receiverType := c.getOptionalExpressionType(c.checkExpressionCached(receiver), receiver)
 			receiverArg := c.createSyntheticExpression(receiver, receiverType, false /*isSpread*/, nil)
 			args = append([]*ast.Node{receiverArg}, args...)

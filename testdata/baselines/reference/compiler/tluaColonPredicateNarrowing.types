@@ -1,0 +1,279 @@
+//// [tests/cases/compiler/tluaColonPredicateNarrowing.tlua] ////
+
+=== tluaColonPredicateNarrowing.tlua ===
+// A colon call passes the receiver as the implicit first argument, so type
+// predicates on colon methods narrow through the shifted indices: declared
+// parameter 0 (`self is T`) narrows the receiver, and predicates on later
+// parameters narrow the corresponding written argument.
+
+interface Entity {
+    IsPlayer(self: Entity): self is Player;
+>IsPlayer : (self: Entity) => self is Player
+>self : Entity
+
+    AssertPlayer(self: Entity): asserts self is Player;
+>AssertPlayer : (self: Entity) => asserts self is Player
+>self : Entity
+
+    Check(self: Entity, v: unknown): v is Player;
+>Check : (self: Entity, v: unknown) => v is Player
+>self : Entity
+>v : unknown
+}
+interface Player extends Entity {
+    Nick(self: Player): string;
+>Nick : (self: Player) => string
+>self : Player
+}
+
+declare e: Entity;
+>e : Entity
+
+declare u: unknown;
+>u : unknown
+
+declare holder: { ent: Entity };
+>holder : { ent: Entity; }
+>ent : Entity
+
+// Receiver predicate narrows the receiver in the true branch; the false
+// branch keeps the base type.
+if e:IsPlayer() then
+>e:IsPlayer() : boolean
+>e:IsPlayer : (self: Entity) => self is Player
+>e : Entity
+>IsPlayer : (self: Entity) => self is Player
+
+    local n: string = e:Nick();
+>n : string
+>e:Nick() : string
+>e:Nick : (self: Player) => string
+>e : Player
+>Nick : (self: Player) => string
+
+else
+    local still: Entity = e;
+>still : Entity
+>e : Entity
+
+end
+
+// A predicate on a later parameter narrows the written argument (declared
+// index 1 is written argument 0).
+if e:Check(u) then
+>e:Check(u) : boolean
+>e:Check : (self: Entity, v: unknown) => v is Player
+>e : Entity
+>Check : (self: Entity, v: unknown) => v is Player
+>u : unknown
+
+    local p: Player = u;
+>p : Player
+>u : Player
+
+end
+
+// Assertion predicates narrow the receiver for the rest of the flow.
+declare e2: Entity;
+>e2 : Entity
+
+e2:AssertPlayer();
+>e2:AssertPlayer() : void
+>e2:AssertPlayer : (self: Entity) => asserts self is Player
+>e2 : Entity
+>AssertPlayer : (self: Entity) => asserts self is Player
+
+local an: string = e2:Nick();
+>an : string
+>e2:Nick() : string
+>e2:Nick : (self: Player) => string
+>e2 : Player
+>Nick : (self: Player) => string
+
+// Property-access receivers narrow too.
+if holder.ent:IsPlayer() then
+>holder.ent:IsPlayer() : boolean
+>holder.ent:IsPlayer : (self: Entity) => self is Player
+>holder.ent : Entity
+>holder : { ent: Entity; }
+>ent : Entity
+>IsPlayer : (self: Entity) => self is Player
+
+    local hn: string = holder.ent:Nick();
+>hn : string
+>holder.ent:Nick() : string
+>holder.ent:Nick : (self: Player) => string
+>holder.ent : Player
+>holder : { ent: Entity; }
+>ent : Player
+>Nick : (self: Player) => string
+
+end
+
+// Plain-function predicates with a self-named parameter still narrow their
+// explicit argument (no index shift on dot calls).
+declare isP: (self: Entity) => self is Player;
+>isP : (self: Entity) => self is Player
+>self : Entity
+
+declare e3: Entity;
+>e3 : Entity
+
+if isP(e3) then
+>isP(e3) : boolean
+>isP : (self: Entity) => self is Player
+>e3 : Entity
+
+    local dn: string = e3:Nick();
+>dn : string
+>e3:Nick() : string
+>e3:Nick : (self: Player) => string
+>e3 : Player
+>Nick : (self: Player) => string
+
+end
+
+// Typeless `asserts cond` predicates use the same colon-aware index mapping:
+// the assertion narrows the written argument at the shifted index, not the
+// one at the raw declared index.
+interface Guard {
+    Ensure(self: Guard, cond: unknown): asserts cond;
+>Ensure : (self: Guard, cond: unknown) => asserts cond
+>self : Guard
+>cond : unknown
+
+    EnsureWith(self: Guard, cond: unknown, extra: unknown): asserts cond;
+>EnsureWith : (self: Guard, cond: unknown, extra: unknown) => asserts cond
+>self : Guard
+>cond : unknown
+>extra : unknown
+}
+declare g: Guard;
+>g : Guard
+
+declare maybe: string | nil;
+>maybe : string | nil
+
+g:Ensure(maybe ~= nil);
+>g:Ensure(maybe ~= nil) : void
+>g:Ensure : (self: Guard, cond: unknown) => asserts cond
+>g : Guard
+>Ensure : (self: Guard, cond: unknown) => asserts cond
+>maybe ~= nil : boolean
+>maybe : string | nil
+
+local sure: string = maybe;
+>sure : string
+>maybe : string
+
+// The predicate names `cond` (declared index 1 -> written argument 0); the
+// unrelated second argument must not be the one narrowed.
+declare maybe2: string | nil;
+>maybe2 : string | nil
+
+declare unrelated: boolean;
+>unrelated : boolean
+
+g:EnsureWith(maybe2 ~= nil, unrelated);
+>g:EnsureWith(maybe2 ~= nil, unrelated) : void
+>g:EnsureWith : (self: Guard, cond: unknown, extra: unknown) => asserts cond
+>g : Guard
+>EnsureWith : (self: Guard, cond: unknown, extra: unknown) => asserts cond
+>maybe2 ~= nil : boolean
+>maybe2 : string | nil
+>unrelated : boolean
+
+local sure2: string = maybe2;
+>sure2 : string
+>maybe2 : string
+
+// A colon-call assertion of a literal false marks the following code
+// unreachable: the missing-return error is suppressed after Ensure(false)
+// but still fires after Ensure(true).
+function neverReturns(gg: Guard): number
+>neverReturns : (gg: Guard) => number
+>gg : Guard
+
+    gg:Ensure(false);
+>gg:Ensure(false) : void
+>gg:Ensure : (self: Guard, cond: unknown) => asserts cond
+>gg : Guard
+>Ensure : (self: Guard, cond: unknown) => asserts cond
+>false : false
+
+end
+function stillNeedsReturn(gg: Guard): number
+>stillNeedsReturn : (gg: Guard) => number
+>gg : Guard
+
+    gg:Ensure(true);
+>gg:Ensure(true) : void
+>gg:Ensure : (self: Guard, cond: unknown) => asserts cond
+>gg : Guard
+>Ensure : (self: Guard, cond: unknown) => asserts cond
+>true : true
+
+end
+
+// A predicate whose parameter name matches nothing narrows nothing on colon
+// calls either (the mismatch index stays out of range after the shift).
+interface Wrong {
+    Bad(self: Wrong, cond: unknown): asserts missing;
+>Bad : (self: Wrong, cond: unknown) => asserts missing
+>self : Wrong
+>cond : unknown
+}
+declare w: Wrong;
+>w : Wrong
+
+declare wv: string | nil;
+>wv : string | nil
+
+w:Bad(wv ~= nil);
+>w:Bad(wv ~= nil) : void
+>w:Bad : (self: Wrong, cond: unknown) => asserts missing
+>w : Wrong
+>Bad : (self: Wrong, cond: unknown) => asserts missing
+>wv ~= nil : boolean
+>wv : string | nil
+
+local wUnnarrowed: string | nil = wv;
+>wUnnarrowed : string | nil
+>wv : string | nil
+
+// Colon-calling a function-typed member with NO self parameter binds the
+// receiver to the predicate's declared parameter 0 (consistent with call
+// checking, which also reports the arity error) -- the written argument is
+// deliberately NOT narrowed.
+interface Holder2 {
+    CheckV: (v: unknown) => v is Player;
+>CheckV : (v: unknown) => v is Player
+>v : unknown
+}
+declare h2: Holder2;
+>h2 : Holder2
+
+declare u2: unknown;
+>u2 : unknown
+
+if h2:CheckV(u2) then
+>h2:CheckV(u2) : boolean
+>h2:CheckV : (v: unknown) => v is Player
+>h2 : Holder2
+>CheckV : (v: unknown) => v is Player
+>u2 : unknown
+
+    local notNarrowed: Player = u2;
+>notNarrowed : Player
+>u2 : unknown
+
+end
+
+// Outside the guard the receiver is not narrowed.
+local bad: string = e:Nick();
+>bad : string
+>e:Nick() : any
+>e:Nick : any
+>e : Entity
+>Nick : any
+

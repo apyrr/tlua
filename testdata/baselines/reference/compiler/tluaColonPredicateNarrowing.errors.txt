@@ -1,0 +1,123 @@
+tluaColonPredicateNarrowing.tlua(76,39): error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+tluaColonPredicateNarrowing.tlua(83,46): error TLUA1225: Cannot find parameter 'missing'.
+tluaColonPredicateNarrowing.tlua(99,14): error TLUA2554: Expected 1 arguments, but got 2.
+tluaColonPredicateNarrowing.tlua(100,11): error TLUA2322: Type 'unknown' is not assignable to type 'Player'.
+tluaColonPredicateNarrowing.tlua(104,23): error TLUA2339: Property 'Nick' does not exist on type 'Entity'.
+
+
+==== tluaColonPredicateNarrowing.tlua (5 errors) ====
+    // A colon call passes the receiver as the implicit first argument, so type
+    // predicates on colon methods narrow through the shifted indices: declared
+    // parameter 0 (`self is T`) narrows the receiver, and predicates on later
+    // parameters narrow the corresponding written argument.
+    
+    interface Entity {
+        IsPlayer(self: Entity): self is Player;
+        AssertPlayer(self: Entity): asserts self is Player;
+        Check(self: Entity, v: unknown): v is Player;
+    }
+    interface Player extends Entity {
+        Nick(self: Player): string;
+    }
+    
+    declare e: Entity;
+    declare u: unknown;
+    declare holder: { ent: Entity };
+    
+    // Receiver predicate narrows the receiver in the true branch; the false
+    // branch keeps the base type.
+    if e:IsPlayer() then
+        local n: string = e:Nick();
+    else
+        local still: Entity = e;
+    end
+    
+    // A predicate on a later parameter narrows the written argument (declared
+    // index 1 is written argument 0).
+    if e:Check(u) then
+        local p: Player = u;
+    end
+    
+    // Assertion predicates narrow the receiver for the rest of the flow.
+    declare e2: Entity;
+    e2:AssertPlayer();
+    local an: string = e2:Nick();
+    
+    // Property-access receivers narrow too.
+    if holder.ent:IsPlayer() then
+        local hn: string = holder.ent:Nick();
+    end
+    
+    // Plain-function predicates with a self-named parameter still narrow their
+    // explicit argument (no index shift on dot calls).
+    declare isP: (self: Entity) => self is Player;
+    declare e3: Entity;
+    if isP(e3) then
+        local dn: string = e3:Nick();
+    end
+    
+    // Typeless `asserts cond` predicates use the same colon-aware index mapping:
+    // the assertion narrows the written argument at the shifted index, not the
+    // one at the raw declared index.
+    interface Guard {
+        Ensure(self: Guard, cond: unknown): asserts cond;
+        EnsureWith(self: Guard, cond: unknown, extra: unknown): asserts cond;
+    }
+    declare g: Guard;
+    declare maybe: string | nil;
+    g:Ensure(maybe ~= nil);
+    local sure: string = maybe;
+    
+    // The predicate names `cond` (declared index 1 -> written argument 0); the
+    // unrelated second argument must not be the one narrowed.
+    declare maybe2: string | nil;
+    declare unrelated: boolean;
+    g:EnsureWith(maybe2 ~= nil, unrelated);
+    local sure2: string = maybe2;
+    
+    // A colon-call assertion of a literal false marks the following code
+    // unreachable: the missing-return error is suppressed after Ensure(false)
+    // but still fires after Ensure(true).
+    function neverReturns(gg: Guard): number
+        gg:Ensure(false);
+    end
+    function stillNeedsReturn(gg: Guard): number
+                                          ~~~~~~
+!!! error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+        gg:Ensure(true);
+    end
+    
+    // A predicate whose parameter name matches nothing narrows nothing on colon
+    // calls either (the mismatch index stays out of range after the shift).
+    interface Wrong {
+        Bad(self: Wrong, cond: unknown): asserts missing;
+                                                 ~~~~~~~
+!!! error TLUA1225: Cannot find parameter 'missing'.
+    }
+    declare w: Wrong;
+    declare wv: string | nil;
+    w:Bad(wv ~= nil);
+    local wUnnarrowed: string | nil = wv;
+    
+    // Colon-calling a function-typed member with NO self parameter binds the
+    // receiver to the predicate's declared parameter 0 (consistent with call
+    // checking, which also reports the arity error) -- the written argument is
+    // deliberately NOT narrowed.
+    interface Holder2 {
+        CheckV: (v: unknown) => v is Player;
+    }
+    declare h2: Holder2;
+    declare u2: unknown;
+    if h2:CheckV(u2) then
+                 ~~
+!!! error TLUA2554: Expected 1 arguments, but got 2.
+        local notNarrowed: Player = u2;
+              ~~~~~~~~~~~
+!!! error TLUA2322: Type 'unknown' is not assignable to type 'Player'.
+    end
+    
+    // Outside the guard the receiver is not narrowed.
+    local bad: string = e:Nick();
+                          ~~~~
+!!! error TLUA2339: Property 'Nick' does not exist on type 'Entity'.
+    

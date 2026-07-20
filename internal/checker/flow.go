@@ -293,14 +293,13 @@ func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
 		if predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier {
 			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
 			t := c.finalizeEvolvingArrayType(flowType.t)
-			var narrowedType *Type
-			switch {
-			case predicate.t != nil:
+			narrowedType := t
+			if predicate.t != nil {
 				narrowedType = c.narrowTypeByTypePredicate(f, t, predicate, flow.Node, true /*assumeTrue*/)
-			case predicate.kind == TypePredicateKindAssertsIdentifier && predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(flow.Node.Arguments()):
-				narrowedType = c.narrowTypeByAssertion(f, t, flow.Node.Arguments()[predicate.parameterIndex])
-			default:
-				narrowedType = t
+			} else if arg := c.getTypePredicateArgument(predicate, flow.Node); arg != nil {
+				// Typeless `asserts x`: the same colon-aware index mapping
+				// as typed predicates.
+				narrowedType = c.narrowTypeByAssertion(f, t, arg)
 			}
 			if narrowedType == t {
 				return flowType
@@ -2130,17 +2129,26 @@ func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
 	return false
 }
 
+// getTypePredicateArgument maps a predicate's declared parameter index to the
+// written argument node it binds. A colon call passes the receiver as the
+// implicit first argument, so declared indices shift against the written
+// list: index 0 names the receiver (`e:IsPlayer()` with `self is Player`
+// narrows e) and written arguments start at declared index 1. This is the
+// RAW-node dual of getEffectiveCallArguments' synthetic receiver: narrowing
+// needs reference identity, which a synthetic can never satisfy. It mirrors
+// only the colon shift -- not tail-pack expansion -- so a predicate parameter
+// bound to a pack element conservatively resolves to no argument.
 func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpression *ast.Node) *ast.Node {
-	if predicate.kind == TypePredicateKindIdentifier || predicate.kind == TypePredicateKindAssertsIdentifier {
-		arguments := callExpression.Arguments()
-		if predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(arguments) {
-			return arguments[predicate.parameterIndex]
+	index := int(predicate.parameterIndex)
+	if ast.IsLuaColonCall(callExpression) {
+		if index == 0 {
+			return ast.SkipParentheses(ast.LuaColonCallReceiver(callExpression))
 		}
-	} else {
-		invokedExpression := ast.SkipParentheses(callExpression.Expression())
-		if ast.IsAccessExpression(invokedExpression) {
-			return ast.SkipParentheses(invokedExpression.Expression())
-		}
+		index--
+	}
+	arguments := callExpression.Arguments()
+	if index >= 0 && index < len(arguments) {
+		return arguments[index]
 	}
 	return nil
 }
@@ -2224,7 +2232,8 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		case flags&ast.FlowFlagsCall != 0:
 			if signature := c.getEffectsSignature(flow.Node); signature != nil {
 				if predicate := c.getTypePredicateOfSignature(signature); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
-					if arguments := flow.Node.Arguments(); predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(arguments) && c.isFalseExpression(arguments[predicate.parameterIndex]) {
+					// Same colon-aware index mapping as typed predicates.
+					if arg := c.getTypePredicateArgument(predicate, flow.Node); arg != nil && c.isFalseExpression(arg) {
 						return false
 					}
 				}

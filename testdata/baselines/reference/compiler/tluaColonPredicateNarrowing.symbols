@@ -1,0 +1,299 @@
+//// [tests/cases/compiler/tluaColonPredicateNarrowing.tlua] ////
+
+=== tluaColonPredicateNarrowing.tlua ===
+// A colon call passes the receiver as the implicit first argument, so type
+// predicates on colon methods narrow through the shifted indices: declared
+// parameter 0 (`self is T`) narrows the receiver, and predicates on later
+// parameters narrow the corresponding written argument.
+
+interface Entity {
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+
+    IsPlayer(self: Entity): self is Player;
+>IsPlayer : Symbol(Entity.IsPlayer, Decl(tluaColonPredicateNarrowing.tlua, 5, 18))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 6, 13))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 6, 13))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+
+    AssertPlayer(self: Entity): asserts self is Player;
+>AssertPlayer : Symbol(Entity.AssertPlayer, Decl(tluaColonPredicateNarrowing.tlua, 6, 43))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 7, 17))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 7, 17))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+
+    Check(self: Entity, v: unknown): v is Player;
+>Check : Symbol(Entity.Check, Decl(tluaColonPredicateNarrowing.tlua, 7, 55))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 8, 10))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+>v : Symbol(v, Decl(tluaColonPredicateNarrowing.tlua, 8, 23))
+>v : Symbol(v, Decl(tluaColonPredicateNarrowing.tlua, 8, 23))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+}
+interface Player extends Entity {
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+
+    Nick(self: Player): string;
+>Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 11, 9))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+}
+
+declare e: Entity;
+>e : Symbol(e, Decl(tluaColonPredicateNarrowing.tlua, 14, 7))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+
+declare u: unknown;
+>u : Symbol(u, Decl(tluaColonPredicateNarrowing.tlua, 15, 7))
+
+declare holder: { ent: Entity };
+>holder : Symbol(holder, Decl(tluaColonPredicateNarrowing.tlua, 16, 7))
+>ent : Symbol(ent, Decl(tluaColonPredicateNarrowing.tlua, 16, 17))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+
+// Receiver predicate narrows the receiver in the true branch; the false
+// branch keeps the base type.
+if e:IsPlayer() then
+>e:IsPlayer : Symbol(Entity.IsPlayer, Decl(tluaColonPredicateNarrowing.tlua, 5, 18))
+>e : Symbol(e, Decl(tluaColonPredicateNarrowing.tlua, 14, 7))
+>IsPlayer : Symbol(Entity.IsPlayer, Decl(tluaColonPredicateNarrowing.tlua, 5, 18))
+
+    local n: string = e:Nick();
+>n : Symbol(n, Decl(tluaColonPredicateNarrowing.tlua, 21, 9))
+>e:Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+>e : Symbol(e, Decl(tluaColonPredicateNarrowing.tlua, 14, 7))
+>Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+
+else
+    local still: Entity = e;
+>still : Symbol(still, Decl(tluaColonPredicateNarrowing.tlua, 23, 9))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+>e : Symbol(e, Decl(tluaColonPredicateNarrowing.tlua, 14, 7))
+
+end
+
+// A predicate on a later parameter narrows the written argument (declared
+// index 1 is written argument 0).
+if e:Check(u) then
+>e:Check : Symbol(Entity.Check, Decl(tluaColonPredicateNarrowing.tlua, 7, 55))
+>e : Symbol(e, Decl(tluaColonPredicateNarrowing.tlua, 14, 7))
+>Check : Symbol(Entity.Check, Decl(tluaColonPredicateNarrowing.tlua, 7, 55))
+>u : Symbol(u, Decl(tluaColonPredicateNarrowing.tlua, 15, 7))
+
+    local p: Player = u;
+>p : Symbol(p, Decl(tluaColonPredicateNarrowing.tlua, 29, 9))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+>u : Symbol(u, Decl(tluaColonPredicateNarrowing.tlua, 15, 7))
+
+end
+
+// Assertion predicates narrow the receiver for the rest of the flow.
+declare e2: Entity;
+>e2 : Symbol(e2, Decl(tluaColonPredicateNarrowing.tlua, 33, 7))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+
+e2:AssertPlayer();
+>e2:AssertPlayer : Symbol(Entity.AssertPlayer, Decl(tluaColonPredicateNarrowing.tlua, 6, 43))
+>e2 : Symbol(e2, Decl(tluaColonPredicateNarrowing.tlua, 33, 7))
+>AssertPlayer : Symbol(Entity.AssertPlayer, Decl(tluaColonPredicateNarrowing.tlua, 6, 43))
+
+local an: string = e2:Nick();
+>an : Symbol(an, Decl(tluaColonPredicateNarrowing.tlua, 35, 5))
+>e2:Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+>e2 : Symbol(e2, Decl(tluaColonPredicateNarrowing.tlua, 33, 7))
+>Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+
+// Property-access receivers narrow too.
+if holder.ent:IsPlayer() then
+>holder.ent:IsPlayer : Symbol(Entity.IsPlayer, Decl(tluaColonPredicateNarrowing.tlua, 5, 18))
+>holder.ent : Symbol(ent, Decl(tluaColonPredicateNarrowing.tlua, 16, 17))
+>holder : Symbol(holder, Decl(tluaColonPredicateNarrowing.tlua, 16, 7))
+>ent : Symbol(ent, Decl(tluaColonPredicateNarrowing.tlua, 16, 17))
+>IsPlayer : Symbol(Entity.IsPlayer, Decl(tluaColonPredicateNarrowing.tlua, 5, 18))
+
+    local hn: string = holder.ent:Nick();
+>hn : Symbol(hn, Decl(tluaColonPredicateNarrowing.tlua, 39, 9))
+>holder.ent:Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+>holder.ent : Symbol(ent, Decl(tluaColonPredicateNarrowing.tlua, 16, 17))
+>holder : Symbol(holder, Decl(tluaColonPredicateNarrowing.tlua, 16, 7))
+>ent : Symbol(ent, Decl(tluaColonPredicateNarrowing.tlua, 16, 17))
+>Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+
+end
+
+// Plain-function predicates with a self-named parameter still narrow their
+// explicit argument (no index shift on dot calls).
+declare isP: (self: Entity) => self is Player;
+>isP : Symbol(isP, Decl(tluaColonPredicateNarrowing.tlua, 44, 7))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 44, 14))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 44, 14))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+
+declare e3: Entity;
+>e3 : Symbol(e3, Decl(tluaColonPredicateNarrowing.tlua, 45, 7))
+>Entity : Symbol(Entity, Decl(tluaColonPredicateNarrowing.tlua, 0, 0))
+
+if isP(e3) then
+>isP : Symbol(isP, Decl(tluaColonPredicateNarrowing.tlua, 44, 7))
+>e3 : Symbol(e3, Decl(tluaColonPredicateNarrowing.tlua, 45, 7))
+
+    local dn: string = e3:Nick();
+>dn : Symbol(dn, Decl(tluaColonPredicateNarrowing.tlua, 47, 9))
+>e3:Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+>e3 : Symbol(e3, Decl(tluaColonPredicateNarrowing.tlua, 45, 7))
+>Nick : Symbol(Player.Nick, Decl(tluaColonPredicateNarrowing.tlua, 10, 33))
+
+end
+
+// Typeless `asserts cond` predicates use the same colon-aware index mapping:
+// the assertion narrows the written argument at the shifted index, not the
+// one at the raw declared index.
+interface Guard {
+>Guard : Symbol(Guard, Decl(tluaColonPredicateNarrowing.tlua, 48, 3))
+
+    Ensure(self: Guard, cond: unknown): asserts cond;
+>Ensure : Symbol(Guard.Ensure, Decl(tluaColonPredicateNarrowing.tlua, 53, 17))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 54, 11))
+>Guard : Symbol(Guard, Decl(tluaColonPredicateNarrowing.tlua, 48, 3))
+>cond : Symbol(cond, Decl(tluaColonPredicateNarrowing.tlua, 54, 23))
+>cond : Symbol(cond, Decl(tluaColonPredicateNarrowing.tlua, 54, 23))
+
+    EnsureWith(self: Guard, cond: unknown, extra: unknown): asserts cond;
+>EnsureWith : Symbol(Guard.EnsureWith, Decl(tluaColonPredicateNarrowing.tlua, 54, 53))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 55, 15))
+>Guard : Symbol(Guard, Decl(tluaColonPredicateNarrowing.tlua, 48, 3))
+>cond : Symbol(cond, Decl(tluaColonPredicateNarrowing.tlua, 55, 27))
+>extra : Symbol(extra, Decl(tluaColonPredicateNarrowing.tlua, 55, 42))
+>cond : Symbol(cond, Decl(tluaColonPredicateNarrowing.tlua, 55, 27))
+}
+declare g: Guard;
+>g : Symbol(g, Decl(tluaColonPredicateNarrowing.tlua, 57, 7))
+>Guard : Symbol(Guard, Decl(tluaColonPredicateNarrowing.tlua, 48, 3))
+
+declare maybe: string | nil;
+>maybe : Symbol(maybe, Decl(tluaColonPredicateNarrowing.tlua, 58, 7))
+
+g:Ensure(maybe ~= nil);
+>g:Ensure : Symbol(Guard.Ensure, Decl(tluaColonPredicateNarrowing.tlua, 53, 17))
+>g : Symbol(g, Decl(tluaColonPredicateNarrowing.tlua, 57, 7))
+>Ensure : Symbol(Guard.Ensure, Decl(tluaColonPredicateNarrowing.tlua, 53, 17))
+>maybe : Symbol(maybe, Decl(tluaColonPredicateNarrowing.tlua, 58, 7))
+
+local sure: string = maybe;
+>sure : Symbol(sure, Decl(tluaColonPredicateNarrowing.tlua, 60, 5))
+>maybe : Symbol(maybe, Decl(tluaColonPredicateNarrowing.tlua, 58, 7))
+
+// The predicate names `cond` (declared index 1 -> written argument 0); the
+// unrelated second argument must not be the one narrowed.
+declare maybe2: string | nil;
+>maybe2 : Symbol(maybe2, Decl(tluaColonPredicateNarrowing.tlua, 64, 7))
+
+declare unrelated: boolean;
+>unrelated : Symbol(unrelated, Decl(tluaColonPredicateNarrowing.tlua, 65, 7))
+
+g:EnsureWith(maybe2 ~= nil, unrelated);
+>g:EnsureWith : Symbol(Guard.EnsureWith, Decl(tluaColonPredicateNarrowing.tlua, 54, 53))
+>g : Symbol(g, Decl(tluaColonPredicateNarrowing.tlua, 57, 7))
+>EnsureWith : Symbol(Guard.EnsureWith, Decl(tluaColonPredicateNarrowing.tlua, 54, 53))
+>maybe2 : Symbol(maybe2, Decl(tluaColonPredicateNarrowing.tlua, 64, 7))
+>unrelated : Symbol(unrelated, Decl(tluaColonPredicateNarrowing.tlua, 65, 7))
+
+local sure2: string = maybe2;
+>sure2 : Symbol(sure2, Decl(tluaColonPredicateNarrowing.tlua, 67, 5))
+>maybe2 : Symbol(maybe2, Decl(tluaColonPredicateNarrowing.tlua, 64, 7))
+
+// A colon-call assertion of a literal false marks the following code
+// unreachable: the missing-return error is suppressed after Ensure(false)
+// but still fires after Ensure(true).
+function neverReturns(gg: Guard): number
+>neverReturns : Symbol(neverReturns, Decl(tluaColonPredicateNarrowing.tlua, 67, 29))
+>gg : Symbol(gg, Decl(tluaColonPredicateNarrowing.tlua, 72, 22))
+>Guard : Symbol(Guard, Decl(tluaColonPredicateNarrowing.tlua, 48, 3))
+
+    gg:Ensure(false);
+>gg:Ensure : Symbol(Guard.Ensure, Decl(tluaColonPredicateNarrowing.tlua, 53, 17))
+>gg : Symbol(gg, Decl(tluaColonPredicateNarrowing.tlua, 72, 22))
+>Ensure : Symbol(Guard.Ensure, Decl(tluaColonPredicateNarrowing.tlua, 53, 17))
+
+end
+function stillNeedsReturn(gg: Guard): number
+>stillNeedsReturn : Symbol(stillNeedsReturn, Decl(tluaColonPredicateNarrowing.tlua, 74, 3))
+>gg : Symbol(gg, Decl(tluaColonPredicateNarrowing.tlua, 75, 26))
+>Guard : Symbol(Guard, Decl(tluaColonPredicateNarrowing.tlua, 48, 3))
+
+    gg:Ensure(true);
+>gg:Ensure : Symbol(Guard.Ensure, Decl(tluaColonPredicateNarrowing.tlua, 53, 17))
+>gg : Symbol(gg, Decl(tluaColonPredicateNarrowing.tlua, 75, 26))
+>Ensure : Symbol(Guard.Ensure, Decl(tluaColonPredicateNarrowing.tlua, 53, 17))
+
+end
+
+// A predicate whose parameter name matches nothing narrows nothing on colon
+// calls either (the mismatch index stays out of range after the shift).
+interface Wrong {
+>Wrong : Symbol(Wrong, Decl(tluaColonPredicateNarrowing.tlua, 77, 3))
+
+    Bad(self: Wrong, cond: unknown): asserts missing;
+>Bad : Symbol(Wrong.Bad, Decl(tluaColonPredicateNarrowing.tlua, 81, 17))
+>self : Symbol(self, Decl(tluaColonPredicateNarrowing.tlua, 82, 8))
+>Wrong : Symbol(Wrong, Decl(tluaColonPredicateNarrowing.tlua, 77, 3))
+>cond : Symbol(cond, Decl(tluaColonPredicateNarrowing.tlua, 82, 20))
+}
+declare w: Wrong;
+>w : Symbol(w, Decl(tluaColonPredicateNarrowing.tlua, 84, 7))
+>Wrong : Symbol(Wrong, Decl(tluaColonPredicateNarrowing.tlua, 77, 3))
+
+declare wv: string | nil;
+>wv : Symbol(wv, Decl(tluaColonPredicateNarrowing.tlua, 85, 7))
+
+w:Bad(wv ~= nil);
+>w:Bad : Symbol(Wrong.Bad, Decl(tluaColonPredicateNarrowing.tlua, 81, 17))
+>w : Symbol(w, Decl(tluaColonPredicateNarrowing.tlua, 84, 7))
+>Bad : Symbol(Wrong.Bad, Decl(tluaColonPredicateNarrowing.tlua, 81, 17))
+>wv : Symbol(wv, Decl(tluaColonPredicateNarrowing.tlua, 85, 7))
+
+local wUnnarrowed: string | nil = wv;
+>wUnnarrowed : Symbol(wUnnarrowed, Decl(tluaColonPredicateNarrowing.tlua, 87, 5))
+>wv : Symbol(wv, Decl(tluaColonPredicateNarrowing.tlua, 85, 7))
+
+// Colon-calling a function-typed member with NO self parameter binds the
+// receiver to the predicate's declared parameter 0 (consistent with call
+// checking, which also reports the arity error) -- the written argument is
+// deliberately NOT narrowed.
+interface Holder2 {
+>Holder2 : Symbol(Holder2, Decl(tluaColonPredicateNarrowing.tlua, 87, 37))
+
+    CheckV: (v: unknown) => v is Player;
+>CheckV : Symbol(Holder2.CheckV, Decl(tluaColonPredicateNarrowing.tlua, 93, 19))
+>v : Symbol(v, Decl(tluaColonPredicateNarrowing.tlua, 94, 13))
+>v : Symbol(v, Decl(tluaColonPredicateNarrowing.tlua, 94, 13))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+}
+declare h2: Holder2;
+>h2 : Symbol(h2, Decl(tluaColonPredicateNarrowing.tlua, 96, 7))
+>Holder2 : Symbol(Holder2, Decl(tluaColonPredicateNarrowing.tlua, 87, 37))
+
+declare u2: unknown;
+>u2 : Symbol(u2, Decl(tluaColonPredicateNarrowing.tlua, 97, 7))
+
+if h2:CheckV(u2) then
+>h2:CheckV : Symbol(Holder2.CheckV, Decl(tluaColonPredicateNarrowing.tlua, 93, 19))
+>h2 : Symbol(h2, Decl(tluaColonPredicateNarrowing.tlua, 96, 7))
+>CheckV : Symbol(Holder2.CheckV, Decl(tluaColonPredicateNarrowing.tlua, 93, 19))
+>u2 : Symbol(u2, Decl(tluaColonPredicateNarrowing.tlua, 97, 7))
+
+    local notNarrowed: Player = u2;
+>notNarrowed : Symbol(notNarrowed, Decl(tluaColonPredicateNarrowing.tlua, 99, 9))
+>Player : Symbol(Player, Decl(tluaColonPredicateNarrowing.tlua, 9, 1))
+>u2 : Symbol(u2, Decl(tluaColonPredicateNarrowing.tlua, 97, 7))
+
+end
+
+// Outside the guard the receiver is not narrowed.
+local bad: string = e:Nick();
+>bad : Symbol(bad, Decl(tluaColonPredicateNarrowing.tlua, 103, 5))
+>e : Symbol(e, Decl(tluaColonPredicateNarrowing.tlua, 14, 7))
+

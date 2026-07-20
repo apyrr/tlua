@@ -866,6 +866,13 @@ func IsLuaColonCall(node *Node) bool {
 	return callee.Kind == KindPropertyAccessExpression && callee.AsPropertyAccessExpression().ColonToken != nil
 }
 
+// LuaColonCallReceiver returns the raw receiver expression of a colon call
+// (`obj` in `obj:f(a)`), with any parentheses preserved. The node must
+// satisfy IsLuaColonCall.
+func LuaColonCallReceiver(node *Node) *Node {
+	return node.AsCallExpression().Expression.AsPropertyAccessExpression().Expression
+}
+
 func IsCatchClauseVariableDeclarationOrBindingElement(declaration *Node) bool {
 	node := GetRootDeclaration(declaration)
 	return node.Kind == KindVariableDeclaration && node.Parent.Kind == KindCatchClause
