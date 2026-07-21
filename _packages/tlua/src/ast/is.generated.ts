@@ -1362,6 +1362,9 @@ export function isKeywordTypeKind(kind: SyntaxKind): kind is KeywordTypeSyntaxKi
         || kind === SyntaxKind.NeverKeyword
         || kind === SyntaxKind.NumberKeyword
         || kind === SyntaxKind.ObjectKeyword
+        || kind === SyntaxKind.ThreadKeyword
+        || kind === SyntaxKind.UserdataKeyword
+        || kind === SyntaxKind.CDataKeyword
         || kind === SyntaxKind.StringKeyword
         || kind === SyntaxKind.SymbolKeyword
         || kind === SyntaxKind.NilKeyword
