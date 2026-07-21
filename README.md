@@ -155,11 +155,10 @@ declare version: string
 declare limits: { min: number, max: number }
 ```
 
-**Optional chaining and string templates** are compiled away into ordinary Lua,
-so they cost you nothing at runtime. `?.` short-circuits on `nil` using `and`
-guards (hoisting a temporary only when a subexpression would otherwise be
-evaluated twice), and `` `...${}` `` templates lower to `..` concatenation with
-`tostring`:
+**Optional chaining and string templates** lower to ordinary Lua. `?.`
+short-circuits on `nil` using `and` guards, hoisting a temporary when a
+subexpression would otherwise be evaluated twice, and `` `...${}` `` templates
+become `..` concatenation with `tostring`:
 
 ```lua
 type User = { name: string, address: { city: string } | nil }
