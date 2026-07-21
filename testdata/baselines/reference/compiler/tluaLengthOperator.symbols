@@ -79,12 +79,26 @@ local e4 = #numOrRec;
 >e4 : Symbol(e4, Decl(tluaLengthOperator.tlua, 33, 5))
 >numOrRec : Symbol(numOrRec, Decl(tluaLengthOperator.tlua, 32, 7))
 
-// Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
-declare th: LuaThread;
->th : Symbol(th, Decl(tluaLengthOperator.tlua, 36, 7))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+// Opaque handles are not tables: `#` on a thread, userdata, or cdata errors at
+// runtime (cdata has no __len without an ffi.metatype).
+declare th: thread;
+>th : Symbol(th, Decl(tluaLengthOperator.tlua, 37, 7))
 
 local e5 = #th;
->e5 : Symbol(e5, Decl(tluaLengthOperator.tlua, 37, 5))
->th : Symbol(th, Decl(tluaLengthOperator.tlua, 36, 7))
+>e5 : Symbol(e5, Decl(tluaLengthOperator.tlua, 38, 5))
+>th : Symbol(th, Decl(tluaLengthOperator.tlua, 37, 7))
+
+declare ud: userdata;
+>ud : Symbol(ud, Decl(tluaLengthOperator.tlua, 39, 7))
+
+local e6 = #ud;
+>e6 : Symbol(e6, Decl(tluaLengthOperator.tlua, 40, 5))
+>ud : Symbol(ud, Decl(tluaLengthOperator.tlua, 39, 7))
+
+declare cd: cdata;
+>cd : Symbol(cd, Decl(tluaLengthOperator.tlua, 41, 7))
+
+local e7 = #cd;
+>e7 : Symbol(e7, Decl(tluaLengthOperator.tlua, 42, 5))
+>cd : Symbol(cd, Decl(tluaLengthOperator.tlua, 41, 7))
 

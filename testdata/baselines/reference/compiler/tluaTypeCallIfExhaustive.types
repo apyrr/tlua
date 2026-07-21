@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/tluaTypeCallIfExhaustive.tlua] ////
 
 === tluaTypeCallIfExhaustive.tlua ===
-type Mixed = { n: number } | LuaThread | ((a: number) => void) | string | nil;
+type Mixed = { n: number } | thread | ((a: number) => void) | string | nil;
 >Mixed : Mixed
 >n : number
 >a : number
@@ -29,12 +29,12 @@ function clauses(v: Mixed): string
 >type(v) == "table" : boolean
 >type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->v : LuaThread | { n: number; } | ((a: number) => void) | nil
+>v : thread | { n: number; } | ((a: number) => void) | nil
 >"table" : "table"
 >type(v) == "function" : boolean
 >type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->v : LuaThread | ((a: number) => void) | nil
+>v : thread | ((a: number) => void) | nil
 >"function" : "function"
 
     // An or-grouped condition narrows to the union of its tags.
@@ -51,12 +51,12 @@ function clauses(v: Mixed): string
 >type(v) == "thread" : boolean
 >type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->v : LuaThread | nil
+>v : thread | nil
 >"thread" : "thread"
 
-    local th: LuaThread = v;
->th : LuaThread
->v : LuaThread
+    local th: thread = v;
+>th : thread
+>v : thread
 
     return "thread";
 >"thread" : "thread"
@@ -163,15 +163,15 @@ local widened: number = allTagsNoElse(1); // error: number | nil
 
 // The final else of a chain covering a concrete union narrows to never, so an
 // else-based exhaustiveness check types clean.
-function coveredUnion(v: string | LuaThread): number
->coveredUnion : (v: string | LuaThread) => number
->v : string | LuaThread
+function coveredUnion(v: string | thread): number
+>coveredUnion : (v: string | thread) => number
+>v : string | thread
 
   if type(v) == "string" then
 >type(v) == "string" : boolean
 >type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->v : string | LuaThread
+>v : string | thread
 >"string" : "string"
 
     return 1;
@@ -181,7 +181,7 @@ function coveredUnion(v: string | LuaThread): number
 >type(v) == "thread" : boolean
 >type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->v : LuaThread
+>v : thread
 >"thread" : "thread"
 
     return 2;

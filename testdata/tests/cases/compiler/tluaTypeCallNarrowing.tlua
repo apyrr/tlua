@@ -7,20 +7,20 @@
 // three branded non-table kinds, which carry the same type facts as a plain table and
 // therefore cannot be told apart by facts alone.
 
-type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
+type Mixed = { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil;
 
 function tags(v: Mixed): void {
   if type(v) == "table" then
     local table1: { n: number } = v; // the brands are not tables, and "table" excludes nil
   end
   if type(v) == "thread" then
-    local thread1: LuaThread = v;
+    local thread1: thread = v;
   end
   if type(v) == "userdata" then
-    local userdata1: LuaUserdata = v;
+    local userdata1: userdata = v;
   end
   if type(v) == "cdata" then
-    local cdata1: LuaCData = v;
+    local cdata1: cdata = v;
   end
   if type(v) == "function" then
     local function1: (a: number) => void = v;
@@ -41,14 +41,14 @@ function tags(v: Mixed): void {
 
 function negated(v: Mixed): void {
   if type(v) ~= "table" then
-    local notTable: LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+    local notTable: thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil = v;
   end
   if type(v) ~= "thread" then
     // A negated brand keeps every table: only the brand is ruled out.
-    local notThread: { n: number } | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+    local notThread: { n: number } | userdata | cdata | ((a: number) => void) | string | number | boolean | nil = v;
   end
   if type(v) ~= "nil" then
-    local present: { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean = v;
+    local present: { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean = v;
   end
 }
 
@@ -62,7 +62,7 @@ function tops(u: unknown, a: any): void {
     local o: table = u;
   end
   if type(u) == "thread" then
-    local t: LuaThread = u;
+    local t: thread = u;
   end
   if type(u) == "string" then
     local s: string = u;
@@ -74,11 +74,11 @@ function tops(u: unknown, a: any): void {
 
 function generic<T>(v: T): void {
   if type(v) == "thread" then
-    local t: T & LuaThread = v;
+    local t: T & thread = v;
   end
 }
 
-function constrained<T extends LuaThread | string>(v: T): void {
+function constrained<T extends thread | string>(v: T): void {
   if type(v) ~= "thread" then
     local s: string = v;
   end

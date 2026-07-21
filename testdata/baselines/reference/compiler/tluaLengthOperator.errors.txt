@@ -2,10 +2,12 @@ tluaLengthOperator.tlua(18,13): error TLUA100042: The '#' operator can only be a
 tluaLengthOperator.tlua(19,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
 tluaLengthOperator.tlua(21,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
 tluaLengthOperator.tlua(34,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
-tluaLengthOperator.tlua(38,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(39,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(41,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
+tluaLengthOperator.tlua(43,13): error TLUA100042: The '#' operator can only be applied to a string or a table.
 
 
-==== tluaLengthOperator.tlua (5 errors) ====
+==== tluaLengthOperator.tlua (7 errors) ====
     // Lua's `#` is a unary length operator: a string or a table yields a number.
     
     local ls: number = #"abc";
@@ -49,9 +51,18 @@ tluaLengthOperator.tlua(38,13): error TLUA100042: The '#' operator can only be a
                 ~~~~~~~~
 !!! error TLUA100042: The '#' operator can only be applied to a string or a table.
     
-    // Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
-    declare th: LuaThread;
+    // Opaque handles are not tables: `#` on a thread, userdata, or cdata errors at
+    // runtime (cdata has no __len without an ffi.metatype).
+    declare th: thread;
     local e5 = #th;
+                ~~
+!!! error TLUA100042: The '#' operator can only be applied to a string or a table.
+    declare ud: userdata;
+    local e6 = #ud;
+                ~~
+!!! error TLUA100042: The '#' operator can only be applied to a string or a table.
+    declare cd: cdata;
+    local e7 = #cd;
                 ~~
 !!! error TLUA100042: The '#' operator can only be applied to a string or a table.
     

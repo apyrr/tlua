@@ -3,7 +3,7 @@ tluaTypeCallIfExhaustive.tlua(37,7): error TLUA2322: Type 'number | nil' is not 
 
 
 ==== tluaTypeCallIfExhaustive.tlua (1 errors) ====
-    type Mixed = { n: number } | LuaThread | ((a: number) => void) | string | nil;
+    type Mixed = { n: number } | thread | ((a: number) => void) | string | nil;
     
     function clauses(v: Mixed): string
       if type(v) == "string" then
@@ -14,7 +14,7 @@ tluaTypeCallIfExhaustive.tlua(37,7): error TLUA2322: Type 'number | nil' is not 
         local tf: { n: number } | ((a: number) => void) = v;
         return "tf";
       elseif type(v) == "thread" then
-        local th: LuaThread = v;
+        local th: thread = v;
         return "thread";
       else
         // The final else is left with what no other arm handled.
@@ -46,7 +46,7 @@ tluaTypeCallIfExhaustive.tlua(37,7): error TLUA2322: Type 'number | nil' is not 
     
     // The final else of a chain covering a concrete union narrows to never, so an
     // else-based exhaustiveness check types clean.
-    function coveredUnion(v: string | LuaThread): number
+    function coveredUnion(v: string | thread): number
       if type(v) == "string" then
         return 1;
       elseif type(v) == "thread" then

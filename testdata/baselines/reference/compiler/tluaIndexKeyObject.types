@@ -16,14 +16,14 @@ interface ByFunction { [key: (a: number) => void]: string }
 >key : (a: number) => void
 >a : number
 
-interface ByThread { [key: LuaThread]: string }
->key : LuaThread
+interface ByThread { [key: thread]: string }
+>key : thread
 
-interface ByUserdata { [key: LuaUserdata]: string }
->key : LuaUserdata
+interface ByUserdata { [key: userdata]: string }
+>key : userdata
 
-interface ByCData { [key: LuaCData]: string }
->key : LuaCData
+interface ByCData { [key: cdata]: string }
+>key : cdata
 
 declare pt: Point;
 >pt : Point
@@ -32,14 +32,14 @@ declare fn: (a: number) => void;
 >fn : (a: number) => void
 >a : number
 
-declare th: LuaThread;
->th : LuaThread
+declare th: thread;
+>th : thread
 
-declare ud: LuaUserdata;
->ud : LuaUserdata
+declare ud: userdata;
+>ud : userdata
 
-declare cd: LuaCData;
->cd : LuaCData
+declare cd: cdata;
+>cd : cdata
 
 declare byTable: ByTable;
 >byTable : ByTable
@@ -72,19 +72,19 @@ local s3: string = byThread[th];
 >s3 : string
 >byThread[th] : string
 >byThread : ByThread
->th : LuaThread
+>th : thread
 
 local s4: string = byUserdata[ud];
 >s4 : string
 >byUserdata[ud] : string
 >byUserdata : ByUserdata
->ud : LuaUserdata
+>ud : userdata
 
 local s5: string = byCData[cd];
 >s5 : string
 >byCData[cd] : string
 >byCData : ByCData
->cd : LuaCData
+>cd : cdata
 
 // The key domains do not bleed into one another: a table key is not a string key.
 local bad1: string = byTable["x"];

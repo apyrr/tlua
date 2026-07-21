@@ -1,6 +1,6 @@
 interface JITProfileLib {
-    start(mode: string, callback: (thread: LuaThread, samples: number, vmstate: string) => void): void;
+    start(mode: string, callback: (thread: thread, samples: number, vmstate: string) => void): void;
     stop(): void;
     dumpstack(format: string, depth: number): string;
-    dumpstack(thread: LuaThread, format: string, depth: number): string;
+    dumpstack(thread: thread, format: string, depth: number): string;
 }

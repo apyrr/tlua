@@ -33,26 +33,26 @@ local fn2: table = lf;
 >lf : function
 
 // The branded non-table kinds are not tables either.
-declare th: LuaThread;
->th : LuaThread
+declare th: thread;
+>th : thread
 
 local notThread: table = th;
 >notThread : table
->th : LuaThread
+>th : thread
 
-declare ud: LuaUserdata;
->ud : LuaUserdata
+declare ud: userdata;
+>ud : userdata
 
 local notUserdata: table = ud;
 >notUserdata : table
->ud : LuaUserdata
+>ud : userdata
 
-declare cd: LuaCData;
->cd : LuaCData
+declare cd: cdata;
+>cd : cdata
 
 local notCData: table = cd;
 >notCData : table
->cd : LuaCData
+>cd : cdata
 
 // A setmetatable pairing is a real table by construction, even a callable one.
 local callable = setmetatable({ n = 1 },
@@ -85,13 +85,15 @@ local notMix: table = callableMix;
 >notMix : table
 >callableMix : { a: number; } & (() => void)
 
+// LuaThread by interface name on purpose: the name must stay resolvable
+// alongside the thread keyword, and both display as `thread`.
 declare threadMix: LuaThread & { a: number };
->threadMix : LuaThread & { a: number; }
+>threadMix : thread & { a: number; }
 >a : number
 
 local notThreadMix: table = threadMix;
 >notThreadMix : table
->threadMix : LuaThread & { a: number; }
+>threadMix : thread & { a: number; }
 
 // ...and a union needs every constituent to be a table.
 declare fnOrTable: (() => void) | { a: number };
@@ -187,15 +189,15 @@ end
 
 // `type(x) == "table"` narrowing and the keyword agree: the narrowed value
 // satisfies the annotation.
-declare mixed: string | { k: number } | LuaThread;
->mixed : string | LuaThread | { k: number; }
+declare mixed: string | { k: number } | thread;
+>mixed : string | thread | { k: number; }
 >k : number
 
 if type(mixed) == "table" then
 >type(mixed) == "table" : boolean
 >type(mixed) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->mixed : string | LuaThread | { k: number; }
+>mixed : string | thread | { k: number; }
 >"table" : "table"
 
     local narrowed: table = mixed;

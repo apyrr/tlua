@@ -38,6 +38,11 @@ local mixedLen: number = #strOrRec;
 declare numOrRec: number | { x: number };
 local e4 = #numOrRec;
 
-// Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
-declare th: LuaThread;
+// Opaque handles are not tables: `#` on a thread, userdata, or cdata errors at
+// runtime (cdata has no __len without an ffi.metatype).
+declare th: thread;
 local e5 = #th;
+declare ud: userdata;
+local e6 = #ud;
+declare cd: cdata;
+local e7 = #cd;

@@ -18,7 +18,7 @@ declare function load(reader: () => string | nil, chunkname?: string): (function
 declare function loadfile(filename?: string): (function?, string?);
 declare function loadstring(source: string, chunkname?: string): (function?, string?);
 declare function module(name: string, ...: function): void;
-declare function newproxy(prototype?: boolean | LuaUserdata): LuaUserdata;
+declare function newproxy(prototype?: boolean | userdata): userdata;
 // next is the pairs iteration protocol, so its value is non-optional for the same
 // reason LuaPairsIterator's is: a key it yields always has one.
 declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V);
@@ -62,7 +62,7 @@ declare function xpcall(fn: function, handler: (message: any) => any, ...: any):
  * value-dependent choice generics cannot spell, so the checker refines it (like
  * `type`/`io.type` narrowing). `unpack` already correlates through the ordinary
  * generic `T`. The whole coroutine module stays erased: resume/yield because a
- * `LuaThread` is opaque and carries no packs (Luau makes the same call), and wrap
+ * `thread` is opaque and carries no packs (Luau makes the same call), and wrap
  * because a wrapped call exchanges values with `yield`, not with fn's packs.
  *
  * The signatures of setmetatable and getmetatable stay deliberately plain: the

@@ -5,16 +5,13 @@
 // three branded non-table kinds, which carry the same type facts as a plain table and
 // therefore cannot be told apart by facts alone.
 
-type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
+type Mixed = { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil;
 >Mixed : Symbol(Mixed, Decl(tluaTypeCallNarrowing.tlua, 0, 0))
 >n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 4, 14))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
->a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 4, 68))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 4, 59))
 
 function tags(v: Mixed): void {
->tags : Symbol(tags, Decl(tluaTypeCallNarrowing.tlua, 4, 122))
+>tags : Symbol(tags, Decl(tluaTypeCallNarrowing.tlua, 4, 113))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 >Mixed : Symbol(Mixed, Decl(tluaTypeCallNarrowing.tlua, 0, 0))
 
@@ -32,9 +29,8 @@ function tags(v: Mixed): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 
-    local thread1: LuaThread = v;
+    local thread1: thread = v;
 >thread1 : Symbol(thread1, Decl(tluaTypeCallNarrowing.tlua, 11, 9))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 
   end
@@ -42,9 +38,8 @@ function tags(v: Mixed): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 
-    local userdata1: LuaUserdata = v;
+    local userdata1: userdata = v;
 >userdata1 : Symbol(userdata1, Decl(tluaTypeCallNarrowing.tlua, 14, 9))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 
   end
@@ -52,9 +47,8 @@ function tags(v: Mixed): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 
-    local cdata1: LuaCData = v;
+    local cdata1: cdata = v;
 >cdata1 : Symbol(cdata1, Decl(tluaTypeCallNarrowing.tlua, 17, 9))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 
   end
@@ -115,12 +109,9 @@ function negated(v: Mixed): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 
-    local notTable: LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+    local notTable: thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil = v;
 >notTable : Symbol(notTable, Decl(tluaTypeCallNarrowing.tlua, 38, 9))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
->a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 38, 59))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 38, 50))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 
   end
@@ -129,12 +120,10 @@ function negated(v: Mixed): void {
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 
     // A negated brand keeps every table: only the brand is ruled out.
-    local notThread: { n: number } | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
+    local notThread: { n: number } | userdata | cdata | ((a: number) => void) | string | number | boolean | nil = v;
 >notThread : Symbol(notThread, Decl(tluaTypeCallNarrowing.tlua, 42, 9))
 >n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 42, 22))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
->a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 42, 64))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 42, 58))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 
   end
@@ -142,13 +131,10 @@ function negated(v: Mixed): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 
-    local present: { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean = v;
+    local present: { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean = v;
 >present : Symbol(present, Decl(tluaTypeCallNarrowing.tlua, 45, 9))
 >n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 45, 20))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
->a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 45, 74))
+>a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 45, 65))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 
   end
@@ -185,9 +171,8 @@ function tops(u: unknown, a: any): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
 
-    local t: LuaThread = u;
+    local t: thread = u;
 >t : Symbol(t, Decl(tluaTypeCallNarrowing.tlua, 59, 9))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 >u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
 
   end
@@ -221,29 +206,27 @@ function generic<T>(v: T): void {
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 69, 20))
 
-    local t: T & LuaThread = v;
+    local t: T & thread = v;
 >t : Symbol(t, Decl(tluaTypeCallNarrowing.tlua, 71, 9))
 >T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 69, 17))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 69, 20))
 
   end
 }
 
-function constrained<T extends LuaThread | string>(v: T): void {
+function constrained<T extends thread | string>(v: T): void {
 >constrained : Symbol(constrained, Decl(tluaTypeCallNarrowing.tlua, 73, 1))
 >T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 75, 21))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
->v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 51))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 48))
 >T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 75, 21))
 
   if type(v) ~= "thread" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
->v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 51))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 48))
 
     local s: string = v;
 >s : Symbol(s, Decl(tluaTypeCallNarrowing.tlua, 77, 9))
->v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 51))
+>v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 48))
 
   end
 }

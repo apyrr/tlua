@@ -17,11 +17,11 @@ declare lf: function;
 local fn2: table = lf;
 
 // The branded non-table kinds are not tables either.
-declare th: LuaThread;
+declare th: thread;
 local notThread: table = th;
-declare ud: LuaUserdata;
+declare ud: userdata;
 local notUserdata: table = ud;
-declare cd: LuaCData;
+declare cd: cdata;
 local notCData: table = cd;
 
 // A setmetatable pairing is a real table by construction, even a callable one.
@@ -33,6 +33,8 @@ local pairedIsTable: table = callable;
 // vouch for a callable or branded partner...
 declare callableMix: { a: number } & (() => void);
 local notMix: table = callableMix;
+// LuaThread by interface name on purpose: the name must stay resolvable
+// alongside the thread keyword, and both display as `thread`.
 declare threadMix: LuaThread & { a: number };
 local notThreadMix: table = threadMix;
 // ...and a union needs every constituent to be a table.
@@ -70,7 +72,7 @@ end
 
 // `type(x) == "table"` narrowing and the keyword agree: the narrowed value
 // satisfies the annotation.
-declare mixed: string | { k: number } | LuaThread;
+declare mixed: string | { k: number } | thread;
 if type(mixed) == "table" then
     local narrowed: table = mixed;
 end

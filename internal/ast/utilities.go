@@ -889,6 +889,9 @@ func IsTypeNodeKind(kind Kind) bool {
 		KindUnknownKeyword,
 		KindNumberKeyword,
 		KindObjectKeyword,
+		KindThreadKeyword,
+		KindUserdataKeyword,
+		KindCDataKeyword,
 		KindFunctionKeyword,
 		KindBooleanKeyword,
 		KindStringKeyword,
@@ -2215,6 +2218,7 @@ func IsPartOfTypeNode(node *Node) bool {
 	switch node.Kind {
 	case KindAnyKeyword, KindUnknownKeyword, KindNumberKeyword, KindStringKeyword,
 		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword,
+		KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword,
 		KindNilKeyword, KindNeverKeyword:
 		return true
 	case KindVoidKeyword:

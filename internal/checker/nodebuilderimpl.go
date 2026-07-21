@@ -3351,6 +3351,20 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		b.ctx.approximateLength += 8
 		return b.f.NewKeywordTypeNode(ast.KindFunctionKeyword)
 	}
+	// The opaque-handle brand interfaces print back as their keyword spellings.
+	// Identity checks are safe: the resolvers return nil under --noLib and t never is.
+	if t == b.ch.getLuaThreadType() {
+		b.ctx.approximateLength += 6
+		return b.f.NewKeywordTypeNode(ast.KindThreadKeyword)
+	}
+	if t == b.ch.getLuaUserdataType() {
+		b.ctx.approximateLength += 8
+		return b.f.NewKeywordTypeNode(ast.KindUserdataKeyword)
+	}
+	if t == b.ch.getLuaCDataType() {
+		b.ctx.approximateLength += 5
+		return b.f.NewKeywordTypeNode(ast.KindCDataKeyword)
+	}
 	if inTypeAlias == 0 && t.alias != nil && (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 || b.ch.IsTypeSymbolAccessible(t.alias.Symbol(), b.ctx.enclosingDeclaration)) {
 		// If we should expand this type alias, skip the alias and fall through to expand the underlying type
 		if !b.shouldExpandType(t, true /*isAlias*/) {

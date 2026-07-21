@@ -29,25 +29,22 @@ local fn2: table = lf;
 >lf : Symbol(lf, Decl(tluaTableType.tlua, 10, 7))
 
 // The branded non-table kinds are not tables either.
-declare th: LuaThread;
+declare th: thread;
 >th : Symbol(th, Decl(tluaTableType.tlua, 14, 7))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 
 local notThread: table = th;
 >notThread : Symbol(notThread, Decl(tluaTableType.tlua, 15, 5))
 >th : Symbol(th, Decl(tluaTableType.tlua, 14, 7))
 
-declare ud: LuaUserdata;
+declare ud: userdata;
 >ud : Symbol(ud, Decl(tluaTableType.tlua, 16, 7))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
 
 local notUserdata: table = ud;
 >notUserdata : Symbol(notUserdata, Decl(tluaTableType.tlua, 17, 5))
 >ud : Symbol(ud, Decl(tluaTableType.tlua, 16, 7))
 
-declare cd: LuaCData;
+declare cd: cdata;
 >cd : Symbol(cd, Decl(tluaTableType.tlua, 18, 7))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
 
 local notCData: table = cd;
 >notCData : Symbol(notCData, Decl(tluaTableType.tlua, 19, 5))
@@ -79,43 +76,45 @@ local notMix: table = callableMix;
 >notMix : Symbol(notMix, Decl(tluaTableType.tlua, 29, 5))
 >callableMix : Symbol(callableMix, Decl(tluaTableType.tlua, 28, 7))
 
+// LuaThread by interface name on purpose: the name must stay resolvable
+// alongside the thread keyword, and both display as `thread`.
 declare threadMix: LuaThread & { a: number };
->threadMix : Symbol(threadMix, Decl(tluaTableType.tlua, 30, 7))
+>threadMix : Symbol(threadMix, Decl(tluaTableType.tlua, 32, 7))
 >LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
->a : Symbol(a, Decl(tluaTableType.tlua, 30, 32))
+>a : Symbol(a, Decl(tluaTableType.tlua, 32, 32))
 
 local notThreadMix: table = threadMix;
->notThreadMix : Symbol(notThreadMix, Decl(tluaTableType.tlua, 31, 5))
->threadMix : Symbol(threadMix, Decl(tluaTableType.tlua, 30, 7))
+>notThreadMix : Symbol(notThreadMix, Decl(tluaTableType.tlua, 33, 5))
+>threadMix : Symbol(threadMix, Decl(tluaTableType.tlua, 32, 7))
 
 // ...and a union needs every constituent to be a table.
 declare fnOrTable: (() => void) | { a: number };
->fnOrTable : Symbol(fnOrTable, Decl(tluaTableType.tlua, 33, 7))
->a : Symbol(a, Decl(tluaTableType.tlua, 33, 35))
+>fnOrTable : Symbol(fnOrTable, Decl(tluaTableType.tlua, 35, 7))
+>a : Symbol(a, Decl(tluaTableType.tlua, 35, 35))
 
 local notUnion: table = fnOrTable;
->notUnion : Symbol(notUnion, Decl(tluaTableType.tlua, 34, 5))
->fnOrTable : Symbol(fnOrTable, Decl(tluaTableType.tlua, 33, 7))
+>notUnion : Symbol(notUnion, Decl(tluaTableType.tlua, 36, 5))
+>fnOrTable : Symbol(fnOrTable, Decl(tluaTableType.tlua, 35, 7))
 
 // A pairing constituent keeps an intersection a real table.
 declare pairedMix: typeof callable & { extra: number };
->pairedMix : Symbol(pairedMix, Decl(tluaTableType.tlua, 36, 7))
+>pairedMix : Symbol(pairedMix, Decl(tluaTableType.tlua, 38, 7))
 >callable : Symbol(callable, Decl(tluaTableType.tlua, 22, 5))
->extra : Symbol(extra, Decl(tluaTableType.tlua, 36, 38))
+>extra : Symbol(extra, Decl(tluaTableType.tlua, 38, 38))
 
 local stillPaired: table = pairedMix;
->stillPaired : Symbol(stillPaired, Decl(tluaTableType.tlua, 37, 5))
->pairedMix : Symbol(pairedMix, Decl(tluaTableType.tlua, 36, 7))
+>stillPaired : Symbol(stillPaired, Decl(tluaTableType.tlua, 39, 5))
+>pairedMix : Symbol(pairedMix, Decl(tluaTableType.tlua, 38, 7))
 
 // A primitive constituent means the value IS that primitive at runtime: the
 // branded-string idiom is never a table.
 declare brandedStr: string & { tag: number };
->brandedStr : Symbol(brandedStr, Decl(tluaTableType.tlua, 40, 7))
->tag : Symbol(tag, Decl(tluaTableType.tlua, 40, 30))
+>brandedStr : Symbol(brandedStr, Decl(tluaTableType.tlua, 42, 7))
+>tag : Symbol(tag, Decl(tluaTableType.tlua, 42, 30))
 
 local notBranded: table = brandedStr;
->notBranded : Symbol(notBranded, Decl(tluaTableType.tlua, 41, 5))
->brandedStr : Symbol(brandedStr, Decl(tluaTableType.tlua, 40, 7))
+>notBranded : Symbol(notBranded, Decl(tluaTableType.tlua, 43, 5))
+>brandedStr : Symbol(brandedStr, Decl(tluaTableType.tlua, 42, 7))
 
 // Narrowing agrees a callable pairing is a table: the true-"table" branch keeps
 // it live, and the "function" branch is dead (type() reports "table").
@@ -124,7 +123,7 @@ if type(callable) == "table" then
 >callable : Symbol(callable, Decl(tluaTableType.tlua, 22, 5))
 
     local liveN: number = callable.n;
->liveN : Symbol(liveN, Decl(tluaTableType.tlua, 46, 9))
+>liveN : Symbol(liveN, Decl(tluaTableType.tlua, 48, 9))
 >callable.n : Symbol(n, Decl(tluaTableType.tlua, 22, 31))
 >callable : Symbol(callable, Decl(tluaTableType.tlua, 22, 5))
 >n : Symbol(n, Decl(tluaTableType.tlua, 22, 31))
@@ -135,7 +134,7 @@ if type(callable) == "function" then
 >callable : Symbol(callable, Decl(tluaTableType.tlua, 22, 5))
 
     local deadPairing: never = callable;
->deadPairing : Symbol(deadPairing, Decl(tluaTableType.tlua, 49, 9))
+>deadPairing : Symbol(deadPairing, Decl(tluaTableType.tlua, 51, 9))
 >callable : Symbol(callable, Decl(tluaTableType.tlua, 22, 5))
 
 end
@@ -143,104 +142,103 @@ end
 // A brand member excludes by IDENTITY: a lookalike field of another type is
 // just a field, and the carrier stays a plain table.
 declare lookalike: { __luaThreadBrand: number, n: number };
->lookalike : Symbol(lookalike, Decl(tluaTableType.tlua, 54, 7))
->__luaThreadBrand : Symbol(__luaThreadBrand, Decl(tluaTableType.tlua, 54, 20))
->n : Symbol(n, Decl(tluaTableType.tlua, 54, 46))
+>lookalike : Symbol(lookalike, Decl(tluaTableType.tlua, 56, 7))
+>__luaThreadBrand : Symbol(__luaThreadBrand, Decl(tluaTableType.tlua, 56, 20))
+>n : Symbol(n, Decl(tluaTableType.tlua, 56, 46))
 
 local lookalikeIsTable: table = lookalike;
->lookalikeIsTable : Symbol(lookalikeIsTable, Decl(tluaTableType.tlua, 55, 5))
->lookalike : Symbol(lookalike, Decl(tluaTableType.tlua, 54, 7))
+>lookalikeIsTable : Symbol(lookalikeIsTable, Decl(tluaTableType.tlua, 57, 5))
+>lookalike : Symbol(lookalike, Decl(tluaTableType.tlua, 56, 7))
 
 // A `bind` field is just a field too (the JS Function heuristic is gone):
 // the value narrows as a table, not to never.
 declare withBind: { bind: string } | number;
->withBind : Symbol(withBind, Decl(tluaTableType.tlua, 59, 7))
->bind : Symbol(bind, Decl(tluaTableType.tlua, 59, 19))
+>withBind : Symbol(withBind, Decl(tluaTableType.tlua, 61, 7))
+>bind : Symbol(bind, Decl(tluaTableType.tlua, 61, 19))
 
 if type(withBind) == "table" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
->withBind : Symbol(withBind, Decl(tluaTableType.tlua, 59, 7))
+>withBind : Symbol(withBind, Decl(tluaTableType.tlua, 61, 7))
 
     local wb: table = withBind;
->wb : Symbol(wb, Decl(tluaTableType.tlua, 61, 9))
->withBind : Symbol(withBind, Decl(tluaTableType.tlua, 59, 7))
+>wb : Symbol(wb, Decl(tluaTableType.tlua, 63, 9))
+>withBind : Symbol(withBind, Decl(tluaTableType.tlua, 61, 7))
 
     local wbn: number = withBind;
->wbn : Symbol(wbn, Decl(tluaTableType.tlua, 62, 9))
->withBind : Symbol(withBind, Decl(tluaTableType.tlua, 59, 7))
+>wbn : Symbol(wbn, Decl(tluaTableType.tlua, 64, 9))
+>withBind : Symbol(withBind, Decl(tluaTableType.tlua, 61, 7))
 
 end
 
 // `type(x) == "table"` narrowing and the keyword agree: the narrowed value
 // satisfies the annotation.
-declare mixed: string | { k: number } | LuaThread;
->mixed : Symbol(mixed, Decl(tluaTableType.tlua, 67, 7))
->k : Symbol(k, Decl(tluaTableType.tlua, 67, 25))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
+declare mixed: string | { k: number } | thread;
+>mixed : Symbol(mixed, Decl(tluaTableType.tlua, 69, 7))
+>k : Symbol(k, Decl(tluaTableType.tlua, 69, 25))
 
 if type(mixed) == "table" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
->mixed : Symbol(mixed, Decl(tluaTableType.tlua, 67, 7))
+>mixed : Symbol(mixed, Decl(tluaTableType.tlua, 69, 7))
 
     local narrowed: table = mixed;
->narrowed : Symbol(narrowed, Decl(tluaTableType.tlua, 69, 9))
->mixed : Symbol(mixed, Decl(tluaTableType.tlua, 67, 7))
+>narrowed : Symbol(narrowed, Decl(tluaTableType.tlua, 71, 9))
+>mixed : Symbol(mixed, Decl(tluaTableType.tlua, 69, 7))
 
 end
 
 // The keyword is reserved as a type name...
 type table = number;
->table : Symbol(table, Decl(lib.luajit.d.tlua, --, --), Decl(tluaTableType.tlua, 70, 3))
+>table : Symbol(table, Decl(lib.luajit.d.tlua, --, --), Decl(tluaTableType.tlua, 72, 3))
 
 // ...but stays an ordinary identifier in value positions: the table library and
 // shadowing locals are untouched.
 local joined: string = table.concat({ "a", "b" }, ",");
->joined : Symbol(joined, Decl(tluaTableType.tlua, 77, 5))
+>joined : Symbol(joined, Decl(tluaTableType.tlua, 79, 5))
 >table.concat : Symbol(TableLib.concat, Decl(lib.luajit.d.tlua, --, --))
->table : Symbol(table, Decl(lib.luajit.d.tlua, --, --), Decl(tluaTableType.tlua, 70, 3))
+>table : Symbol(table, Decl(lib.luajit.d.tlua, --, --), Decl(tluaTableType.tlua, 72, 3))
 >concat : Symbol(TableLib.concat, Decl(lib.luajit.d.tlua, --, --))
 
 function shadow(): number
->shadow : Symbol(shadow, Decl(tluaTableType.tlua, 77, 55))
+>shadow : Symbol(shadow, Decl(tluaTableType.tlua, 79, 55))
 
     local table = { 1, 2 };
->table : Symbol(table, Decl(tluaTableType.tlua, 79, 9))
+>table : Symbol(table, Decl(tluaTableType.tlua, 81, 9))
 
     return table[1];
->table : Symbol(table, Decl(tluaTableType.tlua, 79, 9))
->1 : Symbol(1, Decl(tluaTableType.tlua, 79, 19))
+>table : Symbol(table, Decl(tluaTableType.tlua, 81, 9))
+>1 : Symbol(1, Decl(tluaTableType.tlua, 81, 19))
 
 end
 
 // `object` is just an identifier now, in both value and type positions.
 local dead = object;
->dead : Symbol(dead, Decl(tluaTableType.tlua, 84, 5))
+>dead : Symbol(dead, Decl(tluaTableType.tlua, 86, 5))
 
 type Obj = object;
->Obj : Symbol(Obj, Decl(tluaTableType.tlua, 84, 20))
+>Obj : Symbol(Obj, Decl(tluaTableType.tlua, 86, 20))
 >object : Symbol(object)
 
 // The JS Object/Function stubs are gone from the libs entirely.
 type O2 = Object;
->O2 : Symbol(O2, Decl(tluaTableType.tlua, 85, 18))
+>O2 : Symbol(O2, Decl(tluaTableType.tlua, 87, 18))
 >Object : Symbol(Object)
 
 type F2 = Function;
->F2 : Symbol(F2, Decl(tluaTableType.tlua, 88, 17))
+>F2 : Symbol(F2, Decl(tluaTableType.tlua, 90, 17))
 >Function : Symbol(Function)
 
 // `type(x) == "function"` on unknown narrows to function (the stand-in when
 // there is no declared constituent to keep).
 declare u: unknown;
->u : Symbol(u, Decl(tluaTableType.tlua, 93, 7))
+>u : Symbol(u, Decl(tluaTableType.tlua, 95, 7))
 
 if type(u) == "function" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
->u : Symbol(u, Decl(tluaTableType.tlua, 93, 7))
+>u : Symbol(u, Decl(tluaTableType.tlua, 95, 7))
 
     local lf2: function = u;
->lf2 : Symbol(lf2, Decl(tluaTableType.tlua, 95, 9))
->u : Symbol(u, Decl(tluaTableType.tlua, 93, 7))
+>lf2 : Symbol(lf2, Decl(tluaTableType.tlua, 97, 9))
+>u : Symbol(u, Decl(tluaTableType.tlua, 95, 7))
 
 end
 

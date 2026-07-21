@@ -11,15 +11,15 @@ interface Point { x: number; y: number }
 
 interface ByTable { [key: Point]: string }
 interface ByFunction { [key: (a: number) => void]: string }
-interface ByThread { [key: LuaThread]: string }
-interface ByUserdata { [key: LuaUserdata]: string }
-interface ByCData { [key: LuaCData]: string }
+interface ByThread { [key: thread]: string }
+interface ByUserdata { [key: userdata]: string }
+interface ByCData { [key: cdata]: string }
 
 declare pt: Point;
 declare fn: (a: number) => void;
-declare th: LuaThread;
-declare ud: LuaUserdata;
-declare cd: LuaCData;
+declare th: thread;
+declare ud: userdata;
+declare cd: cdata;
 
 declare byTable: ByTable;
 declare byFunction: ByFunction;

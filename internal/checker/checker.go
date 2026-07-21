@@ -6123,7 +6123,7 @@ func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.M
 	// TS 1.0 spec (April 2014): 3.6.1
 	// The predefined type keywords are reserved and cannot be used as names of user defined types.
 	switch name.Text() {
-	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "table", "undefined":
+	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "table", "thread", "userdata", "cdata", "undefined":
 		c.error(name, message, name.Text())
 	}
 }
@@ -18870,7 +18870,8 @@ func isThislessVariableLikeDeclaration(node *ast.Node) bool {
 func isThislessType(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword, ast.KindBooleanKeyword,
-		ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindFunctionKeyword, ast.KindVoidKeyword, ast.KindNilKeyword,
+		ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindThreadKeyword, ast.KindUserdataKeyword, ast.KindCDataKeyword,
+		ast.KindFunctionKeyword, ast.KindVoidKeyword, ast.KindNilKeyword,
 		ast.KindNeverKeyword, ast.KindLiteralType:
 		return true
 	case ast.KindArrayType:
@@ -20963,6 +20964,23 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.nonPrimitiveType
 	case ast.KindFunctionKeyword:
 		return c.getLuaFunctionType()
+	// The three opaque-handle keywords alias the lib-declared brand interfaces;
+	// the resolvers return nil when the lib does not declare them (e.g. --noLib).
+	case ast.KindThreadKeyword:
+		if t := c.getLuaThreadType(); t != nil {
+			return t
+		}
+		return c.errorType
+	case ast.KindUserdataKeyword:
+		if t := c.getLuaUserdataType(); t != nil {
+			return t
+		}
+		return c.errorType
+	case ast.KindCDataKeyword:
+		if t := c.getLuaCDataType(); t != nil {
+			return t
+		}
+		return c.errorType
 	case ast.KindIntrinsicKeyword:
 		return c.intrinsicMarkerType
 	case ast.KindLiteralType:
@@ -21658,7 +21676,7 @@ func (c *Checker) isArrayLikeType(t *Type) bool {
 // isLuaLengthOperandType reports whether `#` measures a single constituent: a
 // string, or any table -- Lua returns a border even without an array part. A
 // bare function is an object type in this model but not a table at runtime,
-// and the branded thread/userdata handles are opaque values `#` rejects.
+// and the branded opaque handles (thread/userdata/cdata) are values `#` rejects.
 func (c *Checker) isLuaLengthOperandType(t *Type) bool {
 	if c.isTypeAssignableToKind(t, TypeFlagsStringLike|TypeFlagsAnyOrUnknown) {
 		return true
@@ -21674,8 +21692,8 @@ func (c *Checker) isLuaLengthOperandType(t *Type) bool {
 		len(c.getSignaturesOfType(apparent, SignatureKindConstruct)) != 0 {
 		return false
 	}
-	for _, brand := range []func() *Type{c.getLuaThreadType, c.getLuaUserdataType} {
-		if brandType := brand(); brandType != nil && c.isTypeAssignableTo(apparent, brandType) {
+	for _, brandType := range c.getLuaBrandTypes() {
+		if c.isTypeAssignableTo(apparent, brandType) {
 			return false
 		}
 	}

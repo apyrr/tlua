@@ -70,10 +70,10 @@ declare namespace coroutine {
 > : any[]
 }
 coroutine.create(fetchOk);
->coroutine.create(fetchOk) : LuaThread
->coroutine.create : (fn: function) => LuaThread
+>coroutine.create(fetchOk) : thread
+>coroutine.create : (fn: function) => thread
 >coroutine : CoroutineLib
->create : (fn: function) => LuaThread
+>create : (fn: function) => thread
 >fetchOk : async (url: string) => boolean
 
 // async function types are usable in ambient / declared positions.

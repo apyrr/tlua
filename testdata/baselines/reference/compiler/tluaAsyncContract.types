@@ -114,10 +114,10 @@ end
 
 // OK: passing an async function as a value is not a call.
 coroutine.create(fetchOk);
->coroutine.create(fetchOk) : LuaThread
->coroutine.create : (fn: function) => LuaThread
+>coroutine.create(fetchOk) : thread
+>coroutine.create : (fn: function) => thread
 >coroutine : CoroutineLib
->create : (fn: function) => LuaThread
+>create : (fn: function) => thread
 >fetchOk : async (url: string) => (boolean, any)
 
 local wrapped = coroutine.wrap(fetchOk);

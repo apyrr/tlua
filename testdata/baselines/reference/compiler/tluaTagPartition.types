@@ -34,8 +34,8 @@ declare brandedPrim: string & { tag: number };
 >brandedPrim : string & { tag: number; }
 >tag : number
 
-declare thread: LuaThread;
->thread : LuaThread
+declare thread: thread;
+>thread : thread
 
 declare lookalike: { __luaThreadBrand: number };
 >lookalike : { __luaThreadBrand: number; }
@@ -45,8 +45,8 @@ declare callableMix: { a: number } & (() => void);
 >callableMix : { a: number; } & (() => void)
 >a : number
 
-declare threadMix: LuaThread & { a: number };
->threadMix : LuaThread & { a: number; }
+declare threadMix: thread & { a: number };
+>threadMix : thread & { a: number; }
 >a : number
 
 // Column 1: assignable to `table`?
@@ -68,7 +68,7 @@ local t4: table = brandedPrim;
 
 local t5: table = thread;
 >t5 : table
->thread : LuaThread
+>thread : thread
 
 local t6: table = lookalike;
 >t6 : table
@@ -80,7 +80,7 @@ local t7: table = callableMix;
 
 local t8: table = threadMix;
 >t8 : table
->threadMix : LuaThread & { a: number; }
+>threadMix : thread & { a: number; }
 
 // Column 2: assignable to `function`? Structural: anything callable is admitted,
 // so a callable pairing or intersection passes even though type() says "table".
@@ -102,7 +102,7 @@ local f4: function = brandedPrim;
 
 local f5: function = thread;
 >f5 : function
->thread : LuaThread
+>thread : thread
 
 local f6: function = lookalike;
 >f6 : function
@@ -114,7 +114,7 @@ local f7: function = callableMix;
 
 local f8: function = threadMix;
 >f8 : function
->threadMix : LuaThread & { a: number; }
+>threadMix : thread & { a: number; }
 
 // Column 3: `type(x) == "table"` narrowing (union with number; a `never` local
 // locks exclusion, a deliberate number-mismatch locks a kept constituent).
@@ -175,14 +175,14 @@ if type(uBranded) == "table" then local d4: never = uBranded; end
 >d4 : never
 >uBranded : never
 
-declare uThread: LuaThread | number;
->uThread : number | LuaThread
+declare uThread: thread | number;
+>uThread : number | thread
 
 if type(uThread) == "table" then local d5: never = uThread; end
 >type(uThread) == "table" : boolean
 >type(uThread) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->uThread : number | LuaThread
+>uThread : number | thread
 >"table" : "table"
 >d5 : never
 >uThread : never
@@ -213,15 +213,15 @@ if type(uCallableMix) == "table" then local d7: never = uCallableMix; end
 >d7 : never
 >uCallableMix : never
 
-declare uThreadMix: (LuaThread & { a: number }) | number;
->uThreadMix : number | (LuaThread & { a: number; })
+declare uThreadMix: (thread & { a: number }) | number;
+>uThreadMix : number | (thread & { a: number; })
 >a : number
 
 if type(uThreadMix) == "table" then local d8: never = uThreadMix; end
 >type(uThreadMix) == "table" : boolean
 >type(uThreadMix) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->uThreadMix : number | (LuaThread & { a: number; })
+>uThreadMix : number | (thread & { a: number; })
 >"table" : "table"
 >d8 : never
 >uThreadMix : never
@@ -268,7 +268,7 @@ if type(uThread) == "function" then local g5: never = uThread; end
 >type(uThread) == "function" : boolean
 >type(uThread) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->uThread : number | LuaThread
+>uThread : number | thread
 >"function" : "function"
 >g5 : never
 >uThread : never
@@ -295,7 +295,7 @@ if type(uThreadMix) == "function" then local g8: never = uThreadMix; end
 >type(uThreadMix) == "function" : boolean
 >type(uThreadMix) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->uThreadMix : number | (LuaThread & { a: number; })
+>uThreadMix : number | (thread & { a: number; })
 >"function" : "function"
 >g8 : never
 >uThreadMix : never

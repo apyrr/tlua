@@ -6,7 +6,7 @@ interface LuaCData {
 
 interface LuaCType {
     readonly __ffiCTypeBrand: unique symbol;
-    (...: any): LuaCData;
+    (...: any): cdata;
 }
 
 interface LuaCallback extends LuaCData {
@@ -19,7 +19,7 @@ interface LuaCNamespace {
     [name: string]: any;
 }
 
-type LuaCTypeSpec = LuaCType | string | LuaCData;
+type LuaCTypeSpec = LuaCType | string | cdata;
 
 interface FFILib {
     readonly C: LuaCNamespace;
@@ -27,11 +27,11 @@ interface FFILib {
     readonly arch: string;
     cdef(definition: string): void;
     load(name: string, global?: boolean): LuaCNamespace;
-    "new": (type: LuaCTypeSpec, ...: any) => LuaCData;
+    "new": (type: LuaCTypeSpec, ...: any) => cdata;
     "typeof": (type: LuaCTypeSpec, ...: any) => LuaCType;
-    cast(type: LuaCTypeSpec, initializer: any): LuaCData;
+    cast(type: LuaCTypeSpec, initializer: any): cdata;
     metatype(type: LuaCTypeSpec, metatable: table): LuaCType;
-    gc(value: LuaCData, finalizer?: function): LuaCData;
+    gc(value: cdata, finalizer?: function): cdata;
     sizeof(type: LuaCTypeSpec, count?: number): number | nil;
     alignof(type: LuaCTypeSpec): number;
     offsetof(type: LuaCTypeSpec, field: string): (number, number?, number?);

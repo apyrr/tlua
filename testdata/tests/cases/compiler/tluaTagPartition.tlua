@@ -14,10 +14,10 @@ declare fn: () => void;
 local pairing = setmetatable({ n = 1 },
     { __call = function(self: table, x: number): number return x; end });
 declare brandedPrim: string & { tag: number };
-declare thread: LuaThread;
+declare thread: thread;
 declare lookalike: { __luaThreadBrand: number };
 declare callableMix: { a: number } & (() => void);
-declare threadMix: LuaThread & { a: number };
+declare threadMix: thread & { a: number };
 
 // Column 1: assignable to `table`?
 local t1: table = plainTable;
@@ -50,13 +50,13 @@ declare uPairing: typeof pairing | number;
 if type(uPairing) == "table" then local k3: table = uPairing; local e3: number = uPairing.n; end
 declare uBranded: (string & { tag: number }) | number;
 if type(uBranded) == "table" then local d4: never = uBranded; end
-declare uThread: LuaThread | number;
+declare uThread: thread | number;
 if type(uThread) == "table" then local d5: never = uThread; end
 declare uLookalike: { __luaThreadBrand: number } | number;
 if type(uLookalike) == "table" then local k6: table = uLookalike; end
 declare uCallableMix: ({ a: number } & (() => void)) | number;
 if type(uCallableMix) == "table" then local d7: never = uCallableMix; end
-declare uThreadMix: (LuaThread & { a: number }) | number;
+declare uThreadMix: (thread & { a: number }) | number;
 if type(uThreadMix) == "table" then local d8: never = uThreadMix; end
 
 // Column 4: `type(x) == "function"` narrowing. A callable pairing is dead here

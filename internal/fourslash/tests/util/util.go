@@ -439,6 +439,21 @@ var CompletionGlobalKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "thread",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "userdata",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "cdata",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "package",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -1171,6 +1186,21 @@ var CompletionTypeKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "thread",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "userdata",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "cdata",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "readonly",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -1382,7 +1412,7 @@ func getInJSKeywords(keywords []fourslash.CompletionsExpectedItem) []fourslash.C
 			switch label {
 			case "enum", "interface", "implements", "private", "protected", "public", "abstract",
 				"any", "boolean", "declare", "infer", "is", "keyof", "module", "namespace", "never",
-				"readonly", "number", "table", "string", "symbol", "type", "unique", "override",
+				"readonly", "number", "table", "thread", "userdata", "cdata", "string", "symbol", "type", "unique", "override",
 				"unknown", "global":
 				return false
 			default:

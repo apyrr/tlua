@@ -3,7 +3,7 @@ tluaLibLuaJIT.tlua(29,7): error TLUA2322: Type 'number | nil' is not assignable 
   Type 'nil' is not assignable to type 'string'.
 tluaLibLuaJIT.tlua(30,13): error TLUA2554: Expected 1 arguments, but got 2.
 tluaLibLuaJIT.tlua(31,20): error TLUA2554: Expected 2 arguments, but got 3.
-tluaLibLuaJIT.tlua(32,7): error TLUA2741: Property '__luaUserdataBrand' is missing in type 'LuaThread' but required in type 'LuaUserdata'.
+tluaLibLuaJIT.tlua(32,7): error TLUA2741: Property '__luaUserdataBrand' is missing in type 'thread' but required in type 'userdata'.
 
 
 ==== tluaLibLuaJIT.tlua (5 errors) ====
@@ -17,7 +17,7 @@ tluaLibLuaJIT.tlua(32,7): error TLUA2741: Property '__luaUserdataBrand' is missi
     local masked: number = bitlib.band(0xff, 0x0f);
     local platform: string = jitlib.os;
     local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
-    local memory: LuaCData = ffiLib.new(ctype);
+    local memory: cdata = ffiLib.new(ctype);
     local argumentsObject: IArguments;
     local presized: table = newTable(8, 4);
     local encoded: string = buffer.encode(presized);
@@ -47,8 +47,8 @@ tluaLibLuaJIT.tlua(32,7): error TLUA2741: Property '__luaUserdataBrand' is missi
     string.rep("a", 2, ",");
                        ~~~
 !!! error TLUA2554: Expected 2 arguments, but got 3.
-    local notUserdata: LuaUserdata = coroutine.create(function() end);
+    local notUserdata: userdata = coroutine.create(function() end);
           ~~~~~~~~~~~
-!!! error TLUA2741: Property '__luaUserdataBrand' is missing in type 'LuaThread' but required in type 'LuaUserdata'.
+!!! error TLUA2741: Property '__luaUserdataBrand' is missing in type 'thread' but required in type 'userdata'.
 !!! related TLUA2728 lib.luajit.d.tlua:32:14: '__luaUserdataBrand' is declared here.
     

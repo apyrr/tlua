@@ -1,16 +1,16 @@
 interface LuaStringBuffer {
     put(value: string | number | table, ...: string | number | table): LuaStringBuffer;
     putf(format: string, ...: string | number | table): LuaStringBuffer;
-    putcdata(value: LuaCData, length: number): LuaStringBuffer;
-    set(value: string | LuaCData, length?: number): LuaStringBuffer;
+    putcdata(value: cdata, length: number): LuaStringBuffer;
+    set(value: string | cdata, length?: number): LuaStringBuffer;
     reset(): LuaStringBuffer;
     free(): void;
-    reserve(size: number): (LuaCData, number);
+    reserve(size: number): (cdata, number);
     commit(used: number): LuaStringBuffer;
     skip(length: number): LuaStringBuffer;
     get(length?: number, ...: number | nil): (string, ...string);
     tostring(): string;
-    ref(): (LuaCData, number);
+    ref(): (cdata, number);
     encode(value: any): LuaStringBuffer;
     decode(): any;
 }

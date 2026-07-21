@@ -44,9 +44,8 @@ local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
 >ffiLib : Symbol(ffiLib, Decl(tluaLibLuaJIT.tlua, 1, 5))
 >typeof : Symbol(FFILib["typeof"], Decl(lib.luajit.d.tlua, --, --))
 
-local memory: LuaCData = ffiLib.new(ctype);
+local memory: cdata = ffiLib.new(ctype);
 >memory : Symbol(memory, Decl(tluaLibLuaJIT.tlua, 10, 5))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
 >ffiLib.new : Symbol(FFILib["new"], Decl(lib.luajit.d.tlua, --, --))
 >ffiLib : Symbol(ffiLib, Decl(tluaLibLuaJIT.tlua, 1, 5))
 >new : Symbol(FFILib["new"], Decl(lib.luajit.d.tlua, --, --))
@@ -156,9 +155,8 @@ string.rep("a", 2, ",");
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 >rep : Symbol(StringLib.rep, Decl(lib.luajit.d.tlua, --, --))
 
-local notUserdata: LuaUserdata = coroutine.create(function() end);
+local notUserdata: userdata = coroutine.create(function() end);
 >notUserdata : Symbol(notUserdata, Decl(tluaLibLuaJIT.tlua, 31, 5))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
 >coroutine.create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
 >coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
 >create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))

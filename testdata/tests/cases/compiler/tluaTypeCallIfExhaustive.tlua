@@ -3,7 +3,7 @@
 // @strict: true
 // @noEmit: true
 
-type Mixed = { n: number } | LuaThread | ((a: number) => void) | string | nil;
+type Mixed = { n: number } | thread | ((a: number) => void) | string | nil;
 
 function clauses(v: Mixed): string
   if type(v) == "string" then
@@ -14,7 +14,7 @@ function clauses(v: Mixed): string
     local tf: { n: number } | ((a: number) => void) = v;
     return "tf";
   elseif type(v) == "thread" then
-    local th: LuaThread = v;
+    local th: thread = v;
     return "thread";
   else
     // The final else is left with what no other arm handled.
@@ -43,7 +43,7 @@ local widened: number = allTagsNoElse(1); // error: number | nil
 
 // The final else of a chain covering a concrete union narrows to never, so an
 // else-based exhaustiveness check types clean.
-function coveredUnion(v: string | LuaThread): number
+function coveredUnion(v: string | thread): number
   if type(v) == "string" then
     return 1;
   elseif type(v) == "thread" then

@@ -1,18 +1,18 @@
 tluaTagPartition.tlua(19,7): error TLUA2322: Type '() => void' is not assignable to type 'table'.
 tluaTagPartition.tlua(21,7): error TLUA2322: Type 'string & { tag: number; }' is not assignable to type 'table'.
-tluaTagPartition.tlua(22,7): error TLUA2322: Type 'LuaThread' is not assignable to type 'table'.
+tluaTagPartition.tlua(22,7): error TLUA2322: Type 'thread' is not assignable to type 'table'.
 tluaTagPartition.tlua(24,7): error TLUA2322: Type '{ a: number; } & (() => void)' is not assignable to type 'table'.
-tluaTagPartition.tlua(25,7): error TLUA2322: Type 'LuaThread & { a: number; }' is not assignable to type 'table'.
+tluaTagPartition.tlua(25,7): error TLUA2322: Type 'thread & { a: number; }' is not assignable to type 'table'.
 tluaTagPartition.tlua(29,7): error TLUA2322: Type '{ n: number; }' is not assignable to type 'function'.
   Type '{ n: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
 tluaTagPartition.tlua(32,7): error TLUA2322: Type 'string & { tag: number; }' is not assignable to type 'function'.
   Type 'String & { tag: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
-tluaTagPartition.tlua(33,7): error TLUA2322: Type 'LuaThread' is not assignable to type 'function'.
-  Type 'LuaThread' provides no match for the signature '(...: any): (any?, ...any)'.
+tluaTagPartition.tlua(33,7): error TLUA2322: Type 'thread' is not assignable to type 'function'.
+  Type 'thread' provides no match for the signature '(...: any): (any?, ...any)'.
 tluaTagPartition.tlua(34,7): error TLUA2322: Type '{ __luaThreadBrand: number; }' is not assignable to type 'function'.
   Type '{ __luaThreadBrand: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
-tluaTagPartition.tlua(36,7): error TLUA2322: Type 'LuaThread & { a: number; }' is not assignable to type 'function'.
-  Type 'LuaThread & { a: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
+tluaTagPartition.tlua(36,7): error TLUA2322: Type 'thread & { a: number; }' is not assignable to type 'function'.
+  Type 'thread & { a: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
 tluaTagPartition.tlua(41,65): error TLUA2322: Type '{ n: number; }' is not assignable to type 'number'.
 
 
@@ -28,10 +28,10 @@ tluaTagPartition.tlua(41,65): error TLUA2322: Type '{ n: number; }' is not assig
     local pairing = setmetatable({ n = 1 },
         { __call = function(self: table, x: number): number return x; end });
     declare brandedPrim: string & { tag: number };
-    declare thread: LuaThread;
+    declare thread: thread;
     declare lookalike: { __luaThreadBrand: number };
     declare callableMix: { a: number } & (() => void);
-    declare threadMix: LuaThread & { a: number };
+    declare threadMix: thread & { a: number };
     
     // Column 1: assignable to `table`?
     local t1: table = plainTable;
@@ -44,14 +44,14 @@ tluaTagPartition.tlua(41,65): error TLUA2322: Type '{ n: number; }' is not assig
 !!! error TLUA2322: Type 'string & { tag: number; }' is not assignable to type 'table'.
     local t5: table = thread;
           ~~
-!!! error TLUA2322: Type 'LuaThread' is not assignable to type 'table'.
+!!! error TLUA2322: Type 'thread' is not assignable to type 'table'.
     local t6: table = lookalike;
     local t7: table = callableMix;
           ~~
 !!! error TLUA2322: Type '{ a: number; } & (() => void)' is not assignable to type 'table'.
     local t8: table = threadMix;
           ~~
-!!! error TLUA2322: Type 'LuaThread & { a: number; }' is not assignable to type 'table'.
+!!! error TLUA2322: Type 'thread & { a: number; }' is not assignable to type 'table'.
     
     // Column 2: assignable to `function`? Structural: anything callable is admitted,
     // so a callable pairing or intersection passes even though type() says "table".
@@ -67,8 +67,8 @@ tluaTagPartition.tlua(41,65): error TLUA2322: Type '{ n: number; }' is not assig
 !!! error TLUA2322:   Type 'String & { tag: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
     local f5: function = thread;
           ~~
-!!! error TLUA2322: Type 'LuaThread' is not assignable to type 'function'.
-!!! error TLUA2322:   Type 'LuaThread' provides no match for the signature '(...: any): (any?, ...any)'.
+!!! error TLUA2322: Type 'thread' is not assignable to type 'function'.
+!!! error TLUA2322:   Type 'thread' provides no match for the signature '(...: any): (any?, ...any)'.
     local f6: function = lookalike;
           ~~
 !!! error TLUA2322: Type '{ __luaThreadBrand: number; }' is not assignable to type 'function'.
@@ -76,8 +76,8 @@ tluaTagPartition.tlua(41,65): error TLUA2322: Type '{ n: number; }' is not assig
     local f7: function = callableMix;
     local f8: function = threadMix;
           ~~
-!!! error TLUA2322: Type 'LuaThread & { a: number; }' is not assignable to type 'function'.
-!!! error TLUA2322:   Type 'LuaThread & { a: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
+!!! error TLUA2322: Type 'thread & { a: number; }' is not assignable to type 'function'.
+!!! error TLUA2322:   Type 'thread & { a: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
     
     // Column 3: `type(x) == "table"` narrowing (union with number; a `never` local
     // locks exclusion, a deliberate number-mismatch locks a kept constituent).
@@ -91,13 +91,13 @@ tluaTagPartition.tlua(41,65): error TLUA2322: Type '{ n: number; }' is not assig
     if type(uPairing) == "table" then local k3: table = uPairing; local e3: number = uPairing.n; end
     declare uBranded: (string & { tag: number }) | number;
     if type(uBranded) == "table" then local d4: never = uBranded; end
-    declare uThread: LuaThread | number;
+    declare uThread: thread | number;
     if type(uThread) == "table" then local d5: never = uThread; end
     declare uLookalike: { __luaThreadBrand: number } | number;
     if type(uLookalike) == "table" then local k6: table = uLookalike; end
     declare uCallableMix: ({ a: number } & (() => void)) | number;
     if type(uCallableMix) == "table" then local d7: never = uCallableMix; end
-    declare uThreadMix: (LuaThread & { a: number }) | number;
+    declare uThreadMix: (thread & { a: number }) | number;
     if type(uThreadMix) == "table" then local d8: never = uThreadMix; end
     
     // Column 4: `type(x) == "function"` narrowing. A callable pairing is dead here

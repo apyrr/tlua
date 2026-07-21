@@ -3742,11 +3742,11 @@
         },
         "type-primitive": {
             "name": "support.type.primitive.tlua",
-            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(string|number|boolean|symbol|any|void|never|unknown)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(string|number|boolean|symbol|any|void|never|unknown|table|function|thread|userdata|cdata)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
         },
         "type-builtin-literals": {
             "name": "support.type.builtin.tlua",
-            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(this|true|false|undefined|null|object)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(this|true|false|undefined|nil|null)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
         },
         "type-tuple": {
             "name": "meta.type.tuple.tlua",

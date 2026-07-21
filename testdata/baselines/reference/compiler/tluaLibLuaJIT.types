@@ -61,12 +61,12 @@ local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
 >"int[?]" : "int[?]"
 >4 : 4
 
-local memory: LuaCData = ffiLib.new(ctype);
->memory : LuaCData
->ffiLib.new(ctype) : LuaCData
->ffiLib.new : (type: LuaCTypeSpec, ...: any) => LuaCData
+local memory: cdata = ffiLib.new(ctype);
+>memory : cdata
+>ffiLib.new(ctype) : cdata
+>ffiLib.new : (type: LuaCTypeSpec, ...: any) => cdata
 >ffiLib : FFILib
->new : (type: LuaCTypeSpec, ...: any) => LuaCData
+>new : (type: LuaCTypeSpec, ...: any) => cdata
 >ctype : LuaCType
 
 local argumentsObject: IArguments;
@@ -132,19 +132,19 @@ local assertionMessage: string = message;
 
 profile.start("f", function(thread, samples, vmstate)
 >profile.start("f", function(thread, samples, vmstate)    print(thread, samples, vmstate);end) : void
->profile.start : (mode: string, callback: (thread: LuaThread, samples: number, vmstate: string) => void) => void
+>profile.start : (mode: string, callback: (thread: thread, samples: number, vmstate: string) => void) => void
 >profile : JITProfileLib
->start : (mode: string, callback: (thread: LuaThread, samples: number, vmstate: string) => void) => void
+>start : (mode: string, callback: (thread: thread, samples: number, vmstate: string) => void) => void
 >"f" : "f"
->function(thread, samples, vmstate)    print(thread, samples, vmstate);end : (thread: LuaThread, samples: number, vmstate: string) => void
->thread : LuaThread
+>function(thread, samples, vmstate)    print(thread, samples, vmstate);end : (thread: thread, samples: number, vmstate: string) => void
+>thread : thread
 >samples : number
 >vmstate : string
 
     print(thread, samples, vmstate);
 >print(thread, samples, vmstate) : void
 >print : (...: any) => void
->thread : LuaThread
+>thread : thread
 >samples : number
 >vmstate : string
 
@@ -185,7 +185,7 @@ local wrong: string = ffiLib.sizeof(memory);
 >ffiLib.sizeof : (type: LuaCTypeSpec, count?: number) => number | nil
 >ffiLib : FFILib
 >sizeof : (type: LuaCTypeSpec, count?: number) => number | nil
->memory : LuaCData
+>memory : cdata
 
 math.log(8, 2);
 >math.log(8, 2) : number
@@ -204,11 +204,11 @@ string.rep("a", 2, ",");
 >2 : 2
 >"," : ","
 
-local notUserdata: LuaUserdata = coroutine.create(function() end);
->notUserdata : LuaUserdata
->coroutine.create(function() end) : LuaThread
->coroutine.create : (fn: function) => LuaThread
+local notUserdata: userdata = coroutine.create(function() end);
+>notUserdata : userdata
+>coroutine.create(function() end) : thread
+>coroutine.create : (fn: function) => thread
 >coroutine : CoroutineLib
->create : (fn: function) => LuaThread
+>create : (fn: function) => thread
 >function() end : () => void
 

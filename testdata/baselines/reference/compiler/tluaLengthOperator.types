@@ -99,12 +99,29 @@ local e4 = #numOrRec;
 >#numOrRec : number
 >numOrRec : number | { x: number; }
 
-// Opaque handles are not tables: `#` on a thread or userdata errors at runtime.
-declare th: LuaThread;
->th : LuaThread
+// Opaque handles are not tables: `#` on a thread, userdata, or cdata errors at
+// runtime (cdata has no __len without an ffi.metatype).
+declare th: thread;
+>th : thread
 
 local e5 = #th;
 >e5 : number
 >#th : number
->th : LuaThread
+>th : thread
+
+declare ud: userdata;
+>ud : userdata
+
+local e6 = #ud;
+>e6 : number
+>#ud : number
+>ud : userdata
+
+declare cd: cdata;
+>cd : cdata
+
+local e7 = #cd;
+>e7 : number
+>#cd : number
+>cd : cdata
 

@@ -1,14 +1,13 @@
 //// [tests/cases/compiler/tluaTypeCallIfExhaustive.tlua] ////
 
 === tluaTypeCallIfExhaustive.tlua ===
-type Mixed = { n: number } | LuaThread | ((a: number) => void) | string | nil;
+type Mixed = { n: number } | thread | ((a: number) => void) | string | nil;
 >Mixed : Symbol(Mixed, Decl(tluaTypeCallIfExhaustive.tlua, 0, 0))
 >n : Symbol(n, Decl(tluaTypeCallIfExhaustive.tlua, 0, 14))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
->a : Symbol(a, Decl(tluaTypeCallIfExhaustive.tlua, 0, 43))
+>a : Symbol(a, Decl(tluaTypeCallIfExhaustive.tlua, 0, 40))
 
 function clauses(v: Mixed): string
->clauses : Symbol(clauses, Decl(tluaTypeCallIfExhaustive.tlua, 0, 78))
+>clauses : Symbol(clauses, Decl(tluaTypeCallIfExhaustive.tlua, 0, 75))
 >v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
 >Mixed : Symbol(Mixed, Decl(tluaTypeCallIfExhaustive.tlua, 0, 0))
 
@@ -41,9 +40,8 @@ function clauses(v: Mixed): string
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
 
-    local th: LuaThread = v;
+    local th: thread = v;
 >th : Symbol(th, Decl(tluaTypeCallIfExhaustive.tlua, 11, 9))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 2, 17))
 
     return "thread";
@@ -109,10 +107,9 @@ local widened: number = allTagsNoElse(1); // error: number | nil
 
 // The final else of a chain covering a concrete union narrows to never, so an
 // else-based exhaustiveness check types clean.
-function coveredUnion(v: string | LuaThread): number
+function coveredUnion(v: string | thread): number
 >coveredUnion : Symbol(coveredUnion, Decl(tluaTypeCallIfExhaustive.tlua, 36, 41))
 >v : Symbol(v, Decl(tluaTypeCallIfExhaustive.tlua, 40, 22))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 
   if type(v) == "string" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))

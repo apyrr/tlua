@@ -5,7 +5,7 @@
 // three branded non-table kinds, which carry the same type facts as a plain table and
 // therefore cannot be told apart by facts alone.
 
-type Mixed = { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil;
+type Mixed = { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil;
 >Mixed : Mixed
 >n : number
 >a : number
@@ -34,9 +34,9 @@ function tags(v: Mixed): void {
 >v : Mixed
 >"thread" : "thread"
 
-    local thread1: LuaThread = v;
->thread1 : LuaThread
->v : LuaThread
+    local thread1: thread = v;
+>thread1 : thread
+>v : thread
 
   end
   if type(v) == "userdata" then
@@ -46,9 +46,9 @@ function tags(v: Mixed): void {
 >v : Mixed
 >"userdata" : "userdata"
 
-    local userdata1: LuaUserdata = v;
->userdata1 : LuaUserdata
->v : LuaUserdata
+    local userdata1: userdata = v;
+>userdata1 : userdata
+>v : userdata
 
   end
   if type(v) == "cdata" then
@@ -58,9 +58,9 @@ function tags(v: Mixed): void {
 >v : Mixed
 >"cdata" : "cdata"
 
-    local cdata1: LuaCData = v;
->cdata1 : LuaCData
->v : LuaCData
+    local cdata1: cdata = v;
+>cdata1 : cdata
+>v : cdata
 
   end
   if type(v) == "function" then
@@ -137,10 +137,10 @@ function negated(v: Mixed): void {
 >v : Mixed
 >"table" : "table"
 
-    local notTable: LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
->notTable : string | number | boolean | LuaCData | LuaThread | LuaUserdata | ((a: number) => void) | nil
+    local notTable: thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil = v;
+>notTable : string | number | boolean | cdata | thread | userdata | ((a: number) => void) | nil
 >a : number
->v : string | number | boolean | LuaCData | LuaThread | LuaUserdata | ((a: number) => void) | nil
+>v : string | number | boolean | cdata | thread | userdata | ((a: number) => void) | nil
 
   end
   if type(v) ~= "thread" then
@@ -151,11 +151,11 @@ function negated(v: Mixed): void {
 >"thread" : "thread"
 
     // A negated brand keeps every table: only the brand is ruled out.
-    local notThread: { n: number } | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean | nil = v;
->notThread : string | number | boolean | LuaCData | LuaUserdata | { n: number; } | ((a: number) => void) | nil
+    local notThread: { n: number } | userdata | cdata | ((a: number) => void) | string | number | boolean | nil = v;
+>notThread : string | number | boolean | cdata | userdata | { n: number; } | ((a: number) => void) | nil
 >n : number
 >a : number
->v : string | number | boolean | LuaCData | LuaUserdata | { n: number; } | ((a: number) => void) | nil
+>v : string | number | boolean | cdata | userdata | { n: number; } | ((a: number) => void) | nil
 
   end
   if type(v) ~= "nil" then
@@ -165,11 +165,11 @@ function negated(v: Mixed): void {
 >v : Mixed
 >"nil" : "nil"
 
-    local present: { n: number } | LuaThread | LuaUserdata | LuaCData | ((a: number) => void) | string | number | boolean = v;
->present : string | number | boolean | LuaCData | LuaThread | LuaUserdata | { n: number; } | ((a: number) => void)
+    local present: { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean = v;
+>present : string | number | boolean | cdata | thread | userdata | { n: number; } | ((a: number) => void)
 >n : number
 >a : number
->v : string | number | boolean | LuaCData | LuaThread | LuaUserdata | { n: number; } | ((a: number) => void)
+>v : string | number | boolean | cdata | thread | userdata | { n: number; } | ((a: number) => void)
 
   end
 }
@@ -217,9 +217,9 @@ function tops(u: unknown, a: any): void {
 >u : unknown
 >"thread" : "thread"
 
-    local t: LuaThread = u;
->t : LuaThread
->u : LuaThread
+    local t: thread = u;
+>t : thread
+>u : thread
 
   end
   if type(u) == "string" then
@@ -259,22 +259,22 @@ function generic<T>(v: T): void {
 >v : T
 >"thread" : "thread"
 
-    local t: T & LuaThread = v;
->t : T & LuaThread
->v : T & LuaThread
+    local t: T & thread = v;
+>t : T & thread
+>v : T & thread
 
   end
 }
 
-function constrained<T extends LuaThread | string>(v: T): void {
->constrained : <T extends LuaThread | string>(v: T) => void
+function constrained<T extends thread | string>(v: T): void {
+>constrained : <T extends thread | string>(v: T) => void
 >v : T
 
   if type(v) ~= "thread" then
 >type(v) ~= "thread" : boolean
 >type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->v : string | LuaThread
+>v : string | thread
 >"thread" : "thread"
 
     local s: string = v;

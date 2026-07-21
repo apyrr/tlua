@@ -20,20 +20,17 @@ interface ByFunction { [key: (a: number) => void]: string }
 >key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 7, 24))
 >a : Symbol(a, Decl(tluaIndexKeyObject.tlua, 7, 30))
 
-interface ByThread { [key: LuaThread]: string }
+interface ByThread { [key: thread]: string }
 >ByThread : Symbol(ByThread, Decl(tluaIndexKeyObject.tlua, 7, 59))
 >key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 8, 22))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 
-interface ByUserdata { [key: LuaUserdata]: string }
->ByUserdata : Symbol(ByUserdata, Decl(tluaIndexKeyObject.tlua, 8, 47))
+interface ByUserdata { [key: userdata]: string }
+>ByUserdata : Symbol(ByUserdata, Decl(tluaIndexKeyObject.tlua, 8, 44))
 >key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 9, 24))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
 
-interface ByCData { [key: LuaCData]: string }
->ByCData : Symbol(ByCData, Decl(tluaIndexKeyObject.tlua, 9, 51))
+interface ByCData { [key: cdata]: string }
+>ByCData : Symbol(ByCData, Decl(tluaIndexKeyObject.tlua, 9, 48))
 >key : Symbol(key, Decl(tluaIndexKeyObject.tlua, 10, 21))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
 
 declare pt: Point;
 >pt : Symbol(pt, Decl(tluaIndexKeyObject.tlua, 12, 7))
@@ -43,17 +40,14 @@ declare fn: (a: number) => void;
 >fn : Symbol(fn, Decl(tluaIndexKeyObject.tlua, 13, 7))
 >a : Symbol(a, Decl(tluaIndexKeyObject.tlua, 13, 13))
 
-declare th: LuaThread;
+declare th: thread;
 >th : Symbol(th, Decl(tluaIndexKeyObject.tlua, 14, 7))
->LuaThread : Symbol(LuaThread, Decl(lib.luajit.d.tlua, --, --))
 
-declare ud: LuaUserdata;
+declare ud: userdata;
 >ud : Symbol(ud, Decl(tluaIndexKeyObject.tlua, 15, 7))
->LuaUserdata : Symbol(LuaUserdata, Decl(lib.luajit.d.tlua, --, --))
 
-declare cd: LuaCData;
+declare cd: cdata;
 >cd : Symbol(cd, Decl(tluaIndexKeyObject.tlua, 16, 7))
->LuaCData : Symbol(LuaCData, Decl(lib.luajit.d.tlua, --, --))
 
 declare byTable: ByTable;
 >byTable : Symbol(byTable, Decl(tluaIndexKeyObject.tlua, 18, 7))
@@ -69,11 +63,11 @@ declare byThread: ByThread;
 
 declare byUserdata: ByUserdata;
 >byUserdata : Symbol(byUserdata, Decl(tluaIndexKeyObject.tlua, 21, 7))
->ByUserdata : Symbol(ByUserdata, Decl(tluaIndexKeyObject.tlua, 8, 47))
+>ByUserdata : Symbol(ByUserdata, Decl(tluaIndexKeyObject.tlua, 8, 44))
 
 declare byCData: ByCData;
 >byCData : Symbol(byCData, Decl(tluaIndexKeyObject.tlua, 22, 7))
->ByCData : Symbol(ByCData, Decl(tluaIndexKeyObject.tlua, 9, 51))
+>ByCData : Symbol(ByCData, Decl(tluaIndexKeyObject.tlua, 9, 48))
 
 local s1: string = byTable[pt];
 >s1 : Symbol(s1, Decl(tluaIndexKeyObject.tlua, 24, 5))

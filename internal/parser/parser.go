@@ -2166,6 +2166,7 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 	switch p.token {
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword,
 		ast.KindSymbolKeyword, ast.KindBooleanKeyword, ast.KindNilKeyword, ast.KindNeverKeyword, ast.KindObjectKeyword,
+		ast.KindThreadKeyword, ast.KindUserdataKeyword, ast.KindCDataKeyword,
 		ast.KindFunctionKeyword:
 		state := p.mark()
 		keywordTypeNode := p.parseKeywordTypeNode()
@@ -5620,7 +5621,8 @@ func (p *Parser) isStartOfType(inStartOfParameter bool) bool {
 		ast.KindNilKeyword, ast.KindTypeOfKeyword, ast.KindNeverKeyword,
 		ast.KindOpenBraceToken, ast.KindLessThanToken, ast.KindBarToken, ast.KindAmpersandToken,
 		ast.KindNewKeyword, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindTrueKeyword,
-		ast.KindFalseKeyword, ast.KindObjectKeyword, ast.KindAsteriskToken, ast.KindQuestionToken,
+		ast.KindFalseKeyword, ast.KindObjectKeyword, ast.KindThreadKeyword, ast.KindUserdataKeyword, ast.KindCDataKeyword,
+		ast.KindAsteriskToken, ast.KindQuestionToken,
 		ast.KindDotDotDotToken, ast.KindInferKeyword, ast.KindImportKeyword, ast.KindAssertsKeyword, ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindTemplateHead:
 		return true

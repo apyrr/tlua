@@ -261,20 +261,26 @@ func TestDecodeSourceFile_KeywordExpressions(t *testing.T) {
 func TestDecodeSourceFile_KeywordTypeNodes(t *testing.T) {
 	t.Parallel()
 	// A keyword type must decode as KeywordTypeNode, not Token, or the printer
-	// panics. `function` is the newest keyword type and the one that regressed
-	// when ast.json lagged behind the parser.
-	sf := parseSourceFile("local x: function = print;")
-	buf, _, err := encoder.EncodeSourceFile(sf)
-	assert.NilError(t, err)
+	// panics. `function` is the keyword type that regressed when ast.json
+	// lagged behind the parser.
+	for keyword, kind := range map[string]ast.Kind{
+		"function": ast.KindFunctionKeyword,
+		"thread":   ast.KindThreadKeyword,
+		"userdata": ast.KindUserdataKeyword,
+		"cdata":    ast.KindCDataKeyword,
+	} {
+		sf := parseSourceFile("local x: " + keyword + ";")
+		buf, _, err := encoder.EncodeSourceFile(sf)
+		assert.NilError(t, err)
 
-	decoded, err := encoder.DecodeSourceFile(buf)
-	assert.NilError(t, err)
+		decoded, err := encoder.DecodeSourceFile(buf)
+		assert.NilError(t, err)
 
-	decl := decoded.Statements.Nodes[0].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
-	fnType := decl.Type
-	assert.Equal(t, fnType.Kind, ast.KindFunctionKeyword)
-	// This would panic if decoded as Token instead of KeywordTypeNode
-	assert.Assert(t, fnType.AsKeywordTypeNode() != nil)
+		decl := decoded.Statements.Nodes[0].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
+		assert.Equal(t, decl.Type.Kind, kind)
+		// This would panic if decoded as Token instead of KeywordTypeNode
+		assert.Assert(t, decl.Type.AsKeywordTypeNode() != nil)
+	}
 }
 
 func TestDecodeSourceFile_EmptyModuleBlock(t *testing.T) {
