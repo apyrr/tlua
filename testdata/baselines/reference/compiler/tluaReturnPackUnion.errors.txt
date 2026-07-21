@@ -1,0 +1,31 @@
+tluaReturnPackUnion.tlua(24,7): error TLUA2322: Type '() => boolean | (number, string)' is not assignable to type 'nil'.
+
+
+==== tluaReturnPackUnion.tlua (1 errors) ====
+    // A union of return packs: the callee returns either a value or an error,
+    // never both. Each constituent is an explicitly parenthesized pack.
+    declare function parse(s: string): (number, nil) | (nil, string)
+    
+    local value, err = parse("12")
+    
+    // Each name still projects positionally out of the union.
+    local v: number | nil = value;
+    local e: string | nil = err;
+    
+    // The whole signature round-trips through the printer.
+    local sig: (s: string) => (number, nil) | (nil, string) = parse;
+    
+    // A non-pack constituent mixed with a pack constituent.
+    declare function maybe(): (number, string) | nil
+    local m = maybe();
+    
+    // A pack constituent mixed with a scalar (`boolean`) round-trips regardless of the
+    // union's display order: any-position parsing accepts a pack in any spot, so whatever
+    // order the printer prints the constituents in re-parses cleanly. The error message
+    // below pins the spelling.
+    declare function packOrScalar(): (number, string) | boolean
+    local reparse: (s: string) => (number, string) | boolean = packOrScalar;
+    local mustError: nil = packOrScalar;
+          ~~~~~~~~~
+!!! error TLUA2322: Type '() => boolean | (number, string)' is not assignable to type 'nil'.
+    

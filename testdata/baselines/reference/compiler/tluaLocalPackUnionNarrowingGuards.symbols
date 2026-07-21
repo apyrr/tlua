@@ -1,0 +1,122 @@
+//// [tests/cases/compiler/tluaLocalPackUnionNarrowingGuards.tlua] ////
+
+=== tluaLocalPackUnionNarrowingGuards.tlua ===
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 0, 0))
+>s : Symbol(s, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 0, 23))
+
+// Each `mustError` below asserts that correlation did NOT happen. They are the
+// point of this file: if a guard regresses, the error disappears and the baseline
+// diff shows it. A `number | nil` annotation would accept either outcome and
+// assert nothing.
+
+// Reassigning any name in the list breaks the tie between the pack and the locals.
+// The flow graph never matches an assignment against the list pseudo-reference, so
+// narrowing must be refused outright rather than trusting a stale correlation.
+local value, err = parse("a");
+>value : Symbol(value, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 10, 5))
+>err : Symbol(err, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 10, 12))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 0, 0))
+
+err = nil;
+>err : Symbol(err, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 10, 12))
+
+if err == nil then
+>err : Symbol(err, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 10, 12))
+
+  local mustError: number = value;
+>mustError : Symbol(mustError, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 13, 7))
+>value : Symbol(value, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 10, 5))
+
+end
+
+// An assignment from inside a closure counts just the same.
+local v2, e2 = parse("b");
+>v2 : Symbol(v2, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 17, 5))
+>e2 : Symbol(e2, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 17, 9))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 0, 0))
+
+local reset = function()
+>reset : Symbol(reset, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 18, 5))
+
+  e2 = nil;
+>e2 : Symbol(e2, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 17, 9))
+
+end;
+if e2 ~= nil then
+>e2 : Symbol(e2, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 17, 9))
+
+  local mustError2: nil = v2;
+>mustError2 : Symbol(mustError2, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 22, 7))
+>v2 : Symbol(v2, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 17, 5))
+
+end
+
+// An explicitly annotated name opts out: its annotation is the declared type, and
+// correlation must not override it.
+local v3: number | nil, e3 = parse("c");
+>v3 : Symbol(v3, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 27, 5))
+>e3 : Symbol(e3, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 27, 23))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 0, 0))
+
+if e3 ~= nil then
+>e3 : Symbol(e3, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 27, 23))
+
+  local mustError3: nil = v3;
+>mustError3 : Symbol(mustError3, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 29, 7))
+>v3 : Symbol(v3, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 27, 5))
+
+end
+
+// A lone name has nothing to correlate with, and must not be disturbed.
+local solo = parse("d");
+>solo : Symbol(solo, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 33, 5))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 0, 0))
+
+local soloWide: number | nil = solo;
+>soloWide : Symbol(soloWide, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 34, 5))
+>solo : Symbol(solo, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 33, 5))
+
+// Narrowing has to survive a loop join: the pseudo-reference needs a flow cache
+// key, or getTypeAtFlowLoopLabel discards everything established before the loop.
+function loopCase(s: string): number
+>loopCase : Symbol(loopCase, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 34, 36))
+>s : Symbol(s, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 38, 18))
+
+  local v4, e4 = parse(s);
+>v4 : Symbol(v4, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 39, 7))
+>e4 : Symbol(e4, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 39, 11))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 0, 0))
+>s : Symbol(s, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 38, 18))
+
+  if e4 ~= nil then
+>e4 : Symbol(e4, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 39, 11))
+
+    return 0;
+  end
+  local total = 0;
+>total : Symbol(total, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 43, 7))
+
+  for i = 1, 10 do
+>i : Symbol(i, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 44, 5))
+
+    local inLoop: number = v4;
+>inLoop : Symbol(inLoop, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 45, 9))
+>v4 : Symbol(v4, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 39, 7))
+
+    total = total + inLoop;
+>total : Symbol(total, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 43, 7))
+>total : Symbol(total, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 43, 7))
+>inLoop : Symbol(inLoop, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 45, 9))
+
+  end
+  local afterLoop: number = v4;
+>afterLoop : Symbol(afterLoop, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 48, 7))
+>v4 : Symbol(v4, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 39, 7))
+
+  return total + afterLoop;
+>total : Symbol(total, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 43, 7))
+>afterLoop : Symbol(afterLoop, Decl(tluaLocalPackUnionNarrowingGuards.tlua, 48, 7))
+
+end
+

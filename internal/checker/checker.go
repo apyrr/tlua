@@ -4582,6 +4582,14 @@ func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType
 				unwrappedExprType = c.createPackTypeEx([]*Type{unwrappedExprType}, []TupleElementInfo{{flags: ElementFlagsRequired}}, false /*collapse*/)
 			}
 		}
+		// Lift BOTH sides' non-pack arms so a `nil` arm of `(number, string) | nil` reads
+		// as the one-value pack `(nil)` consistently. A bare `return nil` was wrapped into
+		// `(nil)` above and must match the lifted target arm; a forwarded `return maybe()`
+		// carries its own mixed union as the source (via getCallPackType), whose scalar
+		// arm must be lifted the same way -- lifting only the target rejects that valid
+		// forwarding return.
+		unwrappedExprType = c.liftUnionTailArms(unwrappedExprType)
+		unwrappedReturnType = c.liftUnionTailArms(unwrappedReturnType)
 	}
 	effectiveExpr := expr // The effective expression for diagnostics purposes.
 	if expr != nil {
@@ -12265,8 +12273,90 @@ func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node
 				}
 			}
 		}
+		// A name in a multi-name Lua local list takes its position out of the value
+		// list's pack. When that pack is a UNION of packs the names are correlated --
+		// the callee returned exactly one arm -- so a check on any one name fixes the
+		// others. Narrow the declaration list as a pseudo-reference (the Lua analog of
+		// the destructuring case above) and re-project this name's position.
+		if ast.HasLuaLocalValueList(declaration) && declaration.Type() == nil {
+			list := declaration.Parent
+			declarations := list.AsVariableDeclarationList().Declarations.Nodes
+			// A lone name has nothing to correlate with. An assigned name breaks the tie
+			// between the pack and the locals: the flow graph never matches an assignment
+			// against the list pseudo-reference, so `err = nil` would not invalidate it.
+			if len(declarations) > 1 && !core.Some(declarations, c.isSomeSymbolAssigned) {
+				links := c.nodeLinks.Get(list)
+				if links.flags&NodeCheckFlagsInCheckIdentifier == 0 {
+					// The flag has to cover the flow walk as well as the parent type: any
+					// name mentioned in a narrowing condition re-enters checkIdentifier and
+					// lands back here. Unlike getTypeOfSymbol this path is not wrapped in
+					// pushTypeResolution, so an unguarded cycle is a stack overflow.
+					links.flags |= NodeCheckFlagsInCheckIdentifier
+					parentType := c.getPackTypeOfValueList(ast.LuaLocalValueList(list), CheckModeNormal)
+					if parentType != nil && parentType.flags&TypeFlagsUnion != 0 && everyType(parentType, isPackType) {
+						reference := c.padPackUnionForDiscrimination(parentType)
+						narrowed := c.getFlowTypeOfReferenceEx(list, reference, reference, nil /*flowContainer*/, getFlowNodeOfNode(location))
+						if narrowed.flags&TypeFlagsNever != 0 {
+							t = c.neverType
+						} else {
+							t = c.packElementForIndex(narrowed, slices.Index(declarations, declaration))
+						}
+					}
+					links.flags &^= NodeCheckFlagsInCheckIdentifier
+				}
+			}
+		}
 	}
 	return t
+}
+
+// padPackUnionForDiscrimination extends every constituent of a union of packs to
+// the union's widest fixed arity with `nil` elements. Narrowing keys on a
+// number-key property that must be present in EVERY constituent, so without this a
+// shorter arm makes that position undiscriminatable -- the ragged
+// `(number, string) | (number, string, boolean)` shape, where the discriminating
+// name sits past the end of the shorter arm. (A one-value success arm cannot be
+// written today: a pack constituent needs a comma, so `(LuaFile)` parses as a
+// parenthesized type -- it has to be spelled `(LuaFile, nil)`.) Padding with `nil`
+// states what Lua already guarantees:
+// a value the callee did not return reads as nil. The padded type is only ever the
+// narrowing reference and never escapes -- callers immediately project one position
+// out of it -- so widening the arity here cannot leak into an assignability check.
+func (c *Checker) padPackUnionForDiscrimination(t *Type) *Type {
+	maxArity := 0
+	for _, s := range t.Types() {
+		// An open pack has no fixed arity to pad to, and its variable part already
+		// answers every position.
+		if isOpenPackType(s) {
+			return t
+		}
+		maxArity = max(maxArity, len(c.getElementTypes(s)))
+	}
+	padded := make([]*Type, 0, len(t.Types()))
+	changed := false
+	for _, s := range t.Types() {
+		elementTypes := c.getElementTypes(s)
+		if len(elementTypes) == maxArity {
+			padded = append(padded, s)
+			continue
+		}
+		newTypes := slices.Clone(elementTypes)
+		newInfos := slices.Clone(s.TargetTupleType().elementInfos)
+		for len(newTypes) < maxArity {
+			// Required, NOT Optional (unlike mergeClosedPacks' pad): a discriminant must
+			// be PRESENT in every arm -- an absent/optional property aborts discriminant
+			// narrowing (narrowTypeByDiscriminant bails when the union property is nil).
+			// The two pad routines look alike but must not be unified on this flag.
+			newTypes = append(newTypes, c.nilType)
+			newInfos = append(newInfos, TupleElementInfo{flags: ElementFlagsRequired})
+		}
+		padded = append(padded, c.createPackTypeEx(newTypes, newInfos, false /*collapse*/))
+		changed = true
+	}
+	if !changed {
+		return t
+	}
+	return c.getUnionType(padded)
 }
 
 func (c *Checker) isReadonlyAssignmentDeclaration(node *ast.Node) bool {
@@ -22939,6 +23029,34 @@ func (c *Checker) packTailArgumentTypes(packType *Type, index int, signature *Si
 	return types
 }
 
+// liftUnionTailArms lifts every non-pack arm of a spreadable union to the single-value
+// pack Lua semantics give it (nonPackReturnAsPack: void -> zero values, any other
+// value -> a one-element pack), so the whole union is uniformly pack-shaped. A union
+// carried as one spread argument then reaches consumers that distribute over it --
+// getSpreadArgumentType (a `<...A>` rest parameter) and tuple normalization -- as a
+// union of packs rather than a mix that makes a scalar arm non-array-like (a bogus
+// "is not an array type") or an errorType rest element. A non-union, or a union with
+// no non-pack arm, is returned unchanged.
+func (c *Checker) liftUnionTailArms(t *Type) *Type {
+	if t == nil || t.flags&TypeFlagsUnion == 0 {
+		return t
+	}
+	changed := false
+	arms := make([]*Type, len(t.Types()))
+	for i, arm := range t.Types() {
+		if isPackType(arm) {
+			arms[i] = arm
+			continue
+		}
+		arms[i] = c.nonPackReturnAsPack(arm)
+		changed = true
+	}
+	if !changed {
+		return t
+	}
+	return c.getUnionType(arms)
+}
+
 // maybePackType reports whether t is a pack or a union containing one.
 func (c *Checker) maybePackType(t *Type) bool {
 	if isPackType(t) {
@@ -23126,10 +23244,18 @@ func (c *Checker) getCallPackType(expr *ast.Node, checkMode CheckMode) *Type {
 // the checked type of the expression (an ExpressionList already carries the
 // pack), with a trailing call's full pack preserved (checkExpression adjusts
 // calls to a single value at the boundary).
+//
+// liftUnionTailArms (lift, never merge): the correlated-narrowing eligibility check
+// reads this (getNarrowedTypeOfSymbol gates on everyType(isPackType)), so a mixed
+// union `(number, string) | nil` must have its `nil` arm lifted to `(nil)` here too --
+// otherwise `local value, err = maybe()` (a bare call) would not narrow while
+// `local x, value, err = 1, maybe()` (an ExpressionList, already lifted inside
+// checkExpressionList) would, an inconsistency. Merging is still wrong: it would
+// decorrelate the arms.
 func (c *Checker) getPackTypeOfValueList(valueList *ast.Node, checkMode CheckMode) *Type {
 	t := c.checkExpressionCachedEx(valueList, checkMode)
 	if packType := c.getCallPackType(valueList, checkMode); packType != nil {
-		t = packType
+		t = c.liftUnionTailArms(packType)
 	}
 	return t
 }
@@ -23162,11 +23288,21 @@ func (c *Checker) checkExpressionList(node *ast.Node, checkMode CheckMode) *Type
 		t := c.checkExpressionForMutableLocation(element, checkMode)
 		if i == len(elements)-1 {
 			// Tail position: a plain call expands to all of its values.
+			//
+			// liftUnionTailArms (lift, never merge): merging an all-closed
+			// union would decorrelate the arms, and correlated narrowing of
+			// `local value, err = parse(s)` (getNarrowedTypeOfSymbol) depends on the
+			// value list keeping the union. Lifting only turns a non-pack arm
+			// (`nil | (number, string)`) into a one-value pack -- a no-op for the all-pack
+			// unions narrowing cares about -- so the union survives while tuple
+			// normalization no longer sees a bare scalar arm it would turn into an
+			// errorType rest element. The variadic splice then distributes it into a
+			// union of packs.
 			if packType := c.getCallPackType(element, checkMode); packType != nil {
 				if packType.flags&TypeFlagsVoid != 0 {
 					continue // zero values
 				}
-				elementTypes = append(elementTypes, packType)
+				elementTypes = append(elementTypes, c.liftUnionTailArms(packType))
 				elementInfos = append(elementInfos, TupleElementInfo{flags: ElementFlagsVariadic})
 				continue
 			}
@@ -23194,16 +23330,37 @@ func (c *Checker) getUnionOfReturnPackTypes(types []*Type) *Type {
 	if !core.Some(types, c.maybePackType) {
 		return plainUnion()
 	}
+	if merged := c.mergeClosedPacks(types, true /*collapse*/); merged != nil {
+		return merged
+	}
+	return plainUnion()
+}
+
+// mergeClosedPacks merges value packs whose shapes are all statically known into a
+// single pack: each position is the union of what every arm supplies there, and a
+// short arm pads with nil and makes the position optional (Lua reads a value the
+// callee did not return as nil). void arms supply zero values and single-value arms
+// supply one, so a `pack | nil` return merges as readily as a pack union.
+//
+// Returns nil when any arm's length is NOT statically known -- a variable element,
+// or a nested union of packs -- because then there is no single shape to merge into
+// and callers must keep the union and spread it instead.
+//
+// collapse canonicalizes the degenerate arities (zero values to `void`, one fixed
+// value to that value's bare type). A return type wants that; a TAIL does not --
+// the tail paths read the result as a pack, and a collapsed one-element merge would
+// hand them a scalar whose getElementTypes call dereferences nil.
+func (c *Checker) mergeClosedPacks(types []*Type, collapse bool) *Type {
 	arity := 0
 	for _, t := range types {
 		switch {
 		case isPackType(t):
 			if t.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 {
-				return plainUnion()
+				return nil
 			}
 			arity = max(arity, c.getTypeReferenceArity(t))
 		case t.flags&TypeFlagsUnion != 0 && core.Some(t.Types(), isPackType):
-			return plainUnion()
+			return nil
 		case t.flags&TypeFlagsVoid != 0:
 			// zero values
 		default:
@@ -23239,7 +23396,7 @@ func (c *Checker) getUnionOfReturnPackTypes(types []*Type) *Type {
 		elementTypes[i] = c.getUnionTypeEx(members, UnionReductionSubtype, nil /*alias*/, nil /*origin*/)
 		elementInfos[i] = TupleElementInfo{flags: flags}
 	}
-	return c.createPackTypeEx(elementTypes, elementInfos, true /*collapse*/)
+	return c.createPackTypeEx(elementTypes, elementInfos, collapse)
 }
 
 func (c *Checker) getTupleTargetType(elementInfos []TupleElementInfo, readonly bool, isPack bool) *Type {

@@ -1,0 +1,43 @@
+tluaReturnPackUnionAnyPosition.tlua(27,40): error TLUA1385: Function type notation must be parenthesized when used in a union type.
+tluaReturnPackUnionAnyPosition.tlua(27,42): error TLUA7051: Parameter has a name but no type. Did you mean 'arg0: number'?
+tluaReturnPackUnionAnyPosition.tlua(27,50): error TLUA7051: Parameter has a name but no type. Did you mean 'arg1: string'?
+tluaReturnPackUnionAnyPosition.tlua(27,57): error TLUA1005: '=>' expected.
+
+
+==== tluaReturnPackUnionAnyPosition.tlua (4 errors) ====
+    // A pack constituent may appear in ANY position of a return-type union, not only
+    // leading. Previously only a pack-LEADING union parsed; a non-pack first constituent
+    // (`nil`, or a parenthesized single like `(number)`) sent the pack in a later
+    // position into the ordinary type grammar, which misparsed it and swallowed the
+    // FOLLOWING declaration in an error cascade.
+    declare function leadingNil(): nil | (number, string)
+    declare function leadingParen(): (number) | (number, string)
+    declare function threeArms(): boolean | (number, nil) | (nil, string)
+    
+    // The next declaration must still be seen -- the old cascade consumed it entirely.
+    declare function stillDeclared(x: number): number
+    local ok: number = stillDeclared(1);
+    
+    // Each spelling round-trips: any-position parsing accepts a pack constituent in any
+    // position, so the printer's display order does not matter to assignability.
+    local sigNil: () => nil | (number, string) = leadingNil;
+    local sigParen: () => (number) | (number, string) = leadingParen;
+    
+    // A bare function-type return is still parsed cleanly (no spurious "must be
+    // parenthesized in a union" from the union-constituent path).
+    declare function fnReturn(): () => number
+    local fn: () => number = fnReturn();
+    
+    // The pack grammar is scoped to the OUTERMOST return union: it must not leak into a
+    // nested union inside a function-type return, where a pack constituent is still a
+    // parenthesization error (the same as `type T = (x: number | (number, string)) => T`).
+    declare function scoped(): (x: number | (number, string)) => boolean
+                                           ~~~~~~~~~~~~~~~~~
+!!! error TLUA1385: Function type notation must be parenthesized when used in a union type.
+                                             ~~~~~~
+!!! error TLUA7051: Parameter has a name but no type. Did you mean 'arg0: number'?
+                                                     ~~~~~~
+!!! error TLUA7051: Parameter has a name but no type. Did you mean 'arg1: string'?
+                                                            ~
+!!! error TLUA1005: '=>' expected.
+    

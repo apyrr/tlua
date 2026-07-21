@@ -1,0 +1,46 @@
+// @strict: true
+// @noEmit: true
+
+// A return-type union may mix a pack arm with a NON-pack (scalar) arm. The scalar arm
+// reads as a one-value pack, so an IMPLEMENTATION may return it directly.
+local function impl(): (number, string) | nil
+  return nil
+end
+local function impl2(): (number, string) | nil
+  return 1, "x"
+end
+
+// Forwarding a same-typed mixed union through `return f()` must be accepted: the
+// source union's `nil` arm is lifted to match the target's, exactly as a bare
+// `return nil` is. (A mismatched forward is still rejected -- see badFwd below.)
+declare function maybe(): (number, string) | nil
+local function forward(): (number, string) | nil
+  return maybe()
+end
+declare function other(): (boolean, boolean)
+local function badFwd(): (number, string) | nil
+  return other()
+end
+
+// Direct-call correlated narrowing on a mixed union -- consistent with the
+// expression-list path: checking one name narrows the other. The `nil` arm lifts to a
+// one-value pack so the value list is a union of packs the narrowing can discriminate.
+declare function maybe(): (number, string) | nil
+local value, err = maybe();
+local valueFlat: number | nil = value;
+local errFlat: string | nil = err;
+if err ~= nil then
+  local eStr: string = err;
+  local vNum: number = value;
+end
+
+// The same mixed union spliced as a non-leading value in an expression list narrows
+// identically (no divergence between the two value-list paths).
+local lead, value2, err2 = 1, maybe();
+if err2 ~= nil then
+  local vNum2: number = value2;
+end
+
+// The pack grammar is scoped to the outermost return union: it must NOT be recognized
+// inside a type predicate's asserted type, where a pack is a parenthesization error.
+declare function guard(x: any): x is nil | (number, string);

@@ -114,6 +114,54 @@ if head ~= nil and head.kind == "circle" then
 end
 ```
 
+**Multiple returns** are typed as a parenthesized list, and destructure into
+`local` names positionally:
+
+```lua
+local function divmod(a: number, b: number): (number, number)
+  return math.floor(a / b), a % b
+end
+
+local q, r = divmod(7, 2)
+
+-- a name past the returned values is nil-able, so this is an error:
+-- local x, y, z: number = divmod(7, 2)
+
+-- a call in tail position spreads into the enclosing argument list
+print(divmod(9, 4))
+```
+
+The `value, err` convention is a **union of return packs** - the callee returns
+one shape or the other, never a mix. Written that way the names correlate, so
+checking one narrows the rest:
+
+```lua
+local function parse(s: string): (number, nil) | (nil, string)
+  local n = tonumber(s)
+  if n == nil then
+    return nil, "not a number: " .. s
+  end
+  return n, nil
+end
+
+local value, err = parse("12")
+if err ~= nil then
+  error(err)              -- err: string here
+end
+local n: number = value   -- value: number here, because err was nil
+```
+
+`pcall` is typed against the function you hand it, so the results correlate
+with that function's own return pack:
+
+```lua
+local function risky(n: number): (string, number)
+  return "ok", n
+end
+
+local ok, s, m = pcall(risky, 5)  -- ok: boolean, s: string, m: number
+```
+
 **Modules are Lua modules.** There is no `import`/`export`: a module returns a
 table, and `require` is typed against it.
 

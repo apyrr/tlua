@@ -1,0 +1,99 @@
+//// [tests/cases/compiler/tluaReturnPackUnionMixed.tlua] ////
+
+=== tluaReturnPackUnionMixed.tlua ===
+// A return-type union may mix a pack arm with a NON-pack (scalar) arm. The scalar arm
+// reads as a one-value pack, so an IMPLEMENTATION may return it directly.
+local function impl(): (number, string) | nil
+>impl : Symbol(impl, Decl(tluaReturnPackUnionMixed.tlua, 0, 0))
+
+  return nil
+end
+local function impl2(): (number, string) | nil
+>impl2 : Symbol(impl2, Decl(tluaReturnPackUnionMixed.tlua, 4, 3))
+
+  return 1, "x"
+end
+
+// Forwarding a same-typed mixed union through `return f()` must be accepted: the
+// source union's `nil` arm is lifted to match the target's, exactly as a bare
+// `return nil` is. (A mismatched forward is still rejected -- see badFwd below.)
+declare function maybe(): (number, string) | nil
+>maybe : Symbol(maybe, Decl(tluaReturnPackUnionMixed.tlua, 7, 3), Decl(tluaReturnPackUnionMixed.tlua, 19, 3))
+
+local function forward(): (number, string) | nil
+>forward : Symbol(forward, Decl(tluaReturnPackUnionMixed.tlua, 12, 48))
+
+  return maybe()
+>maybe : Symbol(maybe, Decl(tluaReturnPackUnionMixed.tlua, 7, 3), Decl(tluaReturnPackUnionMixed.tlua, 19, 3))
+
+end
+declare function other(): (boolean, boolean)
+>other : Symbol(other, Decl(tluaReturnPackUnionMixed.tlua, 15, 3))
+
+local function badFwd(): (number, string) | nil
+>badFwd : Symbol(badFwd, Decl(tluaReturnPackUnionMixed.tlua, 16, 44))
+
+  return other()
+>other : Symbol(other, Decl(tluaReturnPackUnionMixed.tlua, 15, 3))
+
+end
+
+// Direct-call correlated narrowing on a mixed union -- consistent with the
+// expression-list path: checking one name narrows the other. The `nil` arm lifts to a
+// one-value pack so the value list is a union of packs the narrowing can discriminate.
+declare function maybe(): (number, string) | nil
+>maybe : Symbol(maybe, Decl(tluaReturnPackUnionMixed.tlua, 7, 3), Decl(tluaReturnPackUnionMixed.tlua, 19, 3))
+
+local value, err = maybe();
+>value : Symbol(value, Decl(tluaReturnPackUnionMixed.tlua, 25, 5))
+>err : Symbol(err, Decl(tluaReturnPackUnionMixed.tlua, 25, 12))
+>maybe : Symbol(maybe, Decl(tluaReturnPackUnionMixed.tlua, 7, 3), Decl(tluaReturnPackUnionMixed.tlua, 19, 3))
+
+local valueFlat: number | nil = value;
+>valueFlat : Symbol(valueFlat, Decl(tluaReturnPackUnionMixed.tlua, 26, 5))
+>value : Symbol(value, Decl(tluaReturnPackUnionMixed.tlua, 25, 5))
+
+local errFlat: string | nil = err;
+>errFlat : Symbol(errFlat, Decl(tluaReturnPackUnionMixed.tlua, 27, 5))
+>err : Symbol(err, Decl(tluaReturnPackUnionMixed.tlua, 25, 12))
+
+if err ~= nil then
+>err : Symbol(err, Decl(tluaReturnPackUnionMixed.tlua, 25, 12))
+
+  local eStr: string = err;
+>eStr : Symbol(eStr, Decl(tluaReturnPackUnionMixed.tlua, 29, 7))
+>err : Symbol(err, Decl(tluaReturnPackUnionMixed.tlua, 25, 12))
+
+  local vNum: number = value;
+>vNum : Symbol(vNum, Decl(tluaReturnPackUnionMixed.tlua, 30, 7))
+>value : Symbol(value, Decl(tluaReturnPackUnionMixed.tlua, 25, 5))
+
+end
+
+// The same mixed union spliced as a non-leading value in an expression list narrows
+// identically (no divergence between the two value-list paths).
+local lead, value2, err2 = 1, maybe();
+>lead : Symbol(lead, Decl(tluaReturnPackUnionMixed.tlua, 35, 5))
+>value2 : Symbol(value2, Decl(tluaReturnPackUnionMixed.tlua, 35, 11))
+>err2 : Symbol(err2, Decl(tluaReturnPackUnionMixed.tlua, 35, 19))
+>maybe : Symbol(maybe, Decl(tluaReturnPackUnionMixed.tlua, 7, 3), Decl(tluaReturnPackUnionMixed.tlua, 19, 3))
+
+if err2 ~= nil then
+>err2 : Symbol(err2, Decl(tluaReturnPackUnionMixed.tlua, 35, 19))
+
+  local vNum2: number = value2;
+>vNum2 : Symbol(vNum2, Decl(tluaReturnPackUnionMixed.tlua, 37, 7))
+>value2 : Symbol(value2, Decl(tluaReturnPackUnionMixed.tlua, 35, 11))
+
+end
+
+// The pack grammar is scoped to the outermost return union: it must NOT be recognized
+// inside a type predicate's asserted type, where a pack is a parenthesization error.
+declare function guard(x: any): x is nil | (number, string);
+>guard : Symbol(guard, Decl(tluaReturnPackUnionMixed.tlua, 38, 3))
+>x : Symbol(x, Decl(tluaReturnPackUnionMixed.tlua, 42, 23))
+>x : Symbol(x, Decl(tluaReturnPackUnionMixed.tlua, 42, 23))
+>number : Symbol(number, Decl(tluaReturnPackUnionMixed.tlua, 42, 44))
+>string : Symbol(string, Decl(tluaReturnPackUnionMixed.tlua, 42, 51))
+> : Symbol(unknown)
+

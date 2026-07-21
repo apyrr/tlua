@@ -83,6 +83,12 @@ type Parser struct {
 	hasDeprecatedTag bool
 	hasParseError    bool
 
+	// packsInReturnUnion lets the OUTERMOST union of a return type recognize a
+	// parenthesized pack as a constituent (`nil | (number, string)`), so a pack may
+	// appear in any position, not only leading. parseUnionOrIntersectionType reads and
+	// immediately clears it, so nested unions and intersections are unaffected.
+	packsInReturnUnion bool
+
 	identifiers                map[string]string
 	identifierCount            int
 	notParenthesizedArrow      collections.Set[int]
@@ -337,24 +343,26 @@ func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Mess
 }
 
 type ParserState struct {
-	scannerState      scanner.ScannerState
-	contextFlags      ast.NodeFlags
-	diagnosticsLen    int
-	jsDiagnosticsLen  int
-	jsdocInfosLen     int
-	reparsedClonesLen int
-	hasParseError     bool
+	scannerState       scanner.ScannerState
+	contextFlags       ast.NodeFlags
+	diagnosticsLen     int
+	jsDiagnosticsLen   int
+	jsdocInfosLen      int
+	reparsedClonesLen  int
+	hasParseError      bool
+	packsInReturnUnion bool
 }
 
 func (p *Parser) mark() ParserState {
 	return ParserState{
-		scannerState:      p.scanner.Mark(),
-		contextFlags:      p.contextFlags,
-		diagnosticsLen:    len(p.diagnostics),
-		jsDiagnosticsLen:  len(p.jsDiagnostics),
-		jsdocInfosLen:     len(p.jsdocInfos),
-		reparsedClonesLen: len(p.reparsedClones),
-		hasParseError:     p.hasParseError,
+		scannerState:       p.scanner.Mark(),
+		contextFlags:       p.contextFlags,
+		diagnosticsLen:     len(p.diagnostics),
+		jsDiagnosticsLen:   len(p.jsDiagnostics),
+		jsdocInfosLen:      len(p.jsdocInfos),
+		reparsedClonesLen:  len(p.reparsedClones),
+		hasParseError:      p.hasParseError,
+		packsInReturnUnion: p.packsInReturnUnion,
 	}
 }
 
@@ -367,6 +375,9 @@ func (p *Parser) rewind(state ParserState) {
 	p.jsdocInfos = p.jsdocInfos[0:state.jsdocInfosLen]
 	p.reparsedClones = p.reparsedClones[0:state.reparsedClonesLen]
 	p.hasParseError = state.hasParseError
+	// Restored across a speculative parse so a lookAhead/tryParse that runs while the
+	// flag is set (return-union pack recognition) cannot leak it past a rewind.
+	p.packsInReturnUnion = state.packsInReturnUnion
 }
 
 func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
@@ -2015,11 +2026,18 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 func (p *Parser) parseType() *ast.TypeNode {
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsTypeExcludesFlags, false)
+	// packsInReturnUnion applies only to the OUTERMOST union of a return type. Consume
+	// it across this dispatch and re-arm it just for the union branch, so it cannot
+	// leak past a function-type or conditional return into a nested union (a parameter
+	// type, a type-parameter constraint) and wrongly recognize a pack there.
+	packsInReturnUnion := p.packsInReturnUnion
+	p.packsInReturnUnion = false
 	var typeNode *ast.TypeNode
 	if p.isStartOfFunctionTypeOrConstructorType() {
 		typeNode = p.parseFunctionOrConstructorType()
 	} else {
 		pos := p.nodePos()
+		p.packsInReturnUnion = packsInReturnUnion
 		typeNode = p.parseUnionTypeOrHigher()
 		if !p.inDisallowConditionalTypesContext() && !p.hasPrecedingLineBreak() && p.parseOptional(ast.KindExtendsKeyword) {
 			// The type following 'extends' is not permitted to be another conditional type
@@ -2048,10 +2066,21 @@ func (p *Parser) parseIntersectionTypeOrHigher() *ast.TypeNode {
 func (p *Parser) parseUnionOrIntersectionType(operator ast.Kind, parseConstituentType func(p *Parser) *ast.TypeNode) *ast.TypeNode {
 	pos := p.nodePos()
 	isUnionType := operator == ast.KindBarToken
+	// A return type's outermost union recognizes a parenthesized pack as a constituent
+	// (`nil | (number, string)`). Consume the flag here so nested unions and every
+	// intersection see it cleared -- a pack is only valid at the top of the return type.
+	packsInUnion := isUnionType && p.packsInReturnUnion
+	p.packsInReturnUnion = false
+	parseConstituent := func(p *Parser) *ast.TypeNode {
+		if packsInUnion && p.isParenthesizedReturnTypeList() {
+			return p.parseParenthesizedReturnTypeList()
+		}
+		return p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType)
+	}
 	hasLeadingOperator := p.parseOptional(operator)
 	var typeNode *ast.TypeNode
 	if hasLeadingOperator {
-		typeNode = p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType)
+		typeNode = parseConstituent(p)
 	} else {
 		typeNode = parseConstituentType(p)
 	}
@@ -2059,7 +2088,7 @@ func (p *Parser) parseUnionOrIntersectionType(operator ast.Kind, parseConstituen
 		types := make([]*ast.Node, 1, 8)
 		types[0] = typeNode
 		for p.parseOptional(operator) {
-			types = append(types, p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType))
+			types = append(types, parseConstituent(p))
 		}
 		typeNode = p.createUnionOrIntersectionTypeNode(operator, p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSliceArena.Clone(types)))
 		p.finishNode(typeNode, pos)
@@ -2425,6 +2454,11 @@ func (p *Parser) parseTypeArguments() *ast.NodeList {
 // the empty pack needs its own spelling because `()` is not otherwise a type.
 func (p *Parser) parseTypeArgument() *ast.TypeNode {
 	if p.isParenthesizedReturnTypeList() {
+		// Deliberately NO union continuation here (unlike return position): the
+		// checker instantiates a `<...A>` pack parameter by wrapping a non-pack
+		// argument in a one-value pack, so a union-of-packs argument would
+		// silently mistype every call site ("Expected 1 arguments"). Until that
+		// lifting distributes, the parse error is the honest failure.
 		return p.parseParenthesizedReturnTypeList()
 	}
 	// `()` is the empty pack, but only when it is not the parameter list of a
@@ -2840,10 +2874,61 @@ func (p *Parser) parseCallableReturnType(returnToken ast.Kind, isType bool) *ast
 	if !p.shouldParseReturnType(returnToken, isType) {
 		return nil
 	}
-	if !p.isParenthesizedReturnTypeList() {
-		return doInContext(p, ast.NodeFlagsDisallowConditionalTypesContext, false, (*Parser).parseTypeOrTypePredicate)
+	pos := p.nodePos()
+	if p.isParenthesizedReturnTypeList() {
+		// A pack-LEADING return type: claim the pack before parseType's function-type
+		// lookahead could mistake it for a parameter list, then continue into a union
+		// (packs allowed in later positions) when `|` follows.
+		return p.parseReturnTypeUnionRest(p.parseParenthesizedReturnTypeList(), pos)
 	}
-	return p.parseParenthesizedReturnTypeList()
+	// Otherwise an ordinary type, a conditional (`() => T extends A ? 1 : 2`), or a
+	// union whose LATER constituents may be packs (`nil | (number, string)`). parseType
+	// handles conditionals and the leading union exactly as elsewhere; the
+	// packsInReturnUnion flag lets its outermost union recognize a parenthesized pack.
+	return p.parseReturnTypeAllowingPacks()
+}
+
+// parseReturnTypeAllowingPacks parses a non-pack-leading return type with conditional
+// types allowed (a return type is not a conditional-disallowing position) and its
+// outermost union taught to recognize a parenthesized pack in any constituent.
+func (p *Parser) parseReturnTypeAllowingPacks() *ast.TypeNode {
+	return doInContext(p, ast.NodeFlagsDisallowConditionalTypesContext, false, func(p *Parser) *ast.TypeNode {
+		saved := p.packsInReturnUnion
+		p.packsInReturnUnion = true
+		result := p.parseTypeOrTypePredicate()
+		p.packsInReturnUnion = saved
+		return result
+	})
+}
+
+// parseReturnTypeUnionRest continues an already-parsed pack-leading return constituent
+// into a union when a `|` follows, so each later constituent may itself be a pack:
+//
+//	function f(): (number, nil) | (nil, string)
+//
+// The non-pack-leading spelling (`nil | (number, string)`) is handled by
+// parseReturnTypeAllowingPacks instead. With no `|` following, first is returned
+// unwrapped.
+func (p *Parser) parseReturnTypeUnionRest(first *ast.TypeNode, pos int) *ast.TypeNode {
+	if p.token != ast.KindBarToken {
+		return first
+	}
+	types := make([]*ast.Node, 1, 8)
+	types[0] = first
+	for p.parseOptional(ast.KindBarToken) {
+		if p.isParenthesizedReturnTypeList() {
+			types = append(types, p.parseParenthesizedReturnTypeList())
+		} else {
+			// An ordinary constituent, through parseFunctionOrConstructorTypeToError as
+			// the union grammar does: an unparenthesized function type gets its own
+			// diagnostic instead of a parse-error cascade. Packs are claimed above.
+			types = append(types, doInContext(p, ast.NodeFlagsDisallowConditionalTypesContext, false, func(p *Parser) *ast.TypeNode {
+				return p.parseFunctionOrConstructorTypeToError(true /*isUnionType*/, (*Parser).parseIntersectionTypeOrHigher)
+			}))
+		}
+	}
+	list := p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSliceArena.Clone(types))
+	return p.finishNode(p.factory.NewUnionTypeNode(list), pos)
 }
 
 // isParenthesizedReturnTypeList distinguishes a parenthesized return pack from a
@@ -2918,11 +3003,14 @@ func (p *Parser) parseReturnTypeList(returnToken ast.Kind) *ast.TypeNode {
 	if !p.shouldParseReturnType(returnToken, false /*isType*/) {
 		return nil
 	}
-	if p.isParenthesizedReturnTypeList() {
-		return p.parseParenthesizedReturnTypeList()
-	}
 	pos := p.nodePos()
-	first := doInContext(p, ast.NodeFlagsDisallowConditionalTypesContext, false, (*Parser).parseTypeOrTypePredicate)
+	if p.isParenthesizedReturnTypeList() {
+		return p.parseReturnTypeUnionRest(p.parseParenthesizedReturnTypeList(), pos)
+	}
+	// An ordinary type, a conditional, or a union whose later constituents may be
+	// packs (`nil | (number, string)`); a bare comma after it is the unparenthesized
+	// multi-return recovery below.
+	first := p.parseReturnTypeAllowingPacks()
 	if p.token != ast.KindCommaToken {
 		return first
 	}
@@ -2984,6 +3072,11 @@ func (p *Parser) parseTypeOrTypePredicate() *ast.TypeNode {
 		id := p.parseIdentifier()
 		if p.token == ast.KindIsKeyword && !p.hasPrecedingLineBreak() {
 			p.nextToken()
+			// A predicate's asserted type (`x is T`) is a single-value narrowing type,
+			// never the outermost return union, so a pack must not be recognized inside
+			// it. Consume packsInReturnUnion here so `x is nil | (number, string)` does
+			// not parse a pack; parseReturnTypeAllowingPacks restores it afterward.
+			p.packsInReturnUnion = false
 			return p.finishNode(p.factory.NewTypePredicateNode(nil /*assertsModifier*/, id, p.parseType()), pos)
 		}
 		p.rewind(state)

@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaLocalPackUnionNarrowing.tlua] ////
+
+=== tluaLocalPackUnionNarrowing.tlua ===
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowing.tlua, 0, 0))
+>s : Symbol(s, Decl(tluaLocalPackUnionNarrowing.tlua, 0, 23))
+
+// Discriminating on the LAST name. The last declaration in a Lua local list owns
+// the whole value list, so this is the shape that a stray `Initializer() == nil`
+// guard on the candidate-discriminant path would silently stop narrowing.
+local value, err = parse("12");
+>value : Symbol(value, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 5))
+>err : Symbol(err, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 12))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowing.tlua, 0, 0))
+
+if err ~= nil then
+>err : Symbol(err, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 12))
+
+  local e: string = err;
+>e : Symbol(e, Decl(tluaLocalPackUnionNarrowing.tlua, 7, 7))
+>err : Symbol(err, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 12))
+
+  local v: nil = value;
+>v : Symbol(v, Decl(tluaLocalPackUnionNarrowing.tlua, 8, 7))
+>value : Symbol(value, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 5))
+
+else
+  local n: number = value;
+>n : Symbol(n, Decl(tluaLocalPackUnionNarrowing.tlua, 10, 7))
+>value : Symbol(value, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 5))
+
+end
+
+// Discriminating on a name that is not last.
+local v2, e2 = parse("x");
+>v2 : Symbol(v2, Decl(tluaLocalPackUnionNarrowing.tlua, 14, 5))
+>e2 : Symbol(e2, Decl(tluaLocalPackUnionNarrowing.tlua, 14, 9))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowing.tlua, 0, 0))
+
+if v2 ~= nil then
+>v2 : Symbol(v2, Decl(tluaLocalPackUnionNarrowing.tlua, 14, 5))
+
+  local n2: number = v2;
+>n2 : Symbol(n2, Decl(tluaLocalPackUnionNarrowing.tlua, 16, 7))
+>v2 : Symbol(v2, Decl(tluaLocalPackUnionNarrowing.tlua, 14, 5))
+
+  local none2: nil = e2;
+>none2 : Symbol(none2, Decl(tluaLocalPackUnionNarrowing.tlua, 17, 7))
+>e2 : Symbol(e2, Decl(tluaLocalPackUnionNarrowing.tlua, 14, 9))
+
+end
+
+// The correlation is a narrowing, not a redeclaration: outside any check both
+// names keep their full positional type.
+local wide: number | nil = value;
+>wide : Symbol(wide, Decl(tluaLocalPackUnionNarrowing.tlua, 22, 5))
+>value : Symbol(value, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 5))
+
+local wideErr: string | nil = err;
+>wideErr : Symbol(wideErr, Decl(tluaLocalPackUnionNarrowing.tlua, 23, 5))
+>err : Symbol(err, Decl(tluaLocalPackUnionNarrowing.tlua, 5, 12))
+
+// An ordinary (non-union) pack is unaffected and still projects positionally.
+declare function pair(): (number, string)
+>pair : Symbol(pair, Decl(tluaLocalPackUnionNarrowing.tlua, 23, 34))
+
+local a, b = pair();
+>a : Symbol(a, Decl(tluaLocalPackUnionNarrowing.tlua, 27, 5))
+>b : Symbol(b, Decl(tluaLocalPackUnionNarrowing.tlua, 27, 8))
+>pair : Symbol(pair, Decl(tluaLocalPackUnionNarrowing.tlua, 23, 34))
+
+local an: number = a;
+>an : Symbol(an, Decl(tluaLocalPackUnionNarrowing.tlua, 28, 5))
+>a : Symbol(a, Decl(tluaLocalPackUnionNarrowing.tlua, 27, 5))
+
+local bs: string = b;
+>bs : Symbol(bs, Decl(tluaLocalPackUnionNarrowing.tlua, 29, 5))
+>b : Symbol(b, Decl(tluaLocalPackUnionNarrowing.tlua, 27, 8))
+
+// The value list may be an ExpressionList, which splices the pack at a shifted
+// index; the names past the leading value still correlate.
+local lead, value3, err3 = 1, parse("y");
+>lead : Symbol(lead, Decl(tluaLocalPackUnionNarrowing.tlua, 33, 5))
+>value3 : Symbol(value3, Decl(tluaLocalPackUnionNarrowing.tlua, 33, 11))
+>err3 : Symbol(err3, Decl(tluaLocalPackUnionNarrowing.tlua, 33, 19))
+>parse : Symbol(parse, Decl(tluaLocalPackUnionNarrowing.tlua, 0, 0))
+
+if err3 ~= nil then
+>err3 : Symbol(err3, Decl(tluaLocalPackUnionNarrowing.tlua, 33, 19))
+
+  local none3: nil = value3;
+>none3 : Symbol(none3, Decl(tluaLocalPackUnionNarrowing.tlua, 35, 7))
+>value3 : Symbol(value3, Decl(tluaLocalPackUnionNarrowing.tlua, 33, 11))
+
+end
+

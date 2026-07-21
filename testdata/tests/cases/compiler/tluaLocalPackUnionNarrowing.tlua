@@ -1,0 +1,40 @@
+// @strict: true
+// @noEmit: true
+
+declare function parse(s: string): (number, nil) | (nil, string)
+
+// Discriminating on the LAST name. The last declaration in a Lua local list owns
+// the whole value list, so this is the shape that a stray `Initializer() == nil`
+// guard on the candidate-discriminant path would silently stop narrowing.
+local value, err = parse("12");
+if err ~= nil then
+  local e: string = err;
+  local v: nil = value;
+else
+  local n: number = value;
+end
+
+// Discriminating on a name that is not last.
+local v2, e2 = parse("x");
+if v2 ~= nil then
+  local n2: number = v2;
+  local none2: nil = e2;
+end
+
+// The correlation is a narrowing, not a redeclaration: outside any check both
+// names keep their full positional type.
+local wide: number | nil = value;
+local wideErr: string | nil = err;
+
+// An ordinary (non-union) pack is unaffected and still projects positionally.
+declare function pair(): (number, string)
+local a, b = pair();
+local an: number = a;
+local bs: string = b;
+
+// The value list may be an ExpressionList, which splices the pack at a shifted
+// index; the names past the leading value still correlate.
+local lead, value3, err3 = 1, parse("y");
+if err3 ~= nil then
+  local none3: nil = value3;
+end

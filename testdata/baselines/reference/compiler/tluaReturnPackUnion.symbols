@@ -1,0 +1,53 @@
+//// [tests/cases/compiler/tluaReturnPackUnion.tlua] ////
+
+=== tluaReturnPackUnion.tlua ===
+// A union of return packs: the callee returns either a value or an error,
+// never both. Each constituent is an explicitly parenthesized pack.
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : Symbol(parse, Decl(tluaReturnPackUnion.tlua, 0, 0))
+>s : Symbol(s, Decl(tluaReturnPackUnion.tlua, 2, 23))
+
+local value, err = parse("12")
+>value : Symbol(value, Decl(tluaReturnPackUnion.tlua, 4, 5))
+>err : Symbol(err, Decl(tluaReturnPackUnion.tlua, 4, 12))
+>parse : Symbol(parse, Decl(tluaReturnPackUnion.tlua, 0, 0))
+
+// Each name still projects positionally out of the union.
+local v: number | nil = value;
+>v : Symbol(v, Decl(tluaReturnPackUnion.tlua, 7, 5))
+>value : Symbol(value, Decl(tluaReturnPackUnion.tlua, 4, 5))
+
+local e: string | nil = err;
+>e : Symbol(e, Decl(tluaReturnPackUnion.tlua, 8, 5))
+>err : Symbol(err, Decl(tluaReturnPackUnion.tlua, 4, 12))
+
+// The whole signature round-trips through the printer.
+local sig: (s: string) => (number, nil) | (nil, string) = parse;
+>sig : Symbol(sig, Decl(tluaReturnPackUnion.tlua, 11, 5))
+>s : Symbol(s, Decl(tluaReturnPackUnion.tlua, 11, 12))
+>parse : Symbol(parse, Decl(tluaReturnPackUnion.tlua, 0, 0))
+
+// A non-pack constituent mixed with a pack constituent.
+declare function maybe(): (number, string) | nil
+>maybe : Symbol(maybe, Decl(tluaReturnPackUnion.tlua, 11, 64))
+
+local m = maybe();
+>m : Symbol(m, Decl(tluaReturnPackUnion.tlua, 15, 5))
+>maybe : Symbol(maybe, Decl(tluaReturnPackUnion.tlua, 11, 64))
+
+// A pack constituent mixed with a scalar (`boolean`) round-trips regardless of the
+// union's display order: any-position parsing accepts a pack in any spot, so whatever
+// order the printer prints the constituents in re-parses cleanly. The error message
+// below pins the spelling.
+declare function packOrScalar(): (number, string) | boolean
+>packOrScalar : Symbol(packOrScalar, Decl(tluaReturnPackUnion.tlua, 15, 18))
+
+local reparse: (s: string) => (number, string) | boolean = packOrScalar;
+>reparse : Symbol(reparse, Decl(tluaReturnPackUnion.tlua, 22, 5))
+>s : Symbol(s, Decl(tluaReturnPackUnion.tlua, 22, 16))
+>packOrScalar : Symbol(packOrScalar, Decl(tluaReturnPackUnion.tlua, 15, 18))
+
+local mustError: nil = packOrScalar;
+>mustError : Symbol(mustError, Decl(tluaReturnPackUnion.tlua, 23, 5))
+>packOrScalar : Symbol(packOrScalar, Decl(tluaReturnPackUnion.tlua, 15, 18))
+

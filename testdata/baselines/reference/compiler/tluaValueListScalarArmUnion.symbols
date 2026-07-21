@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/tluaValueListScalarArmUnion.tlua] ////
+
+=== tluaValueListScalarArmUnion.tlua ===
+// A mixed union with a NON-pack (scalar/nil) arm as a value-list tail must not
+// normalize the scalar arm to an errorType. `nil | (number, string)` distributes
+// per position, so both names get real types.
+declare function f(): nil | (number, string)
+>f : Symbol(f, Decl(tluaValueListScalarArmUnion.tlua, 0, 0))
+
+// A lone call already distributed correctly (packElementForIndex handles the scalar
+// arm); pin it so it stays that way.
+local a, b = f();
+>a : Symbol(a, Decl(tluaValueListScalarArmUnion.tlua, 7, 5))
+>b : Symbol(b, Decl(tluaValueListScalarArmUnion.tlua, 7, 8))
+>f : Symbol(f, Decl(tluaValueListScalarArmUnion.tlua, 0, 0))
+
+local va: number | nil = a;
+>va : Symbol(va, Decl(tluaValueListScalarArmUnion.tlua, 8, 5))
+>a : Symbol(a, Decl(tluaValueListScalarArmUnion.tlua, 7, 5))
+
+local vb: string | nil = b;
+>vb : Symbol(vb, Decl(tluaValueListScalarArmUnion.tlua, 9, 5))
+>b : Symbol(b, Decl(tluaValueListScalarArmUnion.tlua, 7, 8))
+
+// The exposed path: the mixed union spliced as a NON-leading value in an expression
+// list. `d` is the second value -- `number` from the pack arm or `nil` from the
+// scalar arm -- and must be `number | nil`, never `any` (an errorType rest element
+// from treating the `nil` arm as an array-to-spread).
+local c, d = 1, f();
+>c : Symbol(c, Decl(tluaValueListScalarArmUnion.tlua, 15, 5))
+>d : Symbol(d, Decl(tluaValueListScalarArmUnion.tlua, 15, 8))
+>f : Symbol(f, Decl(tluaValueListScalarArmUnion.tlua, 0, 0))
+
+local vd: number | nil = d;
+>vd : Symbol(vd, Decl(tluaValueListScalarArmUnion.tlua, 16, 5))
+>d : Symbol(d, Decl(tluaValueListScalarArmUnion.tlua, 15, 8))
+

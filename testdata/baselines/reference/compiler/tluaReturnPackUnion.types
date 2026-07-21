@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/tluaReturnPackUnion.tlua] ////
+
+=== tluaReturnPackUnion.tlua ===
+// A union of return packs: the callee returns either a value or an error,
+// never both. Each constituent is an explicitly parenthesized pack.
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : (s: string) => (number, nil) | (nil, string)
+>s : string
+
+local value, err = parse("12")
+>value : number | nil
+>err : string | nil
+>parse("12") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"12" : "12"
+
+// Each name still projects positionally out of the union.
+local v: number | nil = value;
+>v : number | nil
+>value : number | nil
+
+local e: string | nil = err;
+>e : string | nil
+>err : string | nil
+
+// The whole signature round-trips through the printer.
+local sig: (s: string) => (number, nil) | (nil, string) = parse;
+>sig : (s: string) => (number, nil) | (nil, string)
+>s : string
+>parse : (s: string) => (number, nil) | (nil, string)
+
+// A non-pack constituent mixed with a pack constituent.
+declare function maybe(): (number, string) | nil
+>maybe : () => (number, string) | nil
+
+local m = maybe();
+>m : number | nil
+>maybe() : number | nil
+>maybe : () => (number, string) | nil
+
+// A pack constituent mixed with a scalar (`boolean`) round-trips regardless of the
+// union's display order: any-position parsing accepts a pack in any spot, so whatever
+// order the printer prints the constituents in re-parses cleanly. The error message
+// below pins the spelling.
+declare function packOrScalar(): (number, string) | boolean
+>packOrScalar : () => (number, string) | boolean
+
+local reparse: (s: string) => (number, string) | boolean = packOrScalar;
+>reparse : (s: string) => (number, string) | boolean
+>s : string
+>packOrScalar : () => (number, string) | boolean
+
+local mustError: nil = packOrScalar;
+>mustError : nil
+>packOrScalar : () => (number, string) | boolean
+

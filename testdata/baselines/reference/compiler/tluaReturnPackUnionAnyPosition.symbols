@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/tluaReturnPackUnionAnyPosition.tlua] ////
+
+=== tluaReturnPackUnionAnyPosition.tlua ===
+// A pack constituent may appear in ANY position of a return-type union, not only
+// leading. Previously only a pack-LEADING union parsed; a non-pack first constituent
+// (`nil`, or a parenthesized single like `(number)`) sent the pack in a later
+// position into the ordinary type grammar, which misparsed it and swallowed the
+// FOLLOWING declaration in an error cascade.
+declare function leadingNil(): nil | (number, string)
+>leadingNil : Symbol(leadingNil, Decl(tluaReturnPackUnionAnyPosition.tlua, 0, 0))
+
+declare function leadingParen(): (number) | (number, string)
+>leadingParen : Symbol(leadingParen, Decl(tluaReturnPackUnionAnyPosition.tlua, 5, 53))
+
+declare function threeArms(): boolean | (number, nil) | (nil, string)
+>threeArms : Symbol(threeArms, Decl(tluaReturnPackUnionAnyPosition.tlua, 6, 60))
+
+// The next declaration must still be seen -- the old cascade consumed it entirely.
+declare function stillDeclared(x: number): number
+>stillDeclared : Symbol(stillDeclared, Decl(tluaReturnPackUnionAnyPosition.tlua, 7, 69))
+>x : Symbol(x, Decl(tluaReturnPackUnionAnyPosition.tlua, 10, 31))
+
+local ok: number = stillDeclared(1);
+>ok : Symbol(ok, Decl(tluaReturnPackUnionAnyPosition.tlua, 11, 5))
+>stillDeclared : Symbol(stillDeclared, Decl(tluaReturnPackUnionAnyPosition.tlua, 7, 69))
+
+// Each spelling round-trips: any-position parsing accepts a pack constituent in any
+// position, so the printer's display order does not matter to assignability.
+local sigNil: () => nil | (number, string) = leadingNil;
+>sigNil : Symbol(sigNil, Decl(tluaReturnPackUnionAnyPosition.tlua, 15, 5))
+>leadingNil : Symbol(leadingNil, Decl(tluaReturnPackUnionAnyPosition.tlua, 0, 0))
+
+local sigParen: () => (number) | (number, string) = leadingParen;
+>sigParen : Symbol(sigParen, Decl(tluaReturnPackUnionAnyPosition.tlua, 16, 5))
+>leadingParen : Symbol(leadingParen, Decl(tluaReturnPackUnionAnyPosition.tlua, 5, 53))
+
+// A bare function-type return is still parsed cleanly (no spurious "must be
+// parenthesized in a union" from the union-constituent path).
+declare function fnReturn(): () => number
+>fnReturn : Symbol(fnReturn, Decl(tluaReturnPackUnionAnyPosition.tlua, 16, 65))
+
+local fn: () => number = fnReturn();
+>fn : Symbol(fn, Decl(tluaReturnPackUnionAnyPosition.tlua, 21, 5))
+>fnReturn : Symbol(fnReturn, Decl(tluaReturnPackUnionAnyPosition.tlua, 16, 65))
+
+// The pack grammar is scoped to the OUTERMOST return union: it must not leak into a
+// nested union inside a function-type return, where a pack constituent is still a
+// parenthesization error (the same as `type T = (x: number | (number, string)) => T`).
+declare function scoped(): (x: number | (number, string)) => boolean
+>scoped : Symbol(scoped, Decl(tluaReturnPackUnionAnyPosition.tlua, 21, 36))
+>x : Symbol(x, Decl(tluaReturnPackUnionAnyPosition.tlua, 26, 28))
+>number : Symbol(number, Decl(tluaReturnPackUnionAnyPosition.tlua, 26, 41))
+>string : Symbol(string, Decl(tluaReturnPackUnionAnyPosition.tlua, 26, 48))
+> : Symbol(unknown)
+

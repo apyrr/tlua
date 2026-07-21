@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/tluaLocalPackUnionNarrowingRagged.tlua] ////
+
+=== tluaLocalPackUnionNarrowingRagged.tlua ===
+// Arms of DIFFERENT arity. The discriminant below sits at position 2, which
+// exists only in the longer arm -- narrowing keys on a number-key property that
+// must be present in every constituent, so without padding the shorter arm to the
+// union's widest arity this position discriminates nothing.
+//
+// Note the position matters: discriminating at position 1 (present in both arms)
+// would pass whether or not the padding works, and would hide the bug.
+declare function ragged(): (number, nil) | (nil, string, boolean)
+>ragged : () => (number, nil) | (nil, string, boolean)
+
+local v, e, flag = ragged();
+>v : number | nil
+>e : string | nil
+>flag : boolean | nil
+>ragged() : number | nil
+>ragged : () => (number, nil) | (nil, string, boolean)
+
+if flag ~= nil then
+>flag ~= nil : boolean
+>flag : boolean | nil
+
+  // Selects the three-element arm.
+  local ee: string = e;
+>ee : string
+>e : string
+
+  local none: nil = v;
+>none : nil
+>v : nil
+
+end
+
+// The short arm is still reachable, and padding does not invent values: position
+// 2 reads as nil there, exactly as Lua returns it.
+local v2, e2, flag2 = ragged();
+>v2 : number | nil
+>e2 : string | nil
+>flag2 : boolean | nil
+>ragged() : number | nil
+>ragged : () => (number, nil) | (nil, string, boolean)
+
+if flag2 == nil then
+>flag2 == nil : boolean
+>flag2 : boolean | nil
+
+  local n2: number = v2;
+>n2 : number
+>v2 : number
+
+  local none2: nil = e2;
+>none2 : nil
+>e2 : nil
+
+end
+

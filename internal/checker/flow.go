@@ -1268,6 +1268,20 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 				return declaration
 			}
 		}
+	case ast.IsVariableDeclarationList(f.reference) && f.reference.Flags&ast.NodeFlagsLuaLocal != 0:
+		// The reference is a Lua `local a, b = f()` list narrowed as a pseudo-reference
+		// in getNarrowedTypeOfSymbol: any name declared in that same list discriminates
+		// the value list's union of packs. Deliberately no `Initializer() == nil` clause
+		// like the binding-element case above -- the LAST declaration in a Lua local list
+		// owns the whole value list, and it is just as eligible a discriminant as its
+		// siblings (`local value, err = parse(s)` discriminates on `err`).
+		if ast.IsIdentifier(expr) {
+			symbol := c.getResolvedSymbol(expr)
+			declaration := c.getExportSymbolOfValueSymbolIfExported(symbol).ValueDeclaration
+			if declaration != nil && ast.IsVariableDeclaration(declaration) && declaration.Parent == f.reference {
+				return declaration
+			}
+		}
 	case ast.IsAccessExpression(expr):
 		// An access expression is a candidate if the reference matches the left hand expression.
 		if c.isMatchingReference(f.reference, expr.Expression()) {
@@ -1570,7 +1584,12 @@ func (c *Checker) writeFlowCacheKey(b *keyBuilder, node *ast.Node, declaredType 
 			}
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern, ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
+		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration,
+		// A Lua `local a, b = f()` list is narrowed as a pseudo-reference by
+		// getNarrowedTypeOfSymbol. Without a cache key here it would key as a
+		// non-dotted name, and getTypeAtFlowLoopLabel would discard every narrowing
+		// that has to cross a loop join.
+		ast.KindVariableDeclarationList:
 		b.writeNode(node)
 		b.writeByte('#')
 		b.writeType(declaredType)
@@ -1593,6 +1612,11 @@ func (c *Checker) getAccessedPropertyName(access *ast.Node) (string, bool) {
 		// Parameter positions index into synthetic tuples whose element
 		// names live in the number-key namespace at 1-based keys.
 		return ast.NumberKeyNameFromPosition(slices.Index(access.Parent.Parameters(), access)), true
+	}
+	if ast.IsVariableDeclaration(access) && ast.HasLuaLocalValueList(access) {
+		// A name in a multi-name Lua local list indexes the value list's pack at its
+		// own position, in the same number-key namespace as parameters above.
+		return ast.NumberKeyNameFromPosition(slices.Index(access.Parent.AsVariableDeclarationList().Declarations.Nodes, access)), true
 	}
 	return "", false
 }
@@ -1963,8 +1987,12 @@ func (c *Checker) getInitialTypeOfVariableDeclaration(node *ast.Node) *Type {
 	if ast.HasLuaLocalValueList(node) {
 		valueList := ast.LuaLocalValueList(node.Parent)
 		pack := c.getTypeOfInitializer(valueList)
+		// liftUnionTailArms, matching getPackTypeOfValueList: a mixed `nil | pack`
+		// union must lift its scalar arm here too, so the flow initial type agrees with
+		// the declared/narrowed type (getNarrowedTypeOfSymbol) rather than reading a raw
+		// union while its siblings read a lifted one.
 		if packType := c.getCallPackType(valueList, CheckModeNormal); packType != nil {
-			pack = packType
+			pack = c.liftUnionTailArms(packType)
 		}
 		return c.packElementForIndex(pack, slices.Index(node.Parent.AsVariableDeclarationList().Declarations.Nodes, node))
 	}

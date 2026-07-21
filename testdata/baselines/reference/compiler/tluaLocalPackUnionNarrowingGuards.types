@@ -1,0 +1,146 @@
+//// [tests/cases/compiler/tluaLocalPackUnionNarrowingGuards.tlua] ////
+
+=== tluaLocalPackUnionNarrowingGuards.tlua ===
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : (s: string) => (number, nil) | (nil, string)
+>s : string
+
+// Each `mustError` below asserts that correlation did NOT happen. They are the
+// point of this file: if a guard regresses, the error disappears and the baseline
+// diff shows it. A `number | nil` annotation would accept either outcome and
+// assert nothing.
+
+// Reassigning any name in the list breaks the tie between the pack and the locals.
+// The flow graph never matches an assignment against the list pseudo-reference, so
+// narrowing must be refused outright rather than trusting a stale correlation.
+local value, err = parse("a");
+>value : number | nil
+>err : string | nil
+>parse("a") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"a" : "a"
+
+err = nil;
+>err = nil : nil
+>err : string | nil
+
+if err == nil then
+>err == nil : boolean
+>err : nil
+
+  local mustError: number = value;
+>mustError : number
+>value : number | nil
+
+end
+
+// An assignment from inside a closure counts just the same.
+local v2, e2 = parse("b");
+>v2 : number | nil
+>e2 : string | nil
+>parse("b") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"b" : "b"
+
+local reset = function()
+>reset : () => void
+>function()  e2 = nil;end : () => void
+
+  e2 = nil;
+>e2 = nil : nil
+>e2 : string | nil
+
+end;
+if e2 ~= nil then
+>e2 ~= nil : boolean
+>e2 : string | nil
+
+  local mustError2: nil = v2;
+>mustError2 : nil
+>v2 : number | nil
+
+end
+
+// An explicitly annotated name opts out: its annotation is the declared type, and
+// correlation must not override it.
+local v3: number | nil, e3 = parse("c");
+>v3 : number | nil
+>e3 : string | nil
+>parse("c") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"c" : "c"
+
+if e3 ~= nil then
+>e3 ~= nil : boolean
+>e3 : string | nil
+
+  local mustError3: nil = v3;
+>mustError3 : nil
+>v3 : number | nil
+
+end
+
+// A lone name has nothing to correlate with, and must not be disturbed.
+local solo = parse("d");
+>solo : number | nil
+>parse("d") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"d" : "d"
+
+local soloWide: number | nil = solo;
+>soloWide : number | nil
+>solo : number | nil
+
+// Narrowing has to survive a loop join: the pseudo-reference needs a flow cache
+// key, or getTypeAtFlowLoopLabel discards everything established before the loop.
+function loopCase(s: string): number
+>loopCase : (s: string) => number
+>s : string
+
+  local v4, e4 = parse(s);
+>v4 : number | nil
+>e4 : string | nil
+>parse(s) : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>s : string
+
+  if e4 ~= nil then
+>e4 ~= nil : boolean
+>e4 : string | nil
+
+    return 0;
+>0 : 0
+
+  end
+  local total = 0;
+>total : number
+>0 : 0
+
+  for i = 1, 10 do
+>i : number
+>1 : 1
+>10 : 10
+
+    local inLoop: number = v4;
+>inLoop : number
+>v4 : number
+
+    total = total + inLoop;
+>total = total + inLoop : number
+>total : number
+>total + inLoop : number
+>total : number
+>inLoop : number
+
+  end
+  local afterLoop: number = v4;
+>afterLoop : number
+>v4 : number
+
+  return total + afterLoop;
+>total + afterLoop : number
+>total : number
+>afterLoop : number
+
+end
+

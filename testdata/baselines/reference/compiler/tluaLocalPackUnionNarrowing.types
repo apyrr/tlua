@@ -1,0 +1,108 @@
+//// [tests/cases/compiler/tluaLocalPackUnionNarrowing.tlua] ////
+
+=== tluaLocalPackUnionNarrowing.tlua ===
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : (s: string) => (number, nil) | (nil, string)
+>s : string
+
+// Discriminating on the LAST name. The last declaration in a Lua local list owns
+// the whole value list, so this is the shape that a stray `Initializer() == nil`
+// guard on the candidate-discriminant path would silently stop narrowing.
+local value, err = parse("12");
+>value : number | nil
+>err : string | nil
+>parse("12") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"12" : "12"
+
+if err ~= nil then
+>err ~= nil : boolean
+>err : string | nil
+
+  local e: string = err;
+>e : string
+>err : string
+
+  local v: nil = value;
+>v : nil
+>value : nil
+
+else
+  local n: number = value;
+>n : number
+>value : number
+
+end
+
+// Discriminating on a name that is not last.
+local v2, e2 = parse("x");
+>v2 : number | nil
+>e2 : string | nil
+>parse("x") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"x" : "x"
+
+if v2 ~= nil then
+>v2 ~= nil : boolean
+>v2 : number | nil
+
+  local n2: number = v2;
+>n2 : number
+>v2 : number
+
+  local none2: nil = e2;
+>none2 : nil
+>e2 : nil
+
+end
+
+// The correlation is a narrowing, not a redeclaration: outside any check both
+// names keep their full positional type.
+local wide: number | nil = value;
+>wide : number | nil
+>value : number | nil
+
+local wideErr: string | nil = err;
+>wideErr : string | nil
+>err : string | nil
+
+// An ordinary (non-union) pack is unaffected and still projects positionally.
+declare function pair(): (number, string)
+>pair : () => (number, string)
+
+local a, b = pair();
+>a : number
+>b : string
+>pair() : number
+>pair : () => (number, string)
+
+local an: number = a;
+>an : number
+>a : number
+
+local bs: string = b;
+>bs : string
+>b : string
+
+// The value list may be an ExpressionList, which splices the pack at a shifted
+// index; the names past the leading value still correlate.
+local lead, value3, err3 = 1, parse("y");
+>lead : number
+>value3 : number | nil
+>err3 : string | nil
+>1, parse("y") : (number, nil, string) | (number, number, nil)
+>1 : 1
+>parse("y") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"y" : "y"
+
+if err3 ~= nil then
+>err3 ~= nil : boolean
+>err3 : string | nil
+
+  local none3: nil = value3;
+>none3 : nil
+>value3 : nil
+
+end
+
