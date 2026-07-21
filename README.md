@@ -1,7 +1,7 @@
 # tlua
 
-`tlua` is a typed Lua compiler, language service, and tooling stack. It grafts
-TypeScript's type system onto Lua's syntax and semantics: you write Lua
+`tlua` is a typed Lua compiler, language service, and tooling stack. It brings
+TypeScript's type system to Lua's syntax and semantics: you write Lua
 (`function … end`, `local`, `{ x = 1 }` tables, `and`/`or`/`not`, colon methods,
 `goto`, `require`), and it is statically type-checked and compiled to Lua.
 
