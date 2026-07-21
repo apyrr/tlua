@@ -24,7 +24,7 @@ import {
     NodeFlags,
     SyntaxKind,
     unescapeLeadingUnderscores,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import {
     createArrayTypeNode,
     createFunctionTypeNode,
@@ -35,8 +35,8 @@ import {
     createTypeAliasDeclaration,
     createTypeReferenceNode,
     createUnionTypeNode,
-} from "@tlua/compiler/unstable/ast/factory";
-import { visitEachChild } from "@tlua/compiler/unstable/ast/visitor";
+} from "@tlua/cli/unstable/ast/factory";
+import { visitEachChild } from "@tlua/cli/unstable/ast/visitor";
 import {
     API,
     type ConditionalType,
@@ -60,9 +60,9 @@ import {
     TypePredicateKind,
     type TypeReference,
     type UnionOrIntersectionType,
-} from "@tlua/compiler/unstable/async"; // @sync: } from "@tlua/compiler/unstable/sync";
-import { createVirtualFileSystem } from "@tlua/compiler/unstable/fs";
-import type { FileSystem } from "@tlua/compiler/unstable/fs";
+} from "@tlua/cli/unstable/async"; // @sync: } from "@tlua/cli/unstable/sync";
+import { createVirtualFileSystem } from "@tlua/cli/unstable/fs";
+import type { FileSystem } from "@tlua/cli/unstable/fs";
 import assert from "node:assert";
 import { globSync } from "node:fs";
 import { resolve } from "node:path";
@@ -1098,7 +1098,7 @@ function run(): Result {
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
 
-            let callNode: import("@tlua/compiler/unstable/ast").CallExpression | undefined;
+            let callNode: import("@tlua/cli/unstable/ast").CallExpression | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isCallExpression(node)) {
                     const text = sourceFile.text.slice(node.pos, node.end).trim();
@@ -2036,7 +2036,7 @@ foo(42);
             // statement[1] = foo(42); which is an ExpressionStatement -> CallExpression
             const callStmt = sourceFile.statements[1];
             assert.ok(callStmt);
-            let numLiteral: import("@tlua/compiler/unstable/ast").Expression | undefined;
+            let numLiteral: import("@tlua/cli/unstable/ast").Expression | undefined;
             callStmt.forEachChild(function visit(node) {
                 if (isCallExpression(node)) {
                     // First argument
@@ -2093,7 +2093,7 @@ function check(x: string | number) {
             const funcDecl = sourceFile.statements[0];
             assert.ok(funcDecl);
             // Walk to find the first "return x" — inside the if, x should be narrowed to string
-            let firstReturnX: import("@tlua/compiler/unstable/ast").Node | undefined;
+            let firstReturnX: import("@tlua/cli/unstable/ast").Node | undefined;
             funcDecl.forEachChild(function visit(node) {
                 if (isReturnStatement(node) && !firstReturnX) {
                     // The expression of the return statement is the identifier "x"
@@ -3618,7 +3618,7 @@ describe("Checker - isContextSensitive", () => {
             const sourceFile = await project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
             // Find the arrow function node
-            let arrowFn: import("@tlua/compiler/unstable/ast").Node | undefined;
+            let arrowFn: import("@tlua/cli/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (node.kind === SyntaxKind.ArrowFunction) {
                     arrowFn = node;
@@ -3988,7 +3988,7 @@ local obj = { m = 1, s = "hi", b = true };
             assert.ok(sourceFile);
 
             // Find the regex literal node
-            let regexNode: import("@tlua/compiler/unstable/ast").Node | undefined;
+            let regexNode: import("@tlua/cli/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (node.kind === SyntaxKind.RegularExpressionLiteral) {
                     regexNode = node;
@@ -4024,7 +4024,7 @@ describe("modifierFlags", () => {
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
-            let fnNode: import("@tlua/compiler/unstable/ast").FunctionDeclaration | undefined;
+            let fnNode: import("@tlua/cli/unstable/ast").FunctionDeclaration | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isFunctionDeclaration(node)) {
                     fnNode = node;
@@ -4051,7 +4051,7 @@ describe("modifierFlags", () => {
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
-            let fnNode: import("@tlua/compiler/unstable/ast").FunctionDeclaration | undefined;
+            let fnNode: import("@tlua/cli/unstable/ast").FunctionDeclaration | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isFunctionDeclaration(node)) {
                     fnNode = node;
@@ -4080,7 +4080,7 @@ describe("Checker - getResolvedSymbol", () => {
             assert.ok(sourceFile);
 
             // Find the 'x' identifier in `local y = x`
-            let refNode: import("@tlua/compiler/unstable/ast").Identifier | undefined;
+            let refNode: import("@tlua/cli/unstable/ast").Identifier | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isIdentifier(node) && node.text === "x") {
                     // We want the reference, not the declaration - take the last one
@@ -4112,7 +4112,7 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
-            let declList: import("@tlua/compiler/unstable/ast").Node | undefined;
+            let declList: import("@tlua/cli/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isVariableDeclarationList(node)) {
                     declList = node;
@@ -4141,7 +4141,7 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
             const sourceFile = await project.program.getSourceFile("/src/index.tlua");
             assert.ok(sourceFile);
 
-            let declList: import("@tlua/compiler/unstable/ast").Node | undefined;
+            let declList: import("@tlua/cli/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isVariableDeclarationList(node)) {
                     declList = node;
@@ -4168,9 +4168,9 @@ test("TypeOperator operator kind", async () => {
         const project = snapshot.getProject("/tluaconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert(sourceFile);
-        const param = (sourceFile.statements[0] as import("@tlua/compiler/unstable/ast").FunctionDeclaration).parameters[0];
+        const param = (sourceFile.statements[0] as import("@tlua/cli/unstable/ast").FunctionDeclaration).parameters[0];
         assert(param);
-        const type = param.type as import("@tlua/compiler/unstable/ast").TypeOperatorNode;
+        const type = param.type as import("@tlua/cli/unstable/ast").TypeOperatorNode;
         assert(type);
         assert.equal(type.kind, SyntaxKind.TypeOperator);
         assert.equal(type.operator, SyntaxKind.ReadonlyKeyword);
@@ -4192,9 +4192,9 @@ test("VarargExpression roundtrip", async () => {
         const project = snapshot.getProject("/tluaconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert(sourceFile);
-        const stmt = sourceFile.statements[0] as import("@tlua/compiler/unstable/ast").VariableStatement;
-        const object = stmt.declarationList.declarations[0].initializer as import("@tlua/compiler/unstable/ast").ObjectLiteralExpression;
-        const entry = object.properties[0] as import("@tlua/compiler/unstable/ast").TableEntry;
+        const stmt = sourceFile.statements[0] as import("@tlua/cli/unstable/ast").VariableStatement;
+        const object = stmt.declarationList.declarations[0].initializer as import("@tlua/cli/unstable/ast").ObjectLiteralExpression;
+        const entry = object.properties[0] as import("@tlua/cli/unstable/ast").TableEntry;
         assert(entry);
         assert.equal(entry.kind, SyntaxKind.TableEntry);
         const expr = entry.expression;
@@ -4219,13 +4219,13 @@ test("VariableDeclarationList local flag clone", async () => {
         const sourceFile = await project.program.getSourceFile("/src/index.tlua");
         assert(sourceFile);
         {
-            const stmt = sourceFile.statements[0] as import("@tlua/compiler/unstable/ast").VariableStatement;
+            const stmt = sourceFile.statements[0] as import("@tlua/cli/unstable/ast").VariableStatement;
             const list = stmt.declarationList;
             assert(list.flags & NodeFlags.LuaLocal);
         }
         const cloned = getSynthesizedDeepClone(sourceFile);
         {
-            const stmt = cloned.statements[0] as import("@tlua/compiler/unstable/ast").VariableStatement;
+            const stmt = cloned.statements[0] as import("@tlua/cli/unstable/ast").VariableStatement;
             const list = stmt.declarationList;
             assert(list.flags & NodeFlags.LuaLocal);
         }

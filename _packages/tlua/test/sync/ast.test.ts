@@ -7,16 +7,16 @@ import type {
     SourceFile,
     StringLiteralLikeNode,
     VariableStatement,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import {
     isVariableStatement,
     SyntaxKind,
     TokenFlags,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import {
     getSynthesizedDeepClone,
     getSynthesizedDeepClones,
-} from "@tlua/compiler/unstable/ast/clone";
+} from "@tlua/cli/unstable/ast/clone";
 import {
     cloneNode,
     createBinaryExpression,
@@ -30,14 +30,14 @@ import {
     createStringLiteral,
     createToken,
     NodeObject,
-} from "@tlua/compiler/unstable/ast/factory";
+} from "@tlua/cli/unstable/ast/factory";
 import {
     visitEachChild,
     visitNode,
     visitNodes,
-} from "@tlua/compiler/unstable/ast/visitor";
-import { createVirtualFileSystem } from "@tlua/compiler/unstable/fs";
-import { API } from "@tlua/compiler/unstable/sync";
+} from "@tlua/cli/unstable/ast/visitor";
+import { createVirtualFileSystem } from "@tlua/cli/unstable/fs";
+import { API } from "@tlua/cli/unstable/sync";
 import assert from "node:assert";
 import {
     describe,

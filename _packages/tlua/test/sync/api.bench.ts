@@ -10,12 +10,12 @@ import {
     type Node,
     type SourceFile,
     SyntaxKind,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import {
     API,
     type Project,
     type Snapshot,
-} from "@tlua/compiler/unstable/sync";
+} from "@tlua/cli/unstable/sync";
 import {
     existsSync,
     writeFileSync,

@@ -2,11 +2,11 @@ import type {
     Path,
     SourceFile,
     Statement,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import {
     SyntaxKind,
     TokenFlags,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import {
     createArrayLiteralExpression,
     createBlock,
@@ -25,7 +25,7 @@ import {
     createVariableDeclaration,
     createVariableDeclarationList,
     createVariableStatement,
-} from "@tlua/compiler/unstable/ast/factory";
+} from "@tlua/cli/unstable/ast/factory";
 import assert from "node:assert";
 import {
     describe,

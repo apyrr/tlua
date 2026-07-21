@@ -758,7 +758,7 @@ async function runTestTools() {
 }
 
 async function runTestAPI() {
-    await $`npm run -w @tlua/compiler test:only`;
+    await $`npm run -w @tlua/cli test:only`;
 }
 
 export const testTools = task({
@@ -771,7 +771,7 @@ export const buildAPI = task({
     name: "build:api",
     description: "Builds tlua JS API.",
     run: async () => {
-        await $`npm run -w @tlua/compiler build`;
+        await $`npm run -w @tlua/cli build`;
     },
 });
 
@@ -779,7 +779,7 @@ export const buildAPITests = task({
     name: "build:api:test",
     description: "Builds the tlua JS API tests.",
     run: async () => {
-        await $`npm run -w @tlua/compiler build:test`;
+        await $`npm run -w @tlua/cli build:test`;
     },
 });
 
@@ -1614,7 +1614,7 @@ async function runBuildTluaPackages() {
     await fs.promises.copyFile("NOTICE.txt", path.join(mainPackageDir, "NOTICE.txt"));
 
     // Build JS API and copy dist into the package.
-    await $`npm run -w @tlua/compiler build`;
+    await $`npm run -w @tlua/cli build`;
     await cpRecursive(path.join(inputDir, "dist"), path.join(mainPackageDir, "dist"));
 
     // Validate that .d.ts files contain no external imports (all imports must start with "." or "#").

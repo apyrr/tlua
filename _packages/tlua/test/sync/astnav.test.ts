@@ -12,13 +12,13 @@ import {
     formatSyntaxKind,
     getTokenAtPosition,
     getTouchingPropertyName,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import type {
     Node,
     SourceFile,
-} from "@tlua/compiler/unstable/ast";
-import { createVirtualFileSystem } from "@tlua/compiler/unstable/fs";
-import { API } from "@tlua/compiler/unstable/sync";
+} from "@tlua/cli/unstable/ast";
+import { createVirtualFileSystem } from "@tlua/cli/unstable/fs";
+import { API } from "@tlua/cli/unstable/sync";
 import assert from "node:assert";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

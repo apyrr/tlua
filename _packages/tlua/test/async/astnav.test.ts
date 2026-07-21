@@ -1,6 +1,6 @@
-import { API } from "@tlua/compiler/unstable/async"; // @sync-skip
+import { API } from "@tlua/cli/unstable/async"; // @sync-skip
 // @sync-only-start
-// import { API } from "@tlua/compiler/unstable/sync";
+// import { API } from "@tlua/cli/unstable/sync";
 // @sync-only-end
 import {
     findNextToken,
@@ -8,12 +8,12 @@ import {
     formatSyntaxKind,
     getTokenAtPosition,
     getTouchingPropertyName,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import type {
     Node,
     SourceFile,
-} from "@tlua/compiler/unstable/ast";
-import { createVirtualFileSystem } from "@tlua/compiler/unstable/fs";
+} from "@tlua/cli/unstable/ast";
+import { createVirtualFileSystem } from "@tlua/cli/unstable/fs";
 import assert from "node:assert";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

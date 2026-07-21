@@ -15,14 +15,14 @@ import {
     type Statement,
     SyntaxKind,
     TokenFlags,
-} from "@tlua/compiler/unstable/ast";
+} from "@tlua/cli/unstable/ast";
 import {
     createArrayLiteralExpression,
     createExpressionStatement,
     createNumericLiteral,
     createSourceFile,
     createToken,
-} from "@tlua/compiler/unstable/ast/factory";
+} from "@tlua/cli/unstable/ast/factory";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { Bench } from "tinybench";

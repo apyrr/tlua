@@ -27,7 +27,7 @@
         "build:watch": "hereby build:watch",
         "build:watch:debug": "hereby build:watch --debug",
         "test": "hereby test",
-        "api:build": "npm run -w @tlua/compiler build",
+        "api:build": "npm run -w @tlua/cli build",
         "extension:build": "npm run -w _extension build",
         "extension:watch": "npm run -w _extension watch",
         "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts",
