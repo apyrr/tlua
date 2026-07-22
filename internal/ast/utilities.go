@@ -45,12 +45,19 @@ func GetSymbolId(symbol *Symbol) SymbolId {
 
 // GetSymbolTable means "ensure a writable table exists": it allocates when the
 // field is nil, so calling it is a write even where the caller only wants to
-// read. Symbols created by the binder are shared by every checker, and checkers
-// are constructed in parallel, so this belongs to the binder -- or to a checker
-// that has already cloned the symbol into a transient one it owns. To read a
-// shared symbol, index Members/Exports directly; a nil map yields the zero
-// value, so a reader needs no table. Violations are invisible to the ordinary
-// suite and show up only under `TLUA_HEREBY_RACE=true npx hereby test`.
+// read. What decides whether that is safe is what the pointer points into.
+//
+// A table on a binder-created Symbol or Node is shared by every checker, and
+// checkers are constructed in parallel, so allocating one there is a race. Only
+// the binder may, or a checker that has cloned the symbol into a transient one
+// it owns. To read shared state, index the field directly -- a nil map yields
+// the zero value, so a reader never needs the table to exist.
+//
+// A table on state the checker itself owns has a single writer and is fine;
+// getUnionOrIntersectionProperty allocates a *Type's property cache this way.
+//
+// Violations are invisible to the ordinary suite and surface only under
+// `TLUA_HEREBY_RACE=true npx hereby test`.
 func GetSymbolTable(data *SymbolTable) SymbolTable {
 	if *data == nil {
 		*data = make(SymbolTable)
@@ -66,13 +73,17 @@ func GetExports(symbol *Symbol) SymbolTable {
 	return GetSymbolTable(&symbol.Exports)
 }
 
+// GetLocals allocates like GetSymbolTable, on a node every checker shares, so
+// only the binder may call it. Readers go through Node.Locals(), which returns
+// the field without allocating.
 func GetLocals(container *Node) SymbolTable {
 	return GetSymbolTable(&container.LocalsContainerData().Locals)
 }
 
-// GetLuaLocals allocates like GetSymbolTable, and carries the same restriction:
-// only the binder may call it. Readers walk the table through
-// ForEachVisibleLuaLocalAtPos / LookupLuaLocal, which never materialize it.
+// GetLuaLocals allocates like GetSymbolTable, on a node every checker shares,
+// so only the binder may call it. Readers go through Node.LuaLocals(), which
+// returns the field without allocating -- either directly or by way of
+// ForEachVisibleLuaLocalAtPos / LookupLuaLocal.
 func GetLuaLocals(container *Node) LuaLocalSymbolTable {
 	data := container.LocalsContainerData()
 	if data.LuaLocals == nil {
