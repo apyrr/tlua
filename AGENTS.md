@@ -25,6 +25,39 @@ Non-goal: typed Lua with TypeScript compatibility.
 - Run tests less often. For example if task is large, run tests after
   full implementation.
 
+## Concurrency
+
+Checkers are constructed **in parallel** — the pool builds several at once, and
+each one runs `initializeChecker` on its own goroutine over the same
+`*ast.SourceFile` objects.
+
+Binder symbols are therefore shared. Binding itself is parallel across files,
+but each file binds once under `sync.Once` and every `NewChecker` first waits
+on `BindSourceFiles`, so by the time any checker runs, a symbol's `Members` and
+`Exports` are complete and must be treated as **frozen**.
+
+The rule that follows:
+
+- Checker code **reads** `symbol.Members` / `symbol.Exports` directly. Indexing
+  a nil map is legal and yields the zero value, so a reader never needs a table
+  to exist.
+- `ast.GetMembers` / `ast.GetExports` mean *"ensure a writable table exists"*.
+  They allocate when the field is nil, which is a **write**. They belong to the
+  binder, and to checker code only after `cloneSymbol` has produced a transient
+  symbol this checker owns.
+- Never attach checker-computed state to a shared `ast.Symbol`. Put it in a
+  checker-local link store, or clone to a transient symbol first.
+
+This is inherited from typescript-go, where it is enforced by CI rather than
+written down: every `GetMembers`/`GetExports` call site upstream is in the
+binder, and none is in the checker. The ordinary suite cannot see a violation —
+only the race detector can, so the `race mode` CI job is what guards it. Before
+touching symbol tables outside the binder, run:
+
+```sh
+TLUA_HEREBY_RACE=true npx hereby test
+```
+
 ## Common Commands
 
 Run `npx hereby --tasks` to see all available tasks.

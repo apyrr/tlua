@@ -43,6 +43,14 @@ func GetSymbolId(symbol *Symbol) SymbolId {
 	return SymbolId(id)
 }
 
+// GetSymbolTable means "ensure a writable table exists": it allocates when the
+// field is nil, so calling it is a write even where the caller only wants to
+// read. Symbols created by the binder are shared by every checker, and checkers
+// are constructed in parallel, so this belongs to the binder -- or to a checker
+// that has already cloned the symbol into a transient one it owns. To read a
+// shared symbol, index Members/Exports directly; a nil map yields the zero
+// value, so a reader needs no table. Violations are invisible to the ordinary
+// suite and show up only under `TLUA_HEREBY_RACE=true npx hereby test`.
 func GetSymbolTable(data *SymbolTable) SymbolTable {
 	if *data == nil {
 		*data = make(SymbolTable)
@@ -62,6 +70,9 @@ func GetLocals(container *Node) SymbolTable {
 	return GetSymbolTable(&container.LocalsContainerData().Locals)
 }
 
+// GetLuaLocals allocates like GetSymbolTable, and carries the same restriction:
+// only the binder may call it. Readers walk the table through
+// ForEachVisibleLuaLocalAtPos / LookupLuaLocal, which never materialize it.
 func GetLuaLocals(container *Node) LuaLocalSymbolTable {
 	data := container.LocalsContainerData()
 	if data.LuaLocals == nil {
