@@ -105,6 +105,11 @@ jobs:
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
+          # Guards the parallel checker pool: the ordinary suite cannot see a data
+          # race, so without this job one goes unnoticed until it flakes a build.
+          - os: ubuntu-latest
+            name: 'race mode'
+            race: true
           - os: ubuntu-latest
             name: 'concurrent test programs'
             concurrent-test-programs: true
@@ -121,6 +126,7 @@ jobs:
       contents: read
 
     env:
+      TLUA_HEREBY_RACE: ${{ (matrix.config.race && 'true') || 'false' }}
       TLUA_HEREBY_NOEMBED: ${{ (matrix.config.noembed && 'true') || 'false' }}
       TLUA_HEREBY_CONCURRENT_TEST_PROGRAMS: ${{ (matrix.config.concurrent-test-programs && 'true') || 'false' }}
       TLUA_HEREBY_COVERAGE: ${{ (matrix.config.coverage && 'true') || 'false' }}
