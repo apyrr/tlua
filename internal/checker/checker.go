@@ -1650,9 +1650,13 @@ func (c *Checker) attachLuaAugmentation(group []luaAugmentation, constructorArms
 		var seenNext collections.Set[*ast.Symbol]
 		for _, arm := range arms {
 			arm = c.getMergedSymbol(arm)
-			member := ast.GetExports(arm)[name]
+			// Read the tables raw. getMergedSymbol returns the binder symbol when this
+			// checker has not cloned it, and every checker is constructed in parallel,
+			// so ast.GetExports/GetMembers would lazily allocate -- a write -- into a
+			// symbol the other checkers share. Indexing a nil map is legal.
+			member := arm.Exports[name]
 			if member == nil {
-				member = ast.GetMembers(arm)[name]
+				member = arm.Members[name]
 			}
 			memberArms := c.cachedLuaConstructorArms(constructorArms, member)
 			if len(memberArms) == 0 {
@@ -1671,7 +1675,7 @@ func (c *Checker) attachLuaAugmentation(group []luaAugmentation, constructorArms
 	name := group[0].path[len(group[0].path)-1]
 	for _, arm := range arms {
 		arm = c.getMergedSymbol(arm)
-		if existing := core.OrElse(ast.GetExports(arm)[name], ast.GetMembers(arm)[name]); existing != nil {
+		if existing := core.OrElse(arm.Exports[name], arm.Members[name]); existing != nil {
 			// The member is constructor-declared. Assignments to it stay ordinary
 			// checked writes; a dotted function declaration is a duplicate.
 			var fallback *ast.Symbol
