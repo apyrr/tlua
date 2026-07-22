@@ -1,7 +1,7 @@
 {
     "comments": {
-        "lineComment": "//",
-        "blockComment": ["/*", "*/"]
+        "lineComment": "--",
+        "blockComment": ["--[==[", "]==]"]
     },
     "brackets": [
         ["{", "}"],
@@ -34,8 +34,8 @@
     ],
     "wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)",
     "indentationRules": {
-        "decreaseIndentPattern": "^((?!.*?/\\*).*\\*/)?\\s*[\\}\\]].*$",
-        "increaseIndentPattern": "^((?!//).)*(\\{([^}\"'`/]*|(\\t|[ ])*//.*)|\\([^)\"'`/]*|\\[[^\\]\"'`/]*)$"
+        "decreaseIndentPattern": "^\\s*(end|until|elseif|else)\\b|^((?!.*?/\\*).*\\*/)?\\s*[\\}\\]].*$",
+        "increaseIndentPattern": "^((?!--).)*((\\b(then|do|else|repeat)[ \\t]*(--.*)?$)|(\\bfunction\\b(?:(?!\\bend\\b)[^;])*\\)[ \\t]*(:[^;]*)?[ \\t]*(--.*)?$)|\\{[^}\"'`]*$|\\([^)\"'`]*$|\\[[^\\]\"'`]*$)"
     },
     "onEnterRules": [
         {

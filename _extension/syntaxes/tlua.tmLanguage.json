@@ -31,7 +31,13 @@
         "statements": {
             "patterns": [
                 {
+                    "include": "#comment"
+                },
+                {
                     "include": "#declaration"
+                },
+                {
+                    "include": "#tlua-blocks"
                 },
                 {
                     "include": "#control-statement"
@@ -41,9 +47,6 @@
                 },
                 {
                     "include": "#decl-block"
-                },
-                {
-                    "include": "#label"
                 },
                 {
                     "include": "#expression"
@@ -63,6 +66,12 @@
             "patterns": [
                 {
                     "include": "#var-expr"
+                },
+                {
+                    "include": "#function-signature"
+                },
+                {
+                    "include": "#tlua-ambient-global"
                 },
                 {
                     "include": "#function-declaration"
@@ -91,9 +100,6 @@
         "control-statement": {
             "patterns": [
                 {
-                    "include": "#for-loop"
-                },
-                {
                     "name": "storage.type.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(local)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
@@ -112,17 +118,6 @@
                 {
                     "name": "keyword.control.trycatch.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(catch|finally|throw|try)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(break|continue)\\s+([_$[:alpha:]][_$[:alnum:]]*)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.loop.tlua"
-                        },
-                        "2": {
-                            "name": "entity.name.label.tlua"
-                        }
-                    }
                 },
                 {
                     "name": "keyword.control.loop.tlua",
@@ -161,15 +156,12 @@
                             "name": "keyword.control.flow.tlua"
                         }
                     },
-                    "end": "(?=[;}]|$|;|^\\s*$|(?:^\\s*(?:abstract|async|(?:\\bawait\\s+(?:\\busing(?=\\s+(?!in\\b|of\\b(?!\\s*(?:of\\b|=)))[_$[:alpha:]])\\b)\\b)|break|case|catch|class|const|continue|declare|do|else|enum|export|finally|function|for|goto|if|import|interface|let|module|namespace|switch|return|throw|try|type|(?:\\busing(?=\\s+(?!in\\b|of\\b(?!\\s*(?:of\\b|=)))[_$[:alpha:]])\\b)|var|while)\\b))",
+                    "end": "(?=(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:end|elseif|else|until)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.)))|(?=[;}]|$|;|^\\s*$|(?:^\\s*(?:abstract|async|(?:\\bawait\\s+(?:\\busing(?=\\s+(?!in\\b|of\\b(?!\\s*(?:of\\b|=)))[_$[:alpha:]])\\b)\\b)|break|case|catch|class|const|continue|declare|do|else|enum|export|finally|function|for|goto|if|import|interface|let|module|namespace|switch|return|throw|try|type|(?:\\busing(?=\\s+(?!in\\b|of\\b(?!\\s*(?:of\\b|=)))[_$[:alpha:]])\\b)|var|while)\\b))",
                     "patterns": [
                         {
                             "include": "#expression"
                         }
                     ]
-                },
-                {
-                    "include": "#if-statement"
                 },
                 {
                     "name": "keyword.control.conditional.tlua",
@@ -186,38 +178,6 @@
                 {
                     "name": "keyword.other.debugger.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(debugger)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                }
-            ]
-        },
-        "label": {
-            "patterns": [
-                {
-                    "begin": "([_$[:alpha:]][_$[:alnum:]]*)\\s*(:)(?=\\s*\\{)",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "entity.name.label.tlua"
-                        },
-                        "2": {
-                            "name": "punctuation.separator.label.tlua"
-                        }
-                    },
-                    "end": "(?<=\\})",
-                    "patterns": [
-                        {
-                            "include": "#decl-block"
-                        }
-                    ]
-                },
-                {
-                    "match": "([_$[:alpha:]][_$[:alnum:]]*)\\s*(:)",
-                    "captures": {
-                        "1": {
-                            "name": "entity.name.label.tlua"
-                        },
-                        "2": {
-                            "name": "punctuation.separator.label.tlua"
-                        }
-                    }
                 }
             ]
         },
@@ -240,25 +200,17 @@
                     "include": "#string"
                 },
                 {
-                    "include": "#regex"
-                },
-                {
                     "include": "#comment"
                 },
                 {
                     "include": "#function-expression"
                 },
                 {
-                    "include": "#arrow-function"
-                },
-                {
+                    "comment": "tlua has no value lambdas, so `#arrow-function` is not included here. Its heuristic claims any `(` whose first element looks like `name:`, which in tlua is a colon call -- `(T:bump())` and `obj:m():n()` were being scoped as arrow parameter lists.",
                     "include": "#paren-expression-possibly-arrow"
                 },
                 {
                     "include": "#cast"
-                },
-                {
-                    "include": "#ternary-expression"
                 },
                 {
                     "include": "#new-expr"
@@ -271,6 +223,9 @@
                 },
                 {
                     "include": "#expression-operators"
+                },
+                {
+                    "include": "#tlua-colon-call"
                 },
                 {
                     "include": "#function-call"
@@ -301,7 +256,7 @@
                 {
                     "name": "meta.var.expr.tlua",
                     "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(\\bexport)\\s+)?(?:(\\bdeclare)\\s+)?\\b(local)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))(?!\\s+function\\b)(?!\\s+type\\s+[_$[:alpha:]])(?!\\s+interface\\s+[_$[:alpha:]])\\s*",
-                    "end": "(?=;|\\}|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(of|in)\\s+)|^\\s*$|(?:^\\s*(?:abstract|async|break|case|catch|class|continue|declare|do|else|enum|export|finally|for|function|global|goto|if|import|interface|local|module|namespace|repeat|return|switch|throw|try|type|until|while|end|elseif)\\b))",
+                    "end": "((?<![,=+\\-*/%<>~&|^.:(\\[{])(?=\\s*$))|(?=(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:end|elseif|else|until|then|do)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.)))|(?=;|\\}|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(of|in)\\s+)|^\\s*$|(?:^\\s*(?:abstract|async|break|case|catch|class|continue|declare|do|else|enum|export|finally|for|function|global|goto|if|import|interface|local|module|namespace|repeat|return|switch|throw|try|type|until|while|end|elseif)\\b))",
                     "patterns": [
                         {
                             "include": "#destructuring-variable"
@@ -1084,7 +1039,7 @@
                             "name": "keyword.operator.assignment.tlua"
                         }
                     },
-                    "end": "(?=$|^|[,);}\\]]|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(of|in)\\s+))",
+                    "end": "(?=$|^|[,);}\\]]|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(of|in)\\s+)|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:end|elseif|else|until|then|do)(?![_$[:alnum:]])))",
                     "patterns": [
                         {
                             "include": "#expression"
@@ -1098,7 +1053,7 @@
                             "name": "keyword.operator.assignment.tlua"
                         }
                     },
-                    "end": "(?=[,);}\\]]|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(of|in)\\s+))|(?=^\\s*$)|(?<![\\|\\&\\+\\-\\*\\/])(?<=\\S)(?<!=)(?=\\s*$)",
+                    "end": "(?=[,);}\\]]|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(of|in)\\s+)|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:end|elseif|else|until|then|do)(?![_$[:alnum:]])))|(?=^\\s*$)|(?<![\\|\\&\\+\\-\\*\\/])(?<=\\S)(?<!=)(?=\\s*$)",
                     "patterns": [
                         {
                             "include": "#expression"
@@ -1109,52 +1064,27 @@
         },
         "function-declaration": {
             "name": "meta.function.tlua",
-            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(\\bexport)\\s+)?(?:(\\bdeclare)\\s+)?(?:(\\blocal)\\s+)?(?:(async)\\s+)?(function\\b)(?:\\s*(\\*))?(?:(?:\\s+|(?<=\\*))([_$[:alpha:]][_$[:alnum:]]*))?\\s*",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(\\blocal)\\s+)?(?:(async)\\s+)?(function)\\b(?:\\s+([_$[:alpha:]][_$[:alnum:]]*(?:\\s*[.:]\\s*[_$[:alpha:]][_$[:alnum:]]*)*))?\\s*",
             "beginCaptures": {
                 "1": {
-                    "name": "keyword.control.export.tlua"
-                },
-                "2": {
-                    "name": "storage.modifier.tlua"
-                },
-                "3": {
                     "name": "storage.type.tlua"
                 },
-                "4": {
+                "2": {
                     "name": "storage.modifier.async.tlua"
                 },
-                "5": {
+                "3": {
                     "name": "storage.type.function.tlua"
                 },
-                "6": {
-                    "name": "keyword.generator.asterisk.tlua"
-                },
-                "7": {
+                "4": {
                     "name": "meta.definition.function.tlua entity.name.function.tlua"
                 }
             },
-            "end": "(?=;|^\\s*$|(?:^\\s*(?:abstract|async|(?:\\bawait\\s+(?:\\busing(?=\\s+(?!in\\b|of\\b(?!\\s*(?:of\\b|=)))[_$[:alpha:]])\\b)\\b)|break|case|catch|class|const|continue|declare|do|else|enum|export|finally|function|for|goto|if|import|interface|let|module|namespace|switch|return|throw|try|type|(?:\\busing(?=\\s+(?!in\\b|of\\b(?!\\s*(?:of\\b|=)))[_$[:alpha:]])\\b)|var|while|local|repeat|until|elseif|end)\\b))|(?<=\\})",
-            "patterns": [
-                {
-                    "include": "#function-name"
-                },
-                {
-                    "include": "#function-body"
-                }
-            ]
-        },
-        "function-expression": {
-            "name": "meta.function.expression.tlua",
-            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(async)\\s+)?(function)\\b",
-            "beginCaptures": {
+            "end": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(end)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "endCaptures": {
                 "1": {
-                    "name": "storage.modifier.async.tlua"
-                },
-                "2": {
                     "name": "storage.type.function.tlua"
                 }
             },
-            "end": "(?<=\\))",
             "patterns": [
                 {
                     "include": "#comment"
@@ -1164,6 +1094,47 @@
                 },
                 {
                     "include": "#function-parameters"
+                },
+                {
+                    "include": "#return-type"
+                },
+                {
+                    "include": "#statements"
+                }
+            ]
+        },
+        "function-expression": {
+            "name": "meta.function.expression.tlua",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(async)\\s+)?(function)\\b(?=\\s*[<(])",
+            "beginCaptures": {
+                "1": {
+                    "name": "storage.modifier.async.tlua"
+                },
+                "2": {
+                    "name": "storage.type.function.tlua"
+                }
+            },
+            "end": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(end)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "endCaptures": {
+                "1": {
+                    "name": "storage.type.function.tlua"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#type-parameters"
+                },
+                {
+                    "include": "#function-parameters"
+                },
+                {
+                    "include": "#return-type"
+                },
+                {
+                    "include": "#statements"
                 }
             ]
         },
@@ -2139,110 +2110,6 @@
                 }
             ]
         },
-        "for-loop": {
-            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))for(?=((\\s+|(\\s*\\/\\*([^\\*]|(\\*[^\\/]))*\\*\\/\\s*))await)?\\s*(\\/\\*([^\\*]|(\\*[^\\/]))*\\*\\/\\s*)?(\\())",
-            "beginCaptures": {
-                "0": {
-                    "name": "keyword.control.loop.tlua"
-                }
-            },
-            "end": "(?<=\\))",
-            "patterns": [
-                {
-                    "include": "#comment"
-                },
-                {
-                    "name": "keyword.control.loop.tlua",
-                    "match": "await"
-                },
-                {
-                    "begin": "\\(",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "meta.brace.round.tlua"
-                        }
-                    },
-                    "end": "\\)",
-                    "endCaptures": {
-                        "0": {
-                            "name": "meta.brace.round.tlua"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#var-expr"
-                        },
-                        {
-                            "include": "#expression"
-                        },
-                        {
-                            "include": "#punctuation-semicolon"
-                        }
-                    ]
-                }
-            ]
-        },
-        "if-statement": {
-            "patterns": [
-                {
-                    "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?=\\bif\\s*(\\(([^\\(\\)]|(\\(([^\\(\\)]|\\([^\\(\\)]*\\))*\\)))*\\))\\s*(?!\\{))",
-                    "end": "(?=;|$|\\})",
-                    "patterns": [
-                        {
-                            "include": "#comment"
-                        },
-                        {
-                            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(if)\\s*(\\()",
-                            "beginCaptures": {
-                                "1": {
-                                    "name": "keyword.control.conditional.tlua"
-                                },
-                                "2": {
-                                    "name": "meta.brace.round.tlua"
-                                }
-                            },
-                            "end": "\\)",
-                            "endCaptures": {
-                                "0": {
-                                    "name": "meta.brace.round.tlua"
-                                }
-                            },
-                            "patterns": [
-                                {
-                                    "include": "#expression"
-                                }
-                            ]
-                        },
-                        {
-                            "name": "string.regexp.tlua",
-                            "begin": "(?<=\\))\\s*\\/(?![\\/*])(?=(?:[^\\/\\\\\\[]|\\\\.|\\[([^\\]\\\\]|\\\\.)*\\])+\\/([dgimsuvy]+|(?![\\/\\*])|(?=\\/\\*))(?!\\s*[a-zA-Z0-9_$]))",
-                            "beginCaptures": {
-                                "0": {
-                                    "name": "punctuation.definition.string.begin.tlua"
-                                }
-                            },
-                            "end": "(/)([dgimsuvy]*)",
-                            "endCaptures": {
-                                "1": {
-                                    "name": "punctuation.definition.string.end.tlua"
-                                },
-                                "2": {
-                                    "name": "keyword.other.tlua"
-                                }
-                            },
-                            "patterns": [
-                                {
-                                    "include": "#regexp"
-                                }
-                            ]
-                        },
-                        {
-                            "include": "#statements"
-                        }
-                    ]
-                }
-            ]
-        },
         "decl-block": {
             "name": "meta.block.tlua",
             "begin": "\\{",
@@ -2300,6 +2167,10 @@
             "patterns": [
                 {
                     "include": "#object-member"
+                },
+                {
+                    "name": "keyword.operator.assignment.tlua",
+                    "match": "(?<![=<>~!])=(?![=>])"
                 }
             ]
         },
@@ -2309,12 +2180,31 @@
                     "include": "#comment"
                 },
                 {
+                    "name": "meta.object.member.tlua",
+                    "comment": "The value has to be scoped by this rule. Matching only `key =` leaves the value to the following patterns, and the next one that accepts it is the TS method-shorthand rule, which reads `function(x)` as a method named `function` and leaves the whole body unscoped.",
+                    "begin": "([_$[:alpha:]][_$[:alnum:]]*)\\s*(=)(?![=>])",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "meta.object-literal.key.tlua variable.other.property.tlua"
+                        },
+                        "2": {
+                            "name": "keyword.operator.assignment.tlua"
+                        }
+                    },
+                    "end": "(?=[,}])",
+                    "patterns": [
+                        {
+                            "include": "#expression"
+                        }
+                    ]
+                },
+                {
                     "include": "#object-literal-method-declaration"
                 },
                 {
                     "name": "meta.object.member.tlua meta.object-literal.key.tlua",
                     "begin": "(?=\\[)",
-                    "end": "(?=:)|((?<=[\\]])(?=\\s*[\\(\\<]))",
+                    "end": "(?=\\s*[:=])|((?<=[\\]])(?=\\s*[\\(\\<]))",
                     "patterns": [
                         {
                             "include": "#comment"
@@ -2327,7 +2217,7 @@
                 {
                     "name": "meta.object.member.tlua meta.object-literal.key.tlua",
                     "begin": "(?=[\\'\\\"\\`])",
-                    "end": "(?=:)|((?<=[\\'\\\"\\`])(?=((\\s*[\\(\\<,}])|(\\s+(as|satisifies)\\s+))))",
+                    "end": "(?=\\s*[:=])|((?<=[\\'\\\"\\`])(?=((\\s*[\\(\\<,}])|(\\s+(as|satisifies)\\s+))))",
                     "patterns": [
                         {
                             "include": "#comment"
@@ -2340,7 +2230,7 @@
                 {
                     "name": "meta.object.member.tlua meta.object-literal.key.tlua",
                     "begin": "(?x)(?=(\\b(?<!\\$)0(?:x|X)[0-9a-fA-F][0-9a-fA-F_]*(n)?\\b(?!\\$))|(\\b(?<!\\$)0(?:b|B)[01][01_]*(n)?\\b(?!\\$))|(\\b(?<!\\$)0(?:o|O)?[0-7][0-7_]*(n)?\\b(?!\\$))|((?<!\\$)(?:\n  (?:\\b[0-9][0-9_]*(\\.)[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*(n)?\\b)| # 1.1E+3\n  (?:\\b[0-9][0-9_]*(\\.)[eE][+-]?[0-9][0-9_]*(n)?\\b)|             # 1.E+3\n  (?:\\B(\\.)[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*(n)?\\b)|             # .1E+3\n  (?:\\b[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*(n)?\\b)|                 # 1E+3\n  (?:\\b[0-9][0-9_]*(\\.)[0-9][0-9_]*(n)?\\b)|                      # 1.1\n  (?:\\b[0-9][0-9_]*(\\.)(n)?\\B)|                                  # 1.\n  (?:\\B(\\.)[0-9][0-9_]*(n)?\\b)|                                  # .1\n  (?:\\b[0-9][0-9_]*(n)?\\b(?!\\.))                                 # 1\n)(?!\\$)))",
-                    "end": "(?=:)|(?=\\s*([\\(\\<,}])|(\\s+as|satisifies\\s+))",
+                    "end": "(?=\\s*[:=])|(?=\\s*([\\(\\<,}])|(\\s+as|satisifies\\s+))",
                     "patterns": [
                         {
                             "include": "#comment"
@@ -2576,25 +2466,6 @@
                 },
                 {
                     "include": "#decl-block"
-                }
-            ]
-        },
-        "ternary-expression": {
-            "begin": "(?!\\?\\.\\s*[^[:digit:]])(\\?)(?!\\?)",
-            "beginCaptures": {
-                "1": {
-                    "name": "keyword.operator.ternary.tlua"
-                }
-            },
-            "end": "\\s*(:)",
-            "endCaptures": {
-                "1": {
-                    "name": "keyword.operator.ternary.tlua"
-                }
-            },
-            "patterns": [
-                {
-                    "include": "#expression"
                 }
             ]
         },
@@ -3015,6 +2886,10 @@
                     "match": "\\.\\.\\."
                 },
                 {
+                    "name": "keyword.operator.concat.tlua",
+                    "match": "\\.\\."
+                },
+                {
                     "name": "keyword.operator.assignment.compound.tlua",
                     "match": "\\*=|(?<!\\()/=|%=|\\+=|\\-="
                 },
@@ -3028,7 +2903,7 @@
                 },
                 {
                     "name": "keyword.operator.comparison.tlua",
-                    "match": "===|!==|==|!="
+                    "match": "===|!==|==|!=|~="
                 },
                 {
                     "name": "keyword.operator.relational.tlua",
@@ -3054,23 +2929,15 @@
                 },
                 {
                     "name": "keyword.operator.bitwise.tlua",
-                    "match": "\\&|~|\\^|\\|"
+                    "match": "\\&|~|\\|"
                 },
                 {
                     "name": "keyword.operator.assignment.tlua",
                     "match": "\\="
                 },
                 {
-                    "name": "keyword.operator.decrement.tlua",
-                    "match": "--"
-                },
-                {
-                    "name": "keyword.operator.increment.tlua",
-                    "match": "\\+\\+"
-                },
-                {
                     "name": "keyword.operator.arithmetic.tlua",
-                    "match": "%|\\*|/|-|\\+"
+                    "match": "%|\\*|/|-|\\+|\\^|#"
                 },
                 {
                     "begin": "(?<=[_$[:alnum:])\\]])\\s*(?=(\\/\\*([^\\*]|(\\*[^\\/]))*\\*\\/\\s*)+(?:(/=)|(?:(/)(?![/*]))))",
@@ -3519,7 +3386,7 @@
                             "name": "keyword.operator.type.annotation.tlua"
                         }
                     },
-                    "end": "(?<![:|&])(?=$|^|[{};,]|//)",
+                    "end": "(?<![:|&])(?=$|^|[{};,]|//|\\s*(?<![_$[:alnum:]])(?:end|elseif|else|until|then|do|return|local|goto|break|repeat|while|if|for)(?![_$[:alnum:]]))",
                     "patterns": [
                         {
                             "include": "#return-type-core"
@@ -3534,7 +3401,7 @@
                             "name": "keyword.operator.type.annotation.tlua"
                         }
                     },
-                    "end": "(?<![:|&])((?=[{};,]|//|^\\s*$)|((?<=\\S)(?=\\s*$)))",
+                    "end": "(?<![:|&])((?=[{};,]|//|^\\s*$|\\s*(?<![_$[:alnum:]])(?:end|elseif|else|until|then|do|return|local|goto|break|repeat|while|if|for)(?![_$[:alnum:]]))|((?<=\\S)(?=\\s*$)))",
                     "patterns": [
                         {
                             "include": "#return-type-core"
@@ -3616,7 +3483,8 @@
         },
         "type-parameters": {
             "name": "meta.type.parameters.tlua",
-            "begin": "(<)",
+            "comment": "The `<` must look like it opens a parameter list. A function body stays in scope for this rule, so a bare comparison (`a < b`, `step <= 0`) would otherwise open a type-parameter list and swallow the rest of the file.",
+            "begin": "(<)(?![=<])(?=\\s*(?:const\\s+|in\\s+|out\\s+)*(?:\\.\\.\\.)?[_$[:alpha:]][_$[:alnum:]]*\\s*(?:[,>=]|extends(?![_$[:alnum:]])))",
             "beginCaptures": {
                 "1": {
                     "name": "punctuation.definition.typeparameters.begin.tlua"
@@ -4694,6 +4562,43 @@
         "comment": {
             "patterns": [
                 {
+                    "name": "comment.block.tlua",
+                    "begin": "--\\[(=*)\\[",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.tlua"
+                        }
+                    },
+                    "end": "\\]\\1\\]",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.tlua"
+                        }
+                    }
+                },
+                {
+                    "begin": "(^[ \\t]+)?((--)(?!\\[=*\\[)(?:\\s*((@)internal)(?=\\s|$))?)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.whitespace.comment.leading.tlua"
+                        },
+                        "2": {
+                            "name": "comment.line.double-dash.tlua"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.comment.tlua"
+                        },
+                        "4": {
+                            "name": "storage.type.internaldeclaration.tlua"
+                        },
+                        "5": {
+                            "name": "punctuation.decorator.internaldeclaration.tlua"
+                        }
+                    },
+                    "end": "(?=$)",
+                    "contentName": "comment.line.double-dash.tlua"
+                },
+                {
                     "name": "comment.block.documentation.tlua",
                     "begin": "/\\*\\*(?!/)",
                     "beginCaptures": {
@@ -4759,26 +4664,52 @@
             ]
         },
         "single-line-comment-consuming-line-ending": {
-            "begin": "(^[ \\t]+)?((//)(?:\\s*((@)internal)(?=\\s|$))?)",
-            "beginCaptures": {
-                "1": {
-                    "name": "punctuation.whitespace.comment.leading.tlua"
+            "patterns": [
+                {
+                    "begin": "(^[ \\t]+)?((--)(?!\\[=*\\[)(?:\\s*((@)internal)(?=\\s|$))?)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.whitespace.comment.leading.tlua"
+                        },
+                        "2": {
+                            "name": "comment.line.double-dash.tlua"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.comment.tlua"
+                        },
+                        "4": {
+                            "name": "storage.type.internaldeclaration.tlua"
+                        },
+                        "5": {
+                            "name": "punctuation.decorator.internaldeclaration.tlua"
+                        }
+                    },
+                    "end": "(?=^)",
+                    "contentName": "comment.line.double-dash.tlua"
                 },
-                "2": {
-                    "name": "comment.line.double-slash.tlua"
-                },
-                "3": {
-                    "name": "punctuation.definition.comment.tlua"
-                },
-                "4": {
-                    "name": "storage.type.internaldeclaration.tlua"
-                },
-                "5": {
-                    "name": "punctuation.decorator.internaldeclaration.tlua"
+                {
+                    "begin": "(^[ \\t]+)?((//)(?:\\s*((@)internal)(?=\\s|$))?)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.whitespace.comment.leading.tlua"
+                        },
+                        "2": {
+                            "name": "comment.line.double-slash.tlua"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.comment.tlua"
+                        },
+                        "4": {
+                            "name": "storage.type.internaldeclaration.tlua"
+                        },
+                        "5": {
+                            "name": "punctuation.decorator.internaldeclaration.tlua"
+                        }
+                    },
+                    "end": "(?=^)",
+                    "contentName": "comment.line.double-slash.tlua"
                 }
-            },
-            "end": "(?=^)",
-            "contentName": "comment.line.double-slash.tlua"
+            ]
         },
         "directives": {
             "name": "comment.line.triple-slash.directive.tlua",
@@ -5295,6 +5226,182 @@
         "tlua-logical-operators": {
             "name": "keyword.operator.logical.tlua",
             "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(and|or|not)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+        },
+        "tlua-block-do": {
+            "name": "meta.block.tlua",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(do)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.tlua"
+                }
+            },
+            "end": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(end)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "endCaptures": {
+                "1": {
+                    "name": "keyword.control.tlua"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#statements"
+                }
+            ]
+        },
+        "tlua-block-if": {
+            "name": "meta.block.tlua",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(if)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.conditional.tlua"
+                }
+            },
+            "end": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(end)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "endCaptures": {
+                "1": {
+                    "name": "keyword.control.conditional.tlua"
+                }
+            },
+            "patterns": [
+                {
+                    "name": "keyword.control.conditional.tlua",
+                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(then|elseif|else)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+                },
+                {
+                    "include": "#statements"
+                }
+            ]
+        },
+        "tlua-block-repeat": {
+            "name": "meta.block.tlua",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(repeat)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.loop.tlua"
+                }
+            },
+            "end": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(until)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "endCaptures": {
+                "1": {
+                    "name": "keyword.control.loop.tlua"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#statements"
+                }
+            ]
+        },
+        "tlua-loop-header": {
+            "name": "meta.loop.header.tlua",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(while|for)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.loop.tlua"
+                }
+            },
+            "end": "(?=(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:do|end)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.)))|(?=^\\s*$)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#type-annotation"
+                },
+                {
+                    "include": "#expression"
+                },
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+        "tlua-blocks": {
+            "patterns": [
+                {
+                    "include": "#tlua-block-if"
+                },
+                {
+                    "include": "#tlua-block-repeat"
+                },
+                {
+                    "include": "#tlua-loop-header"
+                },
+                {
+                    "include": "#tlua-block-do"
+                }
+            ]
+        },
+        "function-signature": {
+            "name": "meta.function.tlua",
+            "comment": "A signature is a `function` line that reaches a terminating `;` without passing an `end`. Testing only for a trailing `;` would also claim complete one-line definitions such as `local function noop() end;`, whose body this rule has no patterns to scope.",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(\\bdeclare)\\s+|(\\blocal)\\s+(?=(?:(?!(?<![_$[:alnum:]])end(?![_$[:alnum:]]))[^\\n])*;[ \\t]*(?:--.*)?$)|(?=(?:(?!(?<![_$[:alnum:]])end(?![_$[:alnum:]]))[^\\n])*;[ \\t]*(?:--.*)?$))(?:(async)\\s+)?(function)\\b(?:\\s+([_$[:alpha:]][_$[:alnum:]]*))?\\s*",
+            "beginCaptures": {
+                "1": {
+                    "name": "storage.modifier.tlua"
+                },
+                "2": {
+                    "name": "storage.type.tlua"
+                },
+                "3": {
+                    "name": "storage.modifier.async.tlua"
+                },
+                "4": {
+                    "name": "storage.type.function.tlua"
+                },
+                "5": {
+                    "name": "meta.definition.function.tlua entity.name.function.tlua"
+                }
+            },
+            "end": "(?<=;)|((?<![,=+\\-*/%<>~&|^.:(\\[{<])(?=\\s*$))",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#type-parameters"
+                },
+                {
+                    "include": "#function-parameters"
+                },
+                {
+                    "include": "#return-type"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+        "tlua-colon-call": {
+            "match": "(:)\\s*([_$[:alpha:]][_$[:alnum:]]*)(?=\\s*\\()",
+            "captures": {
+                "1": {
+                    "name": "punctuation.accessor.tlua"
+                },
+                "2": {
+                    "name": "entity.name.function.tlua"
+                }
+            }
+        },
+        "tlua-ambient-global": {
+            "name": "meta.var.expr.tlua",
+            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(declare)\\s+(?!(?:function|interface|type|global|local|async|declare)\\b)([_$[:alpha:]][_$[:alnum:]]*)\\s*(?=:)",
+            "beginCaptures": {
+                "1": {
+                    "name": "storage.modifier.tlua"
+                },
+                "2": {
+                    "name": "meta.definition.variable.tlua variable.other.readwrite.tlua"
+                }
+            },
+            "end": "(?=;)|((?<![,=+\\-*/%<>~&|^.:(\\[{])(?=\\s*$))",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#type-annotation"
+                }
+            ]
         }
     }
 }
