@@ -1206,6 +1206,11 @@ var CompletionTypeKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "self",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "string",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),

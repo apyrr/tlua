@@ -86,3 +86,17 @@ func TestFormatControlFlowKeywordSpacing(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatSelfTupleSpread(t *testing.T) {
+	t.Parallel()
+
+	ctx := format.WithFormatCodeSettings(t.Context(), lsutil.GetDefaultFormatCodeSettings(), "\n")
+	text := "interface I { copies: [... self[]] }"
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.tlua",
+		Path:     "/test.tlua",
+	}, text, core.ScriptKindTS)
+
+	formatted := applyBulkEdits(text, format.FormatDocument(ctx, sourceFile))
+	assert.Equal(t, formatted, "interface I { copies: [...self[]] }")
+}

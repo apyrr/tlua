@@ -1696,7 +1696,7 @@ class TypeObject implements Type {
     readonly symbol!: number;
     readonly value!: string | number | boolean;
     readonly intrinsicName!: string;
-    readonly isThisType!: boolean;
+    readonly isSelfType!: boolean;
     readonly freshType!: number;
     readonly regularType!: number;
     readonly target!: number;
@@ -1730,7 +1730,7 @@ class TypeObject implements Type {
             this.value = data.value;
         }
         if (data.intrinsicName !== undefined) this.intrinsicName = data.intrinsicName;
-        if (data.isThisType !== undefined) this.isThisType = data.isThisType;
+        if (data.isSelfType !== undefined) this.isSelfType = data.isSelfType;
         if (data.freshType !== undefined) this.freshType = data.freshType;
         if (data.regularType !== undefined) this.regularType = data.regularType;
         if (data.target !== undefined) this.target = data.target;

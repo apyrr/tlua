@@ -16,7 +16,7 @@ const (
 	NodeFlagsSynthesized                     NodeFlags = 1 << 4  // Node was synthesized during transformation
 	NodeFlagsOptionalChain                   NodeFlags = 1 << 5  // Chained MemberExpression rooted to a pseudo-OptionalExpression
 	NodeFlagsExportContext                   NodeFlags = 1 << 6  // Export context (initialized by binding)
-	NodeFlagsContainsThis                    NodeFlags = 1 << 7  // Interface contains references to "this"
+	NodeFlagsContainsSelf                    NodeFlags = 1 << 7  // Interface contains references to the polymorphic `self` type
 	NodeFlagsHasImplicitReturn               NodeFlags = 1 << 8  // If function implicitly returns on one of codepaths (initialized by binding)
 	NodeFlagsHasExplicitReturn               NodeFlags = 1 << 9  // If function has explicit reachable return on one of codepaths (initialized by binding)
 	NodeFlagsDisallowInContext               NodeFlags = 1 << 10 // If node was parsed in a context where 'in-expressions' are not allowed
@@ -69,7 +69,7 @@ const (
 	NodeFlagsPermanentlySetIncrementalFlags NodeFlags = NodeFlagsPossiblyContainsDynamicImport | NodeFlagsPossiblyContainsImportMeta
 
 	// The following flags repurpose other NodeFlags as different meanings for Identifier nodes
-	NodeFlagsIdentifierHasExtendedUnicodeEscape NodeFlags = NodeFlagsContainsThis      // Indicates whether the identifier contains an extended unicode escape sequence
+	NodeFlagsIdentifierHasExtendedUnicodeEscape NodeFlags = NodeFlagsContainsSelf      // Indicates whether the identifier contains an extended unicode escape sequence
 	NodeFlagsIdentifierIsInJSDocNamespace       NodeFlags = NodeFlagsHasAsyncFunctions // Indicates the identifier is the innermost name of a JSDoc namespace declaration
 
 	// The following flag repurposes other NodeFlags for ModuleDeclaration nodes

@@ -581,7 +581,8 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindCDataKeyword,
 		ast.KindStringKeyword,
 		ast.KindSymbolKeyword,
-		ast.KindUnknownKeyword:
+		ast.KindUnknownKeyword,
+		ast.KindSelfKeyword:
 		return d.factory.NewKeywordTypeNode(kind), nil
 	case ast.KindUnionType:
 		return d.factory.NewUnionTypeNode(d.singleNodeListChild(childIndices)), nil

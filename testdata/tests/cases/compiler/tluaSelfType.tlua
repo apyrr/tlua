@@ -1,0 +1,39 @@
+// @strict: true
+// @noEmit: true
+
+// `self` is a receiver-relative type inside an interface. Inherited members
+// substitute the most-derived interface, which keeps fluent chains precise.
+
+interface HexZodSchema<T> {
+	parse(self: self, value: unknown): T;
+}
+
+interface HexZodStringSchema extends HexZodSchema<string> {
+	min(self: self, length: number, message?: string): self;
+	max(self: self, length: number, message?: string): self;
+	trim(length: number): self;
+	copy(): self;
+	peer: self;
+}
+
+interface BrandedStringSchema extends HexZodStringSchema {
+	brand(self: self): string;
+}
+
+declare schema: BrandedStringSchema;
+
+local minResult: BrandedStringSchema = schema:min(1);
+local maxResult: BrandedStringSchema = schema.max(schema, 10);
+local trimResult: BrandedStringSchema = schema.trim(1);
+local copyResult: BrandedStringSchema = schema.copy();
+local peerResult: BrandedStringSchema = schema.peer;
+local brand: string = schema:min(1):brand();
+
+// The contextual keyword remains a valid value binding and property name.
+local self = schema;
+local selfResult: BrandedStringSchema = self;
+local holder = { self = schema };
+local propertyResult: BrandedStringSchema = holder.self;
+
+// `self` is contextual type syntax rather than a globally available type.
+type Outside = self;

@@ -871,8 +871,8 @@ func isObjectOrArrayLiteralType(t *Type) bool {
 	return t.objectFlags&(ObjectFlagsObjectLiteral|ObjectFlagsArrayLiteral) != 0
 }
 
-func isThisTypeParameter(t *Type) bool {
-	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
+func isSelfTypeParameter(t *Type) bool {
+	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isSelfType
 }
 
 // isPackTypeParameter reports whether t is a generic pack parameter (declared

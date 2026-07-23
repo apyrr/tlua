@@ -315,7 +315,7 @@ func shouldGetType(node *ast.Node) bool {
 		// If we're in a JSDoc node with no associated symbol, no binding has taken place for the node and
 		// we can't answer questions about types of declaration nodes (such as property declarations).
 		return !(node.Flags&ast.NodeFlagsJSDoc != 0 && ast.IsDeclarationName(node)) && !ast.IsLabelName(node) && !ast.IsTagName(node) && !ast.IsConstTypeReference(node.Parent)
-	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindNamedTupleMember:
+	case ast.KindThisKeyword, ast.KindSelfKeyword, ast.KindSuperKeyword, ast.KindNamedTupleMember:
 		return true
 	case ast.KindMetaProperty:
 		return ast.IsImportMeta(node)
@@ -669,7 +669,10 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			setDeclaration(symbol.ValueDeclaration)
 		}
 		if flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 {
-			if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
+			if node.Kind == ast.KindSelfKeyword {
+				writeNewLine()
+				dpw.WriteKeyword("self")
+			} else if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
 				writeNewLine()
 				dpw.WriteKeyword("this")
 			} else if node.Kind == ast.KindConstructorKeyword && ast.IsConstructSignatureDeclaration(node.Parent) {

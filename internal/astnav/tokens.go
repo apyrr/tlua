@@ -531,7 +531,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 		// 3. The current node is a childless, token-less node. The answer is the current node.
 
 		// Case 2: Look at unvisited trailing tokens that occur in between the rightmost visited nodes.
-		if !shouldSkipChild(n) { // JSDoc nodes don't include trivia tokens as children.
+		if !shouldSkipChild(n) { // Atomic nodes don't expose their source spelling as child tokens.
 			var startPos int
 			if rightmostValidNode != nil {
 				startPos = rightmostValidNode.End()

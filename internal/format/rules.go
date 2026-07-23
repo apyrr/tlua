@@ -75,6 +75,7 @@ func getAllRules() []ruleSpec {
 		ast.KindReadonlyKeyword,
 		ast.KindStringKeyword,
 		ast.KindSymbolKeyword,
+		ast.KindSelfKeyword,
 		ast.KindTypeOfKeyword,
 		ast.KindTrueKeyword,
 		ast.KindVoidKeyword,

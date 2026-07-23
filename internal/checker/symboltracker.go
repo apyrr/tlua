@@ -39,12 +39,12 @@ func (this *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclarat
 	return false
 }
 
-func (this *SymbolTrackerImpl) ReportInaccessibleThisError() {
+func (this *SymbolTrackerImpl) ReportInaccessibleSelfError() {
 	this.onDiagnosticReported()
 	if this.inner == nil {
 		return
 	}
-	this.inner.ReportInaccessibleThisError()
+	this.inner.ReportInaccessibleSelfError()
 }
 
 func (this *SymbolTrackerImpl) ReportPrivateInBaseOfClassExpression(propertyName string) {

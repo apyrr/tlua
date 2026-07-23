@@ -3107,6 +3107,7 @@ func isTypeScriptOnlyKeyword(kind ast.Kind) bool {
 		ast.KindProtectedKeyword,
 		ast.KindPublicKeyword,
 		ast.KindReadonlyKeyword,
+		ast.KindSelfKeyword,
 		ast.KindStringKeyword,
 		ast.KindSymbolKeyword,
 		ast.KindTypeKeyword,

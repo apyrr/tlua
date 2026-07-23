@@ -22,7 +22,7 @@ export var NodeBuilderFlags: any;
     NodeBuilderFlags[NodeBuilderFlags["UseInstantiationExpressions"] = 1073741824] = "UseInstantiationExpressions";
     NodeBuilderFlags[NodeBuilderFlags["OmitThisParameter"] = 33554432] = "OmitThisParameter";
     NodeBuilderFlags[NodeBuilderFlags["WriteCallStyleSignature"] = 134217728] = "WriteCallStyleSignature";
-    NodeBuilderFlags[NodeBuilderFlags["AllowThisInObjectLiteral"] = 32768] = "AllowThisInObjectLiteral";
+    NodeBuilderFlags[NodeBuilderFlags["AllowSelfInObjectLiteral"] = 32768] = "AllowSelfInObjectLiteral";
     NodeBuilderFlags[NodeBuilderFlags["AllowQualifiedNameInPlaceOfIdentifier"] = 65536] = "AllowQualifiedNameInPlaceOfIdentifier";
     NodeBuilderFlags[NodeBuilderFlags["AllowAnonymousIdentifier"] = 131072] = "AllowAnonymousIdentifier";
     NodeBuilderFlags[NodeBuilderFlags["AllowEmptyUnionOrIntersection"] = 262144] = "AllowEmptyUnionOrIntersection";

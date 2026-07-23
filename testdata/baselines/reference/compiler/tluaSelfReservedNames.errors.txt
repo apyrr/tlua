@@ -1,0 +1,25 @@
+tluaSelfReservedNames.tlua(3,12): error TLUA2427: Interface name cannot be 'self'.
+tluaSelfReservedNames.tlua(7,7): error TLUA2457: Type alias name cannot be 'self'.
+tluaSelfReservedNames.tlua(10,15): error TLUA2368: Type parameter name cannot be 'self'.
+
+
+==== tluaSelfReservedNames.tlua (3 errors) ====
+    // The receiver type is unshadowable in the type namespace.
+    do
+    	interface self {}
+    	          ~~~~
+!!! error TLUA2427: Interface name cannot be 'self'.
+    end
+    
+    do
+    	type self = string;
+    	     ~~~~
+!!! error TLUA2457: Type alias name cannot be 'self'.
+    end
+    
+    interface Box<self> {
+                  ~~~~
+!!! error TLUA2368: Type parameter name cannot be 'self'.
+    	value: self;
+    }
+    

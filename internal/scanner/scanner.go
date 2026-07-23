@@ -114,6 +114,7 @@ var textToKeyword = map[string]ast.Kind{
 	"global":     ast.KindGlobalKeyword,
 	"return":     ast.KindReturnKeyword,
 	"satisfies":  ast.KindSatisfiesKeyword,
+	"self":       ast.KindSelfKeyword,
 	"set":        ast.KindSetKeyword,
 	"static":     ast.KindStaticKeyword,
 	"string":     ast.KindStringKeyword,

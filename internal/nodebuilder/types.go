@@ -8,7 +8,7 @@ import (
 // TODO: previously all symboltracker methods were optional, but now they're required.
 type SymbolTracker interface {
 	TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool
-	ReportInaccessibleThisError()
+	ReportInaccessibleSelfError()
 	ReportPrivateInBaseOfClassExpression(propertyName string)
 	ReportInaccessibleUniqueSymbolError()
 	ReportCyclicStructureError()
@@ -49,7 +49,7 @@ const (
 	FlagsOmitThisParameter                   Flags = 1 << 25
 	FlagsWriteCallStyleSignature             Flags = 1 << 27
 	// Error handling
-	FlagsAllowThisInObjectLiteral              Flags = 1 << 15
+	FlagsAllowSelfInObjectLiteral              Flags = 1 << 15
 	FlagsAllowQualifiedNameInPlaceOfIdentifier Flags = 1 << 16
 	FlagsAllowAnonymousIdentifier              Flags = 1 << 17
 	FlagsAllowEmptyUnionOrIntersection         Flags = 1 << 18
@@ -58,7 +58,7 @@ const (
 	FlagsAllowEmptyIndexInfoType               Flags = 1 << 21
 	// Errors (cont.)
 	FlagsAllowNodeModulesRelativePaths Flags = 1 << 26
-	FlagsIgnoreErrors                  Flags = FlagsAllowThisInObjectLiteral | FlagsAllowQualifiedNameInPlaceOfIdentifier | FlagsAllowAnonymousIdentifier | FlagsAllowEmptyUnionOrIntersection | FlagsAllowEmptyTuple | FlagsAllowEmptyIndexInfoType | FlagsAllowNodeModulesRelativePaths
+	FlagsIgnoreErrors                  Flags = FlagsAllowSelfInObjectLiteral | FlagsAllowQualifiedNameInPlaceOfIdentifier | FlagsAllowAnonymousIdentifier | FlagsAllowEmptyUnionOrIntersection | FlagsAllowEmptyTuple | FlagsAllowEmptyIndexInfoType | FlagsAllowNodeModulesRelativePaths
 	// State
 	FlagsInObjectTypeLiteral Flags = 1 << 22
 	FlagsInTypeAlias         Flags = 1 << 23

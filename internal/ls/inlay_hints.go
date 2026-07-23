@@ -524,6 +524,8 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "("})
 			visitForDisplayParts(node.Type())
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: ")"})
+		case ast.KindSelfKeyword:
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "self"})
 		case ast.KindTypeOperator:
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: scanner.TokenToString(node.AsTypeOperatorNode().Operator)})
 			visitForDisplayParts(node.Type())

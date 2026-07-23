@@ -839,7 +839,7 @@ func (c *Checker) GetTypeAtPosition(s *Signature, pos int) *Type {
 
 func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
 	t := c.getTypeAtPosition(s, pos)
-	if t.IsIndex() && isThisTypeParameter(t.AsIndexType().target) {
+	if t.IsIndex() && isSelfTypeParameter(t.AsIndexType().target) {
 		constraint := c.getBaseConstraintOfType(t.AsIndexType().target)
 		if constraint != nil {
 			return c.getIndexType(constraint)

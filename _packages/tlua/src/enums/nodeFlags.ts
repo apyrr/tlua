@@ -8,7 +8,7 @@ export var NodeFlags: any;
     NodeFlags[NodeFlags["Synthesized"] = 16] = "Synthesized";
     NodeFlags[NodeFlags["OptionalChain"] = 32] = "OptionalChain";
     NodeFlags[NodeFlags["ExportContext"] = 64] = "ExportContext";
-    NodeFlags[NodeFlags["ContainsThis"] = 128] = "ContainsThis";
+    NodeFlags[NodeFlags["ContainsSelf"] = 128] = "ContainsSelf";
     NodeFlags[NodeFlags["HasImplicitReturn"] = 256] = "HasImplicitReturn";
     NodeFlags[NodeFlags["HasExplicitReturn"] = 512] = "HasExplicitReturn";
     NodeFlags[NodeFlags["DisallowInContext"] = 1024] = "DisallowInContext";

@@ -140,6 +140,7 @@ export const textToKeywordObj: Record<string, KeywordSyntaxKind> = {
     global: SyntaxKind.GlobalKeyword,
     return: SyntaxKind.ReturnKeyword,
     satisfies: SyntaxKind.SatisfiesKeyword,
+    self: SyntaxKind.SelfKeyword,
     set: SyntaxKind.SetKeyword,
     static: SyntaxKind.StaticKeyword,
     string: SyntaxKind.StringKeyword,

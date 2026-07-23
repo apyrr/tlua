@@ -3306,10 +3306,29 @@ function add(a: number, b: number): number return a + b; end
     });
 });
 
-describe("TypeParameter - isThisType", () => {
-    // tlua removed the polymorphic `this` type, so no type parameter is ever a
-    // this-type; only the negative case remains.
-    test("isThisType is absent for a regular generic type parameter", () => {
+describe("TypeParameter - isSelfType", () => {
+    test("isSelfType identifies an interface's polymorphic self type", () => {
+        const src = `\ninterface Fluent {\n    clone(): self;\n}\n`;
+        const api = spawnAPI({
+            "/tluaconfig.json": "{}",
+            "/src/main.tlua": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
+            const pos = src.indexOf("self");
+            const type = project.checker.getTypeAtPosition("/src/main.tlua", pos);
+            assert.ok(type, "Expected a type at the 'self' position");
+            assert.ok(type.flags & TypeFlags.TypeParameter, "Expected TypeParameter");
+            const typeParam = type as TypeParameter;
+            assert.equal(typeParam.isSelfType, true, "Expected the hidden interface receiver type");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("isSelfType is absent for a regular generic type parameter", () => {
         const src = `\nfunction identity<T>(x: T): T return x; end\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
@@ -3326,7 +3345,7 @@ describe("TypeParameter - isThisType", () => {
             assert.ok(type, "Expected a type at the 'T' position");
             assert.ok(type.flags & TypeFlags.TypeParameter, "Expected TypeParameter");
             const typeParam = type as TypeParameter;
-            assert.ok(!typeParam.isThisType, "Expected isThisType to be absent/false for a regular type parameter");
+            assert.ok(!typeParam.isSelfType, "Expected isSelfType to be absent/false for a regular type parameter");
         }
         finally {
             api.close();
@@ -3944,6 +3963,7 @@ local obj = { m = 1, s = "hi", b = true };
                 SyntaxKind.UnknownKeyword,
                 SyntaxKind.ObjectKeyword,
                 SyntaxKind.SymbolKeyword,
+                SyntaxKind.SelfKeyword,
                 SyntaxKind.IntrinsicKeyword,
                 SyntaxKind.ExpressionWithTypeArguments,
                 SyntaxKind.JSDocAllType,

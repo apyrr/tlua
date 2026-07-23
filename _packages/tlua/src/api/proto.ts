@@ -257,7 +257,7 @@ export interface TypeResponse {
     substConstraint?: number;
     texts?: string[];
     intrinsicName?: string;
-    isThisType?: boolean;
+    isSelfType?: boolean;
     aliasTypeArguments?: number[];
     aliasSymbol?: number;
     symbol?: number;

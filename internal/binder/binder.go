@@ -38,7 +38,7 @@ const (
 	ContainerFlagsHasLocals              ContainerFlags = 1 << 5
 	ContainerFlagsIsInterface            ContainerFlags = 1 << 6
 	ContainerFlagsIsThisContainer        ContainerFlags = 1 << 7
-	ContainerFlagsPropagatesThisKeyword  ContainerFlags = 1 << 8
+	ContainerFlagsPropagatesSelfType     ContainerFlags = 1 << 8
 )
 
 type ExpandoAssignmentInfo struct {
@@ -65,7 +65,7 @@ type Binder struct {
 	currentExceptionTarget  *ast.FlowLabel
 	activeLabelList         *ActiveLabel
 	emitFlags               ast.NodeFlags
-	seenThisKeyword         bool
+	seenSelfType            bool
 	hasExplicitReturn       bool
 	hasFlowEffects          bool
 	inAssignmentPattern     bool
@@ -578,10 +578,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsIdentifier().FlowNode = b.currentFlow
 		b.checkContextualIdentifier(node)
 	case ast.KindThisKeyword, ast.KindSuperKeyword:
-		if node.Kind == ast.KindThisKeyword {
-			b.seenThisKeyword = true
-		}
 		node.AsKeywordExpression().FlowNode = b.currentFlow
+	case ast.KindSelfKeyword:
+		b.seenSelfType = true
 	case ast.KindQualifiedName:
 		if b.currentFlow != nil && ast.IsPartOfTypeQuery(node) {
 			node.AsQualifiedName().FlowNode = b.currentFlow
@@ -1308,7 +1307,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		saveExceptionTarget := b.currentExceptionTarget
 		saveActiveLabelList := b.activeLabelList
 		saveHasExplicitReturn := b.hasExplicitReturn
-		saveSeenThisKeyword := b.seenThisKeyword
+		saveSeenSelfType := b.seenSelfType
 		isImmediatelyInvoked := containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
 			!ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
 			ast.GetImmediatelyInvokedFunctionExpression(node) != nil
@@ -1331,10 +1330,10 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentContinueTarget = nil
 		b.activeLabelList = nil
 		b.hasExplicitReturn = false
-		b.seenThisKeyword = false
+		b.seenSelfType = false
 		b.bindChildren(node)
 		// Reset flags (for incremental scenarios)
-		node.Flags &^= ast.NodeFlagsReachabilityAndEmitFlags | ast.NodeFlagsContainsThis
+		node.Flags &^= ast.NodeFlagsReachabilityAndEmitFlags | ast.NodeFlagsContainsSelf
 		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && containerFlags&ContainerFlagsIsFunctionLike != 0 {
 			bodyData := node.BodyData()
 			if bodyData != nil && ast.NodeIsPresent(bodyData.Body) {
@@ -1345,8 +1344,8 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 				bodyData.EndFlowNode = b.currentFlow
 			}
 		}
-		if b.seenThisKeyword {
-			node.Flags |= ast.NodeFlagsContainsThis
+		if b.seenSelfType {
+			node.Flags |= ast.NodeFlagsContainsSelf
 		}
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
@@ -1365,22 +1364,22 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentExceptionTarget = saveExceptionTarget
 		b.activeLabelList = saveActiveLabelList
 		b.hasExplicitReturn = saveHasExplicitReturn
-		if containerFlags&ContainerFlagsPropagatesThisKeyword != 0 {
-			b.seenThisKeyword = saveSeenThisKeyword || b.seenThisKeyword
+		if containerFlags&ContainerFlagsPropagatesSelfType != 0 {
+			b.seenSelfType = saveSeenSelfType || b.seenSelfType
 		} else {
-			b.seenThisKeyword = saveSeenThisKeyword
+			b.seenSelfType = saveSeenSelfType
 		}
 	} else if containerFlags&ContainerFlagsIsInterface != 0 {
-		saveSeenThisKeyword := b.seenThisKeyword
-		b.seenThisKeyword = false
+		saveSeenSelfType := b.seenSelfType
+		b.seenSelfType = false
 		b.bindChildren(node)
-		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on Identifier
-		if b.seenThisKeyword {
-			node.Flags |= ast.NodeFlagsContainsThis
+		// ContainsSelf cannot overlap with HasExtendedUnicodeEscape on Identifier.
+		if b.seenSelfType {
+			node.Flags |= ast.NodeFlagsContainsSelf
 		} else {
-			node.Flags &^= ast.NodeFlagsContainsThis
+			node.Flags &^= ast.NodeFlagsContainsSelf
 		}
-		b.seenThisKeyword = saveSeenThisKeyword
+		b.seenSelfType = saveSeenSelfType
 	} else {
 		b.bindChildren(node)
 	}
@@ -2254,11 +2253,11 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 	case ast.KindFunctionDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesThisKeyword
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesSelfType
 	case ast.KindFunctionExpression:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsIsThisContainer
 	case ast.KindArrowFunction:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsPropagatesThisKeyword
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsPropagatesSelfType
 	case ast.KindModuleBlock:
 		return ContainerFlagsIsControlFlowContainer
 	case ast.KindForOfStatement, ast.KindNumericForStatement,

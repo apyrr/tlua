@@ -25,14 +25,14 @@ type TypeMapper struct {
 
 func (m *TypeMapper) Map(t *Type) *Type    { return m.data.Map(t) }
 func (m *TypeMapper) Kind() TypeMapperKind { return m.data.Kind() }
-func (m *TypeMapper) MapsThisOnly() bool   { return m.data.MapsThisOnly() }
+func (m *TypeMapper) MapsSelfOnly() bool   { return m.data.MapsSelfOnly() }
 
 // TypeMapperData
 
 type TypeMapperData interface {
 	Map(t *Type) *Type
 	Kind() TypeMapperKind
-	MapsThisOnly() bool
+	MapsSelfOnly() bool
 }
 
 // Factory functions
@@ -90,7 +90,7 @@ type TypeMapperBase struct {
 
 func (m *TypeMapperBase) Map(t *Type) *Type    { return t }
 func (m *TypeMapperBase) Kind() TypeMapperKind { return TypeMapperKindUnknown }
-func (m *TypeMapperBase) MapsThisOnly() bool   { return false }
+func (m *TypeMapperBase) MapsSelfOnly() bool   { return false }
 
 // SimpleTypeMapper
 
@@ -119,8 +119,8 @@ func (m *SimpleTypeMapper) Kind() TypeMapperKind {
 	return TypeMapperKindSimple
 }
 
-func (m *SimpleTypeMapper) MapsThisOnly() bool {
-	return isThisTypeParameter(m.source)
+func (m *SimpleTypeMapper) MapsSelfOnly() bool {
+	return isSelfTypeParameter(m.source)
 }
 
 // ArrayTypeMapper
@@ -152,8 +152,8 @@ func (m *ArrayTypeMapper) Kind() TypeMapperKind {
 	return TypeMapperKindArray
 }
 
-func (m *ArrayTypeMapper) MapsThisOnly() bool {
-	return len(m.sources) == 1 && isThisTypeParameter(m.sources[0])
+func (m *ArrayTypeMapper) MapsSelfOnly() bool {
+	return len(m.sources) == 1 && isSelfTypeParameter(m.sources[0])
 }
 
 // ArrayToSingleTypeMapper
@@ -179,8 +179,8 @@ func (m *ArrayToSingleTypeMapper) Map(t *Type) *Type {
 	return t
 }
 
-func (m *ArrayToSingleTypeMapper) MapsThisOnly() bool {
-	return len(m.sources) == 1 && isThisTypeParameter(m.sources[0])
+func (m *ArrayToSingleTypeMapper) MapsSelfOnly() bool {
+	return len(m.sources) == 1 && isSelfTypeParameter(m.sources[0])
 }
 
 // DeferredTypeMapper
@@ -208,8 +208,8 @@ func (m *DeferredTypeMapper) Map(t *Type) *Type {
 	return t
 }
 
-func (m *DeferredTypeMapper) MapsThisOnly() bool {
-	return len(m.sources) == 1 && isThisTypeParameter(m.sources[0])
+func (m *DeferredTypeMapper) MapsSelfOnly() bool {
+	return len(m.sources) == 1 && isSelfTypeParameter(m.sources[0])
 }
 
 // FunctionTypeMapper

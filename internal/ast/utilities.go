@@ -814,6 +814,7 @@ func IsTypeNodeKind(kind Kind) bool {
 		KindBooleanKeyword,
 		KindStringKeyword,
 		KindSymbolKeyword,
+		KindSelfKeyword,
 		KindVoidKeyword,
 		KindNilKeyword,
 		KindNeverKeyword,
@@ -2080,7 +2081,7 @@ func IsPartOfTypeNode(node *Node) bool {
 	case KindAnyKeyword, KindUnknownKeyword, KindNumberKeyword, KindStringKeyword,
 		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword,
 		KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword,
-		KindNilKeyword, KindNeverKeyword:
+		KindNilKeyword, KindNeverKeyword, KindSelfKeyword:
 		return true
 	case KindVoidKeyword:
 		return node.Parent.Kind != KindVoidExpression
@@ -3947,14 +3948,6 @@ func HasContextSensitiveParameters(node *Node) bool {
 		// Functions with any parameters that lack type annotations are context sensitive.
 		if core.Some(node.Parameters(), func(p *Node) bool { return p.Type() == nil }) {
 			return true
-		}
-		if !IsArrowFunction(node) {
-			// If the first parameter is not an explicit 'this' parameter, then the function has
-			// an implicit 'this' parameter which is subject to contextual typing.
-			parameter := core.FirstOrNil(node.Parameters())
-			if parameter == nil || !IsThisParameter(parameter) {
-				return node.Flags&NodeFlagsContainsThis != 0
-			}
 		}
 	}
 	return false

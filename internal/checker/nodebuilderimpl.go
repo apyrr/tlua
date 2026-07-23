@@ -3234,6 +3234,16 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		b.ctx.approximateLength += 5
 		return b.f.NewKeywordTypeNode(ast.KindCDataKeyword)
 	}
+	if isSelfTypeParameter(t) {
+		if b.ctx.flags&nodebuilder.FlagsInObjectTypeLiteral != 0 {
+			if !b.ctx.encounteredError && b.ctx.flags&nodebuilder.FlagsAllowSelfInObjectLiteral == 0 {
+				b.ctx.encounteredError = true
+			}
+			b.ctx.tracker.ReportInaccessibleSelfError()
+		}
+		b.ctx.approximateLength += 4
+		return b.f.NewKeywordTypeNode(ast.KindSelfKeyword)
+	}
 	if inTypeAlias == 0 && t.alias != nil && (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 || b.ch.IsTypeSymbolAccessible(t.alias.Symbol(), b.ctx.enclosingDeclaration)) {
 		// If we should expand this type alias, skip the alias and fall through to expand the underlying type
 		if !b.shouldExpandType(t, true /*isAlias*/) {

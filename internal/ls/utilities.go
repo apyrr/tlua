@@ -248,7 +248,7 @@ func isTypeReference(node *ast.Node) bool {
 	}
 
 	switch node.Kind {
-	case ast.KindThisKeyword:
+	case ast.KindThisKeyword, ast.KindSelfKeyword:
 		return !ast.IsExpressionNode(node)
 	}
 
@@ -323,6 +323,7 @@ var typeKeywords *collections.Set[ast.Kind] = collections.NewSetFromItems(
 	ast.KindReadonlyKeyword,
 	ast.KindStringKeyword,
 	ast.KindSymbolKeyword,
+	ast.KindSelfKeyword,
 	ast.KindTypeOfKeyword,
 	ast.KindTrueKeyword,
 	ast.KindVoidKeyword,

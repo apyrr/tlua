@@ -1,0 +1,120 @@
+//// [tests/cases/compiler/tluaSelfType.tlua] ////
+
+=== tluaSelfType.tlua ===
+// `self` is a receiver-relative type inside an interface. Inherited members
+// substitute the most-derived interface, which keeps fluent chains precise.
+
+interface HexZodSchema<T> {
+	parse(self: self, value: unknown): T;
+>parse : (self: self, value: unknown) => T
+>self : self
+>value : unknown
+}
+
+interface HexZodStringSchema extends HexZodSchema<string> {
+	min(self: self, length: number, message?: string): self;
+>min : (self: self, length: number, message?: string) => self
+>self : self
+>length : number
+>message : string | nil
+
+	max(self: self, length: number, message?: string): self;
+>max : (self: self, length: number, message?: string) => self
+>self : self
+>length : number
+>message : string | nil
+
+	trim(length: number): self;
+>trim : (length: number) => self
+>length : number
+
+	copy(): self;
+>copy : () => self
+
+	peer: self;
+>peer : self
+}
+
+interface BrandedStringSchema extends HexZodStringSchema {
+	brand(self: self): string;
+>brand : (self: self) => string
+>self : self
+}
+
+declare schema: BrandedStringSchema;
+>schema : BrandedStringSchema
+
+local minResult: BrandedStringSchema = schema:min(1);
+>minResult : BrandedStringSchema
+>schema:min(1) : BrandedStringSchema
+>schema:min : (self: BrandedStringSchema, length: number, message?: string) => BrandedStringSchema
+>schema : BrandedStringSchema
+>min : (self: BrandedStringSchema, length: number, message?: string) => BrandedStringSchema
+>1 : 1
+
+local maxResult: BrandedStringSchema = schema.max(schema, 10);
+>maxResult : BrandedStringSchema
+>schema.max(schema, 10) : BrandedStringSchema
+>schema.max : (self: BrandedStringSchema, length: number, message?: string) => BrandedStringSchema
+>schema : BrandedStringSchema
+>max : (self: BrandedStringSchema, length: number, message?: string) => BrandedStringSchema
+>schema : BrandedStringSchema
+>10 : 10
+
+local trimResult: BrandedStringSchema = schema.trim(1);
+>trimResult : BrandedStringSchema
+>schema.trim(1) : BrandedStringSchema
+>schema.trim : (length: number) => BrandedStringSchema
+>schema : BrandedStringSchema
+>trim : (length: number) => BrandedStringSchema
+>1 : 1
+
+local copyResult: BrandedStringSchema = schema.copy();
+>copyResult : BrandedStringSchema
+>schema.copy() : BrandedStringSchema
+>schema.copy : () => BrandedStringSchema
+>schema : BrandedStringSchema
+>copy : () => BrandedStringSchema
+
+local peerResult: BrandedStringSchema = schema.peer;
+>peerResult : BrandedStringSchema
+>schema.peer : BrandedStringSchema
+>schema : BrandedStringSchema
+>peer : BrandedStringSchema
+
+local brand: string = schema:min(1):brand();
+>brand : string
+>schema:min(1):brand() : string
+>schema:min(1):brand : (self: BrandedStringSchema) => string
+>schema:min(1) : BrandedStringSchema
+>schema:min : (self: BrandedStringSchema, length: number, message?: string) => BrandedStringSchema
+>schema : BrandedStringSchema
+>min : (self: BrandedStringSchema, length: number, message?: string) => BrandedStringSchema
+>1 : 1
+>brand : (self: BrandedStringSchema) => string
+
+// The contextual keyword remains a valid value binding and property name.
+local self = schema;
+>self : BrandedStringSchema
+>schema : BrandedStringSchema
+
+local selfResult: BrandedStringSchema = self;
+>selfResult : BrandedStringSchema
+>self : BrandedStringSchema
+
+local holder = { self = schema };
+>holder : { self: BrandedStringSchema; }
+>{ self = schema } : { self: BrandedStringSchema; }
+>self : BrandedStringSchema
+>schema : BrandedStringSchema
+
+local propertyResult: BrandedStringSchema = holder.self;
+>propertyResult : BrandedStringSchema
+>holder.self : BrandedStringSchema
+>holder : { self: BrandedStringSchema; }
+>self : BrandedStringSchema
+
+// `self` is contextual type syntax rather than a globally available type.
+type Outside = self;
+>Outside : any
+

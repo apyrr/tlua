@@ -1,0 +1,127 @@
+//// [tests/cases/compiler/tluaSelfType.tlua] ////
+
+=== tluaSelfType.tlua ===
+// `self` is a receiver-relative type inside an interface. Inherited members
+// substitute the most-derived interface, which keeps fluent chains precise.
+
+interface HexZodSchema<T> {
+>HexZodSchema : Symbol(HexZodSchema, Decl(tluaSelfType.tlua, 0, 0))
+>T : Symbol(T, Decl(tluaSelfType.tlua, 3, 23))
+
+	parse(self: self, value: unknown): T;
+>parse : Symbol(HexZodSchema.parse, Decl(tluaSelfType.tlua, 3, 27))
+>self : Symbol(self, Decl(tluaSelfType.tlua, 4, 7))
+>value : Symbol(value, Decl(tluaSelfType.tlua, 4, 18))
+>T : Symbol(T, Decl(tluaSelfType.tlua, 3, 23))
+}
+
+interface HexZodStringSchema extends HexZodSchema<string> {
+>HexZodStringSchema : Symbol(HexZodStringSchema, Decl(tluaSelfType.tlua, 5, 1))
+>HexZodSchema : Symbol(HexZodSchema, Decl(tluaSelfType.tlua, 0, 0))
+
+	min(self: self, length: number, message?: string): self;
+>min : Symbol(HexZodStringSchema.min, Decl(tluaSelfType.tlua, 7, 59))
+>self : Symbol(self, Decl(tluaSelfType.tlua, 8, 5))
+>length : Symbol(length, Decl(tluaSelfType.tlua, 8, 16))
+>message : Symbol(message, Decl(tluaSelfType.tlua, 8, 32))
+
+	max(self: self, length: number, message?: string): self;
+>max : Symbol(HexZodStringSchema.max, Decl(tluaSelfType.tlua, 8, 57))
+>self : Symbol(self, Decl(tluaSelfType.tlua, 9, 5))
+>length : Symbol(length, Decl(tluaSelfType.tlua, 9, 16))
+>message : Symbol(message, Decl(tluaSelfType.tlua, 9, 32))
+
+	trim(length: number): self;
+>trim : Symbol(HexZodStringSchema.trim, Decl(tluaSelfType.tlua, 9, 57))
+>length : Symbol(length, Decl(tluaSelfType.tlua, 10, 6))
+
+	copy(): self;
+>copy : Symbol(HexZodStringSchema.copy, Decl(tluaSelfType.tlua, 10, 28))
+
+	peer: self;
+>peer : Symbol(HexZodStringSchema.peer, Decl(tluaSelfType.tlua, 11, 14))
+}
+
+interface BrandedStringSchema extends HexZodStringSchema {
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>HexZodStringSchema : Symbol(HexZodStringSchema, Decl(tluaSelfType.tlua, 5, 1))
+
+	brand(self: self): string;
+>brand : Symbol(BrandedStringSchema.brand, Decl(tluaSelfType.tlua, 15, 58))
+>self : Symbol(self, Decl(tluaSelfType.tlua, 16, 7))
+}
+
+declare schema: BrandedStringSchema;
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+
+local minResult: BrandedStringSchema = schema:min(1);
+>minResult : Symbol(minResult, Decl(tluaSelfType.tlua, 21, 5))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>schema:min : Symbol(HexZodStringSchema.min, Decl(tluaSelfType.tlua, 7, 59))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+>min : Symbol(HexZodStringSchema.min, Decl(tluaSelfType.tlua, 7, 59))
+
+local maxResult: BrandedStringSchema = schema.max(schema, 10);
+>maxResult : Symbol(maxResult, Decl(tluaSelfType.tlua, 22, 5))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>schema.max : Symbol(HexZodStringSchema.max, Decl(tluaSelfType.tlua, 8, 57))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+>max : Symbol(HexZodStringSchema.max, Decl(tluaSelfType.tlua, 8, 57))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+
+local trimResult: BrandedStringSchema = schema.trim(1);
+>trimResult : Symbol(trimResult, Decl(tluaSelfType.tlua, 23, 5))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>schema.trim : Symbol(HexZodStringSchema.trim, Decl(tluaSelfType.tlua, 9, 57))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+>trim : Symbol(HexZodStringSchema.trim, Decl(tluaSelfType.tlua, 9, 57))
+
+local copyResult: BrandedStringSchema = schema.copy();
+>copyResult : Symbol(copyResult, Decl(tluaSelfType.tlua, 24, 5))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>schema.copy : Symbol(HexZodStringSchema.copy, Decl(tluaSelfType.tlua, 10, 28))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+>copy : Symbol(HexZodStringSchema.copy, Decl(tluaSelfType.tlua, 10, 28))
+
+local peerResult: BrandedStringSchema = schema.peer;
+>peerResult : Symbol(peerResult, Decl(tluaSelfType.tlua, 25, 5))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>schema.peer : Symbol(HexZodStringSchema.peer, Decl(tluaSelfType.tlua, 11, 14))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+>peer : Symbol(HexZodStringSchema.peer, Decl(tluaSelfType.tlua, 11, 14))
+
+local brand: string = schema:min(1):brand();
+>brand : Symbol(brand, Decl(tluaSelfType.tlua, 26, 5))
+>schema:min(1):brand : Symbol(BrandedStringSchema.brand, Decl(tluaSelfType.tlua, 15, 58))
+>schema:min : Symbol(HexZodStringSchema.min, Decl(tluaSelfType.tlua, 7, 59))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+>min : Symbol(HexZodStringSchema.min, Decl(tluaSelfType.tlua, 7, 59))
+>brand : Symbol(BrandedStringSchema.brand, Decl(tluaSelfType.tlua, 15, 58))
+
+// The contextual keyword remains a valid value binding and property name.
+local self = schema;
+>self : Symbol(self, Decl(tluaSelfType.tlua, 29, 5))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+
+local selfResult: BrandedStringSchema = self;
+>selfResult : Symbol(selfResult, Decl(tluaSelfType.tlua, 30, 5))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>self : Symbol(self, Decl(tluaSelfType.tlua, 29, 5))
+
+local holder = { self = schema };
+>holder : Symbol(holder, Decl(tluaSelfType.tlua, 31, 5))
+>self : Symbol(self, Decl(tluaSelfType.tlua, 31, 16))
+>schema : Symbol(schema, Decl(tluaSelfType.tlua, 19, 7))
+
+local propertyResult: BrandedStringSchema = holder.self;
+>propertyResult : Symbol(propertyResult, Decl(tluaSelfType.tlua, 32, 5))
+>BrandedStringSchema : Symbol(BrandedStringSchema, Decl(tluaSelfType.tlua, 13, 1))
+>holder.self : Symbol(self, Decl(tluaSelfType.tlua, 31, 16))
+>holder : Symbol(holder, Decl(tluaSelfType.tlua, 31, 5))
+>self : Symbol(self, Decl(tluaSelfType.tlua, 31, 16))
+
+// `self` is contextual type syntax rather than a globally available type.
+type Outside = self;
+>Outside : Symbol(Outside, Decl(tluaSelfType.tlua, 32, 56))
+

@@ -181,6 +181,7 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		ast.KindUnionType,
 		ast.KindIntersectionType,
 		ast.KindParenthesizedType,
+		ast.KindSelfKeyword,
 		ast.KindNamedTupleMember:
 		return r.isDeclarationVisible(node.Parent)
 

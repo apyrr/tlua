@@ -287,6 +287,10 @@
         "category": "Error",
         "code": 100055
     },
+    "A 'self' type is available only in a member of an interface.": {
+        "category": "Error",
+        "code": 100056
+    },
     "Part of 'files' list in tluaconfig.json": {
         "category": "Message",
         "code": 1409

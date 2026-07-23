@@ -3571,7 +3571,7 @@
         },
         "type-builtin-literals": {
             "name": "support.type.builtin.tlua",
-            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(this|true|false|undefined|nil|null)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(self|true|false|undefined|nil|null)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
         },
         "type-tuple": {
             "name": "meta.type.tuple.tlua",

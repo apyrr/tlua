@@ -954,9 +954,9 @@ func (t *TypeReference) AsTypeReference() *TypeReference { return t }
 
 type InterfaceType struct {
 	TypeReference
-	allTypeParameters           []*Type // Type parameters (outer + local + thisType)
+	allTypeParameters           []*Type // Type parameters (outer + local + selfType)
 	outerTypeParameterCount     int     // Count of outer type parameters
-	thisType                    *Type   // The "this" type (nil if none)
+	selfType                    *Type   // The polymorphic receiver type (nil if none)
 	baseTypesResolved           bool
 	declaredMembersResolved     bool
 	resolvedBaseConstructorType *Type
@@ -1131,12 +1131,12 @@ type TypeParameter struct {
 	constraint          *Type
 	target              *Type
 	mapper              *TypeMapper
-	isThisType          bool
+	isSelfType          bool
 	isPack              bool // a Lua generic pack parameter, declared `<...A>`; instantiated with a value pack
 	resolvedDefaultType *Type
 }
 
-func (t *TypeParameter) IsThisType() bool { return t.isThisType }
+func (t *TypeParameter) IsSelfType() bool { return t.isSelfType }
 
 // IndexFlags
 

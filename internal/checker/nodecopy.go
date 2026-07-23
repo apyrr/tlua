@@ -157,8 +157,8 @@ func (w *wrappingTracker) ReportCyclicStructureError() {
 	w.bound.markError(w.wrapped.ReportCyclicStructureError)
 }
 
-func (w *wrappingTracker) ReportInaccessibleThisError() {
-	w.bound.markError(w.wrapped.ReportInaccessibleThisError)
+func (w *wrappingTracker) ReportInaccessibleSelfError() {
+	w.bound.markError(w.wrapped.ReportInaccessibleSelfError)
 }
 
 func (w *wrappingTracker) ReportInaccessibleUniqueSymbolError() {
@@ -333,15 +333,6 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		}
 		meaning := getMeaningOfEntityNameReference(node)
 		var sym *ast.Symbol
-		if ast.IsThisIdentifier(leftmost) {
-			// `this` isn't a bindable identifier - skip resolution, find a relevant `this` symbol directly and avoid exhaustive scope traversal
-			sym = b.ch.getSymbolOfDeclaration(ast.GetThisContainer(leftmost, false))
-			if b.ch.IsSymbolAccessible(sym, leftmost, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
-				introducesError = true
-				b.ctx.tracker.ReportInaccessibleThisError()
-			}
-			return introducesError, attachSymbolToLeftmostIdentifier(leftmost, node, sym), nil
-		}
 		sym = b.ch.resolveEntityName(leftmost, meaning, true, true, nil)
 		if b.ctx.enclosingDeclaration != nil && !(sym != nil && sym.Flags&ast.SymbolFlagsTypeParameter != 0) {
 			sym = b.ch.getExportSymbolOfValueSymbolIfExported(sym)

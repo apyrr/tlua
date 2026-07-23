@@ -173,6 +173,7 @@
             "GlobalKeyword",
             "OverrideKeyword",
             "OfKeyword",
+            "SelfKeyword",
             {
                 "name": "DeferKeyword",
                 "comment": "LastKeyword and LastToken and LastContextualKeyword"
@@ -595,6 +596,7 @@
                 "CDataKeyword",
                 "StringKeyword",
                 "SymbolKeyword",
+                "SelfKeyword",
                 "NilKeyword",
                 "UnknownKeyword",
                 "VoidKeyword"

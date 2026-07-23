@@ -12,6 +12,7 @@ import {
     formatSyntaxKind,
     getTokenAtPosition,
     getTouchingPropertyName,
+    SyntaxKind,
 } from "@tlua/cli/unstable/ast";
 import type {
     Node,
@@ -190,4 +191,31 @@ describe("astnav", () => {
             }
         });
     }
+});
+
+describe("self keyword navigation", () => {
+    test("getTokenAtPosition returns the contextual type keyword", () => {
+        const text = "interface Fluent { clone(): self; }";
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: createVirtualFileSystem({
+                "/tluaconfig.json": JSON.stringify({ files: ["/src/main.tlua"] }),
+                "/src/main.tlua": text,
+            }),
+        });
+
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
+            const project = snapshot.getProject("/tluaconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/main.tlua");
+            assert.ok(sourceFile);
+
+            const token = getTokenAtPosition(sourceFile, text.indexOf("self"));
+            assert.ok(token);
+            assert.equal(token.kind, SyntaxKind.SelfKeyword);
+        }
+        finally {
+            api.close();
+        }
+    });
 });

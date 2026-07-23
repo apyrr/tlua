@@ -8,7 +8,7 @@ export enum NodeFlags {
     Synthesized = 1 << 4,
     OptionalChain = 1 << 5,
     ExportContext = 1 << 6,
-    ContainsThis = 1 << 7,
+    ContainsSelf = 1 << 7,
     HasImplicitReturn = 1 << 8,
     HasExplicitReturn = 1 << 9,
     DisallowInContext = 1 << 10,
@@ -37,7 +37,7 @@ export enum NodeFlags {
     ContextFlags = DisallowInContext | DisallowConditionalTypesContext | YieldContext | AwaitContext | JavaScriptFile | Ambient,
     TypeExcludesFlags = YieldContext | AwaitContext,
     PermanentlySetIncrementalFlags = PossiblyContainsDynamicImport | PossiblyContainsImportMeta,
-    IdentifierHasExtendedUnicodeEscape = ContainsThis,
+    IdentifierHasExtendedUnicodeEscape = ContainsSelf,
     IdentifierIsInJSDocNamespace = HasAsyncFunctions,
     NestedNamespace = OptionalChain,
 }

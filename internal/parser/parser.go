@@ -2061,10 +2061,12 @@ func (p *Parser) nextIsStartOfType() bool {
 
 func (p *Parser) parseNonArrayType() *ast.Node {
 	switch p.token {
+	case ast.KindIdentifier:
+		return p.parseTypeReference()
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword,
 		ast.KindSymbolKeyword, ast.KindBooleanKeyword, ast.KindNilKeyword, ast.KindNeverKeyword, ast.KindObjectKeyword,
 		ast.KindThreadKeyword, ast.KindUserdataKeyword, ast.KindCDataKeyword,
-		ast.KindFunctionKeyword:
+		ast.KindFunctionKeyword, ast.KindSelfKeyword:
 		state := p.mark()
 		keywordTypeNode := p.parseKeywordTypeNode()
 		// If these are followed by a dot then parse these out as a dotted type reference instead
@@ -5021,7 +5023,7 @@ func (p *Parser) isStartOfType(inStartOfParameter bool) bool {
 	switch p.token {
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword,
 		ast.KindBooleanKeyword, ast.KindReadonlyKeyword, ast.KindSymbolKeyword, ast.KindUniqueKeyword, ast.KindVoidKeyword,
-		ast.KindNilKeyword, ast.KindTypeOfKeyword, ast.KindNeverKeyword,
+		ast.KindNilKeyword, ast.KindTypeOfKeyword, ast.KindNeverKeyword, ast.KindSelfKeyword,
 		ast.KindOpenBraceToken, ast.KindLessThanToken, ast.KindBarToken, ast.KindAmpersandToken,
 		ast.KindNewKeyword, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindTrueKeyword,
 		ast.KindFalseKeyword, ast.KindObjectKeyword, ast.KindThreadKeyword, ast.KindUserdataKeyword, ast.KindCDataKeyword,

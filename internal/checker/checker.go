@@ -2538,6 +2538,8 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkUnionOrIntersectionType(node)
 	case ast.KindParenthesizedType, ast.KindOptionalType, ast.KindRestType:
 		node.ForEachChild(c.checkSourceElement)
+	case ast.KindSelfKeyword:
+		c.checkSelfType(node)
 	case ast.KindMultiReturnType:
 		c.checkGrammarMultiReturnType(node)
 		node.ForEachChild(c.checkSourceElement)
@@ -2831,7 +2833,7 @@ func (c *Checker) checkTypeParameter(node *ast.Node) {
 	// checking it against the implicit `(...any)` constraint the user never wrote
 	// would only add a confusing second error.
 	if constraintType != nil && defaultType != nil && tpNode.DotDotDotToken == nil {
-		c.checkTypeAssignableTo(defaultType, c.getTypeWithThisArgument(c.instantiateType(constraintType, newSimpleTypeMapper(typeParameter, defaultType)), defaultType, false), tpNode.DefaultType, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
+		c.checkTypeAssignableTo(defaultType, c.getTypeWithSelfArgument(c.instantiateType(constraintType, newSimpleTypeMapper(typeParameter, defaultType)), defaultType, false), tpNode.DefaultType, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
 	}
 	c.checkTypeNameIsReserved(node.Name(), diagnostics.Type_parameter_name_cannot_be_0)
 	if tpNode.DotDotDotToken != nil {
@@ -3238,6 +3240,10 @@ func (c *Checker) checkTupleType(node *ast.Node) {
 func (c *Checker) checkUnionOrIntersectionType(node *ast.Node) {
 	node.ForEachChild(c.checkSourceElement)
 	c.getTypeFromTypeNode(node)
+}
+
+func (c *Checker) checkSelfType(node *ast.Node) {
+	c.getTypeFromSelfKeyword(node)
 }
 
 func (c *Checker) checkTypeOperator(node *ast.Node) {
@@ -4276,17 +4282,17 @@ func (c *Checker) areTypeParametersIdentical(declarations []*ast.Node, targetPar
 	return true
 }
 
-func (c *Checker) issueMemberSpecificError(node *ast.Node, typeWithThis *Type, baseWithThis *Type, broadDiag *diagnostics.Message) {
+func (c *Checker) issueMemberSpecificError(node *ast.Node, typeWithSelf *Type, baseWithSelf *Type, broadDiag *diagnostics.Message) {
 	// iterate over all implemented properties and issue errors on each one which isn't compatible, rather than the class as a whole, if possible
 	issuedMemberError := false
 	for _, member := range node.Members() {
 		if declaredProp := c.getSymbolOfDeclaration(member); declaredProp != nil && declaredProp.Name != ast.InternalSymbolNameComputed {
-			prop := c.getPropertyOfType(typeWithThis, declaredProp.Name)
-			baseProp := c.getPropertyOfType(baseWithThis, declaredProp.Name)
+			prop := c.getPropertyOfType(typeWithSelf, declaredProp.Name)
+			baseProp := c.getPropertyOfType(baseWithSelf, declaredProp.Name)
 			if prop != nil && baseProp != nil {
 				var diags []*ast.Diagnostic
 				if !c.checkTypeAssignableToEx(c.getTypeOfSymbol(prop), c.getTypeOfSymbol(baseProp), core.OrElse(member.Name(), member), nil /*headMessage*/, &diags) {
-					c.addDiagnostic(ast.NewDiagnosticChain(diags[0], diagnostics.Property_0_in_type_1_is_not_assignable_to_the_same_property_in_base_type_2, c.symbolToString(declaredProp), c.TypeToString(typeWithThis), c.TypeToString(baseWithThis)))
+					c.addDiagnostic(ast.NewDiagnosticChain(diags[0], diagnostics.Property_0_in_type_1_is_not_assignable_to_the_same_property_in_base_type_2, c.symbolToString(declaredProp), c.TypeToString(typeWithSelf), c.TypeToString(baseWithSelf)))
 					issuedMemberError = true
 				}
 			}
@@ -4294,7 +4300,7 @@ func (c *Checker) issueMemberSpecificError(node *ast.Node, typeWithThis *Type, b
 	}
 	if !issuedMemberError {
 		// check again with diagnostics to generate a less-specific error
-		c.checkTypeAssignableTo(typeWithThis, baseWithThis, core.OrElse(node.Name(), node), broadDiag)
+		c.checkTypeAssignableTo(typeWithSelf, baseWithSelf, core.OrElse(node.Name(), node), broadDiag)
 	}
 }
 
@@ -4471,11 +4477,11 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 	if links := c.declaredTypeLinks.Get(symbol); !links.interfaceChecked {
 		links.interfaceChecked = true
 		t := c.getDeclaredTypeOfSymbol(symbol)
-		typeWithThis := c.getTypeWithThisArgument(t, nil, false)
+		typeWithSelf := c.getTypeWithSelfArgument(t, nil, false)
 		// run subsequent checks only if first set succeeded
 		if c.checkInheritedPropertiesAreIdentical(t, node.Name()) {
 			for _, baseType := range c.getBaseTypes(t) {
-				c.checkTypeAssignableTo(typeWithThis, c.getTypeWithThisArgument(baseType, t.AsInterfaceType().thisType, false), node.Name(), diagnostics.Interface_0_incorrectly_extends_interface_1)
+				c.checkTypeAssignableTo(typeWithSelf, c.getTypeWithSelfArgument(baseType, t.AsInterfaceType().selfType, false), node.Name(), diagnostics.Interface_0_incorrectly_extends_interface_1)
 			}
 			c.checkIndexConstraints(t, symbol /*isStaticIndex*/, false)
 		}
@@ -4511,7 +4517,7 @@ func (c *Checker) checkInheritedPropertiesAreIdentical(t *Type, typeNode *ast.No
 	}
 	identical := true
 	for _, base := range baseTypes {
-		properties := c.getPropertiesOfType(c.getTypeWithThisArgument(base, t.AsInterfaceType().thisType, false))
+		properties := c.getPropertiesOfType(c.getTypeWithSelfArgument(base, t.AsInterfaceType().selfType, false))
 		for _, prop := range properties {
 			if existing, ok := seen[prop.Name]; !ok {
 				seen[prop.Name] = InheritanceInfo{prop: prop, containingType: base}
@@ -4720,7 +4726,7 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 				nameText := getPropertyNameFromType(exprType)
 				property := c.getPropertyOfType(parentType, nameText)
 				if property != nil {
-					c.markPropertyAsReferenced(property, nil /*nodeForCheckWriteOnly*/, false /*isSelfTypeAccess*/)
+					c.markPropertyAsReferenced(property, nil /*nodeForCheckWriteOnly*/, false /*isThisTypeAccess*/)
 				}
 			}
 		}
@@ -5592,7 +5598,7 @@ func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.M
 	// TS 1.0 spec (April 2014): 3.6.1
 	// The predefined type keywords are reserved and cannot be used as names of user defined types.
 	switch name.Text() {
-	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "table", "thread", "userdata", "cdata", "undefined":
+	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "table", "thread", "userdata", "cdata", "undefined", "self":
 		c.error(name, message, name.Text())
 	}
 }
@@ -6435,7 +6441,7 @@ func (c *Checker) checkPrivateIdentifierExpression(node *ast.Node) *Type {
 	c.checkGrammarPrivateIdentifierExpression(node.AsPrivateIdentifier())
 	symbol := c.getSymbolForPrivateIdentifierExpression(node)
 	if symbol != nil {
-		c.markPropertyAsReferenced(symbol, nil /*nodeForCheckWriteOnly*/, false /*isSelfTypeAccess*/)
+		c.markPropertyAsReferenced(symbol, nil /*nodeForCheckWriteOnly*/, false /*isThisTypeAccess*/)
 	}
 	return c.anyType
 }
@@ -6607,7 +6613,7 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 	} else {
 		accessFlags = AccessFlagsWriting |
 			core.IfElse(assignmentTargetKind == AssignmentKindCompound, AccessFlagsExpressionPosition, 0) |
-			core.IfElse(c.isGenericObjectType(objectType) && !isThisTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
+			core.IfElse(c.isGenericObjectType(objectType) && !isSelfTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
 	}
 	indexedAccessType := core.OrElse(c.getIndexedAccessTypeOrUndefined(objectType, effectiveIndexType, accessFlags, node, nil), c.errorType)
 	return c.checkIndexedAccessIndexType(c.getFlowTypeOfAccessExpression(node, c.getResolvedSymbolOrNil(node), indexedAccessType, indexExpression, checkMode), node)
@@ -7469,7 +7475,7 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 				errorNode = typeArgumentNodes[i]
 			}
 			var diags []*ast.Diagnostic
-			if !c.checkTypeAssignableToEx(typeArgument, c.getTypeWithThisArgument(c.instantiateType(constraint, mapper), typeArgument, false), errorNode, typeArgumentHeadMessage, &diags) {
+			if !c.checkTypeAssignableToEx(typeArgument, c.getTypeWithSelfArgument(c.instantiateType(constraint, mapper), typeArgument, false), errorNode, typeArgumentHeadMessage, &diags) {
 				if len(diags) != 0 {
 					diagnostic := diags[0]
 					if headMessage != nil {
@@ -9305,7 +9311,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 	var propType *Type
 	if prop == nil {
 		var indexInfo *IndexInfo
-		if !ast.IsPrivateIdentifier(right) && (assignmentKind == AssignmentKindNone || !c.isGenericObjectType(leftType) || isThisTypeParameter(leftType)) {
+		if !ast.IsPrivateIdentifier(right) && (assignmentKind == AssignmentKindNone || !c.isGenericObjectType(leftType) || isSelfTypeParameter(leftType)) {
 			indexInfo = c.getApplicableIndexInfoForName(apparentType, right.Text())
 		}
 		if indexInfo == nil {
@@ -9333,7 +9339,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 			if right.Text() != "" && !c.checkAndReportErrorForExtendingInterface(node) {
 				c.addDeferredDiagnostic(func() {
 					// must be deferred because reporting this error can cause us to materialize the containing type completely (to print it), leading to erroneous circularity errors
-					c.reportNonexistentProperty(right, core.IfElse(isThisTypeParameter(leftType), apparentType, leftType), isUncheckedJS)
+					c.reportNonexistentProperty(right, core.IfElse(isSelfTypeParameter(leftType), apparentType, leftType), isUncheckedJS)
 				})
 			}
 			return c.errorType
@@ -9356,7 +9362,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 		if c.isDeprecatedSymbol(targetPropSymbol) && c.isUncalledFunctionReference(node, targetPropSymbol) && targetPropSymbol.Declarations != nil {
 			c.addDeprecatedSuggestion(right, targetPropSymbol.Declarations, right.Text())
 		}
-		c.markPropertyAsReferenced(prop, node, c.isSelfTypeAccess(left, parentSymbol))
+		c.markPropertyAsReferenced(prop, node, c.isThisTypeAccess(left, parentSymbol))
 		c.symbolNodeLinks.Get(node).resolvedSymbol = prop
 		if c.isAssignmentToReadonlyEntity(node, prop, assignmentKind) {
 			c.error(right, diagnostics.Cannot_assign_to_0_because_it_is_a_read_only_property, right.Text())
@@ -14274,18 +14280,15 @@ func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *ast.Symbol) *Type {
 		links.declaredType = t
 		outerTypeParameters := c.getOuterTypeParametersOfClassOrInterface(symbol)
 		typeParameters := c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(outerTypeParameters, symbol)
-		// A class or interface is generic if it has type parameters or a "this" type. We always give classes a "this" type
-		// because it is not feasible to analyze all members to determine if the "this" type escapes the class (in particular,
-		// property types inferred from initializers and method return types inferred from return statements are very hard
-		// to exhaustively analyze). We give interfaces a "this" type if we can't definitely determine that they are free of
-		// "this" references.
-		if typeParameters != nil || kind == ObjectFlagsClass || !c.isThislessInterface(symbol) {
+		// An interface that mentions `self` carries a hidden type parameter.
+		// Instantiating it with a derived interface preserves fluent return types.
+		if typeParameters != nil || kind == ObjectFlagsClass || !c.isSelflessInterface(symbol) {
 			t.objectFlags |= ObjectFlagsReference
 			d := t.AsInterfaceType()
-			d.thisType = c.newTypeParameter(symbol)
-			d.thisType.AsTypeParameter().isThisType = true
-			d.thisType.AsTypeParameter().constraint = t
-			d.allTypeParameters = append(typeParameters, d.thisType)
+			d.selfType = c.newTypeParameter(symbol)
+			d.selfType.AsTypeParameter().isSelfType = true
+			d.selfType.AsTypeParameter().constraint = t
+			d.allTypeParameters = append(typeParameters, d.selfType)
 			d.outerTypeParameterCount = len(outerTypeParameters)
 			d.resolvedTypeArguments = d.TypeParameters()
 			d.instantiations = make(map[CacheHashKey]*Type)
@@ -14297,23 +14300,23 @@ func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *ast.Symbol) *Type {
 }
 
 /**
- * Returns true if the interface given by the symbol is free of "this" references.
+ * Returns true if the interface given by the symbol is free of `self` references.
  *
  * Specifically, the result is true if the interface itself contains no references
- * to "this" in its body, if all base types are interfaces,
- * and if none of the base interfaces have a "this" type.
+ * to `self` in its body, if all base types are interfaces,
+ * and if none of the base interfaces have a polymorphic receiver type.
  */
-func (c *Checker) isThislessInterface(symbol *ast.Symbol) bool {
+func (c *Checker) isSelflessInterface(symbol *ast.Symbol) bool {
 	for _, declaration := range symbol.Declarations {
 		if ast.IsInterfaceDeclaration(declaration) {
-			if declaration.Flags&ast.NodeFlagsContainsThis != 0 {
+			if declaration.Flags&ast.NodeFlagsContainsSelf != 0 {
 				return false
 			}
 			baseTypeNodes := ast.GetExtendsHeritageClauseElements(declaration)
 			for _, node := range baseTypeNodes {
 				if ast.IsEntityNameExpression(node.Expression()) {
 					baseSymbol := c.resolveEntityName(node.Expression(), ast.SymbolFlagsType, true /*ignoreErrors*/, false, nil)
-					if baseSymbol == nil || baseSymbol.Flags&ast.SymbolFlagsInterface == 0 || c.getDeclaredTypeOfClassOrInterface(baseSymbol).AsInterfaceType().thisType != nil {
+					if baseSymbol == nil || baseSymbol.Flags&ast.SymbolFlagsInterface == 0 || c.getDeclaredTypeOfClassOrInterface(baseSymbol).AsInterfaceType().selfType != nil {
 						return false
 					}
 				}
@@ -15906,7 +15909,7 @@ func (c *Checker) resolveObjectTypeMembers(t *Type, source *Type, typeParameters
 		for _, baseType := range baseTypes {
 			instantiatedBaseType := baseType
 			if thisArgument != nil {
-				instantiatedBaseType = c.getTypeWithThisArgument(c.instantiateType(baseType, mapper), thisArgument, false /*needsApparentType*/)
+				instantiatedBaseType = c.getTypeWithSelfArgument(c.instantiateType(baseType, mapper), thisArgument, false /*needsApparentType*/)
 			}
 			members = c.addInheritedMembers(members, c.getPropertiesOfType(instantiatedBaseType))
 			callSignatures = core.Concatenate(callSignatures, c.getSignaturesOfType(instantiatedBaseType, SignatureKindCall))
@@ -16285,20 +16288,20 @@ func getTargetType(t *Type) *Type {
 	return t
 }
 
-func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needApparentType bool) *Type {
+func (c *Checker) getTypeWithSelfArgument(t *Type, selfArgument *Type, needApparentType bool) *Type {
 	if t.objectFlags&ObjectFlagsReference != 0 {
 		target := t.Target()
 		typeArguments := c.getTypeArguments(t)
 		if len(target.AsInterfaceType().TypeParameters()) == len(typeArguments) {
-			if thisArgument == nil {
-				thisArgument = target.AsInterfaceType().thisType
+			if selfArgument == nil {
+				selfArgument = target.AsInterfaceType().selfType
 			}
-			return c.createTypeReference(target, core.Concatenate(typeArguments, []*Type{thisArgument}))
+			return c.createTypeReference(target, core.Concatenate(typeArguments, []*Type{selfArgument}))
 		}
 		return t
 	} else if t.flags&TypeFlagsIntersection != 0 {
 		types := t.Types()
-		newTypes := core.SameMap(types, func(t *Type) *Type { return c.getTypeWithThisArgument(t, thisArgument, needApparentType) })
+		newTypes := core.SameMap(types, func(t *Type) *Type { return c.getTypeWithSelfArgument(t, selfArgument, needApparentType) })
 		if core.Same(newTypes, types) {
 			return t
 		}
@@ -17206,7 +17209,7 @@ func (c *Checker) instantiateSymbol(symbol *ast.Symbol, m *TypeMapper) *ast.Symb
 		return nil
 	}
 	links := c.valueSymbolLinks.Get(symbol)
-	if m != nil && m.MapsThisOnly() && isThisless(symbol) {
+	if m != nil && m.MapsSelfOnly() && isSelfless(symbol) {
 		return symbol
 	}
 	// If the type of the symbol is already resolved, and if that type could not possibly
@@ -17241,42 +17244,41 @@ func (c *Checker) instantiateSymbol(symbol *ast.Symbol, m *TypeMapper) *ast.Symb
 	return result
 }
 
-// Returns true if the parameter or class/interface member given by the symbol is free of "this" references. The
-// function may return false for symbols that are actually free of "this" references because it is not
+// Returns true if the parameter or interface member given by the symbol is free of `self` references. The
+// function may return false for symbols that are actually free of `self` references because it is not
 // feasible to perform a complete analysis in all cases. In particular, property members with types
 // inferred from their initializers and function members with inferred return types are conservatively
-// assumed not to be free of "this" references.
-func isThisless(symbol *ast.Symbol) bool {
+// assumed not to be free of `self` references.
+func isSelfless(symbol *ast.Symbol) bool {
 	if len(symbol.Declarations) == 1 {
 		declaration := symbol.Declarations[0]
 		if declaration != nil {
 			switch declaration.Kind {
 			case ast.KindParameter:
-				return isThislessVariableLikeDeclaration(declaration)
+				return isSelflessVariableLikeDeclaration(declaration)
 			case ast.KindPropertySignature:
-				return isThislessVariableLikeDeclaration(declaration)
+				return isSelflessVariableLikeDeclaration(declaration)
 			case ast.KindMethodSignature:
-				return isThislessFunctionLikeDeclaration(declaration)
+				return isSelflessFunctionLikeDeclaration(declaration)
 			}
 		}
 	}
 	return false
 }
 
-// A variable-like declaration is free of this references if it has a type annotation
-// that is thisless, or if it has no type annotation and no initializer (and is thus of type any).
-func isThislessVariableLikeDeclaration(node *ast.Node) bool {
+// A variable-like declaration is free of self references if it has a type annotation
+// that is selfless, or if it has no type annotation and no initializer (and is thus of type any).
+func isSelflessVariableLikeDeclaration(node *ast.Node) bool {
 	typeNode := node.Type()
 	if typeNode != nil {
-		return isThislessType(typeNode)
+		return isSelflessType(typeNode)
 	}
 	return node.Initializer() == nil
 }
 
-// A type is free of this references if it's the any, string, number, boolean, symbol, or void keyword, a string
-// literal type, an array with an element type that is free of this references, or a type reference that is
-// free of this references.
-func isThislessType(node *ast.Node) bool {
+// A type is free of self references if it's a primitive keyword, a literal type, an array whose
+// element type is selfless, or a type reference whose type arguments are selfless.
+func isSelflessType(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword, ast.KindBooleanKeyword,
 		ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindThreadKeyword, ast.KindUserdataKeyword, ast.KindCDataKeyword,
@@ -17284,27 +17286,25 @@ func isThislessType(node *ast.Node) bool {
 		ast.KindNeverKeyword, ast.KindLiteralType:
 		return true
 	case ast.KindArrayType:
-		return isThislessType(node.AsArrayTypeNode().ElementType)
+		return isSelflessType(node.AsArrayTypeNode().ElementType)
 	case ast.KindTypeReference:
-		return core.Every(node.TypeArguments(), isThislessType)
+		return core.Every(node.TypeArguments(), isSelflessType)
 	}
 	return false
 }
 
-// A function-like declaration is considered free of `this` references if it has a return type
-// annotation that is free of this references and if each parameter is thisless and if
-// each type parameter (if present) is thisless.
-func isThislessFunctionLikeDeclaration(node *ast.Node) bool {
+// A function-like declaration is selfless when its return, parameters, and type parameters are selfless.
+func isSelflessFunctionLikeDeclaration(node *ast.Node) bool {
 	returnType := node.Type()
-	return returnType != nil && isThislessType(returnType) &&
-		core.Every(node.Parameters(), isThislessVariableLikeDeclaration) &&
-		core.Every(node.TypeParameters(), isThislessTypeParameter)
+	return returnType != nil && isSelflessType(returnType) &&
+		core.Every(node.Parameters(), isSelflessVariableLikeDeclaration) &&
+		core.Every(node.TypeParameters(), isSelflessTypeParameter)
 }
 
-// A type parameter is thisless if its constraint is thisless, or if it has no constraint. */
-func isThislessTypeParameter(node *ast.Node) bool {
+// A type parameter is selfless if its constraint is selfless, or if it has no constraint.
+func isSelflessTypeParameter(node *ast.Node) bool {
 	constraint := node.AsTypeParameterDeclaration().Constraint
-	return constraint == nil || isThislessType(constraint)
+	return constraint == nil || isSelflessType(constraint)
 }
 
 func (c *Checker) resolveMappedTypeMembers(t *Type) {
@@ -18161,7 +18161,7 @@ func (c *Checker) getApparentType(t *Type) *Type {
 	case t.objectFlags&ObjectFlagsMapped != 0:
 		return c.getApparentTypeOfMappedType(t)
 	case t.objectFlags&ObjectFlagsReference != 0 && t != originalType:
-		return c.getTypeWithThisArgument(t, originalType, false /*needsApparentType*/)
+		return c.getTypeWithSelfArgument(t, originalType, false /*needsApparentType*/)
 	case t.flags&TypeFlagsIntersection != 0:
 		return c.getApparentTypeOfIntersectionType(t, originalType)
 	case t.flags&TypeFlagsStringLike != 0:
@@ -18212,18 +18212,18 @@ func (c *Checker) getResolvedApparentTypeOfMappedType(t *Type) *Type {
 	return t
 }
 
-func (c *Checker) getApparentTypeOfIntersectionType(t *Type, thisArgument *Type) *Type {
-	if t == thisArgument {
+func (c *Checker) getApparentTypeOfIntersectionType(t *Type, selfArgument *Type) *Type {
+	if t == selfArgument {
 		d := t.AsIntersectionType()
 		if d.resolvedApparentType == nil {
-			d.resolvedApparentType = c.getTypeWithThisArgument(t, thisArgument, true /*needApparentType*/)
+			d.resolvedApparentType = c.getTypeWithSelfArgument(t, selfArgument, true /*needApparentType*/)
 		}
 		return d.resolvedApparentType
 	}
-	key := CachedTypeKey{kind: CachedTypeKindApparentType, typeId: thisArgument.id}
+	key := CachedTypeKey{kind: CachedTypeKindApparentType, typeId: selfArgument.id}
 	result := c.cachedTypes[key]
 	if result == nil {
-		result = c.getTypeWithThisArgument(t, thisArgument, true /*needApparentType*/)
+		result = c.getTypeWithSelfArgument(t, selfArgument, true /*needApparentType*/)
 		c.cachedTypes[key] = result
 	}
 	return result
@@ -18769,7 +18769,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 		// parameters that are in scope (and therefore potentially referenced). For type literals that
 		// aren't the right hand side of a generic type alias declaration we optimize by reducing the
 		// set of type parameters to those that are possibly referenced in the literal.
-		typeParameters = c.getOuterTypeParameters(declaration, true /*includeThisTypes*/)
+		typeParameters = c.getOuterTypeParameters(declaration, true /*includeSelfTypes*/)
 		if len(target.alias.TypeArguments()) == 0 {
 			if t.objectFlags&(ObjectFlagsReference|ObjectFlagsInstantiationExpressionType) != 0 {
 				typeParameters = core.Filter(typeParameters, func(tp *Type) bool {
@@ -18846,9 +18846,11 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 	var containsReference func(*ast.Node) bool
 	containsReference = func(node *ast.Node) bool {
 		switch node.Kind {
+		case ast.KindSelfKeyword:
+			return tp.AsTypeParameter().isSelfType
 		case ast.KindTypeReference:
 			// use worker because we're looking for === equality
-			if !tp.AsTypeParameter().isThisType && len(node.TypeArguments()) == 0 && c.getSymbolFromTypeReference(node) == tp.symbol {
+			if !tp.AsTypeParameter().isSelfType && len(node.TypeArguments()) == 0 && c.getSymbolFromTypeReference(node) == tp.symbol {
 				return true
 			}
 		case ast.KindTypeQuery:
@@ -18861,8 +18863,8 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 				switch {
 				case ast.IsTypeParameterDeclaration(tpDeclaration):
 					tpScope = tpDeclaration.Parent // Type parameter is a regular type parameter, e.g. foo<T>
-				case tp.AsTypeParameter().isThisType:
-					tpScope = tpDeclaration // Type parameter is the this type, and its declaration is the class declaration.
+				case tp.AsTypeParameter().isSelfType:
+					tpScope = tpDeclaration // The hidden self parameter is declared by its interface.
 				}
 				if tpScope != nil {
 					return core.Some(firstIdentifierSymbol.Declarations, func(d *ast.Node) bool { return isNodeDescendantOf(d, tpScope) }) ||
@@ -19380,6 +19382,8 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromNamedTupleTypeNode(node)
 	case ast.KindParenthesizedType:
 		return c.getTypeFromTypeNode(node.Type())
+	case ast.KindSelfKeyword:
+		return c.getTypeFromSelfKeyword(node)
 	case ast.KindRestType:
 		return c.getTypeFromRestTypeNode(node)
 	case ast.KindFunctionType, ast.KindConstructorType, ast.KindTypeLiteral:
@@ -19401,6 +19405,24 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 	default:
 		return c.errorType
 	}
+}
+
+func (c *Checker) getTypeFromSelfKeyword(node *ast.Node) *Type {
+	links := c.typeNodeLinks.Get(node)
+	if links.resolvedType == nil {
+		links.resolvedType = c.getSelfType(node)
+	}
+	return links.resolvedType
+}
+
+func (c *Checker) getSelfType(node *ast.Node) *Type {
+	container := ast.GetThisContainer(node, false /*includeArrowFunctions*/)
+	if container != nil && container.Parent != nil && ast.IsInterfaceDeclaration(container.Parent) {
+		interfaceType := c.getDeclaredTypeOfClassOrInterface(c.getSymbolOfDeclaration(container.Parent)).AsInterfaceType()
+		return core.Coalesce(interfaceType.selfType, c.errorType)
+	}
+	c.error(node, diagnostics.A_self_type_is_available_only_in_a_member_of_an_interface)
+	return c.errorType
 }
 
 func (c *Checker) getTypeFromLiteralTypeNode(node *ast.Node) *Type {
@@ -20321,11 +20343,11 @@ func (c *Checker) getOuterTypeParametersOfClassOrInterface(symbol *ast.Symbol) [
 		})
 	}
 	debug.Assert(declaration != nil, "symbol had no interface or function declaration")
-	return c.getOuterTypeParameters(declaration, false /*includeThisTypes*/)
+	return c.getOuterTypeParameters(declaration, false /*includeSelfTypes*/)
 }
 
 // Return the outer type parameters of a node or undefined if the node has no outer type parameters.
-func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) []*Type {
+func (c *Checker) getOuterTypeParameters(node *ast.Node, includeSelfTypes bool) []*Type {
 	for {
 		node = node.Parent
 		if node == nil {
@@ -20337,7 +20359,7 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) 
 			ast.KindMethodSignature, ast.KindFunctionType, ast.KindConstructorType, ast.KindFunctionDeclaration,
 			ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType,
 			ast.KindConditionalType:
-			outerTypeParameters := c.getOuterTypeParameters(node, includeThisTypes)
+			outerTypeParameters := c.getOuterTypeParameters(node, includeSelfTypes)
 			if (kind == ast.KindFunctionExpression || kind == ast.KindArrowFunction) && c.isContextSensitive(node) {
 				signature := core.FirstOrNil(c.getSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
 				if signature != nil && len(signature.typeParameters) != 0 {
@@ -20351,12 +20373,12 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) 
 				return append(outerTypeParameters, c.getInferTypeParameters(node)...)
 			}
 			outerAndOwnTypeParameters := c.appendTypeParameters(outerTypeParameters, node.TypeParameters())
-			var thisType *Type
-			if includeThisTypes && kind == ast.KindInterfaceDeclaration {
-				thisType = c.getDeclaredTypeOfClassOrInterface(c.getSymbolOfDeclaration(node)).AsInterfaceType().thisType
+			var selfType *Type
+			if includeSelfTypes && kind == ast.KindInterfaceDeclaration {
+				selfType = c.getDeclaredTypeOfClassOrInterface(c.getSymbolOfDeclaration(node)).AsInterfaceType().selfType
 			}
-			if thisType != nil {
-				return append(outerAndOwnTypeParameters, thisType)
+			if selfType != nil {
+				return append(outerAndOwnTypeParameters, selfType)
 			}
 			return outerAndOwnTypeParameters
 		}
@@ -20701,7 +20723,7 @@ func (c *Checker) getTypeFromConditionalTypeNode(node *ast.Node) *Type {
 	if links.resolvedType == nil {
 		checkType := c.getTypeFromTypeNode(node.AsConditionalTypeNode().CheckType)
 		alias := c.getAliasForTypeNode(node)
-		allOuterTypeParameters := c.getOuterTypeParameters(node, true /*includeThisTypes*/)
+		allOuterTypeParameters := c.getOuterTypeParameters(node, true /*includeSelfTypes*/)
 		var outerTypeParameters []*Type
 		if alias != nil && len(alias.typeArguments) != 0 {
 			outerTypeParameters = allOuterTypeParameters
@@ -21140,8 +21162,8 @@ func (c *Checker) createArrayTypeEx(elementType *Type, readonly bool) *Type {
 // initSyntheticGenericTarget wires the scaffolding shared by the symbol-less
 // generic interface targets tlua synthesizes without a declaration — the `T[]`
 // table target (createLuaTableTargetType) and the tuple target
-// (createTupleTargetType). It installs the polymorphic `this` type, the
-// combined type-parameter list (typeParameters + thisType), and
+// (createTupleTargetType). It installs the polymorphic `self` type, the
+// combined type-parameter list (typeParameters + selfType), and
 // self-referential instantiation interning, and marks declared members
 // resolved so member/base resolution never routes through the nil symbol.
 // Callers set their own declared members, index infos, and element metadata
@@ -21149,10 +21171,10 @@ func (c *Checker) createArrayTypeEx(elementType *Type, readonly bool) *Type {
 // instantiation-caching invariants in lockstep.
 func (c *Checker) initSyntheticGenericTarget(t *Type, typeParameters []*Type) {
 	d := t.AsInterfaceType()
-	d.thisType = c.newTypeParameter(nil)
-	d.thisType.AsTypeParameter().isThisType = true
-	d.thisType.AsTypeParameter().constraint = t
-	d.allTypeParameters = append(typeParameters, d.thisType)
+	d.selfType = c.newTypeParameter(nil)
+	d.selfType.AsTypeParameter().isSelfType = true
+	d.selfType.AsTypeParameter().constraint = t
+	d.allTypeParameters = append(typeParameters, d.selfType)
 	d.resolvedTypeArguments = d.TypeParameters()
 	d.instantiations = make(map[CacheHashKey]*Type)
 	d.instantiations[getTypeListKey(d.resolvedTypeArguments)] = t
@@ -23851,7 +23873,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 				c.addDeprecatedSuggestion(deprecatedNode, prop.Declarations, propDisplayName)
 			}
 			if accessExpression != nil {
-				c.markPropertyAsReferenced(prop, accessExpression, c.isSelfTypeAccess(accessExpression.Expression(), objectType.symbol))
+				c.markPropertyAsReferenced(prop, accessExpression, c.isThisTypeAccess(accessExpression.Expression(), objectType.symbol))
 				if c.isAssignmentToReadonlyEntity(accessExpression, prop, getAssignmentTargetKind(accessExpression)) {
 					c.error(accessExpression.AsElementAccessExpression().ArgumentExpression, diagnostics.Cannot_assign_to_0_because_it_is_a_read_only_property, c.symbolToString(prop))
 					return nil
@@ -24091,7 +24113,7 @@ func (c *Checker) errorIfWritingToReadonlyIndex(indexInfo *IndexInfo, objectType
 	}
 }
 
-func (c *Checker) isSelfTypeAccess(name *ast.Node, parent *ast.Symbol) bool {
+func (c *Checker) isThisTypeAccess(name *ast.Node, parent *ast.Symbol) bool {
 	return name.Kind == ast.KindThisKeyword || parent != nil && ast.IsEntityNameExpression(name) && parent == c.getResolvedSymbol(ast.GetFirstIdentifier(name))
 }
 
@@ -24264,7 +24286,7 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 	switch {
 	case t.flags&TypeFlagsTypeParameter != 0:
 		constraint := c.getConstraintFromTypeParameter(t)
-		if t.AsTypeParameter().isThisType {
+		if t.AsTypeParameter().isSelfType {
 			return constraint
 		}
 		return c.getNextBaseConstraint(constraint, stack)
@@ -24466,7 +24488,7 @@ func compareTypesEqual(s *Type, t *Type) Ternary {
 	return TernaryFalse
 }
 
-func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOnly *ast.Node, isSelfTypeAccess bool) {
+func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOnly *ast.Node, isThisTypeAccess bool) {
 	if prop.Flags&ast.SymbolFlagsClassMember == 0 || prop.ValueDeclaration == nil {
 		return
 	}
@@ -24478,7 +24500,7 @@ func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOn
 	if nodeForCheckWriteOnly != nil && ast.IsWriteOnlyAccess(nodeForCheckWriteOnly) && prop.Flags&ast.SymbolFlagsSetAccessor == 0 {
 		return
 	}
-	if isSelfTypeAccess {
+	if isThisTypeAccess {
 		// Find any FunctionLikeDeclaration because those create a new 'this' binding. But this should only matter for methods (or getters/setters).
 		containingMethod := ast.FindAncestor(nodeForCheckWriteOnly, ast.IsFunctionLikeDeclaration)
 		if containingMethod != nil && containingMethod.Symbol() == prop {
@@ -24883,7 +24905,7 @@ func (c *Checker) getSingleBaseForNonAugmentingSubtype(t *Type) *Type {
 		instantiatedBase = c.instantiateType(bases[0], newTypeMapper(typeParameters, c.getTypeArguments(t)[:len(typeParameters)]))
 	}
 	if len(c.getTypeArguments(t)) > len(typeParameters) {
-		instantiatedBase = c.getTypeWithThisArgument(instantiatedBase, core.LastOrNil(c.getTypeArguments(t)), false)
+		instantiatedBase = c.getTypeWithSelfArgument(instantiatedBase, core.LastOrNil(c.getTypeArguments(t)), false)
 	}
 	c.cachedTypes[key] = instantiatedBase
 	return instantiatedBase
@@ -27392,6 +27414,8 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		// `this` is removed from tlua: an identifier spelled `this` (e.g. in
 		// `typeof this`) resolves like any other unresolvable name.
 		return c.getSymbolOfNameOrPropertyAccessExpression(node)
+	case ast.KindSelfKeyword:
+		return c.getTypeFromSelfKeyword(node).symbol
 	case ast.KindSuperKeyword:
 		return c.checkExpression(node).symbol
 	case ast.KindConstructorKeyword:

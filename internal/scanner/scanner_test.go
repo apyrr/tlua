@@ -33,3 +33,10 @@ func TestScanEndKeyword(t *testing.T) {
 	s.SetText("end")
 	assert.Equal(t, s.Scan(), ast.KindEndKeyword)
 }
+
+func TestScanSelfKeyword(t *testing.T) {
+	t.Parallel()
+	s := NewScanner()
+	s.SetText("self")
+	assert.Equal(t, s.Scan(), ast.KindSelfKeyword)
+}

@@ -3703,8 +3703,8 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			if result != TernaryFalse {
 				return result
 			}
-			constraintWithThis := r.c.getTypeWithThisArgument(constraint, source, false /*needApparentType*/)
-			result = r.isRelatedToEx(constraintWithThis, target, RecursionFlagsSource, reportErrors && constraint != r.c.unknownType && target.flags&source.flags&TypeFlagsTypeParameter == 0, nil /*headMessage*/, intersectionState)
+			constraintWithSelf := r.c.getTypeWithSelfArgument(constraint, source, false /*needApparentType*/)
+			result = r.isRelatedToEx(constraintWithSelf, target, RecursionFlagsSource, reportErrors && constraint != r.c.unknownType && target.flags&source.flags&TypeFlagsTypeParameter == 0, nil /*headMessage*/, intersectionState)
 			if result != TernaryFalse {
 				return result
 			}

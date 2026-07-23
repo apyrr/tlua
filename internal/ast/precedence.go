@@ -444,7 +444,6 @@ const (
 	//   NonArrayType:
 	//       KeywordType
 	//       LiteralTypeNode
-	//       ThisTypeNode
 	//       ImportType
 	//       TypeQueryNode
 	//       MappedTypeNode
@@ -458,7 +457,7 @@ const (
 	//   KeywordType: one of
 	//       `any`       `unknown` `string`    `number`
 	//       `symbol`    `boolean` `undefined` `never`  `object`
-	//       `intrinsic` `void`
+	//       `intrinsic` `void`    `self`
 	//
 	//   LiteralTypeNode:
 	//       StringLiteral
@@ -468,9 +467,6 @@ const (
 	//       `true`
 	//       `false`
 	//       `null`
-	//
-	//   ThisTypeNode:
-	//       `this`
 	//
 	//   ImportType:
 	//       `typeof`? `import` `(` Type[~Extends] `)` ImportTypeQualifier? TypeArguments?
@@ -636,6 +632,7 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 		KindCDataKeyword,
 		KindFunctionKeyword,
 		KindIntrinsicKeyword,
+		KindSelfKeyword,
 		KindVoidKeyword,
 		KindJSDocAllType,
 		KindJSDocNullableType,

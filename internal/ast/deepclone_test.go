@@ -347,7 +347,7 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 		{title: "InferTypeNode#1", input: `type T = a extends infer b ? c : d`},
 		{title: "InferTypeNode#2", input: `type T = a extends infer b extends c ? d : e`},
 		{title: "ParenthesizedTypeNode", input: `type T = (U)`},
-		{title: "ThisTypeNode", input: `type T = this`},
+		{title: "SelfKeywordType", input: `interface T { value: self }`},
 		{title: "TypeOperatorNode#1", input: `type T = keyof U`},
 		{title: "TypeOperatorNode#2", input: `type T = readonly U[]`},
 		{title: "TypeOperatorNode#3", input: `type T = unique symbol`},

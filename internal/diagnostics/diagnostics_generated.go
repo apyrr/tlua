@@ -4382,6 +4382,8 @@ var Declaration_emit_is_not_supported_for_a_Lua_module_yet = &Message{code: 1000
 
 var Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name = &Message{code: 100055, category: CategoryError, key: "Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name_100055", text: "Module name '{0}' resolves to the same file as '{1}'; a module has one canonical name."}
 
+var A_self_type_is_available_only_in_a_member_of_an_interface = &Message{code: 100056, category: CategoryError, key: "A_self_type_is_available_only_in_a_member_of_an_interface_100056", text: "A 'self' type is available only in a member of an interface."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8764,6 +8766,8 @@ func keyToMessage(key Key) *Message {
 		return Declaration_emit_is_not_supported_for_a_Lua_module_yet
 	case "Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name_100055":
 		return Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name
+	case "A_self_type_is_available_only_in_a_member_of_an_interface_100056":
+		return A_self_type_is_available_only_in_a_member_of_an_interface
 	default:
 		return nil
 	}

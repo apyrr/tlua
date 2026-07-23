@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/tluaSelfReservedNames.tlua] ////
+
+=== tluaSelfReservedNames.tlua ===
+// The receiver type is unshadowable in the type namespace.
+do
+	interface self {}
+>self : Symbol(self, Decl(tluaSelfReservedNames.tlua, 1, 2))
+
+end
+
+do
+	type self = string;
+>self : Symbol(self, Decl(tluaSelfReservedNames.tlua, 5, 2))
+
+end
+
+interface Box<self> {
+>Box : Symbol(Box, Decl(tluaSelfReservedNames.tlua, 7, 3))
+>self : Symbol(self, Decl(tluaSelfReservedNames.tlua, 9, 14))
+
+	value: self;
+>value : Symbol(Box.value, Decl(tluaSelfReservedNames.tlua, 9, 21))
+}
+

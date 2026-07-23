@@ -327,8 +327,8 @@ func (b *NodeBuilderImpl) filterInheritedProperties(t *Type, baseTypes []*Type, 
 	// Collect names of properties inherited unchanged from base types.
 	var inherited collections.Set[string]
 	for _, base := range baseTypes {
-		baseWithThis := b.ch.getTypeWithThisArgument(base, b.ch.getTargetType(t).AsInterfaceType().thisType, false)
-		for _, prop := range b.ch.getPropertiesOfType(baseWithThis) {
+		baseWithSelf := b.ch.getTypeWithSelfArgument(base, b.ch.getTargetType(t).AsInterfaceType().selfType, false)
+		for _, prop := range b.ch.getPropertiesOfType(baseWithSelf) {
 			if existing, ok := propsByName[prop.Name]; ok && prop.Parent == existing.Parent {
 				inherited.Add(prop.Name)
 			}

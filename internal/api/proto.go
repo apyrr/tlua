@@ -639,7 +639,7 @@ type TypeResponse struct {
 	RegularType TypeID `json:"regularType,omitzero"`
 
 	// TypeParameter data
-	IsThisType bool `json:"isThisType,omitempty"`
+	IsSelfType bool `json:"isSelfType,omitempty"`
 
 	// IntrinsicType data
 	IntrinsicName string `json:"intrinsicName,omitempty"`
@@ -730,7 +730,7 @@ func newTypeResponse(t *checker.Type, id TypeID) *TypeResponse {
 	case flags&checker.TypeFlagsStringMapping != 0:
 		resp.Target = TypeHandle(t.AsStringMappingType().Target())
 	case flags&checker.TypeFlagsTypeParameter != 0:
-		resp.IsThisType = t.AsTypeParameter().IsThisType()
+		resp.IsSelfType = t.AsTypeParameter().IsSelfType()
 	case flags&checker.TypeFlagsIntrinsic != 0:
 		resp.IntrinsicName = t.AsIntrinsicType().IntrinsicName()
 	}

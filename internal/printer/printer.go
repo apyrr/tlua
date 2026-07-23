@@ -2173,6 +2173,7 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		ast.KindBooleanKeyword,
 		ast.KindStringKeyword,
 		ast.KindSymbolKeyword,
+		ast.KindSelfKeyword,
 		ast.KindVoidKeyword,
 		ast.KindNilKeyword,
 		ast.KindNeverKeyword,

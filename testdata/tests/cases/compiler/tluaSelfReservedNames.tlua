@@ -1,0 +1,15 @@
+// @strict: true
+// @noEmit: true
+
+// The receiver type is unshadowable in the type namespace.
+do
+	interface self {}
+end
+
+do
+	type self = string;
+end
+
+interface Box<self> {
+	value: self;
+}

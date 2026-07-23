@@ -134,7 +134,7 @@ export interface TypeReference extends ObjectType {
 
 /** Interface types — classes and interfaces (ObjectFlags.ClassOrInterface) */
 export interface InterfaceType extends TypeReference {
-    /** Get all type parameters (outer + local, excluding thisType) */
+    /** Get all type parameters (outer + local, excluding selfType) */
     getTypeParameters(): Promise<readonly TypeParameter[]>;
     /** Get outer type parameters from enclosing declarations */
     getOuterTypeParameters(): Promise<readonly TypeParameter[]>;
@@ -168,8 +168,8 @@ export interface IntersectionType extends UnionOrIntersectionType {
 
 /** Type parameters (TypeFlags.TypeParameter) */
 export interface TypeParameter extends Type {
-    /** True if this is the synthetic `this` type of an interface, class, or tuple */
-    readonly isThisType?: boolean | undefined;
+    /** True if this is the hidden polymorphic `self` type of an interface */
+    readonly isSelfType?: boolean | undefined;
 }
 
 /** Index types — keyof T (TypeFlags.Index) */

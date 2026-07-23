@@ -243,6 +243,7 @@ func TestEmit(t *testing.T) {
 		{title: "InferTypeNode#1", input: `type T = a extends infer b ? c : d`, output: "type T = a extends infer b ? c : d;"},
 		{title: "InferTypeNode#2", input: `type T = a extends infer b extends c ? d : e`, output: "type T = a extends infer b extends c ? d : e;"},
 		{title: "ParenthesizedTypeNode", input: `type T = (U)`, output: "type T = (U);"},
+		{title: "SelfKeywordType", input: `interface T { value: self }`, output: "interface T {\n    value: self;\n}"},
 		{title: "TypeOperatorNode#1", input: `type T = keyof U`, output: "type T = keyof U;"},
 		{title: "TypeOperatorNode#2", input: `type T = readonly U[]`, output: "type T = readonly U[];"},
 		{title: "TypeOperatorNode#3", input: `type T = unique symbol`, output: "type T = unique symbol;"},
