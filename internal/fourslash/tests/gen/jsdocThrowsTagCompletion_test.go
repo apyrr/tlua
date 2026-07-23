@@ -19,7 +19,7 @@ func TestJsdocThrowsTagCompletion(t *testing.T) {
 /**
  * @throws {/**/} description
  */
-function fn() {}`
+function fn() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

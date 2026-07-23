@@ -14,12 +14,11 @@ func TestJsDocSee3(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo ([|/*def1*/a|]: string) {
+	const content = `function foo ([|/*def1*/a|]: string)
     /**
-     * @see {/*use1*/[|a|]}
+     * @see {/*use1*/[|a|] end
      */
-    function bar ([|/*def2*/a|]: string) {
-    }
+    function bar ([|/*def2*/a|]: string) end
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -107,7 +107,7 @@ func TestFormattingFatArrowFunctions(t *testing.T) {
 
 
 // Function Parameters
-/*70*/function foo    (                 ...     arg    :    any   [      ]    )     { }
+/*70*/function foo    (                 ...     arg    :    any   [      ]    )     end
 
 /*71*/foo    (
 /*72*/        (        a )           =>    110   ,
@@ -271,7 +271,7 @@ func TestFormattingFatArrowFunctions(t *testing.T) {
 	f.GoToMarker(t, "69")
 	f.VerifyCurrentLineContent(t, `((arg1, ...arg2: number[]) => 0) + '' + ((arg1, ...arg2: number[]) => 108);`)
 	f.GoToMarker(t, "70")
-	f.VerifyCurrentLineContent(t, `function foo(...arg: any[]) { }`)
+	f.VerifyCurrentLineContent(t, `function foo(...arg: any[]) end`)
 	f.GoToMarker(t, "71")
 	f.VerifyCurrentLineContent(t, `foo(`)
 	f.GoToMarker(t, "72")

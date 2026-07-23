@@ -14,14 +14,14 @@ func TestSignatureHelpCallExpressionTuples(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function fnTest(str: string, num: number) { }
+	const content = `function fnTest(str: string, num: number) end
 declare function wrap<A extends any[], R>(fn: (...a: A) => R) : (...a: A) => R;
 local fnWrapped = wrap(fnTest);
 fnWrapped/*3*/(/*1*/'', /*2*/5);
-function fnTestVariadic (str: string, ...num: number[]) { }
+function fnTestVariadic (str: string, ...num: number[]) end
 local fnVariadicWrapped = wrap(fnTestVariadic);
 fnVariadicWrapped/*4*/(/*5*/'', /*6*/5);
-function fnNoParams () { }
+function fnNoParams () end
 local fnNoParamsWrapped = wrap(fnNoParams);
 fnNoParamsWrapped/*7*/(/*8*/);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

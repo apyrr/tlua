@@ -16,9 +16,9 @@ func TestQuickinfoVerbosityTypeParameter(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Str = string | {};
 type FooType = Str | number;
-function fn<T extends FooType>(x: T) {
+function fn<T extends FooType>(x: T)
     x/*x*/;
-}
+end
 local y/*y*/: <T extends FooType>(x: T) => void = fn;
 type MixinCtor<A> = new () => A/*a*/ & { constructor: MixinCtor<A> };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

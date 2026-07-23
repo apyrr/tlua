@@ -21,7 +21,7 @@ interface Foo {
     bar: string;
 }
 
-function f<K extends keyof Foo>(a: K) { };
+function f<K extends keyof Foo>(a: K) end;
 f("/*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

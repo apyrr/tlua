@@ -46,13 +46,14 @@ var textToKeyword = map[string]ast.Kind{
 	"any":     ast.KindAnyKeyword,
 	"as":      ast.KindAsKeyword,
 	"asserts": ast.KindAssertsKeyword,
-	"assert":  ast.KindAssertKeyword,
 	"boolean": ast.KindBooleanKeyword,
 	"break":   ast.KindBreakKeyword,
 	// tlua removes switch statements: `switch` and `case` are ordinary
 	// identifiers (Lua reserves neither), and switch statements no longer
 	// parse.
-	"catch": ast.KindCatchKeyword,
+	// tlua removes exception handling: `try`, `catch`, and `finally` are
+	// ordinary identifiers (Lua reserves none of them), and try statements no
+	// longer parse.
 	// tlua removes classes: `class` is an ordinary identifier (Lua has no class
 	// keyword), and class declarations/expressions no longer parse.
 	// tlua removes the TS declaration forms: `var`, `let`, `const`, and `using`
@@ -73,7 +74,6 @@ var textToKeyword = map[string]ast.Kind{
 	// type, the only way to name another chunk's type.
 	"extends":    ast.KindExtendsKeyword,
 	"false":      ast.KindFalseKeyword,
-	"finally":    ast.KindFinallyKeyword,
 	"for":        ast.KindForKeyword,
 	"function":   ast.KindFunctionKeyword,
 	"get":        ast.KindGetKeyword,
@@ -123,7 +123,6 @@ var textToKeyword = map[string]ast.Kind{
 	"this":       ast.KindThisKeyword,
 	"throw":      ast.KindThrowKeyword,
 	"true":       ast.KindTrueKeyword,
-	"try":        ast.KindTryKeyword,
 	"type":       ast.KindTypeKeyword,
 	"typeof":     ast.KindTypeOfKeyword,
 	"undefined":  ast.KindNilKeyword,
@@ -132,7 +131,6 @@ var textToKeyword = map[string]ast.Kind{
 	"until":      ast.KindUntilKeyword,
 	"void":       ast.KindVoidKeyword,
 	"while":      ast.KindWhileKeyword,
-	"with":       ast.KindWithKeyword,
 	"yield":      ast.KindYieldKeyword,
 	"async":      ast.KindAsyncKeyword,
 	"await":      ast.KindAwaitKeyword,
@@ -2707,19 +2705,17 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		}
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
 	// This list is a work in progress. Add missing node kinds to improve their error spans
-	case ast.KindFunctionDeclaration, ast.KindMethodDeclaration:
+	case ast.KindFunctionDeclaration:
 		if node.Flags&ast.NodeFlagsReparsed != 0 {
 			errorNode = node
 			break
 		}
 		fallthrough
-	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindInterfaceDeclaration,
+	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindInterfaceDeclaration,
 		ast.KindModuleDeclaration, ast.KindFunctionExpression,
-		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration,
 		ast.KindPropertySignature, ast.KindNamespaceImport:
 		errorNode = ast.GetNameOfDeclaration(node)
-	case ast.KindClassExpression:
-		errorNode = node.Name()
 
 	case ast.KindArrowFunction:
 		return getErrorRangeForArrowFunction(sourceFile, node)
@@ -2733,17 +2729,6 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		}
 		pos := SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
-	case ast.KindConstructor:
-		if node.Flags&ast.NodeFlagsReparsed != 0 {
-			errorNode = node
-			break
-		}
-		scanner := GetScannerForSourceFile(sourceFile, node.Pos())
-		start := scanner.TokenStart()
-		for scanner.Token() != ast.KindConstructorKeyword && scanner.Token() != ast.KindStringLiteral && scanner.Token() != ast.KindEndOfFile {
-			scanner.Scan()
-		}
-		return core.NewTextRange(start, scanner.TokenEnd())
 	}
 	if errorNode == nil {
 		// If we don't have a better node, then just set the error on the first token of

@@ -28,7 +28,7 @@ interface Foo {
     method2(arg: B): void;
 }
 
-function getFoo1(): Foo {
+function getFoo1(): Foo
     return {
         method1(/*param1*/arg) {
             arg.numProp = 10;
@@ -37,7 +37,7 @@ function getFoo1(): Foo {
             arg.strProp = "hello";
         }
     }
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "param1", "(parameter) arg: A", "")

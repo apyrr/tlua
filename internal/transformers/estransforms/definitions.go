@@ -10,9 +10,7 @@ var (
 	// `using` declarations are removed in tlua, so ESNext has no downlevel:
 	// class fields, class static blocks, decorator, and using lowering are gone.
 	NewESNextTransformer transformers.TransformerFactory = nil
-	// 2025: only module system syntax (import attributes, json modules), untransformed regex modifiers
-	// 2024: no new downlevel syntax
-	// 2023: no new downlevel syntax
+	// ES2025 through ES2022 add no downlevel syntax retained by tlua.
 	NewES2021Transformer = transformers.Chain(newLogicalAssignmentTransformer)
 	// Optional chaining is lowered to Lua by NewLuaOptionalChainTransformer, which
 	// runs unconditionally in the emit pipeline (Lua is always the target), so it
@@ -20,7 +18,7 @@ var (
 	// coalescing (`??`) is removed from tlua entirely, so ES2020 adds no JS
 	// downlevel over ES2021.
 	NewES2020Transformer = NewES2021Transformer
-	NewES2019Transformer = transformers.Chain(NewES2020Transformer, newOptionalCatchTransformer)
+	NewES2019Transformer = NewES2020Transformer
 	// The object rest/spread downlevel transform is removed in tlua: spread
 	// elements, spread assignments, and binding-pattern rests no longer parse,
 	// so there is nothing to lower.

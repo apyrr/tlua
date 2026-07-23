@@ -14,7 +14,7 @@ func TestArgumentCompletions(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
-function foo(a: "a", b: "b") {}
+function foo(a: "a", b: "b") end
 foo("a", /*1*/);
 
 

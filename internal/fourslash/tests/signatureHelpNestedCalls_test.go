@@ -11,8 +11,8 @@ func TestSignatureHelpNestedCalls(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(s: string) { return s; }
-function bar(s: string) { return s; }
+	const content = `function foo(s: string) return s end
+function bar(s: string) return s end
 local s = foo(/*a*/ /*b*/bar/*c*/(/*d*/"hello"/*e*/)/*f*/);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
@@ -43,8 +43,8 @@ func TestSignatureHelpEmptyInnerCall(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(s: string) { return s; }
-function bar(s: string) { return s; }
+	const content = `function foo(s: string) return s end
+function bar(s: string) return s end
 local s = foo(bar(/*a*/));`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

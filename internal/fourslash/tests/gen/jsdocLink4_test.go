@@ -24,8 +24,7 @@ local n/*2*/ = 1
  * A real, very serious {@link I to an interface}. Right there.
  * @param x one {@link Pos here too}
  */
-function f(x) {
-}
+function f(x) end
 f/*3*/()
 type Pos = [number, number]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

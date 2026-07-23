@@ -21,7 +21,7 @@ func TestGetJavaScriptCompletions10(t *testing.T) {
 /**
  * @type {function(this:number)}
  */
-function f() { this./**/ }`
+function f() this./**/ end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

@@ -19,12 +19,12 @@ func TestCompletionsOverridingMethod11(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.tlua
 // @newline: LF
-function foo() {
+function foo()
     local a = 1
     local b = 2
     foo()
     return a + b
-}
+end
 
 interface Base {
     a: string

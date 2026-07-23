@@ -19,7 +19,7 @@ func GetFunctionFlags(node *Node) FunctionFlags {
 	}
 	flags := FunctionFlagsNormal
 	switch node.Kind {
-	case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindArrowFunction:
+	case KindFunctionDeclaration, KindFunctionExpression, KindArrowFunction:
 		if HasSyntacticModifier(node, ModifierFlagsAsync) {
 			flags |= FunctionFlagsAsync
 		}

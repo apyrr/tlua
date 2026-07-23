@@ -16,9 +16,9 @@ func TestCodeFixInferFromUsageOptionalParam(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: false
 // @noImplicitAny: true
-function f([|a? |]){
+function f([|a? |])
     a;
-}
+end
 f();
 f(1);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

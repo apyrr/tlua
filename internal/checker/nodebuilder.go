@@ -169,8 +169,6 @@ func (b *NodeBuilder) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.Symbo
 	result := make([]*ast.Node, 0, len(nodes))
 	for _, node := range nodes {
 		switch node.Kind {
-		case ast.KindClassDeclaration:
-			result = append(result, simplifyClassDeclaration(b.impl.f, node, symbol))
 		case ast.KindInterfaceDeclaration:
 			if meaning&ast.SymbolFlagsInterface != 0 {
 				result = append(result, simplifyModifiers(b.impl.f, node, ast.IsInterfaceDeclaration, symbol))
@@ -181,30 +179,6 @@ func (b *NodeBuilder) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.Symbo
 	}
 
 	return b.exitContextSlice(result)
-}
-
-func simplifyClassDeclaration(f *ast.NodeFactory, classDecl *ast.Node, symbol *ast.Symbol) *ast.Node {
-	classDeclarations := core.Filter(symbol.Declarations, ast.IsClassLike)
-	var originalClassDecl *ast.Node
-	if len(classDeclarations) > 0 {
-		originalClassDecl = classDeclarations[0]
-	} else {
-		originalClassDecl = classDecl
-	}
-	modifiers := originalClassDecl.ModifierFlags() & ^(ast.ModifierFlagsExport | ast.ModifierFlagsAmbient)
-	isAnonymous := ast.IsClassExpression(originalClassDecl)
-	if isAnonymous {
-		cd := classDecl.AsClassDeclaration()
-		classDecl = f.UpdateClassDeclaration(
-			cd,
-			classDecl.Modifiers(),
-			nil,
-			cd.TypeParameters,
-			cd.HeritageClauses,
-			cd.Members,
-		)
-	}
-	return ast.ReplaceModifiers(f, classDecl, f.NewModifierList(ast.CreateModifiersFromModifierFlags(modifiers, f.NewModifier)))
 }
 
 func simplifyModifiers(f *ast.NodeFactory, newDecl *ast.Node, isDeclKind func(*ast.Node) bool, symbol *ast.Symbol) *ast.Node {

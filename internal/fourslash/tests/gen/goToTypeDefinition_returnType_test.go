@@ -17,7 +17,7 @@ func TestGoToTypeDefinition_returnType(t *testing.T) {
 	const content = `interface /*I*/I { x: number; }
 interface /*J*/J { y: number; }
 
-function f0(): I { return { x: 0 }; }
+function f0(): I return x: 0 end; end
 
 type T = /*T*/(i: I) => I;
 local f1: T = i => ({ x: i.x + 1 });
@@ -36,7 +36,7 @@ local /*f7Def*/f7 = (i: I) => {};
 
 function f8(i: I): I;
 function f8(j: J): J;
-function /*f8Def*/f8(ij: any): any { return ij; }
+function /*f8Def*/f8(ij: any): any return ij; end
 
 /*f0*/f0();
 /*f1*/f1();

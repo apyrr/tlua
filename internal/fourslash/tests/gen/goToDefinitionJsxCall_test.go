@@ -19,8 +19,8 @@ interface FC<P = {}> {
     (props: P, context?: any): string;
 }
 
-local Thing: FC = (props) => <div></div>;
-local HelloWorld = () => <[|/**/Thing|] />;`
+local Thing: FC = function(props) return <div></div> end;
+local HelloWorld = function() return <[|/**/Thing|] /> end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, "")

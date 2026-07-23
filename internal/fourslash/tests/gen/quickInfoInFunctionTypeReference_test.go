@@ -14,8 +14,7 @@ func TestQuickInfoInFunctionTypeReference(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function map(fn: (variab/*1*/le1: string) => void) {
-}
+	const content = `function map(fn: (variab/*1*/le1: string) => void) end
 local x = <{ (fn: (va/*2*/riable2: string) => void, a: string): void; }> () => { };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

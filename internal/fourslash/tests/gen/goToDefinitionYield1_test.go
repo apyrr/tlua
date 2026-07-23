@@ -14,9 +14,9 @@ func TestGoToDefinitionYield1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function* /*end1*/gen() {
+	const content = `function* /*end1*/gen()
     [|/*start1*/yield|] 0;
-}
+end
 
 local /*end2*/genFunction = function()
     [|/*start2*/yield|] 0;

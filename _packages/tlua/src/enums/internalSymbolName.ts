@@ -16,7 +16,6 @@ export var InternalSymbolName: any;
     InternalSymbolName["Computed"] = "__computed";
     InternalSymbolName["AssignmentDeclaration"] = "__assignment";
     InternalSymbolName["InstantiationExpression"] = "__instantiationExpression";
-    InternalSymbolName["ImportAttributes"] = "__importAttributes";
     InternalSymbolName["ExportEquals"] = "export=";
     InternalSymbolName["Default"] = "default";
     InternalSymbolName["This"] = "this";

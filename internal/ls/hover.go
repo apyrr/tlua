@@ -571,9 +571,6 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				return
 			}
 		}
-		if flags&ast.SymbolFlagsProperty != 0 && symbol.ValueDeclaration != nil && ast.IsMethodDeclaration(symbol.ValueDeclaration) {
-			flags = ast.SymbolFlagsMethod
-		}
 		if flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) != 0 {
 			writeNewLine()
 			if symbol.CheckFlags&ast.CheckFlagsIndexSymbol == 0 {
@@ -675,7 +672,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
 				writeNewLine()
 				dpw.WriteKeyword("this")
-			} else if node.Kind == ast.KindConstructorKeyword && (ast.IsConstructorDeclaration(node.Parent) || ast.IsConstructSignatureDeclaration(node.Parent)) {
+			} else if node.Kind == ast.KindConstructorKeyword && ast.IsConstructSignatureDeclaration(node.Parent) {
 				setDeclaration(node.Parent)
 				signatures := []*checker.Signature{c.GetSignatureFromDeclaration(node.Parent)}
 				writeSignatures(signatures, "constructor ", false, symbol)
@@ -692,22 +689,8 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				} else {
 					writeNewLine()
 					if flags&ast.SymbolFlagsClass != 0 {
-						classExpression := ast.GetDeclarationOfKind(symbol, ast.KindClassExpression)
-						if classExpression != nil {
-							// Local class expression: show "(local class)" prefix
-							dpw.WritePunctuation("(")
-							dpw.Write("local class")
-							dpw.WritePunctuation(") ")
-						}
 						if !tryExpandSymbol(symbol, flags) {
-							if classExpression == nil {
-								if core.Some(symbol.Declarations, func(d *ast.Node) bool {
-									return ast.IsClassDeclaration(d) && ast.HasAbstractModifier(d)
-								}) {
-									dpw.WriteKeyword("abstract ")
-								}
-								dpw.WriteKeyword("class ")
-							}
+							dpw.WriteKeyword("class ")
 							writeSymbolClassified(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags)
 							params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
 							writeTypeParams(params)
@@ -904,8 +887,8 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		return getMatchingJSDocTag(c, node.Parent, node.Name().Text(), isMatchingTemplateTag)
 	case ast.IsVariableDeclaration(node) && ast.IsVariableDeclarationList(node.Parent) && core.FirstOrNil(node.Parent.AsVariableDeclarationList().Declarations.Nodes) == node:
 		return getJSDocOrTag(c, node.Parent.Parent)
-	case (ast.IsFunctionExpressionOrArrowFunction(node) || ast.IsClassExpression(node)) &&
-		(ast.IsVariableDeclaration(node.Parent) || ast.IsPropertyDeclaration(node.Parent) || ast.IsPropertyAssignment(node.Parent)) && node.Parent.Initializer() == node:
+	case ast.IsFunctionExpressionOrArrowFunction(node) &&
+		(ast.IsVariableDeclaration(node.Parent) || ast.IsPropertyAssignment(node.Parent)) && node.Parent.Initializer() == node:
 		return getJSDocOrTag(c, node.Parent)
 	case ast.IsBindingElement(node) && ast.IsObjectBindingPattern(node.Parent):
 		if name := node.PropertyNameOrName(); ast.IsIdentifier(name) {
@@ -921,7 +904,7 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		}
 	}
 	if symbol := node.Symbol(); symbol != nil && node.Parent != nil {
-		if ast.IsFunctionDeclaration(node) || ast.IsMethodDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsConstructorDeclaration(node) || ast.IsConstructSignatureDeclaration(node) {
+		if ast.IsFunctionDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsConstructSignatureDeclaration(node) {
 			firstSignature := core.Find(symbol.Declarations, ast.IsFunctionLike)
 			if firstSignature != nil && node != firstSignature {
 				if jsDoc := getJSDocOrTag(c, firstSignature); jsDoc != nil {
@@ -929,25 +912,12 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 				}
 			}
 		}
-		if ast.IsClassOrInterfaceLike(node.Parent) {
-			isStatic := ast.HasStaticModifier(node)
-			classType := c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())
-			if isStatic {
-				// For static members, use the checker's base constructor type resolution.
-				// This correctly handles intersection constructor types from mixins
-				// (e.g., typeof MixinClass & T) by preserving the full intersection.
-				staticBaseType := c.GetApparentType(c.GetBaseConstructorTypeOfClass(classType))
-				if prop := c.GetPropertyOfType(staticBaseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+		if ast.IsInterfaceDeclaration(node.Parent) {
+			interfaceType := c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())
+			for _, baseType := range c.GetBaseTypes(interfaceType) {
+				if prop := c.GetPropertyOfType(baseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
 					if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
 						return jsDoc
-					}
-				}
-			} else {
-				for _, baseType := range c.GetBaseTypes(classType) {
-					if prop := c.GetPropertyOfType(baseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
-						if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
-							return jsDoc
-						}
 					}
 				}
 			}

@@ -18,11 +18,11 @@ func TestGoToDefinitionOverriddenMember4(t *testing.T) {
 class Foo {
     /*2*/m() {}
 }
-function f () {
+function f ()
     return class extends Foo {
         [|/*1*/override|] m() {}
     }
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, "1")

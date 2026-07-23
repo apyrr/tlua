@@ -375,31 +375,31 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         // The property index is `order`, minus the number of zeros in the mask that are in bit positions less
         // than the `order`th bit. Example:
         //
-        // This is a MethodDeclaration with mask 0b01110101. The possible properties are
-        // ["modifiers", "asteriskToken", "name", "postfixToken", "typeParameters", "parameters", "type", "body"]
+        // This is a MethodSignature with mask 0b00111011. The possible properties are
+        // ["modifiers", "name", "postfixToken", "typeParameters", "parameters", "type"]
         // (it has modifiers, name, typeParameters, parameters, and type).
         //
-        // | Bit   | 7    | 6    | 5          | 4              | 3            | 2    | 1             | 0         |
-        // | ----- | ---- | ---- | ---------- | -------------- | ------------ | ---- | ------------- | --------- |
-        // | Value | 0    | 1    | 1          | 1              | 0            | 1    | 0             | 1         |
-        // | Name  | body | type | parameters | typeParameters | postfixToken | name | asteriskToken | modifiers |
+        // | Bit   | 5    | 4          | 3              | 2            | 1    | 0         |
+        // | ----- | ---- | ---------- | -------------- | ------------ | ---- | --------- |
+        // | Value | 1    | 1          | 1              | 0            | 1    | 1         |
+        // | Name  | type | parameters | typeParameters | postfixToken | name | modifiers |
         //
-        // We are trying to get the index of "parameters" (bit = 5).
+        // We are trying to get the index of "parameters" (bit = 4).
         // First, set all the more significant bits to 1:
         //
-        // | Bit   | 7    | 6    | 5          | 4              | 3            | 2    | 1             | 0         |
-        // | ----- | ---- | ---- | ---------- | -------------- | ------------ | ---- | ------------- | --------- |
-        // | Value | 1    | 1    | 1          | 1              | 0            | 1    | 0             | 1         |
+        // | Bit   | 5    | 4          | 3              | 2            | 1    | 0         |
+        // | ----- | ---- | ---------- | -------------- | ------------ | ---- | --------- |
+        // | Value | 1    | 1          | 1              | 0            | 1    | 1         |
         //
         // Then, flip the bits:
         //
-        // | Bit   | 7    | 6    | 5          | 4              | 3            | 2    | 1             | 0         |
-        // | ----- | ---- | ---- | ---------- | -------------- | ------------ | ---- | ------------- | --------- |
-        // | Value | 0    | 0    | 0          | 0              | 1            | 0    | 1             | 0         |
+        // | Bit   | 5    | 4          | 3              | 2            | 1    | 0         |
+        // | ----- | ---- | ---------- | -------------- | ------------ | ---- | --------- |
+        // | Value | 0    | 0          | 0              | 1            | 0    | 0         |
         //
         // Counting the 1s gives us the number of *missing properties* before the `order`th property. If every property
-        // were present, we would have `parameters = children[5]`, but since `postfixToken` and `astersiskToken` are
-        // missing, we have `parameters = children[5 - 2]`.
+        // were present, we would have `parameters = children[4]`, but since `postfixToken` is missing,
+        // we have `parameters = children[4 - 1]`.
         const propertyIndex = order - popcount8[~(mask | ((0xff << order) & 0xff)) & 0xff];
         let childIndex = this.index + 1;
         for (let i = 0; i < propertyIndex; i++) {
@@ -534,8 +534,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         switch (this.kind) {
             case SyntaxKind.HeritageClause:
                 return (this.data >> 24) & 0x1 ? SyntaxKind.ImplementsKeyword : SyntaxKind.ExtendsKeyword;
-            case SyntaxKind.ImportAttributes:
-                return (this.data >> 25) & 0x1 ? SyntaxKind.AssertKeyword : SyntaxKind.WithKeyword;
         }
     }
 
@@ -575,17 +573,11 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get assertsModifier(): RemoteNode | undefined {
         return this.getNamedChild("assertsModifier") as RemoteNode;
     }
-    get attributes(): RemoteNode | RemoteNodeList | undefined {
-        return this.getNamedChild("attributes") as RemoteNode | RemoteNodeList;
-    }
-    get block(): RemoteNode | undefined {
-        return this.getNamedChild("block") as RemoteNode;
+    get attributes(): RemoteNode | undefined {
+        return this.getNamedChild("attributes") as RemoteNode;
     }
     get body(): RemoteNode | undefined {
         return this.getNamedChild("body") as RemoteNode;
-    }
-    get catchClause(): RemoteNode | undefined {
-        return this.getNamedChild("catchClause") as RemoteNode;
     }
     get checkType(): RemoteNode | undefined {
         return this.getNamedChild("checkType") as RemoteNode;
@@ -661,9 +653,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get falseType(): RemoteNode | undefined {
         return this.getNamedChild("falseType") as RemoteNode;
-    }
-    get finallyBlock(): RemoteNode | undefined {
-        return this.getNamedChild("finallyBlock") as RemoteNode;
     }
     get from(): RemoteNode | undefined {
         return this.getNamedChild("from") as RemoteNode;
@@ -809,9 +798,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get trueType(): RemoteNode | undefined {
         return this.getNamedChild("trueType") as RemoteNode;
     }
-    get tryBlock(): RemoteNode | undefined {
-        return this.getNamedChild("tryBlock") as RemoteNode;
-    }
     get tupleNameSource(): RemoteNode | undefined {
         return this.getNamedChild("tupleNameSource") as RemoteNode;
     }
@@ -835,12 +821,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get types(): RemoteNodeList | undefined {
         return this.getNamedChild("types") as RemoteNodeList;
-    }
-    get value(): RemoteNode | undefined {
-        return this.getNamedChild("value") as RemoteNode;
-    }
-    get variableDeclaration(): RemoteNode | undefined {
-        return this.getNamedChild("variableDeclaration") as RemoteNode;
     }
     get whenFalse(): RemoteNode | undefined {
         return this.getNamedChild("whenFalse") as RemoteNode;

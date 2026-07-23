@@ -14,13 +14,13 @@ func TestCallHierarchyClass(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
     bar();
-}
+end
 
-function /**/bar() {
+function /**/bar()
     new Baz();
-}
+end
 
 class Baz {
 }`

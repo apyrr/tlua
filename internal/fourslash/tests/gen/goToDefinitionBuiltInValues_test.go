@@ -16,7 +16,7 @@ func TestGoToDefinitionBuiltInValues(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local u = /*undefined*/undefined;
 local n = /*null*/null;
-local a = function() { return /*arguments*/arguments; };
+local a = function() return /*arguments*/arguments; end;
 local t = /*true*/true;
 local f = /*false*/false;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

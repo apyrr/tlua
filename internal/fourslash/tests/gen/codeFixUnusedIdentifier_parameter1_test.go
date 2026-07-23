@@ -16,7 +16,7 @@ func TestCodeFixUnusedIdentifier_parameter1(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noUnusedLocals: true
 // @noUnusedParameters: true
-function g(a, b) { b; }
+function g(a, b) b; end
 g(1, 2);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

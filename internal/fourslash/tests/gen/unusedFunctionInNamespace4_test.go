@@ -17,8 +17,7 @@ func TestUnusedFunctionInNamespace4(t *testing.T) {
 	const content = `// @noUnusedLocals: true
 // @noUnusedParameters:true
  [| namespace Validation {
-    local function1 = function() {
-    }
+    local function1 = function() end
 } |]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

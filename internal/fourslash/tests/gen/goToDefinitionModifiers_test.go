@@ -28,7 +28,7 @@ func TestGoToDefinitionModifiers(t *testing.T) {
     /*public1*/public/*public2*/ as/*multipleModifiers*/ync c/*c*/() { }
 }
 
-exp/*exportFunction*/ort function foo/*foo*/() { }`
+exp/*exportFunction*/ort function foo/*foo*/() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, "export", "A", "private", "z", "readonly", "x", "async", "a", "override", "b", "public1", "public2", "multipleModifiers", "c", "exportFunction", "foo")

@@ -141,7 +141,6 @@ const (
 	//     ArrayLiteral
 	//     ObjectLiteral
 	//     FunctionExpression
-	//     ClassExpression
 	//     GeneratorExpression
 	//     AsyncFunctionExpression
 	//     AsyncGeneratorExpression
@@ -270,7 +269,6 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		KindArrayLiteralExpression,
 		KindObjectLiteralExpression,
 		KindFunctionExpression,
-		KindClassExpression,
 		KindRegularExpressionLiteral,
 		KindNoSubstitutionTemplateLiteral,
 		KindTemplateExpression,
@@ -475,14 +473,10 @@ const (
 	//       `this`
 	//
 	//   ImportType:
-	//       `typeof`? `import` `(` Type[~Extends] `,`? `)` ImportTypeQualifier? TypeArguments?
-	//       `typeof`? `import` `(` Type[~Extends] `,` ImportTypeAttributes `,`? `)` ImportTypeQualifier? TypeArguments?
+	//       `typeof`? `import` `(` Type[~Extends] `)` ImportTypeQualifier? TypeArguments?
 	//
 	//   ImportTypeQualifier:
 	//       `.` EntityName
-	//
-	//   ImportTypeAttributes:
-	//       `{` `with` `:` ImportAttributes `,`? `}`
 	//
 	//   TypeQueryNode:
 	//
@@ -522,8 +516,6 @@ const (
 	//
 	//   MethodSignatureDeclaration:
 	//       PropertyName `?`? TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;`
-	//       `get` PropertyName TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;` // GetAccessorDeclaration
-	//       `set` PropertyName TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;` // SetAccessorDeclaration
 	//
 	//   IndexSignatureDeclaration:
 	//       `[` IdentifierName`]` TypeAnnotation `;`

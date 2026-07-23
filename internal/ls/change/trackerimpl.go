@@ -300,8 +300,8 @@ func hasCommentsBeforeLineBreak(text string, start int) bool {
 }
 
 func needSemicolonBetween(a, b *ast.Node) bool {
-	return (ast.IsPropertySignatureDeclaration(a) || ast.IsPropertyDeclaration(a)) &&
-		ast.IsClassOrTypeElement(b) &&
+	return ast.IsPropertySignatureDeclaration(a) &&
+		ast.IsTypeElement(b) &&
 		b.Name().Kind == ast.KindComputedPropertyName ||
 		ast.IsStatementButNotDeclaration(a) &&
 			ast.IsStatementButNotDeclaration(b) // TODO: only if b would start with a `(` or `[`

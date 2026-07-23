@@ -15,7 +15,7 @@ func TestFindAllRefsJsDocTypeDef(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @typedef {Object} /*0*/T */
-function foo() {}`
+function foo() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0")

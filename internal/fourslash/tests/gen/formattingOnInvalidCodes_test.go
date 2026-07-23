@@ -19,7 +19,7 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 /*3*/local f
 /*4*/a++;b++;
 
-/*5*/function        f     (     )        {
+/*5*/function        f     (     )       
 /*6*/    for (i = 0; i < 10; i++) {
 /*7*/        k = abc + 123 ^ d;
 /*8*/        a = XYZ[m  (a[b[c][d]])];
@@ -65,9 +65,9 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 
 /*47*/    }
 /*48*/    }
-/*49*/    local a  ={b:function(){}};
+/*49*/    local a  ={b:function() end};
 /*50*/    return {a:1,b:2}
-/*51*/}
+/*51*/ end
 
 /*52*/local z = 1;
 /*53*/            for (i = 0; i < 10; i++)
@@ -83,12 +83,12 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 /*61*/    $(document).ready ();
 
 
-/*62*/ function  pageLoad() {
+/*62*/ function  pageLoad()
 /*63*/ $('#TextBox1' ) .     unbind   (  ) ;
 /*64*/$('#TextBox1' ) . datepicker ( ) ;
-/*65*/}
+/*65*/ end
 
-/*66*/        function pageLoad    (     )    {
+/*66*/        function pageLoad    (     )   
 /*67*/    local webclass=[
 /*68*/                { 'student'     :/*69*/
 /*70*/                { 'id': '1', 'name': 'Linda Jones', 'legacySkill': 'Access, VB 5.0' }
@@ -103,11 +103,11 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 
 /*81*/$create(Sys.UI.DataView,{data:webclass},null,null,$get('SList'));
 
-/*82*/}
+/*82*/ end
 
-/*83*/$( document ).ready(function(){
+/*83*/$( document ).ready(function()
 /*84*/alert('hello');
-/*85*/    } ) ;`
+/*85*/    end ) ;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")
@@ -120,7 +120,7 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 	f.GoToMarker(t, "4")
 	f.VerifyCurrentLineContent(t, `a++; b++;`)
 	f.GoToMarker(t, "5")
-	f.VerifyCurrentLineContent(t, `function f() {`)
+	f.VerifyCurrentLineContent(t, `function f() `)
 	f.GoToMarker(t, "6")
 	f.VerifyCurrentLineContent(t, `    for (i = 0; i < 10; i++) {`)
 	f.GoToMarker(t, "7")
@@ -208,11 +208,11 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 	f.GoToMarker(t, "48")
 	f.VerifyCurrentLineContent(t, `    }`)
 	f.GoToMarker(t, "49")
-	f.VerifyCurrentLineContent(t, `    local a = { b: function() { } };`)
+	f.VerifyCurrentLineContent(t, `    local a = { b: function() end };`)
 	f.GoToMarker(t, "50")
 	f.VerifyCurrentLineContent(t, `    return { a: 1, b: 2 }`)
 	f.GoToMarker(t, "51")
-	f.VerifyCurrentLineContent(t, `}`)
+	f.VerifyCurrentLineContent(t, ` end`)
 	f.GoToMarker(t, "52")
 	f.VerifyCurrentLineContent(t, `local z = 1;`)
 	f.GoToMarker(t, "53")
@@ -234,15 +234,15 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 	f.GoToMarker(t, "61")
 	f.VerifyCurrentLineContent(t, `$(document).ready();`)
 	f.GoToMarker(t, "62")
-	f.VerifyCurrentLineContent(t, `function pageLoad() {`)
+	f.VerifyCurrentLineContent(t, `function pageLoad() `)
 	f.GoToMarker(t, "63")
 	f.VerifyCurrentLineContent(t, `    $('#TextBox1').unbind();`)
 	f.GoToMarker(t, "64")
 	f.VerifyCurrentLineContent(t, `    $('#TextBox1').datepicker();`)
 	f.GoToMarker(t, "65")
-	f.VerifyCurrentLineContent(t, `}`)
+	f.VerifyCurrentLineContent(t, ` end`)
 	f.GoToMarker(t, "66")
-	f.VerifyCurrentLineContent(t, `function pageLoad() {`)
+	f.VerifyCurrentLineContent(t, `function pageLoad() `)
 	f.GoToMarker(t, "67")
 	f.VerifyCurrentLineContent(t, `    local webclass = [`)
 	f.GoToMarker(t, "68")
@@ -274,11 +274,11 @@ func TestFormattingOnInvalidCodes(t *testing.T) {
 	f.GoToMarker(t, "81")
 	f.VerifyCurrentLineContent(t, `    $create(Sys.UI.DataView, { data: webclass }, null, null, $get('SList'));`)
 	f.GoToMarker(t, "82")
-	f.VerifyCurrentLineContent(t, `}`)
+	f.VerifyCurrentLineContent(t, ` end`)
 	f.GoToMarker(t, "83")
-	f.VerifyCurrentLineContent(t, `$(document).ready(function() {`)
+	f.VerifyCurrentLineContent(t, `$(document).ready(function() `)
 	f.GoToMarker(t, "84")
 	f.VerifyCurrentLineContent(t, `    alert('hello');`)
 	f.GoToMarker(t, "85")
-	f.VerifyCurrentLineContent(t, `});`)
+	f.VerifyCurrentLineContent(t, ` end);`)
 }

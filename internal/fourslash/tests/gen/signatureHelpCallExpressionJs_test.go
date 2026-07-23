@@ -18,10 +18,10 @@ func TestSignatureHelpCallExpressionJs(t *testing.T) {
 // @checkJs: true
 // @allowJs: true
 // @Filename: main.lua
-function allOptional() { arguments; }
+function allOptional() arguments; end
 allOptional(/*1*/);
 allOptional(1, 2, 3);
-function someOptional(x, y) { arguments; }
+function someOptional(x, y) arguments; end
 someOptional(/*2*/);
 someOptional(1, 2, 3);
 someOptional(); // no error here; x and y are optional in JS`

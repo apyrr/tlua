@@ -15,7 +15,7 @@ func TestRemoveDeclareInModule(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**/export namespace Foo {
-    function a(): void {}
+    function a(): void end
 }
 
 Foo.a();`

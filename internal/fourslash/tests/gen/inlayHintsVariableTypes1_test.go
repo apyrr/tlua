@@ -31,7 +31,7 @@ local i = new N.C();
 local j = ((((new C()))));
 local k = { a = 1, b = 1 };
 local l = ((({ a = 1, b = 1 })));
- local m = () => 123;
+ local m = function() return 123 end;
  local n;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

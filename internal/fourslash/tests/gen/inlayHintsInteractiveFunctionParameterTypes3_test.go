@@ -21,9 +21,9 @@ func TestInlayHintsInteractiveFunctionParameterTypes3(t *testing.T) {
 }
 
 local a: IFoo = {
-    bar = function (x?): void {
+    bar = function (x?): void
         throw new Error("Function not implemented.");
-    }
+    end
 }
 class Foo {
     #value = 0;

@@ -14,11 +14,11 @@ func TestGoToDefinitionAwait4(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `async function outerAsyncFun() {
-    local /*end*/af = async () => {
+	const content = `async function outerAsyncFun()
+    local /*end*/af = async function()
       [|/*start*/await|] Promise.resolve(0);
-    }
-}`
+    end
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, "start")

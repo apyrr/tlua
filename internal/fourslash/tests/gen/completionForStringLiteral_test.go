@@ -19,7 +19,7 @@ func TestCompletionForStringLiteral(t *testing.T) {
 	const content = `type Options = "Option 1" | "Option 2" | "Option 3";
 local x: Options = "[|/*1*/Option 3|]";
 
-function f(a: Options) { };
+function f(a: Options) end;
 f("/*2*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

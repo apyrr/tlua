@@ -14,10 +14,10 @@ func TestIncrementalResolveFunctionPropertyAssignment(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function bar(indexer: { getLength(): number; getTypeAtIndex(index: number): string; }): string {
+	const content = `function bar(indexer: { getLength(): number; getTypeAtIndex(index: number): string; }): string
     return indexer.getTypeAtIndex(indexer.getLength() - 1);
-}
-function foo(a: string[]) {
+end
+function foo(a: string[])
     return bar({
         getLength(): number {
             return "a.length";
@@ -31,7 +31,7 @@ function foo(a: string[]) {
             }
         }
     });
-}
+end
 local val = foo(["myString1", "myString2"]);
 /*1*/val;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

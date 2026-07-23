@@ -16,25 +16,23 @@ func TestCallHierarchyClassStaticBlock(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C {
     static {
-        function foo() {
+        function foo()
             bar();
-        }
+        end
 
-        function /**/bar() {
+        function /**/bar()
             baz();
             quxx();
             baz();
-        }
+        end
 
         foo();
     }
 }
 
-function baz() {
-}
+function baz() end
 
-function quxx() {
-}`
+function quxx() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

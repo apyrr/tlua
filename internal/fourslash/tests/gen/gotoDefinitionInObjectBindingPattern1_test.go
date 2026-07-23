@@ -14,13 +14,13 @@ func TestGotoDefinitionInObjectBindingPattern1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function bar<T>(onfulfilled: (value: T) => void) {
+	const content = `function bar<T>(onfulfilled: (value: T) => void)
   return undefined;
-}
+end
 interface Test {
   /*destination*/prop2: number
 }
-bar<Test>(({[|pr/*goto*/op2|]})=>{});`
+bar<Test>(function({[|pr/*goto*/op2|]}) end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, "goto")

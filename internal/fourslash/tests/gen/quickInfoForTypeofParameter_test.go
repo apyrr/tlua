@@ -14,10 +14,10 @@ func TestQuickInfoForTypeofParameter(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
     local y/*ref1*/1: string;
     local x: typeof y/*ref2*/1;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "ref1", "(local var) y1: string", "")

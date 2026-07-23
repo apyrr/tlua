@@ -16,13 +16,13 @@ func TestGetJavaScriptSyntacticDiagnostics24(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.lua
-function Person(age) {
+function Person(age)
     if (age >= 18) {
         this.canVote = true;
     } else {
         this.canVote = 23;
     }
-}
+end
 local x = new Person(100);
 x.canVote/**/;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

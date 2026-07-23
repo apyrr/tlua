@@ -14,14 +14,14 @@ func TestRenameFunctionParameter1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function Foo() {
+	const content = `function Foo()
     /**
      * @param {number} p
      */
     this.foo = function(p/**/)
         return p;
     end
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")

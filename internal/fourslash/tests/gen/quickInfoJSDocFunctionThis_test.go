@@ -17,7 +17,7 @@ func TestQuickInfoJSDocFunctionThis(t *testing.T) {
 	const content = `// @allowJs: true
 // @Filename: Foo.lua
 /** @type {function (this: string, string): string} */
-local f/**/ = function (s) { return s; }`
+local f/**/ = function (s) return s; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

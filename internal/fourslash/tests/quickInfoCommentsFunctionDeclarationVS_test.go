@@ -12,15 +12,14 @@ func TestQuickInfoCommentsFunctionDeclarationVS(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This comment should appear for foo*/
-function f/*1*/oo() {
-}
+function f/*1*/oo() end
 f/*2*/oo();
 /** This is comment for function signature*/
 function fo/*5*/oWithParameters(/** this is comment about a*/a: string,
     /** this is comment for b*/
-    b: number) {
+    b: number)
     local /*6*/d = a;
-}
+end
 fooWithParam/*8*/eters("a",10);
 /**
 * Does something

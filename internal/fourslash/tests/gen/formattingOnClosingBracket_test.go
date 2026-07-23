@@ -15,7 +15,7 @@ func TestFormattingOnClosingBracket(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f( ) {/*1*/
+	const content = `function f( ) /*1*/
 local     x = 3;/*2*/
     local z = 2   ;/*3*/
     a  = z  ++ - 2 *  x ;/*4*/
@@ -46,7 +46,7 @@ a++;/*19*/
     default:/*24*/
         break;/*25*/
     }/*26*/
-}/*27*/`
+end/*27*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	opts874 := f.GetOptions()
@@ -54,7 +54,7 @@ a++;/*19*/
 	f.Configure(t, opts874)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
-	f.VerifyCurrentLineContent(t, `function f() {`)
+	f.VerifyCurrentLineContent(t, `function f() `)
 	f.GoToMarker(t, "2")
 	f.VerifyCurrentLineContent(t, `    local x = 3;`)
 	f.GoToMarker(t, "3")
@@ -106,5 +106,5 @@ a++;/*19*/
 	f.GoToMarker(t, "26")
 	f.VerifyCurrentLineContent(t, `    }`)
 	f.GoToMarker(t, "27")
-	f.VerifyCurrentLineContent(t, `}`)
+	f.VerifyCurrentLineContent(t, ` end`)
 }

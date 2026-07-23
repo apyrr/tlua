@@ -14,7 +14,7 @@ func TestCodeFixAddOptionalParam18(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `[|function f(a: number, c: string) {}|]
+	const content = `[|function f(a: number, c: string) end|]
 f(1, 1, "");`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

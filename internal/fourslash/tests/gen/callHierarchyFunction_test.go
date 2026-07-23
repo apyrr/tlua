@@ -14,21 +14,19 @@ func TestCallHierarchyFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
     bar();
-}
+end
 
-function /**/bar() {
+function /**/bar()
     baz();
     quxx();
     baz();
-}
+end
 
-function baz() {
-}
+function baz() end
 
-function quxx() {
-}`
+function quxx() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

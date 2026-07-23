@@ -17,10 +17,10 @@ func TestGetOccurrencesReturnBroken(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `ret/*1*/urn;
 retu/*2*/rn;
-function f(a: number) {
+function f(a: number)
     if (a > 0) {
         return (function ()
-            () => [|return|];
+            function() [|return|] end;
             [|return|];
             [|return|];
 
@@ -30,11 +30,11 @@ function f(a: number) {
         end)() || true;
     }
 
-    local unusued = [1, 2, 3, 4].map(x => { return 4 })
+    local unusued = [1, 2, 3, 4].map(function(x) return 4 end)
 
     return;
     return true;
-}
+end
 
 class A {
     ret/*3*/urn;

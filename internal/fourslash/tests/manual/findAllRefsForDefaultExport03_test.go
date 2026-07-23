@@ -10,9 +10,9 @@ import (
 func TestFindAllRefsForDefaultExport03(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/*1*/function /*2*/f() {
+	const content = `/*1*/function /*2*/f()
     return 100;
-}
+end
 
 /*3*/export default /*4*/f;
 

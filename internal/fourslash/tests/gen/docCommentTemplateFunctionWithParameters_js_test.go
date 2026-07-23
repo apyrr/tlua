@@ -17,7 +17,7 @@ func TestDocCommentTemplateFunctionWithParameters_js(t *testing.T) {
 	const content = `// @allowJs: true
 // @Filename: /a.lua
 /*0*/
-function f(a, ...b): boolean {}`
+function f(a, ...b): boolean end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

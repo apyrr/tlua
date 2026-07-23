@@ -494,7 +494,7 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 	switch node.Kind {
 	case ast.KindTypeParameter:
 		switch {
-		case ast.IsFunctionLike(parent) || ast.IsClassLike(parent) || ast.IsInterfaceDeclaration(parent) || ast.IsTypeOrJSTypeAliasDeclaration(parent):
+		case ast.IsFunctionLike(parent) || ast.IsInterfaceDeclaration(parent) || ast.IsTypeOrJSTypeAliasDeclaration(parent):
 			return parent.TypeParameterList()
 		case ast.IsInferTypeNode(parent):
 			break
@@ -509,11 +509,7 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 	case ast.KindTemplateSpan:
 		return node.Parent.AsTemplateExpression().TemplateSpans
 	case ast.KindHeritageClause:
-		if ast.IsClassLike(node.Parent) {
-			return node.Parent.ClassLikeData().HeritageClauses
-		} else {
-			return node.Parent.AsInterfaceDeclaration().HeritageClauses
-		}
+		return node.Parent.AsInterfaceDeclaration().HeritageClauses
 	}
 
 	// TODO(rbuckton)
@@ -563,10 +559,6 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 		}
 	case ast.KindBlock, ast.KindModuleBlock:
 		return parent.StatementList()
-	case ast.KindClassDeclaration, ast.KindClassExpression:
-		if ast.IsClassElement(node) {
-			return parent.MemberList()
-		}
 	case ast.KindSourceFile:
 		if ast.IsStatement(node) {
 			return parent.StatementList()

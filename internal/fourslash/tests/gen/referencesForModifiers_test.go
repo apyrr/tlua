@@ -24,7 +24,7 @@ func TestReferencesForModifiers(t *testing.T) {
 }|]
 [|/*constModifier*/local enum E {
 }|]
-[|/*asyncModifier*/async function fn() {}|]
+[|/*asyncModifier*/async function fn() end|]
 [|/*exportModifier*/export /*defaultModifier*/default class C2 {}|]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

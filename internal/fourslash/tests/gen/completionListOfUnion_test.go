@@ -19,7 +19,7 @@ func TestCompletionListOfUnion(t *testing.T) {
 	const content = `// @strictNullChecks: true
 local x: { a: number, b: number } | { a: string, c: string } | { b: boolean } | number | null | undefined = { /*x*/ };
 interface I { a: number; }
-function f(...args: Array<I | I[]>) {}
+function f(...args: Array<I | I[]>) end
 f({ /*f*/ });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

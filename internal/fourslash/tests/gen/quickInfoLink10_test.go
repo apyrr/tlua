@@ -17,7 +17,7 @@ func TestQuickInfoLink10(t *testing.T) {
 	const content = `/**
  * start {@link https://vscode.dev/ | end}
  */
-local /**/a = () => 1;`
+local /**/a = function() return 1 end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

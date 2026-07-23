@@ -23,21 +23,21 @@ declare namespace JSX {
         div: any;
     }
 }
-function fn() {
+function fn()
     return <>
         <butto/*1*/
     </>;
-}
-function fn2() {
+end
+function fn2()
     return <>
         preceding junk <butto/*2*/
     </>;
-}
-function fn3() {
+end
+function fn3()
     return <>
         <butto/*3*/ style=""
     </>;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

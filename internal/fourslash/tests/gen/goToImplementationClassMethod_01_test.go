@@ -22,9 +22,9 @@ class Bar extends AbstractBar{
     [|hello|]() {}
 }
 
-function whatever(x: AbstractBar) {
+function whatever(x: AbstractBar)
     x.he/*reference*/llo();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "reference", "declaration")

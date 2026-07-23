@@ -25,9 +25,9 @@ func TestCompletionForStringLiteral4(t *testing.T) {
  * @param {'literal' | number} p4
  * @param {12 | true} p5
  */
-function f(p1, p2, p3, p4, p5) {
+function f(p1, p2, p3, p4, p5)
     return p1 + p2 + p3 + p4 + p5 + '.';
-}
+end
 f/*1*/('literal', 'literal', "[|o/*2*/ther1|]", 12);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

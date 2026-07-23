@@ -16,9 +16,9 @@ func TestFormatSpaceBetweenFunctionAndArrayIndex(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
 
-function test() {
+function test()
     return [];
-}
+end
 
 test() [0]
 `
@@ -27,9 +27,9 @@ test() [0]
 	f.MarkTestAsStradaServer()
 	f.FormatDocument(t, "")
 	f.VerifyCurrentFileContent(t, `
-function test() {
+function test()
     return [];
-}
+end
 
 test()[0]
 `)

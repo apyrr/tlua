@@ -20,7 +20,7 @@ local bar, []
 local foo1, {a, b}
 local bar1, [c, d]
 local {e, x: [f, g]} = {a:1, x:[]};
-local { h: i = function j() {} } = obj;`
+local { h: i = function j() end } = obj;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentSymbol(t)

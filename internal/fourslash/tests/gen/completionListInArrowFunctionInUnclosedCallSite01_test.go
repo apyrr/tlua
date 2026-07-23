@@ -16,8 +16,8 @@ func TestCompletionListInArrowFunctionInUnclosedCallSite01(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function foo(...params: any[]): any;
-function getAllFiles(rootFileNames: string[]) {
-    local processedFiles = rootFileNames.map(fileName => foo(/*1*/`
+function getAllFiles(rootFileNames: string[])
+    local processedFiles = rootFileNames.map(function(fileName) return foo(/*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

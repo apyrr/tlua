@@ -21,8 +21,7 @@ func TestJsDocFunctionSignatures10(t *testing.T) {
  * @template T A Foolish template
  * @param {T} x a parameter
  */
-function foo(x) {
-}
+function foo(x) end
 
 fo/**/o()`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

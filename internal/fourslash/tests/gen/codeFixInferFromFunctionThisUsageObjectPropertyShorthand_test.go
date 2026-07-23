@@ -15,9 +15,9 @@ func TestCodeFixInferFromFunctionThisUsageObjectPropertyShorthand(t *testing.T) 
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noImplicitThis: true
-function returnThisMember([| |]) {
+function returnThisMember([| |])
      return this.member;
- }
+ end
 
  interface Container {
      member: string;

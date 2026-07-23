@@ -41,8 +41,8 @@ declare function MainButton(linkProps: LinkProps): JSX.Element;
 declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 local opt = <MainButton /*1*/ />;
 local opt = <MainButton children="chidlren" /*2*/ />;
-local opt = <MainButton onClick={()=>{}} /*3*/ />;
-local opt = <MainButton onClick={()=>{}} ignore-prop /*4*/ />;
+local opt = <MainButton onClick={function() end} /*3*/ />;
+local opt = <MainButton onClick={function() end} ignore-prop /*4*/ />;
 local opt = <MainButton goTo="goTo" /*5*/ />;
 local opt = <MainButton wrong /*6*/ />;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -21,5 +21,5 @@ func TestAddFunctionAboveMultiLineLambdaExpression(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")
-	f.Insert(t, "function Foo() { }")
+	f.Insert(t, "function Foo() end")
 }

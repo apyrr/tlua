@@ -20,7 +20,7 @@ func TestQuickInfoLink11(t *testing.T) {
  * {@link https://vscode.dev|link text}
  * {@link https://vscode.dev link text}
  */
-function f() {}
+function f() end
 
 /**/f();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

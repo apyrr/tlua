@@ -81,7 +81,7 @@ func deleteDeclaration(t *Tracker, deletedNodesInLists map[*ast.Node]bool, sourc
 	case ast.KindFunctionKeyword:
 		deleteNode(t, sourceFile, node, LeadingTriviaOptionExclude, TrailingTriviaOptionInclude)
 
-	case ast.KindClassDeclaration, ast.KindFunctionDeclaration:
+	case ast.KindFunctionDeclaration:
 		leadingTrivia := LeadingTriviaOptionStartLine
 		if hasJSDocNodes(node) {
 			leadingTrivia = LeadingTriviaOptionJSDoc
@@ -147,15 +147,6 @@ func deleteImportBinding(t *Tracker, sourceFile *ast.SourceFile, node *ast.Node)
 
 func deleteVariableDeclaration(t *Tracker, deletedNodesInLists map[*ast.Node]bool, sourceFile *ast.SourceFile, node *ast.Node) {
 	parent := node.Parent
-
-	if parent.Kind == ast.KindCatchClause {
-		// TODO: There's currently no unused diagnostic for this, could be a suggestion
-		openParen := astnav.FindChildOfKind(parent, ast.KindOpenParenToken, sourceFile)
-		closeParen := astnav.FindChildOfKind(parent, ast.KindCloseParenToken, sourceFile)
-		debug.Assert(openParen != nil && closeParen != nil, "catch clause should have parens")
-		t.DeleteNodeRange(sourceFile, openParen, closeParen, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionInclude)
-		return
-	}
 
 	if len(parent.AsVariableDeclarationList().Declarations.Nodes) != 1 {
 		deleteNodeInList(t, deletedNodesInLists, sourceFile, node)

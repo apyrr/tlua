@@ -18,7 +18,7 @@ func TestContextualTypingOfGenericCallSignatures1(t *testing.T) {
    <T, U>(x: T): U
 };
 // x should not be contextually typed 
-local f24 = (/**/x) => { return 1 };`
+local f24 = function(/**/x) return 1 end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "(parameter) x: any", "")

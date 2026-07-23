@@ -25,7 +25,7 @@ local foo = "foo";
  * A function
  * @deprecated
  */
-function fn() { }
+function fn() end
 
 /**
  * A class

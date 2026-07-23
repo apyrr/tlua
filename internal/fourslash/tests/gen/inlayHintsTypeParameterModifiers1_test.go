@@ -16,9 +16,9 @@ func TestInlayHintsTypeParameterModifiers1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function test1() {
-  return function <local T>(a: T) {};
-}`
+	const content = `function test1()
+  return function <local T>(a: T) end;
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{InlayHints: lsutil.InlayHintsPreferences{IncludeInlayFunctionLikeReturnTypeHints: core.TSTrue}})

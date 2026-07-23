@@ -124,7 +124,6 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		return r.isDeclarationVisible(node.Parent.Parent)
 	case ast.KindVariableDeclaration,
 		ast.KindModuleDeclaration,
-		ast.KindClassDeclaration,
 		ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration,
 		ast.KindJSTypeAliasDeclaration,
@@ -160,12 +159,7 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		// Exported members/ambient module elements (exception import declaration) are visible if parent is visible
 		return r.isDeclarationVisible(parent)
 
-	case ast.KindPropertyDeclaration,
-		ast.KindPropertySignature,
-		ast.KindGetAccessor,
-		ast.KindSetAccessor,
-		ast.KindMethodDeclaration,
-		ast.KindMethodSignature:
+	case ast.KindPropertySignature, ast.KindMethodSignature:
 		if r.checker.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
 			// Private/protected properties/methods are not visible
 			return false
@@ -173,8 +167,7 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		// Public properties/methods are visible if its parents are visible, so:
 		return r.isDeclarationVisible(node.Parent)
 
-	case ast.KindConstructor,
-		ast.KindConstructSignature,
+	case ast.KindConstructSignature,
 		ast.KindCallSignature,
 		ast.KindIndexSignature,
 		ast.KindParameter,
@@ -472,9 +465,6 @@ func (r *EmitResolver) IsImplementationOfOverload(node *ast.SignatureDeclaration
 		return false
 	}
 	if ast.NodeIsPresent(node.Body()) {
-		if ast.IsGetAccessorDeclaration(node) || ast.IsSetAccessorDeclaration(node) {
-			return false // Get or set accessors can never be overload implementations, but can have up to 2 signatures
-		}
 		r.checkerMu.Lock()
 		defer r.checkerMu.Unlock()
 		symbol := r.checker.getSymbolOfDeclaration(node)
@@ -564,30 +554,30 @@ func (r *EmitResolver) IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node)
 	return r.checker.isLuaEnvironmentExpression(node.Expression().Expression())
 }
 
-func (r *EmitResolver) RequiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
+func (r *EmitResolver) RequiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol) bool {
 	if !ast.IsParseTreeNode(declaration) {
 		return false
 	}
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
-	return r.requiresAddingImplicitUndefined(declaration, symbol, enclosingDeclaration)
+	return r.requiresAddingImplicitUndefined(declaration, symbol)
 }
 
-func (r *EmitResolver) RequiresAddingImplicitUndefinedUnsafe(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
+func (r *EmitResolver) RequiresAddingImplicitUndefinedUnsafe(declaration *ast.Node, symbol *ast.Symbol) bool {
 	if !ast.IsParseTreeNode(declaration) {
 		return false
 	}
 	// NO LOCKING - only should be called in contexts that already have a checker lock
-	return r.requiresAddingImplicitUndefined(declaration, symbol, enclosingDeclaration)
+	return r.requiresAddingImplicitUndefined(declaration, symbol)
 }
 
-func (r *EmitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
+func (r *EmitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol) bool {
 	// node = r.emitContext.ParseNode(node)
 	if !ast.IsParseTreeNode(declaration) {
 		return false
 	}
 	switch declaration.Kind {
-	case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindJSDocPropertyTag:
+	case ast.KindPropertySignature, ast.KindJSDocPropertyTag:
 		if symbol == nil {
 			symbol = r.checker.getSymbolOfDeclaration(declaration)
 		}
@@ -595,14 +585,10 @@ func (r *EmitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, sy
 		r.checker.mappedSymbolLinks.Has(symbol)
 		return (symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t)
 	case ast.KindParameter, ast.KindJSDocParameterTag:
-		return r.requiresAddingImplicitUndefinedWorker(declaration, enclosingDeclaration)
+		return r.isRequiredInitializedParameter(declaration) && !r.declaredParameterTypeContainsUndefined(declaration)
 	default:
 		panic("Node cannot possibly require adding undefined")
 	}
-}
-
-func (r *EmitResolver) requiresAddingImplicitUndefinedWorker(parameter *ast.Node, enclosingDeclaration *ast.Node) bool {
-	return (r.isRequiredInitializedParameter(parameter, enclosingDeclaration) || r.isOptionalUninitializedParameterProperty(parameter)) && !r.declaredParameterTypeContainsUndefined(parameter)
 }
 
 func (r *EmitResolver) declaredParameterTypeContainsUndefined(parameter *ast.Node) bool {
@@ -618,18 +604,9 @@ func (r *EmitResolver) declaredParameterTypeContainsUndefined(parameter *ast.Nod
 	return r.checker.isErrorType(t) || r.checker.containsUndefinedType(t)
 }
 
-func (r *EmitResolver) isOptionalUninitializedParameterProperty(parameter *ast.Node) bool {
-	return r.isOptionalParameter(parameter) &&
-		( /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil) && // !!! TODO: JSDoc support
-		ast.HasSyntacticModifier(parameter, ast.ModifierFlagsParameterPropertyModifier)
-}
-
-func (r *EmitResolver) isRequiredInitializedParameter(parameter *ast.Node, enclosingDeclaration *ast.Node) bool {
+func (r *EmitResolver) isRequiredInitializedParameter(parameter *ast.Node) bool {
 	if r.isOptionalParameter(parameter) || /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil { // !!! TODO: JSDoc Support
 		return false
-	}
-	if ast.HasSyntacticModifier(parameter, ast.ModifierFlagsParameterPropertyModifier) {
-		return enclosingDeclaration != nil && ast.IsFunctionLikeDeclaration(enclosingDeclaration)
 	}
 	return true
 }
@@ -1087,17 +1064,17 @@ func (r *EmitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 							tracker.TrackSymbol(name, enclosingDeclaration, ast.SymbolFlagsValue)
 						}
 
-						mods := core.IfElse(isStatic, []*ast.Node{emitContext.Factory.NewModifier(ast.KindStaticKeyword)}, nil)
+						var mods []*ast.Node
 						if info.isReadonly {
 							mods = append(mods, emitContext.Factory.NewModifier(ast.KindReadonlyKeyword))
 						}
 
-						decl := emitContext.Factory.NewPropertyDeclaration(
+						decl := emitContext.Factory.NewPropertySignatureDeclaration(
 							core.IfElse(mods != nil, emitContext.Factory.NewModifierList(mods), nil),
 							c.Name(),
 							c.QuestionToken(),
 							requestNodeBuilder.TypeToTypeNode(r.checker.getTypeOfSymbol(c.Symbol()), enclosingDeclaration, flags, internalFlags, tracker),
-							nil,
+							nil, /*initializer*/
 						)
 						result = append(result, decl)
 					}
@@ -1129,13 +1106,6 @@ func (r *EmitResolver) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.Mo
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
 	return r.checker.GetEffectiveDeclarationFlags(node, flags)
-}
-
-func (r *EmitResolver) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
-	// node = emitContext.ParseNode(node)
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
-	return r.checker.GetResolutionModeOverride(node.AsImportAttributes(), false)
 }
 
 func (r *EmitResolver) GetTypeReferenceSerializationKind(typeName *ast.Node, location *ast.Node) printer.TypeReferenceSerializationKind {

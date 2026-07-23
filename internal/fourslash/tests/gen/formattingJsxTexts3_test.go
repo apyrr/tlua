@@ -15,21 +15,21 @@ func TestFormattingJsxTexts3(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
-function foo() {
+function foo()
 local bar = "Oh no";
 
 return (
 <div>"{bar}"</div>
 )
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")
-	f.VerifyCurrentFileContent(t, `function foo() {
+	f.VerifyCurrentFileContent(t, `function foo()
     local bar = "Oh no";
 
     return (
         <div>"{bar}"</div>
     )
-}`)
+end`)
 }

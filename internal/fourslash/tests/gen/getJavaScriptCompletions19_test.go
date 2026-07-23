@@ -18,13 +18,13 @@ func TestGetJavaScriptCompletions19(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: file.lua
-function fn() {
+function fn()
 	if (foo) {
 		return 0;
 	} else {
 		return '0';
 	}
-}
+end
 local x = fn();
 if(typeof x === 'string') {
 	x/*str*/

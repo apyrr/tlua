@@ -14,9 +14,9 @@ func TestGoToDefinitionTypeofThis(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(/*fnDecl*/this: number) {
+	const content = `function f(/*fnDecl*/this: number)
     type X = typeof [|/*fnUse*/this|];
-}
+end
 class /*cls*/C {
     constructor() { type X = typeof [|/*clsUse*/this|]; }
     get self(/*getterDecl*/this: number) { type X = typeof [|/*getterUse*/this|]; }

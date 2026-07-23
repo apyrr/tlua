@@ -13,7 +13,7 @@ func TestNavto_emptyPattern(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: foo.tlua
 local [|x|]: number = 1;
-function [|y|](x: string): string { return x; }`
+function [|y|](x: string): string return x; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{

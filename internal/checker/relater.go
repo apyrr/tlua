@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/apyrr/tlua/internal/ast"
-	"github.com/apyrr/tlua/internal/binder"
 	"github.com/apyrr/tlua/internal/collections"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
@@ -432,7 +431,7 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 			continue
 		}
 		switch prop.Kind {
-		case ast.KindSetAccessor, ast.KindGetAccessor, ast.KindMethodDeclaration, ast.KindShorthandPropertyAssignment:
+		case ast.KindShorthandPropertyAssignment:
 			reportedError = c.elaborateElement(source, target, relation, prop.Name(), nil, nameType, nil, nil, diagnosticOutput) || reportedError
 		case ast.KindPropertyAssignment:
 			message := core.IfElse(ast.IsComputedNonLiteralName(prop.Name()), diagnostics.Type_of_computed_property_s_value_is_0_which_is_not_assignable_to_type_1, nil)
@@ -805,7 +804,7 @@ func getRecursionIdentity(t *Type) RecursionId {
 			// unique AST node.
 			return asRecursionId(t.AsTypeReference().node)
 		}
-		if t.symbol != nil && !(t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol.Flags&ast.SymbolFlagsClass != 0) && t.objectFlags&ObjectFlagsFromTypeNode == 0 {
+		if t.symbol != nil && t.objectFlags&ObjectFlagsFromTypeNode == 0 {
 			// We track object types that have a symbol by that symbol (representing the origin of the type), but
 			// exclude the static sides of classes (since they share their symbols with the instance sides) and type
 			// references that originate in resolution of AST type nodes (since such type nodes cannot be the source
@@ -944,10 +943,6 @@ func (c *Checker) getUnmatchedProperties(source *Type, target *Type, requireOpti
 func (c *Checker) getUnmatchedPropertiesWorker(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool, propsOut *[]*ast.Symbol) *ast.Symbol {
 	properties := c.getPropertiesOfType(target)
 	for _, targetProp := range properties {
-		// TODO: remove this when we support static private identifier fields and find other solutions to get privateNamesAndStaticFields test to pass
-		if isStaticPrivateIdentifierProperty(targetProp) {
-			continue
-		}
 		if requireOptionalProperties || targetProp.Flags&ast.SymbolFlagsOptional == 0 && targetProp.CheckFlags&ast.CheckFlagsPartial == 0 {
 			sourceProp := c.getPropertyOfType(source, targetProp.Name)
 			if sourceProp == nil {
@@ -1470,7 +1465,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 	if target.declaration != nil {
 		kind = target.declaration.Kind
 	}
-	strictVariance := checkMode&SignatureCheckModeCallback == 0 && c.strictFunctionTypes && kind != ast.KindMethodDeclaration && kind != ast.KindMethodSignature && kind != ast.KindConstructor
+	strictVariance := checkMode&SignatureCheckModeCallback == 0 && c.strictFunctionTypes && kind != ast.KindMethodSignature
 	result := TernaryTrue
 	sourceThisType := c.getThisTypeOfSignature(source)
 	if sourceThisType != nil && sourceThisType != c.voidType {
@@ -4341,35 +4336,6 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 }
 
 func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.Symbol, targetProp *ast.Symbol, getTypeOfSourceProperty func(sym *ast.Symbol) *Type, reportErrors bool, intersectionState IntersectionState, skipOptional bool) Ternary {
-	sourcePropFlags := getDeclarationModifierFlagsFromSymbol(sourceProp)
-	targetPropFlags := getDeclarationModifierFlagsFromSymbol(targetProp)
-	switch {
-	case sourcePropFlags&ast.ModifierFlagsPrivate != 0 || targetPropFlags&ast.ModifierFlagsPrivate != 0:
-		if sourceProp.ValueDeclaration != targetProp.ValueDeclaration {
-			if reportErrors {
-				if sourcePropFlags&ast.ModifierFlagsPrivate != 0 && targetPropFlags&ast.ModifierFlagsPrivate != 0 {
-					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.symbolToString(targetProp))
-				} else {
-					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.TypeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.TypeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
-				}
-			}
-			return TernaryFalse
-		}
-	case targetPropFlags&ast.ModifierFlagsProtected != 0:
-		if !r.c.isValidOverrideOf(sourceProp, targetProp) {
-			if reportErrors {
-				sourceType := core.OrElse(r.c.getDeclaringClass(sourceProp), source)
-				targetType := core.OrElse(r.c.getDeclaringClass(targetProp), target)
-				r.reportError(diagnostics.Property_0_is_protected_but_type_1_is_not_a_class_derived_from_2, r.c.symbolToString(targetProp), r.c.TypeToString(sourceType), r.c.TypeToString(targetType))
-			}
-			return TernaryFalse
-		}
-	case sourcePropFlags&ast.ModifierFlagsProtected != 0:
-		if reportErrors {
-			r.reportError(diagnostics.Property_0_is_protected_in_type_1_but_public_in_type_2, r.c.symbolToString(targetProp), r.c.TypeToString(source), r.c.TypeToString(target))
-		}
-		return TernaryFalse
-	}
 	// Ensure {readonly a: whatever} is not a subtype of {a: whatever},
 	// while {a: whatever} is a subtype of {readonly a: whatever}.
 	// This ensures the subtype relationship is ordered, and preventing declaration order
@@ -4388,19 +4354,6 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 		return TernaryFalse
 	}
 	// When checking for comparability, be more lenient with optional properties.
-	if !skipOptional && sourceProp.Flags&ast.SymbolFlagsOptional != 0 && targetProp.Flags&ast.SymbolFlagsClassMember != 0 && targetProp.Flags&ast.SymbolFlagsOptional == 0 {
-		// TypeScript 1.0 spec (April 2014): 3.8.3
-		// S is a subtype of a type T, and T is a supertype of S if ...
-		// S' and T are object types and, for each member M in T..
-		// M is a property and S' contains a property N where
-		// if M is a required property, N is also a required property
-		// (M - property in T)
-		// (N - property in S)
-		if reportErrors {
-			r.reportError(diagnostics.Property_0_is_optional_in_type_1_but_required_in_type_2, r.c.symbolToString(targetProp), r.c.TypeToString(source), r.c.TypeToString(target))
-		}
-		return TernaryFalse
-	}
 	return related
 }
 
@@ -4416,19 +4369,6 @@ func (r *Relater) isPropertySymbolTypeRelated(sourceProp *ast.Symbol, targetProp
 }
 
 func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedProperty *ast.Symbol, requireOptionalProperties bool) {
-	// give specific error in case where private names have the same description
-	if unmatchedProperty.ValueDeclaration != nil &&
-		unmatchedProperty.ValueDeclaration.Name() != nil &&
-		ast.IsPrivateIdentifier(unmatchedProperty.ValueDeclaration.Name()) &&
-		source.symbol != nil &&
-		source.symbol.Flags&ast.SymbolFlagsClass != 0 {
-		privateIdentifierDescription := unmatchedProperty.ValueDeclaration.Name().Text()
-		symbolTableKey := binder.GetSymbolNameForPrivateIdentifier(source.symbol, privateIdentifierDescription)
-		if r.c.getPropertyOfType(source, symbolTableKey) != nil {
-			r.reportError(diagnostics.Property_0_in_type_1_refers_to_a_different_member_that_cannot_be_accessed_from_within_type_2, privateIdentifierDescription, r.c.SymbolToString(source.symbol), r.c.SymbolToString(target.symbol))
-			return
-		}
-	}
 	props := r.c.getUnmatchedProperties(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/)
 	if len(props) == 1 {
 		sourceType, targetType := r.c.getTypeNamesForErrorDisplay(source, target)

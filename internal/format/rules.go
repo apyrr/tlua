@@ -91,7 +91,7 @@ func getAllRules() []ruleSpec {
 	typeScriptOpenBraceLeftTokenRange := tokenRangeFrom(ast.KindIdentifier, ast.KindGreaterThanToken, ast.KindMultiLineCommentTrivia, ast.KindClassKeyword, ast.KindExportKeyword, ast.KindImportKeyword)
 
 	// Place a space before open brace in a control flow construct
-	controlOpenBraceLeftTokenRange := tokenRangeFrom(ast.KindCloseParenToken, ast.KindMultiLineCommentTrivia, ast.KindDoKeyword, ast.KindTryKeyword, ast.KindFinallyKeyword, ast.KindElseKeyword, ast.KindCatchKeyword)
+	controlOpenBraceLeftTokenRange := tokenRangeFrom(ast.KindCloseParenToken, ast.KindMultiLineCommentTrivia, ast.KindDoKeyword, ast.KindElseKeyword)
 
 	// These rules are higher in priority than user-configurable
 	highPriorityCommonRules := []ruleSpec{
@@ -106,7 +106,7 @@ func getAllRules() []ruleSpec {
 		rule("SpaceAfterQuestionMarkInConditionalOperator", ast.KindQuestionToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isConditionalOperatorContext}, ruleActionInsertSpace),
 
 		// in other cases there should be no space between '?' and next token
-		rule("NoSpaceAfterQuestionMark", ast.KindQuestionToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isNonOptionalPropertyContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterQuestionMark", ast.KindQuestionToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
 
 		rule("NoSpaceBeforeDot", anyToken, []ast.Kind{ast.KindDotToken, ast.KindQuestionDotToken}, []contextPredicate{isNonJsxSameLineTokenContext, isNotPropertyAccessOnIntegerLiteral}, ruleActionDeleteSpace),
 		rule("NoSpaceAfterDot", []ast.Kind{ast.KindDotToken, ast.KindQuestionDotToken}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
@@ -372,8 +372,6 @@ func getAllRules() []ruleSpec {
 			[]contextPredicate{isNonJsxSameLineTokenContext, isNonJsxElementOrFragmentContext},
 			ruleActionInsertSpace,
 		),
-		// This low-pri rule takes care of "try {", "catch {" and "finally {" in case the rule SpaceBeforeOpenBraceInControl didn't execute on FormatOnEnter.
-		rule("SpaceAfterTryCatchFinally", []ast.Kind{ast.KindTryKeyword, ast.KindCatchKeyword, ast.KindFinallyKeyword}, ast.KindOpenBraceToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 	}
 
 	result := make([]ruleSpec, 0, len(highPriorityCommonRules)+len(userConfigurableRules)+len(lowPriorityCommonRules))

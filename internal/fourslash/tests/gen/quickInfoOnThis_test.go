@@ -17,15 +17,15 @@ func TestQuickInfoOnThis(t *testing.T) {
 	const content = `interface Restricted {
     n: number;
 }
-function wrapper(wrapped: { (): void; }) { }
+function wrapper(wrapped: { (): void; }) end
 class Foo {
     n: number;
     prop1: th/*0*/is;
     public explicitThis(this: this) {
         wrapper(
-            function explicitVoid(this: void) {
+            function explicitVoid(this: void)
                 console.log(th/*1*/is);
-            }
+            end
         )
         console.log(th/*2*/is);
     }

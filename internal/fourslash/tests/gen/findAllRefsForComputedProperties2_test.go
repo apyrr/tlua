@@ -23,7 +23,7 @@ class C implements I {
 }
 
 local x: I = {
-    ["/*3*/42"]: function () { }
+    ["/*3*/42"]: function () end
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

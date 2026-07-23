@@ -82,7 +82,7 @@ func TestCommentFormatting(t *testing.T) {
 		}, "\n")
 
 		// Original code with tab indentation (tabs represented as \t)
-		originalText := "class Foo {\n\t/**\n\t * @param {string} argument - This is a param description.\n\t */\n\texample(argument) {\nconsole.log(argument);\n\t}\n}"
+		originalText := "function Foo()\n\t/**\n\t * @param {string} argument - This is a param description.\n\t */\n\tfunction example(argument)\nconsole.log(argument);\n\tend\nend"
 
 		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
 			FileName: "/test.tlua",

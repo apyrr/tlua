@@ -19,9 +19,9 @@ func TestCompletionListAfterAnyType(t *testing.T) {
     charAt(pos: number): string;
 }
 
-function bar(a: myString) {
+function bar(a: myString)
     local x: any = a./**/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

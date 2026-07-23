@@ -634,7 +634,7 @@ func getExportNode(parent *ast.Node, node *ast.Node) *ast.Node {
 		declaration = ast.WalkUpBindingElementsAndPatterns(parent)
 	}
 	if declaration != nil {
-		if parent.Name() == node && !ast.IsCatchClause(declaration.Parent) && ast.IsVariableStatement(declaration.Parent.Parent) {
+		if parent.Name() == node && ast.IsVariableStatement(declaration.Parent.Parent) {
 			return declaration.Parent.Parent
 		}
 		return nil

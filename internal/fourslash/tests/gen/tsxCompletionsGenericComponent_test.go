@@ -34,9 +34,9 @@ type Props = { widthInCol: number; text: string; };
 /**
  * @param width {number} Table width in px
  */
-function createTable(width) {
+function createTable(width)
     return <Table<Props> /*1*/ />
-}
+end
 
 createTable(800);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

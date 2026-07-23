@@ -17,8 +17,8 @@ func TestExtendsKeywordCompletion2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f1<T /*1*/>() {}
-function f2<T ext/*2*/>() {}`
+	const content = `function f1<T /*1*/>() end
+function f2<T ext/*2*/>() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{

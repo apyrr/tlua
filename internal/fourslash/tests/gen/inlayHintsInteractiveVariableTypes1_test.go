@@ -31,11 +31,11 @@ local i = new N.C();
 local j = ((((new C()))));
 local k = { a = 1, b = 1 };
 local l = ((({ a = 1, b = 1 })));
- local m = () => 123;
+ local m = function() return 123 end;
  local n;
- local o = () => -1 as const;
- local p = ([a]: Foo[]) => a;
- local q = ({ a }: { a: Foo }) => a;`
+ local o = function() return -1 as const end;
+ local p = function([a]: Foo[]) return a end;
+ local q = function({ a }: { a: Foo }) return a end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{InlayHints: lsutil.InlayHintsPreferences{IncludeInlayVariableTypeHints: core.TSTrue}})

@@ -14,7 +14,7 @@ func TestContextualTypingFromTypeAssertion1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local f3 = <(x: string) => string> function (/**/x) { return x.toLowerCase(); };`
+	const content = `local f3 = <(x: string) => string> function (/**/x) return x.toLowerCase(); end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "(parameter) x: string", "")

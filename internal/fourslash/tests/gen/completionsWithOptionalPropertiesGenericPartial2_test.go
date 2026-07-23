@@ -21,7 +21,7 @@ func TestCompletionsWithOptionalPropertiesGenericPartial2(t *testing.T) {
 interface Foo {
     a: boolean;
 }
-function partialFoo<T extends Partial<Foo>>(x: T, y: T) {return t}
+function partialFoo<T extends Partial<Foo>>(x: T, y: T) return t end
 partialFoo({ a = true, b = true }, { /*1*/ });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

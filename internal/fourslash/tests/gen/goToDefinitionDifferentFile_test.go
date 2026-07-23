@@ -16,7 +16,7 @@ func TestGoToDefinitionDifferentFile(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: goToDefinitionDifferentFile_Definition.tlua
 local /*remoteVariableDefinition*/remoteVariable;
-function /*remoteFunctionDefinition*/remoteFunction() { }
+function /*remoteFunctionDefinition*/remoteFunction() end
 class /*remoteClassDefinition*/remoteClass { }
 interface /*remoteInterfaceDefinition*/remoteInterface{ }
 module /*remoteModuleDefinition*/remoteModule{ export local foo = 1;}

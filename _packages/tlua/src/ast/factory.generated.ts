@@ -15,26 +15,20 @@ import type {
     BindingElement,
     BindingName,
     Block,
+    BlockOrIfStatement,
     BreakStatement,
     CallExpression,
     CallSignatureDeclaration,
-    CatchClause,
-    ClassDeclaration,
-    ClassElement,
-    ClassExpression,
-    ClassStaticBlockDeclaration,
     ColonToken,
     ComputedPropertyName,
     ConciseBody,
     ConditionalExpression,
     ConditionalTypeNode,
-    ConstructorDeclaration,
     ConstructorTypeNode,
     ConstructSignatureDeclaration,
     ContinueStatement,
     DebuggerStatement,
     DeleteExpression,
-    DoStatement,
     DotDotDotToken,
     ElementAccessExpression,
     EmptyStatement,
@@ -57,14 +51,10 @@ import type {
     FunctionDeclaration,
     FunctionExpression,
     FunctionTypeNode,
-    GetAccessorDeclaration,
     GotoStatement,
     HeritageClause,
     Identifier,
     IfStatement,
-    ImportAttribute,
-    ImportAttributeName,
-    ImportAttributes,
     ImportClause,
     ImportDeclaration,
     ImportEqualsDeclaration,
@@ -142,7 +132,6 @@ import type {
     MappedTypeNode,
     MemberName,
     MetaProperty,
-    MethodDeclaration,
     MethodSignatureDeclaration,
     MinusToken,
     MissingDeclaration,
@@ -186,7 +175,6 @@ import type {
     PrivateIdentifier,
     PropertyAccessExpression,
     PropertyAssignment,
-    PropertyDeclaration,
     PropertyName,
     PropertySignatureDeclaration,
     QualifiedName,
@@ -198,8 +186,6 @@ import type {
     RestTypeNode,
     ReturnStatement,
     SatisfiesExpression,
-    SemicolonClassElement,
-    SetAccessorDeclaration,
     ShorthandPropertyAssignment,
     SourceFile,
     SpreadAssignment,
@@ -223,7 +209,6 @@ import type {
     ThrowStatement,
     Token,
     TokenSyntaxKind,
-    TryStatement,
     TupleTypeNode,
     TypeAliasDeclaration,
     TypeAssertion,
@@ -243,7 +228,6 @@ import type {
     VariableStatement,
     VoidExpression,
     WhileStatement,
-    WithStatement,
 } from "./ast.ts";
 import { getTokenPosOfNode } from "./astnav.ts";
 import { cloneSourceFileData } from "./utils.ts";
@@ -283,14 +267,8 @@ export class NodeObject {
     get attributes(): any {
         return this._data?.attributes;
     }
-    get block(): any {
-        return this._data?.block;
-    }
     get body(): any {
         return this._data?.body;
-    }
-    get catchClause(): any {
-        return this._data?.catchClause;
     }
     get checkType(): any {
         return this._data?.checkType;
@@ -375,9 +353,6 @@ export class NodeObject {
     }
     get fileName(): any {
         return this._data?.fileName;
-    }
-    get finallyBlock(): any {
-        return this._data?.finallyBlock;
     }
     get from(): any {
         return this._data?.from;
@@ -601,9 +576,6 @@ export class NodeObject {
     get trueType(): any {
         return this._data?.trueType;
     }
-    get tryBlock(): any {
-        return this._data?.tryBlock;
-    }
     get tupleNameSource(): any {
         return this._data?.tupleNameSource;
     }
@@ -630,12 +602,6 @@ export class NodeObject {
     }
     get types(): any {
         return this._data?.types;
-    }
-    get value(): any {
-        return this._data?.value;
-    }
-    get variableDeclaration(): any {
-        return this._data?.variableDeclaration;
     }
     get whenFalse(): any {
         return this._data?.whenFalse;
@@ -723,8 +689,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression };
         case SyntaxKind.IfStatement:
             return { expression: n.expression, thenStatement: n.thenStatement, elseStatement: n.elseStatement };
-        case SyntaxKind.DoStatement:
-            return { statement: n.statement, expression: n.expression };
         case SyntaxKind.WhileStatement:
             return { expression: n.expression, statement: n.statement };
         case SyntaxKind.ForOfStatement:
@@ -735,14 +699,8 @@ function cloneNodeData(node: Node): any {
             return { statements: n.statements, expression: n.expression };
         case SyntaxKind.ReturnStatement:
             return { expression: n.expression };
-        case SyntaxKind.WithStatement:
-            return { expression: n.expression, statement: n.statement };
         case SyntaxKind.ThrowStatement:
             return { expression: n.expression };
-        case SyntaxKind.TryStatement:
-            return { tryBlock: n.tryBlock, catchClause: n.catchClause, finallyBlock: n.finallyBlock };
-        case SyntaxKind.CatchClause:
-            return { variableDeclaration: n.variableDeclaration, block: n.block };
         case SyntaxKind.LabelStatement:
             return { label: n.label };
         case SyntaxKind.GotoStatement:
@@ -765,10 +723,6 @@ function cloneNodeData(node: Node): any {
             return { modifiers: n.modifiers };
         case SyntaxKind.FunctionDeclaration:
             return { modifiers: n.modifiers, target: n.target, colonToken: n.colonToken, name: n.name, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type, body: n.body };
-        case SyntaxKind.ClassDeclaration:
-            return { modifiers: n.modifiers, name: n.name, typeParameters: n.typeParameters, heritageClauses: n.heritageClauses, members: n.members };
-        case SyntaxKind.ClassExpression:
-            return { modifiers: n.modifiers, name: n.name, typeParameters: n.typeParameters, heritageClauses: n.heritageClauses, members: n.members };
         case SyntaxKind.HeritageClause:
             return { token: n.token, types: n.types };
         case SyntaxKind.InterfaceDeclaration:
@@ -780,7 +734,7 @@ function cloneNodeData(node: Node): any {
             return { statements: n.statements };
         case SyntaxKind.ImportDeclaration:
         case SyntaxKind.JSImportDeclaration:
-            return { modifiers: n.modifiers, importClause: n.importClause, moduleSpecifier: n.moduleSpecifier, attributes: n.attributes };
+            return { modifiers: n.modifiers, importClause: n.importClause, moduleSpecifier: n.moduleSpecifier };
         case SyntaxKind.ExternalModuleReference:
             return { expression: n.expression };
         case SyntaxKind.NamespaceImport:
@@ -801,24 +755,12 @@ function cloneNodeData(node: Node): any {
             return { typeParameters: n.typeParameters, parameters: n.parameters, type: n.type };
         case SyntaxKind.ConstructSignature:
             return { typeParameters: n.typeParameters, parameters: n.parameters, type: n.type };
-        case SyntaxKind.Constructor:
-            return { modifiers: n.modifiers, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type, body: n.body };
-        case SyntaxKind.GetAccessor:
-            return { modifiers: n.modifiers, name: n.name, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type, body: n.body };
-        case SyntaxKind.SetAccessor:
-            return { modifiers: n.modifiers, name: n.name, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type, body: n.body };
         case SyntaxKind.IndexSignature:
             return { modifiers: n.modifiers, parameters: n.parameters, type: n.type };
         case SyntaxKind.MethodSignature:
             return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type };
-        case SyntaxKind.MethodDeclaration:
-            return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type, body: n.body };
         case SyntaxKind.PropertySignature:
             return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, type: n.type, initializer: n.initializer };
-        case SyntaxKind.PropertyDeclaration:
-            return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, type: n.type, initializer: n.initializer };
-        case SyntaxKind.ClassStaticBlockDeclaration:
-            return { modifiers: n.modifiers, body: n.body };
         case SyntaxKind.StringLiteral:
             return { text: n.text, tokenFlags: n.tokenFlags };
         case SyntaxKind.NumericLiteral:
@@ -905,10 +847,6 @@ function cloneNodeData(node: Node): any {
             return { literal: n.literal };
         case SyntaxKind.TypePredicate:
             return { assertsModifier: n.assertsModifier, parameterName: n.parameterName, type: n.type };
-        case SyntaxKind.ImportAttribute:
-            return { name: n.name, value: n.value };
-        case SyntaxKind.ImportAttributes:
-            return { token: n.token, attributes: n.attributes, multiLine: n.multiLine };
         case SyntaxKind.TypeQuery:
             return { exprName: n.exprName, typeArguments: n.typeArguments };
         case SyntaxKind.MappedType:
@@ -1014,7 +952,7 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.JSDocThisTag:
             return { tagName: n.tagName, typeExpression: n.typeExpression, comment: n.comment };
         case SyntaxKind.JSDocImportTag:
-            return { tagName: n.tagName, importClause: n.importClause, moduleSpecifier: n.moduleSpecifier, attributes: n.attributes, comment: n.comment };
+            return { tagName: n.tagName, importClause: n.importClause, moduleSpecifier: n.moduleSpecifier, comment: n.comment };
         case SyntaxKind.JSDocCallbackTag:
             return { tagName: n.tagName, typeExpression: n.typeExpression, name: n.name, comment: n.comment };
         case SyntaxKind.JSDocOverloadTag:
@@ -1030,9 +968,9 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.ImportEqualsDeclaration:
             return { modifiers: n.modifiers, isTypeOnly: n.isTypeOnly, name: n.name, moduleReference: n.moduleReference };
         case SyntaxKind.ExportDeclaration:
-            return { modifiers: n.modifiers, isTypeOnly: n.isTypeOnly, exportClause: n.exportClause, moduleSpecifier: n.moduleSpecifier, attributes: n.attributes };
+            return { modifiers: n.modifiers, isTypeOnly: n.isTypeOnly, exportClause: n.exportClause, moduleSpecifier: n.moduleSpecifier };
         case SyntaxKind.ImportType:
-            return { isTypeOf: n.isTypeOf, argument: n.argument, attributes: n.attributes, qualifier: n.qualifier, typeArguments: n.typeArguments };
+            return { isTypeOf: n.isTypeOf, argument: n.argument, qualifier: n.qualifier, typeArguments: n.typeArguments };
         case SyntaxKind.ImportClause:
             return { phaseModifier: n.phaseModifier, name: n.name, namedBindings: n.namedBindings };
         case SyntaxKind.ImportSpecifier:
@@ -1077,9 +1015,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.thenStatement) ||
         visitNode(cbNode, data.elseStatement),
-    [SyntaxKind.DoStatement]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.statement) ||
-        visitNode(cbNode, data.expression),
     [SyntaxKind.WhileStatement]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.statement),
@@ -1097,17 +1032,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.statements) ||
         visitNode(cbNode, data.expression),
     [SyntaxKind.ReturnStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
-    [SyntaxKind.WithStatement]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.expression) ||
-        visitNode(cbNode, data.statement),
     [SyntaxKind.ThrowStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
-    [SyntaxKind.TryStatement]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.tryBlock) ||
-        visitNode(cbNode, data.catchClause) ||
-        visitNode(cbNode, data.finallyBlock),
-    [SyntaxKind.CatchClause]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.variableDeclaration) ||
-        visitNode(cbNode, data.block),
     [SyntaxKind.LabelStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
     [SyntaxKind.GotoStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
     [SyntaxKind.ExpressionStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
@@ -1143,18 +1068,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.parameters) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.body),
-    [SyntaxKind.ClassDeclaration]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.heritageClauses) ||
-        visitNodes(cbNode, cbNodes, data.members),
-    [SyntaxKind.ClassExpression]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.heritageClauses) ||
-        visitNodes(cbNode, cbNodes, data.members),
     [SyntaxKind.HeritageClause]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.types),
     [SyntaxKind.InterfaceDeclaration]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
@@ -1176,13 +1089,11 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.ImportDeclaration]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.importClause) ||
-        visitNode(cbNode, data.moduleSpecifier) ||
-        visitNode(cbNode, data.attributes),
+        visitNode(cbNode, data.moduleSpecifier),
     [SyntaxKind.JSImportDeclaration]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.importClause) ||
-        visitNode(cbNode, data.moduleSpecifier) ||
-        visitNode(cbNode, data.attributes),
+        visitNode(cbNode, data.moduleSpecifier),
     [SyntaxKind.ExternalModuleReference]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.NamespaceImport]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
     [SyntaxKind.NamedImports]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
@@ -1206,26 +1117,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
         visitNode(cbNode, data.type),
-    [SyntaxKind.Constructor]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type) ||
-        visitNode(cbNode, data.body),
-    [SyntaxKind.GetAccessor]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type) ||
-        visitNode(cbNode, data.body),
-    [SyntaxKind.SetAccessor]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type) ||
-        visitNode(cbNode, data.body),
     [SyntaxKind.IndexSignature]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
@@ -1237,29 +1128,12 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
         visitNode(cbNode, data.type),
-    [SyntaxKind.MethodDeclaration]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name) ||
-        visitNode(cbNode, data.postfixToken) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type) ||
-        visitNode(cbNode, data.body),
     [SyntaxKind.PropertySignature]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.name) ||
         visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
-    [SyntaxKind.PropertyDeclaration]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name) ||
-        visitNode(cbNode, data.postfixToken) ||
-        visitNode(cbNode, data.type) ||
-        visitNode(cbNode, data.initializer),
-    [SyntaxKind.ClassStaticBlockDeclaration]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.body),
     [SyntaxKind.BinaryExpression]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.left) ||
@@ -1373,10 +1247,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.assertsModifier) ||
         visitNode(cbNode, data.parameterName) ||
         visitNode(cbNode, data.type),
-    [SyntaxKind.ImportAttribute]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.name) ||
-        visitNode(cbNode, data.value),
-    [SyntaxKind.ImportAttributes]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.attributes),
     [SyntaxKind.TypeQuery]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.exprName) ||
         visitNodes(cbNode, cbNodes, data.typeArguments),
@@ -1515,7 +1385,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.tagName) ||
         visitNode(cbNode, data.importClause) ||
         visitNode(cbNode, data.moduleSpecifier) ||
-        visitNode(cbNode, data.attributes) ||
         visitNodes(cbNode, cbNodes, data.comment),
     [SyntaxKind.JSDocCallbackTag]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.tagName) ||
@@ -1547,11 +1416,9 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.ExportDeclaration]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNode(cbNode, data.exportClause) ||
-        visitNode(cbNode, data.moduleSpecifier) ||
-        visitNode(cbNode, data.attributes),
+        visitNode(cbNode, data.moduleSpecifier),
     [SyntaxKind.ImportType]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.argument) ||
-        visitNode(cbNode, data.attributes) ||
         visitNode(cbNode, data.qualifier) ||
         visitNodes(cbNode, cbNodes, data.typeArguments),
     [SyntaxKind.ImportClause]: (data, cbNode, cbNodes) =>
@@ -1630,7 +1497,7 @@ export function createEmptyStatement(): EmptyStatement {
     return new NodeObject(SyntaxKind.EmptyStatement, undefined) as unknown as EmptyStatement;
 }
 
-export function createIfStatement(expression: Expression, thenStatement: Statement, elseStatement?: Statement): IfStatement {
+export function createIfStatement(expression: Expression, thenStatement: Block, elseStatement?: BlockOrIfStatement): IfStatement {
     return new NodeObject(SyntaxKind.IfStatement, {
         expression,
         thenStatement,
@@ -1638,21 +1505,14 @@ export function createIfStatement(expression: Expression, thenStatement: Stateme
     }) as unknown as IfStatement;
 }
 
-export function createDoStatement(statement: Statement, expression: Expression): DoStatement {
-    return new NodeObject(SyntaxKind.DoStatement, {
-        statement,
-        expression,
-    }) as unknown as DoStatement;
-}
-
-export function createWhileStatement(expression: Expression, statement: Statement): WhileStatement {
+export function createWhileStatement(expression: Expression, statement: Block): WhileStatement {
     return new NodeObject(SyntaxKind.WhileStatement, {
         expression,
         statement,
     }) as unknown as WhileStatement;
 }
 
-export function createForOfStatement(initializer: ForInitializer, expression: Expression, statement: Statement): ForOfStatement {
+export function createForOfStatement(initializer: ForInitializer, expression: Expression, statement: Block): ForOfStatement {
     return new NodeObject(SyntaxKind.ForOfStatement, {
         initializer,
         expression,
@@ -1660,7 +1520,7 @@ export function createForOfStatement(initializer: ForInitializer, expression: Ex
     }) as unknown as ForOfStatement;
 }
 
-export function createNumericForStatement(initializer: ForInitializer, from: Expression, to: Expression, step: Expression | undefined, statement: Statement): NumericForStatement {
+export function createNumericForStatement(initializer: ForInitializer, from: Expression, to: Expression, step: Expression | undefined, statement: Block): NumericForStatement {
     return new NodeObject(SyntaxKind.NumericForStatement, {
         initializer,
         from,
@@ -1691,32 +1551,10 @@ export function createReturnStatement(expression?: Expression): ReturnStatement 
     }) as unknown as ReturnStatement;
 }
 
-export function createWithStatement(expression: Expression, statement: Statement): WithStatement {
-    return new NodeObject(SyntaxKind.WithStatement, {
-        expression,
-        statement,
-    }) as unknown as WithStatement;
-}
-
 export function createThrowStatement(expression: Expression): ThrowStatement {
     return new NodeObject(SyntaxKind.ThrowStatement, {
         expression,
     }) as unknown as ThrowStatement;
-}
-
-export function createTryStatement(tryBlock: Block, catchClause?: CatchClause, finallyBlock?: Block): TryStatement {
-    return new NodeObject(SyntaxKind.TryStatement, {
-        tryBlock,
-        catchClause,
-        finallyBlock,
-    }) as unknown as TryStatement;
-}
-
-export function createCatchClause(variableDeclaration: VariableDeclaration | undefined, block: Block): CatchClause {
-    return new NodeObject(SyntaxKind.CatchClause, {
-        variableDeclaration,
-        block,
-    }) as unknown as CatchClause;
 }
 
 export function createDebuggerStatement(): DebuggerStatement {
@@ -1811,26 +1649,6 @@ export function createFunctionDeclaration(modifiers: readonly ModifierLike[] | u
     }) as unknown as FunctionDeclaration;
 }
 
-export function createClassDeclaration(modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassDeclaration {
-    return new NodeObject(SyntaxKind.ClassDeclaration, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
-        members: createNodeArray(members),
-    }) as unknown as ClassDeclaration;
-}
-
-export function createClassExpression(modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassExpression {
-    return new NodeObject(SyntaxKind.ClassExpression, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        heritageClauses: heritageClauses ? createNodeArray(heritageClauses) : undefined,
-        members: createNodeArray(members),
-    }) as unknown as ClassExpression;
-}
-
 export function createHeritageClause(token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, types: readonly ExpressionWithTypeArguments[]): HeritageClause {
     return new NodeObject(SyntaxKind.HeritageClause, {
         token,
@@ -1871,12 +1689,11 @@ export function createNotEmittedTypeElement(): NotEmittedTypeElement {
     return new NodeObject(SyntaxKind.NotEmittedTypeElement, undefined) as unknown as NotEmittedTypeElement;
 }
 
-export function createImportDeclaration(modifiers: readonly ModifierLike[] | undefined, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes?: ImportAttributes): ImportDeclaration {
+export function createImportDeclaration(modifiers: readonly ModifierLike[] | undefined, importClause: ImportClause | undefined, moduleSpecifier: Expression): ImportDeclaration {
     return new NodeObject(SyntaxKind.ImportDeclaration, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         importClause,
         moduleSpecifier,
-        attributes,
     }) as unknown as ImportDeclaration;
 }
 
@@ -1950,38 +1767,6 @@ export function createConstructSignatureDeclaration(typeParameters: readonly Typ
     }) as unknown as ConstructSignatureDeclaration;
 }
 
-export function createConstructorDeclaration(modifiers: readonly ModifierLike[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): ConstructorDeclaration {
-    return new NodeObject(SyntaxKind.Constructor, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        parameters: createNodeArray(parameters),
-        type,
-        body,
-    }) as unknown as ConstructorDeclaration;
-}
-
-export function createGetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): GetAccessorDeclaration {
-    return new NodeObject(SyntaxKind.GetAccessor, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        parameters: createNodeArray(parameters),
-        type,
-        body,
-    }) as unknown as GetAccessorDeclaration;
-}
-
-export function createSetAccessorDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): SetAccessorDeclaration {
-    return new NodeObject(SyntaxKind.SetAccessor, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        name,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        parameters: createNodeArray(parameters),
-        type,
-        body,
-    }) as unknown as SetAccessorDeclaration;
-}
-
 export function createIndexSignatureDeclaration(modifiers: readonly ModifierLike[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode): IndexSignatureDeclaration {
     return new NodeObject(SyntaxKind.IndexSignature, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
@@ -2001,18 +1786,6 @@ export function createMethodSignatureDeclaration(modifiers: readonly ModifierLik
     }) as unknown as MethodSignatureDeclaration;
 }
 
-export function createMethodDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): MethodDeclaration {
-    return new NodeObject(SyntaxKind.MethodDeclaration, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        name,
-        postfixToken,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        parameters: createNodeArray(parameters),
-        type,
-        body,
-    }) as unknown as MethodDeclaration;
-}
-
 export function createPropertySignatureDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer: Expression): PropertySignatureDeclaration {
     return new NodeObject(SyntaxKind.PropertySignature, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
@@ -2021,27 +1794,6 @@ export function createPropertySignatureDeclaration(modifiers: readonly ModifierL
         type,
         initializer,
     }) as unknown as PropertySignatureDeclaration;
-}
-
-export function createPropertyDeclaration(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken?: QuestionToken | ExclamationToken, type?: TypeNode, initializer?: Expression): PropertyDeclaration {
-    return new NodeObject(SyntaxKind.PropertyDeclaration, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        name,
-        postfixToken,
-        type,
-        initializer,
-    }) as unknown as PropertyDeclaration;
-}
-
-export function createSemicolonClassElement(): SemicolonClassElement {
-    return new NodeObject(SyntaxKind.SemicolonClassElement, undefined) as unknown as SemicolonClassElement;
-}
-
-export function createClassStaticBlockDeclaration(modifiers: readonly ModifierLike[] | undefined, body: Block): ClassStaticBlockDeclaration {
-    return new NodeObject(SyntaxKind.ClassStaticBlockDeclaration, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        body,
-    }) as unknown as ClassStaticBlockDeclaration;
 }
 
 export function createOmittedExpression(): OmittedExpression {
@@ -2388,21 +2140,6 @@ export function createTypePredicateNode(assertsModifier: AssertsKeyword | undefi
         parameterName,
         type,
     }) as unknown as TypePredicateNode;
-}
-
-export function createImportAttribute(name: ImportAttributeName, value: Expression): ImportAttribute {
-    return new NodeObject(SyntaxKind.ImportAttribute, {
-        name,
-        value,
-    }) as unknown as ImportAttribute;
-}
-
-export function createImportAttributes(token: SyntaxKind.WithKeyword | SyntaxKind.AssertKeyword, attributes: readonly ImportAttribute[], multiLine?: boolean): ImportAttributes {
-    return new NodeObject(SyntaxKind.ImportAttributes, {
-        token,
-        attributes: createNodeArray(attributes),
-        multiLine,
-    }) as unknown as ImportAttributes;
 }
 
 export function createTypeQueryNode(exprName: EntityName, typeArguments?: readonly TypeNode[]): TypeQueryNode {
@@ -2793,12 +2530,11 @@ export function createJSDocThisTag(tagName: Identifier, typeExpression: TypeNode
     }) as unknown as JSDocThisTag;
 }
 
-export function createJSDocImportTag(tagName: Identifier, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes?: ImportAttributes, comment?: readonly JSDocComment[]): JSDocImportTag {
+export function createJSDocImportTag(tagName: Identifier, importClause: ImportClause | undefined, moduleSpecifier: Expression, comment?: readonly JSDocComment[]): JSDocImportTag {
     return new NodeObject(SyntaxKind.JSDocImportTag, {
         tagName,
         importClause,
         moduleSpecifier,
-        attributes,
         comment: comment ? createNodeArray(comment) : undefined,
     }) as unknown as JSDocImportTag;
 }
@@ -2861,21 +2597,19 @@ export function createImportEqualsDeclaration(modifiers: readonly ModifierLike[]
     }) as unknown as ImportEqualsDeclaration;
 }
 
-export function createExportDeclaration(modifiers?: readonly ModifierLike[], isTypeOnly?: boolean, exportClause?: NamedExportBindings, moduleSpecifier?: Expression, attributes?: ImportAttributes): ExportDeclaration {
+export function createExportDeclaration(modifiers?: readonly ModifierLike[], isTypeOnly?: boolean, exportClause?: NamedExportBindings, moduleSpecifier?: Expression): ExportDeclaration {
     return new NodeObject(SyntaxKind.ExportDeclaration, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
         isTypeOnly,
         exportClause,
         moduleSpecifier,
-        attributes,
     }) as unknown as ExportDeclaration;
 }
 
-export function createImportTypeNode(isTypeOf: boolean = false, argument: TypeNode, attributes?: ImportAttributes, qualifier?: EntityName, typeArguments?: readonly TypeNode[]): ImportTypeNode {
+export function createImportTypeNode(isTypeOf: boolean = false, argument: TypeNode, qualifier?: EntityName, typeArguments?: readonly TypeNode[]): ImportTypeNode {
     return new NodeObject(SyntaxKind.ImportType, {
         isTypeOf,
         argument,
-        attributes,
         qualifier,
         typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
     }) as unknown as ImportTypeNode;
@@ -2991,23 +2725,19 @@ export function updateComputedPropertyName(node: ComputedPropertyName, expressio
     return node.expression !== expression ? createComputedPropertyName(expression) : node;
 }
 
-export function updateIfStatement(node: IfStatement, expression: Expression, thenStatement: Statement, elseStatement?: Statement): IfStatement {
+export function updateIfStatement(node: IfStatement, expression: Expression, thenStatement: Block, elseStatement?: BlockOrIfStatement): IfStatement {
     return node.expression !== expression || node.thenStatement !== thenStatement || node.elseStatement !== elseStatement ? createIfStatement(expression, thenStatement, elseStatement) : node;
 }
 
-export function updateDoStatement(node: DoStatement, statement: Statement, expression: Expression): DoStatement {
-    return node.statement !== statement || node.expression !== expression ? createDoStatement(statement, expression) : node;
-}
-
-export function updateWhileStatement(node: WhileStatement, expression: Expression, statement: Statement): WhileStatement {
+export function updateWhileStatement(node: WhileStatement, expression: Expression, statement: Block): WhileStatement {
     return node.expression !== expression || node.statement !== statement ? createWhileStatement(expression, statement) : node;
 }
 
-export function updateForOfStatement(node: ForOfStatement, initializer: ForInitializer, expression: Expression, statement: Statement): ForOfStatement {
+export function updateForOfStatement(node: ForOfStatement, initializer: ForInitializer, expression: Expression, statement: Block): ForOfStatement {
     return node.initializer !== initializer || node.expression !== expression || node.statement !== statement ? createForOfStatement(initializer, expression, statement) : node;
 }
 
-export function updateNumericForStatement(node: NumericForStatement, initializer: ForInitializer, from: Expression, to: Expression, step: Expression | undefined, statement: Statement): NumericForStatement {
+export function updateNumericForStatement(node: NumericForStatement, initializer: ForInitializer, from: Expression, to: Expression, step: Expression | undefined, statement: Block): NumericForStatement {
     return node.initializer !== initializer || node.from !== from || node.to !== to || node.step !== step || node.statement !== statement ? createNumericForStatement(initializer, from, to, step, statement) : node;
 }
 
@@ -3019,20 +2749,8 @@ export function updateReturnStatement(node: ReturnStatement, expression?: Expres
     return node.expression !== expression ? createReturnStatement(expression) : node;
 }
 
-export function updateWithStatement(node: WithStatement, expression: Expression, statement: Statement): WithStatement {
-    return node.expression !== expression || node.statement !== statement ? createWithStatement(expression, statement) : node;
-}
-
 export function updateThrowStatement(node: ThrowStatement, expression: Expression): ThrowStatement {
     return node.expression !== expression ? createThrowStatement(expression) : node;
-}
-
-export function updateTryStatement(node: TryStatement, tryBlock: Block, catchClause?: CatchClause, finallyBlock?: Block): TryStatement {
-    return node.tryBlock !== tryBlock || node.catchClause !== catchClause || node.finallyBlock !== finallyBlock ? createTryStatement(tryBlock, catchClause, finallyBlock) : node;
-}
-
-export function updateCatchClause(node: CatchClause, variableDeclaration: VariableDeclaration | undefined, block: Block): CatchClause {
-    return node.variableDeclaration !== variableDeclaration || node.block !== block ? createCatchClause(variableDeclaration, block) : node;
 }
 
 export function updateLabelStatement(node: LabelStatement, label: Identifier): LabelStatement {
@@ -3079,14 +2797,6 @@ export function updateFunctionDeclaration(node: FunctionDeclaration, modifiers: 
     return node.modifiers !== modifiers || node.target !== target || node.colonToken !== colonToken || node.name !== name || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type || node.body !== body ? createFunctionDeclaration(modifiers, target, colonToken, name, typeParameters, parameters, type, body) : node;
 }
 
-export function updateClassDeclaration(node: ClassDeclaration, modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassDeclaration {
-    return node.modifiers !== modifiers || node.name !== name || node.typeParameters !== typeParameters || node.heritageClauses !== heritageClauses || node.members !== members ? createClassDeclaration(modifiers, name, typeParameters, heritageClauses, members) : node;
-}
-
-export function updateClassExpression(node: ClassExpression, modifiers: readonly ModifierLike[] | undefined, name: Identifier | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, heritageClauses: readonly HeritageClause[] | undefined, members: readonly ClassElement[]): ClassExpression {
-    return node.modifiers !== modifiers || node.name !== name || node.typeParameters !== typeParameters || node.heritageClauses !== heritageClauses || node.members !== members ? createClassExpression(modifiers, name, typeParameters, heritageClauses, members) : node;
-}
-
 export function updateHeritageClause(node: HeritageClause, types: readonly ExpressionWithTypeArguments[]): HeritageClause {
     return node.types !== types ? createHeritageClause(node.token, types) : node;
 }
@@ -3103,8 +2813,8 @@ export function updateModuleBlock(node: ModuleBlock, statements: readonly Statem
     return node.statements !== statements ? createModuleBlock(statements) : node;
 }
 
-export function updateImportDeclaration(node: ImportDeclaration, modifiers: readonly ModifierLike[] | undefined, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes?: ImportAttributes): ImportDeclaration {
-    return node.modifiers !== modifiers || node.importClause !== importClause || node.moduleSpecifier !== moduleSpecifier || node.attributes !== attributes ? createImportDeclaration(modifiers, importClause, moduleSpecifier, attributes) : node;
+export function updateImportDeclaration(node: ImportDeclaration, modifiers: readonly ModifierLike[] | undefined, importClause: ImportClause | undefined, moduleSpecifier: Expression): ImportDeclaration {
+    return node.modifiers !== modifiers || node.importClause !== importClause || node.moduleSpecifier !== moduleSpecifier ? createImportDeclaration(modifiers, importClause, moduleSpecifier) : node;
 }
 
 export function updateExternalModuleReference(node: ExternalModuleReference, expression: Expression): ExternalModuleReference {
@@ -3147,18 +2857,6 @@ export function updateConstructSignatureDeclaration(node: ConstructSignatureDecl
     return node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type ? createConstructSignatureDeclaration(typeParameters, parameters, type) : node;
 }
 
-export function updateConstructorDeclaration(node: ConstructorDeclaration, modifiers: readonly ModifierLike[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): ConstructorDeclaration {
-    return node.modifiers !== modifiers || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type || node.body !== body ? createConstructorDeclaration(modifiers, typeParameters, parameters, type, body) : node;
-}
-
-export function updateGetAccessorDeclaration(node: GetAccessorDeclaration, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): GetAccessorDeclaration {
-    return node.modifiers !== modifiers || node.name !== name || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type || node.body !== body ? createGetAccessorDeclaration(modifiers, name, typeParameters, parameters, type, body) : node;
-}
-
-export function updateSetAccessorDeclaration(node: SetAccessorDeclaration, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): SetAccessorDeclaration {
-    return node.modifiers !== modifiers || node.name !== name || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type || node.body !== body ? createSetAccessorDeclaration(modifiers, name, typeParameters, parameters, type, body) : node;
-}
-
 export function updateIndexSignatureDeclaration(node: IndexSignatureDeclaration, modifiers: readonly ModifierLike[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode): IndexSignatureDeclaration {
     return node.modifiers !== modifiers || node.parameters !== parameters || node.type !== type ? createIndexSignatureDeclaration(modifiers, parameters, type) : node;
 }
@@ -3167,20 +2865,8 @@ export function updateMethodSignatureDeclaration(node: MethodSignatureDeclaratio
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type ? createMethodSignatureDeclaration(modifiers, name, postfixToken, typeParameters, parameters, type) : node;
 }
 
-export function updateMethodDeclaration(node: MethodDeclaration, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode, body?: FunctionBody): MethodDeclaration {
-    return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type || node.body !== body ? createMethodDeclaration(modifiers, name, postfixToken, typeParameters, parameters, type, body) : node;
-}
-
 export function updatePropertySignatureDeclaration(node: PropertySignatureDeclaration, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer: Expression): PropertySignatureDeclaration {
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertySignatureDeclaration(modifiers, name, postfixToken, type, initializer) : node;
-}
-
-export function updatePropertyDeclaration(node: PropertyDeclaration, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken?: QuestionToken | ExclamationToken, type?: TypeNode, initializer?: Expression): PropertyDeclaration {
-    return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertyDeclaration(modifiers, name, postfixToken, type, initializer) : node;
-}
-
-export function updateClassStaticBlockDeclaration(node: ClassStaticBlockDeclaration, modifiers: readonly ModifierLike[] | undefined, body: Block): ClassStaticBlockDeclaration {
-    return node.modifiers !== modifiers || node.body !== body ? createClassStaticBlockDeclaration(modifiers, body) : node;
 }
 
 export function updateBinaryExpression(node: BinaryExpression, modifiers: readonly ModifierLike[] | undefined, left: Expression, type: TypeNode | undefined, operatorToken: BinaryOperatorToken, right: Expression): BinaryExpression {
@@ -3337,14 +3023,6 @@ export function updateLiteralTypeNode(node: LiteralTypeNode, literal: Node): Lit
 
 export function updateTypePredicateNode(node: TypePredicateNode, assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {
     return node.assertsModifier !== assertsModifier || node.parameterName !== parameterName || node.type !== type ? createTypePredicateNode(assertsModifier, parameterName, type) : node;
-}
-
-export function updateImportAttribute(node: ImportAttribute, name: ImportAttributeName, value: Expression): ImportAttribute {
-    return node.name !== name || node.value !== value ? createImportAttribute(name, value) : node;
-}
-
-export function updateImportAttributes(node: ImportAttributes, attributes: readonly ImportAttribute[]): ImportAttributes {
-    return node.attributes !== attributes ? createImportAttributes(node.token, attributes, node.multiLine) : node;
 }
 
 export function updateTypeQueryNode(node: TypeQueryNode, exprName: EntityName, typeArguments?: readonly TypeNode[]): TypeQueryNode {
@@ -3539,8 +3217,8 @@ export function updateJSDocThisTag(node: JSDocThisTag, tagName: Identifier, type
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocThisTag(tagName, typeExpression, comment) : node;
 }
 
-export function updateJSDocImportTag(node: JSDocImportTag, tagName: Identifier, importClause: ImportClause | undefined, moduleSpecifier: Expression, attributes?: ImportAttributes, comment?: readonly JSDocComment[]): JSDocImportTag {
-    return node.tagName !== tagName || node.importClause !== importClause || node.moduleSpecifier !== moduleSpecifier || node.attributes !== attributes || node.comment !== comment ? createJSDocImportTag(tagName, importClause, moduleSpecifier, attributes, comment) : node;
+export function updateJSDocImportTag(node: JSDocImportTag, tagName: Identifier, importClause: ImportClause | undefined, moduleSpecifier: Expression, comment?: readonly JSDocComment[]): JSDocImportTag {
+    return node.tagName !== tagName || node.importClause !== importClause || node.moduleSpecifier !== moduleSpecifier || node.comment !== comment ? createJSDocImportTag(tagName, importClause, moduleSpecifier, comment) : node;
 }
 
 export function updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier, typeExpression: TypeNode, name?: JSDocFullName, comment?: readonly JSDocComment[]): JSDocCallbackTag {
@@ -3571,12 +3249,12 @@ export function updateImportEqualsDeclaration(node: ImportEqualsDeclaration, mod
     return node.modifiers !== modifiers || node.name !== name || node.moduleReference !== moduleReference ? createImportEqualsDeclaration(modifiers, node.isTypeOnly, name, moduleReference) : node;
 }
 
-export function updateExportDeclaration(node: ExportDeclaration, modifiers?: readonly ModifierLike[], exportClause?: NamedExportBindings, moduleSpecifier?: Expression, attributes?: ImportAttributes): ExportDeclaration {
-    return node.modifiers !== modifiers || node.exportClause !== exportClause || node.moduleSpecifier !== moduleSpecifier || node.attributes !== attributes ? createExportDeclaration(modifiers, node.isTypeOnly, exportClause, moduleSpecifier, attributes) : node;
+export function updateExportDeclaration(node: ExportDeclaration, modifiers?: readonly ModifierLike[], exportClause?: NamedExportBindings, moduleSpecifier?: Expression): ExportDeclaration {
+    return node.modifiers !== modifiers || node.exportClause !== exportClause || node.moduleSpecifier !== moduleSpecifier ? createExportDeclaration(modifiers, node.isTypeOnly, exportClause, moduleSpecifier) : node;
 }
 
-export function updateImportTypeNode(node: ImportTypeNode, argument: TypeNode, attributes?: ImportAttributes, qualifier?: EntityName, typeArguments?: readonly TypeNode[]): ImportTypeNode {
-    return node.argument !== argument || node.attributes !== attributes || node.qualifier !== qualifier || node.typeArguments !== typeArguments ? createImportTypeNode(node.isTypeOf, argument, attributes, qualifier, typeArguments) : node;
+export function updateImportTypeNode(node: ImportTypeNode, argument: TypeNode, qualifier?: EntityName, typeArguments?: readonly TypeNode[]): ImportTypeNode {
+    return node.argument !== argument || node.qualifier !== qualifier || node.typeArguments !== typeArguments ? createImportTypeNode(node.isTypeOf, argument, qualifier, typeArguments) : node;
 }
 
 export function updateImportClause(node: ImportClause, name?: Identifier, namedBindings?: NamedImportBindings): ImportClause {

@@ -18,9 +18,9 @@ func TestCompletionsGenericUnconstrained(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
-function f<T>(x: T) {
+function f<T>(x: T)
   return x;
-}
+end
 
 f({ /**/ });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

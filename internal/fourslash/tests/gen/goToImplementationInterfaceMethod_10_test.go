@@ -47,13 +47,13 @@ class FooAndBarImpl implements Foo, Bar {
 	 goodbye() {}
 }
 
-function someFunction(x: Foo | Bar) {
+function someFunction(x: Foo | Bar)
 	 x.he/*function_call0*/llo();
-}
+end
 
-function anotherFunction(x: Foo & Bar) {
+function anotherFunction(x: Foo & Bar)
 	 x.he/*function_call1*/llo();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "function_call0", "function_call1")

@@ -19,12 +19,12 @@ func TestConstQuickInfoAndCompletionList(t *testing.T) {
 	const content = `local /*1*/a = 10;
 local x = /*2*/a;
 /*3*/
-function foo() {
+function foo()
     local /*4*/b = 20;
     local y = /*5*/b;
     local z = /*6*/a;
     /*7*/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{

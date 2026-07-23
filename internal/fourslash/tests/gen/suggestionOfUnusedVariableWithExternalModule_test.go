@@ -18,12 +18,12 @@ func TestSuggestionOfUnusedVariableWithExternalModule(t *testing.T) {
 	const content = `//@allowJs: true
 //@module: commonjs
 // @Filename: /mymodule.lua
-(function ([|root|], factory) {
+(function ([|root|], factory)
     module.exports = factory();
-}(this, function () {
+end(this, function ()
     local [|unusedVar|] = "something";
     return {};
-}));
+end));
 // @Filename: /app.lua
 //@ts-check
 [|require("./mymodule")|];`

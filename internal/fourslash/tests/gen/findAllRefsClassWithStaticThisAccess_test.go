@@ -21,7 +21,7 @@ func TestFindAllRefsClassWithStaticThisAccess(t *testing.T) {
     static get f() {
         return /*2*/[|this|];
 
-        function inner() { this; }
+        function inner() this; end
         class Inner { x = this; }
     }
 }|]`

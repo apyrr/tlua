@@ -16,7 +16,7 @@ func TestGoToDefinitionTaggedTemplateOverloads(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*defFNumber*/f(strs: TemplateStringsArray, x: number): void;
 function /*defFBool*/f(strs: TemplateStringsArray, x: boolean): void;
-function f(strs: TemplateStringsArray, x: number | boolean) {}
+function f(strs: TemplateStringsArray, x: number | boolean) end
 
 [|/*useFNumber*/f|]` + "`" + `${0}` + "`" + `;
 [|/*useFBool*/f|]` + "`" + `${false}` + "`" + `;`

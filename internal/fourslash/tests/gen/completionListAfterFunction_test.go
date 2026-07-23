@@ -22,10 +22,10 @@ declare function f1(a: number);/*1*/
 declare function f2(b: number, b2 = /*2*/
 
 // Outside the function
-function f3(c: number) { }/*3*/
+function f3(c: number) end/*3*/
 
 // inside the function
-function f4(d: number) { /*4*/}`
+function f4(d: number) /*4*/ end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

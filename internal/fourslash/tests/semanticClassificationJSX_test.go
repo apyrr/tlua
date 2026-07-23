@@ -12,7 +12,7 @@ func TestSemanticClassificationJSX(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.tsx
-local Component = () => <div>Hello</div>;
+local Component = function() return <div>Hello</div> end;
 local afterJSX = 42;
 local alsoAfterJSX = "test";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

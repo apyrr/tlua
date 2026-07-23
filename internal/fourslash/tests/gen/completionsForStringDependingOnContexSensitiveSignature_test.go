@@ -44,13 +44,13 @@ declare function sendTo<
 createMachine<{
   child: ActorRef<{ type: "EVENT" }>;
 }>({
-  entry = sendTo((ctx) => ctx.child, { type = /*1*/ }),
+  entry = sendTo(function(ctx) return ctx.child end, { type = /*1*/ }),
 });
 
 createMachine<{
   child: ActorRef<{ type: "EVENT" }>;
 }>({
-  entry = sendTo((ctx) => ctx.child, { type = "/*2*/" }),
+  entry = sendTo(function(ctx) return ctx.child end, { type = "/*2*/" }),
 });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

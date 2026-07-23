@@ -15,9 +15,9 @@ func TestCodeFixInferFromPrimitiveUsage(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noImplicitAny: true
-function wrap( [| s |] ) {
+function wrap( [| s |] )
     return s.length + s.indexOf('hi')
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyRangeAfterCodeFix(t, `s: string | string[]`, false, 0, 0)

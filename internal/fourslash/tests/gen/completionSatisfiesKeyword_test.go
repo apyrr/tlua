@@ -18,9 +18,9 @@ func TestCompletionSatisfiesKeyword(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local x = { a: 1 } /*1*/
-function foo() {
+function foo()
     local x = { a: 1 } /*2*/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{

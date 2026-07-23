@@ -15,10 +15,10 @@ func TestQuickInfoFromContextualUnionType2(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
-function test1(arg: { prop: "foo" }) {}
+function test1(arg: { prop: "foo" }) end
 test1({ /*1*/prop: "bar" });
 
-function test2(arg: { prop: "foo" } | undefined) {}
+function test2(arg: { prop: "foo" } | undefined) end
 test2({ /*2*/prop: "bar" });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -243,9 +243,6 @@ func (b *NodeBuilderImpl) tryReuseExistingNodeHelper(existing *ast.TypeNode) *as
 func (b *NodeBuilderImpl) getModuleSpecifierOverride(parent *ast.Node, lit *ast.Node) string {
 	if b.ctx.enclosingFile != ast.GetSourceFileOfNode(lit) {
 		mode := core.ResolutionModeNone
-		if parent.AsImportTypeNode().Attributes != nil {
-			mode = b.ch.getResolutionModeOverride(parent.AsImportTypeNode().Attributes.AsImportAttributes(), false)
-		}
 		name := lit.Text()
 		originalName := name
 		nodeSymbol := b.tryGetResolvedSymbolFromTypeNode(parent)
@@ -614,12 +611,6 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			}
 		}
 		if ast.IsLiteralImportTypeNode(node) {
-			// assert keyword in imported attributes is deprecated, so we don't reuse types that contain it
-			// Ex: import("pkg", { assert: {} }
-			if node.AsImportTypeNode().Attributes != nil && node.AsImportTypeNode().Attributes.AsImportAttributes().Token == ast.KindAssertKeyword {
-				bound.markError(nil)
-				return node
-			}
 			t := b.getTypeFromTypeNode(node, true)
 			if t == nil {
 				bound.markError(nil)
@@ -642,7 +633,6 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				node.AsImportTypeNode(),
 				node.AsImportTypeNode().IsTypeOf,
 				arg,
-				visitor.VisitNode(node.AsImportTypeNode().Attributes),
 				visitor.VisitNode(node.AsImportTypeNode().Qualifier),
 				visitor.VisitNodes(node.AsImportTypeNode().TypeArguments),
 			)
@@ -659,7 +649,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				return nil
 			}
 		}
-		if (ast.IsFunctionLike(node) && node.Type() == nil) || (ast.IsPropertyDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsPropertySignatureDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsParameterDeclaration(node) && node.Type() == nil && node.Initializer() == nil) {
+		if (ast.IsFunctionLike(node) && node.Type() == nil) || (ast.IsPropertySignatureDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsParameterDeclaration(node) && node.Type() == nil && node.Initializer() == nil) {
 			visited := visitor.VisitEachChild(node)
 			if visited == node {
 				visited = b.setTextRange(node.Clone(factory), node)
@@ -667,15 +657,6 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			node = visited
 			newType := factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 			switch node.Kind {
-			case ast.KindPropertyDeclaration:
-				return factory.UpdatePropertyDeclaration(
-					node.AsPropertyDeclaration(),
-					node.Modifiers(),
-					node.Name(),
-					node.PostfixToken(),
-					newType,
-					nil,
-				)
 			case ast.KindPropertySignature:
 				return factory.UpdatePropertySignatureDeclaration(
 					node.AsPropertySignatureDeclaration(),

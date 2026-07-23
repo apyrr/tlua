@@ -15,13 +15,13 @@ func TestNoCompletionsForCurrentOrLaterParametersInDefaults(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f1(a = /*1*/, b) { }
-function f2(a = a/*2*/, b) { }
-function f3(a = a + /*3*/, b = a/*4*/, c = /*5*/) { }
-function f3(a) {
-    function f4(b = /*6*/, c) { }
-}
-local f5 = (a, b = (c = /*7*/, e) => { }, d = b) => { }
+	const content = `function f1(a = /*1*/, b) end
+function f2(a = a/*2*/, b) end
+function f3(a = a + /*3*/, b = a/*4*/, c = /*5*/) end
+function f3(a)
+    function f4(b = /*6*/, c) end
+end
+local f5 = function(a, b = function(c = /*7*/, e) end, d = b) end
 
 type A1<K = /*T1*/, L> = K`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

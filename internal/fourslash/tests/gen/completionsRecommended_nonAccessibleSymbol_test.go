@@ -15,10 +15,10 @@ func TestCompletionsRecommended_nonAccessibleSymbol(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f() {
+	const content = `function f()
     class C {}
     return (c: C) => void;
-}
+end
 f()(new /**/);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -14,14 +14,14 @@ func TestContextualTypingGenericFunction1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local obj: { f<T>(x: T): T } = { f: <S>(/*1*/x) => x };
-local obj2: <T>(x: T) => T = <S>(/*2*/x) => x;
+	const content = `local obj: { f<T>(x: T): T } = { f: function<S>(/*1*/x) return x end };
+local obj2: <T>(x: T) => T = function<S>(/*2*/x) return x end;
 
 class C<T> {
     obj: <T>(x: T) => T
 }
 local c = new C();
-c.obj = <S>(/*3*/x) => x;`
+c.obj = function<S>(/*3*/x) return x end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(parameter) x: any", "")

@@ -20,7 +20,7 @@ func TestCompletionForQuotedPropertyInPropertyAssignment4(t *testing.T) {
   jspm: string;
   'jspm:browser': string;
 }
-function foo(c: ConfigFiles) {}
+function foo(c: ConfigFiles) end
 foo({
     j/*0*/ = "",
     ["[|/*1*/|]"] = "",

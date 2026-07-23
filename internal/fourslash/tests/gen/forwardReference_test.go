@@ -15,10 +15,10 @@ func TestForwardReference(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f() {
+	const content = `function f()
     local x = new t();
     x./**/
-}
+end
 class t {
     public n: number;
 }`

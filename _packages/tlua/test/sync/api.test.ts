@@ -378,7 +378,7 @@ describe("SourceFile", () => {
     test("forEachChild with visitList does not visit array children twice", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ files: ["/input.tlua"] }),
-            "/input.tlua": `local arrow = () => {}`,
+            "/input.tlua": `local arrow = function() end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -780,7 +780,7 @@ describe("Source file caching", () => {
     test("node handles from a cached source file should be valid in a new snapshot", () => {
         const { api, fs } = spawnAPIWithFS({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function foo(x: number) {}\nfoo(42);`,
+            "/src/main.tlua": `function foo(x: number) end\nfoo(42);`,
             "/src/other.tlua": `local x = 1;\nreturn { x = x };`,
         });
         try {
@@ -972,7 +972,7 @@ describe("Checker - types and signatures", () => {
         "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/main.tlua": `
 local x = 42 as const;
-function add(a: number, b: number, ...rest: number[]): number { return a + b; }
+function add(a: number, b: number, ...rest: number[]): number return a + b end
 interface Widget {
     value: string;
 }
@@ -980,7 +980,7 @@ declare MyClass: {
     new (): Widget;
 };
 local holder = {
-    getValue = function(): string { return ""; },
+    getValue = function(): string return "" end,
 };
 `,
     };
@@ -1089,13 +1089,13 @@ local c = obj.b.c;
             "/src/main.tlua": `
 type Result = { readonly value: string };
 
-function buildCapabilities(): Result {
-    return { value: "ok" };
-}
+function buildCapabilities(): Result
+    return { value = "ok" };
+end
 
-function run(): Result {
+function run(): Result
     return buildCapabilities();
-}
+end
 `,
         };
 
@@ -1325,7 +1325,7 @@ function run(): Result {
 
     test("Signature.getTarget() returns the generic source signature for an instantiated call", () => {
         const src = `
-            function identity<T>(x: T): T { return x; }
+            function identity<T>(x: T): T return x; end
             identity<string>("hello");
         `;
         const api = spawnAPI({
@@ -1920,11 +1920,11 @@ describe("Checker - multi-project type ID uniqueness", () => {
     test("symbol and signature handles from 3 projects in the same snapshot have non-colliding IDs", () => {
         const api = spawnAPI({
             "/proj1/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/proj1/src/index.tlua": `function add(a: number, b: number): number { return a + b; }`,
+            "/proj1/src/index.tlua": `function add(a: number, b: number): number return a + b; end`,
             "/proj2/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/proj2/src/index.tlua": `function greet(name: string): string { return "hello " + name; }`,
+            "/proj2/src/index.tlua": `function greet(name: string): string return "hello " + name; end`,
             "/proj3/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/proj3/src/index.tlua": `function toggle(b: boolean): boolean { return !b; }`,
+            "/proj3/src/index.tlua": `function toggle(b: boolean): boolean return !b; end`,
         });
         try {
             api.updateSnapshot({ openProject: "/proj1/tluaconfig.json" });
@@ -1936,9 +1936,9 @@ describe("Checker - multi-project type ID uniqueness", () => {
             const proj3 = snapshot.getProject("/proj3/tluaconfig.json")!;
 
             // Get a symbol from each project (exercises symbol registry)
-            const src1 = `function add(a: number, b: number): number { return a + b; }`;
-            const src2 = `function greet(name: string): string { return "hello " + name; }`;
-            const src3 = `function toggle(b: boolean): boolean { return !b; }`;
+            const src1 = `function add(a: number, b: number): number return a + b; end`;
+            const src2 = `function greet(name: string): string return "hello " + name; end`;
+            const src3 = `function toggle(b: boolean): boolean return !b; end`;
 
             const sym1 = proj1.checker.getSymbolAtPosition("/proj1/src/index.tlua", src1.indexOf("add"));
             const sym2 = proj2.checker.getSymbolAtPosition("/proj2/src/index.tlua", src2.indexOf("greet"));
@@ -2029,7 +2029,7 @@ describe("Checker - getContextualType", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
             "/src/main.tlua": `
-function foo(x: number) {}
+function foo(x: number) end
 foo(42);
 `,
         });
@@ -2069,18 +2069,18 @@ describe("Checker - getTypeOfSymbolAtLocation", () => {
             // `type` is a lualib global, so the LuaJIT declarations must be in the program.
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true, lib: ["esnext", "luajit"] } }),
             "/src/main.tlua": `
-function check(x: string | number) {
-    if (type(x) == "string") {
+function check(x: string | number)
+    if type(x) == "string" then
         return x;
-    }
+    end
     return x;
-}
+end
 `,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `\nfunction check(x: string | number) {\n    if (type(x) == "string") {\n        return x;\n    }\n    return x;\n}\n`;
+            const src = `\nfunction check(x: string | number)\n    if type(x) == "string" then\n        return x;\n    end\n    return x;\nend\n`;
 
             // Get the symbol for parameter "x"
             const paramPos = src.indexOf("x:");
@@ -2319,12 +2319,12 @@ describe("Checker - getReturnTypeOfSignature", () => {
     test("returns the return type of a function signature", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function add(a: number, b: number): number { return a + b; }`,
+            "/src/main.tlua": `function add(a: number, b: number): number return a + b; end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function add(a: number, b: number): number { return a + b; }`;
+            const src = `function add(a: number, b: number): number return a + b; end`;
             const pos = src.indexOf("add(");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -2346,12 +2346,12 @@ describe("Checker - getRestTypeOfSignature", () => {
     test("returns the rest type of a signature with rest parameter", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function sum(...nums: number[]): number { return nums.reduce((a, b) => a + b, 0); }`,
+            "/src/main.tlua": `function sum(...nums: number[]): number return nums.reduce(function(a, b) return a + b end, 0); end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function sum(...nums: number[]): number { return nums.reduce((a, b) => a + b, 0); }`;
+            const src = `function sum(...nums: number[]): number return nums.reduce(function(a, b) return a + b end, 0); end`;
             const pos = src.indexOf("sum(");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -2373,12 +2373,12 @@ describe("Checker - getTypePredicateOfSignature", () => {
     test("returns type predicate for 'x is T' guard", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function isString(x: unknown): x is string { return typeof x === "string"; }`,
+            "/src/main.tlua": `function isString(x: unknown): x is string return typeof x === "string"; end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function isString(x: unknown): x is string { return typeof x === "string"; }`;
+            const src = `function isString(x: unknown): x is string return typeof x === "string"; end`;
             const pos = src.indexOf("isString(");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -2402,12 +2402,12 @@ describe("Checker - getTypePredicateOfSignature", () => {
     test("returns type predicate for 'asserts x is T'", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function assertIsString(x: unknown): asserts x is string { if (typeof x !== "string") throw new Error(); }`,
+            "/src/main.tlua": `function assertIsString(x: unknown): asserts x is string if (typeof x ~= "string") then throw new Error(); end end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function assertIsString(x: unknown): asserts x is string { if (typeof x !== "string") throw new Error(); }`;
+            const src = `function assertIsString(x: unknown): asserts x is string if (typeof x ~= "string") then throw new Error(); end end`;
             const pos = src.indexOf("assertIsString(");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -2431,12 +2431,12 @@ describe("Checker - getTypePredicateOfSignature", () => {
     test("returns undefined for signature without type predicate", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function add(a: number, b: number): number { return a + b; }`,
+            "/src/main.tlua": `function add(a: number, b: number): number return a + b; end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function add(a: number, b: number): number { return a + b; }`;
+            const src = `function add(a: number, b: number): number return a + b; end`;
             const pos = src.indexOf("add(");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -2623,7 +2623,7 @@ type Alias = typeof value;
 describe("Checker - well-known signatures", () => {
     test("isUnknownSignature identifies an unresolvable call", () => {
         const src = `
-local ok = (x: number) => x;
+local ok = function(x: number) return x end;
 ok(1);
 local notCallable = 1;
 notCallable();
@@ -2754,17 +2754,17 @@ describe("ast - getJSDocTags", () => {
  * @param b the second number
  * @returns the sum
  */
-function add(a: number, b: number): number {
-    return a + b;
-}
+function add(a: number, b: number): number
+    return a + b
+end
 
 /**
  * @template T the element type
  * @param x a value
  */
-function identity<T>(x: T): T {
-    return x;
-}
+function identity<T>(x: T): T
+    return x
+end
 
 /** @deprecated use add */
 local total = add(1, 2);
@@ -2831,9 +2831,9 @@ local total = add(1, 2);
  * @param {string} name a name
  * @returns {number} the length
  */
-local measure = function (name) {
+local measure = function (name)
     return name.length;
-};
+end;
 `,
         });
         try {
@@ -2999,12 +2999,12 @@ describe("Checker - getConstraintOfTypeParameter", () => {
     test("returns constraint of a type parameter", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function identity<T extends string>(x: T): T { return x; }`,
+            "/src/main.tlua": `function identity<T extends string>(x: T): T return x; end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function identity<T extends string>(x: T): T { return x; }`;
+            const src = `function identity<T extends string>(x: T): T return x; end`;
             const pos = src.indexOf("identity<");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3085,12 +3085,12 @@ describe("Checker - getBaseConstraintOfType", () => {
     test("returns the base constraint of a type parameter", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function identity<T extends string>(x: T): T { return x; }`,
+            "/src/main.tlua": `function identity<T extends string>(x: T): T return x; end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function identity<T extends string>(x: T): T { return x; }`;
+            const src = `function identity<T extends string>(x: T): T return x; end`;
             const pos = src.indexOf("identity<");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);
@@ -3167,7 +3167,7 @@ describe("Checker - getSignatureFromDeclaration", () => {
     test("returns the signature of a function declaration", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function add(a: number, b: number): number { return a + b; }`,
+            "/src/main.tlua": `function add(a: number, b: number): number return a + b; end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -3263,7 +3263,7 @@ describe("Symbol - getDocumentationComment and getJsDocTags", () => {
  * @param a the first number
  * @returns the sum
  */
-function add(a: number, b: number): number { return a + b; }
+function add(a: number, b: number): number return a + b; end
 `,
     };
 
@@ -3310,7 +3310,7 @@ describe("TypeParameter - isThisType", () => {
     // tlua removed the polymorphic `this` type, so no type parameter is ever a
     // this-type; only the negative case remains.
     test("isThisType is absent for a regular generic type parameter", () => {
-        const src = `\nfunction identity<T>(x: T): T { return x; }\n`;
+        const src = `\nfunction identity<T>(x: T): T return x; end\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
@@ -3336,7 +3336,7 @@ describe("TypeParameter - isThisType", () => {
 
 describe("Type - getAliasTypeArguments", () => {
     test("returns the type arguments of a single-param generic type alias", () => {
-        const src = `\ntype Box<T> = { value: T };\nlocal x: Box<string> = { value: "hi" };\n`;
+        const src = `\ntype Box<T> = { value: T };\nlocal x: Box<string> = { value = "hi" };\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
@@ -3359,7 +3359,7 @@ describe("Type - getAliasTypeArguments", () => {
     });
 
     test("returns multiple type arguments for a multi-param generic type alias", () => {
-        const src = `\ntype Pair<A, B> = { first: A; second: B };\nlocal p: Pair<string, number> = { first: "hello", second: 42 };\n`;
+        const src = `\ntype Pair<A, B> = { first: A; second: B };\nlocal p: Pair<string, number> = { first = "hello", second = 42 };\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
@@ -3408,7 +3408,7 @@ describe("Type - getAliasTypeArguments", () => {
 describe("Type - getAliasSymbol", () => {
     test("returns the symbol for a non-generic type alias", () => {
         // Object-type aliases preserve aliasSymbol; primitive aliases (type Foo = string) do not.
-        const src = `\ntype Point = { x: number; y: number };\nlocal p: Point = { x: 1, y: 2 };\n`;
+        const src = `\ntype Point = { x: number; y: number };\nlocal p: Point = { x = 1, y = 2 };\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
@@ -3431,7 +3431,7 @@ describe("Type - getAliasSymbol", () => {
     });
 
     test("returns the symbol for a generic type alias", () => {
-        const src = `\ntype Container<T> = { item: T };\nlocal c: Container<number> = { item: 42 };\n`;
+        const src = `\ntype Container<T> = { item: T };\nlocal c: Container<number> = { item = 42 };\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
@@ -3618,23 +3618,23 @@ describe("Checker - isContextSensitive", () => {
     test("arrow function with no type annotation is context sensitive", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `local fn = (x) => x;\nreturn { fn = fn };`,
+            "/src/main.tlua": `local fn = function(x) return x end;\nreturn { fn = fn };`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
             const sourceFile = project.program.getSourceFile("/src/main.tlua");
             assert.ok(sourceFile);
-            // Find the arrow function node
-            let arrowFn: import("@tlua/cli/unstable/ast").Node | undefined;
+            // Find the function expression node
+            let functionExpr: import("@tlua/cli/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
-                if (node.kind === SyntaxKind.ArrowFunction) {
-                    arrowFn = node;
+                if (node.kind === SyntaxKind.FunctionExpression) {
+                    functionExpr = node;
                 }
                 node.forEachChild(visit);
             });
-            assert.ok(arrowFn, "Should find an arrow function");
-            const result = project.checker.isContextSensitive(arrowFn);
+            assert.ok(functionExpr, "Should find a function expression");
+            const result = project.checker.isContextSensitive(functionExpr);
             assert.equal(result, true);
         }
         finally {
@@ -3733,7 +3733,7 @@ describe("Checker - getCompletionsAtPosition", () => {
     });
 
     test("completion entries include sortText", () => {
-        const src = `\nlocal obj = { value: 1 };\nobj.\n`;
+        const src = `\nlocal obj = { value = 1 };\nobj.\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/main.tlua": src,
@@ -3796,7 +3796,7 @@ describe("Emitter - printNode", () => {
         "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
         "/src/main.tlua": `
 local x = 42;
-function greet(name: string): string { return name; }
+function greet(name: string): string return name; end
 type Pair = [string, number];
 local obj = { m = 1, s = "hi", b = true };
 `,
@@ -4024,7 +4024,7 @@ describe("modifierFlags", () => {
     test("async function has Async flag", () => {
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
-            "/src/index.tlua": `async function foo() {}`,
+            "/src/index.tlua": `async function foo() end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -4051,7 +4051,7 @@ describe("modifierFlags", () => {
     test("node without modifiers has ModifierFlags.None", () => {
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
-            "/src/index.tlua": `function bar() {}`,
+            "/src/index.tlua": `function bar() end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -4169,7 +4169,7 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
 test("TypeOperator operator kind", () => {
     const api = spawnAPI({
         "/tluaconfig.json": "{}",
-        "/src/index.tlua": `function test(arg: readonly number[]) { }\n`,
+        "/src/index.tlua": `function test(arg: readonly number[])\nend\n`,
     });
     try {
         const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -4372,7 +4372,7 @@ describe("Program - diagnostics", () => {
     });
 
     test("getSemanticDiagnostics with messageChain and relatedInformation", () => {
-        const source = `interface Props { callback: (x: string) => void }\nlocal p: Props = { callback = (x: number) => {} };`;
+        const source = `interface Props { callback: (x: string) => void }\nlocal p: Props = { callback = function(x: number) end };`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/index.tlua": source,
@@ -4418,7 +4418,7 @@ describe("Program - diagnostics", () => {
     });
 
     test("getSuggestionDiagnostics", () => {
-        const source = `function f() { local x = 1; return x; }\nlocal _unused = 1;\nreturn { f = f };\n`;
+        const source = `function f() local x = 1; return x; end\nlocal _unused = 1;\nreturn { f = f };\n`;
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
             "/src/index.tlua": source,
@@ -4587,7 +4587,7 @@ describe("Checker - getReferencedSymbolsForNode", () => {
     test("getReferencedSymbolsForNode", () => {
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
-            "/src/index.tlua": `function greet(name: string) { return name; }\ngreet("world");`,
+            "/src/index.tlua": `function greet(name: string) return name; end\ngreet("world");`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -4613,7 +4613,7 @@ describe("Checker - getSignatureUsage", () => {
     test("getSignatureUsage", () => {
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
-            "/src/index.tlua": `function greet(name: string) { return name; }\ngreet("world");`,
+            "/src/index.tlua": `function greet(name: string) return name; end\ngreet("world");`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });

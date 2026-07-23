@@ -15,9 +15,9 @@ func TestQuickInfoOnCatchVariable(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: false
-function f() {
+function f()
    try { } catch (/**/e) { }
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "(local var) e: any", "")

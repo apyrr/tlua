@@ -41,13 +41,13 @@ local /*c*/c: string;
   * @param param
   * @random tag This should be third line
   */
-function /*d*/d(param: string) { /*1*/param = "hello"; }
+function /*d*/d(param: string) /*1*/param = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
   * @param param
   */
-function /*e*/e(param: string) { /*2*/param = "hello"; }
+function /*e*/e(param: string) /*2*/param = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
@@ -56,7 +56,7 @@ function /*e*/e(param: string) { /*2*/param = "hello"; }
   *  param information third line
   * @random tag This should be third line
   */
-function /*f*/f(param1: string) { /*3*/param1 = "hello"; }
+function /*f*/f(param1: string) /*3*/param1 = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
@@ -65,7 +65,7 @@ function /*f*/f(param1: string) { /*3*/param1 = "hello"; }
   *  param information first line
   * @random tag This should be third line
   */
-function /*g*/g(param1: string) { /*4*/param1 = "hello"; }
+function /*g*/g(param1: string) /*4*/param1 = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
@@ -76,7 +76,7 @@ function /*g*/g(param1: string) { /*4*/param1 = "hello"; }
   *  param information third line
   * @random tag This should be third line
   */
-function /*h*/h(param1: string) { /*5*/param1 = "hello"; }
+function /*h*/h(param1: string) /*5*/param1 = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
@@ -87,7 +87,7 @@ function /*h*/h(param1: string) { /*5*/param1 = "hello"; }
   *  param information third line
   *
   */
-function /*i*/i(param1: string) { /*6*/param1 = "hello"; }
+function /*i*/i(param1: string) /*6*/param1 = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
@@ -97,7 +97,7 @@ function /*i*/i(param1: string) { /*6*/param1 = "hello"; }
   *
   *  param information third line
   */
-function /*j*/j(param1: string) { /*7*/param1 = "hello"; }
+function /*j*/j(param1: string) /*7*/param1 = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
@@ -107,7 +107,7 @@ function /*j*/j(param1: string) { /*7*/param1 = "hello"; }
   *
   *  random information third line
   */
-function /*k*/k(param1: string) { /*8*/param1 = "hello"; }
+function /*k*/k(param1: string) /*8*/param1 = "hello"; end
 /** 
   * This is firstLine
   * This is second Line
@@ -118,7 +118,7 @@ function /*k*/k(param1: string) { /*8*/param1 = "hello"; }
   * blank line that shouldnt be shown when starting this 
   * second time information about the param again
   */
-function /*l*/l(param1: string) { /*9*/param1 = "hello"; }
+function /*l*/l(param1: string) /*9*/param1 = "hello"; end
      /** 
        * This is firstLine
  This is second Line
@@ -126,7 +126,7 @@ function /*l*/l(param1: string) { /*9*/param1 = "hello"; }
  @param param1 first Line text
  second line text
  */
-function /*m*/m(param1: string) { /*10*/param1 = "hello"; }`
+function /*m*/m(param1: string) /*10*/param1 = "hello"; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "a", "local a: string", "This is firstLine\nThis is second Line\n\nThis is fourth Line")

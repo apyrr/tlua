@@ -665,7 +665,7 @@ func TestSession(t *testing.T) {
 				}`,
 				// Drives the diagnostic delta off noImplicitAny (still toggled by "strict"),
 				// since tlua is strict-null always-on and can't use a strictNullChecks toggle.
-				"/home/projects/TS/p1/src/index.tlua": `function f(a) { return a; }`,
+				"/home/projects/TS/p1/src/index.tlua": `function f(a) return a; end`,
 			}
 
 			session, utils := projecttestutil.Setup(files)

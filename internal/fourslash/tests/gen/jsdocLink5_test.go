@@ -14,13 +14,12 @@ func TestJsdocLink5(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function g() { }
+	const content = `function g() end
 /**
  * {@link g()} {@link g() } {@link g ()} {@link g () 0} {@link g()1} {@link g() 2}
  * {@link u()} {@link u() } {@link u ()} {@link u () 0} {@link u()1} {@link u() 2}
  */
-function f(x) {
-}
+function f(x) end
 f/*3*/()`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

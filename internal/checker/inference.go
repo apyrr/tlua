@@ -804,7 +804,7 @@ func (c *Checker) inferFromSignature(n *InferenceState, source *Signature, targe
 			kind = target.declaration.Kind
 		}
 		// Once we descend into a bivariant signature we remain bivariant for all nested inferences
-		n.bivariant = n.bivariant || kind == ast.KindMethodDeclaration || kind == ast.KindMethodSignature || kind == ast.KindConstructor
+		n.bivariant = n.bivariant || kind == ast.KindMethodSignature
 		c.applyToParameterTypes(source, target, func(s, t *Type) { c.inferFromContravariantTypesIfStrictFunctionTypes(n, s, t) })
 		n.bivariant = saveBivariant
 	}
@@ -1311,12 +1311,7 @@ func (c *Checker) addIntraExpressionInferenceSite(n *InferenceContext, node *ast
 // object or array literal, we need to perform intra-expression inferences early.
 func (c *Checker) inferFromIntraExpressionSites(n *InferenceContext) {
 	for _, site := range n.intraExpressionInferenceSites {
-		var contextualType *Type
-		if ast.IsMethodDeclaration(site.node) {
-			contextualType = c.getContextualTypeForObjectLiteralMethod(site.node, ContextFlagsNoConstraints)
-		} else {
-			contextualType = c.getContextualType(site.node, ContextFlagsNoConstraints)
-		}
+		contextualType := c.getContextualType(site.node, ContextFlagsNoConstraints)
 		if contextualType != nil {
 			c.inferTypes(n.inferences, site.t, contextualType, InferencePriorityNone, false)
 		}

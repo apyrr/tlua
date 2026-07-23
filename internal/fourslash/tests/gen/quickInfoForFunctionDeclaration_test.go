@@ -16,11 +16,11 @@ func TestQuickInfoForFunctionDeclaration(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A<T> { }
 
-function ma/*makeA*/keA<T>(t: T): A<T> { return null; }
+function ma/*makeA*/keA<T>(t: T): A<T> return null; end
 
-function /*f*/f<T>(t: T) {
+function /*f*/f<T>(t: T)
     return makeA(t);
-}
+end
 
 local x = f(0);
 local y = makeA(0);`

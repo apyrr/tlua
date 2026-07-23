@@ -13,12 +13,12 @@ func TestInlayHintsPropertyDeclarationComputedName1(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
   local sym = Symbol();
   class C {
     [sym] = 123;
   }
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{

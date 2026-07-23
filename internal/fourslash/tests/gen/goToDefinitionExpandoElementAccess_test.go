@@ -14,7 +14,7 @@ func TestGoToDefinitionExpandoElementAccess(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f() {}
+	const content = `function f() end
 f[/*0*/"x"] = 0;
 f[[|/*1*/"x"|]] = 1;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -18,9 +18,9 @@ func TestCompletionListInUnclosedFunction17(t *testing.T) {
 	const content = `interface MyType {
 }
 
-function foo(x: string, y: number, z: boolean) {
-    function bar(a: number, b: string = "hello", c: typeof x = "hello") {
-        local v = (p: MyType) => y + /*1*/`
+function foo(x: string, y: number, z: boolean)
+    function bar(a: number, b: string = "hello", c: typeof x = "hello")
+        local v = function(p: MyType) return y + /*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

@@ -22,7 +22,7 @@ func TestGetJavaScriptCompletions5(t *testing.T) {
  * @template T
  * @param {T} a
  * @return {T} */
-function foo(a) { }
+function foo(a) end
 local x = foo;
 foo(1)./**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

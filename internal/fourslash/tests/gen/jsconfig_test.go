@@ -15,8 +15,7 @@ func TestJsconfig(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.lua
-function f(/**/x) {
-}
+function f(/**/x) end
 // @Filename: /jsconfig.json
 {
     "compilerOptions": {

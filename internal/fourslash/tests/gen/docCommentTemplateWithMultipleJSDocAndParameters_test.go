@@ -21,7 +21,7 @@ func TestDocCommentTemplateWithMultipleJSDocAndParameters(t *testing.T) {
  */
 /** */
 /*/**/
-function foo(p) {}`
+function foo(p) end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

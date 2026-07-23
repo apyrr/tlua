@@ -14,8 +14,7 @@ func TestQuickInfoOnUndefined(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(a: string) {
-}
+	const content = `function foo(a: string) end
 foo(/*1*/undefined);
 local x = {
     undefined: 10

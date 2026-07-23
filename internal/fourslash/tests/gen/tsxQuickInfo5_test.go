@@ -18,10 +18,10 @@ func TestTsxQuickInfo5(t *testing.T) {
 // @jsx: preserve
 // @noLib: true
 declare function ComponentWithTwoAttributes<K,V>(l: {key1: K, value: V}): JSX.Element;
-function Baz<T,U>(key1: T, value: U) {
+function Baz<T,U>(key1: T, value: U)
     local a0 = <ComponentWi/*1*/thTwoAttributes k/*2*/ey1={key1} val/*3*/ue={value} />
     local a1 = <ComponentWithTwoAttributes {...{key1, value: value}} key="Component" />
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "function ComponentWithTwoAttributes<T, U>(l: {\n    key1: T;\n    value: U;\n}): JSX.Element", "")

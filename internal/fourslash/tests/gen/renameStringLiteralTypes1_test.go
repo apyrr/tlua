@@ -20,7 +20,7 @@ func TestRenameStringLiteralTypes1(t *testing.T) {
     easing: "ease-in" | "ease-out" | "[|ease-in-out|]";
 }
 
-function animate(o: AnimationOptions) { }
+function animate(o: AnimationOptions) end
 
 animate({ deltaX = 100, deltaY = 100, easing = "[|ease-in-out|]" });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -16,19 +16,19 @@ func TestQuickInfoOnObjectLiteralWithAccessors(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function /*1*/makePoint(x: number) {
+	const content = `function /*1*/makePoint(x: number)
     return {
         b: 10,
         get x() { return x; },
         set x(a: number) { this.b = a; }
     };
-};
+end;
 local /*4*/point = makePoint(2);
 local /*2*/x = point.x;
 point./*3*/x = 30;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyQuickInfoAt(t, "1", "function makePoint(x: number): {\n    b: number;\n    x: number;\n}", "")
+	f.VerifyQuickInfoAt(t, "1", "function makePoint(x: number): \n    b: number;\n    x: number;\n end", "")
 	f.VerifyQuickInfoAt(t, "2", "local x: number", "")
 	f.VerifyQuickInfoAt(t, "3", "(property) x: number", "")
 	f.VerifyQuickInfoAt(t, "4", "local point: {\n    b: number;\n    x: number;\n}", "")

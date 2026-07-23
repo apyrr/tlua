@@ -43,11 +43,11 @@ class [|Foo|] {
 
 }
 
-function createBarUsingClassDeclaration(): Bar {
+function createBarUsingClassDeclaration(): Bar
     return {
         Foo
     };
-}
+end
 
 // Class expression that does not get used in a bar implementation
 local y = class Foo {

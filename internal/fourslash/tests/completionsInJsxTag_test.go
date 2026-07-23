@@ -23,12 +23,8 @@ interface JsxIntrinsicElements {
         "aria-label": string
     }
 }
-class Foo {
-    render() {
-        <div /*1*/ ></div>;
-        <div  /*2*/ />
-    }
-}`
+<div /*1*/ ></div>;
+<div  /*2*/ />`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{

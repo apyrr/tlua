@@ -17,7 +17,7 @@ func TestCompletionsLiteralDirectlyInRestConstrainedToArrayType(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 
-function fn<T extends ('value1' | 'value2' | 'value3')[]>(...values: T): T { return values; }
+function fn<T extends ('value1' | 'value2' | 'value3')[]>(...values: T): T return values; end
 
 local value1 = fn('/*1*/');
 local value2 = fn('value1', '/*2*/');`

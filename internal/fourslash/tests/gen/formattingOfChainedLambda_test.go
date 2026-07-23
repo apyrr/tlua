@@ -14,10 +14,10 @@ func TestFormattingOfChainedLambda(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local fn = (x: string) => ()=> alert(x)/**/`
+	const content = `local fn = function(x: string) return function() return alert(x) end end/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")
 	f.Insert(t, ";")
-	f.VerifyCurrentLineContent(t, `local fn = (x: string) => () => alert(x);`)
+	f.VerifyCurrentLineContent(t, `local fn = function(x: string) return function() return alert(x) end end;`)
 }

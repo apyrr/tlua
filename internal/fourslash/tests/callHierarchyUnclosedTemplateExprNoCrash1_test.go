@@ -18,10 +18,10 @@ func TestCallHierarchyUnclosedTemplateExprNoCrash1(t *testing.T) {
 	// previously caused a "Expected call hierarchy declaration to have a reference
 	// node" assertion failure.
 	const content = "// @Filename: /main.tlua\n" +
-		"function updateBadge() {\n" +
+		"function updateBadge()\n" +
 		"    local header = `<div class=\"sub\">${format`;\n" +
 		"    local badge = `<div /*1*/class=\"badge\">`;\n" +
-		"}"
+		"end"
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "1")

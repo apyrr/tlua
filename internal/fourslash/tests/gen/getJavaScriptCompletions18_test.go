@@ -22,10 +22,10 @@ func TestGetJavaScriptCompletions18(t *testing.T) {
   * @param {number} a
   * @param {string} b
 */
-exports.foo = function(a, b) {
+exports.foo = function(a, b)
 	a/*a*/;
 	b/*b*/
-};`
+end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "a")

@@ -15,9 +15,9 @@ func TestGetOccurrencesReturn2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(a: number) {
+	const content = `function f(a: number)
     if (a > 0) {
-        return (function () {
+        return (function ()
             [|return|];
             [|ret/**/urn|];
             [|return|];
@@ -25,14 +25,14 @@ func TestGetOccurrencesReturn2(t *testing.T) {
             while (false) {
                 [|return|] true;
             }
-        })() || true;
+        end)() || true;
     }
 
-    local unusued = [1, 2, 3, 4].map(x => { return 4 })
+    local unusued = [1, 2, 3, 4].map(function(x) return 4 end)
 
     return;
     return true;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)

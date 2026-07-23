@@ -29,7 +29,7 @@ interface Test {
     autoIncrement?: boolean;
 }
 
-function test<T extends Record<string, Test>>(opt: T) { }
+function test<T extends Record<string, Test>>(opt: T) end
 
 test({
     a = {
@@ -45,7 +45,7 @@ type Colors = {
     hsl: { h: number, s: number, l: number }
 };
 
-function createColor<T extends keyof Colors>(kind: T, values: Colors[T]) { }
+function createColor<T extends keyof Colors>(kind: T, values: Colors[T]) end
 
 createColor('rgb', {
   /*3*/
@@ -64,7 +64,7 @@ f2({
 
 type X = { a: { a }, b: { b } }
 
-function f4<T extends 'a' | 'b'>(p: { kind: T } & X[T]) { }
+function f4<T extends 'a' | 'b'>(p: { kind: T } & X[T]) end
 
 f4({
     kind = "a",

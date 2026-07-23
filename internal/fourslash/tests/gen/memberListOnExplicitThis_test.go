@@ -25,8 +25,8 @@ class C1 implements Restricted {
    f(this: this) {this./*1*/} // test on 'this.'
    g(this: Restricted) {this./*2*/}
 }
-function f(this: void) {this./*3*/}
-function g(this: Restricted) {this./*4*/}`
+function f(this: void) this./*3*/ end
+function g(this: Restricted) this./*4*/ end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

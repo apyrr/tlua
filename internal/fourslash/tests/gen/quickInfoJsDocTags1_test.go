@@ -27,7 +27,7 @@ func TestQuickInfoJsDocTags1(t *testing.T) {
  * @returns The result
  * @see x (the parameter)
  */
-function /**/foo(x) {}`
+function /**/foo(x) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

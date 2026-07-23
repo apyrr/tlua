@@ -18,7 +18,7 @@ func TestReturnTypeOfGenericFunction1(t *testing.T) {
     map<U>(iterator: (value: T) => U, context?: any): U[];
 }
 local x: WrappedArray<string>;
-local /**/y = x.map(s => s.length);`
+local /**/y = x.map(function(s) return s.length end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "local y: number[]", "")

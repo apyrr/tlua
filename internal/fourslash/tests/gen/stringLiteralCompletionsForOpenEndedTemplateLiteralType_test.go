@@ -16,7 +16,7 @@ func TestStringLiteralCompletionsForOpenEndedTemplateLiteralType(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @stableTypeOrdering: true
-function conversionTest(groupName: | "downcast" | "dataDowncast" | "editingDowncast" | ` + "`" + `${string}Downcast` + "`" + ` & {}) {}
+function conversionTest(groupName: | "downcast" | "dataDowncast" | "editingDowncast" | ` + "`" + `${string}Downcast` + "`" + ` & {}) end
 conversionTest("/**/");`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

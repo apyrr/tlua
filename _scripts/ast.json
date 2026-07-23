@@ -89,7 +89,6 @@
                 "comment": "Reserved words"
             },
             "BreakKeyword",
-            "CatchKeyword",
             "ClassKeyword",
             "ContinueKeyword",
             "DebuggerKeyword",
@@ -102,7 +101,6 @@
             "ExportKeyword",
             "ExtendsKeyword",
             "FalseKeyword",
-            "FinallyKeyword",
             "ForKeyword",
             "FunctionKeyword",
             "GotoKeyword",
@@ -118,13 +116,11 @@
             "ThisKeyword",
             "ThrowKeyword",
             "TrueKeyword",
-            "TryKeyword",
             "TypeOfKeyword",
             "UntilKeyword",
             "LocalKeyword",
             "VoidKeyword",
             "WhileKeyword",
-            "WithKeyword",
             {
                 "comment": "Strict mode reserved words"
             },
@@ -143,7 +139,6 @@
             "AccessorKeyword",
             "AsKeyword",
             "AssertsKeyword",
-            "AssertKeyword",
             "AnyKeyword",
             "AsyncKeyword",
             "AwaitKeyword",
@@ -200,13 +195,7 @@
                 "comment": "TypeMember"
             },
             "PropertySignature",
-            "PropertyDeclaration",
             "MethodSignature",
-            "MethodDeclaration",
-            "ClassStaticBlockDeclaration",
-            "Constructor",
-            "GetAccessor",
-            "SetAccessor",
             "CallSignature",
             "ConstructSignature",
             "IndexSignature",
@@ -264,7 +253,6 @@
             "ConditionalExpression",
             "TemplateExpression",
             "SpreadElement",
-            "ClassExpression",
             "OmittedExpression",
             "ExpressionWithTypeArguments",
             "AsExpression",
@@ -278,7 +266,6 @@
                 "comment": "Misc"
             },
             "TemplateSpan",
-            "SemicolonClassElement",
             {
                 "comment": "Element"
             },
@@ -287,7 +274,6 @@
             "VariableStatement",
             "ExpressionStatement",
             "IfStatement",
-            "DoStatement",
             "WhileStatement",
             "ForOfStatement",
             "NumericForStatement",
@@ -295,16 +281,13 @@
             "ContinueStatement",
             "BreakStatement",
             "ReturnStatement",
-            "WithStatement",
             "LabelStatement",
             "GotoStatement",
             "ThrowStatement",
-            "TryStatement",
             "DebuggerStatement",
             "VariableDeclaration",
             "VariableDeclarationList",
             "FunctionDeclaration",
-            "ClassDeclaration",
             "InterfaceDeclaration",
             "TypeAliasDeclaration",
             "ModuleDeclaration",
@@ -345,12 +328,6 @@
                 "comment": "Clauses"
             },
             "HeritageClause",
-            "CatchClause",
-            {
-                "comment": "Import attributes"
-            },
-            "ImportAttributes",
-            "ImportAttribute",
             {
                 "comment": "Property assignments"
             },
@@ -444,7 +421,7 @@
             },
             {
                 "name": "LastReservedWord",
-                "value": "WithKeyword"
+                "value": "WhileKeyword"
             },
             {
                 "name": "FirstKeyword",
@@ -760,16 +737,6 @@
                 "FlowNodeBase"
             ]
         },
-        "IterationStatementBase": {
-            "extends": [
-                "StatementBase"
-            ],
-            "fields": {
-                "Statement": {
-                    "type": "Statement"
-                }
-            }
-        },
         "ExpressionBase": {
             "brand": "_expressionBrand",
             "extends": [
@@ -957,36 +924,6 @@
             },
             "brand": "_functionLikeDeclarationBrand"
         },
-        "ClassLikeBase": {
-            "extends": [
-                "DeclarationBase",
-                "ExportableBase",
-                "ModifiersBase",
-                "LocalsContainerBase",
-                "CompositeBase"
-            ],
-            "fields": {
-                "name": {
-                    "type": "Identifier",
-                    "optional": true,
-                    "private": true
-                },
-                "TypeParameters": {
-                    "type": "TypeParameterDeclaration",
-                    "list": "NodeList",
-                    "optional": true
-                },
-                "HeritageClauses": {
-                    "type": "HeritageClause",
-                    "list": "NodeList",
-                    "optional": true
-                },
-                "Members": {
-                    "type": "ClassElement",
-                    "list": "NodeList"
-                }
-            }
-        },
         "LiteralLikeNodeBase": {
             "fields": {
                 "Text": {
@@ -1022,10 +959,6 @@
             "brand": "_typeElementBrand",
             "extends": []
         },
-        "ClassElementBase": {
-            "brand": "_classElementBrand",
-            "extends": []
-        },
         "NamedMemberBase": {
             "extends": [
                 "DeclarationBase",
@@ -1049,18 +982,6 @@
         "ObjectLiteralElementBase": {
             "brand": "_objectLiteralBrand",
             "extends": []
-        },
-        "AccessorDeclarationBase": {
-            "extends": [
-                "NamedMemberBase",
-                "FunctionLikeWithBodyBase",
-                "FlowNodeBase",
-                "TypeElementBase",
-                "ClassElementBase",
-                "ObjectLiteralElementBase",
-                "CompositeBase",
-                "NodeBase"
-            ]
         },
         "FunctionOrConstructorTypeNodeBase": {
             "extends": [
@@ -1143,7 +1064,6 @@
                     "MinusToken": "MinusToken",
                     "QuestionDotToken": "QuestionDotToken",
                     "AssertsKeyword": "AssertsKeyword",
-                    "AssertKeyword": "AssertKeyword",
                     "AwaitKeyword": "AwaitKeyword",
                     "AbstractKeyword": "AbstractKeyword",
                     "AccessorKeyword": "AccessorKeyword",
@@ -1236,41 +1156,21 @@
                     },
                     {
                         "name": "ThenStatement",
-                        "type": "Statement",
-                        "visit": "embeddedStatement"
+                        "type": "Block"
                     },
                     {
                         "name": "ElseStatement",
-                        "type": "Statement",
+                        "type": "BlockOrIfStatement",
                         "optional": true,
                         "visit": "embeddedStatement"
                     }
                 ],
                 "arena": true
             },
-            "DoStatement": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "IterationStatementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Statement",
-                        "type": "Statement",
-                        "visit": "iterationBody",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
-            },
             "WhileStatement": {
                 "generateSubtreeFacts": true,
                 "extends": [
-                    "IterationStatementBase",
+                    "StatementBase",
                     "CompositeBase"
                 ],
                 "members": [
@@ -1280,9 +1180,8 @@
                     },
                     {
                         "name": "Statement",
-                        "type": "Statement",
-                        "visit": "iterationBody",
-                        "inherited": true
+                        "type": "Block",
+                        "visit": "iterationBody"
                     }
                 ]
             },
@@ -1303,7 +1202,7 @@
                     },
                     {
                         "name": "Statement",
-                        "type": "Statement",
+                        "type": "Block",
                         "visit": "iterationBody"
                     }
                 ]
@@ -1311,7 +1210,7 @@
             "NumericForStatement": {
                 "generateSubtreeFacts": true,
                 "extends": [
-                    "IterationStatementBase",
+                    "StatementBase",
                     "LocalsContainerBase",
                     "CompositeBase"
                 ],
@@ -1335,9 +1234,8 @@
                     },
                     {
                         "name": "Statement",
-                        "type": "Statement",
-                        "visit": "iterationBody",
-                        "inherited": true
+                        "type": "Block",
+                        "visit": "iterationBody"
                     }
                 ]
             },
@@ -1385,24 +1283,6 @@
                 ],
                 "arena": true
             },
-            "WithStatement": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "StatementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "Statement",
-                        "type": "Statement",
-                        "visit": "embeddedStatement"
-                    }
-                ]
-            },
             "ThrowStatement": {
                 "generateSubtreeFacts": true,
                 "extends": [
@@ -1413,47 +1293,6 @@
                     {
                         "name": "Expression",
                         "type": "Expression"
-                    }
-                ]
-            },
-            "TryStatement": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "StatementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "TryBlock",
-                        "type": "Block"
-                    },
-                    {
-                        "name": "CatchClause",
-                        "type": "CatchClause",
-                        "optional": true
-                    },
-                    {
-                        "name": "FinallyBlock",
-                        "type": "Block",
-                        "optional": true
-                    }
-                ]
-            },
-            "CatchClause": {
-                "extends": [
-                    "NodeBase",
-                    "LocalsContainerBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "VariableDeclaration",
-                        "type": "VariableDeclaration",
-                        "optional": true
-                    },
-                    {
-                        "name": "Block",
-                        "type": "Block"
                     }
                 ]
             },
@@ -1754,63 +1593,6 @@
                 ],
                 "arena": true
             },
-            "ClassDeclaration": {
-                "extends": [
-                    "DeclarationBase",
-                    "StatementBase",
-                    "ClassLikeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "HeritageClauses",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Members",
-                        "inherited": true
-                    }
-                ]
-            },
-            "ClassExpression": {
-                "extends": [
-                    "PrimaryExpressionBase",
-                    "ClassLikeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "HeritageClauses",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Members",
-                        "inherited": true
-                    }
-                ]
-            },
             "HeritageClause": {
                 "extends": [
                     "NodeBase",
@@ -1956,11 +1738,6 @@
                     {
                         "name": "ModuleSpecifier",
                         "type": "Expression"
-                    },
-                    {
-                        "name": "Attributes",
-                        "type": "ImportAttributes",
-                        "optional": true
                     }
                 ]
             },
@@ -2151,135 +1928,6 @@
                 ],
                 "arena": true
             },
-            "ConstructorDeclaration": {
-                "kind": "Constructor",
-                "extends": [
-                    "NodeBase",
-                    "DeclarationBase",
-                    "ModifiersBase",
-                    "FunctionLikeWithBodyBase",
-                    "ClassElementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Parameters",
-                        "inherited": true,
-                        "visit": "parameters"
-                    },
-                    {
-                        "name": "Type",
-                        "inherited": true
-                    },
-                    {
-                        "name": "FullSignature",
-                        "inherited": true,
-                        "noTS": true
-                    },
-                    {
-                        "name": "Body",
-                        "inherited": true,
-                        "type": "FunctionBody",
-                        "optional": true,
-                        "visit": "functionBody"
-                    },
-                    {
-                        "name": "ReturnFlowNode",
-                        "type": "*FlowNode",
-                        "goOnly": true
-                    }
-                ]
-            },
-            "GetAccessorDeclaration": {
-                "kind": "GetAccessor",
-                "extends": [
-                    "AccessorDeclarationBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Parameters",
-                        "inherited": true,
-                        "visit": "parameters"
-                    },
-                    {
-                        "name": "Type",
-                        "inherited": true
-                    },
-                    {
-                        "name": "FullSignature",
-                        "inherited": true,
-                        "noTS": true
-                    },
-                    {
-                        "name": "Body",
-                        "inherited": true,
-                        "type": "FunctionBody",
-                        "optional": true,
-                        "visit": "functionBody"
-                    }
-                ]
-            },
-            "SetAccessorDeclaration": {
-                "kind": "SetAccessor",
-                "extends": [
-                    "AccessorDeclarationBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Parameters",
-                        "inherited": true,
-                        "visit": "parameters"
-                    },
-                    {
-                        "name": "Type",
-                        "inherited": true
-                    },
-                    {
-                        "name": "FullSignature",
-                        "inherited": true,
-                        "noTS": true
-                    },
-                    {
-                        "name": "Body",
-                        "inherited": true,
-                        "type": "FunctionBody",
-                        "optional": true,
-                        "visit": "functionBody"
-                    }
-                ]
-            },
             "IndexSignatureDeclaration": {
                 "kind": "IndexSignature",
                 "extends": [
@@ -2288,7 +1936,6 @@
                     "ModifiersBase",
                     "FunctionLikeBase",
                     "TypeElementBase",
-                    "ClassElementBase",
                     "TypeSyntaxBase"
                 ],
                 "members": [
@@ -2344,56 +1991,6 @@
                 ],
                 "arena": true
             },
-            "MethodDeclaration": {
-                "extends": [
-                    "NodeBase",
-                    "NamedMemberBase",
-                    "FunctionLikeWithBodyBase",
-                    "FlowNodeBase",
-                    "ClassElementBase",
-                    "ObjectLiteralElementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "PostfixToken",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Parameters",
-                        "inherited": true,
-                        "visit": "parameters"
-                    },
-                    {
-                        "name": "Type",
-                        "inherited": true
-                    },
-                    {
-                        "name": "FullSignature",
-                        "inherited": true,
-                        "noTS": true
-                    },
-                    {
-                        "name": "Body",
-                        "inherited": true,
-                        "type": "FunctionBody",
-                        "optional": true,
-                        "visit": "functionBody"
-                    }
-                ]
-            },
             "PropertySignatureDeclaration": {
                 "kind": "PropertySignature",
                 "extends": [
@@ -2425,70 +2022,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "PropertyDeclaration": {
-                "extends": [
-                    "NodeBase",
-                    "NamedMemberBase",
-                    "ClassElementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "PostfixToken",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Type",
-                        "type": "TypeNode",
-                        "optional": true
-                    },
-                    {
-                        "name": "Initializer",
-                        "type": "Expression",
-                        "optional": true
-                    }
-                ]
-            },
-            "SemicolonClassElement": {
-                "extends": [
-                    "NodeBase",
-                    "DeclarationBase",
-                    "ClassElementBase"
-                ]
-            },
-            "ClassStaticBlockDeclaration": {
-                "extends": [
-                    "NodeBase",
-                    "DeclarationBase",
-                    "ModifiersBase",
-                    "LocalsContainerBase",
-                    "ClassElementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Body",
-                        "type": "Block"
-                    },
-                    {
-                        "name": "ReturnFlowNode",
-                        "type": "*FlowNode",
-                        "goOnly": true
-                    }
-                ]
             },
             "OmittedExpression": {
                 "extends": [
@@ -3447,49 +2980,6 @@
                     }
                 ]
             },
-            "ImportAttribute": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "NodeBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "name",
-                        "type": "ImportAttributeName",
-                        "private": true
-                    },
-                    {
-                        "name": "Value",
-                        "type": "Expression"
-                    }
-                ]
-            },
-            "ImportAttributes": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "NodeBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Token",
-                        "type": [
-                            "SyntaxKind.WithKeyword",
-                            "SyntaxKind.AssertKeyword"
-                        ]
-                    },
-                    {
-                        "name": "Attributes",
-                        "type": "ImportAttribute",
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "MultiLine",
-                        "type": "bool"
-                    }
-                ]
-            },
             "TypeQueryNode": {
                 "kind": "TypeQuery",
                 "extends": [
@@ -4436,11 +3926,6 @@
                         "type": "Expression"
                     },
                     {
-                        "name": "Attributes",
-                        "type": "ImportAttributes",
-                        "optional": true
-                    },
-                    {
                         "name": "Comment",
                         "inherited": true
                     }
@@ -4656,11 +4141,6 @@
                         "name": "ModuleSpecifier",
                         "type": "Expression",
                         "optional": true
-                    },
-                    {
-                        "name": "Attributes",
-                        "type": "ImportAttributes",
-                        "optional": true
                     }
                 ]
             },
@@ -4677,11 +4157,6 @@
                     {
                         "name": "Argument",
                         "type": "TypeNode"
-                    },
-                    {
-                        "name": "Attributes",
-                        "type": "ImportAttributes",
-                        "optional": true
                     },
                     {
                         "name": "Qualifier",
@@ -4937,6 +4412,10 @@
                 "Block",
                 "Expression"
             ],
+            "BlockOrIfStatement": [
+                "Block",
+                "IfStatement"
+            ],
             "NodeBody": [
                 "Block",
                 "Expression",
@@ -5041,14 +4520,6 @@
                 "JsxTagNamePropertyAccess",
                 "JsxNamespacedName"
             ],
-            "ClassLikeDeclaration": [
-                "ClassDeclaration",
-                "ClassExpression"
-            ],
-            "AccessorDeclaration": [
-                "GetAccessorDeclaration",
-                "SetAccessorDeclaration"
-            ],
             "LiteralLikeNode": [
                 "StringLiteral",
                 "NumericLiteral",
@@ -5080,10 +4551,6 @@
             "TypePredicateParameterName": [
                 "Identifier"
             ],
-            "ImportAttributeName": [
-                "Identifier",
-                "StringLiteral"
-            ],
             "LeftHandSideExpression": {
                 "base": "LeftHandSideExpressionBase"
             },
@@ -5101,9 +4568,6 @@
                 "FunctionTypeNode",
                 "ConstructorTypeNode",
                 "FunctionDeclaration",
-                "MethodDeclaration",
-                "ConstructorDeclaration",
-                "AccessorDeclaration",
                 "FunctionExpression",
                 "ArrowFunction"
             ],
@@ -5120,7 +4584,6 @@
                 "ObjectBindingPattern"
             ],
             "ObjectTypeDeclaration": [
-                "ClassLikeDeclaration",
                 "InterfaceDeclaration",
                 "TypeLiteralNode"
             ],
@@ -5145,20 +4608,12 @@
             ],
             "FunctionLikeDeclaration": [
                 "FunctionDeclaration",
-                "MethodDeclaration",
-                "GetAccessorDeclaration",
-                "SetAccessorDeclaration",
-                "ConstructorDeclaration",
                 "FunctionExpression",
                 "ArrowFunction"
             ],
             "VariableOrParameterDeclaration": [
                 "VariableDeclaration",
                 "ParameterDeclaration"
-            ],
-            "VariableOrPropertyDeclaration": [
-                "VariableDeclaration",
-                "PropertyDeclaration"
             ],
             "CallOrNewExpression": [
                 "CallExpression",
@@ -5174,9 +4629,6 @@
             ],
             "Declaration": {
                 "base": "DeclarationBase"
-            },
-            "ClassElement": {
-                "base": "ClassElementBase"
             },
             "TypeElement": {
                 "base": "TypeElementBase"
@@ -5221,10 +4673,7 @@
                 "PropertyAssignment",
                 "ShorthandPropertyAssignment",
                 "SpreadAssignment",
-                "TableEntry",
-                "MethodDeclaration",
-                "GetAccessorDeclaration",
-                "SetAccessorDeclaration"
+                "TableEntry"
             ],
             "PropertyNameLiteral": [
                 "Identifier",
@@ -5258,7 +4707,6 @@
             "TypeParameterList": "TypeParameterDeclaration",
             "ParameterList": "ParameterDeclaration",
             "HeritageClauseList": "HeritageClause",
-            "ClassElementList": "ClassElement",
             "TypeElementList": "TypeElement",
             "ExpressionWithTypeArgumentsList": "ExpressionWithTypeArguments",
             "ImportSpecifierList": "ImportSpecifier",
@@ -5269,7 +4717,6 @@
             "ElementList": "Expression",
             "PropertyDefinitionList": "ObjectLiteralElement",
             "TypeList": "TypeNode",
-            "ImportAttributeList": "ImportAttribute",
             "TemplateLiteralTypeSpanList": "TemplateLiteralTypeSpan",
             "JsxChildList": "JsxChild",
             "JsxAttributeList": "JsxAttributeLike"

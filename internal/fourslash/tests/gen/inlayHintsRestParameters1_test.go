@@ -15,7 +15,7 @@ func TestInlayHintsRestParameters1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo1(a: number, ...b: number[]) {}
+	const content = `function foo1(a: number, ...b: number[]) end
 foo1(1, 1, 1, 1);
 type Args2 = [a: number, b: number]
 declare function foo2(c: number, ...args: Args2);

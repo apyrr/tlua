@@ -17,9 +17,9 @@ func TestCompletionListBeforeNewScope01(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `p/*1*/
 
-function fun(param) {
+function fun(param)
     local party = Math.random() < 0.99;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

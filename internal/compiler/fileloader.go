@@ -619,7 +619,7 @@ func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *a
 	p.factoryMu.Lock()
 	defer p.factoryMu.Unlock()
 	externalHelpersModuleReference := p.factory.NewStringLiteral(text, ast.TokenFlagsNone)
-	importDecl := p.factory.NewImportDeclaration(nil, nil, externalHelpersModuleReference, nil)
+	importDecl := p.factory.NewImportDeclaration(nil, nil, externalHelpersModuleReference)
 	externalHelpersModuleReference.Parent = importDecl
 	importDecl.Parent = file.AsNode()
 	return externalHelpersModuleReference
@@ -708,30 +708,6 @@ func getDefaultResolutionModeForFile(fileName string, meta ast.SourceFileMetaDat
 }
 
 func getModeForUsageLocation(fileName string, meta ast.SourceFileMetaData, usage *ast.StringLiteralLike, options *core.CompilerOptions) core.ResolutionMode {
-	if ast.IsImportDeclaration(usage.Parent) || usage.Parent.Kind == ast.KindJSImportDeclaration || ast.IsExportDeclaration(usage.Parent) || ast.IsJSDocImportTag(usage.Parent) {
-		isTypeOnly := ast.IsExclusivelyTypeOnlyImportOrExport(usage.Parent)
-		if isTypeOnly {
-			var override core.ResolutionMode
-			var ok bool
-			switch usage.Parent.Kind {
-			case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
-				override, ok = usage.Parent.AsImportDeclaration().Attributes.GetResolutionModeOverride()
-			case ast.KindExportDeclaration:
-				override, ok = usage.Parent.AsExportDeclaration().Attributes.GetResolutionModeOverride()
-			case ast.KindJSDocImportTag:
-				override, ok = usage.Parent.AsJSDocImportTag().Attributes.GetResolutionModeOverride()
-			}
-			if ok {
-				return override
-			}
-		}
-	}
-	if ast.IsLiteralTypeNode(usage.Parent) && ast.IsImportTypeNode(usage.Parent.Parent) {
-		if override, ok := usage.Parent.Parent.AsImportTypeNode().Attributes.GetResolutionModeOverride(); ok {
-			return override
-		}
-	}
-
 	if options != nil && importSyntaxAffectsModuleResolution(options) {
 		return getEmitSyntaxForUsageLocationWorker(fileName, meta, usage, options)
 	}

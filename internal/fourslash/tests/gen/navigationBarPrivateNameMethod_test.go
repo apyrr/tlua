@@ -18,8 +18,7 @@ func TestNavigationBarPrivateNameMethod(t *testing.T) {
   #foo() {
     class B {
       #bar() {
-         function baz () {
-         }
+         function baz () end
       }
     }
   }

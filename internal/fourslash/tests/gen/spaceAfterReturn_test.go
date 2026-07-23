@@ -14,11 +14,11 @@ func TestSpaceAfterReturn(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f( ) {
+	const content = `function f( )
 return       1;/*1*/
 return[1];/*2*/
 return    ;/*3*/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")

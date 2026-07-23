@@ -14,11 +14,11 @@ func TestFunctionFormatting(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local foo = foo(function () {
-    /**/function foo  ()  {}}    );`
+	const content = `local foo = foo(function ()
+    /**/function foo  ()  end end    );`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "")
-	f.VerifyCurrentLineContent(t, `    function foo() { }`)
+	f.VerifyCurrentLineContent(t, `    function foo() end end);`)
 }

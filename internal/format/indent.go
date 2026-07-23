@@ -502,7 +502,7 @@ func childStartsOnTheSameLineWithElseInIfStatement(parent *ast.Node, child *ast.
 		// A Lua `elseif` arm is a nested Lua if in the else slot (see emitLuaIfChain).
 		// Like TS `else if`, it stays at the parent if's indentation instead of nesting
 		// one level deeper per arm -- there is no separate `else` keyword to share a line with.
-		if ast.IsLuaIf(parent) && ast.IsLuaIf(child) {
+		if child.Kind == ast.KindIfStatement {
 			return true
 		}
 		elseKeyword := astnav.FindPrecedingToken(sourceFile, child.Pos())
@@ -549,10 +549,8 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
-		ast.KindMethodDeclaration,
 		ast.KindMethodSignature,
 		ast.KindCallSignature,
-		ast.KindConstructor,
 		ast.KindConstructorType,
 		ast.KindConstructSignature:
 		tpl := getList(node.TypeParameterList(), r, node, sourceFile)
@@ -560,11 +558,7 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 			return tpl
 		}
 		return getList(node.ParameterList(), r, node, sourceFile)
-	case ast.KindGetAccessor:
-		return getList(node.ParameterList(), r, node, sourceFile)
-	case ast.KindClassDeclaration,
-		ast.KindClassExpression,
-		ast.KindInterfaceDeclaration,
+	case ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration,
 		ast.KindJSDocTemplateTag:
 		return getList(node.TypeParameterList(), r, node, sourceFile)
@@ -657,8 +651,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 
 	switch parent.Kind {
 	case ast.KindExpressionStatement,
-		ast.KindClassDeclaration,
-		ast.KindClassExpression,
 		ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration,
 		ast.KindArrayLiteralExpression,
@@ -693,8 +685,7 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		ast.KindNamedExports,
 		ast.KindNamedImports,
 		ast.KindExportSpecifier,
-		ast.KindImportSpecifier,
-		ast.KindPropertyDeclaration:
+		ast.KindImportSpecifier:
 		return true
 	case ast.KindVariableDeclaration, ast.KindPropertyAssignment, ast.KindBinaryExpression:
 		if settings.IndentMultiLineObjectLiteralBeginningOnBlankLine.IsFalseOrUnknown() && sourceFile != nil && childKind == ast.KindObjectLiteralExpression {
@@ -709,19 +700,14 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 			return true
 		}
 		return indentByDefault
-	case ast.KindDoStatement,
-		ast.KindWhileStatement,
+	case ast.KindWhileStatement,
 		// Lua `repeat ... until`: its body is a raw statement list (no Block wrapper),
 		// so it indents its statement children directly, like the loop forms above.
 		ast.KindRepeatStatement,
 		ast.KindForOfStatement,
 		ast.KindIfStatement,
 		ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression,
-		ast.KindMethodDeclaration,
-		ast.KindConstructor,
-		ast.KindGetAccessor,
-		ast.KindSetAccessor:
+		ast.KindFunctionExpression:
 		return childKind != ast.KindBlock
 	case ast.KindArrowFunction:
 		if sourceFile != nil && childKind == ast.KindParenthesizedExpression {
@@ -738,11 +724,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		return childKind != ast.KindJsxClosingFragment
 	case ast.KindIntersectionType, ast.KindUnionType, ast.KindSatisfiesExpression:
 		if childKind == ast.KindTypeLiteral || childKind == ast.KindTupleType || childKind == ast.KindMappedType {
-			return false
-		}
-		return indentByDefault
-	case ast.KindTryStatement:
-		if childKind == ast.KindBlock {
 			return false
 		}
 		return indentByDefault

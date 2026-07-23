@@ -329,14 +329,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			return nil
 		}
 
-		var t *checker.Type
-		// Workaround to ensure we output 'C' instead of 'typeof C' for base class expressions
-		if ast.IsExpressionWithTypeArgumentsInClassExtendsClause(node.Parent) {
-			t = fileChecker.GetTypeAtLocation(node.Parent)
-		}
-		if t == nil || checker.IsTypeAny(t) {
-			t = fileChecker.GetTypeAtLocation(node)
-		}
+		t := fileChecker.GetTypeAtLocation(node)
 		var typeString string
 		// var underline string
 		if !walker.hadErrorBaseline &&

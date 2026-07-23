@@ -16,10 +16,10 @@ func TestFindAllRefsThisKeyword(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 /*1*/this;
-function f(/*2*/this) {
+function f(/*2*/this)
     return /*3*/this;
-    function g(/*4*/this) { return /*5*/this; }
-}
+    function g(/*4*/this) return /*5*/this; end
+end
 class C {
     static x() {
         /*6*/this;

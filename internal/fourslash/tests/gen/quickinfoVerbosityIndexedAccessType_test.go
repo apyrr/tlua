@@ -20,12 +20,12 @@ func TestQuickinfoVerbosityIndexedAccessType(t *testing.T) {
 	"any key": string | number | symbol;
 }
 type K2 = "string key" | "any key";
-function fn2<T extends T2>(obj: T, key: keyof T) {
+function fn2<T extends T2>(obj: T, key: keyof T)
 	local value/*v1*/: T[K2] = undefined as any;
-}
-function fn3<K extends keyof T2>(obj: T2, key: K) {
+end
+function fn3<K extends keyof T2>(obj: T2, key: K)
     local value/*v2*/: T2[K] = undefined as any;;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHoverWithVerbosity(t, map[string][]int{"v1": {0, 1}, "v2": {0, 1}})

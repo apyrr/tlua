@@ -17,7 +17,7 @@ func TestInlayHintsTypeMatchesName(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Client = {};
-function getClient(): Client { return {}; };
+function getClient(): Client return {}; end;
 local client = getClient();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

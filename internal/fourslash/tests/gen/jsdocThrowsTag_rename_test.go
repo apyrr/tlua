@@ -18,7 +18,7 @@ func TestJsdocThrowsTag_rename(t *testing.T) {
 /**
  * @throws {E}
  */
-function f() {}`
+function f() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")

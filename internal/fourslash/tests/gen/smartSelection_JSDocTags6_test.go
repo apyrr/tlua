@@ -19,9 +19,9 @@ func TestSmartSelection_JSDocTags6(t *testing.T) {
  * @param {/**/T} x
  * @return {T}
  */
-function foo(x) {
+function foo(x)
     return x;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineSelectionRanges(t)

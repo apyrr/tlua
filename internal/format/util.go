@@ -17,18 +17,14 @@ func rangeIsOnOneLine(node core.TextRange, file *ast.SourceFile) bool {
 
 func getOpenTokenForList(node *ast.Node, list *ast.NodeList) ast.Kind {
 	switch node.Kind {
-	case ast.KindConstructor,
-		ast.KindFunctionDeclaration,
+	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
-		ast.KindMethodDeclaration,
 		ast.KindMethodSignature,
 		ast.KindArrowFunction,
 		ast.KindCallSignature,
 		ast.KindConstructSignature,
 		ast.KindFunctionType,
-		ast.KindConstructorType,
-		ast.KindGetAccessor,
-		ast.KindSetAccessor:
+		ast.KindConstructorType:
 		if node.TypeParameterList() == list {
 			return ast.KindLessThanToken
 		} else if node.ParameterList() == list {
@@ -40,9 +36,7 @@ func getOpenTokenForList(node *ast.Node, list *ast.NodeList) ast.Kind {
 		} else if node.ArgumentList() == list {
 			return ast.KindOpenParenToken
 		}
-	case ast.KindClassDeclaration,
-		ast.KindClassExpression,
-		ast.KindInterfaceDeclaration,
+	case ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration:
 		if node.TypeParameterList() == list {
 			return ast.KindLessThanToken
@@ -92,9 +86,6 @@ func isGrammarError(parent *ast.Node, child *ast.Node) bool {
 	if ast.IsPropertySignatureDeclaration(parent) {
 		return child == parent.Initializer()
 	}
-	if ast.IsPropertyDeclaration(parent) {
-		return ast.IsAutoAccessorPropertyDeclaration(parent) && child == parent.PostfixToken() && child.Kind == ast.KindQuestionToken
-	}
 	if ast.IsPropertyAssignment(parent) {
 		pa := parent.AsPropertyAssignment()
 		mods := pa.Modifiers()
@@ -104,18 +95,6 @@ func isGrammarError(parent *ast.Node, child *ast.Node) bool {
 		sp := parent.AsShorthandPropertyAssignment()
 		mods := sp.Modifiers()
 		return child == sp.EqualsToken || child == sp.PostfixToken || (mods != nil && isGrammarErrorElement(&mods.NodeList, child, ast.IsModifierLike))
-	}
-	if ast.IsMethodDeclaration(parent) {
-		return child == parent.PostfixToken() && child.Kind == ast.KindExclamationToken
-	}
-	if ast.IsConstructorDeclaration(parent) {
-		return child == parent.AsConstructorDeclaration().Type || isGrammarErrorElement(parent.TypeParameterList(), child, ast.IsTypeParameterDeclaration)
-	}
-	if ast.IsGetAccessorDeclaration(parent) {
-		return isGrammarErrorElement(parent.TypeParameterList(), child, ast.IsTypeParameterDeclaration)
-	}
-	if ast.IsSetAccessorDeclaration(parent) {
-		return child == parent.AsSetAccessorDeclaration().Type || isGrammarErrorElement(parent.TypeParameterList(), child, ast.IsTypeParameterDeclaration)
 	}
 	if ast.IsNamespaceExportDeclaration(parent) {
 		mods := parent.AsNamespaceExportDeclaration().Modifiers()
@@ -175,15 +154,13 @@ func findOutermostNodeWithinListLevel(node *ast.Node) *ast.Node {
 // i.e. parent is class declaration with the list of members and node is one of members.
 func isListElement(parent *ast.Node, node *ast.Node) bool {
 	switch parent.Kind {
-	case ast.KindClassDeclaration, ast.KindInterfaceDeclaration:
+	case ast.KindInterfaceDeclaration:
 		return node.Loc.ContainedBy(parent.MemberList().Loc)
 	case ast.KindModuleDeclaration:
 		body := parent.Body()
 		return body != nil && body.Kind == ast.KindModuleBlock && node.Loc.ContainedBy(body.StatementList().Loc)
 	case ast.KindSourceFile, ast.KindBlock, ast.KindModuleBlock:
 		return node.Loc.ContainedBy(parent.StatementList().Loc)
-	case ast.KindCatchClause:
-		return node.Loc.ContainedBy(parent.AsCatchClause().Block.StatementList().Loc)
 	}
 
 	return false

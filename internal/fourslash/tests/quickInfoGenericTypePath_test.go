@@ -12,12 +12,12 @@ func TestQuickInfoGenericTypePath(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
-function f<T>(x: T) {
+function f<T>(x: T)
   class C {
     value = x
   }
   return new C()
-}
+end
 
 class Box<T> {
   public value: T;

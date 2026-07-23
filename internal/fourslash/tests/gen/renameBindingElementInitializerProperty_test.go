@@ -14,10 +14,10 @@ func TestRenameBindingElementInitializerProperty(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f([|{[|{| "contextRangeIndex": 0 |}required|], optional = [|required|]}: {[|[|{| "contextRangeIndex": 3 |}required|]: number,|] optional?: number}|]) {
+	const content = `function f([|{[|{| "contextRangeIndex": 0 |}required|], optional = [|required|]}: {[|[|{| "contextRangeIndex": 3 |}required|]: number,|] optional?: number}|])
     console.log("required", [|required|]);
     console.log("optional", optional);
-}
+end
 
 f({[|[|{| "contextRangeIndex": 6 |}required|] = 10|]});`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -14,9 +14,9 @@ func TestCodeFixCorrectReturnValue4(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function Foo (): any {
+	const content = `function Foo (): any
     1
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCodeFixNotAvailable(t)

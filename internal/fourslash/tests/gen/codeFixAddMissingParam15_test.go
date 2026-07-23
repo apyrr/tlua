@@ -14,7 +14,7 @@ func TestCodeFixAddMissingParam15(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(a: number, b: number) {}
+	const content = `function f(a: number, b: number) end
 f();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

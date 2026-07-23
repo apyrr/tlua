@@ -14,7 +14,7 @@ func TestSignatureHelpOptionalCall(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function fnTest(str: string, num: number) { }
+	const content = `function fnTest(str: string, num: number) end
 fnTest?.(/*1*/);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

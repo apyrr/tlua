@@ -45,13 +45,13 @@ local o5: I = {
 };
 
 local o6: I = {
-    "prop1": function () { },
-    [|"[|{| "contextRangeIndex": 12 |}prop2|]": function () { }|]
+    "prop1": function () end,
+    [|"[|{| "contextRangeIndex": 12 |}prop2|]": function () end|]
 };
 
 local o7: I = {
-    ["prop1"]: function () { },
-    [|["[|{| "contextRangeIndex": 14 |}prop2|]"]: function () { }|]
+    ["prop1"]: function () end,
+    [|["[|{| "contextRangeIndex": 14 |}prop2|]"]: function () end|]
 };
 
 local o8: I = {

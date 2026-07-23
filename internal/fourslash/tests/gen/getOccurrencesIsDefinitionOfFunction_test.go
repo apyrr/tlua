@@ -14,8 +14,7 @@ func TestGetOccurrencesIsDefinitionOfFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/*1*/function /*2*/func(x: number) {
-}
+	const content = `/*1*/function /*2*/func(x: number) end
 /*3*/func(x)`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

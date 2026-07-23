@@ -223,8 +223,7 @@ func isPropertyAccessNamespaceReference(node *ast.Node) bool {
 
 	if !isLastClause && root.Parent.Kind == ast.KindExpressionWithTypeArguments && root.Parent.Parent.Kind == ast.KindHeritageClause {
 		decl := root.Parent.Parent.Parent
-		return (decl.Kind == ast.KindClassDeclaration && root.Parent.Parent.AsHeritageClause().Token == ast.KindImplementsKeyword) ||
-			(decl.Kind == ast.KindInterfaceDeclaration && root.Parent.Parent.AsHeritageClause().Token == ast.KindExtendsKeyword)
+		return decl.Kind == ast.KindInterfaceDeclaration && root.Parent.Parent.AsHeritageClause().Token == ast.KindExtendsKeyword
 	}
 
 	return false
@@ -343,13 +342,9 @@ func isSeparator(node *ast.Node, candidate *ast.Node) bool {
 func isLiteralNameOfPropertyDeclarationOrIndexAccess(node *ast.Node) bool {
 	// utilities
 	switch node.Parent.Kind {
-	case ast.KindPropertyDeclaration,
-		ast.KindPropertySignature,
+	case ast.KindPropertySignature,
 		ast.KindPropertyAssignment,
-		ast.KindMethodDeclaration,
 		ast.KindMethodSignature,
-		ast.KindGetAccessor,
-		ast.KindSetAccessor,
 		ast.KindModuleDeclaration:
 		return ast.GetNameOfDeclaration(node.Parent) == node
 	case ast.KindElementAccessExpression:
@@ -392,14 +387,14 @@ func isImplementation(node *ast.Node) bool {
 	if ast.IsFunctionLikeDeclaration(node) {
 		return node.Body() != nil
 	}
-	return ast.IsClassLike(node) || ast.IsModuleDeclaration(node)
+	return ast.IsModuleDeclaration(node)
 }
 
 func isImplementationExpression(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindParenthesizedExpression:
 		return isImplementationExpression(node.Expression())
-	case ast.KindArrowFunction, ast.KindFunctionExpression, ast.KindObjectLiteralExpression, ast.KindClassExpression, ast.KindArrayLiteralExpression:
+	case ast.KindArrowFunction, ast.KindFunctionExpression, ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression:
 		return true
 	default:
 		return false
@@ -418,7 +413,7 @@ func getContainingNodeIfInHeritageClause(node *ast.Node) *ast.Node {
 	if node.Kind == ast.KindIdentifier || node.Kind == ast.KindPropertyAccessExpression {
 		return getContainingNodeIfInHeritageClause(node.Parent)
 	}
-	if node.Kind == ast.KindExpressionWithTypeArguments && (ast.IsClassLike(node.Parent.Parent) || node.Parent.Parent.Kind == ast.KindInterfaceDeclaration) {
+	if node.Kind == ast.KindExpressionWithTypeArguments && node.Parent.Parent.Kind == ast.KindInterfaceDeclaration {
 		return node.Parent.Parent
 	}
 	return nil
@@ -427,8 +422,8 @@ func getContainingNodeIfInHeritageClause(node *ast.Node) *ast.Node {
 func getContainerNode(node *ast.Node) *ast.Node {
 	for parent := node.Parent; parent != nil; parent = parent.Parent {
 		switch parent.Kind {
-		case ast.KindSourceFile, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
-			ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindModuleDeclaration:
+		case ast.KindSourceFile, ast.KindMethodSignature, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
+			ast.KindInterfaceDeclaration, ast.KindModuleDeclaration:
 			return parent
 		}
 	}
@@ -451,8 +446,6 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 			return ast.CanHaveModifiers(parent) && slices.Contains(parent.ModifierNodes(), node)
 		}
 		switch node.Kind {
-		case ast.KindClassKeyword:
-			return ast.IsClassDeclaration(parent) || ast.IsClassExpression(node)
 		case ast.KindFunctionKeyword:
 			// A `function` RETURN-type annotation shares the declaration parent with the
 			// introducing keyword; only the introducing keyword adjusts to the name.
@@ -465,10 +458,6 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 			return ast.IsModuleDeclaration(parent)
 		case ast.KindImportKeyword:
 			return ast.IsImportEqualsDeclaration(parent)
-		case ast.KindGetKeyword:
-			return ast.IsGetAccessorDeclaration(parent)
-		case ast.KindSetKeyword:
-			return ast.IsSetAccessorDeclaration(parent)
 		}
 		return false
 	}
@@ -671,18 +660,13 @@ func getAdjustedLocationForDeclaration(node *ast.Node, forRename bool, sourceFil
 		return nil
 	}
 	switch node.Kind {
-	case ast.KindClassDeclaration, ast.KindFunctionDeclaration:
-		// for class and function declarations, use the `default` modifier
+	case ast.KindFunctionDeclaration:
+		// For function declarations, use the `default` modifier
 		// when the declaration is unnamed.
 		return core.Find(node.ModifierNodes(), func(*ast.Node) bool { return node.Kind == ast.KindDefaultKeyword })
-	case ast.KindClassExpression:
-		// for class expressions, use the `class` keyword when the class is unnamed
-		return astnav.FindChildOfKind(node, ast.KindClassKeyword, sourceFile)
 	case ast.KindFunctionExpression:
 		// for function expressions, use the `function` keyword when the function is unnamed
 		return astnav.FindChildOfKind(node, ast.KindFunctionKeyword, sourceFile)
-	case ast.KindConstructor:
-		return node
 	}
 	return nil
 }
@@ -816,16 +800,13 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 	switch node.Kind {
 	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement,
-		ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment,
-		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor,
-		ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindCatchClause, ast.KindJsxAttribute:
+		ast.KindPropertySignature, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment,
+		ast.KindMethodSignature,
+		ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindJsxAttribute:
 		return ast.SemanticMeaningValue
 
 	case ast.KindTypeParameter, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral:
 		return ast.SemanticMeaningType
-
-	case ast.KindClassDeclaration:
-		return ast.SemanticMeaningValue | ast.SemanticMeaningType
 
 	case ast.KindModuleDeclaration:
 		if ast.IsAmbientModule(node) {
@@ -888,16 +869,10 @@ func getIntersectingMeaningFromDeclarations(node *ast.Node, symbol *ast.Symbol, 
 	return meaning
 }
 
-// Returns the node in an `extends` or `implements` clause of a class or interface.
+// Returns the nodes in an interface `extends` clause.
 func getAllSuperTypeNodes(node *ast.Node) []*ast.TypeNode {
 	if ast.IsInterfaceDeclaration(node) {
 		return ast.GetHeritageElements(node, ast.KindExtendsKeyword)
-	}
-	if ast.IsClassLike(node) {
-		return append(
-			core.SingleElementSlice(ast.GetClassExtendsHeritageElement(node)),
-			ast.GetImplementsTypeNodes(node)...,
-		)
 	}
 	return nil
 }

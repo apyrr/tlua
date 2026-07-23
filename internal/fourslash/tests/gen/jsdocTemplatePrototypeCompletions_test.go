@@ -19,13 +19,13 @@ func TestJsdocTemplatePrototypeCompletions(t *testing.T) {
 // @filename: index.lua
 https://github.com/microsoft/TypeScript/issues/11492
 /** @constructor */
-function Foo() {}
+function Foo() end
 /**
  * @template T
  * @param {T} bar
  * @returns {T}
  */
-Foo.prototype.foo = function (bar) {};
+Foo.prototype.foo = function (bar) end;
 new Foo().foo({ id: 1234 })./**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

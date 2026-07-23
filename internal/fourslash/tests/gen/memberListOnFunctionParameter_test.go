@@ -17,7 +17,7 @@ func TestMemberListOnFunctionParameter(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `namespace Test10 {
     local x: string[] = [];
-    x.forEach(function (y) { y./**/} );
+    x.forEach(function (y) y./**/ end );
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

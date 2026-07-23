@@ -26,9 +26,9 @@ class X implements B {
     [|hello|]() {}
 }
 
-function someFunction(d : A) {
+function someFunction(d : A)
     d.he/*function_call*/llo();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "function_call")

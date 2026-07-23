@@ -868,16 +868,16 @@ func TestTscIncremental(t *testing.T) {
 					}
 				}`),
 				"/home/src/workspaces/project/main.tlua": stringtestutil.Dedent(`
-                        function logMessage( person: MessageablePerson ) {
+                        function logMessage( person: MessageablePerson )
                             console.log( person.message );
-                        }`),
+                        end`),
 				"/home/src/workspaces/project/MessageablePerson.tlua": stringtestutil.Dedent(`
-                        local Messageable = () => {
+                        local Messageable = function()
                             return {
                                 message: 'hello' as string,
                             }
-                        };
-                        local wrapper = () => Messageable();
+                        end;
+                        local wrapper = function() return Messageable() end;
                         type MessageablePerson = ReturnType<typeof wrapper>;`),
 				tluaLibPath + "/lib.d.tlua": tluaDefaultLibContent + "\n" + stringtestutil.Dedent(`
 					type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
@@ -912,16 +912,16 @@ func TestTscIncremental(t *testing.T) {
 					}
 				}`),
 				"/home/src/workspaces/project/main.tlua": stringtestutil.Dedent(`
-					function logMessage( person: MessageablePerson ) {
+					function logMessage( person: MessageablePerson )
 						console.log( person.message );
-					}`),
+					end`),
 				"/home/src/workspaces/project/MessageablePerson.tlua": stringtestutil.Dedent(`
-					local Messageable = () => {
+					local Messageable = function()
 						return {
 							message: 'hello' as string,
 						}
-					};
-					local wrapper = () => Messageable();
+					end;
+					local wrapper = function() return Messageable() end;
 					type MessageablePerson = ReturnType<typeof wrapper>;`),
 				tluaLibPath + "/lib.d.tlua": tluaDefaultLibContent + "\n" + stringtestutil.Dedent(`
 					type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
@@ -1035,14 +1035,14 @@ func TestTscIncremental(t *testing.T) {
 				"/home/src/workspaces/project/src/main.tlua": stringtestutil.Dedent(`
                     /// <reference path="./filePresent.tlua"/>
                     /// <reference path="./fileNotFound.tlua"/>
-                    function main() { }
+                    function main() end
                 `),
 				"/home/src/workspaces/project/src/anotherFileWithSameReferenes.tlua": stringtestutil.Dedent(`
                     /// <reference path="./filePresent.tlua"/>
                     /// <reference path="./fileNotFound.tlua"/>
-                    function anotherFileWithSameReferenes() { }
+                    function anotherFileWithSameReferenes() end
                 `),
-				"/home/src/workspaces/project/src/filePresent.tlua": `function something() { return 10; }`,
+				"/home/src/workspaces/project/src/filePresent.tlua": `function something() return 10; end`,
 				"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
 				{
                     "compilerOptions": { "composite": true },
@@ -1055,19 +1055,19 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Modify main file",
 					edit: func(sys *TestSys) {
-						sys.appendFile(`/home/src/workspaces/project/src/main.tlua`, `something();`)
+						sys.appendFile(`/home/src/workspaces/project/src/main.tlua`, `\nsomething();`)
 					},
 				},
 				{
 					caption: "Modify main file again",
 					edit: func(sys *TestSys) {
-						sys.appendFile(`/home/src/workspaces/project/src/main.tlua`, `something();`)
+						sys.appendFile(`/home/src/workspaces/project/src/main.tlua`, `\nsomething();`)
 					},
 				},
 				{
 					caption: "Add new file and update main file",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/home/src/workspaces/project/src/newFile.tlua`, "function foo() { return 20; }")
+						sys.writeFileNoError(`/home/src/workspaces/project/src/newFile.tlua`, "function foo() return 20; end")
 						sys.prependFile(
 							`/home/src/workspaces/project/src/main.tlua`,
 							`/// <reference path="./newFile.tlua"/>
@@ -1079,13 +1079,13 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption: "Write file that could not be resolved",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError(`/home/src/workspaces/project/src/fileNotFound.tlua`, "function something2() { return 20; }")
+						sys.writeFileNoError(`/home/src/workspaces/project/src/fileNotFound.tlua`, "function something2() return 20; end")
 					},
 				},
 				{
 					caption: "Modify main file",
 					edit: func(sys *TestSys) {
-						sys.appendFile(`/home/src/workspaces/project/src/main.tlua`, `something();`)
+						sys.appendFile(`/home/src/workspaces/project/src/main.tlua`, `\nsomething();`)
 					},
 				},
 			},
@@ -1101,7 +1101,7 @@ func TestTscIncremental(t *testing.T) {
 							propA?: boolean;
 						};
 					}`), // doesn't contain a jsx-runtime definition
-				"/home/src/workspaces/project/src/index.tsx": `local App = () => <div propA={true}></div>;`,
+				"/home/src/workspaces/project/src/index.tsx": `local App = function() return <div propA={true}></div> end;`,
 				"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
 				{ 
 					"compilerOptions": { 
@@ -1124,7 +1124,7 @@ func TestTscIncremental(t *testing.T) {
 							propA?: boolean;
 						};
 					}`), // doesn't contain a jsx-runtime definition
-				"/home/src/workspaces/project/src/index.tsx": `local App = () => <div propA={true}></div>;`,
+				"/home/src/workspaces/project/src/index.tsx": `local App = function() return <div propA={true}></div> end;`,
 				"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
 				{ 
 					"compilerOptions": { 
@@ -1453,15 +1453,15 @@ func TestTscIncremental(t *testing.T) {
 					}
 				}`),
 				"/home/src/workspaces/project/a.tlua": stringtestutil.Dedent(`
-					local createFileListFromFiles = (files: File[]): FileList => {
+					local createFileListFromFiles = function(files: File[]): FileList
 					local fileList: FileList = {
 						length: files.length,
-						item: (index: number): File | null => files[index] || null,
+						item: function(index: number): File | null return files[index] || null end,
 						[Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,
 					} as unknown as FileList;
 
 					return fileList;
-					};
+					end;
 				`),
 				getTestLibPathFor("es2015.iterable"): stringtestutil.Dedent(`
 					interface SymbolConstructor {
@@ -1990,11 +1990,9 @@ func TestTscNoEmit(t *testing.T) {
 				local indirect = require('src.indirectClass');
 				indirect.indirectClass.classC.prop;`),
 			"/home/src/workspaces/project/src/noChangeFile.tlua": stringtestutil.Dedent(`
-				function writeLog(s: string) {
-				}`),
+				function writeLog(s: string) end`),
 			"/home/src/workspaces/project/src/noChangeFileWithEmitSpecificError.tlua": stringtestutil.Dedent(`
-				function someFunc(arguments: boolean, ...rest: any[]) {
-				}`),
+				function someFunc(arguments: boolean, ...rest: any[]) end`),
 			"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
 				{
 					"compilerOptions":  { %s }
@@ -2937,7 +2935,7 @@ func TestGenerateTrace(t *testing.T) {
 				type Nullable<T> = T | null | undefined;
 				`),
 				"/home/src/workspaces/project/main.tlua": stringtestutil.Dedent(`
-				local c: Container<number> = { value: 42, map: (fn) => ({ value: fn(42), map: c.map }) };
+				local c: Container<number> = { value: 42, map: function(fn) return ({ value: fn(42), map: c.map }) end };
 				local n: Nullable<string> = "hello";
 				`),
 			},

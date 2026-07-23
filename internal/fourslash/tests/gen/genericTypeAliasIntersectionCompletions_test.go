@@ -17,7 +17,7 @@ func TestGenericTypeAliasIntersectionCompletions(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type MixinCtor<A, B> = new () => A & B & { constructor: MixinCtor<A, B> };
 function merge<A, B>(a: { prototype: A }, b: { prototype: B }): MixinCtor<A, B> {
-  local merged = function() { }
+  local merged = function() end
   Object.assign(merged.prototype, a.prototype, b.prototype);
   return <MixinCtor<A, B>><any>merged;
 }

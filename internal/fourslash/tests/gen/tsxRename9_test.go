@@ -38,8 +38,8 @@ interface LinkProps extends ClickableProps {
 [|declare function [|{| "contextRangeIndex": 8 |}MainButton|](props: ButtonProps | LinkProps): JSX.Element;|]
 local opt = [|<[|{| "contextRangeIndex": 10 |}MainButton|] />|];
 local opt = [|<[|{| "contextRangeIndex": 12 |}MainButton|] children="chidlren" />|];
-local opt = [|<[|{| "contextRangeIndex": 14 |}MainButton|] [|[|{| "contextRangeIndex": 16 |}onClick|]={()=>{}}|] />|];
-local opt = [|<[|{| "contextRangeIndex": 18 |}MainButton|] [|[|{| "contextRangeIndex": 20 |}onClick|]={()=>{}}|] [|ignore-prop|] />|];
+local opt = [|<[|{| "contextRangeIndex": 14 |}MainButton|] [|[|{| "contextRangeIndex": 16 |}onClick|]={function() end}|] />|];
+local opt = [|<[|{| "contextRangeIndex": 18 |}MainButton|] [|[|{| "contextRangeIndex": 20 |}onClick|]={function() end}|] [|ignore-prop|] />|];
 local opt = [|<[|{| "contextRangeIndex": 23 |}MainButton|] [|[|{| "contextRangeIndex": 25 |}goTo|]="goTo"|] />|];
 local opt = [|<[|{| "contextRangeIndex": 27 |}MainButton|] [|wrong|] />|];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

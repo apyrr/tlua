@@ -55,8 +55,8 @@ func TestFormattingDecorators(t *testing.T) {
 /*29*/    property1;
 
 /*30*/        @    decorator33    @            decorator34 @decorator35            property2;
-/*31*/function test(@decorator36@decorator37 param) {};
-/*32*/function test2(@decorator38()@decorator39()param) {};
+/*31*/function test(@decorator36@decorator37 param) end;
+/*32*/function test2(@decorator38()@decorator39()param) end;
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
@@ -122,7 +122,7 @@ func TestFormattingDecorators(t *testing.T) {
 	f.GoToMarker(t, "30")
 	f.VerifyCurrentLineContent(t, `    @decorator33 @decorator34 @decorator35 property2;`)
 	f.GoToMarker(t, "31")
-	f.VerifyCurrentLineContent(t, `function test(@decorator36 @decorator37 param) { };`)
+	f.VerifyCurrentLineContent(t, `function test(@decorator36 @decorator37 param) end;`)
 	f.GoToMarker(t, "32")
-	f.VerifyCurrentLineContent(t, `function test2(@decorator38() @decorator39() param) { };`)
+	f.VerifyCurrentLineContent(t, `function test2(@decorator38() @decorator39() param) end;`)
 }

@@ -18,7 +18,7 @@ func TestJsdocThrowsTag_findAllReferences(t *testing.T) {
 /**
  * @throws {E}
  */
-function f() {}`
+function f() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "")

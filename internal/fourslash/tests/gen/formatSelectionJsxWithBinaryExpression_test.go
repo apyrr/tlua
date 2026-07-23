@@ -15,7 +15,7 @@ func TestFormatSelectionJsxWithBinaryExpression(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
-function TestWidget() {
+function TestWidget()
     local test = true;
     return (
         <div>
@@ -29,11 +29,11 @@ function TestWidget() {
             <div>some text</div>
         </div>
     );
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatSelection(t, "1", "2")
-	f.VerifyCurrentFileContent(t, `function TestWidget() {
+	f.VerifyCurrentFileContent(t, `function TestWidget()
     local test = true;
     return (
         <div>
@@ -47,5 +47,5 @@ function TestWidget() {
             <div>some text</div>
         </div>
     );
-}`)
+end`)
 }

@@ -19,9 +19,9 @@ type Wrapper<T> = {
   _type: T;
 };
 
-function stringWrapper(): Wrapper<string> {
+function stringWrapper(): Wrapper<string>
   return { _type = "" };
-}
+end
 
 function objWrapper<T extends Record<string, Wrapper<any>>>(
   obj: T,

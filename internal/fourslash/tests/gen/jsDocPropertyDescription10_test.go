@@ -18,9 +18,9 @@ func TestJsDocPropertyDescription10(t *testing.T) {
     /** Something generic */
     [key: number | symbol | ` + "`" + `data-${string}` + "`" + ` | ` + "`" + `data-${number}` + "`" + `]: string;
 }
-function multipleClass(e: typeof MultipleClass) {
+function multipleClass(e: typeof MultipleClass)
     console.log(e./*multipleClass*/anything);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "multipleClass", "any", "")

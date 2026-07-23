@@ -38,9 +38,7 @@ const (
 	ModifierFlagsJSDocOnlyModifiers        = ModifierFlagsDeprecated
 	ModifierFlagsNonCacheOnlyModifiers     = ModifierFlagsSyntacticOrJSDocModifiers | ModifierFlagsSyntacticOnlyModifiers | ModifierFlagsJSDocOnlyModifiers
 
-	ModifierFlagsAccessibilityModifier = ModifierFlagsPublic | ModifierFlagsPrivate | ModifierFlagsProtected
-	// Accessibility modifiers and 'readonly' can be attached to a parameter in a constructor to make it a property.
-	ModifierFlagsParameterPropertyModifier      = ModifierFlagsAccessibilityModifier | ModifierFlagsReadonly | ModifierFlagsOverride
+	ModifierFlagsAccessibilityModifier          = ModifierFlagsPublic | ModifierFlagsPrivate | ModifierFlagsProtected
 	ModifierFlagsNonPublicAccessibilityModifier = ModifierFlagsPrivate | ModifierFlagsProtected
 
 	ModifierFlagsTypeScriptModifier = ModifierFlagsAmbient | ModifierFlagsPublic | ModifierFlagsPrivate | ModifierFlagsProtected | ModifierFlagsReadonly | ModifierFlagsAbstract | ModifierFlagsOverride | ModifierFlagsIn | ModifierFlagsOut

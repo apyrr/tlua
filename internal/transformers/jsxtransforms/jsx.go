@@ -208,7 +208,6 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 					nil,
 					tx.Factory().NewImportClause(ast.KindUnknown, nil, tx.Factory().NewNamedImports(tx.Factory().NewNodeList(getSortedSpecifiers(importSpecifiersMap)))),
 					tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone),
-					nil,
 				)
 				ast.SetParentInChildren(s)
 				newStatements = append(newStatements, s)

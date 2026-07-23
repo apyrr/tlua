@@ -14,9 +14,9 @@ func TestCodeFixAddMissingAwait_notAvailableWithoutPromise(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `async function fn(a: {}, b: number) {
+	const content = `async function fn(a: {}, b: number)
   a + b;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCodeFixNotAvailable(t, "addMissingAwait")

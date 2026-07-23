@@ -24,13 +24,7 @@ func (c *Checker) GetSymbolsInScopeAtPosition(location *ast.Node, pos int, meani
 }
 
 func (c *Checker) getSymbolsInScope(location *ast.Node, refPos int, refEnd int, meaning ast.SymbolFlags) []*ast.Symbol {
-	if location.Flags&ast.NodeFlagsInWithStatement != 0 {
-		// We cannot answer semantic questions within a with block, do not proceed any further
-		return nil
-	}
-
 	symbols := make(ast.SymbolTable)
-	isStaticSymbol := false
 
 	// Copy the given symbol into symbol tables if the symbol has the given meaning
 	// and it doesn't already exists in the symbol table.
@@ -90,22 +84,8 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, refPos int, refEnd int, 
 				fallthrough
 			case ast.KindModuleDeclaration:
 				copyLocallyVisibleExportSymbols(c.getSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsModuleMember)
-			case ast.KindClassExpression:
-				className := location.AsClassExpression().Name()
-				if className != nil {
-					copySymbol(location.Symbol(), meaning)
-				}
-				// this fall-through is necessary because we would like to handle
-				// type parameter inside class expression similar to how we handle it in classDeclaration and interface Declaration.
-				fallthrough
-			case ast.KindClassDeclaration, ast.KindInterfaceDeclaration:
-				// If we didn't come from static member of class or interface,
-				// add the type parameters into the symbol table
-				// (type parameters of classDeclaration/classExpression and interface are in member property of the symbol.
-				// Note: that the memberFlags come from previous iteration.
-				if !isStaticSymbol {
-					copySymbols(c.getMembersOfSymbol(c.getSymbolOfDeclaration(location)), meaning&ast.SymbolFlagsType)
-				}
+			case ast.KindInterfaceDeclaration:
+				copySymbols(c.getMembersOfSymbol(c.getSymbolOfDeclaration(location)), meaning&ast.SymbolFlagsType)
 			case ast.KindFunctionExpression:
 				funcName := location.Name()
 				if funcName != nil {
@@ -117,7 +97,6 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, refPos int, refEnd int, 
 				copySymbol(c.argumentsSymbol, meaning)
 			}
 
-			isStaticSymbol = ast.IsStatic(location)
 			location = location.Parent
 		}
 
@@ -493,26 +472,6 @@ func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Sym
 		return c.resolveEntityName(location.Name(), ast.SymbolFlagsValue|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
 	}
 	return nil
-}
-
-/**
-* Get symbols that represent parameter-property-declaration as parameter and as property declaration
-* @param parameter a parameterDeclaration node
-* @param parameterName a name of the parameter to get the symbols for.
-* @return a tuple of two symbols
- */
-func (c *Checker) GetSymbolsOfParameterPropertyDeclaration(parameter *ast.Node /*ParameterPropertyDeclaration*/, parameterName string) (*ast.Symbol, *ast.Symbol) {
-	constructorDeclaration := parameter.Parent
-	classDeclaration := parameter.Parent.Parent
-
-	parameterSymbol := c.getSymbol(constructorDeclaration.Locals(), parameterName, ast.SymbolFlagsValue)
-	propertySymbol := c.getSymbol(c.getMembersOfSymbol(classDeclaration.Symbol()), parameterName, ast.SymbolFlagsValue)
-
-	if parameterSymbol != nil && propertySymbol != nil {
-		return parameterSymbol, propertySymbol
-	}
-
-	panic("There should exist two symbols, one as property declaration and one as parameter declaration")
 }
 
 // IsDeclarationUsed checks if an import declaration identifier is used in the source file.

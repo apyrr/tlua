@@ -123,7 +123,6 @@ func (tx *luaOptionalChainTransformer) visitExpressionStatement(node *ast.Expres
 	tx.EmitContext().AddEmitFlags(value, printer.EFNoComments)
 	valueStmt := tx.Factory().NewExpressionStatement(value)
 	thenBlock := tx.Factory().NewBlock(tx.Factory().NewNodeList([]*ast.Node{valueStmt}), true /*multiLine*/)
-	thenBlock.Flags |= ast.NodeFlagsLuaBlock // `then ... end`, not braced
 	ifStmt := tx.Factory().NewIfStatement(guard, thenBlock, nil)
 	ifStmt.Loc = node.Loc
 	tx.EmitContext().SetOriginal(ifStmt, node.AsNode())

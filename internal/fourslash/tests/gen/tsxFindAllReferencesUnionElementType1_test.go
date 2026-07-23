@@ -23,12 +23,12 @@ declare namespace JSX {
     }
     interface ElementAttributesProperty { props; }
 }
-function SFC1(prop: { x: number }) {
+function SFC1(prop: { x: number })
     return <div>hello </div>;
-};
-function SFC2(prop: { x: boolean }) {
+end;
+function SFC2(prop: { x: boolean })
     return <h1>World </h1>;
-}
+end
 /*1*/local /*2*/SFCComp = SFC1 || SFC2;
 /*3*/</*4*/SFCComp x={ "hi" } />`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -16,13 +16,13 @@ func TestGoToDefinitionDifferentFileIndirectly(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: Remote2.tlua
 local /*remoteVariableDefinition*/rem2Var;
-function /*remoteFunctionDefinition*/rem2Fn() { }
+function /*remoteFunctionDefinition*/rem2Fn() end
 class /*remoteClassDefinition*/rem2Cls { }
 interface /*remoteInterfaceDefinition*/rem2Int{}
 module /*remoteModuleDefinition*/rem2Mod { export local foo; }
 // @Filename: Remote1.tlua
 local remVar;
-function remFn() { }
+function remFn() end
 class remCls { }
 interface remInt{}
 namespace remMod { export local foo; }

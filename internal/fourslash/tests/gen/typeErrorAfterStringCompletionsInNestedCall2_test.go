@@ -57,11 +57,11 @@ createMachine({
     events = {} as { type: "FOO" } | { type: "BAR" },
   },
   on = {
-    [|/*error*/FOO|] = raise(({ event }) => {
+    [|/*error*/FOO|] = raise(function({ event })
       return {
         type = "BAR/*1*/" as const,
       };
-    }),
+    end),
   },
 });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

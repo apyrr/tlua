@@ -22,8 +22,7 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 	}
 
 	switch n.Kind {
-	case ast.KindClassDeclaration,
-		ast.KindInterfaceDeclaration,
+	case ast.KindInterfaceDeclaration,
 		ast.KindObjectLiteralExpression,
 		ast.KindObjectBindingPattern,
 		ast.KindTypeLiteral,
@@ -32,9 +31,6 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		ast.KindNamedImports,
 		ast.KindNamedExports:
 		return nodeEndsWith(n, ast.KindCloseBraceToken, sourceFile)
-
-	case ast.KindCatchClause:
-		return IsCompletedNode(n.AsCatchClause().Block, sourceFile)
 
 	case ast.KindNewExpression:
 		if n.ArgumentList() == nil {
@@ -51,12 +47,8 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		ast.KindConstructorType:
 		return IsCompletedNode(n.Type(), sourceFile)
 
-	case ast.KindConstructor,
-		ast.KindGetAccessor,
-		ast.KindSetAccessor,
-		ast.KindFunctionDeclaration,
+	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
-		ast.KindMethodDeclaration,
 		ast.KindMethodSignature,
 		ast.KindConstructSignature,
 		ast.KindCallSignature,
@@ -99,12 +91,6 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 
 	case ast.KindForOfStatement,
 		ast.KindWhileStatement:
-		return IsCompletedNode(n.Statement(), sourceFile)
-	case ast.KindDoStatement:
-		// rough approximation: if DoStatement has While keyword - then if node is completed is checking the presence of ')';
-		if hasChildOfKind(n, ast.KindWhileKeyword, sourceFile) {
-			return nodeEndsWith(n, ast.KindCloseParenToken, sourceFile)
-		}
 		return IsCompletedNode(n.Statement(), sourceFile)
 
 	case ast.KindTypeQuery:

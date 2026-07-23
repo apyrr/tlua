@@ -17,7 +17,7 @@ func TestFormattingInComment(t *testing.T) {
 	const content = `class A {
 foo(              ); // /*1*/
 }
-function foo() {       local x;       } // /*2*/`
+function foo()       local x;       end // /*2*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "1")
@@ -25,5 +25,5 @@ function foo() {       local x;       } // /*2*/`
 	f.VerifyCurrentLineContent(t, `foo(              ); // ;`)
 	f.GoToMarker(t, "2")
 	f.Insert(t, "}")
-	f.VerifyCurrentLineContent(t, `function foo() {       local x;       } // }`)
+	f.VerifyCurrentLineContent(t, `function foo()       local x;       end // }`)
 }

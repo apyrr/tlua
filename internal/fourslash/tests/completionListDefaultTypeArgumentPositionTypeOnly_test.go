@@ -14,7 +14,7 @@ func TestCompletionListDefaultTypeArgumentPositionTypeOnly(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
 local foo = "foo";
-function test1<T = /*1*/>() {}`
+function test1<T = /*1*/>() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

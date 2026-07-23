@@ -7,29 +7,26 @@ import (
 )
 
 type NameResolver struct {
-	CompilerOptions                  *core.CompilerOptions
-	GetSymbolOfDeclaration           func(node *ast.Node) *ast.Symbol
-	Error                            func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic
-	Globals                          ast.SymbolTable
-	ArgumentsSymbol                  *ast.Symbol
-	RequireSymbol                    *ast.Symbol
-	Lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
-	SymbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
-	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
-	GetRequiresScopeChangeCache      func(node *ast.Node) core.Tristate
-	OnPropertyWithInvalidInitializer func(location *ast.Node, name string, declaration *ast.Node, result *ast.Symbol) bool
-	OnFailedToResolveSymbol          func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message)
-	OnSuccessfullyResolvedSymbol     func(location *ast.Node, result *ast.Symbol, meaning ast.SymbolFlags, lastLocation *ast.Node, associatedDeclarationForContainingInitializerOrBindingName *ast.Node, withinDeferredContext bool)
+	CompilerOptions              *core.CompilerOptions
+	GetSymbolOfDeclaration       func(node *ast.Node) *ast.Symbol
+	Error                        func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic
+	Globals                      ast.SymbolTable
+	ArgumentsSymbol              *ast.Symbol
+	RequireSymbol                *ast.Symbol
+	Lookup                       func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
+	SymbolReferenced             func(symbol *ast.Symbol, meaning ast.SymbolFlags)
+	SetRequiresScopeChangeCache  func(node *ast.Node, value core.Tristate)
+	GetRequiresScopeChangeCache  func(node *ast.Node) core.Tristate
+	OnFailedToResolveSymbol      func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message)
+	OnSuccessfullyResolvedSymbol func(location *ast.Node, result *ast.Symbol, meaning ast.SymbolFlags, lastLocation *ast.Node, associatedDeclarationForContainingInitializerOrBindingName *ast.Node, withinDeferredContext bool)
 }
 
 func (r *NameResolver) Resolve(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
 	var result *ast.Symbol
 	var lastLocation *ast.Node
 	var lastSelfReferenceLocation *ast.Node
-	var propertyWithInvalidInitializer *ast.Node
 	var associatedDeclarationForContainingInitializerOrBindingName *ast.Node
 	var withinDeferredContext bool
-	var grandparent *ast.Node
 	originalLocation := location // needed for did-you-mean error reporting, which gathers candidates starting from the original location
 	nameIsConst := name == "const"
 loop:
@@ -147,17 +144,7 @@ loop:
 					}
 				}
 			}
-		case ast.KindPropertyDeclaration:
-			if !ast.IsStatic(location) {
-				ctor := ast.FindConstructorDeclaration(location.Parent)
-				if ctor != nil && ctor.Locals() != nil {
-					if r.lookup(ctor.Locals(), name, meaning&ast.SymbolFlagsValue) != nil {
-						// Remember the property node, it will be used later to report appropriate error
-						propertyWithInvalidInitializer = location
-					}
-				}
-			}
-		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration:
+		case ast.KindInterfaceDeclaration:
 			result = r.lookup(r.getSymbolOfDeclaration(location).Members, name, meaning&ast.SymbolFlagsType)
 			if result != nil {
 				if !isTypeParameterSymbolDeclaredInContainer(result, location) {
@@ -165,36 +152,7 @@ loop:
 					result = nil
 					break
 				}
-				if lastLocation != nil && ast.IsStatic(lastLocation) {
-					// TypeScript 1.0 spec (April 2014): 3.4.1
-					// The scope of a type parameter extends over the entire declaration with which the type
-					// parameter list is associated, with the exception of static member declarations in classes.
-					if nameNotFoundMessage != nil {
-						r.error(originalLocation, diagnostics.Static_members_cannot_reference_class_type_parameters)
-					}
-					return nil
-				}
 				break loop
-			}
-			if ast.IsClassExpression(location) && meaning&ast.SymbolFlagsClass != 0 {
-				className := location.Name()
-				if className != nil && name == className.Text() {
-					result = location.Symbol()
-					break loop
-				}
-			}
-		case ast.KindExpressionWithTypeArguments:
-			if lastLocation == location.Expression() && ast.IsHeritageClause(location.Parent) && location.Parent.AsHeritageClause().Token == ast.KindExtendsKeyword {
-				container := location.Parent.Parent
-				if ast.IsClassLike(container) {
-					result = r.lookup(r.getSymbolOfDeclaration(container).Members, name, meaning&ast.SymbolFlagsType)
-					if result != nil {
-						if nameNotFoundMessage != nil {
-							r.error(originalLocation, diagnostics.Base_class_expressions_cannot_reference_class_type_parameters)
-						}
-						return nil
-					}
-				}
 			}
 		// It is not legal to reference a class's own type parameters from a computed property name that
 		// belongs to the class. For example:
@@ -204,8 +162,8 @@ loop:
 		//       [foo<T>()]() { } // <-- Reference to T from class's own computed property
 		//   }
 		case ast.KindComputedPropertyName:
-			grandparent = location.Parent.Parent
-			if ast.IsClassLike(grandparent) || ast.IsInterfaceDeclaration(grandparent) {
+			grandparent := location.Parent.Parent
+			if ast.IsInterfaceDeclaration(grandparent) {
 				// A reference to this grandparent's type parameters would be an error
 				result = r.lookup(r.getSymbolOfDeclaration(grandparent).Members, name, meaning&ast.SymbolFlagsType)
 				if result != nil {
@@ -215,7 +173,7 @@ loop:
 					return nil
 				}
 			}
-		case ast.KindMethodDeclaration, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionDeclaration:
+		case ast.KindFunctionDeclaration:
 			if meaning&ast.SymbolFlagsVariable != 0 && name == "arguments" {
 				result = r.argumentsSymbol()
 				break loop
@@ -291,9 +249,6 @@ loop:
 		}
 	}
 	if nameNotFoundMessage != nil {
-		if propertyWithInvalidInitializer != nil && r.OnPropertyWithInvalidInitializer != nil && r.OnPropertyWithInvalidInitializer(originalLocation, name, propertyWithInvalidInitializer, result) {
-			return nil
-		}
 		if result == nil {
 			if r.OnFailedToResolveSymbol != nil {
 				r.OnFailedToResolveSymbol(originalLocation, name, meaning, nameNotFoundMessage)
@@ -340,15 +295,10 @@ func (r *NameResolver) requiresScopeChange(node *ast.Node) bool {
 
 func (r *NameResolver) requiresScopeChangeWorker(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindArrowFunction, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindConstructor:
+	case ast.KindArrowFunction, ast.KindFunctionExpression, ast.KindFunctionDeclaration:
 		return false
-	case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindPropertyAssignment:
+	case ast.KindPropertyAssignment:
 		return r.requiresScopeChangeWorker(node.Name())
-	case ast.KindPropertyDeclaration:
-		if ast.HasStaticModifier(node) {
-			return !r.CompilerOptions.GetEmitStandardClassFields()
-		}
-		return r.requiresScopeChangeWorker(node.AsPropertyDeclaration().Name())
 	default:
 		if ast.IsOptionalChain(node) {
 			return r.CompilerOptions.GetEmitScriptTarget() < core.ScriptTargetES2020
@@ -425,7 +375,7 @@ func getIsDeferredContext(location *ast.Node, lastLocation *ast.Node) bool {
 		// initializers in instance property declaration of class like entities are executed in constructor and thus deferred
 		// A name is evaluated within the enclosing scope - so it shouldn't count as deferred
 		return ast.IsTypeQueryNode(location) ||
-			(ast.IsFunctionLikeDeclaration(location) || location.Kind == ast.KindPropertyDeclaration && !ast.IsStatic(location)) &&
+			ast.IsFunctionLikeDeclaration(location) &&
 				(lastLocation == nil || lastLocation != location.Name())
 	}
 	if lastLocation != nil && lastLocation == location.Name() {
@@ -454,7 +404,7 @@ func isSelfReferenceLocation(node *ast.Node, lastLocation *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindParameter:
 		return lastLocation != nil && lastLocation == node.Name()
-	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindInterfaceDeclaration,
+	case ast.KindFunctionDeclaration, ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindModuleDeclaration: // For `namespace N { N; }`
 		return true
 	}

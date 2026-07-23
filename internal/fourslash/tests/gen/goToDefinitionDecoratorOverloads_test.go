@@ -16,11 +16,11 @@ func TestGoToDefinitionDecoratorOverloads(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Target: ES6
 // @experimentaldecorators: true
-async function f() {}
+async function f() end
 
 function /*defDecString*/dec(target: any, propertyKey: string): void;
 function /*defDecSymbol*/dec(target: any, propertyKey: symbol): void;
-function dec(target: any, propertyKey: string | symbol) {}
+function dec(target: any, propertyKey: string | symbol) end
 
 declare s: symbol;
 class C {

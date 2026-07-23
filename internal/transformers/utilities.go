@@ -49,9 +49,7 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		return true
 	case ast.KindComputedPropertyName,
 		ast.KindIfStatement,
-		ast.KindDoStatement,
 		ast.KindWhileStatement,
-		ast.KindWithStatement,
 		ast.KindReturnStatement,
 		ast.KindThrowStatement,
 		ast.KindExpressionStatement,
@@ -63,7 +61,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 	case ast.KindVariableDeclaration,
 		ast.KindParameter,
 		ast.KindBindingElement,
-		ast.KindPropertyDeclaration,
 		ast.KindPropertySignature,
 		ast.KindPropertyAssignment,
 		ast.KindJsxAttribute:
@@ -93,8 +90,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 			slices.Contains(parent.Arguments(), name)
 	case ast.KindTaggedTemplateExpression:
 		return parent.AsTaggedTemplateExpression().Tag == name
-	case ast.KindImportAttribute:
-		return parent.AsImportAttribute().Value == name
 	case ast.KindJsxOpeningElement, ast.KindJsxClosingElement:
 		return parent.TagName() == name
 	default:
@@ -276,10 +271,6 @@ func findSuperStatementIndexPathWorker(statements []*ast.Statement, start int, i
 		statement := statements[i]
 		if GetSuperCallFromStatement(statement) != nil {
 			return append(indices, i)
-		} else if ast.IsTryStatement(statement) {
-			if result := findSuperStatementIndexPathWorker(statement.AsTryStatement().TryBlock.Statements(), 0, indices); result != nil {
-				return append(result, i)
-			}
 		}
 	}
 	return nil
@@ -299,10 +290,6 @@ func GetSuperCallFromStatement(statement *ast.Statement) *ast.Node {
 
 // MoveRangePastModifiers returns a text range that starts past any modifiers on the node.
 func MoveRangePastModifiers(node *ast.Node) core.TextRange {
-	if ast.IsPropertyDeclaration(node) || ast.IsMethodDeclaration(node) {
-		return core.NewTextRange(node.Name().Pos(), node.End())
-	}
-
 	var lastModifier *ast.Node
 	if ast.CanHaveModifiers(node) {
 		lastModifier = core.LastOrNil(node.ModifierNodes())

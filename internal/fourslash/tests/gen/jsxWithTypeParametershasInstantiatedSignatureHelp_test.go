@@ -20,9 +20,9 @@ func TestJsxWithTypeParametershasInstantiatedSignatureHelp(t *testing.T) {
     }
 }
 
-function SFC<T>(_props: Record<string, T>) {
+function SFC<T>(_props: Record<string, T>)
     return '';
-}
+end
 
 (</*1*/SFC/>);
 (</*2*/SFC<string>/>);`

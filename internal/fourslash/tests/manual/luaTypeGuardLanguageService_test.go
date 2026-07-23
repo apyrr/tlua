@@ -46,13 +46,13 @@ func TestLuaTypeGuardNarrowedQuickInfo(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: esnext,luajit
 // @strict: true
-function f(v: string | number) {
+function f(v: string | number)
   if type(v) == "string" then
     use(v/*narrowed*/);
   else
     use(v/*rest*/);
   end
-}
+end
 declare function use(x: unknown): void;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

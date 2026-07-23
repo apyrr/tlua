@@ -14,7 +14,7 @@ func TestFormattingMultilineCommentsWithTabs1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local f = function (j) {
+	const content = `local f = function (j)
 
 	if (j) {
 /*1*/				/* when current checkbox has focus, Firefox has changed check state already
@@ -24,7 +24,7 @@ func TestFormattingMultilineCommentsWithTabs1(t *testing.T) {
 /*5*/				to determine whether checkbox has focus or not
 				*/
 	}
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")

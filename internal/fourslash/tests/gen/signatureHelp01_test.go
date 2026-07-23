@@ -15,8 +15,7 @@ func TestSignatureHelp01(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
-function foo(data: number) {
-}
+function foo(data: number) end
 
 function bar {
     foo(/*1*/)

@@ -14,9 +14,9 @@ func TestGetQuickInfoForIntersectionTypes(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(): string & {(): any} {
+	const content = `function f(): string & (): any end
 	return <any>{};
-}
+end
 local x = f();
 x/**/();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

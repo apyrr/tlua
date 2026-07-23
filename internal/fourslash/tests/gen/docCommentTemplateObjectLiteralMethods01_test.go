@@ -24,7 +24,7 @@ func TestDocCommentTemplateObjectLiteralMethods01(t *testing.T) {
     [1 + 2 + 3 + Math.rand()](x: number, y: string, z = true) { }
 
     /*2*/
-    m1: function(a) {}
+    m1: function(a) end
 
     /*3*/
     m2: (a: string, b: string) => {}

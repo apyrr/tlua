@@ -14,7 +14,7 @@ func TestQuickInfoInInvalidIndexSignature(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function method() { local /**/dictionary = <{ [index]: string; }>{}; }`
+	const content = `function method() local /**/dictionary = <{ [index]: string; }>{}; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "(local var) dictionary: {\n    [x: number]: string;\n}", "")

@@ -56,3 +56,33 @@ func TestFormatNoTrailingSpace(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatControlFlowKeywordSpacing(t *testing.T) {
+	t.Parallel()
+
+	for _, tc := range []struct {
+		name          string
+		option        core.Tristate
+		expectedIf    string
+		expectedWhile string
+	}{
+		{name: "insert", option: core.TSTrue, expectedIf: "if (true) then", expectedWhile: "while (true) do"},
+		{name: "remove", option: core.TSFalse, expectedIf: "if(true) then", expectedWhile: "while(true) do"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			settings := lsutil.GetDefaultFormatCodeSettings()
+			settings.InsertSpaceAfterKeywordsInControlFlowStatements = tc.option
+			ctx := format.WithFormatCodeSettings(t.Context(), settings, "\n")
+			text := "if(true) then\nend\nwhile (true) do\nend"
+			sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName: "/test.tlua",
+				Path:     "/test.tlua",
+			}, text, core.ScriptKindTS)
+
+			formatted := applyBulkEdits(text, format.FormatDocument(ctx, sourceFile))
+			assert.Check(t, strings.Contains(formatted, tc.expectedIf))
+			assert.Check(t, strings.Contains(formatted, tc.expectedWhile))
+		})
+	}
+}

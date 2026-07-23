@@ -24,7 +24,7 @@ func TestGetJavaScriptCompletions12(t *testing.T) {
  * @param {string} currency
  * @returns {number}
  */
-local convert = function(input, currency) {
+local convert = function(input, currency)
     switch(currency./*1*/) {
             case "USD":
             input./*2*/;
@@ -33,12 +33,12 @@ local convert = function(input, currency) {
             case "CNY":
                 return {} + rateToUsd.CNY;
     }
-}
+end
 convert(1, "")./*3*/
 /**
  * @param {number} x
  */
-local test1 = function(x) { return x./*4*/ }, test2 = function(a) { return a./*5*/ };`
+local test1 = function(x) return x./*4*/ end, test2 = function(a) { return a./*5*/ };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

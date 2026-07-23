@@ -14,13 +14,13 @@ func TestGenericFunctionSignatureHelp3(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo1<T>(x: number, callback: (y1: T) => number) { }
-function foo2<T>(x: number, callback: (y2: T) => number) { }
-function foo3<T>(x: number, callback: (y3: T) => number) { }
-function foo4<T>(x: number, callback: (y4: T) => number) { }
-function foo5<T>(x: number, callback: (y5: T) => number) { }
-function foo6<T>(x: number, callback: (y6: T) => number) { }
-function foo7<T>(x: number, callback: (y7: T) => number) { }
+	const content = `function foo1<T>(x: number, callback: (y1: T) => number) end
+function foo2<T>(x: number, callback: (y2: T) => number) end
+function foo3<T>(x: number, callback: (y3: T) => number) end
+function foo4<T>(x: number, callback: (y4: T) => number) end
+function foo5<T>(x: number, callback: (y5: T) => number) end
+function foo6<T>(x: number, callback: (y6: T) => number) end
+function foo7<T>(x: number, callback: (y7: T) => number) end
  IDE shows the results on the right of each line, fourslash says different
 foo1(/*1*/               // signature help shows y as T
 foo2(1,/*2*/             // signature help shows y as {}

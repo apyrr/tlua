@@ -19,18 +19,18 @@ func TestCodeFixInferFromUsageVariable3JS(t *testing.T) {
 // @noEmit: true
 // @noImplicitAny: false
 // @Filename: important.lua
-[|function f(foo) {
+[|function f(foo)
     foo += 2
     return foo
-}|]`
+end|]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyRangeAfterCodeFix(t, `/** 
  * @param {number} foo
  */
-function f(foo) {
+function f(foo)
     foo += 2
     return foo
-}
+end
 `, false, 0, 0)
 }

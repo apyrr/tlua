@@ -79,11 +79,11 @@ declare gen: {
 
 declare succeed: <A>(value: A) => Effect<A>;
 
-gen(function* () {
+gen(function* ()
   local a = yield* succeed(1);
   local b/*1*/ = yield* succeed(2);
   return a + b;
-});`
+end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "local b: number", "")

@@ -15,11 +15,11 @@ func TestDocCommentTemplateReturnsTag1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*0*/
-function f1() {}
+function f1() end
 /*1*/
-function f2() {
+function f2()
     return 1;
-}
+end
 /*2*/
 local f3 = () => 1;
 /*3*/

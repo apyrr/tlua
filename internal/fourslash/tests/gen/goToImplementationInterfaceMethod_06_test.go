@@ -27,12 +27,12 @@ class Bar implements Foo {
      someOtherFunction() {}
 }
 
-function createFoo(): Foo {
+function createFoo(): Foo
     return {
         [|hello|]() {},
         someOtherFunction() {}
     };
-}
+end
 
 local y: Foo = {
     [|hello|]() {},
@@ -53,9 +53,9 @@ class NotFoo implements SuperFoo {
      hello() {}                // We only want implementations of Foo, even though the function is declared in SuperFoo
 }
 
-function (x: Foo) {
+function (x: Foo)
     x.he/*function_call*/llo()
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "function_call")

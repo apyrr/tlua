@@ -26,9 +26,9 @@ declare namespace JSX {
 function /*pt1*/SFC1(prop: { x: number }) {
     return <div>hello </div>;
 };
-function SFC2(prop: { x: boolean }) {
+function SFC2(prop: { x: boolean })
     return <h1>World </h1>;
-}
+end
 local /*def*/SFCComp = SFC1 || SFC2;
 <[|SFC/*one*/Comp|] x />`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

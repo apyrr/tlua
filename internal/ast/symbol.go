@@ -65,9 +65,8 @@ const (
 	InternalSymbolNameComputed                = InternalSymbolNamePrefix + "computed"                // Computed property name declaration with dynamic name
 	InternalSymbolNameAssignmentDeclaration   = InternalSymbolNamePrefix + "assignment"              // Assignment declarations
 	InternalSymbolNameInstantiationExpression = InternalSymbolNamePrefix + "instantiationExpression" // Instantiation expressions
-	InternalSymbolNameImportAttributes        = InternalSymbolNamePrefix + "importAttributes"
-	InternalSymbolNameExportEquals            = "export=" // Export assignment symbol
-	InternalSymbolNameDefault                 = "default" // Default export symbol (technically not wholly internal, but included here for usability)
+	InternalSymbolNameExportEquals            = "export="                                            // Export assignment symbol
+	InternalSymbolNameDefault                 = "default"                                            // Default export symbol (technically not wholly internal, but included here for usability)
 	InternalSymbolNameThis                    = "this"
 	InternalSymbolNameModuleExports           = "module.exports"
 )
@@ -178,9 +177,6 @@ func NumberKeyNumber(name string) (jsnum.Number, bool) {
 }
 
 func SymbolName(symbol *Symbol) string {
-	if symbol.ValueDeclaration != nil && IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
-		return symbol.ValueDeclaration.Name().Text()
-	}
 	return symbol.Name
 }
 

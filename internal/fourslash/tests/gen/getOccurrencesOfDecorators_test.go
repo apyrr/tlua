@@ -20,9 +20,9 @@ class C {
     @decorator
     method() {}
 }
-function decorator(target) {
+function decorator(target)
     return target;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, "1")

@@ -15,9 +15,9 @@ func TestInlayHintsInteractiveParameterNamesWithComments(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local fn = (x: any) => { }
+	const content = `local fn = function(x: any) end
 fn(/* nobody knows exactly what this param is */ 42);
-function foo (aParameter: number, bParameter: number, cParameter: number) { }
+function foo (aParameter: number, bParameter: number, cParameter: number) end
 foo(
     /** aParameter */
     1,

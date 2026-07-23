@@ -15,9 +15,9 @@ func TestCodeFixInferFromExpressionStatement(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noImplicitAny: true
-function inferVoid( [| app |] ) {
+function inferVoid( [| app |] )
     app.use('hi')
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyRangeAfterCodeFix(t, `app: { use: (arg0: string) => void; }`, false, 0, 0)

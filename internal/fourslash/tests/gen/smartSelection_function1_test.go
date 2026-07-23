@@ -14,9 +14,9 @@ func TestSmartSelection_function1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local f1 = () => {
+	const content = `local f1 = function()
    /**/
-};`
+end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineSelectionRanges(t)

@@ -229,7 +229,7 @@ func TestWatch(t *testing.T) {
 			edits: []*tluaEdit{
 				newTscEdit("create multiple new subdirs with files", func(sys *TestSys) {
 					sys.writeFileNoError("/home/src/workspaces/project/src/models/user.tlua", `interface User { name: string; }`)
-					sys.writeFileNoError("/home/src/workspaces/project/src/utils/format.tlua", `function format(s: string): string { return s.trim(); }`)
+					sys.writeFileNoError("/home/src/workspaces/project/src/utils/format.tlua", `function format(s: string): string return s.trim(); end`)
 				}),
 			},
 		},

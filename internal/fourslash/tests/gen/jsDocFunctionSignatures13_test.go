@@ -17,8 +17,7 @@ func TestJsDocFunctionSignatures13(t *testing.T) {
 	const content = `/**
  * @template {string} K/**/ a golden opportunity
  */
-function Multimap(iv) {
-};`
+function Multimap(iv) end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

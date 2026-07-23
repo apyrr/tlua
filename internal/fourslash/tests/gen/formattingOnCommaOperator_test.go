@@ -15,10 +15,10 @@ func TestFormattingOnCommaOperator(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local v1 = ((1, 2, 3), 4, 5, (6, 7));/*1*/
-function f1() {
+function f1()
     local a = 1;
     return a, v1, a;/*2*/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")

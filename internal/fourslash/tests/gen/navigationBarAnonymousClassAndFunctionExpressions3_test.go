@@ -14,15 +14,15 @@ func TestNavigationBarAnonymousClassAndFunctionExpressions3(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `describe('foo', () => {
-    test(` + "`" + `a ${1} b ${2}` + "`" + `, () => {})
-})
+	const content = `describe('foo', function()
+    test(` + "`" + `a ${1} b ${2}` + "`" + `, function() end)
+end)
 
 local a = 1;
 local b = 2;
-describe('foo', () => {
-    test(` + "`" + `a ${a} b {b}` + "`" + `, () => {})
-})`
+describe('foo', function()
+    test(` + "`" + `a ${a} b {b}` + "`" + `, function() end)
+end)`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentSymbol(t)

@@ -15,12 +15,12 @@ func TestMemberListInFunctionCall(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function aa(x: any) {}
+	const content = `function aa(x: any) end
 aa({
-  "1": function () {
+  "1": function ()
     local b = "";
     b/**/;
-  }
+  end
 });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

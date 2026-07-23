@@ -28,9 +28,9 @@ declare function isApple/*f*/(x: unknown): x is Apple;
 type SomeType = {
     prop1: string;
 }
-function someFun(a: SomeType): SomeType {
+function someFun(a: SomeType): SomeType
     return a;
-}
+end
 someFun/*s*/.what = 'what';`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

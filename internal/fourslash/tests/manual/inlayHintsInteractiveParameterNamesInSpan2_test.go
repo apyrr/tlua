@@ -13,12 +13,12 @@ func TestInlayHintsInteractiveParameterNamesInSpan2(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo1 (a: number, b: number) {}
-function foo2 (c: number, d: number) {}
-function foo3 (e: number, f: number) {}
-function foo4 (g: number, h: number) {}
-function foo5 (i: number, j: number) {}
-function foo6 (k: number, l: number) {}
+	const content = `function foo1 (a: number, b: number) end
+function foo2 (c: number, d: number) end
+function foo3 (e: number, f: number) end
+function foo4 (g: number, h: number) end
+function foo5 (i: number, j: number) end
+function foo6 (k: number, l: number) end
 
 foo1(/*a*/1, /*b*/2);
 foo2(/*c*/1, /*d*/2);

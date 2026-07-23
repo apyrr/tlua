@@ -3,10 +3,8 @@ package checker
 import (
 	"math"
 	"slices"
-	"strings"
 
 	"github.com/apyrr/tlua/internal/ast"
-	"github.com/apyrr/tlua/internal/binder"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/jsnum"
@@ -1257,7 +1255,7 @@ func (c *Checker) getDiscriminantPropertyAccess(f *FlowState, expr *ast.Node, co
 
 func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast.Node) *ast.Node {
 	switch {
-	case ast.IsBindingPattern(f.reference) || ast.IsFunctionExpressionOrArrowFunction(f.reference) || ast.IsObjectLiteralMethod(f.reference):
+	case ast.IsBindingPattern(f.reference) || ast.IsFunctionExpressionOrArrowFunction(f.reference):
 		// When the reference is a binding pattern or function or arrow expression, we are narrowing a pseudo-reference in
 		// getNarrowedTypeOfSymbol. An identifier for a destructuring variable declared in the same binding pattern or
 		// parameter declared in the same parameter list is a candidate.
@@ -1584,7 +1582,7 @@ func (c *Checker) writeFlowCacheKey(b *keyBuilder, node *ast.Node, declaredType 
 			}
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern, ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration,
+		ast.KindFunctionExpression, ast.KindArrowFunction,
 		// A Lua `local a, b = f()` list is narrowed as a pseudo-reference by
 		// getNarrowedTypeOfSymbol. Without a cache key here it would key as a
 		// non-dotted name, and getTypeAtFlowLoopLabel would discard every narrowing
@@ -1704,7 +1702,7 @@ func (c *Checker) isConstantReference(node *ast.Node) bool {
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		rootDeclaration := ast.GetRootDeclaration(node.Parent)
-		if ast.IsParameterDeclaration(rootDeclaration) || ast.IsVariableDeclaration(rootDeclaration) && ast.IsCatchClause(rootDeclaration.Parent) {
+		if ast.IsParameterDeclaration(rootDeclaration) {
 			return !c.isSomeSymbolAssigned(rootDeclaration)
 		}
 		return ast.IsVariableDeclaration(rootDeclaration) && c.isVarConst(rootDeclaration)
@@ -1873,34 +1871,25 @@ func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {
 // parameter symbols with declarations that have explicit type annotations. Such references are
 // resolvable with no possibility of triggering circularities in control flow analysis.
 func (c *Checker) getTypeOfDottedName(node *ast.Node, diagnostic *ast.Diagnostic) *Type {
-	if node.Flags&ast.NodeFlagsInWithStatement == 0 {
-		switch node.Kind {
-		case ast.KindIdentifier:
-			symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(node))
-			return c.getExplicitTypeOfSymbol(symbol, diagnostic)
-		case ast.KindThisKeyword:
-			return c.getExplicitThisType(node)
-		case ast.KindSuperKeyword:
-			return c.checkSuperExpression(node)
-		case ast.KindPropertyAccessExpression:
-			t := c.getTypeOfDottedName(node.Expression(), diagnostic)
-			if t != nil {
-				name := node.Name()
-				var prop *ast.Symbol
-				if ast.IsPrivateIdentifier(name) {
-					if t.symbol != nil {
-						prop = c.getPropertyOfType(t, binder.GetSymbolNameForPrivateIdentifier(t.symbol, name.Text()))
-					}
-				} else {
-					prop = c.getPropertyOfType(t, name.Text())
-				}
-				if prop != nil {
-					return c.getExplicitTypeOfSymbol(prop, diagnostic)
-				}
+	switch node.Kind {
+	case ast.KindIdentifier:
+		symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(node))
+		return c.getExplicitTypeOfSymbol(symbol, diagnostic)
+	case ast.KindThisKeyword:
+		return c.getExplicitThisType(node)
+	case ast.KindSuperKeyword:
+		return c.checkSuperExpression(node)
+	case ast.KindPropertyAccessExpression:
+		t := c.getTypeOfDottedName(node.Expression(), diagnostic)
+		if t != nil {
+			name := node.Name()
+			prop := c.getPropertyOfType(t, name.Text())
+			if prop != nil {
+				return c.getExplicitTypeOfSymbol(prop, diagnostic)
 			}
-		case ast.KindParenthesizedExpression:
-			return c.getTypeOfDottedName(node.Expression(), diagnostic)
 		}
+	case ast.KindParenthesizedExpression:
+		return c.getTypeOfDottedName(node.Expression(), diagnostic)
 	}
 	return nil
 }
@@ -1935,7 +1924,7 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 }
 
 func (c *Checker) isDeclarationWithExplicitTypeAnnotation(node *ast.Node) bool {
-	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameterDeclaration(node)) && node.Type() != nil ||
+	return (ast.IsVariableDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameterDeclaration(node)) && node.Type() != nil ||
 		c.isExpandoPropertyFunctionWithReturnTypeAnnotation(node)
 }
 
@@ -1958,14 +1947,6 @@ func (c *Checker) getExplicitThisType(node *ast.Node) *Type {
 		signature := c.getSignatureFromDeclaration(container)
 		if signature.thisParameter != nil {
 			return c.getExplicitTypeOfSymbol(signature.thisParameter, nil)
-		}
-	}
-	if container.Parent != nil && ast.IsClassLike(container.Parent) {
-		symbol := c.getSymbolOfDeclaration(container.Parent)
-		if ast.IsStatic(container) {
-			return c.getTypeOfSymbol(symbol)
-		} else {
-			return c.getDeclaredTypeOfSymbol(symbol).AsInterfaceType().thisType
 		}
 	}
 	return nil
@@ -2179,53 +2160,6 @@ func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpress
 	return nil
 }
 
-func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.Node) *Type {
-	var accessName *ast.Node
-	if strings.HasPrefix(symbol.Name, ast.InternalSymbolNamePrefix+"#") {
-		accessName = c.factory.NewPrivateIdentifier(symbol.Name[strings.Index(symbol.Name, "@")+1:])
-	} else {
-		accessName = c.factory.NewIdentifier(symbol.Name)
-	}
-	reference := c.factory.NewPropertyAccessExpression(c.factory.NewKeywordExpression(ast.KindThisKeyword), nil, nil /*colonToken*/, accessName, ast.NodeFlagsNone)
-	reference.Expression().Parent = reference
-	reference.Parent = constructor
-	reference.FlowNodeData().FlowNode = constructor.AsConstructorDeclaration().ReturnFlowNode
-	flowType := c.getFlowTypeOfProperty(reference, symbol)
-	if c.noImplicitAny && (flowType == c.autoType || flowType == c.autoArrayType) {
-		c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.TypeToString(flowType))
-	}
-	// We don't infer a type if assignments are only null or undefined.
-	if everyType(flowType, c.IsNullableType) {
-		return nil
-	}
-	return c.convertAutoToAny(flowType)
-}
-
-func (c *Checker) getFlowTypeInStaticBlocks(symbol *ast.Symbol, staticBlocks []*ast.Node) *Type {
-	var accessName *ast.Node
-	if strings.HasPrefix(symbol.Name, ast.InternalSymbolNamePrefix+"#") {
-		accessName = c.factory.NewPrivateIdentifier(symbol.Name[strings.Index(symbol.Name, "@")+1:])
-	} else {
-		accessName = c.factory.NewIdentifier(symbol.Name)
-	}
-	for _, staticBlock := range staticBlocks {
-		reference := c.factory.NewPropertyAccessExpression(c.factory.NewKeywordExpression(ast.KindThisKeyword), nil, nil /*colonToken*/, accessName, ast.NodeFlagsNone)
-		reference.Expression().Parent = reference
-		reference.Parent = staticBlock
-		reference.FlowNodeData().FlowNode = staticBlock.AsClassStaticBlockDeclaration().ReturnFlowNode
-		flowType := c.getFlowTypeOfProperty(reference, symbol)
-		if c.noImplicitAny && (flowType == c.autoType || flowType == c.autoArrayType) {
-			c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.TypeToString(flowType))
-		}
-		// We don't infer a type if assignments are only null or undefined.
-		if everyType(flowType, c.IsNullableType) {
-			continue
-		}
-		return c.convertAutoToAny(flowType)
-	}
-	return nil
-}
-
 func (c *Checker) isReachableFlowNode(flow *ast.FlowNode) bool {
 	f := c.getFlowState()
 	result := c.isReachableFlowNodeWorker(f, flow, false /*noCacheCheck*/)
@@ -2398,9 +2332,8 @@ func (c *Checker) extendAssignmentPosition(node *ast.Node, declaration *ast.Node
 	pos := node.Pos()
 	for node != nil && node.Pos() > declaration.Pos() {
 		switch node.Kind {
-		case ast.KindVariableStatement, ast.KindExpressionStatement, ast.KindIfStatement, ast.KindDoStatement, ast.KindWhileStatement,
-			ast.KindForOfStatement, ast.KindNumericForStatement, ast.KindRepeatStatement,
-			ast.KindWithStatement, ast.KindTryStatement, ast.KindClassDeclaration:
+		case ast.KindVariableStatement, ast.KindExpressionStatement, ast.KindIfStatement, ast.KindWhileStatement,
+			ast.KindForOfStatement, ast.KindNumericForStatement, ast.KindRepeatStatement:
 			pos = node.End()
 		}
 		node = node.Parent

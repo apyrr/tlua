@@ -19,12 +19,11 @@ func TestCallHierarchyDecorator(t *testing.T) {
 class Foo {
 }
 
-function /**/bar() {
+function /**/bar()
     baz();
-}
+end
 
-function baz() {
-}`
+function baz() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

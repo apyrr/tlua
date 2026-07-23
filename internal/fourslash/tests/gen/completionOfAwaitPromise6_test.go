@@ -16,9 +16,9 @@ func TestCompletionOfAwaitPromise6(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es2015
-async function foo(x: Promise<string>) {
+async function foo(x: Promise<string>)
    [|x./**/|]
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

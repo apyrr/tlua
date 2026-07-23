@@ -24,8 +24,7 @@ func TestJsdocLink1(t *testing.T) {
  * {@link unformatted postfix text}
  * @see {@link C} its great
  */
-function /**/CC() {
-}`
+function /**/CC() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

@@ -80,12 +80,12 @@ func TestReferencesAfterAncestorProjectConfigDeletion1(t *testing.T) {
 			"compilerOptions": { "composite": true },
 			"include": ["src/**/*.tlua"]
 		}`,
-		"/root/project/src/main.tlua": "export function helloWorld() {}\nhelloWorld()\n",
+		"/root/project/src/main.tlua": "export function helloWorld() end\nhelloWorld()\n",
 	}, &lsutil.UserPreferences{})
 
 	mainURI := lsconv.FileNameToDocumentURI("/root/project/src/main.tlua")
 	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
-		TextDocument: &lsproto.TextDocumentItem{Uri: mainURI, LanguageId: "typescript", Text: "export function helloWorld() {}\nhelloWorld()\n"},
+		TextDocument: &lsproto.TextDocumentItem{Uri: mainURI, LanguageId: "typescript", Text: "export function helloWorld() end\nhelloWorld()\n"},
 	})
 
 	// Prime the child project so opening a file creates the ancestor configured-project placeholder.

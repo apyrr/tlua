@@ -15,18 +15,18 @@ func TestQuickInfoInJsdocInTsFile1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @type {() => { /*1*/data: string[] }} */
-function test(): { data: string[] } {
+function test(): { data: string[] }
   return {
     data: [],
   };
-}
+end
 
 /** @returns {{ /*2*/data: string[] }} */
-function test2(): { data: string[] } {
+function test2(): { data: string[] }
   return {
     data: [],
   };
-}
+end
 
 /** @type {{ /*3*/bar: string; }} */
 local test3 = { bar: '' };
@@ -38,14 +38,14 @@ local test4 = { bar: '' }
 /**
  * @param/*5*/ stuff/*6*/ Stuff to do stuff with
  */
-function doStuffWithStuff(stuff: { quantity: number }) {}
+function doStuffWithStuff(stuff: { quantity: number }) end
 
 declare stuff: { quantity: number };
 /** @see {doStuffWithStuff/*7*/} */
 if (stuff.quantity) {}
 
 /** @type {(a/*8*/: string) => void} */
-function test2(a: string) {}`
+function test2(a: string) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "", "")

@@ -27,35 +27,35 @@ func TestGetOccurrencesClassExpressionThis(t *testing.T) {
     }
     foo() {
         [|this|];
-        () => [|this|];
-        () => {
+        function() return [|this|] end;
+        function()
             if ([|this|]) {
                 [|this|];
             }
-        }
-        function inside() {
+        end
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
         return [|this|].x;
     }
 
     static bar() {
         this;
-        () => this;
-        () => {
+        function() return this end;
+        function()
             if (this) {
                 this;
             }
-        }
-        function inside() {
+        end
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

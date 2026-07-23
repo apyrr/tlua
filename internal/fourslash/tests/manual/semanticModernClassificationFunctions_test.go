@@ -12,9 +12,9 @@ func TestSemanticModernClassificationFunctions(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(p1) {
+	const content = `function foo(p1)
   return foo(Math.abs(p1))
-}
+end
 ` + "`" + `/${window.location}` + "`" + `.split("/").forEach(s => foo(s));`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

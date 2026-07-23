@@ -14,7 +14,7 @@ func TestRemoveParameterBetweenCommentAndParameter(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function fn(/* comment! */ /**/a: number, c) { }`
+	const content = `function fn(/* comment! */ /**/a: number, c) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

@@ -223,10 +223,6 @@ func (e *PseudoObjectElement) Signature() *ast.Node {
 	switch e.Kind {
 	case PseudoObjectElementKindMethod:
 		return e.AsPseudoObjectMethod().Signature
-	case PseudoObjectElementKindSetAccessor:
-		return e.AsPseudoSetAccessor().Signature
-	case PseudoObjectElementKindGetAccessor:
-		return e.AsPseudoGetAccessor().Signature
 	default:
 		return nil
 	}
@@ -237,8 +233,6 @@ type PseudoObjectElementKind int8
 const (
 	PseudoObjectElementKindMethod PseudoObjectElementKind = iota
 	PseudoObjectElementKindPropertyAssignment
-	PseudoObjectElementKindSetAccessor
-	PseudoObjectElementKindGetAccessor
 )
 
 type pseudoObjectElementData interface {
@@ -290,40 +284,6 @@ func NewPseudoPropertyAssignment(readonly bool, name *ast.Node, optional bool, t
 
 func (e *PseudoObjectElement) AsPseudoPropertyAssignment() *PseudoPropertyAssignment {
 	return e.data.(*PseudoPropertyAssignment)
-}
-
-type PseudoSetAccessor struct {
-	PseudoObjectElement
-	Signature *ast.Node
-	Parameter *PseudoParameter
-}
-
-func NewPseudoSetAccessor(signature *ast.Node, name *ast.Node, optional bool, p *PseudoParameter) *PseudoObjectElement {
-	return newPseudoObjectElement(PseudoObjectElementKindSetAccessor, name, optional, &PseudoSetAccessor{
-		Signature: signature,
-		Parameter: p,
-	})
-}
-
-func (e *PseudoObjectElement) AsPseudoSetAccessor() *PseudoSetAccessor {
-	return e.data.(*PseudoSetAccessor)
-}
-
-type PseudoGetAccessor struct {
-	PseudoObjectElement
-	Signature *ast.Node
-	Type      *PseudoType
-}
-
-func NewPseudoGetAccessor(signature *ast.Node, name *ast.Node, optional bool, t *PseudoType) *PseudoObjectElement {
-	return newPseudoObjectElement(PseudoObjectElementKindGetAccessor, name, optional, &PseudoGetAccessor{
-		Signature: signature,
-		Type:      t,
-	})
-}
-
-func (e *PseudoObjectElement) AsPseudoGetAccessor() *PseudoGetAccessor {
-	return e.data.(*PseudoGetAccessor)
 }
 
 // PseudoTypeObjectLiteral represents an object type originaing from an object literal

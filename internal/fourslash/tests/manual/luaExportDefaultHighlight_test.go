@@ -15,7 +15,7 @@ func TestLuaExportDefaultHighlight(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export /*default*/default function f() {}
+	const content = `export /*default*/default function f() end
 f();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

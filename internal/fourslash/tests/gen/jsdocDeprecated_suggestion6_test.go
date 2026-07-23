@@ -19,12 +19,12 @@ func TestJsdocDeprecated_suggestion6(t *testing.T) {
 /** @deprecated */
 type Props = {}
 /** @deprecated */
-local Component = (props: [|Props|]) => props && <div />;
+local Component = function(props: [|Props|]) return props && <div /> end;
 <[|Component|] old="old" new="new" />
 /** @deprecated */
 type Options = {}
 /** @deprecated */
-local deprecatedFunction = (options: [|Options|]) => { options }
+local deprecatedFunction = function(options: [|Options|]) options end
 [|deprecatedFunction|]({});`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

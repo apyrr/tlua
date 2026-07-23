@@ -17,10 +17,10 @@ func TestReferencesForFunctionParameter(t *testing.T) {
 	const content = `local x;
 local n;
 
-function n(x: number, /*1*/n: number) {
+function n(x: number, /*1*/n: number)
     /*2*/n = 32;
     x = /*3*/n;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")

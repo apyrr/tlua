@@ -15,9 +15,9 @@ func TestSignatureHelpInCallback(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function forEach(f: () => void);
-forEach(/*1*/() => {
+forEach(/*1*/function()
     /*2*/
-});`
+end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "1")

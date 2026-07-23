@@ -15,7 +15,7 @@ func TestFormatV8Directive(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: foo.lua
-function foo() {}
+function foo() end
 /*1*/%PrepareFunctionForOptimization(foo)/*2*/;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

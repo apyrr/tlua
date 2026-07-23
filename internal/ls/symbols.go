@@ -139,28 +139,17 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 			}
 		}
 		switch node.Kind {
-		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration:
-			if ast.IsClassLike(node) && ast.GetDeclarationName(node) != "" {
-				expandoTargets.Add(ast.GetDeclarationName(node))
-			}
+		case ast.KindInterfaceDeclaration:
 			addSymbolForNode(node, nil /*name*/, getSymbolsForChildren(node))
 		case ast.KindModuleDeclaration:
 			addSymbolForNode(node, nil /*name*/, getSymbolsForChildren(getInteriorModule(node)))
-		case ast.KindConstructor:
-			addSymbolForNode(node, nil /*name*/, getSymbolsForChildren(node.Body()))
-			for _, param := range node.Parameters() {
-				if ast.IsParameterPropertyDeclaration(param, node) {
-					addSymbolForNode(param, nil /*name*/, nil /*children*/)
-				}
-			}
-		case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration, ast.KindGetAccessor,
-			ast.KindSetAccessor:
+		case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
 			declName := ast.GetDeclarationName(node)
 			if declName != "" {
 				expandoTargets.Add(declName)
 			}
 			addSymbolForNode(node, nil /*name*/, getSymbolsForChildren(node.Body()))
-		case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindPropertyAssignment, ast.KindPropertyDeclaration:
+		case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindPropertyAssignment:
 			nodeName := node.Name()
 			if nodeName != nil {
 				if ast.IsBindingPattern(nodeName) {
@@ -442,13 +431,6 @@ func getUnnamedNodeLabel(node *ast.Node) string {
 			}
 		}
 		return "<function>"
-	case ast.KindClassDeclaration, ast.KindClassExpression:
-		if node.ModifierFlags()&ast.ModifierFlagsDefault != 0 {
-			return "default"
-		}
-		return "<class>"
-	case ast.KindConstructor:
-		return "constructor"
 	case ast.KindCallSignature:
 		return "()"
 	case ast.KindConstructSignature:
@@ -646,8 +628,6 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 		return lsproto.SymbolKindFile
 	case ast.KindModuleDeclaration:
 		return lsproto.SymbolKindNamespace
-	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return lsproto.SymbolKindClass
 	case ast.KindInterfaceDeclaration:
 		return lsproto.SymbolKindInterface
 	case ast.KindTypeAliasDeclaration, ast.KindJSDocTypedefTag, ast.KindJSDocCallbackTag:
@@ -656,25 +636,18 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 		return lsproto.SymbolKindVariable
 	case ast.KindArrowFunction, ast.KindFunctionDeclaration, ast.KindFunctionExpression:
 		return lsproto.SymbolKindFunction
-	case ast.KindGetAccessor, ast.KindSetAccessor:
-		return lsproto.SymbolKindProperty
-	case ast.KindMethodDeclaration, ast.KindMethodSignature:
+	case ast.KindMethodSignature:
 		return lsproto.SymbolKindMethod
-	case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindPropertyAssignment,
+	case ast.KindPropertySignature, ast.KindPropertyAssignment,
 		ast.KindShorthandPropertyAssignment, ast.KindSpreadAssignment, ast.KindIndexSignature:
 		return lsproto.SymbolKindProperty
 	case ast.KindCallSignature:
 		return lsproto.SymbolKindMethod
 	case ast.KindConstructSignature:
 		return lsproto.SymbolKindConstructor
-	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
-		return lsproto.SymbolKindConstructor
 	case ast.KindTypeParameter:
 		return lsproto.SymbolKindTypeParameter
 	case ast.KindParameter:
-		if ast.HasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) {
-			return lsproto.SymbolKindProperty
-		}
 		return lsproto.SymbolKindVariable
 	case ast.KindBinaryExpression, ast.KindCallExpression:
 		kind := ast.GetAssignmentDeclarationKind(node)

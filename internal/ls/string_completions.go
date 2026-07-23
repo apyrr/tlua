@@ -404,9 +404,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			properties := getPropertiesForCompletion(t, typeChecker)
 			return &stringLiteralCompletions{
 				fromProperties: &completionsFromProperties{
-					symbols: core.Filter(properties, func(s *ast.Symbol) bool {
-						return s.ValueDeclaration == nil || !ast.IsPrivateIdentifierClassElementDeclaration(s.ValueDeclaration)
-					}),
+					symbols:           properties,
 					hasIndexSignature: false,
 				},
 			}
@@ -570,8 +568,7 @@ func stringLiteralCompletionsFromProperties(t *checker.Type, typeChecker *checke
 		symbols: core.Filter(typeChecker.GetApparentProperties(t), func(s *ast.Symbol) bool {
 			// A number key has no string-literal spelling (t[1] != t["1"]), so it
 			// never completes inside a string literal.
-			return !ast.IsNumberKeyName(s.Name) &&
-				!(s.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(s.ValueDeclaration))
+			return !ast.IsNumberKeyName(s.Name)
 		}),
 		hasIndexSignature: hasIndexSignature(t, typeChecker),
 	}

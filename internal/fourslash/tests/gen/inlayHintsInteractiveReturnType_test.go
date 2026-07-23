@@ -16,12 +16,12 @@ func TestInlayHintsInteractiveReturnType(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo1 () {
+	const content = `function foo1 ()
     return 1
-}
-function foo2 (): number {
+end
+function foo2 (): number
     return 1
-}
+end
 class C {
     foo() {
         return 1
@@ -30,10 +30,10 @@ class C {
         return this
     }
 }
-local a = () => 1
-local b = function () { return 1 }
-local c = (b) => 1
-local d = b => 1`
+local a = function() return 1 end
+local b = function () return 1 end
+local c = function(b) return 1 end
+local d = function(b) return 1 end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{InlayHints: lsutil.InlayHintsPreferences{IncludeInlayFunctionLikeReturnTypeHints: core.TSTrue}})

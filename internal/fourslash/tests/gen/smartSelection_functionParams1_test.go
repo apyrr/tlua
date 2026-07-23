@@ -14,7 +14,7 @@ func TestSmartSelection_functionParams1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(/*1*/p, /*2*/q?, /*3*/...r: any[] = []) {}`
+	const content = `function f(/*1*/p, /*2*/q?, /*3*/...r: any[] = []) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineSelectionRanges(t)

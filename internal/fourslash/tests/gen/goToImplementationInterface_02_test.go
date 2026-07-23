@@ -18,7 +18,7 @@ func TestGoToImplementationInterface_02(t *testing.T) {
 
 local x: number = 9;
 
-function createFoo(): Foo {
+function createFoo(): Foo
     if (x === 2) {
         return [|{
             hello() {}
@@ -27,15 +27,15 @@ function createFoo(): Foo {
     return [|{
         hello() {}
     }|];
-}
+end
 
 local createFoo2 = (): Foo => [|({hello() {}})|];
 
-function createFooLike() {
+function createFooLike()
     return {
         hello() {}
     };
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "interface_definition")

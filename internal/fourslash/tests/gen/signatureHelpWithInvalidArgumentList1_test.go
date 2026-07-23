@@ -14,7 +14,7 @@ func TestSignatureHelpWithInvalidArgumentList1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(a) { }
+	const content = `function foo(a) end
 foo(hello my name /**/is`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

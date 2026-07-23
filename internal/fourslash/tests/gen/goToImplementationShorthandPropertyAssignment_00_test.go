@@ -40,11 +40,11 @@ class /*declaredClass*/Foo {
 
 }
 
-function createBarUsingClassDeclaration(): Bar {
+function createBarUsingClassDeclaration(): Bar
     return {
         Fo/*declaredClassRef*/o
     };
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "classExpressionRef", "declaredClassRef")

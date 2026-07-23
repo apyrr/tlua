@@ -20,9 +20,7 @@ func TestCompletionInUncheckedJSFile(t *testing.T) {
 	const content = `// @allowJs: true
 // @checkJs: false
 // @Filename: index.lua
-function hello() {
-
-}
+function hello() end
 
 local goodbye = 5;
 

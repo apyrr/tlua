@@ -16,8 +16,7 @@ class A {
   #foo() {
     class B {
       #bar() {   
-         function baz () {
-         }
+         function baz () end
       }
     }
   }

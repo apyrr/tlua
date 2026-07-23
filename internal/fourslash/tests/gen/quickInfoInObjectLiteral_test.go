@@ -18,10 +18,10 @@ func TestQuickInfoInObjectLiteral(t *testing.T) {
     doStuff(x: string, callback: (a: string) => string);
 }
 local x1: Foo = {
-    y/*1*/1 = () => {
+    y/*1*/1 = function()
         return "";
-    } ,
-    doStuff = (z, callback) => { return callback(this.y); }
+    end ,
+    doStuff = function(z, callback) return callback(this.y); end
 }
 local value = 3;
 class Foo {

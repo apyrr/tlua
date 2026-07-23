@@ -16,9 +16,9 @@ func TestCodeFixInferFromUsageRestParam(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: false
 // @noImplicitAny: true
-function f(a: number, [|...rest |]){
+function f(a: number, [|...rest |])
     a; rest;
-}
+end
 f(1);
 f(2, "s1");
 f(3, "s1", "s2");

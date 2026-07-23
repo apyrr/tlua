@@ -20,8 +20,8 @@ func TestCompletionReturnConstAssertion(t *testing.T) {
     foo1: 1;
     foo2: 2;
 }
-function F(x: ()=>T) {}
-F(()=>({/*1*/} as const))`
+function F(x: ()=>T) end
+F(function() return ({/*1*/} as const) end)`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

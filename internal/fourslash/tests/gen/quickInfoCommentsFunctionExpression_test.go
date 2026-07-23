@@ -15,18 +15,18 @@ func TestQuickInfoCommentsFunctionExpression(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** lambdaFoo local comment*/
-local lamb/*1*/daFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
-local lambddaN/*3*/oVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
+local lamb/*1*/daFoo = /** this is lambda comment*/ function(/**param a*/a: number, /**param b*/b: number) return a + b end;
+local lambddaN/*3*/oVarComment = /** this is lambda multiplication*/ function(/**param a*/a: number, /**param b*/b: number) return a * b end;
 lambdaFoo(10, 20);
-function /*7*/anotherFunc(a: number) {
+function /*7*/anotherFunc(a: number)
     /** documentation
         @param b {string} inner parameter */
-    local /*8*/lambdaVar = /** inner docs */(/*9*/b: string) => {
+    local /*8*/lambdaVar = /** inner docs */function(/*9*/b: string)
         local /*10*/localVar = "Hello ";
         return /*11*/localVar + /*12*/b;
-    }
+    end
     return lamb/*13*/daVar("World") + a;
-}
+end
 /**
  * On variable
  * @param s the first parameter!
@@ -36,9 +36,9 @@ local assi/*14*/gned = /**
                 * Summary on expression
                 * @param s param on expression
                 * @returns return on expression
-                */function(/** On parameter */s: string) {
+                */function(/** On parameter */s: string)
   return s.length;
-}
+end
 assig/*16*/ned("hey");`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

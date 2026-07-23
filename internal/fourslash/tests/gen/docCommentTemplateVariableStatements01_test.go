@@ -30,9 +30,9 @@ local d = {
 };
 
 /*e*/
-local e = function e(x, y, z) {
+local e = function e(x, y, z)
     return +(x + y + z);
-};
+end;
 
 /*f*/
 local f = class F {

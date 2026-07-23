@@ -19,18 +19,18 @@ func TestInlayHintsFunctionParameterTypes2(t *testing.T) {
 	const content = `class C {}
 namespace N { export class Foo {} }
 interface Foo {}
-function f1(a = 1) {}
-function f2(a = "a") {}
-function f3(a = true) {}
-function f4(a = { } as Foo) {}
-function f5(a = <Foo>{}) {}
-function f6(a = {} as const) {}
-function f7(a = (({} as const))) {}
-function f8(a = new C()) {}
-function f9(a = new N.C()) {}
-function f10(a = ((((new C()))))) {}
-function f11(a = { a: 1, b: 1 }) {}
-function f12(a = ((({ a: 1, b: 1 })))) {}`
+function f1(a = 1) end
+function f2(a = "a") end
+function f3(a = true) end
+function f4(a = { } as Foo) end
+function f5(a = <Foo>{}) end
+function f6(a = {} as const) end
+function f7(a = (({} as const))) end
+function f8(a = new C()) end
+function f9(a = new N.C()) end
+function f10(a = ((((new C()))))) end
+function f11(a = { a: 1, b: 1 }) end
+function f12(a = ((({ a: 1, b: 1 })))) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{InlayHints: lsutil.InlayHintsPreferences{IncludeInlayFunctionParameterTypeHints: core.TSTrue}})

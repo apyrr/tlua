@@ -15,15 +15,15 @@ func TestGetOccurrencesSuperNegatives(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(x = [|super|]) {
+	const content = `function f(x = [|super|])
     [|super|];
-}
+end
 
 namespace M {
     [|super|];
-    function f(x = [|super|]) {
+    function f(x = [|super|])
     [|super|];
-    }
+    end
 
     class A {
     }

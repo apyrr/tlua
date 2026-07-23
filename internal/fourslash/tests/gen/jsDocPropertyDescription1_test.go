@@ -20,10 +20,10 @@ func TestJsDocPropertyDescription1(t *testing.T) {
     /** Something specific */
     property: number;
 }
-function stringExample(e: StringExample) {
+function stringExample(e: StringExample)
     console.log(e./*property*/property);
     console.log(e./*string*/anything); 
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "property", "(property) StringExample.property: number", "Something specific")

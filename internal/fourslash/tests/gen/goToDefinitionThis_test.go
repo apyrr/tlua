@@ -14,9 +14,9 @@ func TestGoToDefinitionThis(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(/*fnDecl*/this: number) {
+	const content = `function f(/*fnDecl*/this: number)
     return [|/*fnUse*/this|];
-}
+end
 class /*cls*/C {
     constructor() { return [|/*clsUse*/this|]; }
     get self(/*getterDecl*/this: number) { return [|/*getterUse*/this|]; }

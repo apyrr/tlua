@@ -20,10 +20,10 @@ func TestJsDocFunctionSignatures7(t *testing.T) {
  * @param {string} p0
  * @param {string} [p1]
  */
-function Test(p0, p1) {
+function Test(p0, p1)
     this.P0 = p0;
     this.P1 = p1;
-}
+end
 
 
 local /**/test = new Test("");`

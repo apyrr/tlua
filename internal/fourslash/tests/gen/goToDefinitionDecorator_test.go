@@ -21,12 +21,12 @@ class C {
     method() {}
 }
 // @Filename: a.tlua
-function /*decoratorDefinition*/decorator(target) {
+function /*decoratorDefinition*/decorator(target)
     return target;
-}
-function /*decoratorFactoryDefinition*/decoratorFactory(...args) {
+end
+function /*decoratorFactoryDefinition*/decoratorFactory(...args)
     return target => target;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, "decoratorUse", "decoratorFactoryUse")

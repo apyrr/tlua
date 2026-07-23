@@ -17,7 +17,7 @@ func TestCompletionInIncompleteCallExpression(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
 local array = [1, 2, 4]
-function a4(x, y, z) { }
+function a4(x, y, z) end
 a4(...<crash>/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

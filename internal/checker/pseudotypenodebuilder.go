@@ -68,9 +68,6 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		// use symbol type from parent declaration to automatically handle expression type widening without duplicating logic
 		if ast.IsReturnStatement(node.Parent) {
 			enclosing := ast.GetContainingFunction(node)
-			if ast.IsAccessor(enclosing) {
-				return b.serializeTypeForDeclaration(enclosing, nil, nil, false)
-			}
 			return b.serializeReturnTypeForSignature(b.ch.getSignatureFromDeclaration(enclosing), false)
 		}
 		if ast.IsArrowFunction(node.Parent) && node.Parent.AsArrowFunction().Body == node {
@@ -85,7 +82,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindNoResult:
 		node := t.AsPseudoTypeNoResult().Declaration
 		b.ctx.tracker.ReportInferenceFallback(node)
-		if ast.IsFunctionLike(node) && !ast.IsAccessor(node) {
+		if ast.IsFunctionLike(node) {
 			return b.serializeReturnTypeForSignature(b.ch.getSignatureFromDeclaration(node), false)
 		}
 		return b.serializeTypeForDeclaration(node, nil, nil, false)
@@ -257,28 +254,6 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					b.reuseName(e.Name, false /*isMethod*/),
 					nil,
 					b.pseudoTypeToNode(d.Type),
-					nil,
-				)
-			case pseudochecker.PseudoObjectElementKindSetAccessor:
-				d := e.AsPseudoSetAccessor()
-				newProp = b.f.NewSetAccessorDeclaration(
-					nil,
-					b.reuseName(e.Name, false /*isMethod*/),
-					nil,
-					b.f.NewNodeList([]*ast.Node{b.pseudoParameterToNode(d.Parameter)}),
-					nil,
-					nil,
-					nil,
-				)
-			case pseudochecker.PseudoObjectElementKindGetAccessor:
-				d := e.AsPseudoGetAccessor()
-				newProp = b.f.NewGetAccessorDeclaration(
-					nil,
-					b.reuseName(e.Name, false /*isMethod*/),
-					nil,
-					nil,
-					b.pseudoTypeToNode(d.Type),
-					nil,
 					nil,
 				)
 			}
@@ -478,23 +453,6 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 						return false
 					}
 				} else if !b.pseudoTypeEquivalentToType(d.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, false) {
-					if reportErrors {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
-					}
-					return false
-				}
-			case pseudochecker.PseudoObjectElementKindGetAccessor:
-				d := e.AsPseudoGetAccessor()
-				if !b.pseudoTypeEquivalentToType(d.Type, propType, false, false) {
-					if reportErrors {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
-					}
-					return false
-				}
-			case pseudochecker.PseudoObjectElementKindSetAccessor:
-				d := e.AsPseudoSetAccessor()
-				writeType := b.ch.getWriteTypeOfSymbol(targetProp)
-				if !b.pseudoTypeEquivalentToType(d.Parameter.Type, writeType, false, false) {
 					if reportErrors {
 						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
 					}

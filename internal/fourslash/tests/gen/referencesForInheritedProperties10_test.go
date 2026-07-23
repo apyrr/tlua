@@ -31,10 +31,10 @@ class FeedbackHandler extends AbstractFeedbackHandler {
   }
 }
 
-function foo(handler: IFeedbackHandler) {
+function foo(handler: IFeedbackHandler)
   handler./*3*/handleAccept?.();
   handler.handleReject?.();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")

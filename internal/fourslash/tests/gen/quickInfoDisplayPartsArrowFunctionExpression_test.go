@@ -14,10 +14,10 @@ func TestQuickInfoDisplayPartsArrowFunctionExpression(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local /*1*/x = /*5*/a => 10;
-local /*2*/y = (/*6*/a, /*7*/b) => 10;
-local /*3*/z = (/*8*/a: number) => 10;
-local /*4*/z2 = () => 10;`
+	const content = `local /*1*/x = function(/*5*/a) return 10 end;
+local /*2*/y = function(/*6*/a, /*7*/b) return 10 end;
+local /*3*/z = function(/*8*/a: number) return 10 end;
+local /*4*/z2 = function() return 10 end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

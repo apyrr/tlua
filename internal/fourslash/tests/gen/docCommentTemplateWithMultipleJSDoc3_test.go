@@ -16,7 +16,7 @@ func TestDocCommentTemplateWithMultipleJSDoc3(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @param p */
 /*/**/
-function foo(p) {}`
+function foo(p) end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

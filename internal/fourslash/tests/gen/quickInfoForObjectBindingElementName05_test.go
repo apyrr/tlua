@@ -24,9 +24,9 @@ interface B {
     a: string;
 }
 
-function f({ a }: A | B) {
+function f({ a }: A | B)
     a/**/;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

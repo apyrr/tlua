@@ -12,7 +12,7 @@ func TestNavto_excludeLib3(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /index.tlua
-function [|parseInt|](s: string): number {}`
+function [|parseInt|](s: string): number end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{

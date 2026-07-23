@@ -25,9 +25,9 @@ func TestQuickInfoJSDocBackticks(t *testing.T) {
  * @param {string} y hi there ` + "`" + `@ * param
  *                   this is the margin
  */
-export function f(x, y) {
+export function f(x, y)
     return x/*x*/ + y/*y*/
-}
+end
 f/*f*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

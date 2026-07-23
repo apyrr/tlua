@@ -18,7 +18,7 @@ func TestGetOccurrencesThis6(t *testing.T) {
 	const content = `this/*1*/;
 this;
 
-function f() {
+function f()
     this/*2*/;
     this;
     () => this;
@@ -30,17 +30,17 @@ function f() {
             this.this;
         }
     }
-    function inside() {
+    function inside()
         this;
-        (function (_) {
+        (function (_)
             this;
-        })(this);
-    }
-}
+        end)(this);
+    end
+end
 
 namespace m {
     local x = th/*6*/is;
-    function f() {
+    function f()
         this;
         this;
         () => this;
@@ -52,13 +52,13 @@ namespace m {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
-    }
+            end)(this);
+        end
+    end
 }
 
 class A {
@@ -76,12 +76,12 @@ class A {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this/*3*/;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     private method2() {
@@ -96,12 +96,12 @@ class A {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     public static staticB = this.staticMethod1;
@@ -118,12 +118,12 @@ class A {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     private static staticMethod2() {
@@ -138,12 +138,12 @@ class A {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 }
 
@@ -152,9 +152,9 @@ local x = {
 
     f() {
         this/*5*/;
-        function foo() {
+        function foo()
             this;
-        }
+        end
         local bar = () => {
             this;
         }
@@ -166,9 +166,9 @@ local x = {
 
     get h() {
         /*7*/this;
-        function foo() {
+        function foo()
             this;
-        }
+        end
         local bar = () => {
             this;
         }
@@ -181,9 +181,9 @@ local x = {
 
     l: () => {
         /*8*/this;
-        function foo() {
+        function foo()
             this;
-        }
+        end
         local bar = () => {
             this;
         }

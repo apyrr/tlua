@@ -41,12 +41,12 @@ class SubType extends SuperType {
     }
 
     public method3() {
-        local x = () => [|super|].superMethod();
+        local x = function() return [|super|].superMethod() end;
 
         // Bad but still gets highlighted
-        function f() {
+        function f()
             [|super|].superMethod();
-        }
+        end
     }
 
     // Bad but still gets highlighted.

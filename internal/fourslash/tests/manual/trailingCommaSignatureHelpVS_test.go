@@ -17,7 +17,7 @@ func TestTrailingCommaSignatureHelpVS(t *testing.T) {
  * @param radix The radix
  */
 function str(n: number, radix: number): string;
-function str(n: number, radix?: number): string { return ""; }
+function str(n: number, radix?: number): string return ""; end
 
 str(1, /*a*/)
 

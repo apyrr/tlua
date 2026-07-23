@@ -15,10 +15,10 @@ func TestCodeFixInferFromCallInAssignment(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noImplicitAny: true
-function inferAny( [| app |] ) {
+function inferAny( [| app |] )
     local result = app.use('hi')
     return result
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyRangeAfterCodeFix(t, `app: { use: (arg0: string) => any }`, false, 0, 0)

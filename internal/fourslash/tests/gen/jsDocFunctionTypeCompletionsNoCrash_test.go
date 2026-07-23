@@ -19,9 +19,9 @@ func TestJsDocFunctionTypeCompletionsNoCrash(t *testing.T) {
 /**
  * @returns {function/**/(): string}
  */
-function updateCalendarEvent() {
+function updateCalendarEvent()
   return "";
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

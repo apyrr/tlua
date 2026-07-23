@@ -22,10 +22,10 @@ class DataHandler {
         local xmlReq = new XMLHttpRequest();
         xmlReq.open("GET", "/" + filename, true);
         xmlReq.responseType = "arraybuffer";
-        xmlReq.onload = function(xmlEvent) {
+        xmlReq.onload = function(xmlEvent)
             /*local*/
             this./*this*/;
-        }
+        end
     }
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -24,12 +24,12 @@ local b = (x,y,z) => x + y + z;
 local c = ((x => +x))
 
 /*d*/
-local d = (function () { })
+local d = (function () end)
 
 /*e*/
-local e = function e([a,b,c]) {
+local e = function e([a,b,c])
     return "hello"
-};
+end;
 
 /*f*/
 local f = class {

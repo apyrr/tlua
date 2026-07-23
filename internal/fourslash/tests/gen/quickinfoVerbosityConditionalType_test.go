@@ -20,9 +20,9 @@ func TestQuickinfoVerbosityConditionalType(t *testing.T) {
 }
 type StrInt = string | bigint;
 type T1<T extends Apple | Apple[]> = T extends { color: string } ? "one apple" : StrInt;
-function f<T extends Apple | Apple[]>(x: T1<T>): void {
+function f<T extends Apple | Apple[]>(x: T1<T>): void
     x/*x*/;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHoverWithVerbosity(t, map[string][]int{"x": {0, 1, 2}})

@@ -14,17 +14,17 @@ func TestFormattingAwait(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `async function f() {
+	const content = `async function f()
     for          await (local x of g()) {
         console.log(x);
     }
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")
-	f.VerifyCurrentFileContent(t, `async function f() {
+	f.VerifyCurrentFileContent(t, `async function f()
     for await (local x of g()) {
         console.log(x);
     }
-}`)
+end`)
 }

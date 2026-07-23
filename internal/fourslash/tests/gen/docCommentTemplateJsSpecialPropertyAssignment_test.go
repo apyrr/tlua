@@ -16,9 +16,9 @@ func TestDocCommentTemplateJsSpecialPropertyAssignment(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /a.lua
-/*0*/module.exports = function(a) {};
+/*0*/module.exports = function(a) end;
 local myNamespace  = {};
-/*1*/myNamespace.myExport = function(x) {};`
+/*1*/myNamespace.myExport = function(x) end;`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

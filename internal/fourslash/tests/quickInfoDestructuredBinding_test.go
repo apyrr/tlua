@@ -13,9 +13,9 @@ func TestQuickInfoDestructuredBinding(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 
 	const content = `
-function f({ /*1*/x }: { x: number }) {}
-function g([/*2*/y]: number[]) {}
-function h({ a: { /*3*/b } }: { a: { b: string } }) {}
+function f({ /*1*/x }: { x: number }) end
+function g([/*2*/y]: number[]) end
+function h({ a: { /*3*/b } }: { a: { b: string } }) end
 local { /*4*/c } = { c: 42 };
 local { /*5*/d } = { d: "hello" };
 local { /*6*/e } = { e: true };

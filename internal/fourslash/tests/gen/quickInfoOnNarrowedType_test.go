@@ -17,20 +17,20 @@ func TestQuickInfoOnNarrowedType(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strictNullChecks: true
-function foo(strOrNum: string | number) {
+function foo(strOrNum: string | number)
     if (typeof /*1*/strOrNum === "number") {
         return /*2*/strOrNum;
     }
     else {
         return /*3*/strOrNum.length;
     }
-}
-function bar() {
+end
+function bar()
    local s: string | undefined;
    /*4*/s;
    /*5*/s = "abc";
    /*6*/s;
-}
+end
 class Foo {
     #privateProperty: string[] | null;
     constructor() {

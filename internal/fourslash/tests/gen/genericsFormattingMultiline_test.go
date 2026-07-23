@@ -74,7 +74,7 @@ class A < T > extends bar <
      > {
 }
 
-function s<T, U>(x: TemplateStringsArray, ...args: any[]) { return x.join(); }
+function s<T, U>(x: TemplateStringsArray, ...args: any[]) return x.join(); end
 
 local t = s<
       number , 

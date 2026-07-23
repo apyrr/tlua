@@ -16,15 +16,15 @@ func TestNavigationBarItemsInsideMethodsAndConstructors(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Class {
     constructor() {
-        function LocalFunctionInConstructor() {}
+        function LocalFunctionInConstructor() end
         interface LocalInterfaceInConstrcutor {}
         enum LocalEnumInConstructor { LocalEnumMemberInConstructor }
     }
 
     method() {
-        function LocalFunctionInMethod() {
-            function LocalFunctionInLocalFunctionInMethod() {}
-        }
+        function LocalFunctionInMethod()
+            function LocalFunctionInLocalFunctionInMethod() end
+        end
         interface LocalInterfaceInMethod {}
         enum LocalEnumInMethod { LocalEnumMemberInMethod }
     }

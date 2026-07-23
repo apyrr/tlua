@@ -26,66 +26,66 @@ interface NestedInterface {
 
 declare Foo: NestedInterface;
 
-function fn1() {
+function fn1()
     return <Foo>
         <Foo /*1*/ />
     </Foo>
-}
-function fn2() {
+end
+function fn2()
     return <Foo>
         <Foo.Foo /*2*/ />
     </Foo>
-}
-function fn3() {
+end
+function fn3()
     return <Foo>
         <Foo.Foo cla/*3*/ />
     </Foo>
-}
-function fn4() {
+end
+function fn4()
     return <Foo>
         <Foo.Foo cla/*4*/ something />
     </Foo>
-}
-function fn5() {
+end
+function fn5()
     return <Foo>
         <Foo.Foo something /*5*/ />
     </Foo>
-}
-function fn6() {
+end
+function fn6()
     return <Foo>
         <Foo.Foo something cla/*6*/ />
     </Foo>
-}
-function fn7() {
+end
+function fn7()
     return <Foo /*7*/ />
-}
-function fn8() {
+end
+function fn8()
     return <Foo cla/*8*/ />
-}
-function fn9() {
+end
+function fn9()
     return <Foo cla/*9*/ something />
-}
-function fn10() {
+end
+function fn10()
     return <Foo something /*10*/ />
-}
-function fn11() {
+end
+function fn11()
     return <Foo something cla/*11*/ />
-}
-function fn12() {
+end
+function fn12()
     return <Foo something={false} cla/*12*/ />
-}
-function fn13() {
+end
+function fn13()
     return <Foo something={false} /*13*/ foo />
-}
-function fn14() {
+end
+function fn14()
     return <Foo something={false} cla/*14*/ foo />
-}
-function fn15() {
+end
+function fn15()
     return <Foo onC/*15*/="" />
-}
-function fn16() {
+end
+function fn16()
     return <Foo something={false} onC/*16*/="" foo />
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

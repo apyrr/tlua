@@ -64,9 +64,8 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 	}
 
 	switch node.Kind {
-	case ast.KindModuleDeclaration, ast.KindClassDeclaration, ast.KindInterfaceDeclaration,
-		ast.KindFunctionDeclaration, ast.KindClassExpression, ast.KindFunctionExpression,
-		ast.KindMethodDeclaration, ast.KindArrowFunction:
+	case ast.KindModuleDeclaration, ast.KindInterfaceDeclaration,
+		ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
 		if s.ctx.Err() != nil {
 			return true
 		}
@@ -81,8 +80,6 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 	}
 
 	if s.preferences.IncludeInlayVariableTypeHints.IsTrue() && ast.IsVariableDeclaration(node) {
-		s.visitVariableLikeDeclaration(node)
-	} else if s.preferences.IncludeInlayPropertyDeclarationTypeHints.IsTrue() && ast.IsPropertyDeclaration(node) {
 		s.visitVariableLikeDeclaration(node)
 	} else if shouldShowParameterNameHints(s.preferences) && (ast.IsCallExpression(node) || ast.IsNewExpression(node)) {
 		s.visitCallOrNewExpression(node)
@@ -100,7 +97,7 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 	return node.ForEachChild(s.visit)
 }
 
-// FunctionDeclaration | MethodDeclaration | GetAccessor | FunctionExpression | ArrowFunction
+// FunctionDeclaration | FunctionExpression | ArrowFunction
 func (s *inlayHintState) visitFunctionDeclarationLikeForReturnType(decl *ast.FunctionLikeDeclaration) {
 	if ast.IsArrowFunction(decl) {
 		if astnav.FindChildOfKind(decl, ast.KindOpenParenToken, s.file) == nil {
@@ -187,10 +184,8 @@ func (s *inlayHintState) visitCallOrNewExpression(expr *ast.CallOrNewExpression)
 	}
 }
 
-func (s *inlayHintState) visitVariableLikeDeclaration(decl *ast.VariableOrPropertyDeclaration) {
-	if decl.Initializer() == nil &&
-		!(ast.IsPropertyDeclaration(decl) && s.checker.GetTypeAtLocation(decl).Flags()&checker.TypeFlagsAny == 0) ||
-		ast.IsBindingPattern(decl.Name()) || (ast.IsVariableDeclaration(decl) && !isHintableDeclaration(decl)) {
+func (s *inlayHintState) visitVariableLikeDeclaration(decl *ast.Node) {
+	if decl.Initializer() == nil || ast.IsBindingPattern(decl.Name()) || !isHintableDeclaration(decl) {
 		return
 	}
 
@@ -344,10 +339,9 @@ func shouldShowLiteralParameterNameHintsOnly(preferences lsutil.InlayHintsPrefer
 	return preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals
 }
 
-// node is FunctionDeclaration | ArrowFunction | FunctionExpression | MethodDeclaration | GetAccessor
+// node is FunctionDeclaration | ArrowFunction | FunctionExpression.
 func isSignatureSupportingReturnAnnotation(node *ast.Node) bool {
-	return ast.IsArrowFunction(node) || ast.IsFunctionExpression(node) || ast.IsFunctionDeclaration(node) ||
-		ast.IsMethodDeclaration(node) || ast.IsGetAccessorDeclaration(node)
+	return ast.IsArrowFunction(node) || ast.IsFunctionExpression(node) || ast.IsFunctionDeclaration(node)
 }
 
 func isHintableDeclaration(node *ast.VariableOrParameterDeclaration) bool {

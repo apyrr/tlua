@@ -27,8 +27,7 @@ function Foo(fred: any, name: string, age: { });
 function Foo(fred: any, name: string, age: number[]);
 function Foo(test: string, name, age: number);
 function Foo();
-function Foo(x?: any, y?: any, z?: any) {
-}
+function Foo(x?: any, y?: any, z?: any) end
 Fo/**/o();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

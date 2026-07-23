@@ -17,11 +17,11 @@ func TestGoToDefinitionObjectLiteralProperties1(t *testing.T) {
 	const content = `interface PropsBag {
    /*first*/propx: number
 }
-function foo(arg: PropsBag) {}
+function foo(arg: PropsBag) end
 foo({
    [|pr/*p1*/opx|] = 10
 })
-function bar(firstarg: boolean, secondarg: PropsBag) {}
+function bar(firstarg: boolean, secondarg: PropsBag) end
 bar(true, {
    [|pr/*p2*/opx|] = 10
 })`

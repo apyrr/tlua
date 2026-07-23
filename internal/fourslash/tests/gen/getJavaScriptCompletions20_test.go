@@ -26,10 +26,10 @@ func TestGetJavaScriptCompletions20(t *testing.T) {
  * @param {string} name - The name of the person.
  * @param {number} age - The age of the person.
  */
-function Person(name, age) {
+function Person(name, age)
     this.name = name;
     this.age = age;
-}
+end
 
 
 Person.getName = 10;

@@ -18,15 +18,15 @@ func TestJsObjectDefinePropertyRenameLocations(t *testing.T) {
 // @checkJs: true
 // @noEmit: true
 // @Filename: index.lua
-local CircularList = (function () {
-    local CircularList = function() {};
+local CircularList = (function ()
+    local CircularList = function() end;
     Object.defineProperty(CircularList.prototype, "[|maxLength|]", { value: 0, writable: true });
-    CircularList.prototype.push = function (value) {
+    CircularList.prototype.push = function (value)
         // ...
         this.[|maxLength|] + this.[|maxLength|]
-    }
+    end
     return CircularList;
-})()`
+end)()`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/)

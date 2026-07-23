@@ -18,9 +18,9 @@ func TestJsDocPropertyDescription4(t *testing.T) {
     /** Something generic */
     [key: string | number | symbol]: string;
 }
-function multipleExample(e: MultipleExample) {
+function multipleExample(e: MultipleExample)
     console.log(e./*multiple*/anything);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "multiple", "(index) MultipleExample[string | number | symbol]: string", "Something generic")

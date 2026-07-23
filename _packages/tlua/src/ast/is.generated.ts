@@ -4,7 +4,6 @@ import { SyntaxKind } from "#enums/syntaxKind";
 import type {
     AbstractKeyword,
     AccessExpression,
-    AccessorDeclaration,
     AccessorKeyword,
     AdditiveOperator,
     AdditiveOperatorOrHigher,
@@ -17,7 +16,6 @@ import type {
     ArrowFunction,
     AsExpression,
     AssertionExpression,
-    AssertKeyword,
     AssertsKeyword,
     AssignmentOperator,
     AssignmentOperatorOrHigher,
@@ -31,6 +29,7 @@ import type {
     BindingElement,
     BindingName,
     Block,
+    BlockOrIfStatement,
     BooleanLiteral,
     BreakOrContinueStatement,
     BreakStatement,
@@ -38,11 +37,6 @@ import type {
     CallLikeExpression,
     CallOrNewExpression,
     CallSignatureDeclaration,
-    CatchClause,
-    ClassDeclaration,
-    ClassExpression,
-    ClassLikeDeclaration,
-    ClassStaticBlockDeclaration,
     ColonToken,
     CompoundAssignmentOperator,
     ComputedPropertyName,
@@ -50,7 +44,6 @@ import type {
     ConcatenationOperatorOrHigher,
     ConditionalExpression,
     ConditionalTypeNode,
-    ConstructorDeclaration,
     ConstructorTypeNode,
     ConstructSignatureDeclaration,
     ContinueStatement,
@@ -60,7 +53,6 @@ import type {
     DefaultKeyword,
     DeleteExpression,
     DestructuringAssignment,
-    DoStatement,
     DotDotDotToken,
     DotToken,
     ElementAccessExpression,
@@ -88,14 +80,10 @@ import type {
     FunctionExpression,
     FunctionLikeDeclaration,
     FunctionTypeNode,
-    GetAccessorDeclaration,
     GotoStatement,
     HeritageClause,
     Identifier,
     IfStatement,
-    ImportAttribute,
-    ImportAttributeName,
-    ImportAttributes,
     ImportClause,
     ImportClauseOrBindingPattern,
     ImportDeclaration,
@@ -182,7 +170,6 @@ import type {
     MappedTypeNode,
     MemberName,
     MetaProperty,
-    MethodDeclaration,
     MethodSignatureDeclaration,
     MinusToken,
     MissingDeclaration,
@@ -238,7 +225,6 @@ import type {
     PrivateKeyword,
     PropertyAccessExpression,
     PropertyAssignment,
-    PropertyDeclaration,
     PropertyName,
     PropertyNameLiteral,
     PropertySignatureDeclaration,
@@ -257,8 +243,6 @@ import type {
     RestTypeNode,
     ReturnStatement,
     SatisfiesExpression,
-    SemicolonClassElement,
-    SetAccessorDeclaration,
     ShorthandPropertyAssignment,
     SignatureDeclaration,
     SourceFile,
@@ -289,7 +273,6 @@ import type {
     Token,
     TriviaSyntaxKind,
     TrueLiteral,
-    TryStatement,
     TupleTypeNode,
     TypeAliasDeclaration,
     TypeAssertion,
@@ -306,11 +289,9 @@ import type {
     VariableDeclaration,
     VariableDeclarationList,
     VariableOrParameterDeclaration,
-    VariableOrPropertyDeclaration,
     VariableStatement,
     VoidExpression,
     WhileStatement,
-    WithStatement,
 } from "./ast.ts";
 
 export function isToken(node: Node): node is Token {
@@ -341,10 +322,6 @@ export function isIfStatement(node: Node): node is IfStatement {
     return node.kind === SyntaxKind.IfStatement;
 }
 
-export function isDoStatement(node: Node): node is DoStatement {
-    return node.kind === SyntaxKind.DoStatement;
-}
-
 export function isWhileStatement(node: Node): node is WhileStatement {
     return node.kind === SyntaxKind.WhileStatement;
 }
@@ -373,20 +350,8 @@ export function isReturnStatement(node: Node): node is ReturnStatement {
     return node.kind === SyntaxKind.ReturnStatement;
 }
 
-export function isWithStatement(node: Node): node is WithStatement {
-    return node.kind === SyntaxKind.WithStatement;
-}
-
 export function isThrowStatement(node: Node): node is ThrowStatement {
     return node.kind === SyntaxKind.ThrowStatement;
-}
-
-export function isTryStatement(node: Node): node is TryStatement {
-    return node.kind === SyntaxKind.TryStatement;
-}
-
-export function isCatchClause(node: Node): node is CatchClause {
-    return node.kind === SyntaxKind.CatchClause;
 }
 
 export function isDebuggerStatement(node: Node): node is DebuggerStatement {
@@ -435,14 +400,6 @@ export function isMissingDeclaration(node: Node): node is MissingDeclaration {
 
 export function isFunctionDeclaration(node: Node): node is FunctionDeclaration {
     return node.kind === SyntaxKind.FunctionDeclaration;
-}
-
-export function isClassDeclaration(node: Node): node is ClassDeclaration {
-    return node.kind === SyntaxKind.ClassDeclaration;
-}
-
-export function isClassExpression(node: Node): node is ClassExpression {
-    return node.kind === SyntaxKind.ClassExpression;
 }
 
 export function isHeritageClause(node: Node): node is HeritageClause {
@@ -525,18 +482,6 @@ export function isConstructSignatureDeclaration(node: Node): node is ConstructSi
     return node.kind === SyntaxKind.ConstructSignature;
 }
 
-export function isConstructorDeclaration(node: Node): node is ConstructorDeclaration {
-    return node.kind === SyntaxKind.Constructor;
-}
-
-export function isGetAccessorDeclaration(node: Node): node is GetAccessorDeclaration {
-    return node.kind === SyntaxKind.GetAccessor;
-}
-
-export function isSetAccessorDeclaration(node: Node): node is SetAccessorDeclaration {
-    return node.kind === SyntaxKind.SetAccessor;
-}
-
 export function isIndexSignatureDeclaration(node: Node): node is IndexSignatureDeclaration {
     return node.kind === SyntaxKind.IndexSignature;
 }
@@ -545,24 +490,8 @@ export function isMethodSignatureDeclaration(node: Node): node is MethodSignatur
     return node.kind === SyntaxKind.MethodSignature;
 }
 
-export function isMethodDeclaration(node: Node): node is MethodDeclaration {
-    return node.kind === SyntaxKind.MethodDeclaration;
-}
-
 export function isPropertySignatureDeclaration(node: Node): node is PropertySignatureDeclaration {
     return node.kind === SyntaxKind.PropertySignature;
-}
-
-export function isPropertyDeclaration(node: Node): node is PropertyDeclaration {
-    return node.kind === SyntaxKind.PropertyDeclaration;
-}
-
-export function isSemicolonClassElement(node: Node): node is SemicolonClassElement {
-    return node.kind === SyntaxKind.SemicolonClassElement;
-}
-
-export function isClassStaticBlockDeclaration(node: Node): node is ClassStaticBlockDeclaration {
-    return node.kind === SyntaxKind.ClassStaticBlockDeclaration;
 }
 
 export function isOmittedExpression(node: Node): node is OmittedExpression {
@@ -751,14 +680,6 @@ export function isLiteralTypeNode(node: Node): node is LiteralTypeNode {
 
 export function isTypePredicateNode(node: Node): node is TypePredicateNode {
     return node.kind === SyntaxKind.TypePredicate;
-}
-
-export function isImportAttribute(node: Node): node is ImportAttribute {
-    return node.kind === SyntaxKind.ImportAttribute;
-}
-
-export function isImportAttributes(node: Node): node is ImportAttributes {
-    return node.kind === SyntaxKind.ImportAttributes;
 }
 
 export function isTypeQueryNode(node: Node): node is TypeQueryNode {
@@ -1077,6 +998,10 @@ export function isJSDocPropertyTag(node: Node): node is JSDocPropertyTag {
     return node.kind === SyntaxKind.JSDocPropertyTag;
 }
 
+export function isBlockOrIfStatement(node: Node): node is BlockOrIfStatement {
+    return node.kind === SyntaxKind.Block || node.kind === SyntaxKind.IfStatement;
+}
+
 export function isAccessExpression(node: Node): node is AccessExpression {
     return node.kind === SyntaxKind.PropertyAccessExpression || node.kind === SyntaxKind.ElementAccessExpression;
 }
@@ -1154,14 +1079,6 @@ export function isJsxAttributeValue(node: Node): node is JsxAttributeValue {
     return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.JsxExpression || kind === SyntaxKind.JsxElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.JsxFragment;
 }
 
-export function isClassLikeDeclaration(node: Node): node is ClassLikeDeclaration {
-    return node.kind === SyntaxKind.ClassDeclaration || node.kind === SyntaxKind.ClassExpression;
-}
-
-export function isAccessorDeclaration(node: Node): node is AccessorDeclaration {
-    return node.kind === SyntaxKind.GetAccessor || node.kind === SyntaxKind.SetAccessor;
-}
-
 export function isLiteralLikeNode(node: Node): node is LiteralLikeNode {
     const kind = node.kind;
     return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.TemplateHead || kind === SyntaxKind.TemplateMiddle || kind === SyntaxKind.TemplateTail || kind === SyntaxKind.JsxText;
@@ -1193,10 +1110,6 @@ export function isTypePredicateParameterName(node: Node): node is TypePredicateP
     return node.kind === SyntaxKind.Identifier;
 }
 
-export function isImportAttributeName(node: Node): node is ImportAttributeName {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral;
-}
-
 export function isJSDocComment(node: Node): node is JSDocComment {
     const kind = node.kind;
     return kind === SyntaxKind.JSDocText || kind === SyntaxKind.JSDocLink || kind === SyntaxKind.JSDocLinkCode || kind === SyntaxKind.JSDocLinkPlain;
@@ -1204,7 +1117,7 @@ export function isJSDocComment(node: Node): node is JSDocComment {
 
 export function isSignatureDeclaration(node: Node): node is SignatureDeclaration {
     const kind = node.kind;
-    return kind === SyntaxKind.CallSignature || kind === SyntaxKind.ConstructSignature || kind === SyntaxKind.MethodSignature || kind === SyntaxKind.IndexSignature || kind === SyntaxKind.FunctionType || kind === SyntaxKind.ConstructorType || kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.MethodDeclaration || kind === SyntaxKind.Constructor || kind === SyntaxKind.GetAccessor || kind === SyntaxKind.SetAccessor || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ArrowFunction;
+    return kind === SyntaxKind.CallSignature || kind === SyntaxKind.ConstructSignature || kind === SyntaxKind.MethodSignature || kind === SyntaxKind.IndexSignature || kind === SyntaxKind.FunctionType || kind === SyntaxKind.ConstructorType || kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ArrowFunction;
 }
 
 export function isStringLiteralLikeNode(node: Node): node is StringLiteralLikeNode {
@@ -1220,8 +1133,7 @@ export function isObjectLiteralLikeNode(node: Node): node is ObjectLiteralLikeNo
 }
 
 export function isObjectTypeDeclaration(node: Node): node is ObjectTypeDeclaration {
-    const kind = node.kind;
-    return kind === SyntaxKind.ClassDeclaration || kind === SyntaxKind.ClassExpression || kind === SyntaxKind.InterfaceDeclaration || kind === SyntaxKind.TypeLiteral;
+    return node.kind === SyntaxKind.InterfaceDeclaration || node.kind === SyntaxKind.TypeLiteral;
 }
 
 export function isJsxOpeningLikeElement(node: Node): node is JsxOpeningLikeElement {
@@ -1242,16 +1154,11 @@ export function isCallLikeExpression(node: Node): node is CallLikeExpression {
 }
 
 export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration {
-    const kind = node.kind;
-    return kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.MethodDeclaration || kind === SyntaxKind.GetAccessor || kind === SyntaxKind.SetAccessor || kind === SyntaxKind.Constructor || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ArrowFunction;
+    return node.kind === SyntaxKind.FunctionDeclaration || node.kind === SyntaxKind.FunctionExpression || node.kind === SyntaxKind.ArrowFunction;
 }
 
 export function isVariableOrParameterDeclaration(node: Node): node is VariableOrParameterDeclaration {
     return node.kind === SyntaxKind.VariableDeclaration || node.kind === SyntaxKind.Parameter;
-}
-
-export function isVariableOrPropertyDeclaration(node: Node): node is VariableOrPropertyDeclaration {
-    return node.kind === SyntaxKind.VariableDeclaration || node.kind === SyntaxKind.PropertyDeclaration;
 }
 
 export function isCallOrNewExpression(node: Node): node is CallOrNewExpression {
@@ -1294,7 +1201,7 @@ export function isModifier(node: Node): node is Modifier {
 
 export function isObjectLiteralElementLike(node: Node): node is ObjectLiteralElementLike {
     const kind = node.kind;
-    return kind === SyntaxKind.PropertyAssignment || kind === SyntaxKind.ShorthandPropertyAssignment || kind === SyntaxKind.SpreadAssignment || kind === SyntaxKind.TableEntry || kind === SyntaxKind.MethodDeclaration || kind === SyntaxKind.GetAccessor || kind === SyntaxKind.SetAccessor;
+    return kind === SyntaxKind.PropertyAssignment || kind === SyntaxKind.ShorthandPropertyAssignment || kind === SyntaxKind.SpreadAssignment || kind === SyntaxKind.TableEntry;
 }
 
 export function isPropertyNameLiteral(node: Node): node is PropertyNameLiteral {
@@ -1571,10 +1478,6 @@ export function isQuestionDotToken(node: Node): node is QuestionDotToken {
 
 export function isAssertsKeyword(node: Node): node is AssertsKeyword {
     return node.kind === SyntaxKind.AssertsKeyword;
-}
-
-export function isAssertKeyword(node: Node): node is AssertKeyword {
-    return node.kind === SyntaxKind.AssertKeyword;
 }
 
 export function isAwaitKeyword(node: Node): node is AwaitKeyword {

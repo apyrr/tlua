@@ -18,7 +18,7 @@ func TestGetOccurrencesThis5(t *testing.T) {
 	const content = `this;
 this;
 
-function f() {
+function f()
     this;
     this;
     () => this;
@@ -30,16 +30,16 @@ function f() {
             this.this;
         }
     }
-    function inside() {
+    function inside()
         this;
-        (function (_) {
+        (function (_)
             this;
-        })(this);
-    }
-}
+        end)(this);
+    end
+end
 
 namespace m {
-    function f() {
+    function f()
         this;
         this;
         () => this;
@@ -51,13 +51,13 @@ namespace m {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
-    }
+            end)(this);
+        end
+    end
 }
 
 class A {
@@ -75,12 +75,12 @@ class A {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     private method2() {
@@ -95,12 +95,12 @@ class A {
                 this.this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     public static staticB = [|this|].staticMethod1;
@@ -117,12 +117,12 @@ class A {
                 [|this|].this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     private static staticMethod2() {
@@ -137,12 +137,12 @@ class A {
                 [|t/**/his|].this;
             }
         }
-        function inside() {
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 }
 

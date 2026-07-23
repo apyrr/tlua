@@ -17,9 +17,9 @@ func TestDocumentHighlights02(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
 // @Filename: a.tlua
-function [|foo|] () {
+function [|foo|] ()
 	return 1;
-}
+end
 [|foo|]();
 // @Filename: b.tlua
 /// <reference path="a.tlua"/>

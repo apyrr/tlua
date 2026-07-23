@@ -15,14 +15,14 @@ func TestInlayHintsInteractiveParameterNames(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = ` function foo1 (a: number, b: number) {}
+	const content = ` function foo1 (a: number, b: number) end
  foo1(1, 2);
- function foo2 (a: number, { c }: any) {}
+ function foo2 (a: number, { c }: any) end
  foo2(1, { c: 1 });
-local foo3 = (a = 1) => class { }
+local foo3 = function(a = 1) return class { } end
 local C1 = class extends foo3(1) { }
 class C2 extends foo3(1) { }
-function foo4(a: number, b: number, c: number, d: number) {}
+function foo4(a: number, b: number, c: number, d: number) end
 foo4(1, +1, -1, +"1");
 function foo5(
     a: string,
@@ -35,8 +35,8 @@ function foo5(
     h: number,
     i: RegExp,
     j: bigint,
-) {
-}
+)
+end
 foo5(
     "hello",
     undefined,
@@ -51,7 +51,7 @@ foo5(
 );
  declare unknownCall: any;
  unknownCall();
-function trace(message: string) {}
+function trace(message: string) end
 trace(` + "`" + `${1}` + "`" + `);
 trace(` + "`" + `` + "`" + `);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

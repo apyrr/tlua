@@ -17,7 +17,7 @@ func TestReturnRecursiveType(t *testing.T) {
 	const content = `interface MyInt {
     (): void;
 }
-function MyFn() { return <MyInt>MyFn; }
+function MyFn() return <MyInt>MyFn; end
 local My/**/Var = MyFn();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

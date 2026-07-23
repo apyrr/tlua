@@ -14,9 +14,9 @@ func TestCallHierarchyConstNamedClassExpression(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
     new Bar();
-}
+end
 
 local /**/Bar = class {
     constructor() {
@@ -24,8 +24,7 @@ local /**/Bar = class {
     }
 }
 
-function baz() {
-}`
+function baz() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

@@ -22,7 +22,7 @@ interface Foo {
     two: number;
 }
 
-local Component = <T extends Foo>() => <></>;
+local Component = function<T extends Foo>() return <></> end;
 
 <Component<{/*0*/}>></Component>;
 <Component<{/*1*/}>/>;`

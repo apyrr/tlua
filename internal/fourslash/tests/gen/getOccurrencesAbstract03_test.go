@@ -15,12 +15,12 @@ func TestGetOccurrencesAbstract03(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f() {
+	const content = `function f()
     [|abstract|] class A {
         [|abstract|] m(): void;
     }
     abstract class B {}
-}
+end
 switch (0) {
     case 0:
         [|abstract|] class A { [|abstract|] m(): void; }

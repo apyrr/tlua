@@ -26,9 +26,9 @@ func TestQuickInfoForObjectBindingElementName06(t *testing.T) {
     isBaz: boolean
 }
 
-function f(): Foo {
+function f(): Foo
     return undefined as any
-}
+end
 
 local { isBaz: isBar } = f();
 isBar/**/;`

@@ -16,24 +16,24 @@ func TestNavigationBarAnonymousClassAndFunctionExpressions(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `global.cls = class { };
 (function()
-    local x = () => {
+    local x = function()
         // Presence of inner function causes x to be a top-level function.
-        function xx() {}
-    };
+        function xx() end
+    end;
     local y = {
         // This is not a top-level function (contains nothing, but shows up in childItems of its parent.)
         foo = function() end
     };
     (function()
-        function moreNest() {}
+        function moreNest() end
     end)();
 end)();
 (function() // Different anonymous functions are not merged
     // These will only show up as childItems.
-    function z() {}
+    function z() end
     console.log(function() end)
-    describe("this", 'function', ` + "`" + `is a function` + "`" + `, ` + "`" + `with template literal ${"a"}` + "`" + `, () => {});
-    [].map(() => {});
+    describe("this", 'function', ` + "`" + `is a function` + "`" + `, ` + "`" + `with template literal ${"a"}` + "`" + `, function() end);
+    [].map(function() end);
 end)
 (function()
     // Classes show up in top-level regardless of whether they have names or inner declarations.

@@ -17,7 +17,7 @@ func TestInlayHintsUsing(t *testing.T) {
 	// Lua-keyed function-valued field instead.
 	const content = `// @target: esnext
 using _defer = {
-	[Symbol.dispose] = function() {},
+	[Symbol.dispose] = function() end,
 };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

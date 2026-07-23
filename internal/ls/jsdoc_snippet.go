@@ -217,11 +217,11 @@ func getCommentOwnerInfoWorker(commentOwner *ast.Node, generateReturnInDocTempla
 		return nil, false
 	}
 	switch commentOwner.Kind {
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindMethodDeclaration, ast.KindConstructor, ast.KindMethodSignature, ast.KindArrowFunction:
+	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindMethodSignature, ast.KindArrowFunction:
 		return &commentOwnerInfo{commentOwner: commentOwner, parameters: commentOwner.Parameters(), hasReturn: hasReturn(commentOwner, generateReturnInDocTemplate)}, false
 	case ast.KindPropertyAssignment:
 		return getCommentOwnerInfoWorker(commentOwner.AsPropertyAssignment().Initializer, generateReturnInDocTemplate)
-	case ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
 		return &commentOwnerInfo{commentOwner: commentOwner}, false
 	case ast.KindPropertySignature:
 		if typeNode := commentOwner.AsPropertySignatureDeclaration().Type; typeNode != nil && ast.IsFunctionTypeNode(typeNode) {
@@ -256,10 +256,6 @@ func getCommentOwnerInfoWorker(commentOwner *ast.Node, generateReturnInDocTempla
 			return &commentOwnerInfo{commentOwner: commentOwner, parameters: binaryExpression.Right.Parameters(), hasReturn: hasReturn(binaryExpression.Right, generateReturnInDocTemplate)}, false
 		}
 		return &commentOwnerInfo{commentOwner: commentOwner}, false
-	case ast.KindPropertyDeclaration:
-		if initializer := commentOwner.AsPropertyDeclaration().Initializer; initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer) {
-			return &commentOwnerInfo{commentOwner: commentOwner, parameters: initializer.Parameters(), hasReturn: hasReturn(initializer, generateReturnInDocTemplate)}, false
-		}
 	}
 	return nil, false
 }
@@ -291,8 +287,6 @@ func getRightHandSideOfAssignment(rightHandSide *ast.Node) *ast.Node {
 	switch rightHandSide.Kind {
 	case ast.KindFunctionExpression, ast.KindArrowFunction:
 		return rightHandSide
-	case ast.KindClassExpression:
-		return core.Find(rightHandSide.Members(), ast.IsConstructorDeclaration)
 	default:
 		return nil
 	}

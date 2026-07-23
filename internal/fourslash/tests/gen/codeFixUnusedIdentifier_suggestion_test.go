@@ -16,9 +16,9 @@ func TestCodeFixUnusedIdentifier_suggestion(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: false
-function f([|p|]) {
+function f([|p|])
     local [|x|] = 0;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifySuggestionDiagnostics(t, []*lsproto.Diagnostic{

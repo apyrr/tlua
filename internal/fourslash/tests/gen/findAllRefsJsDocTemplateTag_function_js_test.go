@@ -20,7 +20,7 @@ func TestFindAllRefsJsDocTemplateTag_function_js(t *testing.T) {
  * @template /*1*/T
  * @return {/*2*/T}
  */
-function f() {}`
+function f() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2")

@@ -18,15 +18,15 @@ func TestGoToImplementationInterface_04(t *testing.T) {
     (a: number): void
 }
 
-local bar: Foo = [|(a) => {/**0*/}|];
+local bar: Foo = [|function(a) /**0*/ end|];
 
-function whatever(x: Foo = [|(a) => {/**1*/}|] ) {
-}
+function whatever(x: Foo = [|function(a) /**1*/ end|] )
+end
 
 class Bar {
-    x: Foo = [|(a) => {/**2*/}|]
+    x: Foo = [|function(a) /**2*/ end|]
 
-    constructor(public f: Foo = [|function(a) {}|] ) {}
+    constructor(public f: Foo = [|function(a) end|] ) end
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -17,13 +17,13 @@ func TestFormattingInDestructuring1(t *testing.T) {
 	const content = `interface local { }
 /*1*/local x: local         [];
 
-function foo() {
+function foo()
     'use strict'
 /*2*/    local        [x] = [];
 /*3*/    local      [x] = [];
 /*4*/    for (let[x] = [];x < 1;) {
     }
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")

@@ -24,9 +24,9 @@ func TestDocCommentTemplateClassDeclProperty01(t *testing.T) {
         return p1;
     }
     /*2*/
-    baz = function (p2, p3) {
+    baz = function (p2, p3)
         return p2;
-    }
+    end
 }`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)

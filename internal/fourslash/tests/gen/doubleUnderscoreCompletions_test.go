@@ -19,9 +19,9 @@ func TestDoubleUnderscoreCompletions(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.lua
-function MyObject(){
+function MyObject()
     this.__property = 1;
-}
+end
 local instance = new MyObject();
 instance./*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

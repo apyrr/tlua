@@ -17,7 +17,7 @@ func TestSemanticClassificatonTypeAlias(t *testing.T) {
 	const content = `type /*0*/Alias = number
 local x: /*1*/Alias;
 local y = </*2*/Alias>{};
-function f(x: /*3*/Alias): /*4*/Alias { return undefined; }`
+function f(x: /*3*/Alias): /*4*/Alias return undefined; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{

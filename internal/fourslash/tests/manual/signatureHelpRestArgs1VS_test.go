@@ -11,7 +11,7 @@ import (
 func TestSignatureHelpRestArgs1VS(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function fn(a: number, b: number, c: number) {}
+	const content = `function fn(a: number, b: number, c: number) end
 local a = [1, 2] as const;
 local b = [1] as const;
 

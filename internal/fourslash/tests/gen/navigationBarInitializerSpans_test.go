@@ -15,7 +15,7 @@ func TestNavigationBarInitializerSpans(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// get the name for the navbar from the variable name rather than the function name
-local [|[|x|] = () => { local [|a|]; }|];
+local [|[|x|] = function() local [|a|]; end|];
 local [|[|f|] = function() local [|b|]; end|];
 local [|[|y|] = { [|[|z|] = function() local [|c|]; end|] }|];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

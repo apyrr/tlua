@@ -14,8 +14,8 @@ func TestTypeCheckAfterAddingGenericParameter(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f<x, x>() { }
-function f2<X, X>(b: X): X { return null; }
+	const content = `function f<x, x>() end
+function f2<X, X>(b: X): X return null; end
 class C<X> {
     public f<x, x>() {}
 f2<X>(b): X { return null; }

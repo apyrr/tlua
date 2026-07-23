@@ -279,8 +279,8 @@ func TestBuildConfigFileErrors(t *testing.T) {
 		{
 			subScenario: "reports syntax errors in config file",
 			files: FileMap{
-				"/home/src/workspaces/project/a.tlua": "function foo() { }",
-				"/home/src/workspaces/project/b.tlua": "function bar() { }",
+				"/home/src/workspaces/project/a.tlua": "function foo() end",
+				"/home/src/workspaces/project/b.tlua": "function bar() end",
 				"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
 					{
 						"compilerOptions": {
@@ -303,7 +303,7 @@ func TestBuildConfigFileErrors(t *testing.T) {
 				{
 					caption: "reports syntax errors after change to ts file",
 					edit: func(sys *TestSys) {
-						sys.appendFile("/home/src/workspaces/project/a.tlua", "function fooBar() { }")
+						sys.appendFile("/home/src/workspaces/project/a.tlua", "\nfunction fooBar() end")
 					},
 				},
 				noChange,
@@ -332,8 +332,8 @@ func TestBuildConfigFileErrors(t *testing.T) {
 		{
 			subScenario: "reports syntax errors in config file",
 			files: FileMap{
-				"/home/src/workspaces/project/a.tlua": "function foo() { }",
-				"/home/src/workspaces/project/b.tlua": "function bar() { }",
+				"/home/src/workspaces/project/a.tlua": "function foo() end",
+				"/home/src/workspaces/project/b.tlua": "function bar() end",
 				"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
 					{
 						"compilerOptions": {
@@ -356,7 +356,7 @@ func TestBuildConfigFileErrors(t *testing.T) {
 				{
 					caption: "reports syntax errors after change to ts file",
 					edit: func(sys *TestSys) {
-						sys.appendFile("/home/src/workspaces/project/a.tlua", "function fooBar() { }")
+						sys.appendFile("/home/src/workspaces/project/a.tlua", "\nfunction fooBar() end")
 					},
 				},
 				{
@@ -408,7 +408,7 @@ func TestBuildDemoProject(t *testing.T) {
 					name: string;
 				}
 
-				function createDog(): Dog {
+				function createDog(): Dog
 					return ({
 						size: "medium",
 						woof: function()
@@ -416,7 +416,7 @@ func TestBuildDemoProject(t *testing.T) {
 						end,
 						name: utilities.makeRandomName()
 					});
-				}
+				end
 
 				return { createDog = createDog };
 			`),
@@ -438,14 +438,14 @@ func TestBuildDemoProject(t *testing.T) {
 				}
 			`),
 			"/user/username/projects/demo/core/utilities.tlua": stringtestutil.Dedent(`
-				function makeRandomName() {
+				function makeRandomName()
 					return "Bob!?! ";
-				}
+				end
 
-				function lastElementOf<T>(arr: T[]): T | undefined {
-					if (arr.length == 0) return undefined;
+				function lastElementOf<T>(arr: T[]): T | undefined
+					if arr.length == 0 then return undefined end
 					return arr[arr.length - 1];
-				}
+				end
 
 				return { makeRandomName = makeRandomName, lastElementOf = lastElementOf };
 			`),
@@ -461,11 +461,11 @@ func TestBuildDemoProject(t *testing.T) {
 			"/user/username/projects/demo/zoo/zoo.tlua": stringtestutil.Dedent(`
 				local animals = require('animals.index');
 
-				function createZoo(): Array<Dog> {
+				function createZoo(): Array<Dog>
 					return {
 						animals.createDog()
 					};
-				}
+				end
 
 				return { createZoo = createZoo };
 			`),
@@ -687,14 +687,13 @@ func TestBuildFileDelete(t *testing.T) {
 			files: FileMap{
 				"/home/src/workspaces/solution/child/child.tlua": stringtestutil.Dedent(`
 					local child2 = require("child2");
-					function child() {
+					function child()
 						child2.child2();
-					}
+					end
 					return { child = child };
 				`),
 				"/home/src/workspaces/solution/child/child2.tlua": stringtestutil.Dedent(`
-					function child2() {
-					}
+					function child2() end
 					return { child2 = child2 };
 				`),
 				"/home/src/workspaces/solution/child/tluaconfig.json": stringtestutil.Dedent(`
@@ -704,9 +703,9 @@ func TestBuildFileDelete(t *testing.T) {
 				`),
 				"/home/src/workspaces/solution/main/main.tlua": stringtestutil.Dedent(`
                     local child = require("child.child");
-                    function main() {
+                    function main()
                         child.child();
-                    }
+                    end
                     return { main = main };
                 `),
 				"/home/src/workspaces/solution/main/tluaconfig.json": stringtestutil.Dedent(`
@@ -734,14 +733,13 @@ func TestBuildFileDelete(t *testing.T) {
 			files: FileMap{
 				"/home/src/workspaces/solution/child/child.tlua": stringtestutil.Dedent(`
 					local child2 = require("child2");
-					function child() {
+					function child()
 						child2.child2();
-					}
+					end
 					return { child = child };
 				`),
 				"/home/src/workspaces/solution/child/child2.tlua": stringtestutil.Dedent(`
-					function child2() {
-					}
+					function child2() end
 					return { child2 = child2 };
 				`),
 				"/home/src/workspaces/solution/child/tluaconfig.json": stringtestutil.Dedent(`
@@ -1106,11 +1104,10 @@ func TestBuildProgramUpdates(t *testing.T) {
 					}
 
 					function createSomeObject(): SomeObject
-					{
 						return {
-							message: "new Object"
+							message = "new Object"
 						};
-					}
+					end
 
 					return { createSomeObject = createSomeObject };
 				`),
@@ -1149,7 +1146,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 			files: FileMap{
 				"/user/username/projects/solution/app/fileWithError.tlua": stringtestutil.Dedent(`
 					local myClassWithError = {
-						tags: () => { },
+						tags: function() end,
 						p: 12
 					};
 				`),
@@ -1177,7 +1174,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 			files: FileMap{
 				"/user/username/projects/solution/app/fileWithError.tlua": stringtestutil.Dedent(`
 					local myClassWithError = {
-						tags: () => { },
+						tags: function() end,
 						p: 12
 					};
 				`),
@@ -1205,7 +1202,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 			files: FileMap{
 				"/user/username/projects/solution/app/fileWithError.tlua": stringtestutil.Dedent(`
 					local myClassWithError = {
-						tags: () => { },
+						tags: function() end,
 					};
 				`),
 				"/user/username/projects/solution/app/fileWithoutError.tlua": "local myClass = { };",
@@ -1224,7 +1221,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("/user/username/projects/solution/app/fileWithError.tlua", stringtestutil.Dedent(`
 							local myClassWithError = {
-								tags: () => { },
+								tags: function() end,
 								p: 12
 							};
 						`))
@@ -1243,7 +1240,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 			files: FileMap{
 				"/user/username/projects/solution/app/fileWithError.tlua": stringtestutil.Dedent(`
 					local myClassWithError = {
-						tags: () => { },
+						tags: function() end,
 					};
 				`),
 				"/user/username/projects/solution/app/fileWithoutError.tlua": "local myClass = { };",
@@ -1262,7 +1259,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("/user/username/projects/solution/app/fileWithError.tlua", stringtestutil.Dedent(`
 							local myClassWithError = {
-								tags: () => { },
+								tags: function() end,
 								p: 12
 							};
 						`))
@@ -1279,7 +1276,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 		{
 			subScenario: "works when noUnusedParameters changes to false",
 			files: FileMap{
-				"/user/username/projects/myproject/index.tlua": `local fn = (a: string, b: string) => b;`,
+				"/user/username/projects/myproject/index.tlua": `local fn = function(a: string, b: string) return b end;`,
 				"/user/username/projects/myproject/tluaconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -1946,14 +1943,14 @@ func TestBuildRoots(t *testing.T) {
 			}`),
 			"/home/src/workspaces/solution/projects/shared/src/myClass.tlua": "local MyClass = { };\nreturn { MyClass = MyClass };",
 			"/home/src/workspaces/solution/projects/shared/src/logging.tlua": stringtestutil.Dedent(`
-				function log(str: string) {
+				function log(str: string)
 					console.log(str);
-				}
+				end
 			`),
 			"/home/src/workspaces/solution/projects/shared/src/random.tlua": stringtestutil.Dedent(`
-				function randomFn(str: string) {
+				function randomFn(str: string)
 					console.log(str);
-				}
+				end
 			`),
 			"/home/src/workspaces/solution/projects/shared/tluaconfig.json": stringtestutil.Dedent(`
 			{
@@ -1990,7 +1987,7 @@ func TestBuildRoots(t *testing.T) {
 			{
 				caption: "edit logging file",
 				edit: func(sys *TestSys) {
-					sys.appendFile("/home/src/workspaces/solution/projects/shared/src/logging.tlua", "local x = 10;")
+					sys.appendFile("/home/src/workspaces/solution/projects/shared/src/logging.tlua", "\nlocal x = 10;")
 				},
 			},
 			noChangeEdit,
@@ -2186,8 +2183,8 @@ func TestBuildSample(t *testing.T) {
 			}`),
 			"/user/username/projects/sample1/core/index.tlua": stringtestutil.Dedent(`
 				local someString: string = "HELLO WORLD";
-				function leftPad(s: string, n: number) { return s + n; }
-				function multiply(a: number, b: number) { return a * b; }
+				function leftPad(s: string, n: number) return s + n; end
+				function multiply(a: number, b: number) return a * b; end
 				return { someString = someString, leftPad = leftPad, multiply = multiply };
 			`),
 			"/user/username/projects/sample1/core/some_decl.d.tlua":   `declare dts: any;`,
@@ -2195,9 +2192,9 @@ func TestBuildSample(t *testing.T) {
 			"/user/username/projects/sample1/logic/tluaconfig.json":   getLogicConfig(),
 			"/user/username/projects/sample1/logic/index.tlua": stringtestutil.Dedent(`
 				local c = require('core.index');
-				function getSecondsInDay() {
+				function getSecondsInDay()
 					return c.multiply(10, 15);
-				}
+				end
 				local mod = require('core.anotherModule');
 				return { getSecondsInDay = getSecondsInDay, m = mod };
 			`),
@@ -2344,7 +2341,7 @@ func TestBuildSample(t *testing.T) {
 				caption: "Make local change to core",
 				edit: func(sys *TestSys) {
 					// index.tlua ends in a top-level return, so add the local-only function at the top
-					sys.prependFile("/user/username/projects/sample1/core/index.tlua", "function foo() { }\n")
+					sys.prependFile("/user/username/projects/sample1/core/index.tlua", "function foo() end\n")
 				},
 			},
 		}
@@ -2896,7 +2893,7 @@ func TestBuildSample(t *testing.T) {
 					caption: "Make non dts change",
 					edit: func(sys *TestSys) {
 						// index.tlua ends in a top-level return, so add the local-only function at the top
-						sys.prependFile("/user/username/projects/sample1/logic/index.tlua", "function someFn() { }\n")
+						sys.prependFile("/user/username/projects/sample1/logic/index.tlua", "function someFn() end\n")
 					},
 				},
 				{
@@ -3149,7 +3146,7 @@ func TestBuildSolutionProject(t *testing.T) {
 		{
 			subScenario: "does not have empty files diagnostic when files is empty and references are provided",
 			files: FileMap{
-				"/home/src/workspaces/solution/core/index.tlua": "function multiply(a: number, b: number) { return a * b; }",
+				"/home/src/workspaces/solution/core/index.tlua": "function multiply(a: number, b: number) return a * b; end",
 				"/home/src/workspaces/solution/core/tluaconfig.json": stringtestutil.Dedent(`
                     {
                         "compilerOptions": {

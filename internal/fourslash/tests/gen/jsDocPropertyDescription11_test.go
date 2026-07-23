@@ -20,9 +20,9 @@ func TestJsDocPropertyDescription11(t *testing.T) {
     /** Something else */
     [key: ` + "`" + `any${string}` + "`" + `]: string;
 }
-function aliasExample(e: AliasExample) {
+function aliasExample(e: AliasExample)
     console.log(e./*alias*/anything);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "alias", "(index) AliasExample[string | `any${string}`]: string", "Something generic\nSomething else")

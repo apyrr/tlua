@@ -15,8 +15,7 @@ func TestSignatureHelpCommentsFunctionDeclaration(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This comment should appear for foo*/
-function foo() {
-}
+function foo() end
 foo(/*4*/);
 /** This is comment for function signature*/
 function fooWithParameters(/** this is comment about a*/a: string,

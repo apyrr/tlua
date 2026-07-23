@@ -15,21 +15,20 @@ func TestCompletionFilterText3(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 declare foo1: { b: number; "a bc": string; };
-if (true) {
+if true then
     foo1[|.|]/*1*/
-} 
-else {
+else
     foo1[|.a|]/*2*/
-}
+end
 
 declare foo2: { b: number; "a bc": string; } | undefined;
-if (true) {
+if true then
     foo2[|.|]/*3*/
-} else if (false) {
+elseif false then
     foo2[|.a|]/*4*/
-} else {
+else
     foo2[|?.|]/*5*/
-}
+end
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

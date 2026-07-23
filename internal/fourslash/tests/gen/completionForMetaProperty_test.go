@@ -18,7 +18,7 @@ func TestCompletionForMetaProperty(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import./*1*/;
 new./*2*/;
-function test() { new./*3*/ }`
+function test() new./*3*/ end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

@@ -21,7 +21,7 @@ func TestCompletionListInObjectLiteral6(t *testing.T) {
     a = "a",
     b = "b"
 };
-function fn<T extends { [key: string]: any }>(obj: T, events: { [Key in ` + "`" + `on_${string & keyof T}` + "`" + `]?: Key }) {}
+function fn<T extends { [key: string]: any }>(obj: T, events: { [Key in ` + "`" + `on_${string & keyof T}` + "`" + `]?: Key }) end
 
 fn(foo, {
     /*1*/

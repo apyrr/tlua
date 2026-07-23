@@ -17,9 +17,9 @@ func TestReferencesBloomFilters2(t *testing.T) {
 	const content = `// @Filename: declaration.tlua
 local container = { /*1*/42: 1 };
 // @Filename: expression.tlua
-function blah() { return (container[42]) === 2;  };
+function blah() return (container[42]) === 2;  end;
 // @Filename: stringIndexer.tlua
-function blah2() { container["42"] };
+function blah2() container["42"] end;
 // @Filename: redeclaration.tlua
 container = { "42" : 18 };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

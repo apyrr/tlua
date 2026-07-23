@@ -16,9 +16,9 @@ func TestGenericParameterHelp(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IFoo { }
 
-function testFunction<T extends IFoo, U, M extends IFoo>(a: T, b: U, c: M): M {
+function testFunction<T extends IFoo, U, M extends IFoo>(a: T, b: U, c: M): M
     return null;
-}
+end
 
 // Function calls
 testFunction</*1*/

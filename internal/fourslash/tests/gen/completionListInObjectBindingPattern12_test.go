@@ -20,8 +20,7 @@ func TestCompletionListInObjectBindingPattern12(t *testing.T) {
     property2: string;
 }
 
-function f({ property1, /**/ }: I): void {
-}`
+function f({ property1, /**/ }: I): void end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

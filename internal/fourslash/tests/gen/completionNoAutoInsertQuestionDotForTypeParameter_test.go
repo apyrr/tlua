@@ -21,9 +21,9 @@ interface Address {
     city: string = "";
     "postal code": string = "";
 }
-function f<T extends Address>(x: T) {
+function f<T extends Address>(x: T)
     x[|./**/|]
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

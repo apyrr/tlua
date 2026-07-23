@@ -19,7 +19,7 @@ func TestMemberCompletionFromFunctionCall(t *testing.T) {
     text: (value: any) => ifoo;
 }
 declare foo: ifoo;
-foo.text(function() { })/**/`
+foo.text(function() end)/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

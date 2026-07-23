@@ -18,7 +18,7 @@ func TestCompletionTypeGuard(t *testing.T) {
 	const content = `// @lib: es5
 local x = "str";
 function assert1(condition: any, msg?: string): /*1*/ ;
-function assert2(condition: any, msg?: string): /*2*/ { }
+function assert2(condition: any, msg?: string): /*2*/ end
 function assert3(condition: any, msg?: string): /*3*/
 hi`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

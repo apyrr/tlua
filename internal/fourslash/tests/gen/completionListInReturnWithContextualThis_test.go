@@ -23,16 +23,16 @@ func TestCompletionListInReturnWithContextualThis(t *testing.T) {
 
 declare function wrap(cb: (this: Ctx) => any): void;
 
-wrap(function () {
+wrap(function ()
     local xs = this.foo();
     return xs./*inReturn*/
-});
+end);
 
-wrap(function () {
+wrap(function ()
     local xs = this.foo();
     local y = xs./*involvedInReturn*/
     return y;
-});`
+end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "inReturn", &fourslash.CompletionsExpectedList{

@@ -20,9 +20,9 @@ declare function /**/foo(x?: number): void;
 declare function foo(x?: string): void;
 declare function foo(x?: boolean): void;
 // @filename: main.tlua
-function bar() {
+function bar()
     foo();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

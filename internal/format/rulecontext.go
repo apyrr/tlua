@@ -159,7 +159,6 @@ func isBinaryOpContext(context *FormattingContext) bool {
 		// equal in p = 0
 		fallthrough
 	case ast.KindParameter,
-		ast.KindPropertyDeclaration,
 		ast.KindPropertySignature:
 		return context.currentTokenSpan.Kind == ast.KindEqualsToken || context.nextTokenSpan.Kind == ast.KindEqualsToken
 	// "in" keyword in [P in keyof T] T[P]
@@ -204,19 +203,10 @@ func isNotTypeAnnotationContext(context *FormattingContext) bool {
 
 func isTypeAnnotationContext(context *FormattingContext) bool {
 	contextKind := context.contextNode.Kind
-	return contextKind == ast.KindPropertyDeclaration ||
-		contextKind == ast.KindPropertySignature ||
+	return contextKind == ast.KindPropertySignature ||
 		contextKind == ast.KindParameter ||
 		contextKind == ast.KindVariableDeclaration ||
 		ast.IsFunctionLikeKind(contextKind)
-}
-
-func isOptionalPropertyContext(context *FormattingContext) bool {
-	return ast.IsPropertyDeclaration(context.contextNode) && ast.HasQuestionToken(context.contextNode)
-}
-
-func isNonOptionalPropertyContext(context *FormattingContext) bool {
-	return !isOptionalPropertyContext(context)
 }
 
 func isConditionalOperatorContext(context *FormattingContext) bool {
@@ -275,19 +265,11 @@ func nodeIsBlockContext(node *ast.Node) bool {
 func isFunctionDeclContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindFunctionDeclaration,
-		ast.KindMethodDeclaration,
 		ast.KindMethodSignature:
-		// case ast.KindMemberFunctionDeclaration:
-		fallthrough
-	case ast.KindGetAccessor,
-		ast.KindSetAccessor:
-		// case ast.KindMethodSignature:
 		fallthrough
 	case ast.KindCallSignature,
 		ast.KindFunctionExpression,
-		ast.KindConstructor,
 		ast.KindArrowFunction:
-		// case ast.KindConstructorDeclaration:
 		// case ast.KindSimpleArrowFunctionExpression:
 		// case ast.KindParenthesizedArrowFunctionExpression:
 		fallthrough
@@ -312,9 +294,7 @@ func isTypeScriptDeclWithBlockContext(context *FormattingContext) bool {
 
 func nodeIsTypeScriptDeclWithBlockContext(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindClassDeclaration,
-		ast.KindClassExpression,
-		ast.KindInterfaceDeclaration,
+	case ast.KindInterfaceDeclaration,
 		ast.KindTypeLiteral,
 		ast.KindModuleDeclaration,
 		ast.KindExportDeclaration,
@@ -329,9 +309,7 @@ func nodeIsTypeScriptDeclWithBlockContext(node *ast.Node) bool {
 
 func isAfterCodeBlockContext(context *FormattingContext) bool {
 	switch context.currentTokenParent.Kind {
-	case ast.KindClassDeclaration,
-		ast.KindModuleDeclaration,
-		ast.KindCatchClause,
+	case ast.KindModuleDeclaration,
 		ast.KindModuleBlock:
 		return true
 	case ast.KindBlock:
@@ -348,16 +326,10 @@ func isControlDeclContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindIfStatement,
 		ast.KindForOfStatement,
-		ast.KindWhileStatement,
-		ast.KindTryStatement,
-		ast.KindDoStatement,
-		ast.KindWithStatement:
+		ast.KindWhileStatement:
 		// TODO
 		// case ast.KindElseClause:
-		fallthrough
-	case ast.KindCatchClause:
 		return true
-
 	default:
 		return false
 	}
@@ -468,13 +440,10 @@ func isTypeArgumentOrParameterOrAssertion(token TextRangeWithKind, parent *ast.N
 	case ast.KindTypeReference,
 		ast.KindTypeAssertionExpression,
 		ast.KindTypeAliasDeclaration,
-		ast.KindClassDeclaration,
-		ast.KindClassExpression,
 		ast.KindInterfaceDeclaration,
 		ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
-		ast.KindMethodDeclaration,
 		ast.KindMethodSignature,
 		ast.KindCallSignature,
 		ast.KindConstructSignature,
@@ -516,7 +485,6 @@ func isStatementConditionContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindIfStatement,
 		ast.KindForOfStatement,
-		ast.KindDoStatement,
 		ast.KindWhileStatement:
 		return true
 
@@ -555,8 +523,7 @@ func isSemicolonDeletionContext(context *FormattingContext) bool {
 		return true
 	}
 
-	if nextTokenKind == ast.KindSemicolonClassElement ||
-		nextTokenKind == ast.KindSemicolonToken {
+	if nextTokenKind == ast.KindSemicolonToken {
 		return false
 	}
 
@@ -573,12 +540,7 @@ func isSemicolonDeletionContext(context *FormattingContext) bool {
 			nextTokenKind != ast.KindOpenParenToken
 	}
 
-	if ast.IsPropertyDeclaration(context.currentTokenParent) {
-		return context.currentTokenParent.Initializer() == nil
-	}
-
 	return context.currentTokenParent.Kind != ast.KindEmptyStatement &&
-		context.currentTokenParent.Kind != ast.KindSemicolonClassElement &&
 		nextTokenKind != ast.KindOpenBracketToken &&
 		nextTokenKind != ast.KindOpenParenToken &&
 		nextTokenKind != ast.KindPlusToken &&

@@ -14,7 +14,7 @@ func TestFormattingElseInsideAFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local x = function() {
+	const content = `local x = function()
     if (true) {
     /*1*/} else {/*2*/
 }
@@ -25,5 +25,5 @@ func TestFormattingElseInsideAFunction(t *testing.T) {
 	f.GoToMarker(t, "2")
 	f.InsertLine(t, "")
 	f.GoToMarker(t, "1")
-	f.VerifyCurrentLineContent(t, `    } else {`)
+	f.VerifyCurrentLineContent(t, `} else {`)
 }

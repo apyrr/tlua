@@ -19,7 +19,7 @@ func TestGetJavaScriptSyntacticDiagnostics02(t *testing.T) {
 // @Filename: b.lua
 local a = "a";
 local b: boolean = true;
-function foo(): string { }
+function foo(): string end
 local var = "c";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

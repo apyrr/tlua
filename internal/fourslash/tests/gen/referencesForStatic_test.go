@@ -34,9 +34,9 @@ class foo2 {
         foo./*7*/n = x;
     }
 
-    function b(n) {
+    function b(n)
         n = foo./*8*/n;
-    }
+    end
 }
 // @Filename: referencesOnStatic_2.tlua
 local q = foo./*9*/n;`

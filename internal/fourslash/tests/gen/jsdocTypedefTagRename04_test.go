@@ -18,18 +18,18 @@ func TestJsdocTypedefTagRename04(t *testing.T) {
 // @allowNonTsExtensions: true
 // @Filename: jsDocTypedef_form2.lua
 
-function test1() {
+function test1()
    /** @typedef {(string | number)} NumberLike */
 
-   /** @type {/*1*/NumberLike} */
+   /** @type {/*1*/NumberLike end */
    local numberLike;
 }
-function test2() {
+function test2()
    /** @typedef {(string | number)} NumberLike2 */
 
    /** @type {NumberLike2} */
    local n/*2*/umberLike2;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()

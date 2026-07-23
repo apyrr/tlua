@@ -18,10 +18,10 @@ func TestProtoVarVisibleWithOuterScopeUnderscoreProto(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// outer
 local ___proto__ = 10;
-function foo() {
+function foo()
     local __proto__ = "hello";
     /**/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

@@ -21,9 +21,9 @@ func TestJsdocParamTagSpecialKeywords(t *testing.T) {
 /**
  * @param {string} type
  */
-function test(type) {
+function test(type)
     type./**/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()

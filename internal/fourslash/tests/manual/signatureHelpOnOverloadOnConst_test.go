@@ -13,8 +13,7 @@ func TestSignatureHelpOnOverloadOnConst(t *testing.T) {
 	const content = `function x1(x: 'hi');
 function x1(y: 'bye');
 function x1(z: string);
-function x1(a: any) {
-}
+function x1(a: any) end
 
 x1(''/*1*/);
 x1('hi'/*2*/);

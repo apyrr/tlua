@@ -531,7 +531,7 @@ func getCandidateSourceDeclarationNames(originalNode *ast.Node, declaration *ast
 		if declaration.Kind == ast.KindExportAssignment {
 			names = append(names, "default")
 		}
-		if (ast.IsFunctionDeclaration(declaration) || ast.IsClassDeclaration(declaration)) && declaration.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
+		if ast.IsFunctionDeclaration(declaration) && declaration.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
 			names = append(names, "default")
 		}
 		if ast.IsImportSpecifier(declaration) || ast.IsExportSpecifier(declaration) {
@@ -594,7 +594,7 @@ func findDeclarationNodesByName(sourceFile *ast.SourceFile, names []string) []*a
 		if wantDefault && node.Kind == ast.KindExportAssignment {
 			matched = true
 		}
-		if wantDefault && (ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node)) && node.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
+		if wantDefault && ast.IsFunctionDeclaration(node) && node.ModifierFlags()&ast.ModifierFlagsExportDefault == ast.ModifierFlagsExportDefault {
 			matched = true
 		}
 		if matched {
@@ -651,12 +651,8 @@ func getPropertyLikeSourceDeclarations(originalNode *ast.Node, declarations []*a
 		switch node.Kind {
 		case ast.KindPropertyAssignment,
 			ast.KindShorthandPropertyAssignment,
-			ast.KindPropertyDeclaration,
 			ast.KindPropertySignature,
-			ast.KindMethodDeclaration,
-			ast.KindMethodSignature,
-			ast.KindGetAccessor,
-			ast.KindSetAccessor:
+			ast.KindMethodSignature:
 			return true
 		default:
 			return false

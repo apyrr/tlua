@@ -27,7 +27,7 @@ local o: ContextualInterface = {
 interface ContextualInterface2 {
     (this: void, n: number): void;
 }
-local contextualInterface2: ContextualInterface2 = function (th/*2*/is, n) { }`
+local contextualInterface2: ContextualInterface2 = function (th/*2*/is, n) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "this: ContextualInterface", "")

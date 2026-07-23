@@ -14,7 +14,7 @@ func TestFormattingOnEmptyInterfaceLiteral(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/*1*/    function    foo  (  x  :    {    }    )    {    }
+	const content = `/*1*/    function    foo  (  x  :    {    }    )    end
 
 /*2*/foo    (  {     }   )    ;
 
@@ -28,7 +28,7 @@ func TestFormattingOnEmptyInterfaceLiteral(t *testing.T) {
 	defer done()
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
-	f.VerifyCurrentLineContent(t, `function foo(x: {}) { }`)
+	f.VerifyCurrentLineContent(t, `function foo(x: {}) end`)
 	f.GoToMarker(t, "2")
 	f.VerifyCurrentLineContent(t, `foo({});`)
 	f.GoToMarker(t, "3")

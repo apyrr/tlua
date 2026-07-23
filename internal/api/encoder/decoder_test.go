@@ -99,7 +99,7 @@ func TestDecodeSourceFile_VariableDeclarationListFlags(t *testing.T) {
 
 func TestDecodeSourceFile_FunctionDeclaration(t *testing.T) {
 	t.Parallel()
-	sf := parseSourceFile("function add(a: number, b: number): number { return a + b; }")
+	sf := parseSourceFile("function add(a: number, b: number): number return a + b end")
 	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
@@ -193,7 +193,7 @@ func TestDecodeSourceFile_InterfaceDeclaration(t *testing.T) {
 
 func TestDecodeNodes_SubtreeRoundTrip(t *testing.T) {
 	t.Parallel()
-	sf := parseSourceFile("function greet(name: string) { return `Hello, ${name}!`; }")
+	sf := parseSourceFile("function greet(name: string) return `Hello, ${name}!` end")
 
 	var funcNode *ast.Node
 	visitor := &ast.NodeVisitor{}
@@ -305,7 +305,7 @@ func TestDecodeSourceFile_EmptyBlockAndParams(t *testing.T) {
 	t.Parallel()
 	// Empty blocks and parameter lists must decode with non-nil NodeLists (not nil),
 	// matching parser behavior. Previously the decoder left them nil, crashing the printer.
-	sf := parseSourceFile("function foo() {}")
+	sf := parseSourceFile("function foo() end")
 	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
@@ -321,31 +321,10 @@ func TestDecodeSourceFile_EmptyBlockAndParams(t *testing.T) {
 	assert.Equal(t, len(block.Statements.Nodes), 0)
 }
 
-func TestDecodeSourceFile_ArrowFunctionEmptyParams(t *testing.T) {
-	t.Parallel()
-	// `() => {}` must decode with non-nil Parameters (empty NodeList),
-	// matching parser behavior. Previously the decoder left it nil, crashing the printer.
-	sf := parseSourceFile("local f = () => {};")
-	buf, _, err := encoder.EncodeSourceFile(sf)
-	assert.NilError(t, err)
-
-	decoded, err := encoder.DecodeSourceFile(buf)
-	assert.NilError(t, err)
-
-	decl := decoded.Statements.Nodes[0].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
-	arrow := decl.Initializer.AsArrowFunction()
-	assert.Assert(t, arrow.Parameters != nil, "ArrowFunction.Parameters must be non-nil for () => {}")
-	assert.Equal(t, len(arrow.Parameters.Nodes), 0)
-	assert.Assert(t, arrow.Body != nil)
-	block := arrow.Body.AsBlock()
-	assert.Assert(t, block.Statements != nil, "Block.Statements must be non-nil for empty body")
-	assert.Equal(t, len(block.Statements.Nodes), 0)
-}
-
 func TestDecodeSourceFile_FunctionExpressionEmptyParams(t *testing.T) {
 	t.Parallel()
 	// `function() {}` must decode with non-nil Parameters (empty NodeList).
-	sf := parseSourceFile("local f = function() {};")
+	sf := parseSourceFile("local f = function() end;")
 	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 

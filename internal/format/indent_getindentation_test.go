@@ -10,12 +10,11 @@ import (
 	"github.com/apyrr/tlua/internal/parser"
 )
 
-func TestGetIndentationForNamedImportsPosition(t *testing.T) {
+func TestGetIndentationForObjectTypeMemberPosition(t *testing.T) {
 	t.Parallel()
 
-	text := "import {\n    type SomeInterface,\n} from \"./exports.lua\";"
-	// Position 9: \n
-	// Position 10: first space of "    type SomeInterface"
+	text := "local x: {\n    field: number,\n} = a;"
+	// The member line "    field: number," starts after the "{\n" at position 11.
 
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: "/test.tlua",
@@ -24,10 +23,9 @@ func TestGetIndentationForNamedImportsPosition(t *testing.T) {
 
 	options := lsutil.GetDefaultFormatCodeSettings()
 
-	// The line that contains "    type SomeInterface" starts at position 9 (the \n).
-	// The getAdjustedStartPosition with LeadingTriviaOptionNone returns line start.
-	// Let's test at position 9 (start of line containing the specifier)
-	lineStart := format.GetLineStartPositionForPosition(14, sourceFile) // 14 is somewhere in "    type"
+	// getAdjustedStartPosition with LeadingTriviaOptionNone returns the line start;
+	// position 14 is inside the "    field" indentation of the object-type member.
+	lineStart := format.GetLineStartPositionForPosition(14, sourceFile)
 
 	indent := format.GetIndentation(lineStart, sourceFile, options, true)
 	t.Logf("lineStart=%d, text[lineStart:]=%q", lineStart, text[lineStart:lineStart+10])

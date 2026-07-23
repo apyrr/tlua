@@ -17,12 +17,12 @@ func TestRenameJsSpecialAssignmentRhs2(t *testing.T) {
 	const content = `// @allowJs: true
 // @Filename: a.lua
 local foo = {
-    set: function (x) {
+    set: function (x)
         this._x = x;
-    },
-    copy: function ([|x|]) {
+    end,
+    copy: function ([|x|])
         this._x = [|x|].prop;
-    }
+    end
 };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

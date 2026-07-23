@@ -30,9 +30,9 @@ class OtherBar implements Foo {
     hello() {} // should not show up
 }
 
-function (x: SuperBar) {
+function (x: SuperBar)
     x.he/*function_call*/llo()
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "function_call")

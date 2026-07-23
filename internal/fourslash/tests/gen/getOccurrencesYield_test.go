@@ -15,7 +15,7 @@ func TestGetOccurrencesYield(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function* f() {
+	const content = `function* f()
  [|yield|] 100;
  [|y/**/ield|] [|yield|] 200;
   class Foo {
@@ -23,10 +23,10 @@ func TestGetOccurrencesYield(t *testing.T) {
           return yield 1;
       }
   }
-  return function* g() {
+  return function* g()
     yield 1;
-  }
-}`
+  end
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)

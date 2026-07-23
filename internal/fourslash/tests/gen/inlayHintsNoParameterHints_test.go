@@ -15,7 +15,7 @@ func TestInlayHintsNoParameterHints(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo (a: number, b: number) {}
+	const content = `function foo (a: number, b: number) end
 foo(1, 2);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

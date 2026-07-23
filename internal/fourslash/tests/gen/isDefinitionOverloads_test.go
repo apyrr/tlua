@@ -16,7 +16,7 @@ func TestIsDefinitionOverloads(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*1*/f(x: number): void;
 function /*2*/f(x: string): void;
-function /*3*/f(x: number | string) { }
+function /*3*/f(x: number | string) end
 
 f(1);
 f("a");`

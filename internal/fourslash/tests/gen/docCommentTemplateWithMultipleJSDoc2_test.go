@@ -17,7 +17,7 @@ func TestDocCommentTemplateWithMultipleJSDoc2(t *testing.T) {
 	const content = `/** @typedef {string} Id */
 
 /** /**/ */
-function foo(x, y, z) {}`
+function foo(x, y, z) end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

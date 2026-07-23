@@ -18,9 +18,9 @@ func TestJsDocPropertyDescription8(t *testing.T) {
     /** Something generic */
     static [p: symbol]: any;
 }
-function symbolClass(e: typeof SymbolClass) {
+function symbolClass(e: typeof SymbolClass)
     console.log(e./*symbolClass*/anything);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "symbolClass", "any", "")

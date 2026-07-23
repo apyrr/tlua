@@ -162,22 +162,10 @@ func (l *LanguageService) getSyntacticDocumentHighlights(node *ast.Node, sourceF
 		return l.useParent(node.Parent, ast.IsReturnStatement, getReturnOccurrences, sourceFile)
 	case ast.KindThrowKeyword:
 		return l.useParent(node.Parent, ast.IsThrowStatement, getThrowOccurrences, sourceFile)
-	case ast.KindTryKeyword, ast.KindCatchKeyword, ast.KindFinallyKeyword:
-		var tryStatement *ast.Node
-		if node.Kind == ast.KindCatchKeyword {
-			tryStatement = node.Parent.Parent
-		} else {
-			tryStatement = node.Parent
-		}
-		return l.useParent(tryStatement, ast.IsTryStatement, getTryCatchFinallyOccurrences, sourceFile)
 	case ast.KindBreakKeyword, ast.KindContinueKeyword:
 		return l.useParent(node.Parent, ast.IsBreakOrContinueStatement, getBreakOrContinueStatementOccurrences, sourceFile)
 	case ast.KindForKeyword, ast.KindWhileKeyword, ast.KindDoKeyword:
 		return l.useParent(node.Parent, ast.IsIterationStatement, getLoopBreakContinueOccurrences, sourceFile)
-	case ast.KindConstructorKeyword:
-		return l.getFromAllDeclarations(ast.IsConstructorDeclaration, []ast.Kind{ast.KindConstructorKeyword}, node, sourceFile)
-	case ast.KindGetKeyword, ast.KindSetKeyword:
-		return l.getFromAllDeclarations(ast.IsAccessor, []ast.Kind{ast.KindGetKeyword, ast.KindSetKeyword}, node, sourceFile)
 	case ast.KindAsyncKeyword:
 		return l.highlightSpans(getAsyncAndAwaitOccurrences(node, sourceFile), sourceFile)
 	case ast.KindInKeyword, ast.KindOutKeyword:
@@ -356,24 +344,6 @@ func aggregateOwnedThrowStatements(node *ast.Node, sourceFile *ast.SourceFile) [
 	if ast.IsThrowStatement(node) {
 		return []*ast.Node{node}
 	}
-	if ast.IsTryStatement(node) {
-		// Exceptions thrown within a try block lacking a catch clause are "owned" in the current context.
-		statement := node.AsTryStatement()
-		tryBlock := statement.TryBlock
-		catchClause := statement.CatchClause
-		finallyBlock := statement.FinallyBlock
-
-		var result []*ast.Node
-		if catchClause != nil {
-			result = aggregateOwnedThrowStatements(catchClause, sourceFile)
-		} else if tryBlock != nil {
-			result = aggregateOwnedThrowStatements(tryBlock, sourceFile)
-		}
-		if finallyBlock != nil {
-			result = append(result, aggregateOwnedThrowStatements(finallyBlock, sourceFile)...)
-		}
-		return result
-	}
 	// Do not cross function boundaries.
 	if ast.IsFunctionLike(node) {
 		return nil
@@ -427,8 +397,7 @@ func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node
 }
 
 // For lack of a better name, this function takes a throw statement and returns the
-// nearest ancestor that is a try-block (whose try statement has a catch clause),
-// function-block, or source file.
+// nearest ancestor function block or source file.
 func getThrowStatementOwner(throwStatement *ast.Node) *ast.Node {
 	child := throwStatement
 	for child.Parent != nil {
@@ -438,42 +407,9 @@ func getThrowStatementOwner(throwStatement *ast.Node) *ast.Node {
 			return parent
 		}
 
-		// A throw-statement is only owned by a try-statement if the try-statement has
-		// a catch clause, and if the throw-statement occurs within the try block.
-		if ast.IsTryStatement(parent) {
-			tryStatement := parent.AsTryStatement()
-			if tryStatement.TryBlock == child && tryStatement.CatchClause != nil {
-				return child
-			}
-		}
-
 		child = parent
 	}
 	return nil
-}
-
-func getTryCatchFinallyOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	tryStatement := node.AsTryStatement()
-
-	var keywords []*ast.Node
-	token := lsutil.GetFirstToken(node, sourceFile)
-	if token != nil && token.Kind == ast.KindTryKeyword {
-		keywords = append(keywords, token)
-	}
-
-	if tryStatement.CatchClause != nil {
-		if catchToken := astnav.FindChildOfKind(node, ast.KindCatchKeyword, sourceFile); catchToken != nil {
-			keywords = append(keywords, catchToken)
-		}
-	}
-
-	if tryStatement.FinallyBlock != nil {
-		if finallyKeyword := astnav.FindChildOfKind(node, ast.KindFinallyKeyword, sourceFile); finallyKeyword != nil {
-			keywords = append(keywords, finallyKeyword)
-		}
-	}
-
-	return keywords
 }
 
 func aggregateAllBreakAndContinueStatements(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
@@ -521,15 +457,6 @@ func getLoopBreakContinueOccurrences(node *ast.Node, sourceFile *ast.SourceFile)
 	token := lsutil.GetFirstToken(node, sourceFile)
 	if token.Kind == ast.KindForKeyword || token.Kind == ast.KindDoKeyword || token.Kind == ast.KindWhileKeyword {
 		keywords = append(keywords, token)
-		if node.Kind == ast.KindDoStatement {
-			loopTokens := getChildrenFromNonJSDocNode(node, sourceFile)
-			for i := len(loopTokens) - 1; i >= 0; i-- {
-				if loopTokens[i].Kind == ast.KindWhileKeyword {
-					keywords = append(keywords, loopTokens[i])
-					break
-				}
-			}
-		}
 	}
 
 	breakAndContinueStatements := aggregateAllBreakAndContinueStatements(node, sourceFile)
@@ -562,7 +489,7 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 
 func traverseWithoutCrossingFunction(node *ast.Node, sourceFile *ast.SourceFile, cb func(*ast.Node)) {
 	cb(node)
-	if !ast.IsFunctionLike(node) && !ast.IsClassLike(node) && !ast.IsInterfaceDeclaration(node) && !ast.IsModuleDeclaration(node) && !ast.IsTypeAliasDeclaration(node) && !ast.IsTypeNode(node) {
+	if !ast.IsFunctionLike(node) && !ast.IsInterfaceDeclaration(node) && !ast.IsModuleDeclaration(node) && !ast.IsTypeAliasDeclaration(node) && !ast.IsTypeNode(node) {
 		node.ForEachChild(func(child *ast.Node) bool {
 			traverseWithoutCrossingFunction(child, sourceFile, cb)
 			return false // continue traversal
@@ -594,37 +521,14 @@ func getNodesToSearchForModifier(declaration *ast.Node, modifierFlag ast.Modifie
 	// Types of node whose children might have modifiers.
 	switch container.Kind {
 	case ast.KindModuleBlock, ast.KindSourceFile, ast.KindBlock:
-		// Container is either a class declaration or the declaration is a classDeclaration
-		if (modifierFlag&ast.ModifierFlagsAbstract) != 0 && ast.IsClassDeclaration(declaration) {
-			return append(append(result, declaration.Members()...), declaration)
-		} else {
-			return append(result, container.Statements()...)
-		}
-	case ast.KindConstructor, ast.KindMethodDeclaration, ast.KindFunctionDeclaration:
-		// Parameters and, if inside a class, also class members
+		return append(result, container.Statements()...)
+	case ast.KindFunctionDeclaration:
 		result = append(result, container.Parameters()...)
-		if ast.IsClassLike(container.Parent) {
-			result = append(result, container.Parent.Members()...)
-		}
 		return result
-	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
+	case ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
 		nodes := container.Members()
 		result = append(result, nodes...)
-		// If we're an accessibility modifier, we're in an instance member and should search
-		// the constructor's parameter list for instance members as well.
-		if (modifierFlag & (ast.ModifierFlagsAccessibilityModifier | ast.ModifierFlagsReadonly)) != 0 {
-			var constructor *ast.Node
-
-			for _, member := range nodes {
-				if ast.IsConstructorDeclaration(member) {
-					constructor = member
-					break
-				}
-			}
-			if constructor != nil {
-				result = append(result, constructor.Parameters()...)
-			}
-		} else if (modifierFlag & ast.ModifierFlagsAbstract) != 0 {
+		if (modifierFlag & ast.ModifierFlagsAbstract) != 0 {
 			result = append(result, container)
 		}
 		return result

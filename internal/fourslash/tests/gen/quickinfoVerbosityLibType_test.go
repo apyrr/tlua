@@ -19,9 +19,9 @@ interface Apple {
     color: string;
     size: number;
 }
-function f(): Promise<Apple> {
+function f(): Promise<Apple>
     return Promise.resolve({ color: "red", size: 5 });
-}
+end
 local g/*g*/ = f;
 local u/*u*/: Map<string, Apple> = new Map;
 type Foo<T> = Promise/*p*/<T>;`

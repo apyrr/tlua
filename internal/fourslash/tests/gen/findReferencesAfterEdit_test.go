@@ -21,9 +21,9 @@ interface A {
 // @Filename: b.tlua
 ///<reference path='a.tlua'/>
 /**/
-function foo(x: A) {
+function foo(x: A)
     x./*2*/foo
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2")

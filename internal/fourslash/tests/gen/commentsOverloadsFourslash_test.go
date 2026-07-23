@@ -19,34 +19,34 @@ func TestCommentsOverloadsFourslash(t *testing.T) {
 	const content = `/** this is signature 1*/
 function /*1*/f1(/**param a*/a: number): number;
 function /*2*/f1(b: string): number;
-function /*3*/f1(aOrb: any) {
+function /*3*/f1(aOrb: any)
     return 10;
-}
+end
 f/*4q*/1(/*4*/"hello");
 f/*o4q*/1(/*o4*/10);
 function /*5*/f2(/**param a*/a: number): number;
 /** this is signature 2*/
 function /*6*/f2(b: string): number;
 /** this is f2 local comment*/
-function /*7*/f2(aOrb: any) {
+function /*7*/f2(aOrb: any)
     return 10;
-}
+end
 f/*8q*/2(/*8*/"hello");
 f/*o8q*/2(/*o8*/10);
 function /*9*/f3(a: number): number;
 function /*10*/f3(b: string): number;
-function /*11*/f3(aOrb: any) {
+function /*11*/f3(aOrb: any)
     return 10;
-}
+end
 f/*12q*/3(/*12*/"hello");
 f/*o12q*/3(/*o12*/10);
 /** this is signature 4 - with number parameter*/
 function /*13*/f4(/**param a*/a: number): number;
 /** this is signature 4 - with string parameter*/
 function /*14*/f4(b: string): number;
-function /*15*/f4(aOrb: any) {
+function /*15*/f4(aOrb: any)
     return 10;
-}
+end
 f/*16q*/4(/*16*/"hello");
 f/*o16q*/4(/*o16*/10);
 /*17*/
@@ -221,9 +221,9 @@ function multiOverload(b: string): string;
 /** This is multiOverload F1 3*/
 function multiOverload(c: boolean): string;
 /** This is multiOverload Implementation */
-function multiOverload(d): string {
+function multiOverload(d): string
     return "Hello";
-}
+end
 multiOverl/*71*/oad(10);
 multiOverl/*72*/oad("hello");
 multiOverl/*73*/oad(true);
@@ -237,8 +237,7 @@ declare function ambientF1(c: boolean): boolean;
 ambient/*74*/F1(10);
 ambient/*75*/F1("hello");
 ambient/*76*/F1(true);
-function foo(a/*77*/a: i3) {
-}
+function foo(a/*77*/a: i3) end
 foo(null);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

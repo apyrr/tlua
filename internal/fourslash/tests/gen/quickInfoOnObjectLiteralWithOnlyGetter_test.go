@@ -16,16 +16,16 @@ func TestQuickInfoOnObjectLiteralWithOnlyGetter(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function /*1*/makePoint(x: number) {
+	const content = `function /*1*/makePoint(x: number)
     return {
         get x() { return x; },
     };
-};
+end;
 local /*4*/point = makePoint(2);
 local /*2*/x = point./*3*/x;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyQuickInfoAt(t, "1", "function makePoint(x: number): {\n    readonly x: number;\n}", "")
+	f.VerifyQuickInfoAt(t, "1", "function makePoint(x: number): \n    readonly x: number;\n end", "")
 	f.VerifyQuickInfoAt(t, "2", "local x: number", "")
 	f.VerifyQuickInfoAt(t, "4", "local point: {\n    readonly x: number;\n}", "")
 	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{

@@ -24,9 +24,9 @@ class Bar implements Foo {
     public sure() {}
 }
 
-function whatever(a: Foo) {
+function whatever(a: Foo)
     a.he/*function_call*/llo();
-}
+end
 
 whatever(new Bar());`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

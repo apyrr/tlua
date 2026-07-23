@@ -16,9 +16,9 @@ func TestExportDefaultFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export default function func() {
+	const content = `export default function func()
     /*1*/
-}
+end
  /*2*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

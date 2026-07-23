@@ -17,7 +17,7 @@ func TestDocCommentTemplateFunctionWithParameters(t *testing.T) {
 	const content = `// @Filename: functionWithParams.tlua
 /*0*/
     /*1*/
-        function foo(x: number, y: string): boolean {}`
+        function foo(x: number, y: string): boolean end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

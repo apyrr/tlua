@@ -32,7 +32,7 @@ class List2</*4*/T extends IList<number>> implements IList<T> {
 function foo4</*11*/T extends Date>(test: T): T;
 function foo4</*12*/S extends string>(test: S): S;
 function foo4(test: any): any;
-function foo4</*13*/T extends Date>(test: any): any { return null; }
+function foo4</*13*/T extends Date>(test: any): any return null; end
 local x: List2<IList<number>>;
 local y = x./*14*/getItem(10);
 local x2: IList<IList<number>>;

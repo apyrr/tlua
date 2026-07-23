@@ -15,11 +15,11 @@ func TestUnusedLocalsInFunction3(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noUnusedLocals: true
-function greeter() {
+function greeter()
    [| local x, y = 0,z = 1; |]
     x+1;
     z+1;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyRangeAfterCodeFix(t, `local x,z = 1;`, false, 6133, 0)

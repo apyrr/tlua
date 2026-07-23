@@ -22,7 +22,7 @@ declare function test(
   cb: (state: { [STATE_SIGNAL]: unknown }) => void,
 ): unknown;
 
-test((state) => {});`
+test(function(state) end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{InlayHints: lsutil.InlayHintsPreferences{IncludeInlayFunctionParameterTypeHints: core.TSTrue}})

@@ -20,10 +20,10 @@ local a;
 local b     
      
 //     
-function b(){     
+function b()     
     while(true){     
     }     
-}     
+end     
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
@@ -36,9 +36,9 @@ local a;
 local b     
      
 //     
-function b() {     
+function b()     
     while (true) {     
     }     
-}     
+end     
 `)
 }

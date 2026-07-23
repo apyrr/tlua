@@ -21,7 +21,7 @@ func TestFunctionProperty(t *testing.T) {
 };
 
 local b = {
-    x: function (a: number) { }
+    x: function (a: number) end
 };
 
 local c = {

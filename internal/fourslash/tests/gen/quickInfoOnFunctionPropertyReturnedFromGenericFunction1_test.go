@@ -14,13 +14,13 @@ func TestQuickInfoOnFunctionPropertyReturnedFromGenericFunction1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function createProps<T>(t: T) {
-  function getProps() {}
-  function createVariants() {}
+	const content = `function createProps<T>(t: T)
+  function getProps() end
+  function createVariants() end
 
   getProps.createVariants = createVariants;
   return getProps;
-}
+end
 
 createProps({})./**/createVariants();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

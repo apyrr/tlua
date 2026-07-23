@@ -15,16 +15,16 @@ func TestNavigationBarFunctionIndirectlyInVariableDeclaration(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local a = {
-    propA = function() {
+    propA = function()
         local c;
-    }
+    end
 };
 local b;
 b = {
-    propB = function() {
+    propB = function()
     // function must not have an empty body to appear top level
         local d;
-    }
+    end
 };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -16,14 +16,14 @@ func TestCompletionListInNamedFunctionExpressionWithShadowing(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {}
+	const content = `function foo() end
 /*0*/
-local x = function foo() {
+local x = function foo()
    /*1*/
-}
-local y = function () {
+end
+local y = function ()
    /*2*/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"0", "2"}, &fourslash.CompletionsExpectedList{

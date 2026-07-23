@@ -14,7 +14,7 @@ func TestFindAllRefsInsideTemplates2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/*1*/function /*2*/f(...rest: any[]) { }
+	const content = `/*1*/function /*2*/f(...rest: any[]) end
 /*3*/f ` + "`" + `${ /*4*/f } ${ /*5*/f }` + "`" + ``
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

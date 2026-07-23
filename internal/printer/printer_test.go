@@ -102,15 +102,6 @@ func TestEmit(t *testing.T) {
 		{title: "FunctionExpression#6", input: "(function<T>() end)", output: "(function<T>()\nend);"},
 		{title: "FunctionExpression#7", input: "(function(a) end)", output: "(function(a)\nend);"},
 		{title: "FunctionExpression#8", input: "(function(): T end)", output: "(function(): T\nend);"},
-		{title: "ArrowFunction#1", input: `a=>{}`, output: "(function(a)\nend);"},
-		{title: "ArrowFunction#2", input: `()=>{}`, output: "(function()\nend);"},
-		{title: "ArrowFunction#3", input: `(a)=>{}`, output: "(function(a)\nend);"},
-		{title: "ArrowFunction#4", input: `<T>(a)=>{}`, output: "(function<T>(a)\nend);"},
-		{title: "ArrowFunction#5", input: `async a=>{}`, output: "(async function(a)\nend);"},
-		{title: "ArrowFunction#6", input: `async()=>{}`, output: "(async function()\nend);"},
-		{title: "ArrowFunction#7", input: `async<T>()=>{}`, output: "(async function<T>()\nend);"},
-		{title: "ArrowFunction#8", input: `():T=>{}`, output: "(function(): T\nend);"},
-		{title: "ArrowFunction#9", input: `()=>a`, output: `(function() return a end);`},
 		{title: "DeleteExpression", input: `delete a`, output: `delete a;`},
 		{title: "VoidExpression", input: `void a`, output: `void a;`},
 		{title: "PrefixUnaryExpression#1", input: `+a`, output: `+a;`},
@@ -174,23 +165,9 @@ func TestEmit(t *testing.T) {
 		{title: "PropertyAssignment", input: "({a = b})", output: "({ a = b });"},
 		{title: "PropertyAssignment#2", input: "({[a] = b})", output: "({ [a] = b });"},
 		{title: "SpreadAssignment", input: `({...a})`, output: `({ ...a });`, removed: true},
-		{title: "Block", input: `{}`, output: `{ }`},
 		{title: "VariableStatement#1", input: `local a`, output: `local a;`},
 		{title: "VariableStatement#3", input: `local a = b`, output: `local a = b;`},
 		{title: "EmptyStatement", input: `;`, output: `;`},
-		{title: "IfStatement#1", input: `if(a);`, output: "if (a)\n    ;"},
-		{title: "IfStatement#2", input: `if(a);else;`, output: "if (a)\n    ;\nelse\n    ;"},
-		{title: "IfStatement#3", input: `if(a);else{}`, output: "if (a)\n    ;\nelse { }"},
-		{title: "IfStatement#4", input: `if(a);else if(b);`, output: "if (a)\n    ;\nelse if (b)\n    ;"},
-		{title: "IfStatement#5", input: `if(a);else if(b) {}`, output: "if (a)\n    ;\nelse if (b) { }"},
-		{title: "IfStatement#6", input: `if(a) {}`, output: "if (a) { }"},
-		{title: "IfStatement#7", input: `if(a) {} else;`, output: "if (a) { }\nelse\n    ;"},
-		{title: "IfStatement#8", input: `if(a) {} else {}`, output: "if (a) { }\nelse { }"},
-		{title: "IfStatement#9", input: `if(a) {} else if(b);`, output: "if (a) { }\nelse if (b)\n    ;"},
-		{title: "IfStatement#10", input: `if(a) {} else if(b){}`, output: "if (a) { }\nelse if (b) { }"},
-		{title: "DoStatement#2", input: `do {} while(a);`, output: "do { } while (a);"},
-		{title: "WhileStatement#1", input: `while(a);`, output: "while (a)\n    ;"},
-		{title: "WhileStatement#2", input: `while(a) {}`, output: "while (a) { }"},
 		{title: "ForOfStatement#1", input: `for(a of b);`, output: "for (a of b)\n    ;", removed: true},
 		{title: "ForOfStatement#2", input: `for(local a of b);`, output: "for (local a of b)\n    ;", removed: true},
 		{title: "ForOfStatement#3", input: `for(a of b){}`, output: "for (a of b) { }", removed: true},
@@ -198,20 +175,15 @@ func TestEmit(t *testing.T) {
 		{title: "BreakStatement", input: `break`, output: "break;"},
 		{title: "ReturnStatement#1", input: `return`, output: "return;"},
 		{title: "ReturnStatement#2", input: `return a`, output: "return a;"},
-		{title: "WithStatement#1", input: `with(a);`, output: "with (a)\n    ;"},
-		{title: "WithStatement#2", input: `with(a){}`, output: "with (a) { }"},
 		{title: "LabelStatement", input: `::a::`, output: "::a::"},
 		{title: "GotoStatement", input: `::a:: goto a`, output: "::a::\ngoto a;"},
 		{title: "ThrowStatement", input: `throw a`, output: "throw a;"},
-		{title: "TryStatement#1", input: `try {} catch {}`, output: "try { }\ncatch { }"},
-		{title: "TryStatement#2", input: `try {} finally {}`, output: "try { }\nfinally { }"},
-		{title: "TryStatement#3", input: `try {} catch {} finally {}`, output: "try { }\ncatch { }\nfinally { }"},
 		{title: "DebuggerStatement", input: `debugger`, output: "debugger;"},
-		{title: "FunctionDeclaration#2", input: `function f(){}`, output: `function f() { }`},
-		{title: "FunctionDeclaration#4", input: `async function f(){}`, output: `async function f() { }`},
-		{title: "FunctionDeclaration#6", input: `function f<T>(){}`, output: `function f<T>() { }`},
-		{title: "FunctionDeclaration#7", input: `function f(a){}`, output: `function f(a) { }`},
-		{title: "FunctionDeclaration#8", input: `function f():T{}`, output: `function f(): T { }`},
+		{title: "FunctionDeclaration#2", input: `function f() end`, output: "function f()\nend"},
+		{title: "FunctionDeclaration#4", input: `async function f() end`, output: "async function f()\nend"},
+		{title: "FunctionDeclaration#6", input: `function f<T>() end`, output: "function f<T>()\nend"},
+		{title: "FunctionDeclaration#7", input: `function f(a) end`, output: "function f(a)\nend"},
+		{title: "FunctionDeclaration#8", input: `function f():T end`, output: "function f(): T\nend"},
 		{title: "FunctionDeclaration#9", input: `function f();`, output: `function f();`},
 		{title: "InterfaceDeclaration#1", input: `interface a {}`, output: "interface a {\n}"},
 		{title: "InterfaceDeclaration#2", input: `interface a<T>{}`, output: "interface a<T> {\n}"},
@@ -300,9 +272,6 @@ func TestEmit(t *testing.T) {
 		{title: "ImportTypeNode#3", input: `type T = import(a).b<U>`, output: "type T = import(a).b<U>;"},
 		{title: "ImportTypeNode#4", input: `type T = typeof import(a)`, output: "type T = typeof import(a);"},
 		{title: "ImportTypeNode#5", input: `type T = typeof import(a).b`, output: "type T = typeof import(a).b;"},
-		{title: "ImportTypeNode#6", input: `type T = import(a, { with: { } })`, output: "type T = import(a, { with: {} });"},
-		{title: "ImportTypeNode#6", input: `type T = import(a, { with: { b: "c" } })`, output: "type T = import(a, { with: { b: \"c\" } });"},
-		{title: "ImportTypeNode#7", input: `type T = import(a, { with: { "b": "c" } })`, output: "type T = import(a, { with: { \"b\": \"c\" } });"},
 		{title: "PropertySignature#1", input: "interface I {a}", output: "interface I {\n    a;\n}"},
 		{title: "PropertySignature#2", input: "interface I {readonly a}", output: "interface I {\n    readonly a;\n}"},
 		{title: "PropertySignature#3", input: "interface I {\"a\"}", output: "interface I {\n    \"a\";\n}"},
@@ -1533,9 +1502,9 @@ func TestParenthesizeExpressionStatement2(t *testing.T) {
 			false, /*multiLine*/
 		),
 	)
-	// Synthesized function expressions must be Lua-flagged like parsed ones,
-	// or they print with the unparseable braced body.
-	fn.Flags |= ast.NodeFlagsLuaBlock
+	// Function expressions always print an `end`-terminated Lua body; the printer
+	// no longer gates on a body flag, so a flag-less synthesized node prints valid
+	// Lua too.
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
 			factory.NewExpressionStatement(fn),
@@ -2011,7 +1980,7 @@ func TestNameGeneration(t *testing.T) {
 	}), ec.Factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, ec, file.AsSourceFile(), "local _a;\nfunction f() {\n    local _a;\n}")
+	emittestutil.CheckEmit(t, ec, file.AsSourceFile(), "local _a;\nfunction f()\n    local _a;\nend")
 }
 
 func TestNoTrailingCommaAfterTransform(t *testing.T) {

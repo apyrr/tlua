@@ -14,8 +14,8 @@ func TestQuickInfoOfGenericTypeAssertions1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f<T>(x: T): T { return null; }
-local /*1*/r = <T>(x: T) => x;
+	const content = `function f<T>(x: T): T return null; end
+local /*1*/r = function<T>(x: T) return x end;
 local /*2*/r2 = < <T>(x: T) => T>f;
 local a;
 local /*3*/r3 = < <T>(x: <A>(y: A) => A) => T>a;`

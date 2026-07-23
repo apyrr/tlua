@@ -16,10 +16,10 @@ func TestCompletionListFunctionMembers(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
-function fnc1() {
+function fnc1()
     local bar = 1;
-    function foob(){ }
-}
+    function foob() end
+end
 
 fnc1./**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

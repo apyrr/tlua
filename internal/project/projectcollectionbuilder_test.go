@@ -560,7 +560,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 				"main": "lib/utils.tlua"
 			}`,
 			"/home/projects/myproject/src/index.tlua": `local utils = require("dep");`,
-			"/home/projects/myproject/node_modules/dep/lib/utils.tlua": `function add(a: number, b: number): number { return a + b; }
+			"/home/projects/myproject/node_modules/dep/lib/utils.tlua": `function add(a: number, b: number): number return a + b; end
 return { add = add };`,
 		}
 

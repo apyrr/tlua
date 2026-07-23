@@ -21,10 +21,10 @@ func TestRestArgType(t *testing.T) {
         local x = restArgs[2];
     }
 }
-local x: (...y: string[]) => void = function (.../*3*/y) {
+local x: (...y: string[]) => void = function (.../*3*/y)
     local t = y;
-};
-function foo(x: (...y: string[]) => void ) { }
+end;
+function foo(x: (...y: string[]) => void ) end
 foo((.../*4*/y1) => {
     local t = y;
 });

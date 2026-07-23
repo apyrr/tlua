@@ -32,7 +32,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		}`,
 		"/project/src/index.tlua":     `local helper = require("src.helper"); local h = helper.helper;`,
 		"/project/src/helper.tlua":    `local helper = "test"; return { helper = helper };`,
-		"/project/src/utils/lib.tlua": `function util() { return "util"; } return { util = util };`,
+		"/project/src/utils/lib.tlua": `function util() return "util"; end return { util = util };`,
 
 		// Declaration files are global scripts, so siblings are pulled in through
 		// reference directives rather than imports.

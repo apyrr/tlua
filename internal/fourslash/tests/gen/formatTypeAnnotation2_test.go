@@ -14,7 +14,7 @@ func TestFormatTypeAnnotation2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(x : number, y ?: string) : number {}
+	const content = `function foo(x : number, y ?: string) : number end
 interface Foo {
     x : number;
     y ?: number;
@@ -22,7 +22,7 @@ interface Foo {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")
-	f.VerifyCurrentFileContent(t, `function foo(x: number, y?: string): number { }
+	f.VerifyCurrentFileContent(t, `function foo(x: number, y?: string): number end
 interface Foo {
     x: number;
     y?: number;

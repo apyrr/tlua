@@ -383,7 +383,6 @@ func getNewImports(
 					ct.NodeFactory.NewNamespaceImport(ct.NodeFactory.NewIdentifier(namespaceLikeImport.name)),
 				),
 				moduleSpecifierStringLiteral,
-				/*attributes*/ nil,
 			)
 		}
 		statements = append(statements, declaration)
@@ -530,7 +529,7 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 	if defaultImport != nil || newNamedImports != nil {
 		importClause = ct.NodeFactory.NewImportClause(core.IfElse(isTypeOnly, ast.KindTypeKeyword, ast.KindUnknown), defaultImport, newNamedImports)
 	}
-	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier, nil /*attributes*/)
+	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier)
 }
 
 func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool, usagePosition *lsproto.Position) []*Fix {

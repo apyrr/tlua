@@ -14,10 +14,10 @@ func TestGenericFunctionWithGenericParams1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local obj = function f<T>(a: T) {
+	const content = `local obj = function f<T>(a: T)
     local x/**/x: T;
     return a;
-};`
+end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "(local var) xx: T", "")

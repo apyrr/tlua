@@ -20,9 +20,9 @@ class Bar implements Foo {
     [|hello|] = 5 * 9;
 }
 
-function whatever(foo: Foo) {
+function whatever(foo: Foo)
     foo.he/*reference*/llo;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "reference")

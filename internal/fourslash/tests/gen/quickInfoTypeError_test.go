@@ -15,7 +15,7 @@ func TestQuickInfoTypeError(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `foo({
-    /**/f: function() {},
+    /**/f: function() end,
     f() {}
 });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

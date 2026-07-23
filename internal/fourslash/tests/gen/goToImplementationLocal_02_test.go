@@ -14,7 +14,7 @@ func TestGoToImplementationLocal_02(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local x = { [|hello|] = () => {} };
+	const content = `local x = { [|hello|] = function() end };
 
 x.he/*function_call*/llo();
 `

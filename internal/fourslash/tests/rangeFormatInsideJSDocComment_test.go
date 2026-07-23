@@ -16,7 +16,7 @@ func TestRangeFormatStartingInsideJSDocComment(t *testing.T) {
 		" * `\n" +
 		"/*s*/ * @b\n" +
 		" */\n" +
-		"function f() {}/*e*/"
+		"function f() end/*e*/"
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatSelection(t, "s", "e")

@@ -18,7 +18,7 @@ func TestNavigationBarGetterAndSetter(t *testing.T) {
     get x() {}
     set x(value) {
         // Inner declaration should make the setter top-level.
-        function f() {}
+        function f() end
     }
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

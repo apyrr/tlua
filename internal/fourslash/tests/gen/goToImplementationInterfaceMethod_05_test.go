@@ -42,9 +42,9 @@ class NotBar extends SuperBar {
     hello() {}         // Should not be returned because it is not structurally equivalent to Bar
 }
 
-function whatever(x: Bar) {
+function whatever(x: Bar)
     x.he/*function_call*/llo()
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "function_call")

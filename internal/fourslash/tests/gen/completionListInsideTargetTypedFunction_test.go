@@ -18,7 +18,7 @@ func TestCompletionListInsideTargetTypedFunction(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `namespace Fix2 {
     interface iFace { (event: string); }
-    local foo: iFace = function (elem) { /**/ }
+    local foo: iFace = function (elem) /**/ end
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

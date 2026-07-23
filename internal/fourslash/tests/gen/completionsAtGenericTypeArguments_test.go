@@ -19,7 +19,7 @@ func TestCompletionsAtGenericTypeArguments(t *testing.T) {
 class Foo<T1, T2> {}
 local foo = new Foo</*1*/, /*2*/,
 
-function foo<T1, T2>() {}
+function foo<T1, T2>() end
 local f = foo</*3*/, /*4*/,`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

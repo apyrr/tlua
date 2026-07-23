@@ -14,10 +14,10 @@ func TestGenericCombinatorWithConstraints1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function apply<T, U extends Date>(source: T[], selector: (x: T) => U) {
+	const content = `function apply<T, U extends Date>(source: T[], selector: (x: T) => U)
     local /*1*/xs = source.map(selector); // any[]
     local /*2*/xs2 = source.map((x: T, a, b): U => { return null }); // any[] 
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(local var) xs: U[]", "")

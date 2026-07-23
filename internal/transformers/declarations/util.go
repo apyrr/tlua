@@ -12,8 +12,7 @@ func needsScopeMarker(result *ast.Node) bool {
 
 func canHaveLiteralInitializer(host DeclarationEmitHost, node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindPropertyDeclaration,
-		ast.KindPropertySignature:
+	case ast.KindPropertySignature:
 		return host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) == 0
 	case ast.KindParameter,
 		ast.KindVariableDeclaration:
@@ -24,14 +23,10 @@ func canHaveLiteralInitializer(host DeclarationEmitHost, node *ast.Node) bool {
 
 func canProduceDiagnostics(node *ast.Node) bool {
 	return ast.IsVariableDeclaration(node) ||
-		ast.IsPropertyDeclaration(node) ||
 		ast.IsPropertySignatureDeclaration(node) ||
 		ast.IsBindingElement(node) ||
-		ast.IsSetAccessorDeclaration(node) ||
-		ast.IsGetAccessorDeclaration(node) ||
 		ast.IsConstructSignatureDeclaration(node) ||
 		ast.IsCallSignatureDeclaration(node) ||
-		ast.IsMethodDeclaration(node) ||
 		ast.IsMethodSignatureDeclaration(node) ||
 		ast.IsFunctionDeclaration(node) ||
 		ast.IsParameterDeclaration(node) ||
@@ -40,7 +35,6 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsImportEqualsDeclaration(node) ||
 		ast.IsTypeAliasDeclaration(node) ||
 		ast.IsJSTypeAliasDeclaration(node) ||
-		ast.IsConstructorDeclaration(node) ||
 		ast.IsIndexSignatureDeclaration(node) ||
 		ast.IsPropertyAccessExpression(node) ||
 		ast.IsElementAccessExpression(node) ||
@@ -64,7 +58,6 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 	case ast.KindFunctionDeclaration,
 		ast.KindModuleDeclaration,
 		ast.KindInterfaceDeclaration,
-		ast.KindClassDeclaration,
 		ast.KindTypeAliasDeclaration,
 		ast.KindJSTypeAliasDeclaration:
 		return !resolver.IsDeclarationVisible(node)
@@ -77,8 +70,6 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 		ast.KindExportDeclaration,
 		ast.KindExportAssignment:
 		return false
-	case ast.KindClassStaticBlockDeclaration:
-		return true
 	}
 	return false
 }
@@ -110,7 +101,6 @@ func isEnclosingDeclaration(node *ast.Node) bool {
 		ast.IsTypeAliasDeclaration(node) ||
 		ast.IsJSTypeAliasDeclaration(node) ||
 		ast.IsModuleDeclaration(node) ||
-		ast.IsClassDeclaration(node) ||
 		ast.IsInterfaceDeclaration(node) ||
 		ast.IsFunctionLike(node) ||
 		ast.IsIndexSignatureDeclaration(node) ||
@@ -145,10 +135,6 @@ func unwrapParenthesizedExpression(o *ast.Node) *ast.Node {
 	return o
 }
 
-func isPrivateMethodTypeParameter(host DeclarationEmitHost, node *ast.TypeParameterDeclaration) bool {
-	return node.AsNode().Parent.Kind == ast.KindMethodDeclaration && host.GetEffectiveDeclarationFlags(node.AsNode().Parent, ast.ModifierFlagsPrivate) != 0
-}
-
 // Returns true if expando properties should be emitted for this function.
 // Properties are emitted if any overload in the symbol has a body (implementation).
 func shouldEmitFunctionProperties(input *ast.FunctionDeclaration) bool {
@@ -158,19 +144,6 @@ func shouldEmitFunctionProperties(input *ast.FunctionDeclaration) bool {
 	return !core.Every(input.Symbol.Declarations, func(decl *ast.Node) bool {
 		return !ast.IsFunctionDeclaration(decl) || decl.AsFunctionDeclaration().Body == nil
 	})
-}
-
-func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {
-	baseType := ast.GetClassExtendsHeritageElement(node)
-	// !!! TODO: JSDoc support
-	// if (baseType && isInJSFile(node)) {
-	//     // Prefer an @augments tag because it may have type parameters.
-	//     const tag = getJSDocAugmentsTag(node);
-	//     if (tag) {
-	//         return tag.class;
-	//     }
-	// }
-	return baseType
 }
 
 func isScopeMarker(node *ast.Node) bool {

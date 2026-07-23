@@ -14,9 +14,9 @@ func TestGetOccurrencesIsDefinitionOfParameter(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(/*1*/x: number) {
+	const content = `function f(/*1*/x: number)
   return /*2*/x + 1
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2")

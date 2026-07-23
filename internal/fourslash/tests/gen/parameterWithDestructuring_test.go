@@ -21,7 +21,7 @@ func TestParameterWithDestructuring(t *testing.T) {
 local f1 = (a: (b: string[]) => void) => {};
 f1(([a, b]) => { /*3*/a.charAt(0); });
 
-function f2({/*4*/a }: { a: string; }, [/*5*/b]: [string]) {}`
+function f2({/*4*/a }: { a: string; }, [/*5*/b]: [string]) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(parameter) a: string", "")

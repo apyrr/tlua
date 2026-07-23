@@ -16,7 +16,7 @@ func TestParameterWithNestedDestructuring(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[[{ a: 'hello', b: [1] }]]
   .map(([{ a, b: [c] }]) => /*1*/a + /*2*/c);
-function f([[/*3*/a]]: [[string]], { b1: { /*4*/b2 } }: { b1: { b2: string; } }) {}`
+function f([[/*3*/a]]: [[string]], { b1: { /*4*/b2 } }: { b1: { b2: string; } }) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(parameter) a: string", "")

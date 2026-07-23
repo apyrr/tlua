@@ -16,9 +16,9 @@ func TestCompletionListAfterFunction3(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// Outside the function expression
-local x1 = (a: number) => { }/*1*/;
+local x1 = function(a: number) end/*1*/;
 
-local x2 = (b: number) => {/*2*/ };`
+local x2 = function(b: number) /*2*/ end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

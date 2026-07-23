@@ -18,8 +18,7 @@ func TestSmartSelection_JSDocTags7(t *testing.T) {
  * @constructor
  * @param {/**/number} data
  */
-function Foo(data) {
-}`
+function Foo(data) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineSelectionRanges(t)

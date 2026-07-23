@@ -21,12 +21,12 @@ func TestFindAllRefsJsDocTypeDef_js(t *testing.T) {
 /**
  * @return {/*3*/T}
  */
-function f(obj) { return 0; }
+function f(obj) return 0; end
 
 /**
  * @return {/*4*/T}
  */
-function f2(obj) { return 0; }`
+function f2(obj) return 0; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4")

@@ -165,9 +165,9 @@ func (g *NameGenerator) generateNameForNode(node *ast.Node, privateName bool, fl
 			panic("Generated name for an import or export cannot be private and may have neither a prefix nor suffix")
 		}
 		return g.generateNameForImportOrExportDeclaration(node)
-	case ast.KindFunctionDeclaration, ast.KindClassDeclaration:
+	case ast.KindFunctionDeclaration:
 		if privateName || len(prefix) > 0 || len(suffix) > 0 {
-			panic("Generated name for a class or function declaration cannot be private and may have neither a prefix nor suffix")
+			panic("Generated name for a function declaration cannot be private and may have neither a prefix nor suffix")
 		}
 		name := node.Name()
 		if name != nil && !(g.Context == nil && g.Context.HasAutoGenerateInfo(name)) {
@@ -179,13 +179,6 @@ func (g *NameGenerator) generateNameForNode(node *ast.Node, privateName bool, fl
 			panic("Generated name for an export assignment cannot be private and may have neither a prefix nor suffix")
 		}
 		return g.generateNameForExportDefault()
-	case ast.KindClassExpression:
-		if privateName || len(prefix) > 0 || len(suffix) > 0 {
-			panic("Generated name for a class expression cannot be private and may have neither a prefix nor suffix")
-		}
-		return g.generateNameForClassExpression()
-	case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
-		return g.generateNameForMethodOrAccessor(node, privateName, prefix, suffix)
 	case ast.KindComputedPropertyName:
 		return g.makeTempVariableName(tempFlagsAuto, true /*reservedInNestedScopes*/, privateName, prefix, suffix)
 	default:
@@ -214,17 +207,6 @@ func (g *NameGenerator) generateNameForImportOrExportDeclaration(node *ast.Node 
 
 func (g *NameGenerator) generateNameForExportDefault() string {
 	return g.makeUniqueName("default", nil /*checkFn*/, false /*optimistic*/, false /*scoped*/, false /*privateName*/, "" /*prefix*/, "" /*suffix*/)
-}
-
-func (g *NameGenerator) generateNameForClassExpression() string {
-	return g.makeUniqueName("class", nil /*checkFn*/, false /*optimistic*/, false /*scoped*/, false /*privateName*/, "" /*prefix*/, "" /*suffix*/)
-}
-
-func (g *NameGenerator) generateNameForMethodOrAccessor(node *ast.Node /* MethodDeclaration | AccessorDeclaration */, privateName bool, prefix string, suffix string) string {
-	if ast.IsIdentifier(node.Name()) {
-		return g.generateNameForNodeCached(node.Name(), privateName, GeneratedIdentifierFlagsNone, prefix, suffix)
-	}
-	return g.makeTempVariableName(tempFlagsAuto, false /*reservedInNestedScopes*/, privateName, prefix, suffix)
 }
 
 func (g *NameGenerator) makeName(name *ast.Node) string {

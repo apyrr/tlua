@@ -16,8 +16,8 @@ func TestNavigationBarFunctionLikePropertyAssignments(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local functions = {
     a: 0,
-    b: function () { },
-    c: function x() { },
+    b: function () end,
+    c: function x() end,
     d: () => { },
     e: y(),
     f() { }

@@ -31,7 +31,6 @@ export var ModifierFlags: any;
     ModifierFlags[ModifierFlags["JSDocOnlyModifiers"] = 65536] = "JSDocOnlyModifiers";
     ModifierFlags[ModifierFlags["NonCacheOnlyModifiers"] = 94207] = "NonCacheOnlyModifiers";
     ModifierFlags[ModifierFlags["AccessibilityModifier"] = 7] = "AccessibilityModifier";
-    ModifierFlags[ModifierFlags["ParameterPropertyModifier"] = 31] = "ParameterPropertyModifier";
     ModifierFlags[ModifierFlags["NonPublicAccessibilityModifier"] = 6] = "NonPublicAccessibilityModifier";
     ModifierFlags[ModifierFlags["TypeScriptModifier"] = 24799] = "TypeScriptModifier";
     ModifierFlags[ModifierFlags["ExportDefault"] = 2080] = "ExportDefault";

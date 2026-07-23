@@ -14,13 +14,13 @@ func TestQuickInfoForContextuallyTypedIife(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `(({ q/*1*/, qq/*2*/ }, x/*3*/, { p/*4*/ }) => {
+	const content = `(function({ q/*1*/, qq/*2*/ }, x/*3*/, { p/*4*/ })
     local s: number = q/*5*/;
     local t: number = qq/*6*/;
     local u: number = p/*7*/;
     local v: number = x/*8*/;
-    return q; })({ q = 13, qq = 12 }, 1, { p = 14 });
-((a/*9*/, b/*10*/, c/*11*/) => [a/*12*/,b/*13*/,c/*14*/])("foo", 101, false);`
+    return q; end)({ q = 13, qq = 12 }, 1, { p = 14 });
+(function(a/*9*/, b/*10*/, c/*11*/) return [a/*12*/,b/*13*/,c/*14*/] end)("foo", 101, false);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(parameter) q: number", "")

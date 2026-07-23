@@ -218,8 +218,6 @@ func (t *Tracker) TryInsertTypeAnnotation(sourceFile *ast.SourceFile, node *ast.
 			endNode = node.AsVariableDeclaration().ExclamationToken
 		case ast.KindPropertySignature:
 			endNode = node.AsPropertySignatureDeclaration().PostfixToken
-		case ast.KindPropertyDeclaration:
-			endNode = node.AsPropertyDeclaration().PostfixToken
 		case ast.KindParameter:
 			endNode = node.AsParameterDeclaration().QuestionToken
 		}
@@ -589,7 +587,7 @@ func (t *Tracker) getInsertNodeAfterOptions(sourceFile *ast.SourceFile, node *as
 	case ast.KindParameter:
 		// default opts
 		options = NodeOptions{}
-	case ast.KindClassDeclaration, ast.KindModuleDeclaration:
+	case ast.KindModuleDeclaration:
 		options = NodeOptions{Prefix: newLineChar, Suffix: newLineChar}
 
 	case ast.KindVariableDeclaration, ast.KindStringLiteral, ast.KindIdentifier:
@@ -602,7 +600,7 @@ func (t *Tracker) getInsertNodeAfterOptions(sourceFile *ast.SourceFile, node *as
 		options = NodeOptions{Prefix: " "}
 
 	default:
-		if !(ast.IsStatement(node) || ast.IsClassOrTypeElement(node)) {
+		if !(ast.IsStatement(node) || ast.IsTypeElement(node)) {
 			// Else we haven't handled this kind of node yet -- add it
 			panic("unimplemented node type " + node.Kind.String() + " in changeTracker.getInsertNodeAfterOptions")
 		}
@@ -616,7 +614,7 @@ func (t *Tracker) getInsertNodeAfterOptions(sourceFile *ast.SourceFile, node *as
 }
 
 func (t *Tracker) getOptionsForInsertNodeBefore(before *ast.Node, inserted *ast.Node, blankLineBetween bool) NodeOptions {
-	if ast.IsStatement(before) || ast.IsClassOrTypeElement(before) {
+	if ast.IsStatement(before) || ast.IsTypeElement(before) {
 		if blankLineBetween {
 			return NodeOptions{Suffix: t.newLine + t.newLine}
 		}

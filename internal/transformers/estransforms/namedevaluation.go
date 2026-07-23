@@ -6,54 +6,7 @@ import (
 	"github.com/apyrr/tlua/internal/printer"
 )
 
-/**
- * Gets whether a node is a `static {}` block containing only a single call to the `__setFunctionName` helper where that
- * call's second argument is the value stored in the `assignedName` property of the block's `EmitNode`.
- * @internal
- */
-func isClassNamedEvaluationHelperBlock(emitContext *printer.EmitContext, node *ast.Node) bool {
-	if !ast.IsClassStaticBlockDeclaration(node) || len(node.AsClassStaticBlockDeclaration().Body.Statements()) != 1 {
-		return false
-	}
-
-	statement := node.AsClassStaticBlockDeclaration().Body.Statements()[0]
-	if ast.IsExpressionStatement(statement) {
-		expression := statement.Expression()
-		if emitContext.IsCallToHelper(expression, "__setFunctionName") {
-			arguments := expression.AsCallExpression().Arguments
-			return len(arguments.Nodes) >= 2 &&
-				arguments.Nodes[1] == emitContext.AssignedName(node.AsNode())
-		}
-	}
-	return false
-}
-
-/**
- * Gets whether a `ClassLikeDeclaration` has a `static {}` block containing only a single call to the
- * `__setFunctionName` helper.
- * @internal
- */
-func classHasExplicitlyAssignedName(emitContext *printer.EmitContext, node *ast.ClassLikeDeclaration) bool {
-	if assignedName := emitContext.AssignedName(node); assignedName != nil {
-		for _, member := range node.Members() {
-			if isClassNamedEvaluationHelperBlock(emitContext, member) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-/**
- * Gets whether a `ClassLikeDeclaration` has a declared name or contains a `static {}` block containing only a single
- * call to the `__setFunctionName` helper.
- * @internal
- */
-func classHasDeclaredOrExplicitlyAssignedName(emitContext *printer.EmitContext, node *ast.ClassLikeDeclaration) bool {
-	return node.Name() != nil || classHasExplicitlyAssignedName(emitContext, node)
-}
-
-type anonymousFunctionDefinition = ast.Node // ClassExpression | FunctionExpression | ArrowFunction
+type anonymousFunctionDefinition = ast.Node // FunctionExpression | ArrowFunction
 
 // Indicates whether an expression is an anonymous function definition.
 //
@@ -61,11 +14,6 @@ type anonymousFunctionDefinition = ast.Node // ClassExpression | FunctionExpress
 func isAnonymousFunctionDefinition(emitContext *printer.EmitContext, node *ast.Expression, cb func(*anonymousFunctionDefinition) bool) bool {
 	node = ast.SkipOuterExpressions(node, ast.OEKAll)
 	switch node.Kind {
-	case ast.KindClassExpression:
-		if classHasDeclaredOrExplicitlyAssignedName(emitContext, node) {
-			return false
-		}
-		break
 	case ast.KindFunctionExpression:
 		if node.AsFunctionExpression().Name() != nil {
 			return false
@@ -93,7 +41,7 @@ func isNamedEvaluationAnd(emitContext *printer.EmitContext, node *ast.Node, cb f
 	switch node.Kind {
 	case ast.KindShorthandPropertyAssignment:
 		return isAnonymousFunctionDefinition(emitContext, node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer, cb)
-	case ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement, ast.KindPropertyDeclaration:
+	case ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement:
 		return isAnonymousFunctionDefinition(emitContext, node.Initializer(), cb)
 	case ast.KindBinaryExpression:
 		return isAnonymousFunctionDefinition(emitContext, node.AsBinaryExpression().Right, cb)
@@ -108,7 +56,7 @@ func isNamedEvaluationAnd(emitContext *printer.EmitContext, node *ast.Node, cb f
 // Gets a string literal to use as the assigned name of an anonymous class or function declaration.
 func getAssignedNameOfIdentifier(emitContext *printer.EmitContext, name *ast.IdentifierNode, expression *ast.Node /*WrappedExpression<AnonymousFunctionDefinition>*/) *ast.StringLiteralNode {
 	original := emitContext.MostOriginal(ast.SkipOuterExpressions(expression, ast.OEKAll))
-	if (ast.IsClassDeclaration(original) || ast.IsFunctionDeclaration(original)) &&
+	if ast.IsFunctionDeclaration(original) &&
 		original.Name() == nil && ast.HasSyntacticModifier(original, ast.ModifierFlagsDefault) {
 		return emitContext.Factory.NewStringLiteral("default", ast.TokenFlagsNone)
 	}
@@ -314,27 +262,6 @@ func transformNamedEvaluationOfBindingElement(emitContext *printer.EmitContext, 
 	)
 }
 
-func transformNamedEvaluationOfPropertyDeclaration(emitContext *printer.EmitContext, node *ast.PropertyDeclaration /*NamedEvaluation & PropertyDeclaration*/, ignoreEmptyStringLiteral bool, assignedNameText string) *ast.Expression {
-	// 10.2.1.3 RS: EvaluateBody
-	//   Initializer : `=` AssignmentExpression
-	//     ...
-	//     3. If IsAnonymousFunctionDefinition(|AssignmentExpression|) is *true*, then
-	//        a. Let _value_ be ? NamedEvaluation of |Initializer| with argument _functionObject_.[[ClassFieldInitializerName]].
-	//     ...
-
-	factory := emitContext.Factory
-	assignedName, name := getAssignedNameOfPropertyName(emitContext, node.Name(), assignedNameText)
-	initializer := finishTransformNamedEvaluation(emitContext, node.Initializer, assignedName, ignoreEmptyStringLiteral)
-	return factory.UpdatePropertyDeclaration(
-		node,
-		node.Modifiers(),
-		name,
-		nil, /*postfixToken*/
-		nil, /*typeNode*/
-		initializer,
-	)
-}
-
 func transformNamedEvaluationOfAssignmentExpression(emitContext *printer.EmitContext, node *ast.BinaryExpression /*NamedEvaluation & BinaryExpression*/, ignoreEmptyStringLiteral bool, assignedNameText string) *ast.Expression {
 	// 13.15.2 RS: Evaluation
 	//   AssignmentExpression : LeftHandSideExpression `=` AssignmentExpression
@@ -422,8 +349,6 @@ func transformNamedEvaluation(context *printer.EmitContext, node *ast.Node /*Nam
 		return transformNamedEvaluationOfParameterDeclaration(context, node.AsParameterDeclaration(), ignoreEmptyStringLiteral, assignedName)
 	case ast.KindBindingElement:
 		return transformNamedEvaluationOfBindingElement(context, node.AsBindingElement(), ignoreEmptyStringLiteral, assignedName)
-	case ast.KindPropertyDeclaration:
-		return transformNamedEvaluationOfPropertyDeclaration(context, node.AsPropertyDeclaration(), ignoreEmptyStringLiteral, assignedName)
 	case ast.KindBinaryExpression:
 		return transformNamedEvaluationOfAssignmentExpression(context, node.AsBinaryExpression(), ignoreEmptyStringLiteral, assignedName)
 	case ast.KindExportAssignment:

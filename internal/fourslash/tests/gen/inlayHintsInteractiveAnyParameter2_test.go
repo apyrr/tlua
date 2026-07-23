@@ -15,12 +15,12 @@ func TestInlayHintsInteractiveAnyParameter2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo (v: any) {}
+	const content = `function foo (v: any) end
 foo(1);
 foo('');
 foo(true);
-foo(() => 1);
-foo(function () { return 1 });
+foo(function() return 1 end);
+foo(function () return 1 end);
 foo({});
 foo({ a: 1 });
 foo([]);

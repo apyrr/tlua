@@ -22,7 +22,7 @@ func TestEncodeSourceFile(t *testing.T) {
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: "/test.tlua",
 		Path:     "/test.tlua",
-	}, "local bar = require(\"bar\");\nfunction foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptKindTS)
+	}, "local bar = require(\"bar\");\nfunction foo<T, U>(a: string, b: string): any end\nfoo();", core.ScriptKindTS)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
 		buf, _, err := encoder.EncodeSourceFile(sourceFile)
@@ -58,7 +58,7 @@ func TestBuildNodeIndexTableMatchesEncode(t *testing.T) {
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: "/test.tlua",
 		Path:     "/test.tlua",
-	}, "local bar = require(\"bar\");\nfunction foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptKindTS)
+	}, "local bar = require(\"bar\");\nfunction foo<T, U>(a: string, b: string): any end\nfoo();", core.ScriptKindTS)
 
 	_, encodeTable, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(t, err)

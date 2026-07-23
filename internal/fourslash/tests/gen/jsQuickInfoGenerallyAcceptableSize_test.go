@@ -207,8 +207,7 @@ func TestJsQuickInfoGenerallyAcceptableSize(t *testing.T) {
  * Do something
  * @param {DataTableThing} dataTable
  */
-local doSome/*1*/thing = function (dataTable) {
-};
+local doSome/*1*/thing = function (dataTable) end;
 
 /**
  * @callback SomeCallback
@@ -220,7 +219,7 @@ local doSome/*1*/thing = function (dataTable) {
   * Another thing
   * @type {SomeCallback}
   */
-local anotherThing/*2*/ = function(a, b) {}`
+local anotherThing/*2*/ = function(a, b) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "local doSomething: (dataTable: DataTableThing) => void", "Do something")

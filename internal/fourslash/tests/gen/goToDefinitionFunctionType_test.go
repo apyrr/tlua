@@ -16,9 +16,9 @@ func TestGoToDefinitionFunctionType(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local /*constDefinition*/c: () => void;
 /*constReference*/c();
-function test(/*cbDefinition*/cb: () => void) {
+function test(/*cbDefinition*/cb: () => void)
     /*cbReference*/cb();
-}
+end
 class C {
     /*propDefinition*/prop: () => void;
     m() {

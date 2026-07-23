@@ -18,9 +18,9 @@ func TestQuickInfoCallProperty(t *testing.T) {
     /** Doc */
     m: () => void;
 }
-function f(x: I): void {
+function f(x: I): void
     x./**/m();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "(property) I.m: () => void", "Doc")

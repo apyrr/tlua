@@ -24,8 +24,7 @@ local d = 10;
 myVariable = d;
 /*3*/
 /** foos comment*/
-function foo() {
-}
+function foo() end
 /** fooVar comment*/
 local foo/*12*/Var: () => void;
 /*4*/
@@ -53,8 +52,7 @@ local i1_i: i1;
 /*11*/
 function foo2(a: number): void;
 function foo2(b: string): void;
-function foo2(aOrb) {
-}
+function foo2(aOrb) end
 local x = fo/*15*/o2;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

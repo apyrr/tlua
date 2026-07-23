@@ -1275,7 +1275,7 @@ func chooseBetterSymbol(s *ast.Symbol) *ast.Symbol {
 func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) *contextualSignatureLocationInfo {
 	parent := node.Parent
 	switch parent.Kind {
-	case ast.KindParenthesizedExpression, ast.KindMethodDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
+	case ast.KindParenthesizedExpression, ast.KindFunctionExpression, ast.KindArrowFunction:
 		info := getArgumentOrParameterListInfo(node, sourceFile, c)
 		if info == nil {
 			return nil
@@ -1284,12 +1284,7 @@ func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFi
 		argumentCount := info.argumentCount
 		argumentsSpan := info.argumentsSpan
 
-		var contextualType *checker.Type
-		if ast.IsMethodDeclaration(parent) {
-			contextualType = c.GetContextualTypeForObjectLiteralElement(parent, checker.ContextFlagsNone)
-		} else {
-			contextualType = c.GetContextualType(parent, checker.ContextFlagsNone)
-		}
+		contextualType := c.GetContextualType(parent, checker.ContextFlagsNone)
 		if contextualType != nil {
 			return &contextualSignatureLocationInfo{
 				contextualType: contextualType,

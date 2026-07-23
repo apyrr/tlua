@@ -20,12 +20,12 @@ func TestCompletionsPropertiesWithPromiseUnionType(t *testing.T) {
 type MyType = {
   foo: string;
 };
-function fakeTest(cb: () => MyType | Promise<MyType>) {}
-fakeTest(() => {
+function fakeTest(cb: () => MyType | Promise<MyType>) end
+fakeTest(function()
   return {
     /*a*/
   };
-});`
+end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"a"}, &fourslash.CompletionsExpectedList{

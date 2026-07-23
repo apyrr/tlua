@@ -17,23 +17,23 @@ func TestInlayHintsFunctionParameterTypes1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type F1 = (a: string, b: number) => void
-local f1: F1 = (a, b) => { }
-local f2: F1 = (a, b: number) => { }
-function foo1 (cb: (a: string) => void) {}
-foo1((a) => { })
-function foo2 (cb: (a: Exclude<1 | 2 | 3, 1>) => void) {}
-foo2((a) => { })
-function foo3 (a: (b: (c: (d: Exclude<1 | 2 | 3, 1>) => void) => void) => void) {}
-foo3(a => {
-    a(d => {})
-})
-function foo4<T>(v: T, a: (v: T) => void) {}
-foo4(1, a => { })
+local f1: F1 = function(a, b) end
+local f2: F1 = function(a, b: number) end
+function foo1 (cb: (a: string) => void) end
+foo1(function(a) end)
+function foo2 (cb: (a: Exclude<1 | 2 | 3, 1>) => void) end
+foo2(function(a) end)
+function foo3 (a: (b: (c: (d: Exclude<1 | 2 | 3, 1>) => void) => void) => void) end
+foo3(function(a)
+    a(function(d) end)
+end)
+function foo4<T>(v: T, a: (v: T) => void) end
+foo4(1, function(a) end)
 type F2 = (a: {
     a: number
     b: string
 }) => void
-local foo5: F2 = (a) => { }`
+local foo5: F2 = function(a) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{InlayHints: lsutil.InlayHintsPreferences{IncludeInlayFunctionParameterTypeHints: core.TSTrue}})

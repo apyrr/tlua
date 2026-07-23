@@ -93,20 +93,19 @@ export function isStatement(node: Node): node is Statement {
     const kind = node.kind;
     return kind === SyntaxKind.VariableStatement || kind === SyntaxKind.EmptyStatement
         || kind === SyntaxKind.ExpressionStatement || kind === SyntaxKind.IfStatement
-        || kind === SyntaxKind.DoStatement || kind === SyntaxKind.WhileStatement
+        || kind === SyntaxKind.WhileStatement
         || kind === SyntaxKind.ForOfStatement || kind === SyntaxKind.NumericForStatement
         || kind === SyntaxKind.RepeatStatement || kind === SyntaxKind.ContinueStatement
         || kind === SyntaxKind.BreakStatement || kind === SyntaxKind.ReturnStatement
-        || kind === SyntaxKind.WithStatement
         || kind === SyntaxKind.LabelStatement || kind === SyntaxKind.GotoStatement
         || kind === SyntaxKind.ThrowStatement
-        || kind === SyntaxKind.TryStatement || kind === SyntaxKind.DebuggerStatement
+        || kind === SyntaxKind.DebuggerStatement
         || kind === SyntaxKind.InterfaceDeclaration || kind === SyntaxKind.TypeAliasDeclaration
         || kind === SyntaxKind.ModuleDeclaration
         || kind === SyntaxKind.ImportDeclaration || kind === SyntaxKind.ImportEqualsDeclaration
         || kind === SyntaxKind.ExportDeclaration || kind === SyntaxKind.ExportAssignment
         || kind === SyntaxKind.NamespaceExportDeclaration || kind === SyntaxKind.FunctionDeclaration
-        || kind === SyntaxKind.ClassDeclaration || kind === SyntaxKind.MissingDeclaration
+        || kind === SyntaxKind.MissingDeclaration
         || kind === SyntaxKind.NotEmittedStatement || kind === SyntaxKind.Block;
 }
 
@@ -127,7 +126,7 @@ export function isExpression(node: Node): node is Expression {
         || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.NonNullExpression
         || kind === SyntaxKind.MetaProperty || kind === SyntaxKind.JsxExpression
         || kind === SyntaxKind.PropertyAccessExpression || kind === SyntaxKind.ElementAccessExpression
-        || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ClassExpression
+        || kind === SyntaxKind.FunctionExpression
         || kind === SyntaxKind.ParenthesizedExpression || kind === SyntaxKind.ArrayLiteralExpression
         || kind === SyntaxKind.ObjectLiteralExpression || kind === SyntaxKind.TemplateExpression
         || kind === SyntaxKind.Identifier
@@ -170,7 +169,6 @@ function isLeftHandSideExpressionKind(kind: SyntaxKind): boolean {
         case SyntaxKind.ArrayLiteralExpression:
         case SyntaxKind.ParenthesizedExpression:
         case SyntaxKind.ObjectLiteralExpression:
-        case SyntaxKind.ClassExpression:
         case SyntaxKind.FunctionExpression:
         case SyntaxKind.Identifier:
         case SyntaxKind.PrivateIdentifier: // technically this is only an Expression if it's in a `#field in expr` BinaryExpression

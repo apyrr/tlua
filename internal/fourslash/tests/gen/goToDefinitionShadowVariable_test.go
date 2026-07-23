@@ -15,10 +15,10 @@ func TestGoToDefinitionShadowVariable(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local shadowVariable = "foo";
-function shadowVariableTestModule() {
+function shadowVariableTestModule()
     local /*shadowVariableDefinition*/shadowVariable;
     /*shadowVariableReference*/shadowVariable = 1;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, false, "shadowVariableReference")

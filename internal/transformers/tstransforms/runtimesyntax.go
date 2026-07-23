@@ -83,7 +83,7 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 	}
 
 	switch node.Kind {
-	// TypeScript parameter property modifiers are elided
+	// Type-only modifiers have no runtime representation.
 	case ast.KindPublicKeyword,
 		ast.KindPrivateKeyword,
 		ast.KindProtectedKeyword,
@@ -324,59 +324,6 @@ func (tx *RuntimeSyntaxTransformer) visitFunctionDeclaration(node *ast.FunctionD
 		return updated
 	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (tx *RuntimeSyntaxTransformer) transformConstructorBodyWorker(statementsIn []*ast.Statement, superPath []int, initializerStatements []*ast.Statement) []*ast.Statement {
-	var statementsOut []*ast.Statement
-	superStatementIndex := superPath[0]
-	superStatement := statementsIn[superStatementIndex]
-
-	// visit up to the statement containing `super`
-	statementsOut = append(statementsOut, core.FirstResult(tx.Visitor().VisitSlice(statementsIn[:superStatementIndex]))...)
-
-	// if the statement containing `super` is a `try` statement, transform the body of the `try` block
-	if ast.IsTryStatement(superStatement) {
-		tryStatement := superStatement.AsTryStatement()
-		tryBlock := tryStatement.TryBlock.AsBlock()
-
-		// keep track of hierarchy as we descend
-		grandparentOfTryStatement := tx.pushNode(tryStatement.AsNode())
-		grandparentOfTryBlock := tx.pushNode(tryBlock.AsNode())
-		savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName := tx.pushScope(tryBlock.AsNode())
-
-		// visit the `try` block
-		tryBlockStatements := tx.transformConstructorBodyWorker(
-			tryBlock.Statements.Nodes,
-			superPath[1:],
-			initializerStatements,
-		)
-
-		// restore hierarchy as we ascend to the `try` statement
-		tx.popScope(savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName)
-		tx.popNode(grandparentOfTryBlock)
-
-		tryBlockStatementList := tx.Factory().NewNodeList(tryBlockStatements)
-		tryBlockStatementList.Loc = tryBlock.Statements.Loc
-		statementsOut = append(statementsOut, tx.Factory().UpdateTryStatement(
-			tryStatement,
-			tx.Factory().UpdateBlock(tryBlock, tryBlockStatementList, tryBlock.MultiLine),
-			tx.Visitor().VisitNode(tryStatement.CatchClause),
-			tx.Visitor().VisitNode(tryStatement.FinallyBlock),
-		))
-
-		// restore hierarchy as we ascend to the parent of the `try` statement
-		tx.popNode(grandparentOfTryStatement)
-	} else {
-		// visit the statement containing `super`
-		statementsOut = append(statementsOut, core.FirstResult(tx.Visitor().VisitSlice(statementsIn[superStatementIndex:superStatementIndex+1]))...)
-
-		// insert the initializer statements
-		statementsOut = append(statementsOut, initializerStatements...)
-	}
-
-	// visit the statements after `super`
-	statementsOut = append(statementsOut, core.FirstResult(tx.Visitor().VisitSlice(statementsIn[superStatementIndex+1:]))...)
-	return statementsOut
 }
 
 func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.ShorthandPropertyAssignment) *ast.Node {

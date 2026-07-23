@@ -7,7 +7,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/apyrr/tlua/internal/ast"
-	"github.com/apyrr/tlua/internal/collections"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/debug"
 	"github.com/apyrr/tlua/internal/diagnostics"
@@ -25,7 +24,6 @@ const (
 	PCLuaIfClauseStatements                       // Statements in a Lua if/elseif arm (ends at elseif/else/end)
 	PCLuaRepeatStatements                         // Statements in a Lua repeat body (ends at until)
 	PCTypeMembers                                 // Members in interface or type literal
-	PCClassMembers                                // Members in class declaration
 	PCHeritageClauseElement                       // Elements in a heritage clause
 	PCVariableDeclarations                        // Variable declarations in variable statement
 	PCObjectBindingElements                       // Binding elements in object binding list
@@ -42,7 +40,6 @@ const (
 	PCTypeArguments                               // Type arguments in type argument list
 	PCTupleElementTypes                           // Element types in tuple element type list
 	PCHeritageClauses                             // Heritage clauses for a class or interface declaration.
-	PCImportAttributes                            // Import attributes
 	PCJSDocComment                                // Parsing via JSDocParser
 	PCCount                                       // Number of parsing contexts
 )
@@ -91,7 +88,6 @@ type Parser struct {
 
 	identifiers                map[string]string
 	identifierCount            int
-	notParenthesizedArrow      collections.Set[int]
 	nodeSliceArena             core.Arena[*ast.Node]
 	stringSliceArena           core.Arena[string]
 	jsdocInfos                 []JSDocInfo
@@ -114,14 +110,6 @@ func newParser() *Parser {
 }
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
-
-// missingListNodes is a sentinel backing array used to distinguish "missing" node lists
-// (where the expected opening token was not found) from ordinary empty node lists.
-var missingListNodes = make([]*ast.Node, 0, 1)
-
-func isMissingNodeList(list *ast.NodeList) bool {
-	return list != nil && cap(list.Nodes) == 1 && &list.Nodes[:1][0] == &missingListNodes[:1][0]
-}
 
 var parserPool = sync.Pool{
 	New: func() any {
@@ -513,7 +501,13 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	list := make([]*ast.Node, 0, 16)
 	for i := 0; !p.isListTerminator(kind); i++ {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
+			elementPos := p.nodePos()
 			elt := parseElement(p, len(list))
+			// Error recovery must always make progress, even when a removed
+			// construct is still recognized as the start of a list element.
+			if p.nodePos() == elementPos && p.token != ast.KindEndOfFile {
+				p.nextToken()
+			}
 			if len(p.reparseList) != 0 {
 				for _, e := range p.reparseList {
 					// Propagate @typedef type alias declarations outwards to a context that permits them.
@@ -580,7 +574,7 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 			// parse errors.  For example, this can happen when people do things like use
 			// a semicolon to delimit object literal members.   Note: we'll have already
 			// reported an error when we called parseExpected above.
-			if (kind == PCObjectLiteralMembers || kind == PCImportAttributes) && p.token == ast.KindSemicolonToken && !p.hasPrecedingLineBreak() {
+			if kind == PCObjectLiteralMembers && p.token == ast.KindSemicolonToken && !p.hasPrecedingLineBreak() {
 				p.nextToken()
 			}
 			if startPos == p.nodePos() {
@@ -603,25 +597,19 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSliceArena.Clone(list))
 }
 
-// Return a non-nil (but possibly empty) NodeList if parsing was successful, a missing NodeList if the opening
-// token wasn't found, or nil if parseElement returned nil.
+// Return a non-nil (but possibly empty) NodeList. If the opening token is
+// missing, return an empty list at the current position.
 func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) *ast.NodeList {
 	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
 		p.parseExpected(closing)
 		return result
 	}
-	return p.createMissingList()
+	return p.parseEmptyNodeList()
 }
 
 func (p *Parser) parseEmptyNodeList() *ast.NodeList {
 	return p.newNodeList(core.NewTextRange(p.nodePos(), p.nodePos()), nil)
-}
-
-func (p *Parser) createMissingList() *ast.NodeList {
-	result := p.parseEmptyNodeList()
-	result.Nodes = missingListNodes
-	return result
 }
 
 // Returns true if we should abort parsing.
@@ -659,8 +647,6 @@ func (p *Parser) parsingContextErrors(context ParsingContext) {
 		p.parseErrorAtCurrentToken(diagnostics.Declaration_or_statement_expected)
 	case PCRestProperties, PCTypeMembers:
 		p.parseErrorAtCurrentToken(diagnostics.Property_or_signature_expected)
-	case PCClassMembers:
-		p.parseErrorAtCurrentToken(diagnostics.Unexpected_token_A_constructor_method_accessor_or_property_was_expected)
 	case PCHeritageClauseElement:
 		p.parseErrorAtCurrentToken(diagnostics.Expression_expected)
 	case PCVariableDeclarations:
@@ -697,8 +683,6 @@ func (p *Parser) parsingContextErrors(context ParsingContext) {
 		p.parseErrorAtCurrentToken(diagnostics.Unexpected_token_expected)
 	case PCJsxAttributes, PCJsxChildren, PCJSDocComment:
 		p.parseErrorAtCurrentToken(diagnostics.Identifier_expected)
-	case PCImportAttributes:
-		p.parseErrorAtCurrentToken(diagnostics.Identifier_or_string_literal_expected)
 	default:
 		panic("Unhandled case in parsingContextErrors")
 	}
@@ -716,12 +700,6 @@ func (p *Parser) isListElement(parsingContext ParsingContext, inErrorRecovery bo
 		return !(p.token == ast.KindSemicolonToken && inErrorRecovery) && p.isStartOfStatement()
 	case PCTypeMembers:
 		return p.lookAhead((*Parser).scanTypeMemberStart)
-	case PCClassMembers:
-		// We allow semicolons as class elements (as specified by ES6) as long as we're
-		// not in error recovery.  If we're in error recovery, we don't want an errant
-		// semicolon to be treated as a class member (since they're almost always used
-		// for statements.
-		return p.lookAhead((*Parser).scanClassMemberStart) || p.token == ast.KindSemicolonToken && !inErrorRecovery
 	case PCObjectLiteralMembers:
 		switch p.token {
 		// Generators are removed in tlua: `*` is not kept as a member start, so
@@ -745,8 +723,6 @@ func (p *Parser) isListElement(parsingContext ParsingContext, inErrorRecovery bo
 		// no longer consume the token -- claiming it starts an element would spin the
 		// list parser.
 		return p.token == ast.KindOpenBracketToken || p.isLiteralPropertyName()
-	case PCImportAttributes:
-		return p.isImportAttributeName()
 	case PCHeritageClauseElement:
 		// If we see `{ ... }` then only consume it as an expression if it is followed by `,` or `{`
 		// That way we won't consume the body of a class in its heritage clause.
@@ -803,8 +779,8 @@ func (p *Parser) isListTerminator(kind ParsingContext) bool {
 		return true
 	}
 	switch kind {
-	case PCBlockStatements, PCTypeMembers, PCClassMembers, PCObjectLiteralMembers,
-		PCObjectBindingElements, PCImportAttributes:
+	case PCBlockStatements, PCTypeMembers, PCObjectLiteralMembers,
+		PCObjectBindingElements:
 		return p.token == ast.KindCloseBraceToken
 	case PCLuaBlockStatements:
 		return p.token == ast.KindEndKeyword
@@ -954,7 +930,7 @@ func (p *Parser) parseStatement() *ast.Statement {
 	case ast.KindSemicolonToken:
 		return p.parseEmptyStatement()
 	case ast.KindOpenBraceToken:
-		return p.parseBlock(false /*ignoreMissingOpenBrace*/, nil)
+		return p.parseRemovedBlockStatement()
 	case ast.KindLocalKeyword:
 		return p.parseLocalStatement(p.nodePos(), p.jsdocScannerInfo())
 	case ast.KindFunctionKeyword:
@@ -962,7 +938,7 @@ func (p *Parser) parseStatement() *ast.Statement {
 	case ast.KindIfKeyword:
 		return p.parseIfStatement()
 	case ast.KindDoKeyword:
-		return p.parseDoStatement()
+		return p.parseDoBlock()
 	case ast.KindRepeatKeyword:
 		return p.parseRepeatStatement()
 	case ast.KindWhileKeyword:
@@ -979,12 +955,8 @@ func (p *Parser) parseStatement() *ast.Statement {
 		return p.parseGotoStatement()
 	case ast.KindReturnKeyword:
 		return p.parseReturnStatement()
-	case ast.KindWithKeyword:
-		return p.parseWithStatement()
 	case ast.KindThrowKeyword:
 		return p.parseThrowStatement()
-	case ast.KindTryKeyword, ast.KindCatchKeyword, ast.KindFinallyKeyword:
-		return p.parseTryStatement()
 	case ast.KindDebuggerKeyword:
 		return p.parseDebuggerStatement()
 	case ast.KindAsyncKeyword, ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
@@ -1091,13 +1063,13 @@ func isDeclareModifier(modifier *ast.Node) bool {
 	return modifier.Kind == ast.KindDeclareKeyword
 }
 
-func (p *Parser) parseBlock(ignoreMissingOpenBrace bool, diagnosticMessage *diagnostics.Message) *ast.Node {
+func (p *Parser) parseBlock(diagnosticMessage *diagnostics.Message) *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	openBracePosition := p.scanner.TokenStart()
 	openBraceParsed := p.parseExpectedWithDiagnostic(ast.KindOpenBraceToken, diagnosticMessage, true /*shouldAdvance*/)
 	multiline := false
-	if openBraceParsed || ignoreMissingOpenBrace {
+	if openBraceParsed {
 		multiline = p.hasPrecedingLineBreak()
 		statements := p.parseList(PCBlockStatements, (*Parser).parseStatement)
 		p.parseExpectedMatchingBrackets(ast.KindOpenBraceToken, ast.KindCloseBraceToken, openBraceParsed, openBracePosition)
@@ -1109,7 +1081,7 @@ func (p *Parser) parseBlock(ignoreMissingOpenBrace bool, diagnosticMessage *diag
 		}
 		return result
 	}
-	result := p.finishNode(p.factory.NewBlock(p.createMissingList(), multiline), pos)
+	result := p.finishNode(p.factory.NewBlock(p.parseEmptyNodeList(), multiline), pos)
 	p.withJSDoc(result, jsdoc)
 	return result
 }
@@ -1127,36 +1099,24 @@ func (p *Parser) parseIfStatement() *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	p.parseExpected(ast.KindIfKeyword)
-	// Lua: `if c then ... end`. TS requires `(` after `if`, so a non-paren
-	// condition is unambiguously Lua. With `(`, speculatively parse a full
-	// expression (the condition may extend past the parens: `(a) && b`): a
-	// following `then` — reserved, so no TS sentence has it there — selects
-	// Lua; anything else rewinds to the byte-identical TS path.
-	if p.token != ast.KindOpenParenToken {
-		return p.parseLuaIfRest(pos, jsdoc)
-	}
-	// Accept the Lua interpretation only when the condition parsed cleanly:
-	// expression error-recovery heuristics (e.g. `(x) {` committing to an
-	// arrow function) can otherwise swallow statements and still land on the
-	// disambiguating keyword.
-	state := p.mark()
-	speculative := p.parseExpressionAllowIn()
-	if p.token == ast.KindThenKeyword && len(p.diagnostics) == state.diagnosticsLen {
-		return p.parseLuaIfRestAfterCondition(pos, jsdoc, speculative)
-	}
-	p.rewind(state)
-	openParenPosition := p.scanner.TokenStart()
-	openParenParsed := p.parseExpected(ast.KindOpenParenToken)
-	expression := p.parseExpressionAllowIn()
-	p.parseExpectedMatchingBrackets(ast.KindOpenParenToken, ast.KindCloseParenToken, openParenParsed, openParenPosition)
-	thenStatement := p.parseStatement()
-	var elseStatement *ast.Statement
-	if p.parseOptional(ast.KindElseKeyword) {
-		elseStatement = p.parseStatement()
-	}
-	result := p.finishNode(p.factory.NewIfStatement(expression, thenStatement, elseStatement), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
+	// tlua has only the Lua form `if c then ... end`. A parenthesized condition
+	// (`if (x) then`) is just a parenthesized expression; the C-style
+	// `if (c) <stmt>` form is removed, so the condition always leads to `then`.
+	return p.parseLuaIfRest(pos, jsdoc)
+}
+
+// parseRemovedBlockStatement reports and recovers from a `{` in statement
+// position. Block statements are removed: a Lua block is `do ... end`, and a
+// bare `{ ... }` is neither a statement nor (in statement position) a table
+// literal. We report at the brace but still parse the balanced region as a
+// Block, rather than a token-spanning leaf node that would crash
+// language-service position queries. For a balanced `{ ... }` -- e.g. a stale
+// C-style function body -- recovery resumes after `}`; an unbalanced `{` (no
+// closing `}` before EOF) greedily absorbs the trailing statements into the
+// Block, matching upstream block recovery.
+func (p *Parser) parseRemovedBlockStatement() *ast.Node {
+	p.parseErrorAtCurrentToken(diagnostics.Declaration_or_statement_expected)
+	return p.parseBlock(nil)
 }
 
 // parseLuaIfRest parses `<cond> then <arm> [elseif ...|else ...] end` — the
@@ -1206,62 +1166,25 @@ func (p *Parser) parseRepeatStatement() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseDoStatement() *ast.Node {
+func (p *Parser) parseDoBlock() *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	p.parseExpected(ast.KindDoKeyword)
-	// Lua: `do ... end` standalone block. TS do-while bodies are braced (`{`
-	// after `do` ⇒ TS); anything else starts a Lua block, whose statements
-	// run to `end`.
-	if p.token != ast.KindOpenBraceToken {
-		statements := p.parseList(PCLuaBlockStatements, (*Parser).parseStatement)
-		p.parseExpected(ast.KindEndKeyword)
-		block := p.finishNode(p.factory.NewBlock(statements, true /*multiLine*/), pos)
-		block.Flags |= ast.NodeFlagsLuaBlock
-		p.withJSDoc(block, jsdoc)
-		return block
-	}
-	statement := p.parseStatement()
-	p.parseExpected(ast.KindWhileKeyword)
-	openParenPosition := p.scanner.TokenStart()
-	openParenParsed := p.parseExpected(ast.KindOpenParenToken)
-	expression := p.parseExpressionAllowIn()
-	p.parseExpectedMatchingBrackets(ast.KindOpenParenToken, ast.KindCloseParenToken, openParenParsed, openParenPosition)
-	// From: https://mail.mozilla.org/pipermail/es-discuss/2011-August/016188.html
-	// 157 min --- All allen at wirfs-brock.com CONF --- "do{;}while(false)false" prohibited in
-	// spec but allowed in consensus reality. Approved -- this is the de-facto standard whereby
-	//  do;while(0)x will have a semicolon inserted before x.
-	p.parseOptional(ast.KindSemicolonToken)
-	result := p.finishNode(p.factory.NewDoStatement(statement, expression), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
+	// tlua has only Lua `do ... end` standalone blocks; the TS `do { } while (c)`
+	// form is removed, so the statements always run to `end`.
+	block := p.finishLuaEndBlock(pos)
+	p.withJSDoc(block, jsdoc)
+	return block
 }
 
 func (p *Parser) parseWhileStatement() *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	p.parseExpected(ast.KindWhileKeyword)
-	// Lua: `while c do ... end`. A non-paren condition is unambiguously Lua;
-	// with `(`, a `do` after the (speculatively parsed) condition always
-	// selects Lua — the TS do-while-as-unbraced-while-body form is given up.
-	if p.token != ast.KindOpenParenToken {
-		return p.parseLuaWhileRest(pos, jsdoc, p.parseExpressionAllowIn())
-	}
-	// Clean-parse guard: see parseIfStatement.
-	state := p.mark()
-	speculative := p.parseExpressionAllowIn()
-	if p.token == ast.KindDoKeyword && len(p.diagnostics) == state.diagnosticsLen {
-		return p.parseLuaWhileRest(pos, jsdoc, speculative)
-	}
-	p.rewind(state)
-	openParenPosition := p.scanner.TokenStart()
-	openParenParsed := p.parseExpected(ast.KindOpenParenToken)
-	expression := p.parseExpressionAllowIn()
-	p.parseExpectedMatchingBrackets(ast.KindOpenParenToken, ast.KindCloseParenToken, openParenParsed, openParenPosition)
-	statement := p.parseStatement()
-	result := p.finishNode(p.factory.NewWhileStatement(expression, statement), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
+	// tlua has only the Lua form `while c do ... end`. A parenthesized condition
+	// (`while (x) do`) is just a parenthesized expression; the C-style
+	// `while (c) <stmt>` form is removed.
+	return p.parseLuaWhileRest(pos, jsdoc, p.parseExpressionAllowIn())
 }
 
 func (p *Parser) parseLuaWhileRest(pos int, jsdoc jsdocScannerInfo, expression *ast.Expression) *ast.Node {
@@ -1412,20 +1335,6 @@ func (p *Parser) parseReturnStatement() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseWithStatement() *ast.Node {
-	pos := p.nodePos()
-	jsdoc := p.jsdocScannerInfo()
-	p.parseExpected(ast.KindWithKeyword)
-	openParenPosition := p.scanner.TokenStart()
-	openParenParsed := p.parseExpected(ast.KindOpenParenToken)
-	expression := p.parseExpressionAllowIn()
-	p.parseExpectedMatchingBrackets(ast.KindOpenParenToken, ast.KindCloseParenToken, openParenParsed, openParenPosition)
-	statement := doInContext(p, ast.NodeFlagsInWithStatement, true, (*Parser).parseStatement)
-	result := p.finishNode(p.factory.NewWithStatement(expression, statement), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
-}
-
 func (p *Parser) parseThrowStatement() *ast.Node {
 	// ThrowStatement[Yield] :
 	//      throw [no LineTerminator here]Expression[In, ?Yield];
@@ -1448,41 +1357,6 @@ func (p *Parser) parseThrowStatement() *ast.Node {
 	}
 	result := p.finishNode(p.factory.NewThrowStatement(expression), pos)
 	p.withJSDoc(result, jsdoc)
-	return result
-}
-
-// TODO: Review for error recovery
-func (p *Parser) parseTryStatement() *ast.Node {
-	pos := p.nodePos()
-	jsdoc := p.jsdocScannerInfo()
-	p.parseExpected(ast.KindTryKeyword)
-	tryBlock := p.parseBlock(false /*ignoreMissingOpenBrace*/, nil)
-	var catchClause *ast.Node
-	if p.token == ast.KindCatchKeyword {
-		catchClause = p.parseCatchClause()
-	}
-	// If we don't have a catch clause, then we must have a finally clause.  Try to parse
-	// one out no matter what.
-	var finallyBlock *ast.Node
-	if catchClause == nil || p.token == ast.KindFinallyKeyword {
-		p.parseExpectedWithDiagnostic(ast.KindFinallyKeyword, diagnostics.X_catch_or_finally_expected, true /*shouldAdvance*/)
-		finallyBlock = p.parseBlock(false /*ignoreMissingOpenBrace*/, nil)
-	}
-	result := p.finishNode(p.factory.NewTryStatement(tryBlock, catchClause, finallyBlock), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
-}
-
-func (p *Parser) parseCatchClause() *ast.Node {
-	pos := p.nodePos()
-	p.parseExpected(ast.KindCatchKeyword)
-	var variableDeclaration *ast.Node
-	if p.parseOptional(ast.KindOpenParenToken) {
-		variableDeclaration = p.parseVariableDeclaration()
-		p.parseExpected(ast.KindCloseParenToken)
-	}
-	block := p.parseBlock(false /*ignoreMissingOpenBrace*/, nil)
-	result := p.finishNode(p.factory.NewCatchClause(variableDeclaration, block), pos)
 	return result
 }
 
@@ -1544,9 +1418,9 @@ func (p *Parser) parseLocalFunctionDeclaration(pos int, jsdoc jsdocScannerInfo) 
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsNone)
 	returnType := p.parseReturnTypeList(ast.KindColonToken)
-	body := p.parseLuaFunctionBlock(ParseFlagsNone)
+	body := p.parseLuaFunctionBlock()
 	result := p.finishNode(p.factory.NewFunctionDeclaration(nil /*modifiers*/, nil /*target*/, nil /*colonToken*/, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
-	result.Flags |= ast.NodeFlagsLuaLocal | ast.NodeFlagsLuaBlock
+	result.Flags |= ast.NodeFlagsLuaLocal
 	p.withJSDoc(result, jsdoc)
 	p.checkJSSyntax(result)
 	return result
@@ -1782,7 +1656,6 @@ func (p *Parser) parseFunctionDeclaration(pos int, jsdoc jsdocScannerInfo, modif
 		}
 	}
 	typeParameters := p.parseTypeParameters()
-	hasParameterList := p.token == ast.KindOpenParenToken
 	parameters := p.parseParameters(ParseFlagsNone)
 	if selfParameter != nil {
 		// The colon form is sugar for an explicit first parameter, so the synthesized
@@ -1790,11 +1663,8 @@ func (p *Parser) parseFunctionDeclaration(pos int, jsdoc jsdocScannerInfo, modif
 		parameters = p.newNodeList(parameters.Loc, append([]*ast.Node{selfParameter}, parameters.Nodes...))
 	}
 	returnType := p.parseReturnTypeList(ast.KindColonToken)
-	body, isLuaBody := p.parseFunctionDeclarationBody(ParseFlagsNone, hasParameterList, diagnostics.X_or_expected)
+	body := p.parseFunctionDeclarationBody()
 	result := p.finishNode(p.factory.NewFunctionDeclaration(modifiers, target, colonToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
-	if isLuaBody {
-		result.Flags |= ast.NodeFlagsLuaBlock
-	}
 	p.withJSDoc(result, jsdoc)
 	p.checkJSSyntax(result)
 	return result
@@ -1833,19 +1703,17 @@ func (p *Parser) finishSelfNode(node *ast.Node, loc core.TextRange) *ast.Node {
 	return p.finishNodeWithEnd(node, loc.Pos(), loc.End())
 }
 
-func (p *Parser) parseFunctionDeclarationBody(flags ParseFlags, hasParameterList bool, diagnosticMessage *diagnostics.Message) (*ast.Node, bool) {
-	if p.token == ast.KindOpenBraceToken || p.contextFlags&ast.NodeFlagsAmbient != 0 {
-		return p.parseFunctionBlockOrSemicolon(flags, diagnosticMessage), false
+func (p *Parser) parseFunctionDeclarationBody() *ast.Node {
+	// Ambient declarations carry no body -- just a signature terminated by `;`.
+	if p.contextFlags&ast.NodeFlagsAmbient != 0 {
+		p.parseSemicolon()
+		return nil
 	}
 	if p.token == ast.KindSemicolonToken {
 		p.parseSemicolon()
-		return nil, false
+		return nil
 	}
-	// In tlua, braceless function declarations are Lua bodies; signatures use `;`.
-	if hasParameterList && (p.token == ast.KindEndKeyword || p.isListElement(PCLuaBlockStatements, false /*inErrorRecovery*/)) {
-		return p.parseLuaFunctionBlock(flags), true
-	}
-	return p.parseFunctionBlockOrSemicolon(flags, diagnosticMessage), false
+	return p.parseLuaFunctionBlock()
 }
 
 func isAsyncModifier(modifier *ast.Node) bool {
@@ -2016,7 +1884,7 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 		statements = p.parseList(PCBlockStatements, (*Parser).parseStatement)
 		p.parseExpected(ast.KindCloseBraceToken)
 	} else {
-		statements = p.createMissingList()
+		statements = p.parseEmptyNodeList()
 	}
 	return p.finishNode(p.factory.NewModuleBlock(statements), pos)
 }
@@ -2487,82 +2355,13 @@ func (p *Parser) parseImportType() *ast.Node {
 	p.parseExpected(ast.KindImportKeyword)
 	p.parseExpected(ast.KindOpenParenToken)
 	typeNode := p.parseType()
-	var attributes *ast.Node
-	if p.parseOptional(ast.KindCommaToken) {
-		openBracePosition := p.scanner.TokenStart()
-		p.parseExpected(ast.KindOpenBraceToken)
-		currentToken := p.token
-		if currentToken == ast.KindWithKeyword || currentToken == ast.KindAssertKeyword {
-			if currentToken == ast.KindAssertKeyword {
-				p.parseErrorAtCurrentToken(diagnostics.Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert)
-			}
-			p.nextToken()
-		} else {
-			p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(ast.KindWithKeyword))
-		}
-		p.parseExpected(ast.KindColonToken)
-		attributes = p.parseImportAttributes(currentToken, true /*skipKeyword*/)
-		p.parseOptional(ast.KindCommaToken)
-		if !p.parseExpected(ast.KindCloseBraceToken) {
-			if len(p.diagnostics) != 0 {
-				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
-				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
-					lastDiagnostic.AddRelatedInfo(related)
-				}
-			}
-		}
-	}
 	p.parseExpected(ast.KindCloseParenToken)
 	var qualifier *ast.Node
 	if p.parseOptional(ast.KindDotToken) {
 		qualifier = p.parseEntityNameOfTypeReference()
 	}
 	typeArguments := p.parseTypeArgumentsOfTypeReference()
-	return p.finishNode(p.factory.NewImportTypeNode(isTypeOf, typeNode, attributes, qualifier, typeArguments), pos)
-}
-
-func (p *Parser) parseImportAttribute() *ast.Node {
-	pos := p.nodePos()
-	var name *ast.Node
-	if tokenIsIdentifierOrKeyword(p.token) {
-		name = p.parseIdentifierName()
-	} else if p.token == ast.KindStringLiteral {
-		name = p.parseLiteralExpression(false /*intern*/)
-	}
-	if name != nil {
-		p.parseExpected(ast.KindColonToken)
-	} else {
-		p.parseErrorAtCurrentToken(diagnostics.Identifier_or_string_literal_expected)
-	}
-	value := p.parseAssignmentExpressionOrHigher()
-	return p.finishNode(p.factory.NewImportAttribute(name, value), pos)
-}
-
-func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *ast.Node {
-	pos := p.nodePos()
-	if !skipKeyword {
-		p.parseExpected(token)
-	}
-	var elements *ast.NodeList
-	var multiLine bool
-	openBracePosition := p.scanner.TokenStart()
-	if p.parseExpected(ast.KindOpenBraceToken) {
-		multiLine = p.hasPrecedingLineBreak()
-		elements = p.parseDelimitedList(PCImportAttributes, (*Parser).parseImportAttribute)
-		if !p.parseExpected(ast.KindCloseBraceToken) {
-			if len(p.diagnostics) != 0 {
-				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
-				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
-					lastDiagnostic.AddRelatedInfo(related)
-				}
-			}
-		}
-	} else {
-		elements = p.parseEmptyNodeList()
-	}
-	return p.finishNode(p.factory.NewImportAttributes(token, elements, multiLine), pos)
+	return p.finishNode(p.factory.NewImportTypeNode(isTypeOf, typeNode, qualifier, typeArguments), pos)
 }
 
 func (p *Parser) parseTypeQuery() *ast.Node {
@@ -2637,12 +2436,6 @@ func (p *Parser) parseTypeMember() *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	modifiers := p.parseModifiers()
-	if p.parseContextualModifier(ast.KindGetKeyword) {
-		return p.parseAccessorDeclaration(pos, jsdoc, modifiers, ast.KindGetAccessor, ParseFlagsType)
-	}
-	if p.parseContextualModifier(ast.KindSetKeyword) {
-		return p.parseAccessorDeclaration(pos, jsdoc, modifiers, ast.KindSetAccessor, ParseFlagsType)
-	}
 	if p.isIndexSignature() {
 		return p.parseIndexSignatureDeclaration(pos, jsdoc, modifiers)
 	}
@@ -2743,7 +2536,7 @@ func (p *Parser) parseParameters(flags ParseFlags) *ast.NodeList {
 		p.parseExpected(ast.KindCloseParenToken)
 		return parameters
 	}
-	return p.createMissingList()
+	return p.parseEmptyNodeList()
 }
 
 func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) *ast.NodeList {
@@ -3094,26 +2887,6 @@ func (p *Parser) parseTypeMemberSemicolon() {
 	p.parseSemicolon()
 }
 
-func (p *Parser) parseAccessorDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList, kind ast.Kind, flags ParseFlags) *ast.Node {
-	name := p.parsePropertyName()
-	typeParameters := p.parseTypeParameters()
-	parameters := p.parseParameters(ParseFlagsNone)
-	returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
-	body := p.parseFunctionBlockOrSemicolon(flags, nil /*diagnosticMessage*/)
-	var result *ast.Node
-	// Keep track of `typeParameters` (for both) and `type` (for setters) if they were parsed those indicate grammar errors
-	if kind == ast.KindGetAccessor {
-		result = p.factory.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
-	} else {
-		result = p.factory.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
-	}
-	p.withJSDoc(p.finishNode(result, pos), jsdoc)
-	if flags&ParseFlagsType == 0 {
-		p.checkJSSyntax(result)
-	}
-	return result
-}
-
 func (p *Parser) parsePropertyName() *ast.Node {
 	prop := p.parsePropertyNameWorker(true /*allowComputedPropertyNames*/)
 	return prop
@@ -3147,27 +2920,19 @@ func (p *Parser) parseComputedPropertyName() *ast.Node {
 	return p.finishNode(p.factory.NewComputedPropertyName(expression), pos)
 }
 
-func (p *Parser) parseFunctionBlockOrSemicolon(flags ParseFlags, diagnosticMessage *diagnostics.Message) *ast.Node {
-	if p.token != ast.KindOpenBraceToken {
-		if flags&ParseFlagsType != 0 {
-			p.parseTypeMemberSemicolon()
-			return nil
-		}
-		if p.canParseSemicolon() {
-			p.parseSemicolon()
-			return nil
-		}
-	}
-	return p.parseFunctionBlock(flags, diagnosticMessage)
-}
-
-func (p *Parser) parseLuaFunctionBlock(flags ParseFlags) *ast.Node {
-	pos := p.nodePos()
+// finishLuaEndBlock parses statements up to and consuming `end`, wrapping them in
+// a Lua-flagged Block whose range starts at pos. Shared by function bodies and
+// standalone `do ... end` blocks so the `end`-block shape stays in one place.
+func (p *Parser) finishLuaEndBlock(pos int) *ast.Node {
 	statements := p.parseList(PCLuaBlockStatements, (*Parser).parseStatement)
 	p.parseExpected(ast.KindEndKeyword)
 	block := p.finishNode(p.factory.NewBlock(statements, true /*multiLine*/), pos)
 	block.Flags |= ast.NodeFlagsLuaBlock
 	return block
+}
+
+func (p *Parser) parseLuaFunctionBlock() *ast.Node {
+	return p.finishLuaEndBlock(p.nodePos())
 }
 
 // parseLuaClauseBlock parses statements up to (not including) the clause
@@ -3180,10 +2945,6 @@ func (p *Parser) parseLuaClauseBlock(context ParsingContext) *ast.Node {
 	block := p.finishNode(p.factory.NewBlock(statements, true /*multiLine*/), pos)
 	block.Flags |= ast.NodeFlagsLuaBlock
 	return block
-}
-
-func (p *Parser) parseFunctionBlock(flags ParseFlags, diagnosticMessage *diagnostics.Message) *ast.Node {
-	return p.parseBlock(flags&ParseFlagsIgnoreMissingOpenBrace != 0, diagnosticMessage)
 }
 
 func (p *Parser) isIndexSignature() bool {
@@ -3287,7 +3048,7 @@ func (p *Parser) parseObjectTypeMembers() *ast.NodeList {
 		p.parseExpected(ast.KindCloseBraceToken)
 		return members
 	}
-	return p.createMissingList()
+	return p.parseEmptyNodeList()
 }
 
 func (p *Parser) parseTupleType() *ast.Node {
@@ -3462,7 +3223,7 @@ func (p *Parser) parseFunctionOrConstructorType() *ast.TypeNode {
 	if !isConstructorType && modifiers == nil {
 		// A function type may carry an `async` modifier (the tlua coroutine
 		// contract); constructor types only take `abstract`, parsed above.
-		modifiers = p.parseModifiersForArrowFunction()
+		modifiers = p.parseModifiersForFunctionType()
 	}
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
@@ -3742,43 +3503,15 @@ func (p *Parser) parseAssignmentExpressionOrHigher() *ast.Expression {
 	// (i.e. they're both BinaryExpressions with an assignment operator in it).
 	// Generators are removed in tlua: `yield` is an ordinary identifier, never a
 	// YieldExpression (production '6').
-	// Then, check if we have an arrow function (production '4' and '5') that starts with a parenthesized
-	// parameter list or is an async arrow function.
-	// AsyncArrowFunctionExpression:
-	//      1) async[no LineTerminator here]AsyncArrowBindingIdentifier[?Yield][no LineTerminator here]=>AsyncConciseBody[?In]
-	//      2) CoverCallExpressionAndAsyncArrowHead[?Yield, ?Await][no LineTerminator here]=>AsyncConciseBody[?In]
-	// Production (1) of AsyncArrowFunctionExpression is parsed in "tryParseAsyncSimpleArrowFunctionExpression".
-	// And production (2) is parsed in "tryParseParenthesizedArrowFunctionExpression".
+	// tlua has no arrow function expressions (productions '4' and '5'); an
+	// anonymous function value is written `function(...) ... end`. So an
+	// assignment expression reduces to productions '1'-'3'.
 	//
-	// If we do successfully parse arrow-function, we must *not* recurse for productions 1, 2 or 3. An ArrowFunction is
-	// not a LeftHandSideExpression, nor does it start a ConditionalExpression.  So we are done
-	// with AssignmentExpression if we see one.
-	arrowExpression := p.tryParseParenthesizedArrowFunctionExpression()
-	if arrowExpression != nil {
-		return arrowExpression
-	}
-	arrowExpression = p.tryParseAsyncSimpleArrowFunctionExpression()
-	if arrowExpression != nil {
-		return arrowExpression
-	}
-	// Now try to see if we're in production '1', '2' or '3'.  A conditional expression can
-	// start with a LogicalOrExpression, while the assignment productions can only start with
-	// LeftHandSideExpressions.
-	//
-	// So, first, we try to just parse out a BinaryExpression.  If we get something that is a
-	// LeftHandSide or higher, then we can try to parse out the assignment expression part.
-	// Otherwise, we try to parse out the conditional expression bit.  We want to allow any
-	// binary expression here, so we pass in the 'lowest' precedence here so that it matches
-	// and consumes anything.
+	// We parse out a BinaryExpression. If we get something that is a LeftHandSide
+	// or higher, we then try to parse out the assignment expression part. We pass
+	// in the 'lowest' precedence so that it matches and consumes anything.
 	pos := p.nodePos()
-	jsdoc := p.jsdocScannerInfo()
 	expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
-	// To avoid a look-ahead, we did not handle the case of an arrow function with a single un-parenthesized
-	// parameter ('x => ...') above. We handle it here by checking if the parsed expression was a single
-	// identifier and the current token is an arrow.
-	if expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
-		return p.parseSimpleArrowFunctionExpression(pos, expr, jsdoc, nil /*asyncModifier*/)
-	}
 	// Now see if we might be in cases '2' or '3'.
 	// If the expression was a LHS expression, and we have an assignment operator, then
 	// we're in '2' or '3'. Consume the assignment and return.
@@ -3793,275 +3526,10 @@ func (p *Parser) parseAssignmentExpressionOrHigher() *ast.Expression {
 	return expr
 }
 
-func (p *Parser) isParenthesizedArrowFunctionExpression() core.Tristate {
-	if p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken || p.token == ast.KindAsyncKeyword {
-		state := p.mark()
-		result := p.nextIsParenthesizedArrowFunctionExpression()
-		p.rewind(state)
-		return result
-	}
-	if p.token == ast.KindEqualsGreaterThanToken {
-		// ERROR RECOVERY TWEAK:
-		// If we see a standalone => try to parse it as an arrow function expression as that's
-		// likely what the user intended to write.
-		return core.TSTrue
-	}
-	// Definitely not a parenthesized arrow function.
-	return core.TSFalse
-}
-
-func (p *Parser) nextIsParenthesizedArrowFunctionExpression() core.Tristate {
-	if p.token == ast.KindAsyncKeyword {
-		p.nextToken()
-		if p.hasPrecedingLineBreak() {
-			return core.TSFalse
-		}
-		if p.token != ast.KindOpenParenToken && p.token != ast.KindLessThanToken {
-			return core.TSFalse
-		}
-	}
-	first := p.token
-	second := p.nextToken()
-	if first == ast.KindOpenParenToken {
-		if second == ast.KindCloseParenToken {
-			// Simple cases: "() =>", "(): ", and "() {".
-			// This is an arrow function with no parameters.
-			// The last one is not actually an arrow function,
-			// but this is probably what the user intended.
-			third := p.nextToken()
-			switch third {
-			case ast.KindEqualsGreaterThanToken, ast.KindColonToken, ast.KindOpenBraceToken:
-				return core.TSTrue
-			}
-			return core.TSFalse
-		}
-		// If encounter "({", this could be the start of an object binding pattern.
-		// Examples:
-		//      ({ x }) => { }
-		//      ({ x })
-		if second == ast.KindOpenBraceToken {
-			return core.TSUnknown
-		}
-		// "(..." is ambiguous in tlua: `(...)` is a parenthesized vararg
-		// expression -- the Lua single-value truncation idiom -- and the vararg
-		// can be an operand inside those parens (`(... or 0)`, `(... as T)`).
-		// Only a parameter list keeps it an arrow.
-		if second == ast.KindDotDotDotToken {
-			switch p.nextToken() {
-			case ast.KindCloseParenToken:
-				// `(...)` alone. NOT the same test as the `()` case above, because
-				// `(...)` is a valid expression while `()` is not: `=>` is the
-				// arrow and `{` a malformed arrow we still want to read as one,
-				// but a `:` is ambiguous -- the return type in `(...): T => R`,
-				// a case label in `switch (n) { case (...): }`. Try the arrow
-				// parse; it rewinds to the expression when no `=>`/`{` follows.
-				switch p.nextToken() {
-				case ast.KindEqualsGreaterThanToken, ast.KindOpenBraceToken:
-					return core.TSTrue
-				case ast.KindColonToken:
-					return core.TSUnknown
-				}
-				return core.TSFalse
-			case ast.KindColonToken, ast.KindQuestionToken, ast.KindEqualsToken:
-				// An annotation, or a (rejected) `?`/`=`: no expression can
-				// continue a bare `...` with these, so it is a parameter list.
-				return core.TSTrue
-			case ast.KindCommaToken:
-				// `(..., x) => R` is a (rejected, rest-must-be-last) parameter
-				// list, but `(..., x)` is a legal parenthesized expression list
-				// -- and the only reading when no `=>` follows. Try the arrow
-				// parse; it rewinds to the expression when the list is not
-				// arrow-shaped.
-				return core.TSUnknown
-			}
-			if p.isIdentifier() {
-				// A named rest is illegal (100034), but it is still a parameter
-				// list, and only when a parameter continuation follows the name:
-				// `as` and `satisfies` are identifiers here too, so `(... as T)`
-				// would otherwise be committed to an arrow parse. No expression
-				// can continue `... <name>`, so the follow set decides outright.
-				p.nextToken()
-				return core.IfElse(p.isVarargParameterFollow(), core.TSTrue, core.TSFalse)
-			}
-			// An operator or other expression continuation: `...` is an operand in
-			// a parenthesized expression.
-			return core.TSFalse
-		}
-		// Check for "(xxx yyy", where xxx is a modifier and yyy is an identifier. This
-		// isn't actually allowed, but we want to treat it as a lambda so we can provide
-		// a good error message.
-		if ast.IsModifierKind(second) && second != ast.KindAsyncKeyword && p.lookAhead((*Parser).nextTokenIsIdentifier) {
-			if p.nextToken() == ast.KindAsKeyword {
-				// https://github.com/microsoft/TypeScript/issues/44466
-				return core.TSFalse
-			}
-			return core.TSTrue
-		}
-		// If we had "(" followed by something that's not an identifier,
-		// then this definitely doesn't look like a lambda. `this` parameters are
-		// removed, so `(this` no longer looks like an arrow parameter list.
-		if !p.isIdentifier() {
-			return core.TSFalse
-		}
-		switch p.nextToken() {
-		case ast.KindColonToken:
-			// "(a:" is usually a type-annotated parameter in an arrow function
-			// expression -- but "(a:b(" and "(a:b<" can open a parenthesized Lua
-			// colon call, plain or with explicit type arguments. Try the arrow
-			// parse; it rewinds to the expression when the rest is not
-			// arrow-shaped (`(x: y<z>) => e` still commits as an arrow). The
-			// name set mirrors the colon-call gate in parseCallExpressionRest.
-			if tokenIsLuaMethodName(p.nextToken()) {
-				switch p.nextToken() {
-				case ast.KindOpenParenToken, ast.KindLessThanToken:
-					return core.TSUnknown
-				}
-			}
-			return core.TSTrue
-		case ast.KindQuestionToken:
-			p.nextToken()
-			// If we have "(a?:" or "(a?," or "(a?=" or "(a?)" then it is definitely a lambda.
-			if p.token == ast.KindColonToken || p.token == ast.KindCommaToken || p.token == ast.KindEqualsToken || p.token == ast.KindCloseParenToken {
-				return core.TSTrue
-			}
-			// Otherwise it is definitely not a lambda. tlua has no ternary, so this
-			// arm now only sees malformed input -- but a ported `(a ? b : c)` recovers
-			// far better as a parenthesized expression with one error at the `?` than
-			// as a mangled arrow parameter list.
-			return core.TSFalse
-		case ast.KindCommaToken, ast.KindEqualsToken, ast.KindCloseParenToken:
-			// If we have "(a," or "(a=" or "(a)" this *could* be an arrow function
-			return core.TSUnknown
-		}
-		// It is definitely not an arrow function
-		return core.TSFalse
-	} else {
-		debug.Assert(first == ast.KindLessThanToken)
-		// If we have "<" not followed by an identifier,
-		// then this definitely is not an arrow function.
-		if !p.isIdentifier() {
-			return core.TSFalse
-		}
-		// JSX overrides
-		if p.languageVariant == core.LanguageVariantJSX {
-			isArrowFunctionInJsx := p.lookAhead(func(p *Parser) bool {
-				third := p.nextToken()
-				if third == ast.KindExtendsKeyword {
-					fourth := p.nextToken()
-					switch fourth {
-					case ast.KindEqualsToken, ast.KindGreaterThanToken, ast.KindSlashToken:
-						return false
-					}
-					return true
-				} else if third == ast.KindCommaToken || third == ast.KindEqualsToken {
-					return true
-				}
-				return false
-			})
-			if isArrowFunctionInJsx {
-				return core.TSTrue
-			}
-			return core.TSFalse
-		}
-		// This *could* be a parenthesized arrow function.
-		return core.TSUnknown
-	}
-}
-
-func (p *Parser) tryParseParenthesizedArrowFunctionExpression() *ast.Node {
-	tristate := p.isParenthesizedArrowFunctionExpression()
-	if tristate == core.TSFalse {
-		// It's definitely not a parenthesized arrow function expression.
-		return nil
-	}
-	// If we definitely have an arrow function, then we can just parse one, not requiring a
-	// following => or { token. Otherwise, we *might* have an arrow function.  Try to parse
-	// it out, but don't allow any ambiguity, and return 'undefined' if this could be an
-	// expression instead.
-	if tristate == core.TSTrue {
-		return p.parseParenthesizedArrowFunctionExpression(true /*allowAmbiguity*/)
-	}
-	state := p.mark()
-	result := p.parsePossibleParenthesizedArrowFunctionExpression()
-	if result == nil {
-		p.rewind(state)
-	}
-	return result
-}
-
-func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool) *ast.Node {
-	pos := p.nodePos()
-	jsdoc := p.jsdocScannerInfo()
-	modifiers := p.parseModifiersForArrowFunction()
-	signatureFlags := ParseFlagsNone
-	// Arrow functions are never generators.
-	//
-	// If we're speculatively parsing a signature for a parenthesized arrow function, then
-	// we have to have a complete parameter list.  Otherwise we might see something like
-	// a => (b => c)
-	// And think that "(b =>" was actually a parenthesized arrow function with a missing
-	// close paren.
-	typeParameters := p.parseTypeParameters()
-	var parameters *ast.NodeList
-	if !p.parseExpected(ast.KindOpenParenToken) {
-		if !allowAmbiguity {
-			return nil
-		}
-		parameters = p.createMissingList()
-	} else {
-		if !allowAmbiguity {
-			maybeParameters := p.parseParametersWorker(signatureFlags, allowAmbiguity)
-			if maybeParameters == nil {
-				return nil
-			}
-			parameters = maybeParameters
-		} else {
-			parameters = p.parseParametersWorker(signatureFlags, allowAmbiguity)
-		}
-		if !p.parseExpected(ast.KindCloseParenToken) && !allowAmbiguity {
-			return nil
-		}
-	}
-	returnType := p.parseReturnType(ast.KindColonToken /*isType*/, false)
-	if returnType != nil && !allowAmbiguity && typeHasArrowFunctionBlockingParseError(returnType) {
-		return nil
-	}
-	// Parsing a signature isn't enough.
-	// Parenthesized arrow signatures often look like other valid expressions.
-	// For instance:
-	//  - "(x = 10)" is an assignment expression parsed as a signature with a default parameter value.
-	//  - "(x,y)" is a comma expression parsed as a signature with two parameters.
-	//
-	// So we need just a bit of lookahead to ensure that it can only be a signature.
-	unwrappedType := returnType
-	for unwrappedType != nil && unwrappedType.Kind == ast.KindParenthesizedType {
-		unwrappedType = unwrappedType.Type() // Skip parens if need be
-	}
-	if !allowAmbiguity && p.token != ast.KindEqualsGreaterThanToken && p.token != ast.KindOpenBraceToken {
-		// Returning undefined here will cause our caller to rewind to where we started from.
-		return nil
-	}
-	// If we have an arrow, then try to parse the body. Even if not, try to parse if we
-	// have an opening brace, just in case we're in an error state.
-	lastToken := p.token
-	equalsGreaterThanToken := p.parseExpectedToken(ast.KindEqualsGreaterThanToken)
-	var body *ast.Node
-	if lastToken == ast.KindEqualsGreaterThanToken || lastToken == ast.KindOpenBraceToken {
-		body = p.parseArrowFunctionExpressionBody()
-	} else {
-		body = p.parseIdentifier()
-	}
-	// Upstream withheld an arrow function's return type when the arrow sat in the
-	// true branch of a conditional expression, where the `:` belonged to the
-	// conditional instead. tlua has no conditional expression, so the return type
-	// is always allowed and the arrow always wins the colon.
-	result := p.finishNode(p.factory.NewArrowFunction(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, equalsGreaterThanToken, body), pos)
-	p.withJSDoc(result, jsdoc)
-	p.checkJSSyntax(result)
-	return result
-}
-
-func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
+// parseModifiersForFunctionType parses the leading modifiers of a function
+// type. In tlua the only such modifier is `async` (`async (…) => T`); arrow
+// function values are removed, so this no longer feeds a value form.
+func (p *Parser) parseModifiersForFunctionType() *ast.ModifierList {
 	if p.token == ast.KindAsyncKeyword {
 		pos := p.nodePos()
 		p.nextToken()
@@ -4069,103 +3537,6 @@ func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
 		return p.newModifierList(modifier.Loc, p.nodeSliceArena.NewSlice1(modifier))
 	}
 	return nil
-}
-
-// If true, we should abort parsing an error function.
-func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
-	switch node.Kind {
-	case ast.KindTypeReference:
-		return ast.NodeIsMissing(node.AsTypeReferenceNode().TypeName)
-	case ast.KindFunctionType, ast.KindConstructorType:
-		return isMissingNodeList(node.FunctionLikeData().Parameters) || typeHasArrowFunctionBlockingParseError(node.Type())
-	case ast.KindParenthesizedType:
-		return typeHasArrowFunctionBlockingParseError(node.Type())
-	}
-	return false
-}
-
-func (p *Parser) parseArrowFunctionExpressionBody() *ast.Node {
-	if p.token == ast.KindOpenBraceToken {
-		return p.parseFunctionBlock(ParseFlagsNone, nil /*diagnosticMessage*/)
-	}
-	if p.token != ast.KindSemicolonToken && p.token != ast.KindFunctionKeyword && p.token != ast.KindClassKeyword && p.isStartOfStatement() && !p.isStartOfExpressionStatement() {
-		// Check if we got a plain statement (i.e. no expression-statements, no function/class expressions/declarations)
-		//
-		// Here we try to recover from a potential error situation in the case where the
-		// user meant to supply a block. For example, if the user wrote:
-		//
-		//  a =>
-		//      let v = 0;
-		//  }
-		//
-		// they may be missing an open brace.  Check to see if that's the case so we can
-		// try to recover better.  If we don't do this, then the next close curly we see may end
-		// up preemptively closing the containing construct.
-		//
-		// Note: even when 'IgnoreMissingOpenBrace' is passed, parseBody will still error.
-		return p.parseFunctionBlock(ParseFlagsIgnoreMissingOpenBrace, nil /*diagnosticMessage*/)
-	}
-	return p.parseAssignmentExpressionOrHigher()
-}
-
-func (p *Parser) isStartOfExpressionStatement() bool {
-	// As per the grammar, none of '{' or 'function' or 'class' can start an expression statement.
-	return p.token != ast.KindOpenBraceToken && p.token != ast.KindFunctionKeyword && p.token != ast.KindClassKeyword && p.isStartOfExpression()
-}
-
-func (p *Parser) parsePossibleParenthesizedArrowFunctionExpression() *ast.Node {
-	tokenPos := p.scanner.TokenStart()
-	if p.notParenthesizedArrow.Has(tokenPos) {
-		return nil
-	}
-	result := p.parseParenthesizedArrowFunctionExpression(false /*allowAmbiguity*/)
-	if result == nil {
-		p.notParenthesizedArrow.Add(tokenPos)
-	}
-	return result
-}
-
-func (p *Parser) tryParseAsyncSimpleArrowFunctionExpression() *ast.Node {
-	// We do a check here so that we won't be doing unnecessarily call to "lookAhead"
-	if p.token == ast.KindAsyncKeyword && p.lookAhead((*Parser).nextIsUnParenthesizedAsyncArrowFunction) {
-		pos := p.nodePos()
-		jsdoc := p.jsdocScannerInfo()
-		asyncModifier := p.parseModifiersForArrowFunction()
-		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
-		return p.parseSimpleArrowFunctionExpression(pos, expr, jsdoc, asyncModifier)
-	}
-	return nil
-}
-
-func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
-	// AsyncArrowFunctionExpression:
-	//      1) async[no LineTerminator here]AsyncArrowBindingIdentifier[?Yield][no LineTerminator here]=>AsyncConciseBody[?In]
-	//      2) CoverCallExpressionAndAsyncArrowHead[?Yield, ?Await][no LineTerminator here]=>AsyncConciseBody[?In]
-	if p.token == ast.KindAsyncKeyword {
-		p.nextToken()
-		// If the "async" is followed by "=>" token then it is not a beginning of an async arrow-function
-		// but instead a simple arrow-function which will be parsed inside "parseAssignmentExpressionOrHigher"
-		if p.hasPrecedingLineBreak() || p.token == ast.KindEqualsGreaterThanToken {
-			return false
-		}
-		// Check for un-parenthesized AsyncArrowFunction
-		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
-		if !p.hasPrecedingLineBreak() && expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
-			return true
-		}
-	}
-	return false
-}
-
-func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Node, jsdoc jsdocScannerInfo, asyncModifier *ast.ModifierList) *ast.Node {
-	debug.Assert(p.token == ast.KindEqualsGreaterThanToken, "parseSimpleArrowFunctionExpression should only have been called if we had a =>")
-	parameter := p.finishNode(p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, identifier, nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/), identifier.Pos())
-	parameters := p.newNodeList(parameter.Loc, []*ast.Node{parameter})
-	equalsGreaterThanToken := p.parseExpectedToken(ast.KindEqualsGreaterThanToken)
-	body := p.parseArrowFunctionExpressionBody()
-	result := p.finishNode(p.factory.NewArrowFunction(asyncModifier, nil /*typeParameters*/, parameters, nil /*returnType*/, nil /*fullSignature*/, equalsGreaterThanToken, body), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
 }
 
 func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence) *ast.Expression {
@@ -5107,9 +4478,10 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 	case ast.KindOpenBraceToken:
 		return p.parseObjectLiteralExpression()
 	case ast.KindAsyncKeyword:
-		// Async arrow functions are parsed earlier in parseAssignmentExpressionOrHigher.
-		// If we encounter `async [no LineTerminator here] function` then this is an async
-		// function; otherwise, its an identifier.
+		// Async arrow function values are removed in tlua, so `async` here can only
+		// introduce an async function expression. If we encounter `async [no
+		// LineTerminator here] function` then this is an async function; otherwise,
+		// it is an identifier.
 		if !p.lookAhead((*Parser).nextTokenIsFunctionKeywordOnSameLine) {
 			break
 		}
@@ -5247,9 +4619,8 @@ func (p *Parser) parseFunctionExpression() *ast.Expression {
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsNone)
 	returnType := p.parseReturnTypeList(ast.KindColonToken)
-	body := p.parseLuaFunctionBlock(ParseFlagsNone)
+	body := p.parseLuaFunctionBlock()
 	result := p.factory.NewFunctionExpression(modifiers, nil /*name*/, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
-	result.Flags |= ast.NodeFlagsLuaBlock
 	p.finishNode(result, pos)
 	p.withJSDoc(result, jsdoc)
 	p.checkJSSyntax(result)
@@ -5486,61 +4857,6 @@ func (p *Parser) scanTypeMemberStart() bool {
 	return false
 }
 
-func (p *Parser) scanClassMemberStart() bool {
-	idToken := ast.KindUnknown
-	// Eat up all modifiers, but hold on to the last one in case it is actually an identifier.
-	for ast.IsModifierKind(p.token) {
-		idToken = p.token
-		// If the idToken is a class modifier (protected, private, public, and static), it is
-		// certain that we are starting to parse class member. This allows better error recovery
-		// Example:
-		//      public foo() ...     // true
-		//      public @dec blah ... // true; we will then report an error later
-		//      export public ...    // true; we will then report an error later
-		if ast.IsClassMemberModifier(idToken) {
-			return true
-		}
-		p.nextToken()
-	}
-	// Generators are removed in tlua: a leading `*` is not a class-member start,
-	// so list recovery consumes it with a natural error instead of looping.
-	// Try to get the first property-like token following all modifiers.
-	// This can either be an identifier or the 'get' or 'set' keywords.
-	if p.isLiteralPropertyName() {
-		idToken = p.token
-		p.nextToken()
-	}
-	// Index signatures and computed properties are class members; we can parse.
-	if p.token == ast.KindOpenBracketToken {
-		return true
-	}
-	// If we were able to get any potential identifier...
-	if idToken != ast.KindUnknown {
-		// If we have a non-keyword identifier, or if we have an accessor, then it's safe to parse.
-		if !ast.IsKeyword(idToken) || idToken == ast.KindSetKeyword || idToken == ast.KindGetKeyword {
-			return true
-		}
-		// If it *is* a keyword, but not an accessor, check a little farther along
-		// to see if it should actually be parsed as a class member.
-		switch p.token {
-		case ast.KindOpenParenToken, // Method declaration
-			ast.KindLessThanToken,    // Generic Method declaration
-			ast.KindExclamationToken, // Non-null assertion on property name
-			ast.KindColonToken,       // Type Annotation for declaration
-			ast.KindEqualsToken,      // Initializer for declaration
-			ast.KindQuestionToken:    // Not valid, but permitted so that it gets caught later on.
-			return true
-		}
-		// Covers
-		//  - Semicolons     (declaration termination)
-		//  - Closing braces (end-of-class, must be declaration)
-		//  - End-of-files   (not valid, but permitted so that it gets caught later on)
-		//  - Line-breaks    (enabling *automatic semicolon insertion*)
-		return p.canParseSemicolon()
-	}
-	return false
-}
-
 func (p *Parser) canParseSemicolon() bool {
 	// If there's a real semicolon, then we can always parse it out.
 	// We can parse out an optional semicolon in ASI cases in the following cases.
@@ -5571,14 +4887,12 @@ func (p *Parser) isLiteralPropertyName() bool {
 
 func (p *Parser) isStartOfStatement() bool {
 	switch p.token {
-	// 'catch' and 'finally' do not actually indicate that the code is part of a statement,
-	// however, we say they are here so that we may gracefully parse them and error later.
 	case ast.KindSemicolonToken, ast.KindOpenBraceToken,
 		ast.KindLocalKeyword, ast.KindFunctionKeyword, ast.KindClassKeyword, ast.KindIfKeyword,
 		ast.KindDoKeyword, ast.KindWhileKeyword, ast.KindForKeyword, ast.KindRepeatKeyword, ast.KindContinueKeyword, ast.KindBreakKeyword,
 		ast.KindColonColonToken, ast.KindGotoKeyword,
-		ast.KindReturnKeyword, ast.KindWithKeyword, ast.KindThrowKeyword, ast.KindTryKeyword,
-		ast.KindDebuggerKeyword, ast.KindCatchKeyword, ast.KindFinallyKeyword:
+		ast.KindReturnKeyword, ast.KindThrowKeyword,
+		ast.KindDebuggerKeyword:
 		return true
 	case ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindInterfaceKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
 		ast.KindTypeKeyword, ast.KindGlobalKeyword, ast.KindDeferKeyword:
@@ -5794,10 +5108,6 @@ func (p *Parser) isIdentifier() bool {
 func (p *Parser) isBindingIdentifier() bool {
 	// `let await`/`let yield` in [Yield] or [Await] are allowed here and disallowed in the binder.
 	return p.token == ast.KindIdentifier || p.token > ast.KindLastReservedWord
-}
-
-func (p *Parser) isImportAttributeName() bool {
-	return tokenIsIdentifierOrKeyword(p.token) || p.token == ast.KindStringLiteral
 }
 
 func (p *Parser) isBinaryOperator() bool {
@@ -6165,12 +5475,12 @@ func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
 		return node
 	}
 	switch node.Kind {
-	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration:
+	case ast.KindParameter:
 		if token := node.QuestionToken(); token != nil && token.Flags&ast.NodeFlagsReparsed == 0 && ast.IsQuestionToken(token) {
 			p.jsErrorAtRange(token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_tlua_files, "?")
 		}
 		fallthrough
-	case ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionExpression,
+	case ast.KindMethodSignature, ast.KindFunctionExpression,
 		ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindVariableDeclaration, ast.KindIndexSignature:
 		if ast.IsFunctionLike(node) && node.Body() == nil {
 			p.jsErrorAtRange(node.Loc, diagnostics.Signature_declarations_can_only_be_used_in_tlua_files)
@@ -6218,13 +5528,12 @@ func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
 	}
 	// Check absence of type parameters, type arguments and non-JavaScript modifiers
 	switch node.Kind {
-	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindMethodDeclaration, ast.KindConstructor, ast.KindGetAccessor,
-		ast.KindSetAccessor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction:
+	case ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction:
 		if list := node.TypeParameterList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
 			p.jsErrorAtRange(list.Loc, diagnostics.Type_parameter_declarations_can_only_be_used_in_tlua_files)
 		}
 		fallthrough
-	case ast.KindVariableStatement, ast.KindPropertyDeclaration:
+	case ast.KindVariableStatement:
 		for _, modifier := range node.ModifierNodes() {
 			if modifier.Flags&ast.NodeFlagsReparsed == 0 && ast.ModifierToFlag(modifier.Kind)&ast.ModifierFlagsJavaScript == 0 {
 				p.jsErrorAtRange(modifier.Loc, diagnostics.The_0_modifier_can_only_be_used_in_tlua_files, scanner.TokenToString(modifier.Kind))

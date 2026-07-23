@@ -16,7 +16,7 @@ func TestGenericCloduleCompletionList(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class D<T> { x: number }
-namespace D { export function f() { } }
+namespace D { export function f() end }
 local d: D<number>;
 d./**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

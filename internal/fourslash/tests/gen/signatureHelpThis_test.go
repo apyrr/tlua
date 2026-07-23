@@ -25,15 +25,15 @@ func TestSignatureHelpThis(t *testing.T) {
     }
 }
 
-function implicitAny(x: number): void {
+function implicitAny(x: number): void
     return this;
-}
-function explicitVoid(this: void, x: number): void {
+end
+function explicitVoid(this: void, x: number): void
     return this;
-}
-function explicitLiteral(this: { n: number }, x: number): void {
+end
+function explicitLiteral(this: { n: number }, x: number): void
     console.log(this);
-}
+end
 local foo = new Foo<number>();
 foo.implicitAny(/*1*/);
 foo.explicitThis(/*2*/);

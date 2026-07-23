@@ -18,7 +18,7 @@ func TestFunctionTypes(t *testing.T) {
 	const content = `// @lib: es5
 // @strict: false
 local f: Function;
-function g() { }
+function g() end
 
 class C {
     h: () => void ;

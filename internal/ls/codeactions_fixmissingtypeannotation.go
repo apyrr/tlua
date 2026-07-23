@@ -54,23 +54,18 @@ var IsolatedDeclarationsFixProvider = &CodeFixProvider{
 
 // canHaveTypeAnnotationKinds are the node kinds that can have type annotations added.
 var canHaveTypeAnnotationKinds = map[ast.Kind]bool{
-	ast.KindGetAccessor:          true,
-	ast.KindMethodDeclaration:    true,
-	ast.KindPropertyDeclaration:  true,
 	ast.KindFunctionDeclaration:  true,
 	ast.KindFunctionExpression:   true,
 	ast.KindArrowFunction:        true,
 	ast.KindVariableDeclaration:  true,
 	ast.KindParameter:            true,
 	ast.KindExportAssignment:     true,
-	ast.KindClassDeclaration:     true,
 	ast.KindObjectBindingPattern: true,
 	ast.KindArrayBindingPattern:  true,
 }
 
 // declarationEmitNodeBuilderFlags are the node builder flags used for declaration emit.
 var declarationEmitNodeBuilderFlags = nodebuilder.FlagsMultilineObjectLiterals |
-	nodebuilder.FlagsWriteClassExpressionAsTypeLiteral |
 	nodebuilder.FlagsUseTypeOfFunction |
 	nodebuilder.FlagsUseStructuralFallback |
 	nodebuilder.FlagsAllowEmptyTuple |
@@ -535,15 +530,12 @@ func (f *isolatedDeclarationsFixer) fixIsolatedDeclarationError(node *ast.Node) 
 	f.fixedNodes[node] = true
 
 	switch node.Kind {
-	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindVariableDeclaration:
+	case ast.KindParameter, ast.KindVariableDeclaration:
 		return f.addTypeToVariableLike(node)
-	case ast.KindArrowFunction, ast.KindFunctionExpression, ast.KindFunctionDeclaration,
-		ast.KindMethodDeclaration, ast.KindGetAccessor:
+	case ast.KindArrowFunction, ast.KindFunctionExpression, ast.KindFunctionDeclaration:
 		return f.addTypeToSignatureDeclaration(node)
 	case ast.KindExportAssignment:
 		return f.transformExportAssignment(node)
-	case ast.KindClassDeclaration:
-		return f.transformExtendsClauseWithExpression(node)
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		return f.transformDestructuringPatterns(node)
 	default:
@@ -590,55 +582,6 @@ func (f *isolatedDeclarationsFixer) transformExportAssignment(defaultExport *ast
 
 	f.changeTracker.ReplaceNodeWithNodes(f.sourceFile, defaultExport, []*ast.Node{varStmt, newExport}, nil)
 	return diagnostics.Extract_default_export_to_variable.Localize(f.locale)
-}
-
-func (f *isolatedDeclarationsFixer) transformExtendsClauseWithExpression(classDecl *ast.Node) string {
-	cd := classDecl.AsClassDeclaration()
-	var extendsClause *ast.Node
-	if cd.HeritageClauses != nil {
-		for _, clause := range cd.HeritageClauses.Nodes {
-			if clause.AsHeritageClause().Token == ast.KindExtendsKeyword {
-				extendsClause = clause
-				break
-			}
-		}
-	}
-	if extendsClause == nil {
-		return ""
-	}
-
-	heritageTypes := extendsClause.AsHeritageClause().Types
-	if heritageTypes == nil || len(heritageTypes.Nodes) == 0 {
-		return ""
-	}
-	heritageExpression := heritageTypes.Nodes[0]
-	expression := heritageExpression.AsExpressionWithTypeArguments().Expression
-
-	heritageTypeNode := f.inferType(expression, nil)
-	if heritageTypeNode == nil {
-		return ""
-	}
-
-	factory := f.changeTracker.NodeFactory
-
-	baseName := "Anonymous"
-	if cd.Name() != nil {
-		baseName = cd.Name().Text() + "Base"
-	}
-	baseClassName := f.changeTracker.EmitContext.Factory.NewUniqueNameEx(baseName, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-
-	// Create: const <BaseName>: <type> = <expression>;
-	clonedExpression := factory.DeepCloneNode(expression)
-	varDecl := factory.NewVariableDeclaration(baseClassName.AsNode(), nil, heritageTypeNode, clonedExpression)
-	varDeclList := factory.NewVariableDeclarationList(factory.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst)
-	varStmt := factory.NewVariableStatement(nil, varDeclList)
-
-	f.changeTracker.InsertNodeBefore(f.sourceFile, classDecl, varStmt, false, change.LeadingTriviaOptionNone)
-
-	// Replace the heritage expression with the base class name
-	f.changeTracker.ReplaceNode(f.sourceFile, heritageExpression, factory.NewExpressionWithTypeArguments(baseClassName.AsNode(), nil), nil)
-
-	return diagnostics.Extract_base_class_to_variable.Localize(f.locale)
 }
 
 func (f *isolatedDeclarationsFixer) transformDestructuringPatterns(bindingPattern *ast.Node) string {
@@ -891,9 +834,7 @@ func (f *isolatedDeclarationsFixer) inferType(node *ast.Node, variableType *chec
 }
 
 func (f *isolatedDeclarationsFixer) getExtraFlags(node *ast.Node, t *checker.Type) nodebuilder.Flags {
-	if (ast.IsVariableDeclaration(node) ||
-		(ast.IsPropertyDeclaration(node) && ast.HasSyntacticModifier(node, ast.ModifierFlagsStatic|ast.ModifierFlagsReadonly))) &&
-		t.Flags()&checker.TypeFlagsUniqueESSymbol != 0 {
+	if ast.IsVariableDeclaration(node) && t.Flags()&checker.TypeFlagsUniqueESSymbol != 0 {
 		return nodebuilder.FlagsAllowUniqueESSymbolType
 	}
 	return nodebuilder.FlagsNone
@@ -1294,15 +1235,14 @@ func findBestFittingNode(node *ast.Node, span core.TextRange) *ast.Node {
 // while TS's isDeclaration only returns true for specific named declaration kinds.
 func isNamedDeclarationKind(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindArrowFunction, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression,
-		ast.KindClassStaticBlockDeclaration, ast.KindConstructor,
+	case ast.KindArrowFunction, ast.KindBindingElement,
 		ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
-		ast.KindGetAccessor, ast.KindImportClause, ast.KindImportEqualsDeclaration,
+		ast.KindImportClause, ast.KindImportEqualsDeclaration,
 		ast.KindImportSpecifier, ast.KindInterfaceDeclaration, ast.KindJsxAttribute,
-		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindModuleDeclaration,
+		ast.KindMethodSignature, ast.KindModuleDeclaration,
 		ast.KindNamespaceExportDeclaration, ast.KindNamespaceImport, ast.KindNamespaceExport,
-		ast.KindParameter, ast.KindPropertyAssignment, ast.KindPropertyDeclaration,
-		ast.KindPropertySignature, ast.KindSetAccessor, ast.KindShorthandPropertyAssignment,
+		ast.KindParameter, ast.KindPropertyAssignment,
+		ast.KindPropertySignature, ast.KindShorthandPropertyAssignment,
 		ast.KindTypeAliasDeclaration, ast.KindTypeParameter, ast.KindVariableDeclaration,
 		ast.KindJSDocTypedefTag, ast.KindJSDocCallbackTag, ast.KindJSDocPropertyTag,
 		ast.KindNamedTupleMember:
@@ -1313,8 +1253,7 @@ func isNamedDeclarationKind(node *ast.Node) bool {
 
 // isValueSignatureDeclaration checks if a node is a function-like declaration that produces a value.
 func isValueSignatureDeclaration(node *ast.Node) bool {
-	return ast.IsFunctionExpression(node) || ast.IsArrowFunction(node) || ast.IsMethodDeclaration(node) ||
-		ast.IsAccessor(node) || ast.IsFunctionDeclaration(node) || ast.IsConstructorDeclaration(node)
+	return ast.IsFunctionExpression(node) || ast.IsArrowFunction(node) || ast.IsFunctionDeclaration(node)
 }
 
 // getIdentifierNameForNode derives a meaningful variable name from a node expression.
@@ -1367,7 +1306,7 @@ func (f *isolatedDeclarationsFixer) addSymbolToExistingImport(sym *ast.Symbol) {
 			newElements := append(existingElements, newSpecifier.AsNode())
 			newNamedImports := factory.NewNamedImports(factory.NewNodeList(newElements))
 			newImportClause := factory.UpdateImportClause(importClause, importClause.PhaseModifier, importClause.Name(), newNamedImports)
-			newImportDecl := factory.UpdateImportDeclaration(importDecl, importDecl.Modifiers(), newImportClause, importDecl.ModuleSpecifier, importDecl.Attributes)
+			newImportDecl := factory.UpdateImportDeclaration(importDecl, importDecl.Modifiers(), newImportClause, importDecl.ModuleSpecifier)
 			f.changeTracker.ReplaceNode(f.sourceFile, stmt, newImportDecl.AsNode(), nil)
 		}
 		return

@@ -15,7 +15,7 @@ func TestQualifyModuleTypeNames(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `namespace m { export class c { } };
-function x(arg: m.c) { return arg; }
+function x(arg: m.c) return arg; end
 x(/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

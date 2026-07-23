@@ -12,18 +12,12 @@ import type {
     Block,
     CallExpression,
     CallSignatureDeclaration,
-    CatchClause,
-    ClassDeclaration,
-    ClassExpression,
-    ClassStaticBlockDeclaration,
     ComputedPropertyName,
     ConditionalExpression,
     ConditionalTypeNode,
-    ConstructorDeclaration,
     ConstructorTypeNode,
     ConstructSignatureDeclaration,
     DeleteExpression,
-    DoStatement,
     ElementAccessExpression,
     ExportAssignment,
     ExportDeclaration,
@@ -36,12 +30,9 @@ import type {
     FunctionDeclaration,
     FunctionExpression,
     FunctionTypeNode,
-    GetAccessorDeclaration,
     GotoStatement,
     HeritageClause,
     IfStatement,
-    ImportAttribute,
-    ImportAttributes,
     ImportClause,
     ImportDeclaration,
     ImportEqualsDeclaration,
@@ -100,7 +91,6 @@ import type {
     LiteralTypeNode,
     MappedTypeNode,
     MetaProperty,
-    MethodDeclaration,
     MethodSignatureDeclaration,
     MissingDeclaration,
     ModuleBlock,
@@ -127,14 +117,12 @@ import type {
     PrefixUnaryExpression,
     PropertyAccessExpression,
     PropertyAssignment,
-    PropertyDeclaration,
     PropertySignatureDeclaration,
     QualifiedName,
     RepeatStatement,
     RestTypeNode,
     ReturnStatement,
     SatisfiesExpression,
-    SetAccessorDeclaration,
     ShorthandPropertyAssignment,
     SourceFile,
     SpreadAssignment,
@@ -149,7 +137,6 @@ import type {
     TemplateLiteralTypeSpan,
     TemplateSpan,
     ThrowStatement,
-    TryStatement,
     TupleTypeNode,
     TypeAliasDeclaration,
     TypeAssertion,
@@ -165,7 +152,6 @@ import type {
     VariableStatement,
     VoidExpression,
     WhileStatement,
-    WithStatement,
 } from "./ast.ts";
 import {
     createNodeArray,
@@ -179,18 +165,12 @@ import {
     updateBlock,
     updateCallExpression,
     updateCallSignatureDeclaration,
-    updateCatchClause,
-    updateClassDeclaration,
-    updateClassExpression,
-    updateClassStaticBlockDeclaration,
     updateComputedPropertyName,
     updateConditionalExpression,
     updateConditionalTypeNode,
-    updateConstructorDeclaration,
     updateConstructorTypeNode,
     updateConstructSignatureDeclaration,
     updateDeleteExpression,
-    updateDoStatement,
     updateElementAccessExpression,
     updateExportAssignment,
     updateExportDeclaration,
@@ -203,12 +183,9 @@ import {
     updateFunctionDeclaration,
     updateFunctionExpression,
     updateFunctionTypeNode,
-    updateGetAccessorDeclaration,
     updateGotoStatement,
     updateHeritageClause,
     updateIfStatement,
-    updateImportAttribute,
-    updateImportAttributes,
     updateImportClause,
     updateImportDeclaration,
     updateImportEqualsDeclaration,
@@ -265,7 +242,6 @@ import {
     updateLiteralTypeNode,
     updateMappedTypeNode,
     updateMetaProperty,
-    updateMethodDeclaration,
     updateMethodSignatureDeclaration,
     updateMissingDeclaration,
     updateModuleBlock,
@@ -290,14 +266,12 @@ import {
     updatePrefixUnaryExpression,
     updatePropertyAccessExpression,
     updatePropertyAssignment,
-    updatePropertyDeclaration,
     updatePropertySignatureDeclaration,
     updateQualifiedName,
     updateRepeatStatement,
     updateRestTypeNode,
     updateReturnStatement,
     updateSatisfiesExpression,
-    updateSetAccessorDeclaration,
     updateShorthandPropertyAssignment,
     updateSourceFile,
     updateSpreadAssignment,
@@ -312,7 +286,6 @@ import {
     updateTemplateLiteralTypeSpan,
     updateTemplateSpan,
     updateThrowStatement,
-    updateTryStatement,
     updateTupleTypeNode,
     updateTypeAliasDeclaration,
     updateTypeAssertion,
@@ -328,14 +301,13 @@ import {
     updateVariableStatement,
     updateVoidExpression,
     updateWhileStatement,
-    updateWithStatement,
 } from "./factory.generated.ts";
 import {
     isAssertsKeyword,
     isBinaryOperatorToken,
     isBindingName,
     isBlock,
-    isCatchClause,
+    isBlockOrIfStatement,
     isColonToken,
     isConciseBody,
     isDotDotDotToken,
@@ -349,8 +321,6 @@ import {
     isForInitializer,
     isFunctionBody,
     isIdentifier,
-    isImportAttributeName,
-    isImportAttributes,
     isImportClause,
     isJSDocFullName,
     isJsxAttributeName,
@@ -374,14 +344,12 @@ import {
     isQuestionOrPlusOrMinusToken,
     isQuestionToken,
     isReadonlyKeywordOrPlusOrMinusToken,
-    isStatement,
     isTemplateHead,
     isTemplateLiteral,
     isTemplateMiddleOrTail,
     isTypeNode,
     isTypeParameterDeclaration,
     isTypePredicateParameterName,
-    isVariableDeclaration,
     isVariableDeclarationList,
 } from "./is.ts";
 import {
@@ -502,24 +470,19 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     },
     [SyntaxKind.IfStatement]: (node: IfStatement, visitor: Visitor): IfStatement => {
         const _expression = visitNode(node.expression, visitor, isExpression);
-        const _thenStatement = visitNode(node.thenStatement, visitor, isStatement);
-        const _elseStatement = visitNode(node.elseStatement, visitor, isStatement);
+        const _thenStatement = visitNode(node.thenStatement, visitor, isBlock);
+        const _elseStatement = visitNode(node.elseStatement, visitor, isBlockOrIfStatement);
         return updateIfStatement(node, _expression, _thenStatement, _elseStatement);
-    },
-    [SyntaxKind.DoStatement]: (node: DoStatement, visitor: Visitor): DoStatement => {
-        const _statement = visitNode(node.statement, visitor, isStatement);
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateDoStatement(node, _statement, _expression);
     },
     [SyntaxKind.WhileStatement]: (node: WhileStatement, visitor: Visitor): WhileStatement => {
         const _expression = visitNode(node.expression, visitor, isExpression);
-        const _statement = visitNode(node.statement, visitor, isStatement);
+        const _statement = visitNode(node.statement, visitor, isBlock);
         return updateWhileStatement(node, _expression, _statement);
     },
     [SyntaxKind.ForOfStatement]: (node: ForOfStatement, visitor: Visitor): ForOfStatement => {
         const _initializer = visitNode(node.initializer, visitor, isForInitializer);
         const _expression = visitNode(node.expression, visitor, isExpression);
-        const _statement = visitNode(node.statement, visitor, isStatement);
+        const _statement = visitNode(node.statement, visitor, isBlock);
         return updateForOfStatement(node, _initializer, _expression, _statement);
     },
     [SyntaxKind.NumericForStatement]: (node: NumericForStatement, visitor: Visitor): NumericForStatement => {
@@ -527,7 +490,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _from = visitNode(node.from, visitor, isExpression);
         const _to = visitNode(node.to, visitor, isExpression);
         const _step = visitNode(node.step, visitor, isExpression);
-        const _statement = visitNode(node.statement, visitor, isStatement);
+        const _statement = visitNode(node.statement, visitor, isBlock);
         return updateNumericForStatement(node, _initializer, _from, _to, _step, _statement);
     },
     [SyntaxKind.RepeatStatement]: (node: RepeatStatement, visitor: Visitor): RepeatStatement => {
@@ -539,25 +502,9 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _expression = visitNode(node.expression, visitor, isExpression);
         return updateReturnStatement(node, _expression);
     },
-    [SyntaxKind.WithStatement]: (node: WithStatement, visitor: Visitor): WithStatement => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        const _statement = visitNode(node.statement, visitor, isStatement);
-        return updateWithStatement(node, _expression, _statement);
-    },
     [SyntaxKind.ThrowStatement]: (node: ThrowStatement, visitor: Visitor): ThrowStatement => {
         const _expression = visitNode(node.expression, visitor, isExpression);
         return updateThrowStatement(node, _expression);
-    },
-    [SyntaxKind.TryStatement]: (node: TryStatement, visitor: Visitor): TryStatement => {
-        const _tryBlock = visitNode(node.tryBlock, visitor, isBlock);
-        const _catchClause = visitNode(node.catchClause, visitor, isCatchClause);
-        const _finallyBlock = visitNode(node.finallyBlock, visitor, isBlock);
-        return updateTryStatement(node, _tryBlock, _catchClause, _finallyBlock);
-    },
-    [SyntaxKind.CatchClause]: (node: CatchClause, visitor: Visitor): CatchClause => {
-        const _variableDeclaration = visitNode(node.variableDeclaration, visitor, isVariableDeclaration);
-        const _block = visitNode(node.block, visitor, isBlock);
-        return updateCatchClause(node, _variableDeclaration, _block);
     },
     [SyntaxKind.LabelStatement]: (node: LabelStatement, visitor: Visitor): LabelStatement => {
         const _label = visitNode(node.label, visitor, isIdentifier);
@@ -622,22 +569,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _body = visitNode(node.body, visitor, isFunctionBody);
         return updateFunctionDeclaration(node, _modifiers, _target, _colonToken, _name, _typeParameters, _parameters, _type, _body);
     },
-    [SyntaxKind.ClassDeclaration]: (node: ClassDeclaration, visitor: Visitor): ClassDeclaration => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _name = visitNode(node.name, visitor, isIdentifier);
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _heritageClauses = visitNodes(node.heritageClauses, visitor);
-        const _members = visitNodes(node.members, visitor);
-        return updateClassDeclaration(node, _modifiers, _name, _typeParameters, _heritageClauses, _members);
-    },
-    [SyntaxKind.ClassExpression]: (node: ClassExpression, visitor: Visitor): ClassExpression => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _name = visitNode(node.name, visitor, isIdentifier);
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _heritageClauses = visitNodes(node.heritageClauses, visitor);
-        const _members = visitNodes(node.members, visitor);
-        return updateClassExpression(node, _modifiers, _name, _typeParameters, _heritageClauses, _members);
-    },
     [SyntaxKind.HeritageClause]: (node: HeritageClause, visitor: Visitor): HeritageClause => {
         const _types = visitNodes(node.types, visitor);
         return updateHeritageClause(node, _types);
@@ -665,8 +596,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _importClause = visitNode(node.importClause, visitor, isImportClause);
         const _moduleSpecifier = visitNode(node.moduleSpecifier, visitor, isExpression);
-        const _attributes = visitNode(node.attributes, visitor, isImportAttributes);
-        return updateImportDeclaration(node, _modifiers, _importClause, _moduleSpecifier, _attributes);
+        return updateImportDeclaration(node, _modifiers, _importClause, _moduleSpecifier);
     },
     [SyntaxKind.ExternalModuleReference]: (node: ExternalModuleReference, visitor: Visitor): ExternalModuleReference => {
         const _expression = visitNode(node.expression, visitor, isExpression);
@@ -716,32 +646,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         return updateConstructSignatureDeclaration(node, _typeParameters, _parameters, _type);
     },
-    [SyntaxKind.Constructor]: (node: ConstructorDeclaration, visitor: Visitor): ConstructorDeclaration => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _parameters = visitNodes(node.parameters, visitor);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        const _body = visitNode(node.body, visitor, isFunctionBody);
-        return updateConstructorDeclaration(node, _modifiers, _typeParameters, _parameters, _type, _body);
-    },
-    [SyntaxKind.GetAccessor]: (node: GetAccessorDeclaration, visitor: Visitor): GetAccessorDeclaration => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _name = visitNode(node.name, visitor, isPropertyName);
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _parameters = visitNodes(node.parameters, visitor);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        const _body = visitNode(node.body, visitor, isFunctionBody);
-        return updateGetAccessorDeclaration(node, _modifiers, _name, _typeParameters, _parameters, _type, _body);
-    },
-    [SyntaxKind.SetAccessor]: (node: SetAccessorDeclaration, visitor: Visitor): SetAccessorDeclaration => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _name = visitNode(node.name, visitor, isPropertyName);
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _parameters = visitNodes(node.parameters, visitor);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        const _body = visitNode(node.body, visitor, isFunctionBody);
-        return updateSetAccessorDeclaration(node, _modifiers, _name, _typeParameters, _parameters, _type, _body);
-    },
     [SyntaxKind.IndexSignature]: (node: IndexSignatureDeclaration, visitor: Visitor): IndexSignatureDeclaration => {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _parameters = visitNodes(node.parameters, visitor);
@@ -757,16 +661,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         return updateMethodSignatureDeclaration(node, _modifiers, _name, _postfixToken, _typeParameters, _parameters, _type);
     },
-    [SyntaxKind.MethodDeclaration]: (node: MethodDeclaration, visitor: Visitor): MethodDeclaration => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _name = visitNode(node.name, visitor, isPropertyName);
-        const _postfixToken = visitNode(node.postfixToken, visitor, isQuestionOrExclamationToken);
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _parameters = visitNodes(node.parameters, visitor);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        const _body = visitNode(node.body, visitor, isFunctionBody);
-        return updateMethodDeclaration(node, _modifiers, _name, _postfixToken, _typeParameters, _parameters, _type, _body);
-    },
     [SyntaxKind.PropertySignature]: (node: PropertySignatureDeclaration, visitor: Visitor): PropertySignatureDeclaration => {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _name = visitNode(node.name, visitor, isPropertyName);
@@ -774,19 +668,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         const _initializer = visitNode(node.initializer, visitor, isExpression);
         return updatePropertySignatureDeclaration(node, _modifiers, _name, _postfixToken, _type, _initializer);
-    },
-    [SyntaxKind.PropertyDeclaration]: (node: PropertyDeclaration, visitor: Visitor): PropertyDeclaration => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _name = visitNode(node.name, visitor, isPropertyName);
-        const _postfixToken = visitNode(node.postfixToken, visitor, isQuestionOrExclamationToken);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        const _initializer = visitNode(node.initializer, visitor, isExpression);
-        return updatePropertyDeclaration(node, _modifiers, _name, _postfixToken, _type, _initializer);
-    },
-    [SyntaxKind.ClassStaticBlockDeclaration]: (node: ClassStaticBlockDeclaration, visitor: Visitor): ClassStaticBlockDeclaration => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _body = visitNode(node.body, visitor, isBlock);
-        return updateClassStaticBlockDeclaration(node, _modifiers, _body);
     },
     [SyntaxKind.BinaryExpression]: (node: BinaryExpression, visitor: Visitor): BinaryExpression => {
         const _modifiers = visitNodes(node.modifiers, visitor);
@@ -996,15 +877,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _parameterName = visitNode(node.parameterName, visitor, isTypePredicateParameterName);
         const _type = visitNode(node.type, visitor, isTypeNode);
         return updateTypePredicateNode(node, _assertsModifier, _parameterName, _type);
-    },
-    [SyntaxKind.ImportAttribute]: (node: ImportAttribute, visitor: Visitor): ImportAttribute => {
-        const _name = visitNode(node.name, visitor, isImportAttributeName);
-        const _value = visitNode(node.value, visitor, isExpression);
-        return updateImportAttribute(node, _name, _value);
-    },
-    [SyntaxKind.ImportAttributes]: (node: ImportAttributes, visitor: Visitor): ImportAttributes => {
-        const _attributes = visitNodes(node.attributes, visitor);
-        return updateImportAttributes(node, _attributes);
     },
     [SyntaxKind.TypeQuery]: (node: TypeQueryNode, visitor: Visitor): TypeQueryNode => {
         const _exprName = visitNode(node.exprName, visitor, isEntityName);
@@ -1257,9 +1129,8 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _tagName = visitNode(node.tagName, visitor, isIdentifier);
         const _importClause = visitNode(node.importClause, visitor, isImportClause);
         const _moduleSpecifier = visitNode(node.moduleSpecifier, visitor, isExpression);
-        const _attributes = visitNode(node.attributes, visitor, isImportAttributes);
         const _comment = visitNodes(node.comment, visitor);
-        return updateJSDocImportTag(node, _tagName, _importClause, _moduleSpecifier, _attributes, _comment);
+        return updateJSDocImportTag(node, _tagName, _importClause, _moduleSpecifier, _comment);
     },
     [SyntaxKind.JSDocCallbackTag]: (node: JSDocCallbackTag, visitor: Visitor): JSDocCallbackTag => {
         const _tagName = visitNode(node.tagName, visitor, isIdentifier);
@@ -1312,15 +1183,13 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _exportClause = visitNode(node.exportClause, visitor, isNamedExportBindings);
         const _moduleSpecifier = visitNode(node.moduleSpecifier, visitor, isExpression);
-        const _attributes = visitNode(node.attributes, visitor, isImportAttributes);
-        return updateExportDeclaration(node, _modifiers, _exportClause, _moduleSpecifier, _attributes);
+        return updateExportDeclaration(node, _modifiers, _exportClause, _moduleSpecifier);
     },
     [SyntaxKind.ImportType]: (node: ImportTypeNode, visitor: Visitor): ImportTypeNode => {
         const _argument = visitNode(node.argument, visitor, isTypeNode);
-        const _attributes = visitNode(node.attributes, visitor, isImportAttributes);
         const _qualifier = visitNode(node.qualifier, visitor, isEntityName);
         const _typeArguments = visitNodes(node.typeArguments, visitor);
-        return updateImportTypeNode(node, _argument, _attributes, _qualifier, _typeArguments);
+        return updateImportTypeNode(node, _argument, _qualifier, _typeArguments);
     },
     [SyntaxKind.ImportClause]: (node: ImportClause, visitor: Visitor): ImportClause => {
         const _name = visitNode(node.name, visitor, isIdentifier);

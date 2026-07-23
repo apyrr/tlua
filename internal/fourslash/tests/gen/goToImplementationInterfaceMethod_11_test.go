@@ -18,8 +18,8 @@ func TestGoToImplementationInterfaceMethod_11(t *testing.T) {
    hel/*reference*/lo(): void;
 }
 
-local x = <Foo> { [|hello|] = () => {} };
-local y = <Foo> (((({ [|hello|] = () => {} }))));`
+local x = <Foo> { [|hello|] = function() end };
+local y = <Foo> (((({ [|hello|] = function() end }))));`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "reference")

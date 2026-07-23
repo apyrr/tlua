@@ -18,9 +18,9 @@ func TestCompletionsKeyof(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A { a: number; };
 interface B { a: number; b: number; };
-function f<T extends keyof A>(key: T) {}
+function f<T extends keyof A>(key: T) end
 f("[|/*f*/|]");
-function g<T extends keyof B>(key: T) {}
+function g<T extends keyof B>(key: T) end
 g("[|/*g*/|]");`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -16,10 +16,9 @@ func TestFormattingSingleLineWithNewLineOptionSet(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/namespace Default{}
-/*2*/function foo(){}
+/*2*/function foo() end
 /*3*/if (true){}
-/*4*/function boo() {
-}`
+/*4*/function boo() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	opts211 := f.GetOptions()
@@ -32,7 +31,7 @@ func TestFormattingSingleLineWithNewLineOptionSet(t *testing.T) {
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `namespace Default { }`)
 	f.GoToMarker(t, "2")
-	f.VerifyCurrentLineContent(t, `function foo() { }`)
+	f.VerifyCurrentLineContent(t, `function foo() end`)
 	f.GoToMarker(t, "3")
 	f.VerifyCurrentLineContent(t, `if (true) { }`)
 	f.GoToMarker(t, "4")

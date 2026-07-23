@@ -22,9 +22,9 @@ func TestGetOccurrencesSuper3(t *testing.T) {
     b() {
         return [|super|].a();
     },
-    c: function () {
+    c: function ()
         return [|super|].a();
-    }
+    end
     d: () => [|super|].b();
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

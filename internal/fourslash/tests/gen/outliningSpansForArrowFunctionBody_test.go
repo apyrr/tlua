@@ -14,17 +14,17 @@ func TestOutliningSpansForArrowFunctionBody(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `() => 42;
-() => ( 42 );
-() =>[| {
+	const content = `function() return 42 end;
+function() return ( 42 ) end;
+function()[|
     42
-}|];
-() => [|(
+end|];
+function() return [|(
     42
-)|];
-() =>[| "foo" +
+)|] end;
+function() return[| "foo" +
     "bar" +
-    "baz"|];`
+    "baz"|] end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyOutliningSpans(t)

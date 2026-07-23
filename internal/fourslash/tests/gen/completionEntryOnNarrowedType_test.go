@@ -16,7 +16,7 @@ func TestCompletionEntryOnNarrowedType(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(strOrNum: string | number) {
+	const content = `function foo(strOrNum: string | number)
     /*1*/
     if (typeof strOrNum === "number") {
         strOrNum/*2*/;
@@ -24,7 +24,7 @@ func TestCompletionEntryOnNarrowedType(t *testing.T) {
     else {
         strOrNum/*3*/;
     }
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

@@ -15,7 +15,7 @@ func TestGoToDefinitionSameFile(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local /*localVariableDefinition*/localVariable;
-function /*localFunctionDefinition*/localFunction() { }
+function /*localFunctionDefinition*/localFunction() end
 class /*localClassDefinition*/localClass { }
 interface /*localInterfaceDefinition*/localInterface{ }
 module /*localModuleDefinition*/localModule{ export local foo = 1;}

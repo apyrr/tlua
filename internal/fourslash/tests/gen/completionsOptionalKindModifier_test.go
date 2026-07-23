@@ -17,9 +17,9 @@ func TestCompletionsOptionalKindModifier(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A { a?: number; method?(): number; };
-function f(x: A) {
+function f(x: A)
 x./*a*/;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{

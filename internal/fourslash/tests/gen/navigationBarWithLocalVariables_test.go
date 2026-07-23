@@ -14,10 +14,10 @@ func TestNavigationBarWithLocalVariables(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function x(){
+	const content = `function x()
 	local x = Object()
 	x.foo = ""
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentSymbol(t)

@@ -19,15 +19,15 @@ func TestCompletionInFunctionLikeBody_includesPrimitiveTypes(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo<T> { }
 class Bar { }
-function includesTypes() {
+function includesTypes()
     new Foo</*1*/
-}
-function excludesTypes1() {
+end
+function excludesTypes1()
     new Bar</*2*/
-}
-function excludesTypes2() {
+end
+function excludesTypes2()
     1</*3*/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"1"}, &fourslash.CompletionsExpectedList{

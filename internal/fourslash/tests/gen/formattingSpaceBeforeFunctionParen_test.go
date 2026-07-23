@@ -15,13 +15,13 @@ func TestFormattingSpaceBeforeFunctionParen(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/*1*/function foo() { }
-/*2*/function boo  () { }
-/*3*/local bar = function foo() { };
+	const content = `/*1*/function foo() end
+/*2*/function boo  () end
+/*3*/local bar = function foo() end;
 /*4*/local foo = { bar() { } };
-/*5*/function tmpl <T> () { }
-/*6*/local f = function*() { };
-/*7*/function* g () { }`
+/*5*/function tmpl <T> () end
+/*6*/local f = function*() end;
+/*7*/function* g () end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	opts333 := f.GetOptions()
@@ -32,17 +32,17 @@ func TestFormattingSpaceBeforeFunctionParen(t *testing.T) {
 	f.Configure(t, opts414)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
-	f.VerifyCurrentLineContent(t, `function foo () { }`)
+	f.VerifyCurrentLineContent(t, `function foo () end`)
 	f.GoToMarker(t, "2")
-	f.VerifyCurrentLineContent(t, `function boo () { }`)
+	f.VerifyCurrentLineContent(t, `function boo () end`)
 	f.GoToMarker(t, "3")
-	f.VerifyCurrentLineContent(t, `local bar = function foo () { };`)
+	f.VerifyCurrentLineContent(t, `local bar = function foo () end;`)
 	f.GoToMarker(t, "4")
 	f.VerifyCurrentLineContent(t, `local foo = { bar () { } };`)
 	f.GoToMarker(t, "5")
-	f.VerifyCurrentLineContent(t, `function tmpl<T> () { }`)
+	f.VerifyCurrentLineContent(t, `function tmpl<T> () end`)
 	f.GoToMarker(t, "6")
-	f.VerifyCurrentLineContent(t, `local f = function*() { };`)
+	f.VerifyCurrentLineContent(t, `local f = function*() end;`)
 	f.GoToMarker(t, "7")
-	f.VerifyCurrentLineContent(t, `function* g () { }`)
+	f.VerifyCurrentLineContent(t, `function* g () end`)
 }

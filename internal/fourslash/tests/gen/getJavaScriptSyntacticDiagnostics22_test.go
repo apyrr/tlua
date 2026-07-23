@@ -16,7 +16,7 @@ func TestGetJavaScriptSyntacticDiagnostics22(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.lua
-function foo(...a) {}`
+function foo(...a) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyNonSuggestionDiagnostics(t, nil)

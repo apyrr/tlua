@@ -14,7 +14,7 @@ func TestRestParamsContextuallyTyped(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local foo: Function = function (/*1*/a, /*2*/b, /*3*/c) { };`
+	const content = `local foo: Function = function (/*1*/a, /*2*/b, /*3*/c) end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(parameter) a: any", "")

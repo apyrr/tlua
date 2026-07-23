@@ -26,21 +26,21 @@ interface Bar {
     };
 }
 
-function a<T extends Foo>() {}
+function a<T extends Foo>() end
 a<{/*0*/}>();
 
-local b = () => <T extends Foo>() => {};
+local b = function() return function<T extends Foo>() end end;
 b()<{/*1*/}>();
 
 declare function c<T extends Foo>(): void
 declare function c<T extends Bar>(): void
 c<{/*2*/}>();
 
-function d<T extends Foo, U extends Bar>() {}
+function d<T extends Foo, U extends Bar>() end
 d<{/*3*/}, {/*4*/}>();
 d<Foo, { four: {/*5*/} }>();
 
-(<T extends Foo>() => {})<{/*6*/}>();`
+(function<T extends Foo>() end)<{/*6*/}>();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "0", &fourslash.CompletionsExpectedList{

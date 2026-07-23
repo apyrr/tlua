@@ -29,10 +29,10 @@ interface IFoo {
 foo()<number, string, T >();
 (a + b)<number, string, T >();
 
-/*inFunctionDeclaration*/function bar <T> () {
+/*inFunctionDeclaration*/function bar <T> ()
 /*inClassExpression*/    return class  <  T2 > {
     }
-}
+end
 /*expressionWithTypeArguments*/class A < T > extends bar <  T >( )  <  T > {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

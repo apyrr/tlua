@@ -16,9 +16,9 @@ func TestOccurrences02(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
-function [|f|](x: typeof [|f|]) {
+function [|f|](x: typeof [|f|])
     [|f|]([|f|]);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()

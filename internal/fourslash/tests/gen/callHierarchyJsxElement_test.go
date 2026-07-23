@@ -16,16 +16,15 @@ func TestCallHierarchyJsxElement(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: preserve
 // @filename: main.tsx
-function foo() {
+function foo()
     return <Bar/>;
-}
+end
 
-function /**/Bar() {
+function /**/Bar()
     baz();
-}
+end
 
-function baz() {
-}`
+function baz() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

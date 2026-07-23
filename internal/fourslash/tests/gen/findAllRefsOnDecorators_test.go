@@ -15,9 +15,9 @@ func TestFindAllRefsOnDecorators(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.tlua
-/*1*/function /*2*/decorator(target) {
+/*1*/function /*2*/decorator(target)
     return target;
-}
+end
 /*3*/decorator();
 // @Filename: b.tlua
 @/*4*/decorator @/*5*/decorator("again")

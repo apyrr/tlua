@@ -29,8 +29,8 @@ interface IUser {
 interface IFetchUserProps {
     children: (user: IUser) => any;
 }
-function FetchUser(props: IFetchUserProps) { return undefined; }
-function UserName() {
+function FetchUser(props: IFetchUserProps) return undefined; end
+function UserName()
     return (
         <FetchUser>
             { user => (
@@ -38,7 +38,7 @@ function UserName() {
             )}
         </FetchUser>
     );
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", nil)

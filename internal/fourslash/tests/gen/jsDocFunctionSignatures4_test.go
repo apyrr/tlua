@@ -18,7 +18,7 @@ func TestJsDocFunctionSignatures4(t *testing.T) {
 // @Filename: Foo.lua
 /** @param {function ({OwnerID:string,AwayID:string}):void} x
   * @param {function (string):void} y */
-function fn(x, y) { }`
+function fn(x, y) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyNoErrors(t)

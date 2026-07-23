@@ -14,11 +14,11 @@ func TestGoToDefinitionReturn2(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
-    return /*end*/() => {
+	const content = `function foo()
+    return /*end*/function()
         [|/*start*/return|] 10;
-    }
-}`
+    end
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, true, "start")

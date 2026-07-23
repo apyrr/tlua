@@ -17,16 +17,16 @@ func TestQuickInfoJSDocAtBeforeSpace(t *testing.T) {
 	const content = `/**
  * @return Don't @ me
  */
-function /*f*/f() { }
+function /*f*/f() end
 /**
  * @return One final @
  */
-function /*g*/g() { }
+function /*g*/g() end
 /**
  * @return An @
  * But another line
  */
-function /*h*/h() { }`
+function /*h*/h() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

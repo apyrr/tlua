@@ -16,8 +16,8 @@ func TestCompletionTypeofExpressions(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local x = "str";
-function test(arg: typeof x./*1*/) {}
-function test1(arg: typeof (x./*2*/)) {}`
+function test(arg: typeof x./*1*/) end
+function test1(arg: typeof (x./*2*/)) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

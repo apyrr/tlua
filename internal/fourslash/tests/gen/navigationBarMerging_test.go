@@ -16,17 +16,17 @@ func TestNavigationBarMerging(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: file1.tlua
 namespace a {
-    function foo() {}
+    function foo() end
 }
 namespace b {
-    function foo() {}
+    function foo() end
 }
 namespace a {
-    function bar() {}
+    function bar() end
 }
 // @Filename: file2.tlua
 namespace a {}
-function a() {}
+function a() end
 // @Filename: file3.tlua
 namespace a {
     interface A {

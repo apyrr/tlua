@@ -23,10 +23,10 @@ local someObject = {
      * @param {string} param1 Some string param.
      * @param {number} parm2  Some number param.
      */
-    someMethod: function(param1, param2) {
+    someMethod: function(param1, param2)
         console.log(param1/*1*/);
         return false;
-    },
+    end,
     /**
      * @param {number} p1  Some number param.
      */

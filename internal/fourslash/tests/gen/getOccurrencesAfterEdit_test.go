@@ -18,9 +18,9 @@ func TestGetOccurrencesAfterEdit(t *testing.T) {
 interface A {
     foo: string;
 }
-function foo(x: A) {
+function foo(x: A)
     x.f/*1*/oo
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, "1")

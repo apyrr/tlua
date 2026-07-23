@@ -14,7 +14,7 @@ func TestGoToDefinitionPropertyAssignment(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export local /*FunctionResult*/Component = () => { return "OK"}
+	const content = `export local /*FunctionResult*/Component = function() return "OK" end
 Component./*PropertyResult*/displayName = 'Component'
 
 [|/*FunctionClick*/Component|]

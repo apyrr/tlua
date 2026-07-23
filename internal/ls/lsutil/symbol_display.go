@@ -141,13 +141,6 @@ func GetSymbolKind(typeChecker *checker.Checker, symbol *ast.Symbol, location *a
 		return result
 	}
 	flags := symbol.CombinedLocalAndExportSymbolFlags()
-	if flags&ast.SymbolFlagsClass != 0 {
-		decl := ast.GetDeclarationOfKind(symbol, ast.KindClassExpression)
-		if decl != nil {
-			return ScriptElementKindLocalClassElement
-		}
-		return ScriptElementKindClassElement
-	}
 	if flags&ast.SymbolFlagsTypeAlias != 0 {
 		return ScriptElementKindTypeElement
 	}

@@ -16,9 +16,7 @@ func TestJavaScriptModulesError1(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.lua
-define('mod1', ['a'], /**/function(a, b) {
-	
-});`
+define('mod1', ['a'], /**/function(a, b) end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

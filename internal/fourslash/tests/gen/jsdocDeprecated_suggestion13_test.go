@@ -19,7 +19,7 @@ func TestJsdocDeprecated_suggestion13(t *testing.T) {
 /**
  * @deprecated
  */
-function foo() {};
+function foo() end;
 
 class Foo {
     constructor(fn: () => void) {

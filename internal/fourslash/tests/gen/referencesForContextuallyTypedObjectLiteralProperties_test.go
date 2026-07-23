@@ -21,7 +21,7 @@ local a1: IFoo = { xy = 0 };
 local a2: IFoo = { xy = 0 };
 
 // Function call
-function consumer(f: IFoo) { }
+function consumer(f: IFoo) end
 consumer({ xy = 1 });
 
 // Type cast

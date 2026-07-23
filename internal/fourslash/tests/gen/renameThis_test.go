@@ -14,9 +14,9 @@ func TestRenameThis(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f([|this|]) {
+	const content = `function f([|this|])
     return [|this|];
-}
+end
 this/**/;
 local _ = { [|["[|{| "contextRangeIndex": 2 |}this|]"] = 0|] }.[|this|];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -17,7 +17,7 @@ func TestDocCommentTemplateIndentation(t *testing.T) {
 	const content = `// @Filename: indents.tlua
     a   /*2*/
     /*1*/
-/*0*/        function foo() { }`
+/*0*/        function foo() end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

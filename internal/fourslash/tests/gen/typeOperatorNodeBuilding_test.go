@@ -15,14 +15,14 @@ func TestTypeOperatorNodeBuilding(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: keyof.tlua
-function doSomethingWithKeys<T>(...keys: (keyof T)[]) { }
+function doSomethingWithKeys<T>(...keys: (keyof T)[]) end
 
 local /*1*/utilityFunctions = {
   doSomethingWithKeys
 };
 // @Filename: typeof.tlua
 class Foo { static a: number; }
-function doSomethingWithTypes(...statics: (typeof Foo)[]) {}
+function doSomethingWithTypes(...statics: (typeof Foo)[]) end
 
 local /*2*/utilityFunctions = {
   doSomethingWithTypes

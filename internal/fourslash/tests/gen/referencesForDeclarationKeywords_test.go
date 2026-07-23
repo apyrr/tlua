@@ -25,7 +25,7 @@ interface Implemented1 {}
 /*enumDecl_enumKeyword*/enum E { }
 /*namespaceDecl_namespaceKeyword*/namespace N { }
 /*moduleDecl_moduleKeyword*/namespace M { }
-/*functionDecl_functionKeyword*/function fn() {}
+/*functionDecl_functionKeyword*/function fn() end
 /*varDecl_varKeyword*/local x;
 /*letDecl_letKeyword*/local y;
 /*constDecl_constKeyword*/local z = 1;

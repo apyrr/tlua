@@ -29,7 +29,7 @@ local v1: A | B = { a = 0, /*3*/common = "" };
 local v2: A | B = { b = 0, /*4*/common = 3 };
 
 // Function call
-function consumer(f:  A | B) { }
+function consumer(f:  A | B) end
 consumer({ a = 0, b = 0, /*5*/common = 1 });
 
 // Type cast

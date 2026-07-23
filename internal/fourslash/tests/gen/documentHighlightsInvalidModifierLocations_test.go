@@ -18,12 +18,12 @@ func TestDocumentHighlightsInvalidModifierLocations(t *testing.T) {
 	const content = `class C {
     m([|readonly|] p) {}
 }
-function f([|readonly|] p) {}
+function f([|readonly|] p) end
 
 class D {
     m([|public|] p) {}
 }
-function g([|public|] p) {}`
+function g([|public|] p) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)

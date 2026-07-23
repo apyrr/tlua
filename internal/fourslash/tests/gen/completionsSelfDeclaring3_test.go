@@ -15,7 +15,7 @@ func TestCompletionsSelfDeclaring3(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f<T extends { x: number }>(p: T & (T extends { hello: string } ? { goodbye: number } : {})) {}
+	const content = `function f<T extends { x: number }>(p: T & (T extends { hello: string } ? { goodbye: number } : {})) end
 f({ x/*x*/ = 0, hello/*hello*/ = "", goodbye/*goodbye*/ = 0, abc/*abc*/ = "" })`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

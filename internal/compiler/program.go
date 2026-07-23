@@ -1980,7 +1980,6 @@ var plainJSErrors = collections.NewSetFromItems(
 	diagnostics.Classes_may_not_have_a_field_named_constructor.Code(),
 	diagnostics.Did_you_mean_to_use_a_Colon_An_can_only_follow_a_property_name_when_the_containing_object_literal_is_part_of_a_destructuring_pattern.Code(),
 	diagnostics.Duplicate_label_0.Code(),
-	diagnostics.Dynamic_imports_can_only_accept_a_module_specifier_and_an_optional_set_of_attributes_as_arguments.Code(),
 	diagnostics.X_for_await_loops_cannot_be_used_inside_a_class_static_block.Code(),
 	diagnostics.JSX_attributes_must_only_be_assigned_a_non_empty_expression.Code(),
 	diagnostics.JSX_elements_cannot_have_multiple_attributes_with_the_same_name.Code(),

@@ -32,14 +32,13 @@ const (
 	ContainerFlagsIsBlockScopedContainer ContainerFlags = 1 << 1
 	// The current node is the container of a control flow path. The current control flow should
 	// be saved and restored, and a new control flow initialized within the container.
-	ContainerFlagsIsControlFlowContainer                           ContainerFlags = 1 << 2
-	ContainerFlagsIsFunctionLike                                   ContainerFlags = 1 << 3
-	ContainerFlagsIsFunctionExpression                             ContainerFlags = 1 << 4
-	ContainerFlagsHasLocals                                        ContainerFlags = 1 << 5
-	ContainerFlagsIsInterface                                      ContainerFlags = 1 << 6
-	ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor ContainerFlags = 1 << 7
-	ContainerFlagsIsThisContainer                                  ContainerFlags = 1 << 8
-	ContainerFlagsPropagatesThisKeyword                            ContainerFlags = 1 << 9
+	ContainerFlagsIsControlFlowContainer ContainerFlags = 1 << 2
+	ContainerFlagsIsFunctionLike         ContainerFlags = 1 << 3
+	ContainerFlagsIsFunctionExpression   ContainerFlags = 1 << 4
+	ContainerFlagsHasLocals              ContainerFlags = 1 << 5
+	ContainerFlagsIsInterface            ContainerFlags = 1 << 6
+	ContainerFlagsIsThisContainer        ContainerFlags = 1 << 7
+	ContainerFlagsPropagatesThisKeyword  ContainerFlags = 1 << 8
 )
 
 type ExpandoAssignmentInfo struct {
@@ -314,13 +313,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			return ast.InternalSymbolNameGlobal
 		}
 		if ast.IsPrivateIdentifier(name) {
-			// containingClass exists because private names only allowed inside classes
-			containingClass := ast.GetContainingClass(node)
-			if containingClass == nil {
-				// we can get here in cases where there is already a parse error.
-				return ast.InternalSymbolNameMissing
-			}
-			return GetSymbolNameForPrivateIdentifier(containingClass.Symbol(), name.Text())
+			return ast.InternalSymbolNameMissing
 		}
 		if ast.IsPropertyNameLiteral(name) || ast.IsJsxNamespacedName(name) {
 			// Numeric literal names denote Lua number keys, a namespace
@@ -348,8 +341,6 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 		return ast.InternalSymbolNameMissing
 	}
 	switch node.Kind {
-	case ast.KindConstructor:
-		return ast.InternalSymbolNameConstructor
 	case ast.KindFunctionType, ast.KindCallSignature:
 		return ast.InternalSymbolNameCall
 	case ast.KindConstructorType, ast.KindConstructSignature:
@@ -374,10 +365,6 @@ func (b *Binder) getDisplayName(node *ast.Node) string {
 		return name
 	}
 	return "(Missing)"
-}
-
-func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, description string) string {
-	return ast.InternalSymbolNamePrefix + "#" + strconv.Itoa(int(ast.GetSymbolId(containingClassSymbol))) + "@" + description
 }
 
 func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
@@ -421,13 +408,6 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	return b.declareSymbol(ast.GetLocals(container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 }
 
-func (b *Binder) declareClassMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
-	if ast.IsStatic(node) {
-		return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
-	}
-	return b.declareSymbol(ast.GetMembers(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
-}
-
 func (b *Binder) declareSourceFileMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
 	if ast.IsExternalModule(b.file) {
 		return b.declareModuleMember(node, symbolFlags, symbolExcludes)
@@ -441,14 +421,11 @@ func (b *Binder) declareSymbolAndAddToSymbolTable(node *ast.Node, symbolFlags as
 		return b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	case ast.KindSourceFile:
 		return b.declareSourceFileMember(node, symbolFlags, symbolExcludes)
-	case ast.KindClassExpression, ast.KindClassDeclaration:
-		return b.declareClassMember(node, symbolFlags, symbolExcludes)
 	case ast.KindTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration, ast.KindJsxAttributes:
 		return b.declareSymbol(ast.GetMembers(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
 	case ast.KindFunctionType, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature,
-		ast.KindIndexSignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor,
-		ast.KindSetAccessor, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction,
-		ast.KindClassStaticBlockDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType:
+		ast.KindIndexSignature, ast.KindMethodSignature, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction,
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType:
 		return b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 	}
 	panic("Unhandled case in declareSymbolAndAddToSymbolTable")
@@ -630,12 +607,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 			b.bindThisPropertyAssignment(node)
 		}
 		b.checkStrictModeBinaryExpression(node)
-	case ast.KindCatchClause:
-		b.checkStrictModeCatchClause(node)
 	case ast.KindDeleteExpression:
 		b.checkStrictModeDeleteExpression(node)
-	case ast.KindWithStatement:
-		b.checkStrictModeWithStatement(node)
 	case ast.KindTypeParameter:
 		b.bindTypeParameter(node)
 	case ast.KindParameter:
@@ -645,7 +618,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindBindingElement:
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
-	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
+	case ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
 		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsProperty, ast.SymbolFlagsPropertyExcludes)
@@ -655,8 +628,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty, ast.InternalSymbolNameComputed)
 	case ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature:
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsSignature, ast.SymbolFlagsNone)
-	case ast.KindMethodDeclaration, ast.KindMethodSignature:
-		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|getOptionalSymbolFlagForNode(node), core.IfElse(ast.IsObjectLiteralMethod(node), ast.SymbolFlagsValue, ast.SymbolFlagsMethodExcludes))
+	case ast.KindMethodSignature:
+		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|getOptionalSymbolFlagForNode(node), ast.SymbolFlagsMethodExcludes)
 	case ast.KindFunctionDeclaration:
 		switch {
 		case ast.IsLuaLocal(node):
@@ -666,12 +639,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 		default:
 			b.bindFunctionDeclaration(node)
 		}
-	case ast.KindConstructor:
-		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsConstructor, ast.SymbolFlagsNone)
-	case ast.KindGetAccessor:
-		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsGetAccessor, ast.SymbolFlagsGetAccessorExcludes)
-	case ast.KindSetAccessor:
-		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsSetAccessor, ast.SymbolFlagsSetAccessorExcludes)
 	case ast.KindFunctionType, ast.KindConstructorType:
 		b.bindFunctionOrConstructorType(node)
 	case ast.KindTypeLiteral, ast.KindMappedType:
@@ -736,10 +703,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 }
 
 func (b *Binder) bindPropertyWorker(node *ast.Node) {
-	isAutoAccessor := ast.IsAutoAccessorPropertyDeclaration(node)
-	includes := core.IfElse(isAutoAccessor, ast.SymbolFlagsAccessor, ast.SymbolFlagsProperty)
-	excludes := core.IfElse(isAutoAccessor, ast.SymbolFlagsAccessorExcludes, ast.SymbolFlagsPropertyExcludes)
-	b.bindPropertyOrMethodOrAccessor(node, includes|getOptionalSymbolFlagForNode(node), excludes)
+	b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsProperty|getOptionalSymbolFlagForNode(node), ast.SymbolFlagsPropertyExcludes)
 }
 
 func (b *Binder) bindSourceFileIfExternalModule() {
@@ -853,9 +817,6 @@ func (b *Binder) setCommonJSModuleIndicator(node *ast.Node) bool {
 func (b *Binder) bindPropertyOrMethodOrAccessor(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) {
 	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsAsyncFunction(node) {
 		b.emitFlags |= ast.NodeFlagsHasAsyncFunctions
-	}
-	if b.currentFlow != nil && ast.IsObjectLiteralOrClassExpressionMethodOrAccessor(node) {
-		setFlowNode(node, b.currentFlow)
 	}
 	if ast.HasDynamicName(node) {
 		b.bindAnonymousDeclaration(node, symbolFlags, ast.InternalSymbolNameComputed)
@@ -1013,7 +974,7 @@ func getInitializerSymbol(symbol *ast.Symbol) *ast.Symbol {
 	// property declarations to the function's symbol. This also applies to class expressions in JS files,
 	// and empty object literals in JS files when the declaration doesn't have a type annotation.
 	switch {
-	case ast.IsFunctionDeclaration(declaration) || ast.IsInJSFile(declaration) && ast.IsClassDeclaration(declaration):
+	case ast.IsFunctionDeclaration(declaration):
 		return symbol
 	case ast.IsVariableDeclaration(declaration) &&
 		(declaration.Parent.Flags&ast.NodeFlagsConst != 0 || ast.IsInJSFile(declaration)):
@@ -1059,14 +1020,6 @@ func (b *Binder) getThisClassAndSymbolTable() (classSymbol *ast.Symbol, symbolTa
 	switch b.thisContainer.Kind {
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
 		// !!! constructor functions
-	case ast.KindConstructor, ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassStaticBlockDeclaration:
-		// this.property assignment in class member -- bind to the containing class
-		classSymbol = b.thisContainer.Parent.Symbol()
-		if ast.IsStatic(b.thisContainer) {
-			symbolTable = ast.GetExports(classSymbol)
-		} else {
-			symbolTable = ast.GetMembers(classSymbol)
-		}
 	}
 	return classSymbol, symbolTable
 }
@@ -1137,13 +1090,6 @@ func (b *Binder) bindParameter(node *ast.Node) {
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunctionScopedVariable, "__"+strconv.Itoa(index))
 	} else {
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsParameterExcludes)
-	}
-	// If this is a property-parameter, then also declare the property symbol into the
-	// containing class.
-	if ast.IsParameterPropertyDeclaration(node, node.Parent) {
-		classDeclaration := node.Parent.Parent
-		flags := ast.SymbolFlagsProperty | core.IfElse(decl.QuestionToken != nil, ast.SymbolFlagsOptional, ast.SymbolFlagsNone)
-		b.declareSymbol(ast.GetMembers(classDeclaration.Symbol()), classDeclaration.Symbol(), node, flags, ast.SymbolFlagsPropertyExcludes)
 	}
 }
 
@@ -1266,9 +1212,6 @@ func (b *Binder) checkPrivateIdentifier(node *ast.Node) {
 func (b *Binder) getStrictModeIdentifierMessage(node *ast.Node) *diagnostics.Message {
 	// Provide specialized messages to help the user understand why we think they're in
 	// strict mode.
-	if ast.GetContainingClass(node) != nil {
-		return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode_Class_definitions_are_automatically_in_strict_mode
-	}
 	if b.file.ExternalModuleIndicator != nil {
 		return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode_Modules_are_automatically_in_strict_mode
 	}
@@ -1306,9 +1249,6 @@ func (b *Binder) checkStrictModeFunctionName(node *ast.Node) {
 
 func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Node) *diagnostics.Message {
 	// Provide specialized messages to help the user understand why we think they're in strict mode.
-	if ast.GetContainingClass(node) != nil {
-		return diagnostics.Function_declarations_are_not_allowed_inside_blocks_in_strict_mode_when_targeting_ES5_Class_definitions_are_automatically_in_strict_mode
-	}
 	if b.file.ExternalModuleIndicator != nil {
 		return diagnostics.Function_declarations_are_not_allowed_inside_blocks_in_strict_mode_when_targeting_ES5_Modules_are_automatically_in_strict_mode
 	}
@@ -1324,15 +1264,6 @@ func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	}
 }
 
-func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
-	// It is a SyntaxError if a TryStatement with a Catch occurs within strict code and the Identifier of the
-	// Catch production is eval or arguments
-	clause := node.AsCatchClause()
-	if clause.VariableDeclaration != nil {
-		b.checkStrictModeEvalOrArguments(node, clause.VariableDeclaration.AsVariableDeclaration().Name())
-	}
-}
-
 func (b *Binder) checkStrictModeDeleteExpression(node *ast.Node) {
 	// Grammar checking
 	expr := node.AsDeleteExpression()
@@ -1341,11 +1272,6 @@ func (b *Binder) checkStrictModeDeleteExpression(node *ast.Node) {
 		// UnaryExpression is a direct reference to a variable, function argument, or function name
 		b.errorOnNode(expr.Expression, diagnostics.X_delete_cannot_be_called_on_an_identifier_in_strict_mode)
 	}
-}
-
-func (b *Binder) checkStrictModeWithStatement(node *ast.Node) {
-	// Grammar checking for withStatement
-	b.errorOnFirstToken(node, diagnostics.X_with_statements_are_not_allowed_in_strict_mode)
 }
 
 func isEvalOrArgumentsIdentifier(node *ast.Node) bool {
@@ -1366,9 +1292,6 @@ func (b *Binder) checkStrictModeEvalOrArguments(contextNode *ast.Node, name *ast
 
 func (b *Binder) getStrictModeEvalOrArgumentsMessage(node *ast.Node) *diagnostics.Message {
 	// Provide specialized messages to help the user understand why we think they're in strict mode
-	if ast.GetContainingClass(node) != nil {
-		return diagnostics.Code_contained_in_a_class_is_evaluated_in_JavaScript_s_strict_mode_which_does_not_allow_this_use_of_0_For_more_information_see_https_Colon_Slash_Slashdeveloper_mozilla_org_Slashen_US_Slashdocs_SlashWeb_SlashJavaScript_SlashReference_SlashStrict_mode
-	}
 	if b.file.ExternalModuleIndicator != nil {
 		return diagnostics.Invalid_use_of_0_Modules_are_automatically_in_strict_mode
 	}
@@ -1426,21 +1349,19 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		saveActiveLabelList := b.activeLabelList
 		saveHasExplicitReturn := b.hasExplicitReturn
 		saveSeenThisKeyword := b.seenThisKeyword
-		isImmediatelyInvoked := (containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
+		isImmediatelyInvoked := containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
 			!ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
-			ast.GetImmediatelyInvokedFunctionExpression(node) != nil) || node.Kind == ast.KindClassStaticBlockDeclaration
+			ast.GetImmediatelyInvokedFunctionExpression(node) != nil
 		// A non-async IIFE is considered part of the containing control flow. Return statements behave
 		// similarly to break statements that exit to a label just past the statement body.
 		if !isImmediatelyInvoked {
 			flowStart := b.newFlowNode(ast.FlowFlagsStart)
 			b.currentFlow = flowStart
-			if containerFlags&(ContainerFlagsIsFunctionExpression|ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor) != 0 {
+			if containerFlags&ContainerFlagsIsFunctionExpression != 0 {
 				flowStart.Node = node
 			}
 		}
-		// We create a return control flow graph for IIFEs and constructors. For constructors
-		// we use the return control flow graph in strict property initialization checks.
-		if isImmediatelyInvoked || node.Kind == ast.KindConstructor {
+		if isImmediatelyInvoked {
 			b.currentReturnTarget = b.newFlowNode(ast.FlowFlagsBranchLabel)
 		} else {
 			b.currentReturnTarget = nil
@@ -1474,9 +1395,6 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
 			b.currentFlow = b.finishFlowLabel(b.currentReturnTarget)
-			if node.Kind == ast.KindConstructor || node.Kind == ast.KindClassStaticBlockDeclaration {
-				setReturnFlowNode(node, b.currentFlow)
-			}
 		}
 		if !isImmediatelyInvoked {
 			b.currentFlow = saveCurrentFlow
@@ -1603,8 +1521,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	switch node.Kind {
 	case ast.KindWhileStatement:
 		b.bindWhileStatement(node)
-	case ast.KindDoStatement:
-		b.bindDoStatement(node)
 	case ast.KindForOfStatement:
 		b.bindForOfStatement(node)
 	case ast.KindNumericForStatement:
@@ -1621,8 +1537,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.bindBreakStatement(node)
 	case ast.KindContinueStatement:
 		b.bindContinueStatement(node)
-	case ast.KindTryStatement:
-		b.bindTryStatement(node)
 	case ast.KindExpressionStatement:
 		b.bindExpressionStatement(node)
 	case ast.KindGotoStatement:
@@ -1800,20 +1714,6 @@ func (b *Binder) bindWhileStatement(node *ast.Node) {
 	b.currentFlow = b.finishFlowLabel(postWhileLabel)
 }
 
-func (b *Binder) bindDoStatement(node *ast.Node) {
-	stmt := node.AsDoStatement()
-	preDoLabel := b.createLoopLabel()
-	preConditionLabel := b.createBranchLabel()
-	postDoLabel := b.createBranchLabel()
-	b.addAntecedent(preDoLabel, b.currentFlow)
-	b.currentFlow = preDoLabel
-	b.bindIterativeStatement(stmt.Statement, postDoLabel, preConditionLabel)
-	b.addAntecedent(preConditionLabel, b.currentFlow)
-	b.currentFlow = b.finishFlowLabel(preConditionLabel)
-	b.bindCondition(stmt.Expression, preDoLabel, postDoLabel)
-	b.currentFlow = b.finishFlowLabel(postDoLabel)
-}
-
 // bindRepeatStatement binds Lua `repeat ... until c`: bottom-tested like
 // do-while, but the loop continues while the condition is FALSE — the
 // condition targets are swapped (true exits, false loops), so narrowing from
@@ -1953,87 +1853,6 @@ func (b *Binder) bindJumpFlow(flowLabel *ast.FlowLabel) {
 		b.addAntecedent(flowLabel, b.currentFlow)
 		b.currentFlow = b.unreachableFlow
 		b.hasFlowEffects = true
-	}
-}
-
-func (b *Binder) bindTryStatement(node *ast.Node) {
-	// We conservatively assume that *any* code in the try block can cause an exception, but we only need
-	// to track code that causes mutations (because only mutations widen the possible control flow type of
-	// a variable). The exceptionLabel is the target label for control flows that result from exceptions.
-	// We add all mutation flow nodes as antecedents of this label such that we can analyze them as possible
-	// antecedents of the start of catch or finally blocks. Furthermore, we add the current control flow to
-	// represent exceptions that occur before any mutations.
-	stmt := node.AsTryStatement()
-	saveReturnTarget := b.currentReturnTarget
-	saveExceptionTarget := b.currentExceptionTarget
-	normalExitLabel := b.createBranchLabel()
-	returnLabel := b.createBranchLabel()
-	exceptionLabel := b.createBranchLabel()
-	if stmt.FinallyBlock != nil {
-		b.currentReturnTarget = returnLabel
-	}
-	b.addAntecedent(exceptionLabel, b.currentFlow)
-	b.currentExceptionTarget = exceptionLabel
-	b.bind(stmt.TryBlock)
-	b.addAntecedent(normalExitLabel, b.currentFlow)
-	if stmt.CatchClause != nil {
-		// Start of catch clause is the target of exceptions from try block.
-		b.currentFlow = b.finishFlowLabel(exceptionLabel)
-		// The currentExceptionTarget now represents control flows from exceptions in the catch clause.
-		// Effectively, in a try-catch-finally, if an exception occurs in the try block, the catch block
-		// acts like a second try block.
-		exceptionLabel = b.createBranchLabel()
-		b.addAntecedent(exceptionLabel, b.currentFlow)
-		b.currentExceptionTarget = exceptionLabel
-		b.bind(stmt.CatchClause)
-		b.addAntecedent(normalExitLabel, b.currentFlow)
-	}
-	b.currentReturnTarget = saveReturnTarget
-	b.currentExceptionTarget = saveExceptionTarget
-	if stmt.FinallyBlock != nil {
-		// Possible ways control can reach the finally block:
-		// 1) Normal completion of try block of a try-finally or try-catch-finally
-		// 2) Normal completion of catch block (following exception in try block) of a try-catch-finally
-		// 3) Return in try or catch block of a try-finally or try-catch-finally
-		// 4) Exception in try block of a try-finally
-		// 5) Exception in catch block of a try-catch-finally
-		// When analyzing a control flow graph that starts inside a finally block we want to consider all
-		// five possibilities above. However, when analyzing a control flow graph that starts outside (past)
-		// the finally block, we only want to consider the first two (if we're past a finally block then it
-		// must have completed normally). Likewise, when analyzing a control flow graph from return statements
-		// in try or catch blocks in an IIFE, we only want to consider the third. To make this possible, we
-		// inject a ReduceLabel node into the control flow graph. This node contains an alternate reduced
-		// set of antecedents for the pre-finally label. As control flow analysis passes by a ReduceLabel
-		// node, the pre-finally label is temporarily switched to the reduced antecedent set.
-		finallyLabel := b.createBranchLabel()
-		finallyLabel.Antecedents = b.combineFlowLists(normalExitLabel.Antecedents, b.combineFlowLists(exceptionLabel.Antecedents, returnLabel.Antecedents))
-		b.currentFlow = finallyLabel
-		b.bind(stmt.FinallyBlock)
-		if b.currentFlow.Flags&ast.FlowFlagsUnreachable != 0 {
-			// If the end of the finally block is unreachable, the end of the entire try statement is unreachable.
-			b.currentFlow = b.unreachableFlow
-		} else {
-			// If we have an IIFE return target and return statements in the try or catch blocks, add a control
-			// flow that goes back through the finally block and back through only the return statements.
-			if b.currentReturnTarget != nil && returnLabel.Antecedents != nil {
-				b.addAntecedent(b.currentReturnTarget, b.createReduceLabel(finallyLabel, returnLabel.Antecedents, b.currentFlow))
-			}
-			// If we have an outer exception target (i.e. a containing try-finally or try-catch-finally), add a
-			// control flow that goes back through the finally block and back through each possible exception source.
-			if b.currentExceptionTarget != nil && exceptionLabel.Antecedents != nil {
-				b.addAntecedent(b.currentExceptionTarget, b.createReduceLabel(finallyLabel, exceptionLabel.Antecedents, b.currentFlow))
-			}
-			// If the end of the finally block is reachable, but the end of the try and catch blocks are not,
-			// convert the current flow to unreachable. For example, 'try { return 1; } finally { ... }' should
-			// result in an unreachable current control flow.
-			if normalExitLabel.Antecedents != nil {
-				b.currentFlow = b.createReduceLabel(finallyLabel, normalExitLabel.Antecedents, b.currentFlow)
-			} else {
-				b.currentFlow = b.unreachableFlow
-			}
-		}
-	} else {
-		b.currentFlow = b.finishFlowLabel(normalExitLabel)
 	}
 }
 
@@ -2421,19 +2240,6 @@ func setFlowNode(node *ast.Node, flowNode *ast.FlowNode) {
 	}
 }
 
-func setReturnFlowNode(node *ast.Node, returnFlowNode *ast.FlowNode) {
-	switch node.Kind {
-	case ast.KindConstructor:
-		node.AsConstructorDeclaration().ReturnFlowNode = returnFlowNode
-	case ast.KindFunctionDeclaration:
-		node.AsFunctionDeclaration().ReturnFlowNode = returnFlowNode
-	case ast.KindFunctionExpression:
-		node.AsFunctionExpression().ReturnFlowNode = returnFlowNode
-	case ast.KindClassStaticBlockDeclaration:
-		node.AsClassStaticBlockDeclaration().ReturnFlowNode = returnFlowNode
-	}
-}
-
 func (b *Binder) addToContainerChain(next *ast.Node) {
 	if b.lastContainer != nil {
 		b.lastContainer.LocalsContainerData().NextContainer = next
@@ -2476,7 +2282,7 @@ func SetValueDeclaration(symbol *ast.Symbol, node *ast.Node) {
 
 func GetContainerFlags(node *ast.Node) ContainerFlags {
 	switch node.Kind {
-	case ast.KindClassExpression, ast.KindClassDeclaration, ast.KindObjectLiteralExpression, ast.KindTypeLiteral,
+	case ast.KindObjectLiteralExpression, ast.KindTypeLiteral,
 		ast.KindJsxAttributes:
 		return ContainerFlagsIsContainer
 	case ast.KindInterfaceDeclaration:
@@ -2485,12 +2291,7 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		return ContainerFlagsIsContainer | ContainerFlagsHasLocals
 	case ast.KindSourceFile:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals
-	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
-		if ast.IsObjectLiteralOrClassExpressionMethodOrAccessor(node) {
-			return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor | ContainerFlagsIsThisContainer
-		}
-		fallthrough
-	case ast.KindConstructor, ast.KindFunctionDeclaration, ast.KindClassStaticBlockDeclaration:
+	case ast.KindFunctionDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesThisKeyword
@@ -2500,17 +2301,11 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsPropagatesThisKeyword
 	case ast.KindModuleBlock:
 		return ContainerFlagsIsControlFlowContainer
-	case ast.KindPropertyDeclaration:
-		if node.Initializer() != nil {
-			return ContainerFlagsIsControlFlowContainer | ContainerFlagsIsThisContainer
-		} else {
-			return ContainerFlagsNone
-		}
-	case ast.KindCatchClause, ast.KindForOfStatement, ast.KindNumericForStatement,
+	case ast.KindForOfStatement, ast.KindNumericForStatement,
 		ast.KindRepeatStatement:
 		return ContainerFlagsIsBlockScopedContainer | ContainerFlagsHasLocals
 	case ast.KindBlock:
-		if ast.IsFunctionLike(node.Parent) || ast.IsClassStaticBlockDeclaration(node.Parent) {
+		if ast.IsFunctionLike(node.Parent) {
 			return ContainerFlagsNone
 		} else {
 			return ContainerFlagsIsBlockScopedContainer | ContainerFlagsHasLocals
@@ -2702,7 +2497,7 @@ func isFunctionSymbol(symbol *ast.Symbol) bool {
 
 func isStatementCondition(node *ast.Node) bool {
 	switch node.Parent.Kind {
-	case ast.KindIfStatement, ast.KindWhileStatement, ast.KindDoStatement, ast.KindRepeatStatement:
+	case ast.KindIfStatement, ast.KindWhileStatement, ast.KindRepeatStatement:
 		return node.Parent.Expression() == node
 	case ast.KindConditionalExpression:
 		return node.Parent.AsConditionalExpression().Condition == node

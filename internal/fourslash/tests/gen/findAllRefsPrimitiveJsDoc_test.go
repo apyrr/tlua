@@ -19,7 +19,7 @@ func TestFindAllRefsPrimitiveJsDoc(t *testing.T) {
  * @param {/*1*/number} n
  * @returns {/*2*/number}
  */
-function f(n: /*3*/number): /*4*/number {}`
+function f(n: /*3*/number): /*4*/number end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4")

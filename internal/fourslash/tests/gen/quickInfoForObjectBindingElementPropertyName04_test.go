@@ -19,8 +19,7 @@ func TestQuickInfoForObjectBindingElementPropertyName04(t *testing.T) {
     value: any;
 }
 
-function f ({ /*1*/next: { /*2*/next: x} }) {
-}`
+function f ({ /*1*/next: { /*2*/next: x} }) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) next: {\n    next: any;\n}", "")

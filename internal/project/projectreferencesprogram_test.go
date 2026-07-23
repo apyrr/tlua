@@ -240,7 +240,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 				}
 			}`,
 			"/user/username/projects/myproject/dependency/fns.tlua": `
-				function fn1() { }
+				function fn1() end
 				return { fn1 = fn1 };
 			`,
 			"/user/username/projects/myproject/other/tluaconfig.json": `{
@@ -343,11 +343,11 @@ func filesForReferencedProjectProgram(disableSourceOfProjectReferenceRedirect bo
 			},
 		}`,
 		"/user/username/projects/myproject/dependency/fns.tlua": `
-			function fn1() { }
-			function fn2() { }
-			function fn3() { }
-			function fn4() { }
-			function fn5() { }
+			function fn1() end
+			function fn2() end
+			function fn3() end
+			function fn4() end
+			function fn5() end
 			return { fn1 = fn1, fn2 = fn2, fn3 = fn3, fn4 = fn4, fn5 = fn5 };
 		`,
 	}
@@ -367,8 +367,8 @@ func filesForSymlinkReferences(preserveSymlinks bool) (files map[string]any, aTe
 			b.foo();
 			bar.bar();
 		`,
-		bFoo: `function foo() { } return { foo = foo };`,
-		bBar: `function bar() { } return { bar = bar };`,
+		bFoo: `function foo() end return { foo = foo };`,
+		bBar: `function bar() end return { bar = bar };`,
 		`/user/username/projects/myproject/node_modules/b`: vfstest.Symlink("/user/username/projects/myproject/packages/B"),
 	}
 	addConfigForPackage(files, "A", preserveSymlinks, []string{"../B"})
@@ -388,8 +388,8 @@ func filesForSymlinkReferencesInSubfolder(preserveSymlinks bool) (files map[stri
 			foo.foo();
 			bar.bar();
 		`,
-		bFoo: `function foo() { } return { foo = foo };`,
-		bBar: `function bar() { } return { bar = bar };`,
+		bFoo: `function foo() end return { foo = foo };`,
+		bBar: `function bar() end return { bar = bar };`,
 		`/user/username/projects/myproject/node_modules/b`: vfstest.Symlink("/user/username/projects/myproject/packages/B"),
 	}
 	addConfigForPackage(files, "A", preserveSymlinks, []string{"../B"})
@@ -409,7 +409,7 @@ func filesForDirectorySubpathSymlinkReferences() (files map[string]any, aIndex s
 			local result: number = File.helper();
 			return { result = result };
 		`,
-		bFile: `function helper(): number { return 1; } return { helper = helper };`,
+		bFile: `function helper(): number return 1; end return { helper = helper };`,
 		"/user/username/projects/myproject/node_modules/b": vfstest.Symlink("/user/username/projects/myproject/packages/b"),
 	}
 	addConfigForPackage(files, "a", false, []string{"../b"})

@@ -19,9 +19,9 @@ interface /*def*/I {
 	foo: string;
 }
 
-function f() {
+function f()
     local foo = { foo: '' } satisfies [|I|];
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "def")

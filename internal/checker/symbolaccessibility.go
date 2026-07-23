@@ -303,21 +303,6 @@ func (c *Checker) getContainersOfSymbol(symbol *ast.Symbol, enclosingDeclaration
 				continue
 			}
 		}
-		if ast.IsClassExpression(d) && ast.IsBinaryExpression(d.Parent) && d.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken && ast.IsAccessExpression(d.Parent.AsBinaryExpression().Left) && ast.IsEntityNameExpression(d.Parent.AsBinaryExpression().Left.Expression()) {
-			if ast.IsModuleExportsAccessExpression(d.Parent.AsBinaryExpression().Left) || ast.IsExportsIdentifier(d.Parent.AsBinaryExpression().Left.Expression()) {
-				sym := c.getSymbolOfDeclaration(ast.GetSourceFileOfNode(d).AsNode())
-				if sym != nil && !slices.Contains(candidates, sym) {
-					candidates = append(candidates, sym)
-				}
-				continue
-			}
-			c.checkExpressionCached(d.Parent.AsBinaryExpression().Left.Expression())
-			sym := c.symbolNodeLinks.Get(d.Parent.AsBinaryExpression().Left.Expression()).resolvedSymbol
-			if sym != nil && !slices.Contains(candidates, sym) {
-				candidates = append(candidates, sym)
-			}
-			continue
-		}
 	}
 	if len(candidates) == 0 {
 		return nil
@@ -445,9 +430,6 @@ func symbolTableIDFromGlobals() symbolTableID {
 
 func (c *Checker) getAccessibleSymbolChainEx(ctx accessibleSymbolChainContext) []*ast.Symbol {
 	if ctx.symbol == nil {
-		return nil
-	}
-	if isPropertyOrMethodDeclarationSymbol(ctx.symbol) {
 		return nil
 	}
 	// Go from enclosingDeclaration to the first scope we check, so the cache is keyed off the scope and thus shared more
@@ -741,24 +723,6 @@ func (c *Checker) needsQualification(symbol *ast.Symbol, enclosingDeclaration *a
 	return qualify
 }
 
-func isPropertyOrMethodDeclarationSymbol(symbol *ast.Symbol) bool {
-	if len(symbol.Declarations) > 0 {
-		for _, declaration := range symbol.Declarations {
-			switch declaration.Kind {
-			case ast.KindPropertyDeclaration,
-				ast.KindMethodDeclaration,
-				ast.KindGetAccessor,
-				ast.KindSetAccessor:
-				continue
-			default:
-				return false
-			}
-		}
-		return true
-	}
-	return false
-}
-
 func (c *Checker) someSymbolTableInScope(
 	enclosingDeclaration *ast.Node,
 	callback func(symbolTable ast.SymbolTable, tableId symbolTableID, ignoreQualification bool, isLocalNameLookup bool, scopeNode *ast.Node) bool,
@@ -784,7 +748,7 @@ func (c *Checker) someSymbolTableInScope(
 			if callback(sym.Exports, symbolTableIDFromExports(sym), false, true, location) {
 				return true
 			}
-		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration:
+		case ast.KindInterfaceDeclaration:
 			// Type parameters are bound into `members` lists so they can merge across declarations
 			// This is troublesome, since in all other respects, they behave like locals :cries:
 			// TODO: the below is shared with similar code in `resolveName` - in fact, rephrasing all this symbol
@@ -805,18 +769,6 @@ func (c *Checker) someSymbolTableInScope(
 			}
 			if table != nil && callback(table, symbolTableIDFromMembers(sym), false, false, location) {
 				return true
-			}
-			// Class expression names (e.g., `B` in `class B {}`) are not stored in any
-			// scope table — the binder uses bindAnonymousDeclaration. Expose the name
-			// binding here so getAccessibleSymbolChain can resolve self-references.
-			// This mirrors the special casing of class expression names in
-			// (*NameResolver).Resolve; if class names are ever bound differently
-			// (e.g., via class-local type aliases), both sites should be updated.
-			if ast.IsClassExpression(location) && location.AsClassExpression().Name() != nil {
-				nameTable := c.getClassExpressionNameTable(location)
-				if nameTable != nil && callback(nameTable, symbolTableIDFromLocals(location.AsNode()), false, true, location) {
-					return true
-				}
 			}
 		}
 	}
@@ -842,30 +794,6 @@ func hasLuaLocalScope(location *ast.Node) bool {
 		}
 	}
 	return false
-}
-
-// getClassExpressionNameTable returns a cached symbol table containing the class
-// expression's name binding. Class expression names are bound via
-// bindAnonymousDeclaration and aren't stored in any container's locals, so this
-// synthesized table lets someSymbolTableInScope expose them during accessibility checks.
-func (c *Checker) getClassExpressionNameTable(location *ast.Node) ast.SymbolTable {
-	nodeId := ast.GetNodeId(location)
-	if c.classExpressionNameTables != nil {
-		if table, ok := c.classExpressionNameTables[nodeId]; ok {
-			return table
-		}
-	}
-	classSymbol := c.getSymbolOfDeclaration(location)
-	nameText := location.AsClassExpression().Name().Text()
-	if len(nameText) == 0 || classSymbol == nil {
-		return nil
-	}
-	table := ast.SymbolTable{nameText: classSymbol}
-	if c.classExpressionNameTables == nil {
-		c.classExpressionNameTables = make(map[ast.NodeId]ast.SymbolTable)
-	}
-	c.classExpressionNameTables[nodeId] = table
-	return table
 }
 
 /**

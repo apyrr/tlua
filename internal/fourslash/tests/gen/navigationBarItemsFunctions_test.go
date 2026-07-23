@@ -14,22 +14,22 @@ func TestNavigationBarItemsFunctions(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
     local x = 10;
-    function bar() {
+    function bar()
         local y = 10;
-        function biz() {
+        function biz()
             local z = 10;
-        }
-        function qux() {
+        end
+        function qux()
             // A function with an empty body should not be top level
-        }
-    }
-}
+        end
+    end
+end
 
-function baz() {
+function baz()
     local v = 10;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentSymbol(t)

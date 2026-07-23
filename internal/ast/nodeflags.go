@@ -44,14 +44,13 @@ const (
 	NodeFlagsHasJSDoc                      NodeFlags = 1 << 21 // If node has preceding JSDoc comment(s)
 	NodeFlagsJSDoc                         NodeFlags = 1 << 22 // If node was parsed inside jsdoc
 	NodeFlagsAmbient                       NodeFlags = 1 << 23 // If node was inside an ambient context -- a declaration file, or inside something with the `declare` modifier.
-	NodeFlagsInWithStatement               NodeFlags = 1 << 24 // If any ancestor of node was the `statement` of a WithStatement (not the `expression`)
 	NodeFlagsJsonFile                      NodeFlags = 1 << 25 // If node was parsed in a Json
 	NodeFlagsPossiblyContainsDeprecatedTag NodeFlags = 1 << 26 // Set during parse if comment text contains '@deprecated'; must confirm via JSDoc lookup
 	NodeFlagsUnreachable                   NodeFlags = 1 << 27 // If node is unreachable according to the binder
 	NodeFlagsReparserTransformedLiteral    NodeFlags = 1 << 28 // If node was transformed during parsing, making its' naive text source not match the AST
 	NodeFlagsLuaLocal                      NodeFlags = 1 << 29 // Lua local variable declaration
-	NodeFlagsLuaBlock                      NodeFlags = 1 << 30 // On a function declaration/expression: its body is a Lua `end` block. On a Block: a keyword-delimited Lua block (`then`/`do`/`else` ... `end`). Set only by the parser; it discriminates Lua if/while printing (IsLuaIf/IsLuaWhile), so transforms must not re-parent a Lua-flagged Block under a brace-form statement.
-	NodeFlagsLuaTableField                 NodeFlags = 1 << 31 // On a PropertyAssignment: parsed with Lua `[k] = v` syntax rather than `[k]: v`. Set only by the parser; drives `=` printing. NOTE: bit 2 (the deleted Using flag) is the only free NodeFlags bit — after it, future Lua flags must repurpose per-kind bits (like NodeFlagsNestedNamespace below).
+	NodeFlagsLuaBlock                      NodeFlags = 1 << 30 // On a Block: a keyword-delimited Lua block (`then`/`do`/`else` ... `end`). Used by source formatting.
+	NodeFlagsLuaTableField                 NodeFlags = 1 << 31 // On a PropertyAssignment: parsed with Lua `[k] = v` syntax rather than `[k]: v`. Set only by the parser; drives `=` printing. NOTE: bits 2 and 24 are free; after them, future Lua flags must repurpose per-kind bits (like NodeFlagsNestedNamespace below).
 
 	NodeFlagsBlockScoped = NodeFlagsLet | NodeFlagsConst
 
@@ -59,7 +58,7 @@ const (
 	NodeFlagsReachabilityAndEmitFlags = NodeFlagsReachabilityCheckFlags | NodeFlagsHasAsyncFunctions
 
 	// Parsing context flags
-	NodeFlagsContextFlags NodeFlags = NodeFlagsDisallowInContext | NodeFlagsDisallowConditionalTypesContext | NodeFlagsYieldContext | NodeFlagsAwaitContext | NodeFlagsJavaScriptFile | NodeFlagsInWithStatement | NodeFlagsAmbient
+	NodeFlagsContextFlags NodeFlags = NodeFlagsDisallowInContext | NodeFlagsDisallowConditionalTypesContext | NodeFlagsYieldContext | NodeFlagsAwaitContext | NodeFlagsJavaScriptFile | NodeFlagsAmbient
 
 	// Exclude these flags when parsing a Type
 	NodeFlagsTypeExcludesFlags NodeFlags = NodeFlagsYieldContext | NodeFlagsAwaitContext

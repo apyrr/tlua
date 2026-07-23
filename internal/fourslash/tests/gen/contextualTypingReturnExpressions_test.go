@@ -15,7 +15,7 @@ func TestContextualTypingReturnExpressions(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A { }
-local f44: (x: A) => (y: A) => A = /*1*/x => /*2*/y => /*3*/x;`
+local f44: (x: A) => (y: A) => A = function(/*1*/x) return function(/*2*/y) return /*3*/x end end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(parameter) x: A", "")

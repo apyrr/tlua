@@ -23,10 +23,10 @@ interface Baz extends Foo {}
 local bar: Foo = [|{|"parts": ["(","object literal",")"], "kind": "interface"|}{ hello: helloImpl /**0*/ }|];
 local baz: Foo[] = [|[{ hello: helloImpl /**4*/ }]|];
 
-function helloImpl () {}
+function helloImpl () end
 
-function whatever(x: Foo = [|{|"parts": ["(","object literal",")"], "kind": "interface"|}{ hello() {/**1*/} }|] ) {
-}
+function whatever(x: Foo = [|{|"parts": ["(","object literal",")"], "kind": "interface"|}{ hello() {/**1*/} }|] )
+end
 
 class Bar {
     x: Foo = [|{ hello() {/*2*/} }|]

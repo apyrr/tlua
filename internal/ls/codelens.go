@@ -159,18 +159,6 @@ func isValidImplementationsCodeLensNode(node *ast.Node, userPrefs lsutil.CodeLen
 	// If configured, show on interface methods
 	case ast.KindMethodSignature:
 		return userPrefs.ImplementationsCodeLensShowOnInterfaceMethods.IsTrue() && node.Parent.Kind == ast.KindInterfaceDeclaration
-
-	// If configured, show on all class methods - but not private ones.
-	case ast.KindMethodDeclaration:
-		if userPrefs.ImplementationsCodeLensShowOnAllClassMethods.IsTrue() && node.Parent.Kind == ast.KindClassDeclaration {
-			return !ast.HasModifier(node, ast.ModifierFlagsPrivate) && node.Name().Kind != ast.KindPrivateIdentifier
-		}
-		fallthrough
-
-	// Always show on abstract classes/properties/methods
-	case ast.KindClassDeclaration, ast.KindConstructor,
-		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindPropertyDeclaration:
-		return ast.HasModifier(node, ast.ModifierFlagsAbstract)
 	}
 
 	return false
@@ -187,18 +175,16 @@ func isValidReferenceLensNode(node *ast.Node, userPrefs lsutil.CodeLensUserPrefe
 	case ast.KindVariableDeclaration:
 		return ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0
 
-	case ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
 		return true
 
-	case ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor,
-		ast.KindGetAccessor, ast.KindSetAccessor,
-		ast.KindPropertyDeclaration, ast.KindPropertySignature:
+	case ast.KindMethodSignature, ast.KindPropertySignature:
 		// Don't show if child and parent have same start
 		// For https://github.com/microsoft/vscode/issues/90396
 		// !!!
 
 		switch node.Parent.Kind {
-		case ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
+		case ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
 			return true
 		}
 	}

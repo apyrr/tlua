@@ -14,9 +14,7 @@ func TestSignatureHelpExpandedRestUnlabeledTuples(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export function complex(item: string, another: string, ...rest: [] | [object, (err: Error) => void] | [(err: Error) => void, ...object[]]) {
-    
-}
+	const content = `export function complex(item: string, another: string, ...rest: [] | [object, (err: Error) => void] | [(err: Error) => void, ...object[]]) end
 
 complex(/*1*/);
 complex("ok", "ok", /*2*/);

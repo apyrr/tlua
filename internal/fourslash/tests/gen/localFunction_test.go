@@ -14,14 +14,11 @@ func TestLocalFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function /*1*/foo() {
-    function /*2*/bar2() {
-    }
-    local y = function /*3*/bar3() {
-    }
-}
-local x = function /*4*/bar4() {
-}`
+	const content = `function /*1*/foo()
+    function /*2*/bar2() end
+    local y = function /*3*/bar3() end
+end
+local x = function /*4*/bar4() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "function foo(): void", "")

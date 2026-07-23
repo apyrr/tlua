@@ -15,11 +15,11 @@ func TestQuickInfoBindingPatternInJsdocNoCrash1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @type {({ /*1*/data: any }?) => { data: string[] }} */
-function useQuery({ data }): { data: string[] } {
+function useQuery({ data }): { data: string[] }
   return {
     data,
   };
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "", "")

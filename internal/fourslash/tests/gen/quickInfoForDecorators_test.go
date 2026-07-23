@@ -15,7 +15,7 @@ func TestQuickInfoForDecorators(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** decorator documentation*/
-local decorator = t=> t;
+local decorator = function(t) return t end;
 @/*1*/decorator
 class C {
 }`

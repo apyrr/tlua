@@ -25,7 +25,7 @@ Colors./*enumVariable*/;
 local x = Colors.Red;
 x./*variableOfEnumType*/;
 
-function foo(): Colors { return null; }
+function foo(): Colors return null; end
 foo()./*callOfEnumReturnType*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

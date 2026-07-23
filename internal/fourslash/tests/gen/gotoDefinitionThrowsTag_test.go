@@ -19,7 +19,7 @@ func TestGotoDefinitionThrowsTag(t *testing.T) {
 /**
  * @throws {/*use*/[|E|]}
  */
-function f() {}`
+function f() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToDefinition(t, false, "use")

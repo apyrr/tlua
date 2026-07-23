@@ -19,13 +19,13 @@ func TestGetJavaScriptGlobalCompletions1(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.lua
-function f() {
+function f()
     // helloWorld leaks from here into the global space?
     if (helloWorld) {
         return 3;
     }
     return 5;
-}
+end
 
 hello/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

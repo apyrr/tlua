@@ -351,12 +351,6 @@ func (moduleKind ModuleKind) IsNonNodeESM() bool {
 	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
 }
 
-func (moduleKind ModuleKind) SupportsImportAttributes() bool {
-	return ModuleKindNode18 <= moduleKind && moduleKind <= ModuleKindNodeNext ||
-		moduleKind == ModuleKindPreserve ||
-		moduleKind == ModuleKindESNext
-}
-
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
 
 const (

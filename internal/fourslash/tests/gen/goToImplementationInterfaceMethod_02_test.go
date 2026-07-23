@@ -26,9 +26,9 @@ class Bar extends AbstractBar {
     [|hello|]() {}
 }
 
-function whatever(a: AbstractBar) {
+function whatever(a: AbstractBar)
     a.he/*function_call*/llo();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "function_call", "declaration")

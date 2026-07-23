@@ -19,10 +19,10 @@ func TestJsdocDeprecated_suggestion12(t *testing.T) {
 /**
  * @deprecated
  */
-function foo() {};
-function bar(fn: () => void) {
+function foo() end;
+function bar(fn: () => void)
     fn();
-}
+end
 bar([|foo|]);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

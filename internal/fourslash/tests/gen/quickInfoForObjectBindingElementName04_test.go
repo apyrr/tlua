@@ -26,10 +26,10 @@ func TestQuickInfoForObjectBindingElementName04(t *testing.T) {
    }
 }
 
-function f({ a, a: { b } }: Options) {
+function f({ a, a: { b } }: Options)
     a/*1*/;
     b/*2*/;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

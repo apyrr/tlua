@@ -17,8 +17,8 @@ func TestDuplicateFunctionImplementation(t *testing.T) {
 	const content = `interface IFoo<T> {
     foo<T>(): T;
 }
-function foo<string>(/**/): string { return null; }
-function foo<T>(x: T): T { return null; }`
+function foo<string>(/**/): string return null; end
+function foo<T>(x: T): T return null; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

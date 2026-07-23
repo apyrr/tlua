@@ -19,9 +19,9 @@ interface A {
   arr: string[];
 }
 
-function test(a?: A): string {
+function test(a?: A): string
   return a?.ar/*1*/r.length ? "A" : "B";
-}
+end
 
 interface Foo { bar: { baz: string } };
 declare foo: Foo | undefined;

@@ -16,7 +16,7 @@ func TestFormattingVoid(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/  local x: () =>           void    ;
 /*2*/  local y:     void    ;
-/*3*/  function test(a:void,b:string){}
+/*3*/  function test(a:void,b:string) end
 /*4*/  local a, b, c, d;
 /*5*/  void    a    ;
 /*6*/  void        (0);
@@ -29,7 +29,7 @@ func TestFormattingVoid(t *testing.T) {
 	f.GoToMarker(t, "2")
 	f.VerifyCurrentLineContent(t, `local y: void;`)
 	f.GoToMarker(t, "3")
-	f.VerifyCurrentLineContent(t, `function test(a: void, b: string) { }`)
+	f.VerifyCurrentLineContent(t, `function test(a: void, b: string) end`)
 	f.GoToMarker(t, "5")
 	f.VerifyCurrentLineContent(t, `void a;`)
 	f.GoToMarker(t, "6")

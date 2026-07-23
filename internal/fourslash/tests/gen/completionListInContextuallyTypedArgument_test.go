@@ -20,7 +20,7 @@ func TestCompletionListInContextuallyTypedArgument(t *testing.T) {
     y1: number;
 }
 
-function foo(a: (e: MyPoint) => string) { }
+function foo(a: (e: MyPoint) => string) end
 foo((e) => {
     e./*1*/
 } );

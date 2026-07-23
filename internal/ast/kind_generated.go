@@ -81,7 +81,6 @@ const (
 	KindJSDocCommentTextToken
 	// Reserved words
 	KindBreakKeyword
-	KindCatchKeyword
 	KindClassKeyword
 	KindContinueKeyword
 	KindDebuggerKeyword
@@ -94,7 +93,6 @@ const (
 	KindExportKeyword
 	KindExtendsKeyword
 	KindFalseKeyword
-	KindFinallyKeyword
 	KindForKeyword
 	KindFunctionKeyword
 	KindGotoKeyword
@@ -110,13 +108,11 @@ const (
 	KindThisKeyword
 	KindThrowKeyword
 	KindTrueKeyword
-	KindTryKeyword
 	KindTypeOfKeyword
 	KindUntilKeyword
 	KindLocalKeyword
 	KindVoidKeyword
 	KindWhileKeyword
-	KindWithKeyword
 	// Strict mode reserved words
 	KindImplementsKeyword
 	KindInterfaceKeyword
@@ -131,7 +127,6 @@ const (
 	KindAccessorKeyword
 	KindAsKeyword
 	KindAssertsKeyword
-	KindAssertKeyword
 	KindAnyKeyword
 	KindAsyncKeyword
 	KindAwaitKeyword
@@ -177,13 +172,7 @@ const (
 	KindParameter
 	// TypeMember
 	KindPropertySignature
-	KindPropertyDeclaration
 	KindMethodSignature
-	KindMethodDeclaration
-	KindClassStaticBlockDeclaration
-	KindConstructor
-	KindGetAccessor
-	KindSetAccessor
 	KindCallSignature
 	KindConstructSignature
 	KindIndexSignature
@@ -235,7 +224,6 @@ const (
 	KindConditionalExpression
 	KindTemplateExpression
 	KindSpreadElement
-	KindClassExpression
 	KindOmittedExpression
 	KindExpressionWithTypeArguments
 	KindAsExpression
@@ -247,14 +235,12 @@ const (
 	KindVarargExpression
 	// Misc
 	KindTemplateSpan
-	KindSemicolonClassElement
 	// Element
 	KindBlock
 	KindEmptyStatement
 	KindVariableStatement
 	KindExpressionStatement
 	KindIfStatement
-	KindDoStatement
 	KindWhileStatement
 	KindForOfStatement
 	KindNumericForStatement
@@ -262,16 +248,13 @@ const (
 	KindContinueStatement
 	KindBreakStatement
 	KindReturnStatement
-	KindWithStatement
 	KindLabelStatement
 	KindGotoStatement
 	KindThrowStatement
-	KindTryStatement
 	KindDebuggerStatement
 	KindVariableDeclaration
 	KindVariableDeclarationList
 	KindFunctionDeclaration
-	KindClassDeclaration
 	KindInterfaceDeclaration
 	KindTypeAliasDeclaration
 	KindModuleDeclaration
@@ -306,10 +289,6 @@ const (
 	KindJsxNamespacedName
 	// Clauses
 	KindHeritageClause
-	KindCatchClause
-	// Import attributes
-	KindImportAttributes
-	KindImportAttribute
 	// Property assignments
 	KindPropertyAssignment
 	KindShorthandPropertyAssignment
@@ -370,7 +349,7 @@ const (
 	KindFirstCompoundAssignment = KindPlusEqualsToken
 	KindLastCompoundAssignment  = KindAmpersandAmpersandEqualsToken
 	KindFirstReservedWord       = KindBreakKeyword
-	KindLastReservedWord        = KindWithKeyword
+	KindLastReservedWord        = KindWhileKeyword
 	KindFirstKeyword            = KindBreakKeyword
 	KindLastKeyword             = KindDeferKeyword
 	KindFirstFutureReservedWord = KindImplementsKeyword
@@ -406,11 +385,11 @@ type (
 	LiteralSyntaxKind              = Kind // KindNumericLiteral | KindStringLiteral | KindJsxText | KindJsxTextAllWhiteSpaces | KindRegularExpressionLiteral | KindNoSubstitutionTemplateLiteral
 	PseudoLiteralSyntaxKind        = Kind // KindTemplateHead | KindTemplateMiddle | KindTemplateTail
 	PunctuationSyntaxKind          = Kind // KindOpenBraceToken | KindCloseBraceToken | KindOpenParenToken | KindCloseParenToken | KindOpenBracketToken | KindCloseBracketToken | KindDotToken | KindDotDotDotToken | KindSemicolonToken | KindCommaToken | KindQuestionDotToken | KindLessThanToken | KindLessThanSlashToken | KindGreaterThanToken | KindLessThanEqualsToken | KindGreaterThanEqualsToken | KindEqualsEqualsToken | KindTildeEqualsToken | KindEqualsGreaterThanToken | KindPlusToken | KindMinusToken | KindAsteriskToken | KindAsteriskAsteriskToken | KindSlashToken | KindPercentToken | KindDotDotToken | KindAmpersandToken | KindBarToken | KindExclamationToken | KindAmpersandAmpersandToken | KindBarBarToken | KindQuestionToken | KindColonToken | KindColonColonToken | KindAtToken | KindBacktickToken | KindHashToken | KindEqualsToken | KindPlusEqualsToken | KindMinusEqualsToken | KindAsteriskEqualsToken | KindSlashEqualsToken | KindPercentEqualsToken | KindBarBarEqualsToken | KindAmpersandAmpersandEqualsToken
-	KeywordSyntaxKind              = Kind // KindBreakKeyword | KindCatchKeyword | KindClassKeyword | KindContinueKeyword | KindDebuggerKeyword | KindDefaultKeyword | KindDeleteKeyword | KindDoKeyword | KindElseKeyword | KindElseIfKeyword | KindEndKeyword | KindExportKeyword | KindExtendsKeyword | KindFalseKeyword | KindFinallyKeyword | KindForKeyword | KindFunctionKeyword | KindGotoKeyword | KindIfKeyword | KindImportKeyword | KindInKeyword | KindInstanceOfKeyword | KindNewKeyword | KindRepeatKeyword | KindReturnKeyword | KindSuperKeyword | KindThenKeyword | KindThisKeyword | KindThrowKeyword | KindTrueKeyword | KindTryKeyword | KindTypeOfKeyword | KindUntilKeyword | KindLocalKeyword | KindVoidKeyword | KindWhileKeyword | KindWithKeyword | KindImplementsKeyword | KindInterfaceKeyword | KindPackageKeyword | KindPrivateKeyword | KindProtectedKeyword | KindPublicKeyword | KindStaticKeyword | KindYieldKeyword | KindAbstractKeyword | KindAccessorKeyword | KindAsKeyword | KindAssertsKeyword | KindAssertKeyword | KindAnyKeyword | KindAsyncKeyword | KindAwaitKeyword | KindBooleanKeyword | KindConstructorKeyword | KindDeclareKeyword | KindGetKeyword | KindImmediateKeyword | KindInferKeyword | KindIntrinsicKeyword | KindIsKeyword | KindKeyOfKeyword | KindModuleKeyword | KindNamespaceKeyword | KindNeverKeyword | KindOutKeyword | KindReadonlyKeyword | KindRequireKeyword | KindNumberKeyword | KindObjectKeyword | KindThreadKeyword | KindUserdataKeyword | KindCDataKeyword | KindSatisfiesKeyword | KindSetKeyword | KindStringKeyword | KindSymbolKeyword | KindTypeKeyword | KindNilKeyword | KindUniqueKeyword | KindUnknownKeyword | KindFromKeyword | KindGlobalKeyword | KindOverrideKeyword | KindOfKeyword | KindDeferKeyword
+	KeywordSyntaxKind              = Kind // KindBreakKeyword | KindClassKeyword | KindContinueKeyword | KindDebuggerKeyword | KindDefaultKeyword | KindDeleteKeyword | KindDoKeyword | KindElseKeyword | KindElseIfKeyword | KindEndKeyword | KindExportKeyword | KindExtendsKeyword | KindFalseKeyword | KindForKeyword | KindFunctionKeyword | KindGotoKeyword | KindIfKeyword | KindImportKeyword | KindInKeyword | KindInstanceOfKeyword | KindNewKeyword | KindRepeatKeyword | KindReturnKeyword | KindSuperKeyword | KindThenKeyword | KindThisKeyword | KindThrowKeyword | KindTrueKeyword | KindTypeOfKeyword | KindUntilKeyword | KindLocalKeyword | KindVoidKeyword | KindWhileKeyword | KindImplementsKeyword | KindInterfaceKeyword | KindPackageKeyword | KindPrivateKeyword | KindProtectedKeyword | KindPublicKeyword | KindStaticKeyword | KindYieldKeyword | KindAbstractKeyword | KindAccessorKeyword | KindAsKeyword | KindAssertsKeyword | KindAnyKeyword | KindAsyncKeyword | KindAwaitKeyword | KindBooleanKeyword | KindConstructorKeyword | KindDeclareKeyword | KindGetKeyword | KindImmediateKeyword | KindInferKeyword | KindIntrinsicKeyword | KindIsKeyword | KindKeyOfKeyword | KindModuleKeyword | KindNamespaceKeyword | KindNeverKeyword | KindOutKeyword | KindReadonlyKeyword | KindRequireKeyword | KindNumberKeyword | KindObjectKeyword | KindThreadKeyword | KindUserdataKeyword | KindCDataKeyword | KindSatisfiesKeyword | KindSetKeyword | KindStringKeyword | KindSymbolKeyword | KindTypeKeyword | KindNilKeyword | KindUniqueKeyword | KindUnknownKeyword | KindFromKeyword | KindGlobalKeyword | KindOverrideKeyword | KindOfKeyword | KindDeferKeyword
 	ModifierSyntaxKind             = Kind // KindAbstractKeyword | KindAccessorKeyword | KindAsyncKeyword | KindDeclareKeyword | KindDefaultKeyword | KindExportKeyword | KindInKeyword | KindPrivateKeyword | KindProtectedKeyword | KindPublicKeyword | KindReadonlyKeyword | KindOutKeyword | KindOverrideKeyword | KindStaticKeyword
 	KeywordTypeSyntaxKind          = Kind // KindAnyKeyword | KindBooleanKeyword | KindFunctionKeyword | KindIntrinsicKeyword | KindNeverKeyword | KindNumberKeyword | KindObjectKeyword | KindThreadKeyword | KindUserdataKeyword | KindCDataKeyword | KindStringKeyword | KindSymbolKeyword | KindNilKeyword | KindUnknownKeyword | KindVoidKeyword
 	KeywordExpressionSyntaxKind    = Kind // KindNilKeyword | KindTrueKeyword | KindFalseKeyword | KindThisKeyword | KindSuperKeyword | KindImportKeyword
-	TokenSyntaxKind                = Kind // KindUnknown | KindEndOfFile | KindSingleLineCommentTrivia | KindMultiLineCommentTrivia | KindNewLineTrivia | KindWhitespaceTrivia | KindConflictMarkerTrivia | KindNonTextFileMarkerTrivia | KindNumericLiteral | KindStringLiteral | KindJsxText | KindJsxTextAllWhiteSpaces | KindRegularExpressionLiteral | KindNoSubstitutionTemplateLiteral | KindTemplateHead | KindTemplateMiddle | KindTemplateTail | KindOpenBraceToken | KindCloseBraceToken | KindOpenParenToken | KindCloseParenToken | KindOpenBracketToken | KindCloseBracketToken | KindDotToken | KindDotDotDotToken | KindSemicolonToken | KindCommaToken | KindQuestionDotToken | KindLessThanToken | KindLessThanSlashToken | KindGreaterThanToken | KindLessThanEqualsToken | KindGreaterThanEqualsToken | KindEqualsEqualsToken | KindTildeEqualsToken | KindEqualsGreaterThanToken | KindPlusToken | KindMinusToken | KindAsteriskToken | KindAsteriskAsteriskToken | KindSlashToken | KindPercentToken | KindDotDotToken | KindAmpersandToken | KindBarToken | KindExclamationToken | KindAmpersandAmpersandToken | KindBarBarToken | KindQuestionToken | KindColonToken | KindColonColonToken | KindAtToken | KindBacktickToken | KindHashToken | KindEqualsToken | KindPlusEqualsToken | KindMinusEqualsToken | KindAsteriskEqualsToken | KindSlashEqualsToken | KindPercentEqualsToken | KindBarBarEqualsToken | KindAmpersandAmpersandEqualsToken | KindIdentifier | KindPrivateIdentifier | KindJSDocCommentTextToken | KindBreakKeyword | KindCatchKeyword | KindClassKeyword | KindContinueKeyword | KindDebuggerKeyword | KindDefaultKeyword | KindDeleteKeyword | KindDoKeyword | KindElseKeyword | KindElseIfKeyword | KindEndKeyword | KindExportKeyword | KindExtendsKeyword | KindFalseKeyword | KindFinallyKeyword | KindForKeyword | KindFunctionKeyword | KindGotoKeyword | KindIfKeyword | KindImportKeyword | KindInKeyword | KindInstanceOfKeyword | KindNewKeyword | KindRepeatKeyword | KindReturnKeyword | KindSuperKeyword | KindThenKeyword | KindThisKeyword | KindThrowKeyword | KindTrueKeyword | KindTryKeyword | KindTypeOfKeyword | KindUntilKeyword | KindLocalKeyword | KindVoidKeyword | KindWhileKeyword | KindWithKeyword | KindImplementsKeyword | KindInterfaceKeyword | KindPackageKeyword | KindPrivateKeyword | KindProtectedKeyword | KindPublicKeyword | KindStaticKeyword | KindYieldKeyword | KindAbstractKeyword | KindAccessorKeyword | KindAsKeyword | KindAssertsKeyword | KindAssertKeyword | KindAnyKeyword | KindAsyncKeyword | KindAwaitKeyword | KindBooleanKeyword | KindConstructorKeyword | KindDeclareKeyword | KindGetKeyword | KindImmediateKeyword | KindInferKeyword | KindIntrinsicKeyword | KindIsKeyword | KindKeyOfKeyword | KindModuleKeyword | KindNamespaceKeyword | KindNeverKeyword | KindOutKeyword | KindReadonlyKeyword | KindRequireKeyword | KindNumberKeyword | KindObjectKeyword | KindThreadKeyword | KindUserdataKeyword | KindCDataKeyword | KindSatisfiesKeyword | KindSetKeyword | KindStringKeyword | KindSymbolKeyword | KindTypeKeyword | KindNilKeyword | KindUniqueKeyword | KindUnknownKeyword | KindFromKeyword | KindGlobalKeyword | KindOverrideKeyword | KindOfKeyword | KindDeferKeyword
+	TokenSyntaxKind                = Kind // KindUnknown | KindEndOfFile | KindSingleLineCommentTrivia | KindMultiLineCommentTrivia | KindNewLineTrivia | KindWhitespaceTrivia | KindConflictMarkerTrivia | KindNonTextFileMarkerTrivia | KindNumericLiteral | KindStringLiteral | KindJsxText | KindJsxTextAllWhiteSpaces | KindRegularExpressionLiteral | KindNoSubstitutionTemplateLiteral | KindTemplateHead | KindTemplateMiddle | KindTemplateTail | KindOpenBraceToken | KindCloseBraceToken | KindOpenParenToken | KindCloseParenToken | KindOpenBracketToken | KindCloseBracketToken | KindDotToken | KindDotDotDotToken | KindSemicolonToken | KindCommaToken | KindQuestionDotToken | KindLessThanToken | KindLessThanSlashToken | KindGreaterThanToken | KindLessThanEqualsToken | KindGreaterThanEqualsToken | KindEqualsEqualsToken | KindTildeEqualsToken | KindEqualsGreaterThanToken | KindPlusToken | KindMinusToken | KindAsteriskToken | KindAsteriskAsteriskToken | KindSlashToken | KindPercentToken | KindDotDotToken | KindAmpersandToken | KindBarToken | KindExclamationToken | KindAmpersandAmpersandToken | KindBarBarToken | KindQuestionToken | KindColonToken | KindColonColonToken | KindAtToken | KindBacktickToken | KindHashToken | KindEqualsToken | KindPlusEqualsToken | KindMinusEqualsToken | KindAsteriskEqualsToken | KindSlashEqualsToken | KindPercentEqualsToken | KindBarBarEqualsToken | KindAmpersandAmpersandEqualsToken | KindIdentifier | KindPrivateIdentifier | KindJSDocCommentTextToken | KindBreakKeyword | KindClassKeyword | KindContinueKeyword | KindDebuggerKeyword | KindDefaultKeyword | KindDeleteKeyword | KindDoKeyword | KindElseKeyword | KindElseIfKeyword | KindEndKeyword | KindExportKeyword | KindExtendsKeyword | KindFalseKeyword | KindForKeyword | KindFunctionKeyword | KindGotoKeyword | KindIfKeyword | KindImportKeyword | KindInKeyword | KindInstanceOfKeyword | KindNewKeyword | KindRepeatKeyword | KindReturnKeyword | KindSuperKeyword | KindThenKeyword | KindThisKeyword | KindThrowKeyword | KindTrueKeyword | KindTypeOfKeyword | KindUntilKeyword | KindLocalKeyword | KindVoidKeyword | KindWhileKeyword | KindImplementsKeyword | KindInterfaceKeyword | KindPackageKeyword | KindPrivateKeyword | KindProtectedKeyword | KindPublicKeyword | KindStaticKeyword | KindYieldKeyword | KindAbstractKeyword | KindAccessorKeyword | KindAsKeyword | KindAssertsKeyword | KindAnyKeyword | KindAsyncKeyword | KindAwaitKeyword | KindBooleanKeyword | KindConstructorKeyword | KindDeclareKeyword | KindGetKeyword | KindImmediateKeyword | KindInferKeyword | KindIntrinsicKeyword | KindIsKeyword | KindKeyOfKeyword | KindModuleKeyword | KindNamespaceKeyword | KindNeverKeyword | KindOutKeyword | KindReadonlyKeyword | KindRequireKeyword | KindNumberKeyword | KindObjectKeyword | KindThreadKeyword | KindUserdataKeyword | KindCDataKeyword | KindSatisfiesKeyword | KindSetKeyword | KindStringKeyword | KindSymbolKeyword | KindTypeKeyword | KindNilKeyword | KindUniqueKeyword | KindUnknownKeyword | KindFromKeyword | KindGlobalKeyword | KindOverrideKeyword | KindOfKeyword | KindDeferKeyword
 	JsxTokenSyntaxKind             = Kind // KindLessThanSlashToken | KindEndOfFile | KindConflictMarkerTrivia | KindJsxText | KindJsxTextAllWhiteSpaces | KindOpenBraceToken | KindLessThanToken
 	JSDocNodeSyntaxKind            = Kind // KindJSDocTypeExpression | KindJSDocNameReference | KindJSDocAllType | KindJSDocNullableType | KindJSDocNonNullableType | KindJSDocOptionalType | KindJSDocVariadicType | KindJSDoc | KindJSDocText | KindJSDocTypeLiteral | KindJSDocSignature | KindJSDocLink | KindJSDocLinkCode | KindJSDocLinkPlain | KindJSDocUnknownTag | KindJSDocAugmentsTag | KindJSDocImplementsTag | KindJSDocDeprecatedTag | KindJSDocPublicTag | KindJSDocPrivateTag | KindJSDocProtectedTag | KindJSDocReadonlyTag | KindJSDocOverrideTag | KindJSDocCallbackTag | KindJSDocOverloadTag | KindJSDocParameterTag | KindJSDocReturnTag | KindJSDocThisTag | KindJSDocTypeTag | KindJSDocTemplateTag | KindJSDocTypedefTag | KindJSDocSeeTag | KindJSDocPropertyTag | KindJSDocThrowsTag | KindJSDocSatisfiesTag | KindJSDocImportTag
 	ImportPhaseModifierSyntaxKind  = Kind // KindTypeKeyword | KindDeferKeyword

@@ -16,41 +16,41 @@ func TestContextuallyTypedParameters(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function foo(cb: (this: any, x: number, y: string, z: boolean) => void): void;
 
-foo(function(this, a, ...args) {
+foo(function(this, a, ...args)
     a/*10*/;
     args/*11*/;
-});
+end);
 
-foo(function(this, a, b, ...args) {
+foo(function(this, a, b, ...args)
     a/*20*/;
     b/*21*/;
     args/*22*/;
-});
+end);
 
-foo(function(this, a, b, c, ...args) {
+foo(function(this, a, b, c, ...args)
     a/*30*/;
     b/*31*/;
     c/*32*/;
     args/*33*/;
-});
+end);
 
-foo(function(a, ...args) {
+foo(function(a, ...args)
     a/*40*/;
     args/*41*/;
-});
+end);
 
-foo(function(a, b, ...args) {
+foo(function(a, b, ...args)
     a/*50*/;
     b/*51*/;
     args/*52*/;
-});
+end);
 
-foo(function(a, b, c, ...args) {
+foo(function(a, b, c, ...args)
     a/*60*/;
     b/*61*/;
     c/*62*/;
     args/*63*/;
-});`
+end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "10", "(parameter) a: number", "")

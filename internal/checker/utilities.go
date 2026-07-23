@@ -65,10 +65,6 @@ func hasReadonlyModifier(node *ast.Node) bool {
 	return ast.HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
-func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
-	return s.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(s.ValueDeclaration) && ast.IsStatic(s.ValueDeclaration)
-}
-
 func isEmptyObjectLiteral(expression *ast.Node) bool {
 	return ast.IsObjectLiteralExpression(expression) && len(expression.Properties()) == 0
 }
@@ -157,13 +153,13 @@ func IsInTypeQuery(node *ast.Node) bool {
 
 func canHaveLocals(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindArrowFunction, ast.KindBlock, ast.KindCallSignature, ast.KindCatchClause,
-		ast.KindClassStaticBlockDeclaration, ast.KindConditionalType, ast.KindConstructor, ast.KindConstructorType,
+	case ast.KindArrowFunction, ast.KindBlock, ast.KindCallSignature,
+		ast.KindConditionalType, ast.KindConstructorType,
 		ast.KindConstructSignature, ast.KindForOfStatement,
 		ast.KindNumericForStatement, ast.KindRepeatStatement, ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindGetAccessor, ast.KindIndexSignature,
+		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindIndexSignature,
 		ast.KindJSDocSignature, ast.KindMappedType,
-		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindSetAccessor, ast.KindSourceFile,
+		ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindSourceFile,
 		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		return true
 	}
@@ -239,7 +235,7 @@ func isTypeAlias(node *ast.Node) bool {
 
 func hasOnlyExpressionInitializer(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement, ast.KindPropertyDeclaration, ast.KindPropertyAssignment:
+	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement, ast.KindPropertyAssignment:
 		return true
 	}
 	return false
@@ -304,19 +300,6 @@ func (c *Checker) isOptionalParameter(node *ast.Node) bool {
 
 func isEmptyArrayLiteral(expression *ast.Node) bool {
 	return ast.IsArrayLiteralExpression(expression) && len(expression.Elements()) == 0
-}
-
-func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
-	root := ast.GetRootDeclaration(declaration)
-	memberDeclaration := root
-	if root.Kind == ast.KindParameter {
-		memberDeclaration = root.Parent
-	}
-	return isPrivateWithinAmbient(memberDeclaration)
-}
-
-func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (ast.HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -682,45 +665,8 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 }
 
 func getDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
-	return getDeclarationModifierFlagsFromSymbolEx(s, false /*isWrite*/)
-}
-
-func getDeclarationModifierFlagsFromSymbolEx(s *ast.Symbol, isWrite bool) ast.ModifierFlags {
 	if s.ValueDeclaration != nil {
-		var declaration *ast.Node
-		if isWrite {
-			declaration = core.Find(s.Declarations, ast.IsSetAccessorDeclaration)
-		}
-		if declaration == nil && s.Flags&ast.SymbolFlagsGetAccessor != 0 {
-			declaration = core.Find(s.Declarations, ast.IsGetAccessorDeclaration)
-		}
-		if declaration == nil {
-			declaration = s.ValueDeclaration
-		}
-		flags := ast.GetCombinedModifierFlags(declaration)
-		if s.Parent != nil && s.Parent.Flags&ast.SymbolFlagsClass != 0 {
-			return flags
-		}
-		return flags & ^ast.ModifierFlagsAccessibilityModifier
-	}
-	if s.CheckFlags&ast.CheckFlagsSynthetic != 0 {
-		var accessModifier ast.ModifierFlags
-		switch {
-		case s.CheckFlags&ast.CheckFlagsContainsPrivate != 0:
-			accessModifier = ast.ModifierFlagsPrivate
-		case s.CheckFlags&ast.CheckFlagsContainsPublic != 0:
-			accessModifier = ast.ModifierFlagsPublic
-		default:
-			accessModifier = ast.ModifierFlagsProtected
-		}
-		var staticModifier ast.ModifierFlags
-		if s.CheckFlags&ast.CheckFlagsContainsStatic != 0 {
-			staticModifier = ast.ModifierFlagsStatic
-		}
-		return accessModifier | staticModifier
-	}
-	if s.Flags&ast.SymbolFlagsPrototype != 0 {
-		return ast.ModifierFlagsPublic | ast.ModifierFlagsStatic
+		return ast.GetCombinedModifierFlags(s.ValueDeclaration) & ^ast.ModifierFlagsAccessibilityModifier
 	}
 	return ast.ModifierFlagsNone
 }
@@ -783,7 +729,7 @@ func isObjectLiteralType(t *Type) bool {
 }
 
 func isDeclarationReadonly(declaration *ast.Node) bool {
-	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !ast.IsParameterPropertyDeclaration(declaration, declaration.Parent)
+	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0
 }
 
 // orderedSetMapThreshold is the size at which an orderedSet materializes its dedup map.
@@ -817,10 +763,6 @@ func (s *orderedSet[T]) add(value T) {
 		}
 	}
 	s.valuesByKey[value] = struct{}{}
-}
-
-func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
-	return ast.FindAncestor(node.Parent, ast.IsFunctionLikeOrClassStaticBlockDeclaration)
 }
 
 func isNodeDescendantOf(node *ast.Node, ancestor *ast.Node) bool {
@@ -903,9 +845,6 @@ func isValidESSymbolDeclaration(node *ast.Node) bool {
 	if ast.IsVariableDeclaration(node) {
 		return ast.IsVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
-	if ast.IsPropertyDeclaration(node) {
-		return hasReadonlyModifier(node) && ast.HasStaticModifier(node)
-	}
 	return ast.IsPropertySignatureDeclaration(node) && hasReadonlyModifier(node)
 }
 
@@ -943,15 +882,6 @@ func isPackTypeParameter(t *Type) bool {
 	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isPack
 }
 
-func isClassInstanceProperty(node *ast.Node) bool {
-	if ast.IsInJSFile(node) && ast.IsExpandoPropertyDeclaration(node) {
-		left := node.AsBinaryExpression().Left
-		return (!ast.IsBindableStaticAccessExpression(left, false /*excludeThisKeyword*/) || !ast.IsPrototypeAccess(left.Expression())) &&
-			!ast.IsBindableStaticNameExpression(left, true /*excludeThisKeyword*/)
-	}
-	return node.Parent != nil && ast.IsClassLike(node.Parent) && ast.IsPropertyDeclaration(node) && !ast.HasAccessorModifier(node)
-}
-
 func isThisInitializedObjectBindingExpression(node *ast.Node) bool {
 	return node != nil && (ast.IsShorthandPropertyAssignment(node) || ast.IsPropertyAssignment(node)) && ast.IsBinaryExpression(node.Parent.Parent) &&
 		node.Parent.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken &&
@@ -974,7 +904,7 @@ func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 	// Return true if symbol is a parameter, a catch clause variable, or a mutable local variable
 	if symbol.ValueDeclaration != nil {
 		declaration := ast.GetRootDeclaration(symbol.ValueDeclaration)
-		return declaration != nil && (ast.IsParameterDeclaration(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
+		return declaration != nil && (ast.IsParameterDeclaration(declaration) || ast.IsVariableDeclaration(declaration) && c.isMutableLocalVariableDeclaration(declaration))
 	}
 	return false
 }
@@ -993,7 +923,7 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 func isLiteralExpressionOfObject(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression, ast.KindRegularExpressionLiteral,
-		ast.KindFunctionExpression, ast.KindClassExpression:
+		ast.KindFunctionExpression:
 		return true
 	}
 	return false
@@ -1025,7 +955,7 @@ func isSuperCall(n *ast.Node) bool {
 
 func getMembersOfDeclaration(node *ast.Node) []*ast.Node {
 	switch node.Kind {
-	case ast.KindInterfaceDeclaration, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindTypeLiteral:
+	case ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
 		return node.Members()
 	case ast.KindObjectLiteralExpression:
 		return node.Properties()
@@ -1047,11 +977,7 @@ func isJsxIntrinsicTagName(tagName *ast.Node) bool {
 }
 
 func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
-	if (f.Kind == ast.KindMethodDeclaration ||
-		f.Kind == ast.KindGetAccessor ||
-		f.Kind == ast.KindSetAccessor) && f.Parent.Kind == ast.KindObjectLiteralExpression {
-		return f.Parent
-	} else if f.Kind == ast.KindFunctionExpression && f.Parent.Kind == ast.KindPropertyAssignment {
+	if f.Kind == ast.KindFunctionExpression && f.Parent.Kind == ast.KindPropertyAssignment {
 		return f.Parent.Parent
 	}
 	return nil
@@ -1107,27 +1033,6 @@ func expressionResultIsUnused(node *ast.Node) bool {
 			continue
 		}
 		return false
-	}
-}
-
-func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
-	for {
-		node = node.Parent
-		if node == nil {
-			return nil
-		}
-		switch node.Kind {
-		case ast.KindComputedPropertyName:
-			node = node.Parent
-		case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
-			if !stopOnFunctions {
-				continue
-			}
-			fallthrough
-		case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor,
-			ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassStaticBlockDeclaration:
-			return node
-		}
 	}
 }
 
@@ -1508,8 +1413,7 @@ func isReservedMemberName(name string) bool {
 
 func introducesArgumentsExoticObject(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor,
-		ast.KindSetAccessor, ast.KindFunctionDeclaration, ast.KindFunctionExpression:
+	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
 		return true
 	}
 	return false
@@ -1589,8 +1493,7 @@ func ValueToString(value any) string {
 
 func nodeStartsNewLexicalEnvironment(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindConstructor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction,
-		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindModuleDeclaration, ast.KindSourceFile:
+	case ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindModuleDeclaration, ast.KindSourceFile:
 		return true
 	}
 	return false
@@ -1611,13 +1514,8 @@ func (c *Checker) isUncheckedJSSuggestion(node *ast.Node, suggestion *ast.Symbol
 					declarationFile = ast.GetSourceFileOfNode(firstDeclaration)
 				}
 			}
-			suggestionHasNoExtends := suggestion == nil ||
-				suggestion.ValueDeclaration == nil ||
-				!ast.IsClassLike(suggestion.ValueDeclaration) ||
-				len(ast.GetExtendsHeritageClauseElements(suggestion.ValueDeclaration)) != 0
 			return !(file != declarationFile && declarationFile != nil && ast.IsGlobalSourceFile(declarationFile.AsNode())) &&
-				!(excludeClasses && suggestion != nil && suggestion.Flags&ast.SymbolFlagsClass != 0 && suggestionHasNoExtends) &&
-				!(node != nil && excludeClasses && ast.IsPropertyAccessExpression(node) && node.Expression().Kind == ast.KindThisKeyword && suggestionHasNoExtends)
+				!(node != nil && excludeClasses && ast.IsPropertyAccessExpression(node) && node.Expression().Kind == ast.KindThisKeyword)
 		}
 	}
 	return false
@@ -1723,13 +1621,4 @@ func walkUpOuterExpressions(node *ast.Node) *ast.Node {
 		parent = parent.Parent
 	}
 	return parent
-}
-
-func GetSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
-	parameters := accessor.Parameters()
-	if len(parameters) > 0 {
-		hasThis := len(parameters) == 2 && ast.IsThisParameter(parameters[0])
-		return parameters[core.IfElse(hasThis, 1, 0)]
-	}
-	return nil
 }

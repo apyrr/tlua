@@ -15,7 +15,7 @@ func TestCompletionListInUnclosedFunction06(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(x: string, y: number, z: boolean) {
+	const content = `function foo(x: string, y: number, z: boolean)
     function bar(a: number, b: string = /*1*/, c: typeof x = "hello"
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

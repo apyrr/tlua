@@ -31,7 +31,6 @@ export enum ModifierFlags {
     JSDocOnlyModifiers = Deprecated,
     NonCacheOnlyModifiers = SyntacticOrJSDocModifiers | SyntacticOnlyModifiers | JSDocOnlyModifiers,
     AccessibilityModifier = Public | Private | Protected,
-    ParameterPropertyModifier = AccessibilityModifier | Readonly | Override,
     NonPublicAccessibilityModifier = Private | Protected,
     TypeScriptModifier = Ambient | Public | Private | Protected | Readonly | Abstract | Override | In | Out,
     ExportDefault = Export | Default,

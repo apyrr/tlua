@@ -19,7 +19,7 @@ func TestCompletionsSelfDeclaring1(t *testing.T) {
   autoIncrement?: boolean;
 }
 
-function test<T extends Record<string, Test>>(opt: T) { }
+function test<T extends Record<string, Test>>(opt: T) end
 
 test({
   a = {

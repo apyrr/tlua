@@ -24,7 +24,7 @@ interface Foo {
     a_c: boolean;
     b_a: boolean;
 }
-function partialFoo<T extends Partial<Foo>>(t: T) {return t}
+function partialFoo<T extends Partial<Foo>>(t: T) return t end
 partialFoo({ /*1*/ });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

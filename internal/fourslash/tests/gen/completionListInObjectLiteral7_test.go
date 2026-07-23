@@ -18,13 +18,13 @@ func TestCompletionListInObjectLiteral7(t *testing.T) {
 	const content = `type Foo = { foo: boolean };
 function f<T>(shape: Foo): any;
 function f<T>(shape: () => Foo): any;
-function f(arg: any) {
+function f(arg: any)
   return arg;
-}
+end
 
 f({ /*1*/ });
-f(() => ({ /*2*/ }));
-f(() => (({ /*3*/ })));`
+f(function() return ({ /*2*/ }) end);
+f(function() return (({ /*3*/ })) end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"1", "2", "3"}, &fourslash.CompletionsExpectedList{

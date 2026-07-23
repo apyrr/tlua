@@ -18,17 +18,17 @@ func TestGoToImplementationShorthandPropertyAssignment_02(t *testing.T) {
 	 hello(): void;
 }
 
-function createFoo(): Foo {
+function createFoo(): Foo
     return {
          hello
     };
 
-    function [|hello|]() {}
-}
+    function [|hello|]() end
+end
 
-function whatever(x: Foo) {
+function whatever(x: Foo)
      x.h/*function_call*/ello();
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "function_call")

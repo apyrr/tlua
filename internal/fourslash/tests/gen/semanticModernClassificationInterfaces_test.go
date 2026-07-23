@@ -16,7 +16,7 @@ func TestSemanticModernClassificationInterfaces(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Pos { x: number, y: number };
 local p = { x = 1, y = 2 } as Pos;
-local foo = (o: Pos) => o.x + o.y;`
+local foo = function(o: Pos) return o.x + o.y end;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{

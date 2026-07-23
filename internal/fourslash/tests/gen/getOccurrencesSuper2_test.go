@@ -44,9 +44,9 @@ class SubType extends SuperType {
         local x = () => super.superMethod();
 
         // Bad but still gets highlighted
-        function f() {
+        function f()
             super.superMethod();
-        }
+        end
     }
 
     // Bad but still gets highlighted.

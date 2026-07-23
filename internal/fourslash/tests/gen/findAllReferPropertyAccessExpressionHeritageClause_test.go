@@ -15,9 +15,9 @@ func TestFindAllReferPropertyAccessExpressionHeritageClause(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class B {}
-function foo() {
+function foo()
     return {/*1*/B = B};
-}
+end
 class C extends (foo())./*2*/B {}
 class C1 extends foo()./*3*/B {}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

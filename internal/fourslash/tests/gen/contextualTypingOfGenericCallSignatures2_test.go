@@ -17,7 +17,7 @@ func TestContextualTypingOfGenericCallSignatures2(t *testing.T) {
 	const content = `interface I {
     <T>(x: T): void
 }
-function f6(x: <T extends I>(p: T) => void) { }
+function f6(x: <T extends I>(p: T) => void) end
 // x should not be contextually typed so this should be an error
 f6(/**/x => x<number>())`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

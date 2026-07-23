@@ -20,7 +20,7 @@ func TestMemberListOnContextualThis(t *testing.T) {
     a: string;
 }
 declare function ctx(callback: (this: A) => string): string;
-ctx(function () { return th/*1*/is./*2*/a });`
+ctx(function () return th/*1*/is./*2*/a end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "this: A", "")

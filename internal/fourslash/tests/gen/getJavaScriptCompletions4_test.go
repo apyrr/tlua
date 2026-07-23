@@ -19,7 +19,7 @@ func TestGetJavaScriptCompletions4(t *testing.T) {
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.lua
 /** @return {number} */
-function foo(a,b) { }
+function foo(a,b) end
 foo(1,2)./**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -3,7 +3,6 @@ package printer
 import (
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/binder"
-	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/nodebuilder"
 )
 
@@ -81,7 +80,6 @@ type EmitResolver interface {
 	MarkLinkedReferencesRecursively(file *ast.SourceFile)
 	GetExternalModuleFileFromDeclaration(node *ast.Node) *ast.SourceFile
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
-	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 
 	// decorator metadata
 	GetTypeReferenceSerializationKind(name *ast.EntityName, serialScope *ast.Node) TypeReferenceSerializationKind
@@ -98,7 +96,7 @@ type EmitResolver interface {
 	IsExpandoFunctionDeclaration(node *ast.Node) bool
 	IsExpandoFunctionDeclarationUnsafe(node *ast.Node) bool
 	IsLiteralConstDeclaration(node *ast.Node) bool
-	RequiresAddingImplicitUndefined(node *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool
+	RequiresAddingImplicitUndefined(node *ast.Node, symbol *ast.Symbol) bool
 	IsDeclarationVisible(node *ast.Node) bool
 	IsNameResolvable(location *ast.Node, name string) bool
 	IsImportRequiredByAugmentation(decl *ast.ImportDeclaration) bool
@@ -110,7 +108,7 @@ type EmitResolver interface {
 
 	// isolatedDeclarations-specific declaration emit
 	GetPropertiesOfContainerFunction(node *ast.Node) []*ast.Symbol
-	RequiresAddingImplicitUndefinedUnsafe(node *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool
+	RequiresAddingImplicitUndefinedUnsafe(node *ast.Node, symbol *ast.Symbol) bool
 	GetReferencedValueDeclarationUnsafe(node *ast.IdentifierNode) *ast.Declaration
 
 	// Node construction for declaration emit

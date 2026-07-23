@@ -17,10 +17,10 @@ func TestCompletionColonToken(t *testing.T) {
 :/*a*/
 
 // @filename: /b.tlua
-function b(class: /*b*/) {}
+function b(class: /*b*/) end
 
 // @filename: /c.tlua
-function c(enum: /*c*/) {}
+function c(enum: /*c*/) end
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

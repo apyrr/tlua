@@ -17,9 +17,9 @@ func TestQuickInfoJsDocThisTag(t *testing.T) {
 	const content = `// @strict: true
 // @filename: /a.tlua
 /** @this {number} */
-function f/**/() {
+function f/**/()
     this
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

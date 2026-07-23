@@ -58,7 +58,6 @@ function isVariableLike(node: Node): boolean {
         case SyntaxKind.BindingElement:
         case SyntaxKind.Parameter:
         case SyntaxKind.PropertyAssignment:
-        case SyntaxKind.PropertyDeclaration:
         case SyntaxKind.PropertySignature:
         case SyntaxKind.ShorthandPropertyAssignment:
         case SyntaxKind.VariableDeclaration:
@@ -163,7 +162,6 @@ function getNextJSDocCommentLocation(node: Node): Node | undefined {
         switch (parent.kind) {
             case SyntaxKind.PropertyAssignment:
             case SyntaxKind.ExportAssignment:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.VariableDeclaration:
             case SyntaxKind.SatisfiesExpression:
             case SyntaxKind.ReturnStatement:

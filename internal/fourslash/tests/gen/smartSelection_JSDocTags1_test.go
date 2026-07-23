@@ -17,7 +17,7 @@ func TestSmartSelection_JSDocTags1(t *testing.T) {
 	const content = `/**
  * @returns {Array<{ value: /**/string }>}
  */
-function foo() { return [] }`
+function foo() return [] end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineSelectionRanges(t)

@@ -18,7 +18,7 @@ func TestInvertedFunduleAfterQuickInfo(t *testing.T) {
     namespace A {
         local o;
     }
-    function A(/**/x: number): void { }
+    function A(/**/x: number): void end
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

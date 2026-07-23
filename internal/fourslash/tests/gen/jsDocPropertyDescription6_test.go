@@ -19,11 +19,11 @@ func TestJsDocPropertyDescription6(t *testing.T) {
     /** Something else */
     [key: ` + "`" + `prefix${number}` + "`" + `]: number;
 }
-function literal1Example(e: Literal1Example) {
+function literal1Example(e: Literal1Example)
     console.log(e./*literal1*/prefixMember);
     console.log(e./*literal2*/anything);
     console.log(e./*literal3*/prefix0);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "literal1", "(index) Literal1Example[`prefix${string}`]: string | number", "")

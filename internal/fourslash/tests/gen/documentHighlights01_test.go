@@ -17,9 +17,9 @@ func TestDocumentHighlights01(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @lib: es5
 // @Filename: a.tlua
-function [|f|](x: typeof [|f|]) {
+function [|f|](x: typeof [|f|])
     [|f|]([|f|]);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()

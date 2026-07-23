@@ -14,16 +14,15 @@ func TestCallHierarchyTaggedTemplate(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
     bar` + "`" + `a${1}b` + "`" + `;
-}
+end
 
-function /**/bar(array: TemplateStringsArray, ...args: any[]) {
+function /**/bar(array: TemplateStringsArray, ...args: any[])
     baz();
-}
+end
 
-function baz() {
-}`
+function baz() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

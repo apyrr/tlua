@@ -21,9 +21,9 @@ func TestRenameRestBindingElement(t *testing.T) {
     b: number;
     c: number;
 }
-function foo([|{ a, ...[|{| "contextRangeIndex": 0 |}rest|] }: I|]) {
+function foo([|{ a, ...[|{| "contextRangeIndex": 0 |}rest|] }: I|])
     [|rest|];
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineRename(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSTrue}, f.Ranges()[1])

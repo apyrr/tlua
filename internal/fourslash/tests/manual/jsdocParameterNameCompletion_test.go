@@ -15,21 +15,21 @@ func TestJsdocParameterNameCompletion(t *testing.T) {
 	const content = `/**
  * @param /*0*/
  */
-function f(foo, bar) {}
+function f(foo, bar) end
 /**
  * @param foo
  * @param /*1*/
  */
-function g(foo, bar) {}
+function g(foo, bar) end
 /**
  * @param can/*2*/
  * @param cantaloupe
  */
-function h(cat, canary, canoodle, cantaloupe, zebra) {}
+function h(cat, canary, canoodle, cantaloupe, zebra) end
 /**
  * @param /*3*/ {string} /*4*/
  */
-function i(foo, bar) {}`
+function i(foo, bar) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"0", "3", "4"}, &fourslash.CompletionsExpectedList{

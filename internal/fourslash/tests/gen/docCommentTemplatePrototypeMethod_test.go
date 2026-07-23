@@ -17,9 +17,9 @@ func TestDocCommentTemplatePrototypeMethod(t *testing.T) {
 	const content = `// @allowJs: true
 // @Filename: foo.lua
 /** @class */
-function C() { }
+function C() end
 /*above*/
-C.prototype.method = /*next*/ function (p) {}`
+C.prototype.method = /*next*/ function (p) end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

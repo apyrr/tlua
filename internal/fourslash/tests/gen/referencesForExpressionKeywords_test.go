@@ -21,10 +21,10 @@ func TestReferencesForExpressionKeywords(t *testing.T) {
 /*void*/void C;
 /*typeof*/typeof C;
 /*delete*/delete C.x;
-/*async*/async function* f() {
+/*async*/async function* f()
     /*yield*/yield C;
     /*await*/await C;
-}
+end
 "x" /*in*/in C;
 undefined /*instanceof*/instanceof C;
 undefined /*as*/as C;`

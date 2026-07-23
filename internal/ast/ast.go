@@ -215,7 +215,6 @@ func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.data.Locals
 func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.data.FunctionLikeData() }
 func (n *Node) ParameterList() *ParameterList             { return n.data.FunctionLikeData().Parameters }
 func (n *Node) Parameters() []*ParameterDeclarationNode   { return n.ParameterList().Nodes }
-func (n *Node) ClassLikeData() *ClassLikeBase             { return n.data.ClassLikeData() }
 func (n *Node) BodyData() *BodyBase                       { return n.data.BodyData() }
 func (n *Node) SubtreeFacts() SubtreeFacts                { return n.data.SubtreeFacts() }
 func (n *Node) propagateSubtreeFacts() SubtreeFacts       { return n.data.propagateSubtreeFacts() }
@@ -347,14 +346,10 @@ func (n *Node) Expression() *Node {
 		return n.AsPartiallyEmittedExpression().Expression
 	case KindIfStatement:
 		return n.AsIfStatement().Expression
-	case KindDoStatement:
-		return n.AsDoStatement().Expression
 	case KindRepeatStatement:
 		return n.AsRepeatStatement().Expression
 	case KindWhileStatement:
 		return n.AsWhileStatement().Expression
-	case KindWithStatement:
-		return n.AsWithStatement().Expression
 	case KindForOfStatement:
 		return n.AsForOfStatement().Expression
 	case KindExpressionStatement:
@@ -428,14 +423,10 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsPartiallyEmittedExpression().Expression = expr
 	case KindIfStatement:
 		n.AsIfStatement().Expression = expr
-	case KindDoStatement:
-		n.AsDoStatement().Expression = expr
 	case KindRepeatStatement:
 		n.AsRepeatStatement().Expression = expr
 	case KindWhileStatement:
 		n.AsWhileStatement().Expression = expr
-	case KindWithStatement:
-		n.AsWithStatement().Expression = expr
 	case KindForOfStatement:
 		n.AsForOfStatement().Expression = expr
 	case KindExpressionStatement:
@@ -509,10 +500,6 @@ func (n *Node) TypeArguments() []*Node {
 
 func (n *Node) TypeParameterList() *NodeList {
 	switch n.Kind {
-	case KindClassDeclaration:
-		return n.AsClassDeclaration().TypeParameters
-	case KindClassExpression:
-		return n.AsClassExpression().TypeParameters
 	case KindInterfaceDeclaration:
 		return n.AsInterfaceDeclaration().TypeParameters
 	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
@@ -538,10 +525,6 @@ func (n *Node) TypeParameters() []*Node {
 
 func (n *Node) MemberList() *NodeList {
 	switch n.Kind {
-	case KindClassDeclaration:
-		return n.AsClassDeclaration().Members
-	case KindClassExpression:
-		return n.AsClassExpression().Members
 	case KindInterfaceDeclaration:
 		return n.AsInterfaceDeclaration().Members
 	case KindTypeLiteral:
@@ -615,8 +598,6 @@ func (n *Node) Type() *Node {
 		return n.AsParameterDeclaration().Type
 	case KindPropertySignature:
 		return n.AsPropertySignatureDeclaration().Type
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().Type
 	case KindPropertyAssignment:
 		return n.AsPropertyAssignment().Type
 	case KindShorthandPropertyAssignment:
@@ -676,8 +657,6 @@ func (m *MutableNode) SetType(t *Node) {
 		n.AsParameterDeclaration().Type = t
 	case KindPropertySignature:
 		n.AsPropertySignatureDeclaration().Type = t
-	case KindPropertyDeclaration:
-		n.AsPropertyDeclaration().Type = t
 	case KindPropertyAssignment:
 		n.AsPropertyAssignment().Type = t
 	case KindShorthandPropertyAssignment:
@@ -737,8 +716,6 @@ func (n *Node) Initializer() *Node {
 		return n.AsParameterDeclaration().Initializer
 	case KindBindingElement:
 		return n.AsBindingElement().Initializer
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().Initializer
 	case KindPropertySignature:
 		return n.AsPropertySignatureDeclaration().Initializer
 	case KindPropertyAssignment:
@@ -762,8 +739,6 @@ func (m *MutableNode) SetInitializer(initializer *Node) {
 		n.AsParameterDeclaration().Initializer = initializer
 	case KindBindingElement:
 		n.AsBindingElement().Initializer = initializer
-	case KindPropertyDeclaration:
-		n.AsPropertyDeclaration().Initializer = initializer
 	case KindPropertySignature:
 		n.AsPropertySignatureDeclaration().Initializer = initializer
 	case KindPropertyAssignment:
@@ -980,16 +955,12 @@ func (n *Node) ImportClause() *Node {
 
 func (n *Node) Statement() *Statement {
 	switch n.Kind {
-	case KindDoStatement:
-		return n.AsDoStatement().Statement
 	case KindWhileStatement:
 		return n.AsWhileStatement().Statement
 	case KindForOfStatement:
 		return n.AsForOfStatement().Statement
 	case KindNumericForStatement:
 		return n.AsNumericForStatement().Statement
-	case KindWithStatement:
-		return n.AsWithStatement().Statement
 	}
 	panic("Unhandled case in Node.Statement: " + n.Kind.String())
 }
@@ -1042,8 +1013,6 @@ func (n *Node) Elements() []*Node {
 
 func (n *Node) PostfixToken() *Node {
 	switch n.Kind {
-	case KindMethodDeclaration:
-		return n.AsMethodDeclaration().PostfixToken
 	case KindShorthandPropertyAssignment:
 		return n.AsShorthandPropertyAssignment().PostfixToken
 	case KindMethodSignature:
@@ -1052,12 +1021,6 @@ func (n *Node) PostfixToken() *Node {
 		return n.AsPropertySignatureDeclaration().PostfixToken
 	case KindPropertyAssignment:
 		return n.AsPropertyAssignment().PostfixToken
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().PostfixToken
-	case KindGetAccessor:
-		return n.AsGetAccessorDeclaration().PostfixToken
-	case KindSetAccessor:
-		return n.AsSetAccessorDeclaration().PostfixToken
 	}
 	return nil
 }
@@ -1161,7 +1124,6 @@ type nodeData interface {
 	ExportableData() *ExportableBase
 	LocalsContainerData() *LocalsContainerBase
 	FunctionLikeData() *FunctionLikeBase
-	ClassLikeData() *ClassLikeBase
 	BodyData() *BodyBase
 	LiteralLikeData() *LiteralLikeNodeBase
 	TemplateLiteralLikeData() *TemplateLiteralLikeNodeBase
@@ -1190,7 +1152,6 @@ func (node *NodeDefault) DeclarationData() *DeclarationBase                     
 func (node *NodeDefault) ExportableData() *ExportableBase                       { return nil }
 func (node *NodeDefault) LocalsContainerData() *LocalsContainerBase             { return nil }
 func (node *NodeDefault) FunctionLikeData() *FunctionLikeBase                   { return nil }
-func (node *NodeDefault) ClassLikeData() *ClassLikeBase                         { return nil }
 func (node *NodeDefault) BodyData() *BodyBase                                   { return nil }
 func (node *NodeDefault) LiteralLikeData() *LiteralLikeNodeBase                 { return nil }
 func (node *NodeDefault) TemplateLiteralLikeData() *TemplateLiteralLikeNodeBase { return nil }
@@ -1308,8 +1269,6 @@ func declarationIsWriteAccess(decl *Node) bool {
 	switch decl.Kind {
 	case KindBinaryExpression,
 		KindBindingElement,
-		KindClassDeclaration,
-		KindClassExpression,
 		KindDefaultKeyword,
 		KindExportSpecifier,
 		KindImportClause, // default import
@@ -1335,35 +1294,18 @@ func declarationIsWriteAccess(decl *Node) bool {
 		// is always the write access it looks like.
 		return true
 
-	case KindFunctionDeclaration, KindFunctionExpression, KindConstructor, KindMethodDeclaration, KindGetAccessor, KindSetAccessor:
+	case KindFunctionDeclaration, KindFunctionExpression:
 		// functions considered write if they provide a value (have a body)
 		switch decl.Kind {
 		case KindFunctionDeclaration:
 			return decl.AsFunctionDeclaration().Body != nil
 		case KindFunctionExpression:
 			return decl.AsFunctionExpression().Body != nil
-		case KindConstructor:
-			// constructor node stores body on the parent? treat same as others
-			return decl.AsConstructorDeclaration().Body != nil
-		case KindMethodDeclaration:
-			return decl.AsMethodDeclaration().Body != nil
-		case KindGetAccessor:
-			return decl.AsGetAccessorDeclaration().Body != nil
-		case KindSetAccessor:
-			return decl.AsSetAccessorDeclaration().Body != nil
 		}
 		return false
 
-	case KindVariableDeclaration, KindPropertyDeclaration:
-		// variable/property write if initializer present or is in catch clause
-		var hasInit bool
-		switch decl.Kind {
-		case KindVariableDeclaration:
-			hasInit = decl.AsVariableDeclaration().Initializer != nil
-		case KindPropertyDeclaration:
-			hasInit = decl.AsPropertyDeclaration().Initializer != nil
-		}
-		return hasInit || IsCatchClause(decl.Parent)
+	case KindVariableDeclaration:
+		return decl.AsVariableDeclaration().Initializer != nil
 
 	case KindMethodSignature, KindPropertySignature, KindJSDocPropertyTag, KindJSDocParameterTag:
 		return false
@@ -1623,19 +1565,6 @@ func (node *ReturnStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
 }
 
-func (node *CatchClause) computeSubtreeFacts() SubtreeFacts {
-	res := propagateSubtreeFacts(node.VariableDeclaration) |
-		propagateSubtreeFacts(node.Block)
-	if node.VariableDeclaration == nil {
-		res |= SubtreeContainsMissingCatchClauseVariable
-	}
-	return res
-}
-
-func (node *CatchClause) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsCatchClause
-}
-
 func (node *VariableStatement) computeSubtreeFacts() SubtreeFacts {
 	if node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
 		return SubtreeContainsTypeScript
@@ -1718,32 +1647,6 @@ func (node *FunctionDeclaration) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsFunction
 }
 
-// ClassLikeBase
-
-func (node *ClassLikeBase) Name() *DeclarationName { return node.name }
-
-func (node *ClassLikeBase) ClassLikeData() *ClassLikeBase { return node }
-
-func (node *ClassLikeBase) computeSubtreeFacts() SubtreeFacts {
-	if node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.HeritageClauses, propagateSubtreeFacts) |
-			propagateNodeListSubtreeFacts(node.Members, propagateSubtreeFacts)
-	}
-}
-
-func (node *ClassDeclaration) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsClass
-}
-
-func (node *ClassExpression) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsClass
-}
-
 func (node *HeritageClause) computeSubtreeFacts() SubtreeFacts {
 	switch node.Token {
 	case KindExtendsKeyword:
@@ -1818,7 +1721,6 @@ func (node *ExportDeclaration) computeSubtreeFacts() SubtreeFacts {
 	return propagateModifierListSubtreeFacts(node.modifiers) |
 		propagateSubtreeFacts(node.ExportClause) |
 		propagateSubtreeFacts(node.ModuleSpecifier) |
-		propagateSubtreeFacts(node.Attributes) |
 		core.IfElse(node.IsTypeOnly, SubtreeContainsTypeScript, SubtreeFactsNone)
 }
 
@@ -1837,86 +1739,6 @@ func (node *NamedMemberBase) DeclarationData() *DeclarationBase    { return &nod
 func (node *NamedMemberBase) Modifiers() *ModifierList             { return node.modifiers }
 func (node *NamedMemberBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
 func (node *NamedMemberBase) Name() *DeclarationName               { return node.name }
-
-func (node *ConstructorDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
-			propagateSubtreeFacts(node.Body)
-	}
-}
-
-func (node *ConstructorDeclaration) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsConstructor
-}
-
-func (node *AccessorDeclarationBase) IsAccessorDeclaration() {}
-
-func (node *AccessorDeclarationBase) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
-			propagateSubtreeFacts(node.Body)
-	}
-}
-
-func (node *AccessorDeclarationBase) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsAccessor |
-		propagateSubtreeFacts(node.name)
-}
-
-func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil {
-		return SubtreeContainsTypeScript
-	} else {
-		isAsync := node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAsync != 0
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxSubtreeFacts(node.PostfixToken) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-			propagateSubtreeFacts(node.Body) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
-			core.IfElse(isAsync, SubtreeContainsAnyAwait, SubtreeFactsNone)
-	}
-}
-
-func (node *MethodDeclaration) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsMethod |
-		propagateSubtreeFacts(node.name)
-}
-
-func (node *PropertyDeclaration) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateSubtreeFacts(node.name) |
-		propagateEraseableSyntaxSubtreeFacts(node.PostfixToken) |
-		propagateEraseableSyntaxSubtreeFacts(node.Type) |
-		propagateSubtreeFacts(node.Initializer) |
-		SubtreeContainsClassFields
-}
-
-func (node *PropertyDeclaration) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsProperty |
-		propagateSubtreeFacts(node.name)
-}
-
-func (node *ClassStaticBlockDeclaration) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateSubtreeFacts(node.Body) |
-		SubtreeContainsClassFields
-}
 
 func (node *KeywordExpression) computeSubtreeFacts() SubtreeFacts {
 	switch node.Kind {
@@ -2098,53 +1920,6 @@ func (node *TypeAssertion) propagateSubtreeFacts() SubtreeFacts {
 func (node *ExpressionWithTypeArguments) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) |
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments)
-}
-
-func (node *ImportAttributesNode) GetResolutionModeOverride( /* !!! grammarErrorOnNode?: (node: Node, diagnostic: DiagnosticMessage) => void*/ ) (core.ResolutionMode, bool) {
-	if node == nil {
-		return core.ResolutionModeNone, false
-	}
-
-	attributes := node.AsImportAttributes().Attributes
-
-	if len(attributes.Nodes) != 1 {
-		// !!!
-		// grammarErrorOnNode?.(
-		//     node,
-		//     node.token === SyntaxKind.WithKeyword
-		//         ? Diagnostics.Type_import_attributes_should_have_exactly_one_key_resolution_mode_with_value_import_or_require
-		//         : Diagnostics.Type_import_assertions_should_have_exactly_one_key_resolution_mode_with_value_import_or_require,
-		// );
-		return core.ResolutionModeNone, false
-	}
-
-	elem := attributes.Nodes[0].AsImportAttribute()
-	if !IsStringLiteralLike(elem.Name()) {
-		return core.ResolutionModeNone, false
-	}
-	if elem.Name().Text() != "resolution-mode" {
-		// !!!
-		// grammarErrorOnNode?.(
-		//     elem.name,
-		//     node.token === SyntaxKind.WithKeyword
-		//         ? Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_attributes
-		//         : Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_assertions,
-		// );
-		return core.ResolutionModeNone, false
-	}
-	if !IsStringLiteralLike(elem.Value) {
-		return core.ResolutionModeNone, false
-	}
-	if elem.Value.Text() != "import" && elem.Value.Text() != "require" {
-		// !!!
-		// grammarErrorOnNode?.(elem.value, Diagnostics.resolution_mode_should_be_either_require_or_import);
-		return core.ResolutionModeNone, false
-	}
-	if elem.Value.Text() == "import" {
-		return core.ResolutionModeESM, true
-	} else {
-		return core.ModuleKindCommonJS, true
-	}
 }
 
 // FunctionOrConstructorTypeNodeBase
@@ -2738,7 +2513,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	var visit func(*Node) bool
 	visit = func(node *Node) bool {
 		switch node.Kind {
-		case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindMethodSignature:
+		case KindFunctionDeclaration, KindFunctionExpression, KindMethodSignature:
 			declarationName := GetDeclarationName(node)
 			if declarationName != "" {
 				declarations := result[declarationName]
@@ -2757,20 +2532,14 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				}
 			}
 			node.ForEachChild(visit)
-		case KindClassDeclaration, KindClassExpression, KindInterfaceDeclaration, KindTypeAliasDeclaration, KindModuleDeclaration,
-			KindImportEqualsDeclaration, KindImportClause, KindNamespaceImport, KindGetAccessor, KindSetAccessor, KindTypeLiteral:
+		case KindInterfaceDeclaration, KindTypeAliasDeclaration, KindModuleDeclaration,
+			KindImportEqualsDeclaration, KindImportClause, KindNamespaceImport, KindTypeLiteral:
 			addDeclaration(node)
 			node.ForEachChild(visit)
 		case KindImportSpecifier, KindExportSpecifier:
 			if node.PropertyName() != nil {
 				addDeclaration(node)
 			}
-		case KindParameter:
-			// Only consider parameter properties
-			if !HasSyntacticModifier(node, ModifierFlagsParameterPropertyModifier) {
-				break
-			}
-			fallthrough
 		case KindVariableDeclaration, KindBindingElement:
 			name := node.Name()
 			if name != nil {
@@ -2783,7 +2552,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 					addDeclaration(node)
 				}
 			}
-		case KindPropertyDeclaration, KindPropertySignature:
+		case KindPropertySignature:
 			addDeclaration(node)
 		case KindExportDeclaration:
 			// Handle named exports case e.g.:

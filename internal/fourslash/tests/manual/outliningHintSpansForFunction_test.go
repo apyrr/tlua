@@ -11,14 +11,14 @@ func TestOutliningHintSpansForFunction(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(x: number, y: number)[| {
+	const content = `function f(x: number, y: number) [|{
     return x + y;
 }|]
 
-function g[|(
+function g(
     x: number,
     y: number,
-): number {
+): number [|{
     return x + y;
 }|]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

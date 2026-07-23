@@ -70,13 +70,13 @@ interface I/*8*/ {
     d()
 }
 
-function nestor() {
+function nestor()
     /** {@link r2} */
-    function ref() { }
+    function ref() end
     /** @see {r2} */
-    function d3() { }
-    function r2/*6*/() { }
-}`
+    function d3() end
+    function r2/*6*/() end
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4", "5", "6", "7", "8")

@@ -14,8 +14,7 @@ func TestSignatureHelpLeadingRestTuple(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export function leading(...args: [...names: string[], allCaps: boolean]): void {
-}
+	const content = `export function leading(...args: [...names: string[], allCaps: boolean]): void end
 
 leading(/*1*/);
 leading("ok", /*2*/);

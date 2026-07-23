@@ -16,7 +16,7 @@ func TestCompletionWithConditionalOperatorMissingColon(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `1 ? fun/*1*/
-function func () {}`
+function func () end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

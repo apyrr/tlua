@@ -27,7 +27,7 @@ func TestNavigationBarPropertyDeclarations(t *testing.T) {
         z() {}
     }
 
-    public A3 = function () {}
+    public A3 = function () end
     public A4 = () => {}
     public A5 = 1;
     public A6 = "A6";

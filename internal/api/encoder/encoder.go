@@ -219,7 +219,6 @@ const (
 // | `JsDocPropertyTag`           | Bit 0: `isBracketed`, Bit 1: `isNameFirst` |                           |
 // | `JsDocParameterTag`          | Bit 0: `isBracketed`, Bit 1: `isNameFirst` |                           |
 // | `VariableDeclarationList`    | Flags field preserves let/const/local |                                |
-// | `ImportAttributes`           | Bit 0: `multiline`, Bit 1: is `assert`|                                |
 // | `PrefixUnaryExpression`      | Bits 0-5: operator SyntaxKind         | e.g., `!`, `#`, `+`, `-`      |
 //
 // The remaining 3 bytes of the node data field vary by data type:
@@ -229,22 +228,18 @@ const (
 // If a node has fewer children than its type allows, additional data is needed to determine which properties the children
 // correspond to. The last byte of the 4-byte data field is a bitmask representing the child properties of the node type,
 // in visitor order, where `1` indicates that the child at that property is present and `0` indicates that the property is
-// nil. For example, a `MethodDeclaration` has the following child properties:
+// nil. For example, a `PropertySignature` has the following child properties:
 //
 // | Property name  | Bit position |
 // | -------------- | ------------ |
 // | modifiers      | 0            |
-// | asteriskToken  | 1            |
-// | name           | 2            |
-// | postfixToken   | 3            |
-// | typeParameters | 4            |
-// | parameters     | 5            |
-// | returnType     | 6            |
-// | body           | 7            |
+// | name           | 1            |
+// | questionToken  | 2            |
+// | type           | 3            |
 //
-// A bitmask with value `0b01100101` would indicate that the next four direct descendants (i.e., node records that have a
-// `parent` set to the node index of the `MethodDeclaration`) of the node are its `modifiers`, `name`, `parameters`, and
-// `body` properties, in that order. The remaining properties are nil. (To reconstruct the node with named properties, the
+// A bitmask with value `0b1101` would indicate that the next three direct descendants (i.e., node records that have a
+// `parent` set to the node index of the `PropertySignature`) of the node are its `modifiers`, `questionToken`, and
+// `type` properties, in that order. The remaining property is nil. (To reconstruct the node with named properties, the
 // client must consult a static table of each node type's child property names.)
 //
 // The bitmask may be zero for node types that can only have a single child, since no disambiguation is needed.

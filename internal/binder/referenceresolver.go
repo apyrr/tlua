@@ -215,18 +215,12 @@ func (r *referenceResolver) GetReferencedValueDeclarations(node *ast.IdentifierN
 			case ast.KindVariableDeclaration,
 				ast.KindParameter,
 				ast.KindBindingElement,
-				ast.KindPropertyDeclaration,
 				ast.KindPropertyAssignment,
 				ast.KindShorthandPropertyAssignment,
 				ast.KindObjectLiteralExpression,
 				ast.KindFunctionDeclaration,
 				ast.KindFunctionExpression,
 				ast.KindArrowFunction,
-				ast.KindClassDeclaration,
-				ast.KindClassExpression,
-				ast.KindMethodDeclaration,
-				ast.KindGetAccessor,
-				ast.KindSetAccessor,
 				ast.KindModuleDeclaration:
 				declarations = append(declarations, declaration)
 			}

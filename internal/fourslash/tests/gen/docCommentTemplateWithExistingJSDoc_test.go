@@ -20,9 +20,9 @@ func TestDocCommentTemplateWithExistingJSDoc(t *testing.T) {
  * @param {string} a
  * @param {string} b
  */
-function foo(a, b) {
+function foo(a, b)
     return a + b;
-}`
+end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

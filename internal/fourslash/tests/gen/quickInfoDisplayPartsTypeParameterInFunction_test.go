@@ -14,13 +14,13 @@ func TestQuickInfoDisplayPartsTypeParameterInFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function /*1*/foo</*2*/U>(/*3*/a: /*4*/U) {
+	const content = `function /*1*/foo</*2*/U>(/*3*/a: /*4*/U)
     return /*5*/a;
-}
+end
 /*6*/foo("Hello");
-function /*7*/foo2</*8*/U extends string>(/*9*/a: /*10*/U) {
+function /*7*/foo2</*8*/U extends string>(/*9*/a: /*10*/U)
     return /*11*/a;
-}
+end
 /*12*/foo2("hello");`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

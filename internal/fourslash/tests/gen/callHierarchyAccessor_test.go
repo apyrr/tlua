@@ -14,9 +14,9 @@ func TestCallHierarchyAccessor(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo() {
+	const content = `function foo()
     new C().bar;
-}
+end
 
 class C {
     get /**/bar() {
@@ -24,8 +24,7 @@ class C {
     }
 }
 
-function baz() {
-}`
+function baz() end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

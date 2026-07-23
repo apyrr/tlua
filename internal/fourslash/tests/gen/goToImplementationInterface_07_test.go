@@ -23,7 +23,7 @@ interface Bar {
 }
 
 local x1: Foo            = [|{ hello ()          { /**typeReference*/ } }|];
-local x2: () => Foo      = [|(() => { hello ()   { /**functionType*/} })|];
+local x2: () => Foo      = [|(function() hello ()   { /**functionType*/} end)|];
 local x3: Foo | Bar      = [|{ hello ()          { /**unionType*/} }|];
 local x4: Foo & (Foo & Bar)      = [|{ hello ()          { /**intersectionType*/} }|];
 local x5: [Foo]          = [|[{ hello ()         { /**tupleType*/} }]|];
@@ -35,9 +35,9 @@ local x10 = [|{|"parts": ["(","anonymous local class",")"], "kind": "local class
 local x11 = class [|{|"parts": ["(","local class",")"," ","C"], "kind": "local class"|}C|] implements Foo { hello() {} }
 
 // Should not do anything for type predicates
-function isFoo(a: any): a is Foo {
+function isFoo(a: any): a is Foo
     return true;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineGoToImplementation(t, "interface_definition")

@@ -14,11 +14,10 @@ func TestSignatureHelpEmptyList(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function Foo(arg1: string, arg2: string) {
-}
+	const content = `function Foo(arg1: string, arg2: string) end
 
 Foo(/*1*/);
-function Bar<T>(arg1: string, arg2: string) { }
+function Bar<T>(arg1: string, arg2: string) end
 Bar</*2*/>();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -14,11 +14,11 @@ func TestTypeOfAFundule(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function m1() { return 1; }
+	const content = `function m1() return 1; end
 namespace m1 { export local y = 2; }
-function foo13() {
+function foo13()
     return m1;
-}
+end
 local /**/r13 = foo13();`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

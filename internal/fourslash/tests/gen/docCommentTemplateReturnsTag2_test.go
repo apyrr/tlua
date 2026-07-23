@@ -15,9 +15,9 @@ func TestDocCommentTemplateReturnsTag2(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*0*/
-function f1(x: number, y: number) {
+function f1(x: number, y: number)
     return 1;
-}`
+end`
 	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = new(false)
 	f, done := fourslash.NewFourslash(t, capabilities, content)

@@ -330,20 +330,12 @@ func tokenFromDeclarationMapping(kind ast.Kind) tokenType {
 		return tokenTypeVariable
 	case ast.KindParameter:
 		return tokenTypeParameter
-	case ast.KindPropertyDeclaration:
-		return tokenTypeProperty
 	case ast.KindModuleDeclaration:
 		return tokenTypeNamespace
-	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tokenTypeClass
-	case ast.KindMethodDeclaration:
-		return tokenTypeMethod
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
 		return tokenTypeFunction
 	case ast.KindMethodSignature:
 		return tokenTypeMethod
-	case ast.KindGetAccessor, ast.KindSetAccessor:
-		return tokenTypeProperty
 	case ast.KindPropertySignature:
 		return tokenTypeProperty
 	case ast.KindInterfaceDeclaration:
@@ -414,15 +406,11 @@ func isLocalDeclaration(decl *ast.Node, sourceFile *ast.SourceFile) bool {
 			return ast.GetSourceFileOfNode(decl) == sourceFile
 		}
 		parent := decl.Parent
-		// Check if this is a catch clause parameter
-		if parent != nil && ast.IsCatchClause(parent) {
-			return ast.GetSourceFileOfNode(decl) == sourceFile
-		}
 		if parent != nil && ast.IsVariableDeclarationList(parent) {
 			grandparent := parent.Parent
 			if grandparent != nil {
 				greatGrandparent := grandparent.Parent
-				return (!ast.IsSourceFile(greatGrandparent) || ast.IsCatchClause(grandparent)) &&
+				return !ast.IsSourceFile(greatGrandparent) &&
 					ast.GetSourceFileOfNode(decl) == sourceFile
 			}
 		}

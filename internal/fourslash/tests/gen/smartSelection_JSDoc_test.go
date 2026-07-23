@@ -18,9 +18,9 @@ func TestSmartSelection_JSDoc(t *testing.T) {
 /**
  * @param {number} x The number to square
  */
-function /**/square(x) {
+function /**/square(x)
   return x * x;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineSelectionRanges(t)

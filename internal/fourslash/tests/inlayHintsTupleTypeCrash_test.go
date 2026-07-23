@@ -13,9 +13,9 @@ func TestInlayHintsTupleTypeCrash(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function iterateTuples(tuples: [string][]): void {
-  tuples.forEach((l) => {})
-}`
+	const content = `function iterateTuples(tuples: [string][]): void
+  tuples.forEach(function(l) end)
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{

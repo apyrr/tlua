@@ -24,36 +24,36 @@ interface NestedInterface {
 
 declare Foo: NestedInterface;
 
-function fn1() {
+function fn1()
     return <Foo>
         </*1*/
     </Foo>
-}
-function fn2() {
+end
+function fn2()
     return <Foo>
         <Fo/*2*/
     </Foo>
-}
-function fn3() {
+end
+function fn3()
     return <Foo>
         <Foo./*3*/
     </Foo>
-}
-function fn4() {
+end
+function fn4()
     return <Foo>
         <Foo.F/*4*/
     </Foo>
-}
-function fn5() {
+end
+function fn5()
     return <Foo>
         <Foo.Foo./*5*/
     </Foo>
-}
-function fn6() {
+end
+function fn6()
     return <Foo>
         <Foo.Foo.F/*6*/
     </Foo>
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

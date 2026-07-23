@@ -18,10 +18,10 @@ func TestLetQuickInfoAndCompletionList(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local /*1*/a = 10;
 /*2*/a = 30;
-function foo() {
+function foo()
     local /*3*/b = 20;
     /*4*/b = /*5*/a;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{

@@ -16,20 +16,20 @@ func TestCodeFixInferFromUsageInaccessibleTypes(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: false
 // @noImplicitAny: true
-function f1(a) { a; }
-function h1() {
+function f1(a) a; end
+function h1()
     class C { p: number };
     f1({ ofTypeC: new C() });
-}
+end
 
-function f2(a) { a; }
-function h2() {
+function f2(a) a; end
+function h2()
     interface I { a: number }
     local i: I = {a : 1};
     f2(i);
     f2(2);
     f2(false);
-}
+end
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

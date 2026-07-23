@@ -21,11 +21,11 @@ func TestGoToImplementationInterfaceMethod_00(t *testing.T) {
 local bar: Foo = { [|hello|]: helloImpl };
 local baz: Foo = { "[|hello|]": helloImpl };
 
-function helloImpl () {}
+function helloImpl () end
 
-function whatever(x: Foo = { [|hello|]() {/**1*/} }) {
+function whatever(x: Foo = { [|hello|]() {/**1*/} })
     x.he/*function_call*/llo()
-}
+end
 
 class Bar {
     x: Foo = { [|hello|]() {/*2*/} }

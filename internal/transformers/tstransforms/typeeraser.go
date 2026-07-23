@@ -126,54 +126,6 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		n := node.AsExpressionWithTypeArguments()
 		return tx.Factory().UpdateExpressionWithTypeArguments(n, tx.Visitor().VisitNode(n.Expression), nil)
 
-	case ast.KindPropertyDeclaration:
-		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) {
-			// TypeScript `declare` fields are elided
-			return nil
-		}
-		n := node.AsPropertyDeclaration()
-		return tx.Factory().UpdatePropertyDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
-
-	case ast.KindConstructor:
-		n := node.AsConstructorDeclaration()
-		if ast.NodeIsMissing(n.Body) {
-			// TypeScript overloads are elided
-			return nil
-		}
-		return tx.Factory().UpdateConstructorDeclaration(n, nil, nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
-
-	case ast.KindMethodDeclaration:
-		n := node.AsMethodDeclaration()
-		if ast.NodeIsMissing(n.Body) {
-			// TypeScript overloads are elided
-			return nil
-		}
-		return tx.Factory().UpdateMethodDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
-
-	case ast.KindGetAccessor:
-		n := node.AsGetAccessorDeclaration()
-		if ast.NodeIsMissing(n.Body) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
-			// Abstract accessors are elided
-			return nil
-		}
-		body := tx.Visitor().VisitNode(n.Body)
-		if body == nil {
-			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false)
-		}
-		return tx.Factory().UpdateGetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, body)
-
-	case ast.KindSetAccessor:
-		n := node.AsSetAccessorDeclaration()
-		if ast.NodeIsMissing(n.Body) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
-			// Abstract accessors are elided
-			return nil
-		}
-		body := tx.Visitor().VisitNode(n.Body)
-		if body == nil {
-			body = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false)
-		}
-		return tx.Factory().UpdateSetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, body)
-
 	case ast.KindVariableDeclaration:
 		n := node.AsVariableDeclaration()
 		updated := tx.Factory().UpdateVariableDeclaration(n, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
@@ -212,12 +164,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		n := node.AsParameterDeclaration()
-		// preserve parameter property modifiers to be handled by the runtime transformer
-		var modifiers *ast.ModifierList
-		if ast.IsParameterPropertyDeclaration(node, tx.parentNode) {
-			modifiers = transformers.ExtractModifiers(tx.EmitContext(), n.Modifiers(), ast.ModifierFlagsParameterPropertyModifier)
-		}
-		return tx.Factory().UpdateParameterDeclaration(n, modifiers, n.DotDotDotToken, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		return tx.Factory().UpdateParameterDeclaration(n, nil, n.DotDotDotToken, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
 
 	case ast.KindCallExpression:
 		n := node.AsCallExpression()
@@ -277,7 +224,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		if importClause == nil {
 			return nil
 		}
-		return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, n.Attributes)
+		return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier)
 
 	case ast.KindImportClause:
 		n := node.AsImportClause()
@@ -328,7 +275,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 				return nil
 			}
 		}
-		return tx.Factory().UpdateExportDeclaration(n, nil /*modifiers*/, false /*isTypeOnly*/, exportClause, tx.Visitor().VisitNode(n.ModuleSpecifier), tx.Visitor().VisitNode(n.Attributes))
+		return tx.Factory().UpdateExportDeclaration(n, nil /*modifiers*/, false /*isTypeOnly*/, exportClause, tx.Visitor().VisitNode(n.ModuleSpecifier))
 
 	case ast.KindNamedExports:
 		n := node.AsNamedExports()

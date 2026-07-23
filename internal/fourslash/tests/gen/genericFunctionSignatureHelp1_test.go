@@ -14,7 +14,7 @@ func TestGenericFunctionSignatureHelp1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f<T>(a: T): T { return null; }
+	const content = `function f<T>(a: T): T return null; end
 f(/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

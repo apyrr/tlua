@@ -44,7 +44,7 @@ func TestRefCountingCaches(t *testing.T) {
 
 		files := map[string]any{
 			"/user/username/projects/myproject/src/main.tlua":  "local x = 1;",
-			"/user/username/projects/myproject/src/utils.tlua": "function util() {}",
+			"/user/username/projects/myproject/src/utils.tlua": "function util() end",
 		}
 
 		t.Run("reuse unchanged file", func(t *testing.T) {
@@ -139,7 +139,7 @@ func TestRefCountingCaches(t *testing.T) {
 							Start: lsproto.Position{Line: 0, Character: 0},
 							End:   lsproto.Position{Line: 0, Character: 18},
 						},
-						Text: "function util2() {}",
+						Text: "function util2() end",
 					},
 				},
 			})

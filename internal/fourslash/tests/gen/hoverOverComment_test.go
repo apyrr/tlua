@@ -14,7 +14,7 @@ func TestHoverOverComment(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export function f() {}
+	const content = `export function f() end
 //foo
 /**///moo`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

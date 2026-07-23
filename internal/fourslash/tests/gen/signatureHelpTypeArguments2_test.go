@@ -21,7 +21,7 @@ func TestSignatureHelpTypeArguments2(t *testing.T) {
  * @param a ok
  * @param b not ok
  */
-function f<T, U, V, W>(a: number, b: string, c: boolean): void { }
+function f<T, U, V, W>(a: number, b: string, c: boolean): void end
 f</*f0*/;
 f<number, /*f1*/;
 f<number, string, /*f2*/;

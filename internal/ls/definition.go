@@ -49,12 +49,6 @@ func (l *LanguageService) provideDefinitionWorker(
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
-	if node.Kind == ast.KindOverrideKeyword {
-		if sym := getSymbolForOverriddenMember(c, node); sym != nil {
-			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, sym.Declarations, nil /*reference*/), nil
-		}
-	}
-
 	if ast.IsJumpStatementTarget(node) {
 		if label := getTargetLabel(node.Parent, node.Text()); label != nil {
 			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{label}, nil /*reference*/), nil
@@ -74,13 +68,7 @@ func (l *LanguageService) provideDefinitionWorker(
 		if symbol != nil && core.Some(c.GetRootSymbols(symbol), func(rootSymbol *ast.Symbol) bool {
 			return symbolMatchesSignature(rootSymbol, calledDeclaration)
 		}) {
-			if !ast.IsConstructorDeclaration(calledDeclaration) {
-				declarations = nil
-			} else {
-				declarations = core.Filter(slices.Clip(declarations), func(node *ast.Node) bool {
-					return node != calledDeclaration && (ast.IsClassDeclaration(node) || ast.IsClassExpression(node))
-				})
-			}
+			declarations = nil
 		} else {
 			declarations = core.Filter(slices.Clip(declarations), func(node *ast.Node) bool { return node != calledDeclaration })
 		}
@@ -261,11 +249,6 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 
 	node = getDeclarationNameForKeyword(node)
 	if symbol := c.GetSymbolAtLocation(node); symbol != nil {
-		if symbol.Flags&ast.SymbolFlagsClass != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable) == 0 && node.Kind == ast.KindConstructorKeyword {
-			if constructor := symbol.Members[ast.InternalSymbolNameConstructor]; constructor != nil {
-				symbol = constructor
-			}
-		}
 		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
 			if resolved, ok := c.ResolveAlias(symbol); ok {
 				symbol = resolved
@@ -347,8 +330,7 @@ func tryGetSignatureDeclaration(typeChecker *checker.Checker, node *ast.Node) *a
 
 func isJsxConstructorLike(node *ast.Node) bool {
 	switch {
-	case ast.IsConstructorDeclaration(node),
-		ast.IsConstructorTypeNode(node),
+	case ast.IsConstructorTypeNode(node),
 		ast.IsCallSignatureDeclaration(node),
 		ast.IsConstructSignatureDeclaration(node):
 		return true
@@ -368,37 +350,6 @@ func symbolMatchesSignature(symbol *ast.Symbol, calledDeclaration *ast.Node) boo
 	parent := calledDeclaration.Parent
 	return parent != nil && (ast.IsAssignmentExpression(parent, false /*excludeCompoundAssignment*/) ||
 		!ast.IsCallLikeExpression(parent) && ast.CanHaveSymbol(parent) && symbol == parent.Symbol())
-}
-
-func getSymbolForOverriddenMember(typeChecker *checker.Checker, node *ast.Node) *ast.Symbol {
-	classElement := ast.FindAncestor(node, ast.IsClassElement)
-	if classElement == nil || classElement.Name() == nil {
-		return nil
-	}
-	baseDeclaration := ast.FindAncestor(classElement, ast.IsClassLike)
-	if baseDeclaration == nil {
-		return nil
-	}
-	baseTypeNode := ast.GetClassExtendsHeritageElement(baseDeclaration)
-	if baseTypeNode == nil {
-		return nil
-	}
-	expression := ast.SkipParentheses(baseTypeNode.Expression())
-	var base *ast.Symbol
-	if ast.IsClassExpression(expression) {
-		base = expression.Symbol()
-	} else {
-		base = typeChecker.GetSymbolAtLocation(expression)
-	}
-	if base == nil {
-		return nil
-	}
-	// Identity (symbol-table) name: number keys are mangled.
-	name := ast.GetPropertyNameForPropertyNameNode(classElement.Name())
-	if ast.HasStaticModifier(classElement) {
-		return typeChecker.GetPropertyOfType(typeChecker.GetTypeOfSymbol(base), name)
-	}
-	return typeChecker.GetPropertyOfType(typeChecker.GetDeclaredTypeOfSymbol(base), name)
 }
 
 func getTypeOfSymbolAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) *checker.Type {

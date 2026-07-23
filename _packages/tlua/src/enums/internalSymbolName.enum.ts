@@ -16,7 +16,6 @@ export enum InternalSymbolName {
     Computed = "__computed",
     AssignmentDeclaration = "__assignment",
     InstantiationExpression = "__instantiationExpression",
-    ImportAttributes = "__importAttributes",
     ExportEquals = "export=",
     Default = "default",
     This = "this",

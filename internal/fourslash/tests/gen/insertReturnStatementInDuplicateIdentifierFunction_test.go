@@ -16,7 +16,7 @@ func TestInsertReturnStatementInDuplicateIdentifierFunction(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 class foo { };
-function foo() { /**/ }`
+function foo() /**/ end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

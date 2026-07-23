@@ -17,7 +17,7 @@ func TestGetJavaScriptQuickInfo2(t *testing.T) {
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.lua
 /** @param {number} [a] */
-function /**/f(a) { }`
+function /**/f(a) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "function f(a?: number): void", "")

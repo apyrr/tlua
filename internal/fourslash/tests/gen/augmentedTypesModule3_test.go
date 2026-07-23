@@ -15,7 +15,7 @@ func TestAugmentedTypesModule3(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function m2g() { };
+	const content = `function m2g() end;
 namespace m2g { export class C { foo(x: number) { } } }
 local x: m2g./*1*/;
 local /*2*/r = m2g/*3*/;`

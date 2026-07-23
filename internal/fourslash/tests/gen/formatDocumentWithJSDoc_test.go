@@ -17,7 +17,7 @@ func TestFormatDocumentWithJSDoc(t *testing.T) {
 	const content = `/**
  * JSDoc for things
  */
-function f() {
+function f()
     /** more
         jsdoc */
     local t;
@@ -25,14 +25,14 @@ function f() {
      * multiline
      */
     local multiline;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "")
 	f.VerifyCurrentFileContent(t, `/**
  * JSDoc for things
  */
-function f() {
+function f()
     /** more
         jsdoc */
     local t;
@@ -40,5 +40,5 @@ function f() {
      * multiline
      */
     local multiline;
-}`)
+end`)
 }

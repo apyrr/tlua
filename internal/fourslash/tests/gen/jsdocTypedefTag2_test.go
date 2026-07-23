@@ -22,19 +22,19 @@ func TestJsdocTypedefTag2(t *testing.T) {
  * @typedef {Object} A.B.MyType
  * @property {string} yes
  */
-function foo() {}
+function foo() end
 /**
  * @param {A.B.MyType} my2
  */
-function a(my2) {
+function a(my2)
     my2.yes./*1*/
-}
+end
 /**
  * @param {MyType} my2
  */
-function b(my2) {
+function b(my2)
     my2.yes./*2*/
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()

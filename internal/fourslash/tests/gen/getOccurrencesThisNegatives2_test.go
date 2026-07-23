@@ -18,46 +18,46 @@ func TestGetOccurrencesThisNegatives2(t *testing.T) {
 	const content = `this;
 this;
 
-function f() {
+function f()
     this;
     this;
-    () => this;
-    () => {
+    function() return this end;
+    function()
         if (this) {
             this;
         }
         else {
             this.t/*1*/his;
         }
-    }
-    function inside() {
+    end
+    function inside()
         this;
-        (function (_) {
+        (function (_)
             this;
-        })(this);
-    }
-}
+        end)(this);
+    end
+end
 
 namespace m {
-    function f() {
+    function f()
         this;
         this;
-        () => this;
-        () => {
+        function() return this end;
+        function()
             if (this) {
                 this;
             }
             else {
                 this./*2*/this;
             }
-        }
-        function inside() {
+        end
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
-    }
+            end)(this);
+        end
+    end
 }
 
 class A {
@@ -66,41 +66,41 @@ class A {
     public method1() {
         this;
         this;
-        () => this;
-        () => {
+        function() return this end;
+        function()
             if (this) {
                 this;
             }
             else {
                 this.thi/*3*/s;
             }
-        }
-        function inside() {
+        end
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     private method2() {
         this;
         this;
-        () => this;
-        () => {
+        function() return this end;
+        function()
             if (this) {
                 this;
             }
             else {
                 this.t/*4*/his;
             }
-        }
-        function inside() {
+        end
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     public static staticB = this.staticMethod1;
@@ -108,41 +108,41 @@ class A {
     public static staticMethod1() {
         this;
         this;
-        () => this;
-        () => {
+        function() return this end;
+        function()
             if (this) {
                 this;
             }
             else {
                 this.th/*5*/is;
             }
-        }
-        function inside() {
+        end
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 
     private static staticMethod2() {
         this;
         this;
-        () => this;
-        () => {
+        function() return this end;
+        function()
             if (this) {
                 this;
             }
             else {
                 this.th/*6*/is;
             }
-        }
-        function inside() {
+        end
+        function inside()
             this;
-            (function (_) {
+            (function (_)
                 this;
-            })(this);
-        }
+            end)(this);
+        end
     }
 }
 

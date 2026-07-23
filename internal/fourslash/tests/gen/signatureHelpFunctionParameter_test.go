@@ -14,9 +14,9 @@ func TestSignatureHelpFunctionParameter(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function parameterFunction(callback: (a: number, b: string) => void) {
+	const content = `function parameterFunction(callback: (a: number, b: string) => void)
     callback(/*parameterFunction1*/5, /*parameterFunction2*/"");
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "parameterFunction1")

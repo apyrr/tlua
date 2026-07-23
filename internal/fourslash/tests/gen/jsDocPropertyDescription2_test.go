@@ -18,9 +18,9 @@ func TestJsDocPropertyDescription2(t *testing.T) {
     /** Something generic */
     [key: symbol]: string;
 }
-function symbolExample(e: SymbolExample) {
+function symbolExample(e: SymbolExample)
     console.log(e./*symbol*/anything);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "symbol", "any", "")

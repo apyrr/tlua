@@ -32,12 +32,12 @@ class C2 {
         this.a = a;
     }
 }
-function f1(foo: C1 | C2 | { d: number }) {}
+function f1(foo: C1 | C2 | { d: number }) end
 f1({ /*1*/ });
-function f2(foo: C1 | C2) {}
+function f2(foo: C1 | C2) end
 f2({ /*2*/ });
 
-function f3(foo: C2) {}
+function f3(foo: C2) end
 f3({ /*3*/ });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

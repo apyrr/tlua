@@ -15,7 +15,7 @@ func TestGetOccurrencesAsyncAwait(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `[|async|] function f() {
+	const content = `[|async|] function f()
  [|await|] 100;
  [|a/**/wait|] [|await|] 200;
 class Foo {
@@ -23,16 +23,16 @@ class Foo {
         await 1;
     }
 }
- return [|await|] async function () {
+ return [|await|] async function ()
    await 300;
- }
-}
-async function g() {
+ end
+end
+async function g()
     await 300;
-    async function f() {
+    async function f()
         await 400;
-    }
-}`
+    end
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)

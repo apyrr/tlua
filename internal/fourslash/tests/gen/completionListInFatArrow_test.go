@@ -16,10 +16,10 @@ func TestCompletionListInFatArrow(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local items = [0, 1, 2];
-items.forEach((n) => {
+items.forEach(function(n)
     /**/
     local q = n;
-});`
+end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

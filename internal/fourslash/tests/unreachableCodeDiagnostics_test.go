@@ -14,7 +14,7 @@ func TestUnreachableCodeDiagnostics(t *testing.T) {
 	const content = `// @allowUnreachableCode: false
 throw new Error();
 	
-(() => {})();
+(function() end)();
 	`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

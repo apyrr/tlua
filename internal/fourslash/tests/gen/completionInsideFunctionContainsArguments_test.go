@@ -15,15 +15,15 @@ func TestCompletionInsideFunctionContainsArguments(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function testArguments() {/*1*/}
+	const content = `function testArguments() /*1*/ end
 /*2*/
-function testNestedArguments() {
-  function nestedfunction(){/*3*/}
-}
-function f() {
-    local g = () => /*4*/
-}
-local g = () => /*5*/`
+function testNestedArguments()
+  function nestedfunction() /*3*/ end
+end
+function f()
+    local g = function() return /*4*/ end
+end
+local g = function() return /*5*/ end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, []string{"1", "3", "4"}, &fourslash.CompletionsExpectedList{

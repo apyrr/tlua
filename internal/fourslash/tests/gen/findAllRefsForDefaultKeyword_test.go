@@ -15,11 +15,11 @@ func TestFindAllRefsForDefaultKeyword(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
-function f(value: string, /*1*/default: string) {}
+function f(value: string, /*1*/default: string) end
 
 local /*2*/default = 1;
 
-function /*3*/default() {}
+function /*3*/default() end
 
 class /*4*/default {}
 

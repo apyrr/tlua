@@ -20,8 +20,7 @@ func TestMemberListInFunctionCall2(t *testing.T) {
     a: 1;
     b: 2;
 }
-function F(x: T) {
-}
+function F(x: T) end
 F({/*1*/} as const)`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

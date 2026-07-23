@@ -16,7 +16,7 @@ func TestCompletionListInUnclosedSpreadExpression02(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `local x;
-local y = (p) => [1,2,.../*1*/`
+local y = function(p) return [1,2,.../*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

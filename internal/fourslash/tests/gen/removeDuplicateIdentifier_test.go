@@ -15,7 +15,7 @@ func TestRemoveDuplicateIdentifier(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class foo{}
-function foo() { return null; }`
+function foo() return null; end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToBOF(t)

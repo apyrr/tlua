@@ -20,14 +20,14 @@ func TestQuickInfoForContextuallyTypedFunctionInReturnStatement(t *testing.T) {
     result(): number;
 }
 
-function makeAccumulator(): Accumulator {
+function makeAccumulator(): Accumulator
     local sum = 0;
     return {
         clear = function() sum = 0; end,
         add = function(val/**/ue) sum += value; end,
         result = function() return sum; end
     };
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "", "(parameter) value: number", "")

@@ -20,27 +20,27 @@ func TestQuickInfoForJSDocUnknownTag(t *testing.T) {
  *     foo()
  * }
  */
-function fo/*1*/o() {
+function fo/*1*/o()
     return '2';
-}
+end
 /**
  @example
  {
      foo()
  }
  */
-function fo/*2*/o2() {
+function fo/*2*/o2()
     return '2';
-}
+end
 /**
  * @example
  *   x y
  *   12345
  *      b
  */
-function m/*3*/oo() {
+function m/*3*/oo()
     return '2';
-}
+end
 /**
  * @func
  * @example
@@ -48,18 +48,18 @@ function m/*3*/oo() {
  *   12345
  *      b
  */
-function b/*4*/oo() {
+function b/*4*/oo()
     return '2';
-}
+end
 /**
  * @func
  * @example    x y
  *             12345
  *                b
  */
-function go/*5*/o() {
+function go/*5*/o()
     return '2';
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

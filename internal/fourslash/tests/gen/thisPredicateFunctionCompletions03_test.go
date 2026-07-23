@@ -54,9 +54,9 @@ else if (b.is/*7*/Follower()) {
 }
 
 local leader/*13*/Status = a.isLeader();
-function isLeaderGuard(g: RoyalGuard) {
+function isLeaderGuard(g: RoyalGuard)
    return g.isLeader();
-}
+end
 local checked/*14*/LeaderStatus = isLeader/*15*/Guard(a);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

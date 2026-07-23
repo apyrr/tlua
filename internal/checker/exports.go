@@ -2,7 +2,6 @@ package checker
 
 import (
 	"github.com/apyrr/tlua/internal/ast"
-	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
 )
 
@@ -185,10 +184,6 @@ func (c *Checker) GetDefaultFromTypeParameter(typeParameter *Type) *Type {
 	return c.getDefaultFromTypeParameter(typeParameter)
 }
 
-func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
-	return c.getResolutionModeOverride(node, reportErrors)
-}
-
 func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
 	return c.getEffectiveDeclarationFlags(n, flagsToCheck)
 }
@@ -327,15 +322,11 @@ func (c *Checker) GetUnionTypeEx(types []*Type, unionReduction UnionReduction) *
 }
 
 func (c *Checker) RequiresAddingImplicitUndefined(node *ast.Node) bool {
-	enclosingDeclaration := ast.FindAncestor(node, ast.IsDeclaration)
-	if enclosingDeclaration == nil {
-		enclosingDeclaration = ast.GetSourceFileOfNode(node).AsNode()
-	}
 	symbol := node.Symbol()
 	if symbol == nil {
 		return false
 	}
-	return c.GetEmitResolver().RequiresAddingImplicitUndefined(node, symbol, enclosingDeclaration)
+	return c.GetEmitResolver().RequiresAddingImplicitUndefined(node, symbol)
 }
 
 func (c *Checker) RemoveMissingOrUndefinedType(t *Type) *Type {

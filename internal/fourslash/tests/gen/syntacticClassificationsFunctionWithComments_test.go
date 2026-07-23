@@ -18,9 +18,9 @@ func TestSyntacticClassificationsFunctionWithComments(t *testing.T) {
  * This is my function.
  * There are many like it, but this one is mine.
  */
-function myFunction(/* x */ x: any) {
+function myFunction(/* x */ x: any)
     local y = x ? x++ : ++x;
-}
+end
 // end of file`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

@@ -20,7 +20,7 @@ func TestInlayHintsElementAccess(t *testing.T) {
 declare mySymbol: MySymbol;
 
 local foo = {
-	[mySymbol["my dispose"]] = () => {}
+	[mySymbol["my dispose"]] = function() end
 }
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

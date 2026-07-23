@@ -15,7 +15,7 @@ func TestCompletionListInMiddleOfIdentifierInArrowFunction01(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `xyz => x/*1*/y`
+	const content = `function(xyz) return x/*1*/y end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

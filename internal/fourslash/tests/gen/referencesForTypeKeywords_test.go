@@ -15,7 +15,7 @@ func TestReferencesForTypeKeywords(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {}
-function f<T /*typeParam_extendsKeyword*/extends I>() {}
+function f<T /*typeParam_extendsKeyword*/extends I>() end
 type A1<T, U> = T /*conditionalType_extendsKeyword*/extends U ? 1 : 0;
 type A2<T> = T extends /*inferType_inferKeyword*/infer U ? 1 : 0;
 type A3<T> = { [P /*mappedType_inOperator*/in keyof T]: 1 };

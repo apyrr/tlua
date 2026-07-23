@@ -20,18 +20,18 @@ func TestQuickInfoForJSDocCodefence(t *testing.T) {
  * 1 + 2
  * ` + "`" + `` + "`" + `` + "`" + `
  */
-function fo/*1*/o() {
+function fo/*1*/o()
     return '2';
-}
+end
 /**
  * @example
  * ` + "`" + `` + "`" + `
  * 1 + 2
  * ` + "`" + `
  */
-function bo/*2*/o() {
+function bo/*2*/o()
     return '2';
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineHover(t)

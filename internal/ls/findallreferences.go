@@ -256,7 +256,6 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 	}
 
 	if node.Parent.Name() == node || // node is name of declaration, use parent
-		node.Parent.Kind == ast.KindConstructor ||
 		node.Parent.Kind == ast.KindExportAssignment ||
 		// Property name of the import export specifier or binding pattern, use parent
 		((ast.IsImportOrExportSpecifier(node.Parent) || node.Parent.Kind == ast.KindBindingElement) && node.Parent.PropertyName() == node) ||
@@ -388,10 +387,10 @@ func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, 
 }
 
 func getSymbolScope(symbol *ast.Symbol) *ast.Node {
-	// If this is the symbol of a named function expression or named class expression,
+	// If this is the symbol of a named function expression,
 	// then named references are limited to its own scope.
 	valueDeclaration := symbol.ValueDeclaration
-	if valueDeclaration != nil && (valueDeclaration.Kind == ast.KindFunctionExpression || valueDeclaration.Kind == ast.KindClassExpression) {
+	if valueDeclaration != nil && valueDeclaration.Kind == ast.KindFunctionExpression {
 		return valueDeclaration
 	}
 
@@ -400,15 +399,7 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 	}
 
 	declarations := symbol.Declarations
-	// If this is private property or method, the scope is the containing class
 	if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 {
-		privateDeclaration := core.Find(declarations, func(d *ast.Node) bool {
-			return ast.HasModifier(d, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(d)
-		})
-		if privateDeclaration != nil {
-			return ast.FindAncestorKind(privateDeclaration, ast.KindClassDeclaration)
-		}
-		// Else this is a public property and could be accessed from anywhere.
 		return nil
 	}
 
@@ -544,24 +535,11 @@ func isDefinitionVisible(emitResolver *checker.EmitResolver, declaration *ast.No
 		return isDefinitionVisible(emitResolver, declaration.Parent)
 	}
 
-	// Handle some exceptions here like arrow function, members of class and object literal expression which are technically not visible but we want the definition to be determined by its parent
+	// Initializer expressions inherit the visibility of their parent declaration.
 	switch declaration.Kind {
-	case ast.KindPropertyDeclaration,
-		ast.KindGetAccessor,
-		ast.KindSetAccessor,
-		ast.KindMethodDeclaration:
-		// Private/protected properties/methods are not visible
-		if ast.HasModifier(declaration, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifier(declaration.Name()) {
-			return false
-		}
-		// Public properties/methods are visible if its parents are visible, so:
-		// falls through
-		fallthrough
-	case ast.KindConstructor,
-		ast.KindPropertyAssignment,
+	case ast.KindPropertyAssignment,
 		ast.KindShorthandPropertyAssignment,
 		ast.KindObjectLiteralExpression,
-		ast.KindClassExpression,
 		ast.KindArrowFunction,
 		ast.KindFunctionExpression:
 		return isDefinitionVisible(emitResolver, declaration.Parent)
@@ -974,8 +952,6 @@ func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
 		source = node.Parent
 	} else if ast.IsLiteralComputedPropertyDeclarationName(node) {
 		source = node.Parent.Parent
-	} else if node.Kind == ast.KindConstructorKeyword && ast.IsConstructorDeclaration(node.Parent) {
-		source = node.Parent.Parent
 	}
 
 	// !!!
@@ -1189,8 +1165,7 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		}
 	}
 
-	// constructors should use the class symbol, detected by name, if present
-	symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
+	symbol := checker.GetSymbolAtLocation(node)
 	// Could not find a symbol e.g. unknown identifier
 	if symbol == nil {
 		// String literal might be a property (and thus have a symbol), so do this here rather than in getReferencedSymbolsSpecial.
@@ -1331,10 +1306,6 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 		return getAllReferencesForImportMeta(sourceFiles)
 	}
 
-	if node.Kind == ast.KindStaticKeyword && node.Parent.Kind == ast.KindClassStaticBlockDeclaration {
-		return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: node}, references: []*ReferenceEntry{newNodeEntry(node)}}}
-	}
-
 	// Labels
 	if ast.IsJumpStatementTarget(node) {
 		// if we have a label definition, look within its block for references, if not, then
@@ -1352,10 +1323,6 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 
 	if isThis(node) {
 		return getReferencesForThisKeyword(node, sourceFiles /*, cancellationToken*/)
-	}
-
-	if node.Kind == ast.KindSuperKeyword {
-		return getReferencesForSuperKeyword(node)
 	}
 
 	return nil
@@ -1382,31 +1349,19 @@ func getLabelReferencesInNode(container *ast.Node, targetLabel *ast.Node) []*Sym
 
 func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
 	searchSpaceNode := ast.GetThisContainer(thisOrSuperKeyword, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+	if searchSpaceNode == nil {
+		return nil
+	}
 
-	// Whether 'this' occurs in a static context within a class.
-	staticFlag := ast.ModifierFlagsStatic
 	isParameterName := func(node *ast.Node) bool {
 		return node.Kind == ast.KindIdentifier && node.Parent.Kind == ast.KindParameter && node.Parent.Name() == node
 	}
 
-	switch searchSpaceNode.Kind {
-	case ast.KindMethodDeclaration, ast.KindMethodSignature,
-		ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor:
-		if (searchSpaceNode.Kind == ast.KindMethodDeclaration || searchSpaceNode.Kind == ast.KindMethodSignature) && ast.IsObjectLiteralMethod(searchSpaceNode) {
-			staticFlag &= searchSpaceNode.ModifierFlags()
-			searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning object literals
-			break
-		}
-		staticFlag &= searchSpaceNode.ModifierFlags()
-		searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning class
-	case ast.KindSourceFile:
+	if searchSpaceNode.Kind == ast.KindSourceFile {
 		if ast.IsExternalModule(searchSpaceNode.AsSourceFile()) || isParameterName(thisOrSuperKeyword) {
 			return nil
 		}
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		// Computed properties in classes are not handled here because references to this are illegal,
-		// so there is no point finding references to them.
-	default:
+	} else if searchSpaceNode.Kind != ast.KindFunctionDeclaration && searchSpaceNode.Kind != ast.KindFunctionExpression {
 		return nil
 	}
 
@@ -1424,18 +1379,12 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 						return false
 					}
 					container := ast.GetThisContainer(node /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/, false)
-					if !ast.CanHaveSymbol(container) {
+					if container == nil || !ast.CanHaveSymbol(container) {
 						return false
 					}
 					switch searchSpaceNode.Kind {
 					case ast.KindFunctionExpression, ast.KindFunctionDeclaration:
 						return searchSpaceNode.Symbol() == container.Symbol()
-					case ast.KindMethodDeclaration, ast.KindMethodSignature:
-						return ast.IsObjectLiteralMethod(searchSpaceNode) && searchSpaceNode.Symbol() == container.Symbol()
-					case ast.KindClassExpression, ast.KindClassDeclaration, ast.KindObjectLiteralExpression:
-						// Make sure the container belongs to the same class/object literals
-						// and has the appropriate static modifier from the original container.
-						return container.Parent != nil && ast.CanHaveSymbol(container.Parent) && searchSpaceNode.Symbol() == container.Parent.Symbol() && ast.IsStatic(container) == (staticFlag != ast.ModifierFlagsNone)
 					case ast.KindSourceFile:
 						return container.Kind == ast.KindSourceFile && !ast.IsExternalModule(container.AsSourceFile()) && !isParameterName(node)
 					}
@@ -1456,42 +1405,6 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 		thisParameter = thisOrSuperKeyword
 	}
 	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindThis, thisParameter, searchSpaceNode.Symbol(), references)}
-}
-
-func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
-	searchSpaceNode := ast.GetSuperContainer(superKeyword, false /*stopOnFunctions*/)
-	if searchSpaceNode == nil {
-		return nil
-	}
-	// Whether 'super' occurs in a static context within a class.
-	staticFlag := ast.ModifierFlagsStatic
-
-	switch searchSpaceNode.Kind {
-	case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor:
-		staticFlag &= searchSpaceNode.ModifierFlags()
-		searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning class
-	default:
-		return nil
-	}
-
-	sourceFile := ast.GetSourceFileOfNode(searchSpaceNode)
-	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "super", searchSpaceNode), func(node *ast.Node) *ReferenceEntry {
-		if node.Kind != ast.KindSuperKeyword {
-			return nil
-		}
-
-		container := ast.GetSuperContainer(node, false /*stopOnFunctions*/)
-
-		// If we have a 'super' container, we must have an enclosing class.
-		// Now make sure the owning class is the same as the search-space
-		// and has the same static qualifier as the original 'super's owner.
-		if container != nil && ast.IsStatic(container) == (staticFlag != ast.ModifierFlagsNone) && container.Parent.Symbol() == searchSpaceNode.Symbol() {
-			return newNodeEntry(node)
-		}
-		return nil
-	})
-
-	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindSymbol, nil, searchSpaceNode.Symbol(), references)}
 }
 
 func getAllReferencesForImportMeta(sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
@@ -1737,24 +1650,6 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 }
 
 // -- Core algorithm for find all references --
-func getSpecialSearchKind(node *ast.Node) string {
-	if node == nil {
-		return "none"
-	}
-	switch node.Kind {
-	case ast.KindConstructor, ast.KindConstructorKeyword:
-		return "constructor"
-	case ast.KindIdentifier:
-		if ast.IsClassLike(node.Parent) {
-			debug.Assert(node.Parent.Name() == node)
-			return "class"
-		}
-		fallthrough
-	default:
-		return "none"
-	}
-}
-
 func getReferencedSymbolsForSymbol(ctx context.Context, program *compiler.Program, originalSymbol *ast.Symbol, node *ast.Node, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string], checker *checker.Checker, options refOptions) []*SymbolAndEntries {
 	// Core find-all-references algorithm for a normal symbol.
 
@@ -1813,7 +1708,6 @@ type inheritKey struct {
 type refState struct {
 	sourceFiles                  []*ast.SourceFile
 	sourceFilesSet               *collections.Set[string]
-	specialSearchKind            string // "none", "constructor", or "class"
 	checker                      *checker.Checker
 	ctx                          context.Context
 	program                      *compiler.Program
@@ -1832,7 +1726,6 @@ func newState(ctx context.Context, program *compiler.Program, sourceFiles []*ast
 	return &refState{
 		sourceFiles:             sourceFiles,
 		sourceFilesSet:          sourceFilesSet,
-		specialSearchKind:       getSpecialSearchKind(node),
 		checker:                 checker,
 		ctx:                     ctx,
 		program:                 program,
@@ -1930,74 +1823,6 @@ func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *
 		for _, declaration := range shorthandSymbol.Declarations {
 			if ast.GetMeaningFromDeclaration(declaration)&ast.SemanticMeaningValue != 0 {
 				addReference(declaration)
-			}
-		}
-	}
-}
-
-func isMethodOrAccessor(node *ast.Node) bool {
-	return node.Kind == ast.KindMethodDeclaration || node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor
-}
-
-func tryGetClassByExtendingIdentifier(node *ast.Node) *ast.ClassLikeDeclaration {
-	return ast.TryGetClassExtendingExpressionWithTypeArguments(ast.ClimbPastPropertyAccess(node).Parent)
-}
-
-func getClassConstructorSymbol(classSymbol *ast.Symbol) *ast.Symbol {
-	if classSymbol.Members == nil {
-		return nil
-	}
-	return classSymbol.Members[ast.InternalSymbolNameConstructor]
-}
-
-func hasOwnConstructor(classDeclaration *ast.ClassLikeDeclaration) bool {
-	return getClassConstructorSymbol(classDeclaration.Symbol()) != nil
-}
-
-func findOwnConstructorReferences(classSymbol *ast.Symbol, sourceFile *ast.SourceFile, addNode func(*ast.Node)) {
-	constructorSymbol := getClassConstructorSymbol(classSymbol)
-	if constructorSymbol != nil && len(constructorSymbol.Declarations) > 0 {
-		for _, decl := range constructorSymbol.Declarations {
-			if decl.Kind == ast.KindConstructor {
-				if ctrKeyword := astnav.FindChildOfKind(decl, ast.KindConstructorKeyword, sourceFile); ctrKeyword != nil {
-					addNode(ctrKeyword)
-				}
-			}
-		}
-	}
-
-	if classSymbol.Exports != nil {
-		for _, member := range classSymbol.Exports {
-			decl := member.ValueDeclaration
-			if decl != nil && decl.Kind == ast.KindMethodDeclaration {
-				body := decl.Body()
-				if body != nil {
-					forEachDescendantOfKind(body, ast.KindThisKeyword, func(thisKeyword *ast.Node) {
-						if ast.IsNewExpressionTarget(thisKeyword, false, false) {
-							addNode(thisKeyword)
-						}
-					})
-				}
-			}
-		}
-	}
-}
-
-func findSuperConstructorAccesses(classDeclaration *ast.ClassLikeDeclaration, addNode func(*ast.Node)) {
-	constructorSymbol := getClassConstructorSymbol(classDeclaration.Symbol())
-	if constructorSymbol == nil || len(constructorSymbol.Declarations) == 0 {
-		return
-	}
-
-	for _, decl := range constructorSymbol.Declarations {
-		if decl.Kind == ast.KindConstructor {
-			body := decl.Body()
-			if body != nil {
-				forEachDescendantOfKind(body, ast.KindSuperKeyword, func(node *ast.Node) {
-					if ast.IsCallExpressionTarget(node, false, false) {
-						addNode(node)
-					}
-				})
 			}
 		}
 	}
@@ -2167,15 +1992,8 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 		return
 	}
 
-	switch state.specialSearchKind {
-	case "none":
-		if addReferencesHere {
-			state.addReference(referenceLocation, relatedSymbol, relatedSymbolKind)
-		}
-	case "constructor":
-		state.addConstructorReferences(referenceLocation, relatedSymbol, search, addReferencesHere)
-	case "class":
-		state.addClassStaticThisReferences(referenceLocation, relatedSymbol, search, addReferencesHere)
+	if addReferencesHere {
+		state.addReference(referenceLocation, relatedSymbol, relatedSymbolKind)
 	}
 
 	// Use the parent symbol if the location is commonjs require syntax on javascript files only.
@@ -2190,78 +2008,6 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 	}
 
 	state.getImportOrExportReferences(referenceLocation, referenceSymbol, search)
-}
-
-func (state *refState) addConstructorReferences(referenceLocation *ast.Node, symbol *ast.Symbol, search *refSearch, addReferencesHere bool) {
-	if ast.IsNewExpressionTarget(referenceLocation, false, false) && addReferencesHere {
-		state.addReference(referenceLocation, symbol, entryKindNode)
-	}
-
-	pusher := func() func(*ast.Node, entryKind) {
-		return state.referenceAdder(search.symbol)
-	}
-
-	if ast.IsClassLike(referenceLocation.Parent) {
-		// This is the class declaration containing the constructor.
-		sourceFile := ast.GetSourceFileOfNode(referenceLocation)
-		findOwnConstructorReferences(search.symbol, sourceFile, func(n *ast.Node) {
-			pusher()(n, entryKindNode)
-		})
-	} else {
-		// If this class appears in `extends C`, then the extending class' "super" calls are references.
-		if classExtending := tryGetClassByExtendingIdentifier(referenceLocation); classExtending != nil {
-			findSuperConstructorAccesses(classExtending, func(n *ast.Node) {
-				pusher()(n, entryKindNode)
-			})
-			state.findInheritedConstructorReferences(classExtending)
-		}
-	}
-}
-
-func (state *refState) addClassStaticThisReferences(referenceLocation *ast.Node, symbol *ast.Symbol, search *refSearch, addReferencesHere bool) {
-	if addReferencesHere {
-		state.addReference(referenceLocation, symbol, entryKindNode)
-	}
-
-	classLike := referenceLocation.Parent
-	if state.options.use == referenceUseRename || !ast.IsClassLike(classLike) {
-		return
-	}
-
-	addRef := state.referenceAdder(search.symbol)
-	members := classLike.Members()
-	if members == nil {
-		return
-	}
-	for _, member := range members {
-		if !(isMethodOrAccessor(member) && ast.HasStaticModifier(member)) {
-			continue
-		}
-		body := member.Body()
-		if body != nil {
-			var cb func(*ast.Node)
-			cb = func(node *ast.Node) {
-				if node.Kind == ast.KindThisKeyword {
-					addRef(node, entryKindNode)
-				} else if !ast.IsFunctionLike(node) && !ast.IsClassLike(node) {
-					node.ForEachChild(func(child *ast.Node) bool {
-						cb(child)
-						return false
-					})
-				}
-			}
-			cb(body)
-		}
-	}
-}
-
-func (state *refState) findInheritedConstructorReferences(classDeclaration *ast.ClassLikeDeclaration) {
-	if hasOwnConstructor(classDeclaration) {
-		return
-	}
-	classSymbol := classDeclaration.Symbol()
-	search := state.createSearch(nil, classSymbol, ImpExpKindUnknown, "", nil)
-	state.getReferencesInContainerOrFiles(classSymbol, search)
 }
 
 func (state *refState) getImportOrExportReferences(referenceLocation *ast.Node, referenceSymbol *ast.Symbol, search *refSearch) {
@@ -2572,15 +2318,6 @@ func (state *refState) forEachRelatedSymbol(
 
 	if res := fromRoot(symbol); res != nil {
 		return res, entryKindNode
-	}
-
-	if symbol.ValueDeclaration != nil && ast.IsParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.ValueDeclaration.Parent) {
-		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.Name)
-		debug.Assert(
-			paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsClassMember != 0,
-			"GetSymbolsOfParameterPropertyDeclaration must return (parameter, member) pair",
-		)
-		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNode
 	}
 
 	if exportSpecifier := ast.GetDeclarationOfKind(symbol, ast.KindExportSpecifier); exportSpecifier != nil && (!isForRenamePopulateSearchSymbolSet || exportSpecifier.PropertyName() == nil) {

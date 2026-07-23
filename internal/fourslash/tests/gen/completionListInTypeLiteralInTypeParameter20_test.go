@@ -17,8 +17,8 @@ func TestCompletionListInTypeLiteralInTypeParameter20(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: preserve
 // @filename: a.tsx
-local Component1 = <T extends { x: 'one' | 'two' }>() => <></>;
-local Component2 = <T extends 'one' | 'two'>() => <></>;
+local Component1 = function<T extends { x: 'one' | 'two' }>() return <></> end;
+local Component2 = function<T extends 'one' | 'two'>() return <></> end;
 
 <Component1<{ x: '/*0*/' }>></Component>;
 <Component1<{ x: '/*1*/' }>/>;

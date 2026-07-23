@@ -16,7 +16,7 @@ func TestAllowLateBoundSymbolsOverwriteEarlyBoundSymbols(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export {};
 local prop = "abc";
-function foo(): void {};
+function foo(): void end;
 foo.abc = 10;
 foo[prop] = 10;
 interface T0 {

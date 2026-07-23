@@ -23,13 +23,13 @@ type B = {
   bar: unknown;
 };
 
-function test1(arg: A | B) {}
+function test1(arg: A | B) end
 
 test1({
   foo/*1*/ = 1,
 });
 
-function test2<T extends A>(arg: T | B) {}
+function test2<T extends A>(arg: T | B) end
 
 test2({
   foo/*2*/ = 2,

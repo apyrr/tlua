@@ -14,8 +14,8 @@ func TestSignatureHelpTaggedTemplatesNegatives1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f(templateStrings, x, y, z) { return 10; }
-function g(templateStrings, x, y, z) { return ""; }
+	const content = `function f(templateStrings, x, y, z) return 10; end
+function g(templateStrings, x, y, z) return ""; end
 
 /*1*/f/*2*/ /*3*/` + "`" + ` qwerty ${ 123 } asdf ${   41234   }  zxcvb ${ g ` + "`" + `    ` + "`" + ` }     ` + "`" + `/*4*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

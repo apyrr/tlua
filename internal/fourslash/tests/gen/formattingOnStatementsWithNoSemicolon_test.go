@@ -17,9 +17,9 @@ func TestFormattingOnStatementsWithNoSemicolon(t *testing.T) {
 	const content = `/*1*/do
      { local a/*2*/
 /*3*/}   while (1)
-/*4*/function f() {
+/*4*/function f()
 /*5*/    local s = 1
-/*6*/            }
+/*6*/            end
 /*7*/switch (t) {
 /*8*/    case 1:
 /*9*/{
@@ -37,7 +37,7 @@ func TestFormattingOnStatementsWithNoSemicolon(t *testing.T) {
 /*21*/for(local j=0;j<10;j++){
 /*22*/j-=i
 /*23*/}/*24*/}
-/*25*/function foo() {
+/*25*/function foo()
 /*26*/try {
 /*27*/x+=2
 /*28*/}
@@ -46,13 +46,13 @@ func TestFormattingOnStatementsWithNoSemicolon(t *testing.T) {
 /*31*/}finally {
 /*32*/x+=2
 /*33*/}
-/*34*/}
+/*34*/ end
 /*35*/do     { local a }   while (1)
-    foo(function (file) {/*49*/
+    foo(function (file) /*49*/
         return 0/*50*/
-    }).then(function (doc) {/*51*/
+    end).then(function (doc) /*51*/
         return 1/*52*/
-    });/*53*/
+    end);/*53*/
 /*54*/if(1)
 /*55*/if(1)
 /*56*/x++
@@ -81,11 +81,11 @@ func TestFormattingOnStatementsWithNoSemicolon(t *testing.T) {
 	f.GoToMarker(t, "3")
 	f.VerifyCurrentLineContent(t, `} while (1)`)
 	f.GoToMarker(t, "4")
-	f.VerifyCurrentLineContent(t, `function f() {`)
+	f.VerifyCurrentLineContent(t, `function f() `)
 	f.GoToMarker(t, "5")
 	f.VerifyCurrentLineContent(t, `    local s = 1`)
 	f.GoToMarker(t, "6")
-	f.VerifyCurrentLineContent(t, `}`)
+	f.VerifyCurrentLineContent(t, ` end`)
 	f.GoToMarker(t, "7")
 	f.VerifyCurrentLineContent(t, `switch (t) {`)
 	f.GoToMarker(t, "8")
@@ -123,7 +123,7 @@ func TestFormattingOnStatementsWithNoSemicolon(t *testing.T) {
 	f.GoToMarker(t, "24")
 	f.VerifyCurrentLineContent(t, `    }`)
 	f.GoToMarker(t, "25")
-	f.VerifyCurrentLineContent(t, `function foo() {`)
+	f.VerifyCurrentLineContent(t, `function foo() `)
 	f.GoToMarker(t, "26")
 	f.VerifyCurrentLineContent(t, `    try {`)
 	f.GoToMarker(t, "27")
@@ -141,19 +141,19 @@ func TestFormattingOnStatementsWithNoSemicolon(t *testing.T) {
 	f.GoToMarker(t, "33")
 	f.VerifyCurrentLineContent(t, `    }`)
 	f.GoToMarker(t, "34")
-	f.VerifyCurrentLineContent(t, `}`)
+	f.VerifyCurrentLineContent(t, ` end`)
 	f.GoToMarker(t, "35")
 	f.VerifyCurrentLineContent(t, `do { local a } while (1)`)
 	f.GoToMarker(t, "49")
-	f.VerifyCurrentLineContent(t, `foo(function(file) {`)
+	f.VerifyCurrentLineContent(t, `foo(function(file) `)
 	f.GoToMarker(t, "50")
 	f.VerifyCurrentLineContent(t, `    return 0`)
 	f.GoToMarker(t, "51")
-	f.VerifyCurrentLineContent(t, `}).then(function(doc) {`)
+	f.VerifyCurrentLineContent(t, ` end).then(function(doc) `)
 	f.GoToMarker(t, "52")
 	f.VerifyCurrentLineContent(t, `    return 1`)
 	f.GoToMarker(t, "53")
-	f.VerifyCurrentLineContent(t, `});`)
+	f.VerifyCurrentLineContent(t, ` end);`)
 	f.GoToMarker(t, "54")
 	f.VerifyCurrentLineContent(t, `if (1)`)
 	f.GoToMarker(t, "55")

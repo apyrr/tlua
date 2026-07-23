@@ -32,7 +32,7 @@ func TestCompletionsJSDocNoCrash2(t *testing.T) {
     </file>
   </example>
  */
-local ngShowDirective = ['$animate', function($animate) {}];`
+local ngShowDirective = ['$animate', function($animate) end];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

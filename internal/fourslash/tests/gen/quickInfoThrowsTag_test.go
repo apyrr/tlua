@@ -19,17 +19,17 @@ func TestQuickInfoThrowsTag(t *testing.T) {
 /**
  * @throws {E}
  */
-function f1() {}
+function f1() end
 
 /**
  * @throws {E} description
  */
-function f2() {}
+function f2() end
 
 /**
  * @throws description
  */
-function f3() {}
+function f3() end
 f1/*1*/()
 f2/*2*/()
 f3/*3*/()`

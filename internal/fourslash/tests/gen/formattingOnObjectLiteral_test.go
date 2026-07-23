@@ -21,13 +21,13 @@ boo: /*4*/1 + 5}/*5*/;
 local x2 = /*6*/{foo/*7*/: 1,
 bar: /*8*/"tt",boo:1+5}/*9*/;
 
-function Foo() {/*10*/
+function Foo() /*10*/
 local typeICalc = {/*11*/
 clear: {/*12*/
 "()": [1, 2, 3]/*13*/
 }/*14*/
 }/*15*/
-}/*16*/
+end/*16*/
 
 // Rule for object literal members for the "value" of the memebr to follow the indent/*17*/
 // of the member, i.e. the relative position of the value is maintained when the member/*18*/
@@ -63,7 +63,7 @@ local y = {};/*27*/`
 	f.GoToMarker(t, "9")
 	f.VerifyCurrentLineContent(t, `};`)
 	f.GoToMarker(t, "10")
-	f.VerifyCurrentLineContent(t, `function Foo() {`)
+	f.VerifyCurrentLineContent(t, `function Foo() `)
 	f.GoToMarker(t, "11")
 	f.VerifyCurrentLineContent(t, `    local typeICalc = {`)
 	f.GoToMarker(t, "12")
@@ -75,7 +75,7 @@ local y = {};/*27*/`
 	f.GoToMarker(t, "15")
 	f.VerifyCurrentLineContent(t, `    }`)
 	f.GoToMarker(t, "16")
-	f.VerifyCurrentLineContent(t, `}`)
+	f.VerifyCurrentLineContent(t, ` end`)
 	f.GoToMarker(t, "17")
 	f.VerifyCurrentLineContent(t, `// Rule for object literal members for the "value" of the memebr to follow the indent`)
 	f.GoToMarker(t, "18")

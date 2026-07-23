@@ -19,14 +19,14 @@ func TestIndirectClassInstantiation(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: something.lua
-function TestObj(){
+function TestObj()
     this.property = "value";
-}
+end
 local constructor = TestObj;
 local instance = new constructor();
 instance./*a*/
-local class2 = function() { };
-class2.prototype.blah = function() { };
+local class2 = function() end;
+class2.prototype.blah = function() end;
 local inst2 = new class2();
 inst2.blah/*b*/;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

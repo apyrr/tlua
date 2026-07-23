@@ -12,11 +12,11 @@ func TestCompletionListInClosedFunction05(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(x: string, y: number, z: boolean) {
-    function bar(a: number, b: string = "hello", c: typeof x = "hello") {
+	const content = `function foo(x: string, y: number, z: boolean)
+    function bar(a: number, b: string = "hello", c: typeof x = "hello")
         local v = /*1*/
-    }
-}`
+    end
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

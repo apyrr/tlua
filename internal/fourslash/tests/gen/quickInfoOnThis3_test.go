@@ -17,18 +17,18 @@ func TestQuickInfoOnThis3(t *testing.T) {
 	const content = `interface Restricted {
     n: number;
 }
-function implicitAny(x: number): void {
+function implicitAny(x: number): void
     return th/*1*/is;
-}
-function explicitVoid(th/*2*/is: void, x: number): void {
+end
+function explicitVoid(th/*2*/is: void, x: number): void
     return th/*3*/is;
-}
-function explicitInterface(th/*4*/is: Restricted): void {
+end
+function explicitInterface(th/*4*/is: Restricted): void
     console.log(thi/*5*/s);
-}
-function explicitLiteral(th/*6*/is: { n: number }): void {
+end
+function explicitLiteral(th/*6*/is: { n: number }): void
     console.log(th/*7*/is);
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "any", "")

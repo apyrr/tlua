@@ -16,7 +16,7 @@ func TestCompletionListInTypeLiteralInTypeParameter19(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo<T extends 'one' | 'two'> {}
-function foo<T extends 'one' | 'two'>() {}
+function foo<T extends 'one' | 'two'>() end
 declare function tag<T extends 'one' | 'two'>(x: TemplateStringsArray): void;
 declare function decorator<T extends 'one' | 'two'>(...args: unknown[]): never
 

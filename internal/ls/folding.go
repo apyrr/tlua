@@ -166,15 +166,8 @@ func visitNode(ctx context.Context, n *ast.Node, depthRemaining int, sourceFile 
 			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(ctx, statements.End(), sourceFile, l)...)
 		}
 	}
-	if ast.IsClassLike(n) || ast.IsInterfaceDeclaration(n) {
-		var members *ast.NodeList
-		if ast.IsClassDeclaration(n) {
-			members = n.AsClassDeclaration().Members
-		} else if ast.IsClassExpression(n) {
-			members = n.AsClassExpression().Members
-		} else {
-			members = n.AsInterfaceDeclaration().Members
-		}
+	if ast.IsInterfaceDeclaration(n) {
+		members := n.AsInterfaceDeclaration().Members
 		if members != nil {
 			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(ctx, members.End(), sourceFile, l)...)
 		}
@@ -349,19 +342,8 @@ func getOutliningSpanForNode(ctx context.Context, n *ast.Node, sourceFile *ast.S
 		// If the latter, we want to collapse the block, but consider its hint span
 		// to be the entire span of the parent.
 		switch n.Parent.Kind {
-		case ast.KindDoStatement, ast.KindForOfStatement, ast.KindIfStatement, ast.KindWhileStatement, ast.KindWithStatement, ast.KindCatchClause:
+		case ast.KindForOfStatement, ast.KindIfStatement, ast.KindWhileStatement:
 			return spanForNode(ctx, n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
-		case ast.KindTryStatement:
-			// Could be the try-block, or the finally-block.
-			tryStatement := n.Parent.AsTryStatement()
-			if tryStatement.TryBlock == n {
-				return spanForNode(ctx, n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
-			} else if tryStatement.FinallyBlock == n {
-				if span := spanForNode(ctx, n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l); span != nil {
-					return span
-				}
-			}
-			fallthrough
 		default:
 			// Block was a standalone block.  In this case we want to only collapse
 			// the span of the block, independent of any parent span.
@@ -369,7 +351,7 @@ func getOutliningSpanForNode(ctx context.Context, n *ast.Node, sourceFile *ast.S
 		}
 	case ast.KindModuleBlock:
 		return spanForNode(ctx, n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
-	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeLiteral, ast.KindObjectBindingPattern:
+	case ast.KindInterfaceDeclaration, ast.KindTypeLiteral, ast.KindObjectBindingPattern:
 		return spanForNode(ctx, n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 	case ast.KindTupleType:
 		return spanForNode(ctx, n, ast.KindOpenBracketToken, !ast.IsTupleTypeNode(n.Parent) /*useFullStart*/, sourceFile, l)
@@ -391,7 +373,7 @@ func getOutliningSpanForNode(ctx context.Context, n *ast.Node, sourceFile *ast.S
 		return spanForCallExpression(ctx, n, sourceFile, l)
 	case ast.KindParenthesizedExpression:
 		return spanForParenthesizedExpression(ctx, n, sourceFile, l)
-	case ast.KindNamedImports, ast.KindNamedExports, ast.KindImportAttributes:
+	case ast.KindNamedImports, ast.KindNamedExports:
 		return spanForImportExportElements(ctx, n, sourceFile, l)
 	}
 	return nil
@@ -404,8 +386,6 @@ func spanForImportExportElements(ctx context.Context, node *ast.Node, sourceFile
 		elements = node.AsNamedImports().Elements
 	case ast.KindNamedExports:
 		elements = node.AsNamedExports().Elements
-	case ast.KindImportAttributes:
-		elements = node.AsImportAttributes().Attributes
 	}
 	if elements == nil || len(elements.Nodes) == 0 {
 		return nil

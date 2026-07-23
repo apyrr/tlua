@@ -22,11 +22,11 @@ func TestPromiseTyping2(t *testing.T) {
     done? <U>(success?: (value: T) => any, error?: (error: any) => any, progress?: (progress: any) => void ): void;
 }
 local p1: IPromise<number> = null;
-p/*1*/1.then(function (x/*2*/x) { }); 
-local p/*3*/2 = p1.then(function (x/*4*/x) { return "hello"; })
-local p/*5*/3 = p2.then(function (x/*6*/x) {
+p/*1*/1.then(function (x/*2*/x) end); 
+local p/*3*/2 = p1.then(function (x/*4*/x) return "hello"; end)
+local p/*5*/3 = p2.then(function (x/*6*/x)
     return x/*7*/x;
-});`
+end);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "local p1: IPromise<number>", "")

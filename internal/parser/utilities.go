@@ -41,7 +41,7 @@ func tokenIsLuaMethodName(token ast.Kind) bool {
 		ast.KindGotoKeyword, ast.KindIfKeyword, ast.KindInKeyword, ast.KindLocalKeyword,
 		ast.KindNilKeyword, ast.KindRepeatKeyword, ast.KindReturnKeyword, ast.KindThenKeyword,
 		ast.KindTrueKeyword, ast.KindUntilKeyword, ast.KindWhileKeyword,
-		ast.KindWithKeyword, ast.KindThrowKeyword:
+		ast.KindThrowKeyword:
 		return false
 	}
 	return tokenIsIdentifierOrKeyword(token)

@@ -21,13 +21,13 @@ func TestMemberListOfVarInArrowExpression(t *testing.T) {
 }
 local map: IMap<{ a1: string; }[]>;
 local categories: string[];
-each(categories, category => {
+each(categories, function(category)
     local changes = map[category];
     changes[0]./*1*/a1;
-    return each(changes, change => {
-    });
-});
-function each<T>(items: T[], handler: (item: T) => void) { }`
+    return each(changes, function(change)
+    end);
+end);
+function each<T>(items: T[], handler: (item: T) => void) end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) a1: string", "")

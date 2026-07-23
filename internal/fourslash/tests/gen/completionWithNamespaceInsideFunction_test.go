@@ -16,7 +16,7 @@ func TestCompletionWithNamespaceInsideFunction(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f() {
+	const content = `function f()
     namespace n {
         interface I {
             x: number
@@ -24,9 +24,9 @@ func TestCompletionWithNamespaceInsideFunction(t *testing.T) {
         /*1*/
     }
     /*2*/
-}
+end
 /*3*/
-function f2() {
+function f2()
     namespace n2 {
         class I2 {
             x: number
@@ -34,7 +34,7 @@ function f2() {
         /*11*/
     }
     /*22*/
-}
+end
 /*33*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

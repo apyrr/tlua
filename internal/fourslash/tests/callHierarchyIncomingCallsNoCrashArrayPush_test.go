@@ -10,21 +10,18 @@ import (
 func TestCallHierarchyIncomingCallsNoCrashArrayPush(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function splitNames(name: string) {
-  return (name || "").split(",").filter(Boolean);
-}
+	const content = `function splitNames(name: string)
+  return (name || "").split(",").filter(Boolean)
+end
 
-async function trim(packageNames: string[]) {
-  local nameOrPkgs = packageNames.filter(Boolean);
-  local names = [];
-  for (local nameOrPkg of nameOrPkgs) {
-    try {
-      names./*push*/push(nameOrPkg);
-    } catch (error) {
-    }
-  }
-  return names;
-}
+function trim(packageNames: string[])
+  local nameOrPkgs = packageNames.filter(Boolean)
+  local names = {}
+  for _, nameOrPkg in ipairs(nameOrPkgs) do
+    names./*push*/push(nameOrPkg)
+  end
+  return names
+end
 	`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

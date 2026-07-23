@@ -18,13 +18,13 @@ func TestQuickInfoJsDocTextFormatting1(t *testing.T) {
  * @param {number} var1 **Highlighted text**
  * @param {string} var2 Another **Highlighted text**
 */
-function f1(var1, var2) { }
+function f1(var1, var2) end
 
 /**
  * @param {number} var1 *Regular text with an asterisk
  * @param {string} var2 Another *Regular text with an asterisk
 */
-function f2(var1, var2) { }
+function f2(var1, var2) end
 
 /**
  * @param {number} var1 
@@ -32,7 +32,7 @@ function f2(var1, var2) { }
  * @param {string} var2 
  * Another *Regular text with an asterisk
 */
-function f3(var1, var2) { }
+function f3(var1, var2) end
 
 /**
  * @param {number} var1 
@@ -40,7 +40,7 @@ function f3(var1, var2) { }
  * @param {string} var2 
  * Another **Highlighted text**
 */
-function f4(var1, var2) { }
+function f4(var1, var2) end
 
 /**
  * @param {number} var1 
@@ -48,7 +48,7 @@ function f4(var1, var2) { }
  * @param {string} var2 
    Another **Highlighted text**
 */
-function f5(var1, var2) { }
+function f5(var1, var2) end
 
 f1(/*1*/);
 f2(/*2*/);

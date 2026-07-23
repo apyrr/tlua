@@ -22,16 +22,16 @@ local z2 = {
     y: 2
 };
 local z3 = (
-    () => { }  ,/*z3*/
-    () => { }
+    function() end  ,/*z3*/
+    function() end
     );
 local z4 = [
-    () => { } ,/*z4*/
-    () => { }
+    function() end ,/*z4*/
+    function() end
 ];
 local z5 = {
-    x: () => { } ,/*z5*/
-    y: () => { }
+    x: function() end ,/*z5*/
+    y: function() end
 }; `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
@@ -45,9 +45,9 @@ local z5 = {
 	f.GoToMarker(t, "z2")
 	f.VerifyCurrentLineContent(t, `    x: 1,`)
 	f.GoToMarker(t, "z3")
-	f.VerifyCurrentLineContent(t, `    () => { },`)
+	f.VerifyCurrentLineContent(t, `    function() end,`)
 	f.GoToMarker(t, "z4")
-	f.VerifyCurrentLineContent(t, `    () => { },`)
+	f.VerifyCurrentLineContent(t, `    function() end,`)
 	f.GoToMarker(t, "z5")
-	f.VerifyCurrentLineContent(t, `    x: () => { },`)
+	f.VerifyCurrentLineContent(t, `    x: function() end,`)
 }

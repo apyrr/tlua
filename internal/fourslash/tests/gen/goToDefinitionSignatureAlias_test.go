@@ -16,21 +16,21 @@ func TestGoToDefinitionSignatureAlias(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: preserve
 // @Filename: /a.tsx
-function /*f*/f() {}
+function /*f*/f() end
 local /*g*/g = f;
 local /*h*/h = g;
 [|/*useF*/f|]();
 [|/*useG*/g|]();
 [|/*useH*/h|]();
 local /*i*/i = () => 0;
-local /*iFn*/iFn = function () { return 0; };
+local /*iFn*/iFn = function () return 0; end;
 local /*j*/j = i;
 [|/*useI*/i|]();
 [|/*useIFn*/iFn|]();
 [|/*useJ*/j|]();
 local o = { /*m*/m: () => 0 };
 o.[|/*useM*/m|]();
-local oFn = { /*mFn*/mFn: function () { return 0; } };
+local oFn = { /*mFn*/mFn: function () return 0; end };
 oFn.[|/*useMFn*/mFn|]();
 class Component { /*componentCtr*/constructor(props: {}) {} }
 type ComponentClass = /*ComponentClass*/new () => Component;

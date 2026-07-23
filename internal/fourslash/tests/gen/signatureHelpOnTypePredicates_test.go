@@ -14,9 +14,9 @@ func TestSignatureHelpOnTypePredicates(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function f1(a: any): a is number {}
-function f2<T>(a: any): a is T {}
-function f3(a: any, ...b): a is number {}
+	const content = `function f1(a: any): a is number end
+function f2<T>(a: any): a is T end
+function f3(a: any, ...b): a is number end
 f1(/*1*/)
 f2(/*2*/)
 f3(/*3*/)`

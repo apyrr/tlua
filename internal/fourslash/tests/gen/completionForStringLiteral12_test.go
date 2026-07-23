@@ -18,7 +18,7 @@ func TestCompletionForStringLiteral12(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(x: "bla"): void;
 function foo(x: "bla"): void;
-function foo(x: string) {}
+function foo(x: string) end
 foo("[|/**/|]")`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

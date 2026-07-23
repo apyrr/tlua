@@ -16,8 +16,8 @@ func TestCompletionBeforeSemanticDiagnosticsInArrowFunction1(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local f4 = <T>(x: T/**/ ) => {
-}`
+	const content = `local f4 = function<T>(x: T/**/ )
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")

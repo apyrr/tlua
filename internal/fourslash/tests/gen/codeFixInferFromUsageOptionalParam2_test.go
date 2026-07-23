@@ -15,9 +15,9 @@ func TestCodeFixInferFromUsageOptionalParam2(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noImplicitAny: true
-function f([|a? |]){
+function f([|a? |])
     if (a < 9) return;
-}`
+end`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyRangeAfterCodeFix(t, `a?: number`, false, 0, 0)

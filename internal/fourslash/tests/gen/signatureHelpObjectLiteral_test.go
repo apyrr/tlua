@@ -14,7 +14,7 @@ func TestSignatureHelpObjectLiteral(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `local objectLiteral = { n = 5, s = "", f = (a: number, b: string) => "" };
+	const content = `local objectLiteral = { n = 5, s = "", f = function(a: number, b: string) return "" end };
 objectLiteral.f(/*objectLiteral1*/4, /*objectLiteral2*/"");`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
