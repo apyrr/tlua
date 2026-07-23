@@ -45,16 +45,16 @@ local firstMismatch: (() => string) = pair;
 
 //// [tluaMultiReturnAssignability.lua]
 function pair()
-    return 1, "a";
+  return 1, "a";
 end
 function triple()
-    return 1, "a", true;
+  return 1, "a", true;
 end
 function one()
-    return 1;
+  return 1;
 end
 function onePlusOptional()
-    return 1;
+  return 1;
 end
 function allOptional()
 end

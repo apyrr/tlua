@@ -85,7 +85,7 @@ end
 
 //// [/home/src/workspaces/project/src/filePresent.lua] *new* 
 function something()
-    return 10;
+  return 10;
 end
 
 //// [/home/src/workspaces/project/src/main.lua] *new* 
@@ -724,7 +724,7 @@ foo();
 
 //// [/home/src/workspaces/project/src/newFile.lua] *new* 
 function foo()
-    return 20;
+  return 20;
 end
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
@@ -964,7 +964,7 @@ Errors  Files
 //// [/home/src/workspaces/project/src/anotherFileWithSameReferenes.lua] *rewrite with same content*
 //// [/home/src/workspaces/project/src/fileNotFound.lua] *new* 
 function something2()
-    return 20;
+  return 20;
 end
 
 //// [/home/src/workspaces/project/src/main.lua] *rewrite with same content*

@@ -1459,6 +1459,9 @@ type SourceMapEmitResult struct {
 	GeneratedFile        string
 }
 
+// Lua output uses two spaces per indentation level.
+const emitIndentSize = 2
+
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	if tr := p.opts.Tracing; tr != nil {
 		defer tr.Push(tracing.PhaseEmit, "emit", nil, true)()
@@ -1478,7 +1481,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	newLine := p.Options().NewLine.GetNewLineCharacter()
 	writerPool := &sync.Pool{
 		New: func() any {
-			return printer.NewTextWriter(newLine, 0)
+			return printer.NewTextWriter(newLine, emitIndentSize)
 		},
 	}
 	wg := core.NewWorkGroup(p.SingleThreaded())

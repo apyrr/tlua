@@ -40,32 +40,32 @@ end
 //// [tluaBreakContinueErrors.lua]
 -- break outside any loop is a grammar error.
 function breakOutside()
-    break;
+  break;
 end
 -- continue outside any loop is a grammar error.
 function continueOutside()
-    continue;
+  continue;
 end
 -- break nested in a Lua if inside a Lua while is fine.
 function breakNested(flag)
-    while true do
-        if flag then
-            break;
-        end
-        flag = true;
+  while true do
+    if flag then
+      break;
     end
-    return 1;
+    flag = true;
+  end
+  return 1;
 end
 -- continue keeps working inside Lua loops (TS keyword, no rejection guard).
 function continueInLua(n)
-    local i = 0;
-    local total = 0;
-    while i < n do
-        i = i + 1;
-        if i == 2 then
-            continue;
-        end
-        total = total + i;
+  local i = 0;
+  local total = 0;
+  while i < n do
+    i = i + 1;
+    if i == 2 then
+      continue;
     end
-    return total;
+    total = total + i;
+  end
+  return total;
 end

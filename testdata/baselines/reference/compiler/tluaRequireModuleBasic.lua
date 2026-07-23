@@ -26,13 +26,13 @@ local missing = util.nope;
 //// [util.lua]
 local M = {};
 function M.clamp(n, lo, hi)
-    if n < lo then
-        return lo;
-    end
-    if n > hi then
-        return hi;
-    end
-    return n;
+  if n < lo then
+    return lo;
+  end
+  if n > hi then
+    return hi;
+  end
+  return n;
 end
 M.name = "util";
 return M;

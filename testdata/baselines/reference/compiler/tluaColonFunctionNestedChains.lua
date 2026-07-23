@@ -22,10 +22,10 @@ a.b.f(a, 1);
 local a = { b = {} };
 -- `self` takes the type of the whole chain before the colon, not of its root.
 function a.b:f(x)
-    return x;
+  return x;
 end
 function a.b:g()
-    return self.f(self, 1);
+  return self.f(self, 1);
 end
 local n = a.b.g(a.b);
 -- The root is not the receiver.

@@ -14,7 +14,7 @@ end
 
 //// [jsxNestedIndentation.lua]
 function Test()
-    return React.createElement(Child, nil,
-        React.createElement(Child, nil,
-            React.createElement(Child, nil)));
+  return React.createElement(Child, nil,
+    React.createElement(Child, nil,
+      React.createElement(Child, nil)));
 end

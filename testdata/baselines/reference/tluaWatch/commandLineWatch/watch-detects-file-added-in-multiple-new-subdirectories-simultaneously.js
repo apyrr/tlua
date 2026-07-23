@@ -80,7 +80,7 @@ Found 1 error in src/utils/format.tlua[90m:1[0m
 
 //// [/home/src/workspaces/project/src/utils/format.lua] *new* 
 function format(s)
-    return s.trim();
+  return s.trim();
 end
 
 

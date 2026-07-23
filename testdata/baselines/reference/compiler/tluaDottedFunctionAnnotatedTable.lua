@@ -22,15 +22,15 @@ end
 
 //// [tluaDottedFunctionAnnotatedTable.lua]
 local ops = { good = function(a)
-        return a;
-    end, wrong = function(a)
-        return a;
-    end };
-function ops.good(a)
     return a;
+  end, wrong = function(a)
+    return a;
+  end };
+function ops.good(a)
+  return a;
 end
 function ops.wrong(a)
-    return a;
+  return a;
 end
 function ops.absent()
 end

@@ -98,17 +98,17 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/MessageablePerson.lua] *new* 
 local Messageable = function()
-    return {
-        message, 'hello' as string,
-    };
+  return {
+    message, 'hello' as string,
+  };
 end;
 local wrapper = function()
-    return Messageable();
+  return Messageable();
 end;
 
 //// [/home/src/workspaces/project/main.lua] *new* 
 function logMessage(person)
-    console.log(person.message);
+  console.log(person.message);
 end
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
@@ -276,12 +276,12 @@ Errors  Files
 
 //// [/home/src/workspaces/project/MessageablePerson.lua] *modified* 
 local Messageable = function()
-    return {
-        message, 'hello' as 'hello',
-    };
+  return {
+    message, 'hello' as 'hello',
+  };
 end;
 local wrapper = function()
-    return Messageable();
+  return Messageable();
 end;
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
@@ -455,12 +455,12 @@ Errors  Files
 
 //// [/home/src/workspaces/project/MessageablePerson.lua] *modified* 
 local Messageable = function()
-    return {
-        message, 'hello' as string,
-    };
+  return {
+    message, 'hello' as string,
+  };
 end;
 local wrapper = function()
-    return Messageable();
+  return Messageable();
 end;
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 

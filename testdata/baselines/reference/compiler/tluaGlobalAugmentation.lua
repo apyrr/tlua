@@ -66,16 +66,16 @@ local G = {};
 G.localOnly = true;
 local localOnly = G.localOnly;
 function G.identity(value)
-    return value;
+  return value;
 end
 local localIdentity = G.identity(1);
 //// [d.lua]
 function G.double(value)
-    return value * 2;
+  return value * 2;
 end
 local doubled = G.double(2);
 function G:triple(value)
-    return value * 3;
+  return value * 3;
 end
 local tripled = G.triple(G, 3);
 //// [e.lua]

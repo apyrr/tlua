@@ -21,9 +21,9 @@ local all = {a, b, c, d, e};
 local a = { a = 1, b = 2, c = 3, };
 local b = { x = 1, y = 2 };
 local c = {
-    first = 1,
-    second = 2,
-    third = 3,
+  first = 1,
+  second = 2,
+  third = 3,
 };
 local d = { only = 1, };
 local e = { trailingComma = 1, };

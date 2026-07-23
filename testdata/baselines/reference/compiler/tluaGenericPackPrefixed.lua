@@ -42,9 +42,9 @@ local p, q = split(pair);
 -- upstream TypeScript (variadicTuples `curry` vs `curry2`) and Luau here.
 local a, b, c = prepend(true, 1, "x");
 local x, y = both(function(n)
-    return n;
+  return n;
 end, function(s)
-    return s;
+  return s;
 end);
 local p, q = split(pair);
 -- p: any, q: any -- the ambiguous split, not (number)

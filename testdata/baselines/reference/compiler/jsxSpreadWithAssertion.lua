@@ -18,18 +18,18 @@ local c = <EntryTextDialog
 import { jsx as _jsx } from "react/jsx-runtime";
 local c = _jsx(EntryTextDialog, {});
 do
-    ...;
-    do
-        first;
-        0,
-            foo;
-        1,
-            bar;
-        2,
-            baz;
-        3,
-            last;
-        4;
-    end
+  ...;
+  do
+    first;
+    0,
+      foo;
+    1,
+      bar;
+    2,
+      baz;
+    3,
+      last;
+    4;
+  end
 end
 />;

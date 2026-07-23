@@ -87,9 +87,9 @@ library.createSomeObject().message;
 }
 //// [/user/username/projects/sample1/Library/library.lua] *new* 
 function createSomeObject()
-    return {
-        message = "new Object"
-    };
+  return {
+    message = "new Object"
+  };
 end
 return { createSomeObject = createSomeObject };
 
@@ -204,9 +204,9 @@ Output::
 //// [/user/username/projects/sample1/App/tluaconfig.tluabuildinfo] *mTime changed*
 //// [/user/username/projects/sample1/Library/library.lua] *modified* 
 function createSomeObject()
-    return {
-        message2 = "new Object"
-    };
+  return {
+    message2 = "new Object"
+  };
 end
 return { createSomeObject = createSomeObject };
 
@@ -320,9 +320,9 @@ Output::
 //// [/user/username/projects/sample1/App/tluaconfig.tluabuildinfo] *mTime changed*
 //// [/user/username/projects/sample1/Library/library.lua] *modified* 
 function createSomeObject()
-    return {
-        message = "new Object"
-    };
+  return {
+    message = "new Object"
+  };
 end
 return { createSomeObject = createSomeObject };
 

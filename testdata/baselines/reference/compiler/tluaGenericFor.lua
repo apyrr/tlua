@@ -66,48 +66,48 @@ end
 -- The first name drops nil (a nil first value ends the loop); the second
 -- keeps the iterator's declared nil-ability and narrows normally.
 function walk(t)
-    local count = 0;
-    for i, s in ipairsLike(t) do
-        count = count + i;
-        if s ~= nil then
-            count = count + s.length;
-        end
+  local count = 0;
+  for i, s in ipairsLike(t) do
+    count = count + i;
+    if s ~= nil then
+      count = count + s.length;
     end
-    return count;
+  end
+  return count;
 end
 -- Single-name form.
 function keys(t)
-    local total = 0;
-    for i in ipairsLike(t) do
-        total = total + i;
-    end
-    return total;
+  local total = 0;
+  for i in ipairsLike(t) do
+    total = total + i;
+  end
+  return total;
 end
 function explist(t)
-    local total = 0;
-    for k, v in next, t, nil do
-        total = total + k;
-    end
-    return total;
+  local total = 0;
+  for k, v in next, t, nil do
+    total = total + k;
+  end
+  return total;
 end
 -- Names past the iterator's values read as nil.
 function extraName(t)
-    for i, s, extra in ipairsLike(t) do
-        local x = extra;
-        x;
-    end
+  for i, s, extra in ipairsLike(t) do
+    local x = extra;
+    x;
+  end
 end
 -- Annotated names check against their positional value.
 function annotated(t)
-    for i, s in ipairsLike(t) do
-        i;
-        s;
-    end
+  for i, s in ipairsLike(t) do
+    i;
+    s;
+  end
 end
 -- break and TS statements inside the body.
 function firstKey(t)
-    for i in ipairsLike(t) do
-        return i;
-    end
-    return 0;
+  for i in ipairsLike(t) do
+    return i;
+  end
+  return 0;
 end

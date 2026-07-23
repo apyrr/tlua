@@ -41,31 +41,31 @@ end
 
 //// [tluaGotoForwardDeadEdge.lua]
 function liveFallThroughDeadGoto(b)
-    if b then
-        fail();
-        goto done;
-    end
-    log(1);
-    ::done::
-    log(2);
+  if b then
+    fail();
+    goto done;
+  end
+  log(1);
+  ::done::
+  log(2);
 end
 -- The mirror case: several forward gotos, the FIRST-bound one dead, a later one
 -- live, fall-through dead. The label is still reachable through the live edge.
 function liveSecondGoto(b)
-    if b then
-        fail();
-        goto out;
-    end
+  if b then
+    fail();
     goto out;
-    ::out::
-    return 1;
+  end
+  goto out;
+  ::out::
+  return 1;
 end
 -- Narrowing still joins all live entries when a dead edge is among them.
 function narrowPastDeadEdge(x)
-    if x == nil then
-        fail();
-        goto has;
-    end
-    ::has::
-    return x;
+  if x == nil then
+    fail();
+    goto has;
+  end
+  ::has::
+  return x;
 end

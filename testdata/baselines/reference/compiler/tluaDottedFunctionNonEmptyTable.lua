@@ -21,8 +21,8 @@ end
 //// [tluaDottedFunctionNonEmptyTable.lua]
 local Counter = { count = 0, label = "hits" };
 function Counter.bump(by)
-    Counter.count = Counter.count + by;
-    return Counter.count;
+  Counter.count = Counter.count + by;
+  return Counter.count;
 end
 local total = Counter.bump(2) + Counter.count;
 local name = Counter.label;

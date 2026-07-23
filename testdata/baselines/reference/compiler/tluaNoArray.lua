@@ -59,16 +59,16 @@ a, b;
 pair();
 -- `for..of`; use a Lua generic-for `for _, v in ipairs(t) do`.
 for  in () do
-    local v;
-    of;
-    items;
-    do
-        use(v);
-    end
-    -- Tuple types parse in source, and a multireturn is not a tuple value: only
-    -- the first value survives outside a value-list tail, so this is an error.
-    local t = pair();
-    -- `of` is an ordinary identifier again.
-    local of = 3;
-    use(of);
+  local v;
+  of;
+  items;
+  do
+    use(v);
+  end
+  -- Tuple types parse in source, and a multireturn is not a tuple value: only
+  -- the first value survives outside a value-list tail, so this is an error.
+  local t = pair();
+  -- `of` is an ordinary identifier again.
+  local of = 3;
+  use(of);
 end

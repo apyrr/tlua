@@ -28,20 +28,20 @@ end
 
 //// [tluaGotoIntoLetScope.lua]
 function intoLetScope()
-    goto done;
-    local x = 1;
-    ::done::
-    log(x);
+  goto done;
+  local x = 1;
+  ::done::
+  log(x);
 end
 function intoConstScope()
-    goto done;
-    local c = 1;
-    ::done::
-    log(c);
+  goto done;
+  local c = 1;
+  ::done::
+  log(c);
 end
 function intoVarScope()
-    goto done;
-    local v = 1;
-    ::done::
-    log(v);
+  goto done;
+  local v = 1;
+  ::done::
+  log(v);
 end

@@ -36,8 +36,8 @@ end
 //// [tluaColonCallEmit.lua]
 local T = { n = 0 };
 function T:bump()
-    self.n = self.n + 1;
-    return self.n;
+  self.n = self.n + 1;
+  return self.n;
 end
 -- Colon calls round-trip through the emitter.
 T:bump();
@@ -52,8 +52,8 @@ d.u:bump();
 -- Return- and throw-position colon calls keep their colon: the no-ASI
 -- parenthesizer must not rebuild the callee as a dot access.
 function T:twice()
-    return self:bump() + self:bump();
+  return self:bump() + self:bump();
 end
 function raise()
-    throw T:bump();
+  throw T:bump();
 end

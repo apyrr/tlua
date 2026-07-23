@@ -26,7 +26,7 @@ local m, n: string = pair();
 
 //// [tluaLocalMultiNameAnnotated.lua]
 function pair()
-    return 1, "a";
+  return 1, "a";
 end
 -- Annotations check their positional value.
 local a, b = pair();

@@ -17,9 +17,9 @@ end
 //// [tluaColonFunctionDeclarationEmit.lua]
 local Exported = {};
 function Exported:visible(a)
-    return a;
+  return a;
 end
 local Hidden = {};
 function Hidden:invisible()
-    self.invisible(self);
+  self.invisible(self);
 end

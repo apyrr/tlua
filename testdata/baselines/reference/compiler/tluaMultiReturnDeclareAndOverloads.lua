@@ -23,10 +23,10 @@ local o2 = over("x");
 
 //// [tluaMultiReturnDeclareAndOverloads.lua]
 function over(a)
-    if type(a) == "number" then
-        return a, "n";
-    end
-    return a, 0;
+  if type(a) == "number" then
+    return a, "n";
+  end
+  return a, 0;
 end
 local a = ambient();
 local v = ambientVariadic(1);

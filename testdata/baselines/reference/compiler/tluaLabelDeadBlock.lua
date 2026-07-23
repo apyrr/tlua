@@ -24,20 +24,20 @@ end
 -- A dead block still scopes its labels: an unused label inside one is reported
 -- exactly like an unused label directly in the dead tail of a live block.
 function deadLabelBare()
-    return 1;
-    ::L1::
+  return 1;
+  ::L1::
 end
 function deadLabelInBlock()
-    return 1;
-    do
-        ::L2::
-    end
+  return 1;
+  do
+    ::L2::
+  end
 end
 -- And a goto inside a dead block still marks its label referenced.
 function deadBlockGotoReferences()
-    return 1;
-    do
-        ::L3::
-        goto L3;
-    end
+  return 1;
+  do
+    ::L3::
+    goto L3;
+  end
 end

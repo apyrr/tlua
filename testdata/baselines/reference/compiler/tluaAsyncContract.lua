@@ -97,68 +97,68 @@ coroutine;
 do
 end
 async function fetchOk(url)
-    local ok, res = request(url);
-    return ok, res;
+  local ok, res = request(url);
+  return ok, res;
 end
 -- OK: direct call from an async context; the result is the plain pack.
 async function handler()
-    local ok, res = fetchOk("https://example.com");
-    if ok then
-        return 1;
-    end
-    return 0;
+  local ok, res = fetchOk("https://example.com");
+  if ok then
+    return 1;
+  end
+  return 0;
 end
 -- Error: direct call from a sync function.
 function syncCaller()
-    fetchOk("nope");
+  fetchOk("nope");
 end
 -- Error: call at top level.
 fetchOk("top");
 -- Error: inferred alias keeps the contract (the flag rides the signature).
 function aliasCaller()
-    local f = fetchOk;
-    f("aliased");
+  local f = fetchOk;
+  f("aliased");
 end
 -- OK: alias called from an async context.
 async function aliasAsyncCaller()
-    local f = fetchOk;
-    f("aliased");
+  local f = fetchOk;
+  f("aliased");
 end
 -- OK: passing an async function as a value is not a call.
 coroutine.create(fetchOk);
 local wrapped = coroutine.wrap(fetchOk);
 -- OK: async recursion.
 async function pingpong(n)
-    if n <= 0 then
-        return 0;
-    end
-    return pingpong(n - 1);
+  if n <= 0 then
+    return 0;
+  end
+  return pingpong(n - 1);
 end
 -- Async arrow expressions participate too.
 local asyncArrow = async function()
-    return 42;
+  return 42;
 end;
 function arrowSyncCaller()
-    asyncArrow(); -- error
+  asyncArrow(); -- error
 end
 async function arrowAsyncCaller()
-    return asyncArrow(); -- OK
+  return asyncArrow(); -- OK
 end
 -- Generic async functions keep the flag through instantiation.
 async function identityAsync(x)
-    return x;
+  return x;
 end
 function genericSyncCaller()
-    identityAsync(1); -- error
+  identityAsync(1); -- error
 end
 async function genericAsyncCaller()
-    return identityAsync(2); -- OK
+  return identityAsync(2); -- OK
 end
 -- The async return type is the plain type, not Promise<T>.
 async function plain()
-    return 3;
+  return 3;
 end
 async function usePlain()
-    local n = plain();
-    return n + 1;
+  local n = plain();
+  return n + 1;
 end

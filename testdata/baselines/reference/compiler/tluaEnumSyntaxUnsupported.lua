@@ -10,6 +10,6 @@ enum E {
 enum;
 E;
 do
-    A,
-    ;
+  A,
+  ;
 end

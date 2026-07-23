@@ -9,8 +9,8 @@ x = class { static #foo = 1; };
 local x;
 x = class;
 do
-    static;
-    #foo;
-    1;
+  static;
+  #foo;
+  1;
 end
 ;

@@ -14,8 +14,8 @@ class C {
 class;
 C;
 do
-    y;
-    number = 2;
-    y;
-    number = 3;
+  y;
+  number = 2;
+  y;
+  number = 3;
 end

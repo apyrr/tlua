@@ -237,13 +237,13 @@ declare function require(module: string): any;
 //// [/user/username/projects/demo/lib/animals/animals/dog.lua] *new* 
 local utilities = require('core.utilities');
 function createDog()
-    return ({
-        size, "medium",
-        woof, function()
-            console.log("Woof!");
-        end,
-        name, utilities.makeRandomName()
-    });
+  return ({
+    size, "medium",
+    woof, function()
+      console.log("Woof!");
+    end,
+    name, utilities.makeRandomName()
+  });
 end
 return { createDog = createDog };
 
@@ -379,13 +379,13 @@ return { createDog = dog.createDog };
 //// [/user/username/projects/demo/lib/core/animals/dog.lua] *new* 
 local utilities = require('core.utilities');
 function createDog()
-    return ({
-        size, "medium",
-        woof, function()
-            console.log("Woof!");
-        end,
-        name, utilities.makeRandomName()
-    });
+  return ({
+    size, "medium",
+    woof, function()
+      console.log("Woof!");
+    end,
+    name, utilities.makeRandomName()
+  });
 end
 return { createDog = createDog };
 
@@ -517,13 +517,13 @@ return { createDog = dog.createDog };
 local A = require('animals.index');
 A;
 function makeRandomName()
-    return "Bob!?! ";
+  return "Bob!?! ";
 end
 function lastElementOf(arr)
-    if arr.length == 0 then
-        return nil;
-    end
-    return arr[arr.length - 1];
+  if arr.length == 0 then
+    return nil;
+  end
+  return arr[arr.length - 1];
 end
 return { makeRandomName = makeRandomName, lastElementOf = lastElementOf };
 
@@ -604,9 +604,9 @@ return { makeRandomName = makeRandomName, lastElementOf = lastElementOf };
 //// [/user/username/projects/demo/lib/zoo/zoo/zoo.lua] *new* 
 local animals = require('animals.index');
 function createZoo()
-    return {
-        animals.createDog()
-    };
+  return {
+    animals.createDog()
+  };
 end
 return { createZoo = createZoo };
 

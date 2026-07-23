@@ -141,10 +141,10 @@ return { World = World };
 multiply();
 local someString = "HELLO WORLD";
 function leftPad(s, n)
-    return s + n;
+  return s + n;
 end
 function multiply(a, b)
-    return a * b;
+  return a * b;
 end
 return { someString = someString, leftPad = leftPad, multiply = multiply };
 
@@ -333,10 +333,10 @@ Output::
 //// [/user/username/projects/sample1/core/index.lua] *modified* 
 local someString = "HELLO WORLD";
 function leftPad(s, n)
-    return s + n;
+  return s + n;
 end
 function multiply(a, b)
-    return a * b;
+  return a * b;
 end
 return { someString = someString, leftPad = leftPad, multiply = multiply };
 

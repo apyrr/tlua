@@ -10,6 +10,6 @@ local enum E {
 local enum;
 E;
 do
-    A,
-    ;
+  A,
+  ;
 end

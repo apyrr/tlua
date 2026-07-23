@@ -30,13 +30,13 @@ local tooMany = takes2(1, pair());
 
 //// [tluaMultiReturnCallSpread.lua]
 function pair()
-    return 1, "a";
+  return 1, "a";
 end
 function takes2(a, b)
-    return true;
+  return true;
 end
 function takes3(a, b, c)
-    return b;
+  return b;
 end
 -- The last argument expands its whole pack.
 local expanded = takes2(pair());

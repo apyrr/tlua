@@ -38,19 +38,19 @@ local fromDeclarationVariadic = fromDtsVariadic();
 
 //// [main.lua]
 function annotated()
-    return 1, "a";
+  return 1, "a";
 end
 function inferred(cond)
-    if cond then
-        return 1, "a";
-    end
-    return 2;
+  if cond then
+    return 1, "a";
+  end
+  return 2;
 end
 function variadic()
-    return 1, "a", "b";
+  return 1, "a", "b";
 end
 function optional()
-    return 1;
+  return 1;
 end
 -- Consuming hand-written d.tlua packs proves the declared syntax parses.
 local fromDeclaration = fromDts();

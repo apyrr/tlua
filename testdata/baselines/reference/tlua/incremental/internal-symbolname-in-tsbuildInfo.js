@@ -136,14 +136,14 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/a.lua] *new* 
 local createFileListFromFiles = function(files)
-    local fileList = {
-        length, files.length,
-        item, function(index: number): File | nil
-            return files[index] or nil;
-        end,
-        [Symbol.iterator] = , (0 as any) as () => ArrayIterator<File>,
-    };
-    return fileList;
+  local fileList = {
+    length, files.length,
+    item, function(index: number): File | nil
+      return files[index] or nil;
+    end,
+    [Symbol.iterator] = , (0 as any) as () => ArrayIterator<File>,
+  };
+  return fileList;
 end;
 
 

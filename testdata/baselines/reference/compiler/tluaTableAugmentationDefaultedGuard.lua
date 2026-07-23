@@ -96,7 +96,7 @@ G = G or {};
 G.fromB = "b";
 local fromA = G.fromA;
 local function make()
-    return { fixed = 1 };
+  return { fixed = 1 };
 end
 Closed = Closed or make();
 Closed.extra = true;
@@ -111,7 +111,7 @@ Chain = Chain or Other or {};
 Different = Other or {};
 Different.extra = true;
 local function keep(value)
-    return {};
+  return {};
 end
 ReadInside = ReadInside or keep(ReadInside);
 local LocalSelf = LocalSelf or {};
@@ -119,6 +119,6 @@ local Declared;
 Declared = Declared or {};
 local Outer = { base = 1 };
 do
-    local Outer = Outer or {};
-    Outer.extra = true;
+  local Outer = Outer or {};
+  Outer.extra = true;
 end

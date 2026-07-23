@@ -40,10 +40,10 @@ apply(takesNumberString, 1); -- error: missing the second argument
 -- Forwarding a vararg pack into another correlated call: `...` carries the whole
 -- pack A, so `apply(g, ...)` type-checks against g's parameters.
 function relay(g, ...)
-    return apply(g, ...);
+  return apply(g, ...);
 end
 local relayed = relay(g2, "s", true);
 -- An open forward: the tail feeds the correlated parameter list.
 function callWithNumbers(...)
-    apply(g2, ...); -- error: number tail is not (string, boolean)
+  apply(g2, ...); -- error: number tail is not (string, boolean)
 end

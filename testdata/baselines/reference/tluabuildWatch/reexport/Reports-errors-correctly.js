@@ -104,7 +104,7 @@ declare function require(module: string): any;
 local pure = require("pure");
 pure;
 local session = {
-    foo, 1
+  foo, 1
 };
 
 //// [/user/username/projects/reexport/out/main/tluaconfig.tluabuildinfo] *new* 

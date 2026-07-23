@@ -47,11 +47,11 @@ local g = maybe?.inner:read();
 //// [tluaColonCallBasic.lua]
 local M = { count = 0 };
 function M:inc(by)
-    self.count = self.count + by;
-    return self.count;
+  self.count = self.count + by;
+  return self.count;
 end
 function M:read()
-    return self.count;
+  return self.count;
 end
 -- The colon call passes the receiver as the implicit first argument.
 local a = M:inc(1);
@@ -64,10 +64,10 @@ local d = outer.inner:inc(2);
 local e = chain:next():next():value();
 -- The colon form also fits an explicit self-typed member on a table value.
 local t = {
-    base = 10,
-    plus = function(self, n)
-        return self.base + n;
-    end,
+  base = 10,
+  plus = function(self, n)
+    return self.base + n;
+  end,
 };
 local f = t:plus(5);
 -- A receiver that survived its `?.` guards is not nil at call time: the

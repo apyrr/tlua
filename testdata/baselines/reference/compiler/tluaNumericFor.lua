@@ -52,45 +52,45 @@ end
 
 //// [tluaNumericFor.lua]
 function sumTo(n)
-    local total = 0;
-    for i = 1, n do
-        total = total + i;
-    end
-    return total;
+  local total = 0;
+  for i = 1, n do
+    total = total + i;
+  end
+  return total;
 end
 -- Optional step; the control variable may be assigned.
 function countDown(n)
-    local last = 0;
-    for i = n, 1, -1 do
-        last = i;
-        i = i - 1;
-    end
-    return last;
+  local last = 0;
+  for i = n, 1, -1 do
+    last = i;
+    i = i - 1;
+  end
+  return last;
 end
 -- An annotation is allowed when it accepts a number.
 function annotated(n)
-    local total = 0;
-    for i = 1, n do
-        total = total + i;
-    end
-    return total;
+  local total = 0;
+  for i = 1, n do
+    total = total + i;
+  end
+  return total;
 end
 -- break works; nesting works; TS body statements work.
 function nested(w, h)
-    local count = 0;
-    for x = 1, w do
-        for y = 1, h do
-            if (count > 100) then
-                break;
-            end
-            count = count + 1;
-        end
+  local count = 0;
+  for x = 1, w do
+    for y = 1, h do
+      if (count > 100) then
+        break;
+      end
+      count = count + 1;
     end
-    return count;
+  end
+  return count;
 end
 -- The control variable is scoped to the loop.
 function scoped(n)
-    for i = 1, n do
-    end
-    return i;
+  for i = 1, n do
+  end
+  return i;
 end

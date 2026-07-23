@@ -28,28 +28,28 @@ end
 
 //// [tluaLabelEmbedded.lua]
 function unusedInIf(b)
-    if b then
-        ::stray::
-    end
+  if b then
+    ::stray::
+  end
 end
 -- A label definition creates no back-edge: x is still narrowed to string at the
 -- assignment even though a later if-arm makes it nil. The if-block label must
 -- NOT join the outer label's flow.
 function noNameCapture(b)
-    local x = "a";
+  local x = "a";
+  ::l::
+  local y = x;
+  use(y);
+  if b then
+    x = nil;
+  end
+  if b then
     ::l::
-    local y = x;
-    use(y);
-    if b then
-        x = nil;
-    end
-    if b then
-        ::l::
-    end
+  end
 end
 -- A label as an unused loop-body statement is in embedded position too.
 function unusedInWhile(b)
-    while b do
-        ::spin::
-    end
+  while b do
+    ::spin::
+  end
 end

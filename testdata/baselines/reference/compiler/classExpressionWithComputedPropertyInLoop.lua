@@ -22,8 +22,8 @@ end
 local array = [];
 local key = "myKey";
 for i = 0, 2 do
-    array.push(class, C, {
-        [key] = i,
-        #field, i,
-    });
+  array.push(class, C, {
+    [key] = i,
+    #field, i,
+  });
 end

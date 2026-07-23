@@ -10,5 +10,5 @@ end
 
 //// [test.jsx]
 async function f()
-    return <div arguments={42}/>;
+  return <div arguments={42}/>;
 end

@@ -50,6 +50,6 @@ local widened = { n = 0 };
 widened.n = 42;
 -- Table fields holding functions (brace-bodied function expressions).
 local fns = { add = function(a, b)
-        return a + b;
-    end };
+    return a + b;
+  end };
 local three = fns.add(1, 2);

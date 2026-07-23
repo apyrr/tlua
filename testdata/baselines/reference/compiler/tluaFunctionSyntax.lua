@@ -64,43 +64,43 @@ preservedOverload("x");
 
 //// [tluaFunctionSyntax.lua]
 function topLua(a)
-    return a;
+  return a;
 end
 function emptyLua()
 end
 function braceStillWorks(a)
-    return a + 1;
+  return a + 1;
 end
 function withBraceStatement(flag)
-    local result = 0;
-    if (flag) then
-        result = braceStillWorks(1);
-    end
-    return result;
+  local result = 0;
+  if (flag) then
+    result = braceStillWorks(1);
+  end
+  return result;
 end
 local function localLua(a)
-    return a + 1;
+  return a + 1;
 end
 function withNestedBraceFunction()
-    function nestedBrace()
-        return 1;
-    end
-    return nestedBrace();
+  function nestedBrace()
+    return 1;
+  end
+  return nestedBrace();
 end
 function withNestedLuaFunction()
-    function nestedLua()
-        return 2;
-    end
-    return nestedLua();
+  function nestedLua()
+    return 2;
+  end
+  return nestedLua();
 end
 function outerLua(value)
-    local function innerLua(delta)
-        return value + delta;
-    end
-    return innerLua(localLua(1));
+  local function innerLua(delta)
+    return value + delta;
+  end
+  return innerLua(localLua(1));
 end
 function preservedOverload(x)
-    return x;
+  return x;
 end
 topLua(1);
 emptyLua();

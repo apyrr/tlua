@@ -12,12 +12,12 @@ end
 
 //// [tluaSynthesizedLuaIf.lua]
 function getObject()
-    return { value = nil };
+  return { value = nil };
 end
 function defaultValue(value)
-    local _a;
-    if value == void 0 then
-        value = (_a = getObject()).value or (_a.value = 1);
-    end
-    return value;
+  local _a;
+  if value == void 0 then
+    value = (_a = getObject()).value or (_a.value = 1);
+  end
+  return value;
 end

@@ -69,7 +69,7 @@ local ;
 3;
 -- Declaration names.
 function ()
-     or ();
+   or ();
 end
 local n1 = maybe;
 !;

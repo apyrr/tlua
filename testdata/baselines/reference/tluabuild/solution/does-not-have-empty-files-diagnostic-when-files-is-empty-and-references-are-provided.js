@@ -63,7 +63,7 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/solution/core/index.lua] *new* 
 function multiply(a, b)
-    return a * b;
+  return a * b;
 end
 
 //// [/home/src/workspaces/solution/core/tluaconfig.tluabuildinfo] *new* 

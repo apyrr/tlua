@@ -16,9 +16,9 @@ end
 -- With statements are removed, and `with` is an ordinary identifier.
 with(scope);
 do
-    value;
+  value;
 end
 function usesWith()
-    local with = 3;
-    return with;
+  local with = 3;
+  return with;
 end

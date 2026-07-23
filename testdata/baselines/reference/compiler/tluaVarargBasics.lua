@@ -45,13 +45,13 @@ function bare(...)
 end
 -- Varargs coexist with fixed parameters.
 function withFixed(label, ...)
-    return label;
+  return label;
 end
 -- `...` expands in a value list, so both names bind. A rest-only pack may be
 -- empty, so each name is `number | nil`.
 function twoNames(...)
-    local a, b = ...;
-    return a, b;
+  local a, b = ...;
+  return a, b;
 end
 -- A vararg function accepts zero or more trailing arguments.
 annotated();

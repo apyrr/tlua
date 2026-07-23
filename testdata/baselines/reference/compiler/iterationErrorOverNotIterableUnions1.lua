@@ -23,10 +23,10 @@ el2.b;
 
 //// [iterationErrorOverNotIterableUnions1.lua]
 for _, item in ipairs(data) do
-    item.b;
+  item.b;
 end
 for _, ignoredItem in ipairs(data) do
-    ignoredItem.b;
+  ignoredItem.b;
 end
 local ;
 el;

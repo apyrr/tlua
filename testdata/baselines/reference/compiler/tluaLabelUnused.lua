@@ -16,10 +16,10 @@ end
 //// [tluaLabelUnused.lua]
 -- A label no goto targets is reported.
 function unused()
-    ::dead::
+  ::dead::
 end
 -- A label a goto targets is silent.
 function used()
-    ::live::
-    goto live;
+  ::live::
+  goto live;
 end

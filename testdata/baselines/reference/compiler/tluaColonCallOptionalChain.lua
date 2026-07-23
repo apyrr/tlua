@@ -17,7 +17,7 @@ local y = maybe?.inner:bump();
 //// [tluaColonCallOptionalChain.lua]
 local W = { n = 1 };
 function W:bump()
-    return self.n;
+  return self.n;
 end
 local maybe = { inner = W };
 -- The `?.` guard narrows the receiver, so the implicit first argument is not

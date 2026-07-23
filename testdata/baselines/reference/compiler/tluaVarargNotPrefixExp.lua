@@ -30,21 +30,21 @@ end
 -- reading as a call/index/property access on the pack -- the TS spread forms
 -- `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
 function f(...)
-    local called = ...;
-    (1);
-    local indexed = ...;
-    1;
-    ;
-    local accessed = ...;
-    x;
+  local called = ...;
+  (1);
+  local indexed = ...;
+  1;
+  ;
+  local accessed = ...;
+  x;
 end
 -- The same holds in a table constructor, where TS table spread used to live.
 function g(...)
-    local t = { ..., ({} as number) };
+  local t = { ..., ({} as number) };
 end
 -- A bare `...` in each of those positions is still fine.
 function h(...)
-    local ok = ...;
-    local t = { ... };
-    f(...);
+  local ok = ...;
+  local t = { ... };
+  f(...);
 end

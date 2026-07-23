@@ -68,9 +68,9 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/user/username/projects/solution/app/fileWithError.lua] *new* 
 local myClassWithError = {
-    tags, function()
-    end,
-    p, 12
+  tags, function()
+  end,
+  p, 12
 };
 
 //// [/user/username/projects/solution/app/fileWithoutError.lua] *new* 

@@ -36,15 +36,15 @@ local M = { count = 0 };
 -- The colon form is sugar for an explicit first parameter, so `self` is in scope
 -- with the type of the table being extended.
 function M:inc(by)
-    self.count = self.count + by;
-    return self.count;
+  self.count = self.count + by;
+  return self.count;
 end
 function M:read()
-    return self.count;
+  return self.count;
 end
 -- A colon method still reaches the table's other members through `self`.
 function M:double()
-    return self.inc(self, self.read(self));
+  return self.inc(self, self.read(self));
 end
 -- Calls pass the receiver explicitly, or implicitly with the colon form.
 local a = M.inc(M, 1);

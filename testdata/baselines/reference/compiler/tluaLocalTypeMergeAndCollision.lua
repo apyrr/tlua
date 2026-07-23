@@ -32,5 +32,5 @@ local b = { width = 1, height = 2 };
 -- `local type` nested in a block is redundant with bare nested types (both scope
 -- lexically) but is legal for spelling consistency with `local function`.
 do
-    local x = { v = 1 };
+  local x = { v = 1 };
 end

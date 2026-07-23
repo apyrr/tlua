@@ -128,7 +128,7 @@ local pok, s = pcall(pure, 3);
 local sType = s;
 -- xpcall forwards trailing arguments (LuaJIT) and correlates the result pack.
 local xok, xs = xpcall(pure, function(e)
-    return e;
+  return e;
 end, 7);
 local xsType = xs;
 local asserted, extra = assert(maybe, "message");
@@ -165,19 +165,19 @@ local oneIsString = one;
 local twoIsNumber = two;
 -- The same as a multiple-return tail.
 function sliceTail()
-    return str, select(3, str, bool, num);
+  return str, select(3, str, bool, num);
 end
 -- A literal index with an open tail keeps the fixed positions and splices the
 -- tail: values before the index never leak into the result.
 function literalWithTail(...)
-    local m, b = select(2, str, num, ...);
-    local mIsNumber = m;
-    local bIsBoolean = b;
+  local m, b = select(2, str, num, ...);
+  local mIsNumber = m;
+  local bIsBoolean = b;
 end
 -- A literal index landing inside the tail selects the tail's values only.
 function literalInsideTail(...)
-    local t = select(3, str, num, ...);
-    local tIsBoolean = t;
+  local t = select(3, str, num, ...);
+  local tIsBoolean = t;
 end
 local packFn = cond and gPack or hPack;
 local u = select(dynamic, packFn());

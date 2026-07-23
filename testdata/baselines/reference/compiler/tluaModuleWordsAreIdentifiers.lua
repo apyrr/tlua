@@ -30,7 +30,7 @@ local from = "f";
 local default = { n = 1 };
 local t = { export = export, from = from, default = default.n };
 function M_from(self, mode)
-    return mode;
+  return mode;
 end
 local obj = { from = M_from, default = 2, export = 3 };
 local a = obj:from("on");

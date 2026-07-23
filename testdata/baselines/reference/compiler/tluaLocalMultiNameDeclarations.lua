@@ -44,10 +44,10 @@ end
 
 //// [tluaLocalMultiNameDeclarations.lua]
 function pair()
-    return 1, "a";
+  return 1, "a";
 end
 function variadic()
-    return 1, "a", "b";
+  return 1, "a", "b";
 end
 function nothing()
 end
@@ -68,6 +68,6 @@ local o, q = nothing();
 -- No value list at all.
 local r, s;
 function useAll()
-    r = a + c + f + l;
-    return r;
+  r = a + c + f + l;
+  return r;
 end

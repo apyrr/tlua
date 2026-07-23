@@ -15,5 +15,5 @@ end
 -- A generic pack signature round-trips through declaration emit as `<...A>` and
 -- `...: A` / `...R`, the same spelling the source uses.
 function wrap(f)
-    return f;
+  return f;
 end

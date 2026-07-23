@@ -50,7 +50,7 @@ local n: async = 1;
 -- through an async-typed slot is checked, and async-ness is visible in the
 -- type display.
 async function fetchOk(url)
-    return request(url);
+  return request(url);
 end
 -- OK: async fn into an async-typed slot; the slot keeps the contract.
 local g = fetchOk;
@@ -59,10 +59,10 @@ local h = plainOk;
 -- Calling through the async-typed slot: error from a sync function, OK from an
 -- async function.
 function sync1()
-    g("a");
+  g("a");
 end
 async function ok()
-    g("b");
+  g("b");
 end
 -- Passing an async fn as a value into the "any function" top signature is fine
 -- (it is how coroutine.create/wrap receive a suspendable function).

@@ -30,21 +30,21 @@ end
 //// [tluaRepeatUntilErrors.lua]
 -- Missing `until`.
 function missingUntil()
-    repeat
-        local n = 1;
-        n;
-        return 0;
-    until ;
+  repeat
+    local n = 1;
+    n;
+    return 0;
+  until ;
 end
 -- `until` outside a repeat.
 function strayUntil()
-    true;
-    return 0;
+  true;
+  return 0;
 end
 function voidCondition()
-    repeat
-        local n = 1;
-        n;
-    until nothing();
-    return 0;
+  repeat
+    local n = 1;
+    n;
+  until nothing();
+  return 0;
 end

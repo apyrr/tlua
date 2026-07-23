@@ -28,21 +28,21 @@ end
 
 //// [tluaColonFunctionAnnotatedTable.lua]
 local ops = {
-    good = function(self, a)
-        return a;
-    end,
-    noSelf = function(a)
-        return a;
-    end,
+  good = function(self, a)
+    return a;
+  end,
+  noSelf = function(a)
+    return a;
+  end,
 };
 -- An annotated table gets an assignability check against the declared member,
 -- and the colon form supplies the receiver the interface asks for.
 function ops:good(a)
-    return a;
+  return a;
 end
 -- `noSelf` takes no receiver, so the colon form does not fit it.
 function ops:noSelf(a)
-    return a;
+  return a;
 end
 function ops:absent()
 end

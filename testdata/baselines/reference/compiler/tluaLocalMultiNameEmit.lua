@@ -17,7 +17,7 @@ local l, m = (0, 1), 2;
 
 //// [tluaLocalMultiNameEmit.lua]
 function pair()
-    return 1, "a";
+  return 1, "a";
 end
 local a, b = pair();
 local c, d = 1, "x";

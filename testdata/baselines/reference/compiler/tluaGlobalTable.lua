@@ -197,13 +197,13 @@ function _G._G(): void end
 _G.fromDot = 1;
 _G["fromElement"] = "text";
 function _G.fromFunction(x)
-    return x;
+  return x;
 end
 function _G.pairedGlobal(x)
-    return x;
+  return x;
 end
 function _G.existingFunction(x)
-    return x;
+  return x;
 end
 function _G.dup()
 end
@@ -221,7 +221,7 @@ qualifiedTable.fromBare = "text";
 -- Repeated environment self-access still reaches the canonical global table.
 _G._G.repeatedGlobal = 1;
 function _G._G.repeatedFunction(x)
-    return x;
+  return x;
 end
 -- Deep mixed-spelling guards describe the same canonical entity.
 deepTable = {};
@@ -260,9 +260,9 @@ use(_G.rejectedEnvironmentMember);
 use(_G.hidden);
 use(_G["hidden"]);
 if hidden ~= nil then
-    _G.hidden = nil;
-    local stillNarrowed = hidden;
-    use(stillNarrowed);
+  _G.hidden = nil;
+  local stillNarrowed = hidden;
+  use(stillNarrowed);
 end
 -- `globalThis` is no longer compiler-provided.
 use(globalThis);
@@ -270,40 +270,40 @@ use(globalThis);
 _G.missing.member = 1;
 -- A lexical `_G` is an ordinary table and does not create globals.
 function shadow()
-    local _G = {};
-    _G.localOnly = true;
+  local _G = {};
+  _G.localOnly = true;
 end
 use(localOnly);
 -- Narrowing crosses bare and environment-qualified spellings.
 maybe = true;
 local globalKey = "maybe";
 if _G.maybe ~= nil then
-    local narrowed = ((_G.maybe));
-    local narrowedThroughStaticKey = _G[globalKey];
-    _G[globalKey] = nil;
-    local invalidated = _G.maybe;
-    use(narrowed);
-    use(narrowedThroughStaticKey);
-    use(invalidated);
+  local narrowed = ((_G.maybe));
+  local narrowedThroughStaticKey = _G[globalKey];
+  _G[globalKey] = nil;
+  local invalidated = _G.maybe;
+  use(narrowed);
+  use(narrowedThroughStaticKey);
+  use(invalidated);
 end
 -- Static keys normalize even when the keyed spelling is the guard.
 reverseMaybe = true;
 local reverseGlobalKey = "reverseMaybe";
 if _G[reverseGlobalKey] ~= nil then
-    local narrowedBare = reverseMaybe;
-    reverseMaybe = nil;
-    local invalidatedStaticKey = _G[reverseGlobalKey];
-    use(narrowedBare);
-    use(invalidatedStaticKey);
+  local narrowedBare = reverseMaybe;
+  reverseMaybe = nil;
+  local invalidatedStaticKey = _G[reverseGlobalKey];
+  use(narrowedBare);
+  use(invalidatedStaticKey);
 end
 -- Repeated `_G` self-access has the same flow identity as the bare global.
 repeatedMaybe = true;
 if _G._G.repeatedMaybe ~= nil then
-    local narrowedRepeatedBare = repeatedMaybe;
-    repeatedMaybe = nil;
-    local invalidatedRepeated = _G._G.repeatedMaybe;
-    use(narrowedRepeatedBare);
-    use(invalidatedRepeated);
+  local narrowedRepeatedBare = repeatedMaybe;
+  repeatedMaybe = nil;
+  local invalidatedRepeated = _G._G.repeatedMaybe;
+  use(narrowedRepeatedBare);
+  use(invalidatedRepeated);
 end
 -- Assignments mint implicit globals whose narrowing spans both spellings and
 -- shares one flow-cache key. (The var-declared initialized global and the

@@ -38,20 +38,20 @@ end
 
 //// [tluaMultiReturnArityErrors.lua]
 function need2()
-    return 1;
+  return 1;
 end
 function allows2()
-    return 1, "a", true;
+  return 1, "a", true;
 end
 function wrongTypes()
-    return "a", 1;
+  return "a", 1;
 end
 function single()
-    return 1, "a";
+  return 1, "a";
 end
 -- A bare return provides zero values against a pack that requires two.
 function bareReturn()
-    return;
+  return;
 end
 -- An all-optional pack allows returning nothing at all.
 function allOptional()
@@ -61,5 +61,5 @@ function mustReturn()
 end
 -- A type predicate cannot start a multiple return type.
 function badPredicate(x)
-    return type(x) == "string", 1;
+  return type(x) == "string", 1;
 end

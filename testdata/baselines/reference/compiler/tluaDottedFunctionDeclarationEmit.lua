@@ -16,7 +16,7 @@ end
 //// [tluaDottedFunctionDeclarationEmit.lua]
 local Exported = {};
 function Exported.visible(a)
-    return a;
+  return a;
 end
 local Hidden = {};
 function Hidden.invisible()

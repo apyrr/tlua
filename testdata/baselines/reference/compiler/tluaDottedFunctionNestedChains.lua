@@ -24,7 +24,7 @@ end
 //// [tluaDottedFunctionNestedChains.lua]
 local a = { b = {} };
 function a.b.deep(x)
-    return x;
+  return x;
 end
 local viaChain = a.b.deep(1);
 local outer = {};

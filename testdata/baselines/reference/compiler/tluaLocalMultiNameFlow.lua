@@ -35,26 +35,26 @@ end
 
 //// [tluaLocalMultiNameFlow.lua]
 function maybePair()
-    return 1;
+  return 1;
 end
 -- Every name in a list with a value list counts as initialized.
 local a, b = maybePair();
 function useBoth()
-    if b ~= nil then
-        return a + b.length;
-    end
-    return a;
+  if b ~= nil then
+    return a + b.length;
+  end
+  return a;
 end
 -- Without a value list, use-before-assignment still applies per name.
 local c, d;
 function useUnassigned()
-    return c;
+  return c;
 end
 -- Narrowing works on positional values.
 local e, f = maybePair();
 function narrowed()
-    if f == nil then
-        return "";
-    end
-    return f;
+  if f == nil then
+    return "";
+  end
+  return f;
 end

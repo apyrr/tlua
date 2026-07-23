@@ -43,22 +43,22 @@ type BarePackArgument<...A> = Handler<A>;
 
 //// [tluaGenericPackAlias.lua]
 local pair = function(a, b)
-    local n = a;
-    local s = b;
+  local n = a;
+  local s = b;
 end;
 pair(1, "x");
 local empty = function()
 end;
 empty();
 local one = function(value)
-    local n = value;
+  local n = value;
 end;
 one(1);
 local strings = function(...)
 end;
 strings("a", "b");
 local forward = function(handler, ...)
-    handler(...);
+  handler(...);
 end;
 forward(pair, 1, "x");
 scalar(1);

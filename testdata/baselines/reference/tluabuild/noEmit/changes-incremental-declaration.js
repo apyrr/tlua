@@ -114,7 +114,7 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/src/class.lua] *new* 
 local classC = {
-    prop = 1,
+  prop = 1,
 };
 return { classC = classC };
 
@@ -125,7 +125,7 @@ indirect.indirectClass.classC.prop;
 //// [/home/src/workspaces/project/src/indirectClass.lua] *new* 
 local classMod = require('src.class');
 local indirectClass = {
-    classC = classMod.classC,
+  classC = classMod.classC,
 };
 return { indirectClass = indirectClass };
 
@@ -1176,7 +1176,7 @@ Errors  Files
 
 //// [/home/src/workspaces/project/src/class.lua] *modified* 
 local classC = {
-    prop1 = 1,
+  prop1 = 1,
 };
 return { classC = classC };
 
@@ -2086,7 +2086,7 @@ Errors  Files
 
 //// [/home/src/workspaces/project/src/class.lua] *modified* 
 local classC = {
-    prop = 1,
+  prop = 1,
 };
 return { classC = classC };
 

@@ -62,7 +62,7 @@ declare function require(module: string): any;
 //// [/home/src/workspaces/solution/child/child.lua] *new* 
 local child2 = require("child2");
 function child()
-    child2.child2();
+  child2.child2();
 end
 return { child = child };
 

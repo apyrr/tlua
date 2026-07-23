@@ -97,31 +97,31 @@ end
 -- A string is always truthy, so testing one narrows nothing and the else branch
 -- is unreachable.
 function narrowString()
-    if s then
-        local inThen = s;
-    else
-        local inElse = s;
-    end
+  if s then
+    local inThen = s;
+  else
+    local inElse = s;
+  end
 end
 -- Same for numbers: `0 | 1` keeps both constituents.
 function narrowNumber(x)
-    if x then
-        local kept = x;
-    end
+  if x then
+    local kept = x;
+  end
 end
 -- `nil` is still falsy, so absence still narrows.
 function narrowNil()
-    if maybe then
-        local present = maybe;
-    end
+  if maybe then
+    local present = maybe;
+  end
 end
 -- `false` is still falsy.
 function narrowBoolean()
-    if flag then
-        local t = flag;
-    else
-        local f = flag;
-    end
+  if flag then
+    local t = flag;
+  else
+    local f = flag;
+  end
 end
 -- `not` on a truthy value is `false`.
 local notZero = !zero;
@@ -139,27 +139,27 @@ local or2 = zero or s;
 local or3 = maybe or s;
 -- A `while` over a number can only be left by `break`, since no number is falsy.
 function loopExit(x)
-    while x do
-        if x == 3 then
-            break;
-        end
-        if x == 5 then
-            break;
-        end
+  while x do
+    if x == 3 then
+      break;
     end
-    -- Only the values it broke on survive.
-    local after = x;
-    return after;
+    if x == 5 then
+      break;
+    end
+  end
+  -- Only the values it broke on survive.
+  local after = x;
+  return after;
 end
 -- Literal conditions: the JS-era `while(0)`/`while(1)` exemption is retired.
 -- `0` no longer means "loop never", so a numeric literal condition is reported
 -- always-truthy exactly like a string literal.
 function literalConditions()
-    while 1 do
-        break;
-    end
-    if 0 then
-    end
-    if "" then
-    end
+  while 1 do
+    break;
+  end
+  if 0 then
+  end
+  if "" then
+  end
 end

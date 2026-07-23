@@ -18,5 +18,5 @@ end
 -- Constructor parameter properties are removed with classes. Modifiers on an
 -- ordinary function parameter are always invalid.
 function rejected(a, b, c, d, e)
-    return a + b + c + d + e;
+  return a + b + c + d + e;
 end

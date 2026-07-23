@@ -108,7 +108,7 @@ declare function require(module: string): any;
 //// [/home/src/workspaces/solution/child/child.lua] *new* 
 local child2 = require("child2");
 function child()
-    child2.child2();
+  child2.child2();
 end
 return { child = child };
 
@@ -207,7 +207,7 @@ return { child2 = child2 };
 //// [/home/src/workspaces/solution/main/main.lua] *new* 
 local child = require("child.child");
 function main()
-    child.child();
+  child.child();
 end
 return { main = main };
 

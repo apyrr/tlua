@@ -140,10 +140,10 @@ return { World = World };
 //// [/user/username/projects/sample1/core/index.lua] *new* 
 local someString = "HELLO WORLD";
 function leftPad(s, n)
-    return s + n;
+  return s + n;
 end
 function multiply(a, b)
-    return a * b;
+  return a * b;
 end
 return { someString = someString, leftPad = leftPad, multiply = multiply };
 
@@ -254,13 +254,13 @@ return { someString = someString, leftPad = leftPad, multiply = multiply };
 //// [/user/username/projects/sample1/logic/index.lua] *new* 
 local c = require('core.index');
 function getSecondsInDay()
-    return c.multiply(10, 15);
+  return c.multiply(10, 15);
 end
 local mod = require('core.anotherModule');
 return { getSecondsInDay = getSecondsInDay, m = mod };
 //# sourceMappingURL=index.lua.map
 //// [/user/username/projects/sample1/logic/index.lua.map] *new* 
-{"version":3,"file":"index.lua","sourceRoot":"","sources":["index.tlua"],"names":[],"mappings":"AAAA,MAAM,CAAC,GAAG,OAAO,CAAC,YAAY,CAAC,CAAC;AAChC,SAAS,eAAe;IACpB,OAAO,CAAC,CAAC,QAAQ,CAAC,EAAE,EAAE,EAAE,CAAC,CAAC;GAC3B;AACH,MAAM,GAAG,GAAG,OAAO,CAAC,oBAAoB,CAAC,CAAC;AAC1C,OAAO,EAAE,eAAe,GAAG,eAAe,EAAE,CAAC,GAAG,GAAG,EAAE,CAAC"}
+{"version":3,"file":"index.lua","sourceRoot":"","sources":["index.tlua"],"names":[],"mappings":"AAAA,MAAM,CAAC,GAAG,OAAO,CAAC,YAAY,CAAC,CAAC;AAChC,SAAS,eAAe;EACpB,OAAO,CAAC,CAAC,QAAQ,CAAC,EAAE,EAAE,EAAE,CAAC,CAAC;GAC3B;AACH,MAAM,GAAG,GAAG,OAAO,CAAC,oBAAoB,CAAC,CAAC;AAC1C,OAAO,EAAE,eAAe,GAAG,eAAe,EAAE,CAAC,GAAG,GAAG,EAAE,CAAC"}
 //// [/user/username/projects/sample1/logic/tluaconfig.tluabuildinfo] *new* 
 {"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./index.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"58f473d4d63e304a922bb0a3fd4eedf8-local c = require('core.index');\nfunction getSecondsInDay()\n    return c.multiply(10, 15);\nend\nlocal mod = require('core.anotherModule');\nreturn { getSecondsInDay = getSecondsInDay, m = mod };"],"options":{"composite":true,"declaration":true,"rootDir":"..","skipDefaultLibCheck":true,"sourceMap":true},"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
 //// [/user/username/projects/sample1/logic/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
@@ -485,13 +485,13 @@ function someFn()
 end
 local c = require('core.index');
 function getSecondsInDay()
-    return c.multiply(10, 15);
+  return c.multiply(10, 15);
 end
 local mod = require('core.anotherModule');
 return { getSecondsInDay = getSecondsInDay, m = mod };
 //# sourceMappingURL=index.lua.map
 //// [/user/username/projects/sample1/logic/index.lua.map] *modified* 
-{"version":3,"file":"index.lua","sourceRoot":"","sources":["index.tlua"],"names":[],"mappings":"AAAA,SAAS,MAAM;GAAM;AACrB,MAAM,CAAC,GAAG,OAAO,CAAC,YAAY,CAAC,CAAC;AAChC,SAAS,eAAe;IACpB,OAAO,CAAC,CAAC,QAAQ,CAAC,EAAE,EAAE,EAAE,CAAC,CAAC;GAC3B;AACH,MAAM,GAAG,GAAG,OAAO,CAAC,oBAAoB,CAAC,CAAC;AAC1C,OAAO,EAAE,eAAe,GAAG,eAAe,EAAE,CAAC,GAAG,GAAG,EAAE,CAAC"}
+{"version":3,"file":"index.lua","sourceRoot":"","sources":["index.tlua"],"names":[],"mappings":"AAAA,SAAS,MAAM;GAAM;AACrB,MAAM,CAAC,GAAG,OAAO,CAAC,YAAY,CAAC,CAAC;AAChC,SAAS,eAAe;EACpB,OAAO,CAAC,CAAC,QAAQ,CAAC,EAAE,EAAE,EAAE,CAAC,CAAC;GAC3B;AACH,MAAM,GAAG,GAAG,OAAO,CAAC,oBAAoB,CAAC,CAAC;AAC1C,OAAO,EAAE,eAAe,GAAG,eAAe,EAAE,CAAC,GAAG,GAAG,EAAE,CAAC"}
 //// [/user/username/projects/sample1/logic/tluaconfig.tluabuildinfo] *modified* 
 {"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./index.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"299af904fe4b9b579a36ede777b9476a-function someFn() end\nlocal c = require('core.index');\nfunction getSecondsInDay()\n    return c.multiply(10, 15);\nend\nlocal mod = require('core.anotherModule');\nreturn { getSecondsInDay = getSecondsInDay, m = mod };","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1}],"options":{"composite":true,"declaration":true,"rootDir":"..","skipDefaultLibCheck":true,"sourceMap":true},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
 //// [/user/username/projects/sample1/logic/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
@@ -640,13 +640,13 @@ function someFn()
 end
 local c = require('core.index');
 function getSecondsInDay()
-    return c.multiply(10, 15);
+  return c.multiply(10, 15);
 end
 local mod = require('core.anotherModule');
 return { someFn = someFn, getSecondsInDay = getSecondsInDay, m = mod };
 //# sourceMappingURL=index.lua.map
 //// [/user/username/projects/sample1/logic/index.lua.map] *modified* 
-{"version":3,"file":"index.lua","sourceRoot":"","sources":["index.tlua"],"names":[],"mappings":"AAAA,SAAS,MAAM;GAAM;AACrB,MAAM,CAAC,GAAG,OAAO,CAAC,YAAY,CAAC,CAAC;AAChC,SAAS,eAAe;IACpB,OAAO,CAAC,CAAC,QAAQ,CAAC,EAAE,EAAE,EAAE,CAAC,CAAC;GAC3B;AACH,MAAM,GAAG,GAAG,OAAO,CAAC,oBAAoB,CAAC,CAAC;AAC1C,OAAO,EAAE,MAAM,GAAG,MAAM,EAAE,eAAe,GAAG,eAAe,EAAE,CAAC,GAAG,GAAG,EAAE,CAAC"}
+{"version":3,"file":"index.lua","sourceRoot":"","sources":["index.tlua"],"names":[],"mappings":"AAAA,SAAS,MAAM;GAAM;AACrB,MAAM,CAAC,GAAG,OAAO,CAAC,YAAY,CAAC,CAAC;AAChC,SAAS,eAAe;EACpB,OAAO,CAAC,CAAC,QAAQ,CAAC,EAAE,EAAE,EAAE,CAAC,CAAC;GAC3B;AACH,MAAM,GAAG,GAAG,OAAO,CAAC,oBAAoB,CAAC,CAAC;AAC1C,OAAO,EAAE,MAAM,GAAG,MAAM,EAAE,eAAe,GAAG,eAAe,EAAE,CAAC,GAAG,GAAG,EAAE,CAAC"}
 //// [/user/username/projects/sample1/logic/tluaconfig.tluabuildinfo] *modified* 
 {"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./index.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"a92f00824f16c65a31781b68b327d5a7-function someFn() end\nlocal c = require('core.index');\nfunction getSecondsInDay()\n    return c.multiply(10, 15);\nend\nlocal mod = require('core.anotherModule');\nreturn { someFn = someFn, getSecondsInDay = getSecondsInDay, m = mod };","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1}],"options":{"composite":true,"declaration":true,"rootDir":"..","skipDefaultLibCheck":true,"sourceMap":true},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
 //// [/user/username/projects/sample1/logic/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 

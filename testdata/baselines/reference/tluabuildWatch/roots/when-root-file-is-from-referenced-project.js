@@ -193,7 +193,7 @@ console.log('Hello, world!');
 }
 //// [/home/src/workspaces/solution/projects/shared/dist/src/logging.lua] *new* 
 function log(str)
-    console.log(str);
+  console.log(str);
 end
 
 //// [/home/src/workspaces/solution/projects/shared/dist/src/myClass.lua] *new* 
@@ -202,7 +202,7 @@ return { MyClass = MyClass };
 
 //// [/home/src/workspaces/solution/projects/shared/dist/src/random.lua] *new* 
 function randomFn(str)
-    console.log(str);
+  console.log(str);
 end
 
 //// [/home/src/workspaces/solution/projects/shared/dist/tluaconfig.tluabuildinfo] *new* 
@@ -448,7 +448,7 @@ projects/server/src/server.tlua
 
 //// [/home/src/workspaces/solution/projects/shared/dist/src/logging.lua] *modified* 
 function log(str)
-    console.log(str);
+  console.log(str);
 end
 local x = 10;
 

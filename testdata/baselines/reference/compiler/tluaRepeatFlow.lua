@@ -47,35 +47,35 @@ end
 -- The until-condition narrows: true exits the loop, so the post-loop flow
 -- keeps the condition's facts.
 function narrowAfter()
-    local x = nil;
-    repeat
-        x = poll();
-    until x ~= nil;
-    return x;
+  local x = nil;
+  repeat
+    x = poll();
+  until x ~= nil;
+  return x;
 end
 -- `return` inside repeat participates in return-type inference.
 function inferred(cond)
-    repeat
-        if cond then
-            return 1;
-        end
-    until cond;
-    return "done";
+  repeat
+    if cond then
+      return 1;
+    end
+  until cond;
+  return "done";
 end
 -- Unreachable code after break is reported.
 function unreachable()
-    local n = 0;
-    repeat
-        break;
-        n = 1;
-    until true;
-    return n;
+  local n = 0;
+  repeat
+    break;
+    n = 1;
+  until true;
+  return n;
 end
 -- A body assignment is visible in the condition and after the loop.
 function assignedInBody()
-    local total = nil;
-    repeat
-        total = 1;
-    until total ~= nil;
-    return total;
+  local total = nil;
+  repeat
+    total = 1;
+  until total ~= nil;
+  return total;
 end

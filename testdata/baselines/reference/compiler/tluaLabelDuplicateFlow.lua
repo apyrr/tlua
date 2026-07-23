@@ -24,18 +24,18 @@ end
 
 //// [tluaLabelDuplicateFlow.lua]
 function duplicateNoMerge(x)
-    if x == nil then
-        return;
-    end
-    ::a::
-    local y = x;
-    use(y);
-    x = nil;
-    ::a::
+  if x == nil then
+    return;
+  end
+  ::a::
+  local y = x;
+  use(y);
+  x = nil;
+  ::a::
 end
 -- Adjacent duplicates must not make the label its own antecedent.
 function adjacentDuplicates()
-    ::b::
-    ::b::
-    return 1;
+  ::b::
+  ::b::
+  return 1;
 end

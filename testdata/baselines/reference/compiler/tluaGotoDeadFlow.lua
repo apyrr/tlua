@@ -41,29 +41,29 @@ end
 -- antecedent, a cycle with no base. The label is now correctly unreachable, and
 -- the compiler terminates.
 function selfGotoInDeadCode()
-    return 1;
-    ::again::
-    goto again;
+  return 1;
+  ::again::
+  goto again;
 end
 -- A label whose only goto sits in dead code is NOT unused: the goto still names
 -- it, even though it wires no flow edge.
 function deadGotoStillReferences()
-    ::x::
-    return 1;
-    goto x;
+  ::x::
+  return 1;
+  goto x;
 end
 -- A label nothing references at all is unused.
 function trulyUnused()
-    ::dead::
-    return 1;
+  ::dead::
+  return 1;
 end
 -- A live forward goto keeps a label — and the code after it — reachable, even
 -- when the fall-through into the label is dead.
 function reachableViaGotoOnly(flag)
-    if flag then
-        goto tail;
-    end
-    return 1;
-    ::tail::
-    return 2;
+  if flag then
+    goto tail;
+  end
+  return 1;
+  ::tail::
+  return 2;
 end

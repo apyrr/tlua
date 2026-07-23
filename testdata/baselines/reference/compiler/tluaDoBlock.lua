@@ -57,48 +57,48 @@ end
 //// [tluaDoBlock.lua]
 -- Standalone do-block: locals scoped inside, shadowing works.
 function scoped()
-    local x = 1;
-    do
-        local x = 2;
-        local y = x + 1;
-        y;
-    end
-    return x;
+  local x = 1;
+  do
+    local x = 2;
+    local y = x + 1;
+    y;
+  end
+  return x;
 end
 -- Block locals are not visible outside.
 function leak()
-    do
-        local hidden = 1;
-    end
-    return hidden;
+  do
+    local hidden = 1;
+  end
+  return hidden;
 end
 -- Nested do-blocks; TS statements inside.
 function nested(flag)
-    local n = 0;
+  local n = 0;
+  do
     do
-        do
-            if flag then
-                n = 1;
-            end
-        end
+      if flag then
+        n = 1;
+      end
     end
-    return n;
+  end
+  return n;
 end
 -- A repeat-until loop coexists with Lua do-blocks in one body.
 function coexist(flag)
-    repeat
-        flag = false;
-    until !(flag);
-    do
-        local x = 1;
-        x;
-    end
-    return 0;
+  repeat
+    flag = false;
+  until !(flag);
+  do
+    local x = 1;
+    x;
+  end
+  return 0;
 end
 -- A plain Lua if coexisting with the do-blocks above.
 function canonical(flag)
-    if flag then
-        return 1;
-    end
-    return 0;
+  if flag then
+    return 1;
+  end
+  return 0;
 end

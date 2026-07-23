@@ -76,81 +76,81 @@ local x = 1;
 namespace;
 A;
 do
-    while true do
-    end
-    local x;
+  while true do
+  end
+  local x;
 end
 namespace;
 A1;
 do
-    while true do
-    end
-    namespace;
-    A;
-    do
-    end
+  while true do
+  end
+  namespace;
+  A;
+  do
+  end
 end
 namespace;
 A2;
 do
-    while true do
-    end
-    namespace;
-    A;
-    do
-        local x = 1;
-    end
+  while true do
+  end
+  namespace;
+  A;
+  do
+    local x = 1;
+  end
 end
 namespace;
 A3;
 do
-    while true do
-    end
+  while true do
+  end
 end
 namespace;
 A4;
 do
-    while true do
-    end
-    namespace;
-    A;
-    do
-        local x = 1;
-    end
+  while true do
+  end
+  namespace;
+  A;
+  do
+    local x = 1;
+  end
 end
 function f1(x)
-    if x then
-        return;
-    else
-        throw new Error("123");
-    end
-    local x;
+  if x then
+    return;
+  else
+    throw new Error("123");
+  end
+  local x;
 end
 function f2()
-    return;
-    class;
-    A;
-    do
-    end
+  return;
+  class;
+  A;
+  do
+  end
 end
 namespace;
 B;
 do
-    while true do
-    end
-    namespace;
-    C;
-    do
-    end
+  while true do
+  end
+  namespace;
+  C;
+  do
+  end
 end
 function f3()
-    while true do
-    end
-    local x = 1;
+  while true do
+  end
+  local x = 1;
 end
 function f4()
-    if true then
-        throw new Error();
-    end
-    local x = 1;
+  if true then
+    throw new Error();
+  end
+  local x = 1;
 end

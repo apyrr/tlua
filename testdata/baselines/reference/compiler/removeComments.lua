@@ -31,21 +31,21 @@ end
 
 //// [removeComments.lua]
 function t1()
-    if () then
-        a < 2;
-        console.log('t1', a);
-    end
+  if () then
+    a < 2;
+    console.log('t1', a);
+  end
 end
 function t2()
-    console.log("t2");
-    local obj = {
-        a = 1,
-        b = 2,
-        c = 3,
-    };
-    console.log("test", {
-        a = , , .a,
-        b = , , .b,
-        c = , , .c,
-    }, obj);
+  console.log("t2");
+  local obj = {
+    a = 1,
+    b = 2,
+    c = 3,
+  };
+  console.log("test", {
+    a = , , .a,
+    b = , , .b,
+    c = , , .c,
+  }, obj);
 end

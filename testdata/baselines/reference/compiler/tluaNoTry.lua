@@ -17,13 +17,13 @@ try {
 -- reports ordinary syntax errors without constructing legacy AST nodes.
 try;
 do
-    throw "boom";
+  throw "boom";
 end
 catch(e);
 do
-    local caught = e;
+  local caught = e;
 end
 finally;
 do
-    local cleaned = true;
+  local cleaned = true;
 end

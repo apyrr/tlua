@@ -68,26 +68,26 @@ type Complex<T> = () => (T extends string ? number : boolean, (string | nil)?, .
 //// [tluaMultiReturnTypeSyntax.lua]
 -- Bare multi-return type lists on declaration headers.
 function pair()
-    return 1, "a";
+  return 1, "a";
 end
 function triple()
-    return 1, "a", true;
+  return 1, "a", true;
 end
 local function localPair()
-    return 2, "b";
+  return 2, "b";
 end
 function bracePair()
-    return 3, "c";
+  return 3, "c";
 end
 local exprPair = function()
-    return 4, "d";
+  return 4, "d";
 end;
 -- Single-type returns are unchanged by the list grammar.
 function single()
-    return 5;
+  return 5;
 end
 function explicitPair()
-    return 6, "f";
+  return 6, "f";
 end
 local p = pair();
 local t = triple();
@@ -103,5 +103,5 @@ consumePair(pairFunction());
 consumePair(pairCallable());
 consumePair(pairCallable.pair());
 local function takesCallback(callback, label)
-    return callback(), label;
+  return callback(), label;
 end

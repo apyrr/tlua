@@ -48,7 +48,7 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/user/username/projects/myproject/index.lua] *new* 
 local fn = function(a, b)
-    return b;
+  return b;
 end;
 
 //// [/user/username/projects/myproject/tluaconfig.tluabuildinfo] *new* 

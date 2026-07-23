@@ -32,20 +32,20 @@ end
 -- async function bodies and module top level — and async functions emit as
 -- plain functions (no __awaiter, no transform).
 async function f()
-    local await = compute();
-    return await;
+  local await = compute();
+  return await;
 end
 -- `await expr` no longer parses as a unary operator.
 async function g()
-    return await;
-    f();
+  return await;
+  f();
 end
 -- Ordinary identifier at top level of a module.
 local await = 1;
 local usesAwait = await + 1;
 -- `await using` is removed with it.
 function h()
-    await;
-    using;
-    r = compute();
+  await;
+  using;
+  r = compute();
 end

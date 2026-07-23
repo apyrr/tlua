@@ -23,16 +23,16 @@ nested.inner.cb = function(y) return y + 1; end;
 -- member's existing type — only real augmentations suppress that.
 -- Base is an identifier (`t`): exercises the KindIdentifier branch.
 local t = { cb = function(x)
-        return x;
-    end };
+    return x;
+  end };
 t.cb = function(x)
-    return x + 1;
+  return x + 1;
 end;
 -- Base is a property access (`nested.inner`): exercises the
 -- KindPropertyAccessExpression branch.
 local nested = { inner = { cb = function(y)
-            return y;
-        end } };
+      return y;
+    end } };
 nested.inner.cb = function(y)
-    return y + 1;
+  return y + 1;
 end;

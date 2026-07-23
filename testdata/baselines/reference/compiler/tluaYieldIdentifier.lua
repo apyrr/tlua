@@ -24,6 +24,6 @@ local exportedYield = yield;
 local yield = 1;
 local sum = yield + 1;
 function useYield(yield)
-    return yield;
+  return yield;
 end
 local exportedYield = yield;

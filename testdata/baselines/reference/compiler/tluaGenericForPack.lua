@@ -40,25 +40,25 @@ end
 
 //// [tluaGenericForPack.lua]
 function useOverloaded()
-    for k, v in overloaded do
-        k;
-        v;
-    end
+  for k, v in overloaded do
+    k;
+    v;
+  end
 end
 function useVariadic()
-    for k, v, w in variadicIter do
-        k;
-        v;
-        w;
-    end
+  for k, v, w in variadicIter do
+    k;
+    v;
+    w;
+  end
 end
 function defAssign(t)
-    local total = 0;
-    for k, v in pair, t, nil do
-        total = total + k;
-        if v ~= nil then
-            total = total + v;
-        end
+  local total = 0;
+  for k, v in pair, t, nil do
+    total = total + k;
+    if v ~= nil then
+      total = total + v;
     end
-    return total;
+  end
+  return total;
 end

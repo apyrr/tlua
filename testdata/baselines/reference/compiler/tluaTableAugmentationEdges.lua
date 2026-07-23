@@ -50,7 +50,7 @@ G.x = 1;
 U = {};
 //// [c.lua]
 local function make()
-    return { y = 2 };
+  return { y = 2 };
 end
 G = make();
 -- A member written in only one arm's constructor needs narrowing: before the

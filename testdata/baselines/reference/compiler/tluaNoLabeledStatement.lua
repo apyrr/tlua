@@ -35,17 +35,17 @@ while true do
 end
 -- break takes no label.
 function labeledBreak(n)
-    while n > 0 do
-        break;
-        outer;
-    end
+  while n > 0 do
+    break;
+    outer;
+  end
 end
 -- continue takes no label.
 function labeledContinue(n)
-    while n > 0 do
-        continue;
-        outer;
-    end
+  while n > 0 do
+    continue;
+    outer;
+  end
 end
 -- `goto` is a reserved word, so it cannot be a binding name.
 local ;

@@ -21,6 +21,6 @@ declare;
 x;
 declare = x;
 local call = function(declare)
-    return declare;
+  return declare;
 end;
 call(declare);

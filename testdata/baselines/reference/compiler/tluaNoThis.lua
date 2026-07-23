@@ -74,8 +74,8 @@ Dog;
 is;
 Dog;
 function q(self)
-    local a = self;
-    use(a);
+  local a = self;
+  use(a);
 end
 use(x);
 use(y);

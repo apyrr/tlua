@@ -18,13 +18,13 @@ end
 return { value = 1 };
 //// [main.lua]
 do
-    with;
-    do
-        type;
-        "json";
-    end
+  with;
+  do
+    type;
+    "json";
+  end
 end
 function usesAssert()
-    local assert = 4;
-    return assert;
+  local assert = 4;
+  return assert;
 end

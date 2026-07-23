@@ -48,8 +48,8 @@ M:absent();
 //// [tluaColonCallErrors.lua]
 local M = { count = 0 };
 function M:inc(by)
-    self.count = self.count + by;
-    return self.count;
+  self.count = self.count + by;
+  return self.count;
 end
 -- Wrong argument type.
 M:inc("x");

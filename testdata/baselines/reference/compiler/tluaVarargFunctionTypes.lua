@@ -76,39 +76,39 @@ local toAnnotated = bare;
 local fixedFromVararg = annotated;
 local varargFromFixed = fixed;
 local contextual = function(...)
-    local first, second, third, fourth = ...;
-    -- A positive annotation cannot catch an `any` fallback (any assigns to
-    -- everything), so assert negatively: if the pack is precise, the first value
-    -- is a `number` and this is an error. If it degrades to `any`, it passes.
-    local wrong = ...;
+  local first, second, third, fourth = ...;
+  -- A positive annotation cannot catch an `any` fallback (any assigns to
+  -- everything), so assert negatively: if the pack is precise, the first value
+  -- is a `number` and this is an error. If it degrades to `any`, it passes.
+  local wrong = ...;
 end;
 -- Return-type position disambiguation. `(...)` after `:` opens a *callable
 -- type*, so this is a function returning a function.
 function mk()
-    return function(...)
-    end;
+  return function(...)
+  end;
 end
 function mkAnnotated()
-    return function(...)
-    end;
+  return function(...)
+  end;
 end
 -- A type start after `...` makes it a pure-variadic *return pack* instead.
 function g()
-    return "a", "b";
+  return "a", "b";
 end
 function h()
-    return 1, "a", "b";
+  return 1, "a", "b";
 end
 -- An arrow with a bare vararg, including with a return-type annotation: the
 -- `(...` lookahead must not mistake these for a parenthesized vararg expression.
 local arrowBare = function(...)
-    return 1;
+  return 1;
 end;
 local arrowTyped = function(...)
-    return 1;
+  return 1;
 end;
 local arrowAnnotated = function(...)
-    return 1;
+  return 1;
 end;
 local combined = function(q, ...)
 end;

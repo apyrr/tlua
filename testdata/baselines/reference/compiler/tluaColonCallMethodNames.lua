@@ -43,13 +43,13 @@ Account:case();
 -- emits — symmetric with what the dot path accepts.
 local Account = { balance = 0 };
 function Account:new()
-    return self;
+  return self;
 end
 function Account:delete()
-    self.balance = 0;
+  self.balance = 0;
 end
 function Account:type()
-    return "account";
+  return "account";
 end
 local a = Account:new();
 Account:delete();

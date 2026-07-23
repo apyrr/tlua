@@ -39,16 +39,16 @@ end
 
 //// [tluaMultiReturnForwarding.lua]
 function pair()
-    return 1, "a";
+  return 1, "a";
 end
 function variadic()
-    return 1, "a", "b";
+  return 1, "a", "b";
 end
 function rest(a, ...)
-    return a;
+  return a;
 end
 function takes2(a, b)
-    return true;
+  return true;
 end
 -- A variadic tail forwards into a rest parameter.
 local restForward = rest(variadic());
@@ -57,10 +57,10 @@ local restForward = rest(variadic());
 local unbounded = takes2(variadic());
 -- Packs forward through nested calls.
 function wrap()
-    return pair();
+  return pair();
 end
 local nested = takes2(wrap());
 -- The tail expands inside a call used as a value list tail.
 function both()
-    return takes2(pair()), 2;
+  return takes2(pair()), 2;
 end

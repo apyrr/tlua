@@ -33,7 +33,7 @@ end
 //// [tluaColonFunctionErrors.lua]
 local M = {};
 function M:bar(v)
-    return v;
+  return v;
 end
 -- The colon call form supplies the receiver implicitly.
 M:bar(1);
@@ -42,17 +42,17 @@ function M:clash(self)
 end
 -- At most one colon segment, and nothing may follow it.
 function M:deep()
-    f();
-    void ;
+  f();
+  void ;
 end
 function M:a()
-    ();
-    void ;
+  ();
+  void ;
 end
 -- `local function` takes a plain name.
 local function Bad()
-    ();
-    void ;
+  ();
+  void ;
 end
 -- Unknown base.
 function Unknown:f()

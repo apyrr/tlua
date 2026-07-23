@@ -24,7 +24,7 @@ run(fetchOk);
 -- (non-async) function type. This closes the laundering hole — async-ness can
 -- no longer be silently erased by annotating a sync function type.
 async function fetchOk(url)
-    return request(url);
+  return request(url);
 end
 -- Error: async fn laundered through a plain (sync) function-typed slot.
 local bad = fetchOk;

@@ -10,5 +10,5 @@ end
 //// [tluaLabelUnusedAllowed.lua]
 -- allowUnusedLabels suppresses the report for a label no goto targets.
 function unused()
-    ::dead::
+  ::dead::
 end

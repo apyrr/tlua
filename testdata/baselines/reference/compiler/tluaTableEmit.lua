@@ -18,9 +18,9 @@ local t = {
 -- `;` separators normalize to `,`.
 local key = "dyn";
 local t = {
-    x = 1,
-    y = 2,
-    ["lit"] = 3,
-    [key] = 4,
-    [5] = "five",
+  x = 1,
+  y = 2,
+  ["lit"] = 3,
+  [key] = 4,
+  [5] = "five",
 };

@@ -23,25 +23,25 @@ class C extends B {
 class;
 B;
 do
-    m();
-    do
-        return 1;
-    end
+  m();
+  do
+    return 1;
+  end
 end
 class;
 C;
 B;
 do
-    f();
-    do
-        local g = async function(b = super.m())
-            return b;
-        end;
-        return g();
-    end
-    async;
-    h(b = super.m());
-    do
-        return b;
-    end
+  f();
+  do
+    local g = async function(b = super.m())
+      return b;
+    end;
+    return g();
+  end
+  async;
+  h(b = super.m());
+  do
+    return b;
+  end
 end

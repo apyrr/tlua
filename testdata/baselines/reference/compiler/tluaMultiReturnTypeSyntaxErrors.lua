@@ -37,25 +37,25 @@ local s: string = b;
 
 //// [tluaMultiReturnTypeSyntaxErrors.lua]
 function takesCallback(cb, more)
-    return cb() + more.length;
+  return cb() + more.length;
 end
 function trailingCallback(cb)
-    return cb();
+  return cb();
 end
 -- An arrow return type in a call argument list does not swallow the comma.
 function twoArgs(a, b)
-    return a(b);
+  return a(b);
 end
 local r = twoArgs(function(x)
-    return x;
+  return x;
 end, 1);
 -- A bare multiple return type must be parenthesized; the list is still
 -- parsed for recovery, so the pack itself checks normally.
 function barePair()
-    return 1, "a";
+  return 1, "a";
 end
 local function bareLocal()
-    return 1, nil;
+  return 1, nil;
 end
 local a, b = barePair();
 local n = a;

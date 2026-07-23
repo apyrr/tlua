@@ -49,7 +49,7 @@ local banded = bits["and"](1);
 -- An expando member named `and` is skipped by declaration emit rather than
 -- emitted as the bare alias `export { ... as and }`, which would not parse.
 function A()
-    return "A";
+  return "A";
 end
 A["and"] = t;
 A["ok"] = t;

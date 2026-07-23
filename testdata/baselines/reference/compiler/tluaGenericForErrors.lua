@@ -45,30 +45,30 @@ end
 //// [tluaGenericForErrors.lua]
 -- Value 1 must be callable — reported once.
 function notCallable()
-    for k in 42 do
-        k;
-    end
+  for k in 42 do
+    k;
+  end
 end
 function anyIterator()
-    for k, v in anything do
-        k;
-        v;
-    end
+  for k, v in anything do
+    k;
+    v;
+  end
 end
 function badAnnotation(t)
-    for k in iter do
-        k;
-    end
+  for k in iter do
+    k;
+  end
 end
 -- Missing `in`.
 function missingIn()
-    for k in of do
-    end
+  for k in of do
+  end
 end
 -- Loop names are ordinary block-scoped variables: using one in its own
 -- header is a use-before-declaration error (like numeric-for).
 function selfReference()
-    for k in k do
-        k;
-    end
+  for k in k do
+    k;
+  end
 end

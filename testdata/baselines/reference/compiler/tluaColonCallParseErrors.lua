@@ -27,8 +27,8 @@ fine(1);
 
 //// [tluaColonCallParseErrors.lua]
 local M = { ping = function(self)
-        return 1;
-    end };
+    return 1;
+  end };
 -- A colon access exists only as a call: Lua rejects `obj:f` without arguments.
 local f = M;
 ping;

@@ -62,26 +62,26 @@ end
 class;
 WithMembers;
 do
-    x = 1;
-    m();
-    do
-    end
-    constructor();
-    do
-    end
-    s();
-    do
-    end
-    #p;
-    2;
-    get;
-    a();
-    do
-        return 1;
-    end
+  x = 1;
+  m();
+  do
+  end
+  constructor();
+  do
+  end
+  s();
+  do
+  end
+  #p;
+  2;
+  get;
+  a();
+  do
+    return 1;
+  end
 end
 -- `class` is now an ordinary identifier.
 function usesClassName()
-    local class = 3;
-    return class;
+  local class = 3;
+  return class;
 end

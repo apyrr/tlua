@@ -78,27 +78,27 @@ use(inst);
 -- Ordinary identifier type predicates still narrow. Only the `this is T` form
 -- was removed, and it is a distinct branch of the predicate machinery.
 function isString(v)
-    return type(v) == "string";
+  return type(v) == "string";
 end
 function narrow(v)
-    if isString(v) then
-        local s = v;
-        use(s);
-    end
-    assertString(v);
-    local t = v;
-    use(t);
+  if isString(v) then
+    local s = v;
+    use(s);
+  end
+  assertString(v);
+  local t = v;
+  use(t);
 end
 -- Lua's global environment remains available independently of `this`.
 local g = _G;
 local counter = {
-    n = 0,
-    bump = function(self, by)
-        return self.n + by;
-    end,
+  n = 0,
+  bump = function(self, by)
+    return self.n + by;
+  end,
 };
 function counter:bump(by)
-    return self.n + by;
+  return self.n + by;
 end
 local mapped = box.map(box, toStr);
 local inst = new K();

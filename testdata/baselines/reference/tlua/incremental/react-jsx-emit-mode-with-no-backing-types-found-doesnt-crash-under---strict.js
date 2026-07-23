@@ -70,7 +70,7 @@ declare function require(module: string): any;
 //// [/home/src/workspaces/project/src/index.lua] *new* 
 import { jsx as _jsx } from "react/jsx-runtime";
 local App = function()
-    return _jsx("div", { propA: true });
+  return _jsx("div", { propA: true });
 end;
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
