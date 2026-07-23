@@ -5,14 +5,15 @@ local function factorial(n: number): number
 >factorial : (n: number) => number
 >n : number
 
-  if (n <= 1) {
+  if n <= 1 then
 >n <= 1 : boolean
 >n : number
 >1 : 1
 
     return 1;
 >1 : 1
-  }
+
+  end
   return n * factorial(n - 1);
 >n * factorial(n - 1) : number
 >n : number
@@ -32,14 +33,15 @@ local function recursiveOnly(n: number): number
 >recursiveOnly : (n: number) => number
 >n : number
 
-  if (n <= 0) {
+  if n <= 0 then
 >n <= 0 : boolean
 >n : number
 >0 : 0
 
     return 0;
 >0 : 0
-  }
+
+  end
   return recursiveOnly(n - 1);
 >recursiveOnly(n - 1) : number
 >recursiveOnly : (n: number) => number
@@ -92,7 +94,7 @@ shadow();
 >shadow() : number
 >shadow : () => number
 
-{
+do
   local function shadow(): number
 >shadow : () => number
 
@@ -103,7 +105,8 @@ shadow();
   shadow();
 >shadow() : number
 >shadow : () => number
-}
+
+end
 
 shadow();
 >shadow() : number

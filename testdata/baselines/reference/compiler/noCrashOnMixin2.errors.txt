@@ -2,6 +2,7 @@ noCrashOnMixin2.tlua(3,1): error TLUA1434: Unexpected keyword or identifier.
 noCrashOnMixin2.tlua(3,1): error TLUA2304: Cannot find name 'class'.
 noCrashOnMixin2.tlua(3,7): error TLUA1435: Unknown keyword or identifier. Did you mean 'abstract'?
 noCrashOnMixin2.tlua(3,7): error TLUA2304: Cannot find name 'Abstract'.
+noCrashOnMixin2.tlua(3,16): error TLUA1128: Declaration or statement expected.
 noCrashOnMixin2.tlua(4,5): error TLUA1128: Declaration or statement expected.
 noCrashOnMixin2.tlua(4,15): error TLUA2304: Cannot find name 'constructor'.
 noCrashOnMixin2.tlua(4,29): error TLUA1005: ';' expected.
@@ -12,15 +13,18 @@ noCrashOnMixin2.tlua(8,7): error TLUA2304: Cannot find name 'Concrete'.
 noCrashOnMixin2.tlua(8,16): error TLUA1128: Declaration or statement expected.
 noCrashOnMixin2.tlua(8,24): error TLUA1435: Unknown keyword or identifier. Did you mean 'abstract'?
 noCrashOnMixin2.tlua(8,24): error TLUA2304: Cannot find name 'Abstract'.
+noCrashOnMixin2.tlua(8,33): error TLUA1128: Declaration or statement expected.
 noCrashOnMixin2.tlua(11,33): error TLUA2370: A rest parameter must be of an array type.
 noCrashOnMixin2.tlua(11,36): error TLUA100034: A vararg parameter cannot have a name.
 noCrashOnMixin2.tlua(14,12): error TLUA2304: Cannot find name 'class'.
 noCrashOnMixin2.tlua(14,18): error TLUA1005: ';' expected.
 noCrashOnMixin2.tlua(14,26): error TLUA1434: Unexpected keyword or identifier.
+noCrashOnMixin2.tlua(14,31): error TLUA1128: Declaration or statement expected.
 noCrashOnMixin2.tlua(18,1): error TLUA1434: Unexpected keyword or identifier.
 noCrashOnMixin2.tlua(18,1): error TLUA2304: Cannot find name 'class'.
 noCrashOnMixin2.tlua(18,7): error TLUA1434: Unexpected keyword or identifier.
 noCrashOnMixin2.tlua(18,7): error TLUA2304: Cannot find name 'Empty'.
+noCrashOnMixin2.tlua(18,13): error TLUA1128: Declaration or statement expected.
 noCrashOnMixin2.tlua(21,1): error TLUA1434: Unexpected keyword or identifier.
 noCrashOnMixin2.tlua(21,1): error TLUA2304: Cannot find name 'class'.
 noCrashOnMixin2.tlua(21,7): error TLUA1434: Unexpected keyword or identifier.
@@ -34,7 +38,7 @@ noCrashOnMixin2.tlua(22,22): error TLUA1005: ';' expected.
 noCrashOnMixin2.tlua(23,13): error TLUA2304: Cannot find name 'Concrete'.
 
 
-==== noCrashOnMixin2.tlua (34 errors) ====
+==== noCrashOnMixin2.tlua (38 errors) ====
     // https://github.com/microsoft/TypeScript/issues/62921
     
     class Abstract {
@@ -46,6 +50,8 @@ noCrashOnMixin2.tlua(23,13): error TLUA2304: Cannot find name 'Concrete'.
 !!! error TLUA1435: Unknown keyword or identifier. Did you mean 'abstract'?
           ~~~~~~~~
 !!! error TLUA2304: Cannot find name 'Abstract'.
+                   ~
+!!! error TLUA1128: Declaration or statement expected.
         protected constructor() {
         ~~~~~~~~~
 !!! error TLUA1128: Declaration or statement expected.
@@ -71,6 +77,8 @@ noCrashOnMixin2.tlua(23,13): error TLUA2304: Cannot find name 'Concrete'.
 !!! error TLUA1435: Unknown keyword or identifier. Did you mean 'abstract'?
                            ~~~~~~~~
 !!! error TLUA2304: Cannot find name 'Abstract'.
+                                    ~
+!!! error TLUA1128: Declaration or statement expected.
     }
     
     type Constructor<T = {}> = new (...args?: any[]) => T;
@@ -79,7 +87,7 @@ noCrashOnMixin2.tlua(23,13): error TLUA2304: Cannot find name 'Concrete'.
                                        ~~~~
 !!! error TLUA100034: A vararg parameter cannot have a name.
     
-    function Mixin<TBase extends Constructor>(Base: TBase) {
+    function Mixin<TBase extends Constructor>(Base: TBase)
         return class extends Base {
                ~~~~~
 !!! error TLUA2304: Cannot find name 'class'.
@@ -87,8 +95,10 @@ noCrashOnMixin2.tlua(23,13): error TLUA2304: Cannot find name 'Concrete'.
 !!! error TLUA1005: ';' expected.
                              ~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
+                                  ~
+!!! error TLUA1128: Declaration or statement expected.
         };
-    }
+    end
     
     class Empty {
     ~~~~~
@@ -99,6 +109,8 @@ noCrashOnMixin2.tlua(23,13): error TLUA2304: Cannot find name 'Concrete'.
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~~~~~
 !!! error TLUA2304: Cannot find name 'Empty'.
+                ~
+!!! error TLUA1128: Declaration or statement expected.
     }
     
     class CrashTrigger extends Mixin(Empty) {

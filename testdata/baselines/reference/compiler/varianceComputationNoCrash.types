@@ -188,7 +188,7 @@ type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends strin
     : Type;
 
 // This would cause a stack overflow during variance computation
-function boom<T>(x: CamelCase<T>, y: CamelCase<T, {}>) {
+function boom<T>(x: CamelCase<T>, y: CamelCase<T, {}>)
 >boom : <T>(x: CamelCase<T>, y: CamelCase<T, {}>) => void
 >x : CamelCase<T, {}>
 >y : CamelCase<T, {}>
@@ -202,5 +202,6 @@ function boom<T>(x: CamelCase<T>, y: CamelCase<T, {}>) {
 >y = x : CamelCase<T, {}>
 >y : CamelCase<T, {}>
 >x : CamelCase<T, {}>
-}
+
+end
 

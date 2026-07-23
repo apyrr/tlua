@@ -1,8 +1,8 @@
-subtypeReductionWithAnyFunctionType.tlua(10,16): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+subtypeReductionWithAnyFunctionType.tlua(10,25): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
 subtypeReductionWithAnyFunctionType.tlua(23,23): error TLUA1135: Argument expression expected.
 subtypeReductionWithAnyFunctionType.tlua(23,37): error TLUA2554: Expected 1 arguments, but got 2.
-subtypeReductionWithAnyFunctionType.tlua(23,46): error TLUA7006: Parameter 'v' implicitly has an 'any' type.
-subtypeReductionWithAnyFunctionType.tlua(23,55): error TLUA1005: ',' expected.
+subtypeReductionWithAnyFunctionType.tlua(23,54): error TLUA7006: Parameter 'v' implicitly has an 'any' type.
+subtypeReductionWithAnyFunctionType.tlua(23,71): error TLUA1005: ',' expected.
 
 
 ==== subtypeReductionWithAnyFunctionType.tlua (5 errors) ====
@@ -10,17 +10,17 @@ subtypeReductionWithAnyFunctionType.tlua(23,55): error TLUA1005: ',' expected.
     
     declare function useMemo<T>(func: () => T): T;
     
-    function getPredicate(alwaysTrue: boolean) {
-        local predicate: (input: string) => boolean = useMemo(() => {
-            if (alwaysTrue) {
-                return () => true;
-            }
-            return x => x.length > 0;
-                   ~
+    function getPredicate(alwaysTrue: boolean)
+        local predicate: (input: string) => boolean = useMemo(function()
+            if (alwaysTrue) then
+                return function() return true end;
+            end
+            return function(x) return x.length > 0 end;
+                            ~
 !!! error TLUA7006: Parameter 'x' implicitly has an 'any' type.
-        });
+        end);
         return predicate;
-    }
+    end
     
     // https://github.com/microsoft/typescript-go/issues/1016
     
@@ -29,15 +29,15 @@ subtypeReductionWithAnyFunctionType.tlua(23,55): error TLUA1005: ',' expected.
     interface Fooer {
         foo: (v: string) => string;
     }
-    function f() {
-        local _ = compact([makeFooer(), { foo = (v) => v }]);
+    function f()
+        local _ = compact([makeFooer(), { foo = function(v) return v end }]);
                           ~
 !!! error TLUA1135: Argument expression expected.
-                                        ~~~~~~~~~~~~~~~~~~
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TLUA2554: Expected 1 arguments, but got 2.
-                                                 ~
+                                                         ~
 !!! error TLUA7006: Parameter 'v' implicitly has an 'any' type.
-                                                          ~
+                                                                          ~
 !!! error TLUA1005: ',' expected.
-    }
+    end
     

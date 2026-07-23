@@ -2,14 +2,14 @@
 // === /getOccurrencesThis3.tlua ===
 // --- (line: 13) skipped ---
 //         }
-//     }
-//     function inside() {
+//     end
+//     function inside()
 //         /*HIGHLIGHTS*/[|this|];
 //         (function (_)
 //             this;
 //         end)([|this|]);
-//     }
-// }
+//     end
+// end
 // 
 // --- (line: 24) skipped ---
 
@@ -19,13 +19,13 @@
 // === /getOccurrencesThis3.tlua ===
 // --- (line: 13) skipped ---
 //         }
-//     }
-//     function inside() {
+//     end
+//     function inside()
 //         [|this|];
 //         (function (_)
 //             this;
 //         end)(/*HIGHLIGHTS*/[|this|]);
-//     }
-// }
+//     end
+// end
 // 
 // --- (line: 24) skipped ---

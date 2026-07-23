@@ -15,10 +15,8 @@ tluaAndOrNotReserved.tlua(19,7): error TLUA1003: Identifier expected.
 tluaAndOrNotReserved.tlua(19,10): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(20,7): error TLUA1003: Identifier expected.
 tluaAndOrNotReserved.tlua(20,11): error TLUA1109: Expression expected.
-tluaAndOrNotReserved.tlua(23,9): error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
 tluaAndOrNotReserved.tlua(23,10): error TLUA1003: Identifier expected.
 tluaAndOrNotReserved.tlua(23,13): error TLUA1109: Expression expected.
-tluaAndOrNotReserved.tlua(23,15): error TLUA1005: ';' expected.
 tluaAndOrNotReserved.tlua(29,18): error TLUA1005: ';' expected.
 tluaAndOrNotReserved.tlua(29,21): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(30,10): error TLUA1005: ';' expected.
@@ -33,7 +31,7 @@ tluaAndOrNotReserved.tlua(40,11): error TLUA1110: Type expected.
 tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 
 
-==== tluaAndOrNotReserved.tlua (33 errors) ====
+==== tluaAndOrNotReserved.tlua (31 errors) ====
     // `and`, `or` and `not` are keywords, so they are reserved. Every use as a name
     // falls into stock recovery, as with the class, decorator, array and this
     // removals. Lua reserves them too, so `t.and` is invalid there as well.
@@ -90,15 +88,11 @@ tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type
 !!! error TLUA1109: Expression expected.
     
     // Declaration names.
-    function or() {}
-            
-!!! error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+    function or() end
              ~~
 !!! error TLUA1003: Identifier expected.
                 ~
 !!! error TLUA1109: Expression expected.
-                  ~
-!!! error TLUA1005: ';' expected.
     
     // `not` shares KindExclamationToken with `!`, but only the punctuation spelling
     // is the non-null and definite-assignment operator. Accepting the word in those

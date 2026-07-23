@@ -4,7 +4,7 @@
   interface JsxIntrinsicElements { div: any; }
 >div : any
 
-async function f() {
+async function f()
 >f : async () => any
 
   return <div arguments={42} />;
@@ -12,5 +12,6 @@ async function f() {
 >div : any
 >arguments : number
 >42 : 42
-}
+
+end
 

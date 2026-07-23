@@ -2,7 +2,7 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/project/main.tlua] *new* 
-local c: Container<number> = { value: 42, map: (fn) => ({ value: fn(42), map: c.map }) };
+local c: Container<number> = { value: 42, map: function(fn) return ({ value: fn(42), map: c.map }) end };
 local n: Nullable<string> = "hello";
 //// [/home/src/workspaces/project/tluaconfig.json] *new* 
 {
@@ -23,18 +23,18 @@ ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [96mmain.tlua[0m:[93m1[0m:[93m37[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
 
-[7m1[0m local c: Container<number> = { value: 42, map: (fn) => ({ value: fn(42), map: c.map }) };
+[7m1[0m local c: Container<number> = { value: 42, map: function(fn) return ({ value: fn(42), map: c.map }) end };
 [7m [0m [91m                                    ~[0m
 
 [96mmain.tlua[0m:[93m1[0m:[93m46[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
 
-[7m1[0m local c: Container<number> = { value: 42, map: (fn) => ({ value: fn(42), map: c.map }) };
+[7m1[0m local c: Container<number> = { value: 42, map: function(fn) return ({ value: fn(42), map: c.map }) end };
 [7m [0m [91m                                             ~[0m
 
-[96mmain.tlua[0m:[93m1[0m:[93m77[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
+[96mmain.tlua[0m:[93m1[0m:[93m89[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
 
-[7m1[0m local c: Container<number> = { value: 42, map: (fn) => ({ value: fn(42), map: c.map }) };
-[7m [0m [91m                                                                            ~[0m
+[7m1[0m local c: Container<number> = { value: 42, map: function(fn) return ({ value: fn(42), map: c.map }) end };
+[7m [0m [91m                                                                                        ~[0m
 
 
 Found 3 errors in the same file, starting at: main.tlua[90m:1[0m

@@ -1,10 +1,10 @@
 // === Inlay Hints ===
-test((state) => {});
-           ^
+test(function(state) end);
+                   ^
 {
   "position": {
     "line": 6,
-    "character": 11
+    "character": 19
   },
   "label": [
     {

@@ -2,7 +2,7 @@
 /**
  * @param {/**/string} x
  */
-function foo(x) {}
+function foo(x) end
 
            string   ↲
 
@@ -16,4 +16,4 @@ function foo(x) {}
 /**
  * @param {string} x
  */
-function foo(x) {}
+function foo(x) end

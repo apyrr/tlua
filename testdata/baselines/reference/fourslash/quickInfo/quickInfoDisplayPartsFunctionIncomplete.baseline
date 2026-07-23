@@ -1,6 +1,6 @@
 // === QuickInfo ===
 === /quickInfoDisplayPartsFunctionIncomplete.tlua ===
-// function (param: string) {
+// function (param: string) end\
 // ^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -13,7 +13,6 @@
 // | ----------------------------------------------------------------------
 // | No quickinfo at /*2*/.
 // | ----------------------------------------------------------------------
-// }\
 // function  {
 // ^^^^^^^^
 // | ----------------------------------------------------------------------
@@ -72,7 +71,7 @@
     "marker": {
       "Position": 30,
       "LSPosition": {
-        "line": 2,
+        "line": 1,
         "character": 0
       },
       "Name": "3",
@@ -85,11 +84,11 @@
       },
       "range": {
         "start": {
-          "line": 2,
+          "line": 1,
           "character": 0
         },
         "end": {
-          "line": 2,
+          "line": 1,
           "character": 8
         }
       }
@@ -99,7 +98,7 @@
     "marker": {
       "Position": 39,
       "LSPosition": {
-        "line": 2,
+        "line": 1,
         "character": 9
       },
       "Name": "4",

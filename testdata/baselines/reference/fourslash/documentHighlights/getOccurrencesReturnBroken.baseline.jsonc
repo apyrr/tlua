@@ -2,30 +2,23 @@
 // === /getOccurrencesReturnBroken.tlua ===
 // return;
 // return;
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
 //         return (function ()
-//             () => /*HIGHLIGHTS*/[|return|];
-//             [|return|];
-//             [|return|];
+//             function() /*HIGHLIGHTS*/[|return|] end;
+//             return;
+//             return;
 // 
-//             if (false) {
-//                 [|return|] true;
-//             }
-//         end)() || true;
-//     }
-// --- (line: 15) skipped ---
+// --- (line: 10) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesReturnBroken.tlua ===
-// return;
-// return;
-// function f(a: number) {
+// --- (line: 3) skipped ---
 //     if (a > 0) {
 //         return (function ()
-//             () => [|return|];
+//             function() return end;
 //             /*HIGHLIGHTS*/[|return|];
 //             [|return|];
 // 
@@ -40,12 +33,10 @@
 
 // === documentHighlights ===
 // === /getOccurrencesReturnBroken.tlua ===
-// return;
-// return;
-// function f(a: number) {
+// --- (line: 3) skipped ---
 //     if (a > 0) {
 //         return (function ()
-//             () => [|return|];
+//             function() return end;
 //             [|return|];
 //             /*HIGHLIGHTS*/[|return|];
 // 
@@ -60,12 +51,10 @@
 
 // === documentHighlights ===
 // === /getOccurrencesReturnBroken.tlua ===
-// return;
-// return;
-// function f(a: number) {
+// --- (line: 3) skipped ---
 //     if (a > 0) {
 //         return (function ()
-//             () => [|return|];
+//             function() return end;
 //             [|return|];
 //             [|return|];
 // 
@@ -82,7 +71,7 @@
 // === /getOccurrencesReturnBroken.tlua ===
 // ret/*HIGHLIGHTS*/urn;
 // return;
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
 // --- (line: 5) skipped ---
 
@@ -92,7 +81,7 @@
 // === /getOccurrencesReturnBroken.tlua ===
 // return;
 // retu/*HIGHLIGHTS*/rn;
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
 //         return (function ()
 // --- (line: 6) skipped ---
@@ -101,21 +90,52 @@
 
 // === documentHighlights ===
 // === /getOccurrencesReturnBroken.tlua ===
-// --- (line: 19) skipped ---
-// }
+// return;
+// return;
+// function f(a: number)
+//     if (a > 0) {
+//         [|return|] (function ()
+//             function() return end;
+//             return;
+//             return;
+// --- (line: 9) skipped ---
+
+// --- (line: 14) skipped ---
+// 
+//     local unusued = [1, 2, 3, 4].map(function(x) return 4 end)
+// 
+//     [|return|];
+//     [|return|] true;
+// end
 // 
 // class A {
-//     ret/*HIGHLIGHTS*/urn;
-//     return 8675309;
+//     [|ret/*HIGHLIGHTS*/urn|];
+//     [|return|] 8675309;
 // }
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesReturnBroken.tlua ===
-// --- (line: 20) skipped ---
+// return;
+// return;
+// function f(a: number)
+//     if (a > 0) {
+//         [|return|] (function ()
+//             function() return end;
+//             return;
+//             return;
+// --- (line: 9) skipped ---
+
+// --- (line: 14) skipped ---
+// 
+//     local unusued = [1, 2, 3, 4].map(function(x) return 4 end)
+// 
+//     [|return|];
+//     [|return|] true;
+// end
 // 
 // class A {
-//     return;
-//     r/*HIGHLIGHTS*/eturn 8675309;
+//     [|return|];
+//     [|r/*HIGHLIGHTS*/eturn|] 8675309;
 // }

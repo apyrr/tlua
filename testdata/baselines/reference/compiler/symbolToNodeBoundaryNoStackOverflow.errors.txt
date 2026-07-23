@@ -20,17 +20,17 @@ symbolToNodeBoundaryNoStackOverflow.tlua(22,10): error TLUA2345: Argument of typ
         getNextNode: <T>() => CustomNode<T>;
     };
     
-    function wrapNode<T>(getNode: () => CustomNode<T>) {
+    function wrapNode<T>(getNode: () => CustomNode<T>)
         return getNode;
-    }
+    end
     
-    wrapNode(() => {
-             ~~~~~~~
+    wrapNode(function()
+             ~~~~~~~~
 !!! error TLUA2345: Argument of type '() => () => CustomNode<any>' is not assignable to parameter of type '() => CustomNode<unknown>'.
 !!! error TLUA2345:   Type '() => CustomNode<typeof node.getNextNode<any>>' is not assignable to type 'CustomNode<unknown>'.
 !!! related TLUA6212 symbolToNodeBoundaryNoStackOverflow.tlua:22:10: Did you mean to call this expression?
         local node = createNode();
     
         return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);
-    });
+    end);
     

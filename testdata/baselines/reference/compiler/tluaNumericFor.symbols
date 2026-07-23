@@ -89,11 +89,11 @@ function nested(w: number, h: number): number
 >y : Symbol(y, Decl(tluaNumericFor.tlua, 31, 7))
 >h : Symbol(h, Decl(tluaNumericFor.tlua, 28, 26))
 
-      if (count > 100) {
+      if (count > 100) then
 >count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))
 
         break;
-      }
+      end
       count = count + 1;
 >count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))
 >count : Symbol(count, Decl(tluaNumericFor.tlua, 29, 7))

@@ -19,7 +19,7 @@ recursiveIndexedAccessSimplification.tlua(12,37): error TLUA2589: Type instantia
             ~~~~~~~~~~~~~~~~
 !!! error TLUA2536: Type 'number' cannot be used to index type 'Recur<T>'.
     
-    function join<T>(l: Recur<T>[]): Recur<T> {
+    function join<T>(l: Recur<T>[]): Recur<T>
         return ['marker', ...l];
                ~
 !!! error TLUA1109: Expression expected.
@@ -31,11 +31,11 @@ recursiveIndexedAccessSimplification.tlua(12,37): error TLUA2589: Type instantia
 !!! error TLUA1005: ']' expected.
                               ~
 !!! error TLUA1128: Declaration or statement expected.
-    }
+    end
     
-    function a<T>(l: Recur<T>[]): void {
+    function a<T>(l: Recur<T>[]): void
         local x: Recur<T> | undefined = join(l);
                                         ~~~~~~~
 !!! error TLUA2589: Type instantiation is excessively deep and possibly infinite.
-    }
+    end
     

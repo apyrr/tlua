@@ -19,7 +19,7 @@ type BadPredicate = (value: unknown) => (value is string, number);
 >value : Symbol(value, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 4, 21))
 >value : Symbol(value, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 4, 21))
 
-function takesCallback(cb: () => number, more: string) {
+function takesCallback(cb: () => number, more: string)
 >takesCallback : Symbol(takesCallback, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 4, 66))
 >cb : Symbol(cb, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 6, 23))
 >more : Symbol(more, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 6, 40))
@@ -29,19 +29,21 @@ function takesCallback(cb: () => number, more: string) {
 >more.length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
 >more : Symbol(more, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 6, 40))
 >length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
-}
 
-function trailingCallback(cb: () => number,) {
->trailingCallback : Symbol(trailingCallback, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 8, 1))
+end
+
+function trailingCallback(cb: () => number,)
+>trailingCallback : Symbol(trailingCallback, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 8, 3))
 >cb : Symbol(cb, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 10, 26))
 
   return cb();
 >cb : Symbol(cb, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 10, 26))
-}
+
+end
 
 // An arrow return type in a call argument list does not swallow the comma.
-function twoArgs(a: (x: number) => number, b: number) {
->twoArgs : Symbol(twoArgs, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 12, 1))
+function twoArgs(a: (x: number) => number, b: number)
+>twoArgs : Symbol(twoArgs, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 12, 3))
 >a : Symbol(a, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 17))
 >x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 21))
 >b : Symbol(b, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 42))
@@ -49,22 +51,23 @@ function twoArgs(a: (x: number) => number, b: number) {
   return a(b);
 >a : Symbol(a, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 17))
 >b : Symbol(b, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 15, 42))
-}
-local r = twoArgs((x): number => x, 1);
+
+end
+local r = twoArgs(function(x): number return x end, 1);
 >r : Symbol(r, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 5))
->twoArgs : Symbol(twoArgs, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 12, 1))
->x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 19))
->x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 19))
+>twoArgs : Symbol(twoArgs, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 12, 3))
+>x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 27))
+>x : Symbol(x, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 27))
 
 // A bare multiple return type must be parenthesized; the list is still
 // parsed for recovery, so the pack itself checks normally.
-function barePair(): number, string {
->barePair : Symbol(barePair, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 39))
+function barePair(): number, string
+>barePair : Symbol(barePair, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 55))
 
   return 1, "a";
-}
+end
 declare function bareAmbient(): number, ...string;
->bareAmbient : Symbol(bareAmbient, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 24, 1))
+>bareAmbient : Symbol(bareAmbient, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 24, 3))
 
 local function bareLocal(): number, string?
 >bareLocal : Symbol(bareLocal, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 25, 50))
@@ -74,7 +77,7 @@ end
 local a, b = barePair();
 >a : Symbol(a, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 29, 5))
 >b : Symbol(b, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 29, 8))
->barePair : Symbol(barePair, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 39))
+>barePair : Symbol(barePair, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 18, 55))
 
 local n: number = a;
 >n : Symbol(n, Decl(tluaMultiReturnTypeSyntaxErrors.tlua, 30, 5))

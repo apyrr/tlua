@@ -23,37 +23,42 @@ function inferredPair()
 end
 
 // Inference across mixed arities pads with nil.
-function mixed(cond: boolean) {
+function mixed(cond: boolean)
 >mixed : (cond: boolean) => (number, (string | nil)?)
 >cond : boolean
 
-  if (cond) {
+  if (cond) then
+>(cond) : boolean
 >cond : boolean
 
     return 1, "a";
 >1, "a" : number, string
 >1 : 1
 >"a" : "a"
-  }
+
+  end
   return 2;
 >2 : 2
-}
+
+end
 
 // A bare return contributes zero values.
-function maybeNothing(cond: boolean) {
+function maybeNothing(cond: boolean)
 >maybeNothing : (cond: boolean) => (number | nil, (string | nil)?)
 >cond : boolean
 
-  if (cond) {
+  if (cond) then
+>(cond) : boolean
 >cond : boolean
 
     return;
-  }
+  end
   return 1, "a";
 >1, "a" : number, string
 >1 : 1
 >"a" : "a"
-}
+
+end
 
 // `return f()` forwards the whole pack.
 function forward(): (number, string)

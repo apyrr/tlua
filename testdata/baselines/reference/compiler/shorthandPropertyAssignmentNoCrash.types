@@ -3,24 +3,25 @@
 === shorthandPropertyAssignmentNoCrash.tlua ===
 // https://github.com/microsoft/typescript-go/issues/3789
 
-function ff(f: any) {
+function ff(f: any)
 >ff : (f: any) => void
 >f : any
 
     local g;
 >g : any
 
-    ({ g = (x: any, y: any) => x + y } = f);
->({ g = (x: any, y: any) => x + y } = f) : any
->{ g = (x: any, y: any) => x + y } = f : any
->{ g = (x: any, y: any) => x + y } : { g: (x: any, y: any) => any; }
+    ({ g = function(x: any, y: any) return x + y end } = f);
+>({ g = function(x: any, y: any) return x + y end } = f) : any
+>{ g = function(x: any, y: any) return x + y end } = f : any
+>{ g = function(x: any, y: any) return x + y end } : { g: (x: any, y: any) => any; }
 >g : (x: any, y: any) => any
->(x: any, y: any) => x + y : (x: any, y: any) => any
+>function(x: any, y: any) return x + y end : (x: any, y: any) => any
 >x : any
 >y : any
 >x + y : any
 >x : any
 >y : any
 >f : any
-}
+
+end
 

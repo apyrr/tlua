@@ -48,27 +48,27 @@ declare function Comp<T extends BaseProps>(props: Props<T>): JsxElement;
 
 // Error in ts-go: Type '(props: ...) => Element' is not assignable to
 // type '((props: ...) => ReactNode) & {}'.
-local el = <Comp locale={'en'}>{(props) => <div>{props.locale}</div>}</Comp>;
+local el = <Comp locale={'en'}>{function(props) return <div>{props.locale}</div> end}</Comp>;
 >el : Symbol(el, Decl(jsxFunctionTypeChildren.tsx, 18, 5))
 >Comp : Symbol(Comp, Decl(jsxFunctionTypeChildren.tsx, 12, 6))
 >locale : Symbol(locale, Decl(jsxFunctionTypeChildren.tsx, 18, 16))
->props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 18, 33))
+>props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 18, 41))
 >div : Symbol(JsxIntrinsicElements.div, Decl(jsxFunctionTypeChildren.tsx, 4, 32))
 >props.locale : Symbol(locale, Decl(jsxFunctionTypeChildren.tsx, 8, 18))
->props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 18, 33))
+>props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 18, 41))
 >locale : Symbol(locale, Decl(jsxFunctionTypeChildren.tsx, 8, 18))
 >div : Symbol(JsxIntrinsicElements.div, Decl(jsxFunctionTypeChildren.tsx, 4, 32))
 >Comp : Symbol(Comp, Decl(jsxFunctionTypeChildren.tsx, 12, 6))
 
 // But the equivalent non-JSX call works fine:
-Comp({ locale = 'en', children = (props) => <div>{props.locale}</div> });
+Comp({ locale = 'en', children = function(props) return <div>{props.locale}</div> end });
 >Comp : Symbol(Comp, Decl(jsxFunctionTypeChildren.tsx, 12, 6))
 >locale : Symbol(locale, Decl(jsxFunctionTypeChildren.tsx, 21, 6))
 >children : Symbol(children, Decl(jsxFunctionTypeChildren.tsx, 21, 21))
->props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 21, 34))
+>props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 21, 42))
 >div : Symbol(JsxIntrinsicElements.div, Decl(jsxFunctionTypeChildren.tsx, 4, 32))
 >props.locale : Symbol(locale, Decl(jsxFunctionTypeChildren.tsx, 8, 18))
->props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 21, 34))
+>props : Symbol(props, Decl(jsxFunctionTypeChildren.tsx, 21, 42))
 >locale : Symbol(locale, Decl(jsxFunctionTypeChildren.tsx, 8, 18))
 >div : Symbol(JsxIntrinsicElements.div, Decl(jsxFunctionTypeChildren.tsx, 4, 32))
 

@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/tluaMergedInterfaceNoDuplicate.tlua] ////
+
+=== tluaMergedInterfaceNoDuplicate.tlua ===
+// A property re-declared across merged interface declarations is ordinary
+// merging, not a duplicate identifier: the symbol gains several declarations,
+// but each body declares the name only once.
+interface Merged { x: number }
+>x : number
+
+interface Merged { x: number }
+>x : number
+
+// Adding distinct members across declarations merges cleanly too.
+interface Widened { a: number }
+>a : number
+
+interface Widened { b: string }
+>b : string
+
+// Re-declaring with a conflicting type is a "subsequent property declarations
+// must have the same type" error -- but still NOT a spurious duplicate
+// identifier from the per-body duplicate check.
+interface Conflict { v: number }
+>v : number
+
+interface Conflict { v: string }
+>v : number
+
+// A name repeated within a SINGLE body is a genuine duplicate identifier.
+interface WithinBody { dup: number, dup: number }
+>dup : number
+>dup : number
+
+// Same distinction for a type literal body.
+type Lit = { p: number, p: number }
+>Lit : Lit
+>p : number
+>p : number
+

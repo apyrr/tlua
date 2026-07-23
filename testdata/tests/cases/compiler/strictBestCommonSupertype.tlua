@@ -9,9 +9,9 @@ class Store<T = table> {
 
 local store: Store = inject(Store);
 
-function inject<T>(token: ProviderToken<T>): T {
+function inject<T>(token: ProviderToken<T>): T
     return {} as T;
-}
+end
 
 interface Type<T> {
     new (...args: any[]): T;

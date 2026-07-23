@@ -1,5 +1,5 @@
 // === Inlay Hints ===
-function test1() {
+function test1()
                 ^
 {
   "position": {
@@ -27,7 +27,7 @@ function test1() {
   "paddingLeft": true
 }
 
-  return function <local T>(a: T) {};
+  return function <local T>(a: T) end;
                    ^
 {
   "position": {

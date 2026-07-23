@@ -84,25 +84,25 @@ local w6 = (boxer:wrap<string>("x"));
 >boxer : Symbol(boxer, Decl(tluaColonCallGenerics.tlua, 5, 7))
 >wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
 
-local arrow = (b: Boxer) => b:wrap(1);
+local arrow = function(b: Boxer) return b:wrap(1) end;
 >arrow : Symbol(arrow, Decl(tluaColonCallGenerics.tlua, 23, 5))
->b : Symbol(b, Decl(tluaColonCallGenerics.tlua, 23, 15))
+>b : Symbol(b, Decl(tluaColonCallGenerics.tlua, 23, 23))
 >Boxer : Symbol(Boxer, Decl(tluaColonCallGenerics.tlua, 0, 0))
 >b:wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
->b : Symbol(b, Decl(tluaColonCallGenerics.tlua, 23, 15))
+>b : Symbol(b, Decl(tluaColonCallGenerics.tlua, 23, 23))
 >wrap : Symbol(Boxer.wrap, Decl(tluaColonCallGenerics.tlua, 1, 17))
 
 type Wrapped<T> = { value: T };
->Wrapped : Symbol(Wrapped, Decl(tluaColonCallGenerics.tlua, 23, 38))
+>Wrapped : Symbol(Wrapped, Decl(tluaColonCallGenerics.tlua, 23, 54))
 >T : Symbol(T, Decl(tluaColonCallGenerics.tlua, 24, 13))
 >value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 24, 19))
 >T : Symbol(T, Decl(tluaColonCallGenerics.tlua, 24, 13))
 
-local arrowGeneric = (w: Wrapped<string>) => w.value;
+local arrowGeneric = function(w: Wrapped<string>) return w.value end;
 >arrowGeneric : Symbol(arrowGeneric, Decl(tluaColonCallGenerics.tlua, 25, 5))
->w : Symbol(w, Decl(tluaColonCallGenerics.tlua, 25, 22))
->Wrapped : Symbol(Wrapped, Decl(tluaColonCallGenerics.tlua, 23, 38))
+>w : Symbol(w, Decl(tluaColonCallGenerics.tlua, 25, 30))
+>Wrapped : Symbol(Wrapped, Decl(tluaColonCallGenerics.tlua, 23, 54))
 >w.value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 24, 19))
->w : Symbol(w, Decl(tluaColonCallGenerics.tlua, 25, 22))
+>w : Symbol(w, Decl(tluaColonCallGenerics.tlua, 25, 30))
 >value : Symbol(value, Decl(tluaColonCallGenerics.tlua, 24, 19))
 

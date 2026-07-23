@@ -8,15 +8,15 @@ end
 function emptyLua(): void
 end
 
-function braceStillWorks(a: number): number {
+function braceStillWorks(a: number): number
   return a + 1;
-}
+end
 
 function withBraceStatement(flag: boolean): number
   local result = 0;
-  if (flag) {
+  if (flag) then
     result = braceStillWorks(1);
-  }
+  end
   return result;
 end
 
@@ -25,9 +25,9 @@ local function localLua(a: number): number
 end
 
 function withNestedBraceFunction(): number
-  function nestedBrace(): number {
+  function nestedBrace(): number
     return 1;
-  }
+  end
   return nestedBrace();
 end
 
@@ -68,23 +68,23 @@ function topLua(a)
 end
 function emptyLua()
 end
-function braceStillWorks(a) {
+function braceStillWorks(a)
     return a + 1;
-}
+end
 function withBraceStatement(flag)
     local result = 0;
-    if (flag) {
+    if (flag) then
         result = braceStillWorks(1);
-    }
+    end
     return result;
 end
 local function localLua(a)
     return a + 1;
 end
 function withNestedBraceFunction()
-    function nestedBrace() {
+    function nestedBrace()
         return 1;
-    }
+    end
     return nestedBrace();
 end
 function withNestedLuaFunction()

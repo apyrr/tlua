@@ -23,18 +23,19 @@ declare createNode: () => {
 
 };
 
-function wrapNode<T>(getNode: () => CustomNode<T>) {
+function wrapNode<T>(getNode: () => CustomNode<T>)
 >wrapNode : <T>(getNode: () => CustomNode<T>) => () => CustomNode<T>
 >getNode : () => CustomNode<T>
 
     return getNode;
 >getNode : () => CustomNode<T>
-}
 
-wrapNode(() => {
->wrapNode(() => {    local node = createNode();    return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);}) : () => CustomNode<unknown>
+end
+
+wrapNode(function()
+>wrapNode(function()    local node = createNode();    return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);end) : () => CustomNode<unknown>
 >wrapNode : <T>(getNode: () => CustomNode<T>) => () => CustomNode<T>
->() => {    local node = createNode();    return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);} : () => () => CustomNode<any>
+>function()    local node = createNode();    return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);end : () => () => CustomNode<any>
 
     local node = createNode();
 >node : { getNextNode: <T>() => CustomNode<T>; }
@@ -51,5 +52,5 @@ wrapNode(() => {
 >node : { getNextNode: <T>() => CustomNode<T>; }
 >getNextNode : <T>() => CustomNode<T>
 
-});
+end);
 

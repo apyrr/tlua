@@ -14,11 +14,11 @@ fn(/* nobody knows exactly what this param is */ 42);
         "range": {
           "start": {
             "line": 0,
-            "character": 12
+            "character": 20
           },
           "end": {
             "line": 0,
-            "character": 13
+            "character": 21
           }
         }
       }

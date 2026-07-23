@@ -10,19 +10,19 @@ local example: {
   items?: string[];
 >items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
 
-} = () => undefined;
+} = function() return undefined end;
 example.items = [];
 >example.items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
 >example : Symbol(example, Decl(expandoPropertyEmptyArrayWidening.tlua, 2, 5))
 >items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
 
-function f1() {}
+function f1() end
 >f1 : Symbol(f1, Decl(expandoPropertyEmptyArrayWidening.tlua, 6, 19))
 
 f1.a = [];  // Implicit any error
->f1.a : Symbol(f1.a, Decl(expandoPropertyEmptyArrayWidening.tlua, 8, 16))
+>f1.a : Symbol(f1.a, Decl(expandoPropertyEmptyArrayWidening.tlua, 8, 17))
 >f1 : Symbol(f1, Decl(expandoPropertyEmptyArrayWidening.tlua, 6, 19))
->a : Symbol(f1.a, Decl(expandoPropertyEmptyArrayWidening.tlua, 8, 16))
+>a : Symbol(f1.a, Decl(expandoPropertyEmptyArrayWidening.tlua, 8, 17))
 
 local f2 = function() end;
 >f2 : Symbol(f2, Decl(expandoPropertyEmptyArrayWidening.tlua, 11, 5))
@@ -30,13 +30,13 @@ local f2 = function() end;
 f2.a = [];  // Implicit any error
 >f2 : Symbol(f2, Decl(expandoPropertyEmptyArrayWidening.tlua, 11, 5))
 
-local f3 = () => {};
+local f3 = function() end;
 >f3 : Symbol(f3, Decl(expandoPropertyEmptyArrayWidening.tlua, 14, 5))
 
 f3.a = [];  // Implicit any error
 >f3 : Symbol(f3, Decl(expandoPropertyEmptyArrayWidening.tlua, 14, 5))
 
-local f4: { (): void, a: string[] } = () => {};
+local f4: { (): void, a: string[] } = function() end;
 >f4 : Symbol(f4, Decl(expandoPropertyEmptyArrayWidening.tlua, 17, 5))
 >a : Symbol(a, Decl(expandoPropertyEmptyArrayWidening.tlua, 17, 21))
 

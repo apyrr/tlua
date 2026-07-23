@@ -20,7 +20,7 @@
 // }
 // 
 // local x: I = {
-//     ["42"]: function () { }
+//     ["42"]: function () end
 // }
 
 
@@ -31,5 +31,5 @@
 // }
 // 
 // local x: I = {
-//     ["/*FIND ALL REFS*/[|42|]"]: function () { }
+//     ["/*FIND ALL REFS*/[|42|]"]: function () end
 // }

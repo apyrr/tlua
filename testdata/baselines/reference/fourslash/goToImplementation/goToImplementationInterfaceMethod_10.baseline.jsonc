@@ -3,21 +3,21 @@
 // --- (line: 31) skipped ---
 // }
 // 
-// function someFunction(x: Foo | Bar) {
+// function someFunction(x: Foo | Bar)
 // 	 x.he/*GOTO IMPL*/llo();
-// }
+// end
 // 
-// function anotherFunction(x: Foo & Bar) {
+// function anotherFunction(x: Foo & Bar)
 // 	 x.hello();
-// }
+// end
 
 
 
 // === goToImplementation ===
 // === /goToImplementationInterfaceMethod_10.tlua ===
 // --- (line: 35) skipped ---
-// }
+// end
 // 
-// function anotherFunction(x: Foo & Bar) {
+// function anotherFunction(x: Foo & Bar)
 // 	 x.he/*GOTO IMPL*/llo();
-// }
+// end

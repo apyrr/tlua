@@ -24,18 +24,18 @@ function isTypeA(
 >_value : Symbol(_value, Decl(typePredicateParameterMismatch.tlua, 7, 17))
 >UnionType : Symbol(UnionType, Decl(typePredicateParameterMismatch.tlua, 4, 27))
 
-): value is TypeA {  // "value" doesn't match parameter "_value"
+): value is TypeA  // "value" doesn't match parameter "_value"
 >TypeA : Symbol(TypeA, Decl(typePredicateParameterMismatch.tlua, 0, 0))
 
   return true;
-}
+end
 
-function test(input: UnionType): void {
->test : Symbol(test, Decl(typePredicateParameterMismatch.tlua, 11, 1))
+function test(input: UnionType): void
+>test : Symbol(test, Decl(typePredicateParameterMismatch.tlua, 11, 3))
 >input : Symbol(input, Decl(typePredicateParameterMismatch.tlua, 13, 14))
 >UnionType : Symbol(UnionType, Decl(typePredicateParameterMismatch.tlua, 4, 27))
 
-  if (isTypeA(input)) {
+  if (isTypeA(input)) then
 >isTypeA : Symbol(isTypeA, Decl(typePredicateParameterMismatch.tlua, 5, 31))
 >input : Symbol(input, Decl(typePredicateParameterMismatch.tlua, 13, 14))
 
@@ -43,6 +43,7 @@ function test(input: UnionType): void {
 >input.kind : Symbol(kind, Decl(typePredicateParameterMismatch.tlua, 3, 14), Decl(typePredicateParameterMismatch.tlua, 4, 14))
 >input : Symbol(input, Decl(typePredicateParameterMismatch.tlua, 13, 14))
 >kind : Symbol(kind, Decl(typePredicateParameterMismatch.tlua, 3, 14), Decl(typePredicateParameterMismatch.tlua, 4, 14))
-  }
-}
+
+  end
+end
 

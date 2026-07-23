@@ -1,5 +1,6 @@
 declarations.tlua(7,5): error TLUA2304: Cannot find name 'namespace'.
 declarations.tlua(7,15): error TLUA2819: Namespace name cannot be '_G'.
+declarations.tlua(7,18): error TLUA1128: Declaration or statement expected.
 dottedFunctionConflict.tlua(2,13): error TLUA2397: Declaration name conflicts with built-in global identifier '_G'.
 reads.tlua(6,34): error TLUA2339: Property 'declared' does not exist on type 'typeof _G'.
 reads.tlua(7,4): error TLUA2339: Property 'declared' does not exist on type 'typeof _G'.
@@ -23,7 +24,7 @@ writes.tlua(25,4): error TLUA2300: Duplicate identifier 'mixedGlobal'.
 writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assigned.
 
 
-==== declarations.tlua (2 errors) ====
+==== declarations.tlua (3 errors) ====
     declare global {
         function use(x: unknown): void;
         function getMaybeNumber(): number | nil;
@@ -35,6 +36,8 @@ writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assi
 !!! error TLUA2304: Cannot find name 'namespace'.
                   ~~
 !!! error TLUA2819: Namespace name cannot be '_G'.
+                     ~
+!!! error TLUA1128: Declaration or statement expected.
             declare rejectedEnvironmentMember: number;
         }
     }

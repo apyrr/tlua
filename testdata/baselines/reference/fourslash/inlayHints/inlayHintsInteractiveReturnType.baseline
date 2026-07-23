@@ -1,5 +1,5 @@
 // === Inlay Hints ===
-function foo1 () {
+function foo1 ()
                 ^
 {
   "position": {
@@ -18,12 +18,12 @@ function foo1 () {
   "paddingLeft": true
 }
 
-local a = () => 1
-            ^
+local a = function() return 1 end
+                    ^
 {
   "position": {
     "line": 14,
-    "character": 12
+    "character": 20
   },
   "label": [
     {
@@ -37,7 +37,7 @@ local a = () => 1
   "paddingLeft": true
 }
 
-local b = function () { return 1 }
+local b = function () return 1 end
                      ^
 {
   "position": {
@@ -56,12 +56,31 @@ local b = function () { return 1 }
   "paddingLeft": true
 }
 
-local c = (b) => 1
-             ^
+local c = function(b) return 1 end
+                     ^
 {
   "position": {
     "line": 16,
-    "character": 13
+    "character": 21
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local d = function(b) return 1 end
+                     ^
+{
+  "position": {
+    "line": 17,
+    "character": 21
   },
   "label": [
     {

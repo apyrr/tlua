@@ -6,7 +6,7 @@
 //  * {@link https://vscode.dev|link text}
 //  * {@link https://vscode.dev link text}
 //  */
-// function f() {}
+// function f() end
 // 
 // f();
 // ^
@@ -22,7 +22,7 @@
 [
   {
     "marker": {
-      "Position": 170,
+      "Position": 171,
       "LSPosition": {
         "line": 8,
         "character": 0

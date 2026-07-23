@@ -4,7 +4,7 @@
 //     get x() {}
 //     set x(value) {
 //         // Inner declaration should make the setter top-level.
-//         <|function [|{| name: f, kind: Function |}f|]() {}|>
+//         <|function [|{| name: f, kind: Function |}f|]() end|>
 //     }
 // }
 

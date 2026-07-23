@@ -38,8 +38,8 @@
 // === /goToDefinitionFunctionOverloads.tlua ===
 // <|function /*GOTO DEF*/[|functionOverload|](value: number);|>
 // <|function [|functionOverload|](value: string);|>
-// <|function [|functionOverload|]() {}|>
+// <|function [|functionOverload|]() {}
 // 
 // functionOverload(123);
 // functionOverload("123");
-// functionOverload({});
+// functionOverload({});|>

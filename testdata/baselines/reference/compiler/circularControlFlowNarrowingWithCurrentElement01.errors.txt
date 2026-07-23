@@ -2,6 +2,7 @@ circularControlFlowNarrowingWithCurrentElement01.tlua(1,1): error TLUA1434: Unex
 circularControlFlowNarrowingWithCurrentElement01.tlua(1,1): error TLUA2304: Cannot find name 'class'.
 circularControlFlowNarrowingWithCurrentElement01.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
 circularControlFlowNarrowingWithCurrentElement01.tlua(1,7): error TLUA2304: Cannot find name 'A'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(1,9): error TLUA1128: Declaration or statement expected.
 circularControlFlowNarrowingWithCurrentElement01.tlua(2,3): error TLUA1434: Unexpected keyword or identifier.
 circularControlFlowNarrowingWithCurrentElement01.tlua(2,7): error TLUA1128: Declaration or statement expected.
 circularControlFlowNarrowingWithCurrentElement01.tlua(2,9): error TLUA1434: Unexpected keyword or identifier.
@@ -17,6 +18,7 @@ circularControlFlowNarrowingWithCurrentElement01.tlua(4,35): error TLUA2304: Can
 circularControlFlowNarrowingWithCurrentElement01.tlua(4,37): error TLUA1005: ')' expected.
 circularControlFlowNarrowingWithCurrentElement01.tlua(4,45): error TLUA1011: An element access expression should take an argument.
 circularControlFlowNarrowingWithCurrentElement01.tlua(4,46): error TLUA1005: ';' expected.
+circularControlFlowNarrowingWithCurrentElement01.tlua(4,48): error TLUA1128: Declaration or statement expected.
 circularControlFlowNarrowingWithCurrentElement01.tlua(7,22): error TLUA2304: Cannot find name 'A'.
 circularControlFlowNarrowingWithCurrentElement01.tlua(8,14): error TLUA2304: Cannot find name 'A'.
 circularControlFlowNarrowingWithCurrentElement01.tlua(8,20): error TLUA1109: Expression expected.
@@ -25,10 +27,10 @@ circularControlFlowNarrowingWithCurrentElement01.tlua(10,18): error TLUA2304: Ca
 circularControlFlowNarrowingWithCurrentElement01.tlua(10,33): error TLUA2304: Cannot find name 'A'.
 circularControlFlowNarrowingWithCurrentElement01.tlua(10,35): error TLUA1135: Argument expression expected.
 circularControlFlowNarrowingWithCurrentElement01.tlua(10,36): error TLUA1135: Argument expression expected.
-circularControlFlowNarrowingWithCurrentElement01.tlua(15,13): error TLUA2339: Property 'length' does not exist on type 'A[]'.
+circularControlFlowNarrowingWithCurrentElement01.tlua(15,12): error TLUA2339: Property 'length' does not exist on type 'A[]'.
 
 
-==== circularControlFlowNarrowingWithCurrentElement01.tlua (28 errors) ====
+==== circularControlFlowNarrowingWithCurrentElement01.tlua (30 errors) ====
     class A {
     ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -38,6 +40,8 @@ circularControlFlowNarrowingWithCurrentElement01.tlua(15,13): error TLUA2339: Pr
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~
 !!! error TLUA2304: Cannot find name 'A'.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
       next: A | null = null;
       ~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -71,9 +75,11 @@ circularControlFlowNarrowingWithCurrentElement01.tlua(15,13): error TLUA2339: Pr
 !!! error TLUA1011: An element access expression should take an argument.
                                                  ~
 !!! error TLUA1005: ';' expected.
+                                                   ~
+!!! error TLUA1128: Declaration or statement expected.
     }
     
-    function getNodes(): A[] {
+    function getNodes(): A[]
                          ~
 !!! error TLUA2304: Cannot find name 'A'.
       local out: A[] = [];
@@ -94,32 +100,32 @@ circularControlFlowNarrowingWithCurrentElement01.tlua(15,13): error TLUA2339: Pr
                                        ~
 !!! error TLUA1135: Argument expression expected.
     
-      while (current ~= null) {
+      while current ~= null do
         local firstChild = null;
     
-        if (out.length) {
-                ~~~~~~
+        if out.length then
+               ~~~~~~
 !!! error TLUA2339: Property 'length' does not exist on type 'A[]'.
           current = current.next;
           continue;
-        }
+        end
     
         for i = 0, current.children.length - 1 do
           local child = current.children[i];
     
-          if (child) {
-            if (!firstChild) {
+          if child then
+            if not firstChild then
               firstChild = child;
               firstChild.next = current.next;
-            }
+            end
     
             child.next = current.next;
-          }
+          end
         end
     
         current = firstChild || current.next;
-      }
+      end
     
       return out;
-    }
+    end
     

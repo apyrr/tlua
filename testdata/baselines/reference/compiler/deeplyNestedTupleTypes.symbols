@@ -67,7 +67,7 @@ type BLeaf = {
 
 };
 
-function test(a: AOuter, b: BOuter) {
+function test(a: AOuter, b: BOuter)
 >test : Symbol(test, Decl(deeplyNestedTupleTypes.tlua, 26, 2))
 >a : Symbol(a, Decl(deeplyNestedTupleTypes.tlua, 28, 14))
 >AOuter : Symbol(AOuter, Decl(deeplyNestedTupleTypes.tlua, 0, 0))
@@ -77,5 +77,6 @@ function test(a: AOuter, b: BOuter) {
   a = b;
 >a : Symbol(a, Decl(deeplyNestedTupleTypes.tlua, 28, 14))
 >b : Symbol(b, Decl(deeplyNestedTupleTypes.tlua, 28, 24))
-}
+
+end
 

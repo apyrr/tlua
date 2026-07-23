@@ -4,14 +4,14 @@
 // Generators are removed in tlua: `function*`, `yield`, `yield*`, and async
 // generators no longer parse. Use the Lua coroutine library directly instead.
 
-function* gen(): unknown {
+function* gen(): unknown
   yield 1;
   yield* more;
-}
+end
 
-async function* asyncGen(): unknown {
+async function* asyncGen(): unknown
   yield 4;
-}
+end
 
 local obj = {
   *method() {
@@ -20,37 +20,35 @@ local obj = {
 };
 
 // `yield` is now an ordinary identifier.
-function usesYieldName(): number {
+function usesYieldName(): number
   local yield = 7;
   return yield;
-}
+end
 
 
 //// [tluaNoGenerators.lua]
 -- Generators are removed in tlua: `function*`, `yield`, `yield*`, and async
 -- generators no longer parse. Use the Lua coroutine library directly instead.
-function () { }
- * gen();
-unknown;
-{
+function ()
+     * gen();
+    unknown;
     yield;
     1;
     yield * more;
-}
-async function () { }
- * asyncGen();
-unknown;
-{
+end
+async function ()
+     * asyncGen();
+    unknown;
     yield;
     4;
-}
+end
 local obj = {
         * method(), {
         yield, 5,
     },
 };
 -- `yield` is now an ordinary identifier.
-function usesYieldName() {
+function usesYieldName()
     local yield = 7;
     return yield;
-}
+end

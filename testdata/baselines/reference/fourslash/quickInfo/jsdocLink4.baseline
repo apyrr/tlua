@@ -24,8 +24,7 @@
 //  * A real, very serious {@link I to an interface}. Right there.
 //  * @param x one {@link Pos here too}
 //  */
-// function f(x) {
-// }
+// function f(x) end
 // f()
 // ^
 // | ----------------------------------------------------------------------
@@ -34,7 +33,7 @@
 // | ```
 // | A real, very serious I to an interface. Right there.
 // | 
-// | *@param* `x` — one [here too](file:///jsdocLink4.tlua#14,6-14,9)
+// | *@param* `x` — one [here too](file:///jsdocLink4.tlua#13,6-13,9)
 // | ----------------------------------------------------------------------
 // type Pos = [number, number]
 [
@@ -96,7 +95,7 @@
     "marker": {
       "Position": 210,
       "LSPosition": {
-        "line": 12,
+        "line": 11,
         "character": 1
       },
       "Name": "3",
@@ -105,15 +104,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\nfunction f(x: any): void\n```\nA real, very serious I to an interface. Right there.\n\n*@param* `x` — one [here too](file:///jsdocLink4.tlua#14,6-14,9)"
+        "value": "```tlua\nfunction f(x: any): void\n```\nA real, very serious I to an interface. Right there.\n\n*@param* `x` — one [here too](file:///jsdocLink4.tlua#13,6-13,9)"
       },
       "range": {
         "start": {
-          "line": 12,
+          "line": 11,
           "character": 0
         },
         "end": {
-          "line": 12,
+          "line": 11,
           "character": 1
         }
       }

@@ -22,7 +22,7 @@ local x = 1;
  * ```
  * @param y - a number
  */
-function foo(y: number) {}
+function foo(y: number) end
 >foo : Symbol(foo, Decl(jsDocCodeblockParsing.tlua, 11, 12))
 >y : Symbol(y, Decl(jsDocCodeblockParsing.tlua, 20, 13))
 

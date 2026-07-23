@@ -8,16 +8,16 @@ function deadLabelBare(): number
     ::L1::
 end
 
-function deadLabelInBlock(): number {
+function deadLabelInBlock(): number
     return 1;
-    { ::L2:: }
-}
+    do ::L2:: end
+end
 
 // And a goto inside a dead block still marks its label referenced.
-function deadBlockGotoReferences(): number {
+function deadBlockGotoReferences(): number
     return 1;
-    { ::L3:: goto L3 }
-}
+    do ::L3:: goto L3 end
+end
 
 
 //// [tluaLabelDeadBlock.lua]
@@ -27,17 +27,17 @@ function deadLabelBare()
     return 1;
     ::L1::
 end
-function deadLabelInBlock() {
+function deadLabelInBlock()
     return 1;
-    {
+    do
         ::L2::
-    }
-}
+    end
+end
 -- And a goto inside a dead block still marks its label referenced.
-function deadBlockGotoReferences() {
+function deadBlockGotoReferences()
     return 1;
-    {
+    do
         ::L3::
         goto L3;
-    }
-}
+    end
+end

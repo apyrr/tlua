@@ -1,10 +1,10 @@
 // === Inlay Hints ===
-local f1: F1 = (a, b) => { }
-                 ^
+local f1: F1 = function(a, b) end
+                         ^
 {
   "position": {
     "line": 1,
-    "character": 17
+    "character": 25
   },
   "label": [
     {
@@ -18,12 +18,12 @@ local f1: F1 = (a, b) => { }
   "paddingLeft": true
 }
 
-local f1: F1 = (a, b) => { }
-                    ^
+local f1: F1 = function(a, b) end
+                            ^
 {
   "position": {
     "line": 1,
-    "character": 20
+    "character": 28
   },
   "label": [
     {
@@ -37,12 +37,12 @@ local f1: F1 = (a, b) => { }
   "paddingLeft": true
 }
 
-local f2: F1 = (a, b: number) => { }
-                 ^
+local f2: F1 = function(a, b: number) end
+                         ^
 {
   "position": {
     "line": 2,
-    "character": 17
+    "character": 25
   },
   "label": [
     {
@@ -56,12 +56,12 @@ local f2: F1 = (a, b: number) => { }
   "paddingLeft": true
 }
 
-foo1((a) => { })
-       ^
+foo1(function(a) end)
+               ^
 {
   "position": {
     "line": 4,
-    "character": 7
+    "character": 15
   },
   "label": [
     {
@@ -75,12 +75,12 @@ foo1((a) => { })
   "paddingLeft": true
 }
 
-foo2((a) => { })
-       ^
+foo2(function(a) end)
+               ^
 {
   "position": {
     "line": 6,
-    "character": 7
+    "character": 15
   },
   "label": [
     {
@@ -100,12 +100,12 @@ foo2((a) => { })
   "paddingLeft": true
 }
 
-foo3(a => {
-      ^
+foo3(function(a)
+               ^
 {
   "position": {
     "line": 8,
-    "character": 6
+    "character": 15
   },
   "label": [
     {
@@ -187,12 +187,12 @@ foo3(a => {
   "paddingLeft": true
 }
 
-    a(d => {})
-       ^
+    a(function(d) end)
+                ^
 {
   "position": {
     "line": 9,
-    "character": 7
+    "character": 16
   },
   "label": [
     {
@@ -212,12 +212,12 @@ foo3(a => {
   "paddingLeft": true
 }
 
-foo4(1, a => { })
-         ^
+foo4(1, function(a) end)
+                  ^
 {
   "position": {
     "line": 12,
-    "character": 9
+    "character": 18
   },
   "label": [
     {
@@ -231,12 +231,12 @@ foo4(1, a => { })
   "paddingLeft": true
 }
 
-local foo5: F2 = (a) => { }
-                   ^
+local foo5: F2 = function(a) end
+                           ^
 {
   "position": {
     "line": 17,
-    "character": 19
+    "character": 27
   },
   "label": [
     {

@@ -9,7 +9,7 @@
 // }
 // 
 // local x: I = {
-//     ["[|prop1|]"]: function () { },
+//     ["[|prop1|]"]: function () end,
 // }
 
 
@@ -25,7 +25,7 @@
 // }
 // 
 // local x: I = {
-//     ["[|prop1|]"]: function () { },
+//     ["[|prop1|]"]: function () end,
 // }
 
 
@@ -41,5 +41,5 @@
 // }
 // 
 // local x: I = {
-//     ["/*FIND ALL REFS*/[|prop1|]"]: function () { },
+//     ["/*FIND ALL REFS*/[|prop1|]"]: function () end,
 // }

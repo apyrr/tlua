@@ -62,8 +62,8 @@
 //     }
 //     foo() {
 //         /*HIGHLIGHTS*/this;
-//         () => this;
-//         () => {
+//         function() return this end;
+//         function()
 //             if (this) {
 // --- (line: 16) skipped ---
 
@@ -75,8 +75,8 @@
 //     }
 //     foo() {
 //         this;
-//         () => /*HIGHLIGHTS*/this;
-//         () => {
+//         function() return /*HIGHLIGHTS*/[|this|] end;
+//         function()
 //             if (this) {
 //                 this;
 // --- (line: 17) skipped ---
@@ -85,39 +85,75 @@
 
 // === documentHighlights ===
 // === /getOccurrencesClassExpressionThis.tlua ===
-// --- (line: 11) skipped ---
+// --- (line: 9) skipped ---
+//     }
+//     foo() {
 //         this;
-//         () => this;
-//         () => {
-//             if (/*HIGHLIGHTS*/this) {
-//                 this;
+//         function() return [|this|] end;
+//         function()
+//             if (/*HIGHLIGHTS*/[|this|]) {
+//                 [|this|];
 //             }
-//         }
-// --- (line: 19) skipped ---
+//         end
+//         function inside()
+//             this;
+//             (function (_)
+//                 this;
+//             end)(this);
+//         end
+//         return [|this|].x;
+//     }
+// 
+//     static bar() {
+// --- (line: 29) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesClassExpressionThis.tlua ===
-// --- (line: 12) skipped ---
-//         () => this;
-//         () => {
-//             if (this) {
-//                 /*HIGHLIGHTS*/this;
+// --- (line: 9) skipped ---
+//     }
+//     foo() {
+//         this;
+//         function() return [|this|] end;
+//         function()
+//             if ([|this|]) {
+//                 /*HIGHLIGHTS*/[|this|];
 //             }
-//         }
-//         function inside() {
-// --- (line: 20) skipped ---
+//         end
+//         function inside()
+//             this;
+//             (function (_)
+//                 this;
+//             end)(this);
+//         end
+//         return [|this|].x;
+//     }
+// 
+//     static bar() {
+// --- (line: 29) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesClassExpressionThis.tlua ===
-// --- (line: 21) skipped ---
+// --- (line: 9) skipped ---
+//     }
+//     foo() {
+//         this;
+//         function() return [|this|] end;
+//         function()
+//             if ([|this|]) {
+//                 [|this|];
+//             }
+//         end
+//         function inside()
+//             this;
+//             (function (_)
 //                 this;
-//             })(this);
-//         }
-//         return /*HIGHLIGHTS*/this.x;
+//             end)(this);
+//         end
+//         return /*HIGHLIGHTS*/[|this|].x;
 //     }
 // 
 //     static bar() {

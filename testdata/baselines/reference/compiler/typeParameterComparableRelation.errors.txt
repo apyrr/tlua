@@ -7,10 +7,10 @@ typeParameterComparableRelation.tlua(6,5): error TLUA2352: Conversion of type 'T
     
     type StringOrT<T> = T | string
     
-    function func<A, B, T extends StringOrT<B>>(thing: T): void {
+    function func<A, B, T extends StringOrT<B>>(thing: T): void
         thing as A; // Error
         ~~~~~~~~~~
 !!! error TLUA2352: Conversion of type 'T' to type 'A' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 !!! error TLUA2352:   'A' could be instantiated with an arbitrary type which could be unrelated to 'T'.
-    }
+    end
     

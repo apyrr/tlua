@@ -2,6 +2,7 @@ checkInheritedProperty.tlua(1,1): error TLUA1434: Unexpected keyword or identifi
 checkInheritedProperty.tlua(1,1): error TLUA2304: Cannot find name 'class'.
 checkInheritedProperty.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
 checkInheritedProperty.tlua(1,7): error TLUA2304: Cannot find name 'Base'.
+checkInheritedProperty.tlua(1,12): error TLUA1128: Declaration or statement expected.
 checkInheritedProperty.tlua(4,31): error TLUA2304: Cannot find name 'Base'.
 checkInheritedProperty.tlua(6,1): error TLUA1434: Unexpected keyword or identifier.
 checkInheritedProperty.tlua(6,1): error TLUA2304: Cannot find name 'class'.
@@ -9,6 +10,7 @@ checkInheritedProperty.tlua(6,7): error TLUA1434: Unexpected keyword or identifi
 checkInheritedProperty.tlua(6,7): error TLUA2304: Cannot find name 'Derived'.
 checkInheritedProperty.tlua(6,15): error TLUA1128: Declaration or statement expected.
 checkInheritedProperty.tlua(6,23): error TLUA1434: Unexpected keyword or identifier.
+checkInheritedProperty.tlua(6,35): error TLUA1128: Declaration or statement expected.
 checkInheritedProperty.tlua(7,5): error TLUA2304: Cannot find name 'a'.
 checkInheritedProperty.tlua(7,9): error TLUA1109: Expression expected.
 checkInheritedProperty.tlua(7,13): error TLUA1128: Declaration or statement expected.
@@ -16,7 +18,7 @@ checkInheritedProperty.tlua(7,14): error TLUA2304: Cannot find name 'b'.
 checkInheritedProperty.tlua(8,5): error TLUA2304: Cannot find name 'b'.
 
 
-==== checkInheritedProperty.tlua (16 errors) ====
+==== checkInheritedProperty.tlua (18 errors) ====
     class Base {
     ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -26,6 +28,8 @@ checkInheritedProperty.tlua(8,5): error TLUA2304: Cannot find name 'b'.
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~~~~
 !!! error TLUA2304: Cannot find name 'Base'.
+               ~
+!!! error TLUA1128: Declaration or statement expected.
     }
     
     declare BaseFactory: new() => Base & { c: string }
@@ -45,6 +49,8 @@ checkInheritedProperty.tlua(8,5): error TLUA2304: Cannot find name 'b'.
 !!! error TLUA1128: Declaration or statement expected.
                           ~~~~~~~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
+                                      ~
+!!! error TLUA1128: Declaration or statement expected.
         a = this.b
         ~
 !!! error TLUA2304: Cannot find name 'a'.

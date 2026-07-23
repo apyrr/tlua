@@ -6,8 +6,8 @@ local World = "hello";
 return { World = World };
 //// [/user/username/projects/sample1/core/index.tlua] *new* 
 local someString: string = "HELLO WORLD";
-function leftPad(s: string, n: number) { return s + n; }
-function multiply(a: number, b: number) { return a * b; }
+function leftPad(s: string, n: number) return s + n; end
+function multiply(a: number, b: number) return a * b; end
 return { someString = someString, leftPad = leftPad, multiply = multiply };
 //// [/user/username/projects/sample1/core/some_decl.d.tlua] *new* 
 declare dts: any;
@@ -22,9 +22,9 @@ declare dts: any;
 }
 //// [/user/username/projects/sample1/logic/index.tlua] *new* 
 local c = require('core.index');
-function getSecondsInDay() {
+function getSecondsInDay()
     return c.multiply(10, 15);
-}
+end
 local mod = require('core.anotherModule');
 return { getSecondsInDay = getSecondsInDay, m = mod };
 //// [/user/username/projects/sample1/logic/tluaconfig.json] *new* 
@@ -124,8 +124,12 @@ return { World = World };
 
 //// [/user/username/projects/sample1/core/index.lua] *new* 
 local someString = "HELLO WORLD";
-function leftPad(s, n) { return s + n; }
-function multiply(a, b) { return a * b; }
+function leftPad(s, n)
+    return s + n;
+end
+function multiply(a, b)
+    return a * b;
+end
 return { someString = someString, leftPad = leftPad, multiply = multiply };
 
 //// [/user/username/projects/sample1/core/tluaconfig.tluabuildinfo] *new* 

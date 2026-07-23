@@ -11,9 +11,9 @@ function optBoth(): (number, string?)
 end
 
 // The trailing `?` must parse before a brace body (eager `?` consumption).
-function optBrace(): (number, string?) {
+function optBrace(): (number, string?)
   return 2;
-}
+end
 
 // ... and before a same-line Lua statement.
 function optSameLine(cond: boolean): (number, boolean?) local x = cond;
@@ -50,9 +50,9 @@ function optBoth()
     return 1, "a";
 end
 -- The trailing `?` must parse before a brace body (eager `?` consumption).
-function optBrace() {
+function optBrace()
     return 2;
-}
+end
 -- ... and before a same-line Lua statement.
 function optSameLine(cond)
     local x = cond;

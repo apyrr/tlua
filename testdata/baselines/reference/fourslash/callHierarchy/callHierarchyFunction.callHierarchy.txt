@@ -3,21 +3,21 @@
 ├ kind: function
 ├ file: /callHierarchyFunction.tlua
 ├ span:
-│ ╭ /callHierarchyFunction.tlua:5:1-9:2
-│ │ 5: function bar() {
-│ │    ^^^^^^^^^^^^^^^^
+│ ╭ /callHierarchyFunction.tlua:5:1-9:4
+│ │ 5: function bar()
+│ │    ^^^^^^^^^^^^^^
 │ │ 6:     baz();
 │ │    ^^^^^^^^^^
 │ │ 7:     quxx();
 │ │    ^^^^^^^^^^^
 │ │ 8:     baz();
 │ │    ^^^^^^^^^^
-│ │ 9: }
-│ │    ^
+│ │ 9: end
+│ │    ^^^
 │ ╰
 ├ selectionSpan:
 │ ╭ /callHierarchyFunction.tlua:5:10-5:13
-│ │ 5: function bar() {
+│ │ 5: function bar()
 │ │             ^^^
 │ ╰
 ├ incoming:
@@ -26,17 +26,17 @@
 │ │ ├ kind: function
 │ │ ├ file: /callHierarchyFunction.tlua
 │ │ ├ span:
-│ │ │ ╭ /callHierarchyFunction.tlua:1:1-3:2
-│ │ │ │ 1: function foo() {
-│ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ ╭ /callHierarchyFunction.tlua:1:1-3:4
+│ │ │ │ 1: function foo()
+│ │ │ │    ^^^^^^^^^^^^^^
 │ │ │ │ 2:     bar();
 │ │ │ │    ^^^^^^^^^^
-│ │ │ │ 3: }
-│ │ │ │    ^
+│ │ │ │ 3: end
+│ │ │ │    ^^^
 │ │ │ ╰
 │ │ ├ selectionSpan:
 │ │ │ ╭ /callHierarchyFunction.tlua:1:10-1:13
-│ │ │ │ 1: function foo() {
+│ │ │ │ 1: function foo()
 │ │ │ │             ^^^
 │ │ │ ╰
 │ │ ╰ incoming: none
@@ -51,15 +51,13 @@
 │ │ ├ kind: function
 │ │ ├ file: /callHierarchyFunction.tlua
 │ │ ├ span:
-│ │ │ ╭ /callHierarchyFunction.tlua:11:1-12:2
-│ │ │ │ 11: function baz() {
-│ │ │ │     ^^^^^^^^^^^^^^^^
-│ │ │ │ 12: }
-│ │ │ │     ^
+│ │ │ ╭ /callHierarchyFunction.tlua:11:1-11:19
+│ │ │ │ 11: function baz() end
+│ │ │ │     ^^^^^^^^^^^^^^^^^^
 │ │ │ ╰
 │ │ ├ selectionSpan:
 │ │ │ ╭ /callHierarchyFunction.tlua:11:10-11:13
-│ │ │ │ 11: function baz() {
+│ │ │ │ 11: function baz() end
 │ │ │ │              ^^^
 │ │ │ ╰
 │ │ ╰ outgoing: none
@@ -77,15 +75,13 @@
 │ │ ├ kind: function
 │ │ ├ file: /callHierarchyFunction.tlua
 │ │ ├ span:
-│ │ │ ╭ /callHierarchyFunction.tlua:14:1-15:2
-│ │ │ │ 14: function quxx() {
-│ │ │ │     ^^^^^^^^^^^^^^^^^
-│ │ │ │ 15: }
-│ │ │ │     ^
+│ │ │ ╭ /callHierarchyFunction.tlua:13:1-13:20
+│ │ │ │ 13: function quxx() end
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^
 │ │ │ ╰
 │ │ ├ selectionSpan:
-│ │ │ ╭ /callHierarchyFunction.tlua:14:10-14:14
-│ │ │ │ 14: function quxx() {
+│ │ │ ╭ /callHierarchyFunction.tlua:13:10-13:14
+│ │ │ │ 13: function quxx() end
 │ │ │ │              ^^^^
 │ │ │ ╰
 │ │ ╰ outgoing: none

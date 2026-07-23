@@ -19,11 +19,9 @@ return { indirectClass = indirectClass };
 local indirect = require('src.indirectClass');
 indirect.indirectClass.classC.prop;
 //// [/home/src/workspaces/project/src/noChangeFile.tlua] *new* 
-function writeLog(s: string) {
-}
+function writeLog(s: string) end
 //// [/home/src/workspaces/project/src/noChangeFileWithEmitSpecificError.tlua] *new* 
-function someFunc(arguments: boolean, ...rest: any[]) {
-}
+function someFunc(arguments: boolean, ...rest: any[]) end
 //// [/home/src/workspaces/project/tluaconfig.json] *new* 
 {
     "compilerOptions":  { "incremental": true, "declaration": true }
@@ -61,22 +59,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -136,15 +134,15 @@ local indirect = require('src.indirectClass');
 indirect.indirectClass.classC.prop;
 
 //// [/home/src/workspaces/project/src/noChangeFile.lua] *new* 
-function writeLog(s) {
-}
+function writeLog(s)
+end
 
 //// [/home/src/workspaces/project/src/noChangeFileWithEmitSpecificError.lua] *new* 
-function someFunc(arguments, ...rest) {
-}
+function someFunc(arguments, ...rest)
+end
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}","f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -212,14 +210,14 @@ function someFunc(arguments, ...rest) {
     },
     {
       "fileName": "./src/noChangeFile.tlua",
-      "version": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
-      "signature": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
+      "version": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
+      "signature": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/noChangeFileWithEmitSpecificError.tlua",
-      "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
-      "signature": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
+      "version": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
+      "signature": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -318,7 +316,7 @@ function someFunc(arguments, ...rest) {
       ]
     ]
   ],
-  "size": 2816
+  "size": 2814
 }
 
 tluaconfig.json::
@@ -347,12 +345,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -378,12 +376,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -414,19 +412,19 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
 Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificError.tlua[90m:1[0m
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8be09a1392ba7e2d8eb8a82451d54596-local classC = {\n    prop1 = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}","f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"affectedFilesPendingEmit":[2]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8be09a1392ba7e2d8eb8a82451d54596-local classC = {\n    prop1 = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"affectedFilesPendingEmit":[2]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -499,14 +497,14 @@ Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificEr
     },
     {
       "fileName": "./src/noChangeFile.tlua",
-      "version": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
-      "signature": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
+      "version": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
+      "signature": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/noChangeFileWithEmitSpecificError.tlua",
-      "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
-      "signature": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
+      "version": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
+      "signature": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -601,7 +599,7 @@ Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificEr
       2
     ]
   ],
-  "size": 2895
+  "size": 2893
 }
 
 tluaconfig.json::
@@ -635,7 +633,7 @@ Diff:: incremental build misses dependent-file errors because module signatures 
 -
  [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
- [7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+ [7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 @@ -27,10 +9,5 @@
  [7m [0m [91m                                         ~~~~[0m
 
@@ -688,22 +686,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -719,7 +717,7 @@ Errors  Files
 
 //// [/home/src/workspaces/project/src/class.lua] *rewrite with same content*
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}","f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -792,14 +790,14 @@ Errors  Files
     },
     {
       "fileName": "./src/noChangeFile.tlua",
-      "version": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
-      "signature": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
+      "version": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
+      "signature": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/noChangeFileWithEmitSpecificError.tlua",
-      "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
-      "signature": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
+      "version": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
+      "signature": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -898,7 +896,7 @@ Errors  Files
       ]
     ]
   ],
-  "size": 2983
+  "size": 2981
 }
 
 tluaconfig.json::
@@ -942,22 +940,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -991,12 +989,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1022,12 +1020,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1073,22 +1071,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1147,22 +1145,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1183,7 +1181,7 @@ local classC = {
 return { classC = classC };
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8be09a1392ba7e2d8eb8a82451d54596-local classC = {\n    prop1 = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}","f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8be09a1392ba7e2d8eb8a82451d54596-local classC = {\n    prop1 = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1256,14 +1254,14 @@ return { classC = classC };
     },
     {
       "fileName": "./src/noChangeFile.tlua",
-      "version": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
-      "signature": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
+      "version": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
+      "signature": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/noChangeFileWithEmitSpecificError.tlua",
-      "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
-      "signature": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
+      "version": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
+      "signature": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -1362,7 +1360,7 @@ return { classC = classC };
       ]
     ]
   ],
-  "size": 2984
+  "size": 2982
 }
 
 tluaconfig.json::
@@ -1406,7 +1404,7 @@ Diff:: incremental build misses dependent-file errors because module signatures 
 -
  [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
- [7m1[0m function writeLog(s: string) {
+ [7m1[0m function writeLog(s: string) end
 @@ -57,13 +39,13 @@
  [7m [0m [91m                                         ~~~~[0m
 
@@ -1459,22 +1457,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1528,7 +1526,7 @@ Diff:: incremental build misses dependent-file errors because module signatures 
 -
  [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
- [7m1[0m function writeLog(s: string) {
+ [7m1[0m function writeLog(s: string) end
 @@ -57,13 +39,13 @@
  [7m [0m [91m                                         ~~~~[0m
 
@@ -1561,12 +1559,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1602,7 +1600,7 @@ Diff:: incremental build misses dependent-file errors because module signatures 
 -
  [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
- [7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+ [7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 @@ -27,10 +9,5 @@
  [7m [0m [91m                                         ~~~~[0m
 
@@ -1630,12 +1628,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1671,7 +1669,7 @@ Diff:: incremental build misses dependent-file errors because module signatures 
 -
  [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
- [7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+ [7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 @@ -27,10 +9,5 @@
  [7m [0m [91m                                         ~~~~[0m
 
@@ -1719,22 +1717,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -1788,7 +1786,7 @@ Diff:: incremental build misses dependent-file errors because module signatures 
 -
  [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
- [7m1[0m function writeLog(s: string) {
+ [7m1[0m function writeLog(s: string) end
 @@ -57,13 +39,13 @@
  [7m [0m [91m                                         ~~~~[0m
 
@@ -1826,19 +1824,19 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
 Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificError.tlua[90m:1[0m
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}","f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"affectedFilesPendingEmit":[2]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"affectedFilesPendingEmit":[2]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1911,14 +1909,14 @@ Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificEr
     },
     {
       "fileName": "./src/noChangeFile.tlua",
-      "version": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
-      "signature": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
+      "version": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
+      "signature": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/noChangeFileWithEmitSpecificError.tlua",
-      "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
-      "signature": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
+      "version": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
+      "signature": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -2013,7 +2011,7 @@ Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificEr
       2
     ]
   ],
-  "size": 2894
+  "size": 2892
 }
 
 tluaconfig.json::
@@ -2057,22 +2055,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -2093,7 +2091,7 @@ local classC = {
 return { classC = classC };
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}","f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"options":{"declaration":true},"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[5,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[6,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[7,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -2166,14 +2164,14 @@ return { classC = classC };
     },
     {
       "fileName": "./src/noChangeFile.tlua",
-      "version": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
-      "signature": "25b15953760a029f99acff76343e5ebf-function writeLog(s: string) {\n}",
+      "version": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
+      "signature": "79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/noChangeFileWithEmitSpecificError.tlua",
-      "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
-      "signature": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
+      "version": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
+      "signature": "49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -2272,7 +2270,7 @@ return { classC = classC };
       ]
     ]
   ],
-  "size": 2983
+  "size": 2981
 }
 
 tluaconfig.json::
@@ -2294,12 +2292,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -2325,12 +2323,12 @@ Output::
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 
@@ -2376,22 +2374,22 @@ Output::
 
 [96msrc/noChangeFile.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function writeLog(s: string) {
+[7m1[0m function writeLog(s: string) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TLUA1215: [0mInvalid use of 'arguments'. Modules are automatically in strict mode.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                  ~~~~~~~~~[0m
 
 [96msrc/noChangeFileWithEmitSpecificError.tlua[0m:[93m1[0m:[93m42[0m - [91merror[0m[90m TLUA100034: [0mA vararg parameter cannot have a name.
 
-[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) {
+[7m1[0m function someFunc(arguments: boolean, ...rest: any[]) end
 [7m [0m [91m                                         ~~~~[0m
 
 

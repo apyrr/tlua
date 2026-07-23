@@ -1,10 +1,10 @@
 // === Inlay Hints ===
-  tuples.forEach((l) => {})
-                   ^
+  tuples.forEach(function(l) end)
+                           ^
 {
   "position": {
     "line": 1,
-    "character": 19
+    "character": 27
   },
   "label": [
     {

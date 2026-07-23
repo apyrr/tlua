@@ -13,7 +13,7 @@ tluaNoThis.tlua(27,17): error TLUA2304: Cannot find name 'is'.
 tluaNoThis.tlua(27,20): error TLUA2693: 'Dog' only refers to a type, but is being used as a value here.
 tluaNoThis.tlua(28,1): error TLUA1128: Declaration or statement expected.
 tluaNoThis.tlua(34,31): error TLUA2304: Cannot find name 'asserts'.
-tluaNoThis.tlua(34,39): error TLUA1144: '{' or ';' expected.
+tluaNoThis.tlua(34,39): error TLUA1005: ';' expected.
 tluaNoThis.tlua(34,44): error TLUA2304: Cannot find name 'is'.
 tluaNoThis.tlua(34,44): error TLUA1228: A type predicate is only allowed in return type position for functions and methods.
 tluaNoThis.tlua(34,47): error TLUA2693: 'Dog' only refers to a type, but is being used as a value here.
@@ -48,7 +48,7 @@ tluaNoThis.tlua(47,19): error TLUA2304: Cannot find name 'this'.
 !!! error TLUA2304: Cannot find name 'foo'.
     
     // `this` parameters are gone; write an ordinary parameter instead.
-    function f(this: number, a: string) {}
+    function f(this: number, a: string) end
                ~~~~
 !!! error TLUA1390: 'this' is not allowed as a parameter name.
                    ~
@@ -91,7 +91,7 @@ tluaNoThis.tlua(47,19): error TLUA2304: Cannot find name 'this'.
                                   ~~~~~~~
 !!! error TLUA2304: Cannot find name 'asserts'.
                                           ~~~~
-!!! error TLUA1144: '{' or ';' expected.
+!!! error TLUA1005: ';' expected.
                                                ~~
 !!! error TLUA2304: Cannot find name 'is'.
                                                ~~~
@@ -119,12 +119,12 @@ tluaNoThis.tlua(47,19): error TLUA2304: Cannot find name 'this'.
     type TQP = typeof this.foo;
                       ~~~~
 !!! error TLUA2304: Cannot find name 'this'.
-    function q(self: number) {
+    function q(self: number)
       local a: typeof this = self;
                       ~~~~
 !!! error TLUA2304: Cannot find name 'this'.
       use(a);
-    }
+    end
     
     use(x);
     use(y);

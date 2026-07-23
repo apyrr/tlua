@@ -1,7 +1,7 @@
 // === QuickInfo ===
 === /quickInfoCommentsFunctionDeclaration.tlua ===
 // /** This comment should appear for foo*/
-// function foo() {
+// function foo() end
 //          ^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -9,7 +9,6 @@
 // | ```
 // | This comment should appear for foo
 // | ----------------------------------------------------------------------
-// }
 // foo();
 // ^^^
 // | ----------------------------------------------------------------------
@@ -84,7 +83,7 @@
     "marker": {
       "Position": 61,
       "LSPosition": {
-        "line": 3,
+        "line": 2,
         "character": 1
       },
       "Name": "2",
@@ -97,11 +96,11 @@
       },
       "range": {
         "start": {
-          "line": 3,
+          "line": 2,
           "character": 0
         },
         "end": {
-          "line": 3,
+          "line": 2,
           "character": 3
         }
       }
@@ -111,7 +110,7 @@
     "marker": {
       "Position": 123,
       "LSPosition": {
-        "line": 5,
+        "line": 4,
         "character": 11
       },
       "Name": "5",
@@ -124,11 +123,11 @@
       },
       "range": {
         "start": {
-          "line": 5,
+          "line": 4,
           "character": 9
         },
         "end": {
-          "line": 5,
+          "line": 4,
           "character": 26
         }
       }
@@ -138,7 +137,7 @@
     "marker": {
       "Position": 238,
       "LSPosition": {
-        "line": 8,
+        "line": 7,
         "character": 10
       },
       "Name": "6",
@@ -151,11 +150,11 @@
       },
       "range": {
         "start": {
-          "line": 8,
+          "line": 7,
           "character": 10
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "character": 11
         }
       }
@@ -165,7 +164,7 @@
     "marker": {
       "Position": 259,
       "LSPosition": {
-        "line": 10,
+        "line": 9,
         "character": 12
       },
       "Name": "8",
@@ -178,11 +177,11 @@
       },
       "range": {
         "start": {
-          "line": 10,
+          "line": 9,
           "character": 0
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "character": 17
         }
       }

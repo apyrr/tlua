@@ -1,8 +1,8 @@
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.tlua ===
-// /*FIND ALL REFS*/export default function DefaultExportedFunction() {
+// /*FIND ALL REFS*/export default function DefaultExportedFunction()
 //     return DefaultExportedFunction;
-// }
+// end
 // 
 // --- (line: 5) skipped ---
 
@@ -10,9 +10,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.tlua ===
-// export default function /*FIND ALL REFS*/[|DefaultExportedFunction|]() {
+// export default function /*FIND ALL REFS*/[|DefaultExportedFunction|]()
 //     return [|DefaultExportedFunction|];
-// }
+// end
 // 
 // local x: typeof [|DefaultExportedFunction|];
 // 
@@ -25,9 +25,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.tlua ===
-// export default function [|DefaultExportedFunction|]() {
+// export default function [|DefaultExportedFunction|]()
 //     return /*FIND ALL REFS*/[|DefaultExportedFunction|];
-// }
+// end
 // 
 // local x: typeof [|DefaultExportedFunction|];
 // 
@@ -40,9 +40,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.tlua ===
-// export default function [|DefaultExportedFunction|]() {
+// export default function [|DefaultExportedFunction|]()
 //     return [|DefaultExportedFunction|];
-// }
+// end
 // 
 // local x: typeof /*FIND ALL REFS*/[|DefaultExportedFunction|];
 // 
@@ -55,9 +55,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.tlua ===
-// export default function [|DefaultExportedFunction|]() {
+// export default function [|DefaultExportedFunction|]()
 //     return [|DefaultExportedFunction|];
-// }
+// end
 // 
 // local x: typeof [|DefaultExportedFunction|];
 // 
@@ -81,9 +81,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.tlua ===
-// export default function [|DefaultExportedFunction|]() {
+// export default function [|DefaultExportedFunction|]()
 //     return [|DefaultExportedFunction|];
-// }
+// end
 // 
 // local x: typeof [|DefaultExportedFunction|];
 // 

@@ -10,12 +10,12 @@ type UnionType = TypeA | TypeB;
 
 function isTypeA(
   _value: UnionType
-): value is TypeA {  // "value" doesn't match parameter "_value"
+): value is TypeA  // "value" doesn't match parameter "_value"
   return true;
-}
+end
 
-function test(input: UnionType): void {
-  if (isTypeA(input)) {
+function test(input: UnionType): void
+  if (isTypeA(input)) then
     console.log(input.kind);
-  }
-}
+  end
+end

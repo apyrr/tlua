@@ -9,7 +9,7 @@
 // }
 // 
 // local x1: Foo            = [|{ hello ()          { /**typeReference*/ } }|];
-// local x2: () => Foo      = [|(() => { hello ()   { /**functionType*/} })|];
+// local x2: () => Foo      = [|(function() hello ()   { /**functionType*/} end)|];
 // local x3: Foo | Bar      = [|{ hello ()          { /**unionType*/} }|];
 // local x4: Foo & (Foo & Bar)      = [|{ hello ()          { /**intersectionType*/} }|];
 // local x5: [Foo]          = [{ hello ()         { /**tupleType*/} }];

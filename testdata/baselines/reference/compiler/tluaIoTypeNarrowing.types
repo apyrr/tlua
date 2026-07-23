@@ -7,7 +7,7 @@
 declare v: LuaFile | string | nil;
 >v : string | LuaFile | nil
 
-function comparisons(): void {
+function comparisons(): void
 >comparisons : () => void
 
   if io.type(v) == "file" then
@@ -64,10 +64,10 @@ function comparisons(): void {
 >v : string | nil
 
   end
-}
+end
 
 // The call is truthy exactly for file handles.
-function truthiness(): void {
+function truthiness(): void
 >truthiness : () => void
 
   if io.type(v) then
@@ -87,13 +87,13 @@ function truthiness(): void {
 >v : string | nil
 
   end
-}
+end
 
 // Grouping both file tags with `or` narrows the then-branch, but the else
 // cannot rule LuaFile out: each equality's false branch still admits the
 // other tag. (Switch fallthrough groups excluded the tag set at once; that
 // died with switch. The truthiness form above covers the disjoint case.)
-function grouped(): void {
+function grouped(): void
 >grouped : () => void
 
   if io.type(v) == "file" or io.type(v) == "closed file" then
@@ -123,10 +123,10 @@ function grouped(): void {
 >v : string | LuaFile | nil
 
   end
-}
+end
 
 // A file handle is userdata in Lua, so `type` reports it as such and never as a table.
-function fileIsUserdata(x: LuaFile | { n: number }): void {
+function fileIsUserdata(x: LuaFile | { n: number }): void
 >fileIsUserdata : (x: LuaFile | { n: number; }) => void
 >x : LuaFile | { n: number; }
 >n : number
@@ -156,10 +156,10 @@ function fileIsUserdata(x: LuaFile | { n: number }): void {
 >x : { n: number; }
 
   end
-}
+end
 
 // A table is never a file handle, so the guard is a dead branch.
-function disjoint(x: { n: number }): void {
+function disjoint(x: { n: number }): void
 >disjoint : (x: { n: number; }) => void
 >x : { n: number; }
 >n : number
@@ -190,5 +190,5 @@ function disjoint(x: { n: number }): void {
 >x : never
 
   end
-}
+end
 

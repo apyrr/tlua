@@ -1,0 +1,43 @@
+tluaNoTry.tlua(3,1): error TLUA1434: Unexpected keyword or identifier.
+tluaNoTry.tlua(3,1): error TLUA2304: Cannot find name 'try'.
+tluaNoTry.tlua(3,5): error TLUA1128: Declaration or statement expected.
+tluaNoTry.tlua(5,3): error TLUA2304: Cannot find name 'catch'.
+tluaNoTry.tlua(5,10): error TLUA2304: Cannot find name 'e'.
+tluaNoTry.tlua(5,13): error TLUA1005: ';' expected.
+tluaNoTry.tlua(6,18): error TLUA2304: Cannot find name 'e'.
+tluaNoTry.tlua(7,3): error TLUA1434: Unexpected keyword or identifier.
+tluaNoTry.tlua(7,3): error TLUA2304: Cannot find name 'finally'.
+tluaNoTry.tlua(7,11): error TLUA1128: Declaration or statement expected.
+
+
+==== tluaNoTry.tlua (10 errors) ====
+    // try/catch/finally are removed. The words are ordinary identifiers, so this
+    // reports ordinary syntax errors without constructing legacy AST nodes.
+    try {
+    ~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
+    ~~~
+!!! error TLUA2304: Cannot find name 'try'.
+        ~
+!!! error TLUA1128: Declaration or statement expected.
+      throw "boom";
+    } catch (e) {
+      ~~~~~
+!!! error TLUA2304: Cannot find name 'catch'.
+             ~
+!!! error TLUA2304: Cannot find name 'e'.
+                ~
+!!! error TLUA1005: ';' expected.
+      local caught = e;
+                     ~
+!!! error TLUA2304: Cannot find name 'e'.
+    } finally {
+      ~~~~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
+      ~~~~~~~
+!!! error TLUA2304: Cannot find name 'finally'.
+              ~
+!!! error TLUA1128: Declaration or statement expected.
+      local cleaned = true;
+    }
+    

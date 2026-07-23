@@ -9,7 +9,7 @@ declare function Child(props: { children?: any }): any;
 >props : { children?: any; }
 >children : any
 
-function Test() {
+function Test()
 >Test : () => any
 
     return <Child>
@@ -30,5 +30,6 @@ function Test() {
 
     </Child>
 >Child : (props: { children?: any; }) => any
-}
+
+end
 

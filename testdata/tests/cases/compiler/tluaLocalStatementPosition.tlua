@@ -9,12 +9,12 @@ declare cond: boolean;
 if (cond) local a = 1;
 while (cond) local b = 2;
 
-// Braced and Lua-block bodies are real blocks; the declarations are fine and
+// Lua-block bodies are real blocks; the declarations are fine and
 // stay contained.
-if (cond) {
+if (cond) then
   local ok1 = 1;
   print(ok1);
-}
+end
 if cond then
   local ok2 = 2;
   print(ok2);

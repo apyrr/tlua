@@ -1,0 +1,28 @@
+//// [tests/cases/compiler/tluaSynthesizedLuaIf.tlua] ////
+
+=== tluaSynthesizedLuaIf.tlua ===
+function getObject(): { value: number | nil }
+>getObject : () => { value: number | nil; }
+>value : number | nil
+
+  return { value = nil }
+>{ value = nil } : { value: nil; }
+>value : nil
+
+end
+
+function defaultValue(value = getObject().value ||= 1)
+>defaultValue : (value?: number) => number
+>value : number
+>getObject().value ||= 1 : number
+>getObject().value : number | nil
+>getObject() : { value: number | nil; }
+>getObject : () => { value: number | nil; }
+>value : number | nil
+>1 : 1
+
+  return value
+>value : number
+
+end
+

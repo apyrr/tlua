@@ -1,7 +1,7 @@
 // === Document Symbols ===
 // === /navigationBarItemsMultilineStringIdentifiers2.tlua ===
-// <|function [|{| name: f, kind: Function |}f|](p1: () => any, p2: string) { }|>
-// f(<|[|{| name: f(`line1\line2\line3`) callback, kind: Function |}|]() => { }|>, `line1\
+// <|function [|{| name: f, kind: Function |}f|](p1: () => any, p2: string) end|>
+// f(<|[|{| name: f(`line1\line2\line3`) callback, kind: Function |}|]function() end|>,`line1\
 // line2\
 // line3`);
 // 
@@ -10,7 +10,7 @@
 //         line2';
 // }
 // 
-// f(<|[|{| name: f(`unterminated backtick 1unterminated backtick 2unterminated backtick 3) callback, kind: Function |}|]() => { }|>, `unterminated backtick 1
+// f(<|[|{| name: f(`unterminated backtick 1unterminated backtick 2unterminated backtick 3) callback, kind: Function |}|]function() end|>,`unterminated backtick 1
 // unterminated backtick 2
 // unterminated backtick 3
 

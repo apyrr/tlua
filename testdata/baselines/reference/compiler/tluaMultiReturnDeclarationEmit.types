@@ -8,32 +8,35 @@ declare function fromDtsVariadic(): (boolean, ...number);
 >fromDtsVariadic : () => (boolean, ...number)
 
 === main.tlua ===
-function annotated(): (number, string) {
+function annotated(): (number, string)
 >annotated : () => (number, string)
 
   return 1, "a";
 >1, "a" : number, string
 >1 : 1
 >"a" : "a"
-}
 
-function inferred(cond: boolean) {
+end
+
+function inferred(cond: boolean)
 >inferred : (cond: boolean) => (number, (string | nil)?)
 >cond : boolean
 
-  if (cond) {
+  if cond then
 >cond : boolean
 
     return 1, "a";
 >1, "a" : number, string
 >1 : 1
 >"a" : "a"
-  }
+
+  end
   return 2;
 >2 : 2
-}
 
-function variadic(): (number, ...string) {
+end
+
+function variadic(): (number, ...string)
 >variadic : () => (number, ...string)
 
   return 1, "a", "b";
@@ -41,14 +44,16 @@ function variadic(): (number, ...string) {
 >1 : 1
 >"a" : "a"
 >"b" : "b"
-}
 
-function optional(): (number, string?) {
+end
+
+function optional(): (number, string?)
 >optional : () => (number, string?)
 
   return 1;
 >1 : 1
-}
+
+end
 
 type PairCallback = () => (number, string);
 >PairCallback : PairCallback

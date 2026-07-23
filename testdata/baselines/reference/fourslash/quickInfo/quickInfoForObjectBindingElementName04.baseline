@@ -12,7 +12,7 @@
 //    }
 // }
 // 
-// function f({ a, a: { b } }: Options) {
+// function f({ a, a: { b } }: Options)
 //     a;
 //     ^
 // | ----------------------------------------------------------------------
@@ -31,11 +31,11 @@
 // | ```
 // | A description of 'b'
 // | ----------------------------------------------------------------------
-// }
+// end
 [
   {
     "marker": {
-      "Position": 193,
+      "Position": 191,
       "LSPosition": {
         "line": 13,
         "character": 5
@@ -62,7 +62,7 @@
   },
   {
     "marker": {
-      "Position": 200,
+      "Position": 198,
       "LSPosition": {
         "line": 14,
         "character": 5

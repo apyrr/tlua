@@ -48,10 +48,10 @@ local i = id<number>:ping();
 // Error recovery: an annotation-shaped `ident : ident` in invalid code must
 // not swallow the declarations that follow it into a bogus argument list.
 local bad = (b: number);
->bad : (b: number) => any
->(b: number) : (b: number) => any
->b : number
-> : any
+>bad : any
+>(b : any
+>b : any
+>number : any
 
 declare fine: (n: number) => void;
 >fine : (n: number) => void

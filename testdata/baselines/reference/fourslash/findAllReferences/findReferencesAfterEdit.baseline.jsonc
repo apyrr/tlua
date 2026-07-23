@@ -7,9 +7,9 @@
 // === /b.tlua ===
 // ///<reference path='a.tlua'/>
 // 
-// function foo(x: A) {
+// function foo(x: A)
 //     x.[|foo|]
-// }
+// end
 
 
 
@@ -22,9 +22,9 @@
 // === /b.tlua ===
 // ///<reference path='a.tlua'/>
 // 
-// function foo(x: A) {
+// function foo(x: A)
 //     x./*FIND ALL REFS*/[|foo|]
-// }
+// end
 
 
 
@@ -38,9 +38,9 @@
 // ///<reference path='a.tlua'/>
 // 
 // 
-// function foo(x: A) {
+// function foo(x: A)
 //     x.[|foo|]
-// }
+// end
 
 
 
@@ -54,6 +54,6 @@
 // ///<reference path='a.tlua'/>
 // 
 // 
-// function foo(x: A) {
+// function foo(x: A)
 //     x./*FIND ALL REFS*/[|foo|]
-// }
+// end

@@ -22,9 +22,9 @@ local await = 1;
 local usesAwait = await + 1;
 
 // `await using` is removed with it.
-function h(): void {
+function h(): void
   await using r = compute();
-}
+end
 
 
 //// [tluaNoAwait.lua]
@@ -44,8 +44,8 @@ end
 local await = 1;
 local usesAwait = await + 1;
 -- `await using` is removed with it.
-function h() {
+function h()
     await;
     using;
     r = compute();
-}
+end

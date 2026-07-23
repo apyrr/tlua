@@ -15,7 +15,7 @@ local x = this;
 local y = this.foo;
 
 // `this` parameters are gone; write an ordinary parameter instead.
-function f(this: number, a: string) {}
+function f(this: number, a: string) end
 
 // The polymorphic `this` type is gone.
 interface Poly {
@@ -46,10 +46,10 @@ type OTP = OmitThisParameter<() => void>;
 // unresolvable name instead of typing as the receiver or global environment.
 type TQ = typeof this;
 type TQP = typeof this.foo;
-function q(self: number) {
+function q(self: number)
   local a: typeof this = self;
   use(a);
-}
+end
 
 use(x);
 use(y);
@@ -67,14 +67,15 @@ local x = ;
 local y = ;
 foo;
 -- `this` parameters are gone; write an ordinary parameter instead.
-function f(number, a) { }
+function f(number, a)
+end
 is;
 Dog;
 is;
 Dog;
-function q(self) {
+function q(self)
     local a = self;
     use(a);
-}
+end
 use(x);
 use(y);

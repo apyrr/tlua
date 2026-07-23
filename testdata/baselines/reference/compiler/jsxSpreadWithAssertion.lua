@@ -17,9 +17,9 @@ local c = <EntryTextDialog
 //// [jsxSpreadWithAssertion.lua]
 import { jsx as _jsx } from "react/jsx-runtime";
 local c = _jsx(EntryTextDialog, {});
-{
+do
     ...;
-    {
+    do
         first;
         0,
             foo;
@@ -30,6 +30,6 @@ local c = _jsx(EntryTextDialog, {});
         3,
             last;
         4;
-    }
-}
+    end
+end
 />;

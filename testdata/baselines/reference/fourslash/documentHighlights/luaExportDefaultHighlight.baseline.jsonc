@@ -1,4 +1,4 @@
 // === documentHighlights ===
 // === /luaExportDefaultHighlight.tlua ===
-// export /*HIGHLIGHTS*/default function f() {}
+// export /*HIGHLIGHTS*/default function f() end
 // f();

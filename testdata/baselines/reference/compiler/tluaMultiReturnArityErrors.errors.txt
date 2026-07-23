@@ -61,11 +61,11 @@ tluaMultiReturnArityErrors.tlua(31,37): error TLUA100021: A type predicate canno
     end
     
     // A type predicate cannot start a multiple return type.
-    function badPredicate(x: unknown): (x is string, number) {
+    function badPredicate(x: unknown): (x is string, number)
                                         ~~~~~~~~~~~
 !!! error TLUA1228: A type predicate is only allowed in return type position for functions and methods.
                                         ~~~~~~~~~~~
 !!! error TLUA100021: A type predicate cannot be part of a multiple return type.
       return type(x) == "string", 1;
-    }
+    end
     

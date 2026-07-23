@@ -26,30 +26,30 @@
 
 // === findAllReferences ===
 // === /file3.tlua ===
-// ((x = /*FIND ALL REFS*/this, y) => this)(this, this);
+// (function(x = /*FIND ALL REFS*/this, y) return [|this|] end)(this, this);
 // // different 'this'
-// function f(this) { return this; }
+// function f(this) return this; end
 
 
 
 // === findAllReferences ===
 // === /file3.tlua ===
-// ((x = this, y) => /*FIND ALL REFS*/this)(this, this);
+// (function(x = this, y) return /*FIND ALL REFS*/[|this|] end)(this, this);
 // // different 'this'
-// function f(this) { return this; }
+// function f(this) return this; end
 
 
 
 // === findAllReferences ===
 // === /file3.tlua ===
-// ((x = this, y) => this)(/*FIND ALL REFS*/this, this);
+// (function(x = this, y) return this end)(/*FIND ALL REFS*/this, this);
 // // different 'this'
-// function f(this) { return this; }
+// function f(this) return this; end
 
 
 
 // === findAllReferences ===
 // === /file3.tlua ===
-// ((x = this, y) => this)(this, /*FIND ALL REFS*/this);
+// (function(x = this, y) return this end)(this, /*FIND ALL REFS*/this);
 // // different 'this'
-// function f(this) { return this; }
+// function f(this) return this; end

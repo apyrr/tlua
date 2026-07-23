@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/tluaNoTypeAccessors.tlua] ////
+
+=== tluaNoTypeAccessors.tlua ===
+// Type accessors are removed. `get` and `set` are recovered as ordinary
+// member names rather than accessor declarations.
+interface Accessors {
+>Accessors : Symbol(Accessors, Decl(tluaNoTypeAccessors.tlua, 0, 0))
+
+  get value(): string;
+>get : Symbol(Accessors.get, Decl(tluaNoTypeAccessors.tlua, 2, 21))
+>value : Symbol(Accessors.value, Decl(tluaNoTypeAccessors.tlua, 3, 5), Decl(tluaNoTypeAccessors.tlua, 4, 5))
+
+  set value(next: string);
+>set : Symbol(Accessors.set, Decl(tluaNoTypeAccessors.tlua, 3, 22))
+>value : Symbol(Accessors.value, Decl(tluaNoTypeAccessors.tlua, 3, 5), Decl(tluaNoTypeAccessors.tlua, 4, 5))
+>next : Symbol(next, Decl(tluaNoTypeAccessors.tlua, 4, 12))
+}
+

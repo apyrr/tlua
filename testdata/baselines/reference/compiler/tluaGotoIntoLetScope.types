@@ -7,7 +7,7 @@ declare function log(n: number): void;
 >log : (n: number) => void
 >n : number
 
-function intoLetScope(): void {
+function intoLetScope(): void
 >intoLetScope : () => void
 
     goto done
@@ -24,9 +24,10 @@ function intoLetScope(): void {
 >log(x) : void
 >log : (n: number) => void
 >x : number
-}
 
-function intoConstScope(): void {
+end
+
+function intoConstScope(): void
 >intoConstScope : () => void
 
     goto done
@@ -43,9 +44,10 @@ function intoConstScope(): void {
 >log(c) : void
 >log : (n: number) => void
 >c : number
-}
 
-function intoVarScope(): void {
+end
+
+function intoVarScope(): void
 >intoVarScope : () => void
 
     goto done
@@ -62,5 +64,6 @@ function intoVarScope(): void {
 >log(v) : void
 >log : (n: number) => void
 >v : number
-}
+
+end
 

@@ -1,17 +1,13 @@
 // === Smart Selection ===
-local f1 = () => {
+local f1 = function()
    /**/
-};
+end;
 
 
-                 {
+           function()
    
-} 
+end 
 
-           () => {
+local f1 = function()
    
-} 
-
-local f1 = () => {
-   
-};
+end;

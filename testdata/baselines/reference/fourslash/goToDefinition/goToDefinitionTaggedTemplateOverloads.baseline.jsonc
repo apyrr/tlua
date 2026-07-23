@@ -2,7 +2,7 @@
 // === /goToDefinitionTaggedTemplateOverloads.tlua ===
 // <|function [|f|](strs: TemplateStringsArray, x: number): void;|>
 // function f(strs: TemplateStringsArray, x: boolean): void;
-// function f(strs: TemplateStringsArray, x: number | boolean) {}
+// function f(strs: TemplateStringsArray, x: number | boolean) end
 // 
 // /*GOTO DEF*/f`${0}`;
 // f`${false}`;
@@ -13,7 +13,7 @@
 // === /goToDefinitionTaggedTemplateOverloads.tlua ===
 // function f(strs: TemplateStringsArray, x: number): void;
 // <|function [|f|](strs: TemplateStringsArray, x: boolean): void;|>
-// function f(strs: TemplateStringsArray, x: number | boolean) {}
+// function f(strs: TemplateStringsArray, x: number | boolean) end
 // 
 // f`${0}`;
 // /*GOTO DEF*/f`${false}`;

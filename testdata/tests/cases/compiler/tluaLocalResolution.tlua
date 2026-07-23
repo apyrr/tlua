@@ -7,12 +7,12 @@ local outer = 10;
 local same = outer;
 same = same + 1;
 
-{
+do
   local blockValue = same;
   blockValue = blockValue + 1;
   local blockValue = blockValue + 1;
   blockValue = blockValue + 1;
-}
+end
 
 local forward = laterLocal;
 local laterLocal = 1;
@@ -20,9 +20,9 @@ local laterLocal = 1;
 local outer = outer + 1;
 outer = outer + 1;
 
-function flowForLuaLocal() {
+function flowForLuaLocal()
   local narrowed: string | number;
   narrowed = 1;
-  local reader = () => narrowed;
+  local reader = function() return narrowed end;
   reader();
-}
+end

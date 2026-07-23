@@ -19,7 +19,7 @@ tluaVarargAdjustment.tlua(128,9): error TLUA2322: Type 'string | nil' is not ass
   Type 'nil' is not assignable to type 'string'.
 tluaVarargAdjustment.tlua(134,9): error TLUA2322: Type 'string | number' is not assignable to type 'number'.
   Type 'string' is not assignable to type 'number'.
-tluaVarargAdjustment.tlua(202,24): error TLUA2345: Argument of type 'string | boolean' is not assignable to parameter of type 'string | nil'.
+tluaVarargAdjustment.tlua(203,24): error TLUA2345: Argument of type 'string | boolean' is not assignable to parameter of type 'string | nil'.
   Type 'boolean' is not assignable to type 'string'.
 
 
@@ -117,8 +117,8 @@ tluaVarargAdjustment.tlua(202,24): error TLUA2345: Argument of type 'string | bo
       local compared: boolean = (... == 1);
     
       // The arrow forms stay arrows.
-      local arrow = (...) => (... or 0);
-      local annotated = (...: number) => 0;
+      local arrow = function(...) return (... or 0) end;
+      local annotated = function(...: number) return 0 end;
     end
     
     // Return value lists follow the same rules.
@@ -243,12 +243,13 @@ tluaVarargAdjustment.tlua(202,24): error TLUA2345: Argument of type 'string | bo
     
     // A contextually-typed bare `...` takes its pack from the contextual signature,
     // so here the pack has a FIXED PREFIX: `(number, string, ...boolean)`.
-    local tailWithFixedPrefix: PrefixedVararg = (...) =>
+    local tailWithFixedPrefix: PrefixedVararg = function(...)
       // The prefix fills both of takesPair's parameters, so the tail is not "unable
       // to contribute" and there is no arity error: only the *variable* part of the
       // pack is discarded. Counting the prefix as filled-by-a-fixed-argument used to
       // report 100037 here and mask any real type error underneath it.
-      takesPair(...);
+      return takesPair(...);
+    end;
     
     function midRestIntoParameters(): void
       // `(number, ...string, boolean)` always yields at least two values, so the

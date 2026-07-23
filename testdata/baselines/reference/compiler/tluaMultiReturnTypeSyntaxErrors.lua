@@ -7,25 +7,25 @@ type ParenthesizedSingle = () => (string)[];
 type ConditionalSingle<T> = () => (T extends string ? number : boolean);
 type BadPredicate = (value: unknown) => (value is string, number);
 
-function takesCallback(cb: () => number, more: string) {
+function takesCallback(cb: () => number, more: string)
   return cb() + more.length;
-}
+end
 
-function trailingCallback(cb: () => number,) {
+function trailingCallback(cb: () => number,)
   return cb();
-}
+end
 
 // An arrow return type in a call argument list does not swallow the comma.
-function twoArgs(a: (x: number) => number, b: number) {
+function twoArgs(a: (x: number) => number, b: number)
   return a(b);
-}
-local r = twoArgs((x): number => x, 1);
+end
+local r = twoArgs(function(x): number return x end, 1);
 
 // A bare multiple return type must be parenthesized; the list is still
 // parsed for recovery, so the pack itself checks normally.
-function barePair(): number, string {
+function barePair(): number, string
   return 1, "a";
-}
+end
 declare function bareAmbient(): number, ...string;
 local function bareLocal(): number, string?
   return 1, nil;
@@ -36,22 +36,24 @@ local s: string = b;
 
 
 //// [tluaMultiReturnTypeSyntaxErrors.lua]
-function takesCallback(cb, more) {
+function takesCallback(cb, more)
     return cb() + more.length;
-}
-function trailingCallback(cb) {
+end
+function trailingCallback(cb)
     return cb();
-}
+end
 -- An arrow return type in a call argument list does not swallow the comma.
-function twoArgs(a, b) {
+function twoArgs(a, b)
     return a(b);
-}
-local r = twoArgs(function(x) return x end, 1);
+end
+local r = twoArgs(function(x)
+    return x;
+end, 1);
 -- A bare multiple return type must be parenthesized; the list is still
 -- parsed for recovery, so the pack itself checks normally.
-function barePair() {
+function barePair()
     return 1, "a";
-}
+end
 local function bareLocal()
     return 1, nil;
 end

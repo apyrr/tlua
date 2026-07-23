@@ -10,7 +10,7 @@ type Mixed = { n: number } | thread | userdata | cdata | ((a: number) => void) |
 >n : number
 >a : number
 
-function tags(v: Mixed): void {
+function tags(v: Mixed): void
 >tags : (v: Mixed) => void
 >v : Mixed
 
@@ -124,9 +124,9 @@ function tags(v: Mixed): void {
 >v : nil
 
   end
-}
+end
 
-function negated(v: Mixed): void {
+function negated(v: Mixed): void
 >negated : (v: Mixed) => void
 >v : Mixed
 
@@ -172,10 +172,10 @@ function negated(v: Mixed): void {
 >v : string | number | boolean | cdata | thread | userdata | { n: number; } | ((a: number) => void)
 
   end
-}
+end
 
 // The `and`/`or` idiom narrows the same way an if-statement does.
-function idiom(v: string | number): string {
+function idiom(v: string | number): string
 >idiom : (v: string | number) => string
 >v : string | number
 
@@ -191,9 +191,10 @@ function idiom(v: string | number): string {
 >tostring(v) : string
 >tostring : (value: any) => string
 >v : number
-}
 
-function tops(u: unknown, a: any): void {
+end
+
+function tops(u: unknown, a: any): void
 >tops : (u: unknown, a: any) => void
 >u : unknown
 >a : any
@@ -246,9 +247,9 @@ function tops(u: unknown, a: any): void {
 >a : any
 
   end
-}
+end
 
-function generic<T>(v: T): void {
+function generic<T>(v: T): void
 >generic : <T>(v: T) => void
 >v : T
 
@@ -264,9 +265,9 @@ function generic<T>(v: T): void {
 >v : T & thread
 
   end
-}
+end
 
-function constrained<T extends thread | string>(v: T): void {
+function constrained<T extends thread | string>(v: T): void
 >constrained : <T extends thread | string>(v: T) => void
 >v : T
 
@@ -282,10 +283,10 @@ function constrained<T extends thread | string>(v: T): void {
 >v : string
 
   end
-}
+end
 
 // An unreachable tag: `type()` never reports it, so the true branch is uninhabited.
-function unknownTag(v: string | number): void {
+function unknownTag(v: string | number): void
 >unknownTag : (v: string | number) => void
 >v : string | number
 
@@ -301,11 +302,11 @@ function unknownTag(v: string | number): void {
 >v : never
 
   end
-}
+end
 
 // The tags partition values, so a guard that is provably false is a dead branch:
 // a concrete type unrelated to a brand narrows to never, not to an intersection.
-function disjoint(x: { n: number }, u: { n: number } | string, s: string): void {
+function disjoint(x: { n: number }, u: { n: number } | string, s: string): void
 >disjoint : (x: { n: number; }, u: { n: number; } | string, s: string) => void
 >x : { n: number; }
 >n : number
@@ -349,5 +350,5 @@ function disjoint(x: { n: number }, u: { n: number } | string, s: string): void 
 >s : never
 
   end
-}
+end
 

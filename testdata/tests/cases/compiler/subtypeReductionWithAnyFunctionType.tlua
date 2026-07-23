@@ -6,15 +6,15 @@
 
 declare function useMemo<T>(func: () => T): T;
 
-function getPredicate(alwaysTrue: boolean) {
-    local predicate: (input: string) => boolean = useMemo(() => {
-        if (alwaysTrue) {
-            return () => true;
-        }
-        return x => x.length > 0;
-    });
+function getPredicate(alwaysTrue: boolean)
+    local predicate: (input: string) => boolean = useMemo(function()
+        if (alwaysTrue) then
+            return function() return true end;
+        end
+        return function(x) return x.length > 0 end;
+    end);
     return predicate;
-}
+end
 
 // https://github.com/microsoft/typescript-go/issues/1016
 
@@ -23,6 +23,6 @@ declare function makeFooer(): Fooer;
 interface Fooer {
     foo: (v: string) => string;
 }
-function f() {
-    local _ = compact([makeFooer(), { foo = (v) => v }]);
-}
+function f()
+    local _ = compact([makeFooer(), { foo = function(v) return v end }]);
+end

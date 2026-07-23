@@ -10,7 +10,7 @@ type Mixed = { n: number } | thread | userdata | cdata | ((a: number) => void) |
 >n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 4, 14))
 >a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 4, 59))
 
-function tags(v: Mixed): void {
+function tags(v: Mixed): void
 >tags : Symbol(tags, Decl(tluaTypeCallNarrowing.tlua, 4, 113))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 >Mixed : Symbol(Mixed, Decl(tluaTypeCallNarrowing.tlua, 0, 0))
@@ -98,10 +98,10 @@ function tags(v: Mixed): void {
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 6, 14))
 
   end
-}
+end
 
-function negated(v: Mixed): void {
->negated : Symbol(negated, Decl(tluaTypeCallNarrowing.tlua, 34, 1))
+function negated(v: Mixed): void
+>negated : Symbol(negated, Decl(tluaTypeCallNarrowing.tlua, 34, 3))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 >Mixed : Symbol(Mixed, Decl(tluaTypeCallNarrowing.tlua, 0, 0))
 
@@ -138,11 +138,11 @@ function negated(v: Mixed): void {
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 36, 17))
 
   end
-}
+end
 
 // The `and`/`or` idiom narrows the same way an if-statement does.
-function idiom(v: string | number): string {
->idiom : Symbol(idiom, Decl(tluaTypeCallNarrowing.tlua, 47, 1))
+function idiom(v: string | number): string
+>idiom : Symbol(idiom, Decl(tluaTypeCallNarrowing.tlua, 47, 3))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 50, 15))
 
   return type(v) == "string" and v or tostring(v);
@@ -151,10 +151,11 @@ function idiom(v: string | number): string {
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 50, 15))
 >tostring : Symbol(tostring, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 50, 15))
-}
 
-function tops(u: unknown, a: any): void {
->tops : Symbol(tops, Decl(tluaTypeCallNarrowing.tlua, 52, 1))
+end
+
+function tops(u: unknown, a: any): void
+>tops : Symbol(tops, Decl(tluaTypeCallNarrowing.tlua, 52, 3))
 >u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 54, 14))
 >a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 54, 25))
 
@@ -194,10 +195,10 @@ function tops(u: unknown, a: any): void {
 >a : Symbol(a, Decl(tluaTypeCallNarrowing.tlua, 54, 25))
 
   end
-}
+end
 
-function generic<T>(v: T): void {
->generic : Symbol(generic, Decl(tluaTypeCallNarrowing.tlua, 67, 1))
+function generic<T>(v: T): void
+>generic : Symbol(generic, Decl(tluaTypeCallNarrowing.tlua, 67, 3))
 >T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 69, 17))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 69, 20))
 >T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 69, 17))
@@ -212,10 +213,10 @@ function generic<T>(v: T): void {
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 69, 20))
 
   end
-}
+end
 
-function constrained<T extends thread | string>(v: T): void {
->constrained : Symbol(constrained, Decl(tluaTypeCallNarrowing.tlua, 73, 1))
+function constrained<T extends thread | string>(v: T): void
+>constrained : Symbol(constrained, Decl(tluaTypeCallNarrowing.tlua, 73, 3))
 >T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 75, 21))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 48))
 >T : Symbol(T, Decl(tluaTypeCallNarrowing.tlua, 75, 21))
@@ -229,11 +230,11 @@ function constrained<T extends thread | string>(v: T): void {
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 75, 48))
 
   end
-}
+end
 
 // An unreachable tag: `type()` never reports it, so the true branch is uninhabited.
-function unknownTag(v: string | number): void {
->unknownTag : Symbol(unknownTag, Decl(tluaTypeCallNarrowing.tlua, 79, 1))
+function unknownTag(v: string | number): void
+>unknownTag : Symbol(unknownTag, Decl(tluaTypeCallNarrowing.tlua, 79, 3))
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 82, 20))
 
   if type(v) == "chair" then
@@ -245,12 +246,12 @@ function unknownTag(v: string | number): void {
 >v : Symbol(v, Decl(tluaTypeCallNarrowing.tlua, 82, 20))
 
   end
-}
+end
 
 // The tags partition values, so a guard that is provably false is a dead branch:
 // a concrete type unrelated to a brand narrows to never, not to an intersection.
-function disjoint(x: { n: number }, u: { n: number } | string, s: string): void {
->disjoint : Symbol(disjoint, Decl(tluaTypeCallNarrowing.tlua, 86, 1))
+function disjoint(x: { n: number }, u: { n: number } | string, s: string): void
+>disjoint : Symbol(disjoint, Decl(tluaTypeCallNarrowing.tlua, 86, 3))
 >x : Symbol(x, Decl(tluaTypeCallNarrowing.tlua, 90, 18))
 >n : Symbol(n, Decl(tluaTypeCallNarrowing.tlua, 90, 22))
 >u : Symbol(u, Decl(tluaTypeCallNarrowing.tlua, 90, 35))
@@ -284,5 +285,5 @@ function disjoint(x: { n: number }, u: { n: number } | string, s: string): void 
 >s : Symbol(s, Decl(tluaTypeCallNarrowing.tlua, 90, 62))
 
   end
-}
+end
 

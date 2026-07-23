@@ -19,27 +19,27 @@ tluaMultiReturnTypeSyntaxErrors.tlua(27,29): error TLUA100033: Multiple return t
                                              ~~~~~~~~~~~~~~~
 !!! error TLUA100021: A type predicate cannot be part of a multiple return type.
     
-    function takesCallback(cb: () => number, more: string) {
+    function takesCallback(cb: () => number, more: string)
       return cb() + more.length;
-    }
+    end
     
-    function trailingCallback(cb: () => number,) {
+    function trailingCallback(cb: () => number,)
       return cb();
-    }
+    end
     
     // An arrow return type in a call argument list does not swallow the comma.
-    function twoArgs(a: (x: number) => number, b: number) {
+    function twoArgs(a: (x: number) => number, b: number)
       return a(b);
-    }
-    local r = twoArgs((x): number => x, 1);
+    end
+    local r = twoArgs(function(x): number return x end, 1);
     
     // A bare multiple return type must be parenthesized; the list is still
     // parsed for recovery, so the pack itself checks normally.
-    function barePair(): number, string {
+    function barePair(): number, string
                          ~~~~~~~~~~~~~~
 !!! error TLUA100033: Multiple return types must be parenthesized.
       return 1, "a";
-    }
+    end
     declare function bareAmbient(): number, ...string;
                                     ~~~~~~~~~~~~~~~~~
 !!! error TLUA100033: Multiple return types must be parenthesized.

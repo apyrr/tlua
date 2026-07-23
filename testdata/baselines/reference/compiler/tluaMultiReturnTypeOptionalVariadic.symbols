@@ -15,15 +15,15 @@ function optBoth(): (number, string?)
 end
 
 // The trailing `?` must parse before a brace body (eager `?` consumption).
-function optBrace(): (number, string?) {
+function optBrace(): (number, string?)
 >optBrace : Symbol(optBrace, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 7, 3))
 
   return 2;
-}
+end
 
 // ... and before a same-line Lua statement.
 function optSameLine(cond: boolean): (number, boolean?) local x = cond;
->optSameLine : Symbol(optSameLine, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 12, 1))
+>optSameLine : Symbol(optSameLine, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 12, 3))
 >cond : Symbol(cond, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 15, 21))
 >x : Symbol(x, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 15, 61))
 >cond : Symbol(cond, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 15, 21))
@@ -67,7 +67,7 @@ local c = optBrace();
 
 local d = optSameLine(true);
 >d : Symbol(d, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 36, 5))
->optSameLine : Symbol(optSameLine, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 12, 1))
+>optSameLine : Symbol(optSameLine, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 12, 3))
 
 local e = variadic();
 >e : Symbol(e, Decl(tluaMultiReturnTypeOptionalVariadic.tlua, 37, 5))

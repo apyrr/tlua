@@ -2,6 +2,7 @@ removeComments.tlua(2,9): error TLUA1109: Expression expected.
 removeComments.tlua(2,13): error TLUA1128: Declaration or statement expected.
 removeComments.tlua(2,14): error TLUA2304: Cannot find name 'a'.
 removeComments.tlua(2,19): error TLUA1005: ';' expected.
+removeComments.tlua(2,21): error TLUA1128: Declaration or statement expected.
 removeComments.tlua(3,9): error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
 removeComments.tlua(3,27): error TLUA1135: Argument expression expected.
 removeComments.tlua(3,31): error TLUA1135: Argument expression expected.
@@ -16,9 +17,9 @@ removeComments.tlua(24,17): error TLUA1109: Expression expected.
 removeComments.tlua(24,21): error TLUA1109: Expression expected.
 
 
-==== removeComments.tlua (16 errors) ====
-    function t1() {
-        if (this.a < 2) { // comment after if
+==== removeComments.tlua (17 errors) ====
+    function t1()
+        if (this.a < 2) then // comment after if
             ~~~~
 !!! error TLUA1109: Expression expected.
                 ~
@@ -27,6 +28,8 @@ removeComments.tlua(24,21): error TLUA1109: Expression expected.
 !!! error TLUA2304: Cannot find name 'a'.
                       ~
 !!! error TLUA1005: ';' expected.
+                        ~~~~
+!!! error TLUA1128: Declaration or statement expected.
             console.log('t1', this.a)
             ~~~~~~~
 !!! error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
@@ -38,10 +41,10 @@ removeComments.tlua(24,21): error TLUA1109: Expression expected.
 !!! error TLUA2304: Cannot find name 'a'.
     
             // comment after empty line in if block
-        }
-    }
+        end
+    end
     
-    function t2() {
+    function t2()
         console.log("t2");
         ~~~~~~~
 !!! error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
@@ -74,5 +77,5 @@ removeComments.tlua(24,21): error TLUA1109: Expression expected.
                         ~
 !!! error TLUA1109: Expression expected.
             }, obj)
-    }
+    end
     

@@ -15,7 +15,7 @@ type BadPredicate = (value: unknown) => (value is string, number);
 >BadPredicate : BadPredicate
 >value : unknown
 
-function takesCallback(cb: () => number, more: string) {
+function takesCallback(cb: () => number, more: string)
 >takesCallback : (cb: () => number, more: string) => number
 >cb : () => number
 >more : string
@@ -27,19 +27,21 @@ function takesCallback(cb: () => number, more: string) {
 >more.length : number
 >more : string
 >length : number
-}
 
-function trailingCallback(cb: () => number,) {
+end
+
+function trailingCallback(cb: () => number,)
 >trailingCallback : (cb: () => number) => number
 >cb : () => number
 
   return cb();
 >cb() : number
 >cb : () => number
-}
+
+end
 
 // An arrow return type in a call argument list does not swallow the comma.
-function twoArgs(a: (x: number) => number, b: number) {
+function twoArgs(a: (x: number) => number, b: number)
 >twoArgs : (a: (x: number) => number, b: number) => number
 >a : (x: number) => number
 >x : number
@@ -49,26 +51,28 @@ function twoArgs(a: (x: number) => number, b: number) {
 >a(b) : number
 >a : (x: number) => number
 >b : number
-}
-local r = twoArgs((x): number => x, 1);
+
+end
+local r = twoArgs(function(x): number return x end, 1);
 >r : number
->twoArgs((x): number => x, 1) : number
+>twoArgs(function(x): number return x end, 1) : number
 >twoArgs : (a: (x: number) => number, b: number) => number
->(x): number => x : (x: number) => number
+>function(x): number return x end : (x: number) => number
 >x : number
 >x : number
 >1 : 1
 
 // A bare multiple return type must be parenthesized; the list is still
 // parsed for recovery, so the pack itself checks normally.
-function barePair(): number, string {
+function barePair(): number, string
 >barePair : () => (number, string)
 
   return 1, "a";
 >1, "a" : number, string
 >1 : 1
 >"a" : "a"
-}
+
+end
 declare function bareAmbient(): number, ...string;
 >bareAmbient : () => (number, ...string)
 

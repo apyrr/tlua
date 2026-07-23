@@ -1,9 +1,9 @@
 // === findAllReferences ===
 // === /findAllReferPropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {/*FIND ALL REFS*/[|B|] = B};
-// }
+// end
 // class C extends (foo()).[|B|] {}
 // class C1 extends foo().[|B|] {}
 
@@ -12,9 +12,9 @@
 // === findAllReferences ===
 // === /findAllReferPropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {[|B|] = B};
-// }
+// end
 // class C extends (foo())./*FIND ALL REFS*/[|B|] {}
 // class C1 extends foo().[|B|] {}
 
@@ -23,8 +23,8 @@
 // === findAllReferences ===
 // === /findAllReferPropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {[|B|] = B};
-// }
+// end
 // class C extends (foo()).[|B|] {}
 // class C1 extends foo()./*FIND ALL REFS*/[|B|] {}

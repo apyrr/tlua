@@ -3,9 +3,9 @@
 // --- (line: 6) skipped ---
 // }
 // 
-// function whatever(x: AbstractBar) {
+// function whatever(x: AbstractBar)
 //     x.he/*GOTO IMPL*/llo();
-// }
+// end
 
 
 

@@ -1,8 +1,7 @@
 // === SignatureHelp ===
 === /signatureHelpCommentsCommentParsingVS.tlua ===
 // /// This is simple /// comments
-// function simple() {
-// }
+// function simple() end
 // 
 // simple( );
 //         ^
@@ -13,8 +12,7 @@
 // /// multiLine /// Comments
 // /// This is example of multiline /// comments
 // /// Another multiLine
-// function multiLine() {
-// }
+// function multiLine() end
 // multiLine( );
 //            ^
 // | ----------------------------------------------------------------------
@@ -22,8 +20,7 @@
 // | ----------------------------------------------------------------------
 // 
 // /** this is eg of single line jsdoc style comment */
-// function jsDocSingleLine() {
-// }
+// function jsDocSingleLine() end
 // jsDocSingleLine();
 //                 ^
 // | ----------------------------------------------------------------------
@@ -35,8 +32,7 @@
 // /** this is multiple line jsdoc stule comment
 // *New line1
 // *New Line2*/
-// function jsDocMultiLine() {
-// }
+// function jsDocMultiLine() end
 // jsDocMultiLine();
 //                ^
 // | ----------------------------------------------------------------------
@@ -51,8 +47,7 @@
 // *New Line2*/
 // /** Shoul mege this line as well
 // * and this too*/ /** Another this one too*/
-// function jsDocMultiLineMerge() {
-// }
+// function jsDocMultiLineMerge() end
 // jsDocMultiLineMerge();
 //                     ^
 // | ----------------------------------------------------------------------
@@ -63,8 +58,7 @@
 // 
 // /// Triple slash comment
 // /** jsdoc comment */
-// function jsDocMixedComments1() {
-// }
+// function jsDocMixedComments1() end
 // jsDocMixedComments1();
 //                     ^
 // | ----------------------------------------------------------------------
@@ -74,8 +68,7 @@
 // 
 // /// Triple slash comment
 // /** jsdoc comment */ /** another jsDocComment*/
-// function jsDocMixedComments2() {
-// }
+// function jsDocMixedComments2() end
 // jsDocMixedComments2();
 //                     ^
 // | ----------------------------------------------------------------------
@@ -85,8 +78,7 @@
 // 
 // /** jsdoc comment */ /*** triplestar jsDocComment*/
 // /// Triple slash comment
-// function jsDocMixedComments3() {
-// }
+// function jsDocMixedComments3() end
 // jsDocMixedComments3();
 //                     ^
 // | ----------------------------------------------------------------------
@@ -97,8 +89,7 @@
 // /** jsdoc comment */ /** another jsDocComment*/
 // /// Triple slash comment
 // /// Triple slash comment 2
-// function jsDocMixedComments4() {
-// }
+// function jsDocMixedComments4() end
 // jsDocMixedComments4();
 //                     ^
 // | ----------------------------------------------------------------------
@@ -110,8 +101,7 @@
 // /** jsdoc comment */ /** another jsDocComment*/
 // /// Triple slash comment
 // /// Triple slash comment 2
-// function jsDocMixedComments5() {
-// }
+// function jsDocMixedComments5() end
 // jsDocMixedComments5();
 //                     ^
 // | ----------------------------------------------------------------------
@@ -124,8 +114,7 @@
 // /// Triple slash comment
 // /// Triple slash comment 2
 // /** jsdoc comment */
-// function jsDocMixedComments6() {
-// }
+// function jsDocMixedComments6() end
 // jsDocMixedComments6();
 //                     ^
 // | ----------------------------------------------------------------------
@@ -134,8 +123,7 @@
 // | ----------------------------------------------------------------------
 // 
 // // This shoulnot be help comment
-// function noHelpComment1() {
-// }
+// function noHelpComment1() end
 // noHelpComment1();
 //                ^
 // | ----------------------------------------------------------------------
@@ -143,16 +131,14 @@
 // | ----------------------------------------------------------------------
 // 
 // /* This shoulnot be help comment */
-// function noHelpComment2() {
-// }
+// function noHelpComment2() end
 // noHelpComment2();
 //                ^
 // | ----------------------------------------------------------------------
 // | noHelpComment2(): void
 // | ----------------------------------------------------------------------
 // 
-// function noHelpComment3() {
-// }
+// function noHelpComment3() end
 // noHelpComment3();
 //                ^
 // | ----------------------------------------------------------------------
@@ -162,9 +148,9 @@
 //   * @param {number} a first number
 //   * @param b second number
 //   */
-// function sum(a: number, b: number) {
+// function sum(a: number, b: number)
 //     return a + b;
-// }
+// end
 // sum(10, 20);
 //     ^
 // | ----------------------------------------------------------------------
@@ -185,8 +171,7 @@
 //  * @param c {
 //  @param d @anotherTag
 //  * @param e LastParam @anotherTag*/
-// function multiply(a: number, b: number, c?: number, d?, e?) {
-// }
+// function multiply(a: number, b: number, c?: number, d?, e?) end
 // multiply(10, 20, 30, 40, 50);
 //          ^
 // | ----------------------------------------------------------------------
@@ -221,9 +206,9 @@
 // function f1(a: number);
 // function f1(b: string);
 // /**@param opt optional parameter*/
-// function f1(aOrb, opt?) {
+// function f1(aOrb, opt?)
 //     return aOrb;
-// }
+// end
 // f1(10);
 //    ^
 // | ----------------------------------------------------------------------
@@ -246,8 +231,7 @@
 // @param { { () => string; } } e this is optional param e
 // @param { { { () => string; } } f this is optional param f
 // */
-// function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string) {
-// }
+// function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string) end
 // subtract(10,  20,  null,  null,  null, null);
 //          ^
 // | ----------------------------------------------------------------------
@@ -288,9 +272,9 @@
 // @param { number } a this is input number
 // @returnType { number } it is return type
 // */
-// function square(a: number) {
+// function square(a: number)
 //     return a * a;
-// }
+// end
 // square(10);
 //        ^
 // | ----------------------------------------------------------------------
@@ -303,8 +287,7 @@
 // @paramTag { number } g this is optional param g
 // @param { number} b this is b
 // */
-// function divide(a: number, b: number) {
-// }
+// function divide(a: number, b: number) end
 // divide(10, 20);
 //        ^
 // | ----------------------------------------------------------------------
@@ -323,9 +306,9 @@
 // @param			{string}		foo		is string
 // @param		    {string}		bar		is second string
 // */
-// function fooBar(foo: string, bar: string) {
+// function fooBar(foo: string, bar: string)
 //     return foo + bar;
-// }
+// end
 // fooBar("foo","bar");
 //        ^
 // | ----------------------------------------------------------------------
@@ -349,13 +332,13 @@
 // *@param a it is first parameter
 // *@param c it is third parameter
 // */
-// function jsDocParamTest(/** this is inline comment for a */a: number, /** this is inline comment for b*/ b: number, c: number, d: number) {
+// function jsDocParamTest(/** this is inline comment for a */a: number, /** this is inline comment for b*/ b: number, c: number, d: number)
 //     return a + b + c + d;
 //            ^
 // | ----------------------------------------------------------------------
 // | No signaturehelp at /*39*/.
 // | ----------------------------------------------------------------------
-// }
+// end
 // jsDocParamTest(30, 40, 50, 60);
 //                ^
 // | ----------------------------------------------------------------------
@@ -383,8 +366,7 @@
 // /** This is function comment
 //   * And properly aligned comment
 //   */
-// function jsDocCommentAlignmentTest1() {
-// }
+// function jsDocCommentAlignmentTest1() end
 // jsDocCommentAlignmentTest1();
 //                            ^
 // | ----------------------------------------------------------------------
@@ -395,8 +377,7 @@
 // /** This is function comment
 //   *     And aligned with 4 space char margin
 //   */
-// function jsDocCommentAlignmentTest2() {
-// }
+// function jsDocCommentAlignmentTest2() end
 // jsDocCommentAlignmentTest2();
 //                            ^
 // | ----------------------------------------------------------------------
@@ -415,8 +396,7 @@
 //   * @param c          this is info about b
 //   *  not aligned text about parameter will eat only one space
 //   */
-// function jsDocCommentAlignmentTest3(a: string, b, c) {
-// }
+// function jsDocCommentAlignmentTest3(a: string, b, c) end
 // jsDocCommentAlignmentTest3("hello",1, 2);
 //                            ^
 // | ----------------------------------------------------------------------
@@ -456,7 +436,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 63,
       "LSPosition": {
-        "line": 4,
+        "line": 3,
         "character": 8
       },
       "Name": "1",
@@ -506,7 +486,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 198,
       "LSPosition": {
-        "line": 11,
+        "line": 9,
         "character": 11
       },
       "Name": "2",
@@ -556,7 +536,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 302,
       "LSPosition": {
-        "line": 16,
+        "line": 13,
         "character": 16
       },
       "Name": "3",
@@ -610,7 +590,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 422,
       "LSPosition": {
-        "line": 24,
+        "line": 20,
         "character": 15
       },
       "Name": "4",
@@ -664,7 +644,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 631,
       "LSPosition": {
-        "line": 33,
+        "line": 28,
         "character": 20
       },
       "Name": "5",
@@ -718,7 +698,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 737,
       "LSPosition": {
-        "line": 40,
+        "line": 34,
         "character": 20
       },
       "Name": "6",
@@ -772,7 +752,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 869,
       "LSPosition": {
-        "line": 46,
+        "line": 39,
         "character": 20
       },
       "Name": "7",
@@ -826,7 +806,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1005,
       "LSPosition": {
-        "line": 52,
+        "line": 44,
         "character": 20
       },
       "Name": "8",
@@ -880,7 +860,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1164,
       "LSPosition": {
-        "line": 59,
+        "line": 50,
         "character": 20
       },
       "Name": "9",
@@ -934,7 +914,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1350,
       "LSPosition": {
-        "line": 67,
+        "line": 57,
         "character": 20
       },
       "Name": "10",
@@ -988,7 +968,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1536,
       "LSPosition": {
-        "line": 76,
+        "line": 65,
         "character": 20
       },
       "Name": "11",
@@ -1042,7 +1022,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1618,
       "LSPosition": {
-        "line": 81,
+        "line": 69,
         "character": 15
       },
       "Name": "12",
@@ -1092,7 +1072,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1703,
       "LSPosition": {
-        "line": 86,
+        "line": 73,
         "character": 15
       },
       "Name": "13",
@@ -1142,7 +1122,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1752,
       "LSPosition": {
-        "line": 90,
+        "line": 76,
         "character": 15
       },
       "Name": "14",
@@ -1192,7 +1172,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1928,
       "LSPosition": {
-        "line": 98,
+        "line": 84,
         "character": 4
       },
       "Name": "16",
@@ -1307,7 +1287,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 1932,
       "LSPosition": {
-        "line": 98,
+        "line": 84,
         "character": 8
       },
       "Name": "17",
@@ -1422,7 +1402,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2166,
       "LSPosition": {
-        "line": 108,
+        "line": 93,
         "character": 9
       },
       "Name": "19",
@@ -1636,7 +1616,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2169,
       "LSPosition": {
-        "line": 108,
+        "line": 93,
         "character": 12
       },
       "Name": "20",
@@ -1850,7 +1830,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2173,
       "LSPosition": {
-        "line": 108,
+        "line": 93,
         "character": 16
       },
       "Name": "21",
@@ -2064,7 +2044,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2178,
       "LSPosition": {
-        "line": 108,
+        "line": 93,
         "character": 21
       },
       "Name": "22",
@@ -2278,7 +2258,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2182,
       "LSPosition": {
-        "line": 108,
+        "line": 93,
         "character": 25
       },
       "Name": "23",
@@ -2492,7 +2472,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2372,
       "LSPosition": {
-        "line": 118,
+        "line": 103,
         "character": 3
       },
       "Name": "25",
@@ -2638,7 +2618,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2380,
       "LSPosition": {
-        "line": 119,
+        "line": 104,
         "character": 3
       },
       "Name": "26",
@@ -2784,7 +2764,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2823,
       "LSPosition": {
-        "line": 131,
+        "line": 115,
         "character": 9
       },
       "Name": "28",
@@ -3139,7 +3119,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2827,
       "LSPosition": {
-        "line": 131,
+        "line": 115,
         "character": 13
       },
       "Name": "29",
@@ -3494,7 +3474,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2832,
       "LSPosition": {
-        "line": 131,
+        "line": 115,
         "character": 18
       },
       "Name": "30",
@@ -3849,7 +3829,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2839,
       "LSPosition": {
-        "line": 131,
+        "line": 115,
         "character": 25
       },
       "Name": "31",
@@ -4204,7 +4184,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2846,
       "LSPosition": {
-        "line": 131,
+        "line": 115,
         "character": 32
       },
       "Name": "32",
@@ -4559,7 +4539,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 2853,
       "LSPosition": {
-        "line": 131,
+        "line": 115,
         "character": 39
       },
       "Name": "33",
@@ -4914,7 +4894,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3085,
       "LSPosition": {
-        "line": 140,
+        "line": 124,
         "character": 7
       },
       "Name": "34",
@@ -4997,7 +4977,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3276,
       "LSPosition": {
-        "line": 148,
+        "line": 131,
         "character": 7
       },
       "Name": "35",
@@ -5112,7 +5092,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3280,
       "LSPosition": {
-        "line": 148,
+        "line": 131,
         "character": 11
       },
       "Name": "36",
@@ -5227,7 +5207,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3491,
       "LSPosition": {
-        "line": 157,
+        "line": 140,
         "character": 7
       },
       "Name": "37",
@@ -5342,7 +5322,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3497,
       "LSPosition": {
-        "line": 157,
+        "line": 140,
         "character": 13
       },
       "Name": "38",
@@ -5455,9 +5435,9 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3878,
+      "Position": 3876,
       "LSPosition": {
-        "line": 169,
+        "line": 152,
         "character": 11
       },
       "Name": "39",
@@ -5469,7 +5449,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3910,
       "LSPosition": {
-        "line": 171,
+        "line": 154,
         "character": 15
       },
       "Name": "40",
@@ -5644,7 +5624,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3914,
       "LSPosition": {
-        "line": 171,
+        "line": 154,
         "character": 19
       },
       "Name": "41",
@@ -5819,7 +5799,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3918,
       "LSPosition": {
-        "line": 171,
+        "line": 154,
         "character": 23
       },
       "Name": "42",
@@ -5994,7 +5974,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 3922,
       "LSPosition": {
-        "line": 171,
+        "line": 154,
         "character": 27
       },
       "Name": "43",
@@ -6169,7 +6149,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 4063,
       "LSPosition": {
-        "line": 177,
+        "line": 159,
         "character": 27
       },
       "Name": "45",
@@ -6223,7 +6203,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 4214,
       "LSPosition": {
-        "line": 183,
+        "line": 164,
         "character": 27
       },
       "Name": "46",
@@ -6277,7 +6257,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 4830,
       "LSPosition": {
-        "line": 197,
+        "line": 177,
         "character": 27
       },
       "Name": "47",
@@ -6424,7 +6404,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 4838,
       "LSPosition": {
-        "line": 197,
+        "line": 177,
         "character": 35
       },
       "Name": "48",
@@ -6571,7 +6551,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 4841,
       "LSPosition": {
-        "line": 197,
+        "line": 177,
         "character": 38
       },
       "Name": "49",
@@ -6718,7 +6698,7 @@ not aligned text about parameter will eat only one space
     "marker": {
       "Position": 4845,
       "LSPosition": {
-        "line": 198,
+        "line": 178,
         "character": 0
       },
       "Name": "",

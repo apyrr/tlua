@@ -26,18 +26,18 @@ async function handler(): number
 end
 
 // Error: direct call from a sync function.
-function syncCaller(): void {
+function syncCaller(): void
   fetchOk("nope");
-}
+end
 
 // Error: call at top level.
 fetchOk("top");
 
 // Error: inferred alias keeps the contract (the flag rides the signature).
-function aliasCaller(): void {
+function aliasCaller(): void
   local f = fetchOk;
   f("aliased");
-}
+end
 
 // OK: alias called from an async context.
 async function aliasAsyncCaller(): void
@@ -58,10 +58,10 @@ async function pingpong(n: number): number
 end
 
 // Async arrow expressions participate too.
-local asyncArrow = async (): number => 42;
-function arrowSyncCaller(): void {
+local asyncArrow = async function(): number return 42 end;
+function arrowSyncCaller(): void
   asyncArrow(); // error
-}
+end
 async function arrowAsyncCaller(): number
   return asyncArrow(); // OK
 end
@@ -70,9 +70,9 @@ end
 async function identityAsync<T>(x: T): T
   return x;
 end
-function genericSyncCaller(): void {
+function genericSyncCaller(): void
   identityAsync(1); // error
-}
+end
 async function genericAsyncCaller(): number
   return identityAsync(2); // OK
 end
@@ -94,8 +94,8 @@ end
 declare;
 namespace;
 coroutine;
-{
-}
+do
+end
 async function fetchOk(url)
     local ok, res = request(url);
     return ok, res;
@@ -109,16 +109,16 @@ async function handler()
     return 0;
 end
 -- Error: direct call from a sync function.
-function syncCaller() {
+function syncCaller()
     fetchOk("nope");
-}
+end
 -- Error: call at top level.
 fetchOk("top");
 -- Error: inferred alias keeps the contract (the flag rides the signature).
-function aliasCaller() {
+function aliasCaller()
     local f = fetchOk;
     f("aliased");
-}
+end
 -- OK: alias called from an async context.
 async function aliasAsyncCaller()
     local f = fetchOk;
@@ -135,10 +135,12 @@ async function pingpong(n)
     return pingpong(n - 1);
 end
 -- Async arrow expressions participate too.
-local asyncArrow = async function() return 42 end;
-function arrowSyncCaller() {
+local asyncArrow = async function()
+    return 42;
+end;
+function arrowSyncCaller()
     asyncArrow(); -- error
-}
+end
 async function arrowAsyncCaller()
     return asyncArrow(); -- OK
 end
@@ -146,9 +148,9 @@ end
 async function identityAsync(x)
     return x;
 end
-function genericSyncCaller() {
+function genericSyncCaller()
     identityAsync(1); -- error
-}
+end
 async function genericAsyncCaller()
     return identityAsync(2); -- OK
 end

@@ -3,17 +3,17 @@
 ├ kind: function
 ├ file: /callHierarchyTaggedTemplate.tlua
 ├ span:
-│ ╭ /callHierarchyTaggedTemplate.tlua:5:1-7:2
-│ │ 5: function bar(array: TemplateStringsArray, ...args: any[]) {
-│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ ╭ /callHierarchyTaggedTemplate.tlua:5:1-7:4
+│ │ 5: function bar(array: TemplateStringsArray, ...args: any[])
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 │ │ 6:     baz();
 │ │    ^^^^^^^^^^
-│ │ 7: }
-│ │    ^
+│ │ 7: end
+│ │    ^^^
 │ ╰
 ├ selectionSpan:
 │ ╭ /callHierarchyTaggedTemplate.tlua:5:10-5:13
-│ │ 5: function bar(array: TemplateStringsArray, ...args: any[]) {
+│ │ 5: function bar(array: TemplateStringsArray, ...args: any[])
 │ │             ^^^
 │ ╰
 ├ incoming:
@@ -22,17 +22,17 @@
 │ │ ├ kind: function
 │ │ ├ file: /callHierarchyTaggedTemplate.tlua
 │ │ ├ span:
-│ │ │ ╭ /callHierarchyTaggedTemplate.tlua:1:1-3:2
-│ │ │ │ 1: function foo() {
-│ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ ╭ /callHierarchyTaggedTemplate.tlua:1:1-3:4
+│ │ │ │ 1: function foo()
+│ │ │ │    ^^^^^^^^^^^^^^
 │ │ │ │ 2:     bar`a${1}b`;
 │ │ │ │    ^^^^^^^^^^^^^^^^
-│ │ │ │ 3: }
-│ │ │ │    ^
+│ │ │ │ 3: end
+│ │ │ │    ^^^
 │ │ │ ╰
 │ │ ├ selectionSpan:
 │ │ │ ╭ /callHierarchyTaggedTemplate.tlua:1:10-1:13
-│ │ │ │ 1: function foo() {
+│ │ │ │ 1: function foo()
 │ │ │ │             ^^^
 │ │ │ ╰
 │ │ ╰ incoming: none
@@ -47,15 +47,13 @@
 │ │ ├ kind: function
 │ │ ├ file: /callHierarchyTaggedTemplate.tlua
 │ │ ├ span:
-│ │ │ ╭ /callHierarchyTaggedTemplate.tlua:9:1-10:2
-│ │ │ │  9: function baz() {
-│ │ │ │     ^^^^^^^^^^^^^^^^
-│ │ │ │ 10: }
-│ │ │ │     ^
+│ │ │ ╭ /callHierarchyTaggedTemplate.tlua:9:1-9:19
+│ │ │ │ 9: function baz() end
+│ │ │ │    ^^^^^^^^^^^^^^^^^^
 │ │ │ ╰
 │ │ ├ selectionSpan:
 │ │ │ ╭ /callHierarchyTaggedTemplate.tlua:9:10-9:13
-│ │ │ │ 9: function baz() {
+│ │ │ │ 9: function baz() end
 │ │ │ │             ^^^
 │ │ │ ╰
 │ │ ╰ outgoing: none

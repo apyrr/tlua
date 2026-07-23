@@ -16,7 +16,7 @@ local a, b = maybePair();
 function useBoth(): number
 >useBoth : Symbol(useBoth, Decl(tluaLocalMultiNameFlow.tlua, 5, 25))
 
-  if (b != nil) {
+  if b != nil then
 >b : Symbol(b, Decl(tluaLocalMultiNameFlow.tlua, 5, 8))
 
     return a + b.length;
@@ -24,7 +24,8 @@ function useBoth(): number
 >b.length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
 >b : Symbol(b, Decl(tluaLocalMultiNameFlow.tlua, 5, 8))
 >length : Symbol(String.length, Decl(lib.luajit.d.tlua, --, --))
-  }
+
+  end
   return a;
 >a : Symbol(a, Decl(tluaLocalMultiNameFlow.tlua, 5, 5))
 
@@ -49,15 +50,16 @@ local e, f = maybePair();
 >f : Symbol(f, Decl(tluaLocalMultiNameFlow.tlua, 22, 8))
 >maybePair : Symbol(maybePair, Decl(tluaLocalMultiNameFlow.tlua, 0, 0))
 
-function narrowed(): string {
+function narrowed(): string
 >narrowed : Symbol(narrowed, Decl(tluaLocalMultiNameFlow.tlua, 22, 25))
 
-  if (f == nil) {
+  if f == nil then
 >f : Symbol(f, Decl(tluaLocalMultiNameFlow.tlua, 22, 8))
 
     return "";
-  }
+  end
   return f;
 >f : Symbol(f, Decl(tluaLocalMultiNameFlow.tlua, 22, 8))
-}
+
+end
 

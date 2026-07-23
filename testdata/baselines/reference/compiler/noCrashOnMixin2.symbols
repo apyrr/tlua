@@ -17,7 +17,7 @@ type Constructor<T = {}> = new (...args?: any[]) => T;
 >args : Symbol(args, Decl(noCrashOnMixin2.tlua, 10, 32))
 >T : Symbol(T, Decl(noCrashOnMixin2.tlua, 10, 17))
 
-function Mixin<TBase extends Constructor>(Base: TBase) {
+function Mixin<TBase extends Constructor>(Base: TBase)
 >Mixin : Symbol(Mixin, Decl(noCrashOnMixin2.tlua, 10, 54))
 >TBase : Symbol(TBase, Decl(noCrashOnMixin2.tlua, 12, 15))
 >Constructor : Symbol(Constructor, Decl(noCrashOnMixin2.tlua, 8, 1))
@@ -28,7 +28,7 @@ function Mixin<TBase extends Constructor>(Base: TBase) {
 >Base : Symbol(Base, Decl(noCrashOnMixin2.tlua, 12, 42))
 
     };
-}
+end
 
 class Empty {
 }

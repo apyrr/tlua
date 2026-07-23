@@ -30,7 +30,7 @@ tluaColonCallGenerics.tlua(18,31): error TLUA2345: Argument of type 'number' is 
     // explicit type arguments.
     local w5 = (boxer:wrap(1));
     local w6 = (boxer:wrap<string>("x"));
-    local arrow = (b: Boxer) => b:wrap(1);
+    local arrow = function(b: Boxer) return b:wrap(1) end;
     type Wrapped<T> = { value: T };
-    local arrowGeneric = (w: Wrapped<string>) => w.value;
+    local arrowGeneric = function(w: Wrapped<string>) return w.value end;
     

@@ -2,14 +2,14 @@ tluaControlFlowSyntaxErrors.tlua(2,7): error TLUA1359: Identifier expected. 'the
 tluaControlFlowSyntaxErrors.tlua(2,12): error TLUA1128: Declaration or statement expected.
 tluaControlFlowSyntaxErrors.tlua(3,7): error TLUA1359: Identifier expected. 'until' is a reserved word that cannot be used here.
 tluaControlFlowSyntaxErrors.tlua(3,13): error TLUA1128: Declaration or statement expected.
-tluaControlFlowSyntaxErrors.tlua(4,9): error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
 tluaControlFlowSyntaxErrors.tlua(4,10): error TLUA1359: Identifier expected. 'repeat' is a reserved word that cannot be used here.
-tluaControlFlowSyntaxErrors.tlua(5,1): error TLUA1005: '=>' expected.
+tluaControlFlowSyntaxErrors.tlua(4,17): error TLUA1109: Expression expected.
+tluaControlFlowSyntaxErrors.tlua(4,18): error TLUA1005: ';' expected.
+tluaControlFlowSyntaxErrors.tlua(5,1): error TLUA1109: Expression expected.
 tluaControlFlowSyntaxErrors.tlua(10,5): error TLUA1005: 'then' expected.
 tluaControlFlowSyntaxErrors.tlua(16,37): error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
 tluaControlFlowSyntaxErrors.tlua(28,3): error TLUA1128: Declaration or statement expected.
 tluaControlFlowSyntaxErrors.tlua(28,17): error TLUA1005: ';' expected.
-tluaControlFlowSyntaxErrors.tlua(31,4): error TLUA1109: Expression expected.
 tluaControlFlowSyntaxErrors.tlua(32,1): error TLUA1005: 'end' expected.
 
 
@@ -26,13 +26,15 @@ tluaControlFlowSyntaxErrors.tlua(32,1): error TLUA1005: 'end' expected.
                 ~
 !!! error TLUA1128: Declaration or statement expected.
     function repeat(): void
-            
-!!! error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
              ~~~~~~
 !!! error TLUA1359: Identifier expected. 'repeat' is a reserved word that cannot be used here.
+                    ~
+!!! error TLUA1109: Expression expected.
+                     ~
+!!! error TLUA1005: ';' expected.
     end
     ~~~
-!!! error TLUA1005: '=>' expected.
+!!! error TLUA1109: Expression expected.
     
     // Missing `then`.
     function missingThen(flag: boolean): number
@@ -67,8 +69,6 @@ tluaControlFlowSyntaxErrors.tlua(32,1): error TLUA1005: 'end' expected.
         return 3;
       end
     end
-       
-!!! error TLUA1109: Expression expected.
     
     
 !!! error TLUA1005: 'end' expected.

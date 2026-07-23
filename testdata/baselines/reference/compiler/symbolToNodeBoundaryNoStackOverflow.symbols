@@ -31,7 +31,7 @@ declare createNode: () => {
 
 };
 
-function wrapNode<T>(getNode: () => CustomNode<T>) {
+function wrapNode<T>(getNode: () => CustomNode<T>)
 >wrapNode : Symbol(wrapNode, Decl(symbolToNodeBoundaryNoStackOverflow.tlua, 15, 2))
 >T : Symbol(T, Decl(symbolToNodeBoundaryNoStackOverflow.tlua, 17, 18))
 >getNode : Symbol(getNode, Decl(symbolToNodeBoundaryNoStackOverflow.tlua, 17, 21))
@@ -40,9 +40,10 @@ function wrapNode<T>(getNode: () => CustomNode<T>) {
 
     return getNode;
 >getNode : Symbol(getNode, Decl(symbolToNodeBoundaryNoStackOverflow.tlua, 17, 21))
-}
 
-wrapNode(() => {
+end
+
+wrapNode(function()
 >wrapNode : Symbol(wrapNode, Decl(symbolToNodeBoundaryNoStackOverflow.tlua, 15, 2))
 
     local node = createNode();
@@ -58,5 +59,5 @@ wrapNode(() => {
 >node : Symbol(node, Decl(symbolToNodeBoundaryNoStackOverflow.tlua, 22, 9))
 >getNextNode : Symbol(getNextNode, Decl(symbolToNodeBoundaryNoStackOverflow.tlua, 13, 27))
 
-});
+end);
 

@@ -75,7 +75,7 @@ function sum(xs: number[]): number
 end
 
 // A vararg pack collects into a number-key table with `{...}`.
-function join(sep: string, ...: string): string {
+function join(sep: string, ...: string): string
 >join : (sep: string, ...: string) => string
 >sep : string
 > : string[]
@@ -89,8 +89,9 @@ function join(sep: string, ...: string): string {
 >parts[1] : string
 >parts : string[]
 >1 : 1
-}
-function forward(a: string, b: string): string {
+
+end
+function forward(a: string, b: string): string
 >forward : (a: string, b: string) => string
 >a : string
 >b : string
@@ -101,5 +102,6 @@ function forward(a: string, b: string): string {
 >"," : ","
 >a : string
 >b : string
-}
+
+end
 

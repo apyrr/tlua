@@ -38,11 +38,12 @@ local usesAwait = await + 1;
 >await : Symbol(await, Decl(tluaNoAwait.tlua, 17, 5))
 
 // `await using` is removed with it.
-function h(): void {
+function h(): void
 >h : Symbol(h, Decl(tluaNoAwait.tlua, 18, 28))
 
   await using r = compute();
 >await : Symbol(await, Decl(tluaNoAwait.tlua, 17, 5))
 >compute : Symbol(compute, Decl(tluaNoAwait.tlua, 0, 0))
-}
+
+end
 

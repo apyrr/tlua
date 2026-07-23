@@ -40,7 +40,6 @@ local i = id<number>:ping();
 // not swallow the declarations that follow it into a bogus argument list.
 local bad = (b: number);
 >bad : Symbol(bad, Decl(tluaColonCallParseErrors.tlua, 19, 5))
->b : Symbol(b, Decl(tluaColonCallParseErrors.tlua, 19, 13))
 
 declare fine: (n: number) => void;
 >fine : Symbol(fine, Decl(tluaColonCallParseErrors.tlua, 20, 7))

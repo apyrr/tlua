@@ -7,7 +7,7 @@
 //     foo: string;
 // }
 // 
-// function f({ foo }: Options) {
+// function f({ foo }: Options)
 //     foo;
 //     ^^^
 // | ----------------------------------------------------------------------
@@ -16,11 +16,11 @@
 // | ```
 // | A description of foo
 // | ----------------------------------------------------------------------
-// }
+// end
 [
   {
     "marker": {
-      "Position": 122,
+      "Position": 120,
       "LSPosition": {
         "line": 8,
         "character": 7

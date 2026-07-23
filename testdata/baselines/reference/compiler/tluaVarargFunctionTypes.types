@@ -118,21 +118,21 @@ end
 
 // An arrow with a bare vararg, including with a return-type annotation: the
 // `(...` lookahead must not mistake these for a parenthesized vararg expression.
-local arrowBare = (...) => 1;
+local arrowBare = function(...) return 1 end;
 >arrowBare : (...: any) => number
->(...) => 1 : (...: any) => number
+>function(...) return 1 end : (...: any) => number
 > : any[]
 >1 : 1
 
-local arrowTyped = (...): number => 1;
+local arrowTyped = function(...): number return 1 end;
 >arrowTyped : (...: any) => number
->(...): number => 1 : (...: any) => number
+>function(...): number return 1 end : (...: any) => number
 > : any[]
 >1 : 1
 
-local arrowAnnotated = (...: string): number => 1;
+local arrowAnnotated = function(...: string): number return 1 end;
 >arrowAnnotated : (...: string) => number
->(...: string): number => 1 : (...: string) => number
+>function(...: string): number return 1 end : (...: string) => number
 > : string[]
 >1 : 1
 

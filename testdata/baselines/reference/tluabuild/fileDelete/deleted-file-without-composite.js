@@ -3,13 +3,12 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/solution/child/child.tlua] *new* 
 local child2 = require("child2");
-function child() {
+function child()
     child2.child2();
-}
+end
 return { child = child };
 //// [/home/src/workspaces/solution/child/child2.tlua] *new* 
-function child2() {
-}
+function child2() end
 return { child2 = child2 };
 //// [/home/src/workspaces/solution/child/tluaconfig.json] *new* 
 {
@@ -62,14 +61,14 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/solution/child/child.lua] *new* 
 local child2 = require("child2");
-function child() {
+function child()
     child2.child2();
-}
+end
 return { child = child };
 
 //// [/home/src/workspaces/solution/child/child2.lua] *new* 
-function child2() {
-}
+function child2()
+end
 return { child2 = child2 };
 
 //// [/home/src/workspaces/solution/child/tluaconfig.tluabuildinfo] *new* 

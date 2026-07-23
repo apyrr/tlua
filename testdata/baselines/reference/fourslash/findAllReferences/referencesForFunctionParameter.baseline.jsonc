@@ -3,10 +3,10 @@
 // local x;
 // local n;
 // 
-// function n(x: number, /*FIND ALL REFS*/[|n|]: number) {
+// function n(x: number, /*FIND ALL REFS*/[|n|]: number)
 //     [|n|] = 32;
 //     x = [|n|];
-// }
+// end
 
 
 
@@ -15,10 +15,10 @@
 // local x;
 // local n;
 // 
-// function n(x: number, [|n|]: number) {
+// function n(x: number, [|n|]: number)
 //     /*FIND ALL REFS*/[|n|] = 32;
 //     x = [|n|];
-// }
+// end
 
 
 
@@ -27,7 +27,7 @@
 // local x;
 // local n;
 // 
-// function n(x: number, [|n|]: number) {
+// function n(x: number, [|n|]: number)
 //     [|n|] = 32;
 //     x = /*FIND ALL REFS*/[|n|];
-// }
+// end

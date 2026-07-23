@@ -1,9 +1,9 @@
 // === findAllReferences ===
 // === /file.tsx ===
 // --- (line: 9) skipped ---
-// function SFC2(prop: { x: boolean }) {
+// function SFC2(prop: { x: boolean })
 //     return <h1>World </h1>;
-// }
+// end
 // /*FIND ALL REFS*/local [|SFCComp|] = SFC1 || SFC2;
 // <[|SFCComp|] x={ "hi" } />
 
@@ -12,9 +12,9 @@
 // === findAllReferences ===
 // === /file.tsx ===
 // --- (line: 9) skipped ---
-// function SFC2(prop: { x: boolean }) {
+// function SFC2(prop: { x: boolean })
 //     return <h1>World </h1>;
-// }
+// end
 // local /*FIND ALL REFS*/[|SFCComp|] = SFC1 || SFC2;
 // <[|SFCComp|] x={ "hi" } />
 
@@ -24,7 +24,7 @@
 // === /file.tsx ===
 // --- (line: 10) skipped ---
 //     return <h1>World </h1>;
-// }
+// end
 // local SFCComp = SFC1 || SFC2;
 // /*FIND ALL REFS*/<SFCComp x={ "hi" } />
 
@@ -33,8 +33,8 @@
 // === findAllReferences ===
 // === /file.tsx ===
 // --- (line: 9) skipped ---
-// function SFC2(prop: { x: boolean }) {
+// function SFC2(prop: { x: boolean })
 //     return <h1>World </h1>;
-// }
+// end
 // local [|SFCComp|] = SFC1 || SFC2;
 // </*FIND ALL REFS*/[|SFCComp|] x={ "hi" } />

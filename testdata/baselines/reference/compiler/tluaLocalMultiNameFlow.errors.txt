@@ -10,9 +10,9 @@ tluaLocalMultiNameFlow.tlua(19,3): error TLUA2322: Type 'nil' is not assignable 
     local a, b = maybePair();
     
     function useBoth(): number
-      if (b != nil) {
+      if b != nil then
         return a + b.length;
-      }
+      end
       return a;
     end
     
@@ -28,10 +28,10 @@ tluaLocalMultiNameFlow.tlua(19,3): error TLUA2322: Type 'nil' is not assignable 
     // Narrowing works on positional values.
     local e, f = maybePair();
     
-    function narrowed(): string {
-      if (f == nil) {
+    function narrowed(): string
+      if f == nil then
         return "";
-      }
+      end
       return f;
-    }
+    end
     

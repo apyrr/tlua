@@ -8,7 +8,7 @@ type StringOrT<T> = T | string
 >T : Symbol(T, Decl(typeParameterComparableRelation.tlua, 2, 15))
 >T : Symbol(T, Decl(typeParameterComparableRelation.tlua, 2, 15))
 
-function func<A, B, T extends StringOrT<B>>(thing: T): void {
+function func<A, B, T extends StringOrT<B>>(thing: T): void
 >func : Symbol(func, Decl(typeParameterComparableRelation.tlua, 2, 30))
 >A : Symbol(A, Decl(typeParameterComparableRelation.tlua, 4, 14))
 >B : Symbol(B, Decl(typeParameterComparableRelation.tlua, 4, 16))
@@ -21,5 +21,6 @@ function func<A, B, T extends StringOrT<B>>(thing: T): void {
     thing as A; // Error
 >thing : Symbol(thing, Decl(typeParameterComparableRelation.tlua, 4, 44))
 >A : Symbol(A, Decl(typeParameterComparableRelation.tlua, 4, 14))
-}
+
+end
 

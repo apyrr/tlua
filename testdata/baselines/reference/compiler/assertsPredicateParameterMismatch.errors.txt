@@ -10,20 +10,20 @@ assertsPredicateParameterMismatch.tlua(15,3): error TLUA2584: Cannot find name '
     
     function assertCondition(
       _condition: boolean
-    ): asserts condition {  // "condition" doesn't match parameter "_condition"
+    ): asserts condition  // "condition" doesn't match parameter "_condition"
                ~~~~~~~~~
 !!! error TLUA1225: Cannot find parameter 'condition'.
-      if (!_condition) {
+      if (!_condition) then
         throw new Error('Condition failed');
                   ~~~~~
 !!! error TLUA2304: Cannot find name 'Error'.
-      }
-    }
+      end
+    end
     
-    function test(): void {
+    function test(): void
       assertCondition(false);
       console.log("unreachable");
       ~~~~~~~
 !!! error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
-    }
+    end
     

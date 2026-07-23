@@ -23,7 +23,7 @@ local or = 2;
 local not = 3;
 
 // Declaration names.
-function or() {}
+function or() end
 
 // `not` shares KindExclamationToken with `!`, but only the punctuation spelling
 // is the non-null and definite-assignment operator. Accepting the word in those
@@ -68,9 +68,9 @@ local ;
 !;
 3;
 -- Declaration names.
-function () { }
- or ();
-{ }
+function ()
+     or ();
+end
 local n1 = maybe;
 !;
 local n2;

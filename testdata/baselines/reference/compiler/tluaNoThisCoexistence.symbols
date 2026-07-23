@@ -10,7 +10,7 @@ declare function use(x: unknown): void;
 
 // Ordinary identifier type predicates still narrow. Only the `this is T` form
 // was removed, and it is a distinct branch of the predicate machinery.
-function isString(v: unknown): v is string {
+function isString(v: unknown): v is string
 >isString : Symbol(isString, Decl(tluaNoThisCoexistence.tlua, 3, 39))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 7, 18))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 7, 18))
@@ -18,18 +18,19 @@ function isString(v: unknown): v is string {
   return type(v) == "string";
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 7, 18))
-}
+
+end
 
 declare function assertString(v: unknown): asserts v is string;
->assertString : Symbol(assertString, Decl(tluaNoThisCoexistence.tlua, 9, 1))
+>assertString : Symbol(assertString, Decl(tluaNoThisCoexistence.tlua, 9, 3))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 11, 30))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 11, 30))
 
-function narrow(v: unknown): void {
+function narrow(v: unknown): void
 >narrow : Symbol(narrow, Decl(tluaNoThisCoexistence.tlua, 11, 63))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
 
-  if (isString(v)) {
+  if isString(v) then
 >isString : Symbol(isString, Decl(tluaNoThisCoexistence.tlua, 3, 39))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
 
@@ -40,9 +41,10 @@ function narrow(v: unknown): void {
     use(s);
 >use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
 >s : Symbol(s, Decl(tluaNoThisCoexistence.tlua, 15, 9))
-  }
+
+  end
   assertString(v);
->assertString : Symbol(assertString, Decl(tluaNoThisCoexistence.tlua, 9, 1))
+>assertString : Symbol(assertString, Decl(tluaNoThisCoexistence.tlua, 9, 3))
 >v : Symbol(v, Decl(tluaNoThisCoexistence.tlua, 13, 16))
 
   local t: string = v;
@@ -52,7 +54,8 @@ function narrow(v: unknown): void {
   use(t);
 >use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))
 >t : Symbol(t, Decl(tluaNoThisCoexistence.tlua, 19, 7))
-}
+
+end
 
 // Lua's global environment remains available independently of `this`.
 local g: typeof _G = _G;

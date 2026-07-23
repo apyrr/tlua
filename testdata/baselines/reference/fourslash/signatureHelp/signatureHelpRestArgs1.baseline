@@ -1,6 +1,6 @@
 // === SignatureHelp ===
 === /signatureHelpRestArgs1.tlua ===
-// function fn(a: number, b: number, c: number) {}
+// function fn(a: number, b: number, c: number) end
 // local a = [1, 2] as const;
 // local b = [1] as const;
 // 
@@ -32,7 +32,7 @@
 [
   {
     "marker": {
-      "Position": 109,
+      "Position": 110,
       "LSPosition": {
         "line": 4,
         "character": 9
@@ -63,7 +63,7 @@
   },
   {
     "marker": {
-      "Position": 115,
+      "Position": 116,
       "LSPosition": {
         "line": 5,
         "character": 3
@@ -94,7 +94,7 @@
   },
   {
     "marker": {
-      "Position": 134,
+      "Position": 135,
       "LSPosition": {
         "line": 7,
         "character": 9
@@ -125,7 +125,7 @@
   },
   {
     "marker": {
-      "Position": 140,
+      "Position": 141,
       "LSPosition": {
         "line": 8,
         "character": 3
@@ -156,7 +156,7 @@
   },
   {
     "marker": {
-      "Position": 148,
+      "Position": 149,
       "LSPosition": {
         "line": 8,
         "character": 11

@@ -4,9 +4,9 @@
  * @param {/**/T} x
  * @return {T}
  */
-function foo(x) {
+function foo(x)
     return x;
-}
+end
 
            T   ↲
 
@@ -29,6 +29,6 @@ function foo(x) {
  * @param {T} x
  * @return {T}
  */
-function foo(x) {
+function foo(x)
     return x;
-}
+end

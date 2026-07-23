@@ -1,0 +1,9 @@
+// @target: es2015
+
+function getObject(): { value: number | nil }
+  return { value = nil }
+end
+
+function defaultValue(value = getObject().value ||= 1)
+  return value
+end

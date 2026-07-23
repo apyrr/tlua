@@ -18,12 +18,12 @@ end
 -- https://github.com/microsoft/typescript-go/issues/4123
 class;
 C;
-{
+do
         in x;
     1;
     out;
     y = 2;
-}
+end
 local isIn = "x" in { x = 1 };
 for k = 1, 1 do
     console.log(k);

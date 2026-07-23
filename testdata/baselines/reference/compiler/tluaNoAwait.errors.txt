@@ -32,7 +32,7 @@ tluaNoAwait.tlua(23,15): error TLUA2304: Cannot find name 'r'.
     local usesAwait = await + 1;
     
     // `await using` is removed with it.
-    function h(): void {
+    function h(): void
       await using r = compute();
       ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -42,5 +42,5 @@ tluaNoAwait.tlua(23,15): error TLUA2304: Cannot find name 'r'.
 !!! error TLUA2304: Cannot find name 'using'.
                   ~
 !!! error TLUA2304: Cannot find name 'r'.
-    }
+    end
     

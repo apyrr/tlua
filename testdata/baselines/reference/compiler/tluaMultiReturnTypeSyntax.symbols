@@ -20,11 +20,11 @@ local function localPair(): (number, string)
   return 2, "b";
 end
 
-function bracePair(): (number, string) {
+function bracePair(): (number, string)
 >bracePair : Symbol(bracePair, Decl(tluaMultiReturnTypeSyntax.tlua, 11, 3))
 
   return 3, "c";
-}
+end
 
 local exprPair = function(): (number, string)
 >exprPair : Symbol(exprPair, Decl(tluaMultiReturnTypeSyntax.tlua, 17, 5))

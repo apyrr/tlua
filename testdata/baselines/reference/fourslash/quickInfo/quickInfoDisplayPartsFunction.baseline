@@ -1,6 +1,6 @@
 // === QuickInfo ===
 === /quickInfoDisplayPartsFunction.tlua ===
-// function foo(param: string, optionalParam?: string, paramWithInitializer = "hello", ...restParam: string[]) {
+// function foo(param: string, optionalParam?: string, paramWithInitializer = "hello", ...restParam: string[]) end
 //          ^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -8,7 +8,6 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
-// }
 // function foowithoverload(a: string): string;
 //          ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
@@ -25,7 +24,7 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
-// function foowithoverload(a: any): any {
+// function foowithoverload(a: any): any
 //          ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -34,7 +33,7 @@
 // | 
 // | ----------------------------------------------------------------------
 //     return a;
-// }
+// end
 // function foowith3overload(a: string): string;
 //          ^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
@@ -59,7 +58,7 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
-// function foowith3overload(a: any): any {
+// function foowith3overload(a: any): any
 //          ^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -68,7 +67,7 @@
 // | 
 // | ----------------------------------------------------------------------
 //     return a;
-// }
+// end
 // foo("hello");
 // ^^^
 // | ----------------------------------------------------------------------
@@ -149,7 +148,7 @@
     "marker": {
       "Position": 121,
       "LSPosition": {
-        "line": 2,
+        "line": 1,
         "character": 9
       },
       "Name": "2",
@@ -162,11 +161,11 @@
       },
       "range": {
         "start": {
-          "line": 2,
+          "line": 1,
           "character": 9
         },
         "end": {
-          "line": 2,
+          "line": 1,
           "character": 24
         }
       }
@@ -176,7 +175,7 @@
     "marker": {
       "Position": 166,
       "LSPosition": {
-        "line": 3,
+        "line": 2,
         "character": 9
       },
       "Name": "3",
@@ -189,11 +188,11 @@
       },
       "range": {
         "start": {
-          "line": 3,
+          "line": 2,
           "character": 9
         },
         "end": {
-          "line": 3,
+          "line": 2,
           "character": 24
         }
       }
@@ -203,7 +202,7 @@
     "marker": {
       "Position": 211,
       "LSPosition": {
-        "line": 4,
+        "line": 3,
         "character": 9
       },
       "Name": "4",
@@ -216,11 +215,11 @@
       },
       "range": {
         "start": {
-          "line": 4,
+          "line": 3,
           "character": 9
         },
         "end": {
-          "line": 4,
+          "line": 3,
           "character": 24
         }
       }
@@ -230,7 +229,7 @@
     "marker": {
       "Position": 267,
       "LSPosition": {
-        "line": 7,
+        "line": 6,
         "character": 9
       },
       "Name": "5",
@@ -243,11 +242,11 @@
       },
       "range": {
         "start": {
-          "line": 7,
+          "line": 6,
           "character": 9
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "character": 25
         }
       }
@@ -257,7 +256,7 @@
     "marker": {
       "Position": 313,
       "LSPosition": {
-        "line": 8,
+        "line": 7,
         "character": 9
       },
       "Name": "6",
@@ -270,11 +269,11 @@
       },
       "range": {
         "start": {
-          "line": 8,
+          "line": 7,
           "character": 9
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "character": 25
         }
       }
@@ -284,7 +283,7 @@
     "marker": {
       "Position": 359,
       "LSPosition": {
-        "line": 9,
+        "line": 8,
         "character": 9
       },
       "Name": "7",
@@ -297,11 +296,11 @@
       },
       "range": {
         "start": {
-          "line": 9,
+          "line": 8,
           "character": 9
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "character": 25
         }
       }
@@ -311,7 +310,7 @@
     "marker": {
       "Position": 407,
       "LSPosition": {
-        "line": 10,
+        "line": 9,
         "character": 9
       },
       "Name": "8",
@@ -324,11 +323,11 @@
       },
       "range": {
         "start": {
-          "line": 10,
+          "line": 9,
           "character": 9
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "character": 25
         }
       }
@@ -338,7 +337,7 @@
     "marker": {
       "Position": 455,
       "LSPosition": {
-        "line": 13,
+        "line": 12,
         "character": 0
       },
       "Name": "9",
@@ -351,11 +350,11 @@
       },
       "range": {
         "start": {
-          "line": 13,
+          "line": 12,
           "character": 0
         },
         "end": {
-          "line": 13,
+          "line": 12,
           "character": 3
         }
       }
@@ -365,7 +364,7 @@
     "marker": {
       "Position": 469,
       "LSPosition": {
-        "line": 14,
+        "line": 13,
         "character": 0
       },
       "Name": "10",
@@ -378,11 +377,11 @@
       },
       "range": {
         "start": {
-          "line": 14,
+          "line": 13,
           "character": 0
         },
         "end": {
-          "line": 14,
+          "line": 13,
           "character": 15
         }
       }
@@ -392,7 +391,7 @@
     "marker": {
       "Position": 495,
       "LSPosition": {
-        "line": 15,
+        "line": 14,
         "character": 0
       },
       "Name": "11",
@@ -405,11 +404,11 @@
       },
       "range": {
         "start": {
-          "line": 15,
+          "line": 14,
           "character": 0
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "character": 15
         }
       }
@@ -419,7 +418,7 @@
     "marker": {
       "Position": 516,
       "LSPosition": {
-        "line": 16,
+        "line": 15,
         "character": 0
       },
       "Name": "12",
@@ -432,11 +431,11 @@
       },
       "range": {
         "start": {
-          "line": 16,
+          "line": 15,
           "character": 0
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "character": 16
         }
       }
@@ -446,7 +445,7 @@
     "marker": {
       "Position": 543,
       "LSPosition": {
-        "line": 17,
+        "line": 16,
         "character": 0
       },
       "Name": "13",
@@ -459,11 +458,11 @@
       },
       "range": {
         "start": {
-          "line": 17,
+          "line": 16,
           "character": 0
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "character": 16
         }
       }
@@ -473,7 +472,7 @@
     "marker": {
       "Position": 565,
       "LSPosition": {
-        "line": 18,
+        "line": 17,
         "character": 0
       },
       "Name": "14",
@@ -486,11 +485,11 @@
       },
       "range": {
         "start": {
-          "line": 18,
+          "line": 17,
           "character": 0
         },
         "end": {
-          "line": 18,
+          "line": 17,
           "character": 16
         }
       }

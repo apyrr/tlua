@@ -1,15 +1,15 @@
 // === findAllReferences ===
 // === /findAllRefsMappedType_nonHomomorphic.tlua ===
-// function f(x: { [K in "m"]: number; }) {
+// function f(x: { [K in "m"]: number; })
 //     x./*FIND ALL REFS*/[|m|];
 //     x.[|m|]
-// }
+// end
 
 
 
 // === findAllReferences ===
 // === /findAllRefsMappedType_nonHomomorphic.tlua ===
-// function f(x: { [K in "m"]: number; }) {
+// function f(x: { [K in "m"]: number; })
 //     x.[|m|];
 //     x./*FIND ALL REFS*/[|m|]
-// }
+// end

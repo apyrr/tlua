@@ -1,5 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionExpandoElementAccess.tlua ===
-// function f() {}
+// function f() end
 // <|f[[|"x"|]] = 0;|>
 // <|f[/*GOTO DEF*/[|"x"|]] = 1;|>

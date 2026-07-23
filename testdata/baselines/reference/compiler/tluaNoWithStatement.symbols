@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/tluaNoWithStatement.tlua] ////
+
+=== tluaNoWithStatement.tlua ===
+// With statements are removed, and `with` is an ordinary identifier.
+with (scope) {
+  value;
+}
+
+function usesWith(): number
+>usesWith : Symbol(usesWith, Decl(tluaNoWithStatement.tlua, 3, 1))
+
+  local with = 3
+>with : Symbol(with, Decl(tluaNoWithStatement.tlua, 6, 7))
+
+  return with
+>with : Symbol(with, Decl(tluaNoWithStatement.tlua, 6, 7))
+
+end
+

@@ -1,6 +1,6 @@
 // === SignatureHelp ===
 === /signatureHelpSkippedArgs1.tlua ===
-// function fn(a: number, b: number, c: number) {}
+// function fn(a: number, b: number, c: number) end
 // fn(, , , , );
 //    ^
 // | ----------------------------------------------------------------------
@@ -25,7 +25,7 @@
 [
   {
     "marker": {
-      "Position": 51,
+      "Position": 52,
       "LSPosition": {
         "line": 1,
         "character": 3
@@ -56,7 +56,7 @@
   },
   {
     "marker": {
-      "Position": 53,
+      "Position": 54,
       "LSPosition": {
         "line": 1,
         "character": 5
@@ -87,7 +87,7 @@
   },
   {
     "marker": {
-      "Position": 55,
+      "Position": 56,
       "LSPosition": {
         "line": 1,
         "character": 7
@@ -118,7 +118,7 @@
   },
   {
     "marker": {
-      "Position": 57,
+      "Position": 58,
       "LSPosition": {
         "line": 1,
         "character": 9
@@ -149,7 +149,7 @@
   },
   {
     "marker": {
-      "Position": 59,
+      "Position": 60,
       "LSPosition": {
         "line": 1,
         "character": 11

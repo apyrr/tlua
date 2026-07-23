@@ -1,13 +1,13 @@
 // === Document Symbols ===
 // === /file1.tlua ===
 // namespace a {
-//     <|function [|{| name: foo, kind: Function |}foo|]() {}|>
+//     <|function [|{| name: foo, kind: Function |}foo|]() end|>
 // }
 // namespace b {
-//     <|function [|{| name: foo, kind: Function |}foo|]() {}|>
+//     <|function [|{| name: foo, kind: Function |}foo|]() end|>
 // }
 // namespace a {
-//     <|function [|{| name: bar, kind: Function |}bar|]() {}|>
+//     <|function [|{| name: bar, kind: Function |}bar|]() end|>
 // }
 
 // === Details ===
@@ -21,7 +21,7 @@
 // === Document Symbols ===
 // === /file2.tlua ===
 // namespace a {}
-// <|function [|{| name: a, kind: Function |}a|]() {}|>
+// <|function [|{| name: a, kind: Function |}a|]() end|>
 
 // === Details ===
 (Function) a

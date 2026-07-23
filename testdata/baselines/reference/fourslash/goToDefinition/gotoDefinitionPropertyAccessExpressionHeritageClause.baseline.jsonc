@@ -1,9 +1,9 @@
 // === goToDefinition ===
 // === /gotoDefinitionPropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {<|[|B|] = B|>};
-// }
+// end
 // class C extends (foo())./*GOTO DEF*/B {}
 // class C1 extends foo().B {}
 
@@ -12,8 +12,8 @@
 // === goToDefinition ===
 // === /gotoDefinitionPropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {<|[|B|] = B|>};
-// }
+// end
 // class C extends (foo()).B {}
 // class C1 extends foo()./*GOTO DEF*/B {}

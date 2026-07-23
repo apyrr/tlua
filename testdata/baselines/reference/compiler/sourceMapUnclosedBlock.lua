@@ -4,5 +4,6 @@
 {
 
 //// [sourceMapUnclosedBlock.lua]
-{ }
+do
+end
 //# sourceMappingURL=sourceMapUnclosedBlock.lua.map

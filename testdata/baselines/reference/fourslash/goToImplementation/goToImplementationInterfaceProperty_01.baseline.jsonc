@@ -3,6 +3,6 @@
 // --- (line: 4) skipped ---
 // }
 // 
-// function whatever(foo: Foo) {
+// function whatever(foo: Foo)
 //     foo.he/*GOTO IMPL*/llo;
-// }
+// end

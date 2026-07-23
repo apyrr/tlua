@@ -34,6 +34,10 @@ class HomePage {
 }
 
 
+             props.username) {
+      return '';
+    }↲
+
     if (this.props.username) {
       return '';
     }↲
@@ -64,6 +68,10 @@ class HomePage {
 
              '' ↲
       return '';↲
+
+             props.username) {
+      return '';
+    }↲
 
     if (this.props.username) {
       return '';

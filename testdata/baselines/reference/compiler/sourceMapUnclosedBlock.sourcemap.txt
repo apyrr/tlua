@@ -8,22 +8,16 @@ sources: sourceMapUnclosedBlock.tlua
 emittedFile:sourceMapUnclosedBlock.lua
 sourceFile:sourceMapUnclosedBlock.tlua
 -------------------------------------------------------------------
->>>{ }
+>>>do
 1 >
-2 >^
-3 > ^
-4 >  ^
-5 >   
-6 >   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
+2 >^^^^->
 1 >
-2 >{
-3 > 
-4 >  
-5 >   
 1 >Emitted(1, 1) Source(1, 1) + SourceIndex(0)
-2 >Emitted(1, 2) Source(1, 2) + SourceIndex(0)
-3 >Emitted(1, 3) Source(1, 2) + SourceIndex(0)
-4 >Emitted(1, 4) Source(1, 3) + SourceIndex(0)
-5 >Emitted(1, 4) Source(1, 2) + SourceIndex(0)
+---
+>>>end
+1->^^^
+2 >   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
+1->{
+1->Emitted(2, 4) Source(1, 2) + SourceIndex(0)
 ---
 >>>//# sourceMappingURL=sourceMapUnclosedBlock.lua.map

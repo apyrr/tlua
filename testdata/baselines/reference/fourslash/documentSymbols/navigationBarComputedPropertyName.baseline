@@ -1,11 +1,11 @@
 // === Document Symbols ===
 // === /navigationBarComputedPropertyName.tlua ===
-// <|function [|{| name: F, kind: Function |}F|](key, value) {
+// <|function [|{| name: F, kind: Function |}F|](key, value)
 //     return {
 //         <|[|{| name: [key], kind: Property |}[key]|] = value|>,
 //         <|[|{| name: "prop", kind: Property |}["prop"]|] = true|>
 //     }
-// }|>
+// end|>
 
 // === Details ===
 (Function) F

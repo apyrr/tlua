@@ -40,31 +40,33 @@ local ;
 1;
 local ;
 2;
-function () { }
-repeat
-    (function() return  end);
-    -- Missing `then`.
-    function missingThen(flag)
-        if flag then
-            return 1;
-        end
+function ()
+    repeat
+        ();
+        void ;
+    until ;
+end
+-- Missing `then`.
+function missingThen(flag)
+    if flag then
+        return 1;
+    end
+    return 0;
+end
+-- Missing `end`.
+function missingEnd(flag)
+    if flag then
+        return 1;
         return 0;
     end
-    -- Missing `end`.
-    function missingEnd(flag)
-        if flag then
+    -- elseif after else.
+    function elseifAfterElse(n)
+        if n == 1 then
             return 1;
-            return 0;
-        end
-        -- elseif after else.
-        function elseifAfterElse(n)
-            if n == 1 then
-                return 1;
-            else
-                return 2;
-                n == 3;
-                return 3;
-            end
+        else
+            return 2;
+            n == 3;
+            return 3;
         end
     end
-until ;
+end

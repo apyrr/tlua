@@ -7,9 +7,9 @@
 // local bar: Foo = { <|[|hello|] = 5|> };
 // 
 // 
-// function whatever(x: Foo = { <|[|hello|] = 5 * 9|> }) {
+// function whatever(x: Foo = { <|[|hello|] = 5 * 9|> })
 //     x.he/*GOTO IMPL*/llo
-// }
+// end
 // 
 // class Bar {
 // --- (line: 13) skipped ---

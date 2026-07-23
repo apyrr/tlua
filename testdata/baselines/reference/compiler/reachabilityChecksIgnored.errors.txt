@@ -3,21 +3,21 @@ reachabilityChecksIgnored.tlua(9,15): error TLUA2304: Cannot find name 'Error'.
 
 
 ==== reachabilityChecksIgnored.tlua (2 errors) ====
-    function a() {
+    function a()
         throw new Error("");
                   ~~~~~
 !!! error TLUA2304: Cannot find name 'Error'.
     
         // @ts-ignore
         console.log("unreachable");
-    }
+    end
     
-    function b() {
+    function b()
         throw new Error("");
                   ~~~~~
 !!! error TLUA2304: Cannot find name 'Error'.
     
         // @ts-expect-error
         console.log("unreachable");
-    }
+    end
     

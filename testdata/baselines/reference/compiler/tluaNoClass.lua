@@ -27,10 +27,10 @@ class WithMembers {
 }
 
 // `class` is now an ordinary identifier.
-function usesClassName(): number {
+function usesClassName(): number
   local class = 3;
   return class;
-}
+end
 
 
 //// [tluaNoClass.lua]
@@ -39,41 +39,49 @@ function usesClassName(): number {
 -- below produces natural parse errors (no tlua-specific diagnostic).
 class;
 C;
-{ }
+do
+end
 class;
 D;
 C;
-{ }
+do
+end
 abstract;
 class;
 E;
-{ }
+do
+end
 class;
 F;
-{ }
+do
+end
 local g = class;
-{ }
+do
+end
 ;
 class;
 WithMembers;
-{
+do
     x = 1;
     m();
-    { }
+    do
+    end
     constructor();
-    { }
+    do
+    end
     s();
-    { }
+    do
+    end
     #p;
     2;
     get;
     a();
-    {
+    do
         return 1;
-    }
-}
+    end
+end
 -- `class` is now an ordinary identifier.
-function usesClassName() {
+function usesClassName()
     local class = 3;
     return class;
-}
+end

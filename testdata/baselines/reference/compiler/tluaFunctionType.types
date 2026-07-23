@@ -166,6 +166,6 @@ end
 // The spelling is a hard keyword: it cannot name a type alias.
 type function = number;
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
-> : () => any
+> : () => void
 >number : any
 

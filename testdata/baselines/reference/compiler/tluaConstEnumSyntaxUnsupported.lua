@@ -9,7 +9,7 @@ local enum E {
 //// [tluaConstEnumSyntaxUnsupported.lua]
 local enum;
 E;
-{
+do
     A,
     ;
-}
+end

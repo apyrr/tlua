@@ -51,32 +51,32 @@ declare TestComponentWithoutChildren: <T, TParam>(props: {
 
 }) => JsxElement;
 
-local App = () => {
+local App = function()
 >App : () => JsxElement
->() => {  return (    <>      <TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo = 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      />    </>  );} : () => JsxElement
+>function()  return (    <>      <TestComponentWithChildren state={{ foo = 123 }} selector={function(state) return state.foo end}>        {function(selected) return <div>{Math.max(selected, 0)}</div> end}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo = 123 }}        selector={function(state) return state.foo end}        notChildren={function(selected) return <div>{Math.max(selected, 0)}</div> end}      />    </>  );end : () => JsxElement
 
   return (
->(    <>      <TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo = 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      />    </>  ) : JsxElement
+>(    <>      <TestComponentWithChildren state={{ foo = 123 }} selector={function(state) return state.foo end}>        {function(selected) return <div>{Math.max(selected, 0)}</div> end}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo = 123 }}        selector={function(state) return state.foo end}        notChildren={function(selected) return <div>{Math.max(selected, 0)}</div> end}      />    </>  ) : JsxElement
 
     <>
-><>      <TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo = 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      />    </> : JsxElement
+><>      <TestComponentWithChildren state={{ foo = 123 }} selector={function(state) return state.foo end}>        {function(selected) return <div>{Math.max(selected, 0)}</div> end}      </TestComponentWithChildren>      <TestComponentWithoutChildren        state={{ foo = 123 }}        selector={function(state) return state.foo end}        notChildren={function(selected) return <div>{Math.max(selected, 0)}</div> end}      />    </> : JsxElement
 
-      <TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>
-><TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>        {(selected) => <div>{Math.max(selected, 0)}</div>}      </TestComponentWithChildren> : JsxElement
+      <TestComponentWithChildren state={{ foo = 123 }} selector={function(state) return state.foo end}>
+><TestComponentWithChildren state={{ foo = 123 }} selector={function(state) return state.foo end}>        {function(selected) return <div>{Math.max(selected, 0)}</div> end}      </TestComponentWithChildren> : JsxElement
 >TestComponentWithChildren : <T, TParam>(props: { state: T; selector?: (state: NoInfer<T>) => TParam; children?: (state: NoInfer<TParam>) => JsxElement | nil; }) => JsxElement
 >state : { foo: number; }
 >{ foo = 123 } : { foo: number; }
 >foo : number
 >123 : 123
 >selector : (state: NoInfer<{ foo: number; }>) => number
->(state) => state.foo : (state: NoInfer<{ foo: number; }>) => number
+>function(state) return state.foo end : (state: NoInfer<{ foo: number; }>) => number
 >state : NoInfer<{ foo: number; }>
 >state.foo : number
 >state : { foo: number; }
 >foo : number
 
-        {(selected) => <div>{Math.max(selected, 0)}</div>}
->(selected) => <div>{Math.max(selected, 0)}</div> : (selected: number) => JsxElement
+        {function(selected) return <div>{Math.max(selected, 0)}</div> end}
+>function(selected) return <div>{Math.max(selected, 0)}</div> end : (selected: number) => JsxElement
 >selected : number
 ><div>{Math.max(selected, 0)}</div> : JsxElement
 >div : any
@@ -92,7 +92,7 @@ local App = () => {
 >TestComponentWithChildren : <T, TParam>(props: { state: T; selector?: (state: NoInfer<T>) => TParam; children?: (state: NoInfer<TParam>) => JsxElement | nil; }) => JsxElement
 
       <TestComponentWithoutChildren
-><TestComponentWithoutChildren        state={{ foo = 123 }}        selector={(state) => state.foo}        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}      /> : JsxElement
+><TestComponentWithoutChildren        state={{ foo = 123 }}        selector={function(state) return state.foo end}        notChildren={function(selected) return <div>{Math.max(selected, 0)}</div> end}      /> : JsxElement
 >TestComponentWithoutChildren : <T, TParam>(props: { state: T; selector?: (state: NoInfer<T>) => TParam; notChildren?: (state: NoInfer<TParam>) => JsxElement | nil; }) => JsxElement
 
         state={{ foo = 123 }}
@@ -101,17 +101,17 @@ local App = () => {
 >foo : number
 >123 : 123
 
-        selector={(state) => state.foo}
+        selector={function(state) return state.foo end}
 >selector : (state: NoInfer<{ foo: number; }>) => number
->(state) => state.foo : (state: NoInfer<{ foo: number; }>) => number
+>function(state) return state.foo end : (state: NoInfer<{ foo: number; }>) => number
 >state : NoInfer<{ foo: number; }>
 >state.foo : number
 >state : { foo: number; }
 >foo : number
 
-        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}
+        notChildren={function(selected) return <div>{Math.max(selected, 0)}</div> end}
 >notChildren : (selected: number) => JsxElement
->(selected) => <div>{Math.max(selected, 0)}</div> : (selected: number) => JsxElement
+>function(selected) return <div>{Math.max(selected, 0)}</div> end : (selected: number) => JsxElement
 >selected : number
 ><div>{Math.max(selected, 0)}</div> : JsxElement
 >div : any
@@ -126,5 +126,5 @@ local App = () => {
       />
     </>
   );
-};
+end;
 

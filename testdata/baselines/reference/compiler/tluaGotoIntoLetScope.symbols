@@ -7,7 +7,7 @@ declare function log(n: number): void;
 >log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
 >n : Symbol(n, Decl(tluaGotoIntoLetScope.tlua, 2, 21))
 
-function intoLetScope(): void {
+function intoLetScope(): void
 >intoLetScope : Symbol(intoLetScope, Decl(tluaGotoIntoLetScope.tlua, 2, 38))
 
     goto done
@@ -18,10 +18,11 @@ function intoLetScope(): void {
     log(x);
 >log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
 >x : Symbol(x, Decl(tluaGotoIntoLetScope.tlua, 5, 9))
-}
 
-function intoConstScope(): void {
->intoConstScope : Symbol(intoConstScope, Decl(tluaGotoIntoLetScope.tlua, 8, 1))
+end
+
+function intoConstScope(): void
+>intoConstScope : Symbol(intoConstScope, Decl(tluaGotoIntoLetScope.tlua, 8, 3))
 
     goto done
     local c = 1;
@@ -31,10 +32,11 @@ function intoConstScope(): void {
     log(c);
 >log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
 >c : Symbol(c, Decl(tluaGotoIntoLetScope.tlua, 12, 9))
-}
 
-function intoVarScope(): void {
->intoVarScope : Symbol(intoVarScope, Decl(tluaGotoIntoLetScope.tlua, 15, 1))
+end
+
+function intoVarScope(): void
+>intoVarScope : Symbol(intoVarScope, Decl(tluaGotoIntoLetScope.tlua, 15, 3))
 
     goto done
     local v = 1;
@@ -44,5 +46,6 @@ function intoVarScope(): void {
     log(v);
 >log : Symbol(log, Decl(tluaGotoIntoLetScope.tlua, 0, 0))
 >v : Symbol(v, Decl(tluaGotoIntoLetScope.tlua, 19, 9))
-}
+
+end
 

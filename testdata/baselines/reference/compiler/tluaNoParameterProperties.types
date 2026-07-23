@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/tluaNoParameterProperties.tlua] ////
+
+=== tluaNoParameterProperties.tlua ===
+// Constructor parameter properties are removed with classes. Modifiers on an
+// ordinary function parameter are always invalid.
+function rejected(
+>rejected : (a: number, b: number, c: number, d: number, e: number) => number
+
+  public a: number,
+>a : number
+
+  private b: number,
+>b : number
+
+  protected c: number,
+>c : number
+
+  readonly d: number,
+>d : number
+
+  override e: number,
+>e : number
+
+): number
+  return a + b + c + d + e;
+>a + b + c + d + e : number
+>a + b + c + d : number
+>a + b + c : number
+>a + b : number
+>a : number
+>b : number
+>c : number
+>d : number
+>e : number
+
+end
+

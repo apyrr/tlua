@@ -9,32 +9,32 @@ local function two(): (number, string)
 
   return 1, "s"
 end
-local add = (x: number, y: number) => x + y
+local add = function(x: number, y: number) return x + y end
 >add : Symbol(add, Decl(tluaLambdaEmit.tlua, 6, 5))
->x : Symbol(x, Decl(tluaLambdaEmit.tlua, 6, 13))
->y : Symbol(y, Decl(tluaLambdaEmit.tlua, 6, 23))
->x : Symbol(x, Decl(tluaLambdaEmit.tlua, 6, 13))
->y : Symbol(y, Decl(tluaLambdaEmit.tlua, 6, 23))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 6, 21))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 6, 31))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 6, 21))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 6, 31))
 
-local block = (x: number) => { return x * 2; }
+local block = function(x: number) return x * 2; end
 >block : Symbol(block, Decl(tluaLambdaEmit.tlua, 7, 5))
->x : Symbol(x, Decl(tluaLambdaEmit.tlua, 7, 15))
->x : Symbol(x, Decl(tluaLambdaEmit.tlua, 7, 15))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 7, 23))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 7, 23))
 
-local nested = (x: number) => (y: number) => x + y
+local nested = function(x: number) return function(y: number) return x + y end end
 >nested : Symbol(nested, Decl(tluaLambdaEmit.tlua, 8, 5))
->x : Symbol(x, Decl(tluaLambdaEmit.tlua, 8, 16))
->y : Symbol(y, Decl(tluaLambdaEmit.tlua, 8, 31))
->x : Symbol(x, Decl(tluaLambdaEmit.tlua, 8, 16))
->y : Symbol(y, Decl(tluaLambdaEmit.tlua, 8, 31))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 8, 24))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 8, 51))
+>x : Symbol(x, Decl(tluaLambdaEmit.tlua, 8, 24))
+>y : Symbol(y, Decl(tluaLambdaEmit.tlua, 8, 51))
 
-local noParams = () => 42
+local noParams = function() return 42 end
 >noParams : Symbol(noParams, Decl(tluaLambdaEmit.tlua, 9, 5))
 
 // A concise body is typed as one value, but a direct call in Lua tail
 // position would propagate its whole pack -- the emit parenthesizes it so the
 // runtime truncates to the value the type names.
-local truncated = () => two()
+local truncated = function() return two() end
 >truncated : Symbol(truncated, Decl(tluaLambdaEmit.tlua, 14, 5))
 >two : Symbol(two, Decl(tluaLambdaEmit.tlua, 0, 0))
 
@@ -44,9 +44,9 @@ local one: number = truncated()
 
 // A parenthesized table-literal body keeps its parens; `return { ... } end`
 // would also be valid Lua, but the source spelling round-trips.
-local table = () => ({ k = 1 })
+local table = function() return ({ k = 1 }) end
 >table : Symbol(table, Decl(tluaLambdaEmit.tlua, 19, 5))
->k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 22))
+>k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 34))
 
 print(add(1, 2), block(2), nested(1)(2), noParams(), table().k)
 >print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
@@ -54,7 +54,7 @@ print(add(1, 2), block(2), nested(1)(2), noParams(), table().k)
 >block : Symbol(block, Decl(tluaLambdaEmit.tlua, 7, 5))
 >nested : Symbol(nested, Decl(tluaLambdaEmit.tlua, 8, 5))
 >noParams : Symbol(noParams, Decl(tluaLambdaEmit.tlua, 9, 5))
->table().k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 22))
+>table().k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 34))
 >table : Symbol(table, Decl(tluaLambdaEmit.tlua, 19, 5))
->k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 22))
+>k : Symbol(k, Decl(tluaLambdaEmit.tlua, 19, 34))
 

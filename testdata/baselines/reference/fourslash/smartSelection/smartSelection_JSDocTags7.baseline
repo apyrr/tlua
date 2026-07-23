@@ -3,8 +3,7 @@
  * @constructor
  * @param {/**/number} data
  */
-function Foo(data) {
-}
+function Foo(data) end
 
            number      ↲
 
@@ -24,5 +23,4 @@ function Foo(data) {
  * @constructor
  * @param {number} data
  */
-function Foo(data) {
-}
+function Foo(data) end

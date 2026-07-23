@@ -28,6 +28,6 @@ type BLeaf = {
     id: number;
 }
 
-function test(a: AOuter, b: BOuter) {
+function test(a: AOuter, b: BOuter)
     a = b
-}
+end

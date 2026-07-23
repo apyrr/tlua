@@ -4,7 +4,7 @@
 // /**
 //  * @param options An empty object binding pattern.
 //  */
-// function emptyObj({}) {}
+// function emptyObj({}) end
 // emptyObj()
 //          ^
 // | ----------------------------------------------------------------------
@@ -15,17 +15,17 @@
 // /**
 //  * @param items An empty array binding pattern.
 //  */
-// function emptyArr([]) {}
+// function emptyArr([]) end
 // emptyArr()
 //          ^
 // | ----------------------------------------------------------------------
-// | emptyArr(): any
+// | emptyArr(): void
 // | ----------------------------------------------------------------------
 // 
 // /**
 //  * @param param An object with a and b properties.
 //  */
-// function nonEmptyObj({a, b}: {a: number, b: string}) {}
+// function nonEmptyObj({a, b}: {a: number, b: string}) end
 // nonEmptyObj()
 //             ^
 // | ----------------------------------------------------------------------
@@ -36,18 +36,18 @@
 // /**
 //  * @param tuple A tuple with two elements.
 //  */
-// function nonEmptyArr([x, y]: [number, string]) {}
+// function nonEmptyArr([x, y]: [number, string]) end
 // nonEmptyArr()
 //             ^
 // | ----------------------------------------------------------------------
-// | nonEmptyArr(**x: any**, y: any): any
+// | nonEmptyArr(**x: any**, y: any): void
 // | ----------------------------------------------------------------------
 // 
 // /**
 //  * @param first The first number parameter.
 //  * @param second An object with a and b properties.
 //  */
-// function idLeading(first: number, {a, b}: {a: number, b: string}) {}
+// function idLeading(first: number, {a, b}: {a: number, b: string}) end
 // idLeading(123, { a: 1, b: 2 })
 //              ^
 // | ----------------------------------------------------------------------
@@ -64,7 +64,7 @@
 //  * @param first An object with a and b properties.
 //  * @param last The last number parameter.
 //  */
-// function bindingLeading({a, b}: {a: number, b: string}, last: number) {}
+// function bindingLeading({a, b}: {a: number, b: string}, last: number) end
 // bindingLeading({ a: 1, b: 2 }, 123 )
 //                ^
 // | ----------------------------------------------------------------------
@@ -85,7 +85,7 @@
 //  * @param param2.c {boolean} Comment c
 //  * @param param2.d {unknown} Comment d
 //  */
-// function multipleBindings({ a, b }, { c, d }) {}
+// function multipleBindings({ a, b }, { c, d }) end
 // multipleBindings({ a: 0, b: "" }, { c: true, d: "" })
 //                                 ^
 // | ----------------------------------------------------------------------
@@ -101,7 +101,7 @@
 [
   {
     "marker": {
-      "Position": 94,
+      "Position": 95,
       "LSPosition": {
         "line": 5,
         "character": 9
@@ -130,7 +130,7 @@
   },
   {
     "marker": {
-      "Position": 187,
+      "Position": 189,
       "LSPosition": {
         "line": 11,
         "character": 9
@@ -141,7 +141,7 @@
     "item": {
       "signatures": [
         {
-          "label": "emptyArr(): any",
+          "label": "emptyArr(): void",
           "parameters": []
         }
       ],
@@ -150,7 +150,7 @@
   },
   {
     "marker": {
-      "Position": 317,
+      "Position": 320,
       "LSPosition": {
         "line": 17,
         "character": 12
@@ -179,7 +179,7 @@
   },
   {
     "marker": {
-      "Position": 433,
+      "Position": 437,
       "LSPosition": {
         "line": 23,
         "character": 12
@@ -190,7 +190,7 @@
     "item": {
       "signatures": [
         {
-          "label": "nonEmptyArr(x: any, y: any): any",
+          "label": "nonEmptyArr(x: any, y: any): void",
           "parameters": [
             {
               "label": "x: any"
@@ -207,7 +207,7 @@
   },
   {
     "marker": {
-      "Position": 622,
+      "Position": 627,
       "LSPosition": {
         "line": 30,
         "character": 13
@@ -243,7 +243,7 @@
   },
   {
     "marker": {
-      "Position": 638,
+      "Position": 643,
       "LSPosition": {
         "line": 30,
         "character": 29
@@ -279,7 +279,7 @@
   },
   {
     "marker": {
-      "Position": 830,
+      "Position": 836,
       "LSPosition": {
         "line": 37,
         "character": 15
@@ -315,7 +315,7 @@
   },
   {
     "marker": {
-      "Position": 850,
+      "Position": 856,
       "LSPosition": {
         "line": 37,
         "character": 35
@@ -351,7 +351,7 @@
   },
   {
     "marker": {
-      "Position": 1189,
+      "Position": 1196,
       "LSPosition": {
         "line": 48,
         "character": 32
@@ -387,7 +387,7 @@
   },
   {
     "marker": {
-      "Position": 1209,
+      "Position": 1216,
       "LSPosition": {
         "line": 48,
         "character": 52

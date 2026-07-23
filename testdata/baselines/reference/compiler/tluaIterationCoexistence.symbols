@@ -65,7 +65,7 @@ function sum(xs: number[]): number
 end
 
 // A vararg pack collects into a number-key table with `{...}`.
-function join(sep: string, ...: string): string {
+function join(sep: string, ...: string): string
 >join : Symbol(join, Decl(tluaIterationCoexistence.tlua, 24, 3))
 >sep : Symbol(sep, Decl(tluaIterationCoexistence.tlua, 27, 14))
 > : Symbol((Missing), Decl(tluaIterationCoexistence.tlua, 27, 26))
@@ -75,9 +75,10 @@ function join(sep: string, ...: string): string {
 
   return parts[1];
 >parts : Symbol(parts, Decl(tluaIterationCoexistence.tlua, 28, 7))
-}
-function forward(a: string, b: string): string {
->forward : Symbol(forward, Decl(tluaIterationCoexistence.tlua, 30, 1))
+
+end
+function forward(a: string, b: string): string
+>forward : Symbol(forward, Decl(tluaIterationCoexistence.tlua, 30, 3))
 >a : Symbol(a, Decl(tluaIterationCoexistence.tlua, 31, 17))
 >b : Symbol(b, Decl(tluaIterationCoexistence.tlua, 31, 27))
 
@@ -85,5 +86,6 @@ function forward(a: string, b: string): string {
 >join : Symbol(join, Decl(tluaIterationCoexistence.tlua, 24, 3))
 >a : Symbol(a, Decl(tluaIterationCoexistence.tlua, 31, 17))
 >b : Symbol(b, Decl(tluaIterationCoexistence.tlua, 31, 27))
-}
+
+end
 

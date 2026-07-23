@@ -1,6 +1,6 @@
 // === goToImplementation ===
 // === /goToImplementationLocal_02.tlua ===
-// local x = { <|[|hello|] = () => {}|> };
+// local x = { <|[|hello|] = function() end|> };
 // 
 // x.he/*GOTO IMPL*/llo();
 // 

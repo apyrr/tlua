@@ -14,7 +14,7 @@ interface Dog extends Animal {
     name: string;
 }
 
-function createDog(): Dog {
+function createDog(): Dog
     return ({
         size: "medium",
         woof: function()
@@ -22,7 +22,7 @@ function createDog(): Dog {
         end,
         name: utilities.makeRandomName()
     });
-}
+end
 
 return { createDog = createDog };
 //// [/user/username/projects/demo/animals/index.tlua] *new* 
@@ -54,14 +54,14 @@ return { createDog = dog.createDog };
     ]
 }
 //// [/user/username/projects/demo/core/utilities.tlua] *new* 
-function makeRandomName() {
+function makeRandomName()
     return "Bob!?! ";
-}
+end
 
-function lastElementOf<T>(arr: T[]): T | undefined {
-    if (arr.length == 0) return undefined;
+function lastElementOf<T>(arr: T[]): T | undefined
+    if arr.length == 0 then return undefined end
     return arr[arr.length - 1];
-}
+end
 
 return { makeRandomName = makeRandomName, lastElementOf = lastElementOf };
 //// [/user/username/projects/demo/tluaconfig-base.json] *new* 
@@ -108,11 +108,11 @@ return { makeRandomName = makeRandomName, lastElementOf = lastElementOf };
 //// [/user/username/projects/demo/zoo/zoo.tlua] *new* 
 local animals = require('animals.index');
 
-function createZoo(): Array<Dog> {
+function createZoo(): Array<Dog>
     return {
         animals.createDog()
     };
-}
+end
 
 return { createZoo = createZoo };
 

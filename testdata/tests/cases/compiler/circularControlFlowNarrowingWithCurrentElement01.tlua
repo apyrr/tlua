@@ -7,34 +7,34 @@ class A {
   constructor(readonly children: (A | null)[]) {}
 }
 
-function getNodes(): A[] {
+function getNodes(): A[]
   local out: A[] = [];
 
   local current: A | null = new A([]);
 
-  while (current ~= null) {
+  while current ~= null do
     local firstChild = null;
 
-    if (out.length) {
+    if out.length then
       current = current.next;
       continue;
-    }
+    end
 
     for i = 0, current.children.length - 1 do
       local child = current.children[i];
 
-      if (child) {
-        if (!firstChild) {
+      if child then
+        if not firstChild then
           firstChild = child;
           firstChild.next = current.next;
-        }
+        end
 
         child.next = current.next;
-      }
+      end
     end
 
     current = firstChild || current.next;
-  }
+  end
 
   return out;
-}
+end

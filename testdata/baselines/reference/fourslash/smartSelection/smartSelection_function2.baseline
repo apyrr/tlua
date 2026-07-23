@@ -1,13 +1,9 @@
 // === Smart Selection ===
-function f2() {
+function f2()
     /**/
-}
+end
 
 
-              {
+function f2()
     
-}
-
-function f2() {
-    
-}
+end

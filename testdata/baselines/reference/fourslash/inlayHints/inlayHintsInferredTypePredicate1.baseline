@@ -1,5 +1,5 @@
 // === Inlay Hints ===
-function test(x: unknown) {
+function test(x: unknown)
                          ^
 {
   "position": {

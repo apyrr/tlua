@@ -19,7 +19,7 @@ type Recur<T> =
 >Recur : Symbol(Recur, Decl(recursiveIndexedAccessSimplification.tlua, 0, 0))
 >T : Symbol(T, Decl(recursiveIndexedAccessSimplification.tlua, 2, 11))
 
-function join<T>(l: Recur<T>[]): Recur<T> {
+function join<T>(l: Recur<T>[]): Recur<T>
 >join : Symbol(join, Decl(recursiveIndexedAccessSimplification.tlua, 4, 28))
 >T : Symbol(T, Decl(recursiveIndexedAccessSimplification.tlua, 6, 14))
 >l : Symbol(l, Decl(recursiveIndexedAccessSimplification.tlua, 6, 17))
@@ -30,10 +30,11 @@ function join<T>(l: Recur<T>[]): Recur<T> {
 
     return ['marker', ...l];
 >l : Symbol(l, Decl(recursiveIndexedAccessSimplification.tlua, 6, 17))
-}
 
-function a<T>(l: Recur<T>[]): void {
->a : Symbol(a, Decl(recursiveIndexedAccessSimplification.tlua, 8, 1))
+end
+
+function a<T>(l: Recur<T>[]): void
+>a : Symbol(a, Decl(recursiveIndexedAccessSimplification.tlua, 8, 3))
 >T : Symbol(T, Decl(recursiveIndexedAccessSimplification.tlua, 10, 11))
 >l : Symbol(l, Decl(recursiveIndexedAccessSimplification.tlua, 10, 14))
 >Recur : Symbol(Recur, Decl(recursiveIndexedAccessSimplification.tlua, 0, 0))
@@ -45,5 +46,6 @@ function a<T>(l: Recur<T>[]): void {
 >T : Symbol(T, Decl(recursiveIndexedAccessSimplification.tlua, 10, 11))
 >join : Symbol(join, Decl(recursiveIndexedAccessSimplification.tlua, 4, 28))
 >l : Symbol(l, Decl(recursiveIndexedAccessSimplification.tlua, 10, 14))
-}
+
+end
 

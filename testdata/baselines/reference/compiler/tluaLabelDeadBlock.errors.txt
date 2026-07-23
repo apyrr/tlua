@@ -1,8 +1,8 @@
 tluaLabelDeadBlock.tlua(5,5): error TLUA7027: Unreachable code detected.
 tluaLabelDeadBlock.tlua(5,7): error TLUA7028: Unused label.
-tluaLabelDeadBlock.tlua(10,7): error TLUA7027: Unreachable code detected.
-tluaLabelDeadBlock.tlua(10,9): error TLUA7028: Unused label.
-tluaLabelDeadBlock.tlua(16,7): error TLUA7027: Unreachable code detected.
+tluaLabelDeadBlock.tlua(10,8): error TLUA7027: Unreachable code detected.
+tluaLabelDeadBlock.tlua(10,10): error TLUA7028: Unused label.
+tluaLabelDeadBlock.tlua(16,8): error TLUA7027: Unreachable code detected.
 
 
 ==== tluaLabelDeadBlock.tlua (5 errors) ====
@@ -17,20 +17,20 @@ tluaLabelDeadBlock.tlua(16,7): error TLUA7027: Unreachable code detected.
 !!! error TLUA7028: Unused label.
     end
     
-    function deadLabelInBlock(): number {
+    function deadLabelInBlock(): number
         return 1;
-        { ::L2:: }
-          ~~~~~~
+        do ::L2:: end
+           ~~~~~~
 !!! error TLUA7027: Unreachable code detected.
-            ~~
+             ~~
 !!! error TLUA7028: Unused label.
-    }
+    end
     
     // And a goto inside a dead block still marks its label referenced.
-    function deadBlockGotoReferences(): number {
+    function deadBlockGotoReferences(): number
         return 1;
-        { ::L3:: goto L3 }
-          ~~~~~~~~~~~~~~
+        do ::L3:: goto L3 end
+           ~~~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
-    }
+    end
     

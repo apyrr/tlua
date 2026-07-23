@@ -109,7 +109,7 @@
 //     public async c() { }
 // }
 // 
-// export function foo() { }
+// export function foo() end
 
 
 
@@ -124,7 +124,7 @@
 //     public async c() { }
 // }
 // 
-// export function foo() { }
+// export function foo() end
 
 
 
@@ -137,7 +137,7 @@
 //     /*GOTO DEF*/public async c() { }
 // }
 // 
-// export function foo() { }
+// export function foo() end
 
 
 
@@ -150,7 +150,7 @@
 //     public/*GOTO DEF*/ async c() { }
 // }
 // 
-// export function foo() { }
+// export function foo() end
 
 
 
@@ -163,7 +163,7 @@
 //     public as/*GOTO DEF*/ync c() { }
 // }
 // 
-// export function foo() { }
+// export function foo() end
 
 
 
@@ -176,7 +176,7 @@
 //     public async c/*GOTO DEF*/() { }
 // }
 // 
-// export function foo() { }
+// export function foo() end
 
 
 
@@ -186,7 +186,7 @@
 //     public async c() { }
 // }
 // 
-// exp/*GOTO DEF*/ort function foo() { }
+// exp/*GOTO DEF*/ort function foo() end
 
 
 
@@ -196,4 +196,4 @@
 //     public async c() { }
 // }
 // 
-// export <|function [|foo|]/*GOTO DEF*/() { }|>
+// export <|function [|foo|]/*GOTO DEF*/() end|>

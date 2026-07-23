@@ -1,8 +1,11 @@
+sourceMapUnclosedBlock.tlua(1,1): error TLUA1128: Declaration or statement expected.
 sourceMapUnclosedBlock.tlua(1,2): error TLUA1005: '}' expected.
 
 
-==== sourceMapUnclosedBlock.tlua (1 errors) ====
+==== sourceMapUnclosedBlock.tlua (2 errors) ====
     {
+    ~
+!!! error TLUA1128: Declaration or statement expected.
      
 !!! error TLUA1005: '}' expected.
 !!! related TLUA1007 sourceMapUnclosedBlock.tlua:1:1: The parser expected to find a '}' to match the '{' token here.

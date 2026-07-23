@@ -2,12 +2,13 @@ tluaAsyncFunctionType.tlua(23,3): error TLUA100023: An async function can only b
 tluaAsyncFunctionType.tlua(31,1): error TLUA2304: Cannot find name 'declare'.
 tluaAsyncFunctionType.tlua(31,9): error TLUA2304: Cannot find name 'namespace'.
 tluaAsyncFunctionType.tlua(31,19): error TLUA2819: Namespace name cannot be 'coroutine'.
+tluaAsyncFunctionType.tlua(31,29): error TLUA1128: Declaration or statement expected.
 tluaAsyncFunctionType.tlua(32,12): error TLUA2391: Function implementation is missing or not immediately following the declaration.
 tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url: string) => boolean' is not assignable to parameter of type 'function'.
   An async function is not assignable to a non-async function type.
 
 
-==== tluaAsyncFunctionType.tlua (6 errors) ====
+==== tluaAsyncFunctionType.tlua (7 errors) ====
     // An `async` modifier is allowed on function *type* nodes (the parenthesized
     // `async (params) => T` form). It carries the coroutine contract: a call
     // through an async-typed slot is checked, and async-ness is visible in the
@@ -29,12 +30,12 @@ tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url:
     
     // Calling through the async-typed slot: error from a sync function, OK from an
     // async function.
-    function sync1(): void {
+    function sync1(): void
       g("a");
       ~
 !!! error TLUA100023: An async function can only be called from an async context.
 !!! related TLUA1356 tluaAsyncFunctionType.tlua:22:10: Did you mean to mark this function as 'async'?
-    }
+    end
     async function ok(): void
       g("b");
     end
@@ -48,6 +49,8 @@ tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url:
 !!! error TLUA2304: Cannot find name 'namespace'.
                       ~~~~~~~~~
 !!! error TLUA2819: Namespace name cannot be 'coroutine'.
+                                ~
+!!! error TLUA1128: Declaration or statement expected.
       function create(f: (...: any) => any): any;
                ~~~~~~
 !!! error TLUA2391: Function implementation is missing or not immediately following the declaration.

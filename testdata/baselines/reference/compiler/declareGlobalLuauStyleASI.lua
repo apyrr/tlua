@@ -8,7 +8,7 @@ local x = 2;
 declare
 x;
 declare = x;
-local call = (declare: number) => declare;
+local call = function(declare: number) return declare end;
 call(declare);
 
 
@@ -20,5 +20,7 @@ local x = 2;
 declare;
 x;
 declare = x;
-local call = function(declare) return declare end;
+local call = function(declare)
+    return declare;
+end;
 call(declare);

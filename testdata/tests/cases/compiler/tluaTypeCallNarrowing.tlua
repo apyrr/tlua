@@ -9,7 +9,7 @@
 
 type Mixed = { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil;
 
-function tags(v: Mixed): void {
+function tags(v: Mixed): void
   if type(v) == "table" then
     local table1: { n: number } = v; // the brands are not tables, and "table" excludes nil
   end
@@ -37,9 +37,9 @@ function tags(v: Mixed): void {
   if type(v) == "nil" then
     local nil1: nil = v;
   end
-}
+end
 
-function negated(v: Mixed): void {
+function negated(v: Mixed): void
   if type(v) ~= "table" then
     local notTable: thread | userdata | cdata | ((a: number) => void) | string | number | boolean | nil = v;
   end
@@ -50,14 +50,14 @@ function negated(v: Mixed): void {
   if type(v) ~= "nil" then
     local present: { n: number } | thread | userdata | cdata | ((a: number) => void) | string | number | boolean = v;
   end
-}
+end
 
 // The `and`/`or` idiom narrows the same way an if-statement does.
-function idiom(v: string | number): string {
+function idiom(v: string | number): string
   return type(v) == "string" and v or tostring(v);
-}
+end
 
-function tops(u: unknown, a: any): void {
+function tops(u: unknown, a: any): void
   if type(u) == "table" then
     local o: table = u;
   end
@@ -70,30 +70,30 @@ function tops(u: unknown, a: any): void {
   if type(a) == "table" then
     local stillAny: number = a; // `any` survives every tag
   end
-}
+end
 
-function generic<T>(v: T): void {
+function generic<T>(v: T): void
   if type(v) == "thread" then
     local t: T & thread = v;
   end
-}
+end
 
-function constrained<T extends thread | string>(v: T): void {
+function constrained<T extends thread | string>(v: T): void
   if type(v) ~= "thread" then
     local s: string = v;
   end
-}
+end
 
 // An unreachable tag: `type()` never reports it, so the true branch is uninhabited.
-function unknownTag(v: string | number): void {
+function unknownTag(v: string | number): void
   if type(v) == "chair" then
     local none: never = v;
   end
-}
+end
 
 // The tags partition values, so a guard that is provably false is a dead branch:
 // a concrete type unrelated to a brand narrows to never, not to an intersection.
-function disjoint(x: { n: number }, u: { n: number } | string, s: string): void {
+function disjoint(x: { n: number }, u: { n: number } | string, s: string): void
   if type(x) == "thread" then
     local dead: never = x;
   end
@@ -103,4 +103,4 @@ function disjoint(x: { n: number }, u: { n: number } | string, s: string): void 
   if type(s) == "userdata" then
     local dead3: never = s;
   end
-}
+end

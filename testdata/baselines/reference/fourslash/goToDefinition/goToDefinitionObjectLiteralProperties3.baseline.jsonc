@@ -9,13 +9,13 @@
 //   bar: unknown;
 // };
 // 
-// function test1(arg: A | B) {}
+// function test1(arg: A | B) end
 // 
 // test1({
 //   foo/*GOTO DEF*/ = 1,
 // });
 // 
-// function test2<T extends A>(arg: T | B) {}
+// function test2<T extends A>(arg: T | B) end
 // --- (line: 17) skipped ---
 
 
@@ -34,7 +34,7 @@
 // --- (line: 10) skipped ---
 
 // --- (line: 15) skipped ---
-// function test2<T extends A>(arg: T | B) {}
+// function test2<T extends A>(arg: T | B) end
 // 
 // test2({
 //   foo/*GOTO DEF*/ = 2,

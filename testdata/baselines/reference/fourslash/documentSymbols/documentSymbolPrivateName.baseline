@@ -4,12 +4,11 @@
 //   #foo() {
 //     class B {
 //       #bar() {   
-//          <|function [|{| name: baz, kind: Function |}baz|] () {
-//          }|>
+//          <|function [|{| name: baz, kind: Function |}baz|] () end|>
 //       }
 //     }
 //   }
-// --- (line: 10) skipped ---
+// --- (line: 9) skipped ---
 
 // === Details ===
 (Function) baz

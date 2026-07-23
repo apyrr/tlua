@@ -9,8 +9,6 @@ class Store<T = table> {
     select<K>(mapFn: (state: T) => K) {};
 >select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 >K : Symbol(K)
->state : Symbol(state, Decl(strictBestCommonSupertype.tlua, 3, 22))
->T : Symbol(T)
 }
 
 local store: Store = inject(Store);
@@ -18,7 +16,7 @@ local store: Store = inject(Store);
 >Store : Symbol(Store)
 >inject : Symbol(inject, Decl(strictBestCommonSupertype.tlua, 6, 35))
 
-function inject<T>(token: ProviderToken<T>): T {
+function inject<T>(token: ProviderToken<T>): T
 >inject : Symbol(inject, Decl(strictBestCommonSupertype.tlua, 6, 35))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 8, 16))
 >token : Symbol(token, Decl(strictBestCommonSupertype.tlua, 8, 19))
@@ -28,10 +26,11 @@ function inject<T>(token: ProviderToken<T>): T {
 
     return {} as T;
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 8, 16))
-}
+
+end
 
 interface Type<T> {
->Type : Symbol(Type, Decl(strictBestCommonSupertype.tlua, 10, 1))
+>Type : Symbol(Type, Decl(strictBestCommonSupertype.tlua, 10, 3))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 12, 15))
 
     new (...args: any[]): T;
@@ -42,7 +41,7 @@ interface Type<T> {
 type ProviderToken<T> = Type<T> | AbstractType<T>;
 >ProviderToken : Symbol(ProviderToken, Decl(strictBestCommonSupertype.tlua, 14, 1))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 16, 19))
->Type : Symbol(Type, Decl(strictBestCommonSupertype.tlua, 10, 1))
+>Type : Symbol(Type, Decl(strictBestCommonSupertype.tlua, 10, 3))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 16, 19))
 >AbstractType : Symbol(AbstractType, Decl(strictBestCommonSupertype.tlua, 16, 50))
 >T : Symbol(T, Decl(strictBestCommonSupertype.tlua, 16, 19))

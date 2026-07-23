@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/tluaSynthesizedLuaIf.tlua] ////
+
+=== tluaSynthesizedLuaIf.tlua ===
+function getObject(): { value: number | nil }
+>getObject : Symbol(getObject, Decl(tluaSynthesizedLuaIf.tlua, 0, 0))
+>value : Symbol(value, Decl(tluaSynthesizedLuaIf.tlua, 0, 23))
+
+  return { value = nil }
+>value : Symbol(value, Decl(tluaSynthesizedLuaIf.tlua, 1, 10))
+
+end
+
+function defaultValue(value = getObject().value ||= 1)
+>defaultValue : Symbol(defaultValue, Decl(tluaSynthesizedLuaIf.tlua, 2, 3))
+>value : Symbol(value, Decl(tluaSynthesizedLuaIf.tlua, 4, 22))
+>getObject().value : Symbol(value, Decl(tluaSynthesizedLuaIf.tlua, 0, 23))
+>getObject : Symbol(getObject, Decl(tluaSynthesizedLuaIf.tlua, 0, 0))
+>value : Symbol(value, Decl(tluaSynthesizedLuaIf.tlua, 0, 23))
+
+  return value
+>value : Symbol(value, Decl(tluaSynthesizedLuaIf.tlua, 4, 22))
+
+end
+

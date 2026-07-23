@@ -21,16 +21,18 @@ function isTypeA(
   _value: UnionType
 >_value : UnionType
 
-): value is TypeA {  // "value" doesn't match parameter "_value"
+): value is TypeA  // "value" doesn't match parameter "_value"
   return true;
 >true : true
-}
 
-function test(input: UnionType): void {
+end
+
+function test(input: UnionType): void
 >test : (input: UnionType) => void
 >input : UnionType
 
-  if (isTypeA(input)) {
+  if (isTypeA(input)) then
+>(isTypeA(input)) : boolean
 >isTypeA(input) : boolean
 >isTypeA : (_value: UnionType) => value is TypeA
 >input : UnionType
@@ -43,6 +45,7 @@ function test(input: UnionType): void {
 >input.kind : "a" | "b"
 >input : UnionType
 >kind : "a" | "b"
-  }
-}
+
+  end
+end
 

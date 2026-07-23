@@ -1,9 +1,9 @@
 // === findRenameLocations ===
 // === /renamePropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {/*RENAME*/[|BRENAME|] = B};
-// }
+// end
 // class C extends (foo()).[|BRENAME|] {}
 // class C1 extends foo().[|BRENAME|] {}
 
@@ -12,9 +12,9 @@
 // === findRenameLocations ===
 // === /renamePropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {[|BRENAME|] = B};
-// }
+// end
 // class C extends (foo())./*RENAME*/[|BRENAME|] {}
 // class C1 extends foo().[|BRENAME|] {}
 
@@ -23,8 +23,8 @@
 // === findRenameLocations ===
 // === /renamePropertyAccessExpressionHeritageClause.tlua ===
 // class B {}
-// function foo() {
+// function foo()
 //     return {[|BRENAME|] = B};
-// }
+// end
 // class C extends (foo()).[|BRENAME|] {}
 // class C1 extends foo()./*RENAME*/[|BRENAME|] {}

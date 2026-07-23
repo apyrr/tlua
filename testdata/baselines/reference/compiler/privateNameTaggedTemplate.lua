@@ -13,14 +13,14 @@ class Foo {
 //// [privateNameTaggedTemplate.lua]
 class;
 Foo;
-{
+do
     #x;
     3;
     #y;
     nil;
     func();
-    {
+    do
         console.log(#y ("->>" .. tostring()), #x);
-    }
+    end
     -");\n  }\n}\n";
-}
+end

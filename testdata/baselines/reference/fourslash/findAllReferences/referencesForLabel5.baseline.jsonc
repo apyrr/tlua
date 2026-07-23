@@ -2,7 +2,7 @@
 // === /referencesForLabel5.tlua ===
 // /*FIND ALL REFS*/label:  while (true) {
 //             if (false) break label;
-//             function blah() {
+//             function blah()
 // label:          while (true) {
 // --- (line: 5) skipped ---
 
@@ -12,7 +12,7 @@
 // === /referencesForLabel5.tlua ===
 // label:  while (true) {
 //             if (false) /*FIND ALL REFS*/break label;
-//             function blah() {
+//             function blah()
 // label:          while (true) {
 //                     if (false) break label;
 // --- (line: 6) skipped ---
@@ -23,7 +23,7 @@
 // === /referencesForLabel5.tlua ===
 // label:  while (true) {
 //             if (false) break /*FIND ALL REFS*/label;
-//             function blah() {
+//             function blah()
 // label:          while (true) {
 //                     if (false) break label;
 // --- (line: 6) skipped ---
@@ -34,11 +34,11 @@
 // === /referencesForLabel5.tlua ===
 // label:  while (true) {
 //             if (false) break label;
-//             function blah() {
+//             function blah()
 // /*FIND ALL REFS*/label:          while (true) {
 //                     if (false) break label;
 //                 }
-//             }
+//             end
 //             if (false) break label;
 //         }
 
@@ -48,11 +48,11 @@
 // === /referencesForLabel5.tlua ===
 // label:  while (true) {
 //             if (false) break label;
-//             function blah() {
+//             function blah()
 // label:          while (true) {
 //                     if (false) /*FIND ALL REFS*/break label;
 //                 }
-//             }
+//             end
 //             if (false) break label;
 //         }
 
@@ -62,11 +62,11 @@
 // === /referencesForLabel5.tlua ===
 // label:  while (true) {
 //             if (false) break label;
-//             function blah() {
+//             function blah()
 // label:          while (true) {
 //                     if (false) break /*FIND ALL REFS*/label;
 //                 }
-//             }
+//             end
 //             if (false) break label;
 //         }
 
@@ -77,7 +77,7 @@
 // --- (line: 4) skipped ---
 //                     if (false) break label;
 //                 }
-//             }
+//             end
 //             if (false) /*FIND ALL REFS*/break label;
 //         }
 
@@ -88,6 +88,6 @@
 // --- (line: 4) skipped ---
 //                     if (false) break label;
 //                 }
-//             }
+//             end
 //             if (false) break /*FIND ALL REFS*/label;
 //         }

@@ -1,16 +1,16 @@
 // === Document Symbols ===
 // === /navigationBarFunctionIndirectlyInVariableDeclaration.tlua ===
 // local <|[|{| name: a, kind: Variable |}a|] = {
-//     <|[|{| name: propA, kind: Property |}propA|] = function() {
+//     <|[|{| name: propA, kind: Property |}propA|] = function()
 //         local <|[|{| name: c, kind: Variable |}c|]|>;
-//     }|>
+//     end|>
 // }|>;
 // local <|[|{| name: b, kind: Variable |}b|]|>;
 // b = {
-//     <|[|{| name: propB, kind: Property |}propB|] = function() {
+//     <|[|{| name: propB, kind: Property |}propB|] = function()
 //     // function must not have an empty body to appear top level
 //         local <|[|{| name: d, kind: Variable |}d|]|>;
-//     }|>
+//     end|>
 // };
 
 // === Details ===

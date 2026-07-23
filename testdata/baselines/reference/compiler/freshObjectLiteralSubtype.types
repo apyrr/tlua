@@ -1,10 +1,11 @@
 //// [tests/cases/compiler/freshObjectLiteralSubtype.tlua] ////
 
 === freshObjectLiteralSubtype.tlua ===
-function f1() {
+function f1()
 >f1 : () => { valid: boolean; msg?: nil; }
 
-    if (!!true) {
+    if (!!true) then
+>(!!true) : true
 >!!true : true
 >!true : false
 >true : true
@@ -13,11 +14,13 @@ function f1() {
 >{ valid = true } : { valid: boolean; }
 >valid : boolean
 >true : true
-    }
+
+    end
     return f2()
 >f2() : { valid: boolean; msg?: nil; }
 >f2 : () => { valid: boolean; msg?: nil; }
-}
+
+end
 
 declare f2: () => { valid: boolean, msg?: undefined }
 >f2 : () => { valid: boolean; msg?: nil; }
@@ -32,10 +35,11 @@ f1().msg
 
 // Repro from https://github.com/microsoft/typescript-go/issues/1742
 
-function validate() {
+function validate()
 >validate : () => { valid: boolean; msg?: nil; } | { valid: boolean; msg: string; }
 
-    if(Math.random() > 0.5) {
+    if(Math.random() > 0.5) then
+>(Math.random() > 0.5) : boolean
 >Math.random() > 0.5 : boolean
 >Math.random() : any
 >Math.random : any
@@ -46,13 +50,14 @@ function validate() {
         return utilValidate();
 >utilValidate() : { valid: boolean; msg?: nil; } | { valid: boolean; msg: string; }
 >utilValidate : () => { valid: boolean; msg?: nil; } | { valid: boolean; msg: string; }
-    }
+
+    end
     return { valid = true };
 >{ valid = true } : { valid: boolean; }
 >valid : boolean
 >true : true
 
-};
+end;
 
 
 declare function utilValidate(): {
@@ -80,7 +85,7 @@ validate().msg; // Error in TLUA
 
 // https://github.com/microsoft/typescript-go/issues/1761
 
-function normalise_trace_logs([log]: any[]) {
+function normalise_trace_logs([log]: any[])
 >normalise_trace_logs : (log: any) => any
 >log : any
 >any[] : any
@@ -93,8 +98,8 @@ function normalise_trace_logs([log]: any[]) {
 > : any
 > : any
 
-    if (typeof log == "string" && log.includes("%c")) {
-> : any
+    if (typeof log == "string" && log.includes("%c")) then
+>( : any
 > : any
 >log == "string" && log.includes("%c") : any
 >log == "string" : boolean
@@ -120,7 +125,7 @@ function normalise_trace_logs([log]: any[]) {
 >includes : any
 >"foo" : "foo"
 
-    } else {
+    else
         normalised.push({ log });
 >normalised.push({ log }) : any
 >normalised.push : any
@@ -128,12 +133,14 @@ function normalise_trace_logs([log]: any[]) {
 >push : any
 >{ log } : { 1: any; }
 >log : any
-    }
+
+    end
 	return normalised;
 >normalised : any
-}
 
-function equal<T>(_actual: T, _expected: T): void {}
+end
+
+function equal<T>(_actual: T, _expected: T): void end
 >equal : <T>(_actual: T, _expected: T) => void
 >_actual : T
 >_expected : T

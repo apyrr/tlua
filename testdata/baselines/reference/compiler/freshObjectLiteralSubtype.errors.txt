@@ -1,5 +1,4 @@
 freshObjectLiteralSubtype.tlua(15,8): error TLUA2304: Cannot find name 'Math'.
-freshObjectLiteralSubtype.tlua(34,10): error TLUA7010: 'normalise_trace_logs', which lacks return-type annotation, implicitly has an 'any' return type.
 freshObjectLiteralSubtype.tlua(34,31): error TLUA1138: Parameter declaration expected.
 freshObjectLiteralSubtype.tlua(34,32): error TLUA7006: Parameter 'log' implicitly has an 'any' type.
 freshObjectLiteralSubtype.tlua(34,35): error TLUA1005: ')' expected.
@@ -10,13 +9,8 @@ freshObjectLiteralSubtype.tlua(34,43): error TLUA1005: ';' expected.
 freshObjectLiteralSubtype.tlua(35,21): error TLUA1109: Expression expected.
 freshObjectLiteralSubtype.tlua(35,22): error TLUA1011: An element access expression should take an argument.
 freshObjectLiteralSubtype.tlua(36,9): error TLUA1109: Expression expected.
-freshObjectLiteralSubtype.tlua(36,16): error TLUA2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(36,35): error TLUA2304: Cannot find name 'log'.
 freshObjectLiteralSubtype.tlua(36,53): error TLUA1005: ';' expected.
-freshObjectLiteralSubtype.tlua(37,27): error TLUA2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(37,46): error TLUA2304: Cannot find name 'log'.
-freshObjectLiteralSubtype.tlua(38,7): error TLUA1128: Declaration or statement expected.
-freshObjectLiteralSubtype.tlua(39,27): error TLUA2304: Cannot find name 'log'.
+freshObjectLiteralSubtype.tlua(36,55): error TLUA1128: Declaration or statement expected.
 freshObjectLiteralSubtype.tlua(46,7): error TLUA2554: Expected 1 arguments, but got 0.
 freshObjectLiteralSubtype.tlua(46,28): error TLUA1135: Argument expression expected.
 freshObjectLiteralSubtype.tlua(46,29): error TLUA1135: Argument expression expected.
@@ -25,13 +19,13 @@ freshObjectLiteralSubtype.tlua(48,5): error TLUA2554: Expected 2 arguments, but 
 freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expected.
 
 
-==== freshObjectLiteralSubtype.tlua (25 errors) ====
-    function f1() {
-        if (!!true) {
+==== freshObjectLiteralSubtype.tlua (19 errors) ====
+    function f1()
+        if (!!true) then
             return { valid = true }
-        }
+        end
         return f2()
-    }
+    end
     
     declare f2: () => { valid: boolean, msg?: undefined }
     
@@ -39,14 +33,14 @@ freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expect
     
     // Repro from https://github.com/microsoft/typescript-go/issues/1742
     
-    function validate() {
-        if(Math.random() > 0.5) {
+    function validate()
+        if(Math.random() > 0.5) then
            ~~~~
 !!! error TLUA2304: Cannot find name 'Math'.
             return utilValidate();
-        }
+        end
         return { valid = true };
-    };
+    end;
     
     
     declare function utilValidate(): {
@@ -61,9 +55,7 @@ freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expect
     
     // https://github.com/microsoft/typescript-go/issues/1761
     
-    function normalise_trace_logs([log]: any[]) {
-             ~~~~~~~~~~~~~~~~~~~~
-!!! error TLUA7010: 'normalise_trace_logs', which lacks return-type annotation, implicitly has an 'any' return type.
+    function normalise_trace_logs([log]: any[])
                                   ~
 !!! error TLUA1138: Parameter declaration expected.
                                    ~~~
@@ -83,31 +75,21 @@ freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expect
 !!! error TLUA1109: Expression expected.
     	                    
 !!! error TLUA1011: An element access expression should take an argument.
-        if (typeof log == "string" && log.includes("%c")) {
+        if (typeof log == "string" && log.includes("%c")) then
             ~~~~~~
 !!! error TLUA1109: Expression expected.
-                   ~~~
-!!! error TLUA2304: Cannot find name 'log'.
-                                      ~~~
-!!! error TLUA2304: Cannot find name 'log'.
                                                         ~
 !!! error TLUA1005: ';' expected.
-            normalised.push({ log, highlighted = log.includes("foo") });
-                              ~~~
-!!! error TLUA2304: Cannot find name 'log'.
-                                                 ~~~
-!!! error TLUA2304: Cannot find name 'log'.
-        } else {
-          ~~~~
+                                                          ~~~~
 !!! error TLUA1128: Declaration or statement expected.
+            normalised.push({ log, highlighted = log.includes("foo") });
+        else
             normalised.push({ log });
-                              ~~~
-!!! error TLUA2304: Cannot find name 'log'.
-        }
+        end
     	return normalised;
-    }
+    end
     
-    function equal<T>(_actual: T, _expected: T): void {}
+    function equal<T>(_actual: T, _expected: T): void end
     
     equal(normalise_trace_logs([]), [
           ~~~~~~~~~~~~~~~~~~~~

@@ -74,10 +74,10 @@
 //     }
 // 
 //     public method3() {
-//         local x = () => /*HIGHLIGHTS*/super.superMethod();
+//         local x = function() return /*HIGHLIGHTS*/super.superMethod() end;
 // 
 //         // Bad but still gets highlighted
-//         function f() {
+//         function f()
 // --- (line: 31) skipped ---
 
 
@@ -87,9 +87,9 @@
 // --- (line: 27) skipped ---
 // 
 //         // Bad but still gets highlighted
-//         function f() {
+//         function f()
 //             /*HIGHLIGHTS*/super.superMethod();
-//         }
+//         end
 //     }
 // 
 // --- (line: 35) skipped ---

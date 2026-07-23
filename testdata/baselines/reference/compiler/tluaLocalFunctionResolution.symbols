@@ -5,11 +5,11 @@ local function factorial(n: number): number
 >factorial : Symbol(factorial, Decl(tluaLocalFunctionResolution.tlua, 0, 0))
 >n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 0, 25))
 
-  if (n <= 1) {
+  if n <= 1 then
 >n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 0, 25))
 
     return 1;
-  }
+  end
   return n * factorial(n - 1);
 >n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 0, 25))
 >factorial : Symbol(factorial, Decl(tluaLocalFunctionResolution.tlua, 0, 0))
@@ -23,11 +23,11 @@ local function recursiveOnly(n: number): number
 >recursiveOnly : Symbol(recursiveOnly, Decl(tluaLocalFunctionResolution.tlua, 6, 13))
 >n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 8, 29))
 
-  if (n <= 0) {
+  if n <= 0 then
 >n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 8, 29))
 
     return 0;
-  }
+  end
   return recursiveOnly(n - 1);
 >recursiveOnly : Symbol(recursiveOnly, Decl(tluaLocalFunctionResolution.tlua, 6, 13))
 >n : Symbol(n, Decl(tluaLocalFunctionResolution.tlua, 8, 29))
@@ -63,15 +63,16 @@ end
 shadow();
 >shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 26, 10))
 
-{
+do
   local function shadow(): number
->shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 33, 1))
+>shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 33, 2))
 
     return 2;
   end
   shadow();
->shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 33, 1))
-}
+>shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 33, 2))
+
+end
 
 shadow();
 >shadow : Symbol(shadow, Decl(tluaLocalFunctionResolution.tlua, 26, 10))

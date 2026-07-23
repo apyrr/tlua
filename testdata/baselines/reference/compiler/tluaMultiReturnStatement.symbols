@@ -15,34 +15,34 @@ function inferredPair()
 end
 
 // Inference across mixed arities pads with nil.
-function mixed(cond: boolean) {
+function mixed(cond: boolean)
 >mixed : Symbol(mixed, Decl(tluaMultiReturnStatement.tlua, 7, 3))
 >cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 10, 15))
 
-  if (cond) {
+  if (cond) then
 >cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 10, 15))
 
     return 1, "a";
-  }
+  end
   return 2;
-}
+end
 
 // A bare return contributes zero values.
-function maybeNothing(cond: boolean) {
->maybeNothing : Symbol(maybeNothing, Decl(tluaMultiReturnStatement.tlua, 15, 1))
+function maybeNothing(cond: boolean)
+>maybeNothing : Symbol(maybeNothing, Decl(tluaMultiReturnStatement.tlua, 15, 3))
 >cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 18, 22))
 
-  if (cond) {
+  if (cond) then
 >cond : Symbol(cond, Decl(tluaMultiReturnStatement.tlua, 18, 22))
 
     return;
-  }
+  end
   return 1, "a";
-}
+end
 
 // `return f()` forwards the whole pack.
 function forward(): (number, string)
->forward : Symbol(forward, Decl(tluaMultiReturnStatement.tlua, 23, 1))
+>forward : Symbol(forward, Decl(tluaMultiReturnStatement.tlua, 23, 3))
 
   return pair();
 >pair : Symbol(pair, Decl(tluaMultiReturnStatement.tlua, 0, 0))
@@ -85,11 +85,11 @@ local m = mixed(true);
 
 local n = maybeNothing(false);
 >n : Symbol(n, Decl(tluaMultiReturnStatement.tlua, 45, 5))
->maybeNothing : Symbol(maybeNothing, Decl(tluaMultiReturnStatement.tlua, 15, 1))
+>maybeNothing : Symbol(maybeNothing, Decl(tluaMultiReturnStatement.tlua, 15, 3))
 
 local f = forward();
 >f : Symbol(f, Decl(tluaMultiReturnStatement.tlua, 46, 5))
->forward : Symbol(forward, Decl(tluaMultiReturnStatement.tlua, 23, 1))
+>forward : Symbol(forward, Decl(tluaMultiReturnStatement.tlua, 23, 3))
 
 local g = forwardInferred();
 >g : Symbol(g, Decl(tluaMultiReturnStatement.tlua, 47, 5))

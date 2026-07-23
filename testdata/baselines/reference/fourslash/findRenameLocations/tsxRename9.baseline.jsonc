@@ -14,8 +14,8 @@
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <MainButton />;
 // local opt = <MainButton children="chidlren" />;
-// local opt = <MainButton [|onClickRENAME|]={()=>{}} />;
-// local opt = <MainButton [|onClickRENAME|]={()=>{}} ignore-prop />;
+// local opt = <MainButton [|onClickRENAME|]={function() end} />;
+// local opt = <MainButton [|onClickRENAME|]={function() end} ignore-prop />;
 // local opt = <MainButton goTo="goTo" />;
 // local opt = <MainButton wrong />;
 
@@ -37,8 +37,8 @@
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <MainButton />;
 // local opt = <MainButton children="chidlren" />;
-// local opt = <MainButton /*RENAME*/[|onClickRENAME|]={()=>{}} />;
-// local opt = <MainButton [|onClickRENAME|]={()=>{}} ignore-prop />;
+// local opt = <MainButton /*RENAME*/[|onClickRENAME|]={function() end} />;
+// local opt = <MainButton [|onClickRENAME|]={function() end} ignore-prop />;
 // local opt = <MainButton goTo="goTo" />;
 // local opt = <MainButton wrong />;
 
@@ -60,8 +60,8 @@
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <MainButton />;
 // local opt = <MainButton children="chidlren" />;
-// local opt = <MainButton [|onClickRENAME|]={()=>{}} />;
-// local opt = <MainButton /*RENAME*/[|onClickRENAME|]={()=>{}} ignore-prop />;
+// local opt = <MainButton [|onClickRENAME|]={function() end} />;
+// local opt = <MainButton /*RENAME*/[|onClickRENAME|]={function() end} ignore-prop />;
 // local opt = <MainButton goTo="goTo" />;
 // local opt = <MainButton wrong />;
 
@@ -80,8 +80,8 @@
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <MainButton />;
 // local opt = <MainButton children="chidlren" />;
-// local opt = <MainButton onClick={()=>{}} />;
-// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton onClick={function() end} />;
+// local opt = <MainButton onClick={function() end} ignore-prop />;
 // local opt = <MainButton [|goToRENAME|]="goTo" />;
 // local opt = <MainButton wrong />;
 
@@ -100,8 +100,8 @@
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <MainButton />;
 // local opt = <MainButton children="chidlren" />;
-// local opt = <MainButton onClick={()=>{}} />;
-// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton onClick={function() end} />;
+// local opt = <MainButton onClick={function() end} ignore-prop />;
 // local opt = <MainButton /*RENAME*/[|goToRENAME|]="goTo" />;
 // local opt = <MainButton wrong />;
 
@@ -118,8 +118,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -136,8 +136,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -154,8 +154,8 @@
 // declare function /*RENAME*/[|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -172,8 +172,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = </*RENAME*/[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -190,8 +190,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = </*RENAME*/[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -208,8 +208,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = </*RENAME*/[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = </*RENAME*/[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -226,8 +226,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = </*RENAME*/[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = </*RENAME*/[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -244,8 +244,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = </*RENAME*/[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = <[|MainButtonRENAME|] wrong />;
 
@@ -262,8 +262,8 @@
 // declare function [|MainButtonRENAME|](props: ButtonProps | LinkProps): JSX.Element;
 // local opt = <[|MainButtonRENAME|] />;
 // local opt = <[|MainButtonRENAME|] children="chidlren" />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} />;
-// local opt = <[|MainButtonRENAME|] onClick={()=>{}} ignore-prop />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} />;
+// local opt = <[|MainButtonRENAME|] onClick={function() end} ignore-prop />;
 // local opt = <[|MainButtonRENAME|] goTo="goTo" />;
 // local opt = </*RENAME*/[|MainButtonRENAME|] wrong />;
 
@@ -274,8 +274,8 @@
 // --- (line: 19) skipped ---
 // local opt = <MainButton />;
 // local opt = <MainButton children="chidlren" />;
-// local opt = <MainButton onClick={()=>{}} />;
-// local opt = <MainButton onClick={()=>{}} /*RENAME*/[|ignore-propRENAME|] />;
+// local opt = <MainButton onClick={function() end} />;
+// local opt = <MainButton onClick={function() end} /*RENAME*/[|ignore-propRENAME|] />;
 // local opt = <MainButton goTo="goTo" />;
 // local opt = <MainButton wrong />;
 
@@ -284,7 +284,7 @@
 // === findRenameLocations ===
 // === /file.tsx ===
 // --- (line: 21) skipped ---
-// local opt = <MainButton onClick={()=>{}} />;
-// local opt = <MainButton onClick={()=>{}} ignore-prop />;
+// local opt = <MainButton onClick={function() end} />;
+// local opt = <MainButton onClick={function() end} ignore-prop />;
 // local opt = <MainButton goTo="goTo" />;
 // local opt = <MainButton /*RENAME*/[|wrongRENAME|] />;

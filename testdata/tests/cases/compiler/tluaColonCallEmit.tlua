@@ -28,6 +28,6 @@ function T:twice(): number
   return self:bump() + self:bump();
 end
 
-function raise(): never {
+function raise(): never
   throw T:bump();
-}
+end

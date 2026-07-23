@@ -1,9 +1,9 @@
 //// [tests/cases/compiler/contextuallyTypedFunctionOptionalAndRest.tlua] ////
 
 === contextuallyTypedFunctionOptionalAndRest.tlua ===
-local f: () => void = (a?, ...b) => {};
+local f: () => void = function(a?, ...b) end;
 >f : () => void
->(a?, ...b) => {} : (a?: any) => void
+>function(a?, ...b) end : (a?: any) => void
 >a : any
 >b : []
 

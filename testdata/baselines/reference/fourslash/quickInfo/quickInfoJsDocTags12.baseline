@@ -7,7 +7,7 @@
 //  * @param {Function} callback the callback function
 //  * @returns {number}
 //  */
-// function f(options, callback = null) {
+// function f(options, callback = null) end
 //          ^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -21,7 +21,6 @@
 // | 
 // | *@returns*
 // | ----------------------------------------------------------------------
-// }
 [
   {
     "marker": {

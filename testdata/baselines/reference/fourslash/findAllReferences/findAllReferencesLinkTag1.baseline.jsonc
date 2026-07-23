@@ -83,16 +83,14 @@
 
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.tlua ===
-// --- (line: 54) skipped ---
-// }
-// 
-// function nestor() {
-//     /** {@link [|r2|]} */
-//     function ref() { }
+// --- (line: 56) skipped ---
+// function nestor()
+//     /** {@link r2} */
+//     function ref() end
 //     /** @see {[|r2|]} */
-//     function d3() { }
-//     function [|r2|]/*FIND ALL REFS*/() { }
-// }
+//     function d3() end
+//     function [|r2|]/*FIND ALL REFS*/() end
+// end
 
 
 

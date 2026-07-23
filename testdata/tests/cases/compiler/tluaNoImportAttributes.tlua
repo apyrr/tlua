@@ -1,0 +1,12 @@
+// @filename: module.tlua
+return { value = 1 }
+
+// @filename: main.tlua
+// Import types accept only a module specifier; their former attributes
+// argument is not part of tlua syntax.
+type Module = import("./module", { with: { type: "json" } })
+
+function usesAssert(): number
+  local assert = 4
+  return assert
+end

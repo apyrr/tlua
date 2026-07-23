@@ -1,6 +1,7 @@
 tluaAsyncContract.tlua(6,1): error TLUA2304: Cannot find name 'declare'.
 tluaAsyncContract.tlua(6,9): error TLUA2304: Cannot find name 'namespace'.
 tluaAsyncContract.tlua(6,19): error TLUA2819: Namespace name cannot be 'coroutine'.
+tluaAsyncContract.tlua(6,29): error TLUA1128: Declaration or statement expected.
 tluaAsyncContract.tlua(7,12): error TLUA2391: Function implementation is missing or not immediately following the declaration.
 tluaAsyncContract.tlua(8,12): error TLUA2391: Function implementation is missing or not immediately following the declaration.
 tluaAsyncContract.tlua(27,3): error TLUA100023: An async function can only be called from an async context.
@@ -14,7 +15,7 @@ tluaAsyncContract.tlua(60,3): error TLUA100023: An async function can only be ca
 tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be called from an async context.
 
 
-==== tluaAsyncContract.tlua (12 errors) ====
+==== tluaAsyncContract.tlua (13 errors) ====
     // The tlua coroutine contract: an async function may only be called from an
     // async context. Async functions return their plain type (or pack), never
     // Promise<T>.
@@ -27,6 +28,8 @@ tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be ca
 !!! error TLUA2304: Cannot find name 'namespace'.
                       ~~~~~~~~~
 !!! error TLUA2819: Namespace name cannot be 'coroutine'.
+                                ~
+!!! error TLUA1128: Declaration or statement expected.
       function create(f: (...: any) => any): any;
                ~~~~~~
 !!! error TLUA2391: Function implementation is missing or not immediately following the declaration.
@@ -50,12 +53,12 @@ tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be ca
     end
     
     // Error: direct call from a sync function.
-    function syncCaller(): void {
+    function syncCaller(): void
       fetchOk("nope");
       ~~~~~~~
 !!! error TLUA100023: An async function can only be called from an async context.
 !!! related TLUA1356 tluaAsyncContract.tlua:26:10: Did you mean to mark this function as 'async'?
-    }
+    end
     
     // Error: call at top level.
     fetchOk("top");
@@ -63,13 +66,13 @@ tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be ca
 !!! error TLUA100023: An async function can only be called from an async context.
     
     // Error: inferred alias keeps the contract (the flag rides the signature).
-    function aliasCaller(): void {
+    function aliasCaller(): void
       local f = fetchOk;
       f("aliased");
       ~
 !!! error TLUA100023: An async function can only be called from an async context.
 !!! related TLUA1356 tluaAsyncContract.tlua:34:10: Did you mean to mark this function as 'async'?
-    }
+    end
     
     // OK: alias called from an async context.
     async function aliasAsyncCaller(): void
@@ -96,13 +99,13 @@ tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be ca
     end
     
     // Async arrow expressions participate too.
-    local asyncArrow = async (): number => 42;
-    function arrowSyncCaller(): void {
+    local asyncArrow = async function(): number return 42 end;
+    function arrowSyncCaller(): void
       asyncArrow(); // error
       ~~~~~~~~~~
 !!! error TLUA100023: An async function can only be called from an async context.
 !!! related TLUA1356 tluaAsyncContract.tlua:59:10: Did you mean to mark this function as 'async'?
-    }
+    end
     async function arrowAsyncCaller(): number
       return asyncArrow(); // OK
     end
@@ -111,12 +114,12 @@ tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be ca
     async function identityAsync<T>(x: T): T
       return x;
     end
-    function genericSyncCaller(): void {
+    function genericSyncCaller(): void
       identityAsync(1); // error
       ~~~~~~~~~~~~~
 !!! error TLUA100023: An async function can only be called from an async context.
 !!! related TLUA1356 tluaAsyncContract.tlua:70:10: Did you mean to mark this function as 'async'?
-    }
+    end
     async function genericAsyncCaller(): number
       return identityAsync(2); // OK
     end

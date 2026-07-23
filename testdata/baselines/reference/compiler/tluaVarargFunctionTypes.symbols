@@ -112,24 +112,24 @@ end
 
 // An arrow with a bare vararg, including with a return-type annotation: the
 // `(...` lookahead must not mistake these for a parenthesized vararg expression.
-local arrowBare = (...) => 1;
+local arrowBare = function(...) return 1 end;
 >arrowBare : Symbol(arrowBare, Decl(tluaVarargFunctionTypes.tlua, 53, 5))
-> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 53, 19))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 53, 27))
 
-local arrowTyped = (...): number => 1;
+local arrowTyped = function(...): number return 1 end;
 >arrowTyped : Symbol(arrowTyped, Decl(tluaVarargFunctionTypes.tlua, 54, 5))
-> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 54, 20))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 54, 28))
 
-local arrowAnnotated = (...: string): number => 1;
+local arrowAnnotated = function(...: string): number return 1 end;
 >arrowAnnotated : Symbol(arrowAnnotated, Decl(tluaVarargFunctionTypes.tlua, 55, 5))
-> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 55, 24))
+> : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 55, 32))
 
 // Every rest the *checker* synthesizes is a vararg too. An intersection of
 // signatures combines their parameters into a synthetic one whose elements have
 // no declarations to take labels from; the error below prints that signature, so
 // it pins the display: no `..._0` labels (unparseable), and the tail keeps `...`.
 type Fixed2 = (a: number, b: string) => void;
->Fixed2 : Symbol(Fixed2, Decl(tluaVarargFunctionTypes.tlua, 55, 50))
+>Fixed2 : Symbol(Fixed2, Decl(tluaVarargFunctionTypes.tlua, 55, 66))
 >a : Symbol(a, Decl(tluaVarargFunctionTypes.tlua, 61, 15))
 >b : Symbol(b, Decl(tluaVarargFunctionTypes.tlua, 61, 25))
 
@@ -141,7 +141,7 @@ type VarargTail = (x: number, y: string, ...: boolean) => void;
 
 local combined: Fixed2 & VarargTail = function(q: boolean, ...) end;
 >combined : Symbol(combined, Decl(tluaVarargFunctionTypes.tlua, 63, 5))
->Fixed2 : Symbol(Fixed2, Decl(tluaVarargFunctionTypes.tlua, 55, 50))
+>Fixed2 : Symbol(Fixed2, Decl(tluaVarargFunctionTypes.tlua, 55, 66))
 >VarargTail : Symbol(VarargTail, Decl(tluaVarargFunctionTypes.tlua, 61, 45))
 >q : Symbol(q, Decl(tluaVarargFunctionTypes.tlua, 63, 47))
 > : Symbol((Missing), Decl(tluaVarargFunctionTypes.tlua, 63, 58))

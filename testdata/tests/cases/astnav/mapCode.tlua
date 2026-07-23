@@ -9,11 +9,11 @@ function mapCode(
     host: LanguageServiceHost,
     formatContext: formatting.FormatContext,
     preferences: UserPreferences,
-): FileTextChanges[] {
+): FileTextChanges[]
     return textChanges.ChangeTracker.with(
         { host, formatContext, preferences },
-        changeTracker => {
-            local parsed = contents.map(c => parse(sourceFile, c));
+        function(changeTracker)
+            local parsed = contents.map(function(c) return parse(sourceFile, c) end);
             local flattenedLocations = focusLocations && flatten(focusLocations);
             for (local nodes of parsed) {
                 placeNodeGroup(
@@ -23,40 +23,40 @@ function mapCode(
                     flattenedLocations,
                 );
             }
-        },
+        end,
     );
-}
+end
 
 /**
  * Tries to parse something into either "top-level" statements, or into blocks
  * of class-context definitions.
  */
-function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
+function parse(sourceFile: SourceFile, content: string): NodeArray<Node>
     // We're going to speculatively parse different kinds of contexts to see
     // which one makes the most sense, and grab the NodeArray from there. Do
     // this as lazily as possible.
     local nodeKinds = [
         {
-            parse: () =>
+            parse: function() return
                 createSourceFile(
                     "__mapcode_content_nodes.tlua",
                     content,
                     sourceFile.languageVersion,
                     /*setParentNodes*/ true,
                     sourceFile.scriptKind,
-                ),
-            body: (sf: SourceFile) => sf.statements,
+                ) end,
+            body: function(sf: SourceFile) return sf.statements end,
         },
         {
-            parse: () =>
+            parse: function() return
                 createSourceFile(
                     "__mapcode_class_content_nodes.tlua",
                     `class __class {\n${content}\n}`,
                     sourceFile.languageVersion,
                     /*setParentNodes*/ true,
                     sourceFile.scriptKind,
-                ),
-            body: (cw: SourceFile) => (cw.statements[0] as ClassLikeDeclaration).members,
+                ) end,
+            body: function(cw: SourceFile) return (cw.statements[0] as ClassLikeDeclaration).members end,
         },
     ];
 
@@ -76,20 +76,20 @@ function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
     }
     // Heuristic: fewer errors = more likely to be the right kind.
     parsedNodes.sort(
-        (a, b) =>
+        function(a, b) return
             a.sourceFile.parseDiagnostics.length -
-            b.sourceFile.parseDiagnostics.length,
+            b.sourceFile.parseDiagnostics.length end,
     );
     local { body } = parsedNodes[0];
     return body;
-}
+end
 
 function placeNodeGroup(
     originalFile: SourceFile,
     changeTracker: ChangeTracker,
     changes: NodeArray<Node>,
     focusLocations?: TextSpan[],
-) {
+)
     if (isClassElement(changes[0]) || isTypeElement(changes[0])) {
         placeClassNodeGroup(
             originalFile,
@@ -106,24 +106,24 @@ function placeNodeGroup(
             focusLocations,
         );
     }
-}
+end
 
 function placeClassNodeGroup(
     originalFile: SourceFile,
     changeTracker: ChangeTracker,
     changes: NodeArray<ClassElement> | NodeArray<TypeElement>,
     focusLocations?: TextSpan[],
-) {
+)
     local classOrInterface;
     if (!focusLocations || !focusLocations.length) {
         classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
     }
     else {
-        classOrInterface = forEach(focusLocations, location =>
+        classOrInterface = forEach(focusLocations, function(location) return
             findAncestor(
                 getTokenAtPosition(originalFile, location.start),
                 or(isClassLike, isInterfaceDeclaration),
-            ));
+            ) end);
     }
 
     if (!classOrInterface) {
@@ -131,12 +131,12 @@ function placeClassNodeGroup(
         return;
     }
 
-    local firstMatch = classOrInterface.members.find(member => changes.some(change => matchNode(change, member)));
+    local firstMatch = classOrInterface.members.find(function(member) return changes.some(function(change) return matchNode(change, member) end) end);
     if (firstMatch) {
         // can't be undefined here, since we know we have at least one match.
         local lastMatch = findLast(
             classOrInterface.members as NodeArray<ClassElement | TypeElement>,
-            member => changes.some(change => matchNode(change, member)),
+            function(member) return changes.some(function(change) return matchNode(change, member) end) end,
         )!;
 
         forEach(changes, wipeNode);
@@ -155,14 +155,14 @@ function placeClassNodeGroup(
         classOrInterface.members[classOrInterface.members.length - 1],
         changes,
     );
-}
+end
 
 function placeStatements(
     originalFile: SourceFile,
     changeTracker: ChangeTracker,
     changes: NodeArray<Statement>,
     focusLocations?: TextSpan[],
-) {
+)
     if (!focusLocations?.length) {
         changeTracker.insertNodesAtEndOfFile(
             originalFile,
@@ -175,15 +175,15 @@ function placeStatements(
     for (local location of focusLocations) {
         local scope = findAncestor(
             getTokenAtPosition(originalFile, location.start),
-            (block): block is Block | SourceFile =>
+            function(block): block is Block | SourceFile return
                 or(isBlock, isSourceFile)(block) &&
-                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
         );
         if (scope) {
-            local start = scope.statements.find(stmt => changes.some(node => matchNode(node, stmt)));
+            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
             if (start) {
                 // Can't be undefined here, since we know we have at least one match.
-                local fin = findLast(scope.statements, stmt => changes.some(node => matchNode(node, stmt)))!;
+                local fin = findLast(scope.statements, function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end)!;
                 forEach(changes, wipeNode);
                 changeTracker.replaceNodeRangeWithNodes(
                     originalFile,
@@ -213,9 +213,9 @@ function placeStatements(
         scopeStatements[scopeStatements.length - 1],
         changes,
     );
-}
+end
 
-function matchNode(a: Node, b: Node): boolean {
+function matchNode(a: Node, b: Node): boolean
     if (a.kind ~= b.kind) {
         return false;
     }
@@ -272,15 +272,15 @@ function matchNode(a: Node, b: Node): boolean {
     }
 
     return false;
-}
+end
 
-function wipeNode(node: Mutable<Node>) {
+function wipeNode(node: Mutable<Node>)
     resetNodePositions(node);
     node.parent = undefined!;
-}
+end
 
-function resetNodePositions(node: Mutable<Node>) {
+function resetNodePositions(node: Mutable<Node>)
     node.pos = -1;
     node.end = -1;
     node.forEachChild(resetNodePositions);
-}
+end

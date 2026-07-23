@@ -9,7 +9,7 @@ declare function Child(props: { children?: any }): any;
 >props : Symbol(props, Decl(jsxNestedIndentation.tsx, 1, 23))
 >children : Symbol(children, Decl(jsxNestedIndentation.tsx, 1, 31))
 
-function Test() {
+function Test()
 >Test : Symbol(Test, Decl(jsxNestedIndentation.tsx, 1, 55))
 
     return <Child>
@@ -27,5 +27,6 @@ function Test() {
 
     </Child>
 >Child : Symbol(Child, Decl(jsxNestedIndentation.tsx, 0, 19))
-}
+
+end
 

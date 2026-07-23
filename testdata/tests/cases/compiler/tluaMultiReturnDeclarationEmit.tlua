@@ -4,24 +4,24 @@ declare function fromDts(): (number, string);
 declare function fromDtsVariadic(): (boolean, ...number);
 
 // @filename: main.tlua
-function annotated(): (number, string) {
+function annotated(): (number, string)
   return 1, "a";
-}
+end
 
-function inferred(cond: boolean) {
-  if (cond) {
+function inferred(cond: boolean)
+  if cond then
     return 1, "a";
-  }
+  end
   return 2;
-}
+end
 
-function variadic(): (number, ...string) {
+function variadic(): (number, ...string)
   return 1, "a", "b";
-}
+end
 
-function optional(): (number, string?) {
+function optional(): (number, string?)
   return 1;
-}
+end
 
 type PairCallback = () => (number, string);
 

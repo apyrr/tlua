@@ -1,5 +1,5 @@
 // === Inlay Hints ===
-    bar = function (x?): void {
+    bar = function (x?): void
                       ^
 {
   "position": {

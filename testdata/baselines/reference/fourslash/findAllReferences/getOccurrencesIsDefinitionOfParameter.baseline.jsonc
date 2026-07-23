@@ -1,13 +1,13 @@
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfParameter.tlua ===
-// function f(/*FIND ALL REFS*/[|x|]: number) {
+// function f(/*FIND ALL REFS*/[|x|]: number)
 //   return [|x|] + 1
-// }
+// end
 
 
 
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfParameter.tlua ===
-// function f([|x|]: number) {
+// function f([|x|]: number)
 //   return /*FIND ALL REFS*/[|x|] + 1
-// }
+// end

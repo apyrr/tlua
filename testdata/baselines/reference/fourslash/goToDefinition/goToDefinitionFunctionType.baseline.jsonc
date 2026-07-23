@@ -2,9 +2,9 @@
 // === /goToDefinitionFunctionType.tlua ===
 // <|local [|c|]: () => void;|>
 // /*GOTO DEF*/c();
-// function test(cb: () => void) {
+// function test(cb: () => void)
 //     cb();
-// }
+// end
 // --- (line: 6) skipped ---
 
 
@@ -13,9 +13,9 @@
 // === /goToDefinitionFunctionType.tlua ===
 // local c: () => void;
 // c();
-// function test(<|[|cb|]: () => void|>) {
+// function test(<|[|cb|]: () => void|>)
 //     /*GOTO DEF*/cb();
-// }
+// end
 // class C {
 //     prop: () => void;
 // --- (line: 8) skipped ---

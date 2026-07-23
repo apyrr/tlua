@@ -6,10 +6,14 @@ tluaColonCallParseErrors.tlua(11,13): error TLUA1128: Declaration or statement e
 tluaColonCallParseErrors.tlua(11,17): error TLUA1109: Expression expected.
 tluaColonCallParseErrors.tlua(16,13): error TLUA1477: An instantiation expression cannot be followed by a property access.
 tluaColonCallParseErrors.tlua(16,22): error TLUA2339: Property 'ping' does not exist on type '(self: {}, x: number) => number'.
-tluaColonCallParseErrors.tlua(20,24): error TLUA1005: '=>' expected.
+tluaColonCallParseErrors.tlua(20,14): error TLUA2304: Cannot find name 'b'.
+tluaColonCallParseErrors.tlua(20,15): error TLUA1005: ')' expected.
+tluaColonCallParseErrors.tlua(20,17): error TLUA1434: Unexpected keyword or identifier.
+tluaColonCallParseErrors.tlua(20,17): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
+tluaColonCallParseErrors.tlua(20,23): error TLUA1128: Declaration or statement expected.
 
 
-==== tluaColonCallParseErrors.tlua (9 errors) ====
+==== tluaColonCallParseErrors.tlua (13 errors) ====
     local M = { ping = function(self: {}) return 1; end };
     
     // A colon access exists only as a call: Lua rejects `obj:f` without arguments.
@@ -46,8 +50,16 @@ tluaColonCallParseErrors.tlua(20,24): error TLUA1005: '=>' expected.
     // Error recovery: an annotation-shaped `ident : ident` in invalid code must
     // not swallow the declarations that follow it into a bogus argument list.
     local bad = (b: number);
-                           ~
-!!! error TLUA1005: '=>' expected.
+                 ~
+!!! error TLUA2304: Cannot find name 'b'.
+                  ~
+!!! error TLUA1005: ')' expected.
+                    ~~~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
+                    ~~~~~~
+!!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
+                          ~
+!!! error TLUA1128: Declaration or statement expected.
     declare fine: (n: number) => void;
     fine(1);
     

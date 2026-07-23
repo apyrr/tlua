@@ -8,7 +8,7 @@ class A {
   constructor(readonly children: (A | null)[]) {}
 }
 
-function getNodes(): A[] {
+function getNodes(): A[]
 >getNodes : Symbol(getNodes, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 4, 1))
 >A : Symbol(A)
 
@@ -20,13 +20,13 @@ function getNodes(): A[] {
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
 >A : Symbol(A)
 
-  while (current ~= null) {
+  while current ~= null do
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
 
     local firstChild = null;
 >firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
 
-    if (out.length) {
+    if out.length then
 >out : Symbol(out, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 7, 7))
 
       current = current.next;
@@ -34,7 +34,7 @@ function getNodes(): A[] {
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
 
       continue;
-    }
+    end
 
     for i = 0, current.children.length - 1 do
 >i : Symbol(i, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 19, 7))
@@ -45,10 +45,10 @@ function getNodes(): A[] {
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
 >i : Symbol(i, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 19, 7))
 
-      if (child) {
+      if child then
 >child : Symbol(child, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 20, 11))
 
-        if (!firstChild) {
+        if not firstChild then
 >firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
 
           firstChild = child;
@@ -58,21 +58,25 @@ function getNodes(): A[] {
           firstChild.next = current.next;
 >firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
-        }
+
+        end
 
         child.next = current.next;
 >child : Symbol(child, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 20, 11))
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
-      }
+
+      end
     end
 
     current = firstChild || current.next;
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
 >firstChild : Symbol(firstChild, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 12, 9))
 >current : Symbol(current, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 9, 7))
-  }
+
+  end
 
   return out;
 >out : Symbol(out, Decl(circularControlFlowNarrowingWithCurrentElement01.tlua, 7, 7))
-}
+
+end
 

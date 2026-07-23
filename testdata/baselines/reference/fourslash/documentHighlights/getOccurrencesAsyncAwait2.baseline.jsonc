@@ -1,55 +1,55 @@
 // === documentHighlights ===
 // === /getOccurrencesAsyncAwait2.tlua ===
-// /*HIGHLIGHTS*/[|async|] function f() {
+// /*HIGHLIGHTS*/[|async|] function f()
 //  await 100;
 //  await await 200;
-//  return await async function () {
+//  return await async function ()
 // --- (line: 5) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesAsyncAwait2.tlua ===
-// async function f() {
+// async function f()
 //  /*HIGHLIGHTS*/await 100;
 //  await await 200;
-//  return await async function () {
+//  return await async function ()
 //    await 300;
-//  }
-// }
+//  end
+// end
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesAsyncAwait2.tlua ===
-// async function f() {
+// async function f()
 //  await 100;
 //  /*HIGHLIGHTS*/await await 200;
-//  return await async function () {
+//  return await async function ()
 //    await 300;
-//  }
-// }
+//  end
+// end
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesAsyncAwait2.tlua ===
-// async function f() {
+// async function f()
 //  await 100;
 //  await /*HIGHLIGHTS*/await 200;
-//  return await async function () {
+//  return await async function ()
 //    await 300;
-//  }
-// }
+//  end
+// end
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesAsyncAwait2.tlua ===
-// async function f() {
+// async function f()
 //  await 100;
 //  await await 200;
-//  return /*HIGHLIGHTS*/await async function () {
+//  return /*HIGHLIGHTS*/await async function ()
 //    await 300;
-//  }
-// }
+//  end
+// end

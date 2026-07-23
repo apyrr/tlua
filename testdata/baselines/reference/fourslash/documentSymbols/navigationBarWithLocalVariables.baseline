@@ -1,9 +1,9 @@
 // === Document Symbols ===
 // === /navigationBarWithLocalVariables.tlua ===
-// <|function [|{| name: x, kind: Function |}x|](){
+// <|function [|{| name: x, kind: Function |}x|]()
 // 	local <|[|{| name: x, kind: Variable |}x|] = Object()|>
 // 	x.foo = ""
-// }|>
+// end|>
 
 // === Details ===
 (Function) x

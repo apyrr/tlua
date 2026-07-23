@@ -12,8 +12,8 @@ local World = "hello";
 return { World = World };
 //// [/user/username/projects/sample1/core/index.tlua] *new* 
 local someString: string = "HELLO WORLD";
-function leftPad(s: string, n: number) { return s + n; }
-function multiply(a: number, b: number) { return a * b; }
+function leftPad(s: string, n: number) return s + n; end
+function multiply(a: number, b: number) return a * b; end
 return { someString = someString, leftPad = leftPad, multiply = multiply };
 //// [/user/username/projects/sample1/core/some_decl.d.tlua] *new* 
 declare dts: any;
@@ -28,9 +28,9 @@ declare dts: any;
 }
 //// [/user/username/projects/sample1/logic/index.tlua] *new* 
 local c = require('core.index');
-function getSecondsInDay() {
+function getSecondsInDay()
     return c.multiply(10, 15);
-}
+end
 local mod = require('core.anotherModule');
 return { getSecondsInDay = getSecondsInDay, m = mod };
 //// [/user/username/projects/sample1/logic/tluaconfig.json] *new* 
@@ -118,12 +118,16 @@ return { World = World };
 
 //// [/user/username/projects/sample1/core/index.lua] *new* 
 local someString = "HELLO WORLD";
-function leftPad(s, n) { return s + n; }
-function multiply(a, b) { return a * b; }
+function leftPad(s, n)
+    return s + n;
+end
+function multiply(a, b)
+    return a * b;
+end
 return { someString = someString, leftPad = leftPad, multiply = multiply };
 
 //// [/user/username/projects/sample1/core/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.luajit.d.tlua","./anotherModule.tlua","./index.tlua","./some_decl.d.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"de8b11d3974d80d7f27a2b97bf4ebc60-local World = \"hello\";\nreturn { World = World };","97fc4d7f9638c00045b15c003b710ad6-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) { return s + n; }\nfunction multiply(a: number, b: number) { return a * b; }\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",{"version":"42d1e28e7b1a08aaac11b6695520b779-declare dts: any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"target":99}}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.luajit.d.tlua","./anotherModule.tlua","./index.tlua","./some_decl.d.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"de8b11d3974d80d7f27a2b97bf4ebc60-local World = \"hello\";\nreturn { World = World };","a949631500033123bc74fbbc35557a06-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) return s + n; end\nfunction multiply(a: number, b: number) return a * b; end\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",{"version":"42d1e28e7b1a08aaac11b6695520b779-declare dts: any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"target":99}}
 //// [/user/username/projects/sample1/core/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -167,8 +171,8 @@ return { someString = someString, leftPad = leftPad, multiply = multiply };
     },
     {
       "fileName": "./index.tlua",
-      "version": "97fc4d7f9638c00045b15c003b710ad6-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) { return s + n; }\nfunction multiply(a: number, b: number) { return a * b; }\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
-      "signature": "97fc4d7f9638c00045b15c003b710ad6-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) { return s + n; }\nfunction multiply(a: number, b: number) { return a * b; }\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
+      "version": "a949631500033123bc74fbbc35557a06-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) return s + n; end\nfunction multiply(a: number, b: number) return a * b; end\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
+      "signature": "a949631500033123bc74fbbc35557a06-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) return s + n; end\nfunction multiply(a: number, b: number) return a * b; end\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -238,7 +242,7 @@ Found 1 error in core/tluaconfig.json[90m:6[0m
 //// [/user/username/projects/sample1/core/anotherModule.lua] *rewrite with same content*
 //// [/user/username/projects/sample1/core/index.lua] *rewrite with same content*
 //// [/user/username/projects/sample1/core/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":[[2,4]],"fileNames":["lib.luajit.d.tlua","./anotherModule.tlua","./index.tlua","./some_decl.d.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"de8b11d3974d80d7f27a2b97bf4ebc60-local World = \"hello\";\nreturn { World = World };","97fc4d7f9638c00045b15c003b710ad6-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) { return s + n; }\nfunction multiply(a: number, b: number) { return a * b; }\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",{"version":"42d1e28e7b1a08aaac11b6695520b779-declare dts: any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"target":1}}
+{"version":"FakeTSVersion","errors":true,"root":[[2,4]],"fileNames":["lib.luajit.d.tlua","./anotherModule.tlua","./index.tlua","./some_decl.d.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"de8b11d3974d80d7f27a2b97bf4ebc60-local World = \"hello\";\nreturn { World = World };","a949631500033123bc74fbbc35557a06-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) return s + n; end\nfunction multiply(a: number, b: number) return a * b; end\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",{"version":"42d1e28e7b1a08aaac11b6695520b779-declare dts: any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"target":1}}
 //// [/user/username/projects/sample1/core/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -283,8 +287,8 @@ Found 1 error in core/tluaconfig.json[90m:6[0m
     },
     {
       "fileName": "./index.tlua",
-      "version": "97fc4d7f9638c00045b15c003b710ad6-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) { return s + n; }\nfunction multiply(a: number, b: number) { return a * b; }\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
-      "signature": "97fc4d7f9638c00045b15c003b710ad6-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) { return s + n; }\nfunction multiply(a: number, b: number) { return a * b; }\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
+      "version": "a949631500033123bc74fbbc35557a06-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) return s + n; end\nfunction multiply(a: number, b: number) return a * b; end\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
+      "signature": "a949631500033123bc74fbbc35557a06-local someString: string = \"HELLO WORLD\";\nfunction leftPad(s: string, n: number) return s + n; end\nfunction multiply(a: number, b: number) return a * b; end\nreturn { someString = someString, leftPad = leftPad, multiply = multiply };",
       "impliedNodeFormat": "CommonJS"
     },
     {

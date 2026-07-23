@@ -18,11 +18,11 @@ function over(a: string): (string, number);
 >over : { (a: number): (number, string); (a: string): (string, number); }
 >a : string
 
-function over(a: number | string): (number | string, string | number) {
+function over(a: number | string): (number | string, string | number)
 >over : { (a: number): (number, string); (a: string): (string, number); }
 >a : string | number
 
-  if (type(a) == "number") {
+  if type(a) == "number" then
 >type(a) == "number" : boolean
 >type(a) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
@@ -33,12 +33,14 @@ function over(a: number | string): (number | string, string | number) {
 >a, "n" : number, string
 >a : number
 >"n" : "n"
-  }
+
+  end
   return a, 0;
 >a, 0 : string, number
 >a : string
 >0 : 0
-}
+
+end
 
 local a = ambient();
 >a : number

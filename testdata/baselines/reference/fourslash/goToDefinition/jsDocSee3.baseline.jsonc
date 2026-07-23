@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /jsDocSee3.tlua ===
-// function foo (a: string) {
+// function foo (a: string)
 //     /**
-//      * @see {/*GOTO DEF*/a}
+//      * @see {/*GOTO DEF*/a end
 //      */
-//     function bar (<|[|a|]: string|>) {
-//     }
+//     function bar (a: string) end
 // }

@@ -9,7 +9,7 @@
 //  * @param {Function} callback the callback function
 //  * @returns {number}
 //  */
-// function fn(options, callback = null) { }
+// function fn(options, callback = null) end
 //          ^^
 // | ----------------------------------------------------------------------
 // | ```tlua

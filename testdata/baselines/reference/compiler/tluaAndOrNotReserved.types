@@ -79,8 +79,8 @@ local not = 3;
 >3 : 3
 
 // Declaration names.
-function or() {}
-> : () => any
+function or() end
+> : () => void
 >or() : any
 > : any
 >() : any

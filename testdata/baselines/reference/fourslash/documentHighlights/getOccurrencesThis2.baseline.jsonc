@@ -3,20 +3,74 @@
 // this;
 // this;
 // 
-// function f() {
+// function f()
 //     /*HIGHLIGHTS*/[|this|];
 //     [|this|];
-//     () => [|this|];
-//     () => {
-//         if ([|this|]) {
-//             [|this|];
-//         }
-//         else {
-//             [|this|].[|this|];
-//         }
+//     function() return this end;
+//     function()
+//         if (this) {
+// --- (line: 10) skipped ---
+
+// --- (line: 43) skipped ---
+// }
+// 
+// class A {
+//     public b = [|this|].method1;
+// 
+//     public method1() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 55) skipped ---
+
+// --- (line: 66) skipped ---
 //     }
-//     function inside() {
-// --- (line: 17) skipped ---
+// 
+//     private method2() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 75) skipped ---
+
+// --- (line: 85) skipped ---
+//         end
+//     }
+// 
+//     public static staticB = [|this|].staticMethod1;
+// 
+//     public static staticMethod1() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 97) skipped ---
+
+// --- (line: 108) skipped ---
+//     }
+// 
+//     private static staticMethod2() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 117) skipped ---
+
+// --- (line: 130) skipped ---
+// 
+// local x = {
+//     f() {
+//         [|this|];
+//     },
+//     g() {
+//         [|this|];
+//     }
+// }
 
 
 
@@ -25,105 +79,145 @@
 // this;
 // this;
 // 
-// function f() {
+// function f()
 //     [|this|];
 //     /*HIGHLIGHTS*/[|this|];
-//     () => [|this|];
-//     () => {
-//         if ([|this|]) {
-//             [|this|];
-//         }
-//         else {
-//             [|this|].[|this|];
-//         }
+//     function() return this end;
+//     function()
+//         if (this) {
+// --- (line: 10) skipped ---
+
+// --- (line: 43) skipped ---
+// }
+// 
+// class A {
+//     public b = [|this|].method1;
+// 
+//     public method1() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 55) skipped ---
+
+// --- (line: 66) skipped ---
 //     }
-//     function inside() {
-// --- (line: 17) skipped ---
+// 
+//     private method2() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 75) skipped ---
+
+// --- (line: 85) skipped ---
+//         end
+//     }
+// 
+//     public static staticB = [|this|].staticMethod1;
+// 
+//     public static staticMethod1() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 97) skipped ---
+
+// --- (line: 108) skipped ---
+//     }
+// 
+//     private static staticMethod2() {
+//         [|this|];
+//         [|this|];
+//         function() return this end;
+//         function()
+//             if (this) {
+// --- (line: 117) skipped ---
+
+// --- (line: 130) skipped ---
+// 
+// local x = {
+//     f() {
+//         [|this|];
+//     },
+//     g() {
+//         [|this|];
+//     }
+// }
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThis2.tlua ===
-// this;
-// this;
-// 
-// function f() {
-//     [|this|];
-//     [|this|];
-//     () => /*HIGHLIGHTS*/[|this|];
-//     () => {
-//         if ([|this|]) {
-//             [|this|];
-//         }
-//         else {
-//             [|this|].[|this|];
-//         }
-//     }
-//     function inside() {
-// --- (line: 17) skipped ---
+// --- (line: 3) skipped ---
+// function f()
+//     this;
+//     this;
+//     function() return /*HIGHLIGHTS*/[|this|] end;
+//     function()
+//         if (this) {
+//             this;
+// --- (line: 11) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThis2.tlua ===
-// this;
-// this;
-// 
-// function f() {
-//     [|this|];
-//     [|this|];
-//     () => [|this|];
-//     () => {
+// --- (line: 3) skipped ---
+// function f()
+//     this;
+//     this;
+//     function() return [|this|] end;
+//     function()
 //         if (/*HIGHLIGHTS*/[|this|]) {
 //             [|this|];
 //         }
 //         else {
 //             [|this|].[|this|];
 //         }
-//     }
-//     function inside() {
+//     end
+//     function inside()
 // --- (line: 17) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThis2.tlua ===
-// this;
-// this;
-// 
-// function f() {
-//     [|this|];
-//     [|this|];
-//     () => [|this|];
-//     () => {
+// --- (line: 3) skipped ---
+// function f()
+//     this;
+//     this;
+//     function() return [|this|] end;
+//     function()
 //         if ([|this|]) {
 //             /*HIGHLIGHTS*/[|this|];
 //         }
 //         else {
 //             [|this|].[|this|];
 //         }
-//     }
-//     function inside() {
+//     end
+//     function inside()
 // --- (line: 17) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThis2.tlua ===
-// this;
-// this;
-// 
-// function f() {
-//     [|this|];
-//     [|this|];
-//     () => [|this|];
-//     () => {
+// --- (line: 3) skipped ---
+// function f()
+//     this;
+//     this;
+//     function() return [|this|] end;
+//     function()
 //         if ([|this|]) {
 //             [|this|];
 //         }
 //         else {
 //             /*HIGHLIGHTS*/[|this|].[|this|];
 //         }
-//     }
-//     function inside() {
+//     end
+//     function inside()
 // --- (line: 17) skipped ---

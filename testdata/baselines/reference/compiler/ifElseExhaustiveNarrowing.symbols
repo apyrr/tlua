@@ -77,7 +77,7 @@ function viaChain(source: ClientSource | ServiceSource | nil): boolean
   end
 end
 
-function neverReached(_v: never): void {}
+function neverReached(_v: never): void end
 >neverReached : Symbol(neverReached, Decl(ifElseExhaustiveNarrowing.tlua, 34, 3))
 >_v : Symbol(_v, Decl(ifElseExhaustiveNarrowing.tlua, 36, 22))
 

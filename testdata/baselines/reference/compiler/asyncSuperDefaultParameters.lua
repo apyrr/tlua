@@ -9,7 +9,7 @@ class B {
 
 class C extends B {
     f() {
-        local g = async (b = super.m()) => b;
+        local g = async function(b = super.m()) return b end;
         return g();
     }
 
@@ -22,24 +22,26 @@ class C extends B {
 //// [asyncSuperDefaultParameters.lua]
 class;
 B;
-{
+do
     m();
-    {
+    do
         return 1;
-    }
-}
+    end
+end
 class;
 C;
 B;
-{
+do
     f();
-    {
-        local g = async function(b = super.m()) return b end;
+    do
+        local g = async function(b = super.m())
+            return b;
+        end;
         return g();
-    }
+    end
     async;
     h(b = super.m());
-    {
+    do
         return b;
-    }
-}
+    end
+end

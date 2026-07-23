@@ -1,9 +1,9 @@
 // === goToDefinition ===
 // === /gotoDefinitionInObjectBindingPattern1.tlua ===
-// function bar<T>(onfulfilled: (value: T) => void) {
+// function bar<T>(onfulfilled: (value: T) => void)
 //   return undefined;
-// }
+// end
 // interface Test {
 //   <|[|prop2|]: number|>
 // }
-// bar<Test>(({pr/*GOTO DEF*/op2})=>{});
+// bar<Test>(function({pr/*GOTO DEF*/op2}) end);

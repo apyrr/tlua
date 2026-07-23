@@ -1,18 +1,18 @@
 //// [tests/cases/compiler/expandoFunctionAsAssertion.tlua] ////
 
 === expandoFunctionAsAssertion.tlua ===
-function example() {}
+function example() end
 >example : { (): void; isFoo: (value: string) => asserts value is 'foo'; }
 
 example.isFoo = function(value: string): asserts value is 'foo'
->example.isFoo = function(value: string): asserts value is 'foo'  if (value ~= 'foo') {    throw new Error('Not foo');  }end : (value: string) => asserts value is 'foo'
+>example.isFoo = function(value: string): asserts value is 'foo'  if value ~= 'foo' then    throw new Error('Not foo');  endend : (value: string) => asserts value is 'foo'
 >example.isFoo : (value: string) => asserts value is 'foo'
 >example : { (): void; isFoo: (value: string) => asserts value is 'foo'; }
 >isFoo : (value: string) => asserts value is 'foo'
->function(value: string): asserts value is 'foo'  if (value ~= 'foo') {    throw new Error('Not foo');  }end : (value: string) => asserts value is 'foo'
+>function(value: string): asserts value is 'foo'  if value ~= 'foo' then    throw new Error('Not foo');  endend : (value: string) => asserts value is 'foo'
 >value : string
 
-  if (value ~= 'foo') {
+  if value ~= 'foo' then
 >value ~= 'foo' : boolean
 >value : string
 >'foo' : "foo"
@@ -21,7 +21,8 @@ example.isFoo = function(value: string): asserts value is 'foo'
 >new Error('Not foo') : any
 >Error : any
 >'Not foo' : "Not foo"
-  }
+
+  end
 end;
 
 example.isFoo('test');

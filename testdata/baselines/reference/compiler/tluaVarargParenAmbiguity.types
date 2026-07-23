@@ -29,29 +29,29 @@ local withVararg = (..., 2);
 
 // Still arrows: a bare vararg parameter list, one with the (ambiguous) return
 // type colon, and an annotated vararg.
-local arrow = (...) => 1;
+local arrow = function(...) return 1 end;
 >arrow : (...: any) => number
->(...) => 1 : (...: any) => number
+>function(...) return 1 end : (...: any) => number
 > : any[]
 >1 : 1
 
-local arrowWithReturnType = (...): number => 2;
+local arrowWithReturnType = function(...): number return 2 end;
 >arrowWithReturnType : (...: any) => number
->(...): number => 2 : (...: any) => number
+>function(...): number return 2 end : (...: any) => number
 > : any[]
 >2 : 2
 
-local arrowAnnotated = (...: string) => 3;
+local arrowAnnotated = function(...: string) return 3 end;
 >arrowAnnotated : (...: string) => number
->(...: string) => 3 : (...: string) => number
+>function(...: string) return 3 end : (...: string) => number
 > : string[]
 >3 : 3
 
 // A misplaced vararg is still an arrow when the `=>` says so -- the parameter
 // grammar reports it precisely (a rest parameter must be last).
-local misplacedInArrow = (..., x: number) => x;
+local misplacedInArrow = function(..., x: number) return x end;
 >misplacedInArrow : (...: any, x: number) => number
->(..., x: number) => x : (...: any, x: number) => number
+>function(..., x: number) return x end : (...: any, x: number) => number
 > : any[]
 >x : number
 >x : number

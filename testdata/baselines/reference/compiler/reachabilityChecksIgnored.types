@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/reachabilityChecksIgnored.tlua] ////
 
 === reachabilityChecksIgnored.tlua ===
-function a() {
+function a()
 >a : () => void
 
     throw new Error("");
@@ -16,9 +16,10 @@ function a() {
 >console : any
 >log : any
 >"unreachable" : "unreachable"
-}
 
-function b() {
+end
+
+function b()
 >b : () => void
 
     throw new Error("");
@@ -33,5 +34,6 @@ function b() {
 >console : any
 >log : any
 >"unreachable" : "unreachable"
-}
+
+end
 

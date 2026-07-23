@@ -2,7 +2,7 @@ currentDirectory::/user/username/projects/myproject
 useCaseSensitiveFileNames::true
 Input::
 //// [/user/username/projects/myproject/index.tlua] *new* 
-local fn = (a: string, b: string) => b;
+local fn = function(a: string, b: string) return b end;
 //// [/user/username/projects/myproject/tluaconfig.json] *new* 
 {
     "compilerOptions": {
@@ -15,10 +15,10 @@ ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
 
-[96mindex.tlua[0m:[93m1[0m:[93m13[0m - [91merror[0m[90m TLUA6133: [0m'a' is declared but its value is never read.
+[96mindex.tlua[0m:[93m1[0m:[93m21[0m - [91merror[0m[90m TLUA6133: [0m'a' is declared but its value is never read.
 
-[7m1[0m local fn = (a: string, b: string) => b;
-[7m [0m [91m            ~[0m
+[7m1[0m local fn = function(a: string, b: string) return b end;
+[7m [0m [91m                    ~[0m
 
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
@@ -47,7 +47,9 @@ interface Symbol {
 declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/user/username/projects/myproject/index.lua] *new* 
-local fn = function(a, b) return b end;
+local fn = function(a, b)
+    return b;
+end;
 
 //// [/user/username/projects/myproject/tluaconfig.tluabuildinfo] *new* 
 {"version":"FakeTSVersion","root":["./index.tlua"],"semanticErrors":true}

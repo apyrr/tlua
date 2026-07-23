@@ -10,14 +10,11 @@
 //                 local x = undefined;
 //     }
 // }
-// [|else            if|] (null) {
+// [|else|]            if (null) {
 // }
-// [|else|] /* whar garbl */ [|if|] (undefined) {
+// else /* whar garbl */ if (undefined) {
 // }
-// [|else|]
-// [|if|] (false) {
-// }
-// [|else|] { }
+// --- (line: 18) skipped ---
 
 
 
@@ -33,103 +30,67 @@
 //                 local x = undefined;
 //     }
 // }
-// /*HIGHLIGHTS*/[|else            if|] (null) {
+// /*HIGHLIGHTS*/[|else|]            if (null) {
 // }
-// [|else|] /* whar garbl */ [|if|] (undefined) {
+// else /* whar garbl */ if (undefined) {
 // }
-// [|else|]
-// [|if|] (false) {
-// }
-// [|else|] { }
+// --- (line: 18) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesIfElse.tlua ===
-// [|if|] (true) {
-//     if (false) {
-//     }
-//     else {
-// --- (line: 5) skipped ---
-
 // --- (line: 10) skipped ---
 //                 local x = undefined;
 //     }
 // }
-// [|else            if|] (null) {
+// else            [|if|] (null) {
 // }
-// /*HIGHLIGHTS*/[|else|] /* whar garbl */ [|if|] (undefined) {
+// /*HIGHLIGHTS*/[|else|] /* whar garbl */ if (undefined) {
 // }
-// [|else|]
-// [|if|] (false) {
+// else
+// if (false) {
 // }
-// [|else|] { }
+// else { }
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesIfElse.tlua ===
-// [|if|] (true) {
-//     if (false) {
-//     }
-//     else {
-// --- (line: 5) skipped ---
-
-// --- (line: 10) skipped ---
-//                 local x = undefined;
-//     }
+// --- (line: 12) skipped ---
 // }
-// [|else            if|] (null) {
+// else            if (null) {
 // }
-// [|else|] /* whar garbl */ /*HIGHLIGHTS*/[|if|] (undefined) {
+// else /* whar garbl */ /*HIGHLIGHTS*/[|if|] (undefined) {
 // }
 // [|else|]
-// [|if|] (false) {
+// if (false) {
 // }
-// [|else|] { }
+// else { }
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesIfElse.tlua ===
-// [|if|] (true) {
-//     if (false) {
-//     }
-//     else {
-// --- (line: 5) skipped ---
-
-// --- (line: 10) skipped ---
-//                 local x = undefined;
-//     }
+// --- (line: 12) skipped ---
 // }
-// [|else            if|] (null) {
+// else            if (null) {
 // }
-// [|else|] /* whar garbl */ [|if|] (undefined) {
+// else /* whar garbl */ [|if|] (undefined) {
 // }
 // /*HIGHLIGHTS*/[|else|]
-// [|if|] (false) {
+// if (false) {
 // }
-// [|else|] { }
+// else { }
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesIfElse.tlua ===
-// [|if|] (true) {
-//     if (false) {
-//     }
-//     else {
-// --- (line: 5) skipped ---
-
-// --- (line: 10) skipped ---
-//                 local x = undefined;
-//     }
+// --- (line: 15) skipped ---
+// else /* whar garbl */ if (undefined) {
 // }
-// [|else            if|] (null) {
-// }
-// [|else|] /* whar garbl */ [|if|] (undefined) {
-// }
-// [|else|]
+// else
 // /*HIGHLIGHTS*/[|if|] (false) {
 // }
 // [|else|] { }
@@ -138,21 +99,10 @@
 
 // === documentHighlights ===
 // === /getOccurrencesIfElse.tlua ===
-// [|if|] (true) {
-//     if (false) {
-//     }
-//     else {
-// --- (line: 5) skipped ---
-
-// --- (line: 10) skipped ---
-//                 local x = undefined;
-//     }
+// --- (line: 15) skipped ---
+// else /* whar garbl */ if (undefined) {
 // }
-// [|else            if|] (null) {
-// }
-// [|else|] /* whar garbl */ [|if|] (undefined) {
-// }
-// [|else|]
+// else
 // [|if|] (false) {
 // }
 // /*HIGHLIGHTS*/[|else|] { }

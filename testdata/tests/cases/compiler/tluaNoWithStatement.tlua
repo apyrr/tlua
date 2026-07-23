@@ -1,0 +1,9 @@
+// With statements are removed, and `with` is an ordinary identifier.
+with (scope) {
+  value;
+}
+
+function usesWith(): number
+  local with = 3
+  return with
+end

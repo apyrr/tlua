@@ -108,13 +108,14 @@ function nested(w: number, h: number): number
 >1 : 1
 >h : number
 
-      if (count > 100) {
+      if (count > 100) then
+>(count > 100) : boolean
 >count > 100 : boolean
 >count : number
 >100 : 100
 
         break;
-      }
+      end
       count = count + 1;
 >count = count + 1 : number
 >count : number

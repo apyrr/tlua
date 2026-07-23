@@ -58,19 +58,20 @@ async function handler(): number
 end
 
 // Error: direct call from a sync function.
-function syncCaller(): void {
+function syncCaller(): void
 >syncCaller : Symbol(syncCaller, Decl(tluaAsyncContract.tlua, 22, 3))
 
   fetchOk("nope");
 >fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
-}
+
+end
 
 // Error: call at top level.
 fetchOk("top");
 >fetchOk : Symbol(fetchOk, Decl(tluaAsyncContract.tlua, 8, 1))
 
 // Error: inferred alias keeps the contract (the flag rides the signature).
-function aliasCaller(): void {
+function aliasCaller(): void
 >aliasCaller : Symbol(aliasCaller, Decl(tluaAsyncContract.tlua, 30, 15))
 
   local f = fetchOk;
@@ -79,11 +80,12 @@ function aliasCaller(): void {
 
   f("aliased");
 >f : Symbol(f, Decl(tluaAsyncContract.tlua, 34, 7))
-}
+
+end
 
 // OK: alias called from an async context.
 async function aliasAsyncCaller(): void
->aliasAsyncCaller : Symbol(aliasAsyncCaller, Decl(tluaAsyncContract.tlua, 36, 1))
+>aliasAsyncCaller : Symbol(aliasAsyncCaller, Decl(tluaAsyncContract.tlua, 36, 3))
 
   local f = fetchOk;
 >f : Symbol(f, Decl(tluaAsyncContract.tlua, 40, 7))
@@ -125,17 +127,18 @@ async function pingpong(n: number): number
 end
 
 // Async arrow expressions participate too.
-local asyncArrow = async (): number => 42;
+local asyncArrow = async function(): number return 42 end;
 >asyncArrow : Symbol(asyncArrow, Decl(tluaAsyncContract.tlua, 57, 5))
 
-function arrowSyncCaller(): void {
->arrowSyncCaller : Symbol(arrowSyncCaller, Decl(tluaAsyncContract.tlua, 57, 42))
+function arrowSyncCaller(): void
+>arrowSyncCaller : Symbol(arrowSyncCaller, Decl(tluaAsyncContract.tlua, 57, 58))
 
   asyncArrow(); // error
 >asyncArrow : Symbol(asyncArrow, Decl(tluaAsyncContract.tlua, 57, 5))
-}
+
+end
 async function arrowAsyncCaller(): number
->arrowAsyncCaller : Symbol(arrowAsyncCaller, Decl(tluaAsyncContract.tlua, 60, 1))
+>arrowAsyncCaller : Symbol(arrowAsyncCaller, Decl(tluaAsyncContract.tlua, 60, 3))
 
   return asyncArrow(); // OK
 >asyncArrow : Symbol(asyncArrow, Decl(tluaAsyncContract.tlua, 57, 5))
@@ -154,14 +157,15 @@ async function identityAsync<T>(x: T): T
 >x : Symbol(x, Decl(tluaAsyncContract.tlua, 66, 32))
 
 end
-function genericSyncCaller(): void {
+function genericSyncCaller(): void
 >genericSyncCaller : Symbol(genericSyncCaller, Decl(tluaAsyncContract.tlua, 68, 3))
 
   identityAsync(1); // error
 >identityAsync : Symbol(identityAsync, Decl(tluaAsyncContract.tlua, 63, 3))
-}
+
+end
 async function genericAsyncCaller(): number
->genericAsyncCaller : Symbol(genericAsyncCaller, Decl(tluaAsyncContract.tlua, 71, 1))
+>genericAsyncCaller : Symbol(genericAsyncCaller, Decl(tluaAsyncContract.tlua, 71, 3))
 
   return identityAsync(2); // OK
 >identityAsync : Symbol(identityAsync, Decl(tluaAsyncContract.tlua, 63, 3))

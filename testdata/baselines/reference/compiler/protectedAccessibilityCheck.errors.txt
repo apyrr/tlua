@@ -2,6 +2,7 @@ protectedAccessibilityCheck.tlua(1,1): error TLUA1434: Unexpected keyword or ide
 protectedAccessibilityCheck.tlua(1,1): error TLUA2304: Cannot find name 'class'.
 protectedAccessibilityCheck.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
 protectedAccessibilityCheck.tlua(1,7): error TLUA2304: Cannot find name 'C'.
+protectedAccessibilityCheck.tlua(1,9): error TLUA1128: Declaration or statement expected.
 protectedAccessibilityCheck.tlua(2,3): error TLUA1128: Declaration or statement expected.
 protectedAccessibilityCheck.tlua(2,13): error TLUA2304: Cannot find name 'constructor'.
 protectedAccessibilityCheck.tlua(2,27): error TLUA1005: ';' expected.
@@ -14,6 +15,7 @@ protectedAccessibilityCheck.tlua(5,13): error TLUA2693: 'any' only refers to a t
 protectedAccessibilityCheck.tlua(5,18): error TLUA1109: Expression expected.
 protectedAccessibilityCheck.tlua(5,26): error TLUA1434: Unexpected keyword or identifier.
 protectedAccessibilityCheck.tlua(5,26): error TLUA2304: Cannot find name 'C'.
+protectedAccessibilityCheck.tlua(5,28): error TLUA1128: Declaration or statement expected.
 protectedAccessibilityCheck.tlua(7,1): error TLUA1434: Unexpected keyword or identifier.
 protectedAccessibilityCheck.tlua(7,1): error TLUA2304: Cannot find name 'class'.
 protectedAccessibilityCheck.tlua(7,7): error TLUA1434: Unexpected keyword or identifier.
@@ -21,12 +23,13 @@ protectedAccessibilityCheck.tlua(7,7): error TLUA2304: Cannot find name 'A'.
 protectedAccessibilityCheck.tlua(7,9): error TLUA1128: Declaration or statement expected.
 protectedAccessibilityCheck.tlua(7,17): error TLUA1434: Unexpected keyword or identifier.
 protectedAccessibilityCheck.tlua(7,17): error TLUA2304: Cannot find name 'B'.
+protectedAccessibilityCheck.tlua(7,19): error TLUA1128: Declaration or statement expected.
 protectedAccessibilityCheck.tlua(8,3): error TLUA2304: Cannot find name 'f'.
 protectedAccessibilityCheck.tlua(8,7): error TLUA1005: ';' expected.
 protectedAccessibilityCheck.tlua(9,9): error TLUA2304: Cannot find name 'A'.
 
 
-==== protectedAccessibilityCheck.tlua (26 errors) ====
+==== protectedAccessibilityCheck.tlua (29 errors) ====
     class C {
     ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -36,6 +39,8 @@ protectedAccessibilityCheck.tlua(9,9): error TLUA2304: Cannot find name 'A'.
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~
 !!! error TLUA2304: Cannot find name 'C'.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
       protected constructor() {}
       ~~~~~~~~~
 !!! error TLUA1128: Declaration or statement expected.
@@ -64,6 +69,8 @@ protectedAccessibilityCheck.tlua(9,9): error TLUA2304: Cannot find name 'A'.
 !!! error TLUA1434: Unexpected keyword or identifier.
                              ~
 !!! error TLUA2304: Cannot find name 'C'.
+                               ~
+!!! error TLUA1128: Declaration or statement expected.
     
     class A extends B {
     ~~~~~
@@ -80,6 +87,8 @@ protectedAccessibilityCheck.tlua(9,9): error TLUA2304: Cannot find name 'A'.
 !!! error TLUA1434: Unexpected keyword or identifier.
                     ~
 !!! error TLUA2304: Cannot find name 'B'.
+                      ~
+!!! error TLUA1128: Declaration or statement expected.
       f() {
       ~
 !!! error TLUA2304: Cannot find name 'f'.

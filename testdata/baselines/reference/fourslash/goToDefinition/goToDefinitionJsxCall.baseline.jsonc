@@ -4,5 +4,5 @@
 //     (props: P, context?: any): string;
 // }
 // 
-// <|local [|Thing|]: FC = (props) => <div></div>;|>
-// local HelloWorld = () => </*GOTO DEF*/Thing />;
+// <|local [|Thing|]: FC = function(props) return <div></div> end;|>
+// local HelloWorld = function() return </*GOTO DEF*/Thing /> end;

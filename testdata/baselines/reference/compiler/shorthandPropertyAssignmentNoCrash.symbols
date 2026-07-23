@@ -3,19 +3,20 @@
 === shorthandPropertyAssignmentNoCrash.tlua ===
 // https://github.com/microsoft/typescript-go/issues/3789
 
-function ff(f: any) {
+function ff(f: any)
 >ff : Symbol(ff, Decl(shorthandPropertyAssignmentNoCrash.tlua, 0, 0))
 >f : Symbol(f, Decl(shorthandPropertyAssignmentNoCrash.tlua, 2, 12))
 
     local g;
 >g : Symbol(g, Decl(shorthandPropertyAssignmentNoCrash.tlua, 3, 9))
 
-    ({ g = (x: any, y: any) => x + y } = f);
+    ({ g = function(x: any, y: any) return x + y end } = f);
 >g : Symbol(g, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 6))
->x : Symbol(x, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 12))
->y : Symbol(y, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 19))
->x : Symbol(x, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 12))
->y : Symbol(y, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 19))
+>x : Symbol(x, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 20))
+>y : Symbol(y, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 27))
+>x : Symbol(x, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 20))
+>y : Symbol(y, Decl(shorthandPropertyAssignmentNoCrash.tlua, 4, 27))
 >f : Symbol(f, Decl(shorthandPropertyAssignmentNoCrash.tlua, 2, 12))
-}
+
+end
 

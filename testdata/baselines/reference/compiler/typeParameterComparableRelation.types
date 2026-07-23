@@ -6,12 +6,13 @@
 type StringOrT<T> = T | string
 >StringOrT : StringOrT<T>
 
-function func<A, B, T extends StringOrT<B>>(thing: T): void {
+function func<A, B, T extends StringOrT<B>>(thing: T): void
 >func : <A, B, T extends StringOrT<B>>(thing: T) => void
 >thing : T
 
     thing as A; // Error
 >thing as A : A
 >thing : T
-}
+
+end
 

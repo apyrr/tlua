@@ -1,55 +1,55 @@
 //// [tests/cases/compiler/tluaLabelEmbedded.tlua] ////
 
 //// [tluaLabelEmbedded.tlua]
-// Error: a label as the braceless body of an if is in no statement list, so no
-// goto could ever target it.
+// An unused label as the sole statement of an if-block still errors under
+// allowUnusedLabels: false: no goto targets it.
 declare function use(s: string): void;
-function embeddedInIf(b: boolean): void {
-    if (b) ::stray::;
-}
+function unusedInIf(b: boolean): void
+    if b then ::stray:: end
+end
 
-// Error on the embedded label; the outer label is separately unused. The
-// embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
-// string at the assignment even though the if-arm made it nil.
-function noNameCapture(b: boolean): void {
+// A label definition creates no back-edge: x is still narrowed to string at the
+// assignment even though a later if-arm makes it nil. The if-block label must
+// NOT join the outer label's flow.
+function noNameCapture(b: boolean): void
     local x: string | nil = "a";
     ::l::
     local y: string = x;
     use(y);
-    if (b) { x = nil; }
-    if (b) ::l::;
-}
+    if b then x = nil end
+    if b then ::l:: end
+end
 
-// Error: a loop's braceless body is embedded position too.
-function embeddedInWhile(b: boolean): void {
-    while (b) ::spin::;
-}
+// A label as an unused loop-body statement is in embedded position too.
+function unusedInWhile(b: boolean): void
+    while b do ::spin:: end
+end
 
 
 //// [tluaLabelEmbedded.lua]
-function embeddedInIf(b) {
-    if (b)
+function unusedInIf(b)
+    if b then
         ::stray::
-    ;
-}
--- Error on the embedded label; the outer label is separately unused. The
--- embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
--- string at the assignment even though the if-arm made it nil.
-function noNameCapture(b) {
+    end
+end
+-- A label definition creates no back-edge: x is still narrowed to string at the
+-- assignment even though a later if-arm makes it nil. The if-block label must
+-- NOT join the outer label's flow.
+function noNameCapture(b)
     local x = "a";
     ::l::
     local y = x;
     use(y);
-    if (b) {
+    if b then
         x = nil;
-    }
-    if (b)
+    end
+    if b then
         ::l::
-    ;
-}
--- Error: a loop's braceless body is embedded position too.
-function embeddedInWhile(b) {
-    while (b)
+    end
+end
+-- A label as an unused loop-body statement is in embedded position too.
+function unusedInWhile(b)
+    while b do
         ::spin::
-    ;
-}
+    end
+end

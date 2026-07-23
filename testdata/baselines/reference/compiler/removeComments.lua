@@ -1,15 +1,15 @@
 //// [tests/cases/compiler/removeComments.tlua] ////
 
 //// [removeComments.tlua]
-function t1() {
-    if (this.a < 2) { // comment after if
+function t1()
+    if (this.a < 2) then // comment after if
         console.log('t1', this.a)
 
         // comment after empty line in if block
-    }
-}
+    end
+end
 
-function t2() {
+function t2()
     console.log("t2");
 
     local obj = // comment here
@@ -26,19 +26,17 @@ function t2() {
             b = this.b,  // comment b
             c = this.c,  // comment c (removed)
         }, obj)
-}
+end
 
 
 //// [removeComments.lua]
-function t1() {
-    if ()
-        ;
-    a < 2;
-    {
+function t1()
+    if () then
+        a < 2;
         console.log('t1', a);
-    }
-}
-function t2() {
+    end
+end
+function t2()
     console.log("t2");
     local obj = {
         a = 1,
@@ -50,4 +48,4 @@ function t2() {
         b = , , .b,
         c = , , .c,
     }, obj);
-}
+end

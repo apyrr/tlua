@@ -22,7 +22,7 @@ local y = this.foo;
 >foo : any
 
 // `this` parameters are gone; write an ordinary parameter instead.
-function f(this: number, a: string) {}
+function f(this: number, a: string) end
 >f : (number: any, a: string) => void
 >number : any
 >a : string
@@ -78,7 +78,7 @@ type TQP = typeof this.foo;
 >this : any
 >foo : any
 
-function q(self: number) {
+function q(self: number)
 >q : (self: number) => void
 >self : number
 
@@ -91,7 +91,8 @@ function q(self: number) {
 >use(a) : void
 >use : (x: unknown) => void
 >a : any
-}
+
+end
 
 use(x);
 >use(x) : void

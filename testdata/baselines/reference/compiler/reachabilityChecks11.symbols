@@ -6,13 +6,13 @@ local x = 1;
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 1, 5))
 
 namespace A {
-    while (true);
+    while true do end
     local x;
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 5, 9))
 }
 
 namespace A1 {
-    do {} while(true);
+    while true do end
     namespace A {
         interface F {}
 >F : Symbol(F, Decl(reachabilityChecks11.tlua, 10, 17))
@@ -20,7 +20,7 @@ namespace A1 {
 }
 
 namespace A2 {
-    while (true);
+    while true do end
     namespace A {
         local x = 1;
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 18, 13))
@@ -28,65 +28,67 @@ namespace A2 {
 }
 
 namespace A3 {
-    while (true);
+    while true do end
     type T = string;
->T : Symbol(T, Decl(reachabilityChecks11.tlua, 23, 17))
+>T : Symbol(T, Decl(reachabilityChecks11.tlua, 23, 21))
 }
 
 namespace A4 {
-    while (true);
+    while true do end
     namespace A {
         local x = 1;
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 30, 13))
     }
 }
 
-function f1(x) {
+function f1(x)
 >f1 : Symbol(f1, Decl(reachabilityChecks11.tlua, 32, 1))
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 34, 12))
 
-    if (x) {
+    if x then
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 34, 12))
 
         return;
-    }
-    else {
+    else
         throw new Error("123");
-    }
+    end
     local x;
->x : Symbol(x, Decl(reachabilityChecks11.tlua, 41, 9))
-}
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 40, 9))
 
-function f2() {
->f2 : Symbol(f2, Decl(reachabilityChecks11.tlua, 42, 1))
+end
+
+function f2()
+>f2 : Symbol(f2, Decl(reachabilityChecks11.tlua, 41, 3))
 
     return;
     class A {
     }
-}
+end
 
 namespace B {
-    while (true);
+    while true do end
     namespace C {
     }
 }
 
-function f3() {
->f3 : Symbol(f3, Decl(reachabilityChecks11.tlua, 54, 1))
+function f3()
+>f3 : Symbol(f3, Decl(reachabilityChecks11.tlua, 53, 1))
 
-    do {
-    } while (true);
+    while true do
+    end
     local x = 1;
->x : Symbol(x, Decl(reachabilityChecks11.tlua, 59, 9))
-}
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 58, 9))
 
-function f4() {
->f4 : Symbol(f4, Decl(reachabilityChecks11.tlua, 60, 1))
+end
 
-    if (true) {
+function f4()
+>f4 : Symbol(f4, Decl(reachabilityChecks11.tlua, 59, 3))
+
+    if true then
         throw new Error();
-    }
+    end
     local x = 1;
->x : Symbol(x, Decl(reachabilityChecks11.tlua, 66, 9))
-}
+>x : Symbol(x, Decl(reachabilityChecks11.tlua, 65, 9))
+
+end
 

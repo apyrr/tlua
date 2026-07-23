@@ -1,17 +1,14 @@
 // === Document Symbols ===
 // === /navigationBarPrivateName.tlua ===
 // class A {
-//   #foo: <|[|{| name: <function>, kind: Function |}|]() => {
+//   #foo: () => {
 //     class B {
-//       #bar: <|[|{| name: <function>, kind: Function |}|]() => {   
-//          <|function [|{| name: baz, kind: Function |}baz|] () {
-//          }|>
-//       }|>
+//       #bar: () => {   
+//          <|function [|{| name: baz, kind: Function |}baz|] () end|>
+//       }
 //     }
-//   }|>
+//   }
 // }
 
 // === Details ===
-(Function) <function>
-  (Function) <function>
-    (Function) baz
+(Function) baz

@@ -1,19 +1,19 @@
 // === goToDefinition ===
 // === /goToDefinitionAwait1.tlua ===
-// async function foo() {
+// async function foo()
 //     /*GOTO DEF*/await Promise.resolve(0);
-// }
-// function notAsync() {
+// end
+// function notAsync()
 //     await Promise.resolve(0);
-// }
+// end
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionAwait1.tlua ===
-// async function foo() {
+// async function foo()
 //     await Promise.resolve(0);
-// }
-// function notAsync() {
+// end
+// function notAsync()
 //     /*GOTO DEF*/await Promise.resolve(0);
-// }
+// end

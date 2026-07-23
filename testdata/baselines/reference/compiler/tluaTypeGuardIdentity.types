@@ -12,7 +12,7 @@ declare function use(x: unknown): void;
 >use : (x: unknown) => void
 >x : unknown
 
-function shadowed(): void {
+function shadowed(): void
 >shadowed : () => void
 
   local type = function(value: any) return "string"; end;
@@ -33,9 +33,9 @@ function shadowed(): void {
 >v : string | number
 
   end
-}
+end
 
-function aliased(): void {
+function aliased(): void
 >aliased : () => void
 
   local t = type;
@@ -54,14 +54,14 @@ function aliased(): void {
 >v : string | number
 
   end
-}
+end
 
 declare holder: { type: (value: any) => string };
 >holder : { type: (value: any) => string; }
 >type : (value: any) => string
 >value : any
 
-function member(): void {
+function member(): void
 >member : () => void
 
   if holder.type(v) == "string" then
@@ -78,9 +78,9 @@ function member(): void {
 >v : string | number
 
   end
-}
+end
 
-function wrongArity(): void {
+function wrongArity(): void
 >wrongArity : () => void
 
   if type() == "string" then
@@ -94,10 +94,10 @@ function wrongArity(): void {
 >v : string | number
 
   end
-}
+end
 
 // The global still narrows in the same file, once the shadow is out of scope.
-function global(): void {
+function global(): void
 >global : () => void
 
   if type(v) == "string" then
@@ -117,5 +117,5 @@ function global(): void {
 >s : string
 
   end
-}
+end
 

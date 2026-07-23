@@ -1,12 +1,12 @@
 // @strict: true
 // @noEmit: true
 
-function example() {}
+function example() end
 
 example.isFoo = function(value: string): asserts value is 'foo'
-  if (value ~= 'foo') {
+  if value ~= 'foo' then
     throw new Error('Not foo');
-  }
+  end
 end;
 
 example.isFoo('test');

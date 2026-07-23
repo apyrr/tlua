@@ -51,7 +51,7 @@ local q3 = obj.q;
 >q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 10, 14))
 
 // ... and parameter binding patterns are a separate grammar, untouched.
-function take({ q: q4 }: { q: number }): number { return q4; }
+function take({ q: q4 }: { q: number }): number return q4 end
 >take : Symbol(take, Decl(tluaTableShorthandRemoved.tlua, 20, 17))
 >q : Symbol(q, Decl(tluaTableShorthandRemoved.tlua, 22, 26))
 >q4 : Symbol(q4, Decl(tluaTableShorthandRemoved.tlua, 22, 15))

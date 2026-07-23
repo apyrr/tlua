@@ -23,18 +23,18 @@ declare TestComponentWithoutChildren: <T, TParam>(props: {
   notChildren?: (state: NoInfer<TParam>) => JsxElement | null;
 }) => JsxElement;
 
-local App = () => {
+local App = function()
   return (
     <>
-      <TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>
-        {(selected) => <div>{Math.max(selected, 0)}</div>}
+      <TestComponentWithChildren state={{ foo = 123 }} selector={function(state) return state.foo end}>
+        {function(selected) return <div>{Math.max(selected, 0)}</div> end}
       </TestComponentWithChildren>
 
       <TestComponentWithoutChildren
         state={{ foo = 123 }}
-        selector={(state) => state.foo}
-        notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}
+        selector={function(state) return state.foo end}
+        notChildren={function(selected) return <div>{Math.max(selected, 0)}</div> end}
       />
     </>
   );
-};
+end;

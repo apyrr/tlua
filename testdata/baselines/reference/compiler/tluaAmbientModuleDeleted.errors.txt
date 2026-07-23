@@ -4,6 +4,7 @@ ambient.tlua(1,37): error TLUA1005: ';' expected.
 importAlias.tlua(1,1): error TLUA2304: Cannot find name 'declare'.
 importAlias.tlua(1,16): error TLUA2304: Cannot find name 'Foo'.
 importAlias.tlua(1,16): error TLUA2819: Namespace name cannot be 'Foo'.
+importAlias.tlua(1,20): error TLUA1128: Declaration or statement expected.
 
 
 ==== ambient.tlua (3 errors) ====
@@ -17,7 +18,7 @@ importAlias.tlua(1,16): error TLUA2819: Namespace name cannot be 'Foo'.
       local x: number;
     }
     
-==== importAlias.tlua (3 errors) ====
+==== importAlias.tlua (4 errors) ====
     declare module Foo {
     ~~~~~~~
 !!! error TLUA2304: Cannot find name 'declare'.
@@ -25,6 +26,8 @@ importAlias.tlua(1,16): error TLUA2819: Namespace name cannot be 'Foo'.
 !!! error TLUA2304: Cannot find name 'Foo'.
                    ~~~
 !!! error TLUA2819: Namespace name cannot be 'Foo'.
+                       ~
+!!! error TLUA1128: Declaration or statement expected.
       local y: number;
     }
     

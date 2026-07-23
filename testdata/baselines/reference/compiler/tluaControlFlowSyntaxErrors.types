@@ -11,10 +11,13 @@ local until = 2;
 >2 : 2
 
 function repeat(): void
-> : () => any
->(): void : () => void
+> : () => void
+>() : any
+> : any
+>void : nil
 
 end
+> : any
 > : any
 
 // Missing `then`.
@@ -77,6 +80,4 @@ function elseifAfterElse(n: number): number
 
   end
 end
-
-> : any
 

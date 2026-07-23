@@ -3,13 +3,16 @@
 === objectSubtypeReduction.tlua ===
 // https://github.com/microsoft/typescript-go/issues/1164
 
-function foo(x?: table) {
+function foo(x?: table)
 >foo : Symbol(foo, Decl(objectSubtypeReduction.tlua, 0, 0))
 >x : Symbol(x, Decl(objectSubtypeReduction.tlua, 2, 13))
 
     return Object.entries(x || {})
 >x : Symbol(x, Decl(objectSubtypeReduction.tlua, 2, 13))
 
-        .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name));
-}
+        .sort(function([k1, v1], [k2, v2]) return v1.name.localeCompare(v2.name) end);
+>k1 : Symbol(k1, Decl(objectSubtypeReduction.tlua, 4, 24))
+>v1 : Symbol(v1, Decl(objectSubtypeReduction.tlua, 4, 27))
+
+end
 

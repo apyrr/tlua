@@ -4,6 +4,6 @@
 // 	foo: string;
 // }
 // 
-// function f() {
+// function f()
 //     local foo = [|{ foo: '' }|] satisfies I;
-// }
+// end

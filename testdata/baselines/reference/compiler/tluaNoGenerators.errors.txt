@@ -1,18 +1,16 @@
-tluaNoGenerators.tlua(4,9): error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaNoGenerators.tlua(4,9): error TLUA2393: Duplicate function implementation.
 tluaNoGenerators.tlua(4,9): error TLUA1003: Identifier expected.
 tluaNoGenerators.tlua(4,11): error TLUA2304: Cannot find name 'gen'.
 tluaNoGenerators.tlua(4,16): error TLUA1005: ';' expected.
-tluaNoGenerators.tlua(4,18): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(4,18): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
 tluaNoGenerators.tlua(5,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(5,3): error TLUA2304: Cannot find name 'yield'.
 tluaNoGenerators.tlua(6,3): error TLUA2304: Cannot find name 'yield'.
 tluaNoGenerators.tlua(6,10): error TLUA2304: Cannot find name 'more'.
-tluaNoGenerators.tlua(9,15): error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+tluaNoGenerators.tlua(9,15): error TLUA2393: Duplicate function implementation.
 tluaNoGenerators.tlua(9,15): error TLUA1003: Identifier expected.
 tluaNoGenerators.tlua(9,17): error TLUA2304: Cannot find name 'asyncGen'.
 tluaNoGenerators.tlua(9,27): error TLUA1005: ';' expected.
-tluaNoGenerators.tlua(9,29): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(9,29): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
 tluaNoGenerators.tlua(10,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(10,3): error TLUA2304: Cannot find name 'yield'.
@@ -23,21 +21,19 @@ tluaNoGenerators.tlua(15,5): error TLUA2304: Cannot find name 'yield'.
 tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 
 
-==== tluaNoGenerators.tlua (23 errors) ====
+==== tluaNoGenerators.tlua (21 errors) ====
     // Generators are removed in tlua: `function*`, `yield`, `yield*`, and async
     // generators no longer parse. Use the Lua coroutine library directly instead.
     
-    function* gen(): unknown {
+    function* gen(): unknown
             
-!!! error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+!!! error TLUA2393: Duplicate function implementation.
             ~
 !!! error TLUA1003: Identifier expected.
               ~~~
 !!! error TLUA2304: Cannot find name 'gen'.
                    ~
 !!! error TLUA1005: ';' expected.
-                     ~~~~~~~
-!!! error TLUA1434: Unexpected keyword or identifier.
                      ~~~~~~~
 !!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
       yield 1;
@@ -50,11 +46,11 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 !!! error TLUA2304: Cannot find name 'yield'.
              ~~~~
 !!! error TLUA2304: Cannot find name 'more'.
-    }
+    end
     
-    async function* asyncGen(): unknown {
+    async function* asyncGen(): unknown
                   
-!!! error TLUA7010: '(Missing)', which lacks return-type annotation, implicitly has an 'any' return type.
+!!! error TLUA2393: Duplicate function implementation.
                   ~
 !!! error TLUA1003: Identifier expected.
                     ~~~~~~~~
@@ -62,15 +58,13 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
                               ~
 !!! error TLUA1005: ';' expected.
                                 ~~~~~~~
-!!! error TLUA1434: Unexpected keyword or identifier.
-                                ~~~~~~~
 !!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
       yield 4;
       ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
       ~~~~~
 !!! error TLUA2304: Cannot find name 'yield'.
-    }
+    end
     
     local obj = {
       *method() {
@@ -89,8 +83,8 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
     };
     
     // `yield` is now an ordinary identifier.
-    function usesYieldName(): number {
+    function usesYieldName(): number
       local yield = 7;
       return yield;
-    }
+    end
     

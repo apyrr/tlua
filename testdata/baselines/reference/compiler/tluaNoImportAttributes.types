@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/tluaNoImportAttributes.tlua] ////
+
+=== module.tlua ===
+return { value = 1 }
+>{ value = 1 } : { value: number; }
+>value : number
+>1 : 1
+
+=== main.tlua ===
+// Import types accept only a module specifier; their former attributes
+// argument is not part of tlua syntax.
+type Module = import("./module", { with: { type: "json" } })
+>Module : any
+>with : any
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>"json" : "json"
+
+function usesAssert(): number
+>usesAssert : () => number
+
+  local assert = 4
+>assert : number
+>4 : 4
+
+  return assert
+>assert : number
+
+end
+

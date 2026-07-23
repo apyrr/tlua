@@ -1,12 +1,12 @@
 // === QuickInfo ===
 === /quickInfoGenericTypePath.tlua ===
 // 
-// function f<T>(x: T) {
+// function f<T>(x: T)
 //   class C {
 //     value = x
 //   }
 //   return new C()
-// }
+// end
 // 
 // class Box<T> {
 //   public value: T;

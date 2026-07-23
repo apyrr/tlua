@@ -1,46 +1,61 @@
 objectSubtypeReduction.tlua(4,12): error TLUA2304: Cannot find name 'Object'.
-objectSubtypeReduction.tlua(5,16): error TLUA1109: Expression expected.
-objectSubtypeReduction.tlua(5,17): error TLUA2304: Cannot find name 'k1'.
-objectSubtypeReduction.tlua(5,17): error TLUA2695: Left side of comma operator is unused and has no side effects.
-objectSubtypeReduction.tlua(5,21): error TLUA2304: Cannot find name 'v1'.
-objectSubtypeReduction.tlua(5,26): error TLUA1109: Expression expected.
-objectSubtypeReduction.tlua(5,27): error TLUA2304: Cannot find name 'k2'.
-objectSubtypeReduction.tlua(5,27): error TLUA2695: Left side of comma operator is unused and has no side effects.
-objectSubtypeReduction.tlua(5,31): error TLUA2304: Cannot find name 'v2'.
-objectSubtypeReduction.tlua(5,36): error TLUA1005: ',' expected.
-objectSubtypeReduction.tlua(5,39): error TLUA2304: Cannot find name 'v1'.
-objectSubtypeReduction.tlua(5,61): error TLUA2304: Cannot find name 'v2'.
+objectSubtypeReduction.tlua(5,24): error TLUA1138: Parameter declaration expected.
+objectSubtypeReduction.tlua(5,25): error TLUA7006: Parameter 'k1' implicitly has an 'any' type.
+objectSubtypeReduction.tlua(5,29): error TLUA7006: Parameter 'v1' implicitly has an 'any' type.
+objectSubtypeReduction.tlua(5,31): error TLUA1005: ')' expected.
+objectSubtypeReduction.tlua(5,32): error TLUA1128: Declaration or statement expected.
+objectSubtypeReduction.tlua(5,34): error TLUA1128: Declaration or statement expected.
+objectSubtypeReduction.tlua(5,35): error TLUA2304: Cannot find name 'k2'.
+objectSubtypeReduction.tlua(5,35): error TLUA2695: Left side of comma operator is unused and has no side effects.
+objectSubtypeReduction.tlua(5,39): error TLUA2304: Cannot find name 'v2'.
+objectSubtypeReduction.tlua(5,41): error TLUA1005: ';' expected.
+objectSubtypeReduction.tlua(5,42): error TLUA1128: Declaration or statement expected.
+objectSubtypeReduction.tlua(5,44): error TLUA1005: ';' expected.
+objectSubtypeReduction.tlua(5,51): error TLUA2304: Cannot find name 'v1'.
+objectSubtypeReduction.tlua(5,73): error TLUA2304: Cannot find name 'v2'.
+objectSubtypeReduction.tlua(5,85): error TLUA1128: Declaration or statement expected.
+objectSubtypeReduction.tlua(6,1): error TLUA1128: Declaration or statement expected.
 
 
-==== objectSubtypeReduction.tlua (12 errors) ====
+==== objectSubtypeReduction.tlua (17 errors) ====
     // https://github.com/microsoft/typescript-go/issues/1164
     
-    function foo(x?: table) {
+    function foo(x?: table)
         return Object.entries(x || {})
                ~~~~~~
 !!! error TLUA2304: Cannot find name 'Object'.
-            .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name));
-                   ~
-!!! error TLUA1109: Expression expected.
-                    ~~
-!!! error TLUA2304: Cannot find name 'k1'.
-                    ~~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
-                        ~~
-!!! error TLUA2304: Cannot find name 'v1'.
-                             ~
-!!! error TLUA1109: Expression expected.
-                              ~~
+            .sort(function([k1, v1], [k2, v2]) return v1.name.localeCompare(v2.name) end);
+                           ~
+!!! error TLUA1138: Parameter declaration expected.
+                            ~~
+!!! error TLUA7006: Parameter 'k1' implicitly has an 'any' type.
+                                ~~
+!!! error TLUA7006: Parameter 'v1' implicitly has an 'any' type.
+                                  ~
+!!! error TLUA1005: ')' expected.
+                                   ~
+!!! error TLUA1128: Declaration or statement expected.
+                                     ~
+!!! error TLUA1128: Declaration or statement expected.
+                                      ~~
 !!! error TLUA2304: Cannot find name 'k2'.
-                              ~~
+                                      ~~
 !!! error TLUA2695: Left side of comma operator is unused and has no side effects.
-                                  ~~
-!!! error TLUA2304: Cannot find name 'v2'.
-                                       ~~
-!!! error TLUA1005: ',' expected.
                                           ~~
-!!! error TLUA2304: Cannot find name 'v1'.
-                                                                ~~
 !!! error TLUA2304: Cannot find name 'v2'.
-    }
+                                            ~
+!!! error TLUA1005: ';' expected.
+                                             ~
+!!! error TLUA1128: Declaration or statement expected.
+                                               ~~~~~~
+!!! error TLUA1005: ';' expected.
+                                                      ~~
+!!! error TLUA2304: Cannot find name 'v1'.
+                                                                            ~~
+!!! error TLUA2304: Cannot find name 'v2'.
+                                                                                        ~
+!!! error TLUA1128: Declaration or statement expected.
+    end
+    ~~~
+!!! error TLUA1128: Declaration or statement expected.
     

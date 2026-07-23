@@ -1,97 +1,80 @@
 //// [tests/cases/compiler/tluaControlFlowCoexistence.tlua] ////
 
 //// [tluaControlFlowCoexistence.tlua]
-// The remaining TS control-flow forms keep parsing unchanged.
-function tsForms(flag: boolean): number {
-  if (flag) {
-    return 1;
-  }
-  if (flag) return 2;
-  if (flag) return 3; else return 4;
-  while (flag) {
-    flag = false;
-  }
-  while (flag) flag = false;
-  do {
-    flag = false;
-  } while (flag);
-  return 0;
-}
-
-// TS statements inside Lua bodies.
-function tsInLua(flag: boolean): number
+// Lua control-flow forms parse and emit.
+function ifForms(flag: boolean): number
   if flag then
     return 1;
   end
+  if flag then return 2 end
+  if flag then return 3 else return 4 end
+  return 0;
+end
+
+// Loop forms, including a repeat/until standing in for the old do-while.
+function loopForms(flag: boolean): number
   while flag do
-    do {
+    flag = false;
+  end
+  repeat
+    flag = false;
+  until not (flag)
+  return 0;
+end
+
+// Nested control flow.
+function nested(flag: boolean): number
+  if flag then
+    if flag then
+      return 1;
+    end
+  end
+  while flag do
+    while flag do
       flag = false;
-    } while (flag);
+    end
   end
   return 0;
 end
 
-// Lua statements inside TS braces.
-function luaInTs(flag: boolean): number {
-  if (flag) {
-    if flag then
-      return 1;
-    end
-  }
-  while (flag) {
-    while flag do
-      flag = false;
-    end
-  }
-  return 0;
-}
-
 
 //// [tluaControlFlowCoexistence.lua]
--- The remaining TS control-flow forms keep parsing unchanged.
-function tsForms(flag) {
-    if (flag) {
+-- Lua control-flow forms parse and emit.
+function ifForms(flag)
+    if flag then
         return 1;
-    }
-    if (flag)
+    end
+    if flag then
         return 2;
-    if (flag)
+    end
+    if flag then
         return 3;
     else
         return 4;
-    while (flag) {
-        flag = false;
-    }
-    while (flag)
-        flag = false;
-    do {
-        flag = false;
-    } while (flag);
-    return 0;
-}
--- TS statements inside Lua bodies.
-function tsInLua(flag)
-    if flag then
-        return 1;
-    end
-    while flag do
-        do {
-            flag = false;
-        } while (flag);
     end
     return 0;
 end
--- Lua statements inside TS braces.
-function luaInTs(flag) {
-    if (flag) {
+-- Loop forms, including a repeat/until standing in for the old do-while.
+function loopForms(flag)
+    while flag do
+        flag = false;
+    end
+    repeat
+        flag = false;
+    until !(flag);
+    return 0;
+end
+-- Nested control flow.
+function nested(flag)
+    if flag then
         if flag then
             return 1;
         end
-    }
-    while (flag) {
+    end
+    while flag do
         while flag do
             flag = false;
         end
-    }
+    end
     return 0;
-}
+end

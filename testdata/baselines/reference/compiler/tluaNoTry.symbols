@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/tluaNoTry.tlua] ////
+
+=== tluaNoTry.tlua ===
+// try/catch/finally are removed. The words are ordinary identifiers, so this
+// reports ordinary syntax errors without constructing legacy AST nodes.
+try {
+  throw "boom";
+} catch (e) {
+  local caught = e;
+>caught : Symbol(caught, Decl(tluaNoTry.tlua, 5, 7))
+
+} finally {
+  local cleaned = true;
+>cleaned : Symbol(cleaned, Decl(tluaNoTry.tlua, 7, 7))
+}
+

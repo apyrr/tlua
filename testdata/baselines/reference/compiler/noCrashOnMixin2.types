@@ -23,7 +23,7 @@ type Constructor<T = {}> = new (...args?: any[]) => T;
 >Constructor : Constructor<T>
 >args : any[] | nil
 
-function Mixin<TBase extends Constructor>(Base: TBase) {
+function Mixin<TBase extends Constructor>(Base: TBase)
 >Mixin : <TBase extends Constructor>(Base: TBase) => any
 >Base : TBase
 
@@ -32,7 +32,7 @@ function Mixin<TBase extends Constructor>(Base: TBase) {
 >Base : TBase
 
     };
-}
+end
 
 class Empty {
 >class : any

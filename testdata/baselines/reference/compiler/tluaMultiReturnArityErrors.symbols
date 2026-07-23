@@ -45,7 +45,7 @@ function mustReturn(): (number, string?)
 end
 
 // A type predicate cannot start a multiple return type.
-function badPredicate(x: unknown): (x is string, number) {
+function badPredicate(x: unknown): (x is string, number)
 >badPredicate : Symbol(badPredicate, Decl(tluaMultiReturnArityErrors.tlua, 27, 3))
 >x : Symbol(x, Decl(tluaMultiReturnArityErrors.tlua, 30, 22))
 >x : Symbol(x, Decl(tluaMultiReturnArityErrors.tlua, 30, 22))
@@ -53,5 +53,6 @@ function badPredicate(x: unknown): (x is string, number) {
   return type(x) == "string", 1;
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >x : Symbol(x, Decl(tluaMultiReturnArityErrors.tlua, 30, 22))
-}
+
+end
 

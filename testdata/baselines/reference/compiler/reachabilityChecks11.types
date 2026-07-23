@@ -10,7 +10,7 @@ namespace A {
 >namespace : any
 >A : any
 
-    while (true);
+    while true do end
 >true : true
 
     local x;
@@ -21,7 +21,7 @@ namespace A1 {
 >namespace : any
 >A1 : any
 
-    do {} while(true);
+    while true do end
 >true : true
 
     namespace A {
@@ -36,7 +36,7 @@ namespace A2 {
 >namespace : any
 >A2 : any
 
-    while (true);
+    while true do end
 >true : true
 
     namespace A {
@@ -53,7 +53,7 @@ namespace A3 {
 >namespace : any
 >A3 : any
 
-    while (true);
+    while true do end
 >true : true
 
     type T = string;
@@ -64,7 +64,7 @@ namespace A4 {
 >namespace : any
 >A4 : any
 
-    while (true);
+    while true do end
 >true : true
 
     namespace A {
@@ -77,26 +77,27 @@ namespace A4 {
     }
 }
 
-function f1(x) {
+function f1(x)
 >f1 : (x: any) => void
 >x : any
 
-    if (x) {
+    if x then
 >x : any
 
         return;
-    }
-    else {
+    else
         throw new Error("123");
 >new Error("123") : any
 >Error : any
 >"123" : "123"
-    }
+
+    end
     local x;
 >x : any
-}
 
-function f2() {
+end
+
+function f2()
 >f2 : () => void
 
     return;
@@ -104,13 +105,13 @@ function f2() {
 >class : any
 >A : any
     }
-}
+end
 
 namespace B {
 >namespace : any
 >B : any
 
-    while (true);
+    while true do end
 >true : true
 
     namespace C {
@@ -119,30 +120,33 @@ namespace B {
     }
 }
 
-function f3() {
+function f3()
 >f3 : () => void
 
-    do {
-    } while (true);
+    while true do
 >true : true
 
+    end
     local x = 1;
 >x : number
 >1 : 1
-}
 
-function f4() {
+end
+
+function f4()
 >f4 : () => void
 
-    if (true) {
+    if true then
 >true : true
 
         throw new Error();
 >new Error() : any
 >Error : any
-    }
+
+    end
     local x = 1;
 >x : number
 >1 : 1
-}
+
+end
 

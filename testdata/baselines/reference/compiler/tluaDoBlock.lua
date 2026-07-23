@@ -25,30 +25,29 @@ function nested(flag: boolean): number
   local n = 0;
   do
     do
-      if (flag) {
+      if flag then
         n = 1;
-      }
+      end
     end
   end
   return n;
 end
 
-// TS do-while coexists with Lua do-blocks in one body.
-function coexist(flag: boolean): number {
-  do {
+// A repeat-until loop coexists with Lua do-blocks in one body.
+function coexist(flag: boolean): number
+  repeat
     flag = false;
-  } while (flag);
+  until not (flag);
   do
     local x = 1;
     x;
   end
   return 0;
-}
+end
 
-// The canonicalization edge: a TS if with a Lua do-block body prints as a
-// Lua if (semantically identical).
+// A plain Lua if coexisting with the do-blocks above.
 function canonical(flag: boolean): number
-  if (flag) do
+  if flag then
     return 1;
   end
   return 0;
@@ -78,26 +77,25 @@ function nested(flag)
     local n = 0;
     do
         do
-            if (flag) {
+            if flag then
                 n = 1;
-            }
+            end
         end
     end
     return n;
 end
--- TS do-while coexists with Lua do-blocks in one body.
-function coexist(flag) {
-    do {
+-- A repeat-until loop coexists with Lua do-blocks in one body.
+function coexist(flag)
+    repeat
         flag = false;
-    } while (flag);
+    until !(flag);
     do
         local x = 1;
         x;
     end
     return 0;
-}
--- The canonicalization edge: a TS if with a Lua do-block body prints as a
--- Lua if (semantically identical).
+end
+-- A plain Lua if coexisting with the do-blocks above.
 function canonical(flag)
     if flag then
         return 1;

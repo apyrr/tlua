@@ -1,0 +1,30 @@
+tluaNoParameterProperties.tlua(4,3): error TLUA1184: Modifiers cannot appear here.
+tluaNoParameterProperties.tlua(5,3): error TLUA1184: Modifiers cannot appear here.
+tluaNoParameterProperties.tlua(6,3): error TLUA1184: Modifiers cannot appear here.
+tluaNoParameterProperties.tlua(7,3): error TLUA1184: Modifiers cannot appear here.
+tluaNoParameterProperties.tlua(8,3): error TLUA1184: Modifiers cannot appear here.
+
+
+==== tluaNoParameterProperties.tlua (5 errors) ====
+    // Constructor parameter properties are removed with classes. Modifiers on an
+    // ordinary function parameter are always invalid.
+    function rejected(
+      public a: number,
+      ~~~~~~
+!!! error TLUA1184: Modifiers cannot appear here.
+      private b: number,
+      ~~~~~~~
+!!! error TLUA1184: Modifiers cannot appear here.
+      protected c: number,
+      ~~~~~~~~~
+!!! error TLUA1184: Modifiers cannot appear here.
+      readonly d: number,
+      ~~~~~~~~
+!!! error TLUA1184: Modifiers cannot appear here.
+      override e: number,
+      ~~~~~~~~
+!!! error TLUA1184: Modifiers cannot appear here.
+    ): number
+      return a + b + c + d + e;
+    end
+    

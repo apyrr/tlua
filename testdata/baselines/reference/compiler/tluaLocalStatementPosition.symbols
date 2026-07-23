@@ -16,9 +16,9 @@ while (cond) local b = 2;
 >cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
 >b : Symbol(b, Decl(tluaLocalStatementPosition.tlua, 6, 18))
 
-// Braced and Lua-block bodies are real blocks; the declarations are fine and
+// Lua-block bodies are real blocks; the declarations are fine and
 // stay contained.
-if (cond) {
+if (cond) then
 >cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
 
   local ok1 = 1;
@@ -27,7 +27,8 @@ if (cond) {
   print(ok1);
 >print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
 >ok1 : Symbol(ok1, Decl(tluaLocalStatementPosition.tlua, 11, 7))
-}
+
+end
 if cond then
 >cond : Symbol(cond, Decl(tluaLocalStatementPosition.tlua, 4, 7))
 

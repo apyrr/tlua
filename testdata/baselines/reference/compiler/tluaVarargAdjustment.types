@@ -199,18 +199,18 @@ function parenthesizedOperand(...: number): void
 >1 : 1
 
   // The arrow forms stay arrows.
-  local arrow = (...) => (... or 0);
+  local arrow = function(...) return (... or 0) end;
 >arrow : (...: any) => any
->(...) => (... or 0) : (...: any) => any
+>function(...) return (... or 0) end : (...: any) => any
 > : any[]
 >(... or 0) : any
 >... or 0 : any
 >... : any
 >0 : 0
 
-  local annotated = (...: number) => 0;
+  local annotated = function(...: number) return 0 end;
 >annotated : (...: number) => number
->(...: number) => 0 : (...: number) => number
+>function(...: number) return 0 end : (...: number) => number
 > : number[]
 >0 : 0
 
@@ -495,19 +495,21 @@ type PrefixedVararg = (a: number, b: string, ...: boolean) => void;
 
 // A contextually-typed bare `...` takes its pack from the contextual signature,
 // so here the pack has a FIXED PREFIX: `(number, string, ...boolean)`.
-local tailWithFixedPrefix: PrefixedVararg = (...) =>
+local tailWithFixedPrefix: PrefixedVararg = function(...)
 >tailWithFixedPrefix : PrefixedVararg
->(...) =>  // The prefix fills both of takesPair's parameters, so the tail is not "unable  // to contribute" and there is no arity error: only the *variable* part of the  // pack is discarded. Counting the prefix as filled-by-a-fixed-argument used to  // report 100037 here and mask any real type error underneath it.  takesPair(...) : (a: number, b: string, ...: boolean) => void
+>function(...)  // The prefix fills both of takesPair's parameters, so the tail is not "unable  // to contribute" and there is no arity error: only the *variable* part of the  // pack is discarded. Counting the prefix as filled-by-a-fixed-argument used to  // report 100037 here and mask any real type error underneath it.  return takesPair(...);end : (a: number, b: string, ...: boolean) => void
 > : [a: number, b: string, ...boolean[]]
 
   // The prefix fills both of takesPair's parameters, so the tail is not "unable
   // to contribute" and there is no arity error: only the *variable* part of the
   // pack is discarded. Counting the prefix as filled-by-a-fixed-argument used to
   // report 100037 here and mask any real type error underneath it.
-  takesPair(...);
+  return takesPair(...);
 >takesPair(...) : void
 >takesPair : (x: number, y: string) => void
 >... : number
+
+end;
 
 function midRestIntoParameters(): void
 >midRestIntoParameters : () => void

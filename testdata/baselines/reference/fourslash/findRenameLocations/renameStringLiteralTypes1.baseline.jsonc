@@ -6,7 +6,7 @@
 //     easing: "ease-in" | "ease-out" | "/*RENAME*/[|ease-in-outRENAME|]";
 // }
 // 
-// function animate(o: AnimationOptions) { }
+// function animate(o: AnimationOptions) end
 // 
 // animate({ deltaX = 100, deltaY = 100, easing = "[|ease-in-outRENAME|]" });
 
@@ -20,6 +20,6 @@
 //     easing: "ease-in" | "ease-out" | "[|ease-in-outRENAME|]";
 // }
 // 
-// function animate(o: AnimationOptions) { }
+// function animate(o: AnimationOptions) end
 // 
 // animate({ deltaX = 100, deltaY = 100, easing = "/*RENAME*/[|ease-in-outRENAME|]" });

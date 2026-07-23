@@ -1,42 +1,42 @@
 // === findAllReferences ===
 // === /referencesForFunctionOverloads.tlua ===
 // /*FIND ALL REFS*/function [|foo|](x: string);
-// function [|foo|](x: string, y: number) {
+// function [|foo|](x: string, y: number)
 //     [|foo|]('', 43);
-// }
+// end
 
 
 
 // === findAllReferences ===
 // === /referencesForFunctionOverloads.tlua ===
 // function /*FIND ALL REFS*/[|foo|](x: string);
-// function [|foo|](x: string, y: number) {
+// function [|foo|](x: string, y: number)
 //     [|foo|]('', 43);
-// }
+// end
 
 
 
 // === findAllReferences ===
 // === /referencesForFunctionOverloads.tlua ===
 // function [|foo|](x: string);
-// /*FIND ALL REFS*/function [|foo|](x: string, y: number) {
+// /*FIND ALL REFS*/function [|foo|](x: string, y: number)
 //     [|foo|]('', 43);
-// }
+// end
 
 
 
 // === findAllReferences ===
 // === /referencesForFunctionOverloads.tlua ===
 // function [|foo|](x: string);
-// function /*FIND ALL REFS*/[|foo|](x: string, y: number) {
+// function /*FIND ALL REFS*/[|foo|](x: string, y: number)
 //     [|foo|]('', 43);
-// }
+// end
 
 
 
 // === findAllReferences ===
 // === /referencesForFunctionOverloads.tlua ===
 // function [|foo|](x: string);
-// function [|foo|](x: string, y: number) {
+// function [|foo|](x: string, y: number)
 //     /*FIND ALL REFS*/[|foo|]('', 43);
-// }
+// end

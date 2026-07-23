@@ -10,7 +10,7 @@ tluaGotoIntoLetScope.tlua(22,9): error TLUA2454: Variable 'v' is used before bei
     // The jump-into-local-scope rule covers the transitional let/const/local forms
     // too: they declare names that compile to Lua locals.
     declare function log(n: number): void;
-    function intoLetScope(): void {
+    function intoLetScope(): void
         goto done
         ~~~~~~~~~
 !!! error TLUA100026: Cannot jump into the scope of local 'x'.
@@ -19,9 +19,9 @@ tluaGotoIntoLetScope.tlua(22,9): error TLUA2454: Variable 'v' is used before bei
         log(x);
             ~
 !!! error TLUA2454: Variable 'x' is used before being assigned.
-    }
+    end
     
-    function intoConstScope(): void {
+    function intoConstScope(): void
         goto done
         ~~~~~~~~~
 !!! error TLUA100026: Cannot jump into the scope of local 'c'.
@@ -30,9 +30,9 @@ tluaGotoIntoLetScope.tlua(22,9): error TLUA2454: Variable 'v' is used before bei
         log(c);
             ~
 !!! error TLUA2454: Variable 'c' is used before being assigned.
-    }
+    end
     
-    function intoVarScope(): void {
+    function intoVarScope(): void
         goto done
         ~~~~~~~~~
 !!! error TLUA100026: Cannot jump into the scope of local 'v'.
@@ -41,5 +41,5 @@ tluaGotoIntoLetScope.tlua(22,9): error TLUA2454: Variable 'v' is used before bei
         log(v);
             ~
 !!! error TLUA2454: Variable 'v' is used before being assigned.
-    }
+    end
     

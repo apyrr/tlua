@@ -21,7 +21,7 @@ local x = 1;
  * ```
  * @param y - a number
  */
-function foo(y: number) {}
+function foo(y: number) end
 
 
 //// [jsDocCodeblockParsing.lua]
@@ -44,4 +44,5 @@ local x = 1;
  * ```
  * @param y - a number
  ]]
-function foo(y) { }
+function foo(y)
+end

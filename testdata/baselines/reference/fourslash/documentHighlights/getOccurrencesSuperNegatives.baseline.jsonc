@@ -1,8 +1,8 @@
 // === documentHighlights ===
 // === /getOccurrencesSuperNegatives.tlua ===
-// function f(x = /*HIGHLIGHTS*/super) {
+// function f(x = /*HIGHLIGHTS*/super)
 //     super;
-// }
+// end
 // 
 // --- (line: 5) skipped ---
 
@@ -10,9 +10,9 @@
 
 // === documentHighlights ===
 // === /getOccurrencesSuperNegatives.tlua ===
-// function f(x = super) {
+// function f(x = super)
 //     /*HIGHLIGHTS*/super;
-// }
+// end
 // 
 // namespace M {
 // --- (line: 6) skipped ---
@@ -21,15 +21,15 @@
 
 // === documentHighlights ===
 // === /getOccurrencesSuperNegatives.tlua ===
-// function f(x = super) {
+// function f(x = super)
 //     super;
-// }
+// end
 // 
 // namespace M {
 //     /*HIGHLIGHTS*/super;
-//     function f(x = super) {
+//     function f(x = super)
 //     super;
-//     }
+//     end
 // --- (line: 10) skipped ---
 
 
@@ -40,9 +40,9 @@
 // 
 // namespace M {
 //     super;
-//     function f(x = /*HIGHLIGHTS*/super) {
+//     function f(x = /*HIGHLIGHTS*/super)
 //     super;
-//     }
+//     end
 // 
 // --- (line: 11) skipped ---
 
@@ -53,9 +53,9 @@
 // --- (line: 4) skipped ---
 // namespace M {
 //     super;
-//     function f(x = super) {
+//     function f(x = super)
 //     /*HIGHLIGHTS*/super;
-//     }
+//     end
 // 
 //     class A {
 // --- (line: 12) skipped ---

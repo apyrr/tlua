@@ -21,7 +21,7 @@ class A {
 > : any
 }
 
-function getNodes(): A[] {
+function getNodes(): A[]
 >getNodes : () => A[]
 
   local out: A[] = [];
@@ -35,14 +35,14 @@ function getNodes(): A[] {
 >new A([]) : any
 >A : any
 
-  while (current ~= null) {
+  while current ~= null do
 >current ~= null : boolean
 >current : any
 
     local firstChild = null;
 >firstChild : any
 
-    if (out.length) {
+    if out.length then
 >out.length : any
 >out : A[]
 >length : any
@@ -55,7 +55,7 @@ function getNodes(): A[] {
 >next : any
 
       continue;
-    }
+    end
 
     for i = 0, current.children.length - 1 do
 >i : number
@@ -76,11 +76,11 @@ function getNodes(): A[] {
 >children : any
 >i : number
 
-      if (child) {
+      if child then
 >child : any
 
-        if (!firstChild) {
->!firstChild : boolean
+        if not firstChild then
+>not firstChild : boolean
 >firstChild : any
 
           firstChild = child;
@@ -96,7 +96,8 @@ function getNodes(): A[] {
 >current.next : any
 >current : any
 >next : any
-        }
+
+        end
 
         child.next = current.next;
 >child.next = current.next : any
@@ -106,7 +107,8 @@ function getNodes(): A[] {
 >current.next : any
 >current : any
 >next : any
-      }
+
+      end
     end
 
     current = firstChild || current.next;
@@ -117,9 +119,11 @@ function getNodes(): A[] {
 >current.next : any
 >current : any
 >next : any
-  }
+
+  end
 
   return out;
 >out : A[]
-}
+
+end
 

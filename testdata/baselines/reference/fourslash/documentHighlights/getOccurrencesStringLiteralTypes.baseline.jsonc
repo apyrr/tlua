@@ -1,11 +1,11 @@
 // === documentHighlights ===
 // === /getOccurrencesStringLiteralTypes.tlua ===
-// function foo(a: "/*HIGHLIGHTS*/[|option 1|]") { }
+// function foo(a: "/*HIGHLIGHTS*/[|option 1|]") end
 // foo("[|option 1|]");
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesStringLiteralTypes.tlua ===
-// function foo(a: "[|option 1|]") { }
+// function foo(a: "[|option 1|]") end
 // foo("/*HIGHLIGHTS*/[|option 1|]");

@@ -1,8 +1,8 @@
 // === documentHighlights ===
 // === /getOccurrencesReturn4.tlua ===
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
-//         return (function () {
+//         return (function ()
 //             [|return|]/*HIGHLIGHTS*/;
 //             [|return|];
 //             [|return|];
@@ -10,7 +10,7 @@
 //             if (false) {
 //                 [|return|] true;
 //             }
-//         })() || true;
+//         end)() || true;
 //     }
 // --- (line: 13) skipped ---
 
@@ -18,9 +18,9 @@
 
 // === documentHighlights ===
 // === /getOccurrencesReturn4.tlua ===
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
-//         return (function () {
+//         return (function ()
 //             [|return|];
 //             [|return|]/*HIGHLIGHTS*/;
 //             [|return|];
@@ -28,7 +28,7 @@
 //             if (false) {
 //                 [|return|] true;
 //             }
-//         })() || true;
+//         end)() || true;
 //     }
 // --- (line: 13) skipped ---
 
@@ -36,9 +36,9 @@
 
 // === documentHighlights ===
 // === /getOccurrencesReturn4.tlua ===
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
-//         return (function () {
+//         return (function ()
 //             [|return|];
 //             [|return|];
 //             [|return|]/*HIGHLIGHTS*/;
@@ -46,7 +46,7 @@
 //             if (false) {
 //                 [|return|] true;
 //             }
-//         })() || true;
+//         end)() || true;
 //     }
 // --- (line: 13) skipped ---
 
@@ -54,9 +54,9 @@
 
 // === documentHighlights ===
 // === /getOccurrencesReturn4.tlua ===
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
-//         return (function () {
+//         return (function ()
 //             [|return|];
 //             [|return|];
 //             [|return|];
@@ -64,7 +64,7 @@
 //             if (false) {
 //                 [|return|]/*HIGHLIGHTS*/ true;
 //             }
-//         })() || true;
+//         end)() || true;
 //     }
 // --- (line: 13) skipped ---
 
@@ -73,22 +73,22 @@
 // === documentHighlights ===
 // === /getOccurrencesReturn4.tlua ===
 // --- (line: 10) skipped ---
-//         })() || true;
+//         end)() || true;
 //     }
 // 
-//     local unusued = [1, 2, 3, 4].map(x => { [|return|]/*HIGHLIGHTS*/ 4 })
+//     local unusued = [1, 2, 3, 4].map(function(x) [|return|]/*HIGHLIGHTS*/ 4 end)
 // 
 //     return;
 //     return true;
-// }
+// end
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesReturn4.tlua ===
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
-//         [|return|] (function () {
+//         [|return|] (function ()
 //             return;
 //             return;
 //             return;
@@ -96,19 +96,19 @@
 
 // --- (line: 12) skipped ---
 // 
-//     local unusued = [1, 2, 3, 4].map(x => { return 4 })
+//     local unusued = [1, 2, 3, 4].map(function(x) return 4 end)
 // 
 //     [|return|]/*HIGHLIGHTS*/;
 //     [|return|] true;
-// }
+// end
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesReturn4.tlua ===
-// function f(a: number) {
+// function f(a: number)
 //     if (a > 0) {
-//         [|return|] (function () {
+//         [|return|] (function ()
 //             return;
 //             return;
 //             return;
@@ -116,8 +116,8 @@
 
 // --- (line: 12) skipped ---
 // 
-//     local unusued = [1, 2, 3, 4].map(x => { return 4 })
+//     local unusued = [1, 2, 3, 4].map(function(x) return 4 end)
 // 
 //     [|return|];
 //     [|return|]/*HIGHLIGHTS*/ true;
-// }
+// end

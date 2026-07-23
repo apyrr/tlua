@@ -10,8 +10,8 @@ local example: {
   items?: string[];
 >items : string[] | nil
 
-} = () => undefined;
->() => undefined : () => nil
+} = function() return undefined end;
+>function() return undefined end : () => nil
 
 example.items = [];
 >example.items = [] : any
@@ -22,7 +22,7 @@ example.items = [];
 > : any
 > : any
 
-function f1() {}
+function f1() end
 >f1 : { (): void; a: any; }
 
 f1.a = [];  // Implicit any error
@@ -47,9 +47,9 @@ f2.a = [];  // Implicit any error
 > : any
 > : any
 
-local f3 = () => {};
+local f3 = function() end;
 >f3 : () => void
->() => {} : () => void
+>function() end : () => void
 
 f3.a = [];  // Implicit any error
 >f3.a = [] : any
@@ -60,10 +60,10 @@ f3.a = [];  // Implicit any error
 > : any
 > : any
 
-local f4: { (): void, a: string[] } = () => {};
+local f4: { (): void, a: string[] } = function() end;
 >f4 : { (): void; a: string[]; }
 >a : string[]
->() => {} : () => void
+>function() end : () => void
 
 f4.a = [];
 >f4.a = [] : any

@@ -29,7 +29,7 @@
 //     static get f() {
 //         return /*FIND ALL REFS*/this;
 // 
-//         function inner() { this; }
+//         function inner() this; end
 //         class Inner { x = this; }
 //     }
 // }

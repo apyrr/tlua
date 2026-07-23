@@ -2,14 +2,14 @@ expandoFunctionAsAssertion.tlua(5,15): error TLUA2304: Cannot find name 'Error'.
 
 
 ==== expandoFunctionAsAssertion.tlua (1 errors) ====
-    function example() {}
+    function example() end
     
     example.isFoo = function(value: string): asserts value is 'foo'
-      if (value ~= 'foo') {
+      if value ~= 'foo' then
         throw new Error('Not foo');
                   ~~~~~
 !!! error TLUA2304: Cannot find name 'Error'.
-      }
+      end
     end;
     
     example.isFoo('test');

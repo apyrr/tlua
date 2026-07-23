@@ -1,8 +1,8 @@
 // === findRenameLocations ===
 // === /renameThis.tlua ===
-// function f(/*RENAME*/this) {
+// function f(/*RENAME*/this)
 //     return this;
-// }
+// end
 // this;
 // local _ = { ["this"] = 0 }.this;
 
@@ -10,9 +10,9 @@
 
 // === findRenameLocations ===
 // === /renameThis.tlua ===
-// function f(this) {
+// function f(this)
 //     return /*RENAME*/this;
-// }
+// end
 // this;
 // local _ = { ["this"] = 0 }.this;
 
@@ -20,9 +20,9 @@
 
 // === findRenameLocations ===
 // === /renameThis.tlua ===
-// function f(this) {
+// function f(this)
 //     return this;
-// }
+// end
 // this;
 // local _ = { ["/*RENAME*/[|thisRENAME|]"] = 0 }.[|thisRENAME|];
 
@@ -30,8 +30,8 @@
 
 // === findRenameLocations ===
 // === /renameThis.tlua ===
-// function f(this) {
+// function f(this)
 //     return this;
-// }
+// end
 // this;
 // local _ = { ["[|thisRENAME|]"] = 0 }./*RENAME*/[|thisRENAME|];

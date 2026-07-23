@@ -110,11 +110,11 @@ local C1 = class extends foo3(1) { }
         "range": {
           "start": {
             "line": 4,
-            "character": 14
+            "character": 22
           },
           "end": {
             "line": 4,
-            "character": 15
+            "character": 23
           }
         }
       }
@@ -142,11 +142,11 @@ class C2 extends foo3(1) { }
         "range": {
           "start": {
             "line": 4,
-            "character": 14
+            "character": 22
           },
           "end": {
             "line": 4,
-            "character": 15
+            "character": 23
           }
         }
       }

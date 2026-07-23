@@ -1,3 +1,3 @@
 // @strict: true
 
-local f: () => void = (a?, ...b) => {};
+local f: () => void = function(a?, ...b) end;

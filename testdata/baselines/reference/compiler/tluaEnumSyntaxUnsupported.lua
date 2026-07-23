@@ -9,7 +9,7 @@ enum E {
 //// [tluaEnumSyntaxUnsupported.lua]
 enum;
 E;
-{
+do
     A,
     ;
-}
+end

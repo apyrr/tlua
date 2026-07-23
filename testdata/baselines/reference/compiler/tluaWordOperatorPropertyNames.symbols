@@ -68,7 +68,7 @@ local banded = bits["and"](1);
 
 // An expando member named `and` is skipped by declaration emit rather than
 // emitted as the bare alias `export { ... as and }`, which would not parse.
-function A(): string { return "A"; }
+function A(): string return "A"; end
 >A : Symbol(A, Decl(tluaWordOperatorPropertyNames.tlua, 22, 30))
 
 A["and"] = t;

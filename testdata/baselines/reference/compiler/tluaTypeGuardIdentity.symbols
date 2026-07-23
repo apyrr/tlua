@@ -12,7 +12,7 @@ declare function use(x: unknown): void;
 >use : Symbol(use, Decl(tluaTypeGuardIdentity.tlua, 4, 27))
 >x : Symbol(x, Decl(tluaTypeGuardIdentity.tlua, 5, 21))
 
-function shadowed(): void {
+function shadowed(): void
 >shadowed : Symbol(shadowed, Decl(tluaTypeGuardIdentity.tlua, 5, 39))
 
   local type = function(value: any) return "string"; end;
@@ -28,10 +28,10 @@ function shadowed(): void {
 >v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
 
   end
-}
+end
 
-function aliased(): void {
->aliased : Symbol(aliased, Decl(tluaTypeGuardIdentity.tlua, 12, 1))
+function aliased(): void
+>aliased : Symbol(aliased, Decl(tluaTypeGuardIdentity.tlua, 12, 3))
 
   local t = type;
 >t : Symbol(t, Decl(tluaTypeGuardIdentity.tlua, 15, 7))
@@ -46,14 +46,14 @@ function aliased(): void {
 >v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
 
   end
-}
+end
 
 declare holder: { type: (value: any) => string };
 >holder : Symbol(holder, Decl(tluaTypeGuardIdentity.tlua, 21, 7))
 >type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 21, 17))
 >value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 21, 25))
 
-function member(): void {
+function member(): void
 >member : Symbol(member, Decl(tluaTypeGuardIdentity.tlua, 21, 49))
 
   if holder.type(v) == "string" then
@@ -67,10 +67,10 @@ function member(): void {
 >v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
 
   end
-}
+end
 
-function wrongArity(): void {
->wrongArity : Symbol(wrongArity, Decl(tluaTypeGuardIdentity.tlua, 27, 1))
+function wrongArity(): void
+>wrongArity : Symbol(wrongArity, Decl(tluaTypeGuardIdentity.tlua, 27, 3))
 
   if type() == "string" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
@@ -80,11 +80,11 @@ function wrongArity(): void {
 >v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
 
   end
-}
+end
 
 // The global still narrows in the same file, once the shadow is out of scope.
-function global(): void {
->global : Symbol(global, Decl(tluaTypeGuardIdentity.tlua, 33, 1))
+function global(): void
+>global : Symbol(global, Decl(tluaTypeGuardIdentity.tlua, 33, 3))
 
   if type(v) == "string" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
@@ -99,5 +99,5 @@ function global(): void {
 >s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 38, 9))
 
   end
-}
+end
 

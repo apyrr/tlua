@@ -1,5 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionYield4.tlua ===
-// function* gen() {
+// function* gen()
 //     class C { [/*GOTO DEF*/yield 10]() {} }
-// }
+// end

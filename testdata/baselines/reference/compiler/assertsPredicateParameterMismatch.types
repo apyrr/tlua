@@ -11,8 +11,9 @@ function assertCondition(
   _condition: boolean
 >_condition : boolean
 
-): asserts condition {  // "condition" doesn't match parameter "_condition"
-  if (!_condition) {
+): asserts condition  // "condition" doesn't match parameter "_condition"
+  if (!_condition) then
+>(!_condition) : boolean
 >!_condition : boolean
 >_condition : boolean
 
@@ -20,10 +21,11 @@ function assertCondition(
 >new Error('Condition failed') : any
 >Error : any
 >'Condition failed' : "Condition failed"
-  }
-}
 
-function test(): void {
+  end
+end
+
+function test(): void
 >test : () => void
 
   assertCondition(false);
@@ -37,5 +39,6 @@ function test(): void {
 >console : any
 >log : any
 >"unreachable" : "unreachable"
-}
+
+end
 

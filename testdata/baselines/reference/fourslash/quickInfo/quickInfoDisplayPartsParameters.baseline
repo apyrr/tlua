@@ -1,7 +1,7 @@
 // === QuickInfo ===
 === /quickInfoDisplayPartsParameters.tlua ===
 // /** @return *crunch* */
-// function foo(param: string, optionalParam?: string, paramWithInitializer = "hello", ...restParam: string[]) {
+// function foo(param: string, optionalParam?: string, paramWithInitializer = "hello", ...restParam: string[])
 //          ^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -71,7 +71,7 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
-// }
+// end
 [
   {
     "marker": {
@@ -211,7 +211,7 @@
   },
   {
     "marker": {
-      "Position": 138,
+      "Position": 136,
       "LSPosition": {
         "line": 2,
         "character": 4
@@ -238,7 +238,7 @@
   },
   {
     "marker": {
-      "Position": 159,
+      "Position": 157,
       "LSPosition": {
         "line": 3,
         "character": 4
@@ -265,7 +265,7 @@
   },
   {
     "marker": {
-      "Position": 188,
+      "Position": 186,
       "LSPosition": {
         "line": 4,
         "character": 4
@@ -292,7 +292,7 @@
   },
   {
     "marker": {
-      "Position": 224,
+      "Position": 222,
       "LSPosition": {
         "line": 5,
         "character": 4

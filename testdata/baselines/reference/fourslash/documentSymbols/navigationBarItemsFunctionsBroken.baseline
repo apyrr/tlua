@@ -1,8 +1,8 @@
 // === Document Symbols ===
 // === /navigationBarItemsFunctionsBroken.tlua ===
-// <|function [|{| name: f, kind: Function |}f|]() {
+// <|function [|{| name: f, kind: Function |}f|]()
 //     function;
-// }|>
+// end|>
 
 // === Details ===
 (Function) f

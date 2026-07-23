@@ -3,13 +3,12 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/solution/child/child.tlua] *new* 
 local child2 = require("child2");
-function child() {
+function child()
     child2.child2();
-}
+end
 return { child = child };
 //// [/home/src/workspaces/solution/child/child2.tlua] *new* 
-function child2() {
-}
+function child2() end
 return { child2 = child2 };
 //// [/home/src/workspaces/solution/child/tluaconfig.json] *new* 
 {
@@ -17,9 +16,9 @@ return { child2 = child2 };
 }
 //// [/home/src/workspaces/solution/main/main.tlua] *new* 
 local child = require("child.child");
-function main() {
+function main()
     child.child();
-}
+end
 return { main = main };
 //// [/home/src/workspaces/solution/main/tluaconfig.json] *new* 
 {
@@ -48,7 +47,7 @@ File '/home/src/workspaces/solution/child/child2.tlua' exists - use it as a name
 
 [96mchild/child2.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function child2() {
+[7m1[0m function child2() end
 [7m [0m [91m~~~~~~~~[0m
 
 ../../tslibs/TS/Lib/lib.luajit.d.tlua
@@ -108,18 +107,18 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/solution/child/child.lua] *new* 
 local child2 = require("child2");
-function child() {
+function child()
     child2.child2();
-}
+end
 return { child = child };
 
 //// [/home/src/workspaces/solution/child/child2.lua] *new* 
-function child2() {
-}
+function child2()
+end
 return { child2 = child2 };
 
 //// [/home/src/workspaces/solution/child/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./child2.tlua","./child.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"e0deeda53dc09eb84ace45ae693f9f2b-function child2() {\n}\nreturn { child2 = child2 };","294677e5446c11e40bbab6f337eab150-local child2 = require(\"child2\");\nfunction child() {\n    child2.child2();\n}\nreturn { child = child };"],"options":{"composite":true},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./child2.tlua","./child.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"471b3eb6a1e8bc37213aba99b3152ef6-function child2() end\nreturn { child2 = child2 };","0a16d4ed2a3b10ab1ac9c47e521340d2-local child2 = require(\"child2\");\nfunction child()\n    child2.child2();\nend\nreturn { child = child };"],"options":{"composite":true},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
 //// [/home/src/workspaces/solution/child/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -155,14 +154,14 @@ return { child2 = child2 };
     },
     {
       "fileName": "./child2.tlua",
-      "version": "e0deeda53dc09eb84ace45ae693f9f2b-function child2() {\n}\nreturn { child2 = child2 };",
-      "signature": "e0deeda53dc09eb84ace45ae693f9f2b-function child2() {\n}\nreturn { child2 = child2 };",
+      "version": "471b3eb6a1e8bc37213aba99b3152ef6-function child2() end\nreturn { child2 = child2 };",
+      "signature": "471b3eb6a1e8bc37213aba99b3152ef6-function child2() end\nreturn { child2 = child2 };",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./child.tlua",
-      "version": "294677e5446c11e40bbab6f337eab150-local child2 = require(\"child2\");\nfunction child() {\n    child2.child2();\n}\nreturn { child = child };",
-      "signature": "294677e5446c11e40bbab6f337eab150-local child2 = require(\"child2\");\nfunction child() {\n    child2.child2();\n}\nreturn { child = child };",
+      "version": "0a16d4ed2a3b10ab1ac9c47e521340d2-local child2 = require(\"child2\");\nfunction child()\n    child2.child2();\nend\nreturn { child = child };",
+      "signature": "0a16d4ed2a3b10ab1ac9c47e521340d2-local child2 = require(\"child2\");\nfunction child()\n    child2.child2();\nend\nreturn { child = child };",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -203,17 +202,17 @@ return { child2 = child2 };
       "original": 3
     }
   ],
-  "size": 1478
+  "size": 1477
 }
 //// [/home/src/workspaces/solution/main/main.lua] *new* 
 local child = require("child.child");
-function main() {
+function main()
     child.child();
-}
+end
 return { main = main };
 
 //// [/home/src/workspaces/solution/main/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./main.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"3676b9d8198024df9548c55cf3b18b11-local child = require(\"child.child\");\nfunction main() {\n    child.child();\n}\nreturn { main = main };"],"options":{"composite":true,"rootDir":".."},"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./main.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"10d1d3cd65977580c3d40ec5d3445f47-local child = require(\"child.child\");\nfunction main()\n    child.child();\nend\nreturn { main = main };"],"options":{"composite":true,"rootDir":".."},"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
 //// [/home/src/workspaces/solution/main/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -244,8 +243,8 @@ return { main = main };
     },
     {
       "fileName": "./main.tlua",
-      "version": "3676b9d8198024df9548c55cf3b18b11-local child = require(\"child.child\");\nfunction main() {\n    child.child();\n}\nreturn { main = main };",
-      "signature": "3676b9d8198024df9548c55cf3b18b11-local child = require(\"child.child\");\nfunction main() {\n    child.child();\n}\nreturn { main = main };",
+      "version": "10d1d3cd65977580c3d40ec5d3445f47-local child = require(\"child.child\");\nfunction main()\n    child.child();\nend\nreturn { main = main };",
+      "signature": "10d1d3cd65977580c3d40ec5d3445f47-local child = require(\"child.child\");\nfunction main()\n    child.child();\nend\nreturn { main = main };",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -345,7 +344,7 @@ Errors  Files
      1  main/main.tlua[90m:1[0m
 
 //// [/home/src/workspaces/solution/child/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./child.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"294677e5446c11e40bbab6f337eab150-local child2 = require(\"child2\");\nfunction child() {\n    child2.child2();\n}\nreturn { child = child };"],"options":{"composite":true},"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./child.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"0a16d4ed2a3b10ab1ac9c47e521340d2-local child2 = require(\"child2\");\nfunction child()\n    child2.child2();\nend\nreturn { child = child };"],"options":{"composite":true},"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
 //// [/home/src/workspaces/solution/child/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -376,8 +375,8 @@ Errors  Files
     },
     {
       "fileName": "./child.tlua",
-      "version": "294677e5446c11e40bbab6f337eab150-local child2 = require(\"child2\");\nfunction child() {\n    child2.child2();\n}\nreturn { child = child };",
-      "signature": "294677e5446c11e40bbab6f337eab150-local child2 = require(\"child2\");\nfunction child() {\n    child2.child2();\n}\nreturn { child = child };",
+      "version": "0a16d4ed2a3b10ab1ac9c47e521340d2-local child2 = require(\"child2\");\nfunction child()\n    child2.child2();\nend\nreturn { child = child };",
+      "signature": "0a16d4ed2a3b10ab1ac9c47e521340d2-local child2 = require(\"child2\");\nfunction child()\n    child2.child2();\nend\nreturn { child = child };",
       "impliedNodeFormat": "CommonJS"
     }
   ],

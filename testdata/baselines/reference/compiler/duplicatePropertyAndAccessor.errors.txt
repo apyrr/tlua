@@ -2,6 +2,7 @@ duplicatePropertyAndAccessor.tlua(3,1): error TLUA1434: Unexpected keyword or id
 duplicatePropertyAndAccessor.tlua(3,1): error TLUA2304: Cannot find name 'class'.
 duplicatePropertyAndAccessor.tlua(3,7): error TLUA1434: Unexpected keyword or identifier.
 duplicatePropertyAndAccessor.tlua(3,7): error TLUA2304: Cannot find name 'C'.
+duplicatePropertyAndAccessor.tlua(3,9): error TLUA1128: Declaration or statement expected.
 duplicatePropertyAndAccessor.tlua(4,3): error TLUA1434: Unexpected keyword or identifier.
 duplicatePropertyAndAccessor.tlua(4,3): error TLUA2304: Cannot find name 'y'.
 duplicatePropertyAndAccessor.tlua(4,4): error TLUA1128: Declaration or statement expected.
@@ -13,7 +14,7 @@ duplicatePropertyAndAccessor.tlua(5,13): error TLUA1128: Declaration or statemen
 duplicatePropertyAndAccessor.tlua(5,15): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 
 
-==== duplicatePropertyAndAccessor.tlua (13 errors) ====
+==== duplicatePropertyAndAccessor.tlua (14 errors) ====
     // https://github.com/microsoft/typescript-go/issues/4130
     
     class C {
@@ -25,6 +26,8 @@ duplicatePropertyAndAccessor.tlua(5,15): error TLUA2693: 'number' only refers to
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~
 !!! error TLUA2304: Cannot find name 'C'.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
       y: number = 2;
       ~
 !!! error TLUA1434: Unexpected keyword or identifier.

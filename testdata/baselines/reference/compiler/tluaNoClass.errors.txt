@@ -2,6 +2,7 @@ tluaNoClass.tlua(5,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(5,1): error TLUA2304: Cannot find name 'class'.
 tluaNoClass.tlua(5,7): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(5,7): error TLUA2304: Cannot find name 'C'.
+tluaNoClass.tlua(5,9): error TLUA1128: Declaration or statement expected.
 tluaNoClass.tlua(7,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(7,1): error TLUA2304: Cannot find name 'class'.
 tluaNoClass.tlua(7,7): error TLUA1434: Unexpected keyword or identifier.
@@ -9,22 +10,26 @@ tluaNoClass.tlua(7,7): error TLUA2304: Cannot find name 'D'.
 tluaNoClass.tlua(7,9): error TLUA1128: Declaration or statement expected.
 tluaNoClass.tlua(7,17): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(7,17): error TLUA2304: Cannot find name 'C'.
+tluaNoClass.tlua(7,19): error TLUA1128: Declaration or statement expected.
 tluaNoClass.tlua(9,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(9,1): error TLUA2304: Cannot find name 'abstract'.
 tluaNoClass.tlua(9,10): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(9,10): error TLUA2304: Cannot find name 'class'.
 tluaNoClass.tlua(9,16): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(9,16): error TLUA2304: Cannot find name 'E'.
+tluaNoClass.tlua(9,18): error TLUA1128: Declaration or statement expected.
 tluaNoClass.tlua(11,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(11,1): error TLUA2304: Cannot find name 'class'.
 tluaNoClass.tlua(11,7): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(11,7): error TLUA2304: Cannot find name 'F'.
+tluaNoClass.tlua(11,9): error TLUA1128: Declaration or statement expected.
 tluaNoClass.tlua(13,11): error TLUA2304: Cannot find name 'class'.
 tluaNoClass.tlua(13,17): error TLUA1005: ';' expected.
 tluaNoClass.tlua(15,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(15,1): error TLUA2304: Cannot find name 'class'.
 tluaNoClass.tlua(15,7): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(15,7): error TLUA2304: Cannot find name 'WithMembers'.
+tluaNoClass.tlua(15,19): error TLUA1128: Declaration or statement expected.
 tluaNoClass.tlua(16,3): error TLUA2304: Cannot find name 'x'.
 tluaNoClass.tlua(17,3): error TLUA2304: Cannot find name 'm'.
 tluaNoClass.tlua(17,7): error TLUA1005: ';' expected.
@@ -41,7 +46,7 @@ tluaNoClass.tlua(21,7): error TLUA2304: Cannot find name 'a'.
 tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
 
 
-==== tluaNoClass.tlua (41 errors) ====
+==== tluaNoClass.tlua (46 errors) ====
     // Classes are removed in tlua: `class` is an ordinary identifier (Lua has no
     // `class` keyword) and class declarations/expressions no longer parse. Each form
     // below produces natural parse errors (no tlua-specific diagnostic).
@@ -55,6 +60,8 @@ tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~
 !!! error TLUA2304: Cannot find name 'C'.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
     
     class D extends C {}
     ~~~~~
@@ -71,6 +78,8 @@ tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
                     ~
 !!! error TLUA2304: Cannot find name 'C'.
+                      ~
+!!! error TLUA1128: Declaration or statement expected.
     
     abstract class E {}
     ~~~~~~~~
@@ -85,6 +94,8 @@ tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
                    ~
 !!! error TLUA2304: Cannot find name 'E'.
+                     ~
+!!! error TLUA1128: Declaration or statement expected.
     
     class F {}
     ~~~~~
@@ -95,6 +106,8 @@ tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~
 !!! error TLUA2304: Cannot find name 'F'.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
     
     local g = class {};
               ~~~~~
@@ -111,6 +124,8 @@ tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~~~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'WithMembers'.
+                      ~
+!!! error TLUA1128: Declaration or statement expected.
       x = 1;
       ~
 !!! error TLUA2304: Cannot find name 'x'.
@@ -150,8 +165,8 @@ tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
     }
     
     // `class` is now an ordinary identifier.
-    function usesClassName(): number {
+    function usesClassName(): number
       local class = 3;
       return class;
-    }
+    end
     

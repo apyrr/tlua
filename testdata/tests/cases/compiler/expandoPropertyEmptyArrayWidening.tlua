@@ -5,19 +5,19 @@
 local example: {
   (): void;
   items?: string[];
-} = () => undefined;
+} = function() return undefined end;
 example.items = [];
 
-function f1() {}
+function f1() end
 f1.a = [];  // Implicit any error
 
 local f2 = function() end;
 f2.a = [];  // Implicit any error
 
-local f3 = () => {};
+local f3 = function() end;
 f3.a = [];  // Implicit any error
 
-local f4: { (): void, a: string[] } = () => {};
+local f4: { (): void, a: string[] } = function() end;
 f4.a = [];
 
 local f5: { (): void, a: string[] } = function() end;

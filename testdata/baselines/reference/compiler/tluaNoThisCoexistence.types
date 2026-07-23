@@ -10,7 +10,7 @@ declare function use(x: unknown): void;
 
 // Ordinary identifier type predicates still narrow. Only the `this is T` form
 // was removed, and it is a distinct branch of the predicate machinery.
-function isString(v: unknown): v is string {
+function isString(v: unknown): v is string
 >isString : (v: unknown) => v is string
 >v : unknown
 
@@ -20,17 +20,18 @@ function isString(v: unknown): v is string {
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
 >v : unknown
 >"string" : "string"
-}
+
+end
 
 declare function assertString(v: unknown): asserts v is string;
 >assertString : (v: unknown) => asserts v is string
 >v : unknown
 
-function narrow(v: unknown): void {
+function narrow(v: unknown): void
 >narrow : (v: unknown) => void
 >v : unknown
 
-  if (isString(v)) {
+  if isString(v) then
 >isString(v) : boolean
 >isString : (v: unknown) => v is string
 >v : unknown
@@ -43,7 +44,8 @@ function narrow(v: unknown): void {
 >use(s) : void
 >use : (x: unknown) => void
 >s : string
-  }
+
+  end
   assertString(v);
 >assertString(v) : void
 >assertString : (v: unknown) => asserts v is string
@@ -57,7 +59,8 @@ function narrow(v: unknown): void {
 >use(t) : void
 >use : (x: unknown) => void
 >t : string
-}
+
+end
 
 // Lua's global environment remains available independently of `this`.
 local g: typeof _G = _G;

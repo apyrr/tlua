@@ -33,14 +33,15 @@ local function localPair(): (number, string)
 
 end
 
-function bracePair(): (number, string) {
+function bracePair(): (number, string)
 >bracePair : () => (number, string)
 
   return 3, "c";
 >3, "c" : number, string
 >3 : 3
 >"c" : "c"
-}
+
+end
 
 local exprPair = function(): (number, string)
 >exprPair : () => (number, string)

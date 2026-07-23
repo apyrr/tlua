@@ -7,6 +7,6 @@
 //     b: number;
 //     c: number;
 // }
-// function foo({ a, .../*RENAME*/[|restRENAME|] }: I) {
+// function foo({ a, .../*RENAME*/[|restRENAME|] }: I)
 //     [|restRENAME|];
-// }
+// end

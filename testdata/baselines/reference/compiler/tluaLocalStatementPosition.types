@@ -9,19 +9,22 @@ declare cond: boolean;
 >cond : boolean
 
 if (cond) local a = 1;
+>(cond) : boolean
 >cond : boolean
 >a : number
 >1 : 1
 
 while (cond) local b = 2;
->cond : boolean
+>(cond) : true
+>cond : true
 >b : number
 >2 : 2
 
-// Braced and Lua-block bodies are real blocks; the declarations are fine and
+// Lua-block bodies are real blocks; the declarations are fine and
 // stay contained.
-if (cond) {
->cond : false
+if (cond) then
+>(cond) : true
+>cond : true
 
   local ok1 = 1;
 >ok1 : number
@@ -31,9 +34,10 @@ if (cond) {
 >print(ok1) : void
 >print : (...: any) => void
 >ok1 : number
-}
+
+end
 if cond then
->cond : false
+>cond : true
 
   local ok2 = 2;
 >ok2 : number
@@ -46,7 +50,7 @@ if cond then
 
 end
 while cond do
->cond : false
+>cond : true
 
   local ok3 = 3;
 >ok3 : number

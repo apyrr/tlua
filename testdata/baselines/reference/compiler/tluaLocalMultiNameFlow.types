@@ -19,7 +19,7 @@ local a, b = maybePair();
 function useBoth(): number
 >useBoth : () => number
 
-  if (b != nil) {
+  if b != nil then
 >b != nil : boolean
 >b : string | nil
 
@@ -29,7 +29,8 @@ function useBoth(): number
 >b.length : number
 >b : string
 >length : number
-  }
+
+  end
   return a;
 >a : number
 
@@ -55,17 +56,19 @@ local e, f = maybePair();
 >maybePair() : number
 >maybePair : () => (number, string?)
 
-function narrowed(): string {
+function narrowed(): string
 >narrowed : () => string
 
-  if (f == nil) {
+  if f == nil then
 >f == nil : boolean
 >f : string | nil
 
     return "";
 >"" : ""
-  }
+
+  end
   return f;
 >f : string
-}
+
+end
 

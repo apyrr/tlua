@@ -1,9 +1,9 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.tlua ===
 // /*FIND ALL REFS*/this;
-// function f(this) {
+// function f(this)
 //     return this;
-//     function g(this) { return this; }
+//     function g(this) return this; end
 // --- (line: 5) skipped ---
 
 
@@ -11,10 +11,10 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.tlua ===
 // this;
-// function f(/*FIND ALL REFS*/[|this|]) {
+// function f(/*FIND ALL REFS*/[|this|])
 //     return [|this|];
-//     function g(this) { return this; }
-// }
+//     function g(this) return this; end
+// end
 // class C {
 // --- (line: 7) skipped ---
 
@@ -23,10 +23,10 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.tlua ===
 // this;
-// function f([|this|]) {
+// function f([|this|])
 //     return /*FIND ALL REFS*/[|this|];
-//     function g(this) { return this; }
-// }
+//     function g(this) return this; end
+// end
 // class C {
 // --- (line: 7) skipped ---
 
@@ -35,10 +35,10 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.tlua ===
 // this;
-// function f(this) {
+// function f(this)
 //     return this;
-//     function g(/*FIND ALL REFS*/[|this|]) { return [|this|]; }
-// }
+//     function g(/*FIND ALL REFS*/[|this|]) return [|this|]; end
+// end
 // class C {
 //     static x() {
 // --- (line: 8) skipped ---
@@ -48,10 +48,10 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.tlua ===
 // this;
-// function f(this) {
+// function f(this)
 //     return this;
-//     function g([|this|]) { return /*FIND ALL REFS*/[|this|]; }
-// }
+//     function g([|this|]) return /*FIND ALL REFS*/[|this|]; end
+// end
 // class C {
 //     static x() {
 // --- (line: 8) skipped ---
@@ -61,7 +61,7 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.tlua ===
 // --- (line: 4) skipped ---
-// }
+// end
 // class C {
 //     static x() {
 //         /*FIND ALL REFS*/this;

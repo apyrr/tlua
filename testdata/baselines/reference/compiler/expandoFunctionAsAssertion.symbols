@@ -1,25 +1,25 @@
 //// [tests/cases/compiler/expandoFunctionAsAssertion.tlua] ////
 
 === expandoFunctionAsAssertion.tlua ===
-function example() {}
+function example() end
 >example : Symbol(example, Decl(expandoFunctionAsAssertion.tlua, 0, 0))
 
 example.isFoo = function(value: string): asserts value is 'foo'
->example.isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+>example.isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 22))
 >example : Symbol(example, Decl(expandoFunctionAsAssertion.tlua, 0, 0))
->isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+>isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 22))
 >value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
 >value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
 
-  if (value ~= 'foo') {
+  if value ~= 'foo' then
 >value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
 
     throw new Error('Not foo');
-  }
+  end
 end;
 
 example.isFoo('test');
->example.isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+>example.isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 22))
 >example : Symbol(example, Decl(expandoFunctionAsAssertion.tlua, 0, 0))
->isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 21))
+>isFoo : Symbol(example.isFoo, Decl(expandoFunctionAsAssertion.tlua, 0, 22))
 

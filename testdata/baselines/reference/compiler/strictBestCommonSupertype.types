@@ -10,14 +10,15 @@ class Store<T = table> {
 >T : any
 >table> {    select<K>(mapFn: (state: T) => K) {};} : boolean
 >table : TableLib
->{    select<K>(mapFn: (state: T) => K) {};} : { 1: number & (any?, ...any); 2: {}; }
+>{    select<K>(mapFn: (state: T) => K) {};} : { 1: number & (any?, ...any); 2: any; 3: {}; }
 
     select<K>(mapFn: (state: T) => K) {};
->select<K>(mapFn: (state: T) => K) : number & (any?, ...any)
+>select<K>(mapFn: (state: T) : number & (any?, ...any)
 >select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
 >mapFn : any
->(state: T) => K : (state: T) => any
->state : T
+>(state : any
+>state : any
+>T : any
 >K : any
 >{} : {}
 }
@@ -28,14 +29,15 @@ local store: Store = inject(Store);
 >inject : <T>(token: ProviderToken<T>) => T
 >Store : any
 
-function inject<T>(token: ProviderToken<T>): T {
+function inject<T>(token: ProviderToken<T>): T
 >inject : <T>(token: ProviderToken<T>) => T
 >token : ProviderToken<T>
 
     return {} as T;
 >{} as T : T
 >{} : {}
-}
+
+end
 
 interface Type<T> {
     new (...args: any[]): T;

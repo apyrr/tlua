@@ -47,12 +47,13 @@ function nested(flag: boolean): number
 
   do
     do
-      if (flag) {
+      if flag then
 >flag : Symbol(flag, Decl(tluaDoBlock.tlua, 20, 16))
 
         n = 1;
 >n : Symbol(n, Decl(tluaDoBlock.tlua, 21, 7))
-      }
+
+      end
     end
   end
   return n;
@@ -60,16 +61,16 @@ function nested(flag: boolean): number
 
 end
 
-// TS do-while coexists with Lua do-blocks in one body.
-function coexist(flag: boolean): number {
+// A repeat-until loop coexists with Lua do-blocks in one body.
+function coexist(flag: boolean): number
 >coexist : Symbol(coexist, Decl(tluaDoBlock.tlua, 30, 3))
 >flag : Symbol(flag, Decl(tluaDoBlock.tlua, 33, 17))
 
-  do {
+  repeat
     flag = false;
 >flag : Symbol(flag, Decl(tluaDoBlock.tlua, 33, 17))
 
-  } while (flag);
+  until not (flag);
 >flag : Symbol(flag, Decl(tluaDoBlock.tlua, 33, 17))
 
   do
@@ -81,16 +82,15 @@ function coexist(flag: boolean): number {
 
   end
   return 0;
-}
+end
 
-// The canonicalization edge: a TS if with a Lua do-block body prints as a
-// Lua if (semantically identical).
+// A plain Lua if coexisting with the do-blocks above.
 function canonical(flag: boolean): number
->canonical : Symbol(canonical, Decl(tluaDoBlock.tlua, 42, 1))
->flag : Symbol(flag, Decl(tluaDoBlock.tlua, 46, 19))
+>canonical : Symbol(canonical, Decl(tluaDoBlock.tlua, 42, 3))
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 45, 19))
 
-  if (flag) do
->flag : Symbol(flag, Decl(tluaDoBlock.tlua, 46, 19))
+  if flag then
+>flag : Symbol(flag, Decl(tluaDoBlock.tlua, 45, 19))
 
     return 1;
   end

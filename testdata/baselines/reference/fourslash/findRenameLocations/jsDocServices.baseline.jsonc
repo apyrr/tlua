@@ -5,9 +5,9 @@
 // /**
 //  * @param /*RENAME*/[|fooRENAME|] I pity the foo
 //  */
-// function f([|fooRENAME|]: I) {
+// function f([|fooRENAME|]: I)
 //     return [|fooRENAME|];
-// }
+// end
 
 
 
@@ -18,9 +18,9 @@
 // /**
 //  * @param [|fooRENAME|] I pity the foo
 //  */
-// function f(/*RENAME*/[|fooRENAME|]: I) {
+// function f(/*RENAME*/[|fooRENAME|]: I)
 //     return [|fooRENAME|];
-// }
+// end
 
 
 
@@ -31,6 +31,6 @@
 // /**
 //  * @param [|fooRENAME|] I pity the foo
 //  */
-// function f([|fooRENAME|]: I) {
+// function f([|fooRENAME|]: I)
 //     return /*RENAME*/[|fooRENAME|];
-// }
+// end

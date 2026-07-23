@@ -89,7 +89,7 @@
 //         foo./*FIND ALL REFS*/n = x;
 //     }
 // 
-//     function b(n) {
+//     function b(n)
 // --- (line: 21) skipped ---
 
 
@@ -99,9 +99,9 @@
 // --- (line: 17) skipped ---
 //     }
 // 
-//     function b(n) {
+//     function b(n)
 //         n = foo./*FIND ALL REFS*/n;
-//     }
+//     end
 // }
 
 

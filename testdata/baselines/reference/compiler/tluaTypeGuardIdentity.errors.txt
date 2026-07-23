@@ -17,7 +17,7 @@ tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not
     declare v: string | number;
     declare function use(x: unknown): void;
     
-    function shadowed(): void {
+    function shadowed(): void
       local type = function(value: any) return "string"; end;
       if type(v) == "string" then
         local s: string = v;
@@ -25,9 +25,9 @@ tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not
 !!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
 !!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
-    }
+    end
     
-    function aliased(): void {
+    function aliased(): void
       local t = type;
       if t(v) == "string" then
         local s: string = v;
@@ -35,20 +35,20 @@ tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not
 !!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
 !!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
-    }
+    end
     
     declare holder: { type: (value: any) => string };
     
-    function member(): void {
+    function member(): void
       if holder.type(v) == "string" then
         local s: string = v;
               ~
 !!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
 !!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
-    }
+    end
     
-    function wrongArity(): void {
+    function wrongArity(): void
       if type() == "string" then
          ~~~~
 !!! error TLUA2554: Expected 1 arguments, but got 0.
@@ -58,13 +58,13 @@ tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not
 !!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
 !!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
       end
-    }
+    end
     
     // The global still narrows in the same file, once the shadow is out of scope.
-    function global(): void {
+    function global(): void
       if type(v) == "string" then
         local s: string = v;
         use(s);
       end
-    }
+    end
     

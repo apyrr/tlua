@@ -2,7 +2,7 @@
 /**
  * @returns {Array<{ value: /**/string }>}
  */
-function foo() { return [] }
+function foo() return [] end
 
                             string    ↲
                      value: string    ↲
@@ -19,4 +19,4 @@ function foo() { return [] }
 /**
  * @returns {Array<{ value: string }>}
  */
-function foo() { return [] }
+function foo() return [] end

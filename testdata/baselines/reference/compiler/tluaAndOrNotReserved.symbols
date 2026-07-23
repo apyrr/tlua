@@ -43,7 +43,7 @@ local not = 3;
 > : Symbol((Missing), Decl(tluaAndOrNotReserved.tlua, 19, 5))
 
 // Declaration names.
-function or() {}
+function or() end
 > : Symbol((Missing), Decl(tluaAndOrNotReserved.tlua, 19, 14))
 
 // `not` shares KindExclamationToken with `!`, but only the punctuation spelling

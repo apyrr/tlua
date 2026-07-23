@@ -15,9 +15,9 @@ tluaMultiReturnTypeSyntax.tlua(59,16): error TLUA2583: Cannot find name 'Map'. D
       return 2, "b";
     end
     
-    function bracePair(): (number, string) {
+    function bracePair(): (number, string)
       return 3, "c";
-    }
+    end
     
     local exprPair = function(): (number, string)
       return 4, "d";

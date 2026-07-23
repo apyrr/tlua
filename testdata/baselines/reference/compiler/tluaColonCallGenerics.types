@@ -89,9 +89,9 @@ local w6 = (boxer:wrap<string>("x"));
 >wrap : <T>(self: Boxer, value: T) => { value: T; }
 >"x" : "x"
 
-local arrow = (b: Boxer) => b:wrap(1);
+local arrow = function(b: Boxer) return b:wrap(1) end;
 >arrow : (b: Boxer) => { value: number; }
->(b: Boxer) => b:wrap(1) : (b: Boxer) => { value: number; }
+>function(b: Boxer) return b:wrap(1) end : (b: Boxer) => { value: number; }
 >b : Boxer
 >b:wrap(1) : { value: number; }
 >b:wrap : <T>(self: Boxer, value: T) => { value: T; }
@@ -103,9 +103,9 @@ type Wrapped<T> = { value: T };
 >Wrapped : Wrapped<T>
 >value : T
 
-local arrowGeneric = (w: Wrapped<string>) => w.value;
+local arrowGeneric = function(w: Wrapped<string>) return w.value end;
 >arrowGeneric : (w: Wrapped<string>) => string
->(w: Wrapped<string>) => w.value : (w: Wrapped<string>) => string
+>function(w: Wrapped<string>) return w.value end : (w: Wrapped<string>) => string
 >w : Wrapped<string>
 >w.value : string
 >w : Wrapped<string>

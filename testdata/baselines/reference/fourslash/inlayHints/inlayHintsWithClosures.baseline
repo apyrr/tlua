@@ -46,11 +46,11 @@ foo1(1)(2);
         "range": {
           "start": {
             "line": 1,
-            "character": 12
+            "character": 20
           },
           "end": {
             "line": 1,
-            "character": 13
+            "character": 21
           }
         }
       }
@@ -95,7 +95,7 @@ foo1(1)(2);
   "paddingRight": true
 }
 
-foo2((c: number) => c + 1);
+foo2(function(c: number) return c + 1 end);
      ^
 {
   "position": {

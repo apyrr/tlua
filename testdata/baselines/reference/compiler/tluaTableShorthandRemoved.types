@@ -68,7 +68,7 @@ local q3 = obj.q;
 >q : number
 
 // ... and parameter binding patterns are a separate grammar, untouched.
-function take({ q: q4 }: { q: number }): number { return q4; }
+function take({ q: q4 }: { q: number }): number return q4 end
 >take : ({ q: q4 }: { q: number; }) => number
 >q : any
 >q4 : number

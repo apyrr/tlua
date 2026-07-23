@@ -17,16 +17,16 @@ console.log('Hello, world!');
     ],
 }
 //// [/home/src/workspaces/solution/projects/shared/src/logging.tlua] *new* 
-function log(str: string) {
+function log(str: string)
     console.log(str);
-}
+end
 //// [/home/src/workspaces/solution/projects/shared/src/myClass.tlua] *new* 
 local MyClass = { };
 return { MyClass = MyClass };
 //// [/home/src/workspaces/solution/projects/shared/src/random.tlua] *new* 
-function randomFn(str: string) {
+function randomFn(str: string)
     console.log(str);
-}
+end
 //// [/home/src/workspaces/solution/projects/shared/tluaconfig.json] *new* 
 {
     "extends": "../../tluaconfig.json",
@@ -61,7 +61,7 @@ Output::
 
 [96mprojects/shared/src/logging.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function log(str: string) {
+[7m1[0m function log(str: string)
 [7m [0m [91m~~~~~~~~[0m
 
 [96mprojects/shared/src/myClass.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -71,7 +71,7 @@ Output::
 
 [96mprojects/shared/src/random.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function randomFn(str: string) {
+[7m1[0m function randomFn(str: string)
 [7m [0m [91m~~~~~~~~[0m
 
 ../../tslibs/TS/Lib/lib.luajit.d.tlua
@@ -192,21 +192,21 @@ console.log('Hello, world!');
   "size": 1263
 }
 //// [/home/src/workspaces/solution/projects/shared/dist/src/logging.lua] *new* 
-function log(str) {
+function log(str)
     console.log(str);
-}
+end
 
 //// [/home/src/workspaces/solution/projects/shared/dist/src/myClass.lua] *new* 
 local MyClass = {};
 return { MyClass = MyClass };
 
 //// [/home/src/workspaces/solution/projects/shared/dist/src/random.lua] *new* 
-function randomFn(str) {
+function randomFn(str)
     console.log(str);
-}
+end
 
 //// [/home/src/workspaces/solution/projects/shared/dist/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.luajit.d.tlua","../src/logging.tlua","../src/myClass.tlua","../src/random.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"0971487bc21733f4a85c16f26aa085fe-function log(str: string) {\n    console.log(str);\n}","5d7430c39261c48bb27fd171ed98d7cc-local MyClass = { };\nreturn { MyClass = MyClass };","07919cda4104f1ffa7361b22f3221898-function randomFn(str: string) {\n    console.log(str);\n}"],"options":{"composite":true,"outDir":"./"},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3,4]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.luajit.d.tlua","../src/logging.tlua","../src/myClass.tlua","../src/random.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"4a65b356a4257e0f6d11ae4380e4eef8-function log(str: string)\n    console.log(str);\nend","5d7430c39261c48bb27fd171ed98d7cc-local MyClass = { };\nreturn { MyClass = MyClass };","a35ab881c4859094bc715151839ea471-function randomFn(str: string)\n    console.log(str);\nend"],"options":{"composite":true,"outDir":"./"},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3,4]}
 //// [/home/src/workspaces/solution/projects/shared/dist/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -244,8 +244,8 @@ function randomFn(str) {
     },
     {
       "fileName": "../src/logging.tlua",
-      "version": "0971487bc21733f4a85c16f26aa085fe-function log(str: string) {\n    console.log(str);\n}",
-      "signature": "0971487bc21733f4a85c16f26aa085fe-function log(str: string) {\n    console.log(str);\n}",
+      "version": "4a65b356a4257e0f6d11ae4380e4eef8-function log(str: string)\n    console.log(str);\nend",
+      "signature": "4a65b356a4257e0f6d11ae4380e4eef8-function log(str: string)\n    console.log(str);\nend",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -256,8 +256,8 @@ function randomFn(str) {
     },
     {
       "fileName": "../src/random.tlua",
-      "version": "07919cda4104f1ffa7361b22f3221898-function randomFn(str: string) {\n    console.log(str);\n}",
-      "signature": "07919cda4104f1ffa7361b22f3221898-function randomFn(str: string) {\n    console.log(str);\n}",
+      "version": "a35ab881c4859094bc715151839ea471-function randomFn(str: string)\n    console.log(str);\nend",
+      "signature": "a35ab881c4859094bc715151839ea471-function randomFn(str: string)\n    console.log(str);\nend",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -367,7 +367,7 @@ Diff:: TS100054 declaration emit errors are emit-time diagnostics not stored in 
 @@ -1,20 +0,0 @@
 -[96mprojects/shared/src/logging.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 -
--[7m1[0m function log(str: string) {
+-[7m1[0m function log(str: string)
 -[7m [0m [91m~~~~~~~~[0m
 -
 -[96mprojects/shared/src/myClass.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -377,7 +377,7 @@ Diff:: TS100054 declaration emit errors are emit-time diagnostics not stored in 
 -
 -[96mprojects/shared/src/random.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 -
--[7m1[0m function randomFn(str: string) {
+-[7m1[0m function randomFn(str: string)
 -[7m [0m [91m~~~~~~~~[0m
 -
 -[96mprojects/server/src/server.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -388,9 +388,10 @@ Diff:: TS100054 declaration emit errors are emit-time diagnostics not stored in 
 
 Edit [1]:: edit logging file
 //// [/home/src/workspaces/solution/projects/shared/src/logging.tlua] *modified* 
-function log(str: string) {
+function log(str: string)
     console.log(str);
-}local x = 10;
+end
+local x = 10;
 
 
 Output::
@@ -406,7 +407,7 @@ Output::
 
 [96mprojects/shared/src/logging.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function log(str: string) {
+[7m1[0m function log(str: string)
 [7m [0m [91m~~~~~~~~[0m
 
 [96mprojects/shared/src/myClass.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -416,7 +417,7 @@ Output::
 
 [96mprojects/shared/src/random.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function randomFn(str: string) {
+[7m1[0m function randomFn(str: string)
 [7m [0m [91m~~~~~~~~[0m
 
 ../../tslibs/TS/Lib/lib.luajit.d.tlua
@@ -446,13 +447,13 @@ projects/server/src/server.tlua
 [[90mHH:MM:SS AM[0m] Found 4 errors. Watching for file changes.
 
 //// [/home/src/workspaces/solution/projects/shared/dist/src/logging.lua] *modified* 
-function log(str) {
+function log(str)
     console.log(str);
-}
+end
 local x = 10;
 
 //// [/home/src/workspaces/solution/projects/shared/dist/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.luajit.d.tlua","../src/logging.tlua","../src/myClass.tlua","../src/random.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0154faa1467efe984aa9bfe537f2d32c-function log(str: string) {\n    console.log(str);\n}local x = 10;","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"5d7430c39261c48bb27fd171ed98d7cc-local MyClass = { };\nreturn { MyClass = MyClass };","07919cda4104f1ffa7361b22f3221898-function randomFn(str: string) {\n    console.log(str);\n}"],"options":{"composite":true,"outDir":"./"},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3,4]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.luajit.d.tlua","../src/logging.tlua","../src/myClass.tlua","../src/random.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"9131a9dc7e97e25560c5c4d68c2a8e31-function log(str: string)\n    console.log(str);\nend\nlocal x = 10;","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"5d7430c39261c48bb27fd171ed98d7cc-local MyClass = { };\nreturn { MyClass = MyClass };","a35ab881c4859094bc715151839ea471-function randomFn(str: string)\n    console.log(str);\nend"],"options":{"composite":true,"outDir":"./"},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3,4]}
 //// [/home/src/workspaces/solution/projects/shared/dist/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -490,11 +491,11 @@ local x = 10;
     },
     {
       "fileName": "../src/logging.tlua",
-      "version": "0154faa1467efe984aa9bfe537f2d32c-function log(str: string) {\n    console.log(str);\n}local x = 10;",
+      "version": "9131a9dc7e97e25560c5c4d68c2a8e31-function log(str: string)\n    console.log(str);\nend\nlocal x = 10;",
       "signature": "2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "0154faa1467efe984aa9bfe537f2d32c-function log(str: string) {\n    console.log(str);\n}local x = 10;",
+        "version": "9131a9dc7e97e25560c5c4d68c2a8e31-function log(str: string)\n    console.log(str);\nend\nlocal x = 10;",
         "signature": "2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
         "impliedNodeFormat": 1
       }
@@ -507,8 +508,8 @@ local x = 10;
     },
     {
       "fileName": "../src/random.tlua",
-      "version": "07919cda4104f1ffa7361b22f3221898-function randomFn(str: string) {\n    console.log(str);\n}",
-      "signature": "07919cda4104f1ffa7361b22f3221898-function randomFn(str: string) {\n    console.log(str);\n}",
+      "version": "a35ab881c4859094bc715151839ea471-function randomFn(str: string)\n    console.log(str);\nend",
+      "signature": "a35ab881c4859094bc715151839ea471-function randomFn(str: string)\n    console.log(str);\nend",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -565,7 +566,7 @@ local x = 10;
       "original": 4
     }
   ],
-  "size": 1868
+  "size": 1870
 }
 
 Watch Registrations::
@@ -614,7 +615,7 @@ Diff:: TS100054 declaration emit errors are emit-time diagnostics not stored in 
 @@ -1,20 +0,0 @@
 -[96mprojects/shared/src/logging.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 -
--[7m1[0m function log(str: string) {
+-[7m1[0m function log(str: string)
 -[7m [0m [91m~~~~~~~~[0m
 -
 -[96mprojects/shared/src/myClass.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -624,7 +625,7 @@ Diff:: TS100054 declaration emit errors are emit-time diagnostics not stored in 
 -
 -[96mprojects/shared/src/random.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 -
--[7m1[0m function randomFn(str: string) {
+-[7m1[0m function randomFn(str: string)
 -[7m [0m [91m~~~~~~~~[0m
 -
 -[96mprojects/server/src/server.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -650,7 +651,7 @@ Output::
 
 [96mprojects/shared/src/logging.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function log(str: string) {
+[7m1[0m function log(str: string)
 [7m [0m [91m~~~~~~~~[0m
 
 [96mprojects/shared/src/myClass.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
@@ -683,7 +684,7 @@ projects/server/src/server.tlua
 [[90mHH:MM:SS AM[0m] Found 3 errors. Watching for file changes.
 
 //// [/home/src/workspaces/solution/projects/shared/dist/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../src/logging.tlua","../src/myClass.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0154faa1467efe984aa9bfe537f2d32c-function log(str: string) {\n    console.log(str);\n}local x = 10;","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"5d7430c39261c48bb27fd171ed98d7cc-local MyClass = { };\nreturn { MyClass = MyClass };"],"options":{"composite":true,"outDir":"./"},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../src/logging.tlua","../src/myClass.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"9131a9dc7e97e25560c5c4d68c2a8e31-function log(str: string)\n    console.log(str);\nend\nlocal x = 10;","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"5d7430c39261c48bb27fd171ed98d7cc-local MyClass = { };\nreturn { MyClass = MyClass };"],"options":{"composite":true,"outDir":"./"},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
 //// [/home/src/workspaces/solution/projects/shared/dist/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -719,11 +720,11 @@ projects/server/src/server.tlua
     },
     {
       "fileName": "../src/logging.tlua",
-      "version": "0154faa1467efe984aa9bfe537f2d32c-function log(str: string) {\n    console.log(str);\n}local x = 10;",
+      "version": "9131a9dc7e97e25560c5c4d68c2a8e31-function log(str: string)\n    console.log(str);\nend\nlocal x = 10;",
       "signature": "2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "0154faa1467efe984aa9bfe537f2d32c-function log(str: string) {\n    console.log(str);\n}local x = 10;",
+        "version": "9131a9dc7e97e25560c5c4d68c2a8e31-function log(str: string)\n    console.log(str);\nend\nlocal x = 10;",
         "signature": "2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
         "impliedNodeFormat": 1
       }
@@ -773,7 +774,7 @@ projects/server/src/server.tlua
       "original": 3
     }
   ],
-  "size": 1631
+  "size": 1633
 }
 
 Watch Registrations::
@@ -820,7 +821,7 @@ Diff:: TS100054 declaration emit errors are emit-time diagnostics not stored in 
 @@ -1,15 +0,0 @@
 -[96mprojects/shared/src/logging.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 -
--[7m1[0m function log(str: string) {
+-[7m1[0m function log(str: string)
 -[7m [0m [91m~~~~~~~~[0m
 -
 -[96mprojects/shared/src/myClass.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.

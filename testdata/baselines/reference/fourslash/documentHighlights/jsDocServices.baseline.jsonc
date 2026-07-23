@@ -5,9 +5,9 @@
 // /**
 //  * @param /*HIGHLIGHTS*/[|foo|] I pity the foo
 //  */
-// function f([|foo|]: I) {
+// function f([|foo|]: I)
 //     return [|foo|];
-// }
+// end
 
 
 
@@ -18,9 +18,9 @@
 // /**
 //  * @param [|foo|] I pity the foo
 //  */
-// function f(/*HIGHLIGHTS*/[|foo|]: I) {
+// function f(/*HIGHLIGHTS*/[|foo|]: I)
 //     return [|foo|];
-// }
+// end
 
 
 
@@ -31,6 +31,6 @@
 // /**
 //  * @param [|foo|] I pity the foo
 //  */
-// function f([|foo|]: I) {
+// function f([|foo|]: I)
 //     return /*HIGHLIGHTS*/[|foo|];
-// }
+// end

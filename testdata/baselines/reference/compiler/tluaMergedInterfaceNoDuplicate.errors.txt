@@ -1,0 +1,41 @@
+tluaMergedInterfaceNoDuplicate.tlua(15,22): error TLUA2717: Subsequent property declarations must have the same type.  Property 'v' must be of type 'number', but here has type 'string'.
+tluaMergedInterfaceNoDuplicate.tlua(18,24): error TLUA2300: Duplicate identifier 'dup'.
+tluaMergedInterfaceNoDuplicate.tlua(18,37): error TLUA2300: Duplicate identifier 'dup'.
+tluaMergedInterfaceNoDuplicate.tlua(21,14): error TLUA2300: Duplicate identifier 'p'.
+tluaMergedInterfaceNoDuplicate.tlua(21,25): error TLUA2300: Duplicate identifier 'p'.
+
+
+==== tluaMergedInterfaceNoDuplicate.tlua (5 errors) ====
+    // A property re-declared across merged interface declarations is ordinary
+    // merging, not a duplicate identifier: the symbol gains several declarations,
+    // but each body declares the name only once.
+    interface Merged { x: number }
+    interface Merged { x: number }
+    
+    // Adding distinct members across declarations merges cleanly too.
+    interface Widened { a: number }
+    interface Widened { b: string }
+    
+    // Re-declaring with a conflicting type is a "subsequent property declarations
+    // must have the same type" error -- but still NOT a spurious duplicate
+    // identifier from the per-body duplicate check.
+    interface Conflict { v: number }
+    interface Conflict { v: string }
+                         ~
+!!! error TLUA2717: Subsequent property declarations must have the same type.  Property 'v' must be of type 'number', but here has type 'string'.
+!!! related TLUA6203 tluaMergedInterfaceNoDuplicate.tlua:14:22: 'v' was also declared here.
+    
+    // A name repeated within a SINGLE body is a genuine duplicate identifier.
+    interface WithinBody { dup: number, dup: number }
+                           ~~~
+!!! error TLUA2300: Duplicate identifier 'dup'.
+                                        ~~~
+!!! error TLUA2300: Duplicate identifier 'dup'.
+    
+    // Same distinction for a type literal body.
+    type Lit = { p: number, p: number }
+                 ~
+!!! error TLUA2300: Duplicate identifier 'p'.
+                            ~
+!!! error TLUA2300: Duplicate identifier 'p'.
+    

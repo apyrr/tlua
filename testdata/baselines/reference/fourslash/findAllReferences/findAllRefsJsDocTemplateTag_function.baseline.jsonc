@@ -1,11 +1,11 @@
 // === findAllReferences ===
 // === /findAllRefsJsDocTemplateTag_function.tlua ===
 // /** @template /*FIND ALL REFS*/T */
-// function f<T>() {}
+// function f<T>() end
 
 
 
 // === findAllReferences ===
 // === /findAllRefsJsDocTemplateTag_function.tlua ===
 // /** @template T */
-// function f</*FIND ALL REFS*/[|T|]>() {}
+// function f</*FIND ALL REFS*/[|T|]>() end

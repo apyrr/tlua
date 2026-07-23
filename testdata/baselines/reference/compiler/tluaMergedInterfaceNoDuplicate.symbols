@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/tluaMergedInterfaceNoDuplicate.tlua] ////
+
+=== tluaMergedInterfaceNoDuplicate.tlua ===
+// A property re-declared across merged interface declarations is ordinary
+// merging, not a duplicate identifier: the symbol gains several declarations,
+// but each body declares the name only once.
+interface Merged { x: number }
+>Merged : Symbol(Merged, Decl(tluaMergedInterfaceNoDuplicate.tlua, 0, 0), Decl(tluaMergedInterfaceNoDuplicate.tlua, 3, 30))
+>x : Symbol(Merged.x, Decl(tluaMergedInterfaceNoDuplicate.tlua, 3, 18), Decl(tluaMergedInterfaceNoDuplicate.tlua, 4, 18))
+
+interface Merged { x: number }
+>Merged : Symbol(Merged, Decl(tluaMergedInterfaceNoDuplicate.tlua, 0, 0), Decl(tluaMergedInterfaceNoDuplicate.tlua, 3, 30))
+>x : Symbol(Merged.x, Decl(tluaMergedInterfaceNoDuplicate.tlua, 3, 18), Decl(tluaMergedInterfaceNoDuplicate.tlua, 4, 18))
+
+// Adding distinct members across declarations merges cleanly too.
+interface Widened { a: number }
+>Widened : Symbol(Widened, Decl(tluaMergedInterfaceNoDuplicate.tlua, 4, 30), Decl(tluaMergedInterfaceNoDuplicate.tlua, 7, 31))
+>a : Symbol(Widened.a, Decl(tluaMergedInterfaceNoDuplicate.tlua, 7, 19))
+
+interface Widened { b: string }
+>Widened : Symbol(Widened, Decl(tluaMergedInterfaceNoDuplicate.tlua, 4, 30), Decl(tluaMergedInterfaceNoDuplicate.tlua, 7, 31))
+>b : Symbol(Widened.b, Decl(tluaMergedInterfaceNoDuplicate.tlua, 8, 19))
+
+// Re-declaring with a conflicting type is a "subsequent property declarations
+// must have the same type" error -- but still NOT a spurious duplicate
+// identifier from the per-body duplicate check.
+interface Conflict { v: number }
+>Conflict : Symbol(Conflict, Decl(tluaMergedInterfaceNoDuplicate.tlua, 8, 31), Decl(tluaMergedInterfaceNoDuplicate.tlua, 13, 32))
+>v : Symbol(Conflict.v, Decl(tluaMergedInterfaceNoDuplicate.tlua, 13, 20), Decl(tluaMergedInterfaceNoDuplicate.tlua, 14, 20))
+
+interface Conflict { v: string }
+>Conflict : Symbol(Conflict, Decl(tluaMergedInterfaceNoDuplicate.tlua, 8, 31), Decl(tluaMergedInterfaceNoDuplicate.tlua, 13, 32))
+>v : Symbol(Conflict.v, Decl(tluaMergedInterfaceNoDuplicate.tlua, 13, 20), Decl(tluaMergedInterfaceNoDuplicate.tlua, 14, 20))
+
+// A name repeated within a SINGLE body is a genuine duplicate identifier.
+interface WithinBody { dup: number, dup: number }
+>WithinBody : Symbol(WithinBody, Decl(tluaMergedInterfaceNoDuplicate.tlua, 14, 32))
+>dup : Symbol(WithinBody.dup, Decl(tluaMergedInterfaceNoDuplicate.tlua, 17, 22), Decl(tluaMergedInterfaceNoDuplicate.tlua, 17, 35))
+>dup : Symbol(WithinBody.dup, Decl(tluaMergedInterfaceNoDuplicate.tlua, 17, 22), Decl(tluaMergedInterfaceNoDuplicate.tlua, 17, 35))
+
+// Same distinction for a type literal body.
+type Lit = { p: number, p: number }
+>Lit : Symbol(Lit, Decl(tluaMergedInterfaceNoDuplicate.tlua, 17, 49))
+>p : Symbol(p, Decl(tluaMergedInterfaceNoDuplicate.tlua, 20, 12), Decl(tluaMergedInterfaceNoDuplicate.tlua, 20, 23))
+>p : Symbol(p, Decl(tluaMergedInterfaceNoDuplicate.tlua, 20, 12), Decl(tluaMergedInterfaceNoDuplicate.tlua, 20, 23))
+

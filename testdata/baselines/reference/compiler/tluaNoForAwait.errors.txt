@@ -5,14 +5,15 @@ tluaNoForAwait.tlua(4,22): error TLUA1005: ';' expected.
 tluaNoForAwait.tlua(4,22): error TLUA2304: Cannot find name 'of'.
 tluaNoForAwait.tlua(4,25): error TLUA1434: Unexpected keyword or identifier.
 tluaNoForAwait.tlua(4,27): error TLUA1128: Declaration or statement expected.
+tluaNoForAwait.tlua(4,29): error TLUA1128: Declaration or statement expected.
 tluaNoForAwait.tlua(5,14): error TLUA18048: 'x' is possibly 'undefined'.
 tluaNoForAwait.tlua(7,3): error TLUA2322: Type 'number' is not assignable to type 'Promise<number>'.
-tluaNoForAwait.tlua(8,1): error TLUA1128: Declaration or statement expected.
+tluaNoForAwait.tlua(18,1): error TLUA1005: 'end' expected.
 
 
-==== tluaNoForAwait.tlua (10 errors) ====
+==== tluaNoForAwait.tlua (11 errors) ====
     // `for await` is no longer supported syntax.
-    async function f(xs: number[]): Promise<number> {
+    async function f(xs: number[]): Promise<number>
                                     ~~~~~~~~~~~~~~~
 !!! error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
       local total = 0;
@@ -29,6 +30,8 @@ tluaNoForAwait.tlua(8,1): error TLUA1128: Declaration or statement expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
                               ~
 !!! error TLUA1128: Declaration or statement expected.
+                                ~
+!!! error TLUA1128: Declaration or statement expected.
         total += x;
                  ~
 !!! error TLUA18048: 'x' is possibly 'undefined'.
@@ -36,9 +39,7 @@ tluaNoForAwait.tlua(8,1): error TLUA1128: Declaration or statement expected.
       return total;
       ~~~~~~
 !!! error TLUA2322: Type 'number' is not assignable to type 'Promise<number>'.
-    }
-    ~
-!!! error TLUA1128: Declaration or statement expected.
+    end
     
     // `await` after `for` is an ordinary Lua loop-variable name.
     function awaitName(): number
@@ -49,3 +50,5 @@ tluaNoForAwait.tlua(8,1): error TLUA1128: Declaration or statement expected.
       return total;
     end
     
+    
+!!! error TLUA1005: 'end' expected.

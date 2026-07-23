@@ -1,25 +1,26 @@
 //// [tests/cases/compiler/tluaLabelEmbedded.tlua] ////
 
 === tluaLabelEmbedded.tlua ===
-// Error: a label as the braceless body of an if is in no statement list, so no
-// goto could ever target it.
+// An unused label as the sole statement of an if-block still errors under
+// allowUnusedLabels: false: no goto targets it.
 declare function use(s: string): void;
 >use : Symbol(use, Decl(tluaLabelEmbedded.tlua, 0, 0))
 >s : Symbol(s, Decl(tluaLabelEmbedded.tlua, 2, 21))
 
-function embeddedInIf(b: boolean): void {
->embeddedInIf : Symbol(embeddedInIf, Decl(tluaLabelEmbedded.tlua, 2, 38))
->b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 3, 22))
+function unusedInIf(b: boolean): void
+>unusedInIf : Symbol(unusedInIf, Decl(tluaLabelEmbedded.tlua, 2, 38))
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 3, 20))
 
-    if (b) ::stray::;
->b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 3, 22))
-}
+    if b then ::stray:: end
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 3, 20))
 
-// Error on the embedded label; the outer label is separately unused. The
-// embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
-// string at the assignment even though the if-arm made it nil.
-function noNameCapture(b: boolean): void {
->noNameCapture : Symbol(noNameCapture, Decl(tluaLabelEmbedded.tlua, 5, 1))
+end
+
+// A label definition creates no back-edge: x is still narrowed to string at the
+// assignment even though a later if-arm makes it nil. The if-block label must
+// NOT join the outer label's flow.
+function noNameCapture(b: boolean): void
+>noNameCapture : Symbol(noNameCapture, Decl(tluaLabelEmbedded.tlua, 5, 3))
 >b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 10, 23))
 
     local x: string | nil = "a";
@@ -34,20 +35,22 @@ function noNameCapture(b: boolean): void {
 >use : Symbol(use, Decl(tluaLabelEmbedded.tlua, 0, 0))
 >y : Symbol(y, Decl(tluaLabelEmbedded.tlua, 13, 9))
 
-    if (b) { x = nil; }
+    if b then x = nil end
 >b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 10, 23))
 >x : Symbol(x, Decl(tluaLabelEmbedded.tlua, 11, 9))
 
-    if (b) ::l::;
+    if b then ::l:: end
 >b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 10, 23))
-}
 
-// Error: a loop's braceless body is embedded position too.
-function embeddedInWhile(b: boolean): void {
->embeddedInWhile : Symbol(embeddedInWhile, Decl(tluaLabelEmbedded.tlua, 17, 1))
->b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 20, 25))
+end
 
-    while (b) ::spin::;
->b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 20, 25))
-}
+// A label as an unused loop-body statement is in embedded position too.
+function unusedInWhile(b: boolean): void
+>unusedInWhile : Symbol(unusedInWhile, Decl(tluaLabelEmbedded.tlua, 17, 3))
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 20, 23))
+
+    while b do ::spin:: end
+>b : Symbol(b, Decl(tluaLabelEmbedded.tlua, 20, 23))
+
+end
 

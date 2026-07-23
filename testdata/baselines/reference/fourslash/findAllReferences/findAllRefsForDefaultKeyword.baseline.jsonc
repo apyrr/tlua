@@ -1,6 +1,6 @@
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.tlua ===
-// function f(value: string, /*FIND ALL REFS*/[|default|]: string) {}
+// function f(value: string, /*FIND ALL REFS*/[|default|]: string) end
 // 
 // local default = 1;
 // 
@@ -10,11 +10,11 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.tlua ===
-// function f(value: string, default: string) {}
+// function f(value: string, default: string) end
 // 
 // local /*FIND ALL REFS*/[|default|] = 1;
 // 
-// function default() {}
+// function default() end
 // 
 // class [|default|] {}
 // 
@@ -26,11 +26,11 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.tlua ===
-// function f(value: string, default: string) {}
+// function f(value: string, default: string) end
 // 
 // local default = 1;
 // 
-// function /*FIND ALL REFS*/[|default|]() {}
+// function /*FIND ALL REFS*/[|default|]() end
 // 
 // class default {}
 // 
@@ -40,11 +40,11 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.tlua ===
-// function f(value: string, default: string) {}
+// function f(value: string, default: string) end
 // 
 // local [|default|] = 1;
 // 
-// function default() {}
+// function default() end
 // 
 // class /*FIND ALL REFS*/[|default|] {}
 // 

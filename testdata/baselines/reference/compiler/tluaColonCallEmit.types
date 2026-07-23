@@ -104,7 +104,7 @@ function T:twice(): number
 
 end
 
-function raise(): never {
+function raise(): never
 >raise : () => never
 
   throw T:bump();
@@ -112,5 +112,6 @@ function raise(): never {
 >T:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
 >T : { n: number; bump(self: any): number; twice(self: any): number; }
 >bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
-}
+
+end
 

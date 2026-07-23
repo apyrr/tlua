@@ -14,9 +14,9 @@ local function localPair(): (number, string)
   return 2, "b";
 end
 
-function bracePair(): (number, string) {
+function bracePair(): (number, string)
   return 3, "c";
-}
+end
 
 local exprPair = function(): (number, string)
   return 4, "d";
@@ -76,9 +76,9 @@ end
 local function localPair()
     return 2, "b";
 end
-function bracePair() {
+function bracePair()
     return 3, "c";
-}
+end
 local exprPair = function()
     return 4, "d";
 end;

@@ -3,6 +3,6 @@
 // --- (line: 14) skipped ---
 // }
 // 
-// function (x: SuperBar) {
+// function (x: SuperBar)
 //     x.he/*GOTO IMPL*/llo()
-// }
+// end

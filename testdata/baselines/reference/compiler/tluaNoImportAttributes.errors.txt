@@ -1,0 +1,42 @@
+main.tlua(3,22): error TLUA2307: Cannot find module './module' or its corresponding type declarations.
+main.tlua(3,32): error TLUA1005: ')' expected.
+main.tlua(3,34): error TLUA1128: Declaration or statement expected.
+main.tlua(3,36): error TLUA1434: Unexpected keyword or identifier.
+main.tlua(3,36): error TLUA2304: Cannot find name 'with'.
+main.tlua(3,40): error TLUA1128: Declaration or statement expected.
+main.tlua(3,42): error TLUA1128: Declaration or statement expected.
+main.tlua(3,48): error TLUA2457: Type alias name cannot be 'type'.
+main.tlua(3,60): error TLUA1128: Declaration or statement expected.
+
+
+==== module.tlua (0 errors) ====
+    return { value = 1 }
+    
+==== main.tlua (9 errors) ====
+    // Import types accept only a module specifier; their former attributes
+    // argument is not part of tlua syntax.
+    type Module = import("./module", { with: { type: "json" } })
+                         ~~~~~~~~~~
+!!! error TLUA2307: Cannot find module './module' or its corresponding type declarations.
+                                   ~
+!!! error TLUA1005: ')' expected.
+                                     ~
+!!! error TLUA1128: Declaration or statement expected.
+                                       ~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
+                                       ~~~~
+!!! error TLUA2304: Cannot find name 'with'.
+                                           ~
+!!! error TLUA1128: Declaration or statement expected.
+                                             ~
+!!! error TLUA1128: Declaration or statement expected.
+                                                   ~
+!!! error TLUA2457: Type alias name cannot be 'type'.
+                                                               ~
+!!! error TLUA1128: Declaration or statement expected.
+    
+    function usesAssert(): number
+      local assert = 4
+      return assert
+    end
+    

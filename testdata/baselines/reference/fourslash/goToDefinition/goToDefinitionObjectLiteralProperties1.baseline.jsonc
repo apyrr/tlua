@@ -3,11 +3,11 @@
 // interface PropsBag {
 //    <|[|propx|]: number|>
 // }
-// function foo(arg: PropsBag) {}
+// function foo(arg: PropsBag) end
 // foo({
 //    pr/*GOTO DEF*/opx = 10
 // })
-// function bar(firstarg: boolean, secondarg: PropsBag) {}
+// function bar(firstarg: boolean, secondarg: PropsBag) end
 // bar(true, {
 //    propx = 10
 // })
@@ -19,11 +19,11 @@
 // interface PropsBag {
 //    <|[|propx|]: number|>
 // }
-// function foo(arg: PropsBag) {}
+// function foo(arg: PropsBag) end
 // foo({
 //    propx = 10
 // })
-// function bar(firstarg: boolean, secondarg: PropsBag) {}
+// function bar(firstarg: boolean, secondarg: PropsBag) end
 // bar(true, {
 //    pr/*GOTO DEF*/opx = 10
 // })

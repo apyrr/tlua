@@ -1,7 +1,7 @@
 // === VSQuickInfo ===
 === /quickInfoCommentsFunctionDeclarationVS.tlua ===
 // /** This comment should appear for foo*/
-// function foo() {
+// function foo() end
 //          ^^^
 // | ----------------------------------------------------------------------
 // | ContainerElement (Style=Stacked)
@@ -19,7 +19,6 @@
 // |   ClassifiedTextElement
 // |     [text] "This comment should appear for foo"
 // | ----------------------------------------------------------------------
-// }
 // foo();
 // ^^^
 // | ----------------------------------------------------------------------
@@ -68,7 +67,7 @@
 // |     [text] "This is comment for function signature"
 // | ----------------------------------------------------------------------
 //     /** this is comment for b*/
-//     b: number) {
+//     b: number)
 //     local d = a;
 //           ^
 // | ----------------------------------------------------------------------
@@ -80,7 +79,7 @@
 // |     [punctuation] ": "
 // |     [keyword] "string"
 // | ----------------------------------------------------------------------
-// }
+// end
 // fooWithParameters("a",10);
 // ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
@@ -222,7 +221,7 @@
     "marker": {
       "Position": 61,
       "LSPosition": {
-        "line": 3,
+        "line": 2,
         "character": 1
       },
       "Name": "2",
@@ -235,11 +234,11 @@
       },
       "range": {
         "start": {
-          "line": 3,
+          "line": 2,
           "character": 0
         },
         "end": {
-          "line": 3,
+          "line": 2,
           "character": 3
         }
       },
@@ -324,7 +323,7 @@
     "marker": {
       "Position": 123,
       "LSPosition": {
-        "line": 5,
+        "line": 4,
         "character": 11
       },
       "Name": "5",
@@ -337,11 +336,11 @@
       },
       "range": {
         "start": {
-          "line": 5,
+          "line": 4,
           "character": 9
         },
         "end": {
-          "line": 5,
+          "line": 4,
           "character": 26
         }
       },
@@ -474,9 +473,9 @@
   },
   {
     "marker": {
-      "Position": 238,
+      "Position": 236,
       "LSPosition": {
-        "line": 8,
+        "line": 7,
         "character": 10
       },
       "Name": "6",
@@ -489,11 +488,11 @@
       },
       "range": {
         "start": {
-          "line": 8,
+          "line": 7,
           "character": 10
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "character": 11
         }
       },
@@ -542,7 +541,7 @@
     "marker": {
       "Position": 259,
       "LSPosition": {
-        "line": 10,
+        "line": 9,
         "character": 12
       },
       "Name": "8",
@@ -555,11 +554,11 @@
       },
       "range": {
         "start": {
-          "line": 10,
+          "line": 9,
           "character": 0
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "character": 17
         }
       },

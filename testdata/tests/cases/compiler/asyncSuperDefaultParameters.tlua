@@ -9,7 +9,7 @@ class B {
 
 class C extends B {
     f() {
-        local g = async (b = super.m()) => b;
+        local g = async function(b = super.m()) return b end;
         return g();
     }
 

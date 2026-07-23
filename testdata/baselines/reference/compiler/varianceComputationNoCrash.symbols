@@ -499,7 +499,7 @@ type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends strin
 >Type : Symbol(Type, Decl(varianceComputationNoCrash.tlua, 75, 15))
 
 // This would cause a stack overflow during variance computation
-function boom<T>(x: CamelCase<T>, y: CamelCase<T, {}>) {
+function boom<T>(x: CamelCase<T>, y: CamelCase<T, {}>)
 >boom : Symbol(boom, Decl(varianceComputationNoCrash.tlua, 82, 11))
 >T : Symbol(T, Decl(varianceComputationNoCrash.tlua, 85, 14))
 >x : Symbol(x, Decl(varianceComputationNoCrash.tlua, 85, 17))
@@ -516,5 +516,6 @@ function boom<T>(x: CamelCase<T>, y: CamelCase<T, {}>) {
     y = x
 >y : Symbol(y, Decl(varianceComputationNoCrash.tlua, 85, 33))
 >x : Symbol(x, Decl(varianceComputationNoCrash.tlua, 85, 17))
-}
+
+end
 

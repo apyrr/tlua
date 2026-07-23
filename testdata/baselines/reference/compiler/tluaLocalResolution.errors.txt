@@ -7,12 +7,12 @@ tluaLocalResolution.tlua(13,17): error TLUA2304: Cannot find name 'laterLocal'.
     local same = outer;
     same = same + 1;
     
-    {
+    do
       local blockValue = same;
       blockValue = blockValue + 1;
       local blockValue = blockValue + 1;
       blockValue = blockValue + 1;
-    }
+    end
     
     local forward = laterLocal;
                     ~~~~~~~~~~
@@ -22,10 +22,10 @@ tluaLocalResolution.tlua(13,17): error TLUA2304: Cannot find name 'laterLocal'.
     local outer = outer + 1;
     outer = outer + 1;
     
-    function flowForLuaLocal() {
+    function flowForLuaLocal()
       local narrowed: string | number;
       narrowed = 1;
-      local reader = () => narrowed;
+      local reader = function() return narrowed end;
       reader();
-    }
+    end
     

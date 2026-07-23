@@ -8,7 +8,7 @@
               ~~~~~
 !!! error TLUA2304: Cannot find name 'Error'.
     	
-    (() => {})();
-    ~~~~~~~~~~~~~
+    (function() end)();
+    ~~~~~~~~~~~~~~~~~~~
 !!! warning TLUA7027: Unreachable code detected.
     	

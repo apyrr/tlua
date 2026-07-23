@@ -2,6 +2,7 @@ privateNameTaggedTemplate.tlua(1,1): error TLUA1434: Unexpected keyword or ident
 privateNameTaggedTemplate.tlua(1,1): error TLUA2304: Cannot find name 'class'.
 privateNameTaggedTemplate.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
 privateNameTaggedTemplate.tlua(1,7): error TLUA2304: Cannot find name 'Foo'.
+privateNameTaggedTemplate.tlua(1,11): error TLUA1128: Declaration or statement expected.
 privateNameTaggedTemplate.tlua(2,4): error TLUA2304: Cannot find name 'x'.
 privateNameTaggedTemplate.tlua(2,6): error TLUA1005: ';' expected.
 privateNameTaggedTemplate.tlua(3,4): error TLUA2304: Cannot find name 'y'.
@@ -22,7 +23,7 @@ privateNameTaggedTemplate.tlua(5,41): error TLUA100028: An arithmetic operand mu
 privateNameTaggedTemplate.tlua(8,1): error TLUA1160: Unterminated template literal.
 
 
-==== privateNameTaggedTemplate.tlua (22 errors) ====
+==== privateNameTaggedTemplate.tlua (23 errors) ====
     class Foo {
     ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -32,6 +33,8 @@ privateNameTaggedTemplate.tlua(8,1): error TLUA1160: Unterminated template liter
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~~~
 !!! error TLUA2304: Cannot find name 'Foo'.
+              ~
+!!! error TLUA1128: Declaration or statement expected.
       #x = 3;
        ~
 !!! error TLUA2304: Cannot find name 'x'.

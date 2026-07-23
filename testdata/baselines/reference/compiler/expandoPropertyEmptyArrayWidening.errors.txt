@@ -22,14 +22,14 @@ expandoPropertyEmptyArrayWidening.tlua(22,9): error TLUA1011: An element access 
     local example: {
       (): void;
       items?: string[];
-    } = () => undefined;
+    } = function() return undefined end;
     example.items = [];
                     ~
 !!! error TLUA1109: Expression expected.
                      
 !!! error TLUA1011: An element access expression should take an argument.
     
-    function f1() {}
+    function f1() end
     f1.a = [];  // Implicit any error
            ~
 !!! error TLUA1109: Expression expected.
@@ -45,7 +45,7 @@ expandoPropertyEmptyArrayWidening.tlua(22,9): error TLUA1011: An element access 
             
 !!! error TLUA1011: An element access expression should take an argument.
     
-    local f3 = () => {};
+    local f3 = function() end;
     f3.a = [];  // Implicit any error
        ~
 !!! error TLUA2339: Property 'a' does not exist on type '() => void'.
@@ -54,7 +54,7 @@ expandoPropertyEmptyArrayWidening.tlua(22,9): error TLUA1011: An element access 
             
 !!! error TLUA1011: An element access expression should take an argument.
     
-    local f4: { (): void, a: string[] } = () => {};
+    local f4: { (): void, a: string[] } = function() end;
           ~~
 !!! error TLUA2741: Property 'a' is missing in type '() => void' but required in type '{ (): void; a: string[]; }'.
 !!! related TLUA2728 expandoPropertyEmptyArrayWidening.tlua:18:23: 'a' is declared here.

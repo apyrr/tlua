@@ -54,9 +54,9 @@ end
 
 // An arrow with a bare vararg, including with a return-type annotation: the
 // `(...` lookahead must not mistake these for a parenthesized vararg expression.
-local arrowBare = (...) => 1;
-local arrowTyped = (...): number => 1;
-local arrowAnnotated = (...: string): number => 1;
+local arrowBare = function(...) return 1 end;
+local arrowTyped = function(...): number return 1 end;
+local arrowAnnotated = function(...: string): number return 1 end;
 
 // Every rest the *checker* synthesizes is a vararg too. An intersection of
 // signatures combines their parameters into a synthetic one whose elements have
@@ -101,8 +101,14 @@ function h()
 end
 -- An arrow with a bare vararg, including with a return-type annotation: the
 -- `(...` lookahead must not mistake these for a parenthesized vararg expression.
-local arrowBare = function(...) return 1 end;
-local arrowTyped = function(...) return 1 end;
-local arrowAnnotated = function(...) return 1 end;
+local arrowBare = function(...)
+    return 1;
+end;
+local arrowTyped = function(...)
+    return 1;
+end;
+local arrowAnnotated = function(...)
+    return 1;
+end;
 local combined = function(q, ...)
 end;

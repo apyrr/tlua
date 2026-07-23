@@ -7,13 +7,13 @@
 
 function assertCondition(
   _condition: boolean
-): asserts condition {  // "condition" doesn't match parameter "_condition"
-  if (!_condition) {
+): asserts condition  // "condition" doesn't match parameter "_condition"
+  if (!_condition) then
     throw new Error('Condition failed');
-  }
-}
+  end
+end
 
-function test(): void {
+function test(): void
   assertCondition(false);
   console.log("unreachable");
-}
+end

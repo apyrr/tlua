@@ -60,16 +60,16 @@ Edit [0]:: create multiple new subdirs with files
 //// [/home/src/workspaces/project/src/models/user.tlua] *new* 
 interface User { name: string; }
 //// [/home/src/workspaces/project/src/utils/format.tlua] *new* 
-function format(s: string): string { return s.trim(); }
+function format(s: string): string return s.trim(); end
 
 
 Output::
 [2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
 
-[96msrc/utils/format.tlua[0m:[93m1[0m:[93m47[0m - [91merror[0m[90m TLUA2339: [0mProperty 'trim' does not exist on type 'string'.
+[96msrc/utils/format.tlua[0m:[93m1[0m:[93m45[0m - [91merror[0m[90m TLUA2339: [0mProperty 'trim' does not exist on type 'string'.
 
-[7m1[0m function format(s: string): string { return s.trim(); }
-[7m [0m [91m                                              ~~~~[0m
+[7m1[0m function format(s: string): string return s.trim(); end
+[7m [0m [91m                                            ~~~~[0m
 
 
 Found 1 error in src/utils/format.tlua[90m:1[0m
@@ -79,7 +79,9 @@ Found 1 error in src/utils/format.tlua[90m:1[0m
 //// [/home/src/workspaces/project/src/models/user.lua] *new* 
 
 //// [/home/src/workspaces/project/src/utils/format.lua] *new* 
-function format(s) { return s.trim(); }
+function format(s)
+    return s.trim();
+end
 
 
 Watch Registrations::

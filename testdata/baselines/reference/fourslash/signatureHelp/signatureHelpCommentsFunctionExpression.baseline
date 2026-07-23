@@ -1,8 +1,8 @@
 // === SignatureHelp ===
 === /signatureHelpCommentsFunctionExpression.tlua ===
 // /** lambdaFoo local comment*/
-// local lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
-// local lambddaNoVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
+// local lambdaFoo = /** this is lambda comment*/ function(/**param a*/a: number, /**param b*/b: number) return a + b end;
+// local lambddaNoVarComment = /** this is lambda multiplication*/ function(/**param a*/a: number, /**param b*/b: number) return a * b end;
 // lambdaFoo(10, 20);
 //           ^
 // | ----------------------------------------------------------------------
@@ -16,15 +16,15 @@
 // | - `b: number`: param b
 // | this is lambda comment
 // | ----------------------------------------------------------------------
-// function anotherFunc(a: number) {
+// function anotherFunc(a: number)
 //     /** documentation
 //         @param b {string} inner parameter */
-//     local lambdaVar = /** inner docs */(b: string) => {
+//     local lambdaVar = /** inner docs */function(b: string)
 //         local localVar = "Hello ";
 //         return localVar + b;
-//     }
+//     end
 //     return lambdaVar("World") + a;
-// }
+// end
 // /**
 //  * On variable
 //  * @param s the first parameter!
@@ -34,18 +34,20 @@
 //                 * Summary on expression
 //                 * @param s param on expression
 //                 * @returns return on expression
-//                 */function(/** On parameter */s: string) {
+//                 */function(/** On parameter */s: string)
 //   return s.length;
-// }
+// end
 // assigned("hey");
 //          ^
 // | ----------------------------------------------------------------------
-// | No signaturehelp at /*18*/.
+// | assigned(**s: string**): number
+// | - `s: string`: On parameter
+// | Summary on expression
 // | ----------------------------------------------------------------------
 [
   {
     "marker": {
-      "Position": 265,
+      "Position": 297,
       "LSPosition": {
         "line": 3,
         "character": 10
@@ -85,7 +87,7 @@
   },
   {
     "marker": {
-      "Position": 269,
+      "Position": 301,
       "LSPosition": {
         "line": 3,
         "character": 14
@@ -125,7 +127,7 @@
   },
   {
     "marker": {
-      "Position": 874,
+      "Position": 911,
       "LSPosition": {
         "line": 25,
         "character": 9
@@ -133,6 +135,27 @@
       "Name": "18",
       "Data": {}
     },
-    "item": null
+    "item": {
+      "signatures": [
+        {
+          "label": "assigned(s: string): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Summary on expression"
+          },
+          "parameters": [
+            {
+              "label": "s: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "On parameter"
+              }
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
   }
 ]

@@ -2,7 +2,7 @@
 // === /goToDefinitionBuiltInValues.tlua ===
 // local u = /*GOTO DEF*/undefined;
 // local n = null;
-// local a = function() { return arguments; };
+// local a = function() return arguments; end;
 // local t = true;
 // local f = false;
 
@@ -12,7 +12,7 @@
 // === /goToDefinitionBuiltInValues.tlua ===
 // local u = undefined;
 // local n = /*GOTO DEF*/null;
-// local a = function() { return arguments; };
+// local a = function() return arguments; end;
 // local t = true;
 // local f = false;
 
@@ -22,7 +22,7 @@
 // === /goToDefinitionBuiltInValues.tlua ===
 // local u = undefined;
 // local n = null;
-// local a = function() { return /*GOTO DEF*/arguments; };
+// local a = function() return /*GOTO DEF*/arguments; end;
 // local t = true;
 // local f = false;
 
@@ -32,7 +32,7 @@
 // === /goToDefinitionBuiltInValues.tlua ===
 // local u = undefined;
 // local n = null;
-// local a = function() { return arguments; };
+// local a = function() return arguments; end;
 // local t = /*GOTO DEF*/true;
 // local f = false;
 
@@ -42,6 +42,6 @@
 // === /goToDefinitionBuiltInValues.tlua ===
 // local u = undefined;
 // local n = null;
-// local a = function() { return arguments; };
+// local a = function() return arguments; end;
 // local t = true;
 // local f = /*GOTO DEF*/false;

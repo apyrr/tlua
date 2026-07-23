@@ -44,7 +44,7 @@ local usesAwait = await + 1;
 >1 : 1
 
 // `await using` is removed with it.
-function h(): void {
+function h(): void
 >h : () => void
 
   await using r = compute();
@@ -54,5 +54,6 @@ function h(): void {
 >r : any
 >compute() : number
 >compute : () => number
-}
+
+end
 

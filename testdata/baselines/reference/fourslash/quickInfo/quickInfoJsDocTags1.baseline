@@ -12,7 +12,7 @@
 //  * @returns The result
 //  * @see x (the parameter)
 //  */
-// function foo(x) {}
+// function foo(x) end
 //          ^^^
 // | ----------------------------------------------------------------------
 // | ```tlua

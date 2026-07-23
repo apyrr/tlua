@@ -3,11 +3,12 @@
 /enumSyntaxUnsupported.tlua(1,1): error TLUA2304: Cannot find name 'enum'.
 /enumSyntaxUnsupported.tlua(1,6): error TLUA1434: Unexpected keyword or identifier.
 /enumSyntaxUnsupported.tlua(1,6): error TLUA2304: Cannot find name 'E'.
+/enumSyntaxUnsupported.tlua(1,8): error TLUA1128: Declaration or statement expected.
 /enumSyntaxUnsupported.tlua(1,10): error TLUA2304: Cannot find name 'A'.
 /enumSyntaxUnsupported.tlua(2,15): error TLUA2304: Cannot find name 'E'.
 
 
-==== /enumSyntaxUnsupported.tlua (6 errors) ====
+==== /enumSyntaxUnsupported.tlua (7 errors) ====
     enum E { A }
     ~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -17,6 +18,8 @@
 !!! error TLUA1434: Unexpected keyword or identifier.
          ~
 !!! error TLUA2304: Cannot find name 'E'.
+           ~
+!!! error TLUA1128: Declaration or statement expected.
              ~
 !!! error TLUA2304: Cannot find name 'A'.
     local value = E.A

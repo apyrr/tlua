@@ -1,8 +1,8 @@
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport03.tlua ===
-// /*FIND ALL REFS*/function [|f|]() {
+// /*FIND ALL REFS*/function [|f|]()
 //     return 100;
-// }
+// end
 // 
 // export default [|f|];
 // 
@@ -18,9 +18,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport03.tlua ===
-// function /*FIND ALL REFS*/[|f|]() {
+// function /*FIND ALL REFS*/[|f|]()
 //     return 100;
-// }
+// end
 // 
 // export default [|f|];
 // 
@@ -36,9 +36,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport03.tlua ===
-// function f() {
+// function f()
 //     return 100;
-// }
+// end
 // 
 // /*FIND ALL REFS*/export default f;
 // 
@@ -50,9 +50,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport03.tlua ===
-// function [|f|]() {
+// function [|f|]()
 //     return 100;
-// }
+// end
 // 
 // export default /*FIND ALL REFS*/[|f|];
 // 
@@ -68,9 +68,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport03.tlua ===
-// function [|f|]() {
+// function [|f|]()
 //     return 100;
-// }
+// end
 // 
 // export default [|f|];
 // 
@@ -86,9 +86,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport03.tlua ===
-// function [|f|]() {
+// function [|f|]()
 //     return 100;
-// }
+// end
 // 
 // export default [|f|];
 // 
@@ -116,9 +116,9 @@
 
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport03.tlua ===
-// function [|f|]() {
+// function [|f|]()
 //     return 100;
-// }
+// end
 // 
 // export default [|f|];
 // 

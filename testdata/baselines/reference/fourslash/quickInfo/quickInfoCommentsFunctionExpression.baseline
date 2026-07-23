@@ -1,7 +1,7 @@
 // === QuickInfo ===
 === /quickInfoCommentsFunctionExpression.tlua ===
 // /** lambdaFoo local comment*/
-// local lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
+// local lambdaFoo = /** this is lambda comment*/ function(/**param a*/a: number, /**param b*/b: number) return a + b end;
 //       ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -9,7 +9,7 @@
 // | ```
 // | lambdaFoo local comment
 // | ----------------------------------------------------------------------
-// local lambddaNoVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
+// local lambddaNoVarComment = /** this is lambda multiplication*/ function(/**param a*/a: number, /**param b*/b: number) return a * b end;
 //       ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -18,7 +18,7 @@
 // | 
 // | ----------------------------------------------------------------------
 // lambdaFoo(10, 20);
-// function anotherFunc(a: number) {
+// function anotherFunc(a: number)
 //          ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -28,7 +28,7 @@
 // | ----------------------------------------------------------------------
 //     /** documentation
 //         @param b {string} inner parameter */
-//     local lambdaVar = /** inner docs */(b: string) => {
+//     local lambdaVar = /** inner docs */function(b: string)
 //           ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
@@ -38,7 +38,7 @@
 // | 
 // | *@param* `b` — inner parameter
 // | ----------------------------------------------------------------------
-//                                         ^
+//                                                 ^
 // | ----------------------------------------------------------------------
 // | ```tlua
 // | (parameter) b: string
@@ -68,7 +68,7 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
-//     }
+//     end
 //     return lambdaVar("World") + a;
 //            ^^^^^^^^^
 // | ----------------------------------------------------------------------
@@ -79,7 +79,7 @@
 // | 
 // | *@param* `b` — inner parameter
 // | ----------------------------------------------------------------------
-// }
+// end
 // /**
 //  * On variable
 //  * @param s the first parameter!
@@ -100,16 +100,20 @@
 //                 * Summary on expression
 //                 * @param s param on expression
 //                 * @returns return on expression
-//                 */function(/** On parameter */s: string) {
+//                 */function(/** On parameter */s: string)
 //   return s.length;
-// }
+// end
 // assigned("hey");
 // ^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | any
+// | local assigned: (s: string) => number
 // | ```
+// | On variable
 // | 
+// | *@param* `s` — the first parameter!
+// | 
+// | *@returns* — the parameter's length
 // | ----------------------------------------------------------------------
 [
   {
@@ -141,7 +145,7 @@
   },
   {
     "marker": {
-      "Position": 148,
+      "Position": 164,
       "LSPosition": {
         "line": 2,
         "character": 14
@@ -168,7 +172,7 @@
   },
   {
     "marker": {
-      "Position": 283,
+      "Position": 315,
       "LSPosition": {
         "line": 4,
         "character": 9
@@ -195,7 +199,7 @@
   },
   {
     "marker": {
-      "Position": 385,
+      "Position": 415,
       "LSPosition": {
         "line": 7,
         "character": 10
@@ -222,10 +226,10 @@
   },
   {
     "marker": {
-      "Position": 415,
+      "Position": 453,
       "LSPosition": {
         "line": 7,
-        "character": 40
+        "character": 48
       },
       "Name": "9",
       "Data": {}
@@ -238,18 +242,18 @@
       "range": {
         "start": {
           "line": 7,
-          "character": 40
+          "character": 48
         },
         "end": {
           "line": 7,
-          "character": 41
+          "character": 49
         }
       }
     }
   },
   {
     "marker": {
-      "Position": 445,
+      "Position": 478,
       "LSPosition": {
         "line": 8,
         "character": 14
@@ -276,7 +280,7 @@
   },
   {
     "marker": {
-      "Position": 481,
+      "Position": 514,
       "LSPosition": {
         "line": 9,
         "character": 15
@@ -303,7 +307,7 @@
   },
   {
     "marker": {
-      "Position": 492,
+      "Position": 525,
       "LSPosition": {
         "line": 9,
         "character": 26
@@ -330,7 +334,7 @@
   },
   {
     "marker": {
-      "Position": 516,
+      "Position": 551,
       "LSPosition": {
         "line": 11,
         "character": 15
@@ -357,7 +361,7 @@
   },
   {
     "marker": {
-      "Position": 639,
+      "Position": 676,
       "LSPosition": {
         "line": 18,
         "character": 10
@@ -384,7 +388,7 @@
   },
   {
     "marker": {
-      "Position": 870,
+      "Position": 907,
       "LSPosition": {
         "line": 25,
         "character": 5
@@ -395,7 +399,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\nany\n```\n"
+        "value": "```tlua\nlocal assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n*@returns* — the parameter's length"
       },
       "range": {
         "start": {

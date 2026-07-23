@@ -8,21 +8,21 @@ declare function use(x: unknown): void;
 
 // Ordinary identifier type predicates still narrow. Only the `this is T` form
 // was removed, and it is a distinct branch of the predicate machinery.
-function isString(v: unknown): v is string {
+function isString(v: unknown): v is string
   return type(v) == "string";
-}
+end
 
 declare function assertString(v: unknown): asserts v is string;
 
-function narrow(v: unknown): void {
-  if (isString(v)) {
+function narrow(v: unknown): void
+  if isString(v) then
     local s: string = v;
     use(s);
-  }
+  end
   assertString(v);
   local t: string = v;
   use(t);
-}
+end
 
 // Lua's global environment remains available independently of `this`.
 local g: typeof _G = _G;
@@ -77,18 +77,18 @@ use(inst);
 -- This file must stay zero-error.
 -- Ordinary identifier type predicates still narrow. Only the `this is T` form
 -- was removed, and it is a distinct branch of the predicate machinery.
-function isString(v) {
+function isString(v)
     return type(v) == "string";
-}
-function narrow(v) {
-    if (isString(v)) {
+end
+function narrow(v)
+    if isString(v) then
         local s = v;
         use(s);
-    }
+    end
     assertString(v);
     local t = v;
     use(t);
-}
+end
 -- Lua's global environment remains available independently of `this`.
 local g = _G;
 local counter = {

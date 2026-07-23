@@ -1,6 +1,6 @@
 // === Document Symbols ===
 // === /navigationBarItemsClass1.tlua ===
-// <|function [|{| name: Foo, kind: Function |}Foo|]() {}|>
+// <|function [|{| name: Foo, kind: Function |}Foo|]() end|>
 // class Foo {}
 
 // === Details ===

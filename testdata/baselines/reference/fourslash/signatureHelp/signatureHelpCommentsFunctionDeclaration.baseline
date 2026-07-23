@@ -1,8 +1,7 @@
 // === SignatureHelp ===
 === /signatureHelpCommentsFunctionDeclaration.tlua ===
 // /** This comment should appear for foo*/
-// function foo() {
-// }
+// function foo() end
 // foo();
 //     ^
 // | ----------------------------------------------------------------------
@@ -45,7 +44,7 @@
     "marker": {
       "Position": 64,
       "LSPosition": {
-        "line": 3,
+        "line": 2,
         "character": 4
       },
       "Name": "4",
@@ -69,7 +68,7 @@
     "marker": {
       "Position": 265,
       "LSPosition": {
-        "line": 10,
+        "line": 9,
         "character": 18
       },
       "Name": "10",
@@ -109,7 +108,7 @@
     "marker": {
       "Position": 269,
       "LSPosition": {
-        "line": 10,
+        "line": 9,
         "character": 22
       },
       "Name": "11",
@@ -149,7 +148,7 @@
     "marker": {
       "Position": 353,
       "LSPosition": {
-        "line": 16,
+        "line": 15,
         "character": 3
       },
       "Name": "12",

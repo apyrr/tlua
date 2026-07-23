@@ -4,17 +4,17 @@
 // @noUnusedLocals: true
 
 local function factorial(n: number): number
-  if (n <= 1) {
+  if n <= 1 then
     return 1;
-  }
+  end
   return n * factorial(n - 1);
 end
 factorial(3);
 
 local function recursiveOnly(n: number): number
-  if (n <= 0) {
+  if n <= 0 then
     return 0;
-  }
+  end
   return recursiveOnly(n - 1);
 end
 
@@ -36,11 +36,11 @@ local function shadow(): number
 end
 shadow();
 
-{
+do
   local function shadow(): number
     return 2;
   end
   shadow();
-}
+end
 
 shadow();

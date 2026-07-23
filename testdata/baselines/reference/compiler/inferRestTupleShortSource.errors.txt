@@ -6,9 +6,9 @@ inferRestTupleShortSource.tlua(7,4): error TLUA1135: Argument expression expecte
 ==== inferRestTupleShortSource.tlua (3 errors) ====
     // Regression test: tlua panics when inferring [...rest, ...T] from a tuple shorter than fixed-arity constraint
     
-    function f<T extends [string]>(args: [...string[], ...T]) {
+    function f<T extends [string]>(args: [...string[], ...T])
       // ...
-    }
+    end
     
     f([])
     ~

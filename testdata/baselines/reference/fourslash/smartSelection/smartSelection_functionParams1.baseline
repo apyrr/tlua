@@ -1,24 +1,24 @@
 // === Smart Selection ===
-function f(/**/p, q?, ...r: any[] = []) {}
+function f(/**/p, q?, ...r: any[] = []) end
 
-           p                          
-           p, q?, ...r: any[] = []    
-function f(p, q?, ...r: any[] = []) {}
-
-================================================================================
-
-function f(p, /**/q?, ...r: any[] = []) {}
-
-              q                       
-              q?                      
-           p, q?, ...r: any[] = []    
-function f(p, q?, ...r: any[] = []) {}
+           p                           
+           p, q?, ...r: any[] = []     
+function f(p, q?, ...r: any[] = []) end
 
 ================================================================================
 
-function f(p, q?, /**/...r: any[] = []) {}
+function f(p, /**/q?, ...r: any[] = []) end
 
-                  ...                 
-                  ...r: any[] = []    
-           p, q?, ...r: any[] = []    
-function f(p, q?, ...r: any[] = []) {}
+              q                        
+              q?                       
+           p, q?, ...r: any[] = []     
+function f(p, q?, ...r: any[] = []) end
+
+================================================================================
+
+function f(p, q?, /**/...r: any[] = []) end
+
+                  ...                  
+                  ...r: any[] = []     
+           p, q?, ...r: any[] = []     
+function f(p, q?, ...r: any[] = []) end

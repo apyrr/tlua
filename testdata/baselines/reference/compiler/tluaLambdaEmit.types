@@ -13,57 +13,57 @@ local function two(): (number, string)
 >"s" : "s"
 
 end
-local add = (x: number, y: number) => x + y
+local add = function(x: number, y: number) return x + y end
 >add : (x: number, y: number) => number
->(x: number, y: number) => x + y : (x: number, y: number) => number
+>function(x: number, y: number) return x + y end : (x: number, y: number) => number
 >x : number
 >y : number
 >x + y : number
 >x : number
 >y : number
 
-local block = (x: number) => { return x * 2; }
+local block = function(x: number) return x * 2; end
 >block : (x: number) => number
->(x: number) => { return x * 2; } : (x: number) => number
+>function(x: number) return x * 2; end : (x: number) => number
 >x : number
 >x * 2 : number
 >x : number
 >2 : 2
 
-local nested = (x: number) => (y: number) => x + y
+local nested = function(x: number) return function(y: number) return x + y end end
 >nested : (x: number) => (y: number) => number
->(x: number) => (y: number) => x + y : (x: number) => (y: number) => number
+>function(x: number) return function(y: number) return x + y end end : (x: number) => (y: number) => number
 >x : number
->(y: number) => x + y : (y: number) => number
+>function(y: number) return x + y end : (y: number) => number
 >y : number
 >x + y : number
 >x : number
 >y : number
 
-local noParams = () => 42
+local noParams = function() return 42 end
 >noParams : () => number
->() => 42 : () => number
+>function() return 42 end : () => number
 >42 : 42
 
 // A concise body is typed as one value, but a direct call in Lua tail
 // position would propagate its whole pack -- the emit parenthesizes it so the
 // runtime truncates to the value the type names.
-local truncated = () => two()
->truncated : () => number
->() => two() : () => number
+local truncated = function() return two() end
+>truncated : () => (number, string)
+>function() return two() end : () => (number, string)
 >two() : number
 >two : () => (number, string)
 
 local one: number = truncated()
 >one : number
 >truncated() : number
->truncated : () => number
+>truncated : () => (number, string)
 
 // A parenthesized table-literal body keeps its parens; `return { ... } end`
 // would also be valid Lua, but the source spelling round-trips.
-local table = () => ({ k = 1 })
+local table = function() return ({ k = 1 }) end
 >table : () => { k: number; }
->() => ({ k = 1 }) : () => { k: number; }
+>function() return ({ k = 1 }) end : () => { k: number; }
 >({ k = 1 }) : { k: number; }
 >{ k = 1 } : { k: number; }
 >k : number

@@ -42,5 +42,7 @@ local h = M;
 local i = id:ping();
 -- Error recovery: an annotation-shaped `ident : ident` in invalid code must
 -- not swallow the declarations that follow it into a bogus argument list.
-local bad = function(b) return  end;
+local bad = (b);
+number;
+;
 fine(1);

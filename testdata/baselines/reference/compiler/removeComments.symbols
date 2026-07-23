@@ -1,18 +1,18 @@
 //// [tests/cases/compiler/removeComments.tlua] ////
 
 === removeComments.tlua ===
-function t1() {
+function t1()
 >t1 : Symbol(t1, Decl(removeComments.tlua, 0, 0))
 
-    if (this.a < 2) { // comment after if
+    if (this.a < 2) then // comment after if
         console.log('t1', this.a)
 
         // comment after empty line in if block
-    }
-}
+    end
+end
 
-function t2() {
->t2 : Symbol(t2, Decl(removeComments.tlua, 6, 1))
+function t2()
+>t2 : Symbol(t2, Decl(removeComments.tlua, 6, 3))
 
     console.log("t2");
 
@@ -43,5 +43,6 @@ function t2() {
 
         }, obj)
 >obj : Symbol(obj, Decl(removeComments.tlua, 11, 9))
-}
+
+end
 

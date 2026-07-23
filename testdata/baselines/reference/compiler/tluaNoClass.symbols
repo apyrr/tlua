@@ -28,7 +28,7 @@ class WithMembers {
 }
 
 // `class` is now an ordinary identifier.
-function usesClassName(): number {
+function usesClassName(): number
 >usesClassName : Symbol(usesClassName, Decl(tluaNoClass.tlua, 23, 1))
 
   local class = 3;
@@ -36,5 +36,6 @@ function usesClassName(): number {
 
   return class;
 >class : Symbol(class, Decl(tluaNoClass.tlua, 27, 7))
-}
+
+end
 

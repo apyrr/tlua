@@ -31,9 +31,9 @@ function mustReturn(): (number, string?)
 end
 
 // A type predicate cannot start a multiple return type.
-function badPredicate(x: unknown): (x is string, number) {
+function badPredicate(x: unknown): (x is string, number)
   return type(x) == "string", 1;
-}
+end
 
 
 //// [tluaMultiReturnArityErrors.lua]
@@ -60,6 +60,6 @@ end
 function mustReturn()
 end
 -- A type predicate cannot start a multiple return type.
-function badPredicate(x) {
+function badPredicate(x)
     return type(x) == "string", 1;
-}
+end

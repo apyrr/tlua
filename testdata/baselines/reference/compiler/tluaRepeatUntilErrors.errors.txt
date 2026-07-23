@@ -1,11 +1,9 @@
 tluaRepeatUntilErrors.tlua(7,1): error TLUA1128: Declaration or statement expected.
-tluaRepeatUntilErrors.tlua(10,10): error TLUA2391: Function implementation is missing or not immediately following the declaration.
 tluaRepeatUntilErrors.tlua(11,3): error TLUA1128: Declaration or statement expected.
-tluaRepeatUntilErrors.tlua(13,1): error TLUA1128: Declaration or statement expected.
 tluaRepeatUntilErrors.tlua(22,9): error TLUA1345: An expression of type 'void' cannot be tested for truthiness.
 
 
-==== tluaRepeatUntilErrors.tlua (5 errors) ====
+==== tluaRepeatUntilErrors.tlua (3 errors) ====
     // Missing `until`.
     function missingUntil(): number
       repeat
@@ -18,15 +16,11 @@ tluaRepeatUntilErrors.tlua(22,9): error TLUA1345: An expression of type 'void' c
     
     // `until` outside a repeat.
     function strayUntil(): number
-             ~~~~~~~~~~
-!!! error TLUA2391: Function implementation is missing or not immediately following the declaration.
       until true;
       ~~~~~
 !!! error TLUA1128: Declaration or statement expected.
       return 0;
     end
-    ~~~
-!!! error TLUA1128: Declaration or statement expected.
     
     // A void condition cannot be tested.
     declare function nothing(): void;

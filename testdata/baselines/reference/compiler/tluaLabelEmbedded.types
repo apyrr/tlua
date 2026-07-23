@@ -1,25 +1,26 @@
 //// [tests/cases/compiler/tluaLabelEmbedded.tlua] ////
 
 === tluaLabelEmbedded.tlua ===
-// Error: a label as the braceless body of an if is in no statement list, so no
-// goto could ever target it.
+// An unused label as the sole statement of an if-block still errors under
+// allowUnusedLabels: false: no goto targets it.
 declare function use(s: string): void;
 >use : (s: string) => void
 >s : string
 
-function embeddedInIf(b: boolean): void {
->embeddedInIf : (b: boolean) => void
+function unusedInIf(b: boolean): void
+>unusedInIf : (b: boolean) => void
 >b : boolean
 
-    if (b) ::stray::;
+    if b then ::stray:: end
 >b : boolean
 >stray : any
-}
 
-// Error on the embedded label; the outer label is separately unused. The
-// embedded ::l:: must NOT join the outer label's flow: x is still narrowed to
-// string at the assignment even though the if-arm made it nil.
-function noNameCapture(b: boolean): void {
+end
+
+// A label definition creates no back-edge: x is still narrowed to string at the
+// assignment even though a later if-arm makes it nil. The if-block label must
+// NOT join the outer label's flow.
+function noNameCapture(b: boolean): void
 >noNameCapture : (b: boolean) => void
 >b : boolean
 
@@ -39,23 +40,25 @@ function noNameCapture(b: boolean): void {
 >use : (s: string) => void
 >y : string
 
-    if (b) { x = nil; }
+    if b then x = nil end
 >b : boolean
 >x = nil : nil
 >x : string | nil
 
-    if (b) ::l::;
+    if b then ::l:: end
 >b : boolean
 >l : any
-}
 
-// Error: a loop's braceless body is embedded position too.
-function embeddedInWhile(b: boolean): void {
->embeddedInWhile : (b: boolean) => void
+end
+
+// A label as an unused loop-body statement is in embedded position too.
+function unusedInWhile(b: boolean): void
+>unusedInWhile : (b: boolean) => void
 >b : boolean
 
-    while (b) ::spin::;
+    while b do ::spin:: end
 >b : boolean
 >spin : any
-}
+
+end
 

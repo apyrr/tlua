@@ -1,16 +1,19 @@
 tluaConstEnumSyntaxUnsupported.tlua(1,12): error TLUA1005: ';' expected.
 tluaConstEnumSyntaxUnsupported.tlua(1,12): error TLUA2304: Cannot find name 'E'.
+tluaConstEnumSyntaxUnsupported.tlua(1,14): error TLUA1128: Declaration or statement expected.
 tluaConstEnumSyntaxUnsupported.tlua(2,5): error TLUA2304: Cannot find name 'A'.
 tluaConstEnumSyntaxUnsupported.tlua(2,5): error TLUA2695: Left side of comma operator is unused and has no side effects.
 tluaConstEnumSyntaxUnsupported.tlua(3,1): error TLUA1109: Expression expected.
 
 
-==== tluaConstEnumSyntaxUnsupported.tlua (5 errors) ====
+==== tluaConstEnumSyntaxUnsupported.tlua (6 errors) ====
     local enum E {
                ~
 !!! error TLUA1005: ';' expected.
                ~
 !!! error TLUA2304: Cannot find name 'E'.
+                 ~
+!!! error TLUA1128: Declaration or statement expected.
         A,
         ~
 !!! error TLUA2304: Cannot find name 'A'.

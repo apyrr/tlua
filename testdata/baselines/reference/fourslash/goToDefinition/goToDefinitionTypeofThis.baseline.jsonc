@@ -1,8 +1,8 @@
 // === goToDefinition ===
 // === /goToDefinitionTypeofThis.tlua ===
-// function f(this: number) {
+// function f(this: number)
 //     type X = typeof /*GOTO DEF*/this;
-// }
+// end
 // class C {
 //     constructor() { type X = typeof this; }
 //     get self(this: number) { type X = typeof this; }
@@ -12,9 +12,9 @@
 
 // === goToDefinition ===
 // === /goToDefinitionTypeofThis.tlua ===
-// function f(this: number) {
+// function f(this: number)
 //     type X = typeof this;
-// }
+// end
 // class C {
 //     constructor() { type X = typeof /*GOTO DEF*/this; }
 //     get self(this: number) { type X = typeof this; }
@@ -24,9 +24,9 @@
 
 // === goToDefinition ===
 // === /goToDefinitionTypeofThis.tlua ===
-// function f(this: number) {
+// function f(this: number)
 //     type X = typeof this;
-// }
+// end
 // class C {
 //     constructor() { type X = typeof this; }
 //     get self(this: number) { type X = typeof /*GOTO DEF*/this; }

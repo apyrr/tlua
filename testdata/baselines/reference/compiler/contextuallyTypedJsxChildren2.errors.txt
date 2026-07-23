@@ -1,5 +1,5 @@
-contextuallyTypedJsxChildren2.tsx(25,30): error TLUA2304: Cannot find name 'Math'.
-contextuallyTypedJsxChildren2.tsx(31,42): error TLUA2304: Cannot find name 'Math'.
+contextuallyTypedJsxChildren2.tsx(25,42): error TLUA2304: Cannot find name 'Math'.
+contextuallyTypedJsxChildren2.tsx(31,54): error TLUA2304: Cannot find name 'Math'.
 
 
 ==== contextuallyTypedJsxChildren2.tsx (2 errors) ====
@@ -23,23 +23,23 @@ contextuallyTypedJsxChildren2.tsx(31,42): error TLUA2304: Cannot find name 'Math
       notChildren?: (state: NoInfer<TParam>) => JsxElement | null;
     }) => JsxElement;
     
-    local App = () => {
+    local App = function()
       return (
         <>
-          <TestComponentWithChildren state={{ foo = 123 }} selector={(state) => state.foo}>
-            {(selected) => <div>{Math.max(selected, 0)}</div>}
-                                 ~~~~
+          <TestComponentWithChildren state={{ foo = 123 }} selector={function(state) return state.foo end}>
+            {function(selected) return <div>{Math.max(selected, 0)}</div> end}
+                                             ~~~~
 !!! error TLUA2304: Cannot find name 'Math'.
           </TestComponentWithChildren>
     
           <TestComponentWithoutChildren
             state={{ foo = 123 }}
-            selector={(state) => state.foo}
-            notChildren={(selected) => <div>{Math.max(selected, 0)}</div>}
-                                             ~~~~
+            selector={function(state) return state.foo end}
+            notChildren={function(selected) return <div>{Math.max(selected, 0)}</div> end}
+                                                         ~~~~
 !!! error TLUA2304: Cannot find name 'Math'.
           />
         </>
       );
-    };
+    end;
     

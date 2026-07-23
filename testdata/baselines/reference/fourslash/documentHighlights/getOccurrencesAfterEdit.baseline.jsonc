@@ -4,9 +4,9 @@
 // interface A {
 //     [|foo|]: string;
 // }
-// function foo(x: A) {
+// function foo(x: A)
 //     x.[|f/*HIGHLIGHTS*/oo|]
-// }
+// end
 
 
 
@@ -17,6 +17,6 @@
 // interface A {
 //     [|foo|]: string;
 // }
-// function foo(x: A) {
+// function foo(x: A)
 //     x.[|f/*HIGHLIGHTS*/oo|]
-// }
+// end

@@ -6,8 +6,8 @@
 //     static bar() {
 //         /*HIGHLIGHTS*/this;
 //         this.staticX;
-//         () => this;
-//         () => {
+//         function() return this end;
+//         function()
 // --- (line: 34) skipped ---
 
 
@@ -19,8 +19,8 @@
 //     static bar() {
 //         this;
 //         /*HIGHLIGHTS*/this.staticX;
-//         () => this;
-//         () => {
+//         function() return this end;
+//         function()
 //             if (this) {
 // --- (line: 35) skipped ---
 
@@ -32,8 +32,8 @@
 //     static bar() {
 //         this;
 //         this.staticX;
-//         () => /*HIGHLIGHTS*/this;
-//         () => {
+//         function() return /*HIGHLIGHTS*/[|this|] end;
+//         function()
 //             if (this) {
 //                 this;
 // --- (line: 36) skipped ---
@@ -42,26 +42,32 @@
 
 // === documentHighlights ===
 // === /getOccurrencesClassExpressionStaticThis.tlua ===
-// --- (line: 30) skipped ---
+// --- (line: 28) skipped ---
+//     static bar() {
+//         this;
 //         this.staticX;
-//         () => this;
-//         () => {
-//             if (/*HIGHLIGHTS*/this) {
-//                 this;
+//         function() return [|this|] end;
+//         function()
+//             if (/*HIGHLIGHTS*/[|this|]) {
+//                 [|this|];
 //             }
-//         }
-// --- (line: 38) skipped ---
+//         end
+//         function inside()
+// --- (line: 39) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesClassExpressionStaticThis.tlua ===
-// --- (line: 31) skipped ---
-//         () => this;
-//         () => {
-//             if (this) {
-//                 /*HIGHLIGHTS*/this;
+// --- (line: 28) skipped ---
+//     static bar() {
+//         this;
+//         this.staticX;
+//         function() return [|this|] end;
+//         function()
+//             if ([|this|]) {
+//                 /*HIGHLIGHTS*/[|this|];
 //             }
-//         }
-//         function inside() {
+//         end
+//         function inside()
 // --- (line: 39) skipped ---

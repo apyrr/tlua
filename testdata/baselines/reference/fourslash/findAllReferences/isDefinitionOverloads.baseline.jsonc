@@ -2,7 +2,7 @@
 // === /isDefinitionOverloads.tlua ===
 // function /*FIND ALL REFS*/[|f|](x: number): void;
 // function [|f|](x: string): void;
-// function [|f|](x: number | string) { }
+// function [|f|](x: number | string) end
 // 
 // [|f|](1);
 // [|f|]("a");
@@ -13,7 +13,7 @@
 // === /isDefinitionOverloads.tlua ===
 // function [|f|](x: number): void;
 // function /*FIND ALL REFS*/[|f|](x: string): void;
-// function [|f|](x: number | string) { }
+// function [|f|](x: number | string) end
 // 
 // [|f|](1);
 // [|f|]("a");
@@ -24,7 +24,7 @@
 // === /isDefinitionOverloads.tlua ===
 // function [|f|](x: number): void;
 // function [|f|](x: string): void;
-// function /*FIND ALL REFS*/[|f|](x: number | string) { }
+// function /*FIND ALL REFS*/[|f|](x: number | string) end
 // 
 // [|f|](1);
 // [|f|]("a");

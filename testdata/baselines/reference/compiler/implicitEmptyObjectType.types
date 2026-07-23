@@ -3,16 +3,16 @@
 === implicitEmptyObjectType.tlua ===
 // https://github.com/microsoft/typescript-go/issues/1563
 
-function f() {
+function f()
 >f : () => void
 
   local v: unknown = "lol";
 >v : unknown
 >"lol" : "lol"
 
-  local acceptsRecord = (record: Record<string, string>) => {};
+  local acceptsRecord = function(record: Record<string, string>) end;
 >acceptsRecord : (record: Record<string, string>) => void
->(record: Record<string, string>) => {} : (record: Record<string, string>) => void
+>function(record: Record<string, string>) end : (record: Record<string, string>) => void
 >record : Record<string, string>
 
   acceptsRecord(v || {});
@@ -21,5 +21,6 @@ function f() {
 >v || {} : {}
 >v : unknown
 >{} : {}
-}
+
+end
 

@@ -23,7 +23,7 @@ local w: number | nil;
 // Lua spells the extraction with member access ...
 local q3 = obj.q;
 // ... and parameter binding patterns are a separate grammar, untouched.
-function take({ q: q4 }: { q: number }): number { return q4; }
+function take({ q: q4 }: { q: number }): number return q4 end
 local all = {q, w, q3, take};
 
 // `export {x}` is different syntax, untouched.

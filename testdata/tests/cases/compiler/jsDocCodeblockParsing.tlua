@@ -20,4 +20,4 @@ local x = 1;
  * ```
  * @param y - a number
  */
-function foo(y: number) {}
+function foo(y: number) end

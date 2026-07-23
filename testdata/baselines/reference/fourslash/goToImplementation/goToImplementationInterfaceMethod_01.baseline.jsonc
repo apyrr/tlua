@@ -3,9 +3,9 @@
 // --- (line: 8) skipped ---
 // }
 // 
-// function whatever(a: Foo) {
+// function whatever(a: Foo)
 //     a.he/*GOTO IMPL*/llo();
-// }
+// end
 // 
 // whatever(new Bar());
 

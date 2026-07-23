@@ -12,17 +12,17 @@ typePredicateParameterMismatch.tlua(16,5): error TLUA2584: Cannot find name 'con
     
     function isTypeA(
       _value: UnionType
-    ): value is TypeA {  // "value" doesn't match parameter "_value"
+    ): value is TypeA  // "value" doesn't match parameter "_value"
        ~~~~~
 !!! error TLUA1225: Cannot find parameter 'value'.
       return true;
-    }
+    end
     
-    function test(input: UnionType): void {
-      if (isTypeA(input)) {
+    function test(input: UnionType): void
+      if (isTypeA(input)) then
         console.log(input.kind);
         ~~~~~~~
 !!! error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
-      }
-    }
+      end
+    end
     

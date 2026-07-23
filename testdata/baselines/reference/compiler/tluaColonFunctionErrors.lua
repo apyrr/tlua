@@ -40,12 +40,19 @@ M:bar(1);
 -- `self` is already declared by the colon.
 function M:clash(self)
 end
-f();
-void ;
-(function() return  end);
+-- At most one colon segment, and nothing may follow it.
+function M:deep()
+    f();
+    void ;
+end
+function M:a()
+    ();
+    void ;
+end
 -- `local function` takes a plain name.
 local function Bad()
-    (function() return  end);
+    ();
+    void ;
 end
 -- Unknown base.
 function Unknown:f()

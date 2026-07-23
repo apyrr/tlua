@@ -6,7 +6,7 @@
 // local <|[|{| name: foo1, kind: Variable |}foo1|]|>, {a, b}
 // local <|[|{| name: bar1, kind: Variable |}bar1|]|>, [c, d]
 // local {e, x: [f, g]} = {a:1, x:[]};
-// local { h: i = <|[|{| name: i, kind: Function |}|]function j() {}|> } = obj;
+// local { h: i = <|[|{| name: i, kind: Function |}|]function j() end|> } = obj;
 
 // === Details ===
 (Variable) foo

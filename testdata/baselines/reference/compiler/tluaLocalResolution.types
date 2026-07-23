@@ -16,7 +16,7 @@ same = same + 1;
 >same : number
 >1 : 1
 
-{
+do
   local blockValue = same;
 >blockValue : number
 >same : number
@@ -40,7 +40,8 @@ same = same + 1;
 >blockValue + 1 : number
 >blockValue : number
 >1 : 1
-}
+
+end
 
 local forward = laterLocal;
 >forward : any
@@ -63,7 +64,7 @@ outer = outer + 1;
 >outer : number
 >1 : 1
 
-function flowForLuaLocal() {
+function flowForLuaLocal()
 >flowForLuaLocal : () => void
 
   local narrowed: string | number;
@@ -74,13 +75,14 @@ function flowForLuaLocal() {
 >narrowed : string | number
 >1 : 1
 
-  local reader = () => narrowed;
+  local reader = function() return narrowed end;
 >reader : () => number
->() => narrowed : () => number
+>function() return narrowed end : () => number
 >narrowed : number
 
   reader();
 >reader() : number
 >reader : () => number
-}
+
+end
 

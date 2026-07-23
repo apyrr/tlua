@@ -18,20 +18,22 @@ function over(a: string): (string, number);
 >over : Symbol(over, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 65), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 43), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 43))
 >a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 14))
 
-function over(a: number | string): (number | string, string | number) {
+function over(a: number | string): (number | string, string | number)
 >over : Symbol(over, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 2, 65), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 5, 43), Decl(tluaMultiReturnDeclareAndOverloads.tlua, 6, 43))
 >a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
 
-  if (type(a) == "number") {
+  if type(a) == "number" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 >a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
 
     return a, "n";
 >a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
-  }
+
+  end
   return a, 0;
 >a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 7, 14))
-}
+
+end
 
 local a = ambient();
 >a : Symbol(a, Decl(tluaMultiReturnDeclareAndOverloads.tlua, 14, 5))

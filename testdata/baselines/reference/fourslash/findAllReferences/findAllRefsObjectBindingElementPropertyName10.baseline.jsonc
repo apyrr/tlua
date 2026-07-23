@@ -5,8 +5,7 @@
 //     value: any;
 // }
 // 
-// function f ({ [|next|]: { next: x} }: Recursive) {
-// }
+// function f ({ [|next|]: { next: x} }: Recursive) end
 
 
 
@@ -17,8 +16,7 @@
 //     value: any;
 // }
 // 
-// function f (/*FIND ALL REFS*/{ next: { next: x} }: Recursive) {
-// }
+// function f (/*FIND ALL REFS*/{ next: { next: x} }: Recursive) end
 
 
 
@@ -29,8 +27,7 @@
 //     value: any;
 // }
 // 
-// function f ({ /*FIND ALL REFS*/[|next|]: { next: x} }: Recursive) {
-// }
+// function f ({ /*FIND ALL REFS*/[|next|]: { next: x} }: Recursive) end
 
 
 
@@ -41,5 +38,4 @@
 //     value: any;
 // }
 // 
-// function f ({ next: { /*FIND ALL REFS*/next: x} }: Recursive) {
-// }
+// function f ({ next: { /*FIND ALL REFS*/next: x} }: Recursive) end

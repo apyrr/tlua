@@ -77,7 +77,7 @@ local banded = bits["and"](1);
 
 // An expando member named `and` is skipped by declaration emit rather than
 // emitted as the bare alias `export { ... as and }`, which would not parse.
-function A(): string { return "A"; }
+function A(): string return "A"; end
 >A : { (): string; "and": { "and": number; "or": number; "not": number; while: number; plain: number; }; ok: { "and": number; "or": number; "not": number; while: number; plain: number; }; }
 >"A" : "A"
 

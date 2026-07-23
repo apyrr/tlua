@@ -1,12 +1,15 @@
 unicodeSpellingSuggestions.tlua(3,1): error TLUA1434: Unexpected keyword or identifier.
 unicodeSpellingSuggestions.tlua(3,1): error TLUA2304: Cannot find name 'classAé'.
+unicodeSpellingSuggestions.tlua(3,9): error TLUA1128: Declaration or statement expected.
 unicodeSpellingSuggestions.tlua(6,1): error TLUA1434: Unexpected keyword or identifier.
 unicodeSpellingSuggestions.tlua(6,1): error TLUA2304: Cannot find name 'classAéé'.
+unicodeSpellingSuggestions.tlua(6,10): error TLUA1128: Declaration or statement expected.
 unicodeSpellingSuggestions.tlua(9,1): error TLUA1434: Unexpected keyword or identifier.
 unicodeSpellingSuggestions.tlua(9,1): error TLUA2304: Cannot find name 'classAééé'.
+unicodeSpellingSuggestions.tlua(9,11): error TLUA1128: Declaration or statement expected.
 
 
-==== unicodeSpellingSuggestions.tlua (6 errors) ====
+==== unicodeSpellingSuggestions.tlua (9 errors) ====
     // https://github.com/microsoft/typescript-go/issues/4223
     
     classAé {
@@ -14,6 +17,8 @@ unicodeSpellingSuggestions.tlua(9,1): error TLUA2304: Cannot find name 'classAé
 !!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~~
 !!! error TLUA2304: Cannot find name 'classAé'.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
     }
     
     classAéé {
@@ -21,6 +26,8 @@ unicodeSpellingSuggestions.tlua(9,1): error TLUA2304: Cannot find name 'classAé
 !!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~~~
 !!! error TLUA2304: Cannot find name 'classAéé'.
+             ~
+!!! error TLUA1128: Declaration or statement expected.
     }
     
     classAééé {
@@ -28,5 +35,7 @@ unicodeSpellingSuggestions.tlua(9,1): error TLUA2304: Cannot find name 'classAé
 !!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'classAééé'.
+              ~
+!!! error TLUA1128: Declaration or statement expected.
     }
     

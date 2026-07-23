@@ -19,14 +19,14 @@ local y = this.foo;
 >y : Symbol(y, Decl(tluaNoThis.tlua, 11, 5))
 
 // `this` parameters are gone; write an ordinary parameter instead.
-function f(this: number, a: string) {}
+function f(this: number, a: string) end
 >f : Symbol(f, Decl(tluaNoThis.tlua, 11, 19))
 >number : Symbol(number, Decl(tluaNoThis.tlua, 14, 16))
 >a : Symbol(a, Decl(tluaNoThis.tlua, 14, 24))
 
 // The polymorphic `this` type is gone.
 interface Poly {
->Poly : Symbol(Poly, Decl(tluaNoThis.tlua, 14, 38))
+>Poly : Symbol(Poly, Decl(tluaNoThis.tlua, 14, 39))
 
   m(): this;
 >m : Symbol(Poly.m, Decl(tluaNoThis.tlua, 17, 16))
@@ -81,7 +81,7 @@ type TQ = typeof this;
 type TQP = typeof this.foo;
 >TQP : Symbol(TQP, Decl(tluaNoThis.tlua, 43, 22))
 
-function q(self: number) {
+function q(self: number)
 >q : Symbol(q, Decl(tluaNoThis.tlua, 44, 27))
 >self : Symbol(self, Decl(tluaNoThis.tlua, 45, 11))
 
@@ -92,7 +92,8 @@ function q(self: number) {
   use(a);
 >use : Symbol(use, Decl(tluaNoThis.tlua, 0, 0))
 >a : Symbol(a, Decl(tluaNoThis.tlua, 46, 7))
-}
+
+end
 
 use(x);
 >use : Symbol(use, Decl(tluaNoThis.tlua, 0, 0))

@@ -1,21 +1,21 @@
 // === Document Symbols ===
 // === /navigationBarItemsFunctions.tlua ===
-// <|function [|{| name: foo, kind: Function |}foo|]() {
+// <|function [|{| name: foo, kind: Function |}foo|]()
 //     local <|[|{| name: x, kind: Variable |}x|] = 10|>;
-//     <|function [|{| name: bar, kind: Function |}bar|]() {
+//     <|function [|{| name: bar, kind: Function |}bar|]()
 //         local <|[|{| name: y, kind: Variable |}y|] = 10|>;
-//         <|function [|{| name: biz, kind: Function |}biz|]() {
+//         <|function [|{| name: biz, kind: Function |}biz|]()
 //             local <|[|{| name: z, kind: Variable |}z|] = 10|>;
-//         }|>
-//         <|function [|{| name: qux, kind: Function |}qux|]() {
+//         end|>
+//         <|function [|{| name: qux, kind: Function |}qux|]()
 //             // A function with an empty body should not be top level
-//         }|>
-//     }|>
-// }|>
+//         end|>
+//     end|>
+// end|>
 // 
-// <|function [|{| name: baz, kind: Function |}baz|]() {
+// <|function [|{| name: baz, kind: Function |}baz|]()
 //     local <|[|{| name: v, kind: Variable |}v|] = 10|>;
-// }|>
+// end|>
 
 // === Details ===
 (Function) foo

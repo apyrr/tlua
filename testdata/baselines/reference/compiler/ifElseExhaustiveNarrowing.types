@@ -93,7 +93,7 @@ function viaChain(source: ClientSource | ServiceSource | nil): boolean
   end
 end
 
-function neverReached(_v: never): void {}
+function neverReached(_v: never): void end
 >neverReached : (_v: never) => void
 >_v : never
 

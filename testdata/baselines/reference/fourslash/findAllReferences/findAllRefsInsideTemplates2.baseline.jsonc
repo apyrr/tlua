@@ -1,32 +1,32 @@
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates2.tlua ===
-// /*FIND ALL REFS*/function [|f|](...rest: any[]) { }
+// /*FIND ALL REFS*/function [|f|](...rest: any[]) end
 // [|f|] `${ [|f|] } ${ [|f|] }`
 
 
 
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates2.tlua ===
-// function /*FIND ALL REFS*/[|f|](...rest: any[]) { }
+// function /*FIND ALL REFS*/[|f|](...rest: any[]) end
 // [|f|] `${ [|f|] } ${ [|f|] }`
 
 
 
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates2.tlua ===
-// function [|f|](...rest: any[]) { }
+// function [|f|](...rest: any[]) end
 // /*FIND ALL REFS*/[|f|] `${ [|f|] } ${ [|f|] }`
 
 
 
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates2.tlua ===
-// function [|f|](...rest: any[]) { }
+// function [|f|](...rest: any[]) end
 // [|f|] `${ /*FIND ALL REFS*/[|f|] } ${ [|f|] }`
 
 
 
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates2.tlua ===
-// function [|f|](...rest: any[]) { }
+// function [|f|](...rest: any[]) end
 // [|f|] `${ [|f|] } ${ /*FIND ALL REFS*/[|f|] }`

@@ -22,9 +22,9 @@ declare = x;
 >declare : number
 >x : number
 
-local call = (declare: number) => declare;
+local call = function(declare: number) return declare end;
 >call : (declare: number) => number
->(declare: number) => declare : (declare: number) => number
+>function(declare: number) return declare end : (declare: number) => number
 >declare : number
 >declare : number
 

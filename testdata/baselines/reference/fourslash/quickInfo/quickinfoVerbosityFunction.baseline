@@ -73,9 +73,9 @@
 // type SomeType = {
 //     prop1: string;
 // }
-// function someFun(a: SomeType): SomeType {
+// function someFun(a: SomeType): SomeType
 //     return a;
-// }
+// end
 // someFun.what = 'what';
 // ^^^^^^^
 // | ----------------------------------------------------------------------

@@ -2,12 +2,12 @@
 // @noEmit: true
 // @target: esnext
 
-function f1() {
-    if (!!true) {
+function f1()
+    if (!!true) then
         return { valid = true }
-    }
+    end
     return f2()
-}
+end
 
 declare f2: () => { valid: boolean, msg?: undefined }
 
@@ -15,12 +15,12 @@ f1().msg
 
 // Repro from https://github.com/microsoft/typescript-go/issues/1742
 
-function validate() {
-    if(Math.random() > 0.5) {
+function validate()
+    if(Math.random() > 0.5) then
         return utilValidate();
-    }
+    end
     return { valid = true };
-};
+end;
 
 
 declare function utilValidate(): {
@@ -35,17 +35,17 @@ validate().msg; // Error in TLUA
 
 // https://github.com/microsoft/typescript-go/issues/1761
 
-function normalise_trace_logs([log]: any[]) {
+function normalise_trace_logs([log]: any[])
 	local normalised = [];
-    if (typeof log == "string" && log.includes("%c")) {
+    if (typeof log == "string" && log.includes("%c")) then
         normalised.push({ log, highlighted = log.includes("foo") });
-    } else {
+    else
         normalised.push({ log });
-    }
+    end
 	return normalised;
-}
+end
 
-function equal<T>(_actual: T, _expected: T): void {}
+function equal<T>(_actual: T, _expected: T): void end
 
 equal(normalise_trace_logs([]), [
     { log = 'effect' },

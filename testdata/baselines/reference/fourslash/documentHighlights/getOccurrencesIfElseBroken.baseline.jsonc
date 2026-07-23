@@ -3,9 +3,9 @@
 // /*HIGHLIGHTS*/[|if|] (true) {
 //     local x = 1;
 // }
-// [|else     if|] ()
-// [|else if|]
-// [|else|]  /*  whar garbl   */   if (if (true) { } else { })
+// [|else|]     if ()
+// else if
+// else  /*  whar garbl   */   if (if (true) { } else { })
 // else
 
 
@@ -15,32 +15,32 @@
 // [|if|] (true) {
 //     local x = 1;
 // }
-// /*HIGHLIGHTS*/[|else     if|] ()
-// [|else if|]
-// [|else|]  /*  whar garbl   */   if (if (true) { } else { })
+// /*HIGHLIGHTS*/[|else|]     if ()
+// else if
+// else  /*  whar garbl   */   if (if (true) { } else { })
 // else
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesIfElseBroken.tlua ===
-// [|if|] (true) {
+// if (true) {
 //     local x = 1;
 // }
-// [|else     if|] ()
-// /*HIGHLIGHTS*/[|else if|]
-// [|else|]  /*  whar garbl   */   if (if (true) { } else { })
+// else     [|if|] ()
+// /*HIGHLIGHTS*/[|else|] if
+// else  /*  whar garbl   */   if (if (true) { } else { })
 // else
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesIfElseBroken.tlua ===
-// [|if|] (true) {
+// if (true) {
 //     local x = 1;
 // }
-// [|else     if|] ()
-// [|else if|]
+// else     if ()
+// else [|if|]
 // /*HIGHLIGHTS*/[|else|]  /*  whar garbl   */   if (if (true) { } else { })
 // else
 
@@ -54,7 +54,7 @@
 // else     if ()
 // else if
 // else  /*  whar garbl   */   /*HIGHLIGHTS*/[|if|] (if (true) { } else { })
-// else
+// [|else|]
 
 
 

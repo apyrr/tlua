@@ -1,60 +1,71 @@
 reachabilityChecks11.tlua(4,1): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(4,11): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(4,11): error TLUA2819: Namespace name cannot be 'A'.
+reachabilityChecks11.tlua(4,13): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(6,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(9,1): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(9,1): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(9,11): error TLUA2304: Cannot find name 'A1'.
 reachabilityChecks11.tlua(9,11): error TLUA2819: Namespace name cannot be 'A1'.
+reachabilityChecks11.tlua(9,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(10,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(11,5): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(11,15): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(11,15): error TLUA2819: Namespace name cannot be 'A'.
+reachabilityChecks11.tlua(11,17): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(16,1): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(16,1): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(16,11): error TLUA2304: Cannot find name 'A2'.
 reachabilityChecks11.tlua(16,11): error TLUA2819: Namespace name cannot be 'A2'.
+reachabilityChecks11.tlua(16,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(17,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(18,5): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(18,15): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(18,15): error TLUA2819: Namespace name cannot be 'A'.
+reachabilityChecks11.tlua(18,17): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(19,9): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(23,1): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(23,1): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(23,11): error TLUA2304: Cannot find name 'A3'.
 reachabilityChecks11.tlua(23,11): error TLUA2819: Namespace name cannot be 'A3'.
+reachabilityChecks11.tlua(23,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(24,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(28,1): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(28,1): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(28,11): error TLUA2304: Cannot find name 'A4'.
 reachabilityChecks11.tlua(28,11): error TLUA2819: Namespace name cannot be 'A4'.
+reachabilityChecks11.tlua(28,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(29,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(30,5): error TLUA2304: Cannot find name 'namespace'.
 reachabilityChecks11.tlua(30,15): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(30,15): error TLUA2819: Namespace name cannot be 'A'.
+reachabilityChecks11.tlua(30,17): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(31,9): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(35,13): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
-reachabilityChecks11.tlua(40,19): error TLUA2304: Cannot find name 'Error'.
-reachabilityChecks11.tlua(42,5): error TLUA7027: Unreachable code detected.
-reachabilityChecks11.tlua(47,5): error TLUA1434: Unexpected keyword or identifier.
-reachabilityChecks11.tlua(47,5): error TLUA2304: Cannot find name 'class'.
-reachabilityChecks11.tlua(47,5): error TLUA7027: Unreachable code detected.
-reachabilityChecks11.tlua(47,11): error TLUA1434: Unexpected keyword or identifier.
-reachabilityChecks11.tlua(47,11): error TLUA2304: Cannot find name 'A'.
-reachabilityChecks11.tlua(51,1): error TLUA2304: Cannot find name 'namespace'.
-reachabilityChecks11.tlua(51,1): error TLUA7027: Unreachable code detected.
-reachabilityChecks11.tlua(51,11): error TLUA2304: Cannot find name 'B'.
-reachabilityChecks11.tlua(51,11): error TLUA2819: Namespace name cannot be 'B'.
-reachabilityChecks11.tlua(52,5): error TLUA7027: Unreachable code detected.
-reachabilityChecks11.tlua(53,5): error TLUA2304: Cannot find name 'namespace'.
-reachabilityChecks11.tlua(53,15): error TLUA2304: Cannot find name 'C'.
-reachabilityChecks11.tlua(53,15): error TLUA2819: Namespace name cannot be 'C'.
-reachabilityChecks11.tlua(60,5): error TLUA7027: Unreachable code detected.
-reachabilityChecks11.tlua(65,19): error TLUA2304: Cannot find name 'Error'.
-reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(39,19): error TLUA2304: Cannot find name 'Error'.
+reachabilityChecks11.tlua(41,5): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(46,5): error TLUA1434: Unexpected keyword or identifier.
+reachabilityChecks11.tlua(46,5): error TLUA2304: Cannot find name 'class'.
+reachabilityChecks11.tlua(46,5): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(46,11): error TLUA1434: Unexpected keyword or identifier.
+reachabilityChecks11.tlua(46,11): error TLUA2304: Cannot find name 'A'.
+reachabilityChecks11.tlua(46,13): error TLUA1128: Declaration or statement expected.
+reachabilityChecks11.tlua(50,1): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(50,1): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(50,11): error TLUA2304: Cannot find name 'B'.
+reachabilityChecks11.tlua(50,11): error TLUA2819: Namespace name cannot be 'B'.
+reachabilityChecks11.tlua(50,13): error TLUA1128: Declaration or statement expected.
+reachabilityChecks11.tlua(51,5): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(52,5): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(52,15): error TLUA2304: Cannot find name 'C'.
+reachabilityChecks11.tlua(52,15): error TLUA2819: Namespace name cannot be 'C'.
+reachabilityChecks11.tlua(52,17): error TLUA1128: Declaration or statement expected.
+reachabilityChecks11.tlua(59,5): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(64,19): error TLUA2304: Cannot find name 'Error'.
+reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
 
 
-==== reachabilityChecks11.tlua (54 errors) ====
+==== reachabilityChecks11.tlua (65 errors) ====
     // while (true);
     local x = 1;
     
@@ -65,7 +76,9 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A'.
               ~
 !!! error TLUA2819: Namespace name cannot be 'A'.
-        while (true);
+                ~
+!!! error TLUA1128: Declaration or statement expected.
+        while true do end
         local x;
         ~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
@@ -80,8 +93,10 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A1'.
               ~~
 !!! error TLUA2819: Namespace name cannot be 'A1'.
-        do {} while(true);
-        ~~~~~~~~~~~~~~~~~~
+                 ~
+!!! error TLUA1128: Declaration or statement expected.
+        while true do end
+        ~~~~~~~~~~~~~~~~~
         namespace A {
     ~~~~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
@@ -91,6 +106,8 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A'.
                   ~
 !!! error TLUA2819: Namespace name cannot be 'A'.
+                    ~
+!!! error TLUA1128: Declaration or statement expected.
             interface F {}
         }
     }
@@ -104,8 +121,10 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A2'.
               ~~
 !!! error TLUA2819: Namespace name cannot be 'A2'.
-        while (true);
-        ~~~~~~~~~~~~~
+                 ~
+!!! error TLUA1128: Declaration or statement expected.
+        while true do end
+        ~~~~~~~~~~~~~~~~~
         namespace A {
     ~~~~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
@@ -115,6 +134,8 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A'.
                   ~
 !!! error TLUA2819: Namespace name cannot be 'A'.
+                    ~
+!!! error TLUA1128: Declaration or statement expected.
             local x = 1;
             ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
@@ -130,8 +151,10 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A3'.
               ~~
 !!! error TLUA2819: Namespace name cannot be 'A3'.
-        while (true);
-        ~~~~~~~~~~~~~
+                 ~
+!!! error TLUA1128: Declaration or statement expected.
+        while true do end
+        ~~~~~~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
         type T = string;
     }
@@ -145,8 +168,10 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A4'.
               ~~
 !!! error TLUA2819: Namespace name cannot be 'A4'.
-        while (true);
-        ~~~~~~~~~~~~~
+                 ~
+!!! error TLUA1128: Declaration or statement expected.
+        while true do end
+        ~~~~~~~~~~~~~~~~~
         namespace A {
     ~~~~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
@@ -156,29 +181,30 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'A'.
                   ~
 !!! error TLUA2819: Namespace name cannot be 'A'.
+                    ~
+!!! error TLUA1128: Declaration or statement expected.
             local x = 1;
             ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
         }
     }
     
-    function f1(x) {
+    function f1(x)
                 ~
 !!! error TLUA7006: Parameter 'x' implicitly has an 'any' type.
-        if (x) {
+        if x then
             return;
-        }
-        else {
+        else
             throw new Error("123");
                       ~~~~~
 !!! error TLUA2304: Cannot find name 'Error'.
-        }
+        end
         local x;
         ~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
-    }
+    end
     
-    function f2() {
+    function f2()
         return;
         class A {
         ~~~~~
@@ -191,8 +217,10 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA1434: Unexpected keyword or identifier.
               ~
 !!! error TLUA2304: Cannot find name 'A'.
+                ~
+!!! error TLUA1128: Declaration or statement expected.
         }
-    }
+    end
     
     namespace B {
     ~~~~~~~~~
@@ -203,8 +231,10 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'B'.
               ~
 !!! error TLUA2819: Namespace name cannot be 'B'.
-        while (true);
-        ~~~~~~~~~~~~~
+                ~
+!!! error TLUA1128: Declaration or statement expected.
+        while true do end
+        ~~~~~~~~~~~~~~~~~
         namespace C {
     ~~~~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
@@ -214,25 +244,27 @@ reachabilityChecks11.tlua(67,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA2304: Cannot find name 'C'.
                   ~
 !!! error TLUA2819: Namespace name cannot be 'C'.
+                    ~
+!!! error TLUA1128: Declaration or statement expected.
         }
     }
     
-    function f3() {
-        do {
-        } while (true);
+    function f3()
+        while true do
+        end
         local x = 1;
         ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
-    }
+    end
     
-    function f4() {
-        if (true) {
+    function f4()
+        if true then
             throw new Error();
                       ~~~~~
 !!! error TLUA2304: Cannot find name 'Error'.
-        }
+        end
         local x = 1;
         ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
-    }
+    end
     

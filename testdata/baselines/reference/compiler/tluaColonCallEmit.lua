@@ -28,9 +28,9 @@ function T:twice(): number
   return self:bump() + self:bump();
 end
 
-function raise(): never {
+function raise(): never
   throw T:bump();
-}
+end
 
 
 //// [tluaColonCallEmit.lua]
@@ -54,6 +54,6 @@ d.u:bump();
 function T:twice()
     return self:bump() + self:bump();
 end
-function raise() {
+function raise()
     throw T:bump();
-}
+end

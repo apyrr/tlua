@@ -3,20 +3,23 @@ strictBestCommonSupertype.tlua(3,1): error TLUA2304: Cannot find name 'class'.
 strictBestCommonSupertype.tlua(3,7): error TLUA2304: Cannot find name 'Store'.
 strictBestCommonSupertype.tlua(3,13): error TLUA2304: Cannot find name 'T'.
 strictBestCommonSupertype.tlua(3,15): error TLUA1005: ';' expected.
-strictBestCommonSupertype.tlua(3,17): error TLUA2365: Operator '>' cannot be applied to types 'TableLib' and '{ 1: number & (any?, ...any); 2: {}; }'.
+strictBestCommonSupertype.tlua(3,17): error TLUA2365: Operator '>' cannot be applied to types 'TableLib' and '{ 1: number & (any?, ...any); 2: any; 3: {}; }'.
 strictBestCommonSupertype.tlua(4,12): error TLUA2304: Cannot find name 'K'.
 strictBestCommonSupertype.tlua(4,12): error TLUA2558: Expected 0 type arguments, but got 1.
 strictBestCommonSupertype.tlua(4,15): error TLUA2304: Cannot find name 'mapFn'.
 strictBestCommonSupertype.tlua(4,20): error TLUA1005: ',' expected.
+strictBestCommonSupertype.tlua(4,23): error TLUA2304: Cannot find name 'state'.
+strictBestCommonSupertype.tlua(4,28): error TLUA1005: ')' expected.
 strictBestCommonSupertype.tlua(4,30): error TLUA2304: Cannot find name 'T'.
+strictBestCommonSupertype.tlua(4,33): error TLUA1005: ',' expected.
 strictBestCommonSupertype.tlua(4,36): error TLUA2304: Cannot find name 'K'.
-strictBestCommonSupertype.tlua(4,39): error TLUA1005: ',' expected.
+strictBestCommonSupertype.tlua(4,37): error TLUA1005: ',' expected.
 strictBestCommonSupertype.tlua(7,14): error TLUA2304: Cannot find name 'Store'.
 strictBestCommonSupertype.tlua(7,29): error TLUA2304: Cannot find name 'Store'.
 strictBestCommonSupertype.tlua(14,13): error TLUA100034: A vararg parameter cannot have a name.
 
 
-==== strictBestCommonSupertype.tlua (16 errors) ====
+==== strictBestCommonSupertype.tlua (19 errors) ====
     // https://github.com/microsoft/typescript-go/issues/1222
     
     class Store<T = table> {
@@ -41,15 +44,21 @@ strictBestCommonSupertype.tlua(14,13): error TLUA100034: A vararg parameter cann
 !!! error TLUA2304: Cannot find name 'mapFn'.
                        ~
 !!! error TLUA1005: ',' expected.
+                          ~~~~~
+!!! error TLUA2304: Cannot find name 'state'.
+                               ~
+!!! error TLUA1005: ')' expected.
                                  ~
 !!! error TLUA2304: Cannot find name 'T'.
+                                    ~~
+!!! error TLUA1005: ',' expected.
                                        ~
 !!! error TLUA2304: Cannot find name 'K'.
-                                          ~
+                                        ~
 !!! error TLUA1005: ',' expected.
     }
     ~
-!!! error TLUA2365: Operator '>' cannot be applied to types 'TableLib' and '{ 1: number & (any?, ...any); 2: {}; }'.
+!!! error TLUA2365: Operator '>' cannot be applied to types 'TableLib' and '{ 1: number & (any?, ...any); 2: any; 3: {}; }'.
     
     local store: Store = inject(Store);
                  ~~~~~
@@ -57,9 +66,9 @@ strictBestCommonSupertype.tlua(14,13): error TLUA100034: A vararg parameter cann
                                 ~~~~~
 !!! error TLUA2304: Cannot find name 'Store'.
     
-    function inject<T>(token: ProviderToken<T>): T {
+    function inject<T>(token: ProviderToken<T>): T
         return {} as T;
-    }
+    end
     
     interface Type<T> {
         new (...args: any[]): T;

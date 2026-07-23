@@ -22,9 +22,9 @@ local h: async (url: string) => boolean = plainOk;
 
 // Calling through the async-typed slot: error from a sync function, OK from an
 // async function.
-function sync1(): void {
+function sync1(): void
   g("a");
-}
+end
 async function ok(): void
   g("b");
 end
@@ -58,9 +58,9 @@ local g = fetchOk;
 local h = plainOk;
 -- Calling through the async-typed slot: error from a sync function, OK from an
 -- async function.
-function sync1() {
+function sync1()
     g("a");
-}
+end
 async function ok()
     g("b");
 end
@@ -69,7 +69,7 @@ end
 declare;
 namespace;
 coroutine;
-{
-}
+do
+end
 coroutine.create(fetchOk);
 local n = 1;

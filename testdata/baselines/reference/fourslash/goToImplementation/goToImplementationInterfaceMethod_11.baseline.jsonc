@@ -4,5 +4,5 @@
 //    hel/*GOTO IMPL*/lo(): void;
 // }
 // 
-// local x = <Foo> { <|[|hello|] = () => {}|> };
-// local y = <Foo> (((({ <|[|hello|] = () => {}|> }))));
+// local x = <Foo> { <|[|hello|] = function() end|> };
+// local y = <Foo> (((({ <|[|hello|] = function() end|> }))));

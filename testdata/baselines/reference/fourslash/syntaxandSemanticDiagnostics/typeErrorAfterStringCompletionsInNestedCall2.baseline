@@ -50,7 +50,7 @@
         events = {} as { type: "FOO" } | { type: "BAR" },
       },
       on = {
-        FOO = raise(({ event }) => {
+        FOO = raise(function({ event })
         ~~~
 !!! error TLUA2322: Type '{ ({ event }: { event: { type: "FOO"; }; }): void; _out_TEvent?: { type: "BARx"; } | nil; }' is not assignable to type 'ActionFunction<{ type: "FOO"; }, { type: "FOO"; } | { type: "BAR"; }>'.
 !!! error TLUA2322:   Types of property '_out_TEvent' are incompatible.
@@ -64,6 +64,6 @@
           return {
             type = "BARx" as const,
           };
-        }),
+        end),
       },
     });

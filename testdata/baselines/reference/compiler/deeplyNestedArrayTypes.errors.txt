@@ -41,7 +41,7 @@ deeplyNestedArrayTypes.tlua(30,5): error TLUA2322: Type 'BOuter' is not assignab
         id: number;
     }
     
-    function test(a: AOuter, b: BOuter) {
+    function test(a: AOuter, b: BOuter)
         a = b
         ~
 !!! error TLUA2322: Type 'BOuter' is not assignable to type 'AOuter'.
@@ -56,5 +56,5 @@ deeplyNestedArrayTypes.tlua(30,5): error TLUA2322: Type 'BOuter' is not assignab
 !!! error TLUA2322:                   Type 'BLeaf' is not assignable to type 'ALeaf'.
 !!! error TLUA2322:                     Types of property 'id' are incompatible.
 !!! error TLUA2322:                       Type 'number' is not assignable to type 'string'.
-    }
+    end
     

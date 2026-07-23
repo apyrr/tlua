@@ -8,38 +8,38 @@ declare function fromDtsVariadic(): (boolean, ...number);
 >fromDtsVariadic : Symbol(fromDtsVariadic, Decl(defs.d.tlua, 0, 45))
 
 === main.tlua ===
-function annotated(): (number, string) {
+function annotated(): (number, string)
 >annotated : Symbol(annotated, Decl(main.tlua, 0, 0))
 
   return 1, "a";
-}
+end
 
-function inferred(cond: boolean) {
->inferred : Symbol(inferred, Decl(main.tlua, 2, 1))
+function inferred(cond: boolean)
+>inferred : Symbol(inferred, Decl(main.tlua, 2, 3))
 >cond : Symbol(cond, Decl(main.tlua, 4, 18))
 
-  if (cond) {
+  if cond then
 >cond : Symbol(cond, Decl(main.tlua, 4, 18))
 
     return 1, "a";
-  }
+  end
   return 2;
-}
+end
 
-function variadic(): (number, ...string) {
->variadic : Symbol(variadic, Decl(main.tlua, 9, 1))
+function variadic(): (number, ...string)
+>variadic : Symbol(variadic, Decl(main.tlua, 9, 3))
 
   return 1, "a", "b";
-}
+end
 
-function optional(): (number, string?) {
->optional : Symbol(optional, Decl(main.tlua, 13, 1))
+function optional(): (number, string?)
+>optional : Symbol(optional, Decl(main.tlua, 13, 3))
 
   return 1;
-}
+end
 
 type PairCallback = () => (number, string);
->PairCallback : Symbol(PairCallback, Decl(main.tlua, 17, 1))
+>PairCallback : Symbol(PairCallback, Decl(main.tlua, 17, 3))
 
 interface PairCallable {
 >PairCallable : Symbol(PairCallable, Decl(main.tlua, 19, 43))

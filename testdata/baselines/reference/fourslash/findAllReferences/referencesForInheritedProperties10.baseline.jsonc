@@ -10,10 +10,10 @@
 // --- (line: 15) skipped ---
 // }
 // 
-// function foo(handler: IFeedbackHandler) {
+// function foo(handler: IFeedbackHandler)
 //   handler.[|handleAccept|]?.();
 //   handler.handleReject?.();
-// }
+// end
 
 
 
@@ -43,7 +43,7 @@
 // --- (line: 15) skipped ---
 // }
 // 
-// function foo(handler: IFeedbackHandler) {
+// function foo(handler: IFeedbackHandler)
 //   handler./*FIND ALL REFS*/[|handleAccept|]?.();
 //   handler.handleReject?.();
-// }
+// end

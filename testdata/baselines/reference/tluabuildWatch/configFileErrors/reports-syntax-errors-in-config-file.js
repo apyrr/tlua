@@ -2,9 +2,9 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/project/a.tlua] *new* 
-function foo() { }
+function foo() end
 //// [/home/src/workspaces/project/b.tlua] *new* 
-function bar() { }
+function bar() end
 //// [/home/src/workspaces/project/tluaconfig.json] *new* 
 {
     "compilerOptions": {
@@ -23,12 +23,12 @@ Output::
 
 [96ma.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function foo() { }
+[7m1[0m function foo() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mb.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function bar() { }
+[7m1[0m function bar() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mtluaconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
@@ -63,13 +63,15 @@ interface Symbol {
 declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/a.lua] *new* 
-function foo() { }
+function foo()
+end
 
 //// [/home/src/workspaces/project/b.lua] *new* 
-function bar() { }
+function bar()
+end
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./a.tlua","./b.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"700c3fba6f483a252a9c2dd153c5c8d0-function foo() { }","fad4ba9dd8cd2eb534c23aa7c53048f3-function bar() { }"],"options":{"composite":true},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./a.tlua","./b.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"4bec51fe8e249f58519d33fe233645f2-function foo() end","a3ee51b91312f7c663b8cf659522caf7-function bar() end"],"options":{"composite":true},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -105,14 +107,14 @@ function bar() { }
     },
     {
       "fileName": "./a.tlua",
-      "version": "700c3fba6f483a252a9c2dd153c5c8d0-function foo() { }",
-      "signature": "700c3fba6f483a252a9c2dd153c5c8d0-function foo() { }",
+      "version": "4bec51fe8e249f58519d33fe233645f2-function foo() end",
+      "signature": "4bec51fe8e249f58519d33fe233645f2-function foo() end",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./b.tlua",
-      "version": "fad4ba9dd8cd2eb534c23aa7c53048f3-function bar() { }",
-      "signature": "fad4ba9dd8cd2eb534c23aa7c53048f3-function bar() { }",
+      "version": "a3ee51b91312f7c663b8cf659522caf7-function bar() end",
+      "signature": "a3ee51b91312f7c663b8cf659522caf7-function bar() end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -186,12 +188,12 @@ Output::
 
 [96ma.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function foo() { }
+[7m1[0m function foo() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mb.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function bar() { }
+[7m1[0m function bar() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mtluaconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
@@ -213,7 +215,8 @@ Signatures::
 
 Edit [1]:: reports syntax errors after change to ts file
 //// [/home/src/workspaces/project/a.tlua] *modified* 
-function foo() { }function fooBar() { }
+function foo() end
+function fooBar() end
 
 
 Output::
@@ -221,12 +224,12 @@ Output::
 
 [96ma.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function foo() { }function fooBar() { }
+[7m1[0m function foo() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mb.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function bar() { }
+[7m1[0m function bar() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mtluaconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
@@ -237,11 +240,13 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 3 errors. Watching for file changes.
 
 //// [/home/src/workspaces/project/a.lua] *modified* 
-function foo() { }
-function fooBar() { }
+function foo()
+end
+function fooBar()
+end
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./a.tlua","./b.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"9913eed4c728d7f8bcd32079c829fc4c-function foo() { }function fooBar() { }","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"fad4ba9dd8cd2eb534c23aa7c53048f3-function bar() { }"],"options":{"composite":true,"declaration":true},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./a.tlua","./b.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"46ee5dd7cd7b38b6de60b1b180529314-function foo() end\nfunction fooBar() end","signature":"2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"a3ee51b91312f7c663b8cf659522caf7-function bar() end"],"options":{"composite":true,"declaration":true},"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -277,19 +282,19 @@ function fooBar() { }
     },
     {
       "fileName": "./a.tlua",
-      "version": "9913eed4c728d7f8bcd32079c829fc4c-function foo() { }function fooBar() { }",
+      "version": "46ee5dd7cd7b38b6de60b1b180529314-function foo() end\nfunction fooBar() end",
       "signature": "2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "9913eed4c728d7f8bcd32079c829fc4c-function foo() { }function fooBar() { }",
+        "version": "46ee5dd7cd7b38b6de60b1b180529314-function foo() end\nfunction fooBar() end",
         "signature": "2e6f268da2e4a4fbe3cf418d538b9f36-\n(0,8): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.tlua",
-      "version": "fad4ba9dd8cd2eb534c23aa7c53048f3-function bar() { }",
-      "signature": "fad4ba9dd8cd2eb534c23aa7c53048f3-function bar() { }",
+      "version": "a3ee51b91312f7c663b8cf659522caf7-function bar() end",
+      "signature": "a3ee51b91312f7c663b8cf659522caf7-function bar() end",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -331,7 +336,7 @@ function fooBar() { }
       "original": 3
     }
   ],
-  "size": 1554
+  "size": 1556
 }
 
 Watch Registrations::
@@ -354,12 +359,12 @@ Output::
 
 [96ma.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function foo() { }function fooBar() { }
+[7m1[0m function foo() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mb.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function bar() { }
+[7m1[0m function bar() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mtluaconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
@@ -397,12 +402,12 @@ Output::
 
 [96ma.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function foo() { }function fooBar() { }
+[7m1[0m function foo() end
 [7m [0m [91m~~~~~~~~[0m
 
 [96mb.tlua[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TLUA100054: [0mDeclaration emit is not supported for a Lua module yet.
 
-[7m1[0m function bar() { }
+[7m1[0m function bar() end
 [7m [0m [91m~~~~~~~~[0m
 
 [[90mHH:MM:SS AM[0m] Found 2 errors. Watching for file changes.

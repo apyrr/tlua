@@ -11,20 +11,20 @@ function assertCondition(
   _condition: boolean
 >_condition : Symbol(_condition, Decl(assertsPredicateParameterMismatch.tlua, 4, 25))
 
-): asserts condition {  // "condition" doesn't match parameter "_condition"
-  if (!_condition) {
+): asserts condition  // "condition" doesn't match parameter "_condition"
+  if (!_condition) then
 >_condition : Symbol(_condition, Decl(assertsPredicateParameterMismatch.tlua, 4, 25))
 
     throw new Error('Condition failed');
-  }
-}
+  end
+end
 
-function test(): void {
->test : Symbol(test, Decl(assertsPredicateParameterMismatch.tlua, 10, 1))
+function test(): void
+>test : Symbol(test, Decl(assertsPredicateParameterMismatch.tlua, 10, 3))
 
   assertCondition(false);
 >assertCondition : Symbol(assertCondition, Decl(assertsPredicateParameterMismatch.tlua, 0, 0))
 
   console.log("unreachable");
-}
+end
 

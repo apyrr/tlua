@@ -33,9 +33,9 @@ function nested(w: number, h: number): number
   local count = 0;
   for x = 1, w do
     for y = 1, h do
-      if (count > 100) {
+      if (count > 100) then
         break;
-      }
+      end
       count = count + 1;
     end
   end
@@ -80,9 +80,9 @@ function nested(w, h)
     local count = 0;
     for x = 1, w do
         for y = 1, h do
-            if (count > 100) {
+            if (count > 100) then
                 break;
-            }
+            end
             count = count + 1;
         end
     end

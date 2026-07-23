@@ -1,5 +1,5 @@
 tluaVarargParenAmbiguity.tlua(12,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
-tluaVarargParenAmbiguity.tlua(23,27): error TLUA1014: A rest parameter must be last in a parameter list.
+tluaVarargParenAmbiguity.tlua(23,35): error TLUA1014: A rest parameter must be last in a parameter list.
 
 
 ==== tluaVarargParenAmbiguity.tlua (2 errors) ====
@@ -21,14 +21,14 @@ tluaVarargParenAmbiguity.tlua(23,27): error TLUA1014: A rest parameter must be l
     
     // Still arrows: a bare vararg parameter list, one with the (ambiguous) return
     // type colon, and an annotated vararg.
-    local arrow = (...) => 1;
-    local arrowWithReturnType = (...): number => 2;
-    local arrowAnnotated = (...: string) => 3;
+    local arrow = function(...) return 1 end;
+    local arrowWithReturnType = function(...): number return 2 end;
+    local arrowAnnotated = function(...: string) return 3 end;
     
     // A misplaced vararg is still an arrow when the `=>` says so -- the parameter
     // grammar reports it precisely (a rest parameter must be last).
-    local misplacedInArrow = (..., x: number) => x;
-                              ~~~
+    local misplacedInArrow = function(..., x: number) return x end;
+                                      ~~~
 !!! error TLUA1014: A rest parameter must be last in a parameter list.
     
     // Without the `=>` the same shape is an expression list, not a mangled arrow.

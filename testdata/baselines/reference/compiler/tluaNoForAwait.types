@@ -2,7 +2,7 @@
 
 === tluaNoForAwait.tlua ===
 // `for await` is no longer supported syntax.
-async function f(xs: number[]): Promise<number> {
+async function f(xs: number[]): Promise<number>
 >f : async (xs: number[]) => Promise<number>
 >xs : number[]
 
@@ -25,7 +25,8 @@ async function f(xs: number[]): Promise<number> {
   }
   return total;
 >total : number
-}
+
+end
 
 // `await` after `for` is an ordinary Lua loop-variable name.
 function awaitName(): number

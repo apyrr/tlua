@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/contextuallyTypedFunctionOptionalAndRest.tlua] ////
 
 //// [contextuallyTypedFunctionOptionalAndRest.tlua]
-local f: () => void = (a?, ...b) => {};
+local f: () => void = function(a?, ...b) end;
 
 
 //// [contextuallyTypedFunctionOptionalAndRest.lua]

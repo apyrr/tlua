@@ -18,12 +18,12 @@ declare createNode: () => {
     getNextNode: <T>() => CustomNode<T>;
 };
 
-function wrapNode<T>(getNode: () => CustomNode<T>) {
+function wrapNode<T>(getNode: () => CustomNode<T>)
     return getNode;
-}
+end
 
-wrapNode(() => {
+wrapNode(function()
     local node = createNode();
 
     return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);
-});
+end);

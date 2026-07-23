@@ -68,14 +68,15 @@ async function handler(): number
 end
 
 // Error: direct call from a sync function.
-function syncCaller(): void {
+function syncCaller(): void
 >syncCaller : () => void
 
   fetchOk("nope");
 >fetchOk("nope") : boolean
 >fetchOk : async (url: string) => (boolean, any)
 >"nope" : "nope"
-}
+
+end
 
 // Error: call at top level.
 fetchOk("top");
@@ -84,7 +85,7 @@ fetchOk("top");
 >"top" : "top"
 
 // Error: inferred alias keeps the contract (the flag rides the signature).
-function aliasCaller(): void {
+function aliasCaller(): void
 >aliasCaller : () => void
 
   local f = fetchOk;
@@ -95,7 +96,8 @@ function aliasCaller(): void {
 >f("aliased") : boolean
 >f : async (url: string) => (boolean, any)
 >"aliased" : "aliased"
-}
+
+end
 
 // OK: alias called from an async context.
 async function aliasAsyncCaller(): void
@@ -152,18 +154,19 @@ async function pingpong(n: number): number
 end
 
 // Async arrow expressions participate too.
-local asyncArrow = async (): number => 42;
+local asyncArrow = async function(): number return 42 end;
 >asyncArrow : async () => number
->async (): number => 42 : async () => number
+>async function(): number return 42 end : async () => number
 >42 : 42
 
-function arrowSyncCaller(): void {
+function arrowSyncCaller(): void
 >arrowSyncCaller : () => void
 
   asyncArrow(); // error
 >asyncArrow() : number
 >asyncArrow : async () => number
-}
+
+end
 async function arrowAsyncCaller(): number
 >arrowAsyncCaller : async () => number
 
@@ -182,14 +185,15 @@ async function identityAsync<T>(x: T): T
 >x : T
 
 end
-function genericSyncCaller(): void {
+function genericSyncCaller(): void
 >genericSyncCaller : () => void
 
   identityAsync(1); // error
 >identityAsync(1) : 1
 >identityAsync : async <T>(x: T) => T
 >1 : 1
-}
+
+end
 async function genericAsyncCaller(): number
 >genericAsyncCaller : async () => number
 

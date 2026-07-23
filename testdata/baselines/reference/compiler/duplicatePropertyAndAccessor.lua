@@ -13,9 +13,9 @@ class C {
 -- https://github.com/microsoft/typescript-go/issues/4130
 class;
 C;
-{
+do
     y;
     number = 2;
     y;
     number = 3;
-}
+end

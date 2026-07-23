@@ -1,0 +1,24 @@
+// @strict: true
+// @noEmit: true
+
+// A property re-declared across merged interface declarations is ordinary
+// merging, not a duplicate identifier: the symbol gains several declarations,
+// but each body declares the name only once.
+interface Merged { x: number }
+interface Merged { x: number }
+
+// Adding distinct members across declarations merges cleanly too.
+interface Widened { a: number }
+interface Widened { b: string }
+
+// Re-declaring with a conflicting type is a "subsequent property declarations
+// must have the same type" error -- but still NOT a spurious duplicate
+// identifier from the per-body duplicate check.
+interface Conflict { v: number }
+interface Conflict { v: string }
+
+// A name repeated within a SINGLE body is a genuine duplicate identifier.
+interface WithinBody { dup: number, dup: number }
+
+// Same distinction for a type literal body.
+type Lit = { p: number, p: number }

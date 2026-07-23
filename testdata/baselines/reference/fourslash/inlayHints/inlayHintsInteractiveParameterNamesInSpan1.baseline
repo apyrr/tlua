@@ -1,10 +1,10 @@
 // === Inlay Hints ===
-function c2 () { foo2(1, 2); }
-                      ^
+function c2 () foo2(1, 2); end
+                    ^
 {
   "position": {
     "line": 8,
-    "character": 22
+    "character": 20
   },
   "label": [
     {
@@ -31,12 +31,12 @@ function c2 () { foo2(1, 2); }
   "paddingRight": true
 }
 
-function c2 () { foo2(1, 2); }
-                         ^
+function c2 () foo2(1, 2); end
+                       ^
 {
   "position": {
     "line": 8,
-    "character": 25
+    "character": 23
   },
   "label": [
     {
@@ -63,12 +63,12 @@ function c2 () { foo2(1, 2); }
   "paddingRight": true
 }
 
-function c3 () { foo3(1, 2); }
-                      ^
+function c3 () foo3(1, 2); end
+                    ^
 {
   "position": {
     "line": 9,
-    "character": 22
+    "character": 20
   },
   "label": [
     {
@@ -95,12 +95,12 @@ function c3 () { foo3(1, 2); }
   "paddingRight": true
 }
 
-function c3 () { foo3(1, 2); }
-                         ^
+function c3 () foo3(1, 2); end
+                       ^
 {
   "position": {
     "line": 9,
-    "character": 25
+    "character": 23
   },
   "label": [
     {
@@ -127,12 +127,12 @@ function c3 () { foo3(1, 2); }
   "paddingRight": true
 }
 
-function c4 () { foo4(1, 2); }
-                      ^
+function c4 () foo4(1, 2); end
+                    ^
 {
   "position": {
     "line": 10,
-    "character": 22
+    "character": 20
   },
   "label": [
     {
@@ -159,12 +159,12 @@ function c4 () { foo4(1, 2); }
   "paddingRight": true
 }
 
-function c4 () { foo4(1, 2); }
-                         ^
+function c4 () foo4(1, 2); end
+                       ^
 {
   "position": {
     "line": 10,
-    "character": 25
+    "character": 23
   },
   "label": [
     {

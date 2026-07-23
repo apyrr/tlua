@@ -95,7 +95,7 @@ foo(true);
   "paddingRight": true
 }
 
-foo(() => 1);
+foo(function() return 1 end);
     ^
 {
   "position": {
@@ -127,7 +127,7 @@ foo(() => 1);
   "paddingRight": true
 }
 
-foo(function () { return 1 });
+foo(function () return 1 end);
     ^
 {
   "position": {

@@ -6,7 +6,7 @@
 // 	"any key": string | number | symbol;
 // }
 // type K2 = "string key" | "any key";
-// function fn2<T extends T2>(obj: T, key: keyof T) {
+// function fn2<T extends T2>(obj: T, key: keyof T)
 // 	local value: T[K2] = undefined as any;
 //        ^^^^^
 // | ----------------------------------------------------------------------
@@ -24,8 +24,8 @@
 // | 
 // | (verbosity level: 0)
 // | ----------------------------------------------------------------------
-// }
-// function fn3<K extends keyof T2>(obj: T2, key: K) {
+// end
+// function fn3<K extends keyof T2>(obj: T2, key: K)
 //     local value: T2[K] = undefined as any;;
 //           ^^^^^
 // | ----------------------------------------------------------------------
@@ -47,11 +47,11 @@
 // | 
 // | (verbosity level: 0)
 // | ----------------------------------------------------------------------
-// }
+// end
 [
   {
     "marker": {
-      "Position": 200,
+      "Position": 198,
       "LSPosition": {
         "line": 7,
         "character": 12
@@ -82,7 +82,7 @@
   },
   {
     "marker": {
-      "Position": 200,
+      "Position": 198,
       "LSPosition": {
         "line": 7,
         "character": 12
@@ -112,7 +112,7 @@
   },
   {
     "marker": {
-      "Position": 297,
+      "Position": 295,
       "LSPosition": {
         "line": 10,
         "character": 15
@@ -143,7 +143,7 @@
   },
   {
     "marker": {
-      "Position": 297,
+      "Position": 295,
       "LSPosition": {
         "line": 10,
         "character": 15

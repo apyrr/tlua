@@ -4,10 +4,10 @@
 //     (a: number): void
 // }
 // 
-// local bar: Foo = [|(a) => {/**0*/}|];
+// local bar: Foo = [|function(a) /**0*/ end|];
 // 
-// function whatever(x: Foo = [|(a) => {/**1*/}|] ) {
-// }
+// function whatever(x: Foo = [|function(a) /**1*/ end|] )
+// end
 // 
 // class Bar {
 // --- (line: 11) skipped ---

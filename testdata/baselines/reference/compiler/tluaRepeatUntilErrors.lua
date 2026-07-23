@@ -36,8 +36,11 @@ function missingUntil()
         return 0;
     until ;
 end
-true;
-return 0;
+-- `until` outside a repeat.
+function strayUntil()
+    true;
+    return 0;
+end
 function voidCondition()
     repeat
         local n = 1;

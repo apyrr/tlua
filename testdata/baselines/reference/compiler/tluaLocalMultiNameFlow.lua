@@ -9,9 +9,9 @@ end
 local a, b = maybePair();
 
 function useBoth(): number
-  if (b != nil) {
+  if b != nil then
     return a + b.length;
-  }
+  end
   return a;
 end
 
@@ -25,12 +25,12 @@ end
 // Narrowing works on positional values.
 local e, f = maybePair();
 
-function narrowed(): string {
-  if (f == nil) {
+function narrowed(): string
+  if f == nil then
     return "";
-  }
+  end
   return f;
-}
+end
 
 
 //// [tluaLocalMultiNameFlow.lua]
@@ -40,9 +40,9 @@ end
 -- Every name in a list with a value list counts as initialized.
 local a, b = maybePair();
 function useBoth()
-    if (b ~= nil) {
+    if b ~= nil then
         return a + b.length;
-    }
+    end
     return a;
 end
 -- Without a value list, use-before-assignment still applies per name.
@@ -52,9 +52,9 @@ function useUnassigned()
 end
 -- Narrowing works on positional values.
 local e, f = maybePair();
-function narrowed() {
-    if (f == nil) {
+function narrowed()
+    if f == nil then
         return "";
-    }
+    end
     return f;
-}
+end

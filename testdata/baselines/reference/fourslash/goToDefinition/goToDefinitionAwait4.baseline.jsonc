@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionAwait4.tlua ===
-// async function outerAsyncFun() {
-//     local af = async () => {
+// async function outerAsyncFun()
+//     local af = async function()
 //       /*GOTO DEF*/await Promise.resolve(0);
-//     }
-// }
+//     end
+// end

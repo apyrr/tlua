@@ -28,13 +28,13 @@ function sum(xs: number[]): number
 end
 
 // A vararg pack collects into a number-key table with `{...}`.
-function join(sep: string, ...: string): string {
+function join(sep: string, ...: string): string
   local parts: string[] = {...};
   return parts[1];
-}
-function forward(a: string, b: string): string {
+end
+function forward(a: string, b: string): string
   return join(",", a, b);
-}
+end
 
 
 //// [tluaIterationCoexistence.lua]
@@ -59,10 +59,10 @@ function sum(xs)
     return total;
 end
 -- A vararg pack collects into a number-key table with `{...}`.
-function join(sep, ...) {
+function join(sep, ...)
     local parts = { ... };
     return parts[1];
-}
-function forward(a, b) {
+end
+function forward(a, b)
     return join(",", a, b);
-}
+end

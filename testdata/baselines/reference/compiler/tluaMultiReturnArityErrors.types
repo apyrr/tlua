@@ -60,7 +60,7 @@ function mustReturn(): (number, string?)
 end
 
 // A type predicate cannot start a multiple return type.
-function badPredicate(x: unknown): (x is string, number) {
+function badPredicate(x: unknown): (x is string, number)
 >badPredicate : (x: unknown) => (x is string, number)
 >x : unknown
 
@@ -72,5 +72,6 @@ function badPredicate(x: unknown): (x is string, number) {
 >x : unknown
 >"string" : "string"
 >1 : 1
-}
+
+end
 

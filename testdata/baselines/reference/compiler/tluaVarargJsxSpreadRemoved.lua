@@ -27,17 +27,17 @@ local withChildren = <div a={1}>{items}</div>;
 //// [tluaVarargJsxSpreadRemoved.jsx]
 -- JSX is not a reason to keep spread: attribute spread is gone.
 local spreadAttribute = <div />;
-{
+do
     ...;
     props;
-}
+end
 />;
 -- Including when mixed with regular attributes.
 local spreadAndAttribute = <div a={1}/>;
-{
+do
     ...;
     props;
-}
+end
 />;
 -- Children spread is gone too.
 local spreadChildren = <div>{...}items}</div>;

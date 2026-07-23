@@ -371,7 +371,7 @@ local l = ((({ a = 1, b = 1 })));
   "paddingLeft": true
 }
 
- local m = () => 123;
+ local m = function() return 123 end;
         ^
 {
   "position": {

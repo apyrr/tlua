@@ -21,7 +21,7 @@ declare function Comp<T extends BaseProps>(props: Props<T>): JsxElement;
 
 // Error in ts-go: Type '(props: ...) => Element' is not assignable to
 // type '((props: ...) => ReactNode) & {}'.
-local el = <Comp locale={'en'}>{(props) => <div>{props.locale}</div>}</Comp>;
+local el = <Comp locale={'en'}>{function(props) return <div>{props.locale}</div> end}</Comp>;
 
 // But the equivalent non-JSX call works fine:
-Comp({ locale = 'en', children = (props) => <div>{props.locale}</div> });
+Comp({ locale = 'en', children = function(props) return <div>{props.locale}</div> end });

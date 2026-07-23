@@ -1,97 +1,117 @@
 // === documentHighlights ===
 // === /getOccurrencesThisNegatives2.tlua ===
-// this;
-// this;
-// 
-// function f() {
-//     [|this|];
-//     [|this|];
-//     () => [|this|];
-//     () => {
+// --- (line: 3) skipped ---
+// function f()
+//     this;
+//     this;
+//     function() return [|this|] end;
+//     function()
 //         if ([|this|]) {
 //             [|this|];
 //         }
 //         else {
 //             [|this|].[|t/*HIGHLIGHTS*/his|];
 //         }
-//     }
-//     function inside() {
+//     end
+//     function inside()
 // --- (line: 17) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThisNegatives2.tlua ===
-// --- (line: 22) skipped ---
-// 
-// namespace m {
-//     function f() {
-//         [|this|];
-//         [|this|];
-//         () => [|this|];
-//         () => {
+// --- (line: 24) skipped ---
+//     function f()
+//         this;
+//         this;
+//         function() return [|this|] end;
+//         function()
 //             if ([|this|]) {
 //                 [|this|];
 //             }
 //             else {
 //                 [|this|]./*HIGHLIGHTS*/[|this|];
 //             }
-//         }
-//         function inside() {
+//         end
+//         function inside()
 // --- (line: 38) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThisNegatives2.tlua ===
-// --- (line: 54) skipped ---
-//                 this;
+// --- (line: 48) skipped ---
+//     public method1() {
+//         this;
+//         this;
+//         function() return [|this|] end;
+//         function()
+//             if ([|this|]) {
+//                 [|this|];
 //             }
 //             else {
-//                 this.thi/*HIGHLIGHTS*/s;
+//                 [|this|].[|thi/*HIGHLIGHTS*/s|];
 //             }
-//         }
-//         function inside() {
+//         end
+//         function inside()
 // --- (line: 62) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThisNegatives2.tlua ===
-// --- (line: 74) skipped ---
-//                 this;
+// --- (line: 68) skipped ---
+//     private method2() {
+//         this;
+//         this;
+//         function() return [|this|] end;
+//         function()
+//             if ([|this|]) {
+//                 [|this|];
 //             }
 //             else {
-//                 this.t/*HIGHLIGHTS*/his;
+//                 [|this|].[|t/*HIGHLIGHTS*/his|];
 //             }
-//         }
-//         function inside() {
+//         end
+//         function inside()
 // --- (line: 82) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThisNegatives2.tlua ===
-// --- (line: 96) skipped ---
-//                 this;
+// --- (line: 90) skipped ---
+//     public static staticMethod1() {
+//         this;
+//         this;
+//         function() return [|this|] end;
+//         function()
+//             if ([|this|]) {
+//                 [|this|];
 //             }
 //             else {
-//                 this.th/*HIGHLIGHTS*/is;
+//                 [|this|].[|th/*HIGHLIGHTS*/is|];
 //             }
-//         }
-//         function inside() {
+//         end
+//         function inside()
 // --- (line: 104) skipped ---
 
 
 
 // === documentHighlights ===
 // === /getOccurrencesThisNegatives2.tlua ===
-// --- (line: 116) skipped ---
-//                 this;
+// --- (line: 110) skipped ---
+//     private static staticMethod2() {
+//         this;
+//         this;
+//         function() return [|this|] end;
+//         function()
+//             if ([|this|]) {
+//                 [|this|];
 //             }
 //             else {
-//                 this.th/*HIGHLIGHTS*/is;
+//                 [|this|].[|th/*HIGHLIGHTS*/is|];
 //             }
-//         }
-//         function inside() {
+//         end
+//         function inside()
 // --- (line: 124) skipped ---

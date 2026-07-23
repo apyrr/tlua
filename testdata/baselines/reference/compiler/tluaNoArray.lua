@@ -62,9 +62,9 @@ for  in () do
     local v;
     of;
     items;
-    {
+    do
         use(v);
-    }
+    end
     -- Tuple types parse in source, and a multireturn is not a tuple value: only
     -- the first value survives outside a value-list tail, so this is an error.
     local t = pair();

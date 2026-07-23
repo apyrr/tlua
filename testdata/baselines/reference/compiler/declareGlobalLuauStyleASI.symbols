@@ -19,10 +19,10 @@ declare = x;
 >declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 2, 5))
 >x : Symbol(x, Decl(declareGlobalLuauStyleASI.tlua, 3, 5))
 
-local call = (declare: number) => declare;
+local call = function(declare: number) return declare end;
 >call : Symbol(call, Decl(declareGlobalLuauStyleASI.tlua, 7, 5))
->declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 7, 14))
->declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 7, 14))
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 7, 22))
+>declare : Symbol(declare, Decl(declareGlobalLuauStyleASI.tlua, 7, 22))
 
 call(declare);
 >call : Symbol(call, Decl(declareGlobalLuauStyleASI.tlua, 7, 5))

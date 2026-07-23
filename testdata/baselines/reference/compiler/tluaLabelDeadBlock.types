@@ -14,25 +14,27 @@ function deadLabelBare(): number
 
 end
 
-function deadLabelInBlock(): number {
+function deadLabelInBlock(): number
 >deadLabelInBlock : () => number
 
     return 1;
 >1 : 1
 
-    { ::L2:: }
+    do ::L2:: end
 >L2 : any
-}
+
+end
 
 // And a goto inside a dead block still marks its label referenced.
-function deadBlockGotoReferences(): number {
+function deadBlockGotoReferences(): number
 >deadBlockGotoReferences : () => number
 
     return 1;
 >1 : 1
 
-    { ::L3:: goto L3 }
+    do ::L3:: goto L3 end
 >L3 : any
 >L3 : any
-}
+
+end
 

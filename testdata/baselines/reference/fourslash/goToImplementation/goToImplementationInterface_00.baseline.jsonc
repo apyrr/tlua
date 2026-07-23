@@ -9,10 +9,10 @@
 // local bar: Foo = [|{ hello: helloImpl /**0*/ }|];
 // local baz: Foo[] = [{ hello: helloImpl /**4*/ }];
 // 
-// function helloImpl () {}
+// function helloImpl () end
 // 
-// function whatever(x: Foo = [|{ hello() {/**1*/} }|] ) {
-// }
+// function whatever(x: Foo = [|{ hello() {/**1*/} }|] )
+// end
 // 
 // class Bar {
 // --- (line: 16) skipped ---

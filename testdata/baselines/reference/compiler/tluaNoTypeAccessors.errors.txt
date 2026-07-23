@@ -1,0 +1,25 @@
+tluaNoTypeAccessors.tlua(4,3): error TLUA7008: Member 'get' implicitly has an 'any' type.
+tluaNoTypeAccessors.tlua(4,7): error TLUA1005: ';' expected.
+tluaNoTypeAccessors.tlua(5,3): error TLUA7008: Member 'set' implicitly has an 'any' type.
+tluaNoTypeAccessors.tlua(5,7): error TLUA1005: ';' expected.
+tluaNoTypeAccessors.tlua(5,7): error TLUA7010: 'value', which lacks return-type annotation, implicitly has an 'any' return type.
+
+
+==== tluaNoTypeAccessors.tlua (5 errors) ====
+    // Type accessors are removed. `get` and `set` are recovered as ordinary
+    // member names rather than accessor declarations.
+    interface Accessors {
+      get value(): string;
+      ~~~
+!!! error TLUA7008: Member 'get' implicitly has an 'any' type.
+          ~~~~~
+!!! error TLUA1005: ';' expected.
+      set value(next: string);
+      ~~~
+!!! error TLUA7008: Member 'set' implicitly has an 'any' type.
+          ~~~~~
+!!! error TLUA1005: ';' expected.
+          ~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA7010: 'value', which lacks return-type annotation, implicitly has an 'any' return type.
+    }
+    
