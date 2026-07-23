@@ -26,8 +26,7 @@ Output::
         "module": "commonjs",
         "outDir": "./lib",
         "sourceMap": true,
-        "target": "es2017",
-        "useDefineForClassFields": false
+        "target": "es2017"
     },
     "files": [
         "./src/index.tlua"

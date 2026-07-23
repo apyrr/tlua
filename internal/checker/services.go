@@ -149,42 +149,23 @@ func (c *Checker) IsValidPropertyAccess(node *ast.Node, propertyName string) boo
 func (c *Checker) isValidPropertyAccess(node *ast.Node, propertyName string) bool {
 	switch node.Kind {
 	case ast.KindPropertyAccessExpression:
-		return c.isValidPropertyAccessWithType(node, node.Expression().Kind == ast.KindSuperKeyword, propertyName, c.getWidenedType(c.checkExpression(node.Expression())))
+		return c.isValidPropertyAccessWithType(propertyName, c.getWidenedType(c.checkExpression(node.Expression())))
 	case ast.KindQualifiedName:
-		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getWidenedType(c.checkExpression(node.AsQualifiedName().Left)))
+		return c.isValidPropertyAccessWithType(propertyName, c.getWidenedType(c.checkExpression(node.AsQualifiedName().Left)))
 	case ast.KindImportType:
-		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getTypeFromTypeNode(node))
+		return c.isValidPropertyAccessWithType(propertyName, c.getTypeFromTypeNode(node))
 	}
 	panic("Unexpected node kind in isValidPropertyAccess: " + node.Kind.String())
 }
 
-func (c *Checker) isValidPropertyAccessWithType(node *ast.Node, isSuper bool, propertyName string, t *Type) bool {
+func (c *Checker) isValidPropertyAccessWithType(propertyName string, t *Type) bool {
 	// Short-circuiting for improved performance.
 	if IsTypeAny(t) {
 		return true
 	}
 
 	prop := c.getPropertyOfType(t, propertyName)
-	return prop != nil && c.isPropertyAccessible(node, isSuper, false /*isWrite*/, t, prop)
-}
-
-// Checks if an existing property access is valid for completions purposes.
-// node: a property access-like node where we want to check if we can access a property.
-// This node does not need to be an access of the property we are checking.
-// e.g. in completions, this node will often be an incomplete property access node, as in `foo.`.
-// Besides providing a location (i.e. scope) used to check property accessibility, we use this node for
-// computing whether this is a `super` property access.
-// type: the type whose property we are checking.
-// property: the accessed property's symbol.
-func (c *Checker) IsValidPropertyAccessForCompletions(node *ast.Node, t *Type, property *ast.Symbol) bool {
-	return c.isPropertyAccessible(
-		node,
-		node.Kind == ast.KindPropertyAccessExpression && node.Expression().Kind == ast.KindSuperKeyword,
-		false, /*isWrite*/
-		t,
-		property,
-	)
-	// Previously we validated the 'this' type of methods but this adversely affected performance. See #31377 for more context.
+	return prop != nil
 }
 
 func (c *Checker) GetAllPossiblePropertiesOfTypes(types []*Type) []*ast.Symbol {

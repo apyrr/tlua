@@ -1872,11 +1872,11 @@ func IsInTopLevelContext(node *Node) bool {
 			node = parent
 		}
 	}
-	container := GetThisContainer(node, true /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+	container := GetThisContainer(node, true /*includeArrowFunctions*/)
 	return IsSourceFile(container)
 }
 
-func GetThisContainer(node *Node, includeArrowFunctions bool, includeClassComputedPropertyName bool) *Node {
+func GetThisContainer(node *Node, includeArrowFunctions bool) *Node {
 	for {
 		node = node.Parent
 		if node == nil {
@@ -2226,7 +2226,7 @@ func IsWhitespaceOnlyJsxText(node *Node) bool {
 }
 
 func GetNewTargetContainer(node *Node) *Node {
-	container := GetThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+	container := GetThisContainer(node, false /*includeArrowFunctions*/)
 	if container != nil {
 		switch container.Kind {
 		case KindFunctionDeclaration, KindFunctionExpression:
@@ -3145,18 +3145,6 @@ func GetTypeAnnotationNode(node *Node) *TypeNode {
 
 func IsObjectTypeDeclaration(node *Node) bool {
 	return IsInterfaceDeclaration(node) || IsTypeLiteralNode(node)
-}
-
-func GetClassExtendsHeritageElement(node *Node) *ExpressionWithTypeArgumentsNode {
-	heritageElements := GetHeritageElements(node, KindExtendsKeyword)
-	if len(heritageElements) > 0 {
-		return heritageElements[0]
-	}
-	return nil
-}
-
-func GetImplementsTypeNodes(node *Node) []*ExpressionWithTypeArgumentsNode {
-	return GetHeritageElements(node, KindImplementsKeyword)
 }
 
 func IsTypeKeywordToken(node *Node) bool {

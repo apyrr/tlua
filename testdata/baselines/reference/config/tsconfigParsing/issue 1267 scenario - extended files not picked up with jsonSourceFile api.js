@@ -20,8 +20,7 @@ export {}
     "incremental": false,
     "noImplicitAny": true,
     "types": ["node", "vitest/globals"],
-    "sourceMap": true,
-    "strictPropertyInitialization": false
+    "sourceMap": true
   },
   "files": [
     "types/ical2json.d.tlua",
@@ -89,7 +88,6 @@ CompilerOptions::
   "outDir": "/dist",
   "removeComments": true,
   "rootDir": "/src",
-  "strictPropertyInitialization": false,
   "sourceMap": true,
   "target": 99,
   "types": [

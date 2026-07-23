@@ -60,7 +60,6 @@ export interface CompilerOptions {
     noUnusedLocals?: boolean;
     noUnusedParameters?: boolean;
     noResolve?: boolean;
-    noImplicitOverride?: boolean;
     noUncheckedSideEffectImports?: boolean;
     outDir?: string;
     preserveSymlinks?: boolean;
@@ -77,7 +76,6 @@ export interface CompilerOptions {
     strictBuiltinIteratorReturn?: boolean;
     strictFunctionTypes?: boolean;
     strictNullChecks?: boolean;
-    strictPropertyInitialization?: boolean;
     stripInternal?: boolean;
     skipDefaultLibCheck?: boolean;
     sourceMap?: boolean;
@@ -88,6 +86,4 @@ export interface CompilerOptions {
     tsBuildInfoFile?: string;
     typeRoots?: string[];
     types?: string[];
-    useDefineForClassFields?: boolean;
-    useUnknownInCatchVariables?: boolean;
 }

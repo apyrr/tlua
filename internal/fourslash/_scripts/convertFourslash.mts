@@ -1359,7 +1359,7 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                     }
                     if (sourceInit = getStringLiteralLike(init)) {
                         if (propName === "source" && sourceInit.text.endsWith("/")) {
-                            // source: "ClassMemberSnippet/"
+                            // Internal completion sources use a trailing slash.
                             itemProps.push(`Data: &lsproto.CompletionItemData{
                                 Source: ${getGoStringLiteral(sourceInit.text)},
                             },`);
@@ -3479,8 +3479,6 @@ function parseSortTextExpression(text: string): string {
             return "ls.SortTextGlobalsOrKeywords";
         case "completion.SortText.AutoImportSuggestions":
             return "ls.SortTextAutoImportSuggestions";
-        case "completion.SortText.ClassMemberSnippets":
-            return "ls.SortTextClassMemberSnippets";
         case "completion.SortText.JavascriptIdentifiers":
             return "ls.SortTextJavascriptIdentifiers";
         default:

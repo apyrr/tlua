@@ -168,10 +168,6 @@
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(elseif|else|if)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
                 {
-                    "name": "keyword.control.with.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(with)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
                     "name": "keyword.control.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(package)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
@@ -1983,46 +1979,7 @@
                     "match": "\\bfrom\\b"
                 },
                 {
-                    "include": "#import-export-assert-clause"
-                },
-                {
                     "include": "#import-export-clause"
-                }
-            ]
-        },
-        "import-export-assert-clause": {
-            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(with)|(assert))\\s*(\\{)",
-            "beginCaptures": {
-                "1": {
-                    "name": "keyword.control.with.tlua"
-                },
-                "2": {
-                    "name": "keyword.control.assert.tlua"
-                },
-                "3": {
-                    "name": "punctuation.definition.block.tlua"
-                }
-            },
-            "end": "\\}",
-            "endCaptures": {
-                "0": {
-                    "name": "punctuation.definition.block.tlua"
-                }
-            },
-            "patterns": [
-                {
-                    "include": "#comment"
-                },
-                {
-                    "include": "#string"
-                },
-                {
-                    "name": "meta.object-literal.key.tlua",
-                    "match": "(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?=(\\/\\*([^\\*]|(\\*[^\\/]))*\\*\\/\\s*)*:)"
-                },
-                {
-                    "name": "punctuation.separator.key-value.tlua",
-                    "match": ":"
                 }
             ]
         },

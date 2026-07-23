@@ -20,11 +20,11 @@ Build one or more projects and their dependencies, if out of date
 [94m--checkers[39m
 Set the number of checkers per project.
 
-[94m--help, -h[39m
-Print this message.
-
 [94m--help, -?[39m
 
+
+[94m--help, -h[39m
+Print this message.
 
 [94m--ignoreConfig[39m
 Ignore the tluaconfig found and build with commandline options and files.
@@ -142,11 +142,6 @@ Enable error reporting for expressions and declarations with an implied 'any' ty
 type: boolean
 default: `true`, unless `strict` is `false`
 
-[94m--noImplicitOverride[39m
-Ensure overriding members in derived classes are marked with an override modifier.
-type: boolean
-default: false
-
 [94m--noImplicitReturns[39m
 Enable error reporting for codepaths that do not explicitly return in a function.
 type: boolean
@@ -204,16 +199,6 @@ default: `true`, unless `strict` is `false`
 
 [94m--strictNullChecks[39m
 When type checking, take into account 'null' and 'undefined'.
-type: boolean
-default: `true`, unless `strict` is `false`
-
-[94m--strictPropertyInitialization[39m
-Check for class properties that are declared but not set in the constructor.
-type: boolean
-default: `true`, unless `strict` is `false`
-
-[94m--useUnknownInCatchVariables[39m
-Default catch clause variables as 'unknown' instead of 'any'.
 type: boolean
 default: `true`, unless `strict` is `false`
 
@@ -477,11 +462,6 @@ default: `React`
 Set the JavaScript language version for emitted JavaScript and include compatible library declarations.
 one of: es6/es2015, es2016, es2017, es2018, es2019, es2020, es2021, es2022, es2023, es2024, es2025, esnext
 default: es2025
-
-[94m--useDefineForClassFields[39m
-Emit ECMAScript-standard-compliant class fields.
-type: boolean
-default: `true` for ES2022 and above, including ESNext.
 
 ### Output Formatting
 

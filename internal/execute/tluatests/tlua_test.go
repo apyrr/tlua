@@ -121,7 +121,7 @@ func TestTscCommandline(t *testing.T) {
 		{
 			subScenario:     "option diagnostics are suppressed when there are syntactic errors",
 			files:           FileMap{"/home/src/workspaces/project/a.tlua": `local x: = 1;`},
-			commandLineArgs: []string{"--strictPropertyInitialization", "--strictNullChecks", "false", "a.tlua"},
+			commandLineArgs: []string{"--exactOptionalPropertyTypes", "--strictNullChecks", "false", "a.tlua"},
 		},
 		{
 			subScenario: "Project is empty string",

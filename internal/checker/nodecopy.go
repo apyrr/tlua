@@ -335,7 +335,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		var sym *ast.Symbol
 		if ast.IsThisIdentifier(leftmost) {
 			// `this` isn't a bindable identifier - skip resolution, find a relevant `this` symbol directly and avoid exhaustive scope traversal
-			sym = b.ch.getSymbolOfDeclaration(b.ch.getThisContainer(leftmost, false, false))
+			sym = b.ch.getSymbolOfDeclaration(ast.GetThisContainer(leftmost, false))
 			if b.ch.IsSymbolAccessible(sym, leftmost, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
 				introducesError = true
 				b.ctx.tracker.ReportInaccessibleThisError()

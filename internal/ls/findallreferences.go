@@ -1348,7 +1348,7 @@ func getLabelReferencesInNode(container *ast.Node, targetLabel *ast.Node) []*Sym
 }
 
 func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
-	searchSpaceNode := ast.GetThisContainer(thisOrSuperKeyword, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+	searchSpaceNode := ast.GetThisContainer(thisOrSuperKeyword, false /*includeArrowFunctions*/)
 	if searchSpaceNode == nil {
 		return nil
 	}
@@ -1378,7 +1378,7 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 					if !isThis(node) {
 						return false
 					}
-					container := ast.GetThisContainer(node /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/, false)
+					container := ast.GetThisContainer(node, false /*includeArrowFunctions*/)
 					if container == nil || !ast.CanHaveSymbol(container) {
 						return false
 					}

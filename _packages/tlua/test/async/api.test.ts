@@ -4507,7 +4507,7 @@ describe("Program - diagnostics", () => {
     });
 
     test("getProgramDiagnostics", async () => {
-        const config = `{ "compilerOptions": { "strictPropertyInitialization": true, "strictNullChecks": false } }`;
+        const config = `{ "compilerOptions": { "exactOptionalPropertyTypes": true, "strictNullChecks": false } }`;
         const api = spawnAPI({
             "/tluaconfig.json": config,
             "/src/index.tlua": `local x = 1;`,
@@ -4519,10 +4519,10 @@ describe("Program - diagnostics", () => {
             assert.deepEqual(diags, [
                 {
                     fileName: "/tluaconfig.json",
-                    ...rangeOf(config, `"strictPropertyInitialization"`),
+                    ...rangeOf(config, `"exactOptionalPropertyTypes"`),
                     code: 5052,
                     category: DiagnosticCategory.Error,
-                    text: "Option 'strictPropertyInitialization' cannot be specified without specifying option 'strictNullChecks'.",
+                    text: "Option 'exactOptionalPropertyTypes' cannot be specified without specifying option 'strictNullChecks'.",
                 },
             ]);
         }

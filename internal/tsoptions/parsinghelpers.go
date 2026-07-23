@@ -340,8 +340,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.NoUnusedLocals = ParseTristate(value)
 	case "noUnusedParameters":
 		allOptions.NoUnusedParameters = ParseTristate(value)
-	case "noImplicitOverride":
-		allOptions.NoImplicitOverride = ParseTristate(value)
 	case "noUncheckedSideEffectImports":
 		allOptions.NoUncheckedSideEffectImports = ParseTristate(value)
 	case "outFile":
@@ -378,8 +376,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.StrictFunctionTypes = ParseTristate(value)
 	case "strictNullChecks":
 		allOptions.StrictNullChecks = ParseTristate(value)
-	case "strictPropertyInitialization":
-		allOptions.StrictPropertyInitialization = ParseTristate(value)
 	case "skipDefaultLibCheck":
 		allOptions.SkipDefaultLibCheck = ParseTristate(value)
 	case "sourceMap":
@@ -400,10 +396,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.TypeRoots = ParseStringArray(value)
 	case "types":
 		allOptions.Types = ParseStringArray(value)
-	case "useDefineForClassFields":
-		allOptions.UseDefineForClassFields = ParseTristate(value)
-	case "useUnknownInCatchVariables":
-		allOptions.UseUnknownInCatchVariables = ParseTristate(value)
 	case "version":
 		allOptions.Version = ParseTristate(value)
 	case "help":

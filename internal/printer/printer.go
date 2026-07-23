@@ -5864,8 +5864,6 @@ const (
 	LFVariableDeclarationList           ListFormat = LFCommaDelimited | LFSpaceBetweenSiblings | LFSingleLine
 	LFSingleLineFunctionBodyStatements  ListFormat = LFSingleLine | LFSpaceBetweenSiblings | LFSpaceBetweenBraces
 	LFMultiLineFunctionBodyStatements   ListFormat = LFMultiLine
-	LFClassHeritageClauses              ListFormat = LFSingleLine
-	LFClassMembers                      ListFormat = LFIndented | LFMultiLine
 	LFInterfaceMembers                  ListFormat = LFIndented | LFMultiLine
 	LFNamedImportsOrExportsElements     ListFormat = LFCommaDelimited | LFSpaceBetweenSiblings | LFAllowTrailingComma | LFSingleLine | LFSpaceBetweenBraces | LFNoSpaceIfEmpty
 	LFJsxElementOrFragmentChildren      ListFormat = LFSingleLine | LFNoInterveningComments

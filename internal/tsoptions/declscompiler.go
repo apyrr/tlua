@@ -551,16 +551,6 @@ var optionsForCompiler = []*CommandLineOption{
 		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
-		Name:                       "strictPropertyInitialization",
-		Kind:                       CommandLineOptionTypeBoolean,
-		AffectsSemanticDiagnostics: true,
-		AffectsBuildInfo:           true,
-		strictFlag:                 true,
-		Category:                   diagnostics.Type_Checking,
-		Description:                diagnostics.Check_for_class_properties_that_are_declared_but_not_set_in_the_constructor,
-		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
-	},
-	{
 		Name:                       "strictBuiltinIteratorReturn",
 		Kind:                       CommandLineOptionTypeBoolean,
 		AffectsSemanticDiagnostics: true,
@@ -578,16 +568,6 @@ var optionsForCompiler = []*CommandLineOption{
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Enable_error_reporting_when_this_is_given_the_type_any,
-		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
-	},
-	{
-		Name:                       "useUnknownInCatchVariables",
-		Kind:                       CommandLineOptionTypeBoolean,
-		AffectsSemanticDiagnostics: true,
-		AffectsBuildInfo:           true,
-		strictFlag:                 true,
-		Category:                   diagnostics.Type_Checking,
-		Description:                diagnostics.Default_catch_clause_variables_as_unknown_instead_of_any,
 		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
@@ -654,15 +634,6 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsBuildInfo:           true,
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Add_undefined_to_a_type_when_accessed_using_an_index,
-		DefaultValueDescription:    false,
-	},
-	{
-		Name:                       "noImplicitOverride",
-		Kind:                       CommandLineOptionTypeBoolean,
-		AffectsSemanticDiagnostics: true,
-		AffectsBuildInfo:           true,
-		Category:                   diagnostics.Type_Checking,
-		Description:                diagnostics.Ensure_overriding_members_in_derived_classes_are_marked_with_an_override_modifier,
 		DefaultValueDescription:    false,
 	},
 	{
@@ -980,16 +951,6 @@ var optionsForCompiler = []*CommandLineOption{
 		Category:                diagnostics.Interop_Constraints,
 		Description:             diagnostics.Ensure_that_casing_is_correct_in_imports,
 		DefaultValueDescription: true,
-	},
-	{
-		Name:                       "useDefineForClassFields",
-		Kind:                       CommandLineOptionTypeBoolean,
-		AffectsSemanticDiagnostics: true,
-		AffectsEmit:                true,
-		AffectsBuildInfo:           true,
-		Category:                   diagnostics.Language_and_Environment,
-		Description:                diagnostics.Emit_ECMAScript_standard_compliant_class_fields,
-		DefaultValueDescription:    diagnostics.X_true_for_ES2022_and_above_including_ESNext,
 	},
 	{
 		// A list of plugins to load in the language service

@@ -106,7 +106,6 @@ type completionDataData struct {
 	literals                     []literalValue
 	symbolToOriginInfoMap        map[int]*symbolOriginInfo
 	symbolToSortTextMap          map[ast.SymbolId]SortText
-	recommendedCompletion        *ast.Symbol
 	previousToken                *ast.Node
 	contextToken                 *ast.Node
 	jsxInitializer               jsxInitializer
@@ -206,7 +205,6 @@ const (
 	SortTextSuggestedClassMembers            SortText = "14"
 	SortTextGlobalsOrKeywords                SortText = "15"
 	SortTextAutoImportSuggestions            SortText = "16"
-	SortTextClassMemberSnippets              SortText = "17"
 	SortTextJavascriptIdentifiers            SortText = "18"
 )
 
@@ -280,8 +278,6 @@ type completionSource string
 const (
 	// Completions that require `this.` insertion text.
 	completionSourceThisProperty completionSource = "ThisProperty/"
-	// Auto-import that comes attached to a class member snippet.
-	completionSourceClassMemberSnippet completionSource = "ClassMemberSnippet/"
 	// A type-only import that needs to be promoted in order to be used at the completion location.
 	completionSourceTypeOnlyAlias completionSource = "TypeOnlyAlias/"
 	// Auto-import that comes attached to an object literal method snippet.
@@ -774,18 +770,9 @@ func (l *LanguageService) getCompletionData(
 			}
 		}
 
-		var propertyAccess *ast.Node
-		if node.Kind == ast.KindImportType {
-			propertyAccess = node
-		} else {
-			propertyAccess = node.Parent
-		}
-
 		if inCheckedFile {
 			for _, symbol := range typeChecker.GetApparentProperties(t) {
-				if typeChecker.IsValidPropertyAccessForCompletions(propertyAccess, t, symbol) {
-					addPropertySymbol(symbol, false /*insertAwait*/, insertQuestionDot)
-				}
+				addPropertySymbol(symbol, false /*insertAwait*/, insertQuestionDot)
 			}
 		} else {
 			// In javascript files, for union types, we don't just get the members that
@@ -794,9 +781,7 @@ func (l *LanguageService) getCompletionData(
 			// anyways. So we might as well elevate the members that were at least part
 			// of the individual types to a higher status since we know what they are.
 			for _, symbol := range getPropertiesForCompletion(t, typeChecker) {
-				if typeChecker.IsValidPropertyAccessForCompletions(propertyAccess, t, symbol) {
-					symbols = append(symbols, symbol)
-				}
+				symbols = append(symbols, symbol)
 			}
 		}
 
@@ -804,9 +789,7 @@ func (l *LanguageService) getCompletionData(
 			promiseType := typeChecker.GetPromisedTypeOfPromise(t)
 			if promiseType != nil {
 				for _, symbol := range typeChecker.GetApparentProperties(promiseType) {
-					if typeChecker.IsValidPropertyAccessForCompletions(propertyAccess, promiseType, symbol) {
-						addPropertySymbol(symbol, true /*insertAwait*/, insertQuestionDot)
-					}
+					addPropertySymbol(symbol, true /*insertAwait*/, insertQuestionDot)
 				}
 			}
 		}
@@ -1036,18 +1019,7 @@ func (l *LanguageService) getCompletionData(
 				if typeForObject == nil {
 					return globalsSearchFail, nil
 				}
-				typeMembers = core.Filter(
-					typeChecker.GetPropertiesOfType(typeForObject),
-					func(propertySymbol *ast.Symbol) bool {
-						return typeChecker.IsPropertyAccessible(
-							objectLikeContainer,
-							false, /*isSuper*/
-							false, /*isWrite*/
-							typeForObject,
-							propertySymbol,
-						)
-					},
-				)
+				typeMembers = typeChecker.GetPropertiesOfType(typeForObject)
 				existingMembers = objectLikeContainer.Elements()
 			}
 		}
@@ -1532,7 +1504,6 @@ func (l *LanguageService) getCompletionData(
 		literals:                     literals,
 		symbolToOriginInfoMap:        symbolToOriginInfoMap,
 		symbolToSortTextMap:          symbolToSortTextMap,
-		recommendedCompletion:        nil,
 		previousToken:                previousToken,
 		contextToken:                 contextToken,
 		jsxInitializer:               jsxInitializer,
@@ -1978,12 +1949,6 @@ func (l *LanguageService) createCompletionItem(
 		}
 	}
 
-	if preferences.IncludeCompletionsWithClassMemberSnippets.IsTrue() &&
-		data.completionKind == CompletionKindMemberLike &&
-		isClassLikeMemberCompletion(symbol, data.location, file) {
-		// !!! class member completions
-	}
-
 	if originIsObjectLiteralMethod(origin) {
 		insertText = origin.asObjectLiteralMethod().insertText
 		isSnippet = origin.asObjectLiteralMethod().isSnippet
@@ -2072,7 +2037,6 @@ func (l *LanguageService) createCompletionItem(
 		// Otherwise use the completion list default.
 	}
 
-	preselect := isRecommendedCompletionMatch(symbol, data.recommendedCompletion, typeChecker)
 	kindModifiers := lsutil.GetSymbolModifiers(typeChecker, symbol)
 
 	return l.createLSPCompletionItem(
@@ -2091,16 +2055,11 @@ func (l *LanguageService) createCompletionItem(
 		isMemberCompletion,
 		isSnippet,
 		hasAction,
-		preselect,
+		false, /*preselect*/
 		source,
 		nil, /*autoImportFix*/
 		nil, /*detail*/
 	)
-}
-
-func isRecommendedCompletionMatch(localSymbol *ast.Symbol, recommendedCompletion *ast.Symbol, typeChecker *checker.Checker) bool {
-	return localSymbol == recommendedCompletion ||
-		localSymbol.Flags&ast.SymbolFlagsExportValue != 0 && typeChecker.GetExportSymbolOfSymbol(localSymbol) == recommendedCompletion
 }
 
 // Ported from vscode.
@@ -2275,11 +2234,6 @@ func getLineEndOfPosition(file *ast.SourceFile, pos int) int {
 		return lastCharPos - 1
 	}
 	return lastCharPos
-}
-
-func isClassLikeMemberCompletion(symbol *ast.Symbol, location *ast.Node, file *ast.SourceFile) bool {
-	// !!! class member completions
-	return false
 }
 
 func symbolAppearsToBeTypeOnly(symbol *ast.Symbol, typeChecker *checker.Checker) bool {
@@ -4212,7 +4166,7 @@ func isSolelyIdentifierDefinitionLocation(
 			// |
 			return false
 		}
-	case ast.KindClassKeyword, ast.KindInterfaceKeyword, ast.KindFunctionKeyword,
+	case ast.KindInterfaceKeyword, ast.KindFunctionKeyword,
 		ast.KindImportKeyword, ast.KindLocalKeyword, ast.KindInferKeyword:
 		return true
 	case ast.KindTypeKeyword:
@@ -4231,7 +4185,7 @@ func isSolelyIdentifierDefinitionLocation(
 
 	// Previous token may have been a keyword that was converted to an identifier.
 	switch keywordForNode(contextToken) {
-	case ast.KindAbstractKeyword, ast.KindClassKeyword, ast.KindDeclareKeyword,
+	case ast.KindAbstractKeyword, ast.KindDeclareKeyword,
 		ast.KindFunctionKeyword, ast.KindInterfaceKeyword,
 		ast.KindLocalKeyword, ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword,
 		ast.KindStaticKeyword:
@@ -4351,8 +4305,6 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 const (
 	// Completions that require `this.` insertion text
 	SourceThisProperty = "ThisProperty/"
-	// Auto-import that comes attached to a class member snippet
-	SourceClassMemberSnippet = "ClassMemberSnippet/"
 	// A type-only import that needs to be promoted in order to be used at the completion location
 	SourceTypeOnlyAlias = "TypeOnlyAlias/"
 	// Auto-import that comes attached to an object literal method snippet
@@ -4531,8 +4483,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 		origin := data.symbolToOriginInfoMap[index]
 		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.isJsxIdentifierExpected)
 		if displayName == itemData.Name &&
-			(itemData.Source == string(completionSourceClassMemberSnippet) && symbol.Flags&ast.SymbolFlagsClassMember != 0 ||
-				itemData.Source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
+			(itemData.Source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
 				getSourceFromOrigin(origin) == itemData.Source ||
 				itemData.Source == string(completionSourceObjectLiteralMemberWithComma)) {
 			return detailsData{

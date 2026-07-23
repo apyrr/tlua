@@ -203,67 +203,20 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
-			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.AsPseudoPropertyAssignment().Readonly) {
+			if isConst || e.Readonly {
 				modifiers = b.f.NewModifierList([]*ast.Node{b.f.NewModifier(ast.KindReadonlyKeyword)})
 			}
-			var cleanup func()
-			if e.Kind != pseudochecker.PseudoObjectElementKindPropertyAssignment {
-				signature := b.ch.getSignatureFromDeclaration(e.Signature())
-				expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
-				cleanup = b.enterNewScope(e.Signature(), expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
-			}
-			var newProp *ast.Node
-			switch e.Kind {
-			case pseudochecker.PseudoObjectElementKindMethod:
-				d := e.AsPseudoObjectMethod()
-				var typeParams *ast.NodeList
-				if len(d.TypeParameters) > 0 {
-					res := make([]*ast.Node, 0, len(d.TypeParameters))
-					for _, tp := range d.TypeParameters {
-						res = append(res, b.reuseNode(tp.AsNode()))
-					}
-					typeParams = b.f.NewNodeList(res)
-				}
-				if isConst {
-					newProp = b.f.NewPropertySignatureDeclaration(
-						modifiers,
-						b.reuseName(e.Name, false /*isMethod*/),
-						nil,
-						b.f.NewFunctionTypeNode(
-							nil,
-							typeParams,
-							b.pseudoParametersToNodeList(d.Parameters),
-							b.pseudoTypeToNode(d.ReturnType),
-						),
-						nil,
-					)
-					break
-				}
-				newProp = b.f.NewMethodSignatureDeclaration(
-					modifiers,
-					b.reuseName(e.Name, true /*isMethod*/),
-					nil,
-					typeParams,
-					b.pseudoParametersToNodeList(d.Parameters),
-					b.pseudoTypeToNode(d.ReturnType),
-				)
-			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
-				d := e.AsPseudoPropertyAssignment()
-				newProp = b.f.NewPropertySignatureDeclaration(
-					modifiers,
-					b.reuseName(e.Name, false /*isMethod*/),
-					nil,
-					b.pseudoTypeToNode(d.Type),
-					nil,
-				)
-			}
+			newProp := b.f.NewPropertySignatureDeclaration(
+				modifiers,
+				b.reuseName(e.Name, false /*isMethod*/),
+				nil,
+				b.pseudoTypeToNode(e.Type),
+				nil,
+			)
 			if b.ctx.enclosingFile == ast.GetSourceFileOfNode(e.Name) {
 				b.e.SetCommentRange(newProp, e.Name.Parent.Loc)
 			}
 			newElements = append(newElements, newProp)
-			if cleanup != nil {
-				cleanup()
-			}
 		}
 		restoreObjectLiteralFlags()
 		result := b.f.NewTypeLiteralNode(b.f.NewNodeList(newElements))
@@ -417,47 +370,18 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			}
 			propType := b.ch.getTypeOfSymbol(targetProp)
 			propType = b.ch.removeMissingType(propType, targetIsOptional)
-			switch e.Kind {
-			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
-				d := e.AsPseudoPropertyAssignment()
-				if !b.pseudoTypeEquivalentToType(d.Type, propType, e.Optional, false) {
-					if reportErrors {
-						if d.Type.Kind == pseudochecker.PseudoTypeKindInferred && len(d.Type.AsPseudoTypeInferred().ErrorNodes) > 0 {
-							// Re-report the fine-grained error nodes; the recursive call used reportErrors=false
-							for _, n := range d.Type.AsPseudoTypeInferred().ErrorNodes {
-								b.ctx.tracker.ReportInferenceFallback(n)
-							}
-						} else if !isStructuralPseudoType(d.Type) {
-							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+			if !b.pseudoTypeEquivalentToType(e.Type, propType, e.Optional, false) {
+				if reportErrors {
+					if e.Type.Kind == pseudochecker.PseudoTypeKindInferred && len(e.Type.AsPseudoTypeInferred().ErrorNodes) > 0 {
+						// Re-report the fine-grained error nodes; the recursive call used reportErrors=false
+						for _, n := range e.Type.AsPseudoTypeInferred().ErrorNodes {
+							b.ctx.tracker.ReportInferenceFallback(n)
 						}
-					}
-					return false
-				}
-			case pseudochecker.PseudoObjectElementKindMethod:
-				d := e.AsPseudoObjectMethod()
-				targetSig := b.ch.getSingleCallSignature(propType)
-				if targetSig == nil {
-					// Target property type doesn't have a single call signature; can't validate
-					continue
-				}
-				paramEq := b.pseudoParametersEquivalentToParameters(d.Parameters, targetSig, reportErrors, e.Name.Parent)
-				if !paramEq {
-					return false
-				}
-				targetPredicate := b.ch.getTypePredicateOfSignature(targetSig)
-				if targetPredicate != nil {
-					if !b.pseudoReturnTypeMatchesPredicate(d.ReturnType, targetPredicate) {
-						if reportErrors {
-							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
-						}
-						return false
-					}
-				} else if !b.pseudoTypeEquivalentToType(d.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, false) {
-					if reportErrors {
+					} else if !isStructuralPseudoType(e.Type) {
 						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
 					}
-					return false
 				}
+				return false
 			}
 		}
 		return true

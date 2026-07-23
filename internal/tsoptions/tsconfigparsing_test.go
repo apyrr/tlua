@@ -561,8 +561,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     "incremental": false,
     "noImplicitAny": true,
     "types": ["node", "vitest/globals"],
-    "sourceMap": true,
-    "strictPropertyInitialization": false
+    "sourceMap": true
   },
   "files": [
     "types/ical2json.d.tlua",

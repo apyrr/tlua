@@ -544,13 +544,10 @@ type Checker struct {
 	moduleKind                             core.ModuleKind
 	moduleResolutionKind                   core.ModuleResolutionKind
 	isInferencePartiallyBlocked            bool
-	emitStandardClassFields                bool
 	strictFunctionTypes                    bool
-	strictPropertyInitialization           bool
 	strictBuiltinIteratorReturn            bool
 	noImplicitAny                          bool
 	noImplicitThis                         bool
-	useUnknownInCatchVariables             bool
 	exactOptionalPropertyTypes             bool
 	canCollectSymbolAliasAccessibilityData bool
 	wasCanceled                            bool
@@ -848,13 +845,10 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.languageVersion = c.compilerOptions.GetEmitScriptTarget()
 	c.moduleKind = c.compilerOptions.GetEmitModuleKind()
 	c.moduleResolutionKind = c.compilerOptions.GetModuleResolutionKind()
-	c.emitStandardClassFields = c.compilerOptions.GetEmitStandardClassFields()
 	c.strictFunctionTypes = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictFunctionTypes)
-	c.strictPropertyInitialization = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictPropertyInitialization)
 	c.strictBuiltinIteratorReturn = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictBuiltinIteratorReturn)
 	c.noImplicitAny = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.NoImplicitAny)
 	c.noImplicitThis = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.NoImplicitThis)
-	c.useUnknownInCatchVariables = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.UseUnknownInCatchVariables)
 	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == core.TSTrue
 	c.canCollectSymbolAliasAccessibilityData = true
 	c.arrayVariances = []VarianceFlags{VarianceFlagsCovariant}
@@ -4321,21 +4315,6 @@ func (c *Checker) getTypeWithoutSignatures(t *Type) *Type {
 	return t
 }
 
-func (c *Checker) arePropertiesAbstractOrInterface(base *ast.Symbol, baseDeclarationFlags ast.ModifierFlags) bool {
-	if base.CheckFlags&ast.CheckFlagsSynthetic != 0 {
-		return core.Some(base.Declarations, func(d *ast.Node) bool { return c.isPropertyAbstractOrInterface(d, baseDeclarationFlags) })
-	}
-	return core.Every(base.Declarations, func(d *ast.Node) bool { return c.isPropertyAbstractOrInterface(d, baseDeclarationFlags) })
-}
-
-func (c *Checker) isPropertyAbstractOrInterface(declaration *ast.Node, _ ast.ModifierFlags) bool {
-	return ast.IsInterfaceDeclaration(declaration.Parent)
-}
-
-func (c *Checker) getSuggestedSymbolForNonexistentClassMember(name string, baseType *Type) *ast.Symbol {
-	return c.getSpellingSuggestionForName(name, slices.Values(c.getPropertiesOfType(baseType)), ast.SymbolFlagsClassMember)
-}
-
 func (c *Checker) checkIndexConstraints(t *Type, symbol *ast.Symbol, isStaticIndex bool) {
 	indexInfos := c.getIndexInfosOfType(t)
 	if len(indexInfos) == 0 {
@@ -4742,8 +4721,6 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 				property := c.getPropertyOfType(parentType, nameText)
 				if property != nil {
 					c.markPropertyAsReferenced(property, nil /*nodeForCheckWriteOnly*/, false /*isSelfTypeAccess*/)
-					// A destructuring is never a write-only reference.
-					c.checkPropertyAccessibility(node, parent.Initializer() != nil && parent.Initializer().Kind == ast.KindSuperKeyword, false /*writing*/, parentType, property)
 				}
 			}
 		}
@@ -7038,36 +7015,6 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 	}
 	c.invocationError(node.Expression(), expressionType, SignatureKindConstruct, nil)
 	return c.resolveErrorCall(node)
-}
-
-func (c *Checker) typeHasProtectedAccessibleBase(target *ast.Symbol, t *Type) bool {
-	baseTypes := c.getBaseTypes(c.getTargetType(t))
-	if len(baseTypes) == 0 {
-		return false
-	}
-	firstBase := baseTypes[0]
-	if firstBase.flags&TypeFlagsIntersection != 0 {
-		types := firstBase.AsIntersectionType().types
-		mixinFlags, _ := c.findMixins(types)
-		for i, intersectionMember := range firstBase.Types() {
-			// We want to ignore mixin ctors
-			if !mixinFlags[i] {
-				if intersectionMember.objectFlags&(ObjectFlagsClass|ObjectFlagsInterface) != 0 {
-					if intersectionMember.symbol == target {
-						return true
-					}
-					if c.typeHasProtectedAccessibleBase(target, intersectionMember) {
-						return true
-					}
-				}
-			}
-		}
-		return false
-	}
-	if firstBase.symbol == target {
-		return true
-	}
-	return c.typeHasProtectedAccessibleBase(target, firstBase)
 }
 
 func someSignature(signatures []*Signature, f func(s *Signature) bool) bool {
@@ -9411,7 +9358,6 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 		}
 		c.markPropertyAsReferenced(prop, node, c.isSelfTypeAccess(left, parentSymbol))
 		c.symbolNodeLinks.Get(node).resolvedSymbol = prop
-		c.checkPropertyAccessibility(node, left.Kind == ast.KindSuperKeyword, ast.IsWriteAccess(node), apparentType, prop)
 		if c.isAssignmentToReadonlyEntity(node, prop, assignmentKind) {
 			c.error(right, diagnostics.Cannot_assign_to_0_because_it_is_a_read_only_property, right.Text())
 			return c.errorType
@@ -9552,44 +9498,7 @@ func (c *Checker) getSuggestedLibForNonExistentProperty(missingProperty string, 
 
 func (c *Checker) getSuggestedSymbolForNonexistentProperty(name *ast.Node, containingType *Type) *ast.Symbol {
 	props := c.getPropertiesOfType(containingType)
-	parent := name.Parent
-	if ast.IsPropertyAccessExpression(parent) {
-		props = core.Filter(props, func(prop *ast.Symbol) bool {
-			return c.isValidPropertyAccessForCompletions(parent, containingType, prop)
-		})
-	}
 	return c.getSpellingSuggestionForName(name.Text(), slices.Values(props), ast.SymbolFlagsValue)
-}
-
-// Checks if an existing property access is valid for completions purposes.
-// @param node a property access-like node where we want to check if we can access a property.
-// This node does not need to be an access of the property we are checking.
-// e.g. in completions, this node will often be an incomplete property access node, as in `foo.`.
-// Besides providing a location (i.e. scope) used to check property accessibility, we use this node for
-// computing whether this is a `super` property access.
-// @param type the type whose property we are checking.
-// @param property the accessed property's symbol.
-func (c *Checker) isValidPropertyAccessForCompletions(node *ast.Node, t *Type, property *ast.Symbol) bool {
-	return c.isPropertyAccessible(node, ast.IsPropertyAccessExpression(node) && node.Expression().Kind == ast.KindSuperKeyword, false /*isWrite*/, t, property)
-	// Previously we validated the 'this' type of methods but this adversely affected performance. See #31377 for more context.
-}
-
-// Checks if a property can be accessed in a location.
-// The location is given by the `node` parameter.
-// The node does not need to be a property access.
-// @param node location where to check property accessibility
-// @param isSuper whether to consider this a `super` property access, e.g. `super.foo`.
-// @param isWrite whether this is a write access, e.g. `foo.x = 1`.
-// @param containingType type where the property comes from.
-// @param property property symbol.
-func (c *Checker) isPropertyAccessible(node *ast.Node, isSuper bool, isWrite bool, containingType *Type, property *ast.Symbol) bool {
-	// Short-circuiting for improved performance.
-	if IsTypeAny(containingType) {
-		return true
-	}
-	// A #private property access in an optional chain is an error dealt with by the parser.
-	// The checker does not check for it, so we need to do our own check here.
-	return c.checkPropertyAccessibilityAtLocation(node, isSuper, isWrite, containingType, property, nil)
 }
 
 func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
@@ -9645,104 +9554,6 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 		})
 	}
 	return true
-}
-
-/**
- * Check whether the requested property access is valid.
- * Returns true if node is a valid property access, and false otherwise.
- * @param node The node to be checked.
- * @param isSuper True if the access is from `super.`.
- * @param type The type of the object whose property is being accessed. (Not the type of the property.)
- * @param prop The symbol for the property being accessed.
- */
-func (c *Checker) checkPropertyAccessibility(node *ast.Node, isSuper bool, writing bool, t *Type, prop *ast.Symbol) bool {
-	return c.checkPropertyAccessibilityEx(node, isSuper, writing, t, prop, true /*reportError*/)
-}
-
-func (c *Checker) checkPropertyAccessibilityEx(node *ast.Node, isSuper bool, writing bool, t *Type, prop *ast.Symbol, reportError bool /*  = true */) bool {
-	var errorNode *ast.Node
-	if reportError {
-		switch node.Kind {
-		case ast.KindPropertyAccessExpression:
-			errorNode = node.AsPropertyAccessExpression().Name()
-		case ast.KindQualifiedName:
-			errorNode = node.AsQualifiedName().Right
-		case ast.KindImportType:
-			errorNode = node
-		case ast.KindBindingElement:
-			errorNode = getBindingElementPropertyName(node)
-		default:
-			errorNode = node.Name()
-		}
-	}
-	return c.checkPropertyAccessibilityAtLocation(node, isSuper, writing, t, prop, errorNode)
-}
-
-/**
- * Check whether the requested property can be accessed at the requested location.
- * Returns true if node is a valid property access, and false otherwise.
- * @param location The location node where we want to check if the property is accessible.
- * @param isSuper True if the access is from `super.`.
- * @param writing True if this is a write property access, false if it is a read property access.
- * @param containingType The type of the object whose property is being accessed. (Not the type of the property.)
- * @param prop The symbol for the property being accessed.
- * @param errorNode The node where we should report an invalid property access error, or undefined if we should not report errors.
- */
-func (c *Checker) checkPropertyAccessibilityAtLocation(_ *ast.Node, _ bool, _ bool, _ *Type, _ *ast.Symbol, _ *ast.Node) bool {
-	return true
-}
-
-// Invoke the callback for each underlying property symbol of the given symbol and return the first
-// value that isn't undefined.
-func (c *Checker) forEachProperty(prop *ast.Symbol, callback func(p *ast.Symbol) bool) bool {
-	if prop.CheckFlags&ast.CheckFlagsSynthetic == 0 {
-		return callback(prop)
-	}
-	for _, t := range c.valueSymbolLinks.Get(prop).containingType.Types() {
-		p := c.getPropertyOfType(t, prop.Name)
-		if p != nil && c.forEachProperty(p, callback) {
-			return true
-		}
-	}
-	return false
-}
-
-// Return the declaring class type of a property or undefined if property not declared in class
-func (c *Checker) getDeclaringClass(prop *ast.Symbol) *Type {
-	if prop.Parent != nil && prop.Parent.Flags&ast.SymbolFlagsClass != 0 {
-		return c.getDeclaredTypeOfSymbol(c.getParentOfSymbol(prop))
-	}
-	return nil
-}
-
-// Return true if source property is a valid override of protected parts of target property.
-func (c *Checker) isValidOverrideOf(sourceProp *ast.Symbol, targetProp *ast.Symbol) bool {
-	return !c.forEachProperty(targetProp, func(tp *ast.Symbol) bool {
-		if getDeclarationModifierFlagsFromSymbol(tp)&ast.ModifierFlagsProtected != 0 {
-			return !c.isPropertyInClassDerivedFrom(sourceProp, c.getDeclaringClass(tp))
-		}
-		return false
-	})
-}
-
-// Return true if some underlying source property is declared in a class that derives
-// from the given base class.
-func (c *Checker) isPropertyInClassDerivedFrom(prop *ast.Symbol, baseClass *Type) bool {
-	return c.forEachProperty(prop, func(sp *ast.Symbol) bool {
-		sourceClass := c.getDeclaringClass(sp)
-		if sourceClass != nil {
-			return c.hasBaseType(sourceClass, baseClass)
-		}
-		return false
-	})
-}
-
-func getThisParameterFromNodeContext(node *ast.Node) *ast.Node {
-	thisContainer := ast.GetThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
-	if thisContainer != nil && ast.IsFunctionLike(thisContainer) {
-		return ast.GetThisParameter(thisContainer)
-	}
-	return nil
 }
 
 func (c *Checker) getContextualThisParameterType(fn *ast.Node) *Type {
@@ -9811,7 +9622,7 @@ func (c *Checker) TryGetThisTypeAtEx(node *ast.Node, includeGlobalEnvironment bo
 
 func (c *Checker) tryGetThisTypeAtEx(node *ast.Node, includeGlobalEnvironment bool, container *ast.Node) *Type {
 	if container == nil {
-		container = c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+		container = ast.GetThisContainer(node, false /*includeArrowFunctions*/)
 	}
 	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || ast.GetThisParameter(container) != nil) {
 		sig := c.getSignatureOfFullSignatureType(container)
@@ -9839,30 +9650,6 @@ func (c *Checker) tryGetThisTypeAtEx(node *ast.Node, includeGlobalEnvironment bo
 		}
 	}
 	return nil
-}
-
-func (c *Checker) getThisContainer(node *ast.Node, includeArrowFunctions bool, includeClassComputedPropertyName bool) *ast.Node {
-	for {
-		node = node.Parent
-		if node == nil {
-			// If we never pass in a SourceFile, this should be unreachable, since we'll stop when we reach that.
-			panic("No parent in getThisContainer")
-		}
-		switch node.Kind {
-		case ast.KindComputedPropertyName:
-			// A computed property is not itself a `this` container.
-			node = node.Parent.Parent
-		case ast.KindArrowFunction:
-			if !includeArrowFunctions {
-				continue
-			}
-			fallthrough
-		case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindModuleDeclaration,
-			ast.KindPropertySignature, ast.KindMethodSignature, ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature,
-			ast.KindSourceFile:
-			return node
-		}
-	}
 }
 
 func (c *Checker) isInParameterInitializerBeforeContainingFunction(node *ast.Node) bool {
@@ -10764,13 +10551,13 @@ func (c *Checker) getSpreadType(left *Type, right *Type, symbol *ast.Symbol, obj
 	for _, rightProp := range c.getPropertiesOfType(right) {
 		if getDeclarationModifierFlagsFromSymbol(rightProp)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
 			skippedPrivateMembers.Add(rightProp.Name)
-		} else if c.isSpreadableProperty(rightProp) {
+		} else {
 			members[rightProp.Name] = c.getSpreadSymbol(rightProp, readonly)
 		}
 	}
 
 	for _, leftProp := range c.getPropertiesOfType(left) {
-		if skippedPrivateMembers.Has(leftProp.Name) || !c.isSpreadableProperty(leftProp) {
+		if skippedPrivateMembers.Has(leftProp.Name) {
 			continue
 		}
 		if members[leftProp.Name] != nil {
@@ -10872,7 +10659,7 @@ func (c *Checker) tryMergeUnionOfObjectTypeAndEmptyObject(t *Type, readonly bool
 	for _, prop := range c.getPropertiesOfType(firstType) {
 		if getDeclarationModifierFlagsFromSymbol(prop)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
 			// do nothing, skip privates
-		} else if c.isSpreadableProperty(prop) {
+		} else {
 			isSetonlyAccessor := prop.Flags&ast.SymbolFlagsSetAccessor != 0 && prop.Flags&ast.SymbolFlagsGetAccessor == 0
 			flags := ast.SymbolFlagsProperty | ast.SymbolFlagsOptional
 			result := c.newSymbolEx(flags, prop.Name, prop.CheckFlags&ast.CheckFlagsLate|core.IfElse(readonly, ast.CheckFlagsReadonly, 0))
@@ -10891,15 +10678,6 @@ func (c *Checker) tryMergeUnionOfObjectTypeAndEmptyObject(t *Type, readonly bool
 	spread := c.newAnonymousType(firstType.symbol, members, nil, nil, c.getIndexInfosOfType(firstType))
 	spread.objectFlags |= ObjectFlagsObjectLiteral | ObjectFlagsContainsObjectOrArrayLiteral
 	return spread
-}
-
-// Every property is an own property here: object-literal and interface members
-// (methods included) are all own members, and without classes there are no
-// prototype methods or private class elements to exclude. Upstream gates class
-// methods/accessors out via their class-like parent; with classes removed that
-// exclusion is vacuously true, so every property is spreadable.
-func (c *Checker) isSpreadableProperty(prop *ast.Symbol) bool {
-	return true
 }
 
 func (c *Checker) getSpreadSymbol(prop *ast.Symbol, readonly bool) *ast.Symbol {
@@ -27653,7 +27431,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 			return c.getPropertyOfType(objectType, name)
 		}
 		return nil
-	case ast.KindDefaultKeyword, ast.KindFunctionKeyword, ast.KindEqualsGreaterThanToken, ast.KindClassKeyword:
+	case ast.KindDefaultKeyword, ast.KindFunctionKeyword, ast.KindEqualsGreaterThanToken:
 		return c.getSymbolOfNode(node.Parent)
 	case ast.KindImportType:
 		if ast.IsLiteralImportTypeNode(node) {
@@ -27849,7 +27627,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 
 func (c *Checker) isThisPropertyAndThisTyped(node *ast.Node) bool {
 	if node.Expression().Kind == ast.KindThisKeyword {
-		container := c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+		container := ast.GetThisContainer(node, false /*includeArrowFunctions*/)
 		if ast.IsFunctionLike(container) {
 			containingLiteral := getContainingObjectLiteral(container)
 			if containingLiteral != nil {

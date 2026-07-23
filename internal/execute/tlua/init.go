@@ -182,7 +182,6 @@ func generateTSConfig(options *collections.OrderedMap[string, any], locale local
 
 	emitHeader(diagnostics.Style_Options)
 	emitOption("noImplicitReturns" /*defaultValue*/, true, commentedOptional)
-	emitOption("noImplicitOverride" /*defaultValue*/, true, commentedOptional)
 	emitOption("noUnusedLocals" /*defaultValue*/, true, commentedOptional)
 	emitOption("noUnusedParameters" /*defaultValue*/, true, commentedOptional)
 	emitOption("noPropertyAccessFromIndexSignature" /*defaultValue*/, true, commentedOptional)

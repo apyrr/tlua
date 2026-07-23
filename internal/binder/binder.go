@@ -603,8 +603,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 			b.bindExportsOrObjectDefineProperty(node)
 		case ast.JSDeclarationKindProperty:
 			b.bindExpandoPropertyAssignment(node)
-		case ast.JSDeclarationKindThisProperty:
-			b.bindThisPropertyAssignment(node)
 		}
 		b.checkStrictModeBinaryExpression(node)
 	case ast.KindDeleteExpression:
@@ -991,39 +989,6 @@ func getInitializerSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return nil
 }
 
-func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
-	if !ast.IsInJSFile(node) {
-		return
-	}
-	bin := node.AsBinaryExpression()
-	if ast.IsPropertyAccessExpression(bin.Left) && ast.IsPrivateIdentifier(bin.Left.AsPropertyAccessExpression().Name()) ||
-		b.thisContainer == nil {
-		return
-	}
-	if classSymbol, symbolTable := b.getThisClassAndSymbolTable(); symbolTable != nil {
-		if ast.HasDynamicName(node) {
-			b.declareSymbolEx(symbolTable, classSymbol, node, ast.SymbolFlagsProperty, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, true /*isComputedName*/)
-			b.addLateBoundAssignmentDeclarationToSymbol(node, classSymbol)
-		} else {
-			b.declareSymbolEx(symbolTable, classSymbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, false /*isComputedName*/)
-		}
-	} else if b.thisContainer.Kind != ast.KindFunctionDeclaration && b.thisContainer.Kind != ast.KindFunctionExpression {
-		// !!! constructor functions
-		panic("Unhandled case in bindThisPropertyAssignment: " + b.thisContainer.Kind.String())
-	}
-}
-
-func (b *Binder) getThisClassAndSymbolTable() (classSymbol *ast.Symbol, symbolTable ast.SymbolTable) {
-	if b.thisContainer == nil {
-		return nil, nil
-	}
-	switch b.thisContainer.Kind {
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		// !!! constructor functions
-	}
-	return classSymbol, symbolTable
-}
-
 func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 	b.checkStrictModeEvalOrArguments(node, node.Name())
 	if name := node.Name(); name != nil && !ast.IsBindingPattern(name) {
@@ -1153,11 +1118,6 @@ func (b *Binder) lookupEntity(node *ast.Node, container *ast.Node) *ast.Symbol {
 		return b.lookupName(node.Text(), container)
 	}
 	if node.Expression().Kind == ast.KindThisKeyword {
-		if _, symbolTable := b.getThisClassAndSymbolTable(); symbolTable != nil {
-			if name := ast.GetElementOrPropertyAccessName(node); name != nil {
-				return symbolTable[name.Text()]
-			}
-		}
 		return nil
 	}
 	if symbol := getInitializerSymbol(b.lookupEntity(node.Expression(), container)); symbol != nil && symbol.Exports != nil {

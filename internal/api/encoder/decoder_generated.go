@@ -126,7 +126,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindPrivateIdentifier,
 		ast.KindJSDocCommentTextToken,
 		ast.KindBreakKeyword,
-		ast.KindClassKeyword,
 		ast.KindContinueKeyword,
 		ast.KindDebuggerKeyword,
 		ast.KindDefaultKeyword,

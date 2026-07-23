@@ -38,7 +38,6 @@ var impliedOptions = []impliedOption{
 	{name: "Declaration", dependencies: []string{"Composite"}, compute: computeFn((*core.CompilerOptions).GetEmitDeclarations)},
 	{name: "DeclarationMap", dependencies: []string{"Declaration", "Composite"}, compute: computeFn((*core.CompilerOptions).GetAreDeclarationMapsEnabled)},
 	{name: "Incremental", dependencies: []string{"Composite"}, compute: computeFn((*core.CompilerOptions).IsIncremental)},
-	{name: "UseDefineForClassFields", dependencies: []string{"Target", "Module"}, compute: computeFn((*core.CompilerOptions).GetUseDefineForClassFields)},
 	{name: "ResolvePackageJsonExports", dependencies: []string{"Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetResolvePackageJsonExports)},
 	{name: "ResolvePackageJsonImports", dependencies: []string{"ResolvePackageJsonExports", "Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetResolvePackageJsonImports)},
 	{name: "ResolveJsonModule", dependencies: []string{"Module", "Target"}, compute: computeFn((*core.CompilerOptions).GetResolveJsonModule)},
@@ -86,7 +85,7 @@ func ConvertToTSConfig(configParseResult *ParsedCommandLine, configFileName stri
 	}
 
 	// Add implied compiler options (options that are derived from explicitly set options,
-	// such as moduleResolution implied by module, or useDefineForClassFields implied by target).
+	// such as moduleResolution implied by module).
 	// This mirrors TypeScript's convertToTSConfig computedOptions logic.
 	addImpliedOptions(optionMap, configParseResult.CompilerOptions(), normalizedConfigPath, comparePathsOptions)
 

@@ -30,8 +30,7 @@ Output::
     "compilerOptions": {
         "module": "commonjs",
         "strict": true,
-        "target": "es5",
-        "useDefineForClassFields": false
+        "target": "es5"
     },
     "references": [
         {

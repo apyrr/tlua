@@ -4,7 +4,7 @@ Input::
 //// [/home/src/workspaces/project/a.tlua] *new* 
 local x: = 1;
 
-tlua --strictPropertyInitialization --strictNullChecks false a.tlua
+tlua --exactOptionalPropertyTypes --strictNullChecks false a.tlua
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96ma.tlua[0m:[93m1[0m:[93m10[0m - [91merror[0m[90m TLUA1110: [0mType expected.

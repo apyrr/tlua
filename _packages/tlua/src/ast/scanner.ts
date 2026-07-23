@@ -95,7 +95,6 @@ export const textToKeywordObj: Record<string, KeywordSyntaxKind> = {
     asserts: SyntaxKind.AssertsKeyword,
     boolean: SyntaxKind.BooleanKeyword,
     break: SyntaxKind.BreakKeyword,
-    class: SyntaxKind.ClassKeyword,
     continue: SyntaxKind.ContinueKeyword,
     ["" + "constructor"]: SyntaxKind.ConstructorKeyword,
     debugger: SyntaxKind.DebuggerKeyword,

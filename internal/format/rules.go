@@ -88,7 +88,7 @@ func getAllRules() []ruleSpec {
 	functionOpenBraceLeftTokenRange := anyTokenIncludingMultilineComments
 
 	// Place a space before open brace in a TypeScript declaration that has braces as children (class, module, enum, etc)
-	typeScriptOpenBraceLeftTokenRange := tokenRangeFrom(ast.KindIdentifier, ast.KindGreaterThanToken, ast.KindMultiLineCommentTrivia, ast.KindClassKeyword, ast.KindExportKeyword, ast.KindImportKeyword)
+	typeScriptOpenBraceLeftTokenRange := tokenRangeFrom(ast.KindIdentifier, ast.KindGreaterThanToken, ast.KindMultiLineCommentTrivia, ast.KindExportKeyword, ast.KindImportKeyword)
 
 	// Place a space before open brace in a control flow construct
 	controlOpenBraceLeftTokenRange := tokenRangeFrom(ast.KindCloseParenToken, ast.KindMultiLineCommentTrivia, ast.KindDoKeyword, ast.KindElseKeyword)
@@ -193,7 +193,6 @@ func getAllRules() []ruleSpec {
 			[]ast.Kind{
 				ast.KindAbstractKeyword,
 				ast.KindAccessorKeyword,
-				ast.KindClassKeyword,
 				ast.KindDeclareKeyword,
 				ast.KindDefaultKeyword,
 				ast.KindExportKeyword,

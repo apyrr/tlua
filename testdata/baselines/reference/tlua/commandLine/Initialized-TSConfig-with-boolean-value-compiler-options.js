@@ -38,7 +38,6 @@ You can learn more at https://aka.ms/tsconfig
 
     // Style Options
     // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
     "noUnusedLocals": true,
     // "noUnusedParameters": true,
     // "noPropertyAccessFromIndexSignature": true,

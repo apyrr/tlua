@@ -89,7 +89,6 @@
                 "comment": "Reserved words"
             },
             "BreakKeyword",
-            "ClassKeyword",
             "ContinueKeyword",
             "DebuggerKeyword",
             "DefaultKeyword",

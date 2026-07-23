@@ -71,7 +71,6 @@ type CompilerOptions struct {
 	NoUnusedLocals                            Tristate     `json:"noUnusedLocals,omitzero"`
 	NoUnusedParameters                        Tristate     `json:"noUnusedParameters,omitzero"`
 	NoResolve                                 Tristate     `json:"noResolve,omitzero"`
-	NoImplicitOverride                        Tristate     `json:"noImplicitOverride,omitzero"`
 	NoUncheckedSideEffectImports              Tristate     `json:"noUncheckedSideEffectImports,omitzero"`
 	OutDir                                    string       `json:"outDir,omitzero"`
 	PreserveSymlinks                          Tristate     `json:"preserveSymlinks,omitzero"`
@@ -88,7 +87,6 @@ type CompilerOptions struct {
 	StrictBuiltinIteratorReturn               Tristate     `json:"strictBuiltinIteratorReturn,omitzero"`
 	StrictFunctionTypes                       Tristate     `json:"strictFunctionTypes,omitzero"`
 	StrictNullChecks                          Tristate     `json:"strictNullChecks,omitzero"`
-	StrictPropertyInitialization              Tristate     `json:"strictPropertyInitialization,omitzero"`
 	StripInternal                             Tristate     `json:"stripInternal,omitzero"`
 	SkipDefaultLibCheck                       Tristate     `json:"skipDefaultLibCheck,omitzero"`
 	SourceMap                                 Tristate     `json:"sourceMap,omitzero"`
@@ -99,8 +97,6 @@ type CompilerOptions struct {
 	TsBuildInfoFile                           string       `json:"tsBuildInfoFile,omitzero"`
 	TypeRoots                                 []string     `json:"typeRoots,omitzero"`
 	Types                                     []string     `json:"types,omitzero"`
-	UseDefineForClassFields                   Tristate     `json:"useDefineForClassFields,omitzero"`
-	UseUnknownInCatchVariables                Tristate     `json:"useUnknownInCatchVariables,omitzero"`
 
 	// Deprecated: Do not use outside of options parsing and validation.
 	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
@@ -291,17 +287,6 @@ func (options *CompilerOptions) GetIsolatedModules() bool {
 
 func (options *CompilerOptions) IsIncremental() bool {
 	return options.Incremental.IsTrue() || options.Composite.IsTrue()
-}
-
-func (options *CompilerOptions) GetEmitStandardClassFields() bool {
-	return options.UseDefineForClassFields != TSFalse && options.GetEmitScriptTarget() >= ScriptTargetES2022
-}
-
-func (options *CompilerOptions) GetUseDefineForClassFields() bool {
-	if options.UseDefineForClassFields == TSUnknown {
-		return options.GetEmitScriptTarget() >= ScriptTargetES2022
-	}
-	return options.UseDefineForClassFields == TSTrue
 }
 
 func (options *CompilerOptions) GetEmitDeclarations() bool {

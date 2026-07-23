@@ -1036,7 +1036,7 @@ func (p *Parser) parseDeclarationWorker(pos int, jsdoc jsdocScannerInfo, modifie
 func isAmbientGlobalNameToken(token ast.Kind) bool {
 	switch token {
 	case ast.KindLocalKeyword,
-		ast.KindFunctionKeyword, ast.KindClassKeyword, ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindDeferKeyword,
+		ast.KindFunctionKeyword, ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindDeferKeyword,
 		ast.KindModuleKeyword, ast.KindNamespaceKeyword, ast.KindGlobalKeyword,
 		ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindAsyncKeyword, ast.KindDeclareKeyword,
 		ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword, ast.KindReadonlyKeyword, ast.KindStaticKeyword:
@@ -3408,10 +3408,6 @@ func (p *Parser) nextTokenIsIdentifierOrKeywordOrLiteralOnSameLine() bool {
 	return (p.nextTokenIsIdentifierOrKeyword() || p.token == ast.KindNumericLiteral || p.token == ast.KindStringLiteral) && !p.hasPrecedingLineBreak()
 }
 
-func (p *Parser) nextTokenIsClassKeywordOnSameLine() bool {
-	return p.nextToken() == ast.KindClassKeyword && !p.hasPrecedingLineBreak()
-}
-
 func (p *Parser) nextTokenIsFunctionKeywordOnSameLine() bool {
 	return p.nextToken() == ast.KindFunctionKeyword && !p.hasPrecedingLineBreak()
 }
@@ -4888,7 +4884,7 @@ func (p *Parser) isLiteralPropertyName() bool {
 func (p *Parser) isStartOfStatement() bool {
 	switch p.token {
 	case ast.KindSemicolonToken, ast.KindOpenBraceToken,
-		ast.KindLocalKeyword, ast.KindFunctionKeyword, ast.KindClassKeyword, ast.KindIfKeyword,
+		ast.KindLocalKeyword, ast.KindFunctionKeyword, ast.KindIfKeyword,
 		ast.KindDoKeyword, ast.KindWhileKeyword, ast.KindForKeyword, ast.KindRepeatKeyword, ast.KindContinueKeyword, ast.KindBreakKeyword,
 		ast.KindColonColonToken, ast.KindGotoKeyword,
 		ast.KindReturnKeyword, ast.KindThrowKeyword,
@@ -4916,7 +4912,7 @@ func (p *Parser) isStartOfDeclaration() bool {
 func (p *Parser) scanStartOfDeclaration() bool {
 	for {
 		switch p.token {
-		case ast.KindLocalKeyword, ast.KindFunctionKeyword, ast.KindClassKeyword:
+		case ast.KindLocalKeyword, ast.KindFunctionKeyword:
 			return true
 		// 'declare', 'module', 'namespace', 'interface'* and 'type' are all legal JavaScript identifiers;
 		// however, an identifier cannot be followed by another identifier on the same line. This is what we
@@ -5007,7 +5003,7 @@ func (p *Parser) isStartOfLeftHandSideExpression() bool {
 	// Excluded here, a stray `this` is skipped by list recovery instead.
 	case ast.KindSuperKeyword, ast.KindNilKeyword, ast.KindTrueKeyword, ast.KindFalseKeyword,
 		ast.KindNumericLiteral, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead,
-		ast.KindOpenParenToken, ast.KindOpenBraceToken, ast.KindFunctionKeyword, ast.KindClassKeyword,
+		ast.KindOpenParenToken, ast.KindOpenBraceToken, ast.KindFunctionKeyword,
 		ast.KindNewKeyword, ast.KindSlashToken, ast.KindSlashEqualsToken, ast.KindIdentifier,
 		// `...` is the Lua vararg, a primary expression.
 		ast.KindDotDotDotToken:

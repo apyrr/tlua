@@ -345,7 +345,7 @@ func (r *EmitResolver) isEntityNameVisible(entityName *ast.Node, enclosingDeclar
 	}
 
 	if symbol == nil && ast.IsThisIdentifier(firstIdentifier) {
-		sym := r.checker.getSymbolOfDeclaration(r.checker.getThisContainer(firstIdentifier, false, false))
+		sym := r.checker.getSymbolOfDeclaration(ast.GetThisContainer(firstIdentifier, false))
 		if r.isSymbolAccessible(sym, enclosingDeclaration, meaning, false).Accessibility == printer.SymbolAccessibilityAccessible {
 			return printer.SymbolAccessibilityResult{Accessibility: printer.SymbolAccessibilityAccessible}
 		}

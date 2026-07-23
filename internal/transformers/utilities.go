@@ -259,35 +259,6 @@ func IsSimpleInlineableExpression(expression *ast.Expression) bool {
 	return !ast.IsIdentifier(expression) && IsSimpleCopiableExpression(expression)
 }
 
-// FindSuperStatementIndexPath finds a path of indices to a statement containing a `super()` call.
-func FindSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
-	indices := findSuperStatementIndexPathWorker(statements, start, nil)
-	slices.Reverse(indices)
-	return indices
-}
-
-func findSuperStatementIndexPathWorker(statements []*ast.Statement, start int, indices []int) []int {
-	for i := start; i < len(statements); i++ {
-		statement := statements[i]
-		if GetSuperCallFromStatement(statement) != nil {
-			return append(indices, i)
-		}
-	}
-	return nil
-}
-
-// GetSuperCallFromStatement extracts the super() call expression from an expression statement, if any.
-func GetSuperCallFromStatement(statement *ast.Statement) *ast.Node {
-	if !ast.IsExpressionStatement(statement) {
-		return nil
-	}
-	expression := ast.SkipParentheses(statement.Expression())
-	if ast.IsSuperCall(expression) {
-		return expression
-	}
-	return nil
-}
-
 // MoveRangePastModifiers returns a text range that starts past any modifiers on the node.
 func MoveRangePastModifiers(node *ast.Node) core.TextRange {
 	var lastModifier *ast.Node

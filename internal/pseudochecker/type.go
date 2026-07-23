@@ -213,77 +213,17 @@ func (t *PseudoType) AsPseudoTypeTuple() *PseudoTypeTuple {
 type PseudoObjectElement struct {
 	Name     *ast.Node
 	Optional bool
-	Kind     PseudoObjectElementKind
-	data     pseudoObjectElementData
-}
-
-func (e *PseudoObjectElement) AsPseudoObjectElement() *PseudoObjectElement { return e }
-
-func (e *PseudoObjectElement) Signature() *ast.Node {
-	switch e.Kind {
-	case PseudoObjectElementKindMethod:
-		return e.AsPseudoObjectMethod().Signature
-	default:
-		return nil
-	}
-}
-
-type PseudoObjectElementKind int8
-
-const (
-	PseudoObjectElementKindMethod PseudoObjectElementKind = iota
-	PseudoObjectElementKindPropertyAssignment
-)
-
-type pseudoObjectElementData interface {
-	AsPseudoObjectElement() *PseudoObjectElement
-}
-
-func newPseudoObjectElement(kind PseudoObjectElementKind, name *ast.Node, optional bool, data pseudoObjectElementData) *PseudoObjectElement {
-	e := data.AsPseudoObjectElement()
-	e.Kind = kind
-	e.Name = name
-	e.Optional = optional
-	e.data = data
-	return e
-}
-
-type PseudoObjectMethod struct {
-	PseudoObjectElement
-	Signature      *ast.Node
-	TypeParameters []*ast.TypeParameterDeclaration
-	Parameters     []*PseudoParameter
-	ReturnType     *PseudoType
-}
-
-func NewPseudoObjectMethod(signature *ast.Node, name *ast.Node, optional bool, typeParameters []*ast.TypeParameterDeclaration, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
-	return newPseudoObjectElement(PseudoObjectElementKindMethod, name, optional, &PseudoObjectMethod{
-		Signature:      signature,
-		TypeParameters: typeParameters,
-		Parameters:     parameters,
-		ReturnType:     returnType,
-	})
-}
-
-func (e *PseudoObjectElement) AsPseudoObjectMethod() *PseudoObjectMethod {
-	return e.data.(*PseudoObjectMethod)
-}
-
-type PseudoPropertyAssignment struct {
-	PseudoObjectElement
 	Readonly bool
 	Type     *PseudoType
 }
 
 func NewPseudoPropertyAssignment(readonly bool, name *ast.Node, optional bool, t *PseudoType) *PseudoObjectElement {
-	return newPseudoObjectElement(PseudoObjectElementKindPropertyAssignment, name, optional, &PseudoPropertyAssignment{
+	return &PseudoObjectElement{
+		Name:     name,
+		Optional: optional,
 		Readonly: readonly,
 		Type:     t,
-	})
-}
-
-func (e *PseudoObjectElement) AsPseudoPropertyAssignment() *PseudoPropertyAssignment {
-	return e.data.(*PseudoPropertyAssignment)
+	}
 }
 
 // PseudoTypeObjectLiteral represents an object type originaing from an object literal
