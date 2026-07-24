@@ -9401,7 +9401,8 @@ func (c *Checker) getFlowTypeOfAccessExpression(node *ast.Node, prop *ast.Symbol
 	if prop != nil {
 		if declaration := prop.ValueDeclaration; declaration != nil {
 			if ast.IsBinaryExpression(declaration) && ast.IsPropertyAccessExpression(declaration.AsBinaryExpression().Left) &&
-				c.getControlFlowContainer(node) == c.getControlFlowContainer(declaration) {
+				c.getControlFlowContainer(node) == c.getControlFlowContainer(declaration) &&
+				!c.isLuaDefaultedGuardReference(node) {
 				assumeUninitialized = true
 			}
 		}

@@ -1,0 +1,101 @@
+//// [tests/cases/compiler/tluaTableAugmentationDefaultedGuardCrossFile.tlua] ////
+
+=== roots.tlua ===
+Forward = Forward or {};
+>Forward : Symbol(Forward, Decl(roots.tlua, 0, 0))
+>Forward : Symbol(Forward, Decl(roots.tlua, 0, 0))
+
+MixedKey = MixedKey or {};
+>MixedKey : Symbol(MixedKey, Decl(roots.tlua, 0, 24))
+>MixedKey : Symbol(MixedKey, Decl(roots.tlua, 0, 24))
+
+Parenthesized = Parenthesized or {};
+>Parenthesized : Symbol(Parenthesized, Decl(roots.tlua, 1, 26))
+>Parenthesized : Symbol(Parenthesized, Decl(roots.tlua, 1, 26))
+
+=== members.tlua ===
+Forward.zod = Forward.zod or {};
+>Forward.zod : Symbol(zod, Decl(members.tlua, 0, 0))
+>Forward : Symbol(Forward, Decl(roots.tlua, 0, 0))
+>zod : Symbol(zod, Decl(members.tlua, 0, 0))
+>Forward.zod : Symbol(zod, Decl(members.tlua, 0, 0))
+>Forward : Symbol(Forward, Decl(roots.tlua, 0, 0))
+>zod : Symbol(zod, Decl(members.tlua, 0, 0))
+
+Forward.zod.value = true;
+>Forward.zod.value : Symbol(value, Decl(members.tlua, 0, 32))
+>Forward.zod : Symbol(zod, Decl(members.tlua, 0, 0))
+>Forward : Symbol(Forward, Decl(roots.tlua, 0, 0))
+>zod : Symbol(zod, Decl(members.tlua, 0, 0))
+>value : Symbol(value, Decl(members.tlua, 0, 32))
+
+MixedKey.zod = MixedKey["zod"] or {};
+>MixedKey.zod : Symbol(zod, Decl(members.tlua, 1, 25))
+>MixedKey : Symbol(MixedKey, Decl(roots.tlua, 0, 24))
+>zod : Symbol(zod, Decl(members.tlua, 1, 25))
+>MixedKey : Symbol(MixedKey, Decl(roots.tlua, 0, 24))
+>"zod" : Symbol(zod, Decl(members.tlua, 1, 25))
+
+MixedKey.zod.value = 1;
+>MixedKey.zod.value : Symbol(value, Decl(members.tlua, 3, 37))
+>MixedKey.zod : Symbol(zod, Decl(members.tlua, 1, 25))
+>MixedKey : Symbol(MixedKey, Decl(roots.tlua, 0, 24))
+>zod : Symbol(zod, Decl(members.tlua, 1, 25))
+>value : Symbol(value, Decl(members.tlua, 3, 37))
+
+// Parenthesized self-reads are not the exact defaulted-guard idiom.
+Parenthesized.zod = (Parenthesized.zod) or {};
+>Parenthesized.zod : Symbol(zod, Decl(members.tlua, 4, 23))
+>Parenthesized : Symbol(Parenthesized, Decl(roots.tlua, 1, 26))
+>zod : Symbol(zod, Decl(members.tlua, 4, 23))
+>Parenthesized.zod : Symbol(zod, Decl(members.tlua, 4, 23))
+>Parenthesized : Symbol(Parenthesized, Decl(roots.tlua, 1, 26))
+>zod : Symbol(zod, Decl(members.tlua, 4, 23))
+
+=== reverseMember.tlua ===
+// Root resolution is program-wide, not source-file-order dependent.
+Reverse.zod = Reverse.zod or {};
+>Reverse.zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+>Reverse : Symbol(Reverse, Decl(reverseRoot.tlua, 0, 0))
+>zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+>Reverse.zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+>Reverse : Symbol(Reverse, Decl(reverseRoot.tlua, 0, 0))
+>zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+
+Reverse.zod.value = "reverse";
+>Reverse.zod.value : Symbol(value, Decl(reverseMember.tlua, 1, 32))
+>Reverse.zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+>Reverse : Symbol(Reverse, Decl(reverseRoot.tlua, 0, 0))
+>zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+>value : Symbol(value, Decl(reverseMember.tlua, 1, 32))
+
+=== reverseRoot.tlua ===
+Reverse = Reverse or {};
+>Reverse : Symbol(Reverse, Decl(reverseRoot.tlua, 0, 0))
+>Reverse : Symbol(Reverse, Decl(reverseRoot.tlua, 0, 0))
+
+=== reads.tlua ===
+local forward: boolean = Forward.zod.value;
+>forward : Symbol(forward, Decl(reads.tlua, 0, 5))
+>Forward.zod.value : Symbol(value, Decl(members.tlua, 0, 32))
+>Forward.zod : Symbol(zod, Decl(members.tlua, 0, 0))
+>Forward : Symbol(Forward, Decl(roots.tlua, 0, 0))
+>zod : Symbol(zod, Decl(members.tlua, 0, 0))
+>value : Symbol(value, Decl(members.tlua, 0, 32))
+
+local mixedKey: number = MixedKey.zod.value;
+>mixedKey : Symbol(mixedKey, Decl(reads.tlua, 1, 5))
+>MixedKey.zod.value : Symbol(value, Decl(members.tlua, 3, 37))
+>MixedKey.zod : Symbol(zod, Decl(members.tlua, 1, 25))
+>MixedKey : Symbol(MixedKey, Decl(roots.tlua, 0, 24))
+>zod : Symbol(zod, Decl(members.tlua, 1, 25))
+>value : Symbol(value, Decl(members.tlua, 3, 37))
+
+local reverse: string = Reverse.zod.value;
+>reverse : Symbol(reverse, Decl(reads.tlua, 2, 5))
+>Reverse.zod.value : Symbol(value, Decl(reverseMember.tlua, 1, 32))
+>Reverse.zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+>Reverse : Symbol(Reverse, Decl(reverseRoot.tlua, 0, 0))
+>zod : Symbol(zod, Decl(reverseMember.tlua, 0, 0))
+>value : Symbol(value, Decl(reverseMember.tlua, 1, 32))
+
