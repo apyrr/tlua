@@ -11,17 +11,9 @@ Non-goal: typed Lua with TypeScript compatibility.
 
 - `internal` contains most compiler and language service code.
 - `_extension` contains the preview VS Code extension.
-- Most behavior should be tested with compiler tests.
 
 ## Working Rules
 
-- Add short comments that clarify non-obvious code.
-- Do not add or change dependencies unless asked.
-- Do not remove debug assertions or panic calls just because they look
-  strict.
-- Do not use `timeout` around tests or commands unless specifically
-  debugging a hang.
-- Do not change ts protocol version.
 - Run tests less often. For example if task is large, run tests after
   full implementation.
 
