@@ -1,17 +1,22 @@
+// The string metatable's `__index` is the `string` table itself, so a string's
+// members ARE StringLib's functions -- reached through a receiver rather than
+// bound to one. Each therefore declares `self` explicitly, exactly as a colon
+// method declaration does: `s:sub(1, 2)` passes the receiver as the implicit
+// first argument, and the equivalent `s.sub(s, 1, 2)` writes it out.
 interface String {
     readonly length: number;
-    byte(i?: number, j?: number): (number?, ...number);
-    find(pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
-    format(...: any): string;
-    gmatch(pattern: string): () => string;
-    gsub(pattern: string, replacement: string | table | function, n?: number): (string, number);
-    len(): number;
-    lower(): string;
-    match(pattern: string, init?: number): (string?, ...string);
-    rep(n: number): string;
-    reverse(): string;
-    sub(i: number, j?: number): string;
-    upper(): string;
+    byte(self: string, i?: number, j?: number): (number?, ...number);
+    find(self: string, pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
+    format(self: string, ...: any): string;
+    gmatch(self: string, pattern: string): () => string;
+    gsub(self: string, pattern: string, replacement: string | table | function, n?: number): (string, number);
+    len(self: string): number;
+    lower(self: string): string;
+    match(self: string, pattern: string, init?: number): (string?, ...string);
+    rep(self: string, n: number): string;
+    reverse(self: string): string;
+    sub(self: string, i: number, j?: number): string;
+    upper(self: string): string;
 }
 
 interface StringLib {

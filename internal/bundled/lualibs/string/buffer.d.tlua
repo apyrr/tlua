@@ -1,18 +1,21 @@
+// Buffer methods are metatable members taking the buffer as their first
+// argument, so each declares `self`: `buf:put("x")` passes the receiver
+// implicitly, `buf.put(buf, "x")` writes it out.
 interface LuaStringBuffer {
-    put(value: string | number | table, ...: string | number | table): LuaStringBuffer;
-    putf(format: string, ...: string | number | table): LuaStringBuffer;
-    putcdata(value: cdata, length: number): LuaStringBuffer;
-    set(value: string | cdata, length?: number): LuaStringBuffer;
-    reset(): LuaStringBuffer;
-    free(): void;
-    reserve(size: number): (cdata, number);
-    commit(used: number): LuaStringBuffer;
-    skip(length: number): LuaStringBuffer;
-    get(length?: number, ...: number | nil): (string, ...string);
-    tostring(): string;
-    ref(): (cdata, number);
-    encode(value: any): LuaStringBuffer;
-    decode(): any;
+    put(self: LuaStringBuffer, value: string | number | table, ...: string | number | table): LuaStringBuffer;
+    putf(self: LuaStringBuffer, format: string, ...: string | number | table): LuaStringBuffer;
+    putcdata(self: LuaStringBuffer, value: cdata, length: number): LuaStringBuffer;
+    set(self: LuaStringBuffer, value: string | cdata, length?: number): LuaStringBuffer;
+    reset(self: LuaStringBuffer): LuaStringBuffer;
+    free(self: LuaStringBuffer): void;
+    reserve(self: LuaStringBuffer, size: number): (cdata, number);
+    commit(self: LuaStringBuffer, used: number): LuaStringBuffer;
+    skip(self: LuaStringBuffer, length: number): LuaStringBuffer;
+    get(self: LuaStringBuffer, length?: number, ...: number | nil): (string, ...string);
+    tostring(self: LuaStringBuffer): string;
+    ref(self: LuaStringBuffer): (cdata, number);
+    encode(self: LuaStringBuffer, value: any): LuaStringBuffer;
+    decode(self: LuaStringBuffer): any;
 }
 
 interface StringBufferOptions {
@@ -21,8 +24,11 @@ interface StringBufferOptions {
 }
 
 interface StringBufferLib {
-    new(size?: number, options?: StringBufferOptions): LuaStringBuffer;
-    new(options: StringBufferOptions): LuaStringBuffer;
+    // Quoted, as ffi's `new` is: a bare `new(...)` member declares a CONSTRUCT
+    // signature, which would leave `buffer.new(16)` with no `new` property at
+    // all. tlua has no `new` expression, so the name is only ever a member.
+    "new"(size?: number, options?: StringBufferOptions): LuaStringBuffer;
+    "new"(options: StringBufferOptions): LuaStringBuffer;
     encode(value: any): string;
     decode(value: string): any;
 }

@@ -18,8 +18,23 @@ local bytes = io.read(8);
 local bytesType: string | nil = bytes;
 
 declare f: LuaFile;
-local fileNumber = f.read("*n");
+local fileNumber = f:read("*n");
 local fileNumberType: number | nil = fileNumber;
+
+// The explicit-self form writes the handle out, so the formats start one
+// argument later; the refinement follows.
+local explicitNumber = f.read(f, "*n");
+local explicitNumberType: number | nil = explicitNumber;
+local explicitWhole = f.read(f, "*a");
+local explicitWholeType: string = explicitWhole;
+
+for fileLine in f:lines("*l") do
+  local fileLineType: string | nil = fileLine;
+end
+
+for explicitLine in f.lines(f, "*a") do
+  local explicitLineType: string = explicitLine;
+end
 
 for line in io.lines() do
   local lineType: string = line;

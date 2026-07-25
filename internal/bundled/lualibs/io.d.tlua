@@ -1,14 +1,17 @@
 type LuaReadFormat = "*n" | "*a" | "*l" | number;
 
-// File handles are userdata in Lua, so `type(file)` reports "userdata".
+// File handles are userdata in Lua, so `type(file)` reports "userdata". Their
+// methods live on the handle's metatable and take the handle as their first
+// argument, so each declares `self`: `f:read("*a")` passes the receiver
+// implicitly, `f.read(f, "*a")` writes it out.
 interface LuaFile extends LuaUserdata {
-    close(): (boolean | nil, string?);
-    flush(): (boolean | nil, string?);
-    lines(...: LuaReadFormat): function;
-    read(...: LuaReadFormat): (any, ...any);
-    seek(whence?: "set" | "cur" | "end", offset?: number): (number | nil, string?);
-    setvbuf(mode: "no" | "full" | "line", size?: number): (boolean | nil, string?);
-    write(...: string | number): (LuaFile | nil, string?);
+    close(self: LuaFile): (boolean | nil, string?);
+    flush(self: LuaFile): (boolean | nil, string?);
+    lines(self: LuaFile, ...: LuaReadFormat): function;
+    read(self: LuaFile, ...: LuaReadFormat): (any, ...any);
+    seek(self: LuaFile, whence?: "set" | "cur" | "end", offset?: number): (number | nil, string?);
+    setvbuf(self: LuaFile, mode: "no" | "full" | "line", size?: number): (boolean | nil, string?);
+    write(self: LuaFile, ...: string | number): (LuaFile | nil, string?);
 }
 
 interface IOLib {

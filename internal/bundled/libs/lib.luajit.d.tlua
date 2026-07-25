@@ -257,20 +257,25 @@ interface CoroutineLib {
 
 declare coroutine: CoroutineLib;
 
+// The string metatable's `__index` is the `string` table itself, so a string's
+// members ARE StringLib's functions -- reached through a receiver rather than
+// bound to one. Each therefore declares `self` explicitly, exactly as a colon
+// method declaration does: `s:sub(1, 2)` passes the receiver as the implicit
+// first argument, and the equivalent `s.sub(s, 1, 2)` writes it out.
 interface String {
     readonly length: number;
-    byte(i?: number, j?: number): (number?, ...number);
-    find(pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
-    format(...: any): string;
-    gmatch(pattern: string): () => string;
-    gsub(pattern: string, replacement: string | table | function, n?: number): (string, number);
-    len(): number;
-    lower(): string;
-    match(pattern: string, init?: number): (string?, ...string);
-    rep(n: number): string;
-    reverse(): string;
-    sub(i: number, j?: number): string;
-    upper(): string;
+    byte(self: string, i?: number, j?: number): (number?, ...number);
+    find(self: string, pattern: string, init?: number, plain?: boolean): (number?, number?, ...string);
+    format(self: string, ...: any): string;
+    gmatch(self: string, pattern: string): () => string;
+    gsub(self: string, pattern: string, replacement: string | table | function, n?: number): (string, number);
+    len(self: string): number;
+    lower(self: string): string;
+    match(self: string, pattern: string, init?: number): (string?, ...string);
+    rep(self: string, n: number): string;
+    reverse(self: string): string;
+    sub(self: string, i: number, j?: number): string;
+    upper(self: string): string;
 }
 
 interface StringLib {
@@ -345,15 +350,18 @@ declare math: MathLib;
 
 type LuaReadFormat = "*n" | "*a" | "*l" | number;
 
-// File handles are userdata in Lua, so `type(file)` reports "userdata".
+// File handles are userdata in Lua, so `type(file)` reports "userdata". Their
+// methods live on the handle's metatable and take the handle as their first
+// argument, so each declares `self`: `f:read("*a")` passes the receiver
+// implicitly, `f.read(f, "*a")` writes it out.
 interface LuaFile extends LuaUserdata {
-    close(): (boolean | nil, string?);
-    flush(): (boolean | nil, string?);
-    lines(...: LuaReadFormat): function;
-    read(...: LuaReadFormat): (any, ...any);
-    seek(whence?: "set" | "cur" | "end", offset?: number): (number | nil, string?);
-    setvbuf(mode: "no" | "full" | "line", size?: number): (boolean | nil, string?);
-    write(...: string | number): (LuaFile | nil, string?);
+    close(self: LuaFile): (boolean | nil, string?);
+    flush(self: LuaFile): (boolean | nil, string?);
+    lines(self: LuaFile, ...: LuaReadFormat): function;
+    read(self: LuaFile, ...: LuaReadFormat): (any, ...any);
+    seek(self: LuaFile, whence?: "set" | "cur" | "end", offset?: number): (number | nil, string?);
+    setvbuf(self: LuaFile, mode: "no" | "full" | "line", size?: number): (boolean | nil, string?);
+    write(self: LuaFile, ...: string | number): (LuaFile | nil, string?);
 }
 
 interface IOLib {
@@ -515,10 +523,12 @@ interface LuaCType {
     (...: any): cdata;
 }
 
+// A callback object's methods take the callback itself, so each declares
+// `self`: `cb:free()` passes the receiver implicitly.
 interface LuaCallback extends LuaCData {
     readonly __ffiCallbackBrand: unique symbol;
-    free(): void;
-    set(fn: function): void;
+    free(self: LuaCallback): void;
+    set(self: LuaCallback, fn: function): void;
 }
 
 interface LuaCNamespace {
@@ -600,21 +610,24 @@ interface JITUtilLib {
     ircalladdr(index: number): number | nil;
 }
 
+// Buffer methods are metatable members taking the buffer as their first
+// argument, so each declares `self`: `buf:put("x")` passes the receiver
+// implicitly, `buf.put(buf, "x")` writes it out.
 interface LuaStringBuffer {
-    put(value: string | number | table, ...: string | number | table): LuaStringBuffer;
-    putf(format: string, ...: string | number | table): LuaStringBuffer;
-    putcdata(value: cdata, length: number): LuaStringBuffer;
-    set(value: string | cdata, length?: number): LuaStringBuffer;
-    reset(): LuaStringBuffer;
-    free(): void;
-    reserve(size: number): (cdata, number);
-    commit(used: number): LuaStringBuffer;
-    skip(length: number): LuaStringBuffer;
-    get(length?: number, ...: number | nil): (string, ...string);
-    tostring(): string;
-    ref(): (cdata, number);
-    encode(value: any): LuaStringBuffer;
-    decode(): any;
+    put(self: LuaStringBuffer, value: string | number | table, ...: string | number | table): LuaStringBuffer;
+    putf(self: LuaStringBuffer, format: string, ...: string | number | table): LuaStringBuffer;
+    putcdata(self: LuaStringBuffer, value: cdata, length: number): LuaStringBuffer;
+    set(self: LuaStringBuffer, value: string | cdata, length?: number): LuaStringBuffer;
+    reset(self: LuaStringBuffer): LuaStringBuffer;
+    free(self: LuaStringBuffer): void;
+    reserve(self: LuaStringBuffer, size: number): (cdata, number);
+    commit(self: LuaStringBuffer, used: number): LuaStringBuffer;
+    skip(self: LuaStringBuffer, length: number): LuaStringBuffer;
+    get(self: LuaStringBuffer, length?: number, ...: number | nil): (string, ...string);
+    tostring(self: LuaStringBuffer): string;
+    ref(self: LuaStringBuffer): (cdata, number);
+    encode(self: LuaStringBuffer, value: any): LuaStringBuffer;
+    decode(self: LuaStringBuffer): any;
 }
 
 interface StringBufferOptions {
@@ -623,8 +636,11 @@ interface StringBufferOptions {
 }
 
 interface StringBufferLib {
-    new(size?: number, options?: StringBufferOptions): LuaStringBuffer;
-    new(options: StringBufferOptions): LuaStringBuffer;
+    // Quoted, as ffi's `new` is: a bare `new(...)` member declares a CONSTRUCT
+    // signature, which would leave `buffer.new(16)` with no `new` property at
+    // all. tlua has no `new` expression, so the name is only ever a member.
+    "new"(size?: number, options?: StringBufferOptions): LuaStringBuffer;
+    "new"(options: StringBufferOptions): LuaStringBuffer;
     encode(value: any): string;
     decode(value: string): any;
 }

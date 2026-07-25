@@ -9,10 +9,12 @@ interface LuaCType {
     (...: any): cdata;
 }
 
+// A callback object's methods take the callback itself, so each declares
+// `self`: `cb:free()` passes the receiver implicitly.
 interface LuaCallback extends LuaCData {
     readonly __ffiCallbackBrand: unique symbol;
-    free(): void;
-    set(fn: function): void;
+    free(self: LuaCallback): void;
+    set(self: LuaCallback, fn: function): void;
 }
 
 interface LuaCNamespace {

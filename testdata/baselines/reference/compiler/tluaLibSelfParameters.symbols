@@ -1,0 +1,216 @@
+//// [tests/cases/compiler/tluaLibSelfParameters.tlua] ////
+
+=== tluaLibSelfParameters.tlua ===
+// The bundled lib's receiver-bearing interfaces declare `self` as their first
+// parameter, so the colon form and the explicit-self dot form -- the two ways
+// Lua reaches the same metatable function -- both check.
+
+local text: string = "hello world";
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+
+local upper: string = text:upper();
+>upper : Symbol(upper, Decl(tluaLibSelfParameters.tlua, 6, 5))
+>text:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local piece: string = text:sub(1, 5);
+>piece : Symbol(piece, Decl(tluaLibSelfParameters.tlua, 7, 5))
+>text:sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+
+local repeated: string = text:rep(2);
+>repeated : Symbol(repeated, Decl(tluaLibSelfParameters.tlua, 8, 5))
+>text:rep : Symbol(String.rep, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>rep : Symbol(String.rep, Decl(lib.luajit.d.tlua, --, --))
+
+local length: number = text:len();
+>length : Symbol(length, Decl(tluaLibSelfParameters.tlua, 9, 5))
+>text:len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+
+local reversed: string = text:reverse();
+>reversed : Symbol(reversed, Decl(tluaLibSelfParameters.tlua, 10, 5))
+>text:reverse : Symbol(String.reverse, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>reverse : Symbol(String.reverse, Decl(lib.luajit.d.tlua, --, --))
+
+local lowered: string = text:lower();
+>lowered : Symbol(lowered, Decl(tluaLibSelfParameters.tlua, 11, 5))
+>text:lower : Symbol(String.lower, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>lower : Symbol(String.lower, Decl(lib.luajit.d.tlua, --, --))
+
+local code, nextCode = text:byte(1, 2);
+>code : Symbol(code, Decl(tluaLibSelfParameters.tlua, 12, 5))
+>nextCode : Symbol(nextCode, Decl(tluaLibSelfParameters.tlua, 12, 11))
+>text:byte : Symbol(String.byte, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>byte : Symbol(String.byte, Decl(lib.luajit.d.tlua, --, --))
+
+local codeType: number | nil = code;
+>codeType : Symbol(codeType, Decl(tluaLibSelfParameters.tlua, 13, 5))
+>code : Symbol(code, Decl(tluaLibSelfParameters.tlua, 12, 5))
+
+local explicitPiece: string = text.sub(text, 1, 5);
+>explicitPiece : Symbol(explicitPiece, Decl(tluaLibSelfParameters.tlua, 15, 5))
+>text.sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+
+local explicitUpper: string = text.upper(text);
+>explicitUpper : Symbol(explicitUpper, Decl(tluaLibSelfParameters.tlua, 16, 5))
+>text.upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+
+// The namespace form is unchanged: it names the receiver as an ordinary
+// argument.
+local nsPiece: string = string.sub(text, 1, 5);
+>nsPiece : Symbol(nsPiece, Decl(tluaLibSelfParameters.tlua, 20, 5))
+>string.sub : Symbol(StringLib.sub, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>sub : Symbol(StringLib.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+
+// Arity and argument types are now measured against the receiver's slot, so a
+// colon call reports the WRITTEN argument that is wrong.
+text:sub("one");
+>text:sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+
+text:upper(1);
+>text:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+// A dot call that forgets the receiver is a plain argument mismatch.
+text.upper();
+>text.upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+text.sub(1, 5);
+>text.sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaLibSelfParameters.tlua, 4, 5))
+>sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+
+declare handle: LuaFile;
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+
+local contents: string = handle:read("*a");
+>contents : Symbol(contents, Decl(tluaLibSelfParameters.tlua, 31, 5))
+>handle:read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+
+local seekPosition = handle:seek("set", 0);
+>seekPosition : Symbol(seekPosition, Decl(tluaLibSelfParameters.tlua, 32, 5))
+>handle:seek : Symbol(LuaFile.seek, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>seek : Symbol(LuaFile.seek, Decl(lib.luajit.d.tlua, --, --))
+
+handle:write("a", "b");
+>handle:write : Symbol(LuaFile.write, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>write : Symbol(LuaFile.write, Decl(lib.luajit.d.tlua, --, --))
+
+handle:setvbuf("full", 4096);
+>handle:setvbuf : Symbol(LuaFile.setvbuf, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>setvbuf : Symbol(LuaFile.setvbuf, Decl(lib.luajit.d.tlua, --, --))
+
+handle:flush();
+>handle:flush : Symbol(LuaFile.flush, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>flush : Symbol(LuaFile.flush, Decl(lib.luajit.d.tlua, --, --))
+
+handle:close();
+>handle:close : Symbol(LuaFile.close, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>close : Symbol(LuaFile.close, Decl(lib.luajit.d.tlua, --, --))
+
+handle.close(handle);
+>handle.close : Symbol(LuaFile.close, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>close : Symbol(LuaFile.close, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+
+// The handle is not a read format.
+handle.read("*a");
+>handle.read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>handle : Symbol(handle, Decl(tluaLibSelfParameters.tlua, 30, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+
+local buffer = require("string.buffer").new(64);
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+>require("string.buffer").new : Symbol(StringBufferLib["new"], Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+>new : Symbol(StringBufferLib["new"], Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+local chained: LuaStringBuffer = buffer:put("a"):put("b", "c");
+>chained : Symbol(chained, Decl(tluaLibSelfParameters.tlua, 42, 5))
+>LuaStringBuffer : Symbol(LuaStringBuffer, Decl(lib.luajit.d.tlua, --, --))
+>buffer:put("a"):put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer:put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+>put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+
+local built: string = buffer:tostring();
+>built : Symbol(built, Decl(tluaLibSelfParameters.tlua, 43, 5))
+>buffer:tostring : Symbol(LuaStringBuffer.tostring, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+>tostring : Symbol(LuaStringBuffer.tostring, Decl(lib.luajit.d.tlua, --, --))
+
+buffer:reset();
+>buffer:reset : Symbol(LuaStringBuffer.reset, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+>reset : Symbol(LuaStringBuffer.reset, Decl(lib.luajit.d.tlua, --, --))
+
+buffer:free();
+>buffer:free : Symbol(LuaStringBuffer.free, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+>free : Symbol(LuaStringBuffer.free, Decl(lib.luajit.d.tlua, --, --))
+
+local explicitBuffer: LuaStringBuffer = buffer.put(buffer, "a");
+>explicitBuffer : Symbol(explicitBuffer, Decl(tluaLibSelfParameters.tlua, 46, 5))
+>LuaStringBuffer : Symbol(LuaStringBuffer, Decl(lib.luajit.d.tlua, --, --))
+>buffer.put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+>put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+
+// A buffer method still needs its receiver.
+buffer.put("a");
+>buffer.put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
+>put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+
+declare callback: LuaCallback;
+>callback : Symbol(callback, Decl(tluaLibSelfParameters.tlua, 50, 7))
+>LuaCallback : Symbol(LuaCallback, Decl(lib.luajit.d.tlua, --, --))
+
+callback:set(function() return; end);
+>callback:set : Symbol(LuaCallback.set, Decl(lib.luajit.d.tlua, --, --))
+>callback : Symbol(callback, Decl(tluaLibSelfParameters.tlua, 50, 7))
+>set : Symbol(LuaCallback.set, Decl(lib.luajit.d.tlua, --, --))
+
+callback:free();
+>callback:free : Symbol(LuaCallback.free, Decl(lib.luajit.d.tlua, --, --))
+>callback : Symbol(callback, Decl(tluaLibSelfParameters.tlua, 50, 7))
+>free : Symbol(LuaCallback.free, Decl(lib.luajit.d.tlua, --, --))
+
+callback.free(callback);
+>callback.free : Symbol(LuaCallback.free, Decl(lib.luajit.d.tlua, --, --))
+>callback : Symbol(callback, Decl(tluaLibSelfParameters.tlua, 50, 7))
+>free : Symbol(LuaCallback.free, Decl(lib.luajit.d.tlua, --, --))
+>callback : Symbol(callback, Decl(tluaLibSelfParameters.tlua, 50, 7))
+

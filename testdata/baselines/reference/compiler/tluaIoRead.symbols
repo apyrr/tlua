@@ -52,9 +52,9 @@ declare f: LuaFile;
 >f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
 >LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
 
-local fileNumber = f.read("*n");
+local fileNumber = f:read("*n");
 >fileNumber : Symbol(fileNumber, Decl(tluaIoRead.tlua, 16, 5))
->f.read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>f:read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
 >f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
 >read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
 
@@ -62,94 +62,143 @@ local fileNumberType: number | nil = fileNumber;
 >fileNumberType : Symbol(fileNumberType, Decl(tluaIoRead.tlua, 17, 5))
 >fileNumber : Symbol(fileNumber, Decl(tluaIoRead.tlua, 16, 5))
 
+// The explicit-self form writes the handle out, so the formats start one
+// argument later; the refinement follows.
+local explicitNumber = f.read(f, "*n");
+>explicitNumber : Symbol(explicitNumber, Decl(tluaIoRead.tlua, 21, 5))
+>f.read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+
+local explicitNumberType: number | nil = explicitNumber;
+>explicitNumberType : Symbol(explicitNumberType, Decl(tluaIoRead.tlua, 22, 5))
+>explicitNumber : Symbol(explicitNumber, Decl(tluaIoRead.tlua, 21, 5))
+
+local explicitWhole = f.read(f, "*a");
+>explicitWhole : Symbol(explicitWhole, Decl(tluaIoRead.tlua, 23, 5))
+>f.read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+
+local explicitWholeType: string = explicitWhole;
+>explicitWholeType : Symbol(explicitWholeType, Decl(tluaIoRead.tlua, 24, 5))
+>explicitWhole : Symbol(explicitWhole, Decl(tluaIoRead.tlua, 23, 5))
+
+for fileLine in f:lines("*l") do
+>fileLine : Symbol(fileLine, Decl(tluaIoRead.tlua, 26, 3))
+>f:lines : Symbol(LuaFile.lines, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+>lines : Symbol(LuaFile.lines, Decl(lib.luajit.d.tlua, --, --))
+
+  local fileLineType: string | nil = fileLine;
+>fileLineType : Symbol(fileLineType, Decl(tluaIoRead.tlua, 27, 7))
+>fileLine : Symbol(fileLine, Decl(tluaIoRead.tlua, 26, 3))
+
+end
+
+for explicitLine in f.lines(f, "*a") do
+>explicitLine : Symbol(explicitLine, Decl(tluaIoRead.tlua, 30, 3))
+>f.lines : Symbol(LuaFile.lines, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+>lines : Symbol(LuaFile.lines, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaIoRead.tlua, 15, 7))
+
+  local explicitLineType: string = explicitLine;
+>explicitLineType : Symbol(explicitLineType, Decl(tluaIoRead.tlua, 31, 7))
+>explicitLine : Symbol(explicitLine, Decl(tluaIoRead.tlua, 30, 3))
+
+end
+
 for line in io.lines() do
->line : Symbol(line, Decl(tluaIoRead.tlua, 19, 3))
+>line : Symbol(line, Decl(tluaIoRead.tlua, 34, 3))
 >io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
 >io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
 >lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
 
   local lineType: string = line;
->lineType : Symbol(lineType, Decl(tluaIoRead.tlua, 20, 7))
->line : Symbol(line, Decl(tluaIoRead.tlua, 19, 3))
+>lineType : Symbol(lineType, Decl(tluaIoRead.tlua, 35, 7))
+>line : Symbol(line, Decl(tluaIoRead.tlua, 34, 3))
 
 end
 
 for chunk in io.lines("file", "*a") do
->chunk : Symbol(chunk, Decl(tluaIoRead.tlua, 23, 3))
+>chunk : Symbol(chunk, Decl(tluaIoRead.tlua, 38, 3))
 >io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
 >io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
 >lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
 
   local chunkType: string = chunk;
->chunkType : Symbol(chunkType, Decl(tluaIoRead.tlua, 24, 7))
->chunk : Symbol(chunk, Decl(tluaIoRead.tlua, 23, 3))
+>chunkType : Symbol(chunkType, Decl(tluaIoRead.tlua, 39, 7))
+>chunk : Symbol(chunk, Decl(tluaIoRead.tlua, 38, 3))
 
 end
 
 for filenameOnly in io.lines("*n") do
->filenameOnly : Symbol(filenameOnly, Decl(tluaIoRead.tlua, 27, 3))
+>filenameOnly : Symbol(filenameOnly, Decl(tluaIoRead.tlua, 42, 3))
 >io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
 >io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
 >lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
 
   local filenameOnlyType: string = filenameOnly;
->filenameOnlyType : Symbol(filenameOnlyType, Decl(tluaIoRead.tlua, 28, 7))
->filenameOnly : Symbol(filenameOnly, Decl(tluaIoRead.tlua, 27, 3))
+>filenameOnlyType : Symbol(filenameOnlyType, Decl(tluaIoRead.tlua, 43, 7))
+>filenameOnly : Symbol(filenameOnly, Decl(tluaIoRead.tlua, 42, 3))
 
 end
 
 declare fmt: LuaReadFormat;
->fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 31, 7))
+>fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 46, 7))
 >LuaReadFormat : Symbol(LuaReadFormat, Decl(lib.luajit.d.tlua, --, --))
 
 local x = io.read(fmt);
->x : Symbol(x, Decl(tluaIoRead.tlua, 32, 5))
+>x : Symbol(x, Decl(tluaIoRead.tlua, 47, 5))
 >io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
 >io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
 >read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
->fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 31, 7))
+>fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 46, 7))
 
 local xType: any = x;
->xType : Symbol(xType, Decl(tluaIoRead.tlua, 33, 5))
->x : Symbol(x, Decl(tluaIoRead.tlua, 32, 5))
+>xType : Symbol(xType, Decl(tluaIoRead.tlua, 48, 5))
+>x : Symbol(x, Decl(tluaIoRead.tlua, 47, 5))
 
 // A literal prefix keeps its precision; the runtime-only formats become an
 // open any tail.
 local pn, px = io.read("*n", fmt);
->pn : Symbol(pn, Decl(tluaIoRead.tlua, 37, 5))
->px : Symbol(px, Decl(tluaIoRead.tlua, 37, 9))
+>pn : Symbol(pn, Decl(tluaIoRead.tlua, 52, 5))
+>px : Symbol(px, Decl(tluaIoRead.tlua, 52, 9))
 >io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
 >io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
 >read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
->fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 31, 7))
+>fmt : Symbol(fmt, Decl(tluaIoRead.tlua, 46, 7))
 
 local pnType: number | nil = pn;
->pnType : Symbol(pnType, Decl(tluaIoRead.tlua, 38, 5))
->pn : Symbol(pn, Decl(tluaIoRead.tlua, 37, 5))
+>pnType : Symbol(pnType, Decl(tluaIoRead.tlua, 53, 5))
+>pn : Symbol(pn, Decl(tluaIoRead.tlua, 52, 5))
 
 function shadowedIO(): void
->shadowedIO : Symbol(shadowedIO, Decl(tluaIoRead.tlua, 38, 32))
+>shadowedIO : Symbol(shadowedIO, Decl(tluaIoRead.tlua, 53, 32))
 
   local io = {
->io : Symbol(io, Decl(tluaIoRead.tlua, 41, 7))
+>io : Symbol(io, Decl(tluaIoRead.tlua, 56, 7))
 
     read = function(format: string): boolean return format == "*n"; end,
->read : Symbol(read, Decl(tluaIoRead.tlua, 41, 14))
->format : Symbol(format, Decl(tluaIoRead.tlua, 42, 20))
->format : Symbol(format, Decl(tluaIoRead.tlua, 42, 20))
+>read : Symbol(read, Decl(tluaIoRead.tlua, 56, 14))
+>format : Symbol(format, Decl(tluaIoRead.tlua, 57, 20))
+>format : Symbol(format, Decl(tluaIoRead.tlua, 57, 20))
 
   };
   local shadowed: boolean = io.read("*n");
->shadowed : Symbol(shadowed, Decl(tluaIoRead.tlua, 44, 7))
->io.read : Symbol(read, Decl(tluaIoRead.tlua, 41, 14))
->io : Symbol(io, Decl(tluaIoRead.tlua, 41, 7))
->read : Symbol(read, Decl(tluaIoRead.tlua, 41, 14))
+>shadowed : Symbol(shadowed, Decl(tluaIoRead.tlua, 59, 7))
+>io.read : Symbol(read, Decl(tluaIoRead.tlua, 56, 14))
+>io : Symbol(io, Decl(tluaIoRead.tlua, 56, 7))
+>read : Symbol(read, Decl(tluaIoRead.tlua, 56, 14))
 
 end
 
 local wrong, wrongRest = io.read("*x");
->wrong : Symbol(wrong, Decl(tluaIoRead.tlua, 47, 5))
->wrongRest : Symbol(wrongRest, Decl(tluaIoRead.tlua, 47, 12))
+>wrong : Symbol(wrong, Decl(tluaIoRead.tlua, 62, 5))
+>wrongRest : Symbol(wrongRest, Decl(tluaIoRead.tlua, 62, 12))
 >io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
 >io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
 >read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))

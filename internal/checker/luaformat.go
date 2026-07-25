@@ -20,7 +20,12 @@ func (c *Checker) getLuaFormatCall(node *ast.Node) (*ast.Node, int) {
 	if ast.IsLuaColonCall(node) {
 		colonOffset = 1
 	}
-	if call.namespaceForm {
+	// The format string is the first WRITTEN argument in every form but the
+	// colon call, which supplies it as the receiver. That covers the namespace
+	// form (`string.format(f, x)`) and the explicit-self member form
+	// (`f.format(f, x)`), where the receiver text and the format string are the
+	// same argument.
+	if call.namespaceForm || call.explicitSelf {
 		args := node.Arguments()
 		if len(args) == 0 {
 			return nil, 0

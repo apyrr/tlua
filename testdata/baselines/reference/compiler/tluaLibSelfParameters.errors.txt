@@ -1,0 +1,78 @@
+tluaLibSelfParameters.tlua(25,10): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaLibSelfParameters.tlua(26,12): error TLUA2554: Expected 1 arguments, but got 2.
+tluaLibSelfParameters.tlua(28,6): error TLUA2554: Expected 1 arguments, but got 0.
+tluaLibSelfParameters.tlua(29,10): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tluaLibSelfParameters.tlua(40,13): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'LuaFile'.
+tluaLibSelfParameters.tlua(49,8): error TLUA2555: Expected at least 2 arguments, but got 1.
+
+
+==== tluaLibSelfParameters.tlua (6 errors) ====
+    // The bundled lib's receiver-bearing interfaces declare `self` as their first
+    // parameter, so the colon form and the explicit-self dot form -- the two ways
+    // Lua reaches the same metatable function -- both check.
+    
+    local text: string = "hello world";
+    
+    local upper: string = text:upper();
+    local piece: string = text:sub(1, 5);
+    local repeated: string = text:rep(2);
+    local length: number = text:len();
+    local reversed: string = text:reverse();
+    local lowered: string = text:lower();
+    local code, nextCode = text:byte(1, 2);
+    local codeType: number | nil = code;
+    
+    local explicitPiece: string = text.sub(text, 1, 5);
+    local explicitUpper: string = text.upper(text);
+    
+    // The namespace form is unchanged: it names the receiver as an ordinary
+    // argument.
+    local nsPiece: string = string.sub(text, 1, 5);
+    
+    // Arity and argument types are now measured against the receiver's slot, so a
+    // colon call reports the WRITTEN argument that is wrong.
+    text:sub("one");
+             ~~~~~
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    text:upper(1);
+               ~
+!!! error TLUA2554: Expected 1 arguments, but got 2.
+    // A dot call that forgets the receiver is a plain argument mismatch.
+    text.upper();
+         ~~~~~
+!!! error TLUA2554: Expected 1 arguments, but got 0.
+!!! related TLUA6210 lib.luajit.d.tlua:278:11: An argument for 'self' was not provided.
+    text.sub(1, 5);
+             ~
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    
+    declare handle: LuaFile;
+    local contents: string = handle:read("*a");
+    local seekPosition = handle:seek("set", 0);
+    handle:write("a", "b");
+    handle:setvbuf("full", 4096);
+    handle:flush();
+    handle:close();
+    handle.close(handle);
+    // The handle is not a read format.
+    handle.read("*a");
+                ~~~~
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'LuaFile'.
+    
+    local buffer = require("string.buffer").new(64);
+    local chained: LuaStringBuffer = buffer:put("a"):put("b", "c");
+    local built: string = buffer:tostring();
+    buffer:reset();
+    buffer:free();
+    local explicitBuffer: LuaStringBuffer = buffer.put(buffer, "a");
+    // A buffer method still needs its receiver.
+    buffer.put("a");
+           ~~~
+!!! error TLUA2555: Expected at least 2 arguments, but got 1.
+!!! related TLUA6210 lib.luajit.d.tlua:617:32: An argument for 'value' was not provided.
+    
+    declare callback: LuaCallback;
+    callback:set(function() return; end);
+    callback:free();
+    callback.free(callback);
+    

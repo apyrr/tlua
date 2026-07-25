@@ -1,0 +1,58 @@
+// @strict: true
+// @lib: luajit
+// @noEmit: true
+
+// The bundled lib's receiver-bearing interfaces declare `self` as their first
+// parameter, so the colon form and the explicit-self dot form -- the two ways
+// Lua reaches the same metatable function -- both check.
+
+local text: string = "hello world";
+
+local upper: string = text:upper();
+local piece: string = text:sub(1, 5);
+local repeated: string = text:rep(2);
+local length: number = text:len();
+local reversed: string = text:reverse();
+local lowered: string = text:lower();
+local code, nextCode = text:byte(1, 2);
+local codeType: number | nil = code;
+
+local explicitPiece: string = text.sub(text, 1, 5);
+local explicitUpper: string = text.upper(text);
+
+// The namespace form is unchanged: it names the receiver as an ordinary
+// argument.
+local nsPiece: string = string.sub(text, 1, 5);
+
+// Arity and argument types are now measured against the receiver's slot, so a
+// colon call reports the WRITTEN argument that is wrong.
+text:sub("one");
+text:upper(1);
+// A dot call that forgets the receiver is a plain argument mismatch.
+text.upper();
+text.sub(1, 5);
+
+declare handle: LuaFile;
+local contents: string = handle:read("*a");
+local seekPosition = handle:seek("set", 0);
+handle:write("a", "b");
+handle:setvbuf("full", 4096);
+handle:flush();
+handle:close();
+handle.close(handle);
+// The handle is not a read format.
+handle.read("*a");
+
+local buffer = require("string.buffer").new(64);
+local chained: LuaStringBuffer = buffer:put("a"):put("b", "c");
+local built: string = buffer:tostring();
+buffer:reset();
+buffer:free();
+local explicitBuffer: LuaStringBuffer = buffer.put(buffer, "a");
+// A buffer method still needs its receiver.
+buffer.put("a");
+
+declare callback: LuaCallback;
+callback:set(function() return; end);
+callback:free();
+callback.free(callback);

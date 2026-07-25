@@ -5,13 +5,13 @@ local dateText: string = "2026-07";
 >dateText : string
 >"2026-07" : "2026-07"
 
-local d, m = dateText.match("(%d+)-(%d+)");
+local d, m = dateText:match("(%d+)-(%d+)");
 >d : string | nil
 >m : string | nil
->dateText.match("(%d+)-(%d+)") : string | nil
->dateText.match : (pattern: string, init?: number) => (string?, ...string)
+>dateText:match("(%d+)-(%d+)") : string | nil
+>dateText:match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >dateText : string
->match : (pattern: string, init?: number) => (string?, ...string)
+>match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >"(%d+)-(%d+)" : "(%d+)-(%d+)"
 
 local day: string | nil = d;
@@ -22,16 +22,37 @@ local month: string | nil = m;
 >month : string | nil
 >m : string | nil
 
+// The explicit-self form reaches the same function through the string
+// metatable's `__index`, writing the receiver out. The pattern therefore sits
+// where the namespace form puts it, and the refinement follows.
+local ed, em = dateText.match(dateText, "(%d+)-(%d+)");
+>ed : string | nil
+>em : string | nil
+>dateText.match(dateText, "(%d+)-(%d+)") : string | nil
+>dateText.match : (self: string, pattern: string, init?: number) => (string?, ...string)
+>dateText : string
+>match : (self: string, pattern: string, init?: number) => (string?, ...string)
+>dateText : string
+>"(%d+)-(%d+)" : "(%d+)-(%d+)"
+
+local explicitDay: string | nil = ed;
+>explicitDay : string | nil
+>ed : string | nil
+
+local explicitMonth: string | nil = em;
+>explicitMonth : string | nil
+>em : string | nil
+
 local xText: string = "x";
 >xText : string
 >"x" : "x"
 
-local position = xText.match("()x");
+local position = xText:match("()x");
 >position : number | nil
->xText.match("()x") : number | nil
->xText.match : (pattern: string, init?: number) => (string?, ...string)
+>xText:match("()x") : number | nil
+>xText:match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >xText : string
->match : (pattern: string, init?: number) => (string?, ...string)
+>match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >"()x" : "()x"
 
 local positionOrNil: number | nil = position;
@@ -42,13 +63,13 @@ local abcText: string = "abc";
 >abcText : string
 >"abc" : "abc"
 
-local whole, wholeExtra = abcText.match("%a+");
+local whole, wholeExtra = abcText:match("%a+");
 >whole : string | nil
 >wholeExtra : nil
->abcText.match("%a+") : string | nil
->abcText.match : (pattern: string, init?: number) => (string?, ...string)
+>abcText:match("%a+") : string | nil
+>abcText:match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >abcText : string
->match : (pattern: string, init?: number) => (string?, ...string)
+>match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >"%a+" : "%a+"
 
 local wholeOrNil: string | nil = whole;
@@ -81,14 +102,14 @@ local itemText: string = "item=42";
 >itemText : string
 >"item=42" : "item=42"
 
-local first, last, capture = itemText.find("=(%d+)");
+local first, last, capture = itemText:find("=(%d+)");
 >first : number | nil
 >last : number | nil
 >capture : string | nil
->itemText.find("=(%d+)") : number | nil
->itemText.find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>itemText:find("=(%d+)") : number | nil
+>itemText:find : (self: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
 >itemText : string
->find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>find : (self: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
 >"=(%d+)" : "=(%d+)"
 
 local firstType: number | nil = first;
@@ -130,14 +151,14 @@ local numberText: string = "42";
 >numberText : string
 >"42" : "42"
 
-local plainFirst, plainLast, plainCapture = numberText.find("(%d+)", 1, true);
+local plainFirst, plainLast, plainCapture = numberText:find("(%d+)", 1, true);
 >plainFirst : number | nil
 >plainLast : number | nil
 >plainCapture : nil
->numberText.find("(%d+)", 1, true) : number | nil
->numberText.find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>numberText:find("(%d+)", 1, true) : number | nil
+>numberText:find : (self: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
 >numberText : string
->find : (pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>find : (self: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
 >"(%d+)" : "(%d+)"
 >1 : 1
 >true : true
@@ -153,6 +174,32 @@ local plainLastType: number | nil = plainLast;
 local noPlainCapture: nil = plainCapture;
 >noPlainCapture : nil
 >plainCapture : nil
+
+// The plain flag shifts with the receiver in the explicit-self form.
+local ePlainFirst, ePlainLast, ePlainCapture = numberText.find(numberText, "(%d+)", 1, true);
+>ePlainFirst : number | nil
+>ePlainLast : number | nil
+>ePlainCapture : nil
+>numberText.find(numberText, "(%d+)", 1, true) : number | nil
+>numberText.find : (self: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>numberText : string
+>find : (self: string, pattern: string, init?: number, plain?: boolean) => (number?, number?, ...string)
+>numberText : string
+>"(%d+)" : "(%d+)"
+>1 : 1
+>true : true
+
+local ePlainFirstType: number | nil = ePlainFirst;
+>ePlainFirstType : number | nil
+>ePlainFirst : number | nil
+
+local ePlainLastType: number | nil = ePlainLast;
+>ePlainLastType : number | nil
+>ePlainLast : number | nil
+
+local noExplicitPlainCapture: nil = ePlainCapture;
+>noExplicitPlainCapture : nil
+>ePlainCapture : nil
 
 local dynamicPlainPattern: string = "(%d+)";
 >dynamicPlainPattern : string
@@ -234,13 +281,13 @@ local pairText: string = "a=1";
 >pairText : string
 >"a=1" : "a=1"
 
-for key, value in pairText.gmatch("(%a+)=(%d+)") do
+for key, value in pairText:gmatch("(%a+)=(%d+)") do
 >key : string
 >value : string | nil
->pairText.gmatch("(%a+)=(%d+)") : () => (string | nil, string | nil)
->pairText.gmatch : (pattern: string) => () => string
+>pairText:gmatch("(%a+)=(%d+)") : () => (string | nil, string | nil)
+>pairText:gmatch : (self: string, pattern: string) => () => string
 >pairText : string
->gmatch : (pattern: string) => () => string
+>gmatch : (self: string, pattern: string) => () => string
 >"(%a+)=(%d+)" : "(%a+)=(%d+)"
 
   local keyType: string = key;
@@ -253,12 +300,12 @@ for key, value in pairText.gmatch("(%a+)=(%d+)") do
 
 end
 
-for dynamicWord in pairText.gmatch(dynamicPlainPattern) do
+for dynamicWord in pairText:gmatch(dynamicPlainPattern) do
 >dynamicWord : string
->pairText.gmatch(dynamicPlainPattern) : () => string
->pairText.gmatch : (pattern: string) => () => string
+>pairText:gmatch(dynamicPlainPattern) : () => string
+>pairText:gmatch : (self: string, pattern: string) => () => string
 >pairText : string
->gmatch : (pattern: string) => () => string
+>gmatch : (self: string, pattern: string) => () => string
 >dynamicPlainPattern : string
 
   local dynamicWordType: string = dynamicWord;
@@ -326,12 +373,12 @@ local invalidMethodText: "x" = "x";
 >invalidMethodText : "x"
 >"x" : "x"
 
-local invalidMethod = invalidMethodText.match("(unclosed");
+local invalidMethod = invalidMethodText:match("(unclosed");
 >invalidMethod : string | nil
->invalidMethodText.match("(unclosed") : string | nil
->invalidMethodText.match : (pattern: string, init?: number) => (string?, ...string)
+>invalidMethodText:match("(unclosed") : string | nil
+>invalidMethodText:match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >invalidMethodText : "x"
->match : (pattern: string, init?: number) => (string?, ...string)
+>match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >"(unclosed" : "(unclosed"
 
 local invalidSetFirst, invalidSetSecond = string.match("]", "[]");
@@ -356,13 +403,13 @@ local parenText: string = "(";
 >parenText : string
 >"(" : "("
 
-local setMatch, setCapture = parenText.match("[()]");
+local setMatch, setCapture = parenText:match("[()]");
 >setMatch : string | nil
 >setCapture : nil
->parenText.match("[()]") : string | nil
->parenText.match : (pattern: string, init?: number) => (string?, ...string)
+>parenText:match("[()]") : string | nil
+>parenText:match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >parenText : string
->match : (pattern: string, init?: number) => (string?, ...string)
+>match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >"[()]" : "[()]"
 
 local setMatchType: string | nil = setMatch;
@@ -377,13 +424,13 @@ local balancedText: string = "(x)";
 >balancedText : string
 >"(x)" : "(x)"
 
-local balancedMatch, balancedCapture = balancedText.match("%b()");
+local balancedMatch, balancedCapture = balancedText:match("%b()");
 >balancedMatch : string | nil
 >balancedCapture : nil
->balancedText.match("%b()") : string | nil
->balancedText.match : (pattern: string, init?: number) => (string?, ...string)
+>balancedText:match("%b()") : string | nil
+>balancedText:match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >balancedText : string
->match : (pattern: string, init?: number) => (string?, ...string)
+>match : (self: string, pattern: string, init?: number) => (string?, ...string)
 >"%b()" : "%b()"
 
 local balancedMatchType: string | nil = balancedMatch;
@@ -449,13 +496,13 @@ function shadowedStringPattern(): void
 
 end
 
-local replaced, replacementCount = xText.gsub("(.)", {});
+local replaced, replacementCount = xText:gsub("(.)", {});
 >replaced : string
 >replacementCount : number
->xText.gsub("(.)", {}) : string
->xText.gsub : (pattern: string, replacement: string | table | function, n?: number) => (string, number)
+>xText:gsub("(.)", {}) : string
+>xText:gsub : (self: string, pattern: string, replacement: string | table | function, n?: number) => (string, number)
 >xText : string
->gsub : (pattern: string, replacement: string | table | function, n?: number) => (string, number)
+>gsub : (self: string, pattern: string, replacement: string | table | function, n?: number) => (string, number)
 >"(.)" : "(.)"
 >{} : {}
 

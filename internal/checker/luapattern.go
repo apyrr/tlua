@@ -15,10 +15,13 @@ func (c *Checker) getLuaPatternCall(node *ast.Node) *luaPatternCall {
 	if call == nil {
 		return nil
 	}
-	if call.namespaceForm {
-		return &luaPatternCall{name: call.name, patternIndex: 1, plainIndex: 3}
+	// The subject string is a written argument in every form but the colon
+	// call, which supplies it as the receiver -- so the pattern follows it.
+	patternIndex := 0
+	if call.namespaceForm || call.explicitSelf {
+		patternIndex = 1
 	}
-	return &luaPatternCall{name: call.name, patternIndex: 0, plainIndex: 2}
+	return &luaPatternCall{name: call.name, patternIndex: patternIndex, plainIndex: patternIndex + 2}
 }
 
 func (c *Checker) checkLuaPatternCall(node *ast.Node, checkMode CheckMode) *Type {

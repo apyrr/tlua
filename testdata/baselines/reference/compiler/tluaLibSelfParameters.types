@@ -1,0 +1,276 @@
+//// [tests/cases/compiler/tluaLibSelfParameters.tlua] ////
+
+=== tluaLibSelfParameters.tlua ===
+// The bundled lib's receiver-bearing interfaces declare `self` as their first
+// parameter, so the colon form and the explicit-self dot form -- the two ways
+// Lua reaches the same metatable function -- both check.
+
+local text: string = "hello world";
+>text : string
+>"hello world" : "hello world"
+
+local upper: string = text:upper();
+>upper : string
+>text:upper() : string
+>text:upper : (self: string) => string
+>text : string
+>upper : (self: string) => string
+
+local piece: string = text:sub(1, 5);
+>piece : string
+>text:sub(1, 5) : string
+>text:sub : (self: string, i: number, j?: number) => string
+>text : string
+>sub : (self: string, i: number, j?: number) => string
+>1 : 1
+>5 : 5
+
+local repeated: string = text:rep(2);
+>repeated : string
+>text:rep(2) : string
+>text:rep : (self: string, n: number) => string
+>text : string
+>rep : (self: string, n: number) => string
+>2 : 2
+
+local length: number = text:len();
+>length : number
+>text:len() : number
+>text:len : (self: string) => number
+>text : string
+>len : (self: string) => number
+
+local reversed: string = text:reverse();
+>reversed : string
+>text:reverse() : string
+>text:reverse : (self: string) => string
+>text : string
+>reverse : (self: string) => string
+
+local lowered: string = text:lower();
+>lowered : string
+>text:lower() : string
+>text:lower : (self: string) => string
+>text : string
+>lower : (self: string) => string
+
+local code, nextCode = text:byte(1, 2);
+>code : number | nil
+>nextCode : number | nil
+>text:byte(1, 2) : number | nil
+>text:byte : (self: string, i?: number, j?: number) => (number?, ...number)
+>text : string
+>byte : (self: string, i?: number, j?: number) => (number?, ...number)
+>1 : 1
+>2 : 2
+
+local codeType: number | nil = code;
+>codeType : number | nil
+>code : number | nil
+
+local explicitPiece: string = text.sub(text, 1, 5);
+>explicitPiece : string
+>text.sub(text, 1, 5) : string
+>text.sub : (self: string, i: number, j?: number) => string
+>text : string
+>sub : (self: string, i: number, j?: number) => string
+>text : string
+>1 : 1
+>5 : 5
+
+local explicitUpper: string = text.upper(text);
+>explicitUpper : string
+>text.upper(text) : string
+>text.upper : (self: string) => string
+>text : string
+>upper : (self: string) => string
+>text : string
+
+// The namespace form is unchanged: it names the receiver as an ordinary
+// argument.
+local nsPiece: string = string.sub(text, 1, 5);
+>nsPiece : string
+>string.sub(text, 1, 5) : string
+>string.sub : (value: string, i: number, j?: number) => string
+>string : StringLib
+>sub : (value: string, i: number, j?: number) => string
+>text : string
+>1 : 1
+>5 : 5
+
+// Arity and argument types are now measured against the receiver's slot, so a
+// colon call reports the WRITTEN argument that is wrong.
+text:sub("one");
+>text:sub("one") : string
+>text:sub : (self: string, i: number, j?: number) => string
+>text : string
+>sub : (self: string, i: number, j?: number) => string
+>"one" : "one"
+
+text:upper(1);
+>text:upper(1) : string
+>text:upper : (self: string) => string
+>text : string
+>upper : (self: string) => string
+>1 : 1
+
+// A dot call that forgets the receiver is a plain argument mismatch.
+text.upper();
+>text.upper() : string
+>text.upper : (self: string) => string
+>text : string
+>upper : (self: string) => string
+
+text.sub(1, 5);
+>text.sub(1, 5) : string
+>text.sub : (self: string, i: number, j?: number) => string
+>text : string
+>sub : (self: string, i: number, j?: number) => string
+>1 : 1
+>5 : 5
+
+declare handle: LuaFile;
+>handle : LuaFile
+
+local contents: string = handle:read("*a");
+>contents : string
+>handle:read("*a") : string
+>handle:read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>handle : LuaFile
+>read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>"*a" : "*a"
+
+local seekPosition = handle:seek("set", 0);
+>seekPosition : number | nil
+>handle:seek("set", 0) : number | nil
+>handle:seek : (self: LuaFile, whence?: "set" | "cur" | "end", offset?: number) => (number | nil, string?)
+>handle : LuaFile
+>seek : (self: LuaFile, whence?: "set" | "cur" | "end", offset?: number) => (number | nil, string?)
+>"set" : "set"
+>0 : 0
+
+handle:write("a", "b");
+>handle:write("a", "b") : LuaFile | nil
+>handle:write : (self: LuaFile, ...: string | number) => (LuaFile | nil, string?)
+>handle : LuaFile
+>write : (self: LuaFile, ...: string | number) => (LuaFile | nil, string?)
+>"a" : "a"
+>"b" : "b"
+
+handle:setvbuf("full", 4096);
+>handle:setvbuf("full", 4096) : boolean | nil
+>handle:setvbuf : (self: LuaFile, mode: "no" | "full" | "line", size?: number) => (boolean | nil, string?)
+>handle : LuaFile
+>setvbuf : (self: LuaFile, mode: "no" | "full" | "line", size?: number) => (boolean | nil, string?)
+>"full" : "full"
+>4096 : 4096
+
+handle:flush();
+>handle:flush() : boolean | nil
+>handle:flush : (self: LuaFile) => (boolean | nil, string?)
+>handle : LuaFile
+>flush : (self: LuaFile) => (boolean | nil, string?)
+
+handle:close();
+>handle:close() : boolean | nil
+>handle:close : (self: LuaFile) => (boolean | nil, string?)
+>handle : LuaFile
+>close : (self: LuaFile) => (boolean | nil, string?)
+
+handle.close(handle);
+>handle.close(handle) : boolean | nil
+>handle.close : (self: LuaFile) => (boolean | nil, string?)
+>handle : LuaFile
+>close : (self: LuaFile) => (boolean | nil, string?)
+>handle : LuaFile
+
+// The handle is not a read format.
+handle.read("*a");
+>handle.read("*a") : string | nil
+>handle.read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>handle : LuaFile
+>read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>"*a" : "*a"
+
+local buffer = require("string.buffer").new(64);
+>buffer : LuaStringBuffer
+>require("string.buffer").new(64) : LuaStringBuffer
+>require("string.buffer").new : { (size?: number, options?: StringBufferOptions): LuaStringBuffer; (options: StringBufferOptions): LuaStringBuffer; }
+>require("string.buffer") : StringBufferLib
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"string.buffer" : "string.buffer"
+>new : { (size?: number, options?: StringBufferOptions): LuaStringBuffer; (options: StringBufferOptions): LuaStringBuffer; }
+>64 : 64
+
+local chained: LuaStringBuffer = buffer:put("a"):put("b", "c");
+>chained : LuaStringBuffer
+>buffer:put("a"):put("b", "c") : LuaStringBuffer
+>buffer:put("a"):put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer:put("a") : LuaStringBuffer
+>buffer:put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer : LuaStringBuffer
+>put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>"a" : "a"
+>put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>"b" : "b"
+>"c" : "c"
+
+local built: string = buffer:tostring();
+>built : string
+>buffer:tostring() : string
+>buffer:tostring : (self: LuaStringBuffer) => string
+>buffer : LuaStringBuffer
+>tostring : (self: LuaStringBuffer) => string
+
+buffer:reset();
+>buffer:reset() : LuaStringBuffer
+>buffer:reset : (self: LuaStringBuffer) => LuaStringBuffer
+>buffer : LuaStringBuffer
+>reset : (self: LuaStringBuffer) => LuaStringBuffer
+
+buffer:free();
+>buffer:free() : void
+>buffer:free : (self: LuaStringBuffer) => void
+>buffer : LuaStringBuffer
+>free : (self: LuaStringBuffer) => void
+
+local explicitBuffer: LuaStringBuffer = buffer.put(buffer, "a");
+>explicitBuffer : LuaStringBuffer
+>buffer.put(buffer, "a") : LuaStringBuffer
+>buffer.put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer : LuaStringBuffer
+>put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer : LuaStringBuffer
+>"a" : "a"
+
+// A buffer method still needs its receiver.
+buffer.put("a");
+>buffer.put("a") : LuaStringBuffer
+>buffer.put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer : LuaStringBuffer
+>put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>"a" : "a"
+
+declare callback: LuaCallback;
+>callback : LuaCallback
+
+callback:set(function() return; end);
+>callback:set(function() return; end) : void
+>callback:set : (self: LuaCallback, fn: function) => void
+>callback : LuaCallback
+>set : (self: LuaCallback, fn: function) => void
+>function() return; end : () => void
+
+callback:free();
+>callback:free() : void
+>callback:free : (self: LuaCallback) => void
+>callback : LuaCallback
+>free : (self: LuaCallback) => void
+
+callback.free(callback);
+>callback.free(callback) : void
+>callback.free : (self: LuaCallback) => void
+>callback : LuaCallback
+>free : (self: LuaCallback) => void
+>callback : LuaCallback
+

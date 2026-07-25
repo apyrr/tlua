@@ -33,7 +33,12 @@ func isLuaRefiningCallSyntax(node *ast.Node) bool {
 type luaBuiltinCall struct {
 	name          string
 	callee        *ast.Node // the property-access callee, parentheses skipped
-	namespaceForm bool      // string.match(s, ...) as opposed to s.match(...)
+	namespaceForm bool      // string.match(s, ...) as opposed to s:match(...)
+	// explicitSelf marks the member form written with a dot rather than a
+	// colon: `s.match(s, p)`. The receiver is not passed implicitly there, so
+	// it occupies the first WRITTEN argument, and everything the refiners read
+	// positionally shifts by one -- exactly as it does in the namespace form.
+	explicitSelf bool
 }
 
 // resolveLuaBuiltinCall is the shared detector: a call to one of names,
@@ -58,7 +63,7 @@ func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, names []string, globalSy
 	member := c.getSymbolOfNameOrPropertyAccessExpression(callee)
 	ifaceType := interfaceType()
 	if member != nil && ifaceType != nil && c.getParentOfSymbol(c.getMergedSymbol(member)) == ifaceType.symbol && c.isLuaLibMember(member) {
-		return &luaBuiltinCall{name: name, callee: callee}
+		return &luaBuiltinCall{name: name, callee: callee, explicitSelf: !ast.IsLuaColonCall(node)}
 	}
 	return nil
 }

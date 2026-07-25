@@ -59,17 +59,74 @@ local bytesType: string | nil = bytes;
 declare f: LuaFile;
 >f : LuaFile
 
-local fileNumber = f.read("*n");
+local fileNumber = f:read("*n");
 >fileNumber : number | nil
->f.read("*n") : number | nil
->f.read : (...: LuaReadFormat) => (any, ...any)
+>f:read("*n") : number | nil
+>f:read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
 >f : LuaFile
->read : (...: LuaReadFormat) => (any, ...any)
+>read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
 >"*n" : "*n"
 
 local fileNumberType: number | nil = fileNumber;
 >fileNumberType : number | nil
 >fileNumber : number | nil
+
+// The explicit-self form writes the handle out, so the formats start one
+// argument later; the refinement follows.
+local explicitNumber = f.read(f, "*n");
+>explicitNumber : number | nil
+>f.read(f, "*n") : number | nil
+>f.read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>f : LuaFile
+>read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>f : LuaFile
+>"*n" : "*n"
+
+local explicitNumberType: number | nil = explicitNumber;
+>explicitNumberType : number | nil
+>explicitNumber : number | nil
+
+local explicitWhole = f.read(f, "*a");
+>explicitWhole : string
+>f.read(f, "*a") : string
+>f.read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>f : LuaFile
+>read : (self: LuaFile, ...: LuaReadFormat) => (any, ...any)
+>f : LuaFile
+>"*a" : "*a"
+
+local explicitWholeType: string = explicitWhole;
+>explicitWholeType : string
+>explicitWhole : string
+
+for fileLine in f:lines("*l") do
+>fileLine : string
+>f:lines("*l") : () => (string | nil)
+>f:lines : (self: LuaFile, ...: LuaReadFormat) => function
+>f : LuaFile
+>lines : (self: LuaFile, ...: LuaReadFormat) => function
+>"*l" : "*l"
+
+  local fileLineType: string | nil = fileLine;
+>fileLineType : string | nil
+>fileLine : string
+
+end
+
+for explicitLine in f.lines(f, "*a") do
+>explicitLine : string
+>f.lines(f, "*a") : () => (string)
+>f.lines : (self: LuaFile, ...: LuaReadFormat) => function
+>f : LuaFile
+>lines : (self: LuaFile, ...: LuaReadFormat) => function
+>f : LuaFile
+>"*a" : "*a"
+
+  local explicitLineType: string = explicitLine;
+>explicitLineType : string
+>explicitLine : string
+
+end
 
 for line in io.lines() do
 >line : string

@@ -18,8 +18,11 @@ func (c *Checker) getLuaIOCall(node *ast.Node) *luaIOCall {
 		return nil
 	}
 	formatIndex := 0
-	if call.name == "lines" && call.namespaceForm {
+	switch {
+	case call.name == "lines" && call.namespaceForm:
 		formatIndex = 1 // The namespace form reserves its first argument for the filename.
+	case call.explicitSelf:
+		formatIndex = 1 // `f.read(f, "*a")` writes the handle out; `f:read("*a")` does not.
 	}
 	return &luaIOCall{name: call.name, formatIndex: formatIndex}
 }
