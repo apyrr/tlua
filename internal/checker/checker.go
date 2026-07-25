@@ -8792,7 +8792,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 		if indexInfo.isReadonly && (ast.IsAssignmentTarget(node) || isDeleteTarget(node)) {
 			c.error(node, diagnostics.Index_signature_in_type_0_only_permits_reading, c.TypeToString(apparentType))
 		}
-		propType = indexInfo.valueType
+		propType = c.getIndexSignatureWriteType(indexInfo.valueType, node)
 		if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue && getAssignmentTargetKind(node) != AssignmentKindDefinite {
 			propType = c.getUnionType([]*Type{propType, c.missingType})
 		}
@@ -23410,10 +23410,11 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 				}
 			}
 			c.errorIfWritingToReadonlyIndex(indexInfo, objectType, accessExpression)
+			valueType := c.getIndexSignatureWriteType(indexInfo.valueType, accessExpression)
 			if accessFlags&AccessFlagsIncludeUndefined != 0 {
-				return c.getUnionType([]*Type{indexInfo.valueType, c.missingType})
+				return c.getUnionType([]*Type{valueType, c.missingType})
 			}
-			return indexInfo.valueType
+			return valueType
 		}
 		// A write to a key the merged shape misses runs __newindex, exactly as for a named
 		// property. The Definite gate keeps a compound-assignment read erroring, and the
@@ -23556,6 +23557,24 @@ func (c *Checker) errorIfWritingToReadonlyIndex(indexInfo *IndexInfo, objectType
 	if indexInfo != nil && indexInfo.isReadonly && accessExpression != nil && (ast.IsAssignmentTarget(accessExpression) || isDeleteTarget(accessExpression)) {
 		c.error(accessExpression, diagnostics.Index_signature_in_type_0_only_permits_reading, c.TypeToString(objectType))
 	}
+}
+
+// A Lua table stores no nil value, so `t[k] = nil` is how a key is removed rather than
+// a value the key holds. A write through an index signature is therefore checked against
+// the value type widened with nil, and only that write is: a read keeps the declared
+// value type. A declared property is not an index signature and never reaches here, so
+// `t.declared = nil` still errors. A readonly index signature has already been reported
+// by errorIfWritingToReadonlyIndex; widening only spares it the redundant second error.
+//
+// The Definite gate is exact for Lua, whose only stores are `=` and the generic-for
+// binding, neither of which reads the key first. It is not exact for the operator
+// assignments tlua still inherits from TypeScript and does not emit -- `&&=` and `||=`
+// read the key yet count as Definite -- so removing those forms is what keeps it true.
+func (c *Checker) getIndexSignatureWriteType(valueType *Type, accessExpression *ast.Node) *Type {
+	if accessExpression == nil || getAssignmentTargetKind(accessExpression) != AssignmentKindDefinite {
+		return valueType
+	}
+	return c.getUnionType([]*Type{valueType, c.nilType})
 }
 
 func (c *Checker) isThisTypeAccess(name *ast.Node, parent *ast.Symbol) bool {

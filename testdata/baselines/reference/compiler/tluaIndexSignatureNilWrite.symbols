@@ -1,0 +1,219 @@
+//// [tests/cases/compiler/tluaIndexSignatureNilWrite.tlua] ////
+
+=== tluaIndexSignatureNilWrite.tlua ===
+interface Player {
+>Player : Symbol(Player, Decl(tluaIndexSignatureNilWrite.tlua, 0, 0))
+
+    readonly name: string;
+>name : Symbol(Player.name, Decl(tluaIndexSignatureNilWrite.tlua, 0, 18))
+}
+
+declare ply: Player;
+>ply : Symbol(ply, Decl(tluaIndexSignatureNilWrite.tlua, 4, 7))
+>Player : Symbol(Player, Decl(tluaIndexSignatureNilWrite.tlua, 0, 0))
+
+// Writing nil to an index-signature key is the Lua idiom for removing it.
+local loadQueue: Table<Player, true> = {};
+>loadQueue : Symbol(loadQueue, Decl(tluaIndexSignatureNilWrite.tlua, 7, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>Player : Symbol(Player, Decl(tluaIndexSignatureNilWrite.tlua, 0, 0))
+
+loadQueue[ply] = true;
+>loadQueue : Symbol(loadQueue, Decl(tluaIndexSignatureNilWrite.tlua, 7, 5))
+>ply : Symbol(ply, Decl(tluaIndexSignatureNilWrite.tlua, 4, 7))
+
+loadQueue[ply] = nil;
+>loadQueue : Symbol(loadQueue, Decl(tluaIndexSignatureNilWrite.tlua, 7, 5))
+>ply : Symbol(ply, Decl(tluaIndexSignatureNilWrite.tlua, 4, 7))
+
+local counts: Table<string, number> = {};
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+counts["a"] = 1;
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+
+counts["a"] = nil;
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+
+counts.a = nil;
+>counts.a : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+>a : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+// The value type is otherwise unchanged.
+counts["a"] = "text";
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+
+// A declared property is not an index signature: nil stays an error.
+interface Named {
+>Named : Symbol(Named, Decl(tluaIndexSignatureNilWrite.tlua, 17, 21))
+
+    label: string;
+>label : Symbol(Named.label, Decl(tluaIndexSignatureNilWrite.tlua, 20, 17))
+
+    [key: string]: string;
+>key : Symbol(key, Decl(tluaIndexSignatureNilWrite.tlua, 22, 5))
+}
+declare named: Named;
+>named : Symbol(named, Decl(tluaIndexSignatureNilWrite.tlua, 24, 7))
+>Named : Symbol(Named, Decl(tluaIndexSignatureNilWrite.tlua, 17, 21))
+
+named.label = nil;
+>named.label : Symbol(Named.label, Decl(tluaIndexSignatureNilWrite.tlua, 20, 17))
+>named : Symbol(named, Decl(tluaIndexSignatureNilWrite.tlua, 24, 7))
+>label : Symbol(Named.label, Decl(tluaIndexSignatureNilWrite.tlua, 20, 17))
+
+named["label"] = nil;
+>named : Symbol(named, Decl(tluaIndexSignatureNilWrite.tlua, 24, 7))
+>"label" : Symbol(Named.label, Decl(tluaIndexSignatureNilWrite.tlua, 20, 17))
+
+named.other = nil;
+>named.other : Symbol(Named.__index, Decl(tluaIndexSignatureNilWrite.tlua, 21, 18))
+>named : Symbol(named, Decl(tluaIndexSignatureNilWrite.tlua, 24, 7))
+>other : Symbol(Named.__index, Decl(tluaIndexSignatureNilWrite.tlua, 21, 18))
+
+// An optional declared property already admits nil.
+interface Optional {
+>Optional : Symbol(Optional, Decl(tluaIndexSignatureNilWrite.tlua, 27, 18))
+
+    label?: string;
+>label : Symbol(Optional.label, Decl(tluaIndexSignatureNilWrite.tlua, 30, 20))
+}
+declare optional: Optional;
+>optional : Symbol(optional, Decl(tluaIndexSignatureNilWrite.tlua, 33, 7))
+>Optional : Symbol(Optional, Decl(tluaIndexSignatureNilWrite.tlua, 27, 18))
+
+optional.label = nil;
+>optional.label : Symbol(Optional.label, Decl(tluaIndexSignatureNilWrite.tlua, 30, 20))
+>optional : Symbol(optional, Decl(tluaIndexSignatureNilWrite.tlua, 33, 7))
+>label : Symbol(Optional.label, Decl(tluaIndexSignatureNilWrite.tlua, 30, 20))
+
+// A readonly index signature still rejects the write.
+interface Frozen {
+>Frozen : Symbol(Frozen, Decl(tluaIndexSignatureNilWrite.tlua, 34, 21))
+
+    readonly [key: string]: number;
+>key : Symbol(key, Decl(tluaIndexSignatureNilWrite.tlua, 38, 14))
+}
+declare frozen: Frozen;
+>frozen : Symbol(frozen, Decl(tluaIndexSignatureNilWrite.tlua, 40, 7))
+>Frozen : Symbol(Frozen, Decl(tluaIndexSignatureNilWrite.tlua, 34, 21))
+
+frozen["a"] = nil;
+>frozen : Symbol(frozen, Decl(tluaIndexSignatureNilWrite.tlua, 40, 7))
+
+// Reads are unaffected: the element type has no nil.
+local present: true = loadQueue[ply];
+>present : Symbol(present, Decl(tluaIndexSignatureNilWrite.tlua, 44, 5))
+>loadQueue : Symbol(loadQueue, Decl(tluaIndexSignatureNilWrite.tlua, 7, 5))
+>ply : Symbol(ply, Decl(tluaIndexSignatureNilWrite.tlua, 4, 7))
+
+local count: number = counts["a"];
+>count : Symbol(count, Decl(tluaIndexSignatureNilWrite.tlua, 45, 5))
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+
+// A removal does not narrow the later read to nil: the declared value type governs.
+counts["b"] = nil;
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+
+local afterRemoval: number = counts["b"];
+>afterRemoval : Symbol(afterRemoval, Decl(tluaIndexSignatureNilWrite.tlua, 49, 5))
+>counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
+
+// The widened type is the assignment's contextual type, so a nil-bearing union still
+// checks its non-nil constituent.
+local handlers: Table<string, (x: number) => void> = {};
+>handlers : Symbol(handlers, Decl(tluaIndexSignatureNilWrite.tlua, 53, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 53, 31))
+
+handlers["run"] = function(x)
+>handlers : Symbol(handlers, Decl(tluaIndexSignatureNilWrite.tlua, 53, 5))
+>x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 54, 27))
+
+    local n: number = x;
+>n : Symbol(n, Decl(tluaIndexSignatureNilWrite.tlua, 55, 9))
+>x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 54, 27))
+
+    use(n);
+>use : Symbol(use, Decl(tluaIndexSignatureNilWrite.tlua, 89, 3))
+>n : Symbol(n, Decl(tluaIndexSignatureNilWrite.tlua, 55, 9))
+
+end;
+
+// An array index signature removes an element the same way.
+declare list: Array<string>;
+>list : Symbol(list, Decl(tluaIndexSignatureNilWrite.tlua, 60, 7))
+>Array : Symbol(Array, Decl(lib.luajit.d.tlua, --, --))
+
+list[1] = nil;
+>list : Symbol(list, Decl(tluaIndexSignatureNilWrite.tlua, 60, 7))
+
+// A tuple addresses element positions rather than open keys, so it keeps rejecting nil --
+// including in a variadic tail, which is unbounded like an array but still carries a
+// declared element type. Removal is an `Array<T>` / `Table<K, V>` affordance; a tuple is a
+// shape contract, and a key access on one never reaches the index-signature path above.
+local pair: [string, number] = {"a", 1};
+>pair : Symbol(pair, Decl(tluaIndexSignatureNilWrite.tlua, 67, 5))
+
+pair[1] = nil;
+>pair : Symbol(pair, Decl(tluaIndexSignatureNilWrite.tlua, 67, 5))
+>1 : Symbol(1)
+
+local variadic: [string, ...number[]] = {"a"};
+>variadic : Symbol(variadic, Decl(tluaIndexSignatureNilWrite.tlua, 69, 5))
+
+variadic[3] = nil;
+>variadic : Symbol(variadic, Decl(tluaIndexSignatureNilWrite.tlua, 69, 5))
+
+// A mapped type over a finite key union declares properties rather than opening the
+// table, so its keys keep rejecting nil too.
+type Flags = { [P in "a" | "b"]: boolean };
+>Flags : Symbol(Flags, Decl(tluaIndexSignatureNilWrite.tlua, 70, 18))
+>P : Symbol(P, Decl(tluaIndexSignatureNilWrite.tlua, 74, 16))
+
+declare flags: Flags;
+>flags : Symbol(flags, Decl(tluaIndexSignatureNilWrite.tlua, 75, 7))
+>Flags : Symbol(Flags, Decl(tluaIndexSignatureNilWrite.tlua, 70, 18))
+
+flags.a = nil;
+>flags.a : Symbol(a)
+>flags : Symbol(flags, Decl(tluaIndexSignatureNilWrite.tlua, 75, 7))
+>a : Symbol(a)
+
+// A union of tables removes through the union of their index signatures.
+declare either: Table<string, number> | Table<string, string>;
+>either : Symbol(either, Decl(tluaIndexSignatureNilWrite.tlua, 79, 7))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+either["k"] = nil;
+>either : Symbol(either, Decl(tluaIndexSignatureNilWrite.tlua, 79, 7))
+
+// Known gap: a generic index defers the access to `Table<K, V>[K]`, whose write type is
+// resolved by the relater from a constraint with no access expression to gate on. Widening
+// it there would also widen every other assignment whose target is an indexed access -- an
+// argument passed to a `T[K]` parameter would start accepting nil -- so the removal idiom
+// stops at the type-parameter boundary and a generic helper needs `Table<K, V | nil>`.
+function clear<K, V>(t: Table<K, V>, k: K): void
+>clear : Symbol(clear, Decl(tluaIndexSignatureNilWrite.tlua, 80, 18))
+>K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 87, 15))
+>V : Symbol(V, Decl(tluaIndexSignatureNilWrite.tlua, 87, 17))
+>t : Symbol(t, Decl(tluaIndexSignatureNilWrite.tlua, 87, 21))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 87, 15))
+>V : Symbol(V, Decl(tluaIndexSignatureNilWrite.tlua, 87, 17))
+>k : Symbol(k, Decl(tluaIndexSignatureNilWrite.tlua, 87, 36))
+>K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 87, 15))
+
+    t[k] = nil;
+>t : Symbol(t, Decl(tluaIndexSignatureNilWrite.tlua, 87, 21))
+>k : Symbol(k, Decl(tluaIndexSignatureNilWrite.tlua, 87, 36))
+
+end
+
+declare function use(value: unknown): void;
+>use : Symbol(use, Decl(tluaIndexSignatureNilWrite.tlua, 89, 3))
+>value : Symbol(value, Decl(tluaIndexSignatureNilWrite.tlua, 91, 21))
+

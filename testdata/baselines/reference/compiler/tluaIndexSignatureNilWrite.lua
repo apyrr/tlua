@@ -1,0 +1,145 @@
+//// [tests/cases/compiler/tluaIndexSignatureNilWrite.tlua] ////
+
+//// [tluaIndexSignatureNilWrite.tlua]
+interface Player {
+    readonly name: string;
+}
+
+declare ply: Player;
+
+// Writing nil to an index-signature key is the Lua idiom for removing it.
+local loadQueue: Table<Player, true> = {};
+loadQueue[ply] = true;
+loadQueue[ply] = nil;
+
+local counts: Table<string, number> = {};
+counts["a"] = 1;
+counts["a"] = nil;
+counts.a = nil;
+
+// The value type is otherwise unchanged.
+counts["a"] = "text";
+
+// A declared property is not an index signature: nil stays an error.
+interface Named {
+    label: string;
+    [key: string]: string;
+}
+declare named: Named;
+named.label = nil;
+named["label"] = nil;
+named.other = nil;
+
+// An optional declared property already admits nil.
+interface Optional {
+    label?: string;
+}
+declare optional: Optional;
+optional.label = nil;
+
+// A readonly index signature still rejects the write.
+interface Frozen {
+    readonly [key: string]: number;
+}
+declare frozen: Frozen;
+frozen["a"] = nil;
+
+// Reads are unaffected: the element type has no nil.
+local present: true = loadQueue[ply];
+local count: number = counts["a"];
+
+// A removal does not narrow the later read to nil: the declared value type governs.
+counts["b"] = nil;
+local afterRemoval: number = counts["b"];
+
+// The widened type is the assignment's contextual type, so a nil-bearing union still
+// checks its non-nil constituent.
+local handlers: Table<string, (x: number) => void> = {};
+handlers["run"] = function(x)
+    local n: number = x;
+    use(n);
+end;
+
+// An array index signature removes an element the same way.
+declare list: Array<string>;
+list[1] = nil;
+
+// A tuple addresses element positions rather than open keys, so it keeps rejecting nil --
+// including in a variadic tail, which is unbounded like an array but still carries a
+// declared element type. Removal is an `Array<T>` / `Table<K, V>` affordance; a tuple is a
+// shape contract, and a key access on one never reaches the index-signature path above.
+local pair: [string, number] = {"a", 1};
+pair[1] = nil;
+local variadic: [string, ...number[]] = {"a"};
+variadic[3] = nil;
+
+// A mapped type over a finite key union declares properties rather than opening the
+// table, so its keys keep rejecting nil too.
+type Flags = { [P in "a" | "b"]: boolean };
+declare flags: Flags;
+flags.a = nil;
+
+// A union of tables removes through the union of their index signatures.
+declare either: Table<string, number> | Table<string, string>;
+either["k"] = nil;
+
+// Known gap: a generic index defers the access to `Table<K, V>[K]`, whose write type is
+// resolved by the relater from a constraint with no access expression to gate on. Widening
+// it there would also widen every other assignment whose target is an indexed access -- an
+// argument passed to a `T[K]` parameter would start accepting nil -- so the removal idiom
+// stops at the type-parameter boundary and a generic helper needs `Table<K, V | nil>`.
+function clear<K, V>(t: Table<K, V>, k: K): void
+    t[k] = nil;
+end
+
+declare function use(value: unknown): void;
+
+
+//// [tluaIndexSignatureNilWrite.lua]
+-- Writing nil to an index-signature key is the Lua idiom for removing it.
+local loadQueue = {};
+loadQueue[ply] = true;
+loadQueue[ply] = nil;
+local counts = {};
+counts["a"] = 1;
+counts["a"] = nil;
+counts.a = nil;
+-- The value type is otherwise unchanged.
+counts["a"] = "text";
+named.label = nil;
+named["label"] = nil;
+named.other = nil;
+optional.label = nil;
+frozen["a"] = nil;
+-- Reads are unaffected: the element type has no nil.
+local present = loadQueue[ply];
+local count = counts["a"];
+-- A removal does not narrow the later read to nil: the declared value type governs.
+counts["b"] = nil;
+local afterRemoval = counts["b"];
+-- The widened type is the assignment's contextual type, so a nil-bearing union still
+-- checks its non-nil constituent.
+local handlers = {};
+handlers["run"] = function(x)
+  local n = x;
+  use(n);
+end;
+list[1] = nil;
+-- A tuple addresses element positions rather than open keys, so it keeps rejecting nil --
+-- including in a variadic tail, which is unbounded like an array but still carries a
+-- declared element type. Removal is an `Array<T>` / `Table<K, V>` affordance; a tuple is a
+-- shape contract, and a key access on one never reaches the index-signature path above.
+local pair = { "a", 1 };
+pair[1] = nil;
+local variadic = { "a" };
+variadic[3] = nil;
+flags.a = nil;
+either["k"] = nil;
+-- Known gap: a generic index defers the access to `Table<K, V>[K]`, whose write type is
+-- resolved by the relater from a constraint with no access expression to gate on. Widening
+-- it there would also widen every other assignment whose target is an indexed access -- an
+-- argument passed to a `T[K]` parameter would start accepting nil -- so the removal idiom
+-- stops at the type-parameter boundary and a generic helper needs `Table<K, V | nil>`.
+function clear(t, k)
+  t[k] = nil;
+end

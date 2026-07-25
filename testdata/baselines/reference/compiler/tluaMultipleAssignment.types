@@ -2552,9 +2552,9 @@ IndexedContractRoot = {} as unknown as { [key: string]: string };
 
 IndexedContractRoot.bar = 1;
 >IndexedContractRoot.bar = 1 : 1
->IndexedContractRoot.bar : string
+>IndexedContractRoot.bar : string | nil
 >IndexedContractRoot : { [key: string]: string; }
->bar : string
+>bar : string | nil
 >1 : 1
 
 UnionContractRoot = {} as unknown as ({ bar: string } | { foo: number });
@@ -2827,11 +2827,11 @@ local computedAliasKey = "value";
 
 ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] = 1, 2;
 >ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] = 1, 2 : 1
->ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] : 1 | 2, 1 | 2
->ComputedAliasRoot[computedAliasKey] : 1 | 2
+>ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] : 1 | 2 | nil, 1 | 2 | nil
+>ComputedAliasRoot[computedAliasKey] : 1 | 2 | nil
 >ComputedAliasRoot : { [key: string]: 1 | 2; }
 >computedAliasKey : string
->computedAliasRoot[computedAliasKey] : 1 | 2
+>computedAliasRoot[computedAliasKey] : 1 | 2 | nil
 >computedAliasRoot : { [key: string]: 1 | 2; }
 >computedAliasKey : string
 >1, 2 : 1, 2

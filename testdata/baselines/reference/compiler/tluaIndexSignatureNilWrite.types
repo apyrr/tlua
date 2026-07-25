@@ -1,0 +1,251 @@
+//// [tests/cases/compiler/tluaIndexSignatureNilWrite.tlua] ////
+
+=== tluaIndexSignatureNilWrite.tlua ===
+interface Player {
+    readonly name: string;
+>name : string
+}
+
+declare ply: Player;
+>ply : Player
+
+// Writing nil to an index-signature key is the Lua idiom for removing it.
+local loadQueue: Table<Player, true> = {};
+>loadQueue : Table<Player, true>
+>true : true
+>{} : {}
+
+loadQueue[ply] = true;
+>loadQueue[ply] = true : true
+>loadQueue[ply] : true | nil
+>loadQueue : Table<Player, true>
+>ply : Player
+>true : true
+
+loadQueue[ply] = nil;
+>loadQueue[ply] = nil : nil
+>loadQueue[ply] : true | nil
+>loadQueue : Table<Player, true>
+>ply : Player
+
+local counts: Table<string, number> = {};
+>counts : Table<string, number>
+>{} : {}
+
+counts["a"] = 1;
+>counts["a"] = 1 : 1
+>counts["a"] : number | nil
+>counts : Table<string, number>
+>"a" : "a"
+>1 : 1
+
+counts["a"] = nil;
+>counts["a"] = nil : nil
+>counts["a"] : number | nil
+>counts : Table<string, number>
+>"a" : "a"
+
+counts.a = nil;
+>counts.a = nil : nil
+>counts.a : number | nil
+>counts : Table<string, number>
+>a : number | nil
+
+// The value type is otherwise unchanged.
+counts["a"] = "text";
+>counts["a"] = "text" : "text"
+>counts["a"] : number | nil
+>counts : Table<string, number>
+>"a" : "a"
+>"text" : "text"
+
+// A declared property is not an index signature: nil stays an error.
+interface Named {
+    label: string;
+>label : string
+
+    [key: string]: string;
+>key : string
+}
+declare named: Named;
+>named : Named
+
+named.label = nil;
+>named.label = nil : nil
+>named.label : string
+>named : Named
+>label : string
+
+named["label"] = nil;
+>named["label"] = nil : nil
+>named["label"] : string
+>named : Named
+>"label" : "label"
+
+named.other = nil;
+>named.other = nil : nil
+>named.other : string | nil
+>named : Named
+>other : string | nil
+
+// An optional declared property already admits nil.
+interface Optional {
+    label?: string;
+>label : string | nil
+}
+declare optional: Optional;
+>optional : Optional
+
+optional.label = nil;
+>optional.label = nil : nil
+>optional.label : string | nil
+>optional : Optional
+>label : string | nil
+
+// A readonly index signature still rejects the write.
+interface Frozen {
+    readonly [key: string]: number;
+>key : string
+}
+declare frozen: Frozen;
+>frozen : Frozen
+
+frozen["a"] = nil;
+>frozen["a"] = nil : nil
+>frozen["a"] : number | nil
+>frozen : Frozen
+>"a" : "a"
+
+// Reads are unaffected: the element type has no nil.
+local present: true = loadQueue[ply];
+>present : true
+>true : true
+>loadQueue[ply] : true
+>loadQueue : Table<Player, true>
+>ply : Player
+
+local count: number = counts["a"];
+>count : number
+>counts["a"] : number
+>counts : Table<string, number>
+>"a" : "a"
+
+// A removal does not narrow the later read to nil: the declared value type governs.
+counts["b"] = nil;
+>counts["b"] = nil : nil
+>counts["b"] : number | nil
+>counts : Table<string, number>
+>"b" : "b"
+
+local afterRemoval: number = counts["b"];
+>afterRemoval : number
+>counts["b"] : number
+>counts : Table<string, number>
+>"b" : "b"
+
+// The widened type is the assignment's contextual type, so a nil-bearing union still
+// checks its non-nil constituent.
+local handlers: Table<string, (x: number) => void> = {};
+>handlers : Table<string, (x: number) => void>
+>x : number
+>{} : {}
+
+handlers["run"] = function(x)
+>handlers["run"] = function(x)    local n: number = x;    use(n);end : (x: number) => void
+>handlers["run"] : ((x: number) => void) | nil
+>handlers : Table<string, (x: number) => void>
+>"run" : "run"
+>function(x)    local n: number = x;    use(n);end : (x: number) => void
+>x : number
+
+    local n: number = x;
+>n : number
+>x : number
+
+    use(n);
+>use(n) : void
+>use : (value: unknown) => void
+>n : number
+
+end;
+
+// An array index signature removes an element the same way.
+declare list: Array<string>;
+>list : Array<string>
+
+list[1] = nil;
+>list[1] = nil : nil
+>list[1] : string | nil
+>list : Array<string>
+>1 : 1
+
+// A tuple addresses element positions rather than open keys, so it keeps rejecting nil --
+// including in a variadic tail, which is unbounded like an array but still carries a
+// declared element type. Removal is an `Array<T>` / `Table<K, V>` affordance; a tuple is a
+// shape contract, and a key access on one never reaches the index-signature path above.
+local pair: [string, number] = {"a", 1};
+>pair : [string, number]
+>{"a", 1} : [string, number]
+
+pair[1] = nil;
+>pair[1] = nil : nil
+>pair[1] : string
+>pair : [string, number]
+>1 : 1
+
+local variadic: [string, ...number[]] = {"a"};
+>variadic : [string, ...number[]]
+>{"a"} : [string]
+
+variadic[3] = nil;
+>variadic[3] = nil : nil
+>variadic[3] : number
+>variadic : [string, ...number[]]
+>3 : 3
+
+// A mapped type over a finite key union declares properties rather than opening the
+// table, so its keys keep rejecting nil too.
+type Flags = { [P in "a" | "b"]: boolean };
+>Flags : Flags
+
+declare flags: Flags;
+>flags : Flags
+
+flags.a = nil;
+>flags.a = nil : nil
+>flags.a : boolean
+>flags : Flags
+>a : boolean
+
+// A union of tables removes through the union of their index signatures.
+declare either: Table<string, number> | Table<string, string>;
+>either : Table<string, string> | Table<string, number>
+
+either["k"] = nil;
+>either["k"] = nil : nil
+>either["k"] : string | number | nil
+>either : Table<string, string> | Table<string, number>
+>"k" : "k"
+
+// Known gap: a generic index defers the access to `Table<K, V>[K]`, whose write type is
+// resolved by the relater from a constraint with no access expression to gate on. Widening
+// it there would also widen every other assignment whose target is an indexed access -- an
+// argument passed to a `T[K]` parameter would start accepting nil -- so the removal idiom
+// stops at the type-parameter boundary and a generic helper needs `Table<K, V | nil>`.
+function clear<K, V>(t: Table<K, V>, k: K): void
+>clear : <K, V>(t: Table<K, V>, k: K) => void
+>t : Table<K, V>
+>k : K
+
+    t[k] = nil;
+>t[k] = nil : nil
+>t[k] : Table<K, V>[K]
+>t : Table<K, V>
+>k : K
+
+end
+
+declare function use(value: unknown): void;
+>use : (value: unknown) => void
+>value : unknown
+
