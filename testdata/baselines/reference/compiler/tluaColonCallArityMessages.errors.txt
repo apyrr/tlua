@@ -1,0 +1,77 @@
+tluaColonCallArityMessages.tlua(10,12): error TLUA2554: Expected 0 arguments, but got 1.
+tluaColonCallArityMessages.tlua(11,10): error TLUA2554: Expected 0 arguments, but got 2.
+tluaColonCallArityMessages.tlua(14,6): error TLUA2554: Expected 1-2 arguments, but got 0.
+tluaColonCallArityMessages.tlua(18,6): error TLUA2554: Expected 1 arguments, but got 0.
+tluaColonCallArityMessages.tlua(19,6): error TLUA2554: Expected 2-3 arguments, but got 1.
+tluaColonCallArityMessages.tlua(23,8): error TLUA2554: Expected 2-3 arguments, but got 1.
+tluaColonCallArityMessages.tlua(27,8): error TLUA2555: Expected at least 1 arguments, but got 0.
+tluaColonCallArityMessages.tlua(28,8): error TLUA2555: Expected at least 2 arguments, but got 1.
+tluaColonCallArityMessages.tlua(32,1): error TLUA2554: Expected 1 arguments, but got 2.
+tluaColonCallArityMessages.tlua(33,1): error TLUA2554: Expected 1 arguments, but got 0.
+tluaColonCallArityMessages.tlua(34,1): error TLUA2554: Expected 2 arguments, but got 3.
+
+
+==== tluaColonCallArityMessages.tlua (11 errors) ====
+    // A colon call passes its receiver as the implicit first argument, so the
+    // effective argument list the checker matches against the signature is one
+    // longer than the source. An arity message counts what was WRITTEN, or it
+    // describes an argument list the reader cannot see: `text:upper(1)` takes no
+    // written arguments at all, so "expected 1, got 2" names neither the slot the
+    // user can fill nor the argument they typed.
+    
+    local text: string = "hello";
+    
+    text:upper(1);
+               ~
+!!! error TLUA2554: Expected 0 arguments, but got 1.
+    text:len(1, 2);
+             ~~~~
+!!! error TLUA2554: Expected 0 arguments, but got 2.
+    
+    // Too few, measured the same way: `sub` takes `self` plus a start index.
+    text:sub();
+         ~~~
+!!! error TLUA2554: Expected 1-2 arguments, but got 0.
+!!! related TLUA6210 lib.luajit.d.tlua:273:23: An argument for 'i' was not provided.
+    
+    // The dot form writes its receiver, so counting it is correct there -- these
+    // messages must NOT shift.
+    text.upper();
+         ~~~~~
+!!! error TLUA2554: Expected 1 arguments, but got 0.
+!!! related TLUA6210 lib.luajit.d.tlua:274:11: An argument for 'self' was not provided.
+    text.sub(text);
+         ~~~
+!!! error TLUA2554: Expected 2-3 arguments, but got 1.
+!!! related TLUA6210 lib.luajit.d.tlua:273:23: An argument for 'i' was not provided.
+    
+    // The namespace form never had a receiver to hide.
+    local nsPiece: string = string.sub(text, 1, 5);
+    string.sub(text);
+           ~~~
+!!! error TLUA2554: Expected 2-3 arguments, but got 1.
+!!! related TLUA6210 lib.luajit.d.tlua:290:24: An argument for 'i' was not provided.
+    
+    declare buffer: LuaStringBuffer;
+    // A rest parameter reports a minimum, and the receiver comes out of that too.
+    buffer:put();
+           ~~~
+!!! error TLUA2555: Expected at least 1 arguments, but got 0.
+!!! related TLUA6210 lib.luajit.d.tlua:613:32: An argument for 'value' was not provided.
+    buffer.put(buffer);
+           ~~~
+!!! error TLUA2555: Expected at least 2 arguments, but got 1.
+!!! related TLUA6210 lib.luajit.d.tlua:613:32: An argument for 'value' was not provided.
+    
+    // string.format checks arity against the format string's specifiers, on its
+    // own path -- the receiver has to come out of both counts there as well.
+    ("%d"):format(1, 2);
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2554: Expected 1 arguments, but got 2.
+    ("%d"):format();
+    ~~~~~~~~~~~~~~~
+!!! error TLUA2554: Expected 1 arguments, but got 0.
+    string.format("%d", 1, 2);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2554: Expected 2 arguments, but got 3.
+    

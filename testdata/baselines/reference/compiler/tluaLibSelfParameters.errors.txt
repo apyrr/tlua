@@ -1,5 +1,5 @@
 tluaLibSelfParameters.tlua(25,10): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaLibSelfParameters.tlua(26,12): error TLUA2554: Expected 1 arguments, but got 2.
+tluaLibSelfParameters.tlua(26,12): error TLUA2554: Expected 0 arguments, but got 1.
 tluaLibSelfParameters.tlua(28,6): error TLUA2554: Expected 1 arguments, but got 0.
 tluaLibSelfParameters.tlua(29,10): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
 tluaLibSelfParameters.tlua(40,13): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'LuaFile'.
@@ -36,7 +36,7 @@ tluaLibSelfParameters.tlua(49,8): error TLUA2555: Expected at least 2 arguments,
 !!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     text:upper(1);
                ~
-!!! error TLUA2554: Expected 1 arguments, but got 2.
+!!! error TLUA2554: Expected 0 arguments, but got 1.
     // A dot call that forgets the receiver is a plain argument mismatch.
     text.upper();
          ~~~~~

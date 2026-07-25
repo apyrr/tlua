@@ -5,7 +5,7 @@ tluaStringFormat.tlua(18,21): error TLUA2345: Argument of type 'boolean' is not 
 tluaStringFormat.tlua(31,35): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 tluaStringFormat.tlua(32,1): error TLUA2554: Expected 2 arguments, but got 3.
 tluaStringFormat.tlua(37,21): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaStringFormat.tlua(38,1): error TLUA2554: Expected 2 arguments, but got 3.
+tluaStringFormat.tlua(38,1): error TLUA2554: Expected 1 arguments, but got 2.
 
 
 ==== tluaStringFormat.tlua (8 errors) ====
@@ -62,7 +62,7 @@ tluaStringFormat.tlua(38,1): error TLUA2554: Expected 2 arguments, but got 3.
 !!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     methodFormat:format(2, "extra");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TLUA2554: Expected 2 arguments, but got 3.
+!!! error TLUA2554: Expected 1 arguments, but got 2.
     
     local stringAlias = string;
     stringAlias.format("%d", "aliased", "extra");

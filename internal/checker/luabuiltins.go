@@ -13,6 +13,20 @@ import (
 // SYMBOL IDENTITY -- the namespace global or the bundled interface member --
 // so shadowed and aliased names never refine.
 
+// luaUnwrittenArgumentCount reports how many of a call's effective arguments the
+// user did not write. A colon call passes its receiver as the leading argument --
+// getEffectiveCallArguments prepends it -- so the effective list is one longer
+// than the source. Counts that are only compared against each other can ignore
+// this; counts the user READS cannot, or an arity message describes a list they
+// did not type: `text:upper(1)` reporting "Expected 1 arguments, but got 2" when
+// one was written and none can be.
+func luaUnwrittenArgumentCount(node *ast.Node) int {
+	if ast.IsLuaColonCall(node) {
+		return 1
+	}
+	return 0
+}
+
 // luaRefiningMemberNames pre-filters the quick-path guard: only calls to
 // members with these names can carry a type-changing Lua refinement.
 // (format is absent: it only adds diagnostics, never changes the type.)

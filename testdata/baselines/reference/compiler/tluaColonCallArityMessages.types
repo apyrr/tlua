@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/tluaColonCallArityMessages.tlua] ////
+
+=== tluaColonCallArityMessages.tlua ===
+// A colon call passes its receiver as the implicit first argument, so the
+// effective argument list the checker matches against the signature is one
+// longer than the source. An arity message counts what was WRITTEN, or it
+// describes an argument list the reader cannot see: `text:upper(1)` takes no
+// written arguments at all, so "expected 1, got 2" names neither the slot the
+// user can fill nor the argument they typed.
+
+local text: string = "hello";
+>text : string
+>"hello" : "hello"
+
+text:upper(1);
+>text:upper(1) : string
+>text:upper : (self: string) => string
+>text : string
+>upper : (self: string) => string
+>1 : 1
+
+text:len(1, 2);
+>text:len(1, 2) : number
+>text:len : (self: string) => number
+>text : string
+>len : (self: string) => number
+>1 : 1
+>2 : 2
+
+// Too few, measured the same way: `sub` takes `self` plus a start index.
+text:sub();
+>text:sub() : string
+>text:sub : (self: string, i: number, j?: number) => string
+>text : string
+>sub : (self: string, i: number, j?: number) => string
+
+// The dot form writes its receiver, so counting it is correct there -- these
+// messages must NOT shift.
+text.upper();
+>text.upper() : string
+>text.upper : (self: string) => string
+>text : string
+>upper : (self: string) => string
+
+text.sub(text);
+>text.sub(text) : string
+>text.sub : (self: string, i: number, j?: number) => string
+>text : string
+>sub : (self: string, i: number, j?: number) => string
+>text : string
+
+// The namespace form never had a receiver to hide.
+local nsPiece: string = string.sub(text, 1, 5);
+>nsPiece : string
+>string.sub(text, 1, 5) : string
+>string.sub : (value: string, i: number, j?: number) => string
+>string : StringLib
+>sub : (value: string, i: number, j?: number) => string
+>text : string
+>1 : 1
+>5 : 5
+
+string.sub(text);
+>string.sub(text) : string
+>string.sub : (value: string, i: number, j?: number) => string
+>string : StringLib
+>sub : (value: string, i: number, j?: number) => string
+>text : string
+
+declare buffer: LuaStringBuffer;
+>buffer : LuaStringBuffer
+
+// A rest parameter reports a minimum, and the receiver comes out of that too.
+buffer:put();
+>buffer:put() : LuaStringBuffer
+>buffer:put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer : LuaStringBuffer
+>put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+
+buffer.put(buffer);
+>buffer.put(buffer) : LuaStringBuffer
+>buffer.put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer : LuaStringBuffer
+>put : (self: LuaStringBuffer, value: string | number | table, ...: string | number | table) => LuaStringBuffer
+>buffer : LuaStringBuffer
+
+// string.format checks arity against the format string's specifiers, on its
+// own path -- the receiver has to come out of both counts there as well.
+("%d"):format(1, 2);
+>("%d"):format(1, 2) : string
+>("%d"):format : (self: string, ...: any) => string
+>("%d") : "%d"
+>"%d" : "%d"
+>format : (self: string, ...: any) => string
+>1 : 1
+>2 : 2
+
+("%d"):format();
+>("%d"):format() : string
+>("%d"):format : (self: string, ...: any) => string
+>("%d") : "%d"
+>"%d" : "%d"
+>format : (self: string, ...: any) => string
+
+string.format("%d", 1, 2);
+>string.format("%d", 1, 2) : string
+>string.format : (format: string, ...: any) => string
+>string : StringLib
+>format : (format: string, ...: any) => string
+>"%d" : "%d"
+>1 : 1
+>2 : 2
+

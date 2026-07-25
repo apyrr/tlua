@@ -1,10 +1,10 @@
 tluaColonCallErrors.tlua(15,7): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-tluaColonCallErrors.tlua(19,3): error TLUA2554: Expected 2 arguments, but got 1.
-tluaColonCallErrors.tlua(20,10): error TLUA2554: Expected 2 arguments, but got 3.
+tluaColonCallErrors.tlua(19,3): error TLUA2554: Expected 1 arguments, but got 0.
+tluaColonCallErrors.tlua(20,10): error TLUA2554: Expected 1 arguments, but got 2.
 tluaColonCallErrors.tlua(32,1): error TLUA2345: Argument of type 'Mislabeled' is not assignable to parameter of type 'Counter'.
   Types of property 'count' are incompatible.
     Type 'string' is not assignable to type 'number'.
-tluaColonCallErrors.tlua(36,12): error TLUA2554: Expected 1 arguments, but got 2.
+tluaColonCallErrors.tlua(36,12): error TLUA2554: Expected 0 arguments, but got 1.
 tluaColonCallErrors.tlua(39,5): error TLUA2349: This expression is not callable.
   Type 'String' has no call signatures.
 tluaColonCallErrors.tlua(42,3): error TLUA2339: Property 'absent' does not exist on type '{ count: number; inc(self: any, by: number): number; }'.
@@ -33,11 +33,11 @@ tluaColonCallErrors.tlua(42,3): error TLUA2339: Property 'absent' does not exist
     // expected here.
     M:inc();
       ~~~
-!!! error TLUA2554: Expected 2 arguments, but got 1.
+!!! error TLUA2554: Expected 1 arguments, but got 0.
 !!! related TLUA6210 tluaColonCallErrors.tlua:3:16: An argument for 'by' was not provided.
     M:inc(1, 2);
              ~
-!!! error TLUA2554: Expected 2 arguments, but got 3.
+!!! error TLUA2554: Expected 1 arguments, but got 2.
     
     // The receiver is checked against the declared self parameter, and the error
     // lands on the receiver.
@@ -59,7 +59,7 @@ tluaColonCallErrors.tlua(42,3): error TLUA2339: Property 'absent' does not exist
     // colon form's receiver argument.
     ops:noSelf(1);
                ~
-!!! error TLUA2554: Expected 1 arguments, but got 2.
+!!! error TLUA2554: Expected 0 arguments, but got 1.
     
     // Colon-calling a non-function member.
     ops:tag();

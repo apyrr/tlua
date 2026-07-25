@@ -7454,6 +7454,12 @@ func (c *Checker) addImplementationSuccessElaboration(s *CallState, failed *Sign
 }
 
 func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature, args []*ast.Node, headMessage *diagnostics.Message) *ast.Diagnostic {
+	// Every count below is an EFFECTIVE count, which for a colon call includes the
+	// receiver the source never wrote. The comparisons want it -- they are matching
+	// arguments to parameters -- but the numbers in the message are for the reader,
+	// so each one is converted back to what is on the line.
+	unwritten := luaUnwrittenArgumentCount(node)
+	written := func(count int) int { return max(0, count-unwritten) }
 	spreadIndex := c.getSpreadArgumentIndex(args)
 	if spreadIndex > -1 {
 		// The only spread argument tlua can produce is the synthetic one
@@ -7467,7 +7473,7 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		for _, sig := range signatures {
 			maxCount = max(maxCount, c.getParameterCount(sig))
 		}
-		return NewDiagnosticForNode(args[spreadIndex], diagnostics.Expected_at_most_0_arguments_but_a_tail_may_pass_more, maxCount)
+		return NewDiagnosticForNode(args[spreadIndex], diagnostics.Expected_at_most_0_arguments_but_a_tail_may_pass_more, written(maxCount))
 	}
 	minCount := math.MaxInt // smallest parameter count
 	maxCount := math.MinInt // largest parameter count
@@ -7495,11 +7501,11 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 	var parameterRange string
 	switch {
 	case hasRestParameter:
-		parameterRange = strconv.Itoa(minCount)
+		parameterRange = strconv.Itoa(written(minCount))
 	case minCount < maxCount:
-		parameterRange = strconv.Itoa(minCount) + "-" + strconv.Itoa(maxCount)
+		parameterRange = strconv.Itoa(written(minCount)) + "-" + strconv.Itoa(written(maxCount))
 	default:
-		parameterRange = strconv.Itoa(minCount)
+		parameterRange = strconv.Itoa(written(minCount))
 	}
 	errorNode := getErrorNodeForCallNode(node)
 	var message *diagnostics.Message
@@ -7512,14 +7518,14 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 	switch {
 	case minCount < len(args) && len(args) < maxCount:
 		// between min and max, but with no matching overload
-		diagnostic := NewDiagnosticForNode(errorNode, diagnostics.No_overload_expects_0_arguments_but_overloads_do_exist_that_expect_either_1_or_2_arguments, len(args), maxBelow, minAbove)
+		diagnostic := NewDiagnosticForNode(errorNode, diagnostics.No_overload_expects_0_arguments_but_overloads_do_exist_that_expect_either_1_or_2_arguments, written(len(args)), written(maxBelow), written(minAbove))
 		if headMessage != nil {
 			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
 		return diagnostic
 	case len(args) < minCount:
 		// too short: put the error span on the call expression, not any of the args
-		diagnostic := NewDiagnosticForNode(errorNode, message, parameterRange, len(args))
+		diagnostic := NewDiagnosticForNode(errorNode, message, parameterRange, written(len(args)))
 		if headMessage != nil {
 			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
@@ -7546,7 +7552,7 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		// count actually matches the parameter count (e.g., due to trailing commas
 		// causing signature resolution to fail for other reasons).
 		if maxCount >= len(args) {
-			diagnostic := NewDiagnosticForNode(errorNode, message, parameterRange, len(args))
+			diagnostic := NewDiagnosticForNode(errorNode, message, parameterRange, written(len(args)))
 			if headMessage != nil {
 				diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 			}
@@ -7562,7 +7568,7 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		if end < pos {
 			end = pos
 		}
-		diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(pos, end), message, parameterRange, len(args))
+		diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(pos, end), message, parameterRange, written(len(args)))
 		if headMessage != nil {
 			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}

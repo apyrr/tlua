@@ -1,0 +1,87 @@
+//// [tests/cases/compiler/tluaColonCallArityMessages.tlua] ////
+
+=== tluaColonCallArityMessages.tlua ===
+// A colon call passes its receiver as the implicit first argument, so the
+// effective argument list the checker matches against the signature is one
+// longer than the source. An arity message counts what was WRITTEN, or it
+// describes an argument list the reader cannot see: `text:upper(1)` takes no
+// written arguments at all, so "expected 1, got 2" names neither the slot the
+// user can fill nor the argument they typed.
+
+local text: string = "hello";
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+
+text:upper(1);
+>text:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+text:len(1, 2);
+>text:len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+>len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+
+// Too few, measured the same way: `sub` takes `self` plus a start index.
+text:sub();
+>text:sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+>sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+
+// The dot form writes its receiver, so counting it is correct there -- these
+// messages must NOT shift.
+text.upper();
+>text.upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+text.sub(text);
+>text.sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+>sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+
+// The namespace form never had a receiver to hide.
+local nsPiece: string = string.sub(text, 1, 5);
+>nsPiece : Symbol(nsPiece, Decl(tluaColonCallArityMessages.tlua, 21, 5))
+>string.sub : Symbol(StringLib.sub, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>sub : Symbol(StringLib.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+
+string.sub(text);
+>string.sub : Symbol(StringLib.sub, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>sub : Symbol(StringLib.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+
+declare buffer: LuaStringBuffer;
+>buffer : Symbol(buffer, Decl(tluaColonCallArityMessages.tlua, 24, 7))
+>LuaStringBuffer : Symbol(LuaStringBuffer, Decl(lib.luajit.d.tlua, --, --))
+
+// A rest parameter reports a minimum, and the receiver comes out of that too.
+buffer:put();
+>buffer:put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaColonCallArityMessages.tlua, 24, 7))
+>put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+
+buffer.put(buffer);
+>buffer.put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaColonCallArityMessages.tlua, 24, 7))
+>put : Symbol(LuaStringBuffer.put, Decl(lib.luajit.d.tlua, --, --))
+>buffer : Symbol(buffer, Decl(tluaColonCallArityMessages.tlua, 24, 7))
+
+// string.format checks arity against the format string's specifiers, on its
+// own path -- the receiver has to come out of both counts there as well.
+("%d"):format(1, 2);
+>("%d"):format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+
+("%d"):format();
+>("%d"):format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%d", 1, 2);
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+

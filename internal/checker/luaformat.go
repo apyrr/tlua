@@ -54,7 +54,10 @@ func (c *Checker) checkLuaFormatCall(node *ast.Node, checkMode CheckMode) {
 	spreadIndex := c.getSpreadArgumentIndex(args)
 	openTail := spreadIndex >= 0 && spreadIndex == actualCount-1
 	if actualCount != expectedCount && !(actualCount < expectedCount && openTail) {
-		c.error(node, diagnostics.Expected_0_arguments_but_got_1, expectedCount, actualCount)
+		// Both counts are effective, so a colon call's receiver has to come back out
+		// of each before the reader sees it: `("%d"):format(1, 2)` wrote two.
+		unwritten := luaUnwrittenArgumentCount(node)
+		c.error(node, diagnostics.Expected_0_arguments_but_got_1, expectedCount-unwritten, actualCount-unwritten)
 	}
 	for i, specifierType := range specifiers {
 		argumentIndex := i + argumentOffset
