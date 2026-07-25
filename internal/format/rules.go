@@ -99,10 +99,14 @@ func getAllRules() []ruleSpec {
 		rule("IgnoreBeforeComment", anyToken, comments, anyContext, ruleActionStopProcessingSpaceActions),
 		rule("IgnoreAfterLineComment", ast.KindSingleLineCommentTrivia, anyToken, anyContext, ruleActionStopProcessingSpaceActions),
 
-		// The Lua method colon is part of a name, not a separator: it stays tight on
-		// both sides. These precede the general colon rules because the first
-		// space-modifying rule to match a pair wins, and the type-annotation rules
-		// below would otherwise pad a declaration's `function obj:m()` colon.
+		// The Lua method colon is part of a name, not a separator, so it is not padded
+		// the way the type-annotation colon it shares a token kind with is. These
+		// precede the general colon rules because the first space-modifying rule to
+		// match a pair wins, and the type-annotation rules below would otherwise pad a
+		// declaration's `function obj:m()` colon.
+		//
+		// A comment adjacent to the colon keeps its spacing: the ignore rules above
+		// stop all space actions, here as everywhere else in the formatter.
 		rule("NoSpaceBeforeLuaMethodColon", anyToken, ast.KindColonToken, []contextPredicate{isNonJsxSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
 		rule("NoSpaceAfterLuaMethodColon", ast.KindColonToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
 

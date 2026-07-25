@@ -1506,7 +1506,10 @@ func (p *Printer) emitSignatureSkippingSelf(node *ast.Node) {
 	n := node.FunctionLikeData()
 	p.emitTypeParameters(node, n.TypeParameters)
 	parameters := *n.Parameters
-	if ast.LuaImplicitSelfParameter(node.AsFunctionDeclaration()) != nil {
+	// The caller reaches here only for a declaration whose ColonToken is set, which
+	// is what put the parameter there, so the first one is it. Read through
+	// FunctionLikeData rather than casting: this helper is signature-agnostic.
+	if len(parameters.Nodes) > 0 {
 		parameters.Nodes = parameters.Nodes[1:]
 	}
 	p.emitParameters(node, &parameters)

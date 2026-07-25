@@ -13,19 +13,14 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+// Built on the editor defaults rather than a hand-picked subset: the colon rules
+// share their buckets with the rest of the rule set, and a guard against malformed
+// edits is only worth as much as the number of rules that were allowed to fire.
 func luaFormatContext(t *testing.T, spaceBeforeTypeAnnotation core.Tristate) context.Context {
 	t.Helper()
-	return format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
-		EditorSettings: lsutil.EditorSettings{
-			TabSize:             4,
-			IndentSize:          4,
-			NewLineCharacter:    "\n",
-			ConvertTabsToSpaces: core.TSTrue,
-			IndentStyle:         lsutil.IndentStyleSmart,
-		},
-		InsertSpaceBeforeAndAfterBinaryOperators: core.TSTrue,
-		InsertSpaceBeforeTypeAnnotation:          spaceBeforeTypeAnnotation,
-	}, "\n")
+	settings := lsutil.GetDefaultFormatCodeSettings()
+	settings.InsertSpaceBeforeTypeAnnotation = spaceBeforeTypeAnnotation
+	return format.WithFormatCodeSettings(t.Context(), settings, "\n")
 }
 
 func parseLua(t *testing.T, input string) *ast.SourceFile {
