@@ -334,8 +334,6 @@ func (n *Node) Expression() *Node {
 		return n.AsSpreadElement().Expression
 	case KindTemplateSpan:
 		return n.AsTemplateSpan().Expression
-	case KindDeleteExpression:
-		return n.AsDeleteExpression().Expression
 	case KindVoidExpression:
 		return n.AsVoidExpression().Expression
 	case KindPartiallyEmittedExpression:
@@ -409,8 +407,6 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsSpreadElement().Expression = expr
 	case KindTemplateSpan:
 		n.AsTemplateSpan().Expression = expr
-	case KindDeleteExpression:
-		n.AsDeleteExpression().Expression = expr
 	case KindVoidExpression:
 		n.AsVoidExpression().Expression = expr
 	case KindPartiallyEmittedExpression:
@@ -1522,8 +1518,6 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsExponentiationOperator
 	case KindQuestionDotToken:
 		return SubtreeContainsOptionalChaining
-	case KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
-		return SubtreeContainsLogicalAssignments
 	}
 	return SubtreeFactsNone
 }

@@ -115,13 +115,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindBacktickToken,
 		ast.KindHashToken,
 		ast.KindEqualsToken,
-		ast.KindPlusEqualsToken,
-		ast.KindMinusEqualsToken,
-		ast.KindAsteriskEqualsToken,
-		ast.KindSlashEqualsToken,
-		ast.KindPercentEqualsToken,
-		ast.KindBarBarEqualsToken,
-		ast.KindAmpersandAmpersandEqualsToken,
 		ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
 		ast.KindJSDocCommentTextToken,
@@ -129,7 +122,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindContinueKeyword,
 		ast.KindDebuggerKeyword,
 		ast.KindDefaultKeyword,
-		ast.KindDeleteKeyword,
 		ast.KindDoKeyword,
 		ast.KindElseKeyword,
 		ast.KindElseIfKeyword,
@@ -530,8 +522,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeNode := d.nodeAt(it.nextIf(mask, 3))
 		initializer := d.nodeAt(it.nextIf(mask, 4))
 		return d.factory.NewPropertyAssignment(modifiers, name, postfixToken, typeNode, initializer), nil
-	case ast.KindDeleteExpression:
-		return d.factory.NewDeleteExpression(d.singleChild(childIndices)), nil
 	case ast.KindVoidExpression:
 		return d.factory.NewVoidExpression(d.singleChild(childIndices)), nil
 	case ast.KindTypeAssertionExpression:

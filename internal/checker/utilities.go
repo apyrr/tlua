@@ -74,7 +74,6 @@ type AssignmentKind int32
 const (
 	AssignmentKindNone AssignmentKind = iota
 	AssignmentKindDefinite
-	AssignmentKindCompound
 )
 
 type AssignmentTarget = ast.Node // BinaryExpression | ForOfStatement
@@ -86,23 +85,13 @@ func getAssignmentTargetKind(node *ast.Node) AssignmentKind {
 	}
 	switch target.Kind {
 	case ast.KindBinaryExpression:
-		binaryOperator := target.AsBinaryExpression().OperatorToken.Kind
-		if binaryOperator == ast.KindEqualsToken || ast.IsLogicalAssignmentOperator(binaryOperator) {
-			return AssignmentKindDefinite
-		}
-		return AssignmentKindCompound
+		// `=` is the only assignment operator left, so every binary assignment
+		// target is definite.
+		return AssignmentKindDefinite
 	case ast.KindForOfStatement:
 		return AssignmentKindDefinite
 	}
 	panic("Unhandled case in getAssignmentTargetKind")
-}
-
-func isDeleteTarget(node *ast.Node) bool {
-	if !ast.IsAccessExpression(node) {
-		return false
-	}
-	node = ast.WalkUpParenthesizedExpressions(node.Parent)
-	return node != nil && node.Kind == ast.KindDeleteExpression
 }
 
 func isInCompoundLikeAssignment(node *ast.Node) bool {

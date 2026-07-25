@@ -2140,10 +2140,6 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		}
 		p.rewind(state)
 		return p.parseTypeReference()
-	case ast.KindAsteriskEqualsToken:
-		// If there is '*=', treat it as * followed by postfix =
-		p.scanner.ReScanAsteriskEqualsToken()
-		fallthrough
 	case ast.KindAsteriskToken:
 		return p.parseJSDocAllType()
 	case ast.KindQuestionToken:
@@ -3660,7 +3656,7 @@ func (p *Parser) parseVarargExpression() *ast.Expression {
 
 func (p *Parser) isUpdateExpression() bool {
 	switch p.token {
-	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken, ast.KindDeleteKeyword, ast.KindVoidKeyword:
+	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken, ast.KindVoidKeyword:
 		return false
 	case ast.KindDotDotDotToken:
 		// The Lua vararg is not a prefixexp: it cannot be called, indexed, or
@@ -4003,8 +3999,6 @@ func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 		return p.parseVarargExpression()
 	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken:
 		return p.parsePrefixUnaryExpression()
-	case ast.KindDeleteKeyword:
-		return p.parseDeleteExpression()
 	case ast.KindVoidKeyword:
 		return p.parseVoidExpression()
 	case ast.KindLessThanToken:
@@ -4031,12 +4025,6 @@ func (p *Parser) parsePrefixUnaryExpression() *ast.Node {
 	// operand at unary precedence admits `^`, but stops before multiplicative operators.
 	operand := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceUnary)
 	return p.finishNode(p.factory.NewPrefixUnaryExpression(operator, operand), pos)
-}
-
-func (p *Parser) parseDeleteExpression() *ast.Node {
-	pos := p.nodePos()
-	p.nextToken()
-	return p.finishNode(p.factory.NewDeleteExpression(p.parseSimpleUnaryExpression()), pos)
 }
 
 func (p *Parser) parseVoidExpression() *ast.Node {
@@ -4492,7 +4480,7 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 		return p.parseFunctionExpression()
 	case ast.KindFunctionKeyword:
 		return p.parseFunctionExpression()
-	case ast.KindSlashToken, ast.KindSlashEqualsToken:
+	case ast.KindSlashToken:
 		if p.reScanSlashToken() == ast.KindRegularExpressionLiteral {
 			return p.parseLiteralExpression(false /*intern*/)
 		}
@@ -4956,7 +4944,7 @@ func (p *Parser) isStartOfExpression() bool {
 	// `typeof` is absent: it starts a type query, never an expression. Admitting it
 	// here would make the statement list re-enter on a token no expression parser
 	// consumes, which never terminates.
-	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken, ast.KindDeleteKeyword,
+	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken,
 		ast.KindVoidKeyword, ast.KindLessThanToken,
 		ast.KindAwaitKeyword, ast.KindYieldKeyword, ast.KindPrivateIdentifier:
 		// Yield/await always starts an expression.  Either it is an identifier (in which case
@@ -4983,7 +4971,7 @@ func (p *Parser) isStartOfLeftHandSideExpression() bool {
 	case ast.KindSuperKeyword, ast.KindNilKeyword, ast.KindTrueKeyword, ast.KindFalseKeyword,
 		ast.KindNumericLiteral, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead,
 		ast.KindOpenParenToken, ast.KindOpenBraceToken, ast.KindFunctionKeyword,
-		ast.KindSlashToken, ast.KindSlashEqualsToken, ast.KindIdentifier,
+		ast.KindSlashToken, ast.KindIdentifier,
 		// `...` is the Lua vararg, a primary expression.
 		ast.KindDotDotDotToken:
 		return true

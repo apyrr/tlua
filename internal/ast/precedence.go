@@ -203,14 +203,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		case KindCommaToken:
 			return OperatorPrecedenceComma
 
-		case KindEqualsToken,
-			KindPlusEqualsToken,
-			KindMinusEqualsToken,
-			KindAsteriskEqualsToken,
-			KindSlashEqualsToken,
-			KindPercentEqualsToken,
-			KindBarBarEqualsToken,
-			KindAmpersandAmpersandEqualsToken:
+		case KindEqualsToken:
 			return OperatorPrecedenceAssignment
 
 		default:
@@ -220,8 +213,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 	case KindTypeAssertionExpression,
 		KindNonNullExpression,
 		KindPrefixUnaryExpression,
-		KindVoidExpression,
-		KindDeleteExpression:
+		KindVoidExpression:
 		return OperatorPrecedenceUnary
 
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting

@@ -470,19 +470,18 @@ func (c *Checker) getMetatableFallbackType(d *MetatableType, fallbackInfos []*In
 }
 
 // luaMetamethodForOperator maps a binary operator token to the metamethod Lua runs for it and
-// whether the operands swap first: a > b runs __lt(b, a) and a >= b runs __le(b, a). A compound
-// assignment runs the same metamethod its operator does.
+// whether the operands swap first: a > b runs __lt(b, a) and a >= b runs __le(b, a).
 func luaMetamethodForOperator(operator ast.Kind) (string, bool) {
 	switch operator {
-	case ast.KindPlusToken, ast.KindPlusEqualsToken:
+	case ast.KindPlusToken:
 		return "__add", false
-	case ast.KindMinusToken, ast.KindMinusEqualsToken:
+	case ast.KindMinusToken:
 		return "__sub", false
-	case ast.KindAsteriskToken, ast.KindAsteriskEqualsToken:
+	case ast.KindAsteriskToken:
 		return "__mul", false
-	case ast.KindSlashToken, ast.KindSlashEqualsToken:
+	case ast.KindSlashToken:
 		return "__div", false
-	case ast.KindPercentToken, ast.KindPercentEqualsToken:
+	case ast.KindPercentToken:
 		return "__mod", false
 	case ast.KindAsteriskAsteriskToken:
 		return "__pow", false

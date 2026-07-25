@@ -289,7 +289,6 @@ type (
 	SpreadAssignmentNode              = Node
 	TableEntryNode                    = Node
 	PropertyAssignmentNode            = Node
-	DeleteExpressionNode              = Node
 	VoidExpressionNode                = Node
 	TypeAssertionNode                 = Node
 	KeywordTypeNodeNode               = Node
@@ -532,7 +531,7 @@ func (node *Token) Clone(f NodeFactoryCoercible) *Node {
 
 func IsToken(node *Node) bool {
 	switch node.Kind {
-	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindJsxText, KindJsxTextAllWhiteSpaces, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindThrowKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindAsyncKeyword, KindAwaitKeyword, KindBooleanKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
+	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindJsxText, KindJsxTextAllWhiteSpaces, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindThrowKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindAsyncKeyword, KindAwaitKeyword, KindBooleanKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
 		return true
 	}
 	return false
@@ -3755,48 +3754,6 @@ func (node *PropertyAssignment) Name() *DeclarationName {
 
 func IsPropertyAssignment(node *Node) bool {
 	return node.Kind == KindPropertyAssignment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// DeleteExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type DeleteExpression struct {
-	UnaryExpressionBase
-	Expression *Expression
-}
-
-func (f *NodeFactory) NewDeleteExpression(expression *Expression) *Node {
-	data := &DeleteExpression{}
-	data.Expression = expression
-	return f.newNode(KindDeleteExpression, data)
-}
-
-func (f *NodeFactory) UpdateDeleteExpression(node *DeleteExpression, expression *Expression) *Node {
-	if expression != node.Expression {
-		return updateNode(f.NewDeleteExpression(expression), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *DeleteExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Expression)
-}
-
-func (node *DeleteExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateDeleteExpression(node, v.visitNode(node.Expression))
-}
-
-func (node *DeleteExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewDeleteExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *DeleteExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
-}
-
-func IsDeleteExpression(node *Node) bool {
-	return node.Kind == KindDeleteExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7462,8 +7419,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*TableEntry).ForEachChild(v)
 	case KindPropertyAssignment:
 		return n.data.(*PropertyAssignment).ForEachChild(v)
-	case KindDeleteExpression:
-		return n.data.(*DeleteExpression).ForEachChild(v)
 	case KindVoidExpression:
 		return n.data.(*VoidExpression).ForEachChild(v)
 	case KindTypeAssertionExpression:
@@ -7937,10 +7892,6 @@ func (n *Node) AsPropertyAssignment() *PropertyAssignment {
 	return n.data.(*PropertyAssignment)
 }
 
-func (n *Node) AsDeleteExpression() *DeleteExpression {
-	return n.data.(*DeleteExpression)
-}
-
 func (n *Node) AsVoidExpression() *VoidExpression {
 	return n.data.(*VoidExpression)
 }
@@ -8387,7 +8338,7 @@ func IsPrefixUnaryOperator(kind Kind) bool {
 
 func IsAssignmentOperator(kind Kind) bool {
 	switch kind {
-	case KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
+	case KindEqualsToken:
 		return true
 	}
 	return false
@@ -8395,7 +8346,7 @@ func IsAssignmentOperator(kind Kind) bool {
 
 func IsBinaryOperator(kind Kind) bool {
 	switch kind {
-	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindCommaToken:
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindCommaToken:
 		return true
 	}
 	return false
@@ -8505,25 +8456,9 @@ func IsLogicalOperatorOrHigher(kind Kind) bool {
 	return false
 }
 
-func IsCompoundAssignmentOperator(kind Kind) bool {
-	switch kind {
-	case KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
-		return true
-	}
-	return false
-}
-
 func IsAssignmentOperatorOrHigher(kind Kind) bool {
 	switch kind {
-	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
-		return true
-	}
-	return false
-}
-
-func IsLogicalAssignmentOperator(kind Kind) bool {
-	switch kind {
-	case KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken:
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken:
 		return true
 	}
 	return false

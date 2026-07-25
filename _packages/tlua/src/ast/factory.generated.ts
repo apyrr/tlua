@@ -26,7 +26,6 @@ import type {
     ConditionalTypeNode,
     ContinueStatement,
     DebuggerStatement,
-    DeleteExpression,
     DotDotDotToken,
     ElementAccessExpression,
     EmptyStatement,
@@ -796,8 +795,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression };
         case SyntaxKind.PropertyAssignment:
             return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, type: n.type, initializer: n.initializer };
-        case SyntaxKind.DeleteExpression:
-            return { expression: n.expression };
         case SyntaxKind.VoidExpression:
             return { expression: n.expression };
         case SyntaxKind.TypeAssertionExpression:
@@ -1177,7 +1174,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
-    [SyntaxKind.DeleteExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.VoidExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.TypeAssertionExpression]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.type) ||
@@ -1962,12 +1958,6 @@ export function createPropertyAssignment(modifiers: readonly ModifierLike[] | un
         type,
         initializer,
     }) as unknown as PropertyAssignment;
-}
-
-export function createDeleteExpression(expression: Expression): DeleteExpression {
-    return new NodeObject(SyntaxKind.DeleteExpression, {
-        expression,
-    }) as unknown as DeleteExpression;
 }
 
 export function createVoidExpression(expression: Expression): VoidExpression {
@@ -2862,10 +2852,6 @@ export function updateTableEntry(node: TableEntry, expression: Expression): Tabl
 
 export function updatePropertyAssignment(node: PropertyAssignment, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer: Expression): PropertyAssignment {
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertyAssignment(modifiers, name, postfixToken, type, initializer) : node;
-}
-
-export function updateDeleteExpression(node: DeleteExpression, expression: Expression): DeleteExpression {
-    return node.expression !== expression ? createDeleteExpression(expression) : node;
 }
 
 export function updateVoidExpression(node: VoidExpression, expression: Expression): VoidExpression {

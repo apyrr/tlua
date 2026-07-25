@@ -15,7 +15,6 @@ import type {
     ComputedPropertyName,
     ConditionalExpression,
     ConditionalTypeNode,
-    DeleteExpression,
     ElementAccessExpression,
     ExportAssignment,
     ExportDeclaration,
@@ -163,7 +162,6 @@ import {
     updateComputedPropertyName,
     updateConditionalExpression,
     updateConditionalTypeNode,
-    updateDeleteExpression,
     updateElementAccessExpression,
     updateExportAssignment,
     updateExportDeclaration,
@@ -776,10 +774,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         const _initializer = visitNode(node.initializer, visitor, isExpression);
         return updatePropertyAssignment(node, _modifiers, _name, _postfixToken, _type, _initializer);
-    },
-    [SyntaxKind.DeleteExpression]: (node: DeleteExpression, visitor: Visitor): DeleteExpression => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateDeleteExpression(node, _expression);
     },
     [SyntaxKind.VoidExpression]: (node: VoidExpression, visitor: Visitor): VoidExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);

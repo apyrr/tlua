@@ -37,7 +37,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindSpreadAssignment,
 		ast.KindParenthesizedExpression,
 		ast.KindArrayLiteralExpression,
-		ast.KindDeleteExpression,
 		ast.KindVoidExpression,
 		ast.KindTypeAssertionExpression,
 		ast.KindExpressionWithTypeArguments,
@@ -169,25 +168,4 @@ func MoveRangePastModifiers(node *ast.Node) core.TextRange {
 		return core.NewTextRange(lastModifier.End(), node.End())
 	}
 	return node.Loc
-}
-
-// GetNonAssignmentOperatorForCompoundAssignment returns the non-assignment operator for a compound assignment.
-func GetNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
-	switch kind {
-	case ast.KindPlusEqualsToken:
-		return ast.KindPlusToken
-	case ast.KindMinusEqualsToken:
-		return ast.KindMinusToken
-	case ast.KindAsteriskEqualsToken:
-		return ast.KindAsteriskToken
-	case ast.KindSlashEqualsToken:
-		return ast.KindSlashToken
-	case ast.KindPercentEqualsToken:
-		return ast.KindPercentToken
-	case ast.KindBarBarEqualsToken:
-		return ast.KindBarBarToken
-	case ast.KindAmpersandAmpersandEqualsToken:
-		return ast.KindAmpersandAmpersandToken
-	}
-	return kind
 }

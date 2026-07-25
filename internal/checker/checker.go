@@ -5959,8 +5959,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkExpressionWithTypeArguments(node)
 	case ast.KindSatisfiesExpression:
 		return c.checkSatisfiesExpression(node)
-	case ast.KindDeleteExpression:
-		return c.checkDeleteExpression(node)
 	case ast.KindVoidExpression:
 		return c.checkVoidExpression(node)
 	case ast.KindPrefixUnaryExpression:
@@ -6168,7 +6166,6 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 		accessFlags = AccessFlagsExpressionPosition
 	} else {
 		accessFlags = AccessFlagsWriting |
-			core.IfElse(assignmentTargetKind == AssignmentKindCompound, AccessFlagsExpressionPosition, 0) |
 			core.IfElse(c.isGenericObjectType(objectType) && !isSelfTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
 	}
 	indexedAccessType := core.OrElse(c.getIndexedAccessTypeOrUndefined(objectType, effectiveIndexType, accessFlags, node, nil), c.errorType)
@@ -8299,27 +8296,6 @@ func (c *Checker) checkSatisfiesExpression(node *ast.Node) *Type {
 	return exprType
 }
 
-func (c *Checker) checkDeleteExpression(node *ast.Node) *Type {
-	c.checkExpression(node.Expression())
-	expr := ast.SkipParentheses(node.Expression())
-	if !ast.IsAccessExpression(expr) {
-		c.error(expr, diagnostics.The_operand_of_a_delete_operator_must_be_a_property_reference)
-		return c.booleanType
-	}
-	if ast.IsPropertyAccessExpression(expr) && ast.IsPrivateIdentifier(expr.Name()) {
-		c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_private_identifier)
-	}
-	symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbolOrNil(expr))
-	if symbol != nil {
-		if c.isReadonlySymbol(symbol) {
-			c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_read_only_property)
-		} else {
-			c.checkDeleteExpressionMustBeOptional(expr, symbol)
-		}
-	}
-	return c.booleanType
-}
-
 func (c *Checker) checkDeleteExpressionMustBeOptional(expr *ast.Node, symbol *ast.Symbol) {
 	t := c.getTypeOfSymbol(symbol)
 	if t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsNever) == 0 {
@@ -8745,7 +8721,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 			}
 			return c.errorType
 		}
-		if indexInfo.isReadonly && (ast.IsAssignmentTarget(node) || isDeleteTarget(node)) {
+		if indexInfo.isReadonly && ast.IsAssignmentTarget(node) {
 			c.error(node, diagnostics.Index_signature_in_type_0_only_permits_reading, c.TypeToString(apparentType))
 		}
 		propType = c.getIndexSignatureWriteType(indexInfo.valueType, node)
@@ -9158,18 +9134,16 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		}
 	}
 	switch operator {
-	case ast.KindAsteriskToken, ast.KindAsteriskAsteriskToken, ast.KindAsteriskEqualsToken,
-		ast.KindSlashToken, ast.KindSlashEqualsToken, ast.KindPercentToken, ast.KindPercentEqualsToken, ast.KindMinusToken,
-		ast.KindMinusEqualsToken:
+	case ast.KindAsteriskToken, ast.KindAsteriskAsteriskToken,
+		ast.KindSlashToken, ast.KindPercentToken, ast.KindMinusToken:
 		if leftType == c.silentNeverType || rightType == c.silentNeverType {
 			return c.silentNeverType
 		}
 		leftType = c.checkNonNullType(leftType, left)
 		rightType = c.checkNonNullType(rightType, right)
-		// A paired operand's arithmetic metamethod answers the operation before any numeric
-		// requirement applies; a compound assignment then checks the result back into the target.
+		// A paired operand's arithmetic metamethod answers the operation before any
+		// numeric requirement applies.
 		if resultType := c.checkLuaBinaryMetamethod(operator, left, right, leftType, rightType); resultType != nil {
-			c.checkAssignmentOperator(left, operator, right, leftType, resultType)
 			return resultType
 		}
 		// Check each operand separately and report errors as normal.
@@ -9177,12 +9151,10 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		rightOk := c.checkArithmeticOperandType(right, rightType, diagnostics.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type_any_or_number)
 		// tlua has one numeric type: a well-typed arithmetic operation yields
 		// number (mixed non-numeric operands are already reported by the operand checks).
-		resultType := c.numberType
-		if leftOk && rightOk {
-			c.checkAssignmentOperator(left, operator, right, leftType, resultType)
-		}
-		return resultType
-	case ast.KindPlusToken, ast.KindPlusEqualsToken:
+		_ = leftOk
+		_ = rightOk
+		return c.numberType
+	case ast.KindPlusToken:
 		if leftType == c.silentNeverType || rightType == c.silentNeverType {
 			return c.silentNeverType
 		}
@@ -9227,9 +9199,6 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			})
 			return c.anyType
 		}
-		if operator == ast.KindPlusEqualsToken {
-			c.checkAssignmentOperator(left, operator, right, leftType, resultType)
-		}
 		return resultType
 	case ast.KindLessThanToken, ast.KindGreaterThanToken, ast.KindLessThanEqualsToken, ast.KindGreaterThanEqualsToken:
 		if c.checkForDisallowedESSymbolOperand(left, right, leftType, rightType, operator) {
@@ -9271,23 +9240,17 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		return c.booleanType
 	case ast.KindInKeyword:
 		return c.checkInExpression(left, right, leftType, rightType)
-	case ast.KindAmpersandAmpersandToken, ast.KindAmpersandAmpersandEqualsToken:
+	case ast.KindAmpersandAmpersandToken:
 		resultType := leftType
 		if c.hasTypeFacts(leftType, TypeFactsTruthy) {
 			t := leftType
 			resultType = c.getUnionType([]*Type{c.extractDefinitelyFalsyTypes(t), rightType})
 		}
-		if operator == ast.KindAmpersandAmpersandEqualsToken {
-			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
-		}
 		return resultType
-	case ast.KindBarBarToken, ast.KindBarBarEqualsToken:
+	case ast.KindBarBarToken:
 		resultType := leftType
 		if c.hasTypeFacts(leftType, TypeFactsFalsy) {
 			resultType = c.getUnionTypeEx([]*Type{c.GetNonNullableType(c.removeDefinitelyFalsyTypes(leftType)), rightType}, UnionReductionSubtype, nil, nil)
-		}
-		if operator == ast.KindBarBarEqualsToken {
-			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
 		}
 		return resultType
 	case ast.KindEqualsToken:
@@ -9373,10 +9336,6 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, rig
 			if symbol := c.symbolNodeLinks.Get(left).resolvedSymbol; symbol != nil && len(symbol.Declarations) > 1 && rightType.flags&TypeFlagsNil != 0 {
 				return
 			}
-		}
-		// getters can be a subtype of setters, so to check for assignability we use the setter's type instead
-		if ast.IsCompoundAssignment(operator) && ast.IsPropertyAccessExpression(left) {
-			leftType = c.checkPropertyAccessExpression(left, CheckModeNormal, true /*writeOnly*/)
 		}
 		if c.checkAssignmentReference(left) {
 			var headMessage *diagnostics.Message
@@ -23472,7 +23431,7 @@ func getIndexNodeForAccessExpression(accessNode *ast.Node) *ast.Node {
 }
 
 func (c *Checker) errorIfWritingToReadonlyIndex(indexInfo *IndexInfo, objectType *Type, accessExpression *ast.Node) {
-	if indexInfo != nil && indexInfo.isReadonly && accessExpression != nil && (ast.IsAssignmentTarget(accessExpression) || isDeleteTarget(accessExpression)) {
+	if indexInfo != nil && indexInfo.isReadonly && accessExpression != nil && ast.IsAssignmentTarget(accessExpression) {
 		c.error(accessExpression, diagnostics.Index_signature_in_type_0_only_permits_reading, c.TypeToString(objectType))
 	}
 }
@@ -25414,7 +25373,7 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 		return c.getTypeFromTypeNode(t)
 	}
 	switch binary.OperatorToken.Kind {
-	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken:
+	case ast.KindEqualsToken:
 		// In an assignment expression, the right operand is contextually typed by the type of the left operand
 		// unless it's an assignment declaration.
 		if node == binary.Right {

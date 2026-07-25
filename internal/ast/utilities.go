@@ -199,10 +199,6 @@ func IsModifierLike(node *Node) bool {
 	return IsModifier(node)
 }
 
-func IsCompoundAssignment(token Kind) bool {
-	return token >= KindFirstCompoundAssignment && token <= KindLastCompoundAssignment
-}
-
 func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
 	if node.Kind == KindBinaryExpression {
 		expr := node.AsBinaryExpression()
@@ -306,10 +302,6 @@ func IsLogicalBinaryOperator(token Kind) bool {
 
 func IsLogicalBinaryExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
-}
-
-func IsLogicalAssignmentExpression(expr *Node) bool {
-	return IsBinaryExpression(expr) && IsLogicalAssignmentOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
 func IsLogicalExpression(node *Node) bool {
@@ -497,7 +489,6 @@ func IsLeftHandSideExpression(node *Node) bool {
 func isUnaryExpressionKind(kind Kind) bool {
 	switch kind {
 	case KindPrefixUnaryExpression,
-		KindDeleteExpression,
 		KindVoidExpression,
 		KindTypeAssertionExpression:
 		return true
@@ -2125,7 +2116,6 @@ func IsExpressionNode(node *Node) bool {
 		KindFunctionExpression,
 		KindArrowFunction,
 		KindVoidExpression,
-		KindDeleteExpression,
 		KindPrefixUnaryExpression,
 		KindBinaryExpression,
 		KindConditionalExpression,
@@ -4231,7 +4221,7 @@ func IsNamedEvaluationSource(node *Node) bool {
 		return IsIdentifier(node.AsBindingElement().Name()) && node.Initializer() != nil && node.AsBindingElement().DotDotDotToken == nil
 	case KindBinaryExpression:
 		switch node.AsBinaryExpression().OperatorToken.Kind {
-		case KindEqualsToken, KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken:
+		case KindEqualsToken:
 			return IsIdentifier(node.AsBinaryExpression().Left)
 		}
 	case KindExportAssignment:

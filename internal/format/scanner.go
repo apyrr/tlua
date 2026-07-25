@@ -158,7 +158,7 @@ func shouldRescanJsxAttributeValue(node *ast.Node) bool {
 }
 
 func startsWithSlashToken(t ast.Kind) bool {
-	return t == ast.KindSlashToken || t == ast.KindSlashEqualsToken
+	return t == ast.KindSlashToken
 }
 
 type scanAction int

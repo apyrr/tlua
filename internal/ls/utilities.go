@@ -617,13 +617,10 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	}
 
 	if !forRename {
-		// /**/new [|name|]
 		// /**/void [|name|]
 		// /**/void obj.[|name|]
 		// /**/typeof [|name|]
-		// /**/delete obj.[|name|]
-		if node.Kind == ast.KindVoidKeyword && parent.Kind == ast.KindVoidExpression ||
-			node.Kind == ast.KindDeleteKeyword && parent.Kind == ast.KindDeleteExpression {
+		if node.Kind == ast.KindVoidKeyword && parent.Kind == ast.KindVoidExpression {
 			if expr := parent.Expression(); expr != nil {
 				return ast.SkipOuterExpressions(expr, ast.OEKAll)
 			}

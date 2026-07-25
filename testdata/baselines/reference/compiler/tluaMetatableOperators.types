@@ -168,12 +168,6 @@ local ne: boolean = v ~= w;
 >v : { x: number; }
 >w : { x: number; }
 
-// A compound assignment runs the same metamethod its operator does and checks the result back
-// into the target.
-v += w;
->v += w : { x: number; }
->v : { x: number; }
->w : { x: number; }
 
 // An operand the metamethod's parameter does not admit is an error.
 local badOperand = v * "s";

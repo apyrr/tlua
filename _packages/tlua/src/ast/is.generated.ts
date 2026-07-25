@@ -37,7 +37,6 @@ import type {
     CallLikeExpression,
     CallSignatureDeclaration,
     ColonToken,
-    CompoundAssignmentOperator,
     ComputedPropertyName,
     ConcatenationOperator,
     ConcatenationOperatorOrHigher,
@@ -48,7 +47,6 @@ import type {
     DeclarationName,
     DeclareKeyword,
     DefaultKeyword,
-    DeleteExpression,
     DestructuringAssignment,
     DotDotDotToken,
     DotToken,
@@ -161,7 +159,6 @@ import type {
     LiteralLikeNode,
     LiteralToken,
     LiteralTypeNode,
-    LogicalAssignmentOperator,
     LogicalOperator,
     LogicalOperatorOrHigher,
     MappedTypeNode,
@@ -598,10 +595,6 @@ export function isTableEntry(node: Node): node is TableEntry {
 
 export function isPropertyAssignment(node: Node): node is PropertyAssignment {
     return node.kind === SyntaxKind.PropertyAssignment;
-}
-
-export function isDeleteExpression(node: Node): node is DeleteExpression {
-    return node.kind === SyntaxKind.DeleteExpression;
 }
 
 export function isVoidExpression(node: Node): node is VoidExpression {
@@ -1281,8 +1274,7 @@ export function isPrefixUnaryOperator(kind: SyntaxKind): kind is PrefixUnaryOper
 }
 
 export function isAssignmentOperator(kind: SyntaxKind): kind is AssignmentOperator {
-    return kind === SyntaxKind.EqualsToken
-        || isCompoundAssignmentOperator(kind);
+    return kind === SyntaxKind.EqualsToken;
 }
 
 export function isBinaryOperator(kind: SyntaxKind): kind is BinaryOperator {
@@ -1357,24 +1349,9 @@ export function isLogicalOperatorOrHigher(kind: SyntaxKind): kind is LogicalOper
         || isLogicalOperator(kind);
 }
 
-export function isCompoundAssignmentOperator(kind: SyntaxKind): kind is CompoundAssignmentOperator {
-    return kind === SyntaxKind.PlusEqualsToken
-        || kind === SyntaxKind.MinusEqualsToken
-        || kind === SyntaxKind.AsteriskEqualsToken
-        || kind === SyntaxKind.SlashEqualsToken
-        || kind === SyntaxKind.PercentEqualsToken
-        || kind === SyntaxKind.BarBarEqualsToken
-        || kind === SyntaxKind.AmpersandAmpersandEqualsToken;
-}
-
 export function isAssignmentOperatorOrHigher(kind: SyntaxKind): kind is AssignmentOperatorOrHigher {
     return isLogicalOperatorOrHigher(kind)
         || isAssignmentOperator(kind);
-}
-
-export function isLogicalAssignmentOperator(kind: SyntaxKind): kind is LogicalAssignmentOperator {
-    return kind === SyntaxKind.AmpersandAmpersandEqualsToken
-        || kind === SyntaxKind.BarBarEqualsToken;
 }
 
 export function isLiteralKind(kind: SyntaxKind): boolean {

@@ -214,9 +214,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindPropertyAssignment:
 		n := node.AsPropertyAssignment()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.PostfixToken != nil) << 2) | (boolToByte(n.Type != nil) << 3) | (boolToByte(n.Initializer != nil) << 4)
-	case ast.KindDeleteExpression:
-		n := node.AsDeleteExpression()
-		return (boolToByte(n.Expression != nil) << 0)
 	case ast.KindVoidExpression:
 		n := node.AsVoidExpression()
 		return (boolToByte(n.Expression != nil) << 0)

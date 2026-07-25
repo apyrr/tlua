@@ -72,13 +72,6 @@
                 "comment": "Assignments"
             },
             "EqualsToken",
-            "PlusEqualsToken",
-            "MinusEqualsToken",
-            "AsteriskEqualsToken",
-            "SlashEqualsToken",
-            "PercentEqualsToken",
-            "BarBarEqualsToken",
-            "AmpersandAmpersandEqualsToken",
             {
                 "comment": "Identifiers and PrivateIdentifier"
             },
@@ -92,7 +85,6 @@
             "ContinueKeyword",
             "DebuggerKeyword",
             "DefaultKeyword",
-            "DeleteKeyword",
             "DoKeyword",
             "ElseKeyword",
             "ElseIfKeyword",
@@ -241,7 +233,6 @@
             "ParenthesizedExpression",
             "FunctionExpression",
             "ArrowFunction",
-            "DeleteExpression",
             "VoidExpression",
             "PrefixUnaryExpression",
             "BinaryExpression",
@@ -398,15 +389,7 @@
             },
             {
                 "name": "LastAssignment",
-                "value": "AmpersandAmpersandEqualsToken"
-            },
-            {
-                "name": "FirstCompoundAssignment",
-                "value": "PlusEqualsToken"
-            },
-            {
-                "name": "LastCompoundAssignment",
-                "value": "AmpersandAmpersandEqualsToken"
+                "value": "EqualsToken"
             },
             {
                 "name": "FirstReservedWord",
@@ -446,7 +429,7 @@
             },
             {
                 "name": "LastPunctuation",
-                "value": "AmpersandAmpersandEqualsToken"
+                "value": "EqualsToken"
             },
             {
                 "name": "FirstToken",
@@ -478,7 +461,7 @@
             },
             {
                 "name": "LastBinaryOperator",
-                "value": "AmpersandAmpersandEqualsToken"
+                "value": "EqualsToken"
             },
             {
                 "name": "FirstStatement",
@@ -634,8 +617,7 @@
                 "HashToken"
             ],
             "AssignmentOperator": [
-                "EqualsToken",
-                "CompoundAssignmentOperator"
+                "EqualsToken"
             ],
             "BinaryOperator": [
                 "AssignmentOperatorOrHigher",
@@ -695,22 +677,9 @@
                 "EqualityOperatorOrHigher",
                 "LogicalOperator"
             ],
-            "CompoundAssignmentOperator": [
-                "PlusEqualsToken",
-                "MinusEqualsToken",
-                "AsteriskEqualsToken",
-                "SlashEqualsToken",
-                "PercentEqualsToken",
-                "BarBarEqualsToken",
-                "AmpersandAmpersandEqualsToken"
-            ],
             "AssignmentOperatorOrHigher": [
                 "LogicalOperatorOrHigher",
                 "AssignmentOperator"
-            ],
-            "LogicalAssignmentOperator": [
-                "AmpersandAmpersandEqualsToken",
-                "BarBarEqualsToken"
             ]
         }
     },
@@ -2612,18 +2581,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "DeleteExpression": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "UnaryExpressionBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
             },
             "VoidExpression": {
                 "generateSubtreeFacts": true,

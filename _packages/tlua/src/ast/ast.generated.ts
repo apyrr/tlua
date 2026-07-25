@@ -50,20 +50,12 @@ export type PunctuationSyntaxKind =
     | SyntaxKind.AtToken
     | SyntaxKind.BacktickToken
     | SyntaxKind.HashToken
-    | SyntaxKind.EqualsToken
-    | SyntaxKind.PlusEqualsToken
-    | SyntaxKind.MinusEqualsToken
-    | SyntaxKind.AsteriskEqualsToken
-    | SyntaxKind.SlashEqualsToken
-    | SyntaxKind.PercentEqualsToken
-    | SyntaxKind.BarBarEqualsToken
-    | SyntaxKind.AmpersandAmpersandEqualsToken;
+    | SyntaxKind.EqualsToken;
 export type KeywordSyntaxKind =
     | SyntaxKind.BreakKeyword
     | SyntaxKind.ContinueKeyword
     | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DefaultKeyword
-    | SyntaxKind.DeleteKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword
     | SyntaxKind.ElseIfKeyword
@@ -197,13 +189,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.BacktickToken
     | SyntaxKind.HashToken
     | SyntaxKind.EqualsToken
-    | SyntaxKind.PlusEqualsToken
-    | SyntaxKind.MinusEqualsToken
-    | SyntaxKind.AsteriskEqualsToken
-    | SyntaxKind.SlashEqualsToken
-    | SyntaxKind.PercentEqualsToken
-    | SyntaxKind.BarBarEqualsToken
-    | SyntaxKind.AmpersandAmpersandEqualsToken
     | SyntaxKind.Identifier
     | SyntaxKind.PrivateIdentifier
     | SyntaxKind.JSDocCommentTextToken
@@ -211,7 +196,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.ContinueKeyword
     | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DefaultKeyword
-    | SyntaxKind.DeleteKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword
     | SyntaxKind.ElseIfKeyword
@@ -326,7 +310,7 @@ export type JSDocNodeSyntaxKind =
     | SyntaxKind.JSDocImportTag;
 export type ImportPhaseModifierSyntaxKind = SyntaxKind.TypeKeyword | SyntaxKind.DeferKeyword;
 export type PrefixUnaryOperator = SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.ExclamationToken | SyntaxKind.HashToken;
-export type AssignmentOperator = SyntaxKind.EqualsToken | CompoundAssignmentOperator;
+export type AssignmentOperator = SyntaxKind.EqualsToken;
 export type BinaryOperator = AssignmentOperatorOrHigher | SyntaxKind.CommaToken;
 export type ExponentiationOperator = SyntaxKind.AsteriskAsteriskToken;
 export type MultiplicativeOperator = SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken;
@@ -341,9 +325,7 @@ export type EqualityOperator = SyntaxKind.EqualsEqualsToken | SyntaxKind.TildeEq
 export type EqualityOperatorOrHigher = RelationalOperatorOrHigher | EqualityOperator;
 export type LogicalOperator = SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken;
 export type LogicalOperatorOrHigher = EqualityOperatorOrHigher | LogicalOperator;
-export type CompoundAssignmentOperator = SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken;
 export type AssignmentOperatorOrHigher = LogicalOperatorOrHigher | AssignmentOperator;
-export type LogicalAssignmentOperator = SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.BarBarEqualsToken;
 
 export interface NodeBase extends Node {
     readonly flags: NodeFlags;
@@ -777,10 +759,6 @@ export interface PropertyAssignment extends NodeBase, NamedMemberBase, ObjectLit
     readonly kind: SyntaxKind.PropertyAssignment;
     readonly type: TypeNode;
     readonly initializer: Expression;
-}
-export interface DeleteExpression extends UnaryExpressionBase {
-    readonly kind: SyntaxKind.DeleteExpression;
-    readonly expression: Expression;
 }
 export interface VoidExpression extends UnaryExpressionBase {
     readonly kind: SyntaxKind.VoidExpression;

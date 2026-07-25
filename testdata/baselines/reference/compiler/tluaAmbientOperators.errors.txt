@@ -1,20 +1,20 @@
-tluaAmbientOperators.tlua(80,16): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'string' have no overlap.
-tluaAmbientOperators.tlua(81,15): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'number' have no overlap.
-tluaAmbientOperators.tlua(87,15): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'T' have no overlap.
-tluaAmbientOperators.tlua(109,24): error TLUA2322: Type 'number' is not assignable to type 'Vector'.
-tluaAmbientOperators.tlua(110,23): error TLUA2322: Type 'string' is not assignable to type 'number | Vector'.
-tluaAmbientOperators.tlua(114,15): error TLUA2365: Operator '+' cannot be applied to types '{ p: number; }' and '{ p: number; }'.
-tluaAmbientOperators.tlua(118,18): error TLUA2365: Operator '+' cannot be applied to types '{ __add: number; }' and '{ __add: number; }'.
-tluaAmbientOperators.tlua(125,15): error TLUA2365: Operator '+' cannot be applied to types 'MaybeOps' and 'MaybeOps'.
-tluaAmbientOperators.tlua(129,15): error TLUA2365: Operator '+' cannot be applied to types 'LuaMetatable<{ q: number; }>' and 'LuaMetatable<{ q: number; }>'.
-tluaAmbientOperators.tlua(133,16): error TLUA18048: 'vn' is possibly 'undefined'.
-tluaAmbientOperators.tlua(138,14): error TLUA2365: Operator '+' cannot be applied to types 'VMatrix | Vector' and 'VMatrix | Vector'.
-tluaAmbientOperators.tlua(146,15): error TLUA2365: Operator '+' cannot be applied to types 'Short' and 'Short'.
-tluaAmbientOperators.tlua(155,19): error TLUA2349: This expression is not callable.
+tluaAmbientOperators.tlua(77,16): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'string' have no overlap.
+tluaAmbientOperators.tlua(78,15): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'number' have no overlap.
+tluaAmbientOperators.tlua(84,15): error TLUA2367: This comparison appears to be unintentional because the types 'Span' and 'T' have no overlap.
+tluaAmbientOperators.tlua(106,24): error TLUA2322: Type 'number' is not assignable to type 'Vector'.
+tluaAmbientOperators.tlua(107,23): error TLUA2322: Type 'string' is not assignable to type 'number | Vector'.
+tluaAmbientOperators.tlua(111,15): error TLUA2365: Operator '+' cannot be applied to types '{ p: number; }' and '{ p: number; }'.
+tluaAmbientOperators.tlua(115,18): error TLUA2365: Operator '+' cannot be applied to types '{ __add: number; }' and '{ __add: number; }'.
+tluaAmbientOperators.tlua(122,15): error TLUA2365: Operator '+' cannot be applied to types 'MaybeOps' and 'MaybeOps'.
+tluaAmbientOperators.tlua(126,15): error TLUA2365: Operator '+' cannot be applied to types 'LuaMetatable<{ q: number; }>' and 'LuaMetatable<{ q: number; }>'.
+tluaAmbientOperators.tlua(130,16): error TLUA18048: 'vn' is possibly 'undefined'.
+tluaAmbientOperators.tlua(135,14): error TLUA2365: Operator '+' cannot be applied to types 'VMatrix | Vector' and 'VMatrix | Vector'.
+tluaAmbientOperators.tlua(143,15): error TLUA2365: Operator '+' cannot be applied to types 'Short' and 'Short'.
+tluaAmbientOperators.tlua(152,19): error TLUA2349: This expression is not callable.
   Type 'Fake' has no call signatures.
-tluaAmbientOperators.tlua(156,25): error TLUA2339: Property 'missing' does not exist on type 'Fake'.
-tluaAmbientOperators.tlua(163,17): error TLUA2365: Operator '+' cannot be applied to types '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }' and '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }'.
-tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: table, r: table) => table; k: number; }' and '{ __add: (l: table, r: table) => table; k: number; }'.
+tluaAmbientOperators.tlua(153,25): error TLUA2339: Property 'missing' does not exist on type 'Fake'.
+tluaAmbientOperators.tlua(160,17): error TLUA2365: Operator '+' cannot be applied to types '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }' and '{ x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }'.
+tluaAmbientOperators.tlua(167,20): error TLUA2365: Operator '+' cannot be applied to types '{ __add: (l: table, r: table) => table; k: number; }' and '{ __add: (l: table, r: table) => table; k: number; }'.
 
 
 ==== tluaAmbientOperators.tlua (16 errors) ====
@@ -49,9 +49,6 @@ tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applie
     // __mul overload admits (number, Vector).
     local reversed: Vector = 2 * a;
     
-    // A compound assignment runs the same metamethod its operator does.
-    local acc = a;
-    acc += b;
     
     // A metamethod member is still an ordinary property.
     local handler: (l: Vector, r: Vector) => Vector = a.__add;

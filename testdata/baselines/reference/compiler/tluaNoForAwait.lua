@@ -5,7 +5,7 @@
 async function f(xs: number[]): Promise<number>
   local total = 0;
   for await (local x of xs) {
-    total += x;
+    total = total + x;
   }
   return total;
 end
@@ -29,7 +29,7 @@ async function f(xs)
     of;
     xs;
     do
-      total += x;
+      total = total + x;
     end
     return total;
   end

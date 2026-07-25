@@ -34,9 +34,6 @@ local neg: Vector = -a;
 // __mul overload admits (number, Vector).
 local reversed: Vector = 2 * a;
 
-// A compound assignment runs the same metamethod its operator does.
-local acc = a;
-acc += b;
 
 // A metamethod member is still an ordinary property.
 local handler: (l: Vector, r: Vector) => Vector = a.__add;

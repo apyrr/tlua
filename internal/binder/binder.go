@@ -607,8 +607,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 			b.bindExpandoPropertyAssignment(node)
 		}
 		b.checkStrictModeBinaryExpression(node)
-	case ast.KindDeleteExpression:
-		b.checkStrictModeDeleteExpression(node)
 	case ast.KindTypeParameter:
 		b.bindTypeParameter(node)
 	case ast.KindParameter:
@@ -1251,16 +1249,6 @@ func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	}
 }
 
-func (b *Binder) checkStrictModeDeleteExpression(node *ast.Node) {
-	// Grammar checking
-	expr := node.AsDeleteExpression()
-	if expr.Expression.Kind == ast.KindIdentifier {
-		// When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
-		// UnaryExpression is a direct reference to a variable, function argument, or function name
-		b.errorOnNode(expr.Expression, diagnostics.X_delete_cannot_be_called_on_an_identifier_in_strict_mode)
-	}
-}
-
 func isEvalOrArgumentsIdentifier(node *ast.Node) bool {
 	if ast.IsIdentifier(node) {
 		text := node.Text()
@@ -1539,8 +1527,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 			return
 		}
 		b.bindBinaryExpressionFlow(node)
-	case ast.KindDeleteExpression:
-		b.bindDeleteExpressionFlow(node)
 	case ast.KindConditionalExpression:
 		b.bindConditionalExpressionFlow(node)
 	case ast.KindVariableDeclaration:
@@ -1702,7 +1688,7 @@ func (b *Binder) doWithConditionalBranches(action func(b *Binder, value *ast.Nod
 
 func (b *Binder) bindCondition(node *ast.Node, trueTarget *ast.FlowLabel, falseTarget *ast.FlowLabel) {
 	b.doWithConditionalBranches((*Binder).bind, node, trueTarget, falseTarget)
-	if node == nil || !isLogicalAssignmentExpression(node) && !ast.IsLogicalExpression(node) && !(ast.IsOptionalChain(node) && ast.IsOutermostOptionalChain(node)) {
+	if node == nil || !ast.IsLogicalExpression(node) && !(ast.IsOptionalChain(node) && ast.IsOutermostOptionalChain(node)) {
 		b.addAntecedent(trueTarget, b.createFlowCondition(ast.FlowFlagsTrueCondition, b.currentFlow, node))
 		b.addAntecedent(falseTarget, b.createFlowCondition(ast.FlowFlagsFalseCondition, b.currentFlow, node))
 	}
@@ -1718,13 +1704,6 @@ func (b *Binder) bindIterativeStatement(node *ast.Node, breakTarget *ast.FlowLab
 	b.currentContinueTarget = saveContinueTarget
 }
 
-func isLogicalAssignmentExpression(node *ast.Node) bool {
-	return ast.IsLogicalAssignmentExpression(ast.SkipParentheses(node))
-}
-
-// bindLuaArrayMutation records an element store so evolving-array flow sees it.
-// flowTarget is where the checker looks up the assigned value: the individual
-// target inside a list, the enclosing assignment for a scalar store.
 func (b *Binder) bindLuaArrayMutation(target *ast.Node, flowTarget *ast.Node) {
 	reference := ast.GetLuaAssignmentTargetReference(target)
 	if reference != nil && reference.Kind == ast.KindElementAccessExpression &&
@@ -2020,7 +1999,7 @@ func (b *Binder) bindDestructuringAssignmentFlow(node *ast.Node) {
 func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 	expr := node.AsBinaryExpression()
 	operator := expr.OperatorToken.Kind
-	if ast.IsLogicalBinaryOperator(operator) || ast.IsLogicalAssignmentOperator(operator) {
+	if ast.IsLogicalBinaryOperator(operator) {
 		if isTopLevelLogicalExpression(node) {
 			postExpressionLabel := b.createBranchLabel()
 			saveCurrentFlow := b.currentFlow
@@ -2059,29 +2038,14 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 func (b *Binder) bindLogicalLikeExpression(node *ast.Node, trueTarget *ast.FlowLabel, falseTarget *ast.FlowLabel) {
 	expr := node.AsBinaryExpression()
 	preRightLabel := b.createBranchLabel()
-	if expr.OperatorToken.Kind == ast.KindAmpersandAmpersandToken || expr.OperatorToken.Kind == ast.KindAmpersandAmpersandEqualsToken {
+	if expr.OperatorToken.Kind == ast.KindAmpersandAmpersandToken {
 		b.bindCondition(expr.Left, preRightLabel, falseTarget)
 	} else {
 		b.bindCondition(expr.Left, trueTarget, preRightLabel)
 	}
 	b.currentFlow = b.finishFlowLabel(preRightLabel)
 	b.bind(expr.OperatorToken)
-	if ast.IsLogicalAssignmentOperator(expr.OperatorToken.Kind) {
-		b.doWithConditionalBranches((*Binder).bind, expr.Right, trueTarget, falseTarget)
-		b.bindAssignmentTargetFlow(expr.Left)
-		b.addAntecedent(trueTarget, b.createFlowCondition(ast.FlowFlagsTrueCondition, b.currentFlow, node))
-		b.addAntecedent(falseTarget, b.createFlowCondition(ast.FlowFlagsFalseCondition, b.currentFlow, node))
-	} else {
-		b.bindCondition(expr.Right, trueTarget, falseTarget)
-	}
-}
-
-func (b *Binder) bindDeleteExpressionFlow(node *ast.Node) {
-	expr := node.AsDeleteExpression()
-	b.bindEachChild(node)
-	if expr.Expression.Kind == ast.KindPropertyAccessExpression {
-		b.bindAssignmentTargetFlow(expr.Expression)
-	}
+	b.bindCondition(expr.Right, trueTarget, falseTarget)
 }
 
 func (b *Binder) bindConditionalExpressionFlow(node *ast.Node) {
@@ -2433,7 +2397,7 @@ func hasNarrowableArgument(expr *ast.Node) bool {
 
 func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 	switch expr.OperatorToken.Kind {
-	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken:
+	case ast.KindEqualsToken:
 		return containsNarrowableReference(expr.Left)
 	case ast.KindEqualsEqualsToken, ast.KindTildeEqualsToken:
 		left := ast.SkipParentheses(expr.Left)

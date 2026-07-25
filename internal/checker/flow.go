@@ -238,10 +238,6 @@ func (c *Checker) getTypeAtFlowAssignment(f *FlowState, flow *ast.FlowNode) Flow
 			}
 			return flowType
 		}
-		if getAssignmentTargetKind(node) == AssignmentKindCompound {
-			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
-			return c.newFlowType(c.getBaseTypeOfLiteralType(flowType.t), flowType.incomplete)
-		}
 		if f.declaredType == c.autoType || f.declaredType == c.autoArrayType {
 			if c.isEmptyArrayAssignment(node) {
 				return FlowType{t: c.getEvolvingArrayType(c.neverType)}
@@ -555,7 +551,7 @@ func (c *Checker) narrowTypeByCallExpression(f *FlowState, t *Type, callExpressi
 
 func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.BinaryExpression, assumeTrue bool) *Type {
 	switch expr.OperatorToken.Kind {
-	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken:
+	case ast.KindEqualsToken:
 		return c.narrowTypeByTruthiness(f, c.narrowType(f, t, expr.Right, assumeTrue), expr.Left, assumeTrue)
 	case ast.KindEqualsEqualsToken, ast.KindTildeEqualsToken:
 		operator := expr.OperatorToken.Kind
@@ -1809,7 +1805,7 @@ func (c *Checker) getReferenceCandidate(node *ast.Node) *ast.Node {
 		return c.getReferenceCandidate(node.Expression())
 	case ast.KindBinaryExpression:
 		switch node.AsBinaryExpression().OperatorToken.Kind {
-		case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken:
+		case ast.KindEqualsToken:
 			return c.getReferenceCandidate(node.AsBinaryExpression().Left)
 		case ast.KindCommaToken:
 			return c.getReferenceCandidate(node.AsBinaryExpression().Right)
@@ -2086,8 +2082,6 @@ func (c *Checker) getAssignedType(node *ast.Node) *Type {
 				}
 			}
 		}
-	case ast.KindDeleteExpression:
-		return c.nilType
 	}
 	// The array-literal and property-assignment arms are gone with destructuring
 	// assignment: the binder never emits a FlowAssignment whose node sits inside

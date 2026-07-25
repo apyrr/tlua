@@ -60,7 +60,6 @@ export interface Scanner {
     getTokenFlags(): TokenFlags;
     reScanGreaterToken(): SyntaxKind;
     reScanSlashToken(): SyntaxKind;
-    reScanAsteriskEqualsToken(): SyntaxKind;
     reScanTemplateToken(isTaggedTemplate: boolean): SyntaxKind;
     reScanTemplateHeadOrNoSubstitutionTemplate(): SyntaxKind;
     scanJsxIdentifier(): SyntaxKind;
@@ -100,7 +99,6 @@ export const textToKeywordObj: Record<string, KeywordSyntaxKind> = {
     debugger: SyntaxKind.DebuggerKeyword,
     declare: SyntaxKind.DeclareKeyword,
     defer: SyntaxKind.DeferKeyword,
-    delete: SyntaxKind.DeleteKeyword,
     do: SyntaxKind.DoKeyword,
     else: SyntaxKind.ElseKeyword,
     end: SyntaxKind.EndKeyword,
@@ -197,13 +195,6 @@ const textToToken = new Map(Object.entries({
     "?.": SyntaxKind.QuestionDotToken,
     ":": SyntaxKind.ColonToken,
     "=": SyntaxKind.EqualsToken,
-    "+=": SyntaxKind.PlusEqualsToken,
-    "-=": SyntaxKind.MinusEqualsToken,
-    "*=": SyntaxKind.AsteriskEqualsToken,
-    "/=": SyntaxKind.SlashEqualsToken,
-    "%=": SyntaxKind.PercentEqualsToken,
-    "||=": SyntaxKind.BarBarEqualsToken,
-    "&&=": SyntaxKind.AmpersandAmpersandEqualsToken,
     "@": SyntaxKind.AtToken,
     "#": SyntaxKind.HashToken,
     "`": SyntaxKind.BacktickToken,
@@ -921,7 +912,6 @@ export function createScanner(
         getNumericLiteralFlags: () => tokenFlags & TokenFlags.NumericLiteralFlags,
         getTokenFlags: () => tokenFlags,
         reScanGreaterToken,
-        reScanAsteriskEqualsToken,
         reScanSlashToken,
         reScanTemplateToken,
         reScanTemplateHeadOrNoSubstitutionTemplate,
@@ -1591,16 +1581,10 @@ export function createScanner(
                 case CharacterCodes.backtick:
                     return token = scanTemplateAndSetTokenValue(/*shouldEmitInvalidEscapeError*/ false);
                 case CharacterCodes.percent:
-                    if (charCodeUnchecked(pos + 1) === CharacterCodes.equals) {
-                        return pos += 2, token = SyntaxKind.PercentEqualsToken;
-                    }
                     pos++;
                     return token = SyntaxKind.PercentToken;
                 case CharacterCodes.ampersand:
                     if (charCodeUnchecked(pos + 1) === CharacterCodes.ampersand) {
-                        if (charCodeUnchecked(pos + 2) === CharacterCodes.equals) {
-                            return pos += 3, token = SyntaxKind.AmpersandAmpersandEqualsToken;
-                        }
                         return pos += 2, token = SyntaxKind.AmpersandAmpersandToken;
                     }
                     pos++;
@@ -1612,9 +1596,6 @@ export function createScanner(
                     pos++;
                     return token = SyntaxKind.CloseParenToken;
                 case CharacterCodes.asterisk:
-                    if (charCodeUnchecked(pos + 1) === CharacterCodes.equals) {
-                        return pos += 2, token = SyntaxKind.AsteriskEqualsToken;
-                    }
                     pos++;
                     if (
                         skipJsDocLeadingAsterisks &&
@@ -1629,9 +1610,6 @@ export function createScanner(
                     pos++;
                     return token = SyntaxKind.AsteriskAsteriskToken;
                 case CharacterCodes.plus:
-                    if (charCodeUnchecked(pos + 1) === CharacterCodes.equals) {
-                        return pos += 2, token = SyntaxKind.PlusEqualsToken;
-                    }
                     pos++;
                     return token = SyntaxKind.PlusToken;
                 case CharacterCodes.comma:
@@ -1672,9 +1650,6 @@ export function createScanner(
                             continue;
                         }
                         return token = SyntaxKind.SingleLineCommentTrivia;
-                    }
-                    if (charCodeUnchecked(pos + 1) === CharacterCodes.equals) {
-                        return pos += 2, token = SyntaxKind.MinusEqualsToken;
                     }
                     pos++;
                     return token = SyntaxKind.MinusToken;
@@ -1754,10 +1729,6 @@ export function createScanner(
                             }
                             return token = SyntaxKind.MultiLineCommentTrivia;
                         }
-                    }
-
-                    if (charCodeUnchecked(pos + 1) === CharacterCodes.equals) {
-                        return pos += 2, token = SyntaxKind.SlashEqualsToken;
                     }
 
                     pos++;
@@ -1898,9 +1869,6 @@ export function createScanner(
                     }
 
                     if (charCodeUnchecked(pos + 1) === CharacterCodes.bar) {
-                        if (charCodeUnchecked(pos + 2) === CharacterCodes.equals) {
-                            return pos += 3, token = SyntaxKind.BarBarEqualsToken;
-                        }
                         return pos += 2, token = SyntaxKind.BarBarToken;
                     }
                     pos++;
@@ -2031,13 +1999,8 @@ export function createScanner(
         return token;
     }
 
-    function reScanAsteriskEqualsToken(): SyntaxKind {
-        pos = tokenStart + 1;
-        return token = SyntaxKind.EqualsToken;
-    }
-
     function reScanSlashToken(): SyntaxKind {
-        if (token === SyntaxKind.SlashToken || token === SyntaxKind.SlashEqualsToken) {
+        if (token === SyntaxKind.SlashToken) {
             const startOfRegExpBody = tokenStart + 1;
             pos = startOfRegExpBody;
             let inEscape = false;
