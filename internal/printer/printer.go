@@ -942,7 +942,6 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindJSTypeAliasDeclaration,
 		ast.KindFunctionType,
 		ast.KindCallSignature,
-		ast.KindTaggedTemplateExpression,
 		ast.KindObjectBindingPattern,
 		ast.KindArrayBindingPattern,
 		ast.KindNamedImports,
@@ -2419,15 +2418,6 @@ func (p *Printer) emitTemplateLiteral(node *ast.TemplateLiteral) {
 	}
 }
 
-func (p *Printer) emitTaggedTemplateExpression(node *ast.TaggedTemplateExpression) {
-	state := p.enterNode(node.AsNode())
-	p.emitCallee(node.Tag, node.AsNode())
-	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	p.writeSpace()
-	p.emitTemplateLiteral(node.Template)
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitTypeAssertionExpression(node *ast.TypeAssertion) {
 	state := p.enterNode(node.AsNode())
 	p.writePunctuation("<")
@@ -2918,16 +2908,6 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				ce.Arguments,
 				ce.Flags,
 			)
-		case ast.KindTaggedTemplateExpression:
-			tte := node.AsTaggedTemplateExpression()
-			return p.emitContext.Factory.UpdateTaggedTemplateExpression(
-				tte,
-				p.parenthesizeExpressionForNoAsi(tte.Tag),
-				tte.QuestionDotToken,
-				tte.TypeArguments,
-				tte.Template,
-				tte.Flags,
-			)
 		case ast.KindBinaryExpression:
 			be := node.AsBinaryExpression()
 			return p.emitContext.Factory.UpdateBinaryExpression(
@@ -3022,8 +3002,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitElementAccessExpression(node.AsElementAccessExpression())
 	case ast.KindCallExpression:
 		p.emitCallExpression(node.AsCallExpression())
-	case ast.KindTaggedTemplateExpression:
-		p.emitTaggedTemplateExpression(node.AsTaggedTemplateExpression())
 	case ast.KindTypeAssertionExpression:
 		p.emitTypeAssertionExpression(node.AsTypeAssertion())
 	case ast.KindParenthesizedExpression:

@@ -59,7 +59,6 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (stri
     [SyntaxKind.SpreadElement]: ["expression"],
     [SyntaxKind.TemplateExpression]: ["head", "templateSpans"],
     [SyntaxKind.TemplateSpan]: ["expression", "literal"],
-    [SyntaxKind.TaggedTemplateExpression]: ["tag", "questionDotToken", "typeArguments", "template"],
     [SyntaxKind.ParenthesizedExpression]: ["expression"],
     [SyntaxKind.ArrayLiteralExpression]: ["elements"],
     [SyntaxKind.ObjectLiteralExpression]: ["properties"],

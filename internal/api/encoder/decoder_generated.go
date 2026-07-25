@@ -487,13 +487,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		expression := d.nodeAt(it.nextIf(mask, 0))
 		literal := d.nodeAt(it.nextIf(mask, 1))
 		return d.factory.NewTemplateSpan(expression, literal), nil
-	case ast.KindTaggedTemplateExpression:
-		it := newChildIter(childIndices)
-		tag := d.nodeAt(it.nextIf(mask, 0))
-		questionDotToken := d.nodeAt(it.nextIf(mask, 1))
-		typeArguments := d.nodeListAt(it.nextIf(mask, 2))
-		template := d.nodeAt(it.nextIf(mask, 3))
-		return d.factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, 0), nil
 	case ast.KindParenthesizedExpression:
 		return d.factory.NewParenthesizedExpression(d.singleChild(childIndices)), nil
 	case ast.KindArrayLiteralExpression:

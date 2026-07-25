@@ -282,7 +282,6 @@ type (
 	SpreadElementNode                 = Node
 	TemplateExpressionNode            = Node
 	TemplateSpanNode                  = Node
-	TaggedTemplateExpressionNode      = Node
 	ParenthesizedExpressionNode       = Node
 	ArrayLiteralExpressionNode        = Node
 	ObjectLiteralExpressionNode       = Node
@@ -486,7 +485,7 @@ type (
 	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
 	NamedImportsOrExports          = Node // NamedImports | NamedExports
 	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
-	CallLikeExpression             = Node // CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement
+	CallLikeExpression             = Node // CallExpression | JsxOpeningLikeElement
 	FunctionLikeDeclaration        = Node // FunctionDeclaration | FunctionExpression | ArrowFunction
 	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
 	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
@@ -3437,56 +3436,6 @@ func (node *TemplateSpan) computeSubtreeFacts() SubtreeFacts {
 
 func IsTemplateSpan(node *Node) bool {
 	return node.Kind == KindTemplateSpan
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// TaggedTemplateExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type TaggedTemplateExpression struct {
-	MemberExpressionBase
-	CompositeBase
-	Tag              *Expression
-	QuestionDotToken *QuestionDotToken
-	TypeArguments    *TypeList // Optional
-	Template         *TemplateLiteral
-}
-
-func (f *NodeFactory) NewTaggedTemplateExpression(tag *Expression, questionDotToken *QuestionDotToken, typeArguments *TypeList, template *TemplateLiteral, flags NodeFlags) *Node {
-	data := &TaggedTemplateExpression{}
-	data.Tag = tag
-	data.QuestionDotToken = questionDotToken
-	data.TypeArguments = typeArguments
-	data.Template = template
-	node := f.newNode(KindTaggedTemplateExpression, data)
-	node.Flags |= flags & NodeFlagsOptionalChain
-	return node
-}
-
-func (f *NodeFactory) UpdateTaggedTemplateExpression(node *TaggedTemplateExpression, tag *Expression, questionDotToken *QuestionDotToken, typeArguments *TypeList, template *TemplateLiteral, flags NodeFlags) *Node {
-	if tag != node.Tag || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || template != node.Template || flags != node.Flags {
-		return updateNode(f.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, flags), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *TaggedTemplateExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Tag) ||
-		visit(v, node.QuestionDotToken) ||
-		visitNodeList(v, node.TypeArguments) ||
-		visit(v, node.Template)
-}
-
-func (node *TaggedTemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateTaggedTemplateExpression(node, v.visitNode(node.Tag), v.visitNode(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNode(node.Template), node.Flags)
-}
-
-func (node *TaggedTemplateExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewTaggedTemplateExpression(node.Tag, node.QuestionDotToken, node.TypeArguments, node.Template, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsTaggedTemplateExpression(node *Node) bool {
-	return node.Kind == KindTaggedTemplateExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7405,8 +7354,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*TemplateExpression).ForEachChild(v)
 	case KindTemplateSpan:
 		return n.data.(*TemplateSpan).ForEachChild(v)
-	case KindTaggedTemplateExpression:
-		return n.data.(*TaggedTemplateExpression).ForEachChild(v)
 	case KindParenthesizedExpression:
 		return n.data.(*ParenthesizedExpression).ForEachChild(v)
 	case KindArrayLiteralExpression:
@@ -7862,10 +7809,6 @@ func (n *Node) AsTemplateExpression() *TemplateExpression {
 
 func (n *Node) AsTemplateSpan() *TemplateSpan {
 	return n.data.(*TemplateSpan)
-}
-
-func (n *Node) AsTaggedTemplateExpression() *TaggedTemplateExpression {
-	return n.data.(*TaggedTemplateExpression)
 }
 
 func (n *Node) AsParenthesizedExpression() *ParenthesizedExpression {

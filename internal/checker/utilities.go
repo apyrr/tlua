@@ -945,7 +945,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return ast.IsCallExpression(node) || ast.IsTaggedTemplateExpression(node) || ast.IsJsxOpeningLikeElement(node)
+	return ast.IsCallExpression(node) || ast.IsJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {

@@ -193,9 +193,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindTemplateSpan:
 		n := node.AsTemplateSpan()
 		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.Literal != nil) << 1)
-	case ast.KindTaggedTemplateExpression:
-		n := node.AsTaggedTemplateExpression()
-		return (boolToByte(n.Tag != nil) << 0) | (boolToByte(n.QuestionDotToken != nil) << 1) | (boolToByte(n.TypeArguments != nil) << 2) | (boolToByte(n.Template != nil) << 3)
 	case ast.KindParenthesizedExpression:
 		n := node.AsParenthesizedExpression()
 		return (boolToByte(n.Expression != nil) << 0)

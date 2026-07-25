@@ -85,8 +85,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 	case ast.KindCallExpression:
 		return parent.Expression() == name ||
 			slices.Contains(parent.Arguments(), name)
-	case ast.KindTaggedTemplateExpression:
-		return parent.AsTaggedTemplateExpression().Tag == name
 	case ast.KindJsxOpeningElement, ast.KindJsxClosingElement:
 		return parent.TagName() == name
 	default:

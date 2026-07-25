@@ -282,7 +282,7 @@ func (s *formattingScanner) getNextToken(n *ast.Node, expectedScanAction scanAct
 	case actionRescanTemplateToken:
 		if token == ast.KindCloseBraceToken {
 			s.lastScanAction = actionRescanTemplateToken
-			return s.s.ReScanTemplateToken( /*isTaggedTemplate*/ false)
+			return s.s.ReScanTemplateToken()
 		}
 	case actionRescanJsxIdentifier:
 		s.lastScanAction = actionRescanJsxIdentifier

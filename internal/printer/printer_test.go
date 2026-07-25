@@ -81,8 +81,6 @@ func TestEmit(t *testing.T) {
 		{title: "CallExpression#13", input: `a?.b()`, output: `a?.b();`},
 		// Tagged templates are a non-Lua construct: the tag applied to the lowered
 		// string emits as `tag ""` (Lua string-call sugar) which tlua does not parse.
-		{title: "TaggedTemplateExpression#1", input: "tag``", output: "tag \"\";", removed: true},
-		{title: "TaggedTemplateExpression#2", input: "tag<T>``", output: "tag<T> \"\";", removed: true},
 		{title: "TypeAssertionExpression#1", input: `<T>a`, output: `<T>a;`},
 		{title: "FunctionExpression#1", input: "(function() end)", output: "(function()\nend);"},
 		{title: "FunctionExpression#2", input: "(function(a) return a end)", output: "(function(a)\n    return a;\nend);"},
@@ -591,69 +589,6 @@ func TestParenthesizeCall4(t *testing.T) {
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a((b, c));")
-}
-
-func TestParenthesizeTaggedTemplate1(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewTaggedTemplateExpression(
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
-						factory.NewIdentifier("b"),
-					),
-					nil, /*questionDotToken*/
-					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
-					ast.NodeFlagsNone,
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// tlua: the no-substitution template lowers to a Lua string; the parenthesized tag is
-	// preserved. CheckEmitJS (no reparse) because `tag ""` is Lua string-call sugar tlua
-	// doesn't parse back — a non-Lua tagged template's best-effort emit.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(a, b) \"\";")
-}
-
-func TestParenthesizeTaggedTemplate2(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewTaggedTemplateExpression(
-					// will be parenthesized on emit:
-					factory.NewPropertyAccessExpression(
-						factory.NewIdentifier("a"),
-						factory.NewToken(ast.KindQuestionDotToken),
-						nil, /*colonToken*/
-						factory.NewIdentifier("b"),
-						ast.NodeFlagsOptionalChain,
-					),
-					nil, /*questionDotToken*/
-					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
-					ast.NodeFlagsNone,
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// See TestParenthesizeTaggedTemplate1: CheckEmitJS because the tagged-template emit isn't
-	// re-parseable tlua.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(a?.b) \"\";")
 }
 
 func TestParenthesizeTypeAssertion1(t *testing.T) {

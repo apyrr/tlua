@@ -1044,9 +1044,9 @@ func (s *Scanner) reScanGreaterThanTokenInner() {
 	}
 }
 
-func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) ast.Kind {
+func (s *Scanner) ReScanTemplateToken() ast.Kind {
 	s.pos = s.tokenStart
-	s.token = s.scanTemplateAndSetTokenValue(!isTaggedTemplate)
+	s.token = s.scanTemplateAndSetTokenValue(true /*shouldEmitInvalidEscapeError*/)
 	return s.token
 }
 

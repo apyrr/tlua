@@ -1000,10 +1000,6 @@ func isNoSubstitutionTemplateLiteral(node *ast.Node) bool {
 	return node.Kind == ast.KindNoSubstitutionTemplateLiteral
 }
 
-func isTaggedTemplateExpression(node *ast.Node) bool {
-	return node.Kind == ast.KindTaggedTemplateExpression
-}
-
 func isInsideTemplateLiteral(node *ast.Node, position int, sourceFile *ast.SourceFile) bool {
 	return ast.IsTemplateLiteralKind(node.Kind) && (scanner.GetTokenPosOfNode(node, sourceFile, false) < position && position < node.End() || (ast.IsUnterminatedLiteral(node) && position == node.End()))
 }

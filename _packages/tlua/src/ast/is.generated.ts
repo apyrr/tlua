@@ -247,7 +247,6 @@ import type {
     SyntheticExpression,
     SyntheticReferenceExpression,
     TableEntry,
-    TaggedTemplateExpression,
     TemplateExpression,
     TemplateHead,
     TemplateLiteral,
@@ -567,10 +566,6 @@ export function isTemplateExpression(node: Node): node is TemplateExpression {
 
 export function isTemplateSpan(node: Node): node is TemplateSpan {
     return node.kind === SyntaxKind.TemplateSpan;
-}
-
-export function isTaggedTemplateExpression(node: Node): node is TaggedTemplateExpression {
-    return node.kind === SyntaxKind.TaggedTemplateExpression;
 }
 
 export function isParenthesizedExpression(node: Node): node is ParenthesizedExpression {
@@ -1116,8 +1111,7 @@ export function isBreakOrContinueStatement(node: Node): node is BreakOrContinueS
 }
 
 export function isCallLikeExpression(node: Node): node is CallLikeExpression {
-    const kind = node.kind;
-    return kind === SyntaxKind.CallExpression || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.JsxOpeningElement || kind === SyntaxKind.JsxSelfClosingElement;
+    return node.kind === SyntaxKind.CallExpression || node.kind === SyntaxKind.JsxOpeningElement || node.kind === SyntaxKind.JsxSelfClosingElement;
 }
 
 export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration {

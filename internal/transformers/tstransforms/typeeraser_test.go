@@ -55,11 +55,3 @@ func TestTypeEraser(t *testing.T) {
 // is not re-parseable tlua, so it can't live in the reparse-gated table above. It has its own
 // test via CheckEmitJS (no reparse) to keep covering the type-eraser's TaggedTemplateExpression
 // branch, which must erase the `<T>` type arguments.
-func TestTypeEraserTaggedTemplate(t *testing.T) {
-	t.Parallel()
-	file := parsetestutil.ParseTypeScript("f<T>``", false)
-	parsetestutil.CheckDiagnostics(t, file)
-	compilerOptions := &core.CompilerOptions{}
-	transformed := tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: printer.NewEmitContext()}).TransformSourceFile(file)
-	emittestutil.CheckEmitJS(t, nil, transformed, "f \"\";")
-}

@@ -80,8 +80,6 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 		{title: "NewExpression#10", input: `new a.b<T>(c)`},
 		{title: "NewExpression#11", input: `new a(b).c`},
 		{title: "NewExpression#12", input: `new a<T>(b).c`},
-		{title: "TaggedTemplateExpression#1", input: "tag``"},
-		{title: "TaggedTemplateExpression#2", input: "tag<T>``"},
 		{title: "TypeAssertionExpression#1", input: `<T>a`},
 		{title: "FunctionExpression#1", input: `(function(){})`},
 		{title: "FunctionExpression#2", input: `(function f(){})`},

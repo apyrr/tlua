@@ -21,14 +21,16 @@ var (
 	NewES2019Transformer = NewES2020Transformer
 	// The object rest/spread downlevel transform is removed in tlua: spread
 	// elements, spread assignments, and binding-pattern rests no longer parse,
-	// so there is nothing to lower.
-	NewES2018Transformer transformers.TransformerFactory = newTaggedTemplateLiftRestrictionTransformer
+	// so there is nothing to lower. Tagged templates are gone too, so the
+	// invalid-escape lift restriction went with them.
+	NewES2018Transformer transformers.TransformerFactory = nil
 	// The async downlevel transform (__awaiter + generator state machine) is
 	// removed in tlua: suspension is the Lua coroutine library's job. The
 	// throwaway JS emit therefore keeps the native `async` keyword at ES2017+
 	// instead of lowering it; Lua — the real target — emits a plain function.
 	NewES2017Transformer = NewES2018Transformer
-	NewES2016Transformer = transformers.Chain(NewES2017Transformer, newExponentiationTransformer)
+	// Chain invokes every member, so the nil predecessor cannot be listed here.
+	NewES2016Transformer transformers.TransformerFactory = newExponentiationTransformer
 )
 
 func GetESTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -37,14 +39,11 @@ func GetESTransformer(opts *transformers.TransformOptions) *transformers.Transfo
 	case core.ScriptTargetESNext:
 		return nil
 	case core.ScriptTargetES2025, core.ScriptTargetES2024, core.ScriptTargetES2023, core.ScriptTargetES2022, core.ScriptTargetES2021,
-		core.ScriptTargetES2020, core.ScriptTargetES2019, core.ScriptTargetES2018:
-		// ES2021 down to ES2019 have no downlevel left, so their factories are nil
-		// and must not be invoked; ES2018's own lowering starts at ES2017.
+		core.ScriptTargetES2020, core.ScriptTargetES2019, core.ScriptTargetES2018,
+		core.ScriptTargetES2017, core.ScriptTargetES2016:
+		// ES2021 down to ES2017 have no downlevel left, so their factories are nil
+		// and must not be invoked; the first real lowering is exponentiation, below.
 		return nil
-	case core.ScriptTargetES2017:
-		return NewES2018Transformer(opts)
-	case core.ScriptTargetES2016:
-		return NewES2017Transformer(opts)
 	default: // other, older, option, transform maximally
 		return NewES2016Transformer(opts)
 	}

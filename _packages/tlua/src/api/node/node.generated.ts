@@ -755,9 +755,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get step(): RemoteNode | undefined {
         return this.getNamedChild("step") as RemoteNode;
     }
-    get tag(): RemoteNode | undefined {
-        return this.getNamedChild("tag") as RemoteNode;
-    }
     get tagName(): RemoteNode | undefined {
         return this.getNamedChild("tagName") as RemoteNode;
     }
@@ -766,9 +763,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get target(): RemoteNode | undefined {
         return this.getNamedChild("target") as RemoteNode;
-    }
-    get template(): RemoteNode | undefined {
-        return this.getNamedChild("template") as RemoteNode;
     }
     get templateSpans(): RemoteNodeList | undefined {
         return this.getNamedChild("templateSpans") as RemoteNodeList;

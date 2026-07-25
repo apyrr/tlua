@@ -228,7 +228,6 @@
             "PropertyAccessExpression",
             "ElementAccessExpression",
             "CallExpression",
-            "TaggedTemplateExpression",
             "TypeAssertionExpression",
             "ParenthesizedExpression",
             "FunctionExpression",
@@ -2444,37 +2443,6 @@
                     }
                 ]
             },
-            "TaggedTemplateExpression": {
-                "extends": [
-                    "MemberExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Tag",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "QuestionDotToken",
-                        "type": "QuestionDotToken"
-                    },
-                    {
-                        "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "optional": true,
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "Template",
-                        "type": "TemplateLiteral"
-                    },
-                    {
-                        "name": "Flags",
-                        "inherited": true,
-                        "bitmask": "NodeFlagsOptionalChain"
-                    }
-                ]
-            },
             "ParenthesizedExpression": {
                 "generateSubtreeFacts": true,
                 "extends": [
@@ -4415,7 +4383,6 @@
             ],
             "CallLikeExpression": [
                 "CallExpression",
-                "TaggedTemplateExpression",
                 "JsxOpeningLikeElement"
             ],
             "FunctionLikeDeclaration": [

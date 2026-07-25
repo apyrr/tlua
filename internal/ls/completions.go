@@ -2514,8 +2514,7 @@ func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCha
 
 func isStringLiteralOrTemplate(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateExpression,
-		ast.KindTaggedTemplateExpression:
+	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateExpression:
 		return true
 	}
 	return false

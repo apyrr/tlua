@@ -455,7 +455,6 @@ func isLeftHandSideExpressionKind(kind Kind) bool {
 		KindJsxElement,
 		KindJsxSelfClosingElement,
 		KindJsxFragment,
-		KindTaggedTemplateExpression,
 		KindArrayLiteralExpression,
 		KindParenthesizedExpression,
 		KindObjectLiteralExpression,
@@ -2107,7 +2106,6 @@ func IsExpressionNode(node *Node) bool {
 		KindPropertyAccessExpression,
 		KindElementAccessExpression,
 		KindCallExpression,
-		KindTaggedTemplateExpression,
 		KindAsExpression,
 		KindTypeAssertionExpression,
 		KindSatisfiesExpression,
@@ -2256,7 +2254,7 @@ func isPartOfTypeNodeInParent(node *Node) bool {
 		KindIndexSignature,
 		KindTypeAssertionExpression:
 		return node == parent.Type()
-	case KindCallExpression, KindTaggedTemplateExpression:
+	case KindCallExpression:
 		return slices.Contains(parent.TypeArguments(), node)
 	}
 	return false
@@ -3154,8 +3152,7 @@ func IsCallLikeExpression(node *Node) bool {
 	case KindJsxOpeningElement,
 		KindJsxSelfClosingElement,
 		KindJsxOpeningFragment,
-		KindCallExpression,
-		KindTaggedTemplateExpression:
+		KindCallExpression:
 		return true
 	}
 	return false
@@ -3209,7 +3206,6 @@ func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
 func HasTypeArguments(node *Node) bool {
 	switch node.Kind {
 	case KindCallExpression,
-		KindTaggedTemplateExpression,
 		KindTypeReference,
 		KindExpressionWithTypeArguments,
 		KindImportType,
@@ -3695,13 +3691,6 @@ func selectExpressionOfCallExpression(node *Node) *Node {
 	return nil
 }
 
-func selectTagOfTaggedTemplateExpression(node *Node) *Node {
-	if IsTaggedTemplateExpression(node) {
-		return node.AsTaggedTemplateExpression().Tag
-	}
-	return nil
-}
-
 func selectTagNameOfJsxOpeningLikeElement(node *Node) *Node {
 	if IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node) {
 		return node.TagName()
@@ -3711,10 +3700,6 @@ func selectTagNameOfJsxOpeningLikeElement(node *Node) *Node {
 
 func IsCallExpressionTarget(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
 	return isCalleeWorker(node, IsCallExpression, selectExpressionOfCallExpression, includeElementAccess, skipPastOuterExpressions)
-}
-
-func IsTaggedTemplateTag(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
-	return isCalleeWorker(node, IsTaggedTemplateExpression, selectTagOfTaggedTemplateExpression, includeElementAccess, skipPastOuterExpressions)
 }
 
 func IsJsxOpeningLikeElementTagName(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
@@ -3772,8 +3757,6 @@ func IsJsxOpeningLikeElement(node *Node) bool {
 
 func GetInvokedExpression(node *Node) *Node {
 	switch node.Kind {
-	case KindTaggedTemplateExpression:
-		return node.AsTaggedTemplateExpression().Tag
 	case KindJsxOpeningElement, KindJsxSelfClosingElement:
 		return node.TagName()
 	case KindBinaryExpression:

@@ -40,7 +40,6 @@ func getOpenTokenForList(node *ast.Node, list *ast.NodeList) ast.Kind {
 			return ast.KindLessThanToken
 		}
 	case ast.KindTypeReference,
-		ast.KindTaggedTemplateExpression,
 		ast.KindTypeQuery,
 		ast.KindExpressionWithTypeArguments,
 		ast.KindImportType:

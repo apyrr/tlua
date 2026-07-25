@@ -92,9 +92,6 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		ast.KindSpreadElement:
 		return IsCompletedNode(n.Expression(), sourceFile)
 
-	case ast.KindTaggedTemplateExpression:
-		return IsCompletedNode(n.AsTaggedTemplateExpression().Template, sourceFile)
-
 	case ast.KindTemplateExpression:
 		if n.AsTemplateExpression().TemplateSpans == nil {
 			return false

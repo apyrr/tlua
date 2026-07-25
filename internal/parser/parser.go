@@ -1817,13 +1817,6 @@ func (p *Parser) nextTokenIsOpenParen() bool {
 }
 
 func (p *Parser) parseErrorForMissingSemicolonAfter(node *ast.Node) {
-	// Tagged template literals are sometimes used in places where only simple strings are allowed, i.e.:
-	//   module `M1` {
-	//   ^^^^^^^^^^^ This block is parsed as a template literal like module`M1`.
-	if node.Kind == ast.KindTaggedTemplateExpression {
-		p.parseErrorAtRange(p.skipRangeTrivia(node.AsTaggedTemplateExpression().Template.Loc), diagnostics.Module_declaration_names_may_only_use_or_quoted_strings)
-		return
-	}
 	// Otherwise, if this isn't a well-known keyword-like identifier, give the generic fallback message.
 	var expressionText string
 	if node.Kind == ast.KindIdentifier {
@@ -2361,8 +2354,8 @@ func (p *Parser) reScanSlashToken() ast.Kind {
 	return p.token
 }
 
-func (p *Parser) reScanTemplateToken(isTaggedTemplate bool) ast.Kind {
-	p.token = p.scanner.ReScanTemplateToken(isTaggedTemplate)
+func (p *Parser) reScanTemplateToken() ast.Kind {
+	p.token = p.scanner.ReScanTemplateToken()
 	return p.token
 }
 
@@ -3164,12 +3157,12 @@ func (p *Parser) parseAssertsTypePredicate() *ast.TypeNode {
 
 func (p *Parser) parseTemplateType() *ast.Node {
 	pos := p.nodePos()
-	return p.finishNode(p.factory.NewTemplateLiteralTypeNode(p.parseTemplateHead(false /*isTaggedTemplate*/), p.parseTemplateTypeSpans()), pos)
+	return p.finishNode(p.factory.NewTemplateLiteralTypeNode(p.parseTemplateHead(), p.parseTemplateTypeSpans()), pos)
 }
 
-func (p *Parser) parseTemplateHead(isTaggedTemplate bool) *ast.Node {
-	if !isTaggedTemplate && p.scanner.TokenFlags()&ast.TokenFlagsIsInvalid != 0 {
-		p.reScanTemplateToken(false /*isTaggedTemplate*/)
+func (p *Parser) parseTemplateHead() *ast.Node {
+	if p.scanner.TokenFlags()&ast.TokenFlagsIsInvalid != 0 {
+		p.reScanTemplateToken()
 	}
 	pos := p.nodePos()
 	result := p.factory.NewTemplateHead(p.scanner.TokenValue(), p.getTemplateLiteralRawText(2 /*endLength*/), p.scanner.TokenFlags())
@@ -3200,12 +3193,12 @@ func (p *Parser) parseTemplateTypeSpans() *ast.NodeList {
 
 func (p *Parser) parseTemplateTypeSpan() *ast.Node {
 	pos := p.nodePos()
-	return p.finishNode(p.factory.NewTemplateLiteralTypeSpan(p.parseType(), p.parseLiteralOfTemplateSpan(false /*isTaggedTemplate*/)), pos)
+	return p.finishNode(p.factory.NewTemplateLiteralTypeSpan(p.parseType(), p.parseLiteralOfTemplateSpan()), pos)
 }
 
-func (p *Parser) parseLiteralOfTemplateSpan(isTaggedTemplate bool) *ast.Node {
+func (p *Parser) parseLiteralOfTemplateSpan() *ast.Node {
 	if p.token == ast.KindCloseBraceToken {
-		p.reScanTemplateToken(isTaggedTemplate)
+		p.reScanTemplateToken()
 		return p.parseTemplateMiddleOrTail()
 	}
 	p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(ast.KindCloseBraceToken))
@@ -4100,9 +4093,7 @@ func (p *Parser) parseSuperExpression() *ast.Expression {
 		typeArguments := p.tryParseTypeArgumentsInExpression()
 		if typeArguments != nil {
 			p.parseErrorAt(startPos, p.nodePos(), diagnostics.X_super_may_not_use_type_arguments)
-			if !p.isTemplateStartOfTaggedTemplate() {
-				expression = p.finishNode(p.factory.NewExpressionWithTypeArguments(expression, typeArguments), pos)
-			}
+			expression = p.finishNode(p.factory.NewExpressionWithTypeArguments(expression, typeArguments), pos)
 		}
 	}
 	if p.token == ast.KindOpenParenToken || p.token == ast.KindDotToken || p.token == ast.KindOpenBracketToken {
@@ -4113,10 +4104,6 @@ func (p *Parser) parseSuperExpression() *ast.Expression {
 	p.parseErrorAtCurrentToken(diagnostics.X_super_must_be_followed_by_an_argument_list_or_member_access)
 	// private names will never work with `super` (`super.#foo`), but that's a semantic error, not syntactic
 	return p.finishNode(p.factory.NewPropertyAccessExpression(expression, nil /*questionDotToken*/, nil /*colonToken*/, p.parseRightSideOfDot(true /*allowIdentifierNames*/, true /*allowPrivateIdentifiers*/, true /*allowUnicodeEscapeSequenceInIdentifierName*/), ast.NodeFlagsNone), pos)
-}
-
-func (p *Parser) isTemplateStartOfTaggedTemplate() bool {
-	return p.token == ast.KindNoSubstitutionTemplateLiteral || p.token == ast.KindTemplateHead
 }
 
 func (p *Parser) tryParseTypeArgumentsInExpression() *ast.NodeList {
@@ -4236,17 +4223,6 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 			expression = p.parseElementAccessExpressionRest(pos, expression, questionDotToken)
 			continue
 		}
-		if p.isTemplateStartOfTaggedTemplate() {
-			// Absorb type arguments into TemplateExpression when preceding expression is ExpressionWithTypeArguments
-			if questionDotToken == nil && ast.IsExpressionWithTypeArguments(expression) {
-				original := expression.AsExpressionWithTypeArguments()
-				expression = p.parseTaggedTemplateRest(pos, original.Expression, questionDotToken, original.TypeArguments)
-				p.unparseExpressionWithTypeArguments(original.Expression, original.TypeArguments, expression)
-			} else {
-				expression = p.parseTaggedTemplateRest(pos, expression, questionDotToken, nil /*typeArguments*/)
-			}
-			continue
-		}
 		if questionDotToken == nil {
 			if p.tokenIsExclamationPunctuation() && !p.hasPrecedingLineBreak() {
 				p.nextToken()
@@ -4269,7 +4245,7 @@ func (p *Parser) isStartOfOptionalPropertyOrElementAccessChain() bool {
 
 func (p *Parser) nextTokenIsIdentifierOrKeywordOrOpenBracketOrTemplate() bool {
 	p.nextToken()
-	return tokenIsIdentifierOrKeyword(p.token) || p.token == ast.KindOpenBracketToken || p.isTemplateStartOfTaggedTemplate()
+	return tokenIsIdentifierOrKeyword(p.token) || p.token == ast.KindOpenBracketToken
 }
 
 func (p *Parser) parsePropertyAccessExpressionRest(pos int, expression *ast.Expression, questionDotToken *ast.Node, colonToken *ast.Node) *ast.Node {
@@ -4357,10 +4333,6 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 		questionDotToken := p.parseOptionalToken(ast.KindQuestionDotToken)
 		if questionDotToken != nil {
 			typeArguments = p.tryParseTypeArgumentsInExpression()
-			if p.isTemplateStartOfTaggedTemplate() {
-				expression = p.parseTaggedTemplateRest(pos, expression, questionDotToken, typeArguments)
-				continue
-			}
 		}
 		if typeArguments != nil || p.token == ast.KindOpenParenToken {
 			// Absorb type arguments into CallExpression when preceding expression is ExpressionWithTypeArguments
@@ -4407,28 +4379,16 @@ func (p *Parser) parseArgumentOrArrayLiteralElement() *ast.Expression {
 	return p.parseAssignmentExpressionOrHigher()
 }
 
-func (p *Parser) parseTaggedTemplateRest(pos int, tag *ast.Expression, questionDotToken *ast.Node, typeArguments *ast.NodeList) *ast.Node {
-	var template *ast.Expression
-	if p.token == ast.KindNoSubstitutionTemplateLiteral {
-		p.reScanTemplateToken(true /*isTaggedTemplate*/)
-		template = p.parseLiteralExpression(false /*intern*/)
-	} else {
-		template = p.parseTemplateExpression(true /*isTaggedTemplate*/)
-	}
-	isOptionalChain := questionDotToken != nil || tag.Flags&ast.NodeFlagsOptionalChain != 0
-	return p.checkJSSyntax(p.finishNode(p.factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos))
-}
-
-func (p *Parser) parseTemplateExpression(isTaggedTemplate bool) *ast.Expression {
+func (p *Parser) parseTemplateExpression() *ast.Expression {
 	pos := p.nodePos()
-	return p.finishNode(p.factory.NewTemplateExpression(p.parseTemplateHead(isTaggedTemplate), p.parseTemplateSpans(isTaggedTemplate)), pos)
+	return p.finishNode(p.factory.NewTemplateExpression(p.parseTemplateHead(), p.parseTemplateSpans()), pos)
 }
 
-func (p *Parser) parseTemplateSpans(isTaggedTemplate bool) *ast.NodeList {
+func (p *Parser) parseTemplateSpans() *ast.NodeList {
 	pos := p.nodePos()
 	var list []*ast.Node
 	for {
-		span := p.parseTemplateSpan(isTaggedTemplate)
+		span := p.parseTemplateSpan()
 		list = append(list, span)
 		if span.AsTemplateSpan().Literal.Kind != ast.KindTemplateMiddle {
 			break
@@ -4437,10 +4397,10 @@ func (p *Parser) parseTemplateSpans(isTaggedTemplate bool) *ast.NodeList {
 	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), list)
 }
 
-func (p *Parser) parseTemplateSpan(isTaggedTemplate bool) *ast.Node {
+func (p *Parser) parseTemplateSpan() *ast.Node {
 	pos := p.nodePos()
 	expression := p.parseExpressionAllowIn()
-	literal := p.parseLiteralOfTemplateSpan(isTaggedTemplate)
+	literal := p.parseLiteralOfTemplateSpan()
 	return p.finishNode(p.factory.NewTemplateSpan(expression, literal), pos)
 }
 
@@ -4448,7 +4408,7 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 	switch p.token {
 	case ast.KindNoSubstitutionTemplateLiteral:
 		if p.scanner.TokenFlags()&ast.TokenFlagsIsInvalid != 0 {
-			p.reScanTemplateToken(false /*isTaggedTemplate*/)
+			p.reScanTemplateToken()
 		}
 		fallthrough
 	case ast.KindNumericLiteral, ast.KindStringLiteral:
@@ -4485,7 +4445,7 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 			return p.parseLiteralExpression(false /*intern*/)
 		}
 	case ast.KindTemplateHead:
-		return p.parseTemplateExpression(false /*isTaggedTemplate*/)
+		return p.parseTemplateExpression()
 	case ast.KindPrivateIdentifier:
 		return p.parsePrivateIdentifier()
 	}
@@ -5533,8 +5493,7 @@ func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
 	case ast.KindCallExpression,
 		ast.KindExpressionWithTypeArguments,
 		ast.KindJsxSelfClosingElement,
-		ast.KindJsxOpeningElement,
-		ast.KindTaggedTemplateExpression:
+		ast.KindJsxOpeningElement:
 		if list := node.TypeArgumentList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
 			p.jsErrorAtRange(list.Loc, diagnostics.Type_arguments_can_only_be_used_in_tlua_files)
 		}

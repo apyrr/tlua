@@ -724,7 +724,6 @@ type Checker struct {
 	anyPackType                                 *Type
 	autoArrayType                               *Type
 	anyReadonlyArrayType                        *Type
-	deferredGlobalImportMetaExpressionType      *Type
 	contextualBindingPatterns                   []*ast.Node
 	typeResolutions                             []TypeResolution
 	resolutionStart                             int
@@ -760,14 +759,12 @@ type Checker struct {
 	comparableRelation                          *Relation
 	identityRelation                            *Relation
 	getGlobalESSymbolType                       func() *Type
-	getGlobalImportMetaType                     func() *Type
 	getGlobalNonNullableTypeAliasOrNil          func() *ast.Symbol
 	getGlobalExtractSymbol                      func() *ast.Symbol
 	getGlobalAwaitedSymbol                      func() *ast.Symbol
 	getGlobalAwaitedSymbolOrNil                 func() *ast.Symbol
 	getGlobalNaNSymbolOrNil                     func() *ast.Symbol
 	getGlobalRecordSymbol                       func() *ast.Symbol
-	getGlobalTemplateStringsArrayType           func() *Type
 	getGlobalESSymbolConstructorSymbolOrNil     func() *ast.Symbol
 	getGlobalESSymbolConstructorTypeSymbolOrNil func() *ast.Symbol
 	getGlobalPromiseType                        func() *Type
@@ -999,14 +996,12 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.comparableRelation = &Relation{}
 	c.identityRelation = &Relation{}
 	c.getGlobalESSymbolType = c.getGlobalTypeResolver("Symbol", 0 /*arity*/, false /*reportErrors*/)
-	c.getGlobalImportMetaType = c.getGlobalTypeResolver("ImportMeta", 0 /*arity*/, true /*reportErrors*/)
 	c.getGlobalNonNullableTypeAliasOrNil = c.getGlobalTypeAliasResolver("NonNullable", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalExtractSymbol = c.getGlobalTypeAliasResolver("Extract", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalAwaitedSymbol = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, true /*reportErrors*/)
 	c.getGlobalAwaitedSymbolOrNil = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalNaNSymbolOrNil = c.getGlobalValueSymbolResolver("NaN", false /*reportErrors*/)
 	c.getGlobalRecordSymbol = c.getGlobalTypeAliasResolver("Record", 2 /*arity*/, true /*reportErrors*/)
-	c.getGlobalTemplateStringsArrayType = c.getGlobalTypeResolver("TemplateStringsArray", 0 /*arity*/, true /*reportErrors*/)
 	c.getGlobalESSymbolConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Symbol", false /*reportErrors*/)
 	c.getGlobalESSymbolConstructorTypeSymbolOrNil = c.getGlobalTypeSymbolResolver("SymbolConstructor", false /*reportErrors*/)
 	c.getGlobalPromiseType = c.getGlobalTypeResolver("Promise", 1 /*arity*/, false /*reportErrors*/)
@@ -2271,7 +2266,7 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 	c.currentNode = node
 	c.instantiationCount = 0
 	switch node.Kind {
-	case ast.KindCallExpression, ast.KindTaggedTemplateExpression, ast.KindJsxOpeningElement:
+	case ast.KindCallExpression, ast.KindJsxOpeningElement:
 		// These node kinds are deferred checked when overload resolution fails. To save on work,
 		// we ensure the arguments are checked just once in a deferred way.
 		c.resolveUntypedCall(node)
@@ -2596,8 +2591,6 @@ func (c *Checker) getDeprecatedSuggestionNode(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.getDeprecatedSuggestionNode(node.Expression())
-	case ast.KindTaggedTemplateExpression:
-		return c.getDeprecatedSuggestionNode(node.AsTaggedTemplateExpression().Tag)
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		return c.getDeprecatedSuggestionNode(node.TagName())
 	case ast.KindElementAccessExpression:
@@ -5945,8 +5938,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkIndexedAccess(node, checkMode)
 	case ast.KindCallExpression:
 		return c.checkCallExpression(node, checkMode)
-	case ast.KindTaggedTemplateExpression:
-		return c.checkTaggedTemplateExpression(node)
 	case ast.KindParenthesizedExpression:
 		return c.checkParenthesizedExpression(node, checkMode)
 	case ast.KindFunctionExpression, ast.KindArrowFunction:
@@ -6031,10 +6022,7 @@ func (c *Checker) checkTemplateExpression(node *ast.Node) *Type {
 		texts[i+1] = span.AsTemplateSpan().Literal.Text()
 		types[i] = core.IfElse(c.isTypeAssignableTo(t, c.templateConstraintType), t, c.stringType)
 	}
-	var evaluated any
-	if !ast.IsTaggedTemplateExpression(node.Parent) {
-		evaluated = c.evaluate(node, node)
-	}
+	evaluated := c.evaluate(node, node)
 	if evaluated != nil {
 		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(evaluated.(string)))
 	}
@@ -6299,7 +6287,7 @@ func (c *Checker) checkAsyncCallContext(node *ast.Node, signature *Signature) {
 		return
 	}
 	switch node.Kind {
-	case ast.KindCallExpression, ast.KindTaggedTemplateExpression,
+	case ast.KindCallExpression,
 		ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		// these syntactically invoke the resolved signature
 	default:
@@ -6405,8 +6393,6 @@ func (c *Checker) resolveSignature(node *ast.Node, candidatesOutArray *[]*Signat
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.resolveCallExpression(node, candidatesOutArray, checkMode)
-	case ast.KindTaggedTemplateExpression:
-		return c.resolveTaggedTemplateExpression(node, candidatesOutArray, checkMode)
 	case ast.KindJsxOpeningFragment, ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		return c.resolveJsxOpeningLikeElement(node, candidatesOutArray, checkMode)
 	}
@@ -6507,32 +6493,7 @@ func someSignature(signatures []*Signature, f func(s *Signature) bool) bool {
 	return false
 }
 
-func (c *Checker) resolveTaggedTemplateExpression(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
-	tag := node.AsTaggedTemplateExpression().Tag
-	tagType := c.checkExpression(tag)
-	apparentType := c.getApparentType(tagType)
-	if c.isErrorType(apparentType) {
-		// Another error has already been reported
-		return c.resolveErrorCall(node)
-	}
-	callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
-	numConstructSignatures := len(c.getSignaturesOfType(apparentType, SignatureKindConstruct))
-	if c.isUntypedFunctionCall(tagType, apparentType, len(callSignatures), numConstructSignatures) {
-		return c.resolveUntypedCall(node)
-	}
-	if len(callSignatures) == 0 {
-		if ast.IsArrayLiteralExpression(node.Parent) {
-			c.error(tag, diagnostics.It_is_likely_that_you_are_missing_a_comma_to_separate_these_two_template_expressions_They_form_a_tagged_template_expression_which_cannot_be_invoked)
-			return c.resolveErrorCall(node)
-		}
-		c.invocationError(tag, apparentType, SignatureKindCall, nil)
-		return c.resolveErrorCall(node)
-	}
-	return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
-}
-
 func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidatesOutArray *[]*Signature, checkMode CheckMode, callChainFlags SignatureFlags, headMessage *diagnostics.Message) *Signature {
-	isTaggedTemplate := node.Kind == ast.KindTaggedTemplateExpression
 	isJsxOpeningOrSelfClosingElement := ast.IsJsxOpeningLikeElement(node)
 	reportErrors := !c.isInferencePartiallyBlocked && candidatesOutArray == nil
 	var s CallState
@@ -6540,7 +6501,7 @@ func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidate
 	if !isSuperCall(node) && !ast.IsJsxOpeningFragment(node) {
 		s.typeArguments = node.TypeArguments()
 		// We already perform checking on the type arguments on the class declaration itself.
-		if isTaggedTemplate || isJsxOpeningOrSelfClosingElement || node.Expression().Kind != ast.KindSuperKeyword {
+		if isJsxOpeningOrSelfClosingElement || node.Expression().Kind != ast.KindSuperKeyword {
 			c.checkSourceElements(s.typeArguments)
 		}
 	}
@@ -6794,21 +6755,6 @@ func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *S
 	effectiveParameterCount := c.getParameterCount(signature)
 	effectiveMinimumArguments := c.getMinArgumentCount(signature)
 	switch {
-	case ast.IsTaggedTemplateExpression(node):
-		argCount = len(args)
-		template := node.AsTaggedTemplateExpression().Template
-		if ast.IsTemplateExpression(template) {
-			// If a tagged template expression lacks a tail literal, the call is incomplete.
-			// Specifically, a template only can end in a TemplateTail or a Missing literal.
-			lastSpan := core.LastOrNil(template.AsTemplateExpression().TemplateSpans.Nodes)
-			// we should always have at least one span.
-			callIsIncomplete = ast.NodeIsMissing(lastSpan.AsTemplateSpan().Literal) || ast.IsUnterminatedLiteral(lastSpan.AsTemplateSpan().Literal)
-		} else {
-			// If the template didn't end in a backtick, or its beginning occurred right prior to EOF,
-			// then this might actually turn out to be a TemplateHead in the future;
-			// so we consider the call to be incomplete.
-			callIsIncomplete = ast.IsUnterminatedLiteral(template)
-		}
 	case ast.IsBinaryExpression(node):
 		argCount = 1
 	case ast.IsJsxOpeningLikeElement(node):
@@ -7035,8 +6981,6 @@ func (c *Checker) getThisArgumentOfCall(node *ast.Node) *ast.Node {
 	switch {
 	case ast.IsCallExpression(node):
 		expression = node.Expression()
-	case ast.IsTaggedTemplateExpression(node):
-		expression = node.AsTaggedTemplateExpression().Tag
 	}
 	if expression != nil {
 		callee := ast.SkipOuterExpressions(expression, ast.OEKAll)
@@ -7595,8 +7539,6 @@ func (c *Checker) resolveUntypedCall(node *ast.Node) *Signature {
 		c.checkSourceElements(node.TypeArguments())
 	}
 	switch node.Kind {
-	case ast.KindTaggedTemplateExpression:
-		c.checkExpression(node.AsTaggedTemplateExpression().Template)
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		c.checkExpression(node.Attributes())
 	case ast.KindBinaryExpression:
@@ -7715,15 +7657,6 @@ func (c *Checker) skippedGenericFunction(node *ast.Node, checkMode CheckMode) {
 		context := c.getInferenceContext(node)
 		context.flags |= InferenceFlagsSkippedGenericFunction
 	}
-}
-
-func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
-	if !c.checkGrammarTaggedTemplateChain(node.AsTaggedTemplateExpression()) {
-		c.checkGrammarTypeArguments(node, node.TypeArgumentList())
-	}
-	signature := c.getResolvedSignature(node, nil, CheckModeNormal)
-	c.checkDeprecatedSignature(signature, node)
-	return c.getReturnTypeOfSignature(signature)
 }
 
 func (c *Checker) checkParenthesizedExpression(node *ast.Node, checkMode CheckMode) *Type {
@@ -9480,7 +9413,7 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 func (c *Checker) isSideEffectFree(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
 	switch node.Kind {
-	case ast.KindIdentifier, ast.KindStringLiteral, ast.KindRegularExpressionLiteral, ast.KindTaggedTemplateExpression, ast.KindTemplateExpression,
+	case ast.KindIdentifier, ast.KindStringLiteral, ast.KindRegularExpressionLiteral, ast.KindTemplateExpression,
 		ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindTrueKeyword, ast.KindFalseKeyword,
 		ast.KindNilKeyword, ast.KindFunctionExpression, ast.KindArrowFunction,
 		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindNonNullExpression, ast.KindJsxSelfClosingElement,
@@ -9509,8 +9442,7 @@ func (c *Checker) isIndirectCall(node *ast.Node) bool {
 	left := node.AsBinaryExpression().Left
 	right := node.AsBinaryExpression().Right
 	return ast.IsParenthesizedExpression(node.Parent) && ast.IsNumericLiteral(left) && left.Text() == "0" &&
-		(ast.IsCallExpression(node.Parent.Parent) && node.Parent.Parent.Expression() == node.Parent ||
-			ast.IsTaggedTemplateExpression(node.Parent.Parent)) && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval")
+		ast.IsCallExpression(node.Parent.Parent) && node.Parent.Parent.Expression() == node.Parent && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval")
 }
 
 func (c *Checker) checkInExpression(left *ast.Expression, right *ast.Expression, leftType *Type, rightType *Type) *Type {
@@ -20451,21 +20383,6 @@ func (c *Checker) createTypeFromGenericGlobalType(genericGlobalType *Type, typeA
 	return c.emptyObjectType
 }
 
-func (c *Checker) getGlobalImportMetaExpressionType() *Type {
-	if c.deferredGlobalImportMetaExpressionType == nil {
-		// Create a synthetic type `ImportMetaExpression { meta: MetaProperty }`
-		symbol := c.newSymbol(ast.SymbolFlagsNone, "ImportMetaExpression")
-		importMetaType := c.getGlobalImportMetaType()
-		metaPropertySymbol := c.newSymbolEx(ast.SymbolFlagsProperty, "meta", ast.CheckFlagsReadonly)
-		metaPropertySymbol.Parent = symbol
-		c.valueSymbolLinks.Get(metaPropertySymbol).resolvedType = importMetaType
-		members := createSymbolTable([]*ast.Symbol{metaPropertySymbol})
-		symbol.Members = members
-		c.deferredGlobalImportMetaExpressionType = c.newAnonymousType(symbol, members, nil, nil, nil)
-	}
-	return c.deferredGlobalImportMetaExpressionType
-}
-
 func (c *Checker) createIterableType(iteratedType *Type) *Type {
 	return c.createTypeFromGenericGlobalType(c.getGlobalIterableTypeChecked(), []*Type{iteratedType, c.voidType, c.nilType})
 }
@@ -25092,8 +25009,6 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 		return nil
 	case ast.KindConditionalExpression:
 		return c.getContextualTypeForConditionalOperand(node, contextFlags)
-	case ast.KindTemplateSpan:
-		return c.getContextualTypeForSubstitutionExpression(parent.Parent, node)
 	case ast.KindParenthesizedExpression:
 		return c.getContextualType(parent, contextFlags)
 	case ast.KindNonNullExpression:
@@ -25610,32 +25525,11 @@ func (c *Checker) getContextualTypeForConditionalOperand(node *ast.Node, context
 	return nil
 }
 
-func (c *Checker) getContextualTypeForSubstitutionExpression(template *ast.Node, substitutionExpression *ast.Node) *Type {
-	if ast.IsTaggedTemplateExpression(template.Parent) {
-		return c.getContextualTypeForArgument(template.Parent, substitutionExpression)
-	}
-	return nil
-}
-
-// Returns the effective arguments for an expression that works like a function invocation.
 func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 	switch {
 	case ast.IsJsxOpeningFragment(node):
 		// This attributes Type does not include a children property yet, the same way a fragment created with <React.Fragment> does not at this stage
 		return []*ast.Node{c.createSyntheticExpression(node, c.emptyFreshJsxObjectType, false, nil)}
-	case ast.IsTaggedTemplateExpression(node):
-		template := node.AsTaggedTemplateExpression().Template
-		firstArg := c.createSyntheticExpression(template, c.getGlobalTemplateStringsArrayType(), false, nil)
-		if !ast.IsTemplateExpression(template) {
-			return []*ast.Node{firstArg}
-		}
-		spans := template.AsTemplateExpression().TemplateSpans.Nodes
-		args := make([]*ast.Node, len(spans)+1)
-		args[0] = firstArg
-		for i, span := range spans {
-			args[i+1] = span.Expression()
-		}
-		return args
 	case ast.IsJsxOpeningLikeElement(node):
 		if len(node.Attributes().Properties()) != 0 || (ast.IsJsxOpeningElement(node) && len(node.Parent.Children().Nodes) != 0) {
 			return []*ast.Node{node.Attributes()}

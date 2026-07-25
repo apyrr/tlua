@@ -230,7 +230,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		return OperatorPrecedenceMember
 
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting
-	case KindTaggedTemplateExpression, KindExpressionWithTypeArguments:
+	case KindExpressionWithTypeArguments:
 		return OperatorPrecedenceMember
 
 	case KindAsExpression,
@@ -305,9 +305,6 @@ func GetLeftmostExpression(node *Expression, stopAtCallExpressions bool) *Expres
 			continue
 		case KindConditionalExpression:
 			node = node.AsConditionalExpression().Condition
-			continue
-		case KindTaggedTemplateExpression:
-			node = node.AsTaggedTemplateExpression().Tag
 			continue
 		case KindCallExpression:
 			if stopAtCallExpressions {

@@ -676,7 +676,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		ast.KindParameter,
 		ast.KindFunctionType,
 		ast.KindParenthesizedType,
-		ast.KindTaggedTemplateExpression,
 		ast.KindNamedExports,
 		ast.KindNamedImports,
 		ast.KindExportSpecifier,

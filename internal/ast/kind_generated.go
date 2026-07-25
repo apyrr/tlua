@@ -199,7 +199,6 @@ const (
 	KindPropertyAccessExpression
 	KindElementAccessExpression
 	KindCallExpression
-	KindTaggedTemplateExpression
 	KindTypeAssertionExpression
 	KindParenthesizedExpression
 	KindFunctionExpression

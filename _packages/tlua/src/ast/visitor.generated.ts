@@ -125,7 +125,6 @@ import type {
     SyntheticExpression,
     SyntheticReferenceExpression,
     TableEntry,
-    TaggedTemplateExpression,
     TemplateExpression,
     TemplateLiteralTypeNode,
     TemplateLiteralTypeSpan,
@@ -268,7 +267,6 @@ import {
     updateSyntheticExpression,
     updateSyntheticReferenceExpression,
     updateTableEntry,
-    updateTaggedTemplateExpression,
     updateTemplateExpression,
     updateTemplateLiteralTypeNode,
     updateTemplateLiteralTypeSpan,
@@ -332,7 +330,6 @@ import {
     isQuestionToken,
     isReadonlyKeywordOrPlusOrMinusToken,
     isTemplateHead,
-    isTemplateLiteral,
     isTemplateMiddleOrTail,
     isTypeNode,
     isTypeParameterDeclaration,
@@ -739,13 +736,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _expression = visitNode(node.expression, visitor, isExpression);
         const _literal = visitNode(node.literal, visitor, isTemplateMiddleOrTail);
         return updateTemplateSpan(node, _expression, _literal);
-    },
-    [SyntaxKind.TaggedTemplateExpression]: (node: TaggedTemplateExpression, visitor: Visitor): TaggedTemplateExpression => {
-        const _tag = visitNode(node.tag, visitor, isExpression);
-        const _questionDotToken = visitNode(node.questionDotToken, visitor, isQuestionDotToken);
-        const _typeArguments = visitNodes(node.typeArguments, visitor);
-        const _template = visitNode(node.template, visitor, isTemplateLiteral);
-        return updateTaggedTemplateExpression(node, _tag, _questionDotToken, _typeArguments, _template);
     },
     [SyntaxKind.ParenthesizedExpression]: (node: ParenthesizedExpression, visitor: Visitor): ParenthesizedExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);

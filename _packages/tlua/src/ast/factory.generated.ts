@@ -189,10 +189,8 @@ import type {
     SyntheticExpression,
     SyntheticReferenceExpression,
     TableEntry,
-    TaggedTemplateExpression,
     TemplateExpression,
     TemplateHead,
-    TemplateLiteral,
     TemplateLiteralTypeNode,
     TemplateLiteralTypeSpan,
     TemplateMiddle,
@@ -515,9 +513,6 @@ export class NodeObject {
     get step(): any {
         return this._data?.step;
     }
-    get tag(): any {
-        return this._data?.tag;
-    }
     get tagName(): any {
         return this._data?.tagName;
     }
@@ -526,9 +521,6 @@ export class NodeObject {
     }
     get target(): any {
         return this._data?.target;
-    }
-    get template(): any {
-        return this._data?.template;
     }
     get templateFlags(): any {
         return this._data?.templateFlags;
@@ -781,8 +773,6 @@ function cloneNodeData(node: Node): any {
             return { head: n.head, templateSpans: n.templateSpans };
         case SyntaxKind.TemplateSpan:
             return { expression: n.expression, literal: n.literal };
-        case SyntaxKind.TaggedTemplateExpression:
-            return { tag: n.tag, questionDotToken: n.questionDotToken, typeArguments: n.typeArguments, template: n.template };
         case SyntaxKind.ParenthesizedExpression:
             return { expression: n.expression };
         case SyntaxKind.ArrayLiteralExpression:
@@ -1158,11 +1148,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.TemplateSpan]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.literal),
-    [SyntaxKind.TaggedTemplateExpression]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.tag) ||
-        visitNode(cbNode, data.questionDotToken) ||
-        visitNodes(cbNode, cbNodes, data.typeArguments) ||
-        visitNode(cbNode, data.template),
     [SyntaxKind.ParenthesizedExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.ArrayLiteralExpression]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
     [SyntaxKind.ObjectLiteralExpression]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.properties),
@@ -1905,17 +1890,6 @@ export function createTemplateSpan(expression: Expression, literal: TemplateMidd
         expression,
         literal,
     }) as unknown as TemplateSpan;
-}
-
-export function createTaggedTemplateExpression(tag: Expression, questionDotToken: QuestionDotToken, typeArguments: readonly TypeNode[] | undefined, template: TemplateLiteral, flags: NodeFlags): TaggedTemplateExpression {
-    const node = new NodeObject(SyntaxKind.TaggedTemplateExpression, {
-        tag,
-        questionDotToken,
-        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
-        template,
-    }) as unknown as TaggedTemplateExpression;
-    (node as any).flags = flags;
-    return node;
 }
 
 export function createParenthesizedExpression(expression: Expression): ParenthesizedExpression {
@@ -2824,10 +2798,6 @@ export function updateTemplateExpression(node: TemplateExpression, head: Templat
 
 export function updateTemplateSpan(node: TemplateSpan, expression: Expression, literal: TemplateMiddleOrTail): TemplateSpan {
     return node.expression !== expression || node.literal !== literal ? createTemplateSpan(expression, literal) : node;
-}
-
-export function updateTaggedTemplateExpression(node: TaggedTemplateExpression, tag: Expression, questionDotToken: QuestionDotToken, typeArguments: readonly TypeNode[] | undefined, template: TemplateLiteral): TaggedTemplateExpression {
-    return node.tag !== tag || node.questionDotToken !== questionDotToken || node.typeArguments !== typeArguments || node.template !== template ? createTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, node.flags) : node;
 }
 
 export function updateParenthesizedExpression(node: ParenthesizedExpression, expression: Expression): ParenthesizedExpression {

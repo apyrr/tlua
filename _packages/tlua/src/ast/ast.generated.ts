@@ -726,13 +726,6 @@ export interface TemplateSpan extends NodeBase {
     readonly expression: Expression;
     readonly literal: TemplateMiddleOrTail;
 }
-export interface TaggedTemplateExpression extends MemberExpressionBase {
-    readonly kind: SyntaxKind.TaggedTemplateExpression;
-    readonly tag: Expression;
-    readonly questionDotToken: QuestionDotToken;
-    readonly typeArguments?: NodeArray<TypeNode>;
-    readonly template: TemplateLiteral;
-}
 export interface ParenthesizedExpression extends PrimaryExpressionBase {
     readonly kind: SyntaxKind.ParenthesizedExpression;
     readonly expression: Expression;
@@ -1188,7 +1181,7 @@ export type ObjectTypeDeclaration = InterfaceDeclaration | TypeLiteralNode;
 export type JsxOpeningLikeElement = JsxOpeningElement | JsxSelfClosingElement;
 export type NamedImportsOrExports = NamedImports | NamedExports;
 export type BreakOrContinueStatement = BreakStatement | ContinueStatement;
-export type CallLikeExpression = CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement;
+export type CallLikeExpression = CallExpression | JsxOpeningLikeElement;
 export type FunctionLikeDeclaration = FunctionDeclaration | FunctionExpression | ArrowFunction;
 export type VariableOrParameterDeclaration = VariableDeclaration | ParameterDeclaration;
 export type ImportClauseOrBindingPattern = ImportClause | BindingPattern;

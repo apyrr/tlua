@@ -458,8 +458,6 @@ func (n *Node) TypeArgumentList() *NodeList {
 	switch n.Kind {
 	case KindCallExpression:
 		return n.AsCallExpression().TypeArguments
-	case KindTaggedTemplateExpression:
-		return n.AsTaggedTemplateExpression().TypeArguments
 	case KindTypeReference:
 		return n.AsTypeReferenceNode().TypeArguments
 	case KindExpressionWithTypeArguments:
@@ -1031,8 +1029,6 @@ func (n *Node) QuestionDotToken() *Node {
 		return n.AsPropertyAccessExpression().QuestionDotToken
 	case KindCallExpression:
 		return n.AsCallExpression().QuestionDotToken
-	case KindTaggedTemplateExpression:
-		return n.AsTaggedTemplateExpression().QuestionDotToken
 	}
 	panic("Unhandled case in Node.QuestionDotToken: " + n.Kind.String())
 }
@@ -1835,13 +1831,6 @@ func (node *NonNullExpression) computeSubtreeFacts() SubtreeFacts {
 
 func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsRestOrSpread
-}
-
-func (node *TaggedTemplateExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Tag) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateSubtreeFacts(node.Template)
 }
 
 // Hand-written subtree facts for nontrivial generated nodes.

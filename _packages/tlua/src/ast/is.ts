@@ -123,7 +123,7 @@ export function isExpression(node: Node): node is Expression {
         || kind === SyntaxKind.VoidExpression
         || kind === SyntaxKind.TypeAssertionExpression
         || kind === SyntaxKind.CallExpression
-        || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.NonNullExpression
+        || kind === SyntaxKind.NonNullExpression
         || kind === SyntaxKind.JsxExpression
         || kind === SyntaxKind.PropertyAccessExpression || kind === SyntaxKind.ElementAccessExpression
         || kind === SyntaxKind.FunctionExpression
@@ -164,7 +164,6 @@ function isLeftHandSideExpressionKind(kind: SyntaxKind): boolean {
         case SyntaxKind.JsxElement:
         case SyntaxKind.JsxSelfClosingElement:
         case SyntaxKind.JsxFragment:
-        case SyntaxKind.TaggedTemplateExpression:
         case SyntaxKind.ArrayLiteralExpression:
         case SyntaxKind.ParenthesizedExpression:
         case SyntaxKind.ObjectLiteralExpression:
