@@ -10,8 +10,6 @@ local T = { n = 0 };
 function T:bump(): number
 >T : { n: number; bump(self: any): number; twice(self: any): number; }
 >bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
->: : { n: number; bump(self: any): number; twice(self: any): number; }
->T : { n: number; bump(self: any): number; twice(self: any): number; }
 
   self.n = self.n + 1;
 >self.n = self.n + 1 : number
@@ -88,8 +86,6 @@ d.u:bump();
 function T:twice(): number
 >T : { n: number; bump(self: any): number; twice(self: any): number; }
 >twice : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
->: : { n: number; bump(self: any): number; twice(self: any): number; }
->T : { n: number; bump(self: any): number; twice(self: any): number; }
 
   return self:bump() + self:bump();
 >self:bump() + self:bump() : number

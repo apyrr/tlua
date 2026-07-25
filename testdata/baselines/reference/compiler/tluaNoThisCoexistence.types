@@ -104,8 +104,6 @@ local counter: Counter = {
 function counter:bump(by: number): number
 >counter : Counter
 >bump : (self: Counter, by: number) => number
->: : Counter
->counter : Counter
 >by : number
 
   return self.n + by;

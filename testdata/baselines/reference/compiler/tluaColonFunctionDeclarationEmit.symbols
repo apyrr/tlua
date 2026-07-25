@@ -7,8 +7,6 @@ local Exported = {};
 function Exported:visible(a: number): number
 >Exported : Symbol(Exported, Decl(tluaColonFunctionDeclarationEmit.tlua, 0, 5))
 >visible : Symbol(visible, Decl(tluaColonFunctionDeclarationEmit.tlua, 0, 20))
->: : Symbol(:, Decl(tluaColonFunctionDeclarationEmit.tlua, 2, 17))
->Exported : Symbol(Exported, Decl(tluaColonFunctionDeclarationEmit.tlua, 0, 5))
 >a : Symbol(a, Decl(tluaColonFunctionDeclarationEmit.tlua, 2, 26))
 
   return a;
@@ -22,8 +20,6 @@ local Hidden = {};
 function Hidden:invisible(): void
 >Hidden : Symbol(Hidden, Decl(tluaColonFunctionDeclarationEmit.tlua, 6, 5))
 >invisible : Symbol(invisible, Decl(tluaColonFunctionDeclarationEmit.tlua, 6, 18))
->: : Symbol(:, Decl(tluaColonFunctionDeclarationEmit.tlua, 8, 15))
->Hidden : Symbol(Hidden, Decl(tluaColonFunctionDeclarationEmit.tlua, 6, 5))
 
   self.invisible(self);
 >self.invisible : Symbol(invisible, Decl(tluaColonFunctionDeclarationEmit.tlua, 6, 18))

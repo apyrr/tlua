@@ -38,8 +38,6 @@ local ops: Ops = {
 function ops:good(a: number): number
 >ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
 >good : Symbol(good, Decl(tluaColonFunctionAnnotatedTable.tlua, 8, 2))
->: : Symbol(:, Decl(tluaColonFunctionAnnotatedTable.tlua, 12, 12))
->ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
 >a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 12, 18))
 
   return a;
@@ -51,8 +49,6 @@ end
 function ops:noSelf(a: number): number
 >ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
 >noSelf : Symbol(noSelf, Decl(tluaColonFunctionAnnotatedTable.tlua, 14, 3))
->: : Symbol(:, Decl(tluaColonFunctionAnnotatedTable.tlua, 17, 12))
->ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
 >a : Symbol(a, Decl(tluaColonFunctionAnnotatedTable.tlua, 17, 20))
 
   return a;
@@ -63,8 +59,6 @@ end
 function ops:absent(): void
 >ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
 >absent : Symbol(absent, Decl(tluaColonFunctionAnnotatedTable.tlua, 19, 3))
->: : Symbol(:, Decl(tluaColonFunctionAnnotatedTable.tlua, 21, 12))
->ops : Symbol(ops, Decl(tluaColonFunctionAnnotatedTable.tlua, 5, 5))
 
 end
 

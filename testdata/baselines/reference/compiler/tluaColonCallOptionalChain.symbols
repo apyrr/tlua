@@ -8,8 +8,6 @@ local W = { n = 1 };
 function W:bump(): number
 >W : Symbol(W, Decl(tluaColonCallOptionalChain.tlua, 0, 5))
 >bump : Symbol(bump, Decl(tluaColonCallOptionalChain.tlua, 0, 20))
->: : Symbol(:, Decl(tluaColonCallOptionalChain.tlua, 2, 10))
->W : Symbol(W, Decl(tluaColonCallOptionalChain.tlua, 0, 5))
 
   return self.n;
 >self.n : Symbol(n, Decl(tluaColonCallOptionalChain.tlua, 0, 11))

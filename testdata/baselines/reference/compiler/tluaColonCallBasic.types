@@ -10,8 +10,6 @@ local M = { count = 0 };
 function M:inc(by: number): number
 >M : { count: number; inc(self: any, by: number): number; read(self: any): number; }
 >inc : (self: { count: number; inc(self: any, by: number): number; read(self: any): number; }, by: number) => number
->: : { count: number; inc(self: any, by: number): number; read(self: any): number; }
->M : { count: number; inc(self: any, by: number): number; read(self: any): number; }
 >by : number
 
   self.count = self.count + by;
@@ -35,8 +33,6 @@ end
 function M:read(): number
 >M : { count: number; inc(self: any, by: number): number; read(self: any): number; }
 >read : (self: { count: number; inc(self: any, by: number): number; read(self: any): number; }) => number
->: : { count: number; inc(self: any, by: number): number; read(self: any): number; }
->M : { count: number; inc(self: any, by: number): number; read(self: any): number; }
 
   return self.count;
 >self.count : number

@@ -11,8 +11,6 @@ local Account = { balance = 0 };
 function Account:new(): typeof Account
 >Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 >new : Symbol(new, Decl(tluaColonCallMethodNames.tlua, 3, 32))
->: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 5, 16))
->Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 >Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 
   return self;
@@ -23,8 +21,6 @@ end
 function Account:delete(): void
 >Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 >delete : Symbol(delete, Decl(tluaColonCallMethodNames.tlua, 7, 3))
->: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 9, 16))
->Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 
   self.balance = 0;
 >self.balance : Symbol(balance, Decl(tluaColonCallMethodNames.tlua, 3, 17))
@@ -36,8 +32,6 @@ end
 function Account:type(): string
 >Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 >type : Symbol(type, Decl(tluaColonCallMethodNames.tlua, 11, 3))
->: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 13, 16))
->Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 
   return "account";
 end
@@ -72,16 +66,12 @@ local b = Account.new(Account);
 function Account:switch(): void
 >Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 >switch : Symbol(switch, Decl(tluaColonCallMethodNames.tlua, 22, 31))
->: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 26, 16))
->Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 
 end
 
 function Account:case(): void
 >Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 >case : Symbol(case, Decl(tluaColonCallMethodNames.tlua, 27, 3))
->: : Symbol(:, Decl(tluaColonCallMethodNames.tlua, 29, 16))
->Account : Symbol(Account, Decl(tluaColonCallMethodNames.tlua, 3, 5))
 
 end
 

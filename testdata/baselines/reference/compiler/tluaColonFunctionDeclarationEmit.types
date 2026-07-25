@@ -8,8 +8,6 @@ local Exported = {};
 function Exported:visible(a: number): number
 >Exported : { visible(self: any, a: number): number; }
 >visible : (self: { visible(self: any, a: number): number; }, a: number) => number
->: : { visible(self: any, a: number): number; }
->Exported : { visible(self: any, a: number): number; }
 >a : number
 
   return a;
@@ -24,8 +22,6 @@ local Hidden = {};
 function Hidden:invisible(): void
 >Hidden : { invisible(self: any): void; }
 >invisible : (self: { invisible(self: any): void; }) => void
->: : { invisible(self: any): void; }
->Hidden : { invisible(self: any): void; }
 
   self.invisible(self);
 >self.invisible(self) : void

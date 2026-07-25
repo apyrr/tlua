@@ -13,8 +13,6 @@ local Account = { balance = 0 };
 function Account:new(): typeof Account
 >Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 >new : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
->: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
->Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 >Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 
   return self;
@@ -25,8 +23,6 @@ end
 function Account:delete(): void
 >Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 >delete : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
->: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
->Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 
   self.balance = 0;
 >self.balance = 0 : 0
@@ -40,8 +36,6 @@ end
 function Account:type(): string
 >Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 >type : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => string
->: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
->Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 
   return "account";
 >"account" : "account"
@@ -82,16 +76,12 @@ local b = Account.new(Account);
 function Account:switch(): void
 >Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 >switch : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
->: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
->Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 
 end
 
 function Account:case(): void
 >Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 >case : (self: { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }) => void
->: : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
->Account : { balance: number; "new"(self: any): any; delete(self: any): void; type(self: any): string; switch(self: any): void; case(self: any): void; }
 
 end
 

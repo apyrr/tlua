@@ -10,8 +10,6 @@ local M = { count = 0 };
 function M:inc(by: number): number
 >M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
 >inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))
->: : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 4, 10))
->M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
 >by : Symbol(by, Decl(tluaColonFunctionDeclarations.tlua, 4, 15))
 
   self.count = self.count + by;
@@ -33,8 +31,6 @@ end
 function M:read(): number
 >M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
 >read : Symbol(read, Decl(tluaColonFunctionDeclarations.tlua, 7, 3))
->: : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 9, 10))
->M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
 
   return self.count;
 >self.count : Symbol(count, Decl(tluaColonFunctionDeclarations.tlua, 0, 11))
@@ -47,8 +43,6 @@ end
 function M:double(): number
 >M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
 >double : Symbol(double, Decl(tluaColonFunctionDeclarations.tlua, 11, 3))
->: : Symbol(:, Decl(tluaColonFunctionDeclarations.tlua, 14, 10))
->M : Symbol(M, Decl(tluaColonFunctionDeclarations.tlua, 0, 5))
 
   return self.inc(self, self.read(self));
 >self.inc : Symbol(inc, Decl(tluaColonFunctionDeclarations.tlua, 0, 24))

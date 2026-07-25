@@ -8,8 +8,6 @@ local T = { n = 0 };
 function T:bump(): number
 >T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
 >bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
->: : Symbol(:, Decl(tluaColonCallEmit.tlua, 2, 10))
->T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
 
   self.n = self.n + 1;
 >self.n : Symbol(n, Decl(tluaColonCallEmit.tlua, 0, 11))
@@ -73,8 +71,6 @@ d.u:bump();
 function T:twice(): number
 >T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
 >twice : Symbol(twice, Decl(tluaColonCallEmit.tlua, 19, 11))
->: : Symbol(:, Decl(tluaColonCallEmit.tlua, 23, 10))
->T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
 
   return self:bump() + self:bump();
 >self:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))

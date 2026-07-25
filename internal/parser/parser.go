@@ -1735,12 +1735,21 @@ func (p *Parser) parseFunctionDeclaration(pos int, jsdoc jsdocScannerInfo, modif
 // that stands for them. The type query mirrors the target's own range instead, so that
 // any error it reports about the target — `Cannot find name`, say — lands on the target
 // and collapses into the identical error reported there.
+//
+// Borrowing a range that way is exactly what NodeFlagsReparsed marks: a node the parser
+// put in the tree wearing source that belongs to something else. The flag matters because
+// the borrowed range sits *before* the parameter list, so every walker that reads the tree
+// in source order — the formatter's forward scan, the semantic-token collector, astnav's
+// positional search — would otherwise revisit source it had already passed. They all
+// already skip reparsed nodes; this is how the parameter tells them to.
 func (p *Parser) newLuaSelfParameter(target *ast.Expression, colonToken *ast.TokenNode) *ast.Node {
 	loc := colonToken.Loc
 	name := p.finishSelfNode(p.newIdentifier("self"), loc)
 	typeNode := p.finishSelfNode(p.factory.NewTypeQueryNode(p.newLuaSelfEntityName(target), nil /*typeArguments*/), target.Loc)
 	parameter := p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, name, nil /*questionToken*/, typeNode, nil /*initializer*/)
-	return p.finishSelfNode(parameter, loc)
+	parameter = p.finishSelfNode(parameter, loc)
+	parameter.Flags |= ast.NodeFlagsReparsed
+	return parameter
 }
 
 // newLuaSelfEntityName mirrors the target chain as an entity name so that a type query

@@ -8,8 +8,6 @@ local M = {};
 function M:bar(v: number): number
 >M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >bar : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }, v: number) => number
->: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
->M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >v : number
 
   return v;
@@ -29,8 +27,6 @@ M:bar(1);
 function M:clash(self: number): void
 >M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >clash : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }, self: number) => void
->: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
->M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >self : number
 
 end
@@ -39,8 +35,6 @@ end
 function M:deep.f(): void
 >M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >deep : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }) => void
->: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
->M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >f() : any
 >f : any
 >void : nil
@@ -51,8 +45,6 @@ end
 function M:a:b(): void
 >M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >a : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }) => b
->: : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
->M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >() : any
 > : any
 >void : nil
@@ -74,8 +66,6 @@ end
 function Unknown:f(): void
 >Unknown : any
 >f : (self: typeof Unknown) => void
->: : any
->Unknown : any
 
 end
 

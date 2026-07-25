@@ -36,8 +36,6 @@ local ops: Ops = {
 function ops:good(a: number): number
 >ops : Ops
 >good : (self: Ops, a: number) => number
->: : Ops
->ops : Ops
 >a : number
 
   return a;
@@ -49,8 +47,6 @@ end
 function ops:noSelf(a: number): number
 >ops : Ops
 >noSelf : (self: Ops, a: number) => number
->: : Ops
->ops : Ops
 >a : number
 
   return a;
@@ -61,8 +57,6 @@ end
 function ops:absent(): void
 >ops : Ops
 >absent : (self: Ops) => void
->: : Ops
->ops : Ops
 
 end
 

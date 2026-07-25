@@ -101,8 +101,6 @@ local doubled: number = G.double(2);
 function G:triple(value: number): number
 >G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
 >triple : (self: typeof G, value: number) => number
->: : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
 >value : number
 
   return value * 3;

@@ -82,8 +82,6 @@ local doubled: number = G.double(2);
 function G:triple(value: number): number
 >G : Symbol(G, Decl(b.tlua, 0, 0))
 >triple : Symbol(triple, Decl(d.tlua, 4, 36))
->: : Symbol(:, Decl(d.tlua, 6, 10))
->G : Symbol(G, Decl(b.tlua, 0, 0))
 >value : Symbol(value, Decl(d.tlua, 6, 18))
 
   return value * 3;

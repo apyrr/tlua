@@ -10,8 +10,6 @@ local W = { n = 1 };
 function W:bump(): number
 >W : { n: number; bump(self: any): number; }
 >bump : (self: { n: number; bump(self: any): number; }) => number
->: : { n: number; bump(self: any): number; }
->W : { n: number; bump(self: any): number; }
 
   return self.n;
 >self.n : number

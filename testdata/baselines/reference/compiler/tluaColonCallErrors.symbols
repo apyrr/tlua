@@ -8,8 +8,6 @@ local M = { count = 0 };
 function M:inc(by: number): number
 >M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
 >inc : Symbol(inc, Decl(tluaColonCallErrors.tlua, 0, 24))
->: : Symbol(:, Decl(tluaColonCallErrors.tlua, 2, 10))
->M : Symbol(M, Decl(tluaColonCallErrors.tlua, 0, 5))
 >by : Symbol(by, Decl(tluaColonCallErrors.tlua, 2, 15))
 
   self.count = self.count + by;

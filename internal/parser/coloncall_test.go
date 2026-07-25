@@ -38,24 +38,27 @@ func TestLuaMethodDeclarationTargetExcludesColon(t *testing.T) {
 	}
 }
 
-// The implicit `self` is the declaration's first parameter, and the colon is what
-// makes it implicit -- that pairing is what ast.LuaImplicitSelfParameter reports,
-// and what every consumer that has to skip the parameter relies on.
-func TestLuaMethodDeclarationSynthesizesSelfParameter(t *testing.T) {
+// The implicit `self` is the declaration's first parameter, and it is marked
+// reparsed because it wears the colon's range rather than source of its own. Every
+// walker that reads the tree in source order keys on that flag, so losing it is how
+// the formatter, the semantic-token collector and astnav all break at once.
+func TestLuaMethodDeclarationSynthesizesReparsedSelfParameter(t *testing.T) {
 	t.Parallel()
 
 	decl := parseLua(t, "function a.b:m(x: number) end").Statements.Nodes[0].AsFunctionDeclaration()
-	self := ast.LuaImplicitSelfParameter(decl)
-	assert.Assert(t, self != nil)
-	assert.Equal(t, self, decl.Parameters.Nodes[0])
-	assert.Assert(t, ast.IsLuaImplicitSelfParameter(self))
+	self := decl.Parameters.Nodes[0]
 	assert.Equal(t, self.Name().Text(), "self")
-	// The written parameters keep their own identity behind it.
-	assert.Assert(t, !ast.IsLuaImplicitSelfParameter(decl.Parameters.Nodes[1]))
+	assert.Assert(t, self.Flags&ast.NodeFlagsReparsed != 0)
+	// It borrows the colon, which is what makes the flag necessary.
+	assert.Equal(t, self.Loc, decl.ColonToken.Loc)
 
-	// A declaration written without the colon has no implicit parameter, so the
-	// first written one must not be mistaken for it.
+	// The written parameter is real source and must stay visible.
+	assert.Equal(t, decl.Parameters.Nodes[1].Name().Text(), "x")
+	assert.Assert(t, decl.Parameters.Nodes[1].Flags&ast.NodeFlagsReparsed == 0)
+
+	// A declaration written without the colon has no implicit parameter, so its
+	// first written one must not be marked.
 	dotted := parseLua(t, "function a.b.m(x: number) end").Statements.Nodes[0].AsFunctionDeclaration()
-	assert.Assert(t, ast.LuaImplicitSelfParameter(dotted) == nil)
-	assert.Assert(t, !ast.IsLuaImplicitSelfParameter(dotted.Parameters.Nodes[0]))
+	assert.Assert(t, dotted.ColonToken == nil)
+	assert.Assert(t, dotted.Parameters.Nodes[0].Flags&ast.NodeFlagsReparsed == 0)
 }

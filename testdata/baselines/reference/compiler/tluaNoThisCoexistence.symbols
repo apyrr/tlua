@@ -100,8 +100,6 @@ local counter: Counter = {
 function counter:bump(by: number): number
 >counter : Symbol(counter, Decl(tluaNoThisCoexistence.tlua, 33, 5))
 >bump : Symbol(bump, Decl(tluaNoThisCoexistence.tlua, 36, 2))
->: : Symbol(:, Decl(tluaNoThisCoexistence.tlua, 38, 16))
->counter : Symbol(counter, Decl(tluaNoThisCoexistence.tlua, 33, 5))
 >by : Symbol(by, Decl(tluaNoThisCoexistence.tlua, 38, 22))
 
   return self.n + by;
