@@ -197,3 +197,64 @@ local listReassignedUse: string = listReassigned.value;
 >listReassigned : Symbol(listReassigned, Decl(tluaTableAugmentationAlias.tlua, 70, 5))
 >value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 71, 33))
 
+// A local declared before its first store takes the constructor from that
+// store. `{}` builds an empty table and an empty array alike, so a member
+// declared under a named key is what settles which one this is.
+local deferredRoot;
+>deferredRoot : Symbol(deferredRoot, Decl(tluaTableAugmentationAlias.tlua, 78, 5))
+
+deferredRoot = {};
+>deferredRoot : Symbol(deferredRoot, Decl(tluaTableAugmentationAlias.tlua, 78, 5))
+
+deferredRoot.value = true;
+>deferredRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 79, 18))
+>deferredRoot : Symbol(deferredRoot, Decl(tluaTableAugmentationAlias.tlua, 78, 5))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 79, 18))
+
+local deferredRootUse: boolean = deferredRoot.value;
+>deferredRootUse : Symbol(deferredRootUse, Decl(tluaTableAugmentationAlias.tlua, 81, 5))
+>deferredRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 79, 18))
+>deferredRoot : Symbol(deferredRoot, Decl(tluaTableAugmentationAlias.tlua, 78, 5))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 79, 18))
+
+// Conditional initialization is the same shape: the declaration and the first
+// store are necessarily separate statements.
+local conditionalRoot;
+>conditionalRoot : Symbol(conditionalRoot, Decl(tluaTableAugmentationAlias.tlua, 85, 5))
+
+if condition() then
+>condition : Symbol(condition, Decl(tluaTableAugmentationAlias.tlua, 0, 0))
+
+  conditionalRoot = {};
+>conditionalRoot : Symbol(conditionalRoot, Decl(tluaTableAugmentationAlias.tlua, 85, 5))
+
+else
+  conditionalRoot = {};
+>conditionalRoot : Symbol(conditionalRoot, Decl(tluaTableAugmentationAlias.tlua, 85, 5))
+
+end
+conditionalRoot.name = "chosen";
+>conditionalRoot.name : Symbol(name, Decl(tluaTableAugmentationAlias.tlua, 90, 3))
+>conditionalRoot : Symbol(conditionalRoot, Decl(tluaTableAugmentationAlias.tlua, 85, 5))
+>name : Symbol(name, Decl(tluaTableAugmentationAlias.tlua, 90, 3))
+
+local conditionalRootUse: string = conditionalRoot.name;
+>conditionalRootUse : Symbol(conditionalRootUse, Decl(tluaTableAugmentationAlias.tlua, 92, 5))
+>conditionalRoot.name : Symbol(name, Decl(tluaTableAugmentationAlias.tlua, 90, 3))
+>conditionalRoot : Symbol(conditionalRoot, Decl(tluaTableAugmentationAlias.tlua, 85, 5))
+>name : Symbol(name, Decl(tluaTableAugmentationAlias.tlua, 90, 3))
+
+// A constructor written only under numeric keys still evolves into an array.
+local numericRoot;
+>numericRoot : Symbol(numericRoot, Decl(tluaTableAugmentationAlias.tlua, 95, 5))
+
+numericRoot = {};
+>numericRoot : Symbol(numericRoot, Decl(tluaTableAugmentationAlias.tlua, 95, 5))
+
+numericRoot[1] = "first";
+>numericRoot : Symbol(numericRoot, Decl(tluaTableAugmentationAlias.tlua, 95, 5))
+
+local numericRootUse: string[] = numericRoot;
+>numericRootUse : Symbol(numericRootUse, Decl(tluaTableAugmentationAlias.tlua, 98, 5))
+>numericRoot : Symbol(numericRoot, Decl(tluaTableAugmentationAlias.tlua, 95, 5))
+

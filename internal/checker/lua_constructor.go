@@ -12,6 +12,33 @@ import (
 // resolution is a function of the program alone, never of a query point, which
 // is what lets one cache per checker serve every caller.
 
+// luaConstructorDeclaresNamedMember reports whether a table constructor has a
+// member declared on it under a key that is not a number.
+//
+// `{}` is ambiguous in Lua: it constructs an empty table and an empty array
+// alike, so a bare `t = {}` cannot decide which one the program means. A member
+// declared under a named key settles it. Augmentation attaches every such member
+// before any type is requested, so the answer is available by the time flow
+// analysis asks whether this store starts an evolving array.
+func (c *Checker) luaConstructorDeclaresNamedMember(initializer *ast.Node) bool {
+	constructor := skipLuaEvolvingArrayWrappers(initializer)
+	if !ast.IsObjectLiteralExpression(constructor) || constructor.Symbol() == nil {
+		return false
+	}
+	arm := c.getMergedSymbol(constructor.Symbol())
+	if arm == nil {
+		return false
+	}
+	// Attachment installs augmented members into the arm's exports; an empty
+	// constructor has nothing else in there.
+	for name := range arm.Exports {
+		if !ast.IsNumberKeyName(name) {
+			return true
+		}
+	}
+	return false
+}
+
 func luaConstructorBlocksNumericEvolution(arm *ast.Symbol) bool {
 	for _, declaration := range arm.Declarations {
 		if !ast.IsObjectLiteralExpression(declaration) || len(declaration.Properties()) != 0 {

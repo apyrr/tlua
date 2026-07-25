@@ -291,7 +291,7 @@ func (c *Checker) getInitialOrAssignedType(f *FlowState, flow *ast.FlowNode) *Ty
 
 func (c *Checker) isEmptyArrayAssignment(node *ast.Node) bool {
 	if ast.IsVariableDeclaration(node) && node.Initializer() != nil {
-		return isEmptyEvolvingArrayInitializer(node.Initializer())
+		return c.startsLuaEvolvingArray(node.Initializer())
 	}
 	if ast.IsBindingElement(node) {
 		return false
@@ -302,13 +302,21 @@ func (c *Checker) isEmptyArrayAssignment(node *ast.Node) bool {
 		if binary.OperatorToken.Kind == ast.KindEqualsToken && !ast.IsInJSFile(binary.AsNode()) {
 			initializer = luaExplicitAssignmentValueAt(initializer, 0)
 		}
-		return initializer != nil && isEmptyEvolvingArrayInitializer(initializer)
+		return initializer != nil && c.startsLuaEvolvingArray(initializer)
 	}
 	if slot, ok := luaAssignmentSlotForNode(node); ok {
 		initializer := slot.explicitValue(slot.index)
-		return initializer != nil && isEmptyEvolvingArrayInitializer(initializer)
+		return initializer != nil && c.startsLuaEvolvingArray(initializer)
 	}
 	return false
+}
+
+// startsLuaEvolvingArray reports whether an empty constructor should begin an
+// evolving array. A constructor the program augments under a named key is a
+// table, so it evolves no further and keeps the members declared on it.
+func (c *Checker) startsLuaEvolvingArray(initializer *ast.Node) bool {
+	return isEmptyEvolvingArrayInitializer(initializer) &&
+		!c.luaConstructorDeclaresNamedMember(initializer)
 }
 
 func isEmptyEvolvingArrayInitializer(node *ast.Node) bool {

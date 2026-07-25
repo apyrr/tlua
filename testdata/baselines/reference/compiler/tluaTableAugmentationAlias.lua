@@ -76,6 +76,31 @@ listReassigned, listSide = {}, 0;
 listReassigned.value = "list";
 local listReassignedUse: string = listReassigned.value;
 
+// A local declared before its first store takes the constructor from that
+// store. `{}` builds an empty table and an empty array alike, so a member
+// declared under a named key is what settles which one this is.
+local deferredRoot;
+deferredRoot = {};
+deferredRoot.value = true;
+local deferredRootUse: boolean = deferredRoot.value;
+
+// Conditional initialization is the same shape: the declaration and the first
+// store are necessarily separate statements.
+local conditionalRoot;
+if condition() then
+  conditionalRoot = {};
+else
+  conditionalRoot = {};
+end
+conditionalRoot.name = "chosen";
+local conditionalRootUse: string = conditionalRoot.name;
+
+// A constructor written only under numeric keys still evolves into an array.
+local numericRoot;
+numericRoot = {};
+numericRoot[1] = "first";
+local numericRootUse: string[] = numericRoot;
+
 
 //// [tluaTableAugmentationAlias.lua]
 -- Augmentation is order-independent: a member declared anywhere in the program
@@ -140,3 +165,25 @@ local listReassigned = {};
 listReassigned, listSide = {}, 0;
 listReassigned.value = "list";
 local listReassignedUse = listReassigned.value;
+-- A local declared before its first store takes the constructor from that
+-- store. `{}` builds an empty table and an empty array alike, so a member
+-- declared under a named key is what settles which one this is.
+local deferredRoot;
+deferredRoot = {};
+deferredRoot.value = true;
+local deferredRootUse = deferredRoot.value;
+-- Conditional initialization is the same shape: the declaration and the first
+-- store are necessarily separate statements.
+local conditionalRoot;
+if condition() then
+  conditionalRoot = {};
+else
+  conditionalRoot = {};
+end
+conditionalRoot.name = "chosen";
+local conditionalRootUse = conditionalRoot.name;
+-- A constructor written only under numeric keys still evolves into an array.
+local numericRoot;
+numericRoot = {};
+numericRoot[1] = "first";
+local numericRootUse = numericRoot;

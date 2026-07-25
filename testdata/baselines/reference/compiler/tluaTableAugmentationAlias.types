@@ -266,3 +266,81 @@ local listReassignedUse: string = listReassigned.value;
 >listReassigned : { value: string; }
 >value : string
 
+// A local declared before its first store takes the constructor from that
+// store. `{}` builds an empty table and an empty array alike, so a member
+// declared under a named key is what settles which one this is.
+local deferredRoot;
+>deferredRoot : any
+
+deferredRoot = {};
+>deferredRoot = {} : { value: boolean; }
+>deferredRoot : any
+>{} : { value: boolean; }
+
+deferredRoot.value = true;
+>deferredRoot.value = true : true
+>deferredRoot.value : boolean
+>deferredRoot : { value: boolean; }
+>value : boolean
+>true : true
+
+local deferredRootUse: boolean = deferredRoot.value;
+>deferredRootUse : boolean
+>deferredRoot.value : true
+>deferredRoot : { value: boolean; }
+>value : true
+
+// Conditional initialization is the same shape: the declaration and the first
+// store are necessarily separate statements.
+local conditionalRoot;
+>conditionalRoot : any
+
+if condition() then
+>condition() : boolean
+>condition : () => boolean
+
+  conditionalRoot = {};
+>conditionalRoot = {} : { name: string; }
+>conditionalRoot : any
+>{} : { name: string; }
+
+else
+  conditionalRoot = {};
+>conditionalRoot = {} : { name: string; }
+>conditionalRoot : any
+>{} : { name: string; }
+
+end
+conditionalRoot.name = "chosen";
+>conditionalRoot.name = "chosen" : "chosen"
+>conditionalRoot.name : string
+>conditionalRoot : { name: string; }
+>name : string
+>"chosen" : "chosen"
+
+local conditionalRootUse: string = conditionalRoot.name;
+>conditionalRootUse : string
+>conditionalRoot.name : string
+>conditionalRoot : { name: string; }
+>name : string
+
+// A constructor written only under numeric keys still evolves into an array.
+local numericRoot;
+>numericRoot : any
+
+numericRoot = {};
+>numericRoot = {} : { 1: string; }
+>numericRoot : any
+>{} : { 1: string; }
+
+numericRoot[1] = "first";
+>numericRoot[1] = "first" : "first"
+>numericRoot[1] : any
+>numericRoot : any[]
+>1 : 1
+>"first" : "first"
+
+local numericRootUse: string[] = numericRoot;
+>numericRootUse : string[]
+>numericRoot : string[]
+
