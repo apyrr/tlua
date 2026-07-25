@@ -36,3 +36,29 @@ buffer.put(buffer);
 ("%d"):format(1, 2);
 ("%d"):format();
 string.format("%d", 1, 2);
+
+// The overload branch: no candidate matches, so the message lists the counts the
+// candidates DO accept. Those are written counts too, and a candidate with no
+// parameter for the receiver to fill cannot be described that way at all -- the
+// message then reports the mismatch in the terms it happened in rather than
+// collapsing distinct counts into "no overload expects 0 ... expects either 0".
+interface String {
+  overloaded(): string;
+  overloaded(self: string, a: string, b: string): string;
+}
+text:overloaded("only-one");
+
+// A receiver-filled optional parameter genuinely requires nothing written, so a
+// clamped minimum of zero is the truth rather than a lost negative.
+interface LuaFile {
+  rewind(whence?: string): number;
+}
+declare rewindable: LuaFile;
+rewindable:rewind("set", 1, 2);
+
+// The pack-tail branch: every parameter is already filled, so a `...` in final
+// position can only supply values Lua would discard -- and the parameter the
+// receiver filled is not part of the count the reader sees ("at most 2", not 3).
+function spreadIntoColonCall(...: string)
+  local spread = text:sub(1, 2, ...);
+end

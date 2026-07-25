@@ -85,3 +85,58 @@ string.format("%d", 1, 2);
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 >format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
 
+// The overload branch: no candidate matches, so the message lists the counts the
+// candidates DO accept. Those are written counts too, and a candidate with no
+// parameter for the receiver to fill cannot be described that way at all -- the
+// message then reports the mismatch in the terms it happened in rather than
+// collapsing distinct counts into "no overload expects 0 ... expects either 0".
+interface String {
+>String : Symbol(String, Decl(lib.luajit.d.tlua, --, --), Decl(tluaColonCallArityMessages.tlua, 33, 26))
+
+  overloaded(): string;
+>overloaded : Symbol(String.overloaded, Decl(tluaColonCallArityMessages.tlua, 40, 18), Decl(tluaColonCallArityMessages.tlua, 41, 23))
+
+  overloaded(self: string, a: string, b: string): string;
+>overloaded : Symbol(String.overloaded, Decl(tluaColonCallArityMessages.tlua, 40, 18), Decl(tluaColonCallArityMessages.tlua, 41, 23))
+>self : Symbol(self, Decl(tluaColonCallArityMessages.tlua, 42, 13))
+>a : Symbol(a, Decl(tluaColonCallArityMessages.tlua, 42, 26))
+>b : Symbol(b, Decl(tluaColonCallArityMessages.tlua, 42, 37))
+}
+text:overloaded("only-one");
+>text:overloaded : Symbol(String.overloaded, Decl(tluaColonCallArityMessages.tlua, 40, 18), Decl(tluaColonCallArityMessages.tlua, 41, 23))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+>overloaded : Symbol(String.overloaded, Decl(tluaColonCallArityMessages.tlua, 40, 18), Decl(tluaColonCallArityMessages.tlua, 41, 23))
+
+// A receiver-filled optional parameter genuinely requires nothing written, so a
+// clamped minimum of zero is the truth rather than a lost negative.
+interface LuaFile {
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --), Decl(tluaColonCallArityMessages.tlua, 44, 28))
+
+  rewind(whence?: string): number;
+>rewind : Symbol(LuaFile.rewind, Decl(tluaColonCallArityMessages.tlua, 48, 19))
+>whence : Symbol(whence, Decl(tluaColonCallArityMessages.tlua, 49, 9))
+}
+declare rewindable: LuaFile;
+>rewindable : Symbol(rewindable, Decl(tluaColonCallArityMessages.tlua, 51, 7))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --), Decl(tluaColonCallArityMessages.tlua, 44, 28))
+
+rewindable:rewind("set", 1, 2);
+>rewindable:rewind : Symbol(LuaFile.rewind, Decl(tluaColonCallArityMessages.tlua, 48, 19))
+>rewindable : Symbol(rewindable, Decl(tluaColonCallArityMessages.tlua, 51, 7))
+>rewind : Symbol(LuaFile.rewind, Decl(tluaColonCallArityMessages.tlua, 48, 19))
+
+// The pack-tail branch: every parameter is already filled, so a `...` in final
+// position can only supply values Lua would discard -- and the parameter the
+// receiver filled is not part of the count the reader sees ("at most 2", not 3).
+function spreadIntoColonCall(...: string)
+>spreadIntoColonCall : Symbol(spreadIntoColonCall, Decl(tluaColonCallArityMessages.tlua, 52, 31))
+> : Symbol((Missing), Decl(tluaColonCallArityMessages.tlua, 57, 29))
+
+  local spread = text:sub(1, 2, ...);
+>spread : Symbol(spread, Decl(tluaColonCallArityMessages.tlua, 58, 7))
+>text:sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaColonCallArityMessages.tlua, 7, 5))
+>sub : Symbol(String.sub, Decl(lib.luajit.d.tlua, --, --))
+
+end
+

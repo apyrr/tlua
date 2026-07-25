@@ -268,170 +268,190 @@ for dynamicWord in pairText:gmatch(dynamicPlainPattern) do
 
 end
 
+// gmatch is the only pattern name whose result is wrapped as an iterator, so the
+// explicit-self spelling has to shift its pattern like the others do.
+for explicitKey, explicitValue in pairText.gmatch(pairText, "(%a+)=(%d+)") do
+>explicitKey : Symbol(explicitKey, Decl(tluaStringPatterns.tlua, 77, 3))
+>explicitValue : Symbol(explicitValue, Decl(tluaStringPatterns.tlua, 77, 16))
+>pairText.gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>pairText : Symbol(pairText, Decl(tluaStringPatterns.tlua, 65, 5))
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>pairText : Symbol(pairText, Decl(tluaStringPatterns.tlua, 65, 5))
+
+  local explicitKeyType: string = explicitKey;
+>explicitKeyType : Symbol(explicitKeyType, Decl(tluaStringPatterns.tlua, 78, 7))
+>explicitKey : Symbol(explicitKey, Decl(tluaStringPatterns.tlua, 77, 3))
+
+  local explicitValueType: string | nil = explicitValue;
+>explicitValueType : Symbol(explicitValueType, Decl(tluaStringPatterns.tlua, 79, 7))
+>explicitValue : Symbol(explicitValue, Decl(tluaStringPatterns.tlua, 77, 16))
+
+end
+
 for word in string.gmatch("one two", "(%a+)") do
->word : Symbol(word, Decl(tluaStringPatterns.tlua, 75, 3))
+>word : Symbol(word, Decl(tluaStringPatterns.tlua, 82, 3))
 >string.gmatch : Symbol(StringLib.gmatch, Decl(lib.luajit.d.tlua, --, --))
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 >gmatch : Symbol(StringLib.gmatch, Decl(lib.luajit.d.tlua, --, --))
 
   local wordType: string = word;
->wordType : Symbol(wordType, Decl(tluaStringPatterns.tlua, 76, 7))
->word : Symbol(word, Decl(tluaStringPatterns.tlua, 75, 3))
+>wordType : Symbol(wordType, Decl(tluaStringPatterns.tlua, 83, 7))
+>word : Symbol(word, Decl(tluaStringPatterns.tlua, 82, 3))
 
 end
 
 local dynamicPattern: string = "(%d+)";
->dynamicPattern : Symbol(dynamicPattern, Decl(tluaStringPatterns.tlua, 79, 5))
+>dynamicPattern : Symbol(dynamicPattern, Decl(tluaStringPatterns.tlua, 86, 5))
 
 local fallbackFirst, fallbackSecond = string.match("42", dynamicPattern);
->fallbackFirst : Symbol(fallbackFirst, Decl(tluaStringPatterns.tlua, 80, 5))
->fallbackSecond : Symbol(fallbackSecond, Decl(tluaStringPatterns.tlua, 80, 20))
+>fallbackFirst : Symbol(fallbackFirst, Decl(tluaStringPatterns.tlua, 87, 5))
+>fallbackSecond : Symbol(fallbackSecond, Decl(tluaStringPatterns.tlua, 87, 20))
 >string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 >match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
->dynamicPattern : Symbol(dynamicPattern, Decl(tluaStringPatterns.tlua, 79, 5))
+>dynamicPattern : Symbol(dynamicPattern, Decl(tluaStringPatterns.tlua, 86, 5))
 
 local fallbackFirstType: string | nil = fallbackFirst;
->fallbackFirstType : Symbol(fallbackFirstType, Decl(tluaStringPatterns.tlua, 81, 5))
->fallbackFirst : Symbol(fallbackFirst, Decl(tluaStringPatterns.tlua, 80, 5))
+>fallbackFirstType : Symbol(fallbackFirstType, Decl(tluaStringPatterns.tlua, 88, 5))
+>fallbackFirst : Symbol(fallbackFirst, Decl(tluaStringPatterns.tlua, 87, 5))
 
 local fallbackSecondType: string | nil = fallbackSecond;
->fallbackSecondType : Symbol(fallbackSecondType, Decl(tluaStringPatterns.tlua, 82, 5))
->fallbackSecond : Symbol(fallbackSecond, Decl(tluaStringPatterns.tlua, 80, 20))
+>fallbackSecondType : Symbol(fallbackSecondType, Decl(tluaStringPatterns.tlua, 89, 5))
+>fallbackSecond : Symbol(fallbackSecond, Decl(tluaStringPatterns.tlua, 87, 20))
 
 local invalidFirst, invalidSecond = string.match("x", "(unclosed");
->invalidFirst : Symbol(invalidFirst, Decl(tluaStringPatterns.tlua, 84, 5))
->invalidSecond : Symbol(invalidSecond, Decl(tluaStringPatterns.tlua, 84, 19))
+>invalidFirst : Symbol(invalidFirst, Decl(tluaStringPatterns.tlua, 91, 5))
+>invalidSecond : Symbol(invalidSecond, Decl(tluaStringPatterns.tlua, 91, 19))
 >string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 >match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
 
 local invalidFirstType: string | nil = invalidFirst;
->invalidFirstType : Symbol(invalidFirstType, Decl(tluaStringPatterns.tlua, 85, 5))
->invalidFirst : Symbol(invalidFirst, Decl(tluaStringPatterns.tlua, 84, 5))
+>invalidFirstType : Symbol(invalidFirstType, Decl(tluaStringPatterns.tlua, 92, 5))
+>invalidFirst : Symbol(invalidFirst, Decl(tluaStringPatterns.tlua, 91, 5))
 
 local invalidSecondType: string | nil = invalidSecond;
->invalidSecondType : Symbol(invalidSecondType, Decl(tluaStringPatterns.tlua, 86, 5))
->invalidSecond : Symbol(invalidSecond, Decl(tluaStringPatterns.tlua, 84, 19))
+>invalidSecondType : Symbol(invalidSecondType, Decl(tluaStringPatterns.tlua, 93, 5))
+>invalidSecond : Symbol(invalidSecond, Decl(tluaStringPatterns.tlua, 91, 19))
 
 local invalidMethodText: "x" = "x";
->invalidMethodText : Symbol(invalidMethodText, Decl(tluaStringPatterns.tlua, 88, 5))
+>invalidMethodText : Symbol(invalidMethodText, Decl(tluaStringPatterns.tlua, 95, 5))
 
 local invalidMethod = invalidMethodText:match("(unclosed");
->invalidMethod : Symbol(invalidMethod, Decl(tluaStringPatterns.tlua, 89, 5))
+>invalidMethod : Symbol(invalidMethod, Decl(tluaStringPatterns.tlua, 96, 5))
 >invalidMethodText:match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
->invalidMethodText : Symbol(invalidMethodText, Decl(tluaStringPatterns.tlua, 88, 5))
+>invalidMethodText : Symbol(invalidMethodText, Decl(tluaStringPatterns.tlua, 95, 5))
 >match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
 
 local invalidSetFirst, invalidSetSecond = string.match("]", "[]");
->invalidSetFirst : Symbol(invalidSetFirst, Decl(tluaStringPatterns.tlua, 91, 5))
->invalidSetSecond : Symbol(invalidSetSecond, Decl(tluaStringPatterns.tlua, 91, 22))
+>invalidSetFirst : Symbol(invalidSetFirst, Decl(tluaStringPatterns.tlua, 98, 5))
+>invalidSetSecond : Symbol(invalidSetSecond, Decl(tluaStringPatterns.tlua, 98, 22))
 >string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 >match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
 
 local invalidSetFirstType: string | nil = invalidSetFirst;
->invalidSetFirstType : Symbol(invalidSetFirstType, Decl(tluaStringPatterns.tlua, 92, 5))
->invalidSetFirst : Symbol(invalidSetFirst, Decl(tluaStringPatterns.tlua, 91, 5))
+>invalidSetFirstType : Symbol(invalidSetFirstType, Decl(tluaStringPatterns.tlua, 99, 5))
+>invalidSetFirst : Symbol(invalidSetFirst, Decl(tluaStringPatterns.tlua, 98, 5))
 
 local invalidSetSecondType: string | nil = invalidSetSecond;
->invalidSetSecondType : Symbol(invalidSetSecondType, Decl(tluaStringPatterns.tlua, 93, 5))
->invalidSetSecond : Symbol(invalidSetSecond, Decl(tluaStringPatterns.tlua, 91, 22))
+>invalidSetSecondType : Symbol(invalidSetSecondType, Decl(tluaStringPatterns.tlua, 100, 5))
+>invalidSetSecond : Symbol(invalidSetSecond, Decl(tluaStringPatterns.tlua, 98, 22))
 
 local parenText: string = "(";
->parenText : Symbol(parenText, Decl(tluaStringPatterns.tlua, 95, 5))
+>parenText : Symbol(parenText, Decl(tluaStringPatterns.tlua, 102, 5))
 
 local setMatch, setCapture = parenText:match("[()]");
->setMatch : Symbol(setMatch, Decl(tluaStringPatterns.tlua, 96, 5))
->setCapture : Symbol(setCapture, Decl(tluaStringPatterns.tlua, 96, 15))
+>setMatch : Symbol(setMatch, Decl(tluaStringPatterns.tlua, 103, 5))
+>setCapture : Symbol(setCapture, Decl(tluaStringPatterns.tlua, 103, 15))
 >parenText:match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
->parenText : Symbol(parenText, Decl(tluaStringPatterns.tlua, 95, 5))
+>parenText : Symbol(parenText, Decl(tluaStringPatterns.tlua, 102, 5))
 >match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
 
 local setMatchType: string | nil = setMatch;
->setMatchType : Symbol(setMatchType, Decl(tluaStringPatterns.tlua, 97, 5))
->setMatch : Symbol(setMatch, Decl(tluaStringPatterns.tlua, 96, 5))
+>setMatchType : Symbol(setMatchType, Decl(tluaStringPatterns.tlua, 104, 5))
+>setMatch : Symbol(setMatch, Decl(tluaStringPatterns.tlua, 103, 5))
 
 local noSetCapture: nil = setCapture;
->noSetCapture : Symbol(noSetCapture, Decl(tluaStringPatterns.tlua, 98, 5))
->setCapture : Symbol(setCapture, Decl(tluaStringPatterns.tlua, 96, 15))
+>noSetCapture : Symbol(noSetCapture, Decl(tluaStringPatterns.tlua, 105, 5))
+>setCapture : Symbol(setCapture, Decl(tluaStringPatterns.tlua, 103, 15))
 
 local balancedText: string = "(x)";
->balancedText : Symbol(balancedText, Decl(tluaStringPatterns.tlua, 100, 5))
+>balancedText : Symbol(balancedText, Decl(tluaStringPatterns.tlua, 107, 5))
 
 local balancedMatch, balancedCapture = balancedText:match("%b()");
->balancedMatch : Symbol(balancedMatch, Decl(tluaStringPatterns.tlua, 101, 5))
->balancedCapture : Symbol(balancedCapture, Decl(tluaStringPatterns.tlua, 101, 20))
+>balancedMatch : Symbol(balancedMatch, Decl(tluaStringPatterns.tlua, 108, 5))
+>balancedCapture : Symbol(balancedCapture, Decl(tluaStringPatterns.tlua, 108, 20))
 >balancedText:match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
->balancedText : Symbol(balancedText, Decl(tluaStringPatterns.tlua, 100, 5))
+>balancedText : Symbol(balancedText, Decl(tluaStringPatterns.tlua, 107, 5))
 >match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
 
 local balancedMatchType: string | nil = balancedMatch;
->balancedMatchType : Symbol(balancedMatchType, Decl(tluaStringPatterns.tlua, 102, 5))
->balancedMatch : Symbol(balancedMatch, Decl(tluaStringPatterns.tlua, 101, 5))
+>balancedMatchType : Symbol(balancedMatchType, Decl(tluaStringPatterns.tlua, 109, 5))
+>balancedMatch : Symbol(balancedMatch, Decl(tluaStringPatterns.tlua, 108, 5))
 
 local noBalancedCapture: nil = balancedCapture;
->noBalancedCapture : Symbol(noBalancedCapture, Decl(tluaStringPatterns.tlua, 103, 5))
->balancedCapture : Symbol(balancedCapture, Decl(tluaStringPatterns.tlua, 101, 20))
+>noBalancedCapture : Symbol(noBalancedCapture, Decl(tluaStringPatterns.tlua, 110, 5))
+>balancedCapture : Symbol(balancedCapture, Decl(tluaStringPatterns.tlua, 108, 20))
 
 local stringAlias = string;
->stringAlias : Symbol(stringAlias, Decl(tluaStringPatterns.tlua, 105, 5))
+>stringAlias : Symbol(stringAlias, Decl(tluaStringPatterns.tlua, 112, 5))
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 
 local aliasFirst, aliasSecond, aliasThird = stringAlias.match("42", "(%d+)-?(%d*)");
->aliasFirst : Symbol(aliasFirst, Decl(tluaStringPatterns.tlua, 106, 5))
->aliasSecond : Symbol(aliasSecond, Decl(tluaStringPatterns.tlua, 106, 17))
->aliasThird : Symbol(aliasThird, Decl(tluaStringPatterns.tlua, 106, 30))
+>aliasFirst : Symbol(aliasFirst, Decl(tluaStringPatterns.tlua, 113, 5))
+>aliasSecond : Symbol(aliasSecond, Decl(tluaStringPatterns.tlua, 113, 17))
+>aliasThird : Symbol(aliasThird, Decl(tluaStringPatterns.tlua, 113, 30))
 >stringAlias.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
->stringAlias : Symbol(stringAlias, Decl(tluaStringPatterns.tlua, 105, 5))
+>stringAlias : Symbol(stringAlias, Decl(tluaStringPatterns.tlua, 112, 5))
 >match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
 
 local aliasFirstType: string | nil = aliasFirst;
->aliasFirstType : Symbol(aliasFirstType, Decl(tluaStringPatterns.tlua, 107, 5))
->aliasFirst : Symbol(aliasFirst, Decl(tluaStringPatterns.tlua, 106, 5))
+>aliasFirstType : Symbol(aliasFirstType, Decl(tluaStringPatterns.tlua, 114, 5))
+>aliasFirst : Symbol(aliasFirst, Decl(tluaStringPatterns.tlua, 113, 5))
 
 local aliasSecondType: string | nil = aliasSecond;
->aliasSecondType : Symbol(aliasSecondType, Decl(tluaStringPatterns.tlua, 108, 5))
->aliasSecond : Symbol(aliasSecond, Decl(tluaStringPatterns.tlua, 106, 17))
+>aliasSecondType : Symbol(aliasSecondType, Decl(tluaStringPatterns.tlua, 115, 5))
+>aliasSecond : Symbol(aliasSecond, Decl(tluaStringPatterns.tlua, 113, 17))
 
 local aliasThirdType: string | nil = aliasThird;
->aliasThirdType : Symbol(aliasThirdType, Decl(tluaStringPatterns.tlua, 109, 5))
->aliasThird : Symbol(aliasThird, Decl(tluaStringPatterns.tlua, 106, 30))
+>aliasThirdType : Symbol(aliasThirdType, Decl(tluaStringPatterns.tlua, 116, 5))
+>aliasThird : Symbol(aliasThird, Decl(tluaStringPatterns.tlua, 113, 30))
 
 function shadowedStringPattern(): void
->shadowedStringPattern : Symbol(shadowedStringPattern, Decl(tluaStringPatterns.tlua, 109, 48))
+>shadowedStringPattern : Symbol(shadowedStringPattern, Decl(tluaStringPatterns.tlua, 116, 48))
 
   local string = {
->string : Symbol(string, Decl(tluaStringPatterns.tlua, 112, 7))
+>string : Symbol(string, Decl(tluaStringPatterns.tlua, 119, 7))
 
     match = function(value: string, pattern: string): boolean return value == pattern; end,
->match : Symbol(match, Decl(tluaStringPatterns.tlua, 112, 18))
->value : Symbol(value, Decl(tluaStringPatterns.tlua, 113, 21))
->pattern : Symbol(pattern, Decl(tluaStringPatterns.tlua, 113, 35))
->value : Symbol(value, Decl(tluaStringPatterns.tlua, 113, 21))
->pattern : Symbol(pattern, Decl(tluaStringPatterns.tlua, 113, 35))
+>match : Symbol(match, Decl(tluaStringPatterns.tlua, 119, 18))
+>value : Symbol(value, Decl(tluaStringPatterns.tlua, 120, 21))
+>pattern : Symbol(pattern, Decl(tluaStringPatterns.tlua, 120, 35))
+>value : Symbol(value, Decl(tluaStringPatterns.tlua, 120, 21))
+>pattern : Symbol(pattern, Decl(tluaStringPatterns.tlua, 120, 35))
 
   };
   local shadowed: boolean = string.match("x", "(%a+)");
->shadowed : Symbol(shadowed, Decl(tluaStringPatterns.tlua, 115, 7))
->string.match : Symbol(match, Decl(tluaStringPatterns.tlua, 112, 18))
->string : Symbol(string, Decl(tluaStringPatterns.tlua, 112, 7))
->match : Symbol(match, Decl(tluaStringPatterns.tlua, 112, 18))
+>shadowed : Symbol(shadowed, Decl(tluaStringPatterns.tlua, 122, 7))
+>string.match : Symbol(match, Decl(tluaStringPatterns.tlua, 119, 18))
+>string : Symbol(string, Decl(tluaStringPatterns.tlua, 119, 7))
+>match : Symbol(match, Decl(tluaStringPatterns.tlua, 119, 18))
 
 end
 
 local replaced, replacementCount = xText:gsub("(.)", {});
->replaced : Symbol(replaced, Decl(tluaStringPatterns.tlua, 118, 5))
->replacementCount : Symbol(replacementCount, Decl(tluaStringPatterns.tlua, 118, 15))
+>replaced : Symbol(replaced, Decl(tluaStringPatterns.tlua, 125, 5))
+>replacementCount : Symbol(replacementCount, Decl(tluaStringPatterns.tlua, 125, 15))
 >xText:gsub : Symbol(String.gsub, Decl(lib.luajit.d.tlua, --, --))
 >xText : Symbol(xText, Decl(tluaStringPatterns.tlua, 12, 5))
 >gsub : Symbol(String.gsub, Decl(lib.luajit.d.tlua, --, --))
 
 local replacedType: string = replaced;
->replacedType : Symbol(replacedType, Decl(tluaStringPatterns.tlua, 119, 5))
->replaced : Symbol(replaced, Decl(tluaStringPatterns.tlua, 118, 5))
+>replacedType : Symbol(replacedType, Decl(tluaStringPatterns.tlua, 126, 5))
+>replaced : Symbol(replaced, Decl(tluaStringPatterns.tlua, 125, 5))
 
 local replacementCountType: number = replacementCount;
->replacementCountType : Symbol(replacementCountType, Decl(tluaStringPatterns.tlua, 120, 5))
->replacementCount : Symbol(replacementCount, Decl(tluaStringPatterns.tlua, 118, 15))
+>replacementCountType : Symbol(replacementCountType, Decl(tluaStringPatterns.tlua, 127, 5))
+>replacementCount : Symbol(replacementCount, Decl(tluaStringPatterns.tlua, 125, 15))
 

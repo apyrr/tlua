@@ -77,6 +77,13 @@ for dynamicWord in pairText:gmatch(dynamicPlainPattern) do
   local dynamicWordType: string = dynamicWord;
 end
 
+// gmatch is the only pattern name whose result is wrapped as an iterator, so the
+// explicit-self spelling has to shift its pattern like the others do.
+for explicitKey, explicitValue in pairText.gmatch(pairText, "(%a+)=(%d+)") do
+  local explicitKeyType: string = explicitKey;
+  local explicitValueType: string | nil = explicitValue;
+end
+
 for word in string.gmatch("one two", "(%a+)") do
   local wordType: string = word;
 end

@@ -619,7 +619,13 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 		// writes. Listing it offers the reader a slot they cannot reach, and for a
 		// method on a table literal that slot is the receiver's whole structural type
 		// spelled out. The dot form does write it, and keeps it.
-		if hidesReceiver && len(parameterList) > 0 {
+		//
+		// The receiver fills one argument SLOT, though, which is a whole parameter
+		// only when that parameter takes one. A lone rest parameter goes on absorbing
+		// everything the caller writes, so dropping it would hide the only slot they
+		// can reach and leave the popup with no parameters at all.
+		receiverFillsWholeParameter := len(parameterList) != 1 || !isVariadic(parameterList)
+		if hidesReceiver && len(parameterList) > 0 && receiverFillsWholeParameter {
 			parameterList = parameterList[1:]
 		}
 		parameters := make([]signatureHelpParameter, len(parameterList))

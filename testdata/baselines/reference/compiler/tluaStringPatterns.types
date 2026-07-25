@@ -314,6 +314,28 @@ for dynamicWord in pairText:gmatch(dynamicPlainPattern) do
 
 end
 
+// gmatch is the only pattern name whose result is wrapped as an iterator, so the
+// explicit-self spelling has to shift its pattern like the others do.
+for explicitKey, explicitValue in pairText.gmatch(pairText, "(%a+)=(%d+)") do
+>explicitKey : string
+>explicitValue : string | nil
+>pairText.gmatch(pairText, "(%a+)=(%d+)") : () => (string | nil, string | nil)
+>pairText.gmatch : (self: string, pattern: string) => () => string
+>pairText : string
+>gmatch : (self: string, pattern: string) => () => string
+>pairText : string
+>"(%a+)=(%d+)" : "(%a+)=(%d+)"
+
+  local explicitKeyType: string = explicitKey;
+>explicitKeyType : string
+>explicitKey : string
+
+  local explicitValueType: string | nil = explicitValue;
+>explicitValueType : string | nil
+>explicitValue : string | nil
+
+end
+
 for word in string.gmatch("one two", "(%a+)") do
 >word : string
 >string.gmatch("one two", "(%a+)") : () => (string | nil)

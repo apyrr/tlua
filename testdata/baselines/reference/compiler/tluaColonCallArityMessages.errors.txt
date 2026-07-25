@@ -9,9 +9,12 @@ tluaColonCallArityMessages.tlua(28,8): error TLUA2555: Expected at least 2 argum
 tluaColonCallArityMessages.tlua(32,1): error TLUA2554: Expected 1 arguments, but got 2.
 tluaColonCallArityMessages.tlua(33,1): error TLUA2554: Expected 1 arguments, but got 0.
 tluaColonCallArityMessages.tlua(34,1): error TLUA2554: Expected 2 arguments, but got 3.
+tluaColonCallArityMessages.tlua(45,6): error TLUA2575: No overload expects 2 arguments, but overloads do exist that expect either 0 or 3 arguments.
+tluaColonCallArityMessages.tlua(53,19): error TLUA2554: Expected 0 arguments, but got 3.
+tluaColonCallArityMessages.tlua(59,33): error TLUA100037: Expected at most 2 arguments, but a tail may pass more.
 
 
-==== tluaColonCallArityMessages.tlua (11 errors) ====
+==== tluaColonCallArityMessages.tlua (14 errors) ====
     // A colon call passes its receiver as the implicit first argument, so the
     // effective argument list the checker matches against the signature is one
     // longer than the source. An arity message counts what was WRITTEN, or it
@@ -74,4 +77,36 @@ tluaColonCallArityMessages.tlua(34,1): error TLUA2554: Expected 2 arguments, but
     string.format("%d", 1, 2);
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TLUA2554: Expected 2 arguments, but got 3.
+    
+    // The overload branch: no candidate matches, so the message lists the counts the
+    // candidates DO accept. Those are written counts too, and a candidate with no
+    // parameter for the receiver to fill cannot be described that way at all -- the
+    // message then reports the mismatch in the terms it happened in rather than
+    // collapsing distinct counts into "no overload expects 0 ... expects either 0".
+    interface String {
+      overloaded(): string;
+      overloaded(self: string, a: string, b: string): string;
+    }
+    text:overloaded("only-one");
+         ~~~~~~~~~~
+!!! error TLUA2575: No overload expects 2 arguments, but overloads do exist that expect either 0 or 3 arguments.
+    
+    // A receiver-filled optional parameter genuinely requires nothing written, so a
+    // clamped minimum of zero is the truth rather than a lost negative.
+    interface LuaFile {
+      rewind(whence?: string): number;
+    }
+    declare rewindable: LuaFile;
+    rewindable:rewind("set", 1, 2);
+                      ~~~~~~~~~~~
+!!! error TLUA2554: Expected 0 arguments, but got 3.
+    
+    // The pack-tail branch: every parameter is already filled, so a `...` in final
+    // position can only supply values Lua would discard -- and the parameter the
+    // receiver filled is not part of the count the reader sees ("at most 2", not 3).
+    function spreadIntoColonCall(...: string)
+      local spread = text:sub(1, 2, ...);
+                                    ~~~
+!!! error TLUA100037: Expected at most 2 arguments, but a tail may pass more.
+    end
     

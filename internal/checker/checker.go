@@ -7458,7 +7458,17 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 	// receiver the source never wrote. The comparisons want it -- they are matching
 	// arguments to parameters -- but the numbers in the message are for the reader,
 	// so each one is converted back to what is on the line.
+	// The conversion holds for the whole message or not at all. A candidate with no
+	// parameter for the receiver to fill cannot be described in written terms, and
+	// converting the others anyway collapses distinct counts onto each other:
+	// "no overload expects 0 arguments, but overloads do exist that expect either 0
+	// or 2". Report those in the terms the mismatch actually happened in.
 	unwritten := ast.LuaImplicitArgumentCount(node)
+	if core.Some(signatures, func(sig *Signature) bool { return c.getParameterCount(sig) < unwritten }) {
+		unwritten = 0
+	}
+	// Clamping is the truth for a minimum: no call writes a negative number of
+	// arguments, and a receiver-filled optional parameter really does require none.
 	written := func(count int) int { return max(0, count-unwritten) }
 	spreadIndex := c.getSpreadArgumentIndex(args)
 	if spreadIndex > -1 {
@@ -7498,14 +7508,16 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		}
 	}
 	hasRestParameter := core.Some(signatures, c.hasEffectiveRestParameter)
+	// Whether to print a range is decided from the converted ends, not the raw ones:
+	// a receiver-filled optional parameter narrows 0-1 to exactly 0, and comparing
+	// before the conversion would print it as "0-0".
+	writtenMin, writtenMax := written(minCount), written(maxCount)
 	var parameterRange string
 	switch {
-	case hasRestParameter:
-		parameterRange = strconv.Itoa(written(minCount))
-	case minCount < maxCount:
-		parameterRange = strconv.Itoa(written(minCount)) + "-" + strconv.Itoa(written(maxCount))
+	case hasRestParameter || writtenMin >= writtenMax:
+		parameterRange = strconv.Itoa(writtenMin)
 	default:
-		parameterRange = strconv.Itoa(written(minCount))
+		parameterRange = strconv.Itoa(writtenMin) + "-" + strconv.Itoa(writtenMax)
 	}
 	errorNode := getErrorNodeForCallNode(node)
 	var message *diagnostics.Message
