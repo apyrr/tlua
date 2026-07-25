@@ -7,21 +7,27 @@ import { named } from "m";
 import * as star from "m";
 import def from "m";
 import legacy = require("m");
+>legacy : Symbol(legacy, Decl(tluaNoImportExport.tlua, 5, 6))
 >require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
 
 export local value = 1;
+>export : Symbol(export, Decl(tluaNoImportExport.tlua, 7, 21))
 >value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
 
 export default value;
+>export : Symbol(export, Decl(tluaNoImportExport.tlua, 7, 21))
 >value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
 
 export = value;
+>export : Symbol(export, Decl(tluaNoImportExport.tlua, 7, 21))
 >value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
 
 export { value };
+>export : Symbol(export, Decl(tluaNoImportExport.tlua, 7, 21))
 >value : Symbol(value, Decl(tluaNoImportExport.tlua, 6, 12))
 
 export * from "m";
+>export : Symbol(export, Decl(tluaNoImportExport.tlua, 7, 21))
 
 // The dynamic forms are gone too.
 local dynamic = import("m");

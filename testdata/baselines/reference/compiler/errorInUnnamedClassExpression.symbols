@@ -8,7 +8,11 @@ local Foo = class {
 
     constructor() {
         this.bar = this.bar + 1;
+>bar : Symbol(bar, Decl(errorInUnnamedClassExpression.tlua, 4, 13))
+>bar : Symbol(bar, Decl(errorInUnnamedClassExpression.tlua, 4, 13))
     }
     abstract bar;
+>bar : Symbol(bar, Decl(errorInUnnamedClassExpression.tlua, 4, 13))
+
 };
 

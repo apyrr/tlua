@@ -16,18 +16,14 @@ tluaNoImportExport.tlua(5,8): error TLUA2304: Cannot find name 'def'.
 tluaNoImportExport.tlua(5,12): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(5,12): error TLUA2304: Cannot find name 'from'.
 tluaNoImportExport.tlua(6,1): error TLUA1128: Declaration or statement expected.
-tluaNoImportExport.tlua(6,8): error TLUA2304: Cannot find name 'legacy'.
 tluaNoImportExport.tlua(7,1): error TLUA1434: Unexpected keyword or identifier.
-tluaNoImportExport.tlua(7,1): error TLUA2304: Cannot find name 'export'.
+tluaNoImportExport.tlua(7,1): error TLUA2454: Variable 'export' is used before being assigned.
 tluaNoImportExport.tlua(8,1): error TLUA1434: Unexpected keyword or identifier.
-tluaNoImportExport.tlua(8,1): error TLUA2304: Cannot find name 'export'.
+tluaNoImportExport.tlua(8,1): error TLUA2454: Variable 'export' is used before being assigned.
 tluaNoImportExport.tlua(8,8): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(8,8): error TLUA2304: Cannot find name 'default'.
-tluaNoImportExport.tlua(9,1): error TLUA2304: Cannot find name 'export'.
 tluaNoImportExport.tlua(10,1): error TLUA1434: Unexpected keyword or identifier.
-tluaNoImportExport.tlua(10,1): error TLUA2304: Cannot find name 'export'.
 tluaNoImportExport.tlua(10,8): error TLUA1128: Declaration or statement expected.
-tluaNoImportExport.tlua(11,1): error TLUA2304: Cannot find name 'export'.
 tluaNoImportExport.tlua(11,10): error TLUA2304: Cannot find name 'from'.
 tluaNoImportExport.tlua(11,15): error TLUA1005: ';' expected.
 tluaNoImportExport.tlua(14,17): error TLUA1109: Expression expected.
@@ -35,7 +31,7 @@ tluaNoImportExport.tlua(15,14): error TLUA1109: Expression expected.
 tluaNoImportExport.tlua(15,20): error TLUA1128: Declaration or statement expected.
 
 
-==== tluaNoImportExport.tlua (35 errors) ====
+==== tluaNoImportExport.tlua (31 errors) ====
     // tlua has no TypeScript module syntax: a chunk loads its dependencies with
     // `require` and returns its own value.
     import { named } from "m";
@@ -78,35 +74,27 @@ tluaNoImportExport.tlua(15,20): error TLUA1128: Declaration or statement expecte
     import legacy = require("m");
     ~~~~~~
 !!! error TLUA1128: Declaration or statement expected.
-           ~~~~~~
-!!! error TLUA2304: Cannot find name 'legacy'.
     export local value = 1;
     ~~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~
-!!! error TLUA2304: Cannot find name 'export'.
+!!! error TLUA2454: Variable 'export' is used before being assigned.
     export default value;
     ~~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
     ~~~~~~
-!!! error TLUA2304: Cannot find name 'export'.
+!!! error TLUA2454: Variable 'export' is used before being assigned.
            ~~~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
            ~~~~~~~
 !!! error TLUA2304: Cannot find name 'default'.
     export = value;
-    ~~~~~~
-!!! error TLUA2304: Cannot find name 'export'.
     export { value };
     ~~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
-    ~~~~~~
-!!! error TLUA2304: Cannot find name 'export'.
            ~
 !!! error TLUA1128: Declaration or statement expected.
     export * from "m";
-    ~~~~~~
-!!! error TLUA2304: Cannot find name 'export'.
              ~~~~
 !!! error TLUA2304: Cannot find name 'from'.
                   ~~~

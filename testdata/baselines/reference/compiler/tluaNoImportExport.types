@@ -29,27 +29,27 @@ import legacy = require("m");
 >"m" : "m"
 
 export local value = 1;
->export : any
+>export : number
 >value : number
 >1 : 1
 
 export default value;
->export : any
+>export : number
 >default : any
 >value : number
 
 export = value;
 >export = value : number
->export : any
+>export : number
 >value : number
 
 export { value };
->export : any
+>export : number
 >value : number
 
 export * from "m";
 >export * from : number
->export : any
+>export : number
 >from : any
 >"m" : "m"
 

@@ -76,11 +76,6 @@ func (c *Checker) initializeLuaAugmentations() {
 		default:
 			continue
 		}
-		// Recovered assignments in a syntactically invalid file are not reliable
-		// global declarations and can hide the primary diagnostics.
-		if len(ast.GetSourceFileOfNode(node).Diagnostics()) != 0 {
-			continue
-		}
 		implicit[name] = append(implicit[name], luaAugmentation{LuaWriteCandidate: candidate})
 	}
 	for name, declarations := range implicit {

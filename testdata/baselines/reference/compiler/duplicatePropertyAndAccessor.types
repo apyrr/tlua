@@ -10,13 +10,13 @@ class C {
   y: number = 2;
 >y : any
 >number = 2 : 2
->number : any
+>number : number
 >2 : 2
 
   accessor y: number = 3;
 >y : any
 >number = 3 : 3
->number : any
+>number : number
 >3 : 3
 }
 

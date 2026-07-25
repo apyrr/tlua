@@ -18,6 +18,8 @@ local g = class {};
 
 class WithMembers {
   x = 1;
+>x : Symbol(x, Decl(tluaNoClass.tlua, 14, 19))
+
   m() {}
   constructor() {}
   static s() {}

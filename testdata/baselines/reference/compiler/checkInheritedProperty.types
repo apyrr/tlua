@@ -19,11 +19,11 @@ class Derived extends BaseFactory {
 >a = : any
 >a : any
 > : any
->b : any
+>b : string
 
     b = "abc"
 >b = "abc" : "abc"
->b : any
+>b : string
 >"abc" : "abc"
 }
 

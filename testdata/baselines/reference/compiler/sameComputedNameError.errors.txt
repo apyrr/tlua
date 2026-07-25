@@ -7,7 +7,6 @@ sameComputedNameError.tlua(4,3): error TLUA1128: Declaration or statement expect
 sameComputedNameError.tlua(4,4): error TLUA1434: Unexpected keyword or identifier.
 sameComputedNameError.tlua(4,5): error TLUA1128: Declaration or statement expected.
 sameComputedNameError.tlua(4,6): error TLUA1128: Declaration or statement expected.
-sameComputedNameError.tlua(4,8): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 sameComputedNameError.tlua(7,1): error TLUA1434: Unexpected keyword or identifier.
 sameComputedNameError.tlua(7,1): error TLUA2304: Cannot find name 'class'.
 sameComputedNameError.tlua(7,7): error TLUA1434: Unexpected keyword or identifier.
@@ -23,7 +22,7 @@ sameComputedNameError.tlua(8,6): error TLUA1128: Declaration or statement expect
 sameComputedNameError.tlua(8,8): error TLUA2588: Cannot assign to 'string' because it is a constant.
 
 
-==== sameComputedNameError.tlua (23 errors) ====
+==== sameComputedNameError.tlua (22 errors) ====
     declare s: unique symbol;
     
     class A {
@@ -46,8 +45,6 @@ sameComputedNameError.tlua(8,8): error TLUA2588: Cannot assign to 'string' becau
 !!! error TLUA1128: Declaration or statement expected.
          ~
 !!! error TLUA1128: Declaration or statement expected.
-           ~~~~~~
-!!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
     }
     
     class B extends A {

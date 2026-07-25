@@ -1,7 +1,7 @@
 asyncSuperDefaultParameters.tlua(1,1): error TLUA1434: Unexpected keyword or identifier.
 asyncSuperDefaultParameters.tlua(1,1): error TLUA2304: Cannot find name 'class'.
 asyncSuperDefaultParameters.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
-asyncSuperDefaultParameters.tlua(1,7): error TLUA2304: Cannot find name 'B'.
+asyncSuperDefaultParameters.tlua(1,7): error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
 asyncSuperDefaultParameters.tlua(1,9): error TLUA1128: Declaration or statement expected.
 asyncSuperDefaultParameters.tlua(2,5): error TLUA2304: Cannot find name 'm'.
 asyncSuperDefaultParameters.tlua(2,9): error TLUA1005: ';' expected.
@@ -11,7 +11,7 @@ asyncSuperDefaultParameters.tlua(7,7): error TLUA1434: Unexpected keyword or ide
 asyncSuperDefaultParameters.tlua(7,7): error TLUA2304: Cannot find name 'C'.
 asyncSuperDefaultParameters.tlua(7,9): error TLUA1128: Declaration or statement expected.
 asyncSuperDefaultParameters.tlua(7,17): error TLUA1434: Unexpected keyword or identifier.
-asyncSuperDefaultParameters.tlua(7,17): error TLUA2304: Cannot find name 'B'.
+asyncSuperDefaultParameters.tlua(7,17): error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
 asyncSuperDefaultParameters.tlua(7,19): error TLUA1128: Declaration or statement expected.
 asyncSuperDefaultParameters.tlua(8,5): error TLUA2304: Cannot find name 'f'.
 asyncSuperDefaultParameters.tlua(8,9): error TLUA1005: ';' expected.
@@ -19,12 +19,11 @@ asyncSuperDefaultParameters.tlua(9,38): error TLUA2660: 'super' can only be refe
 asyncSuperDefaultParameters.tlua(13,5): error TLUA1434: Unexpected keyword or identifier.
 asyncSuperDefaultParameters.tlua(13,5): error TLUA2304: Cannot find name 'async'.
 asyncSuperDefaultParameters.tlua(13,11): error TLUA2304: Cannot find name 'h'.
-asyncSuperDefaultParameters.tlua(13,13): error TLUA2304: Cannot find name 'b'.
 asyncSuperDefaultParameters.tlua(13,17): error TLUA2660: 'super' can only be referenced in members of derived classes or object literal expressions.
 asyncSuperDefaultParameters.tlua(13,28): error TLUA1005: ';' expected.
 
 
-==== asyncSuperDefaultParameters.tlua (24 errors) ====
+==== asyncSuperDefaultParameters.tlua (23 errors) ====
     class B {
     ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -33,7 +32,8 @@ asyncSuperDefaultParameters.tlua(13,28): error TLUA1005: ';' expected.
           ~
 !!! error TLUA1434: Unexpected keyword or identifier.
           ~
-!!! error TLUA2304: Cannot find name 'B'.
+!!! error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
+!!! related TLUA2728 asyncSuperDefaultParameters.tlua:13:13: 'b' is declared here.
             ~
 !!! error TLUA1128: Declaration or statement expected.
         m() {
@@ -59,7 +59,8 @@ asyncSuperDefaultParameters.tlua(13,28): error TLUA1005: ';' expected.
                     ~
 !!! error TLUA1434: Unexpected keyword or identifier.
                     ~
-!!! error TLUA2304: Cannot find name 'B'.
+!!! error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
+!!! related TLUA2728 asyncSuperDefaultParameters.tlua:13:13: 'b' is declared here.
                       ~
 !!! error TLUA1128: Declaration or statement expected.
         f() {
@@ -80,8 +81,6 @@ asyncSuperDefaultParameters.tlua(13,28): error TLUA1005: ';' expected.
 !!! error TLUA2304: Cannot find name 'async'.
               ~
 !!! error TLUA2304: Cannot find name 'h'.
-                ~
-!!! error TLUA2304: Cannot find name 'b'.
                     ~~~~~
 !!! error TLUA2660: 'super' can only be referenced in members of derived classes or object literal expressions.
                                ~

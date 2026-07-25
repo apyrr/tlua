@@ -29,11 +29,18 @@
 //     // This is not valid syntax: parameter property can't be binding pattern
 //     constructor(private [privateParam]: number,
 //         public [publicParam]: string,
-//         protected [/*HIGHLIGHTS*/protectedParam]: boolean) {
+//         protected [/*HIGHLIGHTS*/[|protectedParam|]]: boolean) {
 // 
 //         local localPrivate = privateParam;
 //         this.privateParam += 10;
-// --- (line: 9) skipped ---
+// 
+//         local localPublic = publicParam;
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = [|protectedParam|];
+//         this.[|protectedParam|] = false;
+//     }
+// }
 
 
 
@@ -67,11 +74,19 @@
 
 // === documentHighlights ===
 // === /file1.tlua ===
-// --- (line: 9) skipped ---
+// class Foo {
+//     // This is not valid syntax: parameter property can't be binding pattern
+//     constructor(private [privateParam]: number,
+//         public [publicParam]: string,
+//         protected [[|protectedParam|]]: boolean) {
+// 
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// 
 //         local localPublic = publicParam;
 //         this.publicParam += " Hello!";
 // 
-//         local localProtected = /*HIGHLIGHTS*/protectedParam;
-//         this.protectedParam = false;
+//         local localProtected = /*HIGHLIGHTS*/[|protectedParam|];
+//         this.[|protectedParam|] = false;
 //     }
 // }

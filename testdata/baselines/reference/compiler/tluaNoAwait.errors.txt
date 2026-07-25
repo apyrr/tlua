@@ -3,10 +3,9 @@ tluaNoAwait.tlua(14,16): error TLUA1005: ';' expected.
 tluaNoAwait.tlua(23,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoAwait.tlua(23,9): error TLUA1434: Unexpected keyword or identifier.
 tluaNoAwait.tlua(23,9): error TLUA2304: Cannot find name 'using'.
-tluaNoAwait.tlua(23,15): error TLUA2304: Cannot find name 'r'.
 
 
-==== tluaNoAwait.tlua (6 errors) ====
+==== tluaNoAwait.tlua (5 errors) ====
     // `await` is removed: it is an ordinary identifier everywhere — including
     // async function bodies and module top level — and async functions emit as
     // plain functions (no __awaiter, no transform).
@@ -40,7 +39,5 @@ tluaNoAwait.tlua(23,15): error TLUA2304: Cannot find name 'r'.
 !!! error TLUA1434: Unexpected keyword or identifier.
             ~~~~~
 !!! error TLUA2304: Cannot find name 'using'.
-                  ~
-!!! error TLUA2304: Cannot find name 'r'.
     end
     

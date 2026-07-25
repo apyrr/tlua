@@ -13,6 +13,10 @@ class Derived extends BaseFactory {
 >BaseFactory : Symbol(BaseFactory, Decl(checkInheritedProperty.tlua, 3, 7))
 
     a = this.b
+>a : Symbol(a, Decl(checkInheritedProperty.tlua, 5, 35))
+>b : Symbol(b, Decl(checkInheritedProperty.tlua, 6, 14))
+
     b = "abc"
+>b : Symbol(b, Decl(checkInheritedProperty.tlua, 6, 14))
 }
 

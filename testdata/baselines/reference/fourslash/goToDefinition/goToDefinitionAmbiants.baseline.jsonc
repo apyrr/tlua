@@ -4,7 +4,7 @@
 //     public method();
 // }
 // 
-// /*GOTO DEF*/ambientVar = 1;
+// /*GOTO DEF*/[|ambientVar|] = 1;
 // ambientFunction();
 // local ambientClassVariable = new ambientClass();
 // ambientClass.method();

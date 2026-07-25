@@ -43,6 +43,7 @@ function h(): void
 
   await using r = compute();
 >await : Symbol(await, Decl(tluaNoAwait.tlua, 17, 5))
+>r : Symbol(r, Decl(tluaNoAwait.tlua, 22, 13))
 >compute : Symbol(compute, Decl(tluaNoAwait.tlua, 0, 0))
 
 end

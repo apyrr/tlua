@@ -51,7 +51,7 @@ function h(): void
 >await : number
 >using : any
 >r = compute() : number
->r : any
+>r : number
 >compute() : number
 >compute : () => number
 

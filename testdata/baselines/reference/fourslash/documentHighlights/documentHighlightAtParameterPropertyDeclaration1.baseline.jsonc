@@ -26,11 +26,18 @@
 // class Foo {
 //     constructor(private privateParam: number,
 //         public publicParam: string,
-//         protected /*HIGHLIGHTS*/protectedParam: boolean) {
+//         protected /*HIGHLIGHTS*/[|protectedParam|]: boolean) {
 // 
 //         local localPrivate = privateParam;
 //         this.privateParam += 10;
-// --- (line: 8) skipped ---
+// 
+//         local localPublic = publicParam;
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = [|protectedParam|];
+//         this.[|protectedParam|] = false;
+//     }
+// }
 
 
 
@@ -94,12 +101,19 @@
 
 // === documentHighlights ===
 // === /file1.tlua ===
-// --- (line: 8) skipped ---
+// class Foo {
+//     constructor(private privateParam: number,
+//         public publicParam: string,
+//         protected [|protectedParam|]: boolean) {
+// 
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// 
 //         local localPublic = publicParam;
 //         this.publicParam += " Hello!";
 // 
-//         local localProtected = /*HIGHLIGHTS*/protectedParam;
-//         this.protectedParam = false;
+//         local localProtected = /*HIGHLIGHTS*/[|protectedParam|];
+//         this.[|protectedParam|] = false;
 //     }
 // }
 
@@ -107,10 +121,18 @@
 
 // === documentHighlights ===
 // === /file1.tlua ===
-// --- (line: 9) skipped ---
+// class Foo {
+//     constructor(private privateParam: number,
+//         public publicParam: string,
+//         protected [|protectedParam|]: boolean) {
+// 
+//         local localPrivate = privateParam;
+//         this.privateParam += 10;
+// 
+//         local localPublic = publicParam;
 //         this.publicParam += " Hello!";
 // 
-//         local localProtected = protectedParam;
-//         this./*HIGHLIGHTS*/protectedParam = false;
+//         local localProtected = [|protectedParam|];
+//         this./*HIGHLIGHTS*/[|protectedParam|] = false;
 //     }
 // }

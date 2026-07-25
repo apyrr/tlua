@@ -33,7 +33,7 @@ class WithMembers {
 
   x = 1;
 >x = 1 : 1
->x : any
+>x : number
 >1 : 1
 
   m() {}

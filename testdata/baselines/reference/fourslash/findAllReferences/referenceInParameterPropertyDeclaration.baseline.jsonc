@@ -26,8 +26,15 @@
 // class Foo {
 //     constructor(private privateParam: number,
 //         public publicParam: string,
-//         protected /*FIND ALL REFS*/protectedParam: boolean) {
+//         protected /*FIND ALL REFS*/[|protectedParam|]: boolean) {
 // 
 //         local localPrivate = privateParam;
 //         this.privateParam += 10;
-// --- (line: 8) skipped ---
+// 
+//         local localPublic = publicParam;
+//         this.publicParam += " Hello!";
+// 
+//         local localProtected = [|protectedParam|];
+//         this.[|protectedParam|] = false;
+//     }
+// }

@@ -17,7 +17,7 @@ class C {
   out y = 2;
 >out : any
 >y = 2 : 2
->y : any
+>y : number
 >2 : 2
 }
 

@@ -13,11 +13,22 @@
 // === /findAllReferencesLinkTag1.tlua ===
 // class C {
 //     m() { }
-//     n/*FIND ALL REFS*/ = 1
+//     [|n|]/*FIND ALL REFS*/ = 1
 //     static s() { }
 //     /**
 //      * {@link m}
 // --- (line: 7) skipped ---
+
+// --- (line: 13) skipped ---
+//      */
+//     p() { }
+//     /**
+//      * {@link [|n|]}
+//      * @see {[|n|]}
+//      * {@link C.n}
+//      * @see {C.n}
+//      * {@link C#n}
+// --- (line: 22) skipped ---
 
 
 

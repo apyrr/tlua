@@ -11,7 +11,7 @@ class A {
   [s]: number = 1;
 >s : unique symbol
 >number = 1 : 1
->number : any
+>number : number
 >1 : 1
 }
 

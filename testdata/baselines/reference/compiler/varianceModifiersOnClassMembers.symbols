@@ -6,6 +6,7 @@
 class C {
   in x = 1;
   out y = 2;
+>y : Symbol(y, Decl(varianceModifiersOnClassMembers.tlua, 4, 5))
 }
 
 local isIn = "x" in { x = 1 };
