@@ -12,6 +12,7 @@ class C {
 
 class B<T = any> extends C {}
 >class : any
+>B<T = any> : boolean
 >B<T : boolean
 >B : any
 >T : any

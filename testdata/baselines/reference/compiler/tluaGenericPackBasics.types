@@ -59,3 +59,59 @@ forward(f2, 1, "x");
 >1 : 1
 >"x" : "x"
 
+// Erased assertions refine only slot zero while a generic pack keeps its
+// possible zero-result arity and open tail.
+function projectFirst<...A>(f: () => (...A))
+>projectFirst : <...A>(f: () => (...A)) => void
+>f : () => (...A)
+
+    local first, second = f() as number;
+>first : number | nil
+>second : A[number] | nil
+>f() as number : number
+>f() : A[number] | nil
+>f : () => (...A)
+
+    local nestedFirst, nestedSecond = f() as unknown as number;
+>nestedFirst : number | nil
+>nestedSecond : A[number] | nil
+>f() as unknown as number : number
+>f() as unknown : unknown
+>f() : A[number] | nil
+>f : () => (...A)
+
+end
+
+// A generic producer in a non-tail list position keeps the assertion's scalar
+// view even though Tail<A> cannot be represented independently.
+function projectNonTail<...A>(f: () => (...A))
+>projectNonTail : <...A>(f: () => (...A)) => (number | nil, boolean)
+>f : () => (...A)
+
+    return f() as number, true;
+>f() as number, true : number | nil, boolean
+>f() as number : number
+>f() : A[number] | nil
+>f : () => (...A)
+>true : true
+
+end
+
+declare function strings(): (string, string);
+>strings : () => (string, string)
+
+local projectedFirst, projectedSuffix = projectNonTail(strings);
+>projectedFirst : number | nil
+>projectedSuffix : boolean
+>projectNonTail(strings) : number | nil
+>projectNonTail : <...A>(f: () => (...A)) => (number | nil, boolean)
+>strings : () => (string, string)
+
+local projectedFirstUse: number | nil = projectedFirst;
+>projectedFirstUse : number | nil
+>projectedFirst : number | nil
+
+local projectedSuffixUse: boolean = projectedSuffix;
+>projectedSuffixUse : boolean
+>projectedSuffix : boolean
+

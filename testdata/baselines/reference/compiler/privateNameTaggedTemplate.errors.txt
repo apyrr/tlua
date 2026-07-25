@@ -3,10 +3,10 @@ privateNameTaggedTemplate.tlua(1,1): error TLUA2304: Cannot find name 'class'.
 privateNameTaggedTemplate.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
 privateNameTaggedTemplate.tlua(1,7): error TLUA2304: Cannot find name 'Foo'.
 privateNameTaggedTemplate.tlua(1,11): error TLUA1128: Declaration or statement expected.
+privateNameTaggedTemplate.tlua(2,3): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 privateNameTaggedTemplate.tlua(2,4): error TLUA2304: Cannot find name 'x'.
-privateNameTaggedTemplate.tlua(2,6): error TLUA1005: ';' expected.
+privateNameTaggedTemplate.tlua(3,3): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 privateNameTaggedTemplate.tlua(3,4): error TLUA2304: Cannot find name 'y'.
-privateNameTaggedTemplate.tlua(3,6): error TLUA1005: ';' expected.
 privateNameTaggedTemplate.tlua(4,3): error TLUA2304: Cannot find name 'func'.
 privateNameTaggedTemplate.tlua(4,10): error TLUA1005: ';' expected.
 privateNameTaggedTemplate.tlua(5,5): error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
@@ -36,15 +36,15 @@ privateNameTaggedTemplate.tlua(8,1): error TLUA1160: Unterminated template liter
               ~
 !!! error TLUA1128: Declaration or statement expected.
       #x = 3;
+      ~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
        ~
 !!! error TLUA2304: Cannot find name 'x'.
-         ~
-!!! error TLUA1005: ';' expected.
       #y = null as any;
+      ~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
        ~
 !!! error TLUA2304: Cannot find name 'y'.
-         ~
-!!! error TLUA1005: ';' expected.
       func() {
       ~~~~
 !!! error TLUA2304: Cannot find name 'func'.

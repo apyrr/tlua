@@ -87,17 +87,17 @@ function _G.dup(): void end
 >_G : typeof _G
 >dup : any
 
-// Function syntax and ordinary assignment collide when they jointly declare
-// an otherwise missing global.
+// Function syntax supplies the member contract; ordinary Lua writes to the same
+// otherwise-missing global are checked against it.
 function _G.mixedGlobal(): void end
 >_G : typeof _G
->mixedGlobal : any
+>mixedGlobal : () => void
 
 _G.mixedGlobal = 1;
 >_G.mixedGlobal = 1 : 1
->_G.mixedGlobal : any
+>_G.mixedGlobal : () => void
 >_G : typeof _G
->mixedGlobal : any
+>mixedGlobal : () => void
 >1 : 1
 
 bareTable = _G.bareTable or {};
@@ -327,8 +327,8 @@ local dupValue = dup;
 >dup : any
 
 local mixedValue = mixedGlobal;
->mixedValue : any
->mixedGlobal : any
+>mixedValue : () => void
+>mixedGlobal : () => void
 
 local printFunction: () => void = _G.print;
 >printFunction : () => void
@@ -708,7 +708,7 @@ use(dupValue);
 use(mixedValue);
 >use(mixedValue) : void
 >use : (x: unknown) => void
->mixedValue : any
+>mixedValue : () => void
 
 use(printFunction);
 >use(printFunction) : void

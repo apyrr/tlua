@@ -23,6 +23,24 @@ local single: number = apply(f0);
 declare function forward<...A>(f: (...: A) => void, ...: A): void;
 forward(f2, 1, "x");
 
+// Erased assertions refine only slot zero while a generic pack keeps its
+// possible zero-result arity and open tail.
+function projectFirst<...A>(f: () => (...A))
+    local first, second = f() as number;
+    local nestedFirst, nestedSecond = f() as unknown as number;
+end
+
+// A generic producer in a non-tail list position keeps the assertion's scalar
+// view even though Tail<A> cannot be represented independently.
+function projectNonTail<...A>(f: () => (...A))
+    return f() as number, true;
+end
+
+declare function strings(): (string, string);
+local projectedFirst, projectedSuffix = projectNonTail(strings);
+local projectedFirstUse: number | nil = projectedFirst;
+local projectedSuffixUse: boolean = projectedSuffix;
+
 
 //// [tluaGenericPackBasics.lua]
 -- A generic pack parameter, declared `<...A>`, binds a whole value pack. It is
@@ -35,3 +53,17 @@ local msgType = msg;
 -- A single-result callee: the pack collapses to one value.
 local single = apply(f0);
 forward(f2, 1, "x");
+-- Erased assertions refine only slot zero while a generic pack keeps its
+-- possible zero-result arity and open tail.
+function projectFirst(f)
+  local first, second = f();
+  local nestedFirst, nestedSecond = f();
+end
+-- A generic producer in a non-tail list position keeps the assertion's scalar
+-- view even though Tail<A> cannot be represented independently.
+function projectNonTail(f)
+  return f(), true;
+end
+local projectedFirst, projectedSuffix = projectNonTail(strings);
+local projectedFirstUse = projectedFirst;
+local projectedSuffixUse = projectedSuffix;

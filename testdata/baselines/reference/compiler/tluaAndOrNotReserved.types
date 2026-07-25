@@ -60,6 +60,7 @@ local o3 = { not = 1 };
 // Binding names.
 local and = 1;
 > : any
+>and = 1 : 1
 >and : any
 > : any
 > : any
@@ -67,6 +68,7 @@ local and = 1;
 
 local or = 2;
 > : any
+>or = 2 : 2
 >or : any
 > : any
 > : any
@@ -74,6 +76,7 @@ local or = 2;
 
 local not = 3;
 > : any
+>not = 3 : 3
 >not : boolean
 > : any
 >3 : 3

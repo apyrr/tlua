@@ -1,0 +1,127 @@
+//// [tests/cases/compiler/tluaPackWrapperArity.tlua] ////
+
+=== tluaPackWrapperArity.tlua ===
+declare function nothing(): void;
+>nothing : Symbol(nothing, Decl(tluaPackWrapperArity.tlua, 0, 0))
+
+// Parentheses turn a zero-result call into exactly one nil value.
+local parenthesized: nil = (nothing());
+>parenthesized : Symbol(parenthesized, Decl(tluaPackWrapperArity.tlua, 3, 5))
+>nothing : Symbol(nothing, Decl(tluaPackWrapperArity.tlua, 0, 0))
+
+local inferredParenthesized = (nothing());
+>inferredParenthesized : Symbol(inferredParenthesized, Decl(tluaPackWrapperArity.tlua, 4, 5))
+>nothing : Symbol(nothing, Decl(tluaPackWrapperArity.tlua, 0, 0))
+
+local inferredParenthesizedUse: nil = inferredParenthesized;
+>inferredParenthesizedUse : Symbol(inferredParenthesizedUse, Decl(tluaPackWrapperArity.tlua, 5, 5))
+>inferredParenthesized : Symbol(inferredParenthesized, Decl(tluaPackWrapperArity.tlua, 4, 5))
+
+local assertedParenthesized: nil = (nothing() as void);
+>assertedParenthesized : Symbol(assertedParenthesized, Decl(tluaPackWrapperArity.tlua, 6, 5))
+>nothing : Symbol(nothing, Decl(tluaPackWrapperArity.tlua, 0, 0))
+
+local assertedThroughNumber: nil = (nothing() as unknown as number);
+>assertedThroughNumber : Symbol(assertedThroughNumber, Decl(tluaPackWrapperArity.tlua, 7, 5))
+>nothing : Symbol(nothing, Decl(tluaPackWrapperArity.tlua, 0, 0))
+
+local inferredAssertedThroughNumber = (nothing() as unknown as number);
+>inferredAssertedThroughNumber : Symbol(inferredAssertedThroughNumber, Decl(tluaPackWrapperArity.tlua, 8, 5))
+>nothing : Symbol(nothing, Decl(tluaPackWrapperArity.tlua, 0, 0))
+
+local inferredAssertedThroughNumberUse: nil = inferredAssertedThroughNumber;
+>inferredAssertedThroughNumberUse : Symbol(inferredAssertedThroughNumberUse, Decl(tluaPackWrapperArity.tlua, 9, 5))
+>inferredAssertedThroughNumber : Symbol(inferredAssertedThroughNumber, Decl(tluaPackWrapperArity.tlua, 8, 5))
+
+function returnParenthesizedNothing()
+>returnParenthesizedNothing : Symbol(returnParenthesizedNothing, Decl(tluaPackWrapperArity.tlua, 9, 76))
+
+    return (nothing());
+>nothing : Symbol(nothing, Decl(tluaPackWrapperArity.tlua, 0, 0))
+
+end
+
+local returned: nil = returnParenthesizedNothing();
+>returned : Symbol(returned, Decl(tluaPackWrapperArity.tlua, 15, 5))
+>returnParenthesizedNothing : Symbol(returnParenthesizedNothing, Decl(tluaPackWrapperArity.tlua, 9, 76))
+
+// An erased assertion refines the first result of a generic pack without
+// prefixing a new value or discarding the producer's remaining results.
+function projectFirst<...A>(f: () => (...A))
+>projectFirst : Symbol(projectFirst, Decl(tluaPackWrapperArity.tlua, 15, 51))
+>A : Symbol(A, Decl(tluaPackWrapperArity.tlua, 19, 22))
+>f : Symbol(f, Decl(tluaPackWrapperArity.tlua, 19, 28))
+>A : Symbol(A, Decl(tluaPackWrapperArity.tlua, 19, 22))
+
+    return f() as number;
+>f : Symbol(f, Decl(tluaPackWrapperArity.tlua, 19, 28))
+
+end
+
+local projected = projectFirst(function()
+>projected : Symbol(projected, Decl(tluaPackWrapperArity.tlua, 23, 5))
+>projectFirst : Symbol(projectFirst, Decl(tluaPackWrapperArity.tlua, 15, 51))
+
+    return "runtime";
+end);
+local projectedFirst: number | nil = projected;
+>projectedFirst : Symbol(projectedFirst, Decl(tluaPackWrapperArity.tlua, 26, 5))
+>projected : Symbol(projected, Decl(tluaPackWrapperArity.tlua, 23, 5))
+
+local first, second = projectFirst(function()
+>first : Symbol(first, Decl(tluaPackWrapperArity.tlua, 28, 5))
+>second : Symbol(second, Decl(tluaPackWrapperArity.tlua, 28, 12))
+>projectFirst : Symbol(projectFirst, Decl(tluaPackWrapperArity.tlua, 15, 51))
+
+    return "runtime", true;
+end);
+local firstUse: number | nil = first;
+>firstUse : Symbol(firstUse, Decl(tluaPackWrapperArity.tlua, 31, 5))
+>first : Symbol(first, Decl(tluaPackWrapperArity.tlua, 28, 5))
+
+local secondUse: string | boolean | nil = second;
+>secondUse : Symbol(secondUse, Decl(tluaPackWrapperArity.tlua, 32, 5))
+>second : Symbol(second, Decl(tluaPackWrapperArity.tlua, 28, 12))
+
+declare function acceptsProjected(first: number | nil, ...: any[]): void;
+>acceptsProjected : Symbol(acceptsProjected, Decl(tluaPackWrapperArity.tlua, 32, 49))
+>first : Symbol(first, Decl(tluaPackWrapperArity.tlua, 34, 34))
+> : Symbol((Missing), Decl(tluaPackWrapperArity.tlua, 34, 54))
+
+function forwardProjected<...A>(f: () => (...A))
+>forwardProjected : Symbol(forwardProjected, Decl(tluaPackWrapperArity.tlua, 34, 73))
+>A : Symbol(A, Decl(tluaPackWrapperArity.tlua, 36, 26))
+>f : Symbol(f, Decl(tluaPackWrapperArity.tlua, 36, 32))
+>A : Symbol(A, Decl(tluaPackWrapperArity.tlua, 36, 26))
+
+    acceptsProjected(f() as number);
+>acceptsProjected : Symbol(acceptsProjected, Decl(tluaPackWrapperArity.tlua, 32, 49))
+>f : Symbol(f, Decl(tluaPackWrapperArity.tlua, 36, 32))
+
+end
+
+// Parentheses collapse the asserted generic pack to one value, but its first
+// slot remains optional because the source pack may be empty.
+function parenthesizedProjectFirst<...A>(f: () => (...A))
+>parenthesizedProjectFirst : Symbol(parenthesizedProjectFirst, Decl(tluaPackWrapperArity.tlua, 38, 3))
+>A : Symbol(A, Decl(tluaPackWrapperArity.tlua, 42, 35))
+>f : Symbol(f, Decl(tluaPackWrapperArity.tlua, 42, 41))
+>A : Symbol(A, Decl(tluaPackWrapperArity.tlua, 42, 35))
+
+    return (f() as number);
+>f : Symbol(f, Decl(tluaPackWrapperArity.tlua, 42, 41))
+
+end
+
+local parenthesizedProjected = parenthesizedProjectFirst(function(): void end);
+>parenthesizedProjected : Symbol(parenthesizedProjected, Decl(tluaPackWrapperArity.tlua, 46, 5))
+>parenthesizedProjectFirst : Symbol(parenthesizedProjectFirst, Decl(tluaPackWrapperArity.tlua, 38, 3))
+
+local parenthesizedProjectedUse: number | nil = parenthesizedProjected;
+>parenthesizedProjectedUse : Symbol(parenthesizedProjectedUse, Decl(tluaPackWrapperArity.tlua, 47, 5))
+>parenthesizedProjected : Symbol(parenthesizedProjected, Decl(tluaPackWrapperArity.tlua, 46, 5))
+
+local parenthesizedProjectedNilError: number = parenthesizedProjected;
+>parenthesizedProjectedNilError : Symbol(parenthesizedProjectedNilError, Decl(tluaPackWrapperArity.tlua, 48, 5))
+>parenthesizedProjected : Symbol(parenthesizedProjected, Decl(tluaPackWrapperArity.tlua, 46, 5))
+

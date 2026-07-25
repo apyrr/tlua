@@ -59,12 +59,12 @@ b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: n
     // Parentheses make this an ordinary self-referential assignment rather than
     // the exact defaulted-guard idiom.
     Paren = (Paren) or {};
-    ~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~
 !!! error TLUA7022: 'Paren' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     
     local Numeric = {};
     Numeric[1] = Numeric["1"] or {};
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~
 !!! error TLUA7022: '1' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
                  ~~~~~~~~~~~~
 !!! error TLUA7053: Element implicitly has an 'any' type because expression of type '"1"' can't be used to index type '{ 1: any; }'.
@@ -72,7 +72,7 @@ b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: n
     
     local Other = {};
     Chain = Chain or Other or {};
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~
 !!! error TLUA7022: 'Chain' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     
     Different = Other or {};
@@ -84,7 +84,7 @@ b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: n
       return {};
     end
     ReadInside = ReadInside or keep(ReadInside);
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~
 !!! error TLUA7022: 'ReadInside' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     
     local LocalSelf = LocalSelf or {};

@@ -1,0 +1,16 @@
+// @target: esnext
+// @strict: true
+
+// Cross-file access assignments have no fixed execution order. Constructor
+// snapshot recovery must terminate even when their initializer graph cycles.
+
+// @filename: a.tlua
+AccessCycle = {};
+AccessCycle.a = {};
+AccessCycle.b = {};
+AccessCycle.a = AccessCycle.b;
+
+// @filename: b.tlua
+AccessCycle.b = AccessCycle.a;
+AccessCycle.a.value = 1;
+local accessCycleValue = AccessCycle.a.value;

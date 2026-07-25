@@ -85,8 +85,8 @@ function _G.dup(): void end
 >_G : Symbol(_G)
 >dup : Symbol(dup, Decl(writes.tlua, 14, 3), Decl(writes.tlua, 17, 16), Decl(writes.tlua, 18, 27))
 
-// Function syntax and ordinary assignment collide when they jointly declare
-// an otherwise missing global.
+// Function syntax supplies the member contract; ordinary Lua writes to the same
+// otherwise-missing global are checked against it.
 function _G.mixedGlobal(): void end
 >_G : Symbol(_G)
 >mixedGlobal : Symbol(mixedGlobal, Decl(writes.tlua, 19, 27), Decl(writes.tlua, 23, 35))

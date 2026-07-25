@@ -1,0 +1,52 @@
+// @target: esnext
+// @strict: true
+
+declare function nothing(): void;
+
+// Parentheses turn a zero-result call into exactly one nil value.
+local parenthesized: nil = (nothing());
+local inferredParenthesized = (nothing());
+local inferredParenthesizedUse: nil = inferredParenthesized;
+local assertedParenthesized: nil = (nothing() as void);
+local assertedThroughNumber: nil = (nothing() as unknown as number);
+local inferredAssertedThroughNumber = (nothing() as unknown as number);
+local inferredAssertedThroughNumberUse: nil = inferredAssertedThroughNumber;
+
+function returnParenthesizedNothing()
+    return (nothing());
+end
+
+local returned: nil = returnParenthesizedNothing();
+
+// An erased assertion refines the first result of a generic pack without
+// prefixing a new value or discarding the producer's remaining results.
+function projectFirst<...A>(f: () => (...A))
+    return f() as number;
+end
+
+local projected = projectFirst(function()
+    return "runtime";
+end);
+local projectedFirst: number | nil = projected;
+
+local first, second = projectFirst(function()
+    return "runtime", true;
+end);
+local firstUse: number | nil = first;
+local secondUse: string | boolean | nil = second;
+
+declare function acceptsProjected(first: number | nil, ...: any[]): void;
+
+function forwardProjected<...A>(f: () => (...A))
+    acceptsProjected(f() as number);
+end
+
+// Parentheses collapse the asserted generic pack to one value, but its first
+// slot remains optional because the source pack may be empty.
+function parenthesizedProjectFirst<...A>(f: () => (...A))
+    return (f() as number);
+end
+
+local parenthesizedProjected = parenthesizedProjectFirst(function(): void end);
+local parenthesizedProjectedUse: number | nil = parenthesizedProjected;
+local parenthesizedProjectedNilError: number = parenthesizedProjected;

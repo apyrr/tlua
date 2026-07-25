@@ -1,0 +1,268 @@
+//// [tests/cases/compiler/tluaTableAugmentationAlias.tlua] ////
+
+=== tluaTableAugmentationAlias.tlua ===
+declare function condition(): boolean;
+>condition : () => boolean
+
+declare function make(): {};
+>make : () => {}
+
+// Augmentation is order-independent: a member declared anywhere in the program
+// belongs to every constructor its path can reach. A replacement that only may
+// execute therefore does not erase the member from either table.
+BranchRoot = { initial = true };
+>BranchRoot = { initial = true } : { initial: boolean; value: number; }
+>BranchRoot : { initial: boolean; replaced?: nil; value: number; } | { initial?: nil; replaced: boolean; value: number; }
+>{ initial = true } : { initial: boolean; value: number; }
+>initial : boolean
+>true : true
+
+if condition() then
+>condition() : boolean
+>condition : () => boolean
+
+  BranchRoot = { replaced = true };
+>BranchRoot = { replaced = true } : { replaced: boolean; value: number; }
+>BranchRoot : { initial: boolean; replaced?: nil; value: number; } | { initial?: nil; replaced: boolean; value: number; }
+>{ replaced = true } : { replaced: boolean; value: number; }
+>replaced : boolean
+>true : true
+
+end
+BranchRoot.value = 1;
+>BranchRoot.value = 1 : 1
+>BranchRoot.value : number
+>BranchRoot : { initial: boolean; replaced?: nil; value: number; } | { initial?: nil; replaced: boolean; value: number; }
+>value : number
+>1 : 1
+
+local branchValue: number = BranchRoot.value;
+>branchValue : number
+>BranchRoot.value : number
+>BranchRoot : { initial: boolean; replaced?: nil; value: number; } | { initial?: nil; replaced: boolean; value: number; }
+>value : number
+
+LoopRoot = { initial = true };
+>LoopRoot = { initial = true } : { initial: boolean; value: string; }
+>LoopRoot : { replaced?: nil; initial: boolean; value: string; } | { initial?: nil; replaced: boolean; value: string; }
+>{ initial = true } : { initial: boolean; value: string; }
+>initial : boolean
+>true : true
+
+while condition() do
+>condition() : boolean
+>condition : () => boolean
+
+  LoopRoot = { replaced = true };
+>LoopRoot = { replaced = true } : { replaced: boolean; value: string; }
+>LoopRoot : { replaced?: nil; initial: boolean; value: string; } | { initial?: nil; replaced: boolean; value: string; }
+>{ replaced = true } : { replaced: boolean; value: string; }
+>replaced : boolean
+>true : true
+
+  break;
+end
+LoopRoot.value = "loop";
+>LoopRoot.value = "loop" : "loop"
+>LoopRoot.value : string
+>LoopRoot : { replaced?: nil; initial: boolean; value: string; } | { initial?: nil; replaced: boolean; value: string; }
+>value : string
+>"loop" : "loop"
+
+local loopValue: string = LoopRoot.value;
+>loopValue : string
+>LoopRoot.value : string
+>LoopRoot : { replaced?: nil; initial: boolean; value: string; } | { initial?: nil; replaced: boolean; value: string; }
+>value : string
+
+GotoRoot = { initial = true };
+>GotoRoot = { initial = true } : { initial: boolean; value: boolean; }
+>GotoRoot : { replaced?: nil; initial: boolean; value: boolean; } | { initial?: nil; replaced: boolean; value: boolean; }
+>{ initial = true } : { initial: boolean; value: boolean; }
+>initial : boolean
+>true : true
+
+if condition() then
+>condition() : boolean
+>condition : () => boolean
+
+  goto afterReplacement;
+>afterReplacement : any
+
+end
+GotoRoot = { replaced = true };
+>GotoRoot = { replaced = true } : { replaced: boolean; value: boolean; }
+>GotoRoot : { replaced?: nil; initial: boolean; value: boolean; } | { initial?: nil; replaced: boolean; value: boolean; }
+>{ replaced = true } : { replaced: boolean; value: boolean; }
+>replaced : boolean
+>true : true
+
+::afterReplacement::
+>afterReplacement : any
+
+GotoRoot.value = true;
+>GotoRoot.value = true : true
+>GotoRoot.value : boolean
+>GotoRoot : { replaced?: nil; initial: boolean; value: boolean; } | { initial?: nil; replaced: boolean; value: boolean; }
+>value : boolean
+>true : true
+
+local gotoValue: boolean = GotoRoot.value;
+>gotoValue : boolean
+>GotoRoot.value : true
+>GotoRoot : { replaced?: nil; initial: boolean; value: boolean; } | { initial?: nil; replaced: boolean; value: boolean; }
+>value : true
+
+// A stable local alias names the same constructor, so a write through either
+// spelling declares the member on one table.
+local aliasRoot = {};
+>aliasRoot : { member: number; }
+>{} : { member: number; }
+
+local alias = aliasRoot;
+>alias : { member: number; }
+>aliasRoot : { member: number; }
+
+alias.member = 1;
+>alias.member = 1 : 1
+>alias.member : number
+>alias : { member: number; }
+>member : number
+>1 : 1
+
+local aliasMember: number = aliasRoot.member;
+>aliasMember : number
+>aliasRoot.member : number
+>aliasRoot : { member: number; }
+>member : number
+
+// Rebinding a local ends its aliasing: the write below must not leak `leaked`
+// onto sealedRoot's constructor.
+local sealedRoot = {};
+>sealedRoot : {}
+>{} : {}
+
+local rebound = sealedRoot;
+>rebound : {}
+>sealedRoot : {}
+
+rebound = 0;
+>rebound = 0 : 0
+>rebound : {}
+>0 : 0
+
+rebound.leaked = true; -- error
+>rebound.leaked = true : true
+>rebound.leaked : any
+>rebound : {}
+>leaked : any
+>true : true
+
+local sealedRootUse: {} = sealedRoot;
+>sealedRootUse : {}
+>sealedRoot : {}
+
+// A nested function sees the enclosing constructor and can augment it.
+NestedRoot = {};
+>NestedRoot = {} : { nested: string; }
+>NestedRoot : { nested: string; }
+>{} : { nested: string; }
+
+local function addNested()
+>addNested : () => void
+
+  NestedRoot.nested = "inner";
+>NestedRoot.nested = "inner" : "inner"
+>NestedRoot.nested : string
+>NestedRoot : { nested: string; }
+>nested : string
+>"inner" : "inner"
+
+end
+local nestedUse: string = NestedRoot.nested;
+>nestedUse : string
+>NestedRoot.nested : string
+>NestedRoot : { nested: string; }
+>nested : string
+
+// An annotation seals the table.
+local annotated: { x: number } = { x = 1 };
+>annotated : { x: number; }
+>x : number
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+annotated.y = 2; -- error
+>annotated.y = 2 : 2
+>annotated.y : any
+>annotated : { x: number; }
+>y : any
+>2 : 2
+
+// A non-constructor initializer seals it too, in any file order.
+local fromCall = make();
+>fromCall : {}
+>make() : {}
+>make : () => {}
+
+fromCall.z = 3; -- error
+>fromCall.z = 3 : 3
+>fromCall.z : any
+>fromCall : {}
+>z : any
+>3 : 3
+
+// A local rebound to another constructor holds both, so a member declared
+// through it belongs to every table it can name. Only a non-constructor store
+// seals, which is what separates this from `rebound` above.
+local reassigned = {};
+>reassigned : { value: number; }
+>{} : { value: number; }
+
+reassigned = {};
+>reassigned = {} : { value: number; }
+>reassigned : { value: number; }
+>{} : { value: number; }
+
+reassigned.value = 1;
+>reassigned.value = 1 : 1
+>reassigned.value : number
+>reassigned : { value: number; }
+>value : number
+>1 : 1
+
+local reassignedUse: number = reassigned.value;
+>reassignedUse : number
+>reassigned.value : number
+>reassigned : { value: number; }
+>value : number
+
+// The same holds through a target list, where the store shares its statement
+// with an unrelated target.
+local listReassigned = {};
+>listReassigned : { value: string; }
+>{} : { value: string; }
+
+listReassigned, listSide = {}, 0;
+>listReassigned, listSide = {}, 0 : { value: string; }
+>listReassigned, listSide : { value: string; }, number
+>listReassigned : { value: string; }
+>listSide : number
+>{}, 0 : { value: string; }, number
+>{} : { value: string; }
+>0 : 0
+
+listReassigned.value = "list";
+>listReassigned.value = "list" : "list"
+>listReassigned.value : string
+>listReassigned : { value: string; }
+>value : string
+>"list" : "list"
+
+local listReassignedUse: string = listReassigned.value;
+>listReassignedUse : string
+>listReassigned.value : string
+>listReassigned : { value: string; }
+>value : string
+

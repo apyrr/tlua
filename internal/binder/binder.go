@@ -594,7 +594,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 			setFlowNode(node, b.currentFlow)
 		}
 	case ast.KindBinaryExpression:
-		b.bindLuaAugmentationCandidate(node)
+		b.bindLuaWriteCandidate(node)
 		switch ast.GetAssignmentDeclarationKind(node) {
 		case ast.JSDeclarationKindModuleExports:
 			b.bindModuleExportsAssignment(node)
@@ -632,7 +632,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		case ast.IsLuaLocal(node):
 			b.bindLuaLocalFunctionDeclaration(node)
 		case node.AsFunctionDeclaration().Target != nil:
-			b.bindLuaAugmentationCandidate(node)
+			b.bindLuaWriteCandidate(node)
 		default:
 			b.bindFunctionDeclaration(node)
 		}
@@ -887,40 +887,65 @@ func (b *Binder) bindCommonJSTypeExports(moduleSymbol *ast.Symbol) {
 	}
 }
 
-// bindLuaAugmentationCandidate gives assignment-like Lua declarations standalone
+// bindLuaWriteCandidate gives assignment-like Lua declarations standalone
 // symbols; each checker resolves and merges them after all files are bound.
-func (b *Binder) bindLuaAugmentationCandidate(node *ast.Node) {
+func (b *Binder) bindLuaWriteCandidate(node *ast.Node) {
 	if ast.IsInJSFile(node) {
 		return
 	}
-	var name string
 	switch {
 	case ast.IsFunctionDeclaration(node):
-		name = b.getDeclarationName(node)
+		// `function t.m()` declares a method; its name comes from the declaration
+		// rather than from an lvalue, and it has no positional value.
+		symbol := b.newSymbol(ast.SymbolFlagsFunction, b.getDeclarationName(node))
+		b.addDeclarationToSymbol(symbol, node, symbol.Flags)
+		b.addLuaWriteCandidate(node, nil /*target*/, symbol, 0 /*valueIndex*/)
 	case ast.IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken:
-		left := node.AsBinaryExpression().Left
-		if ast.IsIdentifier(left) {
-			name = left.Text()
-		} else if ast.IsAccessExpression(left) {
-			nameNode := ast.GetElementOrPropertyAccessName(left)
-			if nameNode == nil {
-				return
+		if left := node.AsBinaryExpression().Left; left.Kind == ast.KindExpressionList {
+			for index, target := range left.Elements() {
+				b.bindLuaAssignmentTarget(node, target, index)
 			}
-			name = ast.GetPropertyNameForPropertyNameNode(nameNode)
 		} else {
-			return
+			b.bindLuaAssignmentTarget(node, left, 0)
 		}
-	default:
+	}
+}
+
+// bindLuaAssignmentTarget gives one assignment target its own declaration
+// symbol, so each positional store is independently navigable and typable.
+func (b *Binder) bindLuaAssignmentTarget(node *ast.Node, target *ast.Node, valueIndex int) {
+	reference := ast.GetLuaAssignmentTargetReference(target)
+	if reference == nil {
 		return
 	}
-	symbol := b.newSymbol(ast.SymbolFlagsProperty, name)
-	if ast.IsFunctionDeclaration(node) {
-		// The checker maps this fallback symbol to an assignment-method only if
-		// structural augmentation succeeds.
-		symbol.Flags = ast.SymbolFlagsFunction
+	var name string
+	if ast.IsIdentifier(reference) {
+		name = reference.Text()
+	} else {
+		nameNode := ast.GetElementOrPropertyAccessName(reference)
+		if nameNode == nil {
+			return
+		}
+		name = ast.GetPropertyNameForPropertyNameNode(nameNode)
 	}
-	b.addDeclarationToSymbol(symbol, node, symbol.Flags)
-	b.file.LuaAugmentationCandidates = append(b.file.LuaAugmentationCandidates, node)
+	// Every target is its own declaration and value anchor. A scalar binary
+	// retains the symbol only as transaction metadata for contextual typing.
+	symbol := b.newSymbol(ast.SymbolFlagsProperty, name)
+	symbol.Declarations = b.newSingleDeclaration(reference)
+	SetValueDeclaration(symbol, reference)
+	if node.AsBinaryExpression().Left == target {
+		node.DeclarationData().Symbol = symbol
+	}
+	b.addLuaWriteCandidate(node, target, symbol, valueIndex)
+}
+
+func (b *Binder) addLuaWriteCandidate(node *ast.Node, target *ast.Node, symbol *ast.Symbol, valueIndex int) {
+	b.file.LuaWriteCandidates = append(b.file.LuaWriteCandidates, ast.LuaWriteCandidate{
+		Source:     node,
+		Target:     target,
+		Symbol:     symbol,
+		ValueIndex: valueIndex,
+	})
 }
 
 func (b *Binder) bindDeferredExpandoAssignment(node *ast.Node) {
@@ -1525,10 +1550,10 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.bindNonNullExpressionFlow(node)
 	case ast.KindSourceFile:
 		sourceFile := node.AsSourceFile()
-		b.bindEachStatementFunctionsFirst(sourceFile.Statements)
+		b.bindStatementList(sourceFile.Statements)
 		b.bind(sourceFile.EndOfFileToken)
 	case ast.KindBlock, ast.KindModuleBlock:
-		b.bindEachStatementFunctionsFirst(node.StatementList())
+		b.bindStatementList(node.StatementList())
 	case ast.KindBindingElement:
 		b.bindBindingElementFlow(node)
 	case ast.KindParameter:
@@ -1564,20 +1589,64 @@ func (b *Binder) bindModifiers(modifiers *ast.ModifierList) {
 	}
 }
 
-func (b *Binder) bindEachStatementFunctionsFirst(statements *ast.NodeList) {
+// isLuaHoistedFunction reports whether a statement is bound in bindStatementList's
+// first (declaration) pass. `local function` declares an ordinary local instead.
+func isLuaHoistedFunction(node *ast.Node) bool {
+	return node.Kind == ast.KindFunctionDeclaration && !ast.IsLuaLocal(node)
+}
+
+// bindStatementList binds a statement list in two passes. Pass one binds
+// non-local function declarations so a statement earlier in the list can
+// reference them. Pass two walks the list in source order and binds everything
+// else; a hoisted function is not rebound -- that would duplicate symbols and
+// walk its body twice -- and only has its flow position refreshed to the point
+// where it actually executes.
+func (b *Binder) bindStatementList(statements *ast.NodeList) {
 	saveActiveLabelList := b.activeLabelList
 	declared := b.declareLabels(statements.Nodes)
 	for _, node := range statements.Nodes {
-		if node.Kind == ast.KindFunctionDeclaration && !ast.IsLuaLocal(node) {
+		if isLuaHoistedFunction(node) {
 			b.bind(node)
 		}
 	}
 	for _, node := range statements.Nodes {
-		if node.Kind != ast.KindFunctionDeclaration || ast.IsLuaLocal(node) {
-			b.bind(node)
+		if isLuaHoistedFunction(node) {
+			b.stampLuaHoistedFunctionFlow(node)
+			continue
 		}
+		b.bind(node)
 	}
 	b.finishLabels(declared, saveActiveLabelList)
+}
+
+// stampLuaHoistedFunctionFlow moves a hoisted function's flow position to where
+// it actually executes. The re-stamp is deliberate: pass one already set a flow
+// node from the declaration walk, and this replaces it with the runtime one.
+func (b *Binder) stampLuaHoistedFunctionFlow(node *ast.Node) {
+	if ast.IsInJSFile(node) {
+		return
+	}
+	target := node.AsFunctionDeclaration().Target
+	b.stampLuaReferenceFlow(target)
+	setFlowNode(node, b.currentFlow)
+	if target != nil && node.Body() != nil && node.Flags&ast.NodeFlagsAmbient == 0 {
+		// `function t.m()` is runtime sugar for assigning a function value, so
+		// later reads narrow exactly like `t.m = function`.
+		b.currentFlow = b.createFlowMutation(ast.FlowFlagsAssignment, b.currentFlow, node)
+	}
+}
+
+// Dotted functions are hoisted for symbol binding but execute in source order.
+// Refresh only the receiver chain's flow positions; rebinding the declaration
+// would duplicate symbols and walk the function body twice.
+func (b *Binder) stampLuaReferenceFlow(reference *ast.Node) {
+	for reference != nil {
+		setFlowNode(reference, b.currentFlow)
+		if !ast.IsAccessExpression(reference) {
+			return
+		}
+		reference = reference.Expression()
+	}
 }
 
 // Pre-registers this statement list's labels so a goto anywhere in the block —
@@ -1650,11 +1719,36 @@ func isLogicalAssignmentExpression(node *ast.Node) bool {
 	return ast.IsLogicalAssignmentExpression(ast.SkipParentheses(node))
 }
 
+// bindLuaArrayMutation records an element store so evolving-array flow sees it.
+// flowTarget is where the checker looks up the assigned value: the individual
+// target inside a list, the enclosing assignment for a scalar store.
+func (b *Binder) bindLuaArrayMutation(target *ast.Node, flowTarget *ast.Node) {
+	reference := ast.GetLuaAssignmentTargetReference(target)
+	if reference != nil && reference.Kind == ast.KindElementAccessExpression &&
+		isNarrowableOperand(reference.AsElementAccessExpression().Expression) {
+		b.currentFlow = b.createFlowMutation(ast.FlowFlagsArrayMutation, b.currentFlow, flowTarget)
+	}
+}
+
 func (b *Binder) bindAssignmentTargetFlow(node *ast.Node) {
+	if node.Kind == ast.KindExpressionList {
+		targets := node.Elements()
+		// LuaJIT captures every target first, then commits stores right-to-left.
+		// Reverse flow emission makes backward flow traversal see the winning
+		// leftmost store first when targets alias.
+		for index := len(targets) - 1; index >= 0; index-- {
+			target := targets[index]
+			b.bindAssignmentTargetFlow(target)
+			// The target itself identifies both the mutated array and its
+			// positional value in the enclosing Lua assignment.
+			b.bindLuaArrayMutation(target, target)
+		}
+		return
+	}
 	// No destructuring assignment: a literal on the left of `=` is an ordinary
 	// (erroneous) expression, so the only flow-relevant targets are narrowable
 	// references.
-	if isNarrowableReference(node) {
+	if reference := ast.GetLuaAssignmentTargetReference(node); reference != nil && isNarrowableReference(reference) {
 		b.currentFlow = b.createFlowMutation(ast.FlowFlagsAssignment, b.currentFlow, node)
 	}
 }
@@ -1688,7 +1782,7 @@ func (b *Binder) bindRepeatStatement(node *ast.Node) {
 	saveContinueTarget := b.currentContinueTarget
 	b.currentBreakTarget = postRepeatLabel
 	b.currentContinueTarget = preConditionLabel
-	b.bindEachStatementFunctionsFirst(stmt.Statements)
+	b.bindStatementList(stmt.Statements)
 	b.currentBreakTarget = saveBreakTarget
 	b.currentContinueTarget = saveContinueTarget
 	b.addAntecedent(preConditionLabel, b.currentFlow)
@@ -1952,11 +2046,8 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		}
 		if ast.IsAssignmentOperator(operator) && !ast.IsAssignmentTarget(node) {
 			b.bindAssignmentTargetFlow(expr.Left)
-			if operator == ast.KindEqualsToken && expr.Left.Kind == ast.KindElementAccessExpression {
-				elementAccess := expr.Left.AsElementAccessExpression()
-				if isNarrowableOperand(elementAccess.Expression) {
-					b.currentFlow = b.createFlowMutation(ast.FlowFlagsArrayMutation, b.currentFlow, node)
-				}
+			if operator == ast.KindEqualsToken {
+				b.bindLuaArrayMutation(expr.Left, node)
 			}
 		}
 	}

@@ -19,8 +19,7 @@ end
 class;
 C;
 do
-    in x;
-  1;
+    in x = 1;
   out;
   y = 2;
 end

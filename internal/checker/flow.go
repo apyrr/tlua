@@ -214,11 +214,29 @@ func getBranchLabelAntecedents(flow *ast.FlowNode, reduceLabels []*ast.FlowReduc
 
 func (c *Checker) getTypeAtFlowAssignment(f *FlowState, flow *ast.FlowNode) FlowType {
 	node := flow.Node
+	if c.isLuaCapturedReceiverRebound(node) ||
+		c.isOverwrittenLuaCapturedTarget(node) {
+		return FlowType{}
+	}
 	// Assignments only narrow the computed type if the declared type is a union type. Thus, we
 	// only need to evaluate the assigned type if the declared type is a union type.
 	if c.isMatchingReference(f.reference, node) {
 		if !c.isReachableFlowNode(flow) {
 			return FlowType{t: c.unreachableNeverType}
+		}
+		if c.isSelfPreservingLuaCapturedTarget(node) {
+			// The store keeps the captured runtime value, so sibling mutations in
+			// the antecedent remain visible. An assertion on the RHS can still
+			// narrow that value's static type.
+			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
+			if f.declaredType == c.autoType || f.declaredType == c.autoArrayType {
+				return flowType
+			}
+			if flowType.t.flags&TypeFlagsUnion != 0 {
+				assignedType := c.getInitialOrAssignedType(f, flow)
+				return c.newFlowType(c.getAssignmentReducedType(flowType.t, assignedType), flowType.incomplete)
+			}
+			return flowType
 		}
 		if getAssignmentTargetKind(node) == AssignmentKindCompound {
 			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
@@ -272,8 +290,30 @@ func (c *Checker) getInitialOrAssignedType(f *FlowState, flow *ast.FlowNode) *Ty
 }
 
 func (c *Checker) isEmptyArrayAssignment(node *ast.Node) bool {
-	return ast.IsVariableDeclaration(node) && node.Initializer() != nil && isEmptyArrayLiteral(node.Initializer()) ||
-		!ast.IsBindingElement(node) && ast.IsBinaryExpression(node.Parent) && isEmptyArrayLiteral(node.Parent.AsBinaryExpression().Right)
+	if ast.IsVariableDeclaration(node) && node.Initializer() != nil {
+		return isEmptyEvolvingArrayInitializer(node.Initializer())
+	}
+	if ast.IsBindingElement(node) {
+		return false
+	}
+	if ast.IsBinaryExpression(node.Parent) {
+		binary := node.Parent.AsBinaryExpression()
+		initializer := binary.Right
+		if binary.OperatorToken.Kind == ast.KindEqualsToken && !ast.IsInJSFile(binary.AsNode()) {
+			initializer = luaExplicitAssignmentValueAt(initializer, 0)
+		}
+		return initializer != nil && isEmptyEvolvingArrayInitializer(initializer)
+	}
+	if slot, ok := luaAssignmentSlotForNode(node); ok {
+		initializer := slot.explicitValue(slot.index)
+		return initializer != nil && isEmptyEvolvingArrayInitializer(initializer)
+	}
+	return false
+}
+
+func isEmptyEvolvingArrayInitializer(node *ast.Node) bool {
+	node = skipLuaEvolvingArrayWrappers(node)
+	return isEmptyArrayLiteral(node) || ast.IsObjectLiteralExpression(node) && len(node.Properties()) == 0
 }
 
 func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
@@ -1203,11 +1243,26 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 func (c *Checker) getTypeAtFlowArrayMutation(f *FlowState, flow *ast.FlowNode) FlowType {
 	if f.declaredType == c.autoType || f.declaredType == c.autoArrayType {
 		node := flow.Node
+		if c.isLuaCapturedReceiverRebound(node) || c.isOverwrittenLuaCapturedTarget(node) {
+			return FlowType{}
+		}
 		var expr *ast.Node
-		if ast.IsCallExpression(node) {
+		var elementAccess *ast.Node
+		switch {
+		case ast.IsCallExpression(node):
 			expr = node.Expression().Expression()
-		} else {
-			expr = node.AsBinaryExpression().Left.Expression()
+		case ast.IsBinaryExpression(node):
+			elementAccess = ast.GetLuaAssignmentTargetReference(node.AsBinaryExpression().Left)
+			if elementAccess == nil {
+				return FlowType{}
+			}
+			expr = elementAccess.Expression()
+		default:
+			elementAccess = ast.GetLuaAssignmentTargetReference(node)
+			if elementAccess == nil {
+				return FlowType{}
+			}
+			expr = elementAccess.Expression()
 		}
 		if c.isMatchingReference(f.reference, c.getReferenceCandidate(expr)) {
 			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
@@ -1219,9 +1274,19 @@ func (c *Checker) getTypeAtFlowArrayMutation(f *FlowState, flow *ast.FlowNode) F
 					}
 				} else {
 					// We must get the context free expression type so as to not recur in an uncached fashion on the LHS (which causes exponential blowup in compile time)
-					indexType := c.getContextFreeTypeOfExpression(node.AsBinaryExpression().Left.AsElementAccessExpression().ArgumentExpression)
+					indexType := c.getContextFreeTypeOfExpression(elementAccess.AsElementAccessExpression().ArgumentExpression)
 					if c.isTypeAssignableToKind(indexType, TypeFlagsNumberLike) {
-						evolvedType = c.addEvolvingArrayElementType(evolvedType, node.AsBinaryExpression().Right)
+						if ast.IsBinaryExpression(node) {
+							if ast.IsInJSFile(node) {
+								evolvedType = c.addEvolvingArrayElementType(evolvedType, node.AsBinaryExpression().Right)
+							} else {
+								// A Lua scalar target receives only the first
+								// adjusted value, even when its RHS is a list or pack.
+								evolvedType = c.addEvolvingArrayElementTypeFromType(evolvedType, c.getAssignedTypeOfBinaryExpression(node))
+							}
+						} else {
+							evolvedType = c.addEvolvingArrayElementTypeFromType(evolvedType, c.getAssignedType(node))
+						}
 					}
 				}
 				return c.newFlowType(evolvedType, flowType.incomplete)
@@ -1357,9 +1422,9 @@ func (c *Checker) isEvolvingArrayOperationTarget(node *ast.Node) bool {
 	parent := root.Parent
 	isLengthPushOrUnshift := ast.IsPropertyAccessExpression(parent) && (parent.Name().Text() == "length" ||
 		ast.IsCallExpression(parent.Parent) && ast.IsIdentifier(parent.Name()) && ast.IsPushOrUnshiftIdentifier(parent.Name()))
+	assignment := ast.GetAssignmentTarget(parent)
 	isElementAssignment := ast.IsElementAccessExpression(parent) && parent.Expression() == root &&
-		ast.IsBinaryExpression(parent.Parent) && parent.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken &&
-		parent.Parent.AsBinaryExpression().Left == parent && !ast.IsAssignmentTarget(parent.Parent) &&
+		assignment != nil && ast.IsBinaryExpression(assignment) && assignment.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken &&
 		c.isTypeAssignableToKind(c.getTypeOfExpression(parent.AsElementAccessExpression().ArgumentExpression), TypeFlagsNumberLike)
 	return isLengthPushOrUnshift || isElementAssignment
 }
@@ -1368,7 +1433,11 @@ func (c *Checker) isEvolvingArrayOperationTarget(node *ast.Node) bool {
 // we defer subtype reduction until the evolving array type is finalized into a manifest
 // array type.
 func (c *Checker) addEvolvingArrayElementType(evolvingArrayType *Type, node *ast.Node) *Type {
-	newElementType := c.getRegularTypeOfObjectLiteral(c.getBaseTypeOfLiteralType(c.getContextFreeTypeOfExpression(node)))
+	return c.addEvolvingArrayElementTypeFromType(evolvingArrayType, c.getContextFreeTypeOfExpression(node))
+}
+
+func (c *Checker) addEvolvingArrayElementTypeFromType(evolvingArrayType *Type, t *Type) *Type {
+	newElementType := c.getRegularTypeOfObjectLiteral(c.getBaseTypeOfLiteralType(t))
 	elementType := evolvingArrayType.AsEvolvingArrayType().elementType
 	if c.isTypeSubsetOf(newElementType, elementType) {
 		return evolvingArrayType
@@ -1453,6 +1522,11 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 		return ast.IsAssignmentExpression(target, false) && c.isMatchingReference(source, target.AsBinaryExpression().Left) ||
 			ast.IsBinaryExpression(target) && target.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken &&
 				c.isMatchingReference(source, target.AsBinaryExpression().Right)
+	case ast.KindFunctionDeclaration:
+		return c.luaDottedFunctionMatchesReference(source, target)
+	}
+	if c.isSameLuaStableAccess(source, target) {
+		return true
 	}
 	sourceGlobal := c.luaGlobalReferenceSymbol(source)
 	targetGlobal := c.luaGlobalReferenceSymbol(target)
@@ -1506,6 +1580,22 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 	return false
 }
 
+func (c *Checker) luaDottedFunctionMatchesReference(source *ast.Node, declaration *ast.Node) bool {
+	function := declaration.AsFunctionDeclaration()
+	if function.Target == nil || declaration.Name() == nil {
+		return false
+	}
+	sourceRootName, sourcePath, sourceOK := luaEntityNamePath(source, c.getAccessedPropertyName)
+	targetRootName, targetPath, targetOK := luaEntityNamePath(function.Target, c.getAccessedPropertyName)
+	if !sourceOK || !targetOK {
+		return false
+	}
+	targetPath = append(targetPath, ast.GetPropertyNameForPropertyNameNode(declaration.Name()))
+	sourceRoot, sourcePath, sourceOK := c.resolveLuaEntityPath(source, sourceRootName, sourcePath)
+	targetRoot, targetPath, targetOK := c.resolveLuaEntityPath(function.Target, targetRootName, targetPath)
+	return sourceOK && targetOK && sourceRoot == targetRoot && slices.Equal(sourcePath, targetPath)
+}
+
 var nonDottedNameCacheKey = CacheHashKey(xxh3.HashString128("?"))
 
 // Return the flow cache key for a "dotted name" (i.e. a sequence of identifiers
@@ -1537,6 +1627,20 @@ func (c *Checker) writeFlowCacheKey(b *keyBuilder, node *ast.Node, declaredType 
 	if globalSymbol := c.luaGlobalReferenceSymbol(node); globalSymbol != nil {
 		b.writeSymbol(globalSymbol)
 		writeFlowCacheKeySuffix(b, declaredType, initialType, flowContainer)
+		return true
+	}
+	if key, ok := c.getLuaStableAccessKey(node); ok {
+		b.writeSymbol(key.root)
+		writeFlowCacheKeySuffix(b, declaredType, initialType, flowContainer)
+		for _, part := range key.path {
+			if part.computed {
+				b.writeString(".@")
+				b.writeSymbol(part.key)
+			} else {
+				b.writeByte('.')
+				b.writeString(part.name)
+			}
+		}
 		return true
 	}
 	switch node.Kind {
@@ -1747,7 +1851,7 @@ func (c *Checker) getReferenceCandidate(node *ast.Node) *ast.Node {
 
 func (c *Checker) getReferenceRoot(node *ast.Node) *ast.Node {
 	parent := node.Parent
-	if ast.IsParenthesizedExpression(parent) ||
+	if ast.IsParenthesizedExpression(parent) || ast.IsNonNullExpression(parent) ||
 		ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken && parent.AsBinaryExpression().Left == node ||
 		ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken && parent.AsBinaryExpression().Right == node {
 		return c.getReferenceRoot(parent)
@@ -1967,15 +2071,7 @@ func (c *Checker) getInitialTypeOfVariableDeclaration(node *ast.Node) *Type {
 	// never the raw value list (the last name holds the whole list).
 	if ast.HasLuaLocalValueList(node) {
 		valueList := ast.LuaLocalValueList(node.Parent)
-		pack := c.getTypeOfInitializer(valueList)
-		// liftUnionTailArms, matching getPackTypeOfValueList: a mixed `nil | pack`
-		// union must lift its scalar arm here too, so the flow initial type agrees with
-		// the declared/narrowed type (getNarrowedTypeOfSymbol) rather than reading a raw
-		// union while its siblings read a lifted one.
-		if packType := c.getCallPackType(valueList, CheckModeNormal); packType != nil {
-			pack = c.liftUnionTailArms(packType)
-		}
-		return c.packElementForIndex(pack, slices.Index(node.Parent.AsVariableDeclarationList().Declarations.Nodes, node))
+		return c.getLuaFlowAssignmentValueType(valueList, slices.Index(node.Parent.AsVariableDeclarationList().Declarations.Nodes, node))
 	}
 	if node.Initializer() != nil {
 		return c.getTypeOfInitializer(node.Initializer())
@@ -2021,12 +2117,26 @@ func (c *Checker) getInitialTypeOfBindingElement(node *ast.Node) *Type {
 }
 
 func (c *Checker) getAssignedType(node *ast.Node) *Type {
+	if ast.IsFunctionDeclaration(node) && node.AsFunctionDeclaration().Target != nil {
+		return c.getOrCreateTypeFromSignature(c.getSignatureFromDeclaration(node))
+	}
 	parent := node.Parent
 	// No ForOfStatement arm: it is always a Lua generic-for, whose loop names are
 	// declarations typed via getInitialType, so they never flow through here.
 	switch parent.Kind {
 	case ast.KindBinaryExpression:
 		return c.getAssignedTypeOfBinaryExpression(parent)
+	case ast.KindExpressionList:
+		assignment := parent.Parent
+		if assignment.Kind == ast.KindBinaryExpression {
+			binary := assignment.AsBinaryExpression()
+			if binary.OperatorToken.Kind == ast.KindEqualsToken && binary.Left == parent {
+				index := ast.IndexOfNode(parent.Elements(), node)
+				if index >= 0 {
+					return c.getLuaFlowAssignmentValueType(binary.Right, index)
+				}
+			}
+		}
 	case ast.KindDeleteExpression:
 		return c.nilType
 	}
@@ -2039,6 +2149,9 @@ func (c *Checker) getAssignedType(node *ast.Node) *Type {
 func (c *Checker) getAssignedTypeOfBinaryExpression(node *ast.Node) *Type {
 	// No destructuring-default assignment: a `=` right of an object/array
 	// literal target is deleted, so an assignment's flow type is just its RHS.
+	if binary := node.AsBinaryExpression(); binary.OperatorToken.Kind == ast.KindEqualsToken && !ast.IsInJSFile(node) {
+		return c.getLuaFlowAssignmentValueType(binary.Right, 0)
+	}
 	return c.getTypeOfExpression(node.AsBinaryExpression().Right)
 }
 
@@ -2294,13 +2407,12 @@ func (c *Checker) hasParentWithAssignmentsMarked(node *ast.Node) bool {
 func (c *Checker) markNodeAssignmentsWorker(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIdentifier:
-		assignmentKind := getAssignmentTargetKind(node)
-		if assignmentKind != AssignmentKindNone {
-			symbol := c.getResolvedSymbol(node)
+		assignmentKind, symbol, writeLocation := c.getLuaWriteTarget(node)
+		if assignmentKind != AssignmentKindNone && symbol != nil && symbol != c.unknownSymbol {
 			if c.isParameterOrMutableLocalVariable(symbol) {
 				links := c.markedAssignmentSymbolLinks.Get(symbol)
 				if pos := links.lastAssignmentPos; pos == 0 || pos != math.MaxInt32 {
-					referencingFunction := ast.FindAncestor(node, ast.IsFunctionOrSourceFile)
+					referencingFunction := ast.FindAncestor(writeLocation, ast.IsFunctionOrSourceFile)
 					declaringFunction := ast.FindAncestor(symbol.ValueDeclaration, ast.IsFunctionOrSourceFile)
 					if referencingFunction == declaringFunction {
 						links.lastAssignmentPos = int32(c.extendAssignmentPosition(node, symbol.ValueDeclaration))
@@ -2323,6 +2435,28 @@ func (c *Checker) markNodeAssignmentsWorker(node *ast.Node) bool {
 		return false
 	}
 	return node.ForEachChild(c.markNodeAssignments)
+}
+
+// getLuaWriteTarget centralizes assignment marking for expression targets and
+// Lua's declaration-shaped bare function write.
+func (c *Checker) getLuaWriteTarget(node *ast.Node) (AssignmentKind, *ast.Symbol, *ast.Node) {
+	if kind := getAssignmentTargetKind(node); kind != AssignmentKindNone {
+		return kind, c.getResolvedSymbol(node), node
+	}
+	if !ast.IsLuaBareFunctionWriteTarget(node) {
+		return AssignmentKindNone, nil, node
+	}
+	// The name is structurally inside the new function, but its store executes
+	// in the surrounding scope.
+	symbol := c.getMergedSymbol(c.resolveName(
+		node,
+		node.Text(),
+		ast.SymbolFlagsValue,
+		nil,
+		false, /*isUse*/
+		false, /*excludeGlobals*/
+	))
+	return AssignmentKindDefinite, symbol, node.Parent.Parent
 }
 
 // Extend the position of the given assignment target node to the end of any intervening variable statement,

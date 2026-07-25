@@ -10,10 +10,13 @@ tluaAndOrNotReserved.tlua(14,14): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(14,17): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(15,18): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(18,7): error TLUA1003: Identifier expected.
+tluaAndOrNotReserved.tlua(18,7): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 tluaAndOrNotReserved.tlua(18,11): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(19,7): error TLUA1003: Identifier expected.
+tluaAndOrNotReserved.tlua(19,7): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 tluaAndOrNotReserved.tlua(19,10): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(20,7): error TLUA1003: Identifier expected.
+tluaAndOrNotReserved.tlua(20,7): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 tluaAndOrNotReserved.tlua(20,11): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(23,10): error TLUA1003: Identifier expected.
 tluaAndOrNotReserved.tlua(23,13): error TLUA1109: Expression expected.
@@ -31,7 +34,7 @@ tluaAndOrNotReserved.tlua(40,11): error TLUA1110: Type expected.
 tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 
 
-==== tluaAndOrNotReserved.tlua (31 errors) ====
+==== tluaAndOrNotReserved.tlua (34 errors) ====
     // `and`, `or` and `not` are keywords, so they are reserved. Every use as a name
     // falls into stock recovery, as with the class, decorator, array and this
     // removals. Lua reserves them too, so `t.and` is invalid there as well.
@@ -74,16 +77,22 @@ tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type
     local and = 1;
           ~~~
 !!! error TLUA1003: Identifier expected.
+          ~~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
               ~
 !!! error TLUA1109: Expression expected.
     local or = 2;
           ~~
 !!! error TLUA1003: Identifier expected.
+          ~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
              ~
 !!! error TLUA1109: Expression expected.
     local not = 3;
           ~~~
 !!! error TLUA1003: Identifier expected.
+          ~~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
               ~
 !!! error TLUA1109: Expression expected.
     

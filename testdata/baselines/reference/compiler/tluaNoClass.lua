@@ -72,8 +72,7 @@ do
   s();
   do
   end
-  #p;
-  2;
+  #p = 2;
   get;
   a();
   do

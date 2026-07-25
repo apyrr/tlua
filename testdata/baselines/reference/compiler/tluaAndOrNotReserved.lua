@@ -59,14 +59,11 @@ local o2 = {  or , 1 };
 local o3 = { !, 1 };
 -- Binding names.
 local ;
- and ;
-1;
+ and  = 1;
 local ;
- or ;
-2;
+ or  = 2;
 local ;
-!;
-3;
+! = 3;
 -- Declaration names.
 function ()
    or ();

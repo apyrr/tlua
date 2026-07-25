@@ -1322,9 +1322,13 @@ func accessKind(node *Node) AccessKind {
 		return AccessKindRead
 	}
 	switch parent.Kind {
-	case KindParenthesizedExpression:
+	case KindExpressionList:
+		// A direct element inherits write access only when the list is the
+		// target side of a Lua multiple assignment.
 		return accessKind(parent)
 	case KindPrefixUnaryExpression:
+		// tlua has no ++/--, so a prefix operand is only ever read. Kept explicit
+		// so the absence of an update operator is stated rather than implied.
 		return AccessKindRead
 	case KindBinaryExpression:
 		if parent.AsBinaryExpression().Left == node {
@@ -2118,6 +2122,15 @@ type TokenCacheKey struct {
 	loc    core.TextRange
 }
 
+// LuaWriteCandidate describes one declaration-like assignment target.
+// Multiple targets share Source but have distinct symbols and positions.
+type LuaWriteCandidate struct {
+	Source     *Node
+	Target     *Node // Positional lvalue; use as the key for assignment value and flow maps.
+	Symbol     *Symbol
+	ValueIndex int
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -2176,9 +2189,9 @@ type SourceFile struct {
 	SymbolCount               int
 	ClassifiableNames         collections.Set[string]
 	GlobalExports             SymbolTable
-	// LuaAugmentationCandidates are assignment-like declarations resolved after
+	// LuaWriteCandidates are assignment-like declarations resolved after
 	// all program globals have been merged by each checker.
-	LuaAugmentationCandidates []*Node
+	LuaWriteCandidates []LuaWriteCandidate
 
 	// Fields set by ECMALineMap
 

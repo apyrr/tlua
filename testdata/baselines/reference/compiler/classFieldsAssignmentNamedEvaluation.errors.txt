@@ -2,8 +2,8 @@ classFieldsAssignmentNamedEvaluation.tlua(2,5): error TLUA2304: Cannot find name
 classFieldsAssignmentNamedEvaluation.tlua(2,11): error TLUA1005: ';' expected.
 classFieldsAssignmentNamedEvaluation.tlua(2,13): error TLUA1434: Unexpected keyword or identifier.
 classFieldsAssignmentNamedEvaluation.tlua(2,13): error TLUA2304: Cannot find name 'static'.
+classFieldsAssignmentNamedEvaluation.tlua(2,20): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 classFieldsAssignmentNamedEvaluation.tlua(2,21): error TLUA2304: Cannot find name 'foo'.
-classFieldsAssignmentNamedEvaluation.tlua(2,25): error TLUA1005: ';' expected.
 
 
 ==== classFieldsAssignmentNamedEvaluation.tlua (6 errors) ====
@@ -17,8 +17,8 @@ classFieldsAssignmentNamedEvaluation.tlua(2,25): error TLUA1005: ';' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
                 ~~~~~~
 !!! error TLUA2304: Cannot find name 'static'.
+                       ~~~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
                         ~~~
 !!! error TLUA2304: Cannot find name 'foo'.
-                            ~
-!!! error TLUA1005: ';' expected.
     

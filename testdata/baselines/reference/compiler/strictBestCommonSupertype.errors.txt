@@ -1,8 +1,8 @@
 strictBestCommonSupertype.tlua(3,1): error TLUA1434: Unexpected keyword or identifier.
 strictBestCommonSupertype.tlua(3,1): error TLUA2304: Cannot find name 'class'.
 strictBestCommonSupertype.tlua(3,7): error TLUA2304: Cannot find name 'Store'.
+strictBestCommonSupertype.tlua(3,7): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 strictBestCommonSupertype.tlua(3,13): error TLUA2304: Cannot find name 'T'.
-strictBestCommonSupertype.tlua(3,15): error TLUA1005: ';' expected.
 strictBestCommonSupertype.tlua(3,17): error TLUA2365: Operator '>' cannot be applied to types 'TableLib' and '{ 1: number & (any?, ...any); 2: any; 3: {}; }'.
 strictBestCommonSupertype.tlua(4,12): error TLUA2304: Cannot find name 'K'.
 strictBestCommonSupertype.tlua(4,12): error TLUA2558: Expected 0 type arguments, but got 1.
@@ -29,10 +29,10 @@ strictBestCommonSupertype.tlua(14,13): error TLUA100034: A vararg parameter cann
 !!! error TLUA2304: Cannot find name 'class'.
           ~~~~~
 !!! error TLUA2304: Cannot find name 'Store'.
+          ~~~~~~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
                 ~
 !!! error TLUA2304: Cannot find name 'T'.
-                  ~
-!!! error TLUA1005: ';' expected.
                     ~~~~~~~~
         select<K>(mapFn: (state: T) => K) {};
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

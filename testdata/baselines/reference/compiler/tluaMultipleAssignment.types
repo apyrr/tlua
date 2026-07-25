@@ -1,0 +1,2978 @@
+//// [tests/cases/compiler/tluaMultipleAssignment.tlua] ////
+
+=== tluaMultipleAssignment.tlua ===
+function popOperation(index: number): ({ kind: string }, number)
+>popOperation : (index: number) => ({ kind: string; }, number)
+>index : number
+>kind : string
+
+    return { kind = "read" }, index + 1;
+>{ kind = "read" }, index + 1 : { kind: string; }, number
+>{ kind = "read" } : { kind: string; }
+>kind : string
+>"read" : "read"
+>index + 1 : number
+>index : number
+>1 : 1
+
+end
+
+local operation;
+>operation : any
+
+local readIndex = 1;
+>readIndex : number
+>1 : 1
+
+// A trailing call expands across the existing local targets.
+operation, readIndex = popOperation(readIndex);
+>operation, readIndex = popOperation(readIndex) : { kind: string; }
+>operation, readIndex : any, number
+>operation : any
+>readIndex : number
+>popOperation(readIndex) : { kind: string; }
+>popOperation : (index: number) => ({ kind: string; }, number)
+>readIndex : number
+
+local kind: string = operation.kind;
+>kind : string
+>operation.kind : string
+>operation : { kind: string; }
+>kind : string
+
+local nextIndex: number = readIndex;
+>nextIndex : number
+>readIndex : number
+
+function pair(): (number, string)
+>pair : () => (number, string)
+
+    return 1, "ok";
+>1, "ok" : number, string
+>1 : 1
+>"ok" : "ok"
+
+end
+
+declare function nothing(): void;
+>nothing : () => void
+
+declare function takesNumber(value: number): void;
+>takesNumber : (value: number) => void
+>value : number
+
+declare function nilFirst(): (nil, string);
+>nilFirst : () => (nil, string)
+
+declare function nilRest(): (...nil);
+>nilRest : () => (...nil)
+
+local count: number = 0;
+>count : number
+>0 : 0
+
+local label: string = "";
+>label : string
+>"" : ""
+
+count, label = pair();
+>count, label = pair() : number
+>count, label : number, string
+>count : number
+>label : string
+>pair() : number
+>pair : () => (number, string)
+
+count, label = 2, "next", true;
+>count, label = 2, "next", true : number
+>count, label : number, string
+>count : number
+>label : string
+>2, "next", true : number, string, boolean
+>2 : 2
+>"next" : "next"
+>true : true
+
+// Flow analysis records each positional write independently.
+local firstAuto;
+>firstAuto : any
+
+local secondAuto;
+>secondAuto : any
+
+firstAuto, secondAuto = 3, "flow";
+>firstAuto, secondAuto = 3, "flow" : number
+>firstAuto, secondAuto : any, any
+>firstAuto : any
+>secondAuto : any
+>3, "flow" : number, string
+>3 : 3
+>"flow" : "flow"
+
+local flowedNumber: number = firstAuto;
+>flowedNumber : number
+>firstAuto : number
+
+local flowedString: string = secondAuto;
+>flowedString : string
+>secondAuto : string
+
+// Right-hand function expressions receive the matching target context.
+local numberHandler: (value: number) => number = function(value)
+>numberHandler : (value: number) => number
+>value : number
+>function(value)    return value;end : (value: number) => number
+>value : number
+
+    return value;
+>value : number
+
+end;
+local stringHandler: (value: string) => string = function(value)
+>stringHandler : (value: string) => string
+>value : string
+>function(value)    return value;end : (value: string) => string
+>value : string
+
+    return value;
+>value : string
+
+end;
+numberHandler, stringHandler = function(value)
+>numberHandler, stringHandler = function(value)    return value + 1;end, function(value)    return value .. "!";end : (value: number) => number
+>numberHandler, stringHandler : (value: number) => number, (value: string) => string
+>numberHandler : (value: number) => number
+>stringHandler : (value: string) => string
+>function(value)    return value + 1;end, function(value)    return value .. "!";end : (value: number) => number, (value: string) => string
+>function(value)    return value + 1;end : (value: number) => number
+>value : number
+
+    return value + 1;
+>value + 1 : number
+>value : number
+>1 : 1
+
+end, function(value)
+>function(value)    return value .. "!";end : (value: string) => string
+>value : string
+
+    return value .. "!";
+>value .. "!" : string
+>value : string
+>"!" : "!"
+
+end;
+
+// Every right-hand value is evaluated before any target is updated.
+count, readIndex = readIndex, count;
+>count, readIndex = readIndex, count : number
+>count, readIndex : number, number
+>count : number
+>readIndex : number
+>readIndex, count : number, number
+>readIndex : number
+>count : number
+
+// Every target can declare independently: bare names become implicit globals
+// and static accesses augment an inferred table.
+implicitListNumber, implicitListString = 4, "global";
+>implicitListNumber, implicitListString = 4, "global" : number
+>implicitListNumber, implicitListString : number, string
+>implicitListNumber : number
+>implicitListString : string
+>4, "global" : number, string
+>4 : 4
+>"global" : "global"
+
+local implicitNumberUse: number = implicitListNumber;
+>implicitNumberUse : number
+>implicitListNumber : number
+
+local implicitStringUse: string = implicitListString;
+>implicitStringUse : string
+>implicitListString : string
+
+// A list-created global still has a declaration anchor for flow analysis.
+local listGlobalBeforeAssignment: number = ListGlobalAfterUse;
+>listGlobalBeforeAssignment : number
+>ListGlobalAfterUse : number
+
+ListGlobalAfterUse, listGlobalAfterUseSide = 5, 0;
+>ListGlobalAfterUse, listGlobalAfterUseSide = 5, 0 : number
+>ListGlobalAfterUse, listGlobalAfterUseSide : number, number
+>ListGlobalAfterUse : number
+>listGlobalAfterUseSide : number
+>5, 0 : number, number
+>5 : 5
+>0 : 0
+
+local listGlobalAfterAssignment: number = ListGlobalAfterUse;
+>listGlobalAfterAssignment : number
+>ListGlobalAfterUse : number
+
+local augmented = {};
+>augmented : { enabled: boolean; }
+>{} : { enabled: boolean; }
+
+local augmentationSide;
+>augmentationSide : any
+
+augmented.enabled, augmentationSide = true, 5;
+>augmented.enabled, augmentationSide = true, 5 : boolean
+>augmented.enabled, augmentationSide : boolean, any
+>augmented.enabled : boolean
+>augmented : { enabled: boolean; }
+>enabled : boolean
+>augmentationSide : any
+>true, 5 : boolean, number
+>true : true
+>5 : 5
+
+local augmentedUse: boolean = augmented.enabled;
+>augmentedUse : boolean
+>augmented.enabled : true
+>augmented : { enabled: boolean; }
+>enabled : true
+
+local augmentationSideUse: number = augmentationSide;
+>augmentationSideUse : number
+>augmentationSide : number
+
+// Target-local static element declarations preserve property use-before flow.
+local listMemberBeforeAssignment: boolean = ListMemberAfterUseRoot["enabled"];
+>listMemberBeforeAssignment : boolean
+>ListMemberAfterUseRoot["enabled"] : boolean
+>ListMemberAfterUseRoot : { enabled: boolean; }
+>"enabled" : "enabled"
+
+ListMemberAfterUseRoot = {};
+>ListMemberAfterUseRoot = {} : { enabled: boolean; }
+>ListMemberAfterUseRoot : { enabled: boolean; }
+>{} : { enabled: boolean; }
+
+ListMemberAfterUseRoot["enabled"], listMemberAfterUseSide = true, 0;
+>ListMemberAfterUseRoot["enabled"], listMemberAfterUseSide = true, 0 : boolean
+>ListMemberAfterUseRoot["enabled"], listMemberAfterUseSide : boolean, number
+>ListMemberAfterUseRoot["enabled"] : boolean
+>ListMemberAfterUseRoot : { enabled: boolean; }
+>"enabled" : "enabled"
+>listMemberAfterUseSide : number
+>true, 0 : boolean, number
+>true : true
+>0 : 0
+
+local listMemberAfterAssignment: boolean = ListMemberAfterUseRoot["enabled"];
+>listMemberAfterAssignment : boolean
+>ListMemberAfterUseRoot["enabled"] : true
+>ListMemberAfterUseRoot : { enabled: boolean; }
+>"enabled" : "enabled"
+
+// Flow keeps exact assigned literals even though augmentation declarations
+// widen their mutable surface types.
+LiteralGlobal = true;
+>LiteralGlobal = true : true
+>LiteralGlobal : boolean
+>true : true
+
+local literalGlobalUse: true = LiteralGlobal;
+>literalGlobalUse : true
+>true : true
+>LiteralGlobal : true
+
+LiteralScalarRoot = {};
+>LiteralScalarRoot = {} : { enabled: boolean; }
+>LiteralScalarRoot : { enabled: boolean; }
+>{} : { enabled: boolean; }
+
+LiteralScalarRoot.enabled = true;
+>LiteralScalarRoot.enabled = true : true
+>LiteralScalarRoot.enabled : boolean
+>LiteralScalarRoot : { enabled: boolean; }
+>enabled : boolean
+>true : true
+
+local literalScalarMemberUse: true = LiteralScalarRoot.enabled;
+>literalScalarMemberUse : true
+>true : true
+>LiteralScalarRoot.enabled : true
+>LiteralScalarRoot : { enabled: boolean; }
+>enabled : true
+
+LiteralListRoot = {};
+>LiteralListRoot = {} : { enabled: boolean; }
+>LiteralListRoot : { enabled: boolean; }
+>{} : { enabled: boolean; }
+
+LiteralListRoot.enabled, literalListSide = true, 0;
+>LiteralListRoot.enabled, literalListSide = true, 0 : boolean
+>LiteralListRoot.enabled, literalListSide : boolean, number
+>LiteralListRoot.enabled : boolean
+>LiteralListRoot : { enabled: boolean; }
+>enabled : boolean
+>literalListSide : number
+>true, 0 : boolean, number
+>true : true
+>0 : 0
+
+local literalListMemberUse: true = LiteralListRoot.enabled;
+>literalListMemberUse : true
+>true : true
+>LiteralListRoot.enabled : true
+>LiteralListRoot : { enabled: boolean; }
+>enabled : true
+
+local literalLocal: "before" | "after" = "before";
+>literalLocal : "after" | "before"
+>"before" : "before"
+
+literalLocal, literalLocalSide = "after", 0;
+>literalLocal, literalLocalSide = "after", 0 : "after"
+>literalLocal, literalLocalSide : "after" | "before", number
+>literalLocal : "after" | "before"
+>literalLocalSide : number
+>"after", 0 : "after", number
+>"after" : "after"
+>0 : 0
+
+local literalLocalUse: "after" = literalLocal;
+>literalLocalUse : "after"
+>literalLocal : "after"
+
+local literalInitial: "before" | "after", literalInitialSide = "after", 0;
+>literalInitial : "after" | "before"
+>literalInitialSide : number
+>"after", 0 : string, number
+>"after" : "after"
+>0 : 0
+
+local literalInitialUse: "after" = literalInitial;
+>literalInitialUse : "after"
+>literalInitial : "after"
+
+// Element writes in a target list continue evolving an inferred empty array.
+local evolved;
+>evolved : any
+
+evolved = {};
+>evolved = {} : {}
+>evolved : any
+>{} : {}
+
+local evolvedIndex: number = 1;
+>evolvedIndex : number
+>1 : 1
+
+local evolutionSide: number = 0;
+>evolutionSide : number
+>0 : 0
+
+evolved[evolvedIndex], evolutionSide = "element", 1;
+>evolved[evolvedIndex], evolutionSide = "element", 1 : string
+>evolved[evolvedIndex], evolutionSide : any, number
+>evolved[evolvedIndex] : any
+>evolved : any[]
+>evolvedIndex : number
+>evolutionSide : number
+>"element", 1 : string, number
+>"element" : "element"
+>1 : 1
+
+local evolvedUse: string = evolved[evolvedIndex];
+>evolvedUse : string
+>evolved[evolvedIndex] : string
+>evolved : string[]
+>evolvedIndex : number
+
+// An empty table assigned positionally starts an evolving array just like a
+// scalar `inferred = {}` assignment.
+local inferred;
+>inferred : any
+
+local inferenceSide;
+>inferenceSide : any
+
+inferred, inferenceSide = {}, 0;
+>inferred, inferenceSide = {}, 0 : { 1: string; }
+>inferred, inferenceSide : any, any
+>inferred : any
+>inferenceSide : any
+>{}, 0 : { 1: string; }, number
+>{} : { 1: string; }
+>0 : 0
+
+inferred[1] = "later";
+>inferred[1] = "later" : "later"
+>inferred[1] : any
+>inferred : any[]
+>1 : 1
+>"later" : "later"
+
+local inferredUse: string = inferred[1];
+>inferredUse : string
+>inferred[1] : string
+>inferred : string[]
+>1 : 1
+
+// Type-only declarations do not interfere with positional value inference.
+interface Both {
+    value: number;
+>value : number
+}
+Both, Other = 6, "other";
+>Both, Other = 6, "other" : number
+>Both, Other : number, string
+>Both : number
+>Other : string
+>6, "other" : number, string
+>6 : 6
+>"other" : "other"
+
+local bothUse: number = Both;
+>bothUse : number
+>Both : number
+
+local otherUse: string = Other;
+>otherUse : string
+>Other : string
+
+// Type-only merges still close structural table augmentation.
+interface ClosedList {
+    value: number;
+>value : number
+}
+ClosedList, closedListSide = {}, 0;
+>ClosedList, closedListSide = {}, 0 : {}
+>ClosedList, closedListSide : {}, number
+>ClosedList : {}
+>closedListSide : number
+>{}, 0 : {}, number
+>{} : {}
+>0 : 0
+
+ClosedList.tag = 1;
+>ClosedList.tag = 1 : 1
+>ClosedList.tag : any
+>ClosedList : {}
+>tag : any
+>1 : 1
+
+// Zero-result calls supply nil to aligned positions and missing targets.
+VoidFirst, VoidSecond = nothing();
+>VoidFirst, VoidSecond = nothing() : nil
+>VoidFirst, VoidSecond : nil, nil
+>VoidFirst : nil
+>VoidSecond : nil
+>nothing() : void
+>nothing : () => void
+
+local voidFirstUse: nil = VoidFirst;
+>voidFirstUse : nil
+>VoidFirst : nil
+
+local voidSecondUse: nil = VoidSecond;
+>voidSecondUse : nil
+>VoidSecond : nil
+
+NonTailVoid, AfterVoid = nothing(), 1;
+>NonTailVoid, AfterVoid = nothing(), 1 : nil
+>NonTailVoid, AfterVoid : nil, number
+>NonTailVoid : nil
+>AfterVoid : number
+>nothing(), 1 : nil, number
+>nothing() : void
+>nothing : () => void
+>1 : 1
+
+local nonTailVoidUse: nil = NonTailVoid;
+>nonTailVoidUse : nil
+>NonTailVoid : nil
+
+local afterVoidUse: number = AfterVoid;
+>afterVoidUse : number
+>AfterVoid : number
+
+OneBeforeVoid, TailVoid = 1, nothing();
+>OneBeforeVoid, TailVoid = 1, nothing() : number
+>OneBeforeVoid, TailVoid : number, nil
+>OneBeforeVoid : number
+>TailVoid : nil
+>1, nothing() : number
+>1 : 1
+>nothing() : void
+>nothing : () => void
+
+local oneBeforeVoidUse: number = OneBeforeVoid;
+>oneBeforeVoidUse : number
+>OneBeforeVoid : number
+
+local tailVoidUse: nil = TailVoid;
+>tailVoidUse : nil
+>TailVoid : nil
+
+ScalarVoid = nothing();
+>ScalarVoid = nothing() : nil
+>ScalarVoid : nil
+>nothing() : void
+>nothing : () => void
+
+local scalarVoidUse: nil = ScalarVoid;
+>scalarVoidUse : nil
+>ScalarVoid : nil
+
+// Inferred returns preserve a wrapped producer's zero-result arity.
+function inferredNothing()
+>inferredNothing : () => void
+
+    return nothing() as unknown as number;
+>nothing() as unknown as number : number
+>nothing() as unknown : unknown
+>nothing() : void
+>nothing : () => void
+
+end
+local inferredNothingFirst, inferredNothingSecond = inferredNothing();
+>inferredNothingFirst : nil
+>inferredNothingSecond : nil
+>inferredNothing() : void
+>inferredNothing : () => void
+
+local inferredNothingFirstUse: nil = inferredNothingFirst;
+>inferredNothingFirstUse : nil
+>inferredNothingFirst : nil
+
+local inferredNothingSecondUse: nil = inferredNothingSecond;
+>inferredNothingSecondUse : nil
+>inferredNothingSecond : nil
+
+// Assertions change only the first result and never collapse the remaining
+// call pack. A zero-result call still supplies nil to every target.
+NeverFirst, NeverSecond = nilFirst()!;
+>NeverFirst, NeverSecond = nilFirst()! : never
+>NeverFirst, NeverSecond : never, string
+>NeverFirst : never
+>NeverSecond : string
+>nilFirst()! : never
+>nilFirst() : nil
+>nilFirst : () => (nil, string)
+
+local neverFirstUse: never = NeverFirst;
+>neverFirstUse : never
+>NeverFirst : never
+
+local neverSecondUse: string = NeverSecond;
+>neverSecondUse : string
+>NeverSecond : string
+
+RestPaddedFirst, RestPaddedSecond = nilRest()!;
+>RestPaddedFirst, RestPaddedSecond = nilRest()! : nil
+>RestPaddedFirst, RestPaddedSecond : nil, nil
+>RestPaddedFirst : nil
+>RestPaddedSecond : nil
+>nilRest()! : never
+>nilRest() : nil
+>nilRest : () => (...nil)
+
+local restPaddedFirstUse: nil = RestPaddedFirst;
+>restPaddedFirstUse : nil
+>RestPaddedFirst : nil
+
+local restPaddedSecondUse: nil = RestPaddedSecond;
+>restPaddedSecondUse : nil
+>RestPaddedSecond : nil
+
+AssertedVoidFirst, AssertedVoidSecond = nothing() as unknown as number;
+>AssertedVoidFirst, AssertedVoidSecond = nothing() as unknown as number : nil
+>AssertedVoidFirst, AssertedVoidSecond : nil, nil
+>AssertedVoidFirst : nil
+>AssertedVoidSecond : nil
+>nothing() as unknown as number : number
+>nothing() as unknown : unknown
+>nothing() : void
+>nothing : () => void
+
+local assertedVoidFirstUse: nil = AssertedVoidFirst;
+>assertedVoidFirstUse : nil
+>AssertedVoidFirst : nil
+
+local assertedVoidSecondUse: nil = AssertedVoidSecond;
+>assertedVoidSecondUse : nil
+>AssertedVoidSecond : nil
+
+AssertedNonTailVoid, assertedNonTailSide = nothing() as unknown as number, 1;
+>AssertedNonTailVoid, assertedNonTailSide = nothing() as unknown as number, 1 : nil
+>AssertedNonTailVoid, assertedNonTailSide : nil, number
+>AssertedNonTailVoid : nil
+>assertedNonTailSide : number
+>nothing() as unknown as number, 1 : nil, number
+>nothing() as unknown as number : number
+>nothing() as unknown : unknown
+>nothing() : void
+>nothing : () => void
+>1 : 1
+
+local assertedNonTailVoidUse: nil = AssertedNonTailVoid;
+>assertedNonTailVoidUse : nil
+>AssertedNonTailVoid : nil
+
+local assertedNonTailSideUse: number = assertedNonTailSide;
+>assertedNonTailSideUse : number
+>assertedNonTailSide : number
+
+// Every access target keeps the location captured before any store.
+type NumberOrStringBox = { x: number } | { x: string };
+>NumberOrStringBox : NumberOrStringBox
+>x : number
+>x : string
+
+local oldLeftBox = { x = 0 };
+>oldLeftBox : { x: number; }
+>{ x = 0 } : { x: number; }
+>x : number
+>0 : 0
+
+local leftBox: NumberOrStringBox = oldLeftBox;
+>leftBox : NumberOrStringBox
+>oldLeftBox : { x: number; }
+
+leftBox, leftBox.x = { x = "new" }, 1;
+>leftBox, leftBox.x = { x = "new" }, 1 : { x: string; }
+>leftBox, leftBox.x : NumberOrStringBox, number
+>leftBox : NumberOrStringBox
+>leftBox.x : number
+>leftBox : { x: number; }
+>x : number
+>{ x = "new" }, 1 : { x: string; }, number
+>{ x = "new" } : { x: string; }
+>x : string
+>"new" : "new"
+>1 : 1
+
+local leftBoxUse: string = leftBox.x;
+>leftBoxUse : string
+>leftBox.x : string
+>leftBox : { x: string; }
+>x : string
+
+local oldLeftBoxUse: number = oldLeftBox.x;
+>oldLeftBoxUse : number
+>oldLeftBox.x : number
+>oldLeftBox : { x: number; }
+>x : number
+
+local oldRightBox = { x = 0 };
+>oldRightBox : { x: number; }
+>{ x = 0 } : { x: number; }
+>x : number
+>0 : 0
+
+local rightBox: NumberOrStringBox = oldRightBox;
+>rightBox : NumberOrStringBox
+>oldRightBox : { x: number; }
+
+rightBox.x, rightBox = 1, { x = "new" };
+>rightBox.x, rightBox = 1, { x = "new" } : number
+>rightBox.x, rightBox : number, NumberOrStringBox
+>rightBox.x : number
+>rightBox : { x: number; }
+>x : number
+>rightBox : NumberOrStringBox
+>1, { x = "new" } : number, { x: string; }
+>1 : 1
+>{ x = "new" } : { x: string; }
+>x : string
+>"new" : "new"
+
+local rightBoxUse: string = rightBox.x;
+>rightBoxUse : string
+>rightBox.x : string
+>rightBox : { x: string; }
+>x : string
+
+local oldRightBoxUse: number = oldRightBox.x;
+>oldRightBoxUse : number
+>oldRightBox.x : number
+>oldRightBox : { x: number; }
+>x : number
+
+type NestedHolder = { inner: NumberOrStringBox };
+>NestedHolder : NestedHolder
+>inner : NumberOrStringBox
+
+local oldInner = { x = 0 };
+>oldInner : { x: number; }
+>{ x = 0 } : { x: number; }
+>x : number
+>0 : 0
+
+local holder: NestedHolder = { inner = oldInner };
+>holder : NestedHolder
+>{ inner = oldInner } : { inner: { x: number; }; }
+>inner : { x: number; }
+>oldInner : { x: number; }
+
+holder.inner, holder.inner.x = { x = "nested" }, 1;
+>holder.inner, holder.inner.x = { x = "nested" }, 1 : { x: string; }
+>holder.inner, holder.inner.x : NumberOrStringBox, string | number
+>holder.inner : NumberOrStringBox
+>holder : NestedHolder
+>inner : NumberOrStringBox
+>holder.inner.x : string | number
+>holder.inner : NumberOrStringBox
+>holder : NestedHolder
+>inner : NumberOrStringBox
+>x : string | number
+>{ x = "nested" }, 1 : { x: string; }, number
+>{ x = "nested" } : { x: string; }
+>x : string
+>"nested" : "nested"
+>1 : 1
+
+local nestedUse: string = holder.inner.x;
+>nestedUse : string
+>holder.inner.x : string
+>holder.inner : { x: string; }
+>holder : NestedHolder
+>inner : { x: string; }
+>x : string
+
+local oldInnerUse: number = oldInner.x;
+>oldInnerUse : number
+>oldInner.x : number
+>oldInner : { x: number; }
+>x : number
+
+// Captured writes to old arrays do not evolve a newly assigned array.
+local capturedForward;
+>capturedForward : any
+
+capturedForward = {};
+>capturedForward = {} : { 1: string | number; }
+>capturedForward : any
+>{} : { 1: string | number; }
+
+capturedForward, capturedForward[1] = {}, "old";
+>capturedForward, capturedForward[1] = {}, "old" : { 1: string | number; }
+>capturedForward, capturedForward[1] : any, any
+>capturedForward : any
+>capturedForward[1] : any
+>capturedForward : any[]
+>1 : 1
+>{}, "old" : { 1: string | number; }, string
+>{} : { 1: string | number; }
+>"old" : "old"
+
+capturedForward[1] = 1;
+>capturedForward[1] = 1 : 1
+>capturedForward[1] : any
+>capturedForward : any[]
+>1 : 1
+>1 : 1
+
+local capturedForwardUse: number[] = capturedForward;
+>capturedForwardUse : number[]
+>capturedForward : number[]
+
+local capturedReverse;
+>capturedReverse : any
+
+capturedReverse = {};
+>capturedReverse = {} : { 1: string | number; }
+>capturedReverse : any
+>{} : { 1: string | number; }
+
+capturedReverse[1], capturedReverse = "old", {};
+>capturedReverse[1], capturedReverse = "old", {} : string
+>capturedReverse[1], capturedReverse : any, any
+>capturedReverse[1] : any
+>capturedReverse : any[]
+>1 : 1
+>capturedReverse : any
+>"old", {} : string, { 1: string | number; }
+>"old" : "old"
+>{} : { 1: string | number; }
+
+capturedReverse[1] = 1;
+>capturedReverse[1] = 1 : 1
+>capturedReverse[1] : any
+>capturedReverse : any[]
+>1 : 1
+>1 : 1
+
+local capturedReverseUse: number[] = capturedReverse;
+>capturedReverseUse : number[]
+>capturedReverse : number[]
+
+// Restoring a receiver to its captured value preserves sibling mutations.
+local preservedForward;
+>preservedForward : any
+
+preservedForward = {};
+>preservedForward = {} : { 1: string; }
+>preservedForward : any
+>{} : { 1: string; }
+
+preservedForward, preservedForward[1] = preservedForward, "kept";
+>preservedForward, preservedForward[1] = preservedForward, "kept" : any[]
+>preservedForward, preservedForward[1] : any, any
+>preservedForward : any
+>preservedForward[1] : any
+>preservedForward : any[]
+>1 : 1
+>preservedForward, "kept" : any[], string
+>preservedForward : any[]
+>"kept" : "kept"
+
+local preservedForwardUse: string[] = preservedForward;
+>preservedForwardUse : string[]
+>preservedForward : string[]
+
+local preservedReverse;
+>preservedReverse : any
+
+preservedReverse = {};
+>preservedReverse = {} : { 1: string; }
+>preservedReverse : any
+>{} : { 1: string; }
+
+preservedReverse[1], preservedReverse = "kept", preservedReverse;
+>preservedReverse[1], preservedReverse = "kept", preservedReverse : string
+>preservedReverse[1], preservedReverse : any, any
+>preservedReverse[1] : any
+>preservedReverse : any[]
+>1 : 1
+>preservedReverse : any
+>"kept", preservedReverse : string, any[]
+>"kept" : "kept"
+>preservedReverse : any[]
+
+local preservedReverseUse: string[] = preservedReverse;
+>preservedReverseUse : string[]
+>preservedReverse : string[]
+
+local preservedAsserted;
+>preservedAsserted : any
+
+preservedAsserted = {};
+>preservedAsserted = {} : { 1: string; }
+>preservedAsserted : any
+>{} : { 1: string; }
+
+preservedAsserted, preservedAsserted[1] = preservedAsserted as {}, "kept";
+>preservedAsserted, preservedAsserted[1] = preservedAsserted as {}, "kept" : {}
+>preservedAsserted, preservedAsserted[1] : any, any
+>preservedAsserted : any
+>preservedAsserted[1] : any
+>preservedAsserted : any[]
+>1 : 1
+>preservedAsserted as {}, "kept" : {}, string
+>preservedAsserted as {} : {}
+>preservedAsserted : any[]
+>"kept" : "kept"
+
+local preservedAssertedUse: string[] = preservedAsserted;
+>preservedAssertedUse : string[]
+>preservedAsserted : string[]
+
+// Assignment inference reads references from the pre-store transaction
+// snapshot instead of recursively asking for their final declaration types.
+PreservedAugmentation = {};
+>PreservedAugmentation = {} : { value: number; }
+>PreservedAugmentation : { value: number; }
+>{} : { value: number; }
+
+PreservedAugmentation, PreservedAugmentation.value = PreservedAugmentation, 1;
+>PreservedAugmentation, PreservedAugmentation.value = PreservedAugmentation, 1 : { value: number; }
+>PreservedAugmentation, PreservedAugmentation.value : { value: number; }, number
+>PreservedAugmentation : { value: number; }
+>PreservedAugmentation.value : number
+>PreservedAugmentation : { value: number; }
+>value : number
+>PreservedAugmentation, 1 : { value: number; }, number
+>PreservedAugmentation : { value: number; }
+>1 : 1
+
+local preservedAugmentationUse: number = PreservedAugmentation.value;
+>preservedAugmentationUse : number
+>PreservedAugmentation.value : number
+>PreservedAugmentation : { value: number; }
+>value : number
+
+NestedPreservedAugmentation = {};
+>NestedPreservedAugmentation = {} : { child: { value: string; }; }
+>NestedPreservedAugmentation : { child: { value: string; }; }
+>{} : { child: { value: string; }; }
+
+NestedPreservedAugmentation.child = {};
+>NestedPreservedAugmentation.child = {} : { value: string; }
+>NestedPreservedAugmentation.child : { value: string; }
+>NestedPreservedAugmentation : { child: { value: string; }; }
+>child : { value: string; }
+>{} : { value: string; }
+
+NestedPreservedAugmentation.child, NestedPreservedAugmentation.child.value = NestedPreservedAugmentation.child, "kept";
+>NestedPreservedAugmentation.child, NestedPreservedAugmentation.child.value = NestedPreservedAugmentation.child, "kept" : { value: string; }
+>NestedPreservedAugmentation.child, NestedPreservedAugmentation.child.value : { value: string; }, string
+>NestedPreservedAugmentation.child : { value: string; }
+>NestedPreservedAugmentation : { child: { value: string; }; }
+>child : { value: string; }
+>NestedPreservedAugmentation.child.value : string
+>NestedPreservedAugmentation.child : { value: string; }
+>NestedPreservedAugmentation : { child: { value: string; }; }
+>child : { value: string; }
+>value : string
+>NestedPreservedAugmentation.child, "kept" : { value: string; }, string
+>NestedPreservedAugmentation.child : { value: string; }
+>NestedPreservedAugmentation : { child: { value: string; }; }
+>child : { value: string; }
+>"kept" : "kept"
+
+local nestedPreservedAugmentationUse: string = NestedPreservedAugmentation.child.value;
+>nestedPreservedAugmentationUse : string
+>NestedPreservedAugmentation.child.value : string
+>NestedPreservedAugmentation.child : { value: string; }
+>NestedPreservedAugmentation : { child: { value: string; }; }
+>child : { value: string; }
+>value : string
+
+// A swap is not a declaration cycle. The value list is captured before any
+// store, so each target reads its sibling's pre-store type: the declared type
+// unions both, and the read after the statement is the exact swapped type.
+SwapFirst = 1;
+>SwapFirst = 1 : 1
+>SwapFirst : string | number
+>1 : 1
+
+SwapSecond = "swap";
+>SwapSecond = "swap" : "swap"
+>SwapSecond : string | number
+>"swap" : "swap"
+
+SwapFirst, SwapSecond = SwapSecond, SwapFirst;
+>SwapFirst, SwapSecond = SwapSecond, SwapFirst : string
+>SwapFirst, SwapSecond : string | number, string | number
+>SwapFirst : string | number
+>SwapSecond : string | number
+>SwapSecond, SwapFirst : string, number
+>SwapSecond : string
+>SwapFirst : number
+
+local swapFirstUse: string = SwapFirst;
+>swapFirstUse : string
+>SwapFirst : string
+
+local swapSecondUse: number = SwapSecond;
+>swapSecondUse : number
+>SwapSecond : number
+
+local swapFirstWiden: number = SwapFirst; -- error
+>swapFirstWiden : number
+>SwapFirst : string
+
+local swapSecondWiden: string = SwapSecond; -- error
+>swapSecondWiden : string
+>SwapSecond : number
+
+// A three-way rotation resolves the same way.
+RotateFirst = 1;
+>RotateFirst = 1 : 1
+>RotateFirst : number | boolean
+>1 : 1
+
+RotateSecond = "b";
+>RotateSecond = "b" : "b"
+>RotateSecond : string | number
+>"b" : "b"
+
+RotateThird = true;
+>RotateThird = true : true
+>RotateThird : string | boolean
+>true : true
+
+RotateFirst, RotateSecond, RotateThird = RotateThird, RotateFirst, RotateSecond;
+>RotateFirst, RotateSecond, RotateThird = RotateThird, RotateFirst, RotateSecond : boolean
+>RotateFirst, RotateSecond, RotateThird : number | boolean, string | number, string | boolean
+>RotateFirst : number | boolean
+>RotateSecond : string | number
+>RotateThird : string | boolean
+>RotateThird, RotateFirst, RotateSecond : boolean, number, string
+>RotateThird : true
+>RotateFirst : number
+>RotateSecond : string
+
+local rotateFirstUse: boolean = RotateFirst;
+>rotateFirstUse : boolean
+>RotateFirst : true
+
+local rotateSecondUse: number = RotateSecond;
+>rotateSecondUse : number
+>RotateSecond : number
+
+local rotateThirdUse: string = RotateThird;
+>rotateThirdUse : string
+>RotateThird : string
+
+// A cycle that spans statements is genuinely circular and still degrades.
+CycleFirst = CycleSecond;
+>CycleFirst = CycleSecond : any
+>CycleFirst : any
+>CycleSecond : any
+
+CycleSecond = CycleFirst;
+>CycleSecond = CycleFirst : any
+>CycleSecond : any
+>CycleFirst : any
+
+local cycleFirstUse: any = CycleFirst;
+>cycleFirstUse : any
+>CycleFirst : any
+
+// A global reached through the environment is the same captured storage as the
+// bare name, so the two spellings may be mixed within one commit.
+EnvSwapFirst = 1;
+>EnvSwapFirst = 1 : 1
+>EnvSwapFirst : string | number
+>1 : 1
+
+EnvSwapSecond = "s";
+>EnvSwapSecond = "s" : "s"
+>EnvSwapSecond : string | number
+>"s" : "s"
+
+_G.EnvSwapFirst, _G.EnvSwapSecond = _G.EnvSwapSecond, _G.EnvSwapFirst;
+>_G.EnvSwapFirst, _G.EnvSwapSecond = _G.EnvSwapSecond, _G.EnvSwapFirst : string
+>_G.EnvSwapFirst, _G.EnvSwapSecond : string | number, string | number
+>_G.EnvSwapFirst : string | number
+>_G : typeof _G
+>EnvSwapFirst : string | number
+>_G.EnvSwapSecond : string | number
+>_G : typeof _G
+>EnvSwapSecond : string | number
+>_G.EnvSwapSecond, _G.EnvSwapFirst : string, number
+>_G.EnvSwapSecond : string
+>_G : typeof _G
+>EnvSwapSecond : string
+>_G.EnvSwapFirst : number
+>_G : typeof _G
+>EnvSwapFirst : number
+
+local envSwapFirstUse: string = EnvSwapFirst;
+>envSwapFirstUse : string
+>EnvSwapFirst : string
+
+local envSwapSecondUse: number = EnvSwapSecond;
+>envSwapSecondUse : number
+>EnvSwapSecond : number
+
+MixedSpellingFirst = true;
+>MixedSpellingFirst = true : true
+>MixedSpellingFirst : number | boolean
+>true : true
+
+MixedSpellingSecond = 2;
+>MixedSpellingSecond = 2 : 2
+>MixedSpellingSecond : number | boolean
+>2 : 2
+
+MixedSpellingFirst, _G.MixedSpellingSecond = _G.MixedSpellingSecond, MixedSpellingFirst;
+>MixedSpellingFirst, _G.MixedSpellingSecond = _G.MixedSpellingSecond, MixedSpellingFirst : number
+>MixedSpellingFirst, _G.MixedSpellingSecond : number | boolean, number | boolean
+>MixedSpellingFirst : number | boolean
+>_G.MixedSpellingSecond : number | boolean
+>_G : typeof _G
+>MixedSpellingSecond : number | boolean
+>_G.MixedSpellingSecond, MixedSpellingFirst : number, boolean
+>_G.MixedSpellingSecond : number
+>_G : typeof _G
+>MixedSpellingSecond : number
+>MixedSpellingFirst : true
+
+local mixedSpellingFirstUse: number = MixedSpellingFirst;
+>mixedSpellingFirstUse : number
+>MixedSpellingFirst : number
+
+local mixedSpellingSecondUse: boolean = MixedSpellingSecond;
+>mixedSpellingSecondUse : boolean
+>MixedSpellingSecond : true
+
+// A lexical shadow of _G is an ordinary table, not the environment.
+local function shadowedEnvironment()
+>shadowedEnvironment : () => string
+
+  local _G = { shadowed = "local" };
+>_G : { shadowed: string; }
+>{ shadowed = "local" } : { shadowed: string; }
+>shadowed : string
+>"local" : "local"
+
+  local shadowedUse: string = _G.shadowed;
+>shadowedUse : string
+>_G.shadowed : string
+>_G : { shadowed: string; }
+>shadowed : string
+
+  return shadowedUse;
+>shadowedUse : string
+
+end
+
+// Static member aliases participate in the same source snapshot as bare names.
+StaticAliasRoot = {};
+>StaticAliasRoot = {} : { child: any; }
+>StaticAliasRoot : { child: any; }
+>{} : { child: any; }
+
+StaticAliasRoot.child = {};
+>StaticAliasRoot.child = {} : {}
+>StaticAliasRoot.child : any
+>StaticAliasRoot : { child: any; }
+>child : any
+>{} : {}
+
+StaticAlias = StaticAliasRoot["child"];
+>StaticAlias = StaticAliasRoot["child"] : any
+>StaticAlias : any
+>StaticAliasRoot["child"] : any
+>StaticAliasRoot : { child: any; }
+>"child" : "child"
+
+StaticAliasRoot.child = StaticAlias;
+>StaticAliasRoot.child = StaticAlias : any
+>StaticAliasRoot.child : any
+>StaticAliasRoot : { child: any; }
+>child : any
+>StaticAlias : any
+
+StaticAliasRoot.child.value = true;
+>StaticAliasRoot.child.value = true : true
+>StaticAliasRoot.child.value : any
+>StaticAliasRoot.child : any
+>StaticAliasRoot : { child: any; }
+>child : any
+>value : any
+>true : true
+
+local staticAliasUse: boolean = StaticAlias.value;
+>staticAliasUse : boolean
+>StaticAlias.value : any
+>StaticAlias : any
+>value : any
+
+// Alias targets can depend on deeper augmentation paths discovered later.
+DeepAliasRoot = {};
+>DeepAliasRoot = {} : { a: { b: { value: string; }; }; }
+>DeepAliasRoot : { a: { b: { value: string; }; }; }
+>{} : { a: { b: { value: string; }; }; }
+
+DeepAliasRoot.a = {};
+>DeepAliasRoot.a = {} : { b: { value: string; }; }
+>DeepAliasRoot.a : { b: { value: string; }; }
+>DeepAliasRoot : { a: { b: { value: string; }; }; }
+>a : { b: { value: string; }; }
+>{} : { b: { value: string; }; }
+
+DeepAliasRoot.a.b = {};
+>DeepAliasRoot.a.b = {} : { value: string; }
+>DeepAliasRoot.a.b : { value: string; }
+>DeepAliasRoot.a : { b: { value: string; }; }
+>DeepAliasRoot : { a: { b: { value: string; }; }; }
+>a : { b: { value: string; }; }
+>b : { value: string; }
+>{} : { value: string; }
+
+DeepAlias = DeepAliasRoot.a.b;
+>DeepAlias = DeepAliasRoot.a.b : { value: string; }
+>DeepAlias : { value: string; }
+>DeepAliasRoot.a.b : { value: string; }
+>DeepAliasRoot.a : { b: { value: string; }; }
+>DeepAliasRoot : { a: { b: { value: string; }; }; }
+>a : { b: { value: string; }; }
+>b : { value: string; }
+
+DeepAlias.value = "deep";
+>DeepAlias.value = "deep" : "deep"
+>DeepAlias.value : string
+>DeepAlias : { value: string; }
+>value : string
+>"deep" : "deep"
+
+local deepAliasUse: string = DeepAliasRoot.a.b.value;
+>deepAliasUse : string
+>DeepAliasRoot.a.b.value : string
+>DeepAliasRoot.a.b : { value: string; }
+>DeepAliasRoot.a : { b: { value: string; }; }
+>DeepAliasRoot : { a: { b: { value: string; }; }; }
+>a : { b: { value: string; }; }
+>b : { value: string; }
+>value : string
+
+// Fresh implicit globals read as nil during the capture phase.
+FreshSwapFirst, FreshSwapSecond = FreshSwapSecond, FreshSwapFirst;
+>FreshSwapFirst, FreshSwapSecond = FreshSwapSecond, FreshSwapFirst : nil
+>FreshSwapFirst, FreshSwapSecond : nil, nil
+>FreshSwapFirst : nil
+>FreshSwapSecond : nil
+>FreshSwapSecond, FreshSwapFirst : nil, nil
+>FreshSwapSecond : nil
+>FreshSwapFirst : nil
+
+local freshSwapFirstUse: nil = FreshSwapFirst;
+>freshSwapFirstUse : nil
+>FreshSwapFirst : nil
+
+local freshSwapSecondUse: nil = FreshSwapSecond;
+>freshSwapSecondUse : nil
+>FreshSwapSecond : nil
+
+// LuaJIT commits aliased targets right-to-left, so the leftmost write wins.
+local duplicate: number | string = 0;
+>duplicate : string | number
+>0 : 0
+
+duplicate, duplicate = 1, "later";
+>duplicate, duplicate = 1, "later" : number
+>duplicate, duplicate : string | number, string | number
+>duplicate : string | number
+>duplicate : string | number
+>1, "later" : number, string
+>1 : 1
+>"later" : "later"
+
+local duplicateUse: number = duplicate;
+>duplicateUse : number
+>duplicate : number
+
+// A scalar target still owns the entire RHS value-list transaction. The
+// discarded call observes the pre-assignment flow state.
+local scalarOrder: number | string = 1;
+>scalarOrder : string | number
+>1 : 1
+
+scalarOrder = "new", takesNumber(scalarOrder);
+>scalarOrder = "new", takesNumber(scalarOrder) : string
+>scalarOrder : string | number
+>"new", takesNumber(scalarOrder) : string
+>"new" : "new"
+>takesNumber(scalarOrder) : void
+>takesNumber : (value: number) => void
+>scalarOrder : number
+
+local scalarOrderUse: string = scalarOrder;
+>scalarOrderUse : string
+>scalarOrder : string
+
+local scalarFirst: number | string = "";
+>scalarFirst : string | number
+>"" : ""
+
+scalarFirst = 1, "discarded";
+>scalarFirst = 1, "discarded" : number
+>scalarFirst : string | number
+>1, "discarded" : number, string
+>1 : 1
+>"discarded" : "discarded"
+
+local scalarFirstUse: number = scalarFirst;
+>scalarFirstUse : number
+>scalarFirst : number
+
+local scalarArray;
+>scalarArray : any
+
+scalarArray = {}, "discarded";
+>scalarArray = {}, "discarded" : { 1: number; }
+>scalarArray : any
+>{}, "discarded" : { 1: number; }, string
+>{} : { 1: number; }
+>"discarded" : "discarded"
+
+scalarArray[1] = 1;
+>scalarArray[1] = 1 : 1
+>scalarArray[1] : any
+>scalarArray : any[]
+>1 : 1
+>1 : 1
+
+local scalarArrayUse: number[] = scalarArray;
+>scalarArrayUse : number[]
+>scalarArray : number[]
+
+local scalarElementArray;
+>scalarElementArray : any
+
+scalarElementArray = {};
+>scalarElementArray = {} : { 1: string; }
+>scalarElementArray : any
+>{} : { 1: string; }
+
+scalarElementArray[1] = "kept", 0;
+>scalarElementArray[1] = "kept", 0 : string
+>scalarElementArray[1] : any
+>scalarElementArray : any[]
+>1 : 1
+>"kept", 0 : string, number
+>"kept" : "kept"
+>0 : 0
+
+local scalarElementArrayUse: string[] = scalarElementArray;
+>scalarElementArrayUse : string[]
+>scalarElementArray : string[]
+
+// Default guards are matched to their own declaration target.
+GuardFirst, GuardSecond = GuardFirst or {}, GuardSecond or {};
+>GuardFirst, GuardSecond = GuardFirst or {}, GuardSecond or {} : { value: number; }
+>GuardFirst, GuardSecond : { value: number; }, { value: string; }
+>GuardFirst : { value: number; }
+>GuardSecond : { value: string; }
+>GuardFirst or {}, GuardSecond or {} : { value: number; }, { value: string; }
+>GuardFirst or {} : { value: number; }
+>GuardFirst : { value: number; }
+>{} : { value: number; }
+>GuardSecond or {} : { value: string; }
+>GuardSecond : { value: string; }
+>{} : { value: string; }
+
+GuardFirst.value = 1;
+>GuardFirst.value = 1 : 1
+>GuardFirst.value : number
+>GuardFirst : { value: number; }
+>value : number
+>1 : 1
+
+GuardSecond.value = "guard";
+>GuardSecond.value = "guard" : "guard"
+>GuardSecond.value : string
+>GuardSecond : { value: string; }
+>value : string
+>"guard" : "guard"
+
+local guardFirstUse: number = GuardFirst.value;
+>guardFirstUse : number
+>GuardFirst.value : number
+>GuardFirst : { value: number; }
+>value : number
+
+local guardSecondUse: string = GuardSecond.value;
+>guardSecondUse : string
+>GuardSecond.value : string
+>GuardSecond : { value: string; }
+>value : string
+
+AsGuard, asGuardSide = AsGuard as {} or {}, 0;
+>AsGuard, asGuardSide = AsGuard as {} or {}, 0 : {}
+>AsGuard, asGuardSide : { value: string; }, number
+>AsGuard : { value: string; }
+>asGuardSide : number
+>AsGuard as {} or {}, 0 : {}, number
+>AsGuard as {} or {} : {}
+>AsGuard as {} : {}
+>AsGuard : { value: string; }
+>{} : { value: string; }
+>0 : 0
+
+AsGuard.value = "as guard";
+>AsGuard.value = "as guard" : "as guard"
+>AsGuard.value : string
+>AsGuard : { value: string; }
+>value : string
+>"as guard" : "as guard"
+
+local asGuardUse: string = AsGuard.value;
+>asGuardUse : string
+>AsGuard.value : string
+>AsGuard : { value: string; }
+>value : string
+
+SatisfiesGuard, satisfiesGuardSide = SatisfiesGuard satisfies unknown or {}, 0;
+>SatisfiesGuard, satisfiesGuardSide = SatisfiesGuard satisfies unknown or {}, 0 : { value: string; }
+>SatisfiesGuard, satisfiesGuardSide : { value: string; }, number
+>SatisfiesGuard : { value: string; }
+>satisfiesGuardSide : number
+>SatisfiesGuard satisfies unknown or {}, 0 : { value: string; }, number
+>SatisfiesGuard satisfies unknown or {} : { value: string; }
+>SatisfiesGuard satisfies unknown : { value: string; }
+>SatisfiesGuard : { value: string; }
+>{} : { value: string; }
+>0 : 0
+
+SatisfiesGuard.value = "satisfies guard";
+>SatisfiesGuard.value = "satisfies guard" : "satisfies guard"
+>SatisfiesGuard.value : string
+>SatisfiesGuard : { value: string; }
+>value : string
+>"satisfies guard" : "satisfies guard"
+
+local satisfiesGuardUse: string = SatisfiesGuard.value;
+>satisfiesGuardUse : string
+>SatisfiesGuard.value : string
+>SatisfiesGuard : { value: string; }
+>value : string
+
+GuardRoot = {};
+>GuardRoot = {} : { left: { value: boolean; }; right: { value: number; }; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>{} : { left: { value: boolean; }; right: { value: number; }; }
+
+GuardRoot.left, GuardRoot.right = GuardRoot.left or {}, GuardRoot.right or {};
+>GuardRoot.left, GuardRoot.right = GuardRoot.left or {}, GuardRoot.right or {} : { value: boolean; }
+>GuardRoot.left, GuardRoot.right : { value: boolean; }, { value: number; }
+>GuardRoot.left : { value: boolean; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>left : { value: boolean; }
+>GuardRoot.right : { value: number; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>right : { value: number; }
+>GuardRoot.left or {}, GuardRoot.right or {} : { value: boolean; }, { value: number; }
+>GuardRoot.left or {} : { value: boolean; }
+>GuardRoot.left : { value: boolean; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>left : { value: boolean; }
+>{} : { value: boolean; }
+>GuardRoot.right or {} : { value: number; }
+>GuardRoot.right : { value: number; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>right : { value: number; }
+>{} : { value: number; }
+
+GuardRoot.left.value = true;
+>GuardRoot.left.value = true : true
+>GuardRoot.left.value : boolean
+>GuardRoot.left : { value: boolean; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>left : { value: boolean; }
+>value : boolean
+>true : true
+
+GuardRoot.right.value = 2;
+>GuardRoot.right.value = 2 : 2
+>GuardRoot.right.value : number
+>GuardRoot.right : { value: number; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>right : { value: number; }
+>value : number
+>2 : 2
+
+local guardedLeftUse: boolean = GuardRoot.left.value;
+>guardedLeftUse : boolean
+>GuardRoot.left.value : true
+>GuardRoot.left : { value: boolean; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>left : { value: boolean; }
+>value : true
+
+local guardedRightUse: number = GuardRoot.right.value;
+>guardedRightUse : number
+>GuardRoot.right.value : number
+>GuardRoot.right : { value: number; }
+>GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
+>right : { value: number; }
+>value : number
+
+// Postfix assertions cannot wrap a complete assignment target.
+local assertedTarget: number = 0;
+>assertedTarget : number
+>0 : 0
+
+assertedTarget!, assertedTargetSide = 7, 0;
+>assertedTarget!, assertedTargetSide = 7, 0 : number
+>assertedTarget!, assertedTargetSide : number, number
+>assertedTarget! : number
+>assertedTarget : number
+>assertedTargetSide : number
+>7, 0 : number, number
+>7 : 7
+>0 : 0
+
+local assertedTargetUse: number = assertedTarget;
+>assertedTargetUse : number
+>assertedTarget : number
+
+local assertedMemberTargetRoot = { member = false };
+>assertedMemberTargetRoot : { member: boolean; }
+>{ member = false } : { member: boolean; }
+>member : boolean
+>false : false
+
+assertedMemberTargetRoot.member!, assertedMemberTargetSide = true, 0;
+>assertedMemberTargetRoot.member!, assertedMemberTargetSide = true, 0 : true
+>assertedMemberTargetRoot.member!, assertedMemberTargetSide : boolean, number
+>assertedMemberTargetRoot.member! : boolean
+>assertedMemberTargetRoot.member : boolean
+>assertedMemberTargetRoot : { member: boolean; }
+>member : boolean
+>assertedMemberTargetSide : number
+>true, 0 : true, number
+>true : true
+>0 : 0
+
+local assertedMemberTargetUse: boolean = assertedMemberTargetRoot.member;
+>assertedMemberTargetUse : boolean
+>assertedMemberTargetRoot.member : boolean
+>assertedMemberTargetRoot : { member: boolean; }
+>member : boolean
+
+local assertedElementTarget: number[] = {};
+>assertedElementTarget : number[]
+>{} : {}
+
+assertedElementTarget[1]!, assertedElementTargetSide = "ignored", 0;
+>assertedElementTarget[1]!, assertedElementTargetSide = "ignored", 0 : string
+>assertedElementTarget[1]!, assertedElementTargetSide : number, number
+>assertedElementTarget[1]! : number
+>assertedElementTarget[1] : number
+>assertedElementTarget : number[]
+>1 : 1
+>assertedElementTargetSide : number
+>"ignored", 0 : string, number
+>"ignored" : "ignored"
+>0 : 0
+
+local assertedElementTargetUse: number[] = assertedElementTarget;
+>assertedElementTargetUse : number[]
+>assertedElementTarget : number[]
+
+// Assertions remain valid inside a target when they protect a captured
+// receiver rather than the value being replaced.
+AssertedReceiverRoot = {};
+>AssertedReceiverRoot = {} : { member: string; }
+>AssertedReceiverRoot : { member: string; }
+>{} : { member: string; }
+
+AssertedReceiverRoot!.member, assertedReceiverSide = "receiver", 0;
+>AssertedReceiverRoot!.member, assertedReceiverSide = "receiver", 0 : string
+>AssertedReceiverRoot!.member, assertedReceiverSide : string, number
+>AssertedReceiverRoot!.member : string
+>AssertedReceiverRoot! : { member: string; }
+>AssertedReceiverRoot : { member: string; }
+>member : string
+>assertedReceiverSide : number
+>"receiver", 0 : string, number
+>"receiver" : "receiver"
+>0 : 0
+
+local assertedReceiverMemberUse: string = AssertedReceiverRoot.member;
+>assertedReceiverMemberUse : string
+>AssertedReceiverRoot.member : string
+>AssertedReceiverRoot : { member: string; }
+>member : string
+
+AssertedGuardRoot = {};
+>AssertedGuardRoot = {} : { member: { value: number; }; }
+>AssertedGuardRoot : { member: { value: number; }; }
+>{} : { member: { value: number; }; }
+
+AssertedGuardRoot!.member, assertedGuardSide = AssertedGuardRoot.member! or {}, 0;
+>AssertedGuardRoot!.member, assertedGuardSide = AssertedGuardRoot.member! or {}, 0 : { value: number; }
+>AssertedGuardRoot!.member, assertedGuardSide : { value: number; }, number
+>AssertedGuardRoot!.member : { value: number; }
+>AssertedGuardRoot! : { member: { value: number; }; }
+>AssertedGuardRoot : { member: { value: number; }; }
+>member : { value: number; }
+>assertedGuardSide : number
+>AssertedGuardRoot.member! or {}, 0 : { value: number; }, number
+>AssertedGuardRoot.member! or {} : { value: number; }
+>AssertedGuardRoot.member! : { value: number; }
+>AssertedGuardRoot.member : { value: number; }
+>AssertedGuardRoot : { member: { value: number; }; }
+>member : { value: number; }
+>{} : { value: number; }
+>0 : 0
+
+AssertedGuardRoot.member.value = 1;
+>AssertedGuardRoot.member.value = 1 : 1
+>AssertedGuardRoot.member.value : number
+>AssertedGuardRoot.member : { value: number; }
+>AssertedGuardRoot : { member: { value: number; }; }
+>member : { value: number; }
+>value : number
+>1 : 1
+
+local assertedGuardUse: number = AssertedGuardRoot.member.value;
+>assertedGuardUse : number
+>AssertedGuardRoot.member.value : number
+>AssertedGuardRoot.member : { value: number; }
+>AssertedGuardRoot : { member: { value: number; }; }
+>member : { value: number; }
+>value : number
+
+ParenthesizedReceiverGuardRoot = {};
+>ParenthesizedReceiverGuardRoot = {} : { member: { value: string; }; }
+>ParenthesizedReceiverGuardRoot : { member: { value: string; }; }
+>{} : { member: { value: string; }; }
+
+(ParenthesizedReceiverGuardRoot).member, parenthesizedReceiverGuardSide = ParenthesizedReceiverGuardRoot.member or {}, 0;
+>(ParenthesizedReceiverGuardRoot).member, parenthesizedReceiverGuardSide = ParenthesizedReceiverGuardRoot.member or {}, 0 : { value: string; }
+>(ParenthesizedReceiverGuardRoot).member, parenthesizedReceiverGuardSide : { value: string; }, number
+>(ParenthesizedReceiverGuardRoot).member : { value: string; }
+>(ParenthesizedReceiverGuardRoot) : { member: { value: string; }; }
+>ParenthesizedReceiverGuardRoot : { member: { value: string; }; }
+>member : { value: string; }
+>parenthesizedReceiverGuardSide : number
+>ParenthesizedReceiverGuardRoot.member or {}, 0 : { value: string; }, number
+>ParenthesizedReceiverGuardRoot.member or {} : { value: string; }
+>ParenthesizedReceiverGuardRoot.member : { value: string; }
+>ParenthesizedReceiverGuardRoot : { member: { value: string; }; }
+>member : { value: string; }
+>{} : { value: string; }
+>0 : 0
+
+ParenthesizedReceiverGuardRoot.member.value = "guard";
+>ParenthesizedReceiverGuardRoot.member.value = "guard" : "guard"
+>ParenthesizedReceiverGuardRoot.member.value : string
+>ParenthesizedReceiverGuardRoot.member : { value: string; }
+>ParenthesizedReceiverGuardRoot : { member: { value: string; }; }
+>member : { value: string; }
+>value : string
+>"guard" : "guard"
+
+local parenthesizedReceiverGuardUse: string = ParenthesizedReceiverGuardRoot.member.value;
+>parenthesizedReceiverGuardUse : string
+>ParenthesizedReceiverGuardRoot.member.value : string
+>ParenthesizedReceiverGuardRoot.member : { value: string; }
+>ParenthesizedReceiverGuardRoot : { member: { value: string; }; }
+>member : { value: string; }
+>value : string
+
+local assertedReceiverArray;
+>assertedReceiverArray : any
+
+assertedReceiverArray = {};
+>assertedReceiverArray = {} : { 1: number; }
+>assertedReceiverArray : any
+>{} : { 1: number; }
+
+assertedReceiverArray![1], assertedReceiverArraySide = 8, 0;
+>assertedReceiverArray![1], assertedReceiverArraySide = 8, 0 : number
+>assertedReceiverArray![1], assertedReceiverArraySide : any, number
+>assertedReceiverArray![1] : any
+>assertedReceiverArray! : any[]
+>assertedReceiverArray : any[]
+>1 : 1
+>assertedReceiverArraySide : number
+>8, 0 : number, number
+>8 : 8
+>0 : 0
+
+local assertedReceiverArrayUse: number[] = assertedReceiverArray;
+>assertedReceiverArrayUse : number[]
+>assertedReceiverArray : number[]
+
+// Erased postfix assertions preserve constructor and evolving-array shapes.
+local assertedInitializerArray;
+>assertedInitializerArray : any
+
+assertedInitializerArray, assertedInitializerArraySide = ({})!, 0;
+>assertedInitializerArray, assertedInitializerArraySide = ({})!, 0 : { 1: boolean; }
+>assertedInitializerArray, assertedInitializerArraySide : any, number
+>assertedInitializerArray : any
+>assertedInitializerArraySide : number
+>({})!, 0 : { 1: boolean; }, number
+>({})! : { 1: boolean; }
+>({}) : { 1: boolean; }
+>{} : { 1: boolean; }
+>0 : 0
+
+assertedInitializerArray[1] = true;
+>assertedInitializerArray[1] = true : true
+>assertedInitializerArray[1] : any
+>assertedInitializerArray : any[]
+>1 : 1
+>true : true
+
+local assertedInitializerArrayUse: boolean[] = assertedInitializerArray;
+>assertedInitializerArrayUse : boolean[]
+>assertedInitializerArray : boolean[]
+
+AssertedInitializerRoot, assertedInitializerRootSide = ({})!, 0;
+>AssertedInitializerRoot, assertedInitializerRootSide = ({})!, 0 : { value: string; }
+>AssertedInitializerRoot, assertedInitializerRootSide : { value: string; }, number
+>AssertedInitializerRoot : { value: string; }
+>assertedInitializerRootSide : number
+>({})!, 0 : { value: string; }, number
+>({})! : { value: string; }
+>({}) : { value: string; }
+>{} : { value: string; }
+>0 : 0
+
+AssertedInitializerRoot.value = "asserted";
+>AssertedInitializerRoot.value = "asserted" : "asserted"
+>AssertedInitializerRoot.value : string
+>AssertedInitializerRoot : { value: string; }
+>value : string
+>"asserted" : "asserted"
+
+local assertedInitializerRootUse: string = AssertedInitializerRoot.value;
+>assertedInitializerRootUse : string
+>AssertedInitializerRoot.value : string
+>AssertedInitializerRoot : { value: string; }
+>value : string
+
+// Parentheses remain valid around an access receiver, but not around the whole
+// Lua assignment target.
+ReceiverRoot = {};
+>ReceiverRoot = {} : { member: boolean; }
+>ReceiverRoot : { member: boolean; }
+>{} : { member: boolean; }
+
+(ReceiverRoot).member, receiverSide = true, 0;
+>(ReceiverRoot).member, receiverSide = true, 0 : boolean
+>(ReceiverRoot).member, receiverSide : boolean, number
+>(ReceiverRoot).member : boolean
+>(ReceiverRoot) : { member: boolean; }
+>ReceiverRoot : { member: boolean; }
+>member : boolean
+>receiverSide : number
+>true, 0 : boolean, number
+>true : true
+>0 : 0
+
+local receiverMemberUse: boolean = ReceiverRoot.member;
+>receiverMemberUse : boolean
+>ReceiverRoot.member : true
+>ReceiverRoot : { member: boolean; }
+>member : true
+
+local invalidParenthesized: number | string = "";
+>invalidParenthesized : string | number
+>"" : ""
+
+(invalidParenthesized), invalidParenthesizedSide = 1, 0;
+>(invalidParenthesized), invalidParenthesizedSide = 1, 0 : number
+>(invalidParenthesized), invalidParenthesizedSide : string, number
+>(invalidParenthesized) : string
+>invalidParenthesized : string
+>invalidParenthesizedSide : number
+>1, 0 : number, number
+>1 : 1
+>0 : 0
+
+local invalidParenthesizedUse: string = invalidParenthesized;
+>invalidParenthesizedUse : string
+>invalidParenthesized : string
+
+local invalidWrappedArray: number[] = {};
+>invalidWrappedArray : number[]
+>{} : {}
+
+(invalidWrappedArray[1])!, invalidWrappedArraySide = "ignored", 0;
+>(invalidWrappedArray[1])!, invalidWrappedArraySide = "ignored", 0 : string
+>(invalidWrappedArray[1])!, invalidWrappedArraySide : number, number
+>(invalidWrappedArray[1])! : number
+>(invalidWrappedArray[1]) : number
+>invalidWrappedArray[1] : number
+>invalidWrappedArray : number[]
+>1 : 1
+>invalidWrappedArraySide : number
+>"ignored", 0 : string, number
+>"ignored" : "ignored"
+>0 : 0
+
+local invalidWrappedArrayUse: number[] = invalidWrappedArray;
+>invalidWrappedArrayUse : number[]
+>invalidWrappedArray : number[]
+
+// Parentheses around an empty constructor preserve expression semantics while
+// still allowing the assigned slot to become an evolving array or table.
+local parenthesizedArray;
+>parenthesizedArray : any
+
+parenthesizedArray, parenthesizedArraySide = ({}), 0;
+>parenthesizedArray, parenthesizedArraySide = ({}), 0 : { 1: string; }
+>parenthesizedArray, parenthesizedArraySide : any, number
+>parenthesizedArray : any
+>parenthesizedArraySide : number
+>({}), 0 : { 1: string; }, number
+>({}) : { 1: string; }
+>{} : { 1: string; }
+>0 : 0
+
+parenthesizedArray[1] = "value";
+>parenthesizedArray[1] = "value" : "value"
+>parenthesizedArray[1] : any
+>parenthesizedArray : any[]
+>1 : 1
+>"value" : "value"
+
+local parenthesizedArrayUse: string[] = parenthesizedArray;
+>parenthesizedArrayUse : string[]
+>parenthesizedArray : string[]
+
+ParenthesizedRoot, parenthesizedRootSide = ({}), 0;
+>ParenthesizedRoot, parenthesizedRootSide = ({}), 0 : { value: number; }
+>ParenthesizedRoot, parenthesizedRootSide : { value: number; }, number
+>ParenthesizedRoot : { value: number; }
+>parenthesizedRootSide : number
+>({}), 0 : { value: number; }, number
+>({}) : { value: number; }
+>{} : { value: number; }
+>0 : 0
+
+ParenthesizedRoot.value = 1;
+>ParenthesizedRoot.value = 1 : 1
+>ParenthesizedRoot.value : number
+>ParenthesizedRoot : { value: number; }
+>value : number
+>1 : 1
+
+local parenthesizedRootUse: number = ParenthesizedRoot.value;
+>parenthesizedRootUse : number
+>ParenthesizedRoot.value : number
+>ParenthesizedRoot : { value: number; }
+>value : number
+
+ParenthesizedGuard, parenthesizedGuardSide = ParenthesizedGuard or ({}), 0;
+>ParenthesizedGuard, parenthesizedGuardSide = ParenthesizedGuard or ({}), 0 : { value: boolean; }
+>ParenthesizedGuard, parenthesizedGuardSide : { value: boolean; }, number
+>ParenthesizedGuard : { value: boolean; }
+>parenthesizedGuardSide : number
+>ParenthesizedGuard or ({}), 0 : { value: boolean; }, number
+>ParenthesizedGuard or ({}) : { value: boolean; }
+>ParenthesizedGuard : { value: boolean; }
+>({}) : { value: boolean; }
+>{} : { value: boolean; }
+>0 : 0
+
+ParenthesizedGuard.value = true;
+>ParenthesizedGuard.value = true : true
+>ParenthesizedGuard.value : boolean
+>ParenthesizedGuard : { value: boolean; }
+>value : boolean
+>true : true
+
+local parenthesizedGuardUse: boolean = ParenthesizedGuard.value;
+>parenthesizedGuardUse : boolean
+>ParenthesizedGuard.value : true
+>ParenthesizedGuard : { value: boolean; }
+>value : true
+
+// A parenthesized call is one scalar value and must not expand as a tail pack.
+ParenthesizedCallFirst, ParenthesizedCallSecond = (pair());
+>ParenthesizedCallFirst, ParenthesizedCallSecond = (pair()) : number
+>ParenthesizedCallFirst, ParenthesizedCallSecond : number, nil
+>ParenthesizedCallFirst : number
+>ParenthesizedCallSecond : nil
+>(pair()) : number
+>pair() : number
+>pair : () => (number, string)
+
+local parenthesizedCallFirstUse: number = ParenthesizedCallFirst;
+>parenthesizedCallFirstUse : number
+>ParenthesizedCallFirst : number
+
+local parenthesizedCallSecondUse: nil = ParenthesizedCallSecond;
+>parenthesizedCallSecondUse : nil
+>ParenthesizedCallSecond : nil
+
+// Postfix assertions are erased and therefore preserve tail-call expansion.
+AssertedCallFirst, AssertedCallSecond = pair()!;
+>AssertedCallFirst, AssertedCallSecond = pair()! : number
+>AssertedCallFirst, AssertedCallSecond : number, string
+>AssertedCallFirst : number
+>AssertedCallSecond : string
+>pair()! : number
+>pair() : number
+>pair : () => (number, string)
+
+local assertedCallFirstUse: number = AssertedCallFirst;
+>assertedCallFirstUse : number
+>AssertedCallFirst : number
+
+local assertedCallSecondUse: string = AssertedCallSecond;
+>assertedCallSecondUse : string
+>AssertedCallSecond : string
+
+AsCallFirst, AsCallSecond = pair() as number;
+>AsCallFirst, AsCallSecond = pair() as number : number
+>AsCallFirst, AsCallSecond : number, string
+>AsCallFirst : number
+>AsCallSecond : string
+>pair() as number : number
+>pair() : number
+>pair : () => (number, string)
+
+local asCallFirstUse: number = AsCallFirst;
+>asCallFirstUse : number
+>AsCallFirst : number
+
+local asCallSecondUse: string = AsCallSecond;
+>asCallSecondUse : string
+>AsCallSecond : string
+
+SatisfiesCallFirst, SatisfiesCallSecond = pair() satisfies number;
+>SatisfiesCallFirst, SatisfiesCallSecond = pair() satisfies number : number
+>SatisfiesCallFirst, SatisfiesCallSecond : number, string
+>SatisfiesCallFirst : number
+>SatisfiesCallSecond : string
+>pair() satisfies number : number
+>pair() : number
+>pair : () => (number, string)
+
+local satisfiesCallFirstUse: number = SatisfiesCallFirst;
+>satisfiesCallFirstUse : number
+>SatisfiesCallFirst : number
+
+local satisfiesCallSecondUse: string = SatisfiesCallSecond;
+>satisfiesCallSecondUse : string
+>SatisfiesCallSecond : string
+
+ParenthesizedAssertedCallFirst, ParenthesizedAssertedCallSecond = (pair()!);
+>ParenthesizedAssertedCallFirst, ParenthesizedAssertedCallSecond = (pair()!) : number
+>ParenthesizedAssertedCallFirst, ParenthesizedAssertedCallSecond : number, nil
+>ParenthesizedAssertedCallFirst : number
+>ParenthesizedAssertedCallSecond : nil
+>(pair()!) : number
+>pair()! : number
+>pair() : number
+>pair : () => (number, string)
+
+local parenthesizedAssertedCallFirstUse: number = ParenthesizedAssertedCallFirst;
+>parenthesizedAssertedCallFirstUse : number
+>ParenthesizedAssertedCallFirst : number
+
+local parenthesizedAssertedCallSecondUse: nil = ParenthesizedAssertedCallSecond;
+>parenthesizedAssertedCallSecondUse : nil
+>ParenthesizedAssertedCallSecond : nil
+
+// Erased wrappers preserve a call in argument-tail position. Parentheses remain
+// the one-value barrier, and wrapper diagnostics are still checked.
+declare function takesPairValues(first: number, second: string): void;
+>takesPairValues : (first: number, second: string) => void
+>first : number
+>second : string
+
+declare function takesOneValue(first: number): void;
+>takesOneValue : (first: number) => void
+>first : number
+
+declare function takesNoValues(): void;
+>takesNoValues : () => void
+
+declare function genericPair<T>(value: T): (T, string);
+>genericPair : <T>(value: T) => (T, string)
+>value : T
+
+takesPairValues(pair());
+>takesPairValues(pair()) : void
+>takesPairValues : (first: number, second: string) => void
+>pair() : number
+>pair : () => (number, string)
+
+takesPairValues(pair()!);
+>takesPairValues(pair()!) : void
+>takesPairValues : (first: number, second: string) => void
+>pair()! : number
+>pair() : number
+>pair : () => (number, string)
+
+takesPairValues(pair() as number);
+>takesPairValues(pair() as number) : void
+>takesPairValues : (first: number, second: string) => void
+>pair() as number : number
+>pair() : number
+>pair : () => (number, string)
+
+takesPairValues(pair() satisfies number);
+>takesPairValues(pair() satisfies number) : void
+>takesPairValues : (first: number, second: string) => void
+>pair() satisfies number : number
+>pair() : number
+>pair : () => (number, string)
+
+takesPairValues(genericPair(1)!);
+>takesPairValues(genericPair(1)!) : void
+>takesPairValues : (first: number, second: string) => void
+>genericPair(1)! : number
+>genericPair(1) : number
+>genericPair : <T>(value: T) => (T, string)
+>1 : 1
+
+takesOneValue((pair()!));
+>takesOneValue((pair()!)) : void
+>takesOneValue : (first: number) => void
+>(pair()!) : number
+>pair()! : number
+>pair() : number
+>pair : () => (number, string)
+
+takesNoValues(nothing() as unknown as number);
+>takesNoValues(nothing() as unknown as number) : void
+>takesNoValues : () => void
+>nothing() as unknown as number : number
+>nothing() as unknown : unknown
+>nothing() : void
+>nothing : () => void
+
+takesPairValues(pair() satisfies string);
+>takesPairValues(pair() satisfies string) : void
+>takesPairValues : (first: number, second: string) => void
+>pair() satisfies string : number
+>pair() : number
+>pair : () => (number, string)
+
+declare function nullablePair(): (number | nil, string);
+>nullablePair : () => (number | nil, string)
+
+local narrowedPairFirst: number = 0;
+>narrowedPairFirst : number
+>0 : 0
+
+local narrowedPairSecond: string = "";
+>narrowedPairSecond : string
+>"" : ""
+
+narrowedPairFirst, narrowedPairSecond = nullablePair()!;
+>narrowedPairFirst, narrowedPairSecond = nullablePair()! : number
+>narrowedPairFirst, narrowedPairSecond : number, string
+>narrowedPairFirst : number
+>narrowedPairSecond : string
+>nullablePair()! : number
+>nullablePair() : number | nil
+>nullablePair : () => (number | nil, string)
+
+function narrowSelfAssignment(value: number | nil): number
+>narrowSelfAssignment : (value: number | nil) => number
+>value : number | nil
+
+    value, narrowSelfSide = value!, 0;
+>value, narrowSelfSide = value!, 0 : number
+>value, narrowSelfSide : number | nil, number
+>value : number | nil
+>narrowSelfSide : number
+>value!, 0 : number, number
+>value! : number
+>value : number | nil
+>0 : 0
+
+    return value;
+>value : number
+
+end
+
+// A static assertion preserves constructor identity for structural
+// augmentation, but prevents an empty table from becoming an evolving array.
+local declaredAssertedArray = {} as {};
+>declaredAssertedArray : {}
+>{} as {} : {}
+>{} : { 1: string; }
+
+declaredAssertedArray[1] = "declared";
+>declaredAssertedArray[1] = "declared" : "declared"
+>declaredAssertedArray[1] : any
+>declaredAssertedArray : {}
+>1 : 1
+>"declared" : "declared"
+
+local scalarAssertedArray;
+>scalarAssertedArray : any
+
+scalarAssertedArray = {} as {};
+>scalarAssertedArray = {} as {} : {}
+>scalarAssertedArray : any
+>{} as {} : {}
+>{} : { 1: string; }
+
+scalarAssertedArray[1] = "scalar";
+>scalarAssertedArray[1] = "scalar" : "scalar"
+>scalarAssertedArray[1] : any
+>scalarAssertedArray : {}
+>1 : 1
+>"scalar" : "scalar"
+
+local nestedAssertedArray;
+>nestedAssertedArray : any
+
+nestedAssertedArray = ({} as {})!;
+>nestedAssertedArray = ({} as {})! : {}
+>nestedAssertedArray : any
+>({} as {})! : {}
+>({} as {}) : {}
+>{} as {} : {}
+>{} : { 1: string; }
+
+nestedAssertedArray[1] = "nested"; -- error
+>nestedAssertedArray[1] = "nested" : "nested"
+>nestedAssertedArray[1] : any
+>nestedAssertedArray : {}
+>1 : 1
+>"nested" : "nested"
+
+local satisfiesAssertedArray;
+>satisfiesAssertedArray : any
+
+satisfiesAssertedArray = ({}!) satisfies {};
+>satisfiesAssertedArray = ({}!) satisfies {} : { 1: string; }
+>satisfiesAssertedArray : any
+>({}!) satisfies {} : { 1: string; }
+>({}!) : { 1: string; }
+>{}! : { 1: string; }
+>{} : { 1: string; }
+
+satisfiesAssertedArray[1] = "satisfies";
+>satisfiesAssertedArray[1] = "satisfies" : "satisfies"
+>satisfiesAssertedArray[1] : any
+>satisfiesAssertedArray : any[]
+>1 : 1
+>"satisfies" : "satisfies"
+
+local satisfiesAssertedArrayUse: string = satisfiesAssertedArray[1];
+>satisfiesAssertedArrayUse : string
+>satisfiesAssertedArray[1] : string
+>satisfiesAssertedArray : string[]
+>1 : 1
+
+local asInitializerArray;
+>asInitializerArray : any
+
+asInitializerArray, asInitializerArraySide = {} as {}, 0;
+>asInitializerArray, asInitializerArraySide = {} as {}, 0 : {}
+>asInitializerArray, asInitializerArraySide : any, number
+>asInitializerArray : any
+>asInitializerArraySide : number
+>{} as {}, 0 : {}, number
+>{} as {} : {}
+>{} : { 1: number; }
+>0 : 0
+
+asInitializerArray[1] = 9;
+>asInitializerArray[1] = 9 : 9
+>asInitializerArray[1] : any
+>asInitializerArray : {}
+>1 : 1
+>9 : 9
+
+local asInitializerArrayUse: {} = asInitializerArray;
+>asInitializerArrayUse : {}
+>asInitializerArray : {}
+
+AsInitializerRoot, asInitializerRootSide = {} as {}, 0;
+>AsInitializerRoot, asInitializerRootSide = {} as {}, 0 : {}
+>AsInitializerRoot, asInitializerRootSide : { value: string; }, number
+>AsInitializerRoot : { value: string; }
+>asInitializerRootSide : number
+>{} as {}, 0 : {}, number
+>{} as {} : {}
+>{} : { value: string; }
+>0 : 0
+
+AsInitializerRoot.value = "as";
+>AsInitializerRoot.value = "as" : "as"
+>AsInitializerRoot.value : string
+>AsInitializerRoot : { value: string; }
+>value : string
+>"as" : "as"
+
+local asInitializerRootUse: string = AsInitializerRoot.value;
+>asInitializerRootUse : string
+>AsInitializerRoot.value : string
+>AsInitializerRoot : { value: string; }
+>value : string
+
+AssertedContractRoot = {} as unknown as { foo: string };
+>AssertedContractRoot = {} as unknown as { foo: string } : { foo: string; }
+>AssertedContractRoot : { foo: string; } & { bar: number; }
+>{} as unknown as { foo: string } : { foo: string; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>foo : string
+
+AssertedContractRoot.bar = 1;
+>AssertedContractRoot.bar = 1 : 1
+>AssertedContractRoot.bar : number
+>AssertedContractRoot : { foo: string; } & { bar: number; }
+>bar : number
+>1 : 1
+
+local assertedContractFooUse: string = AssertedContractRoot.foo;
+>assertedContractFooUse : string
+>AssertedContractRoot.foo : string
+>AssertedContractRoot : { foo: string; } & { bar: number; }
+>foo : string
+
+local assertedContractBarUse: number = AssertedContractRoot.bar;
+>assertedContractBarUse : number
+>AssertedContractRoot.bar : number
+>AssertedContractRoot : { foo: string; } & { bar: number; }
+>bar : number
+
+local localAssertedContract;
+>localAssertedContract : any
+
+localAssertedContract = {} as unknown as { foo: string };
+>localAssertedContract = {} as unknown as { foo: string } : { foo: string; }
+>localAssertedContract : any
+>{} as unknown as { foo: string } : { foo: string; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>foo : string
+
+localAssertedContract.bar = 1;
+>localAssertedContract.bar = 1 : 1
+>localAssertedContract.bar : number
+>localAssertedContract : { foo: string; } & { bar: number; }
+>bar : number
+>1 : 1
+
+local localAssertedContractFooUse: string = localAssertedContract.foo;
+>localAssertedContractFooUse : string
+>localAssertedContract.foo : string
+>localAssertedContract : { foo: string; } & { bar: number; }
+>foo : string
+
+local localAssertedContractBarUse: number = localAssertedContract.bar;
+>localAssertedContractBarUse : number
+>localAssertedContract.bar : number
+>localAssertedContract : { foo: string; } & { bar: number; }
+>bar : number
+
+// A local composes its contract from its own initializer too, so the member it
+// accepts on the way in is the member it reads back.
+local initAssertedContract = {} as unknown as { foo: string };
+>initAssertedContract : { foo: string; } & { bar: number; }
+>{} as unknown as { foo: string } : { foo: string; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>foo : string
+
+initAssertedContract.bar = 1;
+>initAssertedContract.bar = 1 : 1
+>initAssertedContract.bar : number
+>initAssertedContract : { foo: string; } & { bar: number; }
+>bar : number
+>1 : 1
+
+local initAssertedContractFooUse: string = initAssertedContract.foo;
+>initAssertedContractFooUse : string
+>initAssertedContract.foo : string
+>initAssertedContract : { foo: string; } & { bar: number; }
+>foo : string
+
+local initAssertedContractBarUse: number = initAssertedContract.bar;
+>initAssertedContractBarUse : number
+>initAssertedContract.bar : number
+>initAssertedContract : { foo: string; } & { bar: number; }
+>bar : number
+
+// An annotation still seals: the type is the annotation, not the constructor.
+local annotatedContract: { foo: string } = {} as unknown as { foo: string };
+>annotatedContract : { foo: string; }
+>foo : string
+>{} as unknown as { foo: string } : { foo: string; }
+>{} as unknown : unknown
+>{} : {}
+>foo : string
+
+annotatedContract.bar = 1; -- error
+>annotatedContract.bar = 1 : 1
+>annotatedContract.bar : any
+>annotatedContract : { foo: string; }
+>bar : any
+>1 : 1
+
+ListContractRoot, listContractSide = {} as unknown as { foo: string }, 0;
+>ListContractRoot, listContractSide = {} as unknown as { foo: string }, 0 : { foo: string; }
+>ListContractRoot, listContractSide : { foo: string; } & { bar: number; }, number
+>ListContractRoot : { foo: string; } & { bar: number; }
+>listContractSide : number
+>{} as unknown as { foo: string }, 0 : { foo: string; }, number
+>{} as unknown as { foo: string } : { foo: string; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>foo : string
+>0 : 0
+
+ListContractRoot.bar = 1;
+>ListContractRoot.bar = 1 : 1
+>ListContractRoot.bar : number
+>ListContractRoot : { foo: string; } & { bar: number; }
+>bar : number
+>1 : 1
+
+local listContractFooUse: string = ListContractRoot.foo;
+>listContractFooUse : string
+>ListContractRoot.foo : string
+>ListContractRoot : { foo: string; } & { bar: number; }
+>foo : string
+
+local listContractBarUse: number = ListContractRoot.bar;
+>listContractBarUse : number
+>ListContractRoot.bar : number
+>ListContractRoot : { foo: string; } & { bar: number; }
+>bar : number
+
+IncompatibleContractRoot = {} as unknown as { bar: string };
+>IncompatibleContractRoot = {} as unknown as { bar: string } : { bar: string; }
+>IncompatibleContractRoot : { bar: string; }
+>{} as unknown as { bar: string } : { bar: string; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>bar : string
+
+IncompatibleContractRoot.bar = 1;
+>IncompatibleContractRoot.bar = 1 : 1
+>IncompatibleContractRoot.bar : string
+>IncompatibleContractRoot : { bar: string; }
+>bar : string
+>1 : 1
+
+ListIncompatibleContractRoot, listIncompatibleContractSide = {} as unknown as { bar: string }, 0;
+>ListIncompatibleContractRoot, listIncompatibleContractSide = {} as unknown as { bar: string }, 0 : { bar: string; }
+>ListIncompatibleContractRoot, listIncompatibleContractSide : { bar: string; }, number
+>ListIncompatibleContractRoot : { bar: string; }
+>listIncompatibleContractSide : number
+>{} as unknown as { bar: string }, 0 : { bar: string; }, number
+>{} as unknown as { bar: string } : { bar: string; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>bar : string
+>0 : 0
+
+ListIncompatibleContractRoot.bar = 1;
+>ListIncompatibleContractRoot.bar = 1 : 1
+>ListIncompatibleContractRoot.bar : string
+>ListIncompatibleContractRoot : { bar: string; }
+>bar : string
+>1 : 1
+
+CompatibleContractRoot = {} as unknown as { bar: number };
+>CompatibleContractRoot = {} as unknown as { bar: number } : { bar: number; }
+>CompatibleContractRoot : { bar: number; }
+>{} as unknown as { bar: number } : { bar: number; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>bar : number
+
+CompatibleContractRoot.bar = 1;
+>CompatibleContractRoot.bar = 1 : 1
+>CompatibleContractRoot.bar : number
+>CompatibleContractRoot : { bar: number; }
+>bar : number
+>1 : 1
+
+OverwrittenContractRoot = {} as unknown as { bar: string };
+>OverwrittenContractRoot = {} as unknown as { bar: string } : { bar: string; }
+>OverwrittenContractRoot : { bar: string; }
+>{} as unknown as { bar: string } : { bar: string; }
+>{} as unknown : unknown
+>{} : { bar: string; }
+>bar : string
+
+OverwrittenContractRoot.bar, OverwrittenContractRoot.bar = "ok", 1; -- error
+>OverwrittenContractRoot.bar, OverwrittenContractRoot.bar = "ok", 1 : string
+>OverwrittenContractRoot.bar, OverwrittenContractRoot.bar : string, string
+>OverwrittenContractRoot.bar : string
+>OverwrittenContractRoot : { bar: string; }
+>bar : string
+>OverwrittenContractRoot.bar : string
+>OverwrittenContractRoot : { bar: string; }
+>bar : string
+>"ok", 1 : string, number
+>"ok" : "ok"
+>1 : 1
+
+ReadonlyContractRoot = {} as unknown as { readonly bar: number };
+>ReadonlyContractRoot = {} as unknown as { readonly bar: number } : { readonly bar: number; }
+>ReadonlyContractRoot : { readonly bar: number; }
+>{} as unknown as { readonly bar: number } : { readonly bar: number; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>bar : number
+
+ReadonlyContractRoot.bar = 1;
+>ReadonlyContractRoot.bar = 1 : 1
+>ReadonlyContractRoot.bar : any
+>ReadonlyContractRoot : { readonly bar: number; }
+>bar : any
+>1 : 1
+
+IndexedContractRoot = {} as unknown as { [key: string]: string };
+>IndexedContractRoot = {} as unknown as { [key: string]: string } : { [key: string]: string; }
+>IndexedContractRoot : { [key: string]: string; }
+>{} as unknown as { [key: string]: string } : { [key: string]: string; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>key : string
+
+IndexedContractRoot.bar = 1;
+>IndexedContractRoot.bar = 1 : 1
+>IndexedContractRoot.bar : string
+>IndexedContractRoot : { [key: string]: string; }
+>bar : string
+>1 : 1
+
+UnionContractRoot = {} as unknown as ({ bar: string } | { foo: number });
+>UnionContractRoot = {} as unknown as ({ bar: string } | { foo: number }) : { bar: string; } | { foo: number; }
+>UnionContractRoot : { bar: string; } | { foo: number; }
+>{} as unknown as ({ bar: string } | { foo: number }) : { bar: string; } | { foo: number; }
+>{} as unknown : unknown
+>{} : { bar: number; }
+>bar : string
+>foo : number
+
+UnionContractRoot.bar = 1;
+>UnionContractRoot.bar = 1 : 1
+>UnionContractRoot.bar : any
+>UnionContractRoot : { bar: string; } | { foo: number; }
+>bar : any
+>1 : 1
+
+// Only the leftmost alias contributes an observable type or constructor arm.
+ImplicitWinner, ImplicitWinner = 1, "overwritten";
+>ImplicitWinner, ImplicitWinner = 1, "overwritten" : number
+>ImplicitWinner, ImplicitWinner : number, number
+>ImplicitWinner : number
+>ImplicitWinner : number
+>1, "overwritten" : number, string
+>1 : 1
+>"overwritten" : "overwritten"
+
+local implicitWinnerUse: number = ImplicitWinner;
+>implicitWinnerUse : number
+>ImplicitWinner : number
+
+AliasWinner, _G.AliasWinner = 2, "overwritten";
+>AliasWinner, _G.AliasWinner = 2, "overwritten" : number
+>AliasWinner, _G.AliasWinner : number, number
+>AliasWinner : number
+>_G.AliasWinner : number
+>_G : typeof _G
+>AliasWinner : number
+>2, "overwritten" : number, string
+>2 : 2
+>"overwritten" : "overwritten"
+
+local aliasWinnerUse: number = AliasWinner;
+>aliasWinnerUse : number
+>AliasWinner : number
+
+DuplicateRoot = {};
+>DuplicateRoot = {} : { value: number; }
+>DuplicateRoot : { value: number; }
+>{} : { value: number; }
+
+DuplicateRoot.value, DuplicateRoot["value"] = 3, "overwritten";
+>DuplicateRoot.value, DuplicateRoot["value"] = 3, "overwritten" : number
+>DuplicateRoot.value, DuplicateRoot["value"] : number, number
+>DuplicateRoot.value : number
+>DuplicateRoot : { value: number; }
+>value : number
+>DuplicateRoot["value"] : number
+>DuplicateRoot : { value: number; }
+>"value" : "value"
+>3, "overwritten" : number, string
+>3 : 3
+>"overwritten" : "overwritten"
+
+local duplicateMemberUse: number = DuplicateRoot.value;
+>duplicateMemberUse : number
+>DuplicateRoot.value : number
+>DuplicateRoot : { value: number; }
+>value : number
+
+// Stable direct local aliases share one access-target storage identity.
+local StableAliasRoot = {};
+>StableAliasRoot : { value: number; }
+>{} : { value: number; }
+
+local stableAlias = StableAliasRoot;
+>stableAlias : { value: number; }
+>StableAliasRoot : { value: number; }
+
+StableAliasRoot.value, stableAlias.value = 5, "overwritten";
+>StableAliasRoot.value, stableAlias.value = 5, "overwritten" : number
+>StableAliasRoot.value, stableAlias.value : number, number
+>StableAliasRoot.value : number
+>StableAliasRoot : { value: number; }
+>value : number
+>stableAlias.value : number
+>stableAlias : { value: number; }
+>value : number
+>5, "overwritten" : number, string
+>5 : 5
+>"overwritten" : "overwritten"
+
+local stableAliasRootUse: number = StableAliasRoot.value;
+>stableAliasRootUse : number
+>StableAliasRoot.value : number
+>StableAliasRoot : { value: number; }
+>value : number
+
+local stableAliasUse: number = stableAlias.value;
+>stableAliasUse : number
+>stableAlias.value : number
+>stableAlias : { value: number; }
+>value : number
+
+local StableAliasChainRoot = {};
+>StableAliasChainRoot : { value: number; }
+>{} : { value: number; }
+
+local stableAliasMiddle = StableAliasChainRoot;
+>stableAliasMiddle : { value: number; }
+>StableAliasChainRoot : { value: number; }
+
+local stableAliasTail = stableAliasMiddle;
+>stableAliasTail : { value: number; }
+>stableAliasMiddle : { value: number; }
+
+stableAliasTail.value, StableAliasChainRoot["value"] = 6, "overwritten";
+>stableAliasTail.value, StableAliasChainRoot["value"] = 6, "overwritten" : number
+>stableAliasTail.value, StableAliasChainRoot["value"] : number, number
+>stableAliasTail.value : number
+>stableAliasTail : { value: number; }
+>value : number
+>StableAliasChainRoot["value"] : number
+>StableAliasChainRoot : { value: number; }
+>"value" : "value"
+>6, "overwritten" : number, string
+>6 : 6
+>"overwritten" : "overwritten"
+
+local stableAliasChainRootUse: number = StableAliasChainRoot.value;
+>stableAliasChainRootUse : number
+>StableAliasChainRoot.value : number
+>StableAliasChainRoot : { value: number; }
+>value : number
+
+local stableAliasChainUse: number = stableAliasTail.value;
+>stableAliasChainUse : number
+>stableAliasTail.value : number
+>stableAliasTail : { value: number; }
+>value : number
+
+// A positional local initializer is still a direct stable alias when its
+// source expression is explicit rather than projected from a trailing call.
+local ListAliasRoot = {};
+>ListAliasRoot : { value: number; }
+>{} : { value: number; }
+
+local listAlias, listAliasSide = ListAliasRoot, 0;
+>listAlias : { value: number; }
+>listAliasSide : number
+>ListAliasRoot, 0 : { value: number; }, number
+>ListAliasRoot : { value: number; }
+>0 : 0
+
+ListAliasRoot.value, listAlias.value = 10, "overwritten";
+>ListAliasRoot.value, listAlias.value = 10, "overwritten" : number
+>ListAliasRoot.value, listAlias.value : number, number
+>ListAliasRoot.value : number
+>ListAliasRoot : { value: number; }
+>value : number
+>listAlias.value : number
+>listAlias : { value: number; }
+>value : number
+>10, "overwritten" : number, string
+>10 : 10
+>"overwritten" : "overwritten"
+
+local listAliasRootUse: number = ListAliasRoot.value;
+>listAliasRootUse : number
+>ListAliasRoot.value : number
+>ListAliasRoot : { value: number; }
+>value : number
+
+local listAliasUse: number = listAlias.value;
+>listAliasUse : number
+>listAlias.value : number
+>listAlias : { value: number; }
+>value : number
+
+// Stable aliases use the same identity in declaration inference and flow.
+local FlowAliasRoot = {};
+>FlowAliasRoot : { value: string | number; }
+>{} : { value: string | number; }
+
+local flowAlias = FlowAliasRoot;
+>flowAlias : { value: string | number; }
+>FlowAliasRoot : { value: string | number; }
+
+FlowAliasRoot.value = 1;
+>FlowAliasRoot.value = 1 : 1
+>FlowAliasRoot.value : string | number
+>FlowAliasRoot : { value: string | number; }
+>value : string | number
+>1 : 1
+
+flowAlias.value = "later";
+>flowAlias.value = "later" : "later"
+>flowAlias.value : string | number
+>flowAlias : { value: string | number; }
+>value : string | number
+>"later" : "later"
+
+local flowAliasStringUse: string = FlowAliasRoot.value;
+>flowAliasStringUse : string
+>FlowAliasRoot.value : string
+>FlowAliasRoot : { value: string | number; }
+>value : string
+
+local flowAliasNumberError: number = FlowAliasRoot.value;
+>flowAliasNumberError : number
+>FlowAliasRoot.value : string
+>FlowAliasRoot : { value: string | number; }
+>value : string
+
+// Default guards recognize the same member through a stable alias.
+local AliasGuardRoot = {};
+>AliasGuardRoot : { child: { value: boolean; }; }
+>{} : { child: { value: boolean; }; }
+
+local aliasGuardRoot = AliasGuardRoot;
+>aliasGuardRoot : { child: { value: boolean; }; }
+>AliasGuardRoot : { child: { value: boolean; }; }
+
+AliasGuardRoot.child, aliasGuardSide = aliasGuardRoot.child or {}, 0;
+>AliasGuardRoot.child, aliasGuardSide = aliasGuardRoot.child or {}, 0 : { value: boolean; }
+>AliasGuardRoot.child, aliasGuardSide : { value: boolean; }, number
+>AliasGuardRoot.child : { value: boolean; }
+>AliasGuardRoot : { child: { value: boolean; }; }
+>child : { value: boolean; }
+>aliasGuardSide : number
+>aliasGuardRoot.child or {}, 0 : { value: boolean; }, number
+>aliasGuardRoot.child or {} : { value: boolean; }
+>aliasGuardRoot.child : { value: boolean; }
+>aliasGuardRoot : { child: { value: boolean; }; }
+>child : { value: boolean; }
+>{} : { value: boolean; }
+>0 : 0
+
+AliasGuardRoot.child.value = true;
+>AliasGuardRoot.child.value = true : true
+>AliasGuardRoot.child.value : boolean
+>AliasGuardRoot.child : { value: boolean; }
+>AliasGuardRoot : { child: { value: boolean; }; }
+>child : { value: boolean; }
+>value : boolean
+>true : true
+
+local aliasGuardUse: boolean = aliasGuardRoot.child.value;
+>aliasGuardUse : boolean
+>aliasGuardRoot.child.value : true
+>aliasGuardRoot.child : { value: boolean; }
+>aliasGuardRoot : { child: { value: boolean; }; }
+>child : { value: boolean; }
+>value : true
+
+// A stable computed key participates in the same captured storage identity.
+local ComputedAliasRoot: { [key: string]: 1 | 2 } = {};
+>ComputedAliasRoot : { [key: string]: 1 | 2; }
+>key : string
+>{} : {}
+
+local computedAliasRoot = ComputedAliasRoot;
+>computedAliasRoot : { [key: string]: 1 | 2; }
+>ComputedAliasRoot : { [key: string]: 1 | 2; }
+
+local computedAliasKey = "value";
+>computedAliasKey : string
+>"value" : "value"
+
+ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] = 1, 2;
+>ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] = 1, 2 : 1
+>ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] : 1 | 2, 1 | 2
+>ComputedAliasRoot[computedAliasKey] : 1 | 2
+>ComputedAliasRoot : { [key: string]: 1 | 2; }
+>computedAliasKey : string
+>computedAliasRoot[computedAliasKey] : 1 | 2
+>computedAliasRoot : { [key: string]: 1 | 2; }
+>computedAliasKey : string
+>1, 2 : 1, 2
+>1 : 1
+>2 : 2
+
+local computedAliasWinner: 1 = computedAliasRoot[computedAliasKey];
+>computedAliasWinner : 1
+>computedAliasRoot[computedAliasKey] : 1
+>computedAliasRoot : { [key: string]: 1 | 2; }
+>computedAliasKey : string
+
+// A mutable key still has one captured value across a single LHS list.
+local computedMutableArray;
+>computedMutableArray : any
+
+computedMutableArray = {};
+>computedMutableArray = {} : {}
+>computedMutableArray : any
+>{} : {}
+
+local computedMutableAlias = computedMutableArray;
+>computedMutableAlias : any[]
+>computedMutableArray : any[]
+
+local computedMutableIndex: number = 1;
+>computedMutableIndex : number
+>1 : 1
+
+computedMutableIndex = 2;
+>computedMutableIndex = 2 : 2
+>computedMutableIndex : number
+>2 : 2
+
+computedMutableArray[computedMutableIndex], computedMutableAlias[computedMutableIndex] = 3, "overwritten";
+>computedMutableArray[computedMutableIndex], computedMutableAlias[computedMutableIndex] = 3, "overwritten" : number
+>computedMutableArray[computedMutableIndex], computedMutableAlias[computedMutableIndex] : any, any
+>computedMutableArray[computedMutableIndex] : any
+>computedMutableArray : any[]
+>computedMutableIndex : number
+>computedMutableAlias[computedMutableIndex] : any
+>computedMutableAlias : any[]
+>computedMutableIndex : number
+>3, "overwritten" : number, string
+>3 : 3
+>"overwritten" : "overwritten"
+
+local computedMutableUse: number[] = computedMutableArray;
+>computedMutableUse : number[]
+>computedMutableArray : number[]
+
+// Aliased values do not make their identifier storage slots aliases.
+local aliasSlotRoot: number = 0;
+>aliasSlotRoot : number
+>0 : 0
+
+local aliasSlot = aliasSlotRoot;
+>aliasSlot : number
+>aliasSlotRoot : number
+
+aliasSlotRoot, aliasSlot = 8, "kept";
+>aliasSlotRoot, aliasSlot = 8, "kept" : number
+>aliasSlotRoot, aliasSlot : number, number
+>aliasSlotRoot : number
+>aliasSlot : number
+>8, "kept" : number, string
+>8 : 8
+>"kept" : "kept"
+
+// Every store is checked against an existing declaration even when another
+// target wins the transaction's final value.
+local declaredDuplicate: { value: number } = { value = 0 };
+>declaredDuplicate : { value: number; }
+>value : number
+>{ value = 0 } : { value: number; }
+>value : number
+>0 : 0
+
+declaredDuplicate.value, declaredDuplicate.value = 9, "overwritten";
+>declaredDuplicate.value, declaredDuplicate.value = 9, "overwritten" : number
+>declaredDuplicate.value, declaredDuplicate.value : number, number
+>declaredDuplicate.value : number
+>declaredDuplicate : { value: number; }
+>value : number
+>declaredDuplicate.value : number
+>declaredDuplicate : { value: number; }
+>value : number
+>9, "overwritten" : number, string
+>9 : 9
+>"overwritten" : "overwritten"
+
+local declaredDuplicateUse: number = declaredDuplicate.value;
+>declaredDuplicateUse : number
+>declaredDuplicate.value : number
+>declaredDuplicate : { value: number; }
+>value : number
+
+// An overwritten element target does not contribute to evolving-array flow.
+local duplicateArray;
+>duplicateArray : any
+
+duplicateArray = {};
+>duplicateArray = {} : {}
+>duplicateArray : any
+>{} : {}
+
+local duplicateArrayIndex: number = 1;
+>duplicateArrayIndex : number
+>1 : 1
+
+duplicateArray[duplicateArrayIndex], duplicateArray[duplicateArrayIndex] = 1, "overwritten";
+>duplicateArray[duplicateArrayIndex], duplicateArray[duplicateArrayIndex] = 1, "overwritten" : number
+>duplicateArray[duplicateArrayIndex], duplicateArray[duplicateArrayIndex] : any, any
+>duplicateArray[duplicateArrayIndex] : any
+>duplicateArray : any[]
+>duplicateArrayIndex : number
+>duplicateArray[duplicateArrayIndex] : any
+>duplicateArray : any[]
+>duplicateArrayIndex : number
+>1, "overwritten" : number, string
+>1 : 1
+>"overwritten" : "overwritten"
+
+local duplicateArrayUse: number[] = duplicateArray;
+>duplicateArrayUse : number[]
+>duplicateArray : number[]
+
+local reassignedDuplicateArray;
+>reassignedDuplicateArray : any
+
+reassignedDuplicateArray = {};
+>reassignedDuplicateArray = {} : {}
+>reassignedDuplicateArray : any
+>{} : {}
+
+local reassignedDuplicateIndex: number = 1;
+>reassignedDuplicateIndex : number
+>1 : 1
+
+reassignedDuplicateIndex = 2;
+>reassignedDuplicateIndex = 2 : 2
+>reassignedDuplicateIndex : number
+>2 : 2
+
+reassignedDuplicateArray[reassignedDuplicateIndex], reassignedDuplicateArray[reassignedDuplicateIndex] = 3, "overwritten";
+>reassignedDuplicateArray[reassignedDuplicateIndex], reassignedDuplicateArray[reassignedDuplicateIndex] = 3, "overwritten" : number
+>reassignedDuplicateArray[reassignedDuplicateIndex], reassignedDuplicateArray[reassignedDuplicateIndex] : any, any
+>reassignedDuplicateArray[reassignedDuplicateIndex] : any
+>reassignedDuplicateArray : any[]
+>reassignedDuplicateIndex : number
+>reassignedDuplicateArray[reassignedDuplicateIndex] : any
+>reassignedDuplicateArray : any[]
+>reassignedDuplicateIndex : number
+>3, "overwritten" : number, string
+>3 : 3
+>"overwritten" : "overwritten"
+
+local reassignedDuplicateArrayUse: number[] = reassignedDuplicateArray;
+>reassignedDuplicateArrayUse : number[]
+>reassignedDuplicateArray : number[]
+
+local distinctArray;
+>distinctArray : any
+
+distinctArray = {};
+>distinctArray = {} : { 1: number; 2: string; }
+>distinctArray : any
+>{} : { 1: number; 2: string; }
+
+distinctArray[1], distinctArray[2] = 1, "kept";
+>distinctArray[1], distinctArray[2] = 1, "kept" : number
+>distinctArray[1], distinctArray[2] : any, any
+>distinctArray[1] : any
+>distinctArray : any[]
+>1 : 1
+>distinctArray[2] : any
+>distinctArray : any[]
+>2 : 2
+>1, "kept" : number, string
+>1 : 1
+>"kept" : "kept"
+
+local distinctArrayUse: (number | string)[] = distinctArray;
+>distinctArrayUse : (string | number)[]
+>distinctArray : (string | number)[]
+
+// Losing targets still undergo writable-reference validation.
+OptionalLoserRoot = {};
+>OptionalLoserRoot = {} : { value: number; }
+>OptionalLoserRoot : { value: number; }
+>{} : { value: number; }
+
+OptionalLoserRoot.value, OptionalLoserRoot?.value = 4, 5;
+>OptionalLoserRoot.value, OptionalLoserRoot?.value = 4, 5 : number
+>OptionalLoserRoot.value, OptionalLoserRoot?.value : number, number
+>OptionalLoserRoot.value : number
+>OptionalLoserRoot : { value: number; }
+>value : number
+>OptionalLoserRoot?.value : number
+>OptionalLoserRoot : { value: number; }
+>value : number
+>4, 5 : number, number
+>4 : 4
+>5 : 5
+
+ConstructorWinner, ConstructorWinner = {}, "overwritten";
+>ConstructorWinner, ConstructorWinner = {}, "overwritten" : { kept: boolean; }
+>ConstructorWinner, ConstructorWinner : { kept: boolean; }, { kept: boolean; }
+>ConstructorWinner : { kept: boolean; }
+>ConstructorWinner : { kept: boolean; }
+>{}, "overwritten" : { kept: boolean; }, string
+>{} : { kept: boolean; }
+>"overwritten" : "overwritten"
+
+ConstructorWinner.kept = true;
+>ConstructorWinner.kept = true : true
+>ConstructorWinner.kept : boolean
+>ConstructorWinner : { kept: boolean; }
+>kept : boolean
+>true : true
+
+local constructorWinnerUse: boolean = ConstructorWinner.kept;
+>constructorWinnerUse : boolean
+>ConstructorWinner.kept : true
+>ConstructorWinner : { kept: boolean; }
+>kept : true
+
+PackWinner, PackWinner = pair();
+>PackWinner, PackWinner = pair() : number
+>PackWinner, PackWinner : number, number
+>PackWinner : number
+>PackWinner : number
+>pair() : number
+>pair : () => (number, string)
+
+local packWinnerUse: number = PackWinner;
+>packWinnerUse : number
+>PackWinner : number
+
+// Separate transactions still contribute independently to inferred unions.
+TransactionUnion = 1;
+>TransactionUnion = 1 : 1
+>TransactionUnion : string | number
+>1 : 1
+
+TransactionUnion = "later";
+>TransactionUnion = "later" : "later"
+>TransactionUnion : string | number
+>"later" : "later"
+
+local transactionUnionUse: number | string = TransactionUnion;
+>transactionUnionUse : string | number
+>TransactionUnion : string
+
+// A declared uninitialized target is not an implicit augmentation.
+local DeclaredGuard: {};
+>DeclaredGuard : {}
+
+DeclaredGuard, FreshGuard = DeclaredGuard or {}, FreshGuard or {};
+>DeclaredGuard, FreshGuard = DeclaredGuard or {}, FreshGuard or {} : {}
+>DeclaredGuard, FreshGuard : {}, {}
+>DeclaredGuard : {}
+>FreshGuard : {}
+>DeclaredGuard or {}, FreshGuard or {} : {}, {}
+>DeclaredGuard or {} : {}
+>DeclaredGuard : {}
+>{} : {}
+>FreshGuard or {} : {}
+>FreshGuard : {}
+>{} : {}
+
+// A surplus guard has no positional target and remains an ordinary read.
+DiscardedGuard = {}, DiscardedGuard or {};
+>DiscardedGuard = {}, DiscardedGuard or {} : {}
+>DiscardedGuard : {}
+>{}, DiscardedGuard or {} : {}, {}
+>{} : {}
+>DiscardedGuard or {} : {}
+>DiscardedGuard : {}
+>{} : {}
+
+// Extra and missing values follow Lua's adjustment rules.
+local optional: string | nil = "";
+>optional : string | nil
+>"" : ""
+
+optional, count = "present";
+>optional, count = "present" : "present"
+>optional, count : string | nil, number
+>optional : string | nil
+>count : number
+>"present" : "present"
+
+// Each target is checked against its positional value.
+count, label = "wrong", 3;
+>count, label = "wrong", 3 : string
+>count, label : number, string
+>count : number
+>label : string
+>"wrong", 3 : string, number
+>"wrong" : "wrong"
+>3 : 3
+

@@ -61,3 +61,53 @@ forward(f2, 1, "x");
 >forward : Symbol(forward, Decl(tluaGenericPackBasics.tlua, 16, 33))
 >f2 : Symbol(f2, Decl(tluaGenericPackBasics.tlua, 5, 74))
 
+// Erased assertions refine only slot zero while a generic pack keeps its
+// possible zero-result arity and open tail.
+function projectFirst<...A>(f: () => (...A))
+>projectFirst : Symbol(projectFirst, Decl(tluaGenericPackBasics.tlua, 20, 20))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 24, 22))
+>f : Symbol(f, Decl(tluaGenericPackBasics.tlua, 24, 28))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 24, 22))
+
+    local first, second = f() as number;
+>first : Symbol(first, Decl(tluaGenericPackBasics.tlua, 25, 9))
+>second : Symbol(second, Decl(tluaGenericPackBasics.tlua, 25, 16))
+>f : Symbol(f, Decl(tluaGenericPackBasics.tlua, 24, 28))
+
+    local nestedFirst, nestedSecond = f() as unknown as number;
+>nestedFirst : Symbol(nestedFirst, Decl(tluaGenericPackBasics.tlua, 26, 9))
+>nestedSecond : Symbol(nestedSecond, Decl(tluaGenericPackBasics.tlua, 26, 22))
+>f : Symbol(f, Decl(tluaGenericPackBasics.tlua, 24, 28))
+
+end
+
+// A generic producer in a non-tail list position keeps the assertion's scalar
+// view even though Tail<A> cannot be represented independently.
+function projectNonTail<...A>(f: () => (...A))
+>projectNonTail : Symbol(projectNonTail, Decl(tluaGenericPackBasics.tlua, 27, 3))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 31, 24))
+>f : Symbol(f, Decl(tluaGenericPackBasics.tlua, 31, 30))
+>A : Symbol(A, Decl(tluaGenericPackBasics.tlua, 31, 24))
+
+    return f() as number, true;
+>f : Symbol(f, Decl(tluaGenericPackBasics.tlua, 31, 30))
+
+end
+
+declare function strings(): (string, string);
+>strings : Symbol(strings, Decl(tluaGenericPackBasics.tlua, 33, 3))
+
+local projectedFirst, projectedSuffix = projectNonTail(strings);
+>projectedFirst : Symbol(projectedFirst, Decl(tluaGenericPackBasics.tlua, 36, 5))
+>projectedSuffix : Symbol(projectedSuffix, Decl(tluaGenericPackBasics.tlua, 36, 21))
+>projectNonTail : Symbol(projectNonTail, Decl(tluaGenericPackBasics.tlua, 27, 3))
+>strings : Symbol(strings, Decl(tluaGenericPackBasics.tlua, 33, 3))
+
+local projectedFirstUse: number | nil = projectedFirst;
+>projectedFirstUse : Symbol(projectedFirstUse, Decl(tluaGenericPackBasics.tlua, 37, 5))
+>projectedFirst : Symbol(projectedFirst, Decl(tluaGenericPackBasics.tlua, 36, 5))
+
+local projectedSuffixUse: boolean = projectedSuffix;
+>projectedSuffixUse : Symbol(projectedSuffixUse, Decl(tluaGenericPackBasics.tlua, 38, 5))
+>projectedSuffix : Symbol(projectedSuffix, Decl(tluaGenericPackBasics.tlua, 36, 21))
+

@@ -49,6 +49,7 @@ class WithMembers {
 >s : any
 
   #p = 2;
+>#p = 2 : 2
 >#p : number
 >p : any
 >2 : 2

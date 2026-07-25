@@ -131,3 +131,43 @@ reverseCollision.member = 1;
 >reverseCollision : Symbol(reverseCollision, Decl(tluaTableAugmentation.tlua, 35, 5))
 >member : Symbol(member, Decl(tluaTableAugmentation.tlua, 35, 28), Decl(tluaTableAugmentation.tlua, 37, 3))
 
+// Lexically different paths that reach one constructor are grouped before any
+// member is attached, so source/map iteration order cannot pick the declaration.
+local nestedCollision = { root = {} };
+>nestedCollision : Symbol(nestedCollision, Decl(tluaTableAugmentation.tlua, 42, 5))
+>root : Symbol(root, Decl(tluaTableAugmentation.tlua, 42, 25))
+
+local nestedCollisionAlias = nestedCollision.root;
+>nestedCollisionAlias : Symbol(nestedCollisionAlias, Decl(tluaTableAugmentation.tlua, 43, 5))
+>nestedCollision.root : Symbol(root, Decl(tluaTableAugmentation.tlua, 42, 25))
+>nestedCollision : Symbol(nestedCollision, Decl(tluaTableAugmentation.tlua, 42, 5))
+>root : Symbol(root, Decl(tluaTableAugmentation.tlua, 42, 25))
+
+nestedCollisionAlias.member = 1;
+>nestedCollisionAlias.member : Symbol(member, Decl(tluaTableAugmentation.tlua, 43, 50), Decl(tluaTableAugmentation.tlua, 44, 32))
+>nestedCollisionAlias : Symbol(nestedCollisionAlias, Decl(tluaTableAugmentation.tlua, 43, 5))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 43, 50), Decl(tluaTableAugmentation.tlua, 44, 32))
+
+function nestedCollision.root.member(): void
+>nestedCollision.root : Symbol(root, Decl(tluaTableAugmentation.tlua, 42, 25))
+>nestedCollision : Symbol(nestedCollision, Decl(tluaTableAugmentation.tlua, 42, 5))
+>root : Symbol(root, Decl(tluaTableAugmentation.tlua, 42, 25))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 43, 50), Decl(tluaTableAugmentation.tlua, 44, 32))
+
+end
+
+// Multiple declaration-shaped bodies remain a duplicate declaration.
+local duplicateMethods = {};
+>duplicateMethods : Symbol(duplicateMethods, Decl(tluaTableAugmentation.tlua, 49, 5))
+
+function duplicateMethods.member(): void
+>duplicateMethods : Symbol(duplicateMethods, Decl(tluaTableAugmentation.tlua, 49, 5))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 49, 28), Decl(tluaTableAugmentation.tlua, 51, 3))
+
+end
+function duplicateMethods.member(): void
+>duplicateMethods : Symbol(duplicateMethods, Decl(tluaTableAugmentation.tlua, 49, 5))
+>member : Symbol(member, Decl(tluaTableAugmentation.tlua, 49, 28), Decl(tluaTableAugmentation.tlua, 51, 3))
+
+end
+

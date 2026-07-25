@@ -1,0 +1,159 @@
+//// [tests/cases/compiler/tluaPackWrapperArity.tlua] ////
+
+=== tluaPackWrapperArity.tlua ===
+declare function nothing(): void;
+>nothing : () => void
+
+// Parentheses turn a zero-result call into exactly one nil value.
+local parenthesized: nil = (nothing());
+>parenthesized : nil
+>(nothing()) : nil
+>nothing() : void
+>nothing : () => void
+
+local inferredParenthesized = (nothing());
+>inferredParenthesized : nil
+>(nothing()) : nil
+>nothing() : void
+>nothing : () => void
+
+local inferredParenthesizedUse: nil = inferredParenthesized;
+>inferredParenthesizedUse : nil
+>inferredParenthesized : nil
+
+local assertedParenthesized: nil = (nothing() as void);
+>assertedParenthesized : nil
+>(nothing() as void) : nil
+>nothing() as void : void
+>nothing() : void
+>nothing : () => void
+
+local assertedThroughNumber: nil = (nothing() as unknown as number);
+>assertedThroughNumber : nil
+>(nothing() as unknown as number) : nil
+>nothing() as unknown as number : number
+>nothing() as unknown : unknown
+>nothing() : void
+>nothing : () => void
+
+local inferredAssertedThroughNumber = (nothing() as unknown as number);
+>inferredAssertedThroughNumber : nil
+>(nothing() as unknown as number) : nil
+>nothing() as unknown as number : number
+>nothing() as unknown : unknown
+>nothing() : void
+>nothing : () => void
+
+local inferredAssertedThroughNumberUse: nil = inferredAssertedThroughNumber;
+>inferredAssertedThroughNumberUse : nil
+>inferredAssertedThroughNumber : nil
+
+function returnParenthesizedNothing()
+>returnParenthesizedNothing : () => nil
+
+    return (nothing());
+>(nothing()) : nil
+>nothing() : void
+>nothing : () => void
+
+end
+
+local returned: nil = returnParenthesizedNothing();
+>returned : nil
+>returnParenthesizedNothing() : nil
+>returnParenthesizedNothing : () => nil
+
+// An erased assertion refines the first result of a generic pack without
+// prefixing a new value or discarding the producer's remaining results.
+function projectFirst<...A>(f: () => (...A))
+>projectFirst : <...A>(f: () => (...A)) => ((number | nil)?, ...A[number])
+>f : () => (...A)
+
+    return f() as number;
+>f() as number : number
+>f() : A[number] | nil
+>f : () => (...A)
+
+end
+
+local projected = projectFirst(function()
+>projected : number | nil
+>projectFirst(function()    return "runtime";end) : number | nil
+>projectFirst : <...A>(f: () => (...A)) => ((number | nil)?, ...A[number])
+>function()    return "runtime";end : () => string
+
+    return "runtime";
+>"runtime" : "runtime"
+
+end);
+local projectedFirst: number | nil = projected;
+>projectedFirst : number | nil
+>projected : number | nil
+
+local first, second = projectFirst(function()
+>first : number | nil
+>second : string | boolean | nil
+>projectFirst(function()    return "runtime", true;end) : number | nil
+>projectFirst : <...A>(f: () => (...A)) => ((number | nil)?, ...A[number])
+>function()    return "runtime", true;end : () => (string, boolean)
+
+    return "runtime", true;
+>"runtime", true : string, true
+>"runtime" : "runtime"
+>true : true
+
+end);
+local firstUse: number | nil = first;
+>firstUse : number | nil
+>first : number | nil
+
+local secondUse: string | boolean | nil = second;
+>secondUse : string | boolean | nil
+>second : string | boolean | nil
+
+declare function acceptsProjected(first: number | nil, ...: any[]): void;
+>acceptsProjected : (first: number | nil, ...: any[]) => void
+>first : number | nil
+> : any[][]
+
+function forwardProjected<...A>(f: () => (...A))
+>forwardProjected : <...A>(f: () => (...A)) => void
+>f : () => (...A)
+
+    acceptsProjected(f() as number);
+>acceptsProjected(f() as number) : void
+>acceptsProjected : (first: number | nil, ...: any[]) => void
+>f() as number : number
+>f() : A[number] | nil
+>f : () => (...A)
+
+end
+
+// Parentheses collapse the asserted generic pack to one value, but its first
+// slot remains optional because the source pack may be empty.
+function parenthesizedProjectFirst<...A>(f: () => (...A))
+>parenthesizedProjectFirst : <...A>(f: () => (...A)) => number | nil
+>f : () => (...A)
+
+    return (f() as number);
+>(f() as number) : number | nil
+>f() as number : number
+>f() : A[number] | nil
+>f : () => (...A)
+
+end
+
+local parenthesizedProjected = parenthesizedProjectFirst(function(): void end);
+>parenthesizedProjected : number | nil
+>parenthesizedProjectFirst(function(): void end) : number | nil
+>parenthesizedProjectFirst : <...A>(f: () => (...A)) => number | nil
+>function(): void end : () => void
+
+local parenthesizedProjectedUse: number | nil = parenthesizedProjected;
+>parenthesizedProjectedUse : number | nil
+>parenthesizedProjected : number | nil
+
+local parenthesizedProjectedNilError: number = parenthesizedProjected;
+>parenthesizedProjectedNilError : number
+>parenthesizedProjected : number | nil
+

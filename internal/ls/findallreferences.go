@@ -957,8 +957,10 @@ func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
 	// !!!
 	// const commonjsSource = source && isBinaryExpression(source) ? source.left as unknown as Declaration : undefined;
 
-	return source != nil && core.Some(target.Declarations, func(decl *ast.Node) bool {
-		return decl == source
+	// Lua assignment declarations are their individual targets, while the
+	// reference source can be the target's identifier or access name.
+	return core.Some(target.Declarations, func(decl *ast.Node) bool {
+		return source != nil && decl == source || ast.GetNameOfDeclaration(decl) == node
 	})
 }
 

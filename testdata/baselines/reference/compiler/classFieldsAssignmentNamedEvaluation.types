@@ -9,6 +9,7 @@ x = class { static #foo = 1; };
 >x : any
 >class : any
 >static : any
+>#foo = 1 : 1
 >#foo : number
 >foo : any
 >1 : 1

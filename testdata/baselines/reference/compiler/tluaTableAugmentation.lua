@@ -41,6 +41,21 @@ function reverseCollision.member(): void
 end
 reverseCollision.member = 1;
 
+// Lexically different paths that reach one constructor are grouped before any
+// member is attached, so source/map iteration order cannot pick the declaration.
+local nestedCollision = { root = {} };
+local nestedCollisionAlias = nestedCollision.root;
+nestedCollisionAlias.member = 1;
+function nestedCollision.root.member(): void
+end
+
+// Multiple declaration-shaped bodies remain a duplicate declaration.
+local duplicateMethods = {};
+function duplicateMethods.member(): void
+end
+function duplicateMethods.member(): void
+end
+
 
 //// [tluaTableAugmentation.lua]
 local M = {};
@@ -74,3 +89,16 @@ local reverseCollision = {};
 function reverseCollision.member()
 end
 reverseCollision.member = 1;
+-- Lexically different paths that reach one constructor are grouped before any
+-- member is attached, so source/map iteration order cannot pick the declaration.
+local nestedCollision = { root = {} };
+local nestedCollisionAlias = nestedCollision.root;
+nestedCollisionAlias.member = 1;
+function nestedCollision.root.member()
+end
+-- Multiple declaration-shaped bodies remain a duplicate declaration.
+local duplicateMethods = {};
+function duplicateMethods.member()
+end
+function duplicateMethods.member()
+end

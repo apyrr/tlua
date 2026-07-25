@@ -10,7 +10,6 @@ local x;
 x = class;
 do
   static;
-  #foo;
-  1;
+  #foo = 1;
 end
 ;

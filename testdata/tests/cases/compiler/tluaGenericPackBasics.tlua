@@ -22,3 +22,21 @@ local single: number = apply(f0);
 // A pack parameter reused across the function and callback correlates the two.
 declare function forward<...A>(f: (...: A) => void, ...: A): void;
 forward(f2, 1, "x");
+
+// Erased assertions refine only slot zero while a generic pack keeps its
+// possible zero-result arity and open tail.
+function projectFirst<...A>(f: () => (...A))
+    local first, second = f() as number;
+    local nestedFirst, nestedSecond = f() as unknown as number;
+end
+
+// A generic producer in a non-tail list position keeps the assertion's scalar
+// view even though Tail<A> cannot be represented independently.
+function projectNonTail<...A>(f: () => (...A))
+    return f() as number, true;
+end
+
+declare function strings(): (string, string);
+local projectedFirst, projectedSuffix = projectNonTail(strings);
+local projectedFirstUse: number | nil = projectedFirst;
+local projectedSuffixUse: boolean = projectedSuffix;

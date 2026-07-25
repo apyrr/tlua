@@ -34,8 +34,8 @@ interface dup {}
 function _G.dup(): void end
 function _G.dup(): void end
 
-// Function syntax and ordinary assignment collide when they jointly declare
-// an otherwise missing global.
+// Function syntax supplies the member contract; ordinary Lua writes to the same
+// otherwise-missing global are checked against it.
 function _G.mixedGlobal(): void end
 _G.mixedGlobal = 1;
 
@@ -209,8 +209,8 @@ function _G.dup()
 end
 function _G.dup()
 end
--- Function syntax and ordinary assignment collide when they jointly declare
--- an otherwise missing global.
+-- Function syntax supplies the member contract; ordinary Lua writes to the same
+-- otherwise-missing global are checked against it.
 function _G.mixedGlobal()
 end
 _G.mixedGlobal = 1;

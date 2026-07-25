@@ -1,0 +1,44 @@
+//// [tests/cases/compiler/tluaAccessWriteCycle.tlua] ////
+
+=== a.tlua ===
+AccessCycle = {};
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+
+AccessCycle.a = {};
+>AccessCycle.a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+
+AccessCycle.b = {};
+>AccessCycle.b : Symbol(b, Decl(a.tlua, 1, 19), Decl(b.tlua, 0, 0))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>b : Symbol(b, Decl(a.tlua, 1, 19), Decl(b.tlua, 0, 0))
+
+AccessCycle.a = AccessCycle.b;
+>AccessCycle.a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+>AccessCycle.b : Symbol(b, Decl(a.tlua, 1, 19), Decl(b.tlua, 0, 0))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>b : Symbol(b, Decl(a.tlua, 1, 19), Decl(b.tlua, 0, 0))
+
+=== b.tlua ===
+AccessCycle.b = AccessCycle.a;
+>AccessCycle.b : Symbol(b, Decl(a.tlua, 1, 19), Decl(b.tlua, 0, 0))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>b : Symbol(b, Decl(a.tlua, 1, 19), Decl(b.tlua, 0, 0))
+>AccessCycle.a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+
+AccessCycle.a.value = 1;
+>AccessCycle.a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+
+local accessCycleValue = AccessCycle.a.value;
+>accessCycleValue : Symbol(accessCycleValue, Decl(b.tlua, 2, 5))
+>AccessCycle.a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+>AccessCycle : Symbol(AccessCycle, Decl(a.tlua, 0, 0))
+>a : Symbol(a, Decl(a.tlua, 0, 17), Decl(a.tlua, 2, 19))
+

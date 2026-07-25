@@ -1,0 +1,199 @@
+//// [tests/cases/compiler/tluaTableAugmentationAlias.tlua] ////
+
+=== tluaTableAugmentationAlias.tlua ===
+declare function condition(): boolean;
+>condition : Symbol(condition, Decl(tluaTableAugmentationAlias.tlua, 0, 0))
+
+declare function make(): {};
+>make : Symbol(make, Decl(tluaTableAugmentationAlias.tlua, 0, 38))
+
+// Augmentation is order-independent: a member declared anywhere in the program
+// belongs to every constructor its path can reach. A replacement that only may
+// execute therefore does not erase the member from either table.
+BranchRoot = { initial = true };
+>BranchRoot : Symbol(BranchRoot, Decl(tluaTableAugmentationAlias.tlua, 1, 28), Decl(tluaTableAugmentationAlias.tlua, 7, 19))
+>initial : Symbol(initial, Decl(tluaTableAugmentationAlias.tlua, 6, 14))
+
+if condition() then
+>condition : Symbol(condition, Decl(tluaTableAugmentationAlias.tlua, 0, 0))
+
+  BranchRoot = { replaced = true };
+>BranchRoot : Symbol(BranchRoot, Decl(tluaTableAugmentationAlias.tlua, 1, 28), Decl(tluaTableAugmentationAlias.tlua, 7, 19))
+>replaced : Symbol(replaced, Decl(tluaTableAugmentationAlias.tlua, 8, 16))
+
+end
+BranchRoot.value = 1;
+>BranchRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 9, 3))
+>BranchRoot : Symbol(BranchRoot, Decl(tluaTableAugmentationAlias.tlua, 1, 28), Decl(tluaTableAugmentationAlias.tlua, 7, 19))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 9, 3))
+
+local branchValue: number = BranchRoot.value;
+>branchValue : Symbol(branchValue, Decl(tluaTableAugmentationAlias.tlua, 11, 5))
+>BranchRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 9, 3))
+>BranchRoot : Symbol(BranchRoot, Decl(tluaTableAugmentationAlias.tlua, 1, 28), Decl(tluaTableAugmentationAlias.tlua, 7, 19))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 9, 3))
+
+LoopRoot = { initial = true };
+>LoopRoot : Symbol(LoopRoot, Decl(tluaTableAugmentationAlias.tlua, 11, 45), Decl(tluaTableAugmentationAlias.tlua, 14, 20))
+>initial : Symbol(initial, Decl(tluaTableAugmentationAlias.tlua, 13, 12))
+
+while condition() do
+>condition : Symbol(condition, Decl(tluaTableAugmentationAlias.tlua, 0, 0))
+
+  LoopRoot = { replaced = true };
+>LoopRoot : Symbol(LoopRoot, Decl(tluaTableAugmentationAlias.tlua, 11, 45), Decl(tluaTableAugmentationAlias.tlua, 14, 20))
+>replaced : Symbol(replaced, Decl(tluaTableAugmentationAlias.tlua, 15, 14))
+
+  break;
+end
+LoopRoot.value = "loop";
+>LoopRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 17, 3))
+>LoopRoot : Symbol(LoopRoot, Decl(tluaTableAugmentationAlias.tlua, 11, 45), Decl(tluaTableAugmentationAlias.tlua, 14, 20))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 17, 3))
+
+local loopValue: string = LoopRoot.value;
+>loopValue : Symbol(loopValue, Decl(tluaTableAugmentationAlias.tlua, 19, 5))
+>LoopRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 17, 3))
+>LoopRoot : Symbol(LoopRoot, Decl(tluaTableAugmentationAlias.tlua, 11, 45), Decl(tluaTableAugmentationAlias.tlua, 14, 20))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 17, 3))
+
+GotoRoot = { initial = true };
+>GotoRoot : Symbol(GotoRoot, Decl(tluaTableAugmentationAlias.tlua, 19, 41), Decl(tluaTableAugmentationAlias.tlua, 24, 3))
+>initial : Symbol(initial, Decl(tluaTableAugmentationAlias.tlua, 21, 12))
+
+if condition() then
+>condition : Symbol(condition, Decl(tluaTableAugmentationAlias.tlua, 0, 0))
+
+  goto afterReplacement;
+end
+GotoRoot = { replaced = true };
+>GotoRoot : Symbol(GotoRoot, Decl(tluaTableAugmentationAlias.tlua, 19, 41), Decl(tluaTableAugmentationAlias.tlua, 24, 3))
+>replaced : Symbol(replaced, Decl(tluaTableAugmentationAlias.tlua, 25, 12))
+
+::afterReplacement::
+GotoRoot.value = true;
+>GotoRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 26, 20))
+>GotoRoot : Symbol(GotoRoot, Decl(tluaTableAugmentationAlias.tlua, 19, 41), Decl(tluaTableAugmentationAlias.tlua, 24, 3))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 26, 20))
+
+local gotoValue: boolean = GotoRoot.value;
+>gotoValue : Symbol(gotoValue, Decl(tluaTableAugmentationAlias.tlua, 28, 5))
+>GotoRoot.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 26, 20))
+>GotoRoot : Symbol(GotoRoot, Decl(tluaTableAugmentationAlias.tlua, 19, 41), Decl(tluaTableAugmentationAlias.tlua, 24, 3))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 26, 20))
+
+// A stable local alias names the same constructor, so a write through either
+// spelling declares the member on one table.
+local aliasRoot = {};
+>aliasRoot : Symbol(aliasRoot, Decl(tluaTableAugmentationAlias.tlua, 32, 5))
+
+local alias = aliasRoot;
+>alias : Symbol(alias, Decl(tluaTableAugmentationAlias.tlua, 33, 5))
+>aliasRoot : Symbol(aliasRoot, Decl(tluaTableAugmentationAlias.tlua, 32, 5))
+
+alias.member = 1;
+>alias.member : Symbol(member, Decl(tluaTableAugmentationAlias.tlua, 33, 24))
+>alias : Symbol(alias, Decl(tluaTableAugmentationAlias.tlua, 33, 5))
+>member : Symbol(member, Decl(tluaTableAugmentationAlias.tlua, 33, 24))
+
+local aliasMember: number = aliasRoot.member;
+>aliasMember : Symbol(aliasMember, Decl(tluaTableAugmentationAlias.tlua, 35, 5))
+>aliasRoot.member : Symbol(member, Decl(tluaTableAugmentationAlias.tlua, 33, 24))
+>aliasRoot : Symbol(aliasRoot, Decl(tluaTableAugmentationAlias.tlua, 32, 5))
+>member : Symbol(member, Decl(tluaTableAugmentationAlias.tlua, 33, 24))
+
+// Rebinding a local ends its aliasing: the write below must not leak `leaked`
+// onto sealedRoot's constructor.
+local sealedRoot = {};
+>sealedRoot : Symbol(sealedRoot, Decl(tluaTableAugmentationAlias.tlua, 39, 5))
+
+local rebound = sealedRoot;
+>rebound : Symbol(rebound, Decl(tluaTableAugmentationAlias.tlua, 40, 5))
+>sealedRoot : Symbol(sealedRoot, Decl(tluaTableAugmentationAlias.tlua, 39, 5))
+
+rebound = 0;
+>rebound : Symbol(rebound, Decl(tluaTableAugmentationAlias.tlua, 40, 5))
+
+rebound.leaked = true; -- error
+>rebound : Symbol(rebound, Decl(tluaTableAugmentationAlias.tlua, 40, 5))
+
+local sealedRootUse: {} = sealedRoot;
+>sealedRootUse : Symbol(sealedRootUse, Decl(tluaTableAugmentationAlias.tlua, 43, 5))
+>sealedRoot : Symbol(sealedRoot, Decl(tluaTableAugmentationAlias.tlua, 39, 5))
+
+// A nested function sees the enclosing constructor and can augment it.
+NestedRoot = {};
+>NestedRoot : Symbol(NestedRoot, Decl(tluaTableAugmentationAlias.tlua, 43, 37))
+
+local function addNested()
+>addNested : Symbol(addNested, Decl(tluaTableAugmentationAlias.tlua, 46, 16))
+
+  NestedRoot.nested = "inner";
+>NestedRoot.nested : Symbol(nested, Decl(tluaTableAugmentationAlias.tlua, 47, 26))
+>NestedRoot : Symbol(NestedRoot, Decl(tluaTableAugmentationAlias.tlua, 43, 37))
+>nested : Symbol(nested, Decl(tluaTableAugmentationAlias.tlua, 47, 26))
+
+end
+local nestedUse: string = NestedRoot.nested;
+>nestedUse : Symbol(nestedUse, Decl(tluaTableAugmentationAlias.tlua, 50, 5))
+>NestedRoot.nested : Symbol(nested, Decl(tluaTableAugmentationAlias.tlua, 47, 26))
+>NestedRoot : Symbol(NestedRoot, Decl(tluaTableAugmentationAlias.tlua, 43, 37))
+>nested : Symbol(nested, Decl(tluaTableAugmentationAlias.tlua, 47, 26))
+
+// An annotation seals the table.
+local annotated: { x: number } = { x = 1 };
+>annotated : Symbol(annotated, Decl(tluaTableAugmentationAlias.tlua, 53, 5))
+>x : Symbol(x, Decl(tluaTableAugmentationAlias.tlua, 53, 18))
+>x : Symbol(x, Decl(tluaTableAugmentationAlias.tlua, 53, 34))
+
+annotated.y = 2; -- error
+>annotated : Symbol(annotated, Decl(tluaTableAugmentationAlias.tlua, 53, 5))
+
+// A non-constructor initializer seals it too, in any file order.
+local fromCall = make();
+>fromCall : Symbol(fromCall, Decl(tluaTableAugmentationAlias.tlua, 57, 5))
+>make : Symbol(make, Decl(tluaTableAugmentationAlias.tlua, 0, 38))
+
+fromCall.z = 3; -- error
+>fromCall : Symbol(fromCall, Decl(tluaTableAugmentationAlias.tlua, 57, 5))
+
+// A local rebound to another constructor holds both, so a member declared
+// through it belongs to every table it can name. Only a non-constructor store
+// seals, which is what separates this from `rebound` above.
+local reassigned = {};
+>reassigned : Symbol(reassigned, Decl(tluaTableAugmentationAlias.tlua, 63, 5))
+
+reassigned = {};
+>reassigned : Symbol(reassigned, Decl(tluaTableAugmentationAlias.tlua, 63, 5))
+
+reassigned.value = 1;
+>reassigned.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 64, 16))
+>reassigned : Symbol(reassigned, Decl(tluaTableAugmentationAlias.tlua, 63, 5))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 64, 16))
+
+local reassignedUse: number = reassigned.value;
+>reassignedUse : Symbol(reassignedUse, Decl(tluaTableAugmentationAlias.tlua, 66, 5))
+>reassigned.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 64, 16))
+>reassigned : Symbol(reassigned, Decl(tluaTableAugmentationAlias.tlua, 63, 5))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 64, 16))
+
+// The same holds through a target list, where the store shares its statement
+// with an unrelated target.
+local listReassigned = {};
+>listReassigned : Symbol(listReassigned, Decl(tluaTableAugmentationAlias.tlua, 70, 5))
+
+listReassigned, listSide = {}, 0;
+>listReassigned : Symbol(listReassigned, Decl(tluaTableAugmentationAlias.tlua, 70, 5))
+>listSide : Symbol(listSide, Decl(tluaTableAugmentationAlias.tlua, 71, 15))
+
+listReassigned.value = "list";
+>listReassigned.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 71, 33))
+>listReassigned : Symbol(listReassigned, Decl(tluaTableAugmentationAlias.tlua, 70, 5))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 71, 33))
+
+local listReassignedUse: string = listReassigned.value;
+>listReassignedUse : Symbol(listReassignedUse, Decl(tluaTableAugmentationAlias.tlua, 73, 5))
+>listReassigned.value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 71, 33))
+>listReassigned : Symbol(listReassigned, Decl(tluaTableAugmentationAlias.tlua, 70, 5))
+>value : Symbol(value, Decl(tluaTableAugmentationAlias.tlua, 71, 33))
+

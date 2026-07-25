@@ -19,8 +19,7 @@ reads.tlua(76,11): error TLUA2322: Type 'nil' is not assignable to type 'boolean
 writes.tlua(13,13): error TLUA2339: Property 'existingFunction' does not exist on type 'typeof _G'.
 writes.tlua(19,13): error TLUA2300: Duplicate identifier 'dup'.
 writes.tlua(20,13): error TLUA2300: Duplicate identifier 'dup'.
-writes.tlua(24,13): error TLUA2300: Duplicate identifier 'mixedGlobal'.
-writes.tlua(25,4): error TLUA2300: Duplicate identifier 'mixedGlobal'.
+writes.tlua(25,1): error TLUA2322: Type 'number' is not assignable to type '() => void'.
 writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assigned.
 
 
@@ -42,7 +41,7 @@ writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assi
         }
     }
     
-==== writes.tlua (6 errors) ====
+==== writes.tlua (5 errors) ====
     _G.fromDot = 1;
     _G["fromElement"] = "text";
     function _G.fromFunction(x: number): number
@@ -72,16 +71,12 @@ writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assi
 !!! error TLUA2300: Duplicate identifier 'dup'.
 !!! related TLUA6203 writes.tlua:19:13: 'dup' was also declared here.
     
-    // Function syntax and ordinary assignment collide when they jointly declare
-    // an otherwise missing global.
+    // Function syntax supplies the member contract; ordinary Lua writes to the same
+    // otherwise-missing global are checked against it.
     function _G.mixedGlobal(): void end
-                ~~~~~~~~~~~
-!!! error TLUA2300: Duplicate identifier 'mixedGlobal'.
-!!! related TLUA6203 writes.tlua:25:4: 'mixedGlobal' was also declared here.
     _G.mixedGlobal = 1;
-       ~~~~~~~~~~~
-!!! error TLUA2300: Duplicate identifier 'mixedGlobal'.
-!!! related TLUA6203 writes.tlua:24:13: 'mixedGlobal' was also declared here.
+    ~~~~~~~~~~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type '() => void'.
     
     bareTable = _G.bareTable or {};
     _G.bareTable.fromQualified = 1;

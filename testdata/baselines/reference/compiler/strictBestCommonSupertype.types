@@ -5,6 +5,7 @@
 
 class Store<T = table> {
 >class : any
+>Store<T = table> {    select<K>(mapFn: (state: T) => K) {};} : boolean
 >Store<T : boolean
 >Store : any
 >T : any

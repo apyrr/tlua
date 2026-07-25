@@ -879,6 +879,10 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		return jsdoc
 	}
 	switch {
+	// A Lua assignment target is its own declaration; its documentation lives on
+	// the expression statement that owns the assignment.
+	case ast.GetNameOfLuaAssignmentTarget(node) != nil:
+		return getJSDocOrTag(c, ast.GetAssignmentTarget(node).Parent)
 	case ast.IsParameterDeclaration(node):
 		name := node.Name()
 		if ast.IsBindingPattern(name) {

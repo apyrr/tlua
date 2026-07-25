@@ -1476,11 +1476,6 @@ func (p *Printer) emitInitializer(node *ast.Expression, equalTokenPos int, conte
 	p.writeSpace()
 	p.emitToken(ast.KindEqualsToken, equalTokenPos, WriteKindOperator, contextNode)
 	p.writeSpace()
-	// A Lua value list prints bare — its commas separate values.
-	if node.Kind == ast.KindExpressionList {
-		p.emitExpression(node, ast.OperatorPrecedenceLowest)
-		return
-	}
 	p.emitExpression(node, ast.OperatorPrecedenceDisallowComma)
 }
 
@@ -3058,7 +3053,10 @@ func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.Opera
 }
 
 func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPrecedence) {
-	parens := ast.GetExpressionPrecedence(ast.SkipPartiallyEmittedExpressions(node)) < precedence
+	// A Lua expression list is grammar, not the comma operator: its commas
+	// separate values, so it always prints bare regardless of context.
+	parens := node.Kind != ast.KindExpressionList &&
+		ast.GetExpressionPrecedence(ast.SkipPartiallyEmittedExpressions(node)) < precedence
 	if parens {
 		p.writePunctuation("(")
 	}

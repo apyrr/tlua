@@ -38,8 +38,8 @@ tluaNoClass.tlua(18,17): error TLUA1005: ';' expected.
 tluaNoClass.tlua(19,3): error TLUA1128: Declaration or statement expected.
 tluaNoClass.tlua(19,10): error TLUA2304: Cannot find name 's'.
 tluaNoClass.tlua(19,14): error TLUA1005: ';' expected.
+tluaNoClass.tlua(20,3): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 tluaNoClass.tlua(20,4): error TLUA2304: Cannot find name 'p'.
-tluaNoClass.tlua(20,6): error TLUA1005: ';' expected.
 tluaNoClass.tlua(21,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoClass.tlua(21,3): error TLUA2304: Cannot find name 'get'.
 tluaNoClass.tlua(21,7): error TLUA2304: Cannot find name 'a'.
@@ -147,10 +147,10 @@ tluaNoClass.tlua(21,11): error TLUA1005: ';' expected.
                  ~
 !!! error TLUA1005: ';' expected.
       #p = 2;
+      ~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
        ~
 !!! error TLUA2304: Cannot find name 'p'.
-         ~
-!!! error TLUA1005: ';' expected.
       get a() {
       ~~~
 !!! error TLUA1434: Unexpected keyword or identifier.

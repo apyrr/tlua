@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/tluaAccessWriteCycle.tlua] ////
+
+=== a.tlua ===
+AccessCycle = {};
+>AccessCycle = {} : { a: any; b: any; }
+>AccessCycle : { a: any; b: any; }
+>{} : { a: any; b: any; }
+
+AccessCycle.a = {};
+>AccessCycle.a = {} : {}
+>AccessCycle.a : any
+>AccessCycle : { a: any; b: any; }
+>a : any
+>{} : {}
+
+AccessCycle.b = {};
+>AccessCycle.b = {} : {}
+>AccessCycle.b : any
+>AccessCycle : { a: any; b: any; }
+>b : any
+>{} : {}
+
+AccessCycle.a = AccessCycle.b;
+>AccessCycle.a = AccessCycle.b : any
+>AccessCycle.a : any
+>AccessCycle : { a: any; b: any; }
+>a : any
+>AccessCycle.b : any
+>AccessCycle : { a: any; b: any; }
+>b : any
+
+=== b.tlua ===
+AccessCycle.b = AccessCycle.a;
+>AccessCycle.b = AccessCycle.a : any
+>AccessCycle.b : any
+>AccessCycle : { a: any; b: any; }
+>b : any
+>AccessCycle.a : any
+>AccessCycle : { a: any; b: any; }
+>a : any
+
+AccessCycle.a.value = 1;
+>AccessCycle.a.value = 1 : 1
+>AccessCycle.a.value : any
+>AccessCycle.a : any
+>AccessCycle : { a: any; b: any; }
+>a : any
+>value : any
+>1 : 1
+
+local accessCycleValue = AccessCycle.a.value;
+>accessCycleValue : any
+>AccessCycle.a.value : any
+>AccessCycle.a : any
+>AccessCycle : { a: any; b: any; }
+>a : any
+>value : any
+

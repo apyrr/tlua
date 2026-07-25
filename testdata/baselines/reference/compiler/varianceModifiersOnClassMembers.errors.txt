@@ -4,8 +4,8 @@ varianceModifiersOnClassMembers.tlua(3,7): error TLUA1434: Unexpected keyword or
 varianceModifiersOnClassMembers.tlua(3,7): error TLUA2304: Cannot find name 'C'.
 varianceModifiersOnClassMembers.tlua(3,9): error TLUA1128: Declaration or statement expected.
 varianceModifiersOnClassMembers.tlua(4,3): error TLUA1109: Expression expected.
+varianceModifiersOnClassMembers.tlua(4,3): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 varianceModifiersOnClassMembers.tlua(4,6): error TLUA2304: Cannot find name 'x'.
-varianceModifiersOnClassMembers.tlua(4,8): error TLUA1005: ';' expected.
 varianceModifiersOnClassMembers.tlua(5,3): error TLUA1434: Unexpected keyword or identifier.
 varianceModifiersOnClassMembers.tlua(5,3): error TLUA2304: Cannot find name 'out'.
 varianceModifiersOnClassMembers.tlua(5,7): error TLUA2304: Cannot find name 'y'.
@@ -29,10 +29,10 @@ varianceModifiersOnClassMembers.tlua(10,3): error TLUA2584: Cannot find name 'co
       in x = 1;
       ~~
 !!! error TLUA1109: Expression expected.
+      ~~~~
+!!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
          ~
 !!! error TLUA2304: Cannot find name 'x'.
-           ~
-!!! error TLUA1005: ';' expected.
       out y = 2;
       ~~~
 !!! error TLUA1434: Unexpected keyword or identifier.

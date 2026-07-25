@@ -432,8 +432,8 @@ function varargOperands(...: number): void
 >0 : 0
 
   local cast = (... as number);
->cast : number
->(... as number) : number
+>cast : number | nil
+>(... as number) : number | nil
 >... as number : number
 >... : number | nil
 

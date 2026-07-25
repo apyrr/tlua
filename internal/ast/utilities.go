@@ -258,9 +258,9 @@ func IsBindingPattern(node *Node) bool {
 }
 
 // A node is an assignment target if it is on the left-hand side of an '=' token
-// (through parentheses / non-null wrappers). Destructuring assignment is
-// deleted, so object/array-literal member targets ('{ p: a } = xxx') no longer
-// exist.
+// (directly or through a Lua assignment target list).
+// Destructuring assignment is deleted, so object/array-literal member targets
+// ('{ p: a } = xxx') no longer exist.
 func IsAssignmentTarget(node *Node) bool {
 	return GetAssignmentTarget(node) != nil
 }
@@ -268,30 +268,37 @@ func IsAssignmentTarget(node *Node) bool {
 // GetAssignmentTarget returns the BinaryExpression or ForOfStatement that
 // references the given node as an assignment target, or nil. Destructuring
 // assignment is deleted, so a node inside an object/array literal is never a
-// target through it -- only references (through parens/non-null) are.
+// target through it -- only direct elements of a Lua assignment target list
+// are.
 func GetAssignmentTarget(node *Node) *Node {
-	for {
-		parent := node.Parent
-		switch parent.Kind {
-		case KindBinaryExpression:
-			if IsAssignmentOperator(parent.AsBinaryExpression().OperatorToken.Kind) && parent.AsBinaryExpression().Left == node {
-				return parent
+	// Cheap lvalue test first. The IsExpression half lets a non-expression --
+	// a ForOfStatement's VariableDeclarationList initializer -- reach the arms below.
+	if GetLuaAssignmentTargetReference(node) == nil && IsExpression(node) {
+		return nil
+	}
+	parent := node.Parent
+	if parent == nil {
+		return nil
+	}
+	switch parent.Kind {
+	case KindBinaryExpression:
+		if IsAssignmentOperator(parent.AsBinaryExpression().OperatorToken.Kind) && parent.AsBinaryExpression().Left == node {
+			return parent
+		}
+	case KindExpressionList:
+		assignment := parent.Parent
+		if assignment != nil && assignment.Kind == KindBinaryExpression {
+			binary := assignment.AsBinaryExpression()
+			if binary.OperatorToken.Kind == KindEqualsToken && binary.Left == parent {
+				return assignment
 			}
-			return nil
-		case KindForOfStatement:
-			if parent.Initializer() == node {
-				return parent
-			}
-			return nil
-		case KindParenthesizedExpression, KindNonNullExpression:
-			// No pattern walk-ups: destructuring assignment is deleted, so a
-			// node inside an object/array literal is never an assignment
-			// target through it.
-			node = parent
-		default:
-			return nil
+		}
+	case KindForOfStatement:
+		if parent.Initializer() == node {
+			return parent
 		}
 	}
+	return nil
 }
 
 func IsLogicalBinaryOperator(token Kind) bool {
@@ -755,13 +762,12 @@ func IsLuaTableField(node *Node) bool {
 }
 
 // IsLuaKeyedShorthand reports whether a ShorthandPropertyAssignment is a Lua
-// keyed table field `{ x = 1 }` — a shorthand with an initializer outside a
-// destructuring target. Its name is a property key, not a value reference;
-// inside a destructuring target the same shape is a TS target-with-default.
+// keyed table field `{ x = 1 }`: a shorthand carrying an initializer. Its name
+// is a property key, not a value reference. Destructuring assignment is
+// deleted, so there is no longer a target-with-default shape to exclude.
 func IsLuaKeyedShorthand(node *Node) bool {
 	return node.Kind == KindShorthandPropertyAssignment &&
-		node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil &&
-		!IsAssignmentTarget(node.Parent)
+		node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil
 }
 
 // IsLuaGenericFor reports whether a ForOfStatement is a Lua generic for
@@ -910,6 +916,27 @@ func SkipOuterExpressions(node *Expression, kinds OuterExpressionKinds) *Express
 // Skips past the parentheses of an expression
 func SkipParentheses(node *Expression) *Expression {
 	return SkipOuterExpressions(node, OEKParentheses)
+}
+
+// GetLuaAssignmentTargetReference returns target itself when it is a valid Lua
+// lvalue -- an identifier or a member access -- and nil otherwise. Postfix
+// assertions and whole-target parentheses are expressions, not lvalues.
+func GetLuaAssignmentTargetReference(target *Expression) *Expression {
+	if IsIdentifier(target) || IsAccessExpression(target) {
+		return target
+	}
+	return nil
+}
+
+// IsLuaBareFunctionWriteTarget reports whether name is the identifier written
+// by Lua's declaration-shaped `function name() ... end` form. `local function`
+// creates a new binding and dotted functions have a separate receiver/member
+// shape, so neither is a write to an existing one.
+func IsLuaBareFunctionWriteTarget(name *Node) bool {
+	declaration := name.Parent
+	return declaration != nil && IsFunctionDeclaration(declaration) && declaration.Name() == name &&
+		!IsInJSFile(declaration) && !IsLuaLocal(declaration) &&
+		declaration.AsFunctionDeclaration().Target == nil && declaration.Body() != nil
 }
 
 func SkipTypeParentheses(node *Node) *Node {
@@ -1447,6 +1474,12 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	// !!!
 	switch declaration.Kind {
+	case KindIdentifier, KindPropertyAccessExpression, KindElementAccessExpression:
+		// Only a Lua assignment target names a declaration this way. Anything else
+		// reaching here (a JS expando access, say) keeps its ordinary name node.
+		if name := GetNameOfLuaAssignmentTarget(declaration); name != nil {
+			return name
+		}
 	case KindBinaryExpression, KindCallExpression:
 		switch GetAssignmentDeclarationKind(declaration) {
 		case JSDeclarationKindProperty, JSDeclarationKindThisProperty, JSDeclarationKindExportsProperty:
@@ -1467,6 +1500,25 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 		return nil
 	}
 	return declaration.Name()
+}
+
+// GetNameOfLuaAssignmentTarget returns the declaration name carried by a Lua
+// assignment target. Assignment-list symbols use each target as its distinct
+// declaration and keep positional initializer data outside the AST symbol.
+func GetNameOfLuaAssignmentTarget(target *Node) *Node {
+	reference := GetLuaAssignmentTargetReference(target)
+	if reference == nil {
+		return nil
+	}
+	assignment := GetAssignmentTarget(reference)
+	if assignment == nil || !IsBinaryExpression(assignment) || IsInJSFile(assignment) ||
+		assignment.AsBinaryExpression().OperatorToken.Kind != KindEqualsToken {
+		return nil
+	}
+	if IsIdentifier(reference) {
+		return reference
+	}
+	return GetElementOrPropertyAccessName(reference)
 }
 
 func GetAssignedName(node *Node) *Node {
@@ -3808,6 +3860,13 @@ func GetHostSignatureFromJSDoc(node *Node) *Node {
 // Keep these hosts aligned with JSDoc parameter reparsing so unmatched @param diagnostics use the same attachment rules.
 // Keep in sync with getNextJSDocCommentLocation in the API's src/ast/jsdoc.ts
 func GetNextJSDocCommentLocation(node *Node) *Node {
+	// Lua augmentation symbols use the individual target as their declaration
+	// anchor. Climb through the shared assignment to the expression statement
+	// that owns its leading documentation. A generic-for's declaration list is
+	// also an assignment target and must not pick up the loop's own comment.
+	if assignment := GetAssignmentTarget(node); assignment != nil && IsBinaryExpression(assignment) {
+		return assignment
+	}
 	if parent := node.Parent; parent != nil {
 		switch parent.Kind {
 		case KindPropertyAssignment, KindExportAssignment, KindVariableDeclaration,

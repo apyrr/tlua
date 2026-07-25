@@ -14,10 +14,8 @@ class Foo {
 class;
 Foo;
 do
-  #x;
-  3;
-  #y;
-  nil;
+  #x = 3;
+  #y = nil;
   func();
   do
     console.log(#y ("->>" .. tostring()), #x);

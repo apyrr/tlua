@@ -585,6 +585,13 @@ type Checker struct {
 	errorTypes                             map[CacheHashKey]*Type
 	moduleSymbols                          map[*ast.Node]*ast.Symbol
 	luaGlobalsSymbol                       *ast.Symbol
+	luaAssignmentAugmentations             map[*ast.Symbol][]luaAugmentation
+	luaAugmentationTargets                 map[*ast.Node]*ast.Symbol
+	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
+	luaAugmentationMemberArms              map[*ast.Symbol][]*ast.Symbol
+	luaConstructorResolver                 *luaConstructorResolver
+	luaReportedMethodCollisions            collections.Set[*ast.Node]
+	luaNumericContractTargets              collections.Set[*ast.Node]
 	// luaCanonicalNames maps a resolved module file to its canonical require()
 	// name (one name per module, because package.loaded keys by the literal
 	// string); derived from the program's resolution table, see
@@ -883,6 +890,10 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.errorTypes = make(map[CacheHashKey]*Type)
 	c.moduleSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.luaGlobalsSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "_G", ast.CheckFlagsReadonly)
+	c.luaAssignmentAugmentations = make(map[*ast.Symbol][]luaAugmentation)
+	c.luaStableAccessKeys = make(map[*ast.Node]luaStableAccessKeyResult)
+	c.luaAugmentationTargets = make(map[*ast.Node]*ast.Symbol)
+	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
 	c.luaGlobalsSymbol.Exports = c.globals
 	c.globals[c.luaGlobalsSymbol.Name] = c.luaGlobalsSymbol
 	c.resolveName = c.createNameResolver().Resolve
@@ -1383,474 +1394,6 @@ func (c *Checker) initializeChecker() {
 	}
 	c.anyReadonlyArrayType = c.createArrayTypeEx(c.anyType, true /*readonly*/)
 	c.globalThisType = c.getGlobalType("ThisType", 1 /*arity*/, false /*reportErrors*/)
-}
-
-type luaAugmentation struct {
-	node   *ast.Node
-	root   *ast.Symbol
-	path   []string
-	method bool
-}
-
-type luaAugmentationNode struct {
-	children map[string]*luaAugmentationNode
-	items    []luaAugmentation
-}
-
-// initializeLuaAugmentations resolves Lua assignment declarations only after all
-// files' ordinary globals exist. It operates on checker-local transient symbols.
-func (c *Checker) initializeLuaAugmentations() {
-	var candidates []*ast.Node
-	for _, file := range c.files {
-		candidates = append(candidates, file.LuaAugmentationCandidates...)
-	}
-
-	implicit := make(map[string][]luaAugmentation)
-	for _, node := range candidates {
-		rootName, root, path, ok := c.resolveLuaAugmentationPath(node)
-		if !ok {
-			continue
-		}
-		name := rootName
-		switch {
-		case len(path) == 0 && ast.IsBinaryExpression(node) && ast.IsIdentifier(node.AsBinaryExpression().Left) && root == nil:
-			// Bare unresolved assignments create implicit globals.
-		case root == c.luaGlobalsSymbol && len(path) == 1:
-			// Static writes through the built-in environment bypass lexical shadows
-			// of the member name and create the same global as a bare assignment.
-			name = path[0]
-			if ast.IsNumberKeyName(name) {
-				continue
-			}
-			if existing := c.getMergedSymbol(c.globals[name]); existing != nil && existing.Flags&ast.SymbolFlagsValue != 0 {
-				if ast.IsFunctionDeclaration(node) {
-					// The function name is not itself an access expression, so map its
-					// binder symbol when the target is an actual environment property.
-					if isLuaEnvironmentExport(existing) {
-						c.recordMergedSymbol(existing, node.Symbol())
-					}
-				}
-				continue
-			}
-		default:
-			continue
-		}
-		// Recovered assignments in a syntactically invalid file are not reliable
-		// global declarations and can hide the primary diagnostics.
-		if len(ast.GetSourceFileOfNode(node).Diagnostics()) != 0 {
-			continue
-		}
-		implicit[name] = append(implicit[name], luaAugmentation{node: node, method: ast.IsFunctionDeclaration(node)})
-	}
-	for name, declarations := range implicit {
-		symbol, collision := c.newLuaAugmentationSymbol(
-			declarations,
-			name,
-			ast.SymbolFlagsFunctionScopedVariable,
-			ast.SymbolFlagsFunction,
-		)
-		// A type-only global (an interface, say) may already own the name; merge
-		// rather than clobber, as declared globals do.
-		c.mergeGlobalSymbol(symbol)
-		merged := c.globals[name]
-		// mergeGlobalSymbol may clone a pre-existing type-only global, so collision
-		// recovery and declaration mappings belong on the final canonical symbol.
-		c.finishLuaAugmentationSymbol(merged, declarations, collision)
-	}
-
-	// Build a checker-local forest while resolving roots. Terminal nodes are
-	// bucketed by depth so parents are attached before nested members.
-	roots := make(map[*ast.Symbol]*luaAugmentationNode)
-	var levels [][]*luaAugmentationNode
-	for _, node := range candidates {
-		_, root, path, ok := c.resolveLuaAugmentationPath(node)
-		if !ok || len(path) == 0 {
-			continue
-		}
-		if root == nil {
-			continue
-		}
-		if root == c.luaGlobalsSymbol {
-			// One-segment environment writes were handled as globals above. Deeper
-			// writes augment the canonical global named by the first segment.
-			if len(path) == 1 {
-				continue
-			}
-			root, path, ok = c.rerootLuaEnvironmentPath(root, path)
-			if !ok {
-				continue
-			}
-		}
-		branch := roots[root]
-		if branch == nil {
-			branch = &luaAugmentationNode{}
-			roots[root] = branch
-		}
-		for _, name := range path {
-			if branch.children == nil {
-				branch.children = make(map[string]*luaAugmentationNode)
-			}
-			next := branch.children[name]
-			if next == nil {
-				next = &luaAugmentationNode{}
-				branch.children[name] = next
-			}
-			branch = next
-		}
-		if len(branch.items) == 0 {
-			for len(levels) <= len(path) {
-				levels = append(levels, nil)
-			}
-			levels[len(path)] = append(levels[len(path)], branch)
-		}
-		branch.items = append(branch.items, luaAugmentation{node: node, root: root, path: path, method: ast.IsFunctionDeclaration(node)})
-	}
-	constructorArms := make(map[*ast.Symbol][]*ast.Symbol)
-	for depth := 1; depth < len(levels); depth++ {
-		for _, branch := range levels[depth] {
-			c.attachLuaAugmentation(branch.items, constructorArms)
-		}
-	}
-}
-
-func (c *Checker) skipLuaEnvironmentSelfPath(path []string) []string {
-	for len(path) != 0 && path[0] == c.luaGlobalsSymbol.Name {
-		path = path[1:]
-	}
-	return path
-}
-
-// isLuaEnvironmentExport mirrors the filter used to build `typeof _G`.
-func isLuaEnvironmentExport(symbol *ast.Symbol) bool {
-	return symbol != nil && symbol.Flags&ast.SymbolFlagsBlockScoped == 0 &&
-		!(symbol.Flags&ast.SymbolFlagsValueModule != 0 && len(symbol.Declarations) != 0 && core.Every(symbol.Declarations, ast.IsAmbientModule))
-}
-
-func (c *Checker) luaEnvironmentExport(name string) *ast.Symbol {
-	symbol := c.getMergedSymbol(c.globals[name])
-	if !isLuaEnvironmentExport(symbol) {
-		return nil
-	}
-	return symbol
-}
-
-func (c *Checker) resolveLuaAugmentationPath(node *ast.Node) (rootName string, root *ast.Symbol, path []string, ok bool) {
-	rootName, path, ok = luaAugmentationPath(node)
-	if !ok {
-		return "", nil, nil, false
-	}
-	root, path = c.resolveLuaPathRoot(node, rootName, path)
-	return rootName, root, path, true
-}
-
-func (c *Checker) resolveLuaPathRoot(reference *ast.Node, rootName string, path []string) (*ast.Symbol, []string) {
-	root := c.resolveLuaRoot(reference, rootName)
-	if root != nil {
-		root = c.getMergedSymbol(root)
-		if root == c.luaGlobalsSymbol {
-			path = c.skipLuaEnvironmentSelfPath(path)
-		}
-	}
-	return root, path
-}
-
-func (c *Checker) rerootLuaEnvironmentPath(root *ast.Symbol, path []string) (*ast.Symbol, []string, bool) {
-	if root != c.luaGlobalsSymbol || len(path) == 0 {
-		return root, path, root != nil
-	}
-	root = c.luaEnvironmentExport(path[0])
-	if root == nil {
-		return nil, nil, false
-	}
-	return root, path[1:], true
-}
-
-func (c *Checker) resolveLuaRoot(reference *ast.Node, name string) *ast.Symbol {
-	// resolveName's scope walk already consults ast.LookupLuaLocal position-sensitively.
-	return c.resolveName(reference, name, ast.SymbolFlagsValue, nil, false /*isUse*/, false /*excludeGlobals*/)
-}
-
-// luaAccessLevelName returns the mangled member name for one access-expression
-// level (dot, string, or numeric key), or false when the level has no static
-// name. Dot and string spellings collapse to the same name; numeric keys mangle
-// into their own namespace.
-func luaAccessLevelName(access *ast.Node) (string, bool) {
-	name := ast.GetElementOrPropertyAccessName(access)
-	if name == nil {
-		return "", false
-	}
-	return ast.GetPropertyNameForPropertyNameNode(name), true
-}
-
-func luaAugmentationPath(node *ast.Node) (string, []string, bool) {
-	var expression *ast.Node
-	var methodName string
-	if ast.IsFunctionDeclaration(node) {
-		expression = node.AsFunctionDeclaration().Target
-		name := ast.GetNameOfDeclaration(node)
-		if name == nil {
-			return "", nil, false
-		}
-		methodName = ast.GetPropertyNameForPropertyNameNode(name)
-	} else if ast.IsBinaryExpression(node) {
-		expression = node.AsBinaryExpression().Left
-	} else {
-		return "", nil, false
-	}
-	rootName, path, ok := luaEntityNamePath(expression, luaAccessLevelName)
-	if !ok {
-		return "", nil, false
-	}
-	if methodName != "" {
-		path = append(path, methodName)
-	}
-	return rootName, path, true
-}
-
-// accessName keeps syntactic augmentation eligibility distinct from the
-// checker-resolved static names used for guard identity.
-func luaEntityNamePath(expression *ast.Node, accessName func(*ast.Node) (string, bool)) (string, []string, bool) {
-	var reversed []string
-	for ast.IsAccessExpression(expression) {
-		name, ok := accessName(expression)
-		if !ok {
-			return "", nil, false
-		}
-		reversed = append(reversed, name)
-		expression = expression.Expression()
-	}
-	if !ast.IsIdentifier(expression) {
-		return "", nil, false
-	}
-	path := make([]string, 0, len(reversed))
-	for i := len(reversed) - 1; i >= 0; i-- {
-		path = append(path, reversed[i])
-	}
-	return expression.Text(), path, true
-}
-
-func (c *Checker) attachLuaAugmentation(group []luaAugmentation, constructorArms map[*ast.Symbol][]*ast.Symbol) {
-	arms := c.cachedLuaConstructorArms(constructorArms, group[0].root)
-	if len(arms) == 0 {
-		return
-	}
-	for _, name := range group[0].path[:len(group[0].path)-1] {
-		var next []*ast.Symbol
-		var seenNext collections.Set[*ast.Symbol]
-		for _, arm := range arms {
-			arm = c.getMergedSymbol(arm)
-			// Read the tables raw. getMergedSymbol returns the binder symbol when this
-			// checker has not cloned it, and every checker is constructed in parallel,
-			// so ast.GetExports/GetMembers would lazily allocate -- a write -- into a
-			// symbol the other checkers share. Indexing a nil map is legal.
-			member := arm.Exports[name]
-			if member == nil {
-				member = arm.Members[name]
-			}
-			memberArms := c.cachedLuaConstructorArms(constructorArms, member)
-			if len(memberArms) == 0 {
-				return
-			}
-			for _, memberArm := range memberArms {
-				// Shared augmented members can be reached through every parent arm.
-				// Traverse each of their constructor arms only once at this level.
-				if seenNext.AddIfAbsent(memberArm) {
-					next = append(next, memberArm)
-				}
-			}
-		}
-		arms = next
-	}
-	name := group[0].path[len(group[0].path)-1]
-	for _, arm := range arms {
-		arm = c.getMergedSymbol(arm)
-		if existing := core.OrElse(arm.Exports[name], arm.Members[name]); existing != nil {
-			// The member is constructor-declared. Assignments to it stay ordinary
-			// checked writes; a dotted function declaration is a duplicate.
-			var fallback *ast.Symbol
-			for _, item := range group {
-				if !item.method {
-					continue
-				}
-				c.error(item.node.Name(), diagnostics.Duplicate_identifier_0, ast.NumberKeyDisplayName(name))
-				if fallback == nil {
-					fallback = c.newSymbol(ast.SymbolFlagsMethod|ast.SymbolFlagsAssignment, name)
-					fallback.ValueDeclaration = item.node
-				}
-				fallback.Declarations = append(fallback.Declarations, item.node)
-				c.recordMergedSymbol(fallback, item.node.Symbol())
-			}
-			return
-		}
-	}
-	member, collision := c.newLuaAugmentationSymbol(group, name, ast.SymbolFlagsProperty, ast.SymbolFlagsMethod)
-	c.finishLuaAugmentationSymbol(member, group, collision)
-	for _, arm := range arms {
-		mergedArm := c.getMergedSymbol(arm)
-		if mergedArm.Flags&ast.SymbolFlagsTransient == 0 {
-			mergedArm = c.cloneSymbol(mergedArm)
-		}
-		ast.GetExports(mergedArm)[name] = member
-		// The first arm is the canonical parent; later arms only host the member.
-		if member.Parent == nil {
-			member.Parent = mergedArm
-		}
-	}
-}
-
-func (c *Checker) newLuaAugmentationSymbol(group []luaAugmentation, name string, valueFlags ast.SymbolFlags, methodFlags ast.SymbolFlags) (*ast.Symbol, bool) {
-	hasMethod := core.Some(group, func(item luaAugmentation) bool { return item.method })
-	collision := hasMethod && len(group) > 1
-	if collision {
-		c.reportLuaAugmentationCollision(group, name)
-	}
-	flags := valueFlags | ast.SymbolFlagsAssignment
-	if hasMethod && !collision {
-		flags = methodFlags | ast.SymbolFlagsAssignment
-	}
-	symbol := c.newSymbol(flags, name)
-	for _, item := range group {
-		symbol.Declarations = append(symbol.Declarations, item.node)
-		if symbol.ValueDeclaration == nil {
-			symbol.ValueDeclaration = item.node
-		}
-	}
-	return symbol, collision
-}
-
-func (c *Checker) finishLuaAugmentationSymbol(symbol *ast.Symbol, group []luaAugmentation, collision bool) {
-	if collision {
-		// Keep recovery neutral and source-order independent. The declarations are
-		// still one navigation group, but neither incompatible declaration wins.
-		c.valueSymbolLinks.Get(symbol).resolvedType = c.anyType
-	}
-	for _, item := range group {
-		c.recordMergedSymbol(symbol, item.node.Symbol())
-	}
-}
-
-func (c *Checker) reportLuaAugmentationCollision(group []luaAugmentation, name string) {
-	displayName := ast.NumberKeyDisplayName(name)
-	for _, item := range group {
-		related := make([]*ast.Node, 0, len(group)-1)
-		for _, other := range group {
-			if other.node != item.node {
-				related = append(related, other.node)
-			}
-		}
-		c.addDuplicateDeclarationError(item.node, diagnostics.Duplicate_identifier_0, displayName, related)
-	}
-}
-
-func (c *Checker) luaConstructorArms(symbol *ast.Symbol) []*ast.Symbol {
-	if symbol == nil {
-		return nil
-	}
-	var arms []*ast.Symbol
-	declarations := symbol.Declarations
-	if symbol.Flags&ast.SymbolFlagsAssignment == 0 && symbol.ValueDeclaration != nil {
-		declarations = []*ast.Node{symbol.ValueDeclaration}
-	}
-	for _, declaration := range declarations {
-		var initializer *ast.Node
-		switch {
-		case ast.IsVariableDeclaration(declaration):
-			if declaration.Type() != nil || !ast.IsLuaLocal(declaration) && declaration.Parent.Flags&ast.NodeFlagsConst == 0 {
-				return nil
-			}
-			initializer = declaration.Initializer()
-		case ast.IsPropertyAssignment(declaration):
-			initializer = declaration.Initializer()
-		case ast.IsShorthandPropertyAssignment(declaration):
-			initializer = declaration.AsShorthandPropertyAssignment().ObjectAssignmentInitializer
-		case ast.IsBinaryExpression(declaration):
-			binary := declaration.AsBinaryExpression()
-			initializer = c.luaDefaultedAugmentationInitializer(binary.Left, binary.Right)
-		default:
-			return nil
-		}
-		if initializer == nil || !ast.IsObjectLiteralExpression(initializer) {
-			return nil
-		}
-		arms = append(arms, initializer.Symbol())
-	}
-	return arms
-}
-
-func (c *Checker) cachedLuaConstructorArms(cache map[*ast.Symbol][]*ast.Symbol, symbol *ast.Symbol) []*ast.Symbol {
-	symbol = c.getMergedSymbol(symbol)
-	if arms, ok := cache[symbol]; ok {
-		return arms
-	}
-	arms := c.luaConstructorArms(symbol)
-	cache[symbol] = arms
-	return arms
-}
-
-// luaDefaultedAugmentationInitializer recognizes exactly `X = X or E` and
-// `X = X ?? E`. Parenthesized/chained guards intentionally do not match.
-func (c *Checker) luaDefaultedAugmentationInitializer(target *ast.Node, initializer *ast.Node) *ast.Node {
-	if !ast.IsBinaryExpression(initializer) {
-		return initializer
-	}
-	binary := initializer.AsBinaryExpression()
-	if binary.OperatorToken.Kind != ast.KindBarBarToken || !c.luaSameEntityName(target, binary.Left) {
-		return initializer
-	}
-	return binary.Right
-}
-
-// isLuaEnvironmentExpression recognizes `_G` and repeated self-access such as
-// `_G._G`, while respecting lexical shadows of the root identifier.
-func (c *Checker) isLuaEnvironmentExpression(node *ast.Node) bool {
-	root := luaEntityRoot(node)
-	if !ast.IsIdentifier(root) || root.Text() != c.luaGlobalsSymbol.Name ||
-		c.getMergedSymbol(c.getResolvedSymbol(root)) != c.luaGlobalsSymbol {
-		return false
-	}
-	node = ast.SkipParentheses(node)
-	for ast.IsAccessExpression(node) {
-		name, ok := c.getAccessedPropertyName(node)
-		if !ok || name != c.luaGlobalsSymbol.Name {
-			return false
-		}
-		node = ast.SkipParentheses(node.Expression())
-	}
-	return true
-}
-
-func luaEntityRoot(node *ast.Node) *ast.Node {
-	node = ast.SkipParentheses(node)
-	for ast.IsAccessExpression(node) {
-		node = ast.SkipParentheses(node.Expression())
-	}
-	return node
-}
-
-func (c *Checker) resolveLuaEntityPath(reference *ast.Node, rootName string, path []string) (*ast.Symbol, []string, bool) {
-	root, path := c.resolveLuaPathRoot(reference, rootName, path)
-	if root == nil {
-		return nil, nil, false
-	}
-	return c.rerootLuaEnvironmentPath(root, path)
-}
-
-func (c *Checker) luaSameEntityName(left *ast.Node, right *ast.Node) bool {
-	leftName, leftPath, leftOK := luaEntityNamePath(left, c.getAccessedPropertyName)
-	rightName, rightPath, rightOK := luaEntityNamePath(right, c.getAccessedPropertyName)
-	if !leftOK || !rightOK {
-		return false
-	}
-	if leftName == rightName && slices.Equal(leftPath, rightPath) {
-		return true
-	}
-	// Only the environment spelling can re-root a textually different name.
-	if leftName != c.luaGlobalsSymbol.Name && rightName != c.luaGlobalsSymbol.Name {
-		return false
-	}
-	leftRoot, leftPath, leftOK := c.resolveLuaEntityPath(left, leftName, leftPath)
-	rightRoot, rightPath, rightOK := c.resolveLuaEntityPath(right, rightName, rightPath)
-	return leftOK && rightOK && leftRoot == rightRoot && slices.Equal(leftPath, rightPath)
 }
 
 func (c *Checker) mergeGlobalSymbol(symbol *ast.Symbol) {
@@ -3367,6 +2910,11 @@ func (c *Checker) checkLuaDottedFunctionDeclaration(node *ast.Node, target *ast.
 	if mergedSymbol.Flags&ast.SymbolFlagsAssignment != 0 {
 		return
 	}
+	if c.luaReportedMethodCollisions.Has(node) {
+		// Augmentation already reported this body as duplicating a member the
+		// constructor declares; checking its signature too would double-report.
+		return
+	}
 	if c.isErrorType(targetType) {
 		return
 	}
@@ -3957,8 +3505,8 @@ func errorNodeForPackElement(expression *ast.Node, index int) *ast.Node {
 	return expression
 }
 
-func (c *Checker) getLuaGenericForArgument(expression *ast.Node, pack *Type, position int) luaGenericForArgument {
-	argumentType := c.packElementForIndex(pack, position+1)
+func (c *Checker) getLuaGenericForArgument(expression *ast.Node, position int) luaGenericForArgument {
+	argumentType := c.getLuaAssignmentValueType(expression, position+1, CheckModeNormal)
 	nonNilType := c.GetNonNullableType(argumentType)
 	effectivelyNil := nonNilType.flags&TypeFlagsNever != 0
 	// Nil control is the sentinel; an absent state marks a closure-style iterator.
@@ -4007,8 +3555,8 @@ func (c *Checker) getLuaGenericForIteratorResult(node *ast.Node) *luaGenericForI
 		return links.iteratorResult
 	}
 	data := node.AsForOfStatement()
-	pack := c.getPackTypeOfValueList(data.Expression, CheckModeNormal)
-	iteratorType := c.packElementForIndex(pack, 0)
+	c.getPackTypeOfValueList(data.Expression, CheckModeNormal)
+	iteratorType := c.getLuaAssignmentValueType(data.Expression, 0, CheckModeNormal)
 	result := &luaGenericForIteratorResult{returnPack: c.newRestPack(c.anyType)}
 	links.iteratorResult = result
 	if IsTypeAny(iteratorType) || c.isErrorType(iteratorType) {
@@ -4020,7 +3568,7 @@ func (c *Checker) getLuaGenericForIteratorResult(node *ast.Node) *luaGenericForI
 		return result
 	}
 	for i := range result.arguments {
-		result.arguments[i] = c.getLuaGenericForArgument(data.Expression, pack, i)
+		result.arguments[i] = c.getLuaGenericForArgument(data.Expression, i)
 	}
 	returnPacks := make([]*Type, 0, len(signatures))
 	// Without protocol arguments, no overload can be selected.
@@ -4790,7 +4338,11 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 		// anything the user wrote -- relating `1` to it reports "not assignable to
 		// 'number[]'", a type that appears nowhere in the source.
 		if initializer != nil && !ast.IsVarargParameter(node) {
-			initializerType := c.checkExpressionCached(initializer)
+			// A constructor asserted to a contract declares members the contract
+			// does not govern, and the symbol's type composes them. Relate the same
+			// composition so the declaration is not checked against a shape its own
+			// initializer is missing.
+			initializerType := c.composeLuaLocalConstructorContract(node, c.checkExpressionCached(initializer))
 			c.checkTypeAssignableToAndOptionallyElaborate(initializerType, t, node, initializer, nil /*headMessage*/, nil)
 		}
 		if len(symbol.Declarations) > 1 {
@@ -6008,22 +5560,33 @@ func (c *Checker) getTypeOfExpression(node *ast.Node) *Type {
 // with computing the type and may not fully check all contained sub-expressions for errors.
 func (c *Checker) getQuickTypeOfExpression(node *ast.Node) *Type {
 	expr := ast.SkipParentheses(node)
+	var result *Type
 	switch {
 	// Optimize for the common case of a call to a function with a single non-generic call
 	// signature where we can just fetch the return type without checking the arguments.
 	case ast.IsCallExpression(expr) && expr.Expression().Kind != ast.KindSuperKeyword && !ast.IsRequireCall(expr, true /*requireStringLiteralLikeArgument*/) && !c.isSymbolOrSymbolForCall(expr) && !c.isLuaMetatableCall(expr) && !c.isLuaSelectCall(expr) && !isLuaRefiningCallSyntax(expr) && !ast.IsImportCall(expr):
 		if isCallChain(expr) {
-			return c.getReturnTypeOfSingleNonGenericSignatureOfCallChain(expr)
+			result = c.getReturnTypeOfSingleNonGenericSignatureOfCallChain(expr)
+		} else {
+			result = c.getReturnTypeOfSingleNonGenericSignature(c.checkNonNullExpression(expr.Expression()), SignatureKindCall)
 		}
-		return c.getReturnTypeOfSingleNonGenericSignature(c.checkNonNullExpression(expr.Expression()), SignatureKindCall)
 	case ast.IsNewExpression(expr):
-		return c.getReturnTypeOfSingleNonGenericSignature(c.checkNonNullExpression(expr.Expression()), SignatureKindConstruct)
+		result = c.getReturnTypeOfSingleNonGenericSignature(c.checkNonNullExpression(expr.Expression()), SignatureKindConstruct)
 	case ast.IsAssertionExpression(expr) && !ast.IsConstTypeReference(expr.Type()):
-		return c.getTypeFromTypeNode(expr.Type())
+		result = c.getTypeFromTypeNode(expr.Type())
 	case ast.IsLiteralExpression(node) || ast.IsBooleanLiteral(node):
-		return c.checkExpression(node)
+		result = c.checkExpression(node)
 	}
-	return nil
+	if expr != node && result != nil {
+		// Parentheses must project the producer's runtime slot zero. The quick
+		// scalar type cannot tell whether a call behind erased assertions
+		// returned no value, so let the full checker preserve that arity.
+		if producer, _ := luaPackProducerAndWrappers(expr); producer.Kind == ast.KindVarargExpression || ast.IsCallExpression(producer) {
+			return nil
+		}
+		result = c.adjustLuaParenthesizedValue(result)
+	}
+	return result
 }
 
 func (c *Checker) getReturnTypeOfSingleNonGenericSignature(funcType *Type, kind SignatureKind) *Type {
@@ -8316,7 +7879,12 @@ func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkParenthesizedExpression(node *ast.Node, checkMode CheckMode) *Type {
-	return c.checkExpressionEx(node.Expression(), checkMode)
+	expression := node.Expression()
+	scalar := c.checkExpressionEx(expression, checkMode)
+	if pack := c.getCallPackType(expression, checkMode); pack != nil {
+		return c.getLuaAdjustedValueTypeAt(scalar, pack, 0)
+	}
+	return c.adjustLuaParenthesizedValue(scalar)
 }
 
 func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, checkMode CheckMode) *Type {
@@ -9191,7 +8759,9 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 	// A variable is considered uninitialized when it is possible to analyze the entire control flow graph
 	// from declaration to use, and when the variable's declared type doesn't include undefined but the
 	// control flow based type does include undefined.
-	if !c.isEvolvingArrayOperationTarget(node) && (t == c.autoType || t == c.autoArrayType) {
+	selfPreservingEmptyArray := flowType == c.autoArrayType &&
+		(c.isSelfPreservingLuaAssignmentValue(node) || isLuaDirectAliasInitializerValue(node))
+	if !c.isEvolvingArrayOperationTarget(node) && !selfPreservingEmptyArray && (t == c.autoType || t == c.autoArrayType) {
 		if flowType == c.autoType || flowType == c.autoArrayType {
 			if c.noImplicitAny {
 				c.error(ast.GetNameOfDeclaration(declaration), diagnostics.Variable_0_implicitly_has_type_1_in_some_locations_where_its_type_cannot_be_determined, c.symbolToString(symbol), c.TypeToString(flowType))
@@ -9212,18 +8782,28 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 }
 
 func (c *Checker) isLuaDefaultedGuardReference(node *ast.Node) bool {
-	if ast.IsInJSFile(node) || !ast.IsBinaryExpression(node.Parent) {
+	if ast.IsInJSFile(node) {
 		return false
 	}
-	guard := node.Parent.AsBinaryExpression()
-	if guard.Left != node || guard.OperatorToken.Kind != ast.KindBarBarToken || !ast.IsBinaryExpression(node.Parent.Parent) {
+	guardLeft := outermostLuaWrapper(node, ast.OEKAssertions)
+	if !ast.IsBinaryExpression(guardLeft.Parent) {
 		return false
 	}
-	assignment := node.Parent.Parent.AsBinaryExpression()
-	if assignment.OperatorToken.Kind != ast.KindEqualsToken || assignment.Right != node.Parent || !c.luaSameEntityName(assignment.Left, guard.Left) {
+	guardExpression := guardLeft.Parent
+	guard := guardExpression.AsBinaryExpression()
+	if guard.Left != guardLeft {
 		return false
 	}
-	symbol := c.getMergedSymbol(assignment.Symbol)
+	explicitValue := outermostLuaWrapper(guardExpression, ast.OEKAssertions)
+	target := luaAssignmentTargetForExplicitValue(explicitValue)
+	if target == nil {
+		return false
+	}
+	reference := ast.GetLuaAssignmentTargetReference(target)
+	if reference == nil || !c.isLuaDefaultedAugmentationGuard(reference, explicitValue) {
+		return false
+	}
+	symbol := c.getMergedSymbol(c.luaAugmentationTargets[target])
 	return symbol != nil && symbol.Flags&ast.SymbolFlagsAssignment != 0
 }
 
@@ -9400,8 +8980,18 @@ func (c *Checker) getFlowTypeOfAccessExpression(node *ast.Node, prop *ast.Symbol
 	assumeUninitialized := false
 	if prop != nil {
 		if declaration := prop.ValueDeclaration; declaration != nil {
-			if ast.IsBinaryExpression(declaration) && ast.IsPropertyAccessExpression(declaration.AsBinaryExpression().Left) &&
-				c.getControlFlowContainer(node) == c.getControlFlowContainer(declaration) &&
+			assignment := declaration
+			isPropertyAssignment := ast.IsBinaryExpression(declaration) &&
+				ast.IsPropertyAccessExpression(declaration.AsBinaryExpression().Left)
+			if slot, ok := luaAssignmentSlotForNode(declaration); ok {
+				assignment = slot.assignment
+				// A Lua store declares through its target, so the target itself is the
+				// property. Widen rather than replace: a declaration that is the whole
+				// binary is still a property assignment by the test above.
+				isPropertyAssignment = isPropertyAssignment || ast.IsAccessExpression(declaration)
+			}
+			if isPropertyAssignment &&
+				c.getControlFlowContainer(node) == c.getControlFlowContainer(assignment) &&
 				!c.isLuaDefaultedGuardReference(node) {
 				assumeUninitialized = true
 			}
@@ -9722,6 +9312,9 @@ func (c *Checker) checkBinaryExpression(node *ast.Node, checkMode CheckMode) *Ty
 
 func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.Node, right *ast.Node, checkMode CheckMode, errorNode *ast.Node) *Type {
 	operator := operatorToken.Kind
+	if operator == ast.KindEqualsToken && !ast.IsInJSFile(errorNode) {
+		return c.checkLuaAssignment(left, right, checkMode)
+	}
 	// No destructuring assignment: an object-literal left-hand side is checked
 	// as the table it is and then rejected by the generic reference check
 	// (TS2364) like any other non-reference target.
@@ -9966,7 +9559,7 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, rig
 		if ast.IsCompoundAssignment(operator) && ast.IsPropertyAccessExpression(left) {
 			leftType = c.checkPropertyAccessExpression(left, CheckModeNormal, true /*writeOnly*/)
 		}
-		if c.checkReferenceExpression(left, diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access, diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access) {
+		if c.checkAssignmentReference(left) {
 			var headMessage *diagnostics.Message
 			if c.exactOptionalPropertyTypes && ast.IsPropertyAccessExpression(left) && c.maybeTypeOfKind(rightType, TypeFlagsNil) {
 				target := c.getTypeOfPropertyOfType(c.getTypeOfExpression(left.Expression()), left.Name().Text())
@@ -9978,6 +9571,18 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, rig
 			c.checkTypeAssignableToAndOptionallyElaborate(rightType, leftType, left, right, headMessage, nil)
 		}
 	}
+}
+
+func (c *Checker) checkAssignmentReference(left *ast.Node) bool {
+	if !ast.IsInJSFile(left) && ast.GetLuaAssignmentTargetReference(left) == nil {
+		c.error(left, diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access)
+		return false
+	}
+	return c.checkReferenceExpression(
+		left,
+		diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access,
+		diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access,
+	)
 }
 
 func (c *Checker) checkArithmeticOperandType(operand *ast.Node, t *Type, diagnostic *diagnostics.Message) bool {
@@ -13546,9 +13151,9 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	if symbol == c.requireSymbol {
 		return c.anyType
 	}
-	debug.Assert(symbol.ValueDeclaration != nil)
 	declaration := symbol.ValueDeclaration
-	if ast.IsSourceFile(declaration) && ast.IsJsonSourceFile(declaration.AsSourceFile()) {
+	debug.Assert(declaration != nil || symbol.Flags&ast.SymbolFlagsAssignment != 0)
+	if declaration != nil && ast.IsSourceFile(declaration) && ast.IsJsonSourceFile(declaration.AsSourceFile()) {
 		statements := declaration.Statements()
 		if len(statements) == 0 {
 			return c.emptyObjectType
@@ -13566,31 +13171,37 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		return c.newAnonymousType(symbol, symbol.Members, nil, nil, nil)
 	}
 	var result *Type
-	switch declaration.Kind {
-	case ast.KindParameter, ast.KindPropertySignature, ast.KindVariableDeclaration,
-		ast.KindBindingElement:
-		result = c.getWidenedTypeForVariableLikeDeclaration(declaration, true /*reportErrors*/)
-	case ast.KindFunctionDeclaration:
-		debug.Assert(ast.IsLuaLocal(declaration), "Only Lua-local functions should be checked through the variable-like path")
-		result = c.getTypeOfFuncClassModuleWorker(symbol)
-	case ast.KindPropertyAssignment:
-		result = c.checkPropertyAssignment(declaration, CheckModeNormal)
-	case ast.KindShorthandPropertyAssignment:
-		// A Lua keyed field `{ x = 1 }` types from its initializer; the
-		// destructuring reading is gone with destructuring assignment.
-		result = c.checkShorthandPropertyAssignment(declaration, CheckModeNormal)
-	case ast.KindTableEntry:
-		result = c.checkTableEntry(declaration, CheckModeNormal)
-	case ast.KindReturnStatement:
-		// A chunk's top-level return is its module value. `require` keeps only the
-		// first returned value, so a value list adjusts to one value.
-		result = c.widenTypeForVariableLikeDeclaration(c.adjustMultiReturn(c.checkExpressionCached(declaration.Expression())), declaration, false /*reportErrors*/)
-	case ast.KindBinaryExpression, ast.KindCallExpression:
+	if symbol.Flags&ast.SymbolFlagsAssignment != 0 {
+		// Lua assignment targets carry declaration spans; checker-local records
+		// carry their positional initializers.
 		result = c.getWidenedTypeForAssignmentDeclaration(symbol)
-	case ast.KindJsxAttribute:
-		result = c.checkJsxAttribute(declaration, CheckModeNormal)
-	default:
-		panic("Unhandled case in getTypeOfVariableOrParameterOrPropertyWorker: " + declaration.Kind.String())
+	} else {
+		switch declaration.Kind {
+		case ast.KindParameter, ast.KindPropertySignature, ast.KindVariableDeclaration,
+			ast.KindBindingElement:
+			result = c.getWidenedTypeForVariableLikeDeclaration(declaration, true /*reportErrors*/)
+		case ast.KindFunctionDeclaration:
+			debug.Assert(ast.IsLuaLocal(declaration), "Only Lua-local functions should be checked through the variable-like path")
+			result = c.getTypeOfFuncClassModuleWorker(symbol)
+		case ast.KindPropertyAssignment:
+			result = c.checkPropertyAssignment(declaration, CheckModeNormal)
+		case ast.KindShorthandPropertyAssignment:
+			// A Lua keyed field `{ x = 1 }` types from its initializer; the
+			// destructuring reading is gone with destructuring assignment.
+			result = c.checkShorthandPropertyAssignment(declaration, CheckModeNormal)
+		case ast.KindTableEntry:
+			result = c.checkTableEntry(declaration, CheckModeNormal)
+		case ast.KindReturnStatement:
+			// A chunk's top-level return is its module value. `require` keeps only the
+			// first returned value, so a value list adjusts to one value.
+			result = c.widenTypeForVariableLikeDeclaration(c.adjustMultiReturn(c.checkExpressionCached(declaration.Expression())), declaration, false /*reportErrors*/)
+		case ast.KindBinaryExpression, ast.KindCallExpression:
+			result = c.getWidenedTypeForAssignmentDeclaration(symbol)
+		case ast.KindJsxAttribute:
+			result = c.checkJsxAttribute(declaration, CheckModeNormal)
+		default:
+			panic("Unhandled case in getTypeOfVariableOrParameterOrPropertyWorker: " + declaration.Kind.String())
+		}
 	}
 	if !c.popTypeResolution() {
 		return c.reportCircularityError(symbol)
@@ -13608,7 +13219,8 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 // binding pattern [x, s = ""]. Because the contextual type is a tuple type, the resulting type of [1, "one"] is the
 // tuple type [number, string]. Thus, the type inferred for 'x' is number and the type inferred for 's' is string.
 func (c *Checker) getWidenedTypeForVariableLikeDeclaration(declaration *ast.Node, reportErrors bool) *Type {
-	return c.widenTypeForVariableLikeDeclaration(c.getTypeForVariableLikeDeclaration(declaration /*includeOptionality*/, true, CheckModeNormal), declaration, reportErrors)
+	t := c.widenTypeForVariableLikeDeclaration(c.getTypeForVariableLikeDeclaration(declaration /*includeOptionality*/, true, CheckModeNormal), declaration, reportErrors)
+	return c.composeLuaLocalConstructorContract(declaration, t)
 }
 
 // Return the inferred type for a variable, parameter, or property declaration
@@ -13684,7 +13296,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 	if ast.HasLuaLocalValueList(declaration) {
 		valueList := ast.LuaLocalValueList(declaration.Parent)
 		index := slices.Index(declaration.Parent.AsVariableDeclarationList().Declarations.Nodes, declaration)
-		t := c.packElementForIndex(c.getPackTypeOfValueList(valueList, checkMode), index)
+		t := c.getLuaAssignmentValueType(valueList, index, checkMode)
 		return c.widenTypeInferredFromInitializer(declaration, t)
 	}
 	if c.noImplicitAny && ast.IsVariableDeclaration(declaration) && !ast.IsBindingPattern(declaration.Name()) &&
@@ -14924,18 +14536,6 @@ const (
 	thisAssignmentDeclarationMethod                                      // methods only; look in base first, and if not found, union all declaration types plus undefined
 )
 
-func luaConstructorTypesShareMembers(left *Type, right *Type) bool {
-	if left.flags&TypeFlagsObject == 0 || right.flags&TypeFlagsObject == 0 ||
-		left.objectFlags&ObjectFlagsMembersResolved == 0 || right.objectFlags&ObjectFlagsMembersResolved == 0 {
-		return false
-	}
-	leftStructured := left.AsStructuredType()
-	rightStructured := right.AsStructuredType()
-	return maps.Equal(leftStructured.members, rightStructured.members) &&
-		slices.Equal(leftStructured.signatures, rightStructured.signatures) &&
-		slices.Equal(leftStructured.indexInfos, rightStructured.indexInfos)
-}
-
 func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
 	var t *Type
 	kind, location := c.isConstructorDeclaredThisProperty(symbol)
@@ -14948,8 +14548,22 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 	}
 	if t == nil {
 		var types []*Type
-		dedupeLuaConstructorTypes := symbol.ValueDeclaration != nil && !ast.IsInJSFile(symbol.ValueDeclaration) && len(c.luaConstructorArms(symbol)) > 1
+		assignments := c.luaAssignmentAugmentations[c.getMergedSymbol(symbol)]
+		// Different stores may reach the same constructor through aliases. Once
+		// that identity is known, do not print duplicate structural union arms.
+		dedupeLuaConstructorTypes := c.shouldDedupeLuaConstructorTypes(symbol, assignments)
+		addAssignedType := func(assignedType *Type) {
+			types = c.appendLuaConstructorType(types, assignedType, dedupeLuaConstructorTypes)
+		}
+		var assignmentDeclarations collections.Set[*ast.Node]
+		if len(assignments) != 0 {
+			assignmentDeclarations = luaAssignmentDeclarationSet(assignments)
+			types = c.appendLuaAssignmentDeclaredTypes(types, symbol, assignments, nil /*excludedSource*/, make(map[luaSnapshotKey]bool))
+		}
 		for i, declaration := range symbol.Declarations {
+			if assignmentDeclarations.Has(declaration) {
+				continue
+			}
 			if ast.IsBinaryExpression(declaration) && declaration.Type() != nil {
 				t = c.getTypeFromTypeNode(declaration.Type())
 				break
@@ -14957,15 +14571,10 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 			if assignedType := c.getAssignmentDeclarationInitializerType(declaration); assignedType != nil {
 				// We ignore initial assignments of undefined to CommonJS exports when there are multiple assignment declarations
 				if ast.GetAssignmentDeclarationKind(declaration) != ast.JSDeclarationKindExportsProperty || i != 0 || len(symbol.Declarations) == 1 || assignedType.flags&TypeFlagsNil == 0 {
-					// Lua augmentation keeps each constructor arm for source-local checking,
+					// Lua augmentation keeps every constructor arm as its own union member,
 					// but empty guards can acquire the exact same shared member symbols.
 					// Omit only those duplicate shapes from the inferred root union.
-					duplicateMembers := dedupeLuaConstructorTypes && core.Some(types, func(existing *Type) bool {
-						return luaConstructorTypesShareMembers(existing, assignedType)
-					})
-					if !duplicateMembers {
-						types = core.AppendIfUnique(types, assignedType)
-					}
+					addAssignedType(assignedType)
 				}
 			}
 		}
@@ -16895,8 +16504,8 @@ func (c *Checker) checkAndAggregateReturnExpressionTypes(fn *ast.Node, checkMode
 			return false
 		}
 		t := c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions)
-		// `return f()` forwards f's whole multi-value pack.
-		if packType := c.getCallPackType(expr, checkMode & ^CheckModeSkipGenericFunctions); packType != nil && c.maybePackType(packType) {
+		// A tail producer forwards its whole pack, including zero values.
+		if packType := c.getCallPackType(expr, checkMode & ^CheckModeSkipGenericFunctions); packType != nil {
 			t = packType
 		}
 		if t.flags&TypeFlagsNever != 0 {
@@ -17999,7 +17608,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		}
 		clone := c.createSymbolWithType(singleProp, singlePropType)
 		if singleProp.ValueDeclaration != nil {
-			clone.Parent = singleProp.ValueDeclaration.Symbol().Parent
+			clone.Parent = getDeclarationParentOfSymbol(singleProp)
 		}
 		links := c.valueSymbolLinks.Get(clone)
 		links.containingType = containingType
@@ -18016,10 +17625,12 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	var propTypes []*Type
 	var writeTypes []*Type
 	var firstValueDeclaration *ast.Node
+	var firstValueDeclarationSymbol *ast.Symbol
 	var hasNonUniformValueDeclaration bool
 	for prop := range propSet.Values() {
 		if firstValueDeclaration == nil {
 			firstValueDeclaration = prop.ValueDeclaration
+			firstValueDeclarationSymbol = prop
 		} else if prop.ValueDeclaration != nil && prop.ValueDeclaration != firstValueDeclaration {
 			hasNonUniformValueDeclaration = true
 		}
@@ -18053,7 +17664,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	if !hasNonUniformValueDeclaration && firstValueDeclaration != nil {
 		result.ValueDeclaration = firstValueDeclaration
 		// Inherit information about parent type.
-		result.Parent = firstValueDeclaration.Symbol().Parent
+		result.Parent = getDeclarationParentOfSymbol(firstValueDeclarationSymbol)
 	}
 	links := c.valueSymbolLinks.Get(result)
 	links.containingType = containingType
@@ -21509,13 +21120,16 @@ func (c *Checker) checkVarargExpression(node *ast.Node) *Type {
 	return c.adjustMultiReturn(pack)
 }
 
-// getCallPackType returns the full multi-value pack produced by expr when it
-// is a `...` or a plain (non-chain) call whose signature returns a pack or
-// `void` (the empty pack), and nil otherwise. The caller must already have
-// checked expr; the resolved signature comes from the signature cache.
+// getCallPackType returns the full multi-value pack produced by expr through
+// erased wrappers. The caller must already have checked expr.
 func (c *Checker) getCallPackType(expr *ast.Node, checkMode CheckMode) *Type {
-	// No SkipParentheses: in Lua a parenthesized expression is adjusted to exactly
-	// one value, so `(f())` and `(...)` are single-valued and are not packs.
+	producer, wrappers := luaPackProducerAndWrappers(expr)
+	pack := c.getDirectCallPackType(producer, checkMode)
+	return c.applyLuaPackWrappers(pack, wrappers, checkMode, false /*ensureChecked*/)
+}
+
+// getDirectCallPackType probes an already-checked producer without wrappers.
+func (c *Checker) getDirectCallPackType(expr *ast.Node, checkMode CheckMode) *Type {
 	if expr.Kind == ast.KindVarargExpression {
 		return c.getVarargPackType(expr)
 	}
@@ -21573,10 +21187,12 @@ func (c *Checker) checkLuaLocalValueList(list *ast.Node) {
 	if valueList == nil {
 		return
 	}
-	pack := c.getPackTypeOfValueList(valueList, CheckModeNormal)
+	// Check the whole list, not just the values aligned with a name: Lua
+	// evaluates surplus values and discards them, so their diagnostics stand.
+	c.getPackTypeOfValueList(valueList, CheckModeNormal)
 	for i, declaration := range list.AsVariableDeclarationList().Declarations.Nodes {
 		if declaration.Type() != nil {
-			c.checkTypeAssignableToAndOptionallyElaborate(c.packElementForIndex(pack, i), c.getTypeFromTypeNode(declaration.Type()), declaration, valueList, nil /*headMessage*/, nil)
+			c.checkTypeAssignableToAndOptionallyElaborate(c.getLuaAssignmentValueType(valueList, i, CheckModeNormal), c.getTypeFromTypeNode(declaration.Type()), declaration, valueList, nil /*headMessage*/, nil)
 		}
 	}
 }
@@ -21591,6 +21207,7 @@ func (c *Checker) checkExpressionList(node *ast.Node, checkMode CheckMode) *Type
 	elementInfos := make([]TupleElementInfo, 0, len(elements))
 	for i, element := range elements {
 		t := c.checkExpressionForMutableLocation(element, checkMode)
+		packType := c.getCallPackType(element, checkMode)
 		if i == len(elements)-1 {
 			// Tail position: a plain call expands to all of its values.
 			//
@@ -21603,7 +21220,7 @@ func (c *Checker) checkExpressionList(node *ast.Node, checkMode CheckMode) *Type
 			// normalization no longer sees a bare scalar arm it would turn into an
 			// errorType rest element. The variadic splice then distributes it into a
 			// union of packs.
-			if packType := c.getCallPackType(element, checkMode); packType != nil {
+			if packType != nil {
 				if packType.flags&TypeFlagsVoid != 0 {
 					continue // zero values
 				}
@@ -21612,7 +21229,10 @@ func (c *Checker) checkExpressionList(node *ast.Node, checkMode CheckMode) *Type
 				continue
 			}
 		}
-		elementTypes = append(elementTypes, t)
+		// Every non-expanded expression contributes exactly one value. In
+		// particular, a zero-result call in a non-tail or parenthesized position
+		// contributes nil rather than leaking void into the pack.
+		elementTypes = append(elementTypes, c.getLuaAdjustedValueTypeAt(t, packType, 0))
 		elementInfos = append(elementInfos, TupleElementInfo{flags: ElementFlagsRequired})
 	}
 	return c.createPackTypeEx(elementTypes, elementInfos, true /*collapse*/)
@@ -26072,6 +25692,26 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 
 func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExpression) *Type {
 	left := binary.Left
+	if left.Kind == ast.KindExpressionList {
+		targetTypes := make([]*Type, 0, len(left.Elements()))
+		targetInfos := make([]TupleElementInfo, 0, len(left.Elements()))
+		for _, target := range left.Elements() {
+			targetType := c.wildcardType
+			if c.luaAugmentationTargets[target] == nil {
+				// getTypeOfExpression, not checkExpressionEx: a contextual-type query
+				// must not seed the flow cache from inside an enclosing loop, and must
+				// not emit diagnostics. This matches the scalar arm below.
+				targetType = c.getTypeOfExpression(target)
+			}
+			targetTypes = append(targetTypes, targetType)
+			targetInfos = append(targetInfos, TupleElementInfo{flags: ElementFlagsRequired})
+		}
+		targetPack := c.createPackTypeEx(targetTypes, targetInfos, false /*collapse*/)
+		if binary.Right.Kind == ast.KindExpressionList {
+			return targetPack
+		}
+		return c.packElementForIndex(targetPack, 0)
+	}
 	// In tlua the binder stamps a candidate symbol on every member assignment, not
 	// just genuine assignment declarations, so `binary.Symbol != nil` alone no longer
 	// means "declaring arm". Require the merged symbol to actually carry the assignment
@@ -26352,14 +25992,17 @@ func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 	}
 }
 
-// getTailCallPackType conservatively probes whether expr is a plain call whose
-// callee can only return a pack or void, and returns its pack. A single
-// non-generic signature stays unresolved; generic or overloaded callees are
-// resolved context-free only after every declared return type proves that no
-// single outer contextual type could apply to the scattered results.
+// getTailCallPackType conservatively probes an argument-tail producer through
+// erased wrappers without giving up the contextual-resolution safeguards.
 func (c *Checker) getTailCallPackType(expr *ast.Node) *Type {
-	// No SkipParentheses: `(...)` and `(f())` adjust to one value in Lua, so a
-	// parenthesized tail contributes exactly one argument.
+	producer, wrappers := luaPackProducerAndWrappers(expr)
+	pack := c.getDirectTailCallPackType(producer)
+	return c.applyLuaPackWrappers(pack, wrappers, CheckModeNormal, true /*ensureChecked*/)
+}
+
+// getDirectTailCallPackType resolves only producers known to be safe without
+// an outer argument context.
+func (c *Checker) getDirectTailCallPackType(expr *ast.Node) *Type {
 	if expr.Kind == ast.KindVarargExpression {
 		// No resolution hazard: the pack comes from the enclosing signature's
 		// vararg parameter, not from resolving this call.

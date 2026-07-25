@@ -1377,7 +1377,7 @@ func (p *Parser) parseExpressionStatement() *ast.Statement {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	hasParen := p.token == ast.KindOpenParenToken
-	expression := p.parseExpression()
+	expression := p.parseLuaAssignmentOrExpression()
 
 	if !p.tryParseSemicolon() {
 		p.parseErrorForMissingSemicolonAfter(expression)
@@ -1388,6 +1388,58 @@ func (p *Parser) parseExpressionStatement() *ast.Statement {
 	}
 	p.withJSDoc(result, jsdoc)
 	return result
+}
+
+// parseLuaAssignmentOrExpression gives a statement-level `=` its Lua grammar:
+// both sides may be comma-separated lists. Other expression statements retain
+// the ordinary comma-expression and compound-assignment parse.
+func (p *Parser) parseLuaAssignmentOrExpression() *ast.Expression {
+	pos := p.nodePos()
+	expressions := []*ast.Expression{p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)}
+	var commaTokens []*ast.Node
+	for p.token == ast.KindCommaToken {
+		commaTokens = append(commaTokens, p.parseTokenNode())
+		expressions = append(expressions, p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest))
+	}
+
+	// A statement-level `=` is always Lua assignment, so an invalid target is a
+	// semantic error, not a parse failure. Accepting it here keeps a scalar target
+	// reporting the same diagnostic a target list already reports.
+	if p.token == ast.KindEqualsToken {
+		// Build the target list before consuming `=`, so its span cannot cover it.
+		left := expressions[0]
+		if len(expressions) > 1 {
+			left = p.finishExpressionList(expressions)
+		}
+		return p.makeBinaryExpression(left, p.parseTokenNode(), p.parseCommaValueList(), pos)
+	}
+
+	// Not a Lua assignment, so finish as the comma expression parseExpression
+	// would have produced. An assignment operator other than `=` belongs to the
+	// last comma operand, and only that parse can leave further `, expr` behind.
+	last := len(expressions) - 1
+	if ast.IsLeftHandSideExpression(expressions[last]) && ast.IsAssignmentOperator(p.reScanGreaterThanToken()) {
+		operand := expressions[last]
+		expressions[last] = p.makeBinaryExpression(operand, p.parseTokenNode(), p.parseAssignmentExpressionOrHigher(), operand.Pos())
+		for p.token == ast.KindCommaToken {
+			commaTokens = append(commaTokens, p.parseTokenNode())
+			expressions = append(expressions, p.parseAssignmentExpressionOrHigher())
+		}
+	}
+
+	expression := expressions[0]
+	for i, commaToken := range commaTokens {
+		right := expressions[i+1]
+		expression = p.makeBinaryExpressionWithEnd(expression, commaToken, right, pos, right.End())
+	}
+	return expression
+}
+
+// finishExpressionList spans exactly its elements, so a target list can never
+// cover the `=` that follows it.
+func (p *Parser) finishExpressionList(elements []*ast.Expression) *ast.Expression {
+	loc := core.NewTextRange(elements[0].Pos(), elements[len(elements)-1].End())
+	return p.finishNodeWithEnd(p.factory.NewExpressionList(p.newNodeList(loc, elements)), loc.Pos(), loc.End())
 }
 
 func (p *Parser) parseLocalStatement(pos int, jsdoc jsdocScannerInfo) *ast.Node {
@@ -3462,15 +3514,13 @@ func (p *Parser) parseExpressionAllowIn() *ast.Expression {
 // in a value-list position always separates values (a parenthesized comma
 // expression still parses as before).
 func (p *Parser) parseCommaValueList() *ast.Expression {
-	pos := p.nodePos()
 	expr := p.parseAssignmentExpressionOrHigher()
 	if p.token == ast.KindCommaToken {
 		elements := []*ast.Expression{expr}
 		for p.parseOptional(ast.KindCommaToken) {
 			elements = append(elements, p.parseAssignmentExpressionOrHigher())
 		}
-		list := p.newNodeList(core.NewTextRange(elements[0].Pos(), elements[len(elements)-1].End()), elements)
-		expr = p.finishNode(p.factory.NewExpressionList(list), pos)
+		expr = p.finishExpressionList(elements)
 	}
 	return expr
 }
@@ -3629,7 +3679,11 @@ func (p *Parser) makeAsExpression(left *ast.Expression, right *ast.TypeNode) *as
 }
 
 func (p *Parser) makeBinaryExpression(left *ast.Expression, operatorToken *ast.Node, right *ast.Expression, pos int) *ast.Node {
-	return p.finishNode(p.factory.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, operatorToken, right), pos)
+	return p.makeBinaryExpressionWithEnd(left, operatorToken, right, pos, p.nodePos())
+}
+
+func (p *Parser) makeBinaryExpressionWithEnd(left *ast.Expression, operatorToken *ast.Node, right *ast.Expression, pos int, end int) *ast.Node {
+	return p.finishNodeWithEnd(p.factory.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, operatorToken, right), pos, end)
 }
 
 func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {

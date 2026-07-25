@@ -15,7 +15,7 @@ members.tlua(8,1): error TLUA7022: 'zod' implicitly has type 'any' because it do
     
     // Parenthesized self-reads are not the exact defaulted-guard idiom.
     Parenthesized.zod = (Parenthesized.zod) or {};
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~
 !!! error TLUA7022: 'zod' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     
 ==== reverseMember.tlua (0 errors) ====
