@@ -116,10 +116,6 @@
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(for)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
                 {
-                    "name": "keyword.control.flow.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(throw)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
                     "name": "keyword.control.loop.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(break|continue|do|while)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
@@ -170,10 +166,6 @@
                 {
                     "name": "keyword.control.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(package)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
-                    "name": "keyword.other.debugger.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(debugger)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 }
             ]
         },
@@ -2744,10 +2736,6 @@
                 {
                     "name": "keyword.control.flow.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(await)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
-                    "name": "keyword.operator.expression.delete.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))delete(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
                 {
                     "name": "keyword.operator.expression.in.tlua",
