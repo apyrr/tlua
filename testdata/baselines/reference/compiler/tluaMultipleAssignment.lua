@@ -516,6 +516,30 @@ ListContractRoot.bar = 1;
 local listContractFooUse: string = ListContractRoot.foo;
 local listContractBarUse: number = ListContractRoot.bar;
 
+// A captured value keeps the wrappers written around it. Each erased form
+// denotes the same store, and the wrapper decides the static type the captured
+// value contributes. A `const` assertion cannot appear here: it is only valid
+// on a literal, and a captured value is always a reference.
+ParenSwapA = { a = 1 };
+ParenSwapB = { tag = 2 };
+ParenSwapA, ParenSwapB = (ParenSwapB), ParenSwapA;
+local parenSwapUse: number = ParenSwapA.tag;
+
+NonNullSwapA = { a = 1 };
+NonNullSwapB = { present = "y" };
+NonNullSwapA, NonNullSwapB = NonNullSwapB!, NonNullSwapA;
+local nonNullSwapUse: string = NonNullSwapA.present;
+
+SatisfiesSwapA = { a = 1 };
+SatisfiesSwapB = { kept = true };
+SatisfiesSwapA, SatisfiesSwapB = SatisfiesSwapB satisfies {}, SatisfiesSwapA;
+local satisfiesSwapUse: boolean = SatisfiesSwapA.kept;
+
+AssertSwapA = { a = 1 };
+AssertSwapB = { b = 2 };
+AssertSwapA, AssertSwapB = AssertSwapB as unknown as { tagged: number }, AssertSwapA;
+local assertSwapUse: number = AssertSwapA.tagged;
+
 // A contract composes below a property it already describes: the declared
 // member keeps its contract type while the constructor's own member survives
 // alongside it, rather than either replacing the other.
@@ -1071,6 +1095,26 @@ ListContractRoot, listContractSide = {}, 0;
 ListContractRoot.bar = 1;
 local listContractFooUse = ListContractRoot.foo;
 local listContractBarUse = ListContractRoot.bar;
+-- A captured value keeps the wrappers written around it. Each erased form
+-- denotes the same store, and the wrapper decides the static type the captured
+-- value contributes. A `const` assertion cannot appear here: it is only valid
+-- on a literal, and a captured value is always a reference.
+ParenSwapA = { a = 1 };
+ParenSwapB = { tag = 2 };
+ParenSwapA, ParenSwapB = (ParenSwapB), ParenSwapA;
+local parenSwapUse = ParenSwapA.tag;
+NonNullSwapA = { a = 1 };
+NonNullSwapB = { present = "y" };
+NonNullSwapA, NonNullSwapB = NonNullSwapB, NonNullSwapA;
+local nonNullSwapUse = NonNullSwapA.present;
+SatisfiesSwapA = { a = 1 };
+SatisfiesSwapB = { kept = true };
+SatisfiesSwapA, SatisfiesSwapB = SatisfiesSwapB, SatisfiesSwapA;
+local satisfiesSwapUse = SatisfiesSwapA.kept;
+AssertSwapA = { a = 1 };
+AssertSwapB = { b = 2 };
+AssertSwapA, AssertSwapB = AssertSwapB, AssertSwapA;
+local assertSwapUse = AssertSwapA.tagged;
 -- A contract composes below a property it already describes: the declared
 -- member keeps its contract type while the constructor's own member survives
 -- alongside it, rather than either replacing the other.

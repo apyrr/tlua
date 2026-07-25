@@ -1638,491 +1638,576 @@ local listContractBarUse: number = ListContractRoot.bar;
 >ListContractRoot : Symbol(ListContractRoot, Decl(tluaMultipleAssignment.tlua, 508, 26))
 >bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 510, 73))
 
+// A captured value keeps the wrappers written around it. Each erased form
+// denotes the same store, and the wrapper decides the static type the captured
+// value contributes. A `const` assertion cannot appear here: it is only valid
+// on a literal, and a captured value is always a reference.
+ParenSwapA = { a = 1 };
+>ParenSwapA : Symbol(ParenSwapA, Decl(tluaMultipleAssignment.tlua, 513, 56), Decl(tluaMultipleAssignment.tlua, 520, 25))
+>a : Symbol(a, Decl(tluaMultipleAssignment.tlua, 519, 14))
+
+ParenSwapB = { tag = 2 };
+>ParenSwapB : Symbol(ParenSwapB, Decl(tluaMultipleAssignment.tlua, 519, 23), Decl(tluaMultipleAssignment.tlua, 521, 11))
+>tag : Symbol(tag, Decl(tluaMultipleAssignment.tlua, 520, 14))
+
+ParenSwapA, ParenSwapB = (ParenSwapB), ParenSwapA;
+>ParenSwapA : Symbol(ParenSwapA, Decl(tluaMultipleAssignment.tlua, 513, 56), Decl(tluaMultipleAssignment.tlua, 520, 25))
+>ParenSwapB : Symbol(ParenSwapB, Decl(tluaMultipleAssignment.tlua, 519, 23), Decl(tluaMultipleAssignment.tlua, 521, 11))
+>ParenSwapB : Symbol(ParenSwapB, Decl(tluaMultipleAssignment.tlua, 519, 23), Decl(tluaMultipleAssignment.tlua, 521, 11))
+>ParenSwapA : Symbol(ParenSwapA, Decl(tluaMultipleAssignment.tlua, 513, 56), Decl(tluaMultipleAssignment.tlua, 520, 25))
+
+local parenSwapUse: number = ParenSwapA.tag;
+>parenSwapUse : Symbol(parenSwapUse, Decl(tluaMultipleAssignment.tlua, 522, 5))
+>ParenSwapA.tag : Symbol(tag, Decl(tluaMultipleAssignment.tlua, 520, 14))
+>ParenSwapA : Symbol(ParenSwapA, Decl(tluaMultipleAssignment.tlua, 513, 56), Decl(tluaMultipleAssignment.tlua, 520, 25))
+>tag : Symbol(tag, Decl(tluaMultipleAssignment.tlua, 520, 14))
+
+NonNullSwapA = { a = 1 };
+>NonNullSwapA : Symbol(NonNullSwapA, Decl(tluaMultipleAssignment.tlua, 522, 44), Decl(tluaMultipleAssignment.tlua, 525, 33))
+>a : Symbol(a, Decl(tluaMultipleAssignment.tlua, 524, 16))
+
+NonNullSwapB = { present = "y" };
+>NonNullSwapB : Symbol(NonNullSwapB, Decl(tluaMultipleAssignment.tlua, 524, 25), Decl(tluaMultipleAssignment.tlua, 526, 13))
+>present : Symbol(present, Decl(tluaMultipleAssignment.tlua, 525, 16))
+
+NonNullSwapA, NonNullSwapB = NonNullSwapB!, NonNullSwapA;
+>NonNullSwapA : Symbol(NonNullSwapA, Decl(tluaMultipleAssignment.tlua, 522, 44), Decl(tluaMultipleAssignment.tlua, 525, 33))
+>NonNullSwapB : Symbol(NonNullSwapB, Decl(tluaMultipleAssignment.tlua, 524, 25), Decl(tluaMultipleAssignment.tlua, 526, 13))
+>NonNullSwapB : Symbol(NonNullSwapB, Decl(tluaMultipleAssignment.tlua, 524, 25), Decl(tluaMultipleAssignment.tlua, 526, 13))
+>NonNullSwapA : Symbol(NonNullSwapA, Decl(tluaMultipleAssignment.tlua, 522, 44), Decl(tluaMultipleAssignment.tlua, 525, 33))
+
+local nonNullSwapUse: string = NonNullSwapA.present;
+>nonNullSwapUse : Symbol(nonNullSwapUse, Decl(tluaMultipleAssignment.tlua, 527, 5))
+>NonNullSwapA.present : Symbol(present, Decl(tluaMultipleAssignment.tlua, 525, 16))
+>NonNullSwapA : Symbol(NonNullSwapA, Decl(tluaMultipleAssignment.tlua, 522, 44), Decl(tluaMultipleAssignment.tlua, 525, 33))
+>present : Symbol(present, Decl(tluaMultipleAssignment.tlua, 525, 16))
+
+SatisfiesSwapA = { a = 1 };
+>SatisfiesSwapA : Symbol(SatisfiesSwapA, Decl(tluaMultipleAssignment.tlua, 527, 52), Decl(tluaMultipleAssignment.tlua, 530, 33))
+>a : Symbol(a, Decl(tluaMultipleAssignment.tlua, 529, 18))
+
+SatisfiesSwapB = { kept = true };
+>SatisfiesSwapB : Symbol(SatisfiesSwapB, Decl(tluaMultipleAssignment.tlua, 529, 27), Decl(tluaMultipleAssignment.tlua, 531, 15))
+>kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 530, 18))
+
+SatisfiesSwapA, SatisfiesSwapB = SatisfiesSwapB satisfies {}, SatisfiesSwapA;
+>SatisfiesSwapA : Symbol(SatisfiesSwapA, Decl(tluaMultipleAssignment.tlua, 527, 52), Decl(tluaMultipleAssignment.tlua, 530, 33))
+>SatisfiesSwapB : Symbol(SatisfiesSwapB, Decl(tluaMultipleAssignment.tlua, 529, 27), Decl(tluaMultipleAssignment.tlua, 531, 15))
+>SatisfiesSwapB : Symbol(SatisfiesSwapB, Decl(tluaMultipleAssignment.tlua, 529, 27), Decl(tluaMultipleAssignment.tlua, 531, 15))
+>SatisfiesSwapA : Symbol(SatisfiesSwapA, Decl(tluaMultipleAssignment.tlua, 527, 52), Decl(tluaMultipleAssignment.tlua, 530, 33))
+
+local satisfiesSwapUse: boolean = SatisfiesSwapA.kept;
+>satisfiesSwapUse : Symbol(satisfiesSwapUse, Decl(tluaMultipleAssignment.tlua, 532, 5))
+>SatisfiesSwapA.kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 530, 18))
+>SatisfiesSwapA : Symbol(SatisfiesSwapA, Decl(tluaMultipleAssignment.tlua, 527, 52), Decl(tluaMultipleAssignment.tlua, 530, 33))
+>kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 530, 18))
+
+AssertSwapA = { a = 1 };
+>AssertSwapA : Symbol(AssertSwapA, Decl(tluaMultipleAssignment.tlua, 532, 54), Decl(tluaMultipleAssignment.tlua, 535, 24))
+>a : Symbol(a, Decl(tluaMultipleAssignment.tlua, 534, 15))
+
+AssertSwapB = { b = 2 };
+>AssertSwapB : Symbol(AssertSwapB, Decl(tluaMultipleAssignment.tlua, 534, 24), Decl(tluaMultipleAssignment.tlua, 536, 12))
+>b : Symbol(b, Decl(tluaMultipleAssignment.tlua, 535, 15))
+
+AssertSwapA, AssertSwapB = AssertSwapB as unknown as { tagged: number }, AssertSwapA;
+>AssertSwapA : Symbol(AssertSwapA, Decl(tluaMultipleAssignment.tlua, 532, 54), Decl(tluaMultipleAssignment.tlua, 535, 24))
+>AssertSwapB : Symbol(AssertSwapB, Decl(tluaMultipleAssignment.tlua, 534, 24), Decl(tluaMultipleAssignment.tlua, 536, 12))
+>AssertSwapB : Symbol(AssertSwapB, Decl(tluaMultipleAssignment.tlua, 534, 24), Decl(tluaMultipleAssignment.tlua, 536, 12))
+>tagged : Symbol(tagged, Decl(tluaMultipleAssignment.tlua, 536, 54))
+>AssertSwapA : Symbol(AssertSwapA, Decl(tluaMultipleAssignment.tlua, 532, 54), Decl(tluaMultipleAssignment.tlua, 535, 24))
+
+local assertSwapUse: number = AssertSwapA.tagged;
+>assertSwapUse : Symbol(assertSwapUse, Decl(tluaMultipleAssignment.tlua, 537, 5))
+>AssertSwapA.tagged : Symbol(tagged, Decl(tluaMultipleAssignment.tlua, 536, 54))
+>AssertSwapA : Symbol(AssertSwapA, Decl(tluaMultipleAssignment.tlua, 532, 54), Decl(tluaMultipleAssignment.tlua, 535, 24))
+>tagged : Symbol(tagged, Decl(tluaMultipleAssignment.tlua, 536, 54))
+
 // A contract composes below a property it already describes: the declared
 // member keeps its contract type while the constructor's own member survives
 // alongside it, rather than either replacing the other.
 NestedContractRoot = { child = { runtime = 1 } } as unknown as { child: { declared: string } };
->NestedContractRoot : Symbol(NestedContractRoot, Decl(tluaMultipleAssignment.tlua, 513, 56))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 518, 22))
->runtime : Symbol(runtime, Decl(tluaMultipleAssignment.tlua, 518, 32))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 518, 64))
->declared : Symbol(declared, Decl(tluaMultipleAssignment.tlua, 518, 73))
+>NestedContractRoot : Symbol(NestedContractRoot, Decl(tluaMultipleAssignment.tlua, 537, 49))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 542, 22))
+>runtime : Symbol(runtime, Decl(tluaMultipleAssignment.tlua, 542, 32))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 542, 64))
+>declared : Symbol(declared, Decl(tluaMultipleAssignment.tlua, 542, 73))
 
 local nestedContractDeclaredUse: string = NestedContractRoot.child.declared;
->nestedContractDeclaredUse : Symbol(nestedContractDeclaredUse, Decl(tluaMultipleAssignment.tlua, 519, 5))
->NestedContractRoot.child.declared : Symbol(declared, Decl(tluaMultipleAssignment.tlua, 518, 73))
->NestedContractRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 518, 64), Decl(tluaMultipleAssignment.tlua, 518, 64))
->NestedContractRoot : Symbol(NestedContractRoot, Decl(tluaMultipleAssignment.tlua, 513, 56))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 518, 64), Decl(tluaMultipleAssignment.tlua, 518, 64))
->declared : Symbol(declared, Decl(tluaMultipleAssignment.tlua, 518, 73))
+>nestedContractDeclaredUse : Symbol(nestedContractDeclaredUse, Decl(tluaMultipleAssignment.tlua, 543, 5))
+>NestedContractRoot.child.declared : Symbol(declared, Decl(tluaMultipleAssignment.tlua, 542, 73))
+>NestedContractRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 542, 64), Decl(tluaMultipleAssignment.tlua, 542, 64))
+>NestedContractRoot : Symbol(NestedContractRoot, Decl(tluaMultipleAssignment.tlua, 537, 49))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 542, 64), Decl(tluaMultipleAssignment.tlua, 542, 64))
+>declared : Symbol(declared, Decl(tluaMultipleAssignment.tlua, 542, 73))
 
 local nestedContractRuntimeUse: number = NestedContractRoot.child.runtime;
->nestedContractRuntimeUse : Symbol(nestedContractRuntimeUse, Decl(tluaMultipleAssignment.tlua, 520, 5))
->NestedContractRoot.child.runtime : Symbol(runtime, Decl(tluaMultipleAssignment.tlua, 518, 32))
->NestedContractRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 518, 64), Decl(tluaMultipleAssignment.tlua, 518, 64))
->NestedContractRoot : Symbol(NestedContractRoot, Decl(tluaMultipleAssignment.tlua, 513, 56))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 518, 64), Decl(tluaMultipleAssignment.tlua, 518, 64))
->runtime : Symbol(runtime, Decl(tluaMultipleAssignment.tlua, 518, 32))
+>nestedContractRuntimeUse : Symbol(nestedContractRuntimeUse, Decl(tluaMultipleAssignment.tlua, 544, 5))
+>NestedContractRoot.child.runtime : Symbol(runtime, Decl(tluaMultipleAssignment.tlua, 542, 32))
+>NestedContractRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 542, 64), Decl(tluaMultipleAssignment.tlua, 542, 64))
+>NestedContractRoot : Symbol(NestedContractRoot, Decl(tluaMultipleAssignment.tlua, 537, 49))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 542, 64), Decl(tluaMultipleAssignment.tlua, 542, 64))
+>runtime : Symbol(runtime, Decl(tluaMultipleAssignment.tlua, 542, 32))
 
 
 IncompatibleContractRoot = {} as unknown as { bar: string };
->IncompatibleContractRoot : Symbol(IncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 520, 74))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 523, 45))
+>IncompatibleContractRoot : Symbol(IncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 544, 74))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 547, 45))
 
 IncompatibleContractRoot.bar = 1;
->IncompatibleContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 523, 45))
->IncompatibleContractRoot : Symbol(IncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 520, 74))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 523, 45))
+>IncompatibleContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 547, 45))
+>IncompatibleContractRoot : Symbol(IncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 544, 74))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 547, 45))
 
 ListIncompatibleContractRoot, listIncompatibleContractSide = {} as unknown as { bar: string }, 0;
->ListIncompatibleContractRoot : Symbol(ListIncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 524, 33))
->listIncompatibleContractSide : Symbol(listIncompatibleContractSide, Decl(tluaMultipleAssignment.tlua, 526, 29))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 526, 79))
+>ListIncompatibleContractRoot : Symbol(ListIncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 548, 33))
+>listIncompatibleContractSide : Symbol(listIncompatibleContractSide, Decl(tluaMultipleAssignment.tlua, 550, 29))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 550, 79))
 
 ListIncompatibleContractRoot.bar = 1;
->ListIncompatibleContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 526, 79))
->ListIncompatibleContractRoot : Symbol(ListIncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 524, 33))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 526, 79))
+>ListIncompatibleContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 550, 79))
+>ListIncompatibleContractRoot : Symbol(ListIncompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 548, 33))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 550, 79))
 
 CompatibleContractRoot = {} as unknown as { bar: number };
->CompatibleContractRoot : Symbol(CompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 527, 37))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 529, 43))
+>CompatibleContractRoot : Symbol(CompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 551, 37))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 553, 43))
 
 CompatibleContractRoot.bar = 1;
->CompatibleContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 529, 43))
->CompatibleContractRoot : Symbol(CompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 527, 37))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 529, 43))
+>CompatibleContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 553, 43))
+>CompatibleContractRoot : Symbol(CompatibleContractRoot, Decl(tluaMultipleAssignment.tlua, 551, 37))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 553, 43))
 
 OverwrittenContractRoot = {} as unknown as { bar: string };
->OverwrittenContractRoot : Symbol(OverwrittenContractRoot, Decl(tluaMultipleAssignment.tlua, 530, 31))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 532, 44))
+>OverwrittenContractRoot : Symbol(OverwrittenContractRoot, Decl(tluaMultipleAssignment.tlua, 554, 31))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 556, 44))
 
 OverwrittenContractRoot.bar, OverwrittenContractRoot.bar = "ok", 1; -- error
->OverwrittenContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 532, 44))
->OverwrittenContractRoot : Symbol(OverwrittenContractRoot, Decl(tluaMultipleAssignment.tlua, 530, 31))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 532, 44))
->OverwrittenContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 532, 44))
->OverwrittenContractRoot : Symbol(OverwrittenContractRoot, Decl(tluaMultipleAssignment.tlua, 530, 31))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 532, 44))
+>OverwrittenContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 556, 44))
+>OverwrittenContractRoot : Symbol(OverwrittenContractRoot, Decl(tluaMultipleAssignment.tlua, 554, 31))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 556, 44))
+>OverwrittenContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 556, 44))
+>OverwrittenContractRoot : Symbol(OverwrittenContractRoot, Decl(tluaMultipleAssignment.tlua, 554, 31))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 556, 44))
 
 ReadonlyContractRoot = {} as unknown as { readonly bar: number };
->ReadonlyContractRoot : Symbol(ReadonlyContractRoot, Decl(tluaMultipleAssignment.tlua, 533, 67))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 535, 41))
+>ReadonlyContractRoot : Symbol(ReadonlyContractRoot, Decl(tluaMultipleAssignment.tlua, 557, 67))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 559, 41))
 
 ReadonlyContractRoot.bar = 1;
->ReadonlyContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 535, 41))
->ReadonlyContractRoot : Symbol(ReadonlyContractRoot, Decl(tluaMultipleAssignment.tlua, 533, 67))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 535, 41))
+>ReadonlyContractRoot.bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 559, 41))
+>ReadonlyContractRoot : Symbol(ReadonlyContractRoot, Decl(tluaMultipleAssignment.tlua, 557, 67))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 559, 41))
 
 IndexedContractRoot = {} as unknown as { [key: string]: string };
->IndexedContractRoot : Symbol(IndexedContractRoot, Decl(tluaMultipleAssignment.tlua, 536, 29))
->key : Symbol(key, Decl(tluaMultipleAssignment.tlua, 538, 42))
+>IndexedContractRoot : Symbol(IndexedContractRoot, Decl(tluaMultipleAssignment.tlua, 560, 29))
+>key : Symbol(key, Decl(tluaMultipleAssignment.tlua, 562, 42))
 
 IndexedContractRoot.bar = 1;
->IndexedContractRoot.bar : Symbol(__index, Decl(tluaMultipleAssignment.tlua, 538, 40))
->IndexedContractRoot : Symbol(IndexedContractRoot, Decl(tluaMultipleAssignment.tlua, 536, 29))
->bar : Symbol(__index, Decl(tluaMultipleAssignment.tlua, 538, 40))
+>IndexedContractRoot.bar : Symbol(__index, Decl(tluaMultipleAssignment.tlua, 562, 40))
+>IndexedContractRoot : Symbol(IndexedContractRoot, Decl(tluaMultipleAssignment.tlua, 560, 29))
+>bar : Symbol(__index, Decl(tluaMultipleAssignment.tlua, 562, 40))
 
 UnionContractRoot = {} as unknown as ({ bar: string } | { foo: number });
->UnionContractRoot : Symbol(UnionContractRoot, Decl(tluaMultipleAssignment.tlua, 539, 28))
->bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 541, 39))
->foo : Symbol(foo, Decl(tluaMultipleAssignment.tlua, 541, 57))
+>UnionContractRoot : Symbol(UnionContractRoot, Decl(tluaMultipleAssignment.tlua, 563, 28))
+>bar : Symbol(bar, Decl(tluaMultipleAssignment.tlua, 565, 39))
+>foo : Symbol(foo, Decl(tluaMultipleAssignment.tlua, 565, 57))
 
 UnionContractRoot.bar = 1;
->UnionContractRoot : Symbol(UnionContractRoot, Decl(tluaMultipleAssignment.tlua, 539, 28))
+>UnionContractRoot : Symbol(UnionContractRoot, Decl(tluaMultipleAssignment.tlua, 563, 28))
 
 // Only the leftmost alias contributes an observable type or constructor arm.
 ImplicitWinner, ImplicitWinner = 1, "overwritten";
->ImplicitWinner : Symbol(ImplicitWinner, Decl(tluaMultipleAssignment.tlua, 542, 26), Decl(tluaMultipleAssignment.tlua, 545, 15))
->ImplicitWinner : Symbol(ImplicitWinner, Decl(tluaMultipleAssignment.tlua, 542, 26), Decl(tluaMultipleAssignment.tlua, 545, 15))
+>ImplicitWinner : Symbol(ImplicitWinner, Decl(tluaMultipleAssignment.tlua, 566, 26), Decl(tluaMultipleAssignment.tlua, 569, 15))
+>ImplicitWinner : Symbol(ImplicitWinner, Decl(tluaMultipleAssignment.tlua, 566, 26), Decl(tluaMultipleAssignment.tlua, 569, 15))
 
 local implicitWinnerUse: number = ImplicitWinner;
->implicitWinnerUse : Symbol(implicitWinnerUse, Decl(tluaMultipleAssignment.tlua, 546, 5))
->ImplicitWinner : Symbol(ImplicitWinner, Decl(tluaMultipleAssignment.tlua, 542, 26), Decl(tluaMultipleAssignment.tlua, 545, 15))
+>implicitWinnerUse : Symbol(implicitWinnerUse, Decl(tluaMultipleAssignment.tlua, 570, 5))
+>ImplicitWinner : Symbol(ImplicitWinner, Decl(tluaMultipleAssignment.tlua, 566, 26), Decl(tluaMultipleAssignment.tlua, 569, 15))
 
 AliasWinner, _G.AliasWinner = 2, "overwritten";
->AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 546, 49), Decl(tluaMultipleAssignment.tlua, 548, 12))
->_G.AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 546, 49), Decl(tluaMultipleAssignment.tlua, 548, 12))
+>AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 570, 49), Decl(tluaMultipleAssignment.tlua, 572, 12))
+>_G.AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 570, 49), Decl(tluaMultipleAssignment.tlua, 572, 12))
 >_G : Symbol(_G)
->AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 546, 49), Decl(tluaMultipleAssignment.tlua, 548, 12))
+>AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 570, 49), Decl(tluaMultipleAssignment.tlua, 572, 12))
 
 local aliasWinnerUse: number = AliasWinner;
->aliasWinnerUse : Symbol(aliasWinnerUse, Decl(tluaMultipleAssignment.tlua, 549, 5))
->AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 546, 49), Decl(tluaMultipleAssignment.tlua, 548, 12))
+>aliasWinnerUse : Symbol(aliasWinnerUse, Decl(tluaMultipleAssignment.tlua, 573, 5))
+>AliasWinner : Symbol(AliasWinner, Decl(tluaMultipleAssignment.tlua, 570, 49), Decl(tluaMultipleAssignment.tlua, 572, 12))
 
 DuplicateRoot = {};
->DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 549, 43))
+>DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 573, 43))
 
 DuplicateRoot.value, DuplicateRoot["value"] = 3, "overwritten";
->DuplicateRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 551, 19), Decl(tluaMultipleAssignment.tlua, 552, 20))
->DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 549, 43))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 551, 19), Decl(tluaMultipleAssignment.tlua, 552, 20))
->DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 549, 43))
->"value" : Symbol(value, Decl(tluaMultipleAssignment.tlua, 551, 19), Decl(tluaMultipleAssignment.tlua, 552, 20))
+>DuplicateRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 575, 19), Decl(tluaMultipleAssignment.tlua, 576, 20))
+>DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 573, 43))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 575, 19), Decl(tluaMultipleAssignment.tlua, 576, 20))
+>DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 573, 43))
+>"value" : Symbol(value, Decl(tluaMultipleAssignment.tlua, 575, 19), Decl(tluaMultipleAssignment.tlua, 576, 20))
 
 local duplicateMemberUse: number = DuplicateRoot.value;
->duplicateMemberUse : Symbol(duplicateMemberUse, Decl(tluaMultipleAssignment.tlua, 553, 5))
->DuplicateRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 551, 19), Decl(tluaMultipleAssignment.tlua, 552, 20))
->DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 549, 43))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 551, 19), Decl(tluaMultipleAssignment.tlua, 552, 20))
+>duplicateMemberUse : Symbol(duplicateMemberUse, Decl(tluaMultipleAssignment.tlua, 577, 5))
+>DuplicateRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 575, 19), Decl(tluaMultipleAssignment.tlua, 576, 20))
+>DuplicateRoot : Symbol(DuplicateRoot, Decl(tluaMultipleAssignment.tlua, 573, 43))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 575, 19), Decl(tluaMultipleAssignment.tlua, 576, 20))
 
 // Stable direct local aliases share one access-target storage identity.
 local StableAliasRoot = {};
->StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 556, 5))
+>StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 580, 5))
 
 local stableAlias = StableAliasRoot;
->stableAlias : Symbol(stableAlias, Decl(tluaMultipleAssignment.tlua, 557, 5))
->StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 556, 5))
+>stableAlias : Symbol(stableAlias, Decl(tluaMultipleAssignment.tlua, 581, 5))
+>StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 580, 5))
 
 StableAliasRoot.value, stableAlias.value = 5, "overwritten";
->StableAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
->StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 556, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
->stableAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
->stableAlias : Symbol(stableAlias, Decl(tluaMultipleAssignment.tlua, 557, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
+>StableAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
+>StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 580, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
+>stableAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
+>stableAlias : Symbol(stableAlias, Decl(tluaMultipleAssignment.tlua, 581, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
 
 local stableAliasRootUse: number = StableAliasRoot.value;
->stableAliasRootUse : Symbol(stableAliasRootUse, Decl(tluaMultipleAssignment.tlua, 559, 5))
->StableAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
->StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 556, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
+>stableAliasRootUse : Symbol(stableAliasRootUse, Decl(tluaMultipleAssignment.tlua, 583, 5))
+>StableAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
+>StableAliasRoot : Symbol(StableAliasRoot, Decl(tluaMultipleAssignment.tlua, 580, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
 
 local stableAliasUse: number = stableAlias.value;
->stableAliasUse : Symbol(stableAliasUse, Decl(tluaMultipleAssignment.tlua, 560, 5))
->stableAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
->stableAlias : Symbol(stableAlias, Decl(tluaMultipleAssignment.tlua, 557, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 557, 36), Decl(tluaMultipleAssignment.tlua, 558, 22))
+>stableAliasUse : Symbol(stableAliasUse, Decl(tluaMultipleAssignment.tlua, 584, 5))
+>stableAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
+>stableAlias : Symbol(stableAlias, Decl(tluaMultipleAssignment.tlua, 581, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 581, 36), Decl(tluaMultipleAssignment.tlua, 582, 22))
 
 local StableAliasChainRoot = {};
->StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 562, 5))
+>StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
 
 local stableAliasMiddle = StableAliasChainRoot;
->stableAliasMiddle : Symbol(stableAliasMiddle, Decl(tluaMultipleAssignment.tlua, 563, 5))
->StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 562, 5))
+>stableAliasMiddle : Symbol(stableAliasMiddle, Decl(tluaMultipleAssignment.tlua, 587, 5))
+>StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
 
 local stableAliasTail = stableAliasMiddle;
->stableAliasTail : Symbol(stableAliasTail, Decl(tluaMultipleAssignment.tlua, 564, 5))
->stableAliasMiddle : Symbol(stableAliasMiddle, Decl(tluaMultipleAssignment.tlua, 563, 5))
+>stableAliasTail : Symbol(stableAliasTail, Decl(tluaMultipleAssignment.tlua, 588, 5))
+>stableAliasMiddle : Symbol(stableAliasMiddle, Decl(tluaMultipleAssignment.tlua, 587, 5))
 
 stableAliasTail.value, StableAliasChainRoot["value"] = 6, "overwritten";
->stableAliasTail.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 564, 42), Decl(tluaMultipleAssignment.tlua, 565, 22))
->stableAliasTail : Symbol(stableAliasTail, Decl(tluaMultipleAssignment.tlua, 564, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 564, 42), Decl(tluaMultipleAssignment.tlua, 565, 22))
->StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 562, 5))
->"value" : Symbol(value, Decl(tluaMultipleAssignment.tlua, 564, 42), Decl(tluaMultipleAssignment.tlua, 565, 22))
+>stableAliasTail.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 42), Decl(tluaMultipleAssignment.tlua, 589, 22))
+>stableAliasTail : Symbol(stableAliasTail, Decl(tluaMultipleAssignment.tlua, 588, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 42), Decl(tluaMultipleAssignment.tlua, 589, 22))
+>StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
+>"value" : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 42), Decl(tluaMultipleAssignment.tlua, 589, 22))
 
 local stableAliasChainRootUse: number = StableAliasChainRoot.value;
->stableAliasChainRootUse : Symbol(stableAliasChainRootUse, Decl(tluaMultipleAssignment.tlua, 566, 5))
->StableAliasChainRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 564, 42), Decl(tluaMultipleAssignment.tlua, 565, 22))
->StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 562, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 564, 42), Decl(tluaMultipleAssignment.tlua, 565, 22))
+>stableAliasChainRootUse : Symbol(stableAliasChainRootUse, Decl(tluaMultipleAssignment.tlua, 590, 5))
+>StableAliasChainRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 42), Decl(tluaMultipleAssignment.tlua, 589, 22))
+>StableAliasChainRoot : Symbol(StableAliasChainRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 42), Decl(tluaMultipleAssignment.tlua, 589, 22))
 
 local stableAliasChainUse: number = stableAliasTail.value;
->stableAliasChainUse : Symbol(stableAliasChainUse, Decl(tluaMultipleAssignment.tlua, 567, 5))
->stableAliasTail.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 564, 42), Decl(tluaMultipleAssignment.tlua, 565, 22))
->stableAliasTail : Symbol(stableAliasTail, Decl(tluaMultipleAssignment.tlua, 564, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 564, 42), Decl(tluaMultipleAssignment.tlua, 565, 22))
+>stableAliasChainUse : Symbol(stableAliasChainUse, Decl(tluaMultipleAssignment.tlua, 591, 5))
+>stableAliasTail.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 42), Decl(tluaMultipleAssignment.tlua, 589, 22))
+>stableAliasTail : Symbol(stableAliasTail, Decl(tluaMultipleAssignment.tlua, 588, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 42), Decl(tluaMultipleAssignment.tlua, 589, 22))
 
 // A positional local initializer is still a direct stable alias when its
 // source expression is explicit rather than projected from a trailing call.
 local ListAliasRoot = {};
->ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 571, 5))
+>ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 595, 5))
 
 local listAlias, listAliasSide = ListAliasRoot, 0;
->listAlias : Symbol(listAlias, Decl(tluaMultipleAssignment.tlua, 572, 5))
->listAliasSide : Symbol(listAliasSide, Decl(tluaMultipleAssignment.tlua, 572, 16))
->ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 571, 5))
+>listAlias : Symbol(listAlias, Decl(tluaMultipleAssignment.tlua, 596, 5))
+>listAliasSide : Symbol(listAliasSide, Decl(tluaMultipleAssignment.tlua, 596, 16))
+>ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 595, 5))
 
 ListAliasRoot.value, listAlias.value = 10, "overwritten";
->ListAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
->ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 571, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
->listAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
->listAlias : Symbol(listAlias, Decl(tluaMultipleAssignment.tlua, 572, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
+>ListAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
+>ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 595, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
+>listAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
+>listAlias : Symbol(listAlias, Decl(tluaMultipleAssignment.tlua, 596, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
 
 local listAliasRootUse: number = ListAliasRoot.value;
->listAliasRootUse : Symbol(listAliasRootUse, Decl(tluaMultipleAssignment.tlua, 574, 5))
->ListAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
->ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 571, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
+>listAliasRootUse : Symbol(listAliasRootUse, Decl(tluaMultipleAssignment.tlua, 598, 5))
+>ListAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
+>ListAliasRoot : Symbol(ListAliasRoot, Decl(tluaMultipleAssignment.tlua, 595, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
 
 local listAliasUse: number = listAlias.value;
->listAliasUse : Symbol(listAliasUse, Decl(tluaMultipleAssignment.tlua, 575, 5))
->listAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
->listAlias : Symbol(listAlias, Decl(tluaMultipleAssignment.tlua, 572, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 572, 50), Decl(tluaMultipleAssignment.tlua, 573, 20))
+>listAliasUse : Symbol(listAliasUse, Decl(tluaMultipleAssignment.tlua, 599, 5))
+>listAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
+>listAlias : Symbol(listAlias, Decl(tluaMultipleAssignment.tlua, 596, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 596, 50), Decl(tluaMultipleAssignment.tlua, 597, 20))
 
 // Stable aliases use the same identity in declaration inference and flow.
 local FlowAliasRoot = {};
->FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 578, 5))
+>FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 602, 5))
 
 local flowAlias = FlowAliasRoot;
->flowAlias : Symbol(flowAlias, Decl(tluaMultipleAssignment.tlua, 579, 5))
->FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 578, 5))
+>flowAlias : Symbol(flowAlias, Decl(tluaMultipleAssignment.tlua, 603, 5))
+>FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 602, 5))
 
 FlowAliasRoot.value = 1;
->FlowAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
->FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 578, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
+>FlowAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
+>FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 602, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
 
 flowAlias.value = "later";
->flowAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
->flowAlias : Symbol(flowAlias, Decl(tluaMultipleAssignment.tlua, 579, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
+>flowAlias.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
+>flowAlias : Symbol(flowAlias, Decl(tluaMultipleAssignment.tlua, 603, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
 
 local flowAliasStringUse: string = FlowAliasRoot.value;
->flowAliasStringUse : Symbol(flowAliasStringUse, Decl(tluaMultipleAssignment.tlua, 582, 5))
->FlowAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
->FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 578, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
+>flowAliasStringUse : Symbol(flowAliasStringUse, Decl(tluaMultipleAssignment.tlua, 606, 5))
+>FlowAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
+>FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 602, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
 
 local flowAliasNumberError: number = FlowAliasRoot.value;
->flowAliasNumberError : Symbol(flowAliasNumberError, Decl(tluaMultipleAssignment.tlua, 583, 5))
->FlowAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
->FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 578, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 579, 32), Decl(tluaMultipleAssignment.tlua, 580, 24))
+>flowAliasNumberError : Symbol(flowAliasNumberError, Decl(tluaMultipleAssignment.tlua, 607, 5))
+>FlowAliasRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
+>FlowAliasRoot : Symbol(FlowAliasRoot, Decl(tluaMultipleAssignment.tlua, 602, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 603, 32), Decl(tluaMultipleAssignment.tlua, 604, 24))
 
 // Default guards recognize the same member through a stable alias.
 local AliasGuardRoot = {};
->AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
+>AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 610, 5))
 
 local aliasGuardRoot = AliasGuardRoot;
->aliasGuardRoot : Symbol(aliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 587, 5))
->AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
+>aliasGuardRoot : Symbol(aliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 611, 5))
+>AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 610, 5))
 
 AliasGuardRoot.child, aliasGuardSide = aliasGuardRoot.child or {}, 0;
->AliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
->AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
->aliasGuardSide : Symbol(aliasGuardSide, Decl(tluaMultipleAssignment.tlua, 588, 21))
->aliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
->aliasGuardRoot : Symbol(aliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 587, 5))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
+>AliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
+>AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 610, 5))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
+>aliasGuardSide : Symbol(aliasGuardSide, Decl(tluaMultipleAssignment.tlua, 612, 21))
+>aliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
+>aliasGuardRoot : Symbol(aliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 611, 5))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
 
 AliasGuardRoot.child.value = true;
->AliasGuardRoot.child.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 69))
->AliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
->AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 586, 5))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 69))
+>AliasGuardRoot.child.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 612, 69))
+>AliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
+>AliasGuardRoot : Symbol(AliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 610, 5))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 612, 69))
 
 local aliasGuardUse: boolean = aliasGuardRoot.child.value;
->aliasGuardUse : Symbol(aliasGuardUse, Decl(tluaMultipleAssignment.tlua, 590, 5))
->aliasGuardRoot.child.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 69))
->aliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
->aliasGuardRoot : Symbol(aliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 587, 5))
->child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 587, 38))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 588, 69))
+>aliasGuardUse : Symbol(aliasGuardUse, Decl(tluaMultipleAssignment.tlua, 614, 5))
+>aliasGuardRoot.child.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 612, 69))
+>aliasGuardRoot.child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
+>aliasGuardRoot : Symbol(aliasGuardRoot, Decl(tluaMultipleAssignment.tlua, 611, 5))
+>child : Symbol(child, Decl(tluaMultipleAssignment.tlua, 611, 38))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 612, 69))
 
 // A stable computed key participates in the same captured storage identity.
 local ComputedAliasRoot: { [key: string]: 1 | 2 } = {};
->ComputedAliasRoot : Symbol(ComputedAliasRoot, Decl(tluaMultipleAssignment.tlua, 593, 5))
->key : Symbol(key, Decl(tluaMultipleAssignment.tlua, 593, 28))
+>ComputedAliasRoot : Symbol(ComputedAliasRoot, Decl(tluaMultipleAssignment.tlua, 617, 5))
+>key : Symbol(key, Decl(tluaMultipleAssignment.tlua, 617, 28))
 
 local computedAliasRoot = ComputedAliasRoot;
->computedAliasRoot : Symbol(computedAliasRoot, Decl(tluaMultipleAssignment.tlua, 594, 5))
->ComputedAliasRoot : Symbol(ComputedAliasRoot, Decl(tluaMultipleAssignment.tlua, 593, 5))
+>computedAliasRoot : Symbol(computedAliasRoot, Decl(tluaMultipleAssignment.tlua, 618, 5))
+>ComputedAliasRoot : Symbol(ComputedAliasRoot, Decl(tluaMultipleAssignment.tlua, 617, 5))
 
 local computedAliasKey = "value";
->computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 595, 5))
+>computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 619, 5))
 
 ComputedAliasRoot[computedAliasKey], computedAliasRoot[computedAliasKey] = 1, 2;
->ComputedAliasRoot : Symbol(ComputedAliasRoot, Decl(tluaMultipleAssignment.tlua, 593, 5))
->computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 595, 5))
->computedAliasRoot : Symbol(computedAliasRoot, Decl(tluaMultipleAssignment.tlua, 594, 5))
->computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 595, 5))
+>ComputedAliasRoot : Symbol(ComputedAliasRoot, Decl(tluaMultipleAssignment.tlua, 617, 5))
+>computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 619, 5))
+>computedAliasRoot : Symbol(computedAliasRoot, Decl(tluaMultipleAssignment.tlua, 618, 5))
+>computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 619, 5))
 
 local computedAliasWinner: 1 = computedAliasRoot[computedAliasKey];
->computedAliasWinner : Symbol(computedAliasWinner, Decl(tluaMultipleAssignment.tlua, 597, 5))
->computedAliasRoot : Symbol(computedAliasRoot, Decl(tluaMultipleAssignment.tlua, 594, 5))
->computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 595, 5))
+>computedAliasWinner : Symbol(computedAliasWinner, Decl(tluaMultipleAssignment.tlua, 621, 5))
+>computedAliasRoot : Symbol(computedAliasRoot, Decl(tluaMultipleAssignment.tlua, 618, 5))
+>computedAliasKey : Symbol(computedAliasKey, Decl(tluaMultipleAssignment.tlua, 619, 5))
 
 // A mutable key still has one captured value across a single LHS list.
 local computedMutableArray;
->computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 600, 5))
+>computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 624, 5))
 
 computedMutableArray = {};
->computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 600, 5))
+>computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 624, 5))
 
 local computedMutableAlias = computedMutableArray;
->computedMutableAlias : Symbol(computedMutableAlias, Decl(tluaMultipleAssignment.tlua, 602, 5))
->computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 600, 5))
+>computedMutableAlias : Symbol(computedMutableAlias, Decl(tluaMultipleAssignment.tlua, 626, 5))
+>computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 624, 5))
 
 local computedMutableIndex: number = 1;
->computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 603, 5))
+>computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 627, 5))
 
 computedMutableIndex = 2;
->computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 603, 5))
+>computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 627, 5))
 
 computedMutableArray[computedMutableIndex], computedMutableAlias[computedMutableIndex] = 3, "overwritten";
->computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 600, 5))
->computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 603, 5))
->computedMutableAlias : Symbol(computedMutableAlias, Decl(tluaMultipleAssignment.tlua, 602, 5))
->computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 603, 5))
+>computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 624, 5))
+>computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 627, 5))
+>computedMutableAlias : Symbol(computedMutableAlias, Decl(tluaMultipleAssignment.tlua, 626, 5))
+>computedMutableIndex : Symbol(computedMutableIndex, Decl(tluaMultipleAssignment.tlua, 627, 5))
 
 local computedMutableUse: number[] = computedMutableArray;
->computedMutableUse : Symbol(computedMutableUse, Decl(tluaMultipleAssignment.tlua, 606, 5))
->computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 600, 5))
+>computedMutableUse : Symbol(computedMutableUse, Decl(tluaMultipleAssignment.tlua, 630, 5))
+>computedMutableArray : Symbol(computedMutableArray, Decl(tluaMultipleAssignment.tlua, 624, 5))
 
 // Aliased values do not make their identifier storage slots aliases.
 local aliasSlotRoot: number = 0;
->aliasSlotRoot : Symbol(aliasSlotRoot, Decl(tluaMultipleAssignment.tlua, 609, 5))
+>aliasSlotRoot : Symbol(aliasSlotRoot, Decl(tluaMultipleAssignment.tlua, 633, 5))
 
 local aliasSlot = aliasSlotRoot;
->aliasSlot : Symbol(aliasSlot, Decl(tluaMultipleAssignment.tlua, 610, 5))
->aliasSlotRoot : Symbol(aliasSlotRoot, Decl(tluaMultipleAssignment.tlua, 609, 5))
+>aliasSlot : Symbol(aliasSlot, Decl(tluaMultipleAssignment.tlua, 634, 5))
+>aliasSlotRoot : Symbol(aliasSlotRoot, Decl(tluaMultipleAssignment.tlua, 633, 5))
 
 aliasSlotRoot, aliasSlot = 8, "kept";
->aliasSlotRoot : Symbol(aliasSlotRoot, Decl(tluaMultipleAssignment.tlua, 609, 5))
->aliasSlot : Symbol(aliasSlot, Decl(tluaMultipleAssignment.tlua, 610, 5))
+>aliasSlotRoot : Symbol(aliasSlotRoot, Decl(tluaMultipleAssignment.tlua, 633, 5))
+>aliasSlot : Symbol(aliasSlot, Decl(tluaMultipleAssignment.tlua, 634, 5))
 
 // Every store is checked against an existing declaration even when another
 // target wins the transaction's final value.
 local declaredDuplicate: { value: number } = { value = 0 };
->declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 615, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 26))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 46))
+>declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 639, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 26))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 46))
 
 declaredDuplicate.value, declaredDuplicate.value = 9, "overwritten";
->declaredDuplicate.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 26))
->declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 615, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 26))
->declaredDuplicate.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 26))
->declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 615, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 26))
+>declaredDuplicate.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 26))
+>declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 639, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 26))
+>declaredDuplicate.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 26))
+>declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 639, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 26))
 
 local declaredDuplicateUse: number = declaredDuplicate.value;
->declaredDuplicateUse : Symbol(declaredDuplicateUse, Decl(tluaMultipleAssignment.tlua, 617, 5))
->declaredDuplicate.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 26))
->declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 615, 5))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 615, 26))
+>declaredDuplicateUse : Symbol(declaredDuplicateUse, Decl(tluaMultipleAssignment.tlua, 641, 5))
+>declaredDuplicate.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 26))
+>declaredDuplicate : Symbol(declaredDuplicate, Decl(tluaMultipleAssignment.tlua, 639, 5))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 26))
 
 // An overwritten element target does not contribute to evolving-array flow.
 local duplicateArray;
->duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 620, 5))
+>duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 644, 5))
 
 duplicateArray = {};
->duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 620, 5))
+>duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 644, 5))
 
 local duplicateArrayIndex: number = 1;
->duplicateArrayIndex : Symbol(duplicateArrayIndex, Decl(tluaMultipleAssignment.tlua, 622, 5))
+>duplicateArrayIndex : Symbol(duplicateArrayIndex, Decl(tluaMultipleAssignment.tlua, 646, 5))
 
 duplicateArray[duplicateArrayIndex], duplicateArray[duplicateArrayIndex] = 1, "overwritten";
->duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 620, 5))
->duplicateArrayIndex : Symbol(duplicateArrayIndex, Decl(tluaMultipleAssignment.tlua, 622, 5))
->duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 620, 5))
->duplicateArrayIndex : Symbol(duplicateArrayIndex, Decl(tluaMultipleAssignment.tlua, 622, 5))
+>duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 644, 5))
+>duplicateArrayIndex : Symbol(duplicateArrayIndex, Decl(tluaMultipleAssignment.tlua, 646, 5))
+>duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 644, 5))
+>duplicateArrayIndex : Symbol(duplicateArrayIndex, Decl(tluaMultipleAssignment.tlua, 646, 5))
 
 local duplicateArrayUse: number[] = duplicateArray;
->duplicateArrayUse : Symbol(duplicateArrayUse, Decl(tluaMultipleAssignment.tlua, 624, 5))
->duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 620, 5))
+>duplicateArrayUse : Symbol(duplicateArrayUse, Decl(tluaMultipleAssignment.tlua, 648, 5))
+>duplicateArray : Symbol(duplicateArray, Decl(tluaMultipleAssignment.tlua, 644, 5))
 
 local reassignedDuplicateArray;
->reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 626, 5))
+>reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 650, 5))
 
 reassignedDuplicateArray = {};
->reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 626, 5))
+>reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 650, 5))
 
 local reassignedDuplicateIndex: number = 1;
->reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 628, 5))
+>reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 652, 5))
 
 reassignedDuplicateIndex = 2;
->reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 628, 5))
+>reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 652, 5))
 
 reassignedDuplicateArray[reassignedDuplicateIndex], reassignedDuplicateArray[reassignedDuplicateIndex] = 3, "overwritten";
->reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 626, 5))
->reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 628, 5))
->reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 626, 5))
->reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 628, 5))
+>reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 650, 5))
+>reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 652, 5))
+>reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 650, 5))
+>reassignedDuplicateIndex : Symbol(reassignedDuplicateIndex, Decl(tluaMultipleAssignment.tlua, 652, 5))
 
 local reassignedDuplicateArrayUse: number[] = reassignedDuplicateArray;
->reassignedDuplicateArrayUse : Symbol(reassignedDuplicateArrayUse, Decl(tluaMultipleAssignment.tlua, 631, 5))
->reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 626, 5))
+>reassignedDuplicateArrayUse : Symbol(reassignedDuplicateArrayUse, Decl(tluaMultipleAssignment.tlua, 655, 5))
+>reassignedDuplicateArray : Symbol(reassignedDuplicateArray, Decl(tluaMultipleAssignment.tlua, 650, 5))
 
 local distinctArray;
->distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 633, 5))
+>distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 657, 5))
 
 distinctArray = {};
->distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 633, 5))
+>distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 657, 5))
 
 distinctArray[1], distinctArray[2] = 1, "kept";
->distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 633, 5))
->distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 633, 5))
+>distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 657, 5))
+>distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 657, 5))
 
 local distinctArrayUse: (number | string)[] = distinctArray;
->distinctArrayUse : Symbol(distinctArrayUse, Decl(tluaMultipleAssignment.tlua, 636, 5))
->distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 633, 5))
+>distinctArrayUse : Symbol(distinctArrayUse, Decl(tluaMultipleAssignment.tlua, 660, 5))
+>distinctArray : Symbol(distinctArray, Decl(tluaMultipleAssignment.tlua, 657, 5))
 
 // Losing targets still undergo writable-reference validation.
 OptionalLoserRoot = {};
->OptionalLoserRoot : Symbol(OptionalLoserRoot, Decl(tluaMultipleAssignment.tlua, 636, 60))
+>OptionalLoserRoot : Symbol(OptionalLoserRoot, Decl(tluaMultipleAssignment.tlua, 660, 60))
 
 OptionalLoserRoot.value, OptionalLoserRoot?.value = 4, 5;
->OptionalLoserRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 23), Decl(tluaMultipleAssignment.tlua, 640, 24))
->OptionalLoserRoot : Symbol(OptionalLoserRoot, Decl(tluaMultipleAssignment.tlua, 636, 60))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 23), Decl(tluaMultipleAssignment.tlua, 640, 24))
->OptionalLoserRoot?.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 23), Decl(tluaMultipleAssignment.tlua, 640, 24))
->OptionalLoserRoot : Symbol(OptionalLoserRoot, Decl(tluaMultipleAssignment.tlua, 636, 60))
->value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 639, 23), Decl(tluaMultipleAssignment.tlua, 640, 24))
+>OptionalLoserRoot.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 663, 23), Decl(tluaMultipleAssignment.tlua, 664, 24))
+>OptionalLoserRoot : Symbol(OptionalLoserRoot, Decl(tluaMultipleAssignment.tlua, 660, 60))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 663, 23), Decl(tluaMultipleAssignment.tlua, 664, 24))
+>OptionalLoserRoot?.value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 663, 23), Decl(tluaMultipleAssignment.tlua, 664, 24))
+>OptionalLoserRoot : Symbol(OptionalLoserRoot, Decl(tluaMultipleAssignment.tlua, 660, 60))
+>value : Symbol(value, Decl(tluaMultipleAssignment.tlua, 663, 23), Decl(tluaMultipleAssignment.tlua, 664, 24))
 
 ConstructorWinner, ConstructorWinner = {}, "overwritten";
->ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 640, 57), Decl(tluaMultipleAssignment.tlua, 642, 18))
->ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 640, 57), Decl(tluaMultipleAssignment.tlua, 642, 18))
+>ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 664, 57), Decl(tluaMultipleAssignment.tlua, 666, 18))
+>ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 664, 57), Decl(tluaMultipleAssignment.tlua, 666, 18))
 
 ConstructorWinner.kept = true;
->ConstructorWinner.kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 642, 57))
->ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 640, 57), Decl(tluaMultipleAssignment.tlua, 642, 18))
->kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 642, 57))
+>ConstructorWinner.kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 666, 57))
+>ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 664, 57), Decl(tluaMultipleAssignment.tlua, 666, 18))
+>kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 666, 57))
 
 local constructorWinnerUse: boolean = ConstructorWinner.kept;
->constructorWinnerUse : Symbol(constructorWinnerUse, Decl(tluaMultipleAssignment.tlua, 644, 5))
->ConstructorWinner.kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 642, 57))
->ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 640, 57), Decl(tluaMultipleAssignment.tlua, 642, 18))
->kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 642, 57))
+>constructorWinnerUse : Symbol(constructorWinnerUse, Decl(tluaMultipleAssignment.tlua, 668, 5))
+>ConstructorWinner.kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 666, 57))
+>ConstructorWinner : Symbol(ConstructorWinner, Decl(tluaMultipleAssignment.tlua, 664, 57), Decl(tluaMultipleAssignment.tlua, 666, 18))
+>kept : Symbol(kept, Decl(tluaMultipleAssignment.tlua, 666, 57))
 
 PackWinner, PackWinner = pair();
->PackWinner : Symbol(PackWinner, Decl(tluaMultipleAssignment.tlua, 644, 61), Decl(tluaMultipleAssignment.tlua, 646, 11))
->PackWinner : Symbol(PackWinner, Decl(tluaMultipleAssignment.tlua, 644, 61), Decl(tluaMultipleAssignment.tlua, 646, 11))
+>PackWinner : Symbol(PackWinner, Decl(tluaMultipleAssignment.tlua, 668, 61), Decl(tluaMultipleAssignment.tlua, 670, 11))
+>PackWinner : Symbol(PackWinner, Decl(tluaMultipleAssignment.tlua, 668, 61), Decl(tluaMultipleAssignment.tlua, 670, 11))
 >pair : Symbol(pair, Decl(tluaMultipleAssignment.tlua, 10, 36))
 
 local packWinnerUse: number = PackWinner;
->packWinnerUse : Symbol(packWinnerUse, Decl(tluaMultipleAssignment.tlua, 647, 5))
->PackWinner : Symbol(PackWinner, Decl(tluaMultipleAssignment.tlua, 644, 61), Decl(tluaMultipleAssignment.tlua, 646, 11))
+>packWinnerUse : Symbol(packWinnerUse, Decl(tluaMultipleAssignment.tlua, 671, 5))
+>PackWinner : Symbol(PackWinner, Decl(tluaMultipleAssignment.tlua, 668, 61), Decl(tluaMultipleAssignment.tlua, 670, 11))
 
 // Separate transactions still contribute independently to inferred unions.
 TransactionUnion = 1;
->TransactionUnion : Symbol(TransactionUnion, Decl(tluaMultipleAssignment.tlua, 647, 41), Decl(tluaMultipleAssignment.tlua, 650, 21))
+>TransactionUnion : Symbol(TransactionUnion, Decl(tluaMultipleAssignment.tlua, 671, 41), Decl(tluaMultipleAssignment.tlua, 674, 21))
 
 TransactionUnion = "later";
->TransactionUnion : Symbol(TransactionUnion, Decl(tluaMultipleAssignment.tlua, 647, 41), Decl(tluaMultipleAssignment.tlua, 650, 21))
+>TransactionUnion : Symbol(TransactionUnion, Decl(tluaMultipleAssignment.tlua, 671, 41), Decl(tluaMultipleAssignment.tlua, 674, 21))
 
 local transactionUnionUse: number | string = TransactionUnion;
->transactionUnionUse : Symbol(transactionUnionUse, Decl(tluaMultipleAssignment.tlua, 652, 5))
->TransactionUnion : Symbol(TransactionUnion, Decl(tluaMultipleAssignment.tlua, 647, 41), Decl(tluaMultipleAssignment.tlua, 650, 21))
+>transactionUnionUse : Symbol(transactionUnionUse, Decl(tluaMultipleAssignment.tlua, 676, 5))
+>TransactionUnion : Symbol(TransactionUnion, Decl(tluaMultipleAssignment.tlua, 671, 41), Decl(tluaMultipleAssignment.tlua, 674, 21))
 
 // A declared uninitialized target is not an implicit augmentation.
 local DeclaredGuard: {};
->DeclaredGuard : Symbol(DeclaredGuard, Decl(tluaMultipleAssignment.tlua, 655, 5))
+>DeclaredGuard : Symbol(DeclaredGuard, Decl(tluaMultipleAssignment.tlua, 679, 5))
 
 DeclaredGuard, FreshGuard = DeclaredGuard or {}, FreshGuard or {};
->DeclaredGuard : Symbol(DeclaredGuard, Decl(tluaMultipleAssignment.tlua, 655, 5))
->FreshGuard : Symbol(FreshGuard, Decl(tluaMultipleAssignment.tlua, 656, 14))
->DeclaredGuard : Symbol(DeclaredGuard, Decl(tluaMultipleAssignment.tlua, 655, 5))
->FreshGuard : Symbol(FreshGuard, Decl(tluaMultipleAssignment.tlua, 656, 14))
+>DeclaredGuard : Symbol(DeclaredGuard, Decl(tluaMultipleAssignment.tlua, 679, 5))
+>FreshGuard : Symbol(FreshGuard, Decl(tluaMultipleAssignment.tlua, 680, 14))
+>DeclaredGuard : Symbol(DeclaredGuard, Decl(tluaMultipleAssignment.tlua, 679, 5))
+>FreshGuard : Symbol(FreshGuard, Decl(tluaMultipleAssignment.tlua, 680, 14))
 
 // A surplus guard has no positional target and remains an ordinary read.
 DiscardedGuard = {}, DiscardedGuard or {};
->DiscardedGuard : Symbol(DiscardedGuard, Decl(tluaMultipleAssignment.tlua, 656, 66))
->DiscardedGuard : Symbol(DiscardedGuard, Decl(tluaMultipleAssignment.tlua, 656, 66))
+>DiscardedGuard : Symbol(DiscardedGuard, Decl(tluaMultipleAssignment.tlua, 680, 66))
+>DiscardedGuard : Symbol(DiscardedGuard, Decl(tluaMultipleAssignment.tlua, 680, 66))
 
 // Extra and missing values follow Lua's adjustment rules.
 local optional: string | nil = "";
->optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 662, 5))
+>optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 686, 5))
 
 optional, count = "present";
->optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 662, 5))
+>optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 686, 5))
 >count : Symbol(count, Decl(tluaMultipleAssignment.tlua, 21, 5))
 
 // Each target is checked against its positional value.

@@ -2298,6 +2298,132 @@ local listContractBarUse: number = ListContractRoot.bar;
 >ListContractRoot : { foo: string; } & { bar: number; }
 >bar : number
 
+// A captured value keeps the wrappers written around it. Each erased form
+// denotes the same store, and the wrapper decides the static type the captured
+// value contributes. A `const` assertion cannot appear here: it is only valid
+// on a literal, and a captured value is always a reference.
+ParenSwapA = { a = 1 };
+>ParenSwapA = { a = 1 } : { a: number; }
+>ParenSwapA : { a: number; } | { tag: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+ParenSwapB = { tag = 2 };
+>ParenSwapB = { tag = 2 } : { tag: number; }
+>ParenSwapB : { a: number; } | { tag: number; }
+>{ tag = 2 } : { tag: number; }
+>tag : number
+>2 : 2
+
+ParenSwapA, ParenSwapB = (ParenSwapB), ParenSwapA;
+>ParenSwapA, ParenSwapB = (ParenSwapB), ParenSwapA : { tag: number; }
+>ParenSwapA, ParenSwapB : { a: number; } | { tag: number; }, { a: number; } | { tag: number; }
+>ParenSwapA : { a: number; } | { tag: number; }
+>ParenSwapB : { a: number; } | { tag: number; }
+>(ParenSwapB), ParenSwapA : { tag: number; }, { a: number; }
+>(ParenSwapB) : { tag: number; }
+>ParenSwapB : { tag: number; }
+>ParenSwapA : { a: number; }
+
+local parenSwapUse: number = ParenSwapA.tag;
+>parenSwapUse : number
+>ParenSwapA.tag : number
+>ParenSwapA : { tag: number; }
+>tag : number
+
+NonNullSwapA = { a = 1 };
+>NonNullSwapA = { a = 1 } : { a: number; }
+>NonNullSwapA : { a: number; } | { present: string; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+NonNullSwapB = { present = "y" };
+>NonNullSwapB = { present = "y" } : { present: string; }
+>NonNullSwapB : { a: number; } | { present: string; }
+>{ present = "y" } : { present: string; }
+>present : string
+>"y" : "y"
+
+NonNullSwapA, NonNullSwapB = NonNullSwapB!, NonNullSwapA;
+>NonNullSwapA, NonNullSwapB = NonNullSwapB!, NonNullSwapA : { present: string; }
+>NonNullSwapA, NonNullSwapB : { a: number; } | { present: string; }, { a: number; } | { present: string; }
+>NonNullSwapA : { a: number; } | { present: string; }
+>NonNullSwapB : { a: number; } | { present: string; }
+>NonNullSwapB!, NonNullSwapA : { present: string; }, { a: number; }
+>NonNullSwapB! : { present: string; }
+>NonNullSwapB : { present: string; }
+>NonNullSwapA : { a: number; }
+
+local nonNullSwapUse: string = NonNullSwapA.present;
+>nonNullSwapUse : string
+>NonNullSwapA.present : string
+>NonNullSwapA : { present: string; }
+>present : string
+
+SatisfiesSwapA = { a = 1 };
+>SatisfiesSwapA = { a = 1 } : { a: number; }
+>SatisfiesSwapA : { a: number; } | { kept: boolean; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+SatisfiesSwapB = { kept = true };
+>SatisfiesSwapB = { kept = true } : { kept: boolean; }
+>SatisfiesSwapB : { a: number; } | { kept: boolean; }
+>{ kept = true } : { kept: boolean; }
+>kept : boolean
+>true : true
+
+SatisfiesSwapA, SatisfiesSwapB = SatisfiesSwapB satisfies {}, SatisfiesSwapA;
+>SatisfiesSwapA, SatisfiesSwapB = SatisfiesSwapB satisfies {}, SatisfiesSwapA : { kept: boolean; }
+>SatisfiesSwapA, SatisfiesSwapB : { a: number; } | { kept: boolean; }, { a: number; } | { kept: boolean; }
+>SatisfiesSwapA : { a: number; } | { kept: boolean; }
+>SatisfiesSwapB : { a: number; } | { kept: boolean; }
+>SatisfiesSwapB satisfies {}, SatisfiesSwapA : { kept: boolean; }, { a: number; }
+>SatisfiesSwapB satisfies {} : { kept: boolean; }
+>SatisfiesSwapB : { kept: boolean; }
+>SatisfiesSwapA : { a: number; }
+
+local satisfiesSwapUse: boolean = SatisfiesSwapA.kept;
+>satisfiesSwapUse : boolean
+>SatisfiesSwapA.kept : boolean
+>SatisfiesSwapA : { kept: boolean; }
+>kept : boolean
+
+AssertSwapA = { a = 1 };
+>AssertSwapA = { a = 1 } : { a: number; }
+>AssertSwapA : { a: number; } | { tagged: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+AssertSwapB = { b = 2 };
+>AssertSwapB = { b = 2 } : { b: number; }
+>AssertSwapB : { a: number; } | { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+AssertSwapA, AssertSwapB = AssertSwapB as unknown as { tagged: number }, AssertSwapA;
+>AssertSwapA, AssertSwapB = AssertSwapB as unknown as { tagged: number }, AssertSwapA : { tagged: number; }
+>AssertSwapA, AssertSwapB : { a: number; } | { tagged: number; }, { a: number; } | { b: number; }
+>AssertSwapA : { a: number; } | { tagged: number; }
+>AssertSwapB : { a: number; } | { b: number; }
+>AssertSwapB as unknown as { tagged: number }, AssertSwapA : { tagged: number; }, { a: number; }
+>AssertSwapB as unknown as { tagged: number } : { tagged: number; }
+>AssertSwapB as unknown : unknown
+>AssertSwapB : { b: number; }
+>tagged : number
+>AssertSwapA : { a: number; }
+
+local assertSwapUse: number = AssertSwapA.tagged;
+>assertSwapUse : number
+>AssertSwapA.tagged : number
+>AssertSwapA : { tagged: number; }
+>tagged : number
+
 // A contract composes below a property it already describes: the declared
 // member keeps its contract type while the constructor's own member survives
 // alongside it, rather than either replacing the other.

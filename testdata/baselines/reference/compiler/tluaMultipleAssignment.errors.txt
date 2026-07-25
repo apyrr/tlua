@@ -20,22 +20,22 @@ tluaMultipleAssignment.tlua(473,1): error TLUA7053: Element implicitly has an 'a
 tluaMultipleAssignment.tlua(482,1): error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type '{}'.
   Property '1' does not exist on type '{}'.
 tluaMultipleAssignment.tlua(509,19): error TLUA2339: Property 'bar' does not exist on type '{ foo: string; }'.
-tluaMultipleAssignment.tlua(525,1): error TLUA2322: Type 'number' is not assignable to type 'string'.
-tluaMultipleAssignment.tlua(528,1): error TLUA2322: Type 'number' is not assignable to type 'string'.
-tluaMultipleAssignment.tlua(534,30): error TLUA2322: Type 'number' is not assignable to type 'string'.
-tluaMultipleAssignment.tlua(537,22): error TLUA2540: Cannot assign to 'bar' because it is a read-only property.
-tluaMultipleAssignment.tlua(540,1): error TLUA2322: Type 'number' is not assignable to type 'string'.
-tluaMultipleAssignment.tlua(543,19): error TLUA2339: Property 'bar' does not exist on type '{ bar: string; } | { foo: number; }'.
+tluaMultipleAssignment.tlua(549,1): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMultipleAssignment.tlua(552,1): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMultipleAssignment.tlua(558,30): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMultipleAssignment.tlua(561,22): error TLUA2540: Cannot assign to 'bar' because it is a read-only property.
+tluaMultipleAssignment.tlua(564,1): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMultipleAssignment.tlua(567,19): error TLUA2339: Property 'bar' does not exist on type '{ bar: string; } | { foo: number; }'.
   Property 'bar' does not exist on type '{ foo: number; }'.
-tluaMultipleAssignment.tlua(584,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
-tluaMultipleAssignment.tlua(612,16): error TLUA2322: Type 'string' is not assignable to type 'number'.
-tluaMultipleAssignment.tlua(617,26): error TLUA2322: Type 'string' is not assignable to type 'number'.
-tluaMultipleAssignment.tlua(641,26): error TLUA2779: The left-hand side of an assignment expression may not be an optional property access.
-tluaMultipleAssignment.tlua(657,29): error TLUA2454: Variable 'DeclaredGuard' is used before being assigned.
-tluaMultipleAssignment.tlua(660,22): error TLUA2454: Variable 'DiscardedGuard' is used before being assigned.
-tluaMultipleAssignment.tlua(664,11): error TLUA2322: Type 'nil' is not assignable to type 'number'.
-tluaMultipleAssignment.tlua(667,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
-tluaMultipleAssignment.tlua(667,8): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMultipleAssignment.tlua(608,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMultipleAssignment.tlua(636,16): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMultipleAssignment.tlua(641,26): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMultipleAssignment.tlua(665,26): error TLUA2779: The left-hand side of an assignment expression may not be an optional property access.
+tluaMultipleAssignment.tlua(681,29): error TLUA2454: Variable 'DeclaredGuard' is used before being assigned.
+tluaMultipleAssignment.tlua(684,22): error TLUA2454: Variable 'DiscardedGuard' is used before being assigned.
+tluaMultipleAssignment.tlua(688,11): error TLUA2322: Type 'nil' is not assignable to type 'number'.
+tluaMultipleAssignment.tlua(691,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMultipleAssignment.tlua(691,8): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
 ==== tluaMultipleAssignment.tlua (33 errors) ====
@@ -593,6 +593,30 @@ tluaMultipleAssignment.tlua(667,8): error TLUA2322: Type 'number' is not assigna
     ListContractRoot.bar = 1;
     local listContractFooUse: string = ListContractRoot.foo;
     local listContractBarUse: number = ListContractRoot.bar;
+    
+    // A captured value keeps the wrappers written around it. Each erased form
+    // denotes the same store, and the wrapper decides the static type the captured
+    // value contributes. A `const` assertion cannot appear here: it is only valid
+    // on a literal, and a captured value is always a reference.
+    ParenSwapA = { a = 1 };
+    ParenSwapB = { tag = 2 };
+    ParenSwapA, ParenSwapB = (ParenSwapB), ParenSwapA;
+    local parenSwapUse: number = ParenSwapA.tag;
+    
+    NonNullSwapA = { a = 1 };
+    NonNullSwapB = { present = "y" };
+    NonNullSwapA, NonNullSwapB = NonNullSwapB!, NonNullSwapA;
+    local nonNullSwapUse: string = NonNullSwapA.present;
+    
+    SatisfiesSwapA = { a = 1 };
+    SatisfiesSwapB = { kept = true };
+    SatisfiesSwapA, SatisfiesSwapB = SatisfiesSwapB satisfies {}, SatisfiesSwapA;
+    local satisfiesSwapUse: boolean = SatisfiesSwapA.kept;
+    
+    AssertSwapA = { a = 1 };
+    AssertSwapB = { b = 2 };
+    AssertSwapA, AssertSwapB = AssertSwapB as unknown as { tagged: number }, AssertSwapA;
+    local assertSwapUse: number = AssertSwapA.tagged;
     
     // A contract composes below a property it already describes: the declared
     // member keeps its contract type while the constructor's own member survives
