@@ -309,7 +309,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	}
 	items := make([][]signatureInformation, len(candidates))
 	for i, candidateSignature := range candidates {
-		items[i] = l.getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts.String(), callTargetSymbol, enclosingDeclaration, sourceFile, c, docFormat, vsCapability)
+		items[i] = l.getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, argumentInfo.hidesReceiver, callTargetDisplayParts.String(), callTargetSymbol, enclosingDeclaration, sourceFile, c, docFormat, vsCapability)
 	}
 
 	selectedItemIndex := 0
@@ -377,7 +377,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 
 		// If client supports per-signature activeParameter, set it on each SignatureInformation
 		if supportsPerSignatureActiveParam {
-			sigInfo.ActiveParameter = l.computeActiveParameter(item, argumentInfo.argumentIndex, supportsNullActiveParam)
+			sigInfo.ActiveParameter = l.computeActiveParameter(item, argumentInfo.displayArgumentIndex(), supportsNullActiveParam)
 		}
 
 		signatureInformation[i] = sigInfo
@@ -391,7 +391,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	// If client doesn't support per-signature activeParameter, set it on the top-level SignatureHelp
 	if !supportsPerSignatureActiveParam {
 		activeSignature := flattenedSignatures[selectedItemIndex]
-		help.ActiveParameter = l.computeActiveParameter(activeSignature, argumentInfo.argumentIndex, supportsNullActiveParam)
+		help.ActiveParameter = l.computeActiveParameter(activeSignature, argumentInfo.displayArgumentIndex(), supportsNullActiveParam)
 	}
 
 	return help
@@ -429,12 +429,12 @@ func (l *LanguageService) computeActiveParameter(sig signatureInformation, argum
 	return &lsproto.UintegerOrNull{Uinteger: new(activeParam)}
 }
 
-func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol string, callTargetSym *ast.Symbol, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker, docFormat lsproto.MarkupKind, vsCapability bool) []signatureInformation {
+func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, hidesReceiver bool, callTargetSymbol string, callTargetSym *ast.Symbol, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker, docFormat lsproto.MarkupKind, vsCapability bool) []signatureInformation {
 	var infos []*signatureHelpItemInfo
 	if isTypeParameterList {
 		infos = l.itemInfoForTypeParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat, vsCapability)
 	} else {
-		infos = l.itemInfoForParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat, vsCapability)
+		infos = l.itemInfoForParameters(candidate, hidesReceiver, c, enclosingDeclaration, sourceFile, docFormat, vsCapability)
 	}
 
 	suffixDpw := returnTypeToDisplayParts(candidate, c, enclosingDeclaration, sourceFile, vsCapability)
@@ -568,7 +568,7 @@ func (l *LanguageService) itemInfoForTypeParameters(candidateSignature *checker.
 	return result
 }
 
-func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind, vsCapability bool) []*signatureHelpItemInfo {
+func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Signature, hidesReceiver bool, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind, vsCapability bool) []*signatureHelpItemInfo {
 	emitContext := printer.NewEmitContext()
 	p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
 
@@ -615,6 +615,13 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 
 	result := make([]*signatureHelpItemInfo, len(lists))
 	for i, parameterList := range lists {
+		// A colon call fills parameter 0 with its receiver, which the source never
+		// writes. Listing it offers the reader a slot they cannot reach, and for a
+		// method on a table literal that slot is the receiver's whole structural type
+		// spelled out. The dot form does write it, and keeps it.
+		if hidesReceiver && len(parameterList) > 0 {
+			parameterList = parameterList[1:]
+		}
 		parameters := make([]signatureHelpParameter, len(parameterList))
 		paramDpw := newDisplayPartsWriter(vsCapability)
 		paramDpw.WriteFrom(dpw)
@@ -899,6 +906,22 @@ type argumentListInfo struct {
 	argumentIndex       int
 	/** argumentCount is the *apparent* number of arguments. */
 	argumentCount int
+	/**
+	 * hidesReceiver marks a colon call, whose receiver fills signature parameter 0
+	 * without being written. argumentIndex and argumentCount stay in the signature's
+	 * terms because that is what resolves the candidate; anything the reader sees is
+	 * in the written call's terms instead.
+	 */
+	hidesReceiver bool
+}
+
+// displayArgumentIndex maps argumentIndex onto the parameters actually shown. They
+// differ only for a colon call, where the leading `self` is dropped from the label.
+func (a *argumentListInfo) displayArgumentIndex() int {
+	if a.hidesReceiver {
+		return max(0, a.argumentIndex-1)
+	}
+	return a.argumentIndex
 }
 
 // Returns relevant information for the argument list and the current argument if we are
@@ -949,6 +972,7 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 			argumentsSpan:       argumentsSpan,
 			argumentIndex:       argumentIndex,
 			argumentCount:       argumentCount,
+			hidesReceiver:       !isTypeParameterList && ast.IsLuaColonCall(parent),
 		}
 	} else if isNoSubstitutionTemplateLiteral(node) && isTaggedTemplateExpression(parent) {
 		// Check if we're actually inside the template;

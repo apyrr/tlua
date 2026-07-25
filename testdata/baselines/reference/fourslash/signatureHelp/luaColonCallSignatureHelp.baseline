@@ -7,11 +7,11 @@
 // T:add(1, 2);
 //       ^
 // | ----------------------------------------------------------------------
-// | add(self: { n: number; add(self: ..., **x: number**, y: number): number; }, x: number, y: number): number
+// | add(**x: number**, y: number): number
 // | ----------------------------------------------------------------------
 //          ^
 // | ----------------------------------------------------------------------
-// | add(self: { n: number; add(self: ..., x: number, **y: number**): number; }, x: number, y: number): number
+// | add(x: number, **y: number**): number
 // | ----------------------------------------------------------------------
 // T.add(T, 3, 4);
 //          ^
@@ -32,11 +32,8 @@
     "item": {
       "signatures": [
         {
-          "label": "add(self: { n: number; add(self: ..., x: number, y: number): number; }, x: number, y: number): number",
+          "label": "add(x: number, y: number): number",
           "parameters": [
-            {
-              "label": "self: { n: number; add(self: ..., x: number, y: number): number; }"
-            },
             {
               "label": "x: number"
             },
@@ -44,7 +41,7 @@
               "label": "y: number"
             }
           ],
-          "activeParameter": 1
+          "activeParameter": 0
         }
       ],
       "activeSignature": 0
@@ -63,11 +60,8 @@
     "item": {
       "signatures": [
         {
-          "label": "add(self: { n: number; add(self: ..., x: number, y: number): number; }, x: number, y: number): number",
+          "label": "add(x: number, y: number): number",
           "parameters": [
-            {
-              "label": "self: { n: number; add(self: ..., x: number, y: number): number; }"
-            },
             {
               "label": "x: number"
             },
@@ -75,7 +69,7 @@
               "label": "y: number"
             }
           ],
-          "activeParameter": 2
+          "activeParameter": 1
         }
       ],
       "activeSignature": 0

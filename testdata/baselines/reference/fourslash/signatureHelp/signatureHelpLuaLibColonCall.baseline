@@ -5,12 +5,12 @@
 // s:sub();
 //       ^
 // | ----------------------------------------------------------------------
-// | sub(self: string, **i: number**, j?: number): string
+// | sub(**i: number**, j?: number): string
 // | ----------------------------------------------------------------------
 // s:sub(1, );
 //          ^
 // | ----------------------------------------------------------------------
-// | sub(self: string, i: number, **j?: number**): string
+// | sub(i: number, **j?: number**): string
 // | ----------------------------------------------------------------------
 // 
 // s.sub();
@@ -34,12 +34,12 @@
 // h:seek();
 //        ^
 // | ----------------------------------------------------------------------
-// | seek(self: LuaFile, **whence?: "set" | "cur" | "end"**, offset?: number): number | nil, (string | nil)?
+// | seek(**whence?: "set" | "cur" | "end"**, offset?: number): number | nil, (string | nil)?
 // | ----------------------------------------------------------------------
 // h:seek("set", );
 //               ^
 // | ----------------------------------------------------------------------
-// | seek(self: LuaFile, whence?: "set" | "cur" | "end", **offset?: number**): number | nil, (string | nil)?
+// | seek(whence?: "set" | "cur" | "end", **offset?: number**): number | nil, (string | nil)?
 // | ----------------------------------------------------------------------
 [
   {
@@ -55,11 +55,8 @@
     "item": {
       "signatures": [
         {
-          "label": "sub(self: string, i: number, j?: number): string",
+          "label": "sub(i: number, j?: number): string",
           "parameters": [
-            {
-              "label": "self: string"
-            },
             {
               "label": "i: number"
             },
@@ -67,7 +64,7 @@
               "label": "j?: number"
             }
           ],
-          "activeParameter": 1,
+          "activeParameter": 0,
           "_vs_colorizedLabel": {
             "Runs": [
               {
@@ -78,31 +75,6 @@
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": "(",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "parameter name",
-                "Text": "self",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " ",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "string",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ", ",
                 "_vs_type": "ClassifiedTextRun"
               },
               {
@@ -191,11 +163,8 @@
     "item": {
       "signatures": [
         {
-          "label": "sub(self: string, i: number, j?: number): string",
+          "label": "sub(i: number, j?: number): string",
           "parameters": [
-            {
-              "label": "self: string"
-            },
             {
               "label": "i: number"
             },
@@ -203,7 +172,7 @@
               "label": "j?: number"
             }
           ],
-          "activeParameter": 2,
+          "activeParameter": 1,
           "_vs_colorizedLabel": {
             "Runs": [
               {
@@ -214,31 +183,6 @@
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": "(",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "parameter name",
-                "Text": "self",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " ",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "string",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ", ",
                 "_vs_type": "ClassifiedTextRun"
               },
               {
@@ -735,11 +679,8 @@
     "item": {
       "signatures": [
         {
-          "label": "seek(self: LuaFile, whence?: \"set\" | \"cur\" | \"end\", offset?: number): number | nil, (string | nil)?",
+          "label": "seek(whence?: \"set\" | \"cur\" | \"end\", offset?: number): number | nil, (string | nil)?",
           "parameters": [
-            {
-              "label": "self: LuaFile"
-            },
             {
               "label": "whence?: \"set\" | \"cur\" | \"end\""
             },
@@ -747,7 +688,7 @@
               "label": "offset?: number"
             }
           ],
-          "activeParameter": 1,
+          "activeParameter": 0,
           "_vs_colorizedLabel": {
             "Runs": [
               {
@@ -758,31 +699,6 @@
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": "(",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "parameter name",
-                "Text": "self",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " ",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "text",
-                "Text": "LuaFile",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ", ",
                 "_vs_type": "ClassifiedTextRun"
               },
               {
@@ -986,11 +902,8 @@
     "item": {
       "signatures": [
         {
-          "label": "seek(self: LuaFile, whence?: \"set\" | \"cur\" | \"end\", offset?: number): number | nil, (string | nil)?",
+          "label": "seek(whence?: \"set\" | \"cur\" | \"end\", offset?: number): number | nil, (string | nil)?",
           "parameters": [
-            {
-              "label": "self: LuaFile"
-            },
             {
               "label": "whence?: \"set\" | \"cur\" | \"end\""
             },
@@ -998,7 +911,7 @@
               "label": "offset?: number"
             }
           ],
-          "activeParameter": 2,
+          "activeParameter": 1,
           "_vs_colorizedLabel": {
             "Runs": [
               {
@@ -1009,31 +922,6 @@
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": "(",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "parameter name",
-                "Text": "self",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " ",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "text",
-                "Text": "LuaFile",
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ", ",
                 "_vs_type": "ClassifiedTextRun"
               },
               {
