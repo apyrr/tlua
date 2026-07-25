@@ -999,8 +999,6 @@ func (n *Node) QuestionToken() *TokenNode {
 	switch n.Kind {
 	case KindParameter:
 		return n.AsParameterDeclaration().QuestionToken
-	case KindConditionalExpression:
-		return n.AsConditionalExpression().QuestionToken
 	case KindMappedType:
 		return n.AsMappedTypeNode().QuestionToken
 	case KindNamedTupleMember:

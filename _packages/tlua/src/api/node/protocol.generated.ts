@@ -50,7 +50,6 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (stri
     [SyntaxKind.AsExpression]: ["expression", "type"],
     [SyntaxKind.SatisfiesExpression]: ["expression", "type"],
     [SyntaxKind.ExpressionList]: ["elements"],
-    [SyntaxKind.ConditionalExpression]: ["condition", "questionToken", "whenTrue", "colonToken", "whenFalse"],
     [SyntaxKind.PropertyAccessExpression]: ["expression", "questionDotToken", "colonToken", "name"],
     [SyntaxKind.ElementAccessExpression]: ["expression", "questionDotToken", "argumentExpression"],
     [SyntaxKind.CallExpression]: ["expression", "questionDotToken", "typeArguments", "arguments"],

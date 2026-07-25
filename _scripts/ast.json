@@ -232,7 +232,6 @@
             "ArrowFunction",
             "PrefixUnaryExpression",
             "BinaryExpression",
-            "ConditionalExpression",
             "TemplateExpression",
             "SpreadElement",
             "OmittedExpression",
@@ -2230,36 +2229,6 @@
                 "extends": [
                     "PrimaryExpressionBase"
                 ]
-            },
-            "ConditionalExpression": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "ExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Condition",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "QuestionToken",
-                        "type": "QuestionToken"
-                    },
-                    {
-                        "name": "WhenTrue",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "ColonToken",
-                        "type": "ColonToken"
-                    },
-                    {
-                        "name": "WhenFalse",
-                        "type": "Expression"
-                    }
-                ],
-                "arena": true
             },
             "PropertyAccessExpression": {
                 "extends": [

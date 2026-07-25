@@ -112,7 +112,6 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 		{title: "BinaryExpression#3", input: `a**b`},
 		{title: "BinaryExpression#4", input: `a instanceof b`},
 		{title: "BinaryExpression#5", input: `a in b`},
-		{title: "ConditionalExpression", input: `a?b:c`},
 		{title: "TemplateExpression#1", input: "`a${b}c`"},
 		{title: "TemplateExpression#2", input: "`a${b}c${d}e`"},
 		{title: "YieldExpression#1", input: `(function*() { yield })`},

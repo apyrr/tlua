@@ -111,9 +111,6 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 	case ast.KindBinaryExpression:
 		return IsCompletedNode(n.AsBinaryExpression().Right, sourceFile)
 
-	case ast.KindConditionalExpression:
-		return IsCompletedNode(n.AsConditionalExpression().WhenFalse, sourceFile)
-
 	default:
 		return true
 	}

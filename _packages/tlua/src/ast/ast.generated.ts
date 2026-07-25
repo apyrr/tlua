@@ -669,14 +669,6 @@ export interface ExpressionList extends ExpressionBase {
 export interface VarargExpression extends PrimaryExpressionBase {
     readonly kind: SyntaxKind.VarargExpression;
 }
-export interface ConditionalExpression extends ExpressionBase {
-    readonly kind: SyntaxKind.ConditionalExpression;
-    readonly condition: Expression;
-    readonly questionToken: QuestionToken;
-    readonly whenTrue: Expression;
-    readonly colonToken: ColonToken;
-    readonly whenFalse: Expression;
-}
 export interface PropertyAccessExpression extends MemberExpressionBase {
     readonly kind: SyntaxKind.PropertyAccessExpression;
     readonly expression: Expression;

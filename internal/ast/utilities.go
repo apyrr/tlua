@@ -501,8 +501,7 @@ func IsUnaryExpression(node *Node) bool {
 
 func isExpressionKind(kind Kind) bool {
 	switch kind {
-	case KindConditionalExpression,
-		KindArrowFunction,
+	case KindArrowFunction,
 		KindBinaryExpression,
 		KindSpreadElement,
 		KindAsExpression,
@@ -2108,7 +2107,6 @@ func IsExpressionNode(node *Node) bool {
 		KindArrowFunction,
 		KindPrefixUnaryExpression,
 		KindBinaryExpression,
-		KindConditionalExpression,
 		KindSpreadElement,
 		KindTemplateExpression,
 		KindOmittedExpression,

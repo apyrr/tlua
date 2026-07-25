@@ -1525,8 +1525,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 			return
 		}
 		b.bindBinaryExpressionFlow(node)
-	case ast.KindConditionalExpression:
-		b.bindConditionalExpressionFlow(node)
 	case ast.KindVariableDeclaration:
 		b.bindVariableDeclarationFlow(node)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
@@ -2040,31 +2038,6 @@ func (b *Binder) bindLogicalLikeExpression(node *ast.Node, trueTarget *ast.FlowL
 	b.bindCondition(expr.Right, trueTarget, falseTarget)
 }
 
-func (b *Binder) bindConditionalExpressionFlow(node *ast.Node) {
-	expr := node.AsConditionalExpression()
-	trueLabel := b.createBranchLabel()
-	falseLabel := b.createBranchLabel()
-	postExpressionLabel := b.createBranchLabel()
-	saveCurrentFlow := b.currentFlow
-	saveHasFlowEffects := b.hasFlowEffects
-	b.hasFlowEffects = false
-	b.bindCondition(expr.Condition, trueLabel, falseLabel)
-	b.currentFlow = b.finishFlowLabel(trueLabel)
-	b.bind(expr.QuestionToken)
-	b.bind(expr.WhenTrue)
-	b.addAntecedent(postExpressionLabel, b.currentFlow)
-	b.currentFlow = b.finishFlowLabel(falseLabel)
-	b.bind(expr.ColonToken)
-	b.bind(expr.WhenFalse)
-	b.addAntecedent(postExpressionLabel, b.currentFlow)
-	if b.hasFlowEffects {
-		b.currentFlow = b.finishFlowLabel(postExpressionLabel)
-	} else {
-		b.currentFlow = saveCurrentFlow
-	}
-	b.hasFlowEffects = b.hasFlowEffects || saveHasFlowEffects
-}
-
 func (b *Binder) bindVariableDeclarationFlow(node *ast.Node) {
 	b.bindEachChild(node)
 	// A name in a multi-name Lua local list is assigned by the trailing value
@@ -2506,8 +2479,6 @@ func isStatementCondition(node *ast.Node) bool {
 	switch node.Parent.Kind {
 	case ast.KindIfStatement, ast.KindWhileStatement, ast.KindRepeatStatement:
 		return node.Parent.Expression() == node
-	case ast.KindConditionalExpression:
-		return node.Parent.AsConditionalExpression().Condition == node
 	}
 	return false
 }

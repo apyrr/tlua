@@ -110,8 +110,7 @@ export function isStatement(node: Node): node is Statement {
 
 export function isExpression(node: Node): node is Expression {
     const kind = node.kind;
-    return kind === SyntaxKind.ConditionalExpression
-        || kind === SyntaxKind.ArrowFunction || kind === SyntaxKind.BinaryExpression
+    return kind === SyntaxKind.ArrowFunction || kind === SyntaxKind.BinaryExpression
         || kind === SyntaxKind.SpreadElement || kind === SyntaxKind.AsExpression
         || kind === SyntaxKind.OmittedExpression
         || kind === SyntaxKind.PartiallyEmittedExpression

@@ -664,7 +664,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		ast.KindVariableStatement,
 		ast.KindExportAssignment,
 		ast.KindReturnStatement,
-		ast.KindConditionalExpression,
 		ast.KindArrayBindingPattern,
 		ast.KindObjectBindingPattern,
 		ast.KindJsxOpeningElement,
@@ -752,27 +751,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 // whenTrue and whenFalse children to avoid double-indenting their contents. To identify this scenario,
 // we check for the whenTrue branch beginning on the line that the condition ends, and the whenFalse
 // branch beginning on the line that the whenTrue branch ends.
-func childIsUnindentedBranchOfConditionalExpression(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
-	if parent.Kind == ast.KindConditionalExpression && (child == parent.AsConditionalExpression().WhenTrue || child == parent.AsConditionalExpression().WhenFalse) {
-		conditionEndLine := scanner.GetECMALineOfPosition(sourceFile, parent.AsConditionalExpression().Condition.End())
-		if child == parent.AsConditionalExpression().WhenTrue {
-			return childStartLine == conditionEndLine
-		} else {
-			// On the whenFalse side, we have to look at the whenTrue side, because if that one was
-			// indented, whenFalse must also be indented:
-			//
-			// const y = true
-			//   ? 1 : (          L1: whenTrue indented because it's on a new line
-			//     0              L2: indented two stops, one because whenTrue was indented
-			//   );                   and one because of the parentheses spanning multiple lines
-			trueStartLine := getStartLineForNode(parent.AsConditionalExpression().WhenTrue, sourceFile)
-			trueEndLine := scanner.GetECMALineOfPosition(sourceFile, parent.AsConditionalExpression().WhenTrue.End())
-			return conditionEndLine == trueStartLine && trueEndLine == childStartLine
-		}
-	}
-	return false
-}
-
 func argumentStartsOnSameLineAsPreviousArgument(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
 	if ast.IsCallExpression(parent) {
 		if len(parent.Arguments()) == 0 {

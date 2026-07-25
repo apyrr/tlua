@@ -23,7 +23,6 @@ type NodeFactory struct {
 	binaryExpressionArena             core.Arena[BinaryExpression]
 	blockArena                        core.Arena[Block]
 	callExpressionArena               core.Arena[CallExpression]
-	conditionalExpressionArena        core.Arena[ConditionalExpression]
 	elementAccessExpressionArena      core.Arena[ElementAccessExpression]
 	expressionStatementArena          core.Arena[ExpressionStatement]
 	expressionWithTypeArgumentsArena  core.Arena[ExpressionWithTypeArguments]
@@ -272,7 +271,6 @@ type (
 	SatisfiesExpressionNode           = Node
 	ExpressionListNode                = Node
 	VarargExpressionNode              = Node
-	ConditionalExpressionNode         = Node
 	PropertyAccessExpressionNode      = Node
 	ElementAccessExpressionNode       = Node
 	CallExpressionNode                = Node
@@ -2983,65 +2981,6 @@ func (node *VarargExpression) Clone(f NodeFactoryCoercible) *Node {
 
 func IsVarargExpression(node *Node) bool {
 	return node.Kind == KindVarargExpression
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// ConditionalExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type ConditionalExpression struct {
-	ExpressionBase
-	CompositeBase
-	Condition     *Expression
-	QuestionToken *QuestionToken
-	WhenTrue      *Expression
-	ColonToken    *ColonToken
-	WhenFalse     *Expression
-}
-
-func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionToken *QuestionToken, whenTrue *Expression, colonToken *ColonToken, whenFalse *Expression) *Node {
-	data := f.conditionalExpressionArena.New()
-	data.Condition = condition
-	data.QuestionToken = questionToken
-	data.WhenTrue = whenTrue
-	data.ColonToken = colonToken
-	data.WhenFalse = whenFalse
-	return f.newNode(KindConditionalExpression, data)
-}
-
-func (f *NodeFactory) UpdateConditionalExpression(node *ConditionalExpression, condition *Expression, questionToken *QuestionToken, whenTrue *Expression, colonToken *ColonToken, whenFalse *Expression) *Node {
-	if condition != node.Condition || questionToken != node.QuestionToken || whenTrue != node.WhenTrue || colonToken != node.ColonToken || whenFalse != node.WhenFalse {
-		return updateNode(f.NewConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *ConditionalExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Condition) ||
-		visit(v, node.QuestionToken) ||
-		visit(v, node.WhenTrue) ||
-		visit(v, node.ColonToken) ||
-		visit(v, node.WhenFalse)
-}
-
-func (node *ConditionalExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateConditionalExpression(node, v.visitNode(node.Condition), v.visitNode(node.QuestionToken), v.visitNode(node.WhenTrue), v.visitNode(node.ColonToken), v.visitNode(node.WhenFalse))
-}
-
-func (node *ConditionalExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewConditionalExpression(node.Condition, node.QuestionToken, node.WhenTrue, node.ColonToken, node.WhenFalse), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *ConditionalExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Condition) |
-		propagateSubtreeFacts(node.QuestionToken) |
-		propagateSubtreeFacts(node.WhenTrue) |
-		propagateSubtreeFacts(node.ColonToken) |
-		propagateSubtreeFacts(node.WhenFalse)
-}
-
-func IsConditionalExpression(node *Node) bool {
-	return node.Kind == KindConditionalExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7227,8 +7166,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*SatisfiesExpression).ForEachChild(v)
 	case KindExpressionList:
 		return n.data.(*ExpressionList).ForEachChild(v)
-	case KindConditionalExpression:
-		return n.data.(*ConditionalExpression).ForEachChild(v)
 	case KindPropertyAccessExpression:
 		return n.data.(*PropertyAccessExpression).ForEachChild(v)
 	case KindElementAccessExpression:
@@ -7656,10 +7593,6 @@ func (n *Node) AsExpressionList() *ExpressionList {
 
 func (n *Node) AsVarargExpression() *VarargExpression {
 	return n.data.(*VarargExpression)
-}
-
-func (n *Node) AsConditionalExpression() *ConditionalExpression {
-	return n.data.(*ConditionalExpression)
 }
 
 func (n *Node) AsPropertyAccessExpression() *PropertyAccessExpression {

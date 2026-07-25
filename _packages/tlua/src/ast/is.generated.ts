@@ -40,7 +40,6 @@ import type {
     ComputedPropertyName,
     ConcatenationOperator,
     ConcatenationOperatorOrHigher,
-    ConditionalExpression,
     ConditionalTypeNode,
     ContinueStatement,
     DeclarationName,
@@ -523,10 +522,6 @@ export function isExpressionList(node: Node): node is ExpressionList {
 
 export function isVarargExpression(node: Node): node is VarargExpression {
     return node.kind === SyntaxKind.VarargExpression;
-}
-
-export function isConditionalExpression(node: Node): node is ConditionalExpression {
-    return node.kind === SyntaxKind.ConditionalExpression;
 }
 
 export function isPropertyAccessExpression(node: Node): node is PropertyAccessExpression {

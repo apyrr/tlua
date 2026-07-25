@@ -196,8 +196,6 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting
 	case KindArrowFunction:
 		return OperatorPrecedenceAssignment
-	case KindConditionalExpression:
-		return OperatorPrecedenceConditional
 	case KindBinaryExpression:
 		switch operatorKind {
 		case KindCommaToken:
@@ -301,9 +299,6 @@ func GetLeftmostExpression(node *Expression, stopAtCallExpressions bool) *Expres
 		switch node.Kind {
 		case KindBinaryExpression:
 			node = node.AsBinaryExpression().Left
-			continue
-		case KindConditionalExpression:
-			node = node.AsConditionalExpression().Condition
 			continue
 		case KindCallExpression:
 			if stopAtCallExpressions {

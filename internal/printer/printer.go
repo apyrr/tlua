@@ -2639,28 +2639,6 @@ func (p *Printer) emitShortCircuitExpression(node *ast.Expression) {
 	p.emitExpression(node, ast.OperatorPrecedenceLogicalOR)
 }
 
-func (p *Printer) emitConditionalExpression(node *ast.ConditionalExpression) {
-	state := p.enterNode(node.AsNode())
-	linesBeforeQuestion := p.getLinesBetweenNodes(node.AsNode(), node.Condition, node.QuestionToken)
-	linesAfterQuestion := p.getLinesBetweenNodes(node.AsNode(), node.QuestionToken, node.WhenTrue)
-	linesBeforeColon := p.getLinesBetweenNodes(node.AsNode(), node.WhenTrue, node.ColonToken)
-	linesAfterColon := p.getLinesBetweenNodes(node.AsNode(), node.ColonToken, node.WhenFalse)
-	p.emitShortCircuitExpression(node.Condition)
-	p.writeLinesAndIndent(linesBeforeQuestion /*writeSpaceIfNotIndenting*/, true)
-	p.emitPunctuationNode(node.QuestionToken)
-	p.writeLinesAndIndent(linesAfterQuestion /*writeSpaceIfNotIndenting*/, true)
-	p.emitExpression(node.WhenTrue, ast.OperatorPrecedenceYield)
-	p.decreaseIndentIf(linesAfterQuestion > 0)
-	p.decreaseIndentIf(linesBeforeQuestion > 0)
-	p.writeLinesAndIndent(linesBeforeColon /*writeSpaceIfNotIndenting*/, true)
-	p.emitPunctuationNode(node.ColonToken)
-	p.writeLinesAndIndent(linesAfterColon /*writeSpaceIfNotIndenting*/, true)
-	p.emitExpression(node.WhenFalse, ast.OperatorPrecedenceYield)
-	p.decreaseIndentIf(linesAfterColon > 0)
-	p.decreaseIndentIf(linesBeforeColon > 0)
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitTemplateExpression(node *ast.TemplateExpression) {
 	state := p.enterNode(node.AsNode())
 	// tlua: Lua has no `${}` interpolation. Lower to a parenthesized `..` concatenation,
@@ -2910,16 +2888,6 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				be.OperatorToken,
 				be.Right,
 			)
-		case ast.KindConditionalExpression:
-			ce := node.AsConditionalExpression()
-			return p.emitContext.Factory.UpdateConditionalExpression(
-				ce,
-				p.parenthesizeExpressionForNoAsi(ce.Condition),
-				ce.QuestionToken,
-				ce.WhenTrue,
-				ce.ColonToken,
-				ce.WhenFalse,
-			)
 		case ast.KindAsExpression:
 			ae := node.AsAsExpression()
 			return p.emitContext.Factory.UpdateAsExpression(
@@ -3006,8 +2974,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitPrefixUnaryExpression(node.AsPrefixUnaryExpression())
 	case ast.KindBinaryExpression:
 		p.emitBinaryExpression(node.AsBinaryExpression())
-	case ast.KindConditionalExpression:
-		p.emitConditionalExpression(node.AsConditionalExpression())
 	case ast.KindTemplateExpression:
 		p.emitTemplateExpression(node.AsTemplateExpression())
 	case ast.KindSpreadElement:

@@ -439,14 +439,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewExpressionList(d.singleNodeListChild(childIndices)), nil
 	case ast.KindVarargExpression:
 		return d.factory.NewVarargExpression(), nil
-	case ast.KindConditionalExpression:
-		it := newChildIter(childIndices)
-		condition := d.nodeAt(it.nextIf(mask, 0))
-		questionToken := d.nodeAt(it.nextIf(mask, 1))
-		whenTrue := d.nodeAt(it.nextIf(mask, 2))
-		colonToken := d.nodeAt(it.nextIf(mask, 3))
-		whenFalse := d.nodeAt(it.nextIf(mask, 4))
-		return d.factory.NewConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse), nil
 	case ast.KindPropertyAccessExpression:
 		it := newChildIter(childIndices)
 		expression := d.nodeAt(it.nextIf(mask, 0))

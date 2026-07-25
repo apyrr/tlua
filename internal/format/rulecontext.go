@@ -131,8 +131,7 @@ func isBinaryOpContext(context *FormattingContext) bool {
 	switch context.contextNode.Kind {
 	case ast.KindBinaryExpression:
 		return context.contextNode.AsBinaryExpression().OperatorToken.Kind != ast.KindCommaToken
-	case ast.KindConditionalExpression,
-		ast.KindConditionalType,
+	case ast.KindConditionalType,
 		ast.KindAsExpression,
 		ast.KindExportSpecifier,
 		ast.KindImportSpecifier,
@@ -238,8 +237,7 @@ func isTypeAnnotationContext(context *FormattingContext) bool {
 }
 
 func isConditionalOperatorContext(context *FormattingContext) bool {
-	return context.contextNode.Kind == ast.KindConditionalExpression ||
-		context.contextNode.Kind == ast.KindConditionalType
+	return context.contextNode.Kind == ast.KindConditionalType
 }
 
 func isSameLineTokenOrBeforeBlockContext(context *FormattingContext) bool {

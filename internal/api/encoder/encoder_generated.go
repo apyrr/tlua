@@ -166,9 +166,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindExpressionList:
 		n := node.AsExpressionList()
 		return (boolToByte(n.Elements != nil) << 0)
-	case ast.KindConditionalExpression:
-		n := node.AsConditionalExpression()
-		return (boolToByte(n.Condition != nil) << 0) | (boolToByte(n.QuestionToken != nil) << 1) | (boolToByte(n.WhenTrue != nil) << 2) | (boolToByte(n.ColonToken != nil) << 3) | (boolToByte(n.WhenFalse != nil) << 4)
 	case ast.KindPropertyAccessExpression:
 		n := node.AsPropertyAccessExpression()
 		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.QuestionDotToken != nil) << 1) | (boolToByte(n.ColonToken != nil) << 2) | (boolToByte(n.Name() != nil) << 3)

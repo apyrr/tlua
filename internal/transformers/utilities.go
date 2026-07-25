@@ -76,10 +76,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		return parent.AsImportEqualsDeclaration().ModuleReference == name
 	case ast.KindArrowFunction:
 		return parent.Body() == name
-	case ast.KindConditionalExpression:
-		return parent.AsConditionalExpression().Condition == name ||
-			parent.AsConditionalExpression().WhenTrue == name ||
-			parent.AsConditionalExpression().WhenFalse == name
 	case ast.KindCallExpression:
 		return parent.Expression() == name ||
 			slices.Contains(parent.Arguments(), name)

@@ -558,7 +558,6 @@ func (w *formatSpanWorker) computeIndentation(node *ast.Node, startLine int, inh
 			// - we need to get the indentation on last line and the delta of parent
 			return w.indentationOnLastIndentedLine, parentDynamicIndentation.getDelta(node)
 		} else if childStartsOnTheSameLineWithElseInIfStatement(parent, node, startLine, w.sourceFile) ||
-			childIsUnindentedBranchOfConditionalExpression(parent, node, startLine, w.sourceFile) ||
 			argumentStartsOnSameLineAsPreviousArgument(parent, node, startLine, w.sourceFile) {
 			return parentDynamicIndentation.getIndentation(), delta
 		} else {

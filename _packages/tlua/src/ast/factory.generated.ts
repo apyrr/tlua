@@ -22,7 +22,6 @@ import type {
     ColonToken,
     ComputedPropertyName,
     ConciseBody,
-    ConditionalExpression,
     ConditionalTypeNode,
     ContinueStatement,
     DotDotDotToken,
@@ -278,9 +277,6 @@ export class NodeObject {
     }
     get comment(): any {
         return this._data?.comment;
-    }
-    get condition(): any {
-        return this._data?.condition;
     }
     get constraint(): any {
         return this._data?.constraint;
@@ -576,12 +572,6 @@ export class NodeObject {
     get types(): any {
         return this._data?.types;
     }
-    get whenFalse(): any {
-        return this._data?.whenFalse;
-    }
-    get whenTrue(): any {
-        return this._data?.whenTrue;
-    }
 
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined {
         const fn = forEachChildTable[this.kind];
@@ -752,8 +742,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression, type: n.type };
         case SyntaxKind.ExpressionList:
             return { elements: n.elements };
-        case SyntaxKind.ConditionalExpression:
-            return { condition: n.condition, questionToken: n.questionToken, whenTrue: n.whenTrue, colonToken: n.colonToken, whenFalse: n.whenFalse };
         case SyntaxKind.PropertyAccessExpression:
             return { expression: n.expression, questionDotToken: n.questionDotToken, colonToken: n.colonToken, name: n.name };
         case SyntaxKind.ElementAccessExpression:
@@ -1112,12 +1100,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.type),
     [SyntaxKind.ExpressionList]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
-    [SyntaxKind.ConditionalExpression]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.condition) ||
-        visitNode(cbNode, data.questionToken) ||
-        visitNode(cbNode, data.whenTrue) ||
-        visitNode(cbNode, data.colonToken) ||
-        visitNode(cbNode, data.whenFalse),
     [SyntaxKind.PropertyAccessExpression]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.questionDotToken) ||
@@ -1801,16 +1783,6 @@ export function createExpressionList(elements: readonly Expression[]): Expressio
 
 export function createVarargExpression(): VarargExpression {
     return new NodeObject(SyntaxKind.VarargExpression, undefined) as unknown as VarargExpression;
-}
-
-export function createConditionalExpression(condition: Expression, questionToken: QuestionToken, whenTrue: Expression, colonToken: ColonToken, whenFalse: Expression): ConditionalExpression {
-    return new NodeObject(SyntaxKind.ConditionalExpression, {
-        condition,
-        questionToken,
-        whenTrue,
-        colonToken,
-        whenFalse,
-    }) as unknown as ConditionalExpression;
 }
 
 export function createPropertyAccessExpression(expression: Expression, questionDotToken: QuestionDotToken | undefined, colonToken: ColonToken | undefined, name: MemberName, flags: NodeFlags): PropertyAccessExpression {
@@ -2737,10 +2709,6 @@ export function updateSatisfiesExpression(node: SatisfiesExpression, expression:
 
 export function updateExpressionList(node: ExpressionList, elements: readonly Expression[]): ExpressionList {
     return node.elements !== elements ? createExpressionList(elements) : node;
-}
-
-export function updateConditionalExpression(node: ConditionalExpression, condition: Expression, questionToken: QuestionToken, whenTrue: Expression, colonToken: ColonToken, whenFalse: Expression): ConditionalExpression {
-    return node.condition !== condition || node.questionToken !== questionToken || node.whenTrue !== whenTrue || node.colonToken !== colonToken || node.whenFalse !== whenFalse ? createConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse) : node;
 }
 
 export function updatePropertyAccessExpression(node: PropertyAccessExpression, expression: Expression, questionDotToken: QuestionDotToken | undefined, colonToken: ColonToken | undefined, name: MemberName): PropertyAccessExpression {

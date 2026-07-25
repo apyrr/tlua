@@ -593,9 +593,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get comment(): RemoteNodeList | undefined {
         return this.getNamedChild("comment") as RemoteNodeList;
     }
-    get condition(): RemoteNode | undefined {
-        return this.getNamedChild("condition") as RemoteNode;
-    }
     get constraint(): RemoteNode | undefined {
         return this.getNamedChild("constraint") as RemoteNode;
     }
@@ -802,12 +799,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get types(): RemoteNodeList | undefined {
         return this.getNamedChild("types") as RemoteNodeList;
-    }
-    get whenFalse(): RemoteNode | undefined {
-        return this.getNamedChild("whenFalse") as RemoteNode;
-    }
-    get whenTrue(): RemoteNode | undefined {
-        return this.getNamedChild("whenTrue") as RemoteNode;
     }
 
     // ═══ Generated string property getters ═══

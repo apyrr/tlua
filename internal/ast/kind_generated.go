@@ -203,7 +203,6 @@ const (
 	KindArrowFunction
 	KindPrefixUnaryExpression
 	KindBinaryExpression
-	KindConditionalExpression
 	KindTemplateExpression
 	KindSpreadElement
 	KindOmittedExpression

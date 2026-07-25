@@ -3640,24 +3640,14 @@ func (c *Checker) checkReturnStatement(node *ast.Node) {
 		exprType = c.checkExpressionCached(exprNode)
 	}
 	if c.getReturnTypeFromAnnotation(container) != nil {
-		c.checkReturnExpression(container, returnType, node, node.Expression(), exprType, false)
+		c.checkReturnExpression(container, returnType, node, node.Expression(), exprType)
 	}
 }
 
 // When checking an arrow expression such as `(x) => exp`, then `node` is the expression `exp`.
 // Otherwise, `node` is a return statement.
-func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType *Type, node *ast.Node, expr *ast.Node, exprType *Type, inConditionalExpression bool) {
+func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType *Type, node *ast.Node, expr *ast.Node, exprType *Type) {
 	unwrappedExprType := exprType
-	if expr != nil {
-		unwrappedExpr := ast.SkipParentheses(expr)
-		if ast.IsConditionalExpression(unwrappedExpr) {
-			whenTrue := unwrappedExpr.AsConditionalExpression().WhenTrue
-			whenFalse := unwrappedExpr.AsConditionalExpression().WhenFalse
-			c.checkReturnExpression(container, unwrappedReturnType, node, whenTrue, c.checkExpression(whenTrue), true /*inConditionalExpression*/)
-			c.checkReturnExpression(container, unwrappedReturnType, node, whenFalse, c.checkExpression(whenFalse), true /*inConditionalExpression*/)
-			return
-		}
-	}
 	inReturnStatement := node.Kind == ast.KindReturnStatement
 	// When the declared return type is a multi-value pack, lift the returned
 	// value list to a pack so the tuple relation checks value counts:
@@ -3693,7 +3683,7 @@ func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType
 	if expr != nil {
 		effectiveExpr = c.getEffectiveCheckNode(expr)
 	}
-	errorNode := core.IfElse(inReturnStatement && !inConditionalExpression, node, effectiveExpr)
+	errorNode := core.IfElse(inReturnStatement, node, effectiveExpr)
 	c.checkTypeAssignableToAndOptionallyElaborate(unwrappedExprType, unwrappedReturnType, errorNode, effectiveExpr, nil, nil)
 }
 
@@ -5938,8 +5928,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkPrefixUnaryExpression(node)
 	case ast.KindBinaryExpression:
 		return c.checkBinaryExpression(node, checkMode)
-	case ast.KindConditionalExpression:
-		return c.checkConditionalExpression(node, checkMode)
 	case ast.KindExpressionList:
 		return c.checkExpressionList(node, checkMode)
 	case ast.KindVarargExpression:
@@ -7759,7 +7747,7 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethodDeferred(node *ast
 			// return type directly (async returns its plain type in tlua).
 			exprType := c.checkExpression(body)
 			if returnType != nil {
-				c.checkReturnExpression(node, returnType, body, body, exprType, false)
+				c.checkReturnExpression(node, returnType, body, body, exprType)
 			}
 		}
 	}
@@ -8308,15 +8296,6 @@ func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
 func (c *Checker) getUnaryResultType(operandType *Type) *Type {
 	// tlua has one numeric type: unary arithmetic always yields number.
 	return c.numberType
-}
-
-func (c *Checker) checkConditionalExpression(node *ast.Node, checkMode CheckMode) *Type {
-	cond := node.AsConditionalExpression()
-	t := c.checkTruthinessExpression(cond.Condition, checkMode)
-	c.checkTestingKnownTruthyCallableOrAwaitableType(cond.Condition, t, cond.WhenTrue)
-	type1 := c.checkExpressionEx(cond.WhenTrue, checkMode)
-	type2 := c.checkExpressionEx(cond.WhenFalse, checkMode)
-	return c.getUnionTypeEx([]*Type{type1, type2}, UnionReductionSubtype, nil, nil)
 }
 
 func (c *Checker) checkTruthinessExpression(node *ast.Node, checkMode CheckMode) *Type {
@@ -9369,8 +9348,6 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 		return PredicateSemanticsAlways
 	case ast.KindNilKeyword:
 		return PredicateSemanticsNever
-	case ast.KindConditionalExpression:
-		return c.getSyntacticTruthySemantics(node.AsConditionalExpression().WhenTrue) | c.getSyntacticTruthySemantics(node.AsConditionalExpression().WhenFalse)
 	case ast.KindIdentifier:
 		if c.getResolvedSymbol(node) == c.nilSymbol {
 			return PredicateSemanticsNever
@@ -9396,8 +9373,6 @@ func (c *Checker) isSideEffectFree(node *ast.Node) bool {
 		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindNonNullExpression, ast.KindJsxSelfClosingElement,
 		ast.KindJsxElement:
 		return true
-	case ast.KindConditionalExpression:
-		return c.isSideEffectFree(node.AsConditionalExpression().WhenTrue) && c.isSideEffectFree(node.AsConditionalExpression().WhenFalse)
 	case ast.KindBinaryExpression:
 		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) {
 			return false
@@ -24984,8 +24959,6 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 			}
 		}
 		return nil
-	case ast.KindConditionalExpression:
-		return c.getContextualTypeForConditionalOperand(node, contextFlags)
 	case ast.KindParenthesizedExpression:
 		return c.getContextualType(parent, contextFlags)
 	case ast.KindNonNullExpression:
@@ -25491,15 +25464,6 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 		}
 		return c.getIteratedTypeOrElementType(IterationUseElement, t, c.nilType, nil /*errorNode*/, false /*checkAssignability*/)
 	}, true /*noReductions*/)
-}
-
-// In a contextually typed conditional expression, the true/false expressions are contextually typed by the same type.
-func (c *Checker) getContextualTypeForConditionalOperand(node *ast.Node, contextFlags ContextFlags) *Type {
-	conditional := node.Parent.AsConditionalExpression()
-	if node == conditional.WhenTrue || node == conditional.WhenFalse {
-		return c.getContextualType(node.Parent, contextFlags)
-	}
-	return nil
 }
 
 func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
@@ -26036,8 +26000,6 @@ func (c *Checker) isContextSensitive(node *ast.Node) bool {
 		return core.Some(node.Properties(), c.isContextSensitive)
 	case ast.KindArrayLiteralExpression:
 		return core.Some(node.Elements(), c.isContextSensitive)
-	case ast.KindConditionalExpression:
-		return c.isContextSensitive(node.AsConditionalExpression().WhenTrue) || c.isContextSensitive(node.AsConditionalExpression().WhenFalse)
 	case ast.KindBinaryExpression:
 		binary := node.AsBinaryExpression()
 		return binary.OperatorToken.Kind == ast.KindBarBarToken && (c.isContextSensitive(binary.Left) || c.isContextSensitive(binary.Right))

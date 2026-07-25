@@ -13,7 +13,6 @@ import type {
     CallExpression,
     CallSignatureDeclaration,
     ComputedPropertyName,
-    ConditionalExpression,
     ConditionalTypeNode,
     ElementAccessExpression,
     ExportAssignment,
@@ -157,7 +156,6 @@ import {
     updateCallExpression,
     updateCallSignatureDeclaration,
     updateComputedPropertyName,
-    updateConditionalExpression,
     updateConditionalTypeNode,
     updateElementAccessExpression,
     updateExportAssignment,
@@ -682,14 +680,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.ExpressionList]: (node: ExpressionList, visitor: Visitor): ExpressionList => {
         const _elements = visitNodes(node.elements, visitor);
         return updateExpressionList(node, _elements);
-    },
-    [SyntaxKind.ConditionalExpression]: (node: ConditionalExpression, visitor: Visitor): ConditionalExpression => {
-        const _condition = visitNode(node.condition, visitor, isExpression);
-        const _questionToken = visitNode(node.questionToken, visitor, isQuestionToken);
-        const _whenTrue = visitNode(node.whenTrue, visitor, isExpression);
-        const _colonToken = visitNode(node.colonToken, visitor, isColonToken);
-        const _whenFalse = visitNode(node.whenFalse, visitor, isExpression);
-        return updateConditionalExpression(node, _condition, _questionToken, _whenTrue, _colonToken, _whenFalse);
     },
     [SyntaxKind.PropertyAccessExpression]: (node: PropertyAccessExpression, visitor: Visitor): PropertyAccessExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);
