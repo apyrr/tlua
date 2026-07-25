@@ -4089,6 +4089,13 @@ func (p *Parser) canFollowTypeArgumentsInExpression() bool {
 	// foo<x>(
 	// foo<T> `...`
 	// foo<T> `...${100}...`
+	//
+	// The template forms tagged the template, which tlua no longer has, so they
+	// commit to a type-argument list that then fails to find its call. That is
+	// deliberate: it is the reading the source was reaching for, so the arguments
+	// still parse as types and the language service still answers inside them.
+	// Dropping the two template tokens re-reads `foo<T>` as a comparison and takes
+	// completions in the type arguments with it.
 	case ast.KindOpenParenToken, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead:
 		return true
 	// A type argument list followed by `<` never makes sense, and a type argument list followed
