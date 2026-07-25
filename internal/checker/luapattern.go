@@ -18,7 +18,7 @@ func (c *Checker) getLuaPatternCall(node *ast.Node) *luaPatternCall {
 	// Every spelling reaches the same function, whose parameters are (subject,
 	// pattern, init, plain): the pattern is declared second, and only a colon call
 	// takes it off the written list by filling the subject with its receiver.
-	patternIndex := call.writtenIndex(1)
+	patternIndex := ast.LuaWrittenArgumentIndex(node, 1)
 	return &luaPatternCall{name: call.name, patternIndex: patternIndex, plainIndex: patternIndex + 2}
 }
 

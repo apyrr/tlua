@@ -7458,7 +7458,7 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 	// receiver the source never wrote. The comparisons want it -- they are matching
 	// arguments to parameters -- but the numbers in the message are for the reader,
 	// so each one is converted back to what is on the line.
-	unwritten := luaUnwrittenArgumentCount(node)
+	unwritten := ast.LuaImplicitArgumentCount(node)
 	written := func(count int) int { return max(0, count-unwritten) }
 	spreadIndex := c.getSpreadArgumentIndex(args)
 	if spreadIndex > -1 {

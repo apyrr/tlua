@@ -143,12 +143,8 @@ func (s *inlayHintState) visitCallExpression(expr *ast.Node) {
 		return
 	}
 
-	signatureParamPos := 0
-	if ast.IsLuaColonCall(expr) {
-		// A colon call binds signature parameter 0 (self) to the receiver, so
-		// the written arguments start at parameter 1.
-		signatureParamPos = 1
-	}
+	// The written arguments start after the parameters the receiver fills.
+	signatureParamPos := ast.LuaImplicitArgumentCount(expr)
 	for _, originalArg := range args {
 		arg := ast.SkipParentheses(originalArg)
 		if shouldShowLiteralParameterNameHintsOnly(s.preferences) && !isHintableLiteral(arg) {

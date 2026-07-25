@@ -24,7 +24,7 @@ func (c *Checker) getLuaIOCall(node *ast.Node) *luaIOCall {
 	if call.namespaceForm && call.name == "read" {
 		declaredIndex = 0
 	}
-	formatIndex := call.writtenIndex(declaredIndex)
+	formatIndex := ast.LuaWrittenArgumentIndex(node, declaredIndex)
 	if formatIndex < 0 {
 		// `io:read("*a")` hands the io table itself to the format parameter, so
 		// there is no written format to read and nothing to refine. Without this

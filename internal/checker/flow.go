@@ -2266,12 +2266,14 @@ func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
 // bound to a pack element conservatively resolves to no argument.
 func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpression *ast.Node) *ast.Node {
 	index := int(predicate.parameterIndex)
-	if ast.IsLuaColonCall(callExpression) {
-		if index == 0 {
-			return ast.SkipParentheses(ast.LuaColonCallReceiver(callExpression))
-		}
-		index--
+	if index == 0 && ast.IsLuaColonCall(callExpression) {
+		// The predicate names the parameter the receiver fills, so the reference is
+		// the receiver expression rather than any argument. Checked before the shift
+		// below, whose negative result means "no argument" for every other index --
+		// a predicate index can be out of range entirely.
+		return ast.SkipParentheses(ast.LuaColonCallReceiver(callExpression))
 	}
+	index = ast.LuaWrittenArgumentIndex(callExpression, index)
 	arguments := callExpression.Arguments()
 	if index >= 0 && index < len(arguments) {
 		return arguments[index]

@@ -309,7 +309,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	}
 	items := make([][]signatureInformation, len(candidates))
 	for i, candidateSignature := range candidates {
-		items[i] = l.getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, argumentInfo.hidesReceiver, callTargetDisplayParts.String(), callTargetSymbol, enclosingDeclaration, sourceFile, c, docFormat, vsCapability)
+		items[i] = l.getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, argumentInfo.hidesReceiver(), callTargetDisplayParts.String(), callTargetSymbol, enclosingDeclaration, sourceFile, c, docFormat, vsCapability)
 	}
 
 	selectedItemIndex := 0
@@ -907,21 +907,22 @@ type argumentListInfo struct {
 	/** argumentCount is the *apparent* number of arguments. */
 	argumentCount int
 	/**
-	 * hidesReceiver marks a colon call, whose receiver fills signature parameter 0
-	 * without being written. argumentIndex and argumentCount stay in the signature's
-	 * terms because that is what resolves the candidate; anything the reader sees is
-	 * in the written call's terms instead.
+	 * implicitArguments is ast.LuaImplicitArgumentCount for this call: the leading
+	 * parameters its receiver supplies without writing. argumentIndex and
+	 * argumentCount stay in the signature's terms because that is what resolves the
+	 * candidate; anything the reader sees is in the written call's terms instead.
 	 */
-	hidesReceiver bool
+	implicitArguments int
 }
 
-// displayArgumentIndex maps argumentIndex onto the parameters actually shown. They
-// differ only for a colon call, where the leading `self` is dropped from the label.
+// hidesReceiver reports whether the label must drop its leading parameter.
+func (a *argumentListInfo) hidesReceiver() bool {
+	return a.implicitArguments > 0
+}
+
+// displayArgumentIndex maps argumentIndex onto the parameters actually shown.
 func (a *argumentListInfo) displayArgumentIndex() int {
-	if a.hidesReceiver {
-		return max(0, a.argumentIndex-1)
-	}
-	return a.argumentIndex
+	return max(0, a.argumentIndex-a.implicitArguments)
 }
 
 // Returns relevant information for the argument list and the current argument if we are
@@ -958,21 +959,23 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 				isTypeParameterList = true
 			}
 		}
-		if !isTypeParameterList && ast.IsLuaColonCall(parent) {
-			// A colon call passes the receiver as the implicit first argument:
-			// signature parameter 0 is self, so the written arguments start at
-			// parameter 1 and the apparent count includes the receiver,
-			// matching the checker's effective-argument arity.
-			argumentIndex++
-			argumentCount++
+		// A type argument list takes no receiver; otherwise the call's implicit
+		// arguments move both counts into the signature's terms, matching the
+		// checker's effective arguments, which is what resolves the candidate.
+		// displayArgumentIndex converts back for the reader.
+		implicitArguments := 0
+		if !isTypeParameterList {
+			implicitArguments = ast.LuaImplicitArgumentCount(parent)
 		}
+		argumentIndex += implicitArguments
+		argumentCount += implicitArguments
 		return &argumentListInfo{
 			isTypeParameterList: isTypeParameterList,
 			invocation:          &invocation{callInvocation: &callInvocation{node: parent}},
 			argumentsSpan:       argumentsSpan,
 			argumentIndex:       argumentIndex,
 			argumentCount:       argumentCount,
-			hidesReceiver:       !isTypeParameterList && ast.IsLuaColonCall(parent),
+			implicitArguments:   implicitArguments,
 		}
 	} else if isNoSubstitutionTemplateLiteral(node) && isTaggedTemplateExpression(parent) {
 		// Check if we're actually inside the template;

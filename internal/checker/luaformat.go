@@ -22,7 +22,7 @@ func (c *Checker) getLuaFormatCall(node *ast.Node) (*ast.Node, int) {
 	// The returned offset counts EFFECTIVE arguments before the substitutions, and
 	// getEffectiveCallArguments prepends a colon call's receiver. Either way the
 	// format string lands at effective 0, so the substitutions always start at 1.
-	if index := call.writtenIndex(0); index >= 0 {
+	if index := ast.LuaWrittenArgumentIndex(node, 0); index >= 0 {
 		args := node.Arguments()
 		if index >= len(args) {
 			return nil, 0
@@ -53,7 +53,7 @@ func (c *Checker) checkLuaFormatCall(node *ast.Node, checkMode CheckMode) {
 	if actualCount != expectedCount && !(actualCount < expectedCount && openTail) {
 		// Both counts are effective, so a colon call's receiver has to come back out
 		// of each before the reader sees it: `("%d"):format(1, 2)` wrote two.
-		unwritten := luaUnwrittenArgumentCount(node)
+		unwritten := ast.LuaImplicitArgumentCount(node)
 		c.error(node, diagnostics.Expected_0_arguments_but_got_1, expectedCount-unwritten, actualCount-unwritten)
 	}
 	for i, specifierType := range specifiers {

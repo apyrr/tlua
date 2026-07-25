@@ -801,6 +801,32 @@ func IsLuaColonCall(node *Node) bool {
 	return callee.Kind == KindPropertyAccessExpression && callee.AsPropertyAccessExpression().ColonToken != nil
 }
 
+// LuaImplicitArgumentCount reports how many of a call's leading parameters the
+// receiver supplies rather than the argument list: one for a colon call, none
+// otherwise.
+//
+// This is the single answer to a question the whole stack asks. Counts weighed
+// against a signature want the effective list, which getEffectiveCallArguments
+// builds by prepending the receiver; counts a reader sees -- an arity message, a
+// signature-help label -- want the list as written. Consumers that re-derive it
+// from the callee, or forget it, have produced: arity messages naming an argument
+// the caller cannot write, signature help offering an unfillable slot, and the
+// pattern refiners reading the wrong argument.
+func LuaImplicitArgumentCount(node *Node) int {
+	if IsLuaColonCall(node) {
+		return 1
+	}
+	return 0
+}
+
+// LuaWrittenArgumentIndex maps a parameter's position in a signature onto the
+// argument list as the source writes it. A negative result means the parameter is
+// not written at all: the receiver supplies it, so a consumer looking for it has to
+// read the receiver expression instead of an argument.
+func LuaWrittenArgumentIndex(node *Node, declaredIndex int) int {
+	return declaredIndex - LuaImplicitArgumentCount(node)
+}
+
 // LuaColonCallReceiver returns the raw receiver expression of a colon call
 // (`obj` in `obj:f(a)`), with any parentheses preserved. The node must
 // satisfy IsLuaColonCall.
