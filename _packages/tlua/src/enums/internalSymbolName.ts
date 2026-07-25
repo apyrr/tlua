@@ -19,5 +19,6 @@ export var InternalSymbolName: any;
     InternalSymbolName["ExportEquals"] = "export=";
     InternalSymbolName["Default"] = "default";
     InternalSymbolName["This"] = "this";
+    InternalSymbolName["Self"] = "self";
     InternalSymbolName["ModuleExports"] = "module.exports";
 })(InternalSymbolName || (InternalSymbolName = {}));

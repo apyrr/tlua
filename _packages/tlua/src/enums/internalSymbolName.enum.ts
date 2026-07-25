@@ -19,5 +19,6 @@ export enum InternalSymbolName {
     ExportEquals = "export=",
     Default = "default",
     This = "this",
+    Self = "self",
     ModuleExports = "module.exports",
 }
