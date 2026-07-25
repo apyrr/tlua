@@ -2298,6 +2298,39 @@ local listContractBarUse: number = ListContractRoot.bar;
 >ListContractRoot : { foo: string; } & { bar: number; }
 >bar : number
 
+// A contract composes below a property it already describes: the declared
+// member keeps its contract type while the constructor's own member survives
+// alongside it, rather than either replacing the other.
+NestedContractRoot = { child = { runtime = 1 } } as unknown as { child: { declared: string } };
+>NestedContractRoot = { child = { runtime = 1 } } as unknown as { child: { declared: string } } : { child: { declared: string; }; }
+>NestedContractRoot : { child: { declared: string; }; } & { child: { runtime: number; }; }
+>{ child = { runtime = 1 } } as unknown as { child: { declared: string } } : { child: { declared: string; }; }
+>{ child = { runtime = 1 } } as unknown : unknown
+>{ child = { runtime = 1 } } : { child: { runtime: number; }; }
+>child : { runtime: number; }
+>{ runtime = 1 } : { runtime: number; }
+>runtime : number
+>1 : 1
+>child : { declared: string; }
+>declared : string
+
+local nestedContractDeclaredUse: string = NestedContractRoot.child.declared;
+>nestedContractDeclaredUse : string
+>NestedContractRoot.child.declared : string
+>NestedContractRoot.child : { declared: string; } & { runtime: number; }
+>NestedContractRoot : { child: { declared: string; }; } & { child: { runtime: number; }; }
+>child : { declared: string; } & { runtime: number; }
+>declared : string
+
+local nestedContractRuntimeUse: number = NestedContractRoot.child.runtime;
+>nestedContractRuntimeUse : number
+>NestedContractRoot.child.runtime : number
+>NestedContractRoot.child : { declared: string; } & { runtime: number; }
+>NestedContractRoot : { child: { declared: string; }; } & { child: { runtime: number; }; }
+>child : { declared: string; } & { runtime: number; }
+>runtime : number
+
+
 IncompatibleContractRoot = {} as unknown as { bar: string };
 >IncompatibleContractRoot = {} as unknown as { bar: string } : { bar: string; }
 >IncompatibleContractRoot : { bar: string; }

@@ -516,6 +516,14 @@ ListContractRoot.bar = 1;
 local listContractFooUse: string = ListContractRoot.foo;
 local listContractBarUse: number = ListContractRoot.bar;
 
+// A contract composes below a property it already describes: the declared
+// member keeps its contract type while the constructor's own member survives
+// alongside it, rather than either replacing the other.
+NestedContractRoot = { child = { runtime = 1 } } as unknown as { child: { declared: string } };
+local nestedContractDeclaredUse: string = NestedContractRoot.child.declared;
+local nestedContractRuntimeUse: number = NestedContractRoot.child.runtime;
+
+
 IncompatibleContractRoot = {} as unknown as { bar: string };
 IncompatibleContractRoot.bar = 1;
 
@@ -1063,6 +1071,12 @@ ListContractRoot, listContractSide = {}, 0;
 ListContractRoot.bar = 1;
 local listContractFooUse = ListContractRoot.foo;
 local listContractBarUse = ListContractRoot.bar;
+-- A contract composes below a property it already describes: the declared
+-- member keeps its contract type while the constructor's own member survives
+-- alongside it, rather than either replacing the other.
+NestedContractRoot = { child = { runtime = 1 } };
+local nestedContractDeclaredUse = NestedContractRoot.child.declared;
+local nestedContractRuntimeUse = NestedContractRoot.child.runtime;
 IncompatibleContractRoot = {};
 IncompatibleContractRoot.bar = 1;
 ListIncompatibleContractRoot, listIncompatibleContractSide = {}, 0;
