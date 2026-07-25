@@ -99,8 +99,6 @@ export function isStatement(node: Node): node is Statement {
         || kind === SyntaxKind.RepeatStatement || kind === SyntaxKind.ContinueStatement
         || kind === SyntaxKind.BreakStatement || kind === SyntaxKind.ReturnStatement
         || kind === SyntaxKind.LabelStatement || kind === SyntaxKind.GotoStatement
-        || kind === SyntaxKind.ThrowStatement
-        || kind === SyntaxKind.DebuggerStatement
         || kind === SyntaxKind.InterfaceDeclaration || kind === SyntaxKind.TypeAliasDeclaration
         || kind === SyntaxKind.ModuleDeclaration
         || kind === SyntaxKind.ImportDeclaration || kind === SyntaxKind.ImportEqualsDeclaration

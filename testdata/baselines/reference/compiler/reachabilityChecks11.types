@@ -86,7 +86,9 @@ function f1(x)
 
         return;
     else
-        throw "123";
+        error("123");
+>error("123") : never
+>error : (message?: any, level?: number) => never
 >"123" : "123"
 
     end
@@ -137,7 +139,9 @@ function f4()
     if true then
 >true : true
 
-        throw "";
+        error("");
+>error("") : never
+>error : (message?: any, level?: number) => never
 >"" : ""
 
     end

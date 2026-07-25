@@ -191,8 +191,6 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 		{title: "ReturnStatement#2", input: `return a`},
 		{title: "LabelStatement", input: `::a::`},
 		{title: "GotoStatement", input: `::a:: goto a`},
-		{title: "ThrowStatement", input: `throw a`},
-		{title: "DebuggerStatement", input: `debugger`},
 		{title: "FunctionDeclaration#1", input: `export default function(){}`},
 		{title: "FunctionDeclaration#2", input: `function f(){}`},
 		{title: "FunctionDeclaration#3", input: `function*f(){}`},

@@ -1,8 +1,9 @@
 //// [tests/cases/compiler/reachabilityChecks10.tlua] ////
 
 === reachabilityChecks10.tlua ===
+error("")
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
 
-throw ""
 console.log("1")
 console.log("2")
 

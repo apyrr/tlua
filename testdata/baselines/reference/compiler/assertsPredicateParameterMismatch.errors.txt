@@ -13,7 +13,7 @@ assertsPredicateParameterMismatch.tlua(15,3): error TLUA2584: Cannot find name '
                ~~~~~~~~~
 !!! error TLUA1225: Cannot find parameter 'condition'.
       if (!_condition) then
-        throw 'Condition failed';
+        error('Condition failed');
       end
     end
     

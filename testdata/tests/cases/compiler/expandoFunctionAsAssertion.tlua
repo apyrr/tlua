@@ -5,7 +5,7 @@ function example() end
 
 example.isFoo = function(value: string): asserts value is 'foo'
   if value ~= 'foo' then
-    throw 'Not foo';
+    error('Not foo');
   end
 end;
 

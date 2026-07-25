@@ -193,7 +193,7 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
         if x then
             return;
         else
-            throw "123";
+            error("123");
         end
         local x;
         ~~~~~~~~
@@ -255,7 +255,7 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
     
     function f4()
         if true then
-            throw "";
+            error("");
         end
         local x = 1;
         ~~~~~~~~~~~~

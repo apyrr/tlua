@@ -2,14 +2,14 @@
 
 //// [reachabilityChecksIgnored.tlua]
 function a()
-    throw "";
+    error("");
 
     // @ts-ignore
     console.log("unreachable");
 end
 
 function b()
-    throw "";
+    error("");
 
     // @ts-expect-error
     console.log("unreachable");
@@ -18,12 +18,12 @@ end
 
 //// [reachabilityChecksIgnored.lua]
 function a()
-  throw "";
+  error("");
   -- @ts-ignore
   console.log("unreachable");
 end
 function b()
-  throw "";
+  error("");
   -- @ts-expect-error
   console.log("unreachable");
 end

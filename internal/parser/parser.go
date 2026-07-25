@@ -955,10 +955,6 @@ func (p *Parser) parseStatement() *ast.Statement {
 		return p.parseGotoStatement()
 	case ast.KindReturnKeyword:
 		return p.parseReturnStatement()
-	case ast.KindThrowKeyword:
-		return p.parseThrowStatement()
-	case ast.KindDebuggerKeyword:
-		return p.parseDebuggerStatement()
 	case ast.KindAsyncKeyword, ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
 		ast.KindDeclareKeyword,
 		ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword, ast.KindAbstractKeyword, ast.KindAccessorKeyword,
@@ -1335,44 +1331,6 @@ func (p *Parser) parseReturnStatement() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseThrowStatement() *ast.Node {
-	// ThrowStatement[Yield] :
-	//      throw [no LineTerminator here]Expression[In, ?Yield];
-	pos := p.nodePos()
-	jsdoc := p.jsdocScannerInfo()
-	p.parseExpected(ast.KindThrowKeyword)
-	// Because of automatic semicolon insertion, we need to report error if this
-	// throw could be terminated with a semicolon.  Note: we can't call 'parseExpression'
-	// directly as that might consume an expression on the following line.
-	// Instead, we create a "missing" identifier, but don't report an error. The actual error
-	// will be reported in the grammar walker.
-	var expression *ast.Expression
-	if !p.hasPrecedingLineBreak() {
-		expression = p.parseExpressionAllowIn()
-	} else {
-		expression = p.createMissingIdentifier()
-	}
-	if !p.tryParseSemicolon() {
-		p.parseErrorForMissingSemicolonAfter(expression)
-	}
-	result := p.finishNode(p.factory.NewThrowStatement(expression), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
-}
-
-func (p *Parser) parseDebuggerStatement() *ast.Node {
-	pos := p.nodePos()
-	jsdoc := p.jsdocScannerInfo()
-	p.parseExpected(ast.KindDebuggerKeyword)
-	p.parseSemicolon()
-	result := p.finishNode(p.factory.NewDebuggerStatement(), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
-}
-
-// Upstream also produced a labeled statement here, when the expression turned
-// out to be a bare identifier followed by `:`. tlua labels are `::name::`, a
-// statement of their own, so `name:` no longer starts anything.
 func (p *Parser) parseExpressionStatement() *ast.Statement {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
@@ -4814,8 +4772,7 @@ func (p *Parser) isStartOfStatement() bool {
 		ast.KindLocalKeyword, ast.KindFunctionKeyword, ast.KindIfKeyword,
 		ast.KindDoKeyword, ast.KindWhileKeyword, ast.KindForKeyword, ast.KindRepeatKeyword, ast.KindContinueKeyword, ast.KindBreakKeyword,
 		ast.KindColonColonToken, ast.KindGotoKeyword,
-		ast.KindReturnKeyword, ast.KindThrowKeyword,
-		ast.KindDebuggerKeyword:
+		ast.KindReturnKeyword:
 		return true
 	case ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindInterfaceKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
 		ast.KindTypeKeyword, ast.KindGlobalKeyword, ast.KindDeferKeyword:

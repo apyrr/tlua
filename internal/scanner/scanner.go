@@ -60,7 +60,6 @@ var textToKeyword = map[string]ast.Kind{
 	// are ordinary identifiers; `local` is the only declaration keyword.
 	"continue":    ast.KindContinueKeyword,
 	"constructor": ast.KindConstructorKeyword,
-	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"defer":       ast.KindDeferKeyword,
 	"do":          ast.KindDoKeyword,
@@ -119,7 +118,6 @@ var textToKeyword = map[string]ast.Kind{
 	"symbol":     ast.KindSymbolKeyword,
 	"then":       ast.KindThenKeyword,
 	"this":       ast.KindThisKeyword,
-	"throw":      ast.KindThrowKeyword,
 	"true":       ast.KindTrueKeyword,
 	"type":       ast.KindTypeKeyword,
 	"typeof":     ast.KindTypeOfKeyword,

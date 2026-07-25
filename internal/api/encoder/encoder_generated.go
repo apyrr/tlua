@@ -58,9 +58,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindReturnStatement:
 		n := node.AsReturnStatement()
 		return (boolToByte(n.Expression != nil) << 0)
-	case ast.KindThrowStatement:
-		n := node.AsThrowStatement()
-		return (boolToByte(n.Expression != nil) << 0)
 	case ast.KindLabelStatement:
 		n := node.AsLabelStatement()
 		return (boolToByte(n.Label != nil) << 0)

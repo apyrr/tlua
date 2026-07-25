@@ -54,7 +54,6 @@ export type PunctuationSyntaxKind =
 export type KeywordSyntaxKind =
     | SyntaxKind.BreakKeyword
     | SyntaxKind.ContinueKeyword
-    | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DefaultKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword
@@ -74,7 +73,6 @@ export type KeywordSyntaxKind =
     | SyntaxKind.SuperKeyword
     | SyntaxKind.ThenKeyword
     | SyntaxKind.ThisKeyword
-    | SyntaxKind.ThrowKeyword
     | SyntaxKind.TrueKeyword
     | SyntaxKind.TypeOfKeyword
     | SyntaxKind.UntilKeyword
@@ -194,7 +192,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.JSDocCommentTextToken
     | SyntaxKind.BreakKeyword
     | SyntaxKind.ContinueKeyword
-    | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DefaultKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword
@@ -214,7 +211,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.SuperKeyword
     | SyntaxKind.ThenKeyword
     | SyntaxKind.ThisKeyword
-    | SyntaxKind.ThrowKeyword
     | SyntaxKind.TrueKeyword
     | SyntaxKind.TypeOfKeyword
     | SyntaxKind.UntilKeyword
@@ -474,13 +470,6 @@ export interface ContinueStatement extends StatementBase {
 export interface ReturnStatement extends DeclarationBase, StatementBase {
     readonly kind: SyntaxKind.ReturnStatement;
     readonly expression?: Expression;
-}
-export interface ThrowStatement extends StatementBase {
-    readonly kind: SyntaxKind.ThrowStatement;
-    readonly expression: Expression;
-}
-export interface DebuggerStatement extends StatementBase {
-    readonly kind: SyntaxKind.DebuggerStatement;
 }
 export interface LabelStatement extends StatementBase {
     readonly kind: SyntaxKind.LabelStatement;

@@ -120,7 +120,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindJSDocCommentTextToken,
 		ast.KindBreakKeyword,
 		ast.KindContinueKeyword,
-		ast.KindDebuggerKeyword,
 		ast.KindDefaultKeyword,
 		ast.KindDoKeyword,
 		ast.KindElseKeyword,
@@ -135,7 +134,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindRepeatKeyword,
 		ast.KindReturnKeyword,
 		ast.KindThenKeyword,
-		ast.KindThrowKeyword,
 		ast.KindTypeOfKeyword,
 		ast.KindUntilKeyword,
 		ast.KindLocalKeyword,
@@ -221,10 +219,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewContinueStatement(), nil
 	case ast.KindReturnStatement:
 		return d.factory.NewReturnStatement(d.singleChild(childIndices)), nil
-	case ast.KindThrowStatement:
-		return d.factory.NewThrowStatement(d.singleChild(childIndices)), nil
-	case ast.KindDebuggerStatement:
-		return d.factory.NewDebuggerStatement(), nil
 	case ast.KindLabelStatement:
 		return d.factory.NewLabelStatement(d.singleChild(childIndices)), nil
 	case ast.KindGotoStatement:

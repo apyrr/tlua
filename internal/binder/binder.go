@@ -1506,8 +1506,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.bindIfStatement(node)
 	case ast.KindReturnStatement:
 		b.bindReturnStatement(node)
-	case ast.KindThrowStatement:
-		b.bindThrowStatement(node)
 	case ast.KindBreakStatement:
 		b.bindBreakStatement(node)
 	case ast.KindContinueStatement:
@@ -1854,12 +1852,6 @@ func (b *Binder) bindTopLevelReturn(node *ast.Node) {
 	flags := core.IfElse(ast.ExpressionIsAlias(node.Expression()), ast.SymbolFlagsAlias, ast.SymbolFlagsProperty)
 	symbol := b.declareSymbol(ast.GetExports(b.file.Symbol), b.file.Symbol, node, flags, ast.SymbolFlagsAll)
 	SetValueDeclaration(symbol, node)
-}
-
-func (b *Binder) bindThrowStatement(node *ast.Node) {
-	b.bind(node.Expression())
-	b.currentFlow = b.unreachableFlow
-	b.hasFlowEffects = true
 }
 
 // break and continue take no label in tlua, so they always target the

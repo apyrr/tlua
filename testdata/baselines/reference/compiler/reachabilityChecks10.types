@@ -1,7 +1,9 @@
 //// [tests/cases/compiler/reachabilityChecks10.tlua] ////
 
 === reachabilityChecks10.tlua ===
-throw ""
+error("")
+>error("") : never
+>error : (message?: any, level?: number) => never
 >"" : ""
 
 console.log("1")

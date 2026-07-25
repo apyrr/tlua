@@ -15,7 +15,9 @@ function assertCondition(
   if (!_condition) then
 >_condition : Symbol(_condition, Decl(assertsPredicateParameterMismatch.tlua, 4, 25))
 
-    throw 'Condition failed';
+    error('Condition failed');
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
+
   end
 end
 

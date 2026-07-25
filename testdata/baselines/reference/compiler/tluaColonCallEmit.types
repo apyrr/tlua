@@ -103,7 +103,9 @@ end
 function raise(): never
 >raise : () => never
 
-  throw T:bump();
+  error(T:bump());
+>error(T:bump()) : never
+>error : (message?: any, level?: number) => never
 >T:bump() : number
 >T:bump : (self: { n: number; bump(self: any): number; twice(self: any): number; }) => number
 >T : { n: number; bump(self: any): number; twice(self: any): number; }

@@ -160,8 +160,6 @@ func TestEmit(t *testing.T) {
 		{title: "ReturnStatement#2", input: `return a`, output: "return a;"},
 		{title: "LabelStatement", input: `::a::`, output: "::a::"},
 		{title: "GotoStatement", input: `::a:: goto a`, output: "::a::\ngoto a;"},
-		{title: "ThrowStatement", input: `throw a`, output: "throw a;"},
-		{title: "DebuggerStatement", input: `debugger`, output: "debugger;"},
 		{title: "FunctionDeclaration#2", input: `function f() end`, output: "function f()\nend"},
 		{title: "FunctionDeclaration#4", input: `async function f() end`, output: "async function f()\nend"},
 		{title: "FunctionDeclaration#6", input: `function f<T>() end`, output: "function f<T>()\nend"},

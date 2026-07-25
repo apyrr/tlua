@@ -621,7 +621,7 @@ func getContainingListOrParentStart(parent *ast.Node, child *ast.Node, sourceFil
 
 func isControlFlowEndingStatement(kind ast.Kind, parentKind ast.Kind) bool {
 	switch kind {
-	case ast.KindReturnStatement, ast.KindThrowStatement, ast.KindContinueStatement, ast.KindBreakStatement:
+	case ast.KindReturnStatement, ast.KindContinueStatement, ast.KindBreakStatement:
 		return parentKind != ast.KindBlock
 	default:
 		return false

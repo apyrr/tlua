@@ -2127,8 +2127,6 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkLabelStatement(node)
 	case ast.KindGotoStatement:
 		c.checkGotoStatement(node)
-	case ast.KindThrowStatement:
-		c.checkThrowStatement(node)
 	case ast.KindVariableDeclaration:
 		c.checkVariableDeclaration(node)
 	case ast.KindBindingElement:
@@ -2140,8 +2138,6 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	case ast.KindModuleDeclaration:
 		c.checkModuleDeclaration(node)
 	case ast.KindEmptyStatement:
-		c.checkGrammarStatementInAmbientContext(node)
-	case ast.KindDebuggerStatement:
 		c.checkGrammarStatementInAmbientContext(node)
 	case ast.KindMissingDeclaration:
 		c.checkMissingDeclaration(node)
@@ -3735,16 +3731,6 @@ func (c *Checker) checkLabelStatement(node *ast.Node) {
 
 func (c *Checker) checkGotoStatement(node *ast.Node) {
 	c.checkGrammarGotoStatement(node)
-}
-
-func (c *Checker) checkThrowStatement(node *ast.Node) {
-	throwExpr := node.Expression()
-	if !c.checkGrammarStatementInAmbientContext(node) {
-		if ast.IsIdentifier(throwExpr) && len(throwExpr.Text()) == 0 {
-			c.grammarErrorAtPos(node, throwExpr.Pos(), 0 /*length*/, diagnostics.Line_break_not_permitted_here)
-		}
-	}
-	c.checkExpression(throwExpr)
 }
 
 func (c *Checker) checkBindingElement(node *ast.Node) {

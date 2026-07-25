@@ -657,7 +657,6 @@ func isStatementKindButNotDeclarationKind(kind Kind) bool {
 	switch kind {
 	case KindBreakStatement,
 		KindContinueStatement,
-		KindDebuggerStatement,
 		KindExpressionStatement,
 		KindEmptyStatement,
 		KindForOfStatement,
@@ -667,7 +666,6 @@ func isStatementKindButNotDeclarationKind(kind Kind) bool {
 		KindLabelStatement,
 		KindGotoStatement,
 		KindReturnStatement,
-		KindThrowStatement,
 		KindVariableStatement,
 		KindWhileStatement,
 		KindNotEmittedStatement:
@@ -2153,7 +2151,7 @@ func IsInExpressionContext(node *Node) bool {
 	case KindVariableDeclaration, KindParameter, KindPropertySignature, KindPropertyAssignment, KindBindingElement:
 		return parent.Initializer() == node
 	case KindExpressionStatement, KindIfStatement, KindWhileStatement, KindReturnStatement,
-		KindThrowStatement, KindTypeAssertionExpression, KindAsExpression, KindTemplateSpan, KindComputedPropertyName,
+		KindTypeAssertionExpression, KindAsExpression, KindTemplateSpan, KindComputedPropertyName,
 		KindSatisfiesExpression:
 		return parent.Expression() == node
 	case KindForOfStatement:

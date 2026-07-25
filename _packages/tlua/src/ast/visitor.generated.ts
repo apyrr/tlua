@@ -129,7 +129,6 @@ import type {
     TemplateLiteralTypeNode,
     TemplateLiteralTypeSpan,
     TemplateSpan,
-    ThrowStatement,
     TupleTypeNode,
     TypeAliasDeclaration,
     TypeAssertion,
@@ -271,7 +270,6 @@ import {
     updateTemplateLiteralTypeNode,
     updateTemplateLiteralTypeSpan,
     updateTemplateSpan,
-    updateThrowStatement,
     updateTupleTypeNode,
     updateTypeAliasDeclaration,
     updateTypeAssertion,
@@ -485,10 +483,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.ReturnStatement]: (node: ReturnStatement, visitor: Visitor): ReturnStatement => {
         const _expression = visitNode(node.expression, visitor, isExpression);
         return updateReturnStatement(node, _expression);
-    },
-    [SyntaxKind.ThrowStatement]: (node: ThrowStatement, visitor: Visitor): ThrowStatement => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateThrowStatement(node, _expression);
     },
     [SyntaxKind.LabelStatement]: (node: LabelStatement, visitor: Visitor): LabelStatement => {
         const _label = visitNode(node.label, visitor, isIdentifier);

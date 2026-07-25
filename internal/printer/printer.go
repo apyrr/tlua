@@ -3385,22 +3385,6 @@ func (p *Printer) emitGotoStatement(node *ast.GotoStatement) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitThrowStatement(node *ast.ThrowStatement) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindThrowKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeSpace()
-	p.emitExpressionNoASI(node.Expression, ast.OperatorPrecedenceLowest)
-	p.writeTrailingSemicolon()
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitDebuggerStatement(node *ast.DebuggerStatement) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindDebuggerKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeTrailingSemicolon()
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitNotEmittedStatement(node *ast.NotEmittedStatement) {
 	p.exitNode(node.AsNode(), p.enterNode(node.AsNode()))
 }
@@ -3837,10 +3821,6 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitLabelStatement(node.AsLabelStatement())
 	case ast.KindGotoStatement:
 		p.emitGotoStatement(node.AsGotoStatement())
-	case ast.KindThrowStatement:
-		p.emitThrowStatement(node.AsThrowStatement())
-	case ast.KindDebuggerStatement:
-		p.emitDebuggerStatement(node.AsDebuggerStatement())
 	case ast.KindNotEmittedStatement:
 		p.emitNotEmittedStatement(node.AsNotEmittedStatement())
 

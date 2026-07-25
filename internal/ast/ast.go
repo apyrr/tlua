@@ -350,8 +350,6 @@ func (n *Node) Expression() *Node {
 		return n.AsExpressionStatement().Expression
 	case KindReturnStatement:
 		return n.AsReturnStatement().Expression
-	case KindThrowStatement:
-		return n.AsThrowStatement().Expression
 	case KindExternalModuleReference:
 		return n.AsExternalModuleReference().Expression
 	case KindExportAssignment:
@@ -423,8 +421,6 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsExpressionStatement().Expression = expr
 	case KindReturnStatement:
 		n.AsReturnStatement().Expression = expr
-	case KindThrowStatement:
-		n.AsThrowStatement().Expression = expr
 	case KindExternalModuleReference:
 		n.AsExternalModuleReference().Expression = expr
 	case KindExportAssignment:

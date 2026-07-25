@@ -1,21 +1,10 @@
 // === Syntax and Semantic Diagnostics ===
-/unreachableCodeDiagnostics.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
-/unreachableCodeDiagnostics.tlua(1,7): error TLUA2304: Cannot find name 'new'.
-/unreachableCodeDiagnostics.tlua(1,11): error TLUA2304: Cannot find name 'Error'.
-/unreachableCodeDiagnostics.tlua(1,11): warning TLUA7027: Unreachable code detected.
+/unreachableCodeDiagnostics.tlua(3,1): warning TLUA7027: Unreachable code detected.
 
 
-==== /unreachableCodeDiagnostics.tlua (4 errors) ====
-    throw new Error();
-          ~~~
-!!! error TLUA1434: Unexpected keyword or identifier.
-          ~~~
-!!! error TLUA2304: Cannot find name 'new'.
-              ~~~~~
-!!! error TLUA2304: Cannot find name 'Error'.
-              ~~~~~~~~
+==== /unreachableCodeDiagnostics.tlua (1 errors) ====
+    error("boom");
     	
-    ~
     (function() end)();
     ~~~~~~~~~~~~~~~~~~~
 !!! warning TLUA7027: Unreachable code detected.

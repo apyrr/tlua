@@ -25,7 +25,6 @@ import type {
     ConditionalExpression,
     ConditionalTypeNode,
     ContinueStatement,
-    DebuggerStatement,
     DotDotDotToken,
     ElementAccessExpression,
     EmptyStatement,
@@ -197,7 +196,6 @@ import type {
     TemplateMiddleOrTail,
     TemplateSpan,
     TemplateTail,
-    ThrowStatement,
     Token,
     TokenSyntaxKind,
     TupleTypeNode,
@@ -675,8 +673,6 @@ function cloneNodeData(node: Node): any {
             return { statements: n.statements, expression: n.expression };
         case SyntaxKind.ReturnStatement:
             return { expression: n.expression };
-        case SyntaxKind.ThrowStatement:
-            return { expression: n.expression };
         case SyntaxKind.LabelStatement:
             return { label: n.label };
         case SyntaxKind.GotoStatement:
@@ -994,7 +990,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.statements) ||
         visitNode(cbNode, data.expression),
     [SyntaxKind.ReturnStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
-    [SyntaxKind.ThrowStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.LabelStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
     [SyntaxKind.GotoStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
     [SyntaxKind.ExpressionStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
@@ -1484,16 +1479,6 @@ export function createReturnStatement(expression?: Expression): ReturnStatement 
     return new NodeObject(SyntaxKind.ReturnStatement, {
         expression,
     }) as unknown as ReturnStatement;
-}
-
-export function createThrowStatement(expression: Expression): ThrowStatement {
-    return new NodeObject(SyntaxKind.ThrowStatement, {
-        expression,
-    }) as unknown as ThrowStatement;
-}
-
-export function createDebuggerStatement(): DebuggerStatement {
-    return new NodeObject(SyntaxKind.DebuggerStatement, undefined) as unknown as DebuggerStatement;
 }
 
 export function createLabelStatement(label: Identifier): LabelStatement {
@@ -2622,10 +2607,6 @@ export function updateRepeatStatement(node: RepeatStatement, statements: readonl
 
 export function updateReturnStatement(node: ReturnStatement, expression?: Expression): ReturnStatement {
     return node.expression !== expression ? createReturnStatement(expression) : node;
-}
-
-export function updateThrowStatement(node: ThrowStatement, expression: Expression): ThrowStatement {
-    return node.expression !== expression ? createThrowStatement(expression) : node;
 }
 
 export function updateLabelStatement(node: LabelStatement, label: Identifier): LabelStatement {

@@ -11,7 +11,6 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (stri
     [SyntaxKind.NumericForStatement]: ["initializer", "from", "to", "step", "statement"],
     [SyntaxKind.RepeatStatement]: ["statements", "expression"],
     [SyntaxKind.ReturnStatement]: ["expression"],
-    [SyntaxKind.ThrowStatement]: ["expression"],
     [SyntaxKind.LabelStatement]: ["label"],
     [SyntaxKind.GotoStatement]: ["label"],
     [SyntaxKind.ExpressionStatement]: ["expression"],
@@ -151,7 +150,6 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (stri
 export const singleChildNodePropertyNames: Readonly<Partial<Record<SyntaxKind, string>>> = {
     [SyntaxKind.ComputedPropertyName]: "expression",
     [SyntaxKind.ReturnStatement]: "expression",
-    [SyntaxKind.ThrowStatement]: "expression",
     [SyntaxKind.LabelStatement]: "label",
     [SyntaxKind.GotoStatement]: "label",
     [SyntaxKind.ExpressionStatement]: "expression",

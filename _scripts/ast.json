@@ -83,7 +83,6 @@
             },
             "BreakKeyword",
             "ContinueKeyword",
-            "DebuggerKeyword",
             "DefaultKeyword",
             "DoKeyword",
             "ElseKeyword",
@@ -103,7 +102,6 @@
             "SuperKeyword",
             "ThenKeyword",
             "ThisKeyword",
-            "ThrowKeyword",
             "TrueKeyword",
             "TypeOfKeyword",
             "UntilKeyword",
@@ -267,8 +265,6 @@
             "ReturnStatement",
             "LabelStatement",
             "GotoStatement",
-            "ThrowStatement",
-            "DebuggerStatement",
             "VariableDeclaration",
             "VariableDeclarationList",
             "FunctionDeclaration",
@@ -468,7 +464,7 @@
             },
             {
                 "name": "LastStatement",
-                "value": "DebuggerStatement"
+                "value": "GotoStatement"
             },
             {
                 "name": "FirstNode",
@@ -1236,24 +1232,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "ThrowStatement": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "StatementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
-            },
-            "DebuggerStatement": {
-                "extends": [
-                    "StatementBase"
-                ]
             },
             "LabelStatement": {
                 "extends": [

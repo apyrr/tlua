@@ -4,7 +4,7 @@ reachabilityChecks10.tlua(3,1): error TLUA2584: Cannot find name 'console'. Do y
 
 
 ==== reachabilityChecks10.tlua (3 errors) ====
-    throw ""
+    error("")
     console.log("1")
     ~~~~~~~
 !!! error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.

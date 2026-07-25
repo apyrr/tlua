@@ -43,7 +43,6 @@ import type {
     ConditionalExpression,
     ConditionalTypeNode,
     ContinueStatement,
-    DebuggerStatement,
     DeclarationName,
     DeclareKeyword,
     DefaultKeyword,
@@ -259,7 +258,6 @@ import type {
     TemplateSpan,
     TemplateTail,
     ThisExpression,
-    ThrowStatement,
     Token,
     TriviaSyntaxKind,
     TrueLiteral,
@@ -338,14 +336,6 @@ export function isContinueStatement(node: Node): node is ContinueStatement {
 
 export function isReturnStatement(node: Node): node is ReturnStatement {
     return node.kind === SyntaxKind.ReturnStatement;
-}
-
-export function isThrowStatement(node: Node): node is ThrowStatement {
-    return node.kind === SyntaxKind.ThrowStatement;
-}
-
-export function isDebuggerStatement(node: Node): node is DebuggerStatement {
-    return node.kind === SyntaxKind.DebuggerStatement;
 }
 
 export function isLabelStatement(node: Node): node is LabelStatement {

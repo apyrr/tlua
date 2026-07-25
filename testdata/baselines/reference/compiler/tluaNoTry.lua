@@ -1,8 +1,9 @@
 //// [tests/cases/compiler/tluaNoTry.tlua] ////
 
 //// [tluaNoTry.tlua]
-// try/catch/finally are removed. The words are ordinary identifiers, so this
-// reports ordinary syntax errors without constructing legacy AST nodes.
+// try/catch/finally are removed, and so is `throw`. All of these words are
+// ordinary identifiers now, so this reports ordinary syntax errors without
+// constructing legacy AST nodes.
 try {
   throw "boom";
 } catch (e) {
@@ -13,11 +14,13 @@ try {
 
 
 //// [tluaNoTry.lua]
--- try/catch/finally are removed. The words are ordinary identifiers, so this
--- reports ordinary syntax errors without constructing legacy AST nodes.
+-- try/catch/finally are removed, and so is `throw`. All of these words are
+-- ordinary identifiers now, so this reports ordinary syntax errors without
+-- constructing legacy AST nodes.
 try;
 do
-  throw "boom";
+  throw;
+  "boom";
 end
 catch(e);
 do
