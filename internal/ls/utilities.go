@@ -630,8 +630,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		}
 
 		// left /**/in [|name|]
-		// left /**/instanceof [|name|]
-		if (node.Kind == ast.KindInKeyword || node.Kind == ast.KindInstanceOfKeyword) && parent.Kind == ast.KindBinaryExpression && parent.AsBinaryExpression().OperatorToken == node {
+		if node.Kind == ast.KindInKeyword && parent.Kind == ast.KindBinaryExpression && parent.AsBinaryExpression().OperatorToken == node {
 			return ast.SkipOuterExpressions(parent.AsBinaryExpression().Right, ast.OEKAll)
 		}
 

@@ -144,7 +144,7 @@ local mapped: Box<string> = box.map(box, toStr);
 >box : Box<number>
 >toStr : (v: number) => string
 
-// Interface `extends` heritage and construct signatures are untouched.
+// Interface `extends` heritage is untouched.
 interface Base {
   b: number;
 >b : number

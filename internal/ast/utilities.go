@@ -2046,10 +2046,6 @@ func ExpressionIsAlias(node *Node) bool {
 	return IsEntityNameExpression(node)
 }
 
-func IsInstanceOfExpression(node *Node) bool {
-	return IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == KindInstanceOfKeyword
-}
-
 func IsAnyImportOrReExport(node *Node) bool {
 	return IsImportNode(node) || IsExportDeclaration(node)
 }
@@ -3171,8 +3167,6 @@ func IsCallLikeExpression(node *Node) bool {
 		KindCallExpression,
 		KindTaggedTemplateExpression:
 		return true
-	case KindBinaryExpression:
-		return node.AsBinaryExpression().OperatorToken.Kind == KindInstanceOfKeyword
 	}
 	return false
 }

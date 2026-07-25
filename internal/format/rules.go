@@ -40,7 +40,6 @@ func getAllRules() []ruleSpec {
 	binaryOperators := tokenRangeFromRange(ast.KindFirstBinaryOperator, ast.KindLastBinaryOperator)
 	binaryKeywordOperators := []ast.Kind{
 		ast.KindInKeyword,
-		ast.KindInstanceOfKeyword,
 		ast.KindOfKeyword,
 		ast.KindAsKeyword,
 		ast.KindIsKeyword,

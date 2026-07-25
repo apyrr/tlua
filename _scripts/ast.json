@@ -106,7 +106,6 @@
             "IfKeyword",
             "ImportKeyword",
             "InKeyword",
-            "InstanceOfKeyword",
             "RepeatKeyword",
             "ReturnKeyword",
             "SuperKeyword",
@@ -674,7 +673,6 @@
                 "LessThanEqualsToken",
                 "GreaterThanToken",
                 "GreaterThanEqualsToken",
-                "InstanceOfKeyword",
                 "InKeyword"
             ],
             "RelationalOperatorOrHigher": [
@@ -4461,8 +4459,7 @@
             "CallLikeExpression": [
                 "CallExpression",
                 "TaggedTemplateExpression",
-                "JsxOpeningLikeElement",
-                "BinaryExpression"
+                "JsxOpeningLikeElement"
             ],
             "FunctionLikeDeclaration": [
                 "FunctionDeclaration",

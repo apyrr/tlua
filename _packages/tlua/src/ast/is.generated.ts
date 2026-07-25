@@ -1124,7 +1124,7 @@ export function isBreakOrContinueStatement(node: Node): node is BreakOrContinueS
 
 export function isCallLikeExpression(node: Node): node is CallLikeExpression {
     const kind = node.kind;
-    return kind === SyntaxKind.CallExpression || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.JsxOpeningElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.BinaryExpression;
+    return kind === SyntaxKind.CallExpression || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.JsxOpeningElement || kind === SyntaxKind.JsxSelfClosingElement;
 }
 
 export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration {
@@ -1329,7 +1329,6 @@ export function isRelationalOperator(kind: SyntaxKind): kind is RelationalOperat
         || kind === SyntaxKind.LessThanEqualsToken
         || kind === SyntaxKind.GreaterThanToken
         || kind === SyntaxKind.GreaterThanEqualsToken
-        || kind === SyntaxKind.InstanceOfKeyword
         || kind === SyntaxKind.InKeyword;
 }
 

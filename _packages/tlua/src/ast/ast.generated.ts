@@ -77,7 +77,6 @@ export type KeywordSyntaxKind =
     | SyntaxKind.IfKeyword
     | SyntaxKind.ImportKeyword
     | SyntaxKind.InKeyword
-    | SyntaxKind.InstanceOfKeyword
     | SyntaxKind.RepeatKeyword
     | SyntaxKind.ReturnKeyword
     | SyntaxKind.SuperKeyword
@@ -226,7 +225,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.IfKeyword
     | SyntaxKind.ImportKeyword
     | SyntaxKind.InKeyword
-    | SyntaxKind.InstanceOfKeyword
     | SyntaxKind.RepeatKeyword
     | SyntaxKind.ReturnKeyword
     | SyntaxKind.SuperKeyword
@@ -337,7 +335,7 @@ export type AdditiveOperator = SyntaxKind.PlusToken | SyntaxKind.MinusToken;
 export type AdditiveOperatorOrHigher = MultiplicativeOperatorOrHigher | AdditiveOperator;
 export type ConcatenationOperator = SyntaxKind.DotDotToken;
 export type ConcatenationOperatorOrHigher = AdditiveOperatorOrHigher | ConcatenationOperator;
-export type RelationalOperator = SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword;
+export type RelationalOperator = SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InKeyword;
 export type RelationalOperatorOrHigher = ConcatenationOperatorOrHigher | RelationalOperator;
 export type EqualityOperator = SyntaxKind.EqualsEqualsToken | SyntaxKind.TildeEqualsToken;
 export type EqualityOperatorOrHigher = RelationalOperatorOrHigher | EqualityOperator;
@@ -1212,7 +1210,7 @@ export type ObjectTypeDeclaration = InterfaceDeclaration | TypeLiteralNode;
 export type JsxOpeningLikeElement = JsxOpeningElement | JsxSelfClosingElement;
 export type NamedImportsOrExports = NamedImports | NamedExports;
 export type BreakOrContinueStatement = BreakStatement | ContinueStatement;
-export type CallLikeExpression = CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement | BinaryExpression;
+export type CallLikeExpression = CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement;
 export type FunctionLikeDeclaration = FunctionDeclaration | FunctionExpression | ArrowFunction;
 export type VariableOrParameterDeclaration = VariableDeclaration | ParameterDeclaration;
 export type ImportClauseOrBindingPattern = ImportClause | BindingPattern;

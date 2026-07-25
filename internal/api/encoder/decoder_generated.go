@@ -140,7 +140,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindGotoKeyword,
 		ast.KindIfKeyword,
 		ast.KindInKeyword,
-		ast.KindInstanceOfKeyword,
 		ast.KindRepeatKeyword,
 		ast.KindReturnKeyword,
 		ast.KindThenKeyword,

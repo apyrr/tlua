@@ -151,7 +151,7 @@ local mapped: Box<string> = box.map(box, toStr);
 >box : Symbol(box, Decl(tluaNoThisCoexistence.tlua, 49, 7))
 >toStr : Symbol(toStr, Decl(tluaNoThisCoexistence.tlua, 49, 25))
 
-// Interface `extends` heritage and construct signatures are untouched.
+// Interface `extends` heritage is untouched.
 interface Base {
 >Base : Symbol(Base, Decl(tluaNoThisCoexistence.tlua, 52, 48))
 

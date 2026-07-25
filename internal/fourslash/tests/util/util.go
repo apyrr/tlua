@@ -389,11 +389,6 @@ var CompletionGlobalKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "instanceof",
-		Kind:     new(lsproto.CompletionItemKindKeyword),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
 		Label:    "interface",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),

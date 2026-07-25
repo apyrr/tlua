@@ -114,7 +114,6 @@ export const textToKeywordObj: Record<string, KeywordSyntaxKind> = {
     import: SyntaxKind.ImportKeyword,
     in: SyntaxKind.InKeyword,
     infer: SyntaxKind.InferKeyword,
-    instanceof: SyntaxKind.InstanceOfKeyword,
     interface: SyntaxKind.InterfaceKeyword,
     intrinsic: SyntaxKind.IntrinsicKeyword,
     is: SyntaxKind.IsKeyword,

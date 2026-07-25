@@ -607,8 +607,6 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 		if ast.IsBooleanLiteral(left) && !ast.IsAccessExpression(right) {
 			return c.narrowTypeByBooleanComparison(f, t, right, left, operator, assumeTrue)
 		}
-	case ast.KindInstanceOfKeyword:
-		return c.narrowTypeByInstanceof(f, t, expr, assumeTrue)
 	case ast.KindInKeyword:
 		if ast.IsPrivateIdentifier(expr.Left) {
 			return c.narrowTypeByPrivateIdentifierInInExpression(f, t, expr, assumeTrue)
@@ -869,40 +867,6 @@ func (c *Checker) narrowTypeByBooleanComparison(f *FlowState, t *Type, expr *ast
 	return c.narrowType(f, t, expr, assumeTrue)
 }
 
-func (c *Checker) narrowTypeByInstanceof(f *FlowState, t *Type, expr *ast.BinaryExpression, assumeTrue bool) *Type {
-	left := c.getReferenceCandidate(expr.Left)
-	if !c.isMatchingReference(f.reference, left) {
-		if assumeTrue && c.optionalChainContainsReference(left, f.reference) {
-			return c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
-		}
-		return t
-	}
-	right := expr.Right
-	rightType := c.getTypeOfExpression(right)
-	if !c.isTypeDerivedFrom(rightType, c.globalObjectType) {
-		return t
-	}
-	// if the right-hand side has an object type with a custom `[Symbol.hasInstance]` method, and that method
-	// has a type predicate, use the type predicate to perform narrowing. This allows normal `object` types to
-	// participate in `instanceof`, as per Step 2 of https://tc39.es/ecma262/#sec-instanceofoperator.
-	var predicate *TypePredicate
-	if signature := c.getEffectsSignature(expr.AsNode()); signature != nil {
-		predicate = c.getTypePredicateOfSignature(signature)
-	}
-	if predicate != nil && predicate.kind == TypePredicateKindIdentifier && predicate.parameterIndex == 0 {
-		return c.getNarrowedType(t, predicate.t, assumeTrue, true /*checkDerived*/)
-	}
-	if !c.isTypeDerivedFrom(rightType, c.globalFunctionType) {
-		return t
-	}
-	instanceType := c.mapType(rightType, c.getInstanceType)
-	// Narrow in the false branch only if the target is a non-empty object type.
-	if !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.IsEmptyAnonymousObjectType(instanceType)) {
-		return t
-	}
-	return c.getNarrowedType(t, instanceType, assumeTrue, true /*checkDerived*/)
-}
-
 func (c *Checker) getNarrowedType(t *Type, candidate *Type, assumeTrue bool, checkDerived bool) *Type {
 	return c.getNarrowedTypeEx(t, candidate, assumeTrue, checkDerived, false /*disjoint*/)
 }
@@ -910,9 +874,9 @@ func (c *Checker) getNarrowedType(t *Type, candidate *Type, assumeTrue bool, che
 // The disjoint flag says the candidate's domain partitions the value space, the
 // way Lua's runtime tags do: a type wholly unrelated to the candidate can never
 // inhabit it, so a total miss narrows to never. Without the flag, a miss falls
-// back to an intersection, which is right for type predicates and instanceof --
-// there the candidate is an assertion, and structurally unrelated types may
-// still overlap at runtime.
+// back to an intersection, which is right for a type predicate -- there the
+// candidate is an assertion, and structurally unrelated types may still overlap
+// at runtime.
 func (c *Checker) getNarrowedTypeEx(t *Type, candidate *Type, assumeTrue bool, checkDerived bool, disjoint bool) *Type {
 	if t.flags&TypeFlagsUnion == 0 {
 		return c.getNarrowedTypeWorker(t, candidate, assumeTrue, checkDerived, disjoint)
@@ -967,9 +931,8 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 			}
 		}
 		// For each constituent t in the current type, if t and c are directly related, pick the most
-		// specific of the two. When t and c are related in both directions, we prefer c for type predicates
-		// because that is the asserted type, but t for `instanceof` because generics aren't reflected in
-		// prototype object types.
+		// specific of the two. When t and c are related in both directions, we prefer c
+		// because that is the asserted type.
 		var mapType func(*Type) *Type
 		if checkDerived {
 			mapType = func(t *Type) *Type {
@@ -1142,7 +1105,7 @@ func (c *Checker) getTypeAtFlowBranchLabel(f *FlowState, flow *ast.FlowNode, ant
 		}
 		// If an antecedent type is not a subset of the declared type, we need to perform
 		// subtype reduction. This happens when a "foreign" type is injected into the control
-		// flow using the instanceof operator or a user defined type predicate.
+		// flow using a user defined type predicate.
 		if !c.isTypeSubsetOf(flowType.t, f.initialType) {
 			subtypeReduction = true
 		}
@@ -1227,7 +1190,7 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 		antecedentTypes = core.AppendIfUnique(antecedentTypes, flowType.t)
 		// If an antecedent type is not a subset of the declared type, we need to perform
 		// subtype reduction. This happens when a "foreign" type is injected into the control
-		// flow using the instanceof operator or a user defined type predicate.
+		// flow using a user defined type predicate.
 		if !c.isTypeSubsetOf(flowType.t, f.initialType) {
 			subtypeReduction = true
 		}
@@ -1914,10 +1877,7 @@ func (c *Checker) getEffectsSignature(node *ast.Node) *Signature {
 		// circularities in control flow analysis, we use getTypeOfDottedName when resolving the call
 		// target expression of an assertion.
 		var funcType *Type
-		if ast.IsBinaryExpression(node) {
-			rightType := c.checkNonNullExpression(node.AsBinaryExpression().Right)
-			funcType = c.getSymbolHasInstanceMethodOfObjectType(rightType)
-		} else if ast.IsExpressionStatement(node.Parent) {
+		if ast.IsExpressionStatement(node.Parent) {
 			funcType = c.getTypeOfDottedName(node.Expression(), nil /*diagnostic*/)
 		} else if node.Expression().Kind != ast.KindSuperKeyword {
 			if ast.IsOptionalChain(node) {
@@ -1946,23 +1906,6 @@ func (c *Checker) getEffectsSignature(node *ast.Node) *Signature {
 		return nil
 	}
 	return signature
-}
-
-/**
- * Get the type of the `[Symbol.hasInstance]` method of an object type.
- */
-func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
-	hasInstancePropertyName := c.getPropertyNameForKnownSymbolName("hasInstance")
-	if c.allTypesAssignableToKind(t, TypeFlagsNonPrimitive) {
-		hasInstanceProperty := c.getPropertyOfType(t, hasInstancePropertyName)
-		if hasInstanceProperty != nil {
-			hasInstancePropertyType := c.getTypeOfSymbol(hasInstanceProperty)
-			if hasInstancePropertyType != nil && len(c.getSignaturesOfType(hasInstancePropertyType, SignatureKindCall)) != 0 {
-				return hasInstancePropertyType
-			}
-		}
-	}
-	return nil
 }
 
 func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {

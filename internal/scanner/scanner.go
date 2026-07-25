@@ -84,7 +84,6 @@ var textToKeyword = map[string]ast.Kind{
 	"import":     ast.KindImportKeyword,
 	"in":         ast.KindInKeyword,
 	"infer":      ast.KindInferKeyword,
-	"instanceof": ast.KindInstanceOfKeyword,
 	"interface":  ast.KindInterfaceKeyword,
 	"intrinsic":  ast.KindIntrinsicKeyword,
 	"is":         ast.KindIsKeyword,

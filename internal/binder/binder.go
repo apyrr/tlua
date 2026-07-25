@@ -2441,8 +2441,6 @@ func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 		return isNarrowableOperand(left) || isNarrowableOperand(right) ||
 			isNarrowingLuaTypeGuardOperands(right, left) || isNarrowingLuaTypeGuardOperands(left, right) ||
 			(ast.IsBooleanLiteral(right) && isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && isNarrowingExpression(right))
-	case ast.KindInstanceOfKeyword:
-		return isNarrowableOperand(expr.Left)
 	case ast.KindInKeyword:
 		return isNarrowingExpression(expr.Right)
 	case ast.KindCommaToken:

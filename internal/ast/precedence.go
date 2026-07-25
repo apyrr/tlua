@@ -64,7 +64,6 @@ const (
 	//     RelationalExpression `>` ConcatenationExpression
 	//     RelationalExpression `<=` ConcatenationExpression
 	//     RelationalExpression `>=` ConcatenationExpression
-	//     RelationalExpression `instanceof` ConcatenationExpression
 	//     RelationalExpression `in` ConcatenationExpression
 	//     [+TypeScript] RelationalExpression `as` Type
 	OperatorPrecedenceRelational
@@ -289,7 +288,7 @@ func GetBinaryOperatorPrecedence(operatorKind Kind) OperatorPrecedence {
 	case KindEqualsEqualsToken, KindTildeEqualsToken:
 		return OperatorPrecedenceEquality
 	case KindLessThanToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken,
-		KindInstanceOfKeyword, KindInKeyword, KindAsKeyword, KindSatisfiesKeyword:
+		KindInKeyword, KindAsKeyword, KindSatisfiesKeyword:
 		return OperatorPrecedenceRelational
 	case KindDotDotToken:
 		return OperatorPrecedenceConcatenation

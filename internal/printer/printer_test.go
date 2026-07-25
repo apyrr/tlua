@@ -112,7 +112,6 @@ func TestEmit(t *testing.T) {
 		{title: "BinaryExpression#concat", input: `a..b`, output: `a .. b;`},
 		{title: "BinaryExpression#concatChain", input: `a..b..c`, output: `a .. b .. c;`},
 		{title: "BinaryExpression#concatLeftParen", input: `(a..b)..c`, output: `(a .. b) .. c;`},
-		{title: "BinaryExpression#4", input: `a instanceof b`, output: `a instanceof b;`},
 		{title: "BinaryExpression#5", input: `a in b`, output: `a in b;`},
 		// `&&`/`||` are aliases of `and`/`or` and print with the canonical Lua
 		// spelling, whichever the source used.
@@ -824,8 +823,7 @@ func isBinaryOperator(token ast.Kind) bool {
 		ast.KindPercentEqualsToken,
 		ast.KindBarBarEqualsToken,
 		ast.KindAmpersandAmpersandEqualsToken,
-		ast.KindInKeyword,
-		ast.KindInstanceOfKeyword:
+		ast.KindInKeyword:
 		return true
 	}
 	return false

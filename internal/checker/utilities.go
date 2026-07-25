@@ -707,7 +707,7 @@ func isConcatenationOperatorOrHigher(kind ast.Kind) bool {
 
 func isRelationalOperator(kind ast.Kind) bool {
 	return kind == ast.KindLessThanToken || kind == ast.KindLessThanEqualsToken || kind == ast.KindGreaterThanToken ||
-		kind == ast.KindGreaterThanEqualsToken || kind == ast.KindInstanceOfKeyword || kind == ast.KindInKeyword
+		kind == ast.KindGreaterThanEqualsToken || kind == ast.KindInKeyword
 }
 
 func isRelationalOperatorOrHigher(kind ast.Kind) bool {

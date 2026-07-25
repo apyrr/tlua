@@ -55,7 +55,7 @@ declare function toStr(v: number): string;
 
 local mapped: Box<string> = box.map(box, toStr);
 
-// Interface `extends` heritage and construct signatures are untouched.
+// Interface `extends` heritage is untouched.
 interface Base {
   b: number;
 }
