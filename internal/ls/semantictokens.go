@@ -344,7 +344,7 @@ func tokenFromDeclarationMapping(kind ast.Kind) tokenType {
 		return tokenTypeType
 	case ast.KindTypeParameter:
 		return tokenTypeTypeParameter
-	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
+	case ast.KindPropertyAssignment:
 		return tokenTypeProperty
 	default:
 		return -1

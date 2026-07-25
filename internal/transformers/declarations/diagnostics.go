@@ -334,8 +334,6 @@ func getErrorByDeclarationKind(kind ast.Kind) *diagnostics.Message {
 		return diagnostics.Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations
 	case ast.KindSpreadAssignment:
 		return diagnostics.Objects_that_contain_spread_assignments_can_t_be_inferred_with_isolatedDeclarations
-	case ast.KindShorthandPropertyAssignment:
-		return diagnostics.Objects_that_contain_shorthand_properties_can_t_be_inferred_with_isolatedDeclarations
 	case ast.KindArrayLiteralExpression:
 		return diagnostics.Only_const_arrays_can_be_inferred_with_isolatedDeclarations
 	case ast.KindExportAssignment:
@@ -493,7 +491,7 @@ func createGetIsolatedDeclarationErrors(resolver printer.EmitResolver) func(node
 			return createEntityInTypeNodeError(node)
 		}
 		switch node.Kind {
-		case ast.KindComputedPropertyName, ast.KindShorthandPropertyAssignment, ast.KindSpreadAssignment:
+		case ast.KindComputedPropertyName, ast.KindSpreadAssignment:
 			return createObjectLiteralError(node)
 		case ast.KindArrayLiteralExpression, ast.KindSpreadElement:
 			return createArrayLiteralError(node)

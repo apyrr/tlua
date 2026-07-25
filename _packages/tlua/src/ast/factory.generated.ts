@@ -35,7 +35,6 @@ import type {
     EndOfFile,
     EntityName,
     EqualsGreaterThanToken,
-    EqualsToken,
     ExclamationToken,
     ExportAssignment,
     ExportDeclaration,
@@ -186,7 +185,6 @@ import type {
     RestTypeNode,
     ReturnStatement,
     SatisfiesExpression,
-    ShorthandPropertyAssignment,
     SourceFile,
     SpreadAssignment,
     SpreadElement,
@@ -327,9 +325,6 @@ export class NodeObject {
     get equalsGreaterThanToken(): any {
         return this._data?.equalsGreaterThanToken;
     }
-    get equalsToken(): any {
-        return this._data?.equalsToken;
-    }
     get exclamationToken(): any {
         return this._data?.exclamationToken;
     }
@@ -455,9 +450,6 @@ export class NodeObject {
     }
     get namespace(): any {
         return this._data?.namespace;
-    }
-    get objectAssignmentInitializer(): any {
-        return this._data?.objectAssignmentInitializer;
     }
     get objectType(): any {
         return this._data?.objectType;
@@ -817,8 +809,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression };
         case SyntaxKind.PropertyAssignment:
             return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, type: n.type, initializer: n.initializer };
-        case SyntaxKind.ShorthandPropertyAssignment:
-            return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, type: n.type, equalsToken: n.equalsToken, objectAssignmentInitializer: n.objectAssignmentInitializer };
         case SyntaxKind.DeleteExpression:
             return { expression: n.expression };
         case SyntaxKind.VoidExpression:
@@ -1211,13 +1201,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
-    [SyntaxKind.ShorthandPropertyAssignment]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNode(cbNode, data.name) ||
-        visitNode(cbNode, data.postfixToken) ||
-        visitNode(cbNode, data.type) ||
-        visitNode(cbNode, data.equalsToken) ||
-        visitNode(cbNode, data.objectAssignmentInitializer),
     [SyntaxKind.DeleteExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.VoidExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.TypeAssertionExpression]: (data, cbNode, cbNodes) =>
@@ -2031,17 +2014,6 @@ export function createPropertyAssignment(modifiers: readonly ModifierLike[] | un
         type,
         initializer,
     }) as unknown as PropertyAssignment;
-}
-
-export function createShorthandPropertyAssignment(modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, equalsToken?: EqualsToken, objectAssignmentInitializer?: Expression): ShorthandPropertyAssignment {
-    return new NodeObject(SyntaxKind.ShorthandPropertyAssignment, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        name,
-        postfixToken,
-        type,
-        equalsToken,
-        objectAssignmentInitializer,
-    }) as unknown as ShorthandPropertyAssignment;
 }
 
 export function createDeleteExpression(expression: Expression): DeleteExpression {
@@ -2963,10 +2935,6 @@ export function updateTableEntry(node: TableEntry, expression: Expression): Tabl
 
 export function updatePropertyAssignment(node: PropertyAssignment, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer: Expression): PropertyAssignment {
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertyAssignment(modifiers, name, postfixToken, type, initializer) : node;
-}
-
-export function updateShorthandPropertyAssignment(node: ShorthandPropertyAssignment, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, equalsToken?: EqualsToken, objectAssignmentInitializer?: Expression): ShorthandPropertyAssignment {
-    return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.equalsToken !== equalsToken || node.objectAssignmentInitializer !== objectAssignmentInitializer ? createShorthandPropertyAssignment(modifiers, name, postfixToken, type, equalsToken, objectAssignmentInitializer) : node;
 }
 
 export function updateDeleteExpression(node: DeleteExpression, expression: Expression): DeleteExpression {

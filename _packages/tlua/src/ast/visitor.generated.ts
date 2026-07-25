@@ -123,7 +123,6 @@ import type {
     RestTypeNode,
     ReturnStatement,
     SatisfiesExpression,
-    ShorthandPropertyAssignment,
     SourceFile,
     SpreadAssignment,
     SpreadElement,
@@ -272,7 +271,6 @@ import {
     updateRestTypeNode,
     updateReturnStatement,
     updateSatisfiesExpression,
-    updateShorthandPropertyAssignment,
     updateSourceFile,
     updateSpreadAssignment,
     updateSpreadElement,
@@ -314,7 +312,6 @@ import {
     isEndOfFile,
     isEntityName,
     isEqualsGreaterThanToken,
-    isEqualsToken,
     isExclamationToken,
     isExpression,
     isExpressionWithTypeArguments,
@@ -803,15 +800,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         const _initializer = visitNode(node.initializer, visitor, isExpression);
         return updatePropertyAssignment(node, _modifiers, _name, _postfixToken, _type, _initializer);
-    },
-    [SyntaxKind.ShorthandPropertyAssignment]: (node: ShorthandPropertyAssignment, visitor: Visitor): ShorthandPropertyAssignment => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _name = visitNode(node.name, visitor, isPropertyName);
-        const _postfixToken = visitNode(node.postfixToken, visitor, isQuestionOrExclamationToken);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        const _equalsToken = visitNode(node.equalsToken, visitor, isEqualsToken);
-        const _objectAssignmentInitializer = visitNode(node.objectAssignmentInitializer, visitor, isExpression);
-        return updateShorthandPropertyAssignment(node, _modifiers, _name, _postfixToken, _type, _equalsToken, _objectAssignmentInitializer);
     },
     [SyntaxKind.DeleteExpression]: (node: DeleteExpression, visitor: Visitor): DeleteExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);

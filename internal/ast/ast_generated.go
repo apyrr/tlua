@@ -299,7 +299,6 @@ type (
 	SpreadAssignmentNode              = Node
 	TableEntryNode                    = Node
 	PropertyAssignmentNode            = Node
-	ShorthandPropertyAssignmentNode   = Node
 	DeleteExpressionNode              = Node
 	VoidExpressionNode                = Node
 	TypeAssertionNode                 = Node
@@ -516,7 +515,7 @@ type (
 	DestructuringAssignment        = Node // ObjectDestructuringAssignment | ArrayDestructuringAssignment
 	LiteralToken                   = Node // NumericLiteral | StringLiteral | JsxText | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
 	Modifier                       = Node // ModifierSyntaxKind
-	ObjectLiteralElementLike       = Node // PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | TableEntry
+	ObjectLiteralElementLike       = Node // PropertyAssignment | SpreadAssignment | TableEntry
 	PropertyNameLiteral            = Node // Identifier | StringLiteral | NumericLiteral
 	PseudoLiteralToken             = Node // PseudoLiteralSyntaxKind
 	TemplateLiteralToken           = Node // NoSubstitutionTemplateLiteral | PseudoLiteralToken
@@ -3900,63 +3899,6 @@ func (node *PropertyAssignment) Name() *DeclarationName {
 
 func IsPropertyAssignment(node *Node) bool {
 	return node.Kind == KindPropertyAssignment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// ShorthandPropertyAssignment
-// ──────────────────────────────────────────────────────────────────────
-
-type ShorthandPropertyAssignment struct {
-	NodeBase
-	NamedMemberBase
-	ObjectLiteralElementBase
-	CompositeBase
-	Type                        *TypeNode
-	EqualsToken                 *EqualsToken // Optional
-	ObjectAssignmentInitializer *Expression  // Optional
-}
-
-func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, equalsToken *EqualsToken, objectAssignmentInitializer *Expression) *Node {
-	data := &ShorthandPropertyAssignment{}
-	data.modifiers = modifiers
-	data.name = name
-	data.PostfixToken = postfixToken
-	data.Type = typeNode
-	data.EqualsToken = equalsToken
-	data.ObjectAssignmentInitializer = objectAssignmentInitializer
-	return f.newNode(KindShorthandPropertyAssignment, data)
-}
-
-func (f *NodeFactory) UpdateShorthandPropertyAssignment(node *ShorthandPropertyAssignment, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, equalsToken *EqualsToken, objectAssignmentInitializer *Expression) *Node {
-	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || typeNode != node.Type || equalsToken != node.EqualsToken || objectAssignmentInitializer != node.ObjectAssignmentInitializer {
-		return updateNode(f.NewShorthandPropertyAssignment(modifiers, name, postfixToken, typeNode, equalsToken, objectAssignmentInitializer), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *ShorthandPropertyAssignment) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) ||
-		visit(v, node.name) ||
-		visit(v, node.PostfixToken) ||
-		visit(v, node.Type) ||
-		visit(v, node.EqualsToken) ||
-		visit(v, node.ObjectAssignmentInitializer)
-}
-
-func (node *ShorthandPropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateShorthandPropertyAssignment(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.PostfixToken), v.visitNode(node.Type), v.visitNode(node.EqualsToken), v.visitNode(node.ObjectAssignmentInitializer))
-}
-
-func (node *ShorthandPropertyAssignment) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewShorthandPropertyAssignment(node.Modifiers(), node.name, node.PostfixToken, node.Type, node.EqualsToken, node.ObjectAssignmentInitializer), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *ShorthandPropertyAssignment) Name() *DeclarationName {
-	return node.name
-}
-
-func IsShorthandPropertyAssignment(node *Node) bool {
-	return node.Kind == KindShorthandPropertyAssignment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7713,8 +7655,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*TableEntry).ForEachChild(v)
 	case KindPropertyAssignment:
 		return n.data.(*PropertyAssignment).ForEachChild(v)
-	case KindShorthandPropertyAssignment:
-		return n.data.(*ShorthandPropertyAssignment).ForEachChild(v)
 	case KindDeleteExpression:
 		return n.data.(*DeleteExpression).ForEachChild(v)
 	case KindVoidExpression:
@@ -8202,10 +8142,6 @@ func (n *Node) AsTableEntry() *TableEntry {
 
 func (n *Node) AsPropertyAssignment() *PropertyAssignment {
 	return n.data.(*PropertyAssignment)
-}
-
-func (n *Node) AsShorthandPropertyAssignment() *ShorthandPropertyAssignment {
-	return n.data.(*ShorthandPropertyAssignment)
 }
 
 func (n *Node) AsDeleteExpression() *DeleteExpression {

@@ -337,8 +337,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					}
 				}
 			}
-		case ast.KindVariableDeclaration, ast.KindExportAssignment, ast.KindPropertyAssignment,
-			ast.KindShorthandPropertyAssignment:
+		case ast.KindVariableDeclaration, ast.KindExportAssignment, ast.KindPropertyAssignment:
 			if parent.Type() == nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetType(p.addDeepCloneReparse(tag.TypeExpression().Type()))
 				p.finishMutatedNode(parent)
@@ -400,16 +399,6 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					parent.Initializer(),
 					false, /*isAssertion*/
 				))
-				p.finishMutatedNode(parent)
-			}
-		case ast.KindShorthandPropertyAssignment:
-			shorthand := parent.AsShorthandPropertyAssignment()
-			if shorthand.ObjectAssignmentInitializer != nil && tag.AsJSDocSatisfiesTag().TypeExpression != nil {
-				shorthand.ObjectAssignmentInitializer = p.makeNewCast(
-					p.addDeepCloneReparse(tag.AsJSDocSatisfiesTag().TypeExpression.Type()),
-					shorthand.ObjectAssignmentInitializer,
-					false, /*isAssertion*/
-				)
 				p.finishMutatedNode(parent)
 			}
 		case ast.KindReturnStatement, ast.KindParenthesizedExpression, ast.KindExportAssignment:

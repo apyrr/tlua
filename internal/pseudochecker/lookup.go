@@ -39,7 +39,7 @@ func (ch *PseudoChecker) GetTypeOfDeclaration(node *ast.Node) *PseudoType {
 		return ch.typeFromExpression(node.AsExportAssignment().Expression)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindBinaryExpression:
 		return ch.typeFromExpandoProperty(node)
-	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
+	case ast.KindPropertyAssignment:
 		return ch.typeFromPropertyAssignment(node)
 	case ast.KindCallExpression:
 		switch ast.GetAssignmentDeclarationKind(node) {
@@ -241,7 +241,7 @@ func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 	if errorNodes := ch.canGetTypeFromObjectLiteral(node); errorNodes != nil {
 		return NewPseudoTypeInferredWithErrors(node.AsNode(), false, errorNodes)
 	}
-	// we are in a const context producing an object literal type, there are no shorthand or spread assignments
+	// we are in a const context producing an object literal type, there are no spread assignments
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
 		return NewPseudoTypeObjectLiteral(nil)
 	}
@@ -261,7 +261,7 @@ func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 }
 
 // canGetTypeFromObjectLiteral checks whether an object literal can be typed by the pseudochecker.
-// Returns nil if the object can be typed, or a slice of error nodes (shorthand/spread properties,
+// Returns nil if the object can be typed, or a slice of error nodes (spread properties,
 // non-literal computed names) that prevent typing.
 func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpression) []*ast.Node {
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
@@ -273,7 +273,7 @@ func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpr
 			errorNodes = append(errorNodes, e)
 			continue
 		}
-		if e.Kind == ast.KindShorthandPropertyAssignment || e.Kind == ast.KindSpreadAssignment || e.Kind == ast.KindTableEntry {
+		if e.Kind == ast.KindSpreadAssignment || e.Kind == ast.KindTableEntry {
 			errorNodes = append(errorNodes, e)
 			continue
 		}
@@ -331,7 +331,7 @@ func isConstContextPropagatingKind(kind ast.Kind) bool {
 	switch kind {
 	case ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression,
 		ast.KindParenthesizedExpression, ast.KindSpreadElement, ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment, ast.KindTemplateSpan, ast.KindPrefixUnaryExpression:
+		ast.KindTemplateSpan, ast.KindPrefixUnaryExpression:
 		return true
 	}
 	return false

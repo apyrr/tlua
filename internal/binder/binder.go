@@ -617,7 +617,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
-	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
+	case ast.KindPropertyAssignment:
 		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsProperty, ast.SymbolFlagsPropertyExcludes)
 	case ast.KindTableEntry:
 		// A Lua positional table entry has no syntactic name; the checker

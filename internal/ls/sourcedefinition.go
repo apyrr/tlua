@@ -650,7 +650,6 @@ func getPropertyLikeSourceDeclarations(originalNode *ast.Node, declarations []*a
 	return core.Filter(declarations, func(node *ast.Node) bool {
 		switch node.Kind {
 		case ast.KindPropertyAssignment,
-			ast.KindShorthandPropertyAssignment,
 			ast.KindPropertySignature,
 			ast.KindMethodSignature:
 			return true

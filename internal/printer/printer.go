@@ -1708,8 +1708,6 @@ func (p *Printer) emitObjectLiteralElement(node *ast.ObjectLiteralElement) {
 	switch node.Kind {
 	case ast.KindPropertyAssignment:
 		p.emitPropertyAssignment(node.AsPropertyAssignment())
-	case ast.KindShorthandPropertyAssignment:
-		p.emitShorthandPropertyAssignment(node.AsShorthandPropertyAssignment())
 	case ast.KindSpreadAssignment:
 		p.emitSpreadAssignment(node.AsSpreadAssignment())
 	case ast.KindTableEntry:
@@ -4230,18 +4228,6 @@ func (p *Printer) emitPropertyAssignment(node *ast.PropertyAssignment) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitShorthandPropertyAssignment(node *ast.ShorthandPropertyAssignment) {
-	state := p.enterNode(node.AsNode())
-	p.emitPropertyName(node.Name())
-	if node.ObjectAssignmentInitializer != nil {
-		p.writeSpace()
-		p.writePunctuation("=")
-		p.writeSpace()
-		p.emitExpression(node.ObjectAssignmentInitializer, ast.OperatorPrecedenceDisallowComma)
-	}
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitSpreadAssignment(node *ast.SpreadAssignment) {
 	state := p.enterNode(node.AsNode())
 	if node.Expression != nil {
@@ -4860,8 +4846,6 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	// Property assignments
 	case ast.KindPropertyAssignment:
 		p.emitPropertyAssignment(node.AsPropertyAssignment())
-	case ast.KindShorthandPropertyAssignment:
-		p.emitShorthandPropertyAssignment(node.AsShorthandPropertyAssignment())
 	case ast.KindSpreadAssignment:
 		p.emitSpreadAssignment(node.AsSpreadAssignment())
 
@@ -5692,7 +5676,6 @@ func (p *Printer) generateMemberNames(node *ast.Node) {
 	}
 	switch node.Kind {
 	case ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment,
 		ast.KindPropertySignature,
 		ast.KindMethodSignature:
 		p.generateNameIfNeeded(node.Name())

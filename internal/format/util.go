@@ -91,11 +91,6 @@ func isGrammarError(parent *ast.Node, child *ast.Node) bool {
 		mods := pa.Modifiers()
 		return child == pa.PostfixToken || (mods != nil && isGrammarErrorElement(&mods.NodeList, child, ast.IsModifierLike))
 	}
-	if ast.IsShorthandPropertyAssignment(parent) {
-		sp := parent.AsShorthandPropertyAssignment()
-		mods := sp.Modifiers()
-		return child == sp.EqualsToken || child == sp.PostfixToken || (mods != nil && isGrammarErrorElement(&mods.NodeList, child, ast.IsModifierLike))
-	}
 	if ast.IsNamespaceExportDeclaration(parent) {
 		mods := parent.AsNamespaceExportDeclaration().Modifiers()
 		return mods != nil && isGrammarErrorElement(&mods.NodeList, child, ast.IsModifierLike)

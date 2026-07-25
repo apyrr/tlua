@@ -301,8 +301,6 @@ func getContextNode(node *ast.Node) *ast.Node {
 		// !!! not implemented
 		return nil
 
-	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
-		return node
 	default:
 		return node
 	}
@@ -538,7 +536,6 @@ func isDefinitionVisible(emitResolver *checker.EmitResolver, declaration *ast.No
 	// Initializer expressions inherit the visibility of their parent declaration.
 	switch declaration.Kind {
 	case ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment,
 		ast.KindObjectLiteralExpression,
 		ast.KindArrowFunction,
 		ast.KindFunctionExpression:
@@ -1815,21 +1812,6 @@ func (state *refState) addReference(referenceLocation *ast.Node, symbol *ast.Sym
 	}
 }
 
-func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *checker.Checker, addReference func(*ast.Node)) {
-	refSymbol := checker.GetSymbolAtLocation(node)
-	if refSymbol == nil || refSymbol.ValueDeclaration == nil {
-		return
-	}
-	shorthandSymbol := checker.GetShorthandAssignmentValueSymbol(refSymbol.ValueDeclaration)
-	if shorthandSymbol != nil && len(shorthandSymbol.Declarations) > 0 {
-		for _, declaration := range shorthandSymbol.Declarations {
-			if ast.GetMeaningFromDeclaration(declaration)&ast.SemanticMeaningValue != 0 {
-				addReference(declaration)
-			}
-		}
-	}
-}
-
 func forEachDescendantOfKind(node *ast.Node, kind ast.Kind, action func(*ast.Node)) {
 	node.ForEachChild(func(child *ast.Node) bool {
 		if child.Kind == kind {
@@ -1849,11 +1831,6 @@ func (state *refState) addImplementationReferences(refNode *ast.Node, addRef fun
 
 	if refNode.Kind != ast.KindIdentifier {
 		return
-	}
-
-	if refNode.Parent.Kind == ast.KindShorthandPropertyAssignment {
-		// Go ahead and dereference the shorthand assignment by going to its definition
-		getReferenceEntriesForShorthandPropertyAssignment(refNode, state.checker, addRef)
 	}
 
 	// Check if the node is within an extends or implements clause
@@ -1990,7 +1967,6 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 
 	relatedSymbol, relatedSymbolKind := state.getRelatedSymbol(search, referenceSymbol, referenceLocation)
 	if relatedSymbol == nil {
-		state.getReferenceForShorthandProperty(referenceSymbol, search)
 		return
 	}
 
@@ -2168,23 +2144,6 @@ func (state *refState) hasMatchingMeaning(referenceLocation *ast.Node) bool {
 	return getMeaningFromLocation(referenceLocation)&state.searchMeaning != 0
 }
 
-func (state *refState) getReferenceForShorthandProperty(referenceSymbol *ast.Symbol, search *refSearch) {
-	if referenceSymbol.Flags&ast.SymbolFlagsTransient != 0 || referenceSymbol.ValueDeclaration == nil {
-		return
-	}
-	shorthandValueSymbol := state.checker.GetShorthandAssignmentValueSymbol(referenceSymbol.ValueDeclaration)
-	name := ast.GetNameOfDeclaration(referenceSymbol.ValueDeclaration)
-
-	// Because in short-hand property assignment, an identifier which stored as name of the short-hand property assignment
-	// has two meanings: property name and property value. Therefore when we do findAllReference at the position where
-	// an identifier is declared, the language service should return the position of the variable declaration as well as
-	// the position in short-hand property assignment excluding property accessing. However, if we do findAllReference at the
-	// position of property accessing, the referenceEntry of such position will be handled in the first case.
-	if name != nil && search.includes(shorthandValueSymbol) {
-		state.addReference(name, shorthandValueSymbol, entryKindNode)
-	}
-}
-
 // === search ===
 func (state *refState) populateSearchSymbolSet(symbol *ast.Symbol, location *ast.Node, isForRename, providePrefixAndSuffixText, implementations bool) []*ast.Symbol {
 	if location == nil {
@@ -2276,23 +2235,6 @@ func (state *refState) forEachRelatedSymbol(
 	}
 
 	if containingObjectLiteralElement := getContainingObjectLiteralElement(location); containingObjectLiteralElement != nil {
-		/* Because in short-hand property assignment, location has two meaning : property name and as value of the property
-		 * When we do findAllReference at the position of the short-hand property assignment, we would want to have references to position of
-		 * property name and variable declaration of the identifier.
-		 * Like in below example, when querying for all references for an identifier 'name', of the property assignment, the language service
-		 * should show both 'name' in 'obj' and 'name' in variable declaration
-		 *      const name = "Foo";
-		 *      const obj = { name };
-		 * In order to do that, we will populate the search set with the value symbol of the identifier as a value of the property assignment
-		 * so that when matching with potential reference symbol, both symbols from property declaration and variable declaration
-		 * will be included correctly.
-		 */
-		shorthandValueSymbol := state.checker.GetShorthandAssignmentValueSymbol(location.Parent)
-		// gets the local symbol
-		if shorthandValueSymbol != nil && isForRenamePopulateSearchSymbolSet {
-			// When renaming 'x' in `const o = { x }`, just rename the local variable, not the property.
-			return cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/), entryKindSearchedLocalFoundProperty
-		}
 		// If the location is in a context sensitive location (i.e. in an object literal) try
 		// to get a contextual type for it, and add the property symbol from the contextual
 		// type to the search set
@@ -2302,11 +2244,6 @@ func (state *refState) forEachRelatedSymbol(
 				if res := fromRoot(sym); res != nil {
 					return res, entryKindSearchedPropertyFoundLocal
 				}
-			}
-		}
-		if shorthandValueSymbol != nil {
-			if res := cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/); res != nil {
-				return res, entryKindSearchedLocalFoundProperty
 			}
 		}
 	}

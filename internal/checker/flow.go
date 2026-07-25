@@ -1776,7 +1776,7 @@ func (c *Checker) getDestructuringPropertyName(node *ast.Node) (string, bool) {
 	if ast.IsBindingElement(node) && ast.IsObjectBindingPattern(parent) {
 		return c.getLiteralPropertyNameText(getBindingElementPropertyName(node))
 	}
-	if ast.IsPropertyAssignment(node) || ast.IsShorthandPropertyAssignment(node) {
+	if ast.IsPropertyAssignment(node) {
 		return c.getLiteralPropertyNameText(node.Name())
 	}
 	if ast.IsArrayLiteralExpression(parent) || ast.IsArrayBindingPattern(parent) {
@@ -2148,9 +2148,9 @@ func (c *Checker) getAssignedType(node *ast.Node) *Type {
 	case ast.KindDeleteExpression:
 		return c.nilType
 	}
-	// The array-literal / property-assignment / shorthand arms are gone with
-	// destructuring assignment: the binder never emits a FlowAssignment whose
-	// node sits inside an object or array literal.
+	// The array-literal and property-assignment arms are gone with destructuring
+	// assignment: the binder never emits a FlowAssignment whose node sits inside
+	// an object or array literal.
 	return c.errorType
 }
 

@@ -600,8 +600,6 @@ func (n *Node) Type() *Node {
 		return n.AsPropertySignatureDeclaration().Type
 	case KindPropertyAssignment:
 		return n.AsPropertyAssignment().Type
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().Type
 	case KindTypePredicate:
 		return n.AsTypePredicateNode().Type
 	case KindParenthesizedType:
@@ -659,8 +657,6 @@ func (m *MutableNode) SetType(t *Node) {
 		n.AsPropertySignatureDeclaration().Type = t
 	case KindPropertyAssignment:
 		n.AsPropertyAssignment().Type = t
-	case KindShorthandPropertyAssignment:
-		n.AsShorthandPropertyAssignment().Type = t
 	case KindTypePredicate:
 		n.AsTypePredicateNode().Type = t
 	case KindParenthesizedType:
@@ -1013,8 +1009,6 @@ func (n *Node) Elements() []*Node {
 
 func (n *Node) PostfixToken() *Node {
 	switch n.Kind {
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().PostfixToken
 	case KindMethodSignature:
 		return n.AsMethodSignatureDeclaration().PostfixToken
 	case KindPropertySignature:
@@ -1283,7 +1277,6 @@ func declarationIsWriteAccess(decl *Node) bool {
 		KindNamespaceImport,
 		KindNamespaceExport,
 		KindParameter,
-		KindShorthandPropertyAssignment,
 		KindTypeAliasDeclaration,
 		KindJSTypeAliasDeclaration,
 		KindTypeParameter:
@@ -1353,12 +1346,6 @@ func accessKind(node *Node) AccessKind {
 			return reverseAccessKind(parentAccess)
 		}
 		return parentAccess
-	case KindShorthandPropertyAssignment:
-		// Assume it's the local variable being accessed, since we don't check public properties for --noUnusedLocals.
-		if node == parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer {
-			return AccessKindRead
-		}
-		return accessKind(parent.Parent)
 	case KindArrayLiteralExpression:
 		return accessKind(parent)
 	case KindForOfStatement:
@@ -1905,13 +1892,6 @@ func (node *PropertyAssignment) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.name) |
 		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.Initializer)
-}
-
-func (node *ShorthandPropertyAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		propagateSubtreeFacts(node.Type) |
-		propagateSubtreeFacts(node.ObjectAssignmentInitializer) |
-		SubtreeContainsTypeScript
 }
 
 func (node *TypeAssertion) computeSubtreeFacts() SubtreeFacts {

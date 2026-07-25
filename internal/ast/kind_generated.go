@@ -291,7 +291,6 @@ const (
 	KindHeritageClause
 	// Property assignments
 	KindPropertyAssignment
-	KindShorthandPropertyAssignment
 	KindSpreadAssignment
 	KindTableEntry
 	// Top-level nodes

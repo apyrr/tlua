@@ -332,7 +332,6 @@
                 "comment": "Property assignments"
             },
             "PropertyAssignment",
-            "ShorthandPropertyAssignment",
             "SpreadAssignment",
             "TableEntry",
             {
@@ -2698,42 +2697,6 @@
                 ],
                 "arena": true
             },
-            "ShorthandPropertyAssignment": {
-                "extends": [
-                    "NodeBase",
-                    "NamedMemberBase",
-                    "ObjectLiteralElementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "name",
-                        "inherited": true
-                    },
-                    {
-                        "name": "PostfixToken",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Type",
-                        "type": "TypeNode"
-                    },
-                    {
-                        "name": "EqualsToken",
-                        "type": "EqualsToken",
-                        "optional": true
-                    },
-                    {
-                        "name": "ObjectAssignmentInitializer",
-                        "type": "Expression",
-                        "optional": true
-                    }
-                ]
-            },
             "DeleteExpression": {
                 "generateSubtreeFacts": true,
                 "extends": [
@@ -4672,7 +4635,6 @@
             ],
             "ObjectLiteralElementLike": [
                 "PropertyAssignment",
-                "ShorthandPropertyAssignment",
                 "SpreadAssignment",
                 "TableEntry"
             ],

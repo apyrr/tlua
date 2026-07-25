@@ -243,7 +243,6 @@ import type {
     RestTypeNode,
     ReturnStatement,
     SatisfiesExpression,
-    ShorthandPropertyAssignment,
     SignatureDeclaration,
     SourceFile,
     SpreadAssignment,
@@ -616,10 +615,6 @@ export function isTableEntry(node: Node): node is TableEntry {
 
 export function isPropertyAssignment(node: Node): node is PropertyAssignment {
     return node.kind === SyntaxKind.PropertyAssignment;
-}
-
-export function isShorthandPropertyAssignment(node: Node): node is ShorthandPropertyAssignment {
-    return node.kind === SyntaxKind.ShorthandPropertyAssignment;
 }
 
 export function isDeleteExpression(node: Node): node is DeleteExpression {
@@ -1200,8 +1195,7 @@ export function isModifier(node: Node): node is Modifier {
 }
 
 export function isObjectLiteralElementLike(node: Node): node is ObjectLiteralElementLike {
-    const kind = node.kind;
-    return kind === SyntaxKind.PropertyAssignment || kind === SyntaxKind.ShorthandPropertyAssignment || kind === SyntaxKind.SpreadAssignment || kind === SyntaxKind.TableEntry;
+    return node.kind === SyntaxKind.PropertyAssignment || node.kind === SyntaxKind.SpreadAssignment || node.kind === SyntaxKind.TableEntry;
 }
 
 export function isPropertyNameLiteral(node: Node): node is PropertyNameLiteral {

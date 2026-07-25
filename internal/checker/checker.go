@@ -10011,13 +10011,11 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 			addPositionalProperty(member, t, false /*optional*/)
 			continue
 		}
-		if ast.IsPropertyAssignment(memberDecl) || ast.IsShorthandPropertyAssignment(memberDecl) || ast.IsTableEntry(memberDecl) {
+		if ast.IsPropertyAssignment(memberDecl) || ast.IsTableEntry(memberDecl) {
 			var t *Type
 			switch memberDecl.Kind {
 			case ast.KindPropertyAssignment:
 				t = c.checkPropertyAssignment(memberDecl, checkMode)
-			case ast.KindShorthandPropertyAssignment:
-				t = c.checkShorthandPropertyAssignment(memberDecl, checkMode)
 			case ast.KindTableEntry:
 				// A positional entry types as `[i] = expr`: reuse the whole
 				// late-bound computed-name path with a synthesized numeric key.
@@ -10318,7 +10316,6 @@ func (c *Checker) isEmptyObjectTypeOrSpreadsIntoEmptyObject(t *Type) bool {
 func (c *Checker) hasDefaultValue(node *ast.Node) bool {
 	return ast.IsBindingElement(node) && node.Initializer() != nil ||
 		ast.IsPropertyAssignment(node) && c.hasDefaultValue(node.Initializer()) ||
-		ast.IsShorthandPropertyAssignment(node) && node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil ||
 		ast.IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken
 }
 
@@ -10326,7 +10323,7 @@ func (c *Checker) isConstContext(node *ast.Node) bool {
 	parent := node.Parent
 	return ast.IsConstAssertion(parent) ||
 		(ast.IsParenthesizedExpression(parent) || ast.IsArrayLiteralExpression(parent)) && c.isConstContext(parent) ||
-		(ast.IsPropertyAssignment(parent) || ast.IsShorthandPropertyAssignment(parent) || ast.IsTemplateSpan(parent)) && c.isConstContext(parent.Parent)
+		(ast.IsPropertyAssignment(parent) || ast.IsTemplateSpan(parent)) && c.isConstContext(parent.Parent)
 }
 
 func (c *Checker) isValidConstAssertionArgument(node *ast.Node) bool {
@@ -10461,22 +10458,6 @@ func tableEntryLuaIndex(entry *ast.Node) int {
 		}
 	}
 	return index
-}
-
-func (c *Checker) checkShorthandPropertyAssignment(node *ast.Node, checkMode CheckMode) *Type {
-	// The initializer is the Lua keyed field's value (`{ x = 1 }`); a bare
-	// shorthand name only arises from error recovery and types as itself.
-	expr := node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer
-	if expr == nil {
-		expr = node.Name()
-	}
-	expressionType := c.checkExpressionForMutableLocation(expr, checkMode)
-	if node.Type() != nil {
-		t := c.getTypeFromTypeNode(node.Type())
-		c.checkTypeAssignableToAndOptionallyElaborate(expressionType, t, node, expr, nil /*headMessage*/, nil)
-		return t
-	}
-	return expressionType
 }
 
 // getNarrowedTypeOfSymbol narrows a binding element through its pattern.
@@ -10725,9 +10706,6 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 		}
 		fallthrough
 	default:
-		if node.Parent.Kind == ast.KindShorthandPropertyAssignment {
-			return diagnostics.No_value_exists_in_scope_for_the_shorthand_property_0_Either_declare_one_or_provide_an_initializer
-		}
 		return diagnostics.Cannot_find_name_0
 	}
 }
@@ -12326,8 +12304,6 @@ func (c *Checker) getTargetOfAliasDeclaration(node *ast.Node) *ast.Symbol {
 		return c.getTargetOfBinaryExpression(node)
 	case ast.KindNamespaceExportDeclaration:
 		return c.getTargetOfNamespaceExportDeclaration(node)
-	case ast.KindShorthandPropertyAssignment:
-		return c.resolveEntityName(node.AsShorthandPropertyAssignment().Name(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, true /*ignoreErrors*/, true /*dontRecursivelyResolve*/, nil /*location*/)
 	case ast.KindPropertyAssignment:
 		return c.getTargetOfAliasLikeExpression(node.Initializer())
 	case ast.KindElementAccessExpression, ast.KindPropertyAccessExpression:
@@ -13185,10 +13161,6 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 			result = c.getTypeOfFuncClassModuleWorker(symbol)
 		case ast.KindPropertyAssignment:
 			result = c.checkPropertyAssignment(declaration, CheckModeNormal)
-		case ast.KindShorthandPropertyAssignment:
-			// A Lua keyed field `{ x = 1 }` types from its initializer; the
-			// destructuring reading is gone with destructuring assignment.
-			result = c.checkShorthandPropertyAssignment(declaration, CheckModeNormal)
 		case ast.KindTableEntry:
 			result = c.checkTableEntry(declaration, CheckModeNormal)
 		case ast.KindReturnStatement:
@@ -14320,17 +14292,14 @@ func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, par
 	return c.widenTypeInferredFromInitializer(declaration, c.getUnionTypeEx([]*Type{c.getNonUndefinedType(t), c.checkDeclarationInitializer(declaration, CheckModeNormal, nil)}, UnionReductionSubtype, nil, nil))
 }
 
-// Determine the control flow type associated with a destructuring declaration or assignment. The following
-// forms of destructuring are possible:
+// Determine the control flow type associated with a destructuring declaration.
+// tlua deleted destructuring assignment, so the only remaining form is a
+// BindingElement, which parses in declaration files:
 //
-//	let { x } = obj;  // BindingElement
-//	let [ x ] = obj;  // BindingElement
-//	{ x } = obj;      // ShorthandPropertyAssignment
-//	{ x: v } = obj;   // PropertyAssignment
-//	[ x ] = obj;      // Expression
+//	local [ x ] = obj;
 //
-// We construct a synthetic element access expression corresponding to 'obj.x' such that the control
-// flow analyzer doesn't have to handle all the different syntactic forms.
+// We construct a synthetic element access expression corresponding to 'obj.x' so
+// the control flow analyzer does not have to handle the syntactic form.
 func (c *Checker) getFlowTypeOfDestructuring(node *ast.Node, declaredType *Type) *Type {
 	reference := c.getSyntheticElementAccess(node)
 	if reference != nil {
@@ -24620,12 +24589,7 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		// Identifiers in expression contexts are emitted, so we need to follow their referenced aliases and mark them as used
 		// Some non-expression identifiers are also treated as expression identifiers for this purpose, eg, `a` in `b = {a}`
 		// This is the exception, rather than the rule - most non-expression identifiers are declaration names.
-		if ast.IsIdentifier(location) &&
-			(ast.IsExpressionNode(location) ||
-				// A Lua keyed field's name (`x` in `{x = 1}`) is a property
-				// key, not a value reference — resolving it here would emit a
-				// bogus TS18004 during emit.
-				(ast.IsShorthandPropertyAssignment(location.Parent) && !ast.IsLuaKeyedShorthand(location.Parent))) &&
+		if ast.IsIdentifier(location) && ast.IsExpressionNode(location) &&
 			shouldMarkIdentifierAliasReferenced(location) {
 			if ast.IsPropertyAccessOrQualifiedName(location.Parent) {
 				var left *ast.Node
@@ -25360,7 +25324,6 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 	case ast.KindBinaryExpression:
 		return c.getContextualTypeForBinaryOperand(node, contextFlags)
 	case ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment,
 		ast.KindTableEntry:
 		return c.getContextualTypeForObjectLiteralElement(parent, contextFlags)
 	case ast.KindArrayLiteralExpression:

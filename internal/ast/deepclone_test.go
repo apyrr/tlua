@@ -149,7 +149,6 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 		{title: "ArrayLiteralExpression#5", input: `[...a]`},
 		{title: "ObjectLiteralExpression#1", input: `({})`},
 		{title: "ObjectLiteralExpression#2", input: `({a,})`},
-		{title: "ShorthandPropertyAssignment", input: `({a})`},
 		{title: "PropertyAssignment", input: `({a:b})`},
 		{title: "SpreadAssignment", input: `({...a})`},
 		{title: "Block", input: `{}`},

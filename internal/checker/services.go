@@ -441,17 +441,11 @@ func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbo
 	panic("Unhandled case in getExportSpecifierLocalTargetSymbol, node should be ExportSpecifier | Identifier")
 }
 
+// GetShorthandAssignmentValueSymbol always resolves to nothing: tlua has no
+// shorthand property assignment, so `{ x = 1 }` is a keyed table field whose
+// name is a property key rather than a value reference. Retained because the
+// API protocol exposes it as a method.
 func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Symbol {
-	if location != nil && location.Kind == ast.KindShorthandPropertyAssignment {
-		// A Lua keyed field `{ x = 1 }` uses its name as a property key, not
-		// a value reference — there is no value symbol to resolve; callers
-		// fall back to the member symbol. In a destructuring target (and for
-		// plain `{ x }` shorthand) the name still references the variable.
-		if ast.IsLuaKeyedShorthand(location) {
-			return nil
-		}
-		return c.resolveEntityName(location.Name(), ast.SymbolFlagsValue|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
-	}
 	return nil
 }
 
@@ -503,12 +497,6 @@ func (c *Checker) IsSymbolReferencedInFile(
 		if refSymbol == symbol {
 			return true
 		}
-		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
-			shorthandSymbol := c.GetShorthandAssignmentValueSymbol(token.Parent)
-			if shorthandSymbol == symbol {
-				return true
-			}
-		}
 		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
 			localSymbol := c.getLocalSymbolForExportSpecifier(token.AsIdentifier(), refSymbol, token.Parent.AsExportSpecifier())
 			if localSymbol == symbol {
@@ -538,13 +526,6 @@ func (c *Checker) GetReferencesToSymbolInFile(
 		if refSymbol == symbol {
 			result = append(result, token)
 			continue
-		}
-		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
-			shorthandSymbol := c.GetShorthandAssignmentValueSymbol(token.Parent)
-			if shorthandSymbol == symbol {
-				result = append(result, token)
-				continue
-			}
 		}
 		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
 			localSymbol := c.getLocalSymbolForExportSpecifier(token.AsIdentifier(), refSymbol, token.Parent.AsExportSpecifier())

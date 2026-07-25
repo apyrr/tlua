@@ -216,7 +216,6 @@ func (r *referenceResolver) GetReferencedValueDeclarations(node *ast.IdentifierN
 				ast.KindParameter,
 				ast.KindBindingElement,
 				ast.KindPropertyAssignment,
-				ast.KindShorthandPropertyAssignment,
 				ast.KindObjectLiteralExpression,
 				ast.KindFunctionDeclaration,
 				ast.KindFunctionExpression,

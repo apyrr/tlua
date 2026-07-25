@@ -69,7 +69,6 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (stri
     [SyntaxKind.SpreadAssignment]: ["expression"],
     [SyntaxKind.TableEntry]: ["expression"],
     [SyntaxKind.PropertyAssignment]: ["modifiers", "name", "postfixToken", "type", "initializer"],
-    [SyntaxKind.ShorthandPropertyAssignment]: ["modifiers", "name", "postfixToken", "type", "equalsToken", "objectAssignmentInitializer"],
     [SyntaxKind.DeleteExpression]: ["expression"],
     [SyntaxKind.VoidExpression]: ["expression"],
     [SyntaxKind.TypeAssertionExpression]: ["type", "expression"],

@@ -633,9 +633,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get equalsGreaterThanToken(): RemoteNode | undefined {
         return this.getNamedChild("equalsGreaterThanToken") as RemoteNode;
     }
-    get equalsToken(): RemoteNode | undefined {
-        return this.getNamedChild("equalsToken") as RemoteNode;
-    }
     get exclamationToken(): RemoteNode | undefined {
         return this.getNamedChild("exclamationToken") as RemoteNode;
     }
@@ -710,9 +707,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get nameType(): RemoteNode | undefined {
         return this.getNamedChild("nameType") as RemoteNode;
-    }
-    get objectAssignmentInitializer(): RemoteNode | undefined {
-        return this.getNamedChild("objectAssignmentInitializer") as RemoteNode;
     }
     get objectType(): RemoteNode | undefined {
         return this.getNamedChild("objectType") as RemoteNode;

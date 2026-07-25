@@ -1142,6 +1142,11 @@ export class Checker {
         });
     }
 
+    /**
+     * @deprecated Always resolves to `undefined`. tlua has no shorthand property
+     * assignment: `{ x = 1 }` is a keyed table field whose name is a property key
+     * rather than a value reference. Retained for protocol compatibility.
+     */
     getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined {
         const data = this.client.apiRequest<SymbolResponse | null>("getShorthandAssignmentValueSymbol", {
             snapshot: this.snapshotId,

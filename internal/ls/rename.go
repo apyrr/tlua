@@ -300,24 +300,12 @@ func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *Refere
 		kind := entry.kind
 		parent := node.Parent
 		name := originalNode.Text()
-		isShorthandAssignment := ast.IsShorthandPropertyAssignment(parent)
 		switch {
-		case isShorthandAssignment || (isObjectBindingElementWithoutPropertyName(parent) && parent.Name() == node && parent.AsBindingElement().DotDotDotToken == nil):
-			if kind == entryKindSearchedLocalFoundProperty {
-				return name + ": " + newText
-			}
+		case isObjectBindingElementWithoutPropertyName(parent) && parent.Name() == node && parent.AsBindingElement().DotDotDotToken == nil:
 			if kind == entryKindSearchedPropertyFoundLocal {
 				return newText + ": " + name
 			}
-			// In `const o = { x }; o.x`, symbolAtLocation at `x` in `{ x }` is the property symbol.
 			// For a binding element `const { x } = o;`, symbolAtLocation at `x` is the property symbol.
-			if isShorthandAssignment {
-				grandParent := parent.Parent
-				if ast.IsObjectLiteralExpression(grandParent) && ast.IsBinaryExpression(grandParent.Parent) && ast.IsModuleExportsAccessExpression(grandParent.Parent.AsBinaryExpression().Left) {
-					return name + ": " + newText
-				}
-				return newText + ": " + name
-			}
 			return name + ": " + newText
 		case ast.IsImportSpecifier(parent) && parent.PropertyName() == nil:
 			// If the original symbol was using this alias, just rename the alias.

@@ -39,8 +39,6 @@ func isNamedEvaluationAnd(emitContext *printer.EmitContext, node *ast.Node, cb f
 		return false
 	}
 	switch node.Kind {
-	case ast.KindShorthandPropertyAssignment:
-		return isAnonymousFunctionDefinition(emitContext, node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer, cb)
 	case ast.KindPropertyAssignment, ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement:
 		return isAnonymousFunctionDefinition(emitContext, node.Initializer(), cb)
 	case ast.KindBinaryExpression:
@@ -130,34 +128,6 @@ func transformNamedEvaluationOfPropertyAssignment(context *printer.EmitContext, 
 	assignedName, name := getAssignedNameOfPropertyName(context, node.Name(), assignedNameText)
 	initializer := finishTransformNamedEvaluation(context, node.Initializer, assignedName, ignoreEmptyStringLiteral)
 	return factory.UpdatePropertyAssignment(node, nil /*modifiers*/, name, nil /*postfixToken*/, nil /*typeNode*/, initializer)
-}
-
-func transformNamedEvaluationOfShorthandAssignmentProperty(emitContext *printer.EmitContext, node *ast.ShorthandPropertyAssignment /*NamedEvaluation & ShorthandPropertyAssignment*/, ignoreEmptyStringLiteral bool, assignedNameText string) *ast.Expression {
-	// 13.15.5.3 RS: PropertyDestructuringAssignmentEvaluation
-	//   AssignmentProperty : IdentifierReference Initializer?
-	//     ...
-	//     4. If |Initializer?| is present and _v_ is *undefined*, then
-	//        a. If IsAnonymousFunctionDefinition(|Initializer|) is *true*, then
-	//           i. Set _v_ to ? NamedEvaluation of |Initializer| with argument _P_.
-	//     ...
-
-	factory := emitContext.Factory
-	var assignedName *ast.Expression
-	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
-	} else {
-		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.ObjectAssignmentInitializer)
-	}
-	objectAssignmentInitializer := finishTransformNamedEvaluation(emitContext, node.ObjectAssignmentInitializer, assignedName, ignoreEmptyStringLiteral)
-	return factory.UpdateShorthandPropertyAssignment(
-		node,
-		nil, /*modifiers*/
-		node.Name(),
-		nil, /*postfixToken*/
-		nil, /*typeNode*/
-		node.EqualsToken,
-		objectAssignmentInitializer,
-	)
 }
 
 func transformNamedEvaluationOfVariableDeclaration(emitContext *printer.EmitContext, node *ast.VariableDeclaration /*NamedEvaluation & VariableDeclaration*/, ignoreEmptyStringLiteral bool, assignedNameText string) *ast.Expression {
@@ -341,8 +311,6 @@ func transformNamedEvaluation(context *printer.EmitContext, node *ast.Node /*Nam
 	switch node.Kind {
 	case ast.KindPropertyAssignment:
 		return transformNamedEvaluationOfPropertyAssignment(context, node.AsPropertyAssignment(), ignoreEmptyStringLiteral, assignedName)
-	case ast.KindShorthandPropertyAssignment:
-		return transformNamedEvaluationOfShorthandAssignmentProperty(context, node.AsShorthandPropertyAssignment(), ignoreEmptyStringLiteral, assignedName)
 	case ast.KindVariableDeclaration:
 		return transformNamedEvaluationOfVariableDeclaration(context, node.AsVariableDeclaration(), ignoreEmptyStringLiteral, assignedName)
 	case ast.KindParameter:

@@ -323,7 +323,6 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		ast.KindJSTypeAliasDeclaration:
 		return nil
 	case ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment,
 		ast.KindParameter,
 		ast.KindNamespaceExportDeclaration,
 		ast.KindMissingDeclaration:
@@ -735,16 +734,10 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 		// and either both previous and propId.descriptor have[[Get]] fields or both previous and propId.descriptor have[[Set]] fields
 		var currentKind DeclarationMeaning
 		switch prop.Kind {
-		case ast.KindShorthandPropertyAssignment,
-			ast.KindPropertyAssignment:
-			var commonProp *ast.NamedMemberBase
-			if prop.Kind == ast.KindShorthandPropertyAssignment {
-				commonProp = &prop.AsShorthandPropertyAssignment().NamedMemberBase
-			} else {
-				commonProp = &prop.AsPropertyAssignment().NamedMemberBase
-			}
+		case ast.KindPropertyAssignment:
+			commonProp := &prop.AsPropertyAssignment().NamedMemberBase
 
-			// Grammar checking for computedPropertyName and shorthandPropertyAssignment
+			// Grammar checking for a computed property name
 			c.checkGrammarForInvalidExclamationToken(commonProp.PostfixToken, diagnostics.A_definite_assignment_assertion_is_not_permitted_in_this_context)
 			c.checkGrammarForInvalidQuestionMark(commonProp.PostfixToken, diagnostics.An_object_member_cannot_be_declared_optional)
 

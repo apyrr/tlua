@@ -115,8 +115,6 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 		}
 	case ast.KindIdentifier:
 		node = tx.visitIdentifier(node)
-	case ast.KindShorthandPropertyAssignment:
-		node = tx.visitShorthandPropertyAssignment(node.AsShorthandPropertyAssignment())
 	default:
 		node = tx.Visitor().VisitEachChild(node)
 	}
@@ -324,42 +322,6 @@ func (tx *RuntimeSyntaxTransformer) visitFunctionDeclaration(node *ast.FunctionD
 		return updated
 	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.ShorthandPropertyAssignment) *ast.Node {
-	name := node.Name()
-	exportedOrImportedName := tx.visitExpressionIdentifier(name)
-	if exportedOrImportedName != name {
-		expression := exportedOrImportedName
-		if node.ObjectAssignmentInitializer != nil {
-			equalsToken := node.EqualsToken
-			if equalsToken == nil {
-				equalsToken = tx.Factory().NewToken(ast.KindEqualsToken)
-			}
-			expression = tx.Factory().NewBinaryExpression(
-				nil, /*modifiers*/
-				expression,
-				nil, /*typeNode*/
-				equalsToken,
-				tx.Visitor().VisitNode(node.ObjectAssignmentInitializer),
-			)
-		}
-
-		updated := tx.Factory().NewPropertyAssignment(nil /*modifiers*/, node.Name(), nil /*postfixToken*/, nil /*typeNode*/, expression)
-		updated.Loc = node.Loc
-		tx.EmitContext().SetOriginal(updated, node.AsNode())
-		tx.EmitContext().AssignCommentAndSourceMapRanges(updated, node.AsNode())
-		return updated
-	}
-	return tx.Factory().UpdateShorthandPropertyAssignment(
-		node,
-		nil, /*modifiers*/
-		exportedOrImportedName,
-		nil, /*postfixToken*/
-		nil, /*typeNode*/
-		node.EqualsToken,
-		tx.Visitor().VisitNode(node.ObjectAssignmentInitializer),
-	)
 }
 
 func (tx *RuntimeSyntaxTransformer) visitIdentifier(node *ast.IdentifierNode) *ast.Node {

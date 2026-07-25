@@ -31,7 +31,6 @@ var isolatedDeclarationsFixErrorCodes = []int32{
 	diagnostics.Computed_properties_must_be_number_or_string_literals_variables_or_dotted_expressions_with_isolatedDeclarations.Code(),
 	diagnostics.Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations.Code(),
 	diagnostics.Extends_clause_can_t_contain_an_expression_with_isolatedDeclarations.Code(),
-	diagnostics.Objects_that_contain_shorthand_properties_can_t_be_inferred_with_isolatedDeclarations.Code(),
 	diagnostics.Objects_that_contain_spread_assignments_can_t_be_inferred_with_isolatedDeclarations.Code(),
 	diagnostics.Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations.Code(),
 	diagnostics.Default_exports_can_t_be_inferred_with_isolatedDeclarations.Code(),
@@ -329,11 +328,10 @@ func (f *isolatedDeclarationsFixer) addInlineAssertion(span core.TextRange) stri
 	}
 
 	isExpressionTarget := ast.IsExpression(targetNode)
-	isShorthandPropertyAssignmentTarget := ast.IsShorthandPropertyAssignment(targetNode)
 
 	// Go's IsDeclaration is broader than TS's isDeclaration (e.g. CallExpression has DeclarationData
 	// in Go but is not a declaration kind in TS). Use isNamedDeclarationKind to match TS behavior.
-	if !isShorthandPropertyAssignmentTarget && isNamedDeclarationKind(targetNode) {
+	if isNamedDeclarationKind(targetNode) {
 		return ""
 	}
 	// No inline assertions on binding patterns
@@ -354,7 +352,7 @@ func (f *isolatedDeclarationsFixer) addInlineAssertion(span core.TextRange) stri
 		return ""
 	}
 
-	if !isExpressionTarget && !isShorthandPropertyAssignmentTarget {
+	if !isExpressionTarget {
 		return ""
 	}
 
@@ -365,26 +363,17 @@ func (f *isolatedDeclarationsFixer) addInlineAssertion(span core.TextRange) stri
 
 	factory := f.changeTracker.NodeFactory
 
-	if isShorthandPropertyAssignmentTarget {
-		// Insert `: expr as Type` after the shorthand property name
-		clonedName := factory.DeepCloneNode(targetNode.AsShorthandPropertyAssignment().Name())
-		asExpr := createAsExpression(factory, clonedName, typeNode)
-		f.changeTracker.InsertNodeAt(f.sourceFile, core.TextPos(targetNode.End()), asExpr, change.NodeOptions{Prefix: ": "})
-	} else if isExpressionTarget {
-		// Replace expression with `(expression) satisfies Type as Type` or `expression satisfies Type as Type`
-		clonedTarget := factory.DeepCloneNode(targetNode)
-		if needsParenthesizedExpressionForAssertion(targetNode) {
-			clonedTarget = factory.NewParenthesizedExpression(clonedTarget)
-		}
-		clonedType := factory.DeepCloneNode(typeNode)
-		satisfiesAsExpr := factory.NewAsExpression(
-			factory.NewSatisfiesExpression(clonedTarget, clonedType),
-			typeNode,
-		)
-		f.changeTracker.ReplaceNode(f.sourceFile, targetNode, satisfiesAsExpr, nil)
-	} else {
-		return ""
+	// Replace expression with `(expression) satisfies Type as Type` or `expression satisfies Type as Type`
+	clonedTarget := factory.DeepCloneNode(targetNode)
+	if needsParenthesizedExpressionForAssertion(targetNode) {
+		clonedTarget = factory.NewParenthesizedExpression(clonedTarget)
 	}
+	clonedType := factory.DeepCloneNode(typeNode)
+	satisfiesAsExpr := factory.NewAsExpression(
+		factory.NewSatisfiesExpression(clonedTarget, clonedType),
+		typeNode,
+	)
+	f.changeTracker.ReplaceNode(f.sourceFile, targetNode, satisfiesAsExpr, nil)
 
 	return diagnostics.Add_satisfies_and_an_inline_type_assertion_with_0.Localize(f.locale, typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
 }
@@ -1029,9 +1018,6 @@ func (f *isolatedDeclarationsFixer) relativeType(node *ast.Node) *ast.TypeNode {
 	if ast.IsParameterDeclaration(node) {
 		return nil
 	}
-	if ast.IsShorthandPropertyAssignment(node) {
-		return f.createTypeOfFromEntityNameExpression(node.AsShorthandPropertyAssignment().Name())
-	}
 	if ast.IsEntityNameExpression(node) {
 		return f.createTypeOfFromEntityNameExpression(node)
 	}
@@ -1224,9 +1210,6 @@ func findBestFittingNode(node *ast.Node, span core.TextRange) *ast.Node {
 	if ast.IsIdentifier(node) && ast.HasInitializer(node.Parent) && node.Parent.Initializer() != nil {
 		return node.Parent.Initializer()
 	}
-	if ast.IsIdentifier(node) && ast.IsShorthandPropertyAssignment(node.Parent) {
-		return node.Parent
-	}
 	return node
 }
 
@@ -1242,7 +1225,7 @@ func isNamedDeclarationKind(node *ast.Node) bool {
 		ast.KindMethodSignature, ast.KindModuleDeclaration,
 		ast.KindNamespaceExportDeclaration, ast.KindNamespaceImport, ast.KindNamespaceExport,
 		ast.KindParameter, ast.KindPropertyAssignment,
-		ast.KindPropertySignature, ast.KindShorthandPropertyAssignment,
+		ast.KindPropertySignature,
 		ast.KindTypeAliasDeclaration, ast.KindTypeParameter, ast.KindVariableDeclaration,
 		ast.KindJSDocTypedefTag, ast.KindJSDocCallbackTag, ast.KindJSDocPropertyTag,
 		ast.KindNamedTupleMember:

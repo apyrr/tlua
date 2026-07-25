@@ -550,15 +550,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeNode := d.nodeAt(it.nextIf(mask, 3))
 		initializer := d.nodeAt(it.nextIf(mask, 4))
 		return d.factory.NewPropertyAssignment(modifiers, name, postfixToken, typeNode, initializer), nil
-	case ast.KindShorthandPropertyAssignment:
-		it := newChildIter(childIndices)
-		modifiers := d.modifierListAt(it.nextIf(mask, 0))
-		name := d.nodeAt(it.nextIf(mask, 1))
-		postfixToken := d.nodeAt(it.nextIf(mask, 2))
-		typeNode := d.nodeAt(it.nextIf(mask, 3))
-		equalsToken := d.nodeAt(it.nextIf(mask, 4))
-		objectAssignmentInitializer := d.nodeAt(it.nextIf(mask, 5))
-		return d.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, typeNode, equalsToken, objectAssignmentInitializer), nil
 	case ast.KindDeleteExpression:
 		return d.factory.NewDeleteExpression(d.singleChild(childIndices)), nil
 	case ast.KindVoidExpression:

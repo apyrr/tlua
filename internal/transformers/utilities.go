@@ -66,8 +66,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindJsxAttribute:
 		// only an `Initializer()` child that can be `Identifier` would be an instance of `IdentifierReference`
 		return parent.Initializer() == name
-	case ast.KindShorthandPropertyAssignment:
-		return parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer == name
 	case ast.KindForOfStatement:
 		return parent.Initializer() == name ||
 			parent.Expression() == name
@@ -97,112 +95,13 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 	}
 }
 
-func convertBindingElementToArrayAssignmentElement(emitContext *printer.EmitContext, element *ast.BindingElement) *ast.Expression {
-	if element.Name() == nil {
-		elision := emitContext.Factory.NewOmittedExpression()
-		emitContext.SetOriginal(elision, element.AsNode())
-		emitContext.AssignCommentAndSourceMapRanges(elision, element.AsNode())
-		return elision
-	}
-	if element.DotDotDotToken != nil {
-		spread := emitContext.Factory.NewSpreadElement(element.Name())
-		emitContext.SetOriginal(spread, element.AsNode())
-		emitContext.AssignCommentAndSourceMapRanges(spread, element.AsNode())
-		return spread
-	}
-	expression := convertBindingNameToAssignmentElementTarget(emitContext, element.Name())
-	if element.Initializer != nil {
-		assignment := emitContext.Factory.NewAssignmentExpression(expression, element.Initializer)
-		emitContext.SetOriginal(assignment, element.AsNode())
-		emitContext.AssignCommentAndSourceMapRanges(assignment, element.AsNode())
-		return assignment
-	}
-	return expression
-}
-
-func convertBindingElementToObjectAssignmentElement(emitContext *printer.EmitContext, element *ast.BindingElement) *ast.ObjectLiteralElement {
-	if element.DotDotDotToken != nil {
-		spread := emitContext.Factory.NewSpreadAssignment(element.Name())
-		emitContext.SetOriginal(spread, element.AsNode())
-		emitContext.AssignCommentAndSourceMapRanges(spread, element.AsNode())
-		return spread
-	}
-	if element.PropertyName != nil {
-		expression := convertBindingNameToAssignmentElementTarget(emitContext, element.Name())
-		if element.Initializer != nil {
-			expression = emitContext.Factory.NewAssignmentExpression(expression, element.Initializer)
-		}
-		assignment := emitContext.Factory.NewPropertyAssignment(nil /*modifiers*/, element.PropertyName, nil /*postfixToken*/, nil /*typeNode*/, expression)
-		emitContext.SetOriginal(assignment, element.AsNode())
-		emitContext.AssignCommentAndSourceMapRanges(assignment, element.AsNode())
-		return assignment
-	}
-	var equalsToken *ast.TokenNode
-	if element.Initializer != nil {
-		equalsToken = emitContext.Factory.NewToken(ast.KindEqualsToken)
-	}
-	assignment := emitContext.Factory.NewShorthandPropertyAssignment(
-		nil, /*modifiers*/
-		element.Name(),
-		nil, /*postfixToken*/
-		nil, /*typeNode*/
-		equalsToken,
-		element.Initializer,
-	)
-	emitContext.SetOriginal(assignment, element.AsNode())
-	emitContext.AssignCommentAndSourceMapRanges(assignment, element.AsNode())
-	return assignment
-}
-
-func ConvertBindingPatternToAssignmentPattern(emitContext *printer.EmitContext, element *ast.BindingPattern) *ast.Expression {
-	switch element.Kind {
-	case ast.KindArrayBindingPattern:
-		return convertBindingElementToArrayAssignmentPattern(emitContext, element)
-	case ast.KindObjectBindingPattern:
-		return convertBindingElementToObjectAssignmentPattern(emitContext, element)
-	default:
-		panic("Unknown binding pattern")
-	}
-}
-
-func convertBindingElementToObjectAssignmentPattern(emitContext *printer.EmitContext, element *ast.BindingPattern) *ast.Expression {
-	var properties []*ast.ObjectLiteralElement
-	for _, element := range element.Elements.Nodes {
-		properties = append(properties, convertBindingElementToObjectAssignmentElement(emitContext, element.AsBindingElement()))
-	}
-	propertyList := emitContext.Factory.NewNodeList(properties)
-	propertyList.Loc = element.Elements.Loc
-	object := emitContext.Factory.NewObjectLiteralExpression(propertyList, false /*multiLine*/)
-	emitContext.SetOriginal(object, element.AsNode())
-	emitContext.AssignCommentAndSourceMapRanges(object, element.AsNode())
-	return object
-}
-
-func convertBindingElementToArrayAssignmentPattern(emitContext *printer.EmitContext, element *ast.BindingPattern) *ast.Expression {
-	var elements []*ast.Expression
-	for _, element := range element.Elements.Nodes {
-		elements = append(elements, convertBindingElementToArrayAssignmentElement(emitContext, element.AsBindingElement()))
-	}
-	elementList := emitContext.Factory.NewNodeList(elements)
-	elementList.Loc = element.Elements.Loc
-	object := emitContext.Factory.NewArrayLiteralExpression(elementList, false /*multiLine*/)
-	emitContext.SetOriginal(object, element.AsNode())
-	emitContext.AssignCommentAndSourceMapRanges(object, element.AsNode())
-	return object
-}
-
-func convertBindingNameToAssignmentElementTarget(emitContext *printer.EmitContext, element *ast.Node) *ast.Expression {
-	if ast.IsBindingPattern(element) {
-		return ConvertBindingPatternToAssignmentPattern(emitContext, element.AsBindingPattern())
-	}
-	return element
-}
-
 func ConvertVariableDeclarationToAssignmentExpression(emitContext *printer.EmitContext, element *ast.VariableDeclaration) *ast.Expression {
 	if element.Initializer == nil {
 		return nil
 	}
-	expression := convertBindingNameToAssignmentElementTarget(emitContext, element.Name())
+	// A Lua local declares a plain name: binding patterns parse only in
+	// declaration files, which never reach a runtime-syntax transform.
+	expression := element.Name()
 	assignment := emitContext.Factory.NewAssignmentExpression(expression, element.Initializer)
 	emitContext.SetOriginal(assignment, element.AsNode())
 	emitContext.AssignCommentAndSourceMapRanges(assignment, element.AsNode())

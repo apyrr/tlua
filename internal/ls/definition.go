@@ -201,22 +201,6 @@ func createLocationsFromLinks(links []*lsproto.LocationLink) lsproto.DefinitionR
 }
 
 func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node {
-	if ast.IsIdentifier(node) && ast.IsShorthandPropertyAssignment(node.Parent) {
-		// Because name in short-hand property assignment has two different meanings: property name and property value,
-		// using go-to-definition at such position should go to the variable declaration of the property value rather than
-		// go to the declaration of the property name (in this case stay at the same position). However, if go-to-definition
-		// is performed at the location of property access, we would like to go to definition of the property in the short-hand
-		// assignment. This case and others are handled by the following code.
-		// and the contextual type's property declarations
-		shorthandSymbol := c.GetResolvedSymbol(node)
-		var declarations []*ast.Node
-		if shorthandSymbol != nil {
-			declarations = shorthandSymbol.Declarations
-		}
-		contextualDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
-		return core.Concatenate(declarations, contextualDeclarations)
-	}
-
 	if ast.IsPropertyName(node) && ast.IsBindingElement(node.Parent) && ast.IsObjectBindingPattern(node.Parent.Parent) {
 		// If the node is the name of a BindingElement within an ObjectBindingPattern instead of just returning the
 		// declaration of the symbol (which is itself), we should try to get to the original type of the

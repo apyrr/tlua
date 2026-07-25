@@ -231,7 +231,6 @@ func IsObjectBindingOrAssignmentElement(node *Node) bool {
 	switch node.Kind {
 	case KindBindingElement,
 		KindPropertyAssignment,
-		KindShorthandPropertyAssignment,
 		KindSpreadAssignment:
 		return true
 	}
@@ -597,7 +596,6 @@ func IsTypeElement(node *Node) bool {
 func IsObjectLiteralElement(node *Node) bool {
 	switch node.Kind {
 	case KindPropertyAssignment,
-		KindShorthandPropertyAssignment,
 		KindSpreadAssignment,
 		KindTableEntry:
 		return true
@@ -759,15 +757,6 @@ func IsLuaBlock(node *Node) bool {
 // drives `=` printing).
 func IsLuaTableField(node *Node) bool {
 	return node.Kind == KindPropertyAssignment && node.Flags&NodeFlagsLuaTableField != 0
-}
-
-// IsLuaKeyedShorthand reports whether a ShorthandPropertyAssignment is a Lua
-// keyed table field `{ x = 1 }`: a shorthand carrying an initializer. Its name
-// is a property key, not a value reference. Destructuring assignment is
-// deleted, so there is no longer a target-with-default shape to exclude.
-func IsLuaKeyedShorthand(node *Node) bool {
-	return node.Kind == KindShorthandPropertyAssignment &&
-		node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil
 }
 
 // IsLuaGenericFor reports whether a ForOfStatement is a Lua generic for
@@ -1161,7 +1150,7 @@ func CanHaveSymbol(node *Node) bool {
 		KindMethodSignature, KindModuleDeclaration, KindNamedTupleMember, KindNamespaceExport, KindNamespaceExportDeclaration,
 		KindNamespaceImport, KindNewExpression, KindNoSubstitutionTemplateLiteral, KindNumericLiteral, KindObjectLiteralExpression,
 		KindParameter, KindPropertyAccessExpression, KindPropertyAssignment, KindPropertySignature,
-		KindShorthandPropertyAssignment, KindSourceFile, KindSpreadAssignment, KindStringLiteral,
+		KindSourceFile, KindSpreadAssignment, KindStringLiteral,
 		KindTableEntry, KindTypeAliasDeclaration, KindTypeLiteral, KindTypeParameter, KindVariableDeclaration:
 		return true
 	}
@@ -1171,7 +1160,6 @@ func CanHaveSymbol(node *Node) bool {
 func CanHaveIllegalModifiers(node *Node) bool {
 	switch node.Kind {
 	case KindPropertyAssignment,
-		KindShorthandPropertyAssignment,
 		KindMissingDeclaration,
 		KindNamespaceExportDeclaration:
 		return true
@@ -2108,8 +2096,6 @@ func IsInExpressionContext(node *Node) bool {
 		return parent.AsFunctionDeclaration().Target == node
 	case KindExpressionWithTypeArguments:
 		return parent.Expression() == node && !IsPartOfTypeNode(parent)
-	case KindShorthandPropertyAssignment:
-		return parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer == node
 	default:
 		return IsExpressionNode(parent)
 	}
@@ -2327,7 +2313,6 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindBindingElement,
 		KindPropertySignature,
 		KindPropertyAssignment,
-		KindShorthandPropertyAssignment,
 		KindMethodSignature,
 		KindFunctionDeclaration,
 		KindFunctionExpression,
@@ -3153,7 +3138,7 @@ func IsTypeReferenceType(node *Node) bool {
 func IsVariableLike(node *Node) bool {
 	switch node.Kind {
 	case KindBindingElement, KindParameter, KindPropertyAssignment,
-		KindPropertySignature, KindShorthandPropertyAssignment, KindVariableDeclaration:
+		KindPropertySignature, KindVariableDeclaration:
 		return true
 	}
 	return false
@@ -3235,7 +3220,7 @@ func IsValidTypeOnlyAliasUseSite(useSite *Node) bool {
 		IsPartOfTypeQuery(useSite) ||
 		isIdentifierInNonEmittingHeritageClause(useSite) ||
 		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
-		!(IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
+		!IsExpressionNode(useSite)
 }
 
 func isIdentifierInNonEmittingHeritageClause(node *Node) bool {
@@ -3260,10 +3245,6 @@ func isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(node *Node) bool {
 		return true
 	}
 	return NodeKindIs(node.Parent.Parent, KindInterfaceDeclaration, KindTypeLiteral)
-}
-
-func isShorthandPropertyNameUseSite(useSite *Node) bool {
-	return IsIdentifier(useSite) && IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name() == useSite
 }
 
 // GetPropertyNameForPropertyNameNode returns the symbol-table (identity) name
@@ -3919,7 +3900,6 @@ func HasInferredType(node *Node) bool {
 		KindVariableDeclaration,
 		KindExportAssignment,
 		KindPropertyAssignment,
-		KindShorthandPropertyAssignment,
 		KindJSDocParameterTag,
 		KindJSDocPropertyTag:
 		return true
@@ -4165,8 +4145,6 @@ func IsNamedEvaluationSource(node *Node) bool {
 	switch node.Kind {
 	case KindPropertyAssignment:
 		return !IsProtoSetter(node.AsPropertyAssignment().Name())
-	case KindShorthandPropertyAssignment:
-		return node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil
 	case KindVariableDeclaration:
 		return IsIdentifier(node.AsVariableDeclaration().Name()) && node.Initializer() != nil
 	case KindParameter:

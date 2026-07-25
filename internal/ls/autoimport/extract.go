@@ -229,11 +229,11 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		expression := symbol.Declarations[0].AsBinaryExpression().Right
 		if expression.Kind == ast.KindObjectLiteralExpression {
 			// what is actually desirable here? I think it would be reasonable to only treat these as exports
-			// if *every* property is a shorthand property or identifier: identifier
+			// if *every* property is keyed by a plain identifier.
 			// At least, it would be sketchy if there were any methods, computed properties...
 			*exports = slices.Grow(*exports, len(expression.AsObjectLiteralExpression().Properties.Nodes))
 			for _, prop := range expression.AsObjectLiteralExpression().Properties.Nodes {
-				if ast.IsShorthandPropertyAssignment(prop) || ast.IsPropertyAssignment(prop) && prop.AsPropertyAssignment().Name().Kind == ast.KindIdentifier {
+				if ast.IsPropertyAssignment(prop) && prop.AsPropertyAssignment().Name().Kind == ast.KindIdentifier {
 					export, _ := e.createExport(expression.Symbol().Members[prop.Name().Text()], moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
 						export.through = name

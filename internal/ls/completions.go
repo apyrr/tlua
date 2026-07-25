@@ -972,7 +972,6 @@ func (l *LanguageService) getCompletionData(
 		if objectLikeContainer.Kind == ast.KindObjectLiteralExpression {
 			instantiatedType := tryGetObjectLiteralContextualType(objectLikeContainer, typeChecker)
 
-			// Check completions for Object property value shorthand
 			if instantiatedType == nil {
 				return globalsSearchContinue, nil
 			}
@@ -1941,9 +1940,7 @@ func (l *LanguageService) createCompletionItem(
 		contextToken != nil &&
 		!ast.NodeHasKind(astnav.FindPrecedingTokenEx(file, contextToken.Pos(), contextToken, false /*excludeJSDoc*/), ast.KindCommaToken) {
 		if ast.IsSpreadAssignment(contextToken.Parent) ||
-			lsutil.GetLastToken(ast.FindAncestor(contextToken.Parent, ast.IsPropertyAssignment), file) == contextToken ||
-			ast.IsShorthandPropertyAssignment(contextToken.Parent) &&
-				getLineOfPosition(file, contextToken.End()) != getLineOfPosition(file, position) {
+			lsutil.GetLastToken(ast.FindAncestor(contextToken.Parent, ast.IsPropertyAssignment), file) == contextToken {
 			source = string(completionSourceObjectLiteralMemberWithComma)
 			hasAction = true
 		}
@@ -3325,9 +3322,6 @@ func computeCommitCharactersAndIsNewIdentifier(
 	case ast.KindAsyncKeyword:
 		// const obj = { async c|()
 		// const obj = { async c|
-		if containingNodeKind == ast.KindShorthandPropertyAssignment {
-			return true, emptyCommitCharacters
-		}
 		return false, allCommitCharacters
 	}
 
@@ -3467,19 +3461,12 @@ func tryGetObjectLikeCompletionContainer(contextToken *ast.Node, position int, f
 			return parent.Parent
 		}
 	case ast.KindIdentifier:
-		if contextToken.Text() == "async" && ast.IsShorthandPropertyAssignment(parent) {
+		if ast.IsObjectLiteralExpression(parent.Parent) && ast.IsSpreadAssignment(parent) {
 			return parent.Parent
-		} else {
-			if ast.IsObjectLiteralExpression(parent.Parent) &&
-				(ast.IsSpreadAssignment(parent) ||
-					ast.IsShorthandPropertyAssignment(parent) &&
-						getLineOfPosition(file, contextToken.End()) != getLineOfPosition(file, position)) {
-				return parent.Parent
-			}
-			ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
-			if ancestorNode != nil && lsutil.GetLastToken(ancestorNode, file) == contextToken && ast.IsObjectLiteralExpression(ancestorNode.Parent) {
-				return ancestorNode.Parent
-			}
+		}
+		ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
+		if ancestorNode != nil && lsutil.GetLastToken(ancestorNode, file) == contextToken && ast.IsObjectLiteralExpression(ancestorNode.Parent) {
+			return ancestorNode.Parent
 		}
 	default:
 		if ast.IsSpreadAssignment(parent) && ast.IsObjectLiteralExpression(parent.Parent) {
@@ -3598,7 +3585,6 @@ func filterObjectMembersList(
 	for _, member := range existingMembers {
 		// Ignore omitted expressions for missing members.
 		if member.Kind != ast.KindPropertyAssignment &&
-			member.Kind != ast.KindShorthandPropertyAssignment &&
 			member.Kind != ast.KindBindingElement {
 			continue
 		}
@@ -4196,7 +4182,6 @@ func isSolelyIdentifierDefinitionLocation(
 	}
 
 	return ast.IsDeclarationName(contextToken) &&
-		!ast.IsShorthandPropertyAssignment(parent) &&
 		!ast.IsJsxAttribute(parent) &&
 		// Don't block completions if we're in `interface I /**/` or `<T /**/>`,
 		// because we're *past* the end of the identifier and might want to complete `extends`.

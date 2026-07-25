@@ -59,7 +59,6 @@ function isVariableLike(node: Node): boolean {
         case SyntaxKind.Parameter:
         case SyntaxKind.PropertyAssignment:
         case SyntaxKind.PropertySignature:
-        case SyntaxKind.ShorthandPropertyAssignment:
         case SyntaxKind.VariableDeclaration:
             return true;
     }

@@ -883,7 +883,7 @@ func isPackTypeParameter(t *Type) bool {
 }
 
 func isThisInitializedObjectBindingExpression(node *ast.Node) bool {
-	return node != nil && (ast.IsShorthandPropertyAssignment(node) || ast.IsPropertyAssignment(node)) && ast.IsBinaryExpression(node.Parent.Parent) &&
+	return node != nil && ast.IsPropertyAssignment(node) && ast.IsBinaryExpression(node.Parent.Parent) &&
 		node.Parent.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken &&
 		node.Parent.Parent.AsBinaryExpression().Right.Kind == ast.KindThisKeyword
 }

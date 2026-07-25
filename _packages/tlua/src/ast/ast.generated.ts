@@ -796,12 +796,6 @@ export interface PropertyAssignment extends NodeBase, NamedMemberBase, ObjectLit
     readonly type: TypeNode;
     readonly initializer: Expression;
 }
-export interface ShorthandPropertyAssignment extends NodeBase, NamedMemberBase, ObjectLiteralElementBase {
-    readonly kind: SyntaxKind.ShorthandPropertyAssignment;
-    readonly type: TypeNode;
-    readonly equalsToken?: EqualsToken;
-    readonly objectAssignmentInitializer?: Expression;
-}
 export interface DeleteExpression extends UnaryExpressionBase {
     readonly kind: SyntaxKind.DeleteExpression;
     readonly expression: Expression;
@@ -1254,7 +1248,7 @@ export type ConciseBody = Block | Expression;
 export type DestructuringAssignment = ObjectDestructuringAssignment | ArrayDestructuringAssignment;
 export type LiteralToken = NumericLiteral | StringLiteral | JsxText | RegularExpressionLiteral | NoSubstitutionTemplateLiteral;
 export type Modifier = AbstractKeyword | AccessorKeyword | AsyncKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | InKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | ReadonlyKeyword | OutKeyword | OverrideKeyword | StaticKeyword;
-export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | TableEntry;
+export type ObjectLiteralElementLike = PropertyAssignment | SpreadAssignment | TableEntry;
 export type PropertyNameLiteral = Identifier | StringLiteral | NumericLiteral;
 export type PseudoLiteralToken = TemplateHead | TemplateMiddle | TemplateTail;
 export type TemplateLiteralToken = NoSubstitutionTemplateLiteral | PseudoLiteralToken;

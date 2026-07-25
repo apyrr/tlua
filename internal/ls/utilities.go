@@ -801,7 +801,7 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 	switch node.Kind {
 	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement,
-		ast.KindPropertySignature, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment,
+		ast.KindPropertySignature, ast.KindPropertyAssignment,
 		ast.KindMethodSignature,
 		ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindJsxAttribute:
 		return ast.SemanticMeaningValue
