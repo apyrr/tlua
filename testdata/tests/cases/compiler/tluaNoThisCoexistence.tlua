@@ -63,8 +63,8 @@ interface Base {
 interface Derived extends Base {
   d: number;
 }
-declare K: { new (): Derived };
-local inst: Derived = new K();
+declare K: { make(): Derived };
+local inst: Derived = K.make();
 
 use(narrow);
 use(g);

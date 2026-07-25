@@ -29,7 +29,7 @@ interface FFILib {
     readonly arch: string;
     cdef(definition: string): void;
     load(name: string, global?: boolean): LuaCNamespace;
-    "new": (type: LuaCTypeSpec, ...: any) => cdata;
+    new: (type: LuaCTypeSpec, ...: any) => cdata;
     "typeof": (type: LuaCTypeSpec, ...: any) => LuaCType;
     cast(type: LuaCTypeSpec, initializer: any): cdata;
     metatype(type: LuaCTypeSpec, metatable: table): LuaCType;

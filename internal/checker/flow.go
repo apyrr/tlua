@@ -1544,8 +1544,6 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 		return true
 	}
 	switch source.Kind {
-	case ast.KindMetaProperty:
-		return ast.IsMetaProperty(target) && source.AsMetaProperty().KeywordToken == target.AsMetaProperty().KeywordToken && source.Name().Text() == target.Name().Text()
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
 		if ast.IsThisInTypeQuery(source) {
 			return target.Kind == ast.KindThisKeyword

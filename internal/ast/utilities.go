@@ -457,13 +457,33 @@ func IsAssertionExpression(node *Node) bool {
 
 func isLeftHandSideExpressionKind(kind Kind) bool {
 	switch kind {
-	case KindPropertyAccessExpression, KindElementAccessExpression, KindNewExpression, KindCallExpression,
-		KindJsxElement, KindJsxSelfClosingElement, KindJsxFragment, KindTaggedTemplateExpression, KindArrayLiteralExpression,
-		KindParenthesizedExpression, KindObjectLiteralExpression, KindFunctionExpression, KindIdentifier,
-		KindPrivateIdentifier, KindRegularExpressionLiteral, KindNumericLiteral, KindStringLiteral,
-		KindNoSubstitutionTemplateLiteral, KindTemplateExpression, KindFalseKeyword, KindNilKeyword, KindThisKeyword,
-		KindTrueKeyword, KindSuperKeyword, KindNonNullExpression, KindExpressionWithTypeArguments, KindMetaProperty,
-		KindImportKeyword, KindMissingDeclaration:
+	case KindPropertyAccessExpression,
+		KindElementAccessExpression,
+		KindCallExpression,
+		KindJsxElement,
+		KindJsxSelfClosingElement,
+		KindJsxFragment,
+		KindTaggedTemplateExpression,
+		KindArrayLiteralExpression,
+		KindParenthesizedExpression,
+		KindObjectLiteralExpression,
+		KindFunctionExpression,
+		KindIdentifier,
+		KindPrivateIdentifier,
+		KindRegularExpressionLiteral,
+		KindNumericLiteral,
+		KindStringLiteral,
+		KindNoSubstitutionTemplateLiteral,
+		KindTemplateExpression,
+		KindFalseKeyword,
+		KindNilKeyword,
+		KindThisKeyword,
+		KindTrueKeyword,
+		KindSuperKeyword,
+		KindNonNullExpression,
+		KindExpressionWithTypeArguments,
+		KindImportKeyword,
+		KindMissingDeclaration:
 		return true
 	}
 	return false
@@ -561,10 +581,8 @@ func IsFunctionLikeKind(kind Kind) bool {
 	case KindMethodSignature,
 		KindCallSignature,
 		KindJSDocSignature,
-		KindConstructSignature,
 		KindIndexSignature,
-		KindFunctionType,
-		KindConstructorType:
+		KindFunctionType:
 		return true
 	}
 	return isFunctionLikeDeclarationKind(kind)
@@ -582,8 +600,7 @@ func IsFunctionOrSourceFile(node *Node) bool {
 
 func IsTypeElement(node *Node) bool {
 	switch node.Kind {
-	case KindConstructSignature,
-		KindCallSignature,
+	case KindCallSignature,
 		KindPropertySignature,
 		KindMethodSignature,
 		KindIndexSignature,
@@ -1141,17 +1158,49 @@ func HasStaticModifier(node *Node) bool {
 
 func CanHaveSymbol(node *Node) bool {
 	switch node.Kind {
-	case KindArrowFunction, KindBinaryExpression, KindBindingElement, KindCallExpression, KindCallSignature,
-		KindConstructorType, KindConstructSignature, KindElementAccessExpression, KindExportAssignment,
-		KindExportDeclaration, KindExportSpecifier, KindFunctionDeclaration, KindFunctionExpression, KindFunctionType,
-		KindImportClause, KindImportEqualsDeclaration, KindImportSpecifier, KindIndexSignature,
-		KindInterfaceDeclaration, KindJSTypeAliasDeclaration,
-		KindJsxAttribute, KindJsxAttributes, KindJsxSpreadAttribute, KindMappedType,
-		KindMethodSignature, KindModuleDeclaration, KindNamedTupleMember, KindNamespaceExport, KindNamespaceExportDeclaration,
-		KindNamespaceImport, KindNewExpression, KindNoSubstitutionTemplateLiteral, KindNumericLiteral, KindObjectLiteralExpression,
-		KindParameter, KindPropertyAccessExpression, KindPropertyAssignment, KindPropertySignature,
-		KindSourceFile, KindSpreadAssignment, KindStringLiteral,
-		KindTableEntry, KindTypeAliasDeclaration, KindTypeLiteral, KindTypeParameter, KindVariableDeclaration:
+	case KindArrowFunction,
+		KindBinaryExpression,
+		KindBindingElement,
+		KindCallExpression,
+		KindCallSignature,
+		KindElementAccessExpression,
+		KindExportAssignment,
+		KindExportDeclaration,
+		KindExportSpecifier,
+		KindFunctionDeclaration,
+		KindFunctionExpression,
+		KindFunctionType,
+		KindImportClause,
+		KindImportEqualsDeclaration,
+		KindImportSpecifier,
+		KindIndexSignature,
+		KindInterfaceDeclaration,
+		KindJSTypeAliasDeclaration,
+		KindJsxAttribute,
+		KindJsxAttributes,
+		KindJsxSpreadAttribute,
+		KindMappedType,
+		KindMethodSignature,
+		KindModuleDeclaration,
+		KindNamedTupleMember,
+		KindNamespaceExport,
+		KindNamespaceExportDeclaration,
+		KindNamespaceImport,
+		KindNoSubstitutionTemplateLiteral,
+		KindNumericLiteral,
+		KindObjectLiteralExpression,
+		KindParameter,
+		KindPropertyAccessExpression,
+		KindPropertyAssignment,
+		KindPropertySignature,
+		KindSourceFile,
+		KindSpreadAssignment,
+		KindStringLiteral,
+		KindTableEntry,
+		KindTypeAliasDeclaration,
+		KindTypeLiteral,
+		KindTypeParameter,
+		KindVariableDeclaration:
 		return true
 	}
 	return false
@@ -1174,7 +1223,6 @@ func CanHaveModifiers(node *Node) bool {
 		KindPropertySignature,
 		KindMethodSignature,
 		KindIndexSignature,
-		KindConstructorType,
 		KindFunctionExpression,
 		KindArrowFunction,
 		KindVariableStatement,
@@ -1296,13 +1344,6 @@ func IsDeprecatedDeclarationWithCachedFlags(declaration *Node, combinedFlags Nod
 // (`declare name: Type`) and factory-synthesized nodes.
 func IsVarConst(node *Node) bool {
 	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsConst
-}
-
-func IsImportMeta(node *Node) bool {
-	if node.Kind == KindMetaProperty {
-		return node.AsMetaProperty().KeywordToken == KindImportKeyword && node.AsMetaProperty().Name().Text() == "meta"
-	}
-	return false
 }
 
 func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
@@ -1657,7 +1698,7 @@ func isElementAccessEntityNameExpression(node *Node, allowJS bool) bool {
 
 func IsDottedName(node *Node) bool {
 	switch node.Kind {
-	case KindIdentifier, KindThisKeyword, KindSuperKeyword, KindMetaProperty:
+	case KindIdentifier, KindThisKeyword, KindSuperKeyword:
 		return true
 	case KindPropertyAccessExpression, KindParenthesizedExpression:
 		return IsDottedName(node.Expression())
@@ -1930,8 +1971,13 @@ func GetThisContainer(node *Node, includeArrowFunctions bool) *Node {
 			if includeArrowFunctions {
 				return node
 			}
-		case KindFunctionDeclaration, KindFunctionExpression, KindModuleDeclaration,
-			KindPropertySignature, KindMethodSignature, KindCallSignature, KindConstructSignature, KindIndexSignature,
+		case KindFunctionDeclaration,
+			KindFunctionExpression,
+			KindModuleDeclaration,
+			KindPropertySignature,
+			KindMethodSignature,
+			KindCallSignature,
+			KindIndexSignature,
 			KindSourceFile:
 			return node
 		}
@@ -2038,18 +2084,38 @@ func getImportTypeNodeLiteral(node *Node) *Node {
 
 func IsExpressionNode(node *Node) bool {
 	switch node.Kind {
-	case KindSuperKeyword, KindNilKeyword, KindTrueKeyword, KindFalseKeyword, KindRegularExpressionLiteral,
-		KindArrayLiteralExpression, KindObjectLiteralExpression, KindPropertyAccessExpression, KindElementAccessExpression,
-		KindCallExpression, KindNewExpression, KindTaggedTemplateExpression, KindAsExpression, KindTypeAssertionExpression,
-		KindSatisfiesExpression, KindNonNullExpression, KindParenthesizedExpression, KindFunctionExpression,
-		KindArrowFunction, KindVoidExpression, KindDeleteExpression,
-		KindPrefixUnaryExpression, KindBinaryExpression, KindConditionalExpression,
-		KindSpreadElement, KindTemplateExpression, KindOmittedExpression, KindJsxElement, KindJsxSelfClosingElement,
-		KindJsxFragment, KindExpressionList, KindVarargExpression:
+	case KindSuperKeyword,
+		KindNilKeyword,
+		KindTrueKeyword,
+		KindFalseKeyword,
+		KindRegularExpressionLiteral,
+		KindArrayLiteralExpression,
+		KindObjectLiteralExpression,
+		KindPropertyAccessExpression,
+		KindElementAccessExpression,
+		KindCallExpression,
+		KindTaggedTemplateExpression,
+		KindAsExpression,
+		KindTypeAssertionExpression,
+		KindSatisfiesExpression,
+		KindNonNullExpression,
+		KindParenthesizedExpression,
+		KindFunctionExpression,
+		KindArrowFunction,
+		KindVoidExpression,
+		KindDeleteExpression,
+		KindPrefixUnaryExpression,
+		KindBinaryExpression,
+		KindConditionalExpression,
+		KindSpreadElement,
+		KindTemplateExpression,
+		KindOmittedExpression,
+		KindJsxElement,
+		KindJsxSelfClosingElement,
+		KindJsxFragment,
+		KindExpressionList,
+		KindVarargExpression:
 		return true
-	case KindMetaProperty:
-		// `import.defer` in `import.defer(...)` is not an expression
-		return !IsImportCall(node.Parent) || node.Parent.Expression() != node
 	case KindExpressionWithTypeArguments:
 		return !IsHeritageClause(node.Parent)
 	case KindQualifiedName:
@@ -2167,12 +2233,18 @@ func isPartOfTypeNodeInParent(node *Node) bool {
 		return isPartOfTypeExpressionWithTypeArguments(parent)
 	case KindTypeParameter:
 		return node == parent.AsTypeParameterDeclaration().Constraint
-	case KindVariableDeclaration, KindParameter, KindPropertySignature, KindFunctionDeclaration,
-		KindFunctionExpression, KindArrowFunction, KindMethodSignature,
-		KindCallSignature, KindConstructSignature, KindIndexSignature,
+	case KindVariableDeclaration,
+		KindParameter,
+		KindPropertySignature,
+		KindFunctionDeclaration,
+		KindFunctionExpression,
+		KindArrowFunction,
+		KindMethodSignature,
+		KindCallSignature,
+		KindIndexSignature,
 		KindTypeAssertionExpression:
 		return node == parent.Type()
-	case KindCallExpression, KindNewExpression, KindTaggedTemplateExpression:
+	case KindCallExpression, KindTaggedTemplateExpression:
 		return slices.Contains(parent.TypeArguments(), node)
 	}
 	return false
@@ -2202,7 +2274,7 @@ func IsImportCall(node *Node) bool {
 		return false
 	}
 	e := node.Expression()
-	return e.Kind == KindImportKeyword || IsMetaProperty(e) && e.AsMetaProperty().KeywordToken == KindImportKeyword && e.Text() == "defer"
+	return e.Kind == KindImportKeyword
 }
 
 func IsComputedNonLiteralName(name *Node) bool {
@@ -2798,7 +2870,7 @@ func GetNodeAtPosition(file *SourceFile, position int, includeJSDoc bool) *Node 
 				return false
 			})
 		}
-		if child == nil || IsMetaProperty(child) {
+		if child == nil {
 			return current
 		}
 		current = child
@@ -3067,7 +3139,10 @@ func IsExclusivelyTypeOnlyImportOrExport(node *Node) bool {
 
 func IsCallLikeExpression(node *Node) bool {
 	switch node.Kind {
-	case KindJsxOpeningElement, KindJsxSelfClosingElement, KindJsxOpeningFragment, KindCallExpression, KindNewExpression,
+	case KindJsxOpeningElement,
+		KindJsxSelfClosingElement,
+		KindJsxOpeningFragment,
+		KindCallExpression,
 		KindTaggedTemplateExpression:
 		return true
 	case KindBinaryExpression:
@@ -3123,9 +3198,14 @@ func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
 
 func HasTypeArguments(node *Node) bool {
 	switch node.Kind {
-	case KindCallExpression, KindNewExpression, KindTaggedTemplateExpression,
-		KindTypeReference, KindExpressionWithTypeArguments, KindImportType,
-		KindTypeQuery, KindJsxOpeningElement, KindJsxSelfClosingElement:
+	case KindCallExpression,
+		KindTaggedTemplateExpression,
+		KindTypeReference,
+		KindExpressionWithTypeArguments,
+		KindImportType,
+		KindTypeQuery,
+		KindJsxOpeningElement,
+		KindJsxSelfClosingElement:
 		return true
 	}
 	return false
@@ -3395,14 +3475,6 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.Type(),
 			node.Initializer(),
 		)
-	case KindConstructorType:
-		return factory.UpdateConstructorTypeNode(
-			node.AsConstructorTypeNode(),
-			modifierArray,
-			node.TypeParameterList(),
-			node.ParameterList(),
-			node.Type(),
-		)
 	case KindPropertySignature:
 		return factory.UpdatePropertySignatureDeclaration(
 			node.AsPropertySignatureDeclaration(),
@@ -3606,8 +3678,8 @@ func climbPastPropertyOrElementAccess(node *Node) *Node {
 	return node
 }
 
-func selectExpressionOfCallOrNewExpression(node *Node) *Node {
-	if IsCallExpression(node) || IsNewExpression(node) {
+func selectExpressionOfCallExpression(node *Node) *Node {
+	if IsCallExpression(node) {
 		return node.Expression()
 	}
 	return nil
@@ -3628,15 +3700,7 @@ func selectTagNameOfJsxOpeningLikeElement(node *Node) *Node {
 }
 
 func IsCallExpressionTarget(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
-	return isCalleeWorker(node, IsCallExpression, selectExpressionOfCallOrNewExpression, includeElementAccess, skipPastOuterExpressions)
-}
-
-func IsNewExpressionTarget(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
-	return isCalleeWorker(node, IsNewExpression, selectExpressionOfCallOrNewExpression, includeElementAccess, skipPastOuterExpressions)
-}
-
-func IsCallOrNewExpressionTarget(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
-	return isCalleeWorker(node, IsCallOrNewExpression, selectExpressionOfCallOrNewExpression, includeElementAccess, skipPastOuterExpressions)
+	return isCalleeWorker(node, IsCallExpression, selectExpressionOfCallExpression, includeElementAccess, skipPastOuterExpressions)
 }
 
 func IsTaggedTemplateTag(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
@@ -3676,8 +3740,6 @@ func IsRightSideOfQualifiedNameOrPropertyAccess(node *Node) bool {
 		return parent.AsQualifiedName().Right == node
 	case KindPropertyAccessExpression:
 		return parent.AsPropertyAccessExpression().Name() == node
-	case KindMetaProperty:
-		return parent.AsMetaProperty().Name() == node
 	}
 	return false
 }
@@ -3711,10 +3773,6 @@ func GetInvokedExpression(node *Node) *Node {
 	default:
 		return node.Expression()
 	}
-}
-
-func IsCallOrNewExpression(node *Node) bool {
-	return IsCallExpression(node) || IsNewExpression(node)
 }
 
 func IndexOfNode(nodes []*Node, node *Node) int {

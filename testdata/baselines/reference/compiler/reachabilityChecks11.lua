@@ -39,7 +39,7 @@ function f1(x)
     if x then
         return;
     else
-        throw new Error("123");
+        throw "123";
     end
     local x;
 end
@@ -64,7 +64,7 @@ end
 
 function f4()
     if true then
-        throw new Error();
+        throw "";
     end
     local x = 1;
 end
@@ -122,7 +122,7 @@ function f1(x)
   if x then
     return;
   else
-    throw new Error("123");
+    throw "123";
   end
   local x;
 end
@@ -150,7 +150,7 @@ function f3()
 end
 function f4()
   if true then
-    throw new Error();
+    throw "";
   end
   local x = 1;
 end

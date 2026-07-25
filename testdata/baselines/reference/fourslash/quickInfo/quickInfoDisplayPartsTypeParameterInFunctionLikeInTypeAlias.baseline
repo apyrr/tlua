@@ -4,14 +4,14 @@
 //                               ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) A in type MixinCtor<A>
+// | any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                                            ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) A in type MixinCtor<A>
+// | type A = --[[unresolved]] any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -19,7 +19,7 @@
 //                                                                           ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) A in type MixinCtor<A>
+// | type A = --[[unresolved]] any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -37,7 +37,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) A in type MixinCtor<A>\n```\n"
+        "value": "```tlua\nany\n```\n"
       },
       "range": {
         "start": {
@@ -64,7 +64,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) A in type MixinCtor<A>\n```\n"
+        "value": "```tlua\ntype A = --[[unresolved]] any\n```\n"
       },
       "range": {
         "start": {
@@ -91,7 +91,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) A in type MixinCtor<A>\n```\n"
+        "value": "```tlua\ntype A = --[[unresolved]] any\n```\n"
       },
       "range": {
         "start": {

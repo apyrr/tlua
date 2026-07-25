@@ -60,7 +60,6 @@ interface Promise<T> {
 
 interface PromiseConstructor {
     readonly prototype: Promise<any>;
-    new <T>(executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>;
     resolve<T>(value: T | PromiseLike<T>): Promise<T>;
     resolve(): Promise<void>;
 }
@@ -109,9 +108,6 @@ type NonNullable<T> = T & {};
 
 /** Obtain the return type of a function type */
 type ReturnType<T extends (...: any) => any> = T extends (...: any) => infer R ? R : any;
-
-/** Obtain the instance type of a constructor function type */
-type InstanceType<T extends new (...: any) => any> = T extends new (...: any) => infer R ? R : any;
 
 /** Recursively unwrap the value type of a thenable */
 type Awaited<T> = T extends null | undefined ? T :
@@ -543,7 +539,7 @@ interface FFILib {
     readonly arch: string;
     cdef(definition: string): void;
     load(name: string, global?: boolean): LuaCNamespace;
-    "new": (type: LuaCTypeSpec, ...: any) => cdata;
+    new: (type: LuaCTypeSpec, ...: any) => cdata;
     "typeof": (type: LuaCTypeSpec, ...: any) => LuaCType;
     cast(type: LuaCTypeSpec, initializer: any): cdata;
     metatype(type: LuaCTypeSpec, metatable: table): LuaCType;
@@ -636,11 +632,8 @@ interface StringBufferOptions {
 }
 
 interface StringBufferLib {
-    // Quoted, as ffi's `new` is: a bare `new(...)` member declares a CONSTRUCT
-    // signature, which would leave `buffer.new(16)` with no `new` property at
-    // all. tlua has no `new` expression, so the name is only ever a member.
-    "new"(size?: number, options?: StringBufferOptions): LuaStringBuffer;
-    "new"(options: StringBufferOptions): LuaStringBuffer;
+    new(size?: number, options?: StringBufferOptions): LuaStringBuffer;
+    new(options: StringBufferOptions): LuaStringBuffer;
     encode(value: any): string;
     decode(value: string): any;
 }

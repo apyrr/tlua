@@ -17,9 +17,7 @@ function assertCondition(
 >!_condition : boolean
 >_condition : boolean
 
-    throw new Error('Condition failed');
->new Error('Condition failed') : any
->Error : any
+    throw 'Condition failed';
 >'Condition failed' : "Condition failed"
 
   end

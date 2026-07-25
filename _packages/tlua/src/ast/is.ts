@@ -123,9 +123,9 @@ export function isExpression(node: Node): node is Expression {
         || kind === SyntaxKind.DeleteExpression
         || kind === SyntaxKind.VoidExpression
         || kind === SyntaxKind.TypeAssertionExpression
-        || kind === SyntaxKind.CallExpression || kind === SyntaxKind.NewExpression
+        || kind === SyntaxKind.CallExpression
         || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.NonNullExpression
-        || kind === SyntaxKind.MetaProperty || kind === SyntaxKind.JsxExpression
+        || kind === SyntaxKind.JsxExpression
         || kind === SyntaxKind.PropertyAccessExpression || kind === SyntaxKind.ElementAccessExpression
         || kind === SyntaxKind.FunctionExpression
         || kind === SyntaxKind.ParenthesizedExpression || kind === SyntaxKind.ArrayLiteralExpression
@@ -161,7 +161,6 @@ function isLeftHandSideExpressionKind(kind: SyntaxKind): boolean {
     switch (kind) {
         case SyntaxKind.PropertyAccessExpression:
         case SyntaxKind.ElementAccessExpression:
-        case SyntaxKind.NewExpression:
         case SyntaxKind.CallExpression:
         case SyntaxKind.JsxElement:
         case SyntaxKind.JsxSelfClosingElement:
@@ -185,7 +184,6 @@ function isLeftHandSideExpressionKind(kind: SyntaxKind): boolean {
         case SyntaxKind.SuperKeyword:
         case SyntaxKind.NonNullExpression:
         case SyntaxKind.ExpressionWithTypeArguments:
-        case SyntaxKind.MetaProperty:
         case SyntaxKind.ImportKeyword: // technically this is only an Expression if it's in a CallExpression
         case SyntaxKind.MissingDeclaration:
             return true;

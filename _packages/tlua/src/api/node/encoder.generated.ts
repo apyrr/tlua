@@ -14,7 +14,6 @@ import type {
     JSDocParameterOrPropertyTag,
     JSDocTypeLiteral,
     JsxText,
-    MetaProperty,
     ModuleDeclaration,
     Node,
     ObjectLiteralExpression,
@@ -65,8 +64,6 @@ export function getNodeCommonData(node: Node): number {
             return ((node as ExportSpecifier).isTypeOnly ? 1 : 0) << 24;
         case SyntaxKind.PrefixUnaryExpression:
             return ((node as PrefixUnaryExpression).operator === SyntaxKind.MinusToken ? 1 : (node as PrefixUnaryExpression).operator === SyntaxKind.ExclamationToken ? 2 : (node as PrefixUnaryExpression).operator === SyntaxKind.HashToken ? 3 : 0) << 24;
-        case SyntaxKind.MetaProperty:
-            return ((node as MetaProperty).keywordToken === SyntaxKind.NewKeyword ? 1 : 0) << 24;
         case SyntaxKind.ArrayLiteralExpression:
             return ((node as ArrayLiteralExpression).multiLine ? 1 : 0) << 24;
         case SyntaxKind.ObjectLiteralExpression:

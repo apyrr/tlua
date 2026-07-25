@@ -550,9 +550,7 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
 		ast.KindMethodSignature,
-		ast.KindCallSignature,
-		ast.KindConstructorType,
-		ast.KindConstructSignature:
+		ast.KindCallSignature:
 		tpl := getList(node.TypeParameterList(), r, node, sourceFile)
 		if tpl != nil {
 			return tpl
@@ -562,7 +560,7 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 		ast.KindTypeAliasDeclaration,
 		ast.KindJSDocTemplateTag:
 		return getList(node.TypeParameterList(), r, node, sourceFile)
-	case ast.KindNewExpression, ast.KindCallExpression:
+	case ast.KindCallExpression:
 		l := getList(node.TypeArgumentList(), r, node, sourceFile)
 		if l != nil {
 			return l
@@ -663,7 +661,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		ast.KindParenthesizedExpression,
 		ast.KindPropertyAccessExpression,
 		ast.KindCallExpression,
-		ast.KindNewExpression,
 		ast.KindVariableStatement,
 		ast.KindExportAssignment,
 		ast.KindReturnStatement,
@@ -676,10 +673,8 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		ast.KindJsxExpression,
 		ast.KindMethodSignature,
 		ast.KindCallSignature,
-		ast.KindConstructSignature,
 		ast.KindParameter,
 		ast.KindFunctionType,
-		ast.KindConstructorType,
 		ast.KindParenthesizedType,
 		ast.KindTaggedTemplateExpression,
 		ast.KindNamedExports,
@@ -780,7 +775,7 @@ func childIsUnindentedBranchOfConditionalExpression(parent *ast.Node, child *ast
 }
 
 func argumentStartsOnSameLineAsPreviousArgument(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
-	if ast.IsCallExpression(parent) || ast.IsNewExpression(parent) {
+	if ast.IsCallExpression(parent) {
 		if len(parent.Arguments()) == 0 {
 			return false
 		}

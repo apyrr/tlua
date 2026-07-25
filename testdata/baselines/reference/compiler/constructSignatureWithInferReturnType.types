@@ -3,4 +3,5 @@
 === constructSignatureWithInferReturnType.tlua ===
 type ExtractReturn<T> = T extends { new(): infer R } ? R : never;
 >ExtractReturn : ExtractReturn<T>
+>new : () => infer R
 

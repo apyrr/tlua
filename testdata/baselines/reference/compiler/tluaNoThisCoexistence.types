@@ -155,13 +155,16 @@ interface Derived extends Base {
   d: number;
 >d : number
 }
-declare K: { new (): Derived };
->K : new () => Derived
+declare K: { make(): Derived };
+>K : { make(): Derived; }
+>make : () => Derived
 
-local inst: Derived = new K();
+local inst: Derived = K.make();
 >inst : Derived
->new K() : Derived
->K : new () => Derived
+>K.make() : Derived
+>K.make : () => Derived
+>K : { make(): Derived; }
+>make : () => Derived
 
 use(narrow);
 >use(narrow) : void

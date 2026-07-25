@@ -15,7 +15,7 @@ function assertCondition(
   if (!_condition) then
 >_condition : Symbol(_condition, Decl(assertsPredicateParameterMismatch.tlua, 4, 25))
 
-    throw new Error('Condition failed');
+    throw 'Condition failed';
   end
 end
 

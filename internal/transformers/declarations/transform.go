@@ -601,8 +601,6 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		result = tx.transformHeritageClause(input.AsHeritageClause())
 	case ast.KindMethodSignature:
 		result = tx.transformMethodSignatureDeclaration(input.AsMethodSignatureDeclaration())
-	case ast.KindConstructSignature:
-		result = tx.transformConstructSignatureDeclaration(input.AsConstructSignatureDeclaration())
 	case ast.KindPropertySignature:
 		result = tx.transformPropertySignatureDeclaration(input.AsPropertySignatureDeclaration())
 	case ast.KindCallSignature:
@@ -621,8 +619,6 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		result = tx.transformConditionalTypeNode(input.AsConditionalTypeNode())
 	case ast.KindFunctionType:
 		result = tx.transformFunctionTypeNode(input.AsFunctionTypeNode())
-	case ast.KindConstructorType:
-		result = tx.transformConstructorTypeNode(input.AsConstructorTypeNode())
 	case ast.KindImportType:
 		result = tx.transformImportTypeNode(input.AsImportTypeNode())
 	case ast.KindTypeQuery:
@@ -728,16 +724,6 @@ func (tx *DeclarationTransformer) transformImportTypeNode(input *ast.ImportTypeN
 		),
 		input.Qualifier,
 		tx.Visitor().VisitNodes(input.TypeArguments),
-	)
-}
-
-func (tx *DeclarationTransformer) transformConstructorTypeNode(input *ast.ConstructorTypeNode) *ast.Node {
-	return tx.Factory().UpdateConstructorTypeNode(
-		input,
-		tx.ensureModifiers(input.AsNode()),
-		tx.Visitor().VisitNodes(input.TypeParameters),
-		tx.updateParamList(input.AsNode(), input.Parameters),
-		tx.Visitor().Visit(input.Type),
 	)
 }
 
@@ -910,15 +896,6 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 	)
 	tx.preservePartialJsDoc(result, input.AsNode())
 	return result
-}
-
-func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *ast.ConstructSignatureDeclaration) *ast.Node {
-	return tx.Factory().UpdateConstructSignatureDeclaration(
-		input,
-		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
-		tx.updateParamList(input.AsNode(), input.Parameters),
-		tx.ensureType(input.AsNode(), false),
-	)
 }
 
 func (tx *DeclarationTransformer) transformMethodSignatureDeclaration(input *ast.MethodSignatureDeclaration) *ast.Node {

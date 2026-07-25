@@ -160,8 +160,13 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 			}
 		case ast.KindSpreadAssignment:
 			addSymbolForNode(node, node.Expression(), nil /*children*/)
-		case ast.KindMethodSignature, ast.KindPropertySignature, ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature,
-			ast.KindTypeAliasDeclaration, ast.KindImportEqualsDeclaration, ast.KindExportSpecifier:
+		case ast.KindMethodSignature,
+			ast.KindPropertySignature,
+			ast.KindCallSignature,
+			ast.KindIndexSignature,
+			ast.KindTypeAliasDeclaration,
+			ast.KindImportEqualsDeclaration,
+			ast.KindExportSpecifier:
 			addSymbolForNode(node, nil /*name*/, nil /*children*/)
 		case ast.KindImportClause:
 			// Handle default import case e.g.:
@@ -433,8 +438,6 @@ func getUnnamedNodeLabel(node *ast.Node) string {
 		return "<function>"
 	case ast.KindCallSignature:
 		return "()"
-	case ast.KindConstructSignature:
-		return "new()"
 	case ast.KindIndexSignature:
 		return "[]"
 	}
@@ -643,8 +646,6 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 		return lsproto.SymbolKindProperty
 	case ast.KindCallSignature:
 		return lsproto.SymbolKindMethod
-	case ast.KindConstructSignature:
-		return lsproto.SymbolKindConstructor
 	case ast.KindTypeParameter:
 		return lsproto.SymbolKindTypeParameter
 	case ast.KindParameter:

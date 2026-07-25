@@ -7,13 +7,17 @@ class Base {
 }
 
 declare BaseFactory: new() => Base & { c: string }
->BaseFactory : new () => Base & { c: string; }
->c : string
+>BaseFactory : new
+>() : any
+> : any
+>Base : any
+>c : any
+>string : StringLib
 
 class Derived extends BaseFactory {
 >class : any
 >Derived : any
->BaseFactory : new () => Base & { c: string; }
+>BaseFactory : new
 
     a = this.b
 >a = : any

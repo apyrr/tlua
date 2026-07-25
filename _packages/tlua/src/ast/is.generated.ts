@@ -35,7 +35,6 @@ import type {
     BreakStatement,
     CallExpression,
     CallLikeExpression,
-    CallOrNewExpression,
     CallSignatureDeclaration,
     ColonToken,
     CompoundAssignmentOperator,
@@ -44,8 +43,6 @@ import type {
     ConcatenationOperatorOrHigher,
     ConditionalExpression,
     ConditionalTypeNode,
-    ConstructorTypeNode,
-    ConstructSignatureDeclaration,
     ContinueStatement,
     DebuggerStatement,
     DeclarationName,
@@ -169,7 +166,6 @@ import type {
     LogicalOperatorOrHigher,
     MappedTypeNode,
     MemberName,
-    MetaProperty,
     MethodSignatureDeclaration,
     MinusToken,
     MissingDeclaration,
@@ -194,7 +190,6 @@ import type {
     NamespaceExport,
     NamespaceExportDeclaration,
     NamespaceImport,
-    NewExpression,
     NilLiteral,
     Node,
     NonNullExpression,
@@ -477,10 +472,6 @@ export function isCallSignatureDeclaration(node: Node): node is CallSignatureDec
     return node.kind === SyntaxKind.CallSignature;
 }
 
-export function isConstructSignatureDeclaration(node: Node): node is ConstructSignatureDeclaration {
-    return node.kind === SyntaxKind.ConstructSignature;
-}
-
 export function isIndexSignatureDeclaration(node: Node): node is IndexSignatureDeclaration {
     return node.kind === SyntaxKind.IndexSignature;
 }
@@ -563,14 +554,6 @@ export function isElementAccessExpression(node: Node): node is ElementAccessExpr
 
 export function isCallExpression(node: Node): node is CallExpression {
     return node.kind === SyntaxKind.CallExpression;
-}
-
-export function isNewExpression(node: Node): node is NewExpression {
-    return node.kind === SyntaxKind.NewExpression;
-}
-
-export function isMetaProperty(node: Node): node is MetaProperty {
-    return node.kind === SyntaxKind.MetaProperty;
 }
 
 export function isNonNullExpression(node: Node): node is NonNullExpression {
@@ -715,10 +698,6 @@ export function isParenthesizedTypeNode(node: Node): node is ParenthesizedTypeNo
 
 export function isFunctionTypeNode(node: Node): node is FunctionTypeNode {
     return node.kind === SyntaxKind.FunctionType;
-}
-
-export function isConstructorTypeNode(node: Node): node is ConstructorTypeNode {
-    return node.kind === SyntaxKind.ConstructorType;
 }
 
 export function isTemplateHead(node: Node): node is TemplateHead {
@@ -1112,7 +1091,7 @@ export function isJSDocComment(node: Node): node is JSDocComment {
 
 export function isSignatureDeclaration(node: Node): node is SignatureDeclaration {
     const kind = node.kind;
-    return kind === SyntaxKind.CallSignature || kind === SyntaxKind.ConstructSignature || kind === SyntaxKind.MethodSignature || kind === SyntaxKind.IndexSignature || kind === SyntaxKind.FunctionType || kind === SyntaxKind.ConstructorType || kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ArrowFunction;
+    return kind === SyntaxKind.CallSignature || kind === SyntaxKind.MethodSignature || kind === SyntaxKind.IndexSignature || kind === SyntaxKind.FunctionType || kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ArrowFunction;
 }
 
 export function isStringLiteralLikeNode(node: Node): node is StringLiteralLikeNode {
@@ -1145,7 +1124,7 @@ export function isBreakOrContinueStatement(node: Node): node is BreakOrContinueS
 
 export function isCallLikeExpression(node: Node): node is CallLikeExpression {
     const kind = node.kind;
-    return kind === SyntaxKind.CallExpression || kind === SyntaxKind.NewExpression || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.JsxOpeningElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.BinaryExpression;
+    return kind === SyntaxKind.CallExpression || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.JsxOpeningElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.BinaryExpression;
 }
 
 export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration {
@@ -1154,10 +1133,6 @@ export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDecla
 
 export function isVariableOrParameterDeclaration(node: Node): node is VariableOrParameterDeclaration {
     return node.kind === SyntaxKind.VariableDeclaration || node.kind === SyntaxKind.Parameter;
-}
-
-export function isCallOrNewExpression(node: Node): node is CallOrNewExpression {
-    return node.kind === SyntaxKind.CallExpression || node.kind === SyntaxKind.NewExpression;
 }
 
 export function isImportClauseOrBindingPattern(node: Node): node is ImportClauseOrBindingPattern {

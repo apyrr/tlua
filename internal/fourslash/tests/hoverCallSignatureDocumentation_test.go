@@ -14,20 +14,15 @@ func TestHoverCallSignatureDocumentation(t *testing.T) {
 type X = {
     /** Description of invoking. */
     (): string
-
-    /** Description of constructor. */
-    new (): number
 }
 
 declare x: X
 
 /*1*/x()
-new /*2*/x()
 `
 
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
 	f.VerifyQuickInfoAt(t, "1", "const x: () => string", "Description of invoking.")
-	f.VerifyQuickInfoAt(t, "2", "const x: new () => number", "Description of constructor.")
 }

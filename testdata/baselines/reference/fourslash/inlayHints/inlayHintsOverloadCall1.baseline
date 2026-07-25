@@ -104,17 +104,17 @@ new call(1);
   },
   "label": [
     {
-      "value": "d",
+      "value": "a",
       "location": {
         "uri": "file:///inlayHintsOverloadCall1.tlua",
         "range": {
           "start": {
-            "line": 3,
-            "character": 9
+            "line": 1,
+            "character": 5
           },
           "end": {
-            "line": 3,
-            "character": 10
+            "line": 1,
+            "character": 6
           }
         }
       }

@@ -59,13 +59,6 @@ func (b *NodeBuilderImpl) expandInterfaceDecl(symbol *ast.Symbol) *ast.Node {
 
 	// Index signatures, filtering those identical to base
 	members = append(members, b.serializeIndexSignaturesOfType(interfaceType, baseType)...)
-	// Construct signatures (skip abstract)
-	for _, sig := range resolved.ConstructSignatures() {
-		if sig.flags&SignatureFlagsAbstract != 0 {
-			continue
-		}
-		members = append(members, b.signatureToSignatureDeclarationHelper(sig, ast.KindConstructSignature, nil))
-	}
 	// Call signatures
 	for _, sig := range resolved.CallSignatures() {
 		members = append(members, b.signatureToSignatureDeclarationHelper(sig, ast.KindCallSignature, nil))

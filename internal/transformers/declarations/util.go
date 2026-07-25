@@ -25,7 +25,6 @@ func canProduceDiagnostics(node *ast.Node) bool {
 	return ast.IsVariableDeclaration(node) ||
 		ast.IsPropertySignatureDeclaration(node) ||
 		ast.IsBindingElement(node) ||
-		ast.IsConstructSignatureDeclaration(node) ||
 		ast.IsCallSignatureDeclaration(node) ||
 		ast.IsMethodSignatureDeclaration(node) ||
 		ast.IsFunctionDeclaration(node) ||

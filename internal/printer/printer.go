@@ -941,9 +941,7 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindTypeAliasDeclaration,
 		ast.KindJSTypeAliasDeclaration,
 		ast.KindFunctionType,
-		ast.KindConstructorType,
 		ast.KindCallSignature,
-		ast.KindConstructSignature,
 		ast.KindTaggedTemplateExpression,
 		ast.KindObjectBindingPattern,
 		ast.KindArrayBindingPattern,
@@ -956,8 +954,6 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindFunctionExpression:
 		return true
 	case ast.KindCallExpression:
-		return true
-	case ast.KindNewExpression:
 		return true
 	}
 
@@ -1657,20 +1653,6 @@ func (p *Printer) emitCallSignature(node *ast.CallSignatureDeclaration) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitConstructSignature(node *ast.ConstructSignatureDeclaration) {
-	state := p.enterNode(node.AsNode())
-	p.writeKeyword("new")
-	p.writeSpace()
-	indented := p.shouldEmitIndented(node.AsNode())
-	p.increaseIndentIf(indented)
-	p.pushNameGenerationScope(node.AsNode())
-	p.emitSignature(node.AsNode())
-	p.writeTrailingSemicolon()
-	p.popNameGenerationScope(node.AsNode())
-	p.decreaseIndentIf(indented)
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitIndexSignature(node *ast.IndexSignatureDeclaration) {
 	state := p.enterNode(node.AsNode())
 	p.emitModifierList(node.AsNode(), node.Modifiers())
@@ -1693,8 +1675,6 @@ func (p *Printer) emitTypeElement(node *ast.TypeElement) {
 		p.emitMethodSignature(node.AsMethodSignatureDeclaration())
 	case ast.KindCallSignature:
 		p.emitCallSignature(node.AsCallSignatureDeclaration())
-	case ast.KindConstructSignature:
-		p.emitConstructSignature(node.AsConstructSignatureDeclaration())
 	case ast.KindIndexSignature:
 		p.emitIndexSignature(node.AsIndexSignatureDeclaration())
 	case ast.KindNotEmittedTypeElement:
@@ -1815,24 +1795,6 @@ func (p *Printer) emitFunctionType(node *ast.FunctionTypeNode) {
 	p.emitParameters(node.AsNode(), node.Parameters)
 	p.writeSpace()
 	p.emitReturnType(node.Type, true /*allowReturnPack*/)
-	p.popNameGenerationScope(node.AsNode())
-	p.decreaseIndentIf(indented)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitConstructorType(node *ast.ConstructorTypeNode) {
-	state := p.enterNode(node.AsNode())
-	p.emitModifierList(node.AsNode(), node.Modifiers())
-	p.writeKeyword("new")
-	p.writeSpace()
-	indented := p.shouldEmitIndented(node.AsNode())
-	p.increaseIndentIf(indented)
-	p.pushNameGenerationScope(node.AsNode())
-	// !!! in the old emitter, quickinfo uses type arguments in place of type parameters for instantiated signatures
-	p.emitTypeParameters(node.AsNode(), node.TypeParameters)
-	p.emitParameters(node.AsNode(), node.Parameters)
-	p.writeSpace()
-	p.emitReturnType(node.Type, false /*allowReturnPack*/)
 	p.popNameGenerationScope(node.AsNode())
 	p.decreaseIndentIf(indented)
 	p.exitNode(node.AsNode(), state)
@@ -2180,8 +2142,6 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		p.emitTypeReference(node.AsTypeReferenceNode())
 	case ast.KindFunctionType:
 		p.emitFunctionType(node.AsFunctionTypeNode())
-	case ast.KindConstructorType:
-		p.emitConstructorType(node.AsConstructorTypeNode())
 	case ast.KindTypeQuery:
 		p.emitTypeQuery(node.AsTypeQueryNode())
 	case ast.KindTypeLiteral:
@@ -2431,9 +2391,6 @@ func (p *Printer) emitCallee(callee *ast.Expression, parentNode *ast.Node) {
 		p.writeSpace()
 		p.emitExpression(callee, ast.OperatorPrecedenceComma)
 		p.writePunctuation(")")
-	} else if parentNode.Kind == ast.KindCallExpression && isNewExpressionWithoutArguments(ast.SkipPartiallyEmittedExpressions(callee)) {
-		// Parenthesize `new C` inside of a CallExpression so it is treated as `(new C)()` and not `new C()`
-		p.emitExpression(callee, ast.OperatorPrecedenceParentheses)
 	} else {
 		p.emitExpression(callee, core.IfElse(ast.IsOptionalChain(parentNode), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
 	}
@@ -2445,21 +2402,6 @@ func (p *Printer) emitCallExpression(node *ast.CallExpression) {
 	p.emitTokenNode(node.QuestionDotToken)
 	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
 	p.emitList((*Printer).emitArgument, node.AsNode(), node.Arguments, LFCallExpressionArguments)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitNewExpression(node *ast.NewExpression) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindNewKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeSpace()
-	if ast.SkipPartiallyEmittedExpressions(node.Expression).Kind == ast.KindCallExpression {
-		// Parenthesize `C()` inside of a NewExpression so it is treated as `new (C())` and not `new C()`
-		p.emitExpression(node.Expression, ast.OperatorPrecedenceParentheses)
-	} else {
-		p.emitExpression(node.Expression, ast.OperatorPrecedenceMember)
-	}
-	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	p.emitList((*Printer).emitArgument, node.AsNode(), node.Arguments, LFNewExpressionArguments)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -2849,14 +2791,6 @@ func (p *Printer) emitNonNullExpression(node *ast.NonNullExpression) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitMetaProperty(node *ast.MetaProperty) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(node.KeywordToken, node.Pos(), WriteKindPunctuation, node.AsNode())
-	p.writePunctuation(".")
-	p.emitIdentifierName(node.Name().AsIdentifier())
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression) {
 	// avoid reprinting parens for nested partially emitted expressions
 	type entry struct {
@@ -3093,8 +3027,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitElementAccessExpression(node.AsElementAccessExpression())
 	case ast.KindCallExpression:
 		p.emitCallExpression(node.AsCallExpression())
-	case ast.KindNewExpression:
-		p.emitNewExpression(node.AsNewExpression())
 	case ast.KindTaggedTemplateExpression:
 		p.emitTaggedTemplateExpression(node.AsTaggedTemplateExpression())
 	case ast.KindTypeAssertionExpression:
@@ -3133,8 +3065,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitExpressionList(node.AsExpressionList())
 	case ast.KindVarargExpression:
 		p.emitVarargExpression(node)
-	case ast.KindMetaProperty:
-		p.emitMetaProperty(node.AsMetaProperty())
 	case ast.KindSyntheticExpression:
 		panic("SyntheticExpression should never be printed.")
 	case ast.KindMissingDeclaration:
@@ -4472,7 +4402,7 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 		originalList = originalParent.PropertyList()
 	case ast.KindArrayLiteralExpression:
 		originalList = originalParent.ElementList()
-	case ast.KindCallExpression, ast.KindNewExpression:
+	case ast.KindCallExpression:
 		switch children {
 		case parentNode.TypeArgumentList():
 			originalList = originalParent.TypeArgumentList()
@@ -4483,9 +4413,7 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
 		ast.KindFunctionType,
-		ast.KindConstructorType,
-		ast.KindCallSignature,
-		ast.KindConstructSignature:
+		ast.KindCallSignature:
 		switch children {
 		case parentNode.TypeParameterList():
 			originalList = originalParent.TypeParameterList()
@@ -4777,8 +4705,6 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 		p.emitMethodSignature(node.AsMethodSignatureDeclaration())
 	case ast.KindCallSignature:
 		p.emitCallSignature(node.AsCallSignatureDeclaration())
-	case ast.KindConstructSignature:
-		p.emitConstructSignature(node.AsConstructSignatureDeclaration())
 	case ast.KindIndexSignature:
 		p.emitIndexSignature(node.AsIndexSignatureDeclaration())
 

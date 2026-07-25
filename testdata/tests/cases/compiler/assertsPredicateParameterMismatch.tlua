@@ -9,7 +9,7 @@ function assertCondition(
   _condition: boolean
 ): asserts condition  // "condition" doesn't match parameter "_condition"
   if (!_condition) then
-    throw new Error('Condition failed');
+    throw 'Condition failed';
   end
 end
 

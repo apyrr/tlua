@@ -280,8 +280,6 @@ func (n *Node) Text() string {
 		return n.AsStringLiteral().Text
 	case KindNumericLiteral:
 		return n.AsNumericLiteral().Text
-	case KindMetaProperty:
-		return n.AsMetaProperty().Name().Text()
 	case KindNoSubstitutionTemplateLiteral:
 		return n.AsNoSubstitutionTemplateLiteral().Text
 	case KindTemplateHead:
@@ -316,8 +314,6 @@ func (n *Node) Expression() *Node {
 		return n.AsParenthesizedExpression().Expression
 	case KindCallExpression:
 		return n.AsCallExpression().Expression
-	case KindNewExpression:
-		return n.AsNewExpression().Expression
 	case KindExpressionWithTypeArguments:
 		return n.AsExpressionWithTypeArguments().Expression
 	case KindComputedPropertyName:
@@ -393,8 +389,6 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsParenthesizedExpression().Expression = expr
 	case KindCallExpression:
 		n.AsCallExpression().Expression = expr
-	case KindNewExpression:
-		n.AsNewExpression().Expression = expr
 	case KindExpressionWithTypeArguments:
 		n.AsExpressionWithTypeArguments().Expression = expr
 	case KindComputedPropertyName:
@@ -452,8 +446,6 @@ func (n *Node) ArgumentList() *NodeList {
 	switch n.Kind {
 	case KindCallExpression:
 		return n.AsCallExpression().Arguments
-	case KindNewExpression:
-		return n.AsNewExpression().Arguments
 	}
 	panic("Unhandled case in Node.Arguments: " + n.Kind.String())
 }
@@ -470,8 +462,6 @@ func (n *Node) TypeArgumentList() *NodeList {
 	switch n.Kind {
 	case KindCallExpression:
 		return n.AsCallExpression().TypeArguments
-	case KindNewExpression:
-		return n.AsNewExpression().TypeArguments
 	case KindTaggedTemplateExpression:
 		return n.AsTaggedTemplateExpression().TypeArguments
 	case KindTypeReference:
@@ -1845,20 +1835,6 @@ func (node *CallExpression) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsCall
 }
 
-func (node *NewExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateNodeListSubtreeFacts(node.Arguments, propagateSubtreeFacts)
-}
-
-func (node *NewExpression) propagateSubtreeFacts() SubtreeFacts {
-	return node.SubtreeFacts() & ^SubtreeExclusionsNew
-}
-
-func (node *MetaProperty) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) &^ SubtreeContainsIdentifier
-}
-
 func (node *NonNullExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsTypeScript
 }
@@ -1905,12 +1881,6 @@ func (node *TypeAssertion) propagateSubtreeFacts() SubtreeFacts {
 func (node *ExpressionWithTypeArguments) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) |
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments)
-}
-
-// FunctionOrConstructorTypeNodeBase
-
-func (node *FunctionOrConstructorTypeNodeBase) DeclarationData() *DeclarationBase {
-	return node.FunctionLikeBase.DeclarationData()
 }
 
 func (node *TemplateLiteralLikeNodeBase) LiteralLikeData() *LiteralLikeNodeBase {

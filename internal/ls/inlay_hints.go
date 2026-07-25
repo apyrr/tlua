@@ -81,8 +81,8 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 
 	if s.preferences.IncludeInlayVariableTypeHints.IsTrue() && ast.IsVariableDeclaration(node) {
 		s.visitVariableLikeDeclaration(node)
-	} else if shouldShowParameterNameHints(s.preferences) && (ast.IsCallExpression(node) || ast.IsNewExpression(node)) {
-		s.visitCallOrNewExpression(node)
+	} else if shouldShowParameterNameHints(s.preferences) && ast.IsCallExpression(node) {
+		s.visitCallExpression(node)
 	} else {
 		if s.preferences.IncludeInlayFunctionParameterTypeHints.IsTrue() &&
 			ast.IsFunctionLikeDeclaration(node) &&
@@ -132,7 +132,7 @@ func (s *inlayHintState) visitFunctionDeclarationLikeForReturnType(decl *ast.Fun
 	s.addTypeHints(hintParts, s.getTypeAnnotationPosition(decl))
 }
 
-func (s *inlayHintState) visitCallOrNewExpression(expr *ast.CallOrNewExpression) {
+func (s *inlayHintState) visitCallExpression(expr *ast.Node) {
 	args := expr.Arguments()
 	if len(args) == 0 {
 		return
@@ -348,7 +348,7 @@ func isHintableDeclaration(node *ast.VariableOrParameterDeclaration) bool {
 	if (ast.IsPartOfParameterDeclaration(node) || ast.IsVariableDeclaration(node) && ast.IsVarConst(node)) &&
 		node.Initializer() != nil {
 		initializer := ast.SkipParentheses(node.Initializer())
-		return !(isHintableLiteral(initializer) || ast.IsNewExpression(initializer) ||
+		return !(isHintableLiteral(initializer) ||
 			ast.IsObjectLiteralExpression(initializer) || ast.IsAssertionExpression(initializer))
 	}
 	return true
@@ -457,11 +457,6 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*
 				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
 				visitForDisplayParts(node.Type())
 			}
-		case ast.KindConstructorType:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "new "})
-			visitParametersAndTypeParameters(node)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: " => "})
-			visitForDisplayParts(node.Type())
 		case ast.KindTypeQuery:
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "typeof "})
 			visitForDisplayParts(node.AsTypeQueryNode().ExprName)
@@ -632,13 +627,6 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*
 				visitForDisplayParts(node.Type())
 			}
 		case ast.KindCallSignature:
-			visitParametersAndTypeParameters(node)
-			if node.Type() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-				visitForDisplayParts(node.Type())
-			}
-		case ast.KindConstructSignature:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "new "})
 			visitParametersAndTypeParameters(node)
 			if node.Type() != nil {
 				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})

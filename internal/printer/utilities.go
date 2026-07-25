@@ -541,14 +541,6 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 		case node != p.Expression:
 			return p.Arguments
 		}
-	case ast.KindNewExpression:
-		p := parent.AsNewExpression()
-		switch {
-		case ast.IsTypeNode(node):
-			return p.TypeArguments
-		case node != p.Expression:
-			return p.Arguments
-		}
 	case ast.KindJsxElement, ast.KindJsxFragment:
 		if ast.IsJsxChild(node) {
 			return parent.Children()
@@ -627,10 +619,6 @@ func skipSynthesizedParentheses(node *ast.Node) *ast.Node {
 		node = node.Expression()
 	}
 	return node
-}
-
-func isNewExpressionWithoutArguments(node *ast.Node) bool {
-	return node.Kind == ast.KindNewExpression && node.ArgumentList() == nil
 }
 
 func isBinaryOperation(node *ast.Node, token ast.Kind) bool {

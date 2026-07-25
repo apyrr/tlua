@@ -54,7 +54,6 @@ func getAllRules() []ruleSpec {
 		ast.KindOpenBracketToken,
 		ast.KindOpenBraceToken,
 		ast.KindThisKeyword,
-		ast.KindNewKeyword,
 	}
 	comments := []ast.Kind{ast.KindSingleLineCommentTrivia, ast.KindMultiLineCommentTrivia}
 	typeKeywords := []ast.Kind{
@@ -159,9 +158,9 @@ func getAllRules() []ruleSpec {
 		rule("SpaceAfterGetSetInMember", []ast.Kind{ast.KindGetKeyword, ast.KindSetKeyword}, ast.KindIdentifier, []contextPredicate{isFunctionDeclContext}, ruleActionInsertSpace),
 
 		rule("NoSpaceBetweenReturnAndSemicolon", ast.KindReturnKeyword, ast.KindSemicolonToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindThrowKeyword, ast.KindNewKeyword, ast.KindDeleteKeyword, ast.KindReturnKeyword, ast.KindTypeOfKeyword, ast.KindAwaitKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindThrowKeyword, ast.KindDeleteKeyword, ast.KindReturnKeyword, ast.KindTypeOfKeyword, ast.KindAwaitKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 		rule("SpaceAfterLocalInVariableDeclaration", []ast.Kind{ast.KindLocalKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isStartOfVariableDeclarationList}, ruleActionInsertSpace),
-		rule("NoSpaceBeforeOpenParenInFuncCall", anyToken, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext, isFunctionCallOrNewContext, isPreviousTokenNotComma}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeOpenParenInFuncCall", anyToken, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext, isFunctionCallContext, isPreviousTokenNotComma}, ruleActionDeleteSpace),
 
 		// Special case for binary operators (that are keywords). For these we have to add a space and shouldn't follow any user options.
 		rule("SpaceBeforeBinaryKeywordOperator", anyToken, binaryKeywordOperators, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
@@ -254,7 +253,6 @@ func getAllRules() []ruleSpec {
 		}, ruleActionDeleteSpace),
 
 		rule("NoSpaceBeforeNonNullAssertionOperator", anyToken, ast.KindExclamationToken, []contextPredicate{isNonJsxSameLineTokenContext, isNonNullAssertionContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterNewKeywordOnConstructorSignature", ast.KindNewKeyword, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext, isConstructorSignatureContext}, ruleActionDeleteSpace),
 		rule("SpaceLessThanAndNonJSXTypeAnnotation", ast.KindLessThanToken, ast.KindLessThanToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 	}
 

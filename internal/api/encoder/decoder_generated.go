@@ -141,7 +141,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindIfKeyword,
 		ast.KindInKeyword,
 		ast.KindInstanceOfKeyword,
-		ast.KindNewKeyword,
 		ast.KindRepeatKeyword,
 		ast.KindReturnKeyword,
 		ast.KindThenKeyword,
@@ -370,12 +369,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		parameters := d.nodeListAt(it.nextIf(mask, 1))
 		typeNode := d.nodeAt(it.nextIf(mask, 2))
 		return d.factory.NewCallSignatureDeclaration(typeParameters, parameters, typeNode), nil
-	case ast.KindConstructSignature:
-		it := newChildIter(childIndices)
-		typeParameters := d.nodeListAt(it.nextIf(mask, 0))
-		parameters := d.nodeListAt(it.nextIf(mask, 1))
-		typeNode := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewConstructSignatureDeclaration(typeParameters, parameters, typeNode), nil
 	case ast.KindIndexSignature:
 		it := newChildIter(childIndices)
 		modifiers := d.modifierListAt(it.nextIf(mask, 0))
@@ -489,18 +482,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeArguments := d.nodeListAt(it.nextIf(mask, 2))
 		arguments := d.nodeListAt(it.nextIf(mask, 3))
 		return d.factory.NewCallExpression(expression, questionDotToken, typeArguments, arguments, 0), nil
-	case ast.KindNewExpression:
-		it := newChildIter(childIndices)
-		expression := d.nodeAt(it.nextIf(mask, 0))
-		typeArguments := d.nodeListAt(it.nextIf(mask, 1))
-		arguments := d.nodeListAt(it.nextIf(mask, 2))
-		return d.factory.NewNewExpression(expression, typeArguments, arguments), nil
-	case ast.KindMetaProperty:
-		keywordToken := ast.KindImportKeyword
-		if commonData&1 != 0 {
-			keywordToken = ast.KindNewKeyword
-		}
-		return d.factory.NewMetaProperty(keywordToken, d.singleChild(childIndices)), nil
 	case ast.KindNonNullExpression:
 		return d.factory.NewNonNullExpression(d.singleChild(childIndices), 0), nil
 	case ast.KindSpreadElement:
@@ -664,13 +645,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		parameters := d.nodeListAt(it.nextIf(mask, 2))
 		typeNode := d.nodeAt(it.nextIf(mask, 3))
 		return d.factory.NewFunctionTypeNode(modifiers, typeParameters, parameters, typeNode), nil
-	case ast.KindConstructorType:
-		it := newChildIter(childIndices)
-		modifiers := d.modifierListAt(it.nextIf(mask, 0))
-		typeParameters := d.nodeListAt(it.nextIf(mask, 1))
-		parameters := d.nodeListAt(it.nextIf(mask, 2))
-		typeNode := d.nodeAt(it.nextIf(mask, 3))
-		return d.factory.NewConstructorTypeNode(modifiers, typeParameters, parameters, typeNode), nil
 	case ast.KindTemplateLiteralType:
 		it := newChildIter(childIndices)
 		head := d.nodeAt(it.nextIf(mask, 0))

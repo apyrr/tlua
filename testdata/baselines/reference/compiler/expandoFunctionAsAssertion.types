@@ -5,11 +5,11 @@ function example() end
 >example : { (): void; isFoo: (value: string) => asserts value is 'foo'; }
 
 example.isFoo = function(value: string): asserts value is 'foo'
->example.isFoo = function(value: string): asserts value is 'foo'  if value ~= 'foo' then    throw new Error('Not foo');  endend : (value: string) => asserts value is 'foo'
+>example.isFoo = function(value: string): asserts value is 'foo'  if value ~= 'foo' then    throw 'Not foo';  endend : (value: string) => asserts value is 'foo'
 >example.isFoo : (value: string) => asserts value is 'foo'
 >example : { (): void; isFoo: (value: string) => asserts value is 'foo'; }
 >isFoo : (value: string) => asserts value is 'foo'
->function(value: string): asserts value is 'foo'  if value ~= 'foo' then    throw new Error('Not foo');  endend : (value: string) => asserts value is 'foo'
+>function(value: string): asserts value is 'foo'  if value ~= 'foo' then    throw 'Not foo';  endend : (value: string) => asserts value is 'foo'
 >value : string
 
   if value ~= 'foo' then
@@ -17,9 +17,7 @@ example.isFoo = function(value: string): asserts value is 'foo'
 >value : string
 >'foo' : "foo"
 
-    throw new Error('Not foo');
->new Error('Not foo') : any
->Error : any
+    throw 'Not foo';
 >'Not foo' : "Not foo"
 
   end

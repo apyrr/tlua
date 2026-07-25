@@ -15,8 +15,6 @@ import type {
     ComputedPropertyName,
     ConditionalExpression,
     ConditionalTypeNode,
-    ConstructorTypeNode,
-    ConstructSignatureDeclaration,
     DeleteExpression,
     ElementAccessExpression,
     ExportAssignment,
@@ -90,7 +88,6 @@ import type {
     LabelStatement,
     LiteralTypeNode,
     MappedTypeNode,
-    MetaProperty,
     MethodSignatureDeclaration,
     MissingDeclaration,
     ModuleBlock,
@@ -102,7 +99,6 @@ import type {
     NamespaceExport,
     NamespaceExportDeclaration,
     NamespaceImport,
-    NewExpression,
     Node,
     NodeArray,
     NonNullExpression,
@@ -167,8 +163,6 @@ import {
     updateComputedPropertyName,
     updateConditionalExpression,
     updateConditionalTypeNode,
-    updateConstructorTypeNode,
-    updateConstructSignatureDeclaration,
     updateDeleteExpression,
     updateElementAccessExpression,
     updateExportAssignment,
@@ -240,7 +234,6 @@ import {
     updateLabelStatement,
     updateLiteralTypeNode,
     updateMappedTypeNode,
-    updateMetaProperty,
     updateMethodSignatureDeclaration,
     updateMissingDeclaration,
     updateModuleBlock,
@@ -252,7 +245,6 @@ import {
     updateNamespaceExport,
     updateNamespaceExportDeclaration,
     updateNamespaceImport,
-    updateNewExpression,
     updateNonNullExpression,
     updateNumericForStatement,
     updateObjectBindingPattern,
@@ -637,12 +629,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         return updateCallSignatureDeclaration(node, _typeParameters, _parameters, _type);
     },
-    [SyntaxKind.ConstructSignature]: (node: ConstructSignatureDeclaration, visitor: Visitor): ConstructSignatureDeclaration => {
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _parameters = visitNodes(node.parameters, visitor);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        return updateConstructSignatureDeclaration(node, _typeParameters, _parameters, _type);
-    },
     [SyntaxKind.IndexSignature]: (node: IndexSignatureDeclaration, visitor: Visitor): IndexSignatureDeclaration => {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _parameters = visitNodes(node.parameters, visitor);
@@ -737,16 +723,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _typeArguments = visitNodes(node.typeArguments, visitor);
         const _arguments = visitNodes(node.arguments, visitor);
         return updateCallExpression(node, _expression, _questionDotToken, _typeArguments, _arguments);
-    },
-    [SyntaxKind.NewExpression]: (node: NewExpression, visitor: Visitor): NewExpression => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        const _typeArguments = visitNodes(node.typeArguments, visitor);
-        const _arguments = visitNodes(node.arguments, visitor);
-        return updateNewExpression(node, _expression, _typeArguments, _arguments);
-    },
-    [SyntaxKind.MetaProperty]: (node: MetaProperty, visitor: Visitor): MetaProperty => {
-        const _name = visitNode(node.name, visitor, isIdentifier);
-        return updateMetaProperty(node, _name);
     },
     [SyntaxKind.NonNullExpression]: (node: NonNullExpression, visitor: Visitor): NonNullExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);
@@ -917,13 +893,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _parameters = visitNodes(node.parameters, visitor);
         const _type = visitNode(node.type, visitor, isTypeNode);
         return updateFunctionTypeNode(node, _modifiers, _typeParameters, _parameters, _type);
-    },
-    [SyntaxKind.ConstructorType]: (node: ConstructorTypeNode, visitor: Visitor): ConstructorTypeNode => {
-        const _modifiers = visitNodes(node.modifiers, visitor);
-        const _typeParameters = visitNodes(node.typeParameters, visitor);
-        const _parameters = visitNodes(node.parameters, visitor);
-        const _type = visitNode(node.type, visitor, isTypeNode);
-        return updateConstructorTypeNode(node, _modifiers, _typeParameters, _parameters, _type);
     },
     [SyntaxKind.TemplateLiteralType]: (node: TemplateLiteralTypeNode, visitor: Visitor): TemplateLiteralTypeNode => {
         const _head = visitNode(node.head, visitor, isTemplateHead);

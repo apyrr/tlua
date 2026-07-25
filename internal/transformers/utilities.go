@@ -83,7 +83,7 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		return parent.AsConditionalExpression().Condition == name ||
 			parent.AsConditionalExpression().WhenTrue == name ||
 			parent.AsConditionalExpression().WhenFalse == name
-	case ast.KindCallExpression, ast.KindNewExpression:
+	case ast.KindCallExpression:
 		return parent.Expression() == name ||
 			slices.Contains(parent.Arguments(), name)
 	case ast.KindTaggedTemplateExpression:

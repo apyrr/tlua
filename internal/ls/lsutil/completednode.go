@@ -32,25 +32,17 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		ast.KindNamedExports:
 		return nodeEndsWith(n, ast.KindCloseBraceToken, sourceFile)
 
-	case ast.KindNewExpression:
-		if n.ArgumentList() == nil {
-			return true
-		}
-		fallthrough
-
 	case ast.KindCallExpression,
 		ast.KindParenthesizedExpression,
 		ast.KindParenthesizedType:
 		return nodeEndsWith(n, ast.KindCloseParenToken, sourceFile)
 
-	case ast.KindFunctionType,
-		ast.KindConstructorType:
+	case ast.KindFunctionType:
 		return IsCompletedNode(n.Type(), sourceFile)
 
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindMethodSignature,
-		ast.KindConstructSignature,
 		ast.KindCallSignature,
 		ast.KindArrowFunction:
 		if n.Body() != nil {

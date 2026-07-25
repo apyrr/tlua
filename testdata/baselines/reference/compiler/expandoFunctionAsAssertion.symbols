@@ -14,7 +14,7 @@ example.isFoo = function(value: string): asserts value is 'foo'
   if value ~= 'foo' then
 >value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
 
-    throw new Error('Not foo');
+    throw 'Not foo';
   end
 end;
 

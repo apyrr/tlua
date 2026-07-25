@@ -62,8 +62,8 @@ interface Base {
 interface Derived extends Base {
   d: number;
 }
-declare K: { new (): Derived };
-local inst: Derived = new K();
+declare K: { make(): Derived };
+local inst: Derived = K.make();
 
 use(narrow);
 use(g);
@@ -101,7 +101,7 @@ function counter:bump(by)
   return self.n + by;
 end
 local mapped = box.map(box, toStr);
-local inst = new K();
+local inst = K.make();
 use(narrow);
 use(g);
 use(counter);

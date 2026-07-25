@@ -7,8 +7,8 @@
 // | ```tlua
 // | interface Callable {
 // |     [key: string]: any;
-// |     new (x: string): Callable;
 // |     (x: string): boolean;
+// |     "new"(x: string): Callable;
 // |     name: string;
 // | }
 // | ```
@@ -75,7 +75,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\ninterface Callable {\n    [key: string]: any;\n    new (x: string): Callable;\n    (x: string): boolean;\n    name: string;\n}\n```\n"
+          "value": "```tlua\ninterface Callable {\n    [key: string]: any;\n    (x: string): boolean;\n    \"new\"(x: string): Callable;\n    name: string;\n}\n```\n"
         },
         "range": {
           "start": {

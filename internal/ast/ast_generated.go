@@ -18,55 +18,54 @@ var (
 // ──────────────────────────────────────────────────────────────────────
 
 type NodeFactory struct {
-	hooks                              NodeFactoryHooks
-	arrayTypeNodeArena                 core.Arena[ArrayTypeNode]
-	binaryExpressionArena              core.Arena[BinaryExpression]
-	blockArena                         core.Arena[Block]
-	callExpressionArena                core.Arena[CallExpression]
-	conditionalExpressionArena         core.Arena[ConditionalExpression]
-	constructSignatureDeclarationArena core.Arena[ConstructSignatureDeclaration]
-	elementAccessExpressionArena       core.Arena[ElementAccessExpression]
-	expressionStatementArena           core.Arena[ExpressionStatement]
-	expressionWithTypeArgumentsArena   core.Arena[ExpressionWithTypeArguments]
-	functionDeclarationArena           core.Arena[FunctionDeclaration]
-	functionTypeNodeArena              core.Arena[FunctionTypeNode]
-	heritageClauseArena                core.Arena[HeritageClause]
-	identifierArena                    core.Arena[Identifier]
-	ifStatementArena                   core.Arena[IfStatement]
-	importSpecifierArena               core.Arena[ImportSpecifier]
-	indexedAccessTypeNodeArena         core.Arena[IndexedAccessTypeNode]
-	interfaceDeclarationArena          core.Arena[InterfaceDeclaration]
-	intersectionTypeNodeArena          core.Arena[IntersectionTypeNode]
-	jsdocArena                         core.Arena[JSDoc]
-	jsdocDeprecatedTagArena            core.Arena[JSDocDeprecatedTag]
-	jsdocTextArena                     core.Arena[JSDocText]
-	jsdocUnknownTagArena               core.Arena[JSDocUnknownTag]
-	keywordExpressionArena             core.Arena[KeywordExpression]
-	keywordTypeNodeArena               core.Arena[KeywordTypeNode]
-	literalTypeNodeArena               core.Arena[LiteralTypeNode]
-	methodSignatureDeclarationArena    core.Arena[MethodSignatureDeclaration]
-	modifierListArena                  core.Arena[ModifierList]
-	nodeListArena                      core.Arena[NodeList]
-	numericLiteralArena                core.Arena[NumericLiteral]
-	parameterDeclarationArena          core.Arena[ParameterDeclaration]
-	parenthesizedExpressionArena       core.Arena[ParenthesizedExpression]
-	parenthesizedTypeNodeArena         core.Arena[ParenthesizedTypeNode]
-	prefixUnaryExpressionArena         core.Arena[PrefixUnaryExpression]
-	propertyAccessExpressionArena      core.Arena[PropertyAccessExpression]
-	propertyAssignmentArena            core.Arena[PropertyAssignment]
-	propertySignatureDeclarationArena  core.Arena[PropertySignatureDeclaration]
-	returnStatementArena               core.Arena[ReturnStatement]
-	stringLiteralArena                 core.Arena[StringLiteral]
-	tokenArena                         core.Arena[Token]
-	typeAliasDeclarationArena          core.Arena[TypeAliasDeclaration]
-	typeLiteralNodeArena               core.Arena[TypeLiteralNode]
-	typeOperatorNodeArena              core.Arena[TypeOperatorNode]
-	typeParameterDeclarationArena      core.Arena[TypeParameterDeclaration]
-	typeReferenceNodeArena             core.Arena[TypeReferenceNode]
-	unionTypeNodeArena                 core.Arena[UnionTypeNode]
-	variableDeclarationArena           core.Arena[VariableDeclaration]
-	variableDeclarationListArena       core.Arena[VariableDeclarationList]
-	variableStatementArena             core.Arena[VariableStatement]
+	hooks                             NodeFactoryHooks
+	arrayTypeNodeArena                core.Arena[ArrayTypeNode]
+	binaryExpressionArena             core.Arena[BinaryExpression]
+	blockArena                        core.Arena[Block]
+	callExpressionArena               core.Arena[CallExpression]
+	conditionalExpressionArena        core.Arena[ConditionalExpression]
+	elementAccessExpressionArena      core.Arena[ElementAccessExpression]
+	expressionStatementArena          core.Arena[ExpressionStatement]
+	expressionWithTypeArgumentsArena  core.Arena[ExpressionWithTypeArguments]
+	functionDeclarationArena          core.Arena[FunctionDeclaration]
+	functionTypeNodeArena             core.Arena[FunctionTypeNode]
+	heritageClauseArena               core.Arena[HeritageClause]
+	identifierArena                   core.Arena[Identifier]
+	ifStatementArena                  core.Arena[IfStatement]
+	importSpecifierArena              core.Arena[ImportSpecifier]
+	indexedAccessTypeNodeArena        core.Arena[IndexedAccessTypeNode]
+	interfaceDeclarationArena         core.Arena[InterfaceDeclaration]
+	intersectionTypeNodeArena         core.Arena[IntersectionTypeNode]
+	jsdocArena                        core.Arena[JSDoc]
+	jsdocDeprecatedTagArena           core.Arena[JSDocDeprecatedTag]
+	jsdocTextArena                    core.Arena[JSDocText]
+	jsdocUnknownTagArena              core.Arena[JSDocUnknownTag]
+	keywordExpressionArena            core.Arena[KeywordExpression]
+	keywordTypeNodeArena              core.Arena[KeywordTypeNode]
+	literalTypeNodeArena              core.Arena[LiteralTypeNode]
+	methodSignatureDeclarationArena   core.Arena[MethodSignatureDeclaration]
+	modifierListArena                 core.Arena[ModifierList]
+	nodeListArena                     core.Arena[NodeList]
+	numericLiteralArena               core.Arena[NumericLiteral]
+	parameterDeclarationArena         core.Arena[ParameterDeclaration]
+	parenthesizedExpressionArena      core.Arena[ParenthesizedExpression]
+	parenthesizedTypeNodeArena        core.Arena[ParenthesizedTypeNode]
+	prefixUnaryExpressionArena        core.Arena[PrefixUnaryExpression]
+	propertyAccessExpressionArena     core.Arena[PropertyAccessExpression]
+	propertyAssignmentArena           core.Arena[PropertyAssignment]
+	propertySignatureDeclarationArena core.Arena[PropertySignatureDeclaration]
+	returnStatementArena              core.Arena[ReturnStatement]
+	stringLiteralArena                core.Arena[StringLiteral]
+	tokenArena                        core.Arena[Token]
+	typeAliasDeclarationArena         core.Arena[TypeAliasDeclaration]
+	typeLiteralNodeArena              core.Arena[TypeLiteralNode]
+	typeOperatorNodeArena             core.Arena[TypeOperatorNode]
+	typeParameterDeclarationArena     core.Arena[TypeParameterDeclaration]
+	typeReferenceNodeArena            core.Arena[TypeReferenceNode]
+	unionTypeNodeArena                core.Arena[UnionTypeNode]
+	variableDeclarationArena          core.Arena[VariableDeclaration]
+	variableDeclarationListArena      core.Arena[VariableDeclarationList]
+	variableStatementArena            core.Arena[VariableStatement]
 
 	nodeCount int
 	textCount int
@@ -193,12 +192,6 @@ type NamedMemberBase struct {
 
 type ObjectLiteralElementBase struct{}
 
-type FunctionOrConstructorTypeNodeBase struct {
-	TypeNodeBase
-	ModifiersBase
-	FunctionLikeBase
-}
-
 type UnionOrIntersectionTypeNodeBase struct {
 	TypeNodeBase
 	Types *TypeList
@@ -264,7 +257,6 @@ type (
 	NamedExportsNode                  = Node
 	ExportSpecifierNode               = Node
 	CallSignatureDeclarationNode      = Node
-	ConstructSignatureDeclarationNode = Node
 	IndexSignatureDeclarationNode     = Node
 	MethodSignatureDeclarationNode    = Node
 	PropertySignatureDeclarationNode  = Node
@@ -286,8 +278,6 @@ type (
 	PropertyAccessExpressionNode      = Node
 	ElementAccessExpressionNode       = Node
 	CallExpressionNode                = Node
-	NewExpressionNode                 = Node
-	MetaPropertyNode                  = Node
 	NonNullExpressionNode             = Node
 	SpreadElementNode                 = Node
 	TemplateExpressionNode            = Node
@@ -324,7 +314,6 @@ type (
 	MultiReturnTypeNodeNode           = Node
 	ParenthesizedTypeNodeNode         = Node
 	FunctionTypeNodeNode              = Node
-	ConstructorTypeNodeNode           = Node
 	TemplateHeadNode                  = Node
 	TemplateMiddleNode                = Node
 	TemplateTailNode                  = Node
@@ -490,7 +479,7 @@ type (
 	TypePredicateParameterName     = Node // Identifier
 	LeftHandSideExpression         = Node // Node with LeftHandSideExpressionBase
 	JSDocComment                   = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain
-	SignatureDeclaration           = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | FunctionExpression | ArrowFunction
+	SignatureDeclaration           = Node // CallSignatureDeclaration | MethodSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | FunctionDeclaration | FunctionExpression | ArrowFunction
 	StringLiteralLikeNode          = Node // StringLiteral | NoSubstitutionTemplateLiteral
 	NumericOrStringLikeLiteral     = Node // StringLiteralLikeNode | NumericLiteral
 	ObjectLiteralLikeNode          = Node // ObjectLiteralExpression | ObjectBindingPattern
@@ -498,10 +487,9 @@ type (
 	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
 	NamedImportsOrExports          = Node // NamedImports | NamedExports
 	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
-	CallLikeExpression             = Node // CallExpression | NewExpression | TaggedTemplateExpression | JsxOpeningLikeElement | BinaryExpression
+	CallLikeExpression             = Node // CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement | BinaryExpression
 	FunctionLikeDeclaration        = Node // FunctionDeclaration | FunctionExpression | ArrowFunction
 	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
-	CallOrNewExpression            = Node // CallExpression | NewExpression
 	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
 	AnyImportSyntax                = Node // ImportDeclaration | ImportEqualsDeclaration
 	Declaration                    = Node // Node with DeclarationBase
@@ -544,7 +532,7 @@ func (node *Token) Clone(f NodeFactoryCoercible) *Node {
 
 func IsToken(node *Node) bool {
 	switch node.Kind {
-	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindJsxText, KindJsxTextAllWhiteSpaces, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindInstanceOfKeyword, KindNewKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindThrowKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindAsyncKeyword, KindAwaitKeyword, KindBooleanKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
+	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindJsxText, KindJsxTextAllWhiteSpaces, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindInstanceOfKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindThrowKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindAsyncKeyword, KindAwaitKeyword, KindBooleanKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
 		return true
 	}
 	return false
@@ -2414,49 +2402,6 @@ func IsCallSignatureDeclaration(node *Node) bool {
 }
 
 // ──────────────────────────────────────────────────────────────────────
-// ConstructSignatureDeclaration
-// ──────────────────────────────────────────────────────────────────────
-
-type ConstructSignatureDeclaration struct {
-	NodeBase
-	DeclarationBase
-	FunctionLikeBase
-	TypeElementBase
-	TypeSyntaxBase
-}
-
-func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
-	data := f.constructSignatureDeclarationArena.New()
-	data.TypeParameters = typeParameters
-	data.Parameters = parameters
-	data.Type = typeNode
-	return f.newNode(KindConstructSignature, data)
-}
-
-func (f *NodeFactory) UpdateConstructSignatureDeclaration(node *ConstructSignatureDeclaration, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
-	if typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type {
-		return updateNode(f.NewConstructSignatureDeclaration(typeParameters, parameters, typeNode), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *ConstructSignatureDeclaration) ForEachChild(v Visitor) bool {
-	return visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type)
-}
-
-func (node *ConstructSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateConstructSignatureDeclaration(node, v.visitNodes(node.TypeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
-}
-
-func (node *ConstructSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewConstructSignatureDeclaration(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsConstructSignatureDeclaration(node *Node) bool {
-	return node.Kind == KindConstructSignature
-}
-
-// ──────────────────────────────────────────────────────────────────────
 // IndexSignatureDeclaration
 // ──────────────────────────────────────────────────────────────────────
 
@@ -3324,95 +3269,6 @@ func (node *CallExpression) Clone(f NodeFactoryCoercible) *Node {
 
 func IsCallExpression(node *Node) bool {
 	return node.Kind == KindCallExpression
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// NewExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type NewExpression struct {
-	PrimaryExpressionBase
-	CompositeBase
-	Expression    *Expression
-	TypeArguments *TypeList    // Optional
-	Arguments     *ElementList // Optional
-}
-
-func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *TypeList, arguments *ElementList) *Node {
-	data := &NewExpression{}
-	data.Expression = expression
-	data.TypeArguments = typeArguments
-	data.Arguments = arguments
-	return f.newNode(KindNewExpression, data)
-}
-
-func (f *NodeFactory) UpdateNewExpression(node *NewExpression, expression *Expression, typeArguments *TypeList, arguments *ElementList) *Node {
-	if expression != node.Expression || typeArguments != node.TypeArguments || arguments != node.Arguments {
-		return updateNode(f.NewNewExpression(expression, typeArguments, arguments), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *NewExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Expression) || visitNodeList(v, node.TypeArguments) || visitNodeList(v, node.Arguments)
-}
-
-func (node *NewExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateNewExpression(node, v.visitNode(node.Expression), v.visitNodes(node.TypeArguments), v.visitNodes(node.Arguments))
-}
-
-func (node *NewExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNewExpression(node.Expression, node.TypeArguments, node.Arguments), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsNewExpression(node *Node) bool {
-	return node.Kind == KindNewExpression
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// MetaProperty
-// ──────────────────────────────────────────────────────────────────────
-
-type MetaProperty struct {
-	PrimaryExpressionBase
-	FlowNodeBase
-	CompositeBase
-	KeywordToken Kind
-	name         *IdentifierNode
-}
-
-func (f *NodeFactory) NewMetaProperty(keywordToken Kind, name *IdentifierNode) *Node {
-	data := &MetaProperty{}
-	data.KeywordToken = keywordToken
-	data.name = name
-	return f.newNode(KindMetaProperty, data)
-}
-
-func (f *NodeFactory) UpdateMetaProperty(node *MetaProperty, keywordToken Kind, name *IdentifierNode) *Node {
-	if keywordToken != node.KeywordToken || name != node.name {
-		return updateNode(f.NewMetaProperty(keywordToken, name), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *MetaProperty) ForEachChild(v Visitor) bool {
-	return visit(v, node.name)
-}
-
-func (node *MetaProperty) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateMetaProperty(node, node.KeywordToken, v.visitNode(node.name))
-}
-
-func (node *MetaProperty) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewMetaProperty(node.KeywordToken, node.name), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *MetaProperty) Name() *DeclarationName {
-	return node.name
-}
-
-func IsMetaProperty(node *Node) bool {
-	return node.Kind == KindMetaProperty
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4871,7 +4727,8 @@ func IsParenthesizedTypeNode(node *Node) bool {
 
 type FunctionTypeNode struct {
 	TypeNodeBase
-	FunctionOrConstructorTypeNodeBase
+	ModifiersBase
+	FunctionLikeBase
 }
 
 func (f *NodeFactory) NewFunctionTypeNode(modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -4907,50 +4764,6 @@ func (node *FunctionTypeNode) Clone(f NodeFactoryCoercible) *Node {
 
 func IsFunctionTypeNode(node *Node) bool {
 	return node.Kind == KindFunctionType
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// ConstructorTypeNode
-// ──────────────────────────────────────────────────────────────────────
-
-type ConstructorTypeNode struct {
-	TypeNodeBase
-	FunctionOrConstructorTypeNodeBase
-}
-
-func (f *NodeFactory) NewConstructorTypeNode(modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
-	data := &ConstructorTypeNode{}
-	data.modifiers = modifiers
-	data.TypeParameters = typeParameters
-	data.Parameters = parameters
-	data.Type = typeNode
-	return f.newNode(KindConstructorType, data)
-}
-
-func (f *NodeFactory) UpdateConstructorTypeNode(node *ConstructorTypeNode, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || typeNode != node.Type {
-		return updateNode(f.NewConstructorTypeNode(modifiers, typeParameters, parameters, typeNode), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *ConstructorTypeNode) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) ||
-		visitNodeList(v, node.TypeParameters) ||
-		visitNodeList(v, node.Parameters) ||
-		visit(v, node.Type)
-}
-
-func (node *ConstructorTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateConstructorTypeNode(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
-}
-
-func (node *ConstructorTypeNode) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewConstructorTypeNode(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsConstructorTypeNode(node *Node) bool {
-	return node.Kind == KindConstructorType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7599,8 +7412,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*ExportSpecifier).ForEachChild(v)
 	case KindCallSignature:
 		return n.data.(*CallSignatureDeclaration).ForEachChild(v)
-	case KindConstructSignature:
-		return n.data.(*ConstructSignatureDeclaration).ForEachChild(v)
 	case KindIndexSignature:
 		return n.data.(*IndexSignatureDeclaration).ForEachChild(v)
 	case KindMethodSignature:
@@ -7629,10 +7440,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*ElementAccessExpression).ForEachChild(v)
 	case KindCallExpression:
 		return n.data.(*CallExpression).ForEachChild(v)
-	case KindNewExpression:
-		return n.data.(*NewExpression).ForEachChild(v)
-	case KindMetaProperty:
-		return n.data.(*MetaProperty).ForEachChild(v)
 	case KindNonNullExpression:
 		return n.data.(*NonNullExpression).ForEachChild(v)
 	case KindSpreadElement:
@@ -7703,8 +7510,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*ParenthesizedTypeNode).ForEachChild(v)
 	case KindFunctionType:
 		return n.data.(*FunctionTypeNode).ForEachChild(v)
-	case KindConstructorType:
-		return n.data.(*ConstructorTypeNode).ForEachChild(v)
 	case KindTemplateLiteralType:
 		return n.data.(*TemplateLiteralTypeNode).ForEachChild(v)
 	case KindTemplateLiteralTypeSpan:
@@ -8004,10 +7809,6 @@ func (n *Node) AsCallSignatureDeclaration() *CallSignatureDeclaration {
 	return n.data.(*CallSignatureDeclaration)
 }
 
-func (n *Node) AsConstructSignatureDeclaration() *ConstructSignatureDeclaration {
-	return n.data.(*ConstructSignatureDeclaration)
-}
-
 func (n *Node) AsIndexSignatureDeclaration() *IndexSignatureDeclaration {
 	return n.data.(*IndexSignatureDeclaration)
 }
@@ -8090,14 +7891,6 @@ func (n *Node) AsElementAccessExpression() *ElementAccessExpression {
 
 func (n *Node) AsCallExpression() *CallExpression {
 	return n.data.(*CallExpression)
-}
-
-func (n *Node) AsNewExpression() *NewExpression {
-	return n.data.(*NewExpression)
-}
-
-func (n *Node) AsMetaProperty() *MetaProperty {
-	return n.data.(*MetaProperty)
 }
 
 func (n *Node) AsNonNullExpression() *NonNullExpression {
@@ -8242,10 +8035,6 @@ func (n *Node) AsParenthesizedTypeNode() *ParenthesizedTypeNode {
 
 func (n *Node) AsFunctionTypeNode() *FunctionTypeNode {
 	return n.data.(*FunctionTypeNode)
-}
-
-func (n *Node) AsConstructorTypeNode() *ConstructorTypeNode {
-	return n.data.(*ConstructorTypeNode)
 }
 
 func (n *Node) AsTemplateHead() *TemplateHead {

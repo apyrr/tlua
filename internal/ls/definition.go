@@ -314,9 +314,7 @@ func tryGetSignatureDeclaration(typeChecker *checker.Checker, node *ast.Node) *a
 
 func isJsxConstructorLike(node *ast.Node) bool {
 	switch {
-	case ast.IsConstructorTypeNode(node),
-		ast.IsCallSignatureDeclaration(node),
-		ast.IsConstructSignatureDeclaration(node):
+	case ast.IsCallSignatureDeclaration(node):
 		return true
 	default:
 		return false

@@ -29,8 +29,6 @@ func TestTypeEraser(t *testing.T) {
 		{title: "FunctionExpression", input: "(function<T>(): U end)", output: "(function()\nend);"},
 		{title: "ParameterDeclaration", input: "function f(a: number, b?: boolean) end", output: "function f(a, b)\nend"},
 		{title: "CallExpression", input: "f<T>()", output: "f();"},
-		{title: "NewExpression1", input: "new f<T>()", output: "new f();"},
-		{title: "NewExpression2", input: "new f<T>", output: "new f;"},
 		{title: "NonNullExpression", input: "x!", output: "x;"},
 		{title: "TypeAssertionExpression#1", input: "<T>x", output: "x;"},
 		{title: "TypeAssertionExpression#2", input: "(<T>x).c", output: "x.c;"},

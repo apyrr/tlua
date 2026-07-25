@@ -5,7 +5,7 @@ Input::
 local a = 10;
 //// [/home/src/workspaces/project/b.d.tlua] *new* 
 interface NoName {
-    Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {
+    Profiler: ({ sampleInterval: number, maxBufferSize: number }) => {
         stop: () => Promise<any>;
     };
 }
@@ -48,7 +48,7 @@ declare function require(module: string): any;
 local a = 10;
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./a.tlua","./b.d.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"d840662a1ea9a609bf4508d2e4a1c0ca-local a = 10;",{"version":"53a40371b72faeca3dac96d61d6fb24f-interface NoName {\n    Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"skipLibCheck":true}}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./a.tlua","./b.d.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"d840662a1ea9a609bf4508d2e4a1c0ca-local a = 10;",{"version":"be4b73b48e0daa151cc1c2bd93b74e04-interface NoName {\n    Profiler: ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"skipLibCheck":true}}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -90,12 +90,12 @@ local a = 10;
     },
     {
       "fileName": "./b.d.tlua",
-      "version": "53a40371b72faeca3dac96d61d6fb24f-interface NoName {\n    Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}",
-      "signature": "53a40371b72faeca3dac96d61d6fb24f-interface NoName {\n    Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}",
+      "version": "be4b73b48e0daa151cc1c2bd93b74e04-interface NoName {\n    Profiler: ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}",
+      "signature": "be4b73b48e0daa151cc1c2bd93b74e04-interface NoName {\n    Profiler: ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "53a40371b72faeca3dac96d61d6fb24f-interface NoName {\n    Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}",
+        "version": "be4b73b48e0daa151cc1c2bd93b74e04-interface NoName {\n    Profiler: ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -104,7 +104,7 @@ local a = 10;
   "options": {
     "skipLibCheck": true
   },
-  "size": 1239
+  "size": 1235
 }
 
 tluaconfig.json::

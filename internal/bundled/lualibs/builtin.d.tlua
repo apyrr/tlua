@@ -59,7 +59,6 @@ interface Promise<T> {
 
 interface PromiseConstructor {
     readonly prototype: Promise<any>;
-    new <T>(executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>;
     resolve<T>(value: T | PromiseLike<T>): Promise<T>;
     resolve(): Promise<void>;
 }
@@ -108,9 +107,6 @@ type NonNullable<T> = T & {};
 
 /** Obtain the return type of a function type */
 type ReturnType<T extends (...: any) => any> = T extends (...: any) => infer R ? R : any;
-
-/** Obtain the instance type of a constructor function type */
-type InstanceType<T extends new (...: any) => any> = T extends new (...: any) => infer R ? R : any;
 
 /** Recursively unwrap the value type of a thenable */
 type Awaited<T> = T extends null | undefined ? T :

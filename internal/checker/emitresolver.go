@@ -167,13 +167,11 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		// Public properties/methods are visible if its parents are visible, so:
 		return r.isDeclarationVisible(node.Parent)
 
-	case ast.KindConstructSignature,
-		ast.KindCallSignature,
+	case ast.KindCallSignature,
 		ast.KindIndexSignature,
 		ast.KindParameter,
 		ast.KindModuleBlock,
 		ast.KindFunctionType,
-		ast.KindConstructorType,
 		ast.KindTypeLiteral,
 		ast.KindTypeReference,
 		ast.KindArrayType,

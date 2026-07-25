@@ -167,14 +167,17 @@ interface Derived extends Base {
   d: number;
 >d : Symbol(Derived.d, Decl(tluaNoThisCoexistence.tlua, 58, 32))
 }
-declare K: { new (): Derived };
+declare K: { make(): Derived };
 >K : Symbol(K, Decl(tluaNoThisCoexistence.tlua, 61, 7))
+>make : Symbol(make, Decl(tluaNoThisCoexistence.tlua, 61, 12))
 >Derived : Symbol(Derived, Decl(tluaNoThisCoexistence.tlua, 57, 1))
 
-local inst: Derived = new K();
+local inst: Derived = K.make();
 >inst : Symbol(inst, Decl(tluaNoThisCoexistence.tlua, 62, 5))
 >Derived : Symbol(Derived, Decl(tluaNoThisCoexistence.tlua, 57, 1))
+>K.make : Symbol(make, Decl(tluaNoThisCoexistence.tlua, 61, 12))
 >K : Symbol(K, Decl(tluaNoThisCoexistence.tlua, 61, 7))
+>make : Symbol(make, Decl(tluaNoThisCoexistence.tlua, 61, 12))
 
 use(narrow);
 >use : Symbol(use, Decl(tluaNoThisCoexistence.tlua, 0, 0))

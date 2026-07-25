@@ -1,13 +1,13 @@
 // @allowUnreachableCode: false
 function a()
-    throw new Error("");
+    throw "";
 
     // @ts-ignore
     console.log("unreachable");
 end
 
 function b()
-    throw new Error("");
+    throw "";
 
     // @ts-expect-error
     console.log("unreachable");

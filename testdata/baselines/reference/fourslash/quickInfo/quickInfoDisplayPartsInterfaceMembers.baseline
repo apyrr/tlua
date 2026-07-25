@@ -62,14 +62,14 @@
 //       ^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local anotherInstance: I
+// | local anotherInstance: any
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                             ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local iInstance: new () => I
+// | local iInstance: () => string
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -278,7 +278,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\nlocal anotherInstance: I\n```\n"
+        "value": "```tlua\nlocal anotherInstance: any\n```\n"
       },
       "range": {
         "start": {
@@ -289,8 +289,7 @@
           "line": 9,
           "character": 21
         }
-      },
-      "canIncreaseVerbosity": true
+      }
     }
   },
   {
@@ -306,7 +305,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\nlocal iInstance: new () => I\n```\n"
+        "value": "```tlua\nlocal iInstance: () => string\n```\n"
       },
       "range": {
         "start": {
@@ -317,8 +316,7 @@
           "line": 9,
           "character": 37
         }
-      },
-      "canIncreaseVerbosity": true
+      }
     }
   }
 ]

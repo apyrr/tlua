@@ -6,8 +6,8 @@ class Base {
 
 declare BaseFactory: new() => Base & { c: string }
 >BaseFactory : Symbol(BaseFactory, Decl(checkInheritedProperty.tlua, 3, 7))
->Base : Symbol(Base)
->c : Symbol(c, Decl(checkInheritedProperty.tlua, 3, 38))
+>new : Symbol(new)
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 
 class Derived extends BaseFactory {
 >BaseFactory : Symbol(BaseFactory, Decl(checkInheritedProperty.tlua, 3, 7))

@@ -11,9 +11,13 @@ import (
 func (ch *PseudoChecker) GetReturnTypeOfSignature(signatureNode *ast.Node) *PseudoType {
 	switch signatureNode.Kind {
 	case ast.KindFunctionDeclaration,
-		ast.KindMethodSignature, ast.KindCallSignature, ast.KindConstructSignature,
-		ast.KindIndexSignature, ast.KindFunctionType, ast.KindConstructorType,
-		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindJSDocSignature:
+		ast.KindMethodSignature,
+		ast.KindCallSignature,
+		ast.KindIndexSignature,
+		ast.KindFunctionType,
+		ast.KindFunctionExpression,
+		ast.KindArrowFunction,
+		ast.KindJSDocSignature:
 		return ch.createReturnFromSignature(signatureNode)
 	default:
 		debug.FailBadSyntaxKind(signatureNode, "Node needs to be an inferrable node")

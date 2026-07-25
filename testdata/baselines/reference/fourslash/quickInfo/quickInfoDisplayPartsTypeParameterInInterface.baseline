@@ -19,7 +19,7 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) U in new new <U>(a: U, b: T): U
+// | (type parameter) U in I<T>.new<U>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -33,7 +33,7 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) U in new new <U>(a: U, b: T): U
+// | (type parameter) U in I<T>.new<U>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -54,7 +54,7 @@
 //                          ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) U in new new <U>(a: U, b: T): U
+// | (type parameter) U in I<T>.new<U>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -171,7 +171,7 @@
 //     ^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local iVal: new <"hello">(a: "hello", b: string) => "hello"
+// | local iVal: <"hello">(a: "hello", b: string) => "hello"
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -224,7 +224,7 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) U extends I<string> in new new <U extends I<string>>(a: U, b: T): U
+// | (type parameter) U extends I<string> in I1<T extends I<string>>.new<U extends I<string>>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -245,7 +245,7 @@
 //                                  ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) U extends I<string> in new new <U extends I<string>>(a: U, b: T): U
+// | (type parameter) U extends I<string> in I1<T extends I<string>>.new<U extends I<string>>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -266,7 +266,7 @@
 //                                            ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) U extends I<string> in new new <U extends I<string>>(a: U, b: T): U
+// | (type parameter) U extends I<string> in I1<T extends I<string>>.new<U extends I<string>>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -404,7 +404,7 @@
 //     ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | local iVal1: new <I<string>>(a: I<string>, b: I<string>) => I<string>
+// | local iVal1: <I<string>>(a: I<string>, b: I<string>) => I<string>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -542,7 +542,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) U in new new <U>(a: U, b: T): U\n```\n"
+        "value": "```tlua\n(type parameter) U in I<T>.new<U>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -596,7 +596,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) U in new new <U>(a: U, b: T): U\n```\n"
+        "value": "```tlua\n(type parameter) U in I<T>.new<U>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -677,7 +677,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) U in new new <U>(a: U, b: T): U\n```\n"
+        "value": "```tlua\n(type parameter) U in I<T>.new<U>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -1111,7 +1111,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\nlocal iVal: new <\"hello\">(a: \"hello\", b: string) => \"hello\"\n```\n"
+        "value": "```tlua\nlocal iVal: <\"hello\">(a: \"hello\", b: string) => \"hello\"\n```\n"
       },
       "range": {
         "start": {
@@ -1304,7 +1304,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) U extends I<string> in new new <U extends I<string>>(a: U, b: T): U\n```\n"
+        "value": "```tlua\n(type parameter) U extends I<string> in I1<T extends I<string>>.new<U extends I<string>>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -1388,7 +1388,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) U extends I<string> in new new <U extends I<string>>(a: U, b: T): U\n```\n"
+        "value": "```tlua\n(type parameter) U extends I<string> in I1<T extends I<string>>.new<U extends I<string>>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -1472,7 +1472,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\n(type parameter) U extends I<string> in new new <U extends I<string>>(a: U, b: T): U\n```\n"
+        "value": "```tlua\n(type parameter) U extends I<string> in I1<T extends I<string>>.new<U extends I<string>>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -2004,7 +2004,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tlua\nlocal iVal1: new <I<string>>(a: I<string>, b: I<string>) => I<string>\n```\n"
+        "value": "```tlua\nlocal iVal1: <I<string>>(a: I<string>, b: I<string>) => I<string>\n```\n"
       },
       "range": {
         "start": {

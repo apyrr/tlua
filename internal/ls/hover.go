@@ -144,7 +144,7 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 // declaration JSDoc, alias target JSDoc) and returns the first non-empty result, formatted for
 // contentFormat. commentOnly restricts the result to the JSDoc summary, excluding the @tag section.
 func (l *LanguageService) getDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, declaration *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
-	documentation := l.documentationFromSignature(c, symbol, getCallOrNewExpression(node), node, contentFormat, commentOnly)
+	documentation := l.documentationFromSignature(c, symbol, getCallExpression(node), node, contentFormat, commentOnly)
 	if documentation != "" {
 		return documentation
 	}
@@ -177,7 +177,7 @@ func (l *LanguageService) documentationFromSignature(c *checker.Checker, symbol 
 	if declaration == nil {
 		return ""
 	}
-	if ast.IsCallSignatureDeclaration(declaration) || ast.IsConstructSignatureDeclaration(declaration) {
+	if ast.IsCallSignatureDeclaration(declaration) {
 		return l.getDocumentationFromDeclaration(c, symbol, declaration, location, contentFormat, commentOnly)
 	}
 	return ""
@@ -317,8 +317,6 @@ func shouldGetType(node *ast.Node) bool {
 		return !(node.Flags&ast.NodeFlagsJSDoc != 0 && ast.IsDeclarationName(node)) && !ast.IsLabelName(node) && !ast.IsTagName(node) && !ast.IsConstTypeReference(node.Parent)
 	case ast.KindThisKeyword, ast.KindSelfKeyword, ast.KindSuperKeyword, ast.KindNamedTupleMember:
 		return true
-	case ast.KindMetaProperty:
-		return ast.IsImportMeta(node)
 	default:
 		return false
 	}
@@ -379,20 +377,11 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			dpw.Write(c.SignatureToStringEx(sig, enclosing, flags, vc))
 			return
 		}
-		isConstructor := sig.Flags()&checker.SignatureFlagsConstruct != 0 && flags&checker.TypeFormatFlagsWriteCallStyleSignature == 0
 		var sigOutput ast.Kind
 		if flags&checker.TypeFormatFlagsWriteArrowStyleSignature != 0 {
-			if isConstructor {
-				sigOutput = ast.KindConstructorType
-			} else {
-				sigOutput = ast.KindFunctionType
-			}
+			sigOutput = ast.KindFunctionType
 		} else {
-			if isConstructor {
-				sigOutput = ast.KindConstructSignature
-			} else {
-				sigOutput = ast.KindCallSignature
-			}
+			sigOutput = ast.KindCallSignature
 		}
 		emitContext := printer.NewEmitContext()
 		idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
@@ -613,7 +602,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				}
 				dpw.WritePunctuation(": ")
 			}
-			if callNode := getCallOrNewExpression(node); callNode != nil {
+			if callNode := getCallExpression(node); callNode != nil {
 				flags := typeFormatFlags | checker.TypeFormatFlagsWriteTypeArgumentsOfSignature | checker.TypeFormatFlagsWriteArrowStyleSignature
 				if ast.IsCallExpression(callNode) {
 					flags |= checker.TypeFormatFlagsWriteCallStyleSignature
@@ -675,13 +664,9 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			} else if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
 				writeNewLine()
 				dpw.WriteKeyword("this")
-			} else if node.Kind == ast.KindConstructorKeyword && ast.IsConstructSignatureDeclaration(node.Parent) {
-				setDeclaration(node.Parent)
-				signatures := []*checker.Signature{c.GetSignatureFromDeclaration(node.Parent)}
-				writeSignatures(signatures, "constructor ", false, symbol)
 			} else {
 				var signatures []*checker.Signature
-				if flags&ast.SymbolFlagsClass != 0 && getCallOrNewExpression(node) != nil {
+				if flags&ast.SymbolFlagsClass != 0 && getCallExpression(node) != nil {
 					signatures = getSignaturesAtLocation(c, symbol, checker.SignatureKindConstruct, node)
 				}
 				if len(signatures) == 1 {
@@ -751,9 +736,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 					declaration := decl.Parent
 					if ast.IsFunctionLike(declaration) {
 						dpw.WriteKeyword(" in ")
-						if declaration.Kind == ast.KindConstructSignature {
-							dpw.WriteKeyword("new ")
-						} else if declaration.Kind != ast.KindCallSignature && declaration.Name() != nil {
+						if declaration.Kind != ast.KindCallSignature && declaration.Name() != nil {
 							writeSymbolClassified(declaration.Symbol(), container, ast.SymbolFlagsNone, symbolFormatFlags)
 						}
 						sig := c.GetSignatureFromDeclaration(declaration)
@@ -807,13 +790,7 @@ func getNodeForQuickInfo(node *ast.Node) *ast.Node {
 	if node.Parent == nil {
 		return node
 	}
-	if ast.IsNewExpression(node.Parent) && node.Pos() == node.Parent.Pos() {
-		return node.Parent.Expression()
-	}
 	if ast.IsNamedTupleMember(node.Parent) && node.Pos() == node.Parent.Pos() {
-		return node.Parent
-	}
-	if ast.IsImportMeta(node.Parent) && node.Parent.Name() == node {
 		return node.Parent
 	}
 	if ast.IsJsxNamespacedName(node.Parent) {
@@ -836,7 +813,7 @@ func getSymbolAtLocationForQuickInfo(c *checker.Checker, node *ast.Node) *ast.Sy
 func getSignaturesAtLocation(c *checker.Checker, symbol *ast.Symbol, kind checker.SignatureKind, node *ast.Node) []*checker.Signature {
 	signatures := c.GetSignaturesOfType(c.RemoveMissingOrUndefinedType(c.GetTypeOfSymbol(symbol)), kind)
 	if len(signatures) > 1 || len(signatures) == 1 && len(signatures[0].TypeParameters()) != 0 {
-		if callNode := getCallOrNewExpression(node); callNode != nil {
+		if callNode := getCallExpression(node); callNode != nil {
 			// We have a call or new expression, return the resolved signature
 			return []*checker.Signature{c.GetResolvedSignature(callNode)}
 		}
@@ -844,14 +821,14 @@ func getSignaturesAtLocation(c *checker.Checker, symbol *ast.Symbol, kind checke
 	return signatures
 }
 
-func getCallOrNewExpression(node *ast.Node) *ast.Node {
+func getCallExpression(node *ast.Node) *ast.Node {
 	if ast.IsSourceFile(node) {
 		return nil
 	}
 	if ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node {
 		node = node.Parent
 	}
-	if (ast.IsCallExpression(node.Parent) || ast.IsNewExpression(node.Parent)) && node.Parent.Expression() == node {
+	if ast.IsCallExpression(node.Parent) && node.Parent.Expression() == node {
 		return node.Parent
 	}
 	return nil
@@ -911,7 +888,7 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		}
 	}
 	if symbol := node.Symbol(); symbol != nil && node.Parent != nil {
-		if ast.IsFunctionDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsConstructSignatureDeclaration(node) {
+		if ast.IsFunctionDeclaration(node) || ast.IsMethodSignatureDeclaration(node) {
 			firstSignature := core.Find(symbol.Declarations, ast.IsFunctionLike)
 			if firstSignature != nil && node != firstSignature {
 				if jsDoc := getJSDocOrTag(c, firstSignature); jsDoc != nil {

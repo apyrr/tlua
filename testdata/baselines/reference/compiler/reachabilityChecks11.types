@@ -86,9 +86,7 @@ function f1(x)
 
         return;
     else
-        throw new Error("123");
->new Error("123") : any
->Error : any
+        throw "123";
 >"123" : "123"
 
     end
@@ -139,9 +137,8 @@ function f4()
     if true then
 >true : true
 
-        throw new Error();
->new Error() : any
->Error : any
+        throw "";
+>"" : ""
 
     end
     local x = 1;

@@ -27,7 +27,6 @@ func SyntaxMayBeASICandidate(kind ast.Kind) bool {
 
 func SyntaxRequiresTrailingCommaOrSemicolonOrASI(kind ast.Kind) bool {
 	return kind == ast.KindCallSignature ||
-		kind == ast.KindConstructSignature ||
 		kind == ast.KindIndexSignature ||
 		kind == ast.KindPropertySignature ||
 		kind == ast.KindMethodSignature

@@ -123,7 +123,6 @@ export const textToKeywordObj: Record<string, KeywordSyntaxKind> = {
     module: SyntaxKind.ModuleKeyword,
     namespace: SyntaxKind.NamespaceKeyword,
     never: SyntaxKind.NeverKeyword,
-    new: SyntaxKind.NewKeyword,
     null: SyntaxKind.NilKeyword,
     number: SyntaxKind.NumberKeyword,
     table: SyntaxKind.ObjectKeyword,

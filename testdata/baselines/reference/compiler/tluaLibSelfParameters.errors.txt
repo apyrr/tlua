@@ -41,7 +41,7 @@ tluaLibSelfParameters.tlua(49,8): error TLUA2555: Expected at least 2 arguments,
     text.upper();
          ~~~~~
 !!! error TLUA2554: Expected 1 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:278:11: An argument for 'self' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:274:11: An argument for 'self' was not provided.
     text.sub(1, 5);
              ~
 !!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
@@ -69,7 +69,7 @@ tluaLibSelfParameters.tlua(49,8): error TLUA2555: Expected at least 2 arguments,
     buffer.put("a");
            ~~~
 !!! error TLUA2555: Expected at least 2 arguments, but got 1.
-!!! related TLUA6210 lib.luajit.d.tlua:617:32: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:613:32: An argument for 'value' was not provided.
     
     declare callback: LuaCallback;
     callback:set(function() return; end);

@@ -153,14 +153,24 @@ func IsInTypeQuery(node *ast.Node) bool {
 
 func canHaveLocals(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindArrowFunction, ast.KindBlock, ast.KindCallSignature,
-		ast.KindConditionalType, ast.KindConstructorType,
-		ast.KindConstructSignature, ast.KindForOfStatement,
-		ast.KindNumericForStatement, ast.KindRepeatStatement, ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindIndexSignature,
-		ast.KindJSDocSignature, ast.KindMappedType,
-		ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindSourceFile,
-		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
+	case ast.KindArrowFunction,
+		ast.KindBlock,
+		ast.KindCallSignature,
+		ast.KindConditionalType,
+		ast.KindForOfStatement,
+		ast.KindNumericForStatement,
+		ast.KindRepeatStatement,
+		ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression,
+		ast.KindFunctionType,
+		ast.KindIndexSignature,
+		ast.KindJSDocSignature,
+		ast.KindMappedType,
+		ast.KindMethodSignature,
+		ast.KindModuleDeclaration,
+		ast.KindSourceFile,
+		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration:
 		return true
 	}
 	return false
@@ -946,7 +956,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return ast.IsCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || ast.IsJsxOpeningLikeElement(node)
+	return ast.IsCallExpression(node) || ast.IsTaggedTemplateExpression(node) || ast.IsJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {

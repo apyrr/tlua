@@ -603,11 +603,6 @@ func (l *LanguageService) getCompletionData(
 				node = parent.Name()
 			case ast.KindImportType:
 				node = parent
-			case ast.KindMetaProperty:
-				node = lsutil.GetFirstToken(parent, file)
-				if node.Kind != ast.KindImportKeyword && node.Kind != ast.KindNewKeyword {
-					panic("Unexpected token kind: " + node.Kind.String())
-				}
 			default:
 				// There is nothing that precedes the dot, so this likely just a stray character
 				// or leading into a '...' token. Just bail out instead.
@@ -2679,8 +2674,6 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		default:
 			return nil
 		}
-	case ast.KindNewKeyword:
-		return typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
 	case ast.KindOpenBraceToken:
 		if ast.IsJsxExpression(parent) && !ast.IsJsxElement(parent.Parent) && !ast.IsJsxFragment(parent.Parent) {
 			return typeChecker.GetContextualTypeForJsxAttribute(parent.Parent)
@@ -3230,7 +3223,7 @@ func computeCommitCharactersAndIsNewIdentifier(
 		switch containingNodeKind {
 		// func( a, |
 		// new C(a, |
-		case ast.KindCallExpression, ast.KindNewExpression:
+		case ast.KindCallExpression:
 			expression := contextToken.Parent.Expression()
 			// func\n(a, |
 			if getLineOfPosition(file, expression.End()) != getLineOfPosition(file, position) {
@@ -3255,7 +3248,7 @@ func computeCommitCharactersAndIsNewIdentifier(
 		switch containingNodeKind {
 		// func( |
 		// new C(a|
-		case ast.KindCallExpression, ast.KindNewExpression:
+		case ast.KindCallExpression:
 			expression := contextToken.Parent.Expression()
 			// func\n( |
 			if getLineOfPosition(file, expression.End()) != getLineOfPosition(file, position) {

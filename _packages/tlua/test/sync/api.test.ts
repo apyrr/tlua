@@ -976,9 +976,6 @@ function add(a: number, b: number, ...rest: number[]): number return a + b end
 interface Widget {
     value: string;
 }
-declare MyClass: {
-    new (): Widget;
-};
 local holder = {
     getValue = function(): string return "" end,
 };
@@ -1158,27 +1155,6 @@ end
             assert.ok(sig.hasRestParameter);
             assert.ok(!sig.isConstruct);
             assert.ok(!sig.isAbstract);
-        }
-        finally {
-            api.close();
-        }
-    });
-
-    test("getSignaturesOfType - construct signatures", () => {
-        const api = spawnAPI(checkerFiles);
-        try {
-            const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
-            const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = checkerFiles["/src/main.tlua"];
-            const classPos = src.indexOf("MyClass");
-            const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", classPos);
-            assert.ok(symbol);
-            const type = project.checker.getTypeOfSymbol(symbol);
-            assert.ok(type);
-            const constructSigs = project.checker.getSignaturesOfType(type, SignatureKind.Construct);
-            assert.ok(constructSigs.length > 0);
-            const sig = constructSigs[0];
-            assert.ok(sig.isConstruct);
         }
         finally {
             api.close();
@@ -2402,12 +2378,12 @@ describe("Checker - getTypePredicateOfSignature", () => {
     test("returns type predicate for 'asserts x is T'", () => {
         const api = spawnAPI({
             "/tluaconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
-            "/src/main.tlua": `function assertIsString(x: unknown): asserts x is string if (typeof x ~= "string") then throw new Error(); end end`,
+            "/src/main.tlua": `function assertIsString(x: unknown): asserts x is string if (typeof x ~= "string") then throw "not a string"; end end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
             const project = snapshot.getProject("/tluaconfig.json")!;
-            const src = `function assertIsString(x: unknown): asserts x is string if (typeof x ~= "string") then throw new Error(); end end`;
+            const src = `function assertIsString(x: unknown): asserts x is string if (typeof x ~= "string") then throw "not a string"; end end`;
             const pos = src.indexOf("assertIsString(");
             const symbol = project.checker.getSymbolAtPosition("/src/main.tlua", pos);
             assert.ok(symbol);

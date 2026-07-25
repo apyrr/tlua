@@ -338,7 +338,6 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			!ast.IsPropertyAccessOrQualifiedName(node.Parent) &&
 			!ast.IsLabelName(node) &&
 			!ast.IsGlobalScopeAugmentation(node.Parent) &&
-			!ast.IsMetaProperty(node.Parent) &&
 			!isImportStatementName(node) &&
 			!isExportStatementName(node) &&
 			!isIntrinsicJsxTag(node, walker.currentSourceFile) {

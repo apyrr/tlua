@@ -2061,7 +2061,7 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkParameter(node)
 	case ast.KindPropertySignature:
 		c.checkPropertySignature(node)
-	case ast.KindConstructorType, ast.KindFunctionType, ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature:
+	case ast.KindFunctionType, ast.KindCallSignature, ast.KindIndexSignature:
 		c.checkSignatureDeclaration(node)
 	case ast.KindMethodSignature:
 		c.checkMethodSignature(node)
@@ -2267,7 +2267,7 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 	c.currentNode = node
 	c.instantiationCount = 0
 	switch node.Kind {
-	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression, ast.KindJsxOpeningElement:
+	case ast.KindCallExpression, ast.KindTaggedTemplateExpression, ast.KindJsxOpeningElement:
 		// These node kinds are deferred checked when overload resolution fails. To save on work,
 		// we ensure the arguments are checked just once in a deferred way.
 		c.resolveUntypedCall(node)
@@ -2442,9 +2442,6 @@ func (c *Checker) checkParameter(node *ast.Node) {
 		if slices.Index(fn.Parameters(), node) != 0 {
 			c.error(node, diagnostics.A_0_parameter_must_be_the_first_parameter, paramName)
 		}
-		if ast.IsConstructSignatureDeclaration(fn) || ast.IsConstructorTypeNode(fn) {
-			c.error(node, diagnostics.A_constructor_cannot_have_a_this_parameter)
-		}
 		if ast.IsArrowFunction(fn) {
 			c.error(node, diagnostics.An_arrow_function_cannot_have_a_this_parameter)
 		}
@@ -2481,7 +2478,7 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 	switch node.Kind {
 	case ast.KindIndexSignature:
 		c.checkGrammarIndexSignature(node.AsIndexSignatureDeclaration())
-	case ast.KindFunctionType, ast.KindFunctionDeclaration, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature:
+	case ast.KindFunctionType, ast.KindFunctionDeclaration, ast.KindCallSignature:
 		c.checkGrammarFunctionLikeDeclaration(node)
 	}
 	c.checkTypeParameters(node.TypeParameters())
@@ -2493,8 +2490,6 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 	}
 	if c.noImplicitAny && returnTypeNode == nil {
 		switch node.Kind {
-		case ast.KindConstructSignature:
-			c.error(node, diagnostics.Construct_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type)
 		case ast.KindCallSignature:
 			c.error(node, diagnostics.Call_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type)
 		}
@@ -2599,7 +2594,7 @@ func (c *Checker) isPackArgumentForNonPackParameter(typeParameter *Type, argumen
 func (c *Checker) getDeprecatedSuggestionNode(node *ast.Node) *ast.Node {
 	node = ast.SkipParentheses(node)
 	switch node.Kind {
-	case ast.KindCallExpression, ast.KindNewExpression:
+	case ast.KindCallExpression:
 		return c.getDeprecatedSuggestionNode(node.Expression())
 	case ast.KindTaggedTemplateExpression:
 		return c.getDeprecatedSuggestionNode(node.AsTaggedTemplateExpression().Tag)
@@ -5299,8 +5294,12 @@ func (c *Checker) checkUnusedIdentifiers(potentiallyUnusedIdentifiers []*ast.Nod
 				c.checkUnusedLocalsAndParameters(node)
 			}
 			c.checkUnusedTypeParameters(node)
-		case ast.KindMethodSignature, ast.KindCallSignature, ast.KindConstructSignature, ast.KindFunctionType, ast.KindConstructorType,
-			ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindInterfaceDeclaration:
+		case ast.KindMethodSignature,
+			ast.KindCallSignature,
+			ast.KindFunctionType,
+			ast.KindTypeAliasDeclaration,
+			ast.KindJSTypeAliasDeclaration,
+			ast.KindInterfaceDeclaration:
 			c.checkUnusedTypeParameters(node)
 		case ast.KindInferType:
 			c.checkUnusedInferTypeParameter(node)
@@ -5570,8 +5569,6 @@ func (c *Checker) getQuickTypeOfExpression(node *ast.Node) *Type {
 		} else {
 			result = c.getReturnTypeOfSingleNonGenericSignature(c.checkNonNullExpression(expr.Expression()), SignatureKindCall)
 		}
-	case ast.IsNewExpression(expr):
-		result = c.getReturnTypeOfSingleNonGenericSignature(c.checkNonNullExpression(expr.Expression()), SignatureKindConstruct)
 	case ast.IsAssertionExpression(expr) && !ast.IsConstTypeReference(expr.Type()):
 		result = c.getTypeFromTypeNode(expr.Type())
 	case ast.IsLiteralExpression(node) || ast.IsBooleanLiteral(node):
@@ -5948,8 +5945,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkIndexedAccess(node, checkMode)
 	case ast.KindCallExpression:
 		return c.checkCallExpression(node, checkMode)
-	case ast.KindNewExpression:
-		return c.checkCallExpression(node, checkMode)
 	case ast.KindTaggedTemplateExpression:
 		return c.checkTaggedTemplateExpression(node)
 	case ast.KindParenthesizedExpression:
@@ -5964,8 +5959,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkExpressionWithTypeArguments(node)
 	case ast.KindSatisfiesExpression:
 		return c.checkSatisfiesExpression(node)
-	case ast.KindMetaProperty:
-		return c.checkMetaProperty(node)
 	case ast.KindDeleteExpression:
 		return c.checkDeleteExpression(node)
 	case ast.KindVoidExpression:
@@ -6246,16 +6239,6 @@ func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type
 	if node.Expression().Kind == ast.KindSuperKeyword {
 		return c.voidType
 	}
-	if ast.IsNewExpression(node) {
-		declaration := signature.declaration
-		if declaration != nil && !ast.IsConstructSignatureDeclaration(declaration) && !ast.IsConstructorTypeNode(declaration) {
-			// When resolved signature is a call signature (and not a construct signature) the result type is any
-			if c.noImplicitAny {
-				c.error(node, diagnostics.X_new_expression_whose_target_lacks_a_construct_signature_implicitly_has_an_any_type)
-			}
-			return c.anyType
-		}
-	}
 	// `require("./m")` yields the module's chunk value, which no declared
 	// overload can spell.
 	if t := c.checkLuaRequireCall(node); t != nil {
@@ -6426,8 +6409,6 @@ func (c *Checker) resolveSignature(node *ast.Node, candidatesOutArray *[]*Signat
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.resolveCallExpression(node, candidatesOutArray, checkMode)
-	case ast.KindNewExpression:
-		return c.resolveNewExpression(node, candidatesOutArray, checkMode)
 	case ast.KindTaggedTemplateExpression:
 		return c.resolveTaggedTemplateExpression(node, candidatesOutArray, checkMode)
 	case ast.KindJsxOpeningFragment, ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
@@ -6521,69 +6502,6 @@ func (c *Checker) resolveCallExpression(node *ast.Node, candidatesOutArray *[]*S
 		return c.resolvingSignature
 	}
 	return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, callChainFlags, nil)
-}
-
-func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
-	expressionType := c.checkNonNullExpression(node.Expression())
-	if expressionType == c.silentNeverType {
-		return c.silentNeverSignature
-	}
-	// If expressionType's apparent type(section 3.8.1) is an object type with one or
-	// more construct signatures, the expression is processed in the same manner as a
-	// function call, but using the construct signatures as the initial set of candidate
-	// signatures for overload resolution. The result type of the function call becomes
-	// the result type of the operation.
-	expressionType = c.getApparentType(expressionType)
-	if c.isErrorType(expressionType) {
-		// Another error has already been reported
-		return c.resolveErrorCall(node)
-	}
-	// TS 1.0 spec: 4.11
-	// If expressionType is of type Any, Args can be any argument
-	// list and the result of the operation is of type Any.
-	if IsTypeAny(expressionType) {
-		if len(node.TypeArguments()) != 0 {
-			c.error(node, diagnostics.Untyped_function_calls_may_not_accept_type_arguments)
-		}
-		return c.resolveUntypedCall(node)
-	}
-	// Technically, this signatures list may be incomplete. We are taking the apparent type,
-	// but we are not including construct signatures that may have been added to the Object or
-	// Function interface, since they have none by default. This is a bit of a leap of faith
-	// that the user will not add any.
-	constructSignatures := c.getSignaturesOfType(expressionType, SignatureKindConstruct)
-	if len(constructSignatures) != 0 {
-		// If the expression is a class of abstract type, or an abstract construct signature,
-		// then it cannot be instantiated.
-		// In the case of a merged class-module or class-interface declaration,
-		// only the class declaration node will have the Abstract flag set.
-		if someSignature(constructSignatures, func(sig *Signature) bool {
-			return sig.flags&SignatureFlagsAbstract != 0
-		}) {
-			c.error(node, diagnostics.Cannot_create_an_instance_of_an_abstract_class)
-			return c.resolveErrorCall(node)
-		}
-		return c.resolveCall(node, constructSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
-	}
-	// If expressionType's apparent type is an object type with no construct signatures but
-	// one or more call signatures, the expression is processed as a function call. A compile-time
-	// error occurs if the result of the function call is not Void. The type of the result of the
-	// operation is Any. It is an error to have a Void this type.
-	callSignatures := c.getSignaturesOfType(expressionType, SignatureKindCall)
-	if len(callSignatures) != 0 {
-		signature := c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
-		if !c.noImplicitAny {
-			if signature.declaration != nil && c.getReturnTypeOfSignature(signature) != c.voidType {
-				c.error(node, diagnostics.Only_a_void_function_can_be_called_with_the_new_keyword)
-			}
-			if c.getThisTypeOfSignature(signature) == c.voidType {
-				c.error(node, diagnostics.A_function_that_is_called_with_the_new_keyword_cannot_have_a_this_type_that_is_void)
-			}
-		}
-		return signature
-	}
-	c.invocationError(node.Expression(), expressionType, SignatureKindConstruct, nil)
-	return c.resolveErrorCall(node)
 }
 
 func someSignature(signatures []*Signature, f func(s *Signature) bool) bool {
@@ -6960,9 +6878,6 @@ func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *S
 		argCount = core.IfElse(effectiveMinimumArguments == 0, len(args), 1)
 		effectiveParameterCount = core.IfElse(len(args) == 0, effectiveParameterCount, 1) // class may have argumentless ctor functions - still resolve ctor and compare vs props member type
 		effectiveMinimumArguments = min(effectiveMinimumArguments, 1)                     // sfc may specify context argument - handled by framework and not typechecked
-	case ast.IsNewExpression(node) && node.ArgumentList() == nil:
-		// This only happens when we have something of the form: 'new C'
-		return c.getMinArgumentCount(signature) == 0
 	default:
 		if signatureHelpTrailingComma {
 			argCount = len(args) + 1
@@ -7058,10 +6973,10 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 		return c.checkApplicableSignatureForJsxCallLikeElement(node, signature, relation, checkMode, reportErrors, diagnosticOutput)
 	}
 	thisType := c.getThisTypeOfSignature(signature)
-	if thisType != nil && thisType != c.voidType && !(ast.IsNewExpression(node) || ast.IsCallExpression(node) && ast.IsSuperProperty(node.Expression())) {
+	if thisType != nil && thisType != c.voidType && !(ast.IsCallExpression(node) && ast.IsSuperProperty(node.Expression())) {
 		// If the called expression is not of the form `x.f` or `x["f"]`, then sourceType = voidType
 		// If the signature's 'this' type is voidType, then the check is skipped -- anything is compatible.
-		// If the expression is a new expression or super call expression, then the check is skipped.
+		// If the expression is a super call expression, then the check is skipped.
 		thisArgumentNode := c.getThisArgumentOfCall(node)
 		thisArgumentType := c.getThisArgumentType(thisArgumentNode)
 		var errorNode *ast.Node
@@ -7586,17 +7501,11 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 	default:
 		parameterRange = strconv.Itoa(minCount)
 	}
-	isVoidPromiseError := !hasRestParameter && parameterRange == "1" && len(args) == 0 && c.isPromiseResolveArityError(node)
 	errorNode := getErrorNodeForCallNode(node)
-	if isVoidPromiseError && ast.IsInJSFile(node) {
-		return NewDiagnosticForNode(errorNode, diagnostics.Expected_1_argument_but_got_0_new_Promise_needs_a_JSDoc_hint_to_produce_a_resolve_that_can_be_called_without_arguments)
-	}
 	var message *diagnostics.Message
 	switch {
 	case hasRestParameter:
 		message = diagnostics.Expected_at_least_0_arguments_but_got_1
-	case isVoidPromiseError:
-		message = diagnostics.Expected_0_arguments_but_got_1_Did_you_forget_to_include_void_in_your_type_argument_to_Promise
 	default:
 		message = diagnostics.Expected_0_arguments_but_got_1
 	}
@@ -7659,26 +7568,6 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		}
 		return diagnostic
 	}
-}
-
-func (c *Checker) isPromiseResolveArityError(node *ast.Node) bool {
-	if !ast.IsCallExpression(node) || !ast.IsIdentifier(node.Expression()) {
-		return false
-	}
-	symbol := c.resolveName(node.Expression(), node.Expression().Text(), ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
-	if symbol == nil {
-		return false
-	}
-	decl := symbol.ValueDeclaration
-	if decl == nil || !ast.IsParameterDeclaration(decl) || !ast.IsFunctionExpressionOrArrowFunction(decl.Parent) || !ast.IsNewExpression(decl.Parent.Parent) || !ast.IsIdentifier(decl.Parent.Parent.Expression()) {
-		return false
-	}
-	globalPromiseSymbol := c.getGlobalPromiseConstructorSymbolOrNil()
-	if globalPromiseSymbol == nil {
-		return false
-	}
-	constructorSymbol := c.getResolvedSymbol(decl.Parent.Parent.Expression())
-	return constructorSymbol == globalPromiseSymbol
 }
 
 func getErrorNodeForCallNode(node *ast.Node) *ast.Node {
@@ -7753,7 +7642,7 @@ func (c *Checker) resolveUntypedCall(node *ast.Node) *Signature {
 		c.checkExpression(node.Attributes())
 	case ast.KindBinaryExpression:
 		c.checkExpression(node.AsBinaryExpression().Left)
-	case ast.KindCallExpression, ast.KindNewExpression:
+	case ast.KindCallExpression:
 		for _, argument := range node.Arguments() {
 			c.checkExpression(argument)
 		}
@@ -8454,30 +8343,6 @@ func (c *Checker) checkSatisfiesExpression(node *ast.Node) *Type {
 	return exprType
 }
 
-func (c *Checker) checkMetaProperty(node *ast.Node) *Type {
-	c.checkGrammarMetaProperty(node.AsMetaProperty())
-	switch node.AsMetaProperty().KeywordToken {
-	case ast.KindNewKeyword:
-		return c.checkNewTargetMetaProperty(node)
-	}
-	panic("Unhandled case in checkMetaProperty")
-}
-
-func (c *Checker) checkNewTargetMetaProperty(node *ast.Node) *Type {
-	container := ast.GetNewTargetContainer(node)
-	if container == nil {
-		c.error(node, diagnostics.Meta_property_0_is_only_allowed_in_the_body_of_a_function_declaration_function_expression_or_constructor, "new.target")
-		return c.errorType
-	}
-	symbol := c.getSymbolOfDeclaration(container)
-	return c.getTypeOfSymbol(symbol)
-}
-
-func (c *Checker) checkMetaPropertyKeyword(node *ast.Node) *Type {
-	// !!! This is effectively a helper for GetSymbolAtLocation and GetTypeAtLocation
-	return c.errorType
-}
-
 func (c *Checker) checkDeleteExpression(node *ast.Node) *Type {
 	c.checkExpression(node.Expression())
 	expr := ast.SkipParentheses(node.Expression())
@@ -9024,7 +8889,7 @@ func (c *Checker) isMethodAccessForCall(node *ast.Node) bool {
 	for ast.IsParenthesizedExpression(node.Parent) {
 		node = node.Parent
 	}
-	return ast.IsCallOrNewExpression(node.Parent) && node.Parent.Expression() == node
+	return ast.IsCallExpression(node.Parent) && node.Parent.Expression() == node
 }
 
 func (c *Checker) reportNonexistentProperty(propNode *ast.Node, containingType *Type, isUncheckedJS bool) {
@@ -9144,7 +9009,7 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 			parent = node.Parent
 		}
 		if ast.IsCallLikeExpression(parent) {
-			return ast.IsCallOrNewExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
+			return ast.IsCallExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
 		}
 		return core.Every(symbol.Declarations, func(d *ast.Node) bool {
 			return !ast.IsFunctionLike(d) || c.IsDeprecatedDeclaration(d)
@@ -15663,28 +15528,17 @@ func (c *Checker) getSingleSignature(t *Type, kind SignatureKind, allowMembers b
 }
 
 func (c *Checker) getOrCreateTypeFromSignature(sig *Signature) *Type {
-	// There are two ways to declare a construct signature, one is by declaring a class constructor
-	// using the constructor keyword, and the other is declaring a bare construct signature in an
-	// object type literal or interface (using the new keyword). Each way of declaring a constructor
-	// will result in a different declaration kind.
 	if sig.isolatedSignatureType == nil {
-		var kind ast.Kind
-		if sig.declaration != nil {
-			kind = sig.declaration.Kind
-		}
-		// If declaration is undefined, it is likely to be the signature of the default constructor.
-		isConstructor := kind == ast.KindUnknown || kind == ast.KindConstructSignature || kind == ast.KindConstructorType
-
+		// Every signature is a call signature now: the construct slot had only one
+		// producer, `kind == KindUnknown` for a declaration-less default constructor,
+		// and nothing serializes construct signatures any more -- routing a signature
+		// there would silently render it as `{}`, callable by nothing.
 		var symbol *ast.Symbol
 		if sig.declaration != nil {
 			symbol = sig.declaration.Symbol()
 		}
 		t := c.newObjectType(ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType, symbol)
-		if isConstructor {
-			c.setStructuredTypeMembers(t, nil, nil, []*Signature{sig}, nil)
-		} else {
-			c.setStructuredTypeMembers(t, nil, []*Signature{sig}, nil, nil)
-		}
+		c.setStructuredTypeMembers(t, nil, []*Signature{sig}, nil, nil)
 		sig.isolatedSignatureType = t
 	}
 	return sig.isolatedSignatureType
@@ -16210,12 +16064,6 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 	typeParameters := c.getTypeParametersFromDeclaration(declaration)
 	if hasRestParameter(declaration) {
 		flags |= SignatureFlagsHasRestParameter
-	}
-	if ast.IsConstructorTypeNode(declaration) || ast.IsConstructSignatureDeclaration(declaration) {
-		flags |= SignatureFlagsConstruct
-	}
-	if ast.IsConstructorTypeNode(declaration) && ast.HasSyntacticModifier(declaration, ast.ModifierFlagsAbstract) {
-		flags |= SignatureFlagsAbstract
 	}
 	if ast.HasSyntacticModifier(declaration, ast.ModifierFlagsAsync) {
 		// The tlua coroutine contract: async-ness rides the signature so call
@@ -18967,7 +18815,7 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromSelfKeyword(node)
 	case ast.KindRestType:
 		return c.getTypeFromRestTypeNode(node)
-	case ast.KindFunctionType, ast.KindConstructorType, ast.KindTypeLiteral:
+	case ast.KindFunctionType, ast.KindTypeLiteral:
 		return c.getTypeFromTypeLiteralOrFunctionOrConstructorTypeNode(node)
 	case ast.KindTypeOperator:
 		return c.getTypeFromTypeOperatorNode(node)
@@ -19936,9 +19784,16 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeSelfTypes bool) 
 		}
 		kind := node.Kind
 		switch kind {
-		case ast.KindInterfaceDeclaration, ast.KindCallSignature, ast.KindConstructSignature,
-			ast.KindMethodSignature, ast.KindFunctionType, ast.KindConstructorType, ast.KindFunctionDeclaration,
-			ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType,
+		case ast.KindInterfaceDeclaration,
+			ast.KindCallSignature,
+			ast.KindMethodSignature,
+			ast.KindFunctionType,
+			ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindArrowFunction,
+			ast.KindTypeAliasDeclaration,
+			ast.KindJSTypeAliasDeclaration,
+			ast.KindMappedType,
 			ast.KindConditionalType:
 			outerTypeParameters := c.getOuterTypeParameters(node, includeSelfTypes)
 			if (kind == ast.KindFunctionExpression || kind == ast.KindArrowFunction) && c.isContextSensitive(node) {
@@ -24583,9 +24438,6 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		if ast.IsJsxTagName(location) && isJsxIntrinsicTagName(location) {
 			return // builtin JSX tag names aren't real type refs by most metrics, but are expressions, so must be filtered
 		}
-		if ast.FindAncestor(location, func(n *ast.Node) bool { return ast.IsMetaProperty(n) }) != nil {
-			return // identifiers in meta properties shouldn't be resolved, but are expressions, so must be filtered
-		}
 		// Identifiers in expression contexts are emitted, so we need to follow their referenced aliases and mark them as used
 		// Some non-expression identifiers are also treated as expression identifiers for this purpose, eg, `a` in `b = {a}`
 		// This is the exception, rather than the rule - most non-expression identifiers are declaration names.
@@ -25314,7 +25166,7 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 		return c.getContextualTypeForInitializerExpression(node, contextFlags)
 	case ast.KindArrowFunction, ast.KindReturnStatement:
 		return c.getContextualTypeForReturnExpression(node, contextFlags)
-	case ast.KindCallExpression, ast.KindNewExpression:
+	case ast.KindCallExpression:
 		return c.getContextualTypeForArgument(parent, node)
 	case ast.KindTypeAssertionExpression, ast.KindAsExpression:
 		if ast.IsConstAssertion(parent) {
@@ -26884,7 +26736,7 @@ func (c *Checker) isConstraintPosition(t *Type, node *ast.Node) bool {
 	// a generic type without a nullable constraint and x is a generic type. This is because when both obj
 	// and x are of generic types T and K, we want the resulting type to be T[K].
 	return ast.IsPropertyAccessExpression(parent) || ast.IsQualifiedName(parent) ||
-		(ast.IsCallExpression(parent) || ast.IsNewExpression(parent)) && parent.Expression() == node ||
+		ast.IsCallExpression(parent) && parent.Expression() == node ||
 		ast.IsElementAccessExpression(parent) && parent.Expression() == node && !(someType(t, c.isGenericTypeWithoutNullableConstraint) && c.isGenericIndexType(c.getTypeOfExpression(parent.AsElementAccessExpression().ArgumentExpression)))
 }
 
@@ -26990,21 +26842,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 			if propertyDeclaration := c.getPropertyOfType(typeOfPattern, node.Text()); propertyDeclaration != nil {
 				return propertyDeclaration
 			}
-		} else if ast.IsMetaProperty(parent) && parent.Name() == node {
-			metaProp := parent.AsMetaProperty()
-			if metaProp.KeywordToken == ast.KindNewKeyword && node.Text() == "target" {
-				// `target` in `new.target`
-				return c.checkNewTargetMetaProperty(parent).symbol
-			}
-			// The `meta` in `import.meta` could be given `getTypeOfNode(parent).symbol` (the `ImportMeta` interface symbol), but
-			// we have a fake expression type made for other reasons already, whose transient `meta`
-			// member should more exactly be the kind of (declarationless) symbol we want.
-			// (See #44364 and #45031 for relevant implementation PRs)
-			if metaProp.KeywordToken == ast.KindImportKeyword && node.Text() == "meta" {
-				return c.getGlobalImportMetaExpressionType().AsObjectType().members["meta"]
-			}
-			// no other meta properties are valid syntax, thus no others should have symbols
-			return nil
 		} else if ast.IsJSDocParameterTag(parent) && parent.Name() == node {
 			if fn := ast.GetNodeAtPosition(ast.GetSourceFileOfNode(node), node.Pos(), false); fn != nil && ast.IsFunctionLike(fn) {
 				for _, param := range fn.Parameters() {
@@ -27078,14 +26915,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 		return nil
 	case ast.KindImportKeyword:
-		if ast.IsMetaProperty(node.Parent) && node.Parent.Text() == "defer" {
-			return nil
-		}
-		fallthrough
-	case ast.KindNewKeyword:
-		if ast.IsMetaProperty(parent) {
-			return c.checkMetaPropertyKeyword(parent).symbol
-		}
 		return nil
 	case ast.KindInstanceOfKeyword:
 		if ast.IsBinaryExpression(parent) {
@@ -27097,8 +26926,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 			return t.symbol
 		}
 		return nil
-	case ast.KindMetaProperty:
-		return c.checkExpression(node).symbol
 	case ast.KindJsxNamespacedName:
 		if ast.IsJsxTagName(node) && isJsxIntrinsicTagName(node) {
 			symbol := c.getIntrinsicTagSymbol(node.Parent)
@@ -27340,10 +27167,6 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 			}
 			return c.getTypeOfSymbol(symbol)
 		}
-	}
-
-	if ast.IsMetaProperty(node.Parent) && node.Parent.AsMetaProperty().KeywordToken == node.Kind {
-		return c.checkMetaPropertyKeyword(node.Parent)
 	}
 
 	return c.errorType

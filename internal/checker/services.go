@@ -626,8 +626,6 @@ func (c *Checker) getUninstantiatedSignatures(node *ast.Node) []*Signature {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.getSignaturesOfType(c.getTypeOfExpression(node.Expression()), SignatureKindCall)
-	case ast.KindNewExpression:
-		return c.getSignaturesOfType(c.getTypeOfExpression(node.Expression()), SignatureKindConstruct)
 	case ast.KindJsxSelfClosingElement, ast.KindJsxOpeningElement:
 		if isJsxIntrinsicTagName(node.TagName()) {
 			return nil

@@ -809,7 +809,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 }
 
 func isSyntacticOwner(startingToken *ast.Node, node *ast.CallLikeExpression, sourceFile *ast.SourceFile) bool {
-	if !ast.IsCallOrNewExpression(node) {
+	if !ast.IsCallExpression(node) {
 		return false
 	}
 	invocationChildren := getChildrenFromNonJSDocNode(node, sourceFile)
@@ -905,7 +905,7 @@ type argumentListInfo struct {
 // in the argument of an invocation; returns undefined otherwise.
 func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFile *ast.SourceFile, c *checker.Checker) *argumentListInfo {
 	parent := node.Parent
-	if ast.IsCallOrNewExpression(parent) {
+	if ast.IsCallExpression(parent) {
 		// There are 3 cases to handle:
 		//   1. The token introduces a list, and should begin a signature help session
 		//   2. The token is either not associated with a list, or ends a list, so the session should end
@@ -1210,12 +1210,6 @@ func getChildListThatStartsWithOpenerToken(parent *ast.Node, openerToken *ast.No
 			return parentCallExpression.TypeArgumentList()
 		}
 		return parentCallExpression.Arguments
-	} else if ast.IsNewExpression(parent) {
-		parentNewExpression := parent.AsNewExpression()
-		if openerToken.Kind == ast.KindLessThanToken {
-			return parentNewExpression.TypeArgumentList()
-		}
-		return parentNewExpression.Arguments
 	}
 	return nil
 }

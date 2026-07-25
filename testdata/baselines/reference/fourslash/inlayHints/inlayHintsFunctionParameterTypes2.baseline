@@ -1,2 +1,133 @@
 // === Inlay Hints ===
-=== No inlay hints ===
+function f8(a = new C()) end
+             ^
+{
+  "position": {
+    "line": 10,
+    "character": 13
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+function f8(a = new C()) end
+                     ^
+{
+  "position": {
+    "line": 10,
+    "character": 21
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+function f9(a = new N.C()) end
+             ^
+{
+  "position": {
+    "line": 11,
+    "character": 13
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+function f9(a = new N.C()) end
+                     ^
+{
+  "position": {
+    "line": 11,
+    "character": 21
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+function f9(a = new N.C()) end
+                       ^
+{
+  "position": {
+    "line": 11,
+    "character": 23
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+function f10(a = ((((new C()))))) end
+              ^
+{
+  "position": {
+    "line": 12,
+    "character": 14
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+function f10(a = ((((new C()))))) end
+                          ^
+{
+  "position": {
+    "line": 12,
+    "character": 26
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}

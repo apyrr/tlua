@@ -343,14 +343,6 @@ func isFunctionCallContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindCallExpression
 }
 
-func isNewContext(context *FormattingContext) bool {
-	return context.contextNode.Kind == ast.KindNewExpression
-}
-
-func isFunctionCallOrNewContext(context *FormattingContext) bool {
-	return isFunctionCallContext(context) || isNewContext(context)
-}
-
 func isPreviousTokenNotComma(context *FormattingContext) bool {
 	return context.currentTokenSpan.Kind != ast.KindCommaToken
 }
@@ -428,10 +420,6 @@ func isObjectTypeContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindTypeLiteral // && context.contextNode.parent.Kind != ast.KindInterfaceDeclaration;
 }
 
-func isConstructorSignatureContext(context *FormattingContext) bool {
-	return context.contextNode.Kind == ast.KindConstructSignature
-}
-
 func isTypeArgumentOrParameterOrAssertion(token TextRangeWithKind, parent *ast.Node) bool {
 	if token.Kind != ast.KindLessThanToken && token.Kind != ast.KindGreaterThanToken {
 		return false
@@ -446,9 +434,7 @@ func isTypeArgumentOrParameterOrAssertion(token TextRangeWithKind, parent *ast.N
 		ast.KindArrowFunction,
 		ast.KindMethodSignature,
 		ast.KindCallSignature,
-		ast.KindConstructSignature,
 		ast.KindCallExpression,
-		ast.KindNewExpression,
 		ast.KindExpressionWithTypeArguments:
 		return true
 	default:

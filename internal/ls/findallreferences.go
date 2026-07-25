@@ -1301,10 +1301,6 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 		)
 	}
 
-	if ast.IsImportMeta(node.Parent) && node.Parent.Name() == node {
-		return getAllReferencesForImportMeta(sourceFiles)
-	}
-
 	// Labels
 	if ast.IsJumpStatementTarget(node) {
 		// if we have a label definition, look within its block for references, if not, then
@@ -1406,25 +1402,6 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindThis, thisParameter, searchSpaceNode.Symbol(), references)}
 }
 
-func getAllReferencesForImportMeta(sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
-	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*ReferenceEntry {
-		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "meta", sourceFile.AsNode()), func(node *ast.Node) *ReferenceEntry {
-			parent := node.Parent
-			if ast.IsImportMeta(parent) {
-				return newNodeEntry(parent)
-			}
-			return nil
-		})
-	})
-	if len(references) == 0 {
-		return nil
-	}
-	return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: references[0].node}, references: references}}
-}
-
-// isFunctionDeclarationKeyword reports whether a `function` token is the hard keyword of a
-// declaration or expression rather than the keyword type; such a token is not a type
-// reference.
 func isFunctionDeclarationKeyword(node *ast.Node) bool {
 	return node.Kind == ast.KindFunctionKeyword && !ast.IsFunctionKeywordTypeNode(node)
 }

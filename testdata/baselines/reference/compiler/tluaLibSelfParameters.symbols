@@ -151,9 +151,9 @@ handle.read("*a");
 
 local buffer = require("string.buffer").new(64);
 >buffer : Symbol(buffer, Decl(tluaLibSelfParameters.tlua, 41, 5))
->require("string.buffer").new : Symbol(StringBufferLib["new"], Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>require("string.buffer").new : Symbol(StringBufferLib.new, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 >require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
->new : Symbol(StringBufferLib["new"], Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>new : Symbol(StringBufferLib.new, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 
 local chained: LuaStringBuffer = buffer:put("a"):put("b", "c");
 >chained : Symbol(chained, Decl(tluaLibSelfParameters.tlua, 42, 5))

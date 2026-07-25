@@ -139,9 +139,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindCallSignature:
 		n := node.AsCallSignatureDeclaration()
 		return (boolToByte(n.TypeParameters != nil) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)
-	case ast.KindConstructSignature:
-		n := node.AsConstructSignatureDeclaration()
-		return (boolToByte(n.TypeParameters != nil) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)
 	case ast.KindIndexSignature:
 		n := node.AsIndexSignatureDeclaration()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)
@@ -184,12 +181,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindCallExpression:
 		n := node.AsCallExpression()
 		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.QuestionDotToken != nil) << 1) | (boolToByte(n.TypeArguments != nil) << 2) | (boolToByte(n.Arguments != nil) << 3)
-	case ast.KindNewExpression:
-		n := node.AsNewExpression()
-		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.TypeArguments != nil) << 1) | (boolToByte(n.Arguments != nil) << 2)
-	case ast.KindMetaProperty:
-		n := node.AsMetaProperty()
-		return (boolToByte(n.Name() != nil) << 0)
 	case ast.KindNonNullExpression:
 		n := node.AsNonNullExpression()
 		return (boolToByte(n.Expression != nil) << 0)
@@ -294,9 +285,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		return (boolToByte(n.Type != nil) << 0)
 	case ast.KindFunctionType:
 		n := node.AsFunctionTypeNode()
-		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.TypeParameters != nil) << 1) | (boolToByte(n.Parameters != nil) << 2) | (boolToByte(n.Type != nil) << 3)
-	case ast.KindConstructorType:
-		n := node.AsConstructorTypeNode()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.TypeParameters != nil) << 1) | (boolToByte(n.Parameters != nil) << 2) | (boolToByte(n.Type != nil) << 3)
 	case ast.KindTemplateLiteralType:
 		n := node.AsTemplateLiteralTypeNode()
@@ -502,14 +490,6 @@ func getNodeCommonData(node *ast.Node) uint32 {
 			operatorIdx = 3
 		}
 		return operatorIdx << 24
-	case ast.KindMetaProperty:
-		n := node.AsMetaProperty()
-		var keywordTokenIdx uint32
-		switch n.KeywordToken {
-		case ast.KindNewKeyword:
-			keywordTokenIdx = 1
-		}
-		return keywordTokenIdx << 24
 	case ast.KindArrayLiteralExpression:
 		n := node.AsArrayLiteralExpression()
 		return uint32(boolToByte(n.MultiLine)) << 24

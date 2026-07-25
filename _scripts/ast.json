@@ -107,7 +107,6 @@
             "ImportKeyword",
             "InKeyword",
             "InstanceOfKeyword",
-            "NewKeyword",
             "RepeatKeyword",
             "ReturnKeyword",
             "SuperKeyword",
@@ -197,7 +196,6 @@
             "PropertySignature",
             "MethodSignature",
             "CallSignature",
-            "ConstructSignature",
             "IndexSignature",
             {
                 "comment": "Type"
@@ -205,7 +203,6 @@
             "TypePredicate",
             "TypeReference",
             "FunctionType",
-            "ConstructorType",
             "TypeQuery",
             "TypeLiteral",
             "ArrayType",
@@ -240,7 +237,6 @@
             "PropertyAccessExpression",
             "ElementAccessExpression",
             "CallExpression",
-            "NewExpression",
             "TaggedTemplateExpression",
             "TypeAssertionExpression",
             "ParenthesizedExpression",
@@ -257,7 +253,6 @@
             "ExpressionWithTypeArguments",
             "AsExpression",
             "NonNullExpression",
-            "MetaProperty",
             "SyntheticExpression",
             "SatisfiesExpression",
             "ExpressionList",
@@ -982,13 +977,6 @@
         "ObjectLiteralElementBase": {
             "brand": "_objectLiteralBrand",
             "extends": []
-        },
-        "FunctionOrConstructorTypeNodeBase": {
-            "extends": [
-                "TypeNodeBase",
-                "ModifiersBase",
-                "FunctionLikeBase"
-            ]
         },
         "UnionOrIntersectionTypeNodeBase": {
             "fields": {
@@ -1903,31 +1891,6 @@
                     }
                 ]
             },
-            "ConstructSignatureDeclaration": {
-                "kind": "ConstructSignature",
-                "extends": [
-                    "NodeBase",
-                    "DeclarationBase",
-                    "FunctionLikeBase",
-                    "TypeElementBase",
-                    "TypeSyntaxBase"
-                ],
-                "members": [
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Parameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Type",
-                        "inherited": true
-                    }
-                ],
-                "arena": true
-            },
             "IndexSignatureDeclaration": {
                 "kind": "IndexSignature",
                 "extends": [
@@ -2452,51 +2415,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "NewExpression": {
-                "extends": [
-                    "PrimaryExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "optional": true,
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "Arguments",
-                        "type": "Expression",
-                        "optional": true,
-                        "list": "NodeList"
-                    }
-                ]
-            },
-            "MetaProperty": {
-                "extends": [
-                    "PrimaryExpressionBase",
-                    "FlowNodeBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "KeywordToken",
-                        "type": [
-                            "SyntaxKind.ImportKeyword",
-                            "SyntaxKind.NewKeyword"
-                        ]
-                    },
-                    {
-                        "name": "name",
-                        "type": "Identifier",
-                        "private": true
-                    }
-                ]
             },
             "NonNullExpression": {
                 "extends": [
@@ -3119,7 +3037,8 @@
                 "kind": "FunctionType",
                 "extends": [
                     "TypeNodeBase",
-                    "FunctionOrConstructorTypeNodeBase"
+                    "ModifiersBase",
+                    "FunctionLikeBase"
                 ],
                 "members": [
                     {
@@ -3140,31 +3059,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "ConstructorTypeNode": {
-                "kind": "ConstructorType",
-                "extends": [
-                    "TypeNodeBase",
-                    "FunctionOrConstructorTypeNodeBase"
-                ],
-                "members": [
-                    {
-                        "name": "modifiers",
-                        "inherited": true
-                    },
-                    {
-                        "name": "TypeParameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Parameters",
-                        "inherited": true
-                    },
-                    {
-                        "name": "Type",
-                        "inherited": true
-                    }
-                ]
             },
             "TemplateHead": {
                 "extends": [
@@ -4330,7 +4224,10 @@
                 "members": [
                     {
                         "name": "Kind",
-                        "type": ["SyntaxKind.JSDocParameterTag", "SyntaxKind.JSDocPropertyTag"],
+                        "type": [
+                            "SyntaxKind.JSDocParameterTag",
+                            "SyntaxKind.JSDocPropertyTag"
+                        ],
                         "inherited": true
                     },
                     {
@@ -4526,11 +4423,9 @@
             ],
             "SignatureDeclaration": [
                 "CallSignatureDeclaration",
-                "ConstructSignatureDeclaration",
                 "MethodSignatureDeclaration",
                 "IndexSignatureDeclaration",
                 "FunctionTypeNode",
-                "ConstructorTypeNode",
                 "FunctionDeclaration",
                 "FunctionExpression",
                 "ArrowFunction"
@@ -4565,7 +4460,6 @@
             ],
             "CallLikeExpression": [
                 "CallExpression",
-                "NewExpression",
                 "TaggedTemplateExpression",
                 "JsxOpeningLikeElement",
                 "BinaryExpression"
@@ -4578,10 +4472,6 @@
             "VariableOrParameterDeclaration": [
                 "VariableDeclaration",
                 "ParameterDeclaration"
-            ],
-            "CallOrNewExpression": [
-                "CallExpression",
-                "NewExpression"
             ],
             "ImportClauseOrBindingPattern": [
                 "ImportClause",

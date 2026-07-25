@@ -24,11 +24,8 @@ interface StringBufferOptions {
 }
 
 interface StringBufferLib {
-    // Quoted, as ffi's `new` is: a bare `new(...)` member declares a CONSTRUCT
-    // signature, which would leave `buffer.new(16)` with no `new` property at
-    // all. tlua has no `new` expression, so the name is only ever a member.
-    "new"(size?: number, options?: StringBufferOptions): LuaStringBuffer;
-    "new"(options: StringBufferOptions): LuaStringBuffer;
+    new(size?: number, options?: StringBufferOptions): LuaStringBuffer;
+    new(options: StringBufferOptions): LuaStringBuffer;
     encode(value: any): string;
     decode(value: string): any;
 }

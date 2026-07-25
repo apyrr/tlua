@@ -243,11 +243,9 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 			if flags&ast.ModifierFlagsAbstract != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "abstract")
 			}
-			if node.Kind != ast.KindConstructorType {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_abstract_modifier_can_only_appear_on_a_class_method_or_property_declaration)
-			}
-
-			flags |= ast.ModifierFlagsAbstract
+			// tlua has no classes and no constructor types, so `abstract` has
+			// nothing left to attach to: it is always an error here.
+			return c.grammarErrorOnNode(modifier, diagnostics.X_abstract_modifier_can_only_appear_on_a_class_method_or_property_declaration)
 		case ast.KindAsyncKeyword:
 			if flags&ast.ModifierFlagsAsync != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "async")
@@ -335,8 +333,6 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		case ast.KindFunctionDeclaration,
 			ast.KindFunctionType:
 			return c.findFirstModifierExcept(node, ast.KindAsyncKeyword)
-		case ast.KindConstructorType:
-			return c.findFirstModifierExcept(node, ast.KindAbstractKeyword)
 		case ast.KindInterfaceDeclaration,
 			ast.KindTypeAliasDeclaration:
 			return core.Find(node.ModifierNodes(), ast.IsModifier)
@@ -1135,34 +1131,6 @@ func (c *Checker) containerAllowsBlockScopedVariable(parent *ast.Node) bool {
 	}
 
 	return true
-}
-
-func (c *Checker) checkGrammarMetaProperty(node *ast.MetaProperty) bool {
-	nodeName := node.Name()
-	nameText := nodeName.Text()
-
-	switch node.KeywordToken {
-	case ast.KindNewKeyword:
-		if nameText != "target" {
-			return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, nameText, scanner.TokenToString(node.KeywordToken), "target")
-		}
-	case ast.KindImportKeyword:
-		if nameText != "meta" {
-			isCallee := ast.IsCallExpression(node.Parent) && node.Parent.Expression() == node.AsNode()
-			if nameText == "defer" {
-				if !isCallee {
-					return c.grammarErrorAtPos(node.AsNode(), node.AsNode().End(), 0, diagnostics.X_0_expected, "(")
-				}
-			} else {
-				if isCallee {
-					return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer, nameText)
-				}
-				return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, nameText, scanner.TokenToString(node.KeywordToken), "meta")
-			}
-		}
-	}
-
-	return false
 }
 
 func (c *Checker) checkGrammarProperty(node *ast.Node) bool {

@@ -1812,10 +1812,6 @@ func (b *NodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 	if options != nil {
 		modifiers = options.modifiers
 	}
-	if (kind == ast.KindConstructorType) && signature.flags&SignatureFlagsAbstract != 0 {
-		flags := ast.ModifiersToFlags(modifiers)
-		modifiers = ast.CreateModifiersFromModifierFlags(flags|ast.ModifierFlagsAbstract, b.f.NewModifier)
-	}
 	if kind == ast.KindFunctionType && signature.flags&SignatureFlagsAsync != 0 {
 		// Render an async signature as an `async (x) => T` function type so
 		// async-ness is visible in hover, .d.ts, and diagnostics.
@@ -1844,8 +1840,6 @@ func (b *NodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 	switch {
 	case kind == ast.KindCallSignature:
 		node = b.f.NewCallSignatureDeclaration(typeParamList, paramList, returnTypeNode)
-	case kind == ast.KindConstructSignature:
-		node = b.f.NewConstructSignatureDeclaration(typeParamList, paramList, returnTypeNode)
 	case kind == ast.KindMethodSignature:
 		var questionToken *ast.Node
 		if options != nil {
@@ -1862,11 +1856,6 @@ func (b *NodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 			returnTypeNode = b.f.NewTypeReferenceNode(b.f.NewIdentifier(""), nil)
 		}
 		node = b.f.NewFunctionTypeNode(modifierList, typeParamList, paramList, returnTypeNode)
-	case kind == ast.KindConstructorType:
-		if returnTypeNode == nil {
-			returnTypeNode = b.f.NewTypeReferenceNode(b.f.NewIdentifier(""), nil)
-		}
-		node = b.f.NewConstructorTypeNode(modifierList, typeParamList, paramList, returnTypeNode)
 	case kind == ast.KindFunctionDeclaration:
 		// TODO: assert name is Identifier
 		node = b.f.NewFunctionDeclaration(modifierList, nil /*target*/, nil /*colonToken*/, name, typeParamList, paramList, returnTypeNode, nil /*fullSignature*/, nil /*body*/)
@@ -2540,12 +2529,6 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 	for _, signature := range resolvedType.CallSignatures() {
 		typeElements = append(typeElements, b.signatureToSignatureDeclarationHelper(signature, ast.KindCallSignature, nil))
 	}
-	for _, signature := range resolvedType.ConstructSignatures() {
-		if signature.flags&SignatureFlagsAbstract != 0 {
-			continue
-		}
-		typeElements = append(typeElements, b.signatureToSignatureDeclarationHelper(signature, ast.KindConstructSignature, nil))
-	}
 	printedComponents := make(map[*ast.Node]bool)
 	for _, info := range resolvedType.indexInfos {
 		typeElements = slices.Concat(typeElements, b.indexInfoToObjectComputedNamesOrSignatureDeclaration(info, printedComponents, core.IfElse(resolvedType.objectFlags&ObjectFlagsReverseMapped != 0, b.createElidedInformationPlaceholder(), nil)))
@@ -2603,11 +2586,6 @@ func (b *NodeBuilderImpl) createTypeNodeFromObjectType(t *Type) *ast.TypeNode {
 			return signatureNode
 		}
 
-		if len(ctorSigs) == 1 && len(callSigs) == 0 {
-			signature := ctorSigs[0]
-			signatureNode := b.signatureToSignatureDeclarationHelper(signature, ast.KindConstructorType, nil)
-			return signatureNode
-		}
 	}
 
 	abstractSignatures := core.Filter(ctorSigs, func(signature *Signature) bool {

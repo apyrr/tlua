@@ -46,9 +46,9 @@ local ctype: LuaCType = ffiLib.typeof("int[?]", 4);
 
 local memory: cdata = ffiLib.new(ctype);
 >memory : Symbol(memory, Decl(tluaLibLuaJIT.tlua, 10, 5))
->ffiLib.new : Symbol(FFILib["new"], Decl(lib.luajit.d.tlua, --, --))
+>ffiLib.new : Symbol(FFILib.new, Decl(lib.luajit.d.tlua, --, --))
 >ffiLib : Symbol(ffiLib, Decl(tluaLibLuaJIT.tlua, 1, 5))
->new : Symbol(FFILib["new"], Decl(lib.luajit.d.tlua, --, --))
+>new : Symbol(FFILib.new, Decl(lib.luajit.d.tlua, --, --))
 >ctype : Symbol(ctype, Decl(tluaLibLuaJIT.tlua, 9, 5))
 
 local argumentsObject: IArguments;

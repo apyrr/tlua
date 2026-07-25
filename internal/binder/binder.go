@@ -343,8 +343,6 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 	switch node.Kind {
 	case ast.KindFunctionType, ast.KindCallSignature:
 		return ast.InternalSymbolNameCall
-	case ast.KindConstructorType, ast.KindConstructSignature:
-		return ast.InternalSymbolNameNew
 	case ast.KindIndexSignature:
 		return ast.InternalSymbolNameIndex
 	case ast.KindExportDeclaration:
@@ -423,9 +421,16 @@ func (b *Binder) declareSymbolAndAddToSymbolTable(node *ast.Node, symbolFlags as
 		return b.declareSourceFileMember(node, symbolFlags, symbolExcludes)
 	case ast.KindTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration, ast.KindJsxAttributes:
 		return b.declareSymbol(ast.GetMembers(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
-	case ast.KindFunctionType, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature,
-		ast.KindIndexSignature, ast.KindMethodSignature, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction,
-		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType:
+	case ast.KindFunctionType,
+		ast.KindCallSignature,
+		ast.KindIndexSignature,
+		ast.KindMethodSignature,
+		ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression,
+		ast.KindArrowFunction,
+		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
+		ast.KindMappedType:
 		return b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 	}
 	panic("Unhandled case in declareSymbolAndAddToSymbolTable")
@@ -585,8 +590,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 		if b.currentFlow != nil && ast.IsPartOfTypeQuery(node) {
 			node.AsQualifiedName().FlowNode = b.currentFlow
 		}
-	case ast.KindMetaProperty:
-		node.AsMetaProperty().FlowNode = b.currentFlow
 	case ast.KindPrivateIdentifier:
 		b.checkPrivateIdentifier(node)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
@@ -623,7 +626,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		// A Lua positional table entry has no syntactic name; the checker
 		// late-binds it to its 1-based index, like a computed property name.
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty, ast.InternalSymbolNameComputed)
-	case ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature:
+	case ast.KindCallSignature, ast.KindIndexSignature:
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsSignature, ast.SymbolFlagsNone)
 	case ast.KindMethodSignature:
 		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|getOptionalSymbolFlagForNode(node), ast.SymbolFlagsMethodExcludes)
@@ -636,7 +639,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		default:
 			b.bindFunctionDeclaration(node)
 		}
-	case ast.KindFunctionType, ast.KindConstructorType:
+	case ast.KindFunctionType:
 		b.bindFunctionOrConstructorType(node)
 	case ast.KindTypeLiteral, ast.KindMappedType:
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsTypeLiteral, ast.InternalSymbolNameType)
@@ -2343,7 +2346,7 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals
 	case ast.KindFunctionDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
-	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
+	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesSelfType
 	case ast.KindFunctionExpression:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsIsThisContainer
@@ -2397,7 +2400,7 @@ func containsNarrowableReference(expr *ast.Node) bool {
 
 func isNarrowableReference(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindIdentifier, ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindMetaProperty:
+	case ast.KindIdentifier, ast.KindThisKeyword, ast.KindSuperKeyword:
 		return true
 	case ast.KindPropertyAccessExpression, ast.KindParenthesizedExpression, ast.KindNonNullExpression:
 		return isNarrowableReference(node.Expression())

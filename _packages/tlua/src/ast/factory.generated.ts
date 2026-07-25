@@ -24,8 +24,6 @@ import type {
     ConciseBody,
     ConditionalExpression,
     ConditionalTypeNode,
-    ConstructorTypeNode,
-    ConstructSignatureDeclaration,
     ContinueStatement,
     DebuggerStatement,
     DeleteExpression,
@@ -130,7 +128,6 @@ import type {
     LiteralTypeNode,
     MappedTypeNode,
     MemberName,
-    MetaProperty,
     MethodSignatureDeclaration,
     MinusToken,
     MissingDeclaration,
@@ -150,7 +147,6 @@ import type {
     NamespaceExport,
     NamespaceExportDeclaration,
     NamespaceImport,
-    NewExpression,
     Node,
     NodeArray,
     NonNullExpression,
@@ -399,9 +395,6 @@ export class NodeObject {
     }
     get keyword(): any {
         return this._data?.keyword;
-    }
-    get keywordToken(): any {
-        return this._data?.keywordToken;
     }
     get label(): any {
         return this._data?.label;
@@ -745,8 +738,6 @@ function cloneNodeData(node: Node): any {
             return { isTypeOnly: n.isTypeOnly, propertyName: n.propertyName, name: n.name };
         case SyntaxKind.CallSignature:
             return { typeParameters: n.typeParameters, parameters: n.parameters, type: n.type };
-        case SyntaxKind.ConstructSignature:
-            return { typeParameters: n.typeParameters, parameters: n.parameters, type: n.type };
         case SyntaxKind.IndexSignature:
             return { modifiers: n.modifiers, parameters: n.parameters, type: n.type };
         case SyntaxKind.MethodSignature:
@@ -783,10 +774,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression, questionDotToken: n.questionDotToken, argumentExpression: n.argumentExpression };
         case SyntaxKind.CallExpression:
             return { expression: n.expression, questionDotToken: n.questionDotToken, typeArguments: n.typeArguments, arguments: n.arguments };
-        case SyntaxKind.NewExpression:
-            return { expression: n.expression, typeArguments: n.typeArguments, arguments: n.arguments };
-        case SyntaxKind.MetaProperty:
-            return { keywordToken: n.keywordToken, name: n.name };
         case SyntaxKind.NonNullExpression:
             return { expression: n.expression };
         case SyntaxKind.SpreadElement:
@@ -856,8 +843,6 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.ParenthesizedType:
             return { type: n.type };
         case SyntaxKind.FunctionType:
-            return { modifiers: n.modifiers, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type };
-        case SyntaxKind.ConstructorType:
             return { modifiers: n.modifiers, typeParameters: n.typeParameters, parameters: n.parameters, type: n.type };
         case SyntaxKind.TemplateHead:
             return { text: n.text, rawText: n.rawText, templateFlags: n.templateFlags };
@@ -1103,10 +1088,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
         visitNode(cbNode, data.type),
-    [SyntaxKind.ConstructSignature]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type),
     [SyntaxKind.IndexSignature]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
@@ -1172,11 +1153,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.questionDotToken) ||
         visitNodes(cbNode, cbNodes, data.typeArguments) ||
         visitNodes(cbNode, cbNodes, data.arguments),
-    [SyntaxKind.NewExpression]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.expression) ||
-        visitNodes(cbNode, cbNodes, data.typeArguments) ||
-        visitNodes(cbNode, cbNodes, data.arguments),
-    [SyntaxKind.MetaProperty]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
     [SyntaxKind.NonNullExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.SpreadElement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.TemplateExpression]: (data, cbNode, cbNodes) =>
@@ -1252,11 +1228,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.MultiReturnType]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
     [SyntaxKind.ParenthesizedType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.type),
     [SyntaxKind.FunctionType]: (data, cbNode, cbNodes) =>
-        visitNodes(cbNode, cbNodes, data.modifiers) ||
-        visitNodes(cbNode, cbNodes, data.typeParameters) ||
-        visitNodes(cbNode, cbNodes, data.parameters) ||
-        visitNode(cbNode, data.type),
-    [SyntaxKind.ConstructorType]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.modifiers) ||
         visitNodes(cbNode, cbNodes, data.typeParameters) ||
         visitNodes(cbNode, cbNodes, data.parameters) ||
@@ -1742,14 +1713,6 @@ export function createCallSignatureDeclaration(typeParameters: readonly TypePara
     }) as unknown as CallSignatureDeclaration;
 }
 
-export function createConstructSignatureDeclaration(typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode): ConstructSignatureDeclaration {
-    return new NodeObject(SyntaxKind.ConstructSignature, {
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        parameters: createNodeArray(parameters),
-        type,
-    }) as unknown as ConstructSignatureDeclaration;
-}
-
 export function createIndexSignatureDeclaration(modifiers: readonly ModifierLike[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode): IndexSignatureDeclaration {
     return new NodeObject(SyntaxKind.IndexSignature, {
         modifiers: modifiers ? createNodeArray(modifiers) : undefined,
@@ -1918,21 +1881,6 @@ export function createCallExpression(expression: Expression, questionDotToken: Q
     }) as unknown as CallExpression;
     (node as any).flags = flags;
     return node;
-}
-
-export function createNewExpression(expression: Expression, typeArguments?: readonly TypeNode[], arguments_?: readonly Expression[]): NewExpression {
-    return new NodeObject(SyntaxKind.NewExpression, {
-        expression,
-        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
-        arguments: arguments_ ? createNodeArray(arguments_) : undefined,
-    }) as unknown as NewExpression;
-}
-
-export function createMetaProperty(keywordToken: SyntaxKind.ImportKeyword | SyntaxKind.NewKeyword, name: Identifier): MetaProperty {
-    return new NodeObject(SyntaxKind.MetaProperty, {
-        keywordToken,
-        name,
-    }) as unknown as MetaProperty;
 }
 
 export function createNonNullExpression(expression: Expression, flags: NodeFlags): NonNullExpression {
@@ -2184,15 +2132,6 @@ export function createFunctionTypeNode(modifiers: readonly ModifierLike[] | unde
         parameters: createNodeArray(parameters),
         type,
     }) as unknown as FunctionTypeNode;
-}
-
-export function createConstructorTypeNode(modifiers: readonly ModifierLike[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode): ConstructorTypeNode {
-    return new NodeObject(SyntaxKind.ConstructorType, {
-        modifiers: modifiers ? createNodeArray(modifiers) : undefined,
-        typeParameters: typeParameters ? createNodeArray(typeParameters) : undefined,
-        parameters: createNodeArray(parameters),
-        type,
-    }) as unknown as ConstructorTypeNode;
 }
 
 export function createTemplateHead(text: string, rawText: string, templateFlags: TokenFlags): TemplateHead {
@@ -2825,10 +2764,6 @@ export function updateCallSignatureDeclaration(node: CallSignatureDeclaration, t
     return node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type ? createCallSignatureDeclaration(typeParameters, parameters, type) : node;
 }
 
-export function updateConstructSignatureDeclaration(node: ConstructSignatureDeclaration, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode): ConstructSignatureDeclaration {
-    return node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type ? createConstructSignatureDeclaration(typeParameters, parameters, type) : node;
-}
-
 export function updateIndexSignatureDeclaration(node: IndexSignatureDeclaration, modifiers: readonly ModifierLike[] | undefined, parameters: readonly ParameterDeclaration[], type: TypeNode): IndexSignatureDeclaration {
     return node.modifiers !== modifiers || node.parameters !== parameters || node.type !== type ? createIndexSignatureDeclaration(modifiers, parameters, type) : node;
 }
@@ -2883,14 +2818,6 @@ export function updateElementAccessExpression(node: ElementAccessExpression, exp
 
 export function updateCallExpression(node: CallExpression, expression: Expression, questionDotToken: QuestionDotToken | undefined, typeArguments: readonly TypeNode[] | undefined, arguments_: readonly Expression[]): CallExpression {
     return node.expression !== expression || node.questionDotToken !== questionDotToken || node.typeArguments !== typeArguments || node.arguments !== arguments_ ? createCallExpression(expression, questionDotToken, typeArguments, arguments_, node.flags) : node;
-}
-
-export function updateNewExpression(node: NewExpression, expression: Expression, typeArguments?: readonly TypeNode[], arguments_?: readonly Expression[]): NewExpression {
-    return node.expression !== expression || node.typeArguments !== typeArguments || node.arguments !== arguments_ ? createNewExpression(expression, typeArguments, arguments_) : node;
-}
-
-export function updateMetaProperty(node: MetaProperty, name: Identifier): MetaProperty {
-    return node.name !== name ? createMetaProperty(node.keywordToken, name) : node;
 }
 
 export function updateNonNullExpression(node: NonNullExpression, expression: Expression): NonNullExpression {
@@ -3031,10 +2958,6 @@ export function updateParenthesizedTypeNode(node: ParenthesizedTypeNode, type: T
 
 export function updateFunctionTypeNode(node: FunctionTypeNode, modifiers: readonly ModifierLike[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode): FunctionTypeNode {
     return node.modifiers !== modifiers || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type ? createFunctionTypeNode(modifiers, typeParameters, parameters, type) : node;
-}
-
-export function updateConstructorTypeNode(node: ConstructorTypeNode, modifiers: readonly ModifierLike[] | undefined, typeParameters: readonly TypeParameterDeclaration[] | undefined, parameters: readonly ParameterDeclaration[], type?: TypeNode): ConstructorTypeNode {
-    return node.modifiers !== modifiers || node.typeParameters !== typeParameters || node.parameters !== parameters || node.type !== type ? createConstructorTypeNode(modifiers, typeParameters, parameters, type) : node;
 }
 
 export function updateTemplateLiteralTypeNode(node: TemplateLiteralTypeNode, head: TemplateHead, templateSpans: readonly TemplateLiteralTypeSpan[]): TemplateLiteralTypeNode {

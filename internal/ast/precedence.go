@@ -173,9 +173,7 @@ func getOperator(expression *Expression) Kind {
 func GetExpressionPrecedence(expression *Expression) OperatorPrecedence {
 	operator := getOperator(expression)
 	var flags OperatorPrecedenceFlags
-	if expression.Kind == KindNewExpression && expression.ArgumentList() == nil {
-		flags = OperatorPrecedenceFlagsNewWithoutArguments
-	} else if IsOptionalChain(expression) {
+	if IsOptionalChain(expression) {
 		flags = OperatorPrecedenceFlagsOptionalChain
 	}
 	return GetOperatorPrecedence(expression.Kind, operator, flags)
@@ -184,9 +182,8 @@ func GetExpressionPrecedence(expression *Expression) OperatorPrecedence {
 type OperatorPrecedenceFlags int
 
 const (
-	OperatorPrecedenceFlagsNone                OperatorPrecedenceFlags = 0
-	OperatorPrecedenceFlagsNewWithoutArguments OperatorPrecedenceFlags = 1 << 0
-	OperatorPrecedenceFlagsOptionalChain       OperatorPrecedenceFlags = 1 << 1
+	OperatorPrecedenceFlagsNone          OperatorPrecedenceFlags = 0
+	OperatorPrecedenceFlagsOptionalChain OperatorPrecedenceFlags = 1 << 1
 )
 
 // Gets the precedence of an operator
@@ -242,14 +239,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		return OperatorPrecedenceMember
 
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting
-	case KindNewExpression:
-		if flags&OperatorPrecedenceFlagsNewWithoutArguments != 0 {
-			return OperatorPrecedenceLeftHandSide
-		}
-		return OperatorPrecedenceMember
-
-	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting
-	case KindTaggedTemplateExpression, KindMetaProperty, KindExpressionWithTypeArguments:
+	case KindTaggedTemplateExpression, KindExpressionWithTypeArguments:
 		return OperatorPrecedenceMember
 
 	case KindAsExpression,
@@ -596,7 +586,7 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 		return TypePrecedenceConditional
 	case KindJSDocOptionalType, KindJSDocVariadicType:
 		return TypePrecedenceJSDoc
-	case KindFunctionType, KindConstructorType:
+	case KindFunctionType:
 		return TypePrecedenceFunction
 	case KindUnionType:
 		return TypePrecedenceUnion

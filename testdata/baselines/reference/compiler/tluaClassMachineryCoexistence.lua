@@ -1,13 +1,12 @@
 //// [tests/cases/compiler/tluaClassMachineryCoexistence.tlua] ////
 
 //// [tluaClassMachineryCoexistence.tlua]
-// Class *declarations* are gone, but the shared type machinery that classes
-// relied on must keep working, because interfaces, the DOM libs, and Lua
-// tables all use it: interface `extends` heritage, constructor types / construct
-// signatures, `new`, `instanceof`, `typeof`, and the class-adjacent utility
-// types. (Object-literal `super` died with table-literal methods in the table
-// slice — `super` has no legal home left. Polymorphic `this` died with the
-// `this` slice — see tluaNoThis.tlua.)
+// Class *declarations* are gone, and so is `new` — the expression, `new.target`,
+// construct signatures and constructor types all went with it. What classes
+// relied on that MUST keep working is the shared type machinery interfaces, the
+// DOM libs and Lua tables still use: `extends` heritage, `instanceof`, and
+// `typeof`. (Object-literal `super` died with table-literal methods in the table
+// slice. Polymorphic `this` died with the `this` slice — see tluaNoThis.tlua.)
 
 interface Base {
   b: number;
@@ -18,20 +17,13 @@ interface Derived extends Base {
   d: number;
 }
 
-// constructor types (parenthesized `new` / `abstract new`)
-type Ctor = new () => Derived;
-type ACtor = abstract new () => Base;
+// With classes and construct signatures gone, the only right-hand side
+// `instanceof` still accepts is a value of `function` type.
+declare K: function;
+declare inst: Derived;
 
-// construct signature on an interface
-interface HasCtor {
-  new (x: number): Derived;
-}
-
-declare K: { new (): Derived };
-
-local inst = new K(); // `new X()`
 local isK = inst instanceof K; // `instanceof`
-type TK = typeof K; // `typeof Ctor`
+type TK = typeof K; // `typeof`
 
 // A non-callable right-hand side is still an error: the check runs through
 // isTypeDerivedFrom, not a structural subtype test the empty Function sentinel
@@ -40,22 +32,23 @@ declare notCallable: { area: number };
 local bad1 = inst instanceof notCallable;
 local bad2 = inst instanceof 3;
 
-// class-adjacent utility types (defined in lib.es5.d.tlua via construct signatures).
-// `ConstructorParameters` is gone: it is built on `...args: infer P`, which needs
-// a rest parameter whose type IS the parameter tuple, and a vararg's annotation is
-// the pack's element type. See the vararg slice.
-type Inst = InstanceType<TK>;
+// `InstanceType` and `ConstructorParameters` are both gone: the first was
+// defined over construct signatures, which no longer exist, and the second was
+// built on `...args: infer P`, which needs a rest parameter whose type IS the
+// parameter tuple. See the vararg slice.
 
 
 //// [tluaClassMachineryCoexistence.lua]
--- Class *declarations* are gone, but the shared type machinery that classes
--- relied on must keep working, because interfaces, the DOM libs, and Lua
--- tables all use it: interface `extends` heritage, constructor types / construct
--- signatures, `new`, `instanceof`, `typeof`, and the class-adjacent utility
--- types. (Object-literal `super` died with table-literal methods in the table
--- slice — `super` has no legal home left. Polymorphic `this` died with the
--- `this` slice — see tluaNoThis.tlua.)
-local inst = new K(); -- `new X()`
+-- Class *declarations* are gone, and so is `new` — the expression, `new.target`,
+-- construct signatures and constructor types all went with it. What classes
+-- relied on that MUST keep working is the shared type machinery interfaces, the
+-- DOM libs and Lua tables still use: `extends` heritage, `instanceof`, and
+-- `typeof`. (Object-literal `super` died with table-literal methods in the table
+-- slice. Polymorphic `this` died with the `this` slice — see tluaNoThis.tlua.)
 local isK = inst instanceof K; -- `instanceof`
 local bad1 = inst instanceof notCallable;
 local bad2 = inst instanceof 3;
+-- `InstanceType` and `ConstructorParameters` are both gone: the first was
+-- defined over construct signatures, which no longer exist, and the second was
+-- built on `...args: infer P`, which needs a rest parameter whose type IS the
+-- parameter tuple. See the vararg slice.

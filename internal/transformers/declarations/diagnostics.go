@@ -97,7 +97,7 @@ func getMethodNameVisibilityDiagnosticMessage(node *ast.Node, symbolAccessibilit
 func createGetSymbolAccessibilityDiagnosticForNode(node *ast.Node) GetSymbolAccessibilityDiagnostic {
 	if ast.IsVariableDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node) || ast.IsBinaryExpression(node) || ast.IsBindingElement(node) {
 		return wrapSimpleDiagnosticSelector(node, getVariableDeclarationTypeVisibilityDiagnosticMessage)
-	} else if ast.IsConstructSignatureDeclaration(node) || ast.IsCallSignatureDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsFunctionDeclaration(node) || ast.IsIndexSignatureDeclaration(node) {
+	} else if ast.IsCallSignatureDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsFunctionDeclaration(node) || ast.IsIndexSignatureDeclaration(node) {
 		return wrapFallbackErrorDiagnosticSelector(node, getReturnTypeVisibilityDiagnosticMessage)
 	} else if ast.IsParameterDeclaration(node) {
 		return wrapSimpleDiagnosticSelector(node, getParameterDeclarationTypeVisibilityDiagnosticMessage)
@@ -179,13 +179,6 @@ func getVariableDeclarationTypeVisibilityDiagnosticMessage(node *ast.Node, symbo
 
 func getReturnTypeVisibilityDiagnosticMessage(node *ast.Node, symbolAccessibilityResult printer.SymbolAccessibilityResult) *diagnostics.Message {
 	switch node.Kind {
-	case ast.KindConstructSignature:
-		// Interfaces cannot have return types that cannot be named
-		return selectDiagnosticBasedOnModuleNameNoNameCheck(
-			symbolAccessibilityResult,
-			diagnostics.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_name_0_from_private_module_1,
-			diagnostics.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_name_0,
-		)
 	case ast.KindCallSignature:
 		// Interfaces cannot have return types that cannot be named
 		return selectDiagnosticBasedOnModuleNameNoNameCheck(
@@ -221,14 +214,6 @@ func getReturnTypeVisibilityDiagnosticMessage(node *ast.Node, symbolAccessibilit
 
 func getParameterDeclarationTypeVisibilityDiagnosticMessage(node *ast.Node, symbolAccessibilityResult printer.SymbolAccessibilityResult) *diagnostics.Message {
 	switch node.Parent.Kind {
-	case ast.KindConstructSignature, ast.KindConstructorType:
-		// Interfaces cannot have parameter types that cannot be named
-		return selectDiagnosticBasedOnModuleNameNoNameCheck(
-			symbolAccessibilityResult,
-			diagnostics.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_name_1_from_private_module_2,
-			diagnostics.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_name_1,
-		)
-
 	case ast.KindCallSignature:
 		// Interfaces cannot have parameter types that cannot be named
 		return selectDiagnosticBasedOnModuleNameNoNameCheck(
@@ -271,8 +256,6 @@ func getTypeParameterConstraintVisibilityDiagnosticMessage(node *ast.Node, symbo
 		return diagnostics.Type_parameter_0_of_exported_interface_has_or_is_using_private_name_1
 	case ast.KindMappedType:
 		return diagnostics.Type_parameter_0_of_exported_mapped_object_type_is_using_private_name_1
-	case ast.KindConstructorType, ast.KindConstructSignature:
-		return diagnostics.Type_parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_name_1
 	case ast.KindCallSignature:
 		return diagnostics.Type_parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_name_1
 	case ast.KindMethodSignature:
@@ -299,8 +282,6 @@ func getRelatedSuggestionByDeclarationKind(kind ast.Kind) *diagnostics.Message {
 		return diagnostics.Add_a_return_type_to_the_function_expression
 	case ast.KindFunctionDeclaration:
 		return diagnostics.Add_a_return_type_to_the_function_declaration
-	case ast.KindConstructSignature:
-		return diagnostics.Add_a_return_type_to_the_function_declaration
 	case ast.KindParameter:
 		return diagnostics.Add_a_type_annotation_to_the_parameter_0
 	case ast.KindVariableDeclaration:
@@ -322,8 +303,6 @@ func getErrorByDeclarationKind(kind ast.Kind) *diagnostics.Message {
 		return diagnostics.Function_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations
 	case ast.KindArrowFunction:
 		return diagnostics.Function_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations
-	case ast.KindConstructSignature:
-		return diagnostics.Method_must_have_an_explicit_return_type_annotation_with_isolatedDeclarations
 	case ast.KindParameter:
 		return diagnostics.Parameter_must_have_an_explicit_type_annotation_with_isolatedDeclarations
 	case ast.KindVariableDeclaration:
@@ -495,7 +474,7 @@ func createGetIsolatedDeclarationErrors(resolver printer.EmitResolver) func(node
 			return createObjectLiteralError(node)
 		case ast.KindArrayLiteralExpression, ast.KindSpreadElement:
 			return createArrayLiteralError(node)
-		case ast.KindConstructSignature, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindFunctionDeclaration:
+		case ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindFunctionDeclaration:
 			return createReturnTypeError(node)
 		case ast.KindBindingElement:
 			return createBindingElementError(node)

@@ -2,7 +2,7 @@
 
 === reachabilityChecks10.tlua ===
 
-throw new Error("")
+throw ""
 console.log("1")
 console.log("2")
 

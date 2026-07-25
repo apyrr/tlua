@@ -1,9 +1,8 @@
 assertsPredicateParameterMismatch.tlua(7,12): error TLUA1225: Cannot find parameter 'condition'.
-assertsPredicateParameterMismatch.tlua(9,15): error TLUA2304: Cannot find name 'Error'.
 assertsPredicateParameterMismatch.tlua(15,3): error TLUA2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
 
 
-==== assertsPredicateParameterMismatch.tlua (3 errors) ====
+==== assertsPredicateParameterMismatch.tlua (2 errors) ====
     // This test verifies that the checker doesn't panic when an assertion predicate
     // references a parameter name that doesn't match any actual function parameter.
     // This specifically tests the code path in isReachableFlowNodeWorker.
@@ -14,9 +13,7 @@ assertsPredicateParameterMismatch.tlua(15,3): error TLUA2584: Cannot find name '
                ~~~~~~~~~
 !!! error TLUA1225: Cannot find parameter 'condition'.
       if (!_condition) then
-        throw new Error('Condition failed');
-                  ~~~~~
-!!! error TLUA2304: Cannot find name 'Error'.
+        throw 'Condition failed';
       end
     end
     

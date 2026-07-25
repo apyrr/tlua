@@ -330,7 +330,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			}
 		}
 		return nil
-	case ast.KindCallExpression, ast.KindNewExpression, ast.KindJsxAttribute:
+	case ast.KindCallExpression, ast.KindJsxAttribute:
 		if !isRequireCallArgument(node) && !ast.IsImportCall(parent) {
 			var argumentNode *ast.Node
 			if parent.Kind == ast.KindJsxAttribute {
@@ -462,7 +462,6 @@ func fromUnionableLiteralType(
 		ast.KindExpressionWithTypeArguments,
 		ast.KindJsxOpeningElement,
 		ast.KindJsxSelfClosingElement,
-		ast.KindNewExpression,
 		ast.KindTaggedTemplateExpression,
 		ast.KindTypeReference:
 		typeArgument := ast.FindAncestor(parent, func(n *ast.Node) bool { return n.Parent == grandparent })

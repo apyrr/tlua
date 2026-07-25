@@ -1953,8 +1953,8 @@ func (p *Parser) parseType() *ast.TypeNode {
 	packsInReturnUnion := p.packsInReturnUnion
 	p.packsInReturnUnion = false
 	var typeNode *ast.TypeNode
-	if p.isStartOfFunctionTypeOrConstructorType() {
-		typeNode = p.parseFunctionOrConstructorType()
+	if p.isStartOfFunctionType() {
+		typeNode = p.parseFunctionType()
 	} else {
 		pos := p.nodePos()
 		p.packsInReturnUnion = packsInReturnUnion
@@ -1995,7 +1995,7 @@ func (p *Parser) parseUnionOrIntersectionType(operator ast.Kind, parseConstituen
 		if packsInUnion && p.isParenthesizedReturnTypeList() {
 			return p.parseParenthesizedReturnTypeList()
 		}
-		return p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType)
+		return p.parseFunctionTypeToError(isUnionType, parseConstituentType)
 	}
 	hasLeadingOperator := p.parseOptional(operator)
 	var typeNode *ast.TypeNode
@@ -2482,10 +2482,7 @@ func (p *Parser) parseMappedTypeParameter() *ast.Node {
 
 func (p *Parser) parseTypeMember() *ast.Node {
 	if p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken {
-		return p.parseSignatureMember(ast.KindCallSignature)
-	}
-	if p.token == ast.KindNewKeyword && p.lookAhead((*Parser).nextTokenIsOpenParenOrLessThan) {
-		return p.parseSignatureMember(ast.KindConstructSignature)
+		return p.parseCallSignatureMember()
 	}
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
@@ -2496,32 +2493,14 @@ func (p *Parser) parseTypeMember() *ast.Node {
 	return p.parsePropertyOrMethodSignature(pos, jsdoc, modifiers)
 }
 
-func (p *Parser) nextTokenIsOpenParenOrLessThan() bool {
-	p.nextToken()
-	return p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken
-}
-
-func (p *Parser) parseSignatureMember(kind ast.Kind) *ast.Node {
+func (p *Parser) parseCallSignatureMember() *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
-	if kind == ast.KindConstructSignature {
-		p.parseExpected(ast.KindNewKeyword)
-	}
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
-	var typeNode *ast.TypeNode
-	if kind == ast.KindCallSignature {
-		typeNode = p.parseCallableReturnType(ast.KindColonToken, true /*isType*/)
-	} else {
-		typeNode = p.parseReturnType(ast.KindColonToken, true /*isType*/)
-	}
+	typeNode := p.parseCallableReturnType(ast.KindColonToken, true /*isType*/)
 	p.parseTypeMemberSemicolon()
-	var result *ast.Node
-	if kind == ast.KindCallSignature {
-		result = p.factory.NewCallSignatureDeclaration(typeParameters, parameters, typeNode)
-	} else {
-		result = p.factory.NewConstructSignatureDeclaration(typeParameters, parameters, typeNode)
-	}
+	result := p.factory.NewCallSignatureDeclaration(typeParameters, parameters, typeNode)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, jsdoc)
 	return result
@@ -2766,11 +2745,11 @@ func (p *Parser) parseReturnTypeUnionRest(first *ast.TypeNode, pos int) *ast.Typ
 		if p.isParenthesizedReturnTypeList() {
 			types = append(types, p.parseParenthesizedReturnTypeList())
 		} else {
-			// An ordinary constituent, through parseFunctionOrConstructorTypeToError as
+			// An ordinary constituent, through parseFunctionTypeToError as
 			// the union grammar does: an unparenthesized function type gets its own
 			// diagnostic instead of a parse-error cascade. Packs are claimed above.
 			types = append(types, doInContext(p, ast.NodeFlagsDisallowConditionalTypesContext, false, func(p *Parser) *ast.TypeNode {
-				return p.parseFunctionOrConstructorTypeToError(true /*isUnionType*/, (*Parser).parseIntersectionTypeOrHigher)
+				return p.parseFunctionTypeToError(true /*isUnionType*/, (*Parser).parseIntersectionTypeOrHigher)
 			}))
 		}
 	}
@@ -3236,81 +3215,41 @@ func (p *Parser) parseTemplateMiddleOrTail() *ast.Node {
 	return p.finishNode(result, pos)
 }
 
-func (p *Parser) parseFunctionOrConstructorTypeToError(isInUnionType bool, parseConstituentType func(p *Parser) *ast.TypeNode) *ast.TypeNode {
-	// the function type and constructor type shorthand notation
-	// are not allowed directly in unions and intersections, but we'll
-	// try to parse them gracefully and issue a helpful message.
-	if p.isStartOfFunctionTypeOrConstructorType() {
-		typeNode := p.parseFunctionOrConstructorType()
-		var diagnostic *diagnostics.Message
-		if typeNode.Kind == ast.KindFunctionType {
-			diagnostic = core.IfElse(isInUnionType,
-				diagnostics.Function_type_notation_must_be_parenthesized_when_used_in_a_union_type,
-				diagnostics.Function_type_notation_must_be_parenthesized_when_used_in_an_intersection_type)
-		} else {
-			diagnostic = core.IfElse(isInUnionType,
-				diagnostics.Constructor_type_notation_must_be_parenthesized_when_used_in_a_union_type,
-				diagnostics.Constructor_type_notation_must_be_parenthesized_when_used_in_an_intersection_type)
-		}
-		p.parseErrorAtRange(typeNode.Loc, diagnostic)
+func (p *Parser) parseFunctionTypeToError(isInUnionType bool, parseConstituentType func(p *Parser) *ast.TypeNode) *ast.TypeNode {
+	// The function type shorthand notation is not allowed directly in unions
+	// and intersections, but we'll try to parse it gracefully and issue a
+	// helpful message.
+	if p.isStartOfFunctionType() {
+		typeNode := p.parseFunctionType()
+		p.parseErrorAtRange(typeNode.Loc, core.IfElse(isInUnionType,
+			diagnostics.Function_type_notation_must_be_parenthesized_when_used_in_a_union_type,
+			diagnostics.Function_type_notation_must_be_parenthesized_when_used_in_an_intersection_type))
 		return typeNode
 	}
 	return parseConstituentType(p)
 }
 
-func (p *Parser) isStartOfFunctionTypeOrConstructorType() bool {
+func (p *Parser) isStartOfFunctionType() bool {
 	return p.token == ast.KindLessThanToken ||
 		p.token == ast.KindOpenParenToken && p.lookAhead((*Parser).nextIsUnambiguouslyStartOfFunctionType) ||
-		p.token == ast.KindNewKeyword ||
-		p.token == ast.KindAbstractKeyword && p.lookAhead((*Parser).nextTokenIsNewKeyword) ||
 		// tlua async function type: `async (params) => T`. Only the parenthesized
 		// form is unambiguous; `async <T>(...)` collides with the `async<T>` type
 		// reference and is deferred, so `async` alone stays a type reference.
 		p.token == ast.KindAsyncKeyword && p.lookAhead((*Parser).nextIsStartOfAsyncFunctionType)
 }
 
-func (p *Parser) parseFunctionOrConstructorType() *ast.TypeNode {
+func (p *Parser) parseFunctionType() *ast.TypeNode {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
-	modifiers := p.parseModifiersForConstructorType()
-	isConstructorType := p.parseOptional(ast.KindNewKeyword)
-	if !isConstructorType && modifiers == nil {
-		// A function type may carry an `async` modifier (the tlua coroutine
-		// contract); constructor types only take `abstract`, parsed above.
-		modifiers = p.parseModifiersForFunctionType()
-	}
+	// A function type may carry an `async` modifier (the tlua coroutine contract).
+	modifiers := p.parseModifiersForFunctionType()
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
-	var returnType *ast.TypeNode
-	if isConstructorType {
-		returnType = p.parseReturnType(ast.KindEqualsGreaterThanToken, false /*isType*/)
-	} else {
-		returnType = p.parseCallableReturnType(ast.KindEqualsGreaterThanToken, false /*isType*/)
-	}
-	var result *ast.TypeNode
-	if isConstructorType {
-		result = p.factory.NewConstructorTypeNode(modifiers, typeParameters, parameters, returnType)
-	} else {
-		result = p.factory.NewFunctionTypeNode(modifiers, typeParameters, parameters, returnType)
-	}
+	returnType := p.parseCallableReturnType(ast.KindEqualsGreaterThanToken, false /*isType*/)
+	result := p.factory.NewFunctionTypeNode(modifiers, typeParameters, parameters, returnType)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, jsdoc)
 	return result
-}
-
-func (p *Parser) parseModifiersForConstructorType() *ast.ModifierList {
-	if p.token == ast.KindAbstractKeyword {
-		pos := p.nodePos()
-		modifier := p.factory.NewModifier(p.token)
-		p.nextToken()
-		p.finishNode(modifier, pos)
-		return p.newModifierList(modifier.Loc, p.nodeSliceArena.NewSlice1(modifier))
-	}
-	return nil
-}
-
-func (p *Parser) nextTokenIsNewKeyword() bool {
-	return p.nextToken() == ast.KindNewKeyword
 }
 
 // nextIsStartOfAsyncFunctionType reports whether `async` (already the current
@@ -4540,8 +4479,6 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 		return p.parseFunctionExpression()
 	case ast.KindFunctionKeyword:
 		return p.parseFunctionExpression()
-	case ast.KindNewKeyword:
-		return p.parseNewExpressionOrNewDotTarget()
 	case ast.KindSlashToken, ast.KindSlashEqualsToken:
 		if p.reScanSlashToken() == ast.KindRegularExpressionLiteral {
 			return p.parseLiteralExpression(false /*intern*/)
@@ -4689,33 +4626,6 @@ func (p *Parser) unparseExpressionWithTypeArguments(expression *ast.Node, typeAr
 			a.Parent = result
 		}
 	}
-}
-
-func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
-	pos := p.nodePos()
-	p.parseExpected(ast.KindNewKeyword)
-	if p.parseOptional(ast.KindDotToken) {
-		name := p.parseIdentifierName()
-		return p.finishNode(p.factory.NewMetaProperty(ast.KindNewKeyword, name), pos)
-	}
-	expressionPos := p.nodePos()
-	expression := p.parseMemberExpressionRest(expressionPos, p.parsePrimaryExpression(), false /*allowOptionalChain*/)
-	var typeArguments *ast.NodeList
-	// Absorb type arguments into NewExpression when preceding expression is ExpressionWithTypeArguments
-	if expression.Kind == ast.KindExpressionWithTypeArguments {
-		typeArguments = expression.TypeArgumentList()
-		expression = expression.AsExpressionWithTypeArguments().Expression
-	}
-	if p.token == ast.KindQuestionDotToken {
-		p.parseErrorAtCurrentToken(diagnostics.Invalid_optional_chain_from_new_expression_Did_you_mean_to_call_0, scanner.GetTextOfNodeFromSourceText(p.sourceText, expression, false /*includeTrivia*/))
-	}
-	var argumentList *ast.NodeList
-	if p.token == ast.KindOpenParenToken {
-		argumentList = p.parseArgumentList()
-	}
-	result := p.checkJSSyntax(p.finishNode(p.factory.NewNewExpression(expression, typeArguments, argumentList), pos))
-	p.unparseExpressionWithTypeArguments(expression, typeArguments, result)
-	return result
 }
 
 func (p *Parser) parseKeywordExpression() *ast.Node {
@@ -5060,7 +4970,7 @@ func (p *Parser) isStartOfLeftHandSideExpression() bool {
 	case ast.KindSuperKeyword, ast.KindNilKeyword, ast.KindTrueKeyword, ast.KindFalseKeyword,
 		ast.KindNumericLiteral, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead,
 		ast.KindOpenParenToken, ast.KindOpenBraceToken, ast.KindFunctionKeyword,
-		ast.KindNewKeyword, ast.KindSlashToken, ast.KindSlashEqualsToken, ast.KindIdentifier,
+		ast.KindSlashToken, ast.KindSlashEqualsToken, ast.KindIdentifier,
 		// `...` is the Lua vararg, a primary expression.
 		ast.KindDotDotDotToken:
 		return true
@@ -5075,14 +4985,38 @@ func (p *Parser) isStartOfLeftHandSideExpression() bool {
 
 func (p *Parser) isStartOfType(inStartOfParameter bool) bool {
 	switch p.token {
-	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword,
-		ast.KindBooleanKeyword, ast.KindReadonlyKeyword, ast.KindSymbolKeyword, ast.KindUniqueKeyword, ast.KindVoidKeyword,
-		ast.KindNilKeyword, ast.KindTypeOfKeyword, ast.KindNeverKeyword, ast.KindSelfKeyword,
-		ast.KindOpenBraceToken, ast.KindLessThanToken, ast.KindBarToken, ast.KindAmpersandToken,
-		ast.KindNewKeyword, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindTrueKeyword,
-		ast.KindFalseKeyword, ast.KindObjectKeyword, ast.KindThreadKeyword, ast.KindUserdataKeyword, ast.KindCDataKeyword,
-		ast.KindAsteriskToken, ast.KindQuestionToken,
-		ast.KindDotDotDotToken, ast.KindInferKeyword, ast.KindImportKeyword, ast.KindAssertsKeyword, ast.KindNoSubstitutionTemplateLiteral,
+	case ast.KindAnyKeyword,
+		ast.KindUnknownKeyword,
+		ast.KindStringKeyword,
+		ast.KindNumberKeyword,
+		ast.KindBooleanKeyword,
+		ast.KindReadonlyKeyword,
+		ast.KindSymbolKeyword,
+		ast.KindUniqueKeyword,
+		ast.KindVoidKeyword,
+		ast.KindNilKeyword,
+		ast.KindTypeOfKeyword,
+		ast.KindNeverKeyword,
+		ast.KindSelfKeyword,
+		ast.KindOpenBraceToken,
+		ast.KindLessThanToken,
+		ast.KindBarToken,
+		ast.KindAmpersandToken,
+		ast.KindStringLiteral,
+		ast.KindNumericLiteral,
+		ast.KindTrueKeyword,
+		ast.KindFalseKeyword,
+		ast.KindObjectKeyword,
+		ast.KindThreadKeyword,
+		ast.KindUserdataKeyword,
+		ast.KindCDataKeyword,
+		ast.KindAsteriskToken,
+		ast.KindQuestionToken,
+		ast.KindDotDotDotToken,
+		ast.KindInferKeyword,
+		ast.KindImportKeyword,
+		ast.KindAssertsKeyword,
+		ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindTemplateHead:
 		return true
 	case ast.KindExclamationToken:
@@ -5595,8 +5529,11 @@ func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
 		if core.Some(node.ModifierNodes(), ast.IsModifier) {
 			p.jsErrorAtRange(node.Modifiers().Loc, diagnostics.Parameter_modifiers_can_only_be_used_in_tlua_files)
 		}
-	case ast.KindCallExpression, ast.KindNewExpression, ast.KindExpressionWithTypeArguments, ast.KindJsxSelfClosingElement,
-		ast.KindJsxOpeningElement, ast.KindTaggedTemplateExpression:
+	case ast.KindCallExpression,
+		ast.KindExpressionWithTypeArguments,
+		ast.KindJsxSelfClosingElement,
+		ast.KindJsxOpeningElement,
+		ast.KindTaggedTemplateExpression:
 		if list := node.TypeArgumentList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
 			p.jsErrorAtRange(list.Loc, diagnostics.Type_arguments_can_only_be_used_in_tlua_files)
 		}

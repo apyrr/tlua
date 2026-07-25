@@ -1385,7 +1385,7 @@ func TestTscIncremental(t *testing.T) {
 				"/home/src/workspaces/project/a.tlua": `local a = 10;`,
 				"/home/src/workspaces/project/b.d.tlua": stringtestutil.Dedent(`
 					interface NoName {
-						Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {
+						Profiler: ({ sampleInterval: number, maxBufferSize: number }) => {
 							stop: () => Promise<any>;
 						};
 					}

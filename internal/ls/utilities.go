@@ -622,8 +622,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		// /**/void obj.[|name|]
 		// /**/typeof [|name|]
 		// /**/delete obj.[|name|]
-		if node.Kind == ast.KindNewKeyword && parent.Kind == ast.KindNewExpression ||
-			node.Kind == ast.KindVoidKeyword && parent.Kind == ast.KindVoidExpression ||
+		if node.Kind == ast.KindVoidKeyword && parent.Kind == ast.KindVoidExpression ||
 			node.Kind == ast.KindDeleteKeyword && parent.Kind == ast.KindDeleteExpression {
 			if expr := parent.Expression(); expr != nil {
 				return ast.SkipOuterExpressions(expr, ast.OEKAll)
@@ -986,12 +985,7 @@ func getPossibleGenericSignatures(called *ast.Expression, typeArgumentCount int,
 	if ast.IsOptionalChain(called.Parent) {
 		typeAtLocation = removeOptionality(typeAtLocation, ast.IsOptionalChainRoot(called.Parent), true /*isOptionalChain*/, c)
 	}
-	var signatures []*checker.Signature
-	if ast.IsNewExpression(called.Parent) {
-		signatures = c.GetSignaturesOfType(typeAtLocation, checker.SignatureKindConstruct)
-	} else {
-		signatures = c.GetSignaturesOfType(typeAtLocation, checker.SignatureKindCall)
-	}
+	signatures := c.GetSignaturesOfType(typeAtLocation, checker.SignatureKindCall)
 	return core.Filter(signatures, func(s *checker.Signature) bool {
 		return s.TypeParameters() != nil && len(s.TypeParameters()) >= typeArgumentCount
 	})
@@ -1233,8 +1227,6 @@ func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *c
 func getContextualTypeFromParent(node *ast.Expression, typeChecker *checker.Checker, contextFlags checker.ContextFlags) *checker.Type {
 	parent := ast.WalkUpParenthesizedExpressions(node.Parent)
 	switch parent.Kind {
-	case ast.KindNewExpression:
-		return typeChecker.GetContextualType(parent, contextFlags)
 	case ast.KindBinaryExpression:
 		if isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
 			return typeChecker.GetTypeAtLocation(

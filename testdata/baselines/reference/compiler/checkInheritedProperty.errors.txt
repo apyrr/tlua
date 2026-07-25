@@ -3,7 +3,17 @@ checkInheritedProperty.tlua(1,1): error TLUA2304: Cannot find name 'class'.
 checkInheritedProperty.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
 checkInheritedProperty.tlua(1,7): error TLUA2304: Cannot find name 'Base'.
 checkInheritedProperty.tlua(1,12): error TLUA1128: Declaration or statement expected.
+checkInheritedProperty.tlua(4,22): error TLUA2304: Cannot find name 'new'.
+checkInheritedProperty.tlua(4,25): error TLUA1005: ';' expected.
+checkInheritedProperty.tlua(4,26): error TLUA1109: Expression expected.
+checkInheritedProperty.tlua(4,28): error TLUA1005: ';' expected.
+checkInheritedProperty.tlua(4,31): error TLUA1434: Unexpected keyword or identifier.
 checkInheritedProperty.tlua(4,31): error TLUA2304: Cannot find name 'Base'.
+checkInheritedProperty.tlua(4,36): error TLUA1128: Declaration or statement expected.
+checkInheritedProperty.tlua(4,38): error TLUA1128: Declaration or statement expected.
+checkInheritedProperty.tlua(4,40): error TLUA1434: Unexpected keyword or identifier.
+checkInheritedProperty.tlua(4,40): error TLUA2304: Cannot find name 'c'.
+checkInheritedProperty.tlua(4,41): error TLUA1128: Declaration or statement expected.
 checkInheritedProperty.tlua(6,1): error TLUA1434: Unexpected keyword or identifier.
 checkInheritedProperty.tlua(6,1): error TLUA2304: Cannot find name 'class'.
 checkInheritedProperty.tlua(6,7): error TLUA1434: Unexpected keyword or identifier.
@@ -16,7 +26,7 @@ checkInheritedProperty.tlua(7,13): error TLUA1128: Declaration or statement expe
 checkInheritedProperty.tlua(7,14): error TLUA2454: Variable 'b' is used before being assigned.
 
 
-==== checkInheritedProperty.tlua (16 errors) ====
+==== checkInheritedProperty.tlua (26 errors) ====
     class Base {
     ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -31,8 +41,28 @@ checkInheritedProperty.tlua(7,14): error TLUA2454: Variable 'b' is used before b
     }
     
     declare BaseFactory: new() => Base & { c: string }
+                         ~~~
+!!! error TLUA2304: Cannot find name 'new'.
+                            ~
+!!! error TLUA1005: ';' expected.
+                             ~
+!!! error TLUA1109: Expression expected.
+                               ~~
+!!! error TLUA1005: ';' expected.
+                                  ~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
                                   ~~~~
 !!! error TLUA2304: Cannot find name 'Base'.
+                                       ~
+!!! error TLUA1128: Declaration or statement expected.
+                                         ~
+!!! error TLUA1128: Declaration or statement expected.
+                                           ~
+!!! error TLUA1434: Unexpected keyword or identifier.
+                                           ~
+!!! error TLUA2304: Cannot find name 'c'.
+                                            ~
+!!! error TLUA1128: Declaration or statement expected.
     
     class Derived extends BaseFactory {
     ~~~~~

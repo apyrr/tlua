@@ -50,7 +50,7 @@ function f1(x)
 
         return;
     else
-        throw new Error("123");
+        throw "123";
     end
     local x;
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 40, 9))
@@ -85,7 +85,7 @@ function f4()
 >f4 : Symbol(f4, Decl(reachabilityChecks11.tlua, 59, 3))
 
     if true then
-        throw new Error();
+        throw "";
     end
     local x = 1;
 >x : Symbol(x, Decl(reachabilityChecks11.tlua, 65, 9))

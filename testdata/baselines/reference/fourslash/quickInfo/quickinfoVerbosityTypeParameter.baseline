@@ -58,7 +58,7 @@
 //                               ^
 // | ----------------------------------------------------------------------
 // | ```tlua
-// | (type parameter) A in type MixinCtor<A>
+// | any
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -263,7 +263,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tlua\n(type parameter) A in type MixinCtor<A>\n```\n"
+          "value": "```tlua\nany\n```\n"
         },
         "range": {
           "start": {

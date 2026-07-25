@@ -22,15 +22,13 @@ func getOpenTokenForList(node *ast.Node, list *ast.NodeList) ast.Kind {
 		ast.KindMethodSignature,
 		ast.KindArrowFunction,
 		ast.KindCallSignature,
-		ast.KindConstructSignature,
-		ast.KindFunctionType,
-		ast.KindConstructorType:
+		ast.KindFunctionType:
 		if node.TypeParameterList() == list {
 			return ast.KindLessThanToken
 		} else if node.ParameterList() == list {
 			return ast.KindOpenParenToken
 		}
-	case ast.KindCallExpression, ast.KindNewExpression:
+	case ast.KindCallExpression:
 		if node.TypeArgumentList() == list {
 			return ast.KindLessThanToken
 		} else if node.ArgumentList() == list {

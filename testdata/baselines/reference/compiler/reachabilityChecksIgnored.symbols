@@ -4,7 +4,7 @@
 function a()
 >a : Symbol(a, Decl(reachabilityChecksIgnored.tlua, 0, 0))
 
-    throw new Error("");
+    throw "";
 
     // @ts-ignore
     console.log("unreachable");
@@ -13,7 +13,7 @@ end
 function b()
 >b : Symbol(b, Decl(reachabilityChecksIgnored.tlua, 5, 3))
 
-    throw new Error("");
+    throw "";
 
     // @ts-expect-error
     console.log("unreachable");

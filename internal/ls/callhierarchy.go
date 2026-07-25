@@ -456,7 +456,7 @@ func convertEntryToCallSite(entry *ReferenceEntry) *callSite {
 	}
 
 	node := entry.node
-	if !ast.IsCallOrNewExpressionTarget(node, true /*includeElementAccess*/, true /*skipPastOuterExpressions*/) &&
+	if !ast.IsCallExpressionTarget(node, true /*includeElementAccess*/, true /*skipPastOuterExpressions*/) &&
 		!ast.IsTaggedTemplateTag(node, true, true) &&
 		!ast.IsJsxOpeningLikeElementTagName(node, true, true) &&
 		!ast.IsRightSideOfPropertyAccess(node) &&
@@ -627,8 +627,6 @@ func (c *callSiteCollector) recordCallSite(node *ast.Node) {
 		target = node
 	case ast.IsCallExpression(node):
 		target = node.Expression()
-	case ast.IsNewExpression(node):
-		target = node.Expression()
 	}
 
 	if target == nil {
@@ -697,14 +695,6 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 		return
 	case ast.KindCallExpression:
 		// do not descend into the type arguments of a call expression
-		c.recordCallSite(node)
-		c.collect(node.Expression())
-		for _, arg := range node.Arguments() {
-			c.collect(arg)
-		}
-		return
-	case ast.KindNewExpression:
-		// do not descend into the type arguments of a new expression
 		c.recordCallSite(node)
 		c.collect(node.Expression())
 		for _, arg := range node.Arguments() {

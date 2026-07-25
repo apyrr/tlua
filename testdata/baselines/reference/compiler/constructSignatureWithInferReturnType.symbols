@@ -5,6 +5,7 @@ type ExtractReturn<T> = T extends { new(): infer R } ? R : never;
 >ExtractReturn : Symbol(ExtractReturn, Decl(constructSignatureWithInferReturnType.tlua, 0, 0))
 >T : Symbol(T, Decl(constructSignatureWithInferReturnType.tlua, 0, 19))
 >T : Symbol(T, Decl(constructSignatureWithInferReturnType.tlua, 0, 19))
+>new : Symbol(new, Decl(constructSignatureWithInferReturnType.tlua, 0, 35))
 >R : Symbol(R, Decl(constructSignatureWithInferReturnType.tlua, 0, 48))
 >R : Symbol(R, Decl(constructSignatureWithInferReturnType.tlua, 0, 48))
 

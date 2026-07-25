@@ -78,7 +78,6 @@ export type KeywordSyntaxKind =
     | SyntaxKind.ImportKeyword
     | SyntaxKind.InKeyword
     | SyntaxKind.InstanceOfKeyword
-    | SyntaxKind.NewKeyword
     | SyntaxKind.RepeatKeyword
     | SyntaxKind.ReturnKeyword
     | SyntaxKind.SuperKeyword
@@ -228,7 +227,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.ImportKeyword
     | SyntaxKind.InKeyword
     | SyntaxKind.InstanceOfKeyword
-    | SyntaxKind.NewKeyword
     | SyntaxKind.RepeatKeyword
     | SyntaxKind.ReturnKeyword
     | SyntaxKind.SuperKeyword
@@ -633,9 +631,6 @@ export interface ExportSpecifier extends NodeBase, DeclarationBase {
 export interface CallSignatureDeclaration extends NodeBase, DeclarationBase, FunctionLikeBase, TypeElementBase {
     readonly kind: SyntaxKind.CallSignature;
 }
-export interface ConstructSignatureDeclaration extends NodeBase, DeclarationBase, FunctionLikeBase, TypeElementBase {
-    readonly kind: SyntaxKind.ConstructSignature;
-}
 export interface IndexSignatureDeclaration extends NodeBase, DeclarationBase, ModifiersBase, FunctionLikeBase, TypeElementBase {
     readonly kind: SyntaxKind.IndexSignature;
     readonly type: TypeNode;
@@ -732,17 +727,6 @@ export interface CallExpression extends LeftHandSideExpressionBase, DeclarationB
     readonly questionDotToken?: QuestionDotToken;
     readonly typeArguments?: NodeArray<TypeNode>;
     readonly arguments: NodeArray<Expression>;
-}
-export interface NewExpression extends PrimaryExpressionBase {
-    readonly kind: SyntaxKind.NewExpression;
-    readonly expression: Expression;
-    readonly typeArguments?: NodeArray<TypeNode>;
-    readonly arguments?: NodeArray<Expression>;
-}
-export interface MetaProperty extends PrimaryExpressionBase {
-    readonly kind: SyntaxKind.MetaProperty;
-    readonly keywordToken: SyntaxKind.ImportKeyword | SyntaxKind.NewKeyword;
-    readonly name: Identifier;
 }
 export interface NonNullExpression extends LeftHandSideExpressionBase {
     readonly kind: SyntaxKind.NonNullExpression;
@@ -908,9 +892,6 @@ export interface ParenthesizedTypeNode extends TypeNodeBase {
 }
 export interface FunctionTypeNode extends TypeNodeBase, ModifiersBase, FunctionLikeBase {
     readonly kind: SyntaxKind.FunctionType;
-}
-export interface ConstructorTypeNode extends TypeNodeBase, ModifiersBase, FunctionLikeBase {
-    readonly kind: SyntaxKind.ConstructorType;
 }
 export interface TemplateHead extends NodeBase, TemplateLiteralLikeNodeBase {
     readonly kind: SyntaxKind.TemplateHead;
@@ -1223,7 +1204,7 @@ export type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral
 export type TypePredicateParameterName = Identifier;
 export type LeftHandSideExpression = LeftHandSideExpressionBase;
 export type JSDocComment = JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
-export type SignatureDeclaration = CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | FunctionExpression | ArrowFunction;
+export type SignatureDeclaration = CallSignatureDeclaration | MethodSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | FunctionDeclaration | FunctionExpression | ArrowFunction;
 export type StringLiteralLikeNode = StringLiteral | NoSubstitutionTemplateLiteral;
 export type NumericOrStringLikeLiteral = StringLiteralLikeNode | NumericLiteral;
 export type ObjectLiteralLikeNode = ObjectLiteralExpression | ObjectBindingPattern;
@@ -1231,10 +1212,9 @@ export type ObjectTypeDeclaration = InterfaceDeclaration | TypeLiteralNode;
 export type JsxOpeningLikeElement = JsxOpeningElement | JsxSelfClosingElement;
 export type NamedImportsOrExports = NamedImports | NamedExports;
 export type BreakOrContinueStatement = BreakStatement | ContinueStatement;
-export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | JsxOpeningLikeElement | BinaryExpression;
+export type CallLikeExpression = CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement | BinaryExpression;
 export type FunctionLikeDeclaration = FunctionDeclaration | FunctionExpression | ArrowFunction;
 export type VariableOrParameterDeclaration = VariableDeclaration | ParameterDeclaration;
-export type CallOrNewExpression = CallExpression | NewExpression;
 export type ImportClauseOrBindingPattern = ImportClause | BindingPattern;
 export type AnyImportSyntax = ImportDeclaration | ImportEqualsDeclaration;
 export type Declaration = DeclarationBase;

@@ -77,7 +77,6 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindNeverKeyword,
 		ast.KindVoidKeyword,
 		ast.KindSymbolKeyword,
-		ast.KindConstructorType,
 		ast.KindFunctionType,
 		ast.KindTypeQuery,
 		ast.KindTypeReference,
@@ -170,10 +169,6 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindCallExpression:
 		n := node.AsCallExpression()
 		return tx.Factory().UpdateCallExpression(n, tx.Visitor().VisitNode(n.Expression), n.QuestionDotToken, nil, tx.Visitor().VisitNodes(n.Arguments), n.Flags)
-
-	case ast.KindNewExpression:
-		n := node.AsNewExpression()
-		return tx.Factory().UpdateNewExpression(n, tx.Visitor().VisitNode(n.Expression), nil, tx.Visitor().VisitNodes(n.Arguments))
 
 	case ast.KindTaggedTemplateExpression:
 		n := node.AsTaggedTemplateExpression()

@@ -495,13 +495,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
-    get keywordToken(): SyntaxKind | undefined {
-        switch (this.kind) {
-            case SyntaxKind.MetaProperty:
-                return (this.data >> 24) & 0x1 ? SyntaxKind.NewKeyword : SyntaxKind.ImportKeyword;
-        }
-    }
-
     get operator(): SyntaxKind | undefined {
         switch (this.kind) {
             case SyntaxKind.PrefixUnaryExpression: {
