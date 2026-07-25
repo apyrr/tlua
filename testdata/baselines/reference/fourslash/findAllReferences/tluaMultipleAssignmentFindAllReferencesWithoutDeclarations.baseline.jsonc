@@ -1,0 +1,30 @@
+// === findAllReferences ===
+// === /tluaMultipleAssignmentFindAllReferencesWithoutDeclarations.tlua ===
+// Root = {};
+// Root.x, side = 1, 2;
+// Repeated, Repeated = 5, "overwritten";
+// local member = Root./*FIND ALL REFS*/[|x|];
+// local global = side;
+// local repeated = Repeated;
+
+
+
+// === findAllReferences ===
+// === /tluaMultipleAssignmentFindAllReferencesWithoutDeclarations.tlua ===
+// Root = {};
+// Root.x, side = 1, 2;
+// Repeated, Repeated = 5, "overwritten";
+// local member = Root.x;
+// local global = /*FIND ALL REFS*/[|side|];
+// local repeated = Repeated;
+
+
+
+// === findAllReferences ===
+// === /tluaMultipleAssignmentFindAllReferencesWithoutDeclarations.tlua ===
+// Root = {};
+// Root.x, side = 1, 2;
+// Repeated, Repeated = 5, "overwritten";
+// local member = Root.x;
+// local global = side;
+// local repeated = /*FIND ALL REFS*/[|Repeated|];

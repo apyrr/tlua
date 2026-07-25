@@ -2392,6 +2392,21 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	t *testing.T,
 	markers ...string,
 ) {
+	f.verifyBaselineFindAllReferences(t, true /*includeDeclarations*/, markers...)
+}
+
+func (f *FourslashTest) VerifyBaselineFindAllReferencesWithoutDeclarations(
+	t *testing.T,
+	markers ...string,
+) {
+	f.verifyBaselineFindAllReferences(t, false /*includeDeclarations*/, markers...)
+}
+
+func (f *FourslashTest) verifyBaselineFindAllReferences(
+	t *testing.T,
+	includeDeclarations bool,
+	markers ...string,
+) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
 
 	for _, markerOrRange := range referenceLocations {
@@ -2404,7 +2419,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			},
 			Position: f.currentCaretPosition,
 			Context: &lsproto.ReferenceContext{
-				IncludeDeclaration: true,
+				IncludeDeclaration: includeDeclarations,
 			},
 		}
 		result := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)

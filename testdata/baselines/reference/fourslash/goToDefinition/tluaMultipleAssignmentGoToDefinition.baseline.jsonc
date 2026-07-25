@@ -1,0 +1,126 @@
+// === goToDefinition ===
+// === /tluaMultipleAssignmentGoToDefinition.tlua ===
+// Root = {};
+// <|Root.[|x|]|>, side, Root["named"], Root[1] = 1, 2, 3, 4;
+// Repeated, Repeated = 5, "overwritten";
+// AssertedRoot = {};
+// AssertedRoot!.value, assertedMemberSide = 7, 0;
+// ReceiverRoot = {};
+// (ReceiverRoot).value, receiverMemberSide = "receiver", 0;
+// local member = Root./*GOTO DEF*/x;
+// local global = side;
+// local named = Root["named"];
+// local numeric = Root[1];
+// --- (line: 12) skipped ---
+
+
+
+// === goToDefinition ===
+// === /tluaMultipleAssignmentGoToDefinition.tlua ===
+// Root = {};
+// Root.x, [|side|], Root["named"], Root[1] = 1, 2, 3, 4;
+// Repeated, Repeated = 5, "overwritten";
+// AssertedRoot = {};
+// AssertedRoot!.value, assertedMemberSide = 7, 0;
+// ReceiverRoot = {};
+// (ReceiverRoot).value, receiverMemberSide = "receiver", 0;
+// local member = Root.x;
+// local global = /*GOTO DEF*/side;
+// local named = Root["named"];
+// local numeric = Root[1];
+// local repeated = Repeated;
+// local assertedMember = AssertedRoot.value;
+// local receiverMember = ReceiverRoot.value;
+
+
+
+// === goToDefinition ===
+// === /tluaMultipleAssignmentGoToDefinition.tlua ===
+// Root = {};
+// Root.x, side, <|Root[[|"named"|]]|>, Root[1] = 1, 2, 3, 4;
+// Repeated, Repeated = 5, "overwritten";
+// AssertedRoot = {};
+// AssertedRoot!.value, assertedMemberSide = 7, 0;
+// ReceiverRoot = {};
+// (ReceiverRoot).value, receiverMemberSide = "receiver", 0;
+// local member = Root.x;
+// local global = side;
+// local named = Root[/*GOTO DEF*/"named"];
+// local numeric = Root[1];
+// local repeated = Repeated;
+// local assertedMember = AssertedRoot.value;
+// local receiverMember = ReceiverRoot.value;
+
+
+
+// === goToDefinition ===
+// === /tluaMultipleAssignmentGoToDefinition.tlua ===
+// Root = {};
+// Root.x, side, Root["named"], <|Root[[|1|]]|> = 1, 2, 3, 4;
+// Repeated, Repeated = 5, "overwritten";
+// AssertedRoot = {};
+// AssertedRoot!.value, assertedMemberSide = 7, 0;
+// ReceiverRoot = {};
+// (ReceiverRoot).value, receiverMemberSide = "receiver", 0;
+// local member = Root.x;
+// local global = side;
+// local named = Root["named"];
+// local numeric = Root[/*GOTO DEF*/1];
+// local repeated = Repeated;
+// local assertedMember = AssertedRoot.value;
+// local receiverMember = ReceiverRoot.value;
+
+
+
+// === goToDefinition ===
+// === /tluaMultipleAssignmentGoToDefinition.tlua ===
+// Root = {};
+// Root.x, side, Root["named"], Root[1] = 1, 2, 3, 4;
+// [|Repeated|], [|Repeated|] = 5, "overwritten";
+// AssertedRoot = {};
+// AssertedRoot!.value, assertedMemberSide = 7, 0;
+// ReceiverRoot = {};
+// (ReceiverRoot).value, receiverMemberSide = "receiver", 0;
+// local member = Root.x;
+// local global = side;
+// local named = Root["named"];
+// local numeric = Root[1];
+// local repeated = /*GOTO DEF*/Repeated;
+// local assertedMember = AssertedRoot.value;
+// local receiverMember = ReceiverRoot.value;
+
+
+
+// === goToDefinition ===
+// === /tluaMultipleAssignmentGoToDefinition.tlua ===
+// Root = {};
+// Root.x, side, Root["named"], Root[1] = 1, 2, 3, 4;
+// Repeated, Repeated = 5, "overwritten";
+// AssertedRoot = {};
+// <|AssertedRoot!.[|value|]|>, assertedMemberSide = 7, 0;
+// ReceiverRoot = {};
+// (ReceiverRoot).value, receiverMemberSide = "receiver", 0;
+// local member = Root.x;
+// local global = side;
+// local named = Root["named"];
+// local numeric = Root[1];
+// local repeated = Repeated;
+// local assertedMember = AssertedRoot./*GOTO DEF*/value;
+// local receiverMember = ReceiverRoot.value;
+
+
+
+// === goToDefinition ===
+// === /tluaMultipleAssignmentGoToDefinition.tlua ===
+// --- (line: 3) skipped ---
+// AssertedRoot = {};
+// AssertedRoot!.value, assertedMemberSide = 7, 0;
+// ReceiverRoot = {};
+// <|(ReceiverRoot).[|value|]|>, receiverMemberSide = "receiver", 0;
+// local member = Root.x;
+// local global = side;
+// local named = Root["named"];
+// local numeric = Root[1];
+// local repeated = Repeated;
+// local assertedMember = AssertedRoot.value;
+// local receiverMember = ReceiverRoot./*GOTO DEF*/value;
