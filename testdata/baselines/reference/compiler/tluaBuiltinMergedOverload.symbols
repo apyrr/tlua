@@ -1,0 +1,107 @@
+//// [tests/cases/compiler/tluaBuiltinMergedOverload.tlua] ////
+
+=== tluaBuiltinMergedOverload.tlua ===
+// The refiners read their pattern or format out of the written argument list, so
+// they need to know whether the overload the call RESOLVES to takes the subject
+// first. The bundled members all declare `self`, but a user file can merge one
+// that does not, and then everything shifts a slot. Two literals with different
+// capture counts make the choice visible in the pack's arity.
+
+interface String {
+>String : Symbol(String, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 0, 0))
+
+  // No self: the pattern is the first written argument.
+  match(pattern: string): (string?, ...string);
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 6, 18))
+>pattern : Symbol(pattern, Decl(tluaBuiltinMergedOverload.tlua, 8, 8))
+}
+
+interface LuaFile {
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 9, 1))
+
+  // No self either.
+  read(format: LuaReadFormat): (string | nil);
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 11, 19))
+>format : Symbol(format, Decl(tluaBuiltinMergedOverload.tlua, 13, 7))
+>LuaReadFormat : Symbol(LuaReadFormat, Decl(lib.luajit.d.tlua, --, --))
+}
+
+local s: string = "ab";
+>s : Symbol(s, Decl(tluaBuiltinMergedOverload.tlua, 16, 5))
+
+// Resolves to the merged overload, so the pattern is written first. Two captures
+// means the third value is nil.
+local a, b, c = s.match("(a)(b)");
+>a : Symbol(a, Decl(tluaBuiltinMergedOverload.tlua, 20, 5))
+>b : Symbol(b, Decl(tluaBuiltinMergedOverload.tlua, 20, 8))
+>c : Symbol(c, Decl(tluaBuiltinMergedOverload.tlua, 20, 11))
+>s.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 6, 18))
+>s : Symbol(s, Decl(tluaBuiltinMergedOverload.tlua, 16, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 6, 18))
+
+// The lib's own spellings still declare self and must not shift.
+local d, e, f = s:match("(a)(b)");
+>d : Symbol(d, Decl(tluaBuiltinMergedOverload.tlua, 23, 5))
+>e : Symbol(e, Decl(tluaBuiltinMergedOverload.tlua, 23, 8))
+>f : Symbol(f, Decl(tluaBuiltinMergedOverload.tlua, 23, 11))
+>s:match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 6, 18))
+>s : Symbol(s, Decl(tluaBuiltinMergedOverload.tlua, 16, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 6, 18))
+
+local g, h, i = s.match(s, "(a)(b)");
+>g : Symbol(g, Decl(tluaBuiltinMergedOverload.tlua, 24, 5))
+>h : Symbol(h, Decl(tluaBuiltinMergedOverload.tlua, 24, 8))
+>i : Symbol(i, Decl(tluaBuiltinMergedOverload.tlua, 24, 11))
+>s.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 6, 18))
+>s : Symbol(s, Decl(tluaBuiltinMergedOverload.tlua, 16, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 6, 18))
+>s : Symbol(s, Decl(tluaBuiltinMergedOverload.tlua, 16, 5))
+
+// The namespace form never had a receiver to hide.
+local j, k, l = string.match("subject", "(a)(b)");
+>j : Symbol(j, Decl(tluaBuiltinMergedOverload.tlua, 27, 5))
+>k : Symbol(k, Decl(tluaBuiltinMergedOverload.tlua, 27, 8))
+>l : Symbol(l, Decl(tluaBuiltinMergedOverload.tlua, 27, 11))
+>string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+
+declare handle: LuaFile;
+>handle : Symbol(handle, Decl(tluaBuiltinMergedOverload.tlua, 29, 7))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 9, 1))
+
+// The merged read overload takes the format first, with no handle written.
+local mergedRead = handle.read("*a");
+>mergedRead : Symbol(mergedRead, Decl(tluaBuiltinMergedOverload.tlua, 32, 5))
+>handle.read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 11, 19))
+>handle : Symbol(handle, Decl(tluaBuiltinMergedOverload.tlua, 29, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 11, 19))
+
+// The lib's spellings are unchanged: the colon form writes only the format, the
+// dot form writes the handle ahead of it.
+local colonRead = handle:read("*a");
+>colonRead : Symbol(colonRead, Decl(tluaBuiltinMergedOverload.tlua, 36, 5))
+>handle:read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 11, 19))
+>handle : Symbol(handle, Decl(tluaBuiltinMergedOverload.tlua, 29, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 11, 19))
+
+local dotRead = handle.read(handle, "*a");
+>dotRead : Symbol(dotRead, Decl(tluaBuiltinMergedOverload.tlua, 37, 5))
+>handle.read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 11, 19))
+>handle : Symbol(handle, Decl(tluaBuiltinMergedOverload.tlua, 29, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinMergedOverload.tlua, 11, 19))
+>handle : Symbol(handle, Decl(tluaBuiltinMergedOverload.tlua, 29, 7))
+
+// io.lines still reserves its first argument for the filename.
+for line in io.lines("name.txt", "*a") do
+>line : Symbol(line, Decl(tluaBuiltinMergedOverload.tlua, 40, 3))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+
+  local lineType = line;
+>lineType : Symbol(lineType, Decl(tluaBuiltinMergedOverload.tlua, 41, 7))
+>line : Symbol(line, Decl(tluaBuiltinMergedOverload.tlua, 40, 3))
+
+end
+

@@ -10,20 +10,25 @@ type luaPatternCall struct {
 	plainIndex   int
 }
 
-func (c *Checker) getLuaPatternCall(node *ast.Node) *luaPatternCall {
-	call := c.resolveLuaBuiltinCall(node, luaPatternNames, c.getLuaStringGlobalSymbol, func() *Type { return c.globalStringType })
+func (c *Checker) getLuaPatternCall(node *ast.Node, checkMode CheckMode) *luaPatternCall {
+	call := c.resolveLuaBuiltinCall(node, checkMode, luaPatternNames, c.getLuaStringGlobalSymbol, func() *Type { return c.globalStringType })
 	if call == nil {
 		return nil
 	}
-	// Every spelling reaches the same function, whose parameters are (subject,
-	// pattern, init, plain): the pattern is declared second, and only a colon call
-	// takes it off the written list by filling the subject with its receiver.
-	patternIndex := ast.LuaWrittenArgumentIndex(node, 1)
+	// The pattern is declared right after the subject, so it sits at 1 whenever the
+	// resolved overload takes one -- every namespace form, and every member form but
+	// a merged overload that omits `self`. A colon call then takes the subject off
+	// the written list by filling it with the receiver.
+	declared := 0
+	if call.namespaceForm || call.subjectDeclared {
+		declared = 1
+	}
+	patternIndex := ast.LuaWrittenArgumentIndex(node, declared)
 	return &luaPatternCall{name: call.name, patternIndex: patternIndex, plainIndex: patternIndex + 2}
 }
 
 func (c *Checker) checkLuaPatternCall(node *ast.Node, checkMode CheckMode) *Type {
-	call := c.getLuaPatternCall(node)
+	call := c.getLuaPatternCall(node, checkMode)
 	if call == nil {
 		return nil
 	}

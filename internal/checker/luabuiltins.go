@@ -34,12 +34,41 @@ type luaBuiltinCall struct {
 	name          string
 	callee        *ast.Node // the property-access callee, parentheses skipped
 	namespaceForm bool      // string.match(s, ...) as opposed to s:match(...)
+	// subjectDeclared reports whether the RESOLVED member overload declares the
+	// subject -- the string or file the builtin acts on -- as its leading `self`.
+	// The bundled lib always does, but a user file can merge an overload that
+	// omits it (`match(pattern: string)`), and then everything the refiners read
+	// positionally sits one slot earlier. Meaningless for the namespace form,
+	// whose leading parameter is a value or a filename rather than a receiver.
+	subjectDeclared bool
+}
+
+// luaSubjectDeclared reports whether the overload this call actually resolves to
+// takes the subject first. Name-based, which is how TypeScript itself lifts a
+// `this` parameter out of a signature (checker.go, InternalSymbolNameThis): the
+// bundled lib declares `self`, and the parser synthesizes a parameter named `self`
+// for `function M:f()`, so the same signal arrives from both directions.
+//
+// Resolving here is safe because the caller's own checkMode is threaded in. Both
+// refiner entry points either have the signature cached already (checkCallExpression
+// resolves before refining) or are about to resolve with this very mode
+// (getDirectCallPackType, on the next line), so this is a cache hit or the
+// resolution that was going to happen regardless -- never a competing one.
+func (c *Checker) luaSubjectDeclared(node *ast.Node, checkMode CheckMode) bool {
+	signature := c.getResolvedSignature(node, nil /*candidatesOutArray*/, checkMode)
+	if signature == nil || signature == c.resolvingSignature {
+		// Mid-resolution: assume the lib's shape, which is what every refinement
+		// assumed before this check existed.
+		return true
+	}
+	parameters := signature.Parameters()
+	return len(parameters) > 0 && parameters[0].Name == ast.InternalSymbolNameSelf
 }
 
 // resolveLuaBuiltinCall is the shared detector: a call to one of names,
 // either on the namespace global or as a bundled-interface member. The
 // resolvers are passed lazily so non-matching names never touch symbols.
-func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, names []string, globalSymbol func() *ast.Symbol, interfaceType func() *Type) *luaBuiltinCall {
+func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, checkMode CheckMode, names []string, globalSymbol func() *ast.Symbol, interfaceType func() *Type) *luaBuiltinCall {
 	if !ast.IsCallExpression(node) || node.QuestionDotToken() != nil {
 		return nil
 	}
@@ -58,7 +87,7 @@ func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, names []string, globalSy
 	member := c.getSymbolOfNameOrPropertyAccessExpression(callee)
 	ifaceType := interfaceType()
 	if member != nil && ifaceType != nil && c.getParentOfSymbol(c.getMergedSymbol(member)) == ifaceType.symbol && c.isLuaLibMember(member) {
-		return &luaBuiltinCall{name: name, callee: callee}
+		return &luaBuiltinCall{name: name, callee: callee, subjectDeclared: c.luaSubjectDeclared(node, checkMode)}
 	}
 	return nil
 }

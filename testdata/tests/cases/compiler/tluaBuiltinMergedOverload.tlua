@@ -1,0 +1,47 @@
+// @strict: true
+// @lib: luajit
+// @noEmit: true
+
+// The refiners read their pattern or format out of the written argument list, so
+// they need to know whether the overload the call RESOLVES to takes the subject
+// first. The bundled members all declare `self`, but a user file can merge one
+// that does not, and then everything shifts a slot. Two literals with different
+// capture counts make the choice visible in the pack's arity.
+
+interface String {
+  // No self: the pattern is the first written argument.
+  match(pattern: string): (string?, ...string);
+}
+
+interface LuaFile {
+  // No self either.
+  read(format: LuaReadFormat): (string | nil);
+}
+
+local s: string = "ab";
+
+// Resolves to the merged overload, so the pattern is written first. Two captures
+// means the third value is nil.
+local a, b, c = s.match("(a)(b)");
+
+// The lib's own spellings still declare self and must not shift.
+local d, e, f = s:match("(a)(b)");
+local g, h, i = s.match(s, "(a)(b)");
+
+// The namespace form never had a receiver to hide.
+local j, k, l = string.match("subject", "(a)(b)");
+
+declare handle: LuaFile;
+
+// The merged read overload takes the format first, with no handle written.
+local mergedRead = handle.read("*a");
+
+// The lib's spellings are unchanged: the colon form writes only the format, the
+// dot form writes the handle ahead of it.
+local colonRead = handle:read("*a");
+local dotRead = handle.read(handle, "*a");
+
+// io.lines still reserves its first argument for the filename.
+for line in io.lines("name.txt", "*a") do
+  local lineType = line;
+end

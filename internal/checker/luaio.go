@@ -12,17 +12,17 @@ type luaIOCall struct {
 	formatIndex int
 }
 
-func (c *Checker) getLuaIOCall(node *ast.Node) *luaIOCall {
-	call := c.resolveLuaBuiltinCall(node, luaIONames, c.getLuaIOGlobalSymbol, c.getLuaFileType)
+func (c *Checker) getLuaIOCall(node *ast.Node, checkMode CheckMode) *luaIOCall {
+	call := c.resolveLuaBuiltinCall(node, checkMode, luaIONames, c.getLuaIOGlobalSymbol, c.getLuaFileType)
 	if call == nil {
 		return nil
 	}
 	// Where the format sits in the signature, before any colon shift: `io.read`
 	// takes it first, and everything else reserves that slot -- `io.lines` for the
 	// filename, the file members for the handle.
-	declaredIndex := 1
-	if call.namespaceForm && call.name == "read" {
-		declaredIndex = 0
+	declaredIndex := 0
+	if (call.namespaceForm && call.name == "lines") || (!call.namespaceForm && call.subjectDeclared) {
+		declaredIndex = 1
 	}
 	formatIndex := ast.LuaWrittenArgumentIndex(node, declaredIndex)
 	if formatIndex < 0 {
@@ -35,7 +35,7 @@ func (c *Checker) getLuaIOCall(node *ast.Node) *luaIOCall {
 }
 
 func (c *Checker) checkLuaIOCall(node *ast.Node, checkMode CheckMode) *Type {
-	call := c.getLuaIOCall(node)
+	call := c.getLuaIOCall(node, checkMode)
 	if call == nil {
 		return nil
 	}

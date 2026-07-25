@@ -1,0 +1,120 @@
+//// [tests/cases/compiler/tluaBuiltinMergedOverload.tlua] ////
+
+=== tluaBuiltinMergedOverload.tlua ===
+// The refiners read their pattern or format out of the written argument list, so
+// they need to know whether the overload the call RESOLVES to takes the subject
+// first. The bundled members all declare `self`, but a user file can merge one
+// that does not, and then everything shifts a slot. Two literals with different
+// capture counts make the choice visible in the pack's arity.
+
+interface String {
+  // No self: the pattern is the first written argument.
+  match(pattern: string): (string?, ...string);
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (pattern: string): (string?, ...string); }
+>pattern : string
+}
+
+interface LuaFile {
+  // No self either.
+  read(format: LuaReadFormat): (string | nil);
+>read : { (self: LuaFile, ...: LuaReadFormat): (any, ...any); (format: LuaReadFormat): (string | nil); }
+>format : LuaReadFormat
+}
+
+local s: string = "ab";
+>s : string
+>"ab" : "ab"
+
+// Resolves to the merged overload, so the pattern is written first. Two captures
+// means the third value is nil.
+local a, b, c = s.match("(a)(b)");
+>a : string | nil
+>b : string | nil
+>c : nil
+>s.match("(a)(b)") : string | nil
+>s.match : { (self: string, pattern: string, init?: number): (string?, ...string); (pattern: string): (string?, ...string); }
+>s : string
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (pattern: string): (string?, ...string); }
+>"(a)(b)" : "(a)(b)"
+
+// The lib's own spellings still declare self and must not shift.
+local d, e, f = s:match("(a)(b)");
+>d : string | nil
+>e : string | nil
+>f : nil
+>s:match("(a)(b)") : string | nil
+>s:match : { (self: string, pattern: string, init?: number): (string?, ...string); (pattern: string): (string?, ...string); }
+>s : string
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (pattern: string): (string?, ...string); }
+>"(a)(b)" : "(a)(b)"
+
+local g, h, i = s.match(s, "(a)(b)");
+>g : string | nil
+>h : string | nil
+>i : nil
+>s.match(s, "(a)(b)") : string | nil
+>s.match : { (self: string, pattern: string, init?: number): (string?, ...string); (pattern: string): (string?, ...string); }
+>s : string
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (pattern: string): (string?, ...string); }
+>s : string
+>"(a)(b)" : "(a)(b)"
+
+// The namespace form never had a receiver to hide.
+local j, k, l = string.match("subject", "(a)(b)");
+>j : string | nil
+>k : string | nil
+>l : nil
+>string.match("subject", "(a)(b)") : string | nil
+>string.match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>string : StringLib
+>match : (value: string, pattern: string, init?: number) => (string?, ...string)
+>"subject" : "subject"
+>"(a)(b)" : "(a)(b)"
+
+declare handle: LuaFile;
+>handle : LuaFile
+
+// The merged read overload takes the format first, with no handle written.
+local mergedRead = handle.read("*a");
+>mergedRead : string
+>handle.read("*a") : string
+>handle.read : { (self: LuaFile, ...: LuaReadFormat): (any, ...any); (format: LuaReadFormat): (string | nil); }
+>handle : LuaFile
+>read : { (self: LuaFile, ...: LuaReadFormat): (any, ...any); (format: LuaReadFormat): (string | nil); }
+>"*a" : "*a"
+
+// The lib's spellings are unchanged: the colon form writes only the format, the
+// dot form writes the handle ahead of it.
+local colonRead = handle:read("*a");
+>colonRead : string
+>handle:read("*a") : string
+>handle:read : { (self: LuaFile, ...: LuaReadFormat): (any, ...any); (format: LuaReadFormat): (string | nil); }
+>handle : LuaFile
+>read : { (self: LuaFile, ...: LuaReadFormat): (any, ...any); (format: LuaReadFormat): (string | nil); }
+>"*a" : "*a"
+
+local dotRead = handle.read(handle, "*a");
+>dotRead : string
+>handle.read(handle, "*a") : string
+>handle.read : { (self: LuaFile, ...: LuaReadFormat): (any, ...any); (format: LuaReadFormat): (string | nil); }
+>handle : LuaFile
+>read : { (self: LuaFile, ...: LuaReadFormat): (any, ...any); (format: LuaReadFormat): (string | nil); }
+>handle : LuaFile
+>"*a" : "*a"
+
+// io.lines still reserves its first argument for the filename.
+for line in io.lines("name.txt", "*a") do
+>line : string
+>io.lines("name.txt", "*a") : () => (string)
+>io.lines : (filename?: string, ...: LuaReadFormat) => function
+>io : IOLib
+>lines : (filename?: string, ...: LuaReadFormat) => function
+>"name.txt" : "name.txt"
+>"*a" : "*a"
+
+  local lineType = line;
+>lineType : string
+>line : string
+
+end
+

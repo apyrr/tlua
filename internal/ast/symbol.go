@@ -68,6 +68,7 @@ const (
 	InternalSymbolNameExportEquals            = "export="                                            // Export assignment symbol
 	InternalSymbolNameDefault                 = "default"                                            // Default export symbol (technically not wholly internal, but included here for usability)
 	InternalSymbolNameThis                    = "this"
+	InternalSymbolNameSelf                    = "self" // Lua's receiver parameter, ordinary rather than lifted out like `this`
 	InternalSymbolNameModuleExports           = "module.exports"
 )
 
