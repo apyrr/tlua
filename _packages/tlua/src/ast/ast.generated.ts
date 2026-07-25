@@ -742,10 +742,6 @@ export interface PropertyAssignment extends NodeBase, NamedMemberBase, ObjectLit
     readonly type: TypeNode;
     readonly initializer: Expression;
 }
-export interface VoidExpression extends UnaryExpressionBase {
-    readonly kind: SyntaxKind.VoidExpression;
-    readonly expression: Expression;
-}
 export interface TypeAssertion extends UnaryExpressionBase {
     readonly kind: SyntaxKind.TypeAssertionExpression;
     readonly type: TypeNode;

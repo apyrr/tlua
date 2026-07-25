@@ -3950,8 +3950,6 @@ func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 		return p.parseVarargExpression()
 	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken:
 		return p.parsePrefixUnaryExpression()
-	case ast.KindVoidKeyword:
-		return p.parseVoidExpression()
 	case ast.KindLessThanToken:
 		// Just like in parseUpdateExpression, we need to avoid parsing type assertions when
 		// in JSX and we see an expression like "+ <foo> bar".
@@ -3976,12 +3974,6 @@ func (p *Parser) parsePrefixUnaryExpression() *ast.Node {
 	// operand at unary precedence admits `^`, but stops before multiplicative operators.
 	operand := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceUnary)
 	return p.finishNode(p.factory.NewPrefixUnaryExpression(operator, operand), pos)
-}
-
-func (p *Parser) parseVoidExpression() *ast.Node {
-	pos := p.nodePos()
-	p.nextToken()
-	return p.finishNode(p.factory.NewVoidExpression(p.parseSimpleUnaryExpression()), pos)
 }
 
 func (p *Parser) parseTypeAssertion() *ast.Node {

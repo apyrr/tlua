@@ -44,5 +44,5 @@ end
 -- `local function` takes a plain name.
 local function Bad()
   f();
-  void ;
+  ;
 end

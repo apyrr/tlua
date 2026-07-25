@@ -142,7 +142,6 @@ import type {
     VariableDeclaration,
     VariableDeclarationList,
     VariableStatement,
-    VoidExpression,
     WhileStatement,
 } from "./ast.ts";
 import {
@@ -283,7 +282,6 @@ import {
     updateVariableDeclaration,
     updateVariableDeclarationList,
     updateVariableStatement,
-    updateVoidExpression,
     updateWhileStatement,
 } from "./factory.generated.ts";
 import {
@@ -758,10 +756,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         const _initializer = visitNode(node.initializer, visitor, isExpression);
         return updatePropertyAssignment(node, _modifiers, _name, _postfixToken, _type, _initializer);
-    },
-    [SyntaxKind.VoidExpression]: (node: VoidExpression, visitor: Visitor): VoidExpression => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateVoidExpression(node, _expression);
     },
     [SyntaxKind.TypeAssertionExpression]: (node: TypeAssertion, visitor: Visitor): TypeAssertion => {
         const _type = visitNode(node.type, visitor, isTypeNode);

@@ -176,8 +176,6 @@ func getAllRules() []ruleSpec {
 		rule("SpaceBeforeBinaryKeywordOperator", anyToken, binaryKeywordOperators, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
 		rule("SpaceAfterBinaryKeywordOperator", binaryKeywordOperators, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
 
-		rule("SpaceAfterVoidOperator", ast.KindVoidKeyword, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isVoidOpContext}, ruleActionInsertSpace),
-
 		// Async-await
 		rule("SpaceBetweenAsyncAndOpenParen", ast.KindAsyncKeyword, ast.KindOpenParenToken, []contextPredicate{isArrowFunctionContext, isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 		rule("SpaceBetweenAsyncAndFunctionKeyword", ast.KindAsyncKeyword, []ast.Kind{ast.KindFunctionKeyword, ast.KindIdentifier}, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),

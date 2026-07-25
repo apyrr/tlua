@@ -215,7 +215,6 @@ import type {
     VariableDeclaration,
     VariableDeclarationList,
     VariableStatement,
-    VoidExpression,
     WhileStatement,
 } from "./ast.ts";
 import { getTokenPosOfNode } from "./astnav.ts";
@@ -781,8 +780,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression };
         case SyntaxKind.PropertyAssignment:
             return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, type: n.type, initializer: n.initializer };
-        case SyntaxKind.VoidExpression:
-            return { expression: n.expression };
         case SyntaxKind.TypeAssertionExpression:
             return { type: n.type, expression: n.expression };
         case SyntaxKind.UnionType:
@@ -1154,7 +1151,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
-    [SyntaxKind.VoidExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.TypeAssertionExpression]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.expression),
@@ -1917,12 +1913,6 @@ export function createPropertyAssignment(modifiers: readonly ModifierLike[] | un
         type,
         initializer,
     }) as unknown as PropertyAssignment;
-}
-
-export function createVoidExpression(expression: Expression): VoidExpression {
-    return new NodeObject(SyntaxKind.VoidExpression, {
-        expression,
-    }) as unknown as VoidExpression;
 }
 
 export function createTypeAssertion(type: TypeNode, expression: Expression): TypeAssertion {
@@ -2803,10 +2793,6 @@ export function updateTableEntry(node: TableEntry, expression: Expression): Tabl
 
 export function updatePropertyAssignment(node: PropertyAssignment, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer: Expression): PropertyAssignment {
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertyAssignment(modifiers, name, postfixToken, type, initializer) : node;
-}
-
-export function updateVoidExpression(node: VoidExpression, expression: Expression): VoidExpression {
-    return node.expression !== expression ? createVoidExpression(expression) : node;
 }
 
 export function updateTypeAssertion(node: TypeAssertion, type: TypeNode, expression: Expression): TypeAssertion {

@@ -37,30 +37,27 @@ function M:deep.f(): void
 >deep : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }) => void
 >f() : any
 >f : any
->void : nil
+> : any
 
 end
-> : any
 
 function M:a:b(): void
 >M : { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }
 >a : (self: { bar(self: any, v: number): number; clash(self: any, self: number): void; deep(self: any): void; a(self: any): b; }) => b
 >() : any
 > : any
->void : nil
+> : any
 
 end
-> : any
 
 // `local function` takes a plain name.
 local function Bad:f(): void
 >Bad : () => f
 >() : any
 > : any
->void : nil
+> : any
 
 end
-> : any
 
 // Unknown base.
 function Unknown:f(): void

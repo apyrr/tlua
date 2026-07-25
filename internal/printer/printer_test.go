@@ -88,7 +88,6 @@ func TestEmit(t *testing.T) {
 		{title: "FunctionExpression#6", input: "(function<T>() end)", output: "(function<T>()\nend);"},
 		{title: "FunctionExpression#7", input: "(function(a) end)", output: "(function(a)\nend);"},
 		{title: "FunctionExpression#8", input: "(function(): T end)", output: "(function(): T\nend);"},
-		{title: "VoidExpression", input: `void a`, output: `void a;`},
 		{title: "PrefixUnaryExpression#1", input: `+a`, output: `+a;`},
 		{title: "PrefixUnaryExpression#3", input: `+ +a`, output: `+ +a;`},
 		{title: "PrefixUnaryExpression#5", input: `-a`, output: `-a;`},
@@ -678,31 +677,6 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(function() return {}.a end);")
-}
-
-func TestParenthesizeVoid(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewVoidExpression(
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindPlusToken),
-						factory.NewIdentifier("b"),
-					),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "void (a + b);")
 }
 
 func isBinaryOperator(token ast.Kind) bool {

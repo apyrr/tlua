@@ -286,7 +286,6 @@ type (
 	SpreadAssignmentNode              = Node
 	TableEntryNode                    = Node
 	PropertyAssignmentNode            = Node
-	VoidExpressionNode                = Node
 	TypeAssertionNode                 = Node
 	KeywordTypeNodeNode               = Node
 	UnionTypeNodeNode                 = Node
@@ -3637,48 +3636,6 @@ func (node *PropertyAssignment) Name() *DeclarationName {
 
 func IsPropertyAssignment(node *Node) bool {
 	return node.Kind == KindPropertyAssignment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// VoidExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type VoidExpression struct {
-	UnaryExpressionBase
-	Expression *Expression
-}
-
-func (f *NodeFactory) NewVoidExpression(expression *Expression) *Node {
-	data := &VoidExpression{}
-	data.Expression = expression
-	return f.newNode(KindVoidExpression, data)
-}
-
-func (f *NodeFactory) UpdateVoidExpression(node *VoidExpression, expression *Expression) *Node {
-	if expression != node.Expression {
-		return updateNode(f.NewVoidExpression(expression), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *VoidExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Expression)
-}
-
-func (node *VoidExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateVoidExpression(node, v.visitNode(node.Expression))
-}
-
-func (node *VoidExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewVoidExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *VoidExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
-}
-
-func IsVoidExpression(node *Node) bool {
-	return node.Kind == KindVoidExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7298,8 +7255,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*TableEntry).ForEachChild(v)
 	case KindPropertyAssignment:
 		return n.data.(*PropertyAssignment).ForEachChild(v)
-	case KindVoidExpression:
-		return n.data.(*VoidExpression).ForEachChild(v)
 	case KindTypeAssertionExpression:
 		return n.data.(*TypeAssertion).ForEachChild(v)
 	case KindUnionType:
@@ -7757,10 +7712,6 @@ func (n *Node) AsTableEntry() *TableEntry {
 
 func (n *Node) AsPropertyAssignment() *PropertyAssignment {
 	return n.data.(*PropertyAssignment)
-}
-
-func (n *Node) AsVoidExpression() *VoidExpression {
-	return n.data.(*VoidExpression)
 }
 
 func (n *Node) AsTypeAssertion() *TypeAssertion {

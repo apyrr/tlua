@@ -1018,8 +1018,8 @@ func expressionResultIsUnused(node *ast.Node) bool {
 			node = parent
 			continue
 		}
-		// result is unused in an expression statement or a `void` expression
-		if ast.IsExpressionStatement(parent) || ast.IsVoidExpression(parent) {
+		// result is unused in an expression statement
+		if ast.IsExpressionStatement(parent) {
 			return true
 		}
 		if ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {

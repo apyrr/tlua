@@ -212,8 +212,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 	// TODO: Should prefix `++` and `--` be moved to the `Update` precedence?
 	case KindTypeAssertionExpression,
 		KindNonNullExpression,
-		KindPrefixUnaryExpression,
-		KindVoidExpression:
+		KindPrefixUnaryExpression:
 		return OperatorPrecedenceUnary
 
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting

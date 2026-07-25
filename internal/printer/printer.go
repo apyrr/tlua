@@ -2503,14 +2503,6 @@ func (p *Printer) emitArrowFunction(node *ast.ArrowFunction) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitVoidExpression(node *ast.VoidExpression) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindVoidKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeSpace()
-	p.emitExpression(node.Expression, ast.OperatorPrecedenceUnary)
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitPrefixUnaryExpression(node *ast.PrefixUnaryExpression) {
 	state := p.enterNode(node.AsNode())
 	operator := node.Operator
@@ -3010,8 +3002,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitFunctionExpression(node.AsFunctionExpression())
 	case ast.KindArrowFunction:
 		p.emitArrowFunction(node.AsArrowFunction())
-	case ast.KindVoidExpression:
-		p.emitVoidExpression(node.AsVoidExpression())
 	case ast.KindPrefixUnaryExpression:
 		p.emitPrefixUnaryExpression(node.AsPrefixUnaryExpression())
 	case ast.KindBinaryExpression:

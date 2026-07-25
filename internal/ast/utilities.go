@@ -488,7 +488,6 @@ func IsLeftHandSideExpression(node *Node) bool {
 func isUnaryExpressionKind(kind Kind) bool {
 	switch kind {
 	case KindPrefixUnaryExpression,
-		KindVoidExpression,
 		KindTypeAssertionExpression:
 		return true
 	}
@@ -1425,10 +1424,6 @@ func IsImportOrExportSpecifier(node *Node) bool {
 	return IsImportSpecifier(node) || IsExportSpecifier(node)
 }
 
-func IsVoidZero(node *Node) bool {
-	return IsVoidExpression(node) && IsNumericLiteral(node.Expression()) && node.Expression().Text() == "0"
-}
-
 func IsExportsIdentifier(node *Node) bool {
 	return IsIdentifier(node) && node.Text() == "exports"
 }
@@ -2111,7 +2106,6 @@ func IsExpressionNode(node *Node) bool {
 		KindParenthesizedExpression,
 		KindFunctionExpression,
 		KindArrowFunction,
-		KindVoidExpression,
 		KindPrefixUnaryExpression,
 		KindBinaryExpression,
 		KindConditionalExpression,
@@ -2193,10 +2187,11 @@ func IsPartOfTypeNode(node *Node) bool {
 	case KindAnyKeyword, KindUnknownKeyword, KindNumberKeyword, KindStringKeyword,
 		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword,
 		KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword,
-		KindNilKeyword, KindNeverKeyword, KindSelfKeyword:
+		KindNilKeyword, KindNeverKeyword, KindSelfKeyword,
+		// `void` is only ever a type now: the `void x` expression is gone, so the
+		// keyword no longer has an expression role to be told apart from.
+		KindVoidKeyword:
 		return true
-	case KindVoidKeyword:
-		return node.Parent.Kind != KindVoidExpression
 	case KindFunctionKeyword:
 		return IsFunctionKeywordTypeNode(node)
 	case KindExpressionWithTypeArguments:

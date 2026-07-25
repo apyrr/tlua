@@ -233,10 +233,6 @@ func (f *NodeFactory) NewStrictInequalityExpression(left *ast.Expression, right 
 // Compound Nodes
 //
 
-func (f *NodeFactory) NewVoidZeroExpression() *ast.Expression {
-	return f.NewVoidExpression(f.NewNumericLiteral("0", ast.TokenFlagsNone))
-}
-
 func flattenCommaElement(node *ast.Expression, expressions []*ast.Expression) []*ast.Expression {
 	if ast.IsBinaryExpression(node) && ast.NodeIsSynthesized(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
 		expressions = flattenCommaElement(node.AsBinaryExpression().Left, expressions)

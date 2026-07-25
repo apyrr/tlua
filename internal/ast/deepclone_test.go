@@ -99,7 +99,6 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 		{title: "ArrowFunction#8", input: `():T=>{}`},
 		{title: "ArrowFunction#9", input: `()=>a`},
 		{title: "DeleteExpression", input: `delete a`},
-		{title: "VoidExpression", input: `void a`},
 		{title: "AwaitExpression", input: `await a`},
 		{title: "PrefixUnaryExpression#1", input: `+a`},
 		{title: "PrefixUnaryExpression#3", input: `+ +a`},

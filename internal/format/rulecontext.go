@@ -483,10 +483,6 @@ func isNonTypeAssertionContext(context *FormattingContext) bool {
 	return !isTypeAssertionContext(context)
 }
 
-func isVoidOpContext(context *FormattingContext) bool {
-	return context.currentTokenSpan.Kind == ast.KindVoidKeyword && context.currentTokenParent.Kind == ast.KindVoidExpression
-}
-
 func isNonNullAssertionContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindNonNullExpression
 }

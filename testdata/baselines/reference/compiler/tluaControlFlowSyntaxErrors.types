@@ -14,10 +14,9 @@ function repeat(): void
 > : () => void
 >() : any
 > : any
->void : nil
+> : any
 
 end
-> : any
 > : any
 
 // Missing `then`.

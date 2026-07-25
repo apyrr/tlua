@@ -230,7 +230,6 @@
             "ParenthesizedExpression",
             "FunctionExpression",
             "ArrowFunction",
-            "VoidExpression",
             "PrefixUnaryExpression",
             "BinaryExpression",
             "ConditionalExpression",
@@ -2527,18 +2526,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "VoidExpression": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "UnaryExpressionBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
             },
             "TypeAssertion": {
                 "kind": "TypeAssertionExpression",

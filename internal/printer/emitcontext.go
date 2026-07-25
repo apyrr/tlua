@@ -824,7 +824,7 @@ func (c *EmitContext) addDefaultValueAssignmentForBindingPattern(parameter *ast.
 		initNode = c.Factory.NewConditionalExpression(
 			c.Factory.NewStrictEqualityExpression(
 				c.Factory.NewGeneratedNameForNode(parameter.AsNode()),
-				c.Factory.NewVoidZeroExpression(),
+				c.Factory.NewKeywordExpression(ast.KindNilKeyword),
 			),
 			c.Factory.NewToken(ast.KindQuestionToken),
 			parameter.Initializer,
@@ -868,7 +868,7 @@ func (c *EmitContext) addDefaultValueAssignmentForInitializer(parameter *ast.Par
 	initBlock.Loc = parameter.Loc
 	c.AddEmitFlags(initBlock, EFSingleLine|EFNoTrailingSourceMap|EFNoTokenSourceMaps|EFNoComments)
 	c.AddInitializationStatement(c.Factory.NewIfStatement(
-		c.Factory.NewStrictEqualityExpression(name.Clone(c.Factory), c.Factory.NewVoidZeroExpression()),
+		c.Factory.NewStrictEqualityExpression(name.Clone(c.Factory), c.Factory.NewKeywordExpression(ast.KindNilKeyword)),
 		initBlock,
 		nil,
 	))

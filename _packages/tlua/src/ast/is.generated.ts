@@ -278,7 +278,6 @@ import type {
     VariableDeclarationList,
     VariableOrParameterDeclaration,
     VariableStatement,
-    VoidExpression,
     WhileStatement,
 } from "./ast.ts";
 
@@ -580,10 +579,6 @@ export function isTableEntry(node: Node): node is TableEntry {
 
 export function isPropertyAssignment(node: Node): node is PropertyAssignment {
     return node.kind === SyntaxKind.PropertyAssignment;
-}
-
-export function isVoidExpression(node: Node): node is VoidExpression {
-    return node.kind === SyntaxKind.VoidExpression;
 }
 
 export function isTypeAssertion(node: Node): node is TypeAssertion {

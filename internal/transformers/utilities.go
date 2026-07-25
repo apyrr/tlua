@@ -37,7 +37,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindSpreadAssignment,
 		ast.KindParenthesizedExpression,
 		ast.KindArrayLiteralExpression,
-		ast.KindVoidExpression,
 		ast.KindTypeAssertionExpression,
 		ast.KindExpressionWithTypeArguments,
 		ast.KindJsxSelfClosingElement,

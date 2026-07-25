@@ -118,7 +118,6 @@ export function isExpression(node: Node): node is Expression {
         || kind === SyntaxKind.SatisfiesExpression
         || kind === SyntaxKind.ExpressionList
         || kind === SyntaxKind.PrefixUnaryExpression
-        || kind === SyntaxKind.VoidExpression
         || kind === SyntaxKind.TypeAssertionExpression
         || kind === SyntaxKind.CallExpression
         || kind === SyntaxKind.NonNullExpression
@@ -195,7 +194,6 @@ export function isUnaryExpression(node: Node): node is UnaryExpressionBase {
 function isUnaryExpressionKind(kind: SyntaxKind): boolean {
     switch (kind) {
         case SyntaxKind.PrefixUnaryExpression:
-        case SyntaxKind.VoidExpression:
         case SyntaxKind.TypeAssertionExpression:
             return true;
         default:

@@ -509,8 +509,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeNode := d.nodeAt(it.nextIf(mask, 3))
 		initializer := d.nodeAt(it.nextIf(mask, 4))
 		return d.factory.NewPropertyAssignment(modifiers, name, postfixToken, typeNode, initializer), nil
-	case ast.KindVoidExpression:
-		return d.factory.NewVoidExpression(d.singleChild(childIndices)), nil
 	case ast.KindTypeAssertionExpression:
 		it := newChildIter(childIndices)
 		typeNode := d.nodeAt(it.nextIf(mask, 0))

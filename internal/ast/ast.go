@@ -334,8 +334,6 @@ func (n *Node) Expression() *Node {
 		return n.AsSpreadElement().Expression
 	case KindTemplateSpan:
 		return n.AsTemplateSpan().Expression
-	case KindVoidExpression:
-		return n.AsVoidExpression().Expression
 	case KindPartiallyEmittedExpression:
 		return n.AsPartiallyEmittedExpression().Expression
 	case KindIfStatement:
@@ -405,8 +403,6 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsSpreadElement().Expression = expr
 	case KindTemplateSpan:
 		n.AsTemplateSpan().Expression = expr
-	case KindVoidExpression:
-		n.AsVoidExpression().Expression = expr
 	case KindPartiallyEmittedExpression:
 		n.AsPartiallyEmittedExpression().Expression = expr
 	case KindIfStatement:

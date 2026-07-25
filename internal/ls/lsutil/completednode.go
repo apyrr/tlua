@@ -88,8 +88,7 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 	case ast.KindTypeQuery:
 		return IsCompletedNode(n.AsTypeQueryNode().ExprName, sourceFile)
 
-	case ast.KindVoidExpression,
-		ast.KindSpreadElement:
+	case ast.KindSpreadElement:
 		return IsCompletedNode(n.Expression(), sourceFile)
 
 	case ast.KindTemplateExpression:

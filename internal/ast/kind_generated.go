@@ -201,7 +201,6 @@ const (
 	KindParenthesizedExpression
 	KindFunctionExpression
 	KindArrowFunction
-	KindVoidExpression
 	KindPrefixUnaryExpression
 	KindBinaryExpression
 	KindConditionalExpression

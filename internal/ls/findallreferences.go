@@ -1275,11 +1275,6 @@ func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ct
 
 func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
 	if isTypeKeyword(node.Kind) {
-		// A void expression (i.e., `void foo()`) is not special, but the `void` type is.
-		if node.Kind == ast.KindVoidKeyword && node.Parent.Kind == ast.KindVoidExpression {
-			return nil
-		}
-
 		// A modifier readonly (like on a property declaration) is not special;
 		// a readonly type keyword (like `readonly string[]`) is.
 		if node.Kind == ast.KindReadonlyKeyword && !isReadonlyTypeOperator(node) {

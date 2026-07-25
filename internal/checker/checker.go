@@ -2276,8 +2276,6 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 		c.checkJsxElementDeferred(node)
 	case ast.KindTypeAssertionExpression, ast.KindAsExpression:
 		c.checkAssertionDeferred(node)
-	case ast.KindVoidExpression:
-		c.checkExpression(node.Expression())
 	}
 	c.currentNode = saveCurrentNode
 }
@@ -5936,8 +5934,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkExpressionWithTypeArguments(node)
 	case ast.KindSatisfiesExpression:
 		return c.checkSatisfiesExpression(node)
-	case ast.KindVoidExpression:
-		return c.checkVoidExpression(node)
 	case ast.KindPrefixUnaryExpression:
 		return c.checkPrefixUnaryExpression(node)
 	case ast.KindBinaryExpression:
@@ -8230,11 +8226,6 @@ func (c *Checker) checkDeleteExpressionMustBeOptional(expr *ast.Node, symbol *as
 	}
 }
 
-func (c *Checker) checkVoidExpression(node *ast.Node) *Type {
-	c.checkNodeDeferred(node)
-	return c.nilWideningType
-}
-
 func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
 	expr := node.AsPrefixUnaryExpression()
 	operandType := c.checkExpression(expr.Operand)
@@ -9376,7 +9367,7 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 		// is reported like any other always-truthy expression.
 		ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral:
 		return PredicateSemanticsAlways
-	case ast.KindVoidExpression, ast.KindNilKeyword:
+	case ast.KindNilKeyword:
 		return PredicateSemanticsNever
 	case ast.KindConditionalExpression:
 		return c.getSyntacticTruthySemantics(node.AsConditionalExpression().WhenTrue) | c.getSyntacticTruthySemantics(node.AsConditionalExpression().WhenFalse)

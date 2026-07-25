@@ -436,6 +436,7 @@ TestFormattingSpaceBeforeFunctionParen
 TestFormattingSpaceBetweenParent
 TestFormattingSpacesAfterConstructor
 TestFormattingTemplates
+TestFormattingVoid
 TestFormatTryCatch
 TestFormatV8Directive
 TestForwardReference
