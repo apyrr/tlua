@@ -99,6 +99,13 @@ func getAllRules() []ruleSpec {
 		rule("IgnoreBeforeComment", anyToken, comments, anyContext, ruleActionStopProcessingSpaceActions),
 		rule("IgnoreAfterLineComment", ast.KindSingleLineCommentTrivia, anyToken, anyContext, ruleActionStopProcessingSpaceActions),
 
+		// The Lua method colon is part of a name, not a separator: it stays tight on
+		// both sides. These precede the general colon rules because the first
+		// space-modifying rule to match a pair wins, and the type-annotation rules
+		// below would otherwise pad a declaration's `function obj:m()` colon.
+		rule("NoSpaceBeforeLuaMethodColon", anyToken, ast.KindColonToken, []contextPredicate{isNonJsxSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterLuaMethodColon", ast.KindColonToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
+
 		rule("NotSpaceBeforeColon", anyToken, ast.KindColonToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext, isNotTypeAnnotationContext}, ruleActionDeleteSpace),
 		rule("SpaceAfterColon", ast.KindColonToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext, isNextTokenParentNotJsxNamespacedName}, ruleActionInsertSpace),
 		rule("NoSpaceBeforeQuestionMark", anyToken, ast.KindQuestionToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext, isNotTypeAnnotationContext}, ruleActionDeleteSpace),

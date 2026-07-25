@@ -801,6 +801,31 @@ func IsLuaColonCall(node *Node) bool {
 	return callee.Kind == KindPropertyAccessExpression && callee.AsPropertyAccessExpression().ColonToken != nil
 }
 
+// LuaImplicitSelfParameter returns the `self` parameter that `function M:f(...)`
+// leaves implicit, or nil for a declaration written without the colon. The colon
+// is what makes the parameter implicit, so its presence is the whole test — this
+// is the one definition of "that parameter", and every consumer that skips it
+// should ask here rather than re-deriving it from a position or an index.
+func LuaImplicitSelfParameter(decl *FunctionDeclaration) *Node {
+	if decl.ColonToken == nil || decl.Parameters == nil || len(decl.Parameters.Nodes) == 0 {
+		return nil
+	}
+	return decl.Parameters.Nodes[0]
+}
+
+// IsLuaImplicitSelfParameter reports whether node is that parameter. The parser
+// synthesizes it over the colon, the one character of source that stands for it
+// (see newLuaSelfParameter), so it is the only parameter whose range falls outside
+// — and before — the parameter list. Consumers that walk a declaration's children
+// in source order must skip it, or they revisit source they have already passed:
+// the formatter rewinds its scanner, and semantic tokens go backwards.
+func IsLuaImplicitSelfParameter(node *Node) bool {
+	if node.Kind != KindParameter || node.Parent == nil || node.Parent.Kind != KindFunctionDeclaration {
+		return false
+	}
+	return LuaImplicitSelfParameter(node.Parent.AsFunctionDeclaration()) == node
+}
+
 // LuaColonCallReceiver returns the raw receiver expression of a colon call
 // (`obj` in `obj:f(a)`), with any parentheses preserved. The node must
 // satisfy IsLuaColonCall.

@@ -7,12 +7,12 @@ local a = { b = {} };
 
 // `self` takes the type of the whole chain before the colon, not of its root.
 function a.b:f(x: number): number
->a.b: : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
+>a.b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 >a : Symbol(a, Decl(tluaColonFunctionNestedChains.tlua, 0, 5))
 >b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 >f : Symbol(f, Decl(tluaColonFunctionNestedChains.tlua, 0, 21))
 >: : Symbol(:, Decl(tluaColonFunctionNestedChains.tlua, 3, 12))
->a.b: : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
+>a.b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 >a : Symbol(a, Decl(tluaColonFunctionNestedChains.tlua, 0, 5))
 >b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 >x : Symbol(x, Decl(tluaColonFunctionNestedChains.tlua, 3, 15))
@@ -23,12 +23,12 @@ function a.b:f(x: number): number
 end
 
 function a.b:g(): number
->a.b: : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
+>a.b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 >a : Symbol(a, Decl(tluaColonFunctionNestedChains.tlua, 0, 5))
 >b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 >g : Symbol(g, Decl(tluaColonFunctionNestedChains.tlua, 5, 3))
 >: : Symbol(:, Decl(tluaColonFunctionNestedChains.tlua, 7, 12))
->a.b: : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
+>a.b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 >a : Symbol(a, Decl(tluaColonFunctionNestedChains.tlua, 0, 5))
 >b : Symbol(b, Decl(tluaColonFunctionNestedChains.tlua, 0, 11))
 

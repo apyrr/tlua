@@ -9,12 +9,12 @@ local a = { b = {} };
 
 // `self` takes the type of the whole chain before the colon, not of its root.
 function a.b:f(x: number): number
->a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a.b : { f(self: any, x: number): number; g(self: any): number; }
 >a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
 >b : { f(self: any, x: number): number; g(self: any): number; }
 >f : (self: { f(self: any, x: number): number; g(self: any): number; }, x: number) => number
 >: : { f(self: any, x: number): number; g(self: any): number; }
->a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a.b : { f(self: any, x: number): number; g(self: any): number; }
 >a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
 >b : { f(self: any, x: number): number; g(self: any): number; }
 >x : number
@@ -25,12 +25,12 @@ function a.b:f(x: number): number
 end
 
 function a.b:g(): number
->a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a.b : { f(self: any, x: number): number; g(self: any): number; }
 >a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
 >b : { f(self: any, x: number): number; g(self: any): number; }
 >g : (self: { f(self: any, x: number): number; g(self: any): number; }) => number
 >: : { f(self: any, x: number): number; g(self: any): number; }
->a.b: : { f(self: any, x: number): number; g(self: any): number; }
+>a.b : { f(self: any, x: number): number; g(self: any): number; }
 >a : { b: { f(self: any, x: number): number; g(self: any): number; }; }
 >b : { f(self: any, x: number): number; g(self: any): number; }
 

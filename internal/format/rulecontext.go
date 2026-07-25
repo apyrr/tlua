@@ -197,6 +197,34 @@ func isNextTokenNotWordSpelledOperator(context *FormattingContext) bool {
 	return !spanIsWordSpelledOperator(context, context.nextTokenSpan)
 }
 
+// luaMethodColonToken returns the `:` of the Lua method sugar recorded on the
+// context node — `obj:m()` on a property access, `function obj:m()` on a
+// declaration — or nil for a node that carries no such colon.
+func luaMethodColonToken(context *FormattingContext) *ast.Node {
+	switch context.contextNode.Kind {
+	case ast.KindPropertyAccessExpression:
+		return context.contextNode.AsPropertyAccessExpression().ColonToken
+	case ast.KindFunctionDeclaration:
+		return context.contextNode.AsFunctionDeclaration().ColonToken
+	}
+	return nil
+}
+
+// isLuaMethodColonContext reports whether the pair being formatted straddles a
+// Lua method colon. That colon binds a receiver to a name the way `.` does, so it
+// takes no padding: `obj: m()` reads as a type annotation. A function declaration
+// carries a second, unrelated colon before its return type, so matching on the
+// context node alone is not enough — the token has to be the colon the node
+// recorded. Ends are compared because a node's Pos() includes leading trivia.
+func isLuaMethodColonContext(context *FormattingContext) bool {
+	colon := luaMethodColonToken(context)
+	if colon == nil {
+		return false
+	}
+	return (context.currentTokenSpan.Kind == ast.KindColonToken && context.currentTokenSpan.Loc.End() == colon.End()) ||
+		(context.nextTokenSpan.Kind == ast.KindColonToken && context.nextTokenSpan.Loc.End() == colon.End())
+}
+
 func isNotTypeAnnotationContext(context *FormattingContext) bool {
 	return !isTypeAnnotationContext(context)
 }

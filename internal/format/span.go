@@ -351,6 +351,14 @@ func (w *formatSpanWorker) processChildNode(
 		return inheritedIndentation
 	}
 
+	// The implicit `self` of `function obj:m()` is a parameter synthesized over the
+	// colon, which sits before the parameter list and has already been consumed by
+	// the time the list is walked. Formatting is a forward scan, so descending into
+	// it rewinds the scanner and re-emits edits for tokens behind it.
+	if ast.IsLuaImplicitSelfParameter(child) {
+		return inheritedIndentation
+	}
+
 	childStartPos := scanner.GetTokenPosOfNode(child, w.sourceFile, false)
 	childStartLine := scanner.GetECMALineOfPosition(w.sourceFile, childStartPos)
 	// A Lua block has no opening brace, so its skip-trivia start lands on the first

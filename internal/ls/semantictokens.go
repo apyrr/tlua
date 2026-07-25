@@ -192,6 +192,13 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 		if node.Flags&ast.NodeFlagsReparsed != 0 {
 			return false
 		}
+		// The implicit `self` of `function obj:m()` is synthesized over the colon and
+		// the target, source this walk has already passed by the time it reaches the
+		// parameter list. Its tokens would come out behind the ones already emitted,
+		// which encodeSemanticTokens rejects outright.
+		if ast.IsLuaImplicitSelfParameter(node) {
+			return false
+		}
 		nodeEnd := node.End()
 		if node.Pos() >= spanEnd || nodeEnd <= spanStart {
 			return false

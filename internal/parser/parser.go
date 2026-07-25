@@ -1697,12 +1697,16 @@ func (p *Parser) parseFunctionDeclaration(pos int, jsdoc jsdocScannerInfo, modif
 		// parameter. A colon here is never a return type: those are parsed after the
 		// parameter list. At most one colon segment is allowed, so `a:b:c` and `a:b.c`
 		// fall out as the natural `'(' expected`.
-		if colonToken = p.parseOptionalToken(ast.KindColonToken); colonToken != nil {
+		if p.token == ast.KindColonToken {
+			// The target has to be finished while the colon is still unconsumed: a node
+			// ends where the current token begins, so folding the last segment after
+			// reading the colon would stretch the target over it.
 			if target == nil {
 				target = name
 			} else {
 				target = p.finishNode(p.factory.NewPropertyAccessExpression(target, nil /*questionDotToken*/, nil /*colonToken*/, name, ast.NodeFlagsNone), namePos)
 			}
+			colonToken = p.parseTokenNode()
 			name = p.parseIdentifierName()
 			selfParameter = p.newLuaSelfParameter(target, colonToken)
 		}

@@ -1506,7 +1506,7 @@ func (p *Printer) emitSignatureSkippingSelf(node *ast.Node) {
 	n := node.FunctionLikeData()
 	p.emitTypeParameters(node, n.TypeParameters)
 	parameters := *n.Parameters
-	if len(parameters.Nodes) > 0 {
+	if ast.LuaImplicitSelfParameter(node.AsFunctionDeclaration()) != nil {
 		parameters.Nodes = parameters.Nodes[1:]
 	}
 	p.emitParameters(node, &parameters)
