@@ -57,23 +57,27 @@ for word in s:gmatch("%a+") do
 
 end
 
-// The dot spellings write the subject, so they keep refining as before.
+// The dot spelling shifts by the same misdetected subject, so it reads argument 0 --
+// `s`, which is not a literal -- and declines too. Both spellings pin the same thing
+// here: the declared return, arrived at without crashing.
 local dotMatched = s.match(s, "%d");
->dotMatched : Symbol(dotMatched, Decl(tluaBuiltinReceiverFillsSubject.tlua, 24, 5))
+>dotMatched : Symbol(dotMatched, Decl(tluaBuiltinReceiverFillsSubject.tlua, 26, 5))
 >s.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
 >s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
 >match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
 >s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
 
-// And the bundled forms are untouched.
+// A bundled member the merge leaves alone is unaffected.
 local libColon = s:upper();
->libColon : Symbol(libColon, Decl(tluaBuiltinReceiverFillsSubject.tlua, 27, 5))
+>libColon : Symbol(libColon, Decl(tluaBuiltinReceiverFillsSubject.tlua, 29, 5))
 >s:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 >s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
 >upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 
+// `match` is not left alone: two effective arguments fit the merged overload, so this
+// is its declared return rather than a refined pack.
 local libPattern = ("ab"):match("(a)(b)");
->libPattern : Symbol(libPattern, Decl(tluaBuiltinReceiverFillsSubject.tlua, 28, 5))
+>libPattern : Symbol(libPattern, Decl(tluaBuiltinReceiverFillsSubject.tlua, 33, 5))
 >("ab"):match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
 >match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
 
