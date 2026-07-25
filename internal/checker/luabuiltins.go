@@ -48,11 +48,23 @@ type luaBuiltinCall struct {
 	name          string
 	callee        *ast.Node // the property-access callee, parentheses skipped
 	namespaceForm bool      // string.match(s, ...) as opposed to s:match(...)
-	// explicitSelf marks the member form written with a dot rather than a
-	// colon: `s.match(s, p)`. The receiver is not passed implicitly there, so
-	// it occupies the first WRITTEN argument, and everything the refiners read
-	// positionally shifts by one -- exactly as it does in the namespace form.
-	explicitSelf bool
+	// colonForm marks `x:m(...)`, where the receiver fills the function's first
+	// parameter without appearing in the argument list. It is the only thing that
+	// shifts the refiners' positional reads, and it is a property of the CALL --
+	// independent of whether the callee is the namespace global or a member, which
+	// is why `string:match(s, p)` shifts too.
+	colonForm bool
+}
+
+// writtenIndex maps a parameter's position in the function's signature onto the
+// argument list as the source writes it. A negative result means that parameter is
+// not written at all: the receiver supplies it, so a refiner looking for a literal
+// there has to read the receiver expression instead of an argument.
+func (call *luaBuiltinCall) writtenIndex(declaredIndex int) int {
+	if call.colonForm {
+		return declaredIndex - 1
+	}
+	return declaredIndex
 }
 
 // resolveLuaBuiltinCall is the shared detector: a call to one of names,
@@ -70,14 +82,15 @@ func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, names []string, globalSy
 	if !slices.Contains(names, name) {
 		return nil
 	}
+	colonForm := ast.IsLuaColonCall(node)
 	base := ast.SkipParentheses(callee.Expression())
 	if ast.IsIdentifier(base) && c.isLuaGlobalReference(base, globalSymbol()) {
-		return &luaBuiltinCall{name: name, callee: callee, namespaceForm: true}
+		return &luaBuiltinCall{name: name, callee: callee, namespaceForm: true, colonForm: colonForm}
 	}
 	member := c.getSymbolOfNameOrPropertyAccessExpression(callee)
 	ifaceType := interfaceType()
 	if member != nil && ifaceType != nil && c.getParentOfSymbol(c.getMergedSymbol(member)) == ifaceType.symbol && c.isLuaLibMember(member) {
-		return &luaBuiltinCall{name: name, callee: callee, explicitSelf: !ast.IsLuaColonCall(node)}
+		return &luaBuiltinCall{name: name, callee: callee, colonForm: colonForm}
 	}
 	return nil
 }

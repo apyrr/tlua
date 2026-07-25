@@ -17,12 +17,19 @@ func (c *Checker) getLuaIOCall(node *ast.Node) *luaIOCall {
 	if call == nil {
 		return nil
 	}
-	formatIndex := 0
-	switch {
-	case call.name == "lines" && call.namespaceForm:
-		formatIndex = 1 // The namespace form reserves its first argument for the filename.
-	case call.explicitSelf:
-		formatIndex = 1 // `f.read(f, "*a")` writes the handle out; `f:read("*a")` does not.
+	// Where the format sits in the signature, before any colon shift: `io.read`
+	// takes it first, and everything else reserves that slot -- `io.lines` for the
+	// filename, the file members for the handle.
+	declaredIndex := 1
+	if call.namespaceForm && call.name == "read" {
+		declaredIndex = 0
+	}
+	formatIndex := call.writtenIndex(declaredIndex)
+	if formatIndex < 0 {
+		// `io:read("*a")` hands the io table itself to the format parameter, so
+		// there is no written format to read and nothing to refine. Without this
+		// the read loop below indexes the argument list at -1.
+		return nil
 	}
 	return &luaIOCall{name: call.name, formatIndex: formatIndex}
 }

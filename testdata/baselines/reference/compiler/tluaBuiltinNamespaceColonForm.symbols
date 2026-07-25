@@ -1,0 +1,103 @@
+//// [tests/cases/compiler/tluaBuiltinNamespaceColonForm.tlua] ////
+
+=== tluaBuiltinNamespaceColonForm.tlua ===
+// A colon call fills the function's first parameter with its receiver. That is
+// true of the namespace globals too -- `string:match(a, b)` is
+// `string.match(string, a, b)` -- so the refiners' positional reads shift there
+// exactly as they do for a member call. The receiver is the wrong type in these,
+// which the declared signature reports; what is pinned here is that the refiner
+// reads the argument Lua would read, or declines to refine.
+
+// Two literals with different capture counts, so which one is taken as the
+// pattern shows up in the pack's arity. The pattern is the first WRITTEN
+// argument here, giving two captures -- a third value is nil.
+local x1, x2, x3 = string:match("(a)(b)", "(a)(b)(c)");
+>x1 : Symbol(x1, Decl(tluaBuiltinNamespaceColonForm.tlua, 10, 5))
+>x2 : Symbol(x2, Decl(tluaBuiltinNamespaceColonForm.tlua, 10, 9))
+>x3 : Symbol(x3, Decl(tluaBuiltinNamespaceColonForm.tlua, 10, 13))
+>string:match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+
+// The namespace dot form does write its subject first, so the pattern is second
+// and all three captures land.
+local y1, y2, y3 = string.match("subject", "(a)(b)(c)");
+>y1 : Symbol(y1, Decl(tluaBuiltinNamespaceColonForm.tlua, 14, 5))
+>y2 : Symbol(y2, Decl(tluaBuiltinNamespaceColonForm.tlua, 14, 9))
+>y3 : Symbol(y3, Decl(tluaBuiltinNamespaceColonForm.tlua, 14, 13))
+>string.match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>match : Symbol(StringLib.match, Decl(lib.luajit.d.tlua, --, --))
+
+// The member forms are unchanged by any of this.
+local text: string = "ab";
+>text : Symbol(text, Decl(tluaBuiltinNamespaceColonForm.tlua, 17, 5))
+
+local m1, m2, m3 = text:match("(a)(b)");
+>m1 : Symbol(m1, Decl(tluaBuiltinNamespaceColonForm.tlua, 18, 5))
+>m2 : Symbol(m2, Decl(tluaBuiltinNamespaceColonForm.tlua, 18, 9))
+>m3 : Symbol(m3, Decl(tluaBuiltinNamespaceColonForm.tlua, 18, 13))
+>text:match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaBuiltinNamespaceColonForm.tlua, 17, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+
+local n1, n2, n3 = text.match(text, "(a)(b)");
+>n1 : Symbol(n1, Decl(tluaBuiltinNamespaceColonForm.tlua, 19, 5))
+>n2 : Symbol(n2, Decl(tluaBuiltinNamespaceColonForm.tlua, 19, 9))
+>n3 : Symbol(n3, Decl(tluaBuiltinNamespaceColonForm.tlua, 19, 13))
+>text.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaBuiltinNamespaceColonForm.tlua, 17, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --))
+>text : Symbol(text, Decl(tluaBuiltinNamespaceColonForm.tlua, 17, 5))
+
+// io.read's format is its first parameter, so a colon call leaves none written
+// and there is nothing to refine.
+local readColon = io:read("*a");
+>readColon : Symbol(readColon, Decl(tluaBuiltinNamespaceColonForm.tlua, 23, 5))
+>io:read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+
+local readDot = io.read("*a");
+>readDot : Symbol(readDot, Decl(tluaBuiltinNamespaceColonForm.tlua, 24, 5))
+>io.read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>read : Symbol(IOLib.read, Decl(lib.luajit.d.tlua, --, --))
+
+// io.lines reserves its first parameter for the filename, so the colon form
+// shifts the format onto the first written argument.
+for lineColon in io:lines("name.txt", "*a") do
+>lineColon : Symbol(lineColon, Decl(tluaBuiltinNamespaceColonForm.tlua, 28, 3))
+>io:lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+
+  local lineColonType = lineColon;
+>lineColonType : Symbol(lineColonType, Decl(tluaBuiltinNamespaceColonForm.tlua, 29, 7))
+>lineColon : Symbol(lineColon, Decl(tluaBuiltinNamespaceColonForm.tlua, 28, 3))
+
+end
+for lineDot in io.lines("name.txt", "*a") do
+>lineDot : Symbol(lineDot, Decl(tluaBuiltinNamespaceColonForm.tlua, 31, 3))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+
+  local lineDotType = lineDot;
+>lineDotType : Symbol(lineDotType, Decl(tluaBuiltinNamespaceColonForm.tlua, 32, 7))
+>lineDot : Symbol(lineDot, Decl(tluaBuiltinNamespaceColonForm.tlua, 31, 3))
+
+end
+
+// string.format's format string is its first parameter, so the colon form takes
+// it from the receiver -- which is the string table, not a literal.
+string:format("%d", 1);
+>string:format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+
+string.format("%d", 1);
+>string.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
+>format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
+

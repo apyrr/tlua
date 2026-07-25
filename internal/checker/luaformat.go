@@ -14,25 +14,22 @@ func (c *Checker) getLuaFormatCall(node *ast.Node) (*ast.Node, int) {
 	if call == nil {
 		return nil, 0
 	}
-	// The offset indexes into getEffectiveCallArguments' result, and a colon
-	// call (`fmt:format(x)`) prepends the receiver there.
-	colonOffset := 0
-	if ast.IsLuaColonCall(node) {
-		colonOffset = 1
-	}
-	// The format string is the first WRITTEN argument in every form but the
-	// colon call, which supplies it as the receiver. That covers the namespace
-	// form (`string.format(f, x)`) and the explicit-self member form
-	// (`f.format(f, x)`), where the receiver text and the format string are the
-	// same argument.
-	if call.namespaceForm || call.explicitSelf {
+	// The format string is the function's first parameter in every spelling: the
+	// namespace form writes it (`string.format(f, x)`), and the member form IS it
+	// (`f:format(x)` -- the receiver and the format string are the same text). So a
+	// colon call takes it off the written list, and the receiver supplies it.
+	//
+	// The returned offset counts EFFECTIVE arguments before the substitutions, and
+	// getEffectiveCallArguments prepends a colon call's receiver. Either way the
+	// format string lands at effective 0, so the substitutions always start at 1.
+	if index := call.writtenIndex(0); index >= 0 {
 		args := node.Arguments()
-		if len(args) == 0 {
+		if index >= len(args) {
 			return nil, 0
 		}
-		return args[0], 1 + colonOffset
+		return args[index], 1
 	}
-	return call.callee.Expression(), colonOffset
+	return call.callee.Expression(), 1
 }
 
 func (c *Checker) checkLuaFormatCall(node *ast.Node, checkMode CheckMode) {

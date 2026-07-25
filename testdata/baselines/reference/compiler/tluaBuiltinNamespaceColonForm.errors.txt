@@ -1,0 +1,55 @@
+tluaBuiltinNamespaceColonForm.tlua(11,20): error TLUA2345: Argument of type 'StringLib' is not assignable to parameter of type 'string'.
+tluaBuiltinNamespaceColonForm.tlua(24,19): error TLUA2345: Argument of type 'IOLib' is not assignable to parameter of type 'LuaReadFormat'.
+tluaBuiltinNamespaceColonForm.tlua(29,18): error TLUA2345: Argument of type 'IOLib' is not assignable to parameter of type 'string'.
+tluaBuiltinNamespaceColonForm.tlua(38,1): error TLUA2345: Argument of type 'StringLib' is not assignable to parameter of type 'string'.
+
+
+==== tluaBuiltinNamespaceColonForm.tlua (4 errors) ====
+    // A colon call fills the function's first parameter with its receiver. That is
+    // true of the namespace globals too -- `string:match(a, b)` is
+    // `string.match(string, a, b)` -- so the refiners' positional reads shift there
+    // exactly as they do for a member call. The receiver is the wrong type in these,
+    // which the declared signature reports; what is pinned here is that the refiner
+    // reads the argument Lua would read, or declines to refine.
+    
+    // Two literals with different capture counts, so which one is taken as the
+    // pattern shows up in the pack's arity. The pattern is the first WRITTEN
+    // argument here, giving two captures -- a third value is nil.
+    local x1, x2, x3 = string:match("(a)(b)", "(a)(b)(c)");
+                       ~~~~~~
+!!! error TLUA2345: Argument of type 'StringLib' is not assignable to parameter of type 'string'.
+    
+    // The namespace dot form does write its subject first, so the pattern is second
+    // and all three captures land.
+    local y1, y2, y3 = string.match("subject", "(a)(b)(c)");
+    
+    // The member forms are unchanged by any of this.
+    local text: string = "ab";
+    local m1, m2, m3 = text:match("(a)(b)");
+    local n1, n2, n3 = text.match(text, "(a)(b)");
+    
+    // io.read's format is its first parameter, so a colon call leaves none written
+    // and there is nothing to refine.
+    local readColon = io:read("*a");
+                      ~~
+!!! error TLUA2345: Argument of type 'IOLib' is not assignable to parameter of type 'LuaReadFormat'.
+    local readDot = io.read("*a");
+    
+    // io.lines reserves its first parameter for the filename, so the colon form
+    // shifts the format onto the first written argument.
+    for lineColon in io:lines("name.txt", "*a") do
+                     ~~
+!!! error TLUA2345: Argument of type 'IOLib' is not assignable to parameter of type 'string'.
+      local lineColonType = lineColon;
+    end
+    for lineDot in io.lines("name.txt", "*a") do
+      local lineDotType = lineDot;
+    end
+    
+    // string.format's format string is its first parameter, so the colon form takes
+    // it from the receiver -- which is the string table, not a literal.
+    string:format("%d", 1);
+    ~~~~~~
+!!! error TLUA2345: Argument of type 'StringLib' is not assignable to parameter of type 'string'.
+    string.format("%d", 1);
+    

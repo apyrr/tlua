@@ -15,12 +15,10 @@ func (c *Checker) getLuaPatternCall(node *ast.Node) *luaPatternCall {
 	if call == nil {
 		return nil
 	}
-	// The subject string is a written argument in every form but the colon
-	// call, which supplies it as the receiver -- so the pattern follows it.
-	patternIndex := 0
-	if call.namespaceForm || call.explicitSelf {
-		patternIndex = 1
-	}
+	// Every spelling reaches the same function, whose parameters are (subject,
+	// pattern, init, plain): the pattern is declared second, and only a colon call
+	// takes it off the written list by filling the subject with its receiver.
+	patternIndex := call.writtenIndex(1)
 	return &luaPatternCall{name: call.name, patternIndex: patternIndex, plainIndex: patternIndex + 2}
 }
 
