@@ -24,6 +24,13 @@ func (c *Checker) getLuaPatternCall(node *ast.Node, checkMode CheckMode) *luaPat
 		declared = 1
 	}
 	patternIndex := ast.LuaWrittenArgumentIndex(node, declared)
+	if patternIndex < 0 {
+		// The receiver fills the pattern parameter itself -- a colon call to a merged
+		// overload that declares no subject, so `s:match()` means `s.match(s)` and the
+		// pattern is the receiver, not an argument. There is nothing in the written
+		// list to read, and reading it anyway indexes args at -1.
+		return nil
+	}
 	return &luaPatternCall{name: call.name, patternIndex: patternIndex, plainIndex: patternIndex + 2}
 }
 

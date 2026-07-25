@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/tluaBuiltinReceiverFillsSubject.tlua] ////
+
+=== tluaBuiltinReceiverFillsSubject.tlua ===
+// A written index of -1 means the receiver fills the parameter the refiner wants to
+// read, so there is nothing in the argument list to read and every refiner has to
+// decline rather than index at -1. Reachable whenever a merged overload declares no
+// `self` and the call uses a colon: `s:match(p)` is `s.match(s, p)`, so the merged
+// two-parameter overload wins and its subject is the receiver.
+
+interface String {
+  // Declares the subject under a name that is not `self`, so the refiner cannot
+  // tell it apart from a pattern-first overload.
+  match(subject: string, pattern: string): string;
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (subject: string, pattern: string): string; }
+>subject : string
+>pattern : string
+
+  gmatch(subject: string, pattern: string): () => string;
+>gmatch : { (self: string, pattern: string): () => string; (subject: string, pattern: string): () => string; }
+>subject : string
+>pattern : string
+
+  find(subject: string, pattern: string, plain: boolean): number;
+>find : { (self: string, pattern: string, init?: number, plain?: boolean): (number?, number?, ...string); (subject: string, pattern: string, plain: boolean): number; }
+>subject : string
+>pattern : string
+>plain : boolean
+}
+
+local s: string = "hello";
+>s : string
+>"hello" : "hello"
+
+// Each of these resolves to the merged overload, leaving the pattern unwritten.
+local matched = s:match("%d");
+>matched : string
+>s:match("%d") : string
+>s:match : { (self: string, pattern: string, init?: number): (string?, ...string); (subject: string, pattern: string): string; }
+>s : string
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (subject: string, pattern: string): string; }
+>"%d" : "%d"
+
+local found = s:find("%d", true);
+>found : number
+>s:find("%d", true) : number
+>s:find : { (self: string, pattern: string, init?: number, plain?: boolean): (number?, number?, ...string); (subject: string, pattern: string, plain: boolean): number; }
+>s : string
+>find : { (self: string, pattern: string, init?: number, plain?: boolean): (number?, number?, ...string); (subject: string, pattern: string, plain: boolean): number; }
+>"%d" : "%d"
+>true : true
+
+for word in s:gmatch("%a+") do
+>word : string
+>s:gmatch("%a+") : () => string
+>s:gmatch : { (self: string, pattern: string): () => string; (subject: string, pattern: string): () => string; }
+>s : string
+>gmatch : { (self: string, pattern: string): () => string; (subject: string, pattern: string): () => string; }
+>"%a+" : "%a+"
+
+  local wordType = word;
+>wordType : string
+>word : string
+
+end
+
+// The dot spellings write the subject, so they keep refining as before.
+local dotMatched = s.match(s, "%d");
+>dotMatched : string
+>s.match(s, "%d") : string
+>s.match : { (self: string, pattern: string, init?: number): (string?, ...string); (subject: string, pattern: string): string; }
+>s : string
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (subject: string, pattern: string): string; }
+>s : string
+>"%d" : "%d"
+
+// And the bundled forms are untouched.
+local libColon = s:upper();
+>libColon : string
+>s:upper() : string
+>s:upper : (self: string) => string
+>s : string
+>upper : (self: string) => string
+
+local libPattern = ("ab"):match("(a)(b)");
+>libPattern : string
+>("ab"):match("(a)(b)") : string
+>("ab"):match : { (self: string, pattern: string, init?: number): (string?, ...string); (subject: string, pattern: string): string; }
+>("ab") : "ab"
+>"ab" : "ab"
+>match : { (self: string, pattern: string, init?: number): (string?, ...string); (subject: string, pattern: string): string; }
+>"(a)(b)" : "(a)(b)"
+

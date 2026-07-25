@@ -1,0 +1,33 @@
+// @strict: true
+// @lib: luajit
+// @noEmit: true
+
+// A written index of -1 means the receiver fills the parameter the refiner wants to
+// read, so there is nothing in the argument list to read and every refiner has to
+// decline rather than index at -1. Reachable whenever a merged overload declares no
+// `self` and the call uses a colon: `s:match(p)` is `s.match(s, p)`, so the merged
+// two-parameter overload wins and its subject is the receiver.
+
+interface String {
+  // Declares the subject under a name that is not `self`, so the refiner cannot
+  // tell it apart from a pattern-first overload.
+  match(subject: string, pattern: string): string;
+  gmatch(subject: string, pattern: string): () => string;
+  find(subject: string, pattern: string, plain: boolean): number;
+}
+
+local s: string = "hello";
+
+// Each of these resolves to the merged overload, leaving the pattern unwritten.
+local matched = s:match("%d");
+local found = s:find("%d", true);
+for word in s:gmatch("%a+") do
+  local wordType = word;
+end
+
+// The dot spellings write the subject, so they keep refining as before.
+local dotMatched = s.match(s, "%d");
+
+// And the bundled forms are untouched.
+local libColon = s:upper();
+local libPattern = ("ab"):match("(a)(b)");

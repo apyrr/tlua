@@ -1,0 +1,79 @@
+//// [tests/cases/compiler/tluaBuiltinReceiverFillsSubject.tlua] ////
+
+=== tluaBuiltinReceiverFillsSubject.tlua ===
+// A written index of -1 means the receiver fills the parameter the refiner wants to
+// read, so there is nothing in the argument list to read and every refiner has to
+// decline rather than index at -1. Reachable whenever a merged overload declares no
+// `self` and the call uses a colon: `s:match(p)` is `s.match(s, p)`, so the merged
+// two-parameter overload wins and its subject is the receiver.
+
+interface String {
+>String : Symbol(String, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 0, 0))
+
+  // Declares the subject under a name that is not `self`, so the refiner cannot
+  // tell it apart from a pattern-first overload.
+  match(subject: string, pattern: string): string;
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
+>subject : Symbol(subject, Decl(tluaBuiltinReceiverFillsSubject.tlua, 9, 8))
+>pattern : Symbol(pattern, Decl(tluaBuiltinReceiverFillsSubject.tlua, 9, 24))
+
+  gmatch(subject: string, pattern: string): () => string;
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 9, 50))
+>subject : Symbol(subject, Decl(tluaBuiltinReceiverFillsSubject.tlua, 10, 9))
+>pattern : Symbol(pattern, Decl(tluaBuiltinReceiverFillsSubject.tlua, 10, 25))
+
+  find(subject: string, pattern: string, plain: boolean): number;
+>find : Symbol(String.find, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 10, 57))
+>subject : Symbol(subject, Decl(tluaBuiltinReceiverFillsSubject.tlua, 11, 7))
+>pattern : Symbol(pattern, Decl(tluaBuiltinReceiverFillsSubject.tlua, 11, 23))
+>plain : Symbol(plain, Decl(tluaBuiltinReceiverFillsSubject.tlua, 11, 40))
+}
+
+local s: string = "hello";
+>s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
+
+// Each of these resolves to the merged overload, leaving the pattern unwritten.
+local matched = s:match("%d");
+>matched : Symbol(matched, Decl(tluaBuiltinReceiverFillsSubject.tlua, 17, 5))
+>s:match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
+>s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
+
+local found = s:find("%d", true);
+>found : Symbol(found, Decl(tluaBuiltinReceiverFillsSubject.tlua, 18, 5))
+>s:find : Symbol(String.find, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 10, 57))
+>s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
+>find : Symbol(String.find, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 10, 57))
+
+for word in s:gmatch("%a+") do
+>word : Symbol(word, Decl(tluaBuiltinReceiverFillsSubject.tlua, 19, 3))
+>s:gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 9, 50))
+>s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 9, 50))
+
+  local wordType = word;
+>wordType : Symbol(wordType, Decl(tluaBuiltinReceiverFillsSubject.tlua, 20, 7))
+>word : Symbol(word, Decl(tluaBuiltinReceiverFillsSubject.tlua, 19, 3))
+
+end
+
+// The dot spellings write the subject, so they keep refining as before.
+local dotMatched = s.match(s, "%d");
+>dotMatched : Symbol(dotMatched, Decl(tluaBuiltinReceiverFillsSubject.tlua, 24, 5))
+>s.match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
+>s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
+>s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
+
+// And the bundled forms are untouched.
+local libColon = s:upper();
+>libColon : Symbol(libColon, Decl(tluaBuiltinReceiverFillsSubject.tlua, 27, 5))
+>s:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>s : Symbol(s, Decl(tluaBuiltinReceiverFillsSubject.tlua, 14, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local libPattern = ("ab"):match("(a)(b)");
+>libPattern : Symbol(libPattern, Decl(tluaBuiltinReceiverFillsSubject.tlua, 28, 5))
+>("ab"):match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
+>match : Symbol(String.match, Decl(lib.luajit.d.tlua, --, --), Decl(tluaBuiltinReceiverFillsSubject.tlua, 6, 18))
+
