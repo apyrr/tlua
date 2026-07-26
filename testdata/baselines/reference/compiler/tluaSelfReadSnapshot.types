@@ -1,0 +1,408 @@
+//// [tests/cases/compiler/tluaSelfReadSnapshot.tlua] ////
+
+=== tluaSelfReadSnapshot.tlua ===
+// A self-read nested inside its own store's value list reads the pre-store
+// snapshot instead of reporting a false circularity: nil before the first
+// store, the union the other stores install otherwise. The exact defaulted
+// guard and whole-value capture keep their own paths; this pins the nested
+// shapes that used to report TLUA7022.
+
+count = (count or 0) + 1;
+>count = (count or 0) + 1 : number
+>count : number
+>(count or 0) + 1 : number
+>(count or 0) : number
+>count or 0 : number
+>count : number
+>0 : 0
+>1 : 1
+
+local fromGuarded: number = count;
+>fromGuarded : number
+>count : number
+
+total = 0;
+>total = 0 : 0
+>total : number
+>0 : 0
+
+total = total + 1;
+>total = total + 1 : number
+>total : number
+>total + 1 : number
+>total : number
+>1 : 1
+
+local fromSequenced: number = total;
+>fromSequenced : number
+>total : number
+
+t = {};
+>t = {} : { n: number; }
+>t : { n: number; }
+>{} : { n: number; }
+
+t.n = (t.n or 0) + 1;
+>t.n = (t.n or 0) + 1 : number
+>t.n : number
+>t : { n: number; }
+>n : number
+>(t.n or 0) + 1 : number
+>(t.n or 0) : number
+>t.n or 0 : number
+>t.n : number
+>t : { n: number; }
+>n : number
+>0 : 0
+>1 : 1
+
+local fromMember: number = t.n;
+>fromMember : number
+>t.n : number
+>t : { n: number; }
+>n : number
+
+_G.hits = (_G.hits or 0) + 1;
+>_G.hits = (_G.hits or 0) + 1 : number
+>_G.hits : number
+>_G : typeof _G
+>hits : number
+>(_G.hits or 0) + 1 : number
+>(_G.hits or 0) : number
+>_G.hits or 0 : number
+>_G.hits : number
+>_G : typeof _G
+>hits : number
+>0 : 0
+>1 : 1
+
+local fromEnvironment: number = hits;
+>fromEnvironment : number
+>hits : number
+
+p, q = (p or 0) + 1, (q or "") .. "!";
+>p, q = (p or 0) + 1, (q or "") .. "!" : number
+>p, q : number, string
+>p : number
+>q : string
+>(p or 0) + 1, (q or "") .. "!" : number, string
+>(p or 0) + 1 : number
+>(p or 0) : number
+>p or 0 : number
+>p : number
+>0 : 0
+>1 : 1
+>(q or "") .. "!" : string
+>(q or "") : string
+>q or "" : string
+>q : string
+>"" : ""
+>"!" : "!"
+
+local fromList: number = p;
+>fromList : number
+>p : number
+
+local fromListSecond: string = q;
+>fromListSecond : string
+>q : string
+
+// A literal element key names the same property either spelling reads, so the
+// element and mixed spellings type like the dot access above.
+e = {};
+>e = {} : { 1: number; }
+>e : { 1: number; }
+>{} : { 1: number; }
+
+e[1] = (e[1] or 0) + 1;
+>e[1] = (e[1] or 0) + 1 : number
+>e[1] : number
+>e : { 1: number; }
+>1 : 1
+>(e[1] or 0) + 1 : number
+>(e[1] or 0) : number
+>e[1] or 0 : number
+>e[1] : number
+>e : { 1: number; }
+>1 : 1
+>0 : 0
+>1 : 1
+
+local fromElement: number = e[1];
+>fromElement : number
+>e[1] : number
+>e : { 1: number; }
+>1 : 1
+
+s = {};
+>s = {} : { k: number; }
+>s : { k: number; }
+>{} : { k: number; }
+
+s["k"] = (s["k"] or 0) + 1;
+>s["k"] = (s["k"] or 0) + 1 : number
+>s["k"] : number
+>s : { k: number; }
+>"k" : "k"
+>(s["k"] or 0) + 1 : number
+>(s["k"] or 0) : number
+>s["k"] or 0 : number
+>s["k"] : number
+>s : { k: number; }
+>"k" : "k"
+>0 : 0
+>1 : 1
+
+local fromStringKey: number = s["k"];
+>fromStringKey : number
+>s["k"] : number
+>s : { k: number; }
+>"k" : "k"
+
+m = {};
+>m = {} : { k: number; }
+>m : { k: number; }
+>{} : { k: number; }
+
+m.k = (m["k"] or 0) + 1;
+>m.k = (m["k"] or 0) + 1 : number
+>m.k : number
+>m : { k: number; }
+>k : number
+>(m["k"] or 0) + 1 : number
+>(m["k"] or 0) : number
+>m["k"] or 0 : number
+>m["k"] : number
+>m : { k: number; }
+>"k" : "k"
+>0 : 0
+>1 : 1
+
+local fromMixed: number = m.k;
+>fromMixed : number
+>m.k : number
+>m : { k: number; }
+>k : number
+
+// An unguarded self-read is diagnosed against the snapshot: the only store
+// sees nil and never handles it.
+bare = bare + 1;
+>bare = bare + 1 : any
+>bare : any
+>bare + 1 : any
+>bare : any
+>1 : 1
+
+// Stores may sit in any container; the read still sees its own store's
+// snapshot, here the union of the other stores.
+steps = 0;
+>steps = 0 : 0
+>steps : number
+>0 : 0
+
+local function advance()
+>advance : () => void
+
+  steps = steps + 1;
+>steps = steps + 1 : number
+>steps : number
+>steps + 1 : number
+>steps : number
+>1 : 1
+
+end
+
+// The snapshot is statement-ordered: a later store has not run when the first
+// statement reads, so the self-read still sees nil.
+early = early + 1;
+>early = early + 1 : any
+>early : any
+>early + 1 : any
+>early : any
+>1 : 1
+
+early = 0;
+>early = 0 : 0
+>early : any
+>0 : 0
+
+// A store nested in a conditional may have been skipped, so nil stays in the
+// union even though the store precedes the read.
+if math.random() > 0.5 then
+>math.random() > 0.5 : boolean
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>0.5 : 0.5
+
+  maybe = 0;
+>maybe = 0 : 0
+>maybe : number
+>0 : 0
+
+end
+maybe = maybe + 1;
+>maybe = maybe + 1 : number
+>maybe : number
+>maybe + 1 : number
+>maybe : number
+>1 : 1
+
+// A store inside a function declared later cannot have run before this
+// statement executes.
+late = late + 1;
+>late = late + 1 : any
+>late : any
+>late + 1 : any
+>late : any
+>1 : 1
+
+local function setLate()
+>setLate : () => void
+
+  late = 0;
+>late = 0 : 0
+>late : any
+>0 : 0
+
+end
+
+// Within one invocation a body runs its statements in order: the read in the
+// first statement happens before the later store.
+local function firstCall()
+>firstCall : () => void
+
+  seen = seen + 1;
+>seen = seen + 1 : any
+>seen : any
+>seen + 1 : any
+>seen : any
+>1 : 1
+
+  seen = 0;
+>seen = 0 : 0
+>seen : any
+>0 : 0
+
+end
+
+// A store earlier in the same body has definitely run by the read.
+local function orderedBody()
+>orderedBody : () => void
+
+  ready = 0;
+>ready = 0 : 0
+>ready : number
+>0 : 0
+
+  ready = ready + 1;
+>ready = ready + 1 : number
+>ready : number
+>ready + 1 : number
+>ready : number
+>1 : 1
+
+end
+
+// A self-preserving store re-stores whatever was there, nil included, so it
+// cannot discharge nil from the snapshot.
+if math.random() > 0.5 then
+>math.random() > 0.5 : boolean
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>0.5 : 0.5
+
+  held = 0;
+>held = 0 : 0
+>held : number
+>0 : 0
+
+end
+held = held;
+>held = held : number
+>held : number
+>held : number | nil
+
+held = held + 1;
+>held = held + 1 : number
+>held : number
+>held + 1 : number
+>held : number
+>1 : 1
+
+// An immediately invoked value runs before the store completes, so its read
+// is part of the captured snapshot rather than a circularity.
+iife = (function() return (iife or 0) + 1 end)();
+>iife = (function() return (iife or 0) + 1 end)() : number
+>iife : number
+>(function() return (iife or 0) + 1 end)() : number
+>(function() return (iife or 0) + 1 end) : () => number
+>function() return (iife or 0) + 1 end : () => number
+>(iife or 0) + 1 : number
+>(iife or 0) : number
+>iife or 0 : number
+>iife : number
+>0 : 0
+>1 : 1
+
+local fromIife: number = iife;
+>fromIife : number
+>iife : number
+
+// Flow facts at the reference narrow the snapshot: the guard removes nil from
+// the self-read. (The guard's own read keeps the ordinary path's
+// used-before-assigned strictness; only the self-read types via the snapshot.)
+if math.random() > 0.5 then
+>math.random() > 0.5 : boolean
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>0.5 : 0.5
+
+  guarded = 0;
+>guarded = 0 : 0
+>guarded : number
+>0 : 0
+
+end
+if guarded ~= nil then
+>guarded ~= nil : boolean
+>guarded : number
+
+  guarded = guarded + 1;
+>guarded = guarded + 1 : number
+>guarded : number
+>guarded + 1 : number
+>guarded : number
+>1 : 1
+
+end
+
+// A sibling store in the same block has definitely run by the time the next
+// statement reads: entering the block passed it.
+if math.random() > 0.5 then
+>math.random() > 0.5 : boolean
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>0.5 : 0.5
+
+  sibling = 0;
+>sibling = 0 : 0
+>sibling : number
+>0 : 0
+
+  sibling = sibling + 1;
+>sibling = sibling + 1 : number
+>sibling : number
+>sibling + 1 : number
+>sibling : number
+>1 : 1
+
+end
+

@@ -1,15 +1,12 @@
 a.tlua(16,7): error TLUA2339: Property 'extra' does not exist on type '{}'.
 b.tlua(10,8): error TLUA2339: Property 'extra' does not exist on type '{ fixed: number; }'.
-b.tlua(16,1): error TLUA7022: 'Paren' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-b.tlua(19,1): error TLUA7022: '1' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-b.tlua(19,14): error TLUA7053: Element implicitly has an 'any' type because expression of type '"1"' can't be used to index type '{ 1: any; }'.
+b.tlua(20,1): error TLUA7022: '1' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+b.tlua(20,14): error TLUA7053: Element implicitly has an 'any' type because expression of type '"1"' can't be used to index type '{ 1: any; }'.
   Property '1' does not exist on type '{ 1: any; }'.
-b.tlua(22,1): error TLUA7022: 'Chain' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-b.tlua(25,11): error TLUA2339: Property 'extra' does not exist on type '{}'.
-b.tlua(30,1): error TLUA7022: 'ReadInside' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-b.tlua(32,19): error TLUA2304: Cannot find name 'LocalSelf'.
-b.tlua(35,12): error TLUA2454: Variable 'Declared' is used before being assigned.
-b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: number; }'.
+b.tlua(26,11): error TLUA2339: Property 'extra' does not exist on type '{}'.
+b.tlua(33,19): error TLUA2304: Cannot find name 'LocalSelf'.
+b.tlua(36,12): error TLUA2454: Variable 'Declared' is used before being assigned.
+b.tlua(41,9): error TLUA2339: Property 'extra' does not exist on type '{ base: number; }'.
 
 
 ==== a.tlua (1 errors) ====
@@ -40,7 +37,7 @@ b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: n
     GNested.sub.deep = 1;
     local deep: number = GNested.sub.deep;
     
-==== b.tlua (10 errors) ====
+==== b.tlua (7 errors) ====
     G = G or {};
     G.fromB = "b";
     local fromA: number = G.fromA;
@@ -57,10 +54,9 @@ b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: n
     Mixed = make();
     
     // Parentheses make this an ordinary self-referential assignment rather than
-    // the exact defaulted-guard idiom.
+    // the exact defaulted-guard idiom; the self-read types through the pre-store
+    // snapshot, but no constructor is installed.
     Paren = (Paren) or {};
-    ~~~~~
-!!! error TLUA7022: 'Paren' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     
     local Numeric = {};
     Numeric[1] = Numeric["1"] or {};
@@ -72,8 +68,6 @@ b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: n
     
     local Other = {};
     Chain = Chain or Other or {};
-    ~~~~~
-!!! error TLUA7022: 'Chain' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     
     Different = Other or {};
     Different.extra = true;
@@ -84,8 +78,6 @@ b.tlua(40,9): error TLUA2339: Property 'extra' does not exist on type '{ base: n
       return {};
     end
     ReadInside = ReadInside or keep(ReadInside);
-    ~~~~~~~~~~
-!!! error TLUA7022: 'ReadInside' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     
     local LocalSelf = LocalSelf or {};
                       ~~~~~~~~~

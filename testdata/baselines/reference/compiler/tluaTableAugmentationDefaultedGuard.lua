@@ -41,7 +41,8 @@ Closed.extra = true;
 Mixed = make();
 
 // Parentheses make this an ordinary self-referential assignment rather than
-// the exact defaulted-guard idiom.
+// the exact defaulted-guard idiom; the self-read types through the pre-store
+// snapshot, but no constructor is installed.
 Paren = (Paren) or {};
 
 local Numeric = {};
@@ -102,7 +103,8 @@ Closed = Closed or make();
 Closed.extra = true;
 Mixed = make();
 -- Parentheses make this an ordinary self-referential assignment rather than
--- the exact defaulted-guard idiom.
+-- the exact defaulted-guard idiom; the self-read types through the pre-store
+-- snapshot, but no constructor is installed.
 Paren = (Paren) or {};
 local Numeric = {};
 Numeric[1] = Numeric["1"] or {};

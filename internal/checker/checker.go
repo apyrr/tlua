@@ -586,6 +586,7 @@ type Checker struct {
 	moduleSymbols                          map[*ast.Node]*ast.Symbol
 	luaGlobalsSymbol                       *ast.Symbol
 	luaAssignmentAugmentations             map[*ast.Symbol][]luaAugmentation
+	luaSnapshotResolving                   map[luaSnapshotKey]bool
 	luaAugmentationTargets                 map[*ast.Node]*ast.Symbol
 	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
 	luaAugmentationMemberArms              map[*ast.Symbol][]*ast.Symbol
@@ -899,6 +900,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.moduleSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.luaGlobalsSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "_G", ast.CheckFlagsReadonly)
 	c.luaAssignmentAugmentations = make(map[*ast.Symbol][]luaAugmentation)
+	c.luaSnapshotResolving = make(map[luaSnapshotKey]bool)
 	c.luaStableAccessKeys = make(map[*ast.Node]luaStableAccessKeyResult)
 	c.luaAugmentationTargets = make(map[*ast.Node]*ast.Symbol)
 	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
@@ -6108,6 +6110,18 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 		accessFlags = AccessFlagsWriting |
 			core.IfElse(c.isGenericObjectType(objectType) && !isSelfTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
 	}
+	// A member read inside its own store's value list resolves against the
+	// pre-store snapshot while the member's declared type is still being
+	// inferred; see getLuaSelfReadSnapshotType. A literal key names the same
+	// property either spelling reads, so `t[1] = (t[1] or 0) + 1` types like
+	// its dot-access equivalent.
+	if name, ok := c.getAccessedPropertyName(node); ok {
+		if prop := c.getPropertyOfType(objectType, name); prop != nil {
+			if snapshot, ok := c.getLuaSelfReadSnapshotType(node, prop); ok {
+				return snapshot
+			}
+		}
+	}
 	indexedAccessType := core.OrElse(c.getIndexedAccessTypeOrUndefined(objectType, effectiveIndexType, accessFlags, node, nil), c.errorType)
 	return c.checkIndexedAccessIndexType(c.getFlowTypeOfAccessExpression(node, c.getResolvedSymbolOrNil(node), indexedAccessType, indexExpression, checkMode), node)
 }
@@ -8313,6 +8327,14 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 		ast.FindAncestor(node, func(parent *ast.Node) bool { return parent == declaration.Parent }) != nil {
 		return c.nonInferrableAnyType
 	}
+	// A read of the target inside its own store's value list resolves against
+	// the pre-store snapshot while the target's declared type is still being
+	// inferred, so `a = (a or 0) + 1` types instead of reporting circularity.
+	// The snapshot still narrows through the flow facts at the reference, so a
+	// guard like `if a ~= nil then a = a + 1 end` removes the snapshot's nil.
+	if snapshot, ok := c.getLuaSelfReadSnapshotType(node, localOrExportSymbol); ok {
+		return c.getFlowTypeOfReference(node, snapshot)
+	}
 	t := c.getNarrowedTypeOfSymbol(localOrExportSymbol, node)
 	assignmentKind := getAssignmentTargetKind(node)
 	if assignmentKind != AssignmentKindNone {
@@ -8394,6 +8416,7 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 		isAlias ||
 		(isOuterVariable && !isNeverInitialized) ||
 		c.isLuaDefaultedGuardReference(node) ||
+		c.isLuaSelfStoreRead(node, localOrExportSymbol) ||
 		isModuleExports ||
 		c.isSameScopedBindingElement(node, declaration) ||
 		t != c.autoType && t != c.autoArrayType && (t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid) != 0 || IsInTypeQuery(node) || c.isInAmbientOrTypeNode(node) || node.Parent.Kind == ast.KindExportSpecifier) ||
@@ -8616,6 +8639,13 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 		case writeOnly || ast.IsWriteOnlyAccess(node):
 			propType = c.getWriteTypeOfSymbol(prop)
 		default:
+			// A member read inside its own store's value list resolves against
+			// the pre-store snapshot while the member's declared type is still
+			// being inferred; see getLuaSelfReadSnapshotType. Flow facts at the
+			// reference still narrow the snapshot.
+			if snapshot, ok := c.getLuaSelfReadSnapshotType(node, prop); ok {
+				return c.getFlowTypeOfReference(node, snapshot)
+			}
 			propType = c.getTypeOfSymbol(prop)
 			// A union property can be synthesized from a declared property in one arm
 			// and an index signature in another; the merged symbol type no longer says
@@ -8664,7 +8694,8 @@ func (c *Checker) getFlowTypeOfAccessExpression(node *ast.Node, prop *ast.Symbol
 			}
 			if isPropertyAssignment &&
 				c.getControlFlowContainer(node) == c.getControlFlowContainer(assignment) &&
-				!c.isLuaDefaultedGuardReference(node) {
+				!c.isLuaDefaultedGuardReference(node) &&
+				!c.isLuaSelfStoreRead(node, prop) {
 				assumeUninitialized = true
 			}
 		}
@@ -14143,7 +14174,7 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 		var assignmentDeclarations collections.Set[*ast.Node]
 		if len(assignments) != 0 {
 			assignmentDeclarations = luaAssignmentDeclarationSet(assignments)
-			types = c.appendLuaAssignmentDeclaredTypes(types, symbol, assignments, nil /*excludedSource*/, make(map[luaSnapshotKey]bool))
+			types = c.appendLuaAssignmentDeclaredTypes(types, symbol, assignments, nil /*excludedSource*/, c.luaSnapshotResolving)
 		}
 		for i, declaration := range symbol.Declarations {
 			if assignmentDeclarations.Has(declaration) {

@@ -13,7 +13,7 @@ import (
 // from the pre-store snapshot rather than from the finished program.
 
 func (c *Checker) getLuaAugmentationInitializerType(assignment luaAugmentation) *Type {
-	return c.getLuaAugmentationInitializerTypeEx(assignment, make(map[luaSnapshotKey]bool))
+	return c.getLuaAugmentationInitializerTypeEx(assignment, c.luaSnapshotResolving)
 }
 
 func (c *Checker) getLuaAugmentationTargetInitializerType(symbol *ast.Symbol, target *ast.Node) (*Type, bool) {
@@ -154,6 +154,192 @@ func (c *Checker) getLuaAugmentationSnapshotType(symbol *ast.Symbol, source *ast
 		return nil, false
 	}
 	return c.getWidenedType(c.getUnionType(types)), true
+}
+
+// getLuaSelfReadSnapshotType projects a reference that reads its own store's
+// target while that target's declared type is still resolving. The statement
+// captures its whole value list before storing any of it, so the read sees the
+// pre-store snapshot — what the other stores install — rather than re-entering
+// its own resolution and reporting a false circularity. The whole-value
+// capture and the exact defaulted guard already sidestep such reads without
+// checking them; this covers a self-read nested anywhere else in the value,
+// such as `a = (a or 0) + 1`. A resolved target keeps the ordinary flow path,
+// which respects statement order.
+//
+// The snapshot itself is statement-ordered: only stores that can have executed
+// before this one contribute, and nil stays in the union unless one of them
+// definitely has. `x = x + 1; x = 0` therefore reads nil (the later store has
+// not run), while `total = 0; total = total + 1` reads number — mirroring the
+// order sensitivity the ordinary flow path applies to reads outside a store.
+func (c *Checker) getLuaSelfReadSnapshotType(reference *ast.Node, symbol *ast.Symbol) (*Type, bool) {
+	merged := c.getMergedSymbol(symbol)
+	source := c.luaSelfStoreForRead(reference, merged)
+	if source == nil {
+		return nil, false
+	}
+	// A resolved target keeps the ordinary flow path. Gating on the cached
+	// declared type rather than on a resolution cycle matters when the read
+	// sits inside an immediately invoked value: the first entry arrives
+	// through the IIFE's return-type resolution, before the target's own
+	// resolution is on the stack, and falling through would complete a
+	// return-type/declared-type cycle instead of reading the snapshot.
+	if c.valueSymbolLinks.Get(symbol).resolvedType != nil || c.valueSymbolLinks.Get(merged).resolvedType != nil {
+		return nil, false
+	}
+	return c.getLuaOrderedSelfSnapshotType(merged, source, c.luaSnapshotResolving)
+}
+
+// getLuaOrderedSelfSnapshotType is getLuaAugmentationSnapshotType restricted to
+// the stores that can precede `source` at runtime, nil-extended when none of
+// them definitely does. The unordered variant stays in use for sibling captures
+// inside one transaction, where the whole value list is taken before any store
+// and order between statements is not in question.
+func (c *Checker) getLuaOrderedSelfSnapshotType(symbol *ast.Symbol, source *ast.Node, resolving map[luaSnapshotKey]bool) (*Type, bool) {
+	assignments := c.luaAssignmentAugmentations[symbol]
+	if len(assignments) == 0 {
+		return nil, false
+	}
+	key := luaSnapshotKey{symbol: symbol, source: source}
+	if resolving[key] {
+		// A cycle wholly predating this transaction has no more precise snapshot.
+		return c.anyType, true
+	}
+	resolving[key] = true
+	defer delete(resolving, key)
+
+	prior, definite := c.luaStoresBeforeSelfRead(source, assignments)
+	types := c.appendLuaAssignmentDeclaredTypes(nil, symbol, prior, source, resolving)
+	implicit := !hasLuaValueDeclarationOutsideAssignments(symbol, assignments)
+	if implicit && !definite {
+		// An implicit global exists as nil until a store definitely ran.
+		types = core.AppendIfUnique(types, c.nilType)
+	}
+	if len(types) == 0 {
+		if implicit {
+			return c.nilType, true
+		}
+		return nil, false
+	}
+	return c.getWidenedType(c.getUnionType(types)), true
+}
+
+// luaStoresBeforeSelfRead filters symbol's stores down to those that can have
+// executed before `source` runs, and reports whether one of them definitely
+// has. A store inside a function body is ordered by the position of the
+// function (it must exist before a call can run the store), and never counts
+// as definite — the call may not have happened — except within the reading
+// store's own body, where one invocation runs its statements in order.
+// Cross-file stores follow load order, which the checker does not track, so
+// they mirror the leniency of ordinary cross-file reads: included, and treated
+// as definite. A self-preserving store (`x = x`) re-stores whatever was there,
+// nil included; it contributes no declared type and cannot discharge nil.
+func (c *Checker) luaStoresBeforeSelfRead(source *ast.Node, assignments []luaAugmentation) (prior []luaAugmentation, definite bool) {
+	sourceFile := ast.GetSourceFileOfNode(source)
+	sourceFn := ast.FindAncestor(source, ast.IsFunctionLike)
+	for _, assignment := range assignments {
+		if assignment.Source == source {
+			continue
+		}
+		discharges := !c.isSelfPreservingLuaCapturedTarget(assignment.Target)
+		if ast.GetSourceFileOfNode(assignment.Source) != sourceFile {
+			prior = append(prior, assignment)
+			definite = definite || discharges
+			continue
+		}
+		fn := ast.FindAncestor(assignment.Source, ast.IsFunctionLike)
+		switch {
+		case sourceFn != nil && fn == sourceFn:
+			// Same body: the statement-order rules apply within one invocation.
+			if assignment.Source.Pos() < source.Pos() {
+				prior = append(prior, assignment)
+				if discharges && luaStoreDominatesRead(assignment.Source, source) {
+					definite = true
+				}
+			}
+		case sourceFn != nil:
+			// A store elsewhere is not ordered against this invocation; mirror
+			// the leniency ordinary closure reads get.
+			prior = append(prior, assignment)
+			definite = definite || discharges
+		case fn != nil:
+			if fn.Pos() < source.Pos() {
+				prior = append(prior, assignment)
+			}
+		case assignment.Source.Pos() < source.Pos():
+			prior = append(prior, assignment)
+			if discharges && luaStoreDominatesRead(assignment.Source, source) {
+				definite = true
+			}
+		}
+	}
+	return prior, definite
+}
+
+// luaStoreDominatesRead reports whether a lexically earlier store has
+// definitely executed by the time the reading store runs: the statement block
+// holding the store also holds the read, so control that reached the read
+// entered that block and passed the store. Two sibling stores inside one
+// conditional therefore order against each other, while a store whose block
+// the read is outside of may have been skipped. (goto can in principle jump
+// over the store within the block; the lexical approximation ignores it.)
+func luaStoreDominatesRead(store *ast.Node, read *ast.Node) bool {
+	if store.Parent == nil || !ast.IsExpressionStatement(store.Parent) {
+		return false
+	}
+	container := store.Parent.Parent
+	if container == nil {
+		return false
+	}
+	return ast.FindAncestor(read, func(parent *ast.Node) bool { return parent == container }) != nil
+}
+
+// isLuaSelfStoreRead reports whether reference reads symbol from inside one of
+// symbol's own store value lists. Such a read participates in the pre-store
+// snapshot, so flow analysis must not flag it as used before being assigned —
+// the idiom `a = (a or 0) + 1` handles the missing value itself, and a store
+// that does not is diagnosed against the snapshot instead.
+func (c *Checker) isLuaSelfStoreRead(reference *ast.Node, symbol *ast.Symbol) bool {
+	return c.luaSelfStoreForRead(reference, c.getMergedSymbol(symbol)) != nil
+}
+
+func (c *Checker) luaSelfStoreForRead(reference *ast.Node, merged *ast.Symbol) *ast.Node {
+	assignments := c.luaAssignmentAugmentations[merged]
+	if len(assignments) == 0 {
+		return nil
+	}
+	source := luaEnclosingSelfStore(reference, assignments)
+	if source == nil {
+		return nil
+	}
+	// A value declaration outside the stores (say an annotated local) types the
+	// symbol without inference over its stores; ordinary flow analysis then
+	// tracks its statement order, including used-before-assigned.
+	if hasLuaValueDeclarationOutsideAssignments(merged, assignments) {
+		return nil
+	}
+	return source
+}
+
+// luaEnclosingSelfStore finds the assignment whose value list lexically holds
+// reference, provided that assignment is one of the symbol's registered
+// stores. A function boundary on the way up declines — a closure in the value
+// runs after the store, so its reads are not part of the captured snapshot —
+// unless the function is immediately invoked: an IIFE runs while the value
+// list is being evaluated, before anything is stored.
+func luaEnclosingSelfStore(reference *ast.Node, assignments []luaAugmentation) *ast.Node {
+	for node, parent := reference, reference.Parent; parent != nil; node, parent = parent, parent.Parent {
+		if ast.IsFunctionLike(parent) && ast.GetImmediatelyInvokedFunctionExpression(parent) == nil {
+			return nil
+		}
+		if ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().Right == node {
+			for _, assignment := range assignments {
+				if assignment.Source == parent {
+					return parent
+				}
+			}
+		}
+	}
+	return nil
 }
 
 // appendLuaAssignmentDeclaredTypes appends the constructor type that every

@@ -12,7 +12,8 @@ Forward.zod.value = true;
 MixedKey.zod = MixedKey["zod"] or {};
 MixedKey.zod.value = 1;
 
-// Parenthesized self-reads are not the exact defaulted-guard idiom.
+// Parenthesized self-reads are not the exact defaulted-guard idiom; they
+// type through the pre-store snapshot without installing a constructor.
 Parenthesized.zod = (Parenthesized.zod) or {};
 
 //// [reverseMember.tlua]
@@ -38,7 +39,8 @@ Forward.zod = Forward.zod or {};
 Forward.zod.value = true;
 MixedKey.zod = MixedKey["zod"] or {};
 MixedKey.zod.value = 1;
--- Parenthesized self-reads are not the exact defaulted-guard idiom.
+-- Parenthesized self-reads are not the exact defaulted-guard idiom; they
+-- type through the pre-store snapshot without installing a constructor.
 Parenthesized.zod = (Parenthesized.zod) or {};
 //// [reverseMember.lua]
 -- Root resolution is program-wide, not source-file-order dependent.

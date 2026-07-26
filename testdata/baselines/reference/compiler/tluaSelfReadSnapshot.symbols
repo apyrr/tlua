@@ -1,0 +1,268 @@
+//// [tests/cases/compiler/tluaSelfReadSnapshot.tlua] ////
+
+=== tluaSelfReadSnapshot.tlua ===
+// A self-read nested inside its own store's value list reads the pre-store
+// snapshot instead of reporting a false circularity: nil before the first
+// store, the union the other stores install otherwise. The exact defaulted
+// guard and whole-value capture keep their own paths; this pins the nested
+// shapes that used to report TLUA7022.
+
+count = (count or 0) + 1;
+>count : Symbol(count, Decl(tluaSelfReadSnapshot.tlua, 0, 0))
+>count : Symbol(count, Decl(tluaSelfReadSnapshot.tlua, 0, 0))
+
+local fromGuarded: number = count;
+>fromGuarded : Symbol(fromGuarded, Decl(tluaSelfReadSnapshot.tlua, 7, 5))
+>count : Symbol(count, Decl(tluaSelfReadSnapshot.tlua, 0, 0))
+
+total = 0;
+>total : Symbol(total, Decl(tluaSelfReadSnapshot.tlua, 7, 34), Decl(tluaSelfReadSnapshot.tlua, 9, 10))
+
+total = total + 1;
+>total : Symbol(total, Decl(tluaSelfReadSnapshot.tlua, 7, 34), Decl(tluaSelfReadSnapshot.tlua, 9, 10))
+>total : Symbol(total, Decl(tluaSelfReadSnapshot.tlua, 7, 34), Decl(tluaSelfReadSnapshot.tlua, 9, 10))
+
+local fromSequenced: number = total;
+>fromSequenced : Symbol(fromSequenced, Decl(tluaSelfReadSnapshot.tlua, 11, 5))
+>total : Symbol(total, Decl(tluaSelfReadSnapshot.tlua, 7, 34), Decl(tluaSelfReadSnapshot.tlua, 9, 10))
+
+t = {};
+>t : Symbol(t, Decl(tluaSelfReadSnapshot.tlua, 11, 36))
+
+t.n = (t.n or 0) + 1;
+>t.n : Symbol(n, Decl(tluaSelfReadSnapshot.tlua, 13, 7))
+>t : Symbol(t, Decl(tluaSelfReadSnapshot.tlua, 11, 36))
+>n : Symbol(n, Decl(tluaSelfReadSnapshot.tlua, 13, 7))
+>t.n : Symbol(n, Decl(tluaSelfReadSnapshot.tlua, 13, 7))
+>t : Symbol(t, Decl(tluaSelfReadSnapshot.tlua, 11, 36))
+>n : Symbol(n, Decl(tluaSelfReadSnapshot.tlua, 13, 7))
+
+local fromMember: number = t.n;
+>fromMember : Symbol(fromMember, Decl(tluaSelfReadSnapshot.tlua, 15, 5))
+>t.n : Symbol(n, Decl(tluaSelfReadSnapshot.tlua, 13, 7))
+>t : Symbol(t, Decl(tluaSelfReadSnapshot.tlua, 11, 36))
+>n : Symbol(n, Decl(tluaSelfReadSnapshot.tlua, 13, 7))
+
+_G.hits = (_G.hits or 0) + 1;
+>_G.hits : Symbol(hits, Decl(tluaSelfReadSnapshot.tlua, 15, 31))
+>_G : Symbol(_G)
+>hits : Symbol(hits, Decl(tluaSelfReadSnapshot.tlua, 15, 31))
+>_G.hits : Symbol(hits, Decl(tluaSelfReadSnapshot.tlua, 15, 31))
+>_G : Symbol(_G)
+>hits : Symbol(hits, Decl(tluaSelfReadSnapshot.tlua, 15, 31))
+
+local fromEnvironment: number = hits;
+>fromEnvironment : Symbol(fromEnvironment, Decl(tluaSelfReadSnapshot.tlua, 18, 5))
+>hits : Symbol(hits, Decl(tluaSelfReadSnapshot.tlua, 15, 31))
+
+p, q = (p or 0) + 1, (q or "") .. "!";
+>p : Symbol(p, Decl(tluaSelfReadSnapshot.tlua, 18, 37))
+>q : Symbol(q, Decl(tluaSelfReadSnapshot.tlua, 20, 2))
+>p : Symbol(p, Decl(tluaSelfReadSnapshot.tlua, 18, 37))
+>q : Symbol(q, Decl(tluaSelfReadSnapshot.tlua, 20, 2))
+
+local fromList: number = p;
+>fromList : Symbol(fromList, Decl(tluaSelfReadSnapshot.tlua, 21, 5))
+>p : Symbol(p, Decl(tluaSelfReadSnapshot.tlua, 18, 37))
+
+local fromListSecond: string = q;
+>fromListSecond : Symbol(fromListSecond, Decl(tluaSelfReadSnapshot.tlua, 22, 5))
+>q : Symbol(q, Decl(tluaSelfReadSnapshot.tlua, 20, 2))
+
+// A literal element key names the same property either spelling reads, so the
+// element and mixed spellings type like the dot access above.
+e = {};
+>e : Symbol(e, Decl(tluaSelfReadSnapshot.tlua, 22, 33))
+
+e[1] = (e[1] or 0) + 1;
+>e : Symbol(e, Decl(tluaSelfReadSnapshot.tlua, 22, 33))
+>1 : Symbol(1, Decl(tluaSelfReadSnapshot.tlua, 26, 7))
+>e : Symbol(e, Decl(tluaSelfReadSnapshot.tlua, 22, 33))
+>1 : Symbol(1, Decl(tluaSelfReadSnapshot.tlua, 26, 7))
+
+local fromElement: number = e[1];
+>fromElement : Symbol(fromElement, Decl(tluaSelfReadSnapshot.tlua, 28, 5))
+>e : Symbol(e, Decl(tluaSelfReadSnapshot.tlua, 22, 33))
+>1 : Symbol(1, Decl(tluaSelfReadSnapshot.tlua, 26, 7))
+
+s = {};
+>s : Symbol(s, Decl(tluaSelfReadSnapshot.tlua, 28, 33))
+
+s["k"] = (s["k"] or 0) + 1;
+>s : Symbol(s, Decl(tluaSelfReadSnapshot.tlua, 28, 33))
+>"k" : Symbol("k", Decl(tluaSelfReadSnapshot.tlua, 30, 7))
+>s : Symbol(s, Decl(tluaSelfReadSnapshot.tlua, 28, 33))
+>"k" : Symbol("k", Decl(tluaSelfReadSnapshot.tlua, 30, 7))
+
+local fromStringKey: number = s["k"];
+>fromStringKey : Symbol(fromStringKey, Decl(tluaSelfReadSnapshot.tlua, 32, 5))
+>s : Symbol(s, Decl(tluaSelfReadSnapshot.tlua, 28, 33))
+>"k" : Symbol("k", Decl(tluaSelfReadSnapshot.tlua, 30, 7))
+
+m = {};
+>m : Symbol(m, Decl(tluaSelfReadSnapshot.tlua, 32, 37))
+
+m.k = (m["k"] or 0) + 1;
+>m.k : Symbol(k, Decl(tluaSelfReadSnapshot.tlua, 34, 7))
+>m : Symbol(m, Decl(tluaSelfReadSnapshot.tlua, 32, 37))
+>k : Symbol(k, Decl(tluaSelfReadSnapshot.tlua, 34, 7))
+>m : Symbol(m, Decl(tluaSelfReadSnapshot.tlua, 32, 37))
+>"k" : Symbol(k, Decl(tluaSelfReadSnapshot.tlua, 34, 7))
+
+local fromMixed: number = m.k;
+>fromMixed : Symbol(fromMixed, Decl(tluaSelfReadSnapshot.tlua, 36, 5))
+>m.k : Symbol(k, Decl(tluaSelfReadSnapshot.tlua, 34, 7))
+>m : Symbol(m, Decl(tluaSelfReadSnapshot.tlua, 32, 37))
+>k : Symbol(k, Decl(tluaSelfReadSnapshot.tlua, 34, 7))
+
+// An unguarded self-read is diagnosed against the snapshot: the only store
+// sees nil and never handles it.
+bare = bare + 1;
+>bare : Symbol(bare, Decl(tluaSelfReadSnapshot.tlua, 36, 30))
+>bare : Symbol(bare, Decl(tluaSelfReadSnapshot.tlua, 36, 30))
+
+// Stores may sit in any container; the read still sees its own store's
+// snapshot, here the union of the other stores.
+steps = 0;
+>steps : Symbol(steps, Decl(tluaSelfReadSnapshot.tlua, 40, 16), Decl(tluaSelfReadSnapshot.tlua, 45, 24))
+
+local function advance()
+>advance : Symbol(advance, Decl(tluaSelfReadSnapshot.tlua, 44, 10))
+
+  steps = steps + 1;
+>steps : Symbol(steps, Decl(tluaSelfReadSnapshot.tlua, 40, 16), Decl(tluaSelfReadSnapshot.tlua, 45, 24))
+>steps : Symbol(steps, Decl(tluaSelfReadSnapshot.tlua, 40, 16), Decl(tluaSelfReadSnapshot.tlua, 45, 24))
+
+end
+
+// The snapshot is statement-ordered: a later store has not run when the first
+// statement reads, so the self-read still sees nil.
+early = early + 1;
+>early : Symbol(early, Decl(tluaSelfReadSnapshot.tlua, 47, 3), Decl(tluaSelfReadSnapshot.tlua, 51, 18))
+>early : Symbol(early, Decl(tluaSelfReadSnapshot.tlua, 47, 3), Decl(tluaSelfReadSnapshot.tlua, 51, 18))
+
+early = 0;
+>early : Symbol(early, Decl(tluaSelfReadSnapshot.tlua, 47, 3), Decl(tluaSelfReadSnapshot.tlua, 51, 18))
+
+// A store nested in a conditional may have been skipped, so nil stays in the
+// union even though the store precedes the read.
+if math.random() > 0.5 then
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  maybe = 0;
+>maybe : Symbol(maybe, Decl(tluaSelfReadSnapshot.tlua, 56, 27), Decl(tluaSelfReadSnapshot.tlua, 58, 3))
+
+end
+maybe = maybe + 1;
+>maybe : Symbol(maybe, Decl(tluaSelfReadSnapshot.tlua, 56, 27), Decl(tluaSelfReadSnapshot.tlua, 58, 3))
+>maybe : Symbol(maybe, Decl(tluaSelfReadSnapshot.tlua, 56, 27), Decl(tluaSelfReadSnapshot.tlua, 58, 3))
+
+// A store inside a function declared later cannot have run before this
+// statement executes.
+late = late + 1;
+>late : Symbol(late, Decl(tluaSelfReadSnapshot.tlua, 59, 18), Decl(tluaSelfReadSnapshot.tlua, 64, 24))
+>late : Symbol(late, Decl(tluaSelfReadSnapshot.tlua, 59, 18), Decl(tluaSelfReadSnapshot.tlua, 64, 24))
+
+local function setLate()
+>setLate : Symbol(setLate, Decl(tluaSelfReadSnapshot.tlua, 63, 16))
+
+  late = 0;
+>late : Symbol(late, Decl(tluaSelfReadSnapshot.tlua, 59, 18), Decl(tluaSelfReadSnapshot.tlua, 64, 24))
+
+end
+
+// Within one invocation a body runs its statements in order: the read in the
+// first statement happens before the later store.
+local function firstCall()
+>firstCall : Symbol(firstCall, Decl(tluaSelfReadSnapshot.tlua, 66, 3))
+
+  seen = seen + 1;
+>seen : Symbol(seen, Decl(tluaSelfReadSnapshot.tlua, 70, 26), Decl(tluaSelfReadSnapshot.tlua, 71, 18))
+>seen : Symbol(seen, Decl(tluaSelfReadSnapshot.tlua, 70, 26), Decl(tluaSelfReadSnapshot.tlua, 71, 18))
+
+  seen = 0;
+>seen : Symbol(seen, Decl(tluaSelfReadSnapshot.tlua, 70, 26), Decl(tluaSelfReadSnapshot.tlua, 71, 18))
+
+end
+
+// A store earlier in the same body has definitely run by the read.
+local function orderedBody()
+>orderedBody : Symbol(orderedBody, Decl(tluaSelfReadSnapshot.tlua, 73, 3))
+
+  ready = 0;
+>ready : Symbol(ready, Decl(tluaSelfReadSnapshot.tlua, 76, 28), Decl(tluaSelfReadSnapshot.tlua, 77, 12))
+
+  ready = ready + 1;
+>ready : Symbol(ready, Decl(tluaSelfReadSnapshot.tlua, 76, 28), Decl(tluaSelfReadSnapshot.tlua, 77, 12))
+>ready : Symbol(ready, Decl(tluaSelfReadSnapshot.tlua, 76, 28), Decl(tluaSelfReadSnapshot.tlua, 77, 12))
+
+end
+
+// A self-preserving store re-stores whatever was there, nil included, so it
+// cannot discharge nil from the snapshot.
+if math.random() > 0.5 then
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  held = 0;
+>held : Symbol(held, Decl(tluaSelfReadSnapshot.tlua, 83, 27), Decl(tluaSelfReadSnapshot.tlua, 85, 3), Decl(tluaSelfReadSnapshot.tlua, 86, 12))
+
+end
+held = held;
+>held : Symbol(held, Decl(tluaSelfReadSnapshot.tlua, 83, 27), Decl(tluaSelfReadSnapshot.tlua, 85, 3), Decl(tluaSelfReadSnapshot.tlua, 86, 12))
+>held : Symbol(held, Decl(tluaSelfReadSnapshot.tlua, 83, 27), Decl(tluaSelfReadSnapshot.tlua, 85, 3), Decl(tluaSelfReadSnapshot.tlua, 86, 12))
+
+held = held + 1;
+>held : Symbol(held, Decl(tluaSelfReadSnapshot.tlua, 83, 27), Decl(tluaSelfReadSnapshot.tlua, 85, 3), Decl(tluaSelfReadSnapshot.tlua, 86, 12))
+>held : Symbol(held, Decl(tluaSelfReadSnapshot.tlua, 83, 27), Decl(tluaSelfReadSnapshot.tlua, 85, 3), Decl(tluaSelfReadSnapshot.tlua, 86, 12))
+
+// An immediately invoked value runs before the store completes, so its read
+// is part of the captured snapshot rather than a circularity.
+iife = (function() return (iife or 0) + 1 end)();
+>iife : Symbol(iife, Decl(tluaSelfReadSnapshot.tlua, 87, 16))
+>iife : Symbol(iife, Decl(tluaSelfReadSnapshot.tlua, 87, 16))
+
+local fromIife: number = iife;
+>fromIife : Symbol(fromIife, Decl(tluaSelfReadSnapshot.tlua, 92, 5))
+>iife : Symbol(iife, Decl(tluaSelfReadSnapshot.tlua, 87, 16))
+
+// Flow facts at the reference narrow the snapshot: the guard removes nil from
+// the self-read. (The guard's own read keeps the ordinary path's
+// used-before-assigned strictness; only the self-read types via the snapshot.)
+if math.random() > 0.5 then
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  guarded = 0;
+>guarded : Symbol(guarded, Decl(tluaSelfReadSnapshot.tlua, 97, 27), Decl(tluaSelfReadSnapshot.tlua, 100, 22))
+
+end
+if guarded ~= nil then
+>guarded : Symbol(guarded, Decl(tluaSelfReadSnapshot.tlua, 97, 27), Decl(tluaSelfReadSnapshot.tlua, 100, 22))
+
+  guarded = guarded + 1;
+>guarded : Symbol(guarded, Decl(tluaSelfReadSnapshot.tlua, 97, 27), Decl(tluaSelfReadSnapshot.tlua, 100, 22))
+>guarded : Symbol(guarded, Decl(tluaSelfReadSnapshot.tlua, 97, 27), Decl(tluaSelfReadSnapshot.tlua, 100, 22))
+
+end
+
+// A sibling store in the same block has definitely run by the time the next
+// statement reads: entering the block passed it.
+if math.random() > 0.5 then
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  sibling = 0;
+>sibling : Symbol(sibling, Decl(tluaSelfReadSnapshot.tlua, 106, 27), Decl(tluaSelfReadSnapshot.tlua, 107, 14))
+
+  sibling = sibling + 1;
+>sibling : Symbol(sibling, Decl(tluaSelfReadSnapshot.tlua, 106, 27), Decl(tluaSelfReadSnapshot.tlua, 107, 14))
+>sibling : Symbol(sibling, Decl(tluaSelfReadSnapshot.tlua, 106, 27), Decl(tluaSelfReadSnapshot.tlua, 107, 14))
+
+end
+

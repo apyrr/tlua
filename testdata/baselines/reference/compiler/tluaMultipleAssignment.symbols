@@ -2197,17 +2197,18 @@ DeclaredGuard, FreshGuard = DeclaredGuard or {}, FreshGuard or {};
 >DeclaredGuard : Symbol(DeclaredGuard, Decl(tluaMultipleAssignment.tlua, 679, 5))
 >FreshGuard : Symbol(FreshGuard, Decl(tluaMultipleAssignment.tlua, 680, 14))
 
-// A surplus guard has no positional target and remains an ordinary read.
+// A surplus guard has no positional target and remains an ordinary read —
+// evaluated against the pre-store snapshot, contributing no declared type.
 DiscardedGuard = {}, DiscardedGuard or {};
 >DiscardedGuard : Symbol(DiscardedGuard, Decl(tluaMultipleAssignment.tlua, 680, 66))
 >DiscardedGuard : Symbol(DiscardedGuard, Decl(tluaMultipleAssignment.tlua, 680, 66))
 
 // Extra and missing values follow Lua's adjustment rules.
 local optional: string | nil = "";
->optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 686, 5))
+>optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 687, 5))
 
 optional, count = "present";
->optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 686, 5))
+>optional : Symbol(optional, Decl(tluaMultipleAssignment.tlua, 687, 5))
 >count : Symbol(count, Decl(tluaMultipleAssignment.tlua, 21, 5))
 
 // Each target is checked against its positional value.

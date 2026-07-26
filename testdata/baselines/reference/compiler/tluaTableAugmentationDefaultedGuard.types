@@ -189,13 +189,14 @@ Mixed = make();
 >make : () => { fixed: number; }
 
 // Parentheses make this an ordinary self-referential assignment rather than
-// the exact defaulted-guard idiom.
+// the exact defaulted-guard idiom; the self-read types through the pre-store
+// snapshot, but no constructor is installed.
 Paren = (Paren) or {};
->Paren = (Paren) or {} : any
->Paren : any
->(Paren) or {} : any
->(Paren) : any
->Paren : any
+>Paren = (Paren) or {} : {}
+>Paren : {}
+>(Paren) or {} : {}
+>(Paren) : nil
+>Paren : {}
 >{} : {}
 
 local Numeric = {};
@@ -218,11 +219,11 @@ local Other = {};
 >{} : {}
 
 Chain = Chain or Other or {};
->Chain = Chain or Other or {} : any
->Chain : any
->Chain or Other or {} : any
->Chain or Other : any
->Chain : any
+>Chain = Chain or Other or {} : {}
+>Chain : {}
+>Chain or Other or {} : {}
+>Chain or Other : {}
+>Chain : {}
 >Other : {}
 >{} : {}
 
@@ -249,13 +250,13 @@ local function keep(value: any): {}
 
 end
 ReadInside = ReadInside or keep(ReadInside);
->ReadInside = ReadInside or keep(ReadInside) : any
->ReadInside : any
->ReadInside or keep(ReadInside) : any
->ReadInside : any
+>ReadInside = ReadInside or keep(ReadInside) : {}
+>ReadInside : {}
+>ReadInside or keep(ReadInside) : {}
+>ReadInside : {}
 >keep(ReadInside) : {}
 >keep : (value: any) => {}
->ReadInside : any
+>ReadInside : {}
 
 local LocalSelf = LocalSelf or {};
 >LocalSelf : any

@@ -32,13 +32,12 @@ tluaMultipleAssignment.tlua(636,16): error TLUA2322: Type 'string' is not assign
 tluaMultipleAssignment.tlua(641,26): error TLUA2322: Type 'string' is not assignable to type 'number'.
 tluaMultipleAssignment.tlua(665,26): error TLUA2779: The left-hand side of an assignment expression may not be an optional property access.
 tluaMultipleAssignment.tlua(681,29): error TLUA2454: Variable 'DeclaredGuard' is used before being assigned.
-tluaMultipleAssignment.tlua(684,22): error TLUA2454: Variable 'DiscardedGuard' is used before being assigned.
-tluaMultipleAssignment.tlua(688,11): error TLUA2322: Type 'nil' is not assignable to type 'number'.
-tluaMultipleAssignment.tlua(691,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
-tluaMultipleAssignment.tlua(691,8): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMultipleAssignment.tlua(689,11): error TLUA2322: Type 'nil' is not assignable to type 'number'.
+tluaMultipleAssignment.tlua(692,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMultipleAssignment.tlua(692,8): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
 
-==== tluaMultipleAssignment.tlua (33 errors) ====
+==== tluaMultipleAssignment.tlua (32 errors) ====
     function popOperation(index: number): ({ kind: string }, number)
         return { kind = "read" }, index + 1;
     end
@@ -784,10 +783,9 @@ tluaMultipleAssignment.tlua(691,8): error TLUA2322: Type 'number' is not assigna
                                 ~~~~~~~~~~~~~
 !!! error TLUA2454: Variable 'DeclaredGuard' is used before being assigned.
     
-    // A surplus guard has no positional target and remains an ordinary read.
+    // A surplus guard has no positional target and remains an ordinary read —
+    // evaluated against the pre-store snapshot, contributing no declared type.
     DiscardedGuard = {}, DiscardedGuard or {};
-                         ~~~~~~~~~~~~~~
-!!! error TLUA2454: Variable 'DiscardedGuard' is used before being assigned.
     
     // Extra and missing values follow Lua's adjustment rules.
     local optional: string | nil = "";

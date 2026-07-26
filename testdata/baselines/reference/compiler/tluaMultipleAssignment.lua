@@ -683,7 +683,8 @@ local transactionUnionUse: number | string = TransactionUnion;
 local DeclaredGuard: {};
 DeclaredGuard, FreshGuard = DeclaredGuard or {}, FreshGuard or {};
 
-// A surplus guard has no positional target and remains an ordinary read.
+// A surplus guard has no positional target and remains an ordinary read —
+// evaluated against the pre-store snapshot, contributing no declared type.
 DiscardedGuard = {}, DiscardedGuard or {};
 
 // Extra and missing values follow Lua's adjustment rules.
@@ -1229,7 +1230,8 @@ local transactionUnionUse = TransactionUnion;
 -- A declared uninitialized target is not an implicit augmentation.
 local DeclaredGuard;
 DeclaredGuard, FreshGuard = DeclaredGuard or {}, FreshGuard or {};
--- A surplus guard has no positional target and remains an ordinary read.
+-- A surplus guard has no positional target and remains an ordinary read —
+-- evaluated against the pre-store snapshot, contributing no declared type.
 DiscardedGuard = {}, DiscardedGuard or {};
 -- Extra and missing values follow Lua's adjustment rules.
 local optional = "";
