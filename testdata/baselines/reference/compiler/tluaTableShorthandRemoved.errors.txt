@@ -1,12 +1,15 @@
 tluaTableShorthandRemoved.tlua(6,28): error TLUA2353: Object literal may only specify known properties, and '1' does not exist in type '{ x: number; }'.
+tluaTableShorthandRemoved.tlua(13,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaTableShorthandRemoved.tlua(13,2): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 tluaTableShorthandRemoved.tlua(13,4): error TLUA2454: Variable 'q' is used before being assigned.
+tluaTableShorthandRemoved.tlua(18,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaTableShorthandRemoved.tlua(18,2): error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
 tluaTableShorthandRemoved.tlua(24,14): error TLUA2454: Variable 'q' is used before being assigned.
 tluaTableShorthandRemoved.tlua(27,1): error TLUA1128: Declaration or statement expected.
+tluaTableShorthandRemoved.tlua(27,3): error TLUA100057: Incomplete statement: expected assignment or a function call.
 
 
-==== tluaTableShorthandRemoved.tlua (6 errors) ====
+==== tluaTableShorthandRemoved.tlua (9 errors) ====
     // TS object shorthand is gone: `{x}` is a positional entry `[1] = x`.
     local x = 1;
     local t = { x };
@@ -22,6 +25,8 @@ tluaTableShorthandRemoved.tlua(27,1): error TLUA1128: Declaration or statement e
     declare obj: { q: number; w?: number };
     local q: number;
     ({ q } = obj);
+    ~~~~~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
      ~~~~~
 !!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
        ~
@@ -31,6 +36,8 @@ tluaTableShorthandRemoved.tlua(27,1): error TLUA1128: Declaration or statement e
     // old cover-grammar destructuring reading is an error too.
     local w: number | nil;
     ({ w = 5 } = obj);
+    ~~~~~~~~~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
      ~~~~~~~~~
 !!! error TLUA2364: The left-hand side of an assignment expression must be a variable or a property access.
     
@@ -46,4 +53,6 @@ tluaTableShorthandRemoved.tlua(27,1): error TLUA1128: Declaration or statement e
     { x };
     ~
 !!! error TLUA1128: Declaration or statement expected.
+      ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     

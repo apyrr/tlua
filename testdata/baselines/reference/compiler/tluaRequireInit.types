@@ -13,7 +13,8 @@ local v: number = pkg.version;
 >pkg : { version: number; }
 >version : number
 
-v;
+local _ = v;
+>_ : number
 >v : number
 
 === pkg/init.tlua ===

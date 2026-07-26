@@ -134,7 +134,8 @@ function extraName(t: string[]): void
 >x : nil
 >extra : nil
 
-    x;
+    local _ = x;
+>_ : nil
 >x : nil
 
   end
@@ -152,10 +153,12 @@ function annotated(t: string[]): void
 >ipairsLike : (t: string[]) => typeof iterStep
 >t : string[]
 
-    i;
+    local _ = i;
+>_ : number
 >i : number
 
-    s;
+    local _ = s;
+>_ : string | nil
 >s : string | nil
 
   end

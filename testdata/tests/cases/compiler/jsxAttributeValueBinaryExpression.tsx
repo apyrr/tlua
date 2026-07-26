@@ -1,4 +1,4 @@
 // @jsx: preserve
 // @noTypesAndSymbols: true
 
-<X a=<b/><c/> />
+local _ = <X a=<b/><c/> />

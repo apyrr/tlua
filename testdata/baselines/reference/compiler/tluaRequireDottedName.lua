@@ -7,7 +7,7 @@ return { value = value };
 //// [main.tlua]
 local util = require("app.util");
 local n: number = util.value;
-n;
+local _ = n;
 
 
 //// [util.lua]
@@ -16,4 +16,4 @@ return { value = value };
 //// [main.lua]
 local util = require("app.util");
 local n = util.value;
-n;
+local _ = n;

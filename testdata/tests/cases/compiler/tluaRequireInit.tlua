@@ -6,4 +6,4 @@ return { version = version };
 // @filename: main.tlua
 local pkg = require("pkg");
 local v: number = pkg.version;
-v;
+local _ = v;

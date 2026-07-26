@@ -19,10 +19,12 @@ func CheckEmit(t *testing.T, emitContext *printer.EmitContext, file *ast.SourceF
 	parsetestutil.CheckDiagnosticsMessage(t, file2, "error on reparse: ")
 }
 
-// CheckEmitJS is CheckEmit without the reparse gate, for trees that print
-// JS-only syntax. tlua has no conditional expression, but the downlevel
-// lowerings (`?.`, `??`, destructuring defaults) still synthesize a ternary
-// into their .js output, which tlua source syntax cannot read back.
+// CheckEmitJS is CheckEmit without the reparse gate, for trees whose printed
+// form is not valid tlua source. tlua has no conditional expression, but the
+// downlevel lowerings (`?.`, `??`, destructuring defaults) still synthesize a
+// ternary into their .js output, which tlua source syntax cannot read back.
+// Likewise for statement shapes that only arise from error recovery or
+// synthesis, such as a bare expression statement (TLUA100057).
 func CheckEmitJS(t *testing.T, emitContext *printer.EmitContext, file *ast.SourceFile, expected string) {
 	t.Helper()
 	checkEmitWorker(t, emitContext, file, expected)

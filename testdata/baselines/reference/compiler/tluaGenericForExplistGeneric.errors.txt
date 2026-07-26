@@ -75,11 +75,11 @@ tluaGenericForExplistGeneric.tlua(65,19): error TLUA2345: Argument of type 'numb
     for k, v in next, 42 do
                       ~~
 !!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'Table<never, unknown>'.
-      k;
-      v;
+      local _ = k;
+      local _ = v;
     end
     
     for k in next do
-      k;
+      local _ = k;
     end
     

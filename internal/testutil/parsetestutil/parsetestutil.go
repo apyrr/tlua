@@ -24,13 +24,7 @@ func ParseTypeScript(text string, jsx bool) *ast.SourceFile {
 // Asserts that the given file has no parse diagnostics.
 func CheckDiagnostics(t *testing.T, file *ast.SourceFile) {
 	t.Helper()
-	if len(file.Diagnostics()) > 0 {
-		var b strings.Builder
-		diagnosticwriter.WriteFormatDiagnostics(&b, diagnosticwriter.FromASTDiagnostics(file.Diagnostics()), &diagnosticwriter.FormattingOptions{
-			NewLine: "\n",
-		})
-		t.Error(b.String())
-	}
+	CheckDiagnosticsMessage(t, file, "")
 }
 
 // Asserts that the given file has no parse diagnostics and asserts the given message.

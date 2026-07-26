@@ -7,7 +7,7 @@ function scoped(): number
   do
     local x = 2;
     local y = x + 1;
-    y;
+    local _ = y;
   end
   return x;
 end
@@ -40,7 +40,7 @@ function coexist(flag: boolean): number
   until not (flag);
   do
     local x = 1;
-    x;
+    local _ = x;
   end
   return 0;
 end
@@ -61,7 +61,7 @@ function scoped()
   do
     local x = 2;
     local y = x + 1;
-    y;
+    local _ = y;
   end
   return x;
 end
@@ -91,7 +91,7 @@ function coexist(flag)
   until !(flag);
   do
     local x = 1;
-    x;
+    local _ = x;
   end
   return 0;
 end

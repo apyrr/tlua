@@ -27,12 +27,15 @@ main.tlua(39,31): error TLUA1005: ',' expected.
 main.tlua(43,7): error TLUA1003: Identifier expected.
 main.tlua(43,9): error TLUA2304: Cannot find name 'a'.
 main.tlua(43,9): error TLUA2695: Left side of comma operator is unused and has no side effects.
+main.tlua(43,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 main.tlua(43,15): error TLUA1005: ';' expected.
 main.tlua(43,15): error TLUA2304: Cannot find name 'restOfObj'.
+main.tlua(43,15): error TLUA100057: Incomplete statement: expected assignment or a function call.
 main.tlua(43,27): error TLUA2809: Declaration or statement expected. This '=' follows a block of statements, so if you intended to write a destructuring assignment, you might need to wrap the whole assignment in parentheses.
+main.tlua(43,29): error TLUA100057: Incomplete statement: expected assignment or a function call.
 
 
-==== main.tlua (21 errors) ====
+==== main.tlua (24 errors) ====
     declare function consume(a: number, b: number): void;
     declare nums: number[];
     declare obj: { a: number; b: number };
@@ -113,12 +116,18 @@ main.tlua(43,27): error TLUA2809: Declaration or statement expected. This '=' fo
 !!! error TLUA2304: Cannot find name 'a'.
             ~
 !!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+            ~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                   ~~~~~~~~~
 !!! error TLUA1005: ';' expected.
                   ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'restOfObj'.
+                  ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                               ~
 !!! error TLUA2809: Declaration or statement expected. This '=' follows a block of statements, so if you intended to write a destructuring assignment, you might need to wrap the whole assignment in parentheses.
+                                ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     
 ==== grammar.tlua (8 errors) ====
     // The vararg parameter grammar. These are *checker* grammar rules, not parse

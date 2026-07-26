@@ -11,8 +11,8 @@ return { b = b };
 //// [/user/username/projects/transitiveReferences/c.tlua] *new* 
 /// <reference path="./refs/a.d.tlua"/>
 local b = require('b');
-b.b;
-X.kind;
+local _ = b.b;
+local _ = X.kind;
 //// [/user/username/projects/transitiveReferences/refs/a.d.tlua] *new* 
 declare X: { kind: string };
 declare A: { kind: string };
@@ -105,8 +105,8 @@ return { b = b };
 //// [/user/username/projects/transitiveReferences/c.lua] *new* 
 -- / <reference path="./refs/a.d.tlua"/>
 local b = require('b');
-b.b;
-X.kind;
+local _ = b.b;
+local _ = X.kind;
 
 //// [/user/username/projects/transitiveReferences/tluaconfig.a.tluabuildinfo] *new* 
 {"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./a.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"6a4b029cb656d1640a8d66c6999ada7f-local A = { kind: 'A' };\nreturn { A = A };"],"options":{"composite":true},"semanticDiagnosticsPerFile":[1,2],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}

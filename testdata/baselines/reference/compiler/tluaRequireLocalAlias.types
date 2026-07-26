@@ -18,7 +18,8 @@ local n: number = m.value;
 >m : { value: number; }
 >value : number
 
-n;
+local _ = n;
+>_ : number
 >n : number
 
 === m.tlua ===

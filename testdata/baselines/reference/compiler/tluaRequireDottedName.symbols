@@ -11,7 +11,8 @@ local n: number = util.value;
 >util : Symbol(util, Decl(main.tlua, 0, 5))
 >value : Symbol(value, Decl(util.tlua, 1, 8))
 
-n;
+local _ = n;
+>_ : Symbol(_, Decl(main.tlua, 2, 5))
 >n : Symbol(n, Decl(main.tlua, 1, 5))
 
 === app/util.tlua ===

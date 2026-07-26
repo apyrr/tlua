@@ -1,8 +1,10 @@
 tluaNoImportExport.tlua(3,1): error TLUA1128: Declaration or statement expected.
 tluaNoImportExport.tlua(3,8): error TLUA1128: Declaration or statement expected.
 tluaNoImportExport.tlua(3,10): error TLUA2304: Cannot find name 'named'.
+tluaNoImportExport.tlua(3,10): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoImportExport.tlua(3,18): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(3,18): error TLUA2304: Cannot find name 'from'.
+tluaNoImportExport.tlua(3,23): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoImportExport.tlua(4,1): error TLUA1128: Declaration or statement expected.
 tluaNoImportExport.tlua(4,8): error TLUA1109: Expression expected.
 tluaNoImportExport.tlua(4,10): error TLUA2304: Cannot find name 'as'.
@@ -10,11 +12,13 @@ tluaNoImportExport.tlua(4,13): error TLUA1005: ';' expected.
 tluaNoImportExport.tlua(4,13): error TLUA2304: Cannot find name 'star'.
 tluaNoImportExport.tlua(4,18): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(4,18): error TLUA2304: Cannot find name 'from'.
+tluaNoImportExport.tlua(4,23): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoImportExport.tlua(5,1): error TLUA1128: Declaration or statement expected.
 tluaNoImportExport.tlua(5,8): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(5,8): error TLUA2304: Cannot find name 'def'.
 tluaNoImportExport.tlua(5,12): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(5,12): error TLUA2304: Cannot find name 'from'.
+tluaNoImportExport.tlua(5,17): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoImportExport.tlua(6,1): error TLUA1128: Declaration or statement expected.
 tluaNoImportExport.tlua(7,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(7,1): error TLUA2454: Variable 'export' is used before being assigned.
@@ -22,16 +26,20 @@ tluaNoImportExport.tlua(8,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(8,1): error TLUA2454: Variable 'export' is used before being assigned.
 tluaNoImportExport.tlua(8,8): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(8,8): error TLUA2304: Cannot find name 'default'.
+tluaNoImportExport.tlua(8,16): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoImportExport.tlua(10,1): error TLUA1434: Unexpected keyword or identifier.
 tluaNoImportExport.tlua(10,8): error TLUA1128: Declaration or statement expected.
+tluaNoImportExport.tlua(10,10): error TLUA100057: Incomplete statement: expected assignment or a function call.
+tluaNoImportExport.tlua(11,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoImportExport.tlua(11,10): error TLUA2304: Cannot find name 'from'.
 tluaNoImportExport.tlua(11,15): error TLUA1005: ';' expected.
+tluaNoImportExport.tlua(11,15): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoImportExport.tlua(14,17): error TLUA1109: Expression expected.
 tluaNoImportExport.tlua(15,14): error TLUA1109: Expression expected.
 tluaNoImportExport.tlua(15,20): error TLUA1128: Declaration or statement expected.
 
 
-==== tluaNoImportExport.tlua (31 errors) ====
+==== tluaNoImportExport.tlua (39 errors) ====
     // tlua has no TypeScript module syntax: a chunk loads its dependencies with
     // `require` and returns its own value.
     import { named } from "m";
@@ -41,10 +49,14 @@ tluaNoImportExport.tlua(15,20): error TLUA1128: Declaration or statement expecte
 !!! error TLUA1128: Declaration or statement expected.
              ~~~~~
 !!! error TLUA2304: Cannot find name 'named'.
+             ~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                      ~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
                      ~~~~
 !!! error TLUA2304: Cannot find name 'from'.
+                          ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     import * as star from "m";
     ~~~~~~
 !!! error TLUA1128: Declaration or statement expected.
@@ -60,6 +72,8 @@ tluaNoImportExport.tlua(15,20): error TLUA1128: Declaration or statement expecte
 !!! error TLUA1434: Unexpected keyword or identifier.
                      ~~~~
 !!! error TLUA2304: Cannot find name 'from'.
+                          ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     import def from "m";
     ~~~~~~
 !!! error TLUA1128: Declaration or statement expected.
@@ -71,6 +85,8 @@ tluaNoImportExport.tlua(15,20): error TLUA1128: Declaration or statement expecte
 !!! error TLUA1434: Unexpected keyword or identifier.
                ~~~~
 !!! error TLUA2304: Cannot find name 'from'.
+                    ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     import legacy = require("m");
     ~~~~~~
 !!! error TLUA1128: Declaration or statement expected.
@@ -88,17 +104,25 @@ tluaNoImportExport.tlua(15,20): error TLUA1128: Declaration or statement expecte
 !!! error TLUA1434: Unexpected keyword or identifier.
            ~~~~~~~
 !!! error TLUA2304: Cannot find name 'default'.
+                   ~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     export = value;
     export { value };
     ~~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
            ~
 !!! error TLUA1128: Declaration or statement expected.
+             ~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     export * from "m";
+    ~~~~~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
              ~~~~
 !!! error TLUA2304: Cannot find name 'from'.
                   ~~~
 !!! error TLUA1005: ';' expected.
+                  ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     
     // The dynamic forms are gone too.
     local dynamic = import("m");

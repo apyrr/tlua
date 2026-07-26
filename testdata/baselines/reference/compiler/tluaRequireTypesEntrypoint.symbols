@@ -12,7 +12,8 @@ local n: number = pkg.answer;
 >pkg : Symbol(pkg, Decl(main.tlua, 1, 5))
 >answer : Symbol(answer, Decl(typed.tlua, 1, 8))
 
-n;
+local _ = n;
+>_ : Symbol(_, Decl(main.tlua, 3, 5))
 >n : Symbol(n, Decl(main.tlua, 2, 5))
 
 === node_modules/pkg/typed.tlua ===

@@ -1,42 +1,58 @@
 reachabilityChecks11.tlua(4,1): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(4,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
+reachabilityChecks11.tlua(4,11): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(4,11): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(4,11): error TLUA2819: Namespace name cannot be 'A'.
 reachabilityChecks11.tlua(4,13): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(6,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(9,1): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(9,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 reachabilityChecks11.tlua(9,1): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(9,11): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(9,11): error TLUA2304: Cannot find name 'A1'.
 reachabilityChecks11.tlua(9,11): error TLUA2819: Namespace name cannot be 'A1'.
 reachabilityChecks11.tlua(9,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(10,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(11,5): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(11,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
+reachabilityChecks11.tlua(11,15): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(11,15): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(11,15): error TLUA2819: Namespace name cannot be 'A'.
 reachabilityChecks11.tlua(11,17): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(16,1): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(16,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 reachabilityChecks11.tlua(16,1): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(16,11): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(16,11): error TLUA2304: Cannot find name 'A2'.
 reachabilityChecks11.tlua(16,11): error TLUA2819: Namespace name cannot be 'A2'.
 reachabilityChecks11.tlua(16,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(17,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(18,5): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(18,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
+reachabilityChecks11.tlua(18,15): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(18,15): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(18,15): error TLUA2819: Namespace name cannot be 'A'.
 reachabilityChecks11.tlua(18,17): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(19,9): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(23,1): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(23,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 reachabilityChecks11.tlua(23,1): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(23,11): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(23,11): error TLUA2304: Cannot find name 'A3'.
 reachabilityChecks11.tlua(23,11): error TLUA2819: Namespace name cannot be 'A3'.
 reachabilityChecks11.tlua(23,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(24,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(28,1): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(28,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 reachabilityChecks11.tlua(28,1): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(28,11): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(28,11): error TLUA2304: Cannot find name 'A4'.
 reachabilityChecks11.tlua(28,11): error TLUA2819: Namespace name cannot be 'A4'.
 reachabilityChecks11.tlua(28,14): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(29,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(30,5): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(30,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
+reachabilityChecks11.tlua(30,15): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(30,15): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(30,15): error TLUA2819: Namespace name cannot be 'A'.
 reachabilityChecks11.tlua(30,17): error TLUA1128: Declaration or statement expected.
@@ -50,12 +66,16 @@ reachabilityChecks11.tlua(46,11): error TLUA1434: Unexpected keyword or identifi
 reachabilityChecks11.tlua(46,11): error TLUA2304: Cannot find name 'A'.
 reachabilityChecks11.tlua(46,13): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(50,1): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(50,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 reachabilityChecks11.tlua(50,1): error TLUA7027: Unreachable code detected.
+reachabilityChecks11.tlua(50,11): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(50,11): error TLUA2304: Cannot find name 'B'.
 reachabilityChecks11.tlua(50,11): error TLUA2819: Namespace name cannot be 'B'.
 reachabilityChecks11.tlua(50,13): error TLUA1128: Declaration or statement expected.
 reachabilityChecks11.tlua(51,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(52,5): error TLUA2304: Cannot find name 'namespace'.
+reachabilityChecks11.tlua(52,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
+reachabilityChecks11.tlua(52,15): error TLUA1434: Unexpected keyword or identifier.
 reachabilityChecks11.tlua(52,15): error TLUA2304: Cannot find name 'C'.
 reachabilityChecks11.tlua(52,15): error TLUA2819: Namespace name cannot be 'C'.
 reachabilityChecks11.tlua(52,17): error TLUA1128: Declaration or statement expected.
@@ -63,13 +83,17 @@ reachabilityChecks11.tlua(59,5): error TLUA7027: Unreachable code detected.
 reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
 
 
-==== reachabilityChecks11.tlua (63 errors) ====
+==== reachabilityChecks11.tlua (83 errors) ====
     // while (true);
     local x = 1;
     
     namespace A {
     ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+    ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+              ~
+!!! error TLUA1434: Unexpected keyword or identifier.
               ~
 !!! error TLUA2304: Cannot find name 'A'.
               ~
@@ -85,8 +109,12 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
     namespace A1 {
     ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+    ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
+              ~~
+!!! error TLUA1434: Unexpected keyword or identifier.
               ~~
 !!! error TLUA2304: Cannot find name 'A1'.
               ~~
@@ -100,6 +128,10 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA7027: Unreachable code detected.
         ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+        ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                  ~
+!!! error TLUA1434: Unexpected keyword or identifier.
                   ~
 !!! error TLUA2304: Cannot find name 'A'.
                   ~
@@ -113,8 +145,12 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
     namespace A2 {
     ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+    ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
+              ~~
+!!! error TLUA1434: Unexpected keyword or identifier.
               ~~
 !!! error TLUA2304: Cannot find name 'A2'.
               ~~
@@ -128,6 +164,10 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA7027: Unreachable code detected.
         ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+        ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                  ~
+!!! error TLUA1434: Unexpected keyword or identifier.
                   ~
 !!! error TLUA2304: Cannot find name 'A'.
                   ~
@@ -143,8 +183,12 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
     namespace A3 {
     ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+    ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
+              ~~
+!!! error TLUA1434: Unexpected keyword or identifier.
               ~~
 !!! error TLUA2304: Cannot find name 'A3'.
               ~~
@@ -160,8 +204,12 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
     namespace A4 {
     ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+    ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     ~~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
+              ~~
+!!! error TLUA1434: Unexpected keyword or identifier.
               ~~
 !!! error TLUA2304: Cannot find name 'A4'.
               ~~
@@ -175,6 +223,10 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA7027: Unreachable code detected.
         ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+        ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                  ~
+!!! error TLUA1434: Unexpected keyword or identifier.
                   ~
 !!! error TLUA2304: Cannot find name 'A'.
                   ~
@@ -221,8 +273,12 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
     namespace B {
     ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+    ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     ~~~~~~~~~~~
 !!! error TLUA7027: Unreachable code detected.
+              ~
+!!! error TLUA1434: Unexpected keyword or identifier.
               ~
 !!! error TLUA2304: Cannot find name 'B'.
               ~
@@ -236,6 +292,10 @@ reachabilityChecks11.tlua(66,5): error TLUA7027: Unreachable code detected.
 !!! error TLUA7027: Unreachable code detected.
         ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+        ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                  ~
+!!! error TLUA1434: Unexpected keyword or identifier.
                   ~
 !!! error TLUA2304: Cannot find name 'C'.
                   ~

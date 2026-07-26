@@ -1,6 +1,7 @@
 //// [tests/cases/compiler/regexInvalidUtf8WithUnicodeFlag.tlua] ////
 
 === regexInvalidUtf8WithUnicodeFlag.tlua ===
-/€/u
+local _ = /€/u
+>_ : RegExp
 >/€/u : RegExp
 

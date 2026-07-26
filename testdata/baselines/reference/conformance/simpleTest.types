@@ -1,7 +1,8 @@
 //// [tests/cases/conformance/simpleTest.tlua] ////
 
 === simpleTest.tlua ===
-1 + 2;
+local _ = 1 + 2;
+>_ : number
 >1 + 2 : number
 >1 : 1
 >2 : 2

@@ -2,13 +2,14 @@ tluaFunctionType.tlua(31,7): error TLUA2322: Type '{ n: number; }' is not assign
   Type '{ n: number; }' provides no match for the signature '(...: any): (any?, ...any)'.
 tluaFunctionType.tlua(32,14): error TLUA2304: Cannot find name 'LuaFunction'.
 tluaFunctionType.tlua(53,16): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaFunctionType.tlua(57,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaFunctionType.tlua(57,6): error TLUA2457: Type alias name cannot be 'function'.
 tluaFunctionType.tlua(57,15): error TLUA1003: Identifier expected.
 tluaFunctionType.tlua(57,17): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 tluaFunctionType.tlua(58,1): error TLUA1005: 'end' expected.
 
 
-==== tluaFunctionType.tlua (7 errors) ====
+==== tluaFunctionType.tlua (8 errors) ====
     // `function` is the keyword type for the runtime tag `type(x) == "function"`:
     // the top of every Lua function -- variadic parameters, any results. It replaced
     // the LuaFunction lib alias, which no longer exists.
@@ -73,6 +74,8 @@ tluaFunctionType.tlua(58,1): error TLUA1005: 'end' expected.
     
     // The spelling is a hard keyword: it cannot name a type alias.
     type function = number;
+    ~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
          ~~~~~~~~
 !!! error TLUA2457: Type alias name cannot be 'function'.
                   ~

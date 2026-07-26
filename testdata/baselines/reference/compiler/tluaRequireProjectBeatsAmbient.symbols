@@ -18,7 +18,8 @@ local util = require("jit.util");
 >util : Symbol(util, Decl(main.tlua, 6, 5))
 >require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
 
-util.funcinfo;
+local _ = util.funcinfo;
+>_ : Symbol(_, Decl(main.tlua, 7, 5))
 >util.funcinfo : Symbol(JITUtilLib.funcinfo, Decl(lib.luajit.d.tlua, --, --))
 >util : Symbol(util, Decl(main.tlua, 6, 5))
 >funcinfo : Symbol(JITUtilLib.funcinfo, Decl(lib.luajit.d.tlua, --, --))

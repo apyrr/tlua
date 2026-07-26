@@ -13,6 +13,8 @@ local usedLua = 1;
 >usedLua : number
 >1 : 1
 
-usedLua;
+print(usedLua);
+>print(usedLua) : void
+>print : (...: any) => void
 >usedLua : number
 

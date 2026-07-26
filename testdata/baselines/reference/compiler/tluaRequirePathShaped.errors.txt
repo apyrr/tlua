@@ -14,7 +14,7 @@ main.tlua(3,19): error TLUA2307: Cannot find module 'dir/m' or its corresponding
                       ~~~~~~~
 !!! error TLUA2307: Cannot find module 'dir/m' or its corresponding type declarations.
     local ok = require("m");
-    ok;
+    local _ = ok;
     
 ==== m.tlua (0 errors) ====
     local x = 1;

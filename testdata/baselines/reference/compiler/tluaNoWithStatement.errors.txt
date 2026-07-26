@@ -2,9 +2,10 @@ tluaNoWithStatement.tlua(2,1): error TLUA2304: Cannot find name 'with'.
 tluaNoWithStatement.tlua(2,7): error TLUA2304: Cannot find name 'scope'.
 tluaNoWithStatement.tlua(2,14): error TLUA1005: ';' expected.
 tluaNoWithStatement.tlua(3,3): error TLUA2304: Cannot find name 'value'.
+tluaNoWithStatement.tlua(3,3): error TLUA100057: Incomplete statement: expected assignment or a function call.
 
 
-==== tluaNoWithStatement.tlua (4 errors) ====
+==== tluaNoWithStatement.tlua (5 errors) ====
     // With statements are removed, and `with` is an ordinary identifier.
     with (scope) {
     ~~~~
@@ -16,6 +17,8 @@ tluaNoWithStatement.tlua(3,3): error TLUA2304: Cannot find name 'value'.
       value;
       ~~~~~
 !!! error TLUA2304: Cannot find name 'value'.
+      ~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     }
     
     function usesWith(): number

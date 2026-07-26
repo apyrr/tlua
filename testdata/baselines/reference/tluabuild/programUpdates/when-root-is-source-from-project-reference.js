@@ -3,7 +3,7 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/project/index.tlua] *new* 
 local foo = require("lib.foo");
-foo.FOO;
+local _ = foo.FOO;
 //// [/home/src/workspaces/project/lib/foo.tlua] *new* 
 local FOO: string = 'THEFOOEXPORT';
 return { FOO = FOO };
@@ -56,7 +56,7 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/index.lua] *new* 
 local foo = require("lib.foo");
-foo.FOO;
+local _ = foo.FOO;
 
 //// [/home/src/workspaces/project/lib/dist/foo.lua] *new* 
 local FOO = 'THEFOOEXPORT';

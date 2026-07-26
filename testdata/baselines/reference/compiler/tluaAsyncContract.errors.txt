@@ -1,5 +1,8 @@
 tluaAsyncContract.tlua(6,1): error TLUA2304: Cannot find name 'declare'.
+tluaAsyncContract.tlua(6,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaAsyncContract.tlua(6,9): error TLUA2304: Cannot find name 'namespace'.
+tluaAsyncContract.tlua(6,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
+tluaAsyncContract.tlua(6,19): error TLUA1434: Unexpected keyword or identifier.
 tluaAsyncContract.tlua(6,19): error TLUA2819: Namespace name cannot be 'coroutine'.
 tluaAsyncContract.tlua(6,29): error TLUA1128: Declaration or statement expected.
 tluaAsyncContract.tlua(7,12): error TLUA2391: Function implementation is missing or not immediately following the declaration.
@@ -15,7 +18,7 @@ tluaAsyncContract.tlua(60,3): error TLUA100023: An async function can only be ca
 tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be called from an async context.
 
 
-==== tluaAsyncContract.tlua (13 errors) ====
+==== tluaAsyncContract.tlua (16 errors) ====
     // The tlua coroutine contract: an async function may only be called from an
     // async context. Async functions return their plain type (or pack), never
     // Promise<T>.
@@ -24,8 +27,14 @@ tluaAsyncContract.tlua(71,3): error TLUA100023: An async function can only be ca
     declare namespace coroutine {
     ~~~~~~~
 !!! error TLUA2304: Cannot find name 'declare'.
+    ~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
             ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+            ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                      ~~~~~~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
                       ~~~~~~~~~
 !!! error TLUA2819: Namespace name cannot be 'coroutine'.
                                 ~

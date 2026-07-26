@@ -20,10 +20,12 @@ function useOverloaded(): void
 >v : Symbol(v, Decl(tluaGenericForPack.tlua, 5, 8))
 >overloaded : Symbol(overloaded, Decl(tluaGenericForPack.tlua, 0, 0), Decl(tluaGenericForPack.tlua, 1, 68))
 
-    k;
+    local _ = k;
+>_ : Symbol(_, Decl(tluaGenericForPack.tlua, 6, 9))
 >k : Symbol(k, Decl(tluaGenericForPack.tlua, 5, 5))
 
-    v;
+    local _ = v;
+>_ : Symbol(_, Decl(tluaGenericForPack.tlua, 7, 9))
 >v : Symbol(v, Decl(tluaGenericForPack.tlua, 5, 8))
 
   end
@@ -44,13 +46,16 @@ function useVariadic(): void
 >w : Symbol(w, Decl(tluaGenericForPack.tlua, 15, 11))
 >variadicIter : Symbol(variadicIter, Decl(tluaGenericForPack.tlua, 9, 3))
 
-    k;
+    local _ = k;
+>_ : Symbol(_, Decl(tluaGenericForPack.tlua, 16, 9))
 >k : Symbol(k, Decl(tluaGenericForPack.tlua, 15, 5))
 
-    v;
+    local _ = v;
+>_ : Symbol(_, Decl(tluaGenericForPack.tlua, 17, 9))
 >v : Symbol(v, Decl(tluaGenericForPack.tlua, 15, 8))
 
-    w;
+    local _ = w;
+>_ : Symbol(_, Decl(tluaGenericForPack.tlua, 18, 9))
 >w : Symbol(w, Decl(tluaGenericForPack.tlua, 15, 11))
 
   end

@@ -207,10 +207,12 @@ for k, v in next, 42 do
 >next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
 >42 : 42
 
-  k;
+  local _ = k;
+>_ : never
 >k : never
 
-  v;
+  local _ = v;
+>_ : unknown
 >v : unknown
 
 end
@@ -219,7 +221,8 @@ for k in next do
 >k : {}
 >next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
 
-  k;
+  local _ = k;
+>_ : {}
 >k : {}
 
 end

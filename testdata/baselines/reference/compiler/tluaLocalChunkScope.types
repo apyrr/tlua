@@ -5,10 +5,12 @@ local chunkValue = 1;
 >chunkValue : number
 >1 : 1
 
-chunkValue;
+local _ = chunkValue;
+>_ : number
 >chunkValue : number
 
 === b.tlua ===
-chunkValue;
+local _ = chunkValue;
+>_ : any
 >chunkValue : any
 

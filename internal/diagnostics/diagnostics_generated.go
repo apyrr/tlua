@@ -4384,6 +4384,8 @@ var Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name
 
 var A_self_type_is_available_only_in_a_member_of_an_interface = &Message{code: 100056, category: CategoryError, key: "A_self_type_is_available_only_in_a_member_of_an_interface_100056", text: "A 'self' type is available only in a member of an interface."}
 
+var Incomplete_statement_expected_assignment_or_a_function_call = &Message{code: 100057, category: CategoryError, key: "Incomplete_statement_expected_assignment_or_a_function_call_100057", text: "Incomplete statement: expected assignment or a function call."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8768,6 +8770,8 @@ func keyToMessage(key Key) *Message {
 		return Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name
 	case "A_self_type_is_available_only_in_a_member_of_an_interface_100056":
 		return A_self_type_is_available_only_in_a_member_of_an_interface
+	case "Incomplete_statement_expected_assignment_or_a_function_call_100057":
+		return Incomplete_statement_expected_assignment_or_a_function_call
 	default:
 		return nil
 	}

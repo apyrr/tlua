@@ -16,4 +16,4 @@ local s: string = profile.marker;
 
 // The unshadowed lualib names still hit their overloads.
 local util = require("jit.util");
-util.funcinfo;
+local _ = util.funcinfo;

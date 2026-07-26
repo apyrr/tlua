@@ -10,7 +10,8 @@ function func<A, B, T extends StringOrT<B>>(thing: T): void
 >func : <A, B, T extends StringOrT<B>>(thing: T) => void
 >thing : T
 
-    thing as A; // Error
+    local _ = thing as A; // Error
+>_ : A
 >thing as A : A
 >thing : T
 

@@ -13,7 +13,8 @@ local n: number = util.value;
 >util : { value: number; }
 >value : number
 
-n;
+local _ = n;
+>_ : number
 >n : number
 
 === app/util.tlua ===

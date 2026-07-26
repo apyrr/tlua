@@ -9,7 +9,7 @@ local a = require("./m");
 local b = require("../up");
 local c = require("dir/m");
 local ok = require("m");
-ok;
+local _ = ok;
 
 
 //// [m.lua]
@@ -20,4 +20,4 @@ local a = require("./m");
 local b = require("../up");
 local c = require("dir/m");
 local ok = require("m");
-ok;
+local _ = ok;

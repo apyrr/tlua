@@ -207,10 +207,12 @@ for k, v in next, 42 do
 >v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 64, 6))
 >next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
 
-  k;
+  local _ = k;
+>_ : Symbol(_, Decl(tluaGenericForExplistGeneric.tlua, 65, 7))
 >k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 64, 3))
 
-  v;
+  local _ = v;
+>_ : Symbol(_, Decl(tluaGenericForExplistGeneric.tlua, 66, 7))
 >v : Symbol(v, Decl(tluaGenericForExplistGeneric.tlua, 64, 6))
 
 end
@@ -219,7 +221,8 @@ for k in next do
 >k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 69, 3))
 >next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
 
-  k;
+  local _ = k;
+>_ : Symbol(_, Decl(tluaGenericForExplistGeneric.tlua, 70, 7))
 >k : Symbol(k, Decl(tluaGenericForExplistGeneric.tlua, 69, 3))
 
 end

@@ -1,39 +1,46 @@
-tluaNumericForErrors.tlua(2,10): error TLUA6133: 'badBounds' is declared but its value is never read.
 tluaNumericForErrors.tlua(3,11): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaNumericForErrors.tlua(5,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNumericForErrors.tlua(7,14): error TLUA2322: Type 'boolean' is not assignable to type 'number'.
+tluaNumericForErrors.tlua(8,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNumericForErrors.tlua(10,18): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaNumericForErrors.tlua(11,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNumericForErrors.tlua(17,13): error TLUA1005: ',' expected.
-tluaNumericForErrors.tlua(23,10): error TLUA6133: 'tooMany' is declared but its value is never read.
+tluaNumericForErrors.tlua(18,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNumericForErrors.tlua(24,19): error TLUA100022: A Lua numeric for statement has at most three control expressions.
-tluaNumericForErrors.tlua(30,10): error TLUA6133: 'badAnnotation' is declared but its value is never read.
+tluaNumericForErrors.tlua(25,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNumericForErrors.tlua(31,10): error TLUA2322: Type 'number' is not assignable to type 'string'.
-tluaNumericForErrors.tlua(37,10): error TLUA6133: 'selfReference' is declared but its value is never read.
+tluaNumericForErrors.tlua(32,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNumericForErrors.tlua(38,11): error TLUA2448: Block-scoped variable 'i' used before its declaration.
 tluaNumericForErrors.tlua(38,11): error TLUA2454: Variable 'i' is used before being assigned.
+tluaNumericForErrors.tlua(39,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNumericForErrors.tlua(44,10): error TLUA6133: 'unused' is declared but its value is never read.
 tluaNumericForErrors.tlua(46,7): error TLUA6133: 'i' is declared but its value is never read.
 
 
-==== tluaNumericForErrors.tlua (14 errors) ====
+==== tluaNumericForErrors.tlua (17 errors) ====
     // Non-number bounds and step.
     function badBounds(): void
-             ~~~~~~~~~
-!!! error TLUA6133: 'badBounds' is declared but its value is never read.
       for i = "a", 10 do
               ~~~
 !!! error TLUA2322: Type 'string' is not assignable to type 'number'.
         local n = i;
         n;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
       for i = 1, true do
                  ~~~~
 !!! error TLUA2322: Type 'boolean' is not assignable to type 'number'.
         i;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
       for i = 1, 10, "step" do
                      ~~~~~~
 !!! error TLUA2322: Type 'string' is not assignable to type 'number'.
         i;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     
@@ -43,35 +50,35 @@ tluaNumericForErrors.tlua(46,7): error TLUA6133: 'i' is declared but its value i
                 ~~
 !!! error TLUA1005: ',' expected.
         i;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     
     // More than three control expressions.
     function tooMany(): void
-             ~~~~~~~
-!!! error TLUA6133: 'tooMany' is declared but its value is never read.
       for i = 1, 10, 2, 3 do
                       ~
 !!! error TLUA100022: A Lua numeric for statement has at most three control expressions.
         i;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     
     // An annotation that cannot hold a number.
     function badAnnotation(): void
-             ~~~~~~~~~~~~~
-!!! error TLUA6133: 'badAnnotation' is declared but its value is never read.
       for i: string = 1, 2 do
              ~~~~~~
 !!! error TLUA2322: Type 'number' is not assignable to type 'string'.
         i;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     
     // The control variable cannot be used in its own bounds.
     function selfReference(): void
-             ~~~~~~~~~~~~~
-!!! error TLUA6133: 'selfReference' is declared but its value is never read.
       for i = i, 10 do
               ~
 !!! error TLUA2448: Block-scoped variable 'i' used before its declaration.
@@ -79,6 +86,8 @@ tluaNumericForErrors.tlua(46,7): error TLUA6133: 'i' is declared but its value i
               ~
 !!! error TLUA2454: Variable 'i' is used before being assigned.
         i;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     

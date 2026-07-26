@@ -118,7 +118,8 @@ function extraName(t: string[]): void
 >x : Symbol(x, Decl(tluaGenericFor.tlua, 39, 9))
 >extra : Symbol(extra, Decl(tluaGenericFor.tlua, 38, 11))
 
-    x;
+    local _ = x;
+>_ : Symbol(_, Decl(tluaGenericFor.tlua, 40, 9))
 >x : Symbol(x, Decl(tluaGenericFor.tlua, 39, 9))
 
   end
@@ -135,10 +136,12 @@ function annotated(t: string[]): void
 >ipairsLike : Symbol(ipairsLike, Decl(tluaGenericFor.tlua, 0, 69))
 >t : Symbol(t, Decl(tluaGenericFor.tlua, 45, 19))
 
-    i;
+    local _ = i;
+>_ : Symbol(_, Decl(tluaGenericFor.tlua, 47, 9))
 >i : Symbol(i, Decl(tluaGenericFor.tlua, 46, 5))
 
-    s;
+    local _ = s;
+>_ : Symbol(_, Decl(tluaGenericFor.tlua, 48, 9))
 >s : Symbol(s, Decl(tluaGenericFor.tlua, 46, 16))
 
   end

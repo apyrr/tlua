@@ -1,12 +1,12 @@
-b.tlua(1,1): error TLUA2304: Cannot find name 'chunkValue'.
+b.tlua(1,11): error TLUA2304: Cannot find name 'chunkValue'.
 
 
 ==== a.tlua (0 errors) ====
     local chunkValue = 1;
-    chunkValue;
+    local _ = chunkValue;
     
 ==== b.tlua (1 errors) ====
-    chunkValue;
-    ~~~~~~~~~~
+    local _ = chunkValue;
+              ~~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'chunkValue'.
     

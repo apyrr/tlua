@@ -4,7 +4,7 @@ Input::
 //// [/home/src/app/main.tlua] *new* 
 local util = require("util");
 local n: number = util.value;
-n;
+local _ = n;
 //// [/home/src/app/util.tlua] *new* 
 local value = 42;
 return { value = value };
@@ -15,7 +15,7 @@ Output::
 //// [/home/src/app/main.lua] *new* 
 local util = require("util");
 local n = util.value;
-n;
+local _ = n;
 
 //// [/home/src/app/util.lua] *new* 
 local value = 42;

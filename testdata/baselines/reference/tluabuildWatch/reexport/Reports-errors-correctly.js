@@ -3,7 +3,7 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/user/username/projects/reexport/src/main/index.tlua] *new* 
 local pure = require("pure");
-pure;
+local _ = pure;
 
 local session: Session = {
     foo: 1
@@ -19,7 +19,7 @@ local session: Session = {
 }
 //// [/user/username/projects/reexport/src/pure/init.tlua] *new* 
 local session = require("pure.session");
-session;
+local _ = session;
 //// [/user/username/projects/reexport/src/pure/session.tlua] *new* 
 interface Session {
     foo: number;
@@ -102,7 +102,7 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/user/username/projects/reexport/out/main/index.lua] *new* 
 local pure = require("pure");
-pure;
+local _ = pure;
 local session = {
   foo, 1
 };
@@ -125,12 +125,12 @@ local session = {
 }
 //// [/user/username/projects/reexport/out/pure/init.lua] *new* 
 local session = require("pure.session");
-session;
+local _ = session;
 
 //// [/user/username/projects/reexport/out/pure/session.lua] *new* 
 
 //// [/user/username/projects/reexport/out/pure/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../../src/pure/session.tlua","../../src/pure/init.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"389f150219fcbca1cab654141dd634bf-interface Session {\n    foo: number;\n    // bar: number;\n}","cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;"],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":9,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../../src/pure/session.tlua","../../src/pure/init.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"389f150219fcbca1cab654141dd634bf-interface Session {\n    foo: number;\n    // bar: number;\n}","3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;"],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":9,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
 //// [/user/username/projects/reexport/out/pure/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -172,8 +172,8 @@ session;
     },
     {
       "fileName": "../../src/pure/init.tlua",
-      "version": "cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;",
-      "signature": "cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;",
+      "version": "3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;",
+      "signature": "3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -216,7 +216,7 @@ session;
       "original": 3
     }
   ],
-  "size": 1495
+  "size": 1505
 }
 
 Watch Registrations::
@@ -288,7 +288,7 @@ Output::
 //// [/user/username/projects/reexport/out/main/tluaconfig.tluabuildinfo.readable.baseline.txt] *rewrite with same content*
 //// [/user/username/projects/reexport/out/pure/session.lua] *rewrite with same content*
 //// [/user/username/projects/reexport/out/pure/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../../src/pure/session.tlua","../../src/pure/init.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"7c5411f65d6041f40ef12d4731d29127-interface Session {\n    foo: number;\n    bar: number;\n}","signature":"fee2aa0e86ade495c53cf57aec2202bd-\n(0,9): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;"],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":9,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../../src/pure/session.tlua","../../src/pure/init.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"7c5411f65d6041f40ef12d4731d29127-interface Session {\n    foo: number;\n    bar: number;\n}","signature":"fee2aa0e86ade495c53cf57aec2202bd-\n(0,9): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;"],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":9,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
 //// [/user/username/projects/reexport/out/pure/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -335,8 +335,8 @@ Output::
     },
     {
       "fileName": "../../src/pure/init.tlua",
-      "version": "cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;",
-      "signature": "cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;",
+      "version": "3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;",
+      "signature": "3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -379,7 +379,7 @@ Output::
       "original": 3
     }
   ],
-  "size": 1659
+  "size": 1669
 }
 
 Watch Registrations::
@@ -450,7 +450,7 @@ Output::
 //// [/user/username/projects/reexport/out/main/tluaconfig.tluabuildinfo.readable.baseline.txt] *rewrite with same content*
 //// [/user/username/projects/reexport/out/pure/session.lua] *rewrite with same content*
 //// [/user/username/projects/reexport/out/pure/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../../src/pure/session.tlua","../../src/pure/init.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"389f150219fcbca1cab654141dd634bf-interface Session {\n    foo: number;\n    // bar: number;\n}","signature":"fee2aa0e86ade495c53cf57aec2202bd-\n(0,9): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;"],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":9,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.luajit.d.tlua","../../src/pure/session.tlua","../../src/pure/init.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"389f150219fcbca1cab654141dd634bf-interface Session {\n    foo: number;\n    // bar: number;\n}","signature":"fee2aa0e86ade495c53cf57aec2202bd-\n(0,9): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;"],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"emitDiagnosticsPerFile":[[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[2,[{"end":9,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3]}
 //// [/user/username/projects/reexport/out/pure/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -497,8 +497,8 @@ Output::
     },
     {
       "fileName": "../../src/pure/init.tlua",
-      "version": "cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;",
-      "signature": "cb2d4fba035d98243c4fb16380a83c47-local session = require(\"pure.session\");\nsession;",
+      "version": "3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;",
+      "signature": "3216b2bbd91ce50e093204fe618b7940-local session = require(\"pure.session\");\nlocal _ = session;",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -541,7 +541,7 @@ Output::
       "original": 3
     }
   ],
-  "size": 1662
+  "size": 1672
 }
 
 Watch Registrations::

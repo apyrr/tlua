@@ -8,7 +8,7 @@ local classC = {
 return { classC = classC };
 //// [/home/src/workspaces/project/src/directUse.tlua] *new* 
 local indirect = require('src.indirectClass');
-indirect.indirectClass.classC.prop;
+local _ = indirect.indirectClass.classC.prop;
 //// [/home/src/workspaces/project/src/indirectClass.tlua] *new* 
 local classMod = require('src.class');
 local indirectClass = {
@@ -17,7 +17,7 @@ local indirectClass = {
 return { indirectClass = indirectClass };
 //// [/home/src/workspaces/project/src/indirectUse.tlua] *new* 
 local indirect = require('src.indirectClass');
-indirect.indirectClass.classC.prop;
+local _ = indirect.indirectClass.classC.prop;
 //// [/home/src/workspaces/project/src/noChangeFile.tlua] *new* 
 function writeLog(s: string) end
 //// [/home/src/workspaces/project/src/noChangeFileWithEmitSpecificError.tlua] *new* 
@@ -68,7 +68,7 @@ interface Symbol {
 declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"affectedFilesPendingEmit":[2,4,3,5,6,7]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"affectedFilesPendingEmit":[2,4,3,5,6,7]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -124,14 +124,14 @@ declare function require(module: string): any;
     },
     {
       "fileName": "./src/directUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/indirectUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -203,7 +203,7 @@ declare function require(module: string): any;
       7
     ]
   ],
-  "size": 2077
+  "size": 2097
 }
 
 tluaconfig.json::
@@ -244,7 +244,7 @@ return { classC = classC };
 
 //// [/home/src/workspaces/project/src/directUse.lua] *new* 
 local indirect = require('src.indirectClass');
-indirect.indirectClass.classC.prop;
+local _ = indirect.indirectClass.classC.prop;
 
 //// [/home/src/workspaces/project/src/indirectClass.lua] *new* 
 local classMod = require('src.class');
@@ -255,7 +255,7 @@ return { indirectClass = indirectClass };
 
 //// [/home/src/workspaces/project/src/indirectUse.lua] *new* 
 local indirect = require('src.indirectClass');
-indirect.indirectClass.classC.prop;
+local _ = indirect.indirectClass.classC.prop;
 
 //// [/home/src/workspaces/project/src/noChangeFile.lua] *new* 
 function writeLog(s)
@@ -266,7 +266,7 @@ function someFunc(arguments, ...rest)
 end
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -322,14 +322,14 @@ end
     },
     {
       "fileName": "./src/directUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/indirectUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -369,7 +369,7 @@ end
       ]
     ]
   ],
-  "size": 2036
+  "size": 2056
 }
 
 tluaconfig.json::
@@ -407,7 +407,7 @@ local classC = {
 return { classC = classC };
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8be09a1392ba7e2d8eb8a82451d54596-local classC = {\n    prop1 = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8be09a1392ba7e2d8eb8a82451d54596-local classC = {\n    prop1 = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -468,14 +468,14 @@ return { classC = classC };
     },
     {
       "fileName": "./src/directUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/indirectUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -515,7 +515,7 @@ return { classC = classC };
       ]
     ]
   ],
-  "size": 2204
+  "size": 2224
 }
 
 tluaconfig.json::
@@ -529,19 +529,19 @@ Diff:: incremental build misses dependent-file errors because module signatures 
 --- nonIncremental.output.txt
 +++ incremental.output.txt
 @@ -1,21 +1,3 @@
--[96msrc/directUse.tlua[0m:[93m2[0m:[93m31[0m - [91merror[0m[90m TLUA2551: [0mProperty 'prop' does not exist on type '{ prop1: number; }'. Did you mean 'prop1'?
+-[96msrc/directUse.tlua[0m:[93m2[0m:[93m41[0m - [91merror[0m[90m TLUA2551: [0mProperty 'prop' does not exist on type '{ prop1: number; }'. Did you mean 'prop1'?
 -
--[7m2[0m indirect.indirectClass.classC.prop;
--[7m [0m [91m                              ~~~~[0m
+-[7m2[0m local _ = indirect.indirectClass.classC.prop;
+-[7m [0m [91m                                        ~~~~[0m
 -
 -  [96msrc/class.tlua[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
 -    [7m2[0m     prop1 = 1,
 -    [7m [0m [96m    ~~~~~~~~~[0m
 -
--[96msrc/indirectUse.tlua[0m:[93m2[0m:[93m31[0m - [91merror[0m[90m TLUA2551: [0mProperty 'prop' does not exist on type '{ prop1: number; }'. Did you mean 'prop1'?
+-[96msrc/indirectUse.tlua[0m:[93m2[0m:[93m41[0m - [91merror[0m[90m TLUA2551: [0mProperty 'prop' does not exist on type '{ prop1: number; }'. Did you mean 'prop1'?
 -
--[7m2[0m indirect.indirectClass.classC.prop;
--[7m [0m [91m                              ~~~~[0m
+-[7m2[0m local _ = indirect.indirectClass.classC.prop;
+-[7m [0m [91m                                        ~~~~[0m
 -
 -  [96msrc/class.tlua[0m:[93m2[0m:[93m5[0m - 'prop1' is declared here.
 -    [7m2[0m     prop1 = 1,
@@ -587,7 +587,7 @@ Output::
 Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificError.tlua[90m:1[0m
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"affectedFilesPendingEmit":[2]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]],"affectedFilesPendingEmit":[2]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -648,14 +648,14 @@ Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificEr
     },
     {
       "fileName": "./src/directUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/indirectUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -702,7 +702,7 @@ Found 2 errors in the same file, starting at: src/noChangeFileWithEmitSpecificEr
       2
     ]
   ],
-  "size": 2234
+  "size": 2254
 }
 
 tluaconfig.json::
@@ -737,7 +737,7 @@ local classC = {
 return { classC = classC };
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.luajit.d.tlua","./src/class.tlua","./src/indirectClass.tlua","./src/directUse.tlua","./src/indirectUse.tlua","./src/noChangeFile.tlua","./src/noChangeFileWithEmitSpecificError.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"01b7d09c6307220002a1cfad352a5df8-local classC = {\n    prop = 1,\n};\nreturn { classC = classC };","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"45d4ad1225e205a8c50e34dea21f6146-local classMod = require('src.class');\nlocal indirectClass = {\n    classC = classMod.classC,\n};\nreturn { indirectClass = indirectClass };","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;","79aaed0fe83f9356eae8986134f0606f-function writeLog(s: string) end","49a2ef83f2e7401bfd97db750939d27b-function someFunc(arguments: boolean, ...rest: any[]) end"],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1215,"category":1,"messageKey":"Invalid_use_of_0_Modules_are_automatically_in_strict_mode_1215","messageArgs":["arguments"]},{"pos":41,"end":45,"code":100034,"category":1,"messageKey":"A_vararg_parameter_cannot_have_a_name_100034"}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -798,14 +798,14 @@ return { classC = classC };
     },
     {
       "fileName": "./src/directUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/indirectUse.tlua",
-      "version": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
-      "signature": "7627d2557b2559156a4f49ce9c718fa0-local indirect = require('src.indirectClass');\nindirect.indirectClass.classC.prop;",
+      "version": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
+      "signature": "06f2806a98f5875203b5b73343dd2f48-local indirect = require('src.indirectClass');\nlocal _ = indirect.indirectClass.classC.prop;",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -845,7 +845,7 @@ return { classC = classC };
       ]
     ]
   ],
-  "size": 2203
+  "size": 2223
 }
 
 tluaconfig.json::

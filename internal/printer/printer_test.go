@@ -20,109 +20,112 @@ func TestEmit(t *testing.T) {
 		output string
 		jsx    bool
 	}{
-		{title: "StringLiteral#1", input: `;"test"`, output: ";\n\"test\";"},
+		{title: "StringLiteral#1", input: `;local _ = "test"`, output: ";\nlocal _ = \"test\";"},
 		// tlua: a control char emits as Lua `\xHH` (not JS `\uXXXX` nor octal `\ddd`) and
 		// re-scans cleanly — the reparse gate proves the emitted escape round-trips.
-		{title: "StringLiteral#3", input: "\"\\x1b\"", output: "\"\\x1b\";"},
-		{title: "StringLiteral#2", input: `;'test'`, output: ";\n'test';"},
-		{title: "NumericLiteral#1", input: `0`, output: `0;`},
-		{title: "NumericLiteral#2", input: `10_000`, output: `10000;`},
-		{title: "BooleanLiteral#1", input: `true`, output: `true;`},
-		{title: "BooleanLiteral#2", input: `false`, output: `false;`},
+		{title: "StringLiteral#3", input: "local _ = \"\\x1b\"", output: "local _ = \"\\x1b\";"},
+		{title: "StringLiteral#2", input: `;local _ = 'test'`, output: ";\nlocal _ = 'test';"},
+		{title: "NumericLiteral#1", input: `local _ = 0`, output: `local _ = 0;`},
+		{title: "NumericLiteral#2", input: `local _ = 10_000`, output: `local _ = 10000;`},
+		{title: "BooleanLiteral#1", input: `local _ = true`, output: `local _ = true;`},
+		{title: "BooleanLiteral#2", input: `local _ = false`, output: `local _ = false;`},
 		// tlua: backtick templates lower to Lua strings/concatenation (no `${}` interpolation).
-		{title: "NoSubstitutionTemplateLiteral", input: "``", output: "\"\";"},
-		{title: "NoSubstitutionTemplateLiteral#2", input: "`\n`", output: "\"\\n\";"},
+		{title: "NoSubstitutionTemplateLiteral", input: "local _ = ``", output: "local _ = \"\";"},
+		{title: "NoSubstitutionTemplateLiteral#2", input: "local _ = `\n`", output: "local _ = \"\\n\";"},
 
-		{title: "RegularExpressionLiteral#1", input: `/a/`, output: `/a/;`},
-		{title: "RegularExpressionLiteral#2", input: `/a/g`, output: `/a/g;`},
+		{title: "RegularExpressionLiteral#1", input: `local _ = /a/`, output: `local _ = /a/;`},
+		{title: "RegularExpressionLiteral#2", input: `local _ = /a/g`, output: `local _ = /a/g;`},
 		// `null` is an accepted alias that canonicalizes to `nil`.
-		{title: "NullLiteral", input: `null`, output: `nil;`},
+		{title: "NullLiteral", input: `local _ = null`, output: `local _ = nil;`},
 		{title: "SuperExpression", input: `super()`, output: `super();`},
-		{title: "PropertyAccess#1", input: `a.b`, output: `a.b;`},
+		{title: "PropertyAccess#1", input: `local _ = a.b`, output: `local _ = a.b;`},
 		// `#` is the Lua length operator now, not a private-identifier sigil, so
 		// `a.#b` no longer parses; the PrivateIdentifier node survives only for emit.
-		{title: "PropertyAccess#3", input: `a?.b`, output: `a?.b;`},
-		{title: "PropertyAccess#4", input: `a?.b.c`, output: `a?.b.c;`},
-		{title: "PropertyAccess#5", input: `1..b`, output: `1..b;`},
-		{title: "PropertyAccess#6", input: `1.0.b`, output: `1.0.b;`},
-		{title: "PropertyAccess#7", input: `0x1.b`, output: `0x1.b;`},
-		{title: "PropertyAccess#8", input: `0b1.b`, output: `0b1.b;`},
-		{title: "PropertyAccess#9", input: `0o1.b`, output: `0o1.b;`},
-		{title: "PropertyAccess#10", input: `10e1.b`, output: `10e1.b;`},
-		{title: "PropertyAccess#11", input: `10E1.b`, output: `10E1.b;`},
-		{title: "PropertyAccess#12", input: `a.b?.c`, output: `a.b?.c;`},
-		{title: "PropertyAccess#13", input: "a\n.b", output: "a\n    .b;"},
-		{title: "PropertyAccess#14", input: "a.\nb", output: "a.\n    b;"},
-		{title: "ElementAccess#1", input: `a[b]`, output: `a[b];`},
-		{title: "ElementAccess#2", input: `a?.[b]`, output: `a?.[b];`},
-		{title: "ElementAccess#3", input: `a?.[b].c`, output: `a?.[b].c;`},
+		{title: "PropertyAccess#3", input: `local _ = a?.b`, output: `local _ = a?.b;`},
+		{title: "PropertyAccess#4", input: `local _ = a?.b.c`, output: `local _ = a?.b.c;`},
+		{title: "PropertyAccess#5", input: `local _ = 1..b`, output: `local _ = 1..b;`},
+		{title: "PropertyAccess#6", input: `local _ = 1.0.b`, output: `local _ = 1.0.b;`},
+		{title: "PropertyAccess#7", input: `local _ = 0x1.b`, output: `local _ = 0x1.b;`},
+		{title: "PropertyAccess#8", input: `local _ = 0b1.b`, output: `local _ = 0b1.b;`},
+		{title: "PropertyAccess#9", input: `local _ = 0o1.b`, output: `local _ = 0o1.b;`},
+		{title: "PropertyAccess#10", input: `local _ = 10e1.b`, output: `local _ = 10e1.b;`},
+		{title: "PropertyAccess#11", input: `local _ = 10E1.b`, output: `local _ = 10E1.b;`},
+		{title: "PropertyAccess#12", input: `local _ = a.b?.c`, output: `local _ = a.b?.c;`},
+		{title: "PropertyAccess#13", input: "local _ = a\n.b", output: "local _ = a\n    .b;"},
+		{title: "PropertyAccess#14", input: "local _ = a.\nb", output: "local _ = a.\n    b;"},
+		{title: "ElementAccess#1", input: `local _ = a[b]`, output: `local _ = a[b];`},
+		{title: "ElementAccess#2", input: `local _ = a?.[b]`, output: `local _ = a?.[b];`},
+		{title: "ElementAccess#3", input: `local _ = a?.[b].c`, output: `local _ = a?.[b].c;`},
 		{title: "CallExpression#1", input: `a()`, output: `a();`},
 		{title: "CallExpression#2", input: `a<T>()`, output: `a<T>();`},
 		{title: "CallExpression#3", input: `a(b)`, output: `a(b);`},
 		{title: "CallExpression#4", input: `a<T>(b)`, output: `a<T>(b);`},
-		{title: "CallExpression#5", input: `a(b).c`, output: `a(b).c;`},
-		{title: "CallExpression#6", input: `a<T>(b).c`, output: `a<T>(b).c;`},
+		{title: "CallExpression#5", input: `local _ = a(b).c`, output: `local _ = a(b).c;`},
+		{title: "CallExpression#6", input: `local _ = a<T>(b).c`, output: `local _ = a<T>(b).c;`},
 		{title: "CallExpression#7", input: `a?.(b)`, output: `a?.(b);`},
 		{title: "CallExpression#8", input: `a?.<T>(b)`, output: `a?.<T>(b);`},
-		{title: "CallExpression#9", input: `a?.(b).c`, output: `a?.(b).c;`},
-		{title: "CallExpression#10", input: `a?.<T>(b).c`, output: `a?.<T>(b).c;`},
+		{title: "CallExpression#9", input: `local _ = a?.(b).c`, output: `local _ = a?.(b).c;`},
+		{title: "CallExpression#10", input: `local _ = a?.<T>(b).c`, output: `local _ = a?.<T>(b).c;`},
 		{title: "CallExpression#11", input: `a<T, U>()`, output: `a<T, U>();`},
 		// {title: "CallExpression#12", input: `a<T,>()`, output: `a<T,>();`}, // TODO: preserve trailing comma after Strada migration
 		{title: "CallExpression#13", input: `a?.b()`, output: `a?.b();`},
 		// Tagged templates are a non-Lua construct: the tag applied to the lowered
 		// string emits as `tag ""` (Lua string-call sugar) which tlua does not parse.
-		{title: "TypeAssertionExpression#1", input: `<T>a`, output: `<T>a;`},
-		{title: "FunctionExpression#1", input: "(function() end)", output: "(function()\nend);"},
-		{title: "FunctionExpression#2", input: "(function(a) return a end)", output: "(function(a)\n    return a;\nend);"},
-		{title: "FunctionExpression#4", input: "(async function() end)", output: "(async function()\nend);"},
-		{title: "FunctionExpression#6", input: "(function<T>() end)", output: "(function<T>()\nend);"},
-		{title: "FunctionExpression#7", input: "(function(a) end)", output: "(function(a)\nend);"},
-		{title: "FunctionExpression#8", input: "(function(): T end)", output: "(function(): T\nend);"},
-		{title: "PrefixUnaryExpression#1", input: `+a`, output: `+a;`},
-		{title: "PrefixUnaryExpression#3", input: `+ +a`, output: `+ +a;`},
-		{title: "PrefixUnaryExpression#5", input: `-a`, output: `-a;`},
-		{title: "PrefixUnaryExpression#7", input: `- -a`, output: `- -a;`},
-		{title: "PrefixUnaryExpression#9", input: `+-a`, output: `+-a;`},
-		{title: "PrefixUnaryExpression#11", input: `-+a`, output: `-+a;`},
-		{title: "PrefixUnaryExpression#14", input: `!a`, output: `!a;`},
+		{title: "TypeAssertionExpression#1", input: `local _ = <T>a`, output: `local _ = <T>a;`},
+		{title: "FunctionExpression#1", input: "local _ = (function() end)", output: "local _ = (function()\nend);"},
+		{title: "FunctionExpression#2", input: "local _ = (function(a) return a end)", output: "local _ = (function(a)\n    return a;\nend);"},
+		{title: "FunctionExpression#4", input: "local _ = (async function() end)", output: "local _ = (async function()\nend);"},
+		{title: "FunctionExpression#6", input: "local _ = (function<T>() end)", output: "local _ = (function<T>()\nend);"},
+		{title: "FunctionExpression#7", input: "local _ = (function(a) end)", output: "local _ = (function(a)\nend);"},
+		{title: "FunctionExpression#8", input: "local _ = (function(): T end)", output: "local _ = (function(): T\nend);"},
+		{title: "PrefixUnaryExpression#1", input: `local _ = +a`, output: `local _ = +a;`},
+		{title: "PrefixUnaryExpression#3", input: `local _ = + +a`, output: `local _ = + +a;`},
+		{title: "PrefixUnaryExpression#5", input: `local _ = -a`, output: `local _ = -a;`},
+		{title: "PrefixUnaryExpression#7", input: `local _ = - -a`, output: `local _ = - -a;`},
+		{title: "PrefixUnaryExpression#9", input: `local _ = +-a`, output: `local _ = +-a;`},
+		{title: "PrefixUnaryExpression#11", input: `local _ = -+a`, output: `local _ = -+a;`},
+		{title: "PrefixUnaryExpression#14", input: `local _ = !a`, output: `local _ = !a;`},
 		// Lua length operator.
-		{title: "PrefixUnaryExpression#len", input: `#a`, output: `#a;`},
-		{title: "PrefixUnaryExpression#len2", input: `#a + #b`, output: `#a + #b;`},
+		{title: "PrefixUnaryExpression#len", input: `local _ = #a`, output: `local _ = #a;`},
+		{title: "PrefixUnaryExpression#len2", input: `local _ = #a + #b`, output: `local _ = #a + #b;`},
 		// `#` before `!` keeps a space, else the emitted `#!a` would re-scan as a shebang.
-		{title: "PrefixUnaryExpression#lenNot", input: `# !a`, output: `# !a;`},
-		{title: "BinaryExpression#1", input: `a,b`, output: `a, b;`},
-		{title: "BinaryExpression#2", input: `a+b`, output: `a + b;`},
-		{title: "BinaryExpression#3", input: `a^b`, output: `a ^ b;`},
+		{title: "PrefixUnaryExpression#lenNot", input: `local _ = # !a`, output: `local _ = # !a;`},
+		// The comma operator has no bare-statement spelling, and `local _ = a, b` is a
+		// value list (an ExpressionList node), so the source parens are what keep this a
+		// comma BinaryExpression. They are a real node and round-trip verbatim.
+		{title: "BinaryExpression#1", input: `local _ = (a,b)`, output: `local _ = (a, b);`},
+		{title: "BinaryExpression#2", input: `local _ = a+b`, output: `local _ = a + b;`},
+		{title: "BinaryExpression#3", input: `local _ = a^b`, output: `local _ = a ^ b;`},
 		// Lua concatenation is right-associative: `a .. b .. c` needs no parens, but a
 		// left-nested `(a .. b) .. c` keeps them.
-		{title: "BinaryExpression#concat", input: `a..b`, output: `a .. b;`},
-		{title: "BinaryExpression#concatChain", input: `a..b..c`, output: `a .. b .. c;`},
-		{title: "BinaryExpression#concatLeftParen", input: `(a..b)..c`, output: `(a .. b) .. c;`},
-		{title: "BinaryExpression#5", input: `a in b`, output: `a in b;`},
+		{title: "BinaryExpression#concat", input: `local _ = a..b`, output: `local _ = a .. b;`},
+		{title: "BinaryExpression#concatChain", input: `local _ = a..b..c`, output: `local _ = a .. b .. c;`},
+		{title: "BinaryExpression#concatLeftParen", input: `local _ = (a..b)..c`, output: `local _ = (a .. b) .. c;`},
+		{title: "BinaryExpression#5", input: `local _ = a in b`, output: `local _ = a in b;`},
 		// `&&`/`||` are aliases of `and`/`or` and print with the canonical Lua
 		// spelling, whichever the source used.
-		{title: "BinaryExpression#6", input: "a\n&& b", output: "a\n    and b;"},
-		{title: "BinaryExpression#7", input: "a &&\nb", output: "a and\n    b;"},
-		{title: "BinaryExpression#8", input: "a and b", output: "a and b;"},
-		{title: "BinaryExpression#9", input: "a or b", output: "a or b;"},
+		{title: "BinaryExpression#6", input: "local _ = a\n&& b", output: "local _ = a\n    and b;"},
+		{title: "BinaryExpression#7", input: "local _ = a &&\nb", output: "local _ = a and\n    b;"},
+		{title: "BinaryExpression#8", input: "local _ = a and b", output: "local _ = a and b;"},
+		{title: "BinaryExpression#9", input: "local _ = a or b", output: "local _ = a or b;"},
 		// `not` is spelled `!` on the way out: the token kind is shared with the
 		// non-null and definite-assignment `!`, which must stay punctuation.
-		{title: "PrefixUnaryExpression#not", input: "not a", output: "!a;"},
+		{title: "PrefixUnaryExpression#not", input: "local _ = not a", output: "local _ = !a;"},
 		// tlua has no conditional expression in source; the node survives only in
 		// emit-time synthesis (`?.`/`??` lowering), covered by the factory-built
 		// TestParenthesizeConditional tests below.
-		{title: "TemplateExpression#1", input: "`a${b}c`", output: `("a" .. tostring(b) .. "c");`},
-		{title: "TemplateExpression#2", input: "`a${b}c${d}e`", output: `("a" .. tostring(b) .. "c" .. tostring(d) .. "e");`},
+		{title: "TemplateExpression#1", input: "local _ = `a${b}c`", output: `local _ = ("a" .. tostring(b) .. "c");`},
+		{title: "TemplateExpression#2", input: "local _ = `a${b}c${d}e`", output: `local _ = ("a" .. tostring(b) .. "c" .. tostring(d) .. "e");`},
 		{title: "VarargExpression", input: `f(...)`, output: `f(...);`},
-		{title: "ExpressionWithTypeArguments", input: `a<T>`, output: `a<T>;`},
-		{title: "AsExpression", input: `a as T`, output: `a as T;`},
-		{title: "SatisfiesExpression", input: `a satisfies T`, output: `a satisfies T;`},
-		{title: "NonNullExpression", input: `a!`, output: `a!;`},
-		{title: "MetaProperty#1", input: `new.target`, output: `new.target;`},
-		{title: "ObjectLiteralExpression#1", input: `({})`, output: `({});`},
-		{title: "ObjectLiteralExpression#2", input: `({a,})`, output: `({ a, });`},
-		{title: "PropertyAssignment", input: "({a = b})", output: "({ a = b });"},
-		{title: "PropertyAssignment#2", input: "({[a] = b})", output: "({ [a] = b });"},
+		{title: "ExpressionWithTypeArguments", input: `local _ = a<T>`, output: `local _ = a<T>;`},
+		{title: "AsExpression", input: `local _ = a as T`, output: `local _ = a as T;`},
+		{title: "SatisfiesExpression", input: `local _ = a satisfies T`, output: `local _ = a satisfies T;`},
+		{title: "NonNullExpression", input: `local _ = a!`, output: `local _ = a!;`},
+		{title: "MetaProperty#1", input: `local _ = new.target`, output: `local _ = new.target;`},
+		{title: "ObjectLiteralExpression#1", input: `local _ = ({})`, output: `local _ = ({});`},
+		{title: "ObjectLiteralExpression#2", input: `local _ = ({a,})`, output: `local _ = ({ a, });`},
+		{title: "PropertyAssignment", input: "local _ = ({a = b})", output: "local _ = ({ a = b });"},
+		{title: "PropertyAssignment#2", input: "local _ = ({[a] = b})", output: "local _ = ({ [a] = b });"},
 		{title: "VariableStatement#1", input: `local a`, output: `local a;`},
 		{title: "VariableStatement#3", input: `local a = b`, output: `local a = b;`},
 		{title: "EmptyStatement", input: `;`, output: `;`},
@@ -144,7 +147,7 @@ func TestEmit(t *testing.T) {
 		{title: "InterfaceDeclaration#4", input: `interface a extends b, c {}`, output: "interface a extends b, c {\n}"},
 		{title: "TypeAliasDeclaration#1", input: `type a = b`, output: "type a = b;"},
 		{title: "TypeAliasDeclaration#2", input: `type a<T> = b`, output: "type a<T> = b;"},
-		{title: "ModuleDeclaration#7", input: `global;`, output: "global;"},
+		{title: "ModuleDeclaration#7", input: `local _ = global;`, output: "local _ = global;"},
 		{title: "ModuleDeclaration#8", input: `global{}`, output: "global { }"},
 		{title: "KeywordTypeNode#1", input: `type T = any`, output: `type T = any;`},
 		{title: "KeywordTypeNode#2", input: `type T = unknown`, output: `type T = unknown;`},
@@ -262,38 +265,38 @@ func TestEmit(t *testing.T) {
 		{title: "TypeParameterDeclaration#5", input: "function f<T extends U = V>();", output: "function f<T extends U = V>();"},
 		{title: "TypeParameterDeclaration#6", input: "function f<T, U>();", output: "function f<T, U>();"},
 		// {title: "TypeParameterDeclaration#7", input: "function f<T,>();", output: "function f<T,>();"}, // TODO: preserve trailing comma after Strada migration
-		{title: "JsxElement1", input: "<a></a>", output: "<a></a>;", jsx: true},
-		{title: "JsxElement2", input: "<this></this>", output: "<this></this>;", jsx: true},
-		{title: "JsxElement3", input: "<a:b></a:b>", output: "<a:b></a:b>;", jsx: true},
-		{title: "JsxElement4", input: "<a.b></a.b>", output: "<a.b></a.b>;", jsx: true},
-		{title: "JsxElement5", input: "<a<b>></a>", output: "<a<b>></a>;", jsx: true},
-		{title: "JsxElement6", input: "<a b></a>", output: "<a b></a>;", jsx: true},
-		{title: "JsxElement7", input: "<a>b</a>", output: "<a>b</a>;", jsx: true},
-		{title: "JsxElement8", input: "<a>{b}</a>", output: "<a>{b}</a>;", jsx: true},
-		{title: "JsxElement9", input: "<a><b></b></a>", output: "<a><b></b></a>;", jsx: true},
-		{title: "JsxElement10", input: "<a><b /></a>", output: "<a><b /></a>;", jsx: true},
-		{title: "JsxElement11", input: "<a><></></a>", output: "<a><></></a>;", jsx: true},
-		{title: "JsxElement12", input: "<a>\n    {/* missing */}\n    {\n        // foo\n    }\n</a>", output: "<a>\n    {--[[ missing ]]}\n    {\n    -- foo\n    }\n</a>;", jsx: true},
-		{title: "JsxSelfClosingElement1", input: "<a />", output: "<a />;", jsx: true},
-		{title: "JsxSelfClosingElement2", input: "<this />", output: "<this />;", jsx: true},
-		{title: "JsxSelfClosingElement3", input: "<a:b />", output: "<a:b />;", jsx: true},
-		{title: "JsxSelfClosingElement4", input: "<a.b />", output: "<a.b />;", jsx: true},
-		{title: "JsxSelfClosingElement5", input: "<a<b> />", output: "<a<b> />;", jsx: true},
-		{title: "JsxSelfClosingElement6", input: "<a b/>", output: "<a b/>;", jsx: true},
-		{title: "JsxFragment1", input: "<></>", output: "<></>;", jsx: true},
-		{title: "JsxFragment2", input: "<>b</>", output: "<>b</>;", jsx: true},
-		{title: "JsxFragment3", input: "<>{b}</>", output: "<>{b}</>;", jsx: true},
-		{title: "JsxFragment4", input: "<><b></b></>", output: "<><b></b></>;", jsx: true},
-		{title: "JsxFragment5", input: "<><b /></>", output: "<><b /></>;", jsx: true},
-		{title: "JsxFragment6", input: "<><></></>", output: "<><></></>;", jsx: true},
-		{title: "JsxAttribute1", input: "<a b/>", output: "<a b/>;", jsx: true},
-		{title: "JsxAttribute2", input: "<a b:c/>", output: "<a b:c/>;", jsx: true},
-		{title: "JsxAttribute3", input: "<a b=\"c\"/>", output: "<a b=\"c\"/>;", jsx: true},
-		{title: "JsxAttribute4", input: "<a b='c'/>", output: "<a b='c'/>;", jsx: true},
-		{title: "JsxAttribute5", input: "<a b={c}/>", output: "<a b={c}/>;", jsx: true},
-		{title: "JsxAttribute6", input: "<a b=<c></c>/>", output: "<a b=<c></c>/>;", jsx: true},
-		{title: "JsxAttribute7", input: "<a b=<c />/>", output: "<a b=<c />/>;", jsx: true},
-		{title: "JsxAttribute8", input: "<a b=<></>/>", output: "<a b=<></>/>;", jsx: true},
+		{title: "JsxElement1", input: "local _ = <a></a>", output: "local _ = <a></a>;", jsx: true},
+		{title: "JsxElement2", input: "local _ = <this></this>", output: "local _ = <this></this>;", jsx: true},
+		{title: "JsxElement3", input: "local _ = <a:b></a:b>", output: "local _ = <a:b></a:b>;", jsx: true},
+		{title: "JsxElement4", input: "local _ = <a.b></a.b>", output: "local _ = <a.b></a.b>;", jsx: true},
+		{title: "JsxElement5", input: "local _ = <a<b>></a>", output: "local _ = <a<b>></a>;", jsx: true},
+		{title: "JsxElement6", input: "local _ = <a b></a>", output: "local _ = <a b></a>;", jsx: true},
+		{title: "JsxElement7", input: "local _ = <a>b</a>", output: "local _ = <a>b</a>;", jsx: true},
+		{title: "JsxElement8", input: "local _ = <a>{b}</a>", output: "local _ = <a>{b}</a>;", jsx: true},
+		{title: "JsxElement9", input: "local _ = <a><b></b></a>", output: "local _ = <a><b></b></a>;", jsx: true},
+		{title: "JsxElement10", input: "local _ = <a><b /></a>", output: "local _ = <a><b /></a>;", jsx: true},
+		{title: "JsxElement11", input: "local _ = <a><></></a>", output: "local _ = <a><></></a>;", jsx: true},
+		{title: "JsxElement12", input: "local _ = <a>\n    {/* missing */}\n    {\n        // foo\n    }\n</a>", output: "local _ = <a>\n    {--[[ missing ]]}\n    {\n    -- foo\n    }\n</a>;", jsx: true},
+		{title: "JsxSelfClosingElement1", input: "local _ = <a />", output: "local _ = <a />;", jsx: true},
+		{title: "JsxSelfClosingElement2", input: "local _ = <this />", output: "local _ = <this />;", jsx: true},
+		{title: "JsxSelfClosingElement3", input: "local _ = <a:b />", output: "local _ = <a:b />;", jsx: true},
+		{title: "JsxSelfClosingElement4", input: "local _ = <a.b />", output: "local _ = <a.b />;", jsx: true},
+		{title: "JsxSelfClosingElement5", input: "local _ = <a<b> />", output: "local _ = <a<b> />;", jsx: true},
+		{title: "JsxSelfClosingElement6", input: "local _ = <a b/>", output: "local _ = <a b/>;", jsx: true},
+		{title: "JsxFragment1", input: "local _ = <></>", output: "local _ = <></>;", jsx: true},
+		{title: "JsxFragment2", input: "local _ = <>b</>", output: "local _ = <>b</>;", jsx: true},
+		{title: "JsxFragment3", input: "local _ = <>{b}</>", output: "local _ = <>{b}</>;", jsx: true},
+		{title: "JsxFragment4", input: "local _ = <><b></b></>", output: "local _ = <><b></b></>;", jsx: true},
+		{title: "JsxFragment5", input: "local _ = <><b /></>", output: "local _ = <><b /></>;", jsx: true},
+		{title: "JsxFragment6", input: "local _ = <><></></>", output: "local _ = <><></></>;", jsx: true},
+		{title: "JsxAttribute1", input: "local _ = <a b/>", output: "local _ = <a b/>;", jsx: true},
+		{title: "JsxAttribute2", input: "local _ = <a b:c/>", output: "local _ = <a b:c/>;", jsx: true},
+		{title: "JsxAttribute3", input: "local _ = <a b=\"c\"/>", output: "local _ = <a b=\"c\"/>;", jsx: true},
+		{title: "JsxAttribute4", input: "local _ = <a b='c'/>", output: "local _ = <a b='c'/>;", jsx: true},
+		{title: "JsxAttribute5", input: "local _ = <a b={c}/>", output: "local _ = <a b={c}/>;", jsx: true},
+		{title: "JsxAttribute6", input: "local _ = <a b=<c></c>/>", output: "local _ = <a b=<c></c>/>;", jsx: true},
+		{title: "JsxAttribute7", input: "local _ = <a b=<c />/>", output: "local _ = <a b=<c />/>;", jsx: true},
+		{title: "JsxAttribute8", input: "local _ = <a b=<></>/>", output: "local _ = <a b=<></>/>;", jsx: true},
 	}
 
 	for _, rec := range data {
@@ -306,13 +309,34 @@ func TestEmit(t *testing.T) {
 	}
 }
 
+// localDeclOf wraps an expression as the initializer of `local _ = <expr>`. Lua
+// admits only a call or an assignment as a statement, so a synthesized
+// expression under test needs a declaration to sit in for the bare expression
+// statement these tests used to build.
+func localDeclOf(factory *ast.NodeFactory, expression *ast.Expression) *ast.Node {
+	return factory.NewVariableStatement(
+		nil, /*modifiers*/
+		factory.NewVariableDeclarationList(
+			factory.NewNodeList([]*ast.Node{
+				factory.NewVariableDeclaration(
+					factory.NewIdentifier("_"),
+					nil, /*exclamationToken*/
+					nil, /*type*/
+					expression,
+				),
+			}),
+			ast.NodeFlagsLuaLocal,
+		),
+	)
+}
+
 func TestParenthesizePropertyAccess1(t *testing.T) {
 	t.Parallel()
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewPropertyAccessExpression(
 					// will be parenthesized on emit:
 					factory.NewBinaryExpression(
@@ -332,7 +356,7 @@ func TestParenthesizePropertyAccess1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b).c;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b).c;")
 }
 
 func TestParenthesizePropertyAccess2(t *testing.T) {
@@ -341,7 +365,7 @@ func TestParenthesizePropertyAccess2(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewPropertyAccessExpression(
 					// will be parenthesized on emit:
 					factory.NewPropertyAccessExpression(
@@ -361,7 +385,7 @@ func TestParenthesizePropertyAccess2(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a?.b).c;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a?.b).c;")
 }
 
 func TestParenthesizeElementAccess1(t *testing.T) {
@@ -370,7 +394,7 @@ func TestParenthesizeElementAccess1(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewElementAccessExpression(
 					// will be parenthesized on emit:
 					factory.NewBinaryExpression(
@@ -389,7 +413,7 @@ func TestParenthesizeElementAccess1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)[c];")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b)[c];")
 }
 
 func TestParenthesizeElementAccess2(t *testing.T) {
@@ -398,7 +422,7 @@ func TestParenthesizeElementAccess2(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewElementAccessExpression(
 					// will be parenthesized on emit:
 					factory.NewPropertyAccessExpression(
@@ -417,7 +441,7 @@ func TestParenthesizeElementAccess2(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a?.b)[c];")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a?.b)[c];")
 }
 
 func TestParenthesizeCall1(t *testing.T) {
@@ -514,7 +538,7 @@ func TestParenthesizeTypeAssertion1(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewTypeAssertion(
 					factory.NewTypeReferenceNode(
 						factory.NewIdentifier("T"),
@@ -534,7 +558,7 @@ func TestParenthesizeTypeAssertion1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "<T>(a + b);")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = <T>(a + b);")
 }
 
 func TestParenthesizeArrowFunction1(t *testing.T) {
@@ -551,7 +575,6 @@ func TestParenthesizeArrowFunction1(t *testing.T) {
 					nil, /*returnType*/
 					nil, /*fullSignature*/
 					factory.NewToken(ast.KindEqualsGreaterThanToken),
-					// will be parenthesized on emit:
 					factory.NewObjectLiteralExpression(
 						factory.NewNodeList([]*ast.Node{}),
 						false, /*multiLine*/
@@ -562,7 +585,10 @@ func TestParenthesizeArrowFunction1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(function() return {} end);")
+	// The parens under test are statement-position parens: the lowered arrow prints as a
+	// `function`-initial expression. Initializer position drops them, so this stays a bare
+	// expression statement, whose printed form cannot reparse clean (TLUA100057).
+	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(function() return {} end);")
 }
 
 func TestParenthesizeArrowFunction2(t *testing.T) {
@@ -579,7 +605,6 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 					nil, /*returnType*/
 					nil, /*fullSignature*/
 					factory.NewToken(ast.KindEqualsGreaterThanToken),
-					// will be parenthesized on emit:
 					factory.NewPropertyAccessExpression(
 						factory.NewObjectLiteralExpression(
 							factory.NewNodeList([]*ast.Node{}),
@@ -596,7 +621,10 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(function() return {}.a end);")
+	// The parens under test are statement-position parens: the lowered arrow prints as a
+	// `function`-initial expression. Initializer position drops them, so this stays a bare
+	// expression statement, whose printed form cannot reparse clean (TLUA100057).
+	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(function() return {}.a end);")
 }
 
 func isBinaryOperator(token ast.Kind) bool {
@@ -658,9 +686,15 @@ func TestParenthesizeBinary(t *testing.T) {
 		operator ast.Kind
 		right    ast.Kind
 		output   string
+		// bare keeps the expression in an expression statement rather than as the
+		// initializer of `local _`. An initializer parenthesizes a comma operand
+		// (OperatorPrecedenceDisallowComma), which would swap the rule under test
+		// for the disallowed-comma rule; a bare statement keeps the operator at
+		// lowest precedence, at the cost of the reparse gate (see CheckEmitJS).
+		bare bool
 	}{
-		{operator: ast.KindCommaToken, output: "l, r"},
-		{operator: ast.KindCommaToken, left: ast.KindPlusToken, output: "ll + lr, r"},
+		{operator: ast.KindCommaToken, output: "l, r", bare: true},
+		{operator: ast.KindCommaToken, left: ast.KindPlusToken, output: "ll + lr, r", bare: true},
 		{operator: ast.KindAsteriskToken, left: ast.KindPlusToken, output: "(ll + lr) * r"},
 		{operator: ast.KindAsteriskToken, right: ast.KindPlusToken, output: "l * (rl + rr)"},
 		{operator: ast.KindPlusToken, left: ast.KindAsteriskToken, output: "ll * lr + r"},
@@ -677,22 +711,29 @@ func TestParenthesizeBinary(t *testing.T) {
 			t.Parallel()
 
 			var factory ast.NodeFactory
+			expression := factory.NewBinaryExpression(
+				nil, /*modifiers*/
+				makeSide("l", rec.left, &factory),
+				nil, /*typeNode*/
+				factory.NewToken(rec.operator),
+				makeSide("r", rec.right, &factory),
+			)
+			statement := localDeclOf(&factory, expression)
+			expected := "local _ = " + rec.output + ";"
+			if rec.bare {
+				statement = factory.NewExpressionStatement(expression)
+				expected = rec.output + ";"
+			}
 			file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-				[]*ast.Node{
-					factory.NewExpressionStatement(
-						factory.NewBinaryExpression(
-							nil, /*modifiers*/
-							makeSide("l", rec.left, &factory),
-							nil, /*typeNode*/
-							factory.NewToken(rec.operator),
-							makeSide("r", rec.right, &factory),
-						),
-					),
-				},
+				[]*ast.Node{statement},
 			), factory.NewToken(ast.KindEndOfFile))
 
 			parsetestutil.MarkSyntheticRecursive(file)
-			emittestutil.CheckEmit(t, nil, file.AsSourceFile(), rec.output+";")
+			if rec.bare {
+				emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), expected)
+			} else {
+				emittestutil.CheckEmit(t, nil, file.AsSourceFile(), expected)
+			}
 		})
 	}
 }
@@ -740,7 +781,7 @@ func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewExpressionWithTypeArguments(
 					// will be parenthesized on emit:
 					factory.NewBinaryExpression(
@@ -764,7 +805,7 @@ func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)<c>;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b)<c>;")
 }
 
 func TestParenthesizeAsExpression(t *testing.T) {
@@ -773,7 +814,7 @@ func TestParenthesizeAsExpression(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewAsExpression(
 					// will be parenthesized on emit:
 					factory.NewBinaryExpression(
@@ -793,7 +834,7 @@ func TestParenthesizeAsExpression(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b) as c;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b) as c;")
 }
 
 func TestParenthesizeSatisfiesExpression(t *testing.T) {
@@ -802,7 +843,7 @@ func TestParenthesizeSatisfiesExpression(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewSatisfiesExpression(
 					// will be parenthesized on emit:
 					factory.NewBinaryExpression(
@@ -822,7 +863,7 @@ func TestParenthesizeSatisfiesExpression(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b) satisfies c;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b) satisfies c;")
 }
 
 func TestParenthesizeNonNullExpression(t *testing.T) {
@@ -831,7 +872,7 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
 		[]*ast.Node{
-			factory.NewExpressionStatement(
+			localDeclOf(&factory,
 				factory.NewNonNullExpression(
 					// will be parenthesized on emit:
 					factory.NewBinaryExpression(
@@ -848,7 +889,7 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)!;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b)!;")
 }
 
 func TestParenthesizeExpressionStatement1(t *testing.T) {
@@ -869,7 +910,8 @@ func TestParenthesizeExpressionStatement1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "({});")
+	// Bare expression statements only arise from error recovery or synthesis, so the printed form cannot reparse clean (TLUA100057).
+	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "({});")
 }
 
 func TestParenthesizeExpressionStatement2(t *testing.T) {
@@ -900,7 +942,8 @@ func TestParenthesizeExpressionStatement2(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(function()\nend);")
+	// Bare expression statements only arise from error recovery or synthesis, so the printed form cannot reparse clean (TLUA100057).
+	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(function()\nend);")
 }
 
 func TestParenthesizeArrayType(t *testing.T) {

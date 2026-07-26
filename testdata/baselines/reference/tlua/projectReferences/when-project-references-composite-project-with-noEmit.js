@@ -3,7 +3,7 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/solution/project/index.tlua] *new* 
 local utils = require("utils.index");
-utils.x;
+local _ = utils.x;
 //// [/home/src/workspaces/solution/project/tluaconfig.json] *new* 
 {
     "compilerOptions": {
@@ -61,6 +61,6 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/solution/project/index.lua] *new* 
 local utils = require("utils.index");
-utils.x;
+local _ = utils.x;
 
 

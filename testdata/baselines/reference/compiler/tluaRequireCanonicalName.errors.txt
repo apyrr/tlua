@@ -1,12 +1,18 @@
 main.tlua(2,19): error TLUA100055: Module name 'pkg.init' resolves to the same file as 'pkg'; a module has one canonical name.
+main.tlua(3,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
+main.tlua(3,4): error TLUA100057: Incomplete statement: expected assignment or a function call.
 
 
-==== main.tlua (1 errors) ====
+==== main.tlua (3 errors) ====
     local a = require("pkg");
     local b = require("pkg.init");
                       ~~~~~~~~~~
 !!! error TLUA100055: Module name 'pkg.init' resolves to the same file as 'pkg'; a module has one canonical name.
     a; b;
+    ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+       ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     
 ==== pkg/init.tlua (0 errors) ====
     local v = 1;

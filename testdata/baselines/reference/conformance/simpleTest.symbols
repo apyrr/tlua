@@ -1,5 +1,6 @@
 //// [tests/cases/conformance/simpleTest.tlua] ////
 
 === simpleTest.tlua ===
+local _ = 1 + 2;
+>_ : Symbol(_, Decl(simpleTest.tlua, 0, 5))
 
-1 + 2;

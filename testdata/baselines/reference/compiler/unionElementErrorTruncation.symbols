@@ -73,11 +73,13 @@ declare o2:
     | { id: "19" };
 >id : Symbol(id, Decl(unionElementErrorTruncation.tlua, 23, 7))
 
-o1[s];
+local _ = o1[s];
+>_ : Symbol(_, Decl(unionElementErrorTruncation.tlua, 25, 5))
 >o1 : Symbol(o1, Decl(unionElementErrorTruncation.tlua, 1, 7))
 >s : Symbol(s, Decl(unionElementErrorTruncation.tlua, 0, 7))
 
-o2[s];
+local _ = o2[s];
+>_ : Symbol(_, Decl(unionElementErrorTruncation.tlua, 26, 5))
 >o2 : Symbol(o2, Decl(unionElementErrorTruncation.tlua, 21, 7))
 >s : Symbol(s, Decl(unionElementErrorTruncation.tlua, 0, 7))
 

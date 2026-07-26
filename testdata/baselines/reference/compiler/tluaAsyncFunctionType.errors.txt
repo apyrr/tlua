@@ -1,6 +1,9 @@
 tluaAsyncFunctionType.tlua(23,3): error TLUA100023: An async function can only be called from an async context.
 tluaAsyncFunctionType.tlua(31,1): error TLUA2304: Cannot find name 'declare'.
+tluaAsyncFunctionType.tlua(31,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaAsyncFunctionType.tlua(31,9): error TLUA2304: Cannot find name 'namespace'.
+tluaAsyncFunctionType.tlua(31,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
+tluaAsyncFunctionType.tlua(31,19): error TLUA1434: Unexpected keyword or identifier.
 tluaAsyncFunctionType.tlua(31,19): error TLUA2819: Namespace name cannot be 'coroutine'.
 tluaAsyncFunctionType.tlua(31,29): error TLUA1128: Declaration or statement expected.
 tluaAsyncFunctionType.tlua(32,12): error TLUA2391: Function implementation is missing or not immediately following the declaration.
@@ -8,7 +11,7 @@ tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url:
   An async function is not assignable to a non-async function type.
 
 
-==== tluaAsyncFunctionType.tlua (7 errors) ====
+==== tluaAsyncFunctionType.tlua (10 errors) ====
     // An `async` modifier is allowed on function *type* nodes (the parenthesized
     // `async (params) => T` form). It carries the coroutine contract: a call
     // through an async-typed slot is checked, and async-ness is visible in the
@@ -45,8 +48,14 @@ tluaAsyncFunctionType.tlua(34,18): error TLUA2345: Argument of type 'async (url:
     declare namespace coroutine {
     ~~~~~~~
 !!! error TLUA2304: Cannot find name 'declare'.
+    ~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
             ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+            ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                      ~~~~~~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
                       ~~~~~~~~~
 !!! error TLUA2819: Namespace name cannot be 'coroutine'.
                                 ~

@@ -19,7 +19,8 @@ declare f2: () => { valid: boolean, msg?: undefined }
 >valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 7, 19))
 >msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 7, 35))
 
-f1().msg
+local _ = f1().msg
+>_ : Symbol(_, Decl(freshObjectLiteralSubtype.tlua, 9, 5))
 >f1().msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 7, 35))
 >f1 : Symbol(f1, Decl(freshObjectLiteralSubtype.tlua, 0, 0))
 >msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 7, 35))
@@ -27,7 +28,7 @@ f1().msg
 // Repro from https://github.com/microsoft/typescript-go/issues/1742
 
 function validate()
->validate : Symbol(validate, Decl(freshObjectLiteralSubtype.tlua, 9, 8))
+>validate : Symbol(validate, Decl(freshObjectLiteralSubtype.tlua, 9, 18))
 
     if(Math.random() > 0.5) then
         return utilValidate();
@@ -57,15 +58,16 @@ declare function utilValidate(): {
 >msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 25, 19))
 }
 
-validate().msg; // Error in TLUA
+local _ = validate().msg; // Error in TLUA
+>_ : Symbol(_, Decl(freshObjectLiteralSubtype.tlua, 29, 5))
 >validate().msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 22, 19), Decl(freshObjectLiteralSubtype.tlua, 25, 19))
->validate : Symbol(validate, Decl(freshObjectLiteralSubtype.tlua, 9, 8))
+>validate : Symbol(validate, Decl(freshObjectLiteralSubtype.tlua, 9, 18))
 >msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 22, 19), Decl(freshObjectLiteralSubtype.tlua, 25, 19))
 
 // https://github.com/microsoft/typescript-go/issues/1761
 
 function normalise_trace_logs([log]: any[])
->normalise_trace_logs : Symbol(normalise_trace_logs, Decl(freshObjectLiteralSubtype.tlua, 29, 15))
+>normalise_trace_logs : Symbol(normalise_trace_logs, Decl(freshObjectLiteralSubtype.tlua, 29, 25))
 >log : Symbol(log, Decl(freshObjectLiteralSubtype.tlua, 33, 31))
 
 	local normalised = [];
@@ -100,7 +102,7 @@ function equal<T>(_actual: T, _expected: T): void end
 
 equal(normalise_trace_logs([]), [
 >equal : Symbol(equal, Decl(freshObjectLiteralSubtype.tlua, 41, 3))
->normalise_trace_logs : Symbol(normalise_trace_logs, Decl(freshObjectLiteralSubtype.tlua, 29, 15))
+>normalise_trace_logs : Symbol(normalise_trace_logs, Decl(freshObjectLiteralSubtype.tlua, 29, 25))
 
     { log = 'effect' },
 >log : Symbol(log, Decl(freshObjectLiteralSubtype.tlua, 46, 5))

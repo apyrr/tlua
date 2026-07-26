@@ -7,8 +7,8 @@ declare function overloaded(s: string, c: string): (string, number);
 
 function useOverloaded(): void
   for k, v in overloaded do
-    k;
-    v;
+    local _ = k;
+    local _ = v;
   end
 end
 
@@ -17,9 +17,9 @@ declare function variadicIter(s: void, c: number): (number, ...string);
 
 function useVariadic(): void
   for k, v, w in variadicIter do
-    k;
-    v;
-    w;
+    local _ = k;
+    local _ = v;
+    local _ = w;
   end
 end
 
@@ -41,15 +41,15 @@ end
 //// [tluaGenericForPack.lua]
 function useOverloaded()
   for k, v in overloaded do
-    k;
-    v;
+    local _ = k;
+    local _ = v;
   end
 end
 function useVariadic()
   for k, v, w in variadicIter do
-    k;
-    v;
-    w;
+    local _ = k;
+    local _ = v;
+    local _ = w;
   end
 end
 function defAssign(t)

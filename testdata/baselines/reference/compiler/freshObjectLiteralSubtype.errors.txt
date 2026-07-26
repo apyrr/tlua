@@ -29,7 +29,7 @@ freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expect
     
     declare f2: () => { valid: boolean, msg?: undefined }
     
-    f1().msg
+    local _ = f1().msg
     
     // Repro from https://github.com/microsoft/typescript-go/issues/1742
     
@@ -51,7 +51,7 @@ freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expect
         msg: string;
     }
     
-    validate().msg; // Error in TLUA
+    local _ = validate().msg; // Error in TLUA
     
     // https://github.com/microsoft/typescript-go/issues/1761
     

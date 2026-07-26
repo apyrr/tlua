@@ -5,10 +5,11 @@ tluaEnumSyntaxUnsupported.tlua(1,6): error TLUA2304: Cannot find name 'E'.
 tluaEnumSyntaxUnsupported.tlua(1,8): error TLUA1128: Declaration or statement expected.
 tluaEnumSyntaxUnsupported.tlua(2,5): error TLUA2304: Cannot find name 'A'.
 tluaEnumSyntaxUnsupported.tlua(2,5): error TLUA2695: Left side of comma operator is unused and has no side effects.
+tluaEnumSyntaxUnsupported.tlua(2,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaEnumSyntaxUnsupported.tlua(3,1): error TLUA1109: Expression expected.
 
 
-==== tluaEnumSyntaxUnsupported.tlua (8 errors) ====
+==== tluaEnumSyntaxUnsupported.tlua (9 errors) ====
     enum E {
     ~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -25,6 +26,8 @@ tluaEnumSyntaxUnsupported.tlua(3,1): error TLUA1109: Expression expected.
 !!! error TLUA2304: Cannot find name 'A'.
         ~
 !!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+        ~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     }
     ~
 !!! error TLUA1109: Expression expected.

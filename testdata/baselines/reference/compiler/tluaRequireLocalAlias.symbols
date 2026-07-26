@@ -16,7 +16,8 @@ local n: number = m.value;
 >m : Symbol(m, Decl(main.tlua, 2, 5))
 >value : Symbol(value, Decl(m.tlua, 1, 8))
 
-n;
+local _ = n;
+>_ : Symbol(_, Decl(main.tlua, 4, 5))
 >n : Symbol(n, Decl(main.tlua, 3, 5))
 
 === m.tlua ===

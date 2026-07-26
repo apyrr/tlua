@@ -11,12 +11,14 @@ tluaNoThis.tlua(27,12): error TLUA2304: Cannot find name 'this'.
 tluaNoThis.tlua(27,17): error TLUA1005: ';' expected.
 tluaNoThis.tlua(27,17): error TLUA2304: Cannot find name 'is'.
 tluaNoThis.tlua(27,20): error TLUA2693: 'Dog' only refers to a type, but is being used as a value here.
+tluaNoThis.tlua(27,20): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoThis.tlua(28,1): error TLUA1128: Declaration or statement expected.
 tluaNoThis.tlua(34,31): error TLUA2304: Cannot find name 'asserts'.
 tluaNoThis.tlua(34,39): error TLUA1005: ';' expected.
 tluaNoThis.tlua(34,44): error TLUA2304: Cannot find name 'is'.
 tluaNoThis.tlua(34,44): error TLUA1228: A type predicate is only allowed in return type position for functions and methods.
 tluaNoThis.tlua(34,47): error TLUA2693: 'Dog' only refers to a type, but is being used as a value here.
+tluaNoThis.tlua(34,47): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoThis.tlua(38,11): error TLUA2304: Cannot find name 'ThisType'.
 tluaNoThis.tlua(39,12): error TLUA2304: Cannot find name 'ThisParameterType'.
 tluaNoThis.tlua(40,12): error TLUA2304: Cannot find name 'OmitThisParameter'.
@@ -25,7 +27,7 @@ tluaNoThis.tlua(45,19): error TLUA2304: Cannot find name 'this'.
 tluaNoThis.tlua(47,19): error TLUA2304: Cannot find name 'this'.
 
 
-==== tluaNoThis.tlua (25 errors) ====
+==== tluaNoThis.tlua (27 errors) ====
     // The TypeScript `this` feature is removed from tlua source: Lua methods take
     // an explicit `self` parameter. Each form below decomposes into stock
     // parser-recovery errors (no tlua-specific diagnostic), exactly like the
@@ -79,6 +81,8 @@ tluaNoThis.tlua(47,19): error TLUA2304: Cannot find name 'this'.
 !!! error TLUA2304: Cannot find name 'is'.
                        ~~~
 !!! error TLUA2693: 'Dog' only refers to a type, but is being used as a value here.
+                       ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     }
     ~
 !!! error TLUA1128: Declaration or statement expected.
@@ -98,6 +102,8 @@ tluaNoThis.tlua(47,19): error TLUA2304: Cannot find name 'this'.
 !!! error TLUA1228: A type predicate is only allowed in return type position for functions and methods.
                                                   ~~~
 !!! error TLUA2693: 'Dog' only refers to a type, but is being used as a value here.
+                                                  ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     
     // The `ThisType<T>` marker, `ThisParameterType`, and `OmitThisParameter` are
     // no longer part of the lib.

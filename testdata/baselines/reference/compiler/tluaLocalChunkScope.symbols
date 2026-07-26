@@ -4,10 +4,11 @@
 local chunkValue = 1;
 >chunkValue : Symbol(chunkValue, Decl(a.tlua, 0, 5))
 
-chunkValue;
+local _ = chunkValue;
+>_ : Symbol(_, Decl(a.tlua, 1, 5))
 >chunkValue : Symbol(chunkValue, Decl(a.tlua, 0, 5))
 
 === b.tlua ===
-
-chunkValue;
+local _ = chunkValue;
+>_ : Symbol(_, Decl(b.tlua, 0, 5))
 

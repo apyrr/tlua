@@ -10,5 +10,5 @@ tluaLocalUnused.tlua(2,7): error TLUA6133: 'unusedLua' is declared but its value
           ~~~~~~~~~
 !!! error TLUA6133: 'unusedLua' is declared but its value is never read.
     local usedLua = 1;
-    usedLua;
+    print(usedLua);
     

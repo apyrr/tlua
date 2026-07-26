@@ -18,7 +18,8 @@ function func<A, B, T extends StringOrT<B>>(thing: T): void
 >thing : Symbol(thing, Decl(typeParameterComparableRelation.tlua, 4, 44))
 >T : Symbol(T, Decl(typeParameterComparableRelation.tlua, 4, 19))
 
-    thing as A; // Error
+    local _ = thing as A; // Error
+>_ : Symbol(_, Decl(typeParameterComparableRelation.tlua, 5, 9))
 >thing : Symbol(thing, Decl(typeParameterComparableRelation.tlua, 4, 44))
 >A : Symbol(A, Decl(typeParameterComparableRelation.tlua, 4, 14))
 

@@ -1,4 +1,6 @@
 declarations.tlua(7,5): error TLUA2304: Cannot find name 'namespace'.
+declarations.tlua(7,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
+declarations.tlua(7,15): error TLUA1434: Unexpected keyword or identifier.
 declarations.tlua(7,15): error TLUA2819: Namespace name cannot be '_G'.
 declarations.tlua(7,18): error TLUA1128: Declaration or statement expected.
 dottedFunctionConflict.tlua(2,13): error TLUA2397: Declaration name conflicts with built-in global identifier '_G'.
@@ -23,7 +25,7 @@ writes.tlua(25,1): error TLUA2322: Type 'number' is not assignable to type '() =
 writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assigned.
 
 
-==== declarations.tlua (3 errors) ====
+==== declarations.tlua (5 errors) ====
     declare global {
         function use(x: unknown): void;
         function getMaybeNumber(): number | nil;
@@ -33,6 +35,10 @@ writes.tlua(49,14): error TLUA2454: Variable 'pending' is used before being assi
         namespace _G {
         ~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'namespace'.
+        ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                  ~~
+!!! error TLUA1434: Unexpected keyword or identifier.
                   ~~
 !!! error TLUA2819: Namespace name cannot be '_G'.
                      ~

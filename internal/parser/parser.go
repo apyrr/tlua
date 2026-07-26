@@ -80,6 +80,12 @@ type Parser struct {
 	hasDeprecatedTag bool
 	hasParseError    bool
 
+	// listRecoveryResumePos is where element parsing resumed after list recovery
+	// skipped a token (-1 until then). A statement starting exactly there is a
+	// leftover fragment being re-parsed, not something the author wrote as a
+	// statement, so statement-shape errors are not reported on it.
+	listRecoveryResumePos int
+
 	// packsInReturnUnion lets the OUTERMOST union of a return type recognize a
 	// parenthesized pack as a constituent (`nil | (number, string)`), so a pack may
 	// appear in any position, not only leading. parseUnionOrIntersectionType reads and
@@ -305,6 +311,7 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetLanguageVariant(p.languageVariant)
+	p.listRecoveryResumePos = -1
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
@@ -331,26 +338,28 @@ func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Mess
 }
 
 type ParserState struct {
-	scannerState       scanner.ScannerState
-	contextFlags       ast.NodeFlags
-	diagnosticsLen     int
-	jsDiagnosticsLen   int
-	jsdocInfosLen      int
-	reparsedClonesLen  int
-	hasParseError      bool
-	packsInReturnUnion bool
+	scannerState          scanner.ScannerState
+	contextFlags          ast.NodeFlags
+	diagnosticsLen        int
+	jsDiagnosticsLen      int
+	jsdocInfosLen         int
+	reparsedClonesLen     int
+	hasParseError         bool
+	packsInReturnUnion    bool
+	listRecoveryResumePos int
 }
 
 func (p *Parser) mark() ParserState {
 	return ParserState{
-		scannerState:       p.scanner.Mark(),
-		contextFlags:       p.contextFlags,
-		diagnosticsLen:     len(p.diagnostics),
-		jsDiagnosticsLen:   len(p.jsDiagnostics),
-		jsdocInfosLen:      len(p.jsdocInfos),
-		reparsedClonesLen:  len(p.reparsedClones),
-		hasParseError:      p.hasParseError,
-		packsInReturnUnion: p.packsInReturnUnion,
+		scannerState:          p.scanner.Mark(),
+		contextFlags:          p.contextFlags,
+		diagnosticsLen:        len(p.diagnostics),
+		jsDiagnosticsLen:      len(p.jsDiagnostics),
+		jsdocInfosLen:         len(p.jsdocInfos),
+		reparsedClonesLen:     len(p.reparsedClones),
+		hasParseError:         p.hasParseError,
+		packsInReturnUnion:    p.packsInReturnUnion,
+		listRecoveryResumePos: p.listRecoveryResumePos,
 	}
 }
 
@@ -363,6 +372,7 @@ func (p *Parser) rewind(state ParserState) {
 	p.jsdocInfos = p.jsdocInfos[0:state.jsdocInfosLen]
 	p.reparsedClones = p.reparsedClones[0:state.reparsedClonesLen]
 	p.hasParseError = state.hasParseError
+	p.listRecoveryResumePos = state.listRecoveryResumePos
 	// Restored across a speculative parse so a lookAhead/tryParse that runs while the
 	// flag is set (return-union pack recognition) cannot leak it past a rewind.
 	p.packsInReturnUnion = state.packsInReturnUnion
@@ -619,6 +629,7 @@ func (p *Parser) abortParsingListOrMoveToNextToken(kind ParsingContext) bool {
 		return true
 	}
 	p.nextToken()
+	p.listRecoveryResumePos = p.nodePos()
 	return false
 }
 
@@ -1335,10 +1346,24 @@ func (p *Parser) parseExpressionStatement() *ast.Statement {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	hasParen := p.token == ast.KindOpenParenToken
+	errorMark := len(p.diagnostics)
 	expression := p.parseLuaAssignmentOrExpression()
 
 	if !p.tryParseSemicolon() {
 		p.parseErrorForMissingSemicolonAfter(expression)
+	}
+
+	// Lua only admits a function call or an assignment at statement level; any
+	// other expression statement is a parse error. It is not reported when an
+	// error of this statement's own — inside the expression, or aimed back at
+	// it by the misspelled-keyword suggestions of the terminator recovery —
+	// already describes the problem more precisely, nor on a leftover fragment
+	// re-parsed after list recovery, which the author never wrote as a
+	// statement.
+	if !isLuaStatementExpression(expression) &&
+		pos != p.listRecoveryResumePos &&
+		!p.hasErrorInStatement(errorMark) {
+		p.parseErrorAtRange(getErrorSpanForNode(p.sourceText, expression), diagnostics.Incomplete_statement_expected_assignment_or_a_function_call)
 	}
 	result := p.finishNode(p.factory.NewExpressionStatement(expression), pos)
 	if hasParen {
@@ -1391,6 +1416,39 @@ func (p *Parser) parseLuaAssignmentOrExpression() *ast.Expression {
 		expression = p.makeBinaryExpressionWithEnd(expression, commaToken, right, pos, right.End())
 	}
 	return expression
+}
+
+// hasErrorInStatement reports whether any diagnostic appended since mark lies
+// before the current, still-unconsumed token — that is, within the statement
+// just parsed. Position decides ownership rather than time: a scanner error
+// raised while peeking the next statement's first token sits at that token and
+// is not this statement's problem, while a missing-operand error inside the
+// consumed text is, whichever phase reported it.
+func (p *Parser) hasErrorInStatement(mark int) bool {
+	for _, d := range p.diagnostics[mark:] {
+		if d.Pos() < p.scanner.TokenFullStart() {
+			return true
+		}
+	}
+	return false
+}
+
+// isLuaStatementExpression reports whether an expression is one Lua admits as a
+// statement: a function call, or an assignment. The assignment arm accepts any
+// target shape — an invalid target is diagnosed elsewhere, not doubled up here.
+// Compile-time-only assertions erase in emit and so cannot change the statement
+// shape that reaches the Lua output: `f() as void;` emits `f();`. Parentheses
+// are not skipped — they survive emit and truncate a call's multiple returns,
+// so `(f());` is a genuinely different (and invalid) statement.
+func isLuaStatementExpression(expression *ast.Expression) bool {
+	expression = ast.SkipOuterExpressions(expression, ast.OEKAssertions)
+	switch expression.Kind {
+	case ast.KindCallExpression:
+		return true
+	case ast.KindBinaryExpression:
+		return ast.IsAssignmentOperator(expression.AsBinaryExpression().OperatorToken.Kind)
+	}
+	return false
 }
 
 // finishExpressionList spans exactly its elements, so a target list can never

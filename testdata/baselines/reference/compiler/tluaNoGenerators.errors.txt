@@ -1,19 +1,26 @@
 tluaNoGenerators.tlua(4,9): error TLUA2393: Duplicate function implementation.
 tluaNoGenerators.tlua(4,9): error TLUA1003: Identifier expected.
+tluaNoGenerators.tlua(4,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoGenerators.tlua(4,11): error TLUA2304: Cannot find name 'gen'.
 tluaNoGenerators.tlua(4,16): error TLUA1005: ';' expected.
+tluaNoGenerators.tlua(4,16): error TLUA1128: Declaration or statement expected.
 tluaNoGenerators.tlua(4,18): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
 tluaNoGenerators.tlua(5,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(5,3): error TLUA2304: Cannot find name 'yield'.
+tluaNoGenerators.tlua(5,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoGenerators.tlua(6,3): error TLUA2304: Cannot find name 'yield'.
+tluaNoGenerators.tlua(6,3): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoGenerators.tlua(6,10): error TLUA2304: Cannot find name 'more'.
 tluaNoGenerators.tlua(9,15): error TLUA2393: Duplicate function implementation.
 tluaNoGenerators.tlua(9,15): error TLUA1003: Identifier expected.
+tluaNoGenerators.tlua(9,15): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoGenerators.tlua(9,17): error TLUA2304: Cannot find name 'asyncGen'.
 tluaNoGenerators.tlua(9,27): error TLUA1005: ';' expected.
+tluaNoGenerators.tlua(9,27): error TLUA1128: Declaration or statement expected.
 tluaNoGenerators.tlua(9,29): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
 tluaNoGenerators.tlua(10,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(10,3): error TLUA2304: Cannot find name 'yield'.
+tluaNoGenerators.tlua(10,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoGenerators.tlua(14,3): error TLUA1109: Expression expected.
 tluaNoGenerators.tlua(14,4): error TLUA2304: Cannot find name 'method'.
 tluaNoGenerators.tlua(14,13): error TLUA1005: ',' expected.
@@ -21,7 +28,7 @@ tluaNoGenerators.tlua(15,5): error TLUA2304: Cannot find name 'yield'.
 tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 
 
-==== tluaNoGenerators.tlua (21 errors) ====
+==== tluaNoGenerators.tlua (28 errors) ====
     // Generators are removed in tlua: `function*`, `yield`, `yield*`, and async
     // generators no longer parse. Use the Lua coroutine library directly instead.
     
@@ -30,10 +37,14 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 !!! error TLUA2393: Duplicate function implementation.
             ~
 !!! error TLUA1003: Identifier expected.
+            ~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
               ~~~
 !!! error TLUA2304: Cannot find name 'gen'.
                    ~
 !!! error TLUA1005: ';' expected.
+                   ~
+!!! error TLUA1128: Declaration or statement expected.
                      ~~~~~~~
 !!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
       yield 1;
@@ -41,9 +52,13 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
       ~~~~~
 !!! error TLUA2304: Cannot find name 'yield'.
+            ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       yield* more;
       ~~~~~
 !!! error TLUA2304: Cannot find name 'yield'.
+      ~~~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
              ~~~~
 !!! error TLUA2304: Cannot find name 'more'.
     end
@@ -53,10 +68,14 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 !!! error TLUA2393: Duplicate function implementation.
                   ~
 !!! error TLUA1003: Identifier expected.
+                  ~~~~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                     ~~~~~~~~
 !!! error TLUA2304: Cannot find name 'asyncGen'.
                               ~
 !!! error TLUA1005: ';' expected.
+                              ~
+!!! error TLUA1128: Declaration or statement expected.
                                 ~~~~~~~
 !!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
       yield 4;
@@ -64,6 +83,8 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 !!! error TLUA1434: Unexpected keyword or identifier.
       ~~~~~
 !!! error TLUA2304: Cannot find name 'yield'.
+            ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     end
     
     local obj = {

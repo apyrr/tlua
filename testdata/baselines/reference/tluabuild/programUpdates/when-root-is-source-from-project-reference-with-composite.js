@@ -3,7 +3,7 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/project/index.tlua] *new* 
 local foo = require("lib.foo");
-foo.FOO;
+local _ = foo.FOO;
 //// [/home/src/workspaces/project/lib/foo.tlua] *new* 
 local FOO: string = 'THEFOOEXPORT';
 return { FOO = FOO };
@@ -68,7 +68,7 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/index.lua] *new* 
 local foo = require("lib.foo");
-foo.FOO;
+local _ = foo.FOO;
 
 //// [/home/src/workspaces/project/lib/dist/foo.lua] *new* 
 local FOO = 'THEFOOEXPORT';
@@ -137,7 +137,7 @@ return { FOO = FOO };
   "size": 1213
 }
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./index.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"64775c12044659828351775b95372204-local foo = require(\"lib.foo\");\nfoo.FOO;"],"options":{"composite":true},"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./index.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"72b9d6dddcd73270f829162fc2a1d2c8-local foo = require(\"lib.foo\");\nlocal _ = foo.FOO;"],"options":{"composite":true},"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -168,8 +168,8 @@ return { FOO = FOO };
     },
     {
       "fileName": "./index.tlua",
-      "version": "64775c12044659828351775b95372204-local foo = require(\"lib.foo\");\nfoo.FOO;",
-      "signature": "64775c12044659828351775b95372204-local foo = require(\"lib.foo\");\nfoo.FOO;",
+      "version": "72b9d6dddcd73270f829162fc2a1d2c8-local foo = require(\"lib.foo\");\nlocal _ = foo.FOO;",
+      "signature": "72b9d6dddcd73270f829162fc2a1d2c8-local foo = require(\"lib.foo\");\nlocal _ = foo.FOO;",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -195,7 +195,7 @@ return { FOO = FOO };
       "original": 2
     }
   ],
-  "size": 1185
+  "size": 1195
 }
 
 lib/tluaconfig.json::

@@ -26,10 +26,10 @@ declare o2:
     | typeof o1
     | { id: "19" };
 
-o1[s];
-o2[s];
+local _ = o1[s];
+local _ = o2[s];
 
 
 //// [unionElementErrorTruncation.lua]
-o1[s];
-o2[s];
+local _ = o1[s];
+local _ = o2[s];

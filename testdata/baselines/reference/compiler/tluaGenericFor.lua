@@ -41,15 +41,15 @@ end
 function extraName(t: string[]): void
   for i, s, extra in ipairsLike(t) do
     local x: nil = extra;
-    x;
+    local _ = x;
   end
 end
 
 // Annotated names check against their positional value.
 function annotated(t: string[]): void
   for i: number, s: string | nil in ipairsLike(t) do
-    i;
-    s;
+    local _ = i;
+    local _ = s;
   end
 end
 
@@ -94,14 +94,14 @@ end
 function extraName(t)
   for i, s, extra in ipairsLike(t) do
     local x = extra;
-    x;
+    local _ = x;
   end
 end
 -- Annotated names check against their positional value.
 function annotated(t)
   for i, s in ipairsLike(t) do
-    i;
-    s;
+    local _ = i;
+    local _ = s;
   end
 end
 -- break and TS statements inside the body.

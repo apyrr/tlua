@@ -1,19 +1,26 @@
 tluaGenericForErrors.tlua(3,12): error TLUA2349: This expression is not callable.
+tluaGenericForErrors.tlua(4,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
+tluaGenericForErrors.tlua(13,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
+tluaGenericForErrors.tlua(14,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaGenericForErrors.tlua(22,7): error TLUA2322: Type 'number' is not assignable to type 'boolean'.
+tluaGenericForErrors.tlua(23,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaGenericForErrors.tlua(29,9): error TLUA1005: 'in' expected.
 tluaGenericForErrors.tlua(29,9): error TLUA2304: Cannot find name 'of'.
 tluaGenericForErrors.tlua(36,20): error TLUA2349: This expression is not callable.
 tluaGenericForErrors.tlua(36,20): error TLUA2448: Block-scoped variable 'k' used before its declaration.
 tluaGenericForErrors.tlua(36,20): error TLUA2454: Variable 'k' is used before being assigned.
+tluaGenericForErrors.tlua(37,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 
 
-==== tluaGenericForErrors.tlua (7 errors) ====
+==== tluaGenericForErrors.tlua (12 errors) ====
     // Value 1 must be callable — reported once.
     function notCallable(): void
       for k in 42 do
                ~~
 !!! error TLUA2349: This expression is not callable.
         k;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     
@@ -23,7 +30,11 @@ tluaGenericForErrors.tlua(36,20): error TLUA2454: Variable 'k' is used before be
     function anyIterator(): void
       for k, v in anything do
         k;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
         v;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     
@@ -35,6 +46,8 @@ tluaGenericForErrors.tlua(36,20): error TLUA2454: Variable 'k' is used before be
           ~
 !!! error TLUA2322: Type 'number' is not assignable to type 'boolean'.
         k;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     
@@ -60,6 +73,8 @@ tluaGenericForErrors.tlua(36,20): error TLUA2454: Variable 'k' is used before be
                        ~
 !!! error TLUA2454: Variable 'k' is used before being assigned.
         k;
+        ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
       end
     end
     

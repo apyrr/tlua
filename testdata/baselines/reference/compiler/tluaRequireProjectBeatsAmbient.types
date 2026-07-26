@@ -22,7 +22,8 @@ local util = require("jit.util");
 >require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
 >"jit.util" : "jit.util"
 
-util.funcinfo;
+local _ = util.funcinfo;
+>_ : (fn: function, pc?: number) => JITFunctionInfo
 >util.funcinfo : (fn: function, pc?: number) => JITFunctionInfo
 >util : JITUtilLib
 >funcinfo : (fn: function, pc?: number) => JITFunctionInfo

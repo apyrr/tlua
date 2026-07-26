@@ -1,27 +1,48 @@
 ambient.tlua(1,1): error TLUA2304: Cannot find name 'declare'.
+ambient.tlua(1,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
+ambient.tlua(1,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 ambient.tlua(1,16): error TLUA2819: Namespace name cannot be 'some.native.module'.
+ambient.tlua(1,16): error TLUA100057: Incomplete statement: expected assignment or a function call.
 ambient.tlua(1,37): error TLUA1005: ';' expected.
+ambient.tlua(1,37): error TLUA1128: Declaration or statement expected.
 importAlias.tlua(1,1): error TLUA2304: Cannot find name 'declare'.
+importAlias.tlua(1,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
+importAlias.tlua(1,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
+importAlias.tlua(1,16): error TLUA1434: Unexpected keyword or identifier.
 importAlias.tlua(1,16): error TLUA2304: Cannot find name 'Foo'.
 importAlias.tlua(1,16): error TLUA2819: Namespace name cannot be 'Foo'.
 importAlias.tlua(1,20): error TLUA1128: Declaration or statement expected.
 
 
-==== ambient.tlua (3 errors) ====
+==== ambient.tlua (7 errors) ====
     declare module "some.native.module" {
     ~~~~~~~
 !!! error TLUA2304: Cannot find name 'declare'.
+    ~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+            ~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                    ~~~~~~~~~~~~~~~~~~~~
 !!! error TLUA2819: Namespace name cannot be 'some.native.module'.
+                   ~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                                         ~
 !!! error TLUA1005: ';' expected.
+                                        ~
+!!! error TLUA1128: Declaration or statement expected.
       local x: number;
     }
     
-==== importAlias.tlua (4 errors) ====
+==== importAlias.tlua (7 errors) ====
     declare module Foo {
     ~~~~~~~
 !!! error TLUA2304: Cannot find name 'declare'.
+    ~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+            ~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+                   ~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
                    ~~~
 !!! error TLUA2304: Cannot find name 'Foo'.
                    ~~~

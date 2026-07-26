@@ -50,7 +50,7 @@ return { createDog = dog.createDog };
 }
 //// [/user/username/projects/demo/core/utilities.tlua] *new* 
 local A = require('animals.index');
-A;
+local _ = A;
 function makeRandomName()
     return "Bob!?! ";
 end
@@ -403,7 +403,7 @@ local dog = require('animals.dog');
 return { createDog = dog.createDog };
 
 //// [/user/username/projects/demo/lib/core/core/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[4],"fileNames":["lib.luajit.d.tlua","../../../animals/dog.tlua","../../../animals/index.tlua","../../../core/utilities.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"3c00568e3c7121941e7ad954dab72c1c-local utilities = require('core.utilities');\n\ninterface Dog extends Animal {\n    woof(): void;\n    name: string;\n}\n\nfunction createDog(): Dog\n    return ({\n        size: \"medium\",\n        woof: function()\n            console.log(\"Woof!\");\n        end,\n        name: utilities.makeRandomName()\n    });\nend\n\nreturn { createDog = createDog };","4dc4b07932e5707398b3ca3d70ea4a72-local dog = require('animals.dog');\n\nreturn { createDog = dog.createDog };","409f2459c49278d9e0cc361002ef5e9c-local A = require('animals.index');\nA;\nfunction makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };"],"options":{"composite":true,"declaration":true,"module":1,"noImplicitReturns":true,"noUnusedLocals":true,"noUnusedParameters":true,"outDir":"..","rootDir":"../../..","strict":true,"target":1},"semanticDiagnosticsPerFile":[1,2,3,4],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3,4]}
+{"version":"FakeTSVersion","root":[4],"fileNames":["lib.luajit.d.tlua","../../../animals/dog.tlua","../../../animals/index.tlua","../../../core/utilities.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"3c00568e3c7121941e7ad954dab72c1c-local utilities = require('core.utilities');\n\ninterface Dog extends Animal {\n    woof(): void;\n    name: string;\n}\n\nfunction createDog(): Dog\n    return ({\n        size: \"medium\",\n        woof: function()\n            console.log(\"Woof!\");\n        end,\n        name: utilities.makeRandomName()\n    });\nend\n\nreturn { createDog = createDog };","4dc4b07932e5707398b3ca3d70ea4a72-local dog = require('animals.dog');\n\nreturn { createDog = dog.createDog };","f1e225006b5b57271ecbb179d1300f33-local A = require('animals.index');\nlocal _ = A;\nfunction makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };"],"options":{"composite":true,"declaration":true,"module":1,"noImplicitReturns":true,"noUnusedLocals":true,"noUnusedParameters":true,"outDir":"..","rootDir":"../../..","strict":true,"target":1},"semanticDiagnosticsPerFile":[1,2,3,4],"emitDiagnosticsPerFile":[[2,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[3,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]],[4,[{"end":5,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2,3,4]}
 //// [/user/username/projects/demo/lib/core/core/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -448,8 +448,8 @@ return { createDog = dog.createDog };
     },
     {
       "fileName": "../../../core/utilities.tlua",
-      "version": "409f2459c49278d9e0cc361002ef5e9c-local A = require('animals.index');\nA;\nfunction makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
-      "signature": "409f2459c49278d9e0cc361002ef5e9c-local A = require('animals.index');\nA;\nfunction makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
+      "version": "f1e225006b5b57271ecbb179d1300f33-local A = require('animals.index');\nlocal _ = A;\nfunction makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
+      "signature": "f1e225006b5b57271ecbb179d1300f33-local A = require('animals.index');\nlocal _ = A;\nfunction makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -520,11 +520,11 @@ return { createDog = dog.createDog };
       "original": 4
     }
   ],
-  "size": 2486
+  "size": 2496
 }
 //// [/user/username/projects/demo/lib/core/core/utilities.lua] *new* 
 local A = require('animals.index');
-A;
+local _ = A;
 function makeRandomName()
   return "Bob!?! ";
 end

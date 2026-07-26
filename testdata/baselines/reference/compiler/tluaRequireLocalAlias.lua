@@ -9,7 +9,7 @@ return { value = value };
 local require = require;
 local m = require("m");
 local n: number = m.value;
-n;
+local _ = n;
 
 
 //// [m.lua]
@@ -20,4 +20,4 @@ return { value = value };
 local require = require;
 local m = require("m");
 local n = m.value;
-n;
+local _ = n;

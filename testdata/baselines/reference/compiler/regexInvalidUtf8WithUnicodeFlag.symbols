@@ -1,6 +1,6 @@
 //// [tests/cases/compiler/regexInvalidUtf8WithUnicodeFlag.tlua] ////
 
 === regexInvalidUtf8WithUnicodeFlag.tlua ===
-
-/€/u
+local _ = /€/u
+>_ : Symbol(_, Decl(regexInvalidUtf8WithUnicodeFlag.tlua, 0, 5))
 

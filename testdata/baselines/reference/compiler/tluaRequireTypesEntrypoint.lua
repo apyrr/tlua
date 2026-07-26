@@ -9,11 +9,11 @@ return { answer = answer };
 // A package's typed entrypoint (package.json "types") types the require.
 local pkg = require("pkg");
 local n: number = pkg.answer;
-n;
+local _ = n;
 
 
 //// [main.lua]
 -- A package's typed entrypoint (package.json "types") types the require.
 local pkg = require("pkg");
 local n = pkg.answer;
-n;
+local _ = n;

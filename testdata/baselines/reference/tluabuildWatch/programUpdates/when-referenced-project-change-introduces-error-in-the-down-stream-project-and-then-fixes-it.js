@@ -3,7 +3,7 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/user/username/projects/sample1/App/app.tlua] *new* 
 local library = require("Library.library");
-library.createSomeObject().message;
+local _ = library.createSomeObject().message;
 //// [/user/username/projects/sample1/App/tluaconfig.json] *new* 
 { 
     "compilerOptions": { "rootDir": ".." },
@@ -68,7 +68,7 @@ declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/user/username/projects/sample1/App/app.lua] *new* 
 local library = require("Library.library");
-library.createSomeObject().message;
+local _ = library.createSomeObject().message;
 
 //// [/user/username/projects/sample1/App/tluaconfig.tluabuildinfo] *new* 
 {"version":"FakeTSVersion","root":["./app.tlua"]}

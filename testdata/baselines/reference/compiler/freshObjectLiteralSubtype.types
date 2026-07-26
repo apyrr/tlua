@@ -27,7 +27,8 @@ declare f2: () => { valid: boolean, msg?: undefined }
 >valid : boolean
 >msg : nil
 
-f1().msg
+local _ = f1().msg
+>_ : nil
 >f1().msg : nil
 >f1() : { valid: boolean; msg?: nil; }
 >f1 : () => { valid: boolean; msg?: nil; }
@@ -77,7 +78,8 @@ declare function utilValidate(): {
 >msg : string
 }
 
-validate().msg; // Error in TLUA
+local _ = validate().msg; // Error in TLUA
+>_ : string | nil
 >validate().msg : string | nil
 >validate() : { valid: boolean; msg?: nil; } | { valid: boolean; msg: string; }
 >validate : () => { valid: boolean; msg?: nil; } | { valid: boolean; msg: string; }

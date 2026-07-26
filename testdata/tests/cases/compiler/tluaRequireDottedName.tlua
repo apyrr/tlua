@@ -6,4 +6,4 @@ return { value = value };
 // @filename: main.tlua
 local util = require("app.util");
 local n: number = util.value;
-n;
+local _ = n;

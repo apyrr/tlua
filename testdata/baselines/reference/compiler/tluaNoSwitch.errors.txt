@@ -1,10 +1,12 @@
 tluaNoSwitch.tlua(13,1): error TLUA2554: Expected 2 arguments, but got 1.
 tluaNoSwitch.tlua(13,12): error TLUA1005: ';' expected.
 tluaNoSwitch.tlua(14,3): error TLUA1434: Unexpected keyword or identifier.
+tluaNoSwitch.tlua(14,8): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoSwitch.tlua(14,9): error TLUA1005: ';' expected.
+tluaNoSwitch.tlua(14,9): error TLUA1128: Declaration or statement expected.
 
 
-==== tluaNoSwitch.tlua (4 errors) ====
+==== tluaNoSwitch.tlua (6 errors) ====
     // tlua has no switch statement: `switch` and `case` are ordinary identifiers,
     // as in Lua.
     local switch = function(self: {}, mode: string) return mode; end;
@@ -26,8 +28,12 @@ tluaNoSwitch.tlua(14,9): error TLUA1005: ';' expected.
       case 1:
       ~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
+           ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
             ~
 !!! error TLUA1005: ';' expected.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
         break;
     }
     

@@ -11,7 +11,8 @@ local v: number = pkg.version;
 >pkg : Symbol(pkg, Decl(main.tlua, 0, 5))
 >version : Symbol(version, Decl(init.tlua, 1, 8))
 
-v;
+local _ = v;
+>_ : Symbol(_, Decl(main.tlua, 2, 5))
 >v : Symbol(v, Decl(main.tlua, 1, 5))
 
 === pkg/init.tlua ===

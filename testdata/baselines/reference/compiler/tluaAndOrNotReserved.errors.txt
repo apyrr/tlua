@@ -23,10 +23,14 @@ tluaAndOrNotReserved.tlua(23,13): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(29,18): error TLUA1005: ';' expected.
 tluaAndOrNotReserved.tlua(29,21): error TLUA1109: Expression expected.
 tluaAndOrNotReserved.tlua(30,10): error TLUA1005: ';' expected.
+tluaAndOrNotReserved.tlua(30,10): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaAndOrNotReserved.tlua(30,13): error TLUA1109: Expression expected.
+tluaAndOrNotReserved.tlua(30,13): error TLUA1128: Declaration or statement expected.
 tluaAndOrNotReserved.tlua(30,15): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 tluaAndOrNotReserved.tlua(33,9): error TLUA1005: ';' expected.
+tluaAndOrNotReserved.tlua(33,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaAndOrNotReserved.tlua(33,10): error TLUA1109: Expression expected.
+tluaAndOrNotReserved.tlua(33,10): error TLUA1128: Declaration or statement expected.
 tluaAndOrNotReserved.tlua(33,12): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 tluaAndOrNotReserved.tlua(39,18): error TLUA1005: ';' expected.
 tluaAndOrNotReserved.tlua(39,21): error TLUA1109: Expression expected.
@@ -34,7 +38,7 @@ tluaAndOrNotReserved.tlua(40,11): error TLUA1110: Type expected.
 tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type, but is being used as a value here.
 
 
-==== tluaAndOrNotReserved.tlua (34 errors) ====
+==== tluaAndOrNotReserved.tlua (38 errors) ====
     // `and`, `or` and `not` are keywords, so they are reserved. Every use as a name
     // falls into stock recovery, as with the class, decorator, array and this
     // removals. Lua reserves them too, so `t.and` is invalid there as well.
@@ -115,8 +119,12 @@ tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type
     local n2 not: number;
              ~~~
 !!! error TLUA1005: ';' expected.
+             ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                 ~
 !!! error TLUA1109: Expression expected.
+                ~
+!!! error TLUA1128: Declaration or statement expected.
                   ~~~~~~
 !!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
     // The punctuation spelling keeps both roles.
@@ -124,8 +132,12 @@ tluaAndOrNotReserved.tlua(40,15): error TLUA2693: 'number' only refers to a type
     local n4!: number;
             ~
 !!! error TLUA1005: ';' expected.
+            ~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
              ~
 !!! error TLUA1109: Expression expected.
+             ~
+!!! error TLUA1128: Declaration or statement expected.
                ~~~~~~
 !!! error TLUA2693: 'number' only refers to a type, but is being used as a value here.
     // And the word keeps its own: prefix negation.

@@ -16,7 +16,8 @@ function scoped(): number
 >y : Symbol(y, Decl(tluaDoBlock.tlua, 5, 9))
 >x : Symbol(x, Decl(tluaDoBlock.tlua, 4, 9))
 
-    y;
+    local _ = y;
+>_ : Symbol(_, Decl(tluaDoBlock.tlua, 6, 9))
 >y : Symbol(y, Decl(tluaDoBlock.tlua, 5, 9))
 
   end
@@ -77,7 +78,8 @@ function coexist(flag: boolean): number
     local x = 1;
 >x : Symbol(x, Decl(tluaDoBlock.tlua, 38, 9))
 
-    x;
+    local _ = x;
+>_ : Symbol(_, Decl(tluaDoBlock.tlua, 39, 9))
 >x : Symbol(x, Decl(tluaDoBlock.tlua, 38, 9))
 
   end

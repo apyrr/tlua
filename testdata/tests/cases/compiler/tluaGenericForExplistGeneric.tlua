@@ -67,10 +67,10 @@ for k, v in requiredControl, t, nil do
 end
 
 for k, v in next, 42 do
-  k;
-  v;
+  local _ = k;
+  local _ = v;
 end
 
 for k in next do
-  k;
+  local _ = k;
 end

@@ -20,10 +20,12 @@ function useOverloaded(): void
 >v : string | number
 >overloaded : { (s: string, c: number): (number, string); (s: string, c: string): (string, number); }
 
-    k;
+    local _ = k;
+>_ : string | number
 >k : string | number
 
-    v;
+    local _ = v;
+>_ : string | number
 >v : string | number
 
   end
@@ -44,13 +46,16 @@ function useVariadic(): void
 >w : string | nil
 >variadicIter : (s: void, c: number) => (number, ...string)
 
-    k;
+    local _ = k;
+>_ : number
 >k : number
 
-    v;
+    local _ = v;
+>_ : string | nil
 >v : string | nil
 
-    w;
+    local _ = w;
+>_ : string | nil
 >w : string | nil
 
   end

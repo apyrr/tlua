@@ -8,4 +8,4 @@ return { value = value };
 local require = require;
 local m = require("m");
 local n: number = m.value;
-n;
+local _ = n;

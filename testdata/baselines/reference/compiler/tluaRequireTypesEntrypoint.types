@@ -14,7 +14,8 @@ local n: number = pkg.answer;
 >pkg : { answer: number; }
 >answer : number
 
-n;
+local _ = n;
+>_ : number
 >n : number
 
 === node_modules/pkg/typed.tlua ===

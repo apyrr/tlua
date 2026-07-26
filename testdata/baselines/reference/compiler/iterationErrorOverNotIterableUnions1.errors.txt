@@ -1,4 +1,6 @@
+iterationErrorOverNotIterableUnions1.tlua(7,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 iterationErrorOverNotIterableUnions1.tlua(7,10): error TLUA2339: Property 'b' does not exist on type 'A'.
+iterationErrorOverNotIterableUnions1.tlua(11,5): error TLUA100057: Incomplete statement: expected assignment or a function call.
 iterationErrorOverNotIterableUnions1.tlua(11,17): error TLUA2339: Property 'b' does not exist on type 'A'.
 iterationErrorOverNotIterableUnions1.tlua(14,7): error TLUA1003: Identifier expected.
 iterationErrorOverNotIterableUnions1.tlua(14,8): error TLUA1434: Unexpected keyword or identifier.
@@ -6,11 +8,13 @@ iterationErrorOverNotIterableUnions1.tlua(14,8): error TLUA2304: Cannot find nam
 iterationErrorOverNotIterableUnions1.tlua(14,10): error TLUA1128: Declaration or statement expected.
 iterationErrorOverNotIterableUnions1.tlua(14,12): error TLUA1128: Declaration or statement expected.
 iterationErrorOverNotIterableUnions1.tlua(15,1): error TLUA2304: Cannot find name 'el'.
+iterationErrorOverNotIterableUnions1.tlua(15,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 iterationErrorOverNotIterableUnions1.tlua(17,13): error TLUA7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'B | A[]'.
   Property '0' does not exist on type 'B | A[]'.
+iterationErrorOverNotIterableUnions1.tlua(18,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
 
 
-==== iterationErrorOverNotIterableUnions1.tlua (9 errors) ====
+==== iterationErrorOverNotIterableUnions1.tlua (13 errors) ====
     type A = { a: string };
     type B = { b: string };
     
@@ -18,12 +22,16 @@ iterationErrorOverNotIterableUnions1.tlua(17,13): error TLUA7053: Element implic
     
     for _, item in ipairs(data) do
         item.b;
+        ~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
              ~
 !!! error TLUA2339: Property 'b' does not exist on type 'A'.
     end
     
     for _, ignoredItem in ipairs(data) do
         ignoredItem.b;
+        ~~~~~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                     ~
 !!! error TLUA2339: Property 'b' does not exist on type 'A'.
     end
@@ -42,10 +50,14 @@ iterationErrorOverNotIterableUnions1.tlua(17,13): error TLUA7053: Element implic
     el.b;
     ~~
 !!! error TLUA2304: Cannot find name 'el'.
+    ~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     
     local el2 = data[0];
                 ~~~~~~~
 !!! error TLUA7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'B | A[]'.
 !!! error TLUA7053:   Property '0' does not exist on type 'B | A[]'.
     el2.b;
+    ~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
     

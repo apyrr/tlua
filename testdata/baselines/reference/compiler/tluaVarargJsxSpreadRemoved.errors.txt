@@ -1,14 +1,18 @@
 tluaVarargJsxSpreadRemoved.tsx(11,30): error TLUA1003: Identifier expected.
+tluaVarargJsxSpreadRemoved.tsx(11,31): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaVarargJsxSpreadRemoved.tsx(11,34): error TLUA1005: ';' expected.
+tluaVarargJsxSpreadRemoved.tsx(11,34): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaVarargJsxSpreadRemoved.tsx(11,41): error TLUA1161: Unterminated regular expression literal.
 tluaVarargJsxSpreadRemoved.tsx(14,39): error TLUA1003: Identifier expected.
+tluaVarargJsxSpreadRemoved.tsx(14,40): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaVarargJsxSpreadRemoved.tsx(14,43): error TLUA1005: ';' expected.
+tluaVarargJsxSpreadRemoved.tsx(14,43): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaVarargJsxSpreadRemoved.tsx(14,50): error TLUA1161: Unterminated regular expression literal.
 tluaVarargJsxSpreadRemoved.tsx(17,33): error TLUA1005: '}' expected.
 tluaVarargJsxSpreadRemoved.tsx(17,38): error TLUA1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
 
 
-==== tluaVarargJsxSpreadRemoved.tsx (8 errors) ====
+==== tluaVarargJsxSpreadRemoved.tsx (12 errors) ====
     interface JsxElement {}
     interface JsxElementChildrenAttribute { children: {}; }
     interface JsxIntrinsicElements {
@@ -22,8 +26,12 @@ tluaVarargJsxSpreadRemoved.tsx(17,38): error TLUA1381: Unexpected token. Did you
     local spreadAttribute = <div {...props} />;
                                  ~
 !!! error TLUA1003: Identifier expected.
+                                  ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                                      ~~~~~
 !!! error TLUA1005: ';' expected.
+                                     ~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                                             ~~
 !!! error TLUA1161: Unterminated regular expression literal.
     
@@ -31,8 +39,12 @@ tluaVarargJsxSpreadRemoved.tsx(17,38): error TLUA1381: Unexpected token. Did you
     local spreadAndAttribute = <div a={1} {...props} />;
                                           ~
 !!! error TLUA1003: Identifier expected.
+                                           ~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                                               ~~~~~
 !!! error TLUA1005: ';' expected.
+                                              ~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                                                      ~~
 !!! error TLUA1161: Unterminated regular expression literal.
     

@@ -11,7 +11,7 @@ end
 
 declare f2: () => { valid: boolean, msg?: undefined }
 
-f1().msg
+local _ = f1().msg
 
 // Repro from https://github.com/microsoft/typescript-go/issues/1742
 
@@ -31,7 +31,7 @@ declare function utilValidate(): {
     msg: string;
 }
 
-validate().msg; // Error in TLUA
+local _ = validate().msg; // Error in TLUA
 
 // https://github.com/microsoft/typescript-go/issues/1761
 

@@ -553,7 +553,7 @@ func TestBuildDemoProject(t *testing.T) {
 			subScenario: "in bad-ref branch reports the error about files not in rootDir at the import location",
 			files: getBuildDemoFileMap(func(files FileMap) {
 				files["/user/username/projects/demo/core/utilities.tlua"] = `local A = require('animals.index');
-A;
+local _ = A;
 ` + files["/user/username/projects/demo/core/utilities.tlua"].(string)
 			}),
 			cwd:             "/user/username/projects/demo",
@@ -658,7 +658,7 @@ A;
 			subScenario: "updates with bad reference",
 			files: getBuildDemoFileMap(func(files FileMap) {
 				files["/user/username/projects/demo/core/utilities.tlua"] = `local A = require('animals.index');
-A;
+local _ = A;
 ` + files["/user/username/projects/demo/core/utilities.tlua"].(string)
 			}),
 			cwd:             "/user/username/projects/demo",
@@ -1119,7 +1119,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 				}`),
 				"/user/username/projects/sample1/App/app.tlua": stringtestutil.Dedent(`
 					local library = require("Library.library");
-					library.createSomeObject().message;
+					local _ = library.createSomeObject().message;
 				`),
 			},
 			cwd:             "/user/username/projects/sample1",
@@ -1545,7 +1545,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 					{
 						"references": [ { "path": "./lib" } ]
 					}`),
-				"/home/src/workspaces/project/index.tlua": "local foo = require(\"lib.foo\");\nfoo.FOO;",
+				"/home/src/workspaces/project/index.tlua": "local foo = require(\"lib.foo\");\nlocal _ = foo.FOO;",
 			},
 			commandLineArgs: []string{"--b"},
 			edits: []*tluaEdit{
@@ -1577,7 +1577,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 						},
 						"references": [ { "path": "./lib" } ]
 					}`),
-				"/home/src/workspaces/project/index.tlua": "local foo = require(\"lib.foo\");\nfoo.FOO;",
+				"/home/src/workspaces/project/index.tlua": "local foo = require(\"lib.foo\");\nlocal _ = foo.FOO;",
 			},
 			commandLineArgs: []string{"--b"},
 			edits: []*tluaEdit{
@@ -1879,7 +1879,7 @@ func TestBuildReexport(t *testing.T) {
                 }`),
 				"/user/username/projects/reexport/src/main/index.tlua": stringtestutil.Dedent(`
                     local pure = require("pure");
-                    pure;
+                    local _ = pure;
 
                     local session: Session = {
                         foo: 1
@@ -1894,7 +1894,7 @@ func TestBuildReexport(t *testing.T) {
                     },
                     "include": ["**/*.tlua"],
                 }`),
-				"/user/username/projects/reexport/src/pure/init.tlua": "local session = require(\"pure.session\");\nsession;",
+				"/user/username/projects/reexport/src/pure/init.tlua": "local session = require(\"pure.session\");\nlocal _ = session;",
 				"/user/username/projects/reexport/src/pure/session.tlua": stringtestutil.Dedent(`
                     interface Session {
                         foo: number;
@@ -2973,8 +2973,8 @@ func TestBuildTransitiveReferences(t *testing.T) {
 			"/user/username/projects/transitiveReferences/c.tlua": stringtestutil.Dedent(`
 				/// <reference path="./refs/a.d.tlua"/>
 				local b = require('b');
-				b.b;
-				X.kind;
+				local _ = b.b;
+				local _ = X.kind;
 			`),
 			"/user/username/projects/transitiveReferences/tluaconfig.a.json": stringtestutil.Dedent(`
 			{

@@ -291,6 +291,10 @@
         "category": "Error",
         "code": 100056
     },
+    "Incomplete statement: expected assignment or a function call.": {
+        "category": "Error",
+        "code": 100057
+    },
     "Part of 'files' list in tluaconfig.json": {
         "category": "Message",
         "code": 1409

@@ -258,7 +258,7 @@ func TestTscBareFileRootAnchoring(t *testing.T) {
 		cwd:         "/home/src/elsewhere",
 		files: FileMap{
 			"/home/src/app/util.tlua": "local value = 42;\nreturn { value = value };",
-			"/home/src/app/main.tlua": "local util = require(\"util\");\nlocal n: number = util.value;\nn;",
+			"/home/src/app/main.tlua": "local util = require(\"util\");\nlocal n: number = util.value;\nlocal _ = n;",
 		},
 		commandLineArgs: []string{"/home/src/app/main.tlua"},
 	}).run(t, "commandLine")
@@ -835,7 +835,7 @@ func TestTscIncremental(t *testing.T) {
 
                     declare function Component(props: never): any;
                     declare function Component(props: { children?: number }): any;
-                    (<Component>
+                    local _ = (<Component>
                         <div />
                         <div />
                     </Component>)`),
@@ -1985,10 +1985,10 @@ func TestTscNoEmit(t *testing.T) {
 				return { indirectClass = indirectClass };`),
 			"/home/src/workspaces/project/src/directUse.tlua": stringtestutil.Dedent(`
 				local indirect = require('src.indirectClass');
-				indirect.indirectClass.classC.prop;`),
+				local _ = indirect.indirectClass.classC.prop;`),
 			"/home/src/workspaces/project/src/indirectUse.tlua": stringtestutil.Dedent(`
 				local indirect = require('src.indirectClass');
-				indirect.indirectClass.classC.prop;`),
+				local _ = indirect.indirectClass.classC.prop;`),
 			"/home/src/workspaces/project/src/noChangeFile.tlua": stringtestutil.Dedent(`
 				function writeLog(s: string) end`),
 			"/home/src/workspaces/project/src/noChangeFileWithEmitSpecificError.tlua": stringtestutil.Dedent(`
@@ -2541,7 +2541,7 @@ func TestTscProjectReferences(t *testing.T) {
 						"noEmit": true
 					}
 				}`),
-				"/home/src/workspaces/solution/project/index.tlua": "local utils = require(\"utils.index\");\nutils.x;",
+				"/home/src/workspaces/solution/project/index.tlua": "local utils = require(\"utils.index\");\nlocal _ = utils.x;",
 				"/home/src/workspaces/solution/project/tluaconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -2566,7 +2566,7 @@ func TestTscProjectReferences(t *testing.T) {
 						"composite": true
 					}
 				}`),
-				"/home/src/workspaces/solution/project/index.tlua": "local utils = require(\"utils.index\");\nutils.x;",
+				"/home/src/workspaces/solution/project/index.tlua": "local utils = require(\"utils.index\");\nlocal _ = utils.x;",
 				"/home/src/workspaces/solution/project/tluaconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -2590,7 +2590,7 @@ func TestTscProjectReferences(t *testing.T) {
 						"composite": true
 					}
 				}`),
-				"/home/src/workspaces/solution/project/index.tlua": "local utils = require(\"utils.index\");\nutils.x;",
+				"/home/src/workspaces/solution/project/index.tlua": "local utils = require(\"utils.index\");\nlocal _ = utils.x;",
 				"/home/src/workspaces/solution/project/tluaconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {

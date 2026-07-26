@@ -7,7 +7,7 @@ return { version = version };
 //// [main.tlua]
 local pkg = require("pkg");
 local v: number = pkg.version;
-v;
+local _ = v;
 
 
 //// [init.lua]
@@ -16,4 +16,4 @@ return { version = version };
 //// [main.lua]
 local pkg = require("pkg");
 local v = pkg.version;
-v;
+local _ = v;

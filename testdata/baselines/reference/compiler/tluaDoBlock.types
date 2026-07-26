@@ -20,7 +20,8 @@ function scoped(): number
 >x : number
 >1 : 1
 
-    y;
+    local _ = y;
+>_ : number
 >y : number
 
   end
@@ -92,7 +93,8 @@ function coexist(flag: boolean): number
 >x : number
 >1 : 1
 
-    x;
+    local _ = x;
+>_ : number
 >x : number
 
   end
