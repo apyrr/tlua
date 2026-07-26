@@ -9,17 +9,25 @@ import (
 	"github.com/apyrr/tlua/internal/lsp/lsproto"
 )
 
-// getAllDiagnostics collects all diagnostics for a file: syntactic, semantic,
-// suggestion, and (when declarations are emitted) declaration diagnostics.
-func getAllDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
+// getAllDiagnosticsCore collects all diagnostics for a file: syntactic,
+// semantic, suggestion (when requested), and (when declarations are emitted)
+// declaration diagnostics.
+func getAllDiagnosticsCore(ctx context.Context, program *compiler.Program, file *ast.SourceFile, includeSuggestions bool) []*ast.Diagnostic {
 	var diags []*ast.Diagnostic
 	diags = append(diags, program.GetSyntacticDiagnostics(ctx, file)...)
 	diags = append(diags, program.GetSemanticDiagnostics(ctx, file)...)
-	diags = append(diags, program.GetSuggestionDiagnostics(ctx, file)...)
+	if includeSuggestions {
+		diags = append(diags, program.GetSuggestionDiagnostics(ctx, file)...)
+	}
 	if program.Options().GetEmitDeclarations() {
 		diags = append(diags, program.GetDeclarationDiagnostics(ctx, file)...)
 	}
 	return diags
+}
+
+// getAllDiagnostics collects all diagnostics for a file, including suggestions.
+func getAllDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
+	return getAllDiagnosticsCore(ctx, program, file, true /*includeSuggestions*/)
 }
 
 func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.DocumentUri) (lsproto.DocumentDiagnosticResponse, error) {
@@ -41,6 +49,16 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 			Items: l.toLSPDiagnostics(ctx, diagnostics),
 		},
 	}, nil
+}
+
+// ProvideFileDiagnostics computes LSP diagnostics for a single file of this
+// language service's program. Unlike ProvideDiagnostics it takes the file
+// directly (no URI lookup / panic path) and lets the caller choose whether
+// suggestion diagnostics are included (workspace pulls skip them: the client
+// favors document-pull results for open documents, so suggestions stay
+// document-pull-only).
+func (l *LanguageService) ProvideFileDiagnostics(ctx context.Context, file *ast.SourceFile, includeSuggestions bool) []*lsproto.Diagnostic {
+	return l.toLSPDiagnostics(ctx, getAllDiagnosticsCore(ctx, l.GetProgram(), file, includeSuggestions))
 }
 
 func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {

@@ -102,6 +102,10 @@ type Session struct {
 	// When a program is no longer referenced, its source files are
 	// released from the parseCache.
 	programCounter *programCounter
+	// workspaceDiagCache tracks, per project and file, whether the
+	// diagnostics the client already has are still valid, so a
+	// `workspace/diagnostic` pull only recomputes what changed.
+	workspaceDiagCache *WorkspaceDiagCache
 
 	// read-only after initialization
 	initialUserPreferences lsutil.UserPreferences
@@ -205,6 +209,7 @@ func NewSession(init *SessionInit) *Session {
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
+		workspaceDiagCache:  NewWorkspaceDiagCache(),
 		backgroundQueue:     background.NewQueue(),
 		startTime:           time.Now(),
 		snapshot: NewSnapshot(
@@ -1031,6 +1036,22 @@ func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []ls
 		services = append(services, ls.NewLanguageService(project.configFilePath, program, snapshot, activeFile))
 	}
 	return services
+}
+
+// NewLanguageServiceForProject creates a language service for a project in the
+// given snapshot, not tied to any open document.
+func NewLanguageServiceForProject(p *Project, snapshot *Snapshot) *ls.LanguageService {
+	program := p.GetProgram()
+	if program == nil {
+		return nil
+	}
+	return ls.NewLanguageService(p.configFilePath, program, snapshot, "" /*activeFile*/)
+}
+
+// WorkspaceDiagnosticsCache returns the cache backing `workspace/diagnostic`
+// pulls.
+func (s *Session) WorkspaceDiagnosticsCache() *WorkspaceDiagCache {
+	return s.workspaceDiagCache
 }
 
 func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) *ls.LanguageService {

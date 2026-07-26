@@ -197,6 +197,11 @@ type Server struct {
 	apiSessions   map[string]*api.Session
 	apiSessionsMu sync.Mutex
 
+	// workspacePullMu serializes `workspace/diagnostic` pulls. A well-behaved
+	// client cancels the in-flight pull before starting another one; this
+	// keeps a misbehaving one from checking the whole workspace twice at once.
+	workspacePullMu sync.Mutex
+
 	// Test options for initializing session
 	client project.Client
 
@@ -659,6 +664,14 @@ type userFacingRequestFailedError string
 func (e userFacingRequestFailedError) Error() string { return string(e) }
 func (e userFacingRequestFailedError) Unwrap() error { return lsproto.ErrorCodeRequestFailed }
 
+// responseErrorData is implemented by errors that carry a structured `data`
+// payload for their JSON-RPC error response, on top of the error code they
+// unwrap to.
+type responseErrorData interface {
+	error
+	ResponseErrorData() any
+}
+
 func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 	// Do not send error response for notifications,
 	// except for parse errors which may occur before determining if the message is a request or notification.
@@ -670,12 +683,16 @@ func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 	if errCode, ok := errors.AsType[lsproto.ErrorCode](err); ok {
 		code = errCode
 	}
-	// TODO(jakebailey): error data
+	var data any
+	if withData, ok := errors.AsType[responseErrorData](err); ok {
+		data = withData.ResponseErrorData()
+	}
 	return s.sendResponse(&lsproto.ResponseMessage{
 		ID: id,
 		Error: &jsonrpc.ResponseError{
 			Code:    int32(code),
 			Message: err.Error(),
+			Data:    data,
 		},
 	})
 }
@@ -797,6 +814,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
 
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
+	registerAsyncRequestHandler(handlers, lsproto.WorkspaceDiagnosticInfo, (*Server).handleWorkspaceDiagnostic)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensFullInfo, (*Server).handleSemanticTokensFull)
@@ -853,6 +871,45 @@ func registerRequestHandler[Req, Resp any](
 			return nil, ctx.Err()
 		}
 		return nil, s.sendResult(req.ID, resp)
+	}
+}
+
+// registerAsyncRequestHandler registers a handler for a workspace-scoped
+// request: one with no TextDocument URI to resolve a language service from, and
+// one that may run long enough that it must not hold up the dispatch loop. The
+// params are unmarshaled synchronously; the handler itself runs as async work,
+// like the document handlers below.
+func registerAsyncRequestHandler[Req, Resp any](
+	handlers handlerMap,
+	info lsproto.RequestInfo[Req, Resp],
+	fn func(*Server, context.Context, Req) (Resp, error),
+) {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
+		if s.session == nil {
+			return nil, lsproto.ErrorCodeServerNotInitialized
+		}
+		params, err := lsproto.UnmarshalParams[Req](req)
+		if err != nil {
+			return nil, err
+		}
+		return func() error {
+			defer s.recover(req)
+			resp, lsErr := fn(s, ctx, params)
+			// After any language service request, check if new global diagnostics were
+			// discovered during checking and push updated tsconfig diagnostics if so.
+			s.session.EnqueuePublishGlobalDiagnostics()
+			if lsErr != nil {
+				return lsErr
+			}
+			// A completed response is sent even when a cancellation raced in
+			// after the handler finished: responding to a cancelled request is
+			// legal JSON-RPC (the client discards it), whereas turning the
+			// finished work into a plain RequestCancelled here would bypass the
+			// handler's own cancellation answer -- for `workspace/diagnostic`
+			// that answer must carry DiagnosticServerCancellationData or the
+			// client counts it toward shutting its pull loop down.
+			return s.sendResult(req.ID, resp)
+		}, nil
 	}
 }
 
@@ -1097,6 +1154,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				Options: &lsproto.DiagnosticOptions{
 					Identifier:            new("tlua"),
 					InterFileDependencies: true,
+					WorkspaceDiagnostics:  true,
 				},
 			},
 			CompletionProvider: &lsproto.CompletionOptions{
