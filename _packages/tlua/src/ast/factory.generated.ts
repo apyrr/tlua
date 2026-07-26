@@ -22,11 +22,8 @@ import type {
     ColonToken,
     ComputedPropertyName,
     ConciseBody,
-    ConditionalExpression,
     ConditionalTypeNode,
     ContinueStatement,
-    DebuggerStatement,
-    DeleteExpression,
     DotDotDotToken,
     ElementAccessExpression,
     EmptyStatement,
@@ -190,17 +187,14 @@ import type {
     SyntheticExpression,
     SyntheticReferenceExpression,
     TableEntry,
-    TaggedTemplateExpression,
     TemplateExpression,
     TemplateHead,
-    TemplateLiteral,
     TemplateLiteralTypeNode,
     TemplateLiteralTypeSpan,
     TemplateMiddle,
     TemplateMiddleOrTail,
     TemplateSpan,
     TemplateTail,
-    ThrowStatement,
     Token,
     TokenSyntaxKind,
     TupleTypeNode,
@@ -220,7 +214,6 @@ import type {
     VariableDeclaration,
     VariableDeclarationList,
     VariableStatement,
-    VoidExpression,
     WhileStatement,
 } from "./ast.ts";
 import { getTokenPosOfNode } from "./astnav.ts";
@@ -284,9 +277,6 @@ export class NodeObject {
     }
     get comment(): any {
         return this._data?.comment;
-    }
-    get condition(): any {
-        return this._data?.condition;
     }
     get constraint(): any {
         return this._data?.constraint;
@@ -516,9 +506,6 @@ export class NodeObject {
     get step(): any {
         return this._data?.step;
     }
-    get tag(): any {
-        return this._data?.tag;
-    }
     get tagName(): any {
         return this._data?.tagName;
     }
@@ -527,9 +514,6 @@ export class NodeObject {
     }
     get target(): any {
         return this._data?.target;
-    }
-    get template(): any {
-        return this._data?.template;
     }
     get templateFlags(): any {
         return this._data?.templateFlags;
@@ -587,12 +571,6 @@ export class NodeObject {
     }
     get types(): any {
         return this._data?.types;
-    }
-    get whenFalse(): any {
-        return this._data?.whenFalse;
-    }
-    get whenTrue(): any {
-        return this._data?.whenTrue;
     }
 
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined {
@@ -684,8 +662,6 @@ function cloneNodeData(node: Node): any {
             return { statements: n.statements, expression: n.expression };
         case SyntaxKind.ReturnStatement:
             return { expression: n.expression };
-        case SyntaxKind.ThrowStatement:
-            return { expression: n.expression };
         case SyntaxKind.LabelStatement:
             return { label: n.label };
         case SyntaxKind.GotoStatement:
@@ -766,8 +742,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression, type: n.type };
         case SyntaxKind.ExpressionList:
             return { elements: n.elements };
-        case SyntaxKind.ConditionalExpression:
-            return { condition: n.condition, questionToken: n.questionToken, whenTrue: n.whenTrue, colonToken: n.colonToken, whenFalse: n.whenFalse };
         case SyntaxKind.PropertyAccessExpression:
             return { expression: n.expression, questionDotToken: n.questionDotToken, colonToken: n.colonToken, name: n.name };
         case SyntaxKind.ElementAccessExpression:
@@ -782,8 +756,6 @@ function cloneNodeData(node: Node): any {
             return { head: n.head, templateSpans: n.templateSpans };
         case SyntaxKind.TemplateSpan:
             return { expression: n.expression, literal: n.literal };
-        case SyntaxKind.TaggedTemplateExpression:
-            return { tag: n.tag, questionDotToken: n.questionDotToken, typeArguments: n.typeArguments, template: n.template };
         case SyntaxKind.ParenthesizedExpression:
             return { expression: n.expression };
         case SyntaxKind.ArrayLiteralExpression:
@@ -796,10 +768,6 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression };
         case SyntaxKind.PropertyAssignment:
             return { modifiers: n.modifiers, name: n.name, postfixToken: n.postfixToken, type: n.type, initializer: n.initializer };
-        case SyntaxKind.DeleteExpression:
-            return { expression: n.expression };
-        case SyntaxKind.VoidExpression:
-            return { expression: n.expression };
         case SyntaxKind.TypeAssertionExpression:
             return { type: n.type, expression: n.expression };
         case SyntaxKind.UnionType:
@@ -1007,7 +975,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.statements) ||
         visitNode(cbNode, data.expression),
     [SyntaxKind.ReturnStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
-    [SyntaxKind.ThrowStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.LabelStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
     [SyntaxKind.GotoStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.label),
     [SyntaxKind.ExpressionStatement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
@@ -1133,12 +1100,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.type),
     [SyntaxKind.ExpressionList]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
-    [SyntaxKind.ConditionalExpression]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.condition) ||
-        visitNode(cbNode, data.questionToken) ||
-        visitNode(cbNode, data.whenTrue) ||
-        visitNode(cbNode, data.colonToken) ||
-        visitNode(cbNode, data.whenFalse),
     [SyntaxKind.PropertyAccessExpression]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.questionDotToken) ||
@@ -1161,11 +1122,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.TemplateSpan]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.expression) ||
         visitNode(cbNode, data.literal),
-    [SyntaxKind.TaggedTemplateExpression]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.tag) ||
-        visitNode(cbNode, data.questionDotToken) ||
-        visitNodes(cbNode, cbNodes, data.typeArguments) ||
-        visitNode(cbNode, data.template),
     [SyntaxKind.ParenthesizedExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.ArrayLiteralExpression]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.elements),
     [SyntaxKind.ObjectLiteralExpression]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.properties),
@@ -1177,8 +1133,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.postfixToken) ||
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.initializer),
-    [SyntaxKind.DeleteExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
-    [SyntaxKind.VoidExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
     [SyntaxKind.TypeAssertionExpression]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.type) ||
         visitNode(cbNode, data.expression),
@@ -1503,16 +1457,6 @@ export function createReturnStatement(expression?: Expression): ReturnStatement 
     return new NodeObject(SyntaxKind.ReturnStatement, {
         expression,
     }) as unknown as ReturnStatement;
-}
-
-export function createThrowStatement(expression: Expression): ThrowStatement {
-    return new NodeObject(SyntaxKind.ThrowStatement, {
-        expression,
-    }) as unknown as ThrowStatement;
-}
-
-export function createDebuggerStatement(): DebuggerStatement {
-    return new NodeObject(SyntaxKind.DebuggerStatement, undefined) as unknown as DebuggerStatement;
 }
 
 export function createLabelStatement(label: Identifier): LabelStatement {
@@ -1841,16 +1785,6 @@ export function createVarargExpression(): VarargExpression {
     return new NodeObject(SyntaxKind.VarargExpression, undefined) as unknown as VarargExpression;
 }
 
-export function createConditionalExpression(condition: Expression, questionToken: QuestionToken, whenTrue: Expression, colonToken: ColonToken, whenFalse: Expression): ConditionalExpression {
-    return new NodeObject(SyntaxKind.ConditionalExpression, {
-        condition,
-        questionToken,
-        whenTrue,
-        colonToken,
-        whenFalse,
-    }) as unknown as ConditionalExpression;
-}
-
 export function createPropertyAccessExpression(expression: Expression, questionDotToken: QuestionDotToken | undefined, colonToken: ColonToken | undefined, name: MemberName, flags: NodeFlags): PropertyAccessExpression {
     const node = new NodeObject(SyntaxKind.PropertyAccessExpression, {
         expression,
@@ -1911,17 +1845,6 @@ export function createTemplateSpan(expression: Expression, literal: TemplateMidd
     }) as unknown as TemplateSpan;
 }
 
-export function createTaggedTemplateExpression(tag: Expression, questionDotToken: QuestionDotToken, typeArguments: readonly TypeNode[] | undefined, template: TemplateLiteral, flags: NodeFlags): TaggedTemplateExpression {
-    const node = new NodeObject(SyntaxKind.TaggedTemplateExpression, {
-        tag,
-        questionDotToken,
-        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
-        template,
-    }) as unknown as TaggedTemplateExpression;
-    (node as any).flags = flags;
-    return node;
-}
-
 export function createParenthesizedExpression(expression: Expression): ParenthesizedExpression {
     return new NodeObject(SyntaxKind.ParenthesizedExpression, {
         expression,
@@ -1962,18 +1885,6 @@ export function createPropertyAssignment(modifiers: readonly ModifierLike[] | un
         type,
         initializer,
     }) as unknown as PropertyAssignment;
-}
-
-export function createDeleteExpression(expression: Expression): DeleteExpression {
-    return new NodeObject(SyntaxKind.DeleteExpression, {
-        expression,
-    }) as unknown as DeleteExpression;
-}
-
-export function createVoidExpression(expression: Expression): VoidExpression {
-    return new NodeObject(SyntaxKind.VoidExpression, {
-        expression,
-    }) as unknown as VoidExpression;
 }
 
 export function createTypeAssertion(type: TypeNode, expression: Expression): TypeAssertion {
@@ -2660,10 +2571,6 @@ export function updateReturnStatement(node: ReturnStatement, expression?: Expres
     return node.expression !== expression ? createReturnStatement(expression) : node;
 }
 
-export function updateThrowStatement(node: ThrowStatement, expression: Expression): ThrowStatement {
-    return node.expression !== expression ? createThrowStatement(expression) : node;
-}
-
 export function updateLabelStatement(node: LabelStatement, label: Identifier): LabelStatement {
     return node.label !== label ? createLabelStatement(label) : node;
 }
@@ -2804,10 +2711,6 @@ export function updateExpressionList(node: ExpressionList, elements: readonly Ex
     return node.elements !== elements ? createExpressionList(elements) : node;
 }
 
-export function updateConditionalExpression(node: ConditionalExpression, condition: Expression, questionToken: QuestionToken, whenTrue: Expression, colonToken: ColonToken, whenFalse: Expression): ConditionalExpression {
-    return node.condition !== condition || node.questionToken !== questionToken || node.whenTrue !== whenTrue || node.colonToken !== colonToken || node.whenFalse !== whenFalse ? createConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse) : node;
-}
-
 export function updatePropertyAccessExpression(node: PropertyAccessExpression, expression: Expression, questionDotToken: QuestionDotToken | undefined, colonToken: ColonToken | undefined, name: MemberName): PropertyAccessExpression {
     return node.expression !== expression || node.questionDotToken !== questionDotToken || node.colonToken !== colonToken || node.name !== name ? createPropertyAccessExpression(expression, questionDotToken, colonToken, name, node.flags) : node;
 }
@@ -2836,10 +2739,6 @@ export function updateTemplateSpan(node: TemplateSpan, expression: Expression, l
     return node.expression !== expression || node.literal !== literal ? createTemplateSpan(expression, literal) : node;
 }
 
-export function updateTaggedTemplateExpression(node: TaggedTemplateExpression, tag: Expression, questionDotToken: QuestionDotToken, typeArguments: readonly TypeNode[] | undefined, template: TemplateLiteral): TaggedTemplateExpression {
-    return node.tag !== tag || node.questionDotToken !== questionDotToken || node.typeArguments !== typeArguments || node.template !== template ? createTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, node.flags) : node;
-}
-
 export function updateParenthesizedExpression(node: ParenthesizedExpression, expression: Expression): ParenthesizedExpression {
     return node.expression !== expression ? createParenthesizedExpression(expression) : node;
 }
@@ -2862,14 +2761,6 @@ export function updateTableEntry(node: TableEntry, expression: Expression): Tabl
 
 export function updatePropertyAssignment(node: PropertyAssignment, modifiers: readonly ModifierLike[] | undefined, name: PropertyName, postfixToken: QuestionToken | ExclamationToken | undefined, type: TypeNode, initializer: Expression): PropertyAssignment {
     return node.modifiers !== modifiers || node.name !== name || node.postfixToken !== postfixToken || node.type !== type || node.initializer !== initializer ? createPropertyAssignment(modifiers, name, postfixToken, type, initializer) : node;
-}
-
-export function updateDeleteExpression(node: DeleteExpression, expression: Expression): DeleteExpression {
-    return node.expression !== expression ? createDeleteExpression(expression) : node;
-}
-
-export function updateVoidExpression(node: VoidExpression, expression: Expression): VoidExpression {
-    return node.expression !== expression ? createVoidExpression(expression) : node;
 }
 
 export function updateTypeAssertion(node: TypeAssertion, type: TypeNode, expression: Expression): TypeAssertion {

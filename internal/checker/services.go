@@ -631,8 +631,6 @@ func (c *Checker) getUninstantiatedSignatures(node *ast.Node) []*Signature {
 			return nil
 		}
 		return c.getSignaturesOfType(c.getTypeOfExpression(node.TagName()), SignatureKindCall)
-	case ast.KindTaggedTemplateExpression:
-		return c.getSignaturesOfType(c.getTypeOfExpression(node.AsTaggedTemplateExpression().Tag), SignatureKindCall)
 	case ast.KindBinaryExpression, ast.KindJsxOpeningFragment:
 		return nil
 	}

@@ -706,8 +706,6 @@ type Checker struct {
 	silentNeverSignature           *Signature
 	cachedArgumentsReferenced      map[*ast.Node]bool
 	anyBaseTypeIndexInfo           *IndexInfo
-	globalObjectType               *Type
-	globalFunctionType             *Type
 	globalArrayType                *Type
 	globalReadonlyArrayType        *Type
 	// luaTableType / luaReadonlyTableType are the synthesized generic targets
@@ -726,7 +724,6 @@ type Checker struct {
 	anyPackType                                 *Type
 	autoArrayType                               *Type
 	anyReadonlyArrayType                        *Type
-	deferredGlobalImportMetaExpressionType      *Type
 	contextualBindingPatterns                   []*ast.Node
 	typeResolutions                             []TypeResolution
 	resolutionStart                             int
@@ -762,14 +759,12 @@ type Checker struct {
 	comparableRelation                          *Relation
 	identityRelation                            *Relation
 	getGlobalESSymbolType                       func() *Type
-	getGlobalImportMetaType                     func() *Type
 	getGlobalNonNullableTypeAliasOrNil          func() *ast.Symbol
 	getGlobalExtractSymbol                      func() *ast.Symbol
 	getGlobalAwaitedSymbol                      func() *ast.Symbol
 	getGlobalAwaitedSymbolOrNil                 func() *ast.Symbol
 	getGlobalNaNSymbolOrNil                     func() *ast.Symbol
 	getGlobalRecordSymbol                       func() *ast.Symbol
-	getGlobalTemplateStringsArrayType           func() *Type
 	getGlobalESSymbolConstructorSymbolOrNil     func() *ast.Symbol
 	getGlobalESSymbolConstructorTypeSymbolOrNil func() *ast.Symbol
 	getGlobalPromiseType                        func() *Type
@@ -835,6 +830,19 @@ type Checker struct {
 
 	mu     sync.Mutex
 	tracer *Tracer // Optional tracer for trace events and type recording (for --generateTrace)
+}
+
+type CallState struct {
+	node                           *ast.Node
+	typeArguments                  []*ast.Node
+	args                           []*ast.Node
+	candidates                     []*Signature
+	argCheckMode                   CheckMode
+	isSingleNonGenericCandidate    bool
+	signatureHelpTrailingComma     bool
+	candidatesForArgumentError     []*Signature
+	candidateForArgumentArityError *Signature
+	candidateForTypeArgumentError  *Signature
 }
 
 func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
@@ -988,14 +996,12 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.comparableRelation = &Relation{}
 	c.identityRelation = &Relation{}
 	c.getGlobalESSymbolType = c.getGlobalTypeResolver("Symbol", 0 /*arity*/, false /*reportErrors*/)
-	c.getGlobalImportMetaType = c.getGlobalTypeResolver("ImportMeta", 0 /*arity*/, true /*reportErrors*/)
 	c.getGlobalNonNullableTypeAliasOrNil = c.getGlobalTypeAliasResolver("NonNullable", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalExtractSymbol = c.getGlobalTypeAliasResolver("Extract", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalAwaitedSymbol = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, true /*reportErrors*/)
 	c.getGlobalAwaitedSymbolOrNil = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalNaNSymbolOrNil = c.getGlobalValueSymbolResolver("NaN", false /*reportErrors*/)
 	c.getGlobalRecordSymbol = c.getGlobalTypeAliasResolver("Record", 2 /*arity*/, true /*reportErrors*/)
-	c.getGlobalTemplateStringsArrayType = c.getGlobalTypeResolver("TemplateStringsArray", 0 /*arity*/, true /*reportErrors*/)
 	c.getGlobalESSymbolConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Symbol", false /*reportErrors*/)
 	c.getGlobalESSymbolConstructorTypeSymbolOrNil = c.getGlobalTypeSymbolResolver("SymbolConstructor", false /*reportErrors*/)
 	c.getGlobalPromiseType = c.getGlobalTypeResolver("Promise", 1 /*arity*/, false /*reportErrors*/)
@@ -1368,13 +1374,6 @@ func (c *Checker) initializeChecker() {
 	c.valueSymbolLinks.Get(c.luaGlobalsSymbol).resolvedType = c.newObjectType(ObjectFlagsAnonymous, c.luaGlobalsSymbol)
 	// Initialize special types
 	c.globalArrayType = c.getGlobalType("Array", 1 /*arity*/, true /*reportErrors*/)
-	// tlua's libs declare no Object or Function globals: a Lua value has no JS prototype
-	// surface. The inherited plumbing still reads these two as identity sentinels (the
-	// instanceof gates via isTypeDerivedFrom), so each is a distinct empty synthetic that
-	// no declaration can name, merge into, or alias. IsEmptyAnonymousObjectType carves
-	// them out by identity, so nothing mistakes them for a plain `{}`.
-	c.globalObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
-	c.globalFunctionType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.globalStringType = c.getGlobalType("String", 0 /*arity*/, true /*reportErrors*/)
 	c.globalNumberType = c.getGlobalType("Number", 0 /*arity*/, true /*reportErrors*/)
 	c.globalBooleanType = c.getGlobalType("Boolean", 0 /*arity*/, true /*reportErrors*/)
@@ -2128,8 +2127,6 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkLabelStatement(node)
 	case ast.KindGotoStatement:
 		c.checkGotoStatement(node)
-	case ast.KindThrowStatement:
-		c.checkThrowStatement(node)
 	case ast.KindVariableDeclaration:
 		c.checkVariableDeclaration(node)
 	case ast.KindBindingElement:
@@ -2141,8 +2138,6 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	case ast.KindModuleDeclaration:
 		c.checkModuleDeclaration(node)
 	case ast.KindEmptyStatement:
-		c.checkGrammarStatementInAmbientContext(node)
-	case ast.KindDebuggerStatement:
 		c.checkGrammarStatementInAmbientContext(node)
 	case ast.KindMissingDeclaration:
 		c.checkMissingDeclaration(node)
@@ -2267,7 +2262,7 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 	c.currentNode = node
 	c.instantiationCount = 0
 	switch node.Kind {
-	case ast.KindCallExpression, ast.KindTaggedTemplateExpression, ast.KindJsxOpeningElement:
+	case ast.KindCallExpression, ast.KindJsxOpeningElement:
 		// These node kinds are deferred checked when overload resolution fails. To save on work,
 		// we ensure the arguments are checked just once in a deferred way.
 		c.resolveUntypedCall(node)
@@ -2281,12 +2276,6 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 		c.checkJsxElementDeferred(node)
 	case ast.KindTypeAssertionExpression, ast.KindAsExpression:
 		c.checkAssertionDeferred(node)
-	case ast.KindVoidExpression:
-		c.checkExpression(node.Expression())
-	case ast.KindBinaryExpression:
-		if ast.IsInstanceOfExpression(node) {
-			c.resolveUntypedCall(node)
-		}
 	}
 	c.currentNode = saveCurrentNode
 }
@@ -2596,8 +2585,6 @@ func (c *Checker) getDeprecatedSuggestionNode(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.getDeprecatedSuggestionNode(node.Expression())
-	case ast.KindTaggedTemplateExpression:
-		return c.getDeprecatedSuggestionNode(node.AsTaggedTemplateExpression().Tag)
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		return c.getDeprecatedSuggestionNode(node.TagName())
 	case ast.KindElementAccessExpression:
@@ -3626,20 +3613,18 @@ func (c *Checker) checkReturnStatement(node *ast.Node) {
 	}
 	container := ast.GetContainingFunction(node)
 	if container == nil {
-		// A chunk returns its module value, so a top-level return is legal as the
-		// file's last statement -- that is the value `require` reports. There is
-		// no annotation to check it against; the module's type is inferred from it.
+		// A chunk return is legal as the final statement of any Lua block. There
+		// is no annotation to check it against; all chunk exits are aggregated to
+		// infer the value `require` reports.
 		file := ast.GetSourceFileOfNode(node)
 		if file != nil && !file.IsDeclarationFile {
-			if statements := file.Statements.Nodes; node.Parent == file.AsNode() && len(statements) != 0 && statements[len(statements)-1] == node {
+			if ast.IsLastStatementInBlock(node) {
 				if node.Expression() != nil {
 					c.checkExpressionCached(node.Expression())
 				}
 				return
 			}
-			// A return nested in a top-level block, or one followed by more
-			// statements, is not the chunk's value.
-			c.grammarErrorOnFirstToken(node, diagnostics.A_top_level_return_must_be_the_last_statement_of_the_chunk)
+			c.grammarErrorOnFirstToken(node, diagnostics.A_top_level_return_must_be_the_last_statement_of_its_block)
 			return
 		}
 		c.grammarErrorOnFirstToken(node, diagnostics.A_return_statement_can_only_be_used_within_a_function_body)
@@ -3653,24 +3638,14 @@ func (c *Checker) checkReturnStatement(node *ast.Node) {
 		exprType = c.checkExpressionCached(exprNode)
 	}
 	if c.getReturnTypeFromAnnotation(container) != nil {
-		c.checkReturnExpression(container, returnType, node, node.Expression(), exprType, false)
+		c.checkReturnExpression(container, returnType, node, node.Expression(), exprType)
 	}
 }
 
 // When checking an arrow expression such as `(x) => exp`, then `node` is the expression `exp`.
 // Otherwise, `node` is a return statement.
-func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType *Type, node *ast.Node, expr *ast.Node, exprType *Type, inConditionalExpression bool) {
+func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType *Type, node *ast.Node, expr *ast.Node, exprType *Type) {
 	unwrappedExprType := exprType
-	if expr != nil {
-		unwrappedExpr := ast.SkipParentheses(expr)
-		if ast.IsConditionalExpression(unwrappedExpr) {
-			whenTrue := unwrappedExpr.AsConditionalExpression().WhenTrue
-			whenFalse := unwrappedExpr.AsConditionalExpression().WhenFalse
-			c.checkReturnExpression(container, unwrappedReturnType, node, whenTrue, c.checkExpression(whenTrue), true /*inConditionalExpression*/)
-			c.checkReturnExpression(container, unwrappedReturnType, node, whenFalse, c.checkExpression(whenFalse), true /*inConditionalExpression*/)
-			return
-		}
-	}
 	inReturnStatement := node.Kind == ast.KindReturnStatement
 	// When the declared return type is a multi-value pack, lift the returned
 	// value list to a pack so the tuple relation checks value counts:
@@ -3706,7 +3681,7 @@ func (c *Checker) checkReturnExpression(container *ast.Node, unwrappedReturnType
 	if expr != nil {
 		effectiveExpr = c.getEffectiveCheckNode(expr)
 	}
-	errorNode := core.IfElse(inReturnStatement && !inConditionalExpression, node, effectiveExpr)
+	errorNode := core.IfElse(inReturnStatement, node, effectiveExpr)
 	c.checkTypeAssignableToAndOptionallyElaborate(unwrappedExprType, unwrappedReturnType, errorNode, effectiveExpr, nil, nil)
 }
 
@@ -3742,16 +3717,6 @@ func (c *Checker) checkLabelStatement(node *ast.Node) {
 
 func (c *Checker) checkGotoStatement(node *ast.Node) {
 	c.checkGrammarGotoStatement(node)
-}
-
-func (c *Checker) checkThrowStatement(node *ast.Node) {
-	throwExpr := node.Expression()
-	if !c.checkGrammarStatementInAmbientContext(node) {
-		if ast.IsIdentifier(throwExpr) && len(throwExpr.Text()) == 0 {
-			c.grammarErrorAtPos(node, throwExpr.Pos(), 0 /*length*/, diagnostics.Line_break_not_permitted_here)
-		}
-	}
-	c.checkExpression(throwExpr)
 }
 
 func (c *Checker) checkBindingElement(node *ast.Node) {
@@ -5929,8 +5894,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkIndexedAccess(node, checkMode)
 	case ast.KindCallExpression:
 		return c.checkCallExpression(node, checkMode)
-	case ast.KindTaggedTemplateExpression:
-		return c.checkTaggedTemplateExpression(node)
 	case ast.KindParenthesizedExpression:
 		return c.checkParenthesizedExpression(node, checkMode)
 	case ast.KindFunctionExpression, ast.KindArrowFunction:
@@ -5943,16 +5906,10 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.checkExpressionWithTypeArguments(node)
 	case ast.KindSatisfiesExpression:
 		return c.checkSatisfiesExpression(node)
-	case ast.KindDeleteExpression:
-		return c.checkDeleteExpression(node)
-	case ast.KindVoidExpression:
-		return c.checkVoidExpression(node)
 	case ast.KindPrefixUnaryExpression:
 		return c.checkPrefixUnaryExpression(node)
 	case ast.KindBinaryExpression:
 		return c.checkBinaryExpression(node, checkMode)
-	case ast.KindConditionalExpression:
-		return c.checkConditionalExpression(node, checkMode)
 	case ast.KindExpressionList:
 		return c.checkExpressionList(node, checkMode)
 	case ast.KindVarargExpression:
@@ -6017,10 +5974,7 @@ func (c *Checker) checkTemplateExpression(node *ast.Node) *Type {
 		texts[i+1] = span.AsTemplateSpan().Literal.Text()
 		types[i] = core.IfElse(c.isTypeAssignableTo(t, c.templateConstraintType), t, c.stringType)
 	}
-	var evaluated any
-	if !ast.IsTaggedTemplateExpression(node.Parent) {
-		evaluated = c.evaluate(node, node)
-	}
+	evaluated := c.evaluate(node, node)
 	if evaluated != nil {
 		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(evaluated.(string)))
 	}
@@ -6152,7 +6106,6 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 		accessFlags = AccessFlagsExpressionPosition
 	} else {
 		accessFlags = AccessFlagsWriting |
-			core.IfElse(assignmentTargetKind == AssignmentKindCompound, AccessFlagsExpressionPosition, 0) |
 			core.IfElse(c.isGenericObjectType(objectType) && !isSelfTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
 	}
 	indexedAccessType := core.OrElse(c.getIndexedAccessTypeOrUndefined(objectType, effectiveIndexType, accessFlags, node, nil), c.errorType)
@@ -6286,12 +6239,11 @@ func (c *Checker) checkAsyncCallContext(node *ast.Node, signature *Signature) {
 		return
 	}
 	switch node.Kind {
-	case ast.KindCallExpression, ast.KindTaggedTemplateExpression,
+	case ast.KindCallExpression,
 		ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		// these syntactically invoke the resolved signature
 	default:
-		// new expressions resolve a construct signature; instanceof and JSX
-		// fragments do not invoke the signature at all.
+		// A JSX fragment does not invoke the signature at all.
 		return
 	}
 	container := ast.GetContainingFunction(node)
@@ -6393,12 +6345,8 @@ func (c *Checker) resolveSignature(node *ast.Node, candidatesOutArray *[]*Signat
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.resolveCallExpression(node, candidatesOutArray, checkMode)
-	case ast.KindTaggedTemplateExpression:
-		return c.resolveTaggedTemplateExpression(node, candidatesOutArray, checkMode)
 	case ast.KindJsxOpeningFragment, ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		return c.resolveJsxOpeningLikeElement(node, candidatesOutArray, checkMode)
-	case ast.KindBinaryExpression:
-		return c.resolveInstanceofExpression(node, candidatesOutArray, checkMode)
 	}
 	panic("Unhandled case in resolveSignature")
 }
@@ -6497,87 +6445,15 @@ func someSignature(signatures []*Signature, f func(s *Signature) bool) bool {
 	return false
 }
 
-func (c *Checker) resolveTaggedTemplateExpression(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
-	tag := node.AsTaggedTemplateExpression().Tag
-	tagType := c.checkExpression(tag)
-	apparentType := c.getApparentType(tagType)
-	if c.isErrorType(apparentType) {
-		// Another error has already been reported
-		return c.resolveErrorCall(node)
-	}
-	callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
-	numConstructSignatures := len(c.getSignaturesOfType(apparentType, SignatureKindConstruct))
-	if c.isUntypedFunctionCall(tagType, apparentType, len(callSignatures), numConstructSignatures) {
-		return c.resolveUntypedCall(node)
-	}
-	if len(callSignatures) == 0 {
-		if ast.IsArrayLiteralExpression(node.Parent) {
-			c.error(tag, diagnostics.It_is_likely_that_you_are_missing_a_comma_to_separate_these_two_template_expressions_They_form_a_tagged_template_expression_which_cannot_be_invoked)
-			return c.resolveErrorCall(node)
-		}
-		c.invocationError(tag, apparentType, SignatureKindCall, nil)
-		return c.resolveErrorCall(node)
-	}
-	return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
-}
-
-func (c *Checker) resolveInstanceofExpression(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
-	// if rightType is an object type with a custom `[Symbol.hasInstance]` method, then it is potentially
-	// valid on the right-hand side of the `instanceof` operator. This allows normal `object` types to
-	// participate in `instanceof`, as per Step 2 of https://tc39.es/ecma262/#sec-instanceofoperator.
-	right := node.AsBinaryExpression().Right
-	rightType := c.checkExpression(right)
-	if !IsTypeAny(rightType) {
-		hasInstanceMethodType := c.getSymbolHasInstanceMethodOfObjectType(rightType)
-		if hasInstanceMethodType != nil {
-			apparentType := c.getApparentType(hasInstanceMethodType)
-			if c.isErrorType(apparentType) {
-				return c.resolveErrorCall(node)
-			}
-			callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
-			constructSignatures := c.getSignaturesOfType(apparentType, SignatureKindConstruct)
-			if c.isUntypedFunctionCall(hasInstanceMethodType, apparentType, len(callSignatures), len(constructSignatures)) {
-				return c.resolveUntypedCall(node)
-			}
-			if len(callSignatures) != 0 {
-				return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
-			}
-		} else if !(c.typeHasCallOrConstructSignatures(rightType) || c.isTypeDerivedFrom(rightType, c.globalFunctionType)) {
-			// isTypeDerivedFrom (not a structural subtype check, which the empty sentinel
-			// would make vacuous) so a non-callable right-hand side is still an error,
-			// while unions, intersections and constrained type parameters distribute.
-			c.error(right, diagnostics.The_right_hand_side_of_an_instanceof_expression_must_be_either_of_type_any_a_class_function_or_other_type_assignable_to_the_Function_interface_type_or_an_object_type_with_a_Symbol_hasInstance_method)
-			return c.resolveErrorCall(node)
-		}
-	}
-	// fall back to a default signature
-	return c.anySignature
-}
-
-type CallState struct {
-	node                           *ast.Node
-	typeArguments                  []*ast.Node
-	args                           []*ast.Node
-	candidates                     []*Signature
-	argCheckMode                   CheckMode
-	isSingleNonGenericCandidate    bool
-	signatureHelpTrailingComma     bool
-	candidatesForArgumentError     []*Signature
-	candidateForArgumentArityError *Signature
-	candidateForTypeArgumentError  *Signature
-}
-
 func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidatesOutArray *[]*Signature, checkMode CheckMode, callChainFlags SignatureFlags, headMessage *diagnostics.Message) *Signature {
-	isTaggedTemplate := node.Kind == ast.KindTaggedTemplateExpression
 	isJsxOpeningOrSelfClosingElement := ast.IsJsxOpeningLikeElement(node)
-	isInstanceof := node.Kind == ast.KindBinaryExpression
 	reportErrors := !c.isInferencePartiallyBlocked && candidatesOutArray == nil
 	var s CallState
 	s.node = node
-	if !isInstanceof && !isSuperCall(node) && !ast.IsJsxOpeningFragment(node) {
+	if !isSuperCall(node) && !ast.IsJsxOpeningFragment(node) {
 		s.typeArguments = node.TypeArguments()
 		// We already perform checking on the type arguments on the class declaration itself.
-		if isTaggedTemplate || isJsxOpeningOrSelfClosingElement || node.Expression().Kind != ast.KindSuperKeyword {
+		if isJsxOpeningOrSelfClosingElement || node.Expression().Kind != ast.KindSuperKeyword {
 			c.checkSourceElements(s.typeArguments)
 		}
 	}
@@ -6666,12 +6542,6 @@ func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidate
 	// If candidate is undefined, it means that no candidates had a suitable arity. In that case,
 	// skip the checkApplicableSignature check.
 	if reportErrors {
-		// If the call expression is a synthetic call to a `[Symbol.hasInstance]` method then we will produce a head
-		// message when reporting diagnostics that explains how we got to `right[Symbol.hasInstance](left)` from
-		// `left instanceof right`, as it pertains to "Argument" related messages reported for the call.
-		if headMessage == nil && isInstanceof {
-			headMessage = diagnostics.The_left_hand_side_of_an_instanceof_expression_must_be_assignable_to_the_first_argument_of_the_right_hand_side_s_Symbol_hasInstance_method
-		}
 		c.reportCallResolutionErrors(node, &s, signatures, headMessage)
 	}
 	return result
@@ -6837,21 +6707,6 @@ func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *S
 	effectiveParameterCount := c.getParameterCount(signature)
 	effectiveMinimumArguments := c.getMinArgumentCount(signature)
 	switch {
-	case ast.IsTaggedTemplateExpression(node):
-		argCount = len(args)
-		template := node.AsTaggedTemplateExpression().Template
-		if ast.IsTemplateExpression(template) {
-			// If a tagged template expression lacks a tail literal, the call is incomplete.
-			// Specifically, a template only can end in a TemplateTail or a Missing literal.
-			lastSpan := core.LastOrNil(template.AsTemplateExpression().TemplateSpans.Nodes)
-			// we should always have at least one span.
-			callIsIncomplete = ast.NodeIsMissing(lastSpan.AsTemplateSpan().Literal) || ast.IsUnterminatedLiteral(lastSpan.AsTemplateSpan().Literal)
-		} else {
-			// If the template didn't end in a backtick, or its beginning occurred right prior to EOF,
-			// then this might actually turn out to be a TemplateHead in the future;
-			// so we consider the call to be incomplete.
-			callIsIncomplete = ast.IsUnterminatedLiteral(template)
-		}
 	case ast.IsBinaryExpression(node):
 		argCount = 1
 	case ast.IsJsxOpeningLikeElement(node):
@@ -7078,8 +6933,6 @@ func (c *Checker) getThisArgumentOfCall(node *ast.Node) *ast.Node {
 	switch {
 	case ast.IsCallExpression(node):
 		expression = node.Expression()
-	case ast.IsTaggedTemplateExpression(node):
-		expression = node.AsTaggedTemplateExpression().Tag
 	}
 	if expression != nil {
 		callee := ast.SkipOuterExpressions(expression, ast.OEKAll)
@@ -7634,8 +7487,6 @@ func (c *Checker) resolveUntypedCall(node *ast.Node) *Signature {
 		c.checkSourceElements(node.TypeArguments())
 	}
 	switch node.Kind {
-	case ast.KindTaggedTemplateExpression:
-		c.checkExpression(node.AsTaggedTemplateExpression().Template)
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		c.checkExpression(node.Attributes())
 	case ast.KindBinaryExpression:
@@ -7756,15 +7607,6 @@ func (c *Checker) skippedGenericFunction(node *ast.Node, checkMode CheckMode) {
 	}
 }
 
-func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
-	if !c.checkGrammarTaggedTemplateChain(node.AsTaggedTemplateExpression()) {
-		c.checkGrammarTypeArguments(node, node.TypeArgumentList())
-	}
-	signature := c.getResolvedSignature(node, nil, CheckModeNormal)
-	c.checkDeprecatedSignature(signature, node)
-	return c.getReturnTypeOfSignature(signature)
-}
-
 func (c *Checker) checkParenthesizedExpression(node *ast.Node, checkMode CheckMode) *Type {
 	expression := node.Expression()
 	scalar := c.checkExpressionEx(expression, checkMode)
@@ -7883,7 +7725,7 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethodDeferred(node *ast
 			// return type directly (async returns its plain type in tlua).
 			exprType := c.checkExpression(body)
 			if returnType != nil {
-				c.checkReturnExpression(node, returnType, body, body, exprType, false)
+				c.checkReturnExpression(node, returnType, body, body, exprType)
 			}
 		}
 	}
@@ -8231,12 +8073,6 @@ func (c *Checker) checkNonNullChain(node *ast.Node) *Type {
 func (c *Checker) checkExpressionWithTypeArguments(node *ast.Node) *Type {
 	c.checkGrammarExpressionWithTypeArguments(node)
 	c.checkSourceElements(node.TypeArguments())
-	if ast.IsExpressionWithTypeArguments(node) {
-		parent := ast.WalkUpParenthesizedExpressions(node.Parent)
-		if ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindInstanceOfKeyword && isNodeDescendantOf(node, parent.AsBinaryExpression().Right) {
-			c.error(node, diagnostics.The_right_hand_side_of_an_instanceof_expression_must_not_be_an_instantiation_expression)
-		}
-	}
 	var exprType *Type
 	if ast.IsExpressionWithTypeArguments(node) {
 		exprType = c.checkExpression(node.Expression())
@@ -8341,27 +8177,6 @@ func (c *Checker) checkSatisfiesExpression(node *ast.Node) *Type {
 	return exprType
 }
 
-func (c *Checker) checkDeleteExpression(node *ast.Node) *Type {
-	c.checkExpression(node.Expression())
-	expr := ast.SkipParentheses(node.Expression())
-	if !ast.IsAccessExpression(expr) {
-		c.error(expr, diagnostics.The_operand_of_a_delete_operator_must_be_a_property_reference)
-		return c.booleanType
-	}
-	if ast.IsPropertyAccessExpression(expr) && ast.IsPrivateIdentifier(expr.Name()) {
-		c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_private_identifier)
-	}
-	symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbolOrNil(expr))
-	if symbol != nil {
-		if c.isReadonlySymbol(symbol) {
-			c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_read_only_property)
-		} else {
-			c.checkDeleteExpressionMustBeOptional(expr, symbol)
-		}
-	}
-	return c.booleanType
-}
-
 func (c *Checker) checkDeleteExpressionMustBeOptional(expr *ast.Node, symbol *ast.Symbol) {
 	t := c.getTypeOfSymbol(symbol)
 	if t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsNever) == 0 {
@@ -8375,11 +8190,6 @@ func (c *Checker) checkDeleteExpressionMustBeOptional(expr *ast.Node, symbol *as
 			c.error(expr, diagnostics.The_operand_of_a_delete_operator_must_be_optional)
 		}
 	}
-}
-
-func (c *Checker) checkVoidExpression(node *ast.Node) *Type {
-	c.checkNodeDeferred(node)
-	return c.nilWideningType
 }
 
 func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
@@ -8464,15 +8274,6 @@ func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
 func (c *Checker) getUnaryResultType(operandType *Type) *Type {
 	// tlua has one numeric type: unary arithmetic always yields number.
 	return c.numberType
-}
-
-func (c *Checker) checkConditionalExpression(node *ast.Node, checkMode CheckMode) *Type {
-	cond := node.AsConditionalExpression()
-	t := c.checkTruthinessExpression(cond.Condition, checkMode)
-	c.checkTestingKnownTruthyCallableOrAwaitableType(cond.Condition, t, cond.WhenTrue)
-	type1 := c.checkExpressionEx(cond.WhenTrue, checkMode)
-	type2 := c.checkExpressionEx(cond.WhenFalse, checkMode)
-	return c.getUnionTypeEx([]*Type{type1, type2}, UnionReductionSubtype, nil, nil)
 }
 
 func (c *Checker) checkTruthinessExpression(node *ast.Node, checkMode CheckMode) *Type {
@@ -8787,7 +8588,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 			}
 			return c.errorType
 		}
-		if indexInfo.isReadonly && (ast.IsAssignmentTarget(node) || isDeleteTarget(node)) {
+		if indexInfo.isReadonly && ast.IsAssignmentTarget(node) {
 			c.error(node, diagnostics.Index_signature_in_type_0_only_permits_reading, c.TypeToString(apparentType))
 		}
 		propType = c.getIndexSignatureWriteType(indexInfo.valueType, node)
@@ -9208,18 +9009,16 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		}
 	}
 	switch operator {
-	case ast.KindAsteriskToken, ast.KindAsteriskAsteriskToken, ast.KindAsteriskEqualsToken,
-		ast.KindSlashToken, ast.KindSlashEqualsToken, ast.KindPercentToken, ast.KindPercentEqualsToken, ast.KindMinusToken,
-		ast.KindMinusEqualsToken:
+	case ast.KindAsteriskToken, ast.KindAsteriskAsteriskToken,
+		ast.KindSlashToken, ast.KindPercentToken, ast.KindMinusToken:
 		if leftType == c.silentNeverType || rightType == c.silentNeverType {
 			return c.silentNeverType
 		}
 		leftType = c.checkNonNullType(leftType, left)
 		rightType = c.checkNonNullType(rightType, right)
-		// A paired operand's arithmetic metamethod answers the operation before any numeric
-		// requirement applies; a compound assignment then checks the result back into the target.
+		// A paired operand's arithmetic metamethod answers the operation before any
+		// numeric requirement applies.
 		if resultType := c.checkLuaBinaryMetamethod(operator, left, right, leftType, rightType); resultType != nil {
-			c.checkAssignmentOperator(left, operator, right, leftType, resultType)
 			return resultType
 		}
 		// Check each operand separately and report errors as normal.
@@ -9227,12 +9026,10 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		rightOk := c.checkArithmeticOperandType(right, rightType, diagnostics.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type_any_or_number)
 		// tlua has one numeric type: a well-typed arithmetic operation yields
 		// number (mixed non-numeric operands are already reported by the operand checks).
-		resultType := c.numberType
-		if leftOk && rightOk {
-			c.checkAssignmentOperator(left, operator, right, leftType, resultType)
-		}
-		return resultType
-	case ast.KindPlusToken, ast.KindPlusEqualsToken:
+		_ = leftOk
+		_ = rightOk
+		return c.numberType
+	case ast.KindPlusToken:
 		if leftType == c.silentNeverType || rightType == c.silentNeverType {
 			return c.silentNeverType
 		}
@@ -9277,9 +9074,6 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			})
 			return c.anyType
 		}
-		if operator == ast.KindPlusEqualsToken {
-			c.checkAssignmentOperator(left, operator, right, leftType, resultType)
-		}
 		return resultType
 	case ast.KindLessThanToken, ast.KindGreaterThanToken, ast.KindLessThanEqualsToken, ast.KindGreaterThanEqualsToken:
 		if c.checkForDisallowedESSymbolOperand(left, right, leftType, rightType, operator) {
@@ -9319,27 +9113,19 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			})
 		}
 		return c.booleanType
-	case ast.KindInstanceOfKeyword:
-		return c.checkInstanceOfExpression(left, right, leftType, rightType, checkMode)
 	case ast.KindInKeyword:
 		return c.checkInExpression(left, right, leftType, rightType)
-	case ast.KindAmpersandAmpersandToken, ast.KindAmpersandAmpersandEqualsToken:
+	case ast.KindAmpersandAmpersandToken:
 		resultType := leftType
 		if c.hasTypeFacts(leftType, TypeFactsTruthy) {
 			t := leftType
 			resultType = c.getUnionType([]*Type{c.extractDefinitelyFalsyTypes(t), rightType})
 		}
-		if operator == ast.KindAmpersandAmpersandEqualsToken {
-			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
-		}
 		return resultType
-	case ast.KindBarBarToken, ast.KindBarBarEqualsToken:
+	case ast.KindBarBarToken:
 		resultType := leftType
 		if c.hasTypeFacts(leftType, TypeFactsFalsy) {
 			resultType = c.getUnionTypeEx([]*Type{c.GetNonNullableType(c.removeDefinitelyFalsyTypes(leftType)), rightType}, UnionReductionSubtype, nil, nil)
-		}
-		if operator == ast.KindBarBarEqualsToken {
-			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
 		}
 		return resultType
 	case ast.KindEqualsToken:
@@ -9425,10 +9211,6 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, rig
 			if symbol := c.symbolNodeLinks.Get(left).resolvedSymbol; symbol != nil && len(symbol.Declarations) > 1 && rightType.flags&TypeFlagsNil != 0 {
 				return
 			}
-		}
-		// getters can be a subtype of setters, so to check for assignability we use the setter's type instead
-		if ast.IsCompoundAssignment(operator) && ast.IsPropertyAccessExpression(left) {
-			leftType = c.checkPropertyAccessExpression(left, CheckModeNormal, true /*writeOnly*/)
 		}
 		if c.checkAssignmentReference(left) {
 			var headMessage *diagnostics.Message
@@ -9550,10 +9332,8 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 		// is reported like any other always-truthy expression.
 		ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral:
 		return PredicateSemanticsAlways
-	case ast.KindVoidExpression, ast.KindNilKeyword:
+	case ast.KindNilKeyword:
 		return PredicateSemanticsNever
-	case ast.KindConditionalExpression:
-		return c.getSyntacticTruthySemantics(node.AsConditionalExpression().WhenTrue) | c.getSyntacticTruthySemantics(node.AsConditionalExpression().WhenFalse)
 	case ast.KindIdentifier:
 		if c.getResolvedSymbol(node) == c.nilSymbol {
 			return PredicateSemanticsNever
@@ -9573,14 +9353,12 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 func (c *Checker) isSideEffectFree(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
 	switch node.Kind {
-	case ast.KindIdentifier, ast.KindStringLiteral, ast.KindRegularExpressionLiteral, ast.KindTaggedTemplateExpression, ast.KindTemplateExpression,
+	case ast.KindIdentifier, ast.KindStringLiteral, ast.KindRegularExpressionLiteral, ast.KindTemplateExpression,
 		ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindTrueKeyword, ast.KindFalseKeyword,
 		ast.KindNilKeyword, ast.KindFunctionExpression, ast.KindArrowFunction,
 		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindNonNullExpression, ast.KindJsxSelfClosingElement,
 		ast.KindJsxElement:
 		return true
-	case ast.KindConditionalExpression:
-		return c.isSideEffectFree(node.AsConditionalExpression().WhenTrue) && c.isSideEffectFree(node.AsConditionalExpression().WhenFalse)
 	case ast.KindBinaryExpression:
 		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) {
 			return false
@@ -9602,38 +9380,7 @@ func (c *Checker) isIndirectCall(node *ast.Node) bool {
 	left := node.AsBinaryExpression().Left
 	right := node.AsBinaryExpression().Right
 	return ast.IsParenthesizedExpression(node.Parent) && ast.IsNumericLiteral(left) && left.Text() == "0" &&
-		(ast.IsCallExpression(node.Parent.Parent) && node.Parent.Parent.Expression() == node.Parent ||
-			ast.IsTaggedTemplateExpression(node.Parent.Parent)) && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval")
-}
-
-func (c *Checker) checkInstanceOfExpression(left *ast.Expression, right *ast.Expression, leftType *Type, rightType *Type, checkMode CheckMode) *Type {
-	if leftType == c.silentNeverType || rightType == c.silentNeverType {
-		return c.silentNeverType
-	}
-	// TypeScript 1.0 spec (April 2014): 4.15.4
-	// The instanceof operator requires the left operand to be of type Any, an object type, or a type parameter type,
-	// and the right operand to be of type Any, a subtype of the 'Function' interface type, or have a call or construct signature.
-	// The result is always of the Boolean primitive type.
-	// NOTE: do not raise error if leftType is unknown as related error was already reported
-	if !IsTypeAny(leftType) && c.allTypesAssignableToKind(leftType, TypeFlagsPrimitive) {
-		c.error(left, diagnostics.The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter)
-	}
-	signature := c.getResolvedSignature(left.Parent, nil /*candidatesOutArray*/, checkMode)
-	if signature == c.resolvingSignature {
-		// CheckMode.SkipGenericFunctions is enabled and this is a call to a generic function that
-		// returns a function type. We defer checking and return silentNeverType.
-		return c.silentNeverType
-	}
-	// If rightType has a `[Symbol.hasInstance]` method that is not `(value: unknown) => boolean`, we
-	// must check the expression as if it were a call to `right[Symbol.hasInstance](left)`. The call to
-	// `getResolvedSignature`, below, will check that leftType is assignable to the type of the first
-	// parameter.
-	returnType := c.getReturnTypeOfSignature(signature)
-	// We also verify that the return type of the `[Symbol.hasInstance]` method is assignable to
-	// `boolean`. According to the spec, the runtime will actually perform `ToBoolean` on the result,
-	// but this is more type-safe.
-	c.checkTypeAssignableTo(returnType, c.booleanType, right, diagnostics.An_object_s_Symbol_hasInstance_method_must_return_a_boolean_value_for_it_to_be_used_on_the_right_hand_side_of_an_instanceof_expression)
-	return c.booleanType
+		ast.IsCallExpression(node.Parent.Parent) && node.Parent.Parent.Expression() == node.Parent && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval")
 }
 
 func (c *Checker) checkInExpression(left *ast.Expression, right *ast.Expression, leftType *Type, rightType *Type) *Type {
@@ -12168,8 +11915,8 @@ func (c *Checker) getTargetOfAliasDeclaration(node *ast.Node) *ast.Symbol {
 	case ast.KindBindingElement:
 		return c.getTargetOfImportSpecifier(node)
 	case ast.KindReturnStatement:
-		// A chunk's top-level return declares the module export, so `return M`
-		// aliases M exactly as `export = M` does.
+		// A sole unconditional chunk `return M` aliases M exactly as
+		// `export = M` does. Aggregate return paths use a property symbol.
 		return c.getTargetOfExportAssignment(node)
 	case ast.KindBinaryExpression:
 		return c.getTargetOfBinaryExpression(node)
@@ -13035,9 +12782,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		case ast.KindTableEntry:
 			result = c.checkTableEntry(declaration, CheckModeNormal)
 		case ast.KindReturnStatement:
-			// A chunk's top-level return is its module value. `require` keeps only the
-			// first returned value, so a value list adjusts to one value.
-			result = c.widenTypeForVariableLikeDeclaration(c.adjustMultiReturn(c.checkExpressionCached(declaration.Expression())), declaration, false /*reportErrors*/)
+			result = c.getLuaModuleReturnType(symbol)
 		case ast.KindBinaryExpression, ast.KindCallExpression:
 			result = c.getWidenedTypeForAssignmentDeclaration(symbol)
 		case ast.KindJsxAttribute:
@@ -20574,21 +20319,6 @@ func (c *Checker) createTypeFromGenericGlobalType(genericGlobalType *Type, typeA
 	return c.emptyObjectType
 }
 
-func (c *Checker) getGlobalImportMetaExpressionType() *Type {
-	if c.deferredGlobalImportMetaExpressionType == nil {
-		// Create a synthetic type `ImportMetaExpression { meta: MetaProperty }`
-		symbol := c.newSymbol(ast.SymbolFlagsNone, "ImportMetaExpression")
-		importMetaType := c.getGlobalImportMetaType()
-		metaPropertySymbol := c.newSymbolEx(ast.SymbolFlagsProperty, "meta", ast.CheckFlagsReadonly)
-		metaPropertySymbol.Parent = symbol
-		c.valueSymbolLinks.Get(metaPropertySymbol).resolvedType = importMetaType
-		members := createSymbolTable([]*ast.Symbol{metaPropertySymbol})
-		symbol.Members = members
-		c.deferredGlobalImportMetaExpressionType = c.newAnonymousType(symbol, members, nil, nil, nil)
-	}
-	return c.deferredGlobalImportMetaExpressionType
-}
-
 func (c *Checker) createIterableType(iteratedType *Type) *Type {
 	return c.createTypeFromGenericGlobalType(c.getGlobalIterableTypeChecked(), []*Type{iteratedType, c.voidType, c.nilType})
 }
@@ -22757,12 +22487,6 @@ func (c *Checker) filterTypes(types []*Type, predicate func(*Type) bool) {
 }
 
 func (c *Checker) IsEmptyAnonymousObjectType(t *Type) bool {
-	// The Object/Function sentinels are empty anonymous synthetics, but treating them as a
-	// plain `{}` would defeat their identity roles (isTypeDerivedFrom's instanceof gates),
-	// so they are carved out here the way isEmptyResolvedType carves out anyFunctionType.
-	if t == c.globalObjectType || t == c.globalFunctionType {
-		return false
-	}
 	return t.objectFlags&ObjectFlagsAnonymous != 0 && (t.objectFlags&ObjectFlagsMembersResolved != 0 && c.isEmptyResolvedType(t.AsStructuredType()) ||
 		t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsTypeLiteral != 0 && len(c.getMembersOfSymbol(t.symbol)) == 0)
 }
@@ -23583,7 +23307,7 @@ func getIndexNodeForAccessExpression(accessNode *ast.Node) *ast.Node {
 }
 
 func (c *Checker) errorIfWritingToReadonlyIndex(indexInfo *IndexInfo, objectType *Type, accessExpression *ast.Node) {
-	if indexInfo != nil && indexInfo.isReadonly && accessExpression != nil && (ast.IsAssignmentTarget(accessExpression) || isDeleteTarget(accessExpression)) {
+	if indexInfo != nil && indexInfo.isReadonly && accessExpression != nil && ast.IsAssignmentTarget(accessExpression) {
 		c.error(accessExpression, diagnostics.Index_signature_in_type_0_only_permits_reading, c.TypeToString(objectType))
 	}
 }
@@ -25328,10 +25052,6 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 			}
 		}
 		return nil
-	case ast.KindConditionalExpression:
-		return c.getContextualTypeForConditionalOperand(node, contextFlags)
-	case ast.KindTemplateSpan:
-		return c.getContextualTypeForSubstitutionExpression(parent.Parent, node)
 	case ast.KindParenthesizedExpression:
 		return c.getContextualType(parent, contextFlags)
 	case ast.KindNonNullExpression:
@@ -25611,7 +25331,7 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 		return c.getTypeFromTypeNode(t)
 	}
 	switch binary.OperatorToken.Kind {
-	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken:
+	case ast.KindEqualsToken:
 		// In an assignment expression, the right operand is contextually typed by the type of the left operand
 		// unless it's an assignment declaration.
 		if node == binary.Right {
@@ -25839,44 +25559,11 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 	}, true /*noReductions*/)
 }
 
-// In a contextually typed conditional expression, the true/false expressions are contextually typed by the same type.
-func (c *Checker) getContextualTypeForConditionalOperand(node *ast.Node, contextFlags ContextFlags) *Type {
-	conditional := node.Parent.AsConditionalExpression()
-	if node == conditional.WhenTrue || node == conditional.WhenFalse {
-		return c.getContextualType(node.Parent, contextFlags)
-	}
-	return nil
-}
-
-func (c *Checker) getContextualTypeForSubstitutionExpression(template *ast.Node, substitutionExpression *ast.Node) *Type {
-	if ast.IsTaggedTemplateExpression(template.Parent) {
-		return c.getContextualTypeForArgument(template.Parent, substitutionExpression)
-	}
-	return nil
-}
-
-// Returns the effective arguments for an expression that works like a function invocation.
 func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 	switch {
 	case ast.IsJsxOpeningFragment(node):
 		// This attributes Type does not include a children property yet, the same way a fragment created with <React.Fragment> does not at this stage
 		return []*ast.Node{c.createSyntheticExpression(node, c.emptyFreshJsxObjectType, false, nil)}
-	case ast.IsTaggedTemplateExpression(node):
-		template := node.AsTaggedTemplateExpression().Template
-		firstArg := c.createSyntheticExpression(template, c.getGlobalTemplateStringsArrayType(), false, nil)
-		if !ast.IsTemplateExpression(template) {
-			return []*ast.Node{firstArg}
-		}
-		spans := template.AsTemplateExpression().TemplateSpans.Nodes
-		args := make([]*ast.Node, len(spans)+1)
-		args[0] = firstArg
-		for i, span := range spans {
-			args[i+1] = span.Expression()
-		}
-		return args
-	case ast.IsBinaryExpression(node):
-		// Handles instanceof operator
-		return []*ast.Node{node.AsBinaryExpression().Left}
 	case ast.IsJsxOpeningLikeElement(node):
 		if len(node.Attributes().Properties()) != 0 || (ast.IsJsxOpeningElement(node) && len(node.Parent.Children().Nodes) != 0) {
 			return []*ast.Node{node.Attributes()}
@@ -26406,8 +26093,6 @@ func (c *Checker) isContextSensitive(node *ast.Node) bool {
 		return core.Some(node.Properties(), c.isContextSensitive)
 	case ast.KindArrayLiteralExpression:
 		return core.Some(node.Elements(), c.isContextSensitive)
-	case ast.KindConditionalExpression:
-		return c.isContextSensitive(node.AsConditionalExpression().WhenTrue) || c.isContextSensitive(node.AsConditionalExpression().WhenFalse)
 	case ast.KindBinaryExpression:
 		binary := node.AsBinaryExpression()
 		return binary.OperatorToken.Kind == ast.KindBarBarToken && (c.isContextSensitive(binary.Left) || c.isContextSensitive(binary.Right))
@@ -27049,16 +26734,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 		return nil
 	case ast.KindImportKeyword:
-		return nil
-	case ast.KindInstanceOfKeyword:
-		if ast.IsBinaryExpression(parent) {
-			t := c.getTypeOfExpression(parent.AsBinaryExpression().Right)
-			hasInstanceMethodType := c.getSymbolHasInstanceMethodOfObjectType(t)
-			if hasInstanceMethodType != nil && hasInstanceMethodType.symbol != nil {
-				return hasInstanceMethodType.symbol
-			}
-			return t.symbol
-		}
 		return nil
 	case ast.KindJsxNamespacedName:
 		if ast.IsJsxTagName(node) && isJsxIntrinsicTagName(node) {

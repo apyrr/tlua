@@ -25,9 +25,14 @@ for word in s:gmatch("%a+") do
   local wordType = word;
 end
 
-// The dot spellings write the subject, so they keep refining as before.
+// The dot spelling shifts by the same misdetected subject, so it reads argument 0 --
+// `s`, which is not a literal -- and declines too. Both spellings pin the same thing
+// here: the declared return, arrived at without crashing.
 local dotMatched = s.match(s, "%d");
 
-// And the bundled forms are untouched.
+// A bundled member the merge leaves alone is unaffected.
 local libColon = s:upper();
+
+// `match` is not left alone: two effective arguments fit the merged overload, so this
+// is its declared return rather than a refined pack.
 local libPattern = ("ab"):match("(a)(b)");

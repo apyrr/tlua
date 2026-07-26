@@ -13,9 +13,7 @@ import type {
     CallExpression,
     CallSignatureDeclaration,
     ComputedPropertyName,
-    ConditionalExpression,
     ConditionalTypeNode,
-    DeleteExpression,
     ElementAccessExpression,
     ExportAssignment,
     ExportDeclaration,
@@ -126,12 +124,10 @@ import type {
     SyntheticExpression,
     SyntheticReferenceExpression,
     TableEntry,
-    TaggedTemplateExpression,
     TemplateExpression,
     TemplateLiteralTypeNode,
     TemplateLiteralTypeSpan,
     TemplateSpan,
-    ThrowStatement,
     TupleTypeNode,
     TypeAliasDeclaration,
     TypeAssertion,
@@ -145,7 +141,6 @@ import type {
     VariableDeclaration,
     VariableDeclarationList,
     VariableStatement,
-    VoidExpression,
     WhileStatement,
 } from "./ast.ts";
 import {
@@ -161,9 +156,7 @@ import {
     updateCallExpression,
     updateCallSignatureDeclaration,
     updateComputedPropertyName,
-    updateConditionalExpression,
     updateConditionalTypeNode,
-    updateDeleteExpression,
     updateElementAccessExpression,
     updateExportAssignment,
     updateExportDeclaration,
@@ -270,12 +263,10 @@ import {
     updateSyntheticExpression,
     updateSyntheticReferenceExpression,
     updateTableEntry,
-    updateTaggedTemplateExpression,
     updateTemplateExpression,
     updateTemplateLiteralTypeNode,
     updateTemplateLiteralTypeSpan,
     updateTemplateSpan,
-    updateThrowStatement,
     updateTupleTypeNode,
     updateTypeAliasDeclaration,
     updateTypeAssertion,
@@ -289,7 +280,6 @@ import {
     updateVariableDeclaration,
     updateVariableDeclarationList,
     updateVariableStatement,
-    updateVoidExpression,
     updateWhileStatement,
 } from "./factory.generated.ts";
 import {
@@ -334,7 +324,6 @@ import {
     isQuestionToken,
     isReadonlyKeywordOrPlusOrMinusToken,
     isTemplateHead,
-    isTemplateLiteral,
     isTemplateMiddleOrTail,
     isTypeNode,
     isTypeParameterDeclaration,
@@ -490,10 +479,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.ReturnStatement]: (node: ReturnStatement, visitor: Visitor): ReturnStatement => {
         const _expression = visitNode(node.expression, visitor, isExpression);
         return updateReturnStatement(node, _expression);
-    },
-    [SyntaxKind.ThrowStatement]: (node: ThrowStatement, visitor: Visitor): ThrowStatement => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateThrowStatement(node, _expression);
     },
     [SyntaxKind.LabelStatement]: (node: LabelStatement, visitor: Visitor): LabelStatement => {
         const _label = visitNode(node.label, visitor, isIdentifier);
@@ -696,14 +681,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _elements = visitNodes(node.elements, visitor);
         return updateExpressionList(node, _elements);
     },
-    [SyntaxKind.ConditionalExpression]: (node: ConditionalExpression, visitor: Visitor): ConditionalExpression => {
-        const _condition = visitNode(node.condition, visitor, isExpression);
-        const _questionToken = visitNode(node.questionToken, visitor, isQuestionToken);
-        const _whenTrue = visitNode(node.whenTrue, visitor, isExpression);
-        const _colonToken = visitNode(node.colonToken, visitor, isColonToken);
-        const _whenFalse = visitNode(node.whenFalse, visitor, isExpression);
-        return updateConditionalExpression(node, _condition, _questionToken, _whenTrue, _colonToken, _whenFalse);
-    },
     [SyntaxKind.PropertyAccessExpression]: (node: PropertyAccessExpression, visitor: Visitor): PropertyAccessExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);
         const _questionDotToken = visitNode(node.questionDotToken, visitor, isQuestionDotToken);
@@ -742,13 +719,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _literal = visitNode(node.literal, visitor, isTemplateMiddleOrTail);
         return updateTemplateSpan(node, _expression, _literal);
     },
-    [SyntaxKind.TaggedTemplateExpression]: (node: TaggedTemplateExpression, visitor: Visitor): TaggedTemplateExpression => {
-        const _tag = visitNode(node.tag, visitor, isExpression);
-        const _questionDotToken = visitNode(node.questionDotToken, visitor, isQuestionDotToken);
-        const _typeArguments = visitNodes(node.typeArguments, visitor);
-        const _template = visitNode(node.template, visitor, isTemplateLiteral);
-        return updateTaggedTemplateExpression(node, _tag, _questionDotToken, _typeArguments, _template);
-    },
     [SyntaxKind.ParenthesizedExpression]: (node: ParenthesizedExpression, visitor: Visitor): ParenthesizedExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);
         return updateParenthesizedExpression(node, _expression);
@@ -776,14 +746,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _type = visitNode(node.type, visitor, isTypeNode);
         const _initializer = visitNode(node.initializer, visitor, isExpression);
         return updatePropertyAssignment(node, _modifiers, _name, _postfixToken, _type, _initializer);
-    },
-    [SyntaxKind.DeleteExpression]: (node: DeleteExpression, visitor: Visitor): DeleteExpression => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateDeleteExpression(node, _expression);
-    },
-    [SyntaxKind.VoidExpression]: (node: VoidExpression, visitor: Visitor): VoidExpression => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateVoidExpression(node, _expression);
     },
     [SyntaxKind.TypeAssertionExpression]: (node: TypeAssertion, visitor: Visitor): TypeAssertion => {
         const _type = visitNode(node.type, visitor, isTypeNode);

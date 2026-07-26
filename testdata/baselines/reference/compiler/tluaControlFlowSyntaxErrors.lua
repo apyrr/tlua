@@ -43,7 +43,7 @@ local ;
 function ()
   repeat
     ();
-    void ;
+    ;
   until ;
 end
 -- Missing `then`.

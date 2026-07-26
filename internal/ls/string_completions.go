@@ -462,7 +462,6 @@ func fromUnionableLiteralType(
 		ast.KindExpressionWithTypeArguments,
 		ast.KindJsxOpeningElement,
 		ast.KindJsxSelfClosingElement,
-		ast.KindTaggedTemplateExpression,
 		ast.KindTypeReference:
 		typeArgument := ast.FindAncestor(parent, func(n *ast.Node) bool { return n.Parent == grandparent })
 		if typeArgument != nil {

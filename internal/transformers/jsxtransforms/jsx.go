@@ -474,9 +474,10 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementOrFragmentJSX(
 	if tx.compilerOptions.Jsx == core.JsxEmitReactJSXDev {
 		originalFile := tx.EmitContext().MostOriginal(tx.currentSourceFile.AsNode())
 		if originalFile != nil && ast.IsSourceFile(originalFile) {
-			// "maybeKey" has to be replaced with "void 0" to not break the jsxDEV signature
+			// "maybeKey" has to be filled in to not break the jsxDEV signature.
+			// Upstream passes `void 0`; Lua's absent value is `nil`.
 			if keyAttr == nil {
-				args = append(args, tx.Factory().NewVoidZeroExpression())
+				args = append(args, tx.Factory().NewKeywordExpression(ast.KindNilKeyword))
 			}
 			// isStaticChildren development flag
 			if isStaticChildren {

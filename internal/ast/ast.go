@@ -334,10 +334,6 @@ func (n *Node) Expression() *Node {
 		return n.AsSpreadElement().Expression
 	case KindTemplateSpan:
 		return n.AsTemplateSpan().Expression
-	case KindDeleteExpression:
-		return n.AsDeleteExpression().Expression
-	case KindVoidExpression:
-		return n.AsVoidExpression().Expression
 	case KindPartiallyEmittedExpression:
 		return n.AsPartiallyEmittedExpression().Expression
 	case KindIfStatement:
@@ -352,8 +348,6 @@ func (n *Node) Expression() *Node {
 		return n.AsExpressionStatement().Expression
 	case KindReturnStatement:
 		return n.AsReturnStatement().Expression
-	case KindThrowStatement:
-		return n.AsThrowStatement().Expression
 	case KindExternalModuleReference:
 		return n.AsExternalModuleReference().Expression
 	case KindExportAssignment:
@@ -409,10 +403,6 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsSpreadElement().Expression = expr
 	case KindTemplateSpan:
 		n.AsTemplateSpan().Expression = expr
-	case KindDeleteExpression:
-		n.AsDeleteExpression().Expression = expr
-	case KindVoidExpression:
-		n.AsVoidExpression().Expression = expr
 	case KindPartiallyEmittedExpression:
 		n.AsPartiallyEmittedExpression().Expression = expr
 	case KindIfStatement:
@@ -427,8 +417,6 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsExpressionStatement().Expression = expr
 	case KindReturnStatement:
 		n.AsReturnStatement().Expression = expr
-	case KindThrowStatement:
-		n.AsThrowStatement().Expression = expr
 	case KindExternalModuleReference:
 		n.AsExternalModuleReference().Expression = expr
 	case KindExportAssignment:
@@ -462,8 +450,6 @@ func (n *Node) TypeArgumentList() *NodeList {
 	switch n.Kind {
 	case KindCallExpression:
 		return n.AsCallExpression().TypeArguments
-	case KindTaggedTemplateExpression:
-		return n.AsTaggedTemplateExpression().TypeArguments
 	case KindTypeReference:
 		return n.AsTypeReferenceNode().TypeArguments
 	case KindExpressionWithTypeArguments:
@@ -1013,8 +999,6 @@ func (n *Node) QuestionToken() *TokenNode {
 	switch n.Kind {
 	case KindParameter:
 		return n.AsParameterDeclaration().QuestionToken
-	case KindConditionalExpression:
-		return n.AsConditionalExpression().QuestionToken
 	case KindMappedType:
 		return n.AsMappedTypeNode().QuestionToken
 	case KindNamedTupleMember:
@@ -1035,8 +1019,6 @@ func (n *Node) QuestionDotToken() *Node {
 		return n.AsPropertyAccessExpression().QuestionDotToken
 	case KindCallExpression:
 		return n.AsCallExpression().QuestionDotToken
-	case KindTaggedTemplateExpression:
-		return n.AsTaggedTemplateExpression().QuestionDotToken
 	}
 	panic("Unhandled case in Node.QuestionDotToken: " + n.Kind.String())
 }
@@ -1522,8 +1504,6 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsExponentiationOperator
 	case KindQuestionDotToken:
 		return SubtreeContainsOptionalChaining
-	case KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
-		return SubtreeContainsLogicalAssignments
 	}
 	return SubtreeFactsNone
 }
@@ -1841,13 +1821,6 @@ func (node *NonNullExpression) computeSubtreeFacts() SubtreeFacts {
 
 func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsRestOrSpread
-}
-
-func (node *TaggedTemplateExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Tag) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateSubtreeFacts(node.Template)
 }
 
 // Hand-written subtree facts for nontrivial generated nodes.

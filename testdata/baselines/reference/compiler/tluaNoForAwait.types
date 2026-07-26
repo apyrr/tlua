@@ -18,8 +18,10 @@ async function f(xs: number[]): Promise<number>
 >of : any
 >xs : number[]
 
-    total += x;
->total += x : any
+    total = total + x;
+>total = total + x : any
+>total : number
+>total + x : any
 >total : number
 >x : nil
   }

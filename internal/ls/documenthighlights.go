@@ -160,8 +160,6 @@ func (l *LanguageService) getSyntacticDocumentHighlights(node *ast.Node, sourceF
 		return nil
 	case ast.KindReturnKeyword:
 		return l.useParent(node.Parent, ast.IsReturnStatement, getReturnOccurrences, sourceFile)
-	case ast.KindThrowKeyword:
-		return l.useParent(node.Parent, ast.IsThrowStatement, getThrowOccurrences, sourceFile)
 	case ast.KindBreakKeyword, ast.KindContinueKeyword:
 		return l.useParent(node.Parent, ast.IsBreakOrContinueStatement, getBreakOrContinueStatementOccurrences, sourceFile)
 	case ast.KindForKeyword, ast.KindWhileKeyword, ast.KindDoKeyword:
@@ -327,28 +325,8 @@ func getReturnOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Nod
 			}
 			return false // continue traversal
 		})
-
-		// Get all throw statements not in a try block
-		throwStatements := aggregateOwnedThrowStatements(body, sourceFile)
-		for _, throw := range throwStatements {
-			keyword := astnav.FindChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
-			if keyword != nil {
-				keywords = append(keywords, keyword)
-			}
-		}
 	}
 	return keywords
-}
-
-func aggregateOwnedThrowStatements(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	if ast.IsThrowStatement(node) {
-		return []*ast.Node{node}
-	}
-	// Do not cross function boundaries.
-	if ast.IsFunctionLike(node) {
-		return nil
-	}
-	return flatMapChildren(node, sourceFile, aggregateOwnedThrowStatements)
 }
 
 func flatMapChildren[T any](node *ast.Node, sourceFile *ast.SourceFile, cb func(child *ast.Node, sourceFile *ast.SourceFile) []T) []T {
@@ -362,54 +340,6 @@ func flatMapChildren[T any](node *ast.Node, sourceFile *ast.SourceFile, cb func(
 		return false // continue traversal
 	})
 	return result
-}
-
-func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	owner := getThrowStatementOwner(node)
-	if owner == nil {
-		return nil
-	}
-
-	var keywords []*ast.Node
-
-	// Aggregate all throw statements "owned" by this owner.
-	throwStatements := aggregateOwnedThrowStatements(owner, sourceFile)
-	for _, throw := range throwStatements {
-		keyword := astnav.FindChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
-		if keyword != nil {
-			keywords = append(keywords, keyword)
-		}
-	}
-
-	// If the "owner" is a function, then we equate 'return' and 'throw' statements in their
-	// ability to "jump out" of the function, and include occurrences for both
-	if ast.IsFunctionBlock(owner) {
-		ast.ForEachReturnStatement(owner, func(ret *ast.Node) bool {
-			keyword := astnav.FindChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
-			if keyword != nil {
-				keywords = append(keywords, keyword)
-			}
-			return false // continue traversal
-		})
-	}
-
-	return keywords
-}
-
-// For lack of a better name, this function takes a throw statement and returns the
-// nearest ancestor function block or source file.
-func getThrowStatementOwner(throwStatement *ast.Node) *ast.Node {
-	child := throwStatement
-	for child.Parent != nil {
-		parent := child.Parent
-
-		if ast.IsFunctionBlock(parent) || parent.Kind == ast.KindSourceFile {
-			return parent
-		}
-
-		child = parent
-	}
-	return nil
 }
 
 func aggregateAllBreakAndContinueStatements(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {

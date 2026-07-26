@@ -1,0 +1,76 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// @filename: values.tlua
+declare mode: "text" | "number" | "none";
+if mode == "none" then
+  return;
+end
+if mode == "text" then
+  return "done";
+end
+return 1;
+
+// @filename: tables.tlua
+declare chooseA: boolean;
+local A = { a = 1 };
+local B = { b = "two" };
+if chooseA then
+  return A;
+end
+return B;
+
+// @filename: fallthrough.tlua
+declare stop: boolean;
+local result = { stopped = true };
+if stop then
+  return result;
+end
+
+// @filename: nilAndZero.tlua
+declare mode: "nil" | "zero" | "value";
+declare none: () => void;
+if mode == "nil" then
+  return nil;
+end
+if mode == "zero" then
+  return none();
+end
+return "ok";
+
+// @filename: maybeNil.tlua
+declare maybe: () => string | nil;
+return maybe();
+
+// @filename: falseValue.tlua
+declare useNil: boolean;
+if useNil then
+  return nil;
+end
+return false;
+
+// @filename: deadAfterError.tlua
+declare cond: boolean;
+local M = { a = 1 };
+if cond then
+  error("bad");
+  return "never";
+end
+return M;
+
+// @filename: aliasNil.tlua
+declare maybe: string | nil;
+return maybe;
+
+// @filename: main.tlua
+local values = require("values");
+local tables = require("tables");
+local fallthrough = require("fallthrough");
+local nilAndZero = require("nilAndZero");
+local maybeNil = require("maybeNil");
+local falseValue = require("falseValue");
+local dead = require("deadAfterError");
+local deadA = dead.a;
+local aliasNil = require("aliasNil");

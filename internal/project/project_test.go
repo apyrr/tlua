@@ -515,61 +515,6 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected diagnostics to be cleared when validation is disabled")
 	})
 
-	t.Run("publishes global diagnostics after checking", func(t *testing.T) {
-		t.Parallel()
-		// The lualibs do not declare TemplateStringsArray, so a tagged template
-		// triggers a deferred "Cannot find global type 'TemplateStringsArray'"
-		// global diagnostic during checking, which should be accumulated and
-		// published on the tsconfig URI.
-		files := map[string]any{
-			"/src/tluaconfig.json": `{
-				"compilerOptions": {
-					"target": "es2020"
-				}
-			}`,
-			"/src/index.tlua": `declare tag: (...: any) => string;
-local s = tag` + "`hello ${1}`" + `;
-use(s);`,
-		}
-		session, utils := projecttestutil.Setup(files)
-		session.DidOpenFile(context.Background(), "file:///src/index.tlua", 1, files["/src/index.tlua"].(string), lsproto.LanguageKindTypeScript)
-		// Request semantic diagnostics to trigger checking, which triggers the global type resolvers.
-		ls, err := session.GetLanguageService(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.tlua"))
-		assert.NilError(t, err)
-		// Drain background tasks from DidOpenFile (publishProgramDiagnostics, etc.)
-		// before triggering global diagnostics, to avoid racing with publishGlobalDiagnostics.
-		session.WaitForBackgroundTasks()
-
-		_, err = ls.ProvideDiagnostics(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.tlua"))
-		assert.NilError(t, err)
-		// Enqueue global diagnostics publishing (normally done by the LSP server after each request).
-		session.EnqueuePublishGlobalDiagnostics()
-		session.WaitForBackgroundTasks()
-
-		calls := utils.Client().PublishDiagnosticsCalls()
-		// Find the last call for tluaconfig.json
-		var lastTsconfigCall *struct {
-			Ctx    context.Context
-			Params *lsproto.PublishDiagnosticsParams
-		}
-		for i := len(calls) - 1; i >= 0; i-- {
-			if calls[i].Params.Uri == "file:///src/tluaconfig.json" {
-				lastTsconfigCall = &calls[i]
-				break
-			}
-		}
-		assert.Assert(t, lastTsconfigCall != nil, "expected PublishDiagnostics call for tluaconfig.json")
-		// Should have global diagnostics (e.g., Cannot find global type 'Disposable')
-		hasGlobalDiag := false
-		for _, diag := range lastTsconfigCall.Params.Diagnostics {
-			if strings.Contains(diag.Message.AsString(), "Cannot find global") {
-				hasGlobalDiag = true
-				break
-			}
-		}
-		assert.Assert(t, hasGlobalDiag, "expected a 'Cannot find global' diagnostic on tluaconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
-	})
-
 	t.Run("cleans tsconfig diagnostics after TS files close and restores them after TS file is reopened", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{

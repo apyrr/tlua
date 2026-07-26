@@ -7,7 +7,7 @@ import (
 )
 
 // `require("a.b.c")` loads a tlua module by its Lua dotted name: the chunk's
-// top-level return value is what it yields (bindTopLevelReturn declares that
+// possible return values are what it yields (bindTopLevelReturns declares them
 // as the file's export). A dotted name that resolves to no project file keeps
 // the declared overloads in require.d.tlua -- a LuaJIT lib ("bit", "ffi"), a
 // runtime-provided package, a C module -- whose last one returns any. A
@@ -42,7 +42,58 @@ func (c *Checker) checkLuaRequireCall(node *ast.Node) *Type {
 	if resolved == nil {
 		return c.anyType
 	}
-	return c.getTypeOfSymbol(resolved)
+	// Normalizing here rather than in getLuaModuleReturnType covers the
+	// sole-alias fast path too: `return M` resolves to M's own type, which can
+	// include nil even though require never yields it.
+	return c.normalizeLuaRequireResultType(c.getTypeOfSymbol(resolved))
+}
+
+// getLuaModuleReturnType aggregates the first value from every reachable chunk
+// return, nil included: a bare return or a reachable end exits with no value.
+// require's substitution of true for a nil result happens at the call site.
+func (c *Checker) getLuaModuleReturnType(symbol *ast.Symbol) *Type {
+	types := make([]*Type, 0, len(symbol.Declarations)+1)
+	hasNoValueExit := false
+	for _, declaration := range symbol.Declarations {
+		// Unreachable means what it means for the greyed-out editor suggestion:
+		// a return the flow graph cannot reach -- behind a call returning
+		// never, say -- contributes no module value.
+		if !ast.IsReturnStatement(declaration) || c.isSourceElementUnreachable(declaration) {
+			continue
+		}
+		expression := declaration.Expression()
+		if expression == nil {
+			hasNoValueExit = true
+			continue
+		}
+		t := c.adjustMultiReturn(c.checkExpressionCached(expression))
+		types = append(types, c.widenTypeForVariableLikeDeclaration(t, declaration, false /*reportErrors*/))
+	}
+
+	if module := symbol.Parent; module != nil {
+		if file := ast.GetSourceFileOfModule(module); file != nil && file.EndFlowNode != nil && c.isReachableFlowNode(file.EndFlowNode) {
+			hasNoValueExit = true
+		}
+	}
+	if hasNoValueExit {
+		types = append(types, c.nilType)
+	}
+	if len(types) == 0 {
+		return c.nilType
+	}
+	return c.getUnionType(types)
+}
+
+// normalizeLuaRequireResultType applies require's loader-result rule to a
+// module's return type. A nil first value and zero values (void) both cause
+// require to store and return true; false remains an ordinary loader result.
+func (c *Checker) normalizeLuaRequireResultType(t *Type) *Type {
+	return c.mapType(t, func(arm *Type) *Type {
+		if arm.flags&(TypeFlagsNil|TypeFlagsVoid) != 0 {
+			return c.trueType
+		}
+		return arm
+	})
 }
 
 // isLuaRequireReference reports whether callee is the global require, either

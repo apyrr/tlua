@@ -85,7 +85,8 @@ end
 function raise(): never
 >raise : Symbol(raise, Decl(tluaColonCallEmit.tlua, 25, 3))
 
-  throw T:bump();
+  error(T:bump());
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
 >T:bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))
 >T : Symbol(T, Decl(tluaColonCallEmit.tlua, 0, 5))
 >bump : Symbol(bump, Decl(tluaColonCallEmit.tlua, 0, 20))

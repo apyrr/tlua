@@ -116,10 +116,6 @@
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(for)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
                 {
-                    "name": "keyword.control.flow.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(throw)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
                     "name": "keyword.control.loop.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(break|continue|do|while)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
@@ -170,10 +166,6 @@
                 {
                     "name": "keyword.control.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(package)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
-                    "name": "keyword.other.debugger.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(debugger)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 }
             ]
         },
@@ -207,9 +199,6 @@
                 },
                 {
                     "include": "#cast"
-                },
-                {
-                    "include": "#instanceof-expr"
                 },
                 {
                     "include": "#object-literal"
@@ -2520,20 +2509,6 @@
                 }
             ]
         },
-        "instanceof-expr": {
-            "begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(instanceof)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
-            "beginCaptures": {
-                "1": {
-                    "name": "keyword.operator.expression.instanceof.tlua"
-                }
-            },
-            "end": "(?<=\\))|(?=[;),}\\]:?\\-\\+\\>]|\\|\\||\\&\\&|\\!\\=\\=|$|(===|!==|==|!=)|(([\\&\\~\\^\\|]\\s*)?[_$[:alpha:]][_$[:alnum:]]*\\s+instanceof(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.)))|((?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))function((\\s+[_$[:alpha:]][_$[:alnum:]]*)|(\\s*[\\(]))))",
-            "patterns": [
-                {
-                    "include": "#type"
-                }
-            ]
-        },
         "paren-expression-possibly-arrow": {
             "patterns": [
                 {
@@ -2763,20 +2738,12 @@
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(await)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
                 {
-                    "name": "keyword.operator.expression.delete.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))delete(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
                     "name": "keyword.operator.expression.in.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))in(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))(?!\\()"
                 },
                 {
                     "name": "keyword.operator.expression.of.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))of(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))(?!\\()"
-                },
-                {
-                    "name": "keyword.operator.expression.instanceof.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))instanceof(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 },
                 {
                     "include": "#typeof-operator"

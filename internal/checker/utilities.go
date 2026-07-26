@@ -74,7 +74,6 @@ type AssignmentKind int32
 const (
 	AssignmentKindNone AssignmentKind = iota
 	AssignmentKindDefinite
-	AssignmentKindCompound
 )
 
 type AssignmentTarget = ast.Node // BinaryExpression | ForOfStatement
@@ -86,23 +85,13 @@ func getAssignmentTargetKind(node *ast.Node) AssignmentKind {
 	}
 	switch target.Kind {
 	case ast.KindBinaryExpression:
-		binaryOperator := target.AsBinaryExpression().OperatorToken.Kind
-		if binaryOperator == ast.KindEqualsToken || ast.IsLogicalAssignmentOperator(binaryOperator) {
-			return AssignmentKindDefinite
-		}
-		return AssignmentKindCompound
+		// `=` is the only assignment operator left, so every binary assignment
+		// target is definite.
+		return AssignmentKindDefinite
 	case ast.KindForOfStatement:
 		return AssignmentKindDefinite
 	}
 	panic("Unhandled case in getAssignmentTargetKind")
-}
-
-func isDeleteTarget(node *ast.Node) bool {
-	if !ast.IsAccessExpression(node) {
-		return false
-	}
-	node = ast.WalkUpParenthesizedExpressions(node.Parent)
-	return node != nil && node.Kind == ast.KindDeleteExpression
 }
 
 func isInCompoundLikeAssignment(node *ast.Node) bool {
@@ -707,7 +696,7 @@ func isConcatenationOperatorOrHigher(kind ast.Kind) bool {
 
 func isRelationalOperator(kind ast.Kind) bool {
 	return kind == ast.KindLessThanToken || kind == ast.KindLessThanEqualsToken || kind == ast.KindGreaterThanToken ||
-		kind == ast.KindGreaterThanEqualsToken || kind == ast.KindInstanceOfKeyword || kind == ast.KindInKeyword
+		kind == ast.KindGreaterThanEqualsToken || kind == ast.KindInKeyword
 }
 
 func isRelationalOperatorOrHigher(kind ast.Kind) bool {
@@ -956,7 +945,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return ast.IsCallExpression(node) || ast.IsTaggedTemplateExpression(node) || ast.IsJsxOpeningLikeElement(node)
+	return ast.IsCallExpression(node) || ast.IsJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {
@@ -1029,8 +1018,8 @@ func expressionResultIsUnused(node *ast.Node) bool {
 			node = parent
 			continue
 		}
-		// result is unused in an expression statement or a `void` expression
-		if ast.IsExpressionStatement(parent) || ast.IsVoidExpression(parent) {
+		// result is unused in an expression statement
+		if ast.IsExpressionStatement(parent) {
 			return true
 		}
 		if ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {

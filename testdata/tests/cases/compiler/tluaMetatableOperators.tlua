@@ -30,9 +30,6 @@ local ge: boolean = v >= w;
 local eq: boolean = v == w;         // the no-overlap error is suppressed
 local ne: boolean = v ~= w;
 
-// A compound assignment runs the same metamethod its operator does and checks the result back
-// into the target.
-v += w;
 
 // An operand the metamethod's parameter does not admit is an error.
 local badOperand = v * "s";

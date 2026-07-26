@@ -16,3 +16,10 @@ if flag then
   return 1;
 end
 return 2;
+
+// @filename: nestedInvalid.tlua
+declare flag: boolean;
+if flag then
+  return 1;
+  local after = 2;
+end

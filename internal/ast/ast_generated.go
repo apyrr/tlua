@@ -23,7 +23,6 @@ type NodeFactory struct {
 	binaryExpressionArena             core.Arena[BinaryExpression]
 	blockArena                        core.Arena[Block]
 	callExpressionArena               core.Arena[CallExpression]
-	conditionalExpressionArena        core.Arena[ConditionalExpression]
 	elementAccessExpressionArena      core.Arena[ElementAccessExpression]
 	expressionStatementArena          core.Arena[ExpressionStatement]
 	expressionWithTypeArgumentsArena  core.Arena[ExpressionWithTypeArguments]
@@ -227,8 +226,6 @@ type (
 	BreakStatementNode                = Node
 	ContinueStatementNode             = Node
 	ReturnStatementNode               = Node
-	ThrowStatementNode                = Node
-	DebuggerStatementNode             = Node
 	LabelStatementNode                = Node
 	GotoStatementNode                 = Node
 	ExpressionStatementNode           = Node
@@ -274,7 +271,6 @@ type (
 	SatisfiesExpressionNode           = Node
 	ExpressionListNode                = Node
 	VarargExpressionNode              = Node
-	ConditionalExpressionNode         = Node
 	PropertyAccessExpressionNode      = Node
 	ElementAccessExpressionNode       = Node
 	CallExpressionNode                = Node
@@ -282,15 +278,12 @@ type (
 	SpreadElementNode                 = Node
 	TemplateExpressionNode            = Node
 	TemplateSpanNode                  = Node
-	TaggedTemplateExpressionNode      = Node
 	ParenthesizedExpressionNode       = Node
 	ArrayLiteralExpressionNode        = Node
 	ObjectLiteralExpressionNode       = Node
 	SpreadAssignmentNode              = Node
 	TableEntryNode                    = Node
 	PropertyAssignmentNode            = Node
-	DeleteExpressionNode              = Node
-	VoidExpressionNode                = Node
 	TypeAssertionNode                 = Node
 	KeywordTypeNodeNode               = Node
 	UnionTypeNodeNode                 = Node
@@ -487,7 +480,7 @@ type (
 	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
 	NamedImportsOrExports          = Node // NamedImports | NamedExports
 	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
-	CallLikeExpression             = Node // CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement | BinaryExpression
+	CallLikeExpression             = Node // CallExpression | JsxOpeningLikeElement
 	FunctionLikeDeclaration        = Node // FunctionDeclaration | FunctionExpression | ArrowFunction
 	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
 	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
@@ -532,7 +525,7 @@ func (node *Token) Clone(f NodeFactoryCoercible) *Node {
 
 func IsToken(node *Node) bool {
 	switch node.Kind {
-	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindJsxText, KindJsxTextAllWhiteSpaces, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindInstanceOfKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindThrowKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindAsyncKeyword, KindAwaitKeyword, KindBooleanKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
+	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindJsxText, KindJsxTextAllWhiteSpaces, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDefaultKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindAsyncKeyword, KindAwaitKeyword, KindBooleanKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
 		return true
 	}
 	return false
@@ -1024,70 +1017,6 @@ func (node *ReturnStatement) Clone(f NodeFactoryCoercible) *Node {
 
 func IsReturnStatement(node *Node) bool {
 	return node.Kind == KindReturnStatement
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// ThrowStatement
-// ──────────────────────────────────────────────────────────────────────
-
-type ThrowStatement struct {
-	StatementBase
-	CompositeBase
-	Expression *Expression
-}
-
-func (f *NodeFactory) NewThrowStatement(expression *Expression) *Node {
-	data := &ThrowStatement{}
-	data.Expression = expression
-	return f.newNode(KindThrowStatement, data)
-}
-
-func (f *NodeFactory) UpdateThrowStatement(node *ThrowStatement, expression *Expression) *Node {
-	if expression != node.Expression {
-		return updateNode(f.NewThrowStatement(expression), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *ThrowStatement) ForEachChild(v Visitor) bool {
-	return visit(v, node.Expression)
-}
-
-func (node *ThrowStatement) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateThrowStatement(node, v.visitNode(node.Expression))
-}
-
-func (node *ThrowStatement) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewThrowStatement(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *ThrowStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
-}
-
-func IsThrowStatement(node *Node) bool {
-	return node.Kind == KindThrowStatement
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// DebuggerStatement
-// ──────────────────────────────────────────────────────────────────────
-
-type DebuggerStatement struct {
-	StatementBase
-}
-
-func (f *NodeFactory) NewDebuggerStatement() *Node {
-	data := &DebuggerStatement{}
-	return f.newNode(KindDebuggerStatement, data)
-}
-
-func (node *DebuggerStatement) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewDebuggerStatement(), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsDebuggerStatement(node *Node) bool {
-	return node.Kind == KindDebuggerStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3055,65 +2984,6 @@ func IsVarargExpression(node *Node) bool {
 }
 
 // ──────────────────────────────────────────────────────────────────────
-// ConditionalExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type ConditionalExpression struct {
-	ExpressionBase
-	CompositeBase
-	Condition     *Expression
-	QuestionToken *QuestionToken
-	WhenTrue      *Expression
-	ColonToken    *ColonToken
-	WhenFalse     *Expression
-}
-
-func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionToken *QuestionToken, whenTrue *Expression, colonToken *ColonToken, whenFalse *Expression) *Node {
-	data := f.conditionalExpressionArena.New()
-	data.Condition = condition
-	data.QuestionToken = questionToken
-	data.WhenTrue = whenTrue
-	data.ColonToken = colonToken
-	data.WhenFalse = whenFalse
-	return f.newNode(KindConditionalExpression, data)
-}
-
-func (f *NodeFactory) UpdateConditionalExpression(node *ConditionalExpression, condition *Expression, questionToken *QuestionToken, whenTrue *Expression, colonToken *ColonToken, whenFalse *Expression) *Node {
-	if condition != node.Condition || questionToken != node.QuestionToken || whenTrue != node.WhenTrue || colonToken != node.ColonToken || whenFalse != node.WhenFalse {
-		return updateNode(f.NewConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *ConditionalExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Condition) ||
-		visit(v, node.QuestionToken) ||
-		visit(v, node.WhenTrue) ||
-		visit(v, node.ColonToken) ||
-		visit(v, node.WhenFalse)
-}
-
-func (node *ConditionalExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateConditionalExpression(node, v.visitNode(node.Condition), v.visitNode(node.QuestionToken), v.visitNode(node.WhenTrue), v.visitNode(node.ColonToken), v.visitNode(node.WhenFalse))
-}
-
-func (node *ConditionalExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewConditionalExpression(node.Condition, node.QuestionToken, node.WhenTrue, node.ColonToken, node.WhenFalse), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *ConditionalExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Condition) |
-		propagateSubtreeFacts(node.QuestionToken) |
-		propagateSubtreeFacts(node.WhenTrue) |
-		propagateSubtreeFacts(node.ColonToken) |
-		propagateSubtreeFacts(node.WhenFalse)
-}
-
-func IsConditionalExpression(node *Node) bool {
-	return node.Kind == KindConditionalExpression
-}
-
-// ──────────────────────────────────────────────────────────────────────
 // PropertyAccessExpression
 // ──────────────────────────────────────────────────────────────────────
 
@@ -3441,56 +3311,6 @@ func IsTemplateSpan(node *Node) bool {
 }
 
 // ──────────────────────────────────────────────────────────────────────
-// TaggedTemplateExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type TaggedTemplateExpression struct {
-	MemberExpressionBase
-	CompositeBase
-	Tag              *Expression
-	QuestionDotToken *QuestionDotToken
-	TypeArguments    *TypeList // Optional
-	Template         *TemplateLiteral
-}
-
-func (f *NodeFactory) NewTaggedTemplateExpression(tag *Expression, questionDotToken *QuestionDotToken, typeArguments *TypeList, template *TemplateLiteral, flags NodeFlags) *Node {
-	data := &TaggedTemplateExpression{}
-	data.Tag = tag
-	data.QuestionDotToken = questionDotToken
-	data.TypeArguments = typeArguments
-	data.Template = template
-	node := f.newNode(KindTaggedTemplateExpression, data)
-	node.Flags |= flags & NodeFlagsOptionalChain
-	return node
-}
-
-func (f *NodeFactory) UpdateTaggedTemplateExpression(node *TaggedTemplateExpression, tag *Expression, questionDotToken *QuestionDotToken, typeArguments *TypeList, template *TemplateLiteral, flags NodeFlags) *Node {
-	if tag != node.Tag || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || template != node.Template || flags != node.Flags {
-		return updateNode(f.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, flags), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *TaggedTemplateExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Tag) ||
-		visit(v, node.QuestionDotToken) ||
-		visitNodeList(v, node.TypeArguments) ||
-		visit(v, node.Template)
-}
-
-func (node *TaggedTemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateTaggedTemplateExpression(node, v.visitNode(node.Tag), v.visitNode(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNode(node.Template), node.Flags)
-}
-
-func (node *TaggedTemplateExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewTaggedTemplateExpression(node.Tag, node.QuestionDotToken, node.TypeArguments, node.Template, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsTaggedTemplateExpression(node *Node) bool {
-	return node.Kind == KindTaggedTemplateExpression
-}
-
-// ──────────────────────────────────────────────────────────────────────
 // ParenthesizedExpression
 // ──────────────────────────────────────────────────────────────────────
 
@@ -3755,90 +3575,6 @@ func (node *PropertyAssignment) Name() *DeclarationName {
 
 func IsPropertyAssignment(node *Node) bool {
 	return node.Kind == KindPropertyAssignment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// DeleteExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type DeleteExpression struct {
-	UnaryExpressionBase
-	Expression *Expression
-}
-
-func (f *NodeFactory) NewDeleteExpression(expression *Expression) *Node {
-	data := &DeleteExpression{}
-	data.Expression = expression
-	return f.newNode(KindDeleteExpression, data)
-}
-
-func (f *NodeFactory) UpdateDeleteExpression(node *DeleteExpression, expression *Expression) *Node {
-	if expression != node.Expression {
-		return updateNode(f.NewDeleteExpression(expression), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *DeleteExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Expression)
-}
-
-func (node *DeleteExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateDeleteExpression(node, v.visitNode(node.Expression))
-}
-
-func (node *DeleteExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewDeleteExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *DeleteExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
-}
-
-func IsDeleteExpression(node *Node) bool {
-	return node.Kind == KindDeleteExpression
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// VoidExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type VoidExpression struct {
-	UnaryExpressionBase
-	Expression *Expression
-}
-
-func (f *NodeFactory) NewVoidExpression(expression *Expression) *Node {
-	data := &VoidExpression{}
-	data.Expression = expression
-	return f.newNode(KindVoidExpression, data)
-}
-
-func (f *NodeFactory) UpdateVoidExpression(node *VoidExpression, expression *Expression) *Node {
-	if expression != node.Expression {
-		return updateNode(f.NewVoidExpression(expression), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *VoidExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.Expression)
-}
-
-func (node *VoidExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateVoidExpression(node, v.visitNode(node.Expression))
-}
-
-func (node *VoidExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewVoidExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *VoidExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
-}
-
-func IsVoidExpression(node *Node) bool {
-	return node.Kind == KindVoidExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7358,8 +7094,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*RepeatStatement).ForEachChild(v)
 	case KindReturnStatement:
 		return n.data.(*ReturnStatement).ForEachChild(v)
-	case KindThrowStatement:
-		return n.data.(*ThrowStatement).ForEachChild(v)
 	case KindLabelStatement:
 		return n.data.(*LabelStatement).ForEachChild(v)
 	case KindGotoStatement:
@@ -7432,8 +7166,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*SatisfiesExpression).ForEachChild(v)
 	case KindExpressionList:
 		return n.data.(*ExpressionList).ForEachChild(v)
-	case KindConditionalExpression:
-		return n.data.(*ConditionalExpression).ForEachChild(v)
 	case KindPropertyAccessExpression:
 		return n.data.(*PropertyAccessExpression).ForEachChild(v)
 	case KindElementAccessExpression:
@@ -7448,8 +7180,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*TemplateExpression).ForEachChild(v)
 	case KindTemplateSpan:
 		return n.data.(*TemplateSpan).ForEachChild(v)
-	case KindTaggedTemplateExpression:
-		return n.data.(*TaggedTemplateExpression).ForEachChild(v)
 	case KindParenthesizedExpression:
 		return n.data.(*ParenthesizedExpression).ForEachChild(v)
 	case KindArrayLiteralExpression:
@@ -7462,10 +7192,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*TableEntry).ForEachChild(v)
 	case KindPropertyAssignment:
 		return n.data.(*PropertyAssignment).ForEachChild(v)
-	case KindDeleteExpression:
-		return n.data.(*DeleteExpression).ForEachChild(v)
-	case KindVoidExpression:
-		return n.data.(*VoidExpression).ForEachChild(v)
 	case KindTypeAssertionExpression:
 		return n.data.(*TypeAssertion).ForEachChild(v)
 	case KindUnionType:
@@ -7689,14 +7415,6 @@ func (n *Node) AsReturnStatement() *ReturnStatement {
 	return n.data.(*ReturnStatement)
 }
 
-func (n *Node) AsThrowStatement() *ThrowStatement {
-	return n.data.(*ThrowStatement)
-}
-
-func (n *Node) AsDebuggerStatement() *DebuggerStatement {
-	return n.data.(*DebuggerStatement)
-}
-
 func (n *Node) AsLabelStatement() *LabelStatement {
 	return n.data.(*LabelStatement)
 }
@@ -7877,10 +7595,6 @@ func (n *Node) AsVarargExpression() *VarargExpression {
 	return n.data.(*VarargExpression)
 }
 
-func (n *Node) AsConditionalExpression() *ConditionalExpression {
-	return n.data.(*ConditionalExpression)
-}
-
 func (n *Node) AsPropertyAccessExpression() *PropertyAccessExpression {
 	return n.data.(*PropertyAccessExpression)
 }
@@ -7909,10 +7623,6 @@ func (n *Node) AsTemplateSpan() *TemplateSpan {
 	return n.data.(*TemplateSpan)
 }
 
-func (n *Node) AsTaggedTemplateExpression() *TaggedTemplateExpression {
-	return n.data.(*TaggedTemplateExpression)
-}
-
 func (n *Node) AsParenthesizedExpression() *ParenthesizedExpression {
 	return n.data.(*ParenthesizedExpression)
 }
@@ -7935,14 +7645,6 @@ func (n *Node) AsTableEntry() *TableEntry {
 
 func (n *Node) AsPropertyAssignment() *PropertyAssignment {
 	return n.data.(*PropertyAssignment)
-}
-
-func (n *Node) AsDeleteExpression() *DeleteExpression {
-	return n.data.(*DeleteExpression)
-}
-
-func (n *Node) AsVoidExpression() *VoidExpression {
-	return n.data.(*VoidExpression)
 }
 
 func (n *Node) AsTypeAssertion() *TypeAssertion {
@@ -8387,7 +8089,7 @@ func IsPrefixUnaryOperator(kind Kind) bool {
 
 func IsAssignmentOperator(kind Kind) bool {
 	switch kind {
-	case KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
+	case KindEqualsToken:
 		return true
 	}
 	return false
@@ -8395,7 +8097,7 @@ func IsAssignmentOperator(kind Kind) bool {
 
 func IsBinaryOperator(kind Kind) bool {
 	switch kind {
-	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindCommaToken:
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindCommaToken:
 		return true
 	}
 	return false
@@ -8459,7 +8161,7 @@ func IsConcatenationOperatorOrHigher(kind Kind) bool {
 
 func IsRelationalOperator(kind Kind) bool {
 	switch kind {
-	case KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword:
+	case KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword:
 		return true
 	}
 	return false
@@ -8467,7 +8169,7 @@ func IsRelationalOperator(kind Kind) bool {
 
 func IsRelationalOperatorOrHigher(kind Kind) bool {
 	switch kind {
-	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword:
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword:
 		return true
 	}
 	return false
@@ -8483,7 +8185,7 @@ func IsEqualityOperator(kind Kind) bool {
 
 func IsEqualityOperatorOrHigher(kind Kind) bool {
 	switch kind {
-	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken:
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken:
 		return true
 	}
 	return false
@@ -8499,15 +8201,7 @@ func IsLogicalOperator(kind Kind) bool {
 
 func IsLogicalOperatorOrHigher(kind Kind) bool {
 	switch kind {
-	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken:
-		return true
-	}
-	return false
-}
-
-func IsCompoundAssignmentOperator(kind Kind) bool {
-	switch kind {
-	case KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken:
 		return true
 	}
 	return false
@@ -8515,15 +8209,7 @@ func IsCompoundAssignmentOperator(kind Kind) bool {
 
 func IsAssignmentOperatorOrHigher(kind Kind) bool {
 	switch kind {
-	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInstanceOfKeyword, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
-		return true
-	}
-	return false
-}
-
-func IsLogicalAssignmentOperator(kind Kind) bool {
-	switch kind {
-	case KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken:
+	case KindAsteriskAsteriskToken, KindAsteriskToken, KindSlashToken, KindPercentToken, KindPlusToken, KindMinusToken, KindDotDotToken, KindLessThanToken, KindLessThanEqualsToken, KindGreaterThanToken, KindGreaterThanEqualsToken, KindInKeyword, KindEqualsEqualsToken, KindTildeEqualsToken, KindAmpersandAmpersandToken, KindBarBarToken, KindEqualsToken:
 		return true
 	}
 	return false

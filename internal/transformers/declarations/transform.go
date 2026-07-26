@@ -221,7 +221,6 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 	// statements we elide
 	case ast.KindBreakStatement,
 		ast.KindContinueStatement,
-		ast.KindDebuggerStatement,
 		ast.KindEmptyStatement,
 		ast.KindForOfStatement,
 		ast.KindNumericForStatement,
@@ -230,7 +229,6 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindLabelStatement,
 		ast.KindGotoStatement,
 		ast.KindReturnStatement,
-		ast.KindThrowStatement,
 		ast.KindWhileStatement,
 		ast.KindNotEmittedStatement,
 		ast.KindBlock,

@@ -29,7 +29,7 @@ function T:twice(): number
 end
 
 function raise(): never
-  throw T:bump();
+  error(T:bump());
 end
 
 
@@ -55,5 +55,5 @@ function T:twice()
   return self:bump() + self:bump();
 end
 function raise()
-  throw T:bump();
+  error(T:bump());
 end

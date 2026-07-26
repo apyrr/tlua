@@ -41,7 +41,7 @@ func (tx *luaOptionalChainTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindVariableStatement, ast.KindReturnStatement:
 		return tx.visitHoistableStatement(node)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindCallExpression:
-		if node.Flags&ast.NodeFlagsOptionalChain != 0 && !chainSpineHasTaggedTemplate(node) {
+		if node.Flags&ast.NodeFlagsOptionalChain != 0 {
 			return tx.placeChain(node)
 		}
 		return tx.Visitor().VisitEachChild(node)
@@ -105,7 +105,7 @@ func (tx *luaOptionalChainTransformer) visitHoistableStatement(node *ast.Node) *
 // `if a then a.b() end` (a bare `base and access` is not a legal Lua statement).
 func (tx *luaOptionalChainTransformer) visitExpressionStatement(node *ast.ExpressionStatement) *ast.Node {
 	inner := ast.SkipParentheses(node.Expression)
-	if !isOptionalChainExpr(inner) || chainSpineHasTaggedTemplate(inner) {
+	if !isOptionalChainExpr(inner) {
 		// The chain (if any) is nested in a subexpression, or is an invalid
 		// tagged-template chain (TS1358); lower any inner chains in place.
 		return tx.Visitor().VisitEachChild(node.AsNode())
@@ -226,38 +226,13 @@ func isNonNullChain(node *ast.Node) bool {
 	return ast.IsNonNullExpression(node) && node.Flags&ast.NodeFlagsOptionalChain != 0
 }
 
-// chainSpineHasTaggedTemplate reports whether a tagged template sits in the
-// access spine of node. A tagged template in an optional chain is a TS1358
-// error, but emit still runs; `flattenChain` would then call `Node.Expression()`
-// on the tagged template, which panics. Bailing out of lowering keeps the
-// already-erroring program from crashing the compiler. The tagged-template kind
-// is tested before descending, since its `Expression()` accessor is the panic.
-func chainSpineHasTaggedTemplate(node *ast.Node) bool {
-	for node != nil {
-		if ast.IsTaggedTemplateExpression(node) {
-			return true
-		}
-		switch node.Kind {
-		case ast.KindPropertyAccessExpression,
-			ast.KindElementAccessExpression,
-			ast.KindCallExpression,
-			ast.KindNonNullExpression,
-			ast.KindParenthesizedExpression:
-			node = node.Expression()
-		default:
-			return false
-		}
-	}
-	return false
-}
-
 // flattenChain peels one optional-chain group: it returns the base expression
 // before the group's first `?.`, and the links from that first optional access
 // out to the outermost trailing access, in application order.
 func flattenChain(chain *ast.Node) flattenResult {
 	debug.Assert(!isNonNullChain(chain))
 	links := []*ast.Node{chain}
-	for !ast.IsTaggedTemplateExpression(chain) && chain.QuestionDotToken() == nil {
+	for chain.QuestionDotToken() == nil {
 		chain = ast.SkipPartiallyEmittedExpressions(chain.Expression())
 		debug.Assert(!isNonNullChain(chain))
 		links = append([]*ast.Node{chain}, links...)

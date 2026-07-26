@@ -170,10 +170,6 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		n := node.AsCallExpression()
 		return tx.Factory().UpdateCallExpression(n, tx.Visitor().VisitNode(n.Expression), n.QuestionDotToken, nil, tx.Visitor().VisitNodes(n.Arguments), n.Flags)
 
-	case ast.KindTaggedTemplateExpression:
-		n := node.AsTaggedTemplateExpression()
-		return tx.Factory().UpdateTaggedTemplateExpression(n, tx.Visitor().VisitNode(n.Tag), n.QuestionDotToken, nil, tx.Visitor().VisitNode(n.Template), n.Flags)
-
 	case ast.KindNonNullExpression, ast.KindTypeAssertionExpression, ast.KindAsExpression, ast.KindSatisfiesExpression:
 		partial := tx.Factory().NewPartiallyEmittedExpression(tx.Visitor().VisitNode(node.Expression()))
 		tx.EmitContext().SetOriginal(partial, node)

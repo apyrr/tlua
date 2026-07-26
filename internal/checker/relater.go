@@ -5005,14 +5005,7 @@ func (c *Checker) isTypeDerivedFrom(source *Type, target *Type) bool {
 		}
 		return c.isTypeDerivedFrom(constraint, target)
 	case c.IsEmptyAnonymousObjectType(target):
-		// The Object/Function sentinels never match this case: IsEmptyAnonymousObjectType
-		// carves them out by identity, so their cases below stay reachable in any order
-		// (upstream's order is kept for diffability).
 		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0
-	case target == c.globalObjectType:
-		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0 && !c.IsEmptyAnonymousObjectType(source)
-	case target == c.globalFunctionType:
-		return source.flags&TypeFlagsObject != 0 && c.isFunctionObjectType(source)
 	default:
 		// Upstream also treats a source derived from ReadonlyArray as derived
 		// from a mutable array target (Array extends ReadonlyArray). In tlua

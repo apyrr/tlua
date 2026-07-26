@@ -14,7 +14,9 @@ example.isFoo = function(value: string): asserts value is 'foo'
   if value ~= 'foo' then
 >value : Symbol(value, Decl(expandoFunctionAsAssertion.tlua, 2, 25))
 
-    throw 'Not foo';
+    error('Not foo');
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
+
   end
 end;
 

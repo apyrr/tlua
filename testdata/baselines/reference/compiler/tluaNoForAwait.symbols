@@ -15,7 +15,8 @@ async function f(xs: number[]): Promise<number>
 >x : Symbol(x, Decl(tluaNoForAwait.tlua, 3, 18))
 >xs : Symbol(xs, Decl(tluaNoForAwait.tlua, 1, 17))
 
-    total += x;
+    total = total + x;
+>total : Symbol(total, Decl(tluaNoForAwait.tlua, 2, 7))
 >total : Symbol(total, Decl(tluaNoForAwait.tlua, 2, 7))
 >x : Symbol(x, Decl(tluaNoForAwait.tlua, 3, 18))
   }

@@ -40,7 +40,6 @@ func getAllRules() []ruleSpec {
 	binaryOperators := tokenRangeFromRange(ast.KindFirstBinaryOperator, ast.KindLastBinaryOperator)
 	binaryKeywordOperators := []ast.Kind{
 		ast.KindInKeyword,
-		ast.KindInstanceOfKeyword,
 		ast.KindOfKeyword,
 		ast.KindAsKeyword,
 		ast.KindIsKeyword,
@@ -169,15 +168,13 @@ func getAllRules() []ruleSpec {
 		rule("SpaceAfterGetSetInMember", []ast.Kind{ast.KindGetKeyword, ast.KindSetKeyword}, ast.KindIdentifier, []contextPredicate{isFunctionDeclContext}, ruleActionInsertSpace),
 
 		rule("NoSpaceBetweenReturnAndSemicolon", ast.KindReturnKeyword, ast.KindSemicolonToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindThrowKeyword, ast.KindDeleteKeyword, ast.KindReturnKeyword, ast.KindTypeOfKeyword, ast.KindAwaitKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindReturnKeyword, ast.KindTypeOfKeyword, ast.KindAwaitKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 		rule("SpaceAfterLocalInVariableDeclaration", []ast.Kind{ast.KindLocalKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isStartOfVariableDeclarationList}, ruleActionInsertSpace),
 		rule("NoSpaceBeforeOpenParenInFuncCall", anyToken, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext, isFunctionCallContext, isPreviousTokenNotComma}, ruleActionDeleteSpace),
 
 		// Special case for binary operators (that are keywords). For these we have to add a space and shouldn't follow any user options.
 		rule("SpaceBeforeBinaryKeywordOperator", anyToken, binaryKeywordOperators, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
 		rule("SpaceAfterBinaryKeywordOperator", binaryKeywordOperators, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
-
-		rule("SpaceAfterVoidOperator", ast.KindVoidKeyword, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isVoidOpContext}, ruleActionInsertSpace),
 
 		// Async-await
 		rule("SpaceBetweenAsyncAndOpenParen", ast.KindAsyncKeyword, ast.KindOpenParenToken, []contextPredicate{isArrowFunctionContext, isNonJsxSameLineTokenContext}, ruleActionInsertSpace),

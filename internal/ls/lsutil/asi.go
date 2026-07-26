@@ -46,8 +46,6 @@ func SyntaxRequiresTrailingSemicolonOrASI(kind ast.Kind) bool {
 		kind == ast.KindContinueStatement ||
 		kind == ast.KindBreakStatement ||
 		kind == ast.KindReturnStatement ||
-		kind == ast.KindThrowStatement ||
-		kind == ast.KindDebuggerStatement ||
 		kind == ast.KindTypeAliasDeclaration ||
 		kind == ast.KindImportDeclaration ||
 		kind == ast.KindImportEqualsDeclaration ||

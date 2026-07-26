@@ -77,6 +77,7 @@ type Binder struct {
 	flowListArena           core.Arena[ast.FlowList]
 	singleDeclarationsArena core.Arena[*ast.Node]
 	expandoAssignments      []ExpandoAssignmentInfo
+	topLevelReturns         []*ast.Node
 }
 
 // A Lua label in scope: `::name::` is visible in the whole block that declares
@@ -301,7 +302,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 // Should not be called on a declaration with a computed property name,
 // unless it is a well known Symbol.
 func (b *Binder) getDeclarationName(node *ast.Node) string {
-	// A chunk's top-level return is its module export (see bindTopLevelReturn).
+	// A chunk's returns share one module export (see bindTopLevelReturns).
 	if ast.IsReturnStatement(node) {
 		return ast.InternalSymbolNameExportEquals
 	}
@@ -607,8 +608,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 			b.bindExpandoPropertyAssignment(node)
 		}
 		b.checkStrictModeBinaryExpression(node)
-	case ast.KindDeleteExpression:
-		b.checkStrictModeDeleteExpression(node)
 	case ast.KindTypeParameter:
 		b.bindTypeParameter(node)
 	case ast.KindParameter:
@@ -1251,16 +1250,6 @@ func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	}
 }
 
-func (b *Binder) checkStrictModeDeleteExpression(node *ast.Node) {
-	// Grammar checking
-	expr := node.AsDeleteExpression()
-	if expr.Expression.Kind == ast.KindIdentifier {
-		// When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
-		// UnaryExpression is a direct reference to a variable, function argument, or function name
-		b.errorOnNode(expr.Expression, diagnostics.X_delete_cannot_be_called_on_an_identifier_in_strict_mode)
-	}
-}
-
 func isEvalOrArgumentsIdentifier(node *ast.Node) bool {
 	if ast.IsIdentifier(node) {
 		text := node.Text()
@@ -1378,6 +1367,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
 			node.AsSourceFile().EndFlowNode = b.currentFlow
+			b.bindTopLevelReturns()
 		}
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
@@ -1518,8 +1508,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.bindIfStatement(node)
 	case ast.KindReturnStatement:
 		b.bindReturnStatement(node)
-	case ast.KindThrowStatement:
-		b.bindThrowStatement(node)
 	case ast.KindBreakStatement:
 		b.bindBreakStatement(node)
 	case ast.KindContinueStatement:
@@ -1539,10 +1527,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 			return
 		}
 		b.bindBinaryExpressionFlow(node)
-	case ast.KindDeleteExpression:
-		b.bindDeleteExpressionFlow(node)
-	case ast.KindConditionalExpression:
-		b.bindConditionalExpressionFlow(node)
 	case ast.KindVariableDeclaration:
 		b.bindVariableDeclarationFlow(node)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
@@ -1702,7 +1686,7 @@ func (b *Binder) doWithConditionalBranches(action func(b *Binder, value *ast.Nod
 
 func (b *Binder) bindCondition(node *ast.Node, trueTarget *ast.FlowLabel, falseTarget *ast.FlowLabel) {
 	b.doWithConditionalBranches((*Binder).bind, node, trueTarget, falseTarget)
-	if node == nil || !isLogicalAssignmentExpression(node) && !ast.IsLogicalExpression(node) && !(ast.IsOptionalChain(node) && ast.IsOutermostOptionalChain(node)) {
+	if node == nil || !ast.IsLogicalExpression(node) && !(ast.IsOptionalChain(node) && ast.IsOutermostOptionalChain(node)) {
 		b.addAntecedent(trueTarget, b.createFlowCondition(ast.FlowFlagsTrueCondition, b.currentFlow, node))
 		b.addAntecedent(falseTarget, b.createFlowCondition(ast.FlowFlagsFalseCondition, b.currentFlow, node))
 	}
@@ -1718,13 +1702,6 @@ func (b *Binder) bindIterativeStatement(node *ast.Node, breakTarget *ast.FlowLab
 	b.currentContinueTarget = saveContinueTarget
 }
 
-func isLogicalAssignmentExpression(node *ast.Node) bool {
-	return ast.IsLogicalAssignmentExpression(ast.SkipParentheses(node))
-}
-
-// bindLuaArrayMutation records an element store so evolving-array flow sees it.
-// flowTarget is where the checker looks up the assigned value: the individual
-// target inside a list, the enclosing assignment for a scalar store.
 func (b *Binder) bindLuaArrayMutation(target *ast.Node, flowTarget *ast.Node) {
 	reference := ast.GetLuaAssignmentTargetReference(target)
 	if reference != nil && reference.Kind == ast.KindElementAccessExpression &&
@@ -1849,7 +1826,7 @@ func (b *Binder) bindIfStatement(node *ast.Node) {
 }
 
 func (b *Binder) bindReturnStatement(node *ast.Node) {
-	b.bindTopLevelReturn(node)
+	b.collectTopLevelReturn(node)
 	b.bind(node.Expression())
 	if b.currentReturnTarget != nil {
 		b.addAntecedent(b.currentReturnTarget, b.currentFlow)
@@ -1859,28 +1836,51 @@ func (b *Binder) bindReturnStatement(node *ast.Node) {
 	b.hasFlowEffects = true
 }
 
-// bindTopLevelReturn declares the value a chunk returns as its module export:
-// `require` yields whatever the chunk returned, so the file's last statement
-// returning a value is Lua's export. A bare `return` exports nothing (require
-// reports `true`), and only the chunk's final statement counts -- an earlier
-// return is a grammar error the checker reports.
-func (b *Binder) bindTopLevelReturn(node *ast.Node) {
-	if node.Parent != b.file.AsNode() || b.file.IsDeclarationFile || node.Expression() == nil {
+// collectTopLevelReturn records returns belonging to the chunk rather than a
+// function. Lua permits a return as the final statement of any nested block;
+// placement errors are diagnosed by the checker and do not contribute to the
+// module value.
+func (b *Binder) collectTopLevelReturn(node *ast.Node) {
+	if b.file.IsDeclarationFile || node.Flags&ast.NodeFlagsAmbient != 0 || ast.GetContainingFunction(node) != nil || !ast.IsLastStatementInBlock(node) {
 		return
 	}
-	statements := b.file.Statements.Nodes
-	if len(statements) == 0 || statements[len(statements)-1] != node {
-		return
-	}
-	flags := core.IfElse(ast.ExpressionIsAlias(node.Expression()), ast.SymbolFlagsAlias, ast.SymbolFlagsProperty)
-	symbol := b.declareSymbol(ast.GetExports(b.file.Symbol), b.file.Symbol, node, flags, ast.SymbolFlagsAll)
-	SetValueDeclaration(symbol, node)
+	b.topLevelReturns = append(b.topLevelReturns, node)
 }
 
-func (b *Binder) bindThrowStatement(node *ast.Node) {
-	b.bind(node.Expression())
-	b.currentFlow = b.unreachableFlow
-	b.hasFlowEffects = true
+// bindTopLevelReturns declares all value-returning exits from a chunk as one
+// module export. Multiple exits, bare returns, and fallthrough are represented
+// by a property symbol whose checker-computed type is their union. A sole
+// unconditional alias keeps the ordinary export= alias fast path.
+//
+// This runs after the source file's control flow is complete, but before
+// bindCommonJSTypeExports, and is therefore still the binder's exclusive write
+// phase for the shared module symbol.
+func (b *Binder) bindTopLevelReturns() {
+	var valueReturn *ast.Node
+	hasNoValueReturn := false
+	for _, node := range b.topLevelReturns {
+		if node.Expression() == nil {
+			hasNoValueReturn = true
+		} else if valueReturn == nil {
+			valueReturn = node
+		}
+	}
+	if valueReturn == nil {
+		return
+	}
+
+	hasFallthrough := b.file.EndFlowNode == nil || b.file.EndFlowNode.Flags&ast.FlowFlagsUnreachable == 0
+	isSoleAlias := len(b.topLevelReturns) == 1 && !hasNoValueReturn && !hasFallthrough && ast.ExpressionIsAlias(valueReturn.Expression())
+	flags := core.IfElse(isSoleAlias, ast.SymbolFlagsAlias, ast.SymbolFlagsProperty)
+
+	first := b.topLevelReturns[0]
+	symbol := b.declareSymbol(ast.GetExports(b.file.Symbol), b.file.Symbol, first, flags, ast.SymbolFlagsAll)
+	for _, node := range b.topLevelReturns[1:] {
+		b.addDeclarationToSymbol(symbol, node, flags)
+	}
+	// Keep generic symbol consumers on a value-bearing declaration even when
+	// the first source-order exit is a bare return.
+	symbol.ValueDeclaration = valueReturn
 }
 
 // break and continue take no label in tlua, so they always target the
@@ -2020,7 +2020,7 @@ func (b *Binder) bindDestructuringAssignmentFlow(node *ast.Node) {
 func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 	expr := node.AsBinaryExpression()
 	operator := expr.OperatorToken.Kind
-	if ast.IsLogicalBinaryOperator(operator) || ast.IsLogicalAssignmentOperator(operator) {
+	if ast.IsLogicalBinaryOperator(operator) {
 		if isTopLevelLogicalExpression(node) {
 			postExpressionLabel := b.createBranchLabel()
 			saveCurrentFlow := b.currentFlow
@@ -2059,54 +2059,14 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 func (b *Binder) bindLogicalLikeExpression(node *ast.Node, trueTarget *ast.FlowLabel, falseTarget *ast.FlowLabel) {
 	expr := node.AsBinaryExpression()
 	preRightLabel := b.createBranchLabel()
-	if expr.OperatorToken.Kind == ast.KindAmpersandAmpersandToken || expr.OperatorToken.Kind == ast.KindAmpersandAmpersandEqualsToken {
+	if expr.OperatorToken.Kind == ast.KindAmpersandAmpersandToken {
 		b.bindCondition(expr.Left, preRightLabel, falseTarget)
 	} else {
 		b.bindCondition(expr.Left, trueTarget, preRightLabel)
 	}
 	b.currentFlow = b.finishFlowLabel(preRightLabel)
 	b.bind(expr.OperatorToken)
-	if ast.IsLogicalAssignmentOperator(expr.OperatorToken.Kind) {
-		b.doWithConditionalBranches((*Binder).bind, expr.Right, trueTarget, falseTarget)
-		b.bindAssignmentTargetFlow(expr.Left)
-		b.addAntecedent(trueTarget, b.createFlowCondition(ast.FlowFlagsTrueCondition, b.currentFlow, node))
-		b.addAntecedent(falseTarget, b.createFlowCondition(ast.FlowFlagsFalseCondition, b.currentFlow, node))
-	} else {
-		b.bindCondition(expr.Right, trueTarget, falseTarget)
-	}
-}
-
-func (b *Binder) bindDeleteExpressionFlow(node *ast.Node) {
-	expr := node.AsDeleteExpression()
-	b.bindEachChild(node)
-	if expr.Expression.Kind == ast.KindPropertyAccessExpression {
-		b.bindAssignmentTargetFlow(expr.Expression)
-	}
-}
-
-func (b *Binder) bindConditionalExpressionFlow(node *ast.Node) {
-	expr := node.AsConditionalExpression()
-	trueLabel := b.createBranchLabel()
-	falseLabel := b.createBranchLabel()
-	postExpressionLabel := b.createBranchLabel()
-	saveCurrentFlow := b.currentFlow
-	saveHasFlowEffects := b.hasFlowEffects
-	b.hasFlowEffects = false
-	b.bindCondition(expr.Condition, trueLabel, falseLabel)
-	b.currentFlow = b.finishFlowLabel(trueLabel)
-	b.bind(expr.QuestionToken)
-	b.bind(expr.WhenTrue)
-	b.addAntecedent(postExpressionLabel, b.currentFlow)
-	b.currentFlow = b.finishFlowLabel(falseLabel)
-	b.bind(expr.ColonToken)
-	b.bind(expr.WhenFalse)
-	b.addAntecedent(postExpressionLabel, b.currentFlow)
-	if b.hasFlowEffects {
-		b.currentFlow = b.finishFlowLabel(postExpressionLabel)
-	} else {
-		b.currentFlow = saveCurrentFlow
-	}
-	b.hasFlowEffects = b.hasFlowEffects || saveHasFlowEffects
+	b.bindCondition(expr.Right, trueTarget, falseTarget)
 }
 
 func (b *Binder) bindVariableDeclarationFlow(node *ast.Node) {
@@ -2433,7 +2393,7 @@ func hasNarrowableArgument(expr *ast.Node) bool {
 
 func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 	switch expr.OperatorToken.Kind {
-	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken:
+	case ast.KindEqualsToken:
 		return containsNarrowableReference(expr.Left)
 	case ast.KindEqualsEqualsToken, ast.KindTildeEqualsToken:
 		left := ast.SkipParentheses(expr.Left)
@@ -2441,8 +2401,6 @@ func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 		return isNarrowableOperand(left) || isNarrowableOperand(right) ||
 			isNarrowingLuaTypeGuardOperands(right, left) || isNarrowingLuaTypeGuardOperands(left, right) ||
 			(ast.IsBooleanLiteral(right) && isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && isNarrowingExpression(right))
-	case ast.KindInstanceOfKeyword:
-		return isNarrowableOperand(expr.Left)
 	case ast.KindInKeyword:
 		return isNarrowingExpression(expr.Right)
 	case ast.KindCommaToken:
@@ -2552,8 +2510,6 @@ func isStatementCondition(node *ast.Node) bool {
 	switch node.Parent.Kind {
 	case ast.KindIfStatement, ast.KindWhileStatement, ast.KindRepeatStatement:
 		return node.Parent.Expression() == node
-	case ast.KindConditionalExpression:
-		return node.Parent.AsConditionalExpression().Condition == node
 	}
 	return false
 }

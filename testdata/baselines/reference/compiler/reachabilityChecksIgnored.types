@@ -4,7 +4,9 @@
 function a()
 >a : () => void
 
-    throw "";
+    error("");
+>error("") : never
+>error : (message?: any, level?: number) => never
 >"" : ""
 
     // @ts-ignore
@@ -20,7 +22,9 @@ end
 function b()
 >b : () => void
 
-    throw "";
+    error("");
+>error("") : never
+>error : (message?: any, level?: number) => never
 >"" : ""
 
     // @ts-expect-error

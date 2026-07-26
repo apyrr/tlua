@@ -942,7 +942,6 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindJSTypeAliasDeclaration,
 		ast.KindFunctionType,
 		ast.KindCallSignature,
-		ast.KindTaggedTemplateExpression,
 		ast.KindObjectBindingPattern,
 		ast.KindArrayBindingPattern,
 		ast.KindNamedImports,
@@ -2419,15 +2418,6 @@ func (p *Printer) emitTemplateLiteral(node *ast.TemplateLiteral) {
 	}
 }
 
-func (p *Printer) emitTaggedTemplateExpression(node *ast.TaggedTemplateExpression) {
-	state := p.enterNode(node.AsNode())
-	p.emitCallee(node.Tag, node.AsNode())
-	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	p.writeSpace()
-	p.emitTemplateLiteral(node.Template)
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitTypeAssertionExpression(node *ast.TypeAssertion) {
 	state := p.enterNode(node.AsNode())
 	p.writePunctuation("<")
@@ -2510,22 +2500,6 @@ func (p *Printer) emitArrowFunction(node *ast.ArrowFunction) {
 	}
 	p.popNameGenerationScope(node.AsNode())
 	p.decreaseIndentIf(indented)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitDeleteExpression(node *ast.DeleteExpression) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindDeleteKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeSpace()
-	p.emitExpression(node.Expression, ast.OperatorPrecedenceUnary)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitVoidExpression(node *ast.VoidExpression) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindVoidKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeSpace()
-	p.emitExpression(node.Expression, ast.OperatorPrecedenceUnary)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -2663,28 +2637,6 @@ func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 
 func (p *Printer) emitShortCircuitExpression(node *ast.Expression) {
 	p.emitExpression(node, ast.OperatorPrecedenceLogicalOR)
-}
-
-func (p *Printer) emitConditionalExpression(node *ast.ConditionalExpression) {
-	state := p.enterNode(node.AsNode())
-	linesBeforeQuestion := p.getLinesBetweenNodes(node.AsNode(), node.Condition, node.QuestionToken)
-	linesAfterQuestion := p.getLinesBetweenNodes(node.AsNode(), node.QuestionToken, node.WhenTrue)
-	linesBeforeColon := p.getLinesBetweenNodes(node.AsNode(), node.WhenTrue, node.ColonToken)
-	linesAfterColon := p.getLinesBetweenNodes(node.AsNode(), node.ColonToken, node.WhenFalse)
-	p.emitShortCircuitExpression(node.Condition)
-	p.writeLinesAndIndent(linesBeforeQuestion /*writeSpaceIfNotIndenting*/, true)
-	p.emitPunctuationNode(node.QuestionToken)
-	p.writeLinesAndIndent(linesAfterQuestion /*writeSpaceIfNotIndenting*/, true)
-	p.emitExpression(node.WhenTrue, ast.OperatorPrecedenceYield)
-	p.decreaseIndentIf(linesAfterQuestion > 0)
-	p.decreaseIndentIf(linesBeforeQuestion > 0)
-	p.writeLinesAndIndent(linesBeforeColon /*writeSpaceIfNotIndenting*/, true)
-	p.emitPunctuationNode(node.ColonToken)
-	p.writeLinesAndIndent(linesAfterColon /*writeSpaceIfNotIndenting*/, true)
-	p.emitExpression(node.WhenFalse, ast.OperatorPrecedenceYield)
-	p.decreaseIndentIf(linesAfterColon > 0)
-	p.decreaseIndentIf(linesBeforeColon > 0)
-	p.exitNode(node.AsNode(), state)
 }
 
 func (p *Printer) emitTemplateExpression(node *ast.TemplateExpression) {
@@ -2926,16 +2878,6 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				ce.Arguments,
 				ce.Flags,
 			)
-		case ast.KindTaggedTemplateExpression:
-			tte := node.AsTaggedTemplateExpression()
-			return p.emitContext.Factory.UpdateTaggedTemplateExpression(
-				tte,
-				p.parenthesizeExpressionForNoAsi(tte.Tag),
-				tte.QuestionDotToken,
-				tte.TypeArguments,
-				tte.Template,
-				tte.Flags,
-			)
 		case ast.KindBinaryExpression:
 			be := node.AsBinaryExpression()
 			return p.emitContext.Factory.UpdateBinaryExpression(
@@ -2945,16 +2887,6 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				be.Type,
 				be.OperatorToken,
 				be.Right,
-			)
-		case ast.KindConditionalExpression:
-			ce := node.AsConditionalExpression()
-			return p.emitContext.Factory.UpdateConditionalExpression(
-				ce,
-				p.parenthesizeExpressionForNoAsi(ce.Condition),
-				ce.QuestionToken,
-				ce.WhenTrue,
-				ce.ColonToken,
-				ce.WhenFalse,
 			)
 		case ast.KindAsExpression:
 			ae := node.AsAsExpression()
@@ -3030,8 +2962,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitElementAccessExpression(node.AsElementAccessExpression())
 	case ast.KindCallExpression:
 		p.emitCallExpression(node.AsCallExpression())
-	case ast.KindTaggedTemplateExpression:
-		p.emitTaggedTemplateExpression(node.AsTaggedTemplateExpression())
 	case ast.KindTypeAssertionExpression:
 		p.emitTypeAssertionExpression(node.AsTypeAssertion())
 	case ast.KindParenthesizedExpression:
@@ -3040,16 +2970,10 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		p.emitFunctionExpression(node.AsFunctionExpression())
 	case ast.KindArrowFunction:
 		p.emitArrowFunction(node.AsArrowFunction())
-	case ast.KindDeleteExpression:
-		p.emitDeleteExpression(node.AsDeleteExpression())
-	case ast.KindVoidExpression:
-		p.emitVoidExpression(node.AsVoidExpression())
 	case ast.KindPrefixUnaryExpression:
 		p.emitPrefixUnaryExpression(node.AsPrefixUnaryExpression())
 	case ast.KindBinaryExpression:
 		p.emitBinaryExpression(node.AsBinaryExpression())
-	case ast.KindConditionalExpression:
-		p.emitConditionalExpression(node.AsConditionalExpression())
 	case ast.KindTemplateExpression:
 		p.emitTemplateExpression(node.AsTemplateExpression())
 	case ast.KindSpreadElement:
@@ -3413,22 +3337,6 @@ func (p *Printer) emitGotoStatement(node *ast.GotoStatement) {
 	p.emitToken(ast.KindGotoKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
 	p.emitLabelIdentifier(node.Label.AsIdentifier())
-	p.writeTrailingSemicolon()
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitThrowStatement(node *ast.ThrowStatement) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindThrowKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
-	p.writeSpace()
-	p.emitExpressionNoASI(node.Expression, ast.OperatorPrecedenceLowest)
-	p.writeTrailingSemicolon()
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitDebuggerStatement(node *ast.DebuggerStatement) {
-	state := p.enterNode(node.AsNode())
-	p.emitToken(ast.KindDebuggerKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeTrailingSemicolon()
 	p.exitNode(node.AsNode(), state)
 }
@@ -3869,10 +3777,6 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitLabelStatement(node.AsLabelStatement())
 	case ast.KindGotoStatement:
 		p.emitGotoStatement(node.AsGotoStatement())
-	case ast.KindThrowStatement:
-		p.emitThrowStatement(node.AsThrowStatement())
-	case ast.KindDebuggerStatement:
-		p.emitDebuggerStatement(node.AsDebuggerStatement())
 	case ast.KindNotEmittedStatement:
 		p.emitNotEmittedStatement(node.AsNotEmittedStatement())
 

@@ -42,8 +42,7 @@ local function Bad.f(): void
 >Bad : () => void
 >f() : any
 >f : any
->void : nil
+> : any
 
 end
-> : any
 

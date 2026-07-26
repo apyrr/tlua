@@ -68,6 +68,7 @@ findAllRefsForDefaultExport03
 formatOnEnterInComment
 formattingOnSemiColon
 formattingSkippedTokens
+formattingVoid
 getEditsForFileRename_caseInsensitive
 getEditsForFileRename_directory_down
 getEditsForFileRename_directory_up

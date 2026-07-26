@@ -12,7 +12,7 @@ func TestUnreachableCodeDiagnostics(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowUnreachableCode: false
-throw new Error();
+error("boom");
 	
 (function() end)();
 	`

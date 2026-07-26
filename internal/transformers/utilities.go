@@ -37,8 +37,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindSpreadAssignment,
 		ast.KindParenthesizedExpression,
 		ast.KindArrayLiteralExpression,
-		ast.KindDeleteExpression,
-		ast.KindVoidExpression,
 		ast.KindTypeAssertionExpression,
 		ast.KindExpressionWithTypeArguments,
 		ast.KindJsxSelfClosingElement,
@@ -51,7 +49,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindIfStatement,
 		ast.KindWhileStatement,
 		ast.KindReturnStatement,
-		ast.KindThrowStatement,
 		ast.KindExpressionStatement,
 		ast.KindExportAssignment,
 		ast.KindPropertyAccessExpression,
@@ -79,15 +76,9 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		return parent.AsImportEqualsDeclaration().ModuleReference == name
 	case ast.KindArrowFunction:
 		return parent.Body() == name
-	case ast.KindConditionalExpression:
-		return parent.AsConditionalExpression().Condition == name ||
-			parent.AsConditionalExpression().WhenTrue == name ||
-			parent.AsConditionalExpression().WhenFalse == name
 	case ast.KindCallExpression:
 		return parent.Expression() == name ||
 			slices.Contains(parent.Arguments(), name)
-	case ast.KindTaggedTemplateExpression:
-		return parent.AsTaggedTemplateExpression().Tag == name
 	case ast.KindJsxOpeningElement, ast.KindJsxClosingElement:
 		return parent.TagName() == name
 	default:
@@ -169,25 +160,4 @@ func MoveRangePastModifiers(node *ast.Node) core.TextRange {
 		return core.NewTextRange(lastModifier.End(), node.End())
 	}
 	return node.Loc
-}
-
-// GetNonAssignmentOperatorForCompoundAssignment returns the non-assignment operator for a compound assignment.
-func GetNonAssignmentOperatorForCompoundAssignment(kind ast.Kind) ast.Kind {
-	switch kind {
-	case ast.KindPlusEqualsToken:
-		return ast.KindPlusToken
-	case ast.KindMinusEqualsToken:
-		return ast.KindMinusToken
-	case ast.KindAsteriskEqualsToken:
-		return ast.KindAsteriskToken
-	case ast.KindSlashEqualsToken:
-		return ast.KindSlashToken
-	case ast.KindPercentEqualsToken:
-		return ast.KindPercentToken
-	case ast.KindBarBarEqualsToken:
-		return ast.KindBarBarToken
-	case ast.KindAmpersandAmpersandEqualsToken:
-		return ast.KindAmpersandAmpersandToken
-	}
-	return kind
 }

@@ -72,13 +72,6 @@
                 "comment": "Assignments"
             },
             "EqualsToken",
-            "PlusEqualsToken",
-            "MinusEqualsToken",
-            "AsteriskEqualsToken",
-            "SlashEqualsToken",
-            "PercentEqualsToken",
-            "BarBarEqualsToken",
-            "AmpersandAmpersandEqualsToken",
             {
                 "comment": "Identifiers and PrivateIdentifier"
             },
@@ -90,9 +83,7 @@
             },
             "BreakKeyword",
             "ContinueKeyword",
-            "DebuggerKeyword",
             "DefaultKeyword",
-            "DeleteKeyword",
             "DoKeyword",
             "ElseKeyword",
             "ElseIfKeyword",
@@ -106,13 +97,11 @@
             "IfKeyword",
             "ImportKeyword",
             "InKeyword",
-            "InstanceOfKeyword",
             "RepeatKeyword",
             "ReturnKeyword",
             "SuperKeyword",
             "ThenKeyword",
             "ThisKeyword",
-            "ThrowKeyword",
             "TrueKeyword",
             "TypeOfKeyword",
             "UntilKeyword",
@@ -237,16 +226,12 @@
             "PropertyAccessExpression",
             "ElementAccessExpression",
             "CallExpression",
-            "TaggedTemplateExpression",
             "TypeAssertionExpression",
             "ParenthesizedExpression",
             "FunctionExpression",
             "ArrowFunction",
-            "DeleteExpression",
-            "VoidExpression",
             "PrefixUnaryExpression",
             "BinaryExpression",
-            "ConditionalExpression",
             "TemplateExpression",
             "SpreadElement",
             "OmittedExpression",
@@ -278,8 +263,6 @@
             "ReturnStatement",
             "LabelStatement",
             "GotoStatement",
-            "ThrowStatement",
-            "DebuggerStatement",
             "VariableDeclaration",
             "VariableDeclarationList",
             "FunctionDeclaration",
@@ -399,15 +382,7 @@
             },
             {
                 "name": "LastAssignment",
-                "value": "AmpersandAmpersandEqualsToken"
-            },
-            {
-                "name": "FirstCompoundAssignment",
-                "value": "PlusEqualsToken"
-            },
-            {
-                "name": "LastCompoundAssignment",
-                "value": "AmpersandAmpersandEqualsToken"
+                "value": "EqualsToken"
             },
             {
                 "name": "FirstReservedWord",
@@ -447,7 +422,7 @@
             },
             {
                 "name": "LastPunctuation",
-                "value": "AmpersandAmpersandEqualsToken"
+                "value": "EqualsToken"
             },
             {
                 "name": "FirstToken",
@@ -479,7 +454,7 @@
             },
             {
                 "name": "LastBinaryOperator",
-                "value": "AmpersandAmpersandEqualsToken"
+                "value": "EqualsToken"
             },
             {
                 "name": "FirstStatement",
@@ -487,7 +462,7 @@
             },
             {
                 "name": "LastStatement",
-                "value": "DebuggerStatement"
+                "value": "GotoStatement"
             },
             {
                 "name": "FirstNode",
@@ -635,8 +610,7 @@
                 "HashToken"
             ],
             "AssignmentOperator": [
-                "EqualsToken",
-                "CompoundAssignmentOperator"
+                "EqualsToken"
             ],
             "BinaryOperator": [
                 "AssignmentOperatorOrHigher",
@@ -674,7 +648,6 @@
                 "LessThanEqualsToken",
                 "GreaterThanToken",
                 "GreaterThanEqualsToken",
-                "InstanceOfKeyword",
                 "InKeyword"
             ],
             "RelationalOperatorOrHigher": [
@@ -697,22 +670,9 @@
                 "EqualityOperatorOrHigher",
                 "LogicalOperator"
             ],
-            "CompoundAssignmentOperator": [
-                "PlusEqualsToken",
-                "MinusEqualsToken",
-                "AsteriskEqualsToken",
-                "SlashEqualsToken",
-                "PercentEqualsToken",
-                "BarBarEqualsToken",
-                "AmpersandAmpersandEqualsToken"
-            ],
             "AssignmentOperatorOrHigher": [
                 "LogicalOperatorOrHigher",
                 "AssignmentOperator"
-            ],
-            "LogicalAssignmentOperator": [
-                "AmpersandAmpersandEqualsToken",
-                "BarBarEqualsToken"
             ]
         }
     },
@@ -1270,24 +1230,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "ThrowStatement": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "StatementBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
-            },
-            "DebuggerStatement": {
-                "extends": [
-                    "StatementBase"
-                ]
             },
             "LabelStatement": {
                 "extends": [
@@ -2288,36 +2230,6 @@
                     "PrimaryExpressionBase"
                 ]
             },
-            "ConditionalExpression": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "ExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Condition",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "QuestionToken",
-                        "type": "QuestionToken"
-                    },
-                    {
-                        "name": "WhenTrue",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "ColonToken",
-                        "type": "ColonToken"
-                    },
-                    {
-                        "name": "WhenFalse",
-                        "type": "Expression"
-                    }
-                ],
-                "arena": true
-            },
             "PropertyAccessExpression": {
                 "extends": [
                     "MemberExpressionBase",
@@ -2477,37 +2389,6 @@
                     }
                 ]
             },
-            "TaggedTemplateExpression": {
-                "extends": [
-                    "MemberExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Tag",
-                        "type": "Expression"
-                    },
-                    {
-                        "name": "QuestionDotToken",
-                        "type": "QuestionDotToken"
-                    },
-                    {
-                        "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "optional": true,
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "Template",
-                        "type": "TemplateLiteral"
-                    },
-                    {
-                        "name": "Flags",
-                        "inherited": true,
-                        "bitmask": "NodeFlagsOptionalChain"
-                    }
-                ]
-            },
             "ParenthesizedExpression": {
                 "generateSubtreeFacts": true,
                 "extends": [
@@ -2614,30 +2495,6 @@
                     }
                 ],
                 "arena": true
-            },
-            "DeleteExpression": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "UnaryExpressionBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
-            },
-            "VoidExpression": {
-                "generateSubtreeFacts": true,
-                "extends": [
-                    "UnaryExpressionBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
             },
             "TypeAssertion": {
                 "kind": "TypeAssertionExpression",
@@ -4460,9 +4317,7 @@
             ],
             "CallLikeExpression": [
                 "CallExpression",
-                "TaggedTemplateExpression",
-                "JsxOpeningLikeElement",
-                "BinaryExpression"
+                "JsxOpeningLikeElement"
             ],
             "FunctionLikeDeclaration": [
                 "FunctionDeclaration",

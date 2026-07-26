@@ -60,10 +60,8 @@ var textToKeyword = map[string]ast.Kind{
 	// are ordinary identifiers; `local` is the only declaration keyword.
 	"continue":    ast.KindContinueKeyword,
 	"constructor": ast.KindConstructorKeyword,
-	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"defer":       ast.KindDeferKeyword,
-	"delete":      ast.KindDeleteKeyword,
 	"do":          ast.KindDoKeyword,
 	"else":        ast.KindElseKeyword,
 	"elseif":      ast.KindElseIfKeyword,
@@ -84,7 +82,6 @@ var textToKeyword = map[string]ast.Kind{
 	"import":     ast.KindImportKeyword,
 	"in":         ast.KindInKeyword,
 	"infer":      ast.KindInferKeyword,
-	"instanceof": ast.KindInstanceOfKeyword,
 	"interface":  ast.KindInterfaceKeyword,
 	"intrinsic":  ast.KindIntrinsicKeyword,
 	"is":         ast.KindIsKeyword,
@@ -121,7 +118,6 @@ var textToKeyword = map[string]ast.Kind{
 	"symbol":     ast.KindSymbolKeyword,
 	"then":       ast.KindThenKeyword,
 	"this":       ast.KindThisKeyword,
-	"throw":      ast.KindThrowKeyword,
 	"true":       ast.KindTrueKeyword,
 	"type":       ast.KindTypeKeyword,
 	"typeof":     ast.KindTypeOfKeyword,
@@ -174,13 +170,6 @@ var textToToken = func() map[string]ast.Kind {
 		":":   ast.KindColonToken,
 		"::":  ast.KindColonColonToken,
 		"=":   ast.KindEqualsToken,
-		"+=":  ast.KindPlusEqualsToken,
-		"-=":  ast.KindMinusEqualsToken,
-		"*=":  ast.KindAsteriskEqualsToken,
-		"/=":  ast.KindSlashEqualsToken,
-		"%=":  ast.KindPercentEqualsToken,
-		"||=": ast.KindBarBarEqualsToken,
-		"&&=": ast.KindAmpersandAmpersandEqualsToken,
 		"@":   ast.KindAtToken,
 		"#":   ast.KindHashToken,
 		"`":   ast.KindBacktickToken,
@@ -531,23 +520,13 @@ func (s *Scanner) Scan() ast.Kind {
 		case '`':
 			s.token = s.scanTemplateAndSetTokenValue(false /*shouldEmitInvalidEscapeError*/)
 		case '%':
-			if s.charAt(1) == '=' {
-				s.pos += 2
-				s.token = ast.KindPercentEqualsToken
-			} else {
-				s.pos++
-				s.token = ast.KindPercentToken
-			}
+			s.pos++
+			s.token = ast.KindPercentToken
 		case '&':
 			next := s.charAt(1)
 			if next == '&' {
-				if s.charAt(2) == '=' {
-					s.pos += 3
-					s.token = ast.KindAmpersandAmpersandEqualsToken
-				} else {
-					s.pos += 2
-					s.token = ast.KindAmpersandAmpersandToken
-				}
+				s.pos += 2
+				s.token = ast.KindAmpersandAmpersandToken
 			} else {
 				s.pos++
 				s.token = ast.KindAmpersandToken
@@ -559,38 +538,23 @@ func (s *Scanner) Scan() ast.Kind {
 			s.pos++
 			s.token = ast.KindCloseParenToken
 		case '*':
-			next := s.charAt(1)
-			if next == '=' {
-				s.pos += 2
-				s.token = ast.KindAsteriskEqualsToken
-			} else {
-				s.pos++
-				if s.skipJSDocLeadingAsterisks != 0 &&
-					(s.tokenFlags&ast.TokenFlagsPrecedingJSDocLeadingAsterisks) == 0 &&
-					(s.tokenFlags&ast.TokenFlagsPrecedingLineBreak) != 0 {
-					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocLeadingAsterisks
-					continue
-				}
-				s.token = ast.KindAsteriskToken
+			s.pos++
+			if s.skipJSDocLeadingAsterisks != 0 &&
+				(s.tokenFlags&ast.TokenFlagsPrecedingJSDocLeadingAsterisks) == 0 &&
+				(s.tokenFlags&ast.TokenFlagsPrecedingLineBreak) != 0 {
+				s.tokenFlags |= ast.TokenFlagsPrecedingJSDocLeadingAsterisks
+				continue
 			}
+			s.token = ast.KindAsteriskToken
 		case '+':
-			next := s.charAt(1)
-			if next == '=' {
-				s.pos += 2
-				s.token = ast.KindPlusEqualsToken
-			} else {
-				s.pos++
-				s.token = ast.KindPlusToken
-			}
+			s.pos++
+			s.token = ast.KindPlusToken
 		case ',':
 			s.pos++
 			s.token = ast.KindCommaToken
 		case '-':
 			next := s.charAt(1)
-			if next == '=' {
-				s.pos += 2
-				s.token = ast.KindMinusEqualsToken
-			} else if next == '-' {
+			if next == '-' {
 				s.pos += 2
 				level, contentStart, isLong := luaLongBracketStart(s.text, s.pos)
 				if isLong {
@@ -718,13 +682,8 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindMultiLineCommentTrivia
 				return s.token
 			}
-			if s.charAt(1) == '=' {
-				s.pos += 2
-				s.token = ast.KindSlashEqualsToken
-			} else {
-				s.pos++
-				s.token = ast.KindSlashToken
-			}
+			s.pos++
+			s.token = ast.KindSlashToken
 		case '0':
 			if s.charAt(1) == 'X' || s.charAt(1) == 'x' {
 				start := s.pos
@@ -885,13 +844,8 @@ func (s *Scanner) Scan() ast.Kind {
 				}
 			}
 			if s.charAt(1) == '|' {
-				if s.charAt(2) == '=' {
-					s.pos += 3
-					s.token = ast.KindBarBarEqualsToken
-				} else {
-					s.pos += 2
-					s.token = ast.KindBarBarToken
-				}
+				s.pos += 2
+				s.token = ast.KindBarBarToken
 			} else {
 				s.pos++
 				s.token = ast.KindBarToken
@@ -1088,24 +1042,15 @@ func (s *Scanner) reScanGreaterThanTokenInner() {
 	}
 }
 
-func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) ast.Kind {
+func (s *Scanner) ReScanTemplateToken() ast.Kind {
 	s.pos = s.tokenStart
-	s.token = s.scanTemplateAndSetTokenValue(!isTaggedTemplate)
-	return s.token
-}
-
-func (s *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
-	if s.token != ast.KindAsteriskEqualsToken {
-		panic("'ReScanAsteriskEqualsToken' should only be called on a '*='")
-	}
-	s.pos = s.tokenStart + 1
-	s.token = ast.KindEqualsToken
+	s.token = s.scanTemplateAndSetTokenValue(true /*shouldEmitInvalidEscapeError*/)
 	return s.token
 }
 
 func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 	shouldReportErrors := len(reportErrors) > 0 && reportErrors[0]
-	if s.token == ast.KindSlashToken || s.token == ast.KindSlashEqualsToken {
+	if s.token == ast.KindSlashToken {
 		// Quickly get to the end of regex such that we know the flags
 		startOfRegExpBody := s.tokenStart + 1
 		p := startOfRegExpBody

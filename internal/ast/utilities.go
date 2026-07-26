@@ -199,10 +199,6 @@ func IsModifierLike(node *Node) bool {
 	return IsModifier(node)
 }
 
-func IsCompoundAssignment(token Kind) bool {
-	return token >= KindFirstCompoundAssignment && token <= KindLastCompoundAssignment
-}
-
 func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
 	if node.Kind == KindBinaryExpression {
 		expr := node.AsBinaryExpression()
@@ -306,10 +302,6 @@ func IsLogicalBinaryOperator(token Kind) bool {
 
 func IsLogicalBinaryExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
-}
-
-func IsLogicalAssignmentExpression(expr *Node) bool {
-	return IsBinaryExpression(expr) && IsLogicalAssignmentOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
 func IsLogicalExpression(node *Node) bool {
@@ -463,7 +455,6 @@ func isLeftHandSideExpressionKind(kind Kind) bool {
 		KindJsxElement,
 		KindJsxSelfClosingElement,
 		KindJsxFragment,
-		KindTaggedTemplateExpression,
 		KindArrayLiteralExpression,
 		KindParenthesizedExpression,
 		KindObjectLiteralExpression,
@@ -497,8 +488,6 @@ func IsLeftHandSideExpression(node *Node) bool {
 func isUnaryExpressionKind(kind Kind) bool {
 	switch kind {
 	case KindPrefixUnaryExpression,
-		KindDeleteExpression,
-		KindVoidExpression,
 		KindTypeAssertionExpression:
 		return true
 	}
@@ -512,8 +501,7 @@ func IsUnaryExpression(node *Node) bool {
 
 func isExpressionKind(kind Kind) bool {
 	switch kind {
-	case KindConditionalExpression,
-		KindArrowFunction,
+	case KindArrowFunction,
 		KindBinaryExpression,
 		KindSpreadElement,
 		KindAsExpression,
@@ -667,7 +655,6 @@ func isStatementKindButNotDeclarationKind(kind Kind) bool {
 	switch kind {
 	case KindBreakStatement,
 		KindContinueStatement,
-		KindDebuggerStatement,
 		KindExpressionStatement,
 		KindEmptyStatement,
 		KindForOfStatement,
@@ -677,7 +664,6 @@ func isStatementKindButNotDeclarationKind(kind Kind) bool {
 		KindLabelStatement,
 		KindGotoStatement,
 		KindReturnStatement,
-		KindThrowStatement,
 		KindVariableStatement,
 		KindWhileStatement,
 		KindNotEmittedStatement:
@@ -1437,10 +1423,6 @@ func IsImportOrExportSpecifier(node *Node) bool {
 	return IsImportSpecifier(node) || IsExportSpecifier(node)
 }
 
-func IsVoidZero(node *Node) bool {
-	return IsVoidExpression(node) && IsNumericLiteral(node.Expression()) && node.Expression().Text() == "0"
-}
-
 func IsExportsIdentifier(node *Node) bool {
 	return IsIdentifier(node) && node.Text() == "exports"
 }
@@ -2046,10 +2028,6 @@ func ExpressionIsAlias(node *Node) bool {
 	return IsEntityNameExpression(node)
 }
 
-func IsInstanceOfExpression(node *Node) bool {
-	return IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == KindInstanceOfKeyword
-}
-
 func IsAnyImportOrReExport(node *Node) bool {
 	return IsImportNode(node) || IsExportDeclaration(node)
 }
@@ -2120,7 +2098,6 @@ func IsExpressionNode(node *Node) bool {
 		KindPropertyAccessExpression,
 		KindElementAccessExpression,
 		KindCallExpression,
-		KindTaggedTemplateExpression,
 		KindAsExpression,
 		KindTypeAssertionExpression,
 		KindSatisfiesExpression,
@@ -2128,11 +2105,8 @@ func IsExpressionNode(node *Node) bool {
 		KindParenthesizedExpression,
 		KindFunctionExpression,
 		KindArrowFunction,
-		KindVoidExpression,
-		KindDeleteExpression,
 		KindPrefixUnaryExpression,
 		KindBinaryExpression,
-		KindConditionalExpression,
 		KindSpreadElement,
 		KindTemplateExpression,
 		KindOmittedExpression,
@@ -2169,7 +2143,7 @@ func IsInExpressionContext(node *Node) bool {
 	case KindVariableDeclaration, KindParameter, KindPropertySignature, KindPropertyAssignment, KindBindingElement:
 		return parent.Initializer() == node
 	case KindExpressionStatement, KindIfStatement, KindWhileStatement, KindReturnStatement,
-		KindThrowStatement, KindTypeAssertionExpression, KindAsExpression, KindTemplateSpan, KindComputedPropertyName,
+		KindTypeAssertionExpression, KindAsExpression, KindTemplateSpan, KindComputedPropertyName,
 		KindSatisfiesExpression:
 		return parent.Expression() == node
 	case KindForOfStatement:
@@ -2211,10 +2185,11 @@ func IsPartOfTypeNode(node *Node) bool {
 	case KindAnyKeyword, KindUnknownKeyword, KindNumberKeyword, KindStringKeyword,
 		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword,
 		KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword,
-		KindNilKeyword, KindNeverKeyword, KindSelfKeyword:
+		KindNilKeyword, KindNeverKeyword, KindSelfKeyword,
+		// `void` is only ever a type now: the `void x` expression is gone, so the
+		// keyword no longer has an expression role to be told apart from.
+		KindVoidKeyword:
 		return true
-	case KindVoidKeyword:
-		return node.Parent.Kind != KindVoidExpression
 	case KindFunctionKeyword:
 		return IsFunctionKeywordTypeNode(node)
 	case KindExpressionWithTypeArguments:
@@ -2270,7 +2245,7 @@ func isPartOfTypeNodeInParent(node *Node) bool {
 		KindIndexSignature,
 		KindTypeAssertionExpression:
 		return node == parent.Type()
-	case KindCallExpression, KindTaggedTemplateExpression:
+	case KindCallExpression:
 		return slices.Contains(parent.TypeArguments(), node)
 	}
 	return false
@@ -2472,6 +2447,20 @@ func StatementsOfLabelContainer(node *Node) []*Node {
 		return node.AsRepeatStatement().Statements.Nodes
 	}
 	return nil
+}
+
+// IsLastStatementInBlock reports whether node is the final statement in its
+// immediately containing Lua block. A chunk and a repeat body are blocks even
+// though their AST nodes are not KindBlock.
+func IsLastStatementInBlock(node *Node) bool {
+	if node == nil || node.Parent == nil {
+		return false
+	}
+	if node.Parent.Kind != KindSourceFile && node.Parent.Kind != KindRepeatStatement && !IsLuaBlock(node.Parent) {
+		return false
+	}
+	statements := StatementsOfLabelContainer(node.Parent)
+	return len(statements) != 0 && statements[len(statements)-1] == node
 }
 
 // FindLabelStatement returns the `::name::` declared directly in statements, or
@@ -2855,9 +2844,8 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 	case KindExportAssignment:
 		return ExpressionIsAlias(node.Expression())
 	case KindReturnStatement:
-		// A chunk's top-level return declares the module export, so `return M`
-		// aliases M. Only that return is ever an alias declaration: the binder
-		// gives no other one a symbol.
+		// A sole unconditional chunk return aliases its module value. Aggregate
+		// return paths use a property symbol instead.
 		return node.Expression() != nil && ExpressionIsAlias(node.Expression())
 	case KindVariableDeclaration, KindBindingElement:
 		return IsVariableDeclarationInitializedToRequire(node)
@@ -3168,11 +3156,8 @@ func IsCallLikeExpression(node *Node) bool {
 	case KindJsxOpeningElement,
 		KindJsxSelfClosingElement,
 		KindJsxOpeningFragment,
-		KindCallExpression,
-		KindTaggedTemplateExpression:
+		KindCallExpression:
 		return true
-	case KindBinaryExpression:
-		return node.AsBinaryExpression().OperatorToken.Kind == KindInstanceOfKeyword
 	}
 	return false
 }
@@ -3225,7 +3210,6 @@ func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
 func HasTypeArguments(node *Node) bool {
 	switch node.Kind {
 	case KindCallExpression,
-		KindTaggedTemplateExpression,
 		KindTypeReference,
 		KindExpressionWithTypeArguments,
 		KindImportType,
@@ -3711,13 +3695,6 @@ func selectExpressionOfCallExpression(node *Node) *Node {
 	return nil
 }
 
-func selectTagOfTaggedTemplateExpression(node *Node) *Node {
-	if IsTaggedTemplateExpression(node) {
-		return node.AsTaggedTemplateExpression().Tag
-	}
-	return nil
-}
-
 func selectTagNameOfJsxOpeningLikeElement(node *Node) *Node {
 	if IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node) {
 		return node.TagName()
@@ -3727,10 +3704,6 @@ func selectTagNameOfJsxOpeningLikeElement(node *Node) *Node {
 
 func IsCallExpressionTarget(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
 	return isCalleeWorker(node, IsCallExpression, selectExpressionOfCallExpression, includeElementAccess, skipPastOuterExpressions)
-}
-
-func IsTaggedTemplateTag(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
-	return isCalleeWorker(node, IsTaggedTemplateExpression, selectTagOfTaggedTemplateExpression, includeElementAccess, skipPastOuterExpressions)
 }
 
 func IsJsxOpeningLikeElementTagName(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
@@ -3788,8 +3761,6 @@ func IsJsxOpeningLikeElement(node *Node) bool {
 
 func GetInvokedExpression(node *Node) *Node {
 	switch node.Kind {
-	case KindTaggedTemplateExpression:
-		return node.AsTaggedTemplateExpression().Tag
 	case KindJsxOpeningElement, KindJsxSelfClosingElement:
 		return node.TagName()
 	case KindBinaryExpression:
@@ -4237,7 +4208,7 @@ func IsNamedEvaluationSource(node *Node) bool {
 		return IsIdentifier(node.AsBindingElement().Name()) && node.Initializer() != nil && node.AsBindingElement().DotDotDotToken == nil
 	case KindBinaryExpression:
 		switch node.AsBinaryExpression().OperatorToken.Kind {
-		case KindEqualsToken, KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken:
+		case KindEqualsToken:
 			return IsIdentifier(node.AsBinaryExpression().Left)
 		}
 	case KindExportAssignment:

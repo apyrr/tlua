@@ -17,7 +17,9 @@ function assertCondition(
 >!_condition : boolean
 >_condition : boolean
 
-    throw 'Condition failed';
+    error('Condition failed');
+>error('Condition failed') : never
+>error : (message?: any, level?: number) => never
 >'Condition failed' : "Condition failed"
 
   end

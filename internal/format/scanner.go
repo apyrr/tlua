@@ -158,7 +158,7 @@ func shouldRescanJsxAttributeValue(node *ast.Node) bool {
 }
 
 func startsWithSlashToken(t ast.Kind) bool {
-	return t == ast.KindSlashToken || t == ast.KindSlashEqualsToken
+	return t == ast.KindSlashToken
 }
 
 type scanAction int
@@ -282,7 +282,7 @@ func (s *formattingScanner) getNextToken(n *ast.Node, expectedScanAction scanAct
 	case actionRescanTemplateToken:
 		if token == ast.KindCloseBraceToken {
 			s.lastScanAction = actionRescanTemplateToken
-			return s.s.ReScanTemplateToken( /*isTaggedTemplate*/ false)
+			return s.s.ReScanTemplateToken()
 		}
 	case actionRescanJsxIdentifier:
 		s.lastScanAction = actionRescanJsxIdentifier

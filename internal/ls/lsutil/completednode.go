@@ -88,13 +88,8 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 	case ast.KindTypeQuery:
 		return IsCompletedNode(n.AsTypeQueryNode().ExprName, sourceFile)
 
-	case ast.KindDeleteExpression,
-		ast.KindVoidExpression,
-		ast.KindSpreadElement:
+	case ast.KindSpreadElement:
 		return IsCompletedNode(n.Expression(), sourceFile)
-
-	case ast.KindTaggedTemplateExpression:
-		return IsCompletedNode(n.AsTaggedTemplateExpression().Template, sourceFile)
 
 	case ast.KindTemplateExpression:
 		if n.AsTemplateExpression().TemplateSpans == nil {
@@ -115,9 +110,6 @@ func IsCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 
 	case ast.KindBinaryExpression:
 		return IsCompletedNode(n.AsBinaryExpression().Right, sourceFile)
-
-	case ast.KindConditionalExpression:
-		return IsCompletedNode(n.AsConditionalExpression().WhenFalse, sourceFile)
 
 	default:
 		return true

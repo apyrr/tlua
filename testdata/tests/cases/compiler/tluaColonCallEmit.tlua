@@ -29,5 +29,5 @@ function T:twice(): number
 end
 
 function raise(): never
-  throw T:bump();
+  error(T:bump());
 end

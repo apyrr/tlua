@@ -58,9 +58,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindReturnStatement:
 		n := node.AsReturnStatement()
 		return (boolToByte(n.Expression != nil) << 0)
-	case ast.KindThrowStatement:
-		n := node.AsThrowStatement()
-		return (boolToByte(n.Expression != nil) << 0)
 	case ast.KindLabelStatement:
 		n := node.AsLabelStatement()
 		return (boolToByte(n.Label != nil) << 0)
@@ -169,9 +166,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindExpressionList:
 		n := node.AsExpressionList()
 		return (boolToByte(n.Elements != nil) << 0)
-	case ast.KindConditionalExpression:
-		n := node.AsConditionalExpression()
-		return (boolToByte(n.Condition != nil) << 0) | (boolToByte(n.QuestionToken != nil) << 1) | (boolToByte(n.WhenTrue != nil) << 2) | (boolToByte(n.ColonToken != nil) << 3) | (boolToByte(n.WhenFalse != nil) << 4)
 	case ast.KindPropertyAccessExpression:
 		n := node.AsPropertyAccessExpression()
 		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.QuestionDotToken != nil) << 1) | (boolToByte(n.ColonToken != nil) << 2) | (boolToByte(n.Name() != nil) << 3)
@@ -193,9 +187,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindTemplateSpan:
 		n := node.AsTemplateSpan()
 		return (boolToByte(n.Expression != nil) << 0) | (boolToByte(n.Literal != nil) << 1)
-	case ast.KindTaggedTemplateExpression:
-		n := node.AsTaggedTemplateExpression()
-		return (boolToByte(n.Tag != nil) << 0) | (boolToByte(n.QuestionDotToken != nil) << 1) | (boolToByte(n.TypeArguments != nil) << 2) | (boolToByte(n.Template != nil) << 3)
 	case ast.KindParenthesizedExpression:
 		n := node.AsParenthesizedExpression()
 		return (boolToByte(n.Expression != nil) << 0)
@@ -214,12 +205,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindPropertyAssignment:
 		n := node.AsPropertyAssignment()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.PostfixToken != nil) << 2) | (boolToByte(n.Type != nil) << 3) | (boolToByte(n.Initializer != nil) << 4)
-	case ast.KindDeleteExpression:
-		n := node.AsDeleteExpression()
-		return (boolToByte(n.Expression != nil) << 0)
-	case ast.KindVoidExpression:
-		n := node.AsVoidExpression()
-		return (boolToByte(n.Expression != nil) << 0)
 	case ast.KindTypeAssertionExpression:
 		n := node.AsTypeAssertion()
 		return (boolToByte(n.Type != nil) << 0) | (boolToByte(n.Expression != nil) << 1)

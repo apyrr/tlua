@@ -593,9 +593,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get comment(): RemoteNodeList | undefined {
         return this.getNamedChild("comment") as RemoteNodeList;
     }
-    get condition(): RemoteNode | undefined {
-        return this.getNamedChild("condition") as RemoteNode;
-    }
     get constraint(): RemoteNode | undefined {
         return this.getNamedChild("constraint") as RemoteNode;
     }
@@ -755,9 +752,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get step(): RemoteNode | undefined {
         return this.getNamedChild("step") as RemoteNode;
     }
-    get tag(): RemoteNode | undefined {
-        return this.getNamedChild("tag") as RemoteNode;
-    }
     get tagName(): RemoteNode | undefined {
         return this.getNamedChild("tagName") as RemoteNode;
     }
@@ -766,9 +760,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get target(): RemoteNode | undefined {
         return this.getNamedChild("target") as RemoteNode;
-    }
-    get template(): RemoteNode | undefined {
-        return this.getNamedChild("template") as RemoteNode;
     }
     get templateSpans(): RemoteNodeList | undefined {
         return this.getNamedChild("templateSpans") as RemoteNodeList;
@@ -808,12 +799,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get types(): RemoteNodeList | undefined {
         return this.getNamedChild("types") as RemoteNodeList;
-    }
-    get whenFalse(): RemoteNode | undefined {
-        return this.getNamedChild("whenFalse") as RemoteNode;
-    }
-    get whenTrue(): RemoteNode | undefined {
-        return this.getNamedChild("whenTrue") as RemoteNode;
     }
 
     // ═══ Generated string property getters ═══

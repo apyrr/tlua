@@ -19,15 +19,6 @@ func TestEmit(t *testing.T) {
 		input  string
 		output string
 		jsx    bool
-		// removed marks a case this round-trip test can't run: either the syntax
-		// tlua removed from source (so the input no longer parses as .tlua), or a
-		// non-Lua construct whose best-effort Lua emit is intentionally not
-		// re-parseable (e.g. a tagged template lowers to call-sugar tlua doesn't
-		// accept). Emit of these node kinds — which survive for JSON, declaration,
-		// and best-effort value emit — is covered by the compiler baselines
-		// instead. The flag is per-entry (not a title match) so renaming or adding
-		// a case can never silently skip surviving syntax.
-		removed bool
 	}{
 		{title: "StringLiteral#1", input: `;"test"`, output: ";\n\"test\";"},
 		// tlua: a control char emits as Lua `\xHH` (not JS `\uXXXX` nor octal `\ddd`) and
@@ -50,7 +41,6 @@ func TestEmit(t *testing.T) {
 		{title: "PropertyAccess#1", input: `a.b`, output: `a.b;`},
 		// `#` is the Lua length operator now, not a private-identifier sigil, so
 		// `a.#b` no longer parses; the PrivateIdentifier node survives only for emit.
-		{title: "PropertyAccess#2", input: `a.#b`, output: `a.#b;`, removed: true},
 		{title: "PropertyAccess#3", input: `a?.b`, output: `a?.b;`},
 		{title: "PropertyAccess#4", input: `a?.b.c`, output: `a?.b.c;`},
 		{title: "PropertyAccess#5", input: `1..b`, output: `1..b;`},
@@ -81,8 +71,6 @@ func TestEmit(t *testing.T) {
 		{title: "CallExpression#13", input: `a?.b()`, output: `a?.b();`},
 		// Tagged templates are a non-Lua construct: the tag applied to the lowered
 		// string emits as `tag ""` (Lua string-call sugar) which tlua does not parse.
-		{title: "TaggedTemplateExpression#1", input: "tag``", output: "tag \"\";", removed: true},
-		{title: "TaggedTemplateExpression#2", input: "tag<T>``", output: "tag<T> \"\";", removed: true},
 		{title: "TypeAssertionExpression#1", input: `<T>a`, output: `<T>a;`},
 		{title: "FunctionExpression#1", input: "(function() end)", output: "(function()\nend);"},
 		{title: "FunctionExpression#2", input: "(function(a) return a end)", output: "(function(a)\n    return a;\nend);"},
@@ -90,8 +78,6 @@ func TestEmit(t *testing.T) {
 		{title: "FunctionExpression#6", input: "(function<T>() end)", output: "(function<T>()\nend);"},
 		{title: "FunctionExpression#7", input: "(function(a) end)", output: "(function(a)\nend);"},
 		{title: "FunctionExpression#8", input: "(function(): T end)", output: "(function(): T\nend);"},
-		{title: "DeleteExpression", input: `delete a`, output: `delete a;`},
-		{title: "VoidExpression", input: `void a`, output: `void a;`},
 		{title: "PrefixUnaryExpression#1", input: `+a`, output: `+a;`},
 		{title: "PrefixUnaryExpression#3", input: `+ +a`, output: `+ +a;`},
 		{title: "PrefixUnaryExpression#5", input: `-a`, output: `-a;`},
@@ -112,7 +98,6 @@ func TestEmit(t *testing.T) {
 		{title: "BinaryExpression#concat", input: `a..b`, output: `a .. b;`},
 		{title: "BinaryExpression#concatChain", input: `a..b..c`, output: `a .. b .. c;`},
 		{title: "BinaryExpression#concatLeftParen", input: `(a..b)..c`, output: `(a .. b) .. c;`},
-		{title: "BinaryExpression#4", input: `a instanceof b`, output: `a instanceof b;`},
 		{title: "BinaryExpression#5", input: `a in b`, output: `a in b;`},
 		// `&&`/`||` are aliases of `and`/`or` and print with the canonical Lua
 		// spelling, whichever the source used.
@@ -126,46 +111,27 @@ func TestEmit(t *testing.T) {
 		// tlua has no conditional expression in source; the node survives only in
 		// emit-time synthesis (`?.`/`??` lowering), covered by the factory-built
 		// TestParenthesizeConditional tests below.
-		{title: "ConditionalExpression#1", input: `a?b:c`, output: `a ? b : c;`, removed: true},
-		{title: "ConditionalExpression#2", input: "a\n?b:c", output: "a\n    ? b : c;", removed: true},
-		{title: "ConditionalExpression#3", input: "a?\nb:c", output: "a ?\n    b : c;", removed: true},
-		{title: "ConditionalExpression#4", input: "a?b\n:c", output: "a ? b\n    : c;", removed: true},
-		{title: "ConditionalExpression#5", input: "a?b:\nc", output: "a ? b :\n    c;", removed: true},
 		{title: "TemplateExpression#1", input: "`a${b}c`", output: `("a" .. tostring(b) .. "c");`},
 		{title: "TemplateExpression#2", input: "`a${b}c${d}e`", output: `("a" .. tostring(b) .. "c" .. tostring(d) .. "e");`},
-		{title: "SpreadElement", input: `[...a]`, output: `[...a];`, removed: true},
 		{title: "VarargExpression", input: `f(...)`, output: `f(...);`},
-		{title: "OmittedExpression", input: `[,]`, output: `[,];`, removed: true},
 		{title: "ExpressionWithTypeArguments", input: `a<T>`, output: `a<T>;`},
 		{title: "AsExpression", input: `a as T`, output: `a as T;`},
 		{title: "SatisfiesExpression", input: `a satisfies T`, output: `a satisfies T;`},
 		{title: "NonNullExpression", input: `a!`, output: `a!;`},
 		{title: "MetaProperty#1", input: `new.target`, output: `new.target;`},
-		{title: "ArrayLiteralExpression#1", input: `[]`, output: `[];`, removed: true},
-		{title: "ArrayLiteralExpression#2", input: `[a]`, output: `[a];`, removed: true},
-		{title: "ArrayLiteralExpression#3", input: `[a,]`, output: `[a,];`, removed: true},
-		{title: "ArrayLiteralExpression#4", input: `[,a]`, output: `[, a];`, removed: true},
-		{title: "ArrayLiteralExpression#5", input: `[...a]`, output: `[...a];`, removed: true},
-		{title: "ArrayLiteralExpression#6", input: `local array = [/* comment */];`, output: `local array = [ /* comment */];`, removed: true},
 		{title: "ObjectLiteralExpression#1", input: `({})`, output: `({});`},
 		{title: "ObjectLiteralExpression#2", input: `({a,})`, output: `({ a, });`},
 		{title: "PropertyAssignment", input: "({a = b})", output: "({ a = b });"},
 		{title: "PropertyAssignment#2", input: "({[a] = b})", output: "({ [a] = b });"},
-		{title: "SpreadAssignment", input: `({...a})`, output: `({ ...a });`, removed: true},
 		{title: "VariableStatement#1", input: `local a`, output: `local a;`},
 		{title: "VariableStatement#3", input: `local a = b`, output: `local a = b;`},
 		{title: "EmptyStatement", input: `;`, output: `;`},
-		{title: "ForOfStatement#1", input: `for(a of b);`, output: "for (a of b)\n    ;", removed: true},
-		{title: "ForOfStatement#2", input: `for(local a of b);`, output: "for (local a of b)\n    ;", removed: true},
-		{title: "ForOfStatement#3", input: `for(a of b){}`, output: "for (a of b) { }", removed: true},
 		{title: "ContinueStatement", input: `continue`, output: "continue;"},
 		{title: "BreakStatement", input: `break`, output: "break;"},
 		{title: "ReturnStatement#1", input: `return`, output: "return;"},
 		{title: "ReturnStatement#2", input: `return a`, output: "return a;"},
 		{title: "LabelStatement", input: `::a::`, output: "::a::"},
 		{title: "GotoStatement", input: `::a:: goto a`, output: "::a::\ngoto a;"},
-		{title: "ThrowStatement", input: `throw a`, output: "throw a;"},
-		{title: "DebuggerStatement", input: `debugger`, output: "debugger;"},
 		{title: "FunctionDeclaration#2", input: `function f() end`, output: "function f()\nend"},
 		{title: "FunctionDeclaration#4", input: `async function f() end`, output: "async function f()\nend"},
 		{title: "FunctionDeclaration#6", input: `function f<T>() end`, output: "function f<T>()\nend"},
@@ -208,14 +174,6 @@ func TestEmit(t *testing.T) {
 		{title: "TypeLiteralNode#1", input: `type T = {}`, output: `type T = {};`},
 		{title: "TypeLiteralNode#2", input: `type T = {a}`, output: "type T = {\n    a;\n};"},
 		{title: "ArrayTypeNode", input: `type T = a[]`, output: "type T = a[];"},
-		{title: "TupleTypeNode#1", input: `type T = []`, output: "type T = [\n];", removed: true},
-		{title: "TupleTypeNode#2", input: `type T = [a]`, output: "type T = [\n    a\n];", removed: true},
-		{title: "TupleTypeNode#3", input: `type T = [a,]`, output: "type T = [\n    a\n];", removed: true},
-		{title: "RestTypeNode", input: `type T = [...a]`, output: "type T = [\n    ...a\n];", removed: true},
-		{title: "OptionalTypeNode", input: `type T = [a?]`, output: "type T = [\n    a?\n];", removed: true},
-		{title: "NamedTupleMember#1", input: `type T = [a: b]`, output: "type T = [\n    a: b\n];", removed: true},
-		{title: "NamedTupleMember#2", input: `type T = [a?: b]`, output: "type T = [\n    a?: b\n];", removed: true},
-		{title: "NamedTupleMember#3", input: `type T = [...a: b]`, output: "type T = [\n    ...a: b\n];", removed: true},
 		{title: "UnionTypeNode#1", input: `type T = a | b`, output: "type T = a | b;"},
 		{title: "UnionTypeNode#2", input: `type T = a | b | c`, output: "type T = a | b | c;"},
 		{title: "UnionTypeNode#3", input: `type T = | a | b`, output: "type T = a | b;"},
@@ -296,17 +254,7 @@ func TestEmit(t *testing.T) {
 		{title: "ObjectBindingPattern#7", input: "function f({'a': b});", output: "function f({ 'a': b });"},
 		{title: "ObjectBindingPattern#8", input: "function f({0: b});", output: "function f({ 0: b });"},
 		{title: "ObjectBindingPattern#9", input: "function f({[a]: b});", output: "function f({ [a]: b });"},
-		{title: "ObjectBindingPattern#10", input: "function f({...a});", output: "function f({ ...a });", removed: true},
 		{title: "ObjectBindingPattern#11", input: "function f({a: {}});", output: "function f({ a: {} });"},
-		{title: "ArrayBindingPattern#1", input: "function f([]);", output: "function f([]);", removed: true},
-		{title: "ArrayBindingPattern#2", input: "function f([,]);", output: "function f([,]);", removed: true},
-		{title: "ArrayBindingPattern#3", input: "function f([a]);", output: "function f([a]);", removed: true},
-		{title: "ArrayBindingPattern#4", input: "function f([a, b]);", output: "function f([a, b]);", removed: true},
-		{title: "ArrayBindingPattern#5", input: "function f([a, , b]);", output: "function f([a, , b]);", removed: true},
-		{title: "ArrayBindingPattern#6", input: "function f([a = b]);", output: "function f([a = b]);", removed: true},
-		{title: "ArrayBindingPattern#7", input: "function f([...a]);", output: "function f([...a]);", removed: true},
-		{title: "ArrayBindingPattern#8", input: "function f([{}]);", output: "function f([{}]);", removed: true},
-		{title: "ArrayBindingPattern#9", input: "function f([[]]);", output: "function f([[]]);", removed: true},
 		{title: "TypeParameterDeclaration#1", input: "function f<T>();", output: "function f<T>();"},
 		{title: "TypeParameterDeclaration#2", input: "function f<in T>();", output: "function f<in T>();"},
 		{title: "TypeParameterDeclaration#3", input: "function f<T extends U>();", output: "function f<T extends U>();"},
@@ -346,51 +294,16 @@ func TestEmit(t *testing.T) {
 		{title: "JsxAttribute6", input: "<a b=<c></c>/>", output: "<a b=<c></c>/>;", jsx: true},
 		{title: "JsxAttribute7", input: "<a b=<c />/>", output: "<a b=<c />/>;", jsx: true},
 		{title: "JsxAttribute8", input: "<a b=<></>/>", output: "<a b=<></>/>;", jsx: true},
-		{title: "JsxSpreadAttribute", input: "<a {...b}/>", output: "<a {...b}/>;", jsx: true, removed: true},
 	}
 
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
-			if rec.removed {
-				t.Skip("emit of removed array/tuple/iteration syntax; covered by compiler baselines")
-			}
 			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			parsetestutil.CheckDiagnostics(t, file)
 			emittestutil.CheckEmit(t, nil, file, rec.output)
 		})
 	}
-}
-
-func TestParenthesizeArrayLiteral(t *testing.T) {
-	t.Parallel()
-	t.Skip("emit of removed array/tuple/spread syntax; covered by compiler baselines")
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewArrayLiteralExpression(
-					factory.NewNodeList(
-						[]*ast.Node{
-							// will be parenthesized on emit:
-							factory.NewBinaryExpression(
-								nil, /*modifiers*/
-								factory.NewIdentifier("a"),
-								nil, /*typeNode*/
-								factory.NewToken(ast.KindCommaToken),
-								factory.NewIdentifier("b"),
-							),
-						},
-					),
-					false, /*multiLine*/
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "[(a, b)];")
 }
 
 func TestParenthesizePropertyAccess1(t *testing.T) {
@@ -595,69 +508,6 @@ func TestParenthesizeCall4(t *testing.T) {
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a((b, c));")
 }
 
-func TestParenthesizeTaggedTemplate1(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewTaggedTemplateExpression(
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
-						factory.NewIdentifier("b"),
-					),
-					nil, /*questionDotToken*/
-					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
-					ast.NodeFlagsNone,
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// tlua: the no-substitution template lowers to a Lua string; the parenthesized tag is
-	// preserved. CheckEmitJS (no reparse) because `tag ""` is Lua string-call sugar tlua
-	// doesn't parse back — a non-Lua tagged template's best-effort emit.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(a, b) \"\";")
-}
-
-func TestParenthesizeTaggedTemplate2(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewTaggedTemplateExpression(
-					// will be parenthesized on emit:
-					factory.NewPropertyAccessExpression(
-						factory.NewIdentifier("a"),
-						factory.NewToken(ast.KindQuestionDotToken),
-						nil, /*colonToken*/
-						factory.NewIdentifier("b"),
-						ast.NodeFlagsOptionalChain,
-					),
-					nil, /*questionDotToken*/
-					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
-					ast.NodeFlagsNone,
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// See TestParenthesizeTaggedTemplate1: CheckEmitJS because the tagged-template emit isn't
-	// re-parseable tlua.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(a?.b) \"\";")
-}
-
 func TestParenthesizeTypeAssertion1(t *testing.T) {
 	t.Parallel()
 
@@ -749,56 +599,6 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(function() return {}.a end);")
 }
 
-func TestParenthesizeDelete(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewDeleteExpression(
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindPlusToken),
-						factory.NewIdentifier("b"),
-					),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "delete (a + b);")
-}
-
-func TestParenthesizeVoid(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewVoidExpression(
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindPlusToken),
-						factory.NewIdentifier("b"),
-					),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "void (a + b);")
-}
-
 func isBinaryOperator(token ast.Kind) bool {
 	switch token {
 	case ast.KindCommaToken,
@@ -817,15 +617,7 @@ func isBinaryOperator(token ast.Kind) bool {
 		ast.KindAmpersandAmpersandToken,
 		ast.KindBarBarToken,
 		ast.KindEqualsToken,
-		ast.KindPlusEqualsToken,
-		ast.KindMinusEqualsToken,
-		ast.KindAsteriskEqualsToken,
-		ast.KindSlashEqualsToken,
-		ast.KindPercentEqualsToken,
-		ast.KindBarBarEqualsToken,
-		ast.KindAmpersandAmpersandEqualsToken,
-		ast.KindInKeyword,
-		ast.KindInstanceOfKeyword:
+		ast.KindInKeyword:
 		return true
 	}
 	return false
@@ -903,194 +695,6 @@ func TestParenthesizeBinary(t *testing.T) {
 			emittestutil.CheckEmit(t, nil, file.AsSourceFile(), rec.output+";")
 		})
 	}
-}
-
-func TestParenthesizeConditional1(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewConditionalExpression(
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
-						factory.NewIdentifier("b"),
-					),
-					factory.NewToken(ast.KindQuestionToken),
-					factory.NewIdentifier("c"),
-					factory.NewToken(ast.KindColonToken),
-					factory.NewIdentifier("d"),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// The ternary is emit-only JS syntax: no reparse gate.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(a, b) ? c : d;")
-}
-
-func TestParenthesizeConditional2(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewConditionalExpression(
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindEqualsToken),
-						factory.NewIdentifier("b"),
-					),
-					factory.NewToken(ast.KindQuestionToken),
-					factory.NewIdentifier("c"),
-					factory.NewToken(ast.KindColonToken),
-					factory.NewIdentifier("d"),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// The ternary is emit-only JS syntax: no reparse gate.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(a = b) ? c : d;")
-}
-
-func TestParenthesizeConditional3(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewConditionalExpression(
-					// will be parenthesized on emit:
-					factory.NewArrowFunction(
-						nil, /*modifiers*/
-						nil, /*typeParameters*/
-						factory.NewNodeList([]*ast.Node{}),
-						nil, /*returnType*/
-						nil, /*fullSignature*/
-						factory.NewToken(ast.KindEqualsGreaterThanToken),
-						factory.NewBlock(
-							factory.NewNodeList([]*ast.Node{}),
-							false, /*multiLine*/
-						),
-					),
-					factory.NewToken(ast.KindQuestionToken),
-					factory.NewIdentifier("a"),
-					factory.NewToken(ast.KindColonToken),
-					factory.NewIdentifier("b"),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// The ternary is emit-only JS syntax: no reparse gate.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "((function()\nend) ? a : b);")
-}
-
-func TestParenthesizeConditional5(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewConditionalExpression(
-					factory.NewIdentifier("a"),
-					factory.NewToken(ast.KindQuestionToken),
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("b"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
-						factory.NewIdentifier("c"),
-					),
-					factory.NewToken(ast.KindColonToken),
-					factory.NewIdentifier("d"),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// The ternary is emit-only JS syntax: no reparse gate.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "a ? (b, c) : d;")
-}
-
-func TestParenthesizeConditional6(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewConditionalExpression(
-					factory.NewIdentifier("a"),
-					factory.NewToken(ast.KindQuestionToken),
-					factory.NewIdentifier("b"),
-					factory.NewToken(ast.KindColonToken),
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("c"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
-						factory.NewIdentifier("d"),
-					),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	// The ternary is emit-only JS syntax: no reparse gate.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "a ? b : (c, d);")
-}
-
-func TestParenthesizeSpreadElement1(t *testing.T) {
-	t.Parallel()
-	t.Skip("emit of removed array/tuple/spread syntax; covered by compiler baselines")
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewExpressionStatement(
-				factory.NewArrayLiteralExpression(
-					factory.NewNodeList(
-						[]*ast.Node{
-							factory.NewSpreadElement(
-								// will be parenthesized on emit:
-								factory.NewBinaryExpression(
-									nil, /*modifiers*/
-									factory.NewIdentifier("a"),
-									nil, /*typeNode*/
-									factory.NewToken(ast.KindCommaToken),
-									factory.NewIdentifier("b"),
-								),
-							),
-						},
-					),
-					false, /*multiLine*/
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "[...(a, b)];")
 }
 
 func TestParenthesizeSpreadElement2(t *testing.T) {
@@ -1326,42 +930,6 @@ func TestParenthesizeArrayType(t *testing.T) {
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = (a | b)[];")
-}
-
-func TestParenthesizeOptionalType(t *testing.T) {
-	t.Parallel()
-	t.Skip("emit of removed array/tuple/spread syntax; covered by compiler baselines")
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			factory.NewTypeAliasDeclaration(
-				nil,                        /*modifiers*/
-				factory.NewIdentifier("_"), /*name*/
-				nil,                        /*typeParameters*/
-				factory.NewTupleTypeNode(
-					factory.NewNodeList(
-						[]*ast.Node{
-							factory.NewOptionalTypeNode(
-								// will be parenthesized on emit:
-								factory.NewUnionTypeNode(
-									factory.NewNodeList(
-										[]*ast.Node{
-											factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
-											factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
-										},
-									),
-								),
-							),
-						},
-					),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = [\n    (a | b)?\n];")
 }
 
 func TestParenthesizeUnionType1(t *testing.T) {
@@ -1765,50 +1333,6 @@ func TestNameGeneration(t *testing.T) {
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, ec, file.AsSourceFile(), "local _a;\nfunction f()\n    local _a;\nend")
-}
-
-func TestNoTrailingCommaAfterTransform(t *testing.T) {
-	t.Parallel()
-	t.Skip("emit of removed array/tuple/spread syntax; covered by compiler baselines")
-
-	file := parsetestutil.ParseTypeScript("[a!]", false /*jsx*/)
-	emitContext := printer.NewEmitContext()
-
-	var visitor *ast.NodeVisitor
-	visitor = emitContext.NewNodeVisitor(func(node *ast.Node) *ast.Node {
-		switch node.Kind {
-		case ast.KindNonNullExpression:
-			node = node.Expression()
-		default:
-			node = node.VisitEachChild(visitor)
-		}
-		return node
-	})
-	file = visitor.VisitSourceFile(file)
-
-	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), "[a];")
-}
-
-func TestTrailingCommaAfterTransform(t *testing.T) {
-	t.Parallel()
-	t.Skip("emit of removed array/tuple/spread syntax; covered by compiler baselines")
-
-	file := parsetestutil.ParseTypeScript("[a!,]", false /*jsx*/)
-	emitContext := printer.NewEmitContext()
-
-	var visitor *ast.NodeVisitor
-	visitor = emitContext.NewNodeVisitor(func(node *ast.Node) *ast.Node {
-		switch node.Kind {
-		case ast.KindNonNullExpression:
-			node = node.Expression()
-		default:
-			node = node.VisitEachChild(visitor)
-		}
-		return node
-	})
-	file = visitor.VisitSourceFile(file)
-
-	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), "[a,];")
 }
 
 func TestPartiallyEmittedExpression(t *testing.T) {

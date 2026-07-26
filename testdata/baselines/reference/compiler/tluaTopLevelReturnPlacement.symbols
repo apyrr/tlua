@@ -23,3 +23,16 @@ if flag then
 end
 return 2;
 
+=== nestedInvalid.tlua ===
+declare flag: boolean;
+>flag : Symbol(flag, Decl(nestedInvalid.tlua, 0, 7))
+
+if flag then
+>flag : Symbol(flag, Decl(nestedInvalid.tlua, 0, 7))
+
+  return 1;
+  local after = 2;
+>after : Symbol(after, Decl(nestedInvalid.tlua, 3, 7))
+
+end
+

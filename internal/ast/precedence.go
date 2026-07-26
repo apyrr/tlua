@@ -64,7 +64,6 @@ const (
 	//     RelationalExpression `>` ConcatenationExpression
 	//     RelationalExpression `<=` ConcatenationExpression
 	//     RelationalExpression `>=` ConcatenationExpression
-	//     RelationalExpression `instanceof` ConcatenationExpression
 	//     RelationalExpression `in` ConcatenationExpression
 	//     [+TypeScript] RelationalExpression `as` Type
 	OperatorPrecedenceRelational
@@ -197,21 +196,12 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting
 	case KindArrowFunction:
 		return OperatorPrecedenceAssignment
-	case KindConditionalExpression:
-		return OperatorPrecedenceConditional
 	case KindBinaryExpression:
 		switch operatorKind {
 		case KindCommaToken:
 			return OperatorPrecedenceComma
 
-		case KindEqualsToken,
-			KindPlusEqualsToken,
-			KindMinusEqualsToken,
-			KindAsteriskEqualsToken,
-			KindSlashEqualsToken,
-			KindPercentEqualsToken,
-			KindBarBarEqualsToken,
-			KindAmpersandAmpersandEqualsToken:
+		case KindEqualsToken:
 			return OperatorPrecedenceAssignment
 
 		default:
@@ -220,9 +210,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 	// TODO: Should prefix `++` and `--` be moved to the `Update` precedence?
 	case KindTypeAssertionExpression,
 		KindNonNullExpression,
-		KindPrefixUnaryExpression,
-		KindVoidExpression,
-		KindDeleteExpression:
+		KindPrefixUnaryExpression:
 		return OperatorPrecedenceUnary
 
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting
@@ -239,7 +227,7 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		return OperatorPrecedenceMember
 
 	// !!! By necessity, this differs from the old compiler to better align with ParenthesizerRules. consider backporting
-	case KindTaggedTemplateExpression, KindExpressionWithTypeArguments:
+	case KindExpressionWithTypeArguments:
 		return OperatorPrecedenceMember
 
 	case KindAsExpression,
@@ -289,7 +277,7 @@ func GetBinaryOperatorPrecedence(operatorKind Kind) OperatorPrecedence {
 	case KindEqualsEqualsToken, KindTildeEqualsToken:
 		return OperatorPrecedenceEquality
 	case KindLessThanToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken,
-		KindInstanceOfKeyword, KindInKeyword, KindAsKeyword, KindSatisfiesKeyword:
+		KindInKeyword, KindAsKeyword, KindSatisfiesKeyword:
 		return OperatorPrecedenceRelational
 	case KindDotDotToken:
 		return OperatorPrecedenceConcatenation
@@ -311,12 +299,6 @@ func GetLeftmostExpression(node *Expression, stopAtCallExpressions bool) *Expres
 		switch node.Kind {
 		case KindBinaryExpression:
 			node = node.AsBinaryExpression().Left
-			continue
-		case KindConditionalExpression:
-			node = node.AsConditionalExpression().Condition
-			continue
-		case KindTaggedTemplateExpression:
-			node = node.AsTaggedTemplateExpression().Tag
 			continue
 		case KindCallExpression:
 			if stopAtCallExpressions {

@@ -99,8 +99,6 @@ export function isStatement(node: Node): node is Statement {
         || kind === SyntaxKind.RepeatStatement || kind === SyntaxKind.ContinueStatement
         || kind === SyntaxKind.BreakStatement || kind === SyntaxKind.ReturnStatement
         || kind === SyntaxKind.LabelStatement || kind === SyntaxKind.GotoStatement
-        || kind === SyntaxKind.ThrowStatement
-        || kind === SyntaxKind.DebuggerStatement
         || kind === SyntaxKind.InterfaceDeclaration || kind === SyntaxKind.TypeAliasDeclaration
         || kind === SyntaxKind.ModuleDeclaration
         || kind === SyntaxKind.ImportDeclaration || kind === SyntaxKind.ImportEqualsDeclaration
@@ -112,19 +110,16 @@ export function isStatement(node: Node): node is Statement {
 
 export function isExpression(node: Node): node is Expression {
     const kind = node.kind;
-    return kind === SyntaxKind.ConditionalExpression
-        || kind === SyntaxKind.ArrowFunction || kind === SyntaxKind.BinaryExpression
+    return kind === SyntaxKind.ArrowFunction || kind === SyntaxKind.BinaryExpression
         || kind === SyntaxKind.SpreadElement || kind === SyntaxKind.AsExpression
         || kind === SyntaxKind.OmittedExpression
         || kind === SyntaxKind.PartiallyEmittedExpression
         || kind === SyntaxKind.SatisfiesExpression
         || kind === SyntaxKind.ExpressionList
         || kind === SyntaxKind.PrefixUnaryExpression
-        || kind === SyntaxKind.DeleteExpression
-        || kind === SyntaxKind.VoidExpression
         || kind === SyntaxKind.TypeAssertionExpression
         || kind === SyntaxKind.CallExpression
-        || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.NonNullExpression
+        || kind === SyntaxKind.NonNullExpression
         || kind === SyntaxKind.JsxExpression
         || kind === SyntaxKind.PropertyAccessExpression || kind === SyntaxKind.ElementAccessExpression
         || kind === SyntaxKind.FunctionExpression
@@ -165,7 +160,6 @@ function isLeftHandSideExpressionKind(kind: SyntaxKind): boolean {
         case SyntaxKind.JsxElement:
         case SyntaxKind.JsxSelfClosingElement:
         case SyntaxKind.JsxFragment:
-        case SyntaxKind.TaggedTemplateExpression:
         case SyntaxKind.ArrayLiteralExpression:
         case SyntaxKind.ParenthesizedExpression:
         case SyntaxKind.ObjectLiteralExpression:
@@ -199,8 +193,6 @@ export function isUnaryExpression(node: Node): node is UnaryExpressionBase {
 function isUnaryExpressionKind(kind: SyntaxKind): boolean {
     switch (kind) {
         case SyntaxKind.PrefixUnaryExpression:
-        case SyntaxKind.DeleteExpression:
-        case SyntaxKind.VoidExpression:
         case SyntaxKind.TypeAssertionExpression:
             return true;
         default:

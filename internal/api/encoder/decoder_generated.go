@@ -115,21 +115,12 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindBacktickToken,
 		ast.KindHashToken,
 		ast.KindEqualsToken,
-		ast.KindPlusEqualsToken,
-		ast.KindMinusEqualsToken,
-		ast.KindAsteriskEqualsToken,
-		ast.KindSlashEqualsToken,
-		ast.KindPercentEqualsToken,
-		ast.KindBarBarEqualsToken,
-		ast.KindAmpersandAmpersandEqualsToken,
 		ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
 		ast.KindJSDocCommentTextToken,
 		ast.KindBreakKeyword,
 		ast.KindContinueKeyword,
-		ast.KindDebuggerKeyword,
 		ast.KindDefaultKeyword,
-		ast.KindDeleteKeyword,
 		ast.KindDoKeyword,
 		ast.KindElseKeyword,
 		ast.KindElseIfKeyword,
@@ -140,11 +131,9 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindGotoKeyword,
 		ast.KindIfKeyword,
 		ast.KindInKeyword,
-		ast.KindInstanceOfKeyword,
 		ast.KindRepeatKeyword,
 		ast.KindReturnKeyword,
 		ast.KindThenKeyword,
-		ast.KindThrowKeyword,
 		ast.KindTypeOfKeyword,
 		ast.KindUntilKeyword,
 		ast.KindLocalKeyword,
@@ -230,10 +219,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewContinueStatement(), nil
 	case ast.KindReturnStatement:
 		return d.factory.NewReturnStatement(d.singleChild(childIndices)), nil
-	case ast.KindThrowStatement:
-		return d.factory.NewThrowStatement(d.singleChild(childIndices)), nil
-	case ast.KindDebuggerStatement:
-		return d.factory.NewDebuggerStatement(), nil
 	case ast.KindLabelStatement:
 		return d.factory.NewLabelStatement(d.singleChild(childIndices)), nil
 	case ast.KindGotoStatement:
@@ -454,14 +439,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewExpressionList(d.singleNodeListChild(childIndices)), nil
 	case ast.KindVarargExpression:
 		return d.factory.NewVarargExpression(), nil
-	case ast.KindConditionalExpression:
-		it := newChildIter(childIndices)
-		condition := d.nodeAt(it.nextIf(mask, 0))
-		questionToken := d.nodeAt(it.nextIf(mask, 1))
-		whenTrue := d.nodeAt(it.nextIf(mask, 2))
-		colonToken := d.nodeAt(it.nextIf(mask, 3))
-		whenFalse := d.nodeAt(it.nextIf(mask, 4))
-		return d.factory.NewConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse), nil
 	case ast.KindPropertyAccessExpression:
 		it := newChildIter(childIndices)
 		expression := d.nodeAt(it.nextIf(mask, 0))
@@ -496,13 +473,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		expression := d.nodeAt(it.nextIf(mask, 0))
 		literal := d.nodeAt(it.nextIf(mask, 1))
 		return d.factory.NewTemplateSpan(expression, literal), nil
-	case ast.KindTaggedTemplateExpression:
-		it := newChildIter(childIndices)
-		tag := d.nodeAt(it.nextIf(mask, 0))
-		questionDotToken := d.nodeAt(it.nextIf(mask, 1))
-		typeArguments := d.nodeListAt(it.nextIf(mask, 2))
-		template := d.nodeAt(it.nextIf(mask, 3))
-		return d.factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, 0), nil
 	case ast.KindParenthesizedExpression:
 		return d.factory.NewParenthesizedExpression(d.singleChild(childIndices)), nil
 	case ast.KindArrayLiteralExpression:
@@ -531,10 +501,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		typeNode := d.nodeAt(it.nextIf(mask, 3))
 		initializer := d.nodeAt(it.nextIf(mask, 4))
 		return d.factory.NewPropertyAssignment(modifiers, name, postfixToken, typeNode, initializer), nil
-	case ast.KindDeleteExpression:
-		return d.factory.NewDeleteExpression(d.singleChild(childIndices)), nil
-	case ast.KindVoidExpression:
-		return d.factory.NewVoidExpression(d.singleChild(childIndices)), nil
 	case ast.KindTypeAssertionExpression:
 		it := newChildIter(childIndices)
 		typeNode := d.nodeAt(it.nextIf(mask, 0))

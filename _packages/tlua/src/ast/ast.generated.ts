@@ -50,20 +50,11 @@ export type PunctuationSyntaxKind =
     | SyntaxKind.AtToken
     | SyntaxKind.BacktickToken
     | SyntaxKind.HashToken
-    | SyntaxKind.EqualsToken
-    | SyntaxKind.PlusEqualsToken
-    | SyntaxKind.MinusEqualsToken
-    | SyntaxKind.AsteriskEqualsToken
-    | SyntaxKind.SlashEqualsToken
-    | SyntaxKind.PercentEqualsToken
-    | SyntaxKind.BarBarEqualsToken
-    | SyntaxKind.AmpersandAmpersandEqualsToken;
+    | SyntaxKind.EqualsToken;
 export type KeywordSyntaxKind =
     | SyntaxKind.BreakKeyword
     | SyntaxKind.ContinueKeyword
-    | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DefaultKeyword
-    | SyntaxKind.DeleteKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword
     | SyntaxKind.ElseIfKeyword
@@ -77,13 +68,11 @@ export type KeywordSyntaxKind =
     | SyntaxKind.IfKeyword
     | SyntaxKind.ImportKeyword
     | SyntaxKind.InKeyword
-    | SyntaxKind.InstanceOfKeyword
     | SyntaxKind.RepeatKeyword
     | SyntaxKind.ReturnKeyword
     | SyntaxKind.SuperKeyword
     | SyntaxKind.ThenKeyword
     | SyntaxKind.ThisKeyword
-    | SyntaxKind.ThrowKeyword
     | SyntaxKind.TrueKeyword
     | SyntaxKind.TypeOfKeyword
     | SyntaxKind.UntilKeyword
@@ -198,21 +187,12 @@ export type TokenSyntaxKind =
     | SyntaxKind.BacktickToken
     | SyntaxKind.HashToken
     | SyntaxKind.EqualsToken
-    | SyntaxKind.PlusEqualsToken
-    | SyntaxKind.MinusEqualsToken
-    | SyntaxKind.AsteriskEqualsToken
-    | SyntaxKind.SlashEqualsToken
-    | SyntaxKind.PercentEqualsToken
-    | SyntaxKind.BarBarEqualsToken
-    | SyntaxKind.AmpersandAmpersandEqualsToken
     | SyntaxKind.Identifier
     | SyntaxKind.PrivateIdentifier
     | SyntaxKind.JSDocCommentTextToken
     | SyntaxKind.BreakKeyword
     | SyntaxKind.ContinueKeyword
-    | SyntaxKind.DebuggerKeyword
     | SyntaxKind.DefaultKeyword
-    | SyntaxKind.DeleteKeyword
     | SyntaxKind.DoKeyword
     | SyntaxKind.ElseKeyword
     | SyntaxKind.ElseIfKeyword
@@ -226,13 +206,11 @@ export type TokenSyntaxKind =
     | SyntaxKind.IfKeyword
     | SyntaxKind.ImportKeyword
     | SyntaxKind.InKeyword
-    | SyntaxKind.InstanceOfKeyword
     | SyntaxKind.RepeatKeyword
     | SyntaxKind.ReturnKeyword
     | SyntaxKind.SuperKeyword
     | SyntaxKind.ThenKeyword
     | SyntaxKind.ThisKeyword
-    | SyntaxKind.ThrowKeyword
     | SyntaxKind.TrueKeyword
     | SyntaxKind.TypeOfKeyword
     | SyntaxKind.UntilKeyword
@@ -328,7 +306,7 @@ export type JSDocNodeSyntaxKind =
     | SyntaxKind.JSDocImportTag;
 export type ImportPhaseModifierSyntaxKind = SyntaxKind.TypeKeyword | SyntaxKind.DeferKeyword;
 export type PrefixUnaryOperator = SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.ExclamationToken | SyntaxKind.HashToken;
-export type AssignmentOperator = SyntaxKind.EqualsToken | CompoundAssignmentOperator;
+export type AssignmentOperator = SyntaxKind.EqualsToken;
 export type BinaryOperator = AssignmentOperatorOrHigher | SyntaxKind.CommaToken;
 export type ExponentiationOperator = SyntaxKind.AsteriskAsteriskToken;
 export type MultiplicativeOperator = SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken;
@@ -337,15 +315,13 @@ export type AdditiveOperator = SyntaxKind.PlusToken | SyntaxKind.MinusToken;
 export type AdditiveOperatorOrHigher = MultiplicativeOperatorOrHigher | AdditiveOperator;
 export type ConcatenationOperator = SyntaxKind.DotDotToken;
 export type ConcatenationOperatorOrHigher = AdditiveOperatorOrHigher | ConcatenationOperator;
-export type RelationalOperator = SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword;
+export type RelationalOperator = SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InKeyword;
 export type RelationalOperatorOrHigher = ConcatenationOperatorOrHigher | RelationalOperator;
 export type EqualityOperator = SyntaxKind.EqualsEqualsToken | SyntaxKind.TildeEqualsToken;
 export type EqualityOperatorOrHigher = RelationalOperatorOrHigher | EqualityOperator;
 export type LogicalOperator = SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken;
 export type LogicalOperatorOrHigher = EqualityOperatorOrHigher | LogicalOperator;
-export type CompoundAssignmentOperator = SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken;
 export type AssignmentOperatorOrHigher = LogicalOperatorOrHigher | AssignmentOperator;
-export type LogicalAssignmentOperator = SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.BarBarEqualsToken;
 
 export interface NodeBase extends Node {
     readonly flags: NodeFlags;
@@ -494,13 +470,6 @@ export interface ContinueStatement extends StatementBase {
 export interface ReturnStatement extends DeclarationBase, StatementBase {
     readonly kind: SyntaxKind.ReturnStatement;
     readonly expression?: Expression;
-}
-export interface ThrowStatement extends StatementBase {
-    readonly kind: SyntaxKind.ThrowStatement;
-    readonly expression: Expression;
-}
-export interface DebuggerStatement extends StatementBase {
-    readonly kind: SyntaxKind.DebuggerStatement;
 }
 export interface LabelStatement extends StatementBase {
     readonly kind: SyntaxKind.LabelStatement;
@@ -700,14 +669,6 @@ export interface ExpressionList extends ExpressionBase {
 export interface VarargExpression extends PrimaryExpressionBase {
     readonly kind: SyntaxKind.VarargExpression;
 }
-export interface ConditionalExpression extends ExpressionBase {
-    readonly kind: SyntaxKind.ConditionalExpression;
-    readonly condition: Expression;
-    readonly questionToken: QuestionToken;
-    readonly whenTrue: Expression;
-    readonly colonToken: ColonToken;
-    readonly whenFalse: Expression;
-}
 export interface PropertyAccessExpression extends MemberExpressionBase {
     readonly kind: SyntaxKind.PropertyAccessExpression;
     readonly expression: Expression;
@@ -746,13 +707,6 @@ export interface TemplateSpan extends NodeBase {
     readonly expression: Expression;
     readonly literal: TemplateMiddleOrTail;
 }
-export interface TaggedTemplateExpression extends MemberExpressionBase {
-    readonly kind: SyntaxKind.TaggedTemplateExpression;
-    readonly tag: Expression;
-    readonly questionDotToken: QuestionDotToken;
-    readonly typeArguments?: NodeArray<TypeNode>;
-    readonly template: TemplateLiteral;
-}
 export interface ParenthesizedExpression extends PrimaryExpressionBase {
     readonly kind: SyntaxKind.ParenthesizedExpression;
     readonly expression: Expression;
@@ -779,14 +733,6 @@ export interface PropertyAssignment extends NodeBase, NamedMemberBase, ObjectLit
     readonly kind: SyntaxKind.PropertyAssignment;
     readonly type: TypeNode;
     readonly initializer: Expression;
-}
-export interface DeleteExpression extends UnaryExpressionBase {
-    readonly kind: SyntaxKind.DeleteExpression;
-    readonly expression: Expression;
-}
-export interface VoidExpression extends UnaryExpressionBase {
-    readonly kind: SyntaxKind.VoidExpression;
-    readonly expression: Expression;
 }
 export interface TypeAssertion extends UnaryExpressionBase {
     readonly kind: SyntaxKind.TypeAssertionExpression;
@@ -1212,7 +1158,7 @@ export type ObjectTypeDeclaration = InterfaceDeclaration | TypeLiteralNode;
 export type JsxOpeningLikeElement = JsxOpeningElement | JsxSelfClosingElement;
 export type NamedImportsOrExports = NamedImports | NamedExports;
 export type BreakOrContinueStatement = BreakStatement | ContinueStatement;
-export type CallLikeExpression = CallExpression | TaggedTemplateExpression | JsxOpeningLikeElement | BinaryExpression;
+export type CallLikeExpression = CallExpression | JsxOpeningLikeElement;
 export type FunctionLikeDeclaration = FunctionDeclaration | FunctionExpression | ArrowFunction;
 export type VariableOrParameterDeclaration = VariableDeclaration | ParameterDeclaration;
 export type ImportClauseOrBindingPattern = ImportClause | BindingPattern;

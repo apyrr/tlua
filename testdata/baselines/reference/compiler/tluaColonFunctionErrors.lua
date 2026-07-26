@@ -43,16 +43,16 @@ end
 -- At most one colon segment, and nothing may follow it.
 function M:deep()
   f();
-  void ;
+  ;
 end
 function M:a()
   ();
-  void ;
+  ;
 end
 -- `local function` takes a plain name.
 local function Bad()
   ();
-  void ;
+  ;
 end
 -- Unknown base.
 function Unknown:f()

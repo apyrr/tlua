@@ -136,48 +136,43 @@ local ne: boolean = v ~= w;
 >v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
 >w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
 
-// A compound assignment runs the same metamethod its operator does and checks the result back
-// into the target.
-v += w;
->v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
->w : Symbol(w, Decl(tluaMetatableOperators.tlua, 14, 5))
 
 // An operand the metamethod's parameter does not admit is an error.
 local badOperand = v * "s";
->badOperand : Symbol(badOperand, Decl(tluaMetatableOperators.tlua, 32, 5))
+>badOperand : Symbol(badOperand, Decl(tluaMetatableOperators.tlua, 29, 5))
 >v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
 
 // A handler found on the right operand still receives the left as its first argument: `2 ^ v`
 // checks 2 against __pow's { x: number } first parameter and v against its number second.
 local badLeft = 2 ^ v;
->badLeft : Symbol(badLeft, Decl(tluaMetatableOperators.tlua, 36, 5))
+>badLeft : Symbol(badLeft, Decl(tluaMetatableOperators.tlua, 33, 5))
 >v : Symbol(v, Decl(tluaMetatableOperators.tlua, 13, 5))
 
 // A pairing that commits only to __eq makes its tables equality-comparable, but an operator it
 // has no handler for is still an error. `+` reports that its own way.
 local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: table, b: table): boolean return true; end });
->eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 37, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
->n : Symbol(n, Decl(tluaMetatableOperators.tlua, 40, 29))
->__eq : Symbol(__eq, Decl(tluaMetatableOperators.tlua, 40, 40))
->a : Symbol(a, Decl(tluaMetatableOperators.tlua, 40, 57))
->b : Symbol(b, Decl(tluaMetatableOperators.tlua, 40, 66))
+>n : Symbol(n, Decl(tluaMetatableOperators.tlua, 37, 29))
+>__eq : Symbol(__eq, Decl(tluaMetatableOperators.tlua, 37, 40))
+>a : Symbol(a, Decl(tluaMetatableOperators.tlua, 37, 57))
+>b : Symbol(b, Decl(tluaMetatableOperators.tlua, 37, 66))
 
 local eqOk: boolean = eqOnly == eqOnly;
->eqOk : Symbol(eqOk, Decl(tluaMetatableOperators.tlua, 41, 5))
->eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
->eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+>eqOk : Symbol(eqOk, Decl(tluaMetatableOperators.tlua, 38, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 37, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 37, 5))
 
 local noAdd = eqOnly + eqOnly;
->noAdd : Symbol(noAdd, Decl(tluaMetatableOperators.tlua, 42, 5))
->eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
->eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+>noAdd : Symbol(noAdd, Decl(tluaMetatableOperators.tlua, 39, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 37, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 37, 5))
 
 // Unary minus is arithmetic now: a non-numeric operand is rejected whether or not it is paired.
 local minusString = -"abc";
->minusString : Symbol(minusString, Decl(tluaMetatableOperators.tlua, 45, 5))
+>minusString : Symbol(minusString, Decl(tluaMetatableOperators.tlua, 42, 5))
 
 local minusTable = -eqOnly;
->minusTable : Symbol(minusTable, Decl(tluaMetatableOperators.tlua, 46, 5))
->eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 40, 5))
+>minusTable : Symbol(minusTable, Decl(tluaMetatableOperators.tlua, 43, 5))
+>eqOnly : Symbol(eqOnly, Decl(tluaMetatableOperators.tlua, 37, 5))
 

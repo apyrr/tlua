@@ -983,35 +983,6 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 			argumentCount:       argumentCount,
 			implicitArguments:   implicitArguments,
 		}
-	} else if isNoSubstitutionTemplateLiteral(node) && isTaggedTemplateExpression(parent) {
-		// Check if we're actually inside the template;
-		// otherwise we'll fall out and return undefined.
-		if isInsideTemplateLiteral(node, position, sourceFile) {
-			return getArgumentListInfoForTemplate(parent.AsTaggedTemplateExpression(), 0, sourceFile)
-		}
-		return nil
-	} else if isTemplateHead(node) && parent.Parent.Kind == ast.KindTaggedTemplateExpression {
-		templateExpression := parent.AsTemplateExpression()
-		tagExpression := templateExpression.Parent.AsTaggedTemplateExpression()
-
-		argumentIndex := 1
-		if isInsideTemplateLiteral(node, position, sourceFile) {
-			argumentIndex = 0
-		}
-		return getArgumentListInfoForTemplate(tagExpression, argumentIndex, sourceFile)
-	} else if ast.IsTemplateSpan(parent) && isTaggedTemplateExpression(parent.Parent.Parent) {
-		templateSpan := parent
-		tagExpression := parent.Parent.Parent
-
-		// If we're just after a template tail, don't show signature help.
-		if isTemplateTail(node) && !isInsideTemplateLiteral(node, position, sourceFile) {
-			return nil
-		}
-
-		spanIndex := ast.IndexOfNode(templateSpan.Parent.AsTemplateExpression().TemplateSpans.Nodes, templateSpan)
-		argumentIndex := getArgumentIndexForTemplatePiece(spanIndex, node, position, sourceFile)
-
-		return getArgumentListInfoForTemplate(tagExpression.AsTaggedTemplateExpression(), argumentIndex, sourceFile)
 	} else if ast.IsJsxOpeningLikeElement(parent) {
 		// Provide a signature help for JSX opening element or JSX self-closing element.
 		// This is not guarantee that JSX tag-name is resolved into stateless function component. (that is done in "getSignatureHelpItems")
@@ -1378,46 +1349,4 @@ func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sour
 		}
 	}
 	return tokens
-}
-
-func getArgumentListInfoForTemplate(tagExpression *ast.TaggedTemplateExpression, argumentIndex int, sourceFile *ast.SourceFile) *argumentListInfo {
-	// argumentCount is either 1 or (numSpans + 1) to account for the template strings array argument.
-	argumentCount := 1
-	if !isNoSubstitutionTemplateLiteral(tagExpression.Template) {
-		argumentCount = len(tagExpression.Template.AsTemplateExpression().TemplateSpans.Nodes) + 1
-	}
-	if argumentIndex != 0 {
-		debug.Assert(argumentIndex < argumentCount)
-	}
-	return &argumentListInfo{
-		isTypeParameterList: false,
-		invocation:          &invocation{callInvocation: &callInvocation{node: tagExpression.AsNode()}},
-		argumentIndex:       argumentIndex,
-		argumentCount:       argumentCount,
-		argumentsSpan:       getApplicableRangeForTaggedTemplate(tagExpression, sourceFile),
-	}
-}
-
-func getApplicableRangeForTaggedTemplate(taggedTemplate *ast.TaggedTemplateExpression, sourceFile *ast.SourceFile) core.TextRange {
-	template := taggedTemplate.Template
-	applicableSpanStart := scanner.GetTokenPosOfNode(template, sourceFile, false)
-	applicableSpanEnd := template.End()
-
-	// We need to adjust the end position for the case where the template does not have a tail.
-	// Otherwise, we will not show signature help past the expression.
-	// For example,
-	//
-	//      ` ${ 1 + 1 foo(10)
-	//       |       |
-	// This is because a Missing node has no width. However, what we actually want is to include trivia
-	// leading up to the next token in case the user is about to type in a TemplateMiddle or TemplateTail.
-	if template.Kind == ast.KindTemplateExpression {
-		templateSpans := template.AsTemplateExpression().TemplateSpans
-		lastSpan := templateSpans.Nodes[len(templateSpans.Nodes)-1]
-		if lastSpan.AsTemplateSpan().Literal.End()-lastSpan.AsTemplateSpan().Literal.Pos() == 0 {
-			applicableSpanEnd = scanner.SkipTrivia(sourceFile.Text(), applicableSpanEnd)
-		}
-	}
-
-	return core.NewTextRange(applicableSpanStart, applicableSpanEnd-applicableSpanStart)
 }

@@ -37,18 +37,14 @@ import type {
     CallLikeExpression,
     CallSignatureDeclaration,
     ColonToken,
-    CompoundAssignmentOperator,
     ComputedPropertyName,
     ConcatenationOperator,
     ConcatenationOperatorOrHigher,
-    ConditionalExpression,
     ConditionalTypeNode,
     ContinueStatement,
-    DebuggerStatement,
     DeclarationName,
     DeclareKeyword,
     DefaultKeyword,
-    DeleteExpression,
     DestructuringAssignment,
     DotDotDotToken,
     DotToken,
@@ -161,7 +157,6 @@ import type {
     LiteralLikeNode,
     LiteralToken,
     LiteralTypeNode,
-    LogicalAssignmentOperator,
     LogicalOperator,
     LogicalOperatorOrHigher,
     MappedTypeNode,
@@ -250,7 +245,6 @@ import type {
     SyntheticExpression,
     SyntheticReferenceExpression,
     TableEntry,
-    TaggedTemplateExpression,
     TemplateExpression,
     TemplateHead,
     TemplateLiteral,
@@ -263,7 +257,6 @@ import type {
     TemplateSpan,
     TemplateTail,
     ThisExpression,
-    ThrowStatement,
     Token,
     TriviaSyntaxKind,
     TrueLiteral,
@@ -284,7 +277,6 @@ import type {
     VariableDeclarationList,
     VariableOrParameterDeclaration,
     VariableStatement,
-    VoidExpression,
     WhileStatement,
 } from "./ast.ts";
 
@@ -342,14 +334,6 @@ export function isContinueStatement(node: Node): node is ContinueStatement {
 
 export function isReturnStatement(node: Node): node is ReturnStatement {
     return node.kind === SyntaxKind.ReturnStatement;
-}
-
-export function isThrowStatement(node: Node): node is ThrowStatement {
-    return node.kind === SyntaxKind.ThrowStatement;
-}
-
-export function isDebuggerStatement(node: Node): node is DebuggerStatement {
-    return node.kind === SyntaxKind.DebuggerStatement;
 }
 
 export function isLabelStatement(node: Node): node is LabelStatement {
@@ -540,10 +524,6 @@ export function isVarargExpression(node: Node): node is VarargExpression {
     return node.kind === SyntaxKind.VarargExpression;
 }
 
-export function isConditionalExpression(node: Node): node is ConditionalExpression {
-    return node.kind === SyntaxKind.ConditionalExpression;
-}
-
 export function isPropertyAccessExpression(node: Node): node is PropertyAccessExpression {
     return node.kind === SyntaxKind.PropertyAccessExpression;
 }
@@ -572,10 +552,6 @@ export function isTemplateSpan(node: Node): node is TemplateSpan {
     return node.kind === SyntaxKind.TemplateSpan;
 }
 
-export function isTaggedTemplateExpression(node: Node): node is TaggedTemplateExpression {
-    return node.kind === SyntaxKind.TaggedTemplateExpression;
-}
-
 export function isParenthesizedExpression(node: Node): node is ParenthesizedExpression {
     return node.kind === SyntaxKind.ParenthesizedExpression;
 }
@@ -598,14 +574,6 @@ export function isTableEntry(node: Node): node is TableEntry {
 
 export function isPropertyAssignment(node: Node): node is PropertyAssignment {
     return node.kind === SyntaxKind.PropertyAssignment;
-}
-
-export function isDeleteExpression(node: Node): node is DeleteExpression {
-    return node.kind === SyntaxKind.DeleteExpression;
-}
-
-export function isVoidExpression(node: Node): node is VoidExpression {
-    return node.kind === SyntaxKind.VoidExpression;
 }
 
 export function isTypeAssertion(node: Node): node is TypeAssertion {
@@ -1123,8 +1091,7 @@ export function isBreakOrContinueStatement(node: Node): node is BreakOrContinueS
 }
 
 export function isCallLikeExpression(node: Node): node is CallLikeExpression {
-    const kind = node.kind;
-    return kind === SyntaxKind.CallExpression || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.JsxOpeningElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.BinaryExpression;
+    return node.kind === SyntaxKind.CallExpression || node.kind === SyntaxKind.JsxOpeningElement || node.kind === SyntaxKind.JsxSelfClosingElement;
 }
 
 export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration {
@@ -1281,8 +1248,7 @@ export function isPrefixUnaryOperator(kind: SyntaxKind): kind is PrefixUnaryOper
 }
 
 export function isAssignmentOperator(kind: SyntaxKind): kind is AssignmentOperator {
-    return kind === SyntaxKind.EqualsToken
-        || isCompoundAssignmentOperator(kind);
+    return kind === SyntaxKind.EqualsToken;
 }
 
 export function isBinaryOperator(kind: SyntaxKind): kind is BinaryOperator {
@@ -1329,7 +1295,6 @@ export function isRelationalOperator(kind: SyntaxKind): kind is RelationalOperat
         || kind === SyntaxKind.LessThanEqualsToken
         || kind === SyntaxKind.GreaterThanToken
         || kind === SyntaxKind.GreaterThanEqualsToken
-        || kind === SyntaxKind.InstanceOfKeyword
         || kind === SyntaxKind.InKeyword;
 }
 
@@ -1358,24 +1323,9 @@ export function isLogicalOperatorOrHigher(kind: SyntaxKind): kind is LogicalOper
         || isLogicalOperator(kind);
 }
 
-export function isCompoundAssignmentOperator(kind: SyntaxKind): kind is CompoundAssignmentOperator {
-    return kind === SyntaxKind.PlusEqualsToken
-        || kind === SyntaxKind.MinusEqualsToken
-        || kind === SyntaxKind.AsteriskEqualsToken
-        || kind === SyntaxKind.SlashEqualsToken
-        || kind === SyntaxKind.PercentEqualsToken
-        || kind === SyntaxKind.BarBarEqualsToken
-        || kind === SyntaxKind.AmpersandAmpersandEqualsToken;
-}
-
 export function isAssignmentOperatorOrHigher(kind: SyntaxKind): kind is AssignmentOperatorOrHigher {
     return isLogicalOperatorOrHigher(kind)
         || isAssignmentOperator(kind);
-}
-
-export function isLogicalAssignmentOperator(kind: SyntaxKind): kind is LogicalAssignmentOperator {
-    return kind === SyntaxKind.AmpersandAmpersandEqualsToken
-        || kind === SyntaxKind.BarBarEqualsToken;
 }
 
 export function isLiteralKind(kind: SyntaxKind): boolean {

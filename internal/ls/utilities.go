@@ -617,21 +617,8 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	}
 
 	if !forRename {
-		// /**/new [|name|]
-		// /**/void [|name|]
-		// /**/void obj.[|name|]
-		// /**/typeof [|name|]
-		// /**/delete obj.[|name|]
-		if node.Kind == ast.KindVoidKeyword && parent.Kind == ast.KindVoidExpression ||
-			node.Kind == ast.KindDeleteKeyword && parent.Kind == ast.KindDeleteExpression {
-			if expr := parent.Expression(); expr != nil {
-				return ast.SkipOuterExpressions(expr, ast.OEKAll)
-			}
-		}
-
 		// left /**/in [|name|]
-		// left /**/instanceof [|name|]
-		if (node.Kind == ast.KindInKeyword || node.Kind == ast.KindInstanceOfKeyword) && parent.Kind == ast.KindBinaryExpression && parent.AsBinaryExpression().OperatorToken == node {
+		if node.Kind == ast.KindInKeyword && parent.Kind == ast.KindBinaryExpression && parent.AsBinaryExpression().OperatorToken == node {
 			return ast.SkipOuterExpressions(parent.AsBinaryExpression().Right, ast.OEKAll)
 		}
 
@@ -1002,10 +989,6 @@ func removeOptionality(t *checker.Type, isOptionalExpression bool, isOptionalCha
 
 func isNoSubstitutionTemplateLiteral(node *ast.Node) bool {
 	return node.Kind == ast.KindNoSubstitutionTemplateLiteral
-}
-
-func isTaggedTemplateExpression(node *ast.Node) bool {
-	return node.Kind == ast.KindTaggedTemplateExpression
 }
 
 func isInsideTemplateLiteral(node *ast.Node, position int, sourceFile *ast.SourceFile) bool {
