@@ -1,0 +1,203 @@
+//// [tests/cases/compiler/tluaRequireEarlyReturn.tlua] ////
+
+=== main.tlua ===
+local values = require("values");
+>values : string | number | boolean
+>require("values") : "done" | 1 | true
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"values" : "values"
+
+local tables = require("tables");
+>tables : { a: number; } | { b: string; }
+>require("tables") : { a: number; } | { b: string; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"tables" : "tables"
+
+local fallthrough = require("fallthrough");
+>fallthrough : boolean | { stopped: boolean; }
+>require("fallthrough") : true | { stopped: boolean; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"fallthrough" : "fallthrough"
+
+local nilAndZero = require("nilAndZero");
+>nilAndZero : string | boolean
+>require("nilAndZero") : "ok" | true
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"nilAndZero" : "nilAndZero"
+
+local maybeNil = require("maybeNil");
+>maybeNil : string | boolean
+>require("maybeNil") : string | true
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"maybeNil" : "maybeNil"
+
+local falseValue = require("falseValue");
+>falseValue : boolean
+>require("falseValue") : boolean
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"falseValue" : "falseValue"
+
+local dead = require("deadAfterError");
+>dead : { a: number; }
+>require("deadAfterError") : { a: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"deadAfterError" : "deadAfterError"
+
+local deadA = dead.a;
+>deadA : number
+>dead.a : number
+>dead : { a: number; }
+>a : number
+
+local aliasNil = require("aliasNil");
+>aliasNil : string | boolean
+>require("aliasNil") : string | true
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"aliasNil" : "aliasNil"
+
+=== values.tlua ===
+declare mode: "text" | "number" | "none";
+>mode : "none" | "number" | "text"
+
+if mode == "none" then
+>mode == "none" : boolean
+>mode : "none" | "number" | "text"
+>"none" : "none"
+
+  return;
+end
+if mode == "text" then
+>mode == "text" : boolean
+>mode : "number" | "text"
+>"text" : "text"
+
+  return "done";
+>"done" : "done"
+
+end
+return 1;
+>1 : 1
+
+=== tables.tlua ===
+declare chooseA: boolean;
+>chooseA : boolean
+
+local A = { a = 1 };
+>A : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+local B = { b = "two" };
+>B : { b: string; }
+>{ b = "two" } : { b: string; }
+>b : string
+>"two" : "two"
+
+if chooseA then
+>chooseA : boolean
+
+  return A;
+>A : { a: number; }
+
+end
+return B;
+>B : { b: string; }
+
+=== fallthrough.tlua ===
+declare stop: boolean;
+>stop : boolean
+
+local result = { stopped = true };
+>result : { stopped: boolean; }
+>{ stopped = true } : { stopped: boolean; }
+>stopped : boolean
+>true : true
+
+if stop then
+>stop : boolean
+
+  return result;
+>result : { stopped: boolean; }
+
+end
+
+=== nilAndZero.tlua ===
+declare mode: "nil" | "zero" | "value";
+>mode : "nil" | "value" | "zero"
+
+declare none: () => void;
+>none : () => void
+
+if mode == "nil" then
+>mode == "nil" : boolean
+>mode : "nil" | "value" | "zero"
+>"nil" : "nil"
+
+  return nil;
+end
+if mode == "zero" then
+>mode == "zero" : boolean
+>mode : "value" | "zero"
+>"zero" : "zero"
+
+  return none();
+>none() : void
+>none : () => void
+
+end
+return "ok";
+>"ok" : "ok"
+
+=== maybeNil.tlua ===
+declare maybe: () => string | nil;
+>maybe : () => string | nil
+
+return maybe();
+>maybe() : string | nil
+>maybe : () => string | nil
+
+=== falseValue.tlua ===
+declare useNil: boolean;
+>useNil : boolean
+
+if useNil then
+>useNil : boolean
+
+  return nil;
+end
+return false;
+>false : false
+
+=== deadAfterError.tlua ===
+declare cond: boolean;
+>cond : boolean
+
+local M = { a = 1 };
+>M : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+if cond then
+>cond : boolean
+
+  error("bad");
+>error("bad") : never
+>error : (message?: any, level?: number) => never
+>"bad" : "bad"
+
+  return "never";
+>"never" : "never"
+
+end
+return M;
+>M : { a: number; }
+
+=== aliasNil.tlua ===
+declare maybe: string | nil;
+>maybe : string | nil
+
+return maybe;
+>maybe : string | nil
+

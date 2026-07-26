@@ -2449,6 +2449,20 @@ func StatementsOfLabelContainer(node *Node) []*Node {
 	return nil
 }
 
+// IsLastStatementInBlock reports whether node is the final statement in its
+// immediately containing Lua block. A chunk and a repeat body are blocks even
+// though their AST nodes are not KindBlock.
+func IsLastStatementInBlock(node *Node) bool {
+	if node == nil || node.Parent == nil {
+		return false
+	}
+	if node.Parent.Kind != KindSourceFile && node.Parent.Kind != KindRepeatStatement && !IsLuaBlock(node.Parent) {
+		return false
+	}
+	statements := StatementsOfLabelContainer(node.Parent)
+	return len(statements) != 0 && statements[len(statements)-1] == node
+}
+
 // FindLabelStatement returns the `::name::` declared directly in statements, or
 // nil. Duplicates resolve to the first, matching the binder's pre-scan.
 func FindLabelStatement(statements []*Node, name string) *Node {
@@ -2830,9 +2844,8 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 	case KindExportAssignment:
 		return ExpressionIsAlias(node.Expression())
 	case KindReturnStatement:
-		// A chunk's top-level return declares the module export, so `return M`
-		// aliases M. Only that return is ever an alias declaration: the binder
-		// gives no other one a symbol.
+		// A sole unconditional chunk return aliases its module value. Aggregate
+		// return paths use a property symbol instead.
 		return node.Expression() != nil && ExpressionIsAlias(node.Expression())
 	case KindVariableDeclaration, KindBindingElement:
 		return IsVariableDeclarationInitializedToRequire(node)

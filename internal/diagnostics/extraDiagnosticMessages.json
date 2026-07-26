@@ -275,7 +275,7 @@
         "category": "Error",
         "code": 100052
     },
-    "A top-level 'return' must be the last statement of the chunk.": {
+    "A top-level 'return' must be the last statement of its block.": {
         "category": "Error",
         "code": 100053
     },

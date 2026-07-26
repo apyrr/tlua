@@ -3613,20 +3613,18 @@ func (c *Checker) checkReturnStatement(node *ast.Node) {
 	}
 	container := ast.GetContainingFunction(node)
 	if container == nil {
-		// A chunk returns its module value, so a top-level return is legal as the
-		// file's last statement -- that is the value `require` reports. There is
-		// no annotation to check it against; the module's type is inferred from it.
+		// A chunk return is legal as the final statement of any Lua block. There
+		// is no annotation to check it against; all chunk exits are aggregated to
+		// infer the value `require` reports.
 		file := ast.GetSourceFileOfNode(node)
 		if file != nil && !file.IsDeclarationFile {
-			if statements := file.Statements.Nodes; node.Parent == file.AsNode() && len(statements) != 0 && statements[len(statements)-1] == node {
+			if ast.IsLastStatementInBlock(node) {
 				if node.Expression() != nil {
 					c.checkExpressionCached(node.Expression())
 				}
 				return
 			}
-			// A return nested in a top-level block, or one followed by more
-			// statements, is not the chunk's value.
-			c.grammarErrorOnFirstToken(node, diagnostics.A_top_level_return_must_be_the_last_statement_of_the_chunk)
+			c.grammarErrorOnFirstToken(node, diagnostics.A_top_level_return_must_be_the_last_statement_of_its_block)
 			return
 		}
 		c.grammarErrorOnFirstToken(node, diagnostics.A_return_statement_can_only_be_used_within_a_function_body)
@@ -11929,8 +11927,8 @@ func (c *Checker) getTargetOfAliasDeclaration(node *ast.Node) *ast.Symbol {
 	case ast.KindBindingElement:
 		return c.getTargetOfImportSpecifier(node)
 	case ast.KindReturnStatement:
-		// A chunk's top-level return declares the module export, so `return M`
-		// aliases M exactly as `export = M` does.
+		// A sole unconditional chunk `return M` aliases M exactly as
+		// `export = M` does. Aggregate return paths use a property symbol.
 		return c.getTargetOfExportAssignment(node)
 	case ast.KindBinaryExpression:
 		return c.getTargetOfBinaryExpression(node)
@@ -12796,9 +12794,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		case ast.KindTableEntry:
 			result = c.checkTableEntry(declaration, CheckModeNormal)
 		case ast.KindReturnStatement:
-			// A chunk's top-level return is its module value. `require` keeps only the
-			// first returned value, so a value list adjusts to one value.
-			result = c.widenTypeForVariableLikeDeclaration(c.adjustMultiReturn(c.checkExpressionCached(declaration.Expression())), declaration, false /*reportErrors*/)
+			result = c.getLuaModuleReturnType(symbol)
 		case ast.KindBinaryExpression, ast.KindCallExpression:
 			result = c.getWidenedTypeForAssignmentDeclaration(symbol)
 		case ast.KindJsxAttribute:

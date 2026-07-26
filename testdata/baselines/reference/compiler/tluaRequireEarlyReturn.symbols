@@ -1,0 +1,160 @@
+//// [tests/cases/compiler/tluaRequireEarlyReturn.tlua] ////
+
+=== main.tlua ===
+local values = require("values");
+>values : Symbol(values, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local tables = require("tables");
+>tables : Symbol(tables, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local fallthrough = require("fallthrough");
+>fallthrough : Symbol(fallthrough, Decl(main.tlua, 2, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local nilAndZero = require("nilAndZero");
+>nilAndZero : Symbol(nilAndZero, Decl(main.tlua, 3, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local maybeNil = require("maybeNil");
+>maybeNil : Symbol(maybeNil, Decl(main.tlua, 4, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local falseValue = require("falseValue");
+>falseValue : Symbol(falseValue, Decl(main.tlua, 5, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local dead = require("deadAfterError");
+>dead : Symbol(dead, Decl(main.tlua, 6, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local deadA = dead.a;
+>deadA : Symbol(deadA, Decl(main.tlua, 7, 5))
+>dead.a : Symbol(a, Decl(deadAfterError.tlua, 1, 11))
+>dead : Symbol(dead, Decl(main.tlua, 6, 5))
+>a : Symbol(a, Decl(deadAfterError.tlua, 1, 11))
+
+local aliasNil = require("aliasNil");
+>aliasNil : Symbol(aliasNil, Decl(main.tlua, 8, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+=== values.tlua ===
+declare mode: "text" | "number" | "none";
+>mode : Symbol(mode, Decl(values.tlua, 0, 7))
+
+if mode == "none" then
+>mode : Symbol(mode, Decl(values.tlua, 0, 7))
+
+  return;
+end
+if mode == "text" then
+>mode : Symbol(mode, Decl(values.tlua, 0, 7))
+
+  return "done";
+end
+return 1;
+
+=== tables.tlua ===
+declare chooseA: boolean;
+>chooseA : Symbol(chooseA, Decl(tables.tlua, 0, 7))
+
+local A = { a = 1 };
+>A : Symbol(A, Decl(tables.tlua, 1, 5))
+>a : Symbol(a, Decl(tables.tlua, 1, 11))
+
+local B = { b = "two" };
+>B : Symbol(B, Decl(tables.tlua, 2, 5))
+>b : Symbol(b, Decl(tables.tlua, 2, 11))
+
+if chooseA then
+>chooseA : Symbol(chooseA, Decl(tables.tlua, 0, 7))
+
+  return A;
+>A : Symbol(A, Decl(tables.tlua, 1, 5))
+
+end
+return B;
+>B : Symbol(B, Decl(tables.tlua, 2, 5))
+
+=== fallthrough.tlua ===
+declare stop: boolean;
+>stop : Symbol(stop, Decl(fallthrough.tlua, 0, 7))
+
+local result = { stopped = true };
+>result : Symbol(result, Decl(fallthrough.tlua, 1, 5))
+>stopped : Symbol(stopped, Decl(fallthrough.tlua, 1, 16))
+
+if stop then
+>stop : Symbol(stop, Decl(fallthrough.tlua, 0, 7))
+
+  return result;
+>result : Symbol(result, Decl(fallthrough.tlua, 1, 5))
+
+end
+
+=== nilAndZero.tlua ===
+declare mode: "nil" | "zero" | "value";
+>mode : Symbol(mode, Decl(nilAndZero.tlua, 0, 7))
+
+declare none: () => void;
+>none : Symbol(none, Decl(nilAndZero.tlua, 1, 7))
+
+if mode == "nil" then
+>mode : Symbol(mode, Decl(nilAndZero.tlua, 0, 7))
+
+  return nil;
+end
+if mode == "zero" then
+>mode : Symbol(mode, Decl(nilAndZero.tlua, 0, 7))
+
+  return none();
+>none : Symbol(none, Decl(nilAndZero.tlua, 1, 7))
+
+end
+return "ok";
+
+=== maybeNil.tlua ===
+declare maybe: () => string | nil;
+>maybe : Symbol(maybe, Decl(maybeNil.tlua, 0, 7))
+
+return maybe();
+>maybe : Symbol(maybe, Decl(maybeNil.tlua, 0, 7))
+
+=== falseValue.tlua ===
+declare useNil: boolean;
+>useNil : Symbol(useNil, Decl(falseValue.tlua, 0, 7))
+
+if useNil then
+>useNil : Symbol(useNil, Decl(falseValue.tlua, 0, 7))
+
+  return nil;
+end
+return false;
+
+=== deadAfterError.tlua ===
+declare cond: boolean;
+>cond : Symbol(cond, Decl(deadAfterError.tlua, 0, 7))
+
+local M = { a = 1 };
+>M : Symbol(M, Decl(deadAfterError.tlua, 1, 5))
+>a : Symbol(a, Decl(deadAfterError.tlua, 1, 11))
+
+if cond then
+>cond : Symbol(cond, Decl(deadAfterError.tlua, 0, 7))
+
+  error("bad");
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
+
+  return "never";
+end
+return M;
+>M : Symbol(M, Decl(deadAfterError.tlua, 1, 5))
+
+=== aliasNil.tlua ===
+declare maybe: string | nil;
+>maybe : Symbol(maybe, Decl(aliasNil.tlua, 0, 7))
+
+return maybe;
+>maybe : Symbol(maybe, Decl(aliasNil.tlua, 0, 7))
+

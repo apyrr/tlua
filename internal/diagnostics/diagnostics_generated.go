@@ -4376,7 +4376,7 @@ var JSX_element_implicitly_has_type_any_because_no_interface_0_exists = &Message
 
 var A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement = &Message{code: 100052, category: CategoryError, key: "A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement_100052", text: "A 'break' statement can only be used within an enclosing iteration statement."}
 
-var A_top_level_return_must_be_the_last_statement_of_the_chunk = &Message{code: 100053, category: CategoryError, key: "A_top_level_return_must_be_the_last_statement_of_the_chunk_100053", text: "A top-level 'return' must be the last statement of the chunk."}
+var A_top_level_return_must_be_the_last_statement_of_its_block = &Message{code: 100053, category: CategoryError, key: "A_top_level_return_must_be_the_last_statement_of_its_block_100053", text: "A top-level 'return' must be the last statement of its block."}
 
 var Declaration_emit_is_not_supported_for_a_Lua_module_yet = &Message{code: 100054, category: CategoryError, key: "Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054", text: "Declaration emit is not supported for a Lua module yet."}
 
@@ -8760,8 +8760,8 @@ func keyToMessage(key Key) *Message {
 		return JSX_element_implicitly_has_type_any_because_no_interface_0_exists
 	case "A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement_100052":
 		return A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement
-	case "A_top_level_return_must_be_the_last_statement_of_the_chunk_100053":
-		return A_top_level_return_must_be_the_last_statement_of_the_chunk
+	case "A_top_level_return_must_be_the_last_statement_of_its_block_100053":
+		return A_top_level_return_must_be_the_last_statement_of_its_block
 	case "Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054":
 		return Declaration_emit_is_not_supported_for_a_Lua_module_yet
 	case "Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name_100055":

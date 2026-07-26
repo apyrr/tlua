@@ -77,6 +77,7 @@ type Binder struct {
 	flowListArena           core.Arena[ast.FlowList]
 	singleDeclarationsArena core.Arena[*ast.Node]
 	expandoAssignments      []ExpandoAssignmentInfo
+	topLevelReturns         []*ast.Node
 }
 
 // A Lua label in scope: `::name::` is visible in the whole block that declares
@@ -301,7 +302,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 // Should not be called on a declaration with a computed property name,
 // unless it is a well known Symbol.
 func (b *Binder) getDeclarationName(node *ast.Node) string {
-	// A chunk's top-level return is its module export (see bindTopLevelReturn).
+	// A chunk's returns share one module export (see bindTopLevelReturns).
 	if ast.IsReturnStatement(node) {
 		return ast.InternalSymbolNameExportEquals
 	}
@@ -1366,6 +1367,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
 			node.AsSourceFile().EndFlowNode = b.currentFlow
+			b.bindTopLevelReturns()
 		}
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
@@ -1824,7 +1826,7 @@ func (b *Binder) bindIfStatement(node *ast.Node) {
 }
 
 func (b *Binder) bindReturnStatement(node *ast.Node) {
-	b.bindTopLevelReturn(node)
+	b.collectTopLevelReturn(node)
 	b.bind(node.Expression())
 	if b.currentReturnTarget != nil {
 		b.addAntecedent(b.currentReturnTarget, b.currentFlow)
@@ -1834,22 +1836,51 @@ func (b *Binder) bindReturnStatement(node *ast.Node) {
 	b.hasFlowEffects = true
 }
 
-// bindTopLevelReturn declares the value a chunk returns as its module export:
-// `require` yields whatever the chunk returned, so the file's last statement
-// returning a value is Lua's export. A bare `return` exports nothing (require
-// reports `true`), and only the chunk's final statement counts -- an earlier
-// return is a grammar error the checker reports.
-func (b *Binder) bindTopLevelReturn(node *ast.Node) {
-	if node.Parent != b.file.AsNode() || b.file.IsDeclarationFile || node.Expression() == nil {
+// collectTopLevelReturn records returns belonging to the chunk rather than a
+// function. Lua permits a return as the final statement of any nested block;
+// placement errors are diagnosed by the checker and do not contribute to the
+// module value.
+func (b *Binder) collectTopLevelReturn(node *ast.Node) {
+	if b.file.IsDeclarationFile || node.Flags&ast.NodeFlagsAmbient != 0 || ast.GetContainingFunction(node) != nil || !ast.IsLastStatementInBlock(node) {
 		return
 	}
-	statements := b.file.Statements.Nodes
-	if len(statements) == 0 || statements[len(statements)-1] != node {
+	b.topLevelReturns = append(b.topLevelReturns, node)
+}
+
+// bindTopLevelReturns declares all value-returning exits from a chunk as one
+// module export. Multiple exits, bare returns, and fallthrough are represented
+// by a property symbol whose checker-computed type is their union. A sole
+// unconditional alias keeps the ordinary export= alias fast path.
+//
+// This runs after the source file's control flow is complete, but before
+// bindCommonJSTypeExports, and is therefore still the binder's exclusive write
+// phase for the shared module symbol.
+func (b *Binder) bindTopLevelReturns() {
+	var valueReturn *ast.Node
+	hasNoValueReturn := false
+	for _, node := range b.topLevelReturns {
+		if node.Expression() == nil {
+			hasNoValueReturn = true
+		} else if valueReturn == nil {
+			valueReturn = node
+		}
+	}
+	if valueReturn == nil {
 		return
 	}
-	flags := core.IfElse(ast.ExpressionIsAlias(node.Expression()), ast.SymbolFlagsAlias, ast.SymbolFlagsProperty)
-	symbol := b.declareSymbol(ast.GetExports(b.file.Symbol), b.file.Symbol, node, flags, ast.SymbolFlagsAll)
-	SetValueDeclaration(symbol, node)
+
+	hasFallthrough := b.file.EndFlowNode == nil || b.file.EndFlowNode.Flags&ast.FlowFlagsUnreachable == 0
+	isSoleAlias := len(b.topLevelReturns) == 1 && !hasNoValueReturn && !hasFallthrough && ast.ExpressionIsAlias(valueReturn.Expression())
+	flags := core.IfElse(isSoleAlias, ast.SymbolFlagsAlias, ast.SymbolFlagsProperty)
+
+	first := b.topLevelReturns[0]
+	symbol := b.declareSymbol(ast.GetExports(b.file.Symbol), b.file.Symbol, first, flags, ast.SymbolFlagsAll)
+	for _, node := range b.topLevelReturns[1:] {
+		b.addDeclarationToSymbol(symbol, node, flags)
+	}
+	// Keep generic symbol consumers on a value-bearing declaration even when
+	// the first source-order exit is a bare return.
+	symbol.ValueDeclaration = valueReturn
 }
 
 // break and continue take no label in tlua, so they always target the
