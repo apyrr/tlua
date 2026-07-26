@@ -58,7 +58,13 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 // favors document-pull results for open documents, so suggestions stay
 // document-pull-only).
 func (l *LanguageService) ProvideFileDiagnostics(ctx context.Context, file *ast.SourceFile, includeSuggestions bool) []*lsproto.Diagnostic {
-	return l.toLSPDiagnostics(ctx, getAllDiagnosticsCore(ctx, l.GetProgram(), file, includeSuggestions))
+	program := l.GetProgram()
+	if program.GetSourceFileByPath(file.Path()) != file {
+		// A file from another program would check against the wrong graph and
+		// return silently wrong results; fail like getProgramAndFile does.
+		panic("ProvideFileDiagnostics: file does not belong to this language service's program")
+	}
+	return l.toLSPDiagnostics(ctx, getAllDiagnosticsCore(ctx, program, file, includeSuggestions))
 }
 
 func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {

@@ -879,6 +879,15 @@ func registerRequestHandler[Req, Resp any](
 // one that may run long enough that it must not hold up the dispatch loop. The
 // params are unmarshaled synchronously; the handler itself runs as async work,
 // like the document handlers below.
+//
+// Cancellation contract, unlike the sibling registrars: the HANDLER owns the
+// cancellation answer. There is no ctx.Err() override here, so a handler that
+// returns a response with a cancelled context gets that response sent (legal
+// JSON-RPC; the client discards it). A handler registered through this helper
+// must either be fine with that, or detect cancellation itself and return an
+// error carrying the right code -- workspace/diagnostic returns ServerCancelled
+// with DiagnosticServerCancellationData, because a plain RequestCancelled
+// counts toward vscode-languageclient shutting its pull loop down.
 func registerAsyncRequestHandler[Req, Resp any](
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],

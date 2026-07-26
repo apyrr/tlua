@@ -58,6 +58,12 @@ var _ responseErrorData = workspaceDiagnosticsCancelledError{}
 func (s *Server) handleWorkspaceDiagnostic(ctx context.Context, params *lsproto.WorkspaceDiagnosticParams) (lsproto.WorkspaceDiagnosticResponse, error) {
 	s.workspacePullMu.Lock()
 	defer s.workspacePullMu.Unlock()
+	// A pull the client abandoned while it waited behind the previous one has
+	// nothing left to do; answer before pruning, reconciling or walking the
+	// project tree on its behalf.
+	if ctx.Err() != nil {
+		return nil, workspaceDiagnosticsCancelledError{}
+	}
 
 	// The request ID stays on the context: files are checked one after another,
 	// so keeping the checkers affine to this request is what makes the loop
@@ -66,6 +72,12 @@ func (s *Server) handleWorkspaceDiagnostic(ctx context.Context, params *lsproto.
 
 	var items []lsproto.WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport
 	var cancelled bool
+	// A project whose program is not built in this snapshot contributes no
+	// reports and, crucially, no `seen` entries: running the stale-URI cleanup
+	// then would clear every diagnostic of that project for one pull and
+	// resend them all on the next -- flicker for nothing. Staleness for one
+	// cycle is the better trade; the next pull cleans up properly.
+	var unreportedProject bool
 
 	s.session.WithSnapshotLoadingProjectTree(ctx, nil, func(snapshot *project.Snapshot) {
 		cache := s.session.WorkspaceDiagnosticsCache()
@@ -95,16 +107,19 @@ func (s *Server) handleWorkspaceDiagnostic(ctx context.Context, params *lsproto.
 
 		// With validation off there is nothing to report, but the stale-URI
 		// cleanup below still runs: every result the client holds is cleared.
-		if !snapshot.UserPreferences().EnableValidation.IsFalse() {
+		validationOff := snapshot.UserPreferences().EnableValidation.IsFalse()
+		if !validationOff {
 		projects:
 			for _, proj := range snapshot.ProjectCollection.Projects() {
 				program := proj.GetProgram()
 				if program == nil {
+					unreportedProject = true
 					continue
 				}
 				cache.Reconcile(proj)
 				languageService := project.NewLanguageServiceForProject(proj, snapshot)
 				if languageService == nil {
+					unreportedProject = true
 					continue
 				}
 				projectKey := proj.Id()
@@ -185,7 +200,14 @@ func (s *Server) handleWorkspaceDiagnostic(ctx context.Context, params *lsproto.
 
 		// Files the client still holds a result for but that no project reports
 		// on any more (deleted, excluded from the program, or in a project that
-		// went away): an empty full report is what clears them.
+		// went away): an empty full report is what clears them. Skipped while a
+		// project could not report (program still building): its files are
+		// absent from `seen` for that reason, not because they are gone, and
+		// clearing them would flicker the Problems panel. The validation-off
+		// wipe is intentional and still runs.
+		if unreportedProject && !validationOff {
+			return
+		}
 		for _, previousResult := range params.PreviousResultIds {
 			if seen.Has(previousResult.Uri) {
 				continue

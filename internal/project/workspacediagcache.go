@@ -518,11 +518,10 @@ func luaWriteRootIsGlobal(rootName string, reference *ast.Node, isBare bool, dep
 	// Anything else -- a table constructor, a function, a literal, a call
 	// (`require` included) -- roots the write in a value this file owns.
 	//
-	// Known gap: augmenting a required module's table through such an alias
-	// (`local m = require("x"); m.f = ...`) is not caught here. That mutates
-	// another module's type rather than a global, it is not something typed code
-	// normally does, and treating every require alias as global-contributing
-	// would make most files invalidate the world.
+	// A require alias is safe to treat as owned: writing a new member through
+	// it (`local m = require("x"); m.f = ...`) does not augment module x's
+	// type in tlua -- the checker reports TS2339 on the write -- so there is
+	// no cross-file effect to invalidate for.
 	declaration := binding.ValueDeclaration
 	if declaration == nil || !ast.IsVariableDeclaration(declaration) || !ast.IsLuaLocal(declaration) {
 		// Parameters and other non-variable declarations are not stable
