@@ -104,7 +104,7 @@ Reverse = Reverse or {};
 >Reverse = Reverse or {} : { zod: { value: string; }; }
 >Reverse : { zod: { value: string; }; }
 >Reverse or {} : { zod: { value: string; }; }
->Reverse : { zod: { value: string; }; }
+>Reverse : nil
 >{} : { zod: { value: string; }; }
 
 === reads.tlua ===

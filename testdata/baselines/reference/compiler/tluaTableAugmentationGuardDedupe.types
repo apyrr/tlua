@@ -35,10 +35,10 @@ Nested.sub = Nested.sub or {};
 
 === b.tlua ===
 Shared = Shared or {};
->Shared = Shared or {} : { fromA: number; fromB: string; self: any; }
+>Shared = Shared or {} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
 >Shared : { fromA: number; fromB: string; self: any; }
->Shared or {} : { fromA: number; fromB: string; self: any; }
->Shared : { fromA: number; fromB: string; self: any; }
+>Shared or {} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
+>Shared : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
 >{} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
 
 Shared.fromB = "b";
@@ -94,10 +94,10 @@ NonEmpty = NonEmpty or { seed = 1 };
 >1 : 1
 
 NonEmpty = NonEmpty or { seed = 1 };
->NonEmpty = NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
+>NonEmpty = NonEmpty or { seed = 1 } : { seed: number; }
 >NonEmpty : { seed: number; } | { seed: number; }
->NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
->NonEmpty : { seed: number; } | { seed: number; }
+>NonEmpty or { seed = 1 } : { seed: number; }
+>NonEmpty : { seed: number; }
 >{ seed = 1 } : { seed: number; }
 >seed : number
 >1 : 1

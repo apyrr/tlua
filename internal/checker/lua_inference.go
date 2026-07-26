@@ -178,25 +178,26 @@ func (c *Checker) getLuaSelfReadSnapshotType(reference *ast.Node, symbol *ast.Sy
 		return nil, false
 	}
 	// A reference that typed against the snapshot keeps it across re-checks.
-	// The member types inference produced came from the snapshot, so a later
-	// pass re-typing the same reference against the finished declared type
-	// would contradict them: `handlers = { previous = handlers }` would
-	// elaborate the resolved table type of the read against the nil that very
-	// read produced, and quick-info would disagree with the .types the
-	// inference saw.
+	// A first entry that lands mid-cycle resolves to any, and a later pass
+	// recomputing the full snapshot would contradict the member types that
+	// answer produced. The entry doubles as the marker checkAssertionDeferred
+	// reads: an assertion on a self-store read is the guard discharging the
+	// snapshot's nil (`X = X as T or {}`), which must not count against
+	// conversion comparability.
 	if cached, ok := c.luaSelfReadSnapshotTypes[reference]; ok {
 		return cached, true
 	}
-	// A resolved target whose reads never entered here keeps the ordinary flow
-	// path. Gating on the cached declared type rather than on a resolution
-	// cycle matters when the read sits inside an immediately invoked value:
-	// the first entry arrives through the IIFE's return-type resolution,
-	// before the target's own resolution is on the stack, and falling through
-	// would complete a return-type/declared-type cycle instead of reading the
+	// The snapshot applies whether or not the target's declared type has
+	// resolved yet. Which happens first depends on check order — another
+	// file's read can force resolution before this store is checked, and in a
+	// checker pool the owning checker's order differs from program order — so
+	// gating on the cached declared type made the read's type depend on which
+	// checker answered. Entering unconditionally (not on a resolution cycle)
+	// also matters when the read sits inside an immediately invoked value: the
+	// first entry arrives through the IIFE's return-type resolution, before
+	// the target's own resolution is on the stack, and falling through would
+	// complete a return-type/declared-type cycle instead of reading the
 	// snapshot.
-	if c.valueSymbolLinks.Get(symbol).resolvedType != nil || c.valueSymbolLinks.Get(merged).resolvedType != nil {
-		return nil, false
-	}
 	snapshot, ok := c.getLuaOrderedSelfSnapshotType(merged, source, c.luaSnapshotResolving)
 	if ok {
 		c.luaSelfReadSnapshotTypes[reference] = snapshot
