@@ -1,0 +1,24 @@
+// @target: esnext
+// @strict: true
+
+// Cross-file stores follow load order, which the checker does not track, so a
+// top-level store in another file counts as definite for a self-read. A store
+// inside a function still needs a call nothing orders, so it never does —
+// unless the read itself sits in a function body, which gets the leniency
+// ordinary closure reads get.
+
+// @filename: def.tlua
+counted = 0;
+local function setLate()
+  late = 0;
+end
+local function setLenient()
+  lenient = 0;
+end
+
+// @filename: use.tlua
+counted = counted + 1;
+late = late + 1;
+local function bump()
+  lenient = lenient + 1;
+end

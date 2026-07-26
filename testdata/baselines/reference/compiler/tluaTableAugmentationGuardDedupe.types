@@ -2,10 +2,10 @@
 
 === a.tlua ===
 Shared = Shared or {};
->Shared = Shared or {} : { fromA: number; fromB: string; self: any; }
+>Shared = Shared or {} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
 >Shared : { fromA: number; fromB: string; self: any; }
->Shared or {} : { fromA: number; fromB: string; self: any; }
->Shared : { fromA: number; fromB: string; self: any; }
+>Shared or {} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
+>Shared : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
 >{} : { fromA: number; fromB: string; self: { fromA: number; fromB: string; self: any; }; }
 
 Shared.fromA = 1;
@@ -85,10 +85,10 @@ Nested.sub.value = true;
 // Independently declared constructor members stay as distinct arms even when
 // their text is identical.
 NonEmpty = NonEmpty or { seed = 1 };
->NonEmpty = NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
+>NonEmpty = NonEmpty or { seed = 1 } : { seed: number; }
 >NonEmpty : { seed: number; } | { seed: number; }
->NonEmpty or { seed = 1 } : { seed: number; } | { seed: number; }
->NonEmpty : { seed: number; } | { seed: number; }
+>NonEmpty or { seed = 1 } : { seed: number; }
+>NonEmpty : nil
 >{ seed = 1 } : { seed: number; }
 >seed : number
 >1 : 1

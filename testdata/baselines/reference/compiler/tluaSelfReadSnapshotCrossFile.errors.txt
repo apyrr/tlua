@@ -1,0 +1,21 @@
+use.tlua(2,8): error TLUA18048: 'late' is possibly 'nil'.
+
+
+==== def.tlua (0 errors) ====
+    counted = 0;
+    local function setLate()
+      late = 0;
+    end
+    local function setLenient()
+      lenient = 0;
+    end
+    
+==== use.tlua (1 errors) ====
+    counted = counted + 1;
+    late = late + 1;
+           ~~~~
+!!! error TLUA18048: 'late' is possibly 'nil'.
+    local function bump()
+      lenient = lenient + 1;
+    end
+    

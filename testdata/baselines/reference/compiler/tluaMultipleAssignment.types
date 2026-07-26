@@ -1325,10 +1325,10 @@ GuardFirst, GuardSecond = GuardFirst or {}, GuardSecond or {};
 >GuardSecond : { value: string; }
 >GuardFirst or {}, GuardSecond or {} : { value: number; }, { value: string; }
 >GuardFirst or {} : { value: number; }
->GuardFirst : { value: number; }
+>GuardFirst : nil
 >{} : { value: number; }
 >GuardSecond or {} : { value: string; }
->GuardSecond : { value: string; }
+>GuardSecond : nil
 >{} : { value: string; }
 
 GuardFirst.value = 1;
@@ -1365,7 +1365,7 @@ AsGuard, asGuardSide = AsGuard as {} or {}, 0;
 >AsGuard as {} or {}, 0 : {}, number
 >AsGuard as {} or {} : {}
 >AsGuard as {} : {}
->AsGuard : { value: string; }
+>AsGuard : nil
 >{} : { value: string; }
 >0 : 0
 
@@ -1389,8 +1389,8 @@ SatisfiesGuard, satisfiesGuardSide = SatisfiesGuard satisfies unknown or {}, 0;
 >satisfiesGuardSide : number
 >SatisfiesGuard satisfies unknown or {}, 0 : { value: string; }, number
 >SatisfiesGuard satisfies unknown or {} : { value: string; }
->SatisfiesGuard satisfies unknown : { value: string; }
->SatisfiesGuard : { value: string; }
+>SatisfiesGuard satisfies unknown : nil
+>SatisfiesGuard : nil
 >{} : { value: string; }
 >0 : 0
 
@@ -1423,14 +1423,14 @@ GuardRoot.left, GuardRoot.right = GuardRoot.left or {}, GuardRoot.right or {};
 >right : { value: number; }
 >GuardRoot.left or {}, GuardRoot.right or {} : { value: boolean; }, { value: number; }
 >GuardRoot.left or {} : { value: boolean; }
->GuardRoot.left : { value: boolean; }
+>GuardRoot.left : nil
 >GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
->left : { value: boolean; }
+>left : nil
 >{} : { value: boolean; }
 >GuardRoot.right or {} : { value: number; }
->GuardRoot.right : { value: number; }
+>GuardRoot.right : nil
 >GuardRoot : { left: { value: boolean; }; right: { value: number; }; }
->right : { value: number; }
+>right : nil
 >{} : { value: number; }
 
 GuardRoot.left.value = true;
@@ -1561,19 +1561,19 @@ AssertedGuardRoot = {};
 >{} : { member: { value: number; }; }
 
 AssertedGuardRoot!.member, assertedGuardSide = AssertedGuardRoot.member! or {}, 0;
->AssertedGuardRoot!.member, assertedGuardSide = AssertedGuardRoot.member! or {}, 0 : { value: number; }
+>AssertedGuardRoot!.member, assertedGuardSide = AssertedGuardRoot.member! or {}, 0 : never
 >AssertedGuardRoot!.member, assertedGuardSide : { value: number; }, number
 >AssertedGuardRoot!.member : { value: number; }
 >AssertedGuardRoot! : { member: { value: number; }; }
 >AssertedGuardRoot : { member: { value: number; }; }
 >member : { value: number; }
 >assertedGuardSide : number
->AssertedGuardRoot.member! or {}, 0 : { value: number; }, number
->AssertedGuardRoot.member! or {} : { value: number; }
->AssertedGuardRoot.member! : { value: number; }
->AssertedGuardRoot.member : { value: number; }
+>AssertedGuardRoot.member! or {}, 0 : never, number
+>AssertedGuardRoot.member! or {} : never
+>AssertedGuardRoot.member! : never
+>AssertedGuardRoot.member : nil
 >AssertedGuardRoot : { member: { value: number; }; }
->member : { value: number; }
+>member : nil
 >{} : { value: number; }
 >0 : 0
 
@@ -1609,9 +1609,9 @@ ParenthesizedReceiverGuardRoot = {};
 >parenthesizedReceiverGuardSide : number
 >ParenthesizedReceiverGuardRoot.member or {}, 0 : { value: string; }, number
 >ParenthesizedReceiverGuardRoot.member or {} : { value: string; }
->ParenthesizedReceiverGuardRoot.member : { value: string; }
+>ParenthesizedReceiverGuardRoot.member : nil
 >ParenthesizedReceiverGuardRoot : { member: { value: string; }; }
->member : { value: string; }
+>member : nil
 >{} : { value: string; }
 >0 : 0
 
@@ -1826,7 +1826,7 @@ ParenthesizedGuard, parenthesizedGuardSide = ParenthesizedGuard or ({}), 0;
 >parenthesizedGuardSide : number
 >ParenthesizedGuard or ({}), 0 : { value: boolean; }, number
 >ParenthesizedGuard or ({}) : { value: boolean; }
->ParenthesizedGuard : { value: boolean; }
+>ParenthesizedGuard : nil
 >({}) : { value: boolean; }
 >{} : { value: boolean; }
 >0 : 0
@@ -2788,9 +2788,9 @@ AliasGuardRoot.child, aliasGuardSide = aliasGuardRoot.child or {}, 0;
 >aliasGuardSide : number
 >aliasGuardRoot.child or {}, 0 : { value: boolean; }, number
 >aliasGuardRoot.child or {} : { value: boolean; }
->aliasGuardRoot.child : { value: boolean; }
+>aliasGuardRoot.child : nil
 >aliasGuardRoot : { child: { value: boolean; }; }
->child : { value: boolean; }
+>child : nil
 >{} : { value: boolean; }
 >0 : 0
 
@@ -3100,7 +3100,7 @@ DeclaredGuard, FreshGuard = DeclaredGuard or {}, FreshGuard or {};
 >DeclaredGuard : {}
 >{} : {}
 >FreshGuard or {} : {}
->FreshGuard : {}
+>FreshGuard : nil
 >{} : {}
 
 // A surplus guard has no positional target and remains an ordinary read —
@@ -3111,7 +3111,7 @@ DiscardedGuard = {}, DiscardedGuard or {};
 >{}, DiscardedGuard or {} : {}, {}
 >{} : {}
 >DiscardedGuard or {} : {}
->DiscardedGuard : {}
+>DiscardedGuard : nil
 >{} : {}
 
 // Extra and missing values follow Lua's adjustment rules.

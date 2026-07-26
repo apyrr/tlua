@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/tluaSelfReadSnapshotCrossFile.tlua] ////
+
+=== def.tlua ===
+counted = 0;
+>counted : Symbol(counted, Decl(def.tlua, 0, 0), Decl(use.tlua, 0, 0))
+
+local function setLate()
+>setLate : Symbol(setLate, Decl(def.tlua, 0, 12))
+
+  late = 0;
+>late : Symbol(late, Decl(def.tlua, 1, 24), Decl(use.tlua, 0, 22))
+
+end
+local function setLenient()
+>setLenient : Symbol(setLenient, Decl(def.tlua, 3, 3))
+
+  lenient = 0;
+>lenient : Symbol(lenient, Decl(def.tlua, 4, 27), Decl(use.tlua, 2, 21))
+
+end
+
+=== use.tlua ===
+counted = counted + 1;
+>counted : Symbol(counted, Decl(def.tlua, 0, 0), Decl(use.tlua, 0, 0))
+>counted : Symbol(counted, Decl(def.tlua, 0, 0), Decl(use.tlua, 0, 0))
+
+late = late + 1;
+>late : Symbol(late, Decl(def.tlua, 1, 24), Decl(use.tlua, 0, 22))
+>late : Symbol(late, Decl(def.tlua, 1, 24), Decl(use.tlua, 0, 22))
+
+local function bump()
+>bump : Symbol(bump, Decl(use.tlua, 1, 16))
+
+  lenient = lenient + 1;
+>lenient : Symbol(lenient, Decl(def.tlua, 4, 27), Decl(use.tlua, 2, 21))
+>lenient : Symbol(lenient, Decl(def.tlua, 4, 27), Decl(use.tlua, 2, 21))
+
+end
+

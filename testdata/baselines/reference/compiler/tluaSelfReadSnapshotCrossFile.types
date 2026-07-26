@@ -1,0 +1,54 @@
+//// [tests/cases/compiler/tluaSelfReadSnapshotCrossFile.tlua] ////
+
+=== def.tlua ===
+counted = 0;
+>counted = 0 : 0
+>counted : number
+>0 : 0
+
+local function setLate()
+>setLate : () => void
+
+  late = 0;
+>late = 0 : 0
+>late : number
+>0 : 0
+
+end
+local function setLenient()
+>setLenient : () => void
+
+  lenient = 0;
+>lenient = 0 : 0
+>lenient : number
+>0 : 0
+
+end
+
+=== use.tlua ===
+counted = counted + 1;
+>counted = counted + 1 : number
+>counted : number
+>counted + 1 : number
+>counted : number
+>1 : 1
+
+late = late + 1;
+>late = late + 1 : number
+>late : number
+>late + 1 : number
+>late : number | nil
+>1 : 1
+
+local function bump()
+>bump : () => void
+
+  lenient = lenient + 1;
+>lenient = lenient + 1 : number
+>lenient : number
+>lenient + 1 : number
+>lenient : number
+>1 : 1
+
+end
+

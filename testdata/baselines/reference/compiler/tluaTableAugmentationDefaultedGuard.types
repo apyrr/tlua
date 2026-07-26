@@ -31,9 +31,9 @@ M.sub = M.sub or {};
 >M : { sub: { value: boolean; }; }
 >sub : { value: boolean; }
 >M.sub or {} : { value: boolean; }
->M.sub : { value: boolean; }
+>M.sub : nil
 >M : { sub: { value: boolean; }; }
->sub : { value: boolean; }
+>sub : nil
 >{} : { value: boolean; }
 
 M.sub.value = true;
@@ -63,7 +63,7 @@ A.k = A["k"] or {};
 >A : { k: { value: number; }; }
 >k : { value: number; }
 >A["k"] or {} : { value: number; }
->A["k"] : { value: number; }
+>A["k"] : nil
 >A : { k: { value: number; }; }
 >"k" : "k"
 >{} : { value: number; }
@@ -86,10 +86,10 @@ local mixedKey: number = A["k"].value;
 >value : number
 
 Mixed = Mixed or {};
->Mixed = Mixed or {} : {}
+>Mixed = Mixed or {} : { fixed: number; }
 >Mixed : {}
->Mixed or {} : {}
->Mixed : {}
+>Mixed or {} : { fixed: number; }
+>Mixed : { fixed: number; }
 >{} : {}
 
 Mixed.extra = 1;
@@ -113,9 +113,9 @@ GNested.sub = GNested.sub or {};
 >GNested : { sub: { deep: number; }; }
 >sub : { deep: number; }
 >GNested.sub or {} : { deep: number; }
->GNested.sub : { deep: number; }
+>GNested.sub : nil
 >GNested : { sub: { deep: number; }; }
->sub : { deep: number; }
+>sub : nil
 >{} : { deep: number; }
 
 GNested.sub.deep = 1;
@@ -171,7 +171,7 @@ Closed = Closed or make();
 >Closed = Closed or make() : { fixed: number; }
 >Closed : { fixed: number; }
 >Closed or make() : { fixed: number; }
->Closed : { fixed: number; }
+>Closed : nil
 >make() : { fixed: number; }
 >make : () => { fixed: number; }
 
@@ -196,7 +196,7 @@ Paren = (Paren) or {};
 >Paren : {}
 >(Paren) or {} : {}
 >(Paren) : nil
->Paren : {}
+>Paren : nil
 >{} : {}
 
 local Numeric = {};
@@ -223,7 +223,7 @@ Chain = Chain or Other or {};
 >Chain : {}
 >Chain or Other or {} : {}
 >Chain or Other : {}
->Chain : {}
+>Chain : nil
 >Other : {}
 >{} : {}
 
@@ -253,10 +253,10 @@ ReadInside = ReadInside or keep(ReadInside);
 >ReadInside = ReadInside or keep(ReadInside) : {}
 >ReadInside : {}
 >ReadInside or keep(ReadInside) : {}
->ReadInside : {}
+>ReadInside : nil
 >keep(ReadInside) : {}
 >keep : (value: any) => {}
->ReadInside : {}
+>ReadInside : nil
 
 local LocalSelf = LocalSelf or {};
 >LocalSelf : any

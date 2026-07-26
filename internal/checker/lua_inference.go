@@ -177,16 +177,31 @@ func (c *Checker) getLuaSelfReadSnapshotType(reference *ast.Node, symbol *ast.Sy
 	if source == nil {
 		return nil, false
 	}
-	// A resolved target keeps the ordinary flow path. Gating on the cached
-	// declared type rather than on a resolution cycle matters when the read
-	// sits inside an immediately invoked value: the first entry arrives
-	// through the IIFE's return-type resolution, before the target's own
-	// resolution is on the stack, and falling through would complete a
-	// return-type/declared-type cycle instead of reading the snapshot.
+	// A reference that typed against the snapshot keeps it across re-checks.
+	// The member types inference produced came from the snapshot, so a later
+	// pass re-typing the same reference against the finished declared type
+	// would contradict them: `handlers = { previous = handlers }` would
+	// elaborate the resolved table type of the read against the nil that very
+	// read produced, and quick-info would disagree with the .types the
+	// inference saw.
+	if cached, ok := c.luaSelfReadSnapshotTypes[reference]; ok {
+		return cached, true
+	}
+	// A resolved target whose reads never entered here keeps the ordinary flow
+	// path. Gating on the cached declared type rather than on a resolution
+	// cycle matters when the read sits inside an immediately invoked value:
+	// the first entry arrives through the IIFE's return-type resolution,
+	// before the target's own resolution is on the stack, and falling through
+	// would complete a return-type/declared-type cycle instead of reading the
+	// snapshot.
 	if c.valueSymbolLinks.Get(symbol).resolvedType != nil || c.valueSymbolLinks.Get(merged).resolvedType != nil {
 		return nil, false
 	}
-	return c.getLuaOrderedSelfSnapshotType(merged, source, c.luaSnapshotResolving)
+	snapshot, ok := c.getLuaOrderedSelfSnapshotType(merged, source, c.luaSnapshotResolving)
+	if ok {
+		c.luaSelfReadSnapshotTypes[reference] = snapshot
+	}
+	return snapshot, ok
 }
 
 // getLuaOrderedSelfSnapshotType is getLuaAugmentationSnapshotType restricted to
@@ -228,11 +243,16 @@ func (c *Checker) getLuaOrderedSelfSnapshotType(symbol *ast.Symbol, source *ast.
 // has. A store inside a function body is ordered by the position of the
 // function (it must exist before a call can run the store), and never counts
 // as definite — the call may not have happened — except within the reading
-// store's own body, where one invocation runs its statements in order.
-// Cross-file stores follow load order, which the checker does not track, so
-// they mirror the leniency of ordinary cross-file reads: included, and treated
-// as definite. A self-preserving store (`x = x`) re-stores whatever was there,
-// nil included; it contributes no declared type and cannot discharge nil.
+// store's own body, where one invocation runs its statements in order. That
+// rule follows the function wherever it sits: a function nested inside the
+// reading body, or in another file, still needs a call nothing here orders.
+// Only a store in a function *enclosing* the reading body gets the leniency
+// ordinary closure reads get — reaching the read means that body ran.
+// Cross-file stores otherwise follow load order, which the checker does not
+// track, so they mirror the leniency of ordinary cross-file reads: included,
+// and top-level ones treated as definite. A self-preserving store (`x = x`)
+// re-stores whatever was there, nil included; it contributes no declared type
+// and cannot discharge nil.
 func (c *Checker) luaStoresBeforeSelfRead(source *ast.Node, assignments []luaAugmentation) (prior []luaAugmentation, definite bool) {
 	sourceFile := ast.GetSourceFileOfNode(source)
 	sourceFn := ast.FindAncestor(source, ast.IsFunctionLike)
@@ -241,12 +261,14 @@ func (c *Checker) luaStoresBeforeSelfRead(source *ast.Node, assignments []luaAug
 			continue
 		}
 		discharges := !c.isSelfPreservingLuaCapturedTarget(assignment.Target)
+		fn := ast.FindAncestor(assignment.Source, ast.IsFunctionLike)
 		if ast.GetSourceFileOfNode(assignment.Source) != sourceFile {
 			prior = append(prior, assignment)
-			definite = definite || discharges
+			if fn == nil || sourceFn != nil {
+				definite = definite || discharges
+			}
 			continue
 		}
-		fn := ast.FindAncestor(assignment.Source, ast.IsFunctionLike)
 		switch {
 		case sourceFn != nil && fn == sourceFn:
 			// Same body: the statement-order rules apply within one invocation.
@@ -256,15 +278,18 @@ func (c *Checker) luaStoresBeforeSelfRead(source *ast.Node, assignments []luaAug
 					definite = true
 				}
 			}
-		case sourceFn != nil:
-			// A store elsewhere is not ordered against this invocation; mirror
-			// the leniency ordinary closure reads get.
-			prior = append(prior, assignment)
-			definite = definite || discharges
-		case fn != nil:
+		case fn != nil && (sourceFn == nil || ast.FindAncestor(fn.Parent, func(parent *ast.Node) bool { return parent == sourceFn }) != nil):
+			// A store in a function within the reading body (or the top-level
+			// chunk) is ordered by the function's position within one
+			// invocation, and needs a call to run, so it is never definite.
 			if fn.Pos() < source.Pos() {
 				prior = append(prior, assignment)
 			}
+		case sourceFn != nil:
+			// A store outside the reading body is not ordered against this
+			// invocation; mirror the leniency ordinary closure reads get.
+			prior = append(prior, assignment)
+			definite = definite || discharges
 		case assignment.Source.Pos() < source.Pos():
 			prior = append(prior, assignment)
 			if discharges && luaStoreDominatesRead(assignment.Source, source) {

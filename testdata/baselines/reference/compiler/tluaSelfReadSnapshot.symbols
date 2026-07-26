@@ -266,3 +266,95 @@ if math.random() > 0.5 then
 
 end
 
+// A store in a function nested inside the reading body still needs a call
+// nothing here has made, so it is never definite — matching the top-level
+// late/setLate shape above.
+local function outerNest()
+>outerNest : Symbol(outerNest, Decl(tluaSelfReadSnapshot.tlua, 109, 3))
+
+  local function innerNest()
+>innerNest : Symbol(innerNest, Decl(tluaSelfReadSnapshot.tlua, 114, 26))
+
+    nested = 0;
+>nested : Symbol(nested, Decl(tluaSelfReadSnapshot.tlua, 115, 28), Decl(tluaSelfReadSnapshot.tlua, 117, 5))
+
+  end
+  nested = nested + 1;
+>nested : Symbol(nested, Decl(tluaSelfReadSnapshot.tlua, 115, 28), Decl(tluaSelfReadSnapshot.tlua, 117, 5))
+>nested : Symbol(nested, Decl(tluaSelfReadSnapshot.tlua, 115, 28), Decl(tluaSelfReadSnapshot.tlua, 117, 5))
+
+end
+
+// Flow facts narrow the element spelling exactly like the dot spelling: both
+// branches stored, so the merged flow discharges nil from the snapshot.
+branchy = {};
+>branchy : Symbol(branchy, Decl(tluaSelfReadSnapshot.tlua, 119, 3))
+
+if math.random() > 0.5 then
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  branchy[1] = 0;
+>branchy : Symbol(branchy, Decl(tluaSelfReadSnapshot.tlua, 119, 3))
+>1 : Symbol(1, Decl(tluaSelfReadSnapshot.tlua, 124, 27), Decl(tluaSelfReadSnapshot.tlua, 126, 4), Decl(tluaSelfReadSnapshot.tlua, 128, 3))
+
+else
+  branchy[1] = 1;
+>branchy : Symbol(branchy, Decl(tluaSelfReadSnapshot.tlua, 119, 3))
+>1 : Symbol(1, Decl(tluaSelfReadSnapshot.tlua, 124, 27), Decl(tluaSelfReadSnapshot.tlua, 126, 4), Decl(tluaSelfReadSnapshot.tlua, 128, 3))
+
+end
+branchy[1] = branchy[1] + 1;
+>branchy : Symbol(branchy, Decl(tluaSelfReadSnapshot.tlua, 119, 3))
+>1 : Symbol(1, Decl(tluaSelfReadSnapshot.tlua, 124, 27), Decl(tluaSelfReadSnapshot.tlua, 126, 4), Decl(tluaSelfReadSnapshot.tlua, 128, 3))
+>branchy : Symbol(branchy, Decl(tluaSelfReadSnapshot.tlua, 119, 3))
+>1 : Symbol(1, Decl(tluaSelfReadSnapshot.tlua, 124, 27), Decl(tluaSelfReadSnapshot.tlua, 126, 4), Decl(tluaSelfReadSnapshot.tlua, 128, 3))
+
+dotted = {};
+>dotted : Symbol(dotted, Decl(tluaSelfReadSnapshot.tlua, 129, 28))
+
+if math.random() > 0.5 then
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+  dotted.a = 0;
+>dotted.a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+>dotted : Symbol(dotted, Decl(tluaSelfReadSnapshot.tlua, 129, 28))
+>a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+
+else
+  dotted.a = 1;
+>dotted.a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+>dotted : Symbol(dotted, Decl(tluaSelfReadSnapshot.tlua, 129, 28))
+>a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+
+end
+dotted.a = dotted.a + 1;
+>dotted.a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+>dotted : Symbol(dotted, Decl(tluaSelfReadSnapshot.tlua, 129, 28))
+>a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+>dotted.a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+>dotted : Symbol(dotted, Decl(tluaSelfReadSnapshot.tlua, 129, 28))
+>a : Symbol(a, Decl(tluaSelfReadSnapshot.tlua, 131, 27), Decl(tluaSelfReadSnapshot.tlua, 133, 4), Decl(tluaSelfReadSnapshot.tlua, 135, 3))
+
+// A self-read keeps its snapshot type across re-checks: the nested read is
+// nil (nothing stored yet), the member types as nil, and re-elaborating the
+// literal agrees instead of comparing the finished table type against it.
+handlers = { previous = handlers };
+>handlers : Symbol(handlers, Decl(tluaSelfReadSnapshot.tlua, 136, 24), Decl(tluaSelfReadSnapshot.tlua, 141, 35))
+>previous : Symbol(previous, Decl(tluaSelfReadSnapshot.tlua, 141, 12))
+>handlers : Symbol(handlers, Decl(tluaSelfReadSnapshot.tlua, 136, 24), Decl(tluaSelfReadSnapshot.tlua, 141, 35))
+
+handlers = { previous = handlers };
+>handlers : Symbol(handlers, Decl(tluaSelfReadSnapshot.tlua, 136, 24), Decl(tluaSelfReadSnapshot.tlua, 141, 35))
+>previous : Symbol(previous, Decl(tluaSelfReadSnapshot.tlua, 142, 12))
+>handlers : Symbol(handlers, Decl(tluaSelfReadSnapshot.tlua, 136, 24), Decl(tluaSelfReadSnapshot.tlua, 141, 35))
+
+local fromChain: { previous: { previous: nil } | nil } = handlers;
+>fromChain : Symbol(fromChain, Decl(tluaSelfReadSnapshot.tlua, 143, 5))
+>previous : Symbol(previous, Decl(tluaSelfReadSnapshot.tlua, 143, 18))
+>previous : Symbol(previous, Decl(tluaSelfReadSnapshot.tlua, 143, 30))
+>handlers : Symbol(handlers, Decl(tluaSelfReadSnapshot.tlua, 136, 24), Decl(tluaSelfReadSnapshot.tlua, 141, 35))
+

@@ -11,9 +11,9 @@ count = (count or 0) + 1;
 >count = (count or 0) + 1 : number
 >count : number
 >(count or 0) + 1 : number
->(count or 0) : number
->count or 0 : number
->count : number
+>(count or 0) : 0
+>count or 0 : 0
+>count : nil
 >0 : 0
 >1 : 1
 
@@ -48,11 +48,11 @@ t.n = (t.n or 0) + 1;
 >t : { n: number; }
 >n : number
 >(t.n or 0) + 1 : number
->(t.n or 0) : number
->t.n or 0 : number
->t.n : number
+>(t.n or 0) : 0
+>t.n or 0 : 0
+>t.n : nil
 >t : { n: number; }
->n : number
+>n : nil
 >0 : 0
 >1 : 1
 
@@ -68,11 +68,11 @@ _G.hits = (_G.hits or 0) + 1;
 >_G : typeof _G
 >hits : number
 >(_G.hits or 0) + 1 : number
->(_G.hits or 0) : number
->_G.hits or 0 : number
->_G.hits : number
+>(_G.hits or 0) : 0
+>_G.hits or 0 : 0
+>_G.hits : nil
 >_G : typeof _G
->hits : number
+>hits : nil
 >0 : 0
 >1 : 1
 
@@ -87,15 +87,15 @@ p, q = (p or 0) + 1, (q or "") .. "!";
 >q : string
 >(p or 0) + 1, (q or "") .. "!" : number, string
 >(p or 0) + 1 : number
->(p or 0) : number
->p or 0 : number
->p : number
+>(p or 0) : 0
+>p or 0 : 0
+>p : nil
 >0 : 0
 >1 : 1
 >(q or "") .. "!" : string
->(q or "") : string
->q or "" : string
->q : string
+>(q or "") : ""
+>q or "" : ""
+>q : nil
 >"" : ""
 >"!" : "!"
 
@@ -120,9 +120,9 @@ e[1] = (e[1] or 0) + 1;
 >e : { 1: number; }
 >1 : 1
 >(e[1] or 0) + 1 : number
->(e[1] or 0) : number
->e[1] or 0 : number
->e[1] : number
+>(e[1] or 0) : 0
+>e[1] or 0 : 0
+>e[1] : nil
 >e : { 1: number; }
 >1 : 1
 >0 : 0
@@ -145,9 +145,9 @@ s["k"] = (s["k"] or 0) + 1;
 >s : { k: number; }
 >"k" : "k"
 >(s["k"] or 0) + 1 : number
->(s["k"] or 0) : number
->s["k"] or 0 : number
->s["k"] : number
+>(s["k"] or 0) : 0
+>s["k"] or 0 : 0
+>s["k"] : nil
 >s : { k: number; }
 >"k" : "k"
 >0 : 0
@@ -170,9 +170,9 @@ m.k = (m["k"] or 0) + 1;
 >m : { k: number; }
 >k : number
 >(m["k"] or 0) + 1 : number
->(m["k"] or 0) : number
->m["k"] or 0 : number
->m["k"] : number
+>(m["k"] or 0) : 0
+>m["k"] or 0 : 0
+>m["k"] : nil
 >m : { k: number; }
 >"k" : "k"
 >0 : 0
@@ -190,7 +190,7 @@ bare = bare + 1;
 >bare = bare + 1 : any
 >bare : any
 >bare + 1 : any
->bare : any
+>bare : nil
 >1 : 1
 
 // Stores may sit in any container; the read still sees its own store's
@@ -218,7 +218,7 @@ early = early + 1;
 >early = early + 1 : any
 >early : any
 >early + 1 : any
->early : any
+>early : nil
 >1 : 1
 
 early = 0;
@@ -246,7 +246,7 @@ maybe = maybe + 1;
 >maybe = maybe + 1 : number
 >maybe : number
 >maybe + 1 : number
->maybe : number
+>maybe : number | nil
 >1 : 1
 
 // A store inside a function declared later cannot have run before this
@@ -255,7 +255,7 @@ late = late + 1;
 >late = late + 1 : any
 >late : any
 >late + 1 : any
->late : any
+>late : nil
 >1 : 1
 
 local function setLate()
@@ -277,7 +277,7 @@ local function firstCall()
 >seen = seen + 1 : any
 >seen : any
 >seen + 1 : any
->seen : any
+>seen : nil
 >1 : 1
 
   seen = 0;
@@ -322,7 +322,7 @@ if math.random() > 0.5 then
 
 end
 held = held;
->held = held : number
+>held = held : number | nil
 >held : number
 >held : number | nil
 
@@ -330,7 +330,7 @@ held = held + 1;
 >held = held + 1 : number
 >held : number
 >held + 1 : number
->held : number
+>held : number | nil
 >1 : 1
 
 // An immediately invoked value runs before the store completes, so its read
@@ -342,9 +342,9 @@ iife = (function() return (iife or 0) + 1 end)();
 >(function() return (iife or 0) + 1 end) : () => number
 >function() return (iife or 0) + 1 end : () => number
 >(iife or 0) + 1 : number
->(iife or 0) : number
->iife or 0 : number
->iife : number
+>(iife or 0) : 0
+>iife or 0 : 0
+>iife : nil
 >0 : 0
 >1 : 1
 
@@ -405,4 +405,133 @@ if math.random() > 0.5 then
 >1 : 1
 
 end
+
+// A store in a function nested inside the reading body still needs a call
+// nothing here has made, so it is never definite — matching the top-level
+// late/setLate shape above.
+local function outerNest()
+>outerNest : () => void
+
+  local function innerNest()
+>innerNest : () => void
+
+    nested = 0;
+>nested = 0 : 0
+>nested : number
+>0 : 0
+
+  end
+  nested = nested + 1;
+>nested = nested + 1 : number
+>nested : number
+>nested + 1 : number
+>nested : number | nil
+>1 : 1
+
+end
+
+// Flow facts narrow the element spelling exactly like the dot spelling: both
+// branches stored, so the merged flow discharges nil from the snapshot.
+branchy = {};
+>branchy = {} : { 1: number; }
+>branchy : { 1: number; }
+>{} : { 1: number; }
+
+if math.random() > 0.5 then
+>math.random() > 0.5 : boolean
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>0.5 : 0.5
+
+  branchy[1] = 0;
+>branchy[1] = 0 : 0
+>branchy[1] : number
+>branchy : { 1: number; }
+>1 : 1
+>0 : 0
+
+else
+  branchy[1] = 1;
+>branchy[1] = 1 : 1
+>branchy[1] : number
+>branchy : { 1: number; }
+>1 : 1
+>1 : 1
+
+end
+branchy[1] = branchy[1] + 1;
+>branchy[1] = branchy[1] + 1 : number
+>branchy[1] : number
+>branchy : { 1: number; }
+>1 : 1
+>branchy[1] + 1 : number
+>branchy[1] : number
+>branchy : { 1: number; }
+>1 : 1
+>1 : 1
+
+dotted = {};
+>dotted = {} : { a: number; }
+>dotted : { a: number; }
+>{} : { a: number; }
+
+if math.random() > 0.5 then
+>math.random() > 0.5 : boolean
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>0.5 : 0.5
+
+  dotted.a = 0;
+>dotted.a = 0 : 0
+>dotted.a : number
+>dotted : { a: number; }
+>a : number
+>0 : 0
+
+else
+  dotted.a = 1;
+>dotted.a = 1 : 1
+>dotted.a : number
+>dotted : { a: number; }
+>a : number
+>1 : 1
+
+end
+dotted.a = dotted.a + 1;
+>dotted.a = dotted.a + 1 : number
+>dotted.a : number
+>dotted : { a: number; }
+>a : number
+>dotted.a + 1 : number
+>dotted.a : number
+>dotted : { a: number; }
+>a : number
+>1 : 1
+
+// A self-read keeps its snapshot type across re-checks: the nested read is
+// nil (nothing stored yet), the member types as nil, and re-elaborating the
+// literal agrees instead of comparing the finished table type against it.
+handlers = { previous = handlers };
+>handlers = { previous = handlers } : { previous: nil; }
+>handlers : { previous: nil; } | { previous: { previous: nil; }; }
+>{ previous = handlers } : { previous: nil; }
+>previous : nil
+>handlers : nil
+
+handlers = { previous = handlers };
+>handlers = { previous = handlers } : { previous: { previous: nil; }; }
+>handlers : { previous: nil; } | { previous: { previous: nil; }; }
+>{ previous = handlers } : { previous: { previous: nil; }; }
+>previous : { previous: nil; }
+>handlers : { previous: nil; }
+
+local fromChain: { previous: { previous: nil } | nil } = handlers;
+>fromChain : { previous: { previous: nil; } | nil; }
+>previous : { previous: nil; } | nil
+>previous : nil
+>handlers : { previous: { previous: nil; }; }
 

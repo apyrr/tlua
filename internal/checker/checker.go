@@ -587,6 +587,7 @@ type Checker struct {
 	luaGlobalsSymbol                       *ast.Symbol
 	luaAssignmentAugmentations             map[*ast.Symbol][]luaAugmentation
 	luaSnapshotResolving                   map[luaSnapshotKey]bool
+	luaSelfReadSnapshotTypes               map[*ast.Node]*Type
 	luaAugmentationTargets                 map[*ast.Node]*ast.Symbol
 	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
 	luaAugmentationMemberArms              map[*ast.Symbol][]*ast.Symbol
@@ -902,6 +903,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.luaGlobalsSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "_G", ast.CheckFlagsReadonly)
 	c.luaAssignmentAugmentations = make(map[*ast.Symbol][]luaAugmentation)
 	c.luaSnapshotResolving = make(map[luaSnapshotKey]bool)
+	c.luaSelfReadSnapshotTypes = make(map[*ast.Node]*Type)
 	c.luaStableAccessKeys = make(map[*ast.Node]luaStableAccessKeyResult)
 	c.luaAugmentationTargets = make(map[*ast.Node]*ast.Symbol)
 	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
@@ -6115,11 +6117,12 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 	// pre-store snapshot while the member's declared type is still being
 	// inferred; see getLuaSelfReadSnapshotType. A literal key names the same
 	// property either spelling reads, so `t[1] = (t[1] or 0) + 1` types like
-	// its dot-access equivalent.
+	// its dot-access equivalent — including the flow facts at the reference,
+	// which the sibling identifier and dot-access hooks also apply.
 	if name, ok := c.getAccessedPropertyName(node); ok {
 		if prop := c.getPropertyOfType(objectType, name); prop != nil {
 			if snapshot, ok := c.getLuaSelfReadSnapshotType(node, prop); ok {
-				return snapshot
+				return c.getFlowTypeOfReference(node, snapshot)
 			}
 		}
 	}
@@ -9002,6 +9005,16 @@ func (c *Checker) checkAssertionDeferred(node *ast.Node) {
 	if !c.isErrorType(targetType) {
 		widenedType := c.getWidenedType(exprType)
 		if !c.isTypeComparableTo(targetType, widenedType) {
+			// A self-store read carries the pre-store snapshot, nil included.
+			// An assertion on it is the guard discharging that nil — the
+			// pinned `X = X as T or {}` idiom — so the snapshot's nil does not
+			// count against comparability.
+			if _, ok := c.luaSelfReadSnapshotTypes[ast.SkipParentheses(node.Expression())]; ok {
+				nonNil := c.getTypeWithFacts(widenedType, TypeFactsNEUndefinedOrNull)
+				if nonNil.flags&TypeFlagsNever != 0 || c.isTypeComparableTo(targetType, nonNil) || c.isTypeComparableTo(nonNil, targetType) {
+					return
+				}
+			}
 			errNode := node
 			if typeNode.Flags&ast.NodeFlagsReparsed != 0 {
 				errNode = typeNode

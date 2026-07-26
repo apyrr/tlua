@@ -5,9 +5,10 @@ tluaSelfReadSnapshot.tlua(64,8): error TLUA18048: 'late' is possibly 'nil'.
 tluaSelfReadSnapshot.tlua(72,10): error TLUA18048: 'seen' is possibly 'nil'.
 tluaSelfReadSnapshot.tlua(88,8): error TLUA18048: 'held' is possibly 'nil'.
 tluaSelfReadSnapshot.tlua(101,4): error TLUA2454: Variable 'guarded' is used before being assigned.
+tluaSelfReadSnapshot.tlua(119,12): error TLUA18048: 'nested' is possibly 'nil'.
 
 
-==== tluaSelfReadSnapshot.tlua (7 errors) ====
+==== tluaSelfReadSnapshot.tlua (8 errors) ====
     // A self-read nested inside its own store's value list reads the pre-store
     // snapshot instead of reporting a false circularity: nil before the first
     // store, the union the other stores install otherwise. The exact defaulted
@@ -132,4 +133,40 @@ tluaSelfReadSnapshot.tlua(101,4): error TLUA2454: Variable 'guarded' is used bef
       sibling = 0;
       sibling = sibling + 1;
     end
+    
+    // A store in a function nested inside the reading body still needs a call
+    // nothing here has made, so it is never definite — matching the top-level
+    // late/setLate shape above.
+    local function outerNest()
+      local function innerNest()
+        nested = 0;
+      end
+      nested = nested + 1;
+               ~~~~~~
+!!! error TLUA18048: 'nested' is possibly 'nil'.
+    end
+    
+    // Flow facts narrow the element spelling exactly like the dot spelling: both
+    // branches stored, so the merged flow discharges nil from the snapshot.
+    branchy = {};
+    if math.random() > 0.5 then
+      branchy[1] = 0;
+    else
+      branchy[1] = 1;
+    end
+    branchy[1] = branchy[1] + 1;
+    dotted = {};
+    if math.random() > 0.5 then
+      dotted.a = 0;
+    else
+      dotted.a = 1;
+    end
+    dotted.a = dotted.a + 1;
+    
+    // A self-read keeps its snapshot type across re-checks: the nested read is
+    // nil (nothing stored yet), the member types as nil, and re-elaborating the
+    // literal agrees instead of comparing the finished table type against it.
+    handlers = { previous = handlers };
+    handlers = { previous = handlers };
+    local fromChain: { previous: { previous: nil } | nil } = handlers;
     

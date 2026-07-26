@@ -5,21 +5,21 @@ Forward = Forward or {};
 >Forward = Forward or {} : { zod: { value: boolean; }; }
 >Forward : { zod: { value: boolean; }; }
 >Forward or {} : { zod: { value: boolean; }; }
->Forward : { zod: { value: boolean; }; }
+>Forward : nil
 >{} : { zod: { value: boolean; }; }
 
 MixedKey = MixedKey or {};
 >MixedKey = MixedKey or {} : { zod: { value: number; }; }
 >MixedKey : { zod: { value: number; }; }
 >MixedKey or {} : { zod: { value: number; }; }
->MixedKey : { zod: { value: number; }; }
+>MixedKey : nil
 >{} : { zod: { value: number; }; }
 
 Parenthesized = Parenthesized or {};
 >Parenthesized = Parenthesized or {} : { zod: {}; }
 >Parenthesized : { zod: {}; }
 >Parenthesized or {} : { zod: {}; }
->Parenthesized : { zod: {}; }
+>Parenthesized : nil
 >{} : { zod: {}; }
 
 === members.tlua ===
@@ -29,9 +29,9 @@ Forward.zod = Forward.zod or {};
 >Forward : { zod: { value: boolean; }; }
 >zod : { value: boolean; }
 >Forward.zod or {} : { value: boolean; }
->Forward.zod : { value: boolean; }
+>Forward.zod : nil
 >Forward : { zod: { value: boolean; }; }
->zod : { value: boolean; }
+>zod : nil
 >{} : { value: boolean; }
 
 Forward.zod.value = true;
@@ -49,7 +49,7 @@ MixedKey.zod = MixedKey["zod"] or {};
 >MixedKey : { zod: { value: number; }; }
 >zod : { value: number; }
 >MixedKey["zod"] or {} : { value: number; }
->MixedKey["zod"] : { value: number; }
+>MixedKey["zod"] : nil
 >MixedKey : { zod: { value: number; }; }
 >"zod" : "zod"
 >{} : { value: number; }
@@ -72,9 +72,9 @@ Parenthesized.zod = (Parenthesized.zod) or {};
 >zod : {}
 >(Parenthesized.zod) or {} : {}
 >(Parenthesized.zod) : nil
->Parenthesized.zod : {}
+>Parenthesized.zod : nil
 >Parenthesized : { zod: {}; }
->zod : {}
+>zod : nil
 >{} : {}
 
 === reverseMember.tlua ===
@@ -85,9 +85,9 @@ Reverse.zod = Reverse.zod or {};
 >Reverse : { zod: { value: string; }; }
 >zod : { value: string; }
 >Reverse.zod or {} : { value: string; }
->Reverse.zod : { value: string; }
+>Reverse.zod : nil
 >Reverse : { zod: { value: string; }; }
->zod : { value: string; }
+>zod : nil
 >{} : { value: string; }
 
 Reverse.zod.value = "reverse";

@@ -104,9 +104,9 @@ bareTable = _G.bareTable or {};
 >bareTable = _G.bareTable or {} : { fromQualified: number; }
 >bareTable : { fromQualified: number; }
 >_G.bareTable or {} : { fromQualified: number; }
->_G.bareTable : { fromQualified: number; }
+>_G.bareTable : nil
 >_G : typeof _G
->bareTable : { fromQualified: number; }
+>bareTable : nil
 >{} : { fromQualified: number; }
 
 _G.bareTable.fromQualified = 1;
@@ -122,9 +122,9 @@ qualifiedTable = _G.qualifiedTable or {};
 >qualifiedTable = _G.qualifiedTable or {} : { fromBare: string; }
 >qualifiedTable : { fromBare: string; }
 >_G.qualifiedTable or {} : { fromBare: string; }
->_G.qualifiedTable : { fromBare: string; }
+>_G.qualifiedTable : nil
 >_G : typeof _G
->qualifiedTable : { fromBare: string; }
+>qualifiedTable : nil
 >{} : { fromBare: string; }
 
 qualifiedTable.fromBare = "text";
@@ -163,16 +163,16 @@ deepTable = {};
 >{} : { value: number; table: { member: string; }; }
 
 _G.deepTable.value = deepTable.value or 1;
->_G.deepTable.value = deepTable.value or 1 : number
+>_G.deepTable.value = deepTable.value or 1 : 1
 >_G.deepTable.value : number
 >_G.deepTable : { value: number; table: { member: string; }; }
 >_G : typeof _G
 >deepTable : { value: number; table: { member: string; }; }
 >value : number
->deepTable.value or 1 : number
->deepTable.value : number
+>deepTable.value or 1 : 1
+>deepTable.value : nil
 >deepTable : { value: number; table: { member: string; }; }
->value : number
+>value : nil
 >1 : 1
 
 _G.deepTable.table = deepTable.table or {};
@@ -183,9 +183,9 @@ _G.deepTable.table = deepTable.table or {};
 >deepTable : { value: number; table: { member: string; }; }
 >table : { member: string; }
 >deepTable.table or {} : { member: string; }
->deepTable.table : { member: string; }
+>deepTable.table : nil
 >deepTable : { value: number; table: { member: string; }; }
->table : { member: string; }
+>table : nil
 >{} : { member: string; }
 
 _G.deepTable.table.member = "ok";
@@ -610,7 +610,7 @@ guardTable = _G[guardGlobalKey] or {};
 >guardTable = _G[guardGlobalKey] or {} : { fromStaticGuard: number; }
 >guardTable : { fromStaticGuard: number; }
 >_G[guardGlobalKey] or {} : { fromStaticGuard: number; }
->_G[guardGlobalKey] : { fromStaticGuard: number; }
+>_G[guardGlobalKey] : nil
 >_G : typeof _G
 >guardGlobalKey : "guardTable"
 >{} : { fromStaticGuard: number; }
