@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaInstantiationStatement.tlua] ////
+
+=== tluaInstantiationStatement.tlua ===
+declare function makeGeneric(): <T>(value: T) => T;
+>makeGeneric : Symbol(makeGeneric, Decl(tluaInstantiationStatement.tlua, 0, 0))
+>T : Symbol(T, Decl(tluaInstantiationStatement.tlua, 0, 33))
+>value : Symbol(value, Decl(tluaInstantiationStatement.tlua, 0, 36))
+>T : Symbol(T, Decl(tluaInstantiationStatement.tlua, 0, 33))
+>T : Symbol(T, Decl(tluaInstantiationStatement.tlua, 0, 33))
+
+declare id: <T>(value: T) => T;
+>id : Symbol(id, Decl(tluaInstantiationStatement.tlua, 1, 7))
+>T : Symbol(T, Decl(tluaInstantiationStatement.tlua, 1, 13))
+>value : Symbol(value, Decl(tluaInstantiationStatement.tlua, 1, 16))
+>T : Symbol(T, Decl(tluaInstantiationStatement.tlua, 1, 13))
+>T : Symbol(T, Decl(tluaInstantiationStatement.tlua, 1, 13))
+
+// The instantiation erases in emit, leaving a plain call statement.
+makeGeneric()<number>;
+>makeGeneric : Symbol(makeGeneric, Decl(tluaInstantiationStatement.tlua, 0, 0))
+
+// Erases to a bare name, which Lua does not admit as a statement.
+id<number>;
+>id : Symbol(id, Decl(tluaInstantiationStatement.tlua, 1, 7))
+

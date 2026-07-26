@@ -1,0 +1,11 @@
+// @target: esnext
+// @strict: true
+
+declare function makeGeneric(): <T>(value: T) => T;
+declare id: <T>(value: T) => T;
+
+// The instantiation erases in emit, leaving a plain call statement.
+makeGeneric()<number>;
+
+// Erases to a bare name, which Lua does not admit as a statement.
+id<number>;

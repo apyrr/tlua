@@ -1436,12 +1436,13 @@ func (p *Parser) hasErrorInStatement(mark int) bool {
 // isLuaStatementExpression reports whether an expression is one Lua admits as a
 // statement: a function call, or an assignment. The assignment arm accepts any
 // target shape — an invalid target is diagnosed elsewhere, not doubled up here.
-// Compile-time-only assertions erase in emit and so cannot change the statement
-// shape that reaches the Lua output: `f() as void;` emits `f();`. Parentheses
-// are not skipped — they survive emit and truncate a call's multiple returns,
-// so `(f());` is a genuinely different (and invalid) statement.
+// Compile-time-only assertions and instantiation expressions erase in emit and
+// so cannot change the statement shape that reaches the Lua output: `f() as
+// void;` and `f()<number>;` both emit `f();`. Parentheses are not skipped —
+// they survive emit and truncate a call's multiple returns, so `(f());` is a
+// genuinely different (and invalid) statement.
 func isLuaStatementExpression(expression *ast.Expression) bool {
-	expression = ast.SkipOuterExpressions(expression, ast.OEKAssertions)
+	expression = ast.SkipOuterExpressions(expression, ast.OEKAssertions|ast.OEKExpressionsWithTypeArguments)
 	switch expression.Kind {
 	case ast.KindCallExpression:
 		return true
