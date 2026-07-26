@@ -69,27 +69,27 @@ declare byCData: ByCData;
 >byCData : Symbol(byCData, Decl(tluaIndexKeyObject.tlua, 22, 7))
 >ByCData : Symbol(ByCData, Decl(tluaIndexKeyObject.tlua, 9, 48))
 
-local s1: string = byTable[pt];
+local s1: string | nil = byTable[pt];
 >s1 : Symbol(s1, Decl(tluaIndexKeyObject.tlua, 24, 5))
 >byTable : Symbol(byTable, Decl(tluaIndexKeyObject.tlua, 18, 7))
 >pt : Symbol(pt, Decl(tluaIndexKeyObject.tlua, 12, 7))
 
-local s2: string = byFunction[fn];
+local s2: string | nil = byFunction[fn];
 >s2 : Symbol(s2, Decl(tluaIndexKeyObject.tlua, 25, 5))
 >byFunction : Symbol(byFunction, Decl(tluaIndexKeyObject.tlua, 19, 7))
 >fn : Symbol(fn, Decl(tluaIndexKeyObject.tlua, 13, 7))
 
-local s3: string = byThread[th];
+local s3: string | nil = byThread[th];
 >s3 : Symbol(s3, Decl(tluaIndexKeyObject.tlua, 26, 5))
 >byThread : Symbol(byThread, Decl(tluaIndexKeyObject.tlua, 20, 7))
 >th : Symbol(th, Decl(tluaIndexKeyObject.tlua, 14, 7))
 
-local s4: string = byUserdata[ud];
+local s4: string | nil = byUserdata[ud];
 >s4 : Symbol(s4, Decl(tluaIndexKeyObject.tlua, 27, 5))
 >byUserdata : Symbol(byUserdata, Decl(tluaIndexKeyObject.tlua, 21, 7))
 >ud : Symbol(ud, Decl(tluaIndexKeyObject.tlua, 15, 7))
 
-local s5: string = byCData[cd];
+local s5: string | nil = byCData[cd];
 >s5 : Symbol(s5, Decl(tluaIndexKeyObject.tlua, 28, 5))
 >byCData : Symbol(byCData, Decl(tluaIndexKeyObject.tlua, 22, 7))
 >cd : Symbol(cd, Decl(tluaIndexKeyObject.tlua, 16, 7))

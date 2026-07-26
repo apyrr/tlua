@@ -12,10 +12,10 @@ interface Flags {
 }
 
 declare f: Flags;
-local yes: string = f[true];
-local no: string = f[false];
+local yes: string | nil = f[true];
+local no: string | nil = f[false];
 declare b: boolean;
-local either: string = f[b];
+local either: string | nil = f[b];
 
 // keyof reports the key as `boolean`, not `true | false`.
 type K = keyof Flags;
@@ -29,6 +29,6 @@ interface Mixed {
 }
 
 declare m: Mixed;
-local s: string = m[true];
-local n: number = m[1];
+local s: string | nil = m[true];
+local n: number | nil = m[1];
 local o: table = m.named;

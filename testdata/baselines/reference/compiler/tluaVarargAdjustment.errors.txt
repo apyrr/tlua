@@ -13,11 +13,11 @@ tluaVarargAdjustment.tlua(63,16): error TLUA2345: Argument of type 'number | nil
   Type 'nil' is not assignable to type 'string'.
 tluaVarargAdjustment.tlua(89,3): error TLUA2322: Type '...string' is not assignable to type 'string, string'.
   Target requires 2 element(s) but source may have fewer.
-tluaVarargAdjustment.tlua(123,9): error TLUA2322: Type 'string | number | boolean' is not assignable to type 'boolean'.
-  Type 'string' is not assignable to type 'boolean'.
+tluaVarargAdjustment.tlua(123,9): error TLUA2322: Type 'string | number | boolean | nil' is not assignable to type 'boolean | nil'.
+  Type 'string' is not assignable to type 'boolean | nil'.
 tluaVarargAdjustment.tlua(128,9): error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
   Type 'nil' is not assignable to type 'string'.
-tluaVarargAdjustment.tlua(134,9): error TLUA2322: Type 'string | number' is not assignable to type 'number'.
+tluaVarargAdjustment.tlua(134,9): error TLUA2322: Type 'string | number | nil' is not assignable to type 'number | nil'.
   Type 'string' is not assignable to type 'number'.
 tluaVarargAdjustment.tlua(203,24): error TLUA2345: Argument of type 'string | boolean' is not assignable to parameter of type 'string | nil'.
   Type 'boolean' is not assignable to type 'string'.
@@ -169,10 +169,10 @@ tluaVarargAdjustment.tlua(203,24): error TLUA2345: Argument of type 'string | bo
       // wherever the rest ends -- so it joins the number index type instead of
       // claiming index 2.
       local mid = {midRest()};
-      local notBoolean: boolean = mid[2];
+      local notBoolean: boolean | nil = mid[2];
             ~~~~~~~~~~
-!!! error TLUA2322: Type 'string | number | boolean' is not assignable to type 'boolean'.
-!!! error TLUA2322:   Type 'string' is not assignable to type 'boolean'.
+!!! error TLUA2322: Type 'string | number | boolean | nil' is not assignable to type 'boolean | nil'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'boolean | nil'.
     
       // An optional pack element may be absent, so the property it produces is
       // optional and its type carries nil.
@@ -185,10 +185,10 @@ tluaVarargAdjustment.tlua(203,24): error TLUA2345: Argument of type 'string | bo
       // A computed number key and a pack tail share the number index domain: one
       // signature covers both, so neither hides the other.
       local mixed = { [key] = "s", ... };
-      local both: string | number = mixed[1];
-      local notJustNumber: number = mixed[1];
+      local both: string | number | nil = mixed[1];
+      local notJustNumber: number | nil = mixed[1];
             ~~~~~~~~~~~~~
-!!! error TLUA2322: Type 'string | number' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string | number | nil' is not assignable to type 'number | nil'.
 !!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
     end
     

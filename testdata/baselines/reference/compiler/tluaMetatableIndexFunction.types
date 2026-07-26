@@ -24,15 +24,15 @@ local a = setmetatable({ n = 1 }, anyMt);
 >1 : 1
 >anyMt : { __index: (t: table, k: any) => string; }
 
-local s1: string = a.whatever;
->s1 : string
->a.whatever : string
+local s1: string | nil = a.whatever;
+>s1 : string | nil
+>a.whatever : string | nil
 >a : { [x: string]: string; [x: number]: string; n: number; }
->whatever : string
+>whatever : string | nil
 
-local s2: string = a[1];
->s2 : string
->a[1] : string
+local s2: string | nil = a[1];
+>s2 : string | nil
+>a[1] : string | nil
 >a : { [x: string]: string; [x: number]: string; n: number; }
 >1 : 1
 
@@ -61,9 +61,9 @@ local num = setmetatable({ n = 1 }, numMt);
 >1 : 1
 >numMt : { __index: (t: table, k: number) => boolean; }
 
-local b1: boolean = num[3];
->b1 : boolean
->num[3] : boolean
+local b1: boolean | nil = num[3];
+>b1 : boolean | nil
+>num[3] : boolean | nil
 >num : { [x: number]: boolean; n: number; }
 >3 : 3
 
@@ -93,9 +93,9 @@ local lit = setmetatable({ n = 1 }, litMt);
 >1 : 1
 >litMt : { __index: (t: table, k: "a") => number; }
 
-local l1: number = lit["zzz"];
->l1 : number
->lit["zzz"] : number
+local l1: number | nil = lit["zzz"];
+>l1 : number | nil
+>lit["zzz"] : number | nil
 >lit : { [x: string]: number; n: number; }
 >"zzz" : "zzz"
 
@@ -121,11 +121,11 @@ local pack = setmetatable({ n = 1 }, packMt);
 >1 : 1
 >packMt : { __index: (t: table, k: any) => (string, number); }
 
-local p1: string = pack.anything;
->p1 : string
->pack.anything : string
+local p1: string | nil = pack.anything;
+>p1 : string | nil
+>pack.anything : string | nil
 >pack : { [x: string]: string; [x: number]: string; n: number; }
->anything : string
+>anything : string | nil
 
 // Overloads that answer the same key domain both apply: a read of such a key gets whichever
 // one Lua dispatches to.
@@ -146,17 +146,17 @@ local ov = setmetatable({ n = 1 }, overloaded);
 >1 : 1
 >overloaded : { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string; }; }
 
-local either: number | string = ov.b;
->either : string | number
->ov.b : string | number
+local either: number | string | nil = ov.b;
+>either : string | number | nil
+>ov.b : string | number | nil
 >ov : { [x: string]: string | number; n: number; }
->b : string | number
+>b : string | number | nil
 
-local notJustNumber: number = ov.b;
->notJustNumber : number
->ov.b : string | number
+local notJustNumber: number | nil = ov.b;
+>notJustNumber : number | nil
+>ov.b : string | number | nil
 >ov : { [x: string]: string | number; n: number; }
->b : string | number
+>b : string | number | nil
 
 // The table's own members still win: a function __index only runs on a miss.
 local own = setmetatable({ n = 1 }, anyMt);

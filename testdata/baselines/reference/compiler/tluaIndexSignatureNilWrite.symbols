@@ -103,93 +103,111 @@ declare frozen: Frozen;
 frozen["a"] = nil;
 >frozen : Symbol(frozen, Decl(tluaIndexSignatureNilWrite.tlua, 40, 7))
 
-// Reads are unaffected: the element type has no nil.
-local present: true = loadQueue[ply];
->present : Symbol(present, Decl(tluaIndexSignatureNilWrite.tlua, 44, 5))
+// The read is the other half: a key that was never set -- or was just removed -- is
+// nil, so an index read widens to `V | nil`.
+local present: true | nil = loadQueue[ply];
+>present : Symbol(present, Decl(tluaIndexSignatureNilWrite.tlua, 45, 5))
 >loadQueue : Symbol(loadQueue, Decl(tluaIndexSignatureNilWrite.tlua, 7, 5))
 >ply : Symbol(ply, Decl(tluaIndexSignatureNilWrite.tlua, 4, 7))
 
-local count: number = counts["a"];
->count : Symbol(count, Decl(tluaIndexSignatureNilWrite.tlua, 45, 5))
+local count: number | nil = counts["a"];
+>count : Symbol(count, Decl(tluaIndexSignatureNilWrite.tlua, 46, 5))
 >counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
 
-// A removal does not narrow the later read to nil: the declared value type governs.
+// Which is what makes the presence guard mean something: without the widening the
+// condition would be the literal `true` and narrow nothing.
+local pending = loadQueue[ply];
+>pending : Symbol(pending, Decl(tluaIndexSignatureNilWrite.tlua, 50, 5))
+>loadQueue : Symbol(loadQueue, Decl(tluaIndexSignatureNilWrite.tlua, 7, 5))
+>ply : Symbol(ply, Decl(tluaIndexSignatureNilWrite.tlua, 4, 7))
+
+if pending then
+>pending : Symbol(pending, Decl(tluaIndexSignatureNilWrite.tlua, 50, 5))
+
+    local seen: true = pending;
+>seen : Symbol(seen, Decl(tluaIndexSignatureNilWrite.tlua, 52, 9))
+>pending : Symbol(pending, Decl(tluaIndexSignatureNilWrite.tlua, 50, 5))
+
+end
+
+// A removal does not narrow the later read any further: the declared value type,
+// widened by the read, governs.
 counts["b"] = nil;
 >counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
 
-local afterRemoval: number = counts["b"];
->afterRemoval : Symbol(afterRemoval, Decl(tluaIndexSignatureNilWrite.tlua, 49, 5))
+local afterRemoval: number | nil = counts["b"];
+>afterRemoval : Symbol(afterRemoval, Decl(tluaIndexSignatureNilWrite.tlua, 58, 5))
 >counts : Symbol(counts, Decl(tluaIndexSignatureNilWrite.tlua, 11, 5))
 
 // The widened type is the assignment's contextual type, so a nil-bearing union still
 // checks its non-nil constituent.
 local handlers: Table<string, (x: number) => void> = {};
->handlers : Symbol(handlers, Decl(tluaIndexSignatureNilWrite.tlua, 53, 5))
+>handlers : Symbol(handlers, Decl(tluaIndexSignatureNilWrite.tlua, 62, 5))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
->x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 53, 31))
+>x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 62, 31))
 
 handlers["run"] = function(x)
->handlers : Symbol(handlers, Decl(tluaIndexSignatureNilWrite.tlua, 53, 5))
->x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 54, 27))
+>handlers : Symbol(handlers, Decl(tluaIndexSignatureNilWrite.tlua, 62, 5))
+>x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 63, 27))
 
     local n: number = x;
->n : Symbol(n, Decl(tluaIndexSignatureNilWrite.tlua, 55, 9))
->x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 54, 27))
+>n : Symbol(n, Decl(tluaIndexSignatureNilWrite.tlua, 64, 9))
+>x : Symbol(x, Decl(tluaIndexSignatureNilWrite.tlua, 63, 27))
 
     use(n);
->use : Symbol(use, Decl(tluaIndexSignatureNilWrite.tlua, 89, 3))
->n : Symbol(n, Decl(tluaIndexSignatureNilWrite.tlua, 55, 9))
+>use : Symbol(use, Decl(tluaIndexSignatureNilWrite.tlua, 98, 3))
+>n : Symbol(n, Decl(tluaIndexSignatureNilWrite.tlua, 64, 9))
 
 end;
 
 // An array index signature removes an element the same way.
 declare list: Array<string>;
->list : Symbol(list, Decl(tluaIndexSignatureNilWrite.tlua, 60, 7))
+>list : Symbol(list, Decl(tluaIndexSignatureNilWrite.tlua, 69, 7))
 >Array : Symbol(Array, Decl(lib.luajit.d.tlua, --, --))
 
 list[1] = nil;
->list : Symbol(list, Decl(tluaIndexSignatureNilWrite.tlua, 60, 7))
+>list : Symbol(list, Decl(tluaIndexSignatureNilWrite.tlua, 69, 7))
 
 // A tuple addresses element positions rather than open keys, so it keeps rejecting nil --
 // including in a variadic tail, which is unbounded like an array but still carries a
 // declared element type. Removal is an `Array<T>` / `Table<K, V>` affordance; a tuple is a
 // shape contract, and a key access on one never reaches the index-signature path above.
 local pair: [string, number] = {"a", 1};
->pair : Symbol(pair, Decl(tluaIndexSignatureNilWrite.tlua, 67, 5))
+>pair : Symbol(pair, Decl(tluaIndexSignatureNilWrite.tlua, 76, 5))
 
 pair[1] = nil;
->pair : Symbol(pair, Decl(tluaIndexSignatureNilWrite.tlua, 67, 5))
+>pair : Symbol(pair, Decl(tluaIndexSignatureNilWrite.tlua, 76, 5))
 >1 : Symbol(1)
 
 local variadic: [string, ...number[]] = {"a"};
->variadic : Symbol(variadic, Decl(tluaIndexSignatureNilWrite.tlua, 69, 5))
+>variadic : Symbol(variadic, Decl(tluaIndexSignatureNilWrite.tlua, 78, 5))
 
 variadic[3] = nil;
->variadic : Symbol(variadic, Decl(tluaIndexSignatureNilWrite.tlua, 69, 5))
+>variadic : Symbol(variadic, Decl(tluaIndexSignatureNilWrite.tlua, 78, 5))
 
 // A mapped type over a finite key union declares properties rather than opening the
 // table, so its keys keep rejecting nil too.
 type Flags = { [P in "a" | "b"]: boolean };
->Flags : Symbol(Flags, Decl(tluaIndexSignatureNilWrite.tlua, 70, 18))
->P : Symbol(P, Decl(tluaIndexSignatureNilWrite.tlua, 74, 16))
+>Flags : Symbol(Flags, Decl(tluaIndexSignatureNilWrite.tlua, 79, 18))
+>P : Symbol(P, Decl(tluaIndexSignatureNilWrite.tlua, 83, 16))
 
 declare flags: Flags;
->flags : Symbol(flags, Decl(tluaIndexSignatureNilWrite.tlua, 75, 7))
->Flags : Symbol(Flags, Decl(tluaIndexSignatureNilWrite.tlua, 70, 18))
+>flags : Symbol(flags, Decl(tluaIndexSignatureNilWrite.tlua, 84, 7))
+>Flags : Symbol(Flags, Decl(tluaIndexSignatureNilWrite.tlua, 79, 18))
 
 flags.a = nil;
 >flags.a : Symbol(a)
->flags : Symbol(flags, Decl(tluaIndexSignatureNilWrite.tlua, 75, 7))
+>flags : Symbol(flags, Decl(tluaIndexSignatureNilWrite.tlua, 84, 7))
 >a : Symbol(a)
 
 // A union of tables removes through the union of their index signatures.
 declare either: Table<string, number> | Table<string, string>;
->either : Symbol(either, Decl(tluaIndexSignatureNilWrite.tlua, 79, 7))
+>either : Symbol(either, Decl(tluaIndexSignatureNilWrite.tlua, 88, 7))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
 
 either["k"] = nil;
->either : Symbol(either, Decl(tluaIndexSignatureNilWrite.tlua, 79, 7))
+>either : Symbol(either, Decl(tluaIndexSignatureNilWrite.tlua, 88, 7))
 
 // Known gap: a generic index defers the access to `Table<K, V>[K]`, whose write type is
 // resolved by the relater from a constraint with no access expression to gate on. Widening
@@ -197,23 +215,23 @@ either["k"] = nil;
 // argument passed to a `T[K]` parameter would start accepting nil -- so the removal idiom
 // stops at the type-parameter boundary and a generic helper needs `Table<K, V | nil>`.
 function clear<K, V>(t: Table<K, V>, k: K): void
->clear : Symbol(clear, Decl(tluaIndexSignatureNilWrite.tlua, 80, 18))
->K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 87, 15))
->V : Symbol(V, Decl(tluaIndexSignatureNilWrite.tlua, 87, 17))
->t : Symbol(t, Decl(tluaIndexSignatureNilWrite.tlua, 87, 21))
+>clear : Symbol(clear, Decl(tluaIndexSignatureNilWrite.tlua, 89, 18))
+>K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 96, 15))
+>V : Symbol(V, Decl(tluaIndexSignatureNilWrite.tlua, 96, 17))
+>t : Symbol(t, Decl(tluaIndexSignatureNilWrite.tlua, 96, 21))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
->K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 87, 15))
->V : Symbol(V, Decl(tluaIndexSignatureNilWrite.tlua, 87, 17))
->k : Symbol(k, Decl(tluaIndexSignatureNilWrite.tlua, 87, 36))
->K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 87, 15))
+>K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 96, 15))
+>V : Symbol(V, Decl(tluaIndexSignatureNilWrite.tlua, 96, 17))
+>k : Symbol(k, Decl(tluaIndexSignatureNilWrite.tlua, 96, 36))
+>K : Symbol(K, Decl(tluaIndexSignatureNilWrite.tlua, 96, 15))
 
     t[k] = nil;
->t : Symbol(t, Decl(tluaIndexSignatureNilWrite.tlua, 87, 21))
->k : Symbol(k, Decl(tluaIndexSignatureNilWrite.tlua, 87, 36))
+>t : Symbol(t, Decl(tluaIndexSignatureNilWrite.tlua, 96, 21))
+>k : Symbol(k, Decl(tluaIndexSignatureNilWrite.tlua, 96, 36))
 
 end
 
 declare function use(value: unknown): void;
->use : Symbol(use, Decl(tluaIndexSignatureNilWrite.tlua, 89, 3))
->value : Symbol(value, Decl(tluaIndexSignatureNilWrite.tlua, 91, 21))
+>use : Symbol(use, Decl(tluaIndexSignatureNilWrite.tlua, 98, 3))
+>value : Symbol(value, Decl(tluaIndexSignatureNilWrite.tlua, 100, 21))
 

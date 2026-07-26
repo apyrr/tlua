@@ -68,7 +68,7 @@ declare p: PatternKey;
 >p : Symbol(p, Decl(tluaIndexKeyRejected.tlua, 24, 7))
 >PatternKey : Symbol(PatternKey, Decl(tluaIndexKeyRejected.tlua, 20, 25))
 
-local n: number = p["id-1"];
+local n: number | nil = p["id-1"];
 >n : Symbol(n, Decl(tluaIndexKeyRejected.tlua, 25, 5))
 >p : Symbol(p, Decl(tluaIndexKeyRejected.tlua, 24, 7))
 
@@ -76,32 +76,32 @@ local n: number = p["id-1"];
 // keying an index nothing can represent: a template key completed by a type argument
 // becomes a string index, and a literal type argument a string one.
 interface Prefixed<T extends string> { [key: `a${T}`]: number }
->Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 28))
+>Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 34))
 >T : Symbol(T, Decl(tluaIndexKeyRejected.tlua, 30, 19))
 >key : Symbol(key, Decl(tluaIndexKeyRejected.tlua, 30, 40))
 >T : Symbol(T, Decl(tluaIndexKeyRejected.tlua, 30, 19))
 
 declare pre: Prefixed<"x">;
 >pre : Symbol(pre, Decl(tluaIndexKeyRejected.tlua, 31, 7))
->Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 28))
+>Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 34))
 
-local n2: number = pre["ax"];
+local n2: number | nil = pre["ax"];
 >n2 : Symbol(n2, Decl(tluaIndexKeyRejected.tlua, 32, 5))
 >pre : Symbol(pre, Decl(tluaIndexKeyRejected.tlua, 31, 7))
 
 type PK = keyof Prefixed<"x">;
->PK : Symbol(PK, Decl(tluaIndexKeyRejected.tlua, 32, 29))
->Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 28))
+>PK : Symbol(PK, Decl(tluaIndexKeyRejected.tlua, 32, 35))
+>Prefixed : Symbol(Prefixed, Decl(tluaIndexKeyRejected.tlua, 25, 34))
 
 local pk: PK = "anything";
 >pk : Symbol(pk, Decl(tluaIndexKeyRejected.tlua, 34, 5))
->PK : Symbol(PK, Decl(tluaIndexKeyRejected.tlua, 32, 29))
+>PK : Symbol(PK, Decl(tluaIndexKeyRejected.tlua, 32, 35))
 
 declare tl: Table<"a", number>;
 >tl : Symbol(tl, Decl(tluaIndexKeyRejected.tlua, 35, 7))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
 
-local n3: number = tl["b"];
+local n3: number | nil = tl["b"];
 >n3 : Symbol(n3, Decl(tluaIndexKeyRejected.tlua, 36, 5))
 >tl : Symbol(tl, Decl(tluaIndexKeyRejected.tlua, 35, 7))
 

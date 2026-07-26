@@ -1,0 +1,73 @@
+//// [tests/cases/compiler/tluaUncheckedIndexedAccessOff.tlua] ////
+
+=== tluaUncheckedIndexedAccessOff.tlua ===
+// The default is on, so the option is spelled false to get out of it: a project that
+// would rather index a table as though every key were present still can.
+
+interface Registry { [key: string]: number }
+>key : string
+
+declare reg: Registry;
+>reg : Registry
+
+local n: number = reg["a"];
+>n : number
+>reg["a"] : number
+>reg : Registry
+>"a" : "a"
+
+declare xs: number[];
+>xs : number[]
+
+local first: number = xs[1];
+>first : number
+>xs[1] : number
+>xs : number[]
+>1 : 1
+
+// The opt-out follows deferred generic accesses through the same simplification paths.
+interface Open { [key: string]: number }
+>key : string
+
+type OpenOrNamed = Open | { x: boolean };
+>OpenOrNamed : OpenOrNamed
+>x : boolean
+
+function getFromUnion<T extends OpenOrNamed>(t: T): number | boolean
+>getFromUnion : <T extends OpenOrNamed>(t: T) => number | boolean
+>t : T
+
+  return t["x"];
+>t["x"] : number | boolean
+>t : OpenOrNamed
+>"x" : "x"
+
+end
+
+type Mapped<K, V> = { [P in K]: V };
+>Mapped : Mapped<K, V>
+
+function getMapped<K extends string, V>(t: Mapped<K, V>, k: K): V
+>getMapped : <K extends string, V>(t: Mapped<K, V>, k: K) => V
+>t : Mapped<K, V>
+>k : K
+
+  return t[k];
+>t[k] : Mapped<K, V>[K]
+>t : Mapped<K, V>
+>k : K
+
+end
+
+function getTuple<T extends number[]>(t: [string, ...T], key: number): string | number
+>getTuple : <T extends number[]>(t: [string, ...T], key: number) => string | number
+>t : [string, ...T]
+>key : number
+
+  return t[key];
+>t[key] : string | number
+>t : [string, ...T]
+>key : number
+
+end
+

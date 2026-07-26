@@ -13,24 +13,24 @@ interface Flags {
 declare f: Flags;
 >f : Flags
 
-local yes: string = f[true];
->yes : string
->f[true] : string
+local yes: string | nil = f[true];
+>yes : string | nil
+>f[true] : string | nil
 >f : Flags
 >true : true
 
-local no: string = f[false];
->no : string
->f[false] : string
+local no: string | nil = f[false];
+>no : string | nil
+>f[false] : string | nil
 >f : Flags
 >false : false
 
 declare b: boolean;
 >b : boolean
 
-local either: string = f[b];
->either : string
->f[b] : string
+local either: string | nil = f[b];
+>either : string | nil
+>f[b] : string | nil
 >f : Flags
 >b : boolean
 
@@ -57,15 +57,15 @@ interface Mixed {
 declare m: Mixed;
 >m : Mixed
 
-local s: string = m[true];
->s : string
->m[true] : string
+local s: string | nil = m[true];
+>s : string | nil
+>m[true] : string | nil
 >m : Mixed
 >true : true
 
-local n: number = m[1];
->n : number
->m[1] : number
+local n: number | nil = m[1];
+>n : number | nil
+>m[1] : number | nil
 >m : Mixed
 >1 : 1
 

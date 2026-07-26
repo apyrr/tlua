@@ -41,51 +41,53 @@ function walk(t: string[]): number
 
 end
 
-// A number-key table satisfies T[] and is indexed element-wise.
+// A number-key table satisfies T[] and is indexed element-wise. The read
+// carries nil -- a table has no length the index can be checked against -- so
+// `or` supplies the element that is not there.
 function sum(xs: number[]): number
 >sum : Symbol(sum, Decl(tluaIterationCoexistence.tlua, 15, 3))
->xs : Symbol(xs, Decl(tluaIterationCoexistence.tlua, 18, 13))
+>xs : Symbol(xs, Decl(tluaIterationCoexistence.tlua, 20, 13))
 
   local total = 0;
->total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 19, 7))
+>total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 21, 7))
 
   for i = 1, 3 do
->i : Symbol(i, Decl(tluaIterationCoexistence.tlua, 20, 5))
+>i : Symbol(i, Decl(tluaIterationCoexistence.tlua, 22, 5))
 
-    total = total + xs[i];
->total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 19, 7))
->total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 19, 7))
->xs : Symbol(xs, Decl(tluaIterationCoexistence.tlua, 18, 13))
->i : Symbol(i, Decl(tluaIterationCoexistence.tlua, 20, 5))
+    total = total + (xs[i] or 0);
+>total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 21, 7))
+>total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 21, 7))
+>xs : Symbol(xs, Decl(tluaIterationCoexistence.tlua, 20, 13))
+>i : Symbol(i, Decl(tluaIterationCoexistence.tlua, 22, 5))
 
   end
   return total;
->total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 19, 7))
+>total : Symbol(total, Decl(tluaIterationCoexistence.tlua, 21, 7))
 
 end
 
 // A vararg pack collects into a number-key table with `{...}`.
 function join(sep: string, ...: string): string
->join : Symbol(join, Decl(tluaIterationCoexistence.tlua, 24, 3))
->sep : Symbol(sep, Decl(tluaIterationCoexistence.tlua, 27, 14))
-> : Symbol((Missing), Decl(tluaIterationCoexistence.tlua, 27, 26))
+>join : Symbol(join, Decl(tluaIterationCoexistence.tlua, 26, 3))
+>sep : Symbol(sep, Decl(tluaIterationCoexistence.tlua, 29, 14))
+> : Symbol((Missing), Decl(tluaIterationCoexistence.tlua, 29, 26))
 
   local parts: string[] = {...};
->parts : Symbol(parts, Decl(tluaIterationCoexistence.tlua, 28, 7))
+>parts : Symbol(parts, Decl(tluaIterationCoexistence.tlua, 30, 7))
 
-  return parts[1];
->parts : Symbol(parts, Decl(tluaIterationCoexistence.tlua, 28, 7))
+  return parts[1] or "";
+>parts : Symbol(parts, Decl(tluaIterationCoexistence.tlua, 30, 7))
 
 end
 function forward(a: string, b: string): string
->forward : Symbol(forward, Decl(tluaIterationCoexistence.tlua, 30, 3))
->a : Symbol(a, Decl(tluaIterationCoexistence.tlua, 31, 17))
->b : Symbol(b, Decl(tluaIterationCoexistence.tlua, 31, 27))
+>forward : Symbol(forward, Decl(tluaIterationCoexistence.tlua, 32, 3))
+>a : Symbol(a, Decl(tluaIterationCoexistence.tlua, 33, 17))
+>b : Symbol(b, Decl(tluaIterationCoexistence.tlua, 33, 27))
 
   return join(",", a, b);
->join : Symbol(join, Decl(tluaIterationCoexistence.tlua, 24, 3))
->a : Symbol(a, Decl(tluaIterationCoexistence.tlua, 31, 17))
->b : Symbol(b, Decl(tluaIterationCoexistence.tlua, 31, 27))
+>join : Symbol(join, Decl(tluaIterationCoexistence.tlua, 26, 3))
+>a : Symbol(a, Decl(tluaIterationCoexistence.tlua, 33, 17))
+>b : Symbol(b, Decl(tluaIterationCoexistence.tlua, 33, 27))
 
 end
 

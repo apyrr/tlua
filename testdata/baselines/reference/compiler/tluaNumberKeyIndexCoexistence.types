@@ -25,9 +25,9 @@ local u1: string = u[1];
 >1 : 1
 
 // A string-key access falls to the string index signature.
-local us: string | number = u["5"];
->us : string | number
->u["5"] : string | number
+local us: string | number | nil = u["5"];
+>us : string | number | nil
+>u["5"] : string | number | nil
 >u : U
 >"5" : "5"
 
@@ -39,8 +39,8 @@ local un = u[5];
 >5 : 5
 
 local es = {u1, us, un};
->es : { 1: string; 2: string | number; 3: any; }
->{u1, us, un} : { 1: string; 2: string | number; 3: any; }
+>es : { 1: string; 2: string | number | nil; 3: any; }
+>{u1, us, un} : { 1: string; 2: string | number | nil; 3: any; }
 >u1 : any
 >us : any
 >un : any

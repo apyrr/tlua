@@ -1,0 +1,87 @@
+//// [tests/cases/compiler/tluaUncheckedIndexedAccessOff.tlua] ////
+
+=== tluaUncheckedIndexedAccessOff.tlua ===
+// The default is on, so the option is spelled false to get out of it: a project that
+// would rather index a table as though every key were present still can.
+
+interface Registry { [key: string]: number }
+>Registry : Symbol(Registry, Decl(tluaUncheckedIndexedAccessOff.tlua, 0, 0))
+>key : Symbol(key, Decl(tluaUncheckedIndexedAccessOff.tlua, 3, 22))
+
+declare reg: Registry;
+>reg : Symbol(reg, Decl(tluaUncheckedIndexedAccessOff.tlua, 4, 7))
+>Registry : Symbol(Registry, Decl(tluaUncheckedIndexedAccessOff.tlua, 0, 0))
+
+local n: number = reg["a"];
+>n : Symbol(n, Decl(tluaUncheckedIndexedAccessOff.tlua, 5, 5))
+>reg : Symbol(reg, Decl(tluaUncheckedIndexedAccessOff.tlua, 4, 7))
+
+declare xs: number[];
+>xs : Symbol(xs, Decl(tluaUncheckedIndexedAccessOff.tlua, 7, 7))
+
+local first: number = xs[1];
+>first : Symbol(first, Decl(tluaUncheckedIndexedAccessOff.tlua, 8, 5))
+>xs : Symbol(xs, Decl(tluaUncheckedIndexedAccessOff.tlua, 7, 7))
+
+// The opt-out follows deferred generic accesses through the same simplification paths.
+interface Open { [key: string]: number }
+>Open : Symbol(Open, Decl(tluaUncheckedIndexedAccessOff.tlua, 8, 28))
+>key : Symbol(key, Decl(tluaUncheckedIndexedAccessOff.tlua, 11, 18))
+
+type OpenOrNamed = Open | { x: boolean };
+>OpenOrNamed : Symbol(OpenOrNamed, Decl(tluaUncheckedIndexedAccessOff.tlua, 11, 40))
+>Open : Symbol(Open, Decl(tluaUncheckedIndexedAccessOff.tlua, 8, 28))
+>x : Symbol(x, Decl(tluaUncheckedIndexedAccessOff.tlua, 12, 27))
+
+function getFromUnion<T extends OpenOrNamed>(t: T): number | boolean
+>getFromUnion : Symbol(getFromUnion, Decl(tluaUncheckedIndexedAccessOff.tlua, 12, 41))
+>T : Symbol(T, Decl(tluaUncheckedIndexedAccessOff.tlua, 13, 22))
+>OpenOrNamed : Symbol(OpenOrNamed, Decl(tluaUncheckedIndexedAccessOff.tlua, 11, 40))
+>t : Symbol(t, Decl(tluaUncheckedIndexedAccessOff.tlua, 13, 45))
+>T : Symbol(T, Decl(tluaUncheckedIndexedAccessOff.tlua, 13, 22))
+
+  return t["x"];
+>t : Symbol(t, Decl(tluaUncheckedIndexedAccessOff.tlua, 13, 45))
+>"x" : Symbol(x, Decl(tluaUncheckedIndexedAccessOff.tlua, 12, 27))
+
+end
+
+type Mapped<K, V> = { [P in K]: V };
+>Mapped : Symbol(Mapped, Decl(tluaUncheckedIndexedAccessOff.tlua, 15, 3))
+>K : Symbol(K, Decl(tluaUncheckedIndexedAccessOff.tlua, 17, 12))
+>V : Symbol(V, Decl(tluaUncheckedIndexedAccessOff.tlua, 17, 14))
+>P : Symbol(P, Decl(tluaUncheckedIndexedAccessOff.tlua, 17, 23))
+>K : Symbol(K, Decl(tluaUncheckedIndexedAccessOff.tlua, 17, 12))
+>V : Symbol(V, Decl(tluaUncheckedIndexedAccessOff.tlua, 17, 14))
+
+function getMapped<K extends string, V>(t: Mapped<K, V>, k: K): V
+>getMapped : Symbol(getMapped, Decl(tluaUncheckedIndexedAccessOff.tlua, 17, 36))
+>K : Symbol(K, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 19))
+>V : Symbol(V, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 36))
+>t : Symbol(t, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 40))
+>Mapped : Symbol(Mapped, Decl(tluaUncheckedIndexedAccessOff.tlua, 15, 3))
+>K : Symbol(K, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 19))
+>V : Symbol(V, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 36))
+>k : Symbol(k, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 56))
+>K : Symbol(K, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 19))
+>V : Symbol(V, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 36))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 40))
+>k : Symbol(k, Decl(tluaUncheckedIndexedAccessOff.tlua, 18, 56))
+
+end
+
+function getTuple<T extends number[]>(t: [string, ...T], key: number): string | number
+>getTuple : Symbol(getTuple, Decl(tluaUncheckedIndexedAccessOff.tlua, 20, 3))
+>T : Symbol(T, Decl(tluaUncheckedIndexedAccessOff.tlua, 22, 18))
+>t : Symbol(t, Decl(tluaUncheckedIndexedAccessOff.tlua, 22, 38))
+>T : Symbol(T, Decl(tluaUncheckedIndexedAccessOff.tlua, 22, 18))
+>key : Symbol(key, Decl(tluaUncheckedIndexedAccessOff.tlua, 22, 56))
+
+  return t[key];
+>t : Symbol(t, Decl(tluaUncheckedIndexedAccessOff.tlua, 22, 38))
+>key : Symbol(key, Decl(tluaUncheckedIndexedAccessOff.tlua, 22, 56))
+
+end
+

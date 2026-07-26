@@ -27,7 +27,7 @@ local u1: string = u[1];
 >1 : Symbol(U[1], Decl(tluaNumberKeyIndexCoexistence.tlua, 5, 14))
 
 // A string-key access falls to the string index signature.
-local us: string | number = u["5"];
+local us: string | number | nil = u["5"];
 >us : Symbol(us, Decl(tluaNumberKeyIndexCoexistence.tlua, 14, 5))
 >u : Symbol(u, Decl(tluaNumberKeyIndexCoexistence.tlua, 8, 7))
 

@@ -2,10 +2,10 @@ tluaIndexSignatureNilWrite.tlua(18,1): error TLUA2322: Type 'string' is not assi
 tluaIndexSignatureNilWrite.tlua(26,1): error TLUA2322: Type 'nil' is not assignable to type 'string'.
 tluaIndexSignatureNilWrite.tlua(27,1): error TLUA2322: Type 'nil' is not assignable to type 'string'.
 tluaIndexSignatureNilWrite.tlua(42,1): error TLUA2542: Index signature in type 'Frozen' only permits reading.
-tluaIndexSignatureNilWrite.tlua(69,1): error TLUA2322: Type 'nil' is not assignable to type 'string'.
-tluaIndexSignatureNilWrite.tlua(71,1): error TLUA2322: Type 'nil' is not assignable to type 'number'.
-tluaIndexSignatureNilWrite.tlua(77,1): error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
-tluaIndexSignatureNilWrite.tlua(89,5): error TLUA2322: Type 'nil' is not assignable to type 'V'.
+tluaIndexSignatureNilWrite.tlua(78,1): error TLUA2322: Type 'nil' is not assignable to type 'string'.
+tluaIndexSignatureNilWrite.tlua(80,1): error TLUA2322: Type 'nil' is not assignable to type 'number'.
+tluaIndexSignatureNilWrite.tlua(86,1): error TLUA2322: Type 'nil' is not assignable to type 'boolean'.
+tluaIndexSignatureNilWrite.tlua(98,5): error TLUA2322: Type 'nil' is not assignable to type 'V'.
   'V' could be instantiated with an arbitrary type which could be unrelated to 'nil'.
 
 
@@ -61,13 +61,22 @@ tluaIndexSignatureNilWrite.tlua(89,5): error TLUA2322: Type 'nil' is not assigna
     ~~~~~~~~~~~
 !!! error TLUA2542: Index signature in type 'Frozen' only permits reading.
     
-    // Reads are unaffected: the element type has no nil.
-    local present: true = loadQueue[ply];
-    local count: number = counts["a"];
+    // The read is the other half: a key that was never set -- or was just removed -- is
+    // nil, so an index read widens to `V | nil`.
+    local present: true | nil = loadQueue[ply];
+    local count: number | nil = counts["a"];
     
-    // A removal does not narrow the later read to nil: the declared value type governs.
+    // Which is what makes the presence guard mean something: without the widening the
+    // condition would be the literal `true` and narrow nothing.
+    local pending = loadQueue[ply];
+    if pending then
+        local seen: true = pending;
+    end
+    
+    // A removal does not narrow the later read any further: the declared value type,
+    // widened by the read, governs.
     counts["b"] = nil;
-    local afterRemoval: number = counts["b"];
+    local afterRemoval: number | nil = counts["b"];
     
     // The widened type is the assignment's contextual type, so a nil-bearing union still
     // checks its non-nil constituent.

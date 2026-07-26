@@ -56,33 +56,33 @@ declare byUserdata: ByUserdata;
 declare byCData: ByCData;
 >byCData : ByCData
 
-local s1: string = byTable[pt];
->s1 : string
->byTable[pt] : string
+local s1: string | nil = byTable[pt];
+>s1 : string | nil
+>byTable[pt] : string | nil
 >byTable : ByTable
 >pt : Point
 
-local s2: string = byFunction[fn];
->s2 : string
->byFunction[fn] : string
+local s2: string | nil = byFunction[fn];
+>s2 : string | nil
+>byFunction[fn] : string | nil
 >byFunction : ByFunction
 >fn : (a: number) => void
 
-local s3: string = byThread[th];
->s3 : string
->byThread[th] : string
+local s3: string | nil = byThread[th];
+>s3 : string | nil
+>byThread[th] : string | nil
 >byThread : ByThread
 >th : thread
 
-local s4: string = byUserdata[ud];
->s4 : string
->byUserdata[ud] : string
+local s4: string | nil = byUserdata[ud];
+>s4 : string | nil
+>byUserdata[ud] : string | nil
 >byUserdata : ByUserdata
 >ud : userdata
 
-local s5: string = byCData[cd];
->s5 : string
->byCData[cd] : string
+local s5: string | nil = byCData[cd];
+>s5 : string | nil
+>byCData[cd] : string | nil
 >byCData : ByCData
 >cd : cdata
 

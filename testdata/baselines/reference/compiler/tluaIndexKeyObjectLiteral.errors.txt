@@ -10,22 +10,22 @@ tluaIndexKeyObjectLiteral.tlua(41,52): error TLUA2322: Type 'string' is not assi
     declare s: string;
     
     local byBool = { [b] = 1 };
-    local n1: number = byBool[true];
+    local n1: number | nil = byBool[true];
     
     local byTable = { [pt] = "v" };
-    local s1: string = byTable[pt];
+    local s1: string | nil = byTable[pt];
     
     // A literal key widens to its base type. An index signature may not be keyed by a
     // literal, so `{ [true] = 1 }` must synthesize `[key: boolean]`, never `[key: true]` --
     // which the grammar rejects and an emitted .d.tlua would not re-parse.
     local byTrue = { [true] = 1 };
-    local n2: number = byTrue[false];
+    local n2: number | nil = byTrue[false];
     
     // Several key domains in one literal, each its own index.
     local mixed = { [b] = 1, [pt] = 2, [s] = 3 };
-    local n3: number = mixed[true];
-    local n4: number = mixed[pt];
-    local n5: number = mixed["k"];
+    local n3: number | nil = mixed[true];
+    local n4: number | nil = mixed[pt];
+    local n5: number | nil = mixed["k"];
     
     // A computed key is contextually typed by the index it feeds.
     interface BoolIdx { [key: boolean]: number }
@@ -35,9 +35,9 @@ tluaIndexKeyObjectLiteral.tlua(41,52): error TLUA2322: Type 'string' is not assi
     // indexes, and the literal is indexable by the union itself.
     declare sn: string | number;
     local byEither = { [sn] = 1 };
-    local n6: number = byEither[sn];
-    local n7: number = byEither["x"];
-    local n8: number = byEither[1];
+    local n6: number | nil = byEither[sn];
+    local n7: number | nil = byEither["x"];
+    local n8: number | nil = byEither[1];
     
     // A member whose key spans the string domain counts against a string index: the named
     // member cannot slip past it through a union-keyed side door.
@@ -55,6 +55,6 @@ tluaIndexKeyObjectLiteral.tlua(41,52): error TLUA2322: Type 'string' is not assi
     // An `any` key could be a key of any domain, so it feeds string and number alike.
     declare anyKey: any;
     local viaAny = { [anyKey] = 5 };
-    local n9: number = viaAny["x"];
-    local n10: number = viaAny[1];
+    local n9: number | nil = viaAny["x"];
+    local n10: number | nil = viaAny[1];
     

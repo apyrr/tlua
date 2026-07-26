@@ -155,20 +155,20 @@ declare t: { [k: string]: number };
 >k : string
 
 local byIndex = t["and"];
->byIndex : number
->t["and"] : number
+>byIndex : number | nil
+>t["and"] : number | nil
 >t : { [k: string]: number; }
 >"and" : "and"
 
 local byIndex2 = t["or"];
->byIndex2 : number
->t["or"] : number
+>byIndex2 : number | nil
+>t["or"] : number | nil
 >t : { [k: string]: number; }
 >"or" : "or"
 
 local byIndex3 = t["not"];
->byIndex3 : number
->t["not"] : number
+>byIndex3 : number | nil
+>t["not"] : number | nil
 >t : { [k: string]: number; }
 >"not" : "not"
 

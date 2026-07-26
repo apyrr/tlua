@@ -14,26 +14,26 @@ interface ByTable { [key: Point]: string }
 type Copy<T> = { [P in keyof T]: T[P] };
 
 declare cf: Copy<Flags>;
-local s1: string = cf[true];
+local s1: string | nil = cf[true];
 declare cb: Copy<ByTable>;
 declare pt: Point;
-local s2: string = cb[pt];
+local s2: string | nil = cb[pt];
 
 // The modifiers still apply.
 type Ro<T> = { readonly [P in keyof T]: T[P] };
 declare ro: Ro<Flags>;
-local s3: string = ro[false];
+local s3: string | nil = ro[false];
 
 // Mixed domains map together.
 interface Mixed { [key: boolean]: string; named: number }
 declare cm: Copy<Mixed>;
-local s4: string = cm[true];
+local s4: string | nil = cm[true];
 local n1: number = cm.named;
 
 // The constraint check follows the table-key domain: a concrete boolean (or keyof of
 // a boolean-keyed type) maps directly, not only through a generic alias.
 type Direct = { [P in keyof Mixed]: number };
 declare dd: Direct;
-local n2: number = dd[true];
+local n2: number | nil = dd[true];
 declare mb: { [P in boolean]: string };
-local s5: string = mb[false];
+local s5: string | nil = mb[false];

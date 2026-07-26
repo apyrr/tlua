@@ -1,5 +1,5 @@
 tluaMetatableIndexFunction.tlua(16,20): error TLUA2339: Property 'missing' does not exist on type '{ [x: number]: boolean; n: number; }'.
-tluaMetatableIndexFunction.tlua(35,7): error TLUA2322: Type 'string | number' is not assignable to type 'number'.
+tluaMetatableIndexFunction.tlua(35,7): error TLUA2322: Type 'string | number | nil' is not assignable to type 'number | nil'.
   Type 'string' is not assignable to type 'number'.
 tluaMetatableIndexFunction.tlua(40,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 
@@ -12,14 +12,14 @@ tluaMetatableIndexFunction.tlua(40,7): error TLUA2322: Type 'number' is not assi
     // rule a computed table key already follows.
     local anyMt = { __index = function(t: table, k: any): string return "x"; end };
     local a = setmetatable({ n = 1 }, anyMt);
-    local s1: string = a.whatever;
-    local s2: string = a[1];
+    local s1: string | nil = a.whatever;
+    local s2: string | nil = a[1];
     local n1: number = a.n;
     
     // A concrete key domain keeps to itself: this table answers number keys only.
     local numMt = { __index = function(t: table, k: number): boolean return true; end };
     local num = setmetatable({ n = 1 }, numMt);
-    local b1: boolean = num[3];
+    local b1: boolean | nil = num[3];
     local absent = num.missing;
                        ~~~~~~~
 !!! error TLUA2339: Property 'missing' does not exist on type '{ [x: number]: boolean; n: number; }'.
@@ -28,22 +28,22 @@ tluaMetatableIndexFunction.tlua(40,7): error TLUA2322: Type 'number' is not assi
     // literal -- the same widening a computed key gets.
     local litMt = { __index = function(t: table, k: "a"): number return 1; end };
     local lit = setmetatable({ n = 1 }, litMt);
-    local l1: number = lit["zzz"];
+    local l1: number | nil = lit["zzz"];
     
     // A multi-return __index truncates to its first value at the call boundary, as every other
     // call does.
     local packMt = { __index = function(t: table, k: any): (string, number) return "x", 1; end };
     local pack = setmetatable({ n = 1 }, packMt);
-    local p1: string = pack.anything;
+    local p1: string | nil = pack.anything;
     
     // Overloads that answer the same key domain both apply: a read of such a key gets whichever
     // one Lua dispatches to.
     declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string } };
     local ov = setmetatable({ n = 1 }, overloaded);
-    local either: number | string = ov.b;
-    local notJustNumber: number = ov.b;
+    local either: number | string | nil = ov.b;
+    local notJustNumber: number | nil = ov.b;
           ~~~~~~~~~~~~~
-!!! error TLUA2322: Type 'string | number' is not assignable to type 'number'.
+!!! error TLUA2322: Type 'string | number | nil' is not assignable to type 'number | nil'.
 !!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
     
     // The table's own members still win: a function __index only runs on a miss.

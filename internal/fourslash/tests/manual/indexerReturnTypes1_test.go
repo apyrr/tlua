@@ -10,31 +10,30 @@ import (
 func TestIndexerReturnTypes1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface Numeric {
-    [x: number]: Date;
-}
+	// tlua: the upstream fixture keyed these on Date/RegExp, which no lib here
+	// declares -- every marker then reported the error type. Two local interfaces
+	// stand in so the assertions say something.
+	const content = `interface Dt { d: number }
+interface Rx { r: string }
+interface Numeric {
+    [x: number]: Dt;
 }
 interface Stringy {
-    [x: string]: RegExp;
-}
+    [x: string]: Rx;
 }
 interface NumericPlus {
-    [x: number]: Date;
-    foo(): Date;
-}
+    [x: number]: Dt;
+    foo(): Dt;
 }
 interface StringyPlus {
-    [x: string]: RegExp;
-    foo(): RegExp;
-}
+    [x: string]: Rx;
+    foo(): Rx;
 }
 interface NumericG<T> {
     [x: number]: T;
 }
-}
 interface StringyG<T> {
     [x: string]: T;
-}
 }
 interface Ty<T> {
     [x: number]: Ty<T>;
@@ -43,16 +42,14 @@ interface Ty2<T> {
     [x: number]: { [x: number]: T };
 }
 
-
-}
 local numeric: Numeric;
 local stringy: Stringy;
 local numericPlus: NumericPlus;
 local stringPlus: StringyPlus;
-local numericG: NumericG<Date>;
-local stringyG: StringyG<Date>;
-local ty: Ty<Date>;
-local ty2: Ty2<Date>;
+local numericG: NumericG<Dt>;
+local stringyG: StringyG<Dt>;
+local ty: Ty<Dt>;
+local ty2: Ty2<Dt>;
 
 local /*1*/r1 = numeric[1];
 local /*2*/r2 = numeric['1'];
@@ -74,20 +71,21 @@ local /*16*/r16 = ty2['1'];`
 	defer done()
 	// tlua: number and string keys are disjoint, so a string-key access on a
 	// number-only index (and vice versa) is not covered and resolves to `any`.
-	f.VerifyQuickInfoAt(t, "1", "local r1: Date", "")
+	// A covered access carries nil: the key may not be there.
+	f.VerifyQuickInfoAt(t, "1", "local r1: Dt | nil", "")
 	f.VerifyQuickInfoAt(t, "2", "local r2: any", "")
 	f.VerifyQuickInfoAt(t, "3", "local r3: any", "")
-	f.VerifyQuickInfoAt(t, "4", "local r4: RegExp", "")
-	f.VerifyQuickInfoAt(t, "5", "local r5: Date", "")
+	f.VerifyQuickInfoAt(t, "4", "local r4: Rx | nil", "")
+	f.VerifyQuickInfoAt(t, "5", "local r5: Dt | nil", "")
 	f.VerifyQuickInfoAt(t, "6", "local r6: any", "")
 	f.VerifyQuickInfoAt(t, "7", "local r7: any", "")
-	f.VerifyQuickInfoAt(t, "8", "local r8: RegExp", "")
-	f.VerifyQuickInfoAt(t, "9", "local r9: Date", "")
+	f.VerifyQuickInfoAt(t, "8", "local r8: Rx | nil", "")
+	f.VerifyQuickInfoAt(t, "9", "local r9: Dt | nil", "")
 	f.VerifyQuickInfoAt(t, "10", "local r10: any", "")
 	f.VerifyQuickInfoAt(t, "11", "local r11: any", "")
-	f.VerifyQuickInfoAt(t, "12", "local r12: Date", "")
-	f.VerifyQuickInfoAt(t, "13", "local r13: Ty<Date>", "")
+	f.VerifyQuickInfoAt(t, "12", "local r12: Dt | nil", "")
+	f.VerifyQuickInfoAt(t, "13", "local r13: Ty<Dt> | nil", "")
 	f.VerifyQuickInfoAt(t, "14", "local r14: any", "")
-	f.VerifyQuickInfoAt(t, "15", "local r15: {\n    [x: number]: Date;\n}", "")
+	f.VerifyQuickInfoAt(t, "15", "local r15: {\n    [x: number]: Dt;\n} | nil", "")
 	f.VerifyQuickInfoAt(t, "16", "local r16: any", "")
 }

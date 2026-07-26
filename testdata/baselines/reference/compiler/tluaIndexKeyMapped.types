@@ -20,9 +20,9 @@ type Copy<T> = { [P in keyof T]: T[P] };
 declare cf: Copy<Flags>;
 >cf : Copy<Flags>
 
-local s1: string = cf[true];
->s1 : string
->cf[true] : string
+local s1: string | nil = cf[true];
+>s1 : string | nil
+>cf[true] : string | nil
 >cf : Copy<Flags>
 >true : true
 
@@ -32,9 +32,9 @@ declare cb: Copy<ByTable>;
 declare pt: Point;
 >pt : Point
 
-local s2: string = cb[pt];
->s2 : string
->cb[pt] : string
+local s2: string | nil = cb[pt];
+>s2 : string | nil
+>cb[pt] : string | nil
 >cb : Copy<ByTable>
 >pt : Point
 
@@ -45,9 +45,9 @@ type Ro<T> = { readonly [P in keyof T]: T[P] };
 declare ro: Ro<Flags>;
 >ro : Ro<Flags>
 
-local s3: string = ro[false];
->s3 : string
->ro[false] : string
+local s3: string | nil = ro[false];
+>s3 : string | nil
+>ro[false] : string | nil
 >ro : Ro<Flags>
 >false : false
 
@@ -59,9 +59,9 @@ interface Mixed { [key: boolean]: string; named: number }
 declare cm: Copy<Mixed>;
 >cm : Copy<Mixed>
 
-local s4: string = cm[true];
->s4 : string
->cm[true] : string
+local s4: string | nil = cm[true];
+>s4 : string | nil
+>cm[true] : string | nil
 >cm : Copy<Mixed>
 >true : true
 
@@ -79,18 +79,18 @@ type Direct = { [P in keyof Mixed]: number };
 declare dd: Direct;
 >dd : Direct
 
-local n2: number = dd[true];
->n2 : number
->dd[true] : number
+local n2: number | nil = dd[true];
+>n2 : number | nil
+>dd[true] : number | nil
 >dd : Direct
 >true : true
 
 declare mb: { [P in boolean]: string };
 >mb : { [x: boolean]: string; }
 
-local s5: string = mb[false];
->s5 : string
->mb[false] : string
+local s5: string | nil = mb[false];
+>s5 : string | nil
+>mb[false] : string | nil
 >mb : { [x: boolean]: string; }
 >false : false
 

@@ -21,7 +21,7 @@ declare byName: Map2<string, number>;
 >byName : Symbol(byName, Decl(tluaIndexKeyGeneric.tlua, 9, 7))
 >Map2 : Symbol(Map2, Decl(tluaIndexKeyGeneric.tlua, 0, 0))
 
-local n: number = byName["a"];
+local n: number | nil = byName["a"];
 >n : Symbol(n, Decl(tluaIndexKeyGeneric.tlua, 10, 5))
 >byName : Symbol(byName, Decl(tluaIndexKeyGeneric.tlua, 9, 7))
 
@@ -34,19 +34,19 @@ declare pt: { x: number };
 >pt : Symbol(pt, Decl(tluaIndexKeyGeneric.tlua, 13, 7))
 >x : Symbol(x, Decl(tluaIndexKeyGeneric.tlua, 13, 13))
 
-local s: string = byPoint[pt];
+local s: string | nil = byPoint[pt];
 >s : Symbol(s, Decl(tluaIndexKeyGeneric.tlua, 14, 5))
 >byPoint : Symbol(byPoint, Decl(tluaIndexKeyGeneric.tlua, 12, 7))
 >pt : Symbol(pt, Decl(tluaIndexKeyGeneric.tlua, 13, 7))
 
 // keyof yields the key itself, not string | number | symbol.
 type K1 = keyof Map2<string, number>;
->K1 : Symbol(K1, Decl(tluaIndexKeyGeneric.tlua, 14, 30))
+>K1 : Symbol(K1, Decl(tluaIndexKeyGeneric.tlua, 14, 36))
 >Map2 : Symbol(Map2, Decl(tluaIndexKeyGeneric.tlua, 0, 0))
 
 local k1: K1 = "a";
 >k1 : Symbol(k1, Decl(tluaIndexKeyGeneric.tlua, 18, 5))
->K1 : Symbol(K1, Decl(tluaIndexKeyGeneric.tlua, 14, 30))
+>K1 : Symbol(K1, Decl(tluaIndexKeyGeneric.tlua, 14, 36))
 
 type K2 = keyof Map2<boolean, number>;
 >K2 : Symbol(K2, Decl(tluaIndexKeyGeneric.tlua, 18, 19))
@@ -57,197 +57,438 @@ local k2: K2 = true;
 >K2 : Symbol(K2, Decl(tluaIndexKeyGeneric.tlua, 18, 19))
 
 // The index resolves inside a generic body: `Table<K, V>[K]` is `V`, never a deferred
-// indexed access nothing can simplify.
-function get<K, V>(t: Table<K, V>, k: K): V
+// indexed access nothing can simplify. Resolving it keeps the read widening: an index
+// signature keyed by a type parameter is as open as any other, so the value is `V | nil`
+// and a helper that means to hand the absence back says so.
+function get<K, V>(t: Table<K, V>, k: K): V | nil
 >get : Symbol(get, Decl(tluaIndexKeyGeneric.tlua, 20, 20))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 24, 13))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 24, 15))
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 24, 19))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 26, 13))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 26, 15))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 26, 19))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 24, 13))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 24, 15))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 24, 34))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 24, 13))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 24, 15))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 26, 13))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 26, 15))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 26, 34))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 26, 13))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 26, 15))
 
-  return t[k];
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 24, 19))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 24, 34))
+  local v = t[k];
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 27, 7))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 26, 19))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 26, 34))
+
+  return v;
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 27, 7))
+
+end
+
+// The same read through a number index, for contrast -- the generic key is not what
+// carries the nil, the index signature is.
+function at<T>(a: T[], i: number): T | nil
+>at : Symbol(at, Decl(tluaIndexKeyGeneric.tlua, 29, 3))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 33, 12))
+>a : Symbol(a, Decl(tluaIndexKeyGeneric.tlua, 33, 15))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 33, 12))
+>i : Symbol(i, Decl(tluaIndexKeyGeneric.tlua, 33, 22))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 33, 12))
+
+  return a[i];
+>a : Symbol(a, Decl(tluaIndexKeyGeneric.tlua, 33, 15))
+>i : Symbol(i, Decl(tluaIndexKeyGeneric.tlua, 33, 22))
+
+end
+
+// A helper that will not hand the absence back narrows it away first.
+function getOr<K, V>(t: Table<K, V>, k: K, fallback: V): V
+>getOr : Symbol(getOr, Decl(tluaIndexKeyGeneric.tlua, 35, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 38, 15))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 38, 17))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 38, 21))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 38, 15))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 38, 17))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 38, 36))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 38, 15))
+>fallback : Symbol(fallback, Decl(tluaIndexKeyGeneric.tlua, 38, 42))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 38, 17))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 38, 17))
+
+  local v = t[k];
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 39, 7))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 38, 21))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 38, 36))
+
+  if v == nil then
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 39, 7))
+
+    return fallback;
+>fallback : Symbol(fallback, Decl(tluaIndexKeyGeneric.tlua, 38, 42))
+
+  end
+  return v;
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 39, 7))
 
 end
 
 function set<K, V>(t: Table<K, V>, k: K, v: V): void
->set : Symbol(set, Decl(tluaIndexKeyGeneric.tlua, 26, 3))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 28, 13))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 28, 15))
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 28, 19))
+>set : Symbol(set, Decl(tluaIndexKeyGeneric.tlua, 44, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 46, 13))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 46, 15))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 46, 19))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 28, 13))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 28, 15))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 28, 34))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 28, 13))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 28, 40))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 28, 15))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 46, 13))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 46, 15))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 46, 34))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 46, 13))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 46, 40))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 46, 15))
 
   t[k] = v;
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 28, 19))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 28, 34))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 28, 40))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 46, 19))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 46, 34))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 46, 40))
 
 end
 
-// A readonly index stays readonly in a generic body.
+// A readonly index stays readonly in a generic body. Readonly governs the write; the
+// read still widens, because a frozen table is no less open than any other.
 interface ReadonlyTable<K, V> { readonly [key: K]: V }
->ReadonlyTable : Symbol(ReadonlyTable, Decl(tluaIndexKeyGeneric.tlua, 30, 3))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 33, 24))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 33, 26))
->key : Symbol(key, Decl(tluaIndexKeyGeneric.tlua, 33, 42))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 33, 24))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 33, 26))
+>ReadonlyTable : Symbol(ReadonlyTable, Decl(tluaIndexKeyGeneric.tlua, 48, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 52, 24))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 52, 26))
+>key : Symbol(key, Decl(tluaIndexKeyGeneric.tlua, 52, 42))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 52, 24))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 52, 26))
 
-function readOk<K, V>(t: ReadonlyTable<K, V>, k: K): V
->readOk : Symbol(readOk, Decl(tluaIndexKeyGeneric.tlua, 33, 54))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 34, 16))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 34, 18))
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 34, 22))
->ReadonlyTable : Symbol(ReadonlyTable, Decl(tluaIndexKeyGeneric.tlua, 30, 3))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 34, 16))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 34, 18))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 34, 45))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 34, 16))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 34, 18))
+function readOk<K, V>(t: ReadonlyTable<K, V>, k: K): V | nil
+>readOk : Symbol(readOk, Decl(tluaIndexKeyGeneric.tlua, 52, 54))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 53, 16))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 53, 18))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 53, 22))
+>ReadonlyTable : Symbol(ReadonlyTable, Decl(tluaIndexKeyGeneric.tlua, 48, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 53, 16))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 53, 18))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 53, 45))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 53, 16))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 53, 18))
 
   return t[k];
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 34, 22))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 34, 45))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 53, 22))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 53, 45))
 
 end
 function writeNotOk<K, V>(t: ReadonlyTable<K, V>, k: K, v: V): void
->writeNotOk : Symbol(writeNotOk, Decl(tluaIndexKeyGeneric.tlua, 36, 3))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 37, 20))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 37, 22))
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 37, 26))
->ReadonlyTable : Symbol(ReadonlyTable, Decl(tluaIndexKeyGeneric.tlua, 30, 3))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 37, 20))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 37, 22))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 37, 49))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 37, 20))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 37, 55))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 37, 22))
+>writeNotOk : Symbol(writeNotOk, Decl(tluaIndexKeyGeneric.tlua, 55, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 56, 20))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 56, 22))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 56, 26))
+>ReadonlyTable : Symbol(ReadonlyTable, Decl(tluaIndexKeyGeneric.tlua, 48, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 56, 20))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 56, 22))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 56, 49))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 56, 20))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 56, 55))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 56, 22))
 
   t[k] = v;
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 37, 26))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 37, 49))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 37, 55))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 56, 26))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 56, 49))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 56, 55))
 
 end
 
 // A union key still simplifies when every index carries the same value.
-function getEither<K, V>(t: Table<K | string, V>, k: K): V
->getEither : Symbol(getEither, Decl(tluaIndexKeyGeneric.tlua, 39, 3))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 42, 19))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 42, 21))
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 42, 25))
+function getEither<K, V>(t: Table<K | string, V>, k: K): V | nil
+>getEither : Symbol(getEither, Decl(tluaIndexKeyGeneric.tlua, 58, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 61, 19))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 61, 21))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 61, 25))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 42, 19))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 42, 21))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 42, 49))
->K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 42, 19))
->V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 42, 21))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 61, 19))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 61, 21))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 61, 49))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 61, 19))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 61, 21))
 
   return t[k];
->t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 42, 25))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 42, 49))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 61, 25))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 61, 49))
+
+end
+
+// A union *index* distributes into one access per constituent. Each one is resolved
+// under the flags of the access it came from, so the nil survives the split.
+function getEitherKey<A, B, V>(t: Table<A | B, V>, k: A | B): V | nil
+>getEitherKey : Symbol(getEitherKey, Decl(tluaIndexKeyGeneric.tlua, 63, 3))
+>A : Symbol(A, Decl(tluaIndexKeyGeneric.tlua, 67, 22))
+>B : Symbol(B, Decl(tluaIndexKeyGeneric.tlua, 67, 24))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 67, 27))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 67, 31))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>A : Symbol(A, Decl(tluaIndexKeyGeneric.tlua, 67, 22))
+>B : Symbol(B, Decl(tluaIndexKeyGeneric.tlua, 67, 24))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 67, 27))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 67, 50))
+>A : Symbol(A, Decl(tluaIndexKeyGeneric.tlua, 67, 22))
+>B : Symbol(B, Decl(tluaIndexKeyGeneric.tlua, 67, 24))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 67, 27))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 67, 31))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 67, 50))
+
+end
+
+// Simplifying the deferred access must preserve the read widening through an object
+// union. The named arm is known-present; only the index-signature arm contributes nil.
+interface OpenStringTable { [key: string]: number }
+>OpenStringTable : Symbol(OpenStringTable, Decl(tluaIndexKeyGeneric.tlua, 69, 3))
+>key : Symbol(key, Decl(tluaIndexKeyGeneric.tlua, 73, 29))
+
+type OpenOrNamed = OpenStringTable | { x: boolean };
+>OpenOrNamed : Symbol(OpenOrNamed, Decl(tluaIndexKeyGeneric.tlua, 73, 51))
+>OpenStringTable : Symbol(OpenStringTable, Decl(tluaIndexKeyGeneric.tlua, 69, 3))
+>x : Symbol(x, Decl(tluaIndexKeyGeneric.tlua, 74, 38))
+
+function getFromUnion<T extends OpenOrNamed>(t: T): number | boolean | nil
+>getFromUnion : Symbol(getFromUnion, Decl(tluaIndexKeyGeneric.tlua, 74, 52))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 75, 22))
+>OpenOrNamed : Symbol(OpenOrNamed, Decl(tluaIndexKeyGeneric.tlua, 73, 51))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 75, 45))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 75, 22))
+
+  return t["x"];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 75, 45))
+>"x" : Symbol(x, Decl(tluaIndexKeyGeneric.tlua, 74, 38))
+
+end
+function getFromUnionUnsafe<T extends OpenOrNamed>(t: T): number | boolean
+>getFromUnionUnsafe : Symbol(getFromUnionUnsafe, Decl(tluaIndexKeyGeneric.tlua, 77, 3))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 78, 28))
+>OpenOrNamed : Symbol(OpenOrNamed, Decl(tluaIndexKeyGeneric.tlua, 73, 51))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 78, 51))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 78, 28))
+
+  return t["x"];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 78, 51))
+>"x" : Symbol(x, Decl(tluaIndexKeyGeneric.tlua, 74, 38))
+
+end
+type BothNamed = { x: number } | { x: boolean };
+>BothNamed : Symbol(BothNamed, Decl(tluaIndexKeyGeneric.tlua, 80, 3))
+>x : Symbol(x, Decl(tluaIndexKeyGeneric.tlua, 81, 18))
+>x : Symbol(x, Decl(tluaIndexKeyGeneric.tlua, 81, 34))
+
+function getFromNamedUnion<T extends BothNamed>(t: T): number | boolean
+>getFromNamedUnion : Symbol(getFromNamedUnion, Decl(tluaIndexKeyGeneric.tlua, 81, 48))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 82, 27))
+>BothNamed : Symbol(BothNamed, Decl(tluaIndexKeyGeneric.tlua, 80, 3))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 82, 48))
+>T : Symbol(T, Decl(tluaIndexKeyGeneric.tlua, 82, 27))
+
+  return t["x"];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 82, 48))
+>"x" : Symbol(x, Decl(tluaIndexKeyGeneric.tlua, 81, 18), Decl(tluaIndexKeyGeneric.tlua, 81, 34))
+
+end
+
+// A generic mapped access needs the same treatment when its key can become an index
+// signature. A finite literal-key mapping still consists of known-present properties.
+type MappedTable<K, V> = { [P in K]: V };
+>MappedTable : Symbol(MappedTable, Decl(tluaIndexKeyGeneric.tlua, 84, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 88, 17))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 88, 19))
+>P : Symbol(P, Decl(tluaIndexKeyGeneric.tlua, 88, 28))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 88, 17))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 88, 19))
+
+function getMapped<K extends string, V>(t: MappedTable<K, V>, k: K): V | nil
+>getMapped : Symbol(getMapped, Decl(tluaIndexKeyGeneric.tlua, 88, 41))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 89, 19))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 89, 36))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 89, 40))
+>MappedTable : Symbol(MappedTable, Decl(tluaIndexKeyGeneric.tlua, 84, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 89, 19))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 89, 36))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 89, 61))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 89, 19))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 89, 36))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 89, 40))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 89, 61))
+
+end
+function getMappedUnsafe<K extends string, V>(t: MappedTable<K, V>, k: K): V
+>getMappedUnsafe : Symbol(getMappedUnsafe, Decl(tluaIndexKeyGeneric.tlua, 91, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 92, 25))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 92, 42))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 92, 46))
+>MappedTable : Symbol(MappedTable, Decl(tluaIndexKeyGeneric.tlua, 84, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 92, 25))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 92, 42))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 92, 67))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 92, 25))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 92, 42))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 92, 46))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 92, 67))
+
+end
+function getFiniteMapped<K extends "x" | "y", V>(t: MappedTable<K, V>, k: K): V
+>getFiniteMapped : Symbol(getFiniteMapped, Decl(tluaIndexKeyGeneric.tlua, 94, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 95, 25))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 95, 45))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 95, 49))
+>MappedTable : Symbol(MappedTable, Decl(tluaIndexKeyGeneric.tlua, 84, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 95, 25))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 95, 45))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 95, 70))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 95, 25))
+>V : Symbol(V, Decl(tluaIndexKeyGeneric.tlua, 95, 45))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 95, 49))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 95, 70))
+
+end
+type ConcreteStringMap = { [P in string]: number };
+>ConcreteStringMap : Symbol(ConcreteStringMap, Decl(tluaIndexKeyGeneric.tlua, 97, 3))
+>P : Symbol(P, Decl(tluaIndexKeyGeneric.tlua, 98, 28))
+
+function getConcreteMapped<K extends string>(t: ConcreteStringMap, k: K): number | nil
+>getConcreteMapped : Symbol(getConcreteMapped, Decl(tluaIndexKeyGeneric.tlua, 98, 51))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 99, 27))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 99, 45))
+>ConcreteStringMap : Symbol(ConcreteStringMap, Decl(tluaIndexKeyGeneric.tlua, 97, 3))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 99, 66))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 99, 27))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 99, 45))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 99, 66))
+
+end
+function getConcreteMappedUnsafe<K extends string>(t: ConcreteStringMap, k: K): number
+>getConcreteMappedUnsafe : Symbol(getConcreteMappedUnsafe, Decl(tluaIndexKeyGeneric.tlua, 101, 3))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 102, 33))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 102, 51))
+>ConcreteStringMap : Symbol(ConcreteStringMap, Decl(tluaIndexKeyGeneric.tlua, 97, 3))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 102, 72))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 102, 33))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 102, 51))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 102, 72))
+
+end
+type ConcreteFiniteMap = { [P in "x" | "y"]: number };
+>ConcreteFiniteMap : Symbol(ConcreteFiniteMap, Decl(tluaIndexKeyGeneric.tlua, 104, 3))
+>P : Symbol(P, Decl(tluaIndexKeyGeneric.tlua, 105, 28))
+
+function getConcreteFiniteMapped<K extends keyof ConcreteFiniteMap>(t: ConcreteFiniteMap, k: K): number
+>getConcreteFiniteMapped : Symbol(getConcreteFiniteMapped, Decl(tluaIndexKeyGeneric.tlua, 105, 54))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 106, 33))
+>ConcreteFiniteMap : Symbol(ConcreteFiniteMap, Decl(tluaIndexKeyGeneric.tlua, 104, 3))
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 106, 68))
+>ConcreteFiniteMap : Symbol(ConcreteFiniteMap, Decl(tluaIndexKeyGeneric.tlua, 104, 3))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 106, 89))
+>K : Symbol(K, Decl(tluaIndexKeyGeneric.tlua, 106, 33))
+
+  return t[k];
+>t : Symbol(t, Decl(tluaIndexKeyGeneric.tlua, 106, 68))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 106, 89))
 
 end
 
 // A union key instantiates to two disjoint indexes, not one union-keyed index.
 declare both: Map2<string | number, boolean>;
->both : Symbol(both, Decl(tluaIndexKeyGeneric.tlua, 47, 7))
+>both : Symbol(both, Decl(tluaIndexKeyGeneric.tlua, 111, 7))
 >Map2 : Symbol(Map2, Decl(tluaIndexKeyGeneric.tlua, 0, 0))
 
-local b1: boolean = both["a"];
->b1 : Symbol(b1, Decl(tluaIndexKeyGeneric.tlua, 48, 5))
->both : Symbol(both, Decl(tluaIndexKeyGeneric.tlua, 47, 7))
+local b1: boolean | nil = both["a"];
+>b1 : Symbol(b1, Decl(tluaIndexKeyGeneric.tlua, 112, 5))
+>both : Symbol(both, Decl(tluaIndexKeyGeneric.tlua, 111, 7))
 
-local b2: boolean = both[1];
->b2 : Symbol(b2, Decl(tluaIndexKeyGeneric.tlua, 49, 5))
->both : Symbol(both, Decl(tluaIndexKeyGeneric.tlua, 47, 7))
+local b2: boolean | nil = both[1];
+>b2 : Symbol(b2, Decl(tluaIndexKeyGeneric.tlua, 113, 5))
+>both : Symbol(both, Decl(tluaIndexKeyGeneric.tlua, 111, 7))
 
 // The whole point: the standard library comes alive. The key keeps its literal names --
 // `"a" | "b"`, exactly what `keyof m` reports -- rather than widening to string.
 local m = { a = 1, b = 2 };
->m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 53, 5))
->a : Symbol(a, Decl(tluaIndexKeyGeneric.tlua, 53, 11))
->b : Symbol(b, Decl(tluaIndexKeyGeneric.tlua, 53, 18))
+>m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 117, 5))
+>a : Symbol(a, Decl(tluaIndexKeyGeneric.tlua, 117, 11))
+>b : Symbol(b, Decl(tluaIndexKeyGeneric.tlua, 117, 18))
 
 for k, v in pairs(m) do
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 54, 3))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 54, 6))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 118, 3))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 118, 6))
 >pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
->m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 53, 5))
+>m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 117, 5))
 
   local key: "a" | "b" = k;
->key : Symbol(key, Decl(tluaIndexKeyGeneric.tlua, 55, 7))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 54, 3))
+>key : Symbol(key, Decl(tluaIndexKeyGeneric.tlua, 119, 7))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 118, 3))
 
   local alsoAString: string = k;
->alsoAString : Symbol(alsoAString, Decl(tluaIndexKeyGeneric.tlua, 56, 7))
->k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 54, 3))
+>alsoAString : Symbol(alsoAString, Decl(tluaIndexKeyGeneric.tlua, 120, 7))
+>k : Symbol(k, Decl(tluaIndexKeyGeneric.tlua, 118, 3))
 
   local value: number = v;
->value : Symbol(value, Decl(tluaIndexKeyGeneric.tlua, 57, 7))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 54, 6))
+>value : Symbol(value, Decl(tluaIndexKeyGeneric.tlua, 121, 7))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 118, 6))
 
 end
 
 local got: number | nil = rawget(m, "a");
->got : Symbol(got, Decl(tluaIndexKeyGeneric.tlua, 60, 5))
+>got : Symbol(got, Decl(tluaIndexKeyGeneric.tlua, 124, 5))
 >rawget : Symbol(rawget, Decl(lib.luajit.d.tlua, --, --))
->m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 53, 5))
+>m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 117, 5))
 
 // A supplied key wins over the table's own keys (it is inferred at the priority a
 // mapped type constraint uses), so adding a key a table does not have yet -- rawset is
 // how a key is added, in any domain -- always type-checks: a Lua table is open.
 rawset(m, "c", 3);
 >rawset : Symbol(rawset, Decl(lib.luajit.d.tlua, --, --))
->m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 53, 5))
+>m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 117, 5))
 
 rawset(m, 5, 3);
 >rawset : Symbol(rawset, Decl(lib.luajit.d.tlua, --, --))
->m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 53, 5))
+>m : Symbol(m, Decl(tluaIndexKeyGeneric.tlua, 117, 5))
 
 // A recursive table type, spelled by name.
 type RecTable = Table<string, RecTable | number>;
->RecTable : Symbol(RecTable, Decl(tluaIndexKeyGeneric.tlua, 66, 16))
+>RecTable : Symbol(RecTable, Decl(tluaIndexKeyGeneric.tlua, 130, 16))
 >Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
->RecTable : Symbol(RecTable, Decl(tluaIndexKeyGeneric.tlua, 66, 16))
+>RecTable : Symbol(RecTable, Decl(tluaIndexKeyGeneric.tlua, 130, 16))
 
 declare rt: RecTable;
->rt : Symbol(rt, Decl(tluaIndexKeyGeneric.tlua, 70, 7))
->RecTable : Symbol(RecTable, Decl(tluaIndexKeyGeneric.tlua, 66, 16))
+>rt : Symbol(rt, Decl(tluaIndexKeyGeneric.tlua, 134, 7))
+>RecTable : Symbol(RecTable, Decl(tluaIndexKeyGeneric.tlua, 130, 16))
 
 local rec = rt["x"];
->rec : Symbol(rec, Decl(tluaIndexKeyGeneric.tlua, 71, 5))
->rt : Symbol(rt, Decl(tluaIndexKeyGeneric.tlua, 70, 7))
+>rec : Symbol(rec, Decl(tluaIndexKeyGeneric.tlua, 135, 5))
+>rt : Symbol(rt, Decl(tluaIndexKeyGeneric.tlua, 134, 7))
 
 // A number-keyed table iterates with ipairs.
 local arr = { 10, 20, 30 };
->arr : Symbol(arr, Decl(tluaIndexKeyGeneric.tlua, 74, 5))
+>arr : Symbol(arr, Decl(tluaIndexKeyGeneric.tlua, 138, 5))
 
 for i, v in ipairs(arr) do
->i : Symbol(i, Decl(tluaIndexKeyGeneric.tlua, 75, 3))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 75, 6))
+>i : Symbol(i, Decl(tluaIndexKeyGeneric.tlua, 139, 3))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 139, 6))
 >ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
->arr : Symbol(arr, Decl(tluaIndexKeyGeneric.tlua, 74, 5))
+>arr : Symbol(arr, Decl(tluaIndexKeyGeneric.tlua, 138, 5))
 
   local index: number = i;
->index : Symbol(index, Decl(tluaIndexKeyGeneric.tlua, 76, 7))
->i : Symbol(i, Decl(tluaIndexKeyGeneric.tlua, 75, 3))
+>index : Symbol(index, Decl(tluaIndexKeyGeneric.tlua, 140, 7))
+>i : Symbol(i, Decl(tluaIndexKeyGeneric.tlua, 139, 3))
 
   local element: number = v;
->element : Symbol(element, Decl(tluaIndexKeyGeneric.tlua, 77, 7))
->v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 75, 6))
+>element : Symbol(element, Decl(tluaIndexKeyGeneric.tlua, 141, 7))
+>v : Symbol(v, Decl(tluaIndexKeyGeneric.tlua, 139, 6))
 
 end
 

@@ -10,34 +10,34 @@
 // rule a computed table key already follows.
 local anyMt = { __index = function(t: table, k: any): string return "x"; end };
 local a = setmetatable({ n = 1 }, anyMt);
-local s1: string = a.whatever;
-local s2: string = a[1];
+local s1: string | nil = a.whatever;
+local s2: string | nil = a[1];
 local n1: number = a.n;
 
 // A concrete key domain keeps to itself: this table answers number keys only.
 local numMt = { __index = function(t: table, k: number): boolean return true; end };
 local num = setmetatable({ n = 1 }, numMt);
-local b1: boolean = num[3];
+local b1: boolean | nil = num[3];
 local absent = num.missing;
 
 // A literal key widens to its domain, because an index signature may not be keyed by a
 // literal -- the same widening a computed key gets.
 local litMt = { __index = function(t: table, k: "a"): number return 1; end };
 local lit = setmetatable({ n = 1 }, litMt);
-local l1: number = lit["zzz"];
+local l1: number | nil = lit["zzz"];
 
 // A multi-return __index truncates to its first value at the call boundary, as every other
 // call does.
 local packMt = { __index = function(t: table, k: any): (string, number) return "x", 1; end };
 local pack = setmetatable({ n = 1 }, packMt);
-local p1: string = pack.anything;
+local p1: string | nil = pack.anything;
 
 // Overloads that answer the same key domain both apply: a read of such a key gets whichever
 // one Lua dispatches to.
 declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string } };
 local ov = setmetatable({ n = 1 }, overloaded);
-local either: number | string = ov.b;
-local notJustNumber: number = ov.b;
+local either: number | string | nil = ov.b;
+local notJustNumber: number | nil = ov.b;
 
 // The table's own members still win: a function __index only runs on a miss.
 local own = setmetatable({ n = 1 }, anyMt);

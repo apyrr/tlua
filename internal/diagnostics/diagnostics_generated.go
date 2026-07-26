@@ -1382,7 +1382,7 @@ var Property_0_is_incompatible_with_index_signature = &Message{code: 2530, categ
 
 var Object_is_possibly_null = &Message{code: 2531, category: CategoryError, key: "Object_is_possibly_null_2531", text: "Object is possibly 'null'."}
 
-var Object_is_possibly_undefined = &Message{code: 2532, category: CategoryError, key: "Object_is_possibly_undefined_2532", text: "Object is possibly 'undefined'."}
+var Object_is_possibly_nil = &Message{code: 2532, category: CategoryError, key: "Object_is_possibly_nil_2532", text: "Object is possibly 'nil'."}
 
 var Object_is_possibly_null_or_undefined = &Message{code: 2533, category: CategoryError, key: "Object_is_possibly_null_or_undefined_2533", text: "Object is possibly 'null' or 'undefined'."}
 
@@ -1710,7 +1710,7 @@ var Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_
 
 var Cannot_invoke_an_object_which_is_possibly_null = &Message{code: 2721, category: CategoryError, key: "Cannot_invoke_an_object_which_is_possibly_null_2721", text: "Cannot invoke an object which is possibly 'null'."}
 
-var Cannot_invoke_an_object_which_is_possibly_undefined = &Message{code: 2722, category: CategoryError, key: "Cannot_invoke_an_object_which_is_possibly_undefined_2722", text: "Cannot invoke an object which is possibly 'undefined'."}
+var Cannot_invoke_an_object_which_is_possibly_nil = &Message{code: 2722, category: CategoryError, key: "Cannot_invoke_an_object_which_is_possibly_nil_2722", text: "Cannot invoke an object which is possibly 'nil'."}
 
 var Cannot_invoke_an_object_which_is_possibly_null_or_undefined = &Message{code: 2723, category: CategoryError, key: "Cannot_invoke_an_object_which_is_possibly_null_or_undefined_2723", text: "Cannot invoke an object which is possibly 'null' or 'undefined'."}
 
@@ -3192,7 +3192,7 @@ var Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_file
 
 var Disable_strict_checking_of_generic_signatures_in_function_types = &Message{code: 6673, category: CategoryMessage, key: "Disable_strict_checking_of_generic_signatures_in_function_types_6673", text: "Disable strict checking of generic signatures in function types."}
 
-var Add_undefined_to_a_type_when_accessed_using_an_index = &Message{code: 6674, category: CategoryMessage, key: "Add_undefined_to_a_type_when_accessed_using_an_index_6674", text: "Add 'undefined' to a type when accessed using an index."}
+var Add_nil_to_a_type_when_accessed_using_an_index = &Message{code: 6674, category: CategoryMessage, key: "Add_nil_to_a_type_when_accessed_using_an_index_6674", text: "Add 'nil' to a type when accessed using an index."}
 
 var Enable_error_reporting_when_local_variables_aren_t_read = &Message{code: 6675, category: CategoryMessage, key: "Enable_error_reporting_when_local_variables_aren_t_read_6675", text: "Enable error reporting when local variables aren't read."}
 
@@ -3730,7 +3730,7 @@ var X_0_is_of_type_unknown = &Message{code: 18046, category: CategoryError, key:
 
 var X_0_is_possibly_null = &Message{code: 18047, category: CategoryError, key: "_0_is_possibly_null_18047", text: "'{0}' is possibly 'null'."}
 
-var X_0_is_possibly_undefined = &Message{code: 18048, category: CategoryError, key: "_0_is_possibly_undefined_18048", text: "'{0}' is possibly 'undefined'."}
+var X_0_is_possibly_nil = &Message{code: 18048, category: CategoryError, key: "_0_is_possibly_nil_18048", text: "'{0}' is possibly 'nil'."}
 
 var X_0_is_possibly_null_or_undefined = &Message{code: 18049, category: CategoryError, key: "_0_is_possibly_null_or_undefined_18049", text: "'{0}' is possibly 'null' or 'undefined'."}
 
@@ -5766,8 +5766,8 @@ func keyToMessage(key Key) *Message {
 		return Property_0_is_incompatible_with_index_signature
 	case "Object_is_possibly_null_2531":
 		return Object_is_possibly_null
-	case "Object_is_possibly_undefined_2532":
-		return Object_is_possibly_undefined
+	case "Object_is_possibly_nil_2532":
+		return Object_is_possibly_nil
 	case "Object_is_possibly_null_or_undefined_2533":
 		return Object_is_possibly_null_or_undefined
 	case "A_function_returning_never_cannot_have_a_reachable_end_point_2534":
@@ -6094,8 +6094,8 @@ func keyToMessage(key Key) *Message {
 		return Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass
 	case "Cannot_invoke_an_object_which_is_possibly_null_2721":
 		return Cannot_invoke_an_object_which_is_possibly_null
-	case "Cannot_invoke_an_object_which_is_possibly_undefined_2722":
-		return Cannot_invoke_an_object_which_is_possibly_undefined
+	case "Cannot_invoke_an_object_which_is_possibly_nil_2722":
+		return Cannot_invoke_an_object_which_is_possibly_nil
 	case "Cannot_invoke_an_object_which_is_possibly_null_or_undefined_2723":
 		return Cannot_invoke_an_object_which_is_possibly_null_or_undefined
 	case "_0_has_no_exported_member_named_1_Did_you_mean_2_2724":
@@ -7576,8 +7576,8 @@ func keyToMessage(key Key) *Message {
 		return Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_tlua_should_add_to_a_project
 	case "Disable_strict_checking_of_generic_signatures_in_function_types_6673":
 		return Disable_strict_checking_of_generic_signatures_in_function_types
-	case "Add_undefined_to_a_type_when_accessed_using_an_index_6674":
-		return Add_undefined_to_a_type_when_accessed_using_an_index
+	case "Add_nil_to_a_type_when_accessed_using_an_index_6674":
+		return Add_nil_to_a_type_when_accessed_using_an_index
 	case "Enable_error_reporting_when_local_variables_aren_t_read_6675":
 		return Enable_error_reporting_when_local_variables_aren_t_read
 	case "Raise_an_error_when_a_function_parameter_isn_t_read_6676":
@@ -8114,8 +8114,8 @@ func keyToMessage(key Key) *Message {
 		return X_0_is_of_type_unknown
 	case "_0_is_possibly_null_18047":
 		return X_0_is_possibly_null
-	case "_0_is_possibly_undefined_18048":
-		return X_0_is_possibly_undefined
+	case "_0_is_possibly_nil_18048":
+		return X_0_is_possibly_nil
 	case "_0_is_possibly_null_or_undefined_18049":
 		return X_0_is_possibly_null_or_undefined
 	case "The_value_0_cannot_be_used_here_18050":

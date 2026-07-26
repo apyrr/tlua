@@ -49,8 +49,8 @@ local inner: number = nested[1][2];
 >2 : 2
 
 local oob = pair[0];
->oob : string | number
->pair[0] : string | number
+>oob : string | number | nil
+>pair[0] : string | number | nil
 >pair : [number, string]
 >0 : 0
 

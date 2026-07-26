@@ -54,6 +54,7 @@ completionsTypeKeywords
 completionsWithDeprecatedTag4
 completionsWithStringReplacementMode1
 docCommentTemplateNamespacesAndModules01
+duplicateIndexers
 duplicatePackageServices_fileChanges
 exhaustiveCaseCompletions1
 exhaustiveCaseCompletions2
@@ -100,6 +101,7 @@ linkedEditingJsxTag5
 linkedEditingJsxTag6
 linkedEditingJsxTag7
 linkedEditingJsxTag9
+memberListOfVarInArrowExpression
 navigateItemsLet
 navigateToImport
 navigateToSymbolIterator
@@ -167,7 +169,9 @@ pathCompletionsTypesVersionsWildcard3
 pathCompletionsTypesVersionsWildcard4
 pathCompletionsTypesVersionsWildcard5
 pathCompletionsTypesVersionsWildcard6
+quickInfoExtendArray
 quickInfoForOverloadOnConst1
+quickInfoMappedTypeRecursiveInference
 renameDefaultKeyword
 renameForDefaultExport01
 renameForDefaultExport03

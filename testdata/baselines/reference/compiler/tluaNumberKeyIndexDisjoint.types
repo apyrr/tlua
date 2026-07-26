@@ -13,15 +13,15 @@ interface Both {
 declare b: Both;
 >b : Both
 
-local n: string = b[1];    // number index → string
->n : string
->b[1] : string
+local n: string | nil = b[1];    // number index → string
+>n : string | nil
+>b[1] : string | nil
 >b : Both
 >1 : 1
 
-local s: number = b["x"];  // string index → number
->s : number
->b["x"] : number
+local s: number | nil = b["x"];  // string index → number
+>s : number | nil
+>b["x"] : number | nil
 >b : Both
 >"x" : "x"
 
@@ -30,9 +30,9 @@ interface NumOnly {
   [k: number]: boolean;
 >k : number
 }
-local nb: boolean = (({} as NumOnly))[0];
->nb : boolean
->(({} as NumOnly))[0] : boolean
+local nb: boolean | nil = (({} as NumOnly))[0];
+>nb : boolean | nil
+>(({} as NumOnly))[0] : boolean | nil
 >(({} as NumOnly)) : NumOnly
 >({} as NumOnly) : NumOnly
 >{} as NumOnly : NumOnly
@@ -53,9 +53,9 @@ local bad = so[0]; // error: number key not covered by string index
 >so : StrOnly
 >0 : 0
 
-local okStr: boolean = so["x"];
->okStr : boolean
->so["x"] : boolean
+local okStr: boolean | nil = so["x"];
+>okStr : boolean | nil
+>so["x"] : boolean | nil
 >so : StrOnly
 >"x" : "x"
 
@@ -72,21 +72,21 @@ interface Mixed {
 declare m: Mixed;
 >m : Mixed
 
-local mn: string = m[0];
->mn : string
->m[0] : string
+local mn: string | nil = m[0];
+>mn : string | nil
+>m[0] : string | nil
 >m : Mixed
 >0 : 0
 
-local ms: boolean = m["x"];
->ms : boolean
->m["x"] : boolean
+local ms: boolean | nil = m["x"];
+>ms : boolean | nil
+>m["x"] : boolean | nil
 >m : Mixed
 >"x" : "x"
 
 local es = {n, s, nb, bad, okStr, mn, ms};
->es : { 1: string; 2: number; 3: boolean; 4: any; 5: boolean; 6: string; 7: boolean; }
->{n, s, nb, bad, okStr, mn, ms} : { 1: string; 2: number; 3: boolean; 4: any; 5: boolean; 6: string; 7: boolean; }
+>es : { 1: string | nil; 2: number | nil; 3: boolean | nil; 4: any; 5: boolean | nil; 6: string | nil; 7: boolean | nil; }
+>{n, s, nb, bad, okStr, mn, ms} : { 1: string | nil; 2: number | nil; 3: boolean | nil; 4: any; 5: boolean | nil; 6: string | nil; 7: boolean | nil; }
 >n : any
 >s : any
 >nb : any

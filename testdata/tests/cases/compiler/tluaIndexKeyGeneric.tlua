@@ -13,11 +13,11 @@ interface Map2<K, V> {
 
 // The key instantiates along with the value.
 declare byName: Map2<string, number>;
-local n: number = byName["a"];
+local n: number | nil = byName["a"];
 
 declare byPoint: Map2<{ x: number }, string>;
 declare pt: { x: number };
-local s: string = byPoint[pt];
+local s: string | nil = byPoint[pt];
 
 // keyof yields the key itself, not string | number | symbol.
 type K1 = keyof Map2<string, number>;
@@ -26,18 +26,37 @@ type K2 = keyof Map2<boolean, number>;
 local k2: K2 = true;
 
 // The index resolves inside a generic body: `Table<K, V>[K]` is `V`, never a deferred
-// indexed access nothing can simplify.
-function get<K, V>(t: Table<K, V>, k: K): V
-  return t[k];
+// indexed access nothing can simplify. Resolving it keeps the read widening: an index
+// signature keyed by a type parameter is as open as any other, so the value is `V | nil`
+// and a helper that means to hand the absence back says so.
+function get<K, V>(t: Table<K, V>, k: K): V | nil
+  local v = t[k];
+  return v;
+end
+
+// The same read through a number index, for contrast -- the generic key is not what
+// carries the nil, the index signature is.
+function at<T>(a: T[], i: number): T | nil
+  return a[i];
+end
+
+// A helper that will not hand the absence back narrows it away first.
+function getOr<K, V>(t: Table<K, V>, k: K, fallback: V): V
+  local v = t[k];
+  if v == nil then
+    return fallback;
+  end
+  return v;
 end
 
 function set<K, V>(t: Table<K, V>, k: K, v: V): void
   t[k] = v;
 end
 
-// A readonly index stays readonly in a generic body.
+// A readonly index stays readonly in a generic body. Readonly governs the write; the
+// read still widens, because a frozen table is no less open than any other.
 interface ReadonlyTable<K, V> { readonly [key: K]: V }
-function readOk<K, V>(t: ReadonlyTable<K, V>, k: K): V
+function readOk<K, V>(t: ReadonlyTable<K, V>, k: K): V | nil
   return t[k];
 end
 function writeNotOk<K, V>(t: ReadonlyTable<K, V>, k: K, v: V): void
@@ -45,14 +64,59 @@ function writeNotOk<K, V>(t: ReadonlyTable<K, V>, k: K, v: V): void
 end
 
 // A union key still simplifies when every index carries the same value.
-function getEither<K, V>(t: Table<K | string, V>, k: K): V
+function getEither<K, V>(t: Table<K | string, V>, k: K): V | nil
+  return t[k];
+end
+
+// A union *index* distributes into one access per constituent. Each one is resolved
+// under the flags of the access it came from, so the nil survives the split.
+function getEitherKey<A, B, V>(t: Table<A | B, V>, k: A | B): V | nil
+  return t[k];
+end
+
+// Simplifying the deferred access must preserve the read widening through an object
+// union. The named arm is known-present; only the index-signature arm contributes nil.
+interface OpenStringTable { [key: string]: number }
+type OpenOrNamed = OpenStringTable | { x: boolean };
+function getFromUnion<T extends OpenOrNamed>(t: T): number | boolean | nil
+  return t["x"];
+end
+function getFromUnionUnsafe<T extends OpenOrNamed>(t: T): number | boolean
+  return t["x"];
+end
+type BothNamed = { x: number } | { x: boolean };
+function getFromNamedUnion<T extends BothNamed>(t: T): number | boolean
+  return t["x"];
+end
+
+// A generic mapped access needs the same treatment when its key can become an index
+// signature. A finite literal-key mapping still consists of known-present properties.
+type MappedTable<K, V> = { [P in K]: V };
+function getMapped<K extends string, V>(t: MappedTable<K, V>, k: K): V | nil
+  return t[k];
+end
+function getMappedUnsafe<K extends string, V>(t: MappedTable<K, V>, k: K): V
+  return t[k];
+end
+function getFiniteMapped<K extends "x" | "y", V>(t: MappedTable<K, V>, k: K): V
+  return t[k];
+end
+type ConcreteStringMap = { [P in string]: number };
+function getConcreteMapped<K extends string>(t: ConcreteStringMap, k: K): number | nil
+  return t[k];
+end
+function getConcreteMappedUnsafe<K extends string>(t: ConcreteStringMap, k: K): number
+  return t[k];
+end
+type ConcreteFiniteMap = { [P in "x" | "y"]: number };
+function getConcreteFiniteMapped<K extends keyof ConcreteFiniteMap>(t: ConcreteFiniteMap, k: K): number
   return t[k];
 end
 
 // A union key instantiates to two disjoint indexes, not one union-keyed index.
 declare both: Map2<string | number, boolean>;
-local b1: boolean = both["a"];
-local b2: boolean = both[1];
+local b1: boolean | nil = both["a"];
+local b2: boolean | nil = both[1];
 
 // The whole point: the standard library comes alive. The key keeps its literal names --
 // `"a" | "b"`, exactly what `keyof m` reports -- rather than widening to string.

@@ -633,8 +633,8 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsSemanticDiagnostics: true,
 		AffectsBuildInfo:           true,
 		Category:                   diagnostics.Type_Checking,
-		Description:                diagnostics.Add_undefined_to_a_type_when_accessed_using_an_index,
-		DefaultValueDescription:    false,
+		Description:                diagnostics.Add_nil_to_a_type_when_accessed_using_an_index,
+		DefaultValueDescription:    true,
 	},
 	{
 		Name:                       "noPropertyAccessFromIndexSignature",

@@ -16,41 +16,41 @@ declare b: Both;
 >b : Symbol(b, Decl(tluaNumberKeyIndexDisjoint.tlua, 6, 7))
 >Both : Symbol(Both, Decl(tluaNumberKeyIndexDisjoint.tlua, 0, 0))
 
-local n: string = b[1];    // number index → string
+local n: string | nil = b[1];    // number index → string
 >n : Symbol(n, Decl(tluaNumberKeyIndexDisjoint.tlua, 7, 5))
 >b : Symbol(b, Decl(tluaNumberKeyIndexDisjoint.tlua, 6, 7))
 
-local s: number = b["x"];  // string index → number
+local s: number | nil = b["x"];  // string index → number
 >s : Symbol(s, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 5))
 >b : Symbol(b, Decl(tluaNumberKeyIndexDisjoint.tlua, 6, 7))
 
 // A number index signature serves number-key access.
 interface NumOnly {
->NumOnly : Symbol(NumOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 25))
+>NumOnly : Symbol(NumOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 31))
 
   [k: number]: boolean;
 >k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 12, 3))
 }
-local nb: boolean = (({} as NumOnly))[0];
+local nb: boolean | nil = (({} as NumOnly))[0];
 >nb : Symbol(nb, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 5))
->NumOnly : Symbol(NumOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 25))
+>NumOnly : Symbol(NumOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 8, 31))
 
 // A string-only index does NOT serve number-key access (disjoint).
 interface StrOnly {
->StrOnly : Symbol(StrOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 41))
+>StrOnly : Symbol(StrOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 47))
 
   [k: string]: boolean;
 >k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 18, 3))
 }
 declare so: StrOnly;
 >so : Symbol(so, Decl(tluaNumberKeyIndexDisjoint.tlua, 20, 7))
->StrOnly : Symbol(StrOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 41))
+>StrOnly : Symbol(StrOnly, Decl(tluaNumberKeyIndexDisjoint.tlua, 14, 47))
 
 local bad = so[0]; // error: number key not covered by string index
 >bad : Symbol(bad, Decl(tluaNumberKeyIndexDisjoint.tlua, 21, 5))
 >so : Symbol(so, Decl(tluaNumberKeyIndexDisjoint.tlua, 20, 7))
 
-local okStr: boolean = so["x"];
+local okStr: boolean | nil = so["x"];
 >okStr : Symbol(okStr, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 5))
 >so : Symbol(so, Decl(tluaNumberKeyIndexDisjoint.tlua, 20, 7))
 
@@ -58,7 +58,7 @@ local okStr: boolean = so["x"];
 // forced to agree (TS requires the number value assignable to the string
 // value; tlua does not).
 interface Mixed {
->Mixed : Symbol(Mixed, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 31))
+>Mixed : Symbol(Mixed, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 37))
 
   [k: number]: string;
 >k : Symbol(k, Decl(tluaNumberKeyIndexDisjoint.tlua, 28, 3))
@@ -68,13 +68,13 @@ interface Mixed {
 }
 declare m: Mixed;
 >m : Symbol(m, Decl(tluaNumberKeyIndexDisjoint.tlua, 31, 7))
->Mixed : Symbol(Mixed, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 31))
+>Mixed : Symbol(Mixed, Decl(tluaNumberKeyIndexDisjoint.tlua, 22, 37))
 
-local mn: string = m[0];
+local mn: string | nil = m[0];
 >mn : Symbol(mn, Decl(tluaNumberKeyIndexDisjoint.tlua, 32, 5))
 >m : Symbol(m, Decl(tluaNumberKeyIndexDisjoint.tlua, 31, 7))
 
-local ms: boolean = m["x"];
+local ms: boolean | nil = m["x"];
 >ms : Symbol(ms, Decl(tluaNumberKeyIndexDisjoint.tlua, 33, 5))
 >m : Symbol(m, Decl(tluaNumberKeyIndexDisjoint.tlua, 31, 7))
 

@@ -47,7 +47,7 @@ tluaMetatableIndexTable.tlua(48,7): error TLUA2322: Type 'string | number' is no
     // An index signature behind __index carries over.
     declare idxMt: { __index: { [key: string]: number } };
     local ix = setmetatable({ n = 1 }, idxMt);
-    local iv: number = ix["anything"];
+    local iv: number | nil = ix["anything"];
     
     // The table only wins while it *answers*: a key that is absent or nil is exactly what makes
     // Lua run the metatable, so a member that admits nil reads as its own non-nil half or the

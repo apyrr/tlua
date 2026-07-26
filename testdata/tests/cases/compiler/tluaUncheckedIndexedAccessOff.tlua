@@ -1,0 +1,29 @@
+// @strict: true
+// @noEmit: true
+// @noUncheckedIndexedAccess: false
+
+// The default is on, so the option is spelled false to get out of it: a project that
+// would rather index a table as though every key were present still can.
+
+interface Registry { [key: string]: number }
+declare reg: Registry;
+local n: number = reg["a"];
+
+declare xs: number[];
+local first: number = xs[1];
+
+// The opt-out follows deferred generic accesses through the same simplification paths.
+interface Open { [key: string]: number }
+type OpenOrNamed = Open | { x: boolean };
+function getFromUnion<T extends OpenOrNamed>(t: T): number | boolean
+  return t["x"];
+end
+
+type Mapped<K, V> = { [P in K]: V };
+function getMapped<K extends string, V>(t: Mapped<K, V>, k: K): V
+  return t[k];
+end
+
+function getTuple<T extends number[]>(t: [string, ...T], key: number): string | number
+  return t[key];
+end

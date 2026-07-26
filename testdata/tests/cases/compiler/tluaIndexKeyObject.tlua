@@ -27,11 +27,11 @@ declare byThread: ByThread;
 declare byUserdata: ByUserdata;
 declare byCData: ByCData;
 
-local s1: string = byTable[pt];
-local s2: string = byFunction[fn];
-local s3: string = byThread[th];
-local s4: string = byUserdata[ud];
-local s5: string = byCData[cd];
+local s1: string | nil = byTable[pt];
+local s2: string | nil = byFunction[fn];
+local s3: string | nil = byThread[th];
+local s4: string | nil = byUserdata[ud];
+local s5: string | nil = byCData[cd];
 
 // The key domains do not bleed into one another: a table key is not a string key.
 local bad1: string = byTable["x"];

@@ -1518,7 +1518,7 @@ assertedElementTarget[1]!, assertedElementTargetSide = "ignored", 0;
 >assertedElementTarget[1]!, assertedElementTargetSide = "ignored", 0 : string
 >assertedElementTarget[1]!, assertedElementTargetSide : number, number
 >assertedElementTarget[1]! : number
->assertedElementTarget[1] : number
+>assertedElementTarget[1] : number | nil
 >assertedElementTarget : number[]
 >1 : 1
 >assertedElementTargetSide : number
@@ -1757,8 +1757,8 @@ local invalidWrappedArray: number[] = {};
 >(invalidWrappedArray[1])!, invalidWrappedArraySide = "ignored", 0 : string
 >(invalidWrappedArray[1])!, invalidWrappedArraySide : number, number
 >(invalidWrappedArray[1])! : number
->(invalidWrappedArray[1]) : number
->invalidWrappedArray[1] : number
+>(invalidWrappedArray[1]) : number | nil
+>invalidWrappedArray[1] : number | nil
 >invalidWrappedArray : number[]
 >1 : 1
 >invalidWrappedArraySide : number

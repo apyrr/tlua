@@ -21,9 +21,9 @@ local byBool = { [b] = 1 };
 >b : boolean
 >1 : 1
 
-local n1: number = byBool[true];
->n1 : number
->byBool[true] : number
+local n1: number | nil = byBool[true];
+>n1 : number | nil
+>byBool[true] : number | nil
 >byBool : { [b]: number; }
 >true : true
 
@@ -34,9 +34,9 @@ local byTable = { [pt] = "v" };
 >pt : { n: number; }
 >"v" : "v"
 
-local s1: string = byTable[pt];
->s1 : string
->byTable[pt] : string
+local s1: string | nil = byTable[pt];
+>s1 : string | nil
+>byTable[pt] : string | nil
 >byTable : { [pt]: string; }
 >pt : { n: number; }
 
@@ -50,9 +50,9 @@ local byTrue = { [true] = 1 };
 >true : true
 >1 : 1
 
-local n2: number = byTrue[false];
->n2 : number
->byTrue[false] : number
+local n2: number | nil = byTrue[false];
+>n2 : number | nil
+>byTrue[false] : number | nil
 >byTrue : { [x: boolean]: number; }
 >false : false
 
@@ -70,21 +70,21 @@ local mixed = { [b] = 1, [pt] = 2, [s] = 3 };
 >s : string
 >3 : 3
 
-local n3: number = mixed[true];
->n3 : number
->mixed[true] : number
+local n3: number | nil = mixed[true];
+>n3 : number | nil
+>mixed[true] : number | nil
 >mixed : { [b]: number; [pt]: number; [s]: number; }
 >true : true
 
-local n4: number = mixed[pt];
->n4 : number
->mixed[pt] : number
+local n4: number | nil = mixed[pt];
+>n4 : number | nil
+>mixed[pt] : number | nil
 >mixed : { [b]: number; [pt]: number; [s]: number; }
 >pt : { n: number; }
 
-local n5: number = mixed["k"];
->n5 : number
->mixed["k"] : number
+local n5: number | nil = mixed["k"];
+>n5 : number | nil
+>mixed["k"] : number | nil
 >mixed : { [b]: number; [pt]: number; [s]: number; }
 >"k" : "k"
 
@@ -111,21 +111,21 @@ local byEither = { [sn] = 1 };
 >sn : string | number
 >1 : 1
 
-local n6: number = byEither[sn];
->n6 : number
->byEither[sn] : number
+local n6: number | nil = byEither[sn];
+>n6 : number | nil
+>byEither[sn] : number | nil
 >byEither : { [sn]: number; }
 >sn : string | number
 
-local n7: number = byEither["x"];
->n7 : number
->byEither["x"] : number
+local n7: number | nil = byEither["x"];
+>n7 : number | nil
+>byEither["x"] : number | nil
 >byEither : { [sn]: number; }
 >"x" : "x"
 
-local n8: number = byEither[1];
->n8 : number
->byEither[1] : number
+local n8: number | nil = byEither[1];
+>n8 : number | nil
+>byEither[1] : number | nil
 >byEither : { [sn]: number; }
 >1 : 1
 
@@ -173,15 +173,15 @@ local viaAny = { [anyKey] = 5 };
 >anyKey : any
 >5 : 5
 
-local n9: number = viaAny["x"];
->n9 : number
->viaAny["x"] : number
+local n9: number | nil = viaAny["x"];
+>n9 : number | nil
+>viaAny["x"] : number | nil
 >viaAny : { [anyKey]: number; }
 >"x" : "x"
 
-local n10: number = viaAny[1];
->n10 : number
->viaAny[1] : number
+local n10: number | nil = viaAny[1];
+>n10 : number | nil
+>viaAny[1] : number | nil
 >viaAny : { [anyKey]: number; }
 >1 : 1
 

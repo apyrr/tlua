@@ -1,0 +1,64 @@
+tluaUncheckedIndexedAccessDefault.tlua(9,7): error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
+  Type 'nil' is not assignable to type 'number'.
+tluaUncheckedIndexedAccessDefault.tlua(40,7): error TLUA2322: Type 'number | boolean | nil' is not assignable to type 'number | boolean'.
+  Type 'nil' is not assignable to type 'number | boolean'.
+tluaUncheckedIndexedAccessDefault.tlua(41,7): error TLUA2322: Type 'number | boolean | nil' is not assignable to type 'number | boolean'.
+  Type 'nil' is not assignable to type 'number | boolean'.
+
+
+==== tluaUncheckedIndexedAccessDefault.tlua (3 errors) ====
+    // Indexing a key a table does not have yields nil in Lua, so an index read widens to
+    // `V | nil` with nothing to switch on: noUncheckedIndexedAccess is the default here.
+    // In TypeScript the option is a strictness opt-in; for Lua it is plain accuracy, so it
+    // does not follow `strict` either.
+    
+    interface Registry { [key: string]: number }
+    declare reg: Registry;
+    local direct: number | nil = reg["a"];
+    local wrong: number = reg["a"];
+          ~~~~~
+!!! error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'number'.
+    
+    // A number-key table is the same shape -- there is no length to index against -- so an
+    // element read widens the same way.
+    declare xs: number[];
+    local first: number | nil = xs[1];
+    
+    // Which is the point: the widening is what gives a presence guard something to narrow.
+    // Without it the condition would be the declared value type -- here the literal `true` --
+    // and the guard would prove nothing.
+    local queue: Table<string, true> = {};
+    if queue["k"] then
+      local seen: true = queue["k"];
+    end
+    
+    // A declared property is not an index signature and keeps its exact type; only the keys
+    // the index signature opens are the ones that might not be there.
+    interface Named { label: string; [key: string]: string }
+    declare named: Named;
+    local label: string = named.label;
+    local other: string | nil = named["other"];
+    
+    // It is a read-position rule: a write still takes the declared value type.
+    reg["a"] = 1;
+    
+    // A union can answer the same key from a declared property in one arm and an index
+    // signature in another. The index-signature arm may hold no such key, so the read is
+    // possibly nil -- through both spellings of the access, which must always agree.
+    declare mixed: Registry | { a: boolean };
+    local viaIndex: number | boolean | nil = mixed["a"];
+    local viaDot: number | boolean | nil = mixed.a;
+    local viaIndexUnsafe: number | boolean = mixed["a"];
+          ~~~~~~~~~~~~~~
+!!! error TLUA2322: Type 'number | boolean | nil' is not assignable to type 'number | boolean'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'number | boolean'.
+    local viaDotUnsafe: number | boolean = mixed.a;
+          ~~~~~~~~~~~~
+!!! error TLUA2322: Type 'number | boolean | nil' is not assignable to type 'number | boolean'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'number | boolean'.
+    if mixed.a then
+      local present: number | boolean = mixed.a;
+    end
+    mixed.a = 1;
+    

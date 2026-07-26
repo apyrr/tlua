@@ -4464,7 +4464,7 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 		return nil
 	}
 	iterableExists := c.getGlobalIterableType() != c.emptyGenericType
-	possibleOutOfBounds := c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue && use&IterationUsePossiblyOutOfBounds != 0
+	possibleOutOfBounds := c.compilerOptions.GetNoUncheckedIndexedAccess() && use&IterationUsePossiblyOutOfBounds != 0
 	// A number-key table (`T[]`) is iterated and spread as a sequence of its
 	// element type through the array-like path below, not the iterator
 	// protocol. When the input is table-like we suppress the not-iterable
@@ -4552,7 +4552,7 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 	arrayElementType := c.getIndexTypeOfType(arrayType, c.numberType)
 	if hasStringConstituent && arrayElementType != nil {
 		// This is just an optimization for the case where arrayOrStringType is string | string[]
-		if arrayElementType.flags&TypeFlagsStringLike != 0 && c.compilerOptions.NoUncheckedIndexedAccess != core.TSTrue {
+		if arrayElementType.flags&TypeFlagsStringLike != 0 && !c.compilerOptions.GetNoUncheckedIndexedAccess() {
 			return c.stringType
 		}
 		if possibleOutOfBounds {
@@ -5611,10 +5611,10 @@ func (c *Checker) checkNonNullExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkNonNullType(t *Type, node *ast.Node) *Type {
-	return c.checkNonNullTypeWithReporter(t, node, (*Checker).reportObjectPossiblyNullOrUndefinedError)
+	return c.checkNonNullTypeWithReporter(t, node, (*Checker).reportObjectPossiblyNilError)
 }
 
-func (c *Checker) checkNonNullTypeWithReporter(t *Type, node *ast.Node, reportError func(c *Checker, node *ast.Node, facts TypeFacts)) *Type {
+func (c *Checker) checkNonNullTypeWithReporter(t *Type, node *ast.Node, reportError func(c *Checker, node *ast.Node)) *Type {
 	if t.flags&TypeFlagsUnknown != 0 {
 		if ast.IsEntityNameExpression(node) {
 			nodeText := entityNameToString(node)
@@ -5628,7 +5628,7 @@ func (c *Checker) checkNonNullTypeWithReporter(t *Type, node *ast.Node, reportEr
 	}
 	facts := c.getTypeFacts(t, TypeFactsIsUndefinedOrNull)
 	if facts&TypeFactsIsUndefinedOrNull != 0 {
-		reportError(c, node, facts)
+		reportError(c, node)
 		nonNullable := c.GetNonNullableType(t)
 		if nonNullable.flags&(TypeFlagsNullable|TypeFlagsNever) != 0 {
 			return c.errorType
@@ -5643,21 +5643,17 @@ func (c *Checker) checkNonNullNonVoidType(t *Type, node *ast.Node) *Type {
 	if nonNullType.flags&TypeFlagsVoid != 0 {
 		if ast.IsEntityNameExpression(node) {
 			nodeText := entityNameToString(node)
-			if ast.IsIdentifier(node) && (nodeText == "nil" || nodeText == "undefined") {
-				c.error(node, diagnostics.The_value_0_cannot_be_used_here, nodeText)
-				return nonNullType
-			}
 			if len(nodeText) < 100 {
-				c.error(node, diagnostics.X_0_is_possibly_undefined, nodeText)
+				c.error(node, diagnostics.X_0_is_possibly_nil, nodeText)
 				return nonNullType
 			}
 		}
-		c.error(node, diagnostics.Object_is_possibly_undefined)
+		c.error(node, diagnostics.Object_is_possibly_nil)
 	}
 	return nonNullType
 }
 
-func (c *Checker) reportObjectPossiblyNullOrUndefinedError(node *ast.Node, facts TypeFacts) {
+func (c *Checker) reportObjectPossiblyNilError(node *ast.Node) {
 	var nodeText string
 	if ast.IsEntityNameExpression(node) {
 		nodeText = entityNameToString(node)
@@ -5667,21 +5663,9 @@ func (c *Checker) reportObjectPossiblyNullOrUndefinedError(node *ast.Node, facts
 		return
 	}
 	if nodeText != "" && len(nodeText) < 100 {
-		if ast.IsIdentifier(node) && (nodeText == "nil" || nodeText == "undefined") {
-			c.error(node, diagnostics.The_value_0_cannot_be_used_here, "nil")
-			return
-		}
-		c.error(node, core.IfElse(facts&TypeFactsIsUndefined != 0,
-			core.IfElse(facts&TypeFactsIsNull != 0,
-				diagnostics.X_0_is_possibly_null_or_undefined,
-				diagnostics.X_0_is_possibly_undefined),
-			diagnostics.X_0_is_possibly_null), nodeText)
+		c.error(node, diagnostics.X_0_is_possibly_nil, nodeText)
 	} else {
-		c.error(node, core.IfElse(facts&TypeFactsIsUndefined != 0,
-			core.IfElse(facts&TypeFactsIsNull != 0,
-				diagnostics.Object_is_possibly_null_or_undefined,
-				diagnostics.Object_is_possibly_undefined),
-			diagnostics.Object_is_possibly_null))
+		c.error(node, diagnostics.Object_is_possibly_nil)
 	}
 }
 
@@ -6440,7 +6424,7 @@ func (c *Checker) resolveCallExpression(node *ast.Node, candidatesOutArray *[]*S
 	} else {
 		callChainFlags = SignatureFlagsNone
 	}
-	funcType = c.checkNonNullTypeWithReporter(funcType, node.Expression(), (*Checker).reportCannotInvokePossiblyNullOrUndefinedError)
+	funcType = c.checkNonNullTypeWithReporter(funcType, node.Expression(), (*Checker).reportCannotInvokePossiblyNilError)
 	if funcType == c.silentNeverType {
 		return c.silentNeverSignature
 	}
@@ -7639,12 +7623,8 @@ func (c *Checker) getTypeArgumentArityError(node *ast.Node, signatures []*Signat
 	return diagnostic
 }
 
-func (c *Checker) reportCannotInvokePossiblyNullOrUndefinedError(node *ast.Node, facts TypeFacts) {
-	c.error(node, core.IfElse(facts&TypeFactsIsUndefined != 0,
-		core.IfElse(facts&TypeFactsIsNull != 0,
-			diagnostics.Cannot_invoke_an_object_which_is_possibly_null_or_undefined,
-			diagnostics.Cannot_invoke_an_object_which_is_possibly_undefined),
-		diagnostics.Cannot_invoke_an_object_which_is_possibly_null))
+func (c *Checker) reportCannotInvokePossiblyNilError(node *ast.Node) {
+	c.error(node, diagnostics.Cannot_invoke_an_object_which_is_possibly_nil)
 }
 
 func (c *Checker) resolveUntypedCall(node *ast.Node) *Signature {
@@ -8811,7 +8791,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 			c.error(node, diagnostics.Index_signature_in_type_0_only_permits_reading, c.TypeToString(apparentType))
 		}
 		propType = c.getIndexSignatureWriteType(indexInfo.valueType, node)
-		if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue && getAssignmentTargetKind(node) != AssignmentKindDefinite {
+		if c.compilerOptions.GetNoUncheckedIndexedAccess() && getAssignmentTargetKind(node) != AssignmentKindDefinite {
 			propType = c.getUnionType([]*Type{propType, c.missingType})
 		}
 		if c.compilerOptions.NoPropertyAccessFromIndexSignature == core.TSTrue && ast.IsPropertyAccessExpression(node) {
@@ -8836,6 +8816,14 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 			propType = c.getWriteTypeOfSymbol(prop)
 		default:
 			propType = c.getTypeOfSymbol(prop)
+			// A union property can be synthesized from a declared property in one arm
+			// and an index signature in another; the merged symbol type no longer says
+			// which arm was open. Restore the missing value exactly as the element-access
+			// read does, so both spellings of the same key agree.
+			if c.compilerOptions.GetNoUncheckedIndexedAccess() && assignmentKind != AssignmentKindDefinite &&
+				c.unionPropertyUsesIndexSignature(apparentType, c.getStringLiteralType(right.Text()), right.Text()) {
+				propType = c.getUnionType([]*Type{propType, c.missingType})
+			}
 		}
 	}
 	return c.getFlowTypeOfAccessExpression(node, prop, propType, right, checkMode)
@@ -13653,18 +13641,18 @@ func (c *Checker) getConstraintFromIndexedAccess(t *Type) *Type {
 	if c.isMappedTypeGenericIndexedAccess(t) {
 		// For indexed access types of the form { [P in K]: E }[X], where K is non-generic and X is generic,
 		// we substitute an instantiation of E where P is replaced with X.
-		return c.substituteIndexedMappedType(d.objectType, d.indexType)
+		return c.substituteIndexedMappedTypeForAccess(d.objectType, d.indexType, d.accessFlags)
 	}
 	indexConstraint := c.getSimplifiedTypeOrConstraint(d.indexType)
 	if indexConstraint != nil && indexConstraint != d.indexType {
-		indexedAccess := c.getIndexedAccessTypeOrUndefined(d.objectType, indexConstraint, d.accessFlags, nil, nil)
+		indexedAccess := c.getIndexedAccessTypeForConstraint(d.objectType, indexConstraint, d.accessFlags)
 		if indexedAccess != nil {
 			return indexedAccess
 		}
 	}
 	objectConstraint := c.getSimplifiedTypeOrConstraint(d.objectType)
 	if objectConstraint != nil && objectConstraint != d.objectType {
-		return c.getIndexedAccessTypeOrUndefined(objectConstraint, d.indexType, d.accessFlags, nil, nil)
+		return c.getIndexedAccessTypeForConstraint(objectConstraint, d.indexType, d.accessFlags)
 	}
 	return nil
 }
@@ -19611,7 +19599,7 @@ func (c *Checker) getTupleElementType(t *Type, index int) *Type {
 		return propType
 	}
 	if everyType(t, isTupleType) {
-		return c.getTupleElementTypeOutOfStartCount(t, jsnum.Number(index), core.IfElse(c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue, c.nilType, nil))
+		return c.getTupleElementTypeOutOfStartCount(t, jsnum.Number(index), core.IfElse(c.compilerOptions.GetNoUncheckedIndexedAccess(), c.nilType, nil))
 	}
 	return nil
 }
@@ -23247,7 +23235,7 @@ func (c *Checker) getIndexedAccessTypeOrUndefined(objectType *Type, indexType *T
 	}
 	// In noUncheckedIndexedAccess mode, indexed access operations that occur in an expression in a read position and resolve to
 	// an index signature have 'undefined' included in their type.
-	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue && accessFlags&AccessFlagsExpressionPosition != 0 {
+	if c.compilerOptions.GetNoUncheckedIndexedAccess() && accessFlags&AccessFlagsExpressionPosition != 0 {
 		accessFlags |= AccessFlagsIncludeUndefined
 	}
 	// If the index type is generic, or if the object type is generic and doesn't originate in an expression and
@@ -23260,6 +23248,7 @@ func (c *Checker) getIndexedAccessTypeOrUndefined(objectType *Type, indexType *T
 		if objectType.flags&TypeFlagsAnyOrUnknown != 0 {
 			return objectType
 		}
+		c.reportInvalidDeferredTupleIndices(objectType, indexType, accessNode, accessFlags)
 		// Defer the operation by creating an indexed access type.
 		persistentAccessFlags := accessFlags & AccessFlagsPersistent
 		key := getIndexedAccessKey(objectType, indexType, accessFlags, alias)
@@ -23351,6 +23340,12 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			} else {
 				propType = c.getTypeOfSymbol(prop)
 			}
+			// A union property can be synthesized from a declared property in one arm
+			// and an index signature in another. The merged symbol type no longer says
+			// which arm was open, so restore the missing value before returning it.
+			if accessFlags&AccessFlagsIncludeUndefined != 0 && c.unionPropertyUsesIndexSignature(objectType, indexType, propName) {
+				propType = c.getUnionType([]*Type{propType, c.missingType})
+			}
 			switch {
 			case accessExpression != nil && getAssignmentTargetKind(accessExpression) != AssignmentKindDefinite:
 				return c.getFlowTypeOfReference(accessExpression, propType)
@@ -23372,19 +23367,14 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			// defaults) stay silent by design.
 			if accessNode != nil && accessFlags&AccessFlagsAllowMissing == 0 {
 				if index < 0 {
-					c.error(getIndexNodeForAccessExpression(accessNode), diagnostics.A_tuple_type_cannot_be_indexed_with_a_negative_value)
+					c.reportTupleIndexError(objectType, index, accessNode, false)
 					return c.nilType
 				}
 				allFixed := everyType(objectType, func(t *Type) bool {
 					return t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0
 				})
 				if allFixed || !isTupleElementKey(index) {
-					indexNode := getIndexNodeForAccessExpression(accessNode)
-					if isTupleType(objectType) && allFixed {
-						c.error(indexNode, diagnostics.Tuple_type_0_of_length_1_has_no_element_at_index_2, c.TypeToString(objectType), c.getTypeReferenceArity(objectType), index.String())
-					} else {
-						c.error(indexNode, diagnostics.Property_0_does_not_exist_on_type_1, index.String(), c.TypeToString(objectType))
-					}
+					c.reportTupleIndexError(objectType, index, accessNode, allFixed)
 				}
 			}
 			if isTupleElementKey(index) {
@@ -23525,6 +23515,16 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 	return nil
 }
 
+func (c *Checker) unionPropertyUsesIndexSignature(objectType *Type, indexType *Type, propName string) bool {
+	if objectType.flags&TypeFlagsUnion == 0 {
+		return false
+	}
+	return core.Some(objectType.Types(), func(t *Type) bool {
+		t = c.getReducedApparentType(t)
+		return c.getPropertyOfType(t, propName) == nil && c.getApplicableIndexInfo(t, indexType) != nil
+	})
+}
+
 func (c *Checker) getSuggestionForNonexistentProperty(name string, containingType *Type) string {
 	symbol := c.getSpellingSuggestionForName(name, slices.Values(c.getPropertiesOfType(containingType)), ast.SymbolFlagsValue)
 	if symbol != nil {
@@ -23557,6 +23557,17 @@ func (c *Checker) getSuggestionForNonexistentIndexSignature(objectType *Type, ex
 func (c *Checker) getSuggestedTypeForNonexistentStringLiteralType(source *Type, target *Type) *Type {
 	candidates := core.FilterSeq(target.Types(), func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
 	return core.GetSpellingSuggestion(getStringLiteralValue(source), candidates, getStringLiteralValue, CompareTypes)
+}
+
+func (c *Checker) reportTupleIndexError(objectType *Type, index jsnum.Number, accessNode *ast.Node, allFixed bool) {
+	indexNode := getIndexNodeForAccessExpression(accessNode)
+	if index < 0 {
+		c.error(indexNode, diagnostics.A_tuple_type_cannot_be_indexed_with_a_negative_value)
+	} else if isTupleType(objectType) && allFixed {
+		c.error(indexNode, diagnostics.Tuple_type_0_of_length_1_has_no_element_at_index_2, c.TypeToString(objectType), c.getTypeReferenceArity(objectType), index.String())
+	} else {
+		c.error(indexNode, diagnostics.Property_0_does_not_exist_on_type_1, index.String(), c.TypeToString(objectType))
+	}
 }
 
 func getIndexNodeForAccessExpression(accessNode *ast.Node) *ast.Node {
@@ -23651,18 +23662,44 @@ func (c *Checker) shouldDeferIndexedAccessType(objectType *Type, indexType *Type
 		return true
 	}
 	if accessNode != nil && !ast.IsIndexedAccessTypeNode(accessNode) {
-		return c.isGenericTupleType(objectType) && !indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))
+		return c.isGenericTupleType(objectType) && !indexTypeNotInVariablePart(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))
 	}
-	return c.isGenericObjectType(objectType) && !(isTupleType(objectType) && indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))) ||
+	return c.isGenericObjectType(objectType) && !(isTupleType(objectType) && indexTypeNotInVariablePart(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))) ||
 		c.isGenericReducibleType(objectType)
 }
 
-func indexTypeLessThan(indexType *Type, limit int) bool {
+// A deferred indexed-access type retains semantic types and flags, but deliberately
+// not the syntax node needed for diagnostics. Validate definitely invalid numeric
+// constituents while that node is still available; valid element keys in the
+// variadic part continue through the normal deferred path. A generic key's base
+// constraint is the most concrete set of constituents known at the access.
+func (c *Checker) reportInvalidDeferredTupleIndices(objectType *Type, indexType *Type, accessNode *ast.Node, accessFlags AccessFlags) {
+	if accessNode == nil || accessFlags&AccessFlagsAllowMissing != 0 || !c.isGenericTupleType(objectType) {
+		return
+	}
+	indexType = c.getBaseConstraintOrType(indexType)
+	forEachType(indexType, func(t *Type) {
+		if t.flags&TypeFlagsNumberLiteral != 0 {
+			index := getNumberLiteralValue(t)
+			if !isTupleElementKey(index) {
+				c.reportTupleIndexError(objectType, index, accessNode, false)
+			}
+		}
+	})
+}
+
+// indexTypeNotInVariablePart reports whether indexType is entirely at or before a
+// tuple's fixed prefix, so the read can resolve now instead of deferring. Element keys
+// are 1-based, which makes the prefix 1..limit inclusive -- upstream's 0..limit-1 test
+// handed the last fixed element to the variable part, giving `[A, B, ...T][2]` the rest
+// element type instead of B. A non-element numeric key cannot be in the variable part
+// regardless of its magnitude, so it resolves now and reports its own error.
+func indexTypeNotInVariablePart(indexType *Type, limit int) bool {
 	return everyType(indexType, func(t *Type) bool {
 		if t.flags&TypeFlagsNumberLiteral != 0 {
 			// Only number keys index tuple elements (t[1] != t["1"]).
 			index := getNumberLiteralValue(t)
-			return index >= 0 && index < jsnum.Number(limit)
+			return !isTupleElementKey(index) || index <= jsnum.Number(limit)
 		}
 		return false
 	})
@@ -23828,14 +23865,14 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 		if c.isMappedTypeGenericIndexedAccess(t) {
 			// For indexed access types of the form { [P in K]: E }[X], where K is non-generic and X is generic,
 			// we substitute an instantiation of E where P is replaced with X.
-			return c.getNextBaseConstraint(c.substituteIndexedMappedType(t.AsIndexedAccessType().objectType, t.AsIndexedAccessType().indexType), stack)
+			return c.getNextBaseConstraint(c.substituteIndexedMappedTypeForAccess(t.AsIndexedAccessType().objectType, t.AsIndexedAccessType().indexType, t.AsIndexedAccessType().accessFlags), stack)
 		}
 		baseObjectType := c.getNextBaseConstraint(t.AsIndexedAccessType().objectType, stack)
 		baseIndexType := c.getNextBaseConstraint(t.AsIndexedAccessType().indexType, stack)
 		if baseObjectType == nil || baseIndexType == nil {
 			return nil
 		}
-		return c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
+		return c.getNextBaseConstraint(c.getIndexedAccessTypeForConstraint(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags), stack)
 	case t.flags&TypeFlagsConditional != 0:
 		if c.conditionalConstraintDepth >= 100 {
 			return nil
@@ -24163,9 +24200,16 @@ func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *T
 	// '{ [P in T]: { [Q in U]: number } }[T][U]' we want to first simplify the inner indexed access type.
 	objectType := c.getSimplifiedType(t.AsIndexedAccessType().objectType, writing)
 	indexType := c.getSimplifiedType(t.AsIndexedAccessType().indexType, writing)
+	accessFlags := t.AsIndexedAccessType().accessFlags
+	if writing {
+		// IncludeUndefined describes the read side of an access. Compound assignments
+		// still create a read-bearing indexed access, but their write type must remain
+		// the declared index value type.
+		accessFlags &^= AccessFlagsIncludeUndefined
+	}
 	// T[A | B] -> T[A] | T[B] (reading)
 	// T[A | B] -> T[A] & T[B] (writing)
-	distributedOverIndex := c.distributeObjectOverIndexType(objectType, indexType, writing)
+	distributedOverIndex := c.distributeObjectOverIndexType(objectType, indexType, accessFlags, writing)
 	if distributedOverIndex != nil {
 		return distributedOverIndex
 	}
@@ -24174,7 +24218,7 @@ func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *T
 		// (T | U)[K] -> T[K] | U[K] (reading)
 		// (T | U)[K] -> T[K] & U[K] (writing)
 		// (T & U)[K] -> T[K] & U[K]
-		distributedOverObject := c.distributeIndexOverObjectType(objectType, indexType, writing)
+		distributedOverObject := c.distributeIndexOverObjectType(objectType, indexType, accessFlags, writing)
 		if distributedOverObject != nil {
 			return distributedOverObject
 		}
@@ -24187,7 +24231,7 @@ func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *T
 	if c.isGenericTupleType(objectType) && indexType.flags&TypeFlagsNumberLike != 0 {
 		elementType := c.getElementTypeOfSliceOfTupleType(objectType, core.IfElse(indexType.flags&TypeFlagsNumber != 0, 0, objectType.TargetTupleType().fixedLength), 0 /*endSkipCount*/, writing, false)
 		if elementType != nil {
-			return elementType
+			return c.includeMissingInIndexedAccessResult(elementType, accessFlags)
 		}
 	}
 	// If the object type is a mapped type { [P in K]: E }, where K is generic, or { [P in K as N]: E }, where
@@ -24195,7 +24239,7 @@ func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *T
 	// For example, for an index access { [P in K]: Box<T[P]> }[X], we construct the type Box<T[X]>.
 	if c.isGenericMappedType(objectType) {
 		if c.getMappedTypeNameTypeKind(objectType) != MappedTypeNameTypeKindRemapping {
-			return c.mapType(c.substituteIndexedMappedType(objectType, t.AsIndexedAccessType().indexType), func(t *Type) *Type {
+			return c.mapType(c.substituteIndexedMappedTypeForAccess(objectType, t.AsIndexedAccessType().indexType, accessFlags), func(t *Type) *Type {
 				return c.getSimplifiedType(t, writing)
 			})
 		}
@@ -24207,10 +24251,23 @@ func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *T
 	// same value (a colliding sibling would otherwise merge value types) and the object
 	// has no properties (a property could win over the index once K is instantiated
 	// with its name).
-	if simplified := c.getSimplifiedGenericIndexedAccess(objectType, indexType, t.AsIndexedAccessType().indexType, writing); simplified != nil {
+	if simplified := c.getSimplifiedGenericIndexedAccess(t, objectType, indexType, accessFlags, writing); simplified != nil {
 		return simplified
 	}
 	return t
+}
+
+// getIndexedAccessTypeForConstraint resolves a deferred access after one of its
+// operands has been replaced by a constraint. A union object must be distributed
+// before ordinary property lookup merges its members; otherwise an index-signature
+// arm loses the missing value when it is combined with a known property arm.
+func (c *Checker) getIndexedAccessTypeForConstraint(objectType *Type, indexType *Type, accessFlags AccessFlags) *Type {
+	if indexType.flags&TypeFlagsInstantiable == 0 {
+		if distributed := c.distributeIndexOverObjectType(objectType, indexType, accessFlags, false /*writing*/); distributed != nil {
+			return distributed
+		}
+	}
+	return c.getIndexedAccessTypeOrUndefined(objectType, indexType, accessFlags, nil /*accessNode*/, nil /*alias*/)
 }
 
 // getSimplifiedGenericIndexedAccess returns the shared value type of objectType's
@@ -24219,10 +24276,16 @@ func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *T
 // them, and resolving one here could force a type still under construction. A write is
 // simplified only when no index is readonly -- resolving the deferred access would
 // otherwise skip the only check that enforces the modifier.
-func (c *Checker) getSimplifiedGenericIndexedAccess(objectType *Type, indexType *Type, rawIndexType *Type, writing bool) *Type {
+//
+// The value carries the read widening the deferred access was given: an index signature
+// keyed by a type parameter is as open as any other, so `Table<K, V>[K]` reads as
+// `V | nil` for the same reason `Table<string, V>[k]` does. Resolving it here is the
+// only chance to honour that -- once the access is gone, so is the flag.
+func (c *Checker) getSimplifiedGenericIndexedAccess(t *Type, objectType *Type, indexType *Type, accessFlags AccessFlags, writing bool) *Type {
 	if objectType.flags&TypeFlagsObject == 0 || objectType.objectFlags&ObjectFlagsMapped != 0 {
 		return nil
 	}
+	rawIndexType := t.AsIndexedAccessType().indexType
 	indexInfos := c.getIndexInfosOfType(objectType)
 	// The written index type may itself have simplified above, while the declared key
 	// never does -- match either spelling.
@@ -24238,15 +24301,30 @@ func (c *Checker) getSimplifiedGenericIndexedAccess(objectType *Type, indexType 
 			return nil
 		}
 	}
-	return exact.valueType
+	return c.includeMissingInIndexedAccessResult(exact.valueType, accessFlags)
 }
 
-func (c *Checker) distributeObjectOverIndexType(objectType *Type, indexType *Type, writing bool) *Type {
+// includeMissingInIndexedAccessResult applies the persistent read widening carried by
+// a deferred indexed access. Callers use it only after they know the simplification
+// resolved through an index signature or a tuple's variable part; known properties
+// continue to resolve through getPropertyTypeForIndexType and remain exact.
+func (c *Checker) includeMissingInIndexedAccessResult(t *Type, accessFlags AccessFlags) *Type {
+	if accessFlags&AccessFlagsIncludeUndefined != 0 {
+		return c.getUnionType([]*Type{t, c.missingType})
+	}
+	return t
+}
+
+// accessFlags carries the persistent flags of the access being distributed. Dropping
+// them would lose the read widening on the way in: each constituent has to be resolved
+// under the same flags, so that the ones reaching an index signature widen and the ones
+// reaching a mapped type's known-present properties do not.
+func (c *Checker) distributeObjectOverIndexType(objectType *Type, indexType *Type, accessFlags AccessFlags, writing bool) *Type {
 	// T[A | B] -> T[A] | T[B] (reading)
 	// T[A | B] -> T[A] & T[B] (writing)
 	if indexType.flags&TypeFlagsUnion != 0 {
 		types := core.Map(indexType.Types(), func(t *Type) *Type {
-			return c.getSimplifiedType(c.getIndexedAccessType(objectType, t), writing)
+			return c.getSimplifiedType(c.getIndexedAccessTypeEx(objectType, t, accessFlags, nil /*accessNode*/, nil /*alias*/), writing)
 		})
 		if writing {
 			return c.getIntersectionType(types)
@@ -24256,13 +24334,13 @@ func (c *Checker) distributeObjectOverIndexType(objectType *Type, indexType *Typ
 	return nil
 }
 
-func (c *Checker) distributeIndexOverObjectType(objectType *Type, indexType *Type, writing bool) *Type {
+func (c *Checker) distributeIndexOverObjectType(objectType *Type, indexType *Type, accessFlags AccessFlags, writing bool) *Type {
 	// (T | U)[K] -> T[K] | U[K] (reading)
 	// (T | U)[K] -> T[K] & U[K] (writing)
 	// (T & U)[K] -> T[K] & U[K]
 	if objectType.flags&TypeFlagsUnion != 0 || objectType.flags&TypeFlagsIntersection != 0 && !c.shouldDeferIndexType(objectType, IndexFlagsNone) {
 		types := core.Map(objectType.Types(), func(t *Type) *Type {
-			return c.getSimplifiedType(c.getIndexedAccessType(t, indexType), writing)
+			return c.getSimplifiedType(c.getIndexedAccessTypeEx(t, indexType, accessFlags, nil /*accessNode*/, nil /*alias*/), writing)
 		})
 		if objectType.flags&TypeFlagsIntersection != 0 || writing {
 			return c.getIntersectionType(types)
@@ -25151,6 +25229,25 @@ func (c *Checker) substituteIndexedMappedType(objectType *Type, index *Type) *Ty
 		}
 	}
 	return c.addOptionalityEx(instantiatedTemplateType, true /*isProperty*/, isOptional)
+}
+
+// substituteIndexedMappedTypeForAccess preserves the read semantics when a deferred
+// expression access is simplified through a mapped type. Literal and unique-symbol
+// keys become concrete properties and are known-present; every other key shape becomes
+// (or can instantiate to) an index signature and therefore retains the missing value.
+func (c *Checker) substituteIndexedMappedTypeForAccess(objectType *Type, index *Type, accessFlags AccessFlags) *Type {
+	result := c.substituteIndexedMappedType(objectType, index)
+	if c.indexTypeMaySelectIndexSignature(index) {
+		return c.includeMissingInIndexedAccessResult(result, accessFlags)
+	}
+	return result
+}
+
+func (c *Checker) indexTypeMaySelectIndexSignature(index *Type) bool {
+	keyType := c.getBaseConstraintOrType(index)
+	return someType(keyType, func(t *Type) bool {
+		return t.flags&TypeFlagsNever == 0 && !isTypeUsableAsPropertyName(t)
+	})
 }
 
 // Return true if an indexed access with the given object and index types could access an optional property.

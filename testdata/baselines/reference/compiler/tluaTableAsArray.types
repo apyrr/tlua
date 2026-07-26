@@ -7,15 +7,16 @@ local xs: number[] = {1, 2, 3};
 >xs : number[]
 >{1, 2, 3} : { 1: number; 2: number; 3: number; }
 
-local first: number = xs[1];
->first : number
->xs[1] : number
+local first: number | nil = xs[1];
+>first : number | nil
+>xs[1] : number | nil
 >xs : number[]
 >1 : 1
 
 // A vararg has no name, so the pack is reached the Lua way: collect it into a
 // table with `{...}`, which is itself a number-key table and indexes
-// element-wise.
+// element-wise. The element read carries nil, so either `or` supplies the
+// missing element...
 function firstOf(...: string): string
 >firstOf : (...: string) => string
 > : string[]
@@ -25,10 +26,12 @@ function firstOf(...: string): string
 >{...} : { [x: number]: string; }
 >... : string | nil
 
-  return args[1];
->args[1] : string
+  return args[1] or "";
+>args[1] or "" : string
+>args[1] : string | nil
 >args : string[]
 >1 : 1
+>"" : ""
 
 end
 local f1: string = firstOf("a", "b", "c");
@@ -39,9 +42,10 @@ local f1: string = firstOf("a", "b", "c");
 >"b" : "b"
 >"c" : "c"
 
-// Generic vararg inference: T is inferred from the value arguments.
-function pickFirst<T>(...: T): T
->pickFirst : <T>(...: T) => T
+// ...or the nil travels out with the value. Generic vararg inference: T is
+// inferred from the value arguments.
+function pickFirst<T>(...: T): T | nil
+>pickFirst : <T>(...: T) => T | nil
 > : T[]
 
   local items: T[] = {...};
@@ -50,15 +54,15 @@ function pickFirst<T>(...: T): T
 >... : T | nil
 
   return items[1];
->items[1] : T
+>items[1] : T | nil
 >items : T[]
 >1 : 1
 
 end
-local n: number = pickFirst(1, 2, 3);
->n : number
->pickFirst(1, 2, 3) : 1 | 2 | 3
->pickFirst : <T>(...: T) => T
+local n: number | nil = pickFirst(1, 2, 3);
+>n : number | nil
+>pickFirst(1, 2, 3) : 1 | 2 | 3 | nil
+>pickFirst : <T>(...: T) => T | nil
 >1 : 1
 >2 : 2
 >3 : 3
@@ -83,8 +87,8 @@ local j: J = {};
 >{} : {}
 
 local es = {first, f1, n, ys, j};
->es : { 1: number; 2: string; 3: number; 4: readonly number[]; 5: J; }
->{first, f1, n, ys, j} : { 1: number; 2: string; 3: number; 4: readonly number[]; 5: J; }
+>es : { 1: number | nil; 2: string; 3: number | nil; 4: readonly number[]; 5: J; }
+>{first, f1, n, ys, j} : { 1: number | nil; 2: string; 3: number | nil; 4: readonly number[]; 5: J; }
 >first : any
 >f1 : any
 >n : any

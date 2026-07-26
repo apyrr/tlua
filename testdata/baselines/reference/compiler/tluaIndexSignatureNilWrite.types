@@ -116,30 +116,50 @@ frozen["a"] = nil;
 >frozen : Frozen
 >"a" : "a"
 
-// Reads are unaffected: the element type has no nil.
-local present: true = loadQueue[ply];
->present : true
+// The read is the other half: a key that was never set -- or was just removed -- is
+// nil, so an index read widens to `V | nil`.
+local present: true | nil = loadQueue[ply];
+>present : true | nil
 >true : true
->loadQueue[ply] : true
+>loadQueue[ply] : nil
 >loadQueue : Table<Player, true>
 >ply : Player
 
-local count: number = counts["a"];
->count : number
->counts["a"] : number
+local count: number | nil = counts["a"];
+>count : number | nil
+>counts["a"] : number | nil
 >counts : Table<string, number>
 >"a" : "a"
 
-// A removal does not narrow the later read to nil: the declared value type governs.
+// Which is what makes the presence guard mean something: without the widening the
+// condition would be the literal `true` and narrow nothing.
+local pending = loadQueue[ply];
+>pending : nil
+>loadQueue[ply] : nil
+>loadQueue : Table<Player, true>
+>ply : Player
+
+if pending then
+>pending : nil
+
+    local seen: true = pending;
+>seen : true
+>true : true
+>pending : never
+
+end
+
+// A removal does not narrow the later read any further: the declared value type,
+// widened by the read, governs.
 counts["b"] = nil;
 >counts["b"] = nil : nil
 >counts["b"] : number | nil
 >counts : Table<string, number>
 >"b" : "b"
 
-local afterRemoval: number = counts["b"];
->afterRemoval : number
->counts["b"] : number
+local afterRemoval: number | nil = counts["b"];
+>afterRemoval : number | nil
+>counts["b"] : nil
 >counts : Table<string, number>
 >"b" : "b"
 

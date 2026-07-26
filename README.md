@@ -241,6 +241,10 @@ familiar - interfaces, unions, generics, narrowing, mapped and conditional
 types - but the language is Lua:
 
 - `nil` replaces both `null` and `undefined`.
+- Indexing a key a table does not have yields `nil`, so an index-signature read
+  is `V | nil`: `noUncheckedIndexedAccess` is on by default. In TypeScript it is
+  a strictness opt-in; here it is accuracy, so it does not follow `strict`. Set
+  it to `false` to opt out.
 - `local` is the only declaration form; no `let`/`const`/`var`.
 - Modules use `require` and a top-level `return`, not `import`/`export`.
 - `and`/`or`/`not` are the logical operators, with Lua truthiness (`0` and `""`

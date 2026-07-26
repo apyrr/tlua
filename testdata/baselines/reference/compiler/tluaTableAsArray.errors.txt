@@ -1,27 +1,29 @@
-tluaTableAsArray.tlua(27,7): error TLUA2741: Property 'length' is missing in type 'number[]' but required in type 'Array<number>'.
+tluaTableAsArray.tlua(29,7): error TLUA2741: Property 'length' is missing in type 'number[]' but required in type 'Array<number>'.
 
 
 ==== tluaTableAsArray.tlua (1 errors) ====
     // `T[]` denotes the number-key table type `{ [k: number]: T }`, so a table
     // constructor satisfies it and is indexed element-wise.
     local xs: number[] = {1, 2, 3};
-    local first: number = xs[1];
+    local first: number | nil = xs[1];
     
     // A vararg has no name, so the pack is reached the Lua way: collect it into a
     // table with `{...}`, which is itself a number-key table and indexes
-    // element-wise.
+    // element-wise. The element read carries nil, so either `or` supplies the
+    // missing element...
     function firstOf(...: string): string
       local args: string[] = {...};
-      return args[1];
+      return args[1] or "";
     end
     local f1: string = firstOf("a", "b", "c");
     
-    // Generic vararg inference: T is inferred from the value arguments.
-    function pickFirst<T>(...: T): T
+    // ...or the nil travels out with the value. Generic vararg inference: T is
+    // inferred from the value arguments.
+    function pickFirst<T>(...: T): T | nil
       local items: T[] = {...};
       return items[1];
     end
-    local n: number = pickFirst(1, 2, 3);
+    local n: number | nil = pickFirst(1, 2, 3);
     
     // readonly T[] is the readonly number-key table.
     local ys: readonly number[] = {10, 20};

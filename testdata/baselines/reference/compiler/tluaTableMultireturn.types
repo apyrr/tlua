@@ -86,9 +86,9 @@ local u1: number = unbounded[1];
 >unbounded : { [x: number]: string | number; 1: number; 2: number; }
 >1 : 1
 
-local ufar: string | number = unbounded[99];
->ufar : string | number
->unbounded[99] : string | number
+local ufar: string | number | nil = unbounded[99];
+>ufar : string | number | nil
+>unbounded[99] : string | number | nil
 >unbounded : { [x: number]: string | number; 1: number; 2: number; }
 >99 : 99
 
@@ -135,8 +135,8 @@ local kc: number = keyedCall[1];
 >1 : 1
 
 local es = {nt1, nt2, nt3, t2, t3, u1, ufar, empty, p2, p3, kc};
->es : { 1: number; 2: number; 3: string; 4: number; 5: string; 6: number; 7: string | number; 8: {}; 9: number; 10: string; 11: number; }
->{nt1, nt2, nt3, t2, t3, u1, ufar, empty, p2, p3, kc} : { 1: number; 2: number; 3: string; 4: number; 5: string; 6: number; 7: string | number; 8: {}; 9: number; 10: string; 11: number; }
+>es : { 1: number; 2: number; 3: string; 4: number; 5: string; 6: number; 7: string | number | nil; 8: {}; 9: number; 10: string; 11: number; }
+>{nt1, nt2, nt3, t2, t3, u1, ufar, empty, p2, p3, kc} : { 1: number; 2: number; 3: string; 4: number; 5: string; 6: number; 7: string | number | nil; 8: {}; 9: number; 10: string; 11: number; }
 >nt1 : any
 >nt2 : any
 >nt3 : any

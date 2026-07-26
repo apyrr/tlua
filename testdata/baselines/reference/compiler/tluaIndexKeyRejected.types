@@ -65,9 +65,9 @@ interface PatternKey { [key: `id-${string}`]: number }
 declare p: PatternKey;
 >p : PatternKey
 
-local n: number = p["id-1"];
->n : number
->p["id-1"] : number
+local n: number | nil = p["id-1"];
+>n : number | nil
+>p["id-1"] : number | nil
 >p : PatternKey
 >"id-1" : "id-1"
 
@@ -80,9 +80,9 @@ interface Prefixed<T extends string> { [key: `a${T}`]: number }
 declare pre: Prefixed<"x">;
 >pre : Prefixed<"x">
 
-local n2: number = pre["ax"];
->n2 : number
->pre["ax"] : number
+local n2: number | nil = pre["ax"];
+>n2 : number | nil
+>pre["ax"] : number | nil
 >pre : Prefixed<"x">
 >"ax" : "ax"
 
@@ -96,9 +96,9 @@ local pk: PK = "anything";
 declare tl: Table<"a", number>;
 >tl : Table<"a", number>
 
-local n3: number = tl["b"];
->n3 : number
->tl["b"] : number
+local n3: number | nil = tl["b"];
+>n3 : number | nil
+>tl["b"] : number | nil
 >tl : Table<"a", number>
 >"b" : "b"
 

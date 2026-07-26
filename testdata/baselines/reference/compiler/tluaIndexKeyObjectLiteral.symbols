@@ -19,7 +19,7 @@ local byBool = { [b] = 1 };
 >[b] : Symbol([b], Decl(tluaIndexKeyObjectLiteral.tlua, 7, 16))
 >b : Symbol(b, Decl(tluaIndexKeyObjectLiteral.tlua, 3, 7))
 
-local n1: number = byBool[true];
+local n1: number | nil = byBool[true];
 >n1 : Symbol(n1, Decl(tluaIndexKeyObjectLiteral.tlua, 8, 5))
 >byBool : Symbol(byBool, Decl(tluaIndexKeyObjectLiteral.tlua, 7, 5))
 
@@ -28,7 +28,7 @@ local byTable = { [pt] = "v" };
 >[pt] : Symbol([pt], Decl(tluaIndexKeyObjectLiteral.tlua, 10, 17))
 >pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
 
-local s1: string = byTable[pt];
+local s1: string | nil = byTable[pt];
 >s1 : Symbol(s1, Decl(tluaIndexKeyObjectLiteral.tlua, 11, 5))
 >byTable : Symbol(byTable, Decl(tluaIndexKeyObjectLiteral.tlua, 10, 5))
 >pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
@@ -40,7 +40,7 @@ local byTrue = { [true] = 1 };
 >byTrue : Symbol(byTrue, Decl(tluaIndexKeyObjectLiteral.tlua, 16, 5))
 >[true] : Symbol([true], Decl(tluaIndexKeyObjectLiteral.tlua, 16, 16))
 
-local n2: number = byTrue[false];
+local n2: number | nil = byTrue[false];
 >n2 : Symbol(n2, Decl(tluaIndexKeyObjectLiteral.tlua, 17, 5))
 >byTrue : Symbol(byTrue, Decl(tluaIndexKeyObjectLiteral.tlua, 16, 5))
 
@@ -54,27 +54,27 @@ local mixed = { [b] = 1, [pt] = 2, [s] = 3 };
 >[s] : Symbol([s], Decl(tluaIndexKeyObjectLiteral.tlua, 20, 34))
 >s : Symbol(s, Decl(tluaIndexKeyObjectLiteral.tlua, 5, 7))
 
-local n3: number = mixed[true];
+local n3: number | nil = mixed[true];
 >n3 : Symbol(n3, Decl(tluaIndexKeyObjectLiteral.tlua, 21, 5))
 >mixed : Symbol(mixed, Decl(tluaIndexKeyObjectLiteral.tlua, 20, 5))
 
-local n4: number = mixed[pt];
+local n4: number | nil = mixed[pt];
 >n4 : Symbol(n4, Decl(tluaIndexKeyObjectLiteral.tlua, 22, 5))
 >mixed : Symbol(mixed, Decl(tluaIndexKeyObjectLiteral.tlua, 20, 5))
 >pt : Symbol(pt, Decl(tluaIndexKeyObjectLiteral.tlua, 4, 7))
 
-local n5: number = mixed["k"];
+local n5: number | nil = mixed["k"];
 >n5 : Symbol(n5, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 5))
 >mixed : Symbol(mixed, Decl(tluaIndexKeyObjectLiteral.tlua, 20, 5))
 
 // A computed key is contextually typed by the index it feeds.
 interface BoolIdx { [key: boolean]: number }
->BoolIdx : Symbol(BoolIdx, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 30))
+>BoolIdx : Symbol(BoolIdx, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 36))
 >key : Symbol(key, Decl(tluaIndexKeyObjectLiteral.tlua, 26, 21))
 
 local ctx: BoolIdx = { [b] = 1 };
 >ctx : Symbol(ctx, Decl(tluaIndexKeyObjectLiteral.tlua, 27, 5))
->BoolIdx : Symbol(BoolIdx, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 30))
+>BoolIdx : Symbol(BoolIdx, Decl(tluaIndexKeyObjectLiteral.tlua, 23, 36))
 >[b] : Symbol([b], Decl(tluaIndexKeyObjectLiteral.tlua, 27, 22))
 >b : Symbol(b, Decl(tluaIndexKeyObjectLiteral.tlua, 3, 7))
 
@@ -88,16 +88,16 @@ local byEither = { [sn] = 1 };
 >[sn] : Symbol([sn], Decl(tluaIndexKeyObjectLiteral.tlua, 32, 18))
 >sn : Symbol(sn, Decl(tluaIndexKeyObjectLiteral.tlua, 31, 7))
 
-local n6: number = byEither[sn];
+local n6: number | nil = byEither[sn];
 >n6 : Symbol(n6, Decl(tluaIndexKeyObjectLiteral.tlua, 33, 5))
 >byEither : Symbol(byEither, Decl(tluaIndexKeyObjectLiteral.tlua, 32, 5))
 >sn : Symbol(sn, Decl(tluaIndexKeyObjectLiteral.tlua, 31, 7))
 
-local n7: number = byEither["x"];
+local n7: number | nil = byEither["x"];
 >n7 : Symbol(n7, Decl(tluaIndexKeyObjectLiteral.tlua, 34, 5))
 >byEither : Symbol(byEither, Decl(tluaIndexKeyObjectLiteral.tlua, 32, 5))
 
-local n8: number = byEither[1];
+local n8: number | nil = byEither[1];
 >n8 : Symbol(n8, Decl(tluaIndexKeyObjectLiteral.tlua, 35, 5))
 >byEither : Symbol(byEither, Decl(tluaIndexKeyObjectLiteral.tlua, 32, 5))
 
@@ -138,11 +138,11 @@ local viaAny = { [anyKey] = 5 };
 >[anyKey] : Symbol([anyKey], Decl(tluaIndexKeyObjectLiteral.tlua, 49, 16))
 >anyKey : Symbol(anyKey, Decl(tluaIndexKeyObjectLiteral.tlua, 48, 7))
 
-local n9: number = viaAny["x"];
+local n9: number | nil = viaAny["x"];
 >n9 : Symbol(n9, Decl(tluaIndexKeyObjectLiteral.tlua, 50, 5))
 >viaAny : Symbol(viaAny, Decl(tluaIndexKeyObjectLiteral.tlua, 49, 5))
 
-local n10: number = viaAny[1];
+local n10: number | nil = viaAny[1];
 >n10 : Symbol(n10, Decl(tluaIndexKeyObjectLiteral.tlua, 51, 5))
 >viaAny : Symbol(viaAny, Decl(tluaIndexKeyObjectLiteral.tlua, 49, 5))
 

@@ -15,7 +15,7 @@ declare u: U;
 local u1: string = u[1];
 
 // A string-key access falls to the string index signature.
-local us: string | number = u["5"];
+local us: string | number | nil = u["5"];
 
 // A number-key access is NOT covered by the string index signature: error.
 local un = u[5];

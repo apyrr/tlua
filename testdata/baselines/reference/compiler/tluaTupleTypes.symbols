@@ -313,3 +313,107 @@ local bv: string = boxed[1].value;
 local u: [number] | [string, string] = {"a", "b"};
 >u : Symbol(u, Decl(tluaTupleTypes.tlua, 120, 5))
 
+// A variadic tail makes the tuple generic when it is a type parameter, but the fixed
+// prefix in front of it is still addressed by key: keys are 1-based, so the prefix runs
+// 1..fixedLength inclusive and the last of them is an element, not part of the tail.
+function fixedBeforeVariadic<T extends number[]>(t: [string, boolean, ...T]): void
+>fixedBeforeVariadic : Symbol(fixedBeforeVariadic, Decl(tluaTupleTypes.tlua, 120, 50))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 125, 29))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 125, 49))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 125, 29))
+
+  local head: string = t[1];
+>head : Symbol(head, Decl(tluaTupleTypes.tlua, 126, 7))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 125, 49))
+>1 : Symbol(1)
+
+  local last: boolean = t[2];
+>last : Symbol(last, Decl(tluaTupleTypes.tlua, 127, 7))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 125, 49))
+>2 : Symbol(2)
+
+  useTuple(head, last);
+>useTuple : Symbol(useTuple, Decl(tluaTupleTypes.tlua, 129, 3))
+>head : Symbol(head, Decl(tluaTupleTypes.tlua, 126, 7))
+>last : Symbol(last, Decl(tluaTupleTypes.tlua, 127, 7))
+
+end
+declare function useTuple(a: unknown, b: unknown): void;
+>useTuple : Symbol(useTuple, Decl(tluaTupleTypes.tlua, 129, 3))
+>a : Symbol(a, Decl(tluaTupleTypes.tlua, 130, 26))
+>b : Symbol(b, Decl(tluaTupleTypes.tlua, 130, 37))
+
+// A dynamic read from the variable part remains possibly absent after the deferred
+// generic tuple access simplifies. Non-element keys still report their normal errors
+// instead of being mistaken for a read from the variadic tail.
+function readGenericTuple<T extends number[]>(t: [string, ...T], key: number): string | number | nil
+>readGenericTuple : Symbol(readGenericTuple, Decl(tluaTupleTypes.tlua, 130, 56))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 135, 26))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 135, 46))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 135, 26))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 135, 64))
+
+  return t[key];
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 135, 46))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 135, 64))
+
+end
+function readGenericTupleUnsafe<T extends number[]>(t: [string, ...T], key: number): string | number
+>readGenericTupleUnsafe : Symbol(readGenericTupleUnsafe, Decl(tluaTupleTypes.tlua, 137, 3))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 138, 32))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 138, 52))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 138, 32))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 138, 70))
+
+  return t[key];
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 138, 52))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 138, 70))
+
+end
+function readNegativeGenericTuple<T extends number[]>(t: [string, ...T]): nil
+>readNegativeGenericTuple : Symbol(readNegativeGenericTuple, Decl(tluaTupleTypes.tlua, 140, 3))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 141, 34))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 141, 54))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 141, 34))
+
+  return t[-1];
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 141, 54))
+
+end
+function readFractionalGenericTuple<T extends number[]>(t: [string, ...T]): string | number | nil
+>readFractionalGenericTuple : Symbol(readFractionalGenericTuple, Decl(tluaTupleTypes.tlua, 143, 3))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 144, 36))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 144, 56))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 144, 36))
+
+  return t[1.5];
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 144, 56))
+
+end
+function readMixedGenericTuple<T extends number[]>(t: [string, ...T], key: -1 | 2): string | number | nil
+>readMixedGenericTuple : Symbol(readMixedGenericTuple, Decl(tluaTupleTypes.tlua, 146, 3))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 147, 31))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 147, 51))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 147, 31))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 147, 69))
+
+  return t[key];
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 147, 51))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 147, 69))
+
+end
+function readConstrainedMixedGenericTuple<T extends number[], K extends -1 | 2>(t: [string, ...T], key: K): string | number | nil
+>readConstrainedMixedGenericTuple : Symbol(readConstrainedMixedGenericTuple, Decl(tluaTupleTypes.tlua, 149, 3))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 150, 42))
+>K : Symbol(K, Decl(tluaTupleTypes.tlua, 150, 61))
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 150, 80))
+>T : Symbol(T, Decl(tluaTupleTypes.tlua, 150, 42))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 150, 98))
+>K : Symbol(K, Decl(tluaTupleTypes.tlua, 150, 61))
+
+  return t[key];
+>t : Symbol(t, Decl(tluaTupleTypes.tlua, 150, 80))
+>key : Symbol(key, Decl(tluaTupleTypes.tlua, 150, 98))
+
+end
+

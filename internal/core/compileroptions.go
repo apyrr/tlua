@@ -238,6 +238,15 @@ func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
 	return options.Strict != TSFalse
 }
 
+// GetNoUncheckedIndexedAccess reports whether an index-signature read widens
+// to include nil. It is on unless explicitly disabled: indexing a missing key
+// in Lua yields nil, so the unwidened read would simply be wrong. Unlike in
+// TypeScript, where this is a strictness opt-in, here it is accuracy, so it
+// does not follow `strict`.
+func (options *CompilerOptions) GetNoUncheckedIndexedAccess() bool {
+	return options.NoUncheckedIndexedAccess != TSFalse
+}
+
 // GetLuaSearchRoot is the single search root Lua module names resolve
 // against — the compile-time package.path anchor. Module resolution and
 // specifier synthesis both use it; the two must never diverge or the

@@ -534,5 +534,21 @@
     "Convert all typedef to tlua types.": {
         "category": "Message",
         "code": 95177
+    },
+    "Object is possibly 'nil'.": {
+        "category": "Error",
+        "code": 2532
+    },
+    "Cannot invoke an object which is possibly 'nil'.": {
+        "category": "Error",
+        "code": 2722
+    },
+    "Add 'nil' to a type when accessed using an index.": {
+        "category": "Message",
+        "code": 6674
+    },
+    "'{0}' is possibly 'nil'.": {
+        "category": "Error",
+        "code": 18048
     }
 }

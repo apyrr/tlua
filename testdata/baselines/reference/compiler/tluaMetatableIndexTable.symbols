@@ -97,7 +97,7 @@ local ix = setmetatable({ n = 1 }, idxMt);
 >n : Symbol(n, Decl(tluaMetatableIndexTable.tlua, 34, 25))
 >idxMt : Symbol(idxMt, Decl(tluaMetatableIndexTable.tlua, 33, 7))
 
-local iv: number = ix["anything"];
+local iv: number | nil = ix["anything"];
 >iv : Symbol(iv, Decl(tluaMetatableIndexTable.tlua, 35, 5))
 >ix : Symbol(ix, Decl(tluaMetatableIndexTable.tlua, 34, 5))
 

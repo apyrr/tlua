@@ -18,11 +18,11 @@ local a = setmetatable({ n = 1 }, anyMt);
 >n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 6, 24))
 >anyMt : Symbol(anyMt, Decl(tluaMetatableIndexFunction.tlua, 5, 5))
 
-local s1: string = a.whatever;
+local s1: string | nil = a.whatever;
 >s1 : Symbol(s1, Decl(tluaMetatableIndexFunction.tlua, 7, 5))
 >a : Symbol(a, Decl(tluaMetatableIndexFunction.tlua, 6, 5))
 
-local s2: string = a[1];
+local s2: string | nil = a[1];
 >s2 : Symbol(s2, Decl(tluaMetatableIndexFunction.tlua, 8, 5))
 >a : Symbol(a, Decl(tluaMetatableIndexFunction.tlua, 6, 5))
 
@@ -45,7 +45,7 @@ local num = setmetatable({ n = 1 }, numMt);
 >n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 13, 26))
 >numMt : Symbol(numMt, Decl(tluaMetatableIndexFunction.tlua, 12, 5))
 
-local b1: boolean = num[3];
+local b1: boolean | nil = num[3];
 >b1 : Symbol(b1, Decl(tluaMetatableIndexFunction.tlua, 14, 5))
 >num : Symbol(num, Decl(tluaMetatableIndexFunction.tlua, 13, 5))
 
@@ -67,7 +67,7 @@ local lit = setmetatable({ n = 1 }, litMt);
 >n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 20, 26))
 >litMt : Symbol(litMt, Decl(tluaMetatableIndexFunction.tlua, 19, 5))
 
-local l1: number = lit["zzz"];
+local l1: number | nil = lit["zzz"];
 >l1 : Symbol(l1, Decl(tluaMetatableIndexFunction.tlua, 21, 5))
 >lit : Symbol(lit, Decl(tluaMetatableIndexFunction.tlua, 20, 5))
 
@@ -85,7 +85,7 @@ local pack = setmetatable({ n = 1 }, packMt);
 >n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 26, 27))
 >packMt : Symbol(packMt, Decl(tluaMetatableIndexFunction.tlua, 25, 5))
 
-local p1: string = pack.anything;
+local p1: string | nil = pack.anything;
 >p1 : Symbol(p1, Decl(tluaMetatableIndexFunction.tlua, 27, 5))
 >pack : Symbol(pack, Decl(tluaMetatableIndexFunction.tlua, 26, 5))
 
@@ -105,11 +105,11 @@ local ov = setmetatable({ n = 1 }, overloaded);
 >n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 32, 25))
 >overloaded : Symbol(overloaded, Decl(tluaMetatableIndexFunction.tlua, 31, 7))
 
-local either: number | string = ov.b;
+local either: number | string | nil = ov.b;
 >either : Symbol(either, Decl(tluaMetatableIndexFunction.tlua, 33, 5))
 >ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 32, 5))
 
-local notJustNumber: number = ov.b;
+local notJustNumber: number | nil = ov.b;
 >notJustNumber : Symbol(notJustNumber, Decl(tluaMetatableIndexFunction.tlua, 34, 5))
 >ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 32, 5))
 

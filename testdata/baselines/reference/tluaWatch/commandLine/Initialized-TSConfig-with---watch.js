@@ -33,7 +33,6 @@ You can learn more at https://aka.ms/tsconfig
     "declarationMap": true,
 
     // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
 
     // Style Options

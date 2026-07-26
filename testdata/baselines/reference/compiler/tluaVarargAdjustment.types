@@ -323,9 +323,9 @@ function tableTailShapes(...: number): void
 >midRest() : number
 >midRest : () => (number, ...string, boolean)
 
-  local notBoolean: boolean = mid[2];
->notBoolean : boolean
->mid[2] : string | number | boolean
+  local notBoolean: boolean | nil = mid[2];
+>notBoolean : boolean | nil
+>mid[2] : string | number | boolean | nil
 >mid : { [x: number]: string | number | boolean; 1: number; }
 >2 : 2
 
@@ -353,15 +353,15 @@ function tableTailShapes(...: number): void
 >"s" : "s"
 >... : number | nil
 
-  local both: string | number = mixed[1];
->both : string | number
->mixed[1] : string | number
+  local both: string | number | nil = mixed[1];
+>both : string | number | nil
+>mixed[1] : string | number | nil
 >mixed : { [x: number]: string | number; }
 >1 : 1
 
-  local notJustNumber: number = mixed[1];
->notJustNumber : number
->mixed[1] : string | number
+  local notJustNumber: number | nil = mixed[1];
+>notJustNumber : number | nil
+>mixed[1] : string | number | nil
 >mixed : { [x: number]: string | number; }
 >1 : 1
 

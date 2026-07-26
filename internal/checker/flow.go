@@ -2177,7 +2177,7 @@ func (c *Checker) includeUndefinedInIndexSignature(t *Type) *Type {
 	if t == nil {
 		return nil
 	}
-	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue {
+	if c.compilerOptions.GetNoUncheckedIndexedAccess() {
 		return c.getUnionType([]*Type{t, c.missingType})
 	}
 	return t

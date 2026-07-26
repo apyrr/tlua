@@ -56,16 +56,16 @@ tluaIndexKeyRejected.tlua(21,16): error TLUA100040: A table key cannot be 'nil'.
     // Pattern literal keys remain valid: they denote a set of string keys, not one.
     interface PatternKey { [key: `id-${string}`]: number }
     declare p: PatternKey;
-    local n: number = p["id-1"];
+    local n: number | nil = p["id-1"];
     
     // A literal that arrives through instantiation widens to its domain rather than
     // keying an index nothing can represent: a template key completed by a type argument
     // becomes a string index, and a literal type argument a string one.
     interface Prefixed<T extends string> { [key: `a${T}`]: number }
     declare pre: Prefixed<"x">;
-    local n2: number = pre["ax"];
+    local n2: number | nil = pre["ax"];
     type PK = keyof Prefixed<"x">;
     local pk: PK = "anything";
     declare tl: Table<"a", number>;
-    local n3: number = tl["b"];
+    local n3: number | nil = tl["b"];
     

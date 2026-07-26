@@ -121,9 +121,9 @@ local ix = setmetatable({ n = 1 }, idxMt);
 >1 : 1
 >idxMt : { __index: { [key: string]: number; }; }
 
-local iv: number = ix["anything"];
->iv : number
->ix["anything"] : number
+local iv: number | nil = ix["anything"];
+>iv : number | nil
+>ix["anything"] : number | nil
 >ix : { [key: string]: number; n: number; }
 >"anything" : "anything"
 

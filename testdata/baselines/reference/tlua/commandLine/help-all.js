@@ -158,9 +158,9 @@ type: boolean
 default: false
 
 [94m--noUncheckedIndexedAccess[39m
-Add 'undefined' to a type when accessed using an index.
+Add 'nil' to a type when accessed using an index.
 type: boolean
-default: false
+default: true
 
 [94m--noUnusedLocals[39m
 Enable error reporting when local variables aren't read.

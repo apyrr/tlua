@@ -7,7 +7,7 @@ tluaAmbientOperators.tlua(114,15): error TLUA2365: Operator '+' cannot be applie
 tluaAmbientOperators.tlua(118,18): error TLUA2365: Operator '+' cannot be applied to types '{ __add: number; }' and '{ __add: number; }'.
 tluaAmbientOperators.tlua(125,15): error TLUA2365: Operator '+' cannot be applied to types 'MaybeOps' and 'MaybeOps'.
 tluaAmbientOperators.tlua(129,15): error TLUA2365: Operator '+' cannot be applied to types 'LuaMetatable<{ q: number; }>' and 'LuaMetatable<{ q: number; }>'.
-tluaAmbientOperators.tlua(133,16): error TLUA18048: 'vn' is possibly 'undefined'.
+tluaAmbientOperators.tlua(133,16): error TLUA18048: 'vn' is possibly 'nil'.
 tluaAmbientOperators.tlua(138,14): error TLUA2365: Operator '+' cannot be applied to types 'VMatrix | Vector' and 'VMatrix | Vector'.
 tluaAmbientOperators.tlua(146,15): error TLUA2365: Operator '+' cannot be applied to types 'Short' and 'Short'.
 tluaAmbientOperators.tlua(155,19): error TLUA2349: This expression is not callable.
@@ -170,7 +170,7 @@ tluaAmbientOperators.tlua(170,20): error TLUA2365: Operator '+' cannot be applie
     declare vn: Vector | nil;
     local nilSum = vn + a;
                    ~~
-!!! error TLUA18048: 'vn' is possibly 'undefined'.
+!!! error TLUA18048: 'vn' is possibly 'nil'.
     
     // A union carries no ambient metamethods -- which arm would dispatch is exactly
     // what it does not say -- so the plain operator error stands.

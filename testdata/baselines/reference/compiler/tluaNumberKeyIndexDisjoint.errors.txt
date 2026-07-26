@@ -10,14 +10,14 @@ tluaNumberKeyIndexDisjoint.tlua(22,13): error TLUA7053: Element implicitly has a
       [k: string]: number;
     }
     declare b: Both;
-    local n: string = b[1];    // number index → string
-    local s: number = b["x"];  // string index → number
+    local n: string | nil = b[1];    // number index → string
+    local s: number | nil = b["x"];  // string index → number
     
     // A number index signature serves number-key access.
     interface NumOnly {
       [k: number]: boolean;
     }
-    local nb: boolean = (({} as NumOnly))[0];
+    local nb: boolean | nil = (({} as NumOnly))[0];
     
     // A string-only index does NOT serve number-key access (disjoint).
     interface StrOnly {
@@ -28,7 +28,7 @@ tluaNumberKeyIndexDisjoint.tlua(22,13): error TLUA7053: Element implicitly has a
                 ~~~~~
 !!! error TLUA7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'StrOnly'.
 !!! error TLUA7053:   Property '0' does not exist on type 'StrOnly'.
-    local okStr: boolean = so["x"];
+    local okStr: boolean | nil = so["x"];
     
     // Value-type mismatches between the two signatures are independent, not
     // forced to agree (TS requires the number value assignable to the string
@@ -38,8 +38,8 @@ tluaNumberKeyIndexDisjoint.tlua(22,13): error TLUA7053: Element implicitly has a
       [k: string]: boolean;
     }
     declare m: Mixed;
-    local mn: string = m[0];
-    local ms: boolean = m["x"];
+    local mn: string | nil = m[0];
+    local ms: boolean | nil = m["x"];
     
     local es = {n, s, nb, bad, okStr, mn, ms};
     

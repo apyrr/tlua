@@ -44,13 +44,22 @@ interface Frozen {
 declare frozen: Frozen;
 frozen["a"] = nil;
 
-// Reads are unaffected: the element type has no nil.
-local present: true = loadQueue[ply];
-local count: number = counts["a"];
+// The read is the other half: a key that was never set -- or was just removed -- is
+// nil, so an index read widens to `V | nil`.
+local present: true | nil = loadQueue[ply];
+local count: number | nil = counts["a"];
 
-// A removal does not narrow the later read to nil: the declared value type governs.
+// Which is what makes the presence guard mean something: without the widening the
+// condition would be the literal `true` and narrow nothing.
+local pending = loadQueue[ply];
+if pending then
+    local seen: true = pending;
+end
+
+// A removal does not narrow the later read any further: the declared value type,
+// widened by the read, governs.
 counts["b"] = nil;
-local afterRemoval: number = counts["b"];
+local afterRemoval: number | nil = counts["b"];
 
 // The widened type is the assignment's contextual type, so a nil-bearing union still
 // checks its non-nil constituent.
@@ -111,10 +120,18 @@ named["label"] = nil;
 named.other = nil;
 optional.label = nil;
 frozen["a"] = nil;
--- Reads are unaffected: the element type has no nil.
+-- The read is the other half: a key that was never set -- or was just removed -- is
+-- nil, so an index read widens to `V | nil`.
 local present = loadQueue[ply];
 local count = counts["a"];
--- A removal does not narrow the later read to nil: the declared value type governs.
+-- Which is what makes the presence guard mean something: without the widening the
+-- condition would be the literal `true` and narrow nothing.
+local pending = loadQueue[ply];
+if pending then
+  local seen = pending;
+end
+-- A removal does not narrow the later read any further: the declared value type,
+-- widened by the read, governs.
 counts["b"] = nil;
 local afterRemoval = counts["b"];
 -- The widened type is the assignment's contextual type, so a nil-bearing union still

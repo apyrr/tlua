@@ -17,11 +17,13 @@ function walk(t: string[]): number
   return count;
 end
 
-// A number-key table satisfies T[] and is indexed element-wise.
+// A number-key table satisfies T[] and is indexed element-wise. The read
+// carries nil -- a table has no length the index can be checked against -- so
+// `or` supplies the element that is not there.
 function sum(xs: number[]): number
   local total = 0;
   for i = 1, 3 do
-    total = total + xs[i];
+    total = total + (xs[i] or 0);
   end
   return total;
 end
@@ -29,7 +31,7 @@ end
 // A vararg pack collects into a number-key table with `{...}`.
 function join(sep: string, ...: string): string
   local parts: string[] = {...};
-  return parts[1];
+  return parts[1] or "";
 end
 function forward(a: string, b: string): string
   return join(",", a, b);

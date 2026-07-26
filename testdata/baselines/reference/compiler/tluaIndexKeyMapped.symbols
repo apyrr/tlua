@@ -31,7 +31,7 @@ declare cf: Copy<Flags>;
 >Copy : Symbol(Copy, Decl(tluaIndexKeyMapped.tlua, 6, 42))
 >Flags : Symbol(Flags, Decl(tluaIndexKeyMapped.tlua, 0, 0))
 
-local s1: string = cf[true];
+local s1: string | nil = cf[true];
 >s1 : Symbol(s1, Decl(tluaIndexKeyMapped.tlua, 11, 5))
 >cf : Symbol(cf, Decl(tluaIndexKeyMapped.tlua, 10, 7))
 
@@ -44,14 +44,14 @@ declare pt: Point;
 >pt : Symbol(pt, Decl(tluaIndexKeyMapped.tlua, 13, 7))
 >Point : Symbol(Point, Decl(tluaIndexKeyMapped.tlua, 4, 42))
 
-local s2: string = cb[pt];
+local s2: string | nil = cb[pt];
 >s2 : Symbol(s2, Decl(tluaIndexKeyMapped.tlua, 14, 5))
 >cb : Symbol(cb, Decl(tluaIndexKeyMapped.tlua, 12, 7))
 >pt : Symbol(pt, Decl(tluaIndexKeyMapped.tlua, 13, 7))
 
 // The modifiers still apply.
 type Ro<T> = { readonly [P in keyof T]: T[P] };
->Ro : Symbol(Ro, Decl(tluaIndexKeyMapped.tlua, 14, 26))
+>Ro : Symbol(Ro, Decl(tluaIndexKeyMapped.tlua, 14, 32))
 >T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 17, 8))
 >P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 17, 25))
 >T : Symbol(T, Decl(tluaIndexKeyMapped.tlua, 17, 8))
@@ -60,25 +60,25 @@ type Ro<T> = { readonly [P in keyof T]: T[P] };
 
 declare ro: Ro<Flags>;
 >ro : Symbol(ro, Decl(tluaIndexKeyMapped.tlua, 18, 7))
->Ro : Symbol(Ro, Decl(tluaIndexKeyMapped.tlua, 14, 26))
+>Ro : Symbol(Ro, Decl(tluaIndexKeyMapped.tlua, 14, 32))
 >Flags : Symbol(Flags, Decl(tluaIndexKeyMapped.tlua, 0, 0))
 
-local s3: string = ro[false];
+local s3: string | nil = ro[false];
 >s3 : Symbol(s3, Decl(tluaIndexKeyMapped.tlua, 19, 5))
 >ro : Symbol(ro, Decl(tluaIndexKeyMapped.tlua, 18, 7))
 
 // Mixed domains map together.
 interface Mixed { [key: boolean]: string; named: number }
->Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 29))
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 35))
 >key : Symbol(key, Decl(tluaIndexKeyMapped.tlua, 22, 19))
 >named : Symbol(Mixed.named, Decl(tluaIndexKeyMapped.tlua, 22, 41))
 
 declare cm: Copy<Mixed>;
 >cm : Symbol(cm, Decl(tluaIndexKeyMapped.tlua, 23, 7))
 >Copy : Symbol(Copy, Decl(tluaIndexKeyMapped.tlua, 6, 42))
->Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 29))
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 35))
 
-local s4: string = cm[true];
+local s4: string | nil = cm[true];
 >s4 : Symbol(s4, Decl(tluaIndexKeyMapped.tlua, 24, 5))
 >cm : Symbol(cm, Decl(tluaIndexKeyMapped.tlua, 23, 7))
 
@@ -93,13 +93,13 @@ local n1: number = cm.named;
 type Direct = { [P in keyof Mixed]: number };
 >Direct : Symbol(Direct, Decl(tluaIndexKeyMapped.tlua, 25, 28))
 >P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 29, 17))
->Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 29))
+>Mixed : Symbol(Mixed, Decl(tluaIndexKeyMapped.tlua, 19, 35))
 
 declare dd: Direct;
 >dd : Symbol(dd, Decl(tluaIndexKeyMapped.tlua, 30, 7))
 >Direct : Symbol(Direct, Decl(tluaIndexKeyMapped.tlua, 25, 28))
 
-local n2: number = dd[true];
+local n2: number | nil = dd[true];
 >n2 : Symbol(n2, Decl(tluaIndexKeyMapped.tlua, 31, 5))
 >dd : Symbol(dd, Decl(tluaIndexKeyMapped.tlua, 30, 7))
 
@@ -107,7 +107,7 @@ declare mb: { [P in boolean]: string };
 >mb : Symbol(mb, Decl(tluaIndexKeyMapped.tlua, 32, 7))
 >P : Symbol(P, Decl(tluaIndexKeyMapped.tlua, 32, 15))
 
-local s5: string = mb[false];
+local s5: string | nil = mb[false];
 >s5 : Symbol(s5, Decl(tluaIndexKeyMapped.tlua, 33, 5))
 >mb : Symbol(mb, Decl(tluaIndexKeyMapped.tlua, 32, 7))
 

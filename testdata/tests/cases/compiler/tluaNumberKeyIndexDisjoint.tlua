@@ -8,14 +8,14 @@ interface Both {
   [k: string]: number;
 }
 declare b: Both;
-local n: string = b[1];    // number index → string
-local s: number = b["x"];  // string index → number
+local n: string | nil = b[1];    // number index → string
+local s: number | nil = b["x"];  // string index → number
 
 // A number index signature serves number-key access.
 interface NumOnly {
   [k: number]: boolean;
 }
-local nb: boolean = (({} as NumOnly))[0];
+local nb: boolean | nil = (({} as NumOnly))[0];
 
 // A string-only index does NOT serve number-key access (disjoint).
 interface StrOnly {
@@ -23,7 +23,7 @@ interface StrOnly {
 }
 declare so: StrOnly;
 local bad = so[0]; // error: number key not covered by string index
-local okStr: boolean = so["x"];
+local okStr: boolean | nil = so["x"];
 
 // Value-type mismatches between the two signatures are independent, not
 // forced to agree (TS requires the number value assignable to the string
@@ -33,7 +33,7 @@ interface Mixed {
   [k: string]: boolean;
 }
 declare m: Mixed;
-local mn: string = m[0];
-local ms: boolean = m["x"];
+local mn: string | nil = m[0];
+local ms: boolean | nil = m["x"];
 
 local es = {n, s, nb, bad, okStr, mn, ms};

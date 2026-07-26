@@ -123,7 +123,7 @@ function tableTailShapes(...: number): void
   // wherever the rest ends -- so it joins the number index type instead of
   // claiming index 2.
   local mid = {midRest()};
-  local notBoolean: boolean = mid[2];
+  local notBoolean: boolean | nil = mid[2];
 
   // An optional pack element may be absent, so the property it produces is
   // optional and its type carries nil.
@@ -133,8 +133,8 @@ function tableTailShapes(...: number): void
   // A computed number key and a pack tail share the number index domain: one
   // signature covers both, so neither hides the other.
   local mixed = { [key] = "s", ... };
-  local both: string | number = mixed[1];
-  local notJustNumber: number = mixed[1];
+  local both: string | number | nil = mixed[1];
+  local notJustNumber: number | nil = mixed[1];
 end
 
 // A union of packs is only reachable by INFERENCE. The annotation form does not

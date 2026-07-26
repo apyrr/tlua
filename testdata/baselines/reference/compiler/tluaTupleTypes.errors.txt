@@ -25,9 +25,15 @@ tluaTupleTypes.tlua(75,7): error TLUA2322: Type '[number, number, number]' is no
   Type '[number, number, number]' is not assignable to type '[number, number]'.
     Source has 3 element(s) but target allows only 2.
 tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify known properties, and '3' does not exist in type 'SparseU'.
+tluaTupleTypes.tlua(140,3): error TLUA2322: Type 'string | number | nil' is not assignable to type 'string | number'.
+  Type 'nil' is not assignable to type 'string | number'.
+tluaTupleTypes.tlua(143,12): error TLUA2514: A tuple type cannot be indexed with a negative value.
+tluaTupleTypes.tlua(146,12): error TLUA2339: Property '1.5' does not exist on type '[string, ...T]'.
+tluaTupleTypes.tlua(149,12): error TLUA2514: A tuple type cannot be indexed with a negative value.
+tluaTupleTypes.tlua(152,12): error TLUA2514: A tuple type cannot be indexed with a negative value.
 
 
-==== tluaTupleTypes.tlua (21 errors) ====
+==== tluaTupleTypes.tlua (26 errors) ====
     // Tuple types `[A, B]` in .tlua source: a fixed-shape table whose elements
     // live at the 1-based Lua sequence keys. Values are ordinary table
     // constructors; arity and element types check positionally.
@@ -198,4 +204,47 @@ tluaTupleTypes.tlua(85,34): error TLUA2353: Object literal may only specify know
     
     // A tuple in a union context still forces the tuple literal path.
     local u: [number] | [string, string] = {"a", "b"};
+    
+    // A variadic tail makes the tuple generic when it is a type parameter, but the fixed
+    // prefix in front of it is still addressed by key: keys are 1-based, so the prefix runs
+    // 1..fixedLength inclusive and the last of them is an element, not part of the tail.
+    function fixedBeforeVariadic<T extends number[]>(t: [string, boolean, ...T]): void
+      local head: string = t[1];
+      local last: boolean = t[2];
+      useTuple(head, last);
+    end
+    declare function useTuple(a: unknown, b: unknown): void;
+    
+    // A dynamic read from the variable part remains possibly absent after the deferred
+    // generic tuple access simplifies. Non-element keys still report their normal errors
+    // instead of being mistaken for a read from the variadic tail.
+    function readGenericTuple<T extends number[]>(t: [string, ...T], key: number): string | number | nil
+      return t[key];
+    end
+    function readGenericTupleUnsafe<T extends number[]>(t: [string, ...T], key: number): string | number
+      return t[key];
+      ~~~~~~
+!!! error TLUA2322: Type 'string | number | nil' is not assignable to type 'string | number'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string | number'.
+    end
+    function readNegativeGenericTuple<T extends number[]>(t: [string, ...T]): nil
+      return t[-1];
+               ~~
+!!! error TLUA2514: A tuple type cannot be indexed with a negative value.
+    end
+    function readFractionalGenericTuple<T extends number[]>(t: [string, ...T]): string | number | nil
+      return t[1.5];
+               ~~~
+!!! error TLUA2339: Property '1.5' does not exist on type '[string, ...T]'.
+    end
+    function readMixedGenericTuple<T extends number[]>(t: [string, ...T], key: -1 | 2): string | number | nil
+      return t[key];
+               ~~~
+!!! error TLUA2514: A tuple type cannot be indexed with a negative value.
+    end
+    function readConstrainedMixedGenericTuple<T extends number[], K extends -1 | 2>(t: [string, ...T], key: K): string | number | nil
+      return t[key];
+               ~~~
+!!! error TLUA2514: A tuple type cannot be indexed with a negative value.
+    end
     
