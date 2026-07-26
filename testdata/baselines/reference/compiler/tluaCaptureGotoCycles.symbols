@@ -1,0 +1,299 @@
+//// [tests/cases/compiler/tluaCaptureGotoCycles.tlua] ////
+
+=== tluaCaptureGotoCycles.tlua ===
+// A backward goto re-runs everything between its label and itself, so an assignment inside that
+// span poisons capture narrowing to the goto's end -- the same rule a while body already gets.
+// Without it, a closure created after the nil guard could be called on the next pass, after the
+// reassignment and before the guard, and hand out the nil the narrowing promised away.
+
+declare function maybeName(): string | nil;
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+declare function cond(): boolean;
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+// A function declaration created inside the cycle reads the declared type.
+function declarationInCycle(): void
+>declarationInCycle : Symbol(declarationInCycle, Decl(tluaCaptureGotoCycles.tlua, 6, 33))
+
+  local name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 10, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  local saved: (() => string) | nil = nil;
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 11, 7))
+
+  ::top::
+  name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 10, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  if saved ~= nil then
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 11, 7))
+
+    local s: string = saved();
+>s : Symbol(s, Decl(tluaCaptureGotoCycles.tlua, 15, 9))
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 11, 7))
+
+  end
+  if name == nil then
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 10, 7))
+
+    name = "anon";
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 10, 7))
+
+  end
+  function greet(): string
+>greet : Symbol(greet, Decl(tluaCaptureGotoCycles.tlua, 19, 5))
+
+    return name;              // error: the goto re-opens the nil arm
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 10, 7))
+
+  end
+  saved = greet;
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 11, 7))
+>greet : Symbol(greet, Decl(tluaCaptureGotoCycles.tlua, 19, 5))
+
+  if cond() then
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    goto top;
+  end
+end
+
+// A function expression gets the same suppression.
+function expressionInCycle(): void
+>expressionInCycle : Symbol(expressionInCycle, Decl(tluaCaptureGotoCycles.tlua, 27, 3))
+
+  local name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 31, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  local saved: (() => string) | nil = nil;
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 32, 7))
+
+  ::top::
+  name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 31, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  if saved ~= nil then
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 32, 7))
+
+    local s: string = saved();
+>s : Symbol(s, Decl(tluaCaptureGotoCycles.tlua, 36, 9))
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 32, 7))
+
+  end
+  if name == nil then
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 31, 7))
+
+    name = "anon";
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 31, 7))
+
+  end
+  saved = function(): string
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 32, 7))
+
+    return name;              // error: same cycle, same rule
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 31, 7))
+
+  end;
+  if cond() then
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    goto top;
+  end
+end
+
+// The syntactic loop keeps its own, older extension.
+function whileLoop(): void
+>whileLoop : Symbol(whileLoop, Decl(tluaCaptureGotoCycles.tlua, 47, 3))
+
+  local name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 51, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  local saved: (() => string) | nil = nil;
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 52, 7))
+
+  while cond() do
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 51, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+    if name == nil then
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 51, 7))
+
+      name = "anon";
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 51, 7))
+
+    end
+    saved = function(): string
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 52, 7))
+
+      return name;            // error: the loop body extension
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 51, 7))
+
+    end;
+  end
+end
+
+// A local declared inside the cycle is a fresh binding on every pass: the one a closure
+// captured is never assigned again, so its narrowing stands.
+function freshBindingInCycle(): void
+>freshBindingInCycle : Symbol(freshBindingInCycle, Decl(tluaCaptureGotoCycles.tlua, 62, 3))
+
+  local saved: (() => string) | nil = nil;
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 67, 7))
+
+  ::top::
+  local name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 69, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  if saved ~= nil then
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 67, 7))
+
+    local s: string = saved();
+>s : Symbol(s, Decl(tluaCaptureGotoCycles.tlua, 71, 9))
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 67, 7))
+
+  end
+  if name == nil then
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 69, 7))
+
+    name = "anon";
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 69, 7))
+
+  end
+  saved = function(): string
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 67, 7))
+
+    return name;              // fine: this pass's binding is done being assigned
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 69, 7))
+
+  end;
+  if cond() then
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    goto top;
+  end
+end
+
+// A forward goto re-enters nothing, so it suppresses nothing.
+function forwardOnly(): void
+>forwardOnly : Symbol(forwardOnly, Decl(tluaCaptureGotoCycles.tlua, 82, 3))
+
+  local name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 86, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  if cond() then
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    goto done;
+  end
+  if name == nil then
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 86, 7))
+
+    name = "anon";
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 86, 7))
+
+  end
+  function g(): string
+>g : Symbol(g, Decl(tluaCaptureGotoCycles.tlua, 92, 5))
+
+    return name;              // fine: only reachable through the guard
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 86, 7))
+
+  end
+  ::done::
+end
+
+// A same-named label in a block the goto cannot see does not stand in for the real target:
+// the goto resolves to the outer ::top::, whose cycle re-runs the assignment.
+function shadowedLabel(): void
+>shadowedLabel : Symbol(shadowedLabel, Decl(tluaCaptureGotoCycles.tlua, 97, 3))
+
+  if cond() then
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    ::top::                  // scoped to this then-block; invisible to the goto below
+  end
+  local name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 105, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  local saved: (() => string) | nil = nil;
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 106, 7))
+
+  ::top::
+  name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 105, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  if saved ~= nil then
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 106, 7))
+
+    local s: string = saved();
+>s : Symbol(s, Decl(tluaCaptureGotoCycles.tlua, 110, 9))
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 106, 7))
+
+  end
+  if name == nil then
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 105, 7))
+
+    name = "anon";
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 105, 7))
+
+  end
+  saved = function(): string
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 106, 7))
+
+    return name;             // error: the outer label's cycle re-opens the nil arm
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 105, 7))
+
+  end;
+  if cond() then
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    goto top;
+  end
+end
+
+// Assignments wholly before the label are not re-run by the jump.
+function beforeLabel(): void
+>beforeLabel : Symbol(beforeLabel, Decl(tluaCaptureGotoCycles.tlua, 121, 3))
+
+  local name = maybeName();
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 125, 7))
+>maybeName : Symbol(maybeName, Decl(tluaCaptureGotoCycles.tlua, 0, 0))
+
+  if name == nil then
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 125, 7))
+
+    name = "anon";
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 125, 7))
+
+  end
+  local saved: (() => string) | nil = nil;
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 129, 7))
+
+  ::top::
+  saved = function(): string
+>saved : Symbol(saved, Decl(tluaCaptureGotoCycles.tlua, 129, 7))
+
+    return name;              // fine: the cycle never assigns name
+>name : Symbol(name, Decl(tluaCaptureGotoCycles.tlua, 125, 7))
+
+  end;
+  if cond() then
+>cond : Symbol(cond, Decl(tluaCaptureGotoCycles.tlua, 5, 43))
+
+    goto top;
+  end
+end
+

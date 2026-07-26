@@ -1,0 +1,143 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A backward goto re-runs everything between its label and itself, so an assignment inside that
+// span poisons capture narrowing to the goto's end -- the same rule a while body already gets.
+// Without it, a closure created after the nil guard could be called on the next pass, after the
+// reassignment and before the guard, and hand out the nil the narrowing promised away.
+
+declare function maybeName(): string | nil;
+declare function cond(): boolean;
+
+// A function declaration created inside the cycle reads the declared type.
+function declarationInCycle(): void
+  local name = maybeName();
+  local saved: (() => string) | nil = nil;
+  ::top::
+  name = maybeName();
+  if saved ~= nil then
+    local s: string = saved();
+  end
+  if name == nil then
+    name = "anon";
+  end
+  function greet(): string
+    return name;              // error: the goto re-opens the nil arm
+  end
+  saved = greet;
+  if cond() then
+    goto top;
+  end
+end
+
+// A function expression gets the same suppression.
+function expressionInCycle(): void
+  local name = maybeName();
+  local saved: (() => string) | nil = nil;
+  ::top::
+  name = maybeName();
+  if saved ~= nil then
+    local s: string = saved();
+  end
+  if name == nil then
+    name = "anon";
+  end
+  saved = function(): string
+    return name;              // error: same cycle, same rule
+  end;
+  if cond() then
+    goto top;
+  end
+end
+
+// The syntactic loop keeps its own, older extension.
+function whileLoop(): void
+  local name = maybeName();
+  local saved: (() => string) | nil = nil;
+  while cond() do
+    name = maybeName();
+    if name == nil then
+      name = "anon";
+    end
+    saved = function(): string
+      return name;            // error: the loop body extension
+    end;
+  end
+end
+
+// A local declared inside the cycle is a fresh binding on every pass: the one a closure
+// captured is never assigned again, so its narrowing stands.
+function freshBindingInCycle(): void
+  local saved: (() => string) | nil = nil;
+  ::top::
+  local name = maybeName();
+  if saved ~= nil then
+    local s: string = saved();
+  end
+  if name == nil then
+    name = "anon";
+  end
+  saved = function(): string
+    return name;              // fine: this pass's binding is done being assigned
+  end;
+  if cond() then
+    goto top;
+  end
+end
+
+// A forward goto re-enters nothing, so it suppresses nothing.
+function forwardOnly(): void
+  local name = maybeName();
+  if cond() then
+    goto done;
+  end
+  if name == nil then
+    name = "anon";
+  end
+  function g(): string
+    return name;              // fine: only reachable through the guard
+  end
+  ::done::
+end
+
+// A same-named label in a block the goto cannot see does not stand in for the real target:
+// the goto resolves to the outer ::top::, whose cycle re-runs the assignment.
+function shadowedLabel(): void
+  if cond() then
+    ::top::                  // scoped to this then-block; invisible to the goto below
+  end
+  local name = maybeName();
+  local saved: (() => string) | nil = nil;
+  ::top::
+  name = maybeName();
+  if saved ~= nil then
+    local s: string = saved();
+  end
+  if name == nil then
+    name = "anon";
+  end
+  saved = function(): string
+    return name;             // error: the outer label's cycle re-opens the nil arm
+  end;
+  if cond() then
+    goto top;
+  end
+end
+
+// Assignments wholly before the label are not re-run by the jump.
+function beforeLabel(): void
+  local name = maybeName();
+  if name == nil then
+    name = "anon";
+  end
+  local saved: (() => string) | nil = nil;
+  ::top::
+  saved = function(): string
+    return name;              // fine: the cycle never assigns name
+  end;
+  if cond() then
+    goto top;
+  end
+end

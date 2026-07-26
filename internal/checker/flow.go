@@ -2430,13 +2430,67 @@ func (c *Checker) getLuaWriteTarget(node *ast.Node) (AssignmentKind, *ast.Symbol
 // declaration node.
 func (c *Checker) extendAssignmentPosition(node *ast.Node, declaration *ast.Node) int {
 	pos := node.Pos()
-	for node != nil && node.Pos() > declaration.Pos() {
-		switch node.Kind {
+	for n := node; n != nil && n.Pos() > declaration.Pos(); n = n.Parent {
+		switch n.Kind {
 		case ast.KindVariableStatement, ast.KindExpressionStatement, ast.KindIfStatement, ast.KindWhileStatement,
 			ast.KindForOfStatement, ast.KindNumericForStatement, ast.KindRepeatStatement:
-			pos = node.End()
+			pos = n.End()
 		}
-		node = node.Parent
+	}
+	// A backward goto re-runs everything between its label and itself, so an assignment inside
+	// that span extends to the goto's end, exactly as one inside a while body extends to the
+	// loop's end above. A span whose label follows the declaration is skipped: jumping back past
+	// a local leaves its scope, so each pass makes a fresh binding and the one a closure captured
+	// is never assigned again. Extending can land the position inside a later span, so iterate to
+	// a fixed point.
+	if fn := ast.FindAncestor(node, ast.IsFunctionOrSourceFile); fn != nil {
+		spans := c.luaBackwardGotoRanges(fn)
+		for changed := true; changed; {
+			changed = false
+			for _, span := range spans {
+				if declaration.Pos() < span.labelPos && span.labelPos <= pos && pos < span.end {
+					pos = span.end
+					changed = true
+				}
+			}
+		}
 	}
 	return pos
+}
+
+// luaBackwardGotoRange is the statement span a backward goto re-enters: from its label's
+// position to the goto's own end.
+type luaBackwardGotoRange struct {
+	labelPos int
+	end      int
+}
+
+// luaBackwardGotoRanges returns the spans of the backward gotos in fn's own body, nested
+// functions excluded -- a goto cannot cross a function boundary. Each goto resolves to its
+// label through FindTargetLabel, the one resolution walk, so a same-named label in a block
+// the goto cannot see never stands in for the real target.
+func (c *Checker) luaBackwardGotoRanges(fn *ast.Node) []luaBackwardGotoRange {
+	if spans, ok := c.luaBackwardGotoRangeCache[fn]; ok {
+		return spans
+	}
+	var spans []luaBackwardGotoRange
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if node.Kind == ast.KindGotoStatement {
+			if target := ast.FindTargetLabel(node, node.AsGotoStatement().Label.Text()); target != nil && target.Pos() < node.Pos() {
+				spans = append(spans, luaBackwardGotoRange{labelPos: target.Pos(), end: node.End()})
+			}
+			return false
+		}
+		if ast.IsFunctionLike(node) || ast.IsTypeNode(node) {
+			return false
+		}
+		return node.ForEachChild(visit)
+	}
+	fn.ForEachChild(visit)
+	if c.luaBackwardGotoRangeCache == nil {
+		c.luaBackwardGotoRangeCache = make(map[*ast.Node][]luaBackwardGotoRange)
+	}
+	c.luaBackwardGotoRangeCache[fn] = spans
+	return spans
 }

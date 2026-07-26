@@ -605,6 +605,7 @@ type Checker struct {
 	tupleTypes                     map[CacheHashKey]*Type
 	metatableTypes                 map[MetatableTypeKey]*Type
 	luaSetmetatableFlowStack       []*ast.Node
+	luaBackwardGotoRangeCache      map[*ast.Node][]luaBackwardGotoRange
 	unionTypes                     map[CacheHashKey]*Type
 	unionOfUnionTypes              map[UnionOfUnionKey]*Type
 	intersectionTypes              map[CacheHashKey]*Type
