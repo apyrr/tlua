@@ -34,10 +34,19 @@ func (c *Checker) getLuaAugmentationInitializerTypeEx(assignment luaAugmentation
 	binary := assignment.Source.AsBinaryExpression()
 	if initializer := luaExplicitAssignmentValueAt(binary.Right, assignment.ValueIndex); initializer != nil {
 		if defaulted := c.luaDefaultedAugmentationInitializer(assignment.Target, initializer); defaulted != initializer {
+			// The default's contribution never consults the resolving stack, so
+			// it is the same for every snapshot that includes this store. Every
+			// other store's ordered snapshot re-checks it (the cross-file
+			// `X = X or {}` idiom makes that quadratic), so memoize per target.
+			if cached, ok := c.luaDefaultedInitializerTypes[assignment.Target]; ok {
+				return cached
+			}
 			t := c.checkExpressionWithContextualType(defaulted, nil, nil, CheckModeNormal)
 			t = c.packElementForIndex(t, 0)
 			t = c.getWidenedLiteralLikeTypeForContextualType(t, nil)
-			return c.finalizeLuaAugmentationInitializerType(assignment, defaulted, t)
+			result := c.finalizeLuaAugmentationInitializerType(assignment, defaulted, t)
+			c.luaDefaultedInitializerTypes[assignment.Target] = result
+			return result
 		}
 		if t, ok := c.getLuaCapturedSnapshotValueType(assignment, initializer, resolving); ok {
 			return c.finalizeLuaAugmentationInitializerType(assignment, initializer, t)
@@ -157,14 +166,13 @@ func (c *Checker) getLuaAugmentationSnapshotType(symbol *ast.Symbol, source *ast
 }
 
 // getLuaSelfReadSnapshotType projects a reference that reads its own store's
-// target while that target's declared type is still resolving. The statement
-// captures its whole value list before storing any of it, so the read sees the
-// pre-store snapshot — what the other stores install — rather than re-entering
-// its own resolution and reporting a false circularity. The whole-value
-// capture and the exact defaulted guard already sidestep such reads without
-// checking them; this covers a self-read nested anywhere else in the value,
-// such as `a = (a or 0) + 1`. A resolved target keeps the ordinary flow path,
-// which respects statement order.
+// target, whether or not that target's declared type has resolved. The
+// statement captures its whole value list before storing any of it, so the
+// read sees the pre-store snapshot — what the other stores install — rather
+// than re-entering its own resolution and reporting a false circularity. The
+// whole-value capture and the exact defaulted guard already sidestep such
+// reads without checking them; this covers a self-read nested anywhere else
+// in the value, such as `a = (a or 0) + 1`.
 //
 // The snapshot itself is statement-ordered: only stores that can have executed
 // before this one contribute, and nil stays in the union unless one of them
@@ -200,6 +208,13 @@ func (c *Checker) getLuaSelfReadSnapshotType(reference *ast.Node, symbol *ast.Sy
 	// snapshot.
 	snapshot, ok := c.getLuaOrderedSelfSnapshotType(merged, source, c.luaSnapshotResolving)
 	if ok {
+		// Computing the snapshot can re-enter this reference (a prior store's
+		// contribution may re-check this store's own value list) and freeze a
+		// mid-cycle answer; that first answer wins, or the invariant above is
+		// a lie.
+		if cached, exists := c.luaSelfReadSnapshotTypes[reference]; exists {
+			return cached, true
+		}
 		c.luaSelfReadSnapshotTypes[reference] = snapshot
 	}
 	return snapshot, ok
@@ -220,6 +235,21 @@ func (c *Checker) getLuaOrderedSelfSnapshotType(symbol *ast.Symbol, source *ast.
 		// A cycle wholly predating this transaction has no more precise snapshot.
 		return c.anyType, true
 	}
+	// The memo serves only computations entered with nothing else mid-flight —
+	// on both sides. A nested computation's answer depends on which keys sit
+	// on the stack above it, so writing one would freeze that stack's view as
+	// this checker's answer for every later caller, and reading under a stack
+	// would hand a nested computation the canonical answer only when some
+	// earlier read happened to warm it — a check-order dependence of exactly
+	// the kind this path exists to avoid. Cold entries dominate — without the
+	// memo, every reference in every store of the cross-file `X = X or {}`
+	// idiom rebuilds the whole ordered union.
+	cold := len(resolving) == 0
+	if cold {
+		if cached, ok := c.luaOrderedSelfSnapshots[key]; ok {
+			return cached, true
+		}
+	}
 	resolving[key] = true
 	defer delete(resolving, key)
 
@@ -231,12 +261,19 @@ func (c *Checker) getLuaOrderedSelfSnapshotType(symbol *ast.Symbol, source *ast.
 		types = core.AppendIfUnique(types, c.nilType)
 	}
 	if len(types) == 0 {
-		if implicit {
-			return c.nilType, true
+		if !implicit {
+			return nil, false
 		}
-		return nil, false
+		if cold {
+			c.luaOrderedSelfSnapshots[key] = c.nilType
+		}
+		return c.nilType, true
 	}
-	return c.getWidenedType(c.getUnionType(types)), true
+	t := c.getWidenedType(c.getUnionType(types))
+	if cold {
+		c.luaOrderedSelfSnapshots[key] = t
+	}
+	return t, true
 }
 
 // luaStoresBeforeSelfRead filters symbol's stores down to those that can have

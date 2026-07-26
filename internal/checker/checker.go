@@ -588,6 +588,8 @@ type Checker struct {
 	luaAssignmentAugmentations             map[*ast.Symbol][]luaAugmentation
 	luaSnapshotResolving                   map[luaSnapshotKey]bool
 	luaSelfReadSnapshotTypes               map[*ast.Node]*Type
+	luaOrderedSelfSnapshots                map[luaSnapshotKey]*Type
+	luaDefaultedInitializerTypes           map[*ast.Node]*Type
 	luaAugmentationTargets                 map[*ast.Node]*ast.Symbol
 	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
 	luaAugmentationMemberArms              map[*ast.Symbol][]*ast.Symbol
@@ -904,6 +906,8 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.luaAssignmentAugmentations = make(map[*ast.Symbol][]luaAugmentation)
 	c.luaSnapshotResolving = make(map[luaSnapshotKey]bool)
 	c.luaSelfReadSnapshotTypes = make(map[*ast.Node]*Type)
+	c.luaOrderedSelfSnapshots = make(map[luaSnapshotKey]*Type)
+	c.luaDefaultedInitializerTypes = make(map[*ast.Node]*Type)
 	c.luaStableAccessKeys = make(map[*ast.Node]luaStableAccessKeyResult)
 	c.luaAugmentationTargets = make(map[*ast.Node]*ast.Symbol)
 	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
@@ -6114,8 +6118,8 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 			core.IfElse(c.isGenericObjectType(objectType) && !isSelfTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
 	}
 	// A member read inside its own store's value list resolves against the
-	// pre-store snapshot while the member's declared type is still being
-	// inferred; see getLuaSelfReadSnapshotType. A literal key names the same
+	// pre-store snapshot, resolved member or not; see
+	// getLuaSelfReadSnapshotType. A literal key names the same
 	// property either spelling reads, so `t[1] = (t[1] or 0) + 1` types like
 	// its dot-access equivalent — including the flow facts at the reference,
 	// which the sibling identifier and dot-access hooks also apply.
@@ -8332,8 +8336,8 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 		return c.nonInferrableAnyType
 	}
 	// A read of the target inside its own store's value list resolves against
-	// the pre-store snapshot while the target's declared type is still being
-	// inferred, so `a = (a or 0) + 1` types instead of reporting circularity.
+	// the pre-store snapshot, resolved target or not, so `a = (a or 0) + 1`
+	// types instead of reporting circularity and every check order agrees.
 	// The snapshot still narrows through the flow facts at the reference, so a
 	// guard like `if a ~= nil then a = a + 1 end` removes the snapshot's nil.
 	if snapshot, ok := c.getLuaSelfReadSnapshotType(node, localOrExportSymbol); ok {
@@ -8421,8 +8425,10 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 	assumeInitialized := isParameter ||
 		isAlias ||
 		(isOuterVariable && !isNeverInitialized) ||
+		// A self-store read never reaches here: getLuaSelfReadSnapshotType's
+		// hook above already returned for it, and its snapshot carries the
+		// used-before-assigned answer as a possibly-nil type instead.
 		c.isLuaDefaultedGuardReference(node) ||
-		c.isLuaSelfStoreRead(node, localOrExportSymbol) ||
 		isModuleExports ||
 		c.isSameScopedBindingElement(node, declaration) ||
 		t != c.autoType && t != c.autoArrayType && (t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid) != 0 || IsInTypeQuery(node) || c.isInAmbientOrTypeNode(node) || node.Parent.Kind == ast.KindExportSpecifier) ||
@@ -8646,8 +8652,8 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 			propType = c.getWriteTypeOfSymbol(prop)
 		default:
 			// A member read inside its own store's value list resolves against
-			// the pre-store snapshot while the member's declared type is still
-			// being inferred; see getLuaSelfReadSnapshotType. Flow facts at the
+			// the pre-store snapshot, resolved member or not; see
+			// getLuaSelfReadSnapshotType. Flow facts at the
 			// reference still narrow the snapshot.
 			if snapshot, ok := c.getLuaSelfReadSnapshotType(node, prop); ok {
 				return c.getFlowTypeOfReference(node, snapshot)
