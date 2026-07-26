@@ -35,36 +35,36 @@ tluaColonCallArityMessages.tlua(59,33): error TLUA100037: Expected at most 2 arg
     text:sub();
          ~~~
 !!! error TLUA2554: Expected 1-2 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:273:23: An argument for 'i' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:275:23: An argument for 'i' was not provided.
     
     // The dot form writes its receiver, so counting it is correct there -- these
     // messages must NOT shift.
     text.upper();
          ~~~~~
 !!! error TLUA2554: Expected 1 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:274:11: An argument for 'self' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:276:11: An argument for 'self' was not provided.
     text.sub(text);
          ~~~
 !!! error TLUA2554: Expected 2-3 arguments, but got 1.
-!!! related TLUA6210 lib.luajit.d.tlua:273:23: An argument for 'i' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:275:23: An argument for 'i' was not provided.
     
     // The namespace form never had a receiver to hide.
     local nsPiece: string = string.sub(text, 1, 5);
     string.sub(text);
            ~~~
 !!! error TLUA2554: Expected 2-3 arguments, but got 1.
-!!! related TLUA6210 lib.luajit.d.tlua:290:24: An argument for 'i' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:292:24: An argument for 'i' was not provided.
     
     declare buffer: LuaStringBuffer;
     // A rest parameter reports a minimum, and the receiver comes out of that too.
     buffer:put();
            ~~~
 !!! error TLUA2555: Expected at least 1 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:613:32: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:615:32: An argument for 'value' was not provided.
     buffer.put(buffer);
            ~~~
 !!! error TLUA2555: Expected at least 2 arguments, but got 1.
-!!! related TLUA6210 lib.luajit.d.tlua:613:32: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:615:32: An argument for 'value' was not provided.
     
     // string.format checks arity against the format string's specifiers, on its
     // own path -- the receiver has to come out of both counts there as well.

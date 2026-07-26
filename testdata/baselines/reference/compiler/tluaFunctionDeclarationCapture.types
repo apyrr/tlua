@@ -1,0 +1,165 @@
+//// [tests/cases/compiler/tluaFunctionDeclarationCapture.tlua] ////
+
+=== tluaFunctionDeclarationCapture.tlua ===
+// A Lua function statement is an ordered assignment, not a hoisted binding, so narrowing of a
+// closed-over variable flows into a function declaration's body exactly as it flows into a
+// function expression's: the closure cannot run before the statements above it.
+
+declare function maybeName(): string | nil;
+>maybeName : () => string | nil
+
+// A narrowed capture reaches a later function declaration.
+local name = maybeName();
+>name : string | nil
+>maybeName() : string | nil
+>maybeName : () => string | nil
+
+if name == nil then
+>name == nil : boolean
+>name : string | nil
+
+  name = "anon";
+>name = "anon" : "anon"
+>name : string | nil
+>"anon" : "anon"
+
+end
+function greet(): string
+>greet : () => string
+
+  return name;              // string -- the nil arm was closed above
+>name : string
+
+end
+
+// The same through a local function.
+local function greetLocal(): string
+>greetLocal : () => string
+
+  return name;
+>name : string
+
+end
+
+// And through a dotted target.
+local M = {};
+>M : { greet(): string; }
+>{} : { greet(): string; }
+
+function M.greet(): string
+>M : { greet(): string; }
+>greet : () => string
+
+  return name;
+>name : string
+
+end
+
+// A setmetatable pairing reaches a later function declaration too.
+local mt = { __index = { describe = function(self: table): string return "d"; end } };
+>mt : { __index: { describe: (self: table) => string; }; }
+>{ __index = { describe = function(self: table): string return "d"; end } } : { __index: { describe: (self: table) => string; }; }
+>__index : { describe: (self: table) => string; }
+>{ describe = function(self: table): string return "d"; end } : { describe: (self: table) => string; }
+>describe : (self: table) => string
+>function(self: table): string return "d"; end : (self: table) => string
+>self : table
+>"d" : "d"
+
+local t = { n = 1 };
+>t : { n: number; }
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+setmetatable(t, mt);
+>setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>t : { n: number; }
+>mt : { __index: { describe: (self: table) => string; }; }
+
+function useT(): string
+>useT : () => string
+
+  return t.describe(t);
+>t.describe(t) : string
+>t.describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>t : { describe: (self: table) => string; n: number; }
+
+end
+
+// A bare `function f` over an existing binding stores the closure before the body can run:
+// a self-reference sees the assigned function, never the pre-store narrowing, and reads
+// after the statement narrow exactly like `f = function`.
+local fn: (() => void) | nil = nil;
+>fn : (() => void) | nil
+
+function fn(): void
+>fn : () => void
+
+  local self: () => void = fn;
+>self : () => void
+>fn : () => void
+
+end
+local afterStore: () => void = fn;
+>afterStore : () => void
+>fn : () => void
+
+// A declaration placed before the narrowing sees the wide antecedent: the closure's flow
+// continues at the statement's own position, which precedes the guard.
+local early = maybeName();
+>early : string | nil
+>maybeName() : string | nil
+>maybeName : () => string | nil
+
+function tooEarly(): string
+>tooEarly : () => string
+
+  return early;             // error: still string | nil here
+>early : string | nil
+
+end
+if early == nil then
+>early == nil : boolean
+>early : string | nil
+
+  early = "anon";
+>early = "anon" : "anon"
+>early : string | nil
+>"anon" : "anon"
+
+end
+
+// A later reassignment widens the capture back out: the reference is no longer past the last
+// assignment, so the closure reads the declared type.
+local reassigned = maybeName();
+>reassigned : string | nil
+>maybeName() : string | nil
+>maybeName : () => string | nil
+
+if reassigned == nil then
+>reassigned == nil : boolean
+>reassigned : string | nil
+
+  reassigned = "anon";
+>reassigned = "anon" : "anon"
+>reassigned : string | nil
+>"anon" : "anon"
+
+end
+function readReassigned(): string
+>readReassigned : () => string
+
+  return reassigned;        // error: the assignment below reopens the nil arm
+>reassigned : string | nil
+
+end
+reassigned = maybeName();
+>reassigned = maybeName() : string | nil
+>reassigned : string | nil
+>maybeName() : string | nil
+>maybeName : () => string | nil
+

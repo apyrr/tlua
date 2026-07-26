@@ -630,6 +630,10 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindMethodSignature:
 		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|getOptionalSymbolFlagForNode(node), ast.SymbolFlagsMethodExcludes)
 	case ast.KindFunctionDeclaration:
+		// A Lua function statement executes in order -- it is an assignment, not a hoisted
+		// binding -- so it records the flow at its position the way a function expression
+		// does: control flow analysis of a closed-over variable continues from here.
+		setFlowNode(node, b.currentFlow)
 		switch {
 		case ast.IsLuaLocal(node):
 			b.bindLuaLocalFunctionDeclaration(node)
@@ -1333,7 +1337,10 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		if !isImmediatelyInvoked {
 			flowStart := b.newFlowNode(ast.FlowFlagsStart)
 			b.currentFlow = flowStart
-			if containerFlags&ContainerFlagsIsFunctionExpression != 0 {
+			// Function declarations carry their start node too: a Lua function statement is
+			// an ordered assignment, so a flow walk may continue past its start into the
+			// enclosing graph exactly as it does for a function expression.
+			if containerFlags&ContainerFlagsIsFunctionExpression != 0 || ast.IsFunctionDeclaration(node) {
 				flowStart.Node = node
 			}
 		}
@@ -1615,12 +1622,26 @@ func (b *Binder) stampLuaHoistedFunctionFlow(node *ast.Node) {
 	}
 	target := node.AsFunctionDeclaration().Target
 	b.stampLuaReferenceFlow(target)
-	setFlowNode(node, b.currentFlow)
-	if target != nil && node.Body() != nil && node.Flags&ast.NodeFlagsAmbient == 0 {
-		// `function t.m()` is runtime sugar for assigning a function value, so
-		// later reads narrow exactly like `t.m = function`.
+	writes := node.Body() != nil && node.Flags&ast.NodeFlagsAmbient == 0
+	if target != nil {
+		setFlowNode(node, b.currentFlow)
+		if writes {
+			// `function t.m()` is runtime sugar for assigning a function value, so
+			// later reads narrow exactly like `t.m = function`. The node keeps the
+			// pre-store flow: a body's read of the receiver is a property access,
+			// which never continues through the function's flow start.
+			b.currentFlow = b.createFlowMutation(ast.FlowFlagsAssignment, b.currentFlow, node)
+		}
+		return
+	}
+	// Bare `function f` stores the closure into f before the body can run, so the
+	// store precedes the recorded flow: a self-reference in the body sees the
+	// assigned function, never a pre-store narrowing of the binding it overwrote,
+	// and later reads narrow exactly like `f = function`.
+	if writes {
 		b.currentFlow = b.createFlowMutation(ast.FlowFlagsAssignment, b.currentFlow, node)
 	}
+	setFlowNode(node, b.currentFlow)
 }
 
 // Dotted functions are hoisted for symbol binding but execute in source order.

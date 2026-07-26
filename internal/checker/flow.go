@@ -181,8 +181,12 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 			// Check if we should continue with the control flow of the containing function.
 			container := flow.Node
 			if container != nil && container != f.flowContainer && !ast.IsPropertyAccessExpression(f.reference) && !ast.IsElementAccessExpression(f.reference) && !(f.reference.Kind == ast.KindThisKeyword && !ast.IsArrowFunction(container)) {
-				flow = container.FlowNodeData().FlowNode
-				continue
+				// A function declaration in dead code keeps no flow of its own; fall through
+				// to the initial type rather than walking from nothing.
+				if outer := container.FlowNodeData().FlowNode; outer != nil {
+					flow = outer
+					continue
+				}
 			}
 			// At the top of the flow we have the initial type.
 			t = FlowType{t: f.initialType}
@@ -1490,7 +1494,10 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 			ast.IsBinaryExpression(target) && target.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken &&
 				c.isMatchingReference(source, target.AsBinaryExpression().Right)
 	case ast.KindFunctionDeclaration:
-		return c.luaDottedFunctionMatchesReference(source, target)
+		if target.AsFunctionDeclaration().Target != nil {
+			return c.luaDottedFunctionMatchesReference(source, target)
+		}
+		return c.luaBareFunctionMatchesReference(source, target)
 	}
 	if c.isSameLuaStableAccess(source, target) {
 		return true
@@ -1559,6 +1566,19 @@ func (c *Checker) luaDottedFunctionMatchesReference(source *ast.Node, declaratio
 	sourceRoot, sourcePath, sourceOK := c.resolveLuaEntityPath(source, sourceRootName, sourcePath)
 	targetRoot, targetPath, targetOK := c.resolveLuaEntityPath(function.Target, targetRootName, targetPath)
 	return sourceOK && targetOK && sourceRoot == targetRoot && slices.Equal(sourcePath, targetPath)
+}
+
+// luaBareFunctionMatchesReference reports whether a bare `function f` statement assigns the
+// binding source reads. The written symbol comes from the same resolution the assignment
+// marker uses, so the flow assignment and the textual last-assignment analysis agree on
+// which f a declaration-shaped write stores into.
+func (c *Checker) luaBareFunctionMatchesReference(source *ast.Node, declaration *ast.Node) bool {
+	name := declaration.Name()
+	if name == nil || !ast.IsIdentifier(source) {
+		return false
+	}
+	_, symbol, _ := c.getLuaWriteTarget(name)
+	return symbol != nil && symbol != c.unknownSymbol && c.getMergedSymbol(c.getResolvedSymbol(source)) == symbol
 }
 
 var nonDottedNameCacheKey = CacheHashKey(xxh3.HashString128("?"))
@@ -2062,7 +2082,8 @@ func (c *Checker) getInitialTypeOfBindingElement(node *ast.Node) *Type {
 }
 
 func (c *Checker) getAssignedType(node *ast.Node) *Type {
-	if ast.IsFunctionDeclaration(node) && node.AsFunctionDeclaration().Target != nil {
+	// A function statement -- dotted or bare -- assigns the closure it builds.
+	if ast.IsFunctionDeclaration(node) {
 		return c.getOrCreateTypeFromSignature(c.getSignatureFromDeclaration(node))
 	}
 	parent := node.Parent

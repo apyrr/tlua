@@ -1,0 +1,77 @@
+tluaFunctionDeclarationCapture.tlua(48,3): error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+tluaFunctionDeclarationCapture.tlua(61,3): error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+
+
+==== tluaFunctionDeclarationCapture.tlua (2 errors) ====
+    // A Lua function statement is an ordered assignment, not a hoisted binding, so narrowing of a
+    // closed-over variable flows into a function declaration's body exactly as it flows into a
+    // function expression's: the closure cannot run before the statements above it.
+    
+    declare function maybeName(): string | nil;
+    
+    // A narrowed capture reaches a later function declaration.
+    local name = maybeName();
+    if name == nil then
+      name = "anon";
+    end
+    function greet(): string
+      return name;              // string -- the nil arm was closed above
+    end
+    
+    // The same through a local function.
+    local function greetLocal(): string
+      return name;
+    end
+    
+    // And through a dotted target.
+    local M = {};
+    function M.greet(): string
+      return name;
+    end
+    
+    // A setmetatable pairing reaches a later function declaration too.
+    local mt = { __index = { describe = function(self: table): string return "d"; end } };
+    local t = { n = 1 };
+    setmetatable(t, mt);
+    function useT(): string
+      return t.describe(t);
+    end
+    
+    // A bare `function f` over an existing binding stores the closure before the body can run:
+    // a self-reference sees the assigned function, never the pre-store narrowing, and reads
+    // after the statement narrow exactly like `f = function`.
+    local fn: (() => void) | nil = nil;
+    function fn(): void
+      local self: () => void = fn;
+    end
+    local afterStore: () => void = fn;
+    
+    // A declaration placed before the narrowing sees the wide antecedent: the closure's flow
+    // continues at the statement's own position, which precedes the guard.
+    local early = maybeName();
+    function tooEarly(): string
+      return early;             // error: still string | nil here
+      ~~~~~~
+!!! error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
+    end
+    if early == nil then
+      early = "anon";
+    end
+    
+    // A later reassignment widens the capture back out: the reference is no longer past the last
+    // assignment, so the closure reads the declared type.
+    local reassigned = maybeName();
+    if reassigned == nil then
+      reassigned = "anon";
+    end
+    function readReassigned(): string
+      return reassigned;        // error: the assignment below reopens the nil arm
+      ~~~~~~
+!!! error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
+    end
+    reassigned = maybeName();
+    

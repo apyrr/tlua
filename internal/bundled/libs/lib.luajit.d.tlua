@@ -132,7 +132,7 @@ type Uncapitalize<S extends string> = intrinsic;
 interface LuaMetatable<T extends table> {
     __index?: Table<any, any> | ((value: T, key: any) => any);
     __newindex?: Table<any, any> | ((value: T, key: any, newValue: any) => void);
-    __call?: (value: T, ...: any) => (any?, ...any);
+    __call?: async (value: T, ...: any) => (any?, ...any);
     __tostring?: (value: T) => string;
     __len?: (value: T) => number;
     __unm?: (value: T) => any;
@@ -228,7 +228,9 @@ declare function xpcall(fn: function, handler: (message: any) => any, ...: any):
  * metamethods also dispatch ambiently: a declared type that states them as
  * `__add`-style members (a userdata class like GMod's Vector) overloads the
  * operators with no setmetatable in sight; __index, __newindex and __call stay
- * pairing-only.
+ * pairing-only. The __call slot is async-typed so a handler may carry the
+ * coroutine contract -- a sync handler satisfies it too, and the pairing's call
+ * surface keeps whichever flavor the handler declares.
  * debug.setmetatable and debug.getmetatable bypass __metatable protection. A
  * shadowed local of either name keeps whatever it declares. Both signatures still
  * carry the contract this file can express: the parameter type is what validates a

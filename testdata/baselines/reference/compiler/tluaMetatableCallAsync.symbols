@@ -1,0 +1,126 @@
+//// [tests/cases/compiler/tluaMetatableCallAsync.tlua] ////
+
+=== tluaMetatableCallAsync.tlua ===
+// An async __call pairs the same way a sync one does: the receiver drops out, and the call
+// carries the coroutine contract, so only an async context may invoke it.
+
+local execute = async function(query: string): table[]
+>execute : Symbol(execute, Decl(tluaMetatableCallAsync.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallAsync.tlua, 3, 31))
+
+  return {};
+end;
+
+// The assign form.
+local sqlAssigned = setmetatable({}, {
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallAsync.tlua, 8, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+  __call = async function(self: table, query: string): table[]
+>__call : Symbol(__call, Decl(tluaMetatableCallAsync.tlua, 8, 38))
+>self : Symbol(self, Decl(tluaMetatableCallAsync.tlua, 9, 26))
+>query : Symbol(query, Decl(tluaMetatableCallAsync.tlua, 9, 38))
+
+    return execute(query);
+>execute : Symbol(execute, Decl(tluaMetatableCallAsync.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallAsync.tlua, 9, 38))
+
+  end,
+});
+
+// The statement form, mutating in place. The receiver picks up its type from the __call slot.
+local sql = {};
+>sql : Symbol(sql, Decl(tluaMetatableCallAsync.tlua, 15, 5))
+
+setmetatable(sql, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>sql : Symbol(sql, Decl(tluaMetatableCallAsync.tlua, 15, 5))
+
+  __call = async function(_self, query: string)
+>__call : Symbol(__call, Decl(tluaMetatableCallAsync.tlua, 16, 19))
+>_self : Symbol(_self, Decl(tluaMetatableCallAsync.tlua, 17, 26))
+>query : Symbol(query, Decl(tluaMetatableCallAsync.tlua, 17, 32))
+
+    return execute(query);
+>execute : Symbol(execute, Decl(tluaMetatableCallAsync.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallAsync.tlua, 17, 32))
+
+  end,
+});
+
+// Own members survive next to the call surface.
+local api = { begin = function(self: table): number return 1; end };
+>api : Symbol(api, Decl(tluaMetatableCallAsync.tlua, 23, 5))
+>begin : Symbol(begin, Decl(tluaMetatableCallAsync.tlua, 23, 13))
+>self : Symbol(self, Decl(tluaMetatableCallAsync.tlua, 23, 31))
+
+setmetatable(api, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>api : Symbol(api, Decl(tluaMetatableCallAsync.tlua, 23, 5))
+
+  __call = async function(self: table, query: string): table[]
+>__call : Symbol(__call, Decl(tluaMetatableCallAsync.tlua, 24, 19))
+>self : Symbol(self, Decl(tluaMetatableCallAsync.tlua, 25, 26))
+>query : Symbol(query, Decl(tluaMetatableCallAsync.tlua, 25, 38))
+
+    return execute(query);
+>execute : Symbol(execute, Decl(tluaMetatableCallAsync.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallAsync.tlua, 25, 38))
+
+  end,
+});
+
+async function use(): void
+>use : Symbol(use, Decl(tluaMetatableCallAsync.tlua, 28, 3))
+
+  local rows: table[] = sqlAssigned("SELECT 1");
+>rows : Symbol(rows, Decl(tluaMetatableCallAsync.tlua, 31, 7))
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallAsync.tlua, 8, 5))
+
+  local rows2: table[] = sql("SELECT 1");
+>rows2 : Symbol(rows2, Decl(tluaMetatableCallAsync.tlua, 32, 7))
+>sql : Symbol(sql, Decl(tluaMetatableCallAsync.tlua, 15, 5))
+
+  local n: number = api.begin(api);
+>n : Symbol(n, Decl(tluaMetatableCallAsync.tlua, 33, 7))
+>api.begin : Symbol(begin, Decl(tluaMetatableCallAsync.tlua, 23, 13))
+>api : Symbol(api, Decl(tluaMetatableCallAsync.tlua, 23, 5))
+>begin : Symbol(begin, Decl(tluaMetatableCallAsync.tlua, 23, 13))
+>api : Symbol(api, Decl(tluaMetatableCallAsync.tlua, 23, 5))
+
+  local rows3: table[] = api("SELECT 1");
+>rows3 : Symbol(rows3, Decl(tluaMetatableCallAsync.tlua, 34, 7))
+>api : Symbol(api, Decl(tluaMetatableCallAsync.tlua, 23, 5))
+
+end
+
+// The contract holds through the pairing: a sync context may not invoke an async __call.
+function syncUse(): void
+>syncUse : Symbol(syncUse, Decl(tluaMetatableCallAsync.tlua, 35, 3))
+
+  local rows = sql("SELECT 1");
+>rows : Symbol(rows, Decl(tluaMetatableCallAsync.tlua, 39, 7))
+>sql : Symbol(sql, Decl(tluaMetatableCallAsync.tlua, 15, 5))
+
+  local rowsAssigned = sqlAssigned("SELECT 1");
+>rowsAssigned : Symbol(rowsAssigned, Decl(tluaMetatableCallAsync.tlua, 40, 7))
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallAsync.tlua, 8, 5))
+
+  local rowsApi = api("SELECT 1");
+>rowsApi : Symbol(rowsApi, Decl(tluaMetatableCallAsync.tlua, 41, 7))
+>api : Symbol(api, Decl(tluaMetatableCallAsync.tlua, 23, 5))
+
+end
+sql("top level");
+>sql : Symbol(sql, Decl(tluaMetatableCallAsync.tlua, 15, 5))
+
+// The receiver is implicit, so passing it back is one argument too many.
+async function tooMany(): void
+>tooMany : Symbol(tooMany, Decl(tluaMetatableCallAsync.tlua, 43, 17))
+
+  sqlAssigned(sqlAssigned, "SELECT 1");
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallAsync.tlua, 8, 5))
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallAsync.tlua, 8, 5))
+
+end
+

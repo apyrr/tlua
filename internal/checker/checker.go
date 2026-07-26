@@ -8393,12 +8393,14 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 	isModuleExports := symbol.Flags&ast.SymbolFlagsModuleExports != 0
 	typeIsAutomatic := t == c.autoType || t == c.autoArrayType
 	isAutomaticTypeInNonNull := typeIsAutomatic && node.Parent.Kind == ast.KindNonNullExpression
-	// When the control flow originates in a function expression, arrow function, method, or accessor, and
-	// we are referencing a closed-over const variable or parameter or mutable local variable past its last
-	// assignment, we extend the origin of the control flow analysis to include the immediately enclosing
-	// control flow container.
+	// When the control flow originates in a function, and we are referencing a closed-over const
+	// variable or parameter or mutable local variable past its last assignment, we extend the origin
+	// of the control flow analysis to include the immediately enclosing control flow container.
+	// Unlike TS, function declarations extend too: a Lua `function f() ... end` statement is an
+	// ordered assignment, not a hoisted binding, so the closure cannot run before the statements
+	// above it -- the same footing the function-expression form already stands on.
 	for flowContainer != declarationContainer &&
-		ast.IsFunctionExpressionOrArrowFunction(flowContainer) &&
+		(ast.IsFunctionExpressionOrArrowFunction(flowContainer) || ast.IsFunctionDeclaration(flowContainer)) &&
 		(c.isConstantVariable(localOrExportSymbol) && t != c.autoArrayType || c.isParameterOrMutableLocalVariable(localOrExportSymbol) && c.isPastLastAssignment(localOrExportSymbol, node)) {
 		flowContainer = c.getControlFlowContainer(flowContainer)
 	}

@@ -1,0 +1,142 @@
+//// [tests/cases/compiler/tluaFunctionDeclarationCapture.tlua] ////
+
+=== tluaFunctionDeclarationCapture.tlua ===
+// A Lua function statement is an ordered assignment, not a hoisted binding, so narrowing of a
+// closed-over variable flows into a function declaration's body exactly as it flows into a
+// function expression's: the closure cannot run before the statements above it.
+
+declare function maybeName(): string | nil;
+>maybeName : Symbol(maybeName, Decl(tluaFunctionDeclarationCapture.tlua, 0, 0))
+
+// A narrowed capture reaches a later function declaration.
+local name = maybeName();
+>name : Symbol(name, Decl(tluaFunctionDeclarationCapture.tlua, 7, 5))
+>maybeName : Symbol(maybeName, Decl(tluaFunctionDeclarationCapture.tlua, 0, 0))
+
+if name == nil then
+>name : Symbol(name, Decl(tluaFunctionDeclarationCapture.tlua, 7, 5))
+
+  name = "anon";
+>name : Symbol(name, Decl(tluaFunctionDeclarationCapture.tlua, 7, 5))
+
+end
+function greet(): string
+>greet : Symbol(greet, Decl(tluaFunctionDeclarationCapture.tlua, 10, 3))
+
+  return name;              // string -- the nil arm was closed above
+>name : Symbol(name, Decl(tluaFunctionDeclarationCapture.tlua, 7, 5))
+
+end
+
+// The same through a local function.
+local function greetLocal(): string
+>greetLocal : Symbol(greetLocal, Decl(tluaFunctionDeclarationCapture.tlua, 13, 3))
+
+  return name;
+>name : Symbol(name, Decl(tluaFunctionDeclarationCapture.tlua, 7, 5))
+
+end
+
+// And through a dotted target.
+local M = {};
+>M : Symbol(M, Decl(tluaFunctionDeclarationCapture.tlua, 21, 5))
+
+function M.greet(): string
+>M : Symbol(M, Decl(tluaFunctionDeclarationCapture.tlua, 21, 5))
+>greet : Symbol(greet, Decl(tluaFunctionDeclarationCapture.tlua, 21, 13))
+
+  return name;
+>name : Symbol(name, Decl(tluaFunctionDeclarationCapture.tlua, 7, 5))
+
+end
+
+// A setmetatable pairing reaches a later function declaration too.
+local mt = { __index = { describe = function(self: table): string return "d"; end } };
+>mt : Symbol(mt, Decl(tluaFunctionDeclarationCapture.tlua, 27, 5))
+>__index : Symbol(__index, Decl(tluaFunctionDeclarationCapture.tlua, 27, 12))
+>describe : Symbol(describe, Decl(tluaFunctionDeclarationCapture.tlua, 27, 24))
+>self : Symbol(self, Decl(tluaFunctionDeclarationCapture.tlua, 27, 45))
+
+local t = { n = 1 };
+>t : Symbol(t, Decl(tluaFunctionDeclarationCapture.tlua, 28, 5))
+>n : Symbol(n, Decl(tluaFunctionDeclarationCapture.tlua, 28, 11))
+
+setmetatable(t, mt);
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaFunctionDeclarationCapture.tlua, 28, 5))
+>mt : Symbol(mt, Decl(tluaFunctionDeclarationCapture.tlua, 27, 5))
+
+function useT(): string
+>useT : Symbol(useT, Decl(tluaFunctionDeclarationCapture.tlua, 29, 20))
+
+  return t.describe(t);
+>t.describe : Symbol(describe, Decl(tluaFunctionDeclarationCapture.tlua, 27, 24))
+>t : Symbol(t, Decl(tluaFunctionDeclarationCapture.tlua, 28, 5))
+>describe : Symbol(describe, Decl(tluaFunctionDeclarationCapture.tlua, 27, 24))
+>t : Symbol(t, Decl(tluaFunctionDeclarationCapture.tlua, 28, 5))
+
+end
+
+// A bare `function f` over an existing binding stores the closure before the body can run:
+// a self-reference sees the assigned function, never the pre-store narrowing, and reads
+// after the statement narrow exactly like `f = function`.
+local fn: (() => void) | nil = nil;
+>fn : Symbol(fn, Decl(tluaFunctionDeclarationCapture.tlua, 37, 5))
+
+function fn(): void
+>fn : Symbol(fn, Decl(tluaFunctionDeclarationCapture.tlua, 37, 35))
+
+  local self: () => void = fn;
+>self : Symbol(self, Decl(tluaFunctionDeclarationCapture.tlua, 39, 7))
+>fn : Symbol(fn, Decl(tluaFunctionDeclarationCapture.tlua, 37, 5))
+
+end
+local afterStore: () => void = fn;
+>afterStore : Symbol(afterStore, Decl(tluaFunctionDeclarationCapture.tlua, 41, 5))
+>fn : Symbol(fn, Decl(tluaFunctionDeclarationCapture.tlua, 37, 5))
+
+// A declaration placed before the narrowing sees the wide antecedent: the closure's flow
+// continues at the statement's own position, which precedes the guard.
+local early = maybeName();
+>early : Symbol(early, Decl(tluaFunctionDeclarationCapture.tlua, 45, 5))
+>maybeName : Symbol(maybeName, Decl(tluaFunctionDeclarationCapture.tlua, 0, 0))
+
+function tooEarly(): string
+>tooEarly : Symbol(tooEarly, Decl(tluaFunctionDeclarationCapture.tlua, 45, 26))
+
+  return early;             // error: still string | nil here
+>early : Symbol(early, Decl(tluaFunctionDeclarationCapture.tlua, 45, 5))
+
+end
+if early == nil then
+>early : Symbol(early, Decl(tluaFunctionDeclarationCapture.tlua, 45, 5))
+
+  early = "anon";
+>early : Symbol(early, Decl(tluaFunctionDeclarationCapture.tlua, 45, 5))
+
+end
+
+// A later reassignment widens the capture back out: the reference is no longer past the last
+// assignment, so the closure reads the declared type.
+local reassigned = maybeName();
+>reassigned : Symbol(reassigned, Decl(tluaFunctionDeclarationCapture.tlua, 55, 5))
+>maybeName : Symbol(maybeName, Decl(tluaFunctionDeclarationCapture.tlua, 0, 0))
+
+if reassigned == nil then
+>reassigned : Symbol(reassigned, Decl(tluaFunctionDeclarationCapture.tlua, 55, 5))
+
+  reassigned = "anon";
+>reassigned : Symbol(reassigned, Decl(tluaFunctionDeclarationCapture.tlua, 55, 5))
+
+end
+function readReassigned(): string
+>readReassigned : Symbol(readReassigned, Decl(tluaFunctionDeclarationCapture.tlua, 58, 3))
+
+  return reassigned;        // error: the assignment below reopens the nil arm
+>reassigned : Symbol(reassigned, Decl(tluaFunctionDeclarationCapture.tlua, 55, 5))
+
+end
+reassigned = maybeName();
+>reassigned : Symbol(reassigned, Decl(tluaFunctionDeclarationCapture.tlua, 55, 5))
+>maybeName : Symbol(maybeName, Decl(tluaFunctionDeclarationCapture.tlua, 0, 0))
+
