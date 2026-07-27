@@ -1,0 +1,100 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A statement-form setmetatable pairs its table operand's declared type, so the
+// call surface a metatable installs is visible from other files -- and from
+// inside functions of the same file, where flow narrowing does not reach.
+
+// @filename: producer.tlua
+app = app or {};
+app.sql = app.sql or {};
+
+local executeSql = suspend function<T extends table>(query: string): T[]
+  return {};
+end;
+
+function app.sql.begin(): void
+end
+
+setmetatable(app.sql, {
+  __call = suspend function<T extends table>(_self: table, query: string): T[]
+    return executeSql(query);
+  end,
+});
+
+// The same file sees both surfaces from inside a function body.
+suspend function producerUse(): void
+  app.sql.begin();
+  local rows = app.sql("SELECT 1");
+end
+
+// @filename: consumer.tlua
+local run = suspend function()
+  app.sql.begin();
+  local rows = app.sql<{ id: number }>("SELECT id FROM example");
+  local first: { id: number } | nil = rows[1];
+end;
+
+// A defaulted guard in another file still checks: a store supplies the table,
+// not the pairing the setmetatable statements install.
+app.sql = app.sql or {};
+
+// @filename: globalRoot.tlua
+// A pairing on an implicit global root, consumed cross-file.
+Counter = Counter or {};
+Counter.count = 0;
+setmetatable(Counter, {
+  __index = function(_self, key: string): number
+    return 0;
+  end,
+});
+
+// @filename: globalRootReads.tlua
+local count: number = Counter.count;
+local missing: number | nil = Counter.other;
+
+// @filename: bareGlobal.tlua
+// A callable pairing on a bare global: the defaulted guard still checks -- a
+// store supplies the table, not the pairing -- and pairing replaces, so of
+// several statements the last one stands.
+Gauge = Gauge or {};
+setmetatable(Gauge, {
+  __call = function(_self: table): number
+    return 1;
+  end,
+});
+setmetatable(Gauge, {
+  __call = function(_self: table): string
+    return "replaced";
+  end,
+});
+
+// @filename: bareGlobalReads.tlua
+Gauge = Gauge or {};
+local replaced: string = Gauge();
+
+// @filename: selfReferential.tlua
+// The class idiom's metatable reads the symbol back while the pairing is being
+// computed; that read sees the plain table, not a false circularity.
+Account = Account or {};
+Account.balance = 0;
+setmetatable(Account, { __index = Account });
+
+// @filename: selfReferentialReads.tlua
+local balance: number = Account.balance;
+
+// @filename: shadowed.tlua
+// A shadowing local is not the protocol, so it pairs nothing.
+Plain = Plain or {};
+local function setmetatable(value: table, metatable: table): void
+end
+setmetatable(Plain, {
+  __call = function(_self: table): number
+    return 1;
+  end,
+});
+
+// @filename: shadowedReads.tlua
+local notCallable = Plain();

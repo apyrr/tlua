@@ -255,17 +255,28 @@ func (c *WorkspaceDiagCache) Reconcile(project *Project) {
 				queue = append(queue, path)
 			}
 		}
-		for len(queue) > 0 {
+		escalate := false
+		for len(queue) > 0 && !escalate {
 			path := queue[len(queue)-1]
 			queue = queue[:len(queue)-1]
 			if entry := state.files[path]; entry != nil {
 				entry.valid = false
+				// A file in the closure that contributes globals re-types the
+				// global scope for every file, importer or not: its own hash did
+				// not move, but the types it feeds its globals -- through a
+				// require, say -- may have. The directly changed files were
+				// screened before the switch, so a hit here is an indirect one.
+				escalate = entry.contributesGlobals
 			}
 			for _, importer := range state.revDeps[path] {
 				if seen.AddIfAbsent(importer) {
 					queue = append(queue, importer)
 				}
 			}
+		}
+		if escalate {
+			fullInvalidate(state, cur)
+			break
 		}
 		for _, path := range changed {
 			entry, file := state.files[path], cur[path]
@@ -470,6 +481,25 @@ func fileContributesToGlobalScope(file *ast.SourceFile) bool {
 	// scope binds `local`s, not stores to undeclared names.
 	for _, candidate := range file.LuaWriteCandidates {
 		if luaCandidateWritesGlobal(candidate, 0 /*depth*/) {
+			return true
+		}
+	}
+	// A statement-form setmetatable call pairs its table operand's declared
+	// type (checker.attachLuaMetatablePairings), so one aimed at a global --
+	// directly or through a local alias -- changes that global's type in every
+	// file. Expression-form candidates only anchor diagnostics and change no
+	// declared type. The root walk is the same as for writes; a bare resolved
+	// local is the one operand shape whose pairing stays file-local.
+	for _, node := range file.LuaSetmetatableCandidates {
+		if !ast.IsLuaStatementFormCall(node) {
+			continue
+		}
+		operand := ast.SkipOuterExpressions(node.Arguments()[0], ast.OEKParentheses|ast.OEKAssertions)
+		root := luaStaticAccessRoot(operand)
+		if root == nil {
+			continue
+		}
+		if luaWriteRootIsGlobal(root.Text(), root, ast.IsIdentifier(operand) /*isBare*/, 0 /*depth*/) {
 			return true
 		}
 	}

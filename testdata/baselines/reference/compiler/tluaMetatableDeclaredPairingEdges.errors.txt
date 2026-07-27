@@ -1,0 +1,460 @@
+condMaskC.tlua(1,1): error TLUA100041: Cannot change a protected metatable.
+conditionalRebind.tlua(12,1): error TLUA100041: Cannot change a protected metatable.
+crossConditionalPair.tlua(1,1): error TLUA100041: Cannot change a protected metatable.
+cycleUse.tlua(10,22): error TLUA2349: This expression is not callable.
+  Type '{}' has no call signatures.
+exclusiveFn.tlua(13,5): error TLUA100041: Cannot change a protected metatable.
+maskExpB.tlua(1,20): error TLUA100041: Cannot change a protected metatable.
+maskedB.tlua(1,1): error TLUA100041: Cannot change a protected metatable.
+protectedReplace.tlua(2,1): error TLUA100041: Cannot change a protected metatable.
+selfPresC.tlua(1,1): error TLUA100041: Cannot change a protected metatable.
+
+
+==== protectedPair.tlua (0 errors) ====
+    setmetatable(Locked, {
+      __index = { fallback = 2 },
+      __metatable = "locked",
+    });
+    
+==== protectedStores.tlua (0 errors) ====
+    Locked = Locked or {};
+    Locked.own = 1;
+    
+==== protectedReplace.tlua (1 errors) ====
+    // A later call still runs into the protection the first call installed.
+    setmetatable(Locked, {
+    ~~~~~~~~~~~~~~~~~~~~~~
+      __index = { other = 3 },
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    });
+    ~~
+!!! error TLUA100041: Cannot change a protected metatable.
+    
+==== protectedReads.tlua (0 errors) ====
+    local own: number = Locked.own;
+    local fallback: number = Locked.fallback;
+    
+==== contextSensitive.tlua (0 errors) ====
+    // The pairing file precedes every store, so the replay checks this literal while
+    // the call's own signature is still resolving; the metatable context must be
+    // supplied anyway, or _self loses its parameter type.
+    setmetatable(Ctx, {
+      __call = function(_self, q: string): number
+        return 1;
+      end,
+    });
+    
+==== contextSensitiveStores.tlua (0 errors) ====
+    Ctx = Ctx or {};
+    
+==== contextSensitiveReads.tlua (0 errors) ====
+    local viaCtx: number = Ctx("q");
+    
+==== rebound.tlua (0 errors) ====
+    // A rebinding store between two pairings replaces the table, so the first
+    // pairing's protection does not survive to refuse the second.
+    Rebound = Rebound or {};
+    setmetatable(Rebound, {
+      __index = { old = 1 },
+      __metatable = "locked",
+    });
+    Rebound = {};
+    setmetatable(Rebound, {
+      __index = { fresh = 2 },
+    });
+    
+==== reboundReads.tlua (0 errors) ====
+    local fresh: number = Rebound.fresh;
+    
+==== crossRebindA.tlua (0 errors) ====
+    // The rebinding store and the next protected pairing sit in separate files: the
+    // second install must see the reset, not the first protection.
+    CrossRebind = CrossRebind or {};
+    setmetatable(CrossRebind, {
+      __index = { old = 1 },
+      __metatable = "first",
+    });
+    
+==== crossRebindB.tlua (0 errors) ====
+    CrossRebind = {};
+    
+==== crossRebindC.tlua (0 errors) ====
+    setmetatable(CrossRebind, {
+      __index = { fresh = 2 },
+      __metatable = "second",
+    });
+    
+==== crossRebindReads.tlua (0 errors) ====
+    local crossFresh: number = CrossRebind.fresh;
+    
+==== maskedA.tlua (0 errors) ====
+    // A refused replacement stays an error even when a later debug.setmetatable
+    // leaves the final declared type unprotected.
+    Masked = Masked or {};
+    setmetatable(Masked, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    
+==== maskedB.tlua (1 errors) ====
+    setmetatable(Masked, {
+    ~~~~~~~~~~~~~~~~~~~~~~
+      __index = { b = 2 },
+    ~~~~~~~~~~~~~~~~~~~~~~
+    });
+    ~~
+!!! error TLUA100041: Cannot change a protected metatable.
+    
+==== maskedC.tlua (0 errors) ====
+    debug.setmetatable(Masked, {
+      __index = { c = 3 },
+    });
+    
+==== maskedReads.tlua (0 errors) ====
+    local maskedC: number = Masked.c;
+    
+==== conditionalRebind.tlua (1 errors) ====
+    // A conditional rebind may not have run, so on the path where it did not, the
+    // first pairing's protection still refuses the second call.
+    declare rebindCond: boolean;
+    Conditional = Conditional or {};
+    setmetatable(Conditional, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    if rebindCond then
+      Conditional = {};
+    end
+    setmetatable(Conditional, {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      __index = { b = 2 },
+    ~~~~~~~~~~~~~~~~~~~~~~
+    });
+    ~~
+!!! error TLUA100041: Cannot change a protected metatable.
+    
+==== hoistOrder.tlua (0 errors) ====
+    // Hoisted function declarations bind before the statements around them, so the
+    // recorded calls must be sorted back into source order: the top-level pairing
+    // here runs first and is never protected, and the body's pairing is the latest.
+    Hoisted = Hoisted or {};
+    setmetatable(Hoisted, { __index = { early = 1 } });
+    function protectLater(): void
+      setmetatable(Hoisted, {
+        __index = { late = 2 },
+        __metatable = "locked",
+      });
+    end
+    
+==== hoistOrderReads.tlua (0 errors) ====
+    local late: number = Hoisted.late;
+    
+==== bodyRebind.tlua (0 errors) ====
+    // A body that rebinds and then re-pairs works on a fresh table, so the earlier
+    // protection does not reach its call: a body store resets exactly as a body
+    // pairing contributes.
+    BodyRebind = BodyRebind or {};
+    setmetatable(BodyRebind, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    function rebuildBody(): void
+      BodyRebind = {};
+      setmetatable(BodyRebind, { __index = { b = 2 } });
+    end
+    
+==== crossConditional.tlua (0 errors) ====
+    // A conditional rebind is no more definite for sitting in another file.
+    CrossConditional = CrossConditional or {};
+    setmetatable(CrossConditional, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    
+==== crossConditionalRebind.tlua (0 errors) ====
+    declare crossCond: boolean;
+    if crossCond then
+      CrossConditional = {};
+    end
+    
+==== crossConditionalPair.tlua (1 errors) ====
+    setmetatable(CrossConditional, { __index = { b = 2 } });
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100041: Cannot change a protected metatable.
+    
+==== unionArmA.tlua (0 errors) ====
+    Union = { one = 1 };
+    setmetatable(Union, {
+      __call = function(_self: table): number
+        return 1;
+      end,
+    });
+    
+==== unionArmB.tlua (0 errors) ====
+    Union = { two = 2 };
+    
+==== unionReads.tlua (0 errors) ====
+    local n: number = Union();
+    
+==== asserted.tlua (0 errors) ====
+    Asserted = Asserted or {};
+    setmetatable(Asserted, {
+      __call = function(_self: table): number
+        return 1;
+      end,
+    }) as table;
+    
+==== assertedReads.tlua (0 errors) ====
+    local viaAssertion: number = Asserted();
+    
+==== methodOperand.tlua (0 errors) ====
+    // Function storage keeps its function type: metatables on functions are
+    // per-type at runtime, so no declared pairing forms.
+    Mod = Mod or {};
+    function Mod.f(): number
+      return 1;
+    end
+    debug.setmetatable(Mod.f, {
+      __index = { attached = true },
+    });
+    
+==== methodOperandReads.tlua (0 errors) ====
+    local viaMethod: number = Mod.f();
+    
+==== doRebind.tlua (0 errors) ====
+    // A do-block runs exactly once when its chunk does, so a rebind inside one is
+    // as definite as a top-level store: the protection does not survive to refuse
+    // the later call.
+    DoRebind = DoRebind or {};
+    setmetatable(DoRebind, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    do
+      DoRebind = {};
+    end
+    setmetatable(DoRebind, {
+      __index = { b = 2 },
+    });
+    
+==== doRebindReads.tlua (0 errors) ====
+    local doFresh: number = DoRebind.b;
+    
+==== doCrossA.tlua (0 errors) ====
+    // The do-block rebind is no less definite for sitting in another file.
+    DoCross = DoCross or {};
+    setmetatable(DoCross, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    
+==== doCrossRebind.tlua (0 errors) ====
+    do
+      DoCross = {};
+    end
+    
+==== doCrossPair.tlua (0 errors) ====
+    setmetatable(DoCross, { __index = { b = 2 } });
+    
+==== cycleUse.tlua (1 errors) ====
+    // Mutually referential metatable arguments cannot both capture the other
+    // paired -- the cycle must break somewhere -- but where it breaks is canonical:
+    // paired symbols resolve in program order, so CycA's literal captures CycB
+    // fully paired and the cycle-closing read inside CycB's literal captures CycA's
+    // unpaired base. This use file runs first and reads CycB first precisely so a
+    // query-order-driven resolution would break the cycle the other way around.
+    local bPeer = debug.getmetatable(CycB).__index;
+    local aPeer = debug.getmetatable(CycA).__index;
+    local viaA: number = aPeer();
+    local viaB: string = bPeer();
+                         ~~~~~
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type '{}' has no call signatures.
+    
+==== cycleA.tlua (0 errors) ====
+    CycA = CycA or {};
+    setmetatable(CycA, {
+      __index = CycB,
+      __call = function(_self: table): string
+        return "a";
+      end,
+    });
+    
+==== cycleB.tlua (0 errors) ====
+    CycB = CycB or {};
+    setmetatable(CycB, {
+      __index = CycA,
+      __call = function(_self: table): number
+        return 1;
+      end,
+    });
+    
+==== expStores.tlua (0 errors) ====
+    // An expression-form call anchors the protected check at its own program point
+    // without contributing a pairing: this one runs before the protection below is
+    // installed, so it is not refused.
+    Exp = Exp or {};
+    
+==== expCall.tlua (0 errors) ====
+    local expResult = setmetatable(Exp, { __index = { x = 1 } });
+    
+==== expProtect.tlua (0 errors) ====
+    setmetatable(Exp, {
+      __index = { y = 2 },
+      __metatable = "locked",
+    });
+    
+==== maskExpA.tlua (0 errors) ====
+    // The reverse ordering: an expression-form replacement after the protection was
+    // installed raises at runtime, and the later debug.setmetatable that leaves the
+    // final declared type unprotected must not mask that.
+    MaskExp = MaskExp or {};
+    setmetatable(MaskExp, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    
+==== maskExpB.tlua (1 errors) ====
+    local maskResult = setmetatable(MaskExp, { __index = { b = 2 } });
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100041: Cannot change a protected metatable.
+    
+==== maskExpC.tlua (0 errors) ====
+    debug.setmetatable(MaskExp, { __index = { c = 3 } });
+    
+==== explicitArgs.tlua (0 errors) ====
+    // An explicit instantiation names T itself, so the replay contextualizes the
+    // literal exactly as the call does: _self is table, not Expl's inferred shape,
+    // and no contradiction arises when the call re-checks the frozen literal.
+    Expl = Expl or {};
+    Expl.tag = 1;
+    setmetatable<table>(Expl, {
+      __call = function(_self, q: string): number
+        return 1;
+      end,
+    });
+    
+==== debugPair.tlua (0 errors) ====
+    // debug.setmetatable's table overload declares the same LuaMetatable<T>
+    // contract the replay synthesizes, so handlers type identically whether the
+    // literal's first check comes from the replay or from the call itself.
+    debug.setmetatable(DbgAug, {
+      __call = function(_self, q: string): number
+        return 1;
+      end,
+    });
+    
+==== debugPairStores.tlua (0 errors) ====
+    DbgAug = DbgAug or {};
+    
+==== debugPairReads.tlua (0 errors) ====
+    local viaDbg: number = DbgAug("q");
+    
+==== debugLocal.tlua (0 errors) ====
+    // A plain local gets the same contract from the overload directly.
+    local plain: table = {};
+    debug.setmetatable(plain, {
+      __call = function(_self, q: string): number
+        return 1;
+      end,
+    });
+    
+==== condMaskA.tlua (0 errors) ====
+    // A CONDITIONAL debug.setmetatable may not have run, and on the path where it
+    // did not, the protection it would have stripped still refuses the later call.
+    CondMask = CondMask or {};
+    setmetatable(CondMask, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    
+==== condMaskB.tlua (0 errors) ====
+    declare condFlag: boolean;
+    if condFlag then
+      debug.setmetatable(CondMask, { __index = { b = 2 } });
+    end
+    
+==== condMaskC.tlua (1 errors) ====
+    setmetatable(CondMask, { __index = { c = 3 } });
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100041: Cannot change a protected metatable.
+    
+==== condMaskReads.tlua (0 errors) ====
+    local condDeclared: number = CondMask.c;
+    
+==== definiteMaskA.tlua (0 errors) ====
+    // An unconditional debug.setmetatable definitely strips the protection, so the
+    // later call is not refused.
+    DefMask = DefMask or {};
+    setmetatable(DefMask, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    
+==== definiteMaskB.tlua (0 errors) ====
+    debug.setmetatable(DefMask, { __index = { b = 2 } });
+    
+==== definiteMaskC.tlua (0 errors) ====
+    setmetatable(DefMask, { __index = { c = 3 } });
+    
+==== definiteMaskReads.tlua (0 errors) ====
+    local defDeclared: number = DefMask.c;
+    
+==== selfPresA.tlua (0 errors) ====
+    // A store whose value may evaluate to the target itself keeps the table -- and
+    // its protection -- on that path, so it is no rebinding and the later call is
+    // still refused.
+    SelfPres = SelfPres or {};
+    setmetatable(SelfPres, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+    
+==== selfPresB.tlua (0 errors) ====
+    declare keepFlag: boolean;
+    SelfPres = keepFlag and SelfPres or {};
+    
+==== selfPresC.tlua (1 errors) ====
+    setmetatable(SelfPres, { __index = { b = 2 } });
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100041: Cannot change a protected metatable.
+    
+==== selfPresReads.tlua (0 errors) ====
+    local selfDeclared: number = SelfPres.a;
+    
+==== exclusiveTop.tlua (0 errors) ====
+    // A chunk runs once, so the branches of a top-level `if` are mutually
+    // exclusive: the else call never meets the then branch's protection.
+    declare exclCond: boolean;
+    Branches = {};
+    if exclCond then
+      setmetatable(Branches, {
+        __index = { a = 1 },
+        __metatable = "locked",
+      });
+    else
+      setmetatable(Branches, { __index = { b = 2 } });
+    end
+    
+==== exclusiveReads.tlua (0 errors) ====
+    local branchDeclared: number = Branches.a;
+    
+==== exclusiveFn.tlua (1 errors) ====
+    // In a function body the same `if` runs per call with the condition free to
+    // flip, so the branches are not exclusive and the protection still refuses
+    // the else call.
+    declare fnCond: boolean;
+    FnBranches = {};
+    function flipBranches(): void
+      if fnCond then
+        setmetatable(FnBranches, {
+          __index = { a = 1 },
+          __metatable = "locked",
+        });
+      else
+        setmetatable(FnBranches, { __index = { b = 2 } });
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100041: Cannot change a protected metatable.
+      end
+    end
+    

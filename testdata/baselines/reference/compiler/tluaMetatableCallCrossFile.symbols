@@ -1,0 +1,235 @@
+//// [tests/cases/compiler/tluaMetatableCallCrossFile.tlua] ////
+
+=== producer.tlua ===
+app = app or {};
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+
+app.sql = app.sql or {};
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+
+local executeSql = suspend function<T extends table>(query: string): T[]
+>executeSql : Symbol(executeSql, Decl(producer.tlua, 3, 5))
+>T : Symbol(T, Decl(producer.tlua, 3, 36))
+>query : Symbol(query, Decl(producer.tlua, 3, 53))
+>T : Symbol(T, Decl(producer.tlua, 3, 36))
+
+  return {};
+end;
+
+function app.sql.begin(): void
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>begin : Symbol(begin, Decl(producer.tlua, 5, 4))
+
+end
+
+setmetatable(app.sql, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+
+  __call = suspend function<T extends table>(_self: table, query: string): T[]
+>__call : Symbol(__call, Decl(producer.tlua, 10, 23))
+>T : Symbol(T, Decl(producer.tlua, 11, 28))
+>_self : Symbol(_self, Decl(producer.tlua, 11, 45))
+>query : Symbol(query, Decl(producer.tlua, 11, 58))
+>T : Symbol(T, Decl(producer.tlua, 11, 28))
+
+    return executeSql(query);
+>executeSql : Symbol(executeSql, Decl(producer.tlua, 3, 5))
+>query : Symbol(query, Decl(producer.tlua, 11, 58))
+
+  end,
+});
+
+// The same file sees both surfaces from inside a function body.
+suspend function producerUse(): void
+>producerUse : Symbol(producerUse, Decl(producer.tlua, 14, 3))
+
+  app.sql.begin();
+>app.sql.begin : Symbol(begin, Decl(producer.tlua, 5, 4))
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>begin : Symbol(begin, Decl(producer.tlua, 5, 4))
+
+  local rows = app.sql("SELECT 1");
+>rows : Symbol(rows, Decl(producer.tlua, 19, 7))
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+
+end
+
+=== consumer.tlua ===
+local run = suspend function()
+>run : Symbol(run, Decl(consumer.tlua, 0, 5))
+
+  app.sql.begin();
+>app.sql.begin : Symbol(begin, Decl(producer.tlua, 5, 4))
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>begin : Symbol(begin, Decl(producer.tlua, 5, 4))
+
+  local rows = app.sql<{ id: number }>("SELECT id FROM example");
+>rows : Symbol(rows, Decl(consumer.tlua, 2, 7))
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>id : Symbol(id, Decl(consumer.tlua, 2, 24))
+
+  local first: { id: number } | nil = rows[1];
+>first : Symbol(first, Decl(consumer.tlua, 3, 7))
+>id : Symbol(id, Decl(consumer.tlua, 3, 16))
+>rows : Symbol(rows, Decl(consumer.tlua, 2, 7))
+
+end;
+
+// A defaulted guard in another file still checks: a store supplies the table,
+// not the pairing the setmetatable statements install.
+app.sql = app.sql or {};
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app.sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+>app : Symbol(app, Decl(producer.tlua, 0, 0))
+>sql : Symbol(sql, Decl(producer.tlua, 0, 16), Decl(consumer.tlua, 4, 4))
+
+=== globalRoot.tlua ===
+// A pairing on an implicit global root, consumed cross-file.
+Counter = Counter or {};
+>Counter : Symbol(Counter, Decl(globalRoot.tlua, 0, 0))
+>Counter : Symbol(Counter, Decl(globalRoot.tlua, 0, 0))
+
+Counter.count = 0;
+>Counter.count : Symbol(count, Decl(globalRoot.tlua, 1, 24))
+>Counter : Symbol(Counter, Decl(globalRoot.tlua, 0, 0))
+>count : Symbol(count, Decl(globalRoot.tlua, 1, 24))
+
+setmetatable(Counter, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Counter : Symbol(Counter, Decl(globalRoot.tlua, 0, 0))
+
+  __index = function(_self, key: string): number
+>__index : Symbol(__index, Decl(globalRoot.tlua, 3, 23))
+>_self : Symbol(_self, Decl(globalRoot.tlua, 4, 21))
+>key : Symbol(key, Decl(globalRoot.tlua, 4, 27))
+
+    return 0;
+  end,
+});
+
+=== globalRootReads.tlua ===
+local count: number = Counter.count;
+>count : Symbol(count, Decl(globalRootReads.tlua, 0, 5))
+>Counter.count : Symbol(count, Decl(globalRoot.tlua, 1, 24))
+>Counter : Symbol(Counter, Decl(globalRoot.tlua, 0, 0))
+>count : Symbol(count, Decl(globalRoot.tlua, 1, 24))
+
+local missing: number | nil = Counter.other;
+>missing : Symbol(missing, Decl(globalRootReads.tlua, 1, 5))
+>Counter : Symbol(Counter, Decl(globalRoot.tlua, 0, 0))
+
+=== bareGlobal.tlua ===
+// A callable pairing on a bare global: the defaulted guard still checks -- a
+// store supplies the table, not the pairing -- and pairing replaces, so of
+// several statements the last one stands.
+Gauge = Gauge or {};
+>Gauge : Symbol(Gauge, Decl(bareGlobal.tlua, 0, 0), Decl(bareGlobalReads.tlua, 0, 0))
+>Gauge : Symbol(Gauge, Decl(bareGlobal.tlua, 0, 0), Decl(bareGlobalReads.tlua, 0, 0))
+
+setmetatable(Gauge, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Gauge : Symbol(Gauge, Decl(bareGlobal.tlua, 0, 0), Decl(bareGlobalReads.tlua, 0, 0))
+
+  __call = function(_self: table): number
+>__call : Symbol(__call, Decl(bareGlobal.tlua, 4, 21))
+>_self : Symbol(_self, Decl(bareGlobal.tlua, 5, 20))
+
+    return 1;
+  end,
+});
+setmetatable(Gauge, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Gauge : Symbol(Gauge, Decl(bareGlobal.tlua, 0, 0), Decl(bareGlobalReads.tlua, 0, 0))
+
+  __call = function(_self: table): string
+>__call : Symbol(__call, Decl(bareGlobal.tlua, 9, 21))
+>_self : Symbol(_self, Decl(bareGlobal.tlua, 10, 20))
+
+    return "replaced";
+  end,
+});
+
+=== bareGlobalReads.tlua ===
+Gauge = Gauge or {};
+>Gauge : Symbol(Gauge, Decl(bareGlobal.tlua, 0, 0), Decl(bareGlobalReads.tlua, 0, 0))
+>Gauge : Symbol(Gauge, Decl(bareGlobal.tlua, 0, 0), Decl(bareGlobalReads.tlua, 0, 0))
+
+local replaced: string = Gauge();
+>replaced : Symbol(replaced, Decl(bareGlobalReads.tlua, 1, 5))
+>Gauge : Symbol(Gauge, Decl(bareGlobal.tlua, 0, 0), Decl(bareGlobalReads.tlua, 0, 0))
+
+=== selfReferential.tlua ===
+// The class idiom's metatable reads the symbol back while the pairing is being
+// computed; that read sees the plain table, not a false circularity.
+Account = Account or {};
+>Account : Symbol(Account, Decl(selfReferential.tlua, 0, 0))
+>Account : Symbol(Account, Decl(selfReferential.tlua, 0, 0))
+
+Account.balance = 0;
+>Account.balance : Symbol(balance, Decl(selfReferential.tlua, 2, 24))
+>Account : Symbol(Account, Decl(selfReferential.tlua, 0, 0))
+>balance : Symbol(balance, Decl(selfReferential.tlua, 2, 24))
+
+setmetatable(Account, { __index = Account });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Account : Symbol(Account, Decl(selfReferential.tlua, 0, 0))
+>__index : Symbol(__index, Decl(selfReferential.tlua, 4, 23))
+>Account : Symbol(Account, Decl(selfReferential.tlua, 0, 0))
+
+=== selfReferentialReads.tlua ===
+local balance: number = Account.balance;
+>balance : Symbol(balance, Decl(selfReferentialReads.tlua, 0, 5))
+>Account.balance : Symbol(balance, Decl(selfReferential.tlua, 2, 24))
+>Account : Symbol(Account, Decl(selfReferential.tlua, 0, 0))
+>balance : Symbol(balance, Decl(selfReferential.tlua, 2, 24))
+
+=== shadowed.tlua ===
+// A shadowing local is not the protocol, so it pairs nothing.
+Plain = Plain or {};
+>Plain : Symbol(Plain, Decl(shadowed.tlua, 0, 0))
+>Plain : Symbol(Plain, Decl(shadowed.tlua, 0, 0))
+
+local function setmetatable(value: table, metatable: table): void
+>setmetatable : Symbol(setmetatable, Decl(shadowed.tlua, 1, 20))
+>value : Symbol(value, Decl(shadowed.tlua, 2, 28))
+>metatable : Symbol(metatable, Decl(shadowed.tlua, 2, 41))
+
+end
+setmetatable(Plain, {
+>setmetatable : Symbol(setmetatable, Decl(shadowed.tlua, 1, 20))
+>Plain : Symbol(Plain, Decl(shadowed.tlua, 0, 0))
+
+  __call = function(_self: table): number
+>__call : Symbol(__call, Decl(shadowed.tlua, 4, 21))
+>_self : Symbol(_self, Decl(shadowed.tlua, 5, 20))
+
+    return 1;
+  end,
+});
+
+=== shadowedReads.tlua ===
+local notCallable = Plain();
+>notCallable : Symbol(notCallable, Decl(shadowedReads.tlua, 0, 5))
+>Plain : Symbol(Plain, Decl(shadowed.tlua, 0, 0))
+

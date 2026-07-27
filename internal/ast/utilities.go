@@ -946,6 +946,20 @@ func GetLuaAssignmentTargetReference(target *Expression) *Expression {
 	return nil
 }
 
+// IsLuaStatementFormCall reports whether a call expression stands as a whole
+// statement -- possibly under type-only assertion wrappers, which erase before
+// emission -- rather than feeding its result to a surrounding expression. The
+// statement form is the fire-and-forget shape of calls like `setmetatable(t,
+// mt);`, whose effect on t is all the statement does.
+func IsLuaStatementFormCall(node *Node) bool {
+	parent := node.Parent
+	for parent != nil && (parent.Kind == KindAsExpression || parent.Kind == KindSatisfiesExpression ||
+		parent.Kind == KindNonNullExpression || parent.Kind == KindTypeAssertionExpression) {
+		parent = parent.Parent
+	}
+	return parent != nil && IsExpressionStatement(parent)
+}
+
 // IsLuaBareFunctionWriteTarget reports whether name is the identifier written
 // by Lua's declaration-shaped `function name() ... end` form. `local function`
 // creates a new binding and dotted functions have a separate receiver/member

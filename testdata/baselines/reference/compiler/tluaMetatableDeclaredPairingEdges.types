@@ -1,0 +1,1281 @@
+//// [tests/cases/compiler/tluaMetatableDeclaredPairingEdges.tlua] ////
+
+=== protectedPair.tlua ===
+setmetatable(Locked, {
+>setmetatable(Locked, {  __index = { fallback = 2 },  __metatable = "locked",}) : { fallback: number; own: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Locked : { fallback: number; own: number; }
+>{  __index = { fallback = 2 },  __metatable = "locked",} : { __index: { fallback: number; }; __metatable: string; }
+
+  __index = { fallback = 2 },
+>__index : { fallback: number; }
+>{ fallback = 2 } : { fallback: number; }
+>fallback : number
+>2 : 2
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== protectedStores.tlua ===
+Locked = Locked or {};
+>Locked = Locked or {} : { own: number; }
+>Locked : { fallback: number; own: number; }
+>Locked or {} : { own: number; }
+>Locked : nil
+>{} : { own: number; }
+
+Locked.own = 1;
+>Locked.own = 1 : 1
+>Locked.own : number
+>Locked : { fallback: number; own: number; }
+>own : number
+>1 : 1
+
+=== protectedReplace.tlua ===
+// A later call still runs into the protection the first call installed.
+setmetatable(Locked, {
+>setmetatable(Locked, {  __index = { other = 3 },}) : { fallback: number; own: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Locked : { fallback: number; own: number; }
+>{  __index = { other = 3 },} : { __index: { other: number; }; }
+
+  __index = { other = 3 },
+>__index : { other: number; }
+>{ other = 3 } : { other: number; }
+>other : number
+>3 : 3
+
+});
+
+=== protectedReads.tlua ===
+local own: number = Locked.own;
+>own : number
+>Locked.own : number
+>Locked : { fallback: number; own: number; }
+>own : number
+
+local fallback: number = Locked.fallback;
+>fallback : number
+>Locked.fallback : number
+>Locked : { fallback: number; own: number; }
+>fallback : number
+
+=== contextSensitive.tlua ===
+// The pairing file precedes every store, so the replay checks this literal while
+// the call's own signature is still resolving; the metatable context must be
+// supplied anyway, or _self loses its parameter type.
+setmetatable(Ctx, {
+>setmetatable(Ctx, {  __call = function(_self, q: string): number    return 1;  end,}) : (q: string) => number
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Ctx : (q: string) => number
+>{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: {}, q: string) => number; }
+
+  __call = function(_self, q: string): number
+>__call : (_self: {}, q: string) => number
+>function(_self, q: string): number    return 1;  end : (_self: {}, q: string) => number
+>_self : {}
+>q : string
+
+    return 1;
+>1 : 1
+
+  end,
+});
+
+=== contextSensitiveStores.tlua ===
+Ctx = Ctx or {};
+>Ctx = Ctx or {} : {}
+>Ctx : (q: string) => number
+>Ctx or {} : {}
+>Ctx : nil
+>{} : {}
+
+=== contextSensitiveReads.tlua ===
+local viaCtx: number = Ctx("q");
+>viaCtx : number
+>Ctx("q") : number
+>Ctx : (q: string) => number
+>"q" : "q"
+
+=== rebound.tlua ===
+// A rebinding store between two pairings replaces the table, so the first
+// pairing's protection does not survive to refuse the second.
+Rebound = Rebound or {};
+>Rebound = Rebound or {} : {}
+>Rebound : { fresh: number; }
+>Rebound or {} : {}
+>Rebound : nil
+>{} : {}
+
+setmetatable(Rebound, {
+>setmetatable(Rebound, {  __index = { old = 1 },  __metatable = "locked",}) : { old: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Rebound : { fresh: number; }
+>{  __index = { old = 1 },  __metatable = "locked",} : { __index: { old: number; }; __metatable: string; }
+
+  __index = { old = 1 },
+>__index : { old: number; }
+>{ old = 1 } : { old: number; }
+>old : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+Rebound = {};
+>Rebound = {} : {}
+>Rebound : { fresh: number; }
+>{} : {}
+
+setmetatable(Rebound, {
+>setmetatable(Rebound, {  __index = { fresh = 2 },}) : { fresh: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Rebound : { fresh: number; }
+>{  __index = { fresh = 2 },} : { __index: { fresh: number; }; }
+
+  __index = { fresh = 2 },
+>__index : { fresh: number; }
+>{ fresh = 2 } : { fresh: number; }
+>fresh : number
+>2 : 2
+
+});
+
+=== reboundReads.tlua ===
+local fresh: number = Rebound.fresh;
+>fresh : number
+>Rebound.fresh : number
+>Rebound : { fresh: number; }
+>fresh : number
+
+=== crossRebindA.tlua ===
+// The rebinding store and the next protected pairing sit in separate files: the
+// second install must see the reset, not the first protection.
+CrossRebind = CrossRebind or {};
+>CrossRebind = CrossRebind or {} : {}
+>CrossRebind : { fresh: number; }
+>CrossRebind or {} : {}
+>CrossRebind : {}
+>{} : {}
+
+setmetatable(CrossRebind, {
+>setmetatable(CrossRebind, {  __index = { old = 1 },  __metatable = "first",}) : { old: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CrossRebind : { fresh: number; }
+>{  __index = { old = 1 },  __metatable = "first",} : { __index: { old: number; }; __metatable: string; }
+
+  __index = { old = 1 },
+>__index : { old: number; }
+>{ old = 1 } : { old: number; }
+>old : number
+>1 : 1
+
+  __metatable = "first",
+>__metatable : string
+>"first" : "first"
+
+});
+
+=== crossRebindB.tlua ===
+CrossRebind = {};
+>CrossRebind = {} : {}
+>CrossRebind : { fresh: number; }
+>{} : {}
+
+=== crossRebindC.tlua ===
+setmetatable(CrossRebind, {
+>setmetatable(CrossRebind, {  __index = { fresh = 2 },  __metatable = "second",}) : { fresh: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CrossRebind : { fresh: number; }
+>{  __index = { fresh = 2 },  __metatable = "second",} : { __index: { fresh: number; }; __metatable: string; }
+
+  __index = { fresh = 2 },
+>__index : { fresh: number; }
+>{ fresh = 2 } : { fresh: number; }
+>fresh : number
+>2 : 2
+
+  __metatable = "second",
+>__metatable : string
+>"second" : "second"
+
+});
+
+=== crossRebindReads.tlua ===
+local crossFresh: number = CrossRebind.fresh;
+>crossFresh : number
+>CrossRebind.fresh : number
+>CrossRebind : { fresh: number; }
+>fresh : number
+
+=== maskedA.tlua ===
+// A refused replacement stays an error even when a later debug.setmetatable
+// leaves the final declared type unprotected.
+Masked = Masked or {};
+>Masked = Masked or {} : {}
+>Masked : { c: number; }
+>Masked or {} : {}
+>Masked : nil
+>{} : {}
+
+setmetatable(Masked, {
+>setmetatable(Masked, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Masked : { c: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== maskedB.tlua ===
+setmetatable(Masked, {
+>setmetatable(Masked, {  __index = { b = 2 },}) : { c: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Masked : { c: number; }
+>{  __index = { b = 2 },} : { __index: { b: number; }; }
+
+  __index = { b = 2 },
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+});
+
+=== maskedC.tlua ===
+debug.setmetatable(Masked, {
+>debug.setmetatable(Masked, {  __index = { c = 3 },}) : { c: number; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>Masked : { c: number; }
+>{  __index = { c = 3 },} : { __index: { c: number; }; }
+
+  __index = { c = 3 },
+>__index : { c: number; }
+>{ c = 3 } : { c: number; }
+>c : number
+>3 : 3
+
+});
+
+=== maskedReads.tlua ===
+local maskedC: number = Masked.c;
+>maskedC : number
+>Masked.c : number
+>Masked : { c: number; }
+>c : number
+
+=== conditionalRebind.tlua ===
+// A conditional rebind may not have run, so on the path where it did not, the
+// first pairing's protection still refuses the second call.
+declare rebindCond: boolean;
+>rebindCond : boolean
+
+Conditional = Conditional or {};
+>Conditional = Conditional or {} : {}
+>Conditional : { b: number; }
+>Conditional or {} : {}
+>Conditional : nil
+>{} : {}
+
+setmetatable(Conditional, {
+>setmetatable(Conditional, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Conditional : { b: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+if rebindCond then
+>rebindCond : boolean
+
+  Conditional = {};
+>Conditional = {} : {}
+>Conditional : { b: number; }
+>{} : {}
+
+end
+setmetatable(Conditional, {
+>setmetatable(Conditional, {  __index = { b = 2 },}) : { b: number; } | { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Conditional : { b: number; } | { a: number; }
+>{  __index = { b = 2 },} : { __index: { b: number; }; }
+
+  __index = { b = 2 },
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+});
+
+=== hoistOrder.tlua ===
+// Hoisted function declarations bind before the statements around them, so the
+// recorded calls must be sorted back into source order: the top-level pairing
+// here runs first and is never protected, and the body's pairing is the latest.
+Hoisted = Hoisted or {};
+>Hoisted = Hoisted or {} : {}
+>Hoisted : { late: number; }
+>Hoisted or {} : {}
+>Hoisted : nil
+>{} : {}
+
+setmetatable(Hoisted, { __index = { early = 1 } });
+>setmetatable(Hoisted, { __index = { early = 1 } }) : { early: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Hoisted : { late: number; }
+>{ __index = { early = 1 } } : { __index: { early: number; }; }
+>__index : { early: number; }
+>{ early = 1 } : { early: number; }
+>early : number
+>1 : 1
+
+function protectLater(): void
+>protectLater : () => void
+
+  setmetatable(Hoisted, {
+>setmetatable(Hoisted, {    __index = { late = 2 },    __metatable = "locked",  }) : { late: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Hoisted : { late: number; }
+>{    __index = { late = 2 },    __metatable = "locked",  } : { __index: { late: number; }; __metatable: string; }
+
+    __index = { late = 2 },
+>__index : { late: number; }
+>{ late = 2 } : { late: number; }
+>late : number
+>2 : 2
+
+    __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+  });
+end
+
+=== hoistOrderReads.tlua ===
+local late: number = Hoisted.late;
+>late : number
+>Hoisted.late : number
+>Hoisted : { late: number; }
+>late : number
+
+=== bodyRebind.tlua ===
+// A body that rebinds and then re-pairs works on a fresh table, so the earlier
+// protection does not reach its call: a body store resets exactly as a body
+// pairing contributes.
+BodyRebind = BodyRebind or {};
+>BodyRebind = BodyRebind or {} : {}
+>BodyRebind : { b: number; }
+>BodyRebind or {} : {}
+>BodyRebind : nil
+>{} : {}
+
+setmetatable(BodyRebind, {
+>setmetatable(BodyRebind, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>BodyRebind : { b: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+function rebuildBody(): void
+>rebuildBody : () => void
+
+  BodyRebind = {};
+>BodyRebind = {} : {}
+>BodyRebind : { b: number; }
+>{} : {}
+
+  setmetatable(BodyRebind, { __index = { b = 2 } });
+>setmetatable(BodyRebind, { __index = { b = 2 } }) : { b: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>BodyRebind : { b: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+end
+
+=== crossConditional.tlua ===
+// A conditional rebind is no more definite for sitting in another file.
+CrossConditional = CrossConditional or {};
+>CrossConditional = CrossConditional or {} : {}
+>CrossConditional : { b: number; }
+>CrossConditional or {} : {}
+>CrossConditional : {}
+>{} : {}
+
+setmetatable(CrossConditional, {
+>setmetatable(CrossConditional, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CrossConditional : { b: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== crossConditionalRebind.tlua ===
+declare crossCond: boolean;
+>crossCond : boolean
+
+if crossCond then
+>crossCond : boolean
+
+  CrossConditional = {};
+>CrossConditional = {} : {}
+>CrossConditional : { b: number; }
+>{} : {}
+
+end
+
+=== crossConditionalPair.tlua ===
+setmetatable(CrossConditional, { __index = { b = 2 } });
+>setmetatable(CrossConditional, { __index = { b = 2 } }) : { b: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CrossConditional : { b: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+=== unionArmA.tlua ===
+Union = { one = 1 };
+>Union = { one = 1 } : { one: number; }
+>Union : { (): number; one: number; two?: nil; } | { (): number; one?: nil; two: number; }
+>{ one = 1 } : { one: number; }
+>one : number
+>1 : 1
+
+setmetatable(Union, {
+>setmetatable(Union, {  __call = function(_self: table): number    return 1;  end,}) : { one: number; two?: nil; } | { one?: nil; two: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Union : { (): number; one: number; two?: nil; } | { (): number; one?: nil; two: number; }
+>{  __call = function(_self: table): number    return 1;  end,} : { __call: (_self: table) => number; }
+
+  __call = function(_self: table): number
+>__call : (_self: table) => number
+>function(_self: table): number    return 1;  end : (_self: table) => number
+>_self : table
+
+    return 1;
+>1 : 1
+
+  end,
+});
+
+=== unionArmB.tlua ===
+Union = { two = 2 };
+>Union = { two = 2 } : { two: number; }
+>Union : { (): number; one: number; two?: nil; } | { (): number; one?: nil; two: number; }
+>{ two = 2 } : { two: number; }
+>two : number
+>2 : 2
+
+=== unionReads.tlua ===
+local n: number = Union();
+>n : number
+>Union() : number
+>Union : { (): number; one: number; two?: nil; } | { (): number; one?: nil; two: number; }
+
+=== asserted.tlua ===
+Asserted = Asserted or {};
+>Asserted = Asserted or {} : {}
+>Asserted : () => number
+>Asserted or {} : {}
+>Asserted : nil
+>{} : {}
+
+setmetatable(Asserted, {
+>setmetatable(Asserted, {  __call = function(_self: table): number    return 1;  end,}) as table : table
+>setmetatable(Asserted, {  __call = function(_self: table): number    return 1;  end,}) : () => number
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Asserted : () => number
+>{  __call = function(_self: table): number    return 1;  end,} : { __call: (_self: table) => number; }
+
+  __call = function(_self: table): number
+>__call : (_self: table) => number
+>function(_self: table): number    return 1;  end : (_self: table) => number
+>_self : table
+
+    return 1;
+>1 : 1
+
+  end,
+}) as table;
+
+=== assertedReads.tlua ===
+local viaAssertion: number = Asserted();
+>viaAssertion : number
+>Asserted() : number
+>Asserted : () => number
+
+=== methodOperand.tlua ===
+// Function storage keeps its function type: metatables on functions are
+// per-type at runtime, so no declared pairing forms.
+Mod = Mod or {};
+>Mod = Mod or {} : { f(): number; }
+>Mod : { f(): number; }
+>Mod or {} : { f(): number; }
+>Mod : nil
+>{} : { f(): number; }
+
+function Mod.f(): number
+>Mod : { f(): number; }
+>f : () => number
+
+  return 1;
+>1 : 1
+
+end
+debug.setmetatable(Mod.f, {
+>debug.setmetatable(Mod.f, {  __index = { attached = true },}) : { (): number; attached: boolean; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>Mod.f : () => number
+>Mod : { f(): number; }
+>f : () => number
+>{  __index = { attached = true },} : { __index: { attached: boolean; }; }
+
+  __index = { attached = true },
+>__index : { attached: boolean; }
+>{ attached = true } : { attached: boolean; }
+>attached : boolean
+>true : true
+
+});
+
+=== methodOperandReads.tlua ===
+local viaMethod: number = Mod.f();
+>viaMethod : number
+>Mod.f() : number
+>Mod.f : () => number
+>Mod : { f(): number; }
+>f : () => number
+
+=== doRebind.tlua ===
+// A do-block runs exactly once when its chunk does, so a rebind inside one is
+// as definite as a top-level store: the protection does not survive to refuse
+// the later call.
+DoRebind = DoRebind or {};
+>DoRebind = DoRebind or {} : {}
+>DoRebind : { b: number; }
+>DoRebind or {} : {}
+>DoRebind : nil
+>{} : {}
+
+setmetatable(DoRebind, {
+>setmetatable(DoRebind, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>DoRebind : { b: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+do
+  DoRebind = {};
+>DoRebind = {} : {}
+>DoRebind : { b: number; }
+>{} : {}
+
+end
+setmetatable(DoRebind, {
+>setmetatable(DoRebind, {  __index = { b = 2 },}) : { b: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>DoRebind : { b: number; }
+>{  __index = { b = 2 },} : { __index: { b: number; }; }
+
+  __index = { b = 2 },
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+});
+
+=== doRebindReads.tlua ===
+local doFresh: number = DoRebind.b;
+>doFresh : number
+>DoRebind.b : number
+>DoRebind : { b: number; }
+>b : number
+
+=== doCrossA.tlua ===
+// The do-block rebind is no less definite for sitting in another file.
+DoCross = DoCross or {};
+>DoCross = DoCross or {} : {}
+>DoCross : { b: number; }
+>DoCross or {} : {}
+>DoCross : {}
+>{} : {}
+
+setmetatable(DoCross, {
+>setmetatable(DoCross, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>DoCross : { b: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== doCrossRebind.tlua ===
+do
+  DoCross = {};
+>DoCross = {} : {}
+>DoCross : { b: number; }
+>{} : {}
+
+end
+
+=== doCrossPair.tlua ===
+setmetatable(DoCross, { __index = { b = 2 } });
+>setmetatable(DoCross, { __index = { b = 2 } }) : { b: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>DoCross : { b: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+=== cycleUse.tlua ===
+// Mutually referential metatable arguments cannot both capture the other
+// paired -- the cycle must break somewhere -- but where it breaks is canonical:
+// paired symbols resolve in program order, so CycA's literal captures CycB
+// fully paired and the cycle-closing read inside CycB's literal captures CycA's
+// unpaired base. This use file runs first and reads CycB first precisely so a
+// query-order-driven resolution would break the cycle the other way around.
+local bPeer = debug.getmetatable(CycB).__index;
+>bPeer : {}
+>debug.getmetatable(CycB).__index : {}
+>debug.getmetatable(CycB) : { __index: {}; __call: (_self: table) => number; }
+>debug.getmetatable : (value: any) => table | nil
+>debug : DebugLib
+>getmetatable : (value: any) => table | nil
+>CycB : () => number
+>__index : {}
+
+local aPeer = debug.getmetatable(CycA).__index;
+>aPeer : () => number
+>debug.getmetatable(CycA).__index : () => number
+>debug.getmetatable(CycA) : { __index: () => number; __call: (_self: table) => string; }
+>debug.getmetatable : (value: any) => table | nil
+>debug : DebugLib
+>getmetatable : (value: any) => table | nil
+>CycA : { (): string; [x: string]: number; [x: number]: number; }
+>__index : () => number
+
+local viaA: number = aPeer();
+>viaA : number
+>aPeer() : number
+>aPeer : () => number
+
+local viaB: string = bPeer();
+>viaB : string
+>bPeer() : any
+>bPeer : {}
+
+=== cycleA.tlua ===
+CycA = CycA or {};
+>CycA = CycA or {} : {}
+>CycA : { (): string; [x: string]: number; [x: number]: number; }
+>CycA or {} : {}
+>CycA : nil
+>{} : {}
+
+setmetatable(CycA, {
+>setmetatable(CycA, {  __index = CycB,  __call = function(_self: table): string    return "a";  end,}) : { (): string; [x: string]: number; [x: number]: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CycA : { (): string; [x: string]: number; [x: number]: number; }
+>{  __index = CycB,  __call = function(_self: table): string    return "a";  end,} : { __index: () => number; __call: (_self: table) => string; }
+
+  __index = CycB,
+>__index : () => number
+>CycB : () => number
+
+  __call = function(_self: table): string
+>__call : (_self: table) => string
+>function(_self: table): string    return "a";  end : (_self: table) => string
+>_self : table
+
+    return "a";
+>"a" : "a"
+
+  end,
+});
+
+=== cycleB.tlua ===
+CycB = CycB or {};
+>CycB = CycB or {} : {}
+>CycB : () => number
+>CycB or {} : {}
+>CycB : nil
+>{} : {}
+
+setmetatable(CycB, {
+>setmetatable(CycB, {  __index = CycA,  __call = function(_self: table): number    return 1;  end,}) : () => number
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CycB : () => number
+>{  __index = CycA,  __call = function(_self: table): number    return 1;  end,} : { __index: { (): string; [x: string]: number; [x: number]: number; }; __call: (_self: table) => number; }
+
+  __index = CycA,
+>__index : { (): string; [x: string]: number; [x: number]: number; }
+>CycA : { (): string; [x: string]: number; [x: number]: number; }
+
+  __call = function(_self: table): number
+>__call : (_self: table) => number
+>function(_self: table): number    return 1;  end : (_self: table) => number
+>_self : table
+
+    return 1;
+>1 : 1
+
+  end,
+});
+
+=== expStores.tlua ===
+// An expression-form call anchors the protected check at its own program point
+// without contributing a pairing: this one runs before the protection below is
+// installed, so it is not refused.
+Exp = Exp or {};
+>Exp = Exp or {} : {}
+>Exp : { y: number; }
+>Exp or {} : {}
+>Exp : nil
+>{} : {}
+
+=== expCall.tlua ===
+local expResult = setmetatable(Exp, { __index = { x = 1 } });
+>expResult : { x: number; }
+>setmetatable(Exp, { __index = { x = 1 } }) : { x: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Exp : { y: number; }
+>{ __index = { x = 1 } } : { __index: { x: number; }; }
+>__index : { x: number; }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+
+=== expProtect.tlua ===
+setmetatable(Exp, {
+>setmetatable(Exp, {  __index = { y = 2 },  __metatable = "locked",}) : { y: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Exp : { y: number; }
+>{  __index = { y = 2 },  __metatable = "locked",} : { __index: { y: number; }; __metatable: string; }
+
+  __index = { y = 2 },
+>__index : { y: number; }
+>{ y = 2 } : { y: number; }
+>y : number
+>2 : 2
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== maskExpA.tlua ===
+// The reverse ordering: an expression-form replacement after the protection was
+// installed raises at runtime, and the later debug.setmetatable that leaves the
+// final declared type unprotected must not mask that.
+MaskExp = MaskExp or {};
+>MaskExp = MaskExp or {} : {}
+>MaskExp : { c: number; }
+>MaskExp or {} : {}
+>MaskExp : nil
+>{} : {}
+
+setmetatable(MaskExp, {
+>setmetatable(MaskExp, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>MaskExp : { c: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== maskExpB.tlua ===
+local maskResult = setmetatable(MaskExp, { __index = { b = 2 } });
+>maskResult : { c: number; }
+>setmetatable(MaskExp, { __index = { b = 2 } }) : { c: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>MaskExp : { c: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+=== maskExpC.tlua ===
+debug.setmetatable(MaskExp, { __index = { c = 3 } });
+>debug.setmetatable(MaskExp, { __index = { c = 3 } }) : { c: number; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>MaskExp : { c: number; }
+>{ __index = { c = 3 } } : { __index: { c: number; }; }
+>__index : { c: number; }
+>{ c = 3 } : { c: number; }
+>c : number
+>3 : 3
+
+=== explicitArgs.tlua ===
+// An explicit instantiation names T itself, so the replay contextualizes the
+// literal exactly as the call does: _self is table, not Expl's inferred shape,
+// and no contradiction arises when the call re-checks the frozen literal.
+Expl = Expl or {};
+>Expl = Expl or {} : { tag: number; }
+>Expl : { (q: string): number; tag: number; }
+>Expl or {} : { tag: number; }
+>Expl : nil
+>{} : { tag: number; }
+
+Expl.tag = 1;
+>Expl.tag = 1 : 1
+>Expl.tag : number
+>Expl : { (q: string): number; tag: number; }
+>tag : number
+>1 : 1
+
+setmetatable<table>(Expl, {
+>setmetatable<table>(Expl, {  __call = function(_self, q: string): number    return 1;  end,}) : table
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Expl : { (q: string): number; tag: number; }
+>{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: table, q: string) => number; }
+
+  __call = function(_self, q: string): number
+>__call : (_self: table, q: string) => number
+>function(_self, q: string): number    return 1;  end : (_self: table, q: string) => number
+>_self : table
+>q : string
+
+    return 1;
+>1 : 1
+
+  end,
+});
+
+=== debugPair.tlua ===
+// debug.setmetatable's table overload declares the same LuaMetatable<T>
+// contract the replay synthesizes, so handlers type identically whether the
+// literal's first check comes from the replay or from the call itself.
+debug.setmetatable(DbgAug, {
+>debug.setmetatable(DbgAug, {  __call = function(_self, q: string): number    return 1;  end,}) : (q: string) => number
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>DbgAug : (q: string) => number
+>{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: {}, q: string) => number; }
+
+  __call = function(_self, q: string): number
+>__call : (_self: {}, q: string) => number
+>function(_self, q: string): number    return 1;  end : (_self: {}, q: string) => number
+>_self : {}
+>q : string
+
+    return 1;
+>1 : 1
+
+  end,
+});
+
+=== debugPairStores.tlua ===
+DbgAug = DbgAug or {};
+>DbgAug = DbgAug or {} : {}
+>DbgAug : (q: string) => number
+>DbgAug or {} : {}
+>DbgAug : nil
+>{} : {}
+
+=== debugPairReads.tlua ===
+local viaDbg: number = DbgAug("q");
+>viaDbg : number
+>DbgAug("q") : number
+>DbgAug : (q: string) => number
+>"q" : "q"
+
+=== debugLocal.tlua ===
+// A plain local gets the same contract from the overload directly.
+local plain: table = {};
+>plain : table
+>{} : {}
+
+debug.setmetatable(plain, {
+>debug.setmetatable(plain, {  __call = function(_self, q: string): number    return 1;  end,}) : table
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>plain : table
+>{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: table, q: string) => number; }
+
+  __call = function(_self, q: string): number
+>__call : (_self: table, q: string) => number
+>function(_self, q: string): number    return 1;  end : (_self: table, q: string) => number
+>_self : table
+>q : string
+
+    return 1;
+>1 : 1
+
+  end,
+});
+
+=== condMaskA.tlua ===
+// A CONDITIONAL debug.setmetatable may not have run, and on the path where it
+// did not, the protection it would have stripped still refuses the later call.
+CondMask = CondMask or {};
+>CondMask = CondMask or {} : {}
+>CondMask : { c: number; }
+>CondMask or {} : {}
+>CondMask : nil
+>{} : {}
+
+setmetatable(CondMask, {
+>setmetatable(CondMask, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CondMask : { c: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== condMaskB.tlua ===
+declare condFlag: boolean;
+>condFlag : boolean
+
+if condFlag then
+>condFlag : boolean
+
+  debug.setmetatable(CondMask, { __index = { b = 2 } });
+>debug.setmetatable(CondMask, { __index = { b = 2 } }) : { b: number; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>CondMask : { c: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+end
+
+=== condMaskC.tlua ===
+setmetatable(CondMask, { __index = { c = 3 } });
+>setmetatable(CondMask, { __index = { c = 3 } }) : { c: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>CondMask : { c: number; }
+>{ __index = { c = 3 } } : { __index: { c: number; }; }
+>__index : { c: number; }
+>{ c = 3 } : { c: number; }
+>c : number
+>3 : 3
+
+=== condMaskReads.tlua ===
+local condDeclared: number = CondMask.c;
+>condDeclared : number
+>CondMask.c : number
+>CondMask : { c: number; }
+>c : number
+
+=== definiteMaskA.tlua ===
+// An unconditional debug.setmetatable definitely strips the protection, so the
+// later call is not refused.
+DefMask = DefMask or {};
+>DefMask = DefMask or {} : {}
+>DefMask : { c: number; }
+>DefMask or {} : {}
+>DefMask : nil
+>{} : {}
+
+setmetatable(DefMask, {
+>setmetatable(DefMask, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>DefMask : { c: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== definiteMaskB.tlua ===
+debug.setmetatable(DefMask, { __index = { b = 2 } });
+>debug.setmetatable(DefMask, { __index = { b = 2 } }) : { b: number; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>DefMask : { c: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+=== definiteMaskC.tlua ===
+setmetatable(DefMask, { __index = { c = 3 } });
+>setmetatable(DefMask, { __index = { c = 3 } }) : { c: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>DefMask : { c: number; }
+>{ __index = { c = 3 } } : { __index: { c: number; }; }
+>__index : { c: number; }
+>{ c = 3 } : { c: number; }
+>c : number
+>3 : 3
+
+=== definiteMaskReads.tlua ===
+local defDeclared: number = DefMask.c;
+>defDeclared : number
+>DefMask.c : number
+>DefMask : { c: number; }
+>c : number
+
+=== selfPresA.tlua ===
+// A store whose value may evaluate to the target itself keeps the table -- and
+// its protection -- on that path, so it is no rebinding and the later call is
+// still refused.
+SelfPres = SelfPres or {};
+>SelfPres = SelfPres or {} : {}
+>SelfPres : { a: number; }
+>SelfPres or {} : {}
+>SelfPres : {}
+>{} : {}
+
+setmetatable(SelfPres, {
+>setmetatable(SelfPres, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>SelfPres : { a: number; }
+>{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
+
+  __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+  __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+});
+
+=== selfPresB.tlua ===
+declare keepFlag: boolean;
+>keepFlag : boolean
+
+SelfPres = keepFlag and SelfPres or {};
+>SelfPres = keepFlag and SelfPres or {} : {}
+>SelfPres : { a: number; }
+>keepFlag and SelfPres or {} : {}
+>keepFlag and SelfPres : false | {}
+>keepFlag : boolean
+>SelfPres : {}
+>{} : {}
+
+=== selfPresC.tlua ===
+setmetatable(SelfPres, { __index = { b = 2 } });
+>setmetatable(SelfPres, { __index = { b = 2 } }) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>SelfPres : { a: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+=== selfPresReads.tlua ===
+local selfDeclared: number = SelfPres.a;
+>selfDeclared : number
+>SelfPres.a : number
+>SelfPres : { a: number; }
+>a : number
+
+=== exclusiveTop.tlua ===
+// A chunk runs once, so the branches of a top-level `if` are mutually
+// exclusive: the else call never meets the then branch's protection.
+declare exclCond: boolean;
+>exclCond : boolean
+
+Branches = {};
+>Branches = {} : {}
+>Branches : { a: number; }
+>{} : {}
+
+if exclCond then
+>exclCond : boolean
+
+  setmetatable(Branches, {
+>setmetatable(Branches, {    __index = { a = 1 },    __metatable = "locked",  }) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Branches : { a: number; }
+>{    __index = { a = 1 },    __metatable = "locked",  } : { __index: { a: number; }; __metatable: string; }
+
+    __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+    __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+  });
+else
+  setmetatable(Branches, { __index = { b = 2 } });
+>setmetatable(Branches, { __index = { b = 2 } }) : { b: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Branches : { a: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+end
+
+=== exclusiveReads.tlua ===
+local branchDeclared: number = Branches.a;
+>branchDeclared : number
+>Branches.a : number
+>Branches : { a: number; }
+>a : number
+
+=== exclusiveFn.tlua ===
+// In a function body the same `if` runs per call with the condition free to
+// flip, so the branches are not exclusive and the protection still refuses
+// the else call.
+declare fnCond: boolean;
+>fnCond : boolean
+
+FnBranches = {};
+>FnBranches = {} : {}
+>FnBranches : { a: number; }
+>{} : {}
+
+function flipBranches(): void
+>flipBranches : () => void
+
+  if fnCond then
+>fnCond : boolean
+
+    setmetatable(FnBranches, {
+>setmetatable(FnBranches, {      __index = { a = 1 },      __metatable = "locked",    }) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>FnBranches : { a: number; }
+>{      __index = { a = 1 },      __metatable = "locked",    } : { __index: { a: number; }; __metatable: string; }
+
+      __index = { a = 1 },
+>__index : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+      __metatable = "locked",
+>__metatable : string
+>"locked" : "locked"
+
+    });
+  else
+    setmetatable(FnBranches, { __index = { b = 2 } });
+>setmetatable(FnBranches, { __index = { b = 2 } }) : { a: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>FnBranches : { a: number; }
+>{ __index = { b = 2 } } : { __index: { b: number; }; }
+>__index : { b: number; }
+>{ b = 2 } : { b: number; }
+>b : number
+>2 : 2
+
+  end
+end
+

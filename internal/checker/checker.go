@@ -589,6 +589,13 @@ type Checker struct {
 	luaOrderedSelfSnapshots                map[luaSnapshotKey]*Type
 	luaDefaultedInitializerTypes           map[*ast.Node]*Type
 	luaAugmentationTargets                 map[*ast.Node]*ast.Symbol
+	luaMetatablePairings                   map[*ast.Symbol][]*ast.Node
+	luaMetatablePairingCalls               map[*ast.Node][]*ast.Symbol
+	luaOrderedPairingSymbols               []*ast.Symbol
+	luaPairedSymbolsResolved               bool
+	luaDeclaredPairingBases                map[*ast.Symbol]*Type
+	luaPairingMetatableArgTypes            map[*ast.Node]*Type
+	luaSymbolEffectTimelines               map[*ast.Symbol][]luaSymbolEffect
 	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
 	luaAugmentationMemberArms              map[*ast.Symbol][]*ast.Symbol
 	luaConstructorResolver                 *luaConstructorResolver
@@ -893,6 +900,11 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.luaDefaultedInitializerTypes = make(map[*ast.Node]*Type)
 	c.luaStableAccessKeys = make(map[*ast.Node]luaStableAccessKeyResult)
 	c.luaAugmentationTargets = make(map[*ast.Node]*ast.Symbol)
+	c.luaMetatablePairings = make(map[*ast.Symbol][]*ast.Node)
+	c.luaMetatablePairingCalls = make(map[*ast.Node][]*ast.Symbol)
+	c.luaDeclaredPairingBases = make(map[*ast.Symbol]*Type)
+	c.luaPairingMetatableArgTypes = make(map[*ast.Node]*Type)
+	c.luaSymbolEffectTimelines = make(map[*ast.Symbol][]luaSymbolEffect)
 	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
 	c.luaGlobalsSymbol.Exports = c.globals
 	c.globals[c.luaGlobalsSymbol.Name] = c.luaGlobalsSymbol
@@ -12650,6 +12662,16 @@ func (c *Checker) getWriteTypeOfInstantiatedSymbol(symbol *ast.Symbol) *Type {
 func (c *Checker) getTypeOfVariableOrParameterOrProperty(symbol *ast.Symbol) *Type {
 	links := c.valueSymbolLinks.Get(symbol)
 	if links.resolvedType == nil {
+		if symbol.Flags&ast.SymbolFlagsAssignment != 0 {
+			// Before this symbol publishes anything: cyclic metatable arguments
+			// freeze whichever neighbor is mid-resolution, so paired symbols
+			// resolve once, in program order, regardless of which one a checker
+			// or a query touches first.
+			c.ensureLuaPairedSymbolsResolved(symbol)
+			if links.resolvedType != nil {
+				return links.resolvedType
+			}
+		}
 		t := c.getTypeOfVariableOrParameterOrPropertyWorker(symbol)
 		if t == nil {
 			panic("Unexpected nil type")
@@ -12661,6 +12683,14 @@ func (c *Checker) getTypeOfVariableOrParameterOrProperty(symbol *ast.Symbol) *Ty
 		// cases where contextual typing may take place.
 		if links.resolvedType == nil && !c.isParameterOfContextSensitiveSignature(symbol) {
 			links.resolvedType = t
+			if symbol.Flags&ast.SymbolFlagsAssignment != 0 {
+				// Deliberately after the unpaired type is published above: pairing
+				// resolves the metatable argument, whose members may read the
+				// symbol back, and that read must see the plain table instead of
+				// reporting a false circularity.
+				t = c.applyLuaDeclaredMetatablePairings(symbol, t)
+				links.resolvedType = t
+			}
 		}
 		return t
 	}

@@ -69,7 +69,7 @@ tluaLibSelfParameters.tlua(49,8): error TLUA2555: Expected at least 2 arguments,
     buffer.put("a");
            ~~~
 !!! error TLUA2555: Expected at least 2 arguments, but got 1.
-!!! related TLUA6210 lib.luajit.d.tlua:589:32: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:590:32: An argument for 'value' was not provided.
     
     declare callback: LuaCallback;
     callback:set(function() return; end);

@@ -492,6 +492,23 @@ func (c *Checker) isSelfPreservingLuaCapturedTarget(target *ast.Node) bool {
 	return value != nil && c.isSameLuaCapturedTargetStorage(slot.target(), value)
 }
 
+// luaStoreMayPreserveTarget reports whether a store's value can evaluate to the
+// stored target itself. `and`/`or` yield one of their operands, so any operand
+// in result position that names the target's storage keeps the table -- and its
+// metatable -- on that path. Deliberately over-approximate: a left `and`
+// operand only results when falsy, but treating it as preserving merely retains
+// a pairing, the conservative direction.
+func (c *Checker) luaStoreMayPreserveTarget(target *ast.Node, value *ast.Node) bool {
+	value = skipLuaTypeOnlyWrappers(value)
+	if ast.IsBinaryExpression(value) {
+		binary := value.AsBinaryExpression()
+		if binary.OperatorToken.Kind == ast.KindAmpersandAmpersandToken || binary.OperatorToken.Kind == ast.KindBarBarToken {
+			return c.luaStoreMayPreserveTarget(target, binary.Left) || c.luaStoreMayPreserveTarget(target, binary.Right)
+		}
+	}
+	return c.isSameLuaCapturedTargetStorage(target, value)
+}
+
 // isSelfPreservingLuaAssignmentValue recognizes the RHS read paired with a
 // target such as a in a, a[1] = a, value. Reading an otherwise-empty evolving
 // array here must not force it to any[] before the sibling mutation is applied.
@@ -615,6 +632,12 @@ func (c *Checker) checkLuaAssignment(left *ast.Node, right *ast.Node, checkMode 
 			targetType = c.checkLuaAugmentationTarget(target, symbol, checkMode)
 		} else {
 			targetType = c.checkExpressionEx(target, checkMode)
+		}
+		if isAugmentation && len(c.luaMetatablePairings[symbol]) != 0 {
+			// A store replaces the table, so it checks against the storage the
+			// declared-type pairing wrapped -- the pairing describes what the
+			// setmetatable statements install, not what a store must supply.
+			targetType = c.getUnpairedTableType(targetType)
 		}
 		overwritten := c.isOverwrittenLuaCapturedTarget(target)
 		if overwritten {

@@ -31,9 +31,9 @@ local ra: number = real.__index.a;
 // debug.setmetatable replaces a protected pairing without error.
 local swapped = debug.setmetatable(guarded, { __index = { b = "s" } });
 >swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 10, 5))
->debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 >debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
->setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 >guarded : Symbol(guarded, Decl(tluaMetatableDebug.tlua, 3, 5))
 >__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 10, 45))
 >b : Symbol(b, Decl(tluaMetatableDebug.tlua, 10, 57))
@@ -83,9 +83,9 @@ function stmtBypass(): void
 >__metatable : Symbol(__metatable, Decl(tluaMetatableDebug.tlua, 22, 64))
 
   debug.setmetatable(prot, { __index = { swapped = "s" } });
->debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 >debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
->setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
 >prot : Symbol(prot, Decl(tluaMetatableDebug.tlua, 22, 7))
 >__index : Symbol(__index, Decl(tluaMetatableDebug.tlua, 23, 28))
 >swapped : Symbol(swapped, Decl(tluaMetatableDebug.tlua, 23, 40))

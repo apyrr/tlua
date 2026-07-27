@@ -1,0 +1,99 @@
+shadowedReads.tlua(1,21): error TLUA2349: This expression is not callable.
+  Type '{}' has no call signatures.
+
+
+==== producer.tlua (0 errors) ====
+    app = app or {};
+    app.sql = app.sql or {};
+    
+    local executeSql = suspend function<T extends table>(query: string): T[]
+      return {};
+    end;
+    
+    function app.sql.begin(): void
+    end
+    
+    setmetatable(app.sql, {
+      __call = suspend function<T extends table>(_self: table, query: string): T[]
+        return executeSql(query);
+      end,
+    });
+    
+    // The same file sees both surfaces from inside a function body.
+    suspend function producerUse(): void
+      app.sql.begin();
+      local rows = app.sql("SELECT 1");
+    end
+    
+==== consumer.tlua (0 errors) ====
+    local run = suspend function()
+      app.sql.begin();
+      local rows = app.sql<{ id: number }>("SELECT id FROM example");
+      local first: { id: number } | nil = rows[1];
+    end;
+    
+    // A defaulted guard in another file still checks: a store supplies the table,
+    // not the pairing the setmetatable statements install.
+    app.sql = app.sql or {};
+    
+==== globalRoot.tlua (0 errors) ====
+    // A pairing on an implicit global root, consumed cross-file.
+    Counter = Counter or {};
+    Counter.count = 0;
+    setmetatable(Counter, {
+      __index = function(_self, key: string): number
+        return 0;
+      end,
+    });
+    
+==== globalRootReads.tlua (0 errors) ====
+    local count: number = Counter.count;
+    local missing: number | nil = Counter.other;
+    
+==== bareGlobal.tlua (0 errors) ====
+    // A callable pairing on a bare global: the defaulted guard still checks -- a
+    // store supplies the table, not the pairing -- and pairing replaces, so of
+    // several statements the last one stands.
+    Gauge = Gauge or {};
+    setmetatable(Gauge, {
+      __call = function(_self: table): number
+        return 1;
+      end,
+    });
+    setmetatable(Gauge, {
+      __call = function(_self: table): string
+        return "replaced";
+      end,
+    });
+    
+==== bareGlobalReads.tlua (0 errors) ====
+    Gauge = Gauge or {};
+    local replaced: string = Gauge();
+    
+==== selfReferential.tlua (0 errors) ====
+    // The class idiom's metatable reads the symbol back while the pairing is being
+    // computed; that read sees the plain table, not a false circularity.
+    Account = Account or {};
+    Account.balance = 0;
+    setmetatable(Account, { __index = Account });
+    
+==== selfReferentialReads.tlua (0 errors) ====
+    local balance: number = Account.balance;
+    
+==== shadowed.tlua (0 errors) ====
+    // A shadowing local is not the protocol, so it pairs nothing.
+    Plain = Plain or {};
+    local function setmetatable(value: table, metatable: table): void
+    end
+    setmetatable(Plain, {
+      __call = function(_self: table): number
+        return 1;
+      end,
+    });
+    
+==== shadowedReads.tlua (1 errors) ====
+    local notCallable = Plain();
+                        ~~~~~
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type '{}' has no call signatures.
+    

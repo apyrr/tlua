@@ -149,6 +149,10 @@ func (c *Checker) initializeLuaAugmentations() {
 		}
 		pending = deferred
 	}
+
+	// Members are all attached, so the shared resolver can map each setmetatable
+	// statement's table operand to the storage whose declared type it pairs.
+	c.attachLuaMetatablePairings()
 }
 
 // isLuaEnvironmentExport mirrors the filter used to build `typeof _G`.

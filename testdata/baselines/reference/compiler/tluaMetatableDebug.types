@@ -40,9 +40,9 @@ local ra: number = real.__index.a;
 local swapped = debug.setmetatable(guarded, { __index = { b = "s" } });
 >swapped : { n: number; b: string; }
 >debug.setmetatable(guarded, { __index = { b = "s" } }) : { n: number; b: string; }
->debug.setmetatable : <T>(value: T, metatable: table | nil) => T
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : <T>(value: T, metatable: table | nil) => T
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >guarded : { n: number; a: number; }
 >{ __index = { b = "s" } } : { __index: { b: string; }; }
 >__index : { b: string; }
@@ -113,9 +113,9 @@ function stmtBypass(): void
 
   debug.setmetatable(prot, { __index = { swapped = "s" } });
 >debug.setmetatable(prot, { __index = { swapped = "s" } }) : { y: number; swapped: string; }
->debug.setmetatable : <T>(value: T, metatable: table | nil) => T
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : <T>(value: T, metatable: table | nil) => T
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >prot : { y: number; base: number; }
 >{ __index = { swapped = "s" } } : { __index: { swapped: string; }; }
 >__index : { swapped: string; }

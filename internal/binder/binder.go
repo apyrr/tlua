@@ -128,6 +128,13 @@ func bindSourceFile(file *ast.SourceFile) {
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
 		b.bindDeferredExpandoAssignments()
+		// Restore the source order the walk does not produce: bindStatementList binds
+		// hoisted function declarations -- bodies included -- before the statements
+		// around them, so a call inside a body is appended ahead of top-level calls
+		// that precede it. Consumers read this list as the order the file runs in.
+		slices.SortFunc(file.LuaSetmetatableCandidates, func(left *ast.Node, right *ast.Node) int {
+			return left.Pos() - right.Pos()
+		})
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
 	})
@@ -653,6 +660,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindInterfaceDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
 	case ast.KindCallExpression:
+		b.bindLuaSetmetatableCandidate(node)
 		switch ast.GetAssignmentDeclarationKind(node) {
 		case ast.JSDeclarationKindObjectDefinePropertyValue:
 			b.bindExpandoPropertyAssignment(node)
@@ -952,6 +960,36 @@ func (b *Binder) addLuaWriteCandidate(node *ast.Node, target *ast.Node, symbol *
 		Symbol:     symbol,
 		ValueIndex: valueIndex,
 	})
+}
+
+// bindLuaSetmetatableCandidate records a `setmetatable(t, mt)` (or
+// `debug.setmetatable`) call in any position, so each checker can anchor its
+// protected-metatable check at the call's program point and, for the statement
+// form, fold the pairing the call installs into the declared type of the
+// storage its table operand names. The filter here is purely syntactic; the
+// checker re-verifies that the callee is the real global, classifies the
+// statement form, and resolves the operand to augmentation storage.
+func (b *Binder) bindLuaSetmetatableCandidate(node *ast.Node) {
+	if ast.IsInJSFile(node) {
+		return
+	}
+	if len(node.Arguments()) < 2 {
+		return
+	}
+	callee := ast.SkipParentheses(node.Expression())
+	switch callee.Kind {
+	case ast.KindIdentifier:
+		if callee.Text() != "setmetatable" {
+			return
+		}
+	case ast.KindPropertyAccessExpression:
+		if callee.Name().Text() != "setmetatable" {
+			return
+		}
+	default:
+		return
+	}
+	b.file.LuaSetmetatableCandidates = append(b.file.LuaSetmetatableCandidates, node)
 }
 
 func (b *Binder) bindDeferredExpandoAssignment(node *ast.Node) {

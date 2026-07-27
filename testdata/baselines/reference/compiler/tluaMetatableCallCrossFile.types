@@ -1,0 +1,301 @@
+//// [tests/cases/compiler/tluaMetatableCallCrossFile.tlua] ////
+
+=== producer.tlua ===
+app = app or {};
+>app = app or {} : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>app or {} : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>app : nil
+>{} : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+
+app.sql = app.sql or {};
+>app.sql = app.sql or {} : { begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql or {} : { begin(): void; }
+>app.sql : { begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { begin(): void; }
+>{} : { begin(): void; }
+
+local executeSql = suspend function<T extends table>(query: string): T[]
+>executeSql : suspend <T extends table>(query: string) => T[]
+>suspend function<T extends table>(query: string): T[]  return {};end : suspend <T extends table>(query: string) => T[]
+>query : string
+
+  return {};
+>{} : {}
+
+end;
+
+function app.sql.begin(): void
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>begin : () => void
+
+end
+
+setmetatable(app.sql, {
+>setmetatable(app.sql, {  __call = suspend function<T extends table>(_self: table, query: string): T[]    return executeSql(query);  end,}) : { <T extends table>(query: string): T[]; begin(): void; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>{  __call = suspend function<T extends table>(_self: table, query: string): T[]    return executeSql(query);  end,} : { __call: <T extends table>(_self: table, query: string) => T[]; }
+
+  __call = suspend function<T extends table>(_self: table, query: string): T[]
+>__call : suspend <T extends table>(_self: table, query: string) => T[]
+>suspend function<T extends table>(_self: table, query: string): T[]    return executeSql(query);  end : suspend <T extends table>(_self: table, query: string) => T[]
+>_self : table
+>query : string
+
+    return executeSql(query);
+>executeSql(query) : T[]
+>executeSql : suspend <T_1 extends table>(query: string) => T_1[]
+>query : string
+
+  end,
+});
+
+// The same file sees both surfaces from inside a function body.
+suspend function producerUse(): void
+>producerUse : suspend () => void
+
+  app.sql.begin();
+>app.sql.begin() : void
+>app.sql.begin : () => void
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>begin : () => void
+
+  local rows = app.sql("SELECT 1");
+>rows : table[]
+>app.sql("SELECT 1") : table[]
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>"SELECT 1" : "SELECT 1"
+
+end
+
+=== consumer.tlua ===
+local run = suspend function()
+>run : suspend () => void
+>suspend function()  app.sql.begin();  local rows = app.sql<{ id: number }>("SELECT id FROM example");  local first: { id: number } | nil = rows[1];end : suspend () => void
+
+  app.sql.begin();
+>app.sql.begin() : void
+>app.sql.begin : () => void
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>begin : () => void
+
+  local rows = app.sql<{ id: number }>("SELECT id FROM example");
+>rows : { id: number; }[]
+>app.sql<{ id: number }>("SELECT id FROM example") : { id: number; }[]
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>id : number
+>"SELECT id FROM example" : "SELECT id FROM example"
+
+  local first: { id: number } | nil = rows[1];
+>first : { id: number; } | nil
+>id : number
+>rows[1] : { id: number; } | nil
+>rows : { id: number; }[]
+>1 : 1
+
+end;
+
+// A defaulted guard in another file still checks: a store supplies the table,
+// not the pairing the setmetatable statements install.
+app.sql = app.sql or {};
+>app.sql = app.sql or {} : { begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql or {} : { begin(): void; }
+>app.sql : { begin(): void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>sql : { begin(): void; }
+>{} : { begin(): void; }
+
+=== globalRoot.tlua ===
+// A pairing on an implicit global root, consumed cross-file.
+Counter = Counter or {};
+>Counter = Counter or {} : { count: number; }
+>Counter : { [x: string]: number; count: number; }
+>Counter or {} : { count: number; }
+>Counter : nil
+>{} : { count: number; }
+
+Counter.count = 0;
+>Counter.count = 0 : 0
+>Counter.count : number
+>Counter : { [x: string]: number; count: number; }
+>count : number
+>0 : 0
+
+setmetatable(Counter, {
+>setmetatable(Counter, {  __index = function(_self, key: string): number    return 0;  end,}) : { [x: string]: number; count: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Counter : { [x: string]: number; count: number; }
+>{  __index = function(_self, key: string): number    return 0;  end,} : { __index: (_self: { count: number; }, key: string) => number; }
+
+  __index = function(_self, key: string): number
+>__index : (_self: { count: number; }, key: string) => number
+>function(_self, key: string): number    return 0;  end : (_self: { count: number; }, key: string) => number
+>_self : { count: number; }
+>key : string
+
+    return 0;
+>0 : 0
+
+  end,
+});
+
+=== globalRootReads.tlua ===
+local count: number = Counter.count;
+>count : number
+>Counter.count : number
+>Counter : { [x: string]: number; count: number; }
+>count : number
+
+local missing: number | nil = Counter.other;
+>missing : number | nil
+>Counter.other : number | nil
+>Counter : { [x: string]: number; count: number; }
+>other : number | nil
+
+=== bareGlobal.tlua ===
+// A callable pairing on a bare global: the defaulted guard still checks -- a
+// store supplies the table, not the pairing -- and pairing replaces, so of
+// several statements the last one stands.
+Gauge = Gauge or {};
+>Gauge = Gauge or {} : {}
+>Gauge : () => string
+>Gauge or {} : {}
+>Gauge : {}
+>{} : {}
+
+setmetatable(Gauge, {
+>setmetatable(Gauge, {  __call = function(_self: table): number    return 1;  end,}) : () => number
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Gauge : () => string
+>{  __call = function(_self: table): number    return 1;  end,} : { __call: (_self: table) => number; }
+
+  __call = function(_self: table): number
+>__call : (_self: table) => number
+>function(_self: table): number    return 1;  end : (_self: table) => number
+>_self : table
+
+    return 1;
+>1 : 1
+
+  end,
+});
+setmetatable(Gauge, {
+>setmetatable(Gauge, {  __call = function(_self: table): string    return "replaced";  end,}) : () => string
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Gauge : () => number
+>{  __call = function(_self: table): string    return "replaced";  end,} : { __call: (_self: table) => string; }
+
+  __call = function(_self: table): string
+>__call : (_self: table) => string
+>function(_self: table): string    return "replaced";  end : (_self: table) => string
+>_self : table
+
+    return "replaced";
+>"replaced" : "replaced"
+
+  end,
+});
+
+=== bareGlobalReads.tlua ===
+Gauge = Gauge or {};
+>Gauge = Gauge or {} : {}
+>Gauge : () => string
+>Gauge or {} : {}
+>Gauge : {}
+>{} : {}
+
+local replaced: string = Gauge();
+>replaced : string
+>Gauge() : string
+>Gauge : () => string
+
+=== selfReferential.tlua ===
+// The class idiom's metatable reads the symbol back while the pairing is being
+// computed; that read sees the plain table, not a false circularity.
+Account = Account or {};
+>Account = Account or {} : { balance: number; }
+>Account : { balance: number; }
+>Account or {} : { balance: number; }
+>Account : nil
+>{} : { balance: number; }
+
+Account.balance = 0;
+>Account.balance = 0 : 0
+>Account.balance : number
+>Account : { balance: number; }
+>balance : number
+>0 : 0
+
+setmetatable(Account, { __index = Account });
+>setmetatable(Account, { __index = Account }) : { balance: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>Account : { balance: number; }
+>{ __index = Account } : { __index: { balance: number; }; }
+>__index : { balance: number; }
+>Account : { balance: number; }
+
+=== selfReferentialReads.tlua ===
+local balance: number = Account.balance;
+>balance : number
+>Account.balance : number
+>Account : { balance: number; }
+>balance : number
+
+=== shadowed.tlua ===
+// A shadowing local is not the protocol, so it pairs nothing.
+Plain = Plain or {};
+>Plain = Plain or {} : {}
+>Plain : {}
+>Plain or {} : {}
+>Plain : nil
+>{} : {}
+
+local function setmetatable(value: table, metatable: table): void
+>setmetatable : (value: table, metatable: table) => void
+>value : table
+>metatable : table
+
+end
+setmetatable(Plain, {
+>setmetatable(Plain, {  __call = function(_self: table): number    return 1;  end,}) : void
+>setmetatable : (value: table, metatable: table) => void
+>Plain : {}
+>{  __call = function(_self: table): number    return 1;  end,} : { __call: (_self: table) => number; }
+
+  __call = function(_self: table): number
+>__call : (_self: table) => number
+>function(_self: table): number    return 1;  end : (_self: table) => number
+>_self : table
+
+    return 1;
+>1 : 1
+
+  end,
+});
+
+=== shadowedReads.tlua ===
+local notCallable = Plain();
+>notCallable : any
+>Plain() : any
+>Plain : {}
+

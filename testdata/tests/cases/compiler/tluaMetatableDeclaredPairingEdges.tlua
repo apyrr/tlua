@@ -1,0 +1,434 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// Edges of declared-type metatable pairing: a protected pairing must not refuse
+// its own installing call in any check order, union storage pairs arm by arm,
+// an assertion-wrapped call statement still pairs, and function storage stays
+// flow-only.
+
+// The pairing file comes first so the installing call is checked before any
+// store resolves the global -- the order that once saw its own protection.
+// @filename: protectedPair.tlua
+setmetatable(Locked, {
+  __index = { fallback = 2 },
+  __metatable = "locked",
+});
+
+// @filename: protectedStores.tlua
+Locked = Locked or {};
+Locked.own = 1;
+
+// @filename: protectedReplace.tlua
+// A later call still runs into the protection the first call installed.
+setmetatable(Locked, {
+  __index = { other = 3 },
+});
+
+// @filename: protectedReads.tlua
+local own: number = Locked.own;
+local fallback: number = Locked.fallback;
+
+// @filename: contextSensitive.tlua
+// The pairing file precedes every store, so the replay checks this literal while
+// the call's own signature is still resolving; the metatable context must be
+// supplied anyway, or _self loses its parameter type.
+setmetatable(Ctx, {
+  __call = function(_self, q: string): number
+    return 1;
+  end,
+});
+
+// @filename: contextSensitiveStores.tlua
+Ctx = Ctx or {};
+
+// @filename: contextSensitiveReads.tlua
+local viaCtx: number = Ctx("q");
+
+// @filename: rebound.tlua
+// A rebinding store between two pairings replaces the table, so the first
+// pairing's protection does not survive to refuse the second.
+Rebound = Rebound or {};
+setmetatable(Rebound, {
+  __index = { old = 1 },
+  __metatable = "locked",
+});
+Rebound = {};
+setmetatable(Rebound, {
+  __index = { fresh = 2 },
+});
+
+// @filename: reboundReads.tlua
+local fresh: number = Rebound.fresh;
+
+// @filename: crossRebindA.tlua
+// The rebinding store and the next protected pairing sit in separate files: the
+// second install must see the reset, not the first protection.
+CrossRebind = CrossRebind or {};
+setmetatable(CrossRebind, {
+  __index = { old = 1 },
+  __metatable = "first",
+});
+
+// @filename: crossRebindB.tlua
+CrossRebind = {};
+
+// @filename: crossRebindC.tlua
+setmetatable(CrossRebind, {
+  __index = { fresh = 2 },
+  __metatable = "second",
+});
+
+// @filename: crossRebindReads.tlua
+local crossFresh: number = CrossRebind.fresh;
+
+// @filename: maskedA.tlua
+// A refused replacement stays an error even when a later debug.setmetatable
+// leaves the final declared type unprotected.
+Masked = Masked or {};
+setmetatable(Masked, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+
+// @filename: maskedB.tlua
+setmetatable(Masked, {
+  __index = { b = 2 },
+});
+
+// @filename: maskedC.tlua
+debug.setmetatable(Masked, {
+  __index = { c = 3 },
+});
+
+// @filename: maskedReads.tlua
+local maskedC: number = Masked.c;
+
+// @filename: conditionalRebind.tlua
+// A conditional rebind may not have run, so on the path where it did not, the
+// first pairing's protection still refuses the second call.
+declare rebindCond: boolean;
+Conditional = Conditional or {};
+setmetatable(Conditional, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+if rebindCond then
+  Conditional = {};
+end
+setmetatable(Conditional, {
+  __index = { b = 2 },
+});
+
+// @filename: hoistOrder.tlua
+// Hoisted function declarations bind before the statements around them, so the
+// recorded calls must be sorted back into source order: the top-level pairing
+// here runs first and is never protected, and the body's pairing is the latest.
+Hoisted = Hoisted or {};
+setmetatable(Hoisted, { __index = { early = 1 } });
+function protectLater(): void
+  setmetatable(Hoisted, {
+    __index = { late = 2 },
+    __metatable = "locked",
+  });
+end
+
+// @filename: hoistOrderReads.tlua
+local late: number = Hoisted.late;
+
+// @filename: bodyRebind.tlua
+// A body that rebinds and then re-pairs works on a fresh table, so the earlier
+// protection does not reach its call: a body store resets exactly as a body
+// pairing contributes.
+BodyRebind = BodyRebind or {};
+setmetatable(BodyRebind, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+function rebuildBody(): void
+  BodyRebind = {};
+  setmetatable(BodyRebind, { __index = { b = 2 } });
+end
+
+// @filename: crossConditional.tlua
+// A conditional rebind is no more definite for sitting in another file.
+CrossConditional = CrossConditional or {};
+setmetatable(CrossConditional, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+
+// @filename: crossConditionalRebind.tlua
+declare crossCond: boolean;
+if crossCond then
+  CrossConditional = {};
+end
+
+// @filename: crossConditionalPair.tlua
+setmetatable(CrossConditional, { __index = { b = 2 } });
+
+// @filename: unionArmA.tlua
+Union = { one = 1 };
+setmetatable(Union, {
+  __call = function(_self: table): number
+    return 1;
+  end,
+});
+
+// @filename: unionArmB.tlua
+Union = { two = 2 };
+
+// @filename: unionReads.tlua
+local n: number = Union();
+
+// @filename: asserted.tlua
+Asserted = Asserted or {};
+setmetatable(Asserted, {
+  __call = function(_self: table): number
+    return 1;
+  end,
+}) as table;
+
+// @filename: assertedReads.tlua
+local viaAssertion: number = Asserted();
+
+// @filename: methodOperand.tlua
+// Function storage keeps its function type: metatables on functions are
+// per-type at runtime, so no declared pairing forms.
+Mod = Mod or {};
+function Mod.f(): number
+  return 1;
+end
+debug.setmetatable(Mod.f, {
+  __index = { attached = true },
+});
+
+// @filename: methodOperandReads.tlua
+local viaMethod: number = Mod.f();
+
+// @filename: doRebind.tlua
+// A do-block runs exactly once when its chunk does, so a rebind inside one is
+// as definite as a top-level store: the protection does not survive to refuse
+// the later call.
+DoRebind = DoRebind or {};
+setmetatable(DoRebind, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+do
+  DoRebind = {};
+end
+setmetatable(DoRebind, {
+  __index = { b = 2 },
+});
+
+// @filename: doRebindReads.tlua
+local doFresh: number = DoRebind.b;
+
+// @filename: doCrossA.tlua
+// The do-block rebind is no less definite for sitting in another file.
+DoCross = DoCross or {};
+setmetatable(DoCross, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+
+// @filename: doCrossRebind.tlua
+do
+  DoCross = {};
+end
+
+// @filename: doCrossPair.tlua
+setmetatable(DoCross, { __index = { b = 2 } });
+
+// @filename: cycleUse.tlua
+// Mutually referential metatable arguments cannot both capture the other
+// paired -- the cycle must break somewhere -- but where it breaks is canonical:
+// paired symbols resolve in program order, so CycA's literal captures CycB
+// fully paired and the cycle-closing read inside CycB's literal captures CycA's
+// unpaired base. This use file runs first and reads CycB first precisely so a
+// query-order-driven resolution would break the cycle the other way around.
+local bPeer = debug.getmetatable(CycB).__index;
+local aPeer = debug.getmetatable(CycA).__index;
+local viaA: number = aPeer();
+local viaB: string = bPeer();
+
+// @filename: cycleA.tlua
+CycA = CycA or {};
+setmetatable(CycA, {
+  __index = CycB,
+  __call = function(_self: table): string
+    return "a";
+  end,
+});
+
+// @filename: cycleB.tlua
+CycB = CycB or {};
+setmetatable(CycB, {
+  __index = CycA,
+  __call = function(_self: table): number
+    return 1;
+  end,
+});
+
+// @filename: expStores.tlua
+// An expression-form call anchors the protected check at its own program point
+// without contributing a pairing: this one runs before the protection below is
+// installed, so it is not refused.
+Exp = Exp or {};
+
+// @filename: expCall.tlua
+local expResult = setmetatable(Exp, { __index = { x = 1 } });
+
+// @filename: expProtect.tlua
+setmetatable(Exp, {
+  __index = { y = 2 },
+  __metatable = "locked",
+});
+
+// @filename: maskExpA.tlua
+// The reverse ordering: an expression-form replacement after the protection was
+// installed raises at runtime, and the later debug.setmetatable that leaves the
+// final declared type unprotected must not mask that.
+MaskExp = MaskExp or {};
+setmetatable(MaskExp, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+
+// @filename: maskExpB.tlua
+local maskResult = setmetatable(MaskExp, { __index = { b = 2 } });
+
+// @filename: maskExpC.tlua
+debug.setmetatable(MaskExp, { __index = { c = 3 } });
+
+// @filename: explicitArgs.tlua
+// An explicit instantiation names T itself, so the replay contextualizes the
+// literal exactly as the call does: _self is table, not Expl's inferred shape,
+// and no contradiction arises when the call re-checks the frozen literal.
+Expl = Expl or {};
+Expl.tag = 1;
+setmetatable<table>(Expl, {
+  __call = function(_self, q: string): number
+    return 1;
+  end,
+});
+
+// @filename: debugPair.tlua
+// debug.setmetatable's table overload declares the same LuaMetatable<T>
+// contract the replay synthesizes, so handlers type identically whether the
+// literal's first check comes from the replay or from the call itself.
+debug.setmetatable(DbgAug, {
+  __call = function(_self, q: string): number
+    return 1;
+  end,
+});
+
+// @filename: debugPairStores.tlua
+DbgAug = DbgAug or {};
+
+// @filename: debugPairReads.tlua
+local viaDbg: number = DbgAug("q");
+
+// @filename: debugLocal.tlua
+// A plain local gets the same contract from the overload directly.
+local plain: table = {};
+debug.setmetatable(plain, {
+  __call = function(_self, q: string): number
+    return 1;
+  end,
+});
+
+// @filename: condMaskA.tlua
+// A CONDITIONAL debug.setmetatable may not have run, and on the path where it
+// did not, the protection it would have stripped still refuses the later call.
+CondMask = CondMask or {};
+setmetatable(CondMask, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+
+// @filename: condMaskB.tlua
+declare condFlag: boolean;
+if condFlag then
+  debug.setmetatable(CondMask, { __index = { b = 2 } });
+end
+
+// @filename: condMaskC.tlua
+setmetatable(CondMask, { __index = { c = 3 } });
+
+// @filename: condMaskReads.tlua
+local condDeclared: number = CondMask.c;
+
+// @filename: definiteMaskA.tlua
+// An unconditional debug.setmetatable definitely strips the protection, so the
+// later call is not refused.
+DefMask = DefMask or {};
+setmetatable(DefMask, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+
+// @filename: definiteMaskB.tlua
+debug.setmetatable(DefMask, { __index = { b = 2 } });
+
+// @filename: definiteMaskC.tlua
+setmetatable(DefMask, { __index = { c = 3 } });
+
+// @filename: definiteMaskReads.tlua
+local defDeclared: number = DefMask.c;
+
+// @filename: selfPresA.tlua
+// A store whose value may evaluate to the target itself keeps the table -- and
+// its protection -- on that path, so it is no rebinding and the later call is
+// still refused.
+SelfPres = SelfPres or {};
+setmetatable(SelfPres, {
+  __index = { a = 1 },
+  __metatable = "locked",
+});
+
+// @filename: selfPresB.tlua
+declare keepFlag: boolean;
+SelfPres = keepFlag and SelfPres or {};
+
+// @filename: selfPresC.tlua
+setmetatable(SelfPres, { __index = { b = 2 } });
+
+// @filename: selfPresReads.tlua
+local selfDeclared: number = SelfPres.a;
+
+// @filename: exclusiveTop.tlua
+// A chunk runs once, so the branches of a top-level `if` are mutually
+// exclusive: the else call never meets the then branch's protection.
+declare exclCond: boolean;
+Branches = {};
+if exclCond then
+  setmetatable(Branches, {
+    __index = { a = 1 },
+    __metatable = "locked",
+  });
+else
+  setmetatable(Branches, { __index = { b = 2 } });
+end
+
+// @filename: exclusiveReads.tlua
+local branchDeclared: number = Branches.a;
+
+// @filename: exclusiveFn.tlua
+// In a function body the same `if` runs per call with the condition free to
+// flip, so the branches are not exclusive and the protection still refuses
+// the else call.
+declare fnCond: boolean;
+FnBranches = {};
+function flipBranches(): void
+  if fnCond then
+    setmetatable(FnBranches, {
+      __index = { a = 1 },
+      __metatable = "locked",
+    });
+  else
+    setmetatable(FnBranches, { __index = { b = 2 } });
+  end
+end

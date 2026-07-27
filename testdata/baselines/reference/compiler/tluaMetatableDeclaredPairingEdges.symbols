@@ -1,0 +1,954 @@
+//// [tests/cases/compiler/tluaMetatableDeclaredPairingEdges.tlua] ////
+
+=== protectedPair.tlua ===
+setmetatable(Locked, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Locked : Symbol(Locked, Decl(protectedStores.tlua, 0, 0))
+
+  __index = { fallback = 2 },
+>__index : Symbol(__index, Decl(protectedPair.tlua, 0, 22))
+>fallback : Symbol(fallback, Decl(protectedPair.tlua, 1, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(protectedPair.tlua, 1, 29))
+
+});
+
+=== protectedStores.tlua ===
+Locked = Locked or {};
+>Locked : Symbol(Locked, Decl(protectedStores.tlua, 0, 0))
+>Locked : Symbol(Locked, Decl(protectedStores.tlua, 0, 0))
+
+Locked.own = 1;
+>Locked.own : Symbol(own, Decl(protectedStores.tlua, 0, 22))
+>Locked : Symbol(Locked, Decl(protectedStores.tlua, 0, 0))
+>own : Symbol(own, Decl(protectedStores.tlua, 0, 22))
+
+=== protectedReplace.tlua ===
+// A later call still runs into the protection the first call installed.
+setmetatable(Locked, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Locked : Symbol(Locked, Decl(protectedStores.tlua, 0, 0))
+
+  __index = { other = 3 },
+>__index : Symbol(__index, Decl(protectedReplace.tlua, 1, 22))
+>other : Symbol(other, Decl(protectedReplace.tlua, 2, 13))
+
+});
+
+=== protectedReads.tlua ===
+local own: number = Locked.own;
+>own : Symbol(own, Decl(protectedReads.tlua, 0, 5))
+>Locked.own : Symbol(own, Decl(protectedStores.tlua, 0, 22))
+>Locked : Symbol(Locked, Decl(protectedStores.tlua, 0, 0))
+>own : Symbol(own, Decl(protectedStores.tlua, 0, 22))
+
+local fallback: number = Locked.fallback;
+>fallback : Symbol(fallback, Decl(protectedReads.tlua, 1, 5))
+>Locked.fallback : Symbol(fallback, Decl(protectedPair.tlua, 1, 13))
+>Locked : Symbol(Locked, Decl(protectedStores.tlua, 0, 0))
+>fallback : Symbol(fallback, Decl(protectedPair.tlua, 1, 13))
+
+=== contextSensitive.tlua ===
+// The pairing file precedes every store, so the replay checks this literal while
+// the call's own signature is still resolving; the metatable context must be
+// supplied anyway, or _self loses its parameter type.
+setmetatable(Ctx, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Ctx : Symbol(Ctx, Decl(contextSensitiveStores.tlua, 0, 0))
+
+  __call = function(_self, q: string): number
+>__call : Symbol(__call, Decl(contextSensitive.tlua, 3, 19))
+>_self : Symbol(_self, Decl(contextSensitive.tlua, 4, 20))
+>q : Symbol(q, Decl(contextSensitive.tlua, 4, 26))
+
+    return 1;
+  end,
+});
+
+=== contextSensitiveStores.tlua ===
+Ctx = Ctx or {};
+>Ctx : Symbol(Ctx, Decl(contextSensitiveStores.tlua, 0, 0))
+>Ctx : Symbol(Ctx, Decl(contextSensitiveStores.tlua, 0, 0))
+
+=== contextSensitiveReads.tlua ===
+local viaCtx: number = Ctx("q");
+>viaCtx : Symbol(viaCtx, Decl(contextSensitiveReads.tlua, 0, 5))
+>Ctx : Symbol(Ctx, Decl(contextSensitiveStores.tlua, 0, 0))
+
+=== rebound.tlua ===
+// A rebinding store between two pairings replaces the table, so the first
+// pairing's protection does not survive to refuse the second.
+Rebound = Rebound or {};
+>Rebound : Symbol(Rebound, Decl(rebound.tlua, 0, 0), Decl(rebound.tlua, 6, 3))
+>Rebound : Symbol(Rebound, Decl(rebound.tlua, 0, 0), Decl(rebound.tlua, 6, 3))
+
+setmetatable(Rebound, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Rebound : Symbol(Rebound, Decl(rebound.tlua, 0, 0), Decl(rebound.tlua, 6, 3))
+
+  __index = { old = 1 },
+>__index : Symbol(__index, Decl(rebound.tlua, 3, 23))
+>old : Symbol(old, Decl(rebound.tlua, 4, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(rebound.tlua, 4, 24))
+
+});
+Rebound = {};
+>Rebound : Symbol(Rebound, Decl(rebound.tlua, 0, 0), Decl(rebound.tlua, 6, 3))
+
+setmetatable(Rebound, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Rebound : Symbol(Rebound, Decl(rebound.tlua, 0, 0), Decl(rebound.tlua, 6, 3))
+
+  __index = { fresh = 2 },
+>__index : Symbol(__index, Decl(rebound.tlua, 8, 23))
+>fresh : Symbol(fresh, Decl(rebound.tlua, 9, 13))
+
+});
+
+=== reboundReads.tlua ===
+local fresh: number = Rebound.fresh;
+>fresh : Symbol(fresh, Decl(reboundReads.tlua, 0, 5))
+>Rebound.fresh : Symbol(fresh, Decl(rebound.tlua, 9, 13))
+>Rebound : Symbol(Rebound, Decl(rebound.tlua, 0, 0), Decl(rebound.tlua, 6, 3))
+>fresh : Symbol(fresh, Decl(rebound.tlua, 9, 13))
+
+=== crossRebindA.tlua ===
+// The rebinding store and the next protected pairing sit in separate files: the
+// second install must see the reset, not the first protection.
+CrossRebind = CrossRebind or {};
+>CrossRebind : Symbol(CrossRebind, Decl(crossRebindA.tlua, 0, 0), Decl(crossRebindB.tlua, 0, 0))
+>CrossRebind : Symbol(CrossRebind, Decl(crossRebindA.tlua, 0, 0), Decl(crossRebindB.tlua, 0, 0))
+
+setmetatable(CrossRebind, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CrossRebind : Symbol(CrossRebind, Decl(crossRebindA.tlua, 0, 0), Decl(crossRebindB.tlua, 0, 0))
+
+  __index = { old = 1 },
+>__index : Symbol(__index, Decl(crossRebindA.tlua, 3, 27))
+>old : Symbol(old, Decl(crossRebindA.tlua, 4, 13))
+
+  __metatable = "first",
+>__metatable : Symbol(__metatable, Decl(crossRebindA.tlua, 4, 24))
+
+});
+
+=== crossRebindB.tlua ===
+CrossRebind = {};
+>CrossRebind : Symbol(CrossRebind, Decl(crossRebindA.tlua, 0, 0), Decl(crossRebindB.tlua, 0, 0))
+
+=== crossRebindC.tlua ===
+setmetatable(CrossRebind, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CrossRebind : Symbol(CrossRebind, Decl(crossRebindA.tlua, 0, 0), Decl(crossRebindB.tlua, 0, 0))
+
+  __index = { fresh = 2 },
+>__index : Symbol(__index, Decl(crossRebindC.tlua, 0, 27))
+>fresh : Symbol(fresh, Decl(crossRebindC.tlua, 1, 13))
+
+  __metatable = "second",
+>__metatable : Symbol(__metatable, Decl(crossRebindC.tlua, 1, 26))
+
+});
+
+=== crossRebindReads.tlua ===
+local crossFresh: number = CrossRebind.fresh;
+>crossFresh : Symbol(crossFresh, Decl(crossRebindReads.tlua, 0, 5))
+>CrossRebind.fresh : Symbol(fresh, Decl(crossRebindC.tlua, 1, 13))
+>CrossRebind : Symbol(CrossRebind, Decl(crossRebindA.tlua, 0, 0), Decl(crossRebindB.tlua, 0, 0))
+>fresh : Symbol(fresh, Decl(crossRebindC.tlua, 1, 13))
+
+=== maskedA.tlua ===
+// A refused replacement stays an error even when a later debug.setmetatable
+// leaves the final declared type unprotected.
+Masked = Masked or {};
+>Masked : Symbol(Masked, Decl(maskedA.tlua, 0, 0))
+>Masked : Symbol(Masked, Decl(maskedA.tlua, 0, 0))
+
+setmetatable(Masked, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Masked : Symbol(Masked, Decl(maskedA.tlua, 0, 0))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(maskedA.tlua, 3, 22))
+>a : Symbol(a, Decl(maskedA.tlua, 4, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(maskedA.tlua, 4, 22))
+
+});
+
+=== maskedB.tlua ===
+setmetatable(Masked, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Masked : Symbol(Masked, Decl(maskedA.tlua, 0, 0))
+
+  __index = { b = 2 },
+>__index : Symbol(__index, Decl(maskedB.tlua, 0, 22))
+>b : Symbol(b, Decl(maskedB.tlua, 1, 13))
+
+});
+
+=== maskedC.tlua ===
+debug.setmetatable(Masked, {
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>Masked : Symbol(Masked, Decl(maskedA.tlua, 0, 0))
+
+  __index = { c = 3 },
+>__index : Symbol(__index, Decl(maskedC.tlua, 0, 28))
+>c : Symbol(c, Decl(maskedC.tlua, 1, 13))
+
+});
+
+=== maskedReads.tlua ===
+local maskedC: number = Masked.c;
+>maskedC : Symbol(maskedC, Decl(maskedReads.tlua, 0, 5))
+>Masked.c : Symbol(c, Decl(maskedC.tlua, 1, 13))
+>Masked : Symbol(Masked, Decl(maskedA.tlua, 0, 0))
+>c : Symbol(c, Decl(maskedC.tlua, 1, 13))
+
+=== conditionalRebind.tlua ===
+// A conditional rebind may not have run, so on the path where it did not, the
+// first pairing's protection still refuses the second call.
+declare rebindCond: boolean;
+>rebindCond : Symbol(rebindCond, Decl(conditionalRebind.tlua, 2, 7))
+
+Conditional = Conditional or {};
+>Conditional : Symbol(Conditional, Decl(conditionalRebind.tlua, 2, 28), Decl(conditionalRebind.tlua, 8, 18))
+>Conditional : Symbol(Conditional, Decl(conditionalRebind.tlua, 2, 28), Decl(conditionalRebind.tlua, 8, 18))
+
+setmetatable(Conditional, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Conditional : Symbol(Conditional, Decl(conditionalRebind.tlua, 2, 28), Decl(conditionalRebind.tlua, 8, 18))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(conditionalRebind.tlua, 4, 27))
+>a : Symbol(a, Decl(conditionalRebind.tlua, 5, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(conditionalRebind.tlua, 5, 22))
+
+});
+if rebindCond then
+>rebindCond : Symbol(rebindCond, Decl(conditionalRebind.tlua, 2, 7))
+
+  Conditional = {};
+>Conditional : Symbol(Conditional, Decl(conditionalRebind.tlua, 2, 28), Decl(conditionalRebind.tlua, 8, 18))
+
+end
+setmetatable(Conditional, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Conditional : Symbol(Conditional, Decl(conditionalRebind.tlua, 2, 28), Decl(conditionalRebind.tlua, 8, 18))
+
+  __index = { b = 2 },
+>__index : Symbol(__index, Decl(conditionalRebind.tlua, 11, 27))
+>b : Symbol(b, Decl(conditionalRebind.tlua, 12, 13))
+
+});
+
+=== hoistOrder.tlua ===
+// Hoisted function declarations bind before the statements around them, so the
+// recorded calls must be sorted back into source order: the top-level pairing
+// here runs first and is never protected, and the body's pairing is the latest.
+Hoisted = Hoisted or {};
+>Hoisted : Symbol(Hoisted, Decl(hoistOrder.tlua, 0, 0))
+>Hoisted : Symbol(Hoisted, Decl(hoistOrder.tlua, 0, 0))
+
+setmetatable(Hoisted, { __index = { early = 1 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Hoisted : Symbol(Hoisted, Decl(hoistOrder.tlua, 0, 0))
+>__index : Symbol(__index, Decl(hoistOrder.tlua, 4, 23))
+>early : Symbol(early, Decl(hoistOrder.tlua, 4, 35))
+
+function protectLater(): void
+>protectLater : Symbol(protectLater, Decl(hoistOrder.tlua, 4, 51))
+
+  setmetatable(Hoisted, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Hoisted : Symbol(Hoisted, Decl(hoistOrder.tlua, 0, 0))
+
+    __index = { late = 2 },
+>__index : Symbol(__index, Decl(hoistOrder.tlua, 6, 25))
+>late : Symbol(late, Decl(hoistOrder.tlua, 7, 15))
+
+    __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(hoistOrder.tlua, 7, 27))
+
+  });
+end
+
+=== hoistOrderReads.tlua ===
+local late: number = Hoisted.late;
+>late : Symbol(late, Decl(hoistOrderReads.tlua, 0, 5))
+>Hoisted.late : Symbol(late, Decl(hoistOrder.tlua, 7, 15))
+>Hoisted : Symbol(Hoisted, Decl(hoistOrder.tlua, 0, 0))
+>late : Symbol(late, Decl(hoistOrder.tlua, 7, 15))
+
+=== bodyRebind.tlua ===
+// A body that rebinds and then re-pairs works on a fresh table, so the earlier
+// protection does not reach its call: a body store resets exactly as a body
+// pairing contributes.
+BodyRebind = BodyRebind or {};
+>BodyRebind : Symbol(BodyRebind, Decl(bodyRebind.tlua, 8, 28), Decl(bodyRebind.tlua, 0, 0))
+>BodyRebind : Symbol(BodyRebind, Decl(bodyRebind.tlua, 8, 28), Decl(bodyRebind.tlua, 0, 0))
+
+setmetatable(BodyRebind, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>BodyRebind : Symbol(BodyRebind, Decl(bodyRebind.tlua, 8, 28), Decl(bodyRebind.tlua, 0, 0))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(bodyRebind.tlua, 4, 26))
+>a : Symbol(a, Decl(bodyRebind.tlua, 5, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(bodyRebind.tlua, 5, 22))
+
+});
+function rebuildBody(): void
+>rebuildBody : Symbol(rebuildBody, Decl(bodyRebind.tlua, 7, 3))
+
+  BodyRebind = {};
+>BodyRebind : Symbol(BodyRebind, Decl(bodyRebind.tlua, 8, 28), Decl(bodyRebind.tlua, 0, 0))
+
+  setmetatable(BodyRebind, { __index = { b = 2 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>BodyRebind : Symbol(BodyRebind, Decl(bodyRebind.tlua, 8, 28), Decl(bodyRebind.tlua, 0, 0))
+>__index : Symbol(__index, Decl(bodyRebind.tlua, 10, 28))
+>b : Symbol(b, Decl(bodyRebind.tlua, 10, 40))
+
+end
+
+=== crossConditional.tlua ===
+// A conditional rebind is no more definite for sitting in another file.
+CrossConditional = CrossConditional or {};
+>CrossConditional : Symbol(CrossConditional, Decl(crossConditional.tlua, 0, 0), Decl(crossConditionalRebind.tlua, 1, 17))
+>CrossConditional : Symbol(CrossConditional, Decl(crossConditional.tlua, 0, 0), Decl(crossConditionalRebind.tlua, 1, 17))
+
+setmetatable(CrossConditional, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CrossConditional : Symbol(CrossConditional, Decl(crossConditional.tlua, 0, 0), Decl(crossConditionalRebind.tlua, 1, 17))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(crossConditional.tlua, 2, 32))
+>a : Symbol(a, Decl(crossConditional.tlua, 3, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(crossConditional.tlua, 3, 22))
+
+});
+
+=== crossConditionalRebind.tlua ===
+declare crossCond: boolean;
+>crossCond : Symbol(crossCond, Decl(crossConditionalRebind.tlua, 0, 7))
+
+if crossCond then
+>crossCond : Symbol(crossCond, Decl(crossConditionalRebind.tlua, 0, 7))
+
+  CrossConditional = {};
+>CrossConditional : Symbol(CrossConditional, Decl(crossConditional.tlua, 0, 0), Decl(crossConditionalRebind.tlua, 1, 17))
+
+end
+
+=== crossConditionalPair.tlua ===
+setmetatable(CrossConditional, { __index = { b = 2 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CrossConditional : Symbol(CrossConditional, Decl(crossConditional.tlua, 0, 0), Decl(crossConditionalRebind.tlua, 1, 17))
+>__index : Symbol(__index, Decl(crossConditionalPair.tlua, 0, 32))
+>b : Symbol(b, Decl(crossConditionalPair.tlua, 0, 44))
+
+=== unionArmA.tlua ===
+Union = { one = 1 };
+>Union : Symbol(Union, Decl(unionArmA.tlua, 0, 0), Decl(unionArmB.tlua, 0, 0))
+>one : Symbol(one, Decl(unionArmA.tlua, 0, 9))
+
+setmetatable(Union, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Union : Symbol(Union, Decl(unionArmA.tlua, 0, 0), Decl(unionArmB.tlua, 0, 0))
+
+  __call = function(_self: table): number
+>__call : Symbol(__call, Decl(unionArmA.tlua, 1, 21))
+>_self : Symbol(_self, Decl(unionArmA.tlua, 2, 20))
+
+    return 1;
+  end,
+});
+
+=== unionArmB.tlua ===
+Union = { two = 2 };
+>Union : Symbol(Union, Decl(unionArmA.tlua, 0, 0), Decl(unionArmB.tlua, 0, 0))
+>two : Symbol(two, Decl(unionArmB.tlua, 0, 9))
+
+=== unionReads.tlua ===
+local n: number = Union();
+>n : Symbol(n, Decl(unionReads.tlua, 0, 5))
+>Union : Symbol(Union, Decl(unionArmA.tlua, 0, 0), Decl(unionArmB.tlua, 0, 0))
+
+=== asserted.tlua ===
+Asserted = Asserted or {};
+>Asserted : Symbol(Asserted, Decl(asserted.tlua, 0, 0))
+>Asserted : Symbol(Asserted, Decl(asserted.tlua, 0, 0))
+
+setmetatable(Asserted, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Asserted : Symbol(Asserted, Decl(asserted.tlua, 0, 0))
+
+  __call = function(_self: table): number
+>__call : Symbol(__call, Decl(asserted.tlua, 1, 24))
+>_self : Symbol(_self, Decl(asserted.tlua, 2, 20))
+
+    return 1;
+  end,
+}) as table;
+
+=== assertedReads.tlua ===
+local viaAssertion: number = Asserted();
+>viaAssertion : Symbol(viaAssertion, Decl(assertedReads.tlua, 0, 5))
+>Asserted : Symbol(Asserted, Decl(asserted.tlua, 0, 0))
+
+=== methodOperand.tlua ===
+// Function storage keeps its function type: metatables on functions are
+// per-type at runtime, so no declared pairing forms.
+Mod = Mod or {};
+>Mod : Symbol(Mod, Decl(methodOperand.tlua, 0, 0))
+>Mod : Symbol(Mod, Decl(methodOperand.tlua, 0, 0))
+
+function Mod.f(): number
+>Mod : Symbol(Mod, Decl(methodOperand.tlua, 0, 0))
+>f : Symbol(f, Decl(methodOperand.tlua, 2, 16))
+
+  return 1;
+end
+debug.setmetatable(Mod.f, {
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>Mod.f : Symbol(f, Decl(methodOperand.tlua, 2, 16))
+>Mod : Symbol(Mod, Decl(methodOperand.tlua, 0, 0))
+>f : Symbol(f, Decl(methodOperand.tlua, 2, 16))
+
+  __index = { attached = true },
+>__index : Symbol(__index, Decl(methodOperand.tlua, 6, 27))
+>attached : Symbol(attached, Decl(methodOperand.tlua, 7, 13))
+
+});
+
+=== methodOperandReads.tlua ===
+local viaMethod: number = Mod.f();
+>viaMethod : Symbol(viaMethod, Decl(methodOperandReads.tlua, 0, 5))
+>Mod.f : Symbol(f, Decl(methodOperand.tlua, 2, 16))
+>Mod : Symbol(Mod, Decl(methodOperand.tlua, 0, 0))
+>f : Symbol(f, Decl(methodOperand.tlua, 2, 16))
+
+=== doRebind.tlua ===
+// A do-block runs exactly once when its chunk does, so a rebind inside one is
+// as definite as a top-level store: the protection does not survive to refuse
+// the later call.
+DoRebind = DoRebind or {};
+>DoRebind : Symbol(DoRebind, Decl(doRebind.tlua, 0, 0), Decl(doRebind.tlua, 8, 2))
+>DoRebind : Symbol(DoRebind, Decl(doRebind.tlua, 0, 0), Decl(doRebind.tlua, 8, 2))
+
+setmetatable(DoRebind, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>DoRebind : Symbol(DoRebind, Decl(doRebind.tlua, 0, 0), Decl(doRebind.tlua, 8, 2))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(doRebind.tlua, 4, 24))
+>a : Symbol(a, Decl(doRebind.tlua, 5, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(doRebind.tlua, 5, 22))
+
+});
+do
+  DoRebind = {};
+>DoRebind : Symbol(DoRebind, Decl(doRebind.tlua, 0, 0), Decl(doRebind.tlua, 8, 2))
+
+end
+setmetatable(DoRebind, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>DoRebind : Symbol(DoRebind, Decl(doRebind.tlua, 0, 0), Decl(doRebind.tlua, 8, 2))
+
+  __index = { b = 2 },
+>__index : Symbol(__index, Decl(doRebind.tlua, 11, 24))
+>b : Symbol(b, Decl(doRebind.tlua, 12, 13))
+
+});
+
+=== doRebindReads.tlua ===
+local doFresh: number = DoRebind.b;
+>doFresh : Symbol(doFresh, Decl(doRebindReads.tlua, 0, 5))
+>DoRebind.b : Symbol(b, Decl(doRebind.tlua, 12, 13))
+>DoRebind : Symbol(DoRebind, Decl(doRebind.tlua, 0, 0), Decl(doRebind.tlua, 8, 2))
+>b : Symbol(b, Decl(doRebind.tlua, 12, 13))
+
+=== doCrossA.tlua ===
+// The do-block rebind is no less definite for sitting in another file.
+DoCross = DoCross or {};
+>DoCross : Symbol(DoCross, Decl(doCrossA.tlua, 0, 0), Decl(doCrossRebind.tlua, 0, 2))
+>DoCross : Symbol(DoCross, Decl(doCrossA.tlua, 0, 0), Decl(doCrossRebind.tlua, 0, 2))
+
+setmetatable(DoCross, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>DoCross : Symbol(DoCross, Decl(doCrossA.tlua, 0, 0), Decl(doCrossRebind.tlua, 0, 2))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(doCrossA.tlua, 2, 23))
+>a : Symbol(a, Decl(doCrossA.tlua, 3, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(doCrossA.tlua, 3, 22))
+
+});
+
+=== doCrossRebind.tlua ===
+do
+  DoCross = {};
+>DoCross : Symbol(DoCross, Decl(doCrossA.tlua, 0, 0), Decl(doCrossRebind.tlua, 0, 2))
+
+end
+
+=== doCrossPair.tlua ===
+setmetatable(DoCross, { __index = { b = 2 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>DoCross : Symbol(DoCross, Decl(doCrossA.tlua, 0, 0), Decl(doCrossRebind.tlua, 0, 2))
+>__index : Symbol(__index, Decl(doCrossPair.tlua, 0, 23))
+>b : Symbol(b, Decl(doCrossPair.tlua, 0, 35))
+
+=== cycleUse.tlua ===
+// Mutually referential metatable arguments cannot both capture the other
+// paired -- the cycle must break somewhere -- but where it breaks is canonical:
+// paired symbols resolve in program order, so CycA's literal captures CycB
+// fully paired and the cycle-closing read inside CycB's literal captures CycA's
+// unpaired base. This use file runs first and reads CycB first precisely so a
+// query-order-driven resolution would break the cycle the other way around.
+local bPeer = debug.getmetatable(CycB).__index;
+>bPeer : Symbol(bPeer, Decl(cycleUse.tlua, 6, 5))
+>debug.getmetatable(CycB).__index : Symbol(__index, Decl(cycleB.tlua, 1, 20))
+>debug.getmetatable : Symbol(DebugLib.getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>getmetatable : Symbol(DebugLib.getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CycB : Symbol(CycB, Decl(cycleB.tlua, 0, 0))
+>__index : Symbol(__index, Decl(cycleB.tlua, 1, 20))
+
+local aPeer = debug.getmetatable(CycA).__index;
+>aPeer : Symbol(aPeer, Decl(cycleUse.tlua, 7, 5))
+>debug.getmetatable(CycA).__index : Symbol(__index, Decl(cycleA.tlua, 1, 20))
+>debug.getmetatable : Symbol(DebugLib.getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>getmetatable : Symbol(DebugLib.getmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CycA : Symbol(CycA, Decl(cycleA.tlua, 0, 0))
+>__index : Symbol(__index, Decl(cycleA.tlua, 1, 20))
+
+local viaA: number = aPeer();
+>viaA : Symbol(viaA, Decl(cycleUse.tlua, 8, 5))
+>aPeer : Symbol(aPeer, Decl(cycleUse.tlua, 7, 5))
+
+local viaB: string = bPeer();
+>viaB : Symbol(viaB, Decl(cycleUse.tlua, 9, 5))
+>bPeer : Symbol(bPeer, Decl(cycleUse.tlua, 6, 5))
+
+=== cycleA.tlua ===
+CycA = CycA or {};
+>CycA : Symbol(CycA, Decl(cycleA.tlua, 0, 0))
+>CycA : Symbol(CycA, Decl(cycleA.tlua, 0, 0))
+
+setmetatable(CycA, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CycA : Symbol(CycA, Decl(cycleA.tlua, 0, 0))
+
+  __index = CycB,
+>__index : Symbol(__index, Decl(cycleA.tlua, 1, 20))
+>CycB : Symbol(CycB, Decl(cycleB.tlua, 0, 0))
+
+  __call = function(_self: table): string
+>__call : Symbol(__call, Decl(cycleA.tlua, 2, 17))
+>_self : Symbol(_self, Decl(cycleA.tlua, 3, 20))
+
+    return "a";
+  end,
+});
+
+=== cycleB.tlua ===
+CycB = CycB or {};
+>CycB : Symbol(CycB, Decl(cycleB.tlua, 0, 0))
+>CycB : Symbol(CycB, Decl(cycleB.tlua, 0, 0))
+
+setmetatable(CycB, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CycB : Symbol(CycB, Decl(cycleB.tlua, 0, 0))
+
+  __index = CycA,
+>__index : Symbol(__index, Decl(cycleB.tlua, 1, 20))
+>CycA : Symbol(CycA, Decl(cycleA.tlua, 0, 0))
+
+  __call = function(_self: table): number
+>__call : Symbol(__call, Decl(cycleB.tlua, 2, 17))
+>_self : Symbol(_self, Decl(cycleB.tlua, 3, 20))
+
+    return 1;
+  end,
+});
+
+=== expStores.tlua ===
+// An expression-form call anchors the protected check at its own program point
+// without contributing a pairing: this one runs before the protection below is
+// installed, so it is not refused.
+Exp = Exp or {};
+>Exp : Symbol(Exp, Decl(expStores.tlua, 0, 0))
+>Exp : Symbol(Exp, Decl(expStores.tlua, 0, 0))
+
+=== expCall.tlua ===
+local expResult = setmetatable(Exp, { __index = { x = 1 } });
+>expResult : Symbol(expResult, Decl(expCall.tlua, 0, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Exp : Symbol(Exp, Decl(expStores.tlua, 0, 0))
+>__index : Symbol(__index, Decl(expCall.tlua, 0, 37))
+>x : Symbol(x, Decl(expCall.tlua, 0, 49))
+
+=== expProtect.tlua ===
+setmetatable(Exp, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Exp : Symbol(Exp, Decl(expStores.tlua, 0, 0))
+
+  __index = { y = 2 },
+>__index : Symbol(__index, Decl(expProtect.tlua, 0, 19))
+>y : Symbol(y, Decl(expProtect.tlua, 1, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(expProtect.tlua, 1, 22))
+
+});
+
+=== maskExpA.tlua ===
+// The reverse ordering: an expression-form replacement after the protection was
+// installed raises at runtime, and the later debug.setmetatable that leaves the
+// final declared type unprotected must not mask that.
+MaskExp = MaskExp or {};
+>MaskExp : Symbol(MaskExp, Decl(maskExpA.tlua, 0, 0))
+>MaskExp : Symbol(MaskExp, Decl(maskExpA.tlua, 0, 0))
+
+setmetatable(MaskExp, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>MaskExp : Symbol(MaskExp, Decl(maskExpA.tlua, 0, 0))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(maskExpA.tlua, 4, 23))
+>a : Symbol(a, Decl(maskExpA.tlua, 5, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(maskExpA.tlua, 5, 22))
+
+});
+
+=== maskExpB.tlua ===
+local maskResult = setmetatable(MaskExp, { __index = { b = 2 } });
+>maskResult : Symbol(maskResult, Decl(maskExpB.tlua, 0, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>MaskExp : Symbol(MaskExp, Decl(maskExpA.tlua, 0, 0))
+>__index : Symbol(__index, Decl(maskExpB.tlua, 0, 42))
+>b : Symbol(b, Decl(maskExpB.tlua, 0, 54))
+
+=== maskExpC.tlua ===
+debug.setmetatable(MaskExp, { __index = { c = 3 } });
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>MaskExp : Symbol(MaskExp, Decl(maskExpA.tlua, 0, 0))
+>__index : Symbol(__index, Decl(maskExpC.tlua, 0, 29))
+>c : Symbol(c, Decl(maskExpC.tlua, 0, 41))
+
+=== explicitArgs.tlua ===
+// An explicit instantiation names T itself, so the replay contextualizes the
+// literal exactly as the call does: _self is table, not Expl's inferred shape,
+// and no contradiction arises when the call re-checks the frozen literal.
+Expl = Expl or {};
+>Expl : Symbol(Expl, Decl(explicitArgs.tlua, 0, 0))
+>Expl : Symbol(Expl, Decl(explicitArgs.tlua, 0, 0))
+
+Expl.tag = 1;
+>Expl.tag : Symbol(tag, Decl(explicitArgs.tlua, 3, 18))
+>Expl : Symbol(Expl, Decl(explicitArgs.tlua, 0, 0))
+>tag : Symbol(tag, Decl(explicitArgs.tlua, 3, 18))
+
+setmetatable<table>(Expl, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Expl : Symbol(Expl, Decl(explicitArgs.tlua, 0, 0))
+
+  __call = function(_self, q: string): number
+>__call : Symbol(__call, Decl(explicitArgs.tlua, 5, 27))
+>_self : Symbol(_self, Decl(explicitArgs.tlua, 6, 20))
+>q : Symbol(q, Decl(explicitArgs.tlua, 6, 26))
+
+    return 1;
+  end,
+});
+
+=== debugPair.tlua ===
+// debug.setmetatable's table overload declares the same LuaMetatable<T>
+// contract the replay synthesizes, so handlers type identically whether the
+// literal's first check comes from the replay or from the call itself.
+debug.setmetatable(DbgAug, {
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>DbgAug : Symbol(DbgAug, Decl(debugPairStores.tlua, 0, 0))
+
+  __call = function(_self, q: string): number
+>__call : Symbol(__call, Decl(debugPair.tlua, 3, 28))
+>_self : Symbol(_self, Decl(debugPair.tlua, 4, 20))
+>q : Symbol(q, Decl(debugPair.tlua, 4, 26))
+
+    return 1;
+  end,
+});
+
+=== debugPairStores.tlua ===
+DbgAug = DbgAug or {};
+>DbgAug : Symbol(DbgAug, Decl(debugPairStores.tlua, 0, 0))
+>DbgAug : Symbol(DbgAug, Decl(debugPairStores.tlua, 0, 0))
+
+=== debugPairReads.tlua ===
+local viaDbg: number = DbgAug("q");
+>viaDbg : Symbol(viaDbg, Decl(debugPairReads.tlua, 0, 5))
+>DbgAug : Symbol(DbgAug, Decl(debugPairStores.tlua, 0, 0))
+
+=== debugLocal.tlua ===
+// A plain local gets the same contract from the overload directly.
+local plain: table = {};
+>plain : Symbol(plain, Decl(debugLocal.tlua, 1, 5))
+
+debug.setmetatable(plain, {
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>plain : Symbol(plain, Decl(debugLocal.tlua, 1, 5))
+
+  __call = function(_self, q: string): number
+>__call : Symbol(__call, Decl(debugLocal.tlua, 2, 27))
+>_self : Symbol(_self, Decl(debugLocal.tlua, 3, 20))
+>q : Symbol(q, Decl(debugLocal.tlua, 3, 26))
+
+    return 1;
+  end,
+});
+
+=== condMaskA.tlua ===
+// A CONDITIONAL debug.setmetatable may not have run, and on the path where it
+// did not, the protection it would have stripped still refuses the later call.
+CondMask = CondMask or {};
+>CondMask : Symbol(CondMask, Decl(condMaskA.tlua, 0, 0))
+>CondMask : Symbol(CondMask, Decl(condMaskA.tlua, 0, 0))
+
+setmetatable(CondMask, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CondMask : Symbol(CondMask, Decl(condMaskA.tlua, 0, 0))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(condMaskA.tlua, 3, 24))
+>a : Symbol(a, Decl(condMaskA.tlua, 4, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(condMaskA.tlua, 4, 22))
+
+});
+
+=== condMaskB.tlua ===
+declare condFlag: boolean;
+>condFlag : Symbol(condFlag, Decl(condMaskB.tlua, 0, 7))
+
+if condFlag then
+>condFlag : Symbol(condFlag, Decl(condMaskB.tlua, 0, 7))
+
+  debug.setmetatable(CondMask, { __index = { b = 2 } });
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>CondMask : Symbol(CondMask, Decl(condMaskA.tlua, 0, 0))
+>__index : Symbol(__index, Decl(condMaskB.tlua, 2, 32))
+>b : Symbol(b, Decl(condMaskB.tlua, 2, 44))
+
+end
+
+=== condMaskC.tlua ===
+setmetatable(CondMask, { __index = { c = 3 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>CondMask : Symbol(CondMask, Decl(condMaskA.tlua, 0, 0))
+>__index : Symbol(__index, Decl(condMaskC.tlua, 0, 24))
+>c : Symbol(c, Decl(condMaskC.tlua, 0, 36))
+
+=== condMaskReads.tlua ===
+local condDeclared: number = CondMask.c;
+>condDeclared : Symbol(condDeclared, Decl(condMaskReads.tlua, 0, 5))
+>CondMask.c : Symbol(c, Decl(condMaskC.tlua, 0, 36))
+>CondMask : Symbol(CondMask, Decl(condMaskA.tlua, 0, 0))
+>c : Symbol(c, Decl(condMaskC.tlua, 0, 36))
+
+=== definiteMaskA.tlua ===
+// An unconditional debug.setmetatable definitely strips the protection, so the
+// later call is not refused.
+DefMask = DefMask or {};
+>DefMask : Symbol(DefMask, Decl(definiteMaskA.tlua, 0, 0))
+>DefMask : Symbol(DefMask, Decl(definiteMaskA.tlua, 0, 0))
+
+setmetatable(DefMask, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>DefMask : Symbol(DefMask, Decl(definiteMaskA.tlua, 0, 0))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(definiteMaskA.tlua, 3, 23))
+>a : Symbol(a, Decl(definiteMaskA.tlua, 4, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(definiteMaskA.tlua, 4, 22))
+
+});
+
+=== definiteMaskB.tlua ===
+debug.setmetatable(DefMask, { __index = { b = 2 } });
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>DefMask : Symbol(DefMask, Decl(definiteMaskA.tlua, 0, 0))
+>__index : Symbol(__index, Decl(definiteMaskB.tlua, 0, 29))
+>b : Symbol(b, Decl(definiteMaskB.tlua, 0, 41))
+
+=== definiteMaskC.tlua ===
+setmetatable(DefMask, { __index = { c = 3 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>DefMask : Symbol(DefMask, Decl(definiteMaskA.tlua, 0, 0))
+>__index : Symbol(__index, Decl(definiteMaskC.tlua, 0, 23))
+>c : Symbol(c, Decl(definiteMaskC.tlua, 0, 35))
+
+=== definiteMaskReads.tlua ===
+local defDeclared: number = DefMask.c;
+>defDeclared : Symbol(defDeclared, Decl(definiteMaskReads.tlua, 0, 5))
+>DefMask.c : Symbol(c, Decl(definiteMaskC.tlua, 0, 35))
+>DefMask : Symbol(DefMask, Decl(definiteMaskA.tlua, 0, 0))
+>c : Symbol(c, Decl(definiteMaskC.tlua, 0, 35))
+
+=== selfPresA.tlua ===
+// A store whose value may evaluate to the target itself keeps the table -- and
+// its protection -- on that path, so it is no rebinding and the later call is
+// still refused.
+SelfPres = SelfPres or {};
+>SelfPres : Symbol(SelfPres, Decl(selfPresA.tlua, 0, 0), Decl(selfPresB.tlua, 0, 26))
+>SelfPres : Symbol(SelfPres, Decl(selfPresA.tlua, 0, 0), Decl(selfPresB.tlua, 0, 26))
+
+setmetatable(SelfPres, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>SelfPres : Symbol(SelfPres, Decl(selfPresA.tlua, 0, 0), Decl(selfPresB.tlua, 0, 26))
+
+  __index = { a = 1 },
+>__index : Symbol(__index, Decl(selfPresA.tlua, 4, 24))
+>a : Symbol(a, Decl(selfPresA.tlua, 5, 13))
+
+  __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(selfPresA.tlua, 5, 22))
+
+});
+
+=== selfPresB.tlua ===
+declare keepFlag: boolean;
+>keepFlag : Symbol(keepFlag, Decl(selfPresB.tlua, 0, 7))
+
+SelfPres = keepFlag and SelfPres or {};
+>SelfPres : Symbol(SelfPres, Decl(selfPresA.tlua, 0, 0), Decl(selfPresB.tlua, 0, 26))
+>keepFlag : Symbol(keepFlag, Decl(selfPresB.tlua, 0, 7))
+>SelfPres : Symbol(SelfPres, Decl(selfPresA.tlua, 0, 0), Decl(selfPresB.tlua, 0, 26))
+
+=== selfPresC.tlua ===
+setmetatable(SelfPres, { __index = { b = 2 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>SelfPres : Symbol(SelfPres, Decl(selfPresA.tlua, 0, 0), Decl(selfPresB.tlua, 0, 26))
+>__index : Symbol(__index, Decl(selfPresC.tlua, 0, 24))
+>b : Symbol(b, Decl(selfPresC.tlua, 0, 36))
+
+=== selfPresReads.tlua ===
+local selfDeclared: number = SelfPres.a;
+>selfDeclared : Symbol(selfDeclared, Decl(selfPresReads.tlua, 0, 5))
+>SelfPres.a : Symbol(a, Decl(selfPresA.tlua, 5, 13))
+>SelfPres : Symbol(SelfPres, Decl(selfPresA.tlua, 0, 0), Decl(selfPresB.tlua, 0, 26))
+>a : Symbol(a, Decl(selfPresA.tlua, 5, 13))
+
+=== exclusiveTop.tlua ===
+// A chunk runs once, so the branches of a top-level `if` are mutually
+// exclusive: the else call never meets the then branch's protection.
+declare exclCond: boolean;
+>exclCond : Symbol(exclCond, Decl(exclusiveTop.tlua, 2, 7))
+
+Branches = {};
+>Branches : Symbol(Branches, Decl(exclusiveTop.tlua, 2, 26))
+
+if exclCond then
+>exclCond : Symbol(exclCond, Decl(exclusiveTop.tlua, 2, 7))
+
+  setmetatable(Branches, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Branches : Symbol(Branches, Decl(exclusiveTop.tlua, 2, 26))
+
+    __index = { a = 1 },
+>__index : Symbol(__index, Decl(exclusiveTop.tlua, 5, 26))
+>a : Symbol(a, Decl(exclusiveTop.tlua, 6, 15))
+
+    __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(exclusiveTop.tlua, 6, 24))
+
+  });
+else
+  setmetatable(Branches, { __index = { b = 2 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Branches : Symbol(Branches, Decl(exclusiveTop.tlua, 2, 26))
+>__index : Symbol(__index, Decl(exclusiveTop.tlua, 10, 26))
+>b : Symbol(b, Decl(exclusiveTop.tlua, 10, 38))
+
+end
+
+=== exclusiveReads.tlua ===
+local branchDeclared: number = Branches.a;
+>branchDeclared : Symbol(branchDeclared, Decl(exclusiveReads.tlua, 0, 5))
+>Branches.a : Symbol(a, Decl(exclusiveTop.tlua, 6, 15))
+>Branches : Symbol(Branches, Decl(exclusiveTop.tlua, 2, 26))
+>a : Symbol(a, Decl(exclusiveTop.tlua, 6, 15))
+
+=== exclusiveFn.tlua ===
+// In a function body the same `if` runs per call with the condition free to
+// flip, so the branches are not exclusive and the protection still refuses
+// the else call.
+declare fnCond: boolean;
+>fnCond : Symbol(fnCond, Decl(exclusiveFn.tlua, 3, 7))
+
+FnBranches = {};
+>FnBranches : Symbol(FnBranches, Decl(exclusiveFn.tlua, 3, 24))
+
+function flipBranches(): void
+>flipBranches : Symbol(flipBranches, Decl(exclusiveFn.tlua, 4, 16))
+
+  if fnCond then
+>fnCond : Symbol(fnCond, Decl(exclusiveFn.tlua, 3, 7))
+
+    setmetatable(FnBranches, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>FnBranches : Symbol(FnBranches, Decl(exclusiveFn.tlua, 3, 24))
+
+      __index = { a = 1 },
+>__index : Symbol(__index, Decl(exclusiveFn.tlua, 7, 30))
+>a : Symbol(a, Decl(exclusiveFn.tlua, 8, 17))
+
+      __metatable = "locked",
+>__metatable : Symbol(__metatable, Decl(exclusiveFn.tlua, 8, 26))
+
+    });
+  else
+    setmetatable(FnBranches, { __index = { b = 2 } });
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>FnBranches : Symbol(FnBranches, Decl(exclusiveFn.tlua, 3, 24))
+>__index : Symbol(__index, Decl(exclusiveFn.tlua, 12, 30))
+>b : Symbol(b, Decl(exclusiveFn.tlua, 12, 42))
+
+  end
+end
+

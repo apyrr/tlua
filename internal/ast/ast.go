@@ -2107,6 +2107,12 @@ type SourceFile struct {
 	// LuaWriteCandidates are assignment-like declarations resolved after
 	// all program globals have been merged by each checker.
 	LuaWriteCandidates []LuaWriteCandidate
+	// LuaSetmetatableCandidates are `setmetatable(t, mt)` calls in any position, in
+	// source order, recorded syntactically. Each checker re-verifies the callee and
+	// resolves the table operand; every real call anchors the protected-metatable
+	// check at its program point, and statement-form calls (IsLuaStatementFormCall)
+	// additionally fold their pairing into the operand's declared type.
+	LuaSetmetatableCandidates []*Node
 
 	// Fields set by ECMALineMap
 

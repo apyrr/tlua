@@ -60,11 +60,11 @@ tluaColonCallArityMessages.tlua(59,33): error TLUA100037: Expected at most 2 arg
     buffer:put();
            ~~~
 !!! error TLUA2555: Expected at least 1 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:589:32: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:590:32: An argument for 'value' was not provided.
     buffer.put(buffer);
            ~~~
 !!! error TLUA2555: Expected at least 2 arguments, but got 1.
-!!! related TLUA6210 lib.luajit.d.tlua:589:32: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:590:32: An argument for 'value' was not provided.
     
     // string.format checks arity against the format string's specifiers, on its
     // own path -- the receiver has to come out of both counts there as well.

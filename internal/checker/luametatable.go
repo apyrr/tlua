@@ -98,7 +98,7 @@ func (c *Checker) checkLuaMetatableCall(node *ast.Node, returnType *Type) *Type 
 		// A protected table refuses a new metatable: the runtime raises, so the old pairing
 		// stands unchanged -- the one place setmetatable does not replace. debug.setmetatable
 		// bypasses the protection.
-		if kind == luaMetatableCallSet && someType(returnType, c.isProtectedMetatableType) {
+		if kind == luaMetatableCallSet && c.luaSetmetatableSeesProtected(node, returnType) {
 			c.error(node, diagnostics.Cannot_change_a_protected_metatable)
 			return returnType
 		}
@@ -122,6 +122,426 @@ func (c *Checker) checkLuaMetatableCall(node *ast.Node, returnType *Type) *Type 
 // so a fresh literal never reaches a type that outlives the expression.
 func (c *Checker) getLuaMetatableArgumentType(arg *ast.Node) *Type {
 	return c.getWidenedType(c.getRegularTypeOfObjectLiteral(c.checkExpressionCached(arg)))
+}
+
+// attachLuaMetatablePairings maps each augmentation symbol to the statement-form
+// setmetatable calls whose table operand names its storage. Flow analysis already
+// re-pairs references downstream of such a statement, but flow never leaves the
+// statement's own file or function, while the storage's declared type is what
+// every other file reads -- so the pairing must reach the declared type too.
+// Statement placement follows the leniency of the write machinery: like a store,
+// a call inside a function body or another file still contributes.
+func (c *Checker) attachLuaMetatablePairings() {
+	resolver := c.resolveLuaConstructors()
+	for _, file := range c.files {
+		for _, node := range file.LuaSetmetatableCandidates {
+			if !c.getLuaMetatableCall(node).isSet() {
+				continue
+			}
+			symbols, known := resolver.referenceSymbols(skipLuaRuntimeTransparentWrappers(node.Arguments()[0]))
+			if !known {
+				continue
+			}
+			isStatement := ast.IsLuaStatementFormCall(node)
+			for _, symbol := range symbols {
+				symbol = c.getMergedSymbol(symbol)
+				// Only inferred augmentation storage folds the pairing in; a declared
+				// contract keeps its annotation, exactly as it does for stores. A
+				// dotted method's symbol resolves through the function path, which
+				// never applies pairings -- and a metatable on a function is per-type
+				// at runtime, not per-value -- so function storage stays flow-only.
+				if symbol == nil || symbol.Flags&ast.SymbolFlagsAssignment == 0 ||
+					symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0 {
+					continue
+				}
+				// Every real call anchors the protected check at its own program
+				// point; only the statement form -- the fire-and-forget install
+				// idiom -- contributes to the declared type. An expression form
+				// feeds its result somewhere, and that value's flow or the store
+				// machinery carries it from there.
+				c.luaMetatablePairingCalls[node] = core.AppendIfUnique(c.luaMetatablePairingCalls[node], symbol)
+				if !isStatement {
+					continue
+				}
+				if len(c.luaMetatablePairings[symbol]) == 0 {
+					// First pairing wins the symbol's place in the resolution
+					// order ensureLuaPairedSymbolsResolved replays.
+					c.luaOrderedPairingSymbols = append(c.luaOrderedPairingSymbols, symbol)
+				}
+				c.luaMetatablePairings[symbol] = append(c.luaMetatablePairings[symbol], node)
+			}
+		}
+	}
+}
+
+// ensureLuaPairedSymbolsResolved resolves every paired symbol's type in program
+// order the first time any of them is about to resolve. Metatable arguments may
+// reference each other in a cycle; whichever symbol resolves first captures its
+// neighbors fully paired, while the read that closes the cycle captures the
+// first symbol's temporarily published unpaired base. That break is inherent --
+// no finite type holds a mutual pairing -- but where it lands must not depend on
+// which symbol a checker, a hover, or a pool ordering happens to touch first.
+// Called before the triggering symbol publishes anything, so the replay below
+// resolves it in its canonical position like any other. Runs on first use rather
+// than at attach time: attachLuaMetatablePairings runs before the checker's
+// global types exist, too early to resolve anything.
+func (c *Checker) ensureLuaPairedSymbolsResolved(symbol *ast.Symbol) {
+	// The map-emptiness test keeps the common pairing-free program at one bool
+	// and one length read, skipping the symbol lookups entirely.
+	if c.luaPairedSymbolsResolved || len(c.luaMetatablePairings) == 0 ||
+		len(c.luaMetatablePairings[c.getMergedSymbol(symbol)]) == 0 {
+		return
+	}
+	// Set first: every resolution below re-enters the hook that called us.
+	c.luaPairedSymbolsResolved = true
+	for _, paired := range c.luaOrderedPairingSymbols {
+		c.getTypeOfSymbol(paired)
+	}
+}
+
+// applyLuaDeclaredMetatablePairings pairs an augmentation symbol's declared type
+// with the metatables the program's setmetatable statements install on it, in
+// program order -- pairing replaces, so with several calls the last one stands,
+// as at runtime. Called after the unpaired type is published to the symbol's
+// links: computing the metatable argument may read the symbol back (the class
+// idiom's self-referential metatables), and that read must see the plain table
+// rather than a false circularity. The pre-pairing base is recorded so the
+// protected check can rebuild the type a given call saw (luaSetmetatableSeesProtected).
+func (c *Checker) applyLuaDeclaredMetatablePairings(symbol *ast.Symbol, t *Type) *Type {
+	if len(c.luaMetatablePairings) == 0 {
+		return t
+	}
+	merged := c.getMergedSymbol(symbol)
+	if len(c.luaMetatablePairings[merged]) == 0 {
+		return t
+	}
+	c.luaDeclaredPairingBases[merged] = t
+	return c.replayLuaDeclaredPairings(merged, t, nil /*stopAt*/, nil /*anchor*/)
+}
+
+// replayLuaDeclaredPairings walks a symbol's effect timeline in program order,
+// stopping before stopAt when given, and folds the pairings onto the base type.
+// A rebinding store puts a fresh table in the storage, so the accumulated
+// pairing -- protection included -- does not survive it; but a store only
+// matters when something after it observes the storage: the next pairing, or
+// the anchored call itself. The declared surface (anchor nil) therefore follows
+// the latest pairing even past a trailing store, while a protected-check prefix
+// (anchor = the call being checked) sees a rebind just before its own position.
+// An anchored replay only honors a reset that definitely ran before the anchor:
+// a conditional rebind may not have executed, and on the path where it did not,
+// the protection still refuses the call.
+func (c *Checker) replayLuaDeclaredPairings(merged *ast.Symbol, base *Type, stopAt *ast.Node, anchor *ast.Node) *Type {
+	var stop *luaProgramOrderKey
+	if stopAt != nil {
+		key := c.luaProgramOrder(stopAt)
+		stop = &key
+	}
+	t := base
+	resetPending := false
+	for _, effect := range c.getLuaSymbolEffectTimeline(merged) {
+		// The stop point is compared by program order, not identity: an
+		// expression-form anchor is not on the timeline, but still stops the
+		// replay at its own position.
+		if stop != nil && !effect.key.less(*stop) {
+			break
+		}
+		// An effect in the opposite branch of a run-once `if` cannot have
+		// happened on any path that reaches the anchor.
+		if anchor != nil && luaEffectExcludesAnchor(effect.node, anchor) {
+			continue
+		}
+		switch effect.kind {
+		case luaEffectRebindingStore:
+			if anchor == nil || c.luaEffectDefinitelyPrecedes(effect.node, anchor) {
+				resetPending = true
+			}
+		case luaEffectPairing:
+			if resetPending {
+				t = base
+				resetPending = false
+			}
+			// Only debug's bypass can strip protection, and for an anchored
+			// prefix stripping counts only when the call definitely ran: on
+			// the path where it did not, the protection remains and still
+			// refuses the anchored call. Installing protection stays ungated
+			// -- any path that installed it refuses -- and an ordinary
+			// pairing over a protected type is a refused no-op either way.
+			if anchor != nil && someType(t, c.isProtectedMetatableType) && !c.luaEffectDefinitelyPrecedes(effect.node, anchor) {
+				continue
+			}
+			t = c.applyLuaDeclaredMetatablePairing(t, effect.node)
+		}
+	}
+	if resetPending && stop != nil {
+		t = base
+	}
+	return t
+}
+
+// luaEffectDefinitelyPrecedes reports whether an effect -- a rebinding store or a
+// protection-stripping pairing call -- has definitely run by the time the anchor call
+// does: the same ordering questions luaStoresBeforeSelfRead answers for a self-read,
+// asked of a statement already known to precede the anchor in program order. An effect
+// in a function body needs a call nothing orders, so only the anchor's own body orders
+// it, by dominance within one invocation. An effect outside the anchor's body is
+// reached by the leniency ordinary cross-body and cross-file reads get, provided it
+// runs unconditionally where it sits; a conditional one may have been skipped, and a
+// skipped rebind or bypass leaves the old table -- protection included -- in place.
+// (An assertion-wrapped call statement conservatively fails both placement tests --
+// its parent is the wrapper -- which keeps protection, the safe direction.)
+func (c *Checker) luaEffectDefinitelyPrecedes(source *ast.Node, anchor *ast.Node) bool {
+	sourceFn := ast.FindAncestor(source, ast.IsFunctionLike)
+	anchorFn := ast.FindAncestor(anchor, ast.IsFunctionLike)
+	switch {
+	case sourceFn != nil:
+		// A store in a function body needs a call nothing here orders. Only the
+		// anchor's own body orders it: control there passed the store when the
+		// store's block holds the anchor, or when nothing in the body skips it.
+		return sourceFn == anchorFn && (luaStoreDominatesRead(source, anchor) || luaStoreRunsUnconditionally(source))
+	case anchorFn == nil && ast.GetSourceFileOfNode(source) == ast.GetSourceFileOfNode(anchor):
+		// Both run in the same chunk: control that reached the call either
+		// entered the store's own block on the way, or could not skip the store.
+		return luaStoreDominatesRead(source, anchor) || luaStoreRunsUnconditionally(source)
+	default:
+		// A top-level store in another file, or one the anchor's body closes over:
+		// reached by the leniency ordinary cross-body and cross-file reads get,
+		// provided nothing can skip it.
+		return luaStoreRunsUnconditionally(source)
+	}
+}
+
+// luaEffectExcludesAnchor reports whether an effect and the anchor sit in mutually
+// exclusive branches of one run-once `if`: a chunk executes once, so only one branch of
+// a top-level `if` ever runs, and an effect in the other branch cannot have happened on
+// any path that reaches the anchor. Inside a function body or a loop the same `if` runs
+// again with the condition free to flip, so the branches are not exclusive across
+// invocations and no effect is excluded. A function boundary between the effect and the
+// branch likewise defers the effect past the branch's own run, ending the walk.
+func luaEffectExcludesAnchor(effect *ast.Node, anchor *ast.Node) bool {
+	child := effect
+	for parent := child.Parent; parent != nil; child, parent = parent, parent.Parent {
+		if ast.IsFunctionLike(parent) {
+			return false
+		}
+		if !ast.IsIfStatement(parent) {
+			continue
+		}
+		ifStatement := parent.AsIfStatement()
+		var other *ast.Node
+		switch child {
+		case ifStatement.ThenStatement:
+			other = ifStatement.ElseStatement
+		case ifStatement.ElseStatement:
+			other = ifStatement.ThenStatement
+		}
+		// An effect in the condition runs on both paths; keep climbing.
+		if other != nil && ast.FindAncestor(anchor, func(node *ast.Node) bool { return node == other }) != nil {
+			return luaIfRunsAtMostOnce(parent)
+		}
+	}
+	return false
+}
+
+// luaIfRunsAtMostOnce reports whether an `if` statement executes at most once per
+// program run: nothing above it is a function body or a loop.
+func luaIfRunsAtMostOnce(node *ast.Node) bool {
+	return ast.FindAncestor(node.Parent, func(parent *ast.Node) bool {
+		return ast.IsFunctionLike(parent) || ast.IsIterationStatement(parent)
+	}) == nil
+}
+
+// luaStoreRunsUnconditionally reports whether a store runs whenever the body holding it
+// runs: its statement sits in that chunk or function body rather than inside a
+// conditional or a loop. A bare block (a do-block) runs exactly once when its holder
+// does, so the climb sees through any nesting of them; a block belonging to an if or a
+// loop hangs off the control statement, not another block, and stops the climb.
+func luaStoreRunsUnconditionally(source *ast.Node) bool {
+	if source.Parent == nil || !ast.IsExpressionStatement(source.Parent) {
+		return false
+	}
+	container := source.Parent.Parent
+	for container != nil && ast.IsBlock(container) && container.Parent != nil && ast.IsBlock(container.Parent) {
+		container = container.Parent
+	}
+	if container == nil {
+		return false
+	}
+	return ast.IsSourceFile(container) ||
+		ast.IsBlock(container) && container.Parent != nil &&
+			(ast.IsFunctionLike(container.Parent) || ast.IsSourceFile(container.Parent))
+}
+
+// applyLuaDeclaredMetatablePairing applies one recorded call to a declared type.
+// A protected pairing refuses replacement (the call site reports it); debug.setmetatable
+// bypasses the protection, as on the flow path. Union storage pairs arm by arm: the
+// call pairs whichever table the storage holds, and a pairing itself never forms over
+// a union (canCarryMetatableMembers).
+func (c *Checker) applyLuaDeclaredMetatablePairing(t *Type, node *ast.Node) *Type {
+	if c.getLuaMetatableCall(node) == luaMetatableCallSet && someType(t, c.isProtectedMetatableType) {
+		return t
+	}
+	metatableType := c.getLuaDeclaredPairingMetatableType(node, t)
+	return c.mapType(t, func(arm *Type) *Type {
+		if paired := c.getSetmetatableResultType(arm, metatableType); paired != nil {
+			return paired
+		}
+		return arm
+	})
+}
+
+// getLuaDeclaredPairingMetatableType checks a recorded call's metatable operand for the
+// declared-type replay. The replay can be what checks the operand first -- the call's own
+// table argument may have triggered the symbol resolution that runs it -- and at that
+// moment the call's signature is still resolving, so contextual typing through the call
+// finds nothing and a context-sensitive metatable member would lose its parameter types.
+// The context the call would provide is supplied directly: setmetatable declares the
+// operand as LuaMetatable<T> with T the table being paired. Memoized per call so prefix
+// rebuilds reuse the same interned type.
+func (c *Checker) getLuaDeclaredPairingMetatableType(node *ast.Node, tableType *Type) *Type {
+	if cached, ok := c.luaPairingMetatableArgTypes[node]; ok {
+		return cached
+	}
+	arg := node.Arguments()[1]
+	// A statement that names several storage symbols (disjoint constructor-arm
+	// groups sharing a member name) replays under several table types, but the
+	// literal's members freeze on their first check. Contextualize such a call
+	// against the bare table type instead, so the memo's content cannot depend
+	// on which storage resolves first.
+	operandType := c.getUnpairedTableType(tableType)
+	if len(c.luaMetatablePairingCalls[node]) > 1 {
+		operandType = c.nonPrimitiveType
+	}
+	if typeArguments := node.TypeArguments(); len(typeArguments) != 0 {
+		// An explicit instantiation names T itself, so the call contextualizes
+		// the literal with the written type; the replay must match it or the
+		// literal freezes under a contract the call then contradicts.
+		operandType = c.getTypeFromTypeNode(typeArguments[0])
+	}
+	var t *Type
+	if globalType := c.getGlobalType("LuaMetatable", 1 /*arity*/, false /*reportErrors*/); globalType != c.emptyGenericType {
+		contextualType := c.createTypeFromGenericGlobalType(globalType, []*Type{operandType})
+		t = c.checkExpressionWithContextualType(arg, contextualType, nil /*inferenceContext*/, CheckModeNormal)
+		t = c.getWidenedType(c.getRegularTypeOfObjectLiteral(t))
+	} else {
+		t = c.getLuaMetatableArgumentType(arg)
+	}
+	c.luaPairingMetatableArgTypes[node] = t
+	return t
+}
+
+// luaSetmetatableSeesProtected reports whether a setmetatable call's table operand is
+// protected when the call runs. A recorded pairing call answers from its prefix alone:
+// the base with the pairings and rebinding stores that precede it replayed. The
+// flow-derived operand type is wrong in both directions there -- outside the call's own
+// file it falls back to the final declared type, which contains the pairing this very
+// call installs (a false report on the installer) and reflects replacements that run
+// only after this call, debug.setmetatable's bypass included (a masked report on a
+// refused replacement). An unrecorded call keeps the flow answer, which is exact for
+// the local narrowing that produced it.
+func (c *Checker) luaSetmetatableSeesProtected(node *ast.Node, returnType *Type) bool {
+	symbols := c.luaMetatablePairingCalls[node]
+	if len(symbols) == 0 {
+		return someType(returnType, c.isProtectedMetatableType)
+	}
+	return core.Some(symbols, func(symbol *ast.Symbol) bool {
+		return someType(c.getLuaDeclaredPairingTypeBefore(symbol, node), c.isProtectedMetatableType)
+	})
+}
+
+// getLuaDeclaredPairingTypeBefore rebuilds a symbol's declared type as of just before
+// `call`: the recorded pre-pairing base with only the pairings preceding the call
+// applied. Pairing results are interned, so the rebuild redoes no structural work.
+func (c *Checker) getLuaDeclaredPairingTypeBefore(symbol *ast.Symbol, call *ast.Node) *Type {
+	merged := c.getMergedSymbol(symbol)
+	base, ok := c.luaDeclaredPairingBases[merged]
+	if !ok {
+		// Resolving the symbol records the base on the way to the paired type.
+		t := c.getTypeOfSymbol(merged)
+		if base, ok = c.luaDeclaredPairingBases[merged]; !ok {
+			// A resolution that never applied pairings (a collision's pre-set
+			// any, say) has nothing call-order-sensitive in it.
+			return t
+		}
+	}
+	return c.replayLuaDeclaredPairings(merged, base, call /*stopAt*/, call /*anchor*/)
+}
+
+type luaProgramOrderKey struct {
+	file int
+	pos  int
+}
+
+// luaSymbolEffectKind classifies one entry on a symbol's effect timeline.
+type luaSymbolEffectKind int8
+
+const (
+	// luaEffectRebindingStore is an effective store that replaces the table
+	// outright, clearing whatever pairing the storage had accumulated.
+	luaEffectRebindingStore luaSymbolEffectKind = iota
+	// luaEffectPairing is a statement-form setmetatable call that installs a
+	// metatable on the storage.
+	luaEffectPairing
+)
+
+// luaSymbolEffect is one program-ordered effect on an augmentation symbol's
+// declared metatable state. The node lets an anchored replay ask whether a
+// store definitely ran before the call it anchors on.
+type luaSymbolEffect struct {
+	key  luaProgramOrderKey
+	kind luaSymbolEffectKind
+	node *ast.Node
+}
+
+func (key luaProgramOrderKey) less(other luaProgramOrderKey) bool {
+	return key.file < other.file || key.file == other.file && key.pos < other.pos
+}
+
+func (c *Checker) luaProgramOrder(node *ast.Node) luaProgramOrderKey {
+	return luaProgramOrderKey{file: c.fileIndexMap[ast.GetSourceFileOfNode(node)], pos: node.Pos()}
+}
+
+// getLuaSymbolEffectTimeline merges a symbol's statement-form pairings with its
+// rebinding stores into one program-ordered list. A defaulted guard (`X = X or
+// {}`) keeps the existing table -- and its metatable -- whenever one exists,
+// and a self-preserving store re-stores what was there, so neither appears. A
+// store inside a function body does, because a pairing inside one contributes:
+// the two must agree, or a body that rebinds and re-pairs would replay the old
+// protection against its own fresh table. Whether a store definitely ran is the
+// replay's question (luaEffectDefinitelyPrecedes), not the timeline's.
+func (c *Checker) getLuaSymbolEffectTimeline(merged *ast.Symbol) []luaSymbolEffect {
+	if effects, ok := c.luaSymbolEffectTimelines[merged]; ok {
+		return effects
+	}
+	effects := []luaSymbolEffect{}
+	for _, assignment := range c.effectiveLuaAssignmentAugmentations(c.luaAssignmentAugmentations[merged]) {
+		if c.isSelfPreservingLuaCapturedTarget(assignment.Target) {
+			continue
+		}
+		if initializer := luaExplicitAssignmentValueAt(assignment.Source.AsBinaryExpression().Right, assignment.ValueIndex); initializer != nil &&
+			(c.isLuaDefaultedAugmentationGuard(assignment.Target, initializer) ||
+				c.luaStoreMayPreserveTarget(assignment.Target, initializer)) {
+			// A value that may evaluate to the target itself -- `X = cond and X
+			// or {}` -- keeps the table and its metatable on that path, so the
+			// store is no rebinding.
+			continue
+		}
+		effects = append(effects, luaSymbolEffect{key: c.luaProgramOrder(assignment.Source), kind: luaEffectRebindingStore, node: assignment.Source})
+	}
+	for _, node := range c.luaMetatablePairings[merged] {
+		effects = append(effects, luaSymbolEffect{key: c.luaProgramOrder(node), kind: luaEffectPairing, node: node})
+	}
+	// Stores and pairings are whole statements, so no two effects share a key.
+	slices.SortFunc(effects, func(left luaSymbolEffect, right luaSymbolEffect) int {
+		if left.key.less(right.key) {
+			return -1
+		}
+		if right.key.less(left.key) {
+			return 1
+		}
+		return 0
+	})
+	c.luaSymbolEffectTimelines[merged] = effects
+	return effects
 }
 
 // getGetmetatableResultType returns the metatable paired with t, or nil when t carries no
