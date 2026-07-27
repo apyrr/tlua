@@ -1,0 +1,177 @@
+//// [tests/cases/compiler/tluaCoroutineYieldSuspend.tlua] ////
+
+=== tluaCoroutineYieldSuspend.tlua ===
+// `coroutine.yield` anchors the suspend contract: it is the primitive that
+// actually suspends the running coroutine, so a function whose body yields must
+// declare itself `suspend`.
+
+// OK: a suspend function may yield.
+suspend function producer(n: number): void
+>producer : Symbol(producer, Decl(tluaCoroutineYieldSuspend.tlua, 0, 0))
+>n : Symbol(n, Decl(tluaCoroutineYieldSuspend.tlua, 5, 26))
+
+  local i = 1;
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 6, 7))
+
+  while i <= n do
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 6, 7))
+>n : Symbol(n, Decl(tluaCoroutineYieldSuspend.tlua, 5, 26))
+
+    coroutine.yield(i);
+>coroutine.yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 6, 7))
+
+    i = i + 1;
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 6, 7))
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 6, 7))
+
+  end
+end
+
+// Error: yielding from ordinary code is the runtime's "attempt to yield from
+// outside a coroutine".
+function syncProducer(): void
+>syncProducer : Symbol(syncProducer, Decl(tluaCoroutineYieldSuspend.tlua, 11, 3))
+
+  coroutine.yield(1);
+>coroutine.yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+// Error: at top level there is no function to mark, so the yield is rejected.
+coroutine.yield();
+>coroutine.yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+
+// Error: the flag rides the signature, so an alias keeps the contract.
+local yield = coroutine.yield;
+>yield : Symbol(yield, Decl(tluaCoroutineYieldSuspend.tlua, 23, 5))
+>coroutine.yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+
+function aliasCaller(): void
+>aliasCaller : Symbol(aliasCaller, Decl(tluaCoroutineYieldSuspend.tlua, 23, 30))
+
+  yield(1);
+>yield : Symbol(yield, Decl(tluaCoroutineYieldSuspend.tlua, 23, 5))
+
+end
+
+// OK: the same alias from a suspend context.
+suspend function aliasSuspendCaller(): void
+>aliasSuspendCaller : Symbol(aliasSuspendCaller, Decl(tluaCoroutineYieldSuspend.tlua, 26, 3))
+
+  yield(1);
+>yield : Symbol(yield, Decl(tluaCoroutineYieldSuspend.tlua, 23, 5))
+
+end
+
+// The results are erased, exactly as resume's are.
+suspend function consumeResumeValues(): void
+>consumeResumeValues : Symbol(consumeResumeValues, Decl(tluaCoroutineYieldSuspend.tlua, 31, 3))
+
+  local first, rest = coroutine.yield(1);
+>first : Symbol(first, Decl(tluaCoroutineYieldSuspend.tlua, 35, 7))
+>rest : Symbol(rest, Decl(tluaCoroutineYieldSuspend.tlua, 35, 14))
+>coroutine.yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+
+  local anyFirst: any = first;
+>anyFirst : Symbol(anyFirst, Decl(tluaCoroutineYieldSuspend.tlua, 36, 7))
+>first : Symbol(first, Decl(tluaCoroutineYieldSuspend.tlua, 35, 7))
+
+  local anyRest: any = rest;
+>anyRest : Symbol(anyRest, Decl(tluaCoroutineYieldSuspend.tlua, 37, 7))
+>rest : Symbol(rest, Decl(tluaCoroutineYieldSuspend.tlua, 35, 14))
+
+end
+
+// OK: starting a suspend function as a coroutine is the point of the modifier.
+// `create` and `wrap` take the `function` top type, which accepts one.
+local co = coroutine.create(producer);
+>co : Symbol(co, Decl(tluaCoroutineYieldSuspend.tlua, 42, 5))
+>coroutine.create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>producer : Symbol(producer, Decl(tluaCoroutineYieldSuspend.tlua, 0, 0))
+
+local wrapped = coroutine.wrap(producer);
+>wrapped : Symbol(wrapped, Decl(tluaCoroutineYieldSuspend.tlua, 43, 5))
+>coroutine.wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>producer : Symbol(producer, Decl(tluaCoroutineYieldSuspend.tlua, 0, 0))
+
+// OK: driving a coroutine is ordinary sync code -- neither `resume` nor a
+// wrapped function is suspend.
+function drive(): void
+>drive : Symbol(drive, Decl(tluaCoroutineYieldSuspend.tlua, 43, 41))
+
+  coroutine.resume(co, 3);
+>coroutine.resume : Symbol(CoroutineLib.resume, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>resume : Symbol(CoroutineLib.resume, Decl(lib.luajit.d.tlua, --, --))
+>co : Symbol(co, Decl(tluaCoroutineYieldSuspend.tlua, 42, 5))
+
+  wrapped(3);
+>wrapped : Symbol(wrapped, Decl(tluaCoroutineYieldSuspend.tlua, 43, 5))
+
+  local status = coroutine.status(co);
+>status : Symbol(status, Decl(tluaCoroutineYieldSuspend.tlua, 50, 7))
+>coroutine.status : Symbol(CoroutineLib.status, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>status : Symbol(CoroutineLib.status, Decl(lib.luajit.d.tlua, --, --))
+>co : Symbol(co, Decl(tluaCoroutineYieldSuspend.tlua, 42, 5))
+
+end
+
+// OK: an anonymous suspend function is the usual shape at a wrap site.
+local counter = coroutine.wrap(suspend function(): void
+>counter : Symbol(counter, Decl(tluaCoroutineYieldSuspend.tlua, 54, 5))
+>coroutine.wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+
+  local i = 0;
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 55, 7))
+
+  while true do
+    coroutine.yield(i);
+>coroutine.yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 55, 7))
+
+    i = i + 1;
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 55, 7))
+>i : Symbol(i, Decl(tluaCoroutineYieldSuspend.tlua, 55, 7))
+
+  end
+end);
+local firstTick = counter();
+>firstTick : Symbol(firstTick, Decl(tluaCoroutineYieldSuspend.tlua, 61, 5))
+>counter : Symbol(counter, Decl(tluaCoroutineYieldSuspend.tlua, 54, 5))
+
+// The escape hatch: widening to the `function` top type drops the flag, so an
+// untracked yield is still expressible.
+local rawYield: function = coroutine.yield;
+>rawYield : Symbol(rawYield, Decl(tluaCoroutineYieldSuspend.tlua, 65, 5))
+>coroutine.yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>yield : Symbol(CoroutineLib.yield, Decl(lib.luajit.d.tlua, --, --))
+
+function untracked(): void
+>untracked : Symbol(untracked, Decl(tluaCoroutineYieldSuspend.tlua, 65, 43))
+
+  rawYield(1);
+>rawYield : Symbol(rawYield, Decl(tluaCoroutineYieldSuspend.tlua, 65, 5))
+
+end
+

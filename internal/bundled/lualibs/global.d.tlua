@@ -64,6 +64,10 @@ declare function xpcall(fn: function, handler: (message: any) => any, ...: any):
  * generic `T`. The whole coroutine module stays erased: resume/yield because a
  * `thread` is opaque and carries no packs (Luau makes the same call), and wrap
  * because a wrapped call exchanges values with `yield`, not with fn's packs.
+ * That erasure is about packs only -- `coroutine.yield` still carries the suspend
+ * flag, because it is the primitive the whole contract is founded on. `resume`
+ * and a wrapped function do not: driving a coroutine from ordinary code is what
+ * they are for.
  *
  * The signatures of setmetatable and getmetatable stay deliberately plain: the
  * checker pairs a table with its metatable itself. A call to the *global*

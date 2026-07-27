@@ -1,0 +1,211 @@
+//// [tests/cases/compiler/tluaCoroutineYieldSuspend.tlua] ////
+
+=== tluaCoroutineYieldSuspend.tlua ===
+// `coroutine.yield` anchors the suspend contract: it is the primitive that
+// actually suspends the running coroutine, so a function whose body yields must
+// declare itself `suspend`.
+
+// OK: a suspend function may yield.
+suspend function producer(n: number): void
+>producer : suspend (n: number) => void
+>n : number
+
+  local i = 1;
+>i : number
+>1 : 1
+
+  while i <= n do
+>i <= n : boolean
+>i : number
+>n : number
+
+    coroutine.yield(i);
+>coroutine.yield(i) : any
+>coroutine.yield : suspend (...: any) => (any?, ...any)
+>coroutine : CoroutineLib
+>yield : suspend (...: any) => (any?, ...any)
+>i : number
+
+    i = i + 1;
+>i = i + 1 : number
+>i : number
+>i + 1 : number
+>i : number
+>1 : 1
+
+  end
+end
+
+// Error: yielding from ordinary code is the runtime's "attempt to yield from
+// outside a coroutine".
+function syncProducer(): void
+>syncProducer : () => void
+
+  coroutine.yield(1);
+>coroutine.yield(1) : any
+>coroutine.yield : suspend (...: any) => (any?, ...any)
+>coroutine : CoroutineLib
+>yield : suspend (...: any) => (any?, ...any)
+>1 : 1
+
+end
+
+// Error: at top level there is no function to mark, so the yield is rejected.
+coroutine.yield();
+>coroutine.yield() : any
+>coroutine.yield : suspend (...: any) => (any?, ...any)
+>coroutine : CoroutineLib
+>yield : suspend (...: any) => (any?, ...any)
+
+// Error: the flag rides the signature, so an alias keeps the contract.
+local yield = coroutine.yield;
+>yield : suspend (...: any) => (any?, ...any)
+>coroutine.yield : suspend (...: any) => (any?, ...any)
+>coroutine : CoroutineLib
+>yield : suspend (...: any) => (any?, ...any)
+
+function aliasCaller(): void
+>aliasCaller : () => void
+
+  yield(1);
+>yield(1) : any
+>yield : suspend (...: any) => (any?, ...any)
+>1 : 1
+
+end
+
+// OK: the same alias from a suspend context.
+suspend function aliasSuspendCaller(): void
+>aliasSuspendCaller : suspend () => void
+
+  yield(1);
+>yield(1) : any
+>yield : suspend (...: any) => (any?, ...any)
+>1 : 1
+
+end
+
+// The results are erased, exactly as resume's are.
+suspend function consumeResumeValues(): void
+>consumeResumeValues : suspend () => void
+
+  local first, rest = coroutine.yield(1);
+>first : any
+>rest : any
+>coroutine.yield(1) : any
+>coroutine.yield : suspend (...: any) => (any?, ...any)
+>coroutine : CoroutineLib
+>yield : suspend (...: any) => (any?, ...any)
+>1 : 1
+
+  local anyFirst: any = first;
+>anyFirst : any
+>first : any
+
+  local anyRest: any = rest;
+>anyRest : any
+>rest : any
+
+end
+
+// OK: starting a suspend function as a coroutine is the point of the modifier.
+// `create` and `wrap` take the `function` top type, which accepts one.
+local co = coroutine.create(producer);
+>co : thread
+>coroutine.create(producer) : thread
+>coroutine.create : (fn: function) => thread
+>coroutine : CoroutineLib
+>create : (fn: function) => thread
+>producer : suspend (n: number) => void
+
+local wrapped = coroutine.wrap(producer);
+>wrapped : function
+>coroutine.wrap(producer) : function
+>coroutine.wrap : (fn: function) => function
+>coroutine : CoroutineLib
+>wrap : (fn: function) => function
+>producer : suspend (n: number) => void
+
+// OK: driving a coroutine is ordinary sync code -- neither `resume` nor a
+// wrapped function is suspend.
+function drive(): void
+>drive : () => void
+
+  coroutine.resume(co, 3);
+>coroutine.resume(co, 3) : boolean
+>coroutine.resume : (thread: thread, ...: any) => (boolean, ...any)
+>coroutine : CoroutineLib
+>resume : (thread: thread, ...: any) => (boolean, ...any)
+>co : thread
+>3 : 3
+
+  wrapped(3);
+>wrapped(3) : any
+>wrapped : function
+>3 : 3
+
+  local status = coroutine.status(co);
+>status : "dead" | "normal" | "running" | "suspended"
+>coroutine.status(co) : "dead" | "normal" | "running" | "suspended"
+>coroutine.status : (thread: thread) => "running" | "suspended" | "normal" | "dead"
+>coroutine : CoroutineLib
+>status : (thread: thread) => "running" | "suspended" | "normal" | "dead"
+>co : thread
+
+end
+
+// OK: an anonymous suspend function is the usual shape at a wrap site.
+local counter = coroutine.wrap(suspend function(): void
+>counter : function
+>coroutine.wrap(suspend function(): void  local i = 0;  while true do    coroutine.yield(i);    i = i + 1;  endend) : function
+>coroutine.wrap : (fn: function) => function
+>coroutine : CoroutineLib
+>wrap : (fn: function) => function
+>suspend function(): void  local i = 0;  while true do    coroutine.yield(i);    i = i + 1;  endend : suspend () => void
+
+  local i = 0;
+>i : number
+>0 : 0
+
+  while true do
+>true : true
+
+    coroutine.yield(i);
+>coroutine.yield(i) : any
+>coroutine.yield : suspend (...: any) => (any?, ...any)
+>coroutine : CoroutineLib
+>yield : suspend (...: any) => (any?, ...any)
+>i : number
+
+    i = i + 1;
+>i = i + 1 : number
+>i : number
+>i + 1 : number
+>i : number
+>1 : 1
+
+  end
+end);
+local firstTick = counter();
+>firstTick : any
+>counter() : any
+>counter : function
+
+// The escape hatch: widening to the `function` top type drops the flag, so an
+// untracked yield is still expressible.
+local rawYield: function = coroutine.yield;
+>rawYield : function
+>coroutine.yield : suspend (...: any) => (any?, ...any)
+>coroutine : CoroutineLib
+>yield : suspend (...: any) => (any?, ...any)
+
+function untracked(): void
+>untracked : () => void
+
+  rawYield(1);
+>rawYield(1) : any
+>rawYield : function
+>1 : 1
+
+end
+

@@ -1,0 +1,74 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// `coroutine.yield` anchors the suspend contract: it is the primitive that
+// actually suspends the running coroutine, so a function whose body yields must
+// declare itself `suspend`.
+
+// OK: a suspend function may yield.
+suspend function producer(n: number): void
+  local i = 1;
+  while i <= n do
+    coroutine.yield(i);
+    i = i + 1;
+  end
+end
+
+// Error: yielding from ordinary code is the runtime's "attempt to yield from
+// outside a coroutine".
+function syncProducer(): void
+  coroutine.yield(1);
+end
+
+// Error: at top level there is no function to mark, so the yield is rejected.
+coroutine.yield();
+
+// Error: the flag rides the signature, so an alias keeps the contract.
+local yield = coroutine.yield;
+function aliasCaller(): void
+  yield(1);
+end
+
+// OK: the same alias from a suspend context.
+suspend function aliasSuspendCaller(): void
+  yield(1);
+end
+
+// The results are erased, exactly as resume's are.
+suspend function consumeResumeValues(): void
+  local first, rest = coroutine.yield(1);
+  local anyFirst: any = first;
+  local anyRest: any = rest;
+end
+
+// OK: starting a suspend function as a coroutine is the point of the modifier.
+// `create` and `wrap` take the `function` top type, which accepts one.
+local co = coroutine.create(producer);
+local wrapped = coroutine.wrap(producer);
+
+// OK: driving a coroutine is ordinary sync code -- neither `resume` nor a
+// wrapped function is suspend.
+function drive(): void
+  coroutine.resume(co, 3);
+  wrapped(3);
+  local status = coroutine.status(co);
+end
+
+// OK: an anonymous suspend function is the usual shape at a wrap site.
+local counter = coroutine.wrap(suspend function(): void
+  local i = 0;
+  while true do
+    coroutine.yield(i);
+    i = i + 1;
+  end
+end);
+local firstTick = counter();
+
+// The escape hatch: widening to the `function` top type drops the flag, so an
+// untracked yield is still expressible.
+local rawYield: function = coroutine.yield;
+function untracked(): void
+  rawYield(1);
+end

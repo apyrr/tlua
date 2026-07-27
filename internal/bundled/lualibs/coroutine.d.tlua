@@ -9,7 +9,16 @@ interface CoroutineLib {
     // parameter/return packs would assert types that are wrong for every coroutine
     // that yields, which is what wrap is for.
     wrap(fn: function): function;
-    yield(...: any): (any?, ...any);
+    // `yield` is the primitive that actually suspends the running coroutine, so
+    // it anchors the suspend contract: everything else marked `suspend` is marked
+    // by hand, and this is the one signature the contract can be founded on. A
+    // function whose body yields must therefore declare itself `suspend`, and a
+    // yield reached from ordinary code -- the runtime's "attempt to yield from
+    // outside a coroutine" -- is a diagnostic instead. The `suspend` modifier is
+    // illegal in an ambient context, so this is a property carrying a suspend
+    // function *type*; the argument and result types stay erased exactly as
+    // resume's do. Widening to the `function` top type is the escape hatch.
+    yield: suspend (...: any) => (any?, ...any);
 }
 
 declare coroutine: CoroutineLib;
