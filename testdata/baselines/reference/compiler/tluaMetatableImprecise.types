@@ -14,7 +14,7 @@ declare declared: LuaMetatable<{ n: number }>;
 local d = setmetatable({ n = 1 }, declared);
 >d : { n: number; }
 >setmetatable({ n = 1 }, declared) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -43,7 +43,7 @@ declare unionIndex: { __index: { a: number } | ((t: table, k: any) => string) };
 local u = setmetatable({ n = 1 }, unionIndex);
 >u : { n: number; }
 >setmetatable({ n = 1 }, unionIndex) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -64,7 +64,7 @@ declare maybe: { __index: { a: number } } | nil;
 local m = setmetatable({ n = 1 }, maybe);
 >m : { n: number; }
 >setmetatable({ n = 1 }, maybe) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -80,7 +80,7 @@ local mbad = m.a;
 local none = setmetatable({ n = 1 }, nil);
 >none : { n: number; }
 >setmetatable({ n = 1 }, nil) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -101,7 +101,7 @@ local nbad = none.anything;
 local noIndex = setmetatable({ n = 1 }, { __tostring = function(t: table): string return "t"; end });
 >noIndex : { n: number; }
 >setmetatable({ n = 1 }, { __tostring = function(t: table): string return "t"; end }) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -129,7 +129,7 @@ declare hybrid: { __index: { (t: table, k: any): string; extra: number } };
 local h = setmetatable({ n = 1 }, hybrid);
 >h : { n: number; }
 >setmetatable({ n = 1 }, hybrid) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -150,7 +150,7 @@ declare optional: { __index?: { a: number } };
 local o = setmetatable({ n = 1 }, optional);
 >o : { a: number; n: number; }
 >setmetatable({ n = 1 }, optional) : { a: number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -166,7 +166,7 @@ local oa: number = o.a;
 local bad = setmetatable({ n = 1 }, { __index = { a = missingName } });
 >bad : { n: number; a: any; }
 >setmetatable({ n = 1 }, { __index = { a = missingName } }) : { n: number; a: any; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1

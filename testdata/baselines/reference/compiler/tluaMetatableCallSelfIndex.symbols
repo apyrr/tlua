@@ -1,0 +1,888 @@
+//// [tests/cases/compiler/tluaMetatableCallSelfIndex.tlua] ////
+
+=== tluaMetatableCallSelfIndex.tlua ===
+// A metamethod receives the PAIRED table, not the bare one setmetatable was handed: at runtime
+// the fallback behind __index answers for it too. So a metatable literal that commits to a
+// table-valued __index contextually types every metamethod's first parameter as the table
+// intersected with that fallback. And the table operand alone chooses T: a metamethod annotated
+// with a wider receiver states what it accepts, never what the call is pairing.
+
+interface Transaction {
+>Transaction : Symbol(Transaction, Decl(tluaMetatableCallSelfIndex.tlua, 0, 0))
+
+  id: string;
+>id : Symbol(Transaction.id, Decl(tluaMetatableCallSelfIndex.tlua, 6, 23))
+
+  query(self: Transaction, sql: string): table[];
+>query : Symbol(Transaction.query, Decl(tluaMetatableCallSelfIndex.tlua, 7, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 8, 8))
+>Transaction : Symbol(Transaction, Decl(tluaMetatableCallSelfIndex.tlua, 0, 0))
+>sql : Symbol(sql, Decl(tluaMetatableCallSelfIndex.tlua, 8, 26))
+}
+
+local Tx = {};
+>Tx : Symbol(Tx, Decl(tluaMetatableCallSelfIndex.tlua, 11, 5))
+
+function Tx.query(self: Transaction, sql: string): table[]
+>Tx : Symbol(Tx, Decl(tluaMetatableCallSelfIndex.tlua, 11, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSelfIndex.tlua, 11, 14))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 12, 18))
+>Transaction : Symbol(Transaction, Decl(tluaMetatableCallSelfIndex.tlua, 0, 0))
+>sql : Symbol(sql, Decl(tluaMetatableCallSelfIndex.tlua, 12, 36))
+
+  return {};
+end
+
+// (1) The unannotated receiver sees the fallback, so it satisfies Transaction.
+local state = { id = "test" };
+>state : Symbol(state, Decl(tluaMetatableCallSelfIndex.tlua, 17, 5))
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 17, 15))
+
+local tx = setmetatable(state, {
+>tx : Symbol(tx, Decl(tluaMetatableCallSelfIndex.tlua, 18, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>state : Symbol(state, Decl(tluaMetatableCallSelfIndex.tlua, 17, 5))
+
+  __index = Tx,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 18, 32))
+>Tx : Symbol(Tx, Decl(tluaMetatableCallSelfIndex.tlua, 11, 5))
+
+  __call = suspend function(self, sql: string)
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 19, 15))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 20, 28))
+>sql : Symbol(sql, Decl(tluaMetatableCallSelfIndex.tlua, 20, 33))
+
+    return Tx.query(self, sql);
+>Tx.query : Symbol(query, Decl(tluaMetatableCallSelfIndex.tlua, 11, 14))
+>Tx : Symbol(Tx, Decl(tluaMetatableCallSelfIndex.tlua, 11, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSelfIndex.tlua, 11, 14))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 20, 28))
+>sql : Symbol(sql, Decl(tluaMetatableCallSelfIndex.tlua, 20, 33))
+
+  end,
+});
+
+suspend function useTx(): void
+>useTx : Symbol(useTx, Decl(tluaMetatableCallSelfIndex.tlua, 23, 3))
+
+  local rows: table[] = tx("select 1");
+>rows : Symbol(rows, Decl(tluaMetatableCallSelfIndex.tlua, 26, 7))
+>tx : Symbol(tx, Decl(tluaMetatableCallSelfIndex.tlua, 18, 5))
+
+  local id: string = tx.id;
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 27, 7))
+>tx.id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 17, 15))
+>tx : Symbol(tx, Decl(tluaMetatableCallSelfIndex.tlua, 18, 5))
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 17, 15))
+
+  local viaFallback: table[] = tx.query(tx, "select 2");
+>viaFallback : Symbol(viaFallback, Decl(tluaMetatableCallSelfIndex.tlua, 28, 7))
+>tx.query : Symbol(query, Decl(tluaMetatableCallSelfIndex.tlua, 11, 14))
+>tx : Symbol(tx, Decl(tluaMetatableCallSelfIndex.tlua, 18, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSelfIndex.tlua, 11, 14))
+>tx : Symbol(tx, Decl(tluaMetatableCallSelfIndex.tlua, 18, 5))
+
+end
+
+// (2) Annotating the receiver with the interface it satisfies is accepted, and the annotation
+// does not steer T: the error, if any, belongs to the metamethod and not to the table.
+local annotated = setmetatable({ id = "test" }, {
+>annotated : Symbol(annotated, Decl(tluaMetatableCallSelfIndex.tlua, 33, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 33, 32))
+
+  __index = Tx,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 33, 49))
+>Tx : Symbol(Tx, Decl(tluaMetatableCallSelfIndex.tlua, 11, 5))
+
+  __call = suspend function(self: Transaction, sql: string)
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 34, 15))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 35, 28))
+>Transaction : Symbol(Transaction, Decl(tluaMetatableCallSelfIndex.tlua, 0, 0))
+>sql : Symbol(sql, Decl(tluaMetatableCallSelfIndex.tlua, 35, 46))
+
+    return Tx.query(self, sql);
+>Tx.query : Symbol(query, Decl(tluaMetatableCallSelfIndex.tlua, 11, 14))
+>Tx : Symbol(Tx, Decl(tluaMetatableCallSelfIndex.tlua, 11, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSelfIndex.tlua, 11, 14))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 35, 28))
+>sql : Symbol(sql, Decl(tluaMetatableCallSelfIndex.tlua, 35, 46))
+
+  end,
+});
+
+// (3) The statement form freezes the literal through the declared-pairing replay, which must
+// supply the same contract the call site would.
+local Methods = { describe = function(self: table): string return "d"; end };
+>Methods : Symbol(Methods, Decl(tluaMetatableCallSelfIndex.tlua, 42, 5))
+>describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 42, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 42, 38))
+
+Session = Session or {};
+>Session : Symbol(Session, Decl(tluaMetatableCallSelfIndex.tlua, 42, 77))
+>Session : Symbol(Session, Decl(tluaMetatableCallSelfIndex.tlua, 42, 77))
+
+Session.n = 1;
+>Session.n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 43, 24))
+>Session : Symbol(Session, Decl(tluaMetatableCallSelfIndex.tlua, 42, 77))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 43, 24))
+
+setmetatable(Session, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Session : Symbol(Session, Decl(tluaMetatableCallSelfIndex.tlua, 42, 77))
+
+  __index = Methods,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 45, 23))
+>Methods : Symbol(Methods, Decl(tluaMetatableCallSelfIndex.tlua, 42, 5))
+
+  __call = function(self, k: number): string
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 46, 20))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 47, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 47, 25))
+
+    local own: number = self.n;
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 48, 9))
+>self.n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 43, 24))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 47, 20))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 43, 24))
+
+    return self.describe(self);
+>self.describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 42, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 47, 20))
+>describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 42, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 47, 20))
+
+  end,
+});
+local viaSession: string = Session(1);
+>viaSession : Symbol(viaSession, Decl(tluaMetatableCallSelfIndex.tlua, 52, 5))
+>Session : Symbol(Session, Decl(tluaMetatableCallSelfIndex.tlua, 42, 77))
+
+// (4) A function-valued __index augments nothing -- what it answers for a given key is not a
+// shape -- so the receiver stays the bare table.
+local fnIndexed = setmetatable({ n = 1 }, {
+>fnIndexed : Symbol(fnIndexed, Decl(tluaMetatableCallSelfIndex.tlua, 56, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 56, 32))
+
+  __index = function(value: table, key: any): any return nil; end,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 56, 43))
+>value : Symbol(value, Decl(tluaMetatableCallSelfIndex.tlua, 57, 21))
+>key : Symbol(key, Decl(tluaMetatableCallSelfIndex.tlua, 57, 34))
+
+  __call = function(self, k: number): number
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 57, 66))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 58, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 58, 25))
+
+    local own: number = self.n;
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 59, 9))
+>self.n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 56, 32))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 58, 20))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 56, 32))
+
+    local absent = self.describe;
+>absent : Symbol(absent, Decl(tluaMetatableCallSelfIndex.tlua, 60, 9))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 58, 20))
+
+    return own;
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 59, 9))
+
+  end,
+});
+
+// (5) __index naming the very table being paired: the probe must not recur.
+Cell = Cell or {};
+>Cell : Symbol(Cell, Decl(tluaMetatableCallSelfIndex.tlua, 63, 3))
+>Cell : Symbol(Cell, Decl(tluaMetatableCallSelfIndex.tlua, 63, 3))
+
+Cell.own = 1;
+>Cell.own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 66, 18))
+>Cell : Symbol(Cell, Decl(tluaMetatableCallSelfIndex.tlua, 63, 3))
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 66, 18))
+
+setmetatable(Cell, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Cell : Symbol(Cell, Decl(tluaMetatableCallSelfIndex.tlua, 63, 3))
+
+  __index = Cell,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 68, 20))
+>Cell : Symbol(Cell, Decl(tluaMetatableCallSelfIndex.tlua, 63, 3))
+
+  __call = function(self, k: number): number return 1; end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 69, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 70, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 70, 25))
+
+});
+local cellOwn: number = Cell.own;
+>cellOwn : Symbol(cellOwn, Decl(tluaMetatableCallSelfIndex.tlua, 72, 5))
+>Cell.own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 66, 18))
+>Cell : Symbol(Cell, Decl(tluaMetatableCallSelfIndex.tlua, 63, 3))
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 66, 18))
+
+// (6) Every metamethod's first parameter is augmented, not just __call's.
+local VecOps = { magnitude = function(self: table): number return 0; end };
+>VecOps : Symbol(VecOps, Decl(tluaMetatableCallSelfIndex.tlua, 75, 5))
+>magnitude : Symbol(magnitude, Decl(tluaMetatableCallSelfIndex.tlua, 75, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 75, 38))
+
+local vec = setmetatable({ x = 1 }, {
+>vec : Symbol(vec, Decl(tluaMetatableCallSelfIndex.tlua, 76, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaMetatableCallSelfIndex.tlua, 76, 26))
+
+  __index = VecOps,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 76, 37))
+>VecOps : Symbol(VecOps, Decl(tluaMetatableCallSelfIndex.tlua, 75, 5))
+
+  __add = function(left, right: table): number
+>__add : Symbol(__add, Decl(tluaMetatableCallSelfIndex.tlua, 77, 19))
+>left : Symbol(left, Decl(tluaMetatableCallSelfIndex.tlua, 78, 19))
+>right : Symbol(right, Decl(tluaMetatableCallSelfIndex.tlua, 78, 24))
+
+    return left.magnitude(left) + left.x;
+>left.magnitude : Symbol(magnitude, Decl(tluaMetatableCallSelfIndex.tlua, 75, 16))
+>left : Symbol(left, Decl(tluaMetatableCallSelfIndex.tlua, 78, 19))
+>magnitude : Symbol(magnitude, Decl(tluaMetatableCallSelfIndex.tlua, 75, 16))
+>left : Symbol(left, Decl(tluaMetatableCallSelfIndex.tlua, 78, 19))
+>left.x : Symbol(x, Decl(tluaMetatableCallSelfIndex.tlua, 76, 26))
+>left : Symbol(left, Decl(tluaMetatableCallSelfIndex.tlua, 78, 19))
+>x : Symbol(x, Decl(tluaMetatableCallSelfIndex.tlua, 76, 26))
+
+  end,
+  __newindex = function(target, key: string, value: number): void
+>__newindex : Symbol(__newindex, Decl(tluaMetatableCallSelfIndex.tlua, 80, 6))
+>target : Symbol(target, Decl(tluaMetatableCallSelfIndex.tlua, 81, 24))
+>key : Symbol(key, Decl(tluaMetatableCallSelfIndex.tlua, 81, 31))
+>value : Symbol(value, Decl(tluaMetatableCallSelfIndex.tlua, 81, 44))
+
+    local m: number = target.magnitude(target);
+>m : Symbol(m, Decl(tluaMetatableCallSelfIndex.tlua, 82, 9))
+>target.magnitude : Symbol(magnitude, Decl(tluaMetatableCallSelfIndex.tlua, 75, 16))
+>target : Symbol(target, Decl(tluaMetatableCallSelfIndex.tlua, 81, 24))
+>magnitude : Symbol(magnitude, Decl(tluaMetatableCallSelfIndex.tlua, 75, 16))
+>target : Symbol(target, Decl(tluaMetatableCallSelfIndex.tlua, 81, 24))
+
+  end,
+});
+local sum: number = vec + vec;
+>sum : Symbol(sum, Decl(tluaMetatableCallSelfIndex.tlua, 85, 5))
+>vec : Symbol(vec, Decl(tluaMetatableCallSelfIndex.tlua, 76, 5))
+>vec : Symbol(vec, Decl(tluaMetatableCallSelfIndex.tlua, 76, 5))
+
+// (7) The augmentation survives the inference mapper: inside a generic wrapper the receiver is
+// the type parameter intersected with the fallback.
+local Helpers = { describe = function(self: table): string return "d"; end };
+>Helpers : Symbol(Helpers, Decl(tluaMetatableCallSelfIndex.tlua, 89, 5))
+>describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 89, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 89, 38))
+
+function wrapped<T extends table>(value: T)
+>wrapped : Symbol(wrapped, Decl(tluaMetatableCallSelfIndex.tlua, 89, 77))
+>T : Symbol(T, Decl(tluaMetatableCallSelfIndex.tlua, 90, 17))
+>value : Symbol(value, Decl(tluaMetatableCallSelfIndex.tlua, 90, 34))
+>T : Symbol(T, Decl(tluaMetatableCallSelfIndex.tlua, 90, 17))
+
+  return setmetatable(value, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaMetatableCallSelfIndex.tlua, 90, 34))
+
+    __index = Helpers,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 91, 30))
+>Helpers : Symbol(Helpers, Decl(tluaMetatableCallSelfIndex.tlua, 89, 5))
+
+    __call = function(self, n: number): string return self.describe(self); end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 92, 22))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 93, 22))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 93, 27))
+>self.describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 89, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 93, 22))
+>describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 89, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 93, 22))
+
+  });
+end
+local w = wrapped({ own = "o" });
+>w : Symbol(w, Decl(tluaMetatableCallSelfIndex.tlua, 96, 5))
+>wrapped : Symbol(wrapped, Decl(tluaMetatableCallSelfIndex.tlua, 89, 77))
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 96, 19))
+
+local wd: string = w.describe(w);
+>wd : Symbol(wd, Decl(tluaMetatableCallSelfIndex.tlua, 97, 5))
+>w.describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 89, 17))
+>w : Symbol(w, Decl(tluaMetatableCallSelfIndex.tlua, 96, 5))
+>describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 89, 17))
+>w : Symbol(w, Decl(tluaMetatableCallSelfIndex.tlua, 96, 5))
+
+local wo: string = w.own;
+>wo : Symbol(wo, Decl(tluaMetatableCallSelfIndex.tlua, 98, 5))
+>w.own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 96, 19))
+>w : Symbol(w, Decl(tluaMetatableCallSelfIndex.tlua, 96, 5))
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 96, 19))
+
+// (8) With no __index there is nothing to augment with, and T is pinned to the table operand:
+// the wider receiver is refused where it is written, not blamed on the first argument.
+interface Wider { id: string; extra: number }
+>Wider : Symbol(Wider, Decl(tluaMetatableCallSelfIndex.tlua, 98, 25))
+>id : Symbol(Wider.id, Decl(tluaMetatableCallSelfIndex.tlua, 102, 17))
+>extra : Symbol(Wider.extra, Decl(tluaMetatableCallSelfIndex.tlua, 102, 29))
+
+local pinned = setmetatable({ id = "n" }, {
+>pinned : Symbol(pinned, Decl(tluaMetatableCallSelfIndex.tlua, 103, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 103, 29))
+
+  __call = function(self: Wider, k: number): number return self.extra; end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 103, 43))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 104, 20))
+>Wider : Symbol(Wider, Decl(tluaMetatableCallSelfIndex.tlua, 98, 25))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 104, 32))
+>self.extra : Symbol(Wider.extra, Decl(tluaMetatableCallSelfIndex.tlua, 102, 29))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 104, 20))
+>extra : Symbol(Wider.extra, Decl(tluaMetatableCallSelfIndex.tlua, 102, 29))
+
+});
+
+// (9) An inline __index literal is a fallback like any other, as long as typing it needs no
+// context of its own.
+local inline = setmetatable({ n = 1 }, {
+>inline : Symbol(inline, Decl(tluaMetatableCallSelfIndex.tlua, 109, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 109, 29))
+
+  __index = { label = "inline" },
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 109, 40))
+>label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 110, 13))
+
+  __call = function(self, k: number): string
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 110, 33))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 111, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 111, 25))
+
+    local own: number = self.n;
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 112, 9))
+>self.n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 109, 29))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 111, 20))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 109, 29))
+
+    return self.label;
+>self.label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 110, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 111, 20))
+>label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 110, 13))
+
+  end,
+});
+
+// (10) An explicit instantiation names T itself, and debug.setmetatable carries the same
+// protocol as the global.
+local Ops = { tag = function(self: table): string return "t"; end };
+>Ops : Symbol(Ops, Decl(tluaMetatableCallSelfIndex.tlua, 119, 5))
+>tag : Symbol(tag, Decl(tluaMetatableCallSelfIndex.tlua, 119, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 119, 29))
+
+local explicit = setmetatable<table>({ n = 1 }, {
+>explicit : Symbol(explicit, Decl(tluaMetatableCallSelfIndex.tlua, 120, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 120, 38))
+
+  __index = Ops,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 120, 49))
+>Ops : Symbol(Ops, Decl(tluaMetatableCallSelfIndex.tlua, 119, 5))
+
+  __call = function(self, k: number): string return self.tag(self); end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 121, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 122, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 122, 25))
+>self.tag : Symbol(tag, Decl(tluaMetatableCallSelfIndex.tlua, 119, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 122, 20))
+>tag : Symbol(tag, Decl(tluaMetatableCallSelfIndex.tlua, 119, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 122, 20))
+
+});
+local viaDebug = debug.setmetatable({ id = "d" }, {
+>viaDebug : Symbol(viaDebug, Decl(tluaMetatableCallSelfIndex.tlua, 124, 5))
+>debug.setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>debug : Symbol(debug, Decl(lib.luajit.d.tlua, --, --))
+>setmetatable : Symbol(DebugLib.setmetatable, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 124, 37))
+
+  __index = Ops,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 124, 51))
+>Ops : Symbol(Ops, Decl(tluaMetatableCallSelfIndex.tlua, 119, 5))
+
+  __call = function(self, k: number): string
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 125, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 126, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 126, 25))
+
+    local id: string = self.id;
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 127, 9))
+>self.id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 124, 37))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 126, 20))
+>id : Symbol(id, Decl(tluaMetatableCallSelfIndex.tlua, 124, 37))
+
+    return self.tag(self);
+>self.tag : Symbol(tag, Decl(tluaMetatableCallSelfIndex.tlua, 119, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 126, 20))
+>tag : Symbol(tag, Decl(tluaMetatableCallSelfIndex.tlua, 119, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 126, 20))
+
+  end,
+});
+
+// (11) The table wins a colliding key: the runtime never consults the fallback for a key the
+// table answers, so the receiver reads it at the table's own type -- never the fallback's, and
+// never their meeting in never. The keys the table does not answer still come through.
+local collide = setmetatable({ v = 1 }, {
+>collide : Symbol(collide, Decl(tluaMetatableCallSelfIndex.tlua, 135, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 135, 30))
+
+  __index = { v = "fallback", hint = "h" },
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 135, 41))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 136, 13))
+>hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 136, 29))
+
+  __call = function(self, k: number): string
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 136, 43))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 137, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 137, 25))
+
+    local own: number = self.v;
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 138, 9))
+>self.v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 135, 30))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 137, 20))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 135, 30))
+
+    local viaIndex: string = self.hint;
+>viaIndex : Symbol(viaIndex, Decl(tluaMetatableCallSelfIndex.tlua, 139, 9))
+>self.hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 136, 29))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 137, 20))
+>hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 136, 29))
+
+    local wrong: string = self.v;
+>wrong : Symbol(wrong, Decl(tluaMetatableCallSelfIndex.tlua, 140, 9))
+>self.v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 135, 30))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 137, 20))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 135, 30))
+
+    return self.hint;
+>self.hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 136, 29))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 137, 20))
+>hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 136, 29))
+
+  end,
+});
+
+// (12) A fallback the table answers in full augments nothing, so the receiver is simply the
+// table again.
+local covered = setmetatable({ v = 1 }, {
+>covered : Symbol(covered, Decl(tluaMetatableCallSelfIndex.tlua, 147, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 147, 30))
+
+  __index = { v = "fallback" },
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 147, 41))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 148, 13))
+
+  __call = function(self, k: number): number return self.v; end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 148, 31))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 149, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 149, 25))
+>self.v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 147, 30))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 149, 20))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 147, 30))
+
+});
+
+// (13) Parentheses around the metatable literal are transparent, as they are at runtime.
+local parened = setmetatable({ n = 1 }, ({
+>parened : Symbol(parened, Decl(tluaMetatableCallSelfIndex.tlua, 153, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 153, 30))
+
+  __index = Methods,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 153, 42))
+>Methods : Symbol(Methods, Decl(tluaMetatableCallSelfIndex.tlua, 42, 5))
+
+  __call = function(self, k: number): string
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 154, 20))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 155, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 155, 25))
+
+    return self.describe(self);
+>self.describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 42, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 155, 20))
+>describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 42, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 155, 20))
+
+  end,
+}));
+
+// (14) A key spelled ["__index"] is still __index -- a static name is a static name -- and an
+// unrelated statically-named key beside it changes nothing.
+local computed = setmetatable({ n = 1 }, {
+>computed : Symbol(computed, Decl(tluaMetatableCallSelfIndex.tlua, 162, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 162, 31))
+
+  ["__index"] = Methods,
+>["__index"] : Symbol(["__index"], Decl(tluaMetatableCallSelfIndex.tlua, 162, 42))
+>"__index" : Symbol(["__index"], Decl(tluaMetatableCallSelfIndex.tlua, 162, 42))
+>Methods : Symbol(Methods, Decl(tluaMetatableCallSelfIndex.tlua, 42, 5))
+
+  ["__mode"] = "k",
+>["__mode"] : Symbol(["__mode"], Decl(tluaMetatableCallSelfIndex.tlua, 163, 24))
+>"__mode" : Symbol(["__mode"], Decl(tluaMetatableCallSelfIndex.tlua, 163, 24))
+
+  __call = function(self, k: number): string
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 164, 19))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 165, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 165, 25))
+
+    return self.describe(self);
+>self.describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 42, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 165, 20))
+>describe : Symbol(describe, Decl(tluaMetatableCallSelfIndex.tlua, 42, 17))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 165, 20))
+
+  end,
+});
+
+// (15) A union table operand distributes through the receiver: the contextual parameter, the
+// frozen parameter, and the applicability target are the same type.
+declare uni: { a: number } | { b: number };
+>uni : Symbol(uni, Decl(tluaMetatableCallSelfIndex.tlua, 172, 7))
+>a : Symbol(a, Decl(tluaMetatableCallSelfIndex.tlua, 172, 14))
+>b : Symbol(b, Decl(tluaMetatableCallSelfIndex.tlua, 172, 30))
+
+local unionPaired = setmetatable(uni, {
+>unionPaired : Symbol(unionPaired, Decl(tluaMetatableCallSelfIndex.tlua, 173, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>uni : Symbol(uni, Decl(tluaMetatableCallSelfIndex.tlua, 172, 7))
+
+  __index = { extra = "e" },
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 173, 39))
+>extra : Symbol(extra, Decl(tluaMetatableCallSelfIndex.tlua, 174, 13))
+
+  __call = function(self, k: number): string return self.extra; end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 174, 28))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 175, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 175, 25))
+>self.extra : Symbol(extra, Decl(tluaMetatableCallSelfIndex.tlua, 174, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 175, 20))
+>extra : Symbol(extra, Decl(tluaMetatableCallSelfIndex.tlua, 174, 13))
+
+});
+
+// (16) setmetatable REPLACES a metatable: the receiver is built from the unpaired table, so
+// the old fallback's members do not survive into the new handlers -- the handler and the
+// returned value agree.
+local OldOps = { legacy = function(self: table): string return "l"; end };
+>OldOps : Symbol(OldOps, Decl(tluaMetatableCallSelfIndex.tlua, 181, 5))
+>legacy : Symbol(legacy, Decl(tluaMetatableCallSelfIndex.tlua, 181, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 181, 35))
+
+local NewOps = { fresh = function(self: table): string return "f"; end };
+>NewOps : Symbol(NewOps, Decl(tluaMetatableCallSelfIndex.tlua, 182, 5))
+>fresh : Symbol(fresh, Decl(tluaMetatableCallSelfIndex.tlua, 182, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 182, 34))
+
+local firstPairing = setmetatable({ n = 1 }, { __index = OldOps });
+>firstPairing : Symbol(firstPairing, Decl(tluaMetatableCallSelfIndex.tlua, 183, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 183, 35))
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 183, 46))
+>OldOps : Symbol(OldOps, Decl(tluaMetatableCallSelfIndex.tlua, 181, 5))
+
+local repaired = setmetatable(firstPairing, {
+>repaired : Symbol(repaired, Decl(tluaMetatableCallSelfIndex.tlua, 184, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>firstPairing : Symbol(firstPairing, Decl(tluaMetatableCallSelfIndex.tlua, 183, 5))
+
+  __index = NewOps,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 184, 45))
+>NewOps : Symbol(NewOps, Decl(tluaMetatableCallSelfIndex.tlua, 182, 5))
+
+  __call = function(self, k: number): string
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 185, 19))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 186, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 186, 25))
+
+    local ok: string = self.fresh(self);
+>ok : Symbol(ok, Decl(tluaMetatableCallSelfIndex.tlua, 187, 9))
+>self.fresh : Symbol(fresh, Decl(tluaMetatableCallSelfIndex.tlua, 182, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 186, 20))
+>fresh : Symbol(fresh, Decl(tluaMetatableCallSelfIndex.tlua, 182, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 186, 20))
+
+    local stale = self.legacy;
+>stale : Symbol(stale, Decl(tluaMetatableCallSelfIndex.tlua, 188, 9))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 186, 20))
+
+    return ok;
+>ok : Symbol(ok, Decl(tluaMetatableCallSelfIndex.tlua, 187, 9))
+
+  end,
+});
+local resultStale = repaired.legacy;
+>resultStale : Symbol(resultStale, Decl(tluaMetatableCallSelfIndex.tlua, 192, 5))
+>repaired : Symbol(repaired, Decl(tluaMetatableCallSelfIndex.tlua, 184, 5))
+
+// (17) A key the table admits only optionally reads as the table alone declares it: the
+// fallback half of the read is given up, not misstated -- an intersection could only turn the
+// collision into never. The returned pairing still models the full read.
+declare partial: { v?: number };
+>partial : Symbol(partial, Decl(tluaMetatableCallSelfIndex.tlua, 197, 7))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 197, 18))
+
+local optCollide = setmetatable(partial, {
+>optCollide : Symbol(optCollide, Decl(tluaMetatableCallSelfIndex.tlua, 198, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>partial : Symbol(partial, Decl(tluaMetatableCallSelfIndex.tlua, 197, 7))
+
+  __index = { v = "fallback", hint = "h" },
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 198, 42))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 199, 13))
+>hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 199, 29))
+
+  __call = function(self, k: number): void
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 199, 43))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 200, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 200, 25))
+
+    local own: number | nil = self.v;
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 201, 9))
+>self.v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 197, 18))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 200, 20))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 197, 18))
+
+    local viaIndex: string = self.hint;
+>viaIndex : Symbol(viaIndex, Decl(tluaMetatableCallSelfIndex.tlua, 202, 9))
+>self.hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 199, 29))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 200, 20))
+>hint : Symbol(hint, Decl(tluaMetatableCallSelfIndex.tlua, 199, 29))
+
+  end,
+});
+local pairedRead: number | string = optCollide.v;
+>pairedRead : Symbol(pairedRead, Decl(tluaMetatableCallSelfIndex.tlua, 205, 5))
+>optCollide.v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 197, 18))
+>optCollide : Symbol(optCollide, Decl(tluaMetatableCallSelfIndex.tlua, 198, 5))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 197, 18))
+
+// (18) A key domain the table answers through an index signature collides the same way: the
+// fallback may never be consulted for it, so it cannot be asserted.
+declare dyn: Table<string, number>;
+>dyn : Symbol(dyn, Decl(tluaMetatableCallSelfIndex.tlua, 209, 7))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+local dynPaired = setmetatable(dyn, {
+>dynPaired : Symbol(dynPaired, Decl(tluaMetatableCallSelfIndex.tlua, 210, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>dyn : Symbol(dyn, Decl(tluaMetatableCallSelfIndex.tlua, 209, 7))
+
+  __index = { v = "fallback" },
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 210, 37))
+>v : Symbol(v, Decl(tluaMetatableCallSelfIndex.tlua, 211, 13))
+
+  __call = function(self, k: number): void
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 211, 31))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 212, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 212, 25))
+
+    local read: number | nil = self.v;
+>read : Symbol(read, Decl(tluaMetatableCallSelfIndex.tlua, 213, 9))
+>self.v : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 212, 20))
+>v : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+  end,
+});
+
+// (19) A union operand collides arm by arm: an arm that answers a key itself keeps its own
+// type for it, and only the arms that miss it take the fallback's -- reducing against the
+// union as a whole would let the answering arm meet the fallback in never and vanish from
+// the read.
+declare mixed: { p: number } | { q: number };
+>mixed : Symbol(mixed, Decl(tluaMetatableCallSelfIndex.tlua, 221, 7))
+>p : Symbol(p, Decl(tluaMetatableCallSelfIndex.tlua, 221, 16))
+>q : Symbol(q, Decl(tluaMetatableCallSelfIndex.tlua, 221, 32))
+
+local armWise = setmetatable(mixed, {
+>armWise : Symbol(armWise, Decl(tluaMetatableCallSelfIndex.tlua, 222, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>mixed : Symbol(mixed, Decl(tluaMetatableCallSelfIndex.tlua, 221, 7))
+
+  __index = { p = "fallback" },
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 222, 37))
+>p : Symbol(p, Decl(tluaMetatableCallSelfIndex.tlua, 223, 13))
+
+  __call = function(self, k: number): void
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 223, 31))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 224, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 224, 25))
+
+    local honest: number | string = self.p;
+>honest : Symbol(honest, Decl(tluaMetatableCallSelfIndex.tlua, 225, 9))
+>self.p : Symbol(p, Decl(tluaMetatableCallSelfIndex.tlua, 221, 16), Decl(tluaMetatableCallSelfIndex.tlua, 223, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 224, 20))
+>p : Symbol(p, Decl(tluaMetatableCallSelfIndex.tlua, 221, 16), Decl(tluaMetatableCallSelfIndex.tlua, 223, 13))
+
+    local wrong: string = self.p;
+>wrong : Symbol(wrong, Decl(tluaMetatableCallSelfIndex.tlua, 226, 9))
+>self.p : Symbol(p, Decl(tluaMetatableCallSelfIndex.tlua, 221, 16), Decl(tluaMetatableCallSelfIndex.tlua, 223, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 224, 20))
+>p : Symbol(p, Decl(tluaMetatableCallSelfIndex.tlua, 221, 16), Decl(tluaMetatableCallSelfIndex.tlua, 223, 13))
+
+  end,
+});
+
+// (20) Lua does not inherit metamethods through __index: an operator-named member of the
+// fallback must not dispatch ambiently from the receiver, exactly as it does not dispatch
+// from the returned pairing. The plain members still come through.
+local WithOp = {
+>WithOp : Symbol(WithOp, Decl(tluaMetatableCallSelfIndex.tlua, 233, 5))
+
+  helper = function(self: table): number return 0; end,
+>helper : Symbol(helper, Decl(tluaMetatableCallSelfIndex.tlua, 233, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 234, 20))
+
+  __add = function(a: table, b: table): number return 1; end,
+>__add : Symbol(__add, Decl(tluaMetatableCallSelfIndex.tlua, 234, 55))
+>a : Symbol(a, Decl(tluaMetatableCallSelfIndex.tlua, 235, 19))
+>b : Symbol(b, Decl(tluaMetatableCallSelfIndex.tlua, 235, 28))
+
+};
+local opFallback = setmetatable({ n = 1 }, {
+>opFallback : Symbol(opFallback, Decl(tluaMetatableCallSelfIndex.tlua, 237, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 237, 33))
+
+  __index = WithOp,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 237, 44))
+>WithOp : Symbol(WithOp, Decl(tluaMetatableCallSelfIndex.tlua, 233, 5))
+
+  __call = function(self, k: number): number
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 238, 19))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 239, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 239, 25))
+
+    local h: number = self.helper(self);
+>h : Symbol(h, Decl(tluaMetatableCallSelfIndex.tlua, 240, 9))
+>self.helper : Symbol(helper, Decl(tluaMetatableCallSelfIndex.tlua, 233, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 239, 20))
+>helper : Symbol(helper, Decl(tluaMetatableCallSelfIndex.tlua, 233, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 239, 20))
+
+    return self + self;
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 239, 20))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 239, 20))
+
+  end,
+});
+local outsideAdd = opFallback + opFallback;
+>outsideAdd : Symbol(outsideAdd, Decl(tluaMetatableCallSelfIndex.tlua, 244, 5))
+>opFallback : Symbol(opFallback, Decl(tluaMetatableCallSelfIndex.tlua, 237, 5))
+>opFallback : Symbol(opFallback, Decl(tluaMetatableCallSelfIndex.tlua, 237, 5))
+
+// (21) __index naming the very table being paired cannot resurrect the pairing this call
+// replaces: the receiver is the bare table, as it is for any self-referential fallback.
+local prior = setmetatable({ n = 1 }, { __index = Methods });
+>prior : Symbol(prior, Decl(tluaMetatableCallSelfIndex.tlua, 248, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 248, 28))
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 248, 39))
+>Methods : Symbol(Methods, Decl(tluaMetatableCallSelfIndex.tlua, 42, 5))
+
+local repairedSelf = setmetatable(prior, {
+>repairedSelf : Symbol(repairedSelf, Decl(tluaMetatableCallSelfIndex.tlua, 249, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>prior : Symbol(prior, Decl(tluaMetatableCallSelfIndex.tlua, 248, 5))
+
+  __index = prior,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 249, 42))
+>prior : Symbol(prior, Decl(tluaMetatableCallSelfIndex.tlua, 248, 5))
+
+  __call = function(self, k: number): void
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 250, 18))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 251, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 251, 25))
+
+    local own: number = self.n;
+>own : Symbol(own, Decl(tluaMetatableCallSelfIndex.tlua, 252, 9))
+>self.n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 248, 28))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 251, 20))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 248, 28))
+
+    local resurrect = self.describe;
+>resurrect : Symbol(resurrect, Decl(tluaMetatableCallSelfIndex.tlua, 253, 9))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 251, 20))
+
+  end,
+});
+
+// (22) A nilable fallback reads through its nil arm on the receiver exactly as it does on the
+// returned pairing -- the defaults idiom, imprecision included: both sides agree.
+declare maybe: { label: string } | nil;
+>maybe : Symbol(maybe, Decl(tluaMetatableCallSelfIndex.tlua, 259, 7))
+>label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 259, 16))
+
+local nilable = setmetatable({ n = 1 }, {
+>nilable : Symbol(nilable, Decl(tluaMetatableCallSelfIndex.tlua, 260, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>n : Symbol(n, Decl(tluaMetatableCallSelfIndex.tlua, 260, 30))
+
+  __index = maybe,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 260, 41))
+>maybe : Symbol(maybe, Decl(tluaMetatableCallSelfIndex.tlua, 259, 7))
+
+  __call = function(self, k: number): string return self.label; end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 261, 18))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 262, 20))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 262, 25))
+>self.label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 259, 16))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 262, 20))
+>label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 259, 16))
+
+});
+local nilableRead: string = nilable.label;
+>nilableRead : Symbol(nilableRead, Decl(tluaMetatableCallSelfIndex.tlua, 264, 5))
+>nilable.label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 259, 16))
+>nilable : Symbol(nilable, Decl(tluaMetatableCallSelfIndex.tlua, 260, 5))
+>label : Symbol(label, Decl(tluaMetatableCallSelfIndex.tlua, 259, 16))
+
+// (23) A genuinely generic operand keeps the type variable in the receiver without letting
+// the metamethod steer it: a wider annotation is refused on the metamethod member, never
+// blamed on the table argument.
+interface Wider2 { z: number }
+>Wider2 : Symbol(Wider2, Decl(tluaMetatableCallSelfIndex.tlua, 264, 42))
+>z : Symbol(Wider2.z, Decl(tluaMetatableCallSelfIndex.tlua, 269, 18))
+
+function wrapWider<T extends table>(value: T)
+>wrapWider : Symbol(wrapWider, Decl(tluaMetatableCallSelfIndex.tlua, 269, 30))
+>T : Symbol(T, Decl(tluaMetatableCallSelfIndex.tlua, 270, 19))
+>value : Symbol(value, Decl(tluaMetatableCallSelfIndex.tlua, 270, 36))
+>T : Symbol(T, Decl(tluaMetatableCallSelfIndex.tlua, 270, 19))
+
+  return setmetatable(value, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaMetatableCallSelfIndex.tlua, 270, 36))
+
+    __index = Methods,
+>__index : Symbol(__index, Decl(tluaMetatableCallSelfIndex.tlua, 271, 30))
+>Methods : Symbol(Methods, Decl(tluaMetatableCallSelfIndex.tlua, 42, 5))
+
+    __call = function(self: Wider2, k: number): number return self.z; end,
+>__call : Symbol(__call, Decl(tluaMetatableCallSelfIndex.tlua, 272, 22))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 273, 22))
+>Wider2 : Symbol(Wider2, Decl(tluaMetatableCallSelfIndex.tlua, 264, 42))
+>k : Symbol(k, Decl(tluaMetatableCallSelfIndex.tlua, 273, 35))
+>self.z : Symbol(Wider2.z, Decl(tluaMetatableCallSelfIndex.tlua, 269, 18))
+>self : Symbol(self, Decl(tluaMetatableCallSelfIndex.tlua, 273, 22))
+>z : Symbol(Wider2.z, Decl(tluaMetatableCallSelfIndex.tlua, 269, 18))
+
+  });
+end
+

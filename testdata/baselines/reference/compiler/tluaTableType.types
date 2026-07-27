@@ -58,7 +58,7 @@ local notCData: table = cd;
 local callable = setmetatable({ n = 1 },
 >callable : { (x: number): number; n: number; }
 >setmetatable({ n = 1 },    { __call = function(self: table, x: number): number return x; end }) : { (x: number): number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1

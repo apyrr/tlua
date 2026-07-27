@@ -1,0 +1,281 @@
+// @target: esnext
+// @lib: luajit
+// @strict: true
+// @noEmit: true
+
+// A metamethod receives the PAIRED table, not the bare one setmetatable was handed: at runtime
+// the fallback behind __index answers for it too. So a metatable literal that commits to a
+// table-valued __index contextually types every metamethod's first parameter as the table
+// intersected with that fallback. And the table operand alone chooses T: a metamethod annotated
+// with a wider receiver states what it accepts, never what the call is pairing.
+
+interface Transaction {
+  id: string;
+  query(self: Transaction, sql: string): table[];
+}
+
+local Tx = {};
+function Tx.query(self: Transaction, sql: string): table[]
+  return {};
+end
+
+// (1) The unannotated receiver sees the fallback, so it satisfies Transaction.
+local state = { id = "test" };
+local tx = setmetatable(state, {
+  __index = Tx,
+  __call = suspend function(self, sql: string)
+    return Tx.query(self, sql);
+  end,
+});
+
+suspend function useTx(): void
+  local rows: table[] = tx("select 1");
+  local id: string = tx.id;
+  local viaFallback: table[] = tx.query(tx, "select 2");
+end
+
+// (2) Annotating the receiver with the interface it satisfies is accepted, and the annotation
+// does not steer T: the error, if any, belongs to the metamethod and not to the table.
+local annotated = setmetatable({ id = "test" }, {
+  __index = Tx,
+  __call = suspend function(self: Transaction, sql: string)
+    return Tx.query(self, sql);
+  end,
+});
+
+// (3) The statement form freezes the literal through the declared-pairing replay, which must
+// supply the same contract the call site would.
+local Methods = { describe = function(self: table): string return "d"; end };
+Session = Session or {};
+Session.n = 1;
+setmetatable(Session, {
+  __index = Methods,
+  __call = function(self, k: number): string
+    local own: number = self.n;
+    return self.describe(self);
+  end,
+});
+local viaSession: string = Session(1);
+
+// (4) A function-valued __index augments nothing -- what it answers for a given key is not a
+// shape -- so the receiver stays the bare table.
+local fnIndexed = setmetatable({ n = 1 }, {
+  __index = function(value: table, key: any): any return nil; end,
+  __call = function(self, k: number): number
+    local own: number = self.n;
+    local absent = self.describe;
+    return own;
+  end,
+});
+
+// (5) __index naming the very table being paired: the probe must not recur.
+Cell = Cell or {};
+Cell.own = 1;
+setmetatable(Cell, {
+  __index = Cell,
+  __call = function(self, k: number): number return 1; end,
+});
+local cellOwn: number = Cell.own;
+
+// (6) Every metamethod's first parameter is augmented, not just __call's.
+local VecOps = { magnitude = function(self: table): number return 0; end };
+local vec = setmetatable({ x = 1 }, {
+  __index = VecOps,
+  __add = function(left, right: table): number
+    return left.magnitude(left) + left.x;
+  end,
+  __newindex = function(target, key: string, value: number): void
+    local m: number = target.magnitude(target);
+  end,
+});
+local sum: number = vec + vec;
+
+// (7) The augmentation survives the inference mapper: inside a generic wrapper the receiver is
+// the type parameter intersected with the fallback.
+local Helpers = { describe = function(self: table): string return "d"; end };
+function wrapped<T extends table>(value: T)
+  return setmetatable(value, {
+    __index = Helpers,
+    __call = function(self, n: number): string return self.describe(self); end,
+  });
+end
+local w = wrapped({ own = "o" });
+local wd: string = w.describe(w);
+local wo: string = w.own;
+
+// (8) With no __index there is nothing to augment with, and T is pinned to the table operand:
+// the wider receiver is refused where it is written, not blamed on the first argument.
+interface Wider { id: string; extra: number }
+local pinned = setmetatable({ id = "n" }, {
+  __call = function(self: Wider, k: number): number return self.extra; end,
+});
+
+// (9) An inline __index literal is a fallback like any other, as long as typing it needs no
+// context of its own.
+local inline = setmetatable({ n = 1 }, {
+  __index = { label = "inline" },
+  __call = function(self, k: number): string
+    local own: number = self.n;
+    return self.label;
+  end,
+});
+
+// (10) An explicit instantiation names T itself, and debug.setmetatable carries the same
+// protocol as the global.
+local Ops = { tag = function(self: table): string return "t"; end };
+local explicit = setmetatable<table>({ n = 1 }, {
+  __index = Ops,
+  __call = function(self, k: number): string return self.tag(self); end,
+});
+local viaDebug = debug.setmetatable({ id = "d" }, {
+  __index = Ops,
+  __call = function(self, k: number): string
+    local id: string = self.id;
+    return self.tag(self);
+  end,
+});
+
+// (11) The table wins a colliding key: the runtime never consults the fallback for a key the
+// table answers, so the receiver reads it at the table's own type -- never the fallback's, and
+// never their meeting in never. The keys the table does not answer still come through.
+local collide = setmetatable({ v = 1 }, {
+  __index = { v = "fallback", hint = "h" },
+  __call = function(self, k: number): string
+    local own: number = self.v;
+    local viaIndex: string = self.hint;
+    local wrong: string = self.v;
+    return self.hint;
+  end,
+});
+
+// (12) A fallback the table answers in full augments nothing, so the receiver is simply the
+// table again.
+local covered = setmetatable({ v = 1 }, {
+  __index = { v = "fallback" },
+  __call = function(self, k: number): number return self.v; end,
+});
+
+// (13) Parentheses around the metatable literal are transparent, as they are at runtime.
+local parened = setmetatable({ n = 1 }, ({
+  __index = Methods,
+  __call = function(self, k: number): string
+    return self.describe(self);
+  end,
+}));
+
+// (14) A key spelled ["__index"] is still __index -- a static name is a static name -- and an
+// unrelated statically-named key beside it changes nothing.
+local computed = setmetatable({ n = 1 }, {
+  ["__index"] = Methods,
+  ["__mode"] = "k",
+  __call = function(self, k: number): string
+    return self.describe(self);
+  end,
+});
+
+// (15) A union table operand distributes through the receiver: the contextual parameter, the
+// frozen parameter, and the applicability target are the same type.
+declare uni: { a: number } | { b: number };
+local unionPaired = setmetatable(uni, {
+  __index = { extra = "e" },
+  __call = function(self, k: number): string return self.extra; end,
+});
+
+// (16) setmetatable REPLACES a metatable: the receiver is built from the unpaired table, so
+// the old fallback's members do not survive into the new handlers -- the handler and the
+// returned value agree.
+local OldOps = { legacy = function(self: table): string return "l"; end };
+local NewOps = { fresh = function(self: table): string return "f"; end };
+local firstPairing = setmetatable({ n = 1 }, { __index = OldOps });
+local repaired = setmetatable(firstPairing, {
+  __index = NewOps,
+  __call = function(self, k: number): string
+    local ok: string = self.fresh(self);
+    local stale = self.legacy;
+    return ok;
+  end,
+});
+local resultStale = repaired.legacy;
+
+// (17) A key the table admits only optionally reads as the table alone declares it: the
+// fallback half of the read is given up, not misstated -- an intersection could only turn the
+// collision into never. The returned pairing still models the full read.
+declare partial: { v?: number };
+local optCollide = setmetatable(partial, {
+  __index = { v = "fallback", hint = "h" },
+  __call = function(self, k: number): void
+    local own: number | nil = self.v;
+    local viaIndex: string = self.hint;
+  end,
+});
+local pairedRead: number | string = optCollide.v;
+
+// (18) A key domain the table answers through an index signature collides the same way: the
+// fallback may never be consulted for it, so it cannot be asserted.
+declare dyn: Table<string, number>;
+local dynPaired = setmetatable(dyn, {
+  __index = { v = "fallback" },
+  __call = function(self, k: number): void
+    local read: number | nil = self.v;
+  end,
+});
+
+// (19) A union operand collides arm by arm: an arm that answers a key itself keeps its own
+// type for it, and only the arms that miss it take the fallback's -- reducing against the
+// union as a whole would let the answering arm meet the fallback in never and vanish from
+// the read.
+declare mixed: { p: number } | { q: number };
+local armWise = setmetatable(mixed, {
+  __index = { p = "fallback" },
+  __call = function(self, k: number): void
+    local honest: number | string = self.p;
+    local wrong: string = self.p;
+  end,
+});
+
+// (20) Lua does not inherit metamethods through __index: an operator-named member of the
+// fallback must not dispatch ambiently from the receiver, exactly as it does not dispatch
+// from the returned pairing. The plain members still come through.
+local WithOp = {
+  helper = function(self: table): number return 0; end,
+  __add = function(a: table, b: table): number return 1; end,
+};
+local opFallback = setmetatable({ n = 1 }, {
+  __index = WithOp,
+  __call = function(self, k: number): number
+    local h: number = self.helper(self);
+    return self + self;
+  end,
+});
+local outsideAdd = opFallback + opFallback;
+
+// (21) __index naming the very table being paired cannot resurrect the pairing this call
+// replaces: the receiver is the bare table, as it is for any self-referential fallback.
+local prior = setmetatable({ n = 1 }, { __index = Methods });
+local repairedSelf = setmetatable(prior, {
+  __index = prior,
+  __call = function(self, k: number): void
+    local own: number = self.n;
+    local resurrect = self.describe;
+  end,
+});
+
+// (22) A nilable fallback reads through its nil arm on the receiver exactly as it does on the
+// returned pairing -- the defaults idiom, imprecision included: both sides agree.
+declare maybe: { label: string } | nil;
+local nilable = setmetatable({ n = 1 }, {
+  __index = maybe,
+  __call = function(self, k: number): string return self.label; end,
+});
+local nilableRead: string = nilable.label;
+
+// (23) A genuinely generic operand keeps the type variable in the receiver without letting
+// the metamethod steer it: a wider annotation is refused on the metamethod member, never
+// blamed on the table argument.
+interface Wider2 { z: number }
+function wrapWider<T extends table>(value: T)
+  return setmetatable(value, {
+    __index = Methods,
+    __call = function(self: Wider2, k: number): number return self.z; end,
+  });
+end

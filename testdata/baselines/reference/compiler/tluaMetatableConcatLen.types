@@ -34,7 +34,7 @@ local Str = {
 local v = setmetatable({ n = 3 }, Str);
 >v : { n: number; }
 >setmetatable({ n = 3 }, Str) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 3 } : { n: number; }
 >n : number
 >3 : 3
@@ -91,7 +91,7 @@ local Strict = {
 local p = setmetatable({ tag = "p" }, Strict);
 >p : { tag: string; }
 >setmetatable({ tag = "p" }, Strict) : { tag: string; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ tag = "p" } : { tag: string; }
 >tag : string
 >"p" : "p"

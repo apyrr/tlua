@@ -44,7 +44,7 @@ function basic(): void
 
   setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
@@ -75,13 +75,13 @@ function replaced(): void
 
   setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
   setmetatable(t, mt2);             // replacement: unpair, then re-pair
 >setmetatable(t, mt2) : { count: (self: table) => number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { describe: (self: table) => string; n: number; }
 >mt2 : { __index: { count: (self: table) => number; }; }
 
@@ -112,13 +112,13 @@ function detached(): void
 
   setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
   setmetatable(t, nil);             // nil detaches
 >setmetatable(t, nil) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { describe: (self: table) => string; n: number; }
 
   local gone = t.describe;
@@ -140,7 +140,7 @@ function invalidated(): void
 
   setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
@@ -174,7 +174,7 @@ function inLoop(cond: boolean): void
 
     setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
@@ -210,7 +210,7 @@ function inConditional(cond: boolean): void
 
     setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
@@ -244,7 +244,7 @@ function propertyTarget(): void
 
   setmetatable(holder.field, mt);   // a property-access target narrows too
 >setmetatable(holder.field, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >holder.field : { n: number; }
 >holder : { field: { n: number; }; }
 >field : { n: number; }
@@ -305,7 +305,7 @@ function constCapture(): void
 
   setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
@@ -337,7 +337,7 @@ function assignForm(): void
   local r = setmetatable(t, mt);    // the assign form types the result, not the argument
 >r : { describe: (self: table) => string; n: number; }
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 
@@ -376,7 +376,7 @@ function selfReferential(cond: boolean): void
 
     setmetatable(t, t.mt);
 >setmetatable(t, t.mt) : { describe: (self: table) => string; n: number; mt: { __index: { describe: (self: table) => string; }; }; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; mt: { __index: { describe: (self: table) => string; }; }; }
 >t.mt : { __index: { describe: (self: table) => string; }; }
 >t : { n: number; mt: { __index: { describe: (self: table) => string; }; }; }

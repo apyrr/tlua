@@ -3,7 +3,7 @@
 === protectedPair.tlua ===
 setmetatable(Locked, {
 >setmetatable(Locked, {  __index = { fallback = 2 },  __metatable = "locked",}) : { fallback: number; own: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Locked : { fallback: number; own: number; }
 >{  __index = { fallback = 2 },  __metatable = "locked",} : { __index: { fallback: number; }; __metatable: string; }
 
@@ -38,7 +38,7 @@ Locked.own = 1;
 // A later call still runs into the protection the first call installed.
 setmetatable(Locked, {
 >setmetatable(Locked, {  __index = { other = 3 },}) : { fallback: number; own: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Locked : { fallback: number; own: number; }
 >{  __index = { other = 3 },} : { __index: { other: number; }; }
 
@@ -69,7 +69,7 @@ local fallback: number = Locked.fallback;
 // supplied anyway, or _self loses its parameter type.
 setmetatable(Ctx, {
 >setmetatable(Ctx, {  __call = function(_self, q: string): number    return 1;  end,}) : (q: string) => number
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Ctx : (q: string) => number
 >{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: {}, q: string) => number; }
 
@@ -112,7 +112,7 @@ Rebound = Rebound or {};
 
 setmetatable(Rebound, {
 >setmetatable(Rebound, {  __index = { old = 1 },  __metatable = "locked",}) : { old: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Rebound : { fresh: number; }
 >{  __index = { old = 1 },  __metatable = "locked",} : { __index: { old: number; }; __metatable: string; }
 
@@ -134,7 +134,7 @@ Rebound = {};
 
 setmetatable(Rebound, {
 >setmetatable(Rebound, {  __index = { fresh = 2 },}) : { fresh: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Rebound : { fresh: number; }
 >{  __index = { fresh = 2 },} : { __index: { fresh: number; }; }
 
@@ -165,7 +165,7 @@ CrossRebind = CrossRebind or {};
 
 setmetatable(CrossRebind, {
 >setmetatable(CrossRebind, {  __index = { old = 1 },  __metatable = "first",}) : { old: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CrossRebind : { fresh: number; }
 >{  __index = { old = 1 },  __metatable = "first",} : { __index: { old: number; }; __metatable: string; }
 
@@ -190,7 +190,7 @@ CrossRebind = {};
 === crossRebindC.tlua ===
 setmetatable(CrossRebind, {
 >setmetatable(CrossRebind, {  __index = { fresh = 2 },  __metatable = "second",}) : { fresh: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CrossRebind : { fresh: number; }
 >{  __index = { fresh = 2 },  __metatable = "second",} : { __index: { fresh: number; }; __metatable: string; }
 
@@ -225,7 +225,7 @@ Masked = Masked or {};
 
 setmetatable(Masked, {
 >setmetatable(Masked, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Masked : { c: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -244,7 +244,7 @@ setmetatable(Masked, {
 === maskedB.tlua ===
 setmetatable(Masked, {
 >setmetatable(Masked, {  __index = { b = 2 },}) : { c: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Masked : { c: number; }
 >{  __index = { b = 2 },} : { __index: { b: number; }; }
 
@@ -259,9 +259,9 @@ setmetatable(Masked, {
 === maskedC.tlua ===
 debug.setmetatable(Masked, {
 >debug.setmetatable(Masked, {  __index = { c = 3 },}) : { c: number; }
->debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >Masked : { c: number; }
 >{  __index = { c = 3 },} : { __index: { c: number; }; }
 
@@ -295,7 +295,7 @@ Conditional = Conditional or {};
 
 setmetatable(Conditional, {
 >setmetatable(Conditional, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Conditional : { b: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -321,7 +321,7 @@ if rebindCond then
 end
 setmetatable(Conditional, {
 >setmetatable(Conditional, {  __index = { b = 2 },}) : { b: number; } | { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Conditional : { b: number; } | { a: number; }
 >{  __index = { b = 2 },} : { __index: { b: number; }; }
 
@@ -346,7 +346,7 @@ Hoisted = Hoisted or {};
 
 setmetatable(Hoisted, { __index = { early = 1 } });
 >setmetatable(Hoisted, { __index = { early = 1 } }) : { early: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Hoisted : { late: number; }
 >{ __index = { early = 1 } } : { __index: { early: number; }; }
 >__index : { early: number; }
@@ -359,7 +359,7 @@ function protectLater(): void
 
   setmetatable(Hoisted, {
 >setmetatable(Hoisted, {    __index = { late = 2 },    __metatable = "locked",  }) : { late: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Hoisted : { late: number; }
 >{    __index = { late = 2 },    __metatable = "locked",  } : { __index: { late: number; }; __metatable: string; }
 
@@ -396,7 +396,7 @@ BodyRebind = BodyRebind or {};
 
 setmetatable(BodyRebind, {
 >setmetatable(BodyRebind, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >BodyRebind : { b: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -421,7 +421,7 @@ function rebuildBody(): void
 
   setmetatable(BodyRebind, { __index = { b = 2 } });
 >setmetatable(BodyRebind, { __index = { b = 2 } }) : { b: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >BodyRebind : { b: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -442,7 +442,7 @@ CrossConditional = CrossConditional or {};
 
 setmetatable(CrossConditional, {
 >setmetatable(CrossConditional, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CrossConditional : { b: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -475,7 +475,7 @@ end
 === crossConditionalPair.tlua ===
 setmetatable(CrossConditional, { __index = { b = 2 } });
 >setmetatable(CrossConditional, { __index = { b = 2 } }) : { b: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CrossConditional : { b: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -493,7 +493,7 @@ Union = { one = 1 };
 
 setmetatable(Union, {
 >setmetatable(Union, {  __call = function(_self: table): number    return 1;  end,}) : { one: number; two?: nil; } | { one?: nil; two: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Union : { (): number; one: number; two?: nil; } | { (): number; one?: nil; two: number; }
 >{  __call = function(_self: table): number    return 1;  end,} : { __call: (_self: table) => number; }
 
@@ -533,7 +533,7 @@ Asserted = Asserted or {};
 setmetatable(Asserted, {
 >setmetatable(Asserted, {  __call = function(_self: table): number    return 1;  end,}) as table : table
 >setmetatable(Asserted, {  __call = function(_self: table): number    return 1;  end,}) : () => number
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Asserted : () => number
 >{  __call = function(_self: table): number    return 1;  end,} : { __call: (_self: table) => number; }
 
@@ -574,9 +574,9 @@ function Mod.f(): number
 end
 debug.setmetatable(Mod.f, {
 >debug.setmetatable(Mod.f, {  __index = { attached = true },}) : { (): number; attached: boolean; }
->debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >Mod.f : () => number
 >Mod : { f(): number; }
 >f : () => number
@@ -611,7 +611,7 @@ DoRebind = DoRebind or {};
 
 setmetatable(DoRebind, {
 >setmetatable(DoRebind, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >DoRebind : { b: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -635,7 +635,7 @@ do
 end
 setmetatable(DoRebind, {
 >setmetatable(DoRebind, {  __index = { b = 2 },}) : { b: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >DoRebind : { b: number; }
 >{  __index = { b = 2 },} : { __index: { b: number; }; }
 
@@ -665,7 +665,7 @@ DoCross = DoCross or {};
 
 setmetatable(DoCross, {
 >setmetatable(DoCross, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >DoCross : { b: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -693,7 +693,7 @@ end
 === doCrossPair.tlua ===
 setmetatable(DoCross, { __index = { b = 2 } });
 >setmetatable(DoCross, { __index = { b = 2 } }) : { b: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >DoCross : { b: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -748,7 +748,7 @@ CycA = CycA or {};
 
 setmetatable(CycA, {
 >setmetatable(CycA, {  __index = CycB,  __call = function(_self: table): string    return "a";  end,}) : { (): string; [x: string]: number; [x: number]: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CycA : { (): string; [x: string]: number; [x: number]: number; }
 >{  __index = CycB,  __call = function(_self: table): string    return "a";  end,} : { __index: () => number; __call: (_self: table) => string; }
 
@@ -777,7 +777,7 @@ CycB = CycB or {};
 
 setmetatable(CycB, {
 >setmetatable(CycB, {  __index = CycA,  __call = function(_self: table): number    return 1;  end,}) : () => number
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CycB : () => number
 >{  __index = CycA,  __call = function(_self: table): number    return 1;  end,} : { __index: { (): string; [x: string]: number; [x: number]: number; }; __call: (_self: table) => number; }
 
@@ -811,7 +811,7 @@ Exp = Exp or {};
 local expResult = setmetatable(Exp, { __index = { x = 1 } });
 >expResult : { x: number; }
 >setmetatable(Exp, { __index = { x = 1 } }) : { x: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Exp : { y: number; }
 >{ __index = { x = 1 } } : { __index: { x: number; }; }
 >__index : { x: number; }
@@ -822,7 +822,7 @@ local expResult = setmetatable(Exp, { __index = { x = 1 } });
 === expProtect.tlua ===
 setmetatable(Exp, {
 >setmetatable(Exp, {  __index = { y = 2 },  __metatable = "locked",}) : { y: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Exp : { y: number; }
 >{  __index = { y = 2 },  __metatable = "locked",} : { __index: { y: number; }; __metatable: string; }
 
@@ -851,7 +851,7 @@ MaskExp = MaskExp or {};
 
 setmetatable(MaskExp, {
 >setmetatable(MaskExp, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >MaskExp : { c: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -871,7 +871,7 @@ setmetatable(MaskExp, {
 local maskResult = setmetatable(MaskExp, { __index = { b = 2 } });
 >maskResult : { c: number; }
 >setmetatable(MaskExp, { __index = { b = 2 } }) : { c: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >MaskExp : { c: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -882,9 +882,9 @@ local maskResult = setmetatable(MaskExp, { __index = { b = 2 } });
 === maskExpC.tlua ===
 debug.setmetatable(MaskExp, { __index = { c = 3 } });
 >debug.setmetatable(MaskExp, { __index = { c = 3 } }) : { c: number; }
->debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >MaskExp : { c: number; }
 >{ __index = { c = 3 } } : { __index: { c: number; }; }
 >__index : { c: number; }
@@ -912,7 +912,7 @@ Expl.tag = 1;
 
 setmetatable<table>(Expl, {
 >setmetatable<table>(Expl, {  __call = function(_self, q: string): number    return 1;  end,}) : table
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Expl : { (q: string): number; tag: number; }
 >{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: table, q: string) => number; }
 
@@ -934,9 +934,9 @@ setmetatable<table>(Expl, {
 // literal's first check comes from the replay or from the call itself.
 debug.setmetatable(DbgAug, {
 >debug.setmetatable(DbgAug, {  __call = function(_self, q: string): number    return 1;  end,}) : (q: string) => number
->debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >DbgAug : (q: string) => number
 >{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: {}, q: string) => number; }
 
@@ -975,9 +975,9 @@ local plain: table = {};
 
 debug.setmetatable(plain, {
 >debug.setmetatable(plain, {  __call = function(_self, q: string): number    return 1;  end,}) : table
->debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >plain : table
 >{  __call = function(_self, q: string): number    return 1;  end,} : { __call: (_self: table, q: string) => number; }
 
@@ -1005,7 +1005,7 @@ CondMask = CondMask or {};
 
 setmetatable(CondMask, {
 >setmetatable(CondMask, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CondMask : { c: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -1030,9 +1030,9 @@ if condFlag then
 
   debug.setmetatable(CondMask, { __index = { b = 2 } });
 >debug.setmetatable(CondMask, { __index = { b = 2 } }) : { b: number; }
->debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >CondMask : { c: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -1045,7 +1045,7 @@ end
 === condMaskC.tlua ===
 setmetatable(CondMask, { __index = { c = 3 } });
 >setmetatable(CondMask, { __index = { c = 3 } }) : { c: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >CondMask : { c: number; }
 >{ __index = { c = 3 } } : { __index: { c: number; }; }
 >__index : { c: number; }
@@ -1072,7 +1072,7 @@ DefMask = DefMask or {};
 
 setmetatable(DefMask, {
 >setmetatable(DefMask, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >DefMask : { c: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -1091,9 +1091,9 @@ setmetatable(DefMask, {
 === definiteMaskB.tlua ===
 debug.setmetatable(DefMask, { __index = { b = 2 } });
 >debug.setmetatable(DefMask, { __index = { b = 2 } }) : { b: number; }
->debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >debug : DebugLib
->setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<T> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >DefMask : { c: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -1104,7 +1104,7 @@ debug.setmetatable(DefMask, { __index = { b = 2 } });
 === definiteMaskC.tlua ===
 setmetatable(DefMask, { __index = { c = 3 } });
 >setmetatable(DefMask, { __index = { c = 3 } }) : { c: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >DefMask : { c: number; }
 >{ __index = { c = 3 } } : { __index: { c: number; }; }
 >__index : { c: number; }
@@ -1132,7 +1132,7 @@ SelfPres = SelfPres or {};
 
 setmetatable(SelfPres, {
 >setmetatable(SelfPres, {  __index = { a = 1 },  __metatable = "locked",}) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >SelfPres : { a: number; }
 >{  __index = { a = 1 },  __metatable = "locked",} : { __index: { a: number; }; __metatable: string; }
 
@@ -1164,7 +1164,7 @@ SelfPres = keepFlag and SelfPres or {};
 === selfPresC.tlua ===
 setmetatable(SelfPres, { __index = { b = 2 } });
 >setmetatable(SelfPres, { __index = { b = 2 } }) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >SelfPres : { a: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -1195,7 +1195,7 @@ if exclCond then
 
   setmetatable(Branches, {
 >setmetatable(Branches, {    __index = { a = 1 },    __metatable = "locked",  }) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Branches : { a: number; }
 >{    __index = { a = 1 },    __metatable = "locked",  } : { __index: { a: number; }; __metatable: string; }
 
@@ -1213,7 +1213,7 @@ if exclCond then
 else
   setmetatable(Branches, { __index = { b = 2 } });
 >setmetatable(Branches, { __index = { b = 2 } }) : { b: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Branches : { a: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }
@@ -1250,7 +1250,7 @@ function flipBranches(): void
 
     setmetatable(FnBranches, {
 >setmetatable(FnBranches, {      __index = { a = 1 },      __metatable = "locked",    }) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >FnBranches : { a: number; }
 >{      __index = { a = 1 },      __metatable = "locked",    } : { __index: { a: number; }; __metatable: string; }
 
@@ -1268,7 +1268,7 @@ function flipBranches(): void
   else
     setmetatable(FnBranches, { __index = { b = 2 } });
 >setmetatable(FnBranches, { __index = { b = 2 } }) : { a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >FnBranches : { a: number; }
 >{ __index = { b = 2 } } : { __index: { b: number; }; }
 >__index : { b: number; }

@@ -469,7 +469,7 @@ local notIndexed = fake.missing;
 local repaired = setmetatable(a,
 >repaired : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
 >setmetatable(a,    { __eq = function(l: table, r: table): boolean return true; end }) : { x: number; y: number; z: number; __add(l: Vector, r: Vector): Vector; __sub(l: Vector, r: Vector): Vector; __mul(l: Vector, r: number | Vector): Vector; __mul(l: number, r: Vector): Vector; __div(l: Vector, r: number | Vector): Vector; __unm(v: Vector): Vector; __pow(l: Vector, r: number): Vector; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >a : Vector
 
     { __eq = function(l: table, r: table): boolean return true; end });
@@ -491,7 +491,7 @@ local lostAdd = repaired + repaired;
 local fielded = setmetatable(
 >fielded : { __add: (l: table, r: table) => table; k: number; }
 >setmetatable(    { __add = function(l: table, r: table): table return l; end, k = 1 },    { __eq = function(l: table, r: table): boolean return true; end }) : { __add: (l: table, r: table) => table; k: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 
     { __add = function(l: table, r: table): table return l; end, k = 1 },
 >{ __add = function(l: table, r: table): table return l; end, k = 1 } : { __add: (l: table, r: table) => table; k: number; }

@@ -39,7 +39,7 @@ end
 
 setmetatable(app.sql, {
 >setmetatable(app.sql, {  __call = suspend function<T extends table>(_self: table, query: string): T[]    return executeSql(query);  end,}) : { <T extends table>(query: string): T[]; begin(): void; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >app.sql : { <T extends table>(query: string): T[]; begin(): void; }
 >app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
 >sql : { <T extends table>(query: string): T[]; begin(): void; }
@@ -143,7 +143,7 @@ Counter.count = 0;
 
 setmetatable(Counter, {
 >setmetatable(Counter, {  __index = function(_self, key: string): number    return 0;  end,}) : { [x: string]: number; count: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Counter : { [x: string]: number; count: number; }
 >{  __index = function(_self, key: string): number    return 0;  end,} : { __index: (_self: { count: number; }, key: string) => number; }
 
@@ -185,7 +185,7 @@ Gauge = Gauge or {};
 
 setmetatable(Gauge, {
 >setmetatable(Gauge, {  __call = function(_self: table): number    return 1;  end,}) : () => number
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Gauge : () => string
 >{  __call = function(_self: table): number    return 1;  end,} : { __call: (_self: table) => number; }
 
@@ -201,7 +201,7 @@ setmetatable(Gauge, {
 });
 setmetatable(Gauge, {
 >setmetatable(Gauge, {  __call = function(_self: table): string    return "replaced";  end,}) : () => string
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Gauge : () => number
 >{  __call = function(_self: table): string    return "replaced";  end,} : { __call: (_self: table) => string; }
 
@@ -248,7 +248,7 @@ Account.balance = 0;
 
 setmetatable(Account, { __index = Account });
 >setmetatable(Account, { __index = Account }) : { balance: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >Account : { balance: number; }
 >{ __index = Account } : { __index: { balance: number; }; }
 >__index : { balance: number; }

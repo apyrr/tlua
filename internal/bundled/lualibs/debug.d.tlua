@@ -29,7 +29,7 @@ interface DebugLib {
     sethook(thread: thread, hook?: function, mask?: string, count?: number): void;
     setlocal(level: number, localIndex: number, value: any): string | nil;
     setlocal(thread: thread, level: number, localIndex: number, value: any): string | nil;
-    setmetatable<T extends table>(value: T, metatable: LuaMetatable<T> | nil): T;
+    setmetatable<T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T;
     setmetatable<T>(value: T, metatable: table | nil): T;
     setupvalue(fn: function, index: number, value: any): string | nil;
     traceback(message?: any, level?: number): string;

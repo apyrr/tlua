@@ -66,13 +66,13 @@ end
 
 // An alias is a different symbol too.
 local alias = setmetatable;
->alias : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>alias : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 
 local aliased = alias({ n = 1 }, mt);
 >aliased : { n: number; }
 >alias({ n = 1 }, mt) : { n: number; }
->alias : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>alias : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -94,7 +94,7 @@ local aliasOwn: number = aliased.n;
 local real = setmetatable({ n = 1 }, mt);
 >real : { describe: (self: table) => string; n: number; }
 >setmetatable({ n = 1 }, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1

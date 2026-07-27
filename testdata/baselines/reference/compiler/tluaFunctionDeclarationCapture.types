@@ -74,7 +74,7 @@ local t = { n = 1 };
 
 setmetatable(t, mt);
 >setmetatable(t, mt) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >t : { n: number; }
 >mt : { __index: { describe: (self: table) => string; }; }
 

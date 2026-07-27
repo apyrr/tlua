@@ -20,7 +20,7 @@ local Second = { fromSecond = "s" };
 local obj = setmetatable({ own = true }, { __index = First });
 >obj : { fromFirst: number; own: boolean; }
 >setmetatable({ own = true }, { __index = First }) : { fromFirst: number; own: boolean; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ own = true } : { own: true; }
 >own : true
 >true : true
@@ -37,7 +37,7 @@ local f1: number = obj.fromFirst;
 local repaired = setmetatable(obj, { __index = Second });
 >repaired : { fromSecond: string; own: boolean; }
 >setmetatable(obj, { __index = Second }) : { fromSecond: string; own: boolean; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >obj : { fromFirst: number; own: boolean; }
 >{ __index = Second } : { __index: { fromSecond: string; }; }
 >__index : { fromSecond: string; }
@@ -65,7 +65,7 @@ local gone = repaired.fromFirst;
 local detached = setmetatable(obj, nil);
 >detached : { own: boolean; }
 >setmetatable(obj, nil) : { own: boolean; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >obj : { fromFirst: number; own: boolean; }
 
 local own2: boolean = detached.own;
@@ -84,7 +84,7 @@ local gone2 = detached.fromFirst;
 local other = setmetatable(obj, { __tostring = function(t: table): string return "t"; end });
 >other : { own: boolean; }
 >setmetatable(obj, { __tostring = function(t: table): string return "t"; end }) : { own: boolean; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >obj : { fromFirst: number; own: boolean; }
 >{ __tostring = function(t: table): string return "t"; end } : { __tostring: (t: table) => string; }
 >__tostring : (t: table) => string
@@ -130,7 +130,7 @@ local plain = { n = 1 };
 
 setmetatable(plain, { __index = First });
 >setmetatable(plain, { __index = First }) : { fromFirst: number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >plain : { n: number; }
 >{ __index = First } : { __index: { fromFirst: number; }; }
 >__index : { fromFirst: number; }

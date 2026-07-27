@@ -595,6 +595,8 @@ type Checker struct {
 	luaPairedSymbolsResolved               bool
 	luaDeclaredPairingBases                map[*ast.Symbol]*Type
 	luaPairingMetatableArgTypes            map[*ast.Node]*Type
+	luaMetatableIndexProbes                map[*ast.Node]*Type
+	luaMetatableAugmentedParamTypes        map[LuaMetatableAugmentedParamKey]*Type
 	luaSymbolEffectTimelines               map[*ast.Symbol][]luaSymbolEffect
 	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
 	luaAugmentationMemberArms              map[*ast.Symbol][]*ast.Symbol
@@ -904,6 +906,8 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.luaMetatablePairingCalls = make(map[*ast.Node][]*ast.Symbol)
 	c.luaDeclaredPairingBases = make(map[*ast.Symbol]*Type)
 	c.luaPairingMetatableArgTypes = make(map[*ast.Node]*Type)
+	c.luaMetatableIndexProbes = make(map[*ast.Node]*Type)
+	c.luaMetatableAugmentedParamTypes = make(map[LuaMetatableAugmentedParamKey]*Type)
 	c.luaSymbolEffectTimelines = make(map[*ast.Symbol][]luaSymbolEffect)
 	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
 	c.luaGlobalsSymbol.Exports = c.globals
@@ -6788,7 +6792,7 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 			continue
 		}
 		if !ast.IsOmittedExpression(arg) {
-			paramType := c.getTypeAtPosition(signature, i)
+			paramType := c.augmentLuaMetatableParamType(node, i, arg, c.getTypeAtPosition(signature, i))
 			argType := c.checkExpressionWithContextualType(arg, paramType, nil /*inferenceContext*/, checkMode)
 			// If one or more arguments are still excluded (as indicated by CheckMode.SkipContextSensitive),
 			// we obtain the regular type of any object literal arguments because we may not have inferred complete
@@ -7003,7 +7007,7 @@ func (c *Checker) inferTypeArguments(node *ast.Node, signature *Signature, args 
 				c.inferFromPackTail(context, arg, i, signature)
 				continue
 			}
-			paramType := c.getTypeAtPosition(signature, i)
+			paramType := c.augmentLuaMetatableParamType(node, i, arg, c.getTypeAtPosition(signature, i))
 			if c.couldContainTypeVariables(paramType) {
 				argType := c.checkExpressionWithContextualType(arg, paramType, context, checkMode)
 				c.inferTypes(context.inferences, argType, paramType, InferencePriorityNone, false)
@@ -7838,6 +7842,11 @@ func (c *Checker) assignParameterType(parameter *ast.Symbol, contextualType *Typ
 	}
 	declaration := parameter.ValueDeclaration
 	t := contextualType
+	if t != nil {
+		// The parameter freezes here, after inference is done with its context, so a NoInfer
+		// the context carried has said everything it has to say.
+		t = c.removeNoInferTypes(t)
+	}
 	if t == nil {
 		if declaration != nil {
 			t = c.getWidenedTypeForVariableLikeDeclaration(declaration, true /*reportErrors*/)
@@ -12894,7 +12903,9 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 			t = c.getContextuallyTypedParameterType(declaration)
 		}
 		if t != nil {
-			return c.addOptionalityEx(t, false /*isProperty*/, isOptional)
+			// The pull-path twin of assignParameterType's freeze: the parameter is done
+			// informing inference, so a NoInfer the context carried is shed the same way.
+			return c.addOptionalityEx(c.removeNoInferTypes(t), false /*isProperty*/, isOptional)
 		}
 	}
 	// Use the type of the initializer expression if one is present and the declaration is
@@ -22796,6 +22807,25 @@ func (c *Checker) isNoInferType(t *Type) bool {
 	return t.flags&TypeFlagsSubstitution != 0 && t.AsSubstitutionType().constraint.flags&TypeFlagsUnknown != 0
 }
 
+// removeNoInferTypes sheds NoInfer wrappers from the top level of a type, through unions and
+// intersections. NoInfer speaks only to inference, so a type that is done informing it -- a
+// contextually typed parameter being frozen -- carries the wrapper as pure display noise, and a
+// reference to that parameter already reads the bare type (getNarrowableTypeForReference).
+func (c *Checker) removeNoInferTypes(t *Type) *Type {
+	switch {
+	case c.isNoInferType(t):
+		return t.AsSubstitutionType().baseType
+	case t.flags&TypeFlagsUnion != 0:
+		return c.mapType(t, c.removeNoInferTypes)
+	case t.flags&TypeFlagsIntersection != 0:
+		types := t.AsIntersectionType().types
+		if mapped := core.SameMap(types, c.removeNoInferTypes); !core.Same(mapped, types) {
+			return c.getIntersectionType(mapped)
+		}
+	}
+	return t
+}
+
 func (c *Checker) getSubstitutionIntersection(t *Type) *Type {
 	if c.isNoInferType(t) {
 		return t.AsSubstitutionType().baseType
@@ -25199,7 +25229,19 @@ func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argI
 	if signatureHasRestParameter(signature) && argIndex >= restIndex {
 		return c.getIndexedAccessTypeEx(c.getTypeOfSymbol(signature.parameters[restIndex]), c.getNumberLiteralTypeForPosition(argIndex-restIndex), AccessFlagsContextual, nil, nil)
 	}
-	return c.getTypeAtPosition(signature, argIndex)
+	paramType := c.getTypeAtPosition(signature, argIndex)
+	// A metatable literal's metamethods are contextually typed by the PAIRED table, which the
+	// declared parameter does not name. The argument-resolution seams augment the parameter
+	// they check against; every later read of the contextual type -- a deferred metamethod
+	// body, the post-resolution recheck that lands in the baselines, a hover -- comes through
+	// here and must agree with them.
+	if argIndex == 1 && c.getLuaMetatableCall(callTarget).isSet() {
+		args := c.getEffectiveCallArguments(callTarget)
+		if argIndex < len(args) {
+			paramType = c.augmentLuaMetatableParamType(callTarget, argIndex, args[argIndex], paramType)
+		}
+	}
+	return paramType
 }
 
 func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags ContextFlags) *Type {

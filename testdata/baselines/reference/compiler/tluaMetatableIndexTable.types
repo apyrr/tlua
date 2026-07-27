@@ -29,7 +29,7 @@ local mt = { __index = Helpers };
 local obj = setmetatable({ n = 1 }, mt);
 >obj : { describe: (self: table) => string; count: number; n: number; }
 >setmetatable({ n = 1 }, mt) : { describe: (self: table) => string; count: number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -68,7 +68,7 @@ local absent = obj.nothing;
 local collide = setmetatable({ v = 1 }, { __index = { v = "str" } });
 >collide : { v: number; }
 >setmetatable({ v = 1 }, { __index = { v = "str" } }) : { v: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ v = 1 } : { v: number; }
 >v : number
 >1 : 1
@@ -115,7 +115,7 @@ declare idxMt: { __index: { [key: string]: number } };
 local ix = setmetatable({ n = 1 }, idxMt);
 >ix : { [key: string]: number; n: number; }
 >setmetatable({ n = 1 }, idxMt) : { [key: string]: number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -138,7 +138,7 @@ declare partial: { name?: string; id: number };
 local defaulted = setmetatable(partial, { __index = { name = "anonymous" } });
 >defaulted : { name: string; id: number; }
 >setmetatable(partial, { __index = { name = "anonymous" } }) : { name: string; id: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >partial : { name?: string; id: number; }
 >{ __index = { name = "anonymous" } } : { __index: { name: string; }; }
 >__index : { name: string; }
@@ -159,7 +159,7 @@ declare nilable: { v: number | nil };
 local either = setmetatable(nilable, { __index = { v = "str" } });
 >either : { v: string | number; }
 >setmetatable(nilable, { __index = { v = "str" } }) : { v: string | number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >nilable : { v: number | nil; }
 >{ __index = { v = "str" } } : { __index: { v: string; }; }
 >__index : { v: string; }
@@ -189,7 +189,7 @@ declare interMt: { __index: { a: number } } & { __tostring: () => string };
 local inter = setmetatable({ n = 1 }, interMt);
 >inter : { a: number; n: number; }
 >setmetatable({ n = 1 }, interMt) : { a: number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1

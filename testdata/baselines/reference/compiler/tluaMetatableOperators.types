@@ -91,7 +91,7 @@ local Ops = {
 local v = setmetatable({ x = 1 }, Ops);
 >v : { x: number; }
 >setmetatable({ x = 1 }, Ops) : { x: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ x = 1 } : { x: number; }
 >x : number
 >1 : 1
@@ -100,7 +100,7 @@ local v = setmetatable({ x = 1 }, Ops);
 local w = setmetatable({ x = 2 }, Ops);
 >w : { x: number; }
 >setmetatable({ x = 2 }, Ops) : { x: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ x = 2 } : { x: number; }
 >x : number
 >2 : 2
@@ -189,7 +189,7 @@ local badLeft = 2 ^ v;
 local eqOnly = setmetatable({ n = 1 }, { __eq = function(a: table, b: table): boolean return true; end });
 >eqOnly : { n: number; }
 >setmetatable({ n = 1 }, { __eq = function(a: table, b: table): boolean return true; end }) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1

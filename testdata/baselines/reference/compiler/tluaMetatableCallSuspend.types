@@ -18,7 +18,7 @@ end;
 local sqlAssigned = setmetatable({}, {
 >sqlAssigned : suspend (query: string) => table[]
 >setmetatable({}, {  __call = suspend function(self: table, query: string): table[]    return execute(query);  end,}) : suspend (query: string) => table[]
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{} : {}
 >{  __call = suspend function(self: table, query: string): table[]    return execute(query);  end,} : { __call: (self: table, query: string) => table[]; }
 
@@ -43,7 +43,7 @@ local sql = {};
 
 setmetatable(sql, {
 >setmetatable(sql, {  __call = suspend function(_self, query: string)    return execute(query);  end,}) : suspend (query: string) => table[]
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >sql : {}
 >{  __call = suspend function(_self, query: string)    return execute(query);  end,} : { __call: suspend (_self: {}, query: string) => table[]; }
 
@@ -72,7 +72,7 @@ local api = { begin = function(self: table): number return 1; end };
 
 setmetatable(api, {
 >setmetatable(api, {  __call = suspend function(self: table, query: string): table[]    return execute(query);  end,}) : { (query: string): table[]; begin: (self: table) => number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >api : { begin: (self: table) => number; }
 >{  __call = suspend function(self: table, query: string): table[]    return execute(query);  end,} : { __call: (self: table, query: string) => table[]; }
 

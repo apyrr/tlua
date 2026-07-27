@@ -7,7 +7,7 @@
 local callable = setmetatable({ n = 1 }, {
 >callable : { (x: number): string; n: number; }
 >setmetatable({ n = 1 }, {  __call = function(self: table, x: number): string return "s"; end,}) : { (x: number): string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -67,7 +67,7 @@ end
 local rest = setmetatable({}, { __call = function(...: any): number return 1; end });
 >rest : (...: any) => number
 >setmetatable({}, { __call = function(...: any): number return 1; end }) : (...: any) => number
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{} : {}
 >{ __call = function(...: any): number return 1; end } : { __call: (...: any) => number; }
 >__call : (...: any) => number

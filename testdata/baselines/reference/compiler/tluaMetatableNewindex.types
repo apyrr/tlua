@@ -9,7 +9,7 @@
 local logged = setmetatable({ n = 1 }, {
 >logged : { n: number; }
 >setmetatable({ n = 1 }, {  __newindex = function(t: table, k: string, v: number): void return; end,}) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -65,7 +65,7 @@ local store: Table<string, number> = {};
 local proxied = setmetatable({ n = 1 }, { __newindex = store });
 >proxied : { n: number; }
 >setmetatable({ n = 1 }, { __newindex = store }) : { n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -91,7 +91,7 @@ proxied.other = "no";
 local numKeys = setmetatable({}, { __newindex = function(t: table, k: number, v: string): void return; end });
 >numKeys : {}
 >setmetatable({}, { __newindex = function(t: table, k: number, v: string): void return; end }) : {}
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{} : {}
 >{ __newindex = function(t: table, k: number, v: string): void return; end } : { __newindex: (t: table, k: number, v: string) => void; }
 >__newindex : (t: table, k: number, v: string) => void

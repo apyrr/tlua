@@ -68,9 +68,9 @@ local App = function()
 >{ foo = 123 } : { foo: number; }
 >foo : number
 >123 : 123
->selector : (state: NoInfer<{ foo: number; }>) => number
->function(state) return state.foo end : (state: NoInfer<{ foo: number; }>) => number
->state : NoInfer<{ foo: number; }>
+>selector : (state: { foo: number; }) => number
+>function(state) return state.foo end : (state: { foo: number; }) => number
+>state : { foo: number; }
 >state.foo : number
 >state : { foo: number; }
 >foo : number
@@ -102,9 +102,9 @@ local App = function()
 >123 : 123
 
         selector={function(state) return state.foo end}
->selector : (state: NoInfer<{ foo: number; }>) => number
->function(state) return state.foo end : (state: NoInfer<{ foo: number; }>) => number
->state : NoInfer<{ foo: number; }>
+>selector : (state: { foo: number; }) => number
+>function(state) return state.foo end : (state: { foo: number; }) => number
+>state : { foo: number; }
 >state.foo : number
 >state : { foo: number; }
 >foo : number

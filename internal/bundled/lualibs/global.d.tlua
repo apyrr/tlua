@@ -44,7 +44,7 @@ declare function select(index: "#", ...: any): number;
 // fallback for a shadowed or aliased select the refinement does not reach.
 declare function select(index: number, ...: any): (any?, ...any);
 declare function setfenv(target: number | function, environment: table): function;
-declare function setmetatable<T extends table>(value: T, metatable: LuaMetatable<T> | nil): T;
+declare function setmetatable<T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T;
 declare function tonumber(value: any, base?: number): number | nil;
 declare function tostring(value: any): string;
 declare function type(value: any): "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata";
@@ -86,6 +86,6 @@ declare function xpcall(fn: function, handler: (message: any) => any, ...: any):
  * shadowed local of either name keeps whatever it declares. Both signatures still
  * carry the contract this file can express: the parameter type is what validates a
  * metatable's metamethods, and precision comes from the metatable a call passes,
- * since LuaMetatable<T> | nil names no particular fallback. Still uninterpreted:
- * __tostring and ffi.metatype.
+ * since LuaMetatable<T> | nil names no particular fallback; NoInfer pins it so only
+ * the table operand chooses T. Still uninterpreted: __tostring and ffi.metatype.
  */

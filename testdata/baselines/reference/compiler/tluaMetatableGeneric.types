@@ -19,7 +19,7 @@ function withHelpers<T extends table>(value: T)
 
   return setmetatable(value, { __index = helpers });
 >setmetatable(value, { __index = helpers }) : T & { describe: (self: table) => string; }
->setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<T_1> | nil) => T_1
+>setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<NoInfer<T_1>> | nil) => T_1
 >value : T
 >{ __index = helpers } : { __index: { describe: (self: table) => string; }; }
 >__index : { describe: (self: table) => string; }
@@ -63,7 +63,7 @@ function box<T>(value: T)
 
   return setmetatable({ value = value }, { __index = helpers });
 >setmetatable({ value = value }, { __index = helpers }) : { describe: (self: table) => string; value: T; }
->setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<T_1> | nil) => T_1
+>setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<NoInfer<T_1>> | nil) => T_1
 >{ value = value } : { value: T; }
 >value : T
 >value : T

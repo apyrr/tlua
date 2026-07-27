@@ -18,7 +18,7 @@ local anyMt = { __index = function(t: table, k: any): string return "x"; end };
 local a = setmetatable({ n = 1 }, anyMt);
 >a : { [x: string]: string; [x: number]: string; n: number; }
 >setmetatable({ n = 1 }, anyMt) : { [x: string]: string; [x: number]: string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -55,7 +55,7 @@ local numMt = { __index = function(t: table, k: number): boolean return true; en
 local num = setmetatable({ n = 1 }, numMt);
 >num : { [x: number]: boolean; n: number; }
 >setmetatable({ n = 1 }, numMt) : { [x: number]: boolean; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -87,7 +87,7 @@ local litMt = { __index = function(t: table, k: "a"): number return 1; end };
 local lit = setmetatable({ n = 1 }, litMt);
 >lit : { [x: string]: number; n: number; }
 >setmetatable({ n = 1 }, litMt) : { [x: string]: number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -115,7 +115,7 @@ local packMt = { __index = function(t: table, k: any): (string, number) return "
 local pack = setmetatable({ n = 1 }, packMt);
 >pack : { [x: string]: string; [x: number]: string; n: number; }
 >setmetatable({ n = 1 }, packMt) : { [x: string]: string; [x: number]: string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -140,7 +140,7 @@ declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "b"):
 local ov = setmetatable({ n = 1 }, overloaded);
 >ov : { [x: string]: string | number; n: number; }
 >setmetatable({ n = 1 }, overloaded) : { [x: string]: string | number; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -162,7 +162,7 @@ local notJustNumber: number | nil = ov.b;
 local own = setmetatable({ n = 1 }, anyMt);
 >own : { [x: string]: string; [x: number]: string; n: number; }
 >setmetatable({ n = 1 }, anyMt) : { [x: string]: string; [x: number]: string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -188,7 +188,7 @@ declare partial: { v?: number };
 local fallsThrough = setmetatable(partial, anyMt);
 >fallsThrough : { [x: string]: string; [x: number]: string; v: string | number; }
 >setmetatable(partial, anyMt) : { [x: string]: string; [x: number]: string; v: string | number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >partial : { v?: number; }
 >anyMt : { __index: (t: table, k: any) => string; }
 

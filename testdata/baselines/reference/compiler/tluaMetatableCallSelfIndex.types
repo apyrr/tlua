@@ -1,0 +1,1073 @@
+//// [tests/cases/compiler/tluaMetatableCallSelfIndex.tlua] ////
+
+=== tluaMetatableCallSelfIndex.tlua ===
+// A metamethod receives the PAIRED table, not the bare one setmetatable was handed: at runtime
+// the fallback behind __index answers for it too. So a metatable literal that commits to a
+// table-valued __index contextually types every metamethod's first parameter as the table
+// intersected with that fallback. And the table operand alone chooses T: a metamethod annotated
+// with a wider receiver states what it accepts, never what the call is pairing.
+
+interface Transaction {
+  id: string;
+>id : string
+
+  query(self: Transaction, sql: string): table[];
+>query : (self: Transaction, sql: string) => table[]
+>self : Transaction
+>sql : string
+}
+
+local Tx = {};
+>Tx : { query(self: Transaction, sql: string): table[]; }
+>{} : { query(self: Transaction, sql: string): table[]; }
+
+function Tx.query(self: Transaction, sql: string): table[]
+>Tx : { query(self: Transaction, sql: string): table[]; }
+>query : (self: Transaction, sql: string) => table[]
+>self : Transaction
+>sql : string
+
+  return {};
+>{} : {}
+
+end
+
+// (1) The unannotated receiver sees the fallback, so it satisfies Transaction.
+local state = { id = "test" };
+>state : { id: string; }
+>{ id = "test" } : { id: string; }
+>id : string
+>"test" : "test"
+
+local tx = setmetatable(state, {
+>tx : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>setmetatable(state, {  __index = Tx,  __call = suspend function(self, sql: string)    return Tx.query(self, sql);  end,}) : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>state : { id: string; }
+>{  __index = Tx,  __call = suspend function(self, sql: string)    return Tx.query(self, sql);  end,} : { __index: { query(self: Transaction, sql: string): table[]; }; __call: suspend (self: { id: string; } & { query(self: Transaction, sql: string): table[]; }, sql: string) => table[]; }
+
+  __index = Tx,
+>__index : { query(self: Transaction, sql: string): table[]; }
+>Tx : { query(self: Transaction, sql: string): table[]; }
+
+  __call = suspend function(self, sql: string)
+>__call : suspend (self: { id: string; } & { query(self: Transaction, sql: string): table[]; }, sql: string) => table[]
+>suspend function(self, sql: string)    return Tx.query(self, sql);  end : suspend (self: { id: string; } & { query(self: Transaction, sql: string): table[]; }, sql: string) => table[]
+>self : { id: string; } & { query(self: Transaction, sql: string): table[]; }
+>sql : string
+
+    return Tx.query(self, sql);
+>Tx.query(self, sql) : table[]
+>Tx.query : (self: Transaction, sql: string) => table[]
+>Tx : { query(self: Transaction, sql: string): table[]; }
+>query : (self: Transaction, sql: string) => table[]
+>self : { id: string; } & { query(self: Transaction, sql: string): table[]; }
+>sql : string
+
+  end,
+});
+
+suspend function useTx(): void
+>useTx : suspend () => void
+
+  local rows: table[] = tx("select 1");
+>rows : table[]
+>tx("select 1") : table[]
+>tx : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>"select 1" : "select 1"
+
+  local id: string = tx.id;
+>id : string
+>tx.id : string
+>tx : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>id : string
+
+  local viaFallback: table[] = tx.query(tx, "select 2");
+>viaFallback : table[]
+>tx.query(tx, "select 2") : table[]
+>tx.query : (self: Transaction, sql: string) => table[]
+>tx : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>query : (self: Transaction, sql: string) => table[]
+>tx : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>"select 2" : "select 2"
+
+end
+
+// (2) Annotating the receiver with the interface it satisfies is accepted, and the annotation
+// does not steer T: the error, if any, belongs to the metamethod and not to the table.
+local annotated = setmetatable({ id = "test" }, {
+>annotated : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>setmetatable({ id = "test" }, {  __index = Tx,  __call = suspend function(self: Transaction, sql: string)    return Tx.query(self, sql);  end,}) : { (sql: string): table[]; query(self: Transaction, sql: string): table[]; id: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ id = "test" } : { id: string; }
+>id : string
+>"test" : "test"
+>{  __index = Tx,  __call = suspend function(self: Transaction, sql: string)    return Tx.query(self, sql);  end,} : { __index: { query(self: Transaction, sql: string): table[]; }; __call: (self: Transaction, sql: string) => table[]; }
+
+  __index = Tx,
+>__index : { query(self: Transaction, sql: string): table[]; }
+>Tx : { query(self: Transaction, sql: string): table[]; }
+
+  __call = suspend function(self: Transaction, sql: string)
+>__call : suspend (self: Transaction, sql: string) => table[]
+>suspend function(self: Transaction, sql: string)    return Tx.query(self, sql);  end : suspend (self: Transaction, sql: string) => table[]
+>self : Transaction
+>sql : string
+
+    return Tx.query(self, sql);
+>Tx.query(self, sql) : table[]
+>Tx.query : (self: Transaction, sql: string) => table[]
+>Tx : { query(self: Transaction, sql: string): table[]; }
+>query : (self: Transaction, sql: string) => table[]
+>self : Transaction
+>sql : string
+
+  end,
+});
+
+// (3) The statement form freezes the literal through the declared-pairing replay, which must
+// supply the same contract the call site would.
+local Methods = { describe = function(self: table): string return "d"; end };
+>Methods : { describe: (self: table) => string; }
+>{ describe = function(self: table): string return "d"; end } : { describe: (self: table) => string; }
+>describe : (self: table) => string
+>function(self: table): string return "d"; end : (self: table) => string
+>self : table
+>"d" : "d"
+
+Session = Session or {};
+>Session = Session or {} : { n: number; }
+>Session : { (k: number): string; describe: (self: table) => string; n: number; }
+>Session or {} : { n: number; }
+>Session : nil
+>{} : { n: number; }
+
+Session.n = 1;
+>Session.n = 1 : 1
+>Session.n : number
+>Session : { (k: number): string; describe: (self: table) => string; n: number; }
+>n : number
+>1 : 1
+
+setmetatable(Session, {
+>setmetatable(Session, {  __index = Methods,  __call = function(self, k: number): string    local own: number = self.n;    return self.describe(self);  end,}) : { (k: number): string; describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>Session : { (k: number): string; describe: (self: table) => string; n: number; }
+>{  __index = Methods,  __call = function(self, k: number): string    local own: number = self.n;    return self.describe(self);  end,} : { __index: { describe: (self: table) => string; }; __call: (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string; }
+
+  __index = Methods,
+>__index : { describe: (self: table) => string; }
+>Methods : { describe: (self: table) => string; }
+
+  __call = function(self, k: number): string
+>__call : (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string
+>function(self, k: number): string    local own: number = self.n;    return self.describe(self);  end : (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+>k : number
+
+    local own: number = self.n;
+>own : number
+>self.n : number
+>self : { n: number; } & { describe: (self: table) => string; }
+>n : number
+
+    return self.describe(self);
+>self.describe(self) : string
+>self.describe : (self: table) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+>describe : (self: table) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+
+  end,
+});
+local viaSession: string = Session(1);
+>viaSession : string
+>Session(1) : string
+>Session : { (k: number): string; describe: (self: table) => string; n: number; }
+>1 : 1
+
+// (4) A function-valued __index augments nothing -- what it answers for a given key is not a
+// shape -- so the receiver stays the bare table.
+local fnIndexed = setmetatable({ n = 1 }, {
+>fnIndexed : { (k: number): number; [x: string]: any; [x: number]: any; n: number; }
+>setmetatable({ n = 1 }, {  __index = function(value: table, key: any): any return nil; end,  __call = function(self, k: number): number    local own: number = self.n;    local absent = self.describe;    return own;  end,}) : { (k: number): number; [x: string]: any; [x: number]: any; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  __index = function(value: table, key: any): any return nil; end,  __call = function(self, k: number): number    local own: number = self.n;    local absent = self.describe;    return own;  end,} : { __index: (value: table, key: any) => any; __call: (self: { n: number; }, k: number) => number; }
+
+  __index = function(value: table, key: any): any return nil; end,
+>__index : (value: table, key: any) => any
+>function(value: table, key: any): any return nil; end : (value: table, key: any) => any
+>value : table
+>key : any
+
+  __call = function(self, k: number): number
+>__call : (self: { n: number; }, k: number) => number
+>function(self, k: number): number    local own: number = self.n;    local absent = self.describe;    return own;  end : (self: { n: number; }, k: number) => number
+>self : { n: number; }
+>k : number
+
+    local own: number = self.n;
+>own : number
+>self.n : number
+>self : { n: number; }
+>n : number
+
+    local absent = self.describe;
+>absent : any
+>self.describe : any
+>self : { n: number; }
+>describe : any
+
+    return own;
+>own : number
+
+  end,
+});
+
+// (5) __index naming the very table being paired: the probe must not recur.
+Cell = Cell or {};
+>Cell = Cell or {} : { own: number; }
+>Cell : { (k: number): number; own: number; }
+>Cell or {} : { own: number; }
+>Cell : nil
+>{} : { own: number; }
+
+Cell.own = 1;
+>Cell.own = 1 : 1
+>Cell.own : number
+>Cell : { (k: number): number; own: number; }
+>own : number
+>1 : 1
+
+setmetatable(Cell, {
+>setmetatable(Cell, {  __index = Cell,  __call = function(self, k: number): number return 1; end,}) : { (k: number): number; own: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>Cell : { (k: number): number; own: number; }
+>{  __index = Cell,  __call = function(self, k: number): number return 1; end,} : { __index: { (k: number): number; own: number; }; __call: (self: { own: number; }, k: number) => number; }
+
+  __index = Cell,
+>__index : { (k: number): number; own: number; }
+>Cell : { (k: number): number; own: number; }
+
+  __call = function(self, k: number): number return 1; end,
+>__call : (self: { own: number; }, k: number) => number
+>function(self, k: number): number return 1; end : (self: { own: number; }, k: number) => number
+>self : { own: number; }
+>k : number
+>1 : 1
+
+});
+local cellOwn: number = Cell.own;
+>cellOwn : number
+>Cell.own : number
+>Cell : { (k: number): number; own: number; }
+>own : number
+
+// (6) Every metamethod's first parameter is augmented, not just __call's.
+local VecOps = { magnitude = function(self: table): number return 0; end };
+>VecOps : { magnitude: (self: table) => number; }
+>{ magnitude = function(self: table): number return 0; end } : { magnitude: (self: table) => number; }
+>magnitude : (self: table) => number
+>function(self: table): number return 0; end : (self: table) => number
+>self : table
+>0 : 0
+
+local vec = setmetatable({ x = 1 }, {
+>vec : { magnitude: (self: table) => number; x: number; }
+>setmetatable({ x = 1 }, {  __index = VecOps,  __add = function(left, right: table): number    return left.magnitude(left) + left.x;  end,  __newindex = function(target, key: string, value: number): void    local m: number = target.magnitude(target);  end,}) : { magnitude: (self: table) => number; x: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+>{  __index = VecOps,  __add = function(left, right: table): number    return left.magnitude(left) + left.x;  end,  __newindex = function(target, key: string, value: number): void    local m: number = target.magnitude(target);  end,} : { __index: { magnitude: (self: table) => number; }; __add: (left: { x: number; } & { magnitude: (self: table) => number; }, right: table) => number; __newindex: (target: { x: number; } & { magnitude: (self: table) => number; }, key: string, value: number) => void; }
+
+  __index = VecOps,
+>__index : { magnitude: (self: table) => number; }
+>VecOps : { magnitude: (self: table) => number; }
+
+  __add = function(left, right: table): number
+>__add : (left: { x: number; } & { magnitude: (self: table) => number; }, right: table) => number
+>function(left, right: table): number    return left.magnitude(left) + left.x;  end : (left: { x: number; } & { magnitude: (self: table) => number; }, right: table) => number
+>left : { x: number; } & { magnitude: (self: table) => number; }
+>right : table
+
+    return left.magnitude(left) + left.x;
+>left.magnitude(left) + left.x : number
+>left.magnitude(left) : number
+>left.magnitude : (self: table) => number
+>left : { x: number; } & { magnitude: (self: table) => number; }
+>magnitude : (self: table) => number
+>left : { x: number; } & { magnitude: (self: table) => number; }
+>left.x : number
+>left : { x: number; } & { magnitude: (self: table) => number; }
+>x : number
+
+  end,
+  __newindex = function(target, key: string, value: number): void
+>__newindex : (target: { x: number; } & { magnitude: (self: table) => number; }, key: string, value: number) => void
+>function(target, key: string, value: number): void    local m: number = target.magnitude(target);  end : (target: { x: number; } & { magnitude: (self: table) => number; }, key: string, value: number) => void
+>target : { x: number; } & { magnitude: (self: table) => number; }
+>key : string
+>value : number
+
+    local m: number = target.magnitude(target);
+>m : number
+>target.magnitude(target) : number
+>target.magnitude : (self: table) => number
+>target : { x: number; } & { magnitude: (self: table) => number; }
+>magnitude : (self: table) => number
+>target : { x: number; } & { magnitude: (self: table) => number; }
+
+  end,
+});
+local sum: number = vec + vec;
+>sum : number
+>vec + vec : number
+>vec : { magnitude: (self: table) => number; x: number; }
+>vec : { magnitude: (self: table) => number; x: number; }
+
+// (7) The augmentation survives the inference mapper: inside a generic wrapper the receiver is
+// the type parameter intersected with the fallback.
+local Helpers = { describe = function(self: table): string return "d"; end };
+>Helpers : { describe: (self: table) => string; }
+>{ describe = function(self: table): string return "d"; end } : { describe: (self: table) => string; }
+>describe : (self: table) => string
+>function(self: table): string return "d"; end : (self: table) => string
+>self : table
+>"d" : "d"
+
+function wrapped<T extends table>(value: T)
+>wrapped : <T extends table>(value: T) => T & { describe: (self: table) => string; }
+>value : T
+
+  return setmetatable(value, {
+>setmetatable(value, {    __index = Helpers,    __call = function(self, n: number): string return self.describe(self); end,  }) : T & { describe: (self: table) => string; }
+>setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<NoInfer<T_1>> | nil) => T_1
+>value : T
+>{    __index = Helpers,    __call = function(self, n: number): string return self.describe(self); end,  } : { __index: { describe: (self: table) => string; }; __call: (self: T & { describe: (self: table) => string; }, n: number) => string; }
+
+    __index = Helpers,
+>__index : { describe: (self: table) => string; }
+>Helpers : { describe: (self: table) => string; }
+
+    __call = function(self, n: number): string return self.describe(self); end,
+>__call : (self: T & { describe: (self: table) => string; }, n: number) => string
+>function(self, n: number): string return self.describe(self); end : (self: T & { describe: (self: table) => string; }, n: number) => string
+>self : T & { describe: (self: table) => string; }
+>n : number
+>self.describe(self) : string
+>self.describe : (self: table) => string
+>self : T & { describe: (self: table) => string; }
+>describe : (self: table) => string
+>self : T & { describe: (self: table) => string; }
+
+  });
+end
+local w = wrapped({ own = "o" });
+>w : { own: string; } & { describe: (self: table) => string; }
+>wrapped({ own = "o" }) : { own: string; } & { describe: (self: table) => string; }
+>wrapped : <T extends table>(value: T) => T & { describe: (self: table) => string; }
+>{ own = "o" } : { own: string; }
+>own : string
+>"o" : "o"
+
+local wd: string = w.describe(w);
+>wd : string
+>w.describe(w) : string
+>w.describe : (self: table) => string
+>w : { own: string; } & { describe: (self: table) => string; }
+>describe : (self: table) => string
+>w : { own: string; } & { describe: (self: table) => string; }
+
+local wo: string = w.own;
+>wo : string
+>w.own : string
+>w : { own: string; } & { describe: (self: table) => string; }
+>own : string
+
+// (8) With no __index there is nothing to augment with, and T is pinned to the table operand:
+// the wider receiver is refused where it is written, not blamed on the first argument.
+interface Wider { id: string; extra: number }
+>id : string
+>extra : number
+
+local pinned = setmetatable({ id = "n" }, {
+>pinned : { (k: number): number; id: string; }
+>setmetatable({ id = "n" }, {  __call = function(self: Wider, k: number): number return self.extra; end,}) : { (k: number): number; id: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ id = "n" } : { id: string; }
+>id : string
+>"n" : "n"
+>{  __call = function(self: Wider, k: number): number return self.extra; end,} : { __call: (self: Wider, k: number) => number; }
+
+  __call = function(self: Wider, k: number): number return self.extra; end,
+>__call : (self: Wider, k: number) => number
+>function(self: Wider, k: number): number return self.extra; end : (self: Wider, k: number) => number
+>self : Wider
+>k : number
+>self.extra : number
+>self : Wider
+>extra : number
+
+});
+
+// (9) An inline __index literal is a fallback like any other, as long as typing it needs no
+// context of its own.
+local inline = setmetatable({ n = 1 }, {
+>inline : { (k: number): string; n: number; label: string; }
+>setmetatable({ n = 1 }, {  __index = { label = "inline" },  __call = function(self, k: number): string    local own: number = self.n;    return self.label;  end,}) : { (k: number): string; n: number; label: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  __index = { label = "inline" },  __call = function(self, k: number): string    local own: number = self.n;    return self.label;  end,} : { __index: { label: string; }; __call: (self: { n: number; } & { label: string; }, k: number) => string; }
+
+  __index = { label = "inline" },
+>__index : { label: string; }
+>{ label = "inline" } : { label: string; }
+>label : string
+>"inline" : "inline"
+
+  __call = function(self, k: number): string
+>__call : (self: { n: number; } & { label: string; }, k: number) => string
+>function(self, k: number): string    local own: number = self.n;    return self.label;  end : (self: { n: number; } & { label: string; }, k: number) => string
+>self : { n: number; } & { label: string; }
+>k : number
+
+    local own: number = self.n;
+>own : number
+>self.n : number
+>self : { n: number; } & { label: string; }
+>n : number
+
+    return self.label;
+>self.label : string
+>self : { n: number; } & { label: string; }
+>label : string
+
+  end,
+});
+
+// (10) An explicit instantiation names T itself, and debug.setmetatable carries the same
+// protocol as the global.
+local Ops = { tag = function(self: table): string return "t"; end };
+>Ops : { tag: (self: table) => string; }
+>{ tag = function(self: table): string return "t"; end } : { tag: (self: table) => string; }
+>tag : (self: table) => string
+>function(self: table): string return "t"; end : (self: table) => string
+>self : table
+>"t" : "t"
+
+local explicit = setmetatable<table>({ n = 1 }, {
+>explicit : table
+>setmetatable<table>({ n = 1 }, {  __index = Ops,  __call = function(self, k: number): string return self.tag(self); end,}) : table
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  __index = Ops,  __call = function(self, k: number): string return self.tag(self); end,} : { __index: { tag: (self: table) => string; }; __call: (self: table & { tag: (self: table) => string; }, k: number) => string; }
+
+  __index = Ops,
+>__index : { tag: (self: table) => string; }
+>Ops : { tag: (self: table) => string; }
+
+  __call = function(self, k: number): string return self.tag(self); end,
+>__call : (self: table & { tag: (self: table) => string; }, k: number) => string
+>function(self, k: number): string return self.tag(self); end : (self: table & { tag: (self: table) => string; }, k: number) => string
+>self : table & { tag: (self: table) => string; }
+>k : number
+>self.tag(self) : string
+>self.tag : (self: table) => string
+>self : table & { tag: (self: table) => string; }
+>tag : (self: table) => string
+>self : table & { tag: (self: table) => string; }
+
+});
+local viaDebug = debug.setmetatable({ id = "d" }, {
+>viaDebug : { (k: number): string; tag: (self: table) => string; id: string; }
+>debug.setmetatable({ id = "d" }, {  __index = Ops,  __call = function(self, k: number): string    local id: string = self.id;    return self.tag(self);  end,}) : { (k: number): string; tag: (self: table) => string; id: string; }
+>debug.setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>debug : DebugLib
+>setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
+>{ id = "d" } : { id: string; }
+>id : string
+>"d" : "d"
+>{  __index = Ops,  __call = function(self, k: number): string    local id: string = self.id;    return self.tag(self);  end,} : { __index: { tag: (self: table) => string; }; __call: (self: { id: string; } & { tag: (self: table) => string; }, k: number) => string; }
+
+  __index = Ops,
+>__index : { tag: (self: table) => string; }
+>Ops : { tag: (self: table) => string; }
+
+  __call = function(self, k: number): string
+>__call : (self: { id: string; } & { tag: (self: table) => string; }, k: number) => string
+>function(self, k: number): string    local id: string = self.id;    return self.tag(self);  end : (self: { id: string; } & { tag: (self: table) => string; }, k: number) => string
+>self : { id: string; } & { tag: (self: table) => string; }
+>k : number
+
+    local id: string = self.id;
+>id : string
+>self.id : string
+>self : { id: string; } & { tag: (self: table) => string; }
+>id : string
+
+    return self.tag(self);
+>self.tag(self) : string
+>self.tag : (self: table) => string
+>self : { id: string; } & { tag: (self: table) => string; }
+>tag : (self: table) => string
+>self : { id: string; } & { tag: (self: table) => string; }
+
+  end,
+});
+
+// (11) The table wins a colliding key: the runtime never consults the fallback for a key the
+// table answers, so the receiver reads it at the table's own type -- never the fallback's, and
+// never their meeting in never. The keys the table does not answer still come through.
+local collide = setmetatable({ v = 1 }, {
+>collide : { (k: number): string; v: number; hint: string; }
+>setmetatable({ v = 1 }, {  __index = { v = "fallback", hint = "h" },  __call = function(self, k: number): string    local own: number = self.v;    local viaIndex: string = self.hint;    local wrong: string = self.v;    return self.hint;  end,}) : { (k: number): string; v: number; hint: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ v = 1 } : { v: number; }
+>v : number
+>1 : 1
+>{  __index = { v = "fallback", hint = "h" },  __call = function(self, k: number): string    local own: number = self.v;    local viaIndex: string = self.hint;    local wrong: string = self.v;    return self.hint;  end,} : { __index: { v: string; hint: string; }; __call: (self: { v: number; } & { hint: string; }, k: number) => string; }
+
+  __index = { v = "fallback", hint = "h" },
+>__index : { v: string; hint: string; }
+>{ v = "fallback", hint = "h" } : { v: string; hint: string; }
+>v : string
+>"fallback" : "fallback"
+>hint : string
+>"h" : "h"
+
+  __call = function(self, k: number): string
+>__call : (self: { v: number; } & { hint: string; }, k: number) => string
+>function(self, k: number): string    local own: number = self.v;    local viaIndex: string = self.hint;    local wrong: string = self.v;    return self.hint;  end : (self: { v: number; } & { hint: string; }, k: number) => string
+>self : { v: number; } & { hint: string; }
+>k : number
+
+    local own: number = self.v;
+>own : number
+>self.v : number
+>self : { v: number; } & { hint: string; }
+>v : number
+
+    local viaIndex: string = self.hint;
+>viaIndex : string
+>self.hint : string
+>self : { v: number; } & { hint: string; }
+>hint : string
+
+    local wrong: string = self.v;
+>wrong : string
+>self.v : number
+>self : { v: number; } & { hint: string; }
+>v : number
+
+    return self.hint;
+>self.hint : string
+>self : { v: number; } & { hint: string; }
+>hint : string
+
+  end,
+});
+
+// (12) A fallback the table answers in full augments nothing, so the receiver is simply the
+// table again.
+local covered = setmetatable({ v = 1 }, {
+>covered : { (k: number): number; v: number; }
+>setmetatable({ v = 1 }, {  __index = { v = "fallback" },  __call = function(self, k: number): number return self.v; end,}) : { (k: number): number; v: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ v = 1 } : { v: number; }
+>v : number
+>1 : 1
+>{  __index = { v = "fallback" },  __call = function(self, k: number): number return self.v; end,} : { __index: { v: string; }; __call: (self: { v: number; }, k: number) => number; }
+
+  __index = { v = "fallback" },
+>__index : { v: string; }
+>{ v = "fallback" } : { v: string; }
+>v : string
+>"fallback" : "fallback"
+
+  __call = function(self, k: number): number return self.v; end,
+>__call : (self: { v: number; }, k: number) => number
+>function(self, k: number): number return self.v; end : (self: { v: number; }, k: number) => number
+>self : { v: number; }
+>k : number
+>self.v : number
+>self : { v: number; }
+>v : number
+
+});
+
+// (13) Parentheses around the metatable literal are transparent, as they are at runtime.
+local parened = setmetatable({ n = 1 }, ({
+>parened : { (k: number): string; describe: (self: table) => string; n: number; }
+>setmetatable({ n = 1 }, ({  __index = Methods,  __call = function(self, k: number): string    return self.describe(self);  end,})) : { (k: number): string; describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>({  __index = Methods,  __call = function(self, k: number): string    return self.describe(self);  end,}) : { __index: { describe: (self: table) => string; }; __call: (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string; }
+>{  __index = Methods,  __call = function(self, k: number): string    return self.describe(self);  end,} : { __index: { describe: (self: table) => string; }; __call: (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string; }
+
+  __index = Methods,
+>__index : { describe: (self: table) => string; }
+>Methods : { describe: (self: table) => string; }
+
+  __call = function(self, k: number): string
+>__call : (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string
+>function(self, k: number): string    return self.describe(self);  end : (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+>k : number
+
+    return self.describe(self);
+>self.describe(self) : string
+>self.describe : (self: table) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+>describe : (self: table) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+
+  end,
+}));
+
+// (14) A key spelled ["__index"] is still __index -- a static name is a static name -- and an
+// unrelated statically-named key beside it changes nothing.
+local computed = setmetatable({ n = 1 }, {
+>computed : { (k: number): string; describe: (self: table) => string; n: number; }
+>setmetatable({ n = 1 }, {  ["__index"] = Methods,  ["__mode"] = "k",  __call = function(self, k: number): string    return self.describe(self);  end,}) : { (k: number): string; describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  ["__index"] = Methods,  ["__mode"] = "k",  __call = function(self, k: number): string    return self.describe(self);  end,} : { __index: { describe: (self: table) => string; }; __mode: "k"; __call: (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string; }
+
+  ["__index"] = Methods,
+>["__index"] : { describe: (self: table) => string; }
+>"__index" : "__index"
+>Methods : { describe: (self: table) => string; }
+
+  ["__mode"] = "k",
+>["__mode"] : "k"
+>"__mode" : "__mode"
+>"k" : "k"
+
+  __call = function(self, k: number): string
+>__call : (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string
+>function(self, k: number): string    return self.describe(self);  end : (self: { n: number; } & { describe: (self: table) => string; }, k: number) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+>k : number
+
+    return self.describe(self);
+>self.describe(self) : string
+>self.describe : (self: table) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+>describe : (self: table) => string
+>self : { n: number; } & { describe: (self: table) => string; }
+
+  end,
+});
+
+// (15) A union table operand distributes through the receiver: the contextual parameter, the
+// frozen parameter, and the applicability target are the same type.
+declare uni: { a: number } | { b: number };
+>uni : { a: number; } | { b: number; }
+>a : number
+>b : number
+
+local unionPaired = setmetatable(uni, {
+>unionPaired : { a: number; } | { b: number; }
+>setmetatable(uni, {  __index = { extra = "e" },  __call = function(self, k: number): string return self.extra; end,}) : { a: number; } | { b: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>uni : { a: number; } | { b: number; }
+>{  __index = { extra = "e" },  __call = function(self, k: number): string return self.extra; end,} : { __index: { extra: string; }; __call: (self: ({ a: number; } & { extra: string; }) | ({ b: number; } & { extra: string; }), k: number) => string; }
+
+  __index = { extra = "e" },
+>__index : { extra: string; }
+>{ extra = "e" } : { extra: string; }
+>extra : string
+>"e" : "e"
+
+  __call = function(self, k: number): string return self.extra; end,
+>__call : (self: ({ a: number; } & { extra: string; }) | ({ b: number; } & { extra: string; }), k: number) => string
+>function(self, k: number): string return self.extra; end : (self: ({ a: number; } & { extra: string; }) | ({ b: number; } & { extra: string; }), k: number) => string
+>self : ({ a: number; } & { extra: string; }) | ({ b: number; } & { extra: string; })
+>k : number
+>self.extra : string
+>self : ({ a: number; } & { extra: string; }) | ({ b: number; } & { extra: string; })
+>extra : string
+
+});
+
+// (16) setmetatable REPLACES a metatable: the receiver is built from the unpaired table, so
+// the old fallback's members do not survive into the new handlers -- the handler and the
+// returned value agree.
+local OldOps = { legacy = function(self: table): string return "l"; end };
+>OldOps : { legacy: (self: table) => string; }
+>{ legacy = function(self: table): string return "l"; end } : { legacy: (self: table) => string; }
+>legacy : (self: table) => string
+>function(self: table): string return "l"; end : (self: table) => string
+>self : table
+>"l" : "l"
+
+local NewOps = { fresh = function(self: table): string return "f"; end };
+>NewOps : { fresh: (self: table) => string; }
+>{ fresh = function(self: table): string return "f"; end } : { fresh: (self: table) => string; }
+>fresh : (self: table) => string
+>function(self: table): string return "f"; end : (self: table) => string
+>self : table
+>"f" : "f"
+
+local firstPairing = setmetatable({ n = 1 }, { __index = OldOps });
+>firstPairing : { legacy: (self: table) => string; n: number; }
+>setmetatable({ n = 1 }, { __index = OldOps }) : { legacy: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __index = OldOps } : { __index: { legacy: (self: table) => string; }; }
+>__index : { legacy: (self: table) => string; }
+>OldOps : { legacy: (self: table) => string; }
+
+local repaired = setmetatable(firstPairing, {
+>repaired : { (k: number): string; fresh: (self: table) => string; n: number; }
+>setmetatable(firstPairing, {  __index = NewOps,  __call = function(self, k: number): string    local ok: string = self.fresh(self);    local stale = self.legacy;    return ok;  end,}) : { (k: number): string; fresh: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>firstPairing : { legacy: (self: table) => string; n: number; }
+>{  __index = NewOps,  __call = function(self, k: number): string    local ok: string = self.fresh(self);    local stale = self.legacy;    return ok;  end,} : { __index: { fresh: (self: table) => string; }; __call: (self: { n: number; } & { fresh: (self: table) => string; }, k: number) => string; }
+
+  __index = NewOps,
+>__index : { fresh: (self: table) => string; }
+>NewOps : { fresh: (self: table) => string; }
+
+  __call = function(self, k: number): string
+>__call : (self: { n: number; } & { fresh: (self: table) => string; }, k: number) => string
+>function(self, k: number): string    local ok: string = self.fresh(self);    local stale = self.legacy;    return ok;  end : (self: { n: number; } & { fresh: (self: table) => string; }, k: number) => string
+>self : { n: number; } & { fresh: (self: table) => string; }
+>k : number
+
+    local ok: string = self.fresh(self);
+>ok : string
+>self.fresh(self) : string
+>self.fresh : (self: table) => string
+>self : { n: number; } & { fresh: (self: table) => string; }
+>fresh : (self: table) => string
+>self : { n: number; } & { fresh: (self: table) => string; }
+
+    local stale = self.legacy;
+>stale : any
+>self.legacy : any
+>self : { n: number; } & { fresh: (self: table) => string; }
+>legacy : any
+
+    return ok;
+>ok : string
+
+  end,
+});
+local resultStale = repaired.legacy;
+>resultStale : any
+>repaired.legacy : any
+>repaired : { (k: number): string; fresh: (self: table) => string; n: number; }
+>legacy : any
+
+// (17) A key the table admits only optionally reads as the table alone declares it: the
+// fallback half of the read is given up, not misstated -- an intersection could only turn the
+// collision into never. The returned pairing still models the full read.
+declare partial: { v?: number };
+>partial : { v?: number; }
+>v : number | nil
+
+local optCollide = setmetatable(partial, {
+>optCollide : { (k: number): void; v: string | number; hint: string; }
+>setmetatable(partial, {  __index = { v = "fallback", hint = "h" },  __call = function(self, k: number): void    local own: number | nil = self.v;    local viaIndex: string = self.hint;  end,}) : { (k: number): void; v: string | number; hint: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>partial : { v?: number; }
+>{  __index = { v = "fallback", hint = "h" },  __call = function(self, k: number): void    local own: number | nil = self.v;    local viaIndex: string = self.hint;  end,} : { __index: { v: string; hint: string; }; __call: (self: { v?: number; } & { hint: string; }, k: number) => void; }
+
+  __index = { v = "fallback", hint = "h" },
+>__index : { v: string; hint: string; }
+>{ v = "fallback", hint = "h" } : { v: string; hint: string; }
+>v : string
+>"fallback" : "fallback"
+>hint : string
+>"h" : "h"
+
+  __call = function(self, k: number): void
+>__call : (self: { v?: number; } & { hint: string; }, k: number) => void
+>function(self, k: number): void    local own: number | nil = self.v;    local viaIndex: string = self.hint;  end : (self: { v?: number; } & { hint: string; }, k: number) => void
+>self : { v?: number; } & { hint: string; }
+>k : number
+
+    local own: number | nil = self.v;
+>own : number | nil
+>self.v : number | nil
+>self : { v?: number; } & { hint: string; }
+>v : number | nil
+
+    local viaIndex: string = self.hint;
+>viaIndex : string
+>self.hint : string
+>self : { v?: number; } & { hint: string; }
+>hint : string
+
+  end,
+});
+local pairedRead: number | string = optCollide.v;
+>pairedRead : string | number
+>optCollide.v : string | number
+>optCollide : { (k: number): void; v: string | number; hint: string; }
+>v : string | number
+
+// (18) A key domain the table answers through an index signature collides the same way: the
+// fallback may never be consulted for it, so it cannot be asserted.
+declare dyn: Table<string, number>;
+>dyn : Table<string, number>
+
+local dynPaired = setmetatable(dyn, {
+>dynPaired : { (k: number): void; [key: string]: number; v: string; }
+>setmetatable(dyn, {  __index = { v = "fallback" },  __call = function(self, k: number): void    local read: number | nil = self.v;  end,}) : { (k: number): void; [key: string]: number; v: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>dyn : Table<string, number>
+>{  __index = { v = "fallback" },  __call = function(self, k: number): void    local read: number | nil = self.v;  end,} : { __index: { v: string; }; __call: (self: Table<string, number>, k: number) => void; }
+
+  __index = { v = "fallback" },
+>__index : { v: string; }
+>{ v = "fallback" } : { v: string; }
+>v : string
+>"fallback" : "fallback"
+
+  __call = function(self, k: number): void
+>__call : (self: Table<string, number>, k: number) => void
+>function(self, k: number): void    local read: number | nil = self.v;  end : (self: Table<string, number>, k: number) => void
+>self : Table<string, number>
+>k : number
+
+    local read: number | nil = self.v;
+>read : number | nil
+>self.v : number | nil
+>self : Table<string, number>
+>v : number | nil
+
+  end,
+});
+
+// (19) A union operand collides arm by arm: an arm that answers a key itself keeps its own
+// type for it, and only the arms that miss it take the fallback's -- reducing against the
+// union as a whole would let the answering arm meet the fallback in never and vanish from
+// the read.
+declare mixed: { p: number } | { q: number };
+>mixed : { p: number; } | { q: number; }
+>p : number
+>q : number
+
+local armWise = setmetatable(mixed, {
+>armWise : { p: number; } | { q: number; }
+>setmetatable(mixed, {  __index = { p = "fallback" },  __call = function(self, k: number): void    local honest: number | string = self.p;    local wrong: string = self.p;  end,}) : { p: number; } | { q: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>mixed : { p: number; } | { q: number; }
+>{  __index = { p = "fallback" },  __call = function(self, k: number): void    local honest: number | string = self.p;    local wrong: string = self.p;  end,} : { __index: { p: string; }; __call: (self: { p: number; } | ({ q: number; } & { p: string; }), k: number) => void; }
+
+  __index = { p = "fallback" },
+>__index : { p: string; }
+>{ p = "fallback" } : { p: string; }
+>p : string
+>"fallback" : "fallback"
+
+  __call = function(self, k: number): void
+>__call : (self: { p: number; } | ({ q: number; } & { p: string; }), k: number) => void
+>function(self, k: number): void    local honest: number | string = self.p;    local wrong: string = self.p;  end : (self: { p: number; } | ({ q: number; } & { p: string; }), k: number) => void
+>self : { p: number; } | ({ q: number; } & { p: string; })
+>k : number
+
+    local honest: number | string = self.p;
+>honest : string | number
+>self.p : string | number
+>self : { p: number; } | ({ q: number; } & { p: string; })
+>p : string | number
+
+    local wrong: string = self.p;
+>wrong : string
+>self.p : string | number
+>self : { p: number; } | ({ q: number; } & { p: string; })
+>p : string | number
+
+  end,
+});
+
+// (20) Lua does not inherit metamethods through __index: an operator-named member of the
+// fallback must not dispatch ambiently from the receiver, exactly as it does not dispatch
+// from the returned pairing. The plain members still come through.
+local WithOp = {
+>WithOp : { helper: (self: table) => number; __add: (a: table, b: table) => number; }
+>{  helper = function(self: table): number return 0; end,  __add = function(a: table, b: table): number return 1; end,} : { helper: (self: table) => number; __add: (a: table, b: table) => number; }
+
+  helper = function(self: table): number return 0; end,
+>helper : (self: table) => number
+>function(self: table): number return 0; end : (self: table) => number
+>self : table
+>0 : 0
+
+  __add = function(a: table, b: table): number return 1; end,
+>__add : (a: table, b: table) => number
+>function(a: table, b: table): number return 1; end : (a: table, b: table) => number
+>a : table
+>b : table
+>1 : 1
+
+};
+local opFallback = setmetatable({ n = 1 }, {
+>opFallback : { (k: number): number; helper: (self: table) => number; __add: (a: table, b: table) => number; n: number; }
+>setmetatable({ n = 1 }, {  __index = WithOp,  __call = function(self, k: number): number    local h: number = self.helper(self);    return self + self;  end,}) : { (k: number): number; helper: (self: table) => number; __add: (a: table, b: table) => number; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  __index = WithOp,  __call = function(self, k: number): number    local h: number = self.helper(self);    return self + self;  end,} : { __index: { helper: (self: table) => number; __add: (a: table, b: table) => number; }; __call: (self: { n: number; } & { helper: (self: table) => number; }, k: number) => number; }
+
+  __index = WithOp,
+>__index : { helper: (self: table) => number; __add: (a: table, b: table) => number; }
+>WithOp : { helper: (self: table) => number; __add: (a: table, b: table) => number; }
+
+  __call = function(self, k: number): number
+>__call : (self: { n: number; } & { helper: (self: table) => number; }, k: number) => number
+>function(self, k: number): number    local h: number = self.helper(self);    return self + self;  end : (self: { n: number; } & { helper: (self: table) => number; }, k: number) => number
+>self : { n: number; } & { helper: (self: table) => number; }
+>k : number
+
+    local h: number = self.helper(self);
+>h : number
+>self.helper(self) : number
+>self.helper : (self: table) => number
+>self : { n: number; } & { helper: (self: table) => number; }
+>helper : (self: table) => number
+>self : { n: number; } & { helper: (self: table) => number; }
+
+    return self + self;
+>self + self : any
+>self : { n: number; } & { helper: (self: table) => number; }
+>self : { n: number; } & { helper: (self: table) => number; }
+
+  end,
+});
+local outsideAdd = opFallback + opFallback;
+>outsideAdd : any
+>opFallback + opFallback : any
+>opFallback : { (k: number): number; helper: (self: table) => number; __add: (a: table, b: table) => number; n: number; }
+>opFallback : { (k: number): number; helper: (self: table) => number; __add: (a: table, b: table) => number; n: number; }
+
+// (21) __index naming the very table being paired cannot resurrect the pairing this call
+// replaces: the receiver is the bare table, as it is for any self-referential fallback.
+local prior = setmetatable({ n = 1 }, { __index = Methods });
+>prior : { describe: (self: table) => string; n: number; }
+>setmetatable({ n = 1 }, { __index = Methods }) : { describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{ __index = Methods } : { __index: { describe: (self: table) => string; }; }
+>__index : { describe: (self: table) => string; }
+>Methods : { describe: (self: table) => string; }
+
+local repairedSelf = setmetatable(prior, {
+>repairedSelf : { (k: number): void; describe: (self: table) => string; n: number; }
+>setmetatable(prior, {  __index = prior,  __call = function(self, k: number): void    local own: number = self.n;    local resurrect = self.describe;  end,}) : { (k: number): void; describe: (self: table) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>prior : { describe: (self: table) => string; n: number; }
+>{  __index = prior,  __call = function(self, k: number): void    local own: number = self.n;    local resurrect = self.describe;  end,} : { __index: { describe: (self: table) => string; n: number; }; __call: (self: { n: number; }, k: number) => void; }
+
+  __index = prior,
+>__index : { describe: (self: table) => string; n: number; }
+>prior : { describe: (self: table) => string; n: number; }
+
+  __call = function(self, k: number): void
+>__call : (self: { n: number; }, k: number) => void
+>function(self, k: number): void    local own: number = self.n;    local resurrect = self.describe;  end : (self: { n: number; }, k: number) => void
+>self : { n: number; }
+>k : number
+
+    local own: number = self.n;
+>own : number
+>self.n : number
+>self : { n: number; }
+>n : number
+
+    local resurrect = self.describe;
+>resurrect : any
+>self.describe : any
+>self : { n: number; }
+>describe : any
+
+  end,
+});
+
+// (22) A nilable fallback reads through its nil arm on the receiver exactly as it does on the
+// returned pairing -- the defaults idiom, imprecision included: both sides agree.
+declare maybe: { label: string } | nil;
+>maybe : { label: string; } | nil
+>label : string
+
+local nilable = setmetatable({ n = 1 }, {
+>nilable : { (k: number): string; label: string; n: number; }
+>setmetatable({ n = 1 }, {  __index = maybe,  __call = function(self, k: number): string return self.label; end,}) : { (k: number): string; label: string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+>{  __index = maybe,  __call = function(self, k: number): string return self.label; end,} : { __index: { label: string; } | nil; __call: (self: { n: number; } & { label: string; }, k: number) => string; }
+
+  __index = maybe,
+>__index : { label: string; } | nil
+>maybe : { label: string; } | nil
+
+  __call = function(self, k: number): string return self.label; end,
+>__call : (self: { n: number; } & { label: string; }, k: number) => string
+>function(self, k: number): string return self.label; end : (self: { n: number; } & { label: string; }, k: number) => string
+>self : { n: number; } & { label: string; }
+>k : number
+>self.label : string
+>self : { n: number; } & { label: string; }
+>label : string
+
+});
+local nilableRead: string = nilable.label;
+>nilableRead : string
+>nilable.label : string
+>nilable : { (k: number): string; label: string; n: number; }
+>label : string
+
+// (23) A genuinely generic operand keeps the type variable in the receiver without letting
+// the metamethod steer it: a wider annotation is refused on the metamethod member, never
+// blamed on the table argument.
+interface Wider2 { z: number }
+>z : number
+
+function wrapWider<T extends table>(value: T)
+>wrapWider : <T extends table>(value: T) => T & { describe: (self: table) => string; }
+>value : T
+
+  return setmetatable(value, {
+>setmetatable(value, {    __index = Methods,    __call = function(self: Wider2, k: number): number return self.z; end,  }) : T & { describe: (self: table) => string; }
+>setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<NoInfer<T_1>> | nil) => T_1
+>value : T
+>{    __index = Methods,    __call = function(self: Wider2, k: number): number return self.z; end,  } : { __index: { describe: (self: table) => string; }; __call: (self: Wider2, k: number) => number; }
+
+    __index = Methods,
+>__index : { describe: (self: table) => string; }
+>Methods : { describe: (self: table) => string; }
+
+    __call = function(self: Wider2, k: number): number return self.z; end,
+>__call : (self: Wider2, k: number) => number
+>function(self: Wider2, k: number): number return self.z; end : (self: Wider2, k: number) => number
+>self : Wider2
+>k : number
+>self.z : number
+>self : Wider2
+>z : number
+
+  });
+end
+

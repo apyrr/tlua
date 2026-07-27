@@ -26,6 +26,14 @@ type MetatableTypeKey struct {
 	metatableID TypeId
 }
 
+// LuaMetatableAugmentedParamKey interns one augmented metatable parameter: the literal the call
+// passes and the declared parameter type together determine the result, and a type reference is
+// not interned, so rebuilding one twice would hand out two types where one is meant.
+type LuaMetatableAugmentedParamKey struct {
+	nodeId ast.NodeId
+	typeId TypeId
+}
+
 type luaMetatableCallKind int
 
 const (
@@ -122,6 +130,249 @@ func (c *Checker) checkLuaMetatableCall(node *ast.Node, returnType *Type) *Type 
 // so a fresh literal never reaches a type that outlives the expression.
 func (c *Checker) getLuaMetatableArgumentType(arg *ast.Node) *Type {
 	return c.getWidenedType(c.getRegularTypeOfObjectLiteral(c.checkExpressionCached(arg)))
+}
+
+// getLuaMetatableIndexProbeType is the table a metatable literal's __index falls back to, read
+// with no contextual type of its own: this answer is what supplies the literal's context, so it
+// cannot ask for one. Only a literal that names __index exactly once, statically, and initializes
+// it with an expression whose type does not depend on context -- a name, a member access, or a
+// context-free object literal -- commits to a fallback here; every other shape leaves the
+// metatable unaugmented, which is what the parameter already declared. A function-valued __index
+// answers nothing either, exactly as it augments nothing in getSetmetatableResultType. A nil arm
+// reads through: the shared shape filter strips it by the same rule the pairing applies -- a nil
+// arm says only that there may be no fallback at all -- so the receiver and the returned value
+// agree on the defaults idiom, imprecision included.
+func (c *Checker) getLuaMetatableIndexProbeType(metatableLiteral *ast.Node) *Type {
+	metatableLiteral = ast.SkipParentheses(metatableLiteral)
+	if !ast.IsObjectLiteralExpression(metatableLiteral) {
+		return nil
+	}
+	if cached, ok := c.luaMetatableIndexProbes[metatableLiteral]; ok {
+		return cached
+	}
+	// Recorded before the initializer is typed: an __index whose type leads back to this
+	// literal must find no augmentation rather than recur.
+	c.luaMetatableIndexProbes[metatableLiteral] = nil
+	probe := c.computeLuaMetatableIndexProbeType(metatableLiteral)
+	c.luaMetatableIndexProbes[metatableLiteral] = probe
+	return probe
+}
+
+func (c *Checker) computeLuaMetatableIndexProbeType(metatableLiteral *ast.Node) *Type {
+	initializer := luaMetatableIndexProbeInitializer(metatableLiteral)
+	if initializer == nil {
+		return nil
+	}
+	init := ast.SkipParentheses(initializer)
+	if !ast.IsIdentifier(init) && !ast.IsPropertyAccessExpression(init) &&
+		!(ast.IsObjectLiteralExpression(init) && !c.isContextSensitive(init)) {
+		return nil
+	}
+	// Widened and de-freshened like any metatable operand (getLuaMetatableArgumentType), so a
+	// fresh literal's members never reach a type that outlives the expression.
+	source, isFunction, ok := c.luaMetatableSourceShape(c.getWidenedType(c.getRegularTypeOfObjectLiteral(c.getContextFreeTypeOfExpression(init))))
+	if !ok || isFunction {
+		return nil
+	}
+	return source
+}
+
+// luaMetatableIndexProbeInitializer is the initializer of a metatable literal's one
+// statically-named __index entry, or nil. A dynamic key may or may not spell __index at
+// runtime, and a duplicated key says two things; neither commits to a fallback.
+func luaMetatableIndexProbeInitializer(metatableLiteral *ast.Node) *ast.Node {
+	var initializer *ast.Node
+	for _, prop := range metatableLiteral.Properties() {
+		if !ast.IsPropertyAssignment(prop) {
+			// A positional entry keys a number, never a metamethod name.
+			continue
+		}
+		name := prop.Name()
+		if name == nil {
+			return nil
+		}
+		text, static := ast.TryGetTextOfPropertyName(name)
+		if !static {
+			return nil
+		}
+		if text != "__index" {
+			continue
+		}
+		if initializer != nil {
+			return nil
+		}
+		initializer = prop.Initializer()
+	}
+	return initializer
+}
+
+// unpairLuaSelfIndexProbe sheds a probe's pairing when __index names the very table being
+// paired: the call replaces that table's metatable, so the pairing the probe was read with is
+// the one being discarded, and a self-lookup answers no key the table itself misses. An
+// __index naming a DIFFERENT paired table keeps its pairing -- a table __index lookup is a
+// full index of that table, so its own fallback really answers.
+func (c *Checker) unpairLuaSelfIndexProbe(probe *Type, metatableArg *ast.Node, tableArg *ast.Node) *Type {
+	unpaired := c.getUnpairedTableType(probe)
+	if unpaired == probe {
+		return probe
+	}
+	initializer := luaMetatableIndexProbeInitializer(ast.SkipParentheses(metatableArg))
+	if initializer == nil {
+		return probe
+	}
+	init := ast.SkipParentheses(initializer)
+	operand := ast.SkipParentheses(tableArg)
+	if !ast.IsIdentifier(init) || !ast.IsIdentifier(operand) || c.getResolvedSymbol(init) != c.getResolvedSymbol(operand) {
+		return probe
+	}
+	return unpaired
+}
+
+// augmentLuaMetatableParamType is the contextual type a setmetatable call gives the metatable
+// literal it is passed: the declared LuaMetatable<T>, with T intersected with whatever __index
+// falls back to. Lua hands a metamethod the PAIRED table -- the fallback's members included --
+// so the declared parameter alone types every metamethod's first parameter as the bare table,
+// and a body that reads an inherited member is refused. The pairing itself cannot be the
+// contextual type: it is built from the checked metatable, which is what this types. The
+// intersection is the same approximation getSetmetatableResultType falls back to for a generic
+// operand -- except that the fallback is first reduced to the keys the table does not answer
+// itself (reduceLuaMetatableProbeType) -- and it only ever widens what a metamethod's first
+// parameter admits, so nothing that checked before stops checking.
+func (c *Checker) augmentLuaMetatableParamType(callNode *ast.Node, argIndex int, arg *ast.Node, paramType *Type) *Type {
+	if argIndex != 1 || arg == nil {
+		return paramType
+	}
+	// The metatable operand of a real setmetatable, and only where the call writes the literal
+	// out: a variable operand carries whatever type it declares, and no context reaches it.
+	arg = ast.SkipParentheses(arg)
+	if !ast.IsObjectLiteralExpression(arg) || !c.getLuaMetatableCall(callNode).isSet() {
+		return paramType
+	}
+	key := LuaMetatableAugmentedParamKey{nodeId: ast.GetNodeId(arg), typeId: paramType.id}
+	if cached, ok := c.luaMetatableAugmentedParamTypes[key]; ok {
+		return cached
+	}
+	result := paramType
+	globalType := c.getGlobalType("LuaMetatable", 1 /*arity*/, false /*reportErrors*/)
+	probe := c.getLuaMetatableIndexProbeType(arg)
+	if probe != nil {
+		if args := callNode.Arguments(); len(args) != 0 {
+			probe = c.unpairLuaSelfIndexProbe(probe, arg, args[0])
+		}
+	}
+	if globalType != c.emptyGenericType {
+		// The parameter is `LuaMetatable<T> | nil`; only the LuaMetatable arm carries the
+		// operand. The receiver base sheds NoInfer and the pairing setmetatable is replacing;
+		// the intersection with the fallback carries no NoInfer at all, because the wrapper
+		// changes how an intersection over a union normalizes, and the parameter frozen from
+		// this context must be the same type the applicability check relates it to. Rebuilding
+		// works uninstantiated -- instantiation distributes over the intersection -- and
+		// getIntersectionType dedups, so augmenting twice augments once.
+		result = c.mapType(paramType, func(t *Type) *Type {
+			if t.flags&TypeFlagsObject == 0 || t.objectFlags&ObjectFlagsReference == 0 || t.Target() != globalType {
+				return t
+			}
+			typeArguments := c.getTypeArguments(t)
+			if len(typeArguments) != 1 {
+				return t
+			}
+			stripped := c.removeNoInferTypes(typeArguments[0])
+			base := c.getLuaMetatableReceiverBaseType(typeArguments[0], callNode)
+			receiver := base
+			if probe != nil {
+				receiver = c.augmentLuaMetatableOperandType(base, probe)
+			}
+			switch {
+			case receiver != base:
+				return c.createTypeFromGenericGlobalType(globalType, []*Type{receiver})
+			case base != stripped:
+				// No fallback to add, but the argument still named a stale pairing or an
+				// uninstantiated variable; the declared NoInfer shape is kept.
+				return c.createTypeFromGenericGlobalType(globalType, []*Type{c.getNoInferType(base)})
+			default:
+				return t
+			}
+		})
+	}
+	c.luaMetatableAugmentedParamTypes[key] = result
+	return result
+}
+
+// augmentLuaMetatableOperandType intersects each arm of the table operand with the fallback
+// reduced against that arm alone. A union's arms answer different keys, so a collision is an
+// arm-level fact: reducing against the union would keep any key that is not common to every
+// arm, and the arm that answers such a key itself would meet the fallback in never and vanish
+// from the read. An arm that takes nothing from the fallback stays itself.
+func (c *Checker) augmentLuaMetatableOperandType(base *Type, probe *Type) *Type {
+	return c.mapType(base, func(arm *Type) *Type {
+		reduced := c.reduceLuaMetatableProbeType(probe, arm)
+		if reduced == nil {
+			return arm
+		}
+		return c.getIntersectionType([]*Type{arm, reduced})
+	})
+}
+
+// getLuaMetatableReceiverBaseType is the table a metamethod receiver is built from: the
+// declared type argument shed of NoInfer and of any pairing the call is replacing --
+// setmetatable replaces a metatable, so the old fallback's members must not survive into the
+// new receiver. A type argument that is still an uninstantiated variable resolves through the
+// table operand itself, which is what the variable becomes; only a genuinely generic operand
+// stays abstract.
+func (c *Checker) getLuaMetatableReceiverBaseType(typeArgument *Type, callNode *ast.Node) *Type {
+	base := c.getUnpairedTableType(c.removeNoInferTypes(typeArgument))
+	if !c.isGenericObjectType(base) {
+		return base
+	}
+	args := callNode.Arguments()
+	if len(args) == 0 {
+		return base
+	}
+	operand := c.getUnpairedTableType(c.getWidenedType(c.getRegularTypeOfObjectLiteral(c.checkExpressionCached(args[0]))))
+	if c.isGenericObjectType(operand) {
+		return base
+	}
+	return operand
+}
+
+// reduceLuaMetatableProbeType drops from the __index fallback every key the table declares for
+// itself. The runtime never consults __index for a key the table answers, so a declared key
+// reads at the table's own type; a plain intersection would relate the two declarations
+// instead, and a collision would meet in never -- admitting exactly the reads the bare table
+// refused. A key the table admits only optionally, or through an index signature, is dropped
+// too, and reads as the table alone declares it: the true read is the non-nil half or the
+// fallback, but no per-key merge survives intersecting with the table -- an intersection can
+// only narrow -- so the fallback half is given up rather than misstated. The pairing the call
+// returns models that read (getMetatableFallthroughSymbol); the receiver cannot be that
+// pairing, because it must form while the type argument may still be uninstantiated. A
+// generic base keeps the whole fallback, exactly as the generic pairing keeps the whole
+// intersection. An operator-named member is dropped no matter the base: Lua does not inherit
+// metamethods through __index, but a member with an operator's name dispatches ambiently, and
+// the receiver must not offer an operator the pairing refuses -- at the price of the explicit
+// member read of such a name. A fallback reduced to nothing augments nothing.
+func (c *Checker) reduceLuaMetatableProbeType(probe *Type, base *Type) *Type {
+	concrete := !c.isGenericObjectType(base)
+	props := c.getPropertiesOfType(probe)
+	keptProps := core.Filter(props, func(p *ast.Symbol) bool {
+		if slices.Contains(luaOperatorMetamethods, p.Name) {
+			return false
+		}
+		return !concrete || c.getPropertyOfType(base, p.Name) == nil && c.getApplicableIndexInfoForName(base, p.Name) == nil
+	})
+	indexInfos := c.getIndexInfosOfType(probe)
+	keptInfos := indexInfos
+	if concrete {
+		keptInfos = core.Filter(indexInfos, func(info *IndexInfo) bool {
+			return c.getApplicableIndexInfo(base, info.keyType) == nil
+		})
+	}
+	if len(keptProps) == len(props) && len(keptInfos) == len(indexInfos) {
+		return probe
+	}
+	if len(keptProps) == 0 && len(keptInfos) == 0 {
+		return nil
+	}
+	return c.newAnonymousType(nil /*symbol*/, createSymbolTable(keptProps), nil, nil, keptInfos)
 }
 
 // attachLuaMetatablePairings maps each augmentation symbol to the statement-form
@@ -394,8 +645,10 @@ func (c *Checker) applyLuaDeclaredMetatablePairing(t *Type, node *ast.Node) *Typ
 // table argument may have triggered the symbol resolution that runs it -- and at that
 // moment the call's signature is still resolving, so contextual typing through the call
 // finds nothing and a context-sensitive metatable member would lose its parameter types.
-// The context the call would provide is supplied directly: setmetatable declares the
-// operand as LuaMetatable<T> with T the table being paired. Memoized per call so prefix
+// The context the call would provide is supplied directly, and reproduced exactly -- the
+// declared NoInfer and the __index augmentation included -- because the literal freezes its
+// members against whichever path reaches it first: setmetatable declares the operand as
+// LuaMetatable<NoInfer<T>> with T the table being paired. Memoized per call so prefix
 // rebuilds reuse the same interned type.
 func (c *Checker) getLuaDeclaredPairingMetatableType(node *ast.Node, tableType *Type) *Type {
 	if cached, ok := c.luaPairingMetatableArgTypes[node]; ok {
@@ -416,6 +669,18 @@ func (c *Checker) getLuaDeclaredPairingMetatableType(node *ast.Node, tableType *
 		// the literal with the written type; the replay must match it or the
 		// literal freezes under a contract the call then contradicts.
 		operandType = c.getTypeFromTypeNode(typeArguments[0])
+	}
+	rawOperand := c.getUnpairedTableType(operandType)
+	operandType = c.getNoInferType(rawOperand)
+	if probe := c.getLuaMetatableIndexProbeType(arg); probe != nil {
+		if args := node.Arguments(); len(args) != 0 {
+			probe = c.unpairLuaSelfIndexProbe(probe, arg, args[0])
+		}
+		if augmented := c.augmentLuaMetatableOperandType(rawOperand, probe); augmented != rawOperand {
+			// The receiver carries no NoInfer, exactly as the call-site augmentation builds
+			// it: the two paths freeze the same literal and must agree.
+			operandType = augmented
+		}
 	}
 	var t *Type
 	if globalType := c.getGlobalType("LuaMetatable", 1 /*arity*/, false /*reportErrors*/); globalType != c.emptyGenericType {
@@ -629,15 +894,26 @@ func (c *Checker) getMetatableSource(metatableType *Type, name string, allowOpti
 	if prop == nil || !allowOptional && prop.Flags&ast.SymbolFlagsOptional != 0 {
 		return nil, false
 	}
-	source := c.removeMissingOrUndefinedType(c.getTypeOfSymbol(prop))
-	if c.isErrorType(source) || source.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) == 0 {
-		return nil, false
-	}
-	isFunction := len(c.getSignaturesOfType(source, SignatureKindCall)) != 0
-	if isFunction && (len(c.getPropertiesOfType(source)) != 0 || len(c.getIndexInfosOfType(source)) != 0) {
+	source, isFunction, ok := c.luaMetatableSourceShape(c.getTypeOfSymbol(prop))
+	if !ok {
 		return nil, false
 	}
 	return source, isFunction
+}
+
+// luaMetatableSourceShape reports whether a type has the shape a metamethod source takes -- a
+// table or a function -- and which of the two it is. Shared with the __index probe, which has a
+// candidate type but no member symbol to read it from.
+func (c *Checker) luaMetatableSourceShape(source *Type) (*Type, bool /*isFunction*/, bool /*ok*/) {
+	source = c.removeMissingOrUndefinedType(source)
+	if c.isErrorType(source) || source.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) == 0 {
+		return nil, false, false
+	}
+	isFunction := len(c.getSignaturesOfType(source, SignatureKindCall)) != 0
+	if isFunction && (len(c.getPropertiesOfType(source)) != 0 || len(c.getIndexInfosOfType(source)) != 0) {
+		return nil, false, false
+	}
+	return source, isFunction, true
 }
 
 // getMetatableCallSource returns __call when it commits to a callable, or nil. Its signatures

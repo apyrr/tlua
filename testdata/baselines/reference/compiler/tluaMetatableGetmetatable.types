@@ -15,7 +15,7 @@ local Helpers = { describe = function(self: table): string return "d"; end };
 local obj = setmetatable({ n = 1 }, { __index = Helpers });
 >obj : { describe: (self: table) => string; n: number; }
 >setmetatable({ n = 1 }, { __index = Helpers }) : { describe: (self: table) => string; n: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -61,7 +61,7 @@ declare cond: boolean;
 local p1 = setmetatable({ n = 1 }, { __index = { a = 1 } });
 >p1 : { n: number; a: number; }
 >setmetatable({ n = 1 }, { __index = { a = 1 } }) : { n: number; a: number; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
@@ -74,7 +74,7 @@ local p1 = setmetatable({ n = 1 }, { __index = { a = 1 } });
 local p2 = setmetatable({ s = "x" }, { __index = { b = "b" } });
 >p2 : { s: string; b: string; }
 >setmetatable({ s = "x" }, { __index = { b = "b" } }) : { s: string; b: string; }
->setmetatable : <T extends table>(value: T, metatable: LuaMetatable<T> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ s = "x" } : { s: string; }
 >s : string
 >"x" : "x"
