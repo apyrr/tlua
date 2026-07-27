@@ -127,8 +127,10 @@
             "AsKeyword",
             "AssertsKeyword",
             "AnyKeyword",
-            "AsyncKeyword",
-            "AwaitKeyword",
+            {
+                "name": "SuspendKeyword",
+                "comment": "out of alphabetical order on purpose: renamed from AsyncKeyword in place so the Kind value stays put"
+            },
             "BooleanKeyword",
             "ConstructorKeyword",
             "DeclareKeyword",
@@ -539,7 +541,7 @@
             "ModifierSyntaxKind": [
                 "AbstractKeyword",
                 "AccessorKeyword",
-                "AsyncKeyword",
+                "SuspendKeyword",
                 "DeclareKeyword",
                 "DefaultKeyword",
                 "ExportKeyword",
@@ -1012,10 +1014,9 @@
                     "MinusToken": "MinusToken",
                     "QuestionDotToken": "QuestionDotToken",
                     "AssertsKeyword": "AssertsKeyword",
-                    "AwaitKeyword": "AwaitKeyword",
                     "AbstractKeyword": "AbstractKeyword",
                     "AccessorKeyword": "AccessorKeyword",
-                    "AsyncKeyword": "AsyncKeyword",
+                    "SuspendKeyword": "SuspendKeyword",
                     "DeclareKeyword": "DeclareKeyword",
                     "DefaultKeyword": "DefaultKeyword",
                     "ExportKeyword": "ExportKeyword",

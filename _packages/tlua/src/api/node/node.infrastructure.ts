@@ -114,8 +114,8 @@ export function modifierToFlag(kind: SyntaxKind): ModifierFlags {
             return ModifierFlags.Ambient;
         case SyntaxKind.DefaultKeyword:
             return ModifierFlags.Default;
-        case SyntaxKind.AsyncKeyword:
-            return ModifierFlags.Async;
+        case SyntaxKind.SuspendKeyword:
+            return ModifierFlags.Suspend;
         case SyntaxKind.ReadonlyKeyword:
             return ModifierFlags.Readonly;
         case SyntaxKind.OverrideKeyword:

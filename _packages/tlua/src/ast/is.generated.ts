@@ -21,8 +21,6 @@ import type {
     AssignmentOperatorOrHigher,
     AssignmentOperatorToken,
     AsteriskToken,
-    AsyncKeyword,
-    AwaitKeyword,
     BinaryExpression,
     BinaryOperator,
     BinaryOperatorToken,
@@ -241,6 +239,7 @@ import type {
     StringLiteral,
     StringLiteralLikeNode,
     SuperExpression,
+    SuspendKeyword,
     SyntaxList,
     SyntheticExpression,
     SyntheticReferenceExpression,
@@ -1000,7 +999,7 @@ export function isBindingName(node: Node): node is BindingName {
 
 export function isModifierLike(node: Node): node is ModifierLike {
     const kind = node.kind;
-    return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword || kind === SyntaxKind.AsyncKeyword || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword || kind === SyntaxKind.StaticKeyword;
+    return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword || kind === SyntaxKind.SuspendKeyword || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword || kind === SyntaxKind.StaticKeyword;
 }
 
 export function isJsxChild(node: Node): node is JsxChild {
@@ -1183,7 +1182,7 @@ export function isPseudoLiteralKind(kind: SyntaxKind): kind is PseudoLiteralSynt
 export function isModifierKind(kind: SyntaxKind): kind is ModifierSyntaxKind {
     return kind === SyntaxKind.AbstractKeyword
         || kind === SyntaxKind.AccessorKeyword
-        || kind === SyntaxKind.AsyncKeyword
+        || kind === SyntaxKind.SuspendKeyword
         || kind === SyntaxKind.DeclareKeyword
         || kind === SyntaxKind.DefaultKeyword
         || kind === SyntaxKind.ExportKeyword
@@ -1400,10 +1399,6 @@ export function isAssertsKeyword(node: Node): node is AssertsKeyword {
     return node.kind === SyntaxKind.AssertsKeyword;
 }
 
-export function isAwaitKeyword(node: Node): node is AwaitKeyword {
-    return node.kind === SyntaxKind.AwaitKeyword;
-}
-
 export function isAbstractKeyword(node: Node): node is AbstractKeyword {
     return node.kind === SyntaxKind.AbstractKeyword;
 }
@@ -1412,8 +1407,8 @@ export function isAccessorKeyword(node: Node): node is AccessorKeyword {
     return node.kind === SyntaxKind.AccessorKeyword;
 }
 
-export function isAsyncKeyword(node: Node): node is AsyncKeyword {
-    return node.kind === SyntaxKind.AsyncKeyword;
+export function isSuspendKeyword(node: Node): node is SuspendKeyword {
+    return node.kind === SyntaxKind.SuspendKeyword;
 }
 
 export function isDeclareKeyword(node: Node): node is DeclareKeyword {

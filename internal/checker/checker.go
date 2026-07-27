@@ -103,7 +103,6 @@ const (
 	CachedTypeKindStringIndexType
 	CachedTypeKindEquivalentBaseType
 	CachedTypeKindApparentType
-	CachedTypeKindAwaitedType
 	CachedTypeKindEvolvingArrayType
 	CachedTypeKindArrayLiteralType
 	CachedTypeKindPermissiveInstantiation
@@ -113,7 +112,6 @@ const (
 	CachedTypeKindIndexedAccessForWriting
 	CachedTypeKindWidened
 	CachedTypeKindRegularObjectLiteral
-	CachedTypeKindPromisedTypeOfPromise
 	CachedTypeKindDefaultOnlyType
 	CachedTypeKindSyntheticType
 )
@@ -432,10 +430,10 @@ const (
 type IterationUse uint32
 
 const (
-	IterationUseAllowsSyncIterablesFlag  IterationUse = 1 << 0
-	IterationUseAllowsAsyncIterablesFlag IterationUse = 1 << 1
-	IterationUseAllowsStringInputFlag    IterationUse = 1 << 2
-	IterationUseForOfFlag                IterationUse = 1 << 3
+	IterationUseAllowsSyncIterablesFlag IterationUse = 1 << 0
+	// 1 << 1 was IterationUseAllowsAsyncIterablesFlag; await and async iteration are removed in tlua.
+	IterationUseAllowsStringInputFlag IterationUse = 1 << 2
+	IterationUseForOfFlag             IterationUse = 1 << 3
 	// 1 << 4 was IterationUseYieldStarFlag; generators are removed in tlua.
 	IterationUseSpreadFlag          IterationUse = 1 << 5
 	IterationUseDestructuringFlag   IterationUse = 1 << 6
@@ -445,7 +443,7 @@ const (
 	IterationUseSpread        = IterationUseAllowsSyncIterablesFlag | IterationUseSpreadFlag
 	IterationUseDestructuring = IterationUseAllowsSyncIterablesFlag | IterationUseDestructuringFlag
 	IterationUseForOf         = IterationUseAllowsSyncIterablesFlag | IterationUseAllowsStringInputFlag | IterationUseForOfFlag
-	IterationUseCacheFlags    = IterationUseAllowsSyncIterablesFlag | IterationUseAllowsAsyncIterablesFlag | IterationUseForOfFlag
+	IterationUseCacheFlags    = IterationUseAllowsSyncIterablesFlag | IterationUseForOfFlag
 )
 
 type IterationTypes struct {
@@ -753,7 +751,6 @@ type Checker struct {
 	renamedBindingElementsInTypes               []*ast.Node
 	contextualInfos                             []ContextualInfo
 	inferenceContextInfos                       []InferenceContextInfo
-	awaitedTypeStack                            []*Type
 	reverseMappedSourceStack                    []*Type
 	reverseMappedTargetStack                    []*Type
 	reverseExpandingFlags                       ExpandingFlags
@@ -766,16 +763,10 @@ type Checker struct {
 	getGlobalESSymbolType                       func() *Type
 	getGlobalNonNullableTypeAliasOrNil          func() *ast.Symbol
 	getGlobalExtractSymbol                      func() *ast.Symbol
-	getGlobalAwaitedSymbol                      func() *ast.Symbol
-	getGlobalAwaitedSymbolOrNil                 func() *ast.Symbol
 	getGlobalNaNSymbolOrNil                     func() *ast.Symbol
 	getGlobalRecordSymbol                       func() *ast.Symbol
 	getGlobalESSymbolConstructorSymbolOrNil     func() *ast.Symbol
 	getGlobalESSymbolConstructorTypeSymbolOrNil func() *ast.Symbol
-	getGlobalPromiseType                        func() *Type
-	getGlobalPromiseTypeChecked                 func() *Type
-	getGlobalPromiseConstructorSymbol           func() *ast.Symbol
-	getGlobalPromiseConstructorSymbolOrNil      func() *ast.Symbol
 	getGlobalNoInferSymbolOrNil                 func() *ast.Symbol
 	getGlobalIteratorType                       func() *Type
 	getGlobalIterableType                       func() *Type
@@ -784,13 +775,6 @@ type Checker struct {
 	getGlobalIterableIteratorTypeChecked        func() *Type
 	getGlobalIteratorObjectType                 func() *Type
 	getGlobalGeneratorType                      func() *Type
-	getGlobalAsyncIteratorType                  func() *Type
-	getGlobalAsyncIterableType                  func() *Type
-	getGlobalAsyncIterableTypeChecked           func() *Type
-	getGlobalAsyncIterableIteratorType          func() *Type
-	getGlobalAsyncIterableIteratorTypeChecked   func() *Type
-	getGlobalAsyncIteratorObjectType            func() *Type
-	getGlobalAsyncGeneratorType                 func() *Type
 	getGlobalIteratorYieldResultType            func() *Type
 	getGlobalIteratorReturnResultType           func() *Type
 	getGlobalTypedPropertyDescriptorType        func() *Type
@@ -811,7 +795,6 @@ type Checker struct {
 	getLuaBrandMembers                          func() map[string]*Type
 	luaTableTypeResults                         map[*Type]bool
 	syncIterationTypesResolver                  *IterationTypesResolver
-	asyncIterationTypesResolver                 *IterationTypesResolver
 	isPrimitiveOrObjectOrEmptyType              func(*Type) bool
 	containsMissingType                         func(*Type) bool
 	couldContainTypeVariables                   func(*Type) bool
@@ -1007,16 +990,10 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.getGlobalESSymbolType = c.getGlobalTypeResolver("Symbol", 0 /*arity*/, false /*reportErrors*/)
 	c.getGlobalNonNullableTypeAliasOrNil = c.getGlobalTypeAliasResolver("NonNullable", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalExtractSymbol = c.getGlobalTypeAliasResolver("Extract", 2 /*arity*/, true /*reportErrors*/)
-	c.getGlobalAwaitedSymbol = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, true /*reportErrors*/)
-	c.getGlobalAwaitedSymbolOrNil = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalNaNSymbolOrNil = c.getGlobalValueSymbolResolver("NaN", false /*reportErrors*/)
 	c.getGlobalRecordSymbol = c.getGlobalTypeAliasResolver("Record", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalESSymbolConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Symbol", false /*reportErrors*/)
 	c.getGlobalESSymbolConstructorTypeSymbolOrNil = c.getGlobalTypeSymbolResolver("SymbolConstructor", false /*reportErrors*/)
-	c.getGlobalPromiseType = c.getGlobalTypeResolver("Promise", 1 /*arity*/, false /*reportErrors*/)
-	c.getGlobalPromiseTypeChecked = c.getGlobalTypeResolver("Promise", 1 /*arity*/, true /*reportErrors*/)
-	c.getGlobalPromiseConstructorSymbol = c.getGlobalValueSymbolResolver("Promise", true /*reportErrors*/)
-	c.getGlobalPromiseConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Promise", false /*reportErrors*/)
 	c.getGlobalNoInferSymbolOrNil = c.getGlobalTypeAliasResolver("NoInfer", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIteratorType = c.getGlobalTypeResolver("Iterator", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIterableType = c.getGlobalTypeResolver("Iterable", 3 /*arity*/, false /*reportErrors*/)
@@ -1025,13 +1002,6 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.getGlobalIterableIteratorTypeChecked = c.getGlobalTypeResolver("IterableIterator", 3 /*arity*/, true /*reportErrors*/)
 	c.getGlobalIteratorObjectType = c.getGlobalTypeResolver("IteratorObject", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalGeneratorType = c.getGlobalTypeResolver("Generator", 3 /*arity*/, false /*reportErrors*/)
-	c.getGlobalAsyncIteratorType = c.getGlobalTypeResolver("AsyncIterator", 3 /*arity*/, false /*reportErrors*/)
-	c.getGlobalAsyncIterableType = c.getGlobalTypeResolver("AsyncIterable", 3 /*arity*/, false /*reportErrors*/)
-	c.getGlobalAsyncIterableTypeChecked = c.getGlobalTypeResolver("AsyncIterable", 3 /*arity*/, true /*reportErrors*/)
-	c.getGlobalAsyncIterableIteratorType = c.getGlobalTypeResolver("AsyncIterableIterator", 3 /*arity*/, false /*reportErrors*/)
-	c.getGlobalAsyncIterableIteratorTypeChecked = c.getGlobalTypeResolver("AsyncIterableIterator", 3 /*arity*/, true /*reportErrors*/)
-	c.getGlobalAsyncIteratorObjectType = c.getGlobalTypeResolver("AsyncIteratorObject", 3 /*arity*/, false /*reportErrors*/)
-	c.getGlobalAsyncGeneratorType = c.getGlobalTypeResolver("AsyncGenerator", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIteratorYieldResultType = c.getGlobalTypeResolver("IteratorYieldResult", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIteratorReturnResultType = c.getGlobalTypeResolver("IteratorReturnResult", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalTypedPropertyDescriptorType = c.getGlobalTypeResolver("TypedPropertyDescriptor", 1 /*arity*/, true /*reportErrors*/)
@@ -1269,23 +1239,6 @@ func (c *Checker) initializeIterationResolvers() {
 		mustHaveANextMethodDiagnostic: diagnostics.An_iterator_must_have_a_next_method,
 		mustBeAMethodDiagnostic:       diagnostics.The_0_property_of_an_iterator_must_be_a_method,
 		mustHaveAValueDiagnostic:      diagnostics.The_type_returned_by_the_0_method_of_an_iterator_must_have_a_value_property,
-	}
-	c.asyncIterationTypesResolver = &IterationTypesResolver{
-		iteratorSymbolName:                   "asyncIterator",
-		getGlobalIteratorType:                c.getGlobalAsyncIteratorType,
-		getGlobalIterableType:                c.getGlobalAsyncIterableType,
-		getGlobalIterableTypeChecked:         c.getGlobalAsyncIterableTypeChecked,
-		getGlobalIterableIteratorType:        c.getGlobalAsyncIterableIteratorType,
-		getGlobalIterableIteratorTypeChecked: c.getGlobalAsyncIterableIteratorTypeChecked,
-		getGlobalIteratorObjectType:          c.getGlobalAsyncIteratorObjectType,
-		getGlobalGeneratorType:               c.getGlobalAsyncGeneratorType,
-		getGlobalBuiltinIteratorTypes:        c.getGlobalTypesResolver([]string{"ReadableStreamAsyncIterator"}, 1, false /*reportErrors*/),
-		resolveIterationType: func(t *Type, errorNode *ast.Node) *Type {
-			return c.getAwaitedTypeEx(t, errorNode, diagnostics.Type_of_await_operand_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
-		},
-		mustHaveANextMethodDiagnostic: diagnostics.An_async_iterator_must_have_a_next_method,
-		mustBeAMethodDiagnostic:       diagnostics.The_0_property_of_an_async_iterator_must_be_a_method,
-		mustHaveAValueDiagnostic:      diagnostics.The_type_returned_by_the_0_method_of_an_async_iterator_must_be_a_promise_for_a_type_with_a_value_property,
 	}
 }
 
@@ -1915,7 +1868,7 @@ func isSameScopeDescendentOf(initial *ast.Node, parent *ast.Node, stopAt *ast.No
 		if n == parent {
 			return true
 		}
-		if n == stopAt || ast.IsFunctionLike(n) && (ast.GetImmediatelyInvokedFunctionExpression(n) == nil || (ast.GetFunctionFlags(n)&ast.FunctionFlagsAsync != 0)) {
+		if n == stopAt || ast.IsFunctionLike(n) && (ast.GetImmediatelyInvokedFunctionExpression(n) == nil || (ast.GetFunctionFlags(n)&ast.FunctionFlagsSuspend != 0)) {
 			return false
 		}
 	}
@@ -3191,7 +3144,7 @@ func (c *Checker) isImplementationCompatibleWithOverload(implementation *Signatu
 }
 
 func (c *Checker) checkAllCodePathsInNonVoidFunctionReturnOrThrow(fn *ast.Node, returnType *Type) {
-	// Async functions return their plain declared type in tlua, so the declared
+	// Suspend functions return their plain declared type in tlua, so the declared
 	// return type needs no unwrapping.
 	t := returnType
 	// Functions with an explicitly specified return type that includes `void` or is exactly `any` or `undefined` don't
@@ -3270,16 +3223,12 @@ func (c *Checker) checkIfStatement(node *ast.Node) {
 	c.checkGrammarStatementInAmbientContext(node)
 	t := c.checkTruthinessExpression(node.Expression(), CheckModeNormal)
 	data := node.AsIfStatement()
-	c.checkTestingKnownTruthyCallableOrAwaitableType(node.Expression(), t, data.ThenStatement)
+	c.checkTestingKnownTruthyTypes(node.Expression(), t, data.ThenStatement)
 	c.checkSourceElement(data.ThenStatement)
 	if ast.IsEmptyStatement(data.ThenStatement) {
 		c.error(data.ThenStatement, diagnostics.The_body_of_an_if_statement_cannot_be_the_empty_statement)
 	}
 	c.checkSourceElement(data.ElseStatement)
-}
-
-func (c *Checker) checkTestingKnownTruthyCallableOrAwaitableType(condExpr *ast.Node, condType *Type, body *ast.Node) {
-	c.checkTestingKnownTruthyTypes(condExpr, condType, body)
 }
 
 func (c *Checker) checkTestingKnownTruthyTypes(condExpr *ast.Node, condType *Type, body *ast.Node) {
@@ -3312,10 +3261,9 @@ func (c *Checker) checkTestingKnownTruthyType(condExpr *ast.Node, condType *Type
 		return
 	}
 	// While it technically should be invalid for any known-truthy value
-	// to be tested, we de-scope to functions and Promises unreferenced in
-	// the block as a heuristic to identify the most common bugs. There
-	// are too many false positives for values sourced from type
-	// definitions otherwise.
+	// to be tested, we de-scope to functions unreferenced in the block as
+	// a heuristic to identify the most common bugs. There are too many
+	// false positives for values sourced from type definitions otherwise.
 	callSignatures := c.getSignaturesOfType(t, SignatureKindCall)
 	if len(callSignatures) == 0 {
 		return
@@ -4430,10 +4378,9 @@ func (c *Checker) checkIteratedTypeOrElementType(use IterationUse, inputType *Ty
 }
 
 func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type, sentType *Type, errorNode *ast.Node, checkAssignability bool) *Type {
-	allowAsyncIterables := (use & IterationUseAllowsAsyncIterablesFlag) != 0
 	if inputType == c.neverType {
 		if errorNode != nil {
-			c.reportTypeNotIterableError(errorNode, inputType, allowAsyncIterables)
+			c.reportTypeNotIterableError(errorNode, inputType)
 		}
 		return nil
 	}
@@ -4445,7 +4392,7 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 	// error and, if the iterator yields nothing, fall through instead of
 	// stopping at the iterator protocol.
 	tableLike := c.isArrayLikeType(inputType)
-	if iterableExists || allowAsyncIterables {
+	if iterableExists {
 		iterationTypes := c.getIterationTypesOfIterable(inputType, use, core.IfElse(iterableExists && !tableLike, errorNode, nil))
 		if checkAssignability {
 			if iterationTypes.nextType != nil {
@@ -4598,7 +4545,7 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 			if !iterationTypes.hasTypes() {
 				if errorNode != nil {
 					c.addDeferredDiagnostic(func() {
-						c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
+						c.reportTypeNotIterableError(errorNode, t)
 					})
 				}
 				return IterationTypes{}
@@ -4608,30 +4555,9 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		return c.combineIterationTypes(allIterationTypes)
 	}
 	var diags []*ast.Diagnostic
-	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
-		iterationTypes := c.getIterationTypesOfIterableFast(t, c.asyncIterationTypesResolver)
-		if iterationTypes.hasTypes() {
-			if use&IterationUseForOfFlag != 0 {
-				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
-			}
-			return iterationTypes
-		}
-		iterationTypes = c.getIterationTypesOfIterableSlow(t, c.asyncIterationTypesResolver, errorNode, &diags)
-		if iterationTypes.hasTypes() {
-			if len(diags) != 0 {
-				for _, d := range diags {
-					c.addDiagnostic(d)
-				}
-			}
-			return iterationTypes
-		}
-	}
 	if use&IterationUseAllowsSyncIterablesFlag != 0 {
 		iterationTypes := c.getIterationTypesOfIterableFast(t, c.syncIterationTypesResolver)
 		if iterationTypes.hasTypes() {
-			if use&IterationUseAllowsAsyncIterablesFlag != 0 {
-				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
-			}
 			return iterationTypes
 		}
 		iterationTypes = c.getIterationTypesOfIterableSlow(t, c.syncIterationTypesResolver, errorNode, &diags)
@@ -4641,9 +4567,6 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 					c.addDiagnostic(d)
 				}
 			}
-			if use&IterationUseAllowsAsyncIterablesFlag != 0 {
-				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
-			}
 			return iterationTypes
 		}
 	}
@@ -4651,7 +4574,7 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		// We defer the diagnostic because TypeToString may attempt to resolve symbols that are already being
 		// resolved, possibly causing circularities.
 		c.addDeferredDiagnostic(func() {
-			diagnostic := c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
+			diagnostic := c.reportTypeNotIterableError(errorNode, t)
 			for _, d := range diags {
 				diagnostic.AddRelatedInfo(d)
 			}
@@ -4737,22 +4660,6 @@ func (c *Checker) getIterationTypeUnion(iterationTypes []IterationTypes, f func(
 		return nil
 	}
 	return c.getUnionType(types)
-}
-
-func (c *Checker) getAsyncFromSyncIterationTypes(iterationTypes IterationTypes, errorNode *ast.Node) IterationTypes {
-	if !iterationTypes.hasTypes() ||
-		iterationTypes.yieldType == c.anyType && iterationTypes.returnType == c.anyType && iterationTypes.nextType == c.anyType {
-		return iterationTypes
-	}
-	// if we're requesting diagnostics, report errors for a missing `Awaited<T>`.
-	if errorNode != nil {
-		c.getGlobalAwaitedSymbol()
-	}
-	return IterationTypes{
-		yieldType:  core.OrElse(c.getAwaitedTypeEx(iterationTypes.yieldType, errorNode, nil), c.anyType),
-		returnType: core.OrElse(c.getAwaitedTypeEx(iterationTypes.returnType, errorNode, nil), c.anyType),
-		nextType:   iterationTypes.nextType,
-	}
 }
 
 // Gets the *yield*, *return*, and *next* types of an `Iterable`-like or `AsyncIterable`-like
@@ -5002,14 +4909,8 @@ func (c *Checker) isIteratorResult(t *Type, kind IterationTypeKind) bool {
 	return c.isTypeAssignableTo(core.IfElse(kind == IterationTypeKindYield, c.falseType, c.trueType), doneType)
 }
 
-func (c *Checker) reportTypeNotIterableError(errorNode *ast.Node, t *Type, allowAsyncIterables bool) *ast.Diagnostic {
-	var message *diagnostics.Message
-	if allowAsyncIterables {
-		message = diagnostics.Type_0_must_have_a_Symbol_asyncIterator_method_that_returns_an_async_iterator
-	} else {
-		message = diagnostics.Type_0_must_have_a_Symbol_iterator_method_that_returns_an_iterator
-	}
-	return c.error(errorNode, message, c.TypeToString(t))
+func (c *Checker) reportTypeNotIterableError(errorNode *ast.Node, t *Type) *ast.Diagnostic {
+	return c.error(errorNode, diagnostics.Type_0_must_have_a_Symbol_iterator_method_that_returns_an_iterator, c.TypeToString(t))
 }
 
 func (c *Checker) getIterationDiagnosticDetails(use IterationUse, inputType *Type, allowsStrings bool) (*diagnostics.Message, bool) {
@@ -5087,7 +4988,7 @@ func (c *Checker) areDeclarationFlagsIdentical(left *ast.Declaration, right *ast
 	if isOptionalDeclaration(left) != isOptionalDeclaration(right) {
 		return false
 	}
-	interestingFlags := ast.ModifierFlagsPrivate | ast.ModifierFlagsProtected | ast.ModifierFlagsAsync | ast.ModifierFlagsAbstract | ast.ModifierFlagsReadonly | ast.ModifierFlagsStatic
+	interestingFlags := ast.ModifierFlagsPrivate | ast.ModifierFlagsProtected | ast.ModifierFlagsSuspend | ast.ModifierFlagsAbstract | ast.ModifierFlagsReadonly | ast.ModifierFlagsStatic
 	return getSelectedModifierFlags(left, interestingFlags) == getSelectedModifierFlags(right, interestingFlags)
 }
 
@@ -6249,15 +6150,15 @@ func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
 	}
 }
 
-// checkAsyncCallContext enforces the tlua coroutine contract: an async
+// checkSuspendCallContext enforces the tlua coroutine contract: a suspend
 // function may suspend the running coroutine, so a call to one is only
-// allowed inside another async function. Passing an async function as a
+// allowed inside another suspend function. Passing a suspend function as a
 // value (e.g. to coroutine.create) is not a call and stays unrestricted.
 // It is invoked from the single resolution choke point (getResolvedSignature)
 // so every call-like that actually invokes the signature is covered — plain
 // calls, tagged templates, and JSX elements alike.
-func (c *Checker) checkAsyncCallContext(node *ast.Node, signature *Signature) {
-	if signature.flags&SignatureFlagsAsync == 0 || signature.flags&SignatureFlagsConstruct != 0 {
+func (c *Checker) checkSuspendCallContext(node *ast.Node, signature *Signature) {
+	if signature.flags&SignatureFlagsSuspend == 0 || signature.flags&SignatureFlagsConstruct != 0 {
 		return
 	}
 	switch node.Kind {
@@ -6269,12 +6170,12 @@ func (c *Checker) checkAsyncCallContext(node *ast.Node, signature *Signature) {
 		return
 	}
 	container := ast.GetContainingFunction(node)
-	if container != nil && ast.GetFunctionFlags(container)&ast.FunctionFlagsAsync != 0 {
+	if container != nil && ast.GetFunctionFlags(container)&ast.FunctionFlagsSuspend != 0 {
 		return
 	}
-	diagnostic := c.error(ast.GetInvokedExpression(node), diagnostics.An_async_function_can_only_be_called_from_an_async_context)
+	diagnostic := c.error(ast.GetInvokedExpression(node), diagnostics.A_suspend_function_can_only_be_called_from_a_suspend_context)
 	if container != nil && ast.IsFunctionLikeDeclaration(container) {
-		diagnostic.AddRelatedInfo(createDiagnosticForNode(core.OrElse(container.Name(), container), diagnostics.Did_you_mean_to_mark_this_function_as_async))
+		diagnostic.AddRelatedInfo(createDiagnosticForNode(core.OrElse(container.Name(), container), diagnostics.Did_you_mean_to_mark_this_function_as_suspend))
 	}
 }
 
@@ -6349,12 +6250,12 @@ func (c *Checker) getResolvedSignature(node *ast.Node, candidatesOutArray *[]*Si
 		// types from the control flow analysis.
 		if len(c.flowLoopStack) == 0 {
 			links.resolvedSignature = result
-			// Enforce the async coroutine contract once per node, at the point
+			// Enforce the suspend coroutine contract once per node, at the point
 			// the real (non-flow) signature is cached. candidatesOutArray is
 			// non-nil only for language-service signature help, which must not
 			// emit diagnostics.
 			if candidatesOutArray == nil {
-				c.checkAsyncCallContext(node, result)
+				c.checkSuspendCallContext(node, result)
 			}
 		} else {
 			links.resolvedSignature = cached
@@ -7744,7 +7645,7 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethodDeferred(node *ast
 			c.checkSourceElement(body)
 		} else {
 			// Expression-bodied function: check the body against the declared
-			// return type directly (async returns its plain type in tlua).
+			// return type directly (suspend returns its plain type in tlua).
 			exprType := c.checkExpression(body)
 			if returnType != nil {
 				c.checkReturnExpression(node, returnType, body, body, exprType)
@@ -9055,7 +8956,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			if ast.IsIfStatement(parent) {
 				body = parent.AsIfStatement().ThenStatement
 			}
-			c.checkTestingKnownTruthyCallableOrAwaitableType(left, leftType, body)
+			c.checkTestingKnownTruthyTypes(left, leftType, body)
 		}
 		if ast.IsLogicalBinaryOperator(operator) {
 			c.checkTruthinessOfType(leftType, left)
@@ -9117,10 +9018,9 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			return resultType
 		}
 		if resultType == nil {
-			// Types that have a reasonably good chance of being a valid operand type.
-			// If both types have an awaited type of one of these, we'll assume the user
-			// might be missing an await without doing an exhaustive check that inserting
-			// await(s) will actually be a completely valid binary expression.
+			// Types that have a reasonably good chance of being a valid operand type:
+			// if both sides are close enough, report the operator error against the
+			// operand types themselves rather than a generic mismatch.
 			closeEnoughKind := TypeFlagsNumberLike | TypeFlagsStringLike | TypeFlagsAnyOrUnknown
 			c.reportOperatorError(leftType, operator, rightType, errorNode, func(left *Type, right *Type) bool {
 				return c.isTypeAssignableToKind(left, closeEnoughKind) && c.isTypeAssignableToKind(right, closeEnoughKind)
@@ -10368,14 +10268,6 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 		return core.IfElse(c.compilerOptions.UsesWildcardTypes(),
 			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun,
 			diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_and_then_add_bun_to_the_types_field_in_your_tluaconfig)
-	case "Map", "Set", "Promise", "ast.Symbol", "WeakMap", "WeakSet", "Iterator", "AsyncIterator", "SharedArrayBuffer", "Atomics", "AsyncIterable",
-		"AsyncIterableIterator", "AsyncGenerator", "AsyncGeneratorFunction", "BigInt", "Reflect", "BigInt64Array", "BigUint64Array":
-		return diagnostics.Cannot_find_name_0_Do_you_need_to_change_your_target_library_Try_changing_the_lib_compiler_option_to_1_or_later
-	case "await":
-		if ast.IsCallExpression(node.Parent) {
-			return diagnostics.Cannot_find_name_0_Did_you_mean_to_write_this_in_an_async_function
-		}
-		fallthrough
 	default:
 		return diagnostics.Cannot_find_name_0
 	}
@@ -15869,12 +15761,12 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 	if hasRestParameter(declaration) {
 		flags |= SignatureFlagsHasRestParameter
 	}
-	if ast.HasSyntacticModifier(declaration, ast.ModifierFlagsAsync) {
-		// The tlua coroutine contract: async-ness rides the signature so call
+	if ast.HasSyntacticModifier(declaration, ast.ModifierFlagsSuspend) {
+		// The tlua coroutine contract: suspend-ness rides the signature so call
 		// sites can enforce it through aliases, instantiation, and unions. Read
-		// the modifier directly (not GetFunctionFlags, which is body-only) so an
-		// `async (x) => T` function *type* node carries the flag too.
-		flags |= SignatureFlagsAsync
+		// the modifier directly (not GetFunctionFlags, which is body-only) so a
+		// `suspend (x) => T` function *type* node carries the flag too.
+		flags |= SignatureFlagsSuspend
 	}
 	links.resolvedSignature = c.newSignature(flags, declaration, typeParameters, thisParameter, parameters, nil /*resolvedReturnType*/, nil /*resolvedTypePredicate*/, minArgumentCount)
 	return links.resolvedSignature
@@ -16097,7 +15989,7 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 	if returnType == nil {
 		returnType = fallbackReturnType
 	}
-	// An async function returns its plain declared type (or pack): async is a
+	// A suspend function returns its plain declared type (or pack): suspend is a
 	// coroutine contract in tlua, not a Promise wrapper.
 	return returnType
 }
@@ -16158,18 +16050,6 @@ func mayReturnNever(fn *ast.Node) bool {
 		return true
 	}
 	return false
-}
-
-func (c *Checker) createPromiseType(promisedType *Type) *Type {
-	// creates a `Promise<T>` type where `T` is the promisedType argument
-	globalPromiseType := c.getGlobalPromiseTypeChecked()
-	if globalPromiseType != c.emptyGenericType {
-		// if the promised type is itself a promise, get the underlying type; otherwise, fallback to the promised type
-		// Unwrap an `Awaited<T>` to `T` to improve inference.
-		promisedType = core.OrElse(c.getAwaitedTypeNoAlias(c.unwrapAwaitedType(promisedType)), c.unknownType)
-		return c.createTypeReference(globalPromiseType, []*Type{promisedType})
-	}
-	return c.unknownType
 }
 
 func (c *Checker) getWidenedLiteralLikeTypeForContextualReturnTypeIfNeeded(t *Type, contextualSignatureReturnType *Type) *Type {
@@ -18788,10 +18668,6 @@ func (c *Checker) getIntendedTypeFromJSDocTypeReference(node *ast.Node) *Type {
 			case "array":
 				if len(typeArgs) == 0 && !c.noImplicitAny {
 					return c.anyArrayType
-				}
-			case "promise":
-				if len(typeArgs) == 0 && !c.noImplicitAny {
-					return c.createPromiseType(c.anyType)
 				}
 			case "Object":
 				if len(typeArgs) == 2 {
@@ -24634,88 +24510,6 @@ func (c *Checker) markTypeNodeAsReferenced(node *ast.TypeNode) {
 	}
 }
 
-func (c *Checker) GetPromisedTypeOfPromise(t *Type) *Type {
-	return c.getPromisedTypeOfPromiseEx(t, nil, nil)
-}
-
-// Gets the "promised type" of a promise.
-// @param type The type of the promise.
-// @remarks The "promised type" of a type is the type of the "value" parameter of the "onfulfilled" callback.
-func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisTypeForErrorOut **Type) *Type {
-	//  { // type
-	//      then( // thenFunction
-	//          onfulfilled: ( // onfulfilledParameterType
-	//              value: T // valueParameterType
-	//          ) => any
-	//      ): any;
-	//  }
-	if IsTypeAny(t) {
-		return nil
-	}
-	key := CachedTypeKey{kind: CachedTypeKindPromisedTypeOfPromise, typeId: t.id}
-	if cached := c.cachedTypes[key]; cached != nil {
-		return cached
-	}
-	if c.isReferenceToType(t, c.getGlobalPromiseType()) {
-		result := c.getTypeArguments(t)[0]
-		c.cachedTypes[key] = result
-		return result
-	}
-	// primitives with a `{ then() }` won't be unwrapped/adopted.
-	if c.allTypesAssignableToKind(c.getBaseConstraintOrType(t), TypeFlagsPrimitive|TypeFlagsNever) {
-		return nil
-	}
-	thenFunction := c.getTypeOfPropertyOfType(t, "then")
-	// TODO: GH#18217
-	if IsTypeAny(thenFunction) {
-		return nil
-	}
-	var thenSignatures []*Signature
-	if thenFunction != nil {
-		thenSignatures = c.getSignaturesOfType(thenFunction, SignatureKindCall)
-	}
-	if len(thenSignatures) == 0 {
-		if errorNode != nil {
-			c.error(errorNode, diagnostics.A_promise_must_have_a_then_method)
-		}
-		return nil
-	}
-	var thisTypeForError *Type
-	var candidates []*Signature
-	for _, thenSignature := range thenSignatures {
-		thisType := c.getThisTypeOfSignature(thenSignature)
-		if thisType != nil && thisType != c.voidType && !c.isTypeRelatedTo(t, thisType, c.subtypeRelation) {
-			thisTypeForError = thisType
-		} else {
-			candidates = append(candidates, thenSignature)
-		}
-	}
-	if len(candidates) == 0 {
-		debug.Assert(thisTypeForError != nil)
-		if thisTypeForErrorOut != nil {
-			*thisTypeForErrorOut = thisTypeForError
-		}
-		if errorNode != nil {
-			c.error(errorNode, diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1, c.TypeToString(t), c.TypeToString(thisTypeForError))
-		}
-		return nil
-	}
-	onfulfilledParameterType := c.getTypeWithFacts(c.getUnionType(core.Map(candidates, c.getTypeOfFirstParameterOfSignature)), TypeFactsNEUndefinedOrNull)
-	if IsTypeAny(onfulfilledParameterType) {
-		return nil
-	}
-	onfulfilledParameterSignatures := c.getSignaturesOfType(onfulfilledParameterType, SignatureKindCall)
-	if len(onfulfilledParameterSignatures) == 0 {
-		if errorNode != nil {
-			c.error(errorNode, diagnostics.The_first_parameter_of_the_then_method_of_a_promise_must_be_a_callback)
-		}
-		return nil
-	}
-	result := c.getUnionTypeEx(core.Map(onfulfilledParameterSignatures, c.getTypeOfFirstParameterOfSignature), UnionReductionSubtype, nil, nil)
-	c.cachedTypes[key] = result
-	return result
-}
-
 func (c *Checker) getTypeOfFirstParameterOfSignature(signature *Signature) *Type {
 	return c.getTypeOfFirstParameterOfSignatureWithFallback(signature, c.neverType)
 }
@@ -26360,207 +26154,6 @@ func (c *Checker) convertAutoToAny(t *Type) *Type {
 		return c.anyArrayType
 	}
 	return t
-}
-
-func (c *Checker) getAwaitedTypeEx(t *Type, errorNode *ast.Node, diagnosticMessage *diagnostics.Message, args ...any) *Type {
-	awaitedType := c.getAwaitedTypeNoAliasEx(t, errorNode, diagnosticMessage, args...)
-	if awaitedType != nil {
-		return c.createAwaitedTypeIfNeeded(awaitedType)
-	}
-	return nil
-}
-
-// Gets the "awaited type" of a type without introducing an `Awaited<T>` wrapper.
-func (c *Checker) getAwaitedTypeNoAlias(t *Type) *Type {
-	return c.getAwaitedTypeNoAliasEx(t, nil, nil)
-}
-
-func (c *Checker) getAwaitedTypeNoAliasEx(t *Type, errorNode *ast.Node, diagnosticMessage *diagnostics.Message, args ...any) *Type {
-	if IsTypeAny(t) {
-		return t
-	}
-	// If this is already an `Awaited<T>`, just return it. This avoids `Awaited<Awaited<T>>` in higher-order
-	if c.isAwaitedTypeInstantiation(t) {
-		return t
-	}
-	// If we've already cached an awaited type, return a possible `Awaited<T>` for it.
-	key := CachedTypeKey{kind: CachedTypeKindAwaitedType, typeId: t.id}
-	if awaitedType := c.cachedTypes[key]; awaitedType != nil {
-		return awaitedType
-	}
-	// For a union, get a union of the awaited types of each constituent.
-	if t.flags&TypeFlagsUnion != 0 {
-		if slices.Contains(c.awaitedTypeStack, t) {
-			if errorNode != nil {
-				c.error(errorNode, diagnostics.Type_is_referenced_directly_or_indirectly_in_the_fulfillment_callback_of_its_own_then_method)
-			}
-			return nil
-		}
-		c.awaitedTypeStack = append(c.awaitedTypeStack, t)
-		mapped := c.mapType(t, func(t *Type) *Type { return c.getAwaitedTypeNoAliasEx(t, errorNode, diagnosticMessage, args...) })
-		c.awaitedTypeStack = c.awaitedTypeStack[:len(c.awaitedTypeStack)-1]
-		c.cachedTypes[key] = mapped
-		return mapped
-	}
-	// If `type` is generic and should be wrapped in `Awaited<T>`, return it.
-	if c.isAwaitedTypeNeeded(t) {
-		c.cachedTypes[key] = t
-		return t
-	}
-	var thisTypeForError *Type
-	promisedType := c.getPromisedTypeOfPromiseEx(t, nil /*errorNode*/, &thisTypeForError)
-	if promisedType != nil {
-		if t == promisedType || slices.Contains(c.awaitedTypeStack, promisedType) {
-			// Verify that we don't have a bad actor in the form of a promise whose
-			// promised type is the same as the promise type, or a mutually recursive
-			// promise. If so, we return undefined as we cannot guess the shape. If this
-			// were the actual case in the JavaScript, this Promise would never resolve.
-			//
-			// An example of a bad actor with a singly-recursive promise type might
-			// be:
-			//
-			//  interface BadPromise {
-			//      then(
-			//          onfulfilled: (value: BadPromise) => any,
-			//          onrejected: (error: any) => any): BadPromise;
-			//  }
-			//
-			// The above interface will pass the PromiseLike check, and return a
-			// promised type of `BadPromise`. Since this is a self reference, we
-			// don't want to keep recursing ad infinitum.
-			//
-			// An example of a bad actor in the form of a mutually-recursive
-			// promise type might be:
-			//
-			//  interface BadPromiseA {
-			//      then(
-			//          onfulfilled: (value: BadPromiseB) => any,
-			//          onrejected: (error: any) => any): BadPromiseB;
-			//  }
-			//
-			//  interface BadPromiseB {
-			//      then(
-			//          onfulfilled: (value: BadPromiseA) => any,
-			//          onrejected: (error: any) => any): BadPromiseA;
-			//  }
-			//
-			if errorNode != nil {
-				c.error(errorNode, diagnostics.Type_is_referenced_directly_or_indirectly_in_the_fulfillment_callback_of_its_own_then_method)
-			}
-			return nil
-		}
-		// Keep track of the type we're about to unwrap to avoid bad recursive promise types.
-		// See the comments above for more information.
-		c.awaitedTypeStack = append(c.awaitedTypeStack, t)
-		awaitedType := c.getAwaitedTypeNoAliasEx(promisedType, errorNode, diagnosticMessage, args...)
-		c.awaitedTypeStack = c.awaitedTypeStack[:len(c.awaitedTypeStack)-1]
-		if awaitedType == nil {
-			return nil
-		}
-		c.cachedTypes[key] = awaitedType
-		return awaitedType
-	}
-	// The type was not a promise, so it could not be unwrapped any further.
-	// As long as the type does not have a callable "then" property, it is
-	// safe to return the type; otherwise, an error is reported and we return
-	// undefined.
-	//
-	// An example of a non-promise "thenable" might be:
-	//
-	//  await { then(): void {} }
-	//
-	// The "thenable" does not match the minimal definition for a promise. When
-	// a Promise/A+-compatible or ES6 promise tries to adopt this value, the promise
-	// will never settle. We treat this as an error to help flag an early indicator
-	// of a runtime problem. If the user wants to return this value from an async
-	// function, they would need to wrap it in some other value. If they want it to
-	// be treated as a promise, they can cast to <any>.
-	if c.isThenableType(t) {
-		if errorNode != nil {
-			var diagnostic *ast.Diagnostic
-			if thisTypeForError != nil {
-				diagnostic = NewDiagnosticForNode(errorNode, diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1, c.TypeToString(t), c.TypeToString(thisTypeForError))
-			}
-			c.addDiagnostic(NewDiagnosticChainForNode(diagnostic, errorNode, diagnosticMessage, args...))
-		}
-		return nil
-	}
-	c.cachedTypes[key] = t
-	return t
-}
-
-func (c *Checker) isAwaitedTypeInstantiation(t *Type) bool {
-	if t.flags&TypeFlagsConditional != 0 {
-		awaitedSymbol := c.getGlobalAwaitedSymbolOrNil()
-		return awaitedSymbol != nil && t.alias != nil && t.alias.symbol == awaitedSymbol && len(t.alias.typeArguments) == 1
-	}
-	return false
-}
-
-func (c *Checker) isAwaitedTypeNeeded(t *Type) bool {
-	// If this is already an `Awaited<T>`, we shouldn't wrap it. This helps to avoid `Awaited<Awaited<T>>` in higher-order.
-	if IsTypeAny(t) || c.isAwaitedTypeInstantiation(t) {
-		return false
-	}
-	// We only need `Awaited<T>` if `T` contains possibly non-primitive types.
-	if c.isGenericObjectType(t) {
-		baseConstraint := c.getBaseConstraintOfType(t)
-		// We only need `Awaited<T>` if `T` is a type variable that has no base constraint, or the base constraint of `T` is `any`, `unknown`, `{}`, `object`,
-		// or is promise-like.
-		if baseConstraint != nil {
-			return baseConstraint.flags&TypeFlagsAnyOrUnknown != 0 || c.isEmptyObjectType(baseConstraint) || someType(baseConstraint, c.isThenableType)
-		}
-		return c.maybeTypeOfKind(t, TypeFlagsTypeVariable)
-	}
-	return false
-}
-
-func (c *Checker) createAwaitedTypeIfNeeded(t *Type) *Type {
-	// We wrap type `T` in `Awaited<T>` based on the following conditions:
-	// - `T` is not already an `Awaited<U>`, and
-	// - `T` is generic, and
-	// - One of the following applies:
-	//   - `T` has no base constraint, or
-	//   - The base constraint of `T` is `any`, `unknown`, `object`, or `{}`, or
-	//   - The base constraint of `T` is an object type with a callable `then` method.
-	if c.isAwaitedTypeNeeded(t) {
-		awaitedType := c.tryCreateAwaitedType(t)
-		if awaitedType != nil {
-			return awaitedType
-		}
-	}
-	return t
-}
-
-func (c *Checker) tryCreateAwaitedType(t *Type) *Type {
-	// Nothing to do if `Awaited<T>` doesn't exist
-	awaitedSymbol := c.getGlobalAwaitedSymbol()
-	if awaitedSymbol != nil {
-		// Unwrap unions that may contain `Awaited<T>`, otherwise its possible to manufacture an `Awaited<Awaited<T> | U>` where
-		// an `Awaited<T | U>` would suffice.
-		return c.getTypeAliasInstantiation(awaitedSymbol, []*Type{c.unwrapAwaitedType(t)}, nil)
-	}
-	return nil
-}
-
-// For a generic `Awaited<T>`, gets `T`.
-func (c *Checker) unwrapAwaitedType(t *Type) *Type {
-	switch {
-	case t.flags&TypeFlagsUnion != 0:
-		return c.mapType(t, c.unwrapAwaitedType)
-	case c.isAwaitedTypeInstantiation(t):
-		return t.alias.typeArguments[0]
-	}
-	return t
-}
-
-func (c *Checker) isThenableType(t *Type) bool {
-	if c.allTypesAssignableToKind(c.getBaseConstraintOrType(t), TypeFlagsPrimitive|TypeFlagsNever) {
-		// primitive types cannot be considered "thenable" since they are not objects.
-		return false
-	}
-	thenFunction := c.getTypeOfPropertyOfType(t, "then")
-	return thenFunction != nil && len(c.getSignaturesOfType(c.getTypeWithFacts(thenFunction, TypeFactsNEUndefinedOrNull), SignatureKindCall)) != 0
 }
 
 // Check if a parameter or catch variable (or their bindings elements) is assigned anywhere

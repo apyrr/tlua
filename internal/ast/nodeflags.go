@@ -21,12 +21,11 @@ const (
 	NodeFlagsHasExplicitReturn               NodeFlags = 1 << 9  // If function has explicit reachable return on one of codepaths (initialized by binding)
 	NodeFlagsDisallowInContext               NodeFlags = 1 << 10 // If node was parsed in a context where 'in-expressions' are not allowed
 	NodeFlagsYieldContext                    NodeFlags = 1 << 11 // If node was parsed in the 'yield' context created when parsing a generator
-	NodeFlagsAwaitContext                    NodeFlags = 1 << 13 // If node was parsed in the 'await' context created when parsing an async function
 	NodeFlagsDisallowConditionalTypesContext NodeFlags = 1 << 14 // If node was parsed in a context where conditional types are not allowed
 	NodeFlagsThisNodeHasError                NodeFlags = 1 << 15 // If the parser encountered an error when parsing the code that created this node
 	NodeFlagsJavaScriptFile                  NodeFlags = 1 << 16 // If node was parsed in a JavaScript
 	NodeFlagsThisNodeOrAnySubNodesHasError   NodeFlags = 1 << 17 // If this node or any of its children had an error
-	NodeFlagsHasAsyncFunctions               NodeFlags = 1 << 18 // If the file has async functions (initialized by binding)
+	NodeFlagsHasSuspendFunctions             NodeFlags = 1 << 18 // If the file has suspend functions (initialized by binding)
 	// NodeFlagsHasAggregatedChildData is deprecated. Use `subtreeFacts` instead.
 
 	// These flags will be set when the parser encounters a dynamic import expression or 'import.meta' to avoid
@@ -55,13 +54,13 @@ const (
 	NodeFlagsBlockScoped = NodeFlagsLet | NodeFlagsConst
 
 	NodeFlagsReachabilityCheckFlags   = NodeFlagsHasImplicitReturn | NodeFlagsHasExplicitReturn
-	NodeFlagsReachabilityAndEmitFlags = NodeFlagsReachabilityCheckFlags | NodeFlagsHasAsyncFunctions
+	NodeFlagsReachabilityAndEmitFlags = NodeFlagsReachabilityCheckFlags | NodeFlagsHasSuspendFunctions
 
 	// Parsing context flags
-	NodeFlagsContextFlags NodeFlags = NodeFlagsDisallowInContext | NodeFlagsDisallowConditionalTypesContext | NodeFlagsYieldContext | NodeFlagsAwaitContext | NodeFlagsJavaScriptFile | NodeFlagsAmbient
+	NodeFlagsContextFlags NodeFlags = NodeFlagsDisallowInContext | NodeFlagsDisallowConditionalTypesContext | NodeFlagsYieldContext | NodeFlagsJavaScriptFile | NodeFlagsAmbient
 
 	// Exclude these flags when parsing a Type
-	NodeFlagsTypeExcludesFlags NodeFlags = NodeFlagsYieldContext | NodeFlagsAwaitContext
+	NodeFlagsTypeExcludesFlags NodeFlags = NodeFlagsYieldContext
 
 	// Represents all flags that are potentially set once and
 	// never cleared on SourceFiles which get re-used in between incremental parses.
@@ -69,8 +68,8 @@ const (
 	NodeFlagsPermanentlySetIncrementalFlags NodeFlags = NodeFlagsPossiblyContainsDynamicImport | NodeFlagsPossiblyContainsImportMeta
 
 	// The following flags repurpose other NodeFlags as different meanings for Identifier nodes
-	NodeFlagsIdentifierHasExtendedUnicodeEscape NodeFlags = NodeFlagsContainsSelf      // Indicates whether the identifier contains an extended unicode escape sequence
-	NodeFlagsIdentifierIsInJSDocNamespace       NodeFlags = NodeFlagsHasAsyncFunctions // Indicates the identifier is the innermost name of a JSDoc namespace declaration
+	NodeFlagsIdentifierHasExtendedUnicodeEscape NodeFlags = NodeFlagsContainsSelf        // Indicates whether the identifier contains an extended unicode escape sequence
+	NodeFlagsIdentifierIsInJSDocNamespace       NodeFlags = NodeFlagsHasSuspendFunctions // Indicates the identifier is the innermost name of a JSDoc namespace declaration
 
 	// The following flag repurposes other NodeFlags for ModuleDeclaration nodes
 	NodeFlagsNestedNamespace NodeFlags = NodeFlagsOptionalChain // If ModuleDeclaration is a nested namespace (e.g. inner part of A.B.C)

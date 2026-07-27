@@ -19,8 +19,6 @@ const (
 	SubtreeContainsOptionalChaining
 	SubtreeContainsMissingCatchClauseVariable
 	SubtreeContainsESObjectRestOrSpread // subtree has a `...` somewhere inside it, never cleared
-	SubtreeContainsForAwaitOrAsyncGenerator
-	SubtreeContainsAnyAwait
 	SubtreeContainsExponentiationOperator
 
 	// Markers
@@ -30,7 +28,6 @@ const (
 	SubtreeContainsLexicalSuper
 	SubtreeContainsRestOrSpread       // marker on any `...` - cleared on binding pattern exit
 	SubtreeContainsObjectRestOrSpread // marker on any `{...x}` - cleared on most scope exits
-	SubtreeContainsAwait
 	SubtreeContainsDynamicImport
 	SubtreeContainsClassFields
 	SubtreeContainsIdentifier
@@ -47,8 +44,7 @@ const (
 	SubtreeContainsES2021 = SubtreeContainsLogicalAssignments
 	SubtreeContainsES2020 = SubtreeContainsOptionalChaining
 	SubtreeContainsES2019 = SubtreeContainsMissingCatchClauseVariable
-	SubtreeContainsES2018 = SubtreeContainsESObjectRestOrSpread | SubtreeContainsForAwaitOrAsyncGenerator | SubtreeContainsInvalidTemplateEscape
-	SubtreeContainsES2017 = SubtreeContainsAnyAwait
+	SubtreeContainsES2018 = SubtreeContainsESObjectRestOrSpread | SubtreeContainsInvalidTemplateEscape
 	SubtreeContainsES2016 = SubtreeContainsExponentiationOperator
 
 	// Scope Exclusions
@@ -60,11 +56,11 @@ const (
 	SubtreeExclusionsOuterExpression         = SubtreeExclusionsNode
 	SubtreeExclusionsPropertyAccess          = SubtreeExclusionsNode
 	SubtreeExclusionsElementAccess           = SubtreeExclusionsNode
-	SubtreeExclusionsArrowFunction           = SubtreeExclusionsNode | SubtreeContainsAwait | SubtreeContainsObjectRestOrSpread
-	SubtreeExclusionsFunction                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsAwait | SubtreeContainsObjectRestOrSpread
-	SubtreeExclusionsConstructor             = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsAwait | SubtreeContainsObjectRestOrSpread
-	SubtreeExclusionsMethod                  = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsAwait | SubtreeContainsObjectRestOrSpread
-	SubtreeExclusionsAccessor                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsAwait | SubtreeContainsObjectRestOrSpread
+	SubtreeExclusionsArrowFunction           = SubtreeExclusionsNode | SubtreeContainsObjectRestOrSpread
+	SubtreeExclusionsFunction                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread
+	SubtreeExclusionsConstructor             = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread
+	SubtreeExclusionsMethod                  = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread
+	SubtreeExclusionsAccessor                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread
 	SubtreeExclusionsProperty                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper
 	SubtreeExclusionsClass                   = SubtreeExclusionsNode
 	SubtreeExclusionsModule                  = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper

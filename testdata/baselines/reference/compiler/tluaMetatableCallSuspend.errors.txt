@@ -1,0 +1,71 @@
+tluaMetatableCallSuspend.tlua(40,16): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaMetatableCallSuspend.tlua(41,24): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaMetatableCallSuspend.tlua(42,19): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaMetatableCallSuspend.tlua(44,1): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaMetatableCallSuspend.tlua(48,28): error TLUA2554: Expected 1 arguments, but got 2.
+
+
+==== tluaMetatableCallSuspend.tlua (5 errors) ====
+    // A suspend __call pairs the same way a sync one does: the receiver drops out, and the call
+    // carries the coroutine contract, so only a suspend context may invoke it.
+    
+    local execute = suspend function(query: string): table[]
+      return {};
+    end;
+    
+    // The assign form.
+    local sqlAssigned = setmetatable({}, {
+      __call = suspend function(self: table, query: string): table[]
+        return execute(query);
+      end,
+    });
+    
+    // The statement form, mutating in place. The receiver picks up its type from the __call slot.
+    local sql = {};
+    setmetatable(sql, {
+      __call = suspend function(_self, query: string)
+        return execute(query);
+      end,
+    });
+    
+    // Own members survive next to the call surface.
+    local api = { begin = function(self: table): number return 1; end };
+    setmetatable(api, {
+      __call = suspend function(self: table, query: string): table[]
+        return execute(query);
+      end,
+    });
+    
+    suspend function use(): void
+      local rows: table[] = sqlAssigned("SELECT 1");
+      local rows2: table[] = sql("SELECT 1");
+      local n: number = api.begin(api);
+      local rows3: table[] = api("SELECT 1");
+    end
+    
+    // The contract holds through the pairing: a sync context may not invoke a suspend __call.
+    function syncUse(): void
+      local rows = sql("SELECT 1");
+                   ~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 tluaMetatableCallSuspend.tlua:39:10: Did you mean to mark this function as 'suspend'?
+      local rowsAssigned = sqlAssigned("SELECT 1");
+                           ~~~~~~~~~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 tluaMetatableCallSuspend.tlua:39:10: Did you mean to mark this function as 'suspend'?
+      local rowsApi = api("SELECT 1");
+                      ~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 tluaMetatableCallSuspend.tlua:39:10: Did you mean to mark this function as 'suspend'?
+    end
+    sql("top level");
+    ~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+    
+    // The receiver is implicit, so passing it back is one argument too many.
+    suspend function tooMany(): void
+      sqlAssigned(sqlAssigned, "SELECT 1");
+                               ~~~~~~~~~~
+!!! error TLUA2554: Expected 1 arguments, but got 2.
+    end
+    

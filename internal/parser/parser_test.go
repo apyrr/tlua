@@ -147,25 +147,25 @@ func FuzzParser(f *testing.F) {
 
 func TestJSDocImportTypeParentChain(t *testing.T) {
 	t.Parallel()
-	sourceText := `test("", async function () {
+	sourceText := `test("", suspend function () {
   ;(/** @type {typeof import("a")} */ ({}))
 })
 
-test("", async function () {
+test("", suspend function () {
   ;(/** @type {typeof import("a")} */ a)
 })
 
-test("", async function () {
+test("", suspend function () {
   (/** @type {typeof import("a")} */ ({}))
   ;(/** @type {typeof import("a")} */ ({}))
 })
 
-test("", async function () {
+test("", suspend function () {
   (/** @type {typeof import("a")} */ a)
   ;(/** @type {typeof import("a")} */ a)
 })
 
-test("", async function () {
+test("", suspend function () {
   (/** @type {typeof import("a")} */ ({}))
   ;(/** @type {typeof import("a")} */ ({}))
 })

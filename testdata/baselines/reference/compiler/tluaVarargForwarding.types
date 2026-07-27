@@ -109,20 +109,58 @@ local badRet: Ret = "a";
 >badRet : number
 >"a" : "a"
 
-// `Awaited<T>` matches a thenable through `then(onfulfilled: infer F, ...: infer _)`.
-// The `infer` sits in a vararg annotation, so it infers the pack's *element* type
-// and must carry no implicit `unknown[]` constraint -- with one, no element
-// candidate can satisfy it, `then` never matches, and Awaited silently stops
-// unwrapping (resolving to Promise<number> rather than number).
-type Unwrapped = Awaited<Promise<number>>;
->Unwrapped : number
+// `infer` in a vararg annotation infers the pack's *element* type and must
+// carry no implicit `unknown[]` constraint. Two gates:
+//
+// (1) Direct: inferring from a function type's vararg position yields the
+// element type itself, not an array of it.
+declare varfn: (first: string, ...: number) => boolean;
+>varfn : (first: string, ...: number) => boolean
+>first : string
+> : number[]
 
-local unwrapped: Unwrapped = 1;
->unwrapped : number
+type VarargElem<T> = T extends (first: any, ...: infer E) => any ? E : never;
+>VarargElem : VarargElem<T>
+>first : any
+> : E[]
+
+type Elem = VarargElem<typeof varfn>;
+>Elem : number
+>varfn : (first: string, ...: number) => boolean
+
+local elem: Elem = 1;
+>elem : number
 >1 : 1
 
-local badUnwrapped: Unwrapped = "a";
->badUnwrapped : number
+local badElem: Elem = "a";
+>badElem : number
+>"a" : "a"
+
+// (2) Through a structural member match: if the vararg `infer _` picked up an
+// implicit `unknown[]` constraint, no element candidate could satisfy it, the
+// member would silently never match, and Picked would fall through to `never`
+// -- which the positive assignment then catches.
+interface Handler<T> {
+    invoke(value: T, ...: any): boolean;
+>invoke : (value: T, ...: any) => boolean
+>value : T
+> : any[]
+}
+type ValueOf<T> = T extends table & { invoke(value: infer V, ...: infer _): any; } ? V : never;
+>ValueOf : ValueOf<T>
+>invoke : (value: infer V, ...: _) => any
+>value : V
+> : _[]
+
+type Picked = ValueOf<Handler<number>>;
+>Picked : number
+
+local picked: Picked = 1;
+>picked : number
+>1 : 1
+
+local badPicked: Picked = "a";
+>badPicked : number
 >"a" : "a"
 
 // `Parameters<T>` and `ConstructorParameters<T>` are deliberately removed from

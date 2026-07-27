@@ -47,11 +47,38 @@ var tokenModifiers = []lsproto.SemanticTokenModifier{
 	lsproto.SemanticTokenModifierStatic,
 	lsproto.SemanticTokenModifierDeprecated,
 	lsproto.SemanticTokenModifierAbstract,
-	lsproto.SemanticTokenModifierAsync,
 	lsproto.SemanticTokenModifierModification,
 	lsproto.SemanticTokenModifierDocumentation,
 	lsproto.SemanticTokenModifierDefaultLibrary,
-	"local",
+	tokenModifierNameLocal,
+	// tlua's own modifier for a suspend function. The LSP predefined set has an
+	// `async` modifier, but tlua has no `async` — reporting one would name a
+	// runtime model this language does not have, so the custom modifier is the
+	// only one emitted.
+	// Keep this last: a modifier's bit position is its index in this slice.
+	tokenModifierNameSuspend,
+}
+
+// tlua's own modifier names, outside the LSP predefined set. These are exempt
+// from client-capability filtering: spec-following clients advertise only the
+// predefined names (vscode-languageclient hardcodes that list, and the VS Code
+// `semanticTokenModifiers` contribution feeds the THEMING registry, not LSP
+// capabilities), so filtering these by advertisement would strip them for every
+// real client. The legend is server-authoritative — a client decodes modifier
+// bits against the legend the server returns and applies no styling to names it
+// doesn't recognize (rust-analyzer ships many such modifiers) — so always
+// including our own is safe for clients that never heard of them.
+const (
+	tokenModifierNameLocal   lsproto.SemanticTokenModifier = "local"
+	tokenModifierNameSuspend lsproto.SemanticTokenModifier = "suspend"
+)
+
+// clientReceivesModifier reports whether a modifier goes into the legend (and
+// its bit into encoded tokens) for a client with the given advertised list.
+// The legend and the encoder MUST use the same predicate: a modifier's bit
+// position is its index in the filtered legend.
+func clientReceivesModifier(advertised []string, m lsproto.SemanticTokenModifier) bool {
+	return m == tokenModifierNameLocal || m == tokenModifierNameSuspend || slices.Contains(advertised, string(m))
 }
 
 type tokenType int
@@ -88,11 +115,11 @@ const (
 	tokenModifierStatic
 	tokenModifierDeprecated
 	tokenModifierAbstract
-	tokenModifierAsync
 	tokenModifierModification
 	tokenModifierDocumentation
 	tokenModifierDefaultLibrary
 	tokenModifierLocal
+	tokenModifierSuspend
 )
 
 // SemanticTokensLegend returns the legend describing the token types and modifiers.
@@ -107,7 +134,7 @@ func SemanticTokensLegend(clientCapabilities lsproto.ResolvedSemanticTokensClien
 	}
 	modifiers := make([]string, 0, len(tokenModifiers))
 	for _, m := range tokenModifiers {
-		if slices.Contains(clientCapabilities.TokenModifiers, string(m)) {
+		if clientReceivesModifier(clientCapabilities.TokenModifiers, m) {
 			modifiers = append(modifiers, string(m))
 		}
 	}
@@ -241,8 +268,8 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 						if modifiers&ast.ModifierFlagsStatic != 0 {
 							tokenModifier |= tokenModifierStatic
 						}
-						if modifiers&ast.ModifierFlagsAsync != 0 {
-							tokenModifier |= tokenModifierAsync
+						if modifiers&ast.ModifierFlagsSuspend != 0 {
+							tokenModifier |= tokenModifierSuspend
 						}
 						if tokenType != tokenTypeClass && tokenType != tokenTypeInterface {
 							if (modifiers&ast.ModifierFlagsReadonly != 0) || (nodeFlags&ast.NodeFlagsConst != 0) {
@@ -477,7 +504,7 @@ func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast
 	// Map server token modifiers to client-supported bit positions
 	clientBit := uint32(0)
 	for _, serverModifier := range tokenModifiers {
-		if slices.Contains(clientCapabilities.TokenModifiers, string(serverModifier)) {
+		if clientReceivesModifier(clientCapabilities.TokenModifiers, serverModifier) {
 			modifierMapping[serverModifier] = clientBit
 			clientBit++
 		}

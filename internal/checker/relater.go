@@ -615,8 +615,8 @@ func (c *Checker) elaborateArrowFunction(node *ast.Node, source *Type, target *T
 		if target.symbol != nil && len(target.symbol.Declarations) != 0 {
 			diagnostic.AddRelatedInfo(createDiagnosticForNode(target.symbol.Declarations[0], diagnostics.The_expected_type_comes_from_the_return_type_of_this_signature))
 		}
-		// tlua async functions return their plain declared type (not Promise<T>),
-		// so suggesting `async` here would not change assignability — omit it.
+		// tlua suspend functions return their plain declared type (not Promise<T>),
+		// so suggesting `suspend` here would not change assignability — omit it.
 		c.reportDiagnostic(diagnostic, diagnosticOutput)
 		return true
 	}
@@ -1420,15 +1420,15 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 	if checkMode&SignatureCheckModeStrictTopSignature != 0 && c.isTopSignature(source) && !c.isTopSignature(target) {
 		return TernaryFalse
 	}
-	// tlua coroutine contract: an async function is not assignable to a
-	// non-async (sync) function type — treating it as sync would let it be
-	// called from a sync context. sync → async stays allowed (a sync function
+	// tlua coroutine contract: a suspend function is not assignable to a
+	// non-suspend (sync) function type — treating it as sync would let it be
+	// called from a sync context. sync → suspend stays allowed (a sync function
 	// may run in a coroutine). This is the single chokepoint every signature
 	// relation funnels through, so it also covers the contravariant flip for
 	// callback parameters.
-	if source.flags&SignatureFlagsAsync != 0 && target.flags&SignatureFlagsAsync == 0 {
+	if source.flags&SignatureFlagsSuspend != 0 && target.flags&SignatureFlagsSuspend == 0 {
 		if reportErrors {
-			errorReporter(diagnostics.An_async_function_is_not_assignable_to_a_non_async_function_type)
+			errorReporter(diagnostics.A_suspend_function_is_not_assignable_to_a_non_suspend_function_type)
 		}
 		return TernaryFalse
 	}
@@ -1658,7 +1658,7 @@ func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *T
 	return related
 }
 
-// Returns true if `s` is `(...args: A) => R` where `A` is `any`, `any[]`, `never`, or `never[]`, and `R` is `any` or `unknown`.
+// Returns true if `s` is `(...args: A) => R` where `A` is `any`, `any[]`, `never`, or `never[]`, and `R` is a top result.
 func (c *Checker) isTopSignature(s *Signature) bool {
 	if len(s.typeParameters) == 0 && (s.thisParameter == nil || IsTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
 		paramType := c.getTypeOfParameter(s.parameters[0])
@@ -1668,9 +1668,30 @@ func (c *Checker) isTopSignature(s *Signature) bool {
 		} else {
 			restType = paramType
 		}
-		return restType.flags&(TypeFlagsAny|TypeFlagsNever) != 0 && c.getReturnTypeOfSignature(s).flags&TypeFlagsAnyOrUnknown != 0
+		return restType.flags&(TypeFlagsAny|TypeFlagsNever) != 0 && c.isTopResultType(c.getReturnTypeOfSignature(s))
 	}
 	return false
+}
+
+// A result position that constrains nothing. `any`/`unknown` cover the written
+// single-value case, but a Lua function's result is a PACK, so the `function`
+// keyword type returns the open all-`any` pack `(any?, ...any)` (built in
+// getLuaFunctionType) rather than a bare `any`. That pack absorbs any number of
+// `any` results, so it is exactly as permissive as `=> any` and must count as
+// top for the same reason -- otherwise `function`, the documented top of every
+// Lua function, would reject values that the structurally identical
+// `(...: any) => any` accepts. The suspend contract is the case where that gap
+// bites: signature relation short-circuits on a top target, so without this a
+// suspend function is not assignable to `function`, and `coroutine.create` --
+// which is how you actually run one -- rejects it.
+func (c *Checker) isTopResultType(t *Type) bool {
+	if t.flags&TypeFlagsAnyOrUnknown != 0 {
+		return true
+	}
+	if !isOpenPackType(t) {
+		return false
+	}
+	return core.Every(c.getTypeArguments(t), func(e *Type) bool { return e.flags&TypeFlagsAny != 0 })
 }
 
 // Return the number of parameters in a signature. The rest parameter, if present, counts as one

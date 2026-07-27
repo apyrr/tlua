@@ -55,7 +55,7 @@ func (l *LanguageService) provideDefinitionWorker(
 		}
 	}
 
-	if node.Kind == ast.KindReturnKeyword || node.Kind == ast.KindAwaitKeyword {
+	if node.Kind == ast.KindReturnKeyword {
 		if fn := ast.FindAncestor(node, ast.IsFunctionLikeDeclaration); fn != nil {
 			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{fn}, nil /*reference*/), nil
 		}

@@ -1627,7 +1627,7 @@ func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierL
 }
 
 func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.ModifierFlags {
-	mask := ast.ModifierFlagsAll ^ (ast.ModifierFlagsPublic | ast.ModifierFlagsAsync | ast.ModifierFlagsOverride) // No async and override modifiers in declaration files
+	mask := ast.ModifierFlagsAll ^ (ast.ModifierFlagsPublic | ast.ModifierFlagsSuspend | ast.ModifierFlagsOverride) // No suspend and override modifiers in declaration files
 	additions := ast.ModifierFlagsNone
 	if tx.needsDeclare && !isAlwaysType(node) {
 		additions = ast.ModifierFlagsAmbient

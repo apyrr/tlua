@@ -1,0 +1,91 @@
+suspendSuperDefaultParameters.tlua(1,1): error TLUA1434: Unexpected keyword or identifier.
+suspendSuperDefaultParameters.tlua(1,1): error TLUA2304: Cannot find name 'class'.
+suspendSuperDefaultParameters.tlua(1,7): error TLUA1434: Unexpected keyword or identifier.
+suspendSuperDefaultParameters.tlua(1,7): error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
+suspendSuperDefaultParameters.tlua(1,9): error TLUA1128: Declaration or statement expected.
+suspendSuperDefaultParameters.tlua(2,5): error TLUA2304: Cannot find name 'm'.
+suspendSuperDefaultParameters.tlua(2,9): error TLUA1005: ';' expected.
+suspendSuperDefaultParameters.tlua(7,1): error TLUA1434: Unexpected keyword or identifier.
+suspendSuperDefaultParameters.tlua(7,1): error TLUA2304: Cannot find name 'class'.
+suspendSuperDefaultParameters.tlua(7,7): error TLUA1434: Unexpected keyword or identifier.
+suspendSuperDefaultParameters.tlua(7,7): error TLUA2304: Cannot find name 'C'.
+suspendSuperDefaultParameters.tlua(7,9): error TLUA1128: Declaration or statement expected.
+suspendSuperDefaultParameters.tlua(7,17): error TLUA1434: Unexpected keyword or identifier.
+suspendSuperDefaultParameters.tlua(7,17): error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
+suspendSuperDefaultParameters.tlua(7,19): error TLUA1128: Declaration or statement expected.
+suspendSuperDefaultParameters.tlua(8,5): error TLUA2304: Cannot find name 'f'.
+suspendSuperDefaultParameters.tlua(8,9): error TLUA1005: ';' expected.
+suspendSuperDefaultParameters.tlua(9,40): error TLUA2660: 'super' can only be referenced in members of derived classes or object literal expressions.
+suspendSuperDefaultParameters.tlua(13,5): error TLUA1434: Unexpected keyword or identifier.
+suspendSuperDefaultParameters.tlua(13,5): error TLUA2304: Cannot find name 'suspend'.
+suspendSuperDefaultParameters.tlua(13,13): error TLUA2304: Cannot find name 'h'.
+suspendSuperDefaultParameters.tlua(13,19): error TLUA2660: 'super' can only be referenced in members of derived classes or object literal expressions.
+suspendSuperDefaultParameters.tlua(13,30): error TLUA1005: ';' expected.
+
+
+==== suspendSuperDefaultParameters.tlua (23 errors) ====
+    class B {
+    ~~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TLUA2304: Cannot find name 'class'.
+          ~
+!!! error TLUA1434: Unexpected keyword or identifier.
+          ~
+!!! error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
+!!! related TLUA2728 suspendSuperDefaultParameters.tlua:13:15: 'b' is declared here.
+            ~
+!!! error TLUA1128: Declaration or statement expected.
+        m() {
+        ~
+!!! error TLUA2304: Cannot find name 'm'.
+            ~
+!!! error TLUA1005: ';' expected.
+            return 1;
+        }
+    }
+    
+    class C extends B {
+    ~~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
+    ~~~~~
+!!! error TLUA2304: Cannot find name 'class'.
+          ~
+!!! error TLUA1434: Unexpected keyword or identifier.
+          ~
+!!! error TLUA2304: Cannot find name 'C'.
+            ~~~~~~~
+!!! error TLUA1128: Declaration or statement expected.
+                    ~
+!!! error TLUA1434: Unexpected keyword or identifier.
+                    ~
+!!! error TLUA2552: Cannot find name 'B'. Did you mean 'b'?
+!!! related TLUA2728 suspendSuperDefaultParameters.tlua:13:15: 'b' is declared here.
+                      ~
+!!! error TLUA1128: Declaration or statement expected.
+        f() {
+        ~
+!!! error TLUA2304: Cannot find name 'f'.
+            ~
+!!! error TLUA1005: ';' expected.
+            local g = suspend function(b = super.m()) return b end;
+                                           ~~~~~
+!!! error TLUA2660: 'super' can only be referenced in members of derived classes or object literal expressions.
+            return g();
+        }
+    
+        suspend h(b = super.m()) {
+        ~~~~~~~
+!!! error TLUA1434: Unexpected keyword or identifier.
+        ~~~~~~~
+!!! error TLUA2304: Cannot find name 'suspend'.
+                ~
+!!! error TLUA2304: Cannot find name 'h'.
+                      ~~~~~
+!!! error TLUA2660: 'super' can only be referenced in members of derived classes or object literal expressions.
+                                 ~
+!!! error TLUA1005: ';' expected.
+            return b;
+        }
+    }
+    

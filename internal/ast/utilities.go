@@ -1134,8 +1134,8 @@ func ModifierToFlag(token Kind) ModifierFlags {
 		return ModifierFlagsAmbient
 	case KindDefaultKeyword:
 		return ModifierFlagsDefault
-	case KindAsyncKeyword:
-		return ModifierFlagsAsync
+	case KindSuspendKeyword:
+		return ModifierFlagsSuspend
 	case KindReadonlyKeyword:
 		return ModifierFlagsReadonly
 	case KindOverrideKeyword:
@@ -3440,8 +3440,8 @@ func CreateModifiersFromModifierFlags(flags ModifierFlags, createModifier func(k
 	if flags&ModifierFlagsAccessor != 0 {
 		result = append(result, createModifier(KindAccessorKeyword))
 	}
-	if flags&ModifierFlagsAsync != 0 {
-		result = append(result, createModifier(KindAsyncKeyword))
+	if flags&ModifierFlagsSuspend != 0 {
+		result = append(result, createModifier(KindSuspendKeyword))
 	}
 	if flags&ModifierFlagsIn != 0 {
 		result = append(result, createModifier(KindInKeyword))
@@ -4077,11 +4077,11 @@ func HasAmbientModifier(node *Node) bool {
 	return HasSyntacticModifier(node, ModifierFlagsAmbient)
 }
 
-func IsAsyncFunction(node *Node) bool {
+func IsSuspendFunction(node *Node) bool {
 	switch node.Kind {
 	case KindFunctionDeclaration, KindFunctionExpression, KindArrowFunction:
 		data := node.BodyData()
-		return data.Body != nil && HasSyntacticModifier(node, ModifierFlagsAsync)
+		return data.Body != nil && HasSyntacticModifier(node, ModifierFlagsSuspend)
 	}
 	return false
 }

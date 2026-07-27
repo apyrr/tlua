@@ -1,0 +1,126 @@
+//// [tests/cases/compiler/tluaMetatableCallSuspend.tlua] ////
+
+=== tluaMetatableCallSuspend.tlua ===
+// A suspend __call pairs the same way a sync one does: the receiver drops out, and the call
+// carries the coroutine contract, so only a suspend context may invoke it.
+
+local execute = suspend function(query: string): table[]
+>execute : Symbol(execute, Decl(tluaMetatableCallSuspend.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSuspend.tlua, 3, 33))
+
+  return {};
+end;
+
+// The assign form.
+local sqlAssigned = setmetatable({}, {
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallSuspend.tlua, 8, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+  __call = suspend function(self: table, query: string): table[]
+>__call : Symbol(__call, Decl(tluaMetatableCallSuspend.tlua, 8, 38))
+>self : Symbol(self, Decl(tluaMetatableCallSuspend.tlua, 9, 28))
+>query : Symbol(query, Decl(tluaMetatableCallSuspend.tlua, 9, 40))
+
+    return execute(query);
+>execute : Symbol(execute, Decl(tluaMetatableCallSuspend.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSuspend.tlua, 9, 40))
+
+  end,
+});
+
+// The statement form, mutating in place. The receiver picks up its type from the __call slot.
+local sql = {};
+>sql : Symbol(sql, Decl(tluaMetatableCallSuspend.tlua, 15, 5))
+
+setmetatable(sql, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>sql : Symbol(sql, Decl(tluaMetatableCallSuspend.tlua, 15, 5))
+
+  __call = suspend function(_self, query: string)
+>__call : Symbol(__call, Decl(tluaMetatableCallSuspend.tlua, 16, 19))
+>_self : Symbol(_self, Decl(tluaMetatableCallSuspend.tlua, 17, 28))
+>query : Symbol(query, Decl(tluaMetatableCallSuspend.tlua, 17, 34))
+
+    return execute(query);
+>execute : Symbol(execute, Decl(tluaMetatableCallSuspend.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSuspend.tlua, 17, 34))
+
+  end,
+});
+
+// Own members survive next to the call surface.
+local api = { begin = function(self: table): number return 1; end };
+>api : Symbol(api, Decl(tluaMetatableCallSuspend.tlua, 23, 5))
+>begin : Symbol(begin, Decl(tluaMetatableCallSuspend.tlua, 23, 13))
+>self : Symbol(self, Decl(tluaMetatableCallSuspend.tlua, 23, 31))
+
+setmetatable(api, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>api : Symbol(api, Decl(tluaMetatableCallSuspend.tlua, 23, 5))
+
+  __call = suspend function(self: table, query: string): table[]
+>__call : Symbol(__call, Decl(tluaMetatableCallSuspend.tlua, 24, 19))
+>self : Symbol(self, Decl(tluaMetatableCallSuspend.tlua, 25, 28))
+>query : Symbol(query, Decl(tluaMetatableCallSuspend.tlua, 25, 40))
+
+    return execute(query);
+>execute : Symbol(execute, Decl(tluaMetatableCallSuspend.tlua, 3, 5))
+>query : Symbol(query, Decl(tluaMetatableCallSuspend.tlua, 25, 40))
+
+  end,
+});
+
+suspend function use(): void
+>use : Symbol(use, Decl(tluaMetatableCallSuspend.tlua, 28, 3))
+
+  local rows: table[] = sqlAssigned("SELECT 1");
+>rows : Symbol(rows, Decl(tluaMetatableCallSuspend.tlua, 31, 7))
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallSuspend.tlua, 8, 5))
+
+  local rows2: table[] = sql("SELECT 1");
+>rows2 : Symbol(rows2, Decl(tluaMetatableCallSuspend.tlua, 32, 7))
+>sql : Symbol(sql, Decl(tluaMetatableCallSuspend.tlua, 15, 5))
+
+  local n: number = api.begin(api);
+>n : Symbol(n, Decl(tluaMetatableCallSuspend.tlua, 33, 7))
+>api.begin : Symbol(begin, Decl(tluaMetatableCallSuspend.tlua, 23, 13))
+>api : Symbol(api, Decl(tluaMetatableCallSuspend.tlua, 23, 5))
+>begin : Symbol(begin, Decl(tluaMetatableCallSuspend.tlua, 23, 13))
+>api : Symbol(api, Decl(tluaMetatableCallSuspend.tlua, 23, 5))
+
+  local rows3: table[] = api("SELECT 1");
+>rows3 : Symbol(rows3, Decl(tluaMetatableCallSuspend.tlua, 34, 7))
+>api : Symbol(api, Decl(tluaMetatableCallSuspend.tlua, 23, 5))
+
+end
+
+// The contract holds through the pairing: a sync context may not invoke a suspend __call.
+function syncUse(): void
+>syncUse : Symbol(syncUse, Decl(tluaMetatableCallSuspend.tlua, 35, 3))
+
+  local rows = sql("SELECT 1");
+>rows : Symbol(rows, Decl(tluaMetatableCallSuspend.tlua, 39, 7))
+>sql : Symbol(sql, Decl(tluaMetatableCallSuspend.tlua, 15, 5))
+
+  local rowsAssigned = sqlAssigned("SELECT 1");
+>rowsAssigned : Symbol(rowsAssigned, Decl(tluaMetatableCallSuspend.tlua, 40, 7))
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallSuspend.tlua, 8, 5))
+
+  local rowsApi = api("SELECT 1");
+>rowsApi : Symbol(rowsApi, Decl(tluaMetatableCallSuspend.tlua, 41, 7))
+>api : Symbol(api, Decl(tluaMetatableCallSuspend.tlua, 23, 5))
+
+end
+sql("top level");
+>sql : Symbol(sql, Decl(tluaMetatableCallSuspend.tlua, 15, 5))
+
+// The receiver is implicit, so passing it back is one argument too many.
+suspend function tooMany(): void
+>tooMany : Symbol(tooMany, Decl(tluaMetatableCallSuspend.tlua, 43, 17))
+
+  sqlAssigned(sqlAssigned, "SELECT 1");
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallSuspend.tlua, 8, 5))
+>sqlAssigned : Symbol(sqlAssigned, Decl(tluaMetatableCallSuspend.tlua, 8, 5))
+
+end
+

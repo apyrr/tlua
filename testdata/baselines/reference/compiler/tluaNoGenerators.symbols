@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/tluaNoGenerators.tlua] ////
 
 === tluaNoGenerators.tlua ===
-// Generators are removed in tlua: `function*`, `yield`, `yield*`, and async
+// Generators are removed in tlua: `function*`, `yield`, `yield*`, and suspend
 // generators no longer parse. Use the Lua coroutine library directly instead.
 
 function* gen(): unknown
@@ -11,7 +11,7 @@ function* gen(): unknown
   yield* more;
 end
 
-async function* asyncGen(): unknown
+suspend function* suspendGen(): unknown
 > : Symbol((Missing), Decl(tluaNoGenerators.tlua, 0, 0), Decl(tluaNoGenerators.tlua, 6, 3))
 
   yield 4;

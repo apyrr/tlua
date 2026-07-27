@@ -2,13 +2,13 @@
 
 === tluaNoAwait.tlua ===
 // `await` is removed: it is an ordinary identifier everywhere — including
-// async function bodies and module top level — and async functions emit as
+// suspend function bodies and module top level — and suspend functions emit as
 // plain functions (no __awaiter, no transform).
 
 declare function compute(): number;
 >compute : Symbol(compute, Decl(tluaNoAwait.tlua, 0, 0))
 
-async function f(): number
+suspend function f(): number
 >f : Symbol(f, Decl(tluaNoAwait.tlua, 4, 35))
 
   local await = compute();
@@ -21,7 +21,7 @@ async function f(): number
 end
 
 // `await expr` no longer parses as a unary operator.
-async function g(): number
+suspend function g(): number
 >g : Symbol(g, Decl(tluaNoAwait.tlua, 9, 3))
 
   return await f();

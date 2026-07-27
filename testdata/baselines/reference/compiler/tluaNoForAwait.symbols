@@ -2,10 +2,9 @@
 
 === tluaNoForAwait.tlua ===
 // `for await` is no longer supported syntax.
-async function f(xs: number[]): Promise<number>
+suspend function f(xs: number[]): number
 >f : Symbol(f, Decl(tluaNoForAwait.tlua, 0, 0))
->xs : Symbol(xs, Decl(tluaNoForAwait.tlua, 1, 17))
->Promise : Symbol(Promise, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>xs : Symbol(xs, Decl(tluaNoForAwait.tlua, 1, 19))
 
   local total = 0;
 >total : Symbol(total, Decl(tluaNoForAwait.tlua, 2, 7))
@@ -13,7 +12,7 @@ async function f(xs: number[]): Promise<number>
   for await (local x of xs) {
 >await : Symbol(await, Decl(tluaNoForAwait.tlua, 3, 5))
 >x : Symbol(x, Decl(tluaNoForAwait.tlua, 3, 18))
->xs : Symbol(xs, Decl(tluaNoForAwait.tlua, 1, 17))
+>xs : Symbol(xs, Decl(tluaNoForAwait.tlua, 1, 19))
 
     total = total + x;
 >total : Symbol(total, Decl(tluaNoForAwait.tlua, 2, 7))

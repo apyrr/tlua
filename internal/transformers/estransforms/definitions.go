@@ -24,9 +24,9 @@ var (
 	// so there is nothing to lower. Tagged templates are gone too, so the
 	// invalid-escape lift restriction went with them.
 	NewES2018Transformer transformers.TransformerFactory = nil
-	// The async downlevel transform (__awaiter + generator state machine) is
+	// The suspend (formerly async) downlevel transform (__awaiter + generator state machine) is
 	// removed in tlua: suspension is the Lua coroutine library's job. The
-	// throwaway JS emit therefore keeps the native `async` keyword at ES2017+
+	// throwaway JS emit therefore keeps a native `async` keyword at ES2017+
 	// instead of lowering it; Lua — the real target — emits a plain function.
 	NewES2017Transformer = NewES2018Transformer
 	// Chain invokes every member, so the nil predecessor cannot be listed here.

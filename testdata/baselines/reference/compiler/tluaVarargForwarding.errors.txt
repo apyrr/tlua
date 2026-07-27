@@ -1,12 +1,13 @@
 tluaVarargForwarding.tlua(34,15): error TLUA2345: Argument of type 'number | nil' is not assignable to parameter of type 'string'.
   Type 'nil' is not assignable to type 'string'.
 tluaVarargForwarding.tlua(46,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
-tluaVarargForwarding.tlua(55,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
-tluaVarargForwarding.tlua(62,15): error TLUA2304: Cannot find name 'Parameters'.
-tluaVarargForwarding.tlua(63,19): error TLUA2304: Cannot find name 'ConstructorParameters'.
+tluaVarargForwarding.tlua(57,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaVarargForwarding.tlua(69,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaVarargForwarding.tlua(76,15): error TLUA2304: Cannot find name 'Parameters'.
+tluaVarargForwarding.tlua(77,19): error TLUA2304: Cannot find name 'ConstructorParameters'.
 
 
-==== tluaVarargForwarding.tlua (5 errors) ====
+==== tluaVarargForwarding.tlua (6 errors) ====
     declare function target(a: number, ...: string): void;
     
     function forward(...: any): void
@@ -59,15 +60,31 @@ tluaVarargForwarding.tlua(63,19): error TLUA2304: Cannot find name 'ConstructorP
           ~~~~~~
 !!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
-    // `Awaited<T>` matches a thenable through `then(onfulfilled: infer F, ...: infer _)`.
-    // The `infer` sits in a vararg annotation, so it infers the pack's *element* type
-    // and must carry no implicit `unknown[]` constraint -- with one, no element
-    // candidate can satisfy it, `then` never matches, and Awaited silently stops
-    // unwrapping (resolving to Promise<number> rather than number).
-    type Unwrapped = Awaited<Promise<number>>;
-    local unwrapped: Unwrapped = 1;
-    local badUnwrapped: Unwrapped = "a";
-          ~~~~~~~~~~~~
+    // `infer` in a vararg annotation infers the pack's *element* type and must
+    // carry no implicit `unknown[]` constraint. Two gates:
+    //
+    // (1) Direct: inferring from a function type's vararg position yields the
+    // element type itself, not an array of it.
+    declare varfn: (first: string, ...: number) => boolean;
+    type VarargElem<T> = T extends (first: any, ...: infer E) => any ? E : never;
+    type Elem = VarargElem<typeof varfn>;
+    local elem: Elem = 1;
+    local badElem: Elem = "a";
+          ~~~~~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    
+    // (2) Through a structural member match: if the vararg `infer _` picked up an
+    // implicit `unknown[]` constraint, no element candidate could satisfy it, the
+    // member would silently never match, and Picked would fall through to `never`
+    // -- which the positive assignment then catches.
+    interface Handler<T> {
+        invoke(value: T, ...: any): boolean;
+    }
+    type ValueOf<T> = T extends table & { invoke(value: infer V, ...: infer _): any; } ? V : never;
+    type Picked = ValueOf<Handler<number>>;
+    local picked: Picked = 1;
+    local badPicked: Picked = "a";
+          ~~~~~~~~~
 !!! error TLUA2322: Type 'string' is not assignable to type 'number'.
     
     // `Parameters<T>` and `ConstructorParameters<T>` are deliberately removed from

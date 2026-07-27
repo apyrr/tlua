@@ -1,4 +1,4 @@
-tluaMultiReturnTypeSyntaxErrors.tlua(2,10): error TLUA2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
+tluaMultiReturnTypeSyntaxErrors.tlua(2,10): error TLUA2304: Cannot find name 'Map'.
 tluaMultiReturnTypeSyntaxErrors.tlua(5,42): error TLUA1228: A type predicate is only allowed in return type position for functions and methods.
 tluaMultiReturnTypeSyntaxErrors.tlua(5,42): error TLUA100021: A type predicate cannot be part of a multiple return type.
 tluaMultiReturnTypeSyntaxErrors.tlua(23,22): error TLUA100033: Multiple return types must be parenthesized.
@@ -10,7 +10,7 @@ tluaMultiReturnTypeSyntaxErrors.tlua(27,29): error TLUA100033: Multiple return t
     // Ordinary callable return types do not consume enclosing commas.
     type H = Map<() => number, string>;
              ~~~
-!!! error TLUA2583: Cannot find name 'Map'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
+!!! error TLUA2304: Cannot find name 'Map'.
     type ParenthesizedSingle = () => (string)[];
     type ConditionalSingle<T> = () => (T extends string ? number : boolean);
     type BadPredicate = (value: unknown) => (value is string, number);

@@ -1,7 +1,7 @@
 interface LuaMetatable<T extends table> {
     __index?: Table<any, any> | ((value: T, key: any) => any);
     __newindex?: Table<any, any> | ((value: T, key: any, newValue: any) => void);
-    __call?: async (value: T, ...: any) => (any?, ...any);
+    __call?: suspend (value: T, ...: any) => (any?, ...any);
     __tostring?: (value: T) => string;
     __len?: (value: T) => number;
     __unm?: (value: T) => any;

@@ -1,0 +1,242 @@
+//// [tests/cases/compiler/tluaSuspendContract.tlua] ////
+
+=== tluaSuspendContract.tlua ===
+// The tlua coroutine contract: a suspend function may only be called from a
+// suspend context. Suspend functions return their plain type (or pack), never
+// Promise<T>.
+
+declare function request(url: string): (boolean, any);
+>request : (url: string) => (boolean, any)
+>url : string
+
+suspend function fetchOk(url: string): (boolean, any)
+>fetchOk : suspend (url: string) => (boolean, any)
+>url : string
+
+  local ok, res = request(url);
+>ok : boolean
+>res : any
+>request(url) : boolean
+>request : (url: string) => (boolean, any)
+>url : string
+
+  return ok, res;
+>ok, res : boolean, any
+>ok : boolean
+>res : any
+
+end
+
+// OK: direct call from a suspend context; the result is the plain pack.
+suspend function handler(): number
+>handler : suspend () => number
+
+  local ok, res = fetchOk("https://example.com");
+>ok : boolean
+>res : any
+>fetchOk("https://example.com") : boolean
+>fetchOk : suspend (url: string) => (boolean, any)
+>"https://example.com" : "https://example.com"
+
+  if ok then
+>ok : boolean
+
+    return 1;
+>1 : 1
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+// Error: direct call from a sync function.
+function syncCaller(): void
+>syncCaller : () => void
+
+  fetchOk("nope");
+>fetchOk("nope") : boolean
+>fetchOk : suspend (url: string) => (boolean, any)
+>"nope" : "nope"
+
+end
+
+// Error: call at top level.
+fetchOk("top");
+>fetchOk("top") : boolean
+>fetchOk : suspend (url: string) => (boolean, any)
+>"top" : "top"
+
+// Error: inferred alias keeps the contract (the flag rides the signature).
+function aliasCaller(): void
+>aliasCaller : () => void
+
+  local f = fetchOk;
+>f : suspend (url: string) => (boolean, any)
+>fetchOk : suspend (url: string) => (boolean, any)
+
+  f("aliased");
+>f("aliased") : boolean
+>f : suspend (url: string) => (boolean, any)
+>"aliased" : "aliased"
+
+end
+
+// OK: alias called from a suspend context.
+suspend function aliasSuspendCaller(): void
+>aliasSuspendCaller : suspend () => void
+
+  local f = fetchOk;
+>f : suspend (url: string) => (boolean, any)
+>fetchOk : suspend (url: string) => (boolean, any)
+
+  f("aliased");
+>f("aliased") : boolean
+>f : suspend (url: string) => (boolean, any)
+>"aliased" : "aliased"
+
+end
+
+// OK: passing a suspend function as a value is not a call. `coroutine.create`
+// and `coroutine.wrap` take the `function` top type, and a suspend function is
+// a function -- starting one as a coroutine is the whole point of the modifier.
+coroutine.create(fetchOk);
+>coroutine.create(fetchOk) : thread
+>coroutine.create : (fn: function) => thread
+>coroutine : CoroutineLib
+>create : (fn: function) => thread
+>fetchOk : suspend (url: string) => (boolean, any)
+
+local wrapped = coroutine.wrap(fetchOk);
+>wrapped : function
+>coroutine.wrap(fetchOk) : function
+>coroutine.wrap : (fn: function) => function
+>coroutine : CoroutineLib
+>wrap : (fn: function) => function
+>fetchOk : suspend (url: string) => (boolean, any)
+
+// OK: `function` is the top of every Lua function, so it must behave exactly
+// like the structurally identical `(...: any) => any` in target position.
+local topKeyword: function = fetchOk;
+>topKeyword : function
+>fetchOk : suspend (url: string) => (boolean, any)
+
+local topWritten: (...: any) => any = fetchOk;
+>topWritten : (...: any) => any
+> : any[]
+>fetchOk : suspend (url: string) => (boolean, any)
+
+// Error: a top target is the only escape hatch -- a concrete sync signature
+// still rejects, including through a contravariant callback flip.
+local concrete: (url: string) => (boolean, any) = fetchOk;
+>concrete : (url: string) => (boolean, any)
+>url : string
+>fetchOk : suspend (url: string) => (boolean, any)
+
+declare function takesSync(cb: (url: string) => (boolean, any)): void;
+>takesSync : (cb: (url: string) => (boolean, any)) => void
+>cb : (url: string) => (boolean, any)
+>url : string
+
+takesSync(fetchOk);
+>takesSync(fetchOk) : void
+>takesSync : (cb: (url: string) => (boolean, any)) => void
+>fetchOk : suspend (url: string) => (boolean, any)
+
+// OK: suspend recursion.
+suspend function pingpong(n: number): number
+>pingpong : suspend (n: number) => number
+>n : number
+
+  if n <= 0 then
+>n <= 0 : boolean
+>n : number
+>0 : 0
+
+    return 0;
+>0 : 0
+
+  end
+  return pingpong(n - 1);
+>pingpong(n - 1) : number
+>pingpong : suspend (n: number) => number
+>n - 1 : number
+>n : number
+>1 : 1
+
+end
+
+// Suspend arrow expressions participate too.
+local suspendArrow = suspend function(): number return 42 end;
+>suspendArrow : suspend () => number
+>suspend function(): number return 42 end : suspend () => number
+>42 : 42
+
+function arrowSyncCaller(): void
+>arrowSyncCaller : () => void
+
+  suspendArrow(); // error
+>suspendArrow() : number
+>suspendArrow : suspend () => number
+
+end
+suspend function arrowSuspendCaller(): number
+>arrowSuspendCaller : suspend () => number
+
+  return suspendArrow(); // OK
+>suspendArrow() : number
+>suspendArrow : suspend () => number
+
+end
+
+// Generic suspend functions keep the flag through instantiation.
+suspend function identitySuspend<T>(x: T): T
+>identitySuspend : suspend <T>(x: T) => T
+>x : T
+
+  return x;
+>x : T
+
+end
+function genericSyncCaller(): void
+>genericSyncCaller : () => void
+
+  identitySuspend(1); // error
+>identitySuspend(1) : 1
+>identitySuspend : suspend <T>(x: T) => T
+>1 : 1
+
+end
+suspend function genericSuspendCaller(): number
+>genericSuspendCaller : suspend () => number
+
+  return identitySuspend(2); // OK
+>identitySuspend(2) : 2
+>identitySuspend : suspend <T>(x: T) => T
+>2 : 2
+
+end
+
+// The suspend return type is the plain type, not Promise<T>.
+suspend function plain(): number
+>plain : suspend () => number
+
+  return 3;
+>3 : 3
+
+end
+suspend function usePlain(): number
+>usePlain : suspend () => number
+
+  local n = plain();
+>n : number
+>plain() : number
+>plain : suspend () => number
+
+  return n + 1;
+>n + 1 : number
+>n : number
+>1 : 1
+
+end
+

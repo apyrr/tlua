@@ -35,7 +35,7 @@ func TestCommentFormatting(t *testing.T) {
     /**
      *
     */
-    async x() {}
+    suspend x() {}
 }`
 
 		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
@@ -50,7 +50,7 @@ func TestCommentFormatting(t *testing.T) {
 		// Check that the asterisk is not corrupted
 		assert.Check(t, !strings.Contains(firstFormatted, "*/\n   /"), "should not corrupt */ to /")
 		assert.Check(t, strings.Contains(firstFormatted, "*/"), "should preserve */ token")
-		assert.Check(t, strings.Contains(firstFormatted, "async"), "should preserve async keyword")
+		assert.Check(t, strings.Contains(firstFormatted, "suspend"), "should preserve suspend keyword")
 
 		// Apply formatting a second time to test stability
 		sourceFile2 := parser.ParseSourceFile(ast.SourceFileParseOptions{
@@ -62,8 +62,8 @@ func TestCommentFormatting(t *testing.T) {
 		secondFormatted := applyBulkEdits(firstFormatted, edits2)
 
 		// Check that second formatting doesn't introduce corruption
-		assert.Check(t, !strings.Contains(secondFormatted, " sync x()"), "should not corrupt async to sync")
-		assert.Check(t, strings.Contains(secondFormatted, "async"), "should preserve async keyword on second pass")
+		assert.Check(t, !strings.Contains(secondFormatted, " susped x()"), "should not corrupt suspend to susped")
+		assert.Check(t, strings.Contains(secondFormatted, "suspend"), "should preserve suspend keyword on second pass")
 	})
 
 	t.Run("format JSDoc with tab indentation", func(t *testing.T) {

@@ -2,18 +2,18 @@
 
 //// [tluaNoAwait.tlua]
 // `await` is removed: it is an ordinary identifier everywhere — including
-// async function bodies and module top level — and async functions emit as
+// suspend function bodies and module top level — and suspend functions emit as
 // plain functions (no __awaiter, no transform).
 
 declare function compute(): number;
 
-async function f(): number
+suspend function f(): number
   local await = compute();
   return await;
 end
 
 // `await expr` no longer parses as a unary operator.
-async function g(): number
+suspend function g(): number
   return await f();
 end
 
@@ -29,14 +29,14 @@ end
 
 //// [tluaNoAwait.lua]
 -- `await` is removed: it is an ordinary identifier everywhere — including
--- async function bodies and module top level — and async functions emit as
+-- suspend function bodies and module top level — and suspend functions emit as
 -- plain functions (no __awaiter, no transform).
-async function f()
+suspend function f()
   local await = compute();
   return await;
 end
 -- `await expr` no longer parses as a unary operator.
-async function g()
+suspend function g()
   return await;
   f();
 end

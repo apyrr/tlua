@@ -147,7 +147,7 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 	var candidateExpr *ast.Node
 	if fn != nil && !ast.NodeIsMissing(fn.Body()) {
 		flags := ast.GetFunctionFlags(fn)
-		if flags&ast.FunctionFlagsAsync != 0 {
+		if flags&ast.FunctionFlagsSuspend != 0 {
 			return NewPseudoTypeInferred(fn, true)
 		}
 

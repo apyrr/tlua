@@ -8,6 +8,7 @@
     "tlua.goMemLimit.description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
     "tlua.goMemLimit.error": "Must be a valid memory limit (e.g., '2048MiB', '4GiB').",
     "tlua.autoClosingTags.description": "Enable/disable automatic closing of JSX tags.",
+    "tlua.semanticTokenModifiers.suspend.description": "A function declared with the 'suspend' modifier, which may suspend the running coroutine.",
     "tlua.enable.title": "Enable tlua Language Server",
     "tlua.disable.title": "Disable tlua Language Server",
     "tlua.restart.title": "Restart Language Server",

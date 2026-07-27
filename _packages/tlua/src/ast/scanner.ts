@@ -151,8 +151,7 @@ export const textToKeywordObj: Record<string, KeywordSyntaxKind> = {
     void: SyntaxKind.VoidKeyword,
     while: SyntaxKind.WhileKeyword,
     yield: SyntaxKind.YieldKeyword,
-    async: SyntaxKind.AsyncKeyword,
-    await: SyntaxKind.AwaitKeyword,
+    suspend: SyntaxKind.SuspendKeyword,
     of: SyntaxKind.OfKeyword,
 };
 

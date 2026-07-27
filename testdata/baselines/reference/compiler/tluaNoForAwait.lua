@@ -2,7 +2,7 @@
 
 //// [tluaNoForAwait.tlua]
 // `for await` is no longer supported syntax.
-async function f(xs: number[]): Promise<number>
+suspend function f(xs: number[]): number
   local total = 0;
   for await (local x of xs) {
     total = total + x;
@@ -22,7 +22,7 @@ end
 
 //// [tluaNoForAwait.lua]
 -- `for await` is no longer supported syntax.
-async function f(xs)
+suspend function f(xs)
   local total = 0;
   for await in () do
     local x;

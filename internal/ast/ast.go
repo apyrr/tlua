@@ -1494,8 +1494,6 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsTypeScript
 	case KindAccessorKeyword:
 		return SubtreeContainsClassFields
-	case KindAsyncKeyword:
-		return SubtreeContainsAnyAwait
 	case KindSuperKeyword:
 		return SubtreeContainsLexicalSuper
 	case KindThisKeyword:
@@ -1523,8 +1521,7 @@ func (node *ForOfStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func (node *ReturnStatement) computeSubtreeFacts() SubtreeFacts {
-	// return in an ES2018 async generator must be awaited
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
+	return propagateSubtreeFacts(node.Expression)
 }
 
 func (node *VariableStatement) computeSubtreeFacts() SubtreeFacts {
@@ -1593,15 +1590,13 @@ func (node *FunctionDeclaration) computeSubtreeFacts() SubtreeFacts {
 	if node.Body == nil || node.ModifierFlags()&ModifierFlagsAmbient != 0 {
 		return SubtreeContainsTypeScript
 	} else {
-		isAsync := node.ModifierFlags()&ModifierFlagsAsync != 0
 		return propagateModifierListSubtreeFacts(node.modifiers) |
 			propagateSubtreeFacts(node.name) |
 			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
 			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
-			propagateSubtreeFacts(node.Body) |
-			core.IfElse(isAsync, SubtreeContainsAnyAwait, SubtreeFactsNone)
+			propagateSubtreeFacts(node.Body)
 	}
 }
 
@@ -1745,8 +1740,7 @@ func (node *ArrowFunction) computeSubtreeFacts() SubtreeFacts {
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
 		propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
-		propagateSubtreeFacts(node.Body) |
-		core.IfElse(node.ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsAnyAwait, SubtreeFactsNone)
+		propagateSubtreeFacts(node.Body)
 }
 
 func (node *ArrowFunction) propagateSubtreeFacts() SubtreeFacts {
@@ -1754,15 +1748,13 @@ func (node *ArrowFunction) propagateSubtreeFacts() SubtreeFacts {
 }
 
 func (node *FunctionExpression) computeSubtreeFacts() SubtreeFacts {
-	isAsync := node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAsync != 0
 	return propagateModifierListSubtreeFacts(node.modifiers) |
 		propagateSubtreeFacts(node.name) |
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
 		propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
-		propagateSubtreeFacts(node.Body) |
-		core.IfElse(isAsync, SubtreeContainsAnyAwait, SubtreeFactsNone)
+		propagateSubtreeFacts(node.Body)
 }
 
 func (node *FunctionExpression) propagateSubtreeFacts() SubtreeFacts {

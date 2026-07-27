@@ -128,8 +128,7 @@ var textToKeyword = map[string]ast.Kind{
 	"void":       ast.KindVoidKeyword,
 	"while":      ast.KindWhileKeyword,
 	"yield":      ast.KindYieldKeyword,
-	"async":      ast.KindAsyncKeyword,
-	"await":      ast.KindAwaitKeyword,
+	"suspend":    ast.KindSuspendKeyword,
 	"of":         ast.KindOfKeyword,
 }
 

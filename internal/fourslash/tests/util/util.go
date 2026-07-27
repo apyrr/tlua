@@ -254,16 +254,6 @@ var CompletionGlobalKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "async",
-		Kind:     new(lsproto.CompletionItemKindKeyword),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "await",
-		Kind:     new(lsproto.CompletionItemKindKeyword),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
 		Label:    "boolean",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -425,6 +415,11 @@ var CompletionGlobalKeywords = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "number",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "suspend",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -868,26 +863,6 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "PromiseConstructorLike",
-		Kind:     new(lsproto.CompletionItemKindClass),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "PromiseLike",
-		Kind:     new(lsproto.CompletionItemKindInterface),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "Promise",
-		Kind:     new(lsproto.CompletionItemKindInterface),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
-		Label:    "Awaited",
-		Kind:     new(lsproto.CompletionItemKindClass),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
 		Label:    "ArrayLike",
 		Kind:     new(lsproto.CompletionItemKindInterface),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -1259,11 +1234,6 @@ var CompletionClassElementKeywords = []fourslash.CompletionsExpectedItem{
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "async",
-		Kind:     new(lsproto.CompletionItemKindKeyword),
-		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
-	},
-	&lsproto.CompletionItem{
 		Label:    "constructor",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
@@ -1310,6 +1280,11 @@ var CompletionClassElementKeywords = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "static",
+		Kind:     new(lsproto.CompletionItemKindKeyword),
+		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "suspend",
 		Kind:     new(lsproto.CompletionItemKindKeyword),
 		SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 	},

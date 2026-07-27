@@ -4017,10 +4017,10 @@ local obj = { m = 1, s = "hi", b = true };
 });
 
 describe("modifierFlags", () => {
-    test("async function has Async flag", () => {
+    test("suspend function has Suspend flag", () => {
         const api = spawnAPI({
             "/tluaconfig.json": "{}",
-            "/src/index.tlua": `async function foo() end`,
+            "/src/index.tlua": `suspend function foo() end`,
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -4036,8 +4036,8 @@ describe("modifierFlags", () => {
                 node.forEachChild(visit);
             });
             assert.ok(fnNode, "Should find a function declaration");
-            assert.ok(fnNode.modifierFlags & ModifierFlags.Async, "Should have Async flag");
-            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.Async);
+            assert.ok(fnNode.modifierFlags & ModifierFlags.Suspend, "Should have Suspend flag");
+            assert.strictEqual(fnNode.modifierFlags, ModifierFlags.Suspend);
         }
         finally {
             api.close();

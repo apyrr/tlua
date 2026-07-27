@@ -56,6 +56,12 @@
                 "path": "./syntaxes/tlua.tmLanguage.json"
             }
         ],
+        "semanticTokenModifiers": [
+            {
+                "id": "suspend",
+                "description": "%tlua.semanticTokenModifiers.suspend.description%"
+            }
+        ],
         "configuration": [
             {
                 "title": "tlua",

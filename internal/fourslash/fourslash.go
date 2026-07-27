@@ -328,12 +328,23 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	f.capabilities = params.Capabilities
-	resp, _, ok := lsptestutil.SendRequest(t, f.client, lsproto.InitializeInfo, params)
+	resp, initResult, ok := lsptestutil.SendRequest(t, f.client, lsproto.InitializeInfo, params)
 	if !ok {
 		t.Fatalf("Initialize request failed")
 	}
 	if resp.AsResponse().Error != nil {
 		t.Fatalf("Initialize request returned error: %s", resp.AsResponse().Error.String())
+	}
+	// Semantic tokens are encoded as indices into the legend the *server*
+	// returns, not into the list the client advertised: the server emits only
+	// the modifiers it actually uses, so the two lists differ whenever the
+	// client supports a modifier the server never reports. Decode against the
+	// legend, or every modifier past the first divergence is misread.
+	if initResult != nil {
+		if provider := initResult.Capabilities.SemanticTokensProvider; provider != nil && provider.Options != nil {
+			f.semanticTokenTypes = provider.Options.Legend.TokenTypes
+			f.semanticTokenModifiers = provider.Options.Legend.TokenModifiers
+		}
 	}
 	lsptestutil.SendNotification(t, f.client, lsproto.InitializedInfo, &lsproto.InitializedParams{})
 
@@ -379,7 +390,16 @@ func defaultSemanticTokenModifiers() []string {
 		string(lsproto.SemanticTokenModifierModification),
 		string(lsproto.SemanticTokenModifierDocumentation),
 		string(lsproto.SemanticTokenModifierDefaultLibrary),
-		"local",
+		// Exactly the predefined set vscode-languageclient hardcodes — a real
+		// client advertises nothing else. tlua's custom modifiers (`local`,
+		// `suspend`) are deliberately NOT listed: the VS Code
+		// `semanticTokenModifiers` contribution feeds theming, not LSP
+		// capabilities, so the server must include its custom names in the
+		// legend regardless of advertisement — and with this list mirroring
+		// the real client, every semantic-token test exercises that path
+		// end-to-end. The standard `async` stays for the same reason: a
+		// suspend function wrongly reported as `async` shows up in
+		// expectations rather than being silently filtered.
 	}
 }
 

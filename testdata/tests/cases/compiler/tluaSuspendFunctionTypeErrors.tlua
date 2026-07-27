@@ -1,0 +1,18 @@
+// @target: esnext
+
+// Strict suspend assignability: a suspend function is not assignable to a plain
+// (non-suspend) function type. This closes the laundering hole — suspend-ness can
+// no longer be silently erased by annotating a sync function type.
+
+declare function request(url: string): boolean;
+
+suspend function fetchOk(url: string): boolean
+  return request(url);
+end
+
+// Error: suspend fn laundered through a plain (sync) function-typed slot.
+local bad: (url: string) => boolean = fetchOk;
+
+// Error: suspend fn passed to a specific sync-typed callback parameter.
+declare function run(cb: (url: string) => boolean): void;
+run(fetchOk);

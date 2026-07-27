@@ -121,7 +121,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	if c.reportObviousModifierErrors(node) {
 		return true
 	}
-	var lastAsync *ast.Node
+	var lastSuspend *ast.Node
 	flags := ast.ModifierFlagsNone
 	modifiers := node.ModifierNodes()
 	for _, modifier := range modifiers {
@@ -146,8 +146,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, "override", "declare")
 			} else if flags&ast.ModifierFlagsReadonly != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "override", "readonly")
-			} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "override", "async")
+			} else if flags&ast.ModifierFlagsSuspend != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "override", "suspend")
 			}
 			flags |= ast.ModifierFlagsOverride
 
@@ -164,8 +164,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "static")
 			} else if flags&ast.ModifierFlagsReadonly != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "readonly")
-			} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "async")
+			} else if flags&ast.ModifierFlagsSuspend != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "suspend")
 			} else if node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_module_or_namespace_element, text)
 			} else if flags&ast.ModifierFlagsAbstract != 0 {
@@ -181,8 +181,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "static")
 			} else if flags&ast.ModifierFlagsReadonly != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "static", "readonly")
-			} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "static", "async")
+			} else if flags&ast.ModifierFlagsSuspend != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "static", "suspend")
 			} else if node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_module_or_namespace_element, "static")
 			} else if flags&ast.ModifierFlagsAbstract != 0 {
@@ -207,8 +207,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "declare")
 			} else if flags&ast.ModifierFlagsAbstract != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "abstract")
-			} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "async")
+			} else if flags&ast.ModifierFlagsSuspend != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "suspend")
 			}
 			flags |= ast.ModifierFlagsExport
 		case ast.KindDefaultKeyword:
@@ -228,8 +228,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 		case ast.KindDeclareKeyword:
 			if flags&ast.ModifierFlagsAmbient != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "declare")
-			} else if flags&ast.ModifierFlagsAsync != 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "async")
+			} else if flags&ast.ModifierFlagsSuspend != 0 {
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "suspend")
 			} else if flags&ast.ModifierFlagsOverride != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "override")
 			} else if (node.Parent.Flags&ast.NodeFlagsAmbient != 0) && node.Parent.Kind == ast.KindModuleBlock && !ast.IsVariableStatement(node) {
@@ -246,19 +246,19 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 			// tlua has no classes and no constructor types, so `abstract` has
 			// nothing left to attach to: it is always an error here.
 			return c.grammarErrorOnNode(modifier, diagnostics.X_abstract_modifier_can_only_appear_on_a_class_method_or_property_declaration)
-		case ast.KindAsyncKeyword:
-			if flags&ast.ModifierFlagsAsync != 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "async")
+		case ast.KindSuspendKeyword:
+			if flags&ast.ModifierFlagsSuspend != 0 {
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "suspend")
 			} else if node.Kind != ast.KindFunctionType && (flags&ast.ModifierFlagsAmbient != 0 || node.Parent.Flags&ast.NodeFlagsAmbient != 0) {
-				// An `async (x) => T` function *type* is not an implementation,
+				// A `suspend (x) => T` function *type* is not an implementation,
 				// so it is allowed in ambient/.d.ts contexts.
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "async")
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "suspend")
 			}
 			if flags&ast.ModifierFlagsAbstract != 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, "async", "abstract")
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, "suspend", "abstract")
 			}
-			flags |= ast.ModifierFlagsAsync
-			lastAsync = modifier
+			flags |= ast.ModifierFlagsSuspend
+			lastSuspend = modifier
 		case ast.KindInKeyword,
 			ast.KindOutKeyword:
 			var inOutFlag ast.ModifierFlags
@@ -287,8 +287,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 		}
 	}
 
-	if flags&ast.ModifierFlagsAsync != 0 {
-		return c.checkGrammarAsyncModifier(node, lastAsync)
+	if flags&ast.ModifierFlagsSuspend != 0 {
+		return c.checkGrammarSuspendModifier(node, lastSuspend)
 	}
 	return false
 }
@@ -332,7 +332,7 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		switch node.Kind {
 		case ast.KindFunctionDeclaration,
 			ast.KindFunctionType:
-			return c.findFirstModifierExcept(node, ast.KindAsyncKeyword)
+			return c.findFirstModifierExcept(node, ast.KindSuspendKeyword)
 		case ast.KindInterfaceDeclaration,
 			ast.KindTypeAliasDeclaration:
 			return core.Find(node.ModifierNodes(), ast.IsModifier)
@@ -344,7 +344,7 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 	}
 }
 
-func (c *Checker) checkGrammarAsyncModifier(node *ast.Node, asyncModifier *ast.Node) bool {
+func (c *Checker) checkGrammarSuspendModifier(node *ast.Node, suspendModifier *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
@@ -353,7 +353,7 @@ func (c *Checker) checkGrammarAsyncModifier(node *ast.Node, asyncModifier *ast.N
 		return false
 	}
 
-	return c.grammarErrorOnNode(asyncModifier, diagnostics.X_0_modifier_cannot_be_used_here, "async")
+	return c.grammarErrorOnNode(suspendModifier, diagnostics.X_0_modifier_cannot_be_used_here, "suspend")
 }
 
 func (c *Checker) checkGrammarForDisallowedTrailingComma(list *ast.NodeList, diag *diagnostics.Message) bool {

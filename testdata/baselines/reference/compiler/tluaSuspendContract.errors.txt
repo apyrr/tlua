@@ -1,0 +1,126 @@
+tluaSuspendContract.tlua(23,3): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaSuspendContract.tlua(27,1): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaSuspendContract.tlua(32,3): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaSuspendContract.tlua(54,7): error TLUA2322: Type 'suspend (url: string) => (boolean, any)' is not assignable to type '(url: string) => (boolean, any)'.
+  A suspend function is not assignable to a non-suspend function type.
+tluaSuspendContract.tlua(56,11): error TLUA2345: Argument of type 'suspend (url: string) => (boolean, any)' is not assignable to parameter of type '(url: string) => (boolean, any)'.
+  A suspend function is not assignable to a non-suspend function type.
+tluaSuspendContract.tlua(69,3): error TLUA100023: A suspend function can only be called from a suspend context.
+tluaSuspendContract.tlua(80,3): error TLUA100023: A suspend function can only be called from a suspend context.
+
+
+==== tluaSuspendContract.tlua (7 errors) ====
+    // The tlua coroutine contract: a suspend function may only be called from a
+    // suspend context. Suspend functions return their plain type (or pack), never
+    // Promise<T>.
+    
+    declare function request(url: string): (boolean, any);
+    
+    suspend function fetchOk(url: string): (boolean, any)
+      local ok, res = request(url);
+      return ok, res;
+    end
+    
+    // OK: direct call from a suspend context; the result is the plain pack.
+    suspend function handler(): number
+      local ok, res = fetchOk("https://example.com");
+      if ok then
+        return 1;
+      end
+      return 0;
+    end
+    
+    // Error: direct call from a sync function.
+    function syncCaller(): void
+      fetchOk("nope");
+      ~~~~~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 tluaSuspendContract.tlua:22:10: Did you mean to mark this function as 'suspend'?
+    end
+    
+    // Error: call at top level.
+    fetchOk("top");
+    ~~~~~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+    
+    // Error: inferred alias keeps the contract (the flag rides the signature).
+    function aliasCaller(): void
+      local f = fetchOk;
+      f("aliased");
+      ~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 tluaSuspendContract.tlua:30:10: Did you mean to mark this function as 'suspend'?
+    end
+    
+    // OK: alias called from a suspend context.
+    suspend function aliasSuspendCaller(): void
+      local f = fetchOk;
+      f("aliased");
+    end
+    
+    // OK: passing a suspend function as a value is not a call. `coroutine.create`
+    // and `coroutine.wrap` take the `function` top type, and a suspend function is
+    // a function -- starting one as a coroutine is the whole point of the modifier.
+    coroutine.create(fetchOk);
+    local wrapped = coroutine.wrap(fetchOk);
+    
+    // OK: `function` is the top of every Lua function, so it must behave exactly
+    // like the structurally identical `(...: any) => any` in target position.
+    local topKeyword: function = fetchOk;
+    local topWritten: (...: any) => any = fetchOk;
+    
+    // Error: a top target is the only escape hatch -- a concrete sync signature
+    // still rejects, including through a contravariant callback flip.
+    local concrete: (url: string) => (boolean, any) = fetchOk;
+          ~~~~~~~~
+!!! error TLUA2322: Type 'suspend (url: string) => (boolean, any)' is not assignable to type '(url: string) => (boolean, any)'.
+!!! error TLUA2322:   A suspend function is not assignable to a non-suspend function type.
+    declare function takesSync(cb: (url: string) => (boolean, any)): void;
+    takesSync(fetchOk);
+              ~~~~~~~
+!!! error TLUA2345: Argument of type 'suspend (url: string) => (boolean, any)' is not assignable to parameter of type '(url: string) => (boolean, any)'.
+!!! error TLUA2345:   A suspend function is not assignable to a non-suspend function type.
+    
+    // OK: suspend recursion.
+    suspend function pingpong(n: number): number
+      if n <= 0 then
+        return 0;
+      end
+      return pingpong(n - 1);
+    end
+    
+    // Suspend arrow expressions participate too.
+    local suspendArrow = suspend function(): number return 42 end;
+    function arrowSyncCaller(): void
+      suspendArrow(); // error
+      ~~~~~~~~~~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 tluaSuspendContract.tlua:68:10: Did you mean to mark this function as 'suspend'?
+    end
+    suspend function arrowSuspendCaller(): number
+      return suspendArrow(); // OK
+    end
+    
+    // Generic suspend functions keep the flag through instantiation.
+    suspend function identitySuspend<T>(x: T): T
+      return x;
+    end
+    function genericSyncCaller(): void
+      identitySuspend(1); // error
+      ~~~~~~~~~~~~~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 tluaSuspendContract.tlua:79:10: Did you mean to mark this function as 'suspend'?
+    end
+    suspend function genericSuspendCaller(): number
+      return identitySuspend(2); // OK
+    end
+    
+    // The suspend return type is the plain type, not Promise<T>.
+    suspend function plain(): number
+      return 3;
+    end
+    suspend function usePlain(): number
+      local n = plain();
+      return n + 1;
+    end
+    

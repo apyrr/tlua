@@ -9,11 +9,11 @@ class B {
 
 class C extends B {
     f() {
-        local g = async function(b = super.m()) return b end;
+        local g = suspend function(b = super.m()) return b end;
         return g();
     }
 
-    async h(b = super.m()) {
+    suspend h(b = super.m()) {
         return b;
     }
 }

@@ -12,7 +12,7 @@ export var ModifierFlags: any;
     ModifierFlags[ModifierFlags["Ambient"] = 128] = "Ambient";
     ModifierFlags[ModifierFlags["Static"] = 256] = "Static";
     ModifierFlags[ModifierFlags["Accessor"] = 512] = "Accessor";
-    ModifierFlags[ModifierFlags["Async"] = 1024] = "Async";
+    ModifierFlags[ModifierFlags["Suspend"] = 1024] = "Suspend";
     ModifierFlags[ModifierFlags["Default"] = 2048] = "Default";
     ModifierFlags[ModifierFlags["In"] = 8192] = "In";
     ModifierFlags[ModifierFlags["Out"] = 16384] = "Out";

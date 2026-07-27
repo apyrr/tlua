@@ -784,8 +784,8 @@ func (b *Binder) hasExportDeclarations(node *ast.Node) bool {
 }
 
 func (b *Binder) bindFunctionExpression(node *ast.Node) {
-	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsAsyncFunction(node) {
-		b.emitFlags |= ast.NodeFlagsHasAsyncFunctions
+	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsSuspendFunction(node) {
+		b.emitFlags |= ast.NodeFlagsHasSuspendFunctions
 	}
 	setFlowNode(node, b.currentFlow)
 	bindingName := ast.InternalSymbolNameFunction
@@ -818,8 +818,8 @@ func (b *Binder) setCommonJSModuleIndicator(node *ast.Node) bool {
 }
 
 func (b *Binder) bindPropertyOrMethodOrAccessor(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) {
-	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsAsyncFunction(node) {
-		b.emitFlags |= ast.NodeFlagsHasAsyncFunctions
+	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsSuspendFunction(node) {
+		b.emitFlags |= ast.NodeFlagsHasSuspendFunctions
 	}
 	if ast.HasDynamicName(node) {
 		b.bindAnonymousDeclaration(node, symbolFlags, ast.InternalSymbolNameComputed)
@@ -1089,8 +1089,8 @@ func (b *Binder) bindParameter(node *ast.Node) {
 }
 
 func (b *Binder) bindFunctionDeclaration(node *ast.Node) {
-	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsAsyncFunction(node) {
-		b.emitFlags |= ast.NodeFlagsHasAsyncFunctions
+	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsSuspendFunction(node) {
+		b.emitFlags |= ast.NodeFlagsHasSuspendFunctions
 	}
 	b.checkStrictModeFunctionName(node)
 	b.bindBlockScopedDeclaration(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
@@ -1330,9 +1330,9 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		saveHasExplicitReturn := b.hasExplicitReturn
 		saveSeenSelfType := b.seenSelfType
 		isImmediatelyInvoked := containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
-			!ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
+			!ast.HasSyntacticModifier(node, ast.ModifierFlagsSuspend) &&
 			ast.GetImmediatelyInvokedFunctionExpression(node) != nil
-		// A non-async IIFE is considered part of the containing control flow. Return statements behave
+		// A non-suspend IIFE is considered part of the containing control flow. Return statements behave
 		// similarly to break statements that exit to a label just past the statement body.
 		if !isImmediatelyInvoked {
 			flowStart := b.newFlowNode(ast.FlowFlagsStart)

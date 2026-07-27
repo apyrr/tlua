@@ -1812,11 +1812,11 @@ func (b *NodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 	if options != nil {
 		modifiers = options.modifiers
 	}
-	if kind == ast.KindFunctionType && signature.flags&SignatureFlagsAsync != 0 {
-		// Render an async signature as an `async (x) => T` function type so
-		// async-ness is visible in hover, .d.ts, and diagnostics.
+	if kind == ast.KindFunctionType && signature.flags&SignatureFlagsSuspend != 0 {
+		// Render a suspend signature as a `suspend (x) => T` function type so
+		// suspend-ness is visible in hover, .d.ts, and diagnostics.
 		flags := ast.ModifiersToFlags(modifiers)
-		modifiers = ast.CreateModifiersFromModifierFlags(flags|ast.ModifierFlagsAsync, b.f.NewModifier)
+		modifiers = ast.CreateModifiersFromModifierFlags(flags|ast.ModifierFlagsSuspend, b.f.NewModifier)
 	}
 
 	paramList := b.f.NewNodeList(parameters)
@@ -2970,7 +2970,7 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 				// identical to their associated type parameters' defaults for `Iterable`, `IterableIterator`,
 				// `AsyncIterable`, and `AsyncIterableIterator` to provide backwards-compatible .d.ts emit due
 				// to each now having three type parameters instead of only one.
-				if b.ch.isReferenceToType(t, b.ch.getGlobalIterableType()) || b.ch.isReferenceToType(t, b.ch.getGlobalIterableIteratorType()) || b.ch.isReferenceToType(t, b.ch.getGlobalAsyncIterableType()) || b.ch.isReferenceToType(t, b.ch.getGlobalAsyncIterableIteratorType()) {
+				if b.ch.isReferenceToType(t, b.ch.getGlobalIterableType()) || b.ch.isReferenceToType(t, b.ch.getGlobalIterableIteratorType()) {
 					if t.AsTypeReference().node == nil || !ast.IsTypeReferenceNode(t.AsTypeReference().node) || t.AsTypeReference().node.TypeArguments() == nil || len(t.AsTypeReference().node.TypeArguments()) < typeParameterCount {
 						for typeParameterCount > 0 {
 							typeArgument := typeArguments[typeParameterCount-1]

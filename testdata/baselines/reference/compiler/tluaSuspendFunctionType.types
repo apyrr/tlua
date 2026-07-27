@@ -1,0 +1,89 @@
+//// [tests/cases/compiler/tluaSuspendFunctionType.tlua] ////
+
+=== tluaSuspendFunctionType.tlua ===
+// A `suspend` modifier is allowed on function *type* nodes (the parenthesized
+// `suspend (params) => T` form). It carries the coroutine contract: a call
+// through a suspend-typed slot is checked, and suspend-ness is visible in the
+// type display.
+
+declare function request(url: string): boolean;
+>request : (url: string) => boolean
+>url : string
+
+suspend function fetchOk(url: string): boolean
+>fetchOk : suspend (url: string) => boolean
+>url : string
+
+  return request(url);
+>request(url) : boolean
+>request : (url: string) => boolean
+>url : string
+
+end
+
+declare function plainOk(url: string): boolean;
+>plainOk : (url: string) => boolean
+>url : string
+
+// OK: suspend fn into a suspend-typed slot; the slot keeps the contract.
+local g: suspend (url: string) => boolean = fetchOk;
+>g : suspend (url: string) => boolean
+>url : string
+>fetchOk : suspend (url: string) => boolean
+
+// OK: sync fn into a suspend-typed slot (a sync function may run in a coroutine).
+local h: suspend (url: string) => boolean = plainOk;
+>h : suspend (url: string) => boolean
+>url : string
+>plainOk : (url: string) => boolean
+
+// Calling through the suspend-typed slot: error from a sync function, OK from a
+// suspend function.
+function sync1(): void
+>sync1 : () => void
+
+  g("a");
+>g("a") : boolean
+>g : suspend (url: string) => boolean
+>"a" : "a"
+
+end
+suspend function ok(): void
+>ok : suspend () => void
+
+  g("b");
+>g("b") : boolean
+>g : suspend (url: string) => boolean
+>"b" : "b"
+
+end
+
+// Passing a suspend fn as a value into the "any function" top signature is fine
+// (it is how coroutine.create/wrap receive a suspendable function). The global
+// `coroutine` lib declares these as taking the `function` keyword type, which
+// must behave the same as the written `(...: any) => any` spelling.
+coroutine.create(fetchOk);
+>coroutine.create(fetchOk) : thread
+>coroutine.create : (fn: function) => thread
+>coroutine : CoroutineLib
+>create : (fn: function) => thread
+>fetchOk : suspend (url: string) => boolean
+
+local anyFn: (...: any) => any = fetchOk;
+>anyFn : (...: any) => any
+> : any[]
+>fetchOk : suspend (url: string) => boolean
+
+// suspend function types are usable in ambient / declared positions.
+declare handler: suspend (url: string) => boolean;
+>handler : suspend (url: string) => boolean
+>url : string
+
+// `suspend` used as an ordinary type name is unaffected (no parenthesized head).
+type suspend = number;
+>suspend : number
+
+local n: suspend = 1;
+>n : number
+>1 : 1
+

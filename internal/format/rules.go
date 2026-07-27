@@ -168,7 +168,7 @@ func getAllRules() []ruleSpec {
 		rule("SpaceAfterGetSetInMember", []ast.Kind{ast.KindGetKeyword, ast.KindSetKeyword}, ast.KindIdentifier, []contextPredicate{isFunctionDeclContext}, ruleActionInsertSpace),
 
 		rule("NoSpaceBetweenReturnAndSemicolon", ast.KindReturnKeyword, ast.KindSemicolonToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindReturnKeyword, ast.KindTypeOfKeyword, ast.KindAwaitKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindReturnKeyword, ast.KindTypeOfKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 		rule("SpaceAfterLocalInVariableDeclaration", []ast.Kind{ast.KindLocalKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isStartOfVariableDeclarationList}, ruleActionInsertSpace),
 		rule("NoSpaceBeforeOpenParenInFuncCall", anyToken, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext, isFunctionCallContext, isPreviousTokenNotComma}, ruleActionDeleteSpace),
 
@@ -176,9 +176,9 @@ func getAllRules() []ruleSpec {
 		rule("SpaceBeforeBinaryKeywordOperator", anyToken, binaryKeywordOperators, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
 		rule("SpaceAfterBinaryKeywordOperator", binaryKeywordOperators, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
 
-		// Async-await
-		rule("SpaceBetweenAsyncAndOpenParen", ast.KindAsyncKeyword, ast.KindOpenParenToken, []contextPredicate{isArrowFunctionContext, isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceBetweenAsyncAndFunctionKeyword", ast.KindAsyncKeyword, []ast.Kind{ast.KindFunctionKeyword, ast.KindIdentifier}, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		// Suspend modifier
+		rule("SpaceBetweenSuspendAndOpenParen", ast.KindSuspendKeyword, ast.KindOpenParenToken, []contextPredicate{isArrowFunctionContext, isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBetweenSuspendAndFunctionKeyword", ast.KindSuspendKeyword, []ast.Kind{ast.KindFunctionKeyword, ast.KindIdentifier}, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 
 		// Template string
 		rule("NoSpaceBetweenTagAndTemplateString", []ast.Kind{ast.KindIdentifier, ast.KindCloseParenToken}, []ast.Kind{ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead}, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
@@ -359,12 +359,11 @@ func getAllRules() []ruleSpec {
 		rule("NoSpaceBeforeComma", anyToken, ast.KindCommaToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// No space before and after indexer `x[]ast.Kind{}`
-		rule("NoSpaceBeforeOpenBracket", anyTokenExcept(ast.KindAsyncKeyword), ast.KindOpenBracketToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeOpenBracket", anyTokenExcept(ast.KindSuspendKeyword), ast.KindOpenBracketToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
 		rule("NoSpaceAfterCloseBracket", ast.KindCloseBracketToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBeforeBlockInFunctionDeclarationContext}, ruleActionDeleteSpace),
 		rule("SpaceAfterSemicolon", ast.KindSemicolonToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 
 		// Remove extra space between for and await
-		rule("SpaceBetweenForAndAwaitKeyword", ast.KindForKeyword, ast.KindAwaitKeyword, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
 
 		// Remove extra spaces between ... and type name in tuple spread
 		rule("SpaceBetweenDotDotDotAndTypeName", ast.KindDotDotDotToken, typeNames, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),

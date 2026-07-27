@@ -966,7 +966,7 @@ func (p *Parser) parseStatement() *ast.Statement {
 		return p.parseGotoStatement()
 	case ast.KindReturnKeyword:
 		return p.parseReturnStatement()
-	case ast.KindAsyncKeyword, ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
+	case ast.KindSuspendKeyword, ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
 		ast.KindDeclareKeyword,
 		ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword, ast.KindAbstractKeyword, ast.KindAccessorKeyword,
 		ast.KindStaticKeyword, ast.KindReadonlyKeyword, ast.KindGlobalKeyword:
@@ -1045,7 +1045,7 @@ func isAmbientGlobalNameToken(token ast.Kind) bool {
 	case ast.KindLocalKeyword,
 		ast.KindFunctionKeyword, ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindDeferKeyword,
 		ast.KindModuleKeyword, ast.KindNamespaceKeyword, ast.KindGlobalKeyword,
-		ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindAsyncKeyword, ast.KindDeclareKeyword,
+		ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindSuspendKeyword, ast.KindDeclareKeyword,
 		ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword, ast.KindReadonlyKeyword, ast.KindStaticKeyword:
 		return false
 	}
@@ -1798,8 +1798,8 @@ func (p *Parser) parseFunctionDeclarationBody() *ast.Node {
 	return p.parseLuaFunctionBlock()
 }
 
-func isAsyncModifier(modifier *ast.Node) bool {
-	return modifier.Kind == ast.KindAsyncKeyword
+func isSuspendModifier(modifier *ast.Node) bool {
+	return modifier.Kind == ast.KindSuspendKeyword
 }
 
 func (p *Parser) parseHeritageClauses() *ast.NodeList {
@@ -3251,16 +3251,16 @@ func (p *Parser) parseFunctionTypeToError(isInUnionType bool, parseConstituentTy
 func (p *Parser) isStartOfFunctionType() bool {
 	return p.token == ast.KindLessThanToken ||
 		p.token == ast.KindOpenParenToken && p.lookAhead((*Parser).nextIsUnambiguouslyStartOfFunctionType) ||
-		// tlua async function type: `async (params) => T`. Only the parenthesized
-		// form is unambiguous; `async <T>(...)` collides with the `async<T>` type
-		// reference and is deferred, so `async` alone stays a type reference.
-		p.token == ast.KindAsyncKeyword && p.lookAhead((*Parser).nextIsStartOfAsyncFunctionType)
+		// tlua suspend function type: `suspend (params) => T`. Only the parenthesized
+		// form is unambiguous; `suspend <T>(...)` collides with the `suspend<T>` type
+		// reference and is deferred, so `suspend` alone stays a type reference.
+		p.token == ast.KindSuspendKeyword && p.lookAhead((*Parser).nextIsStartOfSuspendFunctionType)
 }
 
 func (p *Parser) parseFunctionType() *ast.TypeNode {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
-	// A function type may carry an `async` modifier (the tlua coroutine contract).
+	// A function type may carry a `suspend` modifier (the tlua coroutine contract).
 	modifiers := p.parseModifiersForFunctionType()
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
@@ -3271,11 +3271,11 @@ func (p *Parser) parseFunctionType() *ast.TypeNode {
 	return result
 }
 
-// nextIsStartOfAsyncFunctionType reports whether `async` (already the current
-// token) begins an async function type `async (params) => T`. Only the
-// parenthesized form is accepted; a following `<` is left to the `async<T>`
-// type-reference reading, and a line break after `async` rules it out.
-func (p *Parser) nextIsStartOfAsyncFunctionType() bool {
+// nextIsStartOfSuspendFunctionType reports whether `suspend` (already the current
+// token) begins a suspend function type `suspend (params) => T`. Only the
+// parenthesized form is accepted; a following `<` is left to the `suspend<T>`
+// type-reference reading, and a line break after `suspend` rules it out.
+func (p *Parser) nextIsStartOfSuspendFunctionType() bool {
 	p.nextToken()
 	if p.hasPrecedingLineBreak() || p.token != ast.KindOpenParenToken {
 		return false
@@ -3425,7 +3425,7 @@ func (p *Parser) nextTokenIsFunctionKeywordOnSameLine() bool {
 }
 
 func (p *Parser) canFollowModifier() bool {
-	// Generators are removed in tlua: `*` cannot follow a modifier (`async *m()`).
+	// Generators are removed in tlua: `*` cannot follow a modifier (`suspend *m()`).
 	return p.token == ast.KindOpenBracketToken || p.token == ast.KindOpenBraceToken || p.token == ast.KindDotDotDotToken || p.isLiteralPropertyName()
 }
 
@@ -3533,13 +3533,13 @@ func (p *Parser) parseAssignmentExpressionOrHigher() *ast.Expression {
 }
 
 // parseModifiersForFunctionType parses the leading modifiers of a function
-// type. In tlua the only such modifier is `async` (`async (…) => T`); arrow
+// type. In tlua the only such modifier is `suspend` (`suspend (…) => T`); arrow
 // function values are removed, so this no longer feeds a value form.
 func (p *Parser) parseModifiersForFunctionType() *ast.ModifierList {
-	if p.token == ast.KindAsyncKeyword {
+	if p.token == ast.KindSuspendKeyword {
 		pos := p.nodePos()
 		p.nextToken()
-		modifier := p.finishNode(p.factory.NewModifier(ast.KindAsyncKeyword), pos)
+		modifier := p.finishNode(p.factory.NewModifier(ast.KindSuspendKeyword), pos)
 		return p.newModifierList(modifier.Loc, p.nodeSliceArena.NewSlice1(modifier))
 	}
 	return nil
@@ -4445,10 +4445,10 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 		}
 	case ast.KindOpenBraceToken:
 		return p.parseObjectLiteralExpression()
-	case ast.KindAsyncKeyword:
-		// Async arrow function values are removed in tlua, so `async` here can only
-		// introduce an async function expression. If we encounter `async [no
-		// LineTerminator here] function` then this is an async function; otherwise,
+	case ast.KindSuspendKeyword:
+		// Suspend arrow function values are removed in tlua, so `suspend` here can only
+		// introduce a suspend function expression. If we encounter `suspend [no
+		// LineTerminator here] function` then this is a suspend function; otherwise,
 		// it is an identifier.
 		if !p.lookAhead((*Parser).nextTokenIsFunctionKeywordOnSameLine) {
 			break
@@ -4832,7 +4832,7 @@ func (p *Parser) isStartOfStatement() bool {
 		ast.KindColonColonToken, ast.KindGotoKeyword,
 		ast.KindReturnKeyword:
 		return true
-	case ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindInterfaceKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
+	case ast.KindSuspendKeyword, ast.KindDeclareKeyword, ast.KindInterfaceKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
 		ast.KindTypeKeyword, ast.KindGlobalKeyword, ast.KindDeferKeyword:
 		// When these don't start a declaration, they're an identifier in an expression statement
 		return true
@@ -4879,7 +4879,7 @@ func (p *Parser) scanStartOfDeclaration() bool {
 		// could be legal, it would add complexity for very little gain.
 		case ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindDeferKeyword:
 			return p.nextTokenIsIdentifierOnSameLine()
-		case ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindPrivateKeyword,
+		case ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindSuspendKeyword, ast.KindDeclareKeyword, ast.KindPrivateKeyword,
 			ast.KindProtectedKeyword, ast.KindPublicKeyword, ast.KindReadonlyKeyword:
 			previousToken := p.token
 			p.nextToken()
@@ -4921,10 +4921,9 @@ func (p *Parser) isStartOfExpression() bool {
 	// consumes, which never terminates.
 	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken,
 		ast.KindVoidKeyword, ast.KindLessThanToken,
-		ast.KindAwaitKeyword, ast.KindYieldKeyword, ast.KindPrivateIdentifier:
-		// Yield/await always starts an expression.  Either it is an identifier (in which case
-		// it is definitely an expression).  Or it's a keyword (either because we're in
-		// a generator or async function, or in strict mode (or both)) and it started a yield or await expression.
+		ast.KindYieldKeyword, ast.KindPrivateIdentifier:
+		// Yield always starts an expression: either it is an identifier (in which case
+		// it is definitely an expression), or it started a yield expression.
 		return true
 	}
 	// Error tolerance.  If we see the start of some binary operator, we consider

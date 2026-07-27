@@ -1,0 +1,83 @@
+//// [tests/cases/compiler/tluaSuspendFunctionType.tlua] ////
+
+=== tluaSuspendFunctionType.tlua ===
+// A `suspend` modifier is allowed on function *type* nodes (the parenthesized
+// `suspend (params) => T` form). It carries the coroutine contract: a call
+// through a suspend-typed slot is checked, and suspend-ness is visible in the
+// type display.
+
+declare function request(url: string): boolean;
+>request : Symbol(request, Decl(tluaSuspendFunctionType.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaSuspendFunctionType.tlua, 5, 25))
+
+suspend function fetchOk(url: string): boolean
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendFunctionType.tlua, 5, 47))
+>url : Symbol(url, Decl(tluaSuspendFunctionType.tlua, 7, 25))
+
+  return request(url);
+>request : Symbol(request, Decl(tluaSuspendFunctionType.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaSuspendFunctionType.tlua, 7, 25))
+
+end
+
+declare function plainOk(url: string): boolean;
+>plainOk : Symbol(plainOk, Decl(tluaSuspendFunctionType.tlua, 9, 3))
+>url : Symbol(url, Decl(tluaSuspendFunctionType.tlua, 11, 25))
+
+// OK: suspend fn into a suspend-typed slot; the slot keeps the contract.
+local g: suspend (url: string) => boolean = fetchOk;
+>g : Symbol(g, Decl(tluaSuspendFunctionType.tlua, 14, 5))
+>url : Symbol(url, Decl(tluaSuspendFunctionType.tlua, 14, 18))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendFunctionType.tlua, 5, 47))
+
+// OK: sync fn into a suspend-typed slot (a sync function may run in a coroutine).
+local h: suspend (url: string) => boolean = plainOk;
+>h : Symbol(h, Decl(tluaSuspendFunctionType.tlua, 17, 5))
+>url : Symbol(url, Decl(tluaSuspendFunctionType.tlua, 17, 18))
+>plainOk : Symbol(plainOk, Decl(tluaSuspendFunctionType.tlua, 9, 3))
+
+// Calling through the suspend-typed slot: error from a sync function, OK from a
+// suspend function.
+function sync1(): void
+>sync1 : Symbol(sync1, Decl(tluaSuspendFunctionType.tlua, 17, 52))
+
+  g("a");
+>g : Symbol(g, Decl(tluaSuspendFunctionType.tlua, 14, 5))
+
+end
+suspend function ok(): void
+>ok : Symbol(ok, Decl(tluaSuspendFunctionType.tlua, 23, 3))
+
+  g("b");
+>g : Symbol(g, Decl(tluaSuspendFunctionType.tlua, 14, 5))
+
+end
+
+// Passing a suspend fn as a value into the "any function" top signature is fine
+// (it is how coroutine.create/wrap receive a suspendable function). The global
+// `coroutine` lib declares these as taking the `function` keyword type, which
+// must behave the same as the written `(...: any) => any` spelling.
+coroutine.create(fetchOk);
+>coroutine.create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendFunctionType.tlua, 5, 47))
+
+local anyFn: (...: any) => any = fetchOk;
+>anyFn : Symbol(anyFn, Decl(tluaSuspendFunctionType.tlua, 33, 5))
+> : Symbol((Missing), Decl(tluaSuspendFunctionType.tlua, 33, 14))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendFunctionType.tlua, 5, 47))
+
+// suspend function types are usable in ambient / declared positions.
+declare handler: suspend (url: string) => boolean;
+>handler : Symbol(handler, Decl(tluaSuspendFunctionType.tlua, 36, 7))
+>url : Symbol(url, Decl(tluaSuspendFunctionType.tlua, 36, 26))
+
+// `suspend` used as an ordinary type name is unaffected (no parenthesized head).
+type suspend = number;
+>suspend : Symbol(suspend, Decl(tluaSuspendFunctionType.tlua, 36, 50))
+
+local n: suspend = 1;
+>n : Symbol(n, Decl(tluaSuspendFunctionType.tlua, 40, 5))
+>suspend : Symbol(suspend, Decl(tluaSuspendFunctionType.tlua, 36, 50))
+

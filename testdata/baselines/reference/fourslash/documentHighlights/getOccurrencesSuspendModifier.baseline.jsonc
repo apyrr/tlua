@@ -1,0 +1,7 @@
+// === documentHighlights ===
+// === /getOccurrencesSuspendModifier.tlua ===
+// /*HIGHLIGHTS*/[|suspend|] function f()
+//  return suspend function ()
+//    return 300;
+//  end
+// end

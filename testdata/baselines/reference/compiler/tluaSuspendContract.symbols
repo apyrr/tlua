@@ -1,0 +1,206 @@
+//// [tests/cases/compiler/tluaSuspendContract.tlua] ////
+
+=== tluaSuspendContract.tlua ===
+// The tlua coroutine contract: a suspend function may only be called from a
+// suspend context. Suspend functions return their plain type (or pack), never
+// Promise<T>.
+
+declare function request(url: string): (boolean, any);
+>request : Symbol(request, Decl(tluaSuspendContract.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaSuspendContract.tlua, 4, 25))
+
+suspend function fetchOk(url: string): (boolean, any)
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+>url : Symbol(url, Decl(tluaSuspendContract.tlua, 6, 25))
+
+  local ok, res = request(url);
+>ok : Symbol(ok, Decl(tluaSuspendContract.tlua, 7, 7))
+>res : Symbol(res, Decl(tluaSuspendContract.tlua, 7, 11))
+>request : Symbol(request, Decl(tluaSuspendContract.tlua, 0, 0))
+>url : Symbol(url, Decl(tluaSuspendContract.tlua, 6, 25))
+
+  return ok, res;
+>ok : Symbol(ok, Decl(tluaSuspendContract.tlua, 7, 7))
+>res : Symbol(res, Decl(tluaSuspendContract.tlua, 7, 11))
+
+end
+
+// OK: direct call from a suspend context; the result is the plain pack.
+suspend function handler(): number
+>handler : Symbol(handler, Decl(tluaSuspendContract.tlua, 9, 3))
+
+  local ok, res = fetchOk("https://example.com");
+>ok : Symbol(ok, Decl(tluaSuspendContract.tlua, 13, 7))
+>res : Symbol(res, Decl(tluaSuspendContract.tlua, 13, 11))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+  if ok then
+>ok : Symbol(ok, Decl(tluaSuspendContract.tlua, 13, 7))
+
+    return 1;
+  end
+  return 0;
+end
+
+// Error: direct call from a sync function.
+function syncCaller(): void
+>syncCaller : Symbol(syncCaller, Decl(tluaSuspendContract.tlua, 18, 3))
+
+  fetchOk("nope");
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+end
+
+// Error: call at top level.
+fetchOk("top");
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+// Error: inferred alias keeps the contract (the flag rides the signature).
+function aliasCaller(): void
+>aliasCaller : Symbol(aliasCaller, Decl(tluaSuspendContract.tlua, 26, 15))
+
+  local f = fetchOk;
+>f : Symbol(f, Decl(tluaSuspendContract.tlua, 30, 7))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+  f("aliased");
+>f : Symbol(f, Decl(tluaSuspendContract.tlua, 30, 7))
+
+end
+
+// OK: alias called from a suspend context.
+suspend function aliasSuspendCaller(): void
+>aliasSuspendCaller : Symbol(aliasSuspendCaller, Decl(tluaSuspendContract.tlua, 32, 3))
+
+  local f = fetchOk;
+>f : Symbol(f, Decl(tluaSuspendContract.tlua, 36, 7))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+  f("aliased");
+>f : Symbol(f, Decl(tluaSuspendContract.tlua, 36, 7))
+
+end
+
+// OK: passing a suspend function as a value is not a call. `coroutine.create`
+// and `coroutine.wrap` take the `function` top type, and a suspend function is
+// a function -- starting one as a coroutine is the whole point of the modifier.
+coroutine.create(fetchOk);
+>coroutine.create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>create : Symbol(CoroutineLib.create, Decl(lib.luajit.d.tlua, --, --))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+local wrapped = coroutine.wrap(fetchOk);
+>wrapped : Symbol(wrapped, Decl(tluaSuspendContract.tlua, 44, 5))
+>coroutine.wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>coroutine : Symbol(coroutine, Decl(lib.luajit.d.tlua, --, --))
+>wrap : Symbol(CoroutineLib.wrap, Decl(lib.luajit.d.tlua, --, --))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+// OK: `function` is the top of every Lua function, so it must behave exactly
+// like the structurally identical `(...: any) => any` in target position.
+local topKeyword: function = fetchOk;
+>topKeyword : Symbol(topKeyword, Decl(tluaSuspendContract.tlua, 48, 5))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+local topWritten: (...: any) => any = fetchOk;
+>topWritten : Symbol(topWritten, Decl(tluaSuspendContract.tlua, 49, 5))
+> : Symbol((Missing), Decl(tluaSuspendContract.tlua, 49, 19))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+// Error: a top target is the only escape hatch -- a concrete sync signature
+// still rejects, including through a contravariant callback flip.
+local concrete: (url: string) => (boolean, any) = fetchOk;
+>concrete : Symbol(concrete, Decl(tluaSuspendContract.tlua, 53, 5))
+>url : Symbol(url, Decl(tluaSuspendContract.tlua, 53, 17))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+declare function takesSync(cb: (url: string) => (boolean, any)): void;
+>takesSync : Symbol(takesSync, Decl(tluaSuspendContract.tlua, 53, 58))
+>cb : Symbol(cb, Decl(tluaSuspendContract.tlua, 54, 27))
+>url : Symbol(url, Decl(tluaSuspendContract.tlua, 54, 32))
+
+takesSync(fetchOk);
+>takesSync : Symbol(takesSync, Decl(tluaSuspendContract.tlua, 53, 58))
+>fetchOk : Symbol(fetchOk, Decl(tluaSuspendContract.tlua, 4, 54))
+
+// OK: suspend recursion.
+suspend function pingpong(n: number): number
+>pingpong : Symbol(pingpong, Decl(tluaSuspendContract.tlua, 55, 19))
+>n : Symbol(n, Decl(tluaSuspendContract.tlua, 58, 26))
+
+  if n <= 0 then
+>n : Symbol(n, Decl(tluaSuspendContract.tlua, 58, 26))
+
+    return 0;
+  end
+  return pingpong(n - 1);
+>pingpong : Symbol(pingpong, Decl(tluaSuspendContract.tlua, 55, 19))
+>n : Symbol(n, Decl(tluaSuspendContract.tlua, 58, 26))
+
+end
+
+// Suspend arrow expressions participate too.
+local suspendArrow = suspend function(): number return 42 end;
+>suspendArrow : Symbol(suspendArrow, Decl(tluaSuspendContract.tlua, 66, 5))
+
+function arrowSyncCaller(): void
+>arrowSyncCaller : Symbol(arrowSyncCaller, Decl(tluaSuspendContract.tlua, 66, 62))
+
+  suspendArrow(); // error
+>suspendArrow : Symbol(suspendArrow, Decl(tluaSuspendContract.tlua, 66, 5))
+
+end
+suspend function arrowSuspendCaller(): number
+>arrowSuspendCaller : Symbol(arrowSuspendCaller, Decl(tluaSuspendContract.tlua, 69, 3))
+
+  return suspendArrow(); // OK
+>suspendArrow : Symbol(suspendArrow, Decl(tluaSuspendContract.tlua, 66, 5))
+
+end
+
+// Generic suspend functions keep the flag through instantiation.
+suspend function identitySuspend<T>(x: T): T
+>identitySuspend : Symbol(identitySuspend, Decl(tluaSuspendContract.tlua, 72, 3))
+>T : Symbol(T, Decl(tluaSuspendContract.tlua, 75, 33))
+>x : Symbol(x, Decl(tluaSuspendContract.tlua, 75, 36))
+>T : Symbol(T, Decl(tluaSuspendContract.tlua, 75, 33))
+>T : Symbol(T, Decl(tluaSuspendContract.tlua, 75, 33))
+
+  return x;
+>x : Symbol(x, Decl(tluaSuspendContract.tlua, 75, 36))
+
+end
+function genericSyncCaller(): void
+>genericSyncCaller : Symbol(genericSyncCaller, Decl(tluaSuspendContract.tlua, 77, 3))
+
+  identitySuspend(1); // error
+>identitySuspend : Symbol(identitySuspend, Decl(tluaSuspendContract.tlua, 72, 3))
+
+end
+suspend function genericSuspendCaller(): number
+>genericSuspendCaller : Symbol(genericSuspendCaller, Decl(tluaSuspendContract.tlua, 80, 3))
+
+  return identitySuspend(2); // OK
+>identitySuspend : Symbol(identitySuspend, Decl(tluaSuspendContract.tlua, 72, 3))
+
+end
+
+// The suspend return type is the plain type, not Promise<T>.
+suspend function plain(): number
+>plain : Symbol(plain, Decl(tluaSuspendContract.tlua, 83, 3))
+
+  return 3;
+end
+suspend function usePlain(): number
+>usePlain : Symbol(usePlain, Decl(tluaSuspendContract.tlua, 88, 3))
+
+  local n = plain();
+>n : Symbol(n, Decl(tluaSuspendContract.tlua, 90, 7))
+>plain : Symbol(plain, Decl(tluaSuspendContract.tlua, 83, 3))
+
+  return n + 1;
+>n : Symbol(n, Decl(tluaSuspendContract.tlua, 90, 7))
+
+end
+

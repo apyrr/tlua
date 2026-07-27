@@ -88,23 +88,75 @@ local badRet: Ret = "a";
 >badRet : Symbol(badRet, Decl(tluaVarargForwarding.tlua, 45, 5))
 >Ret : Symbol(Ret, Decl(tluaVarargForwarding.tlua, 37, 55))
 
-// `Awaited<T>` matches a thenable through `then(onfulfilled: infer F, ...: infer _)`.
-// The `infer` sits in a vararg annotation, so it infers the pack's *element* type
-// and must carry no implicit `unknown[]` constraint -- with one, no element
-// candidate can satisfy it, `then` never matches, and Awaited silently stops
-// unwrapping (resolving to Promise<number> rather than number).
-type Unwrapped = Awaited<Promise<number>>;
->Unwrapped : Symbol(Unwrapped, Decl(tluaVarargForwarding.tlua, 45, 24))
->Awaited : Symbol(Awaited, Decl(lib.luajit.d.tlua, --, --))
->Promise : Symbol(Promise, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+// `infer` in a vararg annotation infers the pack's *element* type and must
+// carry no implicit `unknown[]` constraint. Two gates:
+//
+// (1) Direct: inferring from a function type's vararg position yields the
+// element type itself, not an array of it.
+declare varfn: (first: string, ...: number) => boolean;
+>varfn : Symbol(varfn, Decl(tluaVarargForwarding.tlua, 52, 7))
+>first : Symbol(first, Decl(tluaVarargForwarding.tlua, 52, 16))
+> : Symbol((Missing), Decl(tluaVarargForwarding.tlua, 52, 30))
 
-local unwrapped: Unwrapped = 1;
->unwrapped : Symbol(unwrapped, Decl(tluaVarargForwarding.tlua, 53, 5))
->Unwrapped : Symbol(Unwrapped, Decl(tluaVarargForwarding.tlua, 45, 24))
+type VarargElem<T> = T extends (first: any, ...: infer E) => any ? E : never;
+>VarargElem : Symbol(VarargElem, Decl(tluaVarargForwarding.tlua, 52, 55))
+>T : Symbol(T, Decl(tluaVarargForwarding.tlua, 53, 16))
+>T : Symbol(T, Decl(tluaVarargForwarding.tlua, 53, 16))
+>first : Symbol(first, Decl(tluaVarargForwarding.tlua, 53, 32))
+> : Symbol((Missing), Decl(tluaVarargForwarding.tlua, 53, 43))
+>E : Symbol(E, Decl(tluaVarargForwarding.tlua, 53, 54))
+>E : Symbol(E, Decl(tluaVarargForwarding.tlua, 53, 54))
 
-local badUnwrapped: Unwrapped = "a";
->badUnwrapped : Symbol(badUnwrapped, Decl(tluaVarargForwarding.tlua, 54, 5))
->Unwrapped : Symbol(Unwrapped, Decl(tluaVarargForwarding.tlua, 45, 24))
+type Elem = VarargElem<typeof varfn>;
+>Elem : Symbol(Elem, Decl(tluaVarargForwarding.tlua, 53, 77))
+>VarargElem : Symbol(VarargElem, Decl(tluaVarargForwarding.tlua, 52, 55))
+>varfn : Symbol(varfn, Decl(tluaVarargForwarding.tlua, 52, 7))
+
+local elem: Elem = 1;
+>elem : Symbol(elem, Decl(tluaVarargForwarding.tlua, 55, 5))
+>Elem : Symbol(Elem, Decl(tluaVarargForwarding.tlua, 53, 77))
+
+local badElem: Elem = "a";
+>badElem : Symbol(badElem, Decl(tluaVarargForwarding.tlua, 56, 5))
+>Elem : Symbol(Elem, Decl(tluaVarargForwarding.tlua, 53, 77))
+
+// (2) Through a structural member match: if the vararg `infer _` picked up an
+// implicit `unknown[]` constraint, no element candidate could satisfy it, the
+// member would silently never match, and Picked would fall through to `never`
+// -- which the positive assignment then catches.
+interface Handler<T> {
+>Handler : Symbol(Handler, Decl(tluaVarargForwarding.tlua, 56, 26))
+>T : Symbol(T, Decl(tluaVarargForwarding.tlua, 62, 18))
+
+    invoke(value: T, ...: any): boolean;
+>invoke : Symbol(Handler.invoke, Decl(tluaVarargForwarding.tlua, 62, 22))
+>value : Symbol(value, Decl(tluaVarargForwarding.tlua, 63, 11))
+>T : Symbol(T, Decl(tluaVarargForwarding.tlua, 62, 18))
+> : Symbol((Missing), Decl(tluaVarargForwarding.tlua, 63, 20))
+}
+type ValueOf<T> = T extends table & { invoke(value: infer V, ...: infer _): any; } ? V : never;
+>ValueOf : Symbol(ValueOf, Decl(tluaVarargForwarding.tlua, 64, 1))
+>T : Symbol(T, Decl(tluaVarargForwarding.tlua, 65, 13))
+>T : Symbol(T, Decl(tluaVarargForwarding.tlua, 65, 13))
+>invoke : Symbol(invoke, Decl(tluaVarargForwarding.tlua, 65, 37))
+>value : Symbol(value, Decl(tluaVarargForwarding.tlua, 65, 45))
+>V : Symbol(V, Decl(tluaVarargForwarding.tlua, 65, 57))
+> : Symbol((Missing), Decl(tluaVarargForwarding.tlua, 65, 60))
+>_ : Symbol(_, Decl(tluaVarargForwarding.tlua, 65, 71))
+>V : Symbol(V, Decl(tluaVarargForwarding.tlua, 65, 57))
+
+type Picked = ValueOf<Handler<number>>;
+>Picked : Symbol(Picked, Decl(tluaVarargForwarding.tlua, 65, 95))
+>ValueOf : Symbol(ValueOf, Decl(tluaVarargForwarding.tlua, 64, 1))
+>Handler : Symbol(Handler, Decl(tluaVarargForwarding.tlua, 56, 26))
+
+local picked: Picked = 1;
+>picked : Symbol(picked, Decl(tluaVarargForwarding.tlua, 67, 5))
+>Picked : Symbol(Picked, Decl(tluaVarargForwarding.tlua, 65, 95))
+
+local badPicked: Picked = "a";
+>badPicked : Symbol(badPicked, Decl(tluaVarargForwarding.tlua, 68, 5))
+>Picked : Symbol(Picked, Decl(tluaVarargForwarding.tlua, 65, 95))
 
 // `Parameters<T>` and `ConstructorParameters<T>` are deliberately removed from
 // the libs: they are built on `...args: infer P`, which only works because a TS
@@ -112,12 +164,12 @@ local badUnwrapped: Unwrapped = "a";
 // pack's element type, so the tuple is unreachable -- and with operand spread
 // gone, no tlua program could consume it anyway. Restoring them is Stage 2.
 type Params = Parameters<typeof twoArgs>;
->Params : Symbol(Params, Decl(tluaVarargForwarding.tlua, 54, 36))
+>Params : Symbol(Params, Decl(tluaVarargForwarding.tlua, 68, 30))
 >Parameters : Symbol(Parameters)
 >twoArgs : Symbol(twoArgs, Decl(tluaVarargForwarding.tlua, 34, 3))
 
 type CtorParams = ConstructorParameters<typeof twoArgs>;
->CtorParams : Symbol(CtorParams, Decl(tluaVarargForwarding.tlua, 61, 41))
+>CtorParams : Symbol(CtorParams, Decl(tluaVarargForwarding.tlua, 75, 41))
 >ConstructorParameters : Symbol(ConstructorParameters)
 >twoArgs : Symbol(twoArgs, Decl(tluaVarargForwarding.tlua, 34, 3))
 

@@ -89,7 +89,6 @@ const (
 	//     `+` UnaryExpression
 	//     `-` UnaryExpression
 	//     `!` UnaryExpression
-	//     AwaitExpression
 	// Lua exponentiation binds tighter than unary operators, while still allowing
 	// a unary expression on its right-hand side (for example, `2 ^ -3`).
 	OperatorPrecedenceUnary

@@ -1,6 +1,6 @@
-//// [tests/cases/compiler/asyncSuperDefaultParameters.tlua] ////
+//// [tests/cases/compiler/suspendSuperDefaultParameters.tlua] ////
 
-//// [asyncSuperDefaultParameters.tlua]
+//// [suspendSuperDefaultParameters.tlua]
 class B {
     m() {
         return 1;
@@ -9,17 +9,17 @@ class B {
 
 class C extends B {
     f() {
-        local g = async function(b = super.m()) return b end;
+        local g = suspend function(b = super.m()) return b end;
         return g();
     }
 
-    async h(b = super.m()) {
+    suspend h(b = super.m()) {
         return b;
     }
 }
 
 
-//// [asyncSuperDefaultParameters.lua]
+//// [suspendSuperDefaultParameters.lua]
 class;
 B;
 do
@@ -34,12 +34,12 @@ B;
 do
   f();
   do
-    local g = async function(b = super.m())
+    local g = suspend function(b = super.m())
       return b;
     end;
     return g();
   end
-  async;
+  suspend;
   h(b = super.m());
   do
     return b;

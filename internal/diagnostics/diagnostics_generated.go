@@ -4316,9 +4316,9 @@ var A_type_predicate_cannot_be_part_of_a_multiple_return_type = &Message{code: 1
 
 var A_Lua_numeric_for_statement_has_at_most_three_control_expressions = &Message{code: 100022, category: CategoryError, key: "A_Lua_numeric_for_statement_has_at_most_three_control_expressions_100022", text: "A Lua numeric for statement has at most three control expressions."}
 
-var An_async_function_can_only_be_called_from_an_async_context = &Message{code: 100023, category: CategoryError, key: "An_async_function_can_only_be_called_from_an_async_context_100023", text: "An async function can only be called from an async context."}
+var A_suspend_function_can_only_be_called_from_a_suspend_context = &Message{code: 100023, category: CategoryError, key: "A_suspend_function_can_only_be_called_from_a_suspend_context_100023", text: "A suspend function can only be called from a suspend context."}
 
-var An_async_function_is_not_assignable_to_a_non_async_function_type = &Message{code: 100024, category: CategoryError, key: "An_async_function_is_not_assignable_to_a_non_async_function_type_100024", text: "An async function is not assignable to a non-async function type."}
+var A_suspend_function_is_not_assignable_to_a_non_suspend_function_type = &Message{code: 100024, category: CategoryError, key: "A_suspend_function_is_not_assignable_to_a_non_suspend_function_type_100024", text: "A suspend function is not assignable to a non-suspend function type."}
 
 var No_visible_label_0_for_goto = &Message{code: 100025, category: CategoryError, key: "No_visible_label_0_for_goto_100025", text: "No visible label '{0}' for goto."}
 
@@ -4385,6 +4385,8 @@ var Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name
 var A_self_type_is_available_only_in_a_member_of_an_interface = &Message{code: 100056, category: CategoryError, key: "A_self_type_is_available_only_in_a_member_of_an_interface_100056", text: "A 'self' type is available only in a member of an interface."}
 
 var Incomplete_statement_expected_assignment_or_a_function_call = &Message{code: 100057, category: CategoryError, key: "Incomplete_statement_expected_assignment_or_a_function_call_100057", text: "Incomplete statement: expected assignment or a function call."}
+
+var Did_you_mean_to_mark_this_function_as_suspend = &Message{code: 100058, category: CategoryError, key: "Did_you_mean_to_mark_this_function_as_suspend_100058", text: "Did you mean to mark this function as 'suspend'?"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8702,10 +8704,10 @@ func keyToMessage(key Key) *Message {
 		return A_type_predicate_cannot_be_part_of_a_multiple_return_type
 	case "A_Lua_numeric_for_statement_has_at_most_three_control_expressions_100022":
 		return A_Lua_numeric_for_statement_has_at_most_three_control_expressions
-	case "An_async_function_can_only_be_called_from_an_async_context_100023":
-		return An_async_function_can_only_be_called_from_an_async_context
-	case "An_async_function_is_not_assignable_to_a_non_async_function_type_100024":
-		return An_async_function_is_not_assignable_to_a_non_async_function_type
+	case "A_suspend_function_can_only_be_called_from_a_suspend_context_100023":
+		return A_suspend_function_can_only_be_called_from_a_suspend_context
+	case "A_suspend_function_is_not_assignable_to_a_non_suspend_function_type_100024":
+		return A_suspend_function_is_not_assignable_to_a_non_suspend_function_type
 	case "No_visible_label_0_for_goto_100025":
 		return No_visible_label_0_for_goto
 	case "Cannot_jump_into_the_scope_of_local_0_100026":
@@ -8772,6 +8774,8 @@ func keyToMessage(key Key) *Message {
 		return A_self_type_is_available_only_in_a_member_of_an_interface
 	case "Incomplete_statement_expected_assignment_or_a_function_call_100057":
 		return Incomplete_statement_expected_assignment_or_a_function_call
+	case "Did_you_mean_to_mark_this_function_as_suspend_100058":
+		return Did_you_mean_to_mark_this_function_as_suspend
 	default:
 		return nil
 	}

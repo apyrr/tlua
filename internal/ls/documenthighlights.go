@@ -164,8 +164,8 @@ func (l *LanguageService) getSyntacticDocumentHighlights(node *ast.Node, sourceF
 		return l.useParent(node.Parent, ast.IsBreakOrContinueStatement, getBreakOrContinueStatementOccurrences, sourceFile)
 	case ast.KindForKeyword, ast.KindWhileKeyword, ast.KindDoKeyword:
 		return l.useParent(node.Parent, ast.IsIterationStatement, getLoopBreakContinueOccurrences, sourceFile)
-	case ast.KindAsyncKeyword:
-		return l.highlightSpans(getAsyncAndAwaitOccurrences(node, sourceFile), sourceFile)
+	case ast.KindSuspendKeyword:
+		return l.highlightSpans(getSuspendModifierOccurrences(node, sourceFile), sourceFile)
 	case ast.KindInKeyword, ast.KindOutKeyword:
 		return nil
 	default:
@@ -400,7 +400,7 @@ func getLoopBreakContinueOccurrences(node *ast.Node, sourceFile *ast.SourceFile)
 	return keywords
 }
 
-func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
+func getSuspendModifierOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	fun := ast.GetContainingFunction(node)
 	if fun == nil {
 		return nil
@@ -409,7 +409,7 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 	var keywords []*ast.Node
 
 	for _, modifier := range fun.ModifierNodes() {
-		if modifier.Kind == ast.KindAsyncKeyword {
+		if modifier.Kind == ast.KindSuspendKeyword {
 			keywords = append(keywords, modifier)
 		}
 	}

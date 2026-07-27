@@ -47,24 +47,6 @@ interface LuaPairsIterator<K, V> {
 // user signatures, resolved specially by the checker.
 type NoInfer<T> = intrinsic;
 
-// Inert Promise surface. tlua has no await and no Promise semantics; these
-// exist only so `import(...)` and the residual `async` modifier keep
-// type-checking. Deliberately member-poor.
-interface PromiseLike<T> {
-    then(onfulfilled?: (value: T) => any, onrejected?: (reason: any) => any): PromiseLike<T>;
-}
-
-interface Promise<T> {
-    then(onfulfilled?: (value: T) => any, onrejected?: (reason: any) => any): Promise<T>;
-}
-
-interface PromiseConstructor {
-    readonly prototype: Promise<any>;
-    resolve<T>(value: T | PromiseLike<T>): Promise<T>;
-    resolve(): Promise<void>;
-}
-declare Promise: PromiseConstructor;
-
 // The erasable type-operator utilities inherited from TypeScript. These are
 // pure type sugar over machinery the checker supports (mapped, conditional,
 // and intrinsic string types); no runtime surface.
@@ -109,14 +91,6 @@ type NonNullable<T> = T & {};
 /** Obtain the return type of a function type */
 type ReturnType<T extends (...: any) => any> = T extends (...: any) => infer R ? R : any;
 
-/** Recursively unwrap the value type of a thenable */
-type Awaited<T> = T extends null | undefined ? T :
-    T extends table & { then(onfulfilled: infer F, ...: infer _): any; } ?
-        F extends ((value: infer V, ...: infer _) => any) ?
-            Awaited<V> :
-        never :
-    T;
-
 /** Convert string literal type to uppercase */
 type Uppercase<S extends string> = intrinsic;
 
@@ -132,7 +106,7 @@ type Uncapitalize<S extends string> = intrinsic;
 interface LuaMetatable<T extends table> {
     __index?: Table<any, any> | ((value: T, key: any) => any);
     __newindex?: Table<any, any> | ((value: T, key: any, newValue: any) => void);
-    __call?: async (value: T, ...: any) => (any?, ...any);
+    __call?: suspend (value: T, ...: any) => (any?, ...any);
     __tostring?: (value: T) => string;
     __len?: (value: T) => number;
     __unm?: (value: T) => any;
@@ -228,7 +202,7 @@ declare function xpcall(fn: function, handler: (message: any) => any, ...: any):
  * metamethods also dispatch ambiently: a declared type that states them as
  * `__add`-style members (a userdata class like GMod's Vector) overloads the
  * operators with no setmetatable in sight; __index, __newindex and __call stay
- * pairing-only. The __call slot is async-typed so a handler may carry the
+ * pairing-only. The __call slot is suspend-typed so a handler may carry the
  * coroutine contract -- a sync handler satisfies it too, and the pairing's call
  * surface keeps whichever flavor the handler declares.
  * debug.setmetatable and debug.getmetatable bypass __metatable protection. A

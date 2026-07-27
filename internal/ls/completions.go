@@ -221,7 +221,6 @@ type symbolOriginInfoKind int
 const (
 	symbolOriginInfoKindThisType symbolOriginInfoKind = 1 << iota
 	symbolOriginInfoKindSymbolMember
-	symbolOriginInfoKindPromise
 	symbolOriginInfoKindNullable
 	symbolOriginInfoKindTypeOnlyAlias
 	symbolOriginInfoKindObjectLiteralMethod
@@ -696,16 +695,13 @@ func (l *LanguageService) getCompletionData(
 				ast.IsPartOfTypeNode(location) ||
 				isContextTokenTypeLocation(contextToken))
 
-	addSymbolOriginInfo := func(symbol *ast.Symbol, insertQuestionDot bool, insertAwait bool) {
-		symbolId := ast.GetSymbolId(symbol)
-		if insertAwait && seenPropertySymbols.AddIfAbsent(symbolId) {
-			symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindPromise, insertQuestionDot)}
-		} else if insertQuestionDot {
+	addSymbolOriginInfo := func(symbol *ast.Symbol, insertQuestionDot bool) {
+		if insertQuestionDot {
 			symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: symbolOriginInfoKindNullable}
 		}
 	}
 
-	addPropertySymbol := func(symbol *ast.Symbol, insertAwait bool, insertQuestionDot bool) {
+	addPropertySymbol := func(symbol *ast.Symbol, insertQuestionDot bool) {
 		// For a computed property with an accessible name like `Symbol.iterator`,
 		// we'll add a completion for the *name* `Symbol` instead of for the property.
 		// If this is e.g. [Symbol.iterator], add a completion for `Symbol`.
@@ -745,15 +741,15 @@ func (l *LanguageService) getCompletionData(
 				}
 			} else if firstAccessibleSymbolId == 0 || !seenPropertySymbols.Has(firstAccessibleSymbolId) {
 				symbols = append(symbols, symbol)
-				addSymbolOriginInfo(symbol, insertQuestionDot, insertAwait)
+				addSymbolOriginInfo(symbol, insertQuestionDot)
 			}
 		} else {
 			symbols = append(symbols, symbol)
-			addSymbolOriginInfo(symbol, insertQuestionDot, insertAwait)
+			addSymbolOriginInfo(symbol, insertQuestionDot)
 		}
 	}
 
-	addTypeProperties := func(t *checker.Type, insertAwait bool, insertQuestionDot bool) {
+	addTypeProperties := func(t *checker.Type, insertQuestionDot bool) {
 		if typeChecker.GetStringIndexType(t) != nil {
 			isNewIdentifierLocation = true
 			defaultCommitCharacters = []string{}
@@ -767,7 +763,7 @@ func (l *LanguageService) getCompletionData(
 
 		if inCheckedFile {
 			for _, symbol := range typeChecker.GetApparentProperties(t) {
-				addPropertySymbol(symbol, false /*insertAwait*/, insertQuestionDot)
+				addPropertySymbol(symbol, insertQuestionDot)
 			}
 		} else {
 			// In javascript files, for union types, we don't just get the members that
@@ -777,15 +773,6 @@ func (l *LanguageService) getCompletionData(
 			// of the individual types to a higher status since we know what they are.
 			for _, symbol := range getPropertiesForCompletion(t, typeChecker) {
 				symbols = append(symbols, symbol)
-			}
-		}
-
-		if insertAwait {
-			promiseType := typeChecker.GetPromisedTypeOfPromise(t)
-			if promiseType != nil {
-				for _, symbol := range typeChecker.GetApparentProperties(promiseType) {
-					addPropertySymbol(symbol, true /*insertAwait*/, insertQuestionDot)
-				}
 			}
 		}
 	}
@@ -868,7 +855,7 @@ func (l *LanguageService) getCompletionData(
 								}
 							}
 						}
-						addTypeProperties(t, false /*insertAwait*/, insertQuestionDot)
+						addTypeProperties(t, insertQuestionDot)
 					}
 
 					return
@@ -896,9 +883,9 @@ func (l *LanguageService) getCompletionData(
 						}
 					}
 				}
-				addTypeProperties(t, false /*insertAwait*/, insertQuestionDot)
+				addTypeProperties(t, insertQuestionDot)
 			} else {
-				addTypeProperties(typeChecker.GetNonNullableType(t), false /*insertAwait*/, false /*insertQuestionDot*/)
+				addTypeProperties(typeChecker.GetNonNullableType(t), false /*insertQuestionDot*/)
 			}
 		}
 	}
@@ -1891,31 +1878,6 @@ func (l *LanguageService) createCompletionItem(
 		}
 	}
 
-	if originIsPromise(origin) && data.propertyAccessToConvert != nil {
-		if insertText == "" {
-			insertText = name
-		}
-		precedingToken := astnav.FindPrecedingToken(file, data.propertyAccessToConvert.Pos())
-		var awaitText string
-		if precedingToken != nil && lsutil.PositionIsASICandidate(precedingToken.End(), precedingToken.Parent, file) {
-			awaitText = ";"
-		}
-
-		awaitText += "(await " + scanner.GetTextOfNode(data.propertyAccessToConvert.Expression()) + ")"
-		if needsConvertPropertyAccess {
-			insertText = awaitText + insertText
-		} else {
-			dotStr := core.IfElse(insertQuestionDot, "?.", ".")
-			insertText = awaitText + dotStr + insertText
-		}
-		wrapNode := data.propertyAccessToConvert.Expression()
-		replacementSpan = new(l.createLspRangeFromBounds(
-			astnav.GetStartOfNode(wrapNode, file, false /*includeJSDoc*/),
-			data.propertyAccessToConvert.End(),
-			file,
-		))
-	}
-
 	if originIsTypeOnlyAlias(origin) {
 		hasAction = true
 	}
@@ -2010,7 +1972,7 @@ func (l *LanguageService) createCompletionItem(
 		} else if parentNamedImportOrExport.Kind == ast.KindNamedImports {
 			possibleToken := scanner.StringToToken(name)
 			if possibleToken != ast.KindUnknown &&
-				(possibleToken == ast.KindAwaitKeyword || lsutil.IsNonContextualKeyword(possibleToken)) {
+				lsutil.IsNonContextualKeyword(possibleToken) {
 				insertText = fmt.Sprintf("%s as %s_", name, name)
 			}
 		}
@@ -2446,10 +2408,6 @@ func originIsSymbolMember(origin *symbolOriginInfo) bool {
 
 func originIsNullableMember(origin *symbolOriginInfo) bool {
 	return origin != nil && origin.kind&symbolOriginInfoKindNullable != 0
-}
-
-func originIsPromise(origin *symbolOriginInfo) bool {
-	return origin != nil && origin.kind&symbolOriginInfoKindPromise != 0
 }
 
 func getSourceFromOrigin(origin *symbolOriginInfo) string {
@@ -3109,8 +3067,7 @@ func isTypeScriptOnlyKeyword(kind ast.Kind) bool {
 }
 
 func isFunctionLikeBodyKeyword(kind ast.Kind) bool {
-	return kind == ast.KindAsyncKeyword ||
-		kind == ast.KindAwaitKeyword ||
+	return kind == ast.KindSuspendKeyword ||
 		kind == ast.KindAsKeyword ||
 		kind == ast.KindSatisfiesKeyword ||
 		kind == ast.KindTypeKeyword ||
@@ -3120,7 +3077,7 @@ func isFunctionLikeBodyKeyword(kind ast.Kind) bool {
 func isClassMemberCompletionKeyword(kind ast.Kind) bool {
 	switch kind {
 	case ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindConstructorKeyword, ast.KindGetKeyword,
-		ast.KindSetKeyword, ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindOverrideKeyword,
+		ast.KindSetKeyword, ast.KindSuspendKeyword, ast.KindDeclareKeyword, ast.KindOverrideKeyword,
 		ast.KindPublicKeyword, ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindReadonlyKeyword,
 		ast.KindStaticKeyword:
 		return true
@@ -3135,8 +3092,7 @@ func isInterfaceOrTypeLiteralCompletionKeyword(kind ast.Kind) bool {
 
 func isContextualKeywordInAutoImportableExpressionSpace(keyword string) bool {
 	return keyword == "abstract" ||
-		keyword == "async" ||
-		keyword == "await" ||
+		keyword == "suspend" ||
 		keyword == "declare" ||
 		keyword == "module" ||
 		keyword == "namespace" ||
@@ -3311,9 +3267,9 @@ func computeCommitCharactersAndIsNewIdentifier(
 	case ast.KindTemplateMiddle:
 		// `aa ${10} dd ${|
 		return containingNodeKind == ast.KindTemplateSpan, allCommitCharacters
-	case ast.KindAsyncKeyword:
-		// const obj = { async c|()
-		// const obj = { async c|
+	case ast.KindSuspendKeyword:
+		// local obj = { m = suspend c|()
+		// local obj = { m = suspend c|
 		return false, allCommitCharacters
 	}
 
@@ -3448,7 +3404,7 @@ func tryGetObjectLikeCompletionContainer(contextToken *ast.Node, position int, f
 		if ast.IsObjectLiteralExpression(parent) || ast.IsObjectBindingPattern(parent) {
 			return parent
 		}
-	case ast.KindAsyncKeyword:
+	case ast.KindSuspendKeyword:
 		if ast.IsObjectLiteralExpression(parent.Parent) {
 			return parent.Parent
 		}
@@ -3509,9 +3465,10 @@ func getPropertiesForObjectExpression(
 	} else {
 		types = []*checker.Type{contextualType}
 	}
-	promiseFilteredContextualType := typeChecker.GetUnionType(core.Filter(types, func(t *checker.Type) bool {
-		return typeChecker.GetPromisedTypeOfPromise(t) == nil
-	}))
+	// tlua has no Promise: the TS heuristic that excluded promise-like union
+	// arms from object-literal completions would misfire on any table carrying
+	// a `then` member, so the contextual type is used as-is.
+	promiseFilteredContextualType := typeChecker.GetUnionType(types)
 
 	var t *checker.Type
 	if hasCompletionsType && completionsType.Flags()&checker.TypeFlagsAnyOrUnknown == 0 {
@@ -4169,7 +4126,7 @@ func isSolelyIdentifierDefinitionLocation(
 		ast.KindLocalKeyword, ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword,
 		ast.KindStaticKeyword:
 		return true
-	case ast.KindAsyncKeyword:
+	case ast.KindSuspendKeyword:
 		return false
 	}
 

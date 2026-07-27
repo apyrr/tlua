@@ -155,11 +155,11 @@
         "category": "Error",
         "code": 100022
     },
-    "An async function can only be called from an async context.": {
+    "A suspend function can only be called from a suspend context.": {
         "category": "Error",
         "code": 100023
     },
-    "An async function is not assignable to a non-async function type.": {
+    "A suspend function is not assignable to a non-suspend function type.": {
         "category": "Error",
         "code": 100024
     },
@@ -554,5 +554,9 @@
     "'{0}' is possibly 'nil'.": {
         "category": "Error",
         "code": 18048
+    },
+    "Did you mean to mark this function as 'suspend'?": {
+        "category": "Error",
+        "code": 100058
     }
 }

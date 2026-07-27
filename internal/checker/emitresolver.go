@@ -1144,11 +1144,6 @@ func (r *EmitResolver) GetTypeReferenceSerializationKind(typeName *ast.Node, loc
 	isTypeOnly = isTypeOnly || (typeSymbol != nil && r.checker.getTypeOnlyAliasDeclarationEx(typeSymbol, ast.SymbolFlagsType) != nil)
 
 	if resolvedValueSymbol != nil && resolvedValueSymbol == resolvedTypeSymbol {
-		globalPromiseSymbol := r.checker.getGlobalPromiseConstructorSymbol()
-		if globalPromiseSymbol != nil && resolvedValueSymbol == globalPromiseSymbol {
-			return printer.TypeReferenceSerializationKindPromise
-		}
-
 		constructorType := r.checker.getTypeOfSymbol(resolvedValueSymbol)
 		if constructorType != nil && r.checker.isConstructorType(constructorType) {
 			if isTypeOnly {

@@ -3,16 +3,16 @@
 // @strict: true
 // @noEmit: true
 
-// An async __call pairs the same way a sync one does: the receiver drops out, and the call
-// carries the coroutine contract, so only an async context may invoke it.
+// A suspend __call pairs the same way a sync one does: the receiver drops out, and the call
+// carries the coroutine contract, so only a suspend context may invoke it.
 
-local execute = async function(query: string): table[]
+local execute = suspend function(query: string): table[]
   return {};
 end;
 
 // The assign form.
 local sqlAssigned = setmetatable({}, {
-  __call = async function(self: table, query: string): table[]
+  __call = suspend function(self: table, query: string): table[]
     return execute(query);
   end,
 });
@@ -20,7 +20,7 @@ local sqlAssigned = setmetatable({}, {
 // The statement form, mutating in place. The receiver picks up its type from the __call slot.
 local sql = {};
 setmetatable(sql, {
-  __call = async function(_self, query: string)
+  __call = suspend function(_self, query: string)
     return execute(query);
   end,
 });
@@ -28,19 +28,19 @@ setmetatable(sql, {
 // Own members survive next to the call surface.
 local api = { begin = function(self: table): number return 1; end };
 setmetatable(api, {
-  __call = async function(self: table, query: string): table[]
+  __call = suspend function(self: table, query: string): table[]
     return execute(query);
   end,
 });
 
-async function use(): void
+suspend function use(): void
   local rows: table[] = sqlAssigned("SELECT 1");
   local rows2: table[] = sql("SELECT 1");
   local n: number = api.begin(api);
   local rows3: table[] = api("SELECT 1");
 end
 
-// The contract holds through the pairing: a sync context may not invoke an async __call.
+// The contract holds through the pairing: a sync context may not invoke a suspend __call.
 function syncUse(): void
   local rows = sql("SELECT 1");
   local rowsAssigned = sqlAssigned("SELECT 1");
@@ -49,6 +49,6 @@ end
 sql("top level");
 
 // The receiver is implicit, so passing it back is one argument too many.
-async function tooMany(): void
+suspend function tooMany(): void
   sqlAssigned(sqlAssigned, "SELECT 1");
 end

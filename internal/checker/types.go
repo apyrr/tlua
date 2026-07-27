@@ -1241,11 +1241,11 @@ const (
 	SignatureFlagsIsUntypedSignatureInJSFile             SignatureFlags = 1 << 6 // Indicates signature is from a js file and has no types
 	SignatureFlagsIsNonInferrable                        SignatureFlags = 1 << 7 // Indicates signature comes from a non-inferrable type
 	SignatureFlagsIsSignatureCandidateForOverloadFailure SignatureFlags = 1 << 8
-	SignatureFlagsAsync                                  SignatureFlags = 1 << 9 // Indicates signature comes from an async function (the tlua coroutine contract)
+	SignatureFlagsSuspend                                SignatureFlags = 1 << 9 // Indicates signature comes from a suspend function (the tlua coroutine contract)
 	// We do not propagate `IsInnerCallChain` or `IsOuterCallChain` to instantiated signatures, as that would result in us
 	// attempting to add `| undefined` on each recursive call to `getReturnTypeOfSignature` when
 	// instantiating the return type.
-	SignatureFlagsPropagatingFlags = SignatureFlagsHasRestParameter | SignatureFlagsHasLiteralTypes | SignatureFlagsConstruct | SignatureFlagsAbstract | SignatureFlagsIsUntypedSignatureInJSFile | SignatureFlagsIsSignatureCandidateForOverloadFailure | SignatureFlagsAsync
+	SignatureFlagsPropagatingFlags = SignatureFlagsHasRestParameter | SignatureFlagsHasLiteralTypes | SignatureFlagsConstruct | SignatureFlagsAbstract | SignatureFlagsIsUntypedSignatureInJSFile | SignatureFlagsIsSignatureCandidateForOverloadFailure | SignatureFlagsSuspend
 	SignatureFlagsCallChainFlags   = SignatureFlagsIsInnerCallChain | SignatureFlagsIsOuterCallChain
 )
 

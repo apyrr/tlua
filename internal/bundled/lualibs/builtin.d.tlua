@@ -46,24 +46,6 @@ interface LuaPairsIterator<K, V> {
 // user signatures, resolved specially by the checker.
 type NoInfer<T> = intrinsic;
 
-// Inert Promise surface. tlua has no await and no Promise semantics; these
-// exist only so `import(...)` and the residual `async` modifier keep
-// type-checking. Deliberately member-poor.
-interface PromiseLike<T> {
-    then(onfulfilled?: (value: T) => any, onrejected?: (reason: any) => any): PromiseLike<T>;
-}
-
-interface Promise<T> {
-    then(onfulfilled?: (value: T) => any, onrejected?: (reason: any) => any): Promise<T>;
-}
-
-interface PromiseConstructor {
-    readonly prototype: Promise<any>;
-    resolve<T>(value: T | PromiseLike<T>): Promise<T>;
-    resolve(): Promise<void>;
-}
-declare Promise: PromiseConstructor;
-
 // The erasable type-operator utilities inherited from TypeScript. These are
 // pure type sugar over machinery the checker supports (mapped, conditional,
 // and intrinsic string types); no runtime surface.
@@ -107,14 +89,6 @@ type NonNullable<T> = T & {};
 
 /** Obtain the return type of a function type */
 type ReturnType<T extends (...: any) => any> = T extends (...: any) => infer R ? R : any;
-
-/** Recursively unwrap the value type of a thenable */
-type Awaited<T> = T extends null | undefined ? T :
-    T extends table & { then(onfulfilled: infer F, ...: infer _): any; } ?
-        F extends ((value: infer V, ...: infer _) => any) ?
-            Awaited<V> :
-        never :
-    T;
 
 /** Convert string literal type to uppercase */
 type Uppercase<S extends string> = intrinsic;

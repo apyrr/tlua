@@ -92,8 +92,7 @@ export type KeywordSyntaxKind =
     | SyntaxKind.AsKeyword
     | SyntaxKind.AssertsKeyword
     | SyntaxKind.AnyKeyword
-    | SyntaxKind.AsyncKeyword
-    | SyntaxKind.AwaitKeyword
+    | SyntaxKind.SuspendKeyword
     | SyntaxKind.BooleanKeyword
     | SyntaxKind.ConstructorKeyword
     | SyntaxKind.DeclareKeyword
@@ -128,7 +127,7 @@ export type KeywordSyntaxKind =
     | SyntaxKind.OfKeyword
     | SyntaxKind.SelfKeyword
     | SyntaxKind.DeferKeyword;
-export type ModifierSyntaxKind = SyntaxKind.AbstractKeyword | SyntaxKind.AccessorKeyword | SyntaxKind.AsyncKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.ExportKeyword | SyntaxKind.InKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.OutKeyword | SyntaxKind.OverrideKeyword | SyntaxKind.StaticKeyword;
+export type ModifierSyntaxKind = SyntaxKind.AbstractKeyword | SyntaxKind.AccessorKeyword | SyntaxKind.SuspendKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.ExportKeyword | SyntaxKind.InKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.OutKeyword | SyntaxKind.OverrideKeyword | SyntaxKind.StaticKeyword;
 export type KeywordTypeSyntaxKind = SyntaxKind.AnyKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.FunctionKeyword | SyntaxKind.IntrinsicKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.ThreadKeyword | SyntaxKind.UserdataKeyword | SyntaxKind.CDataKeyword | SyntaxKind.StringKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.SelfKeyword | SyntaxKind.NilKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VoidKeyword;
 export type KeywordExpressionSyntaxKind = SyntaxKind.NilKeyword | SyntaxKind.TrueKeyword | SyntaxKind.FalseKeyword | SyntaxKind.ThisKeyword | SyntaxKind.SuperKeyword | SyntaxKind.ImportKeyword;
 export type TokenSyntaxKind =
@@ -230,8 +229,7 @@ export type TokenSyntaxKind =
     | SyntaxKind.AsKeyword
     | SyntaxKind.AssertsKeyword
     | SyntaxKind.AnyKeyword
-    | SyntaxKind.AsyncKeyword
-    | SyntaxKind.AwaitKeyword
+    | SyntaxKind.SuspendKeyword
     | SyntaxKind.BooleanKeyword
     | SyntaxKind.ConstructorKeyword
     | SyntaxKind.DeclareKeyword
@@ -1173,7 +1171,7 @@ export type BooleanLiteral = TrueLiteral | FalseLiteral;
 export type ConciseBody = Block | Expression;
 export type DestructuringAssignment = ObjectDestructuringAssignment | ArrayDestructuringAssignment;
 export type LiteralToken = NumericLiteral | StringLiteral | JsxText | RegularExpressionLiteral | NoSubstitutionTemplateLiteral;
-export type Modifier = AbstractKeyword | AccessorKeyword | AsyncKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | InKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | ReadonlyKeyword | OutKeyword | OverrideKeyword | StaticKeyword;
+export type Modifier = AbstractKeyword | AccessorKeyword | SuspendKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | InKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | ReadonlyKeyword | OutKeyword | OverrideKeyword | StaticKeyword;
 export type ObjectLiteralElementLike = PropertyAssignment | SpreadAssignment | TableEntry;
 export type PropertyNameLiteral = Identifier | StringLiteral | NumericLiteral;
 export type PseudoLiteralToken = TemplateHead | TemplateMiddle | TemplateTail;
@@ -1220,10 +1218,9 @@ export type PlusToken = Token<SyntaxKind.PlusToken>;
 export type MinusToken = Token<SyntaxKind.MinusToken>;
 export type QuestionDotToken = Token<SyntaxKind.QuestionDotToken>;
 export type AssertsKeyword = Token<SyntaxKind.AssertsKeyword>;
-export type AwaitKeyword = Token<SyntaxKind.AwaitKeyword>;
 export type AbstractKeyword = Token<SyntaxKind.AbstractKeyword>;
 export type AccessorKeyword = Token<SyntaxKind.AccessorKeyword>;
-export type AsyncKeyword = Token<SyntaxKind.AsyncKeyword>;
+export type SuspendKeyword = Token<SyntaxKind.SuspendKeyword>;
 export type DeclareKeyword = Token<SyntaxKind.DeclareKeyword>;
 export type DefaultKeyword = Token<SyntaxKind.DefaultKeyword>;
 export type ExportKeyword = Token<SyntaxKind.ExportKeyword>;

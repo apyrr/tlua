@@ -1,0 +1,30 @@
+tluaSuspendFunctionTypeErrors.tlua(12,7): error TLUA2322: Type 'suspend (url: string) => boolean' is not assignable to type '(url: string) => boolean'.
+  A suspend function is not assignable to a non-suspend function type.
+tluaSuspendFunctionTypeErrors.tlua(16,5): error TLUA2345: Argument of type 'suspend (url: string) => boolean' is not assignable to parameter of type '(url: string) => boolean'.
+  A suspend function is not assignable to a non-suspend function type.
+
+
+==== tluaSuspendFunctionTypeErrors.tlua (2 errors) ====
+    // Strict suspend assignability: a suspend function is not assignable to a plain
+    // (non-suspend) function type. This closes the laundering hole — suspend-ness can
+    // no longer be silently erased by annotating a sync function type.
+    
+    declare function request(url: string): boolean;
+    
+    suspend function fetchOk(url: string): boolean
+      return request(url);
+    end
+    
+    // Error: suspend fn laundered through a plain (sync) function-typed slot.
+    local bad: (url: string) => boolean = fetchOk;
+          ~~~
+!!! error TLUA2322: Type 'suspend (url: string) => boolean' is not assignable to type '(url: string) => boolean'.
+!!! error TLUA2322:   A suspend function is not assignable to a non-suspend function type.
+    
+    // Error: suspend fn passed to a specific sync-typed callback parameter.
+    declare function run(cb: (url: string) => boolean): void;
+    run(fetchOk);
+        ~~~~~~~
+!!! error TLUA2345: Argument of type 'suspend (url: string) => boolean' is not assignable to parameter of type '(url: string) => boolean'.
+!!! error TLUA2345:   A suspend function is not assignable to a non-suspend function type.
+    

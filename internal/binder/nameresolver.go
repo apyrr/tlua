@@ -381,8 +381,8 @@ func getIsDeferredContext(location *ast.Node, lastLocation *ast.Node) bool {
 	if lastLocation != nil && lastLocation == location.Name() {
 		return false
 	}
-	// async functions are not inlined in control flow when immediately invoked
-	if ast.HasSyntacticModifier(location, ast.ModifierFlagsAsync) {
+	// suspend functions are not inlined in control flow when immediately invoked
+	if ast.HasSyntacticModifier(location, ast.ModifierFlagsSuspend) {
 		return true
 	}
 	return ast.GetImmediatelyInvokedFunctionExpression(location) == nil
