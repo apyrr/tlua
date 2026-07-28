@@ -2,7 +2,7 @@
 
 //// [overloadOnConstDuplicateOverloads1.tlua]
 -- ported from tests/cases/compiler/overloadOnConstDuplicateOverloads1.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict checking)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 
 function foo(a: 'hi', x: string);
 function foo(a: 'hi', x: string);
@@ -18,7 +18,7 @@ end
 
 //// [overloadOnConstDuplicateOverloads1.lua]
 -- ported from tests/cases/compiler/overloadOnConstDuplicateOverloads1.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict checking)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 function foo(a, x)
 end
 function foo2(a, x)

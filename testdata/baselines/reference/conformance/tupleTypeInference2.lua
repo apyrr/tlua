@@ -3,7 +3,6 @@
 //// [tupleTypeInference2.tlua]
 -- ported from tests/cases/compiler/tupleTypeInference2.ts
 -- dropped: @target: es2015 and @strict: true directives (tlua defaults to latest target and strict checking)
--- compiler gap: tlua infers unknown/table differently from TypeScript in this tuple inference repro
 
 -- Repro from #22564
 
@@ -33,7 +32,6 @@ h2({ {} } as [void[]]) -- T: void
 //// [tupleTypeInference2.lua]
 -- ported from tests/cases/compiler/tupleTypeInference2.ts
 -- dropped: @target: es2015 and @strict: true directives (tlua defaults to latest target and strict checking)
--- compiler gap: tlua infers unknown/table differently from TypeScript in this tuple inference repro
 f({ nil, '' }); -- T: never
 f({ nil, '' }); -- T: void
 g({ {} }); -- U: {}

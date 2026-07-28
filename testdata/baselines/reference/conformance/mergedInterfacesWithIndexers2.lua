@@ -6,12 +6,17 @@
 
 -- indexers should behave like other members when merging interface declarations
 
+-- note: upstream reports an incompatibility between merged A's number and string index signatures
+--   because JavaScript coerces numeric keys to strings. tlua number and string keys are distinct
+--   domains, so the two A signatures are independent and correctly produce no diagnostic; only the
+--   A2 property-versus-indexer checks below are errors.
+
 interface A {
-    [x: number]: string; -- error
+    [x: number]: string;
 }
 
 interface A {
-    [x: string]: { length: string }; -- error
+    [x: string]: { length: string };
 }
 
 interface A2 {

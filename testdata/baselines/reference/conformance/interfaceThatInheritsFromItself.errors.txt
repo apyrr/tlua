@@ -1,12 +1,14 @@
-interfaceThatInheritsFromItself.tlua(4,11): error TLUA2310: Type 'Foo' recursively references itself as a base type.
-interfaceThatInheritsFromItself.tlua(7,11): error TLUA2310: Type 'Foo2<T>' recursively references itself as a base type.
-interfaceThatInheritsFromItself.tlua(10,11): error TLUA2310: Type 'Foo3<T>' recursively references itself as a base type.
-interfaceThatInheritsFromItself.tlua(13,15): error TLUA1176: Interface declaration cannot have 'implements' clause.
+interfaceThatInheritsFromItself.tlua(7,11): error TLUA2310: Type 'Foo' recursively references itself as a base type.
+interfaceThatInheritsFromItself.tlua(10,11): error TLUA2310: Type 'Foo2<T>' recursively references itself as a base type.
+interfaceThatInheritsFromItself.tlua(13,11): error TLUA2310: Type 'Foo3<T>' recursively references itself as a base type.
 
 
-==== interfaceThatInheritsFromItself.tlua (4 errors) ====
+==== interfaceThatInheritsFromItself.tlua (3 errors) ====
     -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfaceThatInheritsFromItself.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: upstream's `interface Bar implements Bar` case — `implements` is a TypeScript class-only
+    --   clause that tlua has no declaration form for, so the case would only assert that removed syntax
+    --   is rejected rather than exercise recursive base types
     
     interface Foo extends Foo { -- error
               ~~~
@@ -21,10 +23,5 @@ interfaceThatInheritsFromItself.tlua(13,15): error TLUA1176: Interface declarati
     interface Foo3<T> extends Foo3<string> { -- error
               ~~~~
 !!! error TLUA2310: Type 'Foo3<T>' recursively references itself as a base type.
-    }
-    
-    interface Bar implements Bar { -- error
-                  ~~~~~~~~~~
-!!! error TLUA1176: Interface declaration cannot have 'implements' clause.
     }
     

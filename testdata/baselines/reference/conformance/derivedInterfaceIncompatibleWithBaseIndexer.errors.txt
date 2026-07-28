@@ -1,13 +1,20 @@
-derivedInterfaceIncompatibleWithBaseIndexer.tlua(10,5): error TLUA2411: Property '1' of type '{ y: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
-derivedInterfaceIncompatibleWithBaseIndexer.tlua(14,5): error TLUA2411: Property '"1"' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
-derivedInterfaceIncompatibleWithBaseIndexer.tlua(18,5): error TLUA2411: Property 'foo' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
-derivedInterfaceIncompatibleWithBaseIndexer.tlua(22,5): error TLUA2411: Property 'foo' of type '() => { x: number; }' is not assignable to 'string' index type '{ x: number; }'.
-derivedInterfaceIncompatibleWithBaseIndexer.tlua(27,5): error TLUA2411: Property '1' of type '{ x: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(17,5): error TLUA2411: Property '1' of type '{ y: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(21,5): error TLUA2411: Property '"1"' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(25,5): error TLUA2411: Property 'foo' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(29,5): error TLUA2411: Property 'foo' of type '() => { x: number; }' is not assignable to 'string' index type '{ x: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(34,5): error TLUA2411: Property '1' of type '{ x: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
 
 
 ==== derivedInterfaceIncompatibleWithBaseIndexer.tlua (5 errors) ====
     -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/derivedInterfaceIncompatibleWithBaseIndexer.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- note: a Lua number key `1` and a string key `"1"` are distinct keys, so each
+    --   member is checked against exactly one applicable index signature -- the
+    --   number indexer for `1`, the string indexer for `"1"`. Upstream JavaScript
+    --   canonicalizes numeric names to strings and therefore checks numeric-looking
+    --   members against both indexers, which is why upstream reports seven errors
+    --   and tlua reports five. For the same reason the two `Derived5` declarations
+    --   merge into two distinct members here rather than one.
     
     interface Base {
         [x: number]: { x: number; y: number; };
@@ -46,6 +53,6 @@ derivedInterfaceIncompatibleWithBaseIndexer.tlua(27,5): error TLUA2411: Property
     }
     
     interface Derived5 extends Base {
-        "1": { x: number } -- error
+        "1": { x: number } -- ok in tlua: the string key is only checked against the string indexer
     }
     

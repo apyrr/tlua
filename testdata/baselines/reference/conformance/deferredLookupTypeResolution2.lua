@@ -3,8 +3,17 @@
 //// [deferredLookupTypeResolution2.tlua]
 -- ported from tests/cases/compiler/deferredLookupTypeResolution2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration output (unsupported for Lua modules)
--- compiler gap: the checker can report a wrong-false result for this tuple mapped/indexed lookup.
+-- note: tlua sequences are 1-based, so every upstream tuple position key is
+--   shifted by one here: '0'->'1', '1'->'2', '2'->'3'.
+-- note: a Lua number key is not a string key. A tuple's element keys are number
+--   keys, so `Extract<keyof T, string>` on a tuple contains none of them and
+--   `ObjectHasKey<tuple, ...>` resolves to 'false' at every position. That is
+--   the intended tlua key mapping, not a checker gap; upstream's "true" results
+--   for B and D therefore read 'false' here.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
 
 -- Repro from #17456
 
@@ -14,14 +23,14 @@ type ObjectHasKey<O, L extends string> = StringContains<Extract<keyof O, string>
 
 type A<T> = ObjectHasKey<T, '1'>
 
-type B = ObjectHasKey<[string, number], '1'>
-type C = ObjectHasKey<[string, number], '2'>
-type D = A<[string]>
+type B = ObjectHasKey<[string, number], '2'> -- upstream "true"; 'false' in tlua (number key)
+type C = ObjectHasKey<[string, number], '3'> -- "false" (out of range)
+type D = A<[string]> -- upstream "true"; 'false' in tlua (number key)
 
 -- Error, "false" not handled
-type E<T> = { true: 'true' }[ObjectHasKey<T, '1'>]
+type E<T> = { true: 'true' }[ObjectHasKey<T, '2'>]
 
-type Juxtapose<T> = ({ true: 'otherwise' } & { [k: string]: 'true' })[ObjectHasKey<T, '1'>]
+type Juxtapose<T> = ({ true: 'otherwise' } & { [k: string]: 'true' })[ObjectHasKey<T, '2'>]
 
 -- Error, "otherwise" is missing
 type DeepError<T> = { true: 'true' }[Juxtapose<T>]
@@ -32,5 +41,13 @@ type DeepOK<T> = { true: 'true', otherwise: 'false' }[Juxtapose<T>]
 //// [deferredLookupTypeResolution2.lua]
 -- ported from tests/cases/compiler/deferredLookupTypeResolution2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration output (unsupported for Lua modules)
--- compiler gap: the checker can report a wrong-false result for this tuple mapped/indexed lookup.
+-- note: tlua sequences are 1-based, so every upstream tuple position key is
+--   shifted by one here: '0'->'1', '1'->'2', '2'->'3'.
+-- note: a Lua number key is not a string key. A tuple's element keys are number
+--   keys, so `Extract<keyof T, string>` on a tuple contains none of them and
+--   `ObjectHasKey<tuple, ...>` resolves to 'false' at every position. That is
+--   the intended tlua key mapping, not a checker gap; upstream's "true" results
+--   for B and D therefore read 'false' here.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.

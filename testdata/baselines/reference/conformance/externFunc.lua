@@ -3,13 +3,27 @@
 //// [externFunc.tlua]
 -- ported from tests/cases/compiler/externFunc.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: upstream declared `parseInt` to show the source signature merging with the
+--   bundled library's into an overload set. `parseInt` is not a Lua global, so it was
+--   mapped to `tonumber`. The merge does NOT carry over: every .tlua file is a module,
+--   so this top-level `declare function` is module-scoped and SHADOWS lib.luajit's
+--   `tonumber(value: any, base?: number): number | nil` instead of merging with it.
+--   The baselines therefore show one declaration and the lone `(s: string) => number`
+--   signature. What is locked in here is that shadowing, not upstream's overload merge.
 
-declare function parseInt(s: string): number
+declare function tonumber(s: string): number
 
-parseInt("2")
+tonumber("2")
 
 
 //// [externFunc.lua]
 -- ported from tests/cases/compiler/externFunc.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
-parseInt("2");
+-- note: upstream declared `parseInt` to show the source signature merging with the
+--   bundled library's into an overload set. `parseInt` is not a Lua global, so it was
+--   mapped to `tonumber`. The merge does NOT carry over: every .tlua file is a module,
+--   so this top-level `declare function` is module-scoped and SHADOWS lib.luajit's
+--   `tonumber(value: any, base?: number): number | nil` instead of merging with it.
+--   The baselines therefore show one declaration and the lone `(s: string) => number`
+--   signature. What is locked in here is that shadowing, not upstream's overload merge.
+tonumber("2");

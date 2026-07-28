@@ -14,7 +14,10 @@ function f<T>(x: T, y: T): T
 
 end
 
-f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- ok
+-- T infers to a table whose x holds numeric key 1 of type `nil | number` in both argument orders,
+-- so assigning a string is an intentional error on both lines (upstream's stale "ok" comment on the
+-- first line does not match its own current baseline either).
+f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- intentional type error
 >f({ x = { nil } }, { x = { 1 } }).x[1] = "" : ""
 >f({ x = { nil } }, { x = { 1 } }).x[1] : number | nil
 >f({ x = { nil } }, { x = { 1 } }).x : { 1: nil; } | { 1: number; }

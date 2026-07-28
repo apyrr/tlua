@@ -1,7 +1,13 @@
 -- ported from tests/cases/compiler/declarationFilesWithTypeReferences1.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: @types: node directive (tlua has no Node type package)
--- dropped: declaration output (unsupported for Lua modules)
+-- note: the `node` type package is supplied by the virtual
+--   /node_modules/@types/node/index.d.tlua below, so @types: node exercises
+--   automatic type-package inclusion without any external dependency.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
+// @types: node
 // @currentDirectory: /
 
 // @filename: /node_modules/@types/node/index.d.tlua

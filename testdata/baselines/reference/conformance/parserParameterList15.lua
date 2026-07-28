@@ -2,7 +2,7 @@
 
 //// [parserParameterList15.tlua]
 -- ported from tests/cases/conformance/parser/ecmascript5/ParameterLists/parserParameterList15.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 
 function foo(a = 4);
 function foo(a, b)
@@ -11,6 +11,6 @@ end
 
 //// [parserParameterList15.lua]
 -- ported from tests/cases/conformance/parser/ecmascript5/ParameterLists/parserParameterList15.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 function foo(a, b)
 end

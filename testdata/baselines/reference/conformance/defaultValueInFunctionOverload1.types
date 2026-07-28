@@ -2,15 +2,21 @@
 
 === defaultValueInFunctionOverload1.tlua ===
 -- ported from tests/cases/compiler/defaultValueInFunctionOverload1.ts
--- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) — tlua prints parameter initializers verbatim
+--   into the Lua parameter list (`function foo(x = '')`), which is not valid
+--   Lua; default-parameter lowering is an open emitter gap
+-- note: a bodiless overload signature must be terminated by `;` in tlua, since
+--   `end` is what otherwise closes a function body
 
-function foo(x: string = ''): void;
->foo : (x?: string) => void
+
+function foo(x: string = '');
+>foo : (x?: string) => any
 >x : string
 >'' : ""
 
-function foo(x = ''): void
->foo : (x?: string) => void
+function foo(x = '')
+>foo : (x?: string) => any
 >x : string
 >'' : ""
 

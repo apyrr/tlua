@@ -14,30 +14,32 @@ interface A {
 >s : Symbol(s, Decl(propertiesAndIndexers2.tlua, 5, 5))
 }
 
--- All of these should fail.
+-- Lua keeps the number and string key domains distinct, so (unlike JS) tlua does not
+-- require the number indexer to be assignable to the string indexer, and a numeric key
+-- is checked only against the number indexer.
 interface B extends A {
 >B : Symbol(B, Decl(propertiesAndIndexers2.tlua, 6, 1))
 >A : Symbol(A, Decl(propertiesAndIndexers2.tlua, 0, 0))
 
-    c: string
->c : Symbol(B.c, Decl(propertiesAndIndexers2.tlua, 9, 23))
+    c: string             -- fails: string-named member vs `[s: string]: number`
+>c : Symbol(B.c, Decl(propertiesAndIndexers2.tlua, 11, 23))
 
-    3: string
->3 : Symbol(B[3], Decl(propertiesAndIndexers2.tlua, 10, 13))
+    3: string             -- ok: numeric key checked against `[n: number]: string`
+>3 : Symbol(B[3], Decl(propertiesAndIndexers2.tlua, 12, 13))
 
-    Infinity: string
->Infinity : Symbol(B.Infinity, Decl(propertiesAndIndexers2.tlua, 11, 13))
+    Infinity: string      -- fails: string-named member vs `[s: string]: number`
+>Infinity : Symbol(B.Infinity, Decl(propertiesAndIndexers2.tlua, 13, 13))
 
-    "-Infinity": string
->"-Infinity" : Symbol(B["-Infinity"], Decl(propertiesAndIndexers2.tlua, 12, 20))
+    "-Infinity": string   -- fails: string-named member vs `[s: string]: number`
+>"-Infinity" : Symbol(B["-Infinity"], Decl(propertiesAndIndexers2.tlua, 14, 20))
 
-    NaN: string
->NaN : Symbol(B.NaN, Decl(propertiesAndIndexers2.tlua, 13, 23))
+    NaN: string           -- fails: string-named member vs `[s: string]: number`
+>NaN : Symbol(B.NaN, Decl(propertiesAndIndexers2.tlua, 15, 23))
 
-    "-NaN": string
->"-NaN" : Symbol(B["-NaN"], Decl(propertiesAndIndexers2.tlua, 14, 15))
+    "-NaN": string        -- fails: string-named member vs `[s: string]: number`
+>"-NaN" : Symbol(B["-NaN"], Decl(propertiesAndIndexers2.tlua, 16, 15))
 
-    6(): string
->6 : Symbol(B[6], Decl(propertiesAndIndexers2.tlua, 15, 18))
+    6(): string           -- fails: numeric-keyed method vs `[n: number]: string` only
+>6 : Symbol(B[6], Decl(propertiesAndIndexers2.tlua, 17, 18))
 }
 

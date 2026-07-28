@@ -3,24 +3,28 @@
 === declarationEmitFBoundedTypeParams.tlua ===
 -- ported from tests/cases/compiler/declarationEmitFBoundedTypeParams.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration emit (unsupported for Lua modules)
--- dropped: Array.prototype.push mutation (the JS Array method surface is not present in tlua)
+-- dropped: Array.prototype.push mutation (the JS Array method surface is not present in
+-- tlua); the mutation is incidental to the declaration-emit subject
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
 
 -- Repro from #6040
 
 function append<a, b extends a>(result: a[], value: b): a[]
 >append : Symbol(append, Decl(declarationEmitFBoundedTypeParams.tlua, 0, 0))
->a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 16))
->b : Symbol(b, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 18))
->a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 16))
->result : Symbol(result, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 32))
->a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 16))
->value : Symbol(value, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 44))
->b : Symbol(b, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 18))
->a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 16))
+>a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 16))
+>b : Symbol(b, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 18))
+>a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 16))
+>result : Symbol(result, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 32))
+>a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 16))
+>value : Symbol(value, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 44))
+>b : Symbol(b, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 18))
+>a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 16))
 
     return result
->result : Symbol(result, Decl(declarationEmitFBoundedTypeParams.tlua, 7, 32))
+>result : Symbol(result, Decl(declarationEmitFBoundedTypeParams.tlua, 11, 32))
 
 end
 

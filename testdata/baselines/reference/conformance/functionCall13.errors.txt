@@ -1,10 +1,14 @@
-functionCall13.tlua(9,1): error TLUA2555: Expected at least 1 arguments, but got 0.
-functionCall13.tlua(10,5): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+functionCall13.tlua(13,1): error TLUA2555: Expected at least 1 arguments, but got 0.
+functionCall13.tlua(14,5): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
 
 
 ==== functionCall13.tlua (2 errors) ====
     -- ported from tests/cases/compiler/functionCall13.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- note: upstream's named rest parameter `...b: number[]` was rewritten as
+    --   tlua's unnamed scalar vararg `...: number`; each variadic argument is typed
+    --   `number` directly rather than collected into an array, so the upstream
+    --   arity and first-argument diagnostics are preserved unchanged.
     
     function foo(a: string, ...: number)
     end
@@ -14,7 +18,7 @@ functionCall13.tlua(10,5): error TLUA2345: Argument of type 'number' is not assi
     foo()
     ~~~
 !!! error TLUA2555: Expected at least 1 arguments, but got 0.
-!!! related TLUA6210 functionCall13.tlua:4:14: An argument for 'a' was not provided.
+!!! related TLUA6210 functionCall13.tlua:8:14: An argument for 'a' was not provided.
     foo(1, 'bar')
         ~
 !!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.

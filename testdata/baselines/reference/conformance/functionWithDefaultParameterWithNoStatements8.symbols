@@ -2,18 +2,21 @@
 
 === functionWithDefaultParameterWithNoStatements8.tlua ===
 -- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements8.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to the latest target and strict checking)
--- compiler gap: default parameters are not lowered during emit; valid source would produce invalid Lua output
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+-- note: upstream's `a = undefined` initializer maps to tlua's single nil value.
+-- dropped: emit coverage (noEmit) -- tlua does not lower parameter default values, so
+-- `function foo(a = nil)` would print an `a = nil` parameter, which is not valid Lua.
+
 
 function foo(a = nil)
 >foo : Symbol(foo, Decl(functionWithDefaultParameterWithNoStatements8.tlua, 0, 0))
->a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements8.tlua, 4, 13))
+>a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements8.tlua, 7, 13))
 
 end
 
 function bar(a = nil)
->bar : Symbol(bar, Decl(functionWithDefaultParameterWithNoStatements8.tlua, 5, 3))
->a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements8.tlua, 7, 13))
+>bar : Symbol(bar, Decl(functionWithDefaultParameterWithNoStatements8.tlua, 8, 3))
+>a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements8.tlua, 10, 13))
 
 end
 

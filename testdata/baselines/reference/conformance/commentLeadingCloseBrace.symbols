@@ -2,18 +2,16 @@
 
 === commentLeadingCloseBrace.tlua ===
 -- ported from tests/cases/compiler/commentLeadingCloseBrace.ts
--- dropped: @strict: false; tlua tests keep strict mode enabled, so the helper is explicitly typed
+-- dropped: @strict: false; tlua tests keep strict mode enabled, so the ambient helper's
+-- vararg is explicitly typed `any` instead of relying on an implicit any parameter
 -- dropped: @target: es2015 directive (tlua defaults to the latest target)
 
-function commentedParameters(...: any): any
+declare function commentedParameters(...: any): any;
 >commentedParameters : Symbol(commentedParameters, Decl(commentLeadingCloseBrace.tlua, 0, 0))
-> : Symbol((Missing), Decl(commentLeadingCloseBrace.tlua, 4, 29))
-
-    return nil
-end
+> : Symbol((Missing), Decl(commentLeadingCloseBrace.tlua, 5, 37))
 
 function ifelse()
->ifelse : Symbol(ifelse, Decl(commentLeadingCloseBrace.tlua, 6, 3))
+>ifelse : Symbol(ifelse, Decl(commentLeadingCloseBrace.tlua, 5, 52))
 
     if commentedParameters(1, 2) then
 >commentedParameters : Symbol(commentedParameters, Decl(commentLeadingCloseBrace.tlua, 0, 0))

@@ -1,0 +1,18 @@
+noUnusedLocals_potentialPredicateUnusedParam.tlua(6,10): error TLUA6133: 'potentialPredicateUnusedParam' is declared but its value is never read.
+noUnusedLocals_potentialPredicateUnusedParam.tlua(6,40): error TLUA6133: 'a' is declared but its value is never read.
+
+
+==== noUnusedLocals_potentialPredicateUnusedParam.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/noUnusedLocals_potentialPredicateUnusedParam.ts
+    -- dropped: @target: es2015 and @strict: true directives (tlua defaults to the latest target and to strict mode)
+    -- rewritten: the JS global `Math.random()` became the Lua-native `math.random()`; the double negation is preserved so the return stays a widened boolean
+    
+    
+    function potentialPredicateUnusedParam(a: unknown)
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA6133: 'potentialPredicateUnusedParam' is declared but its value is never read.
+                                           ~
+!!! error TLUA6133: 'a' is declared but its value is never read.
+        return not not math.random()
+    end
+    

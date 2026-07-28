@@ -3,7 +3,8 @@
 === unusedTypeParameterInInterface2.tlua ===
 -- ported from tests/cases/compiler/unusedTypeParameterInInterface2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: noUnusedLocals does not report the unused interface type parameter U
+-- compiler gap: the unused type parameter U is reported as expected (T and V are not), but tlua
+-- additionally reports the top-level interface name int as unused; upstream reports only U
 
 
 interface int<T, U, V> {

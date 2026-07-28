@@ -3,29 +3,31 @@
 === infiniteExpandingTypeThroughInheritanceInstantiation.tlua ===
 -- ported from tests/cases/compiler/infiniteExpandingTypeThroughInheritanceInstantiation.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: tlua does not report the upstream circular inheritance-instantiation diagnostic on B<T>
+-- note: upstream's "// error" comment on B<T> is stale; the current upstream reference has no errors
+--   baseline. Both compilers accept these declarations and resolve x as A<B<T>> / B<A<T>> without
+--   nontermination, which is what this test covers.
 
 interface A<T> {
 >A : Symbol(A, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 0, 0))
->T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 4, 12))
+>T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 6, 12))
 
     x: A<B<T>>
->x : Symbol(A.x, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 4, 16))
+>x : Symbol(A.x, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 6, 16))
 >A : Symbol(A, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 0, 0))
->B : Symbol(B, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 6, 1))
->T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 4, 12))
+>B : Symbol(B, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 8, 1))
+>T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 6, 12))
 }
 
 interface B<T> extends A<T> {
->B : Symbol(B, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 6, 1))
->T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 8, 12))
+>B : Symbol(B, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 8, 1))
+>T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 10, 12))
 >A : Symbol(A, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 0, 0))
->T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 8, 12))
+>T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 10, 12))
 
     x: B<A<T>>
->x : Symbol(B.x, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 8, 29))
->B : Symbol(B, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 6, 1))
+>x : Symbol(B.x, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 10, 29))
+>B : Symbol(B, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 8, 1))
 >A : Symbol(A, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 0, 0))
->T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 8, 12))
+>T : Symbol(T, Decl(infiniteExpandingTypeThroughInheritanceInstantiation.tlua, 10, 12))
 }
 

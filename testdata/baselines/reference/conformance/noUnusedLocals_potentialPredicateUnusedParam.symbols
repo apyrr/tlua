@@ -2,17 +2,18 @@
 
 === noUnusedLocals_potentialPredicateUnusedParam.tlua ===
 -- ported from tests/cases/compiler/noUnusedLocals_potentialPredicateUnusedParam.ts
--- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode); Math.random() replaced with a Lua boolean to remove the JS runtime-global dependency
+-- dropped: @target: es2015 and @strict: true directives (tlua defaults to the latest target and to strict mode)
+-- rewritten: the JS global `Math.random()` became the Lua-native `math.random()`; the double negation is preserved so the return stays a widened boolean
 
--- @noEmit: true
--- @noUnusedLocals: true
--- @noUnusedParameters: true
--- compiler gap: noUnusedParameters does not report the unused parameter `a` (the upstream TS6133 diagnostic).
 
 function potentialPredicateUnusedParam(a: unknown)
 >potentialPredicateUnusedParam : Symbol(potentialPredicateUnusedParam, Decl(noUnusedLocals_potentialPredicateUnusedParam.tlua, 0, 0))
->a : Symbol(a, Decl(noUnusedLocals_potentialPredicateUnusedParam.tlua, 8, 39))
+>a : Symbol(a, Decl(noUnusedLocals_potentialPredicateUnusedParam.tlua, 5, 39))
 
-    return true
+    return not not math.random()
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
 end
 

@@ -2,7 +2,7 @@
 
 //// [functionOverloads8.tlua]
 -- ported from tests/cases/compiler/functionOverloads8.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 
 function foo();
 function foo(foo: string);
@@ -13,7 +13,7 @@ end
 
 //// [functionOverloads8.lua]
 -- ported from tests/cases/compiler/functionOverloads8.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 function foo(foo)
   return "";
 end

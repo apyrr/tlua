@@ -4,17 +4,17 @@
 -- ported from tests/cases/compiler/recursiveTypeParameterReferenceError2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 
-interface A {
-    <T extends A>(x: T): void
+interface List<T> {
+    data: T
+    next: List<T>
+    owner: List<List<T>> -- historical comment said "Error, recursive reference with wrapped T";
+                         -- current upstream (and tlua) accept it
 }
 
-interface B {
-    <T extends B>(x: T): void
-}
-
-interface C {
-    (x: A): void
-    (x: B): void
+interface List2<T> {
+    data: T
+    next: List2<T>
+    owner: List2<List2<string>> -- Ok
 }
 
 

@@ -15,5 +15,7 @@ interface C {
 }
 interface D {
     f(p: string): { [p: string]: string }
-    f(p: "spec"): { [p: number]: any } -- Should be error
+    f(p: "spec"): { [p: number]: any } -- legacy upstream comment said "Should be error",
+                                       -- but the current upstream baseline (and tlua) report
+                                       -- no diagnostic here; kept for overload-return coverage.
 }

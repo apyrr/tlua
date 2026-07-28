@@ -1,5 +1,10 @@
 -- ported from tests/cases/compiler/breakNotInIterationOrSwitchStatement2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) -- the `break` is rejected for crossing a function
+-- boundary, so the recovered tree emits a `break` inside `f`, which has no enclosing
+-- loop and is invalid Lua.
+
+// @noEmit: true
 
 while true do
     function f()

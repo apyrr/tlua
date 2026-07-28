@@ -1,31 +1,20 @@
-parserErrorRecovery_ParameterList2.tlua(7,10): error TLUA7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
-parserErrorRecovery_ParameterList2.tlua(7,12): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
-parserErrorRecovery_ParameterList2.tlua(8,4): error TLUA1003: Identifier expected.
-parserErrorRecovery_ParameterList2.tlua(8,4): error TLUA2842: '(Missing)' is an unused renaming of 'end'. Did you intend to use it as a type annotation?
-parserErrorRecovery_ParameterList2.tlua(9,1): error TLUA1005: ':' expected.
-parserErrorRecovery_ParameterList2.tlua(9,1): error TLUA1005: '}' expected.
+parserErrorRecovery_ParameterList2.tlua(10,1): error TLUA1390: 'end' is not allowed as a parameter name.
+parserErrorRecovery_ParameterList2.tlua(11,1): error TLUA1005: ')' expected.
 
 
-==== parserErrorRecovery_ParameterList2.tlua (6 errors) ====
+==== parserErrorRecovery_ParameterList2.tlua (2 errors) ====
     -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ParameterLists/parserErrorRecovery_ParameterList2.ts
-    -- dropped: @target: es2015 and @strict: false directives; the C-style function body was rewritten to a Lua end-block
-    -- @noEmit: true
-    -- compiler gap: malformed comma-separated parameter-list recovery treats the required Lua `end` terminator as a parameter/member and reports unrelated recovery diagnostics.
-    -- dropped: emit coverage because recovery produces invalid Lua for this malformed function declaration.
+    -- dropped: @target: es2015 (tlua targets latest; the ES target is not a tlua concept)
+    -- rewritten: tlua has no `{`-delimited function body (the body starts after `)` and closes at
+    -- `end`), so the parameter list left dangling after a comma runs straight into `end`, the same
+    -- recovery point.
+    -- dropped: emit coverage (noEmit) -- the source is intentionally malformed, so whatever the parser
+    -- recovers is not meaningful Lua to baseline.
     
-    function f(a, {
-             ~
-!!! error TLUA7010: 'f', which lacks return-type annotation, implicitly has an 'any' return type.
-               ~
-!!! error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+    function f(a,
     end
-       
-!!! error TLUA1003: Identifier expected.
-       
-!!! error TLUA2842: '(Missing)' is an unused renaming of 'end'. Did you intend to use it as a type annotation?
-!!! related TLUA2843 parserErrorRecovery_ParameterList2.tlua:8:4: We can only write a type for 'end' by adding a type for the entire parameter here.
+    ~~~
+!!! error TLUA1390: 'end' is not allowed as a parameter name.
     
     
-!!! error TLUA1005: ':' expected.
-    
-!!! error TLUA1005: '}' expected.
+!!! error TLUA1005: ')' expected.

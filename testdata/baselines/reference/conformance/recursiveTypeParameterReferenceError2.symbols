@@ -4,35 +4,44 @@
 -- ported from tests/cases/compiler/recursiveTypeParameterReferenceError2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 
-interface A {
->A : Symbol(A, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+interface List<T> {
+>List : Symbol(List, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 3, 15))
 
-    <T extends A>(x: T): void
->T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 4, 5))
->A : Symbol(A, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
->x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 4, 18))
->T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 4, 5))
+    data: T
+>data : Symbol(List.data, Decl(recursiveTypeParameterReferenceError2.tlua, 3, 19))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 3, 15))
+
+    next: List<T>
+>next : Symbol(List.next, Decl(recursiveTypeParameterReferenceError2.tlua, 4, 11))
+>List : Symbol(List, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 3, 15))
+
+    owner: List<List<T>> -- historical comment said "Error, recursive reference with wrapped T";
+>owner : Symbol(List.owner, Decl(recursiveTypeParameterReferenceError2.tlua, 5, 17))
+>List : Symbol(List, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+>List : Symbol(List, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 3, 15))
+
+                         -- current upstream (and tlua) accept it
 }
 
-interface B {
->B : Symbol(B, Decl(recursiveTypeParameterReferenceError2.tlua, 5, 1))
+interface List2<T> {
+>List2 : Symbol(List2, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 1))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 10, 16))
 
-    <T extends B>(x: T): void
->T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 5))
->B : Symbol(B, Decl(recursiveTypeParameterReferenceError2.tlua, 5, 1))
->x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 18))
->T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 5))
-}
+    data: T
+>data : Symbol(List2.data, Decl(recursiveTypeParameterReferenceError2.tlua, 10, 20))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 10, 16))
 
-interface C {
->C : Symbol(C, Decl(recursiveTypeParameterReferenceError2.tlua, 9, 1))
+    next: List2<T>
+>next : Symbol(List2.next, Decl(recursiveTypeParameterReferenceError2.tlua, 11, 11))
+>List2 : Symbol(List2, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 1))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 10, 16))
 
-    (x: A): void
->x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 12, 5))
->A : Symbol(A, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
-
-    (x: B): void
->x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 13, 5))
->B : Symbol(B, Decl(recursiveTypeParameterReferenceError2.tlua, 5, 1))
+    owner: List2<List2<string>> -- Ok
+>owner : Symbol(List2.owner, Decl(recursiveTypeParameterReferenceError2.tlua, 12, 18))
+>List2 : Symbol(List2, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 1))
+>List2 : Symbol(List2, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 1))
 }
 

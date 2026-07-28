@@ -1,9 +1,9 @@
 -- ported from tests/cases/compiler/optionalParamReferencingOtherParams3.ts
+// @strict: false
 // @noEmit: true
--- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
--- dropped: bare expression statements rewritten as local bindings (bare expressions are invalid in tlua)
--- compiler gap: default parameter initializers emit invalid Lua parameter syntax; checker coverage is retained.
--- dropped: emit coverage suppressed because the generated function parameters are not valid Lua.
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- rewritten: the upstream bare expression statements `a;` / `b;` became `local _ =` bindings (bare expression statements are invalid in tlua)
+-- dropped: emit coverage (noEmit) -- default parameter initializers are printed straight into the Lua parameter list, which is not valid Lua; the checker subject (a parameter referencing a later parameter) is unaffected.
 
 function right(a = b, b = a)
     local _ = a

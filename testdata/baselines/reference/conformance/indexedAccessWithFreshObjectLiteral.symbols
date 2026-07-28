@@ -3,139 +3,145 @@
 === indexedAccessWithFreshObjectLiteral.tlua ===
 -- ported from tests/cases/compiler/indexedAccessWithFreshObjectLiteral.ts
 -- dropped: @target: es2015 and @strict directives (tlua uses the latest target and strict checking by default)
+-- note: tlua enables noUncheckedIndexedAccess by default, so index reads add `| nil` on their own.
+--   Upstream runs with that option off, so its corge/grault results are `string | number` while
+--   tlua's are `string | number | nil`.
+-- note: upstream's numeric-looking keys (`1:`, `2:`) are string keys in JavaScript. tlua number and
+--   string keys are distinct domains, so baz keeps them as string keys `["1"]` and qux covers the
+--   number-key domain separately with `[1]`.
 
 function foo(id: string)
 >foo : Symbol(foo, Decl(indexedAccessWithFreshObjectLiteral.tlua, 0, 0))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 3, 13))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 9, 13))
 
     return ({
         a = 1,
->a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 4, 13))
+>a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 10, 13))
 
         b = "",
->b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 5, 14))
+>b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 11, 14))
 
         c = true
->c : Symbol(c, Decl(indexedAccessWithFreshObjectLiteral.tlua, 6, 15))
+>c : Symbol(c, Decl(indexedAccessWithFreshObjectLiteral.tlua, 12, 15))
 
     })[id]
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 3, 13))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 9, 13))
 
 end
 
 function bar(id: 'a' | 'b')
->bar : Symbol(bar, Decl(indexedAccessWithFreshObjectLiteral.tlua, 9, 3))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 11, 13))
+>bar : Symbol(bar, Decl(indexedAccessWithFreshObjectLiteral.tlua, 15, 3))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 17, 13))
 
     return ({
         a = 1,
->a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 12, 13))
+>a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 18, 13))
 
         b = "",
->b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 13, 14))
+>b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 19, 14))
 
         c = false
->c : Symbol(c, Decl(indexedAccessWithFreshObjectLiteral.tlua, 14, 15))
+>c : Symbol(c, Decl(indexedAccessWithFreshObjectLiteral.tlua, 20, 15))
 
     })[id]
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 11, 13))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 17, 13))
 
 end
 
 function baz(id: '1' | '2')
->baz : Symbol(baz, Decl(indexedAccessWithFreshObjectLiteral.tlua, 17, 3))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 19, 13))
+>baz : Symbol(baz, Decl(indexedAccessWithFreshObjectLiteral.tlua, 23, 3))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 25, 13))
 
     return ({
         ["1"] = 1,
->["1"] : Symbol(["1"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 20, 13))
->"1" : Symbol(["1"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 20, 13))
+>["1"] : Symbol(["1"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 26, 13))
+>"1" : Symbol(["1"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 26, 13))
 
         ["2"] = "",
->["2"] : Symbol(["2"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 21, 18))
->"2" : Symbol(["2"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 21, 18))
+>["2"] : Symbol(["2"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 27, 18))
+>"2" : Symbol(["2"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 27, 18))
 
         ["3"] = false
->["3"] : Symbol(["3"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 22, 19))
->"3" : Symbol(["3"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 22, 19))
+>["3"] : Symbol(["3"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 28, 19))
+>"3" : Symbol(["3"], Decl(indexedAccessWithFreshObjectLiteral.tlua, 28, 19))
 
     })[id]
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 19, 13))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 25, 13))
 
 end
 
 function qux(id: 1 | 2)
->qux : Symbol(qux, Decl(indexedAccessWithFreshObjectLiteral.tlua, 25, 3))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 27, 13))
+>qux : Symbol(qux, Decl(indexedAccessWithFreshObjectLiteral.tlua, 31, 3))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 33, 13))
 
     return ({
         [1] = 1,
->[1] : Symbol([1], Decl(indexedAccessWithFreshObjectLiteral.tlua, 28, 13))
->1 : Symbol([1], Decl(indexedAccessWithFreshObjectLiteral.tlua, 28, 13))
+>[1] : Symbol([1], Decl(indexedAccessWithFreshObjectLiteral.tlua, 34, 13))
+>1 : Symbol([1], Decl(indexedAccessWithFreshObjectLiteral.tlua, 34, 13))
 
         [2] = "",
->[2] : Symbol([2], Decl(indexedAccessWithFreshObjectLiteral.tlua, 29, 16))
->2 : Symbol([2], Decl(indexedAccessWithFreshObjectLiteral.tlua, 29, 16))
+>[2] : Symbol([2], Decl(indexedAccessWithFreshObjectLiteral.tlua, 35, 16))
+>2 : Symbol([2], Decl(indexedAccessWithFreshObjectLiteral.tlua, 35, 16))
 
         [3] = false
->[3] : Symbol([3], Decl(indexedAccessWithFreshObjectLiteral.tlua, 30, 17))
->3 : Symbol([3], Decl(indexedAccessWithFreshObjectLiteral.tlua, 30, 17))
+>[3] : Symbol([3], Decl(indexedAccessWithFreshObjectLiteral.tlua, 36, 17))
+>3 : Symbol([3], Decl(indexedAccessWithFreshObjectLiteral.tlua, 36, 17))
 
     })[id]
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 27, 13))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 33, 13))
 
 end
 
 function quux(id: 'a' | 'b' | 'z')
->quux : Symbol(quux, Decl(indexedAccessWithFreshObjectLiteral.tlua, 33, 3))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 35, 14))
+>quux : Symbol(quux, Decl(indexedAccessWithFreshObjectLiteral.tlua, 39, 3))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 41, 14))
 
     return ({
         a = 1,
->a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 36, 13))
+>a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 42, 13))
 
         b = "",
->b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 37, 14))
+>b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 43, 14))
 
         c = false
->c : Symbol(c, Decl(indexedAccessWithFreshObjectLiteral.tlua, 38, 15))
+>c : Symbol(c, Decl(indexedAccessWithFreshObjectLiteral.tlua, 44, 15))
 
     })[id]
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 35, 14))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 41, 14))
 
 end
 
 function corge(id: string)
->corge : Symbol(corge, Decl(indexedAccessWithFreshObjectLiteral.tlua, 41, 3))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 43, 15))
+>corge : Symbol(corge, Decl(indexedAccessWithFreshObjectLiteral.tlua, 47, 3))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 49, 15))
 
     return (({
         a = 123,
->a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 44, 14))
+>a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 50, 14))
 
         b = ""
->b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 45, 16))
+>b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 51, 16))
 
     }) as Record<string, number | string>)[id]
 >Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 43, 15))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 49, 15))
 
 end
 
 function grault(id: string)
->grault : Symbol(grault, Decl(indexedAccessWithFreshObjectLiteral.tlua, 48, 3))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 50, 16))
+>grault : Symbol(grault, Decl(indexedAccessWithFreshObjectLiteral.tlua, 54, 3))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 56, 16))
 
     return (({
         a = 123,
->a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 51, 14))
+>a : Symbol(a, Decl(indexedAccessWithFreshObjectLiteral.tlua, 57, 14))
 
         b = ""
->b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 52, 16))
+>b : Symbol(b, Decl(indexedAccessWithFreshObjectLiteral.tlua, 58, 16))
 
     }) as { [k: string]: string | number })[id]
->k : Symbol(k, Decl(indexedAccessWithFreshObjectLiteral.tlua, 54, 13))
->id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 50, 16))
+>k : Symbol(k, Decl(indexedAccessWithFreshObjectLiteral.tlua, 60, 13))
+>id : Symbol(id, Decl(indexedAccessWithFreshObjectLiteral.tlua, 56, 16))
 
 end
 

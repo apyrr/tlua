@@ -18,19 +18,22 @@ function f<T>(x: T, y: T): T
 
 end
 
-f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- ok
->f({ x = { nil } }, { x = { 1 } }).x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 20))
+-- T infers to a table whose x holds numeric key 1 of type `nil | number` in both argument orders,
+-- so assigning a string is an intentional error on both lines (upstream's stale "ok" comment on the
+-- first line does not match its own current baseline either).
+f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- intentional type error
+>f({ x = { nil } }, { x = { 1 } }).x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 20))
 >f : Symbol(f, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 0, 0))
->x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 3))
->x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 20))
->x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 20))
->1 : Symbol(1, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 9), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 26))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 3))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 20))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 20))
+>1 : Symbol(1, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 9), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 10, 26))
 
 f({ x = { 1 } }, { x = { nil } }).x[1] = "" -- intentional type error
->f({ x = { 1 } }, { x = { nil } }).x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 18))
+>f({ x = { 1 } }, { x = { nil } }).x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 18))
 >f : Symbol(f, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 0, 0))
->x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 3))
->x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 18))
->x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 18))
->1 : Symbol(1, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 9), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 24))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 3))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 18))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 18))
+>1 : Symbol(1, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 9), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 11, 24))
 

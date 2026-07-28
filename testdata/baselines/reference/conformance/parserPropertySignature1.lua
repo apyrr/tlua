@@ -2,7 +2,7 @@
 
 //// [parserPropertySignature1.tlua]
 -- ported from tests/cases/conformance/parser/ecmascript5/PropertySignatures/parserPropertySignature1.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 
 interface I {
     A;
@@ -11,4 +11,4 @@ interface I {
 
 //// [parserPropertySignature1.lua]
 -- ported from tests/cases/conformance/parser/ecmascript5/PropertySignatures/parserPropertySignature1.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

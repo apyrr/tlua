@@ -5,64 +5,68 @@
 -- dropped: real Number.prototype/lib surface (tlua ships an empty `interface Number {}`);
 --   augmented Number locally below with a `toString` member so the numeric-literal-vs-dot
 --   parsing ambiguity this test exercises still has something to call into.
+-- dropped: emit coverage (noEmit) — the local `interface Number` is a type-only shim kept so
+--   the numeric-literal-vs-dot parsing ambiguity has a member to resolve; Lua numbers have no
+--   runtime `toString` method, so the lowered `0xffffffff.toString()` / `1234..toString()`
+--   calls would not be runnable Lua.
 
 interface Number {
 >Number : Symbol(Number, Decl(lib.luajit.d.tlua, --, --), Decl(propertyAccessNumericLiterals.tlua, 0, 0))
 
   toString(radix?: number): string;
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->radix : Symbol(radix, Decl(propertyAccessNumericLiterals.tlua, 6, 11))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>radix : Symbol(radix, Decl(propertyAccessNumericLiterals.tlua, 10, 11))
 }
 
 0xffffffff.toString();
->0xffffffff.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>0xffffffff.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 0o01234.toString();
->0o01234.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>0o01234.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 0b01101101.toString();
->0b01101101.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>0b01101101.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 1234..toString();
->1234..toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>1234..toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 1e0.toString();
->1e0.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>1e0.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 000.toString();
->000.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>000.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 08.8e5.toString();
->08.8e5.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>08.8e5.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 0_8.8e5.toString();
->0_8.8e5.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>0_8.8e5.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 8.8e5.toString();
->8.8e5.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>8.8e5.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 088e4.toString();
->088e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>088e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 88_e4.toString();
->88_e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>88_e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 88e4.toString();
->88e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>88e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 
 8_8e4.toString();
->8_8e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
->toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 5, 18))
+>8_8e4.toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
+>toString : Symbol(Number.toString, Decl(propertyAccessNumericLiterals.tlua, 9, 18))
 

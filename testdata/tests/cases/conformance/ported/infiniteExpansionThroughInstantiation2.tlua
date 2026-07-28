@@ -3,7 +3,9 @@
 
 -- instantiating a derived type can cause an infinitely expanding type reference to be generated
 -- which could be used in an assignment check for constraint satisfaction
-interface AA<T extends AA<T>> -- error: referencing a type parameter in its constraint
+-- a type parameter referenced in its own constraint is accepted; the point is that instantiating it
+-- terminates (upstream's "now an error" comment is stale and has no errors baseline)
+interface AA<T extends AA<T>>
 {
     x: T
 }

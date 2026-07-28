@@ -1,7 +1,12 @@
 -- ported from tests/cases/compiler/duplicateLabel1.ts
 -- dropped: @target: es2015 directive (tlua defaults to the latest target)
+-- dropped: emit coverage (noEmit) — the subject is the duplicate-label
+--   diagnostic TLUA1114; the source is intentionally invalid, and the printer
+--   would otherwise round-trip both `::target::` labels into a .lua file that
+--   Lua itself rejects
 
 // @allowUnusedLabels: true
+// @noEmit: true
 
 ::target::
 ::target::

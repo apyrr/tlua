@@ -2,7 +2,7 @@
 
 //// [parserIndexSignature11.tlua]
 -- ported from tests/cases/conformance/parser/ecmascript5/IndexSignatures/parserIndexSignature11.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+-- dropped: @target: es2015 (tlua targets latest; the ES target is not a tlua concept)
 
 interface I {
         [p]; -- Used to be indexer, now it is a computed property
@@ -13,4 +13,4 @@ interface I {
 
 //// [parserIndexSignature11.lua]
 -- ported from tests/cases/conformance/parser/ecmascript5/IndexSignatures/parserIndexSignature11.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+-- dropped: @target: es2015 (tlua targets latest; the ES target is not a tlua concept)

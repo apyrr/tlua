@@ -17,12 +17,7 @@ interface Options {
 >test : string | nil
 }
 
-function includesAllRequiredOptions(options: Partial<Options>): options is Options
+declare function includesAllRequiredOptions(options: Partial<Options>): options is Options
 >includesAllRequiredOptions : (options: Partial<Options>) => options is Options
 >options : Partial<Options>
-
-    return true
->true : true
-
-end
 

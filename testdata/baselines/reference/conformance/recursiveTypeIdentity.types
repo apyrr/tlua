@@ -4,25 +4,21 @@
 -- ported from tests/cases/compiler/recursiveTypeIdentity.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 
-interface List<T> {
-    data: T
->data : T
-
-    next: List<T>
->next : List<T>
-
-    owner: List<List<T>> -- Error, recursive reference with wrapped T
->owner : List<List<T>>
+interface A {
+    <T extends A>(x: T): void
+>x : T
 }
 
-interface List2<T> {
-    data: T
->data : T
+interface B {
+    <T extends B>(x: T): void
+>x : T
+}
 
-    next: List2<T>
->next : List2<T>
+interface C {
+    (x: A): void
+>x : A
 
-    owner: List2<List2<string>> -- Ok
->owner : List2<List2<string>>
+    (x: B): void
+>x : B
 }
 

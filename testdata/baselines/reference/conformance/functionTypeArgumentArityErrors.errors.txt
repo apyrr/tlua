@@ -1,18 +1,18 @@
-functionTypeArgumentArityErrors.tlua(7,4): error TLUA2743: No overload expects 2 type arguments, but overloads do exist that expect either 1 or 3 type arguments.
-functionTypeArgumentArityErrors.tlua(8,4): error TLUA2558: Expected 4 type arguments, but got 5.
-functionTypeArgumentArityErrors.tlua(13,4): error TLUA2743: No overload expects 2 type arguments, but overloads do exist that expect either 1 or 3 type arguments.
-functionTypeArgumentArityErrors.tlua(14,4): error TLUA2558: Expected 3 type arguments, but got 4.
-functionTypeArgumentArityErrors.tlua(18,21): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
-functionTypeArgumentArityErrors.tlua(19,4): error TLUA2558: Expected 0 type arguments, but got 1.
-functionTypeArgumentArityErrors.tlua(23,4): error TLUA2558: Expected 2-3 type arguments, but got 1.
-functionTypeArgumentArityErrors.tlua(24,4): error TLUA2558: Expected 2-3 type arguments, but got 4.
-functionTypeArgumentArityErrors.tlua(28,4): error TLUA2558: Expected 2 type arguments, but got 1.
-functionTypeArgumentArityErrors.tlua(29,4): error TLUA2558: Expected 2 type arguments, but got 3.
+functionTypeArgumentArityErrors.tlua(8,4): error TLUA2743: No overload expects 2 type arguments, but overloads do exist that expect either 1 or 3 type arguments.
+functionTypeArgumentArityErrors.tlua(9,4): error TLUA2558: Expected 4 type arguments, but got 5.
+functionTypeArgumentArityErrors.tlua(14,4): error TLUA2743: No overload expects 2 type arguments, but overloads do exist that expect either 1 or 3 type arguments.
+functionTypeArgumentArityErrors.tlua(15,4): error TLUA2558: Expected 3 type arguments, but got 4.
+functionTypeArgumentArityErrors.tlua(20,4): error TLUA2558: Expected 0 type arguments, but got 1.
+functionTypeArgumentArityErrors.tlua(24,4): error TLUA2558: Expected 2-3 type arguments, but got 1.
+functionTypeArgumentArityErrors.tlua(25,4): error TLUA2558: Expected 2-3 type arguments, but got 4.
+functionTypeArgumentArityErrors.tlua(29,4): error TLUA2558: Expected 2 type arguments, but got 1.
+functionTypeArgumentArityErrors.tlua(30,4): error TLUA2558: Expected 2 type arguments, but got 3.
 
 
-==== functionTypeArgumentArityErrors.tlua (10 errors) ====
+==== functionTypeArgumentArityErrors.tlua (9 errors) ====
     -- ported from tests/cases/compiler/functionTypeArgumentArityErrors.ts
-    -- dropped: @target: es2015 and @strict: false directives (tlua defaults)
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
     
     -- Overloaded functions with default type arguments
     declare function f1<A = any>(): void
@@ -37,8 +37,6 @@ functionTypeArgumentArityErrors.tlua(29,4): error TLUA2558: Expected 2 type argu
     -- Overloaded non-generic functions
     declare function f3(): void
     declare function f3(a): void
-                        ~
-!!! error TLUA7006: Parameter 'a' implicitly has an 'any' type.
     f3<number>()
        ~~~~~~
 !!! error TLUA2558: Expected 0 type arguments, but got 1.

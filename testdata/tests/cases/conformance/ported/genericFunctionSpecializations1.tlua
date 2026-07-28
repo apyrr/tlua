@@ -1,7 +1,11 @@
 -- ported from tests/cases/compiler/genericFunctionSpecializations1.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
--- dropped: the JavaScript wrapper type `String`, rewritten to tlua's primitive `string` constraint.
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: upstream's JavaScript wrapper type `String` is written as tlua's primitive
+-- `string` constraint.
+-- note: the inline `-- error` / `-- valid` markers are upstream's and are stale there
+-- too -- the current upstream baseline reports no diagnostics for either pair.
 
+// @strict: false
 function foo3<T>(test: string); -- error
 function foo3<T>(test: T)
 end

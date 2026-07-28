@@ -1,0 +1,15 @@
+unusedMethodsInInterface.tlua(5,11): error TLUA6196: 'I1' is declared but never used.
+
+
+==== unusedMethodsInInterface.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/unusedMethodsInInterface.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    
+    interface I1 {
+              ~~
+!!! error TLUA6196: 'I1' is declared but never used.
+        f1()
+        f2(x: number, y: string)
+    }
+    

@@ -3,8 +3,12 @@
 //// [declarationEmitFBoundedTypeParams.tlua]
 -- ported from tests/cases/compiler/declarationEmitFBoundedTypeParams.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration emit (unsupported for Lua modules)
--- dropped: Array.prototype.push mutation (the JS Array method surface is not present in tlua)
+-- dropped: Array.prototype.push mutation (the JS Array method surface is not present in
+-- tlua); the mutation is incidental to the declaration-emit subject
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
 
 -- Repro from #6040
 
@@ -16,8 +20,11 @@ end
 //// [declarationEmitFBoundedTypeParams.lua]
 -- ported from tests/cases/compiler/declarationEmitFBoundedTypeParams.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration emit (unsupported for Lua modules)
--- dropped: Array.prototype.push mutation (the JS Array method surface is not present in tlua)
+-- dropped: Array.prototype.push mutation (the JS Array method surface is not present in
+-- tlua); the mutation is incidental to the declaration-emit subject
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
 -- Repro from #6040
 function append(result, value)
   return result;

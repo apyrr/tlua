@@ -3,32 +3,25 @@
 //// [ifStatementInternalComments.tlua]
 -- ported from tests/cases/compiler/ifStatementInternalComments.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: upstream's `/*n*/` block comments are written as Lua long comments `--[[n]]` so
+-- that they stay internal to the statement; a line comment would swallow the rest of
+-- the line. The empty `{}` bodies map to `then ... end`, so marker 5 sits between the
+-- condition and `then`, and marker 6 sits between the first body and `else`.
 
-if --2
-    ( --3
-        true --4
-    ) then --5
-end
+--[[1]] if --[[2]] ( --[[3]] true --[[4]] ) --[[5]] then end
 
-if --2
-    ( --3
-        true --4
-    ) then --5
-else --7
-end --6
+--[[1]] if --[[2]] ( --[[3]] true --[[4]] ) --[[5]] then --[[6]] else --[[7]] end
 
 
 //// [ifStatementInternalComments.lua]
 -- ported from tests/cases/compiler/ifStatementInternalComments.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
-if -- 2
- ( -- 3
-true -- 4
-) then
+-- note: upstream's `/*n*/` block comments are written as Lua long comments `--[[n]]` so
+-- that they stay internal to the statement; a line comment would swallow the rest of
+-- the line. The empty `{}` bodies map to `then ... end`, so marker 5 sits between the
+-- condition and `then`, and marker 6 sits between the first body and `else`.
+--[[1]] if --[[2]] ( --[[3]]true --[[4]]) --[[5]] then
 end
-if -- 2
- ( -- 3
-true -- 4
-) then
+--[[1]] if --[[2]] ( --[[3]]true --[[4]]) --[[5]] then
 else
-end -- 6
+end

@@ -3,7 +3,10 @@
 === typeParametersAvailableInNestedScope3.tlua ===
 -- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParametersAvailableInNestedScope3.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: @declaration: true (tlua does not support declaration emit for this test)
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
 
 
 
@@ -11,7 +14,7 @@ function foo<T>(v: T)
 >foo : <T>(v: T) => { a: <T_1>(a: T_1) => T_1; b: () => T; c: <T_1>(v: T_1) => { a: <T_2>(a: T_2) => T_2; b: () => T_1; }; }
 >v : T
 
-    function a<T>(a: T)
+    local function a<T>(a: T)
 >a : <T>(a: T) => T
 >a : T
 
@@ -19,7 +22,7 @@ function foo<T>(v: T)
 >a : T
 
     end
-    function b(): T
+    local function b(): T
 >b : () => T
 
         return v
@@ -27,11 +30,11 @@ function foo<T>(v: T)
 
     end
 
-    function c<T>(v: T)
+    local function c<T>(v: T)
 >c : <T>(v: T) => { a: <T_1>(a: T_1) => T_1; b: () => T; }
 >v : T
 
-        function a<T>(a: T)
+        local function a<T>(a: T)
 >a : <T>(a: T) => T
 >a : T
 
@@ -39,7 +42,7 @@ function foo<T>(v: T)
 >a : T
 
         end
-        function b(): T
+        local function b(): T
 >b : () => T
 
             return v

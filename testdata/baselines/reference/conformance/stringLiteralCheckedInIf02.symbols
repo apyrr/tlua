@@ -3,43 +3,46 @@
 === stringLiteralCheckedInIf02.tlua ===
 -- ported from tests/cases/conformance/types/stringLiteral/stringLiteralCheckedInIf02.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: the upstream first-element access `[0]` maps to Lua's 1-based first slot `[1]`, and
+--   tlua enables noUncheckedIndexedAccess by default, so the indexed read (and therefore the
+--   inferred return type of `f`) is `S | nil` rather than upstream's `S`.
 
 type S = "a" | "b"
 >S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
 
 type T = S[] | S
->T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 3, 18))
+>T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 6, 18))
 >S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
 >S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
 
 function isS(t: T): t is S
->isS : Symbol(isS, Decl(stringLiteralCheckedInIf02.tlua, 4, 16))
->t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
->T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 3, 18))
->t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
+>isS : Symbol(isS, Decl(stringLiteralCheckedInIf02.tlua, 7, 16))
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 9, 13))
+>T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 6, 18))
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 9, 13))
 >S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
 
     return t == "a" or t == "b"
->t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
->t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 9, 13))
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 9, 13))
 
 end
 
 function f(foo: T)
->f : Symbol(f, Decl(stringLiteralCheckedInIf02.tlua, 8, 3))
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
->T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 3, 18))
+>f : Symbol(f, Decl(stringLiteralCheckedInIf02.tlua, 11, 3))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 13, 11))
+>T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 6, 18))
 
     if isS(foo) then
->isS : Symbol(isS, Decl(stringLiteralCheckedInIf02.tlua, 4, 16))
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
+>isS : Symbol(isS, Decl(stringLiteralCheckedInIf02.tlua, 7, 16))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 13, 11))
 
         return foo
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 13, 11))
 
     else
-        return foo[0]
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
+        return foo[1]
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 13, 11))
 
     end
 end

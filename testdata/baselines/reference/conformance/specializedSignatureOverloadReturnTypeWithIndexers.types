@@ -43,9 +43,12 @@ interface D {
 >p : string
 >p : string
 
-    f(p: "spec"): { [p: number]: any } -- Should be error
+    f(p: "spec"): { [p: number]: any } -- legacy upstream comment said "Should be error",
 >f : { (p: string): { [p: string]: string; }; (p: "spec"): { [p: number]: any; }; }
 >p : "spec"
 >p : number
+
+                                       -- but the current upstream baseline (and tlua) report
+                                       -- no diagnostic here; kept for overload-return coverage.
 }
 

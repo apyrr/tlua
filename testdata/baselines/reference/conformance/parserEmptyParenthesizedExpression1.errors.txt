@@ -1,9 +1,10 @@
-parserEmptyParenthesizedExpression1.tlua(6,5): error TLUA1109: Expression expected.
+parserEmptyParenthesizedExpression1.tlua(7,5): error TLUA1109: Expression expected.
 
 
 ==== parserEmptyParenthesizedExpression1.tlua (1 errors) ====
     -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/parserEmptyParenthesizedExpression1.ts
-    -- dropped: the original JS-only `toString` member access was replaced with a generic call while preserving empty-parenthesized-expression recovery
+    -- rewritten: the JS-only `toString` member access became a plain `foo` member call; the subject (recovery from an empty parenthesized expression) is unchanged
+    -- dropped: emit coverage (noEmit) -- the recovered tree prints back as `().foo()`, which is not valid Lua; the parser diagnostic and the recovered call/type shape are what this test asserts.
     
     
     function getObj()

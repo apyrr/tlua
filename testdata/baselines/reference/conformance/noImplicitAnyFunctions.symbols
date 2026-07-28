@@ -4,53 +4,51 @@
 -- ported from tests/cases/compiler/noImplicitAnyFunctions.ts
 -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
 -- dropped: ambient function declarations were rewritten to tlua's `declare name: function-type` form
--- compiler-gap: tlua ambient function-type declarations require an explicit return type, so upstream f1's implicit-any return diagnostic cannot be represented
-
-
-declare f1: () => any
->f1 : Symbol(f1, Decl(noImplicitAnyFunctions.tlua, 6, 7))
+-- dropped: upstream's `declare function f1();` case — tlua's only ambient form is `declare name: T`,
+--   which requires a complete function type, so an ambient signature with an omitted return type
+--   cannot be written and its implicit-any return diagnostic has no tlua analogue
 
 declare f2: () => any
->f2 : Symbol(f2, Decl(noImplicitAnyFunctions.tlua, 8, 7))
+>f2 : Symbol(f2, Decl(noImplicitAnyFunctions.tlua, 7, 7))
 
 function f3(x)
->f3 : Symbol(f3, Decl(noImplicitAnyFunctions.tlua, 8, 21))
->x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 10, 12))
+>f3 : Symbol(f3, Decl(noImplicitAnyFunctions.tlua, 7, 21))
+>x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 9, 12))
 
 end
 
 function f4(x: any)
->f4 : Symbol(f4, Decl(noImplicitAnyFunctions.tlua, 11, 3))
->x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 13, 12))
+>f4 : Symbol(f4, Decl(noImplicitAnyFunctions.tlua, 10, 3))
+>x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 12, 12))
 
     return x
->x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 13, 12))
+>x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 12, 12))
 
 end
 
 function f5(x: any): any
->f5 : Symbol(f5, Decl(noImplicitAnyFunctions.tlua, 15, 3))
->x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 17, 12))
+>f5 : Symbol(f5, Decl(noImplicitAnyFunctions.tlua, 14, 3))
+>x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 16, 12))
 
     return x
->x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 17, 12))
+>x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 16, 12))
 
 end
 
 function f6(x: string, y: number);
->f6 : Symbol(f6, Decl(noImplicitAnyFunctions.tlua, 19, 3), Decl(noImplicitAnyFunctions.tlua, 21, 34), Decl(noImplicitAnyFunctions.tlua, 22, 39))
+>f6 : Symbol(f6, Decl(noImplicitAnyFunctions.tlua, 18, 3), Decl(noImplicitAnyFunctions.tlua, 20, 34), Decl(noImplicitAnyFunctions.tlua, 21, 39))
+>x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 20, 12))
+>y : Symbol(y, Decl(noImplicitAnyFunctions.tlua, 20, 22))
+
+function f6(x: string, y: string): any;
+>f6 : Symbol(f6, Decl(noImplicitAnyFunctions.tlua, 18, 3), Decl(noImplicitAnyFunctions.tlua, 20, 34), Decl(noImplicitAnyFunctions.tlua, 21, 39))
 >x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 21, 12))
 >y : Symbol(y, Decl(noImplicitAnyFunctions.tlua, 21, 22))
 
-function f6(x: string, y: string): any;
->f6 : Symbol(f6, Decl(noImplicitAnyFunctions.tlua, 19, 3), Decl(noImplicitAnyFunctions.tlua, 21, 34), Decl(noImplicitAnyFunctions.tlua, 22, 39))
+function f6(x: string, y)
+>f6 : Symbol(f6, Decl(noImplicitAnyFunctions.tlua, 18, 3), Decl(noImplicitAnyFunctions.tlua, 20, 34), Decl(noImplicitAnyFunctions.tlua, 21, 39))
 >x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 22, 12))
 >y : Symbol(y, Decl(noImplicitAnyFunctions.tlua, 22, 22))
-
-function f6(x: string, y)
->f6 : Symbol(f6, Decl(noImplicitAnyFunctions.tlua, 19, 3), Decl(noImplicitAnyFunctions.tlua, 21, 34), Decl(noImplicitAnyFunctions.tlua, 22, 39))
->x : Symbol(x, Decl(noImplicitAnyFunctions.tlua, 23, 12))
->y : Symbol(y, Decl(noImplicitAnyFunctions.tlua, 23, 22))
 
     return nil
 end

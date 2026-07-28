@@ -3,35 +3,38 @@
 === stringLiteralCheckedInIf01.tlua ===
 -- ported from tests/cases/conformance/types/stringLiteral/stringLiteralCheckedInIf01.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: the upstream first-element access `[0]` maps to Lua's 1-based first slot `[1]`, and
+--   tlua enables noUncheckedIndexedAccess by default, so the indexed read (and therefore the
+--   inferred return type of `f`) is `S | nil` rather than upstream's `S`.
 
 type S = "a" | "b"
 >S : Symbol(S, Decl(stringLiteralCheckedInIf01.tlua, 0, 0))
 
 type T = S[] | S
->T : Symbol(T, Decl(stringLiteralCheckedInIf01.tlua, 3, 18))
+>T : Symbol(T, Decl(stringLiteralCheckedInIf01.tlua, 6, 18))
 >S : Symbol(S, Decl(stringLiteralCheckedInIf01.tlua, 0, 0))
 >S : Symbol(S, Decl(stringLiteralCheckedInIf01.tlua, 0, 0))
 
 function f(foo: T)
->f : Symbol(f, Decl(stringLiteralCheckedInIf01.tlua, 4, 16))
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 6, 11))
->T : Symbol(T, Decl(stringLiteralCheckedInIf01.tlua, 3, 18))
+>f : Symbol(f, Decl(stringLiteralCheckedInIf01.tlua, 7, 16))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 9, 11))
+>T : Symbol(T, Decl(stringLiteralCheckedInIf01.tlua, 6, 18))
 
     if foo == "a" then
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 6, 11))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 9, 11))
 
         return foo
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 6, 11))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 9, 11))
 
     elseif foo == "b" then
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 6, 11))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 9, 11))
 
         return foo
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 6, 11))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 9, 11))
 
     else
-        return (foo as S[])[0]
->foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 6, 11))
+        return (foo as S[])[1]
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf01.tlua, 9, 11))
 >S : Symbol(S, Decl(stringLiteralCheckedInIf01.tlua, 0, 0))
 
     end

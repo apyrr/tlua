@@ -3,72 +3,79 @@
 === derivedInterfaceIncompatibleWithBaseIndexer.tlua ===
 -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/derivedInterfaceIncompatibleWithBaseIndexer.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: a Lua number key `1` and a string key `"1"` are distinct keys, so each
+--   member is checked against exactly one applicable index signature -- the
+--   number indexer for `1`, the string indexer for `"1"`. Upstream JavaScript
+--   canonicalizes numeric names to strings and therefore checks numeric-looking
+--   members against both indexers, which is why upstream reports seven errors
+--   and tlua reports five. For the same reason the two `Derived5` declarations
+--   merge into two distinct members here rather than one.
 
 interface Base {
 >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 0, 0))
 
     [x: number]: { x: number; y: number; };
->x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 4, 5))
->x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 4, 18))
->y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 4, 29))
+>x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 11, 5))
+>x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 11, 18))
+>y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 11, 29))
 
     [x: string]: { x: number; }
->x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 5, 5))
->x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 5, 18))
+>x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 12, 5))
+>x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 12, 18))
 }
 
 interface Derived extends Base {
->Derived : Symbol(Derived, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 6, 1))
+>Derived : Symbol(Derived, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 13, 1))
 >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 0, 0))
 
     1: { y: number } -- error
->1 : Symbol(Derived[1], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 8, 32))
->y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 9, 8))
+>1 : Symbol(Derived[1], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 15, 32))
+>y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 16, 8))
 }
 
 interface Derived2 extends Base {
->Derived2 : Symbol(Derived2, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 10, 1))
+>Derived2 : Symbol(Derived2, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 17, 1))
 >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 0, 0))
 
     "1": { y: number } -- error
->"1" : Symbol(Derived2["1"], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 12, 33))
->y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 13, 10))
+>"1" : Symbol(Derived2["1"], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 19, 33))
+>y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 20, 10))
 }
 
 interface Derived3 extends Base {
->Derived3 : Symbol(Derived3, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 14, 1))
+>Derived3 : Symbol(Derived3, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 21, 1))
 >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 0, 0))
 
     foo: { y: number } -- error
->foo : Symbol(Derived3.foo, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 16, 33))
->y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 17, 10))
+>foo : Symbol(Derived3.foo, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 23, 33))
+>y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 24, 10))
 }
 
 interface Derived4 extends Base {
->Derived4 : Symbol(Derived4, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 18, 1))
+>Derived4 : Symbol(Derived4, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 25, 1))
 >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 0, 0))
 
     foo(): { x: number } -- error
->foo : Symbol(Derived4.foo, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 20, 33))
->x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 21, 12))
+>foo : Symbol(Derived4.foo, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 27, 33))
+>x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 28, 12))
 }
 
 -- satisifies string indexer but not numeric indexer
 interface Derived5 extends Base {
->Derived5 : Symbol(Derived5, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 22, 1), Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 27, 1))
+>Derived5 : Symbol(Derived5, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 29, 1), Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 34, 1))
 >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 0, 0))
 
     1: { x: number } -- error
->1 : Symbol(Derived5[1], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 25, 33))
->x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 26, 8))
+>1 : Symbol(Derived5[1], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 32, 33))
+>x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 33, 8))
 }
 
 interface Derived5 extends Base {
->Derived5 : Symbol(Derived5, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 22, 1), Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 27, 1))
+>Derived5 : Symbol(Derived5, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 29, 1), Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 34, 1))
 >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 0, 0))
 
-    "1": { x: number } -- error
->"1" : Symbol(Derived5["1"], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 29, 33))
->x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 30, 10))
+    "1": { x: number } -- ok in tlua: the string key is only checked against the string indexer
+>"1" : Symbol(Derived5["1"], Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 36, 33))
+>x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.tlua, 37, 10))
 }
 

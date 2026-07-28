@@ -11,8 +11,6 @@ interface Error {
 function foo(): Error
 >foo : () => Error
 
-    return nil as any
->nil as any : any
-
+    return nil
 end
 

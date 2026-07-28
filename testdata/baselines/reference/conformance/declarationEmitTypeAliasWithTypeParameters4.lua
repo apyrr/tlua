@@ -3,7 +3,10 @@
 //// [declarationEmitTypeAliasWithTypeParameters4.tlua]
 -- ported from tests/cases/compiler/declarationEmitTypeAliasWithTypeParameters4.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept generic type-alias, method-signature, alias-instantiation, and assertion checker coverage.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
 
 type Foo<T, Y> = {
     foo<U, J>(): Foo<U, J>
@@ -18,7 +21,9 @@ end
 //// [declarationEmitTypeAliasWithTypeParameters4.lua]
 -- ported from tests/cases/compiler/declarationEmitTypeAliasWithTypeParameters4.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept generic type-alias, method-signature, alias-instantiation, and assertion checker coverage.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
 function foo()
   return {};
 end

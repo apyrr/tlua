@@ -3,14 +3,20 @@
 //// [commentOnExpressionStatement1.tlua]
 -- ported from tests/cases/compiler/commentOnExpressionStatement1.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: bare expression-statement form (tlua requires values to bind to local names)
+-- dropped: the bare arithmetic expression statement `1 + 1;` (tlua allows only calls and
+-- assignments as expression statements, TLUA100057); a call statement carries the
+-- trailing comment instead
 
 
-local _ = 1 + 1 -- Comment.
+declare function f(): void;
+
+f() -- Comment.
 
 
 //// [commentOnExpressionStatement1.lua]
 -- ported from tests/cases/compiler/commentOnExpressionStatement1.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: bare expression-statement form (tlua requires values to bind to local names)
-local _ = 1 + 1; -- Comment.
+-- dropped: the bare arithmetic expression statement `1 + 1;` (tlua allows only calls and
+-- assignments as expression statements, TLUA100057); a call statement carries the
+-- trailing comment instead
+f(); -- Comment.

@@ -4,16 +4,13 @@
 -- ported from tests/cases/compiler/unusedMethodsInInterface.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 
--- @strict: false
---@noUnusedLocals:true
---@noUnusedParameters:true
 
 interface I1 {
-    f1(): void
->f1 : () => void
+    f1()
+>f1 : () => any
 
-    f2(x: number, y: string): void
->f2 : (x: number, y: string) => void
+    f2(x: number, y: string)
+>f2 : (x: number, y: string) => any
 >x : number
 >y : string
 }

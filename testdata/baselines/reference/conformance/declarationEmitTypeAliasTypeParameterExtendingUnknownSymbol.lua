@@ -3,7 +3,10 @@
 //// [declarationEmitTypeAliasTypeParameterExtendingUnknownSymbol.tlua]
 -- ported from tests/cases/compiler/declarationEmitTypeAliasTypeParameterExtendingUnknownSymbol.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration output (unsupported for Lua modules)
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
 
 type A<T extends Unknown> = {}
 
@@ -11,4 +14,6 @@ type A<T extends Unknown> = {}
 //// [declarationEmitTypeAliasTypeParameterExtendingUnknownSymbol.lua]
 -- ported from tests/cases/compiler/declarationEmitTypeAliasTypeParameterExtendingUnknownSymbol.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration output (unsupported for Lua modules)
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.

@@ -6,13 +6,15 @@ interface A {
     [s: string]: number
 }
 
--- All of these should fail.
+-- Lua keeps the number and string key domains distinct, so (unlike JS) tlua does not
+-- require the number indexer to be assignable to the string indexer, and a numeric key
+-- is checked only against the number indexer.
 interface B extends A {
-    c: string
-    3: string
-    Infinity: string
-    "-Infinity": string
-    NaN: string
-    "-NaN": string
-    6(): string
+    c: string             -- fails: string-named member vs `[s: string]: number`
+    3: string             -- ok: numeric key checked against `[n: number]: string`
+    Infinity: string      -- fails: string-named member vs `[s: string]: number`
+    "-Infinity": string   -- fails: string-named member vs `[s: string]: number`
+    NaN: string           -- fails: string-named member vs `[s: string]: number`
+    "-NaN": string        -- fails: string-named member vs `[s: string]: number`
+    6(): string           -- fails: numeric-keyed method vs `[n: number]: string` only
 }

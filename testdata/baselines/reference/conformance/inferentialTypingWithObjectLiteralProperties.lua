@@ -8,7 +8,10 @@ function f<T>(x: T, y: T): T
     return x
 end
 
-f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- ok
+-- T infers to a table whose x holds numeric key 1 of type `nil | number` in both argument orders,
+-- so assigning a string is an intentional error on both lines (upstream's stale "ok" comment on the
+-- first line does not match its own current baseline either).
+f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- intentional type error
 f({ x = { 1 } }, { x = { nil } }).x[1] = "" -- intentional type error
 
 
@@ -18,5 +21,8 @@ f({ x = { 1 } }, { x = { nil } }).x[1] = "" -- intentional type error
 function f(x, y)
   return x;
 end
-f({ x = { nil } }, { x = { 1 } }).x[1] = ""; -- ok
+-- T infers to a table whose x holds numeric key 1 of type `nil | number` in both argument orders,
+-- so assigning a string is an intentional error on both lines (upstream's stale "ok" comment on the
+-- first line does not match its own current baseline either).
+f({ x = { nil } }, { x = { 1 } }).x[1] = ""; -- intentional type error
 f({ x = { 1 } }, { x = { nil } }).x[1] = ""; -- intentional type error

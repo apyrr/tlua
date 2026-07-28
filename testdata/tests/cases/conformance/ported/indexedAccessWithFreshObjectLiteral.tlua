@@ -1,5 +1,11 @@
 -- ported from tests/cases/compiler/indexedAccessWithFreshObjectLiteral.ts
 -- dropped: @target: es2015 and @strict directives (tlua uses the latest target and strict checking by default)
+-- note: tlua enables noUncheckedIndexedAccess by default, so index reads add `| nil` on their own.
+--   Upstream runs with that option off, so its corge/grault results are `string | number` while
+--   tlua's are `string | number | nil`.
+-- note: upstream's numeric-looking keys (`1:`, `2:`) are string keys in JavaScript. tlua number and
+--   string keys are distinct domains, so baz keeps them as string keys `["1"]` and qux covers the
+--   number-key domain separately with `[1]`.
 
 function foo(id: string)
     return ({

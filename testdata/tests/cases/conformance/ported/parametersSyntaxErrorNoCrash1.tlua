@@ -1,8 +1,9 @@
 -- ported from tests/cases/compiler/parametersSyntaxErrorNoCrash1.ts
--- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode)
+-- dropped: @target: es2015 and @strict: true directives (tlua defaults to the latest target and to strict mode)
+-- https://github.com/microsoft/TypeScript/issues/59422
 
--- @noEmit: true
--- @noTypesAndSymbols: true
+// @noEmit: true
+// @noTypesAndSymbols: true
 
 function identity<T>(arg: T: T
     return arg

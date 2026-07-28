@@ -4,10 +4,9 @@
 -- ported from tests/cases/compiler/noImplicitAnyFunctions.ts
 -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
 -- dropped: ambient function declarations were rewritten to tlua's `declare name: function-type` form
--- compiler-gap: tlua ambient function-type declarations require an explicit return type, so upstream f1's implicit-any return diagnostic cannot be represented
-
-
-declare f1: () => any
+-- dropped: upstream's `declare function f1();` case — tlua's only ambient form is `declare name: T`,
+--   which requires a complete function type, so an ambient signature with an omitted return type
+--   cannot be written and its implicit-any return diagnostic has no tlua analogue
 
 declare f2: () => any
 
@@ -33,7 +32,9 @@ end
 -- ported from tests/cases/compiler/noImplicitAnyFunctions.ts
 -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
 -- dropped: ambient function declarations were rewritten to tlua's `declare name: function-type` form
--- compiler-gap: tlua ambient function-type declarations require an explicit return type, so upstream f1's implicit-any return diagnostic cannot be represented
+-- dropped: upstream's `declare function f1();` case — tlua's only ambient form is `declare name: T`,
+--   which requires a complete function type, so an ambient signature with an omitted return type
+--   cannot be written and its implicit-any return diagnostic has no tlua analogue
 function f3(x)
 end
 function f4(x)

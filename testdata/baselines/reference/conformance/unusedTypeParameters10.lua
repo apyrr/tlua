@@ -3,7 +3,8 @@
 //// [unusedTypeParameters10.tlua]
 -- ported from tests/cases/compiler/unusedTypeParameters10.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: noUnusedLocals does not report T in Alias even though Alias2 demonstrates the used case
+-- compiler gap: type-parameter usage is handled correctly (T in Alias is reported, T in Alias2 is not),
+-- but tlua additionally reports the top-level alias names Alias and Alias2 as unused
 
 
 type Alias<T> = {}
@@ -13,4 +14,5 @@ type Alias2<T> = { x: T }
 //// [unusedTypeParameters10.lua]
 -- ported from tests/cases/compiler/unusedTypeParameters10.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: noUnusedLocals does not report T in Alias even though Alias2 demonstrates the used case
+-- compiler gap: type-parameter usage is handled correctly (T in Alias is reported, T in Alias2 is not),
+-- but tlua additionally reports the top-level alias names Alias and Alias2 as unused

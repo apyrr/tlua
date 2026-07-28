@@ -3,7 +3,8 @@
 //// [unusedTypeParameterInInterface1.tlua]
 -- ported from tests/cases/compiler/unusedTypeParameterInInterface1.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: noUnusedLocals does not report the unused interface type parameter T
+-- compiler gap: the unused type parameter T is reported as expected, but tlua additionally reports the
+-- top-level interface name int as unused; upstream reports only T
 
 
 interface int<T> {
@@ -13,4 +14,5 @@ interface int<T> {
 //// [unusedTypeParameterInInterface1.lua]
 -- ported from tests/cases/compiler/unusedTypeParameterInInterface1.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: noUnusedLocals does not report the unused interface type parameter T
+-- compiler gap: the unused type parameter T is reported as expected, but tlua additionally reports the
+-- top-level interface name int as unused; upstream reports only T

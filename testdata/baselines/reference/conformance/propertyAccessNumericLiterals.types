@@ -5,6 +5,10 @@
 -- dropped: real Number.prototype/lib surface (tlua ships an empty `interface Number {}`);
 --   augmented Number locally below with a `toString` member so the numeric-literal-vs-dot
 --   parsing ambiguity this test exercises still has something to call into.
+-- dropped: emit coverage (noEmit) — the local `interface Number` is a type-only shim kept so
+--   the numeric-literal-vs-dot parsing ambiguity has a member to resolve; Lua numbers have no
+--   runtime `toString` method, so the lowered `0xffffffff.toString()` / `1234..toString()`
+--   calls would not be runnable Lua.
 
 interface Number {
   toString(radix?: number): string;

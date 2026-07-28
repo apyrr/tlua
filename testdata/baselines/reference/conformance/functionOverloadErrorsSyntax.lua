@@ -2,10 +2,12 @@
 
 //// [functionOverloadErrorsSyntax.tlua]
 -- ported from tests/cases/conformance/functions/functionOverloadErrorsSyntax.ts
--- dropped: nothing essential; TS's bodyless overload-signature list survives as
--- tlua's semicolon-terminated overload signatures, which (unlike `declare
--- function`) still require a final implementation, so a trivial empty body was
--- added to each overload group to keep the parse legal.
+-- note: upstream's @target: es2015 is raised to esnext; nothing else is dropped.
+-- note: the bodyless overload signatures and their final implementations are both
+-- upstream's; the implementation bodies `function fn4a() { }` were only converted to
+-- tlua's `function fn4a() ... end` form -- no signature or body was added.
+-- note: upstream's mid-list rest parameter `...y: any[]` is written as tlua's `...: any`,
+-- which still reports the "rest parameter must be last" diagnostic.
 
 
 -- Function overload signature with optional parameter followed by non-optional parameter
@@ -25,10 +27,12 @@ end
 
 //// [functionOverloadErrorsSyntax.lua]
 -- ported from tests/cases/conformance/functions/functionOverloadErrorsSyntax.ts
--- dropped: nothing essential; TS's bodyless overload-signature list survives as
--- tlua's semicolon-terminated overload signatures, which (unlike `declare
--- function`) still require a final implementation, so a trivial empty body was
--- added to each overload group to keep the parse legal.
+-- note: upstream's @target: es2015 is raised to esnext; nothing else is dropped.
+-- note: the bodyless overload signatures and their final implementations are both
+-- upstream's; the implementation bodies `function fn4a() { }` were only converted to
+-- tlua's `function fn4a() ... end` form -- no signature or body was added.
+-- note: upstream's mid-list rest parameter `...y: any[]` is written as tlua's `...: any`,
+-- which still reports the "rest parameter must be last" diagnostic.
 function fn4a()
 end
 function fn4b()

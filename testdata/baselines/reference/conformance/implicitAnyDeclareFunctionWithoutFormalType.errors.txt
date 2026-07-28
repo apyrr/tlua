@@ -1,20 +1,23 @@
-implicitAnyDeclareFunctionWithoutFormalType.tlua(10,14): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(13,25): error TLUA7006: Parameter 'y' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(16,16): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(16,19): error TLUA7006: Parameter 'b' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(16,22): error TLUA7006: Parameter 'c' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(13,14): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(16,25): error TLUA7006: Parameter 'y' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(19,16): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(19,19): error TLUA7006: Parameter 'b' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(19,22): error TLUA7006: Parameter 'c' implicitly has an 'any' type.
 
 
 ==== implicitAnyDeclareFunctionWithoutFormalType.tlua (5 errors) ====
     -- ported from tests/cases/compiler/implicitAnyDeclareFunctionWithoutFormalType.ts
     -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to latest target and strict checking)
-    -- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`
-    -- dropped: upstream noImplicitAny diagnostic for the unnamed vararg, which has no name in tlua
-    -- dropped: upstream noImplicitAny diagnostics for defaulted z/w after null/undefined normalization to nil
-    -- dropped: emit coverage (noEmit) — retained default-parameter checker cases are not lowered to valid Lua
+    -- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`, which has no
+    --   name for a diagnostic to point at, so upstream's implicit-any error on `args` has no tlua analogue
+    -- dropped: emit coverage (noEmit) — tlua parses default parameter values but does not lower them,
+    --   so func4/noError1 would emit invalid Lua
+    -- note: upstream's blanket "these should be errors" heading is stale. The upstream baseline reports
+    --   no diagnostic for the null/undefined-defaulted parameters either, and tlua likewise reports none
+    --   once they are normalized to nil.
     
     
-    -- these should be errors
+    -- these are implicit-any errors
     function foo(x)
                  ~
 !!! error TLUA7006: Parameter 'x' implicitly has an 'any' type.
@@ -34,13 +37,13 @@ implicitAnyDeclareFunctionWithoutFormalType.tlua(16,22): error TLUA7006: Paramet
 !!! error TLUA7006: Parameter 'c' implicitly has an 'any' type.
     end -- error at "a,b,c"
     
+    -- these are not errors
     function func3(...)
     end
     
     function func4(z = nil, w = nil)
     end
     
-    -- these shouldn't be errors
     function noError1(x = 3, y = 2)
     end
     

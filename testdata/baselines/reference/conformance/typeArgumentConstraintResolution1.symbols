@@ -2,78 +2,79 @@
 
 === typeArgumentConstraintResolution1.tlua ===
 -- ported from tests/cases/compiler/typeArgumentConstraintResolution1.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 -- dropped: JavaScript Date/Number/String wrapper constraints, replaced with local structural constraint interfaces
+
 
 interface DateConstraint {
 >DateConstraint : Symbol(DateConstraint, Decl(typeArgumentConstraintResolution1.tlua, 0, 0))
 
     date: string
->date : Symbol(DateConstraint.date, Decl(typeArgumentConstraintResolution1.tlua, 4, 26))
+>date : Symbol(DateConstraint.date, Decl(typeArgumentConstraintResolution1.tlua, 5, 26))
 }
 
 interface NumberConstraint {
->NumberConstraint : Symbol(NumberConstraint, Decl(typeArgumentConstraintResolution1.tlua, 6, 1))
+>NumberConstraint : Symbol(NumberConstraint, Decl(typeArgumentConstraintResolution1.tlua, 7, 1))
 
     number: number
->number : Symbol(NumberConstraint.number, Decl(typeArgumentConstraintResolution1.tlua, 8, 28))
+>number : Symbol(NumberConstraint.number, Decl(typeArgumentConstraintResolution1.tlua, 9, 28))
 }
 
 interface StringConstraint {
->StringConstraint : Symbol(StringConstraint, Decl(typeArgumentConstraintResolution1.tlua, 10, 1))
+>StringConstraint : Symbol(StringConstraint, Decl(typeArgumentConstraintResolution1.tlua, 11, 1))
 
     string: string
->string : Symbol(StringConstraint.string, Decl(typeArgumentConstraintResolution1.tlua, 12, 28))
+>string : Symbol(StringConstraint.string, Decl(typeArgumentConstraintResolution1.tlua, 13, 28))
 }
 
 function foo1<T extends DateConstraint>(test: T);
->foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 14, 1), Decl(typeArgumentConstraintResolution1.tlua, 16, 49), Decl(typeArgumentConstraintResolution1.tlua, 17, 56))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 16, 14))
+>foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 15, 1), Decl(typeArgumentConstraintResolution1.tlua, 17, 49), Decl(typeArgumentConstraintResolution1.tlua, 18, 56))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 17, 14))
 >DateConstraint : Symbol(DateConstraint, Decl(typeArgumentConstraintResolution1.tlua, 0, 0))
->test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 16, 40))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 16, 14))
+>test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 17, 40))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 17, 14))
 
 function foo1<T extends NumberConstraint>(test: string);
->foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 14, 1), Decl(typeArgumentConstraintResolution1.tlua, 16, 49), Decl(typeArgumentConstraintResolution1.tlua, 17, 56))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 17, 14))
->NumberConstraint : Symbol(NumberConstraint, Decl(typeArgumentConstraintResolution1.tlua, 6, 1))
->test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 17, 42))
-
-function foo1<T extends StringConstraint>(test: any) end
->foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 14, 1), Decl(typeArgumentConstraintResolution1.tlua, 16, 49), Decl(typeArgumentConstraintResolution1.tlua, 17, 56))
+>foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 15, 1), Decl(typeArgumentConstraintResolution1.tlua, 17, 49), Decl(typeArgumentConstraintResolution1.tlua, 18, 56))
 >T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 18, 14))
->StringConstraint : Symbol(StringConstraint, Decl(typeArgumentConstraintResolution1.tlua, 10, 1))
+>NumberConstraint : Symbol(NumberConstraint, Decl(typeArgumentConstraintResolution1.tlua, 7, 1))
 >test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 18, 42))
 
+function foo1<T extends StringConstraint>(test: any) end
+>foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 15, 1), Decl(typeArgumentConstraintResolution1.tlua, 17, 49), Decl(typeArgumentConstraintResolution1.tlua, 18, 56))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 19, 14))
+>StringConstraint : Symbol(StringConstraint, Decl(typeArgumentConstraintResolution1.tlua, 11, 1))
+>test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 19, 42))
+
 foo1<DateConstraint>("") -- should error
->foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 14, 1), Decl(typeArgumentConstraintResolution1.tlua, 16, 49), Decl(typeArgumentConstraintResolution1.tlua, 17, 56))
+>foo1 : Symbol(foo1, Decl(typeArgumentConstraintResolution1.tlua, 15, 1), Decl(typeArgumentConstraintResolution1.tlua, 17, 49), Decl(typeArgumentConstraintResolution1.tlua, 18, 56))
 >DateConstraint : Symbol(DateConstraint, Decl(typeArgumentConstraintResolution1.tlua, 0, 0))
 
 function foo2<T extends DateConstraint>(test: T): T;
->foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 20, 24), Decl(typeArgumentConstraintResolution1.tlua, 22, 52), Decl(typeArgumentConstraintResolution1.tlua, 23, 59))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 22, 14))
+>foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 21, 24), Decl(typeArgumentConstraintResolution1.tlua, 23, 52), Decl(typeArgumentConstraintResolution1.tlua, 24, 59))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 23, 14))
 >DateConstraint : Symbol(DateConstraint, Decl(typeArgumentConstraintResolution1.tlua, 0, 0))
->test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 22, 40))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 22, 14))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 22, 14))
+>test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 23, 40))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 23, 14))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 23, 14))
 
 function foo2<T extends NumberConstraint>(test: string): T;
->foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 20, 24), Decl(typeArgumentConstraintResolution1.tlua, 22, 52), Decl(typeArgumentConstraintResolution1.tlua, 23, 59))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 23, 14))
->NumberConstraint : Symbol(NumberConstraint, Decl(typeArgumentConstraintResolution1.tlua, 6, 1))
->test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 23, 42))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 23, 14))
+>foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 21, 24), Decl(typeArgumentConstraintResolution1.tlua, 23, 52), Decl(typeArgumentConstraintResolution1.tlua, 24, 59))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 24, 14))
+>NumberConstraint : Symbol(NumberConstraint, Decl(typeArgumentConstraintResolution1.tlua, 7, 1))
+>test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 24, 42))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 24, 14))
 
 function foo2<T extends StringConstraint>(test: any): any
->foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 20, 24), Decl(typeArgumentConstraintResolution1.tlua, 22, 52), Decl(typeArgumentConstraintResolution1.tlua, 23, 59))
->T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 24, 14))
->StringConstraint : Symbol(StringConstraint, Decl(typeArgumentConstraintResolution1.tlua, 10, 1))
->test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 24, 42))
+>foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 21, 24), Decl(typeArgumentConstraintResolution1.tlua, 23, 52), Decl(typeArgumentConstraintResolution1.tlua, 24, 59))
+>T : Symbol(T, Decl(typeArgumentConstraintResolution1.tlua, 25, 14))
+>StringConstraint : Symbol(StringConstraint, Decl(typeArgumentConstraintResolution1.tlua, 11, 1))
+>test : Symbol(test, Decl(typeArgumentConstraintResolution1.tlua, 25, 42))
 
     return nil
 end
 
 foo2<DateConstraint>("") -- DateConstraint does not satisfy the constraint NumberConstraint for T
->foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 20, 24), Decl(typeArgumentConstraintResolution1.tlua, 22, 52), Decl(typeArgumentConstraintResolution1.tlua, 23, 59))
+>foo2 : Symbol(foo2, Decl(typeArgumentConstraintResolution1.tlua, 21, 24), Decl(typeArgumentConstraintResolution1.tlua, 23, 52), Decl(typeArgumentConstraintResolution1.tlua, 24, 59))
 >DateConstraint : Symbol(DateConstraint, Decl(typeArgumentConstraintResolution1.tlua, 0, 0))
 

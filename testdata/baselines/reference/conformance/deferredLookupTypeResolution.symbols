@@ -3,84 +3,88 @@
 === deferredLookupTypeResolution.tlua ===
 -- ported from tests/cases/compiler/deferredLookupTypeResolution.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration output (unsupported for Lua modules)
+-- note: tlua sequences are 1-based, so the upstream first-element key '0' is
+--   written '1' here.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
 
 
 -- Repro from #17456
 
 type StringContains<S extends string, L extends string> = (
 >StringContains : Symbol(StringContains, Decl(deferredLookupTypeResolution.tlua, 0, 0))
->S : Symbol(S, Decl(deferredLookupTypeResolution.tlua, 7, 20))
->L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 7, 37))
+>S : Symbol(S, Decl(deferredLookupTypeResolution.tlua, 11, 20))
+>L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 11, 37))
 
     { [K in S]: 'true' } &
->K : Symbol(K, Decl(deferredLookupTypeResolution.tlua, 8, 7))
->S : Symbol(S, Decl(deferredLookupTypeResolution.tlua, 7, 20))
+>K : Symbol(K, Decl(deferredLookupTypeResolution.tlua, 12, 7))
+>S : Symbol(S, Decl(deferredLookupTypeResolution.tlua, 11, 20))
 
     { [key: string]: 'false' }
->key : Symbol(key, Decl(deferredLookupTypeResolution.tlua, 9, 7))
+>key : Symbol(key, Decl(deferredLookupTypeResolution.tlua, 13, 7))
 
 )[L]
->L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 7, 37))
+>L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 11, 37))
 
 type ObjectHasKey<O, L extends string> = StringContains<Extract<keyof O, string>, L>
->ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 10, 4))
->O : Symbol(O, Decl(deferredLookupTypeResolution.tlua, 12, 18))
->L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 12, 20))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 14, 4))
+>O : Symbol(O, Decl(deferredLookupTypeResolution.tlua, 16, 18))
+>L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 16, 20))
 >StringContains : Symbol(StringContains, Decl(deferredLookupTypeResolution.tlua, 0, 0))
 >Extract : Symbol(Extract, Decl(lib.luajit.d.tlua, --, --))
->O : Symbol(O, Decl(deferredLookupTypeResolution.tlua, 12, 18))
->L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 12, 20))
+>O : Symbol(O, Decl(deferredLookupTypeResolution.tlua, 16, 18))
+>L : Symbol(L, Decl(deferredLookupTypeResolution.tlua, 16, 20))
 
-type First<T> = ObjectHasKey<T, '0'> -- Should be deferred
->First : Symbol(First, Decl(deferredLookupTypeResolution.tlua, 12, 84))
->T : Symbol(T, Decl(deferredLookupTypeResolution.tlua, 14, 11))
->ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 10, 4))
->T : Symbol(T, Decl(deferredLookupTypeResolution.tlua, 14, 11))
+type First<T> = ObjectHasKey<T, '1'> -- Should be deferred
+>First : Symbol(First, Decl(deferredLookupTypeResolution.tlua, 16, 84))
+>T : Symbol(T, Decl(deferredLookupTypeResolution.tlua, 18, 11))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 14, 4))
+>T : Symbol(T, Decl(deferredLookupTypeResolution.tlua, 18, 11))
 
 type T1 = ObjectHasKey<{ a: string }, 'a'> -- 'true'
->T1 : Symbol(T1, Decl(deferredLookupTypeResolution.tlua, 14, 36))
->ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 10, 4))
->a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 16, 24))
+>T1 : Symbol(T1, Decl(deferredLookupTypeResolution.tlua, 18, 36))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 14, 4))
+>a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 20, 24))
 
 type T2 = ObjectHasKey<{ a: string }, 'b'> -- 'false'
->T2 : Symbol(T2, Decl(deferredLookupTypeResolution.tlua, 16, 42))
->ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 10, 4))
->a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 17, 24))
+>T2 : Symbol(T2, Decl(deferredLookupTypeResolution.tlua, 20, 42))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution.tlua, 14, 4))
+>a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 21, 24))
 
 -- Verify that mapped type isn't eagerly resolved in type-to-string operation
 
 declare f1: <A extends string, B extends string>(a: A, b: B) => { [P in A | B]: any }
->f1 : Symbol(f1, Decl(deferredLookupTypeResolution.tlua, 21, 7))
->A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 21, 13))
->B : Symbol(B, Decl(deferredLookupTypeResolution.tlua, 21, 30))
->a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 21, 49))
->A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 21, 13))
->b : Symbol(b, Decl(deferredLookupTypeResolution.tlua, 21, 54))
->B : Symbol(B, Decl(deferredLookupTypeResolution.tlua, 21, 30))
->P : Symbol(P, Decl(deferredLookupTypeResolution.tlua, 21, 67))
->A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 21, 13))
->B : Symbol(B, Decl(deferredLookupTypeResolution.tlua, 21, 30))
+>f1 : Symbol(f1, Decl(deferredLookupTypeResolution.tlua, 25, 7))
+>A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 25, 13))
+>B : Symbol(B, Decl(deferredLookupTypeResolution.tlua, 25, 30))
+>a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 25, 49))
+>A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 25, 13))
+>b : Symbol(b, Decl(deferredLookupTypeResolution.tlua, 25, 54))
+>B : Symbol(B, Decl(deferredLookupTypeResolution.tlua, 25, 30))
+>P : Symbol(P, Decl(deferredLookupTypeResolution.tlua, 25, 67))
+>A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 25, 13))
+>B : Symbol(B, Decl(deferredLookupTypeResolution.tlua, 25, 30))
 
 function f2<A extends string>(a: A)
->f2 : Symbol(f2, Decl(deferredLookupTypeResolution.tlua, 21, 85))
->A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 23, 12))
->a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 23, 30))
->A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 23, 12))
+>f2 : Symbol(f2, Decl(deferredLookupTypeResolution.tlua, 25, 85))
+>A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 27, 12))
+>a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 27, 30))
+>A : Symbol(A, Decl(deferredLookupTypeResolution.tlua, 27, 12))
 
     return f1(a, 'x')
->f1 : Symbol(f1, Decl(deferredLookupTypeResolution.tlua, 21, 7))
->a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 23, 30))
+>f1 : Symbol(f1, Decl(deferredLookupTypeResolution.tlua, 25, 7))
+>a : Symbol(a, Decl(deferredLookupTypeResolution.tlua, 27, 30))
 
 end
 
 function f3(x: 'a' | 'b')
->f3 : Symbol(f3, Decl(deferredLookupTypeResolution.tlua, 25, 3))
->x : Symbol(x, Decl(deferredLookupTypeResolution.tlua, 27, 12))
+>f3 : Symbol(f3, Decl(deferredLookupTypeResolution.tlua, 29, 3))
+>x : Symbol(x, Decl(deferredLookupTypeResolution.tlua, 31, 12))
 
     return f2(x)
->f2 : Symbol(f2, Decl(deferredLookupTypeResolution.tlua, 21, 85))
->x : Symbol(x, Decl(deferredLookupTypeResolution.tlua, 27, 12))
+>f2 : Symbol(f2, Decl(deferredLookupTypeResolution.tlua, 25, 85))
+>x : Symbol(x, Decl(deferredLookupTypeResolution.tlua, 31, 12))
 
 end
 

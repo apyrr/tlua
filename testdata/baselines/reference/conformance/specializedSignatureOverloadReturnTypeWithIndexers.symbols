@@ -51,9 +51,12 @@ interface D {
 >p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 16, 6))
 >p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 16, 21))
 
-    f(p: "spec"): { [p: number]: any } -- Should be error
+    f(p: "spec"): { [p: number]: any } -- legacy upstream comment said "Should be error",
 >f : Symbol(D.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 15, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 16, 41))
 >p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 17, 6))
 >p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 17, 21))
+
+                                       -- but the current upstream baseline (and tlua) report
+                                       -- no diagnostic here; kept for overload-return coverage.
 }
 

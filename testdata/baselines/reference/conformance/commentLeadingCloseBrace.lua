@@ -2,12 +2,11 @@
 
 //// [commentLeadingCloseBrace.tlua]
 -- ported from tests/cases/compiler/commentLeadingCloseBrace.ts
--- dropped: @strict: false; tlua tests keep strict mode enabled, so the helper is explicitly typed
+-- dropped: @strict: false; tlua tests keep strict mode enabled, so the ambient helper's
+-- vararg is explicitly typed `any` instead of relying on an implicit any parameter
 -- dropped: @target: es2015 directive (tlua defaults to the latest target)
 
-function commentedParameters(...: any): any
-    return nil
-end
+declare function commentedParameters(...: any): any;
 
 function ifelse()
     if commentedParameters(1, 2) then
@@ -22,11 +21,9 @@ end
 
 //// [commentLeadingCloseBrace.lua]
 -- ported from tests/cases/compiler/commentLeadingCloseBrace.ts
--- dropped: @strict: false; tlua tests keep strict mode enabled, so the helper is explicitly typed
+-- dropped: @strict: false; tlua tests keep strict mode enabled, so the ambient helper's
+-- vararg is explicitly typed `any` instead of relying on an implicit any parameter
 -- dropped: @target: es2015 directive (tlua defaults to the latest target)
-function commentedParameters(...)
-  return nil;
-end
 function ifelse()
   if commentedParameters(1, 2) then
     --[[comment1]]

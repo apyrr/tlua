@@ -1,12 +1,13 @@
-unusedTypeParameters10.tlua(6,6): error TLUA6196: 'Alias' is declared but never used.
-unusedTypeParameters10.tlua(6,12): error TLUA6196: 'T' is declared but never used.
-unusedTypeParameters10.tlua(7,6): error TLUA6196: 'Alias2' is declared but never used.
+unusedTypeParameters10.tlua(7,6): error TLUA6196: 'Alias' is declared but never used.
+unusedTypeParameters10.tlua(7,12): error TLUA6196: 'T' is declared but never used.
+unusedTypeParameters10.tlua(8,6): error TLUA6196: 'Alias2' is declared but never used.
 
 
 ==== unusedTypeParameters10.tlua (3 errors) ====
     -- ported from tests/cases/compiler/unusedTypeParameters10.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
-    -- compiler gap: noUnusedLocals does not report T in Alias even though Alias2 demonstrates the used case
+    -- compiler gap: type-parameter usage is handled correctly (T in Alias is reported, T in Alias2 is not),
+    -- but tlua additionally reports the top-level alias names Alias and Alias2 as unused
     
     
     type Alias<T> = {}

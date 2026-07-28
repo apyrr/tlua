@@ -3,6 +3,10 @@
 === continueNotInIterationStatement2.tlua ===
 -- ported from tests/cases/compiler/continueNotInIterationStatement2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) -- the `continue` is rejected for crossing a function
+-- boundary, so the recovered tree emits a `continue` inside `f`, which has no enclosing
+-- loop and is invalid Lua.
+
 
 while true do
 >true : true

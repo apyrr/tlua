@@ -2,19 +2,21 @@
 
 === noUnusedLocals_potentialPredicateUnusedParam.tlua ===
 -- ported from tests/cases/compiler/noUnusedLocals_potentialPredicateUnusedParam.ts
--- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode); Math.random() replaced with a Lua boolean to remove the JS runtime-global dependency
+-- dropped: @target: es2015 and @strict: true directives (tlua defaults to the latest target and to strict mode)
+-- rewritten: the JS global `Math.random()` became the Lua-native `math.random()`; the double negation is preserved so the return stays a widened boolean
 
--- @noEmit: true
--- @noUnusedLocals: true
--- @noUnusedParameters: true
--- compiler gap: noUnusedParameters does not report the unused parameter `a` (the upstream TS6133 diagnostic).
 
 function potentialPredicateUnusedParam(a: unknown)
 >potentialPredicateUnusedParam : (a: unknown) => boolean
 >a : unknown
 
-    return true
->true : true
+    return not not math.random()
+>not not math.random() : true
+>not math.random() : false
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
 
 end
 

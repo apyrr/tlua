@@ -1,6 +1,9 @@
 -- ported from tests/cases/compiler/declarationFilesWithTypeReferences4.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept ambient type-reference resolution and function return-type checker coverage.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
+
 
 // @filename: /a/node_modules/@types/node/index.d.tlua
 interface Error {
@@ -10,5 +13,5 @@ interface Error {
 // @filename: /a/app.tlua
 /// <reference types="node"/>
 function foo(): Error
-    return nil as any
+    return nil
 end

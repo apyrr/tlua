@@ -4,42 +4,35 @@
 -- ported from tests/cases/compiler/recursiveTypeIdentity.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 
-interface List<T> {
->List : Symbol(List, Decl(recursiveTypeIdentity.tlua, 0, 0))
->T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 3, 15))
+interface A {
+>A : Symbol(A, Decl(recursiveTypeIdentity.tlua, 0, 0))
 
-    data: T
->data : Symbol(List.data, Decl(recursiveTypeIdentity.tlua, 3, 19))
->T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 3, 15))
-
-    next: List<T>
->next : Symbol(List.next, Decl(recursiveTypeIdentity.tlua, 4, 11))
->List : Symbol(List, Decl(recursiveTypeIdentity.tlua, 0, 0))
->T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 3, 15))
-
-    owner: List<List<T>> -- Error, recursive reference with wrapped T
->owner : Symbol(List.owner, Decl(recursiveTypeIdentity.tlua, 5, 17))
->List : Symbol(List, Decl(recursiveTypeIdentity.tlua, 0, 0))
->List : Symbol(List, Decl(recursiveTypeIdentity.tlua, 0, 0))
->T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 3, 15))
+    <T extends A>(x: T): void
+>T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 4, 5))
+>A : Symbol(A, Decl(recursiveTypeIdentity.tlua, 0, 0))
+>x : Symbol(x, Decl(recursiveTypeIdentity.tlua, 4, 18))
+>T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 4, 5))
 }
 
-interface List2<T> {
->List2 : Symbol(List2, Decl(recursiveTypeIdentity.tlua, 7, 1))
->T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 9, 16))
+interface B {
+>B : Symbol(B, Decl(recursiveTypeIdentity.tlua, 5, 1))
 
-    data: T
->data : Symbol(List2.data, Decl(recursiveTypeIdentity.tlua, 9, 20))
->T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 9, 16))
+    <T extends B>(x: T): void
+>T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 8, 5))
+>B : Symbol(B, Decl(recursiveTypeIdentity.tlua, 5, 1))
+>x : Symbol(x, Decl(recursiveTypeIdentity.tlua, 8, 18))
+>T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 8, 5))
+}
 
-    next: List2<T>
->next : Symbol(List2.next, Decl(recursiveTypeIdentity.tlua, 10, 11))
->List2 : Symbol(List2, Decl(recursiveTypeIdentity.tlua, 7, 1))
->T : Symbol(T, Decl(recursiveTypeIdentity.tlua, 9, 16))
+interface C {
+>C : Symbol(C, Decl(recursiveTypeIdentity.tlua, 9, 1))
 
-    owner: List2<List2<string>> -- Ok
->owner : Symbol(List2.owner, Decl(recursiveTypeIdentity.tlua, 11, 18))
->List2 : Symbol(List2, Decl(recursiveTypeIdentity.tlua, 7, 1))
->List2 : Symbol(List2, Decl(recursiveTypeIdentity.tlua, 7, 1))
+    (x: A): void
+>x : Symbol(x, Decl(recursiveTypeIdentity.tlua, 12, 5))
+>A : Symbol(A, Decl(recursiveTypeIdentity.tlua, 0, 0))
+
+    (x: B): void
+>x : Symbol(x, Decl(recursiveTypeIdentity.tlua, 13, 5))
+>B : Symbol(B, Decl(recursiveTypeIdentity.tlua, 5, 1))
 }
 

@@ -1,9 +1,13 @@
-duplicateLabel1.tlua(6,3): error TLUA1114: Duplicate label 'target'.
+duplicateLabel1.tlua(10,3): error TLUA1114: Duplicate label 'target'.
 
 
 ==== duplicateLabel1.tlua (1 errors) ====
     -- ported from tests/cases/compiler/duplicateLabel1.ts
     -- dropped: @target: es2015 directive (tlua defaults to the latest target)
+    -- dropped: emit coverage (noEmit) — the subject is the duplicate-label
+    --   diagnostic TLUA1114; the source is intentionally invalid, and the printer
+    --   would otherwise round-trip both `::target::` labels into a .lua file that
+    --   Lua itself rejects
     
     
     ::target::

@@ -1,6 +1,8 @@
 -- ported from tests/cases/conformance/parser/ecmascript2021/numericSeparators/parser.numericSeparators.binaryNegative.ts
--- dropped: nothing of substance; bare literal expression statements rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+-- dropped: @target: es2015 directive (pinned to esnext); bare literal expression statements rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+-- dropped: emit coverage (noEmit) -- the parser's recovered malformed binary literals (`0b00_`, `0b01__11`, `0b___0111010_0101_1`) and the split-prefix recovery statement `B0101` are printed verbatim, which is not valid Lua. Error/type/symbol coverage is unaffected.
 
+// @noEmit: true
 // @target: esnext
 // @filename: 1.tlua
 local _ = 0b00_;

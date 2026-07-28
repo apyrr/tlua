@@ -8,7 +8,7 @@ interface Error {
 //// [app.tlua]
 /// <reference types="node"/>
 function foo(): Error
-    return nil as any
+    return nil
 end
 
 

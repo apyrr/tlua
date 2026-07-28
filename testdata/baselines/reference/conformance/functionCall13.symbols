@@ -3,11 +3,15 @@
 === functionCall13.tlua ===
 -- ported from tests/cases/compiler/functionCall13.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: upstream's named rest parameter `...b: number[]` was rewritten as
+--   tlua's unnamed scalar vararg `...: number`; each variadic argument is typed
+--   `number` directly rather than collected into an array, so the upstream
+--   arity and first-argument diagnostics are preserved unchanged.
 
 function foo(a: string, ...: number)
 >foo : Symbol(foo, Decl(functionCall13.tlua, 0, 0))
->a : Symbol(a, Decl(functionCall13.tlua, 3, 13))
-> : Symbol((Missing), Decl(functionCall13.tlua, 3, 23))
+>a : Symbol(a, Decl(functionCall13.tlua, 7, 13))
+> : Symbol((Missing), Decl(functionCall13.tlua, 7, 23))
 
 end
 

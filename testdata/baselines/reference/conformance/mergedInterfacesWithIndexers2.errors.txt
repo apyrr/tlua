@@ -1,5 +1,5 @@
-mergedInterfacesWithIndexers2.tlua(16,5): error TLUA2411: Property '"a"' of type 'number' is not assignable to 'string' index type '{ length: number; }'.
-mergedInterfacesWithIndexers2.tlua(21,5): error TLUA2411: Property '1' of type '{ length: number; }' is not assignable to 'number' index type 'string'.
+mergedInterfacesWithIndexers2.tlua(21,5): error TLUA2411: Property '"a"' of type 'number' is not assignable to 'string' index type '{ length: number; }'.
+mergedInterfacesWithIndexers2.tlua(26,5): error TLUA2411: Property '1' of type '{ length: number; }' is not assignable to 'number' index type 'string'.
 
 
 ==== mergedInterfacesWithIndexers2.tlua (2 errors) ====
@@ -8,12 +8,17 @@ mergedInterfacesWithIndexers2.tlua(21,5): error TLUA2411: Property '1' of type '
     
     -- indexers should behave like other members when merging interface declarations
     
+    -- note: upstream reports an incompatibility between merged A's number and string index signatures
+    --   because JavaScript coerces numeric keys to strings. tlua number and string keys are distinct
+    --   domains, so the two A signatures are independent and correctly produce no diagnostic; only the
+    --   A2 property-versus-indexer checks below are errors.
+    
     interface A {
-        [x: number]: string; -- error
+        [x: number]: string;
     }
     
     interface A {
-        [x: string]: { length: string }; -- error
+        [x: string]: { length: string };
     }
     
     interface A2 {

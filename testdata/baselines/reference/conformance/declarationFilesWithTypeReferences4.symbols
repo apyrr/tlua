@@ -14,6 +14,6 @@ function foo(): Error
 >foo : Symbol(foo, Decl(app.tlua, 0, 0))
 >Error : Symbol(Error, Decl(index.d.tlua, 0, 0))
 
-    return nil as any
+    return nil
 end
 

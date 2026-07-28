@@ -22,14 +22,11 @@ interface Options {
 >Test : Symbol(Test, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 0, 0))
 }
 
-function includesAllRequiredOptions(options: Partial<Options>): options is Options
+declare function includesAllRequiredOptions(options: Partial<Options>): options is Options
 >includesAllRequiredOptions : Symbol(includesAllRequiredOptions, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 12, 1))
->options : Symbol(options, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 14, 36))
+>options : Symbol(options, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 14, 44))
 >Partial : Symbol(Partial, Decl(lib.luajit.d.tlua, --, --))
 >Options : Symbol(Options, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 8, 1))
->options : Symbol(options, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 14, 36))
+>options : Symbol(options, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 14, 44))
 >Options : Symbol(Options, Decl(typePredicateAcceptingPartialOfRefinedType.tlua, 8, 1))
-
-    return true
-end
 

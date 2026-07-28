@@ -1,4 +1,8 @@
 -- ported from tests/cases/compiler/continueNotInIterationStatement1.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) -- the source is intentionally invalid (a top-level
+-- `continue` with no enclosing loop), so the recovered tree emits invalid Lua.
+
+// @noEmit: true
 
 continue

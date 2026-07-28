@@ -3,93 +3,92 @@
 === tupleTypeInference2.tlua ===
 -- ported from tests/cases/compiler/tupleTypeInference2.ts
 -- dropped: @target: es2015 and @strict: true directives (tlua defaults to latest target and strict checking)
--- compiler gap: tlua infers unknown/table differently from TypeScript in this tuple inference repro
 
 -- Repro from #22564
 
 type A<R> = [R] | [R, string]
 >A : Symbol(A, Decl(tupleTypeInference2.tlua, 0, 0))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 6, 7))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 6, 7))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 6, 7))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 5, 7))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 5, 7))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 5, 7))
 
 declare function f<T>(x: A<T>): T
->f : Symbol(f, Decl(tupleTypeInference2.tlua, 6, 29))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 7, 19))
->x : Symbol(x, Decl(tupleTypeInference2.tlua, 7, 22))
+>f : Symbol(f, Decl(tupleTypeInference2.tlua, 5, 29))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 6, 19))
+>x : Symbol(x, Decl(tupleTypeInference2.tlua, 6, 22))
 >A : Symbol(A, Decl(tupleTypeInference2.tlua, 0, 0))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 7, 19))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 7, 19))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 6, 19))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 6, 19))
 
 f({ nil, '' } as [never, string]) -- T: never
->f : Symbol(f, Decl(tupleTypeInference2.tlua, 6, 29))
+>f : Symbol(f, Decl(tupleTypeInference2.tlua, 5, 29))
 
 f({ nil, '' } as [void, string]) -- T: void
->f : Symbol(f, Decl(tupleTypeInference2.tlua, 6, 29))
+>f : Symbol(f, Decl(tupleTypeInference2.tlua, 5, 29))
 
 -- Repro from #22563
 
 type B<R, S> = [R] | [R, S]
->B : Symbol(B, Decl(tupleTypeInference2.tlua, 9, 32))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 13, 7))
->S : Symbol(S, Decl(tupleTypeInference2.tlua, 13, 9))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 13, 7))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 13, 7))
->S : Symbol(S, Decl(tupleTypeInference2.tlua, 13, 9))
+>B : Symbol(B, Decl(tupleTypeInference2.tlua, 8, 32))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 12, 7))
+>S : Symbol(S, Decl(tupleTypeInference2.tlua, 12, 9))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 12, 7))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 12, 7))
+>S : Symbol(S, Decl(tupleTypeInference2.tlua, 12, 9))
 
 declare function g<T, U>(f: B<T, U>): U
->g : Symbol(g, Decl(tupleTypeInference2.tlua, 13, 27))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 14, 19))
->U : Symbol(U, Decl(tupleTypeInference2.tlua, 14, 21))
->f : Symbol(f, Decl(tupleTypeInference2.tlua, 14, 25))
->B : Symbol(B, Decl(tupleTypeInference2.tlua, 9, 32))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 14, 19))
->U : Symbol(U, Decl(tupleTypeInference2.tlua, 14, 21))
->U : Symbol(U, Decl(tupleTypeInference2.tlua, 14, 21))
+>g : Symbol(g, Decl(tupleTypeInference2.tlua, 12, 27))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 13, 19))
+>U : Symbol(U, Decl(tupleTypeInference2.tlua, 13, 21))
+>f : Symbol(f, Decl(tupleTypeInference2.tlua, 13, 25))
+>B : Symbol(B, Decl(tupleTypeInference2.tlua, 8, 32))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 13, 19))
+>U : Symbol(U, Decl(tupleTypeInference2.tlua, 13, 21))
+>U : Symbol(U, Decl(tupleTypeInference2.tlua, 13, 21))
 
 g({ {} } as [void[]]) -- U: {}
->g : Symbol(g, Decl(tupleTypeInference2.tlua, 13, 27))
+>g : Symbol(g, Decl(tupleTypeInference2.tlua, 12, 27))
 
 type C<R, S> = [R[]] | [R[], S]
->C : Symbol(C, Decl(tupleTypeInference2.tlua, 15, 21))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 17, 7))
->S : Symbol(S, Decl(tupleTypeInference2.tlua, 17, 9))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 17, 7))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 17, 7))
->S : Symbol(S, Decl(tupleTypeInference2.tlua, 17, 9))
+>C : Symbol(C, Decl(tupleTypeInference2.tlua, 14, 21))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 16, 7))
+>S : Symbol(S, Decl(tupleTypeInference2.tlua, 16, 9))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 16, 7))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 16, 7))
+>S : Symbol(S, Decl(tupleTypeInference2.tlua, 16, 9))
 
 declare function h<T, U>(f: C<T, U>): U
->h : Symbol(h, Decl(tupleTypeInference2.tlua, 17, 31))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 18, 19))
->U : Symbol(U, Decl(tupleTypeInference2.tlua, 18, 21))
->f : Symbol(f, Decl(tupleTypeInference2.tlua, 18, 25))
->C : Symbol(C, Decl(tupleTypeInference2.tlua, 15, 21))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 18, 19))
->U : Symbol(U, Decl(tupleTypeInference2.tlua, 18, 21))
->U : Symbol(U, Decl(tupleTypeInference2.tlua, 18, 21))
+>h : Symbol(h, Decl(tupleTypeInference2.tlua, 16, 31))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 17, 19))
+>U : Symbol(U, Decl(tupleTypeInference2.tlua, 17, 21))
+>f : Symbol(f, Decl(tupleTypeInference2.tlua, 17, 25))
+>C : Symbol(C, Decl(tupleTypeInference2.tlua, 14, 21))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 17, 19))
+>U : Symbol(U, Decl(tupleTypeInference2.tlua, 17, 21))
+>U : Symbol(U, Decl(tupleTypeInference2.tlua, 17, 21))
 
 h({ {} } as [void[]]) -- U: {}
->h : Symbol(h, Decl(tupleTypeInference2.tlua, 17, 31))
+>h : Symbol(h, Decl(tupleTypeInference2.tlua, 16, 31))
 
 -- Repro from #22562
 
 type C2<R> = [R[]] | [R[], void]
->C2 : Symbol(C2, Decl(tupleTypeInference2.tlua, 19, 21))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 23, 8))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 23, 8))
->R : Symbol(R, Decl(tupleTypeInference2.tlua, 23, 8))
+>C2 : Symbol(C2, Decl(tupleTypeInference2.tlua, 18, 21))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 22, 8))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 22, 8))
+>R : Symbol(R, Decl(tupleTypeInference2.tlua, 22, 8))
 
 declare function h2<T>(f: C2<T>): T
->h2 : Symbol(h2, Decl(tupleTypeInference2.tlua, 23, 32))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 24, 20))
->f : Symbol(f, Decl(tupleTypeInference2.tlua, 24, 23))
->C2 : Symbol(C2, Decl(tupleTypeInference2.tlua, 19, 21))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 24, 20))
->T : Symbol(T, Decl(tupleTypeInference2.tlua, 24, 20))
+>h2 : Symbol(h2, Decl(tupleTypeInference2.tlua, 22, 32))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 23, 20))
+>f : Symbol(f, Decl(tupleTypeInference2.tlua, 23, 23))
+>C2 : Symbol(C2, Decl(tupleTypeInference2.tlua, 18, 21))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 23, 20))
+>T : Symbol(T, Decl(tupleTypeInference2.tlua, 23, 20))
 
 h2({ {} } as [never[]]) -- T: never
->h2 : Symbol(h2, Decl(tupleTypeInference2.tlua, 23, 32))
+>h2 : Symbol(h2, Decl(tupleTypeInference2.tlua, 22, 32))
 
 h2({ {} } as [void[]]) -- T: void
->h2 : Symbol(h2, Decl(tupleTypeInference2.tlua, 23, 32))
+>h2 : Symbol(h2, Decl(tupleTypeInference2.tlua, 22, 32))
 

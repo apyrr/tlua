@@ -2,7 +2,8 @@
 
 //// [functionTypeArgumentArityErrors.tlua]
 -- ported from tests/cases/compiler/functionTypeArgumentArityErrors.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
 
 -- Overloaded functions with default type arguments
 declare function f1<A = any>(): void
@@ -34,7 +35,7 @@ f5<number, number, number>()
 
 //// [functionTypeArgumentArityErrors.lua]
 -- ported from tests/cases/compiler/functionTypeArgumentArityErrors.ts
--- dropped: @target: es2015 and @strict: false directives (tlua defaults)
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
 f1();
 f1();
 f2();

@@ -3,6 +3,13 @@
 === derivedInterfaceIncompatibleWithBaseIndexer.tlua ===
 -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/derivedInterfaceIncompatibleWithBaseIndexer.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- note: a Lua number key `1` and a string key `"1"` are distinct keys, so each
+--   member is checked against exactly one applicable index signature -- the
+--   number indexer for `1`, the string indexer for `"1"`. Upstream JavaScript
+--   canonicalizes numeric names to strings and therefore checks numeric-looking
+--   members against both indexers, which is why upstream reports seven errors
+--   and tlua reports five. For the same reason the two `Derived5` declarations
+--   merge into two distinct members here rather than one.
 
 interface Base {
     [x: number]: { x: number; y: number; };
@@ -47,7 +54,7 @@ interface Derived5 extends Base {
 }
 
 interface Derived5 extends Base {
-    "1": { x: number } -- error
+    "1": { x: number } -- ok in tlua: the string key is only checked against the string indexer
 >"1" : { x: number; }
 >x : number
 }

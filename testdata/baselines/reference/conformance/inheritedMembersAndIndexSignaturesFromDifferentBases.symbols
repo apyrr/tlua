@@ -4,67 +4,72 @@
 -- ported from tests/cases/compiler/inheritedMembersAndIndexSignaturesFromDifferentBases.ts
 -- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking); implicit-any members were made explicit
 
+-- note: tlua number keys and string keys are distinct domains, so a number-keyed member is only
+--   checked against a number index signature. Upstream additionally compares the numeric property 0
+--   against A's string indexer (JavaScript coerces numeric keys to strings); those TypeScript-only
+--   diagnostics are intentionally absent here, so F reports one error and G reports two.
+
 -- indexer in B is a subtype of indexer in A
 interface A {
 >A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
 
     [s: string]: {
->s : Symbol(s, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 5, 5))
-
-        a: any;
->a : Symbol(a, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 5, 18))
-
-    };
-}
-interface B {
->B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
-
-    [s: number]: {
 >s : Symbol(s, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 10, 5))
 
         a: any;
 >a : Symbol(a, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 10, 18))
 
+    };
+}
+interface B {
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 13, 1))
+
+    [s: number]: {
+>s : Symbol(s, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 15, 5))
+
+        a: any;
+>a : Symbol(a, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 15, 18))
+
         b: any;
->b : Symbol(b, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 11, 15))
+>b : Symbol(b, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 16, 15))
 
     };
 }
 interface C {
->C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 14, 1))
+>C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 1))
 
     m: {};
->m : Symbol(C.m, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 15, 13))
+>m : Symbol(C.m, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 20, 13))
 }
 
 interface D extends A, B, C { } -- error because m is not a subtype of {a;}
->D : Symbol(D, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 17, 1))
+>D : Symbol(D, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 22, 1))
 >A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
->B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
->C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 14, 1))
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 13, 1))
+>C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 1))
 
 interface E {
->E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 31))
+>E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 24, 31))
 
     0: {};
->0 : Symbol(E[0], Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 21, 13))
+>0 : Symbol(E[0], Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 26, 13))
 }
 
-interface F extends A, B, E { } -- error because 0 is not a subtype of {a; b;}
->F : Symbol(F, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 23, 1))
+interface F extends A, B, E { } -- error because 0 is not a subtype of B's number indexer {a; b;}
+>F : Symbol(F, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 28, 1))
 >A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
->B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
->E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 31))
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 13, 1))
+>E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 24, 31))
 
-interface G extends A, B, C, E { } -- should only report one error
->G : Symbol(G, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 25, 31))
+interface G extends A, B, C, E { } -- two independent errors: m against the string indexer and 0 against the number indexer
+>G : Symbol(G, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 30, 31))
 >A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
->B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
->C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 14, 1))
->E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 31))
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 13, 1))
+>C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 1))
+>E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 24, 31))
 
 interface H extends A, F { } -- Should report no error at all because error is internal to F
->H : Symbol(H, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 27, 34))
+>H : Symbol(H, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 32, 34))
 >A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
->F : Symbol(F, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 23, 1))
+>F : Symbol(F, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 28, 1))
 

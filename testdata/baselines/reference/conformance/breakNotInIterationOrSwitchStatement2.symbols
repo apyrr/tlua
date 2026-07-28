@@ -3,10 +3,14 @@
 === breakNotInIterationOrSwitchStatement2.tlua ===
 -- ported from tests/cases/compiler/breakNotInIterationOrSwitchStatement2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) -- the `break` is rejected for crossing a function
+-- boundary, so the recovered tree emits a `break` inside `f`, which has no enclosing
+-- loop and is invalid Lua.
+
 
 while true do
     function f()
->f : Symbol(f, Decl(breakNotInIterationOrSwitchStatement2.tlua, 3, 13))
+>f : Symbol(f, Decl(breakNotInIterationOrSwitchStatement2.tlua, 7, 13))
 
         break
     end

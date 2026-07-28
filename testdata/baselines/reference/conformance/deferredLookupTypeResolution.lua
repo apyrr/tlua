@@ -3,7 +3,11 @@
 //// [deferredLookupTypeResolution.tlua]
 -- ported from tests/cases/compiler/deferredLookupTypeResolution.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration output (unsupported for Lua modules)
+-- note: tlua sequences are 1-based, so the upstream first-element key '0' is
+--   written '1' here.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
 
 
 -- Repro from #17456
@@ -15,7 +19,7 @@ type StringContains<S extends string, L extends string> = (
 
 type ObjectHasKey<O, L extends string> = StringContains<Extract<keyof O, string>, L>
 
-type First<T> = ObjectHasKey<T, '0'> -- Should be deferred
+type First<T> = ObjectHasKey<T, '1'> -- Should be deferred
 
 type T1 = ObjectHasKey<{ a: string }, 'a'> -- 'true'
 type T2 = ObjectHasKey<{ a: string }, 'b'> -- 'false'
@@ -36,7 +40,11 @@ end
 //// [deferredLookupTypeResolution.lua]
 -- ported from tests/cases/compiler/deferredLookupTypeResolution.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: declaration output (unsupported for Lua modules)
+-- note: tlua sequences are 1-based, so the upstream first-element key '0' is
+--   written '1' here.
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
 function f2(a)
   return f1(a, 'x');
 end

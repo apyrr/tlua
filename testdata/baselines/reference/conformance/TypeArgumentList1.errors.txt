@@ -1,19 +1,23 @@
-TypeArgumentList1.tlua(4,1): error TLUA2304: Cannot find name 'Foo'.
-TypeArgumentList1.tlua(4,1): error TLUA2695: Left side of comma operator is unused and has no side effects.
-TypeArgumentList1.tlua(4,1): error TLUA2695: Left side of comma operator is unused and has no side effects.
-TypeArgumentList1.tlua(4,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
-TypeArgumentList1.tlua(4,5): error TLUA2304: Cannot find name 'A'.
-TypeArgumentList1.tlua(4,8): error TLUA2304: Cannot find name 'B'.
-TypeArgumentList1.tlua(4,11): error TLUA1127: Invalid character.
-TypeArgumentList1.tlua(4,11): error TLUA1128: Declaration or statement expected.
-TypeArgumentList1.tlua(4,13): error TLUA2304: Cannot find name 'C'.
-TypeArgumentList1.tlua(4,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
-TypeArgumentList1.tlua(4,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
+TypeArgumentList1.tlua(8,1): error TLUA2304: Cannot find name 'Foo'.
+TypeArgumentList1.tlua(8,1): error TLUA2695: Left side of comma operator is unused and has no side effects.
+TypeArgumentList1.tlua(8,1): error TLUA2695: Left side of comma operator is unused and has no side effects.
+TypeArgumentList1.tlua(8,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
+TypeArgumentList1.tlua(8,5): error TLUA2304: Cannot find name 'A'.
+TypeArgumentList1.tlua(8,8): error TLUA2304: Cannot find name 'B'.
+TypeArgumentList1.tlua(8,11): error TLUA1127: Invalid character.
+TypeArgumentList1.tlua(8,11): error TLUA1128: Declaration or statement expected.
+TypeArgumentList1.tlua(8,13): error TLUA2304: Cannot find name 'C'.
+TypeArgumentList1.tlua(8,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
+TypeArgumentList1.tlua(8,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
 
 
 ==== TypeArgumentList1.tlua (11 errors) ====
     -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/TypeArgumentLists/TypeArgumentList1.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: emit coverage (noEmit) -- the source is intentionally malformed parser-recovery
+    -- input (a stray backslash inside an apparent type-argument list), so the recovered tree
+    -- prints as invalid Lua. The subject is the recovery diagnostics, not emit.
+    
     
     Foo<A, B, \ C>(4, 5, 6);
     ~~~

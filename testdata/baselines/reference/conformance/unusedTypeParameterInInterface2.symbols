@@ -3,22 +3,23 @@
 === unusedTypeParameterInInterface2.tlua ===
 -- ported from tests/cases/compiler/unusedTypeParameterInInterface2.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: noUnusedLocals does not report the unused interface type parameter U
+-- compiler gap: the unused type parameter U is reported as expected (T and V are not), but tlua
+-- additionally reports the top-level interface name int as unused; upstream reports only U
 
 
 interface int<T, U, V> {
 >int : Symbol(int, Decl(unusedTypeParameterInInterface2.tlua, 0, 0))
->T : Symbol(T, Decl(unusedTypeParameterInInterface2.tlua, 5, 14))
->U : Symbol(U, Decl(unusedTypeParameterInInterface2.tlua, 5, 16))
->V : Symbol(V, Decl(unusedTypeParameterInInterface2.tlua, 5, 19))
+>T : Symbol(T, Decl(unusedTypeParameterInInterface2.tlua, 6, 14))
+>U : Symbol(U, Decl(unusedTypeParameterInInterface2.tlua, 6, 16))
+>V : Symbol(V, Decl(unusedTypeParameterInInterface2.tlua, 6, 19))
 
     f1(a: T): string
->f1 : Symbol(int.f1, Decl(unusedTypeParameterInInterface2.tlua, 5, 24))
->a : Symbol(a, Decl(unusedTypeParameterInInterface2.tlua, 6, 7))
->T : Symbol(T, Decl(unusedTypeParameterInInterface2.tlua, 5, 14))
+>f1 : Symbol(int.f1, Decl(unusedTypeParameterInInterface2.tlua, 6, 24))
+>a : Symbol(a, Decl(unusedTypeParameterInInterface2.tlua, 7, 7))
+>T : Symbol(T, Decl(unusedTypeParameterInInterface2.tlua, 6, 14))
 
     c: V
->c : Symbol(int.c, Decl(unusedTypeParameterInInterface2.tlua, 6, 20))
->V : Symbol(V, Decl(unusedTypeParameterInInterface2.tlua, 5, 19))
+>c : Symbol(int.c, Decl(unusedTypeParameterInInterface2.tlua, 7, 20))
+>V : Symbol(V, Decl(unusedTypeParameterInInterface2.tlua, 6, 19))
 }
 

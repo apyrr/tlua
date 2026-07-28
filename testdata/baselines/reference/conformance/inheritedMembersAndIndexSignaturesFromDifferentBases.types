@@ -4,6 +4,11 @@
 -- ported from tests/cases/compiler/inheritedMembersAndIndexSignaturesFromDifferentBases.ts
 -- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking); implicit-any members were made explicit
 
+-- note: tlua number keys and string keys are distinct domains, so a number-keyed member is only
+--   checked against a number index signature. Upstream additionally compares the numeric property 0
+--   against A's string indexer (JavaScript coerces numeric keys to strings); those TypeScript-only
+--   diagnostics are intentionally absent here, so F reports one error and G reports two.
+
 -- indexer in B is a subtype of indexer in A
 interface A {
     [s: string]: {
@@ -38,9 +43,9 @@ interface E {
 >0 : {}
 }
 
-interface F extends A, B, E { } -- error because 0 is not a subtype of {a; b;}
+interface F extends A, B, E { } -- error because 0 is not a subtype of B's number indexer {a; b;}
 
-interface G extends A, B, C, E { } -- should only report one error
+interface G extends A, B, C, E { } -- two independent errors: m against the string indexer and 0 against the number indexer
 
 interface H extends A, F { } -- Should report no error at all because error is internal to F
 

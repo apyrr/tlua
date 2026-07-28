@@ -1,9 +1,13 @@
-continueNotInIterationStatement2.tlua(6,9): error TLUA1107: Jump target cannot cross function boundary.
+continueNotInIterationStatement2.tlua(10,9): error TLUA1107: Jump target cannot cross function boundary.
 
 
 ==== continueNotInIterationStatement2.tlua (1 errors) ====
     -- ported from tests/cases/compiler/continueNotInIterationStatement2.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: emit coverage (noEmit) -- the `continue` is rejected for crossing a function
+    -- boundary, so the recovered tree emits a `continue` inside `f`, which has no enclosing
+    -- loop and is invalid Lua.
+    
     
     while true do
         function f()

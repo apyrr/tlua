@@ -3,12 +3,11 @@
 === parserPropertySignature5.tlua ===
 -- ported from tests/cases/conformance/parser/ecmascript5/PropertySignatures/parserPropertySignature5.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: @strict: false directive (tlua uses strict checking by default)
 
 interface I {
 >I : Symbol(I, Decl(parserPropertySignature5.tlua, 0, 0))
 
     "E"
->"E" : Symbol(I["E"], Decl(parserPropertySignature5.tlua, 4, 13))
+>"E" : Symbol(I["E"], Decl(parserPropertySignature5.tlua, 3, 13))
 }
 

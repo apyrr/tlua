@@ -4,8 +4,10 @@
 -- ported from tests/cases/conformance/types/keyof/keyofIntersection.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 -- dropped: @strict: true directive (tlua keeps strict checking enabled)
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.
 
--- @declaration: true
 
 type A = { a: string }
 type B = { b: string }
@@ -39,3 +41,6 @@ type Result5 = Example5<Record<'x', any>, Record<'y', any>> -- "x" | "y"
 -- ported from tests/cases/conformance/types/keyof/keyofIntersection.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 -- dropped: @strict: true directive (tlua keeps strict checking enabled)
+-- dropped: @declaration: true -- tlua has declaration-emit machinery, but it reports
+--   TLUA100054 for every .tlua source, so restoring the directive would replace this test's
+--   subject with that one diagnostic. tluaModuleDeclarationEmitUnsupported.tlua covers it.

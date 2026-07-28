@@ -1,17 +1,17 @@
-functionOverloads1.tlua(5,10): error TLUA2391: Function implementation is missing or not immediately following the declaration.
-functionOverloads1.tlua(5,10): error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
+functionOverloads1.tlua(8,10): error TLUA2391: Function implementation is missing or not immediately following the declaration.
 
 
-==== functionOverloads1.tlua (2 errors) ====
+==== functionOverloads1.tlua (1 errors) ====
     -- ported from tests/cases/compiler/functionOverloads1.ts
-    -- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
-    -- dropped: the incidental bare-expression statement, rewritten as a discarded local value because tlua only permits call and assignment expression statements.
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- note: upstream's incidental bare-expression statement `1+1;` is rewritten as a
+    -- discarded local because tlua only permits call and assignment expression statements
+    -- (TLUA100057). It still separates the overload signature from the implementation,
+    -- which is the subject of the test.
     
     function foo();
              ~~~
 !!! error TLUA2391: Function implementation is missing or not immediately following the declaration.
-             ~~~
-!!! error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
     local _ = 1 + 1;
     function foo(): string
         return "a"
