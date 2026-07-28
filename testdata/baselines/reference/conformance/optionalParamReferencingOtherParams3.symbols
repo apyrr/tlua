@@ -4,22 +4,21 @@
 -- ported from tests/cases/compiler/optionalParamReferencingOtherParams3.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 -- rewritten: the upstream bare expression statements `a;` / `b;` became `local _ =` bindings (bare expression statements are invalid in tlua)
--- dropped: emit coverage (noEmit) -- default parameter initializers are printed straight into the Lua parameter list, which is not valid Lua; the checker subject (a parameter referencing a later parameter) is unaffected.
 
 function right(a = b, b = a)
 >right : Symbol(right, Decl(optionalParamReferencingOtherParams3.tlua, 0, 0))
->a : Symbol(a, Decl(optionalParamReferencingOtherParams3.tlua, 5, 15))
->b : Symbol(b, Decl(optionalParamReferencingOtherParams3.tlua, 5, 21))
->b : Symbol(b, Decl(optionalParamReferencingOtherParams3.tlua, 5, 21))
->a : Symbol(a, Decl(optionalParamReferencingOtherParams3.tlua, 5, 15))
+>a : Symbol(a, Decl(optionalParamReferencingOtherParams3.tlua, 4, 15))
+>b : Symbol(b, Decl(optionalParamReferencingOtherParams3.tlua, 4, 21))
+>b : Symbol(b, Decl(optionalParamReferencingOtherParams3.tlua, 4, 21))
+>a : Symbol(a, Decl(optionalParamReferencingOtherParams3.tlua, 4, 15))
 
     local _ = a
->_ : Symbol(_, Decl(optionalParamReferencingOtherParams3.tlua, 6, 9))
->a : Symbol(a, Decl(optionalParamReferencingOtherParams3.tlua, 5, 15))
+>_ : Symbol(_, Decl(optionalParamReferencingOtherParams3.tlua, 5, 9))
+>a : Symbol(a, Decl(optionalParamReferencingOtherParams3.tlua, 4, 15))
 
     local _ = b
->_ : Symbol(_, Decl(optionalParamReferencingOtherParams3.tlua, 7, 9))
->b : Symbol(b, Decl(optionalParamReferencingOtherParams3.tlua, 5, 21))
+>_ : Symbol(_, Decl(optionalParamReferencingOtherParams3.tlua, 6, 9))
+>b : Symbol(b, Decl(optionalParamReferencingOtherParams3.tlua, 4, 21))
 
 end
 

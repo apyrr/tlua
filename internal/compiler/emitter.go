@@ -116,6 +116,10 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	// target, so this is independent of the target-gated JS downlevel above.
 	tx = append(tx, estransforms.NewLuaOptionalChainTransformer(&opts))
 
+	// Lua has no default parameters, so `function f(x = e)` must become a
+	// nil-guarded prologue assignment. Also unconditional.
+	tx = append(tx, estransforms.NewLuaDefaultParameterTransformer(&opts))
+
 	// A Lua module needs no module transform: `require` is an ordinary call and
 	// the chunk's `return` is an ordinary statement, so both emit verbatim.
 	return tx

@@ -8,8 +8,6 @@
 -- but is still unsafe for an arbitrary subtype of it.
 -- dropped: upstream's separate `foo2<T>(x: T = undefined)` case -- tlua has a single nil
 -- value, so that case is textually identical to the `x: T = nil` case above it.
--- dropped: emit coverage (noEmit) -- tlua does not lower parameter default values, so
--- `function foo(x = nil)` would print an `x = nil` parameter, which is not valid Lua.
 
 -- Generic typed parameters with initializers
 function foo<T>(x: T = nil)

@@ -4,18 +4,17 @@
 -- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements9.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 -- dropped: JavaScript's `console.log` global; replaced with Lua's `print` while preserving a function-valued default expression
--- compiler gap: default parameters are not lowered during emit; valid source would produce invalid Lua output
 
 function foo(a = print)
 >foo : Symbol(foo, Decl(functionWithDefaultParameterWithNoStatements9.tlua, 0, 0))
->a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements9.tlua, 5, 13))
+>a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements9.tlua, 4, 13))
 >print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
 
 end
 
 function bar(a = print)
->bar : Symbol(bar, Decl(functionWithDefaultParameterWithNoStatements9.tlua, 6, 3))
->a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements9.tlua, 8, 13))
+>bar : Symbol(bar, Decl(functionWithDefaultParameterWithNoStatements9.tlua, 5, 3))
+>a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements9.tlua, 7, 13))
 >print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
 
 end

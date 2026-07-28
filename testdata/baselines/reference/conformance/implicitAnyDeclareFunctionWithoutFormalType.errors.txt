@@ -1,8 +1,8 @@
-implicitAnyDeclareFunctionWithoutFormalType.tlua(13,14): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(16,25): error TLUA7006: Parameter 'y' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(19,16): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(19,19): error TLUA7006: Parameter 'b' implicitly has an 'any' type.
-implicitAnyDeclareFunctionWithoutFormalType.tlua(19,22): error TLUA7006: Parameter 'c' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(11,14): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(14,25): error TLUA7006: Parameter 'y' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(17,16): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(17,19): error TLUA7006: Parameter 'b' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(17,22): error TLUA7006: Parameter 'c' implicitly has an 'any' type.
 
 
 ==== implicitAnyDeclareFunctionWithoutFormalType.tlua (5 errors) ====
@@ -10,8 +10,6 @@ implicitAnyDeclareFunctionWithoutFormalType.tlua(19,22): error TLUA7006: Paramet
     -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to latest target and strict checking)
     -- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`, which has no
     --   name for a diagnostic to point at, so upstream's implicit-any error on `args` has no tlua analogue
-    -- dropped: emit coverage (noEmit) — tlua parses default parameter values but does not lower them,
-    --   so func4/noError1 would emit invalid Lua
     -- note: upstream's blanket "these should be errors" heading is stale. The upstream baseline reports
     --   no diagnostic for the null/undefined-defaulted parameters either, and tlua likewise reports none
     --   once they are normalized to nil.

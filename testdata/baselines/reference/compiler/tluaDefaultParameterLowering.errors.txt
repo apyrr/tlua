@@ -1,0 +1,51 @@
+tluaDefaultParameterLowering.tlua(22,20): error TLUA2373: Parameter 'a' cannot reference identifier 'b' declared after it.
+
+
+==== tluaDefaultParameterLowering.tlua (1 errors) ====
+    // Lua has no default parameters, so `x = e` in a parameter list is lowered to a
+    // nil-guarded prologue assignment. The guard is `x == nil` rather than the
+    // idiomatic `x = x or e`, because `false` is falsy in Lua and must not be
+    // replaced by the default.
+    
+    function simple(x = 10)
+        return x
+    end
+    
+    function multiple(a: string, b = "b", c = 3)
+        return a
+    end
+    
+    -- a later default may read an earlier parameter, which by then holds its default
+    function earlier(a = 1, b = a)
+        return b
+    end
+    
+    -- a default may not reference a parameter declared after it: the checker rejects
+    -- this with TLUA2373, so the prologue's parameter-order evaluation is never
+    -- observable as a silent nil
+    function later(a = b, b = 2)
+                       ~
+!!! error TLUA2373: Parameter 'a' cannot reference identifier 'b' declared after it.
+        return a
+    end
+    
+    -- `false` must survive: the nil guard leaves it alone
+    function falsy(flag = true)
+        return flag
+    end
+    
+    -- defaults coexist with a vararg and with an explicitly optional parameter
+    function mixed(a = 1, b?: number, ...: number)
+        return a
+    end
+    
+    -- a default on a function expression is lowered the same way
+    local f = function(x = 5)
+        return x
+    end
+    
+    local _ = simple()
+    local _ = simple(0)
+    local _ = falsy(false)
+    local _ = f()
+    

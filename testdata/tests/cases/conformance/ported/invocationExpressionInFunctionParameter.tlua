@@ -1,9 +1,7 @@
 -- ported from tests/cases/compiler/invocationExpressionInFunctionParameter.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: emit coverage (noEmit) — default parameter initializers are not lowered to valid Lua
 -- compiler gap: valid default-parameter source would otherwise emit an initializer in the Lua parameter list
 
-// @noEmit: true
 
 function foo1(val: string)
 end

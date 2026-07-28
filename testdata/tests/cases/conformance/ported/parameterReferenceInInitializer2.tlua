@@ -1,7 +1,5 @@
 -- ported from tests/cases/compiler/parameterReferenceInInitializer2.ts
-// @noEmit: true
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
--- compiler gap: default parameter initializers emit invalid Lua parameter syntax; checker coverage is retained.
 -- dropped: emit coverage suppressed because the generated function parameter is not valid Lua.
 function Example(x = function(x: any) return x end) -- Error: parameter 'x' cannot be referenced in its initializer
 end

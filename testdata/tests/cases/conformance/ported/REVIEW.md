@@ -7,7 +7,8 @@ This corpus was independently reviewed with `gpt-5.6-sol` against each upstream 
 - Ported tests retained: **329**
 - Independently reviewed with `gpt-5.6-sol`: 383 (54 removed as unsupported)
 - Conversion defects found and **repaired**: **85** (all repairs independently verified)
-- Fixable tlua bugs documented for later work: **23**
+- Fixable tlua bugs documented for later work: **19**
+- Fixed since the review: **14 tests** (default-parameter lowering)
 - Intentional divergences (will not be fixed): **3**
 - Blocked on a design decision: **5**
 - Obsolete once JS residue is deleted: **5**
@@ -100,12 +101,18 @@ diverges in places. These are split by what should actually happen to them.
 
 ### A. Fixable tlua bugs
 
+**Fixed:** parameter defaults are now lowered to a nil-guarded prologue
+(`internal/transformers/estransforms/defaultparameters.go`), so `defaultValueInFunctionOverload1`,
+`functionWithDefaultParameterWithNoStatements4/6/7/8/9/10`, `genericCallWithObjectTypeArgsAndInitializers`,
+`optionalParamReferencingOtherParams1/3`, `parameterReferenceInInitializer2`,
+`invocationExpressionInFunctionParameter`, `emitDefaultParametersFunction`, and
+`implicitAnyDeclareFunctionWithoutFormalType` all have emit coverage back.
+
 Real deficiencies. The test is retained so the gap stays visible; invalid emit is suppressed
 with `// @noEmit: true` rather than baselined.
 
 | Theme | Tests | Gap |
 |---|---|---|
-| Default parameters never lowered | `defaultValueInFunctionOverload1`, `functionWithDefaultParameterWithNoStatements8`, `genericCallWithObjectTypeArgsAndInitializers`, `optionalParamReferencingOtherParams3` | `function f(x = e)` prints the initializer verbatim into the Lua parameter list, which is not valid Lua. Needs lowering to an `if x == nil then x = e end` prologue — or default parameters should be rejected in the grammar. This is the single biggest reason emit coverage keeps being dropped. |
 | Error-recovered trees emitted verbatim | `breakNotInIterationOrSwitchStatement2`, `continueNotInIterationStatement1`, `continueNotInIterationStatement2`, `duplicateLabel1`, `parserEmptyParenthesizedExpression1`, `TypeArgumentList1` | The printer has no guard for synthetic/missing nodes, so a tree the checker already rejected is emitted as syntactically impossible Lua (`break` with no loop, `().foo();`). Emit should be suppressed when the parse errored. |
 | Comment attachment | `ifStatementInternalComments`, `infiniteExpansionThroughInstantiation2`, `commentLeadingCloseBrace` | Trailing comments on an if-branch and leading comments on an `else` are dropped; leading comments are inconsistently attached in type-only files; a `...: any` vararg parameter renders as `Symbol((Missing))` in `.symbols`. |
 | Unused-checks treat globals as locals | `unusedMethodsInInterface`, `unusedTypeParameterInInterface1`, `unusedTypeParameterInInterface2`, `unusedTypeParameters10` | TLUA6196 fires on top-level interface and type-alias names. tlua resolves these globally but still unused-checks them; one fix in the unused-identifier pass clears all four. |

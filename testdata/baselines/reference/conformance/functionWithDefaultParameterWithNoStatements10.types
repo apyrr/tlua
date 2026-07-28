@@ -4,7 +4,6 @@
 -- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements10.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
 -- dropped: array literal defaults (rewritten as positional table literals; array literals are deleted in tlua)
--- compiler gap: default-parameter lowering is unsupported; @noEmit avoids invalid Lua output.
 
 function foo(a = { 0 })
 >foo : (a?: { 1: number; }) => void

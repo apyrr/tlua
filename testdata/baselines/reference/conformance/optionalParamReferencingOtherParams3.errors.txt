@@ -1,11 +1,10 @@
-optionalParamReferencingOtherParams3.tlua(6,20): error TLUA2373: Parameter 'a' cannot reference identifier 'b' declared after it.
+optionalParamReferencingOtherParams3.tlua(5,20): error TLUA2373: Parameter 'a' cannot reference identifier 'b' declared after it.
 
 
 ==== optionalParamReferencingOtherParams3.tlua (1 errors) ====
     -- ported from tests/cases/compiler/optionalParamReferencingOtherParams3.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
     -- rewritten: the upstream bare expression statements `a;` / `b;` became `local _ =` bindings (bare expression statements are invalid in tlua)
-    -- dropped: emit coverage (noEmit) -- default parameter initializers are printed straight into the Lua parameter list, which is not valid Lua; the checker subject (a parameter referencing a later parameter) is unaffected.
     
     function right(a = b, b = a)
                        ~

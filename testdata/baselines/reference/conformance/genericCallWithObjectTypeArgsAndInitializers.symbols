@@ -8,84 +8,82 @@
 -- but is still unsafe for an arbitrary subtype of it.
 -- dropped: upstream's separate `foo2<T>(x: T = undefined)` case -- tlua has a single nil
 -- value, so that case is textually identical to the `x: T = nil` case above it.
--- dropped: emit coverage (noEmit) -- tlua does not lower parameter default values, so
--- `function foo(x = nil)` would print an `x = nil` parameter, which is not valid Lua.
 
 -- Generic typed parameters with initializers
 function foo<T>(x: T = nil)
 >foo : Symbol(foo, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 0, 0))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 11, 13))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 11, 16))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 11, 13))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 9, 13))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 9, 16))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 9, 13))
 
     return x
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 11, 16))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 9, 16))
 
 end -- error
 
 function foo3<T extends number>(x: T = 1)
->foo3 : Symbol(foo3, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 13, 3))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 15, 14))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 15, 32))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 15, 14))
+>foo3 : Symbol(foo3, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 11, 3))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 13, 14))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 13, 32))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 13, 14))
 
 end -- error
 
 function foo4<T, U extends T>(x: T, y: U = x)
->foo4 : Symbol(foo4, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 3))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 14))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 16))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 14))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 30))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 14))
->y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 35))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 16))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 18, 30))
+>foo4 : Symbol(foo4, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 14, 3))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 14))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 16))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 14))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 30))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 14))
+>y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 35))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 16))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 16, 30))
 
 end -- error
 
 function foo5<T, U extends T>(x: U, y: T = x)
->foo5 : Symbol(foo5, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 3))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 14))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 16))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 14))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 30))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 16))
->y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 35))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 14))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 21, 30))
+>foo5 : Symbol(foo5, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 17, 3))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 14))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 16))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 14))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 30))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 16))
+>y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 35))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 14))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 19, 30))
 
 end -- ok
 
 function foo6<T, U extends T, V extends U>(x: T, y: U, z: V = y)
->foo6 : Symbol(foo6, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 3))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 14))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 16))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 14))
->V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 29))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 16))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 43))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 14))
->y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 48))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 16))
->z : Symbol(z, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 54))
->V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 29))
->y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 24, 48))
+>foo6 : Symbol(foo6, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 20, 3))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 14))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 16))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 14))
+>V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 29))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 16))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 43))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 14))
+>y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 48))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 16))
+>z : Symbol(z, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 54))
+>V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 29))
+>y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 22, 48))
 
 end -- error
 
 function foo7<T, U extends T, V extends U>(x: V, y: U = x)
->foo7 : Symbol(foo7, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 3))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 14))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 16))
->T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 14))
->V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 29))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 16))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 43))
->V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 29))
->y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 48))
->U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 16))
->x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 27, 43))
+>foo7 : Symbol(foo7, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 23, 3))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 14))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 16))
+>T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 14))
+>V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 29))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 16))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 43))
+>V : Symbol(V, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 29))
+>y : Symbol(y, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 48))
+>U : Symbol(U, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 16))
+>x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndInitializers.tlua, 25, 43))
 
 end -- should be ok
 

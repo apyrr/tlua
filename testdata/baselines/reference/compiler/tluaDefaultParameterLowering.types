@@ -1,0 +1,117 @@
+//// [tests/cases/compiler/tluaDefaultParameterLowering.tlua] ////
+
+=== tluaDefaultParameterLowering.tlua ===
+// Lua has no default parameters, so `x = e` in a parameter list is lowered to a
+// nil-guarded prologue assignment. The guard is `x == nil` rather than the
+// idiomatic `x = x or e`, because `false` is falsy in Lua and must not be
+// replaced by the default.
+
+function simple(x = 10)
+>simple : (x?: number) => number
+>x : number
+>10 : 10
+
+    return x
+>x : number
+
+end
+
+function multiple(a: string, b = "b", c = 3)
+>multiple : (a: string, b?: string, c?: number) => string
+>a : string
+>b : string
+>"b" : "b"
+>c : number
+>3 : 3
+
+    return a
+>a : string
+
+end
+
+-- a later default may read an earlier parameter, which by then holds its default
+function earlier(a = 1, b = a)
+>earlier : (a?: number, b?: number) => number
+>a : number
+>1 : 1
+>b : number
+>a : number
+
+    return b
+>b : number
+
+end
+
+-- a default may not reference a parameter declared after it: the checker rejects
+-- this with TLUA2373, so the prologue's parameter-order evaluation is never
+-- observable as a silent nil
+function later(a = b, b = 2)
+>later : (a?: number, b?: number) => number
+>a : number
+>b : number
+>b : number
+>2 : 2
+
+    return a
+>a : number
+
+end
+
+-- `false` must survive: the nil guard leaves it alone
+function falsy(flag = true)
+>falsy : (flag?: boolean) => boolean
+>flag : boolean
+>true : true
+
+    return flag
+>flag : boolean
+
+end
+
+-- defaults coexist with a vararg and with an explicitly optional parameter
+function mixed(a = 1, b?: number, ...: number)
+>mixed : (a?: number, b?: number, ...: number) => number
+>a : number
+>1 : 1
+>b : number | nil
+> : number[]
+
+    return a
+>a : number
+
+end
+
+-- a default on a function expression is lowered the same way
+local f = function(x = 5)
+>f : (x?: number) => number
+>function(x = 5)    return xend : (x?: number) => number
+>x : number
+>5 : 5
+
+    return x
+>x : number
+
+end
+
+local _ = simple()
+>_ : number
+>simple() : number
+>simple : (x?: number) => number
+
+local _ = simple(0)
+>_ : number
+>simple(0) : number
+>simple : (x?: number) => number
+>0 : 0
+
+local _ = falsy(false)
+>_ : boolean
+>falsy(false) : boolean
+>falsy : (flag?: boolean) => boolean
+>false : false
+
+local _ = f()
+>_ : number
+>f() : number
+>f : (x?: number) => number
+

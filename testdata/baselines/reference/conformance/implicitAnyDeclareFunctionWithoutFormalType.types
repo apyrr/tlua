@@ -5,8 +5,6 @@
 -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to latest target and strict checking)
 -- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`, which has no
 --   name for a diagnostic to point at, so upstream's implicit-any error on `args` has no tlua analogue
--- dropped: emit coverage (noEmit) — tlua parses default parameter values but does not lower them,
---   so func4/noError1 would emit invalid Lua
 -- note: upstream's blanket "these should be errors" heading is stale. The upstream baseline reports
 --   no diagnostic for the null/undefined-defaulted parameters either, and tlua likewise reports none
 --   once they are normalized to nil.

@@ -1,0 +1,102 @@
+//// [tests/cases/compiler/tluaDefaultParameterLowering.tlua] ////
+
+=== tluaDefaultParameterLowering.tlua ===
+// Lua has no default parameters, so `x = e` in a parameter list is lowered to a
+// nil-guarded prologue assignment. The guard is `x == nil` rather than the
+// idiomatic `x = x or e`, because `false` is falsy in Lua and must not be
+// replaced by the default.
+
+function simple(x = 10)
+>simple : Symbol(simple, Decl(tluaDefaultParameterLowering.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaDefaultParameterLowering.tlua, 5, 16))
+
+    return x
+>x : Symbol(x, Decl(tluaDefaultParameterLowering.tlua, 5, 16))
+
+end
+
+function multiple(a: string, b = "b", c = 3)
+>multiple : Symbol(multiple, Decl(tluaDefaultParameterLowering.tlua, 7, 3))
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 9, 18))
+>b : Symbol(b, Decl(tluaDefaultParameterLowering.tlua, 9, 28))
+>c : Symbol(c, Decl(tluaDefaultParameterLowering.tlua, 9, 37))
+
+    return a
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 9, 18))
+
+end
+
+-- a later default may read an earlier parameter, which by then holds its default
+function earlier(a = 1, b = a)
+>earlier : Symbol(earlier, Decl(tluaDefaultParameterLowering.tlua, 11, 3))
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 14, 17))
+>b : Symbol(b, Decl(tluaDefaultParameterLowering.tlua, 14, 23))
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 14, 17))
+
+    return b
+>b : Symbol(b, Decl(tluaDefaultParameterLowering.tlua, 14, 23))
+
+end
+
+-- a default may not reference a parameter declared after it: the checker rejects
+-- this with TLUA2373, so the prologue's parameter-order evaluation is never
+-- observable as a silent nil
+function later(a = b, b = 2)
+>later : Symbol(later, Decl(tluaDefaultParameterLowering.tlua, 16, 3))
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 21, 15))
+>b : Symbol(b, Decl(tluaDefaultParameterLowering.tlua, 21, 21))
+>b : Symbol(b, Decl(tluaDefaultParameterLowering.tlua, 21, 21))
+
+    return a
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 21, 15))
+
+end
+
+-- `false` must survive: the nil guard leaves it alone
+function falsy(flag = true)
+>falsy : Symbol(falsy, Decl(tluaDefaultParameterLowering.tlua, 23, 3))
+>flag : Symbol(flag, Decl(tluaDefaultParameterLowering.tlua, 26, 15))
+
+    return flag
+>flag : Symbol(flag, Decl(tluaDefaultParameterLowering.tlua, 26, 15))
+
+end
+
+-- defaults coexist with a vararg and with an explicitly optional parameter
+function mixed(a = 1, b?: number, ...: number)
+>mixed : Symbol(mixed, Decl(tluaDefaultParameterLowering.tlua, 28, 3))
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 31, 15))
+>b : Symbol(b, Decl(tluaDefaultParameterLowering.tlua, 31, 21))
+> : Symbol((Missing), Decl(tluaDefaultParameterLowering.tlua, 31, 33))
+
+    return a
+>a : Symbol(a, Decl(tluaDefaultParameterLowering.tlua, 31, 15))
+
+end
+
+-- a default on a function expression is lowered the same way
+local f = function(x = 5)
+>f : Symbol(f, Decl(tluaDefaultParameterLowering.tlua, 36, 5))
+>x : Symbol(x, Decl(tluaDefaultParameterLowering.tlua, 36, 19))
+
+    return x
+>x : Symbol(x, Decl(tluaDefaultParameterLowering.tlua, 36, 19))
+
+end
+
+local _ = simple()
+>_ : Symbol(_, Decl(tluaDefaultParameterLowering.tlua, 40, 5))
+>simple : Symbol(simple, Decl(tluaDefaultParameterLowering.tlua, 0, 0))
+
+local _ = simple(0)
+>_ : Symbol(_, Decl(tluaDefaultParameterLowering.tlua, 41, 5))
+>simple : Symbol(simple, Decl(tluaDefaultParameterLowering.tlua, 0, 0))
+
+local _ = falsy(false)
+>_ : Symbol(_, Decl(tluaDefaultParameterLowering.tlua, 42, 5))
+>falsy : Symbol(falsy, Decl(tluaDefaultParameterLowering.tlua, 23, 3))
+
+local _ = f()
+>_ : Symbol(_, Decl(tluaDefaultParameterLowering.tlua, 43, 5))
+>f : Symbol(f, Decl(tluaDefaultParameterLowering.tlua, 36, 5))
+

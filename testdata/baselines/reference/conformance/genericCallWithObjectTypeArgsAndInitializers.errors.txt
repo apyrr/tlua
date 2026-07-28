@@ -1,10 +1,10 @@
-genericCallWithObjectTypeArgsAndInitializers.tlua(12,17): error TLUA2322: Type 'nil' is not assignable to type 'T'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(10,17): error TLUA2322: Type 'nil' is not assignable to type 'T'.
   'T' could be instantiated with an arbitrary type which could be unrelated to 'nil'.
-genericCallWithObjectTypeArgsAndInitializers.tlua(16,33): error TLUA2322: Type 'number' is not assignable to type 'T'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(14,33): error TLUA2322: Type 'number' is not assignable to type 'T'.
   'number' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'number'.
-genericCallWithObjectTypeArgsAndInitializers.tlua(19,37): error TLUA2322: Type 'T' is not assignable to type 'U'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(17,37): error TLUA2322: Type 'T' is not assignable to type 'U'.
   'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
-genericCallWithObjectTypeArgsAndInitializers.tlua(25,56): error TLUA2322: Type 'U' is not assignable to type 'V'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(23,56): error TLUA2322: Type 'U' is not assignable to type 'V'.
   'V' could be instantiated with an arbitrary type which could be unrelated to 'U'.
 
 
@@ -16,8 +16,6 @@ genericCallWithObjectTypeArgsAndInitializers.tlua(25,56): error TLUA2322: Type '
     -- but is still unsafe for an arbitrary subtype of it.
     -- dropped: upstream's separate `foo2<T>(x: T = undefined)` case -- tlua has a single nil
     -- value, so that case is textually identical to the `x: T = nil` case above it.
-    -- dropped: emit coverage (noEmit) -- tlua does not lower parameter default values, so
-    -- `function foo(x = nil)` would print an `x = nil` parameter, which is not valid Lua.
     
     -- Generic typed parameters with initializers
     function foo<T>(x: T = nil)
@@ -37,7 +35,7 @@ genericCallWithObjectTypeArgsAndInitializers.tlua(25,56): error TLUA2322: Type '
                                         ~~~~~~~~
 !!! error TLUA2322: Type 'T' is not assignable to type 'U'.
 !!! error TLUA2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
-!!! related TLUA2208 genericCallWithObjectTypeArgsAndInitializers.tlua:19:15: This type parameter might need an `extends U` constraint.
+!!! related TLUA2208 genericCallWithObjectTypeArgsAndInitializers.tlua:17:15: This type parameter might need an `extends U` constraint.
     end -- error
     
     function foo5<T, U extends T>(x: U, y: T = x)

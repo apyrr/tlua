@@ -1,9 +1,6 @@
 -- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements8.ts
 -- dropped: @target: es2015 directive (tlua defaults to the latest target)
 -- note: upstream's `a = undefined` initializer maps to tlua's single nil value.
--- dropped: emit coverage (noEmit) -- tlua does not lower parameter default values, so
--- `function foo(a = nil)` would print an `a = nil` parameter, which is not valid Lua.
-// @noEmit: true
 
 // @strict: false
 

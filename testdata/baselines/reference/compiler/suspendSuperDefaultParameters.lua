@@ -34,7 +34,10 @@ B;
 do
   f();
   do
-    local g = suspend function(b = super.m())
+    local g = suspend function(b)
+      if b == nil then
+        b = super.m();
+      end
       return b;
     end;
     return g();
