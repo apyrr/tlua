@@ -1,0 +1,18 @@
+parserUnterminatedGeneric1.tlua(5,19): error TLUA2304: Cannot find name 'IPromise'.
+parserUnterminatedGeneric1.tlua(5,41): error TLUA2304: Cannot find name 'IPromise'.
+parserUnterminatedGeneric1.tlua(6,1): error TLUA1005: '>' expected.
+
+
+==== parserUnterminatedGeneric1.tlua (3 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/parserUnterminatedGeneric1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface IQService {
+        all(promises: IPromise < any > []): IPromise<
+                      ~~~~~~~~
+!!! error TLUA2304: Cannot find name 'IPromise'.
+                                            ~~~~~~~~
+!!! error TLUA2304: Cannot find name 'IPromise'.
+    
+    
+!!! error TLUA1005: '>' expected.

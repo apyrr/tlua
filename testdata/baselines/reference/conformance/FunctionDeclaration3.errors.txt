@@ -1,0 +1,14 @@
+FunctionDeclaration3.tlua(4,10): error TLUA2391: Function implementation is missing or not immediately following the declaration.
+FunctionDeclaration3.tlua(4,10): error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
+
+
+==== FunctionDeclaration3.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/FunctionDeclaration3.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo();
+             ~~~
+!!! error TLUA2391: Function implementation is missing or not immediately following the declaration.
+             ~~~
+!!! error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
+    

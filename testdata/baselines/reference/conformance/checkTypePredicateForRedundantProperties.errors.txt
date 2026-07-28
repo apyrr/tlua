@@ -1,0 +1,16 @@
+checkTypePredicateForRedundantProperties.tlua(4,35): error TLUA2300: Duplicate identifier 'a'.
+checkTypePredicateForRedundantProperties.tlua(4,46): error TLUA2300: Duplicate identifier 'a'.
+
+
+==== checkTypePredicateForRedundantProperties.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/checkTypePredicateForRedundantProperties.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function addProp2(x: any): x is { a: string; a: string }
+                                      ~
+!!! error TLUA2300: Duplicate identifier 'a'.
+                                                 ~
+!!! error TLUA2300: Duplicate identifier 'a'.
+        return true
+    end
+    

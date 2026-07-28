@@ -1,0 +1,42 @@
+//// [tests/cases/conformance/ported/recurringTypeParamForContainerOfBase01.tlua] ////
+
+=== recurringTypeParamForContainerOfBase01.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/recurringTypeParamForContainerOfBase01.ts
+-- dropped: @target: es2015 and @declaration directives (tlua uses the latest target and does not compare declaration emit)
+
+interface BoxOfFoo<T extends Foo<T>> {
+>BoxOfFoo : Symbol(BoxOfFoo, Decl(recurringTypeParamForContainerOfBase01.tlua, 0, 0))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 3, 19))
+>Foo : Symbol(Foo, Decl(recurringTypeParamForContainerOfBase01.tlua, 5, 1))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 3, 19))
+
+    item: T
+>item : Symbol(BoxOfFoo.item, Decl(recurringTypeParamForContainerOfBase01.tlua, 3, 38))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 3, 19))
+}
+
+interface Foo<T extends Foo<T>> {
+>Foo : Symbol(Foo, Decl(recurringTypeParamForContainerOfBase01.tlua, 5, 1))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 7, 14))
+>Foo : Symbol(Foo, Decl(recurringTypeParamForContainerOfBase01.tlua, 5, 1))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 7, 14))
+
+    self: T
+>self : Symbol(Foo.self, Decl(recurringTypeParamForContainerOfBase01.tlua, 7, 33))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 7, 14))
+}
+
+interface Bar<T extends Bar<T>> extends Foo<T> {
+>Bar : Symbol(Bar, Decl(recurringTypeParamForContainerOfBase01.tlua, 9, 1))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 11, 14))
+>Bar : Symbol(Bar, Decl(recurringTypeParamForContainerOfBase01.tlua, 9, 1))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 11, 14))
+>Foo : Symbol(Foo, Decl(recurringTypeParamForContainerOfBase01.tlua, 5, 1))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 11, 14))
+
+    other: BoxOfFoo<T>
+>other : Symbol(Bar.other, Decl(recurringTypeParamForContainerOfBase01.tlua, 11, 48))
+>BoxOfFoo : Symbol(BoxOfFoo, Decl(recurringTypeParamForContainerOfBase01.tlua, 0, 0))
+>T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.tlua, 11, 14))
+}
+

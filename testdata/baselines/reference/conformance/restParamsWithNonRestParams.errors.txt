@@ -1,0 +1,22 @@
+restParamsWithNonRestParams.tlua(10,1): error TLUA2555: Expected at least 1 arguments, but got 0.
+
+
+==== restParamsWithNonRestParams.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/restParamsWithNonRestParams.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo(...: number)
+    end
+    foo()
+    
+    function foo2(a: string, ...: number)
+    end
+    foo2()
+    ~~~~
+!!! error TLUA2555: Expected at least 1 arguments, but got 0.
+!!! related TLUA6210 restParamsWithNonRestParams.tlua:8:15: An argument for 'a' was not provided.
+    
+    function foo3(a?: string, ...: number)
+    end
+    foo3()
+    

@@ -1,0 +1,36 @@
+//// [tests/cases/conformance/ported/recursiveGenericTypeHierarchy.tlua] ////
+
+=== recursiveGenericTypeHierarchy.tlua ===
+-- ported from tests/cases/compiler/recursiveGenericTypeHierarchy.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- used to ICE
+interface A<T extends A<T, S>, S extends A<T, S>> {}
+>A : Symbol(A, Decl(recursiveGenericTypeHierarchy.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 4, 12))
+>A : Symbol(A, Decl(recursiveGenericTypeHierarchy.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 4, 12))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 4, 30))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 4, 30))
+>A : Symbol(A, Decl(recursiveGenericTypeHierarchy.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 4, 12))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 4, 30))
+
+interface B<T extends B<T, S>, S extends B<T, S>> extends A<B<T, S>, B<T, S>> {}
+>B : Symbol(B, Decl(recursiveGenericTypeHierarchy.tlua, 4, 52))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 6, 12))
+>B : Symbol(B, Decl(recursiveGenericTypeHierarchy.tlua, 4, 52))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 6, 12))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 6, 30))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 6, 30))
+>B : Symbol(B, Decl(recursiveGenericTypeHierarchy.tlua, 4, 52))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 6, 12))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 6, 30))
+>A : Symbol(A, Decl(recursiveGenericTypeHierarchy.tlua, 0, 0))
+>B : Symbol(B, Decl(recursiveGenericTypeHierarchy.tlua, 4, 52))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 6, 12))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 6, 30))
+>B : Symbol(B, Decl(recursiveGenericTypeHierarchy.tlua, 4, 52))
+>T : Symbol(T, Decl(recursiveGenericTypeHierarchy.tlua, 6, 12))
+>S : Symbol(S, Decl(recursiveGenericTypeHierarchy.tlua, 6, 30))
+

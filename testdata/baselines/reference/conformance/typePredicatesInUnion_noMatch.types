@@ -1,0 +1,47 @@
+//// [tests/cases/conformance/ported/typePredicatesInUnion_noMatch.tlua] ////
+
+=== typePredicatesInUnion_noMatch.tlua ===
+-- ported from tests/cases/compiler/typePredicatesInUnion_noMatch.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+    pred(x: {}, y: {}): x is boolean
+>pred : (x: {}, y: {}) => x is boolean
+>x : {}
+>y : {}
+}
+interface B {
+    pred(x: {}, y: {}): y is string
+>pred : (x: {}, y: {}) => y is string
+>x : {}
+>y : {}
+}
+
+type Or = A | B
+>Or : Or
+
+function f(o: Or, x: {}, y: {})
+>f : (o: Or, x: {}, y: {}) => void
+>o : Or
+>x : {}
+>y : {}
+
+    if o.pred(x, y) then
+>o.pred(x, y) : boolean
+>o.pred : ((x: {}, y: {}) => x is boolean) | ((x: {}, y: {}) => y is string)
+>o : Or
+>pred : ((x: {}, y: {}) => x is boolean) | ((x: {}, y: {}) => y is string)
+>x : {}
+>y : {}
+
+        local _ = x
+>_ : {}
+>x : {}
+
+        local _ = y
+>_ : {}
+>y : {}
+
+    end
+end
+

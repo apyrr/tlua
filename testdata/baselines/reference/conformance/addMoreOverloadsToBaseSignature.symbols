@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/addMoreOverloadsToBaseSignature.tlua] ////
+
+=== addMoreOverloadsToBaseSignature.tlua ===
+-- ported from tests/cases/compiler/addMoreOverloadsToBaseSignature.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo {
+>Foo : Symbol(Foo, Decl(addMoreOverloadsToBaseSignature.tlua, 0, 0))
+
+    f(): string
+>f : Symbol(Foo.f, Decl(addMoreOverloadsToBaseSignature.tlua, 3, 15))
+}
+
+interface Bar extends Foo {
+>Bar : Symbol(Bar, Decl(addMoreOverloadsToBaseSignature.tlua, 5, 1))
+>Foo : Symbol(Foo, Decl(addMoreOverloadsToBaseSignature.tlua, 0, 0))
+
+    f(key: string): string
+>f : Symbol(Bar.f, Decl(addMoreOverloadsToBaseSignature.tlua, 7, 27))
+>key : Symbol(key, Decl(addMoreOverloadsToBaseSignature.tlua, 8, 6))
+}
+

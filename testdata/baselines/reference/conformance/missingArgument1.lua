@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/missingArgument1.tlua] ////
+
+//// [missingArgument1.tlua]
+-- ported from tests/cases/compiler/missingArgument1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+foo(a,,b)
+
+
+//// [missingArgument1.lua]
+-- ported from tests/cases/compiler/missingArgument1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+foo(a, b);

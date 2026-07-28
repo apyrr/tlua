@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/commentOnParameter3.tlua] ////
+
+=== commentOnParameter3.tlua ===
+-- ported from tests/cases/compiler/commentOnParameter3.ts
+-- dropped: @strict: false; explicit any annotations avoid unrelated strict-mode diagnostics.
+-- note: upstream emission also drops the final standalone parameter comment; retained as printer parity coverage.
+
+
+function commentedParameters(
+>commentedParameters : Symbol(commentedParameters, Decl(commentOnParameter3.tlua, 0, 0))
+
+    a: any --[[ parameter a ]],
+>a : Symbol(a, Decl(commentOnParameter3.tlua, 5, 29))
+
+    b: any --[[ parameter b ]],
+>b : Symbol(b, Decl(commentOnParameter3.tlua, 6, 31))
+
+    --[[ extra comment ]]
+)
+end
+

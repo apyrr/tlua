@@ -1,0 +1,11 @@
+continueNotInIterationStatement1.tlua(4,1): error TLUA1104: A 'continue' statement can only be used within an enclosing iteration statement.
+
+
+==== continueNotInIterationStatement1.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/continueNotInIterationStatement1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    continue
+    ~~~~~~~~
+!!! error TLUA1104: A 'continue' statement can only be used within an enclosing iteration statement.
+    

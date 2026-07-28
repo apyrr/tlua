@@ -1,0 +1,16 @@
+nestedUnaryExpressionHang.tlua(6,17): error TLUA100030: The right-hand side of an arithmetic operation must be of type 'any' or 'number'.
+nestedUnaryExpressionHang.tlua(6,45): error TLUA1109: Expression expected.
+
+
+==== nestedUnaryExpressionHang.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/nestedUnaryExpressionHang.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: emit coverage (noEmit) — nested logical-not recovery leaks invalid `!` syntax
+    
+    
+    local _ = 3333 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100030: The right-hand side of an arithmetic operation must be of type 'any' or 'number'.
+                                                
+!!! error TLUA1109: Expression expected.
+    

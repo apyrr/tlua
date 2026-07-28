@@ -1,0 +1,5 @@
+-- ported from tests/cases/conformance/parser/ecmascript5/SkippedTokens/parserSkippedTokens9.ts
+-- dropped: @target: es2015 directive; tlua uses the esnext default
+
+; -- existing trivia
+--[[foo]] \ --[[bar]]

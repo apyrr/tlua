@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/parserUnterminatedGeneric1.tlua] ////
+
+//// [parserUnterminatedGeneric1.tlua]
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/parserUnterminatedGeneric1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface IQService {
+    all(promises: IPromise < any > []): IPromise<
+
+
+//// [parserUnterminatedGeneric1.lua]
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/parserUnterminatedGeneric1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

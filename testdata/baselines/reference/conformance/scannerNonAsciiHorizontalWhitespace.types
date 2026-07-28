@@ -1,0 +1,10 @@
+//// [tests/cases/conformance/ported/scannerNonAsciiHorizontalWhitespace.tlua] ////
+
+=== scannerNonAsciiHorizontalWhitespace.tlua ===
+-- ported from tests/cases/conformance/scanner/ecmascript5/scannerNonAsciiHorizontalWhitespace.ts
+-- dropped: the duplicate expected .js file and @target: es2015 directive; tlua keeps the scanner-focused string literal only
+
+local _ = "  function f() {}"
+>_ : string
+>"  function f() {}" : "  function f() {}"
+

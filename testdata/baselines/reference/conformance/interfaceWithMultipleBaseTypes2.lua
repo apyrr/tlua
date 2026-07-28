@@ -1,0 +1,34 @@
+//// [tests/cases/conformance/ported/interfaceWithMultipleBaseTypes2.tlua] ////
+
+//// [interfaceWithMultipleBaseTypes2.tlua]
+-- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfaceWithMultipleBaseTypes2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Base {
+    x: {
+        a?: string; b: string;
+    }
+}
+
+interface Base2 {
+    x: {
+        b: string; c?: number;
+    }
+}
+
+interface Derived extends Base, Base2 {
+    x: { b: string }
+}
+
+interface Derived2 extends Base, Base2 { -- error
+    x: { a: number; b: string }
+}
+
+interface Derived3 extends Base, Base2 {
+    x: { a: string; b: string }
+}
+
+
+//// [interfaceWithMultipleBaseTypes2.lua]
+-- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfaceWithMultipleBaseTypes2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

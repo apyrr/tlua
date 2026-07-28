@@ -1,0 +1,19 @@
+inferentialTypingWithObjectLiteralProperties.tlua(8,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+inferentialTypingWithObjectLiteralProperties.tlua(9,1): error TLUA2322: Type 'string' is not assignable to type 'number'.
+
+
+==== inferentialTypingWithObjectLiteralProperties.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/inferentialTypingWithObjectLiteralProperties.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function f<T>(x: T, y: T): T
+        return x
+    end
+    
+    f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- ok
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    f({ x = { 1 } }, { x = { nil } }).x[1] = "" -- intentional type error
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    

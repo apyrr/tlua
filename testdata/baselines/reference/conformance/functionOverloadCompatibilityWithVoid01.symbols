@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/functionOverloadCompatibilityWithVoid01.tlua] ////
+
+=== functionOverloadCompatibilityWithVoid01.tlua ===
+-- ported from tests/cases/conformance/functions/functionOverloadCompatibilityWithVoid01.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+
+function f(x: string): number;
+>f : Symbol(f, Decl(functionOverloadCompatibilityWithVoid01.tlua, 0, 0), Decl(functionOverloadCompatibilityWithVoid01.tlua, 3, 30))
+>x : Symbol(x, Decl(functionOverloadCompatibilityWithVoid01.tlua, 3, 11))
+
+function f(x: string): void
+>f : Symbol(f, Decl(functionOverloadCompatibilityWithVoid01.tlua, 0, 0), Decl(functionOverloadCompatibilityWithVoid01.tlua, 3, 30))
+>x : Symbol(x, Decl(functionOverloadCompatibilityWithVoid01.tlua, 4, 11))
+
+    return
+end
+

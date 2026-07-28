@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/matchingOfObjectLiteralConstraints.tlua] ////
+
+=== matchingOfObjectLiteralConstraints.tlua ===
+-- ported from tests/cases/compiler/matchingOfObjectLiteralConstraints.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo2<T, U extends { y: T }>(x: U, z: T)
+>foo2 : Symbol(foo2, Decl(matchingOfObjectLiteralConstraints.tlua, 0, 0))
+>T : Symbol(T, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 14))
+>U : Symbol(U, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 16))
+>y : Symbol(y, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 28))
+>T : Symbol(T, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 14))
+>x : Symbol(x, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 37))
+>U : Symbol(U, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 16))
+>z : Symbol(z, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 42))
+>T : Symbol(T, Decl(matchingOfObjectLiteralConstraints.tlua, 3, 14))
+
+end
+foo2({ y = "foo" }, "foo")
+>foo2 : Symbol(foo2, Decl(matchingOfObjectLiteralConstraints.tlua, 0, 0))
+>y : Symbol(y, Decl(matchingOfObjectLiteralConstraints.tlua, 5, 6))
+

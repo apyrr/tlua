@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/functionOverloads1.tlua] ////
+
+=== functionOverloads1.tlua ===
+-- ported from tests/cases/compiler/functionOverloads1.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+-- dropped: the incidental bare-expression statement, rewritten as a discarded local value because tlua only permits call and assignment expression statements.
+
+function foo();
+>foo : Symbol(foo, Decl(functionOverloads1.tlua, 0, 0), Decl(functionOverloads1.tlua, 5, 16))
+
+local _ = 1 + 1;
+>_ : Symbol(_, Decl(functionOverloads1.tlua, 5, 5))
+
+function foo(): string
+>foo : Symbol(foo, Decl(functionOverloads1.tlua, 0, 0), Decl(functionOverloads1.tlua, 5, 16))
+
+    return "a"
+end
+

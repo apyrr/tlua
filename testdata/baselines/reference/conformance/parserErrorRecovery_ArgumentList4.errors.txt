@@ -1,0 +1,23 @@
+parserErrorRecovery_ArgumentList4.tlua(5,5): error TLUA2304: Cannot find name 'bar'.
+parserErrorRecovery_ArgumentList4.tlua(5,9): error TLUA2304: Cannot find name 'a'.
+parserErrorRecovery_ArgumentList4.tlua(5,11): error TLUA2304: Cannot find name 'b'.
+parserErrorRecovery_ArgumentList4.tlua(6,5): error TLUA1005: ',' expected.
+
+
+==== parserErrorRecovery_ArgumentList4.tlua (4 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList4.ts
+    -- dropped: @target: es2015 directive (tlua defaults to esnext)
+    
+    function foo()
+        bar(a,b
+        ~~~
+!!! error TLUA2304: Cannot find name 'bar'.
+            ~
+!!! error TLUA2304: Cannot find name 'a'.
+              ~
+!!! error TLUA2304: Cannot find name 'b'.
+        return;
+        ~~~~~~
+!!! error TLUA1005: ',' expected.
+    end
+    

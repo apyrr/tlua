@@ -1,0 +1,51 @@
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(10,5): error TLUA2411: Property '1' of type '{ y: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(14,5): error TLUA2411: Property '"1"' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(18,5): error TLUA2411: Property 'foo' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(22,5): error TLUA2411: Property 'foo' of type '() => { x: number; }' is not assignable to 'string' index type '{ x: number; }'.
+derivedInterfaceIncompatibleWithBaseIndexer.tlua(27,5): error TLUA2411: Property '1' of type '{ x: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
+
+
+==== derivedInterfaceIncompatibleWithBaseIndexer.tlua (5 errors) ====
+    -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/derivedInterfaceIncompatibleWithBaseIndexer.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Base {
+        [x: number]: { x: number; y: number; };
+        [x: string]: { x: number; }
+    }
+    
+    interface Derived extends Base {
+        1: { y: number } -- error
+        ~
+!!! error TLUA2411: Property '1' of type '{ y: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
+    }
+    
+    interface Derived2 extends Base {
+        "1": { y: number } -- error
+        ~~~
+!!! error TLUA2411: Property '"1"' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
+    }
+    
+    interface Derived3 extends Base {
+        foo: { y: number } -- error
+        ~~~
+!!! error TLUA2411: Property 'foo' of type '{ y: number; }' is not assignable to 'string' index type '{ x: number; }'.
+    }
+    
+    interface Derived4 extends Base {
+        foo(): { x: number } -- error
+        ~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2411: Property 'foo' of type '() => { x: number; }' is not assignable to 'string' index type '{ x: number; }'.
+    }
+    
+    -- satisifies string indexer but not numeric indexer
+    interface Derived5 extends Base {
+        1: { x: number } -- error
+        ~
+!!! error TLUA2411: Property '1' of type '{ x: number; }' is not assignable to 'number' index type '{ x: number; y: number; }'.
+    }
+    
+    interface Derived5 extends Base {
+        "1": { x: number } -- error
+    }
+    

@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/functionAndInterfaceWithSeparateErrors.tlua] ////
+
+=== functionAndInterfaceWithSeparateErrors.tlua ===
+-- ported from tests/cases/compiler/functionAndInterfaceWithSeparateErrors.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function Foo(s: string);
+>Foo : Symbol(Foo, Decl(functionAndInterfaceWithSeparateErrors.tlua, 0, 0), Decl(functionAndInterfaceWithSeparateErrors.tlua, 3, 24), Decl(functionAndInterfaceWithSeparateErrors.tlua, 5, 3))
+>s : Symbol(s, Decl(functionAndInterfaceWithSeparateErrors.tlua, 3, 13))
+
+function Foo(n: number)
+>Foo : Symbol(Foo, Decl(functionAndInterfaceWithSeparateErrors.tlua, 0, 0), Decl(functionAndInterfaceWithSeparateErrors.tlua, 3, 24), Decl(functionAndInterfaceWithSeparateErrors.tlua, 5, 3))
+>n : Symbol(n, Decl(functionAndInterfaceWithSeparateErrors.tlua, 4, 13))
+
+end
+
+interface Foo {
+>Foo : Symbol(Foo, Decl(functionAndInterfaceWithSeparateErrors.tlua, 0, 0), Decl(functionAndInterfaceWithSeparateErrors.tlua, 3, 24), Decl(functionAndInterfaceWithSeparateErrors.tlua, 5, 3))
+
+    [s: string]: string
+>s : Symbol(s, Decl(functionAndInterfaceWithSeparateErrors.tlua, 8, 5))
+
+    prop: number
+>prop : Symbol(Foo.prop, Decl(functionAndInterfaceWithSeparateErrors.tlua, 8, 23))
+}
+

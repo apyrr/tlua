@@ -1,0 +1,61 @@
+//// [tests/cases/conformance/ported/nominalSubtypeCheckOfTypeParameter2.tlua] ////
+
+=== nominalSubtypeCheckOfTypeParameter2.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/nominalSubtypeCheckOfTypeParameter2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface B<T> {
+>B : Symbol(B, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 0, 0))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 3, 12))
+
+    bar: T
+>bar : Symbol(B.bar, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 3, 16))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 3, 12))
+}
+
+-- ok
+interface A<T> extends B<T> {
+>A : Symbol(A, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 5, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 8, 12))
+>B : Symbol(B, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 0, 0))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 8, 12))
+
+    foo: T
+>foo : Symbol(A.foo, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 8, 29))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 8, 12))
+}
+
+-- ok
+interface A2<T> extends B<B<string>> {
+>A2 : Symbol(A2, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 10, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 13, 13))
+>B : Symbol(B, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 0, 0))
+>B : Symbol(B, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 0, 0))
+
+    baz: T
+>baz : Symbol(A2.baz, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 13, 38))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 13, 13))
+}
+
+interface C<T> {
+>C : Symbol(C, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 15, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 17, 12))
+
+    bam: T
+>bam : Symbol(C.bam, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 17, 16))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 17, 12))
+}
+
+-- ok
+interface A3<T> extends B<C<T>> {
+>A3 : Symbol(A3, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 19, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 22, 13))
+>B : Symbol(B, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 0, 0))
+>C : Symbol(C, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 15, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 22, 13))
+
+    bing: T
+>bing : Symbol(A3.bing, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 22, 33))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter2.tlua, 22, 13))
+}
+

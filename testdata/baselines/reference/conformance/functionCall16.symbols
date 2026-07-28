@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/ported/functionCall16.tlua] ////
+
+=== functionCall16.tlua ===
+-- ported from tests/cases/compiler/functionCall16.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: named rest parameter `...c`; tlua uses the unnamed vararg `...` form.
+
+function foo(a: string, b?: string, ...: number)
+>foo : Symbol(foo, Decl(functionCall16.tlua, 0, 0))
+>a : Symbol(a, Decl(functionCall16.tlua, 4, 13))
+>b : Symbol(b, Decl(functionCall16.tlua, 4, 23))
+> : Symbol((Missing), Decl(functionCall16.tlua, 4, 35))
+
+end
+
+foo('foo', 1)
+>foo : Symbol(foo, Decl(functionCall16.tlua, 0, 0))
+
+foo('foo')
+>foo : Symbol(foo, Decl(functionCall16.tlua, 0, 0))
+
+foo('foo', 'bar')
+>foo : Symbol(foo, Decl(functionCall16.tlua, 0, 0))
+
+foo()
+>foo : Symbol(foo, Decl(functionCall16.tlua, 0, 0))
+
+foo(1, 'bar')
+>foo : Symbol(foo, Decl(functionCall16.tlua, 0, 0))
+
+foo('foo', 'bar', 3)
+>foo : Symbol(foo, Decl(functionCall16.tlua, 0, 0))
+

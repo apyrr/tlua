@@ -1,0 +1,38 @@
+//// [tests/cases/conformance/ported/commentLeadingCloseBrace.tlua] ////
+
+//// [commentLeadingCloseBrace.tlua]
+-- ported from tests/cases/compiler/commentLeadingCloseBrace.ts
+-- dropped: @strict: false; tlua tests keep strict mode enabled, so the helper is explicitly typed
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+
+function commentedParameters(...: any): any
+    return nil
+end
+
+function ifelse()
+    if commentedParameters(1, 2) then
+        --[[comment1]]
+        commentedParameters(3, 4)
+        --[[comment2]]
+    else
+        commentedParameters(5, 6)
+    end
+end
+
+
+//// [commentLeadingCloseBrace.lua]
+-- ported from tests/cases/compiler/commentLeadingCloseBrace.ts
+-- dropped: @strict: false; tlua tests keep strict mode enabled, so the helper is explicitly typed
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+function commentedParameters(...)
+  return nil;
+end
+function ifelse()
+  if commentedParameters(1, 2) then
+    --[[comment1]]
+    commentedParameters(3, 4);
+    --[[comment2]]
+  else
+    commentedParameters(5, 6);
+  end
+end

@@ -1,0 +1,9 @@
+//// [tests/cases/conformance/ported/parserAmbiguity2.tlua] ////
+
+=== parserAmbiguity2.tlua ===
+
+-- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserAmbiguity2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+f(g<A, B>7)
+

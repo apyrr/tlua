@@ -1,0 +1,48 @@
+//// [tests/cases/conformance/ported/typePredicatesInUnion.tlua] ////
+
+=== typePredicatesInUnion.tlua ===
+-- ported from tests/cases/compiler/typePredicatesInUnion.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+>A : Symbol(A, Decl(typePredicatesInUnion.tlua, 0, 0))
+
+    pred(x: {}): x is boolean
+>pred : Symbol(A.pred, Decl(typePredicatesInUnion.tlua, 3, 13))
+>x : Symbol(x, Decl(typePredicatesInUnion.tlua, 4, 9))
+>x : Symbol(x, Decl(typePredicatesInUnion.tlua, 4, 9))
+}
+
+interface B {
+>B : Symbol(B, Decl(typePredicatesInUnion.tlua, 5, 1))
+
+    pred(x: {}): x is string
+>pred : Symbol(B.pred, Decl(typePredicatesInUnion.tlua, 7, 13))
+>x : Symbol(x, Decl(typePredicatesInUnion.tlua, 8, 9))
+>x : Symbol(x, Decl(typePredicatesInUnion.tlua, 8, 9))
+}
+
+type Or = A | B
+>Or : Symbol(Or, Decl(typePredicatesInUnion.tlua, 9, 1))
+>A : Symbol(A, Decl(typePredicatesInUnion.tlua, 0, 0))
+>B : Symbol(B, Decl(typePredicatesInUnion.tlua, 5, 1))
+
+function f(o: Or, x: {})
+>f : Symbol(f, Decl(typePredicatesInUnion.tlua, 11, 15))
+>o : Symbol(o, Decl(typePredicatesInUnion.tlua, 13, 11))
+>Or : Symbol(Or, Decl(typePredicatesInUnion.tlua, 9, 1))
+>x : Symbol(x, Decl(typePredicatesInUnion.tlua, 13, 17))
+
+    if o.pred(x) then
+>o.pred : Symbol(pred, Decl(typePredicatesInUnion.tlua, 3, 13), Decl(typePredicatesInUnion.tlua, 7, 13))
+>o : Symbol(o, Decl(typePredicatesInUnion.tlua, 13, 11))
+>pred : Symbol(pred, Decl(typePredicatesInUnion.tlua, 3, 13), Decl(typePredicatesInUnion.tlua, 7, 13))
+>x : Symbol(x, Decl(typePredicatesInUnion.tlua, 13, 17))
+
+        local narrowed = x
+>narrowed : Symbol(narrowed, Decl(typePredicatesInUnion.tlua, 15, 13))
+>x : Symbol(x, Decl(typePredicatesInUnion.tlua, 13, 17))
+
+    end
+end
+

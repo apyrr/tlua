@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/unionTypeWithIndexAndTuple.tlua] ////
+
+=== unionTypeWithIndexAndTuple.tlua ===
+-- ported from tests/cases/compiler/unionTypeWithIndexAndTuple.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I {
+>I : Symbol(I, Decl(unionTypeWithIndexAndTuple.tlua, 0, 0))
+
+    [index: number]: any
+>index : Symbol(index, Decl(unionTypeWithIndexAndTuple.tlua, 4, 5))
+
+    someOtherProperty: number
+>someOtherProperty : Symbol(I.someOtherProperty, Decl(unionTypeWithIndexAndTuple.tlua, 4, 24))
+}
+
+function f(args: ["a"] | I)
+>f : Symbol(f, Decl(unionTypeWithIndexAndTuple.tlua, 6, 1))
+>args : Symbol(args, Decl(unionTypeWithIndexAndTuple.tlua, 8, 11))
+>I : Symbol(I, Decl(unionTypeWithIndexAndTuple.tlua, 0, 0))
+
+end
+
+f({ "a" })
+>f : Symbol(f, Decl(unionTypeWithIndexAndTuple.tlua, 6, 1))
+

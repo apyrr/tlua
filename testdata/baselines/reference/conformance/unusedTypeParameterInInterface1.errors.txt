@@ -1,0 +1,17 @@
+unusedTypeParameterInInterface1.tlua(6,11): error TLUA6196: 'int' is declared but never used.
+unusedTypeParameterInInterface1.tlua(6,15): error TLUA6196: 'T' is declared but never used.
+
+
+==== unusedTypeParameterInInterface1.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/unusedTypeParameterInInterface1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- compiler gap: noUnusedLocals does not report the unused interface type parameter T
+    
+    
+    interface int<T> {
+              ~~~
+!!! error TLUA6196: 'int' is declared but never used.
+                  ~
+!!! error TLUA6196: 'T' is declared but never used.
+    }
+    

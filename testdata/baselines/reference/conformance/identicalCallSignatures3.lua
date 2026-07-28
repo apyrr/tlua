@@ -1,0 +1,31 @@
+//// [tests/cases/conformance/ported/identicalCallSignatures3.tlua] ////
+
+//// [identicalCallSignatures3.tlua]
+-- ported from tests/cases/conformance/types/objectTypeLiteral/callSignatures/identicalCallSignatures3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (tlua uses strict checking)
+
+-- Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+-- Here the multiple overloads come from multiple merged declarations, so we do not report errors.
+
+interface I {
+    (x: number): string
+}
+
+interface I {
+    (x: number): string
+}
+
+interface I2<T> {
+    (x: number): string
+}
+
+interface I2<T> {
+    (x: number): string
+}
+
+
+//// [identicalCallSignatures3.lua]
+-- ported from tests/cases/conformance/types/objectTypeLiteral/callSignatures/identicalCallSignatures3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (tlua uses strict checking)

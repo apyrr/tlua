@@ -1,0 +1,45 @@
+//// [tests/cases/conformance/ported/typeArgumentConstraintResolution1.tlua] ////
+
+//// [typeArgumentConstraintResolution1.tlua]
+-- ported from tests/cases/compiler/typeArgumentConstraintResolution1.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+-- dropped: JavaScript Date/Number/String wrapper constraints, replaced with local structural constraint interfaces
+
+interface DateConstraint {
+    date: string
+}
+
+interface NumberConstraint {
+    number: number
+}
+
+interface StringConstraint {
+    string: string
+}
+
+function foo1<T extends DateConstraint>(test: T);
+function foo1<T extends NumberConstraint>(test: string);
+function foo1<T extends StringConstraint>(test: any) end
+
+foo1<DateConstraint>("") -- should error
+
+function foo2<T extends DateConstraint>(test: T): T;
+function foo2<T extends NumberConstraint>(test: string): T;
+function foo2<T extends StringConstraint>(test: any): any
+    return nil
+end
+
+foo2<DateConstraint>("") -- DateConstraint does not satisfy the constraint NumberConstraint for T
+
+
+//// [typeArgumentConstraintResolution1.lua]
+-- ported from tests/cases/compiler/typeArgumentConstraintResolution1.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+-- dropped: JavaScript Date/Number/String wrapper constraints, replaced with local structural constraint interfaces
+function foo1(test)
+end
+foo1(""); -- should error
+function foo2(test)
+  return nil;
+end
+foo2(""); -- DateConstraint does not satisfy the constraint NumberConstraint for T

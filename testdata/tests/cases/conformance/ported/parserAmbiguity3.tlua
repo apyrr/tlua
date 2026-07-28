@@ -1,0 +1,7 @@
+-- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserAmbiguity3.ts
+// @noEmit: true
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: parser-recovery output preserves an invalid Lua comparison/call shape; checker/parser coverage is retained.
+-- dropped: emit coverage suppressed because the recovered expression is not valid Lua.
+
+f(g < A, B > +(7))

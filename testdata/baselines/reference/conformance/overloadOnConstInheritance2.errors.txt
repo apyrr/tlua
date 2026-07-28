@@ -1,0 +1,26 @@
+overloadOnConstInheritance2.tlua(9,11): error TLUA2430: Interface 'Deriver' incorrectly extends interface 'Base'.
+  Types of property 'addEventListener' are incompatible.
+    Type '(x: "bar") => string' is not assignable to type '{ (x: string): any; (x: "foo"): string; }'.
+      Types of parameters 'x' and 'x' are incompatible.
+        Type '"foo"' is not assignable to type '"bar"'.
+
+
+==== overloadOnConstInheritance2.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/overloadOnConstInheritance2.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Base {
+        addEventListener(x: string): any
+        addEventListener(x: 'foo'): string
+    }
+    
+    interface Deriver extends Base {
+              ~~~~~~~
+!!! error TLUA2430: Interface 'Deriver' incorrectly extends interface 'Base'.
+!!! error TLUA2430:   Types of property 'addEventListener' are incompatible.
+!!! error TLUA2430:     Type '(x: "bar") => string' is not assignable to type '{ (x: string): any; (x: "foo"): string; }'.
+!!! error TLUA2430:       Types of parameters 'x' and 'x' are incompatible.
+!!! error TLUA2430:         Type '"foo"' is not assignable to type '"bar"'.
+        addEventListener(x: 'bar'): string
+    }
+    

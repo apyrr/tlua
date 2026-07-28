@@ -1,0 +1,34 @@
+//// [tests/cases/conformance/ported/declarationEmitTypeAliasWithTypeParameters4.tlua] ////
+
+=== declarationEmitTypeAliasWithTypeParameters4.tlua ===
+-- ported from tests/cases/compiler/declarationEmitTypeAliasWithTypeParameters4.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept generic type-alias, method-signature, alias-instantiation, and assertion checker coverage.
+
+type Foo<T, Y> = {
+>Foo : Symbol(Foo, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 0, 0))
+>T : Symbol(T, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 4, 9))
+>Y : Symbol(Y, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 4, 11))
+
+    foo<U, J>(): Foo<U, J>
+>foo : Symbol(foo, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 4, 18))
+>U : Symbol(U, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 5, 8))
+>J : Symbol(J, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 5, 10))
+>Foo : Symbol(Foo, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 0, 0))
+>U : Symbol(U, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 5, 8))
+>J : Symbol(J, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 5, 10))
+}
+type SubFoo<R> = Foo<string, R>
+>SubFoo : Symbol(SubFoo, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 6, 1))
+>R : Symbol(R, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 7, 12))
+>Foo : Symbol(Foo, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 0, 0))
+>R : Symbol(R, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 7, 12))
+
+function foo()
+>foo : Symbol(foo, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 7, 31))
+
+    return {} as SubFoo<number>
+>SubFoo : Symbol(SubFoo, Decl(declarationEmitTypeAliasWithTypeParameters4.tlua, 6, 1))
+
+end
+

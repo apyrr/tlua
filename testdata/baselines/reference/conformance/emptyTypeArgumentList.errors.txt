@@ -1,0 +1,21 @@
+emptyTypeArgumentList.tlua(6,4): error TLUA1099: Type argument list cannot be empty.
+emptyTypeArgumentList.tlua(11,9): error TLUA1099: Type argument list cannot be empty.
+
+
+==== emptyTypeArgumentList.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/emptyTypeArgumentList.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo<T>()
+    end
+    foo<>()
+       ~~
+!!! error TLUA1099: Type argument list cannot be empty.
+    
+    -- https://github.com/microsoft/TypeScript/issues/33041
+    function noParams()
+    end
+    noParams<>()
+            ~~
+!!! error TLUA1099: Type argument list cannot be empty.
+    

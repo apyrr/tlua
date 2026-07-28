@@ -1,0 +1,18 @@
+invocationExpressionInFunctionParameter.tlua(10,24): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+
+
+==== invocationExpressionInFunctionParameter.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/invocationExpressionInFunctionParameter.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: emit coverage (noEmit) — default parameter initializers are not lowered to valid Lua
+    -- compiler gap: valid default-parameter source would otherwise emit an initializer in the Lua parameter list
+    
+    
+    function foo1(val: string)
+    end
+    
+    function foo3(x = foo1(123))
+                           ~~~
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    end
+    

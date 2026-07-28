@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/parametersSyntaxErrorNoCrash1.tlua] ////
+
+=== parametersSyntaxErrorNoCrash1.tlua ===
+-- ported from tests/cases/compiler/parametersSyntaxErrorNoCrash1.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode)
+
+-- @noEmit: true
+-- @noTypesAndSymbols: true
+
+function identity<T>(arg: T: T
+>identity : Symbol(identity, Decl(parametersSyntaxErrorNoCrash1.tlua, 0, 0))
+>T : Symbol(T, Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 18), Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 28))
+>arg : Symbol(arg, Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 21))
+>T : Symbol(T, Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 18), Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 28))
+>T : Symbol(T, Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 18), Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 28))
+
+    return arg
+>arg : Symbol(arg, Decl(parametersSyntaxErrorNoCrash1.tlua, 6, 21))
+
+end
+

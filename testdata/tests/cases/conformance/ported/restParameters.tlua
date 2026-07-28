@@ -1,0 +1,14 @@
+-- ported from tests/cases/compiler/restParameters.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f18(a?: string, ...: number)
+end
+
+function f19(a?: string, b?: number, ...: number)
+end
+
+function f20(a: string, b?: string, ...: number)
+end
+
+function f21(a: string, b?: string, c?: number, ...: number)
+end

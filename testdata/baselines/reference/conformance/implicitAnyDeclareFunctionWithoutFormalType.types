@@ -1,0 +1,63 @@
+//// [tests/cases/conformance/ported/implicitAnyDeclareFunctionWithoutFormalType.tlua] ////
+
+=== implicitAnyDeclareFunctionWithoutFormalType.tlua ===
+-- ported from tests/cases/compiler/implicitAnyDeclareFunctionWithoutFormalType.ts
+-- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to latest target and strict checking)
+-- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`
+-- dropped: upstream noImplicitAny diagnostic for the unnamed vararg, which has no name in tlua
+-- dropped: upstream noImplicitAny diagnostics for defaulted z/w after null/undefined normalization to nil
+-- dropped: emit coverage (noEmit) — retained default-parameter checker cases are not lowered to valid Lua
+
+
+-- these should be errors
+function foo(x)
+>foo : (x: any) => void
+>x : any
+
+end
+
+function bar(x: number, y)
+>bar : (x: number, y: any) => void
+>x : number
+>y : any
+
+end -- error at "y"; no error at "x"
+
+function func2(a, b, c)
+>func2 : (a: any, b: any, c: any) => void
+>a : any
+>b : any
+>c : any
+
+end -- error at "a,b,c"
+
+function func3(...)
+>func3 : (...: any) => void
+> : any[]
+
+end
+
+function func4(z = nil, w = nil)
+>func4 : (z?: nil, w?: nil) => void
+>z : nil
+>w : nil
+
+end
+
+-- these shouldn't be errors
+function noError1(x = 3, y = 2)
+>noError1 : (x?: number, y?: number) => void
+>x : number
+>3 : 3
+>y : number
+>2 : 2
+
+end
+
+function noError2(x: number, y: string)
+>noError2 : (x: number, y: string) => void
+>x : number
+>y : string
+
+end
+

@@ -1,0 +1,63 @@
+//// [tests/cases/conformance/ported/parserOverloadOnConstants1.tlua] ////
+
+=== parserOverloadOnConstants1.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/parserOverloadOnConstants1.ts
+-- dropped: the original interface overloaded on the DOM `Document.createElement` family
+--   (HTMLElement/HTMLCanvasElement/HTMLDivElement/HTMLSpanElement); DOM lib is out of scope
+--   for tlua, so the overload-on-string-literal-constants shape is kept using local interfaces
+
+interface Widget {
+>Widget : Symbol(Widget, Decl(parserOverloadOnConstants1.tlua, 0, 0))
+
+	kind: string;
+>kind : Symbol(Widget.kind, Decl(parserOverloadOnConstants1.tlua, 5, 18))
+}
+
+interface CanvasWidget extends Widget {
+>CanvasWidget : Symbol(CanvasWidget, Decl(parserOverloadOnConstants1.tlua, 7, 1))
+>Widget : Symbol(Widget, Decl(parserOverloadOnConstants1.tlua, 0, 0))
+
+	kind: "canvas";
+>kind : Symbol(CanvasWidget.kind, Decl(parserOverloadOnConstants1.tlua, 9, 39))
+}
+
+interface DivWidget extends Widget {
+>DivWidget : Symbol(DivWidget, Decl(parserOverloadOnConstants1.tlua, 11, 1))
+>Widget : Symbol(Widget, Decl(parserOverloadOnConstants1.tlua, 0, 0))
+
+	kind: "div";
+>kind : Symbol(DivWidget.kind, Decl(parserOverloadOnConstants1.tlua, 13, 36))
+}
+
+interface SpanWidget extends Widget {
+>SpanWidget : Symbol(SpanWidget, Decl(parserOverloadOnConstants1.tlua, 15, 1))
+>Widget : Symbol(Widget, Decl(parserOverloadOnConstants1.tlua, 0, 0))
+
+	kind: "span";
+>kind : Symbol(SpanWidget.kind, Decl(parserOverloadOnConstants1.tlua, 17, 37))
+}
+
+interface Factory {
+>Factory : Symbol(Factory, Decl(parserOverloadOnConstants1.tlua, 19, 1))
+
+	createWidget(name: string): Widget;
+>createWidget : Symbol(Factory.createWidget, Decl(parserOverloadOnConstants1.tlua, 21, 19), Decl(parserOverloadOnConstants1.tlua, 22, 36), Decl(parserOverloadOnConstants1.tlua, 23, 44), Decl(parserOverloadOnConstants1.tlua, 24, 38))
+>name : Symbol(name, Decl(parserOverloadOnConstants1.tlua, 22, 14))
+>Widget : Symbol(Widget, Decl(parserOverloadOnConstants1.tlua, 0, 0))
+
+	createWidget(name: "canvas"): CanvasWidget;
+>createWidget : Symbol(Factory.createWidget, Decl(parserOverloadOnConstants1.tlua, 21, 19), Decl(parserOverloadOnConstants1.tlua, 22, 36), Decl(parserOverloadOnConstants1.tlua, 23, 44), Decl(parserOverloadOnConstants1.tlua, 24, 38))
+>name : Symbol(name, Decl(parserOverloadOnConstants1.tlua, 23, 14))
+>CanvasWidget : Symbol(CanvasWidget, Decl(parserOverloadOnConstants1.tlua, 7, 1))
+
+	createWidget(name: "div"): DivWidget;
+>createWidget : Symbol(Factory.createWidget, Decl(parserOverloadOnConstants1.tlua, 21, 19), Decl(parserOverloadOnConstants1.tlua, 22, 36), Decl(parserOverloadOnConstants1.tlua, 23, 44), Decl(parserOverloadOnConstants1.tlua, 24, 38))
+>name : Symbol(name, Decl(parserOverloadOnConstants1.tlua, 24, 14))
+>DivWidget : Symbol(DivWidget, Decl(parserOverloadOnConstants1.tlua, 11, 1))
+
+	createWidget(name: "span"): SpanWidget;
+>createWidget : Symbol(Factory.createWidget, Decl(parserOverloadOnConstants1.tlua, 21, 19), Decl(parserOverloadOnConstants1.tlua, 22, 36), Decl(parserOverloadOnConstants1.tlua, 23, 44), Decl(parserOverloadOnConstants1.tlua, 24, 38))
+>name : Symbol(name, Decl(parserOverloadOnConstants1.tlua, 25, 14))
+>SpanWidget : Symbol(SpanWidget, Decl(parserOverloadOnConstants1.tlua, 15, 1))
+}
+

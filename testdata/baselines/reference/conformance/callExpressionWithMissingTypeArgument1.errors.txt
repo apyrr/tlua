@@ -1,0 +1,20 @@
+callExpressionWithMissingTypeArgument1.tlua(4,1): error TLUA2304: Cannot find name 'Foo'.
+callExpressionWithMissingTypeArgument1.tlua(4,5): error TLUA2304: Cannot find name 'a'.
+callExpressionWithMissingTypeArgument1.tlua(4,7): error TLUA1110: Type expected.
+callExpressionWithMissingTypeArgument1.tlua(4,8): error TLUA2304: Cannot find name 'b'.
+
+
+==== callExpressionWithMissingTypeArgument1.tlua (4 errors) ====
+    -- ported from tests/cases/compiler/callExpressionWithMissingTypeArgument1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    Foo<a,,b>()
+    ~~~
+!!! error TLUA2304: Cannot find name 'Foo'.
+        ~
+!!! error TLUA2304: Cannot find name 'a'.
+          ~
+!!! error TLUA1110: Type expected.
+           ~
+!!! error TLUA2304: Cannot find name 'b'.
+    

@@ -1,0 +1,15 @@
+parserErrorRecovery_ParameterList4.tlua(4,12): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+parserErrorRecovery_ParameterList4.tlua(4,14): error TLUA1127: Invalid character.
+
+
+==== parserErrorRecovery_ParameterList4.tlua (2 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ParameterLists/parserErrorRecovery_ParameterList4.ts
+    -- dropped: @target: es2015 directive; the C-style function body was rewritten to a Lua end-block
+    
+    function f(a,¬)
+               ~
+!!! error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+                 ~
+!!! error TLUA1127: Invalid character.
+    end
+    

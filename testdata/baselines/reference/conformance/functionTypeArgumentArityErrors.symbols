@@ -1,0 +1,77 @@
+//// [tests/cases/conformance/ported/functionTypeArgumentArityErrors.tlua] ////
+
+=== functionTypeArgumentArityErrors.tlua ===
+-- ported from tests/cases/compiler/functionTypeArgumentArityErrors.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults)
+
+-- Overloaded functions with default type arguments
+declare function f1<A = any>(): void
+>f1 : Symbol(f1, Decl(functionTypeArgumentArityErrors.tlua, 0, 0), Decl(functionTypeArgumentArityErrors.tlua, 4, 36))
+>A : Symbol(A, Decl(functionTypeArgumentArityErrors.tlua, 4, 20))
+
+declare function f1<A, B, C, D = any>(): void
+>f1 : Symbol(f1, Decl(functionTypeArgumentArityErrors.tlua, 0, 0), Decl(functionTypeArgumentArityErrors.tlua, 4, 36))
+>A : Symbol(A, Decl(functionTypeArgumentArityErrors.tlua, 5, 20))
+>B : Symbol(B, Decl(functionTypeArgumentArityErrors.tlua, 5, 22))
+>C : Symbol(C, Decl(functionTypeArgumentArityErrors.tlua, 5, 25))
+>D : Symbol(D, Decl(functionTypeArgumentArityErrors.tlua, 5, 28))
+
+f1<number, number>()
+>f1 : Symbol(f1, Decl(functionTypeArgumentArityErrors.tlua, 0, 0), Decl(functionTypeArgumentArityErrors.tlua, 4, 36))
+
+f1<number, number, number, number, number>()
+>f1 : Symbol(f1, Decl(functionTypeArgumentArityErrors.tlua, 0, 0), Decl(functionTypeArgumentArityErrors.tlua, 4, 36))
+
+-- Overloaded functions with no default type arguments
+declare function f2<A>(): void
+>f2 : Symbol(f2, Decl(functionTypeArgumentArityErrors.tlua, 7, 44), Decl(functionTypeArgumentArityErrors.tlua, 10, 30))
+>A : Symbol(A, Decl(functionTypeArgumentArityErrors.tlua, 10, 20))
+
+declare function f2<A, B, C>(): void
+>f2 : Symbol(f2, Decl(functionTypeArgumentArityErrors.tlua, 7, 44), Decl(functionTypeArgumentArityErrors.tlua, 10, 30))
+>A : Symbol(A, Decl(functionTypeArgumentArityErrors.tlua, 11, 20))
+>B : Symbol(B, Decl(functionTypeArgumentArityErrors.tlua, 11, 22))
+>C : Symbol(C, Decl(functionTypeArgumentArityErrors.tlua, 11, 25))
+
+f2<number, number>()
+>f2 : Symbol(f2, Decl(functionTypeArgumentArityErrors.tlua, 7, 44), Decl(functionTypeArgumentArityErrors.tlua, 10, 30))
+
+f2<number, number, number, number>()
+>f2 : Symbol(f2, Decl(functionTypeArgumentArityErrors.tlua, 7, 44), Decl(functionTypeArgumentArityErrors.tlua, 10, 30))
+
+-- Overloaded non-generic functions
+declare function f3(): void
+>f3 : Symbol(f3, Decl(functionTypeArgumentArityErrors.tlua, 13, 36), Decl(functionTypeArgumentArityErrors.tlua, 16, 27))
+
+declare function f3(a): void
+>f3 : Symbol(f3, Decl(functionTypeArgumentArityErrors.tlua, 13, 36), Decl(functionTypeArgumentArityErrors.tlua, 16, 27))
+>a : Symbol(a, Decl(functionTypeArgumentArityErrors.tlua, 17, 20))
+
+f3<number>()
+>f3 : Symbol(f3, Decl(functionTypeArgumentArityErrors.tlua, 13, 36), Decl(functionTypeArgumentArityErrors.tlua, 16, 27))
+
+-- Generic function with default type parameters
+declare function f4<A, B, C = any>(): void
+>f4 : Symbol(f4, Decl(functionTypeArgumentArityErrors.tlua, 18, 12))
+>A : Symbol(A, Decl(functionTypeArgumentArityErrors.tlua, 21, 20))
+>B : Symbol(B, Decl(functionTypeArgumentArityErrors.tlua, 21, 22))
+>C : Symbol(C, Decl(functionTypeArgumentArityErrors.tlua, 21, 25))
+
+f4<number>()
+>f4 : Symbol(f4, Decl(functionTypeArgumentArityErrors.tlua, 18, 12))
+
+f4<number, number, number, number>()
+>f4 : Symbol(f4, Decl(functionTypeArgumentArityErrors.tlua, 18, 12))
+
+-- Generic function with no default type arguments
+declare function f5<A, B>(): void
+>f5 : Symbol(f5, Decl(functionTypeArgumentArityErrors.tlua, 23, 36))
+>A : Symbol(A, Decl(functionTypeArgumentArityErrors.tlua, 26, 20))
+>B : Symbol(B, Decl(functionTypeArgumentArityErrors.tlua, 26, 22))
+
+f5<number>()
+>f5 : Symbol(f5, Decl(functionTypeArgumentArityErrors.tlua, 23, 36))
+
+f5<number, number, number>()
+>f5 : Symbol(f5, Decl(functionTypeArgumentArityErrors.tlua, 23, 36))
+

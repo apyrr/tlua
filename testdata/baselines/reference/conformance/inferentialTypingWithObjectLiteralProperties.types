@@ -1,0 +1,48 @@
+//// [tests/cases/conformance/ported/inferentialTypingWithObjectLiteralProperties.tlua] ////
+
+=== inferentialTypingWithObjectLiteralProperties.tlua ===
+-- ported from tests/cases/compiler/inferentialTypingWithObjectLiteralProperties.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f<T>(x: T, y: T): T
+>f : <T>(x: T, y: T) => T
+>x : T
+>y : T
+
+    return x
+>x : T
+
+end
+
+f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- ok
+>f({ x = { nil } }, { x = { 1 } }).x[1] = "" : ""
+>f({ x = { nil } }, { x = { 1 } }).x[1] : number | nil
+>f({ x = { nil } }, { x = { 1 } }).x : { 1: nil; } | { 1: number; }
+>f({ x = { nil } }, { x = { 1 } }) : { x: { 1: nil; }; } | { x: { 1: number; }; }
+>f : <T>(x: T, y: T) => T
+>{ x = { nil } } : { x: { 1: nil; }; }
+>x : { 1: nil; }
+>{ nil } : { 1: nil; }
+>{ x = { 1 } } : { x: { 1: number; }; }
+>x : { 1: number; }
+>{ 1 } : { 1: number; }
+>x : { 1: nil; } | { 1: number; }
+>1 : 1
+>"" : ""
+
+f({ x = { 1 } }, { x = { nil } }).x[1] = "" -- intentional type error
+>f({ x = { 1 } }, { x = { nil } }).x[1] = "" : ""
+>f({ x = { 1 } }, { x = { nil } }).x[1] : number | nil
+>f({ x = { 1 } }, { x = { nil } }).x : { 1: number; } | { 1: nil; }
+>f({ x = { 1 } }, { x = { nil } }) : { x: { 1: number; }; } | { x: { 1: nil; }; }
+>f : <T>(x: T, y: T) => T
+>{ x = { 1 } } : { x: { 1: number; }; }
+>x : { 1: number; }
+>{ 1 } : { 1: number; }
+>{ x = { nil } } : { x: { 1: nil; }; }
+>x : { 1: nil; }
+>{ nil } : { 1: nil; }
+>x : { 1: number; } | { 1: nil; }
+>1 : 1
+>"" : ""
+

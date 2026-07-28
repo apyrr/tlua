@@ -1,0 +1,11 @@
+//// [tests/cases/conformance/ported/parserMethodSignature7.tlua] ////
+
+=== parserMethodSignature7.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/MethodSignatures/parserMethodSignature7.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict checking)
+
+interface I {
+    "G"<T>()
+>"G" : <T>() => any
+}
+

@@ -1,0 +1,17 @@
+contextualTyping33.tlua(8,32): error TLUA2322: Type '() => string' is not assignable to type '{ (): number; (i: number): number; }'.
+  Type 'string' is not assignable to type 'number'.
+
+
+==== contextualTyping33.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/contextualTyping33.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- The second function intentionally returns string and should produce a checker error.
+    
+    function foo(param: { (): number; (i: number): number }[])
+    end
+    
+    foo({ function() return 1 end, function() return "foo" end })
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2322: Type '() => string' is not assignable to type '{ (): number; (i: number): number; }'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
+    

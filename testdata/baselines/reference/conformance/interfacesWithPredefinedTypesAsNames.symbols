@@ -1,0 +1,28 @@
+//// [tests/cases/conformance/ported/interfacesWithPredefinedTypesAsNames.tlua] ////
+
+=== interfacesWithPredefinedTypesAsNames.tlua ===
+-- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfacesWithPredefinedTypesAsNames.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: `interface void {}` case -- unlike any/number/string/boolean/unknown/never
+--   (contextual keywords, valid identifiers), `void` is a true reserved word in
+--   tlua's scanner (KindVoidKeyword <= KindLastReservedWord) and cannot name a
+--   declaration; testing that would just be a parse-error tombstone.
+
+interface any { }
+>any : Symbol(any, Decl(interfacesWithPredefinedTypesAsNames.tlua, 0, 0))
+
+interface number { }
+>number : Symbol(number, Decl(interfacesWithPredefinedTypesAsNames.tlua, 7, 17))
+
+interface string { }
+>string : Symbol(string, Decl(lib.luajit.d.tlua, --, --), Decl(interfacesWithPredefinedTypesAsNames.tlua, 8, 20))
+
+interface boolean { }
+>boolean : Symbol(boolean, Decl(interfacesWithPredefinedTypesAsNames.tlua, 9, 20))
+
+interface unknown {}
+>unknown : Symbol(unknown, Decl(interfacesWithPredefinedTypesAsNames.tlua, 10, 21))
+
+interface never {}
+>never : Symbol(never, Decl(interfacesWithPredefinedTypesAsNames.tlua, 11, 20))
+

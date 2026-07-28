@@ -1,0 +1,11 @@
+anyMappedTypesError.tlua(4,12): error TLUA7039: Mapped object type implicitly has an 'any' template type.
+
+
+==== anyMappedTypesError.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/anyMappedTypesError.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    type Foo = { [P in "bar"] }
+               ~~~~~~~~~~~~~~~~
+!!! error TLUA7039: Mapped object type implicitly has an 'any' template type.
+    

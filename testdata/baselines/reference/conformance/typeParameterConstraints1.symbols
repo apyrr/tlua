@@ -1,0 +1,88 @@
+//// [tests/cases/conformance/ported/typeParameterConstraints1.tlua] ////
+
+=== typeParameterConstraints1.tlua ===
+-- ported from tests/cases/compiler/typeParameterConstraints1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: Date and RegExp constraints (JavaScript library types unavailable; rewritten as table)
+-- dropped: Object constraint (JavaScript library type unavailable; rewritten as table)
+-- dropped: undefined constraint (rewritten as nil)
+
+function foo1<T extends any>(test: T) end
+>foo1 : Symbol(foo1, Decl(typeParameterConstraints1.tlua, 0, 0))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 6, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 6, 29))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 6, 14))
+
+function foo2<T extends number>(test: T) end
+>foo2 : Symbol(foo2, Decl(typeParameterConstraints1.tlua, 6, 41))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 7, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 7, 32))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 7, 14))
+
+function foo3<T extends string>(test: T) end
+>foo3 : Symbol(foo3, Decl(typeParameterConstraints1.tlua, 7, 44))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 8, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 8, 32))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 8, 14))
+
+function foo4<T extends table>(test: T) end -- valid
+>foo4 : Symbol(foo4, Decl(typeParameterConstraints1.tlua, 8, 44))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 9, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 9, 31))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 9, 14))
+
+function foo5<T extends table>(test: T) end -- valid
+>foo5 : Symbol(foo5, Decl(typeParameterConstraints1.tlua, 9, 43))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 10, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 10, 31))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 10, 14))
+
+function foo6<T extends hm>(test: T) end
+>foo6 : Symbol(foo6, Decl(typeParameterConstraints1.tlua, 10, 43))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 11, 14))
+>hm : Symbol(hm)
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 11, 28))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 11, 14))
+
+function foo7<T extends table>(test: T) end -- valid
+>foo7 : Symbol(foo7, Decl(typeParameterConstraints1.tlua, 11, 40))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 12, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 12, 31))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 12, 14))
+
+function foo8<T extends "">(test: T) end
+>foo8 : Symbol(foo8, Decl(typeParameterConstraints1.tlua, 12, 43))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 13, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 13, 28))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 13, 14))
+
+function foo9<T extends 1>(test: T) end
+>foo9 : Symbol(foo9, Decl(typeParameterConstraints1.tlua, 13, 40))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 14, 14))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 14, 27))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 14, 14))
+
+function foo10<T extends (1)>(test: T) end
+>foo10 : Symbol(foo10, Decl(typeParameterConstraints1.tlua, 14, 39))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 15, 15))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 15, 30))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 15, 15))
+
+function foo11<T extends nil>(test: T) end
+>foo11 : Symbol(foo11, Decl(typeParameterConstraints1.tlua, 15, 42))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 16, 15))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 16, 30))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 16, 15))
+
+function foo12<T extends nil>(test: T) end
+>foo12 : Symbol(foo12, Decl(typeParameterConstraints1.tlua, 16, 42))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 17, 15))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 17, 30))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 17, 15))
+
+function foo13<T extends void>(test: T) end
+>foo13 : Symbol(foo13, Decl(typeParameterConstraints1.tlua, 17, 42))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 18, 15))
+>test : Symbol(test, Decl(typeParameterConstraints1.tlua, 18, 31))
+>T : Symbol(T, Decl(typeParameterConstraints1.tlua, 18, 15))
+

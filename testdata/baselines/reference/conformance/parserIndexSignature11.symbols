@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/parserIndexSignature11.tlua] ////
+
+=== parserIndexSignature11.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/IndexSignatures/parserIndexSignature11.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+
+interface I {
+>I : Symbol(I, Decl(parserIndexSignature11.tlua, 0, 0))
+
+        [p]; -- Used to be indexer, now it is a computed property
+>[p] : Symbol(I[p], Decl(parserIndexSignature11.tlua, 3, 13))
+
+        [p1: string];
+>p1 : Symbol(p1, Decl(parserIndexSignature11.tlua, 5, 9))
+
+        [p2: string, p3: number];
+>p2 : Symbol(p2, Decl(parserIndexSignature11.tlua, 6, 9))
+>p3 : Symbol(p3, Decl(parserIndexSignature11.tlua, 6, 20))
+}
+

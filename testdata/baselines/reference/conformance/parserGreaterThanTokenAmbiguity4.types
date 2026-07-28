@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/parserGreaterThanTokenAmbiguity4.tlua] ////
+
+=== parserGreaterThanTokenAmbiguity4.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserGreaterThanTokenAmbiguity4.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: the malformed split greater-than token sequence is parsed for diagnostics but has no valid Lua lowering.
+-- dropped: emit coverage because the recovered relational expression emits invalid Lua.
+
+local _ = 1 >
+>_ : boolean
+>1 >> 2 : boolean
+>1 > : boolean
+>1 : 1
+
+> 2
+> : any
+>2 : 2
+

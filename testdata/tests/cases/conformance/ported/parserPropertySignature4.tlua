@@ -1,0 +1,6 @@
+-- ported from tests/cases/conformance/parser/ecmascript5/PropertySignatures/parserPropertySignature4.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I {
+    D?: any
+}

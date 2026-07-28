@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/overloadOnConstInheritance3.tlua] ////
+
+=== overloadOnConstInheritance3.tlua ===
+-- ported from tests/cases/compiler/overloadOnConstInheritance3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Base {
+    addEventListener(x: string): any
+>addEventListener : (x: string) => any
+>x : string
+}
+
+interface Deriver extends Base {
+    -- shouldn't need to redeclare the string overload
+    addEventListener(x: 'bar'): string
+>addEventListener : { (x: 'bar'): string; (x: 'foo'): string; }
+>x : "bar"
+
+    addEventListener(x: 'foo'): string
+>addEventListener : { (x: 'bar'): string; (x: 'foo'): string; }
+>x : "foo"
+}
+

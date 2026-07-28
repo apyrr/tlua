@@ -1,0 +1,59 @@
+//// [tests/cases/conformance/ported/specializedSignatureOverloadReturnTypeWithIndexers.tlua] ////
+
+=== specializedSignatureOverloadReturnTypeWithIndexers.tlua ===
+-- ported from tests/cases/compiler/specializedSignatureOverloadReturnTypeWithIndexers.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+>A : Symbol(A, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 0, 0))
+
+    f(p: string): { [p: string]: string }
+>f : Symbol(A.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 3, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 4, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 4, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 4, 21))
+
+    f(p: "spec"): { [p: string]: any } -- Should be ok
+>f : Symbol(A.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 3, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 4, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 5, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 5, 21))
+}
+interface B {
+>B : Symbol(B, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 6, 1))
+
+    f(p: string): { [p: number]: string }
+>f : Symbol(B.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 7, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 8, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 8, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 8, 21))
+
+    f(p: "spec"): { [p: string]: any } -- Should be ok
+>f : Symbol(B.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 7, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 8, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 9, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 9, 21))
+}
+interface C {
+>C : Symbol(C, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 10, 1))
+
+    f(p: string): { [p: number]: string }
+>f : Symbol(C.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 11, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 12, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 12, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 12, 21))
+
+    f(p: "spec"): { [p: number]: any } -- Should be ok
+>f : Symbol(C.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 11, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 12, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 13, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 13, 21))
+}
+interface D {
+>D : Symbol(D, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 14, 1))
+
+    f(p: string): { [p: string]: string }
+>f : Symbol(D.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 15, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 16, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 16, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 16, 21))
+
+    f(p: "spec"): { [p: number]: any } -- Should be error
+>f : Symbol(D.f, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 15, 13), Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 16, 41))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 17, 6))
+>p : Symbol(p, Decl(specializedSignatureOverloadReturnTypeWithIndexers.tlua, 17, 21))
+}
+

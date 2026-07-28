@@ -1,0 +1,17 @@
+functionOverloadImplementationOfWrongName2.tlua(5,10): error TLUA2389: Function implementation name must be 'foo'.
+functionOverloadImplementationOfWrongName2.tlua(7,10): error TLUA2391: Function implementation is missing or not immediately following the declaration.
+
+
+==== functionOverloadImplementationOfWrongName2.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/functionOverloadImplementationOfWrongName2.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+    
+    function foo(x: any): any;
+    function bar(): any
+             ~~~
+!!! error TLUA2389: Function implementation name must be 'foo'.
+    end
+    function foo(x: any, y: any): any;
+             ~~~
+!!! error TLUA2391: Function implementation is missing or not immediately following the declaration.
+    

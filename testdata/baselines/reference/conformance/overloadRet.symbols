@@ -1,0 +1,44 @@
+//// [tests/cases/conformance/ported/overloadRet.tlua] ////
+
+=== overloadRet.tlua ===
+-- ported from tests/cases/compiler/overloadRet.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I {
+>I : Symbol(I, Decl(overloadRet.tlua, 0, 0))
+
+    f(s: string): number
+>f : Symbol(I.f, Decl(overloadRet.tlua, 3, 13), Decl(overloadRet.tlua, 4, 24))
+>s : Symbol(s, Decl(overloadRet.tlua, 4, 6))
+
+    f(n: number): string
+>f : Symbol(I.f, Decl(overloadRet.tlua, 3, 13), Decl(overloadRet.tlua, 4, 24))
+>n : Symbol(n, Decl(overloadRet.tlua, 5, 6))
+
+    g(n: number): any
+>g : Symbol(I.g, Decl(overloadRet.tlua, 5, 24), Decl(overloadRet.tlua, 6, 21))
+>n : Symbol(n, Decl(overloadRet.tlua, 6, 6))
+
+    g(n: number, m: number): string
+>g : Symbol(I.g, Decl(overloadRet.tlua, 5, 24), Decl(overloadRet.tlua, 6, 21))
+>n : Symbol(n, Decl(overloadRet.tlua, 7, 6))
+>m : Symbol(m, Decl(overloadRet.tlua, 7, 16))
+
+    h(n: number): I
+>h : Symbol(I.h, Decl(overloadRet.tlua, 7, 35), Decl(overloadRet.tlua, 8, 19))
+>n : Symbol(n, Decl(overloadRet.tlua, 8, 6))
+>I : Symbol(I, Decl(overloadRet.tlua, 0, 0))
+
+    h(b: boolean): number
+>h : Symbol(I.h, Decl(overloadRet.tlua, 7, 35), Decl(overloadRet.tlua, 8, 19))
+>b : Symbol(b, Decl(overloadRet.tlua, 9, 6))
+
+    i(b: boolean): number
+>i : Symbol(I.i, Decl(overloadRet.tlua, 9, 25), Decl(overloadRet.tlua, 10, 25))
+>b : Symbol(b, Decl(overloadRet.tlua, 10, 6))
+
+    i(b: boolean): any
+>i : Symbol(I.i, Decl(overloadRet.tlua, 9, 25), Decl(overloadRet.tlua, 10, 25))
+>b : Symbol(b, Decl(overloadRet.tlua, 11, 6))
+}
+

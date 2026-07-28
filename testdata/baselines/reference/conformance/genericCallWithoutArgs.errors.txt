@@ -1,0 +1,19 @@
+genericCallWithoutArgs.tlua(9,2): error TLUA1477: An instantiation expression cannot be followed by a property access.
+genericCallWithoutArgs.tlua(9,19): error TLUA1003: Identifier expected.
+
+
+==== genericCallWithoutArgs.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/genericCallWithoutArgs.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: emit coverage (noEmit) — malformed member-access recovery has no valid Lua lowering
+    
+    
+    function f<X, Y>(x: X, y: Y)
+    end
+    
+    f<number, string>.
+     ~~~~~~~~~~~~~~~~
+!!! error TLUA1477: An instantiation expression cannot be followed by a property access.
+                      
+!!! error TLUA1003: Identifier expected.
+    

@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/functionCall18.tlua] ////
+
+=== functionCall18.tlua ===
+-- ported from tests/cases/compiler/functionCall18.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- Repro from #26835: generic and non-generic overload resolution.
+declare function foo<T>(a: T, b: T): any
+>foo : Symbol(foo, Decl(functionCall18.tlua, 0, 0), Decl(functionCall18.tlua, 3, 40))
+>T : Symbol(T, Decl(functionCall18.tlua, 3, 21))
+>a : Symbol(a, Decl(functionCall18.tlua, 3, 24))
+>T : Symbol(T, Decl(functionCall18.tlua, 3, 21))
+>b : Symbol(b, Decl(functionCall18.tlua, 3, 29))
+>T : Symbol(T, Decl(functionCall18.tlua, 3, 21))
+
+declare function foo(a: table): any
+>foo : Symbol(foo, Decl(functionCall18.tlua, 0, 0), Decl(functionCall18.tlua, 3, 40))
+>a : Symbol(a, Decl(functionCall18.tlua, 4, 21))
+
+foo<string>("hello")
+>foo : Symbol(foo, Decl(functionCall18.tlua, 0, 0), Decl(functionCall18.tlua, 3, 40))
+

@@ -1,0 +1,9 @@
+-- ported from tests/cases/compiler/arrayLiteralInNonVarArgParameter.ts
+-- dropped: the TypeScript rest-array annotation is tlua's scalar vararg annotation, and the [] array literal is a {} table constructor.
+
+// @target: esnext
+
+function panic(val: string[], ...: string)
+end
+
+panic({}, "one", "two")

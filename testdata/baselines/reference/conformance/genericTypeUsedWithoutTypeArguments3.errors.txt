@@ -1,0 +1,12 @@
+genericTypeUsedWithoutTypeArguments3.tlua(5,26): error TLUA2314: Generic type 'Foo<T>' requires 1 type argument(s).
+
+
+==== genericTypeUsedWithoutTypeArguments3.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/genericTypeUsedWithoutTypeArguments3.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Foo<T> { }
+    interface Bar<T> extends Foo { }
+                             ~~~
+!!! error TLUA2314: Generic type 'Foo<T>' requires 1 type argument(s).
+    

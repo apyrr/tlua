@@ -1,0 +1,20 @@
+parserAmbiguity1.tlua(4,1): error TLUA2304: Cannot find name 'f'.
+parserAmbiguity1.tlua(4,3): error TLUA2304: Cannot find name 'g'.
+parserAmbiguity1.tlua(4,5): error TLUA2304: Cannot find name 'A'.
+parserAmbiguity1.tlua(4,8): error TLUA2304: Cannot find name 'B'.
+
+
+==== parserAmbiguity1.tlua (4 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserAmbiguity1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    f(g<A, B>(7))
+    ~
+!!! error TLUA2304: Cannot find name 'f'.
+      ~
+!!! error TLUA2304: Cannot find name 'g'.
+        ~
+!!! error TLUA2304: Cannot find name 'A'.
+           ~
+!!! error TLUA2304: Cannot find name 'B'.
+    

@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/typeParameterAssignability.tlua] ////
+
+=== typeParameterAssignability.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/assignmentCompatibility/typeParameterAssignability.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- type parameters are not assignable to one another unless directly or indirectly constrained to one another
+function foo<T, U>(t: T, u: U): void
+>foo : Symbol(foo, Decl(typeParameterAssignability.tlua, 0, 0))
+>T : Symbol(T, Decl(typeParameterAssignability.tlua, 4, 13))
+>U : Symbol(U, Decl(typeParameterAssignability.tlua, 4, 15))
+>t : Symbol(t, Decl(typeParameterAssignability.tlua, 4, 19))
+>T : Symbol(T, Decl(typeParameterAssignability.tlua, 4, 13))
+>u : Symbol(u, Decl(typeParameterAssignability.tlua, 4, 24))
+>U : Symbol(U, Decl(typeParameterAssignability.tlua, 4, 15))
+
+    t = u -- error
+>t : Symbol(t, Decl(typeParameterAssignability.tlua, 4, 19))
+>u : Symbol(u, Decl(typeParameterAssignability.tlua, 4, 24))
+
+    u = t -- error
+>u : Symbol(u, Decl(typeParameterAssignability.tlua, 4, 24))
+>t : Symbol(t, Decl(typeParameterAssignability.tlua, 4, 19))
+
+end
+

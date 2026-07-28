@@ -1,0 +1,16 @@
+//// [tests/cases/conformance/ported/commentOnExpressionStatement1.tlua] ////
+
+//// [commentOnExpressionStatement1.tlua]
+-- ported from tests/cases/compiler/commentOnExpressionStatement1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: bare expression-statement form (tlua requires values to bind to local names)
+
+
+local _ = 1 + 1 -- Comment.
+
+
+//// [commentOnExpressionStatement1.lua]
+-- ported from tests/cases/compiler/commentOnExpressionStatement1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: bare expression-statement form (tlua requires values to bind to local names)
+local _ = 1 + 1; -- Comment.

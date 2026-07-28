@@ -1,0 +1,19 @@
+FunctionDeclaration6.tlua(6,14): error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
+FunctionDeclaration6.tlua(7,14): error TLUA2389: Function implementation name must be 'foo'.
+
+
+==== FunctionDeclaration6.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/FunctionDeclaration6.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: C-style statement block rewritten as Lua `do`/`end`
+    
+    do
+        function foo();
+                 ~~~
+!!! error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
+        function bar()
+                 ~~~
+!!! error TLUA2389: Function implementation name must be 'foo'.
+        end
+    end
+    

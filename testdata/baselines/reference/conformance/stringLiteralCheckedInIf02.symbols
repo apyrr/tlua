@@ -1,0 +1,46 @@
+//// [tests/cases/conformance/ported/stringLiteralCheckedInIf02.tlua] ////
+
+=== stringLiteralCheckedInIf02.tlua ===
+-- ported from tests/cases/conformance/types/stringLiteral/stringLiteralCheckedInIf02.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type S = "a" | "b"
+>S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
+
+type T = S[] | S
+>T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 3, 18))
+>S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
+>S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
+
+function isS(t: T): t is S
+>isS : Symbol(isS, Decl(stringLiteralCheckedInIf02.tlua, 4, 16))
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
+>T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 3, 18))
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
+>S : Symbol(S, Decl(stringLiteralCheckedInIf02.tlua, 0, 0))
+
+    return t == "a" or t == "b"
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
+>t : Symbol(t, Decl(stringLiteralCheckedInIf02.tlua, 6, 13))
+
+end
+
+function f(foo: T)
+>f : Symbol(f, Decl(stringLiteralCheckedInIf02.tlua, 8, 3))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
+>T : Symbol(T, Decl(stringLiteralCheckedInIf02.tlua, 3, 18))
+
+    if isS(foo) then
+>isS : Symbol(isS, Decl(stringLiteralCheckedInIf02.tlua, 4, 16))
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
+
+        return foo
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
+
+    else
+        return foo[0]
+>foo : Symbol(foo, Decl(stringLiteralCheckedInIf02.tlua, 10, 11))
+
+    end
+end
+

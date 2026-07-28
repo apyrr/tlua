@@ -1,0 +1,18 @@
+computedPropertyNames35_ES6.tlua(7,5): error TLUA1169: A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.
+computedPropertyNames35_ES6.tlua(7,10): error TLUA2467: A computed property name cannot reference a type parameter from its containing type.
+
+
+==== computedPropertyNames35_ES6.tlua (2 errors) ====
+    -- ported from tests/cases/conformance/es6/computedProperties/computedPropertyNames35_ES6.ts
+    -- dropped: @target: es6 directive (tlua defaults to latest target)
+    
+    function foo<T>() return '' end
+    interface I<T> {
+        bar(): string
+        [foo<T>()](): void
+        ~~~~~~~~~~
+!!! error TLUA1169: A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.
+             ~
+!!! error TLUA2467: A computed property name cannot reference a type parameter from its containing type.
+    }
+    

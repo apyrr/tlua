@@ -1,0 +1,18 @@
+-- ported from tests/cases/compiler/typePredicatesInUnion.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+    pred(x: {}): x is boolean
+}
+
+interface B {
+    pred(x: {}): x is string
+}
+
+type Or = A | B
+
+function f(o: Or, x: {})
+    if o.pred(x) then
+        local narrowed = x
+    end
+end

@@ -1,0 +1,22 @@
+parametersSyntaxErrorNoCrash1.tlua(7,28): error TLUA1005: ',' expected.
+parametersSyntaxErrorNoCrash1.tlua(7,30): error TLUA7006: Parameter 'T' implicitly has an 'any' type.
+parametersSyntaxErrorNoCrash1.tlua(8,5): error TLUA1005: ',' expected.
+
+
+==== parametersSyntaxErrorNoCrash1.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/parametersSyntaxErrorNoCrash1.ts
+    -- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode)
+    
+    -- @noEmit: true
+    -- @noTypesAndSymbols: true
+    
+    function identity<T>(arg: T: T
+                               ~
+!!! error TLUA1005: ',' expected.
+                                 ~
+!!! error TLUA7006: Parameter 'T' implicitly has an 'any' type.
+        return arg
+        ~~~~~~
+!!! error TLUA1005: ',' expected.
+    end
+    

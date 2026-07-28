@@ -1,0 +1,11 @@
+parserErrorRecovery_ExtendsOrImplementsClause6.tlua(4,20): error TLUA1097: 'extends' list cannot be empty.
+
+
+==== parserErrorRecovery_ExtendsOrImplementsClause6.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ExtendsOrImplementsClauses/parserErrorRecovery_ExtendsOrImplementsClause6.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface I extends { }
+                       
+!!! error TLUA1097: 'extends' list cannot be empty.
+    

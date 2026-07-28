@@ -1,0 +1,77 @@
+//// [tests/cases/conformance/ported/typeInferenceWithExcessProperties.tlua] ////
+
+=== typeInferenceWithExcessProperties.tlua ===
+-- ported from tests/cases/compiler/typeInferenceWithExcessProperties.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: object-literal method shorthand, rewritten as function-valued properties
+
+interface Named {
+    name: string
+>name : string
+}
+
+function parrot<T extends Named>(obj: T): T
+>parrot : <T extends Named>(obj: T) => T
+>obj : T
+
+    return obj
+>obj : T
+
+end
+
+parrot({
+>parrot({    name = "TypeScript"}) : { name: string; }
+>parrot : <T extends Named>(obj: T) => T
+>{    name = "TypeScript"} : { name: string; }
+
+    name = "TypeScript"
+>name : string
+>"TypeScript" : "TypeScript"
+
+})
+
+parrot({
+>parrot({    name = "TypeScript",    age = 5}) : { name: string; age: number; }
+>parrot : <T extends Named>(obj: T) => T
+>{    name = "TypeScript",    age = 5} : { name: string; age: number; }
+
+    name = "TypeScript",
+>name : string
+>"TypeScript" : "TypeScript"
+
+    age = 5
+>age : number
+>5 : 5
+
+})
+
+parrot({
+>parrot({    name = "TypeScript",    age = function() end}) : { name: string; age: () => void; }
+>parrot : <T extends Named>(obj: T) => T
+>{    name = "TypeScript",    age = function() end} : { name: string; age: () => void; }
+
+    name = "TypeScript",
+>name : string
+>"TypeScript" : "TypeScript"
+
+    age = function() end
+>age : () => void
+>function() end : () => void
+
+})
+
+parrot({
+>parrot({    name = "TypeScript",    sayHello = function() end}) : { name: string; sayHello: () => void; }
+>parrot : <T extends Named>(obj: T) => T
+>{    name = "TypeScript",    sayHello = function() end} : { name: string; sayHello: () => void; }
+
+    name = "TypeScript",
+>name : string
+>"TypeScript" : "TypeScript"
+
+    sayHello = function() end
+>sayHello : () => void
+>function() end : () => void
+
+})
+

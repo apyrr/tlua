@@ -1,0 +1,52 @@
+//// [tests/cases/conformance/ported/genericUnboundedTypeParamAssignability.tlua] ////
+
+=== genericUnboundedTypeParamAssignability.tlua ===
+-- ported from tests/cases/compiler/genericUnboundedTypeParamAssignability.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: Object.prototype.toString behavior (JavaScript-only lib surface)
+
+function f1<T>(o: T)
+>f1 : Symbol(f1, Decl(genericUnboundedTypeParamAssignability.tlua, 0, 0))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 4, 12))
+>o : Symbol(o, Decl(genericUnboundedTypeParamAssignability.tlua, 4, 15))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 4, 12))
+
+end
+
+function f2<T extends {}>(o: T)
+>f2 : Symbol(f2, Decl(genericUnboundedTypeParamAssignability.tlua, 5, 3))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 7, 12))
+>o : Symbol(o, Decl(genericUnboundedTypeParamAssignability.tlua, 7, 26))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 7, 12))
+
+end
+
+function f3<T extends Record<string, any>>(o: T)
+>f3 : Symbol(f3, Decl(genericUnboundedTypeParamAssignability.tlua, 8, 3))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 10, 12))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>o : Symbol(o, Decl(genericUnboundedTypeParamAssignability.tlua, 10, 43))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 10, 12))
+
+end
+
+function user<T>(t: T)
+>user : Symbol(user, Decl(genericUnboundedTypeParamAssignability.tlua, 11, 3))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 13, 14))
+>t : Symbol(t, Decl(genericUnboundedTypeParamAssignability.tlua, 13, 17))
+>T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.tlua, 13, 14))
+
+    f1(t)
+>f1 : Symbol(f1, Decl(genericUnboundedTypeParamAssignability.tlua, 0, 0))
+>t : Symbol(t, Decl(genericUnboundedTypeParamAssignability.tlua, 13, 17))
+
+    f2(t) -- error in strict, unbounded T doesn't satisfy the constraint
+>f2 : Symbol(f2, Decl(genericUnboundedTypeParamAssignability.tlua, 5, 3))
+>t : Symbol(t, Decl(genericUnboundedTypeParamAssignability.tlua, 13, 17))
+
+    f3(t) -- error in strict, unbounded T doesn't satisfy the constraint
+>f3 : Symbol(f3, Decl(genericUnboundedTypeParamAssignability.tlua, 8, 3))
+>t : Symbol(t, Decl(genericUnboundedTypeParamAssignability.tlua, 13, 17))
+
+end
+

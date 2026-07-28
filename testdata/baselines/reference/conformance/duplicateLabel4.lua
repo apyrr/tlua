@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/duplicateLabel4.tlua] ////
+
+//// [duplicateLabel4.tlua]
+-- ported from tests/cases/compiler/duplicateLabel4.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+
+
+::target::
+while true do
+end
+
+::target::
+while true do
+end
+
+
+//// [duplicateLabel4.lua]
+-- ported from tests/cases/compiler/duplicateLabel4.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+::target::
+while true do
+end
+::target::
+while true do
+end

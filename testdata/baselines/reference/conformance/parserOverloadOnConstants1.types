@@ -1,0 +1,46 @@
+//// [tests/cases/conformance/ported/parserOverloadOnConstants1.tlua] ////
+
+=== parserOverloadOnConstants1.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/parserOverloadOnConstants1.ts
+-- dropped: the original interface overloaded on the DOM `Document.createElement` family
+--   (HTMLElement/HTMLCanvasElement/HTMLDivElement/HTMLSpanElement); DOM lib is out of scope
+--   for tlua, so the overload-on-string-literal-constants shape is kept using local interfaces
+
+interface Widget {
+	kind: string;
+>kind : string
+}
+
+interface CanvasWidget extends Widget {
+	kind: "canvas";
+>kind : "canvas"
+}
+
+interface DivWidget extends Widget {
+	kind: "div";
+>kind : "div"
+}
+
+interface SpanWidget extends Widget {
+	kind: "span";
+>kind : "span"
+}
+
+interface Factory {
+	createWidget(name: string): Widget;
+>createWidget : { (name: string): Widget; (name: "canvas"): CanvasWidget; (name: "div"): DivWidget; (name: "span"): SpanWidget; }
+>name : string
+
+	createWidget(name: "canvas"): CanvasWidget;
+>createWidget : { (name: string): Widget; (name: "canvas"): CanvasWidget; (name: "div"): DivWidget; (name: "span"): SpanWidget; }
+>name : "canvas"
+
+	createWidget(name: "div"): DivWidget;
+>createWidget : { (name: string): Widget; (name: "canvas"): CanvasWidget; (name: "div"): DivWidget; (name: "span"): SpanWidget; }
+>name : "div"
+
+	createWidget(name: "span"): SpanWidget;
+>createWidget : { (name: string): Widget; (name: "canvas"): CanvasWidget; (name: "div"): DivWidget; (name: "span"): SpanWidget; }
+>name : "span"
+}
+

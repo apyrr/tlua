@@ -1,0 +1,39 @@
+//// [tests/cases/conformance/ported/homomorphicMappedTypeIntersectionAssignability.tlua] ////
+
+=== homomorphicMappedTypeIntersectionAssignability.tlua ===
+-- ported from tests/cases/compiler/homomorphicMappedTypeIntersectionAssignability.ts
+-- dropped: @target: es2015 and @strict: true directives (tlua defaults to latest target and strict checking)
+
+function f<TType>(
+>f : Symbol(f, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 0, 0))
+>TType : Symbol(TType, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 3, 11))
+
+    a: { weak?: string } & Readonly<TType> & { name: "ok" },
+>a : Symbol(a, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 3, 18))
+>weak : Symbol(weak, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 4, 8))
+>Readonly : Symbol(Readonly, Decl(lib.luajit.d.tlua, --, --))
+>TType : Symbol(TType, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 3, 11))
+>name : Symbol(name, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 4, 46))
+
+    b: Readonly<TType & { name: string }>,
+>b : Symbol(b, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 4, 60))
+>Readonly : Symbol(Readonly, Decl(lib.luajit.d.tlua, --, --))
+>TType : Symbol(TType, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 3, 11))
+>name : Symbol(name, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 5, 25))
+
+    c: Readonly<TType> & { name: string })
+>c : Symbol(c, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 5, 42))
+>Readonly : Symbol(Readonly, Decl(lib.luajit.d.tlua, --, --))
+>TType : Symbol(TType, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 3, 11))
+>name : Symbol(name, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 6, 26))
+
+    c = a -- Works
+>c : Symbol(c, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 5, 42))
+>a : Symbol(a, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 3, 18))
+
+    b = a -- Should also work
+>b : Symbol(b, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 4, 60))
+>a : Symbol(a, Decl(homomorphicMappedTypeIntersectionAssignability.tlua, 3, 18))
+
+end
+

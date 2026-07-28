@@ -1,0 +1,45 @@
+typeArgumentConstraintResolution1.tlua(17,10): error TLUA7010: 'foo1', which lacks return-type annotation, implicitly has an 'any' return type.
+typeArgumentConstraintResolution1.tlua(18,10): error TLUA7010: 'foo1', which lacks return-type annotation, implicitly has an 'any' return type.
+typeArgumentConstraintResolution1.tlua(21,22): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'DateConstraint'.
+typeArgumentConstraintResolution1.tlua(29,22): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'DateConstraint'.
+
+
+==== typeArgumentConstraintResolution1.tlua (4 errors) ====
+    -- ported from tests/cases/compiler/typeArgumentConstraintResolution1.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+    -- dropped: JavaScript Date/Number/String wrapper constraints, replaced with local structural constraint interfaces
+    
+    interface DateConstraint {
+        date: string
+    }
+    
+    interface NumberConstraint {
+        number: number
+    }
+    
+    interface StringConstraint {
+        string: string
+    }
+    
+    function foo1<T extends DateConstraint>(test: T);
+             ~~~~
+!!! error TLUA7010: 'foo1', which lacks return-type annotation, implicitly has an 'any' return type.
+    function foo1<T extends NumberConstraint>(test: string);
+             ~~~~
+!!! error TLUA7010: 'foo1', which lacks return-type annotation, implicitly has an 'any' return type.
+    function foo1<T extends StringConstraint>(test: any) end
+    
+    foo1<DateConstraint>("") -- should error
+                         ~~
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'DateConstraint'.
+    
+    function foo2<T extends DateConstraint>(test: T): T;
+    function foo2<T extends NumberConstraint>(test: string): T;
+    function foo2<T extends StringConstraint>(test: any): any
+        return nil
+    end
+    
+    foo2<DateConstraint>("") -- DateConstraint does not satisfy the constraint NumberConstraint for T
+                         ~~
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'DateConstraint'.
+    

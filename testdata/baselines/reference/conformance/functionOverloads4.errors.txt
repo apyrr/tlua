@@ -1,0 +1,15 @@
+functionOverloads4.tlua(4,10): error TLUA2394: This overload signature is not compatible with its implementation signature.
+
+
+==== functionOverloads4.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/functionOverloads4.ts
+    -- dropped: @target: es2015 directive (tlua defaults to esnext)
+    
+    function foo(): number;
+             ~~~
+!!! error TLUA2394: This overload signature is not compatible with its implementation signature.
+!!! related TLUA2750 functionOverloads4.tlua:5:10: The implementation signature is declared here.
+    function foo(): string
+        return "a"
+    end
+    

@@ -1,0 +1,48 @@
+//// [tests/cases/conformance/ported/errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua] ////
+
+=== errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua ===
+-- ported from tests/cases/compiler/errorElaborationDivesIntoApparentlyPresentPropsOnly.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (tlua strictness is fixed by the harness)
+
+function foo<T extends { a: string }>(x: T)
+>foo : Symbol(foo, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 0, 0))
+>T : Symbol(T, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 4, 13))
+>a : Symbol(a, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 4, 24))
+>x : Symbol(x, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 4, 38))
+>T : Symbol(T, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 4, 13))
+
+    x = { a = "abc", b = 20, c = 30 }
+>x : Symbol(x, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 4, 38))
+>a : Symbol(a, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 5, 9))
+>b : Symbol(b, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 5, 20))
+>c : Symbol(c, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 5, 28))
+
+end
+
+function bar<T extends { a: string }>(x: T)
+>bar : Symbol(bar, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 6, 3))
+>T : Symbol(T, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 8, 13))
+>a : Symbol(a, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 8, 24))
+>x : Symbol(x, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 8, 38))
+>T : Symbol(T, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 8, 13))
+
+    x = { a = 20 }
+>x : Symbol(x, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 8, 38))
+>a : Symbol(a, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 9, 9))
+
+end
+
+function baz<T extends { a: string }>(x: T)
+>baz : Symbol(baz, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 10, 3))
+>T : Symbol(T, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 12, 13))
+>a : Symbol(a, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 12, 24))
+>x : Symbol(x, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 12, 38))
+>T : Symbol(T, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 12, 13))
+
+    x = { a = "not ok" }
+>x : Symbol(x, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 12, 38))
+>a : Symbol(a, Decl(errorElaborationDivesIntoApparentlyPresentPropsOnly.tlua, 13, 9))
+
+end
+

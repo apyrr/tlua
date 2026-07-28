@@ -1,0 +1,30 @@
+//// [tests/cases/conformance/ported/interfacePropertiesWithSameName1.tlua] ////
+
+=== interfacePropertiesWithSameName1.tlua ===
+-- ported from tests/cases/compiler/interfacePropertiesWithSameName1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Mover {
+    move(): void
+>move : () => void
+
+    getStatus(): { speed: number }
+>getStatus : () => { speed: number; }
+>speed : number
+}
+interface Shaker {
+    shake(): void
+>shake : () => void
+
+    getStatus(): { frequency: number }
+>getStatus : () => { frequency: number; }
+>frequency : number
+}
+
+interface MoverShaker extends Mover, Shaker {
+    getStatus(): { speed: number, frequency: number }
+>getStatus : () => { speed: number; frequency: number; }
+>speed : number
+>frequency : number
+}
+

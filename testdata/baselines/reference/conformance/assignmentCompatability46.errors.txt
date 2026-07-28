@@ -1,0 +1,17 @@
+assignmentCompatability46.tlua(6,4): error TLUA2345: Argument of type '{ 1: number; 2: number; 3: number; }' is not assignable to parameter of type 'never'.
+assignmentCompatability46.tlua(7,4): error TLUA2345: Argument of type '{ a: number; b: number; }' is not assignable to parameter of type 'never'.
+
+
+==== assignmentCompatability46.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/assignmentCompatability46.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    declare function fn(x: never): void
+    
+    fn({ 1, 2, 3 })
+       ~~~~~~~~~~~
+!!! error TLUA2345: Argument of type '{ 1: number; 2: number; 3: number; }' is not assignable to parameter of type 'never'.
+    fn({ a = 1, b = 2 })
+       ~~~~~~~~~~~~~~~~
+!!! error TLUA2345: Argument of type '{ a: number; b: number; }' is not assignable to parameter of type 'never'.
+    

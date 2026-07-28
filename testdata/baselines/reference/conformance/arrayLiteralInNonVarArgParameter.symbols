@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/arrayLiteralInNonVarArgParameter.tlua] ////
+
+=== arrayLiteralInNonVarArgParameter.tlua ===
+-- ported from tests/cases/compiler/arrayLiteralInNonVarArgParameter.ts
+-- dropped: the TypeScript rest-array annotation is tlua's scalar vararg annotation, and the [] array literal is a {} table constructor.
+
+
+function panic(val: string[], ...: string)
+>panic : Symbol(panic, Decl(arrayLiteralInNonVarArgParameter.tlua, 0, 0))
+>val : Symbol(val, Decl(arrayLiteralInNonVarArgParameter.tlua, 4, 15))
+> : Symbol((Missing), Decl(arrayLiteralInNonVarArgParameter.tlua, 4, 29))
+
+end
+
+panic({}, "one", "two")
+>panic : Symbol(panic, Decl(arrayLiteralInNonVarArgParameter.tlua, 0, 0))
+

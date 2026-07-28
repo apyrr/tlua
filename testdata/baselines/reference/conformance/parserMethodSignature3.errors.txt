@@ -1,0 +1,13 @@
+parserMethodSignature3.tlua(5,5): error TLUA7010: 'C', which lacks return-type annotation, implicitly has an 'any' return type.
+
+
+==== parserMethodSignature3.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/MethodSignatures/parserMethodSignature3.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict checking)
+    
+    interface I {
+        C<T>()
+        ~~~~~~
+!!! error TLUA7010: 'C', which lacks return-type annotation, implicitly has an 'any' return type.
+    }
+    

@@ -1,0 +1,16 @@
+errorTypesAsTypeArguments.tlua(5,18): error TLUA2304: Cannot find name 'B'.
+errorTypesAsTypeArguments.tlua(5,27): error TLUA2304: Cannot find name 'C'.
+
+
+==== errorTypesAsTypeArguments.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/errorTypesAsTypeArguments.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Foo<A> {
+        bar(baz: Foo<B>): Foo<C>
+                     ~
+!!! error TLUA2304: Cannot find name 'B'.
+                              ~
+!!! error TLUA2304: Cannot find name 'C'.
+    }
+    

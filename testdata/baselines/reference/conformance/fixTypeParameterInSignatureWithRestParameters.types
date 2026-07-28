@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/fixTypeParameterInSignatureWithRestParameters.tlua] ////
+
+=== fixTypeParameterInSignatureWithRestParameters.tlua ===
+-- ported from tests/cases/compiler/fixTypeParameterInSignatureWithRestParameters.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function bar<T>(item1: T, item2: T)
+>bar : <T>(item1: T, item2: T) => void
+>item1 : T
+>item2 : T
+
+end
+
+bar(1, "") -- Should be ok
+>bar(1, "") : void
+>bar : <T>(item1: T, item2: T) => void
+>1 : 1
+>"" : ""
+

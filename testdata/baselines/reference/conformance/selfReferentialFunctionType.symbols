@@ -1,0 +1,30 @@
+//// [tests/cases/conformance/ported/selfReferentialFunctionType.tlua] ////
+
+=== selfReferentialFunctionType.tlua ===
+-- ported from tests/cases/compiler/selfReferentialFunctionType.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: tlua declaration emit is unsupported for this ambient generic-function test.
+-- dropped: declaration-output coverage; checker coverage is retained.
+
+declare function f<T>(args: typeof f<T>): T
+>f : Symbol(f, Decl(selfReferentialFunctionType.tlua, 0, 0))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 5, 19))
+>args : Symbol(args, Decl(selfReferentialFunctionType.tlua, 5, 22))
+>f : Symbol(f, Decl(selfReferentialFunctionType.tlua, 0, 0))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 5, 19))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 5, 19))
+
+declare function g<T = typeof g>(args: T): T
+>g : Symbol(g, Decl(selfReferentialFunctionType.tlua, 5, 43))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 6, 19))
+>g : Symbol(g, Decl(selfReferentialFunctionType.tlua, 5, 43))
+>args : Symbol(args, Decl(selfReferentialFunctionType.tlua, 6, 33))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 6, 19))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 6, 19))
+
+declare function h<T>(): typeof h<T>
+>h : Symbol(h, Decl(selfReferentialFunctionType.tlua, 6, 44))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 7, 19))
+>h : Symbol(h, Decl(selfReferentialFunctionType.tlua, 6, 44))
+>T : Symbol(T, Decl(selfReferentialFunctionType.tlua, 7, 19))
+

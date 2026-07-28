@@ -1,0 +1,10 @@
+-- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements8.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to the latest target and strict checking)
+// @noEmit: true
+-- compiler gap: default parameters are not lowered during emit; valid source would produce invalid Lua output
+
+function foo(a = nil)
+end
+
+function bar(a = nil)
+end

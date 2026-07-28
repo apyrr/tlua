@@ -1,0 +1,15 @@
+parserInterfaceDeclaration1.tlua(4,21): error TLUA2304: Cannot find name 'A'.
+parserInterfaceDeclaration1.tlua(4,23): error TLUA1172: 'extends' clause already seen.
+
+
+==== parserInterfaceDeclaration1.tlua (2 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/InterfaceDeclarations/parserInterfaceDeclaration1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface I extends A extends B {
+                        ~
+!!! error TLUA2304: Cannot find name 'A'.
+                          ~~~~~~~
+!!! error TLUA1172: 'extends' clause already seen.
+    }
+    

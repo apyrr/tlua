@@ -1,0 +1,18 @@
+primitiveConstraints1.tlua(5,6): error TLUA2344: Type 'string' does not satisfy the constraint 'number'.
+primitiveConstraints1.tlua(8,14): error TLUA2344: Type 'string' does not satisfy the constraint 'number'.
+
+
+==== primitiveConstraints1.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/primitiveConstraints1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo1<T extends U, U>(t: T, u: U) end
+    foo1<string, number>('hm', 1) -- no error
+         ~~~~~~
+!!! error TLUA2344: Type 'string' does not satisfy the constraint 'number'.
+    
+    function foo2<T, U extends T>(t: T, u: U) end
+    foo2<number, string>(1, 'hm') -- error
+                 ~~~~~~
+!!! error TLUA2344: Type 'string' does not satisfy the constraint 'number'.
+    

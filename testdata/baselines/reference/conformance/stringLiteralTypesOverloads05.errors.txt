@@ -1,0 +1,26 @@
+stringLiteralTypesOverloads05.tlua(10,10): error TLUA2394: This overload signature is not compatible with its implementation signature.
+stringLiteralTypesOverloads05.tlua(14,5): error TLUA2322: Type 'nil' is not assignable to type 'Moose'.
+
+
+==== stringLiteralTypesOverloads05.tlua (2 errors) ====
+    -- ported from tests/cases/conformance/types/stringLiteral/stringLiteralTypesOverloads05.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: declaration emit directive (unsupported); overload compatibility and implementation return checking are retained
+    
+    interface Animal { animal: {} }
+    interface Dog extends Animal { dog: {} }
+    interface Cat extends Animal { cat: {} }
+    interface Moose extends Animal { moose: {} }
+    
+    function doThing(x: "dog"): Dog;
+             ~~~~~~~
+!!! error TLUA2394: This overload signature is not compatible with its implementation signature.
+!!! related TLUA2750 stringLiteralTypesOverloads05.tlua:13:10: The implementation signature is declared here.
+    function doThing(x: "cat"): Cat;
+    function doThing(x: string): Animal;
+    function doThing(x: string, y?: string): Moose
+        return nil
+        ~~~~~~
+!!! error TLUA2322: Type 'nil' is not assignable to type 'Moose'.
+    end
+    

@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/ported/elementAccessExpressionInternalComments.tlua] ////
+
+=== elementAccessExpressionInternalComments.tlua ===
+-- ported from tests/cases/compiler/elementAccessExpressionInternalComments.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: JavaScript Array global replaced with a neutral local table shape to preserve element-access comment coverage
+
+interface ArrayLike {
+>ArrayLike : Symbol(ArrayLike, Decl(elementAccessExpressionInternalComments.tlua, 0, 0))
+
+    toString?: function
+>toString : Symbol(ArrayLike.toString, Decl(elementAccessExpressionInternalComments.tlua, 4, 21))
+}
+local Array: ArrayLike = {}
+>Array : Symbol(Array, Decl(elementAccessExpressionInternalComments.tlua, 7, 5))
+>ArrayLike : Symbol(ArrayLike, Decl(elementAccessExpressionInternalComments.tlua, 0, 0))
+
+local _ = --[[0]] Array --[[1]][ --[[2]] "toString" --[[3]] ] --[[4]]; --[[5]]
+>_ : Symbol(_, Decl(elementAccessExpressionInternalComments.tlua, 8, 5))
+>Array : Symbol(Array, Decl(elementAccessExpressionInternalComments.tlua, 7, 5))
+>"toString" : Symbol(ArrayLike.toString, Decl(elementAccessExpressionInternalComments.tlua, 4, 21))
+
+local _ = --[[0]] Array
+>_ : Symbol(_, Decl(elementAccessExpressionInternalComments.tlua, 10, 5))
+>Array : Symbol(Array, Decl(elementAccessExpressionInternalComments.tlua, 7, 5))
+
+    -- single line
+    --[[1]][ --[[2]] "toString"
+>"toString" : Symbol(ArrayLike.toString, Decl(elementAccessExpressionInternalComments.tlua, 4, 21))
+
+    -- single line
+    --[[3]] ] --[[4]]
+

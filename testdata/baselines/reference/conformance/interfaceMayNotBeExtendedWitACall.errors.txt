@@ -1,0 +1,14 @@
+interfaceMayNotBeExtendedWitACall.tlua(6,24): error TLUA2499: An interface can only extend an identifier/qualified-name with optional type arguments.
+
+
+==== interfaceMayNotBeExtendedWitACall.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/interfaceMayNotBeExtendedWitACall.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface color {}
+    
+    interface blue extends color() { -- error
+                           ~~~~~~~
+!!! error TLUA2499: An interface can only extend an identifier/qualified-name with optional type arguments.
+    }
+    

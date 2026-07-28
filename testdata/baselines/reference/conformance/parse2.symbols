@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/parse2.tlua] ////
+
+=== parse2.tlua ===
+-- ported from tests/cases/compiler/parse2.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+
+function foo()
+>foo : Symbol(foo, Decl(parse2.tlua, 0, 0))
+
+    foo(
+>foo : Symbol(foo, Decl(parse2.tlua, 0, 0))
+
+end
+

@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/parserMethodSignature3.tlua] ////
+
+=== parserMethodSignature3.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/MethodSignatures/parserMethodSignature3.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict checking)
+
+interface I {
+>I : Symbol(I, Decl(parserMethodSignature3.tlua, 0, 0))
+
+    C<T>()
+>C : Symbol(I.C, Decl(parserMethodSignature3.tlua, 3, 13))
+>T : Symbol(T, Decl(parserMethodSignature3.tlua, 4, 6))
+}
+

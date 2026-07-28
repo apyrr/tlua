@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/parserUnterminatedGeneric1.tlua] ////
+
+=== parserUnterminatedGeneric1.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/parserUnterminatedGeneric1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface IQService {
+>IQService : Symbol(IQService, Decl(parserUnterminatedGeneric1.tlua, 0, 0))
+
+    all(promises: IPromise < any > []): IPromise<
+>all : Symbol(IQService.all, Decl(parserUnterminatedGeneric1.tlua, 3, 21))
+>promises : Symbol(promises, Decl(parserUnterminatedGeneric1.tlua, 4, 8))
+>IPromise : Symbol(IPromise)
+>IPromise : Symbol(IPromise)
+

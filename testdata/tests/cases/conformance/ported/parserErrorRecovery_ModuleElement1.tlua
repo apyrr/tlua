@@ -1,0 +1,10 @@
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ModuleElements/parserErrorRecovery_ModuleElement1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target), semicolons (optional in tlua)
+-- @noEmit: true
+-- compiler gap: parser recovery accepts a second return after a return and reports an incidental missing name while recovering stray braces.
+-- dropped: emit coverage because the recovered `return foo; return bar;` sequence is invalid Lua.
+
+return foo
+}
+return bar
+}

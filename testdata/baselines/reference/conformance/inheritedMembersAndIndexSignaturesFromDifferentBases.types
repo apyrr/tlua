@@ -1,0 +1,46 @@
+//// [tests/cases/conformance/ported/inheritedMembersAndIndexSignaturesFromDifferentBases.tlua] ////
+
+=== inheritedMembersAndIndexSignaturesFromDifferentBases.tlua ===
+-- ported from tests/cases/compiler/inheritedMembersAndIndexSignaturesFromDifferentBases.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking); implicit-any members were made explicit
+
+-- indexer in B is a subtype of indexer in A
+interface A {
+    [s: string]: {
+>s : string
+
+        a: any;
+>a : any
+
+    };
+}
+interface B {
+    [s: number]: {
+>s : number
+
+        a: any;
+>a : any
+
+        b: any;
+>b : any
+
+    };
+}
+interface C {
+    m: {};
+>m : {}
+}
+
+interface D extends A, B, C { } -- error because m is not a subtype of {a;}
+
+interface E {
+    0: {};
+>0 : {}
+}
+
+interface F extends A, B, E { } -- error because 0 is not a subtype of {a; b;}
+
+interface G extends A, B, C, E { } -- should only report one error
+
+interface H extends A, F { } -- Should report no error at all because error is internal to F
+

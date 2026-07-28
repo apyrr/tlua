@@ -1,0 +1,25 @@
+nestedIfStatement.tlua(4,4): error TLUA2872: This kind of expression is always truthy.
+nestedIfStatement.tlua(5,8): error TLUA2872: This kind of expression is always truthy.
+nestedIfStatement.tlua(6,8): error TLUA2872: This kind of expression is always truthy.
+nestedIfStatement.tlua(7,8): error TLUA2872: This kind of expression is always truthy.
+
+
+==== nestedIfStatement.tlua (4 errors) ====
+    -- ported from tests/cases/compiler/nestedIfStatement.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    if 0 then
+       ~
+!!! error TLUA2872: This kind of expression is always truthy.
+    elseif 1 then
+           ~
+!!! error TLUA2872: This kind of expression is always truthy.
+    elseif 2 then
+           ~
+!!! error TLUA2872: This kind of expression is always truthy.
+    elseif 3 then
+           ~
+!!! error TLUA2872: This kind of expression is always truthy.
+    else
+    end
+    

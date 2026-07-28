@@ -1,0 +1,16 @@
+//// [tests/cases/conformance/ported/newLineInTypeofInstantiation.tlua] ////
+
+//// [newLineInTypeofInstantiation.tlua]
+-- ported from tests/cases/compiler/newLineInTypeofInstantiation.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Example {
+    (a: number): typeof a
+
+    <T>(): void
+}
+
+
+//// [newLineInTypeofInstantiation.lua]
+-- ported from tests/cases/compiler/newLineInTypeofInstantiation.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

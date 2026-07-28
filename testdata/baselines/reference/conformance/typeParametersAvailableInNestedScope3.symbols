@@ -1,0 +1,76 @@
+//// [tests/cases/conformance/ported/typeParametersAvailableInNestedScope3.tlua] ////
+
+=== typeParametersAvailableInNestedScope3.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParametersAvailableInNestedScope3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @declaration: true (tlua does not support declaration emit for this test)
+
+
+
+function foo<T>(v: T)
+>foo : Symbol(foo, Decl(typeParametersAvailableInNestedScope3.tlua, 0, 0))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 6, 13))
+>v : Symbol(v, Decl(typeParametersAvailableInNestedScope3.tlua, 6, 16))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 6, 13))
+
+    function a<T>(a: T)
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 6, 21))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 7, 15))
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 7, 18))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 7, 15))
+
+        return a
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 7, 18))
+
+    end
+    function b(): T
+>b : Symbol(b, Decl(typeParametersAvailableInNestedScope3.tlua, 9, 7))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 6, 13))
+
+        return v
+>v : Symbol(v, Decl(typeParametersAvailableInNestedScope3.tlua, 6, 16))
+
+    end
+
+    function c<T>(v: T)
+>c : Symbol(c, Decl(typeParametersAvailableInNestedScope3.tlua, 12, 7))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 14, 15))
+>v : Symbol(v, Decl(typeParametersAvailableInNestedScope3.tlua, 14, 18))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 14, 15))
+
+        function a<T>(a: T)
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 14, 23))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 15, 19))
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 15, 22))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 15, 19))
+
+            return a
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 15, 22))
+
+        end
+        function b(): T
+>b : Symbol(b, Decl(typeParametersAvailableInNestedScope3.tlua, 17, 11))
+>T : Symbol(T, Decl(typeParametersAvailableInNestedScope3.tlua, 14, 15))
+
+            return v
+>v : Symbol(v, Decl(typeParametersAvailableInNestedScope3.tlua, 14, 18))
+
+        end
+        return { a = a, b = b }
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 21, 16))
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 14, 23))
+>b : Symbol(b, Decl(typeParametersAvailableInNestedScope3.tlua, 21, 23))
+>b : Symbol(b, Decl(typeParametersAvailableInNestedScope3.tlua, 17, 11))
+
+    end
+
+    return { a = a, b = b, c = c }
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 24, 12))
+>a : Symbol(a, Decl(typeParametersAvailableInNestedScope3.tlua, 6, 21))
+>b : Symbol(b, Decl(typeParametersAvailableInNestedScope3.tlua, 24, 19))
+>b : Symbol(b, Decl(typeParametersAvailableInNestedScope3.tlua, 9, 7))
+>c : Symbol(c, Decl(typeParametersAvailableInNestedScope3.tlua, 24, 26))
+>c : Symbol(c, Decl(typeParametersAvailableInNestedScope3.tlua, 12, 7))
+
+end
+

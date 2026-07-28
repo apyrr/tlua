@@ -1,0 +1,10 @@
+//// [tests/cases/conformance/ported/anyMappedTypesError.tlua] ////
+
+=== anyMappedTypesError.tlua ===
+-- ported from tests/cases/compiler/anyMappedTypesError.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type Foo = { [P in "bar"] }
+>Foo : Symbol(Foo, Decl(anyMappedTypesError.tlua, 0, 0))
+>P : Symbol(P, Decl(anyMappedTypesError.tlua, 3, 14))
+

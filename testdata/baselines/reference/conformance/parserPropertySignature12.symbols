@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/parserPropertySignature12.tlua] ////
+
+=== parserPropertySignature12.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/PropertySignatures/parserPropertySignature12.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+
+interface I {
+>I : Symbol(I, Decl(parserPropertySignature12.tlua, 0, 0))
+
+    3?: any
+>3 : Symbol(I[3], Decl(parserPropertySignature12.tlua, 3, 13))
+}
+

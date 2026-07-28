@@ -1,0 +1,26 @@
+parserParameterList15.tlua(4,10): error TLUA2394: This overload signature is not compatible with its implementation signature.
+parserParameterList15.tlua(4,10): error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
+parserParameterList15.tlua(4,14): error TLUA2371: A parameter initializer is only allowed in a function or constructor implementation.
+parserParameterList15.tlua(5,14): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+parserParameterList15.tlua(5,17): error TLUA7006: Parameter 'b' implicitly has an 'any' type.
+
+
+==== parserParameterList15.tlua (5 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ParameterLists/parserParameterList15.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+    
+    function foo(a = 4);
+             ~~~
+!!! error TLUA2394: This overload signature is not compatible with its implementation signature.
+!!! related TLUA2750 parserParameterList15.tlua:5:10: The implementation signature is declared here.
+             ~~~
+!!! error TLUA7010: 'foo', which lacks return-type annotation, implicitly has an 'any' return type.
+                 ~~~~~
+!!! error TLUA2371: A parameter initializer is only allowed in a function or constructor implementation.
+    function foo(a, b)
+                 ~
+!!! error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+                    ~
+!!! error TLUA7006: Parameter 'b' implicitly has an 'any' type.
+    end
+    

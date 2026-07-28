@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/nestedIfStatement.tlua] ////
+
+=== nestedIfStatement.tlua ===
+-- ported from tests/cases/compiler/nestedIfStatement.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+if 0 then
+>0 : 0
+
+elseif 1 then
+>1 : 1
+
+elseif 2 then
+>2 : 2
+
+elseif 3 then
+>3 : 3
+
+else
+end
+

@@ -1,0 +1,39 @@
+//// [tests/cases/conformance/ported/unionTypeParameterInference.tlua] ////
+
+=== unionTypeParameterInference.tlua ===
+-- ported from tests/cases/compiler/unionTypeParameterInference.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo<T> { prop: T }
+>Foo : Symbol(Foo, Decl(unionTypeParameterInference.tlua, 0, 0))
+>T : Symbol(T, Decl(unionTypeParameterInference.tlua, 3, 14))
+>prop : Symbol(Foo.prop, Decl(unionTypeParameterInference.tlua, 3, 18))
+>T : Symbol(T, Decl(unionTypeParameterInference.tlua, 3, 14))
+
+declare lift: <U>(value: U | Foo<U>) => Foo<U>
+>lift : Symbol(lift, Decl(unionTypeParameterInference.tlua, 5, 7))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 5, 15))
+>value : Symbol(value, Decl(unionTypeParameterInference.tlua, 5, 18))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 5, 15))
+>Foo : Symbol(Foo, Decl(unionTypeParameterInference.tlua, 0, 0))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 5, 15))
+>Foo : Symbol(Foo, Decl(unionTypeParameterInference.tlua, 0, 0))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 5, 15))
+
+function unlift<U>(value: U | Foo<U>): U
+>unlift : Symbol(unlift, Decl(unionTypeParameterInference.tlua, 5, 46))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 7, 16))
+>value : Symbol(value, Decl(unionTypeParameterInference.tlua, 7, 19))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 7, 16))
+>Foo : Symbol(Foo, Decl(unionTypeParameterInference.tlua, 0, 0))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 7, 16))
+>U : Symbol(U, Decl(unionTypeParameterInference.tlua, 7, 16))
+
+    return lift(value).prop
+>lift(value).prop : Symbol(Foo.prop, Decl(unionTypeParameterInference.tlua, 3, 18))
+>lift : Symbol(lift, Decl(unionTypeParameterInference.tlua, 5, 7))
+>value : Symbol(value, Decl(unionTypeParameterInference.tlua, 7, 19))
+>prop : Symbol(Foo.prop, Decl(unionTypeParameterInference.tlua, 3, 18))
+
+end
+

@@ -1,0 +1,14 @@
+-- ported from tests/cases/compiler/declarationFilesWithTypeReferences4.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept ambient type-reference resolution and function return-type checker coverage.
+
+// @filename: /a/node_modules/@types/node/index.d.tlua
+interface Error {
+    stack2: string
+}
+
+// @filename: /a/app.tlua
+/// <reference types="node"/>
+function foo(): Error
+    return nil as any
+end

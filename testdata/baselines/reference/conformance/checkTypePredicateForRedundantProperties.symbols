@@ -1,0 +1,16 @@
+//// [tests/cases/conformance/ported/checkTypePredicateForRedundantProperties.tlua] ////
+
+=== checkTypePredicateForRedundantProperties.tlua ===
+-- ported from tests/cases/compiler/checkTypePredicateForRedundantProperties.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function addProp2(x: any): x is { a: string; a: string }
+>addProp2 : Symbol(addProp2, Decl(checkTypePredicateForRedundantProperties.tlua, 0, 0))
+>x : Symbol(x, Decl(checkTypePredicateForRedundantProperties.tlua, 3, 18))
+>x : Symbol(x, Decl(checkTypePredicateForRedundantProperties.tlua, 3, 18))
+>a : Symbol(a, Decl(checkTypePredicateForRedundantProperties.tlua, 3, 33), Decl(checkTypePredicateForRedundantProperties.tlua, 3, 44))
+>a : Symbol(a, Decl(checkTypePredicateForRedundantProperties.tlua, 3, 33), Decl(checkTypePredicateForRedundantProperties.tlua, 3, 44))
+
+    return true
+end
+

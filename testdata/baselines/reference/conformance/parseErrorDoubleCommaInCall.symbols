@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/parseErrorDoubleCommaInCall.tlua] ////
+
+=== parseErrorDoubleCommaInCall.tlua ===
+-- ported from tests/cases/compiler/parseErrorDoubleCommaInCall.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: Boolean JS runtime wrapper; replaced with the Lua print builtin
+
+print({
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+
+    x = 0,,
+>x : Symbol(x, Decl(parseErrorDoubleCommaInCall.tlua, 4, 7))
+
+})
+

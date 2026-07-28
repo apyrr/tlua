@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/parserErrorRecovery_ArgumentList7.tlua] ////
+
+//// [parserErrorRecovery_ArgumentList7.tlua]
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList7.ts
+-- dropped: @target: es2015 directive (tlua defaults to esnext)
+
+Foo(a,,
+
+
+//// [parserErrorRecovery_ArgumentList7.lua]
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList7.ts
+-- dropped: @target: es2015 directive (tlua defaults to esnext)
+Foo(a);

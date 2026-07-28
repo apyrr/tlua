@@ -1,0 +1,19 @@
+excessPropertiesInOverloads.tlua(7,6): error TLUA2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'z' does not exist in type '{ y: string; }'.
+
+
+==== excessPropertiesInOverloads.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/excessPropertiesInOverloads.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: @strict: true directive (strict checking is enabled by default)
+    
+    declare function fn(a: { x: string }): nil
+    declare function fn(a: { y: string }): nil
+    fn({ z = 3, a = 3 })
+         ~
+!!! error TLUA2769: No overload matches this call.
+!!! error TLUA2769:   The last overload gave the following error.
+!!! error TLUA2769:     Object literal may only specify known properties, and 'z' does not exist in type '{ y: string; }'.
+!!! related TLUA2771 excessPropertiesInOverloads.tlua:6:18: The last overload is declared here.
+    

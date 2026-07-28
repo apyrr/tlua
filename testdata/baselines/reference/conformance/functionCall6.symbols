@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/functionCall6.tlua] ////
+
+=== functionCall6.tlua ===
+-- ported from tests/cases/compiler/functionCall6.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(a: string)
+>foo : Symbol(foo, Decl(functionCall6.tlua, 0, 0))
+>a : Symbol(a, Decl(functionCall6.tlua, 3, 13))
+
+end
+foo('bar')
+>foo : Symbol(foo, Decl(functionCall6.tlua, 0, 0))
+
+foo(2)
+>foo : Symbol(foo, Decl(functionCall6.tlua, 0, 0))
+
+foo('foo', 'bar')
+>foo : Symbol(foo, Decl(functionCall6.tlua, 0, 0))
+
+foo()
+>foo : Symbol(foo, Decl(functionCall6.tlua, 0, 0))
+

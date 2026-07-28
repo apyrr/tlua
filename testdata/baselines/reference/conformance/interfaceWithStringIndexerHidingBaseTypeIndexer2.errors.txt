@@ -1,0 +1,30 @@
+interfaceWithStringIndexerHidingBaseTypeIndexer2.tlua(20,5): error TLUA2411: Property '1' of type '{ a: number; }' is not assignable to 'number' index type '{ a: number; b: number; }'.
+
+
+==== interfaceWithStringIndexerHidingBaseTypeIndexer2.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfaceWithStringIndexerHidingBaseTypeIndexer2.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Base {
+        [x: number]: { a: number; b: number }
+        x: {
+            a: number; b: number
+        }
+    }
+    
+    interface Derived extends Base {
+        [x: string]: {
+            a: number
+        };
+    
+        y: {
+            a: number;
+        }
+        -- error
+        1: {
+        ~
+!!! error TLUA2411: Property '1' of type '{ a: number; }' is not assignable to 'number' index type '{ a: number; b: number; }'.
+            a: number
+        }
+    }
+    

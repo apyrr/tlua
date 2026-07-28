@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/functionOverloadCompatibilityWithVoid02.tlua] ////
+
+=== functionOverloadCompatibilityWithVoid02.tlua ===
+-- ported from tests/cases/conformance/functions/functionOverloadCompatibilityWithVoid02.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f(x: string): void;
+>f : (x: string) => void
+>x : string
+
+function f(x: string): number
+>f : (x: string) => void
+>x : string
+
+    return 0
+>0 : 0
+
+end
+

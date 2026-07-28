@@ -1,0 +1,14 @@
+parseErrorDoubleCommaInCall.tlua(6,11): error TLUA1136: Property assignment expected.
+
+
+==== parseErrorDoubleCommaInCall.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/parseErrorDoubleCommaInCall.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: Boolean JS runtime wrapper; replaced with the Lua print builtin
+    
+    print({
+        x = 0,,
+              ~
+!!! error TLUA1136: Property assignment expected.
+    })
+    

@@ -1,0 +1,35 @@
+//// [tests/cases/conformance/ported/stringLiteralCheckedInIf02.tlua] ////
+
+//// [stringLiteralCheckedInIf02.tlua]
+-- ported from tests/cases/conformance/types/stringLiteral/stringLiteralCheckedInIf02.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type S = "a" | "b"
+type T = S[] | S
+
+function isS(t: T): t is S
+    return t == "a" or t == "b"
+end
+
+function f(foo: T)
+    if isS(foo) then
+        return foo
+    else
+        return foo[0]
+    end
+end
+
+
+//// [stringLiteralCheckedInIf02.lua]
+-- ported from tests/cases/conformance/types/stringLiteral/stringLiteralCheckedInIf02.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function isS(t)
+  return t == "a" or t == "b";
+end
+function f(foo)
+  if isS(foo) then
+    return foo;
+  else
+    return foo[0];
+  end
+end

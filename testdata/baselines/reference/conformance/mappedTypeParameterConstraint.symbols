@@ -1,0 +1,29 @@
+//// [tests/cases/conformance/ported/mappedTypeParameterConstraint.tlua] ////
+
+=== mappedTypeParameterConstraint.tlua ===
+-- ported from tests/cases/compiler/mappedTypeParameterConstraint.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- Repro for #27596
+
+type MyMap<T> = { [P in keyof T]: T[keyof T] }
+>MyMap : Symbol(MyMap, Decl(mappedTypeParameterConstraint.tlua, 0, 0))
+>T : Symbol(T, Decl(mappedTypeParameterConstraint.tlua, 5, 11))
+>P : Symbol(P, Decl(mappedTypeParameterConstraint.tlua, 5, 19))
+>T : Symbol(T, Decl(mappedTypeParameterConstraint.tlua, 5, 11))
+>T : Symbol(T, Decl(mappedTypeParameterConstraint.tlua, 5, 11))
+>T : Symbol(T, Decl(mappedTypeParameterConstraint.tlua, 5, 11))
+
+function foo<U>(arg: U): MyMap<U>
+>foo : Symbol(foo, Decl(mappedTypeParameterConstraint.tlua, 5, 46))
+>U : Symbol(U, Decl(mappedTypeParameterConstraint.tlua, 6, 13))
+>arg : Symbol(arg, Decl(mappedTypeParameterConstraint.tlua, 6, 16))
+>U : Symbol(U, Decl(mappedTypeParameterConstraint.tlua, 6, 13))
+>MyMap : Symbol(MyMap, Decl(mappedTypeParameterConstraint.tlua, 0, 0))
+>U : Symbol(U, Decl(mappedTypeParameterConstraint.tlua, 6, 13))
+
+    return arg
+>arg : Symbol(arg, Decl(mappedTypeParameterConstraint.tlua, 6, 16))
+
+end
+

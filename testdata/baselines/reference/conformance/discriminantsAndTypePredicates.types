@@ -1,0 +1,114 @@
+//// [tests/cases/conformance/ported/discriminantsAndTypePredicates.tlua] ////
+
+=== discriminantsAndTypePredicates.tlua ===
+-- ported from tests/cases/compiler/discriminantsAndTypePredicates.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A { type: 'A' }
+>type : "A"
+
+interface B { type: 'B' }
+>type : "B"
+
+function isA(x: A | B): x is A
+>isA : (x: A | B) => x is A
+>x : A | B
+
+    return x.type == 'A'
+>x.type == 'A' : boolean
+>x.type : "A" | "B"
+>x : A | B
+>type : "A" | "B"
+>'A' : "A"
+
+end
+
+function isB(x: A | B): x is B
+>isB : (x: A | B) => x is B
+>x : A | B
+
+    return x.type == 'B'
+>x.type == 'B' : boolean
+>x.type : "A" | "B"
+>x : A | B
+>type : "A" | "B"
+>'B' : "B"
+
+end
+
+function foo1(x: A | B): any
+>foo1 : (x: A | B) => any
+>x : A | B
+
+    local _ = x -- A | B
+>_ : A | B
+>x : A | B
+
+    if isA(x) then
+>isA(x) : boolean
+>isA : (x: A | B) => x is A
+>x : A | B
+
+        return x -- A
+>x : A
+
+    end
+    local _ = x -- B
+>_ : B
+>x : B
+
+    if isB(x) then
+>isB(x) : boolean
+>isB : (x: A | B) => x is B
+>x : B
+
+        return x -- B
+>x : B
+
+    end
+    local _ = x -- never
+>_ : never
+>x : never
+
+end
+
+function foo2(x: A | B): any
+>foo2 : (x: A | B) => any
+>x : A | B
+
+    local _ = x -- A | B
+>_ : A | B
+>x : A | B
+
+    if x.type == 'A' then
+>x.type == 'A' : boolean
+>x.type : "A" | "B"
+>x : A | B
+>type : "A" | "B"
+>'A' : "A"
+
+        return x -- A
+>x : A
+
+    end
+    local _ = x -- B
+>_ : B
+>x : B
+
+    if x.type == 'B' then
+>x.type == 'B' : boolean
+>x.type : "B"
+>x : B
+>type : "B"
+>'B' : "B"
+
+        return x -- B
+>x : B
+
+    end
+    local _ = x -- never
+>_ : never
+>x : never
+
+end
+

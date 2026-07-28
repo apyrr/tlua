@@ -1,0 +1,53 @@
+//// [tests/cases/conformance/ported/mappedTypeAndIndexSignatureRelation.tlua] ////
+
+=== mappedTypeAndIndexSignatureRelation.tlua ===
+-- ported from tests/cases/compiler/mappedTypeAndIndexSignatureRelation.ts
+-- dropped: @target: es2015 and @strict directives (tlua uses the latest target and strict checking by default)
+-- adapted: PropertyKey is unavailable in tlua; string | number is the supported table-key constraint
+
+type Same<T> = { [P in keyof T]: T[P] }
+>Same : Same<T>
+
+type T1<T extends Record<string | number, number>> = T
+>T1 : T
+
+type T2<U extends Record<string | number, number>> = T1<Same<U>>
+>T2 : Same<U>
+
+-- Repro from #38235
+
+type Foo<IdentifierT extends Record<string | number, string | number>> =
+>Foo : IdentifierT
+
+    IdentifierT
+
+type Bar<IdentifierT extends Record<string | number, string | number>, T> =
+>Bar : Bar<IdentifierT, T>
+    {
+        [k in keyof T]: Foo<IdentifierT & { k: k }>
+>k : k
+    }
+
+type Merge2<T> = { [k in keyof T]: T[k] }
+>Merge2 : Merge2<T>
+
+type Bar2<IdentifierT extends Record<string | number, string | number>, T> =
+>Bar2 : Bar2<IdentifierT, T>
+    {
+        [k in keyof T]: Foo<Merge2<IdentifierT & { k: k }>>
+>k : k
+    }
+
+type Identity<T> = T
+>Identity : T
+
+type Merge3<T> = Identity<{ [k in keyof T]: T[k] }>
+>Merge3 : { [k in keyof T]: T[k]; }
+
+type Bar3<IdentifierT extends Record<string | number, string | number>, T> =
+>Bar3 : Bar3<IdentifierT, T>
+    {
+        [k in keyof T]: Foo<Merge3<IdentifierT & { k: k }>>
+>k : k
+    }
+

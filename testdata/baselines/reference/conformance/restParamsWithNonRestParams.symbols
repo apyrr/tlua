@@ -1,0 +1,32 @@
+//// [tests/cases/conformance/ported/restParamsWithNonRestParams.tlua] ////
+
+=== restParamsWithNonRestParams.tlua ===
+-- ported from tests/cases/compiler/restParamsWithNonRestParams.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(...: number)
+>foo : Symbol(foo, Decl(restParamsWithNonRestParams.tlua, 0, 0))
+> : Symbol((Missing), Decl(restParamsWithNonRestParams.tlua, 3, 13))
+
+end
+foo()
+>foo : Symbol(foo, Decl(restParamsWithNonRestParams.tlua, 0, 0))
+
+function foo2(a: string, ...: number)
+>foo2 : Symbol(foo2, Decl(restParamsWithNonRestParams.tlua, 5, 5))
+>a : Symbol(a, Decl(restParamsWithNonRestParams.tlua, 7, 14))
+> : Symbol((Missing), Decl(restParamsWithNonRestParams.tlua, 7, 24))
+
+end
+foo2()
+>foo2 : Symbol(foo2, Decl(restParamsWithNonRestParams.tlua, 5, 5))
+
+function foo3(a?: string, ...: number)
+>foo3 : Symbol(foo3, Decl(restParamsWithNonRestParams.tlua, 9, 6))
+>a : Symbol(a, Decl(restParamsWithNonRestParams.tlua, 11, 14))
+> : Symbol((Missing), Decl(restParamsWithNonRestParams.tlua, 11, 25))
+
+end
+foo3()
+>foo3 : Symbol(foo3, Decl(restParamsWithNonRestParams.tlua, 9, 6))
+

@@ -1,0 +1,31 @@
+//// [tests/cases/conformance/ported/genericAndNonGenericInheritedSignature1.tlua] ////
+
+=== genericAndNonGenericInheritedSignature1.tlua ===
+-- ported from tests/cases/compiler/genericAndNonGenericInheritedSignature1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo {
+>Foo : Symbol(Foo, Decl(genericAndNonGenericInheritedSignature1.tlua, 0, 0))
+
+    f(x: any): any
+>f : Symbol(Foo.f, Decl(genericAndNonGenericInheritedSignature1.tlua, 3, 15))
+>x : Symbol(x, Decl(genericAndNonGenericInheritedSignature1.tlua, 4, 6))
+}
+
+interface Bar {
+>Bar : Symbol(Bar, Decl(genericAndNonGenericInheritedSignature1.tlua, 5, 1))
+
+    f<T>(x: T): T
+>f : Symbol(Bar.f, Decl(genericAndNonGenericInheritedSignature1.tlua, 7, 15))
+>T : Symbol(T, Decl(genericAndNonGenericInheritedSignature1.tlua, 8, 6))
+>x : Symbol(x, Decl(genericAndNonGenericInheritedSignature1.tlua, 8, 9))
+>T : Symbol(T, Decl(genericAndNonGenericInheritedSignature1.tlua, 8, 6))
+>T : Symbol(T, Decl(genericAndNonGenericInheritedSignature1.tlua, 8, 6))
+}
+
+interface Hello extends Foo, Bar {
+>Hello : Symbol(Hello, Decl(genericAndNonGenericInheritedSignature1.tlua, 9, 1))
+>Foo : Symbol(Foo, Decl(genericAndNonGenericInheritedSignature1.tlua, 0, 0))
+>Bar : Symbol(Bar, Decl(genericAndNonGenericInheritedSignature1.tlua, 5, 1))
+}
+

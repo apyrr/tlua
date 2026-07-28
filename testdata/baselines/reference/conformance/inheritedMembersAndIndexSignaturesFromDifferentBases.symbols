@@ -1,0 +1,70 @@
+//// [tests/cases/conformance/ported/inheritedMembersAndIndexSignaturesFromDifferentBases.tlua] ////
+
+=== inheritedMembersAndIndexSignaturesFromDifferentBases.tlua ===
+-- ported from tests/cases/compiler/inheritedMembersAndIndexSignaturesFromDifferentBases.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking); implicit-any members were made explicit
+
+-- indexer in B is a subtype of indexer in A
+interface A {
+>A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
+
+    [s: string]: {
+>s : Symbol(s, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 5, 5))
+
+        a: any;
+>a : Symbol(a, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 5, 18))
+
+    };
+}
+interface B {
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
+
+    [s: number]: {
+>s : Symbol(s, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 10, 5))
+
+        a: any;
+>a : Symbol(a, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 10, 18))
+
+        b: any;
+>b : Symbol(b, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 11, 15))
+
+    };
+}
+interface C {
+>C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 14, 1))
+
+    m: {};
+>m : Symbol(C.m, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 15, 13))
+}
+
+interface D extends A, B, C { } -- error because m is not a subtype of {a;}
+>D : Symbol(D, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 17, 1))
+>A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
+>C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 14, 1))
+
+interface E {
+>E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 31))
+
+    0: {};
+>0 : Symbol(E[0], Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 21, 13))
+}
+
+interface F extends A, B, E { } -- error because 0 is not a subtype of {a; b;}
+>F : Symbol(F, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 23, 1))
+>A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
+>E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 31))
+
+interface G extends A, B, C, E { } -- should only report one error
+>G : Symbol(G, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 25, 31))
+>A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 8, 1))
+>C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 14, 1))
+>E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 19, 31))
+
+interface H extends A, F { } -- Should report no error at all because error is internal to F
+>H : Symbol(H, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 27, 34))
+>A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 0, 0))
+>F : Symbol(F, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.tlua, 23, 1))
+

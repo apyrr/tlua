@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/functionWithDefaultParameterWithNoStatements7.tlua] ////
+
+=== functionWithDefaultParameterWithNoStatements7.tlua ===
+-- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements7.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: default parameters are not lowered during emit; valid source would produce invalid Lua output
+
+function foo(a = false)
+>foo : Symbol(foo, Decl(functionWithDefaultParameterWithNoStatements7.tlua, 0, 0))
+>a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements7.tlua, 4, 13))
+
+end
+
+function bar(a = false)
+>bar : Symbol(bar, Decl(functionWithDefaultParameterWithNoStatements7.tlua, 5, 3))
+>a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements7.tlua, 7, 13))
+
+end
+

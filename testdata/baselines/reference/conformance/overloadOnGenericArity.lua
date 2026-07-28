@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/overloadOnGenericArity.tlua] ////
+
+//// [overloadOnGenericArity.tlua]
+-- ported from tests/cases/compiler/overloadOnGenericArity.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @lib: es5 directive (tlua uses its default Lua library)
+
+interface Test {
+    then<U>(p: string): string
+    then(p: string): number
+}
+
+
+//// [overloadOnGenericArity.lua]
+-- ported from tests/cases/compiler/overloadOnGenericArity.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @lib: es5 directive (tlua uses its default Lua library)

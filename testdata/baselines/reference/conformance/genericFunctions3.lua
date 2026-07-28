@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/genericFunctions3.tlua] ////
+
+//// [genericFunctions3.tlua]
+-- ported from tests/cases/compiler/genericFunctions3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Query<T> {
+    foo(x: string): Query<T[]>
+}
+
+function from<T>(arg: boolean): Query<T>; -- was Error: Overload signature is not compatible with function definition.
+function from<T>(arg: any): Query<T>
+    return nil
+end
+
+
+//// [genericFunctions3.lua]
+-- ported from tests/cases/compiler/genericFunctions3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function from(arg)
+  return nil;
+end

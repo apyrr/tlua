@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/genericAndNonGenericInheritedSignature2.tlua] ////
+
+=== genericAndNonGenericInheritedSignature2.tlua ===
+-- ported from tests/cases/compiler/genericAndNonGenericInheritedSignature2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo {
+    f(x: any): any
+>f : (x: any) => any
+>x : any
+}
+
+interface Bar {
+    f<T>(x: T): T
+>f : <T>(x: T) => T
+>x : T
+}
+
+interface Hello extends Bar, Foo {
+}
+

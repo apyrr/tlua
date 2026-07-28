@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/parserAmbiguity3.tlua] ////
+
+=== parserAmbiguity3.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserAmbiguity3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: parser-recovery output preserves an invalid Lua comparison/call shape; checker/parser coverage is retained.
+-- dropped: emit coverage suppressed because the recovered expression is not valid Lua.
+
+f(g < A, B > +(7))
+>f(g < A, B > +(7)) : any
+>f : any
+>g < A : boolean
+>g : any
+>A : any
+>B > +(7) : boolean
+>B : any
+>+(7) : number
+>(7) : 7
+>7 : 7
+

@@ -1,0 +1,17 @@
+-- ported from tests/cases/compiler/checkInterfaceBases.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @module: commonjs directive (Lua modules do not use TypeScript module modes)
+
+// @filename: jquery.d.tlua
+interface JQueryEventObjectTest {
+    data: any
+    which: number
+    metaKey: any
+}
+
+// @filename: app.tlua
+///<reference path='jquery.d.tlua' />
+interface SecondEvent {
+    data: any
+}
+interface Third extends JQueryEventObjectTest, SecondEvent {}

@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/scannerES3NumericLiteral7.tlua] ////
+
+//// [scannerES3NumericLiteral7.tlua]
+-- ported from tests/cases/conformance/scanner/ecmascript3/scannerES3NumericLiteral7.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: bare numeric literal expression statement rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+
+local _ = 1e+0;
+
+
+//// [scannerES3NumericLiteral7.lua]
+-- ported from tests/cases/conformance/scanner/ecmascript3/scannerES3NumericLiteral7.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: bare numeric literal expression statement rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+local _ = 1e+0;

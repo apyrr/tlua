@@ -1,0 +1,42 @@
+//// [tests/cases/conformance/ported/cannotIndexGenericWritingError.tlua] ////
+
+=== cannotIndexGenericWritingError.tlua ===
+-- ported from tests/cases/compiler/cannotIndexGenericWritingError.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: symbol-key coverage (Lua tables use string and numeric keys here)
+
+
+-- From #47357
+
+function foo<T extends { [s: string]: any }>(target: T, p: string)
+>foo : Symbol(foo, Decl(cannotIndexGenericWritingError.tlua, 0, 0))
+>T : Symbol(T, Decl(cannotIndexGenericWritingError.tlua, 7, 13))
+>s : Symbol(s, Decl(cannotIndexGenericWritingError.tlua, 7, 26))
+>target : Symbol(target, Decl(cannotIndexGenericWritingError.tlua, 7, 45))
+>T : Symbol(T, Decl(cannotIndexGenericWritingError.tlua, 7, 13))
+>p : Symbol(p, Decl(cannotIndexGenericWritingError.tlua, 7, 55))
+
+    target[p] = "" -- error
+>target : Symbol(target, Decl(cannotIndexGenericWritingError.tlua, 7, 45))
+>p : Symbol(p, Decl(cannotIndexGenericWritingError.tlua, 7, 55))
+
+end
+
+function foo2<T extends { [n: number]: number; [s: string]: number | string }>(target: T, p: string | number)
+>foo2 : Symbol(foo2, Decl(cannotIndexGenericWritingError.tlua, 9, 3))
+>T : Symbol(T, Decl(cannotIndexGenericWritingError.tlua, 11, 14))
+>n : Symbol(n, Decl(cannotIndexGenericWritingError.tlua, 11, 27))
+>s : Symbol(s, Decl(cannotIndexGenericWritingError.tlua, 11, 48))
+>target : Symbol(target, Decl(cannotIndexGenericWritingError.tlua, 11, 79))
+>T : Symbol(T, Decl(cannotIndexGenericWritingError.tlua, 11, 14))
+>p : Symbol(p, Decl(cannotIndexGenericWritingError.tlua, 11, 89))
+
+    target[p] = 1 -- error
+>target : Symbol(target, Decl(cannotIndexGenericWritingError.tlua, 11, 79))
+>p : Symbol(p, Decl(cannotIndexGenericWritingError.tlua, 11, 89))
+
+    target[1] = 1 -- ok
+>target : Symbol(target, Decl(cannotIndexGenericWritingError.tlua, 11, 79))
+
+end
+

@@ -1,0 +1,17 @@
+typeParameterHasSelfAsConstraint.tlua(4,24): error TLUA2313: Type parameter 'T' has a circular constraint.
+typeParameterHasSelfAsConstraint.tlua(5,5): error TLUA2322: Type 'T' is not assignable to type 'number'.
+
+
+==== typeParameterHasSelfAsConstraint.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/typeParameterHasSelfAsConstraint.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo<T extends T>(x: T): number
+                           ~
+!!! error TLUA2313: Type parameter 'T' has a circular constraint.
+        return x
+        ~~~~~~
+!!! error TLUA2322: Type 'T' is not assignable to type 'number'.
+!!! related TLUA2208 typeParameterHasSelfAsConstraint.tlua:4:14: This type parameter might need an `extends number` constraint.
+    end
+    

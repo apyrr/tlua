@@ -1,0 +1,22 @@
+genericAndNonGenericInheritedSignature2.tlua(12,11): error TLUA2320: Interface 'Hello' cannot simultaneously extend types 'Bar' and 'Foo'.
+  Named property 'f' of types 'Bar' and 'Foo' are not identical.
+
+
+==== genericAndNonGenericInheritedSignature2.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/genericAndNonGenericInheritedSignature2.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Foo {
+        f(x: any): any
+    }
+    
+    interface Bar {
+        f<T>(x: T): T
+    }
+    
+    interface Hello extends Bar, Foo {
+              ~~~~~
+!!! error TLUA2320: Interface 'Hello' cannot simultaneously extend types 'Bar' and 'Foo'.
+!!! error TLUA2320:   Named property 'f' of types 'Bar' and 'Foo' are not identical.
+    }
+    

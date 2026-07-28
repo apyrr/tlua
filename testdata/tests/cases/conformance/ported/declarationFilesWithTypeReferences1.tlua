@@ -1,0 +1,16 @@
+-- ported from tests/cases/compiler/declarationFilesWithTypeReferences1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @types: node directive (tlua has no Node type package)
+-- dropped: declaration output (unsupported for Lua modules)
+// @currentDirectory: /
+
+// @filename: /node_modules/@types/node/index.d.tlua
+interface Error {
+    stack2: string
+}
+
+// @filename: /app.tlua
+
+function foo(): Error
+    return nil
+end

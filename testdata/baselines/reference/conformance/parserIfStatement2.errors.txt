@@ -1,0 +1,11 @@
+parserIfStatement2.tlua(3,4): error TLUA2304: Cannot find name 'a'.
+
+
+==== parserIfStatement2.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/Statements/parserIfStatement2.ts
+    -- dropped: upstream @target: es2015 directive (tlua uses its default target)
+    if a then
+       ~
+!!! error TLUA2304: Cannot find name 'a'.
+    end
+    

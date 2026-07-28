@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/functionOverloads8.tlua] ////
+
+=== functionOverloads8.tlua ===
+-- ported from tests/cases/compiler/functionOverloads8.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict)
+
+function foo();
+>foo : Symbol(foo, Decl(functionOverloads8.tlua, 0, 0), Decl(functionOverloads8.tlua, 3, 15), Decl(functionOverloads8.tlua, 4, 26))
+
+function foo(foo: string);
+>foo : Symbol(foo, Decl(functionOverloads8.tlua, 0, 0), Decl(functionOverloads8.tlua, 3, 15), Decl(functionOverloads8.tlua, 4, 26))
+>foo : Symbol(foo, Decl(functionOverloads8.tlua, 4, 13))
+
+function foo(foo?: any)
+>foo : Symbol(foo, Decl(functionOverloads8.tlua, 0, 0), Decl(functionOverloads8.tlua, 3, 15), Decl(functionOverloads8.tlua, 4, 26))
+>foo : Symbol(foo, Decl(functionOverloads8.tlua, 5, 13))
+
+    return ""
+end
+

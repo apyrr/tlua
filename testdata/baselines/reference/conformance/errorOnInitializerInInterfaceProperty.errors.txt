@@ -1,0 +1,13 @@
+errorOnInitializerInInterfaceProperty.tlua(5,19): error TLUA1246: An interface property cannot have an initializer.
+
+
+==== errorOnInitializerInInterfaceProperty.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/errorOnInitializerInInterfaceProperty.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Foo {
+        bar: number = 5
+                      ~
+!!! error TLUA1246: An interface property cannot have an initializer.
+    }
+    

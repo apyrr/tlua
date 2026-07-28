@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/recursiveGenericMethodCall.tlua] ////
+
+=== recursiveGenericMethodCall.tlua ===
+-- ported from tests/cases/compiler/recursiveGenericMethodCall.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Generator<T> { (): T }
+>Generator : Symbol(Generator, Decl(recursiveGenericMethodCall.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveGenericMethodCall.tlua, 3, 20))
+>T : Symbol(T, Decl(recursiveGenericMethodCall.tlua, 3, 20))
+
+function Generate<T>(func: Generator<T>): T
+>Generate : Symbol(Generate, Decl(recursiveGenericMethodCall.tlua, 3, 32))
+>T : Symbol(T, Decl(recursiveGenericMethodCall.tlua, 5, 18))
+>func : Symbol(func, Decl(recursiveGenericMethodCall.tlua, 5, 21))
+>Generator : Symbol(Generator, Decl(recursiveGenericMethodCall.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveGenericMethodCall.tlua, 5, 18))
+>T : Symbol(T, Decl(recursiveGenericMethodCall.tlua, 5, 18))
+
+    return Generate(func)
+>Generate : Symbol(Generate, Decl(recursiveGenericMethodCall.tlua, 3, 32))
+>func : Symbol(func, Decl(recursiveGenericMethodCall.tlua, 5, 21))
+
+end
+

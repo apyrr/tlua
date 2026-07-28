@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/commentsAtEndOfFile1.tlua] ////
+
+//// [commentsAtEndOfFile1.tlua]
+-- ported from tests/cases/compiler/commentsAtEndOfFile1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @allowUnusedLabels directive and label statement (labels are deleted)
+
+local Input = nil
+-- Testing two
+
+
+//// [commentsAtEndOfFile1.lua]
+-- ported from tests/cases/compiler/commentsAtEndOfFile1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @allowUnusedLabels directive and label statement (labels are deleted)
+local Input = nil;
+-- Testing two

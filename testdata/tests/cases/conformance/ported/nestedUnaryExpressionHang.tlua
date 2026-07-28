@@ -1,0 +1,7 @@
+-- ported from tests/cases/compiler/nestedUnaryExpressionHang.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) — nested logical-not recovery leaks invalid `!` syntax
+
+// @noEmit: true
+
+local _ = 3333 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!

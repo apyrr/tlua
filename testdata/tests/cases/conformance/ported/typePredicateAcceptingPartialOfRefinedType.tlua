@@ -1,0 +1,19 @@
+-- ported from tests/cases/compiler/typePredicateAcceptingPartialOfRefinedType.ts
+-- dropped: @target: es2015 and redundant @strict: true directives (tlua defaults to latest target and strict checking)
+
+// @exactOptionalPropertyTypes: true
+// @noEmit: true
+
+-- repro #51953
+
+interface Test {
+    testy?: string
+}
+
+interface Options {
+    test: Test['testy']
+}
+
+function includesAllRequiredOptions(options: Partial<Options>): options is Options
+    return true
+end

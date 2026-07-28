@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/recursiveSpecializationOfExtendedTypeWithError.tlua] ////
+
+=== recursiveSpecializationOfExtendedTypeWithError.tlua ===
+-- ported from tests/cases/compiler/recursiveSpecializationOfExtendedTypeWithError.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @lib: es5 directive (tlua uses its built-in Lua library)
+
+interface HTMLSelectElement {
+>HTMLSelectElement : Symbol(HTMLSelectElement, Decl(recursiveSpecializationOfExtendedTypeWithError.tlua, 0, 0))
+
+    options: HTMLSelectElement,
+>options : Symbol(HTMLSelectElement.options, Decl(recursiveSpecializationOfExtendedTypeWithError.tlua, 4, 29))
+>HTMLSelectElement : Symbol(HTMLSelectElement, Decl(recursiveSpecializationOfExtendedTypeWithError.tlua, 0, 0))
+
+    <A>(name: A): any,
+>A : Symbol(A, Decl(recursiveSpecializationOfExtendedTypeWithError.tlua, 6, 5))
+>name : Symbol(name, Decl(recursiveSpecializationOfExtendedTypeWithError.tlua, 6, 8))
+>A : Symbol(A, Decl(recursiveSpecializationOfExtendedTypeWithError.tlua, 6, 5))
+}
+

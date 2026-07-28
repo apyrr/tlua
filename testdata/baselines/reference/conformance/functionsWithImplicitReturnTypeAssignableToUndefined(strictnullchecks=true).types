@@ -1,0 +1,99 @@
+//// [tests/cases/conformance/ported/functionsWithImplicitReturnTypeAssignableToUndefined.tlua] ////
+
+=== functionsWithImplicitReturnTypeAssignableToUndefined.tlua ===
+-- ported from tests/cases/compiler/functionsWithImplicitReturnTypeAssignableToUndefined.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+-- dropped: Math.random() conditions, replaced with boolean parameters because Math is a JavaScript runtime global
+
+
+function f1(condition: boolean): unknown
+>f1 : (condition: boolean) => unknown
+>condition : boolean
+
+    if condition then
+>condition : boolean
+
+        return true
+>true : true
+
+    end
+end
+
+type MyUnknown = unknown
+>MyUnknown : unknown
+
+function f2(condition: boolean): unknown
+>f2 : (condition: boolean) => unknown
+>condition : boolean
+
+    if condition then
+>condition : boolean
+
+        return true
+>true : true
+
+    end
+end
+
+function f3(): any
+>f3 : () => any
+
+end
+
+function f4(): void
+>f4 : () => void
+
+end
+
+function f5(condition: boolean): {}
+>f5 : (condition: boolean) => {}
+>condition : boolean
+
+    if condition then
+>condition : boolean
+
+        return {}
+>{} : {}
+
+    end
+end
+
+function f6(condition: boolean): Record<string, any>
+>f6 : (condition: boolean) => Record<string, any>
+>condition : boolean
+
+    if condition then
+>condition : boolean
+
+        return { foo = true }
+>{ foo = true } : { foo: boolean; }
+>foo : boolean
+>true : true
+
+    end
+end
+
+function f7(condition: boolean): nil
+>f7 : (condition: boolean) => nil
+>condition : boolean
+
+    if condition then
+>condition : boolean
+
+        return nil
+    end
+end
+
+function f8(condition: boolean): string | nil
+>f8 : (condition: boolean) => string | nil
+>condition : boolean
+
+    if condition then
+>condition : boolean
+
+        return "foo"
+>"foo" : "foo"
+
+    end
+end
+

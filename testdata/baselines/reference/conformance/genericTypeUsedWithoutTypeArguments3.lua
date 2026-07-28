@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/genericTypeUsedWithoutTypeArguments3.tlua] ////
+
+//// [genericTypeUsedWithoutTypeArguments3.tlua]
+-- ported from tests/cases/compiler/genericTypeUsedWithoutTypeArguments3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo<T> { }
+interface Bar<T> extends Foo { }
+
+
+//// [genericTypeUsedWithoutTypeArguments3.lua]
+-- ported from tests/cases/compiler/genericTypeUsedWithoutTypeArguments3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

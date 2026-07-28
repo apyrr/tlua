@@ -1,0 +1,14 @@
+scannerES3NumericLiteral4.tlua(7,13): error TLUA1124: Digit expected.
+
+
+==== scannerES3NumericLiteral4.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/scanner/ecmascript3/scannerES3NumericLiteral4.ts
+    -- dropped: @target: es2015 directive (tlua defaults to the latest target)
+    -- dropped: bare numeric expression statement, rebound to a discarded local value because tlua only permits call and assignment expression statements
+    -- compiler gap: malformed numeric literal recovery emits invalid Lua (`1e`)
+    -- dropped: emit coverage for the malformed numeric literal
+    
+    local _ = 1e
+                
+!!! error TLUA1124: Digit expected.
+    

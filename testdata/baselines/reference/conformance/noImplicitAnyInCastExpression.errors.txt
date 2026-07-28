@@ -1,0 +1,41 @@
+noImplicitAnyInCastExpression.tlua(13,12): error TLUA2352: Conversion of type '{ a: nil; }' to type 'IFoo' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'b' is missing in type '{ a: nil; }' but required in type 'IFoo'.
+noImplicitAnyInCastExpression.tlua(16,12): error TLUA2352: Conversion of type '{ a: number; b: nil; }' to type 'IFoo' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'b' are incompatible.
+    Type 'nil' is not comparable to type 'string'.
+noImplicitAnyInCastExpression.tlua(19,12): error TLUA2352: Conversion of type '{ c: nil; }' to type 'IFoo' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ c: nil; }' is missing the following properties from type 'IFoo': a, b
+
+
+==== noImplicitAnyInCastExpression.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/noImplicitAnyInCastExpression.ts
+    -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
+    -- dropped: bare cast expression statements (bound to local `_` because tlua permits only calls and assignments as bare expressions)
+    
+    -- verify no implicit-any errors are reported with cast expressions
+    
+    interface IFoo {
+        a: number
+        b: string
+    }
+    
+    -- Expr type not assignable to target type
+    local _ = (<IFoo>{ a = nil })
+               ~~~~~~~~~~~~~~~~~
+!!! error TLUA2352: Conversion of type '{ a: nil; }' to type 'IFoo' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+!!! error TLUA2352:   Property 'b' is missing in type '{ a: nil; }' but required in type 'IFoo'.
+!!! related TLUA2728 noImplicitAnyInCastExpression.tlua:9:5: 'b' is declared here.
+    
+    -- Expr type assignable to target type
+    local _ = (<IFoo>{ a = 2, b = nil })
+               ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2352: Conversion of type '{ a: number; b: nil; }' to type 'IFoo' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+!!! error TLUA2352:   Types of property 'b' are incompatible.
+!!! error TLUA2352:     Type 'nil' is not comparable to type 'string'.
+    
+    -- Neither type is assignable to the other
+    local _ = (<IFoo>{ c = nil })
+               ~~~~~~~~~~~~~~~~~
+!!! error TLUA2352: Conversion of type '{ c: nil; }' to type 'IFoo' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+!!! error TLUA2352:   Type '{ c: nil; }' is missing the following properties from type 'IFoo': a, b
+    

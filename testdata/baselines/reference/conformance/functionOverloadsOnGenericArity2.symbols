@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/functionOverloadsOnGenericArity2.tlua] ////
+
+=== functionOverloadsOnGenericArity2.tlua ===
+-- ported from tests/cases/compiler/functionOverloadsOnGenericArity2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: JavaScript-library Date return type; table preserves overload arity coverage.
+
+interface I {
+>I : Symbol(I, Decl(functionOverloadsOnGenericArity2.tlua, 0, 0))
+
+    then(p: string): string
+>then : Symbol(I.then, Decl(functionOverloadsOnGenericArity2.tlua, 4, 13), Decl(functionOverloadsOnGenericArity2.tlua, 5, 27), Decl(functionOverloadsOnGenericArity2.tlua, 6, 30))
+>p : Symbol(p, Decl(functionOverloadsOnGenericArity2.tlua, 5, 9))
+
+    then<U>(p: string): string
+>then : Symbol(I.then, Decl(functionOverloadsOnGenericArity2.tlua, 4, 13), Decl(functionOverloadsOnGenericArity2.tlua, 5, 27), Decl(functionOverloadsOnGenericArity2.tlua, 6, 30))
+>U : Symbol(U, Decl(functionOverloadsOnGenericArity2.tlua, 6, 9))
+>p : Symbol(p, Decl(functionOverloadsOnGenericArity2.tlua, 6, 12))
+
+    then<U, T>(p: string): table
+>then : Symbol(I.then, Decl(functionOverloadsOnGenericArity2.tlua, 4, 13), Decl(functionOverloadsOnGenericArity2.tlua, 5, 27), Decl(functionOverloadsOnGenericArity2.tlua, 6, 30))
+>U : Symbol(U, Decl(functionOverloadsOnGenericArity2.tlua, 7, 9))
+>T : Symbol(T, Decl(functionOverloadsOnGenericArity2.tlua, 7, 11))
+>p : Symbol(p, Decl(functionOverloadsOnGenericArity2.tlua, 7, 15))
+}
+

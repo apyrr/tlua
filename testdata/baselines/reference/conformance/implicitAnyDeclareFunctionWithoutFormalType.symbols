@@ -1,0 +1,61 @@
+//// [tests/cases/conformance/ported/implicitAnyDeclareFunctionWithoutFormalType.tlua] ////
+
+=== implicitAnyDeclareFunctionWithoutFormalType.tlua ===
+-- ported from tests/cases/compiler/implicitAnyDeclareFunctionWithoutFormalType.ts
+-- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to latest target and strict checking)
+-- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`
+-- dropped: upstream noImplicitAny diagnostic for the unnamed vararg, which has no name in tlua
+-- dropped: upstream noImplicitAny diagnostics for defaulted z/w after null/undefined normalization to nil
+-- dropped: emit coverage (noEmit) — retained default-parameter checker cases are not lowered to valid Lua
+
+
+-- these should be errors
+function foo(x)
+>foo : Symbol(foo, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 0, 0))
+>x : Symbol(x, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 9, 13))
+
+end
+
+function bar(x: number, y)
+>bar : Symbol(bar, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 10, 3))
+>x : Symbol(x, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 12, 13))
+>y : Symbol(y, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 12, 23))
+
+end -- error at "y"; no error at "x"
+
+function func2(a, b, c)
+>func2 : Symbol(func2, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 13, 3))
+>a : Symbol(a, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 15, 15))
+>b : Symbol(b, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 15, 17))
+>c : Symbol(c, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 15, 20))
+
+end -- error at "a,b,c"
+
+function func3(...)
+>func3 : Symbol(func3, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 16, 3))
+> : Symbol((Missing), Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 18, 15))
+
+end
+
+function func4(z = nil, w = nil)
+>func4 : Symbol(func4, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 19, 3))
+>z : Symbol(z, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 21, 15))
+>w : Symbol(w, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 21, 23))
+
+end
+
+-- these shouldn't be errors
+function noError1(x = 3, y = 2)
+>noError1 : Symbol(noError1, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 22, 3))
+>x : Symbol(x, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 25, 18))
+>y : Symbol(y, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 25, 24))
+
+end
+
+function noError2(x: number, y: string)
+>noError2 : Symbol(noError2, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 26, 3))
+>x : Symbol(x, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 28, 18))
+>y : Symbol(y, Decl(implicitAnyDeclareFunctionWithoutFormalType.tlua, 28, 28))
+
+end
+

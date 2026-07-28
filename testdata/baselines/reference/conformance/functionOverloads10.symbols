@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/functionOverloads10.tlua] ////
+
+=== functionOverloads10.tlua ===
+-- ported from tests/cases/compiler/functionOverloads10.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+
+function foo(foo: string, bar: number): any;
+>foo : Symbol(foo, Decl(functionOverloads10.tlua, 0, 0), Decl(functionOverloads10.tlua, 3, 44), Decl(functionOverloads10.tlua, 4, 31))
+>foo : Symbol(foo, Decl(functionOverloads10.tlua, 3, 13))
+>bar : Symbol(bar, Decl(functionOverloads10.tlua, 3, 25))
+
+function foo(foo: string): any;
+>foo : Symbol(foo, Decl(functionOverloads10.tlua, 0, 0), Decl(functionOverloads10.tlua, 3, 44), Decl(functionOverloads10.tlua, 4, 31))
+>foo : Symbol(foo, Decl(functionOverloads10.tlua, 4, 13))
+
+function foo(foo: any): any
+>foo : Symbol(foo, Decl(functionOverloads10.tlua, 0, 0), Decl(functionOverloads10.tlua, 3, 44), Decl(functionOverloads10.tlua, 4, 31))
+>foo : Symbol(foo, Decl(functionOverloads10.tlua, 5, 13))
+
+end
+

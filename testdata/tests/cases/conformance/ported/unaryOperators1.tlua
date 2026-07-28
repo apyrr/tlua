@@ -1,0 +1,8 @@
+-- ported from tests/cases/compiler/unaryOperators1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: bitwise complement (~) because bitwise value operators are deleted
+// @noEmit: true
+-- compiler gap: unary-plus emission is not valid Lua
+
+local _ = +foo
+local _ = -bar

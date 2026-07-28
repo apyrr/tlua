@@ -1,0 +1,23 @@
+addMoreOverloadsToBaseSignature.tlua(8,11): error TLUA2430: Interface 'Bar' incorrectly extends interface 'Foo'.
+  Types of property 'f' are incompatible.
+    Type '(key: string) => string' is not assignable to type '() => string'.
+      Target signature provides too few arguments. Expected 1 or more, but got 0.
+
+
+==== addMoreOverloadsToBaseSignature.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/addMoreOverloadsToBaseSignature.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Foo {
+        f(): string
+    }
+    
+    interface Bar extends Foo {
+              ~~~
+!!! error TLUA2430: Interface 'Bar' incorrectly extends interface 'Foo'.
+!!! error TLUA2430:   Types of property 'f' are incompatible.
+!!! error TLUA2430:     Type '(key: string) => string' is not assignable to type '() => string'.
+!!! error TLUA2430:       Target signature provides too few arguments. Expected 1 or more, but got 0.
+        f(key: string): string
+    }
+    

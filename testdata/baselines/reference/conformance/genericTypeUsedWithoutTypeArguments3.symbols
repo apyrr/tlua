@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/genericTypeUsedWithoutTypeArguments3.tlua] ////
+
+=== genericTypeUsedWithoutTypeArguments3.tlua ===
+-- ported from tests/cases/compiler/genericTypeUsedWithoutTypeArguments3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo<T> { }
+>Foo : Symbol(Foo, Decl(genericTypeUsedWithoutTypeArguments3.tlua, 0, 0))
+>T : Symbol(T, Decl(genericTypeUsedWithoutTypeArguments3.tlua, 3, 14))
+
+interface Bar<T> extends Foo { }
+>Bar : Symbol(Bar, Decl(genericTypeUsedWithoutTypeArguments3.tlua, 3, 20))
+>T : Symbol(T, Decl(genericTypeUsedWithoutTypeArguments3.tlua, 4, 14))
+>Foo : Symbol(Foo, Decl(genericTypeUsedWithoutTypeArguments3.tlua, 0, 0))
+

@@ -1,0 +1,34 @@
+//// [tests/cases/conformance/ported/genericFunctions3.tlua] ////
+
+=== genericFunctions3.tlua ===
+-- ported from tests/cases/compiler/genericFunctions3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Query<T> {
+>Query : Symbol(Query, Decl(genericFunctions3.tlua, 0, 0))
+>T : Symbol(T, Decl(genericFunctions3.tlua, 3, 16))
+
+    foo(x: string): Query<T[]>
+>foo : Symbol(Query.foo, Decl(genericFunctions3.tlua, 3, 20))
+>x : Symbol(x, Decl(genericFunctions3.tlua, 4, 8))
+>Query : Symbol(Query, Decl(genericFunctions3.tlua, 0, 0))
+>T : Symbol(T, Decl(genericFunctions3.tlua, 3, 16))
+}
+
+function from<T>(arg: boolean): Query<T>; -- was Error: Overload signature is not compatible with function definition.
+>from : Symbol(from, Decl(genericFunctions3.tlua, 5, 1), Decl(genericFunctions3.tlua, 7, 41))
+>T : Symbol(T, Decl(genericFunctions3.tlua, 7, 14))
+>arg : Symbol(arg, Decl(genericFunctions3.tlua, 7, 17))
+>Query : Symbol(Query, Decl(genericFunctions3.tlua, 0, 0))
+>T : Symbol(T, Decl(genericFunctions3.tlua, 7, 14))
+
+function from<T>(arg: any): Query<T>
+>from : Symbol(from, Decl(genericFunctions3.tlua, 5, 1), Decl(genericFunctions3.tlua, 7, 41))
+>T : Symbol(T, Decl(genericFunctions3.tlua, 8, 14))
+>arg : Symbol(arg, Decl(genericFunctions3.tlua, 8, 17))
+>Query : Symbol(Query, Decl(genericFunctions3.tlua, 0, 0))
+>T : Symbol(T, Decl(genericFunctions3.tlua, 8, 14))
+
+    return nil
+end
+

@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/genericCallWithoutArgs.tlua] ////
+
+=== genericCallWithoutArgs.tlua ===
+-- ported from tests/cases/compiler/genericCallWithoutArgs.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) — malformed member-access recovery has no valid Lua lowering
+
+
+function f<X, Y>(x: X, y: Y)
+>f : Symbol(f, Decl(genericCallWithoutArgs.tlua, 0, 0))
+>X : Symbol(X, Decl(genericCallWithoutArgs.tlua, 5, 11))
+>Y : Symbol(Y, Decl(genericCallWithoutArgs.tlua, 5, 13))
+>x : Symbol(x, Decl(genericCallWithoutArgs.tlua, 5, 17))
+>X : Symbol(X, Decl(genericCallWithoutArgs.tlua, 5, 11))
+>y : Symbol(y, Decl(genericCallWithoutArgs.tlua, 5, 22))
+>Y : Symbol(Y, Decl(genericCallWithoutArgs.tlua, 5, 13))
+
+end
+
+f<number, string>.
+>f : Symbol(f, Decl(genericCallWithoutArgs.tlua, 0, 0))
+

@@ -1,0 +1,26 @@
+circularlyReferentialInterfaceAccessNoCrash.tlua(4,12): error TLUA4109: Type arguments for 'Mx' circularly reference themselves.
+circularlyReferentialInterfaceAccessNoCrash.tlua(11,16): error TLUA4110: Tuple type arguments circularly reference themselves.
+circularlyReferentialInterfaceAccessNoCrash.tlua(13,19): error TLUA4110: Tuple type arguments circularly reference themselves.
+
+
+==== circularlyReferentialInterfaceAccessNoCrash.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/circularlyReferentialInterfaceAccessNoCrash.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    type Mxs = Mx<'list', Mxs['p1']>;
+               ~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA4109: Type arguments for 'Mx' circularly reference themselves.
+    
+    interface Mx<T, K> {
+      p1: T;
+      p2: K;
+    }
+    
+    type ArrElem = ['list', ArrElem[number][1]][];
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA4110: Tuple type arguments circularly reference themselves.
+    
+    type TupleElem = [['list', TupleElem[1][1]]];
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA4110: Tuple type arguments circularly reference themselves.
+    

@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/multipleBaseInterfaesWithIncompatibleProperties.tlua] ////
+
+=== multipleBaseInterfaesWithIncompatibleProperties.tlua ===
+-- ported from tests/cases/compiler/multipleBaseInterfaesWithIncompatibleProperties.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A<T> {
+>A : Symbol(A, Decl(multipleBaseInterfaesWithIncompatibleProperties.tlua, 0, 0))
+>T : Symbol(T, Decl(multipleBaseInterfaesWithIncompatibleProperties.tlua, 3, 12))
+
+    x: T
+>x : Symbol(A.x, Decl(multipleBaseInterfaesWithIncompatibleProperties.tlua, 3, 16))
+>T : Symbol(T, Decl(multipleBaseInterfaesWithIncompatibleProperties.tlua, 3, 12))
+}
+
+interface C extends A<string>, A<number> { }
+>C : Symbol(C, Decl(multipleBaseInterfaesWithIncompatibleProperties.tlua, 5, 1))
+>A : Symbol(A, Decl(multipleBaseInterfaesWithIncompatibleProperties.tlua, 0, 0))
+>A : Symbol(A, Decl(multipleBaseInterfaesWithIncompatibleProperties.tlua, 0, 0))
+

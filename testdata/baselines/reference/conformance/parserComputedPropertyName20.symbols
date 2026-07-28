@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/parserComputedPropertyName20.tlua] ////
+
+=== parserComputedPropertyName20.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript6/ComputedPropertyNames/parserComputedPropertyName20.ts
+-- dropped: @target: ES6 directive (tlua defaults to latest target)
+
+interface I {
+>I : Symbol(I, Decl(parserComputedPropertyName20.tlua, 0, 0))
+
+    [e](): number
+>[e] : Symbol(I[e], Decl(parserComputedPropertyName20.tlua, 3, 13))
+}
+

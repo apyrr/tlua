@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/declarationEmitTypeAliasWithTypeParameters3.tlua] ////
+
+//// [declarationEmitTypeAliasWithTypeParameters3.tlua]
+-- ported from tests/cases/compiler/declarationEmitTypeAliasWithTypeParameters3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept generic type-alias, method-signature, and assertion checker coverage.
+
+type Foo<T> = {
+    foo<U>(): Foo<U>
+}
+
+function bar()
+    return {} as Foo<number>
+end
+
+
+//// [declarationEmitTypeAliasWithTypeParameters3.lua]
+-- ported from tests/cases/compiler/declarationEmitTypeAliasWithTypeParameters3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept generic type-alias, method-signature, and assertion checker coverage.
+function bar()
+  return {};
+end

@@ -1,0 +1,26 @@
+-- ported from tests/cases/compiler/noImplicitAnyFunctions.ts
+-- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
+-- dropped: ambient function declarations were rewritten to tlua's `declare name: function-type` form
+-- compiler-gap: tlua ambient function-type declarations require an explicit return type, so upstream f1's implicit-any return diagnostic cannot be represented
+
+
+declare f1: () => any
+
+declare f2: () => any
+
+function f3(x)
+end
+
+function f4(x: any)
+    return x
+end
+
+function f5(x: any): any
+    return x
+end
+
+function f6(x: string, y: number);
+function f6(x: string, y: string): any;
+function f6(x: string, y)
+    return nil
+end

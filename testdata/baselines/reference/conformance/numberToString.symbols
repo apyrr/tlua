@@ -1,0 +1,30 @@
+//// [tests/cases/conformance/ported/numberToString.tlua] ////
+
+=== numberToString.tlua ===
+-- ported from tests/cases/compiler/numberToString.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f1(n: number): string
+>f1 : Symbol(f1, Decl(numberToString.tlua, 0, 0))
+>n : Symbol(n, Decl(numberToString.tlua, 3, 12))
+
+    return n -- error return type mismatch
+>n : Symbol(n, Decl(numberToString.tlua, 3, 12))
+
+end
+
+function f2(s: string): void
+>f2 : Symbol(f2, Decl(numberToString.tlua, 5, 3))
+>s : Symbol(s, Decl(numberToString.tlua, 7, 12))
+
+end
+
+f1(3)
+>f1 : Symbol(f1, Decl(numberToString.tlua, 0, 0))
+
+f2(3) -- error no coercion to string
+>f2 : Symbol(f2, Decl(numberToString.tlua, 5, 3))
+
+f2(3 .. "") -- ok string concatenation
+>f2 : Symbol(f2, Decl(numberToString.tlua, 5, 3))
+

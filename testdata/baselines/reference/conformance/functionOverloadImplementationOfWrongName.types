@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/functionOverloadImplementationOfWrongName.tlua] ////
+
+=== functionOverloadImplementationOfWrongName.tlua ===
+-- ported from tests/cases/compiler/functionOverloadImplementationOfWrongName.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+
+function foo(x: any): any;
+>foo : { (x: any): any; (x: any, y: any): any; }
+>x : any
+
+function foo(x: any, y: any): any;
+>foo : { (x: any): any; (x: any, y: any): any; }
+>x : any
+>y : any
+
+function bar(): any
+>bar : () => any
+
+end
+

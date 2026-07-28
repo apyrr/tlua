@@ -1,0 +1,24 @@
+//// [tests/cases/conformance/ported/functionAndInterfaceWithSeparateErrors.tlua] ////
+
+=== functionAndInterfaceWithSeparateErrors.tlua ===
+-- ported from tests/cases/compiler/functionAndInterfaceWithSeparateErrors.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function Foo(s: string);
+>Foo : (s: string) => any
+>s : string
+
+function Foo(n: number)
+>Foo : (s: string) => any
+>n : number
+
+end
+
+interface Foo {
+    [s: string]: string
+>s : string
+
+    prop: number
+>prop : number
+}
+

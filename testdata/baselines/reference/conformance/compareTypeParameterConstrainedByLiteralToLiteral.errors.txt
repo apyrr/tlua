@@ -1,0 +1,15 @@
+compareTypeParameterConstrainedByLiteralToLiteral.tlua(7,15): error TLUA2367: This comparison appears to be unintentional because the types 'T' and '"x"' have no overlap.
+
+
+==== compareTypeParameterConstrainedByLiteralToLiteral.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/compareTypeParameterConstrainedByLiteralToLiteral.ts
+    
+    -- Test for #26758
+    
+    function foo<T extends "a" | "b">(t: T)
+        local _ = t == "a" -- Should be allowed
+        local _ = t == "x" -- Should be error
+                  ~~~~~~~~
+!!! error TLUA2367: This comparison appears to be unintentional because the types 'T' and '"x"' have no overlap.
+    end
+    

@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/intersectionTypeWithLeadingOperator.tlua] ////
+
+=== intersectionTypeWithLeadingOperator.tlua ===
+-- ported from tests/cases/compiler/intersectionTypeWithLeadingOperator.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type A = & string
+>A : Symbol(A, Decl(intersectionTypeWithLeadingOperator.tlua, 0, 0))
+
+type B =
+>B : Symbol(B, Decl(intersectionTypeWithLeadingOperator.tlua, 3, 17))
+
+  & { foo: string }
+>foo : Symbol(foo, Decl(intersectionTypeWithLeadingOperator.tlua, 5, 5))
+
+  & { bar: number }
+>bar : Symbol(bar, Decl(intersectionTypeWithLeadingOperator.tlua, 6, 5))
+
+type C = [& { foo: 1 } & { bar: 2 }, & { foo: 3 } & { bar: 4 }]
+>C : Symbol(C, Decl(intersectionTypeWithLeadingOperator.tlua, 6, 19))
+>foo : Symbol(foo, Decl(intersectionTypeWithLeadingOperator.tlua, 8, 13))
+>bar : Symbol(bar, Decl(intersectionTypeWithLeadingOperator.tlua, 8, 26))
+>foo : Symbol(foo, Decl(intersectionTypeWithLeadingOperator.tlua, 8, 40))
+>bar : Symbol(bar, Decl(intersectionTypeWithLeadingOperator.tlua, 8, 53))
+

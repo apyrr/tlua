@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/methodSignatureHandledDeclarationKindForSymbol.tlua] ////
+
+=== methodSignatureHandledDeclarationKindForSymbol.tlua ===
+-- ported from tests/cases/compiler/methodSignatureHandledDeclarationKindForSymbol.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: the incompatible merged-interface declarations report TLUA2300 duplicate identifiers on both declarations instead of one incompatibility diagnostic on the second declaration.
+
+interface Foo {
+>Foo : Symbol(Foo, Decl(methodSignatureHandledDeclarationKindForSymbol.tlua, 0, 0), Decl(methodSignatureHandledDeclarationKindForSymbol.tlua, 6, 1))
+
+    bold(): string
+>bold : Symbol(Foo.bold, Decl(methodSignatureHandledDeclarationKindForSymbol.tlua, 4, 15))
+}
+
+interface Foo {
+>Foo : Symbol(Foo, Decl(methodSignatureHandledDeclarationKindForSymbol.tlua, 0, 0), Decl(methodSignatureHandledDeclarationKindForSymbol.tlua, 6, 1))
+
+    bold: string
+>bold : Symbol(Foo.bold, Decl(methodSignatureHandledDeclarationKindForSymbol.tlua, 8, 15))
+}
+

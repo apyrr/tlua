@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/ported/circularlyReferentialInterfaceAccessNoCrash.tlua] ////
+
+=== circularlyReferentialInterfaceAccessNoCrash.tlua ===
+-- ported from tests/cases/compiler/circularlyReferentialInterfaceAccessNoCrash.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type Mxs = Mx<'list', Mxs['p1']>;
+>Mxs : Symbol(Mxs, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 0, 0))
+>Mx : Symbol(Mx, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 3, 33))
+>Mxs : Symbol(Mxs, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 0, 0))
+
+interface Mx<T, K> {
+>Mx : Symbol(Mx, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 3, 33))
+>T : Symbol(T, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 5, 13))
+>K : Symbol(K, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 5, 15))
+
+  p1: T;
+>p1 : Symbol(Mx.p1, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 5, 20))
+>T : Symbol(T, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 5, 13))
+
+  p2: K;
+>p2 : Symbol(Mx.p2, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 6, 8))
+>K : Symbol(K, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 5, 15))
+}
+
+type ArrElem = ['list', ArrElem[number][1]][];
+>ArrElem : Symbol(ArrElem, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 8, 1))
+>ArrElem : Symbol(ArrElem, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 8, 1))
+
+type TupleElem = [['list', TupleElem[1][1]]];
+>TupleElem : Symbol(TupleElem, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 10, 46))
+>TupleElem : Symbol(TupleElem, Decl(circularlyReferentialInterfaceAccessNoCrash.tlua, 10, 46))
+

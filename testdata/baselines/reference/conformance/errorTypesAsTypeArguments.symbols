@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/errorTypesAsTypeArguments.tlua] ////
+
+=== errorTypesAsTypeArguments.tlua ===
+-- ported from tests/cases/compiler/errorTypesAsTypeArguments.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo<A> {
+>Foo : Symbol(Foo, Decl(errorTypesAsTypeArguments.tlua, 0, 0))
+>A : Symbol(A, Decl(errorTypesAsTypeArguments.tlua, 3, 14))
+
+    bar(baz: Foo<B>): Foo<C>
+>bar : Symbol(Foo.bar, Decl(errorTypesAsTypeArguments.tlua, 3, 18))
+>baz : Symbol(baz, Decl(errorTypesAsTypeArguments.tlua, 4, 8))
+>Foo : Symbol(Foo, Decl(errorTypesAsTypeArguments.tlua, 0, 0))
+>B : Symbol(B)
+>Foo : Symbol(Foo, Decl(errorTypesAsTypeArguments.tlua, 0, 0))
+>C : Symbol(C)
+}
+

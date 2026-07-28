@@ -1,0 +1,42 @@
+//// [tests/cases/conformance/ported/partialTypeNarrowedToByTypeGuard.tlua] ////
+
+//// [partialTypeNarrowedToByTypeGuard.tlua]
+-- ported from tests/cases/compiler/partialTypeNarrowedToByTypeGuard.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to latest target and strict checking)
+-- dropped: the explanatory commented-out expansion of PartialUser (comments do not affect compiler coverage)
+
+type Obj = table | nil
+
+type User = {
+    email: string,
+    name: string,
+}
+
+type PartialUser = Partial<User>
+
+function isUser(obj: Obj): obj is PartialUser
+    return true
+end
+
+function getUserName(obj: Obj)
+    if isUser(obj) then
+        return obj.name
+    end
+
+    return ''
+end
+
+
+//// [partialTypeNarrowedToByTypeGuard.lua]
+-- ported from tests/cases/compiler/partialTypeNarrowedToByTypeGuard.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to latest target and strict checking)
+-- dropped: the explanatory commented-out expansion of PartialUser (comments do not affect compiler coverage)
+function isUser(obj)
+  return true;
+end
+function getUserName(obj)
+  if isUser(obj) then
+    return obj.name;
+  end
+  return '';
+end

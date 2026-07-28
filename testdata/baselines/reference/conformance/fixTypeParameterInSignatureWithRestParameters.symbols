@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/fixTypeParameterInSignatureWithRestParameters.tlua] ////
+
+=== fixTypeParameterInSignatureWithRestParameters.tlua ===
+-- ported from tests/cases/compiler/fixTypeParameterInSignatureWithRestParameters.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function bar<T>(item1: T, item2: T)
+>bar : Symbol(bar, Decl(fixTypeParameterInSignatureWithRestParameters.tlua, 0, 0))
+>T : Symbol(T, Decl(fixTypeParameterInSignatureWithRestParameters.tlua, 3, 13))
+>item1 : Symbol(item1, Decl(fixTypeParameterInSignatureWithRestParameters.tlua, 3, 16))
+>T : Symbol(T, Decl(fixTypeParameterInSignatureWithRestParameters.tlua, 3, 13))
+>item2 : Symbol(item2, Decl(fixTypeParameterInSignatureWithRestParameters.tlua, 3, 25))
+>T : Symbol(T, Decl(fixTypeParameterInSignatureWithRestParameters.tlua, 3, 13))
+
+end
+
+bar(1, "") -- Should be ok
+>bar : Symbol(bar, Decl(fixTypeParameterInSignatureWithRestParameters.tlua, 0, 0))
+

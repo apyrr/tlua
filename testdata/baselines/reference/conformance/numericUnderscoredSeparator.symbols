@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/numericUnderscoredSeparator.tlua] ////
+
+=== numericUnderscoredSeparator.tlua ===
+-- ported from tests/cases/compiler/numericUnderscoredSeparator.ts
+-- dropped: @target vary-list directive (tlua defaults to latest target)
+
+local _ = 1_000_000_000_000
+>_ : Symbol(_, Decl(numericUnderscoredSeparator.tlua, 3, 5))
+
+local _ = 0b1010_0001_1000_0101
+>_ : Symbol(_, Decl(numericUnderscoredSeparator.tlua, 4, 5))
+
+local _ = 0b1010_0001_1000_0101
+>_ : Symbol(_, Decl(numericUnderscoredSeparator.tlua, 5, 5))
+
+local _ = 0xA0_B0_C0
+>_ : Symbol(_, Decl(numericUnderscoredSeparator.tlua, 6, 5))
+

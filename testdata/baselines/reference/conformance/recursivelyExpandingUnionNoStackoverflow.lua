@@ -1,0 +1,16 @@
+//// [tests/cases/conformance/ported/recursivelyExpandingUnionNoStackoverflow.tlua] ////
+
+//// [recursivelyExpandingUnionNoStackoverflow.tlua]
+-- ported from tests/cases/compiler/recursivelyExpandingUnionNoStackoverflow.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+-- compiler gap: tlua reports the circular mapped-property diagnostic but misses the upstream excessive-instantiation-depth diagnostic
+
+type N<T, K extends string> = T | { [P in K]: N<T, K> }[K]
+
+type M = N<number, "M">
+
+
+//// [recursivelyExpandingUnionNoStackoverflow.lua]
+-- ported from tests/cases/compiler/recursivelyExpandingUnionNoStackoverflow.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+-- compiler gap: tlua reports the circular mapped-property diagnostic but misses the upstream excessive-instantiation-depth diagnostic

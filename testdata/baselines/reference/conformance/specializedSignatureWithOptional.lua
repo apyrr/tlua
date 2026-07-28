@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/specializedSignatureWithOptional.tlua] ////
+
+//// [specializedSignatureWithOptional.tlua]
+-- ported from tests/cases/conformance/types/objectTypeLiteral/callSignatures/specializedSignatureWithOptional.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+
+declare function f(x?: "hi"): void
+declare function f(x?: string): void
+
+
+//// [specializedSignatureWithOptional.lua]
+-- ported from tests/cases/conformance/types/objectTypeLiteral/callSignatures/specializedSignatureWithOptional.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)

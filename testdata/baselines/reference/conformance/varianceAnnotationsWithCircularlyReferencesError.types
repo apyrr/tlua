@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/varianceAnnotationsWithCircularlyReferencesError.tlua] ////
+
+=== varianceAnnotationsWithCircularlyReferencesError.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/varianceAnnotationsWithCircularlyReferencesError.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration output (unsupported for this Lua type test)
+-- dropped: upstream uses reserved `in`/`out` as parameter identifiers for parser recovery; renamed to preserve the circular variance checker cases without a parse storm
+
+type T1<in inParam> = T1 -- Error: circularly references
+>T1 : any
+
+type T2<out outParam> = T2 -- Error: circularly references
+>T2 : any
+

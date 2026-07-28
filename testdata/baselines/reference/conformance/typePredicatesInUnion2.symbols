@@ -1,0 +1,30 @@
+//// [tests/cases/conformance/ported/typePredicatesInUnion2.tlua] ////
+
+=== typePredicatesInUnion2.tlua ===
+-- ported from tests/cases/compiler/typePredicatesInUnion2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+declare function isString(x: any): x is string
+>isString : Symbol(isString, Decl(typePredicatesInUnion2.tlua, 0, 0))
+>x : Symbol(x, Decl(typePredicatesInUnion2.tlua, 3, 26))
+>x : Symbol(x, Decl(typePredicatesInUnion2.tlua, 3, 26))
+
+declare function isNumber(x: any): x is number
+>isNumber : Symbol(isNumber, Decl(typePredicatesInUnion2.tlua, 3, 46))
+>x : Symbol(x, Decl(typePredicatesInUnion2.tlua, 4, 26))
+>x : Symbol(x, Decl(typePredicatesInUnion2.tlua, 4, 26))
+
+declare function f(p: typeof isString | typeof isNumber): void
+>f : Symbol(f, Decl(typePredicatesInUnion2.tlua, 4, 46))
+>p : Symbol(p, Decl(typePredicatesInUnion2.tlua, 5, 19))
+>isString : Symbol(isString, Decl(typePredicatesInUnion2.tlua, 0, 0))
+>isNumber : Symbol(isNumber, Decl(typePredicatesInUnion2.tlua, 3, 46))
+
+f(isString)
+>f : Symbol(f, Decl(typePredicatesInUnion2.tlua, 4, 46))
+>isString : Symbol(isString, Decl(typePredicatesInUnion2.tlua, 0, 0))
+
+f(isNumber)
+>f : Symbol(f, Decl(typePredicatesInUnion2.tlua, 4, 46))
+>isNumber : Symbol(isNumber, Decl(typePredicatesInUnion2.tlua, 3, 46))
+

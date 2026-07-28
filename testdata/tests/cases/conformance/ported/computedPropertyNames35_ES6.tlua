@@ -1,0 +1,8 @@
+-- ported from tests/cases/conformance/es6/computedProperties/computedPropertyNames35_ES6.ts
+-- dropped: @target: es6 directive (tlua defaults to latest target)
+
+function foo<T>() return '' end
+interface I<T> {
+    bar(): string
+    [foo<T>()](): void
+}

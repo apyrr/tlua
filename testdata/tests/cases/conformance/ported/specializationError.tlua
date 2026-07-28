@@ -1,0 +1,13 @@
+-- ported from tests/cases/compiler/specializationError.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: Promise return type renamed to Result because Promise is not part of tlua's library surface
+
+interface Result<T> {
+    then<U>(value: T): void
+}
+
+interface Bar {
+    bar(value: "Menu"): Result<string>
+    bar<T>(value: string, element: string): Result<T>
+    bar<T>(value: string): Result<T>
+}

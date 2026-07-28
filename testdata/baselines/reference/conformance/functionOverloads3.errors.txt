@@ -1,0 +1,11 @@
+functionOverloads3.tlua(4,10): error TLUA2391: Function implementation is missing or not immediately following the declaration.
+
+
+==== functionOverloads3.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/functionOverloads3.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo(): string;
+             ~~~
+!!! error TLUA2391: Function implementation is missing or not immediately following the declaration.
+    

@@ -1,0 +1,30 @@
+//// [tests/cases/conformance/ported/unionTypeWithIndexAndMethodSignature.tlua] ////
+
+=== unionTypeWithIndexAndMethodSignature.tlua ===
+-- ported from tests/cases/compiler/unionTypeWithIndexAndMethodSignature.ts
+-- dropped: @target: es2015 and @strict: true directives (tlua defaults to esnext and strict checking)
+
+interface Options {
+    m(x: number): void
+>m : (x: number) => void
+>x : number
+
+    [key: string]: unknown
+>key : string
+}
+declare function f(options: number | Options): void
+>f : (options: number | Options) => void
+>options : number | Options
+
+f({
+>f({    m = function(x) end,}) : void
+>f : (options: number | Options) => void
+>{    m = function(x) end,} : { m: (x: number) => void; }
+
+    m = function(x) end,
+>m : (x: number) => void
+>function(x) end : (x: number) => void
+>x : number
+
+})
+

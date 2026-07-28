@@ -1,0 +1,22 @@
+parserAmbiguity3.tlua(6,1): error TLUA2304: Cannot find name 'f'.
+parserAmbiguity3.tlua(6,3): error TLUA2304: Cannot find name 'g'.
+parserAmbiguity3.tlua(6,7): error TLUA2304: Cannot find name 'A'.
+parserAmbiguity3.tlua(6,10): error TLUA2304: Cannot find name 'B'.
+
+
+==== parserAmbiguity3.tlua (4 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserAmbiguity3.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- compiler gap: parser-recovery output preserves an invalid Lua comparison/call shape; checker/parser coverage is retained.
+    -- dropped: emit coverage suppressed because the recovered expression is not valid Lua.
+    
+    f(g < A, B > +(7))
+    ~
+!!! error TLUA2304: Cannot find name 'f'.
+      ~
+!!! error TLUA2304: Cannot find name 'g'.
+          ~
+!!! error TLUA2304: Cannot find name 'A'.
+             ~
+!!! error TLUA2304: Cannot find name 'B'.
+    

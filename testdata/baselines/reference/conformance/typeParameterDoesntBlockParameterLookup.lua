@@ -1,0 +1,12 @@
+//// [tests/cases/conformance/ported/typeParameterDoesntBlockParameterLookup.tlua] ////
+
+//// [typeParameterDoesntBlockParameterLookup.tlua]
+-- ported from tests/cases/compiler/typeParameterDoesntBlockParameterLookup.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+declare function f<Foo extends Bar, Bar>(Bar: any): void
+
+
+//// [typeParameterDoesntBlockParameterLookup.lua]
+-- ported from tests/cases/compiler/typeParameterDoesntBlockParameterLookup.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

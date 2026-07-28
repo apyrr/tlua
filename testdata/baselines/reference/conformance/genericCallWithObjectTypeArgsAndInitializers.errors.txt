@@ -1,0 +1,57 @@
+genericCallWithObjectTypeArgsAndInitializers.tlua(6,17): error TLUA2322: Type 'nil' is not assignable to type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'nil'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(10,18): error TLUA2322: Type 'nil' is not assignable to type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'nil'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(14,32): error TLUA2322: Type 'number' is not assignable to type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(17,37): error TLUA2322: Type 'T' is not assignable to type 'U'.
+  'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+genericCallWithObjectTypeArgsAndInitializers.tlua(23,56): error TLUA2322: Type 'U' is not assignable to type 'V'.
+  'V' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+
+
+==== genericCallWithObjectTypeArgsAndInitializers.tlua (5 errors) ====
+    -- ported from tests/cases/conformance/types/typeRelationships/assignmentCompatibility/genericCallWithObjectTypeArgsAndInitializers.ts
+    -- dropped: @target: es2015 directive (tlua defaults to the latest target)
+    -- dropped: Number constraint rewritten as table because the JavaScript Number library type is unavailable in tlua
+    
+    -- Generic typed parameters with initializers
+    function foo<T>(x: T = nil)
+                    ~~~~~~~~~~
+!!! error TLUA2322: Type 'nil' is not assignable to type 'T'.
+!!! error TLUA2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'nil'.
+        return x
+    end
+    
+    function foo2<T>(x: T = nil)
+                     ~~~~~~~~~~
+!!! error TLUA2322: Type 'nil' is not assignable to type 'T'.
+!!! error TLUA2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'nil'.
+        return x
+    end
+    
+    function foo3<T extends table>(x: T = 1)
+                                   ~~~~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'T'.
+!!! error TLUA2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+    end -- error
+    
+    function foo4<T, U extends T>(x: T, y: U = x)
+                                        ~~~~~~~~
+!!! error TLUA2322: Type 'T' is not assignable to type 'U'.
+!!! error TLUA2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+!!! related TLUA2208 genericCallWithObjectTypeArgsAndInitializers.tlua:17:15: This type parameter might need an `extends U` constraint.
+    end -- error
+    
+    function foo5<T, U extends T>(x: U, y: T = x)
+    end -- ok
+    
+    function foo6<T, U extends T, V extends U>(x: T, y: U, z: V = y)
+                                                           ~~~~~~~~
+!!! error TLUA2322: Type 'U' is not assignable to type 'V'.
+!!! error TLUA2322:   'V' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+    end -- error
+    
+    function foo7<T, U extends T, V extends U>(x: V, y: U = x)
+    end -- should be ok
+    

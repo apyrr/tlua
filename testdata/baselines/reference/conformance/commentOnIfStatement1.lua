@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/commentOnIfStatement1.tlua] ////
+
+//// [commentOnIfStatement1.tlua]
+-- ported from tests/cases/compiler/commentOnIfStatement1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+
+-- Test
+if true then
+end
+
+
+//// [commentOnIfStatement1.lua]
+-- ported from tests/cases/compiler/commentOnIfStatement1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- Test
+if true then
+end

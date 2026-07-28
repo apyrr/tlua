@@ -1,0 +1,10 @@
+unterminatedStringLiteralWithBackslash1.tlua(4,13): error TLUA1126: Unexpected end of text.
+
+
+==== unterminatedStringLiteralWithBackslash1.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/unterminatedStringLiteralWithBackslash1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    local _ = "\
+                
+!!! error TLUA1126: Unexpected end of text.

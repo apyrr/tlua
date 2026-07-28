@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/parserMemberAccessExpression1.tlua] ////
+
+=== parserMemberAccessExpression1.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserMemberAccessExpression1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+local _ = Foo<T>()
+>_ : Symbol(_, Decl(parserMemberAccessExpression1.tlua, 3, 5))
+>T : Symbol(T)
+
+local _ = Foo.Bar<T>()
+>_ : Symbol(_, Decl(parserMemberAccessExpression1.tlua, 4, 5))
+>T : Symbol(T)
+
+local _ = Foo<T>.Bar()
+>_ : Symbol(_, Decl(parserMemberAccessExpression1.tlua, 5, 5))
+>T : Symbol(T)
+
+local _ = Foo<T>.Bar<T>()
+>_ : Symbol(_, Decl(parserMemberAccessExpression1.tlua, 6, 5))
+>T : Symbol(T)
+>T : Symbol(T)
+

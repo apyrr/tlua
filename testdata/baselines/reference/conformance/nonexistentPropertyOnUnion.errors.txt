@@ -1,0 +1,20 @@
+nonexistentPropertyOnUnion.tlua(10,7): error TLUA2339: Property 'lower' does not exist on type 'string | Other'.
+  Property 'lower' does not exist on type 'Other'.
+
+
+==== nonexistentPropertyOnUnion.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/nonexistentPropertyOnUnion.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: Promise union constituent (Promise is deleted; replaced with a structurally distinct interface)
+    
+    interface Other {
+        value: string
+    }
+    
+    function f(x: string | Other)
+        x:lower()
+          ~~~~~
+!!! error TLUA2339: Property 'lower' does not exist on type 'string | Other'.
+!!! error TLUA2339:   Property 'lower' does not exist on type 'Other'.
+    end
+    

@@ -1,0 +1,30 @@
+genericUnboundedTypeParamAssignability.tlua(16,8): error TLUA2345: Argument of type 'T' is not assignable to parameter of type '{}'.
+genericUnboundedTypeParamAssignability.tlua(17,8): error TLUA2345: Argument of type 'T' is not assignable to parameter of type 'Record<string, any>'.
+
+
+==== genericUnboundedTypeParamAssignability.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/genericUnboundedTypeParamAssignability.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: Object.prototype.toString behavior (JavaScript-only lib surface)
+    
+    function f1<T>(o: T)
+    end
+    
+    function f2<T extends {}>(o: T)
+    end
+    
+    function f3<T extends Record<string, any>>(o: T)
+    end
+    
+    function user<T>(t: T)
+        f1(t)
+        f2(t) -- error in strict, unbounded T doesn't satisfy the constraint
+           ~
+!!! error TLUA2345: Argument of type 'T' is not assignable to parameter of type '{}'.
+!!! related TLUA2208 genericUnboundedTypeParamAssignability.tlua:14:15: This type parameter might need an `extends {}` constraint.
+        f3(t) -- error in strict, unbounded T doesn't satisfy the constraint
+           ~
+!!! error TLUA2345: Argument of type 'T' is not assignable to parameter of type 'Record<string, any>'.
+!!! related TLUA2208 genericUnboundedTypeParamAssignability.tlua:14:15: This type parameter might need an `extends Record<string, any>` constraint.
+    end
+    

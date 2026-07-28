@@ -1,0 +1,23 @@
+interfaceThatHidesBaseProperty2.tlua(8,11): error TLUA2430: Interface 'Derived' incorrectly extends interface 'Base'.
+  The types of 'x.a' are incompatible between these types.
+    Type 'string' is not assignable to type 'number'.
+
+
+==== interfaceThatHidesBaseProperty2.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfaceThatHidesBaseProperty2.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface Base {
+        x: { a: number }
+    }
+    
+    interface Derived extends Base { -- error
+              ~~~~~~~
+!!! error TLUA2430: Interface 'Derived' incorrectly extends interface 'Base'.
+!!! error TLUA2430:   The types of 'x.a' are incompatible between these types.
+!!! error TLUA2430:     Type 'string' is not assignable to type 'number'.
+        x: {
+            a: string
+        }
+    }
+    

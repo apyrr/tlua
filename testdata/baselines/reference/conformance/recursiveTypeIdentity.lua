@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/recursiveTypeIdentity.tlua] ////
+
+//// [recursiveTypeIdentity.tlua]
+-- ported from tests/cases/compiler/recursiveTypeIdentity.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface List<T> {
+    data: T
+    next: List<T>
+    owner: List<List<T>> -- Error, recursive reference with wrapped T
+}
+
+interface List2<T> {
+    data: T
+    next: List2<T>
+    owner: List2<List2<string>> -- Ok
+}
+
+
+//// [recursiveTypeIdentity.lua]
+-- ported from tests/cases/compiler/recursiveTypeIdentity.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/compareTypeParameterConstrainedByLiteralToLiteral.tlua] ////
+
+=== compareTypeParameterConstrainedByLiteralToLiteral.tlua ===
+-- ported from tests/cases/compiler/compareTypeParameterConstrainedByLiteralToLiteral.ts
+
+-- Test for #26758
+
+function foo<T extends "a" | "b">(t: T)
+>foo : <T extends "a" | "b">(t: T) => void
+>t : T
+
+    local _ = t == "a" -- Should be allowed
+>_ : boolean
+>t == "a" : boolean
+>t : T
+>"a" : "a"
+
+    local _ = t == "x" -- Should be error
+>_ : boolean
+>t == "x" : boolean
+>t : T
+>"x" : "x"
+
+end
+

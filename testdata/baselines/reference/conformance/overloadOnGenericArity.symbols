@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/overloadOnGenericArity.tlua] ////
+
+=== overloadOnGenericArity.tlua ===
+-- ported from tests/cases/compiler/overloadOnGenericArity.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @lib: es5 directive (tlua uses its default Lua library)
+
+interface Test {
+>Test : Symbol(Test, Decl(overloadOnGenericArity.tlua, 0, 0))
+
+    then<U>(p: string): string
+>then : Symbol(Test.then, Decl(overloadOnGenericArity.tlua, 4, 16), Decl(overloadOnGenericArity.tlua, 5, 30))
+>U : Symbol(U, Decl(overloadOnGenericArity.tlua, 5, 9))
+>p : Symbol(p, Decl(overloadOnGenericArity.tlua, 5, 12))
+
+    then(p: string): number
+>then : Symbol(Test.then, Decl(overloadOnGenericArity.tlua, 4, 16), Decl(overloadOnGenericArity.tlua, 5, 30))
+>p : Symbol(p, Decl(overloadOnGenericArity.tlua, 6, 9))
+}
+

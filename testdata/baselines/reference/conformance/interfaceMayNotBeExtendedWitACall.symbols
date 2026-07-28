@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/interfaceMayNotBeExtendedWitACall.tlua] ////
+
+=== interfaceMayNotBeExtendedWitACall.tlua ===
+-- ported from tests/cases/compiler/interfaceMayNotBeExtendedWitACall.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface color {}
+>color : Symbol(color, Decl(interfaceMayNotBeExtendedWitACall.tlua, 0, 0))
+
+interface blue extends color() { -- error
+>blue : Symbol(blue, Decl(interfaceMayNotBeExtendedWitACall.tlua, 3, 18))
+}
+

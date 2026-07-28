@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/genericConstraint3.tlua] ////
+
+=== genericConstraint3.tlua ===
+-- ported from tests/cases/compiler/genericConstraint3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface C<P> {
+    x: P
+>x : P
+}
+
+interface A<T, U extends C<T>> {
+    x: U
+>x : U
+}
+
+interface B extends A<{}, { x: {} }> {
+>x : {}
+}
+-- Should not produce an error
+

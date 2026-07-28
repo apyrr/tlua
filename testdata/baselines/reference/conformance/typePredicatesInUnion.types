@@ -1,0 +1,40 @@
+//// [tests/cases/conformance/ported/typePredicatesInUnion.tlua] ////
+
+=== typePredicatesInUnion.tlua ===
+-- ported from tests/cases/compiler/typePredicatesInUnion.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+    pred(x: {}): x is boolean
+>pred : (x: {}) => x is boolean
+>x : {}
+}
+
+interface B {
+    pred(x: {}): x is string
+>pred : (x: {}) => x is string
+>x : {}
+}
+
+type Or = A | B
+>Or : Or
+
+function f(o: Or, x: {})
+>f : (o: Or, x: {}) => void
+>o : Or
+>x : {}
+
+    if o.pred(x) then
+>o.pred(x) : boolean
+>o.pred : ((x: {}) => x is boolean) | ((x: {}) => x is string)
+>o : Or
+>pred : ((x: {}) => x is boolean) | ((x: {}) => x is string)
+>x : {}
+
+        local narrowed = x
+>narrowed : string | boolean
+>x : string | boolean
+
+    end
+end
+

@@ -1,0 +1,34 @@
+//// [tests/cases/conformance/ported/genericConstraint3.tlua] ////
+
+=== genericConstraint3.tlua ===
+-- ported from tests/cases/compiler/genericConstraint3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface C<P> {
+>C : Symbol(C, Decl(genericConstraint3.tlua, 0, 0))
+>P : Symbol(P, Decl(genericConstraint3.tlua, 3, 12))
+
+    x: P
+>x : Symbol(C.x, Decl(genericConstraint3.tlua, 3, 16))
+>P : Symbol(P, Decl(genericConstraint3.tlua, 3, 12))
+}
+
+interface A<T, U extends C<T>> {
+>A : Symbol(A, Decl(genericConstraint3.tlua, 5, 1))
+>T : Symbol(T, Decl(genericConstraint3.tlua, 7, 12))
+>U : Symbol(U, Decl(genericConstraint3.tlua, 7, 14))
+>C : Symbol(C, Decl(genericConstraint3.tlua, 0, 0))
+>T : Symbol(T, Decl(genericConstraint3.tlua, 7, 12))
+
+    x: U
+>x : Symbol(A.x, Decl(genericConstraint3.tlua, 7, 32))
+>U : Symbol(U, Decl(genericConstraint3.tlua, 7, 14))
+}
+
+interface B extends A<{}, { x: {} }> {
+>B : Symbol(B, Decl(genericConstraint3.tlua, 9, 1))
+>A : Symbol(A, Decl(genericConstraint3.tlua, 5, 1))
+>x : Symbol(x, Decl(genericConstraint3.tlua, 11, 27))
+}
+-- Should not produce an error
+

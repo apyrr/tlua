@@ -1,0 +1,7 @@
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/Blocks/parserErrorRecovery_Block2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f()
+    ¬
+    return
+end

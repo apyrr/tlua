@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/parserErrorRecovery_ArgumentList3.tlua] ////
+
+=== parserErrorRecovery_ArgumentList3.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList3.ts
+-- dropped: @target: es2015 directive (tlua defaults to esnext)
+
+function foo()
+>foo : Symbol(foo, Decl(parserErrorRecovery_ArgumentList3.tlua, 0, 0))
+
+    bar(a,
+    return;
+end
+

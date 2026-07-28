@@ -1,0 +1,12 @@
+parserSkippedTokens9.tlua(5,11): error TLUA1127: Invalid character.
+
+
+==== parserSkippedTokens9.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/SkippedTokens/parserSkippedTokens9.ts
+    -- dropped: @target: es2015 directive; tlua uses the esnext default
+    
+    ; -- existing trivia
+    --[[foo]] \ --[[bar]]
+              ~
+!!! error TLUA1127: Invalid character.
+    

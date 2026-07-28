@@ -1,0 +1,50 @@
+//// [tests/cases/conformance/ported/stringLiteralTypesOverloads05.tlua] ////
+
+=== stringLiteralTypesOverloads05.tlua ===
+-- ported from tests/cases/conformance/types/stringLiteral/stringLiteralTypesOverloads05.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit directive (unsupported); overload compatibility and implementation return checking are retained
+
+interface Animal { animal: {} }
+>Animal : Symbol(Animal, Decl(stringLiteralTypesOverloads05.tlua, 0, 0))
+>animal : Symbol(Animal.animal, Decl(stringLiteralTypesOverloads05.tlua, 4, 18))
+
+interface Dog extends Animal { dog: {} }
+>Dog : Symbol(Dog, Decl(stringLiteralTypesOverloads05.tlua, 4, 31))
+>Animal : Symbol(Animal, Decl(stringLiteralTypesOverloads05.tlua, 0, 0))
+>dog : Symbol(Dog.dog, Decl(stringLiteralTypesOverloads05.tlua, 5, 30))
+
+interface Cat extends Animal { cat: {} }
+>Cat : Symbol(Cat, Decl(stringLiteralTypesOverloads05.tlua, 5, 40))
+>Animal : Symbol(Animal, Decl(stringLiteralTypesOverloads05.tlua, 0, 0))
+>cat : Symbol(Cat.cat, Decl(stringLiteralTypesOverloads05.tlua, 6, 30))
+
+interface Moose extends Animal { moose: {} }
+>Moose : Symbol(Moose, Decl(stringLiteralTypesOverloads05.tlua, 6, 40))
+>Animal : Symbol(Animal, Decl(stringLiteralTypesOverloads05.tlua, 0, 0))
+>moose : Symbol(Moose.moose, Decl(stringLiteralTypesOverloads05.tlua, 7, 32))
+
+function doThing(x: "dog"): Dog;
+>doThing : Symbol(doThing, Decl(stringLiteralTypesOverloads05.tlua, 7, 44), Decl(stringLiteralTypesOverloads05.tlua, 9, 32), Decl(stringLiteralTypesOverloads05.tlua, 10, 32), Decl(stringLiteralTypesOverloads05.tlua, 11, 36))
+>x : Symbol(x, Decl(stringLiteralTypesOverloads05.tlua, 9, 17))
+>Dog : Symbol(Dog, Decl(stringLiteralTypesOverloads05.tlua, 4, 31))
+
+function doThing(x: "cat"): Cat;
+>doThing : Symbol(doThing, Decl(stringLiteralTypesOverloads05.tlua, 7, 44), Decl(stringLiteralTypesOverloads05.tlua, 9, 32), Decl(stringLiteralTypesOverloads05.tlua, 10, 32), Decl(stringLiteralTypesOverloads05.tlua, 11, 36))
+>x : Symbol(x, Decl(stringLiteralTypesOverloads05.tlua, 10, 17))
+>Cat : Symbol(Cat, Decl(stringLiteralTypesOverloads05.tlua, 5, 40))
+
+function doThing(x: string): Animal;
+>doThing : Symbol(doThing, Decl(stringLiteralTypesOverloads05.tlua, 7, 44), Decl(stringLiteralTypesOverloads05.tlua, 9, 32), Decl(stringLiteralTypesOverloads05.tlua, 10, 32), Decl(stringLiteralTypesOverloads05.tlua, 11, 36))
+>x : Symbol(x, Decl(stringLiteralTypesOverloads05.tlua, 11, 17))
+>Animal : Symbol(Animal, Decl(stringLiteralTypesOverloads05.tlua, 0, 0))
+
+function doThing(x: string, y?: string): Moose
+>doThing : Symbol(doThing, Decl(stringLiteralTypesOverloads05.tlua, 7, 44), Decl(stringLiteralTypesOverloads05.tlua, 9, 32), Decl(stringLiteralTypesOverloads05.tlua, 10, 32), Decl(stringLiteralTypesOverloads05.tlua, 11, 36))
+>x : Symbol(x, Decl(stringLiteralTypesOverloads05.tlua, 12, 17))
+>y : Symbol(y, Decl(stringLiteralTypesOverloads05.tlua, 12, 27))
+>Moose : Symbol(Moose, Decl(stringLiteralTypesOverloads05.tlua, 6, 40))
+
+    return nil
+end
+

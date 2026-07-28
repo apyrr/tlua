@@ -1,0 +1,38 @@
+//// [tests/cases/conformance/ported/restParameters.tlua] ////
+
+=== restParameters.tlua ===
+-- ported from tests/cases/compiler/restParameters.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f18(a?: string, ...: number)
+>f18 : (a?: string, ...: number) => void
+>a : string | nil
+> : number[]
+
+end
+
+function f19(a?: string, b?: number, ...: number)
+>f19 : (a?: string, b?: number, ...: number) => void
+>a : string | nil
+>b : number | nil
+> : number[]
+
+end
+
+function f20(a: string, b?: string, ...: number)
+>f20 : (a: string, b?: string, ...: number) => void
+>a : string
+>b : string | nil
+> : number[]
+
+end
+
+function f21(a: string, b?: string, c?: number, ...: number)
+>f21 : (a: string, b?: string, c?: number, ...: number) => void
+>a : string
+>b : string | nil
+>c : number | nil
+> : number[]
+
+end
+

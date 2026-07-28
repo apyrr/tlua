@@ -1,0 +1,7 @@
+-- ported from tests/cases/compiler/fixTypeParameterInSignatureWithRestParameters.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function bar<T>(item1: T, item2: T)
+end
+
+bar(1, "") -- Should be ok

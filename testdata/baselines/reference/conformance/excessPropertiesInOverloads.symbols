@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/excessPropertiesInOverloads.tlua] ////
+
+=== excessPropertiesInOverloads.tlua ===
+-- ported from tests/cases/compiler/excessPropertiesInOverloads.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+
+declare function fn(a: { x: string }): nil
+>fn : Symbol(fn, Decl(excessPropertiesInOverloads.tlua, 0, 0), Decl(excessPropertiesInOverloads.tlua, 4, 42))
+>a : Symbol(a, Decl(excessPropertiesInOverloads.tlua, 4, 20))
+>x : Symbol(x, Decl(excessPropertiesInOverloads.tlua, 4, 24))
+
+declare function fn(a: { y: string }): nil
+>fn : Symbol(fn, Decl(excessPropertiesInOverloads.tlua, 0, 0), Decl(excessPropertiesInOverloads.tlua, 4, 42))
+>a : Symbol(a, Decl(excessPropertiesInOverloads.tlua, 5, 20))
+>y : Symbol(y, Decl(excessPropertiesInOverloads.tlua, 5, 24))
+
+fn({ z = 3, a = 3 })
+>fn : Symbol(fn, Decl(excessPropertiesInOverloads.tlua, 0, 0), Decl(excessPropertiesInOverloads.tlua, 4, 42))
+>z : Symbol(z, Decl(excessPropertiesInOverloads.tlua, 6, 4))
+>a : Symbol(a, Decl(excessPropertiesInOverloads.tlua, 6, 11))
+

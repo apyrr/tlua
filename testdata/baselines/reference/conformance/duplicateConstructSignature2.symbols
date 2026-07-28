@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/duplicateConstructSignature2.tlua] ////
+
+=== duplicateConstructSignature2.tlua ===
+-- ported from tests/cases/compiler/duplicateConstructSignature2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I<T> {
+>I : Symbol(I, Decl(duplicateConstructSignature2.tlua, 0, 0))
+>T : Symbol(T, Decl(duplicateConstructSignature2.tlua, 3, 12))
+
+    (x: T): number
+>x : Symbol(x, Decl(duplicateConstructSignature2.tlua, 4, 5))
+>T : Symbol(T, Decl(duplicateConstructSignature2.tlua, 3, 12))
+
+    (x: T): string
+>x : Symbol(x, Decl(duplicateConstructSignature2.tlua, 5, 5))
+>T : Symbol(T, Decl(duplicateConstructSignature2.tlua, 3, 12))
+}
+

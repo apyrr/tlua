@@ -1,0 +1,25 @@
+functionAndInterfaceWithSeparateErrors.tlua(4,10): error TLUA2394: This overload signature is not compatible with its implementation signature.
+functionAndInterfaceWithSeparateErrors.tlua(4,10): error TLUA7010: 'Foo', which lacks return-type annotation, implicitly has an 'any' return type.
+functionAndInterfaceWithSeparateErrors.tlua(10,5): error TLUA2411: Property 'prop' of type 'number' is not assignable to 'string' index type 'string'.
+
+
+==== functionAndInterfaceWithSeparateErrors.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/functionAndInterfaceWithSeparateErrors.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function Foo(s: string);
+             ~~~
+!!! error TLUA2394: This overload signature is not compatible with its implementation signature.
+!!! related TLUA2750 functionAndInterfaceWithSeparateErrors.tlua:5:10: The implementation signature is declared here.
+             ~~~
+!!! error TLUA7010: 'Foo', which lacks return-type annotation, implicitly has an 'any' return type.
+    function Foo(n: number)
+    end
+    
+    interface Foo {
+        [s: string]: string
+        prop: number
+        ~~~~
+!!! error TLUA2411: Property 'prop' of type 'number' is not assignable to 'string' index type 'string'.
+    }
+    

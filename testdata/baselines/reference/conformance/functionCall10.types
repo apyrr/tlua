@@ -1,0 +1,32 @@
+//// [tests/cases/conformance/ported/functionCall10.tlua] ////
+
+=== functionCall10.tlua ===
+-- ported from tests/cases/compiler/functionCall10.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(...: number)
+>foo : (...: number) => void
+> : number[]
+
+end
+foo(0, 1)
+>foo(0, 1) : void
+>foo : (...: number) => void
+>0 : 0
+>1 : 1
+
+foo('foo')
+>foo('foo') : void
+>foo : (...: number) => void
+>'foo' : "foo"
+
+foo()
+>foo() : void
+>foo : (...: number) => void
+
+foo(1, 'bar')
+>foo(1, 'bar') : void
+>foo : (...: number) => void
+>1 : 1
+>'bar' : "bar"
+

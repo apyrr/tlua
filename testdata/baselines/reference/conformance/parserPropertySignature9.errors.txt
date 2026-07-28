@@ -1,0 +1,13 @@
+parserPropertySignature9.tlua(5,5): error TLUA7008: Member '0' implicitly has an 'any' type.
+
+
+==== parserPropertySignature9.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/PropertySignatures/parserPropertySignature9.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+    
+    interface I {
+        0;
+        ~
+!!! error TLUA7008: Member '0' implicitly has an 'any' type.
+    }
+    

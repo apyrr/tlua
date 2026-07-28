@@ -1,0 +1,24 @@
+//// [tests/cases/conformance/ported/commentOnParameter1.tlua] ////
+
+=== commentOnParameter1.tlua ===
+-- ported from tests/cases/compiler/commentOnParameter1.ts
+-- dropped: @strict: false; tlua test defaults keep strict mode enabled, so parameters are explicitly any to avoid unrelated errors.
+
+
+function commentedParameters(
+>commentedParameters : Symbol(commentedParameters, Decl(commentOnParameter1.tlua, 0, 0))
+
+--[[ Parameter a ]]
+a: any
+>a : Symbol(a, Decl(commentOnParameter1.tlua, 4, 29))
+
+--[[ End of parameter a ]]
+--[[ Parameter b ]]
+,
+b: any
+>b : Symbol(b, Decl(commentOnParameter1.tlua, 9, 1))
+
+--[[ End of parameter b ]]
+)
+end
+

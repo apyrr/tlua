@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/unusedTypeParameterInInterface1.tlua] ////
+
+=== unusedTypeParameterInInterface1.tlua ===
+-- ported from tests/cases/compiler/unusedTypeParameterInInterface1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: noUnusedLocals does not report the unused interface type parameter T
+
+
+interface int<T> {
+>int : Symbol(int, Decl(unusedTypeParameterInInterface1.tlua, 0, 0))
+>T : Symbol(T, Decl(unusedTypeParameterInInterface1.tlua, 5, 14))
+}
+

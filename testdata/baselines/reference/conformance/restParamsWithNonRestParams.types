@@ -1,0 +1,35 @@
+//// [tests/cases/conformance/ported/restParamsWithNonRestParams.tlua] ////
+
+=== restParamsWithNonRestParams.tlua ===
+-- ported from tests/cases/compiler/restParamsWithNonRestParams.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(...: number)
+>foo : (...: number) => void
+> : number[]
+
+end
+foo()
+>foo() : void
+>foo : (...: number) => void
+
+function foo2(a: string, ...: number)
+>foo2 : (a: string, ...: number) => void
+>a : string
+> : number[]
+
+end
+foo2()
+>foo2() : void
+>foo2 : (a: string, ...: number) => void
+
+function foo3(a?: string, ...: number)
+>foo3 : (a?: string, ...: number) => void
+>a : string | nil
+> : number[]
+
+end
+foo3()
+>foo3() : void
+>foo3 : (a?: string, ...: number) => void
+

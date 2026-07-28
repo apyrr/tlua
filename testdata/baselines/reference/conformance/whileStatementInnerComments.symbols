@@ -1,0 +1,11 @@
+//// [tests/cases/conformance/ported/whileStatementInnerComments.tlua] ////
+
+=== whileStatementInnerComments.tlua ===
+
+-- ported from tests/cases/compiler/whileStatementInnerComments.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: do-while comment coverage because do-while is deleted in tlua
+
+/*a*/ while /*b*/ ( /*c*/ false /*d*/ ) /*e*/ do
+end
+

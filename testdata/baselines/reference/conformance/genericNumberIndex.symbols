@@ -1,0 +1,11 @@
+//// [tests/cases/conformance/ported/genericNumberIndex.tlua] ////
+
+=== genericNumberIndex.tlua ===
+-- ported from tests/cases/compiler/genericNumberIndex.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type X<I extends number> = ['a'][I]
+>X : Symbol(X, Decl(genericNumberIndex.tlua, 0, 0))
+>I : Symbol(I, Decl(genericNumberIndex.tlua, 3, 7))
+>I : Symbol(I, Decl(genericNumberIndex.tlua, 3, 7))
+

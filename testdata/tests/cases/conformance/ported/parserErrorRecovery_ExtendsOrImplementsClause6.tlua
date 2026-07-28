@@ -1,0 +1,4 @@
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ExtendsOrImplementsClauses/parserErrorRecovery_ExtendsOrImplementsClause6.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I extends { }

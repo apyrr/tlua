@@ -1,0 +1,90 @@
+//// [tests/cases/conformance/ported/functionsWithImplicitReturnTypeAssignableToUndefined.tlua] ////
+
+=== functionsWithImplicitReturnTypeAssignableToUndefined.tlua ===
+-- ported from tests/cases/compiler/functionsWithImplicitReturnTypeAssignableToUndefined.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+-- dropped: Math.random() conditions, replaced with boolean parameters because Math is a JavaScript runtime global
+
+
+function f1(condition: boolean): unknown
+>f1 : Symbol(f1, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 0, 0))
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 5, 12))
+
+    if condition then
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 5, 12))
+
+        return true
+    end
+end
+
+type MyUnknown = unknown
+>MyUnknown : Symbol(MyUnknown, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 9, 3))
+
+function f2(condition: boolean): unknown
+>f2 : Symbol(f2, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 11, 24))
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 12, 12))
+
+    if condition then
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 12, 12))
+
+        return true
+    end
+end
+
+function f3(): any
+>f3 : Symbol(f3, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 16, 3))
+
+end
+
+function f4(): void
+>f4 : Symbol(f4, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 19, 3))
+
+end
+
+function f5(condition: boolean): {}
+>f5 : Symbol(f5, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 22, 3))
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 24, 12))
+
+    if condition then
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 24, 12))
+
+        return {}
+    end
+end
+
+function f6(condition: boolean): Record<string, any>
+>f6 : Symbol(f6, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 28, 3))
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 30, 12))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+
+    if condition then
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 30, 12))
+
+        return { foo = true }
+>foo : Symbol(foo, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 32, 16))
+
+    end
+end
+
+function f7(condition: boolean): nil
+>f7 : Symbol(f7, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 34, 3))
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 36, 12))
+
+    if condition then
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 36, 12))
+
+        return nil
+    end
+end
+
+function f8(condition: boolean): string | nil
+>f8 : Symbol(f8, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 40, 3))
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 42, 12))
+
+    if condition then
+>condition : Symbol(condition, Decl(functionsWithImplicitReturnTypeAssignableToUndefined.tlua, 42, 12))
+
+        return "foo"
+    end
+end
+

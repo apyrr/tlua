@@ -1,0 +1,42 @@
+//// [tests/cases/conformance/ported/specializationError.tlua] ////
+
+=== specializationError.tlua ===
+-- ported from tests/cases/compiler/specializationError.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: Promise return type renamed to Result because Promise is not part of tlua's library surface
+
+interface Result<T> {
+>Result : Symbol(Result, Decl(specializationError.tlua, 0, 0))
+>T : Symbol(T, Decl(specializationError.tlua, 4, 17))
+
+    then<U>(value: T): void
+>then : Symbol(Result.then, Decl(specializationError.tlua, 4, 21))
+>U : Symbol(U, Decl(specializationError.tlua, 5, 9))
+>value : Symbol(value, Decl(specializationError.tlua, 5, 12))
+>T : Symbol(T, Decl(specializationError.tlua, 4, 17))
+}
+
+interface Bar {
+>Bar : Symbol(Bar, Decl(specializationError.tlua, 6, 1))
+
+    bar(value: "Menu"): Result<string>
+>bar : Symbol(Bar.bar, Decl(specializationError.tlua, 8, 15), Decl(specializationError.tlua, 9, 38), Decl(specializationError.tlua, 10, 53))
+>value : Symbol(value, Decl(specializationError.tlua, 9, 8))
+>Result : Symbol(Result, Decl(specializationError.tlua, 0, 0))
+
+    bar<T>(value: string, element: string): Result<T>
+>bar : Symbol(Bar.bar, Decl(specializationError.tlua, 8, 15), Decl(specializationError.tlua, 9, 38), Decl(specializationError.tlua, 10, 53))
+>T : Symbol(T, Decl(specializationError.tlua, 10, 8))
+>value : Symbol(value, Decl(specializationError.tlua, 10, 11))
+>element : Symbol(element, Decl(specializationError.tlua, 10, 25))
+>Result : Symbol(Result, Decl(specializationError.tlua, 0, 0))
+>T : Symbol(T, Decl(specializationError.tlua, 10, 8))
+
+    bar<T>(value: string): Result<T>
+>bar : Symbol(Bar.bar, Decl(specializationError.tlua, 8, 15), Decl(specializationError.tlua, 9, 38), Decl(specializationError.tlua, 10, 53))
+>T : Symbol(T, Decl(specializationError.tlua, 11, 8))
+>value : Symbol(value, Decl(specializationError.tlua, 11, 11))
+>Result : Symbol(Result, Decl(specializationError.tlua, 0, 0))
+>T : Symbol(T, Decl(specializationError.tlua, 11, 8))
+}
+

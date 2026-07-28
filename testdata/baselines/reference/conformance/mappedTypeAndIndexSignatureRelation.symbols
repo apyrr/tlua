@@ -1,0 +1,108 @@
+//// [tests/cases/conformance/ported/mappedTypeAndIndexSignatureRelation.tlua] ////
+
+=== mappedTypeAndIndexSignatureRelation.tlua ===
+-- ported from tests/cases/compiler/mappedTypeAndIndexSignatureRelation.ts
+-- dropped: @target: es2015 and @strict directives (tlua uses the latest target and strict checking by default)
+-- adapted: PropertyKey is unavailable in tlua; string | number is the supported table-key constraint
+
+type Same<T> = { [P in keyof T]: T[P] }
+>Same : Symbol(Same, Decl(mappedTypeAndIndexSignatureRelation.tlua, 0, 0))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 4, 10))
+>P : Symbol(P, Decl(mappedTypeAndIndexSignatureRelation.tlua, 4, 18))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 4, 10))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 4, 10))
+>P : Symbol(P, Decl(mappedTypeAndIndexSignatureRelation.tlua, 4, 18))
+
+type T1<T extends Record<string | number, number>> = T
+>T1 : Symbol(T1, Decl(mappedTypeAndIndexSignatureRelation.tlua, 4, 39))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 6, 8))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 6, 8))
+
+type T2<U extends Record<string | number, number>> = T1<Same<U>>
+>T2 : Symbol(T2, Decl(mappedTypeAndIndexSignatureRelation.tlua, 6, 54))
+>U : Symbol(U, Decl(mappedTypeAndIndexSignatureRelation.tlua, 7, 8))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T1 : Symbol(T1, Decl(mappedTypeAndIndexSignatureRelation.tlua, 4, 39))
+>Same : Symbol(Same, Decl(mappedTypeAndIndexSignatureRelation.tlua, 0, 0))
+>U : Symbol(U, Decl(mappedTypeAndIndexSignatureRelation.tlua, 7, 8))
+
+-- Repro from #38235
+
+type Foo<IdentifierT extends Record<string | number, string | number>> =
+>Foo : Symbol(Foo, Decl(mappedTypeAndIndexSignatureRelation.tlua, 7, 64))
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 11, 9))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+
+    IdentifierT
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 11, 9))
+
+type Bar<IdentifierT extends Record<string | number, string | number>, T> =
+>Bar : Symbol(Bar, Decl(mappedTypeAndIndexSignatureRelation.tlua, 12, 15))
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 14, 9))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 14, 70))
+    {
+        [k in keyof T]: Foo<IdentifierT & { k: k }>
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 16, 9))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 14, 70))
+>Foo : Symbol(Foo, Decl(mappedTypeAndIndexSignatureRelation.tlua, 7, 64))
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 14, 9))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 16, 43))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 16, 9))
+    }
+
+type Merge2<T> = { [k in keyof T]: T[k] }
+>Merge2 : Symbol(Merge2, Decl(mappedTypeAndIndexSignatureRelation.tlua, 17, 5))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 19, 12))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 19, 20))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 19, 12))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 19, 12))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 19, 20))
+
+type Bar2<IdentifierT extends Record<string | number, string | number>, T> =
+>Bar2 : Symbol(Bar2, Decl(mappedTypeAndIndexSignatureRelation.tlua, 19, 41))
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 20, 10))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 20, 71))
+    {
+        [k in keyof T]: Foo<Merge2<IdentifierT & { k: k }>>
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 22, 9))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 20, 71))
+>Foo : Symbol(Foo, Decl(mappedTypeAndIndexSignatureRelation.tlua, 7, 64))
+>Merge2 : Symbol(Merge2, Decl(mappedTypeAndIndexSignatureRelation.tlua, 17, 5))
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 20, 10))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 22, 50))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 22, 9))
+    }
+
+type Identity<T> = T
+>Identity : Symbol(Identity, Decl(mappedTypeAndIndexSignatureRelation.tlua, 23, 5))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 25, 14))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 25, 14))
+
+type Merge3<T> = Identity<{ [k in keyof T]: T[k] }>
+>Merge3 : Symbol(Merge3, Decl(mappedTypeAndIndexSignatureRelation.tlua, 25, 20))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 26, 12))
+>Identity : Symbol(Identity, Decl(mappedTypeAndIndexSignatureRelation.tlua, 23, 5))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 26, 29))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 26, 12))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 26, 12))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 26, 29))
+
+type Bar3<IdentifierT extends Record<string | number, string | number>, T> =
+>Bar3 : Symbol(Bar3, Decl(mappedTypeAndIndexSignatureRelation.tlua, 26, 51))
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 27, 10))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 27, 71))
+    {
+        [k in keyof T]: Foo<Merge3<IdentifierT & { k: k }>>
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 29, 9))
+>T : Symbol(T, Decl(mappedTypeAndIndexSignatureRelation.tlua, 27, 71))
+>Foo : Symbol(Foo, Decl(mappedTypeAndIndexSignatureRelation.tlua, 7, 64))
+>Merge3 : Symbol(Merge3, Decl(mappedTypeAndIndexSignatureRelation.tlua, 25, 20))
+>IdentifierT : Symbol(IdentifierT, Decl(mappedTypeAndIndexSignatureRelation.tlua, 27, 10))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 29, 50))
+>k : Symbol(k, Decl(mappedTypeAndIndexSignatureRelation.tlua, 29, 9))
+    }
+

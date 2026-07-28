@@ -1,0 +1,27 @@
+//// [tests/cases/conformance/ported/inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua] ////
+
+=== inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua ===
+-- ported from tests/cases/compiler/inheritedMembersAndIndexSignaturesFromDifferentBases2.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+
+interface A<T> {
+>A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 0, 0))
+>T : Symbol(T, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 3, 12))
+
+    [n: number]: T;
+>n : Symbol(n, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 4, 5))
+>T : Symbol(T, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 3, 12))
+}
+
+interface B {
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 5, 1))
+
+    foo: number;
+>foo : Symbol(B.foo, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 7, 13))
+}
+
+interface C extends B, A<string> { } -- Should succeed
+>C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 9, 1))
+>B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 5, 1))
+>A : Symbol(A, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.tlua, 0, 0))
+

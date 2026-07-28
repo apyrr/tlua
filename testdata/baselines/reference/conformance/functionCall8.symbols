@@ -1,0 +1,24 @@
+//// [tests/cases/conformance/ported/functionCall8.tlua] ////
+
+=== functionCall8.tlua ===
+-- ported from tests/cases/compiler/functionCall8.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(a?: string)
+>foo : Symbol(foo, Decl(functionCall8.tlua, 0, 0))
+>a : Symbol(a, Decl(functionCall8.tlua, 3, 13))
+
+end
+
+foo('foo')
+>foo : Symbol(foo, Decl(functionCall8.tlua, 0, 0))
+
+foo('foo', 'bar')
+>foo : Symbol(foo, Decl(functionCall8.tlua, 0, 0))
+
+foo(4)
+>foo : Symbol(foo, Decl(functionCall8.tlua, 0, 0))
+
+foo()
+>foo : Symbol(foo, Decl(functionCall8.tlua, 0, 0))
+

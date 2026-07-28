@@ -1,0 +1,24 @@
+typeParameterAssignability.tlua(6,5): error TLUA2322: Type 'U' is not assignable to type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+typeParameterAssignability.tlua(7,5): error TLUA2322: Type 'T' is not assignable to type 'U'.
+  'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+
+
+==== typeParameterAssignability.tlua (2 errors) ====
+    -- ported from tests/cases/conformance/types/typeRelationships/assignmentCompatibility/typeParameterAssignability.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    -- type parameters are not assignable to one another unless directly or indirectly constrained to one another
+    function foo<T, U>(t: T, u: U): void
+        t = u -- error
+        ~
+!!! error TLUA2322: Type 'U' is not assignable to type 'T'.
+!!! error TLUA2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+!!! related TLUA2208 typeParameterAssignability.tlua:5:17: This type parameter might need an `extends T` constraint.
+        u = t -- error
+        ~
+!!! error TLUA2322: Type 'T' is not assignable to type 'U'.
+!!! error TLUA2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+!!! related TLUA2208 typeParameterAssignability.tlua:5:14: This type parameter might need an `extends U` constraint.
+    end
+    

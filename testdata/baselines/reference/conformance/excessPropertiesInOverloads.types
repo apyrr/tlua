@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/excessPropertiesInOverloads.tlua] ////
+
+=== excessPropertiesInOverloads.tlua ===
+-- ported from tests/cases/compiler/excessPropertiesInOverloads.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+
+declare function fn(a: { x: string }): nil
+>fn : { (a: { x: string; }): nil; (a: { y: string; }): nil; }
+>a : { x: string; }
+>x : string
+
+declare function fn(a: { y: string }): nil
+>fn : { (a: { x: string; }): nil; (a: { y: string; }): nil; }
+>a : { y: string; }
+>y : string
+
+fn({ z = 3, a = 3 })
+>fn({ z = 3, a = 3 }) : nil
+>fn : { (a: { x: string; }): nil; (a: { y: string; }): nil; }
+>{ z = 3, a = 3 } : { z: number; a: number; }
+>z : number
+>3 : 3
+>a : number
+>3 : 3
+

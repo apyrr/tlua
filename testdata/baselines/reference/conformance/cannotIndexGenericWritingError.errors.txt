@@ -1,0 +1,25 @@
+cannotIndexGenericWritingError.tlua(9,5): error TLUA2862: Type 'T' is generic and can only be indexed for reading.
+cannotIndexGenericWritingError.tlua(13,5): error TLUA2862: Type 'T' is generic and can only be indexed for reading.
+
+
+==== cannotIndexGenericWritingError.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/cannotIndexGenericWritingError.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: symbol-key coverage (Lua tables use string and numeric keys here)
+    
+    
+    -- From #47357
+    
+    function foo<T extends { [s: string]: any }>(target: T, p: string)
+        target[p] = "" -- error
+        ~~~~~~~~~
+!!! error TLUA2862: Type 'T' is generic and can only be indexed for reading.
+    end
+    
+    function foo2<T extends { [n: number]: number; [s: string]: number | string }>(target: T, p: string | number)
+        target[p] = 1 -- error
+        ~~~~~~~~~
+!!! error TLUA2862: Type 'T' is generic and can only be indexed for reading.
+        target[1] = 1 -- ok
+    end
+    

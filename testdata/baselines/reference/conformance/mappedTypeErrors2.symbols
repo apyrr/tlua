@@ -1,0 +1,75 @@
+//// [tests/cases/conformance/ported/mappedTypeErrors2.tlua] ////
+
+=== mappedTypeErrors2.tlua ===
+-- ported from tests/cases/conformance/types/mapped/mappedTypeErrors2.ts
+-- dropped: @target: es2015, @strictNullChecks: true, and @declaration directives (tlua uses the latest target, strict checking, and does not compare declaration emit)
+
+-- Repros from #17238
+
+type AB = {
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+
+    a: 'a'
+>a : Symbol(a, Decl(mappedTypeErrors2.tlua, 5, 11))
+
+    b: 'a'
+>b : Symbol(b, Decl(mappedTypeErrors2.tlua, 6, 10))
+}
+
+type T1<K extends keyof AB> = { [key in AB[K]]: true }
+>T1 : Symbol(T1, Decl(mappedTypeErrors2.tlua, 8, 1))
+>K : Symbol(K, Decl(mappedTypeErrors2.tlua, 10, 8))
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+>key : Symbol(key, Decl(mappedTypeErrors2.tlua, 10, 33))
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+>K : Symbol(K, Decl(mappedTypeErrors2.tlua, 10, 8))
+
+type T2<K extends 'a'|'b'> = T1<K>[K] -- Error
+>T2 : Symbol(T2, Decl(mappedTypeErrors2.tlua, 10, 54))
+>K : Symbol(K, Decl(mappedTypeErrors2.tlua, 11, 8))
+>T1 : Symbol(T1, Decl(mappedTypeErrors2.tlua, 8, 1))
+>K : Symbol(K, Decl(mappedTypeErrors2.tlua, 11, 8))
+>K : Symbol(K, Decl(mappedTypeErrors2.tlua, 11, 8))
+
+type R = AB[keyof AB] -- "a"
+>R : Symbol(R, Decl(mappedTypeErrors2.tlua, 11, 37))
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+
+type T3 = { [key in R]: true }
+>T3 : Symbol(T3, Decl(mappedTypeErrors2.tlua, 13, 21))
+>key : Symbol(key, Decl(mappedTypeErrors2.tlua, 14, 13))
+>R : Symbol(R, Decl(mappedTypeErrors2.tlua, 11, 37))
+
+type T4<K extends 'a'|'b'> = T3[K] -- Error
+>T4 : Symbol(T4, Decl(mappedTypeErrors2.tlua, 14, 30))
+>K : Symbol(K, Decl(mappedTypeErrors2.tlua, 15, 8))
+>T3 : Symbol(T3, Decl(mappedTypeErrors2.tlua, 13, 21))
+>K : Symbol(K, Decl(mappedTypeErrors2.tlua, 15, 8))
+
+type T5<S extends 'a'|'b'|'extra'> = {[key in AB[S]]: true}[S] -- Error
+>T5 : Symbol(T5, Decl(mappedTypeErrors2.tlua, 15, 34))
+>S : Symbol(S, Decl(mappedTypeErrors2.tlua, 17, 8))
+>key : Symbol(key, Decl(mappedTypeErrors2.tlua, 17, 39))
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+>S : Symbol(S, Decl(mappedTypeErrors2.tlua, 17, 8))
+>S : Symbol(S, Decl(mappedTypeErrors2.tlua, 17, 8))
+
+type T6<S extends 'a'|'b', L extends 'a'|'b'> = {[key in AB[S]]: true}[L] -- Error
+>T6 : Symbol(T6, Decl(mappedTypeErrors2.tlua, 17, 62))
+>S : Symbol(S, Decl(mappedTypeErrors2.tlua, 19, 8))
+>L : Symbol(L, Decl(mappedTypeErrors2.tlua, 19, 26))
+>key : Symbol(key, Decl(mappedTypeErrors2.tlua, 19, 50))
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+>S : Symbol(S, Decl(mappedTypeErrors2.tlua, 19, 8))
+>L : Symbol(L, Decl(mappedTypeErrors2.tlua, 19, 26))
+
+type T7<S extends 'a'|'b', L extends 'a'> = {[key in AB[S]]: true}[L]
+>T7 : Symbol(T7, Decl(mappedTypeErrors2.tlua, 19, 73))
+>S : Symbol(S, Decl(mappedTypeErrors2.tlua, 21, 8))
+>L : Symbol(L, Decl(mappedTypeErrors2.tlua, 21, 26))
+>key : Symbol(key, Decl(mappedTypeErrors2.tlua, 21, 46))
+>AB : Symbol(AB, Decl(mappedTypeErrors2.tlua, 0, 0))
+>S : Symbol(S, Decl(mappedTypeErrors2.tlua, 21, 8))
+>L : Symbol(L, Decl(mappedTypeErrors2.tlua, 21, 26))
+

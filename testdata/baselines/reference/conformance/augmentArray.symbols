@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/augmentArray.tlua] ////
+
+=== augmentArray.tlua ===
+-- ported from tests/cases/compiler/augmentArray.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Array<T> {
+>Array : Symbol(Array, Decl(lib.luajit.d.tlua, --, --), Decl(augmentArray.tlua, 0, 0))
+>T : Symbol(T, Decl(lib.luajit.d.tlua, --, --), Decl(augmentArray.tlua, 3, 16))
+
+    (): any[]
+}
+

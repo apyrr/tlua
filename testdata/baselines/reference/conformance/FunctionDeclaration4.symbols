@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/FunctionDeclaration4.tlua] ////
+
+=== FunctionDeclaration4.tlua ===
+-- ported from tests/cases/compiler/FunctionDeclaration4.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo();
+>foo : Symbol(foo, Decl(FunctionDeclaration4.tlua, 0, 0))
+
+function bar()
+>bar : Symbol(bar, Decl(FunctionDeclaration4.tlua, 3, 15))
+
+end
+

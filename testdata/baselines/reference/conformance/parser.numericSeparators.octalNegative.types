@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/ported/parser.numericSeparators.octalNegative.tlua] ////
+
+=== 1.tlua ===
+local _ = 0o00_
+>_ : number
+>0o00_ : 0
+
+=== 2.tlua ===
+local _ = 0o_110
+>_ : number
+>0o_110 : 72
+
+=== 3.tlua ===
+local _ = 0_O0101
+>_ : number
+>0_ : 0
+>O0101 : any
+
+=== 4.tlua ===
+local _ = 0o01__11
+>_ : number
+>0o01__11 : 73
+
+=== 5.tlua ===
+local _ = 0O0110_0110__
+>_ : number
+>0O0110_0110__ : 294984
+
+=== 6.tlua ===
+local _ = 0o___0111010_0101_1
+>_ : number
+>0o___0111010_0101_1 : 1224999433
+

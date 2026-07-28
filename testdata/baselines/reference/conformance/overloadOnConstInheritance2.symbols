@@ -1,0 +1,27 @@
+//// [tests/cases/conformance/ported/overloadOnConstInheritance2.tlua] ////
+
+=== overloadOnConstInheritance2.tlua ===
+-- ported from tests/cases/compiler/overloadOnConstInheritance2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Base {
+>Base : Symbol(Base, Decl(overloadOnConstInheritance2.tlua, 0, 0))
+
+    addEventListener(x: string): any
+>addEventListener : Symbol(Base.addEventListener, Decl(overloadOnConstInheritance2.tlua, 3, 16), Decl(overloadOnConstInheritance2.tlua, 4, 36))
+>x : Symbol(x, Decl(overloadOnConstInheritance2.tlua, 4, 21))
+
+    addEventListener(x: 'foo'): string
+>addEventListener : Symbol(Base.addEventListener, Decl(overloadOnConstInheritance2.tlua, 3, 16), Decl(overloadOnConstInheritance2.tlua, 4, 36))
+>x : Symbol(x, Decl(overloadOnConstInheritance2.tlua, 5, 21))
+}
+
+interface Deriver extends Base {
+>Deriver : Symbol(Deriver, Decl(overloadOnConstInheritance2.tlua, 6, 1))
+>Base : Symbol(Base, Decl(overloadOnConstInheritance2.tlua, 0, 0))
+
+    addEventListener(x: 'bar'): string
+>addEventListener : Symbol(Deriver.addEventListener, Decl(overloadOnConstInheritance2.tlua, 8, 32))
+>x : Symbol(x, Decl(overloadOnConstInheritance2.tlua, 9, 21))
+}
+

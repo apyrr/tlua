@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/functionDeclarationWithResolutionOfTypeOfSameName01.tlua] ////
+
+=== functionDeclarationWithResolutionOfTypeOfSameName01.tlua ===
+-- ported from tests/cases/compiler/functionDeclarationWithResolutionOfTypeOfSameName01.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface f {
+>f : Symbol(f, Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 4, 1), Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 0, 0))
+}
+
+function f()
+>f : Symbol(f, Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 4, 1), Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 0, 0))
+
+    local _ = <f>f
+>_ : Symbol(_, Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 7, 9))
+>f : Symbol(f, Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 4, 1), Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 0, 0))
+>f : Symbol(f, Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 4, 1), Decl(functionDeclarationWithResolutionOfTypeOfSameName01.tlua, 0, 0))
+
+end
+

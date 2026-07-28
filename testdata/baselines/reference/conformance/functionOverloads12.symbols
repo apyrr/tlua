@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/functionOverloads12.tlua] ////
+
+=== functionOverloads12.tlua ===
+-- ported from tests/cases/compiler/functionOverloads12.ts
+-- dropped: @target: es2015, @strict: false, and @allowUnreachableCode: true directives (tlua defaults to latest target and strict checking)
+
+function foo(): string;
+>foo : Symbol(foo, Decl(functionOverloads12.tlua, 0, 0), Decl(functionOverloads12.tlua, 3, 23), Decl(functionOverloads12.tlua, 4, 23))
+
+function foo(): number;
+>foo : Symbol(foo, Decl(functionOverloads12.tlua, 0, 0), Decl(functionOverloads12.tlua, 3, 23), Decl(functionOverloads12.tlua, 4, 23))
+
+function foo(): any
+>foo : Symbol(foo, Decl(functionOverloads12.tlua, 0, 0), Decl(functionOverloads12.tlua, 3, 23), Decl(functionOverloads12.tlua, 4, 23))
+
+    if true then
+        return ""
+    else
+        return 0
+    end
+end
+

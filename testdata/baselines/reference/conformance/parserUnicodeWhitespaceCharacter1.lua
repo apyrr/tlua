@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/parserUnicodeWhitespaceCharacter1.tlua] ////
+
+//// [parserUnicodeWhitespaceCharacter1.tlua]
+-- ported from tests/cases/conformance/parser/ecmascript5/parserUnicodeWhitespaceCharacter1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo()　end
+
+
+//// [parserUnicodeWhitespaceCharacter1.lua]
+-- ported from tests/cases/conformance/parser/ecmascript5/parserUnicodeWhitespaceCharacter1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function foo()
+end

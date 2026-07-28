@@ -1,0 +1,23 @@
+inheritSameNamePropertiesWithDifferentOptionality.tlua(12,11): error TLUA2320: Interface 'A' cannot simultaneously extend types 'C' and 'C2'.
+  Named property 'x' of types 'C' and 'C2' are not identical.
+
+
+==== inheritSameNamePropertiesWithDifferentOptionality.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/inheritSameNamePropertiesWithDifferentOptionality.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface C {
+        x?: number
+    }
+    
+    interface C2 {
+        x: number
+    }
+    
+    interface A extends C, C2 { -- error
+              ~
+!!! error TLUA2320: Interface 'A' cannot simultaneously extend types 'C' and 'C2'.
+!!! error TLUA2320:   Named property 'x' of types 'C' and 'C2' are not identical.
+        y: string
+    }
+    

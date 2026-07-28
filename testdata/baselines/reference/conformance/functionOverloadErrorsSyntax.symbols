@@ -1,0 +1,44 @@
+//// [tests/cases/conformance/ported/functionOverloadErrorsSyntax.tlua] ////
+
+=== functionOverloadErrorsSyntax.tlua ===
+-- ported from tests/cases/conformance/functions/functionOverloadErrorsSyntax.ts
+-- dropped: nothing essential; TS's bodyless overload-signature list survives as
+-- tlua's semicolon-terminated overload signatures, which (unlike `declare
+-- function`) still require a final implementation, so a trivial empty body was
+-- added to each overload group to keep the parse legal.
+
+
+-- Function overload signature with optional parameter followed by non-optional parameter
+function fn4a(x?: number, y: string);
+>fn4a : Symbol(fn4a, Decl(functionOverloadErrorsSyntax.tlua, 0, 0), Decl(functionOverloadErrorsSyntax.tlua, 8, 37))
+>x : Symbol(x, Decl(functionOverloadErrorsSyntax.tlua, 8, 14))
+>y : Symbol(y, Decl(functionOverloadErrorsSyntax.tlua, 8, 25))
+
+function fn4a()
+>fn4a : Symbol(fn4a, Decl(functionOverloadErrorsSyntax.tlua, 0, 0), Decl(functionOverloadErrorsSyntax.tlua, 8, 37))
+
+end
+
+function fn4b(n: string, x?: number, y: string);
+>fn4b : Symbol(fn4b, Decl(functionOverloadErrorsSyntax.tlua, 10, 3), Decl(functionOverloadErrorsSyntax.tlua, 12, 48))
+>n : Symbol(n, Decl(functionOverloadErrorsSyntax.tlua, 12, 14))
+>x : Symbol(x, Decl(functionOverloadErrorsSyntax.tlua, 12, 24))
+>y : Symbol(y, Decl(functionOverloadErrorsSyntax.tlua, 12, 36))
+
+function fn4b()
+>fn4b : Symbol(fn4b, Decl(functionOverloadErrorsSyntax.tlua, 10, 3), Decl(functionOverloadErrorsSyntax.tlua, 12, 48))
+
+end
+
+-- Function overload signature with rest param followed by non-optional parameter
+function fn5(x: string, ...: any, z: string);
+>fn5 : Symbol(fn5, Decl(functionOverloadErrorsSyntax.tlua, 14, 3), Decl(functionOverloadErrorsSyntax.tlua, 17, 45))
+>x : Symbol(x, Decl(functionOverloadErrorsSyntax.tlua, 17, 13))
+> : Symbol((Missing), Decl(functionOverloadErrorsSyntax.tlua, 17, 23))
+>z : Symbol(z, Decl(functionOverloadErrorsSyntax.tlua, 17, 33))
+
+function fn5()
+>fn5 : Symbol(fn5, Decl(functionOverloadErrorsSyntax.tlua, 14, 3), Decl(functionOverloadErrorsSyntax.tlua, 17, 45))
+
+end
+

@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/objectLitTargetTypeCallSite.tlua] ////
+
+//// [objectLitTargetTypeCallSite.tlua]
+-- ported from tests/cases/compiler/objectLitTargetTypeCallSite.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function process(x: { a: number; b: string })
+    return x.a
+end
+
+process({ a = true, b = "y" })
+
+
+//// [objectLitTargetTypeCallSite.lua]
+-- ported from tests/cases/compiler/objectLitTargetTypeCallSite.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function process(x)
+  return x.a;
+end
+process({ a = true, b = "y" });

@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/nestedIfStatement.tlua] ////
+
+//// [nestedIfStatement.tlua]
+-- ported from tests/cases/compiler/nestedIfStatement.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+if 0 then
+elseif 1 then
+elseif 2 then
+elseif 3 then
+else
+end
+
+
+//// [nestedIfStatement.lua]
+-- ported from tests/cases/compiler/nestedIfStatement.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+if 0 then
+elseif 1 then
+elseif 2 then
+elseif 3 then
+else
+end

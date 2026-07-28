@@ -1,0 +1,35 @@
+//// [tests/cases/conformance/ported/infinitelyExpandingBaseTypes1.tlua] ////
+
+=== infinitelyExpandingBaseTypes1.tlua ===
+-- ported from tests/cases/compiler/infinitelyExpandingBaseTypes1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A<T> {
+>A : Symbol(A, Decl(infinitelyExpandingBaseTypes1.tlua, 0, 0))
+>T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.tlua, 3, 12))
+
+    x: A<A<T>>
+>x : Symbol(A.x, Decl(infinitelyExpandingBaseTypes1.tlua, 3, 16))
+>A : Symbol(A, Decl(infinitelyExpandingBaseTypes1.tlua, 0, 0))
+>A : Symbol(A, Decl(infinitelyExpandingBaseTypes1.tlua, 0, 0))
+>T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.tlua, 3, 12))
+}
+
+interface B<T> {
+>B : Symbol(B, Decl(infinitelyExpandingBaseTypes1.tlua, 5, 1))
+>T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.tlua, 7, 12))
+
+    x: B<T>
+>x : Symbol(B.x, Decl(infinitelyExpandingBaseTypes1.tlua, 7, 16))
+>B : Symbol(B, Decl(infinitelyExpandingBaseTypes1.tlua, 5, 1))
+>T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.tlua, 7, 12))
+}
+
+interface C<T> extends A<T>, B<T> {}
+>C : Symbol(C, Decl(infinitelyExpandingBaseTypes1.tlua, 9, 1))
+>T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.tlua, 11, 12))
+>A : Symbol(A, Decl(infinitelyExpandingBaseTypes1.tlua, 0, 0))
+>T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.tlua, 11, 12))
+>B : Symbol(B, Decl(infinitelyExpandingBaseTypes1.tlua, 5, 1))
+>T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.tlua, 11, 12))
+

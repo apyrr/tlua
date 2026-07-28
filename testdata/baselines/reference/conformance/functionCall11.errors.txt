@@ -1,0 +1,25 @@
+functionCall11.tlua(9,1): error TLUA2554: Expected 1-2 arguments, but got 0.
+functionCall11.tlua(10,5): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+functionCall11.tlua(11,15): error TLUA2554: Expected 1-2 arguments, but got 3.
+
+
+==== functionCall11.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/functionCall11.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo(a: string, b?: number)
+    end
+    
+    foo('foo', 1)
+    foo('foo')
+    foo()
+    ~~~
+!!! error TLUA2554: Expected 1-2 arguments, but got 0.
+!!! related TLUA6210 functionCall11.tlua:4:14: An argument for 'a' was not provided.
+    foo(1, 'bar')
+        ~
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    foo('foo', 1, 'bar')
+                  ~~~~~
+!!! error TLUA2554: Expected 1-2 arguments, but got 3.
+    

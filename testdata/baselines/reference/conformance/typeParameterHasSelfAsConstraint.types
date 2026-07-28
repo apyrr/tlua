@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/typeParameterHasSelfAsConstraint.tlua] ////
+
+=== typeParameterHasSelfAsConstraint.tlua ===
+-- ported from tests/cases/compiler/typeParameterHasSelfAsConstraint.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo<T extends T>(x: T): number
+>foo : <T>(x: T) => number
+>x : T
+
+    return x
+>x : T
+
+end
+

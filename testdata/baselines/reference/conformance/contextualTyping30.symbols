@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/contextualTyping30.tlua] ////
+
+=== contextualTyping30.tlua ===
+-- ported from tests/cases/compiler/contextualTyping30.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(param: number[])
+>foo : Symbol(foo, Decl(contextualTyping30.tlua, 0, 0))
+>param : Symbol(param, Decl(contextualTyping30.tlua, 3, 13))
+
+end
+
+foo({ 1, "a" })
+>foo : Symbol(foo, Decl(contextualTyping30.tlua, 0, 0))
+

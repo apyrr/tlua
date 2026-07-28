@@ -1,0 +1,42 @@
+//// [tests/cases/conformance/ported/parser.numericSeparators.decimal.tlua] ////
+
+//// [parser.numericSeparators.decimal.tlua]
+-- ported from tests/cases/conformance/parser/ecmascript2021/numericSeparators/parser.numericSeparators.decimal.ts
+-- dropped: the es5/es2020/es2021 target-vary matrix (tlua has no es5 emit target); pinned to esnext
+-- dropped: nothing else of substance; bare literal expression statements rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+
+
+local _ = 1_000_000_000;
+local _ = 1.1_00_01;
+local _ = 1e1_0;
+local _ = 1e+1_0;
+local _ = 1e-1_0;
+local _ = 1.1e10_0;
+local _ = 1.1e+10_0;
+local _ = 1.1e-10_0;
+local _ = 12_34_56;
+local _ = 1_22_333;
+local _ = 1_2.3_4;
+local _ = 1_2.3_4e5_6;
+local _ = 1_2.3_4e+5_6;
+local _ = 1_2.3_4e-5_6;
+
+
+//// [parser.numericSeparators.decimal.lua]
+-- ported from tests/cases/conformance/parser/ecmascript2021/numericSeparators/parser.numericSeparators.decimal.ts
+-- dropped: the es5/es2020/es2021 target-vary matrix (tlua has no es5 emit target); pinned to esnext
+-- dropped: nothing else of substance; bare literal expression statements rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+local _ = 1_000_000_000;
+local _ = 1.1_00_01;
+local _ = 1e1_0;
+local _ = 1e+1_0;
+local _ = 1e-1_0;
+local _ = 1.1e10_0;
+local _ = 1.1e+10_0;
+local _ = 1.1e-10_0;
+local _ = 12_34_56;
+local _ = 1_22_333;
+local _ = 1_2.3_4;
+local _ = 1_2.3_4e5_6;
+local _ = 1_2.3_4e+5_6;
+local _ = 1_2.3_4e-5_6;

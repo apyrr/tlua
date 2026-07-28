@@ -1,0 +1,38 @@
+circularBaseTypes.tlua(9,11): error TLUA2310: Type 'M2' recursively references itself as a base type.
+circularBaseTypes.tlua(10,6): error TLUA2456: Type alias 'M3' circularly references itself.
+circularBaseTypes.tlua(18,21): error TLUA2313: Type parameter 'K' has a circular constraint.
+circularBaseTypes.tlua(19,11): error TLUA2310: Type 'Y' recursively references itself as a base type.
+
+
+==== circularBaseTypes.tlua (4 errors) ====
+    -- ported from tests/cases/compiler/circularBaseTypes.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    -- dropped: declaration emit directive and output (unsupported in tlua; checker coverage retained)
+    
+    -- Repro from #38098
+    
+    type M<T> = { value: T }
+    interface M2 extends M<M3> {} -- Error
+              ~~
+!!! error TLUA2310: Type 'M2' recursively references itself as a base type.
+    type M3 = M2[keyof M2] -- Error
+         ~~
+!!! error TLUA2456: Type alias 'M3' circularly references itself.
+    
+    function f(m: M3)
+        return m.value
+    end
+    
+    -- Repro from #32581
+    
+    type X<T> = { [K in keyof T]: string } & { b: string }
+                        ~~~~~~~
+!!! error TLUA2313: Type parameter 'K' has a circular constraint.
+!!! related TLUA2751 circularBaseTypes.tlua:19:11: Circularity originates in type at this location.
+    interface Y extends X<Y> {
+              ~
+!!! error TLUA2310: Type 'Y' recursively references itself as a base type.
+        a: ""
+    }
+    

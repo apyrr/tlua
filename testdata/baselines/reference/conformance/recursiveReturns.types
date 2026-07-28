@@ -1,0 +1,46 @@
+//// [tests/cases/conformance/ported/recursiveReturns.tlua] ////
+
+=== recursiveReturns.tlua ===
+-- ported from tests/cases/compiler/recursiveReturns.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: post-decrement side effect (rewritten as subtraction for recursive argument)
+
+function R1()
+>R1 : () => void
+
+    R1()
+>R1() : void
+>R1 : () => void
+
+    return
+end
+
+function R2()
+>R2 : () => void
+
+    R2()
+>R2() : void
+>R2 : () => void
+
+end
+
+function R3(n: number)
+>R3 : (n: number) => void
+>n : number
+
+    if n == 0 then
+>n == 0 : boolean
+>n : number
+>0 : 0
+
+    else
+        R3(n - 1)
+>R3(n - 1) : void
+>R3 : (n: number) => void
+>n - 1 : number
+>n : number
+>1 : 1
+
+    end
+end
+

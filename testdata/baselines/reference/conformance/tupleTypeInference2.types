@@ -1,0 +1,81 @@
+//// [tests/cases/conformance/ported/tupleTypeInference2.tlua] ////
+
+=== tupleTypeInference2.tlua ===
+-- ported from tests/cases/compiler/tupleTypeInference2.ts
+-- dropped: @target: es2015 and @strict: true directives (tlua defaults to latest target and strict checking)
+-- compiler gap: tlua infers unknown/table differently from TypeScript in this tuple inference repro
+
+-- Repro from #22564
+
+type A<R> = [R] | [R, string]
+>A : A<R>
+
+declare function f<T>(x: A<T>): T
+>f : <T>(x: A<T>) => T
+>x : A<T>
+
+f({ nil, '' } as [never, string]) -- T: never
+>f({ nil, '' } as [never, string]) : never
+>f : <T>(x: A<T>) => T
+>{ nil, '' } as [never, string] : [never, string]
+>{ nil, '' } : [nil, string]
+
+f({ nil, '' } as [void, string]) -- T: void
+>f({ nil, '' } as [void, string]) : void
+>f : <T>(x: A<T>) => T
+>{ nil, '' } as [void, string] : [void, string]
+>{ nil, '' } : [nil, string]
+
+-- Repro from #22563
+
+type B<R, S> = [R] | [R, S]
+>B : B<R, S>
+
+declare function g<T, U>(f: B<T, U>): U
+>g : <T, U>(f: B<T, U>) => U
+>f : B<T, U>
+
+g({ {} } as [void[]]) -- U: {}
+>g({ {} } as [void[]]) : unknown
+>g : <T, U>(f: B<T, U>) => U
+>{ {} } as [void[]] : [void[]]
+>{ {} } : [{}]
+>{} : {}
+
+type C<R, S> = [R[]] | [R[], S]
+>C : C<R, S>
+
+declare function h<T, U>(f: C<T, U>): U
+>h : <T, U>(f: C<T, U>) => U
+>f : C<T, U>
+
+h({ {} } as [void[]]) -- U: {}
+>h({ {} } as [void[]]) : unknown
+>h : <T, U>(f: C<T, U>) => U
+>{ {} } as [void[]] : [void[]]
+>{ {} } : [{}]
+>{} : {}
+
+-- Repro from #22562
+
+type C2<R> = [R[]] | [R[], void]
+>C2 : C2<R>
+
+declare function h2<T>(f: C2<T>): T
+>h2 : <T>(f: C2<T>) => T
+>f : C2<T>
+
+h2({ {} } as [never[]]) -- T: never
+>h2({ {} } as [never[]]) : never
+>h2 : <T>(f: C2<T>) => T
+>{ {} } as [never[]] : [never[]]
+>{ {} } : [{}]
+>{} : {}
+
+h2({ {} } as [void[]]) -- T: void
+>h2({ {} } as [void[]]) : void
+>h2 : <T>(f: C2<T>) => T
+>{ {} } as [void[]] : [void[]]
+>{ {} } : [{}]
+>{} : {}
+

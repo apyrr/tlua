@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/recursiveUnionTypeInference.tlua] ////
+
+=== recursiveUnionTypeInference.tlua ===
+-- ported from tests/cases/compiler/recursiveUnionTypeInference.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo<T> {
+    x: T
+>x : T
+}
+
+function bar<T>(x: Foo<T> | string): T
+>bar : <T>(x: Foo<T> | string) => T
+>x : string | Foo<T>
+
+    return bar(x)
+>bar(x) : T
+>bar : <T>(x: Foo<T> | string) => T
+>x : string | Foo<T>
+
+end
+

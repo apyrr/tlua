@@ -1,0 +1,24 @@
+//// [tests/cases/conformance/ported/specializedSignatureInInterface.tlua] ////
+
+=== specializedSignatureInInterface.tlua ===
+-- ported from tests/cases/compiler/specializedSignatureInInterface.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+>A : Symbol(A, Decl(specializedSignatureInInterface.tlua, 0, 0))
+
+    (key: string): void
+>key : Symbol(key, Decl(specializedSignatureInInterface.tlua, 4, 5))
+}
+
+interface B extends A {
+>B : Symbol(B, Decl(specializedSignatureInInterface.tlua, 5, 1))
+>A : Symbol(A, Decl(specializedSignatureInInterface.tlua, 0, 0))
+
+    (key: "foo"): string
+>key : Symbol(key, Decl(specializedSignatureInInterface.tlua, 8, 5))
+
+    (key: "bar"): string
+>key : Symbol(key, Decl(specializedSignatureInInterface.tlua, 9, 5))
+}
+

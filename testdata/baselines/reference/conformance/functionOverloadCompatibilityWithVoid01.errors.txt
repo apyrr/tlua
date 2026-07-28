@@ -1,0 +1,15 @@
+functionOverloadCompatibilityWithVoid01.tlua(4,10): error TLUA2394: This overload signature is not compatible with its implementation signature.
+
+
+==== functionOverloadCompatibilityWithVoid01.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/functions/functionOverloadCompatibilityWithVoid01.ts
+    -- dropped: @target: es2015 directive (tlua defaults to the latest target)
+    
+    function f(x: string): number;
+             ~
+!!! error TLUA2394: This overload signature is not compatible with its implementation signature.
+!!! related TLUA2750 functionOverloadCompatibilityWithVoid01.tlua:5:10: The implementation signature is declared here.
+    function f(x: string): void
+        return
+    end
+    

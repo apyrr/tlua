@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/recursiveGenericSignatureInstantiation.tlua] ////
+
+//// [recursiveGenericSignatureInstantiation.tlua]
+-- ported from tests/cases/compiler/recursiveGenericSignatureInstantiation.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f6<T>(x: T)
+    return f6(x)
+end
+
+
+//// [recursiveGenericSignatureInstantiation.lua]
+-- ported from tests/cases/compiler/recursiveGenericSignatureInstantiation.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function f6(x)
+  return f6(x);
+end

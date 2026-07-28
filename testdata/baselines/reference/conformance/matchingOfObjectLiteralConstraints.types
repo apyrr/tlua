@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/matchingOfObjectLiteralConstraints.tlua] ////
+
+=== matchingOfObjectLiteralConstraints.tlua ===
+-- ported from tests/cases/compiler/matchingOfObjectLiteralConstraints.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo2<T, U extends { y: T }>(x: U, z: T)
+>foo2 : <T, U extends { y: T; }>(x: U, z: T) => void
+>y : T
+>x : U
+>z : T
+
+end
+foo2({ y = "foo" }, "foo")
+>foo2({ y = "foo" }, "foo") : void
+>foo2 : <T, U extends { y: T; }>(x: U, z: T) => void
+>{ y = "foo" } : { y: string; }
+>y : string
+>"foo" : "foo"
+>"foo" : "foo"
+

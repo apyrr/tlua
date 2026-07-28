@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/declarationFilesWithTypeReferences1.tlua] ////
+
+=== /node_modules/@types/node/index.d.tlua ===
+interface Error {
+>Error : Symbol(Error, Decl(index.d.tlua, 0, 0))
+
+    stack2: string
+>stack2 : Symbol(Error.stack2, Decl(index.d.tlua, 0, 17))
+}
+
+=== /app.tlua ===
+function foo(): Error
+>foo : Symbol(foo, Decl(app.tlua, 0, 0))
+>Error : Symbol(Error, Decl(index.d.tlua, 0, 0))
+
+    return nil
+end
+

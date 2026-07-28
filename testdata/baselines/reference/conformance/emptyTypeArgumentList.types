@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/emptyTypeArgumentList.tlua] ////
+
+=== emptyTypeArgumentList.tlua ===
+-- ported from tests/cases/compiler/emptyTypeArgumentList.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo<T>()
+>foo : <T>() => void
+
+end
+foo<>()
+>foo<>() : void
+>foo : <T>() => void
+
+-- https://github.com/microsoft/TypeScript/issues/33041
+function noParams()
+>noParams : () => void
+
+end
+noParams<>()
+>noParams<>() : void
+>noParams : () => void
+

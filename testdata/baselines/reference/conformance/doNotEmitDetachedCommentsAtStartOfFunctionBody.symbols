@@ -1,0 +1,47 @@
+//// [tests/cases/conformance/ported/doNotEmitDetachedCommentsAtStartOfFunctionBody.tlua] ////
+
+=== doNotEmitDetachedCommentsAtStartOfFunctionBody.tlua ===
+-- ported from tests/cases/compiler/doNotEmitDetachedCommentsAtStartOfFunctionBody.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+
+function foo1()
+>foo1 : Symbol(foo1, Decl(doNotEmitDetachedCommentsAtStartOfFunctionBody.tlua, 0, 0))
+
+    -- Single line comment
+
+    return 42
+end
+
+function foo2()
+>foo2 : Symbol(foo2, Decl(doNotEmitDetachedCommentsAtStartOfFunctionBody.tlua, 8, 3))
+
+    --[[
+
+        multi line
+        comment
+    ]]
+
+    return 42
+end
+
+function foo3()
+>foo3 : Symbol(foo3, Decl(doNotEmitDetachedCommentsAtStartOfFunctionBody.tlua, 18, 3))
+
+    -- Single line comment with more than one blank line
+
+
+    return 42
+end
+
+function foo4()
+>foo4 : Symbol(foo4, Decl(doNotEmitDetachedCommentsAtStartOfFunctionBody.tlua, 25, 3))
+
+    --[[
+
+        multi line comment with more than one blank line
+    ]]
+
+    return 42
+end
+

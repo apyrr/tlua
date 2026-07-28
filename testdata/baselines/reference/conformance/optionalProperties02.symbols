@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/optionalProperties02.tlua] ////
+
+=== optionalProperties02.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/comparable/optionalProperties02.ts
+-- dropped: @target: es2015, @strictNullChecks: true, and @declaration directives (tlua defaults to the corresponding strict settings and this test does not need declaration output)
+
+interface Foo {
+>Foo : Symbol(Foo, Decl(optionalProperties02.tlua, 0, 0))
+
+    a?: string
+>a : Symbol(Foo.a, Decl(optionalProperties02.tlua, 3, 15))
+
+    b: string
+>b : Symbol(Foo.b, Decl(optionalProperties02.tlua, 4, 14))
+}
+
+local _ = ({ a = nil } as Foo)
+>_ : Symbol(_, Decl(optionalProperties02.tlua, 8, 5))
+>a : Symbol(a, Decl(optionalProperties02.tlua, 8, 12))
+>Foo : Symbol(Foo, Decl(optionalProperties02.tlua, 0, 0))
+

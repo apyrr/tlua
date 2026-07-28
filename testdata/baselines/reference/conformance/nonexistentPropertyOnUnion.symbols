@@ -1,0 +1,24 @@
+//// [tests/cases/conformance/ported/nonexistentPropertyOnUnion.tlua] ////
+
+=== nonexistentPropertyOnUnion.tlua ===
+-- ported from tests/cases/compiler/nonexistentPropertyOnUnion.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: Promise union constituent (Promise is deleted; replaced with a structurally distinct interface)
+
+interface Other {
+>Other : Symbol(Other, Decl(nonexistentPropertyOnUnion.tlua, 0, 0))
+
+    value: string
+>value : Symbol(Other.value, Decl(nonexistentPropertyOnUnion.tlua, 4, 17))
+}
+
+function f(x: string | Other)
+>f : Symbol(f, Decl(nonexistentPropertyOnUnion.tlua, 6, 1))
+>x : Symbol(x, Decl(nonexistentPropertyOnUnion.tlua, 8, 11))
+>Other : Symbol(Other, Decl(nonexistentPropertyOnUnion.tlua, 0, 0))
+
+    x:lower()
+>x : Symbol(x, Decl(nonexistentPropertyOnUnion.tlua, 8, 11))
+
+end
+

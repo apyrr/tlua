@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/parserPropertySignature8.tlua] ////
+
+=== parserPropertySignature8.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/PropertySignatures/parserPropertySignature8.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I {
+>I : Symbol(I, Decl(parserPropertySignature8.tlua, 0, 0))
+
+    "H"?: any
+>"H" : Symbol(I["H"], Decl(parserPropertySignature8.tlua, 3, 13))
+}
+

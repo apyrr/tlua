@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/parserErrorRecovery_ModuleElement2.tlua] ////
+
+//// [parserErrorRecovery_ModuleElement2.tlua]
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ModuleElements/parserErrorRecovery_ModuleElement2.ts
+-- dropped: nothing essential; @target normalized to esnext, function bodies rewritten to Lua end-blocks
+-- kept: the parser error-recovery behavior for stray tokens (`)`) following valid module elements
+
+function foo()
+end
+
+function foo()
+end
+
+)
+)
+
+
+//// [parserErrorRecovery_ModuleElement2.lua]
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ModuleElements/parserErrorRecovery_ModuleElement2.ts
+-- dropped: nothing essential; @target normalized to esnext, function bodies rewritten to Lua end-blocks
+-- kept: the parser error-recovery behavior for stray tokens (`)`) following valid module elements
+function foo()
+end
+function foo()
+end

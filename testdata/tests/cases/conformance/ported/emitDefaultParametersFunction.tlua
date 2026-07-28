@@ -1,0 +1,23 @@
+-- ported from tests/cases/conformance/es6/defaultParameters/emitDefaultParametersFunction.ts
+-- dropped: dual ES5/ES2015 down-level emit comparison (tlua has a single Lua
+--   emit target, no ES5 transform); kept the default-parameter TYPING only
+-- dropped: emit coverage entirely (noEmit) — tlua currently prints parameter
+--   initializers verbatim into the Lua parameter list, which is not valid Lua;
+--   default-parameter lowering is an open emitter gap
+-- dropped: named rest parameter `...rest` (the legacy TS rest form is rejected
+--   in tlua); rewritten as the unnamed vararg `...`
+
+// @target: esnext
+// @noEmit: true
+
+function foo(x: string, y = 10): void
+end
+
+function baz(x: string, y = 5, ...): void
+end
+
+function bar(y = 10): void
+end
+
+function bar1(y = 10, ...): void
+end

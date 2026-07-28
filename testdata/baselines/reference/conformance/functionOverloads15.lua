@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/functionOverloads15.tlua] ////
+
+//// [functionOverloads15.tlua]
+-- ported from tests/cases/compiler/functionOverloads15.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+
+function foo(foo: { a: string; b: number }): string;
+function foo(foo: { a: string; b: number }): number;
+function foo(foo: { a: string; b?: number }): any
+    return ""
+end
+
+
+//// [functionOverloads15.lua]
+-- ported from tests/cases/compiler/functionOverloads15.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+function foo(foo)
+  return "";
+end

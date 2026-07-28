@@ -1,0 +1,118 @@
+//// [tests/cases/conformance/ported/discriminantsAndTypePredicates.tlua] ////
+
+=== discriminantsAndTypePredicates.tlua ===
+-- ported from tests/cases/compiler/discriminantsAndTypePredicates.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A { type: 'A' }
+>A : Symbol(A, Decl(discriminantsAndTypePredicates.tlua, 0, 0))
+>type : Symbol(A.type, Decl(discriminantsAndTypePredicates.tlua, 3, 13))
+
+interface B { type: 'B' }
+>B : Symbol(B, Decl(discriminantsAndTypePredicates.tlua, 3, 25))
+>type : Symbol(B.type, Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+
+function isA(x: A | B): x is A
+>isA : Symbol(isA, Decl(discriminantsAndTypePredicates.tlua, 4, 25))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 6, 13))
+>A : Symbol(A, Decl(discriminantsAndTypePredicates.tlua, 0, 0))
+>B : Symbol(B, Decl(discriminantsAndTypePredicates.tlua, 3, 25))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 6, 13))
+>A : Symbol(A, Decl(discriminantsAndTypePredicates.tlua, 0, 0))
+
+    return x.type == 'A'
+>x.type : Symbol(type, Decl(discriminantsAndTypePredicates.tlua, 3, 13), Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 6, 13))
+>type : Symbol(type, Decl(discriminantsAndTypePredicates.tlua, 3, 13), Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+
+end
+
+function isB(x: A | B): x is B
+>isB : Symbol(isB, Decl(discriminantsAndTypePredicates.tlua, 8, 3))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 10, 13))
+>A : Symbol(A, Decl(discriminantsAndTypePredicates.tlua, 0, 0))
+>B : Symbol(B, Decl(discriminantsAndTypePredicates.tlua, 3, 25))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 10, 13))
+>B : Symbol(B, Decl(discriminantsAndTypePredicates.tlua, 3, 25))
+
+    return x.type == 'B'
+>x.type : Symbol(type, Decl(discriminantsAndTypePredicates.tlua, 3, 13), Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 10, 13))
+>type : Symbol(type, Decl(discriminantsAndTypePredicates.tlua, 3, 13), Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+
+end
+
+function foo1(x: A | B): any
+>foo1 : Symbol(foo1, Decl(discriminantsAndTypePredicates.tlua, 12, 3))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+>A : Symbol(A, Decl(discriminantsAndTypePredicates.tlua, 0, 0))
+>B : Symbol(B, Decl(discriminantsAndTypePredicates.tlua, 3, 25))
+
+    local _ = x -- A | B
+>_ : Symbol(_, Decl(discriminantsAndTypePredicates.tlua, 15, 9))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+
+    if isA(x) then
+>isA : Symbol(isA, Decl(discriminantsAndTypePredicates.tlua, 4, 25))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+
+        return x -- A
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+
+    end
+    local _ = x -- B
+>_ : Symbol(_, Decl(discriminantsAndTypePredicates.tlua, 19, 9))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+
+    if isB(x) then
+>isB : Symbol(isB, Decl(discriminantsAndTypePredicates.tlua, 8, 3))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+
+        return x -- B
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+
+    end
+    local _ = x -- never
+>_ : Symbol(_, Decl(discriminantsAndTypePredicates.tlua, 23, 9))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 14, 14))
+
+end
+
+function foo2(x: A | B): any
+>foo2 : Symbol(foo2, Decl(discriminantsAndTypePredicates.tlua, 24, 3))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+>A : Symbol(A, Decl(discriminantsAndTypePredicates.tlua, 0, 0))
+>B : Symbol(B, Decl(discriminantsAndTypePredicates.tlua, 3, 25))
+
+    local _ = x -- A | B
+>_ : Symbol(_, Decl(discriminantsAndTypePredicates.tlua, 27, 9))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+
+    if x.type == 'A' then
+>x.type : Symbol(type, Decl(discriminantsAndTypePredicates.tlua, 3, 13), Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+>type : Symbol(type, Decl(discriminantsAndTypePredicates.tlua, 3, 13), Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+
+        return x -- A
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+
+    end
+    local _ = x -- B
+>_ : Symbol(_, Decl(discriminantsAndTypePredicates.tlua, 31, 9))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+
+    if x.type == 'B' then
+>x.type : Symbol(B.type, Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+>type : Symbol(B.type, Decl(discriminantsAndTypePredicates.tlua, 4, 13))
+
+        return x -- B
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+
+    end
+    local _ = x -- never
+>_ : Symbol(_, Decl(discriminantsAndTypePredicates.tlua, 35, 9))
+>x : Symbol(x, Decl(discriminantsAndTypePredicates.tlua, 26, 14))
+
+end
+

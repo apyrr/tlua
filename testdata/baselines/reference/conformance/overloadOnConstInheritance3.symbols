@@ -1,0 +1,28 @@
+//// [tests/cases/conformance/ported/overloadOnConstInheritance3.tlua] ////
+
+=== overloadOnConstInheritance3.tlua ===
+-- ported from tests/cases/compiler/overloadOnConstInheritance3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Base {
+>Base : Symbol(Base, Decl(overloadOnConstInheritance3.tlua, 0, 0))
+
+    addEventListener(x: string): any
+>addEventListener : Symbol(Base.addEventListener, Decl(overloadOnConstInheritance3.tlua, 3, 16))
+>x : Symbol(x, Decl(overloadOnConstInheritance3.tlua, 4, 21))
+}
+
+interface Deriver extends Base {
+>Deriver : Symbol(Deriver, Decl(overloadOnConstInheritance3.tlua, 5, 1))
+>Base : Symbol(Base, Decl(overloadOnConstInheritance3.tlua, 0, 0))
+
+    -- shouldn't need to redeclare the string overload
+    addEventListener(x: 'bar'): string
+>addEventListener : Symbol(Deriver.addEventListener, Decl(overloadOnConstInheritance3.tlua, 7, 32), Decl(overloadOnConstInheritance3.tlua, 9, 38))
+>x : Symbol(x, Decl(overloadOnConstInheritance3.tlua, 9, 21))
+
+    addEventListener(x: 'foo'): string
+>addEventListener : Symbol(Deriver.addEventListener, Decl(overloadOnConstInheritance3.tlua, 7, 32), Decl(overloadOnConstInheritance3.tlua, 9, 38))
+>x : Symbol(x, Decl(overloadOnConstInheritance3.tlua, 10, 21))
+}
+

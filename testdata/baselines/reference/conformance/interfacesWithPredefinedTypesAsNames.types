@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/interfacesWithPredefinedTypesAsNames.tlua] ////
+
+=== interfacesWithPredefinedTypesAsNames.tlua ===
+
+-- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfacesWithPredefinedTypesAsNames.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: `interface void {}` case -- unlike any/number/string/boolean/unknown/never
+--   (contextual keywords, valid identifiers), `void` is a true reserved word in
+--   tlua's scanner (KindVoidKeyword <= KindLastReservedWord) and cannot name a
+--   declaration; testing that would just be a parse-error tombstone.
+
+interface any { }
+interface number { }
+interface string { }
+interface boolean { }
+interface unknown {}
+interface never {}
+

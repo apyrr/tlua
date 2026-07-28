@@ -1,0 +1,38 @@
+//// [tests/cases/conformance/ported/noImplicitAnyInCastExpression.tlua] ////
+
+=== noImplicitAnyInCastExpression.tlua ===
+-- ported from tests/cases/compiler/noImplicitAnyInCastExpression.ts
+-- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
+-- dropped: bare cast expression statements (bound to local `_` because tlua permits only calls and assignments as bare expressions)
+
+-- verify no implicit-any errors are reported with cast expressions
+
+interface IFoo {
+>IFoo : Symbol(IFoo, Decl(noImplicitAnyInCastExpression.tlua, 0, 0))
+
+    a: number
+>a : Symbol(IFoo.a, Decl(noImplicitAnyInCastExpression.tlua, 6, 16))
+
+    b: string
+>b : Symbol(IFoo.b, Decl(noImplicitAnyInCastExpression.tlua, 7, 13))
+}
+
+-- Expr type not assignable to target type
+local _ = (<IFoo>{ a = nil })
+>_ : Symbol(_, Decl(noImplicitAnyInCastExpression.tlua, 12, 5))
+>IFoo : Symbol(IFoo, Decl(noImplicitAnyInCastExpression.tlua, 0, 0))
+>a : Symbol(a, Decl(noImplicitAnyInCastExpression.tlua, 12, 18))
+
+-- Expr type assignable to target type
+local _ = (<IFoo>{ a = 2, b = nil })
+>_ : Symbol(_, Decl(noImplicitAnyInCastExpression.tlua, 15, 5))
+>IFoo : Symbol(IFoo, Decl(noImplicitAnyInCastExpression.tlua, 0, 0))
+>a : Symbol(a, Decl(noImplicitAnyInCastExpression.tlua, 15, 18))
+>b : Symbol(b, Decl(noImplicitAnyInCastExpression.tlua, 15, 25))
+
+-- Neither type is assignable to the other
+local _ = (<IFoo>{ c = nil })
+>_ : Symbol(_, Decl(noImplicitAnyInCastExpression.tlua, 18, 5))
+>IFoo : Symbol(IFoo, Decl(noImplicitAnyInCastExpression.tlua, 0, 0))
+>c : Symbol(c, Decl(noImplicitAnyInCastExpression.tlua, 18, 18))
+

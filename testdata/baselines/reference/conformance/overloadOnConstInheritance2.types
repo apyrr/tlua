@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/overloadOnConstInheritance2.tlua] ////
+
+=== overloadOnConstInheritance2.tlua ===
+-- ported from tests/cases/compiler/overloadOnConstInheritance2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Base {
+    addEventListener(x: string): any
+>addEventListener : { (x: string): any; (x: 'foo'): string; }
+>x : string
+
+    addEventListener(x: 'foo'): string
+>addEventListener : { (x: string): any; (x: 'foo'): string; }
+>x : "foo"
+}
+
+interface Deriver extends Base {
+    addEventListener(x: 'bar'): string
+>addEventListener : (x: 'bar') => string
+>x : "bar"
+}
+

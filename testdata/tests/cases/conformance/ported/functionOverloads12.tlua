@@ -1,0 +1,12 @@
+-- ported from tests/cases/compiler/functionOverloads12.ts
+-- dropped: @target: es2015, @strict: false, and @allowUnreachableCode: true directives (tlua defaults to latest target and strict checking)
+
+function foo(): string;
+function foo(): number;
+function foo(): any
+    if true then
+        return ""
+    else
+        return 0
+    end
+end

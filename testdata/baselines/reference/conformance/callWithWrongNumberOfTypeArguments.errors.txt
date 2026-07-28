@@ -1,0 +1,19 @@
+callWithWrongNumberOfTypeArguments.tlua(7,3): error TLUA2558: Expected 2 type arguments, but got 1.
+callWithWrongNumberOfTypeArguments.tlua(9,3): error TLUA2558: Expected 2 type arguments, but got 3.
+
+
+==== callWithWrongNumberOfTypeArguments.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/callWithWrongNumberOfTypeArguments.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function f<T, U>()
+    end
+    
+    f<number>()
+      ~~~~~~
+!!! error TLUA2558: Expected 2 type arguments, but got 1.
+    f<number, string>()
+    f<number, string, number>()
+      ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2558: Expected 2 type arguments, but got 3.
+    

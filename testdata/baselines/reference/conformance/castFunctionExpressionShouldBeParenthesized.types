@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/castFunctionExpressionShouldBeParenthesized.tlua] ////
+
+=== castFunctionExpressionShouldBeParenthesized.tlua ===
+-- ported from tests/cases/compiler/castFunctionExpressionShouldBeParenthesized.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: the emitter omits parentheses around immediately-called anonymous function expressions, producing invalid Lua; dropped emit coverage with @noEmit while keeping cast/call/property checker coverage.
+
+local _ = (function() end as any)().foo()
+>_ : any
+>(function() end as any)().foo() : any
+>(function() end as any)().foo : any
+>(function() end as any)() : any
+>(function() end as any) : any
+>function() end as any : any
+>function() end : () => void
+>foo : any
+

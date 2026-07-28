@@ -1,0 +1,38 @@
+//// [tests/cases/conformance/ported/restParameters.tlua] ////
+
+=== restParameters.tlua ===
+-- ported from tests/cases/compiler/restParameters.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f18(a?: string, ...: number)
+>f18 : Symbol(f18, Decl(restParameters.tlua, 0, 0))
+>a : Symbol(a, Decl(restParameters.tlua, 3, 13))
+> : Symbol((Missing), Decl(restParameters.tlua, 3, 24))
+
+end
+
+function f19(a?: string, b?: number, ...: number)
+>f19 : Symbol(f19, Decl(restParameters.tlua, 4, 3))
+>a : Symbol(a, Decl(restParameters.tlua, 6, 13))
+>b : Symbol(b, Decl(restParameters.tlua, 6, 24))
+> : Symbol((Missing), Decl(restParameters.tlua, 6, 36))
+
+end
+
+function f20(a: string, b?: string, ...: number)
+>f20 : Symbol(f20, Decl(restParameters.tlua, 7, 3))
+>a : Symbol(a, Decl(restParameters.tlua, 9, 13))
+>b : Symbol(b, Decl(restParameters.tlua, 9, 23))
+> : Symbol((Missing), Decl(restParameters.tlua, 9, 35))
+
+end
+
+function f21(a: string, b?: string, c?: number, ...: number)
+>f21 : Symbol(f21, Decl(restParameters.tlua, 10, 3))
+>a : Symbol(a, Decl(restParameters.tlua, 12, 13))
+>b : Symbol(b, Decl(restParameters.tlua, 12, 23))
+>c : Symbol(c, Decl(restParameters.tlua, 12, 35))
+> : Symbol((Missing), Decl(restParameters.tlua, 12, 47))
+
+end
+

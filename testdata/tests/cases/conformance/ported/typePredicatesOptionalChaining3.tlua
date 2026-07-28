@@ -1,0 +1,29 @@
+-- ported from tests/cases/compiler/typePredicatesOptionalChaining3.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode)
+// @noEmit: true
+-- compiler gap: logical-not emission for this optional-chaining type-predicate case is not valid Lua
+
+interface Animal {
+  breed?: Breed
+}
+interface Breed {
+  size?: string
+}
+
+declare function isNil(value: unknown): value is nil
+
+function getBreedSizeWithoutFunction(animal: Animal): string | nil
+  if animal?.breed?.size ~= nil then
+    return animal.breed.size
+  else
+    return nil
+  end
+end
+
+function getBreedSizeWithFunction(animal: Animal): string | nil
+  if not isNil(animal?.breed?.size) then
+    return animal.breed.size
+  else
+    return nil
+  end
+end

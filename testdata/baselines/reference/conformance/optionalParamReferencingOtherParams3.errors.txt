@@ -1,0 +1,23 @@
+optionalParamReferencingOtherParams3.tlua(7,16): error TLUA7022: 'a' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+optionalParamReferencingOtherParams3.tlua(7,20): error TLUA2373: Parameter 'a' cannot reference identifier 'b' declared after it.
+optionalParamReferencingOtherParams3.tlua(7,23): error TLUA7022: 'b' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+
+
+==== optionalParamReferencingOtherParams3.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/optionalParamReferencingOtherParams3.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+    -- dropped: bare expression statements rewritten as local bindings (bare expressions are invalid in tlua)
+    -- compiler gap: default parameter initializers emit invalid Lua parameter syntax; checker coverage is retained.
+    -- dropped: emit coverage suppressed because the generated function parameters are not valid Lua.
+    
+    function right(a = b, b = a)
+                   ~~~~~
+!!! error TLUA7022: 'a' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+                       ~
+!!! error TLUA2373: Parameter 'a' cannot reference identifier 'b' declared after it.
+                          ~~~~~
+!!! error TLUA7022: 'b' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+        local _ = a
+        local _ = b
+    end
+    

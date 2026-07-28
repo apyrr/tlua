@@ -1,0 +1,8 @@
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/parserEmptyParenthesizedExpression1.ts
+-- dropped: the original JS-only `toString` member access was replaced with a generic call while preserving empty-parenthesized-expression recovery
+
+// @target: esnext
+
+function getObj()
+   ().foo()
+end

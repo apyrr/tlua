@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/continueNotInIterationStatement2.tlua] ////
+
+=== continueNotInIterationStatement2.tlua ===
+-- ported from tests/cases/compiler/continueNotInIterationStatement2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+while true do
+    function f()
+>f : Symbol(f, Decl(continueNotInIterationStatement2.tlua, 3, 13))
+
+        continue
+    end
+end
+

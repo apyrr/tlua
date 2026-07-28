@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/unusedTypeParameters10.tlua] ////
+
+=== unusedTypeParameters10.tlua ===
+-- ported from tests/cases/compiler/unusedTypeParameters10.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: noUnusedLocals does not report T in Alias even though Alias2 demonstrates the used case
+
+
+type Alias<T> = {}
+>Alias : Alias<T>
+
+type Alias2<T> = { x: T }
+>Alias2 : Alias2<T>
+>x : T
+

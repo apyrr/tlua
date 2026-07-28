@@ -1,0 +1,30 @@
+//// [tests/cases/conformance/ported/callSignaturesThatDifferOnlyByReturnType3.tlua] ////
+
+=== callSignaturesThatDifferOnlyByReturnType3.tlua ===
+-- ported from tests/cases/conformance/types/objectTypeLiteral/callSignatures/callSignaturesThatDifferOnlyByReturnType3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (tlua uses strict checking)
+
+-- Normally it is an error to have multiple overloads with identical signatures in a single type declaration.
+-- Here the multiple overloads come from multiple merged declarations.
+
+interface I {
+    (x: string): string
+>x : string
+}
+
+interface I {
+    (x: string): number
+>x : string
+}
+
+interface I2<T> {
+    (x: string): string
+>x : string
+}
+
+interface I2<T> {
+    (x: string): number
+>x : string
+}
+

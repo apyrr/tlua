@@ -1,0 +1,29 @@
+//// [tests/cases/conformance/ported/inheritSameNamePropertiesWithDifferentOptionality.tlua] ////
+
+=== inheritSameNamePropertiesWithDifferentOptionality.tlua ===
+-- ported from tests/cases/compiler/inheritSameNamePropertiesWithDifferentOptionality.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface C {
+>C : Symbol(C, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 0, 0))
+
+    x?: number
+>x : Symbol(C.x, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 3, 13))
+}
+
+interface C2 {
+>C2 : Symbol(C2, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 5, 1))
+
+    x: number
+>x : Symbol(C2.x, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 7, 14))
+}
+
+interface A extends C, C2 { -- error
+>A : Symbol(A, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 9, 1))
+>C : Symbol(C, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 0, 0))
+>C2 : Symbol(C2, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 5, 1))
+
+    y: string
+>y : Symbol(A.y, Decl(inheritSameNamePropertiesWithDifferentOptionality.tlua, 11, 27))
+}
+

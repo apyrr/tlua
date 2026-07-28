@@ -1,0 +1,17 @@
+parserSkippedTokens11.tlua(4,3): error TLUA1127: Invalid character.
+parserSkippedTokens11.tlua(4,5): error TLUA1127: Invalid character.
+parserSkippedTokens11.tlua(4,7): error TLUA1127: Invalid character.
+
+
+==== parserSkippedTokens11.tlua (3 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/SkippedTokens/parserSkippedTokens11.ts
+    -- dropped: @target: es2015 directive; tlua uses the esnext default
+    
+    ; \ \ \
+      ~
+!!! error TLUA1127: Invalid character.
+        ~
+!!! error TLUA1127: Invalid character.
+          ~
+!!! error TLUA1127: Invalid character.
+    

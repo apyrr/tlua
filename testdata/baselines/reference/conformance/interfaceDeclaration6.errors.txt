@@ -1,0 +1,21 @@
+interfaceDeclaration6.tlua(6,11): error TLUA2430: Interface 'i3' incorrectly extends interface 'i1'.
+  Types of property 'foo' are incompatible.
+    Type 'string' is not assignable to type 'number'.
+
+
+==== interfaceDeclaration6.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/interfaceDeclaration6.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface i1 { foo: number }
+    interface i2 extends i1 { foo: number }
+    interface i3 extends i1 { foo: string }
+              ~~
+!!! error TLUA2430: Interface 'i3' incorrectly extends interface 'i1'.
+!!! error TLUA2430:   Types of property 'foo' are incompatible.
+!!! error TLUA2430:     Type 'string' is not assignable to type 'number'.
+    interface i4 {
+        bar(): any
+        bar(): any
+    }
+    

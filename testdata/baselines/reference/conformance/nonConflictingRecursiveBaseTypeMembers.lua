@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/nonConflictingRecursiveBaseTypeMembers.tlua] ////
+
+//// [nonConflictingRecursiveBaseTypeMembers.tlua]
+-- ported from tests/cases/compiler/nonConflictingRecursiveBaseTypeMembers.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A<T> {
+    x: C<T>
+}
+
+interface B<T> {
+    x: C<T>
+}
+
+interface C<T> extends A<T>, B<T> { } -- Should not be an error
+
+
+//// [nonConflictingRecursiveBaseTypeMembers.lua]
+-- ported from tests/cases/compiler/nonConflictingRecursiveBaseTypeMembers.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

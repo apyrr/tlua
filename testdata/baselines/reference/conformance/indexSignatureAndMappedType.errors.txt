@@ -1,0 +1,54 @@
+indexSignatureAndMappedType.tlua(10,5): error TLUA2322: Type '{ [key: string]: T; }' is not assignable to type 'Record<K, T>'.
+indexSignatureAndMappedType.tlua(19,5): error TLUA2322: Type 'Record<K, U>' is not assignable to type '{ [key: string]: T; }'.
+  Type 'U' is not assignable to type 'T'.
+    'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+indexSignatureAndMappedType.tlua(20,5): error TLUA2322: Type '{ [key: string]: T; }' is not assignable to type 'Record<K, U>'.
+
+
+==== indexSignatureAndMappedType.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/indexSignatureAndMappedType.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: declaration output is unsupported for this Lua module; checker coverage is retained
+    
+    -- A mapped type { [P in K]: X }, where K is a generic type, is related to
+    -- { [key: string]: Y } if X is related to Y.
+    
+    function f1<T, K extends string>(x: { [key: string]: T }, y: Record<K, T>)
+        x = y
+        y = x -- Error
+        ~
+!!! error TLUA2322: Type '{ [key: string]: T; }' is not assignable to type 'Record<K, T>'.
+    end
+    
+    function f2<T>(x: { [key: string]: T }, y: Record<string, T>)
+        x = y
+        y = x
+    end
+    
+    function f3<T, U, K extends string>(x: { [key: string]: T }, y: Record<K, U>)
+        x = y -- Error
+        ~
+!!! error TLUA2322: Type 'Record<K, U>' is not assignable to type '{ [key: string]: T; }'.
+!!! error TLUA2322:   Type 'U' is not assignable to type 'T'.
+!!! error TLUA2322:     'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+!!! related TLUA2208 indexSignatureAndMappedType.tlua:18:16: This type parameter might need an `extends T` constraint.
+        y = x -- Error
+        ~
+!!! error TLUA2322: Type '{ [key: string]: T; }' is not assignable to type 'Record<K, U>'.
+    end
+    
+    -- Repro from #14548
+    
+    type Dictionary = {
+        [key: string]: string;
+    }
+    
+    interface IBaseEntity {
+        name: string;
+        properties: Dictionary;
+    }
+    
+    interface IEntity<T extends string> extends IBaseEntity {
+        properties: Record<T, string>;
+    }
+    

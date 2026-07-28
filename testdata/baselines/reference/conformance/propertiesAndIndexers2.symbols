@@ -1,0 +1,43 @@
+//// [tests/cases/conformance/ported/propertiesAndIndexers2.tlua] ////
+
+=== propertiesAndIndexers2.tlua ===
+-- ported from tests/cases/compiler/propertiesAndIndexers2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+>A : Symbol(A, Decl(propertiesAndIndexers2.tlua, 0, 0))
+
+    [n: number]: string
+>n : Symbol(n, Decl(propertiesAndIndexers2.tlua, 4, 5))
+
+    [s: string]: number
+>s : Symbol(s, Decl(propertiesAndIndexers2.tlua, 5, 5))
+}
+
+-- All of these should fail.
+interface B extends A {
+>B : Symbol(B, Decl(propertiesAndIndexers2.tlua, 6, 1))
+>A : Symbol(A, Decl(propertiesAndIndexers2.tlua, 0, 0))
+
+    c: string
+>c : Symbol(B.c, Decl(propertiesAndIndexers2.tlua, 9, 23))
+
+    3: string
+>3 : Symbol(B[3], Decl(propertiesAndIndexers2.tlua, 10, 13))
+
+    Infinity: string
+>Infinity : Symbol(B.Infinity, Decl(propertiesAndIndexers2.tlua, 11, 13))
+
+    "-Infinity": string
+>"-Infinity" : Symbol(B["-Infinity"], Decl(propertiesAndIndexers2.tlua, 12, 20))
+
+    NaN: string
+>NaN : Symbol(B.NaN, Decl(propertiesAndIndexers2.tlua, 13, 23))
+
+    "-NaN": string
+>"-NaN" : Symbol(B["-NaN"], Decl(propertiesAndIndexers2.tlua, 14, 15))
+
+    6(): string
+>6 : Symbol(B[6], Decl(propertiesAndIndexers2.tlua, 15, 18))
+}
+

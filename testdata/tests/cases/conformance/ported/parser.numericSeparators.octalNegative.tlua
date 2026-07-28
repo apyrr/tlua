@@ -1,0 +1,22 @@
+-- ported from tests/cases/conformance/parser/ecmascript2021/numericSeparators/parser.numericSeparators.octalNegative.ts
+-- dropped: nothing of substance; bare literal expression statements rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+
+// @target: esnext
+// @filename: 1.tlua
+local _ = 0o00_
+
+// @filename: 2.tlua
+local _ = 0o_110
+
+// @filename: 3.tlua
+local _ = 0_O0101
+
+// @filename: 4.tlua
+local _ = 0o01__11
+
+// @filename: 5.tlua
+
+local _ = 0O0110_0110__
+
+// @filename: 6.tlua
+local _ = 0o___0111010_0101_1

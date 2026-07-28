@@ -1,0 +1,36 @@
+//// [tests/cases/conformance/ported/noUnusedLocals_typeParameterMergedWithParameter.tlua] ////
+
+=== noUnusedLocals_typeParameterMergedWithParameter.tlua ===
+-- ported from tests/cases/compiler/noUnusedLocals_typeParameterMergedWithParameter.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- @noUnusedLocals: true
+-- @noUnusedParameters: true
+-- compiler gap: noUnusedLocals/noUnusedParameters do not report the four upstream TS6133 unused-declaration diagnostics in these type-parameter/value-name collision cases.
+
+function useNone<T>(T: number) end
+>useNone : <T>(T: number) => void
+>T : number
+
+function useParam<T>(T: number)
+>useParam : <T>(T: number) => number
+>T : number
+
+    return T
+>T : number
+
+end
+
+function useTypeParam<T>(T: T) end
+>useTypeParam : <T>(T: T) => void
+>T : T
+
+function useBoth<T>(T: T)
+>useBoth : <T>(T: T) => T
+>T : T
+
+    return T
+>T : T
+
+end
+

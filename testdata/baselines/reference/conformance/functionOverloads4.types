@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/functionOverloads4.tlua] ////
+
+=== functionOverloads4.tlua ===
+-- ported from tests/cases/compiler/functionOverloads4.ts
+-- dropped: @target: es2015 directive (tlua defaults to esnext)
+
+function foo(): number;
+>foo : () => number
+
+function foo(): string
+>foo : () => number
+
+    return "a"
+>"a" : "a"
+
+end
+

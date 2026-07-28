@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/anyIsAssignableToObject.tlua] ////
+
+=== anyIsAssignableToObject.tlua ===
+-- ported from tests/cases/compiler/anyIsAssignableToObject.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface P {
+>P : Symbol(P, Decl(anyIsAssignableToObject.tlua, 0, 0))
+
+    p: {}
+>p : Symbol(P.p, Decl(anyIsAssignableToObject.tlua, 3, 13))
+}
+
+interface Q extends P { -- Check assignability here. Any is assignable to {}
+>Q : Symbol(Q, Decl(anyIsAssignableToObject.tlua, 5, 1))
+>P : Symbol(P, Decl(anyIsAssignableToObject.tlua, 0, 0))
+
+    p: any
+>p : Symbol(Q.p, Decl(anyIsAssignableToObject.tlua, 7, 23))
+}
+

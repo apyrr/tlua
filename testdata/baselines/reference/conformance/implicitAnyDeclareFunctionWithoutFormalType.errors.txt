@@ -1,0 +1,49 @@
+implicitAnyDeclareFunctionWithoutFormalType.tlua(10,14): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(13,25): error TLUA7006: Parameter 'y' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(16,16): error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(16,19): error TLUA7006: Parameter 'b' implicitly has an 'any' type.
+implicitAnyDeclareFunctionWithoutFormalType.tlua(16,22): error TLUA7006: Parameter 'c' implicitly has an 'any' type.
+
+
+==== implicitAnyDeclareFunctionWithoutFormalType.tlua (5 errors) ====
+    -- ported from tests/cases/compiler/implicitAnyDeclareFunctionWithoutFormalType.ts
+    -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to latest target and strict checking)
+    -- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`
+    -- dropped: upstream noImplicitAny diagnostic for the unnamed vararg, which has no name in tlua
+    -- dropped: upstream noImplicitAny diagnostics for defaulted z/w after null/undefined normalization to nil
+    -- dropped: emit coverage (noEmit) — retained default-parameter checker cases are not lowered to valid Lua
+    
+    
+    -- these should be errors
+    function foo(x)
+                 ~
+!!! error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+    end
+    
+    function bar(x: number, y)
+                            ~
+!!! error TLUA7006: Parameter 'y' implicitly has an 'any' type.
+    end -- error at "y"; no error at "x"
+    
+    function func2(a, b, c)
+                   ~
+!!! error TLUA7006: Parameter 'a' implicitly has an 'any' type.
+                      ~
+!!! error TLUA7006: Parameter 'b' implicitly has an 'any' type.
+                         ~
+!!! error TLUA7006: Parameter 'c' implicitly has an 'any' type.
+    end -- error at "a,b,c"
+    
+    function func3(...)
+    end
+    
+    function func4(z = nil, w = nil)
+    end
+    
+    -- these shouldn't be errors
+    function noError1(x = 3, y = 2)
+    end
+    
+    function noError2(x: number, y: string)
+    end
+    

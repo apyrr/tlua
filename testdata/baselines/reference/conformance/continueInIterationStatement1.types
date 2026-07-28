@@ -1,0 +1,12 @@
+//// [tests/cases/conformance/ported/continueInIterationStatement1.tlua] ////
+
+=== continueInIterationStatement1.tlua ===
+-- ported from tests/cases/compiler/continueInIterationStatement1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+while true do
+>true : true
+
+    continue
+end
+

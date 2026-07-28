@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/mappedTypeParameterConstraint.tlua] ////
+
+//// [mappedTypeParameterConstraint.tlua]
+-- ported from tests/cases/compiler/mappedTypeParameterConstraint.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- Repro for #27596
+
+type MyMap<T> = { [P in keyof T]: T[keyof T] }
+function foo<U>(arg: U): MyMap<U>
+    return arg
+end
+
+
+//// [mappedTypeParameterConstraint.lua]
+-- ported from tests/cases/compiler/mappedTypeParameterConstraint.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function foo(arg)
+  return arg;
+end

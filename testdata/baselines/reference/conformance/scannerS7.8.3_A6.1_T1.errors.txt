@@ -1,0 +1,14 @@
+scannerS7.8.3_A6.1_T1.tlua(7,13): error TLUA1125: Hexadecimal digit expected.
+
+
+==== scannerS7.8.3_A6.1_T1.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/scanner/ecmascript5/scannerS7.8.3_A6.1_T1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: bare malformed numeric literal expression statement rebound to `local _ =` (tlua disallows bare non-call/assignment expression statements)
+    -- dropped: emit coverage (noEmit) — malformed hexadecimal recovery emits invalid Lua
+    
+    
+    local _ = 0x
+                
+!!! error TLUA1125: Hexadecimal digit expected.
+    

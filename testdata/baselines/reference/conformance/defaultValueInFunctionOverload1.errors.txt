@@ -1,0 +1,13 @@
+defaultValueInFunctionOverload1.tlua(4,14): error TLUA2371: A parameter initializer is only allowed in a function or constructor implementation.
+
+
+==== defaultValueInFunctionOverload1.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/defaultValueInFunctionOverload1.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+    
+    function foo(x: string = ''): void;
+                 ~~~~~~~~~~~~~~
+!!! error TLUA2371: A parameter initializer is only allowed in a function or constructor implementation.
+    function foo(x = ''): void
+    end
+    

@@ -1,0 +1,8 @@
+-- ported from tests/cases/compiler/recursiveGenericMethodCall.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Generator<T> { (): T }
+
+function Generate<T>(func: Generator<T>): T
+    return Generate(func)
+end

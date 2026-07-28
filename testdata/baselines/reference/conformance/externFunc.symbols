@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/externFunc.tlua] ////
+
+=== externFunc.tlua ===
+-- ported from tests/cases/compiler/externFunc.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+declare function parseInt(s: string): number
+>parseInt : Symbol(parseInt, Decl(externFunc.tlua, 0, 0))
+>s : Symbol(s, Decl(externFunc.tlua, 3, 26))
+
+parseInt("2")
+>parseInt : Symbol(parseInt, Decl(externFunc.tlua, 0, 0))
+

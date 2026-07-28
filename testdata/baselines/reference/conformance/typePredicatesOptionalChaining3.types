@@ -1,0 +1,70 @@
+//// [tests/cases/conformance/ported/typePredicatesOptionalChaining3.tlua] ////
+
+=== typePredicatesOptionalChaining3.tlua ===
+-- ported from tests/cases/compiler/typePredicatesOptionalChaining3.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode)
+-- compiler gap: logical-not emission for this optional-chaining type-predicate case is not valid Lua
+
+interface Animal {
+  breed?: Breed
+>breed : Breed | nil
+}
+interface Breed {
+  size?: string
+>size : string | nil
+}
+
+declare function isNil(value: unknown): value is nil
+>isNil : (value: unknown) => value is nil
+>value : unknown
+
+function getBreedSizeWithoutFunction(animal: Animal): string | nil
+>getBreedSizeWithoutFunction : (animal: Animal) => string | nil
+>animal : Animal
+
+  if animal?.breed?.size ~= nil then
+>animal?.breed?.size ~= nil : boolean
+>animal?.breed?.size : string | nil
+>animal?.breed : Breed | nil
+>animal : Animal
+>breed : Breed | nil
+>size : string | nil
+
+    return animal.breed.size
+>animal.breed.size : string
+>animal.breed : Breed
+>animal : Animal
+>breed : Breed
+>size : string
+
+  else
+    return nil
+  end
+end
+
+function getBreedSizeWithFunction(animal: Animal): string | nil
+>getBreedSizeWithFunction : (animal: Animal) => string | nil
+>animal : Animal
+
+  if not isNil(animal?.breed?.size) then
+>not isNil(animal?.breed?.size) : boolean
+>isNil(animal?.breed?.size) : boolean
+>isNil : (value: unknown) => value is nil
+>animal?.breed?.size : string | nil
+>animal?.breed : Breed | nil
+>animal : Animal
+>breed : Breed | nil
+>size : string | nil
+
+    return animal.breed.size
+>animal.breed.size : string
+>animal.breed : Breed
+>animal : Animal
+>breed : Breed
+>size : string
+
+  else
+    return nil
+  end
+end
+

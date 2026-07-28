@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/recursiveInheritance.tlua] ////
+
+=== recursiveInheritance.tlua ===
+-- ported from tests/cases/compiler/recursiveInheritance.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I5 extends I5 { -- error
+>I5 : Symbol(I5, Decl(recursiveInheritance.tlua, 0, 0))
+>I5 : Symbol(I5, Decl(recursiveInheritance.tlua, 0, 0))
+
+    foo(): void,
+>foo : Symbol(I5.foo, Decl(recursiveInheritance.tlua, 3, 25))
+}
+
+interface i8 extends i9 {} -- error
+>i8 : Symbol(i8, Decl(recursiveInheritance.tlua, 5, 1))
+>i9 : Symbol(i9, Decl(recursiveInheritance.tlua, 7, 26))
+
+interface i9 extends i8 {} -- error
+>i9 : Symbol(i9, Decl(recursiveInheritance.tlua, 7, 26))
+>i8 : Symbol(i8, Decl(recursiveInheritance.tlua, 5, 1))
+

@@ -1,0 +1,41 @@
+//// [tests/cases/conformance/ported/recursiveReturns.tlua] ////
+
+//// [recursiveReturns.tlua]
+-- ported from tests/cases/compiler/recursiveReturns.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: post-decrement side effect (rewritten as subtraction for recursive argument)
+
+function R1()
+    R1()
+    return
+end
+
+function R2()
+    R2()
+end
+
+function R3(n: number)
+    if n == 0 then
+    else
+        R3(n - 1)
+    end
+end
+
+
+//// [recursiveReturns.lua]
+-- ported from tests/cases/compiler/recursiveReturns.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: post-decrement side effect (rewritten as subtraction for recursive argument)
+function R1()
+  R1();
+  return;
+end
+function R2()
+  R2();
+end
+function R3(n)
+  if n == 0 then
+  else
+    R3(n - 1);
+  end
+end

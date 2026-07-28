@@ -1,0 +1,113 @@
+//// [tests/cases/conformance/ported/keyofIntersection.tlua] ////
+
+=== keyofIntersection.tlua ===
+-- ported from tests/cases/conformance/types/keyof/keyofIntersection.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (tlua keeps strict checking enabled)
+
+-- @declaration: true
+
+type A = { a: string }
+>A : Symbol(A, Decl(keyofIntersection.tlua, 0, 0))
+>a : Symbol(a, Decl(keyofIntersection.tlua, 6, 10))
+
+type B = { b: string }
+>B : Symbol(B, Decl(keyofIntersection.tlua, 6, 22))
+>b : Symbol(b, Decl(keyofIntersection.tlua, 7, 10))
+
+type T01 = keyof (A & B) -- "a" | "b"
+>T01 : Symbol(T01, Decl(keyofIntersection.tlua, 7, 22))
+>A : Symbol(A, Decl(keyofIntersection.tlua, 0, 0))
+>B : Symbol(B, Decl(keyofIntersection.tlua, 6, 22))
+
+type T02<T> = keyof (T & B) -- "b" | keyof T
+>T02 : Symbol(T02, Decl(keyofIntersection.tlua, 9, 24))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 10, 9))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 10, 9))
+>B : Symbol(B, Decl(keyofIntersection.tlua, 6, 22))
+
+type T03<U> = keyof (A & U) -- "a" | keyof U
+>T03 : Symbol(T03, Decl(keyofIntersection.tlua, 10, 27))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 11, 9))
+>A : Symbol(A, Decl(keyofIntersection.tlua, 0, 0))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 11, 9))
+
+type T04<T, U> = keyof (T & U) -- keyof T | keyof U
+>T04 : Symbol(T04, Decl(keyofIntersection.tlua, 11, 27))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 12, 9))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 12, 11))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 12, 9))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 12, 11))
+
+type T05 = T02<A> -- "a" | "b"
+>T05 : Symbol(T05, Decl(keyofIntersection.tlua, 12, 30))
+>T02 : Symbol(T02, Decl(keyofIntersection.tlua, 9, 24))
+>A : Symbol(A, Decl(keyofIntersection.tlua, 0, 0))
+
+type T06 = T03<B> -- "a" | "b"
+>T06 : Symbol(T06, Decl(keyofIntersection.tlua, 13, 17))
+>T03 : Symbol(T03, Decl(keyofIntersection.tlua, 10, 27))
+>B : Symbol(B, Decl(keyofIntersection.tlua, 6, 22))
+
+type T07 = T04<A, B> -- "a" | "b"
+>T07 : Symbol(T07, Decl(keyofIntersection.tlua, 14, 17))
+>T04 : Symbol(T04, Decl(keyofIntersection.tlua, 11, 27))
+>A : Symbol(A, Decl(keyofIntersection.tlua, 0, 0))
+>B : Symbol(B, Decl(keyofIntersection.tlua, 6, 22))
+
+-- Repros from #22291
+
+type Example1<T extends string, U extends string> = keyof (Record<T, any> & Record<U, any>)
+>Example1 : Symbol(Example1, Decl(keyofIntersection.tlua, 15, 20))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 19, 14))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 19, 31))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 19, 14))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 19, 31))
+
+type Result1 = Example1<'x', 'y'> -- "x" | "y"
+>Result1 : Symbol(Result1, Decl(keyofIntersection.tlua, 19, 91))
+>Example1 : Symbol(Example1, Decl(keyofIntersection.tlua, 15, 20))
+
+type Result2 = keyof (Record<'x', any> & Record<'y', any>) -- "x" | "y"
+>Result2 : Symbol(Result2, Decl(keyofIntersection.tlua, 20, 33))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+
+type Example3<T extends string> = keyof (Record<T, any>)
+>Example3 : Symbol(Example3, Decl(keyofIntersection.tlua, 22, 58))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 24, 14))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 24, 14))
+
+type Result3 = Example3<'x' | 'y'> -- "x" | "y"
+>Result3 : Symbol(Result3, Decl(keyofIntersection.tlua, 24, 56))
+>Example3 : Symbol(Example3, Decl(keyofIntersection.tlua, 22, 58))
+
+type Example4<T extends string, U extends string> = (Record<T, any> & Record<U, any>)
+>Example4 : Symbol(Example4, Decl(keyofIntersection.tlua, 25, 34))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 27, 14))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 27, 31))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 27, 14))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 27, 31))
+
+type Result4 = keyof Example4<'x', 'y'> -- "x" | "y"
+>Result4 : Symbol(Result4, Decl(keyofIntersection.tlua, 27, 85))
+>Example4 : Symbol(Example4, Decl(keyofIntersection.tlua, 25, 34))
+
+type Example5<T, U> = keyof (T & U)
+>Example5 : Symbol(Example5, Decl(keyofIntersection.tlua, 28, 39))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 30, 14))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 30, 16))
+>T : Symbol(T, Decl(keyofIntersection.tlua, 30, 14))
+>U : Symbol(U, Decl(keyofIntersection.tlua, 30, 16))
+
+type Result5 = Example5<Record<'x', any>, Record<'y', any>> -- "x" | "y"
+>Result5 : Symbol(Result5, Decl(keyofIntersection.tlua, 30, 35))
+>Example5 : Symbol(Example5, Decl(keyofIntersection.tlua, 28, 39))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+

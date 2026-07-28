@@ -1,0 +1,19 @@
+-- ported from tests/cases/compiler/noImplicitAnyInCastExpression.ts
+-- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
+-- dropped: bare cast expression statements (bound to local `_` because tlua permits only calls and assignments as bare expressions)
+
+-- verify no implicit-any errors are reported with cast expressions
+
+interface IFoo {
+    a: number
+    b: string
+}
+
+-- Expr type not assignable to target type
+local _ = (<IFoo>{ a = nil })
+
+-- Expr type assignable to target type
+local _ = (<IFoo>{ a = 2, b = nil })
+
+-- Neither type is assignable to the other
+local _ = (<IFoo>{ c = nil })

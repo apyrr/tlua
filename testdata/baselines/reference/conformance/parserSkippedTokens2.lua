@@ -1,0 +1,12 @@
+//// [tests/cases/conformance/ported/parserSkippedTokens2.tlua] ////
+
+//// [parserSkippedTokens2.tlua]
+-- ported from tests/cases/conformance/parser/ecmascript5/SkippedTokens/parserSkippedTokens2.ts
+-- dropped: @target: es2015 directive; tlua uses the esnext default
+
+\\
+
+
+//// [parserSkippedTokens2.lua]
+-- ported from tests/cases/conformance/parser/ecmascript5/SkippedTokens/parserSkippedTokens2.ts
+-- dropped: @target: es2015 directive; tlua uses the esnext default

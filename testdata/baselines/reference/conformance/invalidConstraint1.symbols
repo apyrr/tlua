@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/invalidConstraint1.tlua] ////
+
+=== invalidConstraint1.tlua ===
+-- ported from tests/cases/compiler/invalidConstraint1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (tlua strictness is fixed by the harness)
+-- dropped: declaration output directive (unsupported); constraint checking is retained
+
+function f<T, U extends { a: T }>()
+>f : Symbol(f, Decl(invalidConstraint1.tlua, 0, 0))
+>T : Symbol(T, Decl(invalidConstraint1.tlua, 5, 11))
+>U : Symbol(U, Decl(invalidConstraint1.tlua, 5, 13))
+>a : Symbol(a, Decl(invalidConstraint1.tlua, 5, 25))
+>T : Symbol(T, Decl(invalidConstraint1.tlua, 5, 11))
+
+    return nil
+end
+f<string, { a: number }>() -- should error
+>f : Symbol(f, Decl(invalidConstraint1.tlua, 0, 0))
+>a : Symbol(a, Decl(invalidConstraint1.tlua, 8, 11))
+

@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/computedPropertyNames35_ES6.tlua] ////
+
+=== computedPropertyNames35_ES6.tlua ===
+-- ported from tests/cases/conformance/es6/computedProperties/computedPropertyNames35_ES6.ts
+-- dropped: @target: es6 directive (tlua defaults to latest target)
+
+function foo<T>() return '' end
+>foo : <T>() => string
+>'' : ""
+
+interface I<T> {
+    bar(): string
+>bar : () => string
+
+    [foo<T>()](): void
+>[foo<T>()] : () => void
+>foo<T>() : string
+>foo : <T>() => string
+}
+

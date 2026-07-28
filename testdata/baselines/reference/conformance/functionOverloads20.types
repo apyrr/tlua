@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/functionOverloads20.tlua] ////
+
+=== functionOverloads20.tlua ===
+-- ported from tests/cases/compiler/functionOverloads20.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(bar: { a: number }): number;
+>foo : { (bar: { a: number; }): number; (bar: { a: string; }): string; }
+>bar : { a: number; }
+>a : number
+
+function foo(bar: { a: string }): string;
+>foo : { (bar: { a: number; }): number; (bar: { a: string; }): string; }
+>bar : { a: string; }
+>a : string
+
+function foo(bar: { a: any }): string
+>foo : { (bar: { a: number; }): number; (bar: { a: string; }): string; }
+>bar : { a: any; }
+>a : any
+
+    return ""
+>"" : ""
+
+end
+

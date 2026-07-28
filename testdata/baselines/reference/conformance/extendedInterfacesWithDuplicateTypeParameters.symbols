@@ -1,0 +1,32 @@
+//// [tests/cases/conformance/ported/extendedInterfacesWithDuplicateTypeParameters.tlua] ////
+
+=== extendedInterfacesWithDuplicateTypeParameters.tlua ===
+-- ported from tests/cases/compiler/extendedInterfacesWithDuplicateTypeParameters.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface InterfaceWithMultipleTypars<A, A> { -- should error
+>InterfaceWithMultipleTypars : Symbol(InterfaceWithMultipleTypars, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 0, 0))
+>A : Symbol(A, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 3, 38), Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 3, 40))
+>A : Symbol(A, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 3, 38), Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 3, 40))
+
+    bar(): void
+>bar : Symbol(InterfaceWithMultipleTypars.bar, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 3, 45))
+}
+
+interface InterfaceWithSomeTypars<B> { -- should not error
+>InterfaceWithSomeTypars : Symbol(InterfaceWithSomeTypars, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 5, 1), Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 9, 1))
+>B : Symbol(B, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 7, 34))
+
+    bar(): void
+>bar : Symbol(InterfaceWithSomeTypars.bar, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 7, 38))
+}
+
+interface InterfaceWithSomeTypars<C, C> { -- should error
+>InterfaceWithSomeTypars : Symbol(InterfaceWithSomeTypars, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 5, 1), Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 9, 1))
+>C : Symbol(C, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 11, 34), Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 11, 36))
+>C : Symbol(C, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 11, 34), Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 11, 36))
+
+    bar2(): void
+>bar2 : Symbol(InterfaceWithSomeTypars.bar2, Decl(extendedInterfacesWithDuplicateTypeParameters.tlua, 11, 41))
+}
+

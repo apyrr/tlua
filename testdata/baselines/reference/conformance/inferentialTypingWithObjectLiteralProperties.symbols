@@ -1,0 +1,36 @@
+//// [tests/cases/conformance/ported/inferentialTypingWithObjectLiteralProperties.tlua] ////
+
+=== inferentialTypingWithObjectLiteralProperties.tlua ===
+-- ported from tests/cases/compiler/inferentialTypingWithObjectLiteralProperties.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f<T>(x: T, y: T): T
+>f : Symbol(f, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 0, 0))
+>T : Symbol(T, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 3, 11))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 3, 14))
+>T : Symbol(T, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 3, 11))
+>y : Symbol(y, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 3, 19))
+>T : Symbol(T, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 3, 11))
+>T : Symbol(T, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 3, 11))
+
+    return x
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 3, 14))
+
+end
+
+f({ x = { nil } }, { x = { 1 } }).x[1] = "" -- ok
+>f({ x = { nil } }, { x = { 1 } }).x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 20))
+>f : Symbol(f, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 0, 0))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 3))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 20))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 20))
+>1 : Symbol(1, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 9), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 7, 26))
+
+f({ x = { 1 } }, { x = { nil } }).x[1] = "" -- intentional type error
+>f({ x = { 1 } }, { x = { nil } }).x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 18))
+>f : Symbol(f, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 0, 0))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 3))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 18))
+>x : Symbol(x, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 3), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 18))
+>1 : Symbol(1, Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 9), Decl(inferentialTypingWithObjectLiteralProperties.tlua, 8, 24))
+

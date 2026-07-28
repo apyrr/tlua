@@ -1,0 +1,34 @@
+//// [tests/cases/conformance/ported/homomorphicMappedTypeIntersectionAssignability.tlua] ////
+
+=== homomorphicMappedTypeIntersectionAssignability.tlua ===
+-- ported from tests/cases/compiler/homomorphicMappedTypeIntersectionAssignability.ts
+-- dropped: @target: es2015 and @strict: true directives (tlua defaults to latest target and strict checking)
+
+function f<TType>(
+>f : <TType>(a: { weak?: string; } & Readonly<TType> & { name: "ok"; }, b: Readonly<TType & { name: string; }>, c: Readonly<TType> & { name: string; }) => void
+
+    a: { weak?: string } & Readonly<TType> & { name: "ok" },
+>a : { weak?: string; } & Readonly<TType> & { name: "ok"; }
+>weak : string | nil
+>name : "ok"
+
+    b: Readonly<TType & { name: string }>,
+>b : Readonly<TType & { name: string; }>
+>name : string
+
+    c: Readonly<TType> & { name: string })
+>c : Readonly<TType> & { name: string; }
+>name : string
+
+    c = a -- Works
+>c = a : { weak?: string; } & Readonly<TType> & { name: "ok"; }
+>c : Readonly<TType> & { name: string; }
+>a : { weak?: string; } & Readonly<TType> & { name: "ok"; }
+
+    b = a -- Should also work
+>b = a : { weak?: string; } & Readonly<TType> & { name: "ok"; }
+>b : Readonly<TType & { name: string; }>
+>a : { weak?: string; } & Readonly<TType> & { name: "ok"; }
+
+end
+

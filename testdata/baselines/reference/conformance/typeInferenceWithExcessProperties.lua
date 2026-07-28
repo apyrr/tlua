@@ -1,0 +1,59 @@
+//// [tests/cases/conformance/ported/typeInferenceWithExcessProperties.tlua] ////
+
+//// [typeInferenceWithExcessProperties.tlua]
+-- ported from tests/cases/compiler/typeInferenceWithExcessProperties.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: object-literal method shorthand, rewritten as function-valued properties
+
+interface Named {
+    name: string
+}
+
+function parrot<T extends Named>(obj: T): T
+    return obj
+end
+
+parrot({
+    name = "TypeScript"
+})
+
+parrot({
+    name = "TypeScript",
+    age = 5
+})
+
+parrot({
+    name = "TypeScript",
+    age = function() end
+})
+
+parrot({
+    name = "TypeScript",
+    sayHello = function() end
+})
+
+
+//// [typeInferenceWithExcessProperties.lua]
+-- ported from tests/cases/compiler/typeInferenceWithExcessProperties.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: object-literal method shorthand, rewritten as function-valued properties
+function parrot(obj)
+  return obj;
+end
+parrot({
+  name = "TypeScript"
+});
+parrot({
+  name = "TypeScript",
+  age = 5
+});
+parrot({
+  name = "TypeScript",
+  age = function()
+  end
+});
+parrot({
+  name = "TypeScript",
+  sayHello = function()
+  end
+});

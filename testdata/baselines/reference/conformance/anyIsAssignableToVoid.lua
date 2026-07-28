@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/anyIsAssignableToVoid.tlua] ////
+
+//// [anyIsAssignableToVoid.tlua]
+-- ported from tests/cases/compiler/anyIsAssignableToVoid.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface P {
+    p: void;
+}
+
+interface Q extends P { // check assignability here. any is assignable to void.
+    p: any;
+}
+
+
+//// [anyIsAssignableToVoid.lua]
+-- ported from tests/cases/compiler/anyIsAssignableToVoid.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

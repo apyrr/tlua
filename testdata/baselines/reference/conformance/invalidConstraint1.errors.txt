@@ -1,0 +1,20 @@
+invalidConstraint1.tlua(9,11): error TLUA2344: Type '{ a: number; }' does not satisfy the constraint '{ a: string; }'.
+  Types of property 'a' are incompatible.
+    Type 'number' is not assignable to type 'string'.
+
+
+==== invalidConstraint1.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/invalidConstraint1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: @strict: false directive (tlua strictness is fixed by the harness)
+    -- dropped: declaration output directive (unsupported); constraint checking is retained
+    
+    function f<T, U extends { a: T }>()
+        return nil
+    end
+    f<string, { a: number }>() -- should error
+              ~~~~~~~~~~~~~
+!!! error TLUA2344: Type '{ a: number; }' does not satisfy the constraint '{ a: string; }'.
+!!! error TLUA2344:   Types of property 'a' are incompatible.
+!!! error TLUA2344:     Type 'number' is not assignable to type 'string'.
+    

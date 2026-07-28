@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/errorOnInitializerInInterfaceProperty.tlua] ////
+
+//// [errorOnInitializerInInterfaceProperty.tlua]
+-- ported from tests/cases/compiler/errorOnInitializerInInterfaceProperty.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo {
+    bar: number = 5
+}
+
+
+//// [errorOnInitializerInInterfaceProperty.lua]
+-- ported from tests/cases/compiler/errorOnInitializerInInterfaceProperty.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/ported/genericFunctionSpecializations1.tlua] ////
+
+=== genericFunctionSpecializations1.tlua ===
+-- ported from tests/cases/compiler/genericFunctionSpecializations1.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+-- dropped: the JavaScript wrapper type `String`, rewritten to tlua's primitive `string` constraint.
+
+function foo3<T>(test: string); -- error
+>foo3 : Symbol(foo3, Decl(genericFunctionSpecializations1.tlua, 0, 0), Decl(genericFunctionSpecializations1.tlua, 4, 31))
+>T : Symbol(T, Decl(genericFunctionSpecializations1.tlua, 4, 14))
+>test : Symbol(test, Decl(genericFunctionSpecializations1.tlua, 4, 17))
+
+function foo3<T>(test: T)
+>foo3 : Symbol(foo3, Decl(genericFunctionSpecializations1.tlua, 0, 0), Decl(genericFunctionSpecializations1.tlua, 4, 31))
+>T : Symbol(T, Decl(genericFunctionSpecializations1.tlua, 5, 14))
+>test : Symbol(test, Decl(genericFunctionSpecializations1.tlua, 5, 17))
+>T : Symbol(T, Decl(genericFunctionSpecializations1.tlua, 5, 14))
+
+end
+
+function foo4<T>(test: string); -- valid
+>foo4 : Symbol(foo4, Decl(genericFunctionSpecializations1.tlua, 6, 3), Decl(genericFunctionSpecializations1.tlua, 8, 31))
+>T : Symbol(T, Decl(genericFunctionSpecializations1.tlua, 8, 14))
+>test : Symbol(test, Decl(genericFunctionSpecializations1.tlua, 8, 17))
+
+function foo4<T extends string>(test: T)
+>foo4 : Symbol(foo4, Decl(genericFunctionSpecializations1.tlua, 6, 3), Decl(genericFunctionSpecializations1.tlua, 8, 31))
+>T : Symbol(T, Decl(genericFunctionSpecializations1.tlua, 9, 14))
+>test : Symbol(test, Decl(genericFunctionSpecializations1.tlua, 9, 32))
+>T : Symbol(T, Decl(genericFunctionSpecializations1.tlua, 9, 14))
+
+end
+

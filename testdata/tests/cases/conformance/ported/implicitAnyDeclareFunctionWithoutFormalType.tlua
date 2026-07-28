@@ -1,0 +1,31 @@
+-- ported from tests/cases/compiler/implicitAnyDeclareFunctionWithoutFormalType.ts
+-- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to latest target and strict checking)
+-- dropped: named rest parameter `...args`; rewritten as tlua's unnamed vararg `...`
+-- dropped: upstream noImplicitAny diagnostic for the unnamed vararg, which has no name in tlua
+-- dropped: upstream noImplicitAny diagnostics for defaulted z/w after null/undefined normalization to nil
+-- dropped: emit coverage (noEmit) — retained default-parameter checker cases are not lowered to valid Lua
+
+// @noEmit: true
+
+-- these should be errors
+function foo(x)
+end
+
+function bar(x: number, y)
+end -- error at "y"; no error at "x"
+
+function func2(a, b, c)
+end -- error at "a,b,c"
+
+function func3(...)
+end
+
+function func4(z = nil, w = nil)
+end
+
+-- these shouldn't be errors
+function noError1(x = 3, y = 2)
+end
+
+function noError2(x: number, y: string)
+end

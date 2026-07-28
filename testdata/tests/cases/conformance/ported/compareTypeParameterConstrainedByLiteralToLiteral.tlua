@@ -1,0 +1,9 @@
+-- ported from tests/cases/compiler/compareTypeParameterConstrainedByLiteralToLiteral.ts
+
+// @target: esnext
+-- Test for #26758
+
+function foo<T extends "a" | "b">(t: T)
+    local _ = t == "a" -- Should be allowed
+    local _ = t == "x" -- Should be error
+end

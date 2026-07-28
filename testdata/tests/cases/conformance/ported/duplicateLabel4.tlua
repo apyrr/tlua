@@ -1,0 +1,13 @@
+-- ported from tests/cases/compiler/duplicateLabel4.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+
+// @allowUnusedLabels: true
+// @allowUnreachableCode: true
+
+::target::
+while true do
+end
+
+::target::
+while true do
+end

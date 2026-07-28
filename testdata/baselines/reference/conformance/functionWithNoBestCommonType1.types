@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/functionWithNoBestCommonType1.tlua] ////
+
+=== functionWithNoBestCommonType1.tlua ===
+-- ported from tests/cases/compiler/functionWithNoBestCommonType1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @allowUnreachableCode: true directive (tlua does not expose this compiler option)
+-- dropped: emit coverage (noEmit) — the intentionally unreachable sequential returns are not valid Lua control flow
+
+
+function foo()
+>foo : () => void | true
+
+    return true
+>true : true
+
+    return bar()
+>bar() : void
+>bar : () => void
+
+end
+
+function bar(): void
+>bar : () => void
+
+end
+

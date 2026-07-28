@@ -1,0 +1,75 @@
+//// [tests/cases/conformance/ported/typePredicatesOptionalChaining3.tlua] ////
+
+=== typePredicatesOptionalChaining3.tlua ===
+-- ported from tests/cases/compiler/typePredicatesOptionalChaining3.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode)
+-- compiler gap: logical-not emission for this optional-chaining type-predicate case is not valid Lua
+
+interface Animal {
+>Animal : Symbol(Animal, Decl(typePredicatesOptionalChaining3.tlua, 0, 0))
+
+  breed?: Breed
+>breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>Breed : Symbol(Breed, Decl(typePredicatesOptionalChaining3.tlua, 6, 1))
+}
+interface Breed {
+>Breed : Symbol(Breed, Decl(typePredicatesOptionalChaining3.tlua, 6, 1))
+
+  size?: string
+>size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+}
+
+declare function isNil(value: unknown): value is nil
+>isNil : Symbol(isNil, Decl(typePredicatesOptionalChaining3.tlua, 9, 1))
+>value : Symbol(value, Decl(typePredicatesOptionalChaining3.tlua, 11, 23))
+>value : Symbol(value, Decl(typePredicatesOptionalChaining3.tlua, 11, 23))
+
+function getBreedSizeWithoutFunction(animal: Animal): string | nil
+>getBreedSizeWithoutFunction : Symbol(getBreedSizeWithoutFunction, Decl(typePredicatesOptionalChaining3.tlua, 11, 52))
+>animal : Symbol(animal, Decl(typePredicatesOptionalChaining3.tlua, 13, 37))
+>Animal : Symbol(Animal, Decl(typePredicatesOptionalChaining3.tlua, 0, 0))
+
+  if animal?.breed?.size ~= nil then
+>animal?.breed?.size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+>animal?.breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>animal : Symbol(animal, Decl(typePredicatesOptionalChaining3.tlua, 13, 37))
+>breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+
+    return animal.breed.size
+>animal.breed.size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+>animal.breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>animal : Symbol(animal, Decl(typePredicatesOptionalChaining3.tlua, 13, 37))
+>breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+
+  else
+    return nil
+  end
+end
+
+function getBreedSizeWithFunction(animal: Animal): string | nil
+>getBreedSizeWithFunction : Symbol(getBreedSizeWithFunction, Decl(typePredicatesOptionalChaining3.tlua, 19, 3))
+>animal : Symbol(animal, Decl(typePredicatesOptionalChaining3.tlua, 21, 34))
+>Animal : Symbol(Animal, Decl(typePredicatesOptionalChaining3.tlua, 0, 0))
+
+  if not isNil(animal?.breed?.size) then
+>isNil : Symbol(isNil, Decl(typePredicatesOptionalChaining3.tlua, 9, 1))
+>animal?.breed?.size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+>animal?.breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>animal : Symbol(animal, Decl(typePredicatesOptionalChaining3.tlua, 21, 34))
+>breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+
+    return animal.breed.size
+>animal.breed.size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+>animal.breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>animal : Symbol(animal, Decl(typePredicatesOptionalChaining3.tlua, 21, 34))
+>breed : Symbol(Animal.breed, Decl(typePredicatesOptionalChaining3.tlua, 4, 18))
+>size : Symbol(Breed.size, Decl(typePredicatesOptionalChaining3.tlua, 7, 17))
+
+  else
+    return nil
+  end
+end
+

@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/parserErrorRecovery_ParameterList2.tlua] ////
+
+=== parserErrorRecovery_ParameterList2.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ParameterLists/parserErrorRecovery_ParameterList2.ts
+-- dropped: @target: es2015 and @strict: false directives; the C-style function body was rewritten to a Lua end-block
+-- @noEmit: true
+-- compiler gap: malformed comma-separated parameter-list recovery treats the required Lua `end` terminator as a parameter/member and reports unrelated recovery diagnostics.
+-- dropped: emit coverage because recovery produces invalid Lua for this malformed function declaration.
+
+function f(a, {
+>f : (a: any, { end:  }: { end: any; }) => any
+>a : any
+
+end
+>end : any
+
+> : any
+

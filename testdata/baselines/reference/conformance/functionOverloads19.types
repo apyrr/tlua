@@ -1,0 +1,28 @@
+//// [tests/cases/conformance/ported/functionOverloads19.tlua] ////
+
+=== functionOverloads19.tlua ===
+-- ported from tests/cases/compiler/functionOverloads19.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function foo(bar: { b: string });
+>foo : { (bar: { b: string; }): any; (bar: { a: string; }): any; }
+>bar : { b: string; }
+>b : string
+
+function foo(bar: { a: string });
+>foo : { (bar: { b: string; }): any; (bar: { a: string; }): any; }
+>bar : { a: string; }
+>a : string
+
+function foo(bar: { a: any })
+>foo : { (bar: { b: string; }): any; (bar: { a: string; }): any; }
+>bar : { a: any; }
+>a : any
+
+    return { a = "" }
+>{ a = "" } : { a: string; }
+>a : string
+>"" : ""
+
+end
+

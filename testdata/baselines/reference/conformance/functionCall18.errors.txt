@@ -1,0 +1,14 @@
+functionCall18.tlua(6,1): error TLUA2554: Expected 2 arguments, but got 1.
+
+
+==== functionCall18.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/functionCall18.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- Repro from #26835: generic and non-generic overload resolution.
+    declare function foo<T>(a: T, b: T): any
+    declare function foo(a: table): any
+    foo<string>("hello")
+    ~~~
+!!! error TLUA2554: Expected 2 arguments, but got 1.
+!!! related TLUA6210 functionCall18.tlua:4:31: An argument for 'b' was not provided.
+    

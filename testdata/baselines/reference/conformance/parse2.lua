@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/parse2.tlua] ////
+
+//// [parse2.tlua]
+-- ported from tests/cases/compiler/parse2.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+
+function foo()
+    foo(
+end
+
+
+//// [parse2.lua]
+-- ported from tests/cases/compiler/parse2.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+function foo()
+  foo();
+end

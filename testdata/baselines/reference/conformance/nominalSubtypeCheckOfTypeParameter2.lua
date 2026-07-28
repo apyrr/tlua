@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/ported/nominalSubtypeCheckOfTypeParameter2.tlua] ////
+
+//// [nominalSubtypeCheckOfTypeParameter2.tlua]
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/nominalSubtypeCheckOfTypeParameter2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface B<T> {
+    bar: T
+}
+
+-- ok
+interface A<T> extends B<T> {
+    foo: T
+}
+
+-- ok
+interface A2<T> extends B<B<string>> {
+    baz: T
+}
+
+interface C<T> {
+    bam: T
+}
+
+-- ok
+interface A3<T> extends B<C<T>> {
+    bing: T
+}
+
+
+//// [nominalSubtypeCheckOfTypeParameter2.lua]
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/nominalSubtypeCheckOfTypeParameter2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

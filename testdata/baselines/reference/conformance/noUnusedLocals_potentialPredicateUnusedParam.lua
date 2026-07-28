@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/noUnusedLocals_potentialPredicateUnusedParam.tlua] ////
+
+//// [noUnusedLocals_potentialPredicateUnusedParam.tlua]
+-- ported from tests/cases/compiler/noUnusedLocals_potentialPredicateUnusedParam.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode); Math.random() replaced with a Lua boolean to remove the JS runtime-global dependency
+
+-- @noEmit: true
+-- @noUnusedLocals: true
+-- @noUnusedParameters: true
+-- compiler gap: noUnusedParameters does not report the unused parameter `a` (the upstream TS6133 diagnostic).
+
+function potentialPredicateUnusedParam(a: unknown)
+    return true
+end
+
+
+//// [noUnusedLocals_potentialPredicateUnusedParam.lua]
+-- ported from tests/cases/compiler/noUnusedLocals_potentialPredicateUnusedParam.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to the latest target and strict mode); Math.random() replaced with a Lua boolean to remove the JS runtime-global dependency
+-- @noEmit: true
+-- @noUnusedLocals: true
+-- @noUnusedParameters: true
+-- compiler gap: noUnusedParameters does not report the unused parameter `a` (the upstream TS6133 diagnostic).
+function potentialPredicateUnusedParam(a)
+  return true;
+end

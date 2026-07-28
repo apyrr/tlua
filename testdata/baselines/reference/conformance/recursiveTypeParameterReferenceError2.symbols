@@ -1,0 +1,38 @@
+//// [tests/cases/conformance/ported/recursiveTypeParameterReferenceError2.tlua] ////
+
+=== recursiveTypeParameterReferenceError2.tlua ===
+-- ported from tests/cases/compiler/recursiveTypeParameterReferenceError2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface A {
+>A : Symbol(A, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+
+    <T extends A>(x: T): void
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 4, 5))
+>A : Symbol(A, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+>x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 4, 18))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 4, 5))
+}
+
+interface B {
+>B : Symbol(B, Decl(recursiveTypeParameterReferenceError2.tlua, 5, 1))
+
+    <T extends B>(x: T): void
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 5))
+>B : Symbol(B, Decl(recursiveTypeParameterReferenceError2.tlua, 5, 1))
+>x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 18))
+>T : Symbol(T, Decl(recursiveTypeParameterReferenceError2.tlua, 8, 5))
+}
+
+interface C {
+>C : Symbol(C, Decl(recursiveTypeParameterReferenceError2.tlua, 9, 1))
+
+    (x: A): void
+>x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 12, 5))
+>A : Symbol(A, Decl(recursiveTypeParameterReferenceError2.tlua, 0, 0))
+
+    (x: B): void
+>x : Symbol(x, Decl(recursiveTypeParameterReferenceError2.tlua, 13, 5))
+>B : Symbol(B, Decl(recursiveTypeParameterReferenceError2.tlua, 5, 1))
+}
+

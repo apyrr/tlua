@@ -1,0 +1,68 @@
+//// [tests/cases/conformance/ported/typeParametersAvailableInNestedScope3.tlua] ////
+
+=== typeParametersAvailableInNestedScope3.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParametersAvailableInNestedScope3.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @declaration: true (tlua does not support declaration emit for this test)
+
+
+
+function foo<T>(v: T)
+>foo : <T>(v: T) => { a: <T_1>(a: T_1) => T_1; b: () => T; c: <T_1>(v: T_1) => { a: <T_2>(a: T_2) => T_2; b: () => T_1; }; }
+>v : T
+
+    function a<T>(a: T)
+>a : <T>(a: T) => T
+>a : T
+
+        return a
+>a : T
+
+    end
+    function b(): T
+>b : () => T
+
+        return v
+>v : T
+
+    end
+
+    function c<T>(v: T)
+>c : <T>(v: T) => { a: <T_1>(a: T_1) => T_1; b: () => T; }
+>v : T
+
+        function a<T>(a: T)
+>a : <T>(a: T) => T
+>a : T
+
+            return a
+>a : T
+
+        end
+        function b(): T
+>b : () => T
+
+            return v
+>v : T
+
+        end
+        return { a = a, b = b }
+>{ a = a, b = b } : { a: <T_1>(a: T_1) => T_1; b: () => T; }
+>a : <T_1>(a: T_1) => T_1
+>a : <T_1>(a: T_1) => T_1
+>b : () => T
+>b : () => T
+
+    end
+
+    return { a = a, b = b, c = c }
+>{ a = a, b = b, c = c } : { a: <T_1>(a: T_1) => T_1; b: () => T; c: <T_1>(v: T_1) => { a: <T_2>(a: T_2) => T_2; b: () => T_1; }; }
+>a : <T_1>(a: T_1) => T_1
+>a : <T_1>(a: T_1) => T_1
+>b : () => T
+>b : () => T
+>c : <T_1>(v: T_1) => { a: <T_2>(a: T_2) => T_2; b: () => T_1; }
+>c : <T_1>(v: T_1) => { a: <T_2>(a: T_2) => T_2; b: () => T_1; }
+
+end
+

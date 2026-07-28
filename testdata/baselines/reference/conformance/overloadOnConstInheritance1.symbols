@@ -1,0 +1,31 @@
+//// [tests/cases/conformance/ported/overloadOnConstInheritance1.tlua] ////
+
+=== overloadOnConstInheritance1.tlua ===
+-- ported from tests/cases/compiler/overloadOnConstInheritance1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Base {
+>Base : Symbol(Base, Decl(overloadOnConstInheritance1.tlua, 0, 0))
+
+    addEventListener(x: string): any
+>addEventListener : Symbol(Base.addEventListener, Decl(overloadOnConstInheritance1.tlua, 3, 16), Decl(overloadOnConstInheritance1.tlua, 4, 36))
+>x : Symbol(x, Decl(overloadOnConstInheritance1.tlua, 4, 21))
+
+    addEventListener(x: 'foo'): string
+>addEventListener : Symbol(Base.addEventListener, Decl(overloadOnConstInheritance1.tlua, 3, 16), Decl(overloadOnConstInheritance1.tlua, 4, 36))
+>x : Symbol(x, Decl(overloadOnConstInheritance1.tlua, 5, 21))
+}
+
+interface Deriver extends Base {
+>Deriver : Symbol(Deriver, Decl(overloadOnConstInheritance1.tlua, 6, 1))
+>Base : Symbol(Base, Decl(overloadOnConstInheritance1.tlua, 0, 0))
+
+    addEventListener(x: string): any
+>addEventListener : Symbol(Deriver.addEventListener, Decl(overloadOnConstInheritance1.tlua, 8, 32), Decl(overloadOnConstInheritance1.tlua, 9, 36))
+>x : Symbol(x, Decl(overloadOnConstInheritance1.tlua, 9, 21))
+
+    addEventListener(x: 'bar'): string
+>addEventListener : Symbol(Deriver.addEventListener, Decl(overloadOnConstInheritance1.tlua, 8, 32), Decl(overloadOnConstInheritance1.tlua, 9, 36))
+>x : Symbol(x, Decl(overloadOnConstInheritance1.tlua, 10, 21))
+}
+

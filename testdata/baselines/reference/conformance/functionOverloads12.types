@@ -1,0 +1,28 @@
+//// [tests/cases/conformance/ported/functionOverloads12.tlua] ////
+
+=== functionOverloads12.tlua ===
+-- ported from tests/cases/compiler/functionOverloads12.ts
+-- dropped: @target: es2015, @strict: false, and @allowUnreachableCode: true directives (tlua defaults to latest target and strict checking)
+
+function foo(): string;
+>foo : { (): string; (): number; }
+
+function foo(): number;
+>foo : { (): string; (): number; }
+
+function foo(): any
+>foo : { (): string; (): number; }
+
+    if true then
+>true : true
+
+        return ""
+>"" : ""
+
+    else
+        return 0
+>0 : 0
+
+    end
+end
+

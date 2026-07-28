@@ -1,0 +1,34 @@
+//// [tests/cases/conformance/ported/infiniteExpansionThroughTypeInference.tlua] ////
+
+=== infiniteExpansionThroughTypeInference.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/infiniteExpansionThroughTypeInference.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface G<T> {
+>G : Symbol(G, Decl(infiniteExpansionThroughTypeInference.tlua, 0, 0))
+>T : Symbol(T, Decl(infiniteExpansionThroughTypeInference.tlua, 3, 12))
+
+    x: G<G<T>>
+>x : Symbol(G.x, Decl(infiniteExpansionThroughTypeInference.tlua, 3, 16))
+>G : Symbol(G, Decl(infiniteExpansionThroughTypeInference.tlua, 0, 0))
+>G : Symbol(G, Decl(infiniteExpansionThroughTypeInference.tlua, 0, 0))
+>T : Symbol(T, Decl(infiniteExpansionThroughTypeInference.tlua, 3, 12))
+
+    y: T
+>y : Symbol(G.y, Decl(infiniteExpansionThroughTypeInference.tlua, 4, 14))
+>T : Symbol(T, Decl(infiniteExpansionThroughTypeInference.tlua, 3, 12))
+}
+
+function ff<T>(g: G<T>): void
+>ff : Symbol(ff, Decl(infiniteExpansionThroughTypeInference.tlua, 6, 1))
+>T : Symbol(T, Decl(infiniteExpansionThroughTypeInference.tlua, 8, 12))
+>g : Symbol(g, Decl(infiniteExpansionThroughTypeInference.tlua, 8, 15))
+>G : Symbol(G, Decl(infiniteExpansionThroughTypeInference.tlua, 0, 0))
+>T : Symbol(T, Decl(infiniteExpansionThroughTypeInference.tlua, 8, 12))
+
+    ff(g)
+>ff : Symbol(ff, Decl(infiniteExpansionThroughTypeInference.tlua, 6, 1))
+>g : Symbol(g, Decl(infiniteExpansionThroughTypeInference.tlua, 8, 15))
+
+end
+

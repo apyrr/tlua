@@ -1,0 +1,31 @@
+//// [tests/cases/conformance/ported/interfaceWithStringIndexerHidingBaseTypeIndexer2.tlua] ////
+
+//// [interfaceWithStringIndexerHidingBaseTypeIndexer2.tlua]
+-- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfaceWithStringIndexerHidingBaseTypeIndexer2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Base {
+    [x: number]: { a: number; b: number }
+    x: {
+        a: number; b: number
+    }
+}
+
+interface Derived extends Base {
+    [x: string]: {
+        a: number
+    };
+
+    y: {
+        a: number;
+    }
+    -- error
+    1: {
+        a: number
+    }
+}
+
+
+//// [interfaceWithStringIndexerHidingBaseTypeIndexer2.lua]
+-- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfaceWithStringIndexerHidingBaseTypeIndexer2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

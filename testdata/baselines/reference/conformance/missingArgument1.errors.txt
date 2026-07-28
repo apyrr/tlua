@@ -1,0 +1,20 @@
+missingArgument1.tlua(4,1): error TLUA2304: Cannot find name 'foo'.
+missingArgument1.tlua(4,5): error TLUA2304: Cannot find name 'a'.
+missingArgument1.tlua(4,7): error TLUA1135: Argument expression expected.
+missingArgument1.tlua(4,8): error TLUA2304: Cannot find name 'b'.
+
+
+==== missingArgument1.tlua (4 errors) ====
+    -- ported from tests/cases/compiler/missingArgument1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    foo(a,,b)
+    ~~~
+!!! error TLUA2304: Cannot find name 'foo'.
+        ~
+!!! error TLUA2304: Cannot find name 'a'.
+          ~
+!!! error TLUA1135: Argument expression expected.
+           ~
+!!! error TLUA2304: Cannot find name 'b'.
+    

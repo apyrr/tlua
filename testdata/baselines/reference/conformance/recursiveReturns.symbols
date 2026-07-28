@@ -1,0 +1,39 @@
+//// [tests/cases/conformance/ported/recursiveReturns.tlua] ////
+
+=== recursiveReturns.tlua ===
+-- ported from tests/cases/compiler/recursiveReturns.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: post-decrement side effect (rewritten as subtraction for recursive argument)
+
+function R1()
+>R1 : Symbol(R1, Decl(recursiveReturns.tlua, 0, 0))
+
+    R1()
+>R1 : Symbol(R1, Decl(recursiveReturns.tlua, 0, 0))
+
+    return
+end
+
+function R2()
+>R2 : Symbol(R2, Decl(recursiveReturns.tlua, 7, 3))
+
+    R2()
+>R2 : Symbol(R2, Decl(recursiveReturns.tlua, 7, 3))
+
+end
+
+function R3(n: number)
+>R3 : Symbol(R3, Decl(recursiveReturns.tlua, 11, 3))
+>n : Symbol(n, Decl(recursiveReturns.tlua, 13, 12))
+
+    if n == 0 then
+>n : Symbol(n, Decl(recursiveReturns.tlua, 13, 12))
+
+    else
+        R3(n - 1)
+>R3 : Symbol(R3, Decl(recursiveReturns.tlua, 11, 3))
+>n : Symbol(n, Decl(recursiveReturns.tlua, 13, 12))
+
+    end
+end
+

@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/testTypings.tlua] ////
+
+//// [testTypings.tlua]
+-- ported from tests/cases/compiler/testTypings.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (the declarations remain valid under tlua's strict defaults)
+
+interface IComparable<T> {
+    compareTo(other: T): any
+}
+
+declare function sort<U extends IComparable<U>>(items: U[]): U[]
+
+
+//// [testTypings.lua]
+-- ported from tests/cases/compiler/testTypings.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (the declarations remain valid under tlua's strict defaults)

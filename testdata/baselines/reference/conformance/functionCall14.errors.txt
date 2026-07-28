@@ -1,0 +1,19 @@
+functionCall14.tlua(11,5): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+
+
+==== functionCall14.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/functionCall14.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: named rest parameter `...b` and its array annotation; rewritten as tlua's unnamed scalar vararg `...: number`
+    
+    function foo(a?: string, ...: number)
+    end
+    
+    foo("foo", 1)
+    foo("foo")
+    foo()
+    foo(1, "bar")
+        ~
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    foo("foo", 1, 3)
+    

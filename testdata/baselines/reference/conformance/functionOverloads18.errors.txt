@@ -1,0 +1,15 @@
+functionOverloads18.tlua(4,10): error TLUA2394: This overload signature is not compatible with its implementation signature.
+
+
+==== functionOverloads18.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/functionOverloads18.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo(bar: { a: number });
+             ~~~
+!!! error TLUA2394: This overload signature is not compatible with its implementation signature.
+!!! related TLUA2750 functionOverloads18.tlua:5:10: The implementation signature is declared here.
+    function foo(bar: { a: string })
+        return { a = "" }
+    end
+    

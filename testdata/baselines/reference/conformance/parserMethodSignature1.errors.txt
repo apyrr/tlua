@@ -1,0 +1,13 @@
+parserMethodSignature1.tlua(5,5): error TLUA7010: 'A', which lacks return-type annotation, implicitly has an 'any' return type.
+
+
+==== parserMethodSignature1.tlua (1 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/MethodSignatures/parserMethodSignature1.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict checking)
+    
+    interface I {
+        A()
+        ~~~
+!!! error TLUA7010: 'A', which lacks return-type annotation, implicitly has an 'any' return type.
+    }
+    

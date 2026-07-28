@@ -1,0 +1,11 @@
+-- ported from tests/cases/compiler/methodSignatureHandledDeclarationKindForSymbol.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: the incompatible merged-interface declarations report TLUA2300 duplicate identifiers on both declarations instead of one incompatibility diagnostic on the second declaration.
+
+interface Foo {
+    bold(): string
+}
+
+interface Foo {
+    bold: string
+}

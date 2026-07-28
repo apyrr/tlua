@@ -1,0 +1,28 @@
+//// [tests/cases/conformance/ported/inferredFunctionReturnTypeIsEmptyType.tlua] ////
+
+//// [inferredFunctionReturnTypeIsEmptyType.tlua]
+-- ported from tests/cases/compiler/inferredFunctionReturnTypeIsEmptyType.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- @allowUnreachableCode: true
+
+function foo()
+    if true then
+        return 42
+    else
+        return "42"
+    end
+end
+
+
+//// [inferredFunctionReturnTypeIsEmptyType.lua]
+-- ported from tests/cases/compiler/inferredFunctionReturnTypeIsEmptyType.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- @allowUnreachableCode: true
+function foo()
+  if true then
+    return 42;
+  else
+    return "42";
+  end
+end

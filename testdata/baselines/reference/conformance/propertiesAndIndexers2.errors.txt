@@ -1,0 +1,40 @@
+propertiesAndIndexers2.tlua(11,5): error TLUA2411: Property 'c' of type 'string' is not assignable to 'string' index type 'number'.
+propertiesAndIndexers2.tlua(13,5): error TLUA2411: Property 'Infinity' of type 'string' is not assignable to 'string' index type 'number'.
+propertiesAndIndexers2.tlua(14,5): error TLUA2411: Property '"-Infinity"' of type 'string' is not assignable to 'string' index type 'number'.
+propertiesAndIndexers2.tlua(15,5): error TLUA2411: Property 'NaN' of type 'string' is not assignable to 'string' index type 'number'.
+propertiesAndIndexers2.tlua(16,5): error TLUA2411: Property '"-NaN"' of type 'string' is not assignable to 'string' index type 'number'.
+propertiesAndIndexers2.tlua(17,5): error TLUA2411: Property '6' of type '() => string' is not assignable to 'number' index type 'string'.
+
+
+==== propertiesAndIndexers2.tlua (6 errors) ====
+    -- ported from tests/cases/compiler/propertiesAndIndexers2.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface A {
+        [n: number]: string
+        [s: string]: number
+    }
+    
+    -- All of these should fail.
+    interface B extends A {
+        c: string
+        ~
+!!! error TLUA2411: Property 'c' of type 'string' is not assignable to 'string' index type 'number'.
+        3: string
+        Infinity: string
+        ~~~~~~~~
+!!! error TLUA2411: Property 'Infinity' of type 'string' is not assignable to 'string' index type 'number'.
+        "-Infinity": string
+        ~~~~~~~~~~~
+!!! error TLUA2411: Property '"-Infinity"' of type 'string' is not assignable to 'string' index type 'number'.
+        NaN: string
+        ~~~
+!!! error TLUA2411: Property 'NaN' of type 'string' is not assignable to 'string' index type 'number'.
+        "-NaN": string
+        ~~~~~~
+!!! error TLUA2411: Property '"-NaN"' of type 'string' is not assignable to 'string' index type 'number'.
+        6(): string
+        ~~~~~~~~~~~
+!!! error TLUA2411: Property '6' of type '() => string' is not assignable to 'number' index type 'string'.
+    }
+    

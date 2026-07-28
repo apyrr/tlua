@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/declarationFilesWithTypeReferences4.tlua] ////
+
+=== /a/node_modules/@types/node/index.d.tlua ===
+interface Error {
+    stack2: string
+>stack2 : string
+}
+
+=== /a/app.tlua ===
+/// <reference types="node"/>
+function foo(): Error
+>foo : () => Error
+
+    return nil as any
+>nil as any : any
+
+end
+

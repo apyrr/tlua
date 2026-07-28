@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/ported/addMoreOverloadsToBaseSignature.tlua] ////
+
+=== addMoreOverloadsToBaseSignature.tlua ===
+-- ported from tests/cases/compiler/addMoreOverloadsToBaseSignature.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo {
+    f(): string
+>f : () => string
+}
+
+interface Bar extends Foo {
+    f(key: string): string
+>f : (key: string) => string
+>key : string
+}
+

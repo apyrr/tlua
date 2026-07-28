@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/callWithWrongNumberOfTypeArguments.tlua] ////
+
+=== callWithWrongNumberOfTypeArguments.tlua ===
+-- ported from tests/cases/compiler/callWithWrongNumberOfTypeArguments.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f<T, U>()
+>f : Symbol(f, Decl(callWithWrongNumberOfTypeArguments.tlua, 0, 0))
+>T : Symbol(T, Decl(callWithWrongNumberOfTypeArguments.tlua, 3, 11))
+>U : Symbol(U, Decl(callWithWrongNumberOfTypeArguments.tlua, 3, 13))
+
+end
+
+f<number>()
+>f : Symbol(f, Decl(callWithWrongNumberOfTypeArguments.tlua, 0, 0))
+
+f<number, string>()
+>f : Symbol(f, Decl(callWithWrongNumberOfTypeArguments.tlua, 0, 0))
+
+f<number, string, number>()
+>f : Symbol(f, Decl(callWithWrongNumberOfTypeArguments.tlua, 0, 0))
+

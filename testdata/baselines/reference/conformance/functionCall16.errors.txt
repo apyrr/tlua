@@ -1,0 +1,27 @@
+functionCall16.tlua(8,12): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+functionCall16.tlua(11,1): error TLUA2555: Expected at least 1 arguments, but got 0.
+functionCall16.tlua(12,5): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+
+
+==== functionCall16.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/functionCall16.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: named rest parameter `...c`; tlua uses the unnamed vararg `...` form.
+    
+    function foo(a: string, b?: string, ...: number)
+    end
+    
+    foo('foo', 1)
+               ~
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    foo('foo')
+    foo('foo', 'bar')
+    foo()
+    ~~~
+!!! error TLUA2555: Expected at least 1 arguments, but got 0.
+!!! related TLUA6210 functionCall16.tlua:5:14: An argument for 'a' was not provided.
+    foo(1, 'bar')
+        ~
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    foo('foo', 'bar', 3)
+    

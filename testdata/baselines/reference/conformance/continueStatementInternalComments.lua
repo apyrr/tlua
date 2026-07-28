@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/ported/continueStatementInternalComments.tlua] ////
+
+//// [continueStatementInternalComments.tlua]
+-- ported from tests/cases/compiler/continueStatementInternalComments.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: labeled continue and C-style infinite loop, rewritten as a Lua while loop
+
+while true do
+    /*1*/ continue /*2*/ /*3*/
+end
+
+
+//// [continueStatementInternalComments.lua]
+-- ported from tests/cases/compiler/continueStatementInternalComments.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: labeled continue and C-style infinite loop, rewritten as a Lua while loop
+while true do
+  --[[1]] continue; --[[2]] --[[3]]
+end

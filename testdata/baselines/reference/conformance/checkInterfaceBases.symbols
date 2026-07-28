@@ -1,0 +1,29 @@
+//// [tests/cases/conformance/ported/checkInterfaceBases.tlua] ////
+
+=== app.tlua ===
+///<reference path='jquery.d.tlua' />
+interface SecondEvent {
+>SecondEvent : Symbol(SecondEvent, Decl(app.tlua, 0, 0))
+
+    data: any
+>data : Symbol(SecondEvent.data, Decl(app.tlua, 1, 23))
+}
+interface Third extends JQueryEventObjectTest, SecondEvent {}
+>Third : Symbol(Third, Decl(app.tlua, 3, 1))
+>JQueryEventObjectTest : Symbol(JQueryEventObjectTest, Decl(jquery.d.tlua, 0, 0))
+>SecondEvent : Symbol(SecondEvent, Decl(app.tlua, 0, 0))
+
+=== jquery.d.tlua ===
+interface JQueryEventObjectTest {
+>JQueryEventObjectTest : Symbol(JQueryEventObjectTest, Decl(jquery.d.tlua, 0, 0))
+
+    data: any
+>data : Symbol(JQueryEventObjectTest.data, Decl(jquery.d.tlua, 0, 33))
+
+    which: number
+>which : Symbol(JQueryEventObjectTest.which, Decl(jquery.d.tlua, 1, 13))
+
+    metaKey: any
+>metaKey : Symbol(JQueryEventObjectTest.metaKey, Decl(jquery.d.tlua, 2, 17))
+}
+

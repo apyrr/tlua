@@ -1,0 +1,14 @@
+contextualTyping30.tlua(7,10): error TLUA2322: Type 'string' is not assignable to type 'number'.
+
+
+==== contextualTyping30.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/contextualTyping30.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo(param: number[])
+    end
+    
+    foo({ 1, "a" })
+             ~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    

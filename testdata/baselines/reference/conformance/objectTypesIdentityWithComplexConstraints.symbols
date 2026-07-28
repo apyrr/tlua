@@ -1,0 +1,55 @@
+//// [tests/cases/conformance/ported/objectTypesIdentityWithComplexConstraints.tlua] ////
+
+=== objectTypesIdentityWithComplexConstraints.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/typeAndMemberIdentity/objectTypesIdentityWithComplexConstraints.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: C-style function body braces, rewritten to Lua `end`
+
+interface A {
+>A : Symbol(A, Decl(objectTypesIdentityWithComplexConstraints.tlua, 0, 0))
+
+    <T extends {
+>T : Symbol(T, Decl(objectTypesIdentityWithComplexConstraints.tlua, 5, 5))
+
+        <S extends A>(x: T, y: S): void
+>S : Symbol(S, Decl(objectTypesIdentityWithComplexConstraints.tlua, 6, 9))
+>A : Symbol(A, Decl(objectTypesIdentityWithComplexConstraints.tlua, 0, 0))
+>x : Symbol(x, Decl(objectTypesIdentityWithComplexConstraints.tlua, 6, 22))
+>T : Symbol(T, Decl(objectTypesIdentityWithComplexConstraints.tlua, 5, 5))
+>y : Symbol(y, Decl(objectTypesIdentityWithComplexConstraints.tlua, 6, 27))
+>S : Symbol(S, Decl(objectTypesIdentityWithComplexConstraints.tlua, 6, 9))
+
+    }>(x: T, y: T): void
+>x : Symbol(x, Decl(objectTypesIdentityWithComplexConstraints.tlua, 7, 7))
+>T : Symbol(T, Decl(objectTypesIdentityWithComplexConstraints.tlua, 5, 5))
+>y : Symbol(y, Decl(objectTypesIdentityWithComplexConstraints.tlua, 7, 12))
+>T : Symbol(T, Decl(objectTypesIdentityWithComplexConstraints.tlua, 5, 5))
+}
+
+interface B {
+>B : Symbol(B, Decl(objectTypesIdentityWithComplexConstraints.tlua, 8, 1))
+
+    <U extends B>(x: U, y: U): void
+>U : Symbol(U, Decl(objectTypesIdentityWithComplexConstraints.tlua, 11, 5))
+>B : Symbol(B, Decl(objectTypesIdentityWithComplexConstraints.tlua, 8, 1))
+>x : Symbol(x, Decl(objectTypesIdentityWithComplexConstraints.tlua, 11, 18))
+>U : Symbol(U, Decl(objectTypesIdentityWithComplexConstraints.tlua, 11, 5))
+>y : Symbol(y, Decl(objectTypesIdentityWithComplexConstraints.tlua, 11, 23))
+>U : Symbol(U, Decl(objectTypesIdentityWithComplexConstraints.tlua, 11, 5))
+}
+
+-- ok, not considered identical because the steps of contextual signature instantiation create fresh type parameters
+function foo(x: A);
+>foo : Symbol(foo, Decl(objectTypesIdentityWithComplexConstraints.tlua, 12, 1), Decl(objectTypesIdentityWithComplexConstraints.tlua, 15, 19), Decl(objectTypesIdentityWithComplexConstraints.tlua, 16, 19))
+>x : Symbol(x, Decl(objectTypesIdentityWithComplexConstraints.tlua, 15, 13))
+>A : Symbol(A, Decl(objectTypesIdentityWithComplexConstraints.tlua, 0, 0))
+
+function foo(x: B); -- error after constraints above made illegal
+>foo : Symbol(foo, Decl(objectTypesIdentityWithComplexConstraints.tlua, 12, 1), Decl(objectTypesIdentityWithComplexConstraints.tlua, 15, 19), Decl(objectTypesIdentityWithComplexConstraints.tlua, 16, 19))
+>x : Symbol(x, Decl(objectTypesIdentityWithComplexConstraints.tlua, 16, 13))
+>B : Symbol(B, Decl(objectTypesIdentityWithComplexConstraints.tlua, 8, 1))
+
+function foo(x: any) end
+>foo : Symbol(foo, Decl(objectTypesIdentityWithComplexConstraints.tlua, 12, 1), Decl(objectTypesIdentityWithComplexConstraints.tlua, 15, 19), Decl(objectTypesIdentityWithComplexConstraints.tlua, 16, 19))
+>x : Symbol(x, Decl(objectTypesIdentityWithComplexConstraints.tlua, 17, 13))
+

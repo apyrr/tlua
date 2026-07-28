@@ -1,0 +1,44 @@
+parserMemberAccessExpression1.tlua(4,11): error TLUA2304: Cannot find name 'Foo'.
+parserMemberAccessExpression1.tlua(4,15): error TLUA2304: Cannot find name 'T'.
+parserMemberAccessExpression1.tlua(5,11): error TLUA2304: Cannot find name 'Foo'.
+parserMemberAccessExpression1.tlua(5,19): error TLUA2304: Cannot find name 'T'.
+parserMemberAccessExpression1.tlua(6,11): error TLUA2304: Cannot find name 'Foo'.
+parserMemberAccessExpression1.tlua(6,14): error TLUA1477: An instantiation expression cannot be followed by a property access.
+parserMemberAccessExpression1.tlua(6,15): error TLUA2304: Cannot find name 'T'.
+parserMemberAccessExpression1.tlua(7,11): error TLUA2304: Cannot find name 'Foo'.
+parserMemberAccessExpression1.tlua(7,14): error TLUA1477: An instantiation expression cannot be followed by a property access.
+parserMemberAccessExpression1.tlua(7,15): error TLUA2304: Cannot find name 'T'.
+parserMemberAccessExpression1.tlua(7,22): error TLUA2304: Cannot find name 'T'.
+
+
+==== parserMemberAccessExpression1.tlua (11 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserMemberAccessExpression1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    local _ = Foo<T>()
+              ~~~
+!!! error TLUA2304: Cannot find name 'Foo'.
+                  ~
+!!! error TLUA2304: Cannot find name 'T'.
+    local _ = Foo.Bar<T>()
+              ~~~
+!!! error TLUA2304: Cannot find name 'Foo'.
+                      ~
+!!! error TLUA2304: Cannot find name 'T'.
+    local _ = Foo<T>.Bar()
+              ~~~
+!!! error TLUA2304: Cannot find name 'Foo'.
+                 ~~~
+!!! error TLUA1477: An instantiation expression cannot be followed by a property access.
+                  ~
+!!! error TLUA2304: Cannot find name 'T'.
+    local _ = Foo<T>.Bar<T>()
+              ~~~
+!!! error TLUA2304: Cannot find name 'Foo'.
+                 ~~~
+!!! error TLUA1477: An instantiation expression cannot be followed by a property access.
+                  ~
+!!! error TLUA2304: Cannot find name 'T'.
+                         ~
+!!! error TLUA2304: Cannot find name 'T'.
+    

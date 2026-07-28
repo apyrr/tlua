@@ -1,0 +1,15 @@
+/app.tlua(2,5): error TLUA2322: Type 'nil' is not assignable to type 'Error'.
+
+
+==== /node_modules/@types/node/index.d.tlua (0 errors) ====
+    interface Error {
+        stack2: string
+    }
+    
+==== /app.tlua (1 errors) ====
+    function foo(): Error
+        return nil
+        ~~~~~~
+!!! error TLUA2322: Type 'nil' is not assignable to type 'Error'.
+    end
+    

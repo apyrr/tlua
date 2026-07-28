@@ -1,0 +1,66 @@
+//// [tests/cases/conformance/ported/genericCallWithObjectTypeArgsAndInitializers.tlua] ////
+
+=== genericCallWithObjectTypeArgsAndInitializers.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/assignmentCompatibility/genericCallWithObjectTypeArgsAndInitializers.ts
+-- dropped: @target: es2015 directive (tlua defaults to the latest target)
+-- dropped: Number constraint rewritten as table because the JavaScript Number library type is unavailable in tlua
+
+-- Generic typed parameters with initializers
+function foo<T>(x: T = nil)
+>foo : <T>(x?: T) => T
+>x : T
+
+    return x
+>x : T
+
+end
+
+function foo2<T>(x: T = nil)
+>foo2 : <T>(x?: T) => T
+>x : T
+
+    return x
+>x : T
+
+end
+
+function foo3<T extends table>(x: T = 1)
+>foo3 : <T extends table>(x?: T) => void
+>x : T
+>1 : 1
+
+end -- error
+
+function foo4<T, U extends T>(x: T, y: U = x)
+>foo4 : <T, U extends T>(x: T, y?: U) => void
+>x : T
+>y : U
+>x : T
+
+end -- error
+
+function foo5<T, U extends T>(x: U, y: T = x)
+>foo5 : <T, U extends T>(x: U, y?: T) => void
+>x : U
+>y : T
+>x : U
+
+end -- ok
+
+function foo6<T, U extends T, V extends U>(x: T, y: U, z: V = y)
+>foo6 : <T, U extends T, V extends U>(x: T, y: U, z?: V) => void
+>x : T
+>y : U
+>z : V
+>y : U
+
+end -- error
+
+function foo7<T, U extends T, V extends U>(x: V, y: U = x)
+>foo7 : <T, U extends T, V extends U>(x: V, y?: U) => void
+>x : V
+>y : U
+>x : V
+
+end -- should be ok
+

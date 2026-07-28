@@ -1,0 +1,106 @@
+//// [tests/cases/conformance/ported/indexSignatureAndMappedType.tlua] ////
+
+=== indexSignatureAndMappedType.tlua ===
+-- ported from tests/cases/compiler/indexSignatureAndMappedType.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration output is unsupported for this Lua module; checker coverage is retained
+
+-- A mapped type { [P in K]: X }, where K is a generic type, is related to
+-- { [key: string]: Y } if X is related to Y.
+
+function f1<T, K extends string>(x: { [key: string]: T }, y: Record<K, T>)
+>f1 : Symbol(f1, Decl(indexSignatureAndMappedType.tlua, 0, 0))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 7, 12))
+>K : Symbol(K, Decl(indexSignatureAndMappedType.tlua, 7, 14))
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 7, 33))
+>key : Symbol(key, Decl(indexSignatureAndMappedType.tlua, 7, 39))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 7, 12))
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 7, 57))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(indexSignatureAndMappedType.tlua, 7, 14))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 7, 12))
+
+    x = y
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 7, 33))
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 7, 57))
+
+    y = x -- Error
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 7, 57))
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 7, 33))
+
+end
+
+function f2<T>(x: { [key: string]: T }, y: Record<string, T>)
+>f2 : Symbol(f2, Decl(indexSignatureAndMappedType.tlua, 10, 3))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 12, 12))
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 12, 15))
+>key : Symbol(key, Decl(indexSignatureAndMappedType.tlua, 12, 21))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 12, 12))
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 12, 39))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 12, 12))
+
+    x = y
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 12, 15))
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 12, 39))
+
+    y = x
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 12, 39))
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 12, 15))
+
+end
+
+function f3<T, U, K extends string>(x: { [key: string]: T }, y: Record<K, U>)
+>f3 : Symbol(f3, Decl(indexSignatureAndMappedType.tlua, 15, 3))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 17, 12))
+>U : Symbol(U, Decl(indexSignatureAndMappedType.tlua, 17, 14))
+>K : Symbol(K, Decl(indexSignatureAndMappedType.tlua, 17, 17))
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 17, 36))
+>key : Symbol(key, Decl(indexSignatureAndMappedType.tlua, 17, 42))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 17, 12))
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 17, 60))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(indexSignatureAndMappedType.tlua, 17, 17))
+>U : Symbol(U, Decl(indexSignatureAndMappedType.tlua, 17, 14))
+
+    x = y -- Error
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 17, 36))
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 17, 60))
+
+    y = x -- Error
+>y : Symbol(y, Decl(indexSignatureAndMappedType.tlua, 17, 60))
+>x : Symbol(x, Decl(indexSignatureAndMappedType.tlua, 17, 36))
+
+end
+
+-- Repro from #14548
+
+type Dictionary = {
+>Dictionary : Symbol(Dictionary, Decl(indexSignatureAndMappedType.tlua, 20, 3))
+
+    [key: string]: string;
+>key : Symbol(key, Decl(indexSignatureAndMappedType.tlua, 25, 5))
+}
+
+interface IBaseEntity {
+>IBaseEntity : Symbol(IBaseEntity, Decl(indexSignatureAndMappedType.tlua, 26, 1))
+
+    name: string;
+>name : Symbol(IBaseEntity.name, Decl(indexSignatureAndMappedType.tlua, 28, 23))
+
+    properties: Dictionary;
+>properties : Symbol(IBaseEntity.properties, Decl(indexSignatureAndMappedType.tlua, 29, 17))
+>Dictionary : Symbol(Dictionary, Decl(indexSignatureAndMappedType.tlua, 20, 3))
+}
+
+interface IEntity<T extends string> extends IBaseEntity {
+>IEntity : Symbol(IEntity, Decl(indexSignatureAndMappedType.tlua, 31, 1))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 33, 18))
+>IBaseEntity : Symbol(IBaseEntity, Decl(indexSignatureAndMappedType.tlua, 26, 1))
+
+    properties: Record<T, string>;
+>properties : Symbol(IEntity.properties, Decl(indexSignatureAndMappedType.tlua, 33, 57))
+>Record : Symbol(Record, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(indexSignatureAndMappedType.tlua, 33, 18))
+}
+

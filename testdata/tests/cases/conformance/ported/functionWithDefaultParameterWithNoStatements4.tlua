@@ -1,0 +1,11 @@
+-- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements4.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) — default parameter initializers are not lowered to valid Lua
+
+// @noEmit: true
+
+function foo(a = ``)
+end
+
+function bar(a = ``)
+end

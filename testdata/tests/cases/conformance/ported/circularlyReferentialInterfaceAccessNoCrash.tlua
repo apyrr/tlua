@@ -1,0 +1,13 @@
+-- ported from tests/cases/compiler/circularlyReferentialInterfaceAccessNoCrash.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type Mxs = Mx<'list', Mxs['p1']>;
+
+interface Mx<T, K> {
+  p1: T;
+  p2: K;
+}
+
+type ArrElem = ['list', ArrElem[number][1]][];
+
+type TupleElem = [['list', TupleElem[1][1]]];

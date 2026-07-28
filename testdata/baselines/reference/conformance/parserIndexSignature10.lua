@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/parserIndexSignature10.tlua] ////
+
+//// [parserIndexSignature10.tlua]
+-- ported from tests/cases/conformance/parser/ecmascript5/IndexSignatures/parserIndexSignature10.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+
+interface I {
+   [a, b]: number
+}
+
+
+//// [parserIndexSignature10.lua]
+-- ported from tests/cases/conformance/parser/ecmascript5/IndexSignatures/parserIndexSignature10.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)

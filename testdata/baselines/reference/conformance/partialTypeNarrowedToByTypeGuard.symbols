@@ -1,0 +1,54 @@
+//// [tests/cases/conformance/ported/partialTypeNarrowedToByTypeGuard.tlua] ////
+
+=== partialTypeNarrowedToByTypeGuard.tlua ===
+-- ported from tests/cases/compiler/partialTypeNarrowedToByTypeGuard.ts
+-- dropped: @target: es2015 and @strict directives (tlua defaults to latest target and strict checking)
+-- dropped: the explanatory commented-out expansion of PartialUser (comments do not affect compiler coverage)
+
+type Obj = table | nil
+>Obj : Symbol(Obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 0, 0))
+
+type User = {
+>User : Symbol(User, Decl(partialTypeNarrowedToByTypeGuard.tlua, 4, 22))
+
+    email: string,
+>email : Symbol(email, Decl(partialTypeNarrowedToByTypeGuard.tlua, 6, 13))
+
+    name: string,
+>name : Symbol(name, Decl(partialTypeNarrowedToByTypeGuard.tlua, 7, 18))
+}
+
+type PartialUser = Partial<User>
+>PartialUser : Symbol(PartialUser, Decl(partialTypeNarrowedToByTypeGuard.tlua, 9, 1))
+>Partial : Symbol(Partial, Decl(lib.luajit.d.tlua, --, --))
+>User : Symbol(User, Decl(partialTypeNarrowedToByTypeGuard.tlua, 4, 22))
+
+function isUser(obj: Obj): obj is PartialUser
+>isUser : Symbol(isUser, Decl(partialTypeNarrowedToByTypeGuard.tlua, 11, 32))
+>obj : Symbol(obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 13, 16))
+>Obj : Symbol(Obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 0, 0))
+>obj : Symbol(obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 13, 16))
+>PartialUser : Symbol(PartialUser, Decl(partialTypeNarrowedToByTypeGuard.tlua, 9, 1))
+
+    return true
+end
+
+function getUserName(obj: Obj)
+>getUserName : Symbol(getUserName, Decl(partialTypeNarrowedToByTypeGuard.tlua, 15, 3))
+>obj : Symbol(obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 17, 21))
+>Obj : Symbol(Obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 0, 0))
+
+    if isUser(obj) then
+>isUser : Symbol(isUser, Decl(partialTypeNarrowedToByTypeGuard.tlua, 11, 32))
+>obj : Symbol(obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 17, 21))
+
+        return obj.name
+>obj.name : Symbol(name, Decl(partialTypeNarrowedToByTypeGuard.tlua, 7, 18))
+>obj : Symbol(obj, Decl(partialTypeNarrowedToByTypeGuard.tlua, 17, 21))
+>name : Symbol(name, Decl(partialTypeNarrowedToByTypeGuard.tlua, 7, 18))
+
+    end
+
+    return ''
+end
+

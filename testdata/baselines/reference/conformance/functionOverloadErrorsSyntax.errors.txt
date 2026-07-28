@@ -1,0 +1,42 @@
+functionOverloadErrorsSyntax.tlua(9,10): error TLUA7010: 'fn4a', which lacks return-type annotation, implicitly has an 'any' return type.
+functionOverloadErrorsSyntax.tlua(9,27): error TLUA1016: A required parameter cannot follow an optional parameter.
+functionOverloadErrorsSyntax.tlua(13,10): error TLUA7010: 'fn4b', which lacks return-type annotation, implicitly has an 'any' return type.
+functionOverloadErrorsSyntax.tlua(13,38): error TLUA1016: A required parameter cannot follow an optional parameter.
+functionOverloadErrorsSyntax.tlua(18,10): error TLUA7010: 'fn5', which lacks return-type annotation, implicitly has an 'any' return type.
+functionOverloadErrorsSyntax.tlua(18,25): error TLUA1014: A rest parameter must be last in a parameter list.
+
+
+==== functionOverloadErrorsSyntax.tlua (6 errors) ====
+    -- ported from tests/cases/conformance/functions/functionOverloadErrorsSyntax.ts
+    -- dropped: nothing essential; TS's bodyless overload-signature list survives as
+    -- tlua's semicolon-terminated overload signatures, which (unlike `declare
+    -- function`) still require a final implementation, so a trivial empty body was
+    -- added to each overload group to keep the parse legal.
+    
+    
+    -- Function overload signature with optional parameter followed by non-optional parameter
+    function fn4a(x?: number, y: string);
+             ~~~~
+!!! error TLUA7010: 'fn4a', which lacks return-type annotation, implicitly has an 'any' return type.
+                              ~
+!!! error TLUA1016: A required parameter cannot follow an optional parameter.
+    function fn4a()
+    end
+    
+    function fn4b(n: string, x?: number, y: string);
+             ~~~~
+!!! error TLUA7010: 'fn4b', which lacks return-type annotation, implicitly has an 'any' return type.
+                                         ~
+!!! error TLUA1016: A required parameter cannot follow an optional parameter.
+    function fn4b()
+    end
+    
+    -- Function overload signature with rest param followed by non-optional parameter
+    function fn5(x: string, ...: any, z: string);
+             ~~~
+!!! error TLUA7010: 'fn5', which lacks return-type annotation, implicitly has an 'any' return type.
+                            ~~~
+!!! error TLUA1014: A rest parameter must be last in a parameter list.
+    function fn5()
+    end
+    

@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/infiniteExpansionThroughInstantiation2.tlua] ////
+
+//// [infiniteExpansionThroughInstantiation2.tlua]
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/infiniteExpansionThroughInstantiation2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- instantiating a derived type can cause an infinitely expanding type reference to be generated
+-- which could be used in an assignment check for constraint satisfaction
+interface AA<T extends AA<T>> -- error: referencing a type parameter in its constraint
+{
+    x: T
+}
+
+interface BB extends AA<AA<BB>>
+{
+}
+
+
+//// [infiniteExpansionThroughInstantiation2.lua]
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/infiniteExpansionThroughInstantiation2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

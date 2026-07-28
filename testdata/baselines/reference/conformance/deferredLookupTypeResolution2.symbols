@@ -1,0 +1,78 @@
+//// [tests/cases/conformance/ported/deferredLookupTypeResolution2.tlua] ////
+
+=== deferredLookupTypeResolution2.tlua ===
+-- ported from tests/cases/compiler/deferredLookupTypeResolution2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration output (unsupported for Lua modules)
+-- compiler gap: the checker can report a wrong-false result for this tuple mapped/indexed lookup.
+
+-- Repro from #17456
+
+type StringContains<S extends string, L extends string> = ({ [K in S]: 'true' } & { [key: string]: 'false' })[L]
+>StringContains : Symbol(StringContains, Decl(deferredLookupTypeResolution2.tlua, 0, 0))
+>S : Symbol(S, Decl(deferredLookupTypeResolution2.tlua, 7, 20))
+>L : Symbol(L, Decl(deferredLookupTypeResolution2.tlua, 7, 37))
+>K : Symbol(K, Decl(deferredLookupTypeResolution2.tlua, 7, 62))
+>S : Symbol(S, Decl(deferredLookupTypeResolution2.tlua, 7, 20))
+>key : Symbol(key, Decl(deferredLookupTypeResolution2.tlua, 7, 85))
+>L : Symbol(L, Decl(deferredLookupTypeResolution2.tlua, 7, 37))
+
+type ObjectHasKey<O, L extends string> = StringContains<Extract<keyof O, string>, L>
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution2.tlua, 7, 112))
+>O : Symbol(O, Decl(deferredLookupTypeResolution2.tlua, 9, 18))
+>L : Symbol(L, Decl(deferredLookupTypeResolution2.tlua, 9, 20))
+>StringContains : Symbol(StringContains, Decl(deferredLookupTypeResolution2.tlua, 0, 0))
+>Extract : Symbol(Extract, Decl(lib.luajit.d.tlua, --, --))
+>O : Symbol(O, Decl(deferredLookupTypeResolution2.tlua, 9, 18))
+>L : Symbol(L, Decl(deferredLookupTypeResolution2.tlua, 9, 20))
+
+type A<T> = ObjectHasKey<T, '1'>
+>A : Symbol(A, Decl(deferredLookupTypeResolution2.tlua, 9, 84))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 11, 7))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution2.tlua, 7, 112))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 11, 7))
+
+type B = ObjectHasKey<[string, number], '1'>
+>B : Symbol(B, Decl(deferredLookupTypeResolution2.tlua, 11, 32))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution2.tlua, 7, 112))
+
+type C = ObjectHasKey<[string, number], '2'>
+>C : Symbol(C, Decl(deferredLookupTypeResolution2.tlua, 13, 44))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution2.tlua, 7, 112))
+
+type D = A<[string]>
+>D : Symbol(D, Decl(deferredLookupTypeResolution2.tlua, 14, 44))
+>A : Symbol(A, Decl(deferredLookupTypeResolution2.tlua, 9, 84))
+
+-- Error, "false" not handled
+type E<T> = { true: 'true' }[ObjectHasKey<T, '1'>]
+>E : Symbol(E, Decl(deferredLookupTypeResolution2.tlua, 15, 20))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 18, 7))
+>true : Symbol(true, Decl(deferredLookupTypeResolution2.tlua, 18, 13))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution2.tlua, 7, 112))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 18, 7))
+
+type Juxtapose<T> = ({ true: 'otherwise' } & { [k: string]: 'true' })[ObjectHasKey<T, '1'>]
+>Juxtapose : Symbol(Juxtapose, Decl(deferredLookupTypeResolution2.tlua, 18, 50))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 20, 15))
+>true : Symbol(true, Decl(deferredLookupTypeResolution2.tlua, 20, 22))
+>k : Symbol(k, Decl(deferredLookupTypeResolution2.tlua, 20, 48))
+>ObjectHasKey : Symbol(ObjectHasKey, Decl(deferredLookupTypeResolution2.tlua, 7, 112))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 20, 15))
+
+-- Error, "otherwise" is missing
+type DeepError<T> = { true: 'true' }[Juxtapose<T>]
+>DeepError : Symbol(DeepError, Decl(deferredLookupTypeResolution2.tlua, 20, 91))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 23, 15))
+>true : Symbol(true, Decl(deferredLookupTypeResolution2.tlua, 23, 21))
+>Juxtapose : Symbol(Juxtapose, Decl(deferredLookupTypeResolution2.tlua, 18, 50))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 23, 15))
+
+type DeepOK<T> = { true: 'true', otherwise: 'false' }[Juxtapose<T>]
+>DeepOK : Symbol(DeepOK, Decl(deferredLookupTypeResolution2.tlua, 23, 50))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 25, 12))
+>true : Symbol(true, Decl(deferredLookupTypeResolution2.tlua, 25, 18))
+>otherwise : Symbol(otherwise, Decl(deferredLookupTypeResolution2.tlua, 25, 32))
+>Juxtapose : Symbol(Juxtapose, Decl(deferredLookupTypeResolution2.tlua, 18, 50))
+>T : Symbol(T, Decl(deferredLookupTypeResolution2.tlua, 25, 12))
+

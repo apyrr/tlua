@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/functionOverloads14.tlua] ////
+
+=== functionOverloads14.tlua ===
+-- ported from tests/cases/compiler/functionOverloads14.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua defaults to esnext and strict checking)
+
+function foo(): { a: number };
+>foo : { (): { a: number; }; (): { a: string; }; }
+>a : number
+
+function foo(): { a: string };
+>foo : { (): { a: number; }; (): { a: string; }; }
+>a : string
+
+function foo(): { a: any }
+>foo : { (): { a: number; }; (): { a: string; }; }
+>a : any
+
+    return { a = 1 }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+end
+

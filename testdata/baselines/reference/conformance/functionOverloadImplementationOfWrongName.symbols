@@ -1,0 +1,20 @@
+//// [tests/cases/conformance/ported/functionOverloadImplementationOfWrongName.tlua] ////
+
+=== functionOverloadImplementationOfWrongName.tlua ===
+-- ported from tests/cases/compiler/functionOverloadImplementationOfWrongName.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+
+function foo(x: any): any;
+>foo : Symbol(foo, Decl(functionOverloadImplementationOfWrongName.tlua, 0, 0), Decl(functionOverloadImplementationOfWrongName.tlua, 3, 26))
+>x : Symbol(x, Decl(functionOverloadImplementationOfWrongName.tlua, 3, 13))
+
+function foo(x: any, y: any): any;
+>foo : Symbol(foo, Decl(functionOverloadImplementationOfWrongName.tlua, 0, 0), Decl(functionOverloadImplementationOfWrongName.tlua, 3, 26))
+>x : Symbol(x, Decl(functionOverloadImplementationOfWrongName.tlua, 4, 13))
+>y : Symbol(y, Decl(functionOverloadImplementationOfWrongName.tlua, 4, 20))
+
+function bar(): any
+>bar : Symbol(bar, Decl(functionOverloadImplementationOfWrongName.tlua, 4, 34))
+
+end
+

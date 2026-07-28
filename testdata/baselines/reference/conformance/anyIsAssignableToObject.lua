@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/anyIsAssignableToObject.tlua] ////
+
+//// [anyIsAssignableToObject.tlua]
+-- ported from tests/cases/compiler/anyIsAssignableToObject.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface P {
+    p: {}
+}
+
+interface Q extends P { -- Check assignability here. Any is assignable to {}
+    p: any
+}
+
+
+//// [anyIsAssignableToObject.lua]
+-- ported from tests/cases/compiler/anyIsAssignableToObject.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

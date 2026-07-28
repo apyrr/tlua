@@ -1,0 +1,54 @@
+//// [tests/cases/conformance/ported/circularBaseTypes.tlua] ////
+
+=== circularBaseTypes.tlua ===
+-- ported from tests/cases/compiler/circularBaseTypes.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- dropped: declaration emit directive and output (unsupported in tlua; checker coverage retained)
+
+-- Repro from #38098
+
+type M<T> = { value: T }
+>M : Symbol(M, Decl(circularBaseTypes.tlua, 0, 0))
+>T : Symbol(T, Decl(circularBaseTypes.tlua, 7, 7))
+>value : Symbol(value, Decl(circularBaseTypes.tlua, 7, 13))
+>T : Symbol(T, Decl(circularBaseTypes.tlua, 7, 7))
+
+interface M2 extends M<M3> {} -- Error
+>M2 : Symbol(M2, Decl(circularBaseTypes.tlua, 7, 24))
+>M : Symbol(M, Decl(circularBaseTypes.tlua, 0, 0))
+>M3 : Symbol(M3, Decl(circularBaseTypes.tlua, 8, 29))
+
+type M3 = M2[keyof M2] -- Error
+>M3 : Symbol(M3, Decl(circularBaseTypes.tlua, 8, 29))
+>M2 : Symbol(M2, Decl(circularBaseTypes.tlua, 7, 24))
+>M2 : Symbol(M2, Decl(circularBaseTypes.tlua, 7, 24))
+
+function f(m: M3)
+>f : Symbol(f, Decl(circularBaseTypes.tlua, 9, 22))
+>m : Symbol(m, Decl(circularBaseTypes.tlua, 11, 11))
+>M3 : Symbol(M3, Decl(circularBaseTypes.tlua, 8, 29))
+
+    return m.value
+>m : Symbol(m, Decl(circularBaseTypes.tlua, 11, 11))
+
+end
+
+-- Repro from #32581
+
+type X<T> = { [K in keyof T]: string } & { b: string }
+>X : Symbol(X, Decl(circularBaseTypes.tlua, 13, 3))
+>T : Symbol(T, Decl(circularBaseTypes.tlua, 17, 7))
+>K : Symbol(K, Decl(circularBaseTypes.tlua, 17, 15))
+>T : Symbol(T, Decl(circularBaseTypes.tlua, 17, 7))
+>b : Symbol(b, Decl(circularBaseTypes.tlua, 17, 42))
+
+interface Y extends X<Y> {
+>Y : Symbol(Y, Decl(circularBaseTypes.tlua, 17, 54))
+>X : Symbol(X, Decl(circularBaseTypes.tlua, 13, 3))
+>Y : Symbol(Y, Decl(circularBaseTypes.tlua, 17, 54))
+
+    a: ""
+>a : Symbol(Y.a, Decl(circularBaseTypes.tlua, 18, 26))
+}
+

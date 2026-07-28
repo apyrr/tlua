@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/unusedMethodsInInterface.tlua] ////
+
+=== unusedMethodsInInterface.tlua ===
+-- ported from tests/cases/compiler/unusedMethodsInInterface.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- @strict: false
+--@noUnusedLocals:true
+--@noUnusedParameters:true
+
+interface I1 {
+>I1 : Symbol(I1, Decl(unusedMethodsInInterface.tlua, 0, 0))
+
+    f1(): void
+>f1 : Symbol(I1.f1, Decl(unusedMethodsInInterface.tlua, 7, 14))
+
+    f2(x: number, y: string): void
+>f2 : Symbol(I1.f2, Decl(unusedMethodsInInterface.tlua, 8, 14))
+>x : Symbol(x, Decl(unusedMethodsInInterface.tlua, 9, 7))
+>y : Symbol(y, Decl(unusedMethodsInInterface.tlua, 9, 17))
+}
+

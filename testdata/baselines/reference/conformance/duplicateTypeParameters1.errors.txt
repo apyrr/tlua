@@ -1,0 +1,12 @@
+duplicateTypeParameters1.tlua(4,15): error TLUA2300: Duplicate identifier 'X'.
+
+
+==== duplicateTypeParameters1.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/duplicateTypeParameters1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function A<X, X>()
+                  ~
+!!! error TLUA2300: Duplicate identifier 'X'.
+    end
+    

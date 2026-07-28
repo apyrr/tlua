@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/anyIsAssignableToVoid.tlua] ////
+
+=== anyIsAssignableToVoid.tlua ===
+-- ported from tests/cases/compiler/anyIsAssignableToVoid.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface P {
+>P : Symbol(P, Decl(anyIsAssignableToVoid.tlua, 0, 0))
+
+    p: void;
+>p : Symbol(P.p, Decl(anyIsAssignableToVoid.tlua, 3, 13))
+}
+
+interface Q extends P { // check assignability here. any is assignable to void.
+>Q : Symbol(Q, Decl(anyIsAssignableToVoid.tlua, 5, 1))
+>P : Symbol(P, Decl(anyIsAssignableToVoid.tlua, 0, 0))
+
+    p: any;
+>p : Symbol(Q.p, Decl(anyIsAssignableToVoid.tlua, 7, 23))
+}
+

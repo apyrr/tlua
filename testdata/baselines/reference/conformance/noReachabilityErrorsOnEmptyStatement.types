@@ -1,0 +1,14 @@
+//// [tests/cases/conformance/ported/noReachabilityErrorsOnEmptyStatement.tlua] ////
+
+=== noReachabilityErrorsOnEmptyStatement.tlua ===
+-- ported from tests/cases/compiler/noReachabilityErrorsOnEmptyStatement.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target); C-style function braces rewritten to Lua end-blocks
+
+function foo()
+>foo : () => number
+
+    return 1;;
+>1 : 1
+
+end
+

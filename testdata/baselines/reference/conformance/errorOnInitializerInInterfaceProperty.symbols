@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/errorOnInitializerInInterfaceProperty.tlua] ////
+
+=== errorOnInitializerInInterfaceProperty.tlua ===
+-- ported from tests/cases/compiler/errorOnInitializerInInterfaceProperty.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Foo {
+>Foo : Symbol(Foo, Decl(errorOnInitializerInInterfaceProperty.tlua, 0, 0))
+
+    bar: number = 5
+>bar : Symbol(Foo.bar, Decl(errorOnInitializerInInterfaceProperty.tlua, 3, 15))
+}
+

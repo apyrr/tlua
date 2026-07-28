@@ -1,0 +1,38 @@
+//// [tests/cases/conformance/ported/interfacePropertiesWithSameName1.tlua] ////
+
+=== interfacePropertiesWithSameName1.tlua ===
+-- ported from tests/cases/compiler/interfacePropertiesWithSameName1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface Mover {
+>Mover : Symbol(Mover, Decl(interfacePropertiesWithSameName1.tlua, 0, 0))
+
+    move(): void
+>move : Symbol(Mover.move, Decl(interfacePropertiesWithSameName1.tlua, 3, 17))
+
+    getStatus(): { speed: number }
+>getStatus : Symbol(Mover.getStatus, Decl(interfacePropertiesWithSameName1.tlua, 4, 16))
+>speed : Symbol(speed, Decl(interfacePropertiesWithSameName1.tlua, 5, 18))
+}
+interface Shaker {
+>Shaker : Symbol(Shaker, Decl(interfacePropertiesWithSameName1.tlua, 6, 1))
+
+    shake(): void
+>shake : Symbol(Shaker.shake, Decl(interfacePropertiesWithSameName1.tlua, 7, 18))
+
+    getStatus(): { frequency: number }
+>getStatus : Symbol(Shaker.getStatus, Decl(interfacePropertiesWithSameName1.tlua, 8, 17))
+>frequency : Symbol(frequency, Decl(interfacePropertiesWithSameName1.tlua, 9, 18))
+}
+
+interface MoverShaker extends Mover, Shaker {
+>MoverShaker : Symbol(MoverShaker, Decl(interfacePropertiesWithSameName1.tlua, 10, 1))
+>Mover : Symbol(Mover, Decl(interfacePropertiesWithSameName1.tlua, 0, 0))
+>Shaker : Symbol(Shaker, Decl(interfacePropertiesWithSameName1.tlua, 6, 1))
+
+    getStatus(): { speed: number, frequency: number }
+>getStatus : Symbol(MoverShaker.getStatus, Decl(interfacePropertiesWithSameName1.tlua, 12, 45))
+>speed : Symbol(speed, Decl(interfacePropertiesWithSameName1.tlua, 13, 18))
+>frequency : Symbol(frequency, Decl(interfacePropertiesWithSameName1.tlua, 13, 33))
+}
+

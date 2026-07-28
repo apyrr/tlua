@@ -1,0 +1,20 @@
+parserErrorRecovery_ArgumentList1.tlua(5,2): error TLUA2304: Cannot find name 'bar'.
+parserErrorRecovery_ArgumentList1.tlua(6,2): error TLUA1135: Argument expression expected.
+parserErrorRecovery_ArgumentList1.tlua(6,9): error TLUA2304: Cannot find name 'x'.
+
+
+==== parserErrorRecovery_ArgumentList1.tlua (3 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo()
+    	bar(
+    	~~~
+!!! error TLUA2304: Cannot find name 'bar'.
+    	return x
+    	~~~~~~
+!!! error TLUA1135: Argument expression expected.
+    	       ~
+!!! error TLUA2304: Cannot find name 'x'.
+    end
+    

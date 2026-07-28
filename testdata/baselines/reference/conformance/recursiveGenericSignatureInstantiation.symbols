@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/recursiveGenericSignatureInstantiation.tlua] ////
+
+=== recursiveGenericSignatureInstantiation.tlua ===
+-- ported from tests/cases/compiler/recursiveGenericSignatureInstantiation.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f6<T>(x: T)
+>f6 : Symbol(f6, Decl(recursiveGenericSignatureInstantiation.tlua, 0, 0))
+>T : Symbol(T, Decl(recursiveGenericSignatureInstantiation.tlua, 3, 12))
+>x : Symbol(x, Decl(recursiveGenericSignatureInstantiation.tlua, 3, 15))
+>T : Symbol(T, Decl(recursiveGenericSignatureInstantiation.tlua, 3, 12))
+
+    return f6(x)
+>f6 : Symbol(f6, Decl(recursiveGenericSignatureInstantiation.tlua, 0, 0))
+>x : Symbol(x, Decl(recursiveGenericSignatureInstantiation.tlua, 3, 15))
+
+end
+

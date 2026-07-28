@@ -1,0 +1,15 @@
+breakNotInIterationOrSwitchStatement2.tlua(6,9): error TLUA1107: Jump target cannot cross function boundary.
+
+
+==== breakNotInIterationOrSwitchStatement2.tlua (1 errors) ====
+    -- ported from tests/cases/compiler/breakNotInIterationOrSwitchStatement2.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    while true do
+        function f()
+            break
+            ~~~~~
+!!! error TLUA1107: Jump target cannot cross function boundary.
+        end
+    end
+    

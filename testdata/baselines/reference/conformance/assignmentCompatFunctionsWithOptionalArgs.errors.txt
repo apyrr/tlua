@@ -1,0 +1,25 @@
+assignmentCompatFunctionsWithOptionalArgs.tlua(12,18): error TLUA2322: Type 'boolean' is not assignable to type 'string'.
+assignmentCompatFunctionsWithOptionalArgs.tlua(13,5): error TLUA2741: Property 'id' is missing in type '{ name: string; }' but required in type '{ id: number; name?: string | nil; }'.
+
+
+==== assignmentCompatFunctionsWithOptionalArgs.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/assignmentCompatFunctionsWithOptionalArgs.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: the incidental missing-implementation diagnostic from the bodyless
+    --   TypeScript declaration; an empty implementation keeps the optional-field
+    --   assignment checks as the test subject.
+    
+    function foo(x: { id: number; name?: string }): void
+    end
+    
+    foo({ id = 1234 })                 -- Ok
+    foo({ id = 1234, name = "hello" })  -- Ok
+    foo({ id = 1234, name = false })    -- Error, name of wrong type
+                     ~~~~
+!!! error TLUA2322: Type 'boolean' is not assignable to type 'string'.
+!!! related TLUA6500 assignmentCompatFunctionsWithOptionalArgs.tlua:7:31: The expected type comes from property 'name' which is declared here on type '{ id: number; name?: string | nil; }'
+    foo({ name = "hello" })            -- Error, id required but missing
+        ~~~~~~~~~~~~~~~~~~
+!!! error TLUA2741: Property 'id' is missing in type '{ name: string; }' but required in type '{ id: number; name?: string | nil; }'.
+!!! related TLUA2728 assignmentCompatFunctionsWithOptionalArgs.tlua:7:19: 'id' is declared here.
+    

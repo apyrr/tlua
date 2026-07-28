@@ -1,0 +1,9 @@
+//// [tests/cases/conformance/ported/parserErrorRecovery_ExtendsOrImplementsClause6.tlua] ////
+
+=== parserErrorRecovery_ExtendsOrImplementsClause6.tlua ===
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ExtendsOrImplementsClauses/parserErrorRecovery_ExtendsOrImplementsClause6.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I extends { }
+>I : Symbol(I, Decl(parserErrorRecovery_ExtendsOrImplementsClause6.tlua, 0, 0))
+

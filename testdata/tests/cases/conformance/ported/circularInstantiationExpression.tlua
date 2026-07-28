@@ -1,0 +1,5 @@
+-- ported from tests/cases/compiler/circularInstantiationExpression.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit is unsupported for Lua modules (TLUA100054); kept circular generic-instantiation checker coverage.
+declare function foo<T>(t: T): typeof foo<T>;
+foo("")

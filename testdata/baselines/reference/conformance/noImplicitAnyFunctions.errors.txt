@@ -1,0 +1,39 @@
+noImplicitAnyFunctions.tlua(11,13): error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+noImplicitAnyFunctions.tlua(22,10): error TLUA7010: 'f6', which lacks return-type annotation, implicitly has an 'any' return type.
+noImplicitAnyFunctions.tlua(24,24): error TLUA7006: Parameter 'y' implicitly has an 'any' type.
+
+
+==== noImplicitAnyFunctions.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/noImplicitAnyFunctions.ts
+    -- dropped: @target: es2015 and @noImplicitAny: true directives (tlua defaults to esnext and strict checking)
+    -- dropped: ambient function declarations were rewritten to tlua's `declare name: function-type` form
+    -- compiler-gap: tlua ambient function-type declarations require an explicit return type, so upstream f1's implicit-any return diagnostic cannot be represented
+    
+    
+    declare f1: () => any
+    
+    declare f2: () => any
+    
+    function f3(x)
+                ~
+!!! error TLUA7006: Parameter 'x' implicitly has an 'any' type.
+    end
+    
+    function f4(x: any)
+        return x
+    end
+    
+    function f5(x: any): any
+        return x
+    end
+    
+    function f6(x: string, y: number);
+             ~~
+!!! error TLUA7010: 'f6', which lacks return-type annotation, implicitly has an 'any' return type.
+    function f6(x: string, y: string): any;
+    function f6(x: string, y)
+                           ~
+!!! error TLUA7006: Parameter 'y' implicitly has an 'any' type.
+        return nil
+    end
+    

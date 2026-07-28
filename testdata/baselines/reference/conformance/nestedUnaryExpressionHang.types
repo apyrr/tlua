@@ -1,0 +1,43 @@
+//// [tests/cases/conformance/ported/nestedUnaryExpressionHang.tlua] ////
+
+=== nestedUnaryExpressionHang.tlua ===
+-- ported from tests/cases/compiler/nestedUnaryExpressionHang.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) — nested logical-not recovery leaks invalid `!` syntax
+
+
+local _ = 3333 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+>_ : number
+>3333 %!!!!!!!!!!!!!!!!!!!!!!!!!!!! : number
+>3333 : 3333
+>!!!!!!!!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!!! : boolean
+>!!!!!!!!!!!! : boolean
+>!!!!!!!!!!! : boolean
+>!!!!!!!!!! : boolean
+>!!!!!!!!! : boolean
+>!!!!!!!! : boolean
+>!!!!!!! : boolean
+>!!!!!! : boolean
+>!!!!! : boolean
+>!!!! : boolean
+>!!! : boolean
+>!! : boolean
+>! : boolean
+
+> : any
+

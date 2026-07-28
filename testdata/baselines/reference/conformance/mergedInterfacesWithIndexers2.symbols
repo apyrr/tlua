@@ -1,0 +1,45 @@
+//// [tests/cases/conformance/ported/mergedInterfacesWithIndexers2.tlua] ////
+
+=== mergedInterfacesWithIndexers2.tlua ===
+-- ported from tests/cases/conformance/interfaces/declarationMerging/mergedInterfacesWithIndexers2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- indexers should behave like other members when merging interface declarations
+
+interface A {
+>A : Symbol(A, Decl(mergedInterfacesWithIndexers2.tlua, 0, 0), Decl(mergedInterfacesWithIndexers2.tlua, 7, 1))
+
+    [x: number]: string; -- error
+>x : Symbol(x, Decl(mergedInterfacesWithIndexers2.tlua, 6, 5))
+}
+
+interface A {
+>A : Symbol(A, Decl(mergedInterfacesWithIndexers2.tlua, 0, 0), Decl(mergedInterfacesWithIndexers2.tlua, 7, 1))
+
+    [x: string]: { length: string }; -- error
+>x : Symbol(x, Decl(mergedInterfacesWithIndexers2.tlua, 10, 5))
+>length : Symbol(length, Decl(mergedInterfacesWithIndexers2.tlua, 10, 18))
+}
+
+interface A2 {
+>A2 : Symbol(A2, Decl(mergedInterfacesWithIndexers2.tlua, 11, 1), Decl(mergedInterfacesWithIndexers2.tlua, 16, 1))
+
+    [x: number]: string;
+>x : Symbol(x, Decl(mergedInterfacesWithIndexers2.tlua, 14, 5))
+
+    "a": number; -- error
+>"a" : Symbol(A2["a"], Decl(mergedInterfacesWithIndexers2.tlua, 14, 24))
+}
+
+interface A2 {
+>A2 : Symbol(A2, Decl(mergedInterfacesWithIndexers2.tlua, 11, 1), Decl(mergedInterfacesWithIndexers2.tlua, 16, 1))
+
+    [x: string]: { length: number };
+>x : Symbol(x, Decl(mergedInterfacesWithIndexers2.tlua, 19, 5))
+>length : Symbol(length, Decl(mergedInterfacesWithIndexers2.tlua, 19, 18))
+
+    1: { length: number }; -- error
+>1 : Symbol(A2[1], Decl(mergedInterfacesWithIndexers2.tlua, 19, 36))
+>length : Symbol(length, Decl(mergedInterfacesWithIndexers2.tlua, 20, 8))
+}
+

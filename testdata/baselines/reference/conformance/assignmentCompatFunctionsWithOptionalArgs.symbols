@@ -1,0 +1,35 @@
+//// [tests/cases/conformance/ported/assignmentCompatFunctionsWithOptionalArgs.tlua] ////
+
+=== assignmentCompatFunctionsWithOptionalArgs.tlua ===
+-- ported from tests/cases/compiler/assignmentCompatFunctionsWithOptionalArgs.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: the incidental missing-implementation diagnostic from the bodyless
+--   TypeScript declaration; an empty implementation keeps the optional-field
+--   assignment checks as the test subject.
+
+function foo(x: { id: number; name?: string }): void
+>foo : Symbol(foo, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 0, 0))
+>x : Symbol(x, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 6, 13))
+>id : Symbol(id, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 6, 17))
+>name : Symbol(name, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 6, 29))
+
+end
+
+foo({ id = 1234 })                 -- Ok
+>foo : Symbol(foo, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 0, 0))
+>id : Symbol(id, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 9, 5))
+
+foo({ id = 1234, name = "hello" })  -- Ok
+>foo : Symbol(foo, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 0, 0))
+>id : Symbol(id, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 10, 5))
+>name : Symbol(name, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 10, 16))
+
+foo({ id = 1234, name = false })    -- Error, name of wrong type
+>foo : Symbol(foo, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 0, 0))
+>id : Symbol(id, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 11, 5))
+>name : Symbol(name, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 11, 16))
+
+foo({ name = "hello" })            -- Error, id required but missing
+>foo : Symbol(foo, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 0, 0))
+>name : Symbol(name, Decl(assignmentCompatFunctionsWithOptionalArgs.tlua, 12, 5))
+

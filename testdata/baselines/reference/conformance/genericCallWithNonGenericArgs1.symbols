@@ -1,0 +1,16 @@
+//// [tests/cases/conformance/ported/genericCallWithNonGenericArgs1.tlua] ////
+
+=== genericCallWithNonGenericArgs1.tlua ===
+-- ported from tests/cases/compiler/genericCallWithNonGenericArgs1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f<T>(x: any)
+>f : Symbol(f, Decl(genericCallWithNonGenericArgs1.tlua, 0, 0))
+>T : Symbol(T, Decl(genericCallWithNonGenericArgs1.tlua, 3, 11))
+>x : Symbol(x, Decl(genericCallWithNonGenericArgs1.tlua, 3, 14))
+
+end
+
+f<any>(nil)
+>f : Symbol(f, Decl(genericCallWithNonGenericArgs1.tlua, 0, 0))
+

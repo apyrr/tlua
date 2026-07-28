@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/functionWithDefaultParameterWithNoStatements6.tlua] ////
+
+=== functionWithDefaultParameterWithNoStatements6.tlua ===
+-- ported from tests/cases/compiler/functionWithDefaultParameterWithNoStatements6.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: default parameters are not lowered during emit; valid source would produce invalid Lua output
+
+function foo(a = true)
+>foo : (a?: boolean) => void
+>a : boolean
+>true : true
+
+end
+
+function bar(a = true)
+>bar : (a?: boolean) => void
+>a : boolean
+>true : true
+
+end
+

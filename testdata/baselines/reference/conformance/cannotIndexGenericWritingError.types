@@ -1,0 +1,48 @@
+//// [tests/cases/conformance/ported/cannotIndexGenericWritingError.tlua] ////
+
+=== cannotIndexGenericWritingError.tlua ===
+-- ported from tests/cases/compiler/cannotIndexGenericWritingError.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: symbol-key coverage (Lua tables use string and numeric keys here)
+
+
+-- From #47357
+
+function foo<T extends { [s: string]: any }>(target: T, p: string)
+>foo : <T extends { [s: string]: any; }>(target: T, p: string) => void
+>s : string
+>target : T
+>p : string
+
+    target[p] = "" -- error
+>target[p] = "" : ""
+>target[p] : any
+>target : T
+>p : string
+>"" : ""
+
+end
+
+function foo2<T extends { [n: number]: number; [s: string]: number | string }>(target: T, p: string | number)
+>foo2 : <T extends { [n: number]: number; [s: string]: number | string; }>(target: T, p: string | number) => void
+>n : number
+>s : string
+>target : T
+>p : string | number
+
+    target[p] = 1 -- error
+>target[p] = 1 : 1
+>target[p] : any
+>target : T
+>p : string | number
+>1 : 1
+
+    target[1] = 1 -- ok
+>target[1] = 1 : 1
+>target[1] : number | nil
+>target : T
+>1 : 1
+>1 : 1
+
+end
+

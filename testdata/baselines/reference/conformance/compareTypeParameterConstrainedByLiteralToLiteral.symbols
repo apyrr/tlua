@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/compareTypeParameterConstrainedByLiteralToLiteral.tlua] ////
+
+=== compareTypeParameterConstrainedByLiteralToLiteral.tlua ===
+-- ported from tests/cases/compiler/compareTypeParameterConstrainedByLiteralToLiteral.ts
+
+-- Test for #26758
+
+function foo<T extends "a" | "b">(t: T)
+>foo : Symbol(foo, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 0, 0))
+>T : Symbol(T, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 4, 13))
+>t : Symbol(t, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 4, 34))
+>T : Symbol(T, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 4, 13))
+
+    local _ = t == "a" -- Should be allowed
+>_ : Symbol(_, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 5, 9))
+>t : Symbol(t, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 4, 34))
+
+    local _ = t == "x" -- Should be error
+>_ : Symbol(_, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 6, 9))
+>t : Symbol(t, Decl(compareTypeParameterConstrainedByLiteralToLiteral.tlua, 4, 34))
+
+end
+

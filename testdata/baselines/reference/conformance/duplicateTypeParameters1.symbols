@@ -1,0 +1,13 @@
+//// [tests/cases/conformance/ported/duplicateTypeParameters1.tlua] ////
+
+=== duplicateTypeParameters1.tlua ===
+-- ported from tests/cases/compiler/duplicateTypeParameters1.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function A<X, X>()
+>A : Symbol(A, Decl(duplicateTypeParameters1.tlua, 0, 0))
+>X : Symbol(X, Decl(duplicateTypeParameters1.tlua, 3, 11), Decl(duplicateTypeParameters1.tlua, 3, 13))
+>X : Symbol(X, Decl(duplicateTypeParameters1.tlua, 3, 11), Decl(duplicateTypeParameters1.tlua, 3, 13))
+
+end
+

@@ -1,0 +1,41 @@
+TypeArgumentList1.tlua(4,1): error TLUA2304: Cannot find name 'Foo'.
+TypeArgumentList1.tlua(4,1): error TLUA2695: Left side of comma operator is unused and has no side effects.
+TypeArgumentList1.tlua(4,1): error TLUA2695: Left side of comma operator is unused and has no side effects.
+TypeArgumentList1.tlua(4,1): error TLUA100057: Incomplete statement: expected assignment or a function call.
+TypeArgumentList1.tlua(4,5): error TLUA2304: Cannot find name 'A'.
+TypeArgumentList1.tlua(4,8): error TLUA2304: Cannot find name 'B'.
+TypeArgumentList1.tlua(4,11): error TLUA1127: Invalid character.
+TypeArgumentList1.tlua(4,11): error TLUA1128: Declaration or statement expected.
+TypeArgumentList1.tlua(4,13): error TLUA2304: Cannot find name 'C'.
+TypeArgumentList1.tlua(4,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
+TypeArgumentList1.tlua(4,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
+
+
+==== TypeArgumentList1.tlua (11 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/TypeArgumentLists/TypeArgumentList1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    Foo<A, B, \ C>(4, 5, 6);
+    ~~~
+!!! error TLUA2304: Cannot find name 'Foo'.
+    ~~~~~
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+    ~~~~~~~~
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+    ~~~~~~~~~
+!!! error TLUA100057: Incomplete statement: expected assignment or a function call.
+        ~
+!!! error TLUA2304: Cannot find name 'A'.
+           ~
+!!! error TLUA2304: Cannot find name 'B'.
+              ~
+!!! error TLUA1127: Invalid character.
+              ~
+!!! error TLUA1128: Declaration or statement expected.
+                ~
+!!! error TLUA2304: Cannot find name 'C'.
+                   ~
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+                   ~~~~
+!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+    

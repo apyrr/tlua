@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/genericSignatureInheritance2.tlua] ////
+
+=== genericSignatureInheritance2.tlua ===
+-- ported from tests/cases/compiler/genericSignatureInheritance2.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I {
+>I : Symbol(I, Decl(genericSignatureInheritance2.tlua, 0, 0))
+
+    <T>(x: T): string
+>T : Symbol(T, Decl(genericSignatureInheritance2.tlua, 4, 5))
+>x : Symbol(x, Decl(genericSignatureInheritance2.tlua, 4, 8))
+>T : Symbol(T, Decl(genericSignatureInheritance2.tlua, 4, 5))
+}
+
+interface I2 extends I {
+>I2 : Symbol(I2, Decl(genericSignatureInheritance2.tlua, 5, 1))
+>I : Symbol(I, Decl(genericSignatureInheritance2.tlua, 0, 0))
+
+    <T>(x: T): void
+>T : Symbol(T, Decl(genericSignatureInheritance2.tlua, 8, 5))
+>x : Symbol(x, Decl(genericSignatureInheritance2.tlua, 8, 8))
+>T : Symbol(T, Decl(genericSignatureInheritance2.tlua, 8, 5))
+}
+

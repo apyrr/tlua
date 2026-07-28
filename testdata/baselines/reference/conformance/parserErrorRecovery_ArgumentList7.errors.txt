@@ -1,0 +1,20 @@
+parserErrorRecovery_ArgumentList7.tlua(4,1): error TLUA2304: Cannot find name 'Foo'.
+parserErrorRecovery_ArgumentList7.tlua(4,5): error TLUA2304: Cannot find name 'a'.
+parserErrorRecovery_ArgumentList7.tlua(4,7): error TLUA1135: Argument expression expected.
+parserErrorRecovery_ArgumentList7.tlua(5,1): error TLUA1005: ')' expected.
+
+
+==== parserErrorRecovery_ArgumentList7.tlua (4 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList7.ts
+    -- dropped: @target: es2015 directive (tlua defaults to esnext)
+    
+    Foo(a,,
+    ~~~
+!!! error TLUA2304: Cannot find name 'Foo'.
+        ~
+!!! error TLUA2304: Cannot find name 'a'.
+          ~
+!!! error TLUA1135: Argument expression expected.
+    
+    
+!!! error TLUA1005: ')' expected.

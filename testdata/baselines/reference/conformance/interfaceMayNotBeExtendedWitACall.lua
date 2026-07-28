@@ -1,0 +1,15 @@
+//// [tests/cases/conformance/ported/interfaceMayNotBeExtendedWitACall.tlua] ////
+
+//// [interfaceMayNotBeExtendedWitACall.tlua]
+-- ported from tests/cases/compiler/interfaceMayNotBeExtendedWitACall.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface color {}
+
+interface blue extends color() { -- error
+}
+
+
+//// [interfaceMayNotBeExtendedWitACall.lua]
+-- ported from tests/cases/compiler/interfaceMayNotBeExtendedWitACall.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)

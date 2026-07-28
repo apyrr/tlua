@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/computedPropertyNames35_ES6.tlua] ////
+
+=== computedPropertyNames35_ES6.tlua ===
+-- ported from tests/cases/conformance/es6/computedProperties/computedPropertyNames35_ES6.ts
+-- dropped: @target: es6 directive (tlua defaults to latest target)
+
+function foo<T>() return '' end
+>foo : Symbol(foo, Decl(computedPropertyNames35_ES6.tlua, 0, 0))
+>T : Symbol(T, Decl(computedPropertyNames35_ES6.tlua, 3, 13))
+
+interface I<T> {
+>I : Symbol(I, Decl(computedPropertyNames35_ES6.tlua, 3, 31))
+>T : Symbol(T, Decl(computedPropertyNames35_ES6.tlua, 4, 12))
+
+    bar(): string
+>bar : Symbol(I.bar, Decl(computedPropertyNames35_ES6.tlua, 4, 16))
+
+    [foo<T>()](): void
+>[foo<T>()] : Symbol(I[foo<T>()], Decl(computedPropertyNames35_ES6.tlua, 5, 17))
+>foo : Symbol(foo, Decl(computedPropertyNames35_ES6.tlua, 0, 0))
+>T : Symbol(T)
+}
+

@@ -1,0 +1,35 @@
+interfacesWithPredefinedTypesAsNames.tlua(8,11): error TLUA2427: Interface name cannot be 'any'.
+interfacesWithPredefinedTypesAsNames.tlua(9,11): error TLUA2427: Interface name cannot be 'number'.
+interfacesWithPredefinedTypesAsNames.tlua(10,11): error TLUA2427: Interface name cannot be 'string'.
+interfacesWithPredefinedTypesAsNames.tlua(11,11): error TLUA2427: Interface name cannot be 'boolean'.
+interfacesWithPredefinedTypesAsNames.tlua(12,11): error TLUA2427: Interface name cannot be 'unknown'.
+interfacesWithPredefinedTypesAsNames.tlua(13,11): error TLUA2427: Interface name cannot be 'never'.
+
+
+==== interfacesWithPredefinedTypesAsNames.tlua (6 errors) ====
+    -- ported from tests/cases/conformance/interfaces/interfaceDeclarations/interfacesWithPredefinedTypesAsNames.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: `interface void {}` case -- unlike any/number/string/boolean/unknown/never
+    --   (contextual keywords, valid identifiers), `void` is a true reserved word in
+    --   tlua's scanner (KindVoidKeyword <= KindLastReservedWord) and cannot name a
+    --   declaration; testing that would just be a parse-error tombstone.
+    
+    interface any { }
+              ~~~
+!!! error TLUA2427: Interface name cannot be 'any'.
+    interface number { }
+              ~~~~~~
+!!! error TLUA2427: Interface name cannot be 'number'.
+    interface string { }
+              ~~~~~~
+!!! error TLUA2427: Interface name cannot be 'string'.
+    interface boolean { }
+              ~~~~~~~
+!!! error TLUA2427: Interface name cannot be 'boolean'.
+    interface unknown {}
+              ~~~~~~~
+!!! error TLUA2427: Interface name cannot be 'unknown'.
+    interface never {}
+              ~~~~~
+!!! error TLUA2427: Interface name cannot be 'never'.
+    

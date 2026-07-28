@@ -1,0 +1,66 @@
+//// [tests/cases/conformance/ported/nominalSubtypeCheckOfTypeParameter.tlua] ////
+
+=== nominalSubtypeCheckOfTypeParameter.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/nominalSubtypeCheckOfTypeParameter.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface BinaryTuple<T, S> {
+>BinaryTuple : Symbol(BinaryTuple, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 0, 0))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 3, 22))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 3, 24))
+
+    first: T
+>first : Symbol(BinaryTuple.first, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 3, 29))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 3, 22))
+
+    second: S
+>second : Symbol(BinaryTuple.second, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 4, 12))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 3, 24))
+}
+
+interface Sequence<T> {
+>Sequence : Symbol(Sequence, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 6, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 8, 19))
+
+    hasNext(): boolean
+>hasNext : Symbol(Sequence.hasNext, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 8, 23))
+
+    pop(): T
+>pop : Symbol(Sequence.pop, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 9, 22))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 8, 19))
+
+    zip<S>(seq: Sequence<S>): Sequence<BinaryTuple<T, S>>
+>zip : Symbol(Sequence.zip, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 10, 12))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 11, 8))
+>seq : Symbol(seq, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 11, 11))
+>Sequence : Symbol(Sequence, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 6, 1))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 11, 8))
+>Sequence : Symbol(Sequence, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 6, 1))
+>BinaryTuple : Symbol(BinaryTuple, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 0, 0))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 8, 19))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 11, 8))
+}
+
+-- error: nominal subtype checks for infinitely expanding type references do not
+-- allow nominal subtyping for the generic type itself.
+interface List<T> extends Sequence<T> {
+>List : Symbol(List, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 12, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 16, 15))
+>Sequence : Symbol(Sequence, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 6, 1))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 16, 15))
+
+    getLength(): number
+>getLength : Symbol(List.getLength, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 16, 39))
+
+    zip<S>(seq: Sequence<S>): List<BinaryTuple<T, S>>
+>zip : Symbol(List.zip, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 17, 23))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 18, 8))
+>seq : Symbol(seq, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 18, 11))
+>Sequence : Symbol(Sequence, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 6, 1))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 18, 8))
+>List : Symbol(List, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 12, 1))
+>BinaryTuple : Symbol(BinaryTuple, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 0, 0))
+>T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 16, 15))
+>S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.tlua, 18, 8))
+}
+

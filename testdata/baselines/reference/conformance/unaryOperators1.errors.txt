@@ -1,0 +1,17 @@
+unaryOperators1.tlua(6,12): error TLUA2304: Cannot find name 'foo'.
+unaryOperators1.tlua(7,12): error TLUA2304: Cannot find name 'bar'.
+
+
+==== unaryOperators1.tlua (2 errors) ====
+    -- ported from tests/cases/compiler/unaryOperators1.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- dropped: bitwise complement (~) because bitwise value operators are deleted
+    -- compiler gap: unary-plus emission is not valid Lua
+    
+    local _ = +foo
+               ~~~
+!!! error TLUA2304: Cannot find name 'foo'.
+    local _ = -bar
+               ~~~
+!!! error TLUA2304: Cannot find name 'bar'.
+    

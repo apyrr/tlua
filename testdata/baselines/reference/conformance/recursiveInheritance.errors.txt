@@ -1,0 +1,22 @@
+recursiveInheritance.tlua(4,11): error TLUA2310: Type 'I5' recursively references itself as a base type.
+recursiveInheritance.tlua(8,11): error TLUA2310: Type 'i8' recursively references itself as a base type.
+recursiveInheritance.tlua(9,11): error TLUA2310: Type 'i9' recursively references itself as a base type.
+
+
+==== recursiveInheritance.tlua (3 errors) ====
+    -- ported from tests/cases/compiler/recursiveInheritance.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface I5 extends I5 { -- error
+              ~~
+!!! error TLUA2310: Type 'I5' recursively references itself as a base type.
+        foo(): void,
+    }
+    
+    interface i8 extends i9 {} -- error
+              ~~
+!!! error TLUA2310: Type 'i8' recursively references itself as a base type.
+    interface i9 extends i8 {} -- error
+              ~~
+!!! error TLUA2310: Type 'i9' recursively references itself as a base type.
+    

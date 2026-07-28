@@ -1,0 +1,39 @@
+//// [tests/cases/conformance/ported/scannerStringLiterals.tlua] ////
+
+=== scannerStringLiterals.tlua ===
+-- ported from tests/cases/conformance/scanner/ecmascript5/scannerStringLiterals.ts
+-- dropped: JavaScript-only Unicode escape and backslash line-continuation cases; Lua string escaping and continuation rules differ
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+local _ = ""
+>_ : string
+>"" : ""
+
+local _ = " "
+>_ : string
+>" " : " "
+
+local _ = "a"
+>_ : string
+>"a" : "a"
+
+local _ = "'"
+>_ : string
+>"'" : "'"
+
+local _ = '"'
+>_ : string
+>'"' : "\""
+
+local _ = "\""
+>_ : string
+>"\"" : "\""
+
+local _ = "Should error because of newline.
+>_ : string
+>"Should error because of newline. : "Should error because of newline."
+
+local _ = "Should error because of end of file.
+>_ : string
+>"Should error because of end of file. : "Should error because of end of file."
+

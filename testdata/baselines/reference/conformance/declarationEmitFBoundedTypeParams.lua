@@ -1,0 +1,24 @@
+//// [tests/cases/conformance/ported/declarationEmitFBoundedTypeParams.tlua] ////
+
+//// [declarationEmitFBoundedTypeParams.tlua]
+-- ported from tests/cases/compiler/declarationEmitFBoundedTypeParams.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit (unsupported for Lua modules)
+-- dropped: Array.prototype.push mutation (the JS Array method surface is not present in tlua)
+
+-- Repro from #6040
+
+function append<a, b extends a>(result: a[], value: b): a[]
+    return result
+end
+
+
+//// [declarationEmitFBoundedTypeParams.lua]
+-- ported from tests/cases/compiler/declarationEmitFBoundedTypeParams.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: declaration emit (unsupported for Lua modules)
+-- dropped: Array.prototype.push mutation (the JS Array method surface is not present in tlua)
+-- Repro from #6040
+function append(result, value)
+  return result;
+end

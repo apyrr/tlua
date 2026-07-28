@@ -1,0 +1,16 @@
+parserGreaterThanTokenAmbiguity3.tlua(6,11): error TLUA2365: Operator '>' cannot be applied to types 'boolean' and 'number'.
+parserGreaterThanTokenAmbiguity3.tlua(6,18): error TLUA1109: Expression expected.
+
+
+==== parserGreaterThanTokenAmbiguity3.tlua (2 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/Generics/parserGreaterThanTokenAmbiguity3.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- compiler gap: the malformed greater-than token sequence is parsed for diagnostics but has no valid Lua lowering.
+    -- dropped: emit coverage because the recovered relational expression emits invalid Lua.
+    
+    local _ = 1 >/**/> 2
+              ~~~~~~~~~~
+!!! error TLUA2365: Operator '>' cannot be applied to types 'boolean' and 'number'.
+                     ~
+!!! error TLUA1109: Expression expected.
+    

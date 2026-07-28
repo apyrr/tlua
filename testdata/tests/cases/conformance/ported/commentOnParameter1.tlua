@@ -1,0 +1,15 @@
+-- ported from tests/cases/compiler/commentOnParameter1.ts
+-- dropped: @strict: false; tlua test defaults keep strict mode enabled, so parameters are explicitly any to avoid unrelated errors.
+
+// @target: esnext
+
+function commentedParameters(
+--[[ Parameter a ]]
+a: any
+--[[ End of parameter a ]]
+--[[ Parameter b ]]
+,
+b: any
+--[[ End of parameter b ]]
+)
+end

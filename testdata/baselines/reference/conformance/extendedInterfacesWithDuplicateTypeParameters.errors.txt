@@ -1,0 +1,30 @@
+extendedInterfacesWithDuplicateTypeParameters.tlua(4,42): error TLUA2300: Duplicate identifier 'A'.
+extendedInterfacesWithDuplicateTypeParameters.tlua(8,11): error TLUA2428: All declarations of 'InterfaceWithSomeTypars' must have identical type parameters.
+extendedInterfacesWithDuplicateTypeParameters.tlua(12,11): error TLUA2428: All declarations of 'InterfaceWithSomeTypars' must have identical type parameters.
+extendedInterfacesWithDuplicateTypeParameters.tlua(12,38): error TLUA2300: Duplicate identifier 'C'.
+
+
+==== extendedInterfacesWithDuplicateTypeParameters.tlua (4 errors) ====
+    -- ported from tests/cases/compiler/extendedInterfacesWithDuplicateTypeParameters.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    interface InterfaceWithMultipleTypars<A, A> { -- should error
+                                             ~
+!!! error TLUA2300: Duplicate identifier 'A'.
+        bar(): void
+    }
+    
+    interface InterfaceWithSomeTypars<B> { -- should not error
+              ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2428: All declarations of 'InterfaceWithSomeTypars' must have identical type parameters.
+        bar(): void
+    }
+    
+    interface InterfaceWithSomeTypars<C, C> { -- should error
+              ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2428: All declarations of 'InterfaceWithSomeTypars' must have identical type parameters.
+                                         ~
+!!! error TLUA2300: Duplicate identifier 'C'.
+        bar2(): void
+    }
+    

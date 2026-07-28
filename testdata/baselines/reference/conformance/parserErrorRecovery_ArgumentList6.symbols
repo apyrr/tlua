@@ -1,0 +1,9 @@
+//// [tests/cases/conformance/ported/parserErrorRecovery_ArgumentList6.tlua] ////
+
+=== parserErrorRecovery_ArgumentList6.tlua ===
+
+-- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList6.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+Foo(,
+

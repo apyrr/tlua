@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/testTypings.tlua] ////
+
+=== testTypings.tlua ===
+-- ported from tests/cases/compiler/testTypings.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: false directive (the declarations remain valid under tlua's strict defaults)
+
+interface IComparable<T> {
+>IComparable : Symbol(IComparable, Decl(testTypings.tlua, 0, 0))
+>T : Symbol(T, Decl(testTypings.tlua, 4, 22))
+
+    compareTo(other: T): any
+>compareTo : Symbol(IComparable.compareTo, Decl(testTypings.tlua, 4, 26))
+>other : Symbol(other, Decl(testTypings.tlua, 5, 14))
+>T : Symbol(T, Decl(testTypings.tlua, 4, 22))
+}
+
+declare function sort<U extends IComparable<U>>(items: U[]): U[]
+>sort : Symbol(sort, Decl(testTypings.tlua, 6, 1))
+>U : Symbol(U, Decl(testTypings.tlua, 8, 22))
+>IComparable : Symbol(IComparable, Decl(testTypings.tlua, 0, 0))
+>U : Symbol(U, Decl(testTypings.tlua, 8, 22))
+>items : Symbol(items, Decl(testTypings.tlua, 8, 48))
+>U : Symbol(U, Decl(testTypings.tlua, 8, 22))
+>U : Symbol(U, Decl(testTypings.tlua, 8, 22))
+

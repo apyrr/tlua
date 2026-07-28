@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/ported/infiniteExpansionThroughTypeInference.tlua] ////
+
+=== infiniteExpansionThroughTypeInference.tlua ===
+-- ported from tests/cases/conformance/types/typeRelationships/recursiveTypes/infiniteExpansionThroughTypeInference.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface G<T> {
+    x: G<G<T>>
+>x : G<G<T>>
+
+    y: T
+>y : T
+}
+
+function ff<T>(g: G<T>): void
+>ff : <T>(g: G<T>) => void
+>g : G<T>
+
+    ff(g)
+>ff(g) : void
+>ff : <T>(g: G<T>) => void
+>g : G<T>
+
+end
+

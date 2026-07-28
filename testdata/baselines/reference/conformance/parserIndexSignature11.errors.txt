@@ -1,0 +1,24 @@
+parserIndexSignature11.tlua(5,9): error TLUA7008: Member '[p]' implicitly has an 'any' type.
+parserIndexSignature11.tlua(5,10): error TLUA2304: Cannot find name 'p'.
+parserIndexSignature11.tlua(6,9): error TLUA1021: An index signature must have a type annotation.
+parserIndexSignature11.tlua(7,10): error TLUA1096: An index signature must have exactly one parameter.
+
+
+==== parserIndexSignature11.tlua (4 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/IndexSignatures/parserIndexSignature11.ts
+    -- dropped: @target: es2015 and @strict: false directives (tlua defaults to latest target and strict checking)
+    
+    interface I {
+            [p]; -- Used to be indexer, now it is a computed property
+            ~~~
+!!! error TLUA7008: Member '[p]' implicitly has an 'any' type.
+             ~
+!!! error TLUA2304: Cannot find name 'p'.
+            [p1: string];
+            ~~~~~~~~~~~~~
+!!! error TLUA1021: An index signature must have a type annotation.
+            [p2: string, p3: number];
+             ~~
+!!! error TLUA1096: An index signature must have exactly one parameter.
+    }
+    

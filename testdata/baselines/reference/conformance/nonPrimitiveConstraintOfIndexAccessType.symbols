@@ -1,0 +1,148 @@
+//// [tests/cases/conformance/ported/nonPrimitiveConstraintOfIndexAccessType.tlua] ////
+
+=== nonPrimitiveConstraintOfIndexAccessType.tlua ===
+-- ported from tests/cases/conformance/types/nonPrimitive/nonPrimitiveConstraintOfIndexAccessType.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (tlua defaults to strict mode)
+-- note: upstream null and undefined both map to tlua nil; g is retained as the single meaningful nil-constrained case and h is omitted as a duplicate.
+-- dropped: emit coverage (noEmit) — generic indexed-access signatures currently leak typed syntax into Lua output
+
+
+function f<T extends table, P extends keyof T>(s: string, tp: T[P]): void
+>f : Symbol(f, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 0, 0))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 27))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 47))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 57))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 27))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 57))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 7, 47))
+
+end
+function g<T extends nil, P extends keyof T>(s: string, tp: T[P]): void
+>g : Symbol(g, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 9, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 25))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 45))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 55))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 25))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 55))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 10, 45))
+
+end
+function i<T extends void, P extends keyof T>(s: string, tp: T[P]): void
+>i : Symbol(i, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 12, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 26))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 46))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 56))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 26))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 56))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 13, 46))
+
+end
+function j<T extends never, P extends keyof T>(s: string, tp: T[P]): void
+>j : Symbol(j, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 15, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 27))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 47))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 57))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 27))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 57))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 16, 47))
+
+end
+function k<T extends number, P extends keyof T>(s: string, tp: T[P]): void
+>k : Symbol(k, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 18, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 28))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 48))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 58))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 28))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 58))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 19, 48))
+
+end
+function o<T extends string, P extends keyof T>(s: string, tp: T[P]): void
+>o : Symbol(o, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 21, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 28))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 48))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 58))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 28))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 58))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 22, 48))
+
+end
+function l<T extends {}, P extends keyof T>(s: string, tp: T[P]): void
+>l : Symbol(l, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 24, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 24))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 44))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 54))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 24))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 54))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 25, 44))
+
+end
+function m<T extends { a: number }, P extends keyof T>(s: string, tp: T[P]): void
+>m : Symbol(m, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 27, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 11))
+>a : Symbol(a, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 22))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 35))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 55))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 65))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 35))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 65))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 28, 55))
+
+end
+function n<T extends { [s: string]: number }, P extends keyof T>(s: string, tp: T[P]): void
+>n : Symbol(n, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 30, 3))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 24))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 45))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 11))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 65))
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 75))
+>T : Symbol(T, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 11))
+>P : Symbol(P, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 45))
+
+    tp = s
+>tp : Symbol(tp, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 75))
+>s : Symbol(s, Decl(nonPrimitiveConstraintOfIndexAccessType.tlua, 31, 65))
+
+end
+

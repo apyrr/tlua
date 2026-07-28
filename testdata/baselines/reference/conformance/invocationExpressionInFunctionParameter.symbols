@@ -1,0 +1,22 @@
+//// [tests/cases/conformance/ported/invocationExpressionInFunctionParameter.tlua] ////
+
+=== invocationExpressionInFunctionParameter.tlua ===
+-- ported from tests/cases/compiler/invocationExpressionInFunctionParameter.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: emit coverage (noEmit) — default parameter initializers are not lowered to valid Lua
+-- compiler gap: valid default-parameter source would otherwise emit an initializer in the Lua parameter list
+
+
+function foo1(val: string)
+>foo1 : Symbol(foo1, Decl(invocationExpressionInFunctionParameter.tlua, 0, 0))
+>val : Symbol(val, Decl(invocationExpressionInFunctionParameter.tlua, 6, 14))
+
+end
+
+function foo3(x = foo1(123))
+>foo3 : Symbol(foo3, Decl(invocationExpressionInFunctionParameter.tlua, 7, 3))
+>x : Symbol(x, Decl(invocationExpressionInFunctionParameter.tlua, 9, 14))
+>foo1 : Symbol(foo1, Decl(invocationExpressionInFunctionParameter.tlua, 0, 0))
+
+end
+

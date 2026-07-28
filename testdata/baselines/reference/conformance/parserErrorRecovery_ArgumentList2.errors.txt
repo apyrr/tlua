@@ -1,0 +1,16 @@
+parserErrorRecovery_ArgumentList2.tlua(5,2): error TLUA2304: Cannot find name 'bar'.
+parserErrorRecovery_ArgumentList2.tlua(5,6): error TLUA1005: ')' expected.
+
+
+==== parserErrorRecovery_ArgumentList2.tlua (2 errors) ====
+    -- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/ArgumentLists/parserErrorRecovery_ArgumentList2.ts
+    -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    
+    function foo()
+    	bar(;
+    	~~~
+!!! error TLUA2304: Cannot find name 'bar'.
+    	    ~
+!!! error TLUA1005: ')' expected.
+    end
+    

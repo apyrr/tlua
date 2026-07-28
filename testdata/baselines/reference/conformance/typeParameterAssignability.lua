@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/ported/typeParameterAssignability.tlua] ////
+
+//// [typeParameterAssignability.tlua]
+-- ported from tests/cases/conformance/types/typeRelationships/assignmentCompatibility/typeParameterAssignability.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+-- type parameters are not assignable to one another unless directly or indirectly constrained to one another
+function foo<T, U>(t: T, u: U): void
+    t = u -- error
+    u = t -- error
+end
+
+
+//// [typeParameterAssignability.lua]
+-- ported from tests/cases/conformance/types/typeRelationships/assignmentCompatibility/typeParameterAssignability.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- type parameters are not assignable to one another unless directly or indirectly constrained to one another
+function foo(t, u)
+  t = u; -- error
+  u = t; -- error
+end

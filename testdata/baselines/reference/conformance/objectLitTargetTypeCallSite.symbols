@@ -1,0 +1,24 @@
+//// [tests/cases/conformance/ported/objectLitTargetTypeCallSite.tlua] ////
+
+=== objectLitTargetTypeCallSite.tlua ===
+-- ported from tests/cases/compiler/objectLitTargetTypeCallSite.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function process(x: { a: number; b: string })
+>process : Symbol(process, Decl(objectLitTargetTypeCallSite.tlua, 0, 0))
+>x : Symbol(x, Decl(objectLitTargetTypeCallSite.tlua, 3, 17))
+>a : Symbol(a, Decl(objectLitTargetTypeCallSite.tlua, 3, 21))
+>b : Symbol(b, Decl(objectLitTargetTypeCallSite.tlua, 3, 32))
+
+    return x.a
+>x.a : Symbol(a, Decl(objectLitTargetTypeCallSite.tlua, 3, 21))
+>x : Symbol(x, Decl(objectLitTargetTypeCallSite.tlua, 3, 17))
+>a : Symbol(a, Decl(objectLitTargetTypeCallSite.tlua, 3, 21))
+
+end
+
+process({ a = true, b = "y" })
+>process : Symbol(process, Decl(objectLitTargetTypeCallSite.tlua, 0, 0))
+>a : Symbol(a, Decl(objectLitTargetTypeCallSite.tlua, 7, 9))
+>b : Symbol(b, Decl(objectLitTargetTypeCallSite.tlua, 7, 19))
+

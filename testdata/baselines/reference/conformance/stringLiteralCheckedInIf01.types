@@ -1,0 +1,43 @@
+//// [tests/cases/conformance/ported/stringLiteralCheckedInIf01.tlua] ////
+
+=== stringLiteralCheckedInIf01.tlua ===
+-- ported from tests/cases/conformance/types/stringLiteral/stringLiteralCheckedInIf01.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+type S = "a" | "b"
+>S : S
+
+type T = S[] | S
+>T : T
+
+function f(foo: T)
+>f : (foo: T) => S | nil
+>foo : T
+
+    if foo == "a" then
+>foo == "a" : boolean
+>foo : T
+>"a" : "a"
+
+        return foo
+>foo : "a"
+
+    elseif foo == "b" then
+>foo == "b" : boolean
+>foo : "b" | S[]
+>"b" : "b"
+
+        return foo
+>foo : "b"
+
+    else
+        return (foo as S[])[0]
+>(foo as S[])[0] : S | nil
+>(foo as S[]) : S[]
+>foo as S[] : S[]
+>foo : S[]
+>0 : 0
+
+    end
+end
+

@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/ported/elementAccessExpressionInternalComments.tlua] ////
+
+=== elementAccessExpressionInternalComments.tlua ===
+-- ported from tests/cases/compiler/elementAccessExpressionInternalComments.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: JavaScript Array global replaced with a neutral local table shape to preserve element-access comment coverage
+
+interface ArrayLike {
+    toString?: function
+>toString : function | nil
+}
+local Array: ArrayLike = {}
+>Array : ArrayLike
+>{} : {}
+
+local _ = --[[0]] Array --[[1]][ --[[2]] "toString" --[[3]] ] --[[4]]; --[[5]]
+>_ : function | nil
+>Array --[[1]][ --[[2]] "toString" --[[3]] ] : function | nil
+>Array : ArrayLike
+>"toString" : "toString"
+
+local _ = --[[0]] Array
+>_ : function | nil
+>Array    -- single line    --[[1]][ --[[2]] "toString"    -- single line    --[[3]] ] : function | nil
+>Array : ArrayLike
+
+    -- single line
+    --[[1]][ --[[2]] "toString"
+>"toString" : "toString"
+
+    -- single line
+    --[[3]] ] --[[4]]
+

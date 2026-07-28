@@ -1,0 +1,41 @@
+//// [tests/cases/conformance/ported/emitDefaultParametersFunction.tlua] ////
+
+=== emitDefaultParametersFunction.tlua ===
+-- ported from tests/cases/conformance/es6/defaultParameters/emitDefaultParametersFunction.ts
+-- dropped: dual ES5/ES2015 down-level emit comparison (tlua has a single Lua
+--   emit target, no ES5 transform); kept the default-parameter TYPING only
+-- dropped: emit coverage entirely (noEmit) — tlua currently prints parameter
+--   initializers verbatim into the Lua parameter list, which is not valid Lua;
+--   default-parameter lowering is an open emitter gap
+-- dropped: named rest parameter `...rest` (the legacy TS rest form is rejected
+--   in tlua); rewritten as the unnamed vararg `...`
+
+
+function foo(x: string, y = 10): void
+>foo : Symbol(foo, Decl(emitDefaultParametersFunction.tlua, 0, 0))
+>x : Symbol(x, Decl(emitDefaultParametersFunction.tlua, 10, 13))
+>y : Symbol(y, Decl(emitDefaultParametersFunction.tlua, 10, 23))
+
+end
+
+function baz(x: string, y = 5, ...): void
+>baz : Symbol(baz, Decl(emitDefaultParametersFunction.tlua, 11, 3))
+>x : Symbol(x, Decl(emitDefaultParametersFunction.tlua, 13, 13))
+>y : Symbol(y, Decl(emitDefaultParametersFunction.tlua, 13, 23))
+> : Symbol((Missing), Decl(emitDefaultParametersFunction.tlua, 13, 30))
+
+end
+
+function bar(y = 10): void
+>bar : Symbol(bar, Decl(emitDefaultParametersFunction.tlua, 14, 3))
+>y : Symbol(y, Decl(emitDefaultParametersFunction.tlua, 16, 13))
+
+end
+
+function bar1(y = 10, ...): void
+>bar1 : Symbol(bar1, Decl(emitDefaultParametersFunction.tlua, 17, 3))
+>y : Symbol(y, Decl(emitDefaultParametersFunction.tlua, 19, 14))
+> : Symbol((Missing), Decl(emitDefaultParametersFunction.tlua, 19, 21))
+
+end
+

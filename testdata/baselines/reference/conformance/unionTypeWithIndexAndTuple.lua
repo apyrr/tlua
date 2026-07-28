@@ -1,0 +1,23 @@
+//// [tests/cases/conformance/ported/unionTypeWithIndexAndTuple.tlua] ////
+
+//// [unionTypeWithIndexAndTuple.tlua]
+-- ported from tests/cases/compiler/unionTypeWithIndexAndTuple.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+interface I {
+    [index: number]: any
+    someOtherProperty: number
+}
+
+function f(args: ["a"] | I)
+end
+
+f({ "a" })
+
+
+//// [unionTypeWithIndexAndTuple.lua]
+-- ported from tests/cases/compiler/unionTypeWithIndexAndTuple.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function f(args)
+end
+f({ "a" });

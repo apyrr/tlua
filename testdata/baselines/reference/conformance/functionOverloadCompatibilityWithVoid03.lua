@@ -1,0 +1,18 @@
+//// [tests/cases/conformance/ported/functionOverloadCompatibilityWithVoid03.tlua] ////
+
+//// [functionOverloadCompatibilityWithVoid03.tlua]
+-- ported from tests/cases/conformance/functions/functionOverloadCompatibilityWithVoid03.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+
+function f(x: string): void;
+function f(x: string): void
+    return
+end
+
+
+//// [functionOverloadCompatibilityWithVoid03.lua]
+-- ported from tests/cases/conformance/functions/functionOverloadCompatibilityWithVoid03.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+function f(x)
+  return;
+end

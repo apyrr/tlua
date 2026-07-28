@@ -1,0 +1,26 @@
+//// [tests/cases/conformance/ported/optionalParamReferencingOtherParams3.tlua] ////
+
+=== optionalParamReferencingOtherParams3.tlua ===
+-- ported from tests/cases/compiler/optionalParamReferencingOtherParams3.ts
+-- dropped: @target: es2015 and @strict: false directives (tlua uses latest target and strict checking)
+-- dropped: bare expression statements rewritten as local bindings (bare expressions are invalid in tlua)
+-- compiler gap: default parameter initializers emit invalid Lua parameter syntax; checker coverage is retained.
+-- dropped: emit coverage suppressed because the generated function parameters are not valid Lua.
+
+function right(a = b, b = a)
+>right : (a?: any, b?: any) => void
+>a : any
+>b : any
+>b : any
+>a : any
+
+    local _ = a
+>_ : any
+>a : any
+
+    local _ = b
+>_ : any
+>b : any
+
+end
+

@@ -1,0 +1,112 @@
+//// [tests/cases/conformance/ported/nonPrimitiveConstraintOfIndexAccessType.tlua] ////
+
+=== nonPrimitiveConstraintOfIndexAccessType.tlua ===
+-- ported from tests/cases/conformance/types/nonPrimitive/nonPrimitiveConstraintOfIndexAccessType.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (tlua defaults to strict mode)
+-- note: upstream null and undefined both map to tlua nil; g is retained as the single meaningful nil-constrained case and h is omitted as a duplicate.
+-- dropped: emit coverage (noEmit) — generic indexed-access signatures currently leak typed syntax into Lua output
+
+
+function f<T extends table, P extends keyof T>(s: string, tp: T[P]): void
+>f : <T extends table, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function g<T extends nil, P extends keyof T>(s: string, tp: T[P]): void
+>g : <T extends nil, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function i<T extends void, P extends keyof T>(s: string, tp: T[P]): void
+>i : <T extends void, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function j<T extends never, P extends keyof T>(s: string, tp: T[P]): void
+>j : <T extends never, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function k<T extends number, P extends keyof T>(s: string, tp: T[P]): void
+>k : <T extends number, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function o<T extends string, P extends keyof T>(s: string, tp: T[P]): void
+>o : <T extends string, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function l<T extends {}, P extends keyof T>(s: string, tp: T[P]): void
+>l : <T extends {}, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function m<T extends { a: number }, P extends keyof T>(s: string, tp: T[P]): void
+>m : <T extends { a: number; }, P extends keyof T>(s: string, tp: T[P]) => void
+>a : number
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+function n<T extends { [s: string]: number }, P extends keyof T>(s: string, tp: T[P]): void
+>n : <T extends { [s: string]: number; }, P extends keyof T>(s: string, tp: T[P]) => void
+>s : string
+>s : string
+>tp : T[P]
+
+    tp = s
+>tp = s : string
+>tp : T[P]
+>s : string
+
+end
+
