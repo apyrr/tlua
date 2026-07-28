@@ -115,7 +115,10 @@ func (c *Checker) checkLuaMetatableCall(node *ast.Node, returnType *Type) *Type 
 		// metatable is read from the argument itself -- its declared parameter type is the
 		// imprecise union by construction -- and widened, so a fresh literal never reaches a
 		// type that outlives the expression.
-		return c.getSetmetatableResultType(returnType, c.getLuaMetatableArgumentType(args[1]))
+		c.beginLuaPairingArgumentRead(node)
+		metatableType := c.getLuaMetatableArgumentType(args[1])
+		c.endLuaPairingArgumentRead(node)
+		return c.getSetmetatableResultType(returnType, metatableType)
 	case kind.isGet():
 		if len(args) < 1 {
 			return nil
@@ -127,9 +130,33 @@ func (c *Checker) checkLuaMetatableCall(node *ast.Node, returnType *Type) *Type 
 
 // getLuaMetatableArgumentType is the metatable operand as the pairing sees it: read from the
 // argument -- the declared parameter type is the imprecise union by construction -- and widened,
-// so a fresh literal never reaches a type that outlives the expression.
+// so a fresh literal never reaches a type that outlives the expression. The read is
+// context-free, exactly like the __index probe's (getContextFreeTypeOfExpression): the
+// sentinel stops a contextual walk inside the literal from climbing to the containing call
+// and resolving it reentrantly against half-built pairing state, where the degraded result
+// would be cached. The declared-type replay does not come through here -- it reconstructs
+// and pushes the call's real contextual type instead (getLuaDeclaredPairingMetatableType).
 func (c *Checker) getLuaMetatableArgumentType(arg *ast.Node) *Type {
-	return c.getWidenedType(c.getRegularTypeOfObjectLiteral(c.checkExpressionCached(arg)))
+	c.pushContextualType(arg, c.anyType, false /*isCache*/)
+	t := c.checkExpressionCached(arg)
+	c.popContextualType()
+	return c.getWidenedType(c.getRegularTypeOfObjectLiteral(t))
+}
+
+// beginLuaPairingArgumentRead marks a pairing-phase read of one of call's arguments;
+// getResolvedSignature asserts the call is never resolved while one is in progress.
+// Counted, not boolean: the flow effect and the declared-type replay can nest reads
+// of the same call.
+func (c *Checker) beginLuaPairingArgumentRead(call *ast.Node) {
+	c.luaActivePairingReads[call]++
+}
+
+func (c *Checker) endLuaPairingArgumentRead(call *ast.Node) {
+	if n := c.luaActivePairingReads[call] - 1; n > 0 {
+		c.luaActivePairingReads[call] = n
+	} else {
+		delete(c.luaActivePairingReads, call)
+	}
 }
 
 // getLuaMetatableIndexProbeType is the table a metatable literal's __index falls back to, read
@@ -153,7 +180,14 @@ func (c *Checker) getLuaMetatableIndexProbeType(metatableLiteral *ast.Node) *Typ
 	// Recorded before the initializer is typed: an __index whose type leads back to this
 	// literal must find no augmentation rather than recur.
 	c.luaMetatableIndexProbes[metatableLiteral] = nil
+	// The initializer is read context-free, but isConstContext's syntactic arms
+	// climb from it to THIS literal, and its contextual-type leg would walk on
+	// to the containing call from there. Sentinel the literal too, so the climb
+	// dies here -- the literal's own parent is the call, which no syntactic arm
+	// crosses (same containment as getLuaMetatableArgumentType).
+	c.pushContextualType(metatableLiteral, c.anyType, false /*isCache*/)
 	probe := c.computeLuaMetatableIndexProbeType(metatableLiteral)
+	c.popContextualType()
 	c.luaMetatableIndexProbes[metatableLiteral] = probe
 	return probe
 }
@@ -654,6 +688,8 @@ func (c *Checker) getLuaDeclaredPairingMetatableType(node *ast.Node, tableType *
 	if cached, ok := c.luaPairingMetatableArgTypes[node]; ok {
 		return cached
 	}
+	c.beginLuaPairingArgumentRead(node)
+	defer c.endLuaPairingArgumentRead(node)
 	arg := node.Arguments()[1]
 	// A statement that names several storage symbols (disjoint constructor-arm
 	// groups sharing a member name) replays under several table types, but the

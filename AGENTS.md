@@ -17,6 +17,23 @@ Non-goal: typed Lua with TypeScript compatibility.
 - Run tests less often. For example if task is large, run tests after
   full implementation.
 
+## Loud Failures
+
+`debug.Assert` is always-on (it panics in release builds), and the LSP server
+recovers panics per request — an assert costs one logged, diagnosable failure,
+never a silent one. The rules:
+
+- Degrading on broken **user code** is correct, but must attach a diagnostic.
+  A result that silently becomes `any` or an empty type with no error is a
+  bug, not robustness: it hides failures behind green output.
+- An **internal invariant** ("impossible by construction") gets a
+  `debug.Assert`, not a defensive fallback. A fallback turns a compiler bug
+  into baseline drift; an assert turns it into a stack trace. Precedent:
+  `getResolvedSignature` asserts that a setmetatable call is never resolved
+  during a pairing-phase read of its own arguments.
+- Be doubly suspicious of fallbacks whose result is **cached**: the degraded
+  value outlives the moment and becomes order-dependent.
+
 ## Concurrency
 
 Checkers are constructed **in parallel** — the pool builds several at once, and

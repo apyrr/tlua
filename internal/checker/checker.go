@@ -597,6 +597,7 @@ type Checker struct {
 	luaDeclaredPairingBases                map[*ast.Symbol]*Type
 	luaPairingMetatableArgTypes            map[*ast.Node]*Type
 	luaMetatableIndexProbes                map[*ast.Node]*Type
+	luaActivePairingReads                  map[*ast.Node]int
 	luaMetatableAugmentedParamTypes        map[LuaMetatableAugmentedParamKey]*Type
 	luaSymbolEffectTimelines               map[*ast.Symbol][]luaSymbolEffect
 	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
@@ -908,6 +909,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.luaDeclaredPairingBases = make(map[*ast.Symbol]*Type)
 	c.luaPairingMetatableArgTypes = make(map[*ast.Node]*Type)
 	c.luaMetatableIndexProbes = make(map[*ast.Node]*Type)
+	c.luaActivePairingReads = make(map[*ast.Node]int)
 	c.luaMetatableAugmentedParamTypes = make(map[LuaMetatableAugmentedParamKey]*Type)
 	c.luaSymbolEffectTimelines = make(map[*ast.Symbol][]luaSymbolEffect)
 	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
@@ -6232,6 +6234,15 @@ func (c *Checker) isSymbolOrSymbolForCall(node *ast.Node) bool {
  * @return a signature of the call-like expression or undefined if one can't be found
  */
 func (c *Checker) getResolvedSignature(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
+	// The metatable pairing reads a call's arguments outside the call's own
+	// check (the flow effect, the declared-type replay). Those reads must never
+	// climb back out and resolve the call they are reading -- the resolution
+	// runs against half-built pairing state and its degraded result is cached.
+	// Every read site either pushes a contextual sentinel or supplies the
+	// reconstructed call context, so this cannot fire; it converts a missing
+	// sentinel on a future read path from silent baseline drift into a loud
+	// failure.
+	debug.Assert(c.luaActivePairingReads[node] == 0, "setmetatable call resolved reentrantly during a pairing-phase read of its own arguments")
 	links := c.signatureLinks.Get(node)
 	// If getResolvedSignature has already been called, we will have cached the resolvedSignature.
 	// However, it is possible that either candidatesOutArray was not passed in the first time,

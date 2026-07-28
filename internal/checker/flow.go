@@ -377,7 +377,9 @@ func (c *Checker) getTypeAtLuaSetmetatableCall(f *FlowState, flow *ast.FlowNode,
 		return FlowType{}
 	}
 	c.luaSetmetatableFlowStack = append(c.luaSetmetatableFlowStack, node)
+	c.beginLuaPairingArgumentRead(node)
 	metatableType := c.getLuaMetatableArgumentType(args[1])
+	c.endLuaPairingArgumentRead(node)
 	c.luaSetmetatableFlowStack = c.luaSetmetatableFlowStack[:len(c.luaSetmetatableFlowStack)-1]
 
 	flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
