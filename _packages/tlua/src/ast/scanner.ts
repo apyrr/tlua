@@ -954,72 +954,32 @@ export function createScanner(
         return pos >= 0 && pos < end ? charCodeUnchecked(pos) : CharacterCodes.EOF;
     }
 
+    // Scans a run of decimal digits. Lua has no numeric separator, so `_` is
+    // not part of a number: `1_000` scans as `1` followed by the identifier
+    // `_000` and fails as an ordinary parse error.
     function scanNumberFragment(): string {
-        let start = pos;
-        let allowSeparator = false;
-        let isPreviousTokenSeparator = false;
-        let result = "";
-        while (true) {
-            const ch = charCodeUnchecked(pos);
-            if (ch === CharacterCodes._) {
-                tokenFlags |= TokenFlags.ContainsSeparator;
-                if (allowSeparator) {
-                    allowSeparator = false;
-                    isPreviousTokenSeparator = true;
-                    result += text.substring(start, pos);
-                }
-                else {
-                    tokenFlags |= TokenFlags.ContainsInvalidSeparator;
-                }
-                pos++;
-                start = pos;
-                continue;
-            }
-            if (isDigit(ch)) {
-                allowSeparator = true;
-                isPreviousTokenSeparator = false;
-                pos++;
-                continue;
-            }
-            break;
+        const start = pos;
+        while (isDigit(charCodeChecked(pos))) {
+            pos++;
         }
-        if (charCodeUnchecked(pos - 1) === CharacterCodes._) {
-            tokenFlags |= TokenFlags.ContainsInvalidSeparator;
-        }
-        return result + text.substring(start, pos);
+        return text.substring(start, pos);
     }
 
     function scanNumber(): SyntaxKind {
-        let start = pos;
-        let mainFragment: string;
+        const start = pos;
         if (charCodeUnchecked(pos) === CharacterCodes._0) {
             pos++;
-            if (charCodeUnchecked(pos) === CharacterCodes._) {
-                tokenFlags |= TokenFlags.ContainsSeparator | TokenFlags.ContainsInvalidSeparator;
-                pos--;
-                mainFragment = scanNumberFragment();
-            }
-            else if (!scanDigits()) {
+            // A leading zero is not an octal prefix: Lua has no legacy octal
+            // literal, so `0123` is the decimal number 123, exactly as Lua
+            // reads it.
+            if (scanDigits()) {
                 tokenFlags |= TokenFlags.ContainsLeadingZero;
-                mainFragment = "" + +tokenValue;
-            }
-            else if (!tokenValue) {
-                mainFragment = "0";
-            }
-            else {
-                tokenValue = "" + parseInt(tokenValue, 8);
-                tokenFlags |= TokenFlags.Octal;
-                const withMinus = token === SyntaxKind.MinusToken;
-                const literal = (withMinus ? "-" : "") + "0o" + (+tokenValue).toString(8);
-                if (withMinus) start--;
-                return SyntaxKind.NumericLiteral;
             }
         }
         else {
-            mainFragment = scanNumberFragment();
+            scanNumberFragment();
         }
         let decimalFragment: string | undefined;
-        let scientificFragment: string | undefined;
         if (charCodeUnchecked(pos) === CharacterCodes.dot) {
             pos++;
             decimalFragment = scanNumberFragment();
@@ -1029,28 +989,15 @@ export function createScanner(
             pos++;
             tokenFlags |= TokenFlags.Scientific;
             if (charCodeUnchecked(pos) === CharacterCodes.plus || charCodeUnchecked(pos) === CharacterCodes.minus) pos++;
-            const preNumericPart = pos;
-            const finalFragment = scanNumberFragment();
-            if (finalFragment) {
-                scientificFragment = text.substring(end, preNumericPart) + finalFragment;
+            if (scanNumberFragment()) {
                 end = pos;
             }
         }
-        let result: string;
-        if (tokenFlags & TokenFlags.ContainsSeparator) {
-            result = mainFragment;
-            if (decimalFragment) {
-                result += "." + decimalFragment;
-            }
-            if (scientificFragment) {
-                result += scientificFragment;
-            }
-        }
-        else {
-            result = text.substring(start, end);
-        }
+        const result = text.substring(start, end);
 
         if (tokenFlags & TokenFlags.ContainsLeadingZero) {
+            // The flag is kept only so the printer emits the canonical form
+            // rather than the original text.
             tokenValue = "" + +result;
             return SyntaxKind.NumericLiteral;
         }
@@ -1082,40 +1029,27 @@ export function createScanner(
 
     function scanDigits(): boolean {
         const start = pos;
-        let isOctal = true;
         while (isDigit(charCodeChecked(pos))) {
-            if (!isOctalDigit(charCodeUnchecked(pos))) {
-                isOctal = false;
-            }
             pos++;
         }
-        tokenValue = text.substring(start, pos);
-        return isOctal;
+        return pos > start;
     }
 
-    function scanExactNumberOfHexDigits(count: number, canHaveSeparators: boolean): number {
-        const valueString = scanHexDigits(count, /*scanAsManyAsPossible*/ false, canHaveSeparators);
+    function scanExactNumberOfHexDigits(count: number): number {
+        const valueString = scanHexDigits(count, /*scanAsManyAsPossible*/ false);
         return valueString ? parseInt(valueString, 16) : -1;
     }
 
-    function scanMinimumNumberOfHexDigits(count: number, canHaveSeparators: boolean): string {
-        return scanHexDigits(count, /*scanAsManyAsPossible*/ true, canHaveSeparators);
+    function scanMinimumNumberOfHexDigits(count: number): string {
+        return scanHexDigits(count, /*scanAsManyAsPossible*/ true);
     }
 
-    function scanHexDigits(minCount: number, scanAsManyAsPossible: boolean, canHaveSeparators: boolean): string {
+    // Scans hexadecimal digits. Lua has `0x` literals but no numeric
+    // separator, so `_` simply ends the run.
+    function scanHexDigits(minCount: number, scanAsManyAsPossible: boolean): string {
         let valueChars: number[] = [];
-        let allowSeparator = false;
         while (valueChars.length < minCount || scanAsManyAsPossible) {
             let ch = charCodeUnchecked(pos);
-            if (canHaveSeparators && ch === CharacterCodes._) {
-                tokenFlags |= TokenFlags.ContainsSeparator;
-                if (allowSeparator) {
-                    allowSeparator = false;
-                }
-                pos++;
-                continue;
-            }
-            allowSeparator = canHaveSeparators;
             if (ch >= CharacterCodes.A && ch <= CharacterCodes.F) {
                 ch += CharacterCodes.a - CharacterCodes.A;
             }
@@ -1351,7 +1285,7 @@ export function createScanner(
     function scanExtendedUnicodeEscape(): string {
         const start = pos;
         pos += 3;
-        const escapedValueString = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ false);
+        const escapedValueString = scanMinimumNumberOfHexDigits(1);
         const escapedValue = escapedValueString ? parseInt(escapedValueString, 16) : -1;
         let isInvalidExtendedEscape = false;
 
@@ -1385,7 +1319,7 @@ export function createScanner(
         if (pos + 5 < end && charCodeUnchecked(pos + 1) === CharacterCodes.u) {
             const start = pos;
             pos += 2;
-            const value = scanExactNumberOfHexDigits(4, /*canHaveSeparators*/ false);
+            const value = scanExactNumberOfHexDigits(4);
             pos = start;
             return value;
         }
@@ -1396,7 +1330,7 @@ export function createScanner(
         if (codePointUnchecked(pos + 1) === CharacterCodes.u && codePointUnchecked(pos + 2) === CharacterCodes.openBrace) {
             const start = pos;
             pos += 3;
-            const escapedValueString = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ false);
+            const escapedValueString = scanMinimumNumberOfHexDigits(1);
             const escapedValue = escapedValueString ? parseInt(escapedValueString, 16) : -1;
             pos = start;
             return escapedValue;
@@ -1451,41 +1385,10 @@ export function createScanner(
         return token = SyntaxKind.Identifier;
     }
 
-    function scanBinaryOrOctalDigits(base: 2 | 8): string {
-        let value = "";
-        let separatorAllowed = false;
-        let isPreviousTokenSeparator = false;
-        while (true) {
-            const ch = charCodeUnchecked(pos);
-            if (ch === CharacterCodes._) {
-                tokenFlags |= TokenFlags.ContainsSeparator;
-                if (separatorAllowed) {
-                    separatorAllowed = false;
-                    isPreviousTokenSeparator = true;
-                }
-                pos++;
-                continue;
-            }
-            separatorAllowed = true;
-            if (!isDigit(ch) || ch - CharacterCodes._0 >= base) {
-                break;
-            }
-            value += text[pos];
-            pos++;
-            isPreviousTokenSeparator = false;
-        }
-        return value;
-    }
-
-    // Normalizes a scanned number (decimal, hex, binary, or octal) and returns
-    // NumericLiteral. tlua has no bigint, so there is no `n` suffix.
+    // Normalizes a scanned number (decimal or hex) and returns NumericLiteral.
+    // tlua has no bigint, so there is no `n` suffix.
     function scanNumericValue(): SyntaxKind {
-        const numericValue = tokenFlags & TokenFlags.BinarySpecifier
-            ? parseInt(tokenValue.slice(2), 2)
-            : tokenFlags & TokenFlags.OctalSpecifier
-            ? parseInt(tokenValue.slice(2), 8)
-            : +tokenValue;
-        tokenValue = "" + numericValue;
+        tokenValue = "" + +tokenValue;
         return SyntaxKind.NumericLiteral;
     }
 
@@ -1734,7 +1637,7 @@ export function createScanner(
                 case CharacterCodes._0:
                     if (pos + 2 < end && (charCodeUnchecked(pos + 1) === CharacterCodes.X || charCodeUnchecked(pos + 1) === CharacterCodes.x)) {
                         pos += 2;
-                        tokenValue = scanMinimumNumberOfHexDigits(1, /*canHaveSeparators*/ true);
+                        tokenValue = scanMinimumNumberOfHexDigits(1);
                         if (!tokenValue) {
                             tokenValue = "0";
                         }
@@ -1742,26 +1645,10 @@ export function createScanner(
                         tokenFlags |= TokenFlags.HexSpecifier;
                         return token = scanNumericValue();
                     }
-                    else if (pos + 2 < end && (charCodeUnchecked(pos + 1) === CharacterCodes.B || charCodeUnchecked(pos + 1) === CharacterCodes.b)) {
-                        pos += 2;
-                        tokenValue = scanBinaryOrOctalDigits(2);
-                        if (!tokenValue) {
-                            tokenValue = "0";
-                        }
-                        tokenValue = "0b" + tokenValue;
-                        tokenFlags |= TokenFlags.BinarySpecifier;
-                        return token = scanNumericValue();
-                    }
-                    else if (pos + 2 < end && (charCodeUnchecked(pos + 1) === CharacterCodes.O || charCodeUnchecked(pos + 1) === CharacterCodes.o)) {
-                        pos += 2;
-                        tokenValue = scanBinaryOrOctalDigits(8);
-                        if (!tokenValue) {
-                            tokenValue = "0";
-                        }
-                        tokenValue = "0o" + tokenValue;
-                        tokenFlags |= TokenFlags.OctalSpecifier;
-                        return token = scanNumericValue();
-                    }
+                    // Lua has hexadecimal literals (handled above) but no binary
+                    // `0b` or octal `0o` form, so those prefixes are not scanned:
+                    // `0b110` is the number `0` followed by the identifier `b110`,
+                    // and fails as an ordinary parse error.
                 // falls through
                 case CharacterCodes._1:
                 case CharacterCodes._2:
