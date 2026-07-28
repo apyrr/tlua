@@ -31,8 +31,9 @@ local j: number, k: string = pair();
 >k : Symbol(k, Decl(tluaLocalMultiNameEmit.tlua, 8, 16))
 >pair : Symbol(pair, Decl(tluaLocalMultiNameEmit.tlua, 0, 0))
 
-// A parenthesized comma expression keeps its parens (it is one value).
-local l, m = (0, 1), 2;
->l : Symbol(l, Decl(tluaLocalMultiNameEmit.tlua, 11, 5))
->m : Symbol(m, Decl(tluaLocalMultiNameEmit.tlua, 11, 8))
+// Parenthesizing a single value keeps its parens; Lua has no comma operator, so
+// `(0, 1)` is not a way to write one value and no longer parses.
+local l, m = (0), 2;
+>l : Symbol(l, Decl(tluaLocalMultiNameEmit.tlua, 12, 5))
+>m : Symbol(m, Decl(tluaLocalMultiNameEmit.tlua, 12, 8))
 

@@ -8,16 +8,16 @@
   },
   "label": [
     {
-      "value": "ok_1",
+      "value": "bad1",
       "location": {
         "uri": "file:///inlayHintsOverloadCall2.tlua",
         "range": {
           "start": {
-            "line": 9,
+            "line": 8,
             "character": 22
           },
           "end": {
-            "line": 9,
+            "line": 8,
             "character": 26
           }
         }
@@ -40,17 +40,17 @@
   },
   "label": [
     {
-      "value": "ok_2",
+      "value": "bad2",
       "location": {
         "uri": "file:///inlayHintsOverloadCall2.tlua",
         "range": {
           "start": {
-            "line": 9,
-            "character": 37
+            "line": 8,
+            "character": 36
           },
           "end": {
-            "line": 9,
-            "character": 41
+            "line": 8,
+            "character": 40
           }
         }
       }

@@ -1057,13 +1057,6 @@
     "nodeEnd": 1722
   },
   {
-    "startPos": 1712,
-    "endPos": 1721,
-    "kind": "CommaToken",
-    "nodePos": 1722,
-    "nodeEnd": 1723
-  },
-  {
     "startPos": 1722,
     "endPos": 1722,
     "kind": "OpenBraceToken",
@@ -1335,20 +1328,6 @@
     "kind": "CloseBraceToken",
     "nodePos": 2181,
     "nodeEnd": 2191
-  },
-  {
-    "startPos": 2181,
-    "endPos": 2190,
-    "kind": "CommaToken",
-    "nodePos": 2191,
-    "nodeEnd": 2192
-  },
-  {
-    "startPos": 2191,
-    "endPos": 2191,
-    "kind": "CloseBracketToken",
-    "nodePos": 2192,
-    "nodeEnd": 2198
   },
   {
     "startPos": 2192,
@@ -2653,6 +2632,13 @@
     "nodeEnd": 3862
   },
   {
+    "startPos": 3861,
+    "endPos": 3861,
+    "kind": "IfKeyword",
+    "nodePos": 3862,
+    "nodeEnd": 3869
+  },
+  {
     "startPos": 3862,
     "endPos": 3868,
     "kind": "OpenParenToken",
@@ -2793,25 +2779,11 @@
     "nodeEnd": 3987
   },
   {
-    "startPos": 3976,
-    "endPos": 3986,
-    "kind": "CommaToken",
-    "nodePos": 3987,
-    "nodeEnd": 3988
-  },
-  {
     "startPos": 3987,
     "endPos": 3987,
     "kind": "Identifier",
     "nodePos": 3988,
     "nodeEnd": 4011
-  },
-  {
-    "startPos": 3988,
-    "endPos": 4010,
-    "kind": "CloseParenToken",
-    "nodePos": 4011,
-    "nodeEnd": 4012
   },
   {
     "startPos": 4012,
@@ -2968,13 +2940,6 @@
     "nodeEnd": 4231
   },
   {
-    "startPos": 4220,
-    "endPos": 4230,
-    "kind": "CommaToken",
-    "nodePos": 4231,
-    "nodeEnd": 4232
-  },
-  {
     "startPos": 4231,
     "endPos": 4231,
     "kind": "Identifier",
@@ -2982,18 +2947,18 @@
     "nodeEnd": 4255
   },
   {
-    "startPos": 4232,
-    "endPos": 4254,
-    "kind": "CloseParenToken",
-    "nodePos": 4255,
-    "nodeEnd": 4256
+    "startPos": 4255,
+    "endPos": 4255,
+    "kind": "CommaToken",
+    "nodePos": 4256,
+    "nodeEnd": 4257
   },
   {
-    "startPos": 4256,
-    "endPos": 4256,
-    "kind": "CloseParenToken",
-    "nodePos": 4257,
-    "nodeEnd": 4271
+    "startPos": 4257,
+    "endPos": 4270,
+    "kind": "EndKeyword",
+    "nodePos": 4271,
+    "nodeEnd": 4275
   },
   {
     "startPos": 4275,
@@ -3001,6 +2966,13 @@
     "kind": "SemicolonToken",
     "nodePos": 4276,
     "nodeEnd": 4277
+  },
+  {
+    "startPos": 4277,
+    "endPos": 4282,
+    "kind": "IfKeyword",
+    "nodePos": 4283,
+    "nodeEnd": 4291
   },
   {
     "startPos": 4283,
@@ -4032,6 +4004,13 @@
     "nodeEnd": 5617
   },
   {
+    "startPos": 5617,
+    "endPos": 5622,
+    "kind": "ForKeyword",
+    "nodePos": 5623,
+    "nodeEnd": 5632
+  },
+  {
     "startPos": 5623,
     "endPos": 5631,
     "kind": "OpenParenToken",
@@ -4235,13 +4214,6 @@
     "nodeEnd": 5872
   },
   {
-    "startPos": 5859,
-    "endPos": 5871,
-    "kind": "CloseParenToken",
-    "nodePos": 5872,
-    "nodeEnd": 5873
-  },
-  {
     "startPos": 5872,
     "endPos": 5872,
     "kind": "OpenParenToken",
@@ -4408,6 +4380,13 @@
     "kind": "Identifier",
     "nodePos": 6005,
     "nodeEnd": 6014
+  },
+  {
+    "startPos": 6024,
+    "endPos": 6024,
+    "kind": "EndKeyword",
+    "nodePos": 6025,
+    "nodeEnd": 6029
   },
   {
     "startPos": 6029,
@@ -4949,6 +4928,13 @@
     "nodeEnd": 6716
   },
   {
+    "startPos": 6740,
+    "endPos": 6745,
+    "kind": "LocalKeyword",
+    "nodePos": 6746,
+    "nodeEnd": 6757
+  },
+  {
     "startPos": 6746,
     "endPos": 6756,
     "kind": "Identifier",
@@ -5017,13 +5003,6 @@
     "kind": "SemicolonToken",
     "nodePos": 6821,
     "nodeEnd": 6822
-  },
-  {
-    "startPos": 6821,
-    "endPos": 6821,
-    "kind": "ForKeyword",
-    "nodePos": 6822,
-    "nodeEnd": 6830
   },
   {
     "startPos": 6822,

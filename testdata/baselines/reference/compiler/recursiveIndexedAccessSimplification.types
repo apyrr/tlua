@@ -14,9 +14,9 @@ function join<T>(l: Recur<T>[]): Recur<T>
 >l : Recur<T>[]
 
     return ['marker', ...l];
->['marker', ... : any
+>['marker', ... : any, any
+>['marker' : any
 > : any
->'marker', ... : any
 >'marker' : "marker"
 >... : any
 >l : Recur<T>[]

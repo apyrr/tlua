@@ -11,8 +11,9 @@ local e, f, g = pair(), true;
 local h, i;
 local j: number, k: string = pair();
 
-// A parenthesized comma expression keeps its parens (it is one value).
-local l, m = (0, 1), 2;
+// Parenthesizing a single value keeps its parens; Lua has no comma operator, so
+// `(0, 1)` is not a way to write one value and no longer parses.
+local l, m = (0), 2;
 
 
 //// [tluaLocalMultiNameEmit.lua]
@@ -24,5 +25,6 @@ local c, d = 1, "x";
 local e, f, g = pair(), true;
 local h, i;
 local j, k = pair();
--- A parenthesized comma expression keeps its parens (it is one value).
-local l, m = (0, 1), 2;
+-- Parenthesizing a single value keeps its parens; Lua has no comma operator, so
+-- `(0, 1)` is not a way to write one value and no longer parses.
+local l, m = (0), 2;

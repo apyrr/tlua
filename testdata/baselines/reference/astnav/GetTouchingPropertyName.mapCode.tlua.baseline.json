@@ -1145,7 +1145,7 @@
     "endPos": 1320,
     "kind": "VariableDeclaration",
     "nodePos": 1308,
-    "nodeEnd": 2198
+    "nodeEnd": 2192
   },
   {
     "startPos": 1321,
@@ -1159,7 +1159,7 @@
     "endPos": 1330,
     "kind": "ElementAccessExpression",
     "nodePos": 1320,
-    "nodeEnd": 2198
+    "nodeEnd": 1722
   },
   {
     "startPos": 1331,
@@ -1451,9 +1451,9 @@
   {
     "startPos": 1723,
     "endPos": 1731,
-    "kind": "BinaryExpression",
-    "nodePos": 1322,
-    "nodeEnd": 2191
+    "kind": "ExpressionList",
+    "nodePos": 1320,
+    "nodeEnd": 2192
   },
   {
     "startPos": 1732,
@@ -1815,9 +1815,9 @@
   {
     "startPos": 2192,
     "endPos": 2196,
-    "kind": "ElementAccessExpression",
-    "nodePos": 1320,
-    "nodeEnd": 2198
+    "kind": "Block",
+    "nodePos": 1109,
+    "nodeEnd": 9108
   },
   {
     "startPos": 2197,
@@ -3637,7 +3637,7 @@
     "endPos": 3913,
     "kind": "IfStatement",
     "nodePos": 3862,
-    "nodeEnd": 9108
+    "nodeEnd": 4275
   },
   {
     "startPos": 3914,
@@ -3672,7 +3672,7 @@
     "endPos": 3942,
     "kind": "BinaryExpression",
     "nodePos": 3915,
-    "nodeEnd": 4013
+    "nodeEnd": 4012
   },
   {
     "startPos": 3943,
@@ -3700,7 +3700,7 @@
     "endPos": 3972,
     "kind": "CallExpression",
     "nodePos": 3942,
-    "nodeEnd": 4013
+    "nodeEnd": 4012
   },
   {
     "startPos": 3973,
@@ -3726,9 +3726,9 @@
   {
     "startPos": 3988,
     "endPos": 3988,
-    "kind": "BinaryExpression",
-    "nodePos": 3976,
-    "nodeEnd": 4011
+    "kind": "CallExpression",
+    "nodePos": 3942,
+    "nodeEnd": 4012
   },
   {
     "startPos": 3989,
@@ -3770,7 +3770,7 @@
     "endPos": 4024,
     "kind": "IfStatement",
     "nodePos": 3862,
-    "nodeEnd": 9108
+    "nodeEnd": 4275
   },
   {
     "startPos": 4025,
@@ -3791,7 +3791,7 @@
     "endPos": 4039,
     "kind": "Block",
     "nodePos": 4029,
-    "nodeEnd": 4283
+    "nodeEnd": 4271
   },
   {
     "startPos": 4040,
@@ -3812,7 +3812,7 @@
     "endPos": 4058,
     "kind": "BinaryExpression",
     "nodePos": 4031,
-    "nodeEnd": 4276
+    "nodeEnd": 4271
   },
   {
     "startPos": 4059,
@@ -3833,7 +3833,7 @@
     "endPos": 4082,
     "kind": "CallExpression",
     "nodePos": 4058,
-    "nodeEnd": 4276
+    "nodeEnd": 4271
   },
   {
     "startPos": 4083,
@@ -3854,7 +3854,7 @@
     "endPos": 4101,
     "kind": "FunctionExpression",
     "nodePos": 4082,
-    "nodeEnd": 4275
+    "nodeEnd": 4257
   },
   {
     "startPos": 4102,
@@ -3868,7 +3868,7 @@
     "endPos": 4120,
     "kind": "Block",
     "nodePos": 4101,
-    "nodeEnd": 4275
+    "nodeEnd": 4257
   },
   {
     "startPos": 4121,
@@ -3882,7 +3882,7 @@
     "endPos": 4150,
     "kind": "CallExpression",
     "nodePos": 4108,
-    "nodeEnd": 4271
+    "nodeEnd": 4256
   },
   {
     "startPos": 4151,
@@ -3931,7 +3931,7 @@
     "endPos": 4216,
     "kind": "CallExpression",
     "nodePos": 4108,
-    "nodeEnd": 4271
+    "nodeEnd": 4256
   },
   {
     "startPos": 4217,
@@ -3957,9 +3957,9 @@
   {
     "startPos": 4232,
     "endPos": 4232,
-    "kind": "BinaryExpression",
-    "nodePos": 4220,
-    "nodeEnd": 4255
+    "kind": "CallExpression",
+    "nodePos": 4108,
+    "nodeEnd": 4256
   },
   {
     "startPos": 4233,
@@ -3979,7 +3979,7 @@
     "startPos": 4257,
     "endPos": 4269,
     "kind": "CallExpression",
-    "nodePos": 4108,
+    "nodePos": 4058,
     "nodeEnd": 4271
   },
   {
@@ -3992,8 +3992,8 @@
   {
     "startPos": 4271,
     "endPos": 4271,
-    "kind": "Block",
-    "nodePos": 4101,
+    "kind": "IfStatement",
+    "nodePos": 3862,
     "nodeEnd": 4275
   },
   {
@@ -4014,8 +4014,8 @@
     "startPos": 4277,
     "endPos": 4281,
     "kind": "Block",
-    "nodePos": 4029,
-    "nodeEnd": 4283
+    "nodePos": 3834,
+    "nodeEnd": 9108
   },
   {
     "startPos": 4282,
@@ -4028,7 +4028,7 @@
     "startPos": 4283,
     "endPos": 4288,
     "kind": "Block",
-    "nodePos": 4029,
+    "nodePos": 3834,
     "nodeEnd": 9108
   },
   {
@@ -5345,7 +5345,7 @@
     "endPos": 5632,
     "kind": "ForOfStatement",
     "nodePos": 5623,
-    "nodeEnd": 9108
+    "nodeEnd": 6029
   },
   {
     "startPos": 5633,
@@ -5387,7 +5387,7 @@
     "endPos": 5667,
     "kind": "Block",
     "nodePos": 5634,
-    "nodeEnd": 9108
+    "nodeEnd": 6025
   },
   {
     "startPos": 5668,
@@ -5401,7 +5401,7 @@
     "endPos": 5677,
     "kind": "Block",
     "nodePos": 5667,
-    "nodeEnd": 6746
+    "nodeEnd": 6025
   },
   {
     "startPos": 5678,
@@ -5429,7 +5429,7 @@
     "endPos": 5691,
     "kind": "VariableDeclaration",
     "nodePos": 5683,
-    "nodeEnd": 6040
+    "nodeEnd": 6025
   },
   {
     "startPos": 5692,
@@ -5443,7 +5443,7 @@
     "endPos": 5717,
     "kind": "CallExpression",
     "nodePos": 5691,
-    "nodeEnd": 6040
+    "nodeEnd": 5873
   },
   {
     "startPos": 5718,
@@ -5492,7 +5492,7 @@
     "endPos": 5779,
     "kind": "CallExpression",
     "nodePos": 5691,
-    "nodeEnd": 6040
+    "nodeEnd": 5873
   },
   {
     "startPos": 5780,
@@ -5520,7 +5520,7 @@
     "endPos": 5796,
     "kind": "FunctionExpression",
     "nodePos": 5767,
-    "nodeEnd": 6029
+    "nodeEnd": 5872
   },
   {
     "startPos": 5797,
@@ -5576,7 +5576,7 @@
     "endPos": 5847,
     "kind": "Block",
     "nodePos": 5824,
-    "nodeEnd": 6029
+    "nodeEnd": 5872
   },
   {
     "startPos": 5848,
@@ -5603,7 +5603,7 @@
     "startPos": 5859,
     "endPos": 5859,
     "kind": "BinaryExpression",
-    "nodePos": 5851,
+    "nodePos": 5831,
     "nodeEnd": 5872
   },
   {
@@ -5631,7 +5631,7 @@
     "startPos": 5880,
     "endPos": 5880,
     "kind": "BinaryExpression",
-    "nodePos": 5850,
+    "nodePos": 5691,
     "nodeEnd": 6025
   },
   {
@@ -5645,7 +5645,7 @@
     "startPos": 5883,
     "endPos": 5899,
     "kind": "BinaryExpression",
-    "nodePos": 5850,
+    "nodePos": 5691,
     "nodeEnd": 6025
   },
   {
@@ -5805,8 +5805,8 @@
   {
     "startPos": 6025,
     "endPos": 6025,
-    "kind": "Block",
-    "nodePos": 5824,
+    "kind": "ForOfStatement",
+    "nodePos": 5623,
     "nodeEnd": 6029
   },
   {
@@ -5819,9 +5819,9 @@
   {
     "startPos": 6030,
     "endPos": 6038,
-    "kind": "CallExpression",
-    "nodePos": 5691,
-    "nodeEnd": 6040
+    "kind": "Block",
+    "nodePos": 5455,
+    "nodeEnd": 9108
   },
   {
     "startPos": 6039,
@@ -5841,8 +5841,8 @@
     "startPos": 6041,
     "endPos": 6049,
     "kind": "Block",
-    "nodePos": 5667,
-    "nodeEnd": 6746
+    "nodePos": 5455,
+    "nodeEnd": 9108
   },
   {
     "startPos": 6050,
@@ -5870,7 +5870,7 @@
     "endPos": 6060,
     "kind": "IfStatement",
     "nodePos": 6041,
-    "nodeEnd": 6740
+    "nodeEnd": 9108
   },
   {
     "startPos": 6061,
@@ -6499,8 +6499,8 @@
     "startPos": 6740,
     "endPos": 6744,
     "kind": "Block",
-    "nodePos": 5667,
-    "nodeEnd": 6746
+    "nodePos": 6060,
+    "nodeEnd": 9108
   },
   {
     "startPos": 6745,
@@ -6513,7 +6513,7 @@
     "startPos": 6746,
     "endPos": 6751,
     "kind": "Block",
-    "nodePos": 5634,
+    "nodePos": 6060,
     "nodeEnd": 9108
   },
   {
@@ -6590,7 +6590,7 @@
     "startPos": 6822,
     "endPos": 6826,
     "kind": "Block",
-    "nodePos": 5634,
+    "nodePos": 6060,
     "nodeEnd": 9108
   },
   {
@@ -7094,7 +7094,7 @@
     "startPos": 7273,
     "endPos": 7273,
     "kind": "Block",
-    "nodePos": 5634,
+    "nodePos": 6060,
     "nodeEnd": 9108
   },
   {

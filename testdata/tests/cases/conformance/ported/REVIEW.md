@@ -4,14 +4,14 @@ This corpus was independently reviewed with `gpt-5.6-sol` against each upstream 
 
 ## Summary
 
-- Ported tests retained: **329**
+- Ported tests retained: **319**
 - Independently reviewed with `gpt-5.6-sol`: 383 (54 removed as unsupported)
 - Conversion defects found and **repaired**: **85** (all repairs independently verified)
 - Fixable tlua bugs documented for later work: **19**
 - Fixed since the review: **14 tests** (default-parameter lowering)
 - Intentional divergences (will not be fixed): **3**
 - Blocked on a design decision: **5**
-- Obsolete once JS residue is deleted: **5**
+- Obsolete JS residue: **removed** (scanner + parser + checker)
 
 Not every divergence from upstream is a bug: Lua is not JavaScript, and tlua diverges
 by design in places. The divergence section below is triaged accordingly.
@@ -138,14 +138,15 @@ with `// @noEmit: true` rather than baselined.
 | `declarationEmitFBoundedTypeParams`, `declarationEmitTypeAliasWithTypeParameters3`, `declarationEmitTypeAliasWithTypeParameters4`, `typeParametersAvailableInNestedScope3` | Every `.tlua` file is an external module, so declaration emit always reports TLUA100054 and the whole upstream `declarationEmit*` family can only be ported as type-display tests. Restoring it requires giving Lua modules an ambient declaration form. |
 | `functionWithDefaultParameterWithNoStatements8` | `a = nil` infers the parameter as `nil` where upstream infers `any`, leaving the parameter unusable. Whether to widen nil-only defaults to `any` is an open question. |
 
-### D. Obsolete once JS residue is deleted
+### D. Obsolete once JS residue is deleted — **done**
 
-These tests should be **removed**, not fixed, when the residue goes.
+The residue was removed rather than fixed: the scanner no longer accepts `0b`/`0o`
+prefixes, numeric separators, or legacy octal, and the comma operator is gone from
+the parser and checker. Leading zeros are now legal decimal, matching Lua
+(`0123` == 123). The tests whose only subject was that residue were deleted:
+`parser.numericSeparators.*` (7), `numericUnderscoredSeparator`,
+`propertyAccessNumericLiterals`, and `TypeArgumentList1`.
 
-| Tests | Residue |
-|---|---|
-| `parser.numericSeparators.binaryNegative`, `parser.numericSeparators.hexNegative`, `parser.numericSeparators.octalNegative`, `propertyAccessNumericLiterals` | The scanner still accepts `0b`/`0o` prefixes and `_` digit separators, which Lua has no notion of (`0b_110` types as `6`). The printer also emits `880000..toString()` and malformed recovered literals verbatim. |
-| `TypeArgumentList1` | The comma operator is still live in the checker — TLUA2695 fires four times and `(4, 5, 6)` types as `6`, though Lua has no comma operator. |
 
 ## Conversion defects — resolved
 

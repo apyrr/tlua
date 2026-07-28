@@ -26,7 +26,6 @@ func TestEmit(t *testing.T) {
 		{title: "StringLiteral#3", input: "local _ = \"\\x1b\"", output: "local _ = \"\\x1b\";"},
 		{title: "StringLiteral#2", input: `;local _ = 'test'`, output: ";\nlocal _ = 'test';"},
 		{title: "NumericLiteral#1", input: `local _ = 0`, output: `local _ = 0;`},
-		{title: "NumericLiteral#2", input: `local _ = 10_000`, output: `local _ = 10000;`},
 		{title: "BooleanLiteral#1", input: `local _ = true`, output: `local _ = true;`},
 		{title: "BooleanLiteral#2", input: `local _ = false`, output: `local _ = false;`},
 		// tlua: backtick templates lower to Lua strings/concatenation (no `${}` interpolation).
@@ -46,8 +45,6 @@ func TestEmit(t *testing.T) {
 		{title: "PropertyAccess#5", input: `local _ = 1..b`, output: `local _ = 1..b;`},
 		{title: "PropertyAccess#6", input: `local _ = 1.0.b`, output: `local _ = 1.0.b;`},
 		{title: "PropertyAccess#7", input: `local _ = 0x1.b`, output: `local _ = 0x1.b;`},
-		{title: "PropertyAccess#8", input: `local _ = 0b1.b`, output: `local _ = 0b1.b;`},
-		{title: "PropertyAccess#9", input: `local _ = 0o1.b`, output: `local _ = 0o1.b;`},
 		{title: "PropertyAccess#10", input: `local _ = 10e1.b`, output: `local _ = 10e1.b;`},
 		{title: "PropertyAccess#11", input: `local _ = 10E1.b`, output: `local _ = 10E1.b;`},
 		{title: "PropertyAccess#12", input: `local _ = a.b?.c`, output: `local _ = a.b?.c;`},
@@ -90,10 +87,9 @@ func TestEmit(t *testing.T) {
 		{title: "PrefixUnaryExpression#len2", input: `local _ = #a + #b`, output: `local _ = #a + #b;`},
 		// `#` before `!` keeps a space, else the emitted `#!a` would re-scan as a shebang.
 		{title: "PrefixUnaryExpression#lenNot", input: `local _ = # !a`, output: `local _ = # !a;`},
-		// The comma operator has no bare-statement spelling, and `local _ = a, b` is a
-		// value list (an ExpressionList node), so the source parens are what keep this a
-		// comma BinaryExpression. They are a real node and round-trip verbatim.
-		{title: "BinaryExpression#1", input: `local _ = (a,b)`, output: `local _ = (a, b);`},
+		// Lua has no comma operator, so `(a, b)` does not parse; `or` is the
+		// lowest-precedence binary operator and stands in for it here.
+		{title: "BinaryExpression#1", input: `local _ = (a or b)`, output: `local _ = (a or b);`},
 		{title: "BinaryExpression#2", input: `local _ = a+b`, output: `local _ = a + b;`},
 		{title: "BinaryExpression#3", input: `local _ = a^b`, output: `local _ = a ^ b;`},
 		// Lua concatenation is right-associative: `a .. b .. c` needs no parens, but a
@@ -343,7 +339,7 @@ func TestParenthesizePropertyAccess1(t *testing.T) {
 						nil, /*modifiers*/
 						factory.NewIdentifier("a"),
 						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
+						factory.NewToken(ast.KindBarBarToken),
 						factory.NewIdentifier("b"),
 					),
 					nil, /*questionDotToken*/
@@ -356,7 +352,7 @@ func TestParenthesizePropertyAccess1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b).c;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a or b).c;")
 }
 
 func TestParenthesizePropertyAccess2(t *testing.T) {
@@ -401,7 +397,7 @@ func TestParenthesizeElementAccess1(t *testing.T) {
 						nil, /*modifiers*/
 						factory.NewIdentifier("a"),
 						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
+						factory.NewToken(ast.KindBarBarToken),
 						factory.NewIdentifier("b"),
 					),
 					nil, /*questionDotToken*/
@@ -413,7 +409,7 @@ func TestParenthesizeElementAccess1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b)[c];")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a or b)[c];")
 }
 
 func TestParenthesizeElementAccess2(t *testing.T) {
@@ -457,7 +453,7 @@ func TestParenthesizeCall1(t *testing.T) {
 						nil, /*modifiers*/
 						factory.NewIdentifier("a"),
 						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
+						factory.NewToken(ast.KindBarBarToken),
 						factory.NewIdentifier("b"),
 					),
 					nil, /*questionDotToken*/
@@ -470,7 +466,7 @@ func TestParenthesizeCall1(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)();")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a or b)();")
 }
 
 func TestParenthesizeCall2(t *testing.T) {
@@ -518,7 +514,7 @@ func TestParenthesizeCall4(t *testing.T) {
 							nil, /*modifiers*/
 							factory.NewIdentifier("b"),
 							nil, /*typeNode*/
-							factory.NewToken(ast.KindCommaToken),
+							factory.NewToken(ast.KindBarBarToken),
 							factory.NewIdentifier("c"),
 						),
 					}),
@@ -529,7 +525,7 @@ func TestParenthesizeCall4(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a((b, c));")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a(b or c);")
 }
 
 func TestParenthesizeTypeAssertion1(t *testing.T) {
@@ -629,8 +625,7 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 
 func isBinaryOperator(token ast.Kind) bool {
 	switch token {
-	case ast.KindCommaToken,
-		ast.KindLessThanToken,
+	case ast.KindLessThanToken,
 		ast.KindGreaterThanToken,
 		ast.KindLessThanEqualsToken,
 		ast.KindGreaterThanEqualsToken,
@@ -687,14 +682,10 @@ func TestParenthesizeBinary(t *testing.T) {
 		right    ast.Kind
 		output   string
 		// bare keeps the expression in an expression statement rather than as the
-		// initializer of `local _`. An initializer parenthesizes a comma operand
-		// (OperatorPrecedenceDisallowComma), which would swap the rule under test
-		// for the disallowed-comma rule; a bare statement keeps the operator at
-		// lowest precedence, at the cost of the reparse gate (see CheckEmitJS).
+		// initializer of `local _`. A bare statement keeps the operator at lowest
+		// precedence, at the cost of the reparse gate (see CheckEmitJS).
 		bare bool
 	}{
-		{operator: ast.KindCommaToken, output: "l, r", bare: true},
-		{operator: ast.KindCommaToken, left: ast.KindPlusToken, output: "ll + lr, r", bare: true},
 		{operator: ast.KindAsteriskToken, left: ast.KindPlusToken, output: "(ll + lr) * r"},
 		{operator: ast.KindAsteriskToken, right: ast.KindPlusToken, output: "l * (rl + rr)"},
 		{operator: ast.KindPlusToken, left: ast.KindAsteriskToken, output: "ll * lr + r"},
@@ -757,7 +748,7 @@ func TestParenthesizeSpreadElement2(t *testing.T) {
 									nil, /*modifiers*/
 									factory.NewIdentifier("b"),
 									nil, /*typeNode*/
-									factory.NewToken(ast.KindCommaToken),
+									factory.NewToken(ast.KindBarBarToken),
 									factory.NewIdentifier("c"),
 								),
 							),
@@ -772,7 +763,7 @@ func TestParenthesizeSpreadElement2(t *testing.T) {
 	parsetestutil.MarkSyntheticRecursive(file)
 	// Spread is emit-only JS syntax: tlua reads `...` as the vararg, which is not
 	// a prefixexp and so cannot take the `(b, c)` suffix. No reparse gate.
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "a(...(b, c));")
+	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "a(...b or c);")
 }
 
 func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
@@ -788,7 +779,7 @@ func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
 						nil, /*modifiers*/
 						factory.NewIdentifier("a"),
 						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
+						factory.NewToken(ast.KindBarBarToken),
 						factory.NewIdentifier("b"),
 					),
 					factory.NewNodeList(
@@ -805,7 +796,7 @@ func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b)<c>;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a or b)<c>;")
 }
 
 func TestParenthesizeAsExpression(t *testing.T) {
@@ -821,7 +812,7 @@ func TestParenthesizeAsExpression(t *testing.T) {
 						nil, /*modifiers*/
 						factory.NewIdentifier("a"),
 						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
+						factory.NewToken(ast.KindBarBarToken),
 						factory.NewIdentifier("b"),
 					),
 					factory.NewTypeReferenceNode(
@@ -834,7 +825,7 @@ func TestParenthesizeAsExpression(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b) as c;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a or b) as c;")
 }
 
 func TestParenthesizeSatisfiesExpression(t *testing.T) {
@@ -850,7 +841,7 @@ func TestParenthesizeSatisfiesExpression(t *testing.T) {
 						nil, /*modifiers*/
 						factory.NewIdentifier("a"),
 						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
+						factory.NewToken(ast.KindBarBarToken),
 						factory.NewIdentifier("b"),
 					),
 					factory.NewTypeReferenceNode(
@@ -863,7 +854,7 @@ func TestParenthesizeSatisfiesExpression(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b) satisfies c;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a or b) satisfies c;")
 }
 
 func TestParenthesizeNonNullExpression(t *testing.T) {
@@ -879,7 +870,7 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 						nil, /*modifiers*/
 						factory.NewIdentifier("a"),
 						nil, /*typeNode*/
-						factory.NewToken(ast.KindCommaToken),
+						factory.NewToken(ast.KindBarBarToken),
 						factory.NewIdentifier("b"),
 					),
 					ast.NodeFlagsNone,
@@ -889,7 +880,7 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a, b)!;")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = (a or b)!;")
 }
 
 func TestParenthesizeExpressionStatement1(t *testing.T) {

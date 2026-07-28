@@ -1,9 +1,0 @@
--- ported from tests/cases/conformance/parser/ecmascript5/ErrorRecovery/TypeArgumentLists/TypeArgumentList1.ts
--- dropped: @target: es2015 directive (tlua defaults to latest target)
--- dropped: emit coverage (noEmit) -- the source is intentionally malformed parser-recovery
--- input (a stray backslash inside an apparent type-argument list), so the recovered tree
--- prints as invalid Lua. The subject is the recovery diagnostics, not emit.
-
-// @noEmit: true
-
-Foo<A, B, \ C>(4, 5, 6);

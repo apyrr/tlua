@@ -1,14 +1,15 @@
 recursiveIndexedAccessSimplification.tlua(5,5): error TLUA4110: Tuple type arguments circularly reference themselves.
 recursiveIndexedAccessSimplification.tlua(5,9): error TLUA2536: Type 'number' cannot be used to index type 'Recur<T>'.
+recursiveIndexedAccessSimplification.tlua(8,5): error TLUA2589: Type instantiation is excessively deep and possibly infinite.
 recursiveIndexedAccessSimplification.tlua(8,12): error TLUA1109: Expression expected.
-recursiveIndexedAccessSimplification.tlua(8,13): error TLUA2695: Left side of comma operator is unused and has no side effects.
+recursiveIndexedAccessSimplification.tlua(8,21): error TLUA1005: ']' expected.
 recursiveIndexedAccessSimplification.tlua(8,23): error TLUA100035: A '...' expression is only allowed inside a vararg function.
-recursiveIndexedAccessSimplification.tlua(8,26): error TLUA1005: ']' expected.
+recursiveIndexedAccessSimplification.tlua(8,26): error TLUA1005: ';' expected.
 recursiveIndexedAccessSimplification.tlua(8,27): error TLUA1128: Declaration or statement expected.
 recursiveIndexedAccessSimplification.tlua(12,37): error TLUA2589: Type instantiation is excessively deep and possibly infinite.
 
 
-==== recursiveIndexedAccessSimplification.tlua (8 errors) ====
+==== recursiveIndexedAccessSimplification.tlua (9 errors) ====
     // https://github.com/microsoft/TypeScript/issues/63270
     
     type Recur<T> =
@@ -21,14 +22,16 @@ recursiveIndexedAccessSimplification.tlua(12,37): error TLUA2589: Type instantia
     
     function join<T>(l: Recur<T>[]): Recur<T>
         return ['marker', ...l];
+        ~~~~~~
+!!! error TLUA2589: Type instantiation is excessively deep and possibly infinite.
                ~
 !!! error TLUA1109: Expression expected.
-                ~~~~~~~~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+                        ~
+!!! error TLUA1005: ']' expected.
                           ~~~
 !!! error TLUA100035: A '...' expression is only allowed inside a vararg function.
                              ~
-!!! error TLUA1005: ']' expected.
+!!! error TLUA1005: ';' expected.
                               ~
 !!! error TLUA1128: Declaration or statement expected.
     end

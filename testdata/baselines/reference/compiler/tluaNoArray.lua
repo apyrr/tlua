@@ -44,11 +44,12 @@ use(of);
 -- tlua-specific diagnostic), exactly like the class/generator removals.
 -- (Tuple *type* syntax `[A, B]` is legal — see the tluaTuple tests.)
 -- Array literals no longer parse in expression position; use a table `{...}`.
-local lit = [1, 2, 3];
+local lit = [1], 2, 3;
+;
 -- Array-literal spread. Every spread form is gone; `...` is the Lua vararg, so
 -- the `...` here reads as a vararg expression (legal in the main chunk) and the
 -- operand that follows is the error.
-local spread = [0, ...];
+local spread = [0], ...;
 items;
 ;
 -- Array binding patterns; use a Lua name list `local a, b = f()`.

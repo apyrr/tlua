@@ -26,7 +26,6 @@ main.tlua(38,27): error TLUA1005: ',' expected.
 main.tlua(39,31): error TLUA1005: ',' expected.
 main.tlua(43,7): error TLUA1003: Identifier expected.
 main.tlua(43,9): error TLUA2304: Cannot find name 'a'.
-main.tlua(43,9): error TLUA2695: Left side of comma operator is unused and has no side effects.
 main.tlua(43,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 main.tlua(43,15): error TLUA1005: ';' expected.
 main.tlua(43,15): error TLUA2304: Cannot find name 'restOfObj'.
@@ -35,7 +34,7 @@ main.tlua(43,27): error TLUA2809: Declaration or statement expected. This '=' fo
 main.tlua(43,29): error TLUA100057: Incomplete statement: expected assignment or a function call.
 
 
-==== main.tlua (24 errors) ====
+==== main.tlua (23 errors) ====
     declare function consume(a: number, b: number): void;
     declare nums: number[];
     declare obj: { a: number; b: number };
@@ -114,8 +113,6 @@ main.tlua(43,29): error TLUA100057: Incomplete statement: expected assignment or
 !!! error TLUA1003: Identifier expected.
             ~
 !!! error TLUA2304: Cannot find name 'a'.
-            ~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
             ~~~~~~
 !!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                   ~~~~~~~~~

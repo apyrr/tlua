@@ -9110,19 +9110,10 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		c.checkAssignmentOperator(left, operator, right, leftType, rightType)
 		return rightType
 	case ast.KindCommaToken:
-		if !c.compilerOptions.AllowUnreachableCode.IsTrue() && c.isSideEffectFree(left) && !c.isIndirectCall(left.Parent) {
-			sf := ast.GetSourceFileOfNode(left)
-			start := scanner.SkipTrivia(sf.Text(), left.Pos())
-			isInDiag2657 := core.Some(sf.Diagnostics(), func(d *ast.Diagnostic) bool {
-				if d.Code() != diagnostics.JSX_expressions_must_have_one_parent_element.Code() {
-					return false
-				}
-				return d.Loc().Contains(start)
-			})
-			if !isInDiag2657 {
-				c.error(left, diagnostics.Left_side_of_comma_operator_is_unused_and_has_no_side_effects)
-			}
-		}
+		// Lua has no comma operator, so the parser never produces one from
+		// well-formed source; a comma reaching here comes from error recovery.
+		// The parse error is the diagnostic, so just take the right operand's
+		// type rather than reporting anything further.
 		return rightType
 	case ast.KindDotDotToken:
 		// Lua string concatenation. There is no compound `..=` form.

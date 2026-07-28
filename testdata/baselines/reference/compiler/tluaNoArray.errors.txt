@@ -1,19 +1,17 @@
 tluaNoArray.tlua(11,13): error TLUA1109: Expression expected.
-tluaNoArray.tlua(11,14): error TLUA2695: Left side of comma operator is unused and has no side effects.
-tluaNoArray.tlua(11,14): error TLUA2695: Left side of comma operator is unused and has no side effects.
+tluaNoArray.tlua(11,15): error TLUA1005: ']' expected.
+tluaNoArray.tlua(11,21): error TLUA1005: ';' expected.
 tluaNoArray.tlua(16,16): error TLUA1109: Expression expected.
-tluaNoArray.tlua(16,17): error TLUA2695: Left side of comma operator is unused and has no side effects.
-tluaNoArray.tlua(16,23): error TLUA1005: ']' expected.
+tluaNoArray.tlua(16,18): error TLUA1005: ']' expected.
+tluaNoArray.tlua(16,23): error TLUA1005: ';' expected.
 tluaNoArray.tlua(16,28): error TLUA1128: Declaration or statement expected.
 tluaNoArray.tlua(19,7): error TLUA1003: Identifier expected.
 tluaNoArray.tlua(19,8): error TLUA2304: Cannot find name 'a'.
-tluaNoArray.tlua(19,8): error TLUA2695: Left side of comma operator is unused and has no side effects.
 tluaNoArray.tlua(19,11): error TLUA2304: Cannot find name 'b'.
 tluaNoArray.tlua(19,12): error TLUA1005: ';' expected.
 tluaNoArray.tlua(19,14): error TLUA1128: Declaration or statement expected.
 tluaNoArray.tlua(22,1): error TLUA1128: Declaration or statement expected.
 tluaNoArray.tlua(22,2): error TLUA2304: Cannot find name 'a'.
-tluaNoArray.tlua(22,2): error TLUA2695: Left side of comma operator is unused and has no side effects.
 tluaNoArray.tlua(22,5): error TLUA2304: Cannot find name 'b'.
 tluaNoArray.tlua(22,6): error TLUA1005: ';' expected.
 tluaNoArray.tlua(22,8): error TLUA1128: Declaration or statement expected.
@@ -28,7 +26,7 @@ tluaNoArray.tlua(31,7): error TLUA2322: Type 'number' is not assignable to type 
 tluaNoArray.tlua(36,1): error TLUA1005: 'end' expected.
 
 
-==== tluaNoArray.tlua (28 errors) ====
+==== tluaNoArray.tlua (26 errors) ====
     // The TypeScript array-literal/iteration syntax is removed from tlua source.
     // Each form below decomposes into stock parser-recovery errors (no
     // tlua-specific diagnostic), exactly like the class/generator removals.
@@ -42,10 +40,10 @@ tluaNoArray.tlua(36,1): error TLUA1005: 'end' expected.
     local lit = [1, 2, 3];
                 ~
 !!! error TLUA1109: Expression expected.
-                 ~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
-                 ~~~~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
+                  ~
+!!! error TLUA1005: ']' expected.
+                        ~
+!!! error TLUA1005: ';' expected.
     
     // Array-literal spread. Every spread form is gone; `...` is the Lua vararg, so
     // the `...` here reads as a vararg expression (legal in the main chunk) and the
@@ -53,10 +51,10 @@ tluaNoArray.tlua(36,1): error TLUA1005: 'end' expected.
     local spread = [0, ...items];
                    ~
 !!! error TLUA1109: Expression expected.
-                    ~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
-                          ~~~~~
+                     ~
 !!! error TLUA1005: ']' expected.
+                          ~~~~~
+!!! error TLUA1005: ';' expected.
                                ~
 !!! error TLUA1128: Declaration or statement expected.
     
@@ -66,8 +64,6 @@ tluaNoArray.tlua(36,1): error TLUA1005: 'end' expected.
 !!! error TLUA1003: Identifier expected.
            ~
 !!! error TLUA2304: Cannot find name 'a'.
-           ~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
               ~
 !!! error TLUA2304: Cannot find name 'b'.
                ~
@@ -81,8 +77,6 @@ tluaNoArray.tlua(36,1): error TLUA1005: 'end' expected.
 !!! error TLUA1128: Declaration or statement expected.
      ~
 !!! error TLUA2304: Cannot find name 'a'.
-     ~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
         ~
 !!! error TLUA2304: Cannot find name 'b'.
          ~

@@ -1,8 +1,7 @@
-tluaVarargParenAmbiguity.tlua(12,16): error TLUA2695: Left side of comma operator is unused and has no side effects.
 tluaVarargParenAmbiguity.tlua(23,35): error TLUA1014: A rest parameter must be last in a parameter list.
 
 
-==== tluaVarargParenAmbiguity.tlua (2 errors) ====
+==== tluaVarargParenAmbiguity.tlua (1 errors) ====
     // `(...` is ambiguous between an arrow parameter list, the Lua single-value
     // truncation idiom `(...)`, and `...` as an operand inside parentheses. The
     // arrow lookahead must not commit where the expression reading is the legal
@@ -12,12 +11,10 @@ tluaVarargParenAmbiguity.tlua(23,35): error TLUA1014: A rest parameter must be l
     
     declare n: number;
     
-    // A parenthesized expression list is an expression, with or without a vararg
-    // inside it.
-    local plain = (1, 2);
-                   ~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
-    local withVararg = (..., 2);
+    // Parenthesizing truncates to a single value; Lua has no comma operator, so a
+    // parenthesized list is not a legal expression.
+    local plain = (1);
+    local withVararg = (...);
     
     // Still arrows: a bare vararg parameter list, one with the (ambiguous) return
     // type colon, and an annotated vararg.
@@ -31,6 +28,6 @@ tluaVarargParenAmbiguity.tlua(23,35): error TLUA1014: A rest parameter must be l
                                       ~~~
 !!! error TLUA1014: A rest parameter must be last in a parameter list.
     
-    // Without the `=>` the same shape is an expression list, not a mangled arrow.
-    local notAnArrow = (..., n);
+    // Without the `=>` the same shape is a truncating parenthesis, not a mangled arrow.
+    local notAnArrow = (...);
     

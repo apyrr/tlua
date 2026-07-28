@@ -22,7 +22,6 @@ const (
 	getLiteralTextFlagsNeverAsciiEscape              getLiteralTextFlags = 1 << 0
 	getLiteralTextFlagsJsxAttributeEscape            getLiteralTextFlags = 1 << 1
 	getLiteralTextFlagsTerminateUnterminatedLiterals getLiteralTextFlags = 1 << 2
-	getLiteralTextFlagsAllowNumericSeparator         getLiteralTextFlags = 1 << 3
 )
 
 type QuoteChar rune
@@ -278,11 +277,6 @@ func canUseOriginalText(node *ast.LiteralLikeNode, flags getLiteralTextFlags) bo
 		// For a numeric literal, we cannot use the original text if the original text was an invalid literal
 		if tokenFlags&ast.TokenFlagsIsInvalid != 0 {
 			return false
-		}
-		// We also cannot use the original text if the literal contains numeric separators, but numeric separators
-		// are not permitted
-		if tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
-			return flags&getLiteralTextFlagsAllowNumericSeparator != 0
 		}
 	}
 

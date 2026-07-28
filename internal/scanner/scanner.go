@@ -687,7 +687,7 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == 'X' || s.charAt(1) == 'x' {
 				start := s.pos
 				s.pos += 2
-				digits := s.scanHexDigits(1, true, true)
+				digits := s.scanHexDigits(1, true)
 				if digits == "" {
 					s.error(diagnostics.Hexadecimal_digit_expected)
 					digits = "0"
@@ -710,30 +710,10 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = s.scanNumericValue()
 				break
 			}
-			if s.charAt(1) == 'B' || s.charAt(1) == 'b' {
-				s.pos += 2
-				digits := s.scanBinaryOrOctalDigits(2)
-				if digits == "" {
-					s.error(diagnostics.Binary_digit_expected)
-					digits = "0"
-				}
-				s.tokenValue = "0b" + digits
-				s.tokenFlags |= ast.TokenFlagsBinarySpecifier
-				s.token = s.scanNumericValue()
-				break
-			}
-			if s.charAt(1) == 'O' || s.charAt(1) == 'o' {
-				s.pos += 2
-				digits := s.scanBinaryOrOctalDigits(8)
-				if digits == "" {
-					s.error(diagnostics.Octal_digit_expected)
-					digits = "0"
-				}
-				s.tokenValue = "0o" + digits
-				s.tokenFlags |= ast.TokenFlagsOctalSpecifier
-				s.token = s.scanNumericValue()
-				break
-			}
+			// Lua has hexadecimal literals (`0x`, handled above) but no binary
+			// `0b` or octal `0o` form, so those prefixes are not scanned: `0b110`
+			// is the number `0` followed by the identifier `b110`, and fails as an
+			// ordinary parse error.
 			fallthrough
 		case '1', '2', '3', '4', '5', '6', '7', '8', '9':
 			s.token = s.scanNumber()
@@ -1834,10 +1814,10 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	var hexDigits string
 	if extended {
 		s.pos++
-		hexDigits = s.scanHexDigits(1, true, false)
+		hexDigits = s.scanHexDigits(1, true)
 	} else {
 		s.tokenFlags |= ast.TokenFlagsUnicodeEscape
-		hexDigits = s.scanHexDigits(4, false, false)
+		hexDigits = s.scanHexDigits(4, false)
 	}
 	if hexDigits == "" {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
@@ -1918,44 +1898,20 @@ func (s *Scanner) peekUnicodeEscape() rune {
 
 func (s *Scanner) scanNumber() ast.Kind {
 	start := s.pos
-	var fixedPart string
 	if s.char() == '0' {
 		s.pos++
-		if s.char() == '_' {
-			s.tokenFlags |= ast.TokenFlagsContainsSeparator | ast.TokenFlagsContainsInvalidSeparator
-			s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos, 1)
-			s.pos = start
-			fixedPart = s.scanNumberFragment()
-		} else {
-			digits, isOctal := s.scanDigits()
-			if digits == "" {
-				fixedPart = "0"
-			} else if !isOctal {
-				s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
-				fixedPart = digits
-			} else {
-				val, _ := strconv.ParseInt(digits, 8, 64)
-				s.tokenValue = strconv.FormatInt(val, 10)
-				s.tokenFlags |= ast.TokenFlagsOctal
-				withMinus := s.token == ast.KindMinusToken
-				literal := core.IfElse(withMinus, "-", "") + "0o" + strconv.FormatInt(val, 8)
-				if withMinus {
-					start--
-				}
-				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, literal)
-				return ast.KindNumericLiteral
-			}
+		// A leading zero is not an octal prefix: Lua has no legacy octal literal,
+		// so `0123` is the decimal number 123, exactly as Lua reads it.
+		if s.scanDigits() != "" {
+			s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
 		}
 	} else {
-		fixedPart = s.scanNumberFragment()
+		s.scanNumberFragment()
 	}
 	fixedPartEnd := s.pos
-	fractionalPart := ""
-	exponentPreamble := ""
-	exponentPart := ""
 	if s.char() == '.' {
 		s.pos++
-		fractionalPart = s.scanNumberFragment()
+		s.scanNumberFragment()
 	}
 	end := s.pos
 	if s.char() == 'E' || s.char() == 'e' {
@@ -1964,28 +1920,17 @@ func (s *Scanner) scanNumber() ast.Kind {
 		if s.char() == '+' || s.char() == '-' {
 			s.pos++
 		}
-		startNumericPart := s.pos
-		exponentPart = s.scanNumberFragment()
-		if exponentPart == "" {
+		if s.scanNumberFragment() == "" {
 			s.error(diagnostics.Digit_expected)
 		} else {
-			exponentPreamble = s.text[end:startNumericPart]
 			end = s.pos
 		}
 	}
-	if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
-		s.tokenValue = fixedPart
-		if fractionalPart != "" {
-			s.tokenValue += "." + fractionalPart
-		}
-		if exponentPart != "" {
-			s.tokenValue += exponentPreamble + exponentPart
-		}
-	} else {
-		s.tokenValue = s.text[start:end]
-	}
+	s.tokenValue = s.text[start:end]
 	if s.tokenFlags&ast.TokenFlagsContainsLeadingZero != 0 {
-		s.errorAt(diagnostics.Decimals_with_leading_zeros_are_not_allowed, start, s.pos-start)
+		// Lua reads `0123` as decimal 123, so a leading zero is legal here. The
+		// flag is kept only so the printer emits the canonical form rather than
+		// the original text.
 		s.tokenValue = jsnum.FromString(s.tokenValue).String()
 		return ast.KindNumericLiteral
 	}
@@ -2008,92 +1953,36 @@ func (s *Scanner) scanNumber() ast.Kind {
 	return result
 }
 
+// scanNumberFragment scans a run of decimal digits. Lua has no numeric
+// separator, so `_` is not part of a number: `1_000` scans as `1` followed by
+// the identifier `_000` and fails as an ordinary parse error.
 func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
-	allowSeparator := false
-	isPreviousTokenSeparator := false
-	var result strings.Builder
-	for {
-		before := s.pos
-		s.scanASCIIWhile(func(b byte) bool {
-			return b >= '0' && b <= '9'
-		})
-		if s.pos > before {
-			allowSeparator = true
-			isPreviousTokenSeparator = false
-		}
-		ch := s.char()
-		if ch == '_' {
-			s.tokenFlags |= ast.TokenFlagsContainsSeparator
-			if allowSeparator {
-				allowSeparator = false
-				isPreviousTokenSeparator = true
-				result.WriteString(s.text[start:s.pos])
-			} else {
-				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
-				if isPreviousTokenSeparator {
-					s.errorAt(diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, s.pos, 1)
-				} else {
-					s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos, 1)
-				}
-			}
-			s.pos++
-			start = s.pos
-			continue
-		}
-		break
-	}
-	if isPreviousTokenSeparator {
-		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
-		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
-	}
-	if result.Len() == 0 {
-		return s.text[start:s.pos]
-	}
-	result.WriteString(s.text[start:s.pos])
-	return result.String()
+	s.scanASCIIWhile(func(b byte) bool {
+		return b >= '0' && b <= '9'
+	})
+	return s.text[start:s.pos]
 }
 
-func (s *Scanner) scanDigits() (string, bool) {
+func (s *Scanner) scanDigits() string {
 	start := s.pos
-	isOctal := true
 	for stringutil.IsDigit(s.char()) {
-		if !stringutil.IsOctalDigit(s.char()) {
-			isOctal = false
-		}
 		s.pos++
 	}
-	return s.text[start:s.pos], isOctal
+	return s.text[start:s.pos]
 }
 
-func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHaveSeparators bool) string {
+// scanHexDigits scans hexadecimal digits. Lua has `0x` literals but no numeric
+// separator, so `_` simply ends the run.
+func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool) string {
 	digitCount := 0
 	start := s.pos
-	allowSeparator := false
-	isPreviousTokenSeparator := false
 	for digitCount < minCount || scanAsManyAsPossible {
-		ch := s.char()
-		if stringutil.IsHexDigit(ch) {
-			allowSeparator = canHaveSeparators
-			isPreviousTokenSeparator = false
-			digitCount++
-		} else if canHaveSeparators && ch == '_' {
-			s.tokenFlags |= ast.TokenFlagsContainsSeparator
-			if allowSeparator {
-				allowSeparator = false
-				isPreviousTokenSeparator = true
-			} else if isPreviousTokenSeparator {
-				s.errorAt(diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, s.pos, 1)
-			} else {
-				s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos, 1)
-			}
-		} else {
+		if !stringutil.IsHexDigit(s.char()) {
 			break
 		}
+		digitCount++
 		s.pos++
-	}
-	if isPreviousTokenSeparator {
-		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
 	if digitCount < minCount {
 		return ""
@@ -2104,46 +1993,10 @@ func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHave
 	}
 	if cached, ok := s.hexDigitCache[digits]; ok {
 		return cached
-	} else {
-		original := digits
-		if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
-			digits = strings.ReplaceAll(digits, "_", "")
-		}
-		digits = strings.ToLower(digits) // standardize hex literals to lowercase
-		s.hexDigitCache[original] = digits
-		return digits
 	}
-}
-
-func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
-	var sb strings.Builder
-	allowSeparator := false
-	isPreviousTokenSeparator := false
-	for {
-		ch := s.char()
-		if stringutil.IsDigit(ch) && ch-'0' < base {
-			sb.WriteByte(byte(ch))
-			allowSeparator = true
-			isPreviousTokenSeparator = false
-		} else if ch == '_' {
-			s.tokenFlags |= ast.TokenFlagsContainsSeparator
-			if allowSeparator {
-				allowSeparator = false
-				isPreviousTokenSeparator = true
-			} else if isPreviousTokenSeparator {
-				s.errorAt(diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, s.pos, 1)
-			} else {
-				s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos, 1)
-			}
-		} else {
-			break
-		}
-		s.pos++
-	}
-	if isPreviousTokenSeparator {
-		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
-	}
-	return sb.String()
+	lowered := strings.ToLower(digits) // standardize hex literals to lowercase
+	s.hexDigitCache[digits] = lowered
+	return lowered
 }
 
 // scanNumericValue normalizes a scanned number (decimal, hex, binary, or octal)

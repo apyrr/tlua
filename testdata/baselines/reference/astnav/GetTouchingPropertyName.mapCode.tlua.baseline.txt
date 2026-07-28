@@ -867,7 +867,7 @@
 
 〚Positions: [1320, 1320]〛
 【TS: BinaryExpression [1308, 2198)】
-《Go: VariableDeclaration [1308, 2198)》
+《Go: VariableDeclaration [1308, 2192)》
 36 │    // which one makes the most sense, and grab the NodeArray from there. Do
 37 │    // this as lazily as possible.
 38 │    local《【 nodeKinds =〚 〛[
@@ -876,20 +876,21 @@
 41 │                createSourceFile(
 42 │                    "__mapcode_content_nodes.tlua",
 43 │                    content,
-   │........ 13 lines omitted ........
+   │........ 12 lines omitted ........
+55 │                    sourceFile.languageVersion,
 56 │                    /*setParentNodes*/ true,
 57 │                    sourceFile.scriptKind,
 58 │                ) end,
 59 │            body: function(cw: SourceFile) return (cw.statements[0] as ClassLikeDeclaration).members end,
-60 │        },
-61 │    ]】》;
+60 │        },》
+61 │    ]】;
 62 │
 63 │    local parsedNodes = [];
 
 
 〚Positions: [1322, 1330]〛
 【TS: ArrayLiteralExpression [1320, 2198)】
-《Go: ElementAccessExpression [1320, 2198)》
+《Go: ElementAccessExpression [1320, 1722)》
 36 │    // which one makes the most sense, and grab the NodeArray from there. Do
 37 │    // this as lazily as possible.
 38 │    local nodeKinds =《【 [〚
@@ -898,13 +899,24 @@
 41 │                createSourceFile(
 42 │                    "__mapcode_content_nodes.tlua",
 43 │                    content,
-   │........ 13 lines omitted ........
+44 │                    sourceFile.languageVersion,
+45 │                    /*setParentNodes*/ true,
+46 │                    sourceFile.scriptKind,
+47 │                ) end,
+48 │            body: function(sf: SourceFile) return sf.statements end,
+49 │        }》,
+50 │        {
+51 │            parse: function() return
+52 │                createSourceFile(
+53 │                    "__mapcode_class_content_nodes.tlua",
+54 │                    `class __class {\n${content}\n}`,
+   │........ 2 lines omitted ........
 56 │                    /*setParentNodes*/ true,
 57 │                    sourceFile.scriptKind,
 58 │                ) end,
 59 │            body: function(cw: SourceFile) return (cw.statements[0] as ClassLikeDeclaration).members end,
 60 │        },
-61 │    ]】》;
+61 │    ]】;
 62 │
 63 │    local parsedNodes = [];
 
@@ -1073,10 +1085,10 @@
 
 〚Positions: [1723, 1731]〛
 【TS: ArrayLiteralExpression [1320, 2198)】
-《Go: BinaryExpression [1322, 2191)》
+《Go: ExpressionList [1320, 2192)》
 36 │    // which one makes the most sense, and grab the NodeArray from there. Do
 37 │    // this as lazily as possible.
-38 │    local nodeKinds =【 [《
+38 │    local nodeKinds =《【 [
 39 │        {
 40 │            parse: function() return
 41 │                createSourceFile(
@@ -1088,7 +1100,7 @@
 57 │                    sourceFile.scriptKind,
 58 │                ) end,
 59 │            body: function(cw: SourceFile) return (cw.statements[0] as ClassLikeDeclaration).members end,
-60 │        }》,
+60 │        },》
 61 │    ]】;
 62 │
 63 │    local parsedNodes = [];
@@ -1278,25 +1290,39 @@
 
 〚Positions: [2192, 2196]〛
 【TS: ArrayLiteralExpression [1320, 2198)】
-《Go: ElementAccessExpression [1320, 2198)》
-36 │    // which one makes the most sense, and grab the NodeArray from there. Do
-37 │    // this as lazily as possible.
-38 │    local nodeKinds =《【 [
-39 │        {
-40 │            parse: function() return
-41 │                createSourceFile(
-42 │                    "__mapcode_content_nodes.tlua",
-43 │                    content,
-   │........ 13 lines omitted ........
-56 │                    /*setParentNodes*/ true,
-57 │                    sourceFile.scriptKind,
-58 │                ) end,
-59 │            body: function(cw: SourceFile) return (cw.statements[0] as ClassLikeDeclaration).members end,
-60 │        },〚
-61 │    〛]】》;
-62 │
-63 │    local parsedNodes = [];
-
+《Go: Block [1109, 9108)》
+ 32 │ * of class-context definitions.
+ 33 │ */
+ 34 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node>《
+ 35 │    // We're going to speculatively parse different kinds of contexts to see
+ 36 │    // which one makes the most sense, and grab the NodeArray from there. Do
+ 37 │    // this as lazily as possible.
+ 38 │    local nodeKinds =【 [
+ 39 │        {
+ 40 │            parse: function() return
+ 41 │                createSourceFile(
+ 42 │                    "__mapcode_content_nodes.tlua",
+ 43 │                    content,
+    │........ 13 lines omitted ........
+ 56 │                    /*setParentNodes*/ true,
+ 57 │                    sourceFile.scriptKind,
+ 58 │                ) end,
+ 59 │            body: function(cw: SourceFile) return (cw.statements[0] as ClassLikeDeclaration).members end,
+ 60 │        },〚
+ 61 │    〛]】;
+ 62 │
+ 63 │    local parsedNodes = [];
+ 64 │    for (local { parse, body } of nodeKinds) {
+ 65 │        local sourceFile = parse();
+ 66 │        local bod = body(sourceFile);
+    │........ 215 lines omitted ........
+281 │
+282 │function resetNodePositions(node: Mutable<Node>)
+283 │    node.pos = -1;
+284 │    node.end = -1;
+285 │    node.forEachChild(resetNodePositions);
+286 │end》
+287 │
 
 〚Positions: [2199, 2204]〛
 【TS: SourceFile [0, 9109)】
@@ -2495,7 +2521,7 @@
 
 〚Positions: [3913, 3913]〛
 【TS: IfStatement [3862, 4283)】
-《Go: IfStatement [3862, 9108)》
+《Go: IfStatement [3862, 4275)》
 115 │    focusLocations?: TextSpan[],
 116 │)
 117 │    local classOrInterface;《【
@@ -2507,21 +2533,32 @@
 123 │            findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),
 125 │                or(isClassLike, isInterfaceDeclaration),
-126 │            ) end);
+126 │            ) end》);
 127 │    }】
 128 │
 129 │    if (!classOrInterface) {
-130 │        // No class? don't insert.
-131 │        return;
-132 │    }
-    │........ 149 lines omitted ........
-281 │
-282 │function resetNodePositions(node: Mutable<Node>)
-283 │    node.pos = -1;
-284 │    node.end = -1;
-285 │    node.forEachChild(resetNodePositions);
-286 │end》
-287 │
+
+
+〚Positions: [3942, 3942]〛
+【TS: BinaryExpression [3915, 4013)】
+《Go: BinaryExpression [3915, 4012)》
+116 │)
+117 │    local classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {《【
+119 │        classOrInterface =〚 〛find(originalFile.statements, or(isClassLike, isInterfaceDeclaration)》)】;
+120 │    }
+121 │    else {
+
+
+〚Positions: [3972, 3972]〛
+【TS: CallExpression [3942, 4013)】
+《Go: CallExpression [3942, 4012)》
+117 │    local classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface =《【 find(originalFile.statements,〚 〛or(isClassLike, isInterfaceDeclaration)》)】;
+120 │    }
+121 │    else {
+
 
 〚Positions: [3973, 3974]〛
 【TS: Identifier [3972, 3975)】
@@ -2545,17 +2582,17 @@
 
 〚Positions: [3988, 3988]〛
 【TS: CallExpression [3972, 4012)】
-《Go: BinaryExpression [3976, 4011)》
+《Go: CallExpression [3942, 4012)》
 117 │    local classOrInterface;
 118 │    if (!focusLocations || !focusLocations.length) {
-119 │        classOrInterface = find(originalFile.statements,【 or(《isClassLike,〚 〛isInterfaceDeclaration》)】);
+119 │        classOrInterface =《 find(originalFile.statements,【 or(isClassLike,〚 〛isInterfaceDeclaration)】》);
 120 │    }
 121 │    else {
 
 
 〚Positions: [4020, 4024]〛
 【TS: IfStatement [3862, 4283)】
-《Go: IfStatement [3862, 9108)》
+《Go: IfStatement [3862, 4275)》
 115 │    focusLocations?: TextSpan[],
 116 │)
 117 │    local classOrInterface;《【
@@ -2567,25 +2604,31 @@
 123 │            findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),
 125 │                or(isClassLike, isInterfaceDeclaration),
-126 │            ) end);
+126 │            ) end》);
 127 │    }】
 128 │
 129 │    if (!classOrInterface) {
-130 │        // No class? don't insert.
-131 │        return;
-132 │    }
-    │........ 149 lines omitted ........
-281 │
-282 │function resetNodePositions(node: Mutable<Node>)
-283 │    node.pos = -1;
-284 │    node.end = -1;
-285 │    node.forEachChild(resetNodePositions);
-286 │end》
-287 │
+
+
+〚Positions: [4031, 4039]〛
+【TS: Block [4029, 4283)】
+《Go: Block [4029, 4271)》
+119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
+120 │    }
+121 │    else《【 {〚
+122 │        〛classOrInterface = forEach(focusLocations, function(location) return
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),
+125 │                or(isClassLike, isInterfaceDeclaration),
+126 │            )》 end);
+127 │    }】
+128 │
+129 │    if (!classOrInterface) {
+
 
 〚Positions: [4058, 4058]〛
 【TS: BinaryExpression [4031, 4101)】
-《Go: BinaryExpression [4031, 4276)》
+《Go: BinaryExpression [4031, 4271)》
 119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
 120 │    }
 121 │    else {《【
@@ -2593,36 +2636,36 @@
 123 │            findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),
 125 │                or(isClassLike, isInterfaceDeclaration),
-126 │            ) end)》;
+126 │            )》 end);
 127 │    }
 128 │
 
 
 〚Positions: [4082, 4082]〛
 【TS: CallExpression [4058, 4101)】
-《Go: CallExpression [4058, 4276)》
+《Go: CallExpression [4058, 4271)》
 120 │    }
 121 │    else {
 122 │        classOrInterface =《【 forEach(focusLocations,〚 〛function(location)】 return
 123 │            findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),
 125 │                or(isClassLike, isInterfaceDeclaration),
-126 │            ) end)》;
+126 │            )》 end);
 127 │    }
 128 │
 
 
 〚Positions: [4101, 4101]〛
 【TS: Block [4029, 4283)】
-《Go: FunctionExpression [4082, 4275)》
+《Go: FunctionExpression [4082, 4257)》
 119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
 120 │    }
 121 │    else【 {
 122 │        classOrInterface = forEach(focusLocations,《 function(location)〚 〛return
 123 │            findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),
-125 │                or(isClassLike, isInterfaceDeclaration),
-126 │            ) end》);
+125 │                or(isClassLike, isInterfaceDeclaration),》
+126 │            ) end);
 127 │    }】
 128 │
 129 │    if (!classOrInterface) {
@@ -2630,18 +2673,46 @@
 
 〚Positions: [4109, 4120]〛
 【TS: Block [4029, 4283)】
-《Go: Block [4101, 4275)》
+《Go: Block [4101, 4257)》
 119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
 120 │    }
 121 │    else【 {
 122 │        classOrInterface = forEach(focusLocations, function(location)《 return
 123 │〚            〛findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),
-125 │                or(isClassLike, isInterfaceDeclaration),
-126 │            ) end》);
+125 │                or(isClassLike, isInterfaceDeclaration),》
+126 │            ) end);
 127 │    }】
 128 │
 129 │    if (!classOrInterface) {
+
+
+〚Positions: [4134, 4150]〛
+【TS: CallExpression [4108, 4271)】
+《Go: CallExpression [4108, 4256)》
+120 │    }
+121 │    else {
+122 │        classOrInterface = forEach(focusLocations, function(location) return《【
+123 │            findAncestor(〚
+124 │                〛getTokenAtPosition(originalFile, location.start),
+125 │                or(isClassLike, isInterfaceDeclaration)》,
+126 │            )】 end);
+127 │    }
+128 │
+
+
+〚Positions: [4200, 4216]〛
+【TS: CallExpression [4108, 4271)】
+《Go: CallExpression [4108, 4256)》
+120 │    }
+121 │    else {
+122 │        classOrInterface = forEach(focusLocations, function(location) return《【
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),〚
+125 │                〛or(isClassLike, isInterfaceDeclaration)》,
+126 │            )】 end);
+127 │    }
+128 │
 
 
 〚Positions: [4217, 4218]〛
@@ -2668,22 +2739,42 @@
 
 〚Positions: [4232, 4232]〛
 【TS: CallExpression [4200, 4256)】
-《Go: BinaryExpression [4220, 4255)》
-122 │        classOrInterface = forEach(focusLocations, function(location) return
+《Go: CallExpression [4108, 4256)》
+120 │    }
+121 │    else {
+122 │        classOrInterface = forEach(focusLocations, function(location) return《
 123 │            findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),【
-125 │                or(《isClassLike,〚 〛isInterfaceDeclaration》)】,
+125 │                or(isClassLike,〚 〛isInterfaceDeclaration)】》,
 126 │            ) end);
 127 │    }
 
 
+〚Positions: [4257, 4269]〛
+【TS: CallExpression [4108, 4271)】
+《Go: CallExpression [4058, 4271)》
+120 │    }
+121 │    else {
+122 │        classOrInterface =《 forEach(focusLocations, function(location) return【
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),
+125 │                or(isClassLike, isInterfaceDeclaration),〚
+126 │            〛)】》 end);
+127 │    }
+128 │
+
+
 〚Positions: [4271, 4271]〛
 【TS: Block [4029, 4283)】
-《Go: Block [4101, 4275)》
+《Go: IfStatement [3862, 4275)》
+115 │    focusLocations?: TextSpan[],
+116 │)
+117 │    local classOrInterface;《
+118 │    if (!focusLocations || !focusLocations.length) {
 119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
 120 │    }
 121 │    else【 {
-122 │        classOrInterface = forEach(focusLocations, function(location)《 return
+122 │        classOrInterface = forEach(focusLocations, function(location) return
 123 │            findAncestor(
 124 │                getTokenAtPosition(originalFile, location.start),
 125 │                or(isClassLike, isInterfaceDeclaration),
@@ -2703,28 +2794,59 @@
 128 │
 
 
+〚Positions: [4277, 4281]〛
+【TS: Block [4029, 4283)】
+《Go: Block [3834, 9108)》
+114 │    changes: NodeArray<ClassElement> | NodeArray<TypeElement>,
+115 │    focusLocations?: TextSpan[],
+116 │)《
+117 │    local classOrInterface;
+118 │    if (!focusLocations || !focusLocations.length) {
+119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
+120 │    }
+121 │    else【 {
+122 │        classOrInterface = forEach(focusLocations, function(location) return
+123 │            findAncestor(
+124 │                getTokenAtPosition(originalFile, location.start),
+125 │                or(isClassLike, isInterfaceDeclaration),
+126 │            ) end);〚
+127 │    〛}】
+128 │
+129 │    if (!classOrInterface) {
+130 │        // No class? don't insert.
+131 │        return;
+132 │    }
+    │........ 149 lines omitted ........
+281 │
+282 │function resetNodePositions(node: Mutable<Node>)
+283 │    node.pos = -1;
+284 │    node.end = -1;
+285 │    node.forEachChild(resetNodePositions);
+286 │end》
+287 │
+
 〚Positions: [4283, 4288]〛
 【TS: SourceFile [0, 9109)】
-《Go: Block [4029, 9108)》
+《Go: Block [3834, 9108)》
   1 │【local ts = require("namespaces.ts");
   2 │local ChangeTracker = require("textChanges").ChangeTracker;
   3 │
   4 │/** @internal */
   5 │function mapCode(
   6 │    sourceFile: SourceFile,
-    │........ 110 lines omitted ........
-116 │)
+    │........ 105 lines omitted ........
+111 │function placeClassNodeGroup(
+112 │    originalFile: SourceFile,
+113 │    changeTracker: ChangeTracker,
+114 │    changes: NodeArray<ClassElement> | NodeArray<TypeElement>,
+115 │    focusLocations?: TextSpan[],
+116 │)《
 117 │    local classOrInterface;
 118 │    if (!focusLocations || !focusLocations.length) {
 119 │        classOrInterface = find(originalFile.statements, or(isClassLike, isInterfaceDeclaration));
 120 │    }
-121 │    else《 {
-122 │        classOrInterface = forEach(focusLocations, function(location) return
-123 │            findAncestor(
-124 │                getTokenAtPosition(originalFile, location.start),
-125 │                or(isClassLike, isInterfaceDeclaration),
-126 │            ) end);
-    │........ 155 lines omitted ........
+121 │    else {
+    │........ 160 lines omitted ........
 281 │
 282 │function resetNodePositions(node: Mutable<Node>)
 283 │    node.pos = -1;
@@ -3591,7 +3713,7 @@
 
 〚Positions: [5632, 5632]〛
 【TS: ForKeyword [5623, 5632)】
-《Go: ForOfStatement [5623, 9108)》
+《Go: ForOfStatement [5623, 6029)》
 171 │        );
 172 │        return;
 173 │    }《【
@@ -3601,15 +3723,10 @@
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return
 179 │                or(isBlock, isSourceFile)(block) &&
-180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-    │........ 101 lines omitted ........
-281 │
-282 │function resetNodePositions(node: Mutable<Node>)
-283 │    node.pos = -1;
-284 │    node.end = -1;
-285 │    node.forEachChild(resetNodePositions);
-286 │end》
-287 │
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end》,
+181 │        );
+182 │        if (scope) {
+
 
 〚Positions: [5634, 5639]〛
 【TS: Identifier [5634, 5639)】
@@ -3623,7 +3740,7 @@
 
 〚Positions: [5667, 5667]〛
 【TS: SourceFile [0, 9109)】
-《Go: Block [5634, 9108)》
+《Go: Block [5634, 6025)》
   1 │【local ts = require("namespaces.ts");
   2 │local ChangeTracker = require("textChanges").ChangeTracker;
   3 │
@@ -3641,15 +3758,46 @@
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return
 179 │                or(isBlock, isSourceFile)(block) &&
-180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-    │........ 101 lines omitted ........
-281 │
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end)》 end,
+181 │        );
+182 │        if (scope) {
+183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+    │........ 97 lines omitted ........
 282 │function resetNodePositions(node: Mutable<Node>)
 283 │    node.pos = -1;
 284 │    node.end = -1;
 285 │    node.forEachChild(resetNodePositions);
-286 │end》
+286 │end
 287 │】
+
+〚Positions: [5669, 5677]〛
+【TS: Block [5667, 6746)】
+《Go: Block [5667, 6025)》
+173 │    }
+174 │
+175 │    for (local location of focusLocations)《【 {〚
+176 │        〛local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            function(block): block is Block | SourceFile return
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end)》 end,
+181 │        );
+182 │        if (scope) {
+183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+    │........ 7 lines omitted ........
+192 │                    changes,
+193 │                );
+194 │                return;
+195 │            }
+196 │        }
+197 │    }】
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+
 
 〚Positions: [5678, 5683]〛
 【TS: Identifier [5669, 5683)】
@@ -3664,79 +3812,72 @@
 
 〚Positions: [5691, 5691]〛
 【TS: BinaryExpression [5683, 5824)】
-《Go: VariableDeclaration [5683, 6040)》
+《Go: VariableDeclaration [5683, 6025)》
 174 │
 175 │    for (local location of focusLocations) {
 176 │        local《【 scope =〚 〛findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile】 return
 179 │                or(isBlock, isSourceFile)(block) &&
-180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-181 │        )》;
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end)》 end,
+181 │        );
 182 │        if (scope) {
-183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
 
 
 〚Positions: [5705, 5717]〛
 【TS: CallExpression [5691, 5824)】
-《Go: CallExpression [5691, 6040)》
+《Go: CallExpression [5691, 5873)》
 174 │
 175 │    for (local location of focusLocations) {
 176 │        local scope =《【 findAncestor(〚
 177 │            〛getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile】 return
-179 │                or(isBlock, isSourceFile)(block) &&
+179 │                or(isBlock, isSourceFile)》(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-181 │        )》;
-182 │        if (scope) {
-183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+181 │        );
 
 
 〚Positions: [5767, 5779]〛
 【TS: CallExpression [5691, 5824)】
-《Go: CallExpression [5691, 6040)》
+《Go: CallExpression [5691, 5873)》
 174 │
 175 │    for (local location of focusLocations) {
 176 │        local scope =《【 findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),〚
 178 │            〛function(block): block is Block | SourceFile】 return
-179 │                or(isBlock, isSourceFile)(block) &&
+179 │                or(isBlock, isSourceFile)》(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-181 │        )》;
-182 │        if (scope) {
-183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+181 │        );
 
 
 〚Positions: [5796, 5796]〛
 【TS: FunctionExpression [5767, 5824)】
-《Go: FunctionExpression [5767, 6029)》
+《Go: FunctionExpression [5767, 5872)》
 175 │    for (local location of focusLocations) {
 176 │        local scope = findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),《【
 178 │            function(block):〚 〛block is Block | SourceFile】 return
-179 │                or(isBlock, isSourceFile)(block) &&
-180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end》,
+179 │                or(isBlock, isSourceFile》)(block) &&
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
 181 │        );
-182 │        if (scope) {
 
 
 〚Positions: [5832, 5847]〛
 【TS: Block [5667, 6746)】
-《Go: Block [5824, 6029)》
+《Go: Block [5824, 5872)》
 173 │    }
 174 │
 175 │    for (local location of focusLocations)【 {
 176 │        local scope = findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile《 return
-179 │〚                〛or(isBlock, isSourceFile)(block) &&
-180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end》,
+179 │〚                〛or(isBlock, isSourceFile》)(block) &&
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
 181 │        );
 182 │        if (scope) {
 183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
 184 │            if (start) {
-185 │                // Can't be undefined here, since we know we have at least one match.
-    │........ 7 lines omitted ........
+    │........ 8 lines omitted ........
 192 │                    changes,
 193 │                );
 194 │                return;
@@ -3771,22 +3912,24 @@
 
 〚Positions: [5859, 5859]〛
 【TS: CallExpression [5831, 5873)】
-《Go: BinaryExpression [5851, 5872)》
+《Go: BinaryExpression [5831, 5872)》
 176 │        local scope = findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),
-178 │            function(block): block is Block | SourceFile return【
-179 │                or(《isBlock,〚 〛isSourceFile》)】(block) &&
+178 │            function(block): block is Block | SourceFile return《【
+179 │                or(isBlock,〚 〛isSourceFile》)】(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
 181 │        );
 
 
 〚Positions: [5880, 5880]〛
 【TS: BinaryExpression [5831, 5941)】
-《Go: BinaryExpression [5850, 6025)》
-176 │        local scope = findAncestor(
+《Go: BinaryExpression [5691, 6025)》
+174 │
+175 │    for (local location of focusLocations) {
+176 │        local scope =《 findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return【
-179 │                or《(isBlock, isSourceFile)(block)〚 〛&&
+179 │                or(isBlock, isSourceFile)(block)〚 〛&&
 180 │                some(block.statements, function(origStmt)】 return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end)》 end,
 181 │        );
 182 │        if (scope) {
@@ -3794,11 +3937,13 @@
 
 〚Positions: [5883, 5899]〛
 【TS: BinaryExpression [5831, 5941)】
-《Go: BinaryExpression [5850, 6025)》
-176 │        local scope = findAncestor(
+《Go: BinaryExpression [5691, 6025)》
+174 │
+175 │    for (local location of focusLocations) {
+176 │        local scope =《 findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return【
-179 │                or《(isBlock, isSourceFile)(block) &&〚
+179 │                or(isBlock, isSourceFile)(block) &&〚
 180 │                〛some(block.statements, function(origStmt)】 return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end)》 end,
 181 │        );
 182 │        if (scope) {
@@ -3945,13 +4090,15 @@
 
 〚Positions: [6025, 6025]〛
 【TS: Block [5667, 6746)】
-《Go: Block [5824, 6029)》
-173 │    }
+《Go: ForOfStatement [5623, 6029)》
+171 │        );
+172 │        return;
+173 │    }《
 174 │
 175 │    for (local location of focusLocations)【 {
 176 │        local scope = findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),
-178 │            function(block): block is Block | SourceFile《 return
+178 │            function(block): block is Block | SourceFile return
 179 │                or(isBlock, isSourceFile)(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end)〚 〛end》,
 181 │        );
@@ -3982,22 +4129,25 @@
 
 〚Positions: [6030, 6038]〛
 【TS: Block [5667, 6746)】
-《Go: CallExpression [5691, 6040)》
+《Go: Block [5455, 9108)》
+164 │    focusLocations?: TextSpan[],
+165 │)
+166 │    if (!focusLocations?.length)《 {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+171 │        );
+172 │        return;
 173 │    }
 174 │
 175 │    for (local location of focusLocations)【 {
-176 │        local scope =《 findAncestor(
+176 │        local scope = findAncestor(
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return
 179 │                or(isBlock, isSourceFile)(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,〚
-181 │        〛)》;
-182 │        if (scope) {
-183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
-184 │            if (start) {
-185 │                // Can't be undefined here, since we know we have at least one match.
-186 │                local fin = findLast(scope.statements, function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end)!;
-    │........ 6 lines omitted ........
+    │........ 12 lines omitted ........
 192 │                    changes,
 193 │                );
 194 │                return;
@@ -4006,7 +4156,90 @@
 197 │    }】
 198 │
 199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+    │........ 79 lines omitted ........
+281 │
+282 │function resetNodePositions(node: Mutable<Node>)
+283 │    node.pos = -1;
+284 │    node.end = -1;
+285 │    node.forEachChild(resetNodePositions);
+286 │end》
+287 │
 
+〚Positions: [6041, 6049]〛
+【TS: Block [5667, 6746)】
+《Go: Block [5455, 9108)》
+164 │    focusLocations?: TextSpan[],
+165 │)
+166 │    if (!focusLocations?.length)《 {
+167 │        changeTracker.insertNodesAtEndOfFile(
+168 │            originalFile,
+169 │            changes,
+170 │            /*blankLineBetween*/ false,
+171 │        );
+172 │        return;
+173 │    }
+174 │
+175 │    for (local location of focusLocations)【 {
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            function(block): block is Block | SourceFile return
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
+    │........ 12 lines omitted ........
+192 │                    changes,
+193 │                );
+194 │                return;
+195 │            }
+196 │        }
+197 │    }】
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+    │........ 79 lines omitted ........
+281 │
+282 │function resetNodePositions(node: Mutable<Node>)
+283 │    node.pos = -1;
+284 │    node.end = -1;
+285 │    node.forEachChild(resetNodePositions);
+286 │end》
+287 │
+
+〚Positions: [6060, 6060]〛
+【TS: IfStatement [6041, 6740)】
+《Go: IfStatement [6041, 9108)》
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
+181 │        );《【
+182 │        if (scope)〚 〛{
+183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                local fin = findLast(scope.statements, function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end)!;
+    │........ 5 lines omitted ........
+191 │                    fin,
+192 │                    changes,
+193 │                );
+194 │                return;
+195 │            }
+196 │        }】
+197 │    }
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+    │........ 80 lines omitted ........
+281 │
+282 │function resetNodePositions(node: Mutable<Node>)
+283 │    node.pos = -1;
+284 │    node.end = -1;
+285 │    node.forEachChild(resetNodePositions);
+286 │end》
+287 │
 
 〚Positions: [6075, 6080]〛
 【TS: Identifier [6062, 6080)】
@@ -4277,28 +4510,67 @@
 188 │                changeTracker.replaceNodeRangeWithNodes(
 
 
+〚Positions: [6740, 6744]〛
+【TS: Block [5667, 6746)】
+《Go: Block [6060, 9108)》
+173 │    }
+174 │
+175 │    for (local location of focusLocations)【 {
+176 │        local scope = findAncestor(
+177 │            getTokenAtPosition(originalFile, location.start),
+178 │            function(block): block is Block | SourceFile return
+179 │                or(isBlock, isSourceFile)(block) &&
+180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
+181 │        );
+182 │        if (scope)《 {
+183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                local fin = findLast(scope.statements, function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end)!;
+187 │                forEach(changes, wipeNode);
+    │........ 5 lines omitted ........
+192 │                    changes,
+193 │                );
+194 │                return;
+195 │            }
+196 │        }〚
+197 │    〛}】
+198 │
+199 │    local scopeStatements: NodeArray<Statement> = originalFile.statements;
+200 │    for (local location of focusLocations) {
+201 │        local block = findAncestor(
+202 │            getTokenAtPosition(originalFile, location.start),
+    │........ 79 lines omitted ........
+281 │
+282 │function resetNodePositions(node: Mutable<Node>)
+283 │    node.pos = -1;
+284 │    node.end = -1;
+285 │    node.forEachChild(resetNodePositions);
+286 │end》
+287 │
+
 〚Positions: [6746, 6751]〛
 【TS: SourceFile [0, 9109)】
-《Go: Block [5634, 9108)》
+《Go: Block [6060, 9108)》
   1 │【local ts = require("namespaces.ts");
   2 │local ChangeTracker = require("textChanges").ChangeTracker;
   3 │
   4 │/** @internal */
   5 │function mapCode(
   6 │    sourceFile: SourceFile,
-    │........ 164 lines omitted ........
-170 │            /*blankLineBetween*/ false,
-171 │        );
-172 │        return;
-173 │    }
-174 │
-175 │    for (《local location of focusLocations) {
-176 │        local scope = findAncestor(
+    │........ 171 lines omitted ........
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return
 179 │                or(isBlock, isSourceFile)(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-    │........ 101 lines omitted ........
+181 │        );
+182 │        if (scope)《 {
+183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                local fin = findLast(scope.statements, function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end)!;
+187 │                forEach(changes, wipeNode);
+    │........ 94 lines omitted ........
 281 │
 282 │function resetNodePositions(node: Mutable<Node>)
 283 │    node.pos = -1;
@@ -4351,26 +4623,26 @@
 
 〚Positions: [6822, 6826]〛
 【TS: SourceFile [0, 9109)】
-《Go: Block [5634, 9108)》
+《Go: Block [6060, 9108)》
   1 │【local ts = require("namespaces.ts");
   2 │local ChangeTracker = require("textChanges").ChangeTracker;
   3 │
   4 │/** @internal */
   5 │function mapCode(
   6 │    sourceFile: SourceFile,
-    │........ 164 lines omitted ........
-170 │            /*blankLineBetween*/ false,
-171 │        );
-172 │        return;
-173 │    }
-174 │
-175 │    for (《local location of focusLocations) {
-176 │        local scope = findAncestor(
+    │........ 171 lines omitted ........
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return
 179 │                or(isBlock, isSourceFile)(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-    │........ 101 lines omitted ........
+181 │        );
+182 │        if (scope)《 {
+183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                local fin = findLast(scope.statements, function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end)!;
+187 │                forEach(changes, wipeNode);
+    │........ 94 lines omitted ........
 281 │
 282 │function resetNodePositions(node: Mutable<Node>)
 283 │    node.pos = -1;
@@ -4613,26 +4885,26 @@
 
 〚Positions: [7273, 7273]〛
 【TS: SourceFile [0, 9109)】
-《Go: Block [5634, 9108)》
+《Go: Block [6060, 9108)》
   1 │【local ts = require("namespaces.ts");
   2 │local ChangeTracker = require("textChanges").ChangeTracker;
   3 │
   4 │/** @internal */
   5 │function mapCode(
   6 │    sourceFile: SourceFile,
-    │........ 164 lines omitted ........
-170 │            /*blankLineBetween*/ false,
-171 │        );
-172 │        return;
-173 │    }
-174 │
-175 │    for (《local location of focusLocations) {
-176 │        local scope = findAncestor(
+    │........ 171 lines omitted ........
 177 │            getTokenAtPosition(originalFile, location.start),
 178 │            function(block): block is Block | SourceFile return
 179 │                or(isBlock, isSourceFile)(block) &&
 180 │                some(block.statements, function(origStmt) return changes.some(function(newStmt) return matchNode(newStmt, origStmt) end) end) end,
-    │........ 101 lines omitted ........
+181 │        );
+182 │        if (scope)《 {
+183 │            local start = scope.statements.find(function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end);
+184 │            if (start) {
+185 │                // Can't be undefined here, since we know we have at least one match.
+186 │                local fin = findLast(scope.statements, function(stmt) return changes.some(function(node) return matchNode(node, stmt) end) end)!;
+187 │                forEach(changes, wipeNode);
+    │........ 94 lines omitted ........
 281 │
 282 │function resetNodePositions(node: Mutable<Node>)
 283 │    node.pos = -1;

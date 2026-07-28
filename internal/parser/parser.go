@@ -3448,18 +3448,12 @@ func (p *Parser) nextTokenIsOpenBrace() bool {
 func (p *Parser) parseExpression() *ast.Expression {
 	// Expression[in]:
 	//      AssignmentExpression[in]
-	//      Expression[in] , AssignmentExpression[in]
-
-	pos := p.nodePos()
-	expr := p.parseAssignmentExpressionOrHigher()
-	for {
-		operatorToken := p.parseOptionalToken(ast.KindCommaToken)
-		if operatorToken == nil {
-			break
-		}
-		expr = p.makeBinaryExpression(expr, operatorToken, p.parseAssignmentExpressionOrHigher(), pos)
-	}
-	return expr
+	//
+	// Lua has no comma operator, so there is no `Expression , AssignmentExpression`
+	// production: a comma always separates values (see parseCommaValueList) or
+	// arguments, never sequences them. A comma reaching a single-expression
+	// position is left for the caller to reject.
+	return p.parseAssignmentExpressionOrHigher()
 }
 
 func (p *Parser) parseExpressionAllowIn() *ast.Expression {

@@ -6,7 +6,6 @@ objectSubtypeReduction.tlua(5,31): error TLUA1005: ')' expected.
 objectSubtypeReduction.tlua(5,32): error TLUA1128: Declaration or statement expected.
 objectSubtypeReduction.tlua(5,34): error TLUA1128: Declaration or statement expected.
 objectSubtypeReduction.tlua(5,35): error TLUA2304: Cannot find name 'k2'.
-objectSubtypeReduction.tlua(5,35): error TLUA2695: Left side of comma operator is unused and has no side effects.
 objectSubtypeReduction.tlua(5,39): error TLUA2304: Cannot find name 'v2'.
 objectSubtypeReduction.tlua(5,41): error TLUA1005: ';' expected.
 objectSubtypeReduction.tlua(5,42): error TLUA1128: Declaration or statement expected.
@@ -17,7 +16,7 @@ objectSubtypeReduction.tlua(5,85): error TLUA1128: Declaration or statement expe
 objectSubtypeReduction.tlua(6,1): error TLUA1128: Declaration or statement expected.
 
 
-==== objectSubtypeReduction.tlua (17 errors) ====
+==== objectSubtypeReduction.tlua (16 errors) ====
     // https://github.com/microsoft/typescript-go/issues/1164
     
     function foo(x?: table)
@@ -39,8 +38,6 @@ objectSubtypeReduction.tlua(6,1): error TLUA1128: Declaration or statement expec
 !!! error TLUA1128: Declaration or statement expected.
                                       ~~
 !!! error TLUA2304: Cannot find name 'k2'.
-                                      ~~
-!!! error TLUA2695: Left side of comma operator is unused and has no side effects.
                                           ~~
 !!! error TLUA2304: Cannot find name 'v2'.
                                             ~
