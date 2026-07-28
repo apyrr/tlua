@@ -1,9 +1,12 @@
-unusedMethodsInInterface.tlua(5,11): error TLUA6196: 'I1' is declared but never used.
+unusedMethodsInInterface.tlua(8,11): error TLUA6196: 'I1' is declared but never used.
 
 
 ==== unusedMethodsInInterface.tlua (1 errors) ====
     -- ported from tests/cases/compiler/unusedMethodsInInterface.ts
     -- dropped: @target: es2015 directive (tlua defaults to latest target)
+    -- compiler gap: tlua reports TLUA6196 on the top-level interface name `I1`; upstream reports
+    --   nothing, because a top-level interface is a global rather than a local. tlua resolves such
+    --   declarations globally but still unused-checks them. Same gap as the unusedTypeParameter* ports.
     
     
     interface I1 {

@@ -3,17 +3,20 @@
 === unusedMethodsInInterface.tlua ===
 -- ported from tests/cases/compiler/unusedMethodsInInterface.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- compiler gap: tlua reports TLUA6196 on the top-level interface name `I1`; upstream reports
+--   nothing, because a top-level interface is a global rather than a local. tlua resolves such
+--   declarations globally but still unused-checks them. Same gap as the unusedTypeParameter* ports.
 
 
 interface I1 {
 >I1 : Symbol(I1, Decl(unusedMethodsInInterface.tlua, 0, 0))
 
     f1()
->f1 : Symbol(I1.f1, Decl(unusedMethodsInInterface.tlua, 4, 14))
+>f1 : Symbol(I1.f1, Decl(unusedMethodsInInterface.tlua, 7, 14))
 
     f2(x: number, y: string)
->f2 : Symbol(I1.f2, Decl(unusedMethodsInInterface.tlua, 5, 8))
->x : Symbol(x, Decl(unusedMethodsInInterface.tlua, 6, 7))
->y : Symbol(y, Decl(unusedMethodsInInterface.tlua, 6, 17))
+>f2 : Symbol(I1.f2, Decl(unusedMethodsInInterface.tlua, 8, 8))
+>x : Symbol(x, Decl(unusedMethodsInInterface.tlua, 9, 7))
+>y : Symbol(y, Decl(unusedMethodsInInterface.tlua, 9, 17))
 }
 
