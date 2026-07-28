@@ -15,7 +15,7 @@ end
 panic({}, "one", "two")
 >panic({}, "one", "two") : void
 >panic : (val: string[], ...: string) => void
->{} : {}
+>{} : never[]
 >"one" : "one"
 >"two" : "two"
 

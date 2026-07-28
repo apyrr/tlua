@@ -1,0 +1,74 @@
+// @strict: true
+// @noEmit: true
+
+interface Schema<T> {
+    parse(self: self, value: unknown): T;
+}
+
+interface ObjectSchema<T> extends Schema<T> {}
+
+type Infer<T> = T extends Schema<infer O> ? O : never;
+type InferUnion<T extends Schema<unknown>[]> = Infer<T[number]>;
+
+declare object: <T extends table>() => ObjectSchema<T>;
+declare union: <T extends Schema<unknown>[]>(options: T) => Schema<InferUnion<T>>;
+
+local success = object<{
+    status: "success";
+    data: string;
+}>()
+
+local failed = object<{
+    status: "failed";
+    error: string;
+}>()
+
+-- A table constructor in an array context types as an array, so the inferred
+-- `T` has a number index signature and `T[number]` is the element union. Typed
+-- as a number-keyed record instead, the read would find no applicable index
+-- info and silently resolve to `unknown`.
+local result = union({ success, failed }):parse({})
+local s = result.status
+
+-- control cases from the report
+type A = Infer<typeof success>;
+local annotated: (typeof success | typeof failed)[] = { success, failed }
+local result2 = union(annotated):parse({})
+local s2 = result2.status
+
+-- An empty constructor is vacuously all-positional, so it takes the array path
+-- and its element type is never.
+local empty: number[] = {}
+local emptyInferred = union({})
+
+-- The last entry expands its pack: an array has no positional slots, so every
+-- value the pack can produce joins the element union.
+declare function two(): (string, string);
+local packed: string[] = { two() }
+
+function collect(...: string): string[]
+    return {...};
+end
+
+declare function pair(): (typeof success, typeof failed);
+local packInferred = union({ pair() }):parse({})
+local packStatus = packInferred.status
+
+-- A readonly array context takes the arm too; the mutable result is assignable.
+local ro: readonly number[] = { 1, 2 }
+
+-- Known non-goal: a `Table<number, V>`-shaped context keeps the object path.
+-- The number-keyed record already satisfies it relationally, and inference
+-- reaches the value type through inferFromIndexTypes rather than `T[number]`.
+declare function collectTable<T extends Table<number, string>>(t: T): T;
+local tabled = collectTable({ "a", "b" })
+local tabledValue: string = tabled[1]
+
+-- An OPTIONAL array context (`X[] | nil`) takes the arm through its array
+-- constituent: nil is not a numeric-keyed record, so the exclusion does not
+-- block, and a literal constructor is self-evidently not nil.
+local opt: number[] | nil = { 1, 2 }
+
+declare unionOpt: <T extends Schema<unknown>[]>(options: T | nil) => Schema<InferUnion<T>>;
+local viaOpt = unionOpt({ success, failed }):parse({})
+local optStatus = viaOpt.status

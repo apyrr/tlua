@@ -1,0 +1,213 @@
+//// [tests/cases/compiler/tableConstructorArrayContextInference2.tlua] ////
+
+=== tableConstructorArrayContextInference2.tlua ===
+interface Schema<T> {
+    parse(self: self, value: unknown): T;
+>parse : (self: self, value: unknown) => T
+>self : self
+>value : unknown
+}
+
+interface ObjectSchema<T> extends Schema<T> {}
+
+type Infer<T> = T extends Schema<infer O> ? O : never;
+>Infer : Infer<T>
+
+type InferUnion<T extends Schema<unknown>[]> = Infer<T[number]>;
+>InferUnion : InferUnion<T>
+
+declare object: <T extends table>() => ObjectSchema<T>;
+>object : <T extends table>() => ObjectSchema<T>
+
+declare union: <T extends Schema<unknown>[]>(options: T) => Schema<InferUnion<T>>;
+>union : <T extends Schema<unknown>[]>(options: T) => Schema<InferUnion<T>>
+>options : T
+
+local success = object<{
+>success : ObjectSchema<{ status: "success"; data: string; }>
+>object<{    status: "success";    data: string;}>() : ObjectSchema<{ status: "success"; data: string; }>
+>object : <T extends table>() => ObjectSchema<T>
+
+    status: "success";
+>status : "success"
+
+    data: string;
+>data : string
+
+}>()
+
+-- Heterogeneity is irrelevant: the homogeneous constructor takes the same path.
+local homo = union({ success, success }):parse({})
+>homo : { status: "success"; data: string; }
+>union({ success, success }):parse({}) : { status: "success"; data: string; }
+>union({ success, success }):parse : (self: Schema<{ status: "success"; data: string; }>, value: unknown) => { status: "success"; data: string; }
+>union({ success, success }) : Schema<{ status: "success"; data: string; }>
+>union : <T extends Schema<unknown>[]>(options: T) => Schema<InferUnion<T>>
+>{ success, success } : ObjectSchema<{ status: "success"; data: string; }>[]
+>success : any
+>success : any
+>parse : (self: Schema<{ status: "success"; data: string; }>, value: unknown) => { status: "success"; data: string; }
+>{} : {}
+
+local h = homo.status
+>h : "success"
+>homo.status : "success"
+>homo : { status: "success"; data: string; }
+>status : "success"
+
+-- A hand-written number-keyed record is NOT implicitly number-indexable: the
+-- array path is a rule about table CONSTRUCTORS in array contexts, not a
+-- read-side leniency. A post-widening record type is indistinguishable from
+-- this one, so making the read lenient would globally silence the error.
+type Lit = { 1: typeof success; 2: typeof success };
+>Lit : Lit
+>1 : ObjectSchema<{ status: "success"; data: string; }>
+>success : ObjectSchema<{ status: "success"; data: string; }>
+>2 : ObjectSchema<{ status: "success"; data: string; }>
+>success : ObjectSchema<{ status: "success"; data: string; }>
+
+type ByNumber = Lit[number]; -- error
+>ByNumber : any
+
+-- Per-UNION exclusion: a numeric-keyed record constituent keeps the object
+-- path, so the record wins and its excess-entry checking survives.
+type Rec = { 1: number; 2: string };
+>Rec : Rec
+>1 : number
+>2 : string
+
+local u: number[] | Rec = { 1, "two" }
+>u : Rec | number[]
+>{ 1, "two" } : { 1: number; 2: string; }
+
+local u2: number[] | Rec = { 1, "two", true } -- error
+>u2 : Rec | number[]
+>{ 1, "two", true } : { 1: number; 2: string; 3: boolean; }
+>true : true
+
+-- Elaboration stays per-entry against an array target: only the bad entry is
+-- blamed, not every entry that differs from the element union.
+local x: number[] = {1, "a"} -- error on "a" only
+>x : number[]
+>{1, "a"} : (string | number)[]
+
+-- A const assertion outranks the array conversion (contextual typing passes
+-- through `as const`): the constructor becomes a readonly tuple, so the
+-- asserted immutability survives generic inference.
+declare freeze: <T extends readonly number[]>(x: T) => T;
+>freeze : <T extends readonly number[]>(x: T) => T
+>x : T
+
+local frozen = freeze({ 1, 2 } as const)
+>frozen : readonly [number, number]
+>freeze({ 1, 2 } as const) : readonly [number, number]
+>freeze : <T extends readonly number[]>(x: T) => T
+>{ 1, 2 } as const : readonly [number, number]
+>{ 1, 2 } : readonly [number, number]
+
+frozen[1] = 5 -- error: read-only
+>frozen[1] = 5 : 5
+>frozen[1] : any
+>frozen : readonly [number, number]
+>1 : 1
+>5 : 5
+
+local roAnn: readonly number[] = { 1, 2 } as const
+>roAnn : readonly number[]
+>{ 1, 2 } as const : readonly [number, number]
+>{ 1, 2 } : readonly [number, number]
+
+-- A MUTABLE array context strips the readonly, checkArrayLiteral's rule.
+local mutAnn: number[] = { 1, 2 } as const
+>mutAnn : number[]
+>{ 1, 2 } as const : [number, number]
+>{ 1, 2 } : [number, number]
+
+mutAnn[1] = 5
+>mutAnn[1] = 5 : 5
+>mutAnn[1] : number | nil
+>mutAnn : number[]
+>1 : 1
+>5 : 5
+
+-- A homomorphic mapped context carries its type variable's constraint
+-- mutability: a mutable array constraint strips the const readonly, a
+-- readonly constraint keeps it.
+declare mapMut: <T extends number[]>(x: { [K in keyof T]: T[K] }) => T;
+>mapMut : <T extends number[]>(x: { [K in keyof T]: T[K]; }) => T
+>x : { [K in keyof T]: T[K]; }
+
+local mm = mapMut({ 1, 2 } as const)
+>mm : [1, 2]
+>mapMut({ 1, 2 } as const) : [1, 2]
+>mapMut : <T extends number[]>(x: { [K in keyof T]: T[K]; }) => T
+>{ 1, 2 } as const : [1, 2]
+>{ 1, 2 } : [1, 2]
+
+mm[1] = 1
+>mm[1] = 1 : 1
+>mm[1] : 1
+>mm : [1, 2]
+>1 : 1
+>1 : 1
+
+declare mapRo: <T extends readonly number[]>(x: { [K in keyof T]: T[K] }) => T;
+>mapRo : <T extends readonly number[]>(x: { [K in keyof T]: T[K]; }) => T
+>x : { [K in keyof T]: T[K]; }
+
+local mr = mapRo({ 1, 2 } as const)
+>mr : readonly [1, 2]
+>mapRo({ 1, 2 } as const) : readonly [1, 2]
+>mapRo : <T extends readonly number[]>(x: { [K in keyof T]: T[K]; }) => T
+>{ 1, 2 } as const : readonly [1, 2]
+>{ 1, 2 } : readonly [1, 2]
+
+mr[1] = 1 -- error: read-only
+>mr[1] = 1 : 1
+>mr[1] : any
+>mr : readonly [1, 2]
+>1 : 1
+>1 : 1
+
+-- `-readonly` makes the mapped target explicitly mutable, overriding the
+-- readonly constraint.
+declare mapStrip: <T extends readonly number[]>(x: { -readonly [K in keyof T]: T[K] }) => T;
+>mapStrip : <T extends readonly number[]>(x: { -readonly [K in keyof T]: T[K]; }) => T
+>x : { -readonly [K in keyof T]: T[K]; }
+
+local ms = mapStrip({ 1, 2 } as const)
+>ms : [1, 2]
+>mapStrip({ 1, 2 } as const) : [1, 2]
+>mapStrip : <T extends readonly number[]>(x: { -readonly [K in keyof T]: T[K]; }) => T
+>{ 1, 2 } as const : [1, 2]
+>{ 1, 2 } : [1, 2]
+
+ms[1] = 1
+>ms[1] = 1 : 1
+>ms[1] : 1
+>ms : [1, 2]
+>1 : 1
+>1 : 1
+
+-- An augmented constructor is a module table: dotted function declarations
+-- merge into it, so it keeps the object path even in array contexts.
+local M = { 1, 2 } satisfies number[]
+>M : { 1: number; 2: number; helper(): number; }
+>{ 1, 2 } satisfies number[] : { 1: number; 2: number; helper(): number; }
+>{ 1, 2 } : { 1: number; 2: number; helper(): number; }
+
+function M.helper(): number
+>M : { 1: number; 2: number; helper(): number; }
+>helper : () => number
+
+  return 1
+>1 : 1
+
+end
+local helped = M.helper()
+>helped : number
+>M.helper() : number
+>M.helper : () => number
+>M : { 1: number; 2: number; helper(): number; }
+>helper : () => number
+

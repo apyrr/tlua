@@ -9427,6 +9427,12 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	var propertiesArray []*ast.Symbol
 	c.pushCachedContextualType(node)
 	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
+	allPositional := core.Every(node.Properties(), ast.IsTableEntry)
+	// An augmentation arm's constructor is a module table: dotted function
+	// declarations merge into it below (the Exports merge), and the tuple and
+	// array conversions would discard those members. Augmented literals keep
+	// the object path regardless of context.
+	augmented := mergedLiteralSymbol != nil && len(mergedLiteralSymbol.Exports) != 0
 	// An all-positional table constructor in a tuple context types as a fresh
 	// tuple, so fixed, optional and rest elements check positionally instead of
 	// property-wise against an anonymous number-keyed object (which could not
@@ -9437,12 +9443,42 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	// per-member: when a union mixes a tuple with a tuple-like interface, the
 	// object path wins, because a fresh tuple source would satisfy the open
 	// interface member without any excess-entry check.
-	if contextualType != nil && core.Every(node.Properties(), ast.IsTableEntry) && someType(contextualType, func(t *Type) bool {
-		return isTupleType(t) || c.isHomomorphicMappedTupleContext(t)
-	}) && !someType(contextualType, func(t *Type) bool {
-		return !isTupleType(t) && c.hasNumberKeyProperty(t)
-	}) {
+	//
+	// CheckModeForceTuple is error elaboration asking for positional structure
+	// regardless of context, so it forces the same conversion.
+	if allPositional && !augmented && (checkMode&CheckModeForceTuple != 0 ||
+		contextualType != nil && someType(contextualType, func(t *Type) bool {
+			return isTupleType(t) || c.isHomomorphicMappedTupleContext(t)
+		}) && !someType(contextualType, func(t *Type) bool {
+			return !isTupleType(t) && c.hasNumberKeyProperty(t)
+		})) {
 		result := c.checkTableConstructorAsTuple(node, checkMode, contextualType)
+		c.popContextualType()
+		return result
+	}
+	// An all-positional constructor in an ARRAY context types as an array
+	// literal rather than a number-keyed record: inference for a parameter
+	// constrained `T extends X[]` reads the element type back through
+	// `T[number]`, which positional properties cannot answer -- they carry no
+	// index info, so the access resolves to `unknown`. The exclusion mirrors
+	// the tuple gate's per-UNION rule: a numeric-keyed record constituent keeps
+	// the object path and its excess-entry checking. A `Table<number, V>`
+	// context stays on the object path too -- the record already satisfies it
+	// relationally, and inference reaches it through inferFromIndexTypes.
+	if allPositional && !augmented && contextualType != nil && someType(contextualType, c.isArrayType) &&
+		!someType(contextualType, func(t *Type) bool {
+			return !c.isArrayType(t) && c.hasNumberKeyProperty(t)
+		}) {
+		// A const assertion outranks the array conversion -- contextual typing
+		// passes through `as const`, so both can apply at once. The constructor
+		// becomes a tuple, readonly unless the context itself is a mutable
+		// array: checkArrayLiteral's precedence.
+		var result *Type
+		if c.isConstContext(node) {
+			result = c.checkTableConstructorAsTuple(node, checkMode, contextualType)
+		} else {
+			result = c.checkTableConstructorAsArray(node, checkMode)
+		}
 		c.popContextualType()
 		return result
 	}
@@ -10020,8 +10056,50 @@ func (c *Checker) checkTableConstructorAsTuple(node *ast.Node, checkMode CheckMo
 		elementTypes = append(elementTypes, t)
 		elementInfos = append(elementInfos, TupleElementInfo{flags: ElementFlagsRequired})
 	}
-	readonly := c.isConstContext(node) && !someType(contextualType, c.isMutableArrayLikeType)
+	// Elaboration forces this path with no contextual type at all, so the
+	// mutable-context probe has to tolerate one being absent.
+	readonly := c.isConstContext(node) && !(contextualType != nil && someType(contextualType, c.isMutableArrayLikeType))
 	return c.createArrayLiteralType(c.createTupleTypeEx(elementTypes, elementInfos, readonly))
+}
+
+// checkTableConstructorAsArray types an all-positional table constructor in an
+// array context as an array literal. Unlike the object path's number-keyed
+// properties, an array carries a number index signature, so `T[number]` on an
+// inferred `T extends X[]` resolves to the element union instead of `unknown`.
+// The last entry expands its pack, the same tail rule the tuple and object
+// paths apply.
+func (c *Checker) checkTableConstructorAsArray(node *ast.Node, checkMode CheckMode) *Type {
+	entries := node.Properties()
+	elementTypes := make([]*Type, 0, len(entries))
+	for i, entry := range entries {
+		t := c.checkTableEntry(entry, checkMode)
+		// Same intra-expression inference rule as the object path's
+		// registerInferenceSite.
+		if c.isIntraExpressionInferenceCandidate(checkMode, entry) {
+			c.addIntraExpressionInferenceSite(c.getInferenceContext(node), entry.Expression(), t)
+		}
+		if i == len(entries)-1 {
+			if packType, kind := c.classifyTailPack(entry.Expression(), checkMode); kind != tailPackNone {
+				if kind == tailPackSpread {
+					// An array has no positional slots to splice into, so the
+					// pack contributes the union of every value it can produce.
+					elementTypes = append(elementTypes, c.getPackValuesFromOffset(packType, 0))
+				}
+				// Both pack kinds consume the entry: spread was unioned in
+				// above, void contributes zero values.
+				continue
+			}
+		}
+		elementTypes = append(elementTypes, t)
+	}
+	// implicitNeverType, not neverType: isEmptyArrayLiteralType keys off it, so
+	// an empty constructor relates leniently.
+	elementType := c.implicitNeverType
+	if len(elementTypes) != 0 {
+		elementType = c.getUnionTypeEx(elementTypes, UnionReductionSubtype, nil, nil)
+	}
+	// Always mutable: const contexts route to the tuple arm before this runs.
+	return c.createArrayLiteralType(c.createArrayType(elementType))
 }
 
 // checkTableEntry types a Lua positional table entry: the entry's type is its
@@ -19240,9 +19318,33 @@ func (c *Checker) isLuaLengthOperandType(t *Type) bool {
 }
 
 func (c *Checker) isMutableArrayLikeType(t *Type) bool {
-	// A type is mutable-array-like if it is a reference to the global Array type, or if it is not the
-	// any, undefined or null type and if it is assignable to Array<any>
-	return c.isMutableArrayOrTuple(t) || t.flags&(TypeFlagsAny|TypeFlagsNullable) == 0 && c.isTypeAssignableTo(t, c.anyArrayType)
+	// Upstream also accepted anything assignable to Array<any>, a stand-in for
+	// "array-ish with mutating methods". tlua arrays are member-less
+	// number-index tables, so that probe is vacuously true of readonly arrays
+	// and records alike and would strip every const assertion. Mutability only
+	// matters where the relater enforces it -- readonly sources against
+	// mutable array/tuple TARGETS (tryElaborateArrayLikeErrors) -- so those
+	// are exactly the contexts that need the mutable copy.
+	//
+	// A homomorphic mapped context stands in for its type variable's array
+	// constraint during array-constrained inference: `+readonly` makes the
+	// target readonly, `-readonly` makes it explicitly mutable, and with
+	// neither the mutability is the constraint's.
+	if c.isHomomorphicMappedTupleContext(t) {
+		modifiers := getMappedTypeModifiers(t)
+		if modifiers&MappedTypeModifiersIncludeReadonly == 0 {
+			if modifiers&MappedTypeModifiersExcludeReadonly != 0 {
+				return true
+			}
+			if tv := c.getHomomorphicTypeVariable(core.OrElse(t.AsMappedType().target, t)); tv != nil {
+				if constraint := c.getBaseConstraintOfType(tv); constraint != nil {
+					return someType(constraint, c.isMutableArrayLikeType)
+				}
+			}
+		}
+		return false
+	}
+	return c.isMutableArrayOrTuple(t)
 }
 
 func (c *Checker) isEmptyArrayLiteralType(t *Type) bool {

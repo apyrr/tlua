@@ -7,7 +7,7 @@
 -- complete. The synthetic `T[]` target must already exist by then.
 local names: string[] = {"apple"}
 >names : string[]
->{"apple"} : { 1: string; }
+>{"apple"} : string[]
 
 local key = names[1]
 >key : string | nil

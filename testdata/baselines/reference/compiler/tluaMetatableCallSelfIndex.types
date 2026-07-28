@@ -28,7 +28,7 @@ function Tx.query(self: Transaction, sql: string): table[]
 >sql : string
 
   return {};
->{} : {}
+>{} : never[]
 
 end
 

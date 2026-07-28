@@ -414,6 +414,18 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 	if target.flags&(TypeFlagsPrimitive|TypeFlagsNever) != 0 {
 		return false
 	}
+	// An array-typed source answers every index with the whole element union,
+	// so each entry would be blamed for every other entry's type. Re-check
+	// positionally to recover per-entry types. Object-path sources already have
+	// per-index properties and skip this.
+	if !c.isTupleLikeType(source) && core.Every(node.Properties(), ast.IsTableEntry) {
+		c.pushContextualType(node, target, false /*isCache*/)
+		source = c.checkObjectLiteral(node, CheckModeContextual|CheckModeForceTuple)
+		c.popContextualType()
+		if !c.isTupleLikeType(source) {
+			return false
+		}
+	}
 	reportedError := false
 	for _, prop := range node.Properties() {
 		if ast.IsTableEntry(prop) {

@@ -25,7 +25,7 @@ local executeSql = suspend function<T extends table>(query: string): T[]
 >query : string
 
   return {};
->{} : {}
+>{} : never[]
 
 end;
 

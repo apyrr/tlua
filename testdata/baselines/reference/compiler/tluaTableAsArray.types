@@ -5,7 +5,7 @@
 // constructor satisfies it and is indexed element-wise.
 local xs: number[] = {1, 2, 3};
 >xs : number[]
->{1, 2, 3} : { 1: number; 2: number; 3: number; }
+>{1, 2, 3} : number[]
 
 local first: number | nil = xs[1];
 >first : number | nil
@@ -23,7 +23,7 @@ function firstOf(...: string): string
 
   local args: string[] = {...};
 >args : string[]
->{...} : { [x: number]: string; }
+>{...} : string[]
 >... : string | nil
 
   return args[1] or "";
@@ -50,7 +50,7 @@ function pickFirst<T>(...: T): T | nil
 
   local items: T[] = {...};
 >items : T[]
->{...} : { [x: number]: T; }
+>{...} : T[]
 >... : T | nil
 
   return items[1];
@@ -70,7 +70,7 @@ local n: number | nil = pickFirst(1, 2, 3);
 // readonly T[] is the readonly number-key table.
 local ys: readonly number[] = {10, 20};
 >ys : readonly number[]
->{10, 20} : { 1: number; 2: number; }
+>{10, 20} : number[]
 
 // The global Array survives only as an inert, separately-nameable type: it is
 // distinct from T[], so a table is not assignable to it (missing length/methods).
@@ -84,7 +84,7 @@ type J = J[];
 
 local j: J = {};
 >j : J
->{} : {}
+>{} : never[]
 
 local es = {first, f1, n, ys, j};
 >es : { 1: number | nil; 2: string; 3: number | nil; 4: readonly number[]; 5: J; }

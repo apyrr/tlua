@@ -1,0 +1,98 @@
+tableConstructorArrayContextInference2.tlua(27,21): error TLUA2537: Type 'Lit' has no matching index signature for type 'number'.
+tableConstructorArrayContextInference2.tlua(33,7): error TLUA2322: Type '{ 1: number; 2: string; 3: boolean; }' is not assignable to type 'Rec | number[]'.
+  Types of property '3' are incompatible.
+    Type 'boolean' is not assignable to type 'number'.
+tableConstructorArrayContextInference2.tlua(37,25): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tableConstructorArrayContextInference2.tlua(44,8): error TLUA2540: Cannot assign to '1' because it is a read-only property.
+tableConstructorArrayContextInference2.tlua(61,4): error TLUA2540: Cannot assign to '1' because it is a read-only property.
+
+
+==== tableConstructorArrayContextInference2.tlua (5 errors) ====
+    interface Schema<T> {
+        parse(self: self, value: unknown): T;
+    }
+    
+    interface ObjectSchema<T> extends Schema<T> {}
+    
+    type Infer<T> = T extends Schema<infer O> ? O : never;
+    type InferUnion<T extends Schema<unknown>[]> = Infer<T[number]>;
+    
+    declare object: <T extends table>() => ObjectSchema<T>;
+    declare union: <T extends Schema<unknown>[]>(options: T) => Schema<InferUnion<T>>;
+    
+    local success = object<{
+        status: "success";
+        data: string;
+    }>()
+    
+    -- Heterogeneity is irrelevant: the homogeneous constructor takes the same path.
+    local homo = union({ success, success }):parse({})
+    local h = homo.status
+    
+    -- A hand-written number-keyed record is NOT implicitly number-indexable: the
+    -- array path is a rule about table CONSTRUCTORS in array contexts, not a
+    -- read-side leniency. A post-widening record type is indistinguishable from
+    -- this one, so making the read lenient would globally silence the error.
+    type Lit = { 1: typeof success; 2: typeof success };
+    type ByNumber = Lit[number]; -- error
+                        ~~~~~~
+!!! error TLUA2537: Type 'Lit' has no matching index signature for type 'number'.
+    
+    -- Per-UNION exclusion: a numeric-keyed record constituent keeps the object
+    -- path, so the record wins and its excess-entry checking survives.
+    type Rec = { 1: number; 2: string };
+    local u: number[] | Rec = { 1, "two" }
+    local u2: number[] | Rec = { 1, "two", true } -- error
+          ~~
+!!! error TLUA2322: Type '{ 1: number; 2: string; 3: boolean; }' is not assignable to type 'Rec | number[]'.
+!!! error TLUA2322:   Types of property '3' are incompatible.
+!!! error TLUA2322:     Type 'boolean' is not assignable to type 'number'.
+    
+    -- Elaboration stays per-entry against an array target: only the bad entry is
+    -- blamed, not every entry that differs from the element union.
+    local x: number[] = {1, "a"} -- error on "a" only
+                            ~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    
+    -- A const assertion outranks the array conversion (contextual typing passes
+    -- through `as const`): the constructor becomes a readonly tuple, so the
+    -- asserted immutability survives generic inference.
+    declare freeze: <T extends readonly number[]>(x: T) => T;
+    local frozen = freeze({ 1, 2 } as const)
+    frozen[1] = 5 -- error: read-only
+           ~
+!!! error TLUA2540: Cannot assign to '1' because it is a read-only property.
+    
+    local roAnn: readonly number[] = { 1, 2 } as const
+    
+    -- A MUTABLE array context strips the readonly, checkArrayLiteral's rule.
+    local mutAnn: number[] = { 1, 2 } as const
+    mutAnn[1] = 5
+    
+    -- A homomorphic mapped context carries its type variable's constraint
+    -- mutability: a mutable array constraint strips the const readonly, a
+    -- readonly constraint keeps it.
+    declare mapMut: <T extends number[]>(x: { [K in keyof T]: T[K] }) => T;
+    local mm = mapMut({ 1, 2 } as const)
+    mm[1] = 1
+    
+    declare mapRo: <T extends readonly number[]>(x: { [K in keyof T]: T[K] }) => T;
+    local mr = mapRo({ 1, 2 } as const)
+    mr[1] = 1 -- error: read-only
+       ~
+!!! error TLUA2540: Cannot assign to '1' because it is a read-only property.
+    
+    -- `-readonly` makes the mapped target explicitly mutable, overriding the
+    -- readonly constraint.
+    declare mapStrip: <T extends readonly number[]>(x: { -readonly [K in keyof T]: T[K] }) => T;
+    local ms = mapStrip({ 1, 2 } as const)
+    ms[1] = 1
+    
+    -- An augmented constructor is a module table: dotted function declarations
+    -- merge into it, so it keeps the object path even in array contexts.
+    local M = { 1, 2 } satisfies number[]
+    function M.helper(): number
+      return 1
+    end
+    local helped = M.helper()
+    

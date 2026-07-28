@@ -10,7 +10,7 @@ local execute = suspend function(query: string): table[]
 >query : string
 
   return {};
->{} : {}
+>{} : never[]
 
 end;
 

@@ -38,8 +38,8 @@ g({ {} } as [void[]]) -- U: {}
 >g({ {} } as [void[]]) : unknown
 >g : <T, U>(f: B<T, U>) => U
 >{ {} } as [void[]] : [void[]]
->{ {} } : [{}]
->{} : {}
+>{ {} } : [never[]]
+>{} : never[]
 
 type C<R, S> = [R[]] | [R[], S]
 >C : C<R, S>
@@ -52,8 +52,8 @@ h({ {} } as [void[]]) -- U: {}
 >h({ {} } as [void[]]) : unknown
 >h : <T, U>(f: C<T, U>) => U
 >{ {} } as [void[]] : [void[]]
->{ {} } : [{}]
->{} : {}
+>{ {} } : [never[]]
+>{} : never[]
 
 -- Repro from #22562
 
@@ -68,13 +68,13 @@ h2({ {} } as [never[]]) -- T: never
 >h2({ {} } as [never[]]) : never
 >h2 : <T>(f: C2<T>) => T
 >{ {} } as [never[]] : [never[]]
->{ {} } : [{}]
->{} : {}
+>{ {} } : [never[]]
+>{} : never[]
 
 h2({ {} } as [void[]]) -- T: void
 >h2({ {} } as [void[]]) : void
 >h2 : <T>(f: C2<T>) => T
 >{ {} } as [void[]] : [void[]]
->{ {} } : [{}]
->{} : {}
+>{ {} } : [never[]]
+>{} : never[]
 

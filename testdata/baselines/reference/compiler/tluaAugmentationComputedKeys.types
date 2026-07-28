@@ -8,7 +8,7 @@
 -- crash checker initialization.
 local names: string[] = {"apple"}
 >names : string[]
->{"apple"} : { 1: string; }
+>{"apple"} : string[]
 
 local akey = names[1]
 >akey : string | nil

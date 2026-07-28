@@ -22,7 +22,7 @@ function foo(bar: any): { a: any, b?: any }[]
 >b : any
 
     return { { a = "" } }
->{ { a = "" } } : { 1: { a: string; }; }
+>{ { a = "" } } : { a: string; }[]
 >{ a = "" } : { a: string; }
 >a : string
 >"" : ""

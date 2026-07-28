@@ -87,7 +87,7 @@ function join(sep: string, ...: string): string
 
   local parts: string[] = {...};
 >parts : string[]
->{...} : { [x: number]: string; }
+>{...} : string[]
 >... : string | nil
 
   return parts[1] or "";

@@ -1512,7 +1512,7 @@ local assertedMemberTargetUse: boolean = assertedMemberTargetRoot.member;
 
 local assertedElementTarget: number[] = {};
 >assertedElementTarget : number[]
->{} : {}
+>{} : never[]
 
 assertedElementTarget[1]!, assertedElementTargetSide = "ignored", 0;
 >assertedElementTarget[1]!, assertedElementTargetSide = "ignored", 0 : string
@@ -1751,7 +1751,7 @@ local invalidParenthesizedUse: string = invalidParenthesized;
 
 local invalidWrappedArray: number[] = {};
 >invalidWrappedArray : number[]
->{} : {}
+>{} : never[]
 
 (invalidWrappedArray[1])!, invalidWrappedArraySide = "ignored", 0;
 >(invalidWrappedArray[1])!, invalidWrappedArraySide = "ignored", 0 : string
