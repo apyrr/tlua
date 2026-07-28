@@ -133,7 +133,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_an_index_signature, scanner.TokenToString(modifier.Kind))
 			}
 		}
-		if modifier.Kind != ast.KindInKeyword && modifier.Kind != ast.KindOutKeyword {
+		if modifier.Kind != ast.KindInKeyword && modifier.Kind != ast.KindOutKeyword && modifier.Kind != ast.KindConstKeyword {
 			if node.Kind == ast.KindTypeParameter {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_type_parameter, scanner.TokenToString(modifier.Kind))
 			}
@@ -284,6 +284,23 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "in", "out")
 			}
 			flags |= inOutFlag
+		case ast.KindConstKeyword:
+			// The parser synthesizes const modifiers only on type parameters,
+			// so unlike upstream there is no class-member arm here. Const makes
+			// sense only where inference happens: value signatures, not
+			// interfaces or type aliases.
+			parent := node.Parent
+			if node.Kind == ast.KindTypeParameter && parent != nil &&
+				!(ast.IsFunctionLikeDeclaration(parent) || ast.IsFunctionTypeNode(parent) ||
+					ast.IsCallSignatureDeclaration(parent) || ast.IsMethodSignatureDeclaration(parent)) {
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_can_only_appear_on_a_type_parameter_of_a_function_method_or_class, scanner.TokenToString(modifier.Kind))
+			}
+			// A pack binds a whole value pack, not a single table or literal;
+			// none of the const inference rules apply to one.
+			if node.Kind == ast.KindTypeParameter && ast.IsPackTypeParameterDeclaration(node) {
+				return c.grammarErrorOnNode(modifier, diagnostics.A_const_modifier_cannot_appear_on_a_generic_pack_parameter)
+			}
+			flags |= ast.ModifierFlagsConst
 		}
 	}
 

@@ -7835,7 +7835,7 @@ func (c *Checker) assignContextualParameterTypes(sig *Signature, context *Signat
 		parameter := core.LastOrNil(sig.parameters)
 		if parameter.ValueDeclaration != nil && parameter.ValueDeclaration.Type() == nil ||
 			parameter.ValueDeclaration == nil && parameter.CheckFlags&ast.CheckFlagsDeferredType != 0 {
-			contextualParameterType := c.getRestTypeAtPosition(context, length)
+			contextualParameterType := c.getRestTypeAtPosition(context, length, false /*readonly*/)
 			c.assignParameterType(parameter, contextualParameterType)
 		}
 	}
@@ -9955,9 +9955,16 @@ func (c *Checker) hasDefaultValue(node *ast.Node) bool {
 
 func (c *Checker) isConstContext(node *ast.Node) bool {
 	parent := node.Parent
+	// The contextual-type leg does a full getContextualType walk, which can
+	// resolve the containing call's signature. That is safe only because the
+	// metatable pairing's context-free reads push a sentinel over their
+	// argument (getLuaMetatableArgumentType) -- the walk terminates there
+	// instead of re-entering the pairing -- and getResolvedSignature asserts
+	// the boundary holds.
 	return ast.IsConstAssertion(parent) ||
+		c.isValidConstAssertionArgument(node) && c.isConstTypeVariable(c.getContextualType(node, ContextFlagsNone), 0) ||
 		(ast.IsParenthesizedExpression(parent) || ast.IsArrayLiteralExpression(parent)) && c.isConstContext(parent) ||
-		(ast.IsPropertyAssignment(parent) || ast.IsTemplateSpan(parent)) && c.isConstContext(parent.Parent)
+		(ast.IsPropertyAssignment(parent) || ast.IsTableEntry(parent) || ast.IsTemplateSpan(parent)) && c.isConstContext(parent.Parent)
 }
 
 func (c *Checker) isValidConstAssertionArgument(node *ast.Node) bool {
@@ -9971,6 +9978,39 @@ func (c *Checker) isValidConstAssertionArgument(node *ast.Node) bool {
 		op := node.AsPrefixUnaryExpression().Operator
 		arg := node.AsPrefixUnaryExpression().Operand
 		return op == ast.KindMinusToken && arg.Kind == ast.KindNumericLiteral || op == ast.KindPlusToken && arg.Kind == ast.KindNumericLiteral
+	}
+	return false
+}
+
+func (c *Checker) isConstTypeVariable(t *Type, depth int) bool {
+	if depth >= 5 || t == nil {
+		return false
+	}
+	switch {
+	case t.flags&TypeFlagsTypeParameter != 0:
+		// Pack parameters are excluded even during error recovery (the grammar
+		// rejects `<const ...A>`): a readonly-tuple candidate would fall out of
+		// the pack expansion machinery as a silent any.
+		return t.symbol != nil && core.Some(t.symbol.Declarations, func(d *ast.Node) bool {
+			return !ast.IsPackTypeParameterDeclaration(d) && ast.HasSyntacticModifier(d, ast.ModifierFlagsConst)
+		})
+	case t.flags&TypeFlagsUnionOrIntersection != 0:
+		return core.Some(t.Types(), func(s *Type) bool { return c.isConstTypeVariable(s, depth) })
+	case t.flags&TypeFlagsIndexedAccess != 0:
+		return c.isConstTypeVariable(t.AsIndexedAccessType().objectType, depth+1)
+	case t.flags&TypeFlagsConditional != 0:
+		return c.isConstTypeVariable(c.getConstraintOfConditionalType(t), depth+1)
+	case t.flags&TypeFlagsSubstitution != 0:
+		return c.isConstTypeVariable(t.AsSubstitutionType().baseType, depth)
+	case t.objectFlags&ObjectFlagsMapped != 0:
+		typeVariable := c.getHomomorphicTypeVariable(t)
+		return typeVariable != nil && c.isConstTypeVariable(typeVariable, depth)
+	case c.isGenericTupleType(t):
+		for i, s := range c.getElementTypes(t) {
+			if t.TargetTupleType().elementInfos[i].flags&ElementFlagsVariadic != 0 && c.isConstTypeVariable(s, depth) {
+				return true
+			}
+		}
 	}
 	return false
 }
@@ -16050,7 +16090,7 @@ func (c *Checker) getParameterTypeOfFullSignature(node *ast.Node, parameter *ast
 	if signature := c.getSignatureOfFullSignatureType(node); signature != nil {
 		pos := slices.Index(node.Parameters(), parameter)
 		if parameter.AsParameterDeclaration().DotDotDotToken != nil {
-			return c.getRestTypeAtPosition(signature, pos)
+			return c.getRestTypeAtPosition(signature, pos, false /*readonly*/)
 		} else {
 			return c.getTypeAtPosition(signature, pos)
 		}
@@ -25156,7 +25196,7 @@ func (c *Checker) getContextuallyTypedParameterType(parameter *ast.Node) *Type {
 	if contextualSignature != nil {
 		index := slices.Index(fn.Parameters(), parameter) - core.IfElse(ast.GetThisParameter(fn) != nil, 1, 0)
 		if hasDotDotDotToken(parameter) && core.LastOrNil(fn.Parameters()) == parameter {
-			return c.getRestTypeAtPosition(contextualSignature, index)
+			return c.getRestTypeAtPosition(contextualSignature, index, false /*readonly*/)
 		}
 		return c.tryGetTypeAtPosition(contextualSignature, index)
 	}
@@ -25168,6 +25208,7 @@ func (c *Checker) isContextSensitiveFunctionOrObjectLiteralMethod(fn *ast.Node) 
 }
 
 func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount int, restType *Type, context *InferenceContext, checkMode CheckMode) *Type {
+	inConstContext := c.isConstTypeVariable(restType, 0)
 	if argCount > 0 && index >= argCount-1 {
 		arg := args[argCount-1]
 		if isSpreadArgument(arg) {
@@ -25179,7 +25220,7 @@ func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount in
 			if c.isArrayLikeType(spreadType) {
 				return c.getMutableArrayOrTupleType(spreadType)
 			}
-			return c.createArrayTypeEx(c.checkIteratedTypeOrElementType(IterationUseSpread, spreadType, c.nilType, arg), false /*readonly*/)
+			return c.createArrayTypeEx(c.checkIteratedTypeOrElementType(IterationUseSpread, spreadType, c.nilType, arg), inConstContext)
 		}
 	}
 	var types []*Type
@@ -25205,7 +25246,7 @@ func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount in
 				contextualType = c.getIndexedAccessTypeEx(restType, c.getNumberLiteralTypeForPosition(i-index), AccessFlagsContextual, nil, nil)
 			}
 			argType := c.checkExpressionWithContextualType(arg, contextualType, context, checkMode)
-			hasPrimitiveContextualType := c.maybeTypeOfKind(contextualType, TypeFlagsPrimitive|TypeFlagsIndex|TypeFlagsTemplateLiteral|TypeFlagsStringMapping)
+			hasPrimitiveContextualType := inConstContext || c.maybeTypeOfKind(contextualType, TypeFlagsPrimitive|TypeFlagsIndex|TypeFlagsTemplateLiteral|TypeFlagsStringMapping)
 			if hasPrimitiveContextualType {
 				t = c.getRegularTypeOfLiteralType(argType)
 			} else {
@@ -25219,7 +25260,7 @@ func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount in
 		types = append(types, t)
 		infos = append(infos, info)
 	}
-	return c.createTupleTypeEx(types, infos, false /*readonly*/)
+	return c.createTupleTypeEx(types, infos, inConstContext && !someType(restType, c.isMutableArrayLikeType))
 }
 
 func (c *Checker) getMutableArrayOrTupleType(t *Type) *Type {

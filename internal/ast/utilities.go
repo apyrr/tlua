@@ -1150,6 +1150,8 @@ func ModifierToFlag(token Kind) ModifierFlags {
 		return ModifierFlagsDefault
 	case KindSuspendKeyword:
 		return ModifierFlagsSuspend
+	case KindConstKeyword:
+		return ModifierFlagsConst
 	case KindReadonlyKeyword:
 		return ModifierFlagsReadonly
 	case KindOverrideKeyword:
@@ -3426,6 +3428,9 @@ func CreateModifiersFromModifierFlags(flags ModifierFlags, createModifier func(k
 	}
 	if flags&ModifierFlagsDefault != 0 {
 		result = append(result, createModifier(KindDefaultKeyword))
+	}
+	if flags&ModifierFlagsConst != 0 {
+		result = append(result, createModifier(KindConstKeyword))
 	}
 	if flags&ModifierFlagsPublic != 0 {
 		result = append(result, createModifier(KindPublicKeyword))

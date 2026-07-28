@@ -4388,6 +4388,8 @@ var Incomplete_statement_expected_assignment_or_a_function_call = &Message{code:
 
 var Did_you_mean_to_mark_this_function_as_suspend = &Message{code: 100058, category: CategoryError, key: "Did_you_mean_to_mark_this_function_as_suspend_100058", text: "Did you mean to mark this function as 'suspend'?"}
 
+var A_const_modifier_cannot_appear_on_a_generic_pack_parameter = &Message{code: 100059, category: CategoryError, key: "A_const_modifier_cannot_appear_on_a_generic_pack_parameter_100059", text: "A 'const' modifier cannot appear on a generic pack parameter."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8776,6 +8778,8 @@ func keyToMessage(key Key) *Message {
 		return Incomplete_statement_expected_assignment_or_a_function_call
 	case "Did_you_mean_to_mark_this_function_as_suspend_100058":
 		return Did_you_mean_to_mark_this_function_as_suspend
+	case "A_const_modifier_cannot_appear_on_a_generic_pack_parameter_100059":
+		return A_const_modifier_cannot_appear_on_a_generic_pack_parameter
 	default:
 		return nil
 	}

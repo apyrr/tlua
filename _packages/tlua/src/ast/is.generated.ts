@@ -39,6 +39,7 @@ import type {
     ConcatenationOperator,
     ConcatenationOperatorOrHigher,
     ConditionalTypeNode,
+    ConstKeyword,
     ContinueStatement,
     DeclarationName,
     DeclareKeyword,
@@ -999,7 +1000,7 @@ export function isBindingName(node: Node): node is BindingName {
 
 export function isModifierLike(node: Node): node is ModifierLike {
     const kind = node.kind;
-    return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword || kind === SyntaxKind.SuspendKeyword || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword || kind === SyntaxKind.StaticKeyword;
+    return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword || kind === SyntaxKind.SuspendKeyword || kind === SyntaxKind.ConstKeyword || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword || kind === SyntaxKind.StaticKeyword;
 }
 
 export function isJsxChild(node: Node): node is JsxChild {
@@ -1183,6 +1184,7 @@ export function isModifierKind(kind: SyntaxKind): kind is ModifierSyntaxKind {
     return kind === SyntaxKind.AbstractKeyword
         || kind === SyntaxKind.AccessorKeyword
         || kind === SyntaxKind.SuspendKeyword
+        || kind === SyntaxKind.ConstKeyword
         || kind === SyntaxKind.DeclareKeyword
         || kind === SyntaxKind.DefaultKeyword
         || kind === SyntaxKind.ExportKeyword
@@ -1409,6 +1411,10 @@ export function isAccessorKeyword(node: Node): node is AccessorKeyword {
 
 export function isSuspendKeyword(node: Node): node is SuspendKeyword {
     return node.kind === SyntaxKind.SuspendKeyword;
+}
+
+export function isConstKeyword(node: Node): node is ConstKeyword {
+    return node.kind === SyntaxKind.ConstKeyword;
 }
 
 export function isDeclareKeyword(node: Node): node is DeclareKeyword {

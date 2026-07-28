@@ -1404,7 +1404,7 @@ func (c *Checker) getTypeParameterModifiers(tp *Type) ast.ModifierFlags {
 			flags |= d.ModifierFlags()
 		}
 	}
-	return flags & (ast.ModifierFlagsIn | ast.ModifierFlagsOut)
+	return flags & (ast.ModifierFlagsIn | ast.ModifierFlagsOut | ast.ModifierFlagsConst)
 }
 
 // Return true if the given type reference has a 'void' type argument for a covariant type parameter.
@@ -1804,7 +1804,7 @@ func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
 // in signatures we want `any[]` in a rest position to be compatible with anything, but `any[]` isn't
 // assignable to tuple types with required elements.
 func (c *Checker) getRestOrAnyTypeAtPosition(source *Signature, pos int) *Type {
-	restType := c.getRestTypeAtPosition(source, pos)
+	restType := c.getRestTypeAtPosition(source, pos, false /*readonly*/)
 	if restType != nil {
 		if elementType := c.getElementTypeOfArrayType(restType); elementType != nil && IsTypeAny(elementType) {
 			return c.anyType
@@ -1813,9 +1813,7 @@ func (c *Checker) getRestOrAnyTypeAtPosition(source *Signature, pos int) *Type {
 	return restType
 }
 
-// The readonly parameter died with the const type-parameter modifier -- every
-// caller passed false -- so the produced tuples are always mutable.
-func (c *Checker) getRestTypeAtPosition(source *Signature, pos int) *Type {
+func (c *Checker) getRestTypeAtPosition(source *Signature, pos int, readonly bool) *Type {
 	parameterCount := c.getParameterCount(source)
 	minArgumentCount := c.getMinArgumentCount(source)
 	restType := c.getEffectiveRestType(source)
@@ -1828,7 +1826,7 @@ func (c *Checker) getRestTypeAtPosition(source *Signature, pos int) *Type {
 	}
 	length := parameterCount - pos
 	if length <= 0 {
-		return c.createTupleTypeEx(nil, nil, false /*readonly*/)
+		return c.createTupleTypeEx(nil, nil, readonly)
 	}
 	types := make([]*Type, length)
 	infos := make([]TupleElementInfo, length)
@@ -1843,7 +1841,7 @@ func (c *Checker) getRestTypeAtPosition(source *Signature, pos int) *Type {
 		}
 		infos[i] = TupleElementInfo{flags: flags, labeledDeclaration: c.getNameableDeclarationAtPosition(source, i+pos)}
 	}
-	return c.createTupleTypeEx(types, infos, false /*readonly*/)
+	return c.createTupleTypeEx(types, infos, readonly)
 }
 
 func (c *Checker) getNameableDeclarationAtPosition(signature *Signature, pos int) *ast.Node {

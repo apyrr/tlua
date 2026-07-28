@@ -983,7 +983,7 @@ func (p *Parser) parseDeclaration() *ast.Statement {
 	// not reusable in that context.
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
-	modifiers := p.parseModifiersEx(false /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	isAmbient := modifiers != nil && core.Some(modifiers.Nodes, isDeclareModifier)
 	if isAmbient {
 		// !!! incremental parsing
@@ -2534,7 +2534,7 @@ func (p *Parser) parseTypeParameters() *ast.NodeList {
 
 func (p *Parser) parseTypeParameter() *ast.Node {
 	pos := p.nodePos()
-	modifiers := p.parseModifiersEx(false /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(true /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	// A leading `...` declares a Lua generic pack parameter (`<...A>`): its value
 	// is a whole value pack, and `...A` / `...: A` spread it. The grammar checks
 	// enforce that pack parameters trail plain ones and appear only in pack
@@ -2624,7 +2624,7 @@ func (p *Parser) parseParameterEx(allowAmbiguity bool) *ast.Node {
 	jsdoc := p.jsdocScannerInfo()
 	// FormalParameter [Yield,Await]:
 	//      BindingElement[?Yield,?Await]
-	modifiers := p.parseModifiersEx(false /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	// `this` parameters are removed from tlua. A `this` token here is rejected
 	// as a reserved word (no parameter named `this` is ever created) and list
 	// recovery skips the token.
@@ -3331,15 +3331,15 @@ func (p *Parser) skipParameterStart() bool {
 }
 
 func (p *Parser) parseModifiers() *ast.ModifierList {
-	return p.parseModifiersEx(false /*stopOnStartOfClassStaticBlock*/)
+	return p.parseModifiersEx(false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 }
 
-func (p *Parser) parseModifiersEx(stopOnStartOfClassStaticBlock bool) *ast.ModifierList {
+func (p *Parser) parseModifiersEx(permitConstAsModifier bool, stopOnStartOfClassStaticBlock bool) *ast.ModifierList {
 	var hasStaticModifier bool
 	pos := p.nodePos()
 	list := make([]*ast.Node, 0, 16)
 	for {
-		modifier := p.tryParseModifier(hasStaticModifier, stopOnStartOfClassStaticBlock)
+		modifier := p.tryParseModifier(hasStaticModifier, permitConstAsModifier, stopOnStartOfClassStaticBlock)
 		if modifier == nil {
 			break
 		}
@@ -3354,9 +3354,22 @@ func (p *Parser) parseModifiersEx(stopOnStartOfClassStaticBlock bool) *ast.Modif
 	return nil
 }
 
-func (p *Parser) tryParseModifier(hasSeenStaticModifier bool, stopOnStartOfClassStaticBlock bool) *ast.Node {
+func (p *Parser) tryParseModifier(hasSeenStaticModifier bool, permitConstAsModifier bool, stopOnStartOfClassStaticBlock bool) *ast.Node {
 	pos := p.nodePos()
 	kind := p.token
+	if permitConstAsModifier && p.token == ast.KindIdentifier && p.scanner.TokenValue() == "const" {
+		// `const` is an ordinary identifier, so inside a type parameter list it
+		// is a modifier only when the type parameter's name follows: `<const T>`
+		// or `<const ...A>`. In `<const>` and `<const extends X>` it is the
+		// type parameter's name.
+		state := p.mark()
+		p.nextToken()
+		if p.isIdentifier() || p.token == ast.KindDotDotDotToken {
+			return p.finishNode(p.factory.NewModifier(ast.KindConstKeyword), pos)
+		}
+		p.rewind(state)
+		return nil
+	}
 	if stopOnStartOfClassStaticBlock && p.token == ast.KindStaticKeyword && p.lookAhead((*Parser).nextTokenIsOpenBrace) {
 		return nil
 	} else if hasSeenStaticModifier && p.token == ast.KindStaticKeyword {

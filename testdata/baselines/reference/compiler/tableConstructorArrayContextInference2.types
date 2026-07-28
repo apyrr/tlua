@@ -99,29 +99,29 @@ declare freeze: <T extends readonly number[]>(x: T) => T;
 >x : T
 
 local frozen = freeze({ 1, 2 } as const)
->frozen : readonly [number, number]
->freeze({ 1, 2 } as const) : readonly [number, number]
+>frozen : readonly [1, 2]
+>freeze({ 1, 2 } as const) : readonly [1, 2]
 >freeze : <T extends readonly number[]>(x: T) => T
->{ 1, 2 } as const : readonly [number, number]
->{ 1, 2 } : readonly [number, number]
+>{ 1, 2 } as const : readonly [1, 2]
+>{ 1, 2 } : readonly [1, 2]
 
 frozen[1] = 5 -- error: read-only
 >frozen[1] = 5 : 5
 >frozen[1] : any
->frozen : readonly [number, number]
+>frozen : readonly [1, 2]
 >1 : 1
 >5 : 5
 
 local roAnn: readonly number[] = { 1, 2 } as const
 >roAnn : readonly number[]
->{ 1, 2 } as const : readonly [number, number]
->{ 1, 2 } : readonly [number, number]
+>{ 1, 2 } as const : readonly [1, 2]
+>{ 1, 2 } : readonly [1, 2]
 
 -- A MUTABLE array context strips the readonly, checkArrayLiteral's rule.
 local mutAnn: number[] = { 1, 2 } as const
 >mutAnn : number[]
->{ 1, 2 } as const : [number, number]
->{ 1, 2 } : [number, number]
+>{ 1, 2 } as const : [1, 2]
+>{ 1, 2 } : [1, 2]
 
 mutAnn[1] = 5
 >mutAnn[1] = 5 : 5

@@ -1,0 +1,109 @@
+tluaConstTypeParameters.tlua(24,1): error TLUA2322: Type '5' is not assignable to type '1'.
+tluaConstTypeParameters.tlua(26,4): error TLUA2540: Cannot assign to '1' because it is a read-only property.
+
+
+==== tluaConstTypeParameters.tlua (2 errors) ====
+    // A const type parameter types its argument as if the caller had written
+    // `as const`: literals stay narrow, table constructors freeze.
+    
+    declare id: <const T>(x: T) => T;
+    declare plain: <T>(x: T) => T;
+    
+    // Literals stay literal; the plain parameter widens as before.
+    local s = id("hi")
+    local n = id(42)
+    local sw = plain("hi")
+    
+    // A table constructor in a bare const context freezes into a readonly record
+    // (tlua's record analog of TS's readonly tuple: `{...}` makes tuples only in
+    // real tuple contexts).
+    local rec = id({ x = 1, y = "a" })
+    local pos = id({ 1, 2 })
+    
+    // Under an array constraint the constructor takes the tuple path. A mutable
+    // constraint strips readonly, exactly as upstream; a readonly constraint
+    // keeps it.
+    declare mut: <const T extends number[]>(x: T) => T;
+    declare ro: <const T extends readonly number[]>(x: T) => T;
+    local mt = mut({ 1, 2 })
+    mt[1] = 5
+    ~~~~~
+!!! error TLUA2322: Type '5' is not assignable to type '1'.
+    local rt = ro({ 1, 2 })
+    rt[1] = 5
+       ~
+!!! error TLUA2540: Cannot assign to '1' because it is a read-only property.
+    
+    // The Zod-style shape from the array-context slice, now const: T infers the
+    // readonly tuple and T[number] is still the element union.
+    interface Schema<T> {
+        parse(self: self, value: unknown): T;
+    }
+    type Infer<T> = T extends Schema<infer O> ? O : never;
+    declare object: <T extends table>() => Schema<T>;
+    declare union: <const T extends readonly Schema<unknown>[]>(options: T) => Schema<Infer<T[number]>>;
+    local success = object<{ status: "success" }>()
+    local failed = object<{ status: "failed" }>()
+    local result = union({ success, failed }):parse({})
+    local status = result.status
+    
+    // An optional const context (`T | nil`) still detects the const type variable
+    // through the union leg.
+    declare unionOpt: <const T extends readonly Schema<unknown>[]>(options: T | nil) => Schema<Infer<T[number]>>;
+    local viaOpt = unionOpt({ success, failed }):parse({})
+    local optStatus = viaOpt.status
+    
+    // Const works on every value-signature form: function declarations, local
+    // functions, and interface methods through a colon call.
+    function fid<const T>(x: T): T
+        return x
+    end
+    local fr = fid({ 1, "a" })
+    
+    local function lid<const T>(x: T): T
+        return x
+    end
+    local lr = lid("s")
+    
+    interface Wrapper {
+        wrap<const T>(self: Wrapper, x: T): T;
+    }
+    declare wrapper: Wrapper;
+    local wr = wrapper:wrap({ tag = "w" })
+    
+    // Scalar literals nested inside a structural or tuple parameter freeze too:
+    // the const context reaches every depth through the contextual walk, not just
+    // positions where a table literal re-anchors it.
+    declare pairOf: <const T>(obj: { x: T, y: T }) => T;
+    local scalarPair = pairOf({ x = "a", y = "b" })
+    declare tupleOf: <const T>(obj: [T, T]) => T;
+    local scalarTuple = tupleOf({ "a", "b" })
+    declare deepOf: <const T>(obj: { x: { y: T } }) => T;
+    local scalarDeep = deepOf({ x = { y = "a" } })
+    
+    // A callback whose return feeds a const type parameter keeps its literal:
+    // the return aggregation consults the contextual return type.
+    declare compute: <const T>(cb: () => T) => T;
+    local computed = compute(function()
+        return "hi"
+    end)
+    declare computePlain: <T>(cb: () => T) => T;
+    local computedPlain = computePlain(function()
+        return "hi"
+    end)
+    
+    // `const` remains an ordinary identifier everywhere else: a variable, a type
+    // parameter NAME (nothing follows it), and a constrained name.
+    local const = 5
+    declare named: <const>(x: const) => const;
+    declare constrained: <const extends string>(x: const) => const;
+    
+    // The modifier and the name can even both be `const`.
+    declare both: <const const>(x: const) => const;
+    local br = both("b")
+    
+    // `as const` is unchanged, and positional entries freeze to their literals
+    // inside it, matching the const-type-parameter behavior.
+    local asConst = { 1, 2 } as const
+    local viaParam = id({ 1, 2 })
+    

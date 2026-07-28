@@ -1240,7 +1240,7 @@ func (p *Parser) parseTemplateTagTypeParameter() *ast.Node {
 	// `@template const T` died with the const type-parameter modifier; the
 	// word now parses as the (ill-advised) parameter name and JSDoc's lenient
 	// recovery skips the rest, like any other removed modifier would.
-	modifiers := p.parseModifiersEx(false)
+	modifiers := p.parseModifiersEx(false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	name := p.parseJSDocIdentifierName(diagnostics.Unexpected_token_A_type_parameter_name_was_expected_without_curly_braces)
 	var defaultType *ast.Node
 	if isBracketed {

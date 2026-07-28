@@ -1,0 +1,332 @@
+//// [tests/cases/compiler/tluaConstTypeParameters.tlua] ////
+
+=== tluaConstTypeParameters.tlua ===
+// A const type parameter types its argument as if the caller had written
+// `as const`: literals stay narrow, table constructors freeze.
+
+declare id: <const T>(x: T) => T;
+>id : Symbol(id, Decl(tluaConstTypeParameters.tlua, 3, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 3, 13))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 3, 22))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 3, 13))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 3, 13))
+
+declare plain: <T>(x: T) => T;
+>plain : Symbol(plain, Decl(tluaConstTypeParameters.tlua, 4, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 4, 16))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 4, 19))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 4, 16))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 4, 16))
+
+// Literals stay literal; the plain parameter widens as before.
+local s = id("hi")
+>s : Symbol(s, Decl(tluaConstTypeParameters.tlua, 7, 5))
+>id : Symbol(id, Decl(tluaConstTypeParameters.tlua, 3, 7))
+
+local n = id(42)
+>n : Symbol(n, Decl(tluaConstTypeParameters.tlua, 8, 5))
+>id : Symbol(id, Decl(tluaConstTypeParameters.tlua, 3, 7))
+
+local sw = plain("hi")
+>sw : Symbol(sw, Decl(tluaConstTypeParameters.tlua, 9, 5))
+>plain : Symbol(plain, Decl(tluaConstTypeParameters.tlua, 4, 7))
+
+// A table constructor in a bare const context freezes into a readonly record
+// (tlua's record analog of TS's readonly tuple: `{...}` makes tuples only in
+// real tuple contexts).
+local rec = id({ x = 1, y = "a" })
+>rec : Symbol(rec, Decl(tluaConstTypeParameters.tlua, 14, 5))
+>id : Symbol(id, Decl(tluaConstTypeParameters.tlua, 3, 7))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 14, 16))
+>y : Symbol(y, Decl(tluaConstTypeParameters.tlua, 14, 23))
+
+local pos = id({ 1, 2 })
+>pos : Symbol(pos, Decl(tluaConstTypeParameters.tlua, 15, 5))
+>id : Symbol(id, Decl(tluaConstTypeParameters.tlua, 3, 7))
+
+// Under an array constraint the constructor takes the tuple path. A mutable
+// constraint strips readonly, exactly as upstream; a readonly constraint
+// keeps it.
+declare mut: <const T extends number[]>(x: T) => T;
+>mut : Symbol(mut, Decl(tluaConstTypeParameters.tlua, 20, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 20, 14))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 20, 40))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 20, 14))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 20, 14))
+
+declare ro: <const T extends readonly number[]>(x: T) => T;
+>ro : Symbol(ro, Decl(tluaConstTypeParameters.tlua, 21, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 21, 13))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 21, 48))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 21, 13))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 21, 13))
+
+local mt = mut({ 1, 2 })
+>mt : Symbol(mt, Decl(tluaConstTypeParameters.tlua, 22, 5))
+>mut : Symbol(mut, Decl(tluaConstTypeParameters.tlua, 20, 7))
+
+mt[1] = 5
+>mt : Symbol(mt, Decl(tluaConstTypeParameters.tlua, 22, 5))
+>1 : Symbol(1)
+
+local rt = ro({ 1, 2 })
+>rt : Symbol(rt, Decl(tluaConstTypeParameters.tlua, 24, 5))
+>ro : Symbol(ro, Decl(tluaConstTypeParameters.tlua, 21, 7))
+
+rt[1] = 5
+>rt : Symbol(rt, Decl(tluaConstTypeParameters.tlua, 24, 5))
+>1 : Symbol(1)
+
+// The Zod-style shape from the array-context slice, now const: T infers the
+// readonly tuple and T[number] is still the element union.
+interface Schema<T> {
+>Schema : Symbol(Schema, Decl(tluaConstTypeParameters.tlua, 25, 9))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 29, 17))
+
+    parse(self: self, value: unknown): T;
+>parse : Symbol(Schema.parse, Decl(tluaConstTypeParameters.tlua, 29, 21))
+>self : Symbol(self, Decl(tluaConstTypeParameters.tlua, 30, 10))
+>value : Symbol(value, Decl(tluaConstTypeParameters.tlua, 30, 21))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 29, 17))
+}
+type Infer<T> = T extends Schema<infer O> ? O : never;
+>Infer : Symbol(Infer, Decl(tluaConstTypeParameters.tlua, 31, 1))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 32, 11))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 32, 11))
+>Schema : Symbol(Schema, Decl(tluaConstTypeParameters.tlua, 25, 9))
+>O : Symbol(O, Decl(tluaConstTypeParameters.tlua, 32, 38))
+>O : Symbol(O, Decl(tluaConstTypeParameters.tlua, 32, 38))
+
+declare object: <T extends table>() => Schema<T>;
+>object : Symbol(object, Decl(tluaConstTypeParameters.tlua, 33, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 33, 17))
+>Schema : Symbol(Schema, Decl(tluaConstTypeParameters.tlua, 25, 9))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 33, 17))
+
+declare union: <const T extends readonly Schema<unknown>[]>(options: T) => Schema<Infer<T[number]>>;
+>union : Symbol(union, Decl(tluaConstTypeParameters.tlua, 34, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 34, 16))
+>Schema : Symbol(Schema, Decl(tluaConstTypeParameters.tlua, 25, 9))
+>options : Symbol(options, Decl(tluaConstTypeParameters.tlua, 34, 60))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 34, 16))
+>Schema : Symbol(Schema, Decl(tluaConstTypeParameters.tlua, 25, 9))
+>Infer : Symbol(Infer, Decl(tluaConstTypeParameters.tlua, 31, 1))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 34, 16))
+
+local success = object<{ status: "success" }>()
+>success : Symbol(success, Decl(tluaConstTypeParameters.tlua, 35, 5))
+>object : Symbol(object, Decl(tluaConstTypeParameters.tlua, 33, 7))
+>status : Symbol(status, Decl(tluaConstTypeParameters.tlua, 35, 24))
+
+local failed = object<{ status: "failed" }>()
+>failed : Symbol(failed, Decl(tluaConstTypeParameters.tlua, 36, 5))
+>object : Symbol(object, Decl(tluaConstTypeParameters.tlua, 33, 7))
+>status : Symbol(status, Decl(tluaConstTypeParameters.tlua, 36, 23))
+
+local result = union({ success, failed }):parse({})
+>result : Symbol(result, Decl(tluaConstTypeParameters.tlua, 37, 5))
+>union({ success, failed }):parse : Symbol(Schema.parse, Decl(tluaConstTypeParameters.tlua, 29, 21))
+>union : Symbol(union, Decl(tluaConstTypeParameters.tlua, 34, 7))
+>parse : Symbol(Schema.parse, Decl(tluaConstTypeParameters.tlua, 29, 21))
+
+local status = result.status
+>status : Symbol(status, Decl(tluaConstTypeParameters.tlua, 38, 5))
+>result.status : Symbol(status, Decl(tluaConstTypeParameters.tlua, 35, 24), Decl(tluaConstTypeParameters.tlua, 36, 23))
+>result : Symbol(result, Decl(tluaConstTypeParameters.tlua, 37, 5))
+>status : Symbol(status, Decl(tluaConstTypeParameters.tlua, 35, 24), Decl(tluaConstTypeParameters.tlua, 36, 23))
+
+// An optional const context (`T | nil`) still detects the const type variable
+// through the union leg.
+declare unionOpt: <const T extends readonly Schema<unknown>[]>(options: T | nil) => Schema<Infer<T[number]>>;
+>unionOpt : Symbol(unionOpt, Decl(tluaConstTypeParameters.tlua, 42, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 42, 19))
+>Schema : Symbol(Schema, Decl(tluaConstTypeParameters.tlua, 25, 9))
+>options : Symbol(options, Decl(tluaConstTypeParameters.tlua, 42, 63))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 42, 19))
+>Schema : Symbol(Schema, Decl(tluaConstTypeParameters.tlua, 25, 9))
+>Infer : Symbol(Infer, Decl(tluaConstTypeParameters.tlua, 31, 1))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 42, 19))
+
+local viaOpt = unionOpt({ success, failed }):parse({})
+>viaOpt : Symbol(viaOpt, Decl(tluaConstTypeParameters.tlua, 43, 5))
+>unionOpt({ success, failed }):parse : Symbol(Schema.parse, Decl(tluaConstTypeParameters.tlua, 29, 21))
+>unionOpt : Symbol(unionOpt, Decl(tluaConstTypeParameters.tlua, 42, 7))
+>parse : Symbol(Schema.parse, Decl(tluaConstTypeParameters.tlua, 29, 21))
+
+local optStatus = viaOpt.status
+>optStatus : Symbol(optStatus, Decl(tluaConstTypeParameters.tlua, 44, 5))
+>viaOpt.status : Symbol(status, Decl(tluaConstTypeParameters.tlua, 35, 24), Decl(tluaConstTypeParameters.tlua, 36, 23))
+>viaOpt : Symbol(viaOpt, Decl(tluaConstTypeParameters.tlua, 43, 5))
+>status : Symbol(status, Decl(tluaConstTypeParameters.tlua, 35, 24), Decl(tluaConstTypeParameters.tlua, 36, 23))
+
+// Const works on every value-signature form: function declarations, local
+// functions, and interface methods through a colon call.
+function fid<const T>(x: T): T
+>fid : Symbol(fid, Decl(tluaConstTypeParameters.tlua, 44, 31))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 48, 13))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 48, 22))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 48, 13))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 48, 13))
+
+    return x
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 48, 22))
+
+end
+local fr = fid({ 1, "a" })
+>fr : Symbol(fr, Decl(tluaConstTypeParameters.tlua, 51, 5))
+>fid : Symbol(fid, Decl(tluaConstTypeParameters.tlua, 44, 31))
+
+local function lid<const T>(x: T): T
+>lid : Symbol(lid, Decl(tluaConstTypeParameters.tlua, 51, 26))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 53, 19))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 53, 28))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 53, 19))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 53, 19))
+
+    return x
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 53, 28))
+
+end
+local lr = lid("s")
+>lr : Symbol(lr, Decl(tluaConstTypeParameters.tlua, 56, 5))
+>lid : Symbol(lid, Decl(tluaConstTypeParameters.tlua, 51, 26))
+
+interface Wrapper {
+>Wrapper : Symbol(Wrapper, Decl(tluaConstTypeParameters.tlua, 56, 19))
+
+    wrap<const T>(self: Wrapper, x: T): T;
+>wrap : Symbol(Wrapper.wrap, Decl(tluaConstTypeParameters.tlua, 58, 19))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 59, 9))
+>self : Symbol(self, Decl(tluaConstTypeParameters.tlua, 59, 18))
+>Wrapper : Symbol(Wrapper, Decl(tluaConstTypeParameters.tlua, 56, 19))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 59, 32))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 59, 9))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 59, 9))
+}
+declare wrapper: Wrapper;
+>wrapper : Symbol(wrapper, Decl(tluaConstTypeParameters.tlua, 61, 7))
+>Wrapper : Symbol(Wrapper, Decl(tluaConstTypeParameters.tlua, 56, 19))
+
+local wr = wrapper:wrap({ tag = "w" })
+>wr : Symbol(wr, Decl(tluaConstTypeParameters.tlua, 62, 5))
+>wrapper:wrap : Symbol(Wrapper.wrap, Decl(tluaConstTypeParameters.tlua, 58, 19))
+>wrapper : Symbol(wrapper, Decl(tluaConstTypeParameters.tlua, 61, 7))
+>wrap : Symbol(Wrapper.wrap, Decl(tluaConstTypeParameters.tlua, 58, 19))
+>tag : Symbol(tag, Decl(tluaConstTypeParameters.tlua, 62, 25))
+
+// Scalar literals nested inside a structural or tuple parameter freeze too:
+// the const context reaches every depth through the contextual walk, not just
+// positions where a table literal re-anchors it.
+declare pairOf: <const T>(obj: { x: T, y: T }) => T;
+>pairOf : Symbol(pairOf, Decl(tluaConstTypeParameters.tlua, 67, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 67, 17))
+>obj : Symbol(obj, Decl(tluaConstTypeParameters.tlua, 67, 26))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 67, 32))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 67, 17))
+>y : Symbol(y, Decl(tluaConstTypeParameters.tlua, 67, 38))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 67, 17))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 67, 17))
+
+local scalarPair = pairOf({ x = "a", y = "b" })
+>scalarPair : Symbol(scalarPair, Decl(tluaConstTypeParameters.tlua, 68, 5))
+>pairOf : Symbol(pairOf, Decl(tluaConstTypeParameters.tlua, 67, 7))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 68, 27))
+>y : Symbol(y, Decl(tluaConstTypeParameters.tlua, 68, 36))
+
+declare tupleOf: <const T>(obj: [T, T]) => T;
+>tupleOf : Symbol(tupleOf, Decl(tluaConstTypeParameters.tlua, 69, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 69, 18))
+>obj : Symbol(obj, Decl(tluaConstTypeParameters.tlua, 69, 27))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 69, 18))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 69, 18))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 69, 18))
+
+local scalarTuple = tupleOf({ "a", "b" })
+>scalarTuple : Symbol(scalarTuple, Decl(tluaConstTypeParameters.tlua, 70, 5))
+>tupleOf : Symbol(tupleOf, Decl(tluaConstTypeParameters.tlua, 69, 7))
+
+declare deepOf: <const T>(obj: { x: { y: T } }) => T;
+>deepOf : Symbol(deepOf, Decl(tluaConstTypeParameters.tlua, 71, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 71, 17))
+>obj : Symbol(obj, Decl(tluaConstTypeParameters.tlua, 71, 26))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 71, 32))
+>y : Symbol(y, Decl(tluaConstTypeParameters.tlua, 71, 37))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 71, 17))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 71, 17))
+
+local scalarDeep = deepOf({ x = { y = "a" } })
+>scalarDeep : Symbol(scalarDeep, Decl(tluaConstTypeParameters.tlua, 72, 5))
+>deepOf : Symbol(deepOf, Decl(tluaConstTypeParameters.tlua, 71, 7))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 72, 27))
+>y : Symbol(y, Decl(tluaConstTypeParameters.tlua, 72, 33))
+
+// A callback whose return feeds a const type parameter keeps its literal:
+// the return aggregation consults the contextual return type.
+declare compute: <const T>(cb: () => T) => T;
+>compute : Symbol(compute, Decl(tluaConstTypeParameters.tlua, 76, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 76, 18))
+>cb : Symbol(cb, Decl(tluaConstTypeParameters.tlua, 76, 27))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 76, 18))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 76, 18))
+
+local computed = compute(function()
+>computed : Symbol(computed, Decl(tluaConstTypeParameters.tlua, 77, 5))
+>compute : Symbol(compute, Decl(tluaConstTypeParameters.tlua, 76, 7))
+
+    return "hi"
+end)
+declare computePlain: <T>(cb: () => T) => T;
+>computePlain : Symbol(computePlain, Decl(tluaConstTypeParameters.tlua, 80, 7))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 80, 23))
+>cb : Symbol(cb, Decl(tluaConstTypeParameters.tlua, 80, 26))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 80, 23))
+>T : Symbol(T, Decl(tluaConstTypeParameters.tlua, 80, 23))
+
+local computedPlain = computePlain(function()
+>computedPlain : Symbol(computedPlain, Decl(tluaConstTypeParameters.tlua, 81, 5))
+>computePlain : Symbol(computePlain, Decl(tluaConstTypeParameters.tlua, 80, 7))
+
+    return "hi"
+end)
+
+// `const` remains an ordinary identifier everywhere else: a variable, a type
+// parameter NAME (nothing follows it), and a constrained name.
+local const = 5
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 87, 5))
+
+declare named: <const>(x: const) => const;
+>named : Symbol(named, Decl(tluaConstTypeParameters.tlua, 88, 7))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 88, 16))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 88, 23))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 88, 16))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 88, 16))
+
+declare constrained: <const extends string>(x: const) => const;
+>constrained : Symbol(constrained, Decl(tluaConstTypeParameters.tlua, 89, 7))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 89, 22))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 89, 44))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 89, 22))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 89, 22))
+
+// The modifier and the name can even both be `const`.
+declare both: <const const>(x: const) => const;
+>both : Symbol(both, Decl(tluaConstTypeParameters.tlua, 92, 7))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 92, 15))
+>x : Symbol(x, Decl(tluaConstTypeParameters.tlua, 92, 28))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 92, 15))
+>const : Symbol(const, Decl(tluaConstTypeParameters.tlua, 92, 15))
+
+local br = both("b")
+>br : Symbol(br, Decl(tluaConstTypeParameters.tlua, 93, 5))
+>both : Symbol(both, Decl(tluaConstTypeParameters.tlua, 92, 7))
+
+// `as const` is unchanged, and positional entries freeze to their literals
+// inside it, matching the const-type-parameter behavior.
+local asConst = { 1, 2 } as const
+>asConst : Symbol(asConst, Decl(tluaConstTypeParameters.tlua, 97, 5))
+>const : Symbol(const)
+
+local viaParam = id({ 1, 2 })
+>viaParam : Symbol(viaParam, Decl(tluaConstTypeParameters.tlua, 98, 5))
+>id : Symbol(id, Decl(tluaConstTypeParameters.tlua, 3, 7))
+

@@ -1,0 +1,324 @@
+//// [tests/cases/compiler/tluaConstTypeParameters.tlua] ////
+
+=== tluaConstTypeParameters.tlua ===
+// A const type parameter types its argument as if the caller had written
+// `as const`: literals stay narrow, table constructors freeze.
+
+declare id: <const T>(x: T) => T;
+>id : <const T>(x: T) => T
+>x : T
+
+declare plain: <T>(x: T) => T;
+>plain : <T>(x: T) => T
+>x : T
+
+// Literals stay literal; the plain parameter widens as before.
+local s = id("hi")
+>s : "hi"
+>id("hi") : "hi"
+>id : <const T>(x: T) => T
+>"hi" : "hi"
+
+local n = id(42)
+>n : 42
+>id(42) : 42
+>id : <const T>(x: T) => T
+>42 : 42
+
+local sw = plain("hi")
+>sw : string
+>plain("hi") : "hi"
+>plain : <T>(x: T) => T
+>"hi" : "hi"
+
+// A table constructor in a bare const context freezes into a readonly record
+// (tlua's record analog of TS's readonly tuple: `{...}` makes tuples only in
+// real tuple contexts).
+local rec = id({ x = 1, y = "a" })
+>rec : { readonly x: 1; readonly y: "a"; }
+>id({ x = 1, y = "a" }) : { readonly x: 1; readonly y: "a"; }
+>id : <const T>(x: T) => T
+>{ x = 1, y = "a" } : { x: 1; y: "a"; }
+>x : 1
+>1 : 1
+>y : "a"
+>"a" : "a"
+
+local pos = id({ 1, 2 })
+>pos : { readonly 1: 1; readonly 2: 2; }
+>id({ 1, 2 }) : { readonly 1: 1; readonly 2: 2; }
+>id : <const T>(x: T) => T
+>{ 1, 2 } : { 1: 1; 2: 2; }
+
+// Under an array constraint the constructor takes the tuple path. A mutable
+// constraint strips readonly, exactly as upstream; a readonly constraint
+// keeps it.
+declare mut: <const T extends number[]>(x: T) => T;
+>mut : <const T extends number[]>(x: T) => T
+>x : T
+
+declare ro: <const T extends readonly number[]>(x: T) => T;
+>ro : <const T extends readonly number[]>(x: T) => T
+>x : T
+
+local mt = mut({ 1, 2 })
+>mt : [1, 2]
+>mut({ 1, 2 }) : [1, 2]
+>mut : <const T extends number[]>(x: T) => T
+>{ 1, 2 } : [1, 2]
+
+mt[1] = 5
+>mt[1] = 5 : 5
+>mt[1] : 1
+>mt : [1, 2]
+>1 : 1
+>5 : 5
+
+local rt = ro({ 1, 2 })
+>rt : readonly [1, 2]
+>ro({ 1, 2 }) : readonly [1, 2]
+>ro : <const T extends readonly number[]>(x: T) => T
+>{ 1, 2 } : [1, 2]
+
+rt[1] = 5
+>rt[1] = 5 : 5
+>rt[1] : any
+>rt : readonly [1, 2]
+>1 : 1
+>5 : 5
+
+// The Zod-style shape from the array-context slice, now const: T infers the
+// readonly tuple and T[number] is still the element union.
+interface Schema<T> {
+    parse(self: self, value: unknown): T;
+>parse : (self: self, value: unknown) => T
+>self : self
+>value : unknown
+}
+type Infer<T> = T extends Schema<infer O> ? O : never;
+>Infer : Infer<T>
+
+declare object: <T extends table>() => Schema<T>;
+>object : <T extends table>() => Schema<T>
+
+declare union: <const T extends readonly Schema<unknown>[]>(options: T) => Schema<Infer<T[number]>>;
+>union : <const T extends readonly Schema<unknown>[]>(options: T) => Schema<Infer<T[number]>>
+>options : T
+
+local success = object<{ status: "success" }>()
+>success : Schema<{ status: "success"; }>
+>object<{ status: "success" }>() : Schema<{ status: "success"; }>
+>object : <T extends table>() => Schema<T>
+>status : "success"
+
+local failed = object<{ status: "failed" }>()
+>failed : Schema<{ status: "failed"; }>
+>object<{ status: "failed" }>() : Schema<{ status: "failed"; }>
+>object : <T extends table>() => Schema<T>
+>status : "failed"
+
+local result = union({ success, failed }):parse({})
+>result : { status: "success"; } | { status: "failed"; }
+>union({ success, failed }):parse({}) : { status: "success"; } | { status: "failed"; }
+>union({ success, failed }):parse : (self: Schema<{ status: "success"; } | { status: "failed"; }>, value: unknown) => { status: "success"; } | { status: "failed"; }
+>union({ success, failed }) : Schema<{ status: "success"; } | { status: "failed"; }>
+>union : <const T extends readonly Schema<unknown>[]>(options: T) => Schema<Infer<T[number]>>
+>{ success, failed } : [Schema<{ status: "success"; }>, Schema<{ status: "failed"; }>]
+>success : any
+>failed : any
+>parse : (self: Schema<{ status: "success"; } | { status: "failed"; }>, value: unknown) => { status: "success"; } | { status: "failed"; }
+>{} : {}
+
+local status = result.status
+>status : "failed" | "success"
+>result.status : "failed" | "success"
+>result : { status: "success"; } | { status: "failed"; }
+>status : "failed" | "success"
+
+// An optional const context (`T | nil`) still detects the const type variable
+// through the union leg.
+declare unionOpt: <const T extends readonly Schema<unknown>[]>(options: T | nil) => Schema<Infer<T[number]>>;
+>unionOpt : <const T extends readonly Schema<unknown>[]>(options: T | nil) => Schema<Infer<T[number]>>
+>options : T | nil
+
+local viaOpt = unionOpt({ success, failed }):parse({})
+>viaOpt : { status: "success"; } | { status: "failed"; }
+>unionOpt({ success, failed }):parse({}) : { status: "success"; } | { status: "failed"; }
+>unionOpt({ success, failed }):parse : (self: Schema<{ status: "success"; } | { status: "failed"; }>, value: unknown) => { status: "success"; } | { status: "failed"; }
+>unionOpt({ success, failed }) : Schema<{ status: "success"; } | { status: "failed"; }>
+>unionOpt : <const T extends readonly Schema<unknown>[]>(options: T | nil) => Schema<Infer<T[number]>>
+>{ success, failed } : [Schema<{ status: "success"; }>, Schema<{ status: "failed"; }>]
+>success : any
+>failed : any
+>parse : (self: Schema<{ status: "success"; } | { status: "failed"; }>, value: unknown) => { status: "success"; } | { status: "failed"; }
+>{} : {}
+
+local optStatus = viaOpt.status
+>optStatus : "failed" | "success"
+>viaOpt.status : "failed" | "success"
+>viaOpt : { status: "success"; } | { status: "failed"; }
+>status : "failed" | "success"
+
+// Const works on every value-signature form: function declarations, local
+// functions, and interface methods through a colon call.
+function fid<const T>(x: T): T
+>fid : <const T>(x: T) => T
+>x : T
+
+    return x
+>x : T
+
+end
+local fr = fid({ 1, "a" })
+>fr : { readonly 1: 1; readonly 2: "a"; }
+>fid({ 1, "a" }) : { readonly 1: 1; readonly 2: "a"; }
+>fid : <const T>(x: T) => T
+>{ 1, "a" } : { 1: 1; 2: "a"; }
+
+local function lid<const T>(x: T): T
+>lid : <const T>(x: T) => T
+>x : T
+
+    return x
+>x : T
+
+end
+local lr = lid("s")
+>lr : "s"
+>lid("s") : "s"
+>lid : <const T>(x: T) => T
+>"s" : "s"
+
+interface Wrapper {
+    wrap<const T>(self: Wrapper, x: T): T;
+>wrap : <const T>(self: Wrapper, x: T) => T
+>self : Wrapper
+>x : T
+}
+declare wrapper: Wrapper;
+>wrapper : Wrapper
+
+local wr = wrapper:wrap({ tag = "w" })
+>wr : { readonly tag: "w"; }
+>wrapper:wrap({ tag = "w" }) : { readonly tag: "w"; }
+>wrapper:wrap : <const T>(self: Wrapper, x: T) => T
+>wrapper : Wrapper
+>wrap : <const T>(self: Wrapper, x: T) => T
+>{ tag = "w" } : { tag: "w"; }
+>tag : "w"
+>"w" : "w"
+
+// Scalar literals nested inside a structural or tuple parameter freeze too:
+// the const context reaches every depth through the contextual walk, not just
+// positions where a table literal re-anchors it.
+declare pairOf: <const T>(obj: { x: T, y: T }) => T;
+>pairOf : <const T>(obj: { x: T; y: T; }) => T
+>obj : { x: T; y: T; }
+>x : T
+>y : T
+
+local scalarPair = pairOf({ x = "a", y = "b" })
+>scalarPair : "a" | "b"
+>pairOf({ x = "a", y = "b" }) : "a" | "b"
+>pairOf : <const T>(obj: { x: T; y: T; }) => T
+>{ x = "a", y = "b" } : { x: "a"; y: "b"; }
+>x : "a"
+>"a" : "a"
+>y : "b"
+>"b" : "b"
+
+declare tupleOf: <const T>(obj: [T, T]) => T;
+>tupleOf : <const T>(obj: [T, T]) => T
+>obj : [T, T]
+
+local scalarTuple = tupleOf({ "a", "b" })
+>scalarTuple : "a" | "b"
+>tupleOf({ "a", "b" }) : "a" | "b"
+>tupleOf : <const T>(obj: [T, T]) => T
+>{ "a", "b" } : ["a", "b"]
+
+declare deepOf: <const T>(obj: { x: { y: T } }) => T;
+>deepOf : <const T>(obj: { x: { y: T; }; }) => T
+>obj : { x: { y: T; }; }
+>x : { y: T; }
+>y : T
+
+local scalarDeep = deepOf({ x = { y = "a" } })
+>scalarDeep : "a"
+>deepOf({ x = { y = "a" } }) : "a"
+>deepOf : <const T>(obj: { x: { y: T; }; }) => T
+>{ x = { y = "a" } } : { x: { y: "a"; }; }
+>x : { y: "a"; }
+>{ y = "a" } : { y: "a"; }
+>y : "a"
+>"a" : "a"
+
+// A callback whose return feeds a const type parameter keeps its literal:
+// the return aggregation consults the contextual return type.
+declare compute: <const T>(cb: () => T) => T;
+>compute : <const T>(cb: () => T) => T
+>cb : () => T
+
+local computed = compute(function()
+>computed : "hi"
+>compute(function()    return "hi"end) : "hi"
+>compute : <const T>(cb: () => T) => T
+>function()    return "hi"end : () => "hi"
+
+    return "hi"
+>"hi" : "hi"
+
+end)
+declare computePlain: <T>(cb: () => T) => T;
+>computePlain : <T>(cb: () => T) => T
+>cb : () => T
+
+local computedPlain = computePlain(function()
+>computedPlain : string
+>computePlain(function()    return "hi"end) : string
+>computePlain : <T>(cb: () => T) => T
+>function()    return "hi"end : () => string
+
+    return "hi"
+>"hi" : "hi"
+
+end)
+
+// `const` remains an ordinary identifier everywhere else: a variable, a type
+// parameter NAME (nothing follows it), and a constrained name.
+local const = 5
+>const : number
+>5 : 5
+
+declare named: <const>(x: const) => const;
+>named : <const>(x: const) => const
+>x : const
+
+declare constrained: <const extends string>(x: const) => const;
+>constrained : <const extends string>(x: const) => const
+>x : const
+
+// The modifier and the name can even both be `const`.
+declare both: <const const>(x: const) => const;
+>both : <const const>(x: const) => const
+>x : const
+
+local br = both("b")
+>br : "b"
+>both("b") : "b"
+>both : <const const>(x: const) => const
+>"b" : "b"
+
+// `as const` is unchanged, and positional entries freeze to their literals
+// inside it, matching the const-type-parameter behavior.
+local asConst = { 1, 2 } as const
+>asConst : { readonly 1: 1; readonly 2: 2; }
+>{ 1, 2 } as const : { readonly 1: 1; readonly 2: 2; }
+>{ 1, 2 } : { readonly 1: 1; readonly 2: 2; }
+
+local viaParam = id({ 1, 2 })
+>viaParam : { readonly 1: 1; readonly 2: 2; }
+>id({ 1, 2 }) : { readonly 1: 1; readonly 2: 2; }
+>id : <const T>(x: T) => T
+>{ 1, 2 } : { 1: 1; 2: 2; }
+

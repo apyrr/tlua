@@ -835,7 +835,7 @@ func (c *Checker) applyToParameterTypes(source *Signature, target *Signature, ca
 		callback(c.getTypeAtPosition(source, i), c.getTypeAtPosition(target, i))
 	}
 	if targetRestType != nil {
-		callback(c.getRestTypeAtPosition(source, paramCount), targetRestType)
+		callback(c.getRestTypeAtPosition(source, paramCount, c.isConstTypeVariable(targetRestType, 0) && !someType(targetRestType, c.isMutableArrayLikeType) /*readonly*/), targetRestType)
 	}
 }
 
@@ -1443,7 +1443,7 @@ func (c *Checker) getCovariantInference(inference *InferenceInfo, signature *Sig
 	// all inferences were made to top-level occurrences of the type parameter, and
 	// the type parameter has no constraint or its constraint includes no primitive or literal types, and
 	// the type parameter was fixed during inference or does not occur at top-level in the return type.
-	primitiveConstraint := c.hasPrimitiveConstraint(inference.typeParameter)
+	primitiveConstraint := c.hasPrimitiveConstraint(inference.typeParameter) || c.isConstTypeVariable(inference.typeParameter, 0)
 	widenLiteralTypes := !primitiveConstraint && inference.topLevel && (inference.isFixed || !c.isTypeParameterAtTopLevelInReturnType(signature, inference.typeParameter))
 	var baseCandidates []*Type
 	switch {

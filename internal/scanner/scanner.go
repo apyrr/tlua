@@ -2129,6 +2129,9 @@ var tokenToText = func() [ast.KindCount]string {
 	result[ast.KindDefaultKeyword] = "default"
 	result[ast.KindFromKeyword] = "from"
 	result[ast.KindRequireKeyword] = "require"
+	// `const` is likewise an ordinary identifier; the parser synthesizes
+	// KindConstKeyword only for the const type-parameter modifier (`<const T>`).
+	result[ast.KindConstKeyword] = "const"
 	return result
 }()
 

@@ -558,5 +558,9 @@
     "Did you mean to mark this function as 'suspend'?": {
         "category": "Error",
         "code": 100058
+    },
+    "A 'const' modifier cannot appear on a generic pack parameter.": {
+        "category": "Error",
+        "code": 100059
     }
 }

@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/tluaConstTypeParametersErrors.tlua] ////
+
+=== tluaConstTypeParametersErrors.tlua ===
+// Const makes sense only where inference happens: value signatures. On a type
+// alias or interface there is no argument to freeze.
+type Box<const T> = T
+>Box : T
+
+interface Bad<const T> {
+    value: T;
+>value : T
+}
+
+// A pack binds a whole value pack; none of the const inference rules apply.
+declare pack: <const ...A>(...: A) => (...A);
+>pack : <const ...A>(...: A) => (...A)
+> : A
+
+// Other modifiers on a type parameter still error as before.
+declare wrong: <readonly T>(x: T) => T;
+>wrong : <T>(x: T) => T
+>x : T
+

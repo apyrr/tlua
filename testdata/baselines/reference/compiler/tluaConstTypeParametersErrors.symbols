@@ -1,0 +1,35 @@
+//// [tests/cases/compiler/tluaConstTypeParametersErrors.tlua] ////
+
+=== tluaConstTypeParametersErrors.tlua ===
+// Const makes sense only where inference happens: value signatures. On a type
+// alias or interface there is no argument to freeze.
+type Box<const T> = T
+>Box : Symbol(Box, Decl(tluaConstTypeParametersErrors.tlua, 0, 0))
+>T : Symbol(T, Decl(tluaConstTypeParametersErrors.tlua, 2, 9))
+>T : Symbol(T, Decl(tluaConstTypeParametersErrors.tlua, 2, 9))
+
+interface Bad<const T> {
+>Bad : Symbol(Bad, Decl(tluaConstTypeParametersErrors.tlua, 2, 21))
+>T : Symbol(T, Decl(tluaConstTypeParametersErrors.tlua, 3, 14))
+
+    value: T;
+>value : Symbol(Bad.value, Decl(tluaConstTypeParametersErrors.tlua, 3, 24))
+>T : Symbol(T, Decl(tluaConstTypeParametersErrors.tlua, 3, 14))
+}
+
+// A pack binds a whole value pack; none of the const inference rules apply.
+declare pack: <const ...A>(...: A) => (...A);
+>pack : Symbol(pack, Decl(tluaConstTypeParametersErrors.tlua, 8, 7))
+>A : Symbol(A, Decl(tluaConstTypeParametersErrors.tlua, 8, 15))
+> : Symbol((Missing), Decl(tluaConstTypeParametersErrors.tlua, 8, 27))
+>A : Symbol(A, Decl(tluaConstTypeParametersErrors.tlua, 8, 15))
+>A : Symbol(A, Decl(tluaConstTypeParametersErrors.tlua, 8, 15))
+
+// Other modifiers on a type parameter still error as before.
+declare wrong: <readonly T>(x: T) => T;
+>wrong : Symbol(wrong, Decl(tluaConstTypeParametersErrors.tlua, 11, 7))
+>T : Symbol(T, Decl(tluaConstTypeParametersErrors.tlua, 11, 16))
+>x : Symbol(x, Decl(tluaConstTypeParametersErrors.tlua, 11, 28))
+>T : Symbol(T, Decl(tluaConstTypeParametersErrors.tlua, 11, 16))
+>T : Symbol(T, Decl(tluaConstTypeParametersErrors.tlua, 11, 16))
+
