@@ -1064,7 +1064,7 @@
             "end": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(end)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
             "endCaptures": {
                 "1": {
-                    "name": "storage.type.function.tlua"
+                    "name": "keyword.control.tlua"
                 }
             },
             "patterns": [
@@ -1099,7 +1099,7 @@
             "end": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(end)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
             "endCaptures": {
                 "1": {
-                    "name": "storage.type.function.tlua"
+                    "name": "keyword.control.tlua"
                 }
             },
             "patterns": [
@@ -2734,11 +2734,8 @@
                     "include": "#tlua-logical-operators"
                 },
                 {
-                    "name": "keyword.control.flow.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(await)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
-                    "name": "keyword.operator.expression.in.tlua",
+                    "comment": "In tlua the only `in` in expression position is the generic-for separator, which VS Code's Lua grammar scopes as `keyword.control`. The mapped-type `[K in T]` keeps `keyword.operator.expression.in`.",
+                    "name": "keyword.control.tlua",
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))in(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))(?!\\()"
                 },
                 {
@@ -2897,6 +2894,9 @@
                     "include": "#nil-literal"
                 },
                 {
+                    "include": "#self-literal"
+                },
+                {
                     "include": "#undefined-literal"
                 },
                 {
@@ -3025,6 +3025,11 @@
                     "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))false(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
                 }
             ]
+        },
+        "self-literal": {
+            "comment": "Matches VS Code's Lua grammar, which scopes `self` as `variable.language.self`. The `self` type keyword is handled by `#type-builtin-literals`.",
+            "name": "variable.language.self.tlua",
+            "match": "(?<![_$[:alnum:]])(?<![.:])self\\b(?!\\$)"
         },
         "super-literal": {
             "name": "variable.language.super.tlua",
@@ -5068,7 +5073,8 @@
             "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))nil(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
         },
         "tlua-logical-operators": {
-            "name": "keyword.operator.logical.tlua",
+            "comment": "`keyword.operator.wordlike` is the scope themes use to colour word operators like a keyword; plain `keyword.operator.logical` falls back to the symbol-operator colour, which is the default foreground.",
+            "name": "keyword.operator.wordlike.logical.tlua",
             "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(and|or|not)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
         },
         "tlua-block-do": {
