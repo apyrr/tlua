@@ -1,0 +1,109 @@
+//// [tests/cases/conformance/ported/typeParameterConstModifiersReverseMappedTypes.tlua] ////
+
+=== typeParameterConstModifiersReverseMappedTypes.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParameterConstModifiersReverseMappedTypes.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+-- dropped: test5 rest-parameter case (rest-tuple correlation is replaced by
+--   generic packs, and const packs are rejected)
+
+declare test1: <const T>(obj: {
+>test1 : <const T>(obj: { [K in keyof T]: T[K]; }) => [T, typeof obj]
+>obj : { [K in keyof T]: T[K]; }
+
+  [K in keyof T]: T[K];
+}) => [T, typeof obj];
+>obj : { [K in keyof T]: T[K]; }
+
+local result1 = test1({
+>result1 : [{ readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }, { readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }]
+>test1({  prop = "foo",  nested = {    nestedProp = "bar",  },}) : [{ readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }, { readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }]
+>test1 : <const T>(obj: { [K in keyof T]: T[K]; }) => [T, typeof obj]
+>{  prop = "foo",  nested = {    nestedProp = "bar",  },} : { prop: "foo"; nested: { nestedProp: "bar"; }; }
+
+  prop = "foo",
+>prop : "foo"
+>"foo" : "foo"
+
+  nested = {
+>nested : { nestedProp: "bar"; }
+>{    nestedProp = "bar",  } : { nestedProp: "bar"; }
+
+    nestedProp = "bar",
+>nestedProp : "bar"
+>"bar" : "bar"
+
+  },
+})
+
+declare test2: <const T>(obj: {
+>test2 : <const T>(obj: { readonly [K in keyof T]: T[K]; }) => [T, typeof obj]
+>obj : { readonly [K in keyof T]: T[K]; }
+
+  readonly [K in keyof T]: T[K];
+}) => [T, typeof obj];
+>obj : { readonly [K in keyof T]: T[K]; }
+
+local result2 = test2({
+>result2 : [{ prop: "foo"; nested: { readonly nestedProp: "bar"; }; }, { readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }]
+>test2({  prop = "foo",  nested = {    nestedProp = "bar",  },}) : [{ prop: "foo"; nested: { readonly nestedProp: "bar"; }; }, { readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }]
+>test2 : <const T>(obj: { readonly [K in keyof T]: T[K]; }) => [T, typeof obj]
+>{  prop = "foo",  nested = {    nestedProp = "bar",  },} : { prop: "foo"; nested: { nestedProp: "bar"; }; }
+
+  prop = "foo",
+>prop : "foo"
+>"foo" : "foo"
+
+  nested = {
+>nested : { nestedProp: "bar"; }
+>{    nestedProp = "bar",  } : { nestedProp: "bar"; }
+
+    nestedProp = "bar",
+>nestedProp : "bar"
+>"bar" : "bar"
+
+  },
+})
+
+declare test3: <const T>(obj: {
+>test3 : <const T>(obj: { -readonly [K in keyof T]: T[K]; }) => [T, typeof obj]
+>obj : { -readonly [K in keyof T]: T[K]; }
+
+  -readonly [K in keyof T]: T[K];
+}) => [T, typeof obj];
+>obj : { -readonly [K in keyof T]: T[K]; }
+
+local result3 = test3({
+>result3 : [{ readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }, { prop: "foo"; nested: { readonly nestedProp: "bar"; }; }]
+>test3({  prop = "foo",  nested = {    nestedProp = "bar",  },}) : [{ readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }, { prop: "foo"; nested: { readonly nestedProp: "bar"; }; }]
+>test3 : <const T>(obj: { -readonly [K in keyof T]: T[K]; }) => [T, typeof obj]
+>{  prop = "foo",  nested = {    nestedProp = "bar",  },} : { prop: "foo"; nested: { nestedProp: "bar"; }; }
+
+  prop = "foo",
+>prop : "foo"
+>"foo" : "foo"
+
+  nested = {
+>nested : { nestedProp: "bar"; }
+>{    nestedProp = "bar",  } : { nestedProp: "bar"; }
+
+    nestedProp = "bar",
+>nestedProp : "bar"
+>"bar" : "bar"
+
+  },
+})
+
+declare test4: <const T extends readonly unknown[]>(arr: {
+>test4 : <const T extends readonly unknown[]>(arr: { [K in keyof T]: T[K]; }) => T
+>arr : { [K in keyof T]: T[K]; }
+
+  [K in keyof T]: T[K];
+}) => T;
+
+local result4 = test4({ "1", 2 })
+>result4 : readonly ["1", 2]
+>test4({ "1", 2 }) : readonly ["1", 2]
+>test4 : <const T extends readonly unknown[]>(arr: { [K in keyof T]: T[K]; }) => T
+>{ "1", 2 } : ["1", 2]
+

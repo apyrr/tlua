@@ -1,0 +1,120 @@
+//// [tests/cases/conformance/ported/typeParameterConstModifiersReverseMappedTypes.tlua] ////
+
+=== typeParameterConstModifiersReverseMappedTypes.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParameterConstModifiersReverseMappedTypes.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+-- dropped: test5 rest-parameter case (rest-tuple correlation is replaced by
+--   generic packs, and const packs are rejected)
+
+declare test1: <const T>(obj: {
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 16))
+>obj : Symbol(obj, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 25))
+
+  [K in keyof T]: T[K];
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 7, 3))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 16))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 16))
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 7, 3))
+
+}) => [T, typeof obj];
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 16))
+>obj : Symbol(obj, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 25))
+
+local result1 = test1({
+>result1 : Symbol(result1, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 10, 5))
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 6, 7))
+
+  prop = "foo",
+>prop : Symbol(prop, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 10, 23))
+
+  nested = {
+>nested : Symbol(nested, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 11, 15))
+
+    nestedProp = "bar",
+>nestedProp : Symbol(nestedProp, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 12, 12))
+
+  },
+})
+
+declare test2: <const T>(obj: {
+>test2 : Symbol(test2, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 16))
+>obj : Symbol(obj, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 25))
+
+  readonly [K in keyof T]: T[K];
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 18, 12))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 16))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 16))
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 18, 12))
+
+}) => [T, typeof obj];
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 16))
+>obj : Symbol(obj, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 25))
+
+local result2 = test2({
+>result2 : Symbol(result2, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 21, 5))
+>test2 : Symbol(test2, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 17, 7))
+
+  prop = "foo",
+>prop : Symbol(prop, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 21, 23))
+
+  nested = {
+>nested : Symbol(nested, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 22, 15))
+
+    nestedProp = "bar",
+>nestedProp : Symbol(nestedProp, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 23, 12))
+
+  },
+})
+
+declare test3: <const T>(obj: {
+>test3 : Symbol(test3, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 16))
+>obj : Symbol(obj, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 25))
+
+  -readonly [K in keyof T]: T[K];
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 29, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 16))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 16))
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 29, 13))
+
+}) => [T, typeof obj];
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 16))
+>obj : Symbol(obj, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 25))
+
+local result3 = test3({
+>result3 : Symbol(result3, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 32, 5))
+>test3 : Symbol(test3, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 28, 7))
+
+  prop = "foo",
+>prop : Symbol(prop, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 32, 23))
+
+  nested = {
+>nested : Symbol(nested, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 33, 15))
+
+    nestedProp = "bar",
+>nestedProp : Symbol(nestedProp, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 34, 12))
+
+  },
+})
+
+declare test4: <const T extends readonly unknown[]>(arr: {
+>test4 : Symbol(test4, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 39, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 39, 16))
+>arr : Symbol(arr, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 39, 52))
+
+  [K in keyof T]: T[K];
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 40, 3))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 39, 16))
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 39, 16))
+>K : Symbol(K, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 40, 3))
+
+}) => T;
+>T : Symbol(T, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 39, 16))
+
+local result4 = test4({ "1", 2 })
+>result4 : Symbol(result4, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 43, 5))
+>test4 : Symbol(test4, Decl(typeParameterConstModifiersReverseMappedTypes.tlua, 39, 7))
+

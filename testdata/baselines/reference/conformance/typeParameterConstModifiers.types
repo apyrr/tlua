@@ -1,0 +1,342 @@
+//// [tests/cases/conformance/ported/typeParameterConstModifiers.tlua] ////
+
+=== typeParameterConstModifiers.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParameterConstModifiers.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+-- dropped: f6/fb/fc/fn/fn1/factory_55033 rest-parameter cases (rest-tuple
+--   correlation is replaced by generic packs, and const packs are rejected)
+-- dropped: spread arguments (operand spread no longer parses)
+-- dropped: C1/C2 class cases (classes removed)
+-- dropped: T4/T5 construct-signature types (`new` removed)
+-- converted: arrow functions to function expressions; fx2's trailing-comma
+--   variant collapses into fx1 (no arrow ambiguity to disambiguate)
+
+declare f1: <const T>(x: T) => T;
+>f1 : <const T>(x: T) => T
+>x : T
+
+local x11 = f1('a')
+>x11 : "a"
+>f1('a') : "a"
+>f1 : <const T>(x: T) => T
+>'a' : "a"
+
+local x12 = f1({ 'a', { 'b', 'c' } })
+>x12 : { readonly 1: "a"; readonly 2: { readonly 1: "b"; readonly 2: "c"; }; }
+>f1({ 'a', { 'b', 'c' } }) : { readonly 1: "a"; readonly 2: { readonly 1: "b"; readonly 2: "c"; }; }
+>f1 : <const T>(x: T) => T
+>{ 'a', { 'b', 'c' } } : { 1: "a"; 2: { 1: "b"; 2: "c"; }; }
+>{ 'b', 'c' } : { 1: "b"; 2: "c"; }
+
+local x13 = f1({ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } })
+>x13 : { readonly a: 1; readonly b: "c"; readonly d: { readonly 1: "e"; readonly 2: 2; readonly 3: true; readonly 4: { readonly f: "g"; }; }; }
+>f1({ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } }) : { readonly a: 1; readonly b: "c"; readonly d: { readonly 1: "e"; readonly 2: 2; readonly 3: true; readonly 4: { readonly f: "g"; }; }; }
+>f1 : <const T>(x: T) => T
+>{ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } } : { a: 1; b: "c"; d: { 1: "e"; 2: 2; 3: true; 4: { f: "g"; }; }; }
+>a : 1
+>1 : 1
+>b : "c"
+>"c" : "c"
+>d : { 1: "e"; 2: 2; 3: true; 4: { f: "g"; }; }
+>{ "e", 2, true, { f = "g" } } : { 1: "e"; 2: 2; 3: true; 4: { f: "g"; }; }
+>true : true
+>{ f = "g" } : { f: "g"; }
+>f : "g"
+>"g" : "g"
+
+declare f2: <const T, U>(x: T | nil) => T;
+>f2 : <const T, U>(x: T | nil) => T
+>x : T | nil
+
+local x21 = f2('a')
+>x21 : "a"
+>f2('a') : "a"
+>f2 : <const T, U>(x: T | nil) => T
+>'a' : "a"
+
+local x22 = f2({ 'a', { 'b', 'c' } })
+>x22 : { readonly 1: "a"; readonly 2: { readonly 1: "b"; readonly 2: "c"; }; }
+>f2({ 'a', { 'b', 'c' } }) : { readonly 1: "a"; readonly 2: { readonly 1: "b"; readonly 2: "c"; }; }
+>f2 : <const T, U>(x: T | nil) => T
+>{ 'a', { 'b', 'c' } } : { 1: "a"; 2: { 1: "b"; 2: "c"; }; }
+>{ 'b', 'c' } : { 1: "b"; 2: "c"; }
+
+local x23 = f2({ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } })
+>x23 : { readonly a: 1; readonly b: "c"; readonly d: { readonly 1: "e"; readonly 2: 2; readonly 3: true; readonly 4: { readonly f: "g"; }; }; }
+>f2({ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } }) : { readonly a: 1; readonly b: "c"; readonly d: { readonly 1: "e"; readonly 2: 2; readonly 3: true; readonly 4: { readonly f: "g"; }; }; }
+>f2 : <const T, U>(x: T | nil) => T
+>{ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } } : { a: 1; b: "c"; d: { 1: "e"; 2: 2; 3: true; 4: { f: "g"; }; }; }
+>a : 1
+>1 : 1
+>b : "c"
+>"c" : "c"
+>d : { 1: "e"; 2: 2; 3: true; 4: { f: "g"; }; }
+>{ "e", 2, true, { f = "g" } } : { 1: "e"; 2: 2; 3: true; 4: { f: "g"; }; }
+>true : true
+>{ f = "g" } : { f: "g"; }
+>f : "g"
+>"g" : "g"
+
+declare f3: <const T>(x: T) => T[];
+>f3 : <const T>(x: T) => T[]
+>x : T
+
+local x31 = f3("hello")
+>x31 : "hello"[]
+>f3("hello") : "hello"[]
+>f3 : <const T>(x: T) => T[]
+>"hello" : "hello"
+
+local x32 = f3("hello")
+>x32 : "hello"[]
+>f3("hello") : "hello"[]
+>f3 : <const T>(x: T) => T[]
+>"hello" : "hello"
+
+declare f4: <const T>(obj: [T, T]) => T;
+>f4 : <const T>(obj: [T, T]) => T
+>obj : [T, T]
+
+local x41 = f4({ { 1, 'x' }, { 2, 'y' } })
+>x41 : { readonly 1: 1; readonly 2: "x"; } | { readonly 1: 2; readonly 2: "y"; }
+>f4({ { 1, 'x' }, { 2, 'y' } }) : { readonly 1: 1; readonly 2: "x"; } | { readonly 1: 2; readonly 2: "y"; }
+>f4 : <const T>(obj: [T, T]) => T
+>{ { 1, 'x' }, { 2, 'y' } } : [{ 1: 1; 2: "x"; }, { 1: 2; 2: "y"; }]
+>{ 1, 'x' } : { 1: 1; 2: "x"; }
+>{ 2, 'y' } : { 1: 2; 2: "y"; }
+
+local x42 = f4({ { a = 1, b = 'x' }, { a = 2, b = 'y' } })
+>x42 : { readonly a: 1; readonly b: "x"; } | { readonly a: 2; readonly b: "y"; }
+>f4({ { a = 1, b = 'x' }, { a = 2, b = 'y' } }) : { readonly a: 1; readonly b: "x"; } | { readonly a: 2; readonly b: "y"; }
+>f4 : <const T>(obj: [T, T]) => T
+>{ { a = 1, b = 'x' }, { a = 2, b = 'y' } } : [{ a: 1; b: "x"; }, { a: 2; b: "y"; }]
+>{ a = 1, b = 'x' } : { a: 1; b: "x"; }
+>a : 1
+>1 : 1
+>b : "x"
+>'x' : "x"
+>{ a = 2, b = 'y' } : { a: 2; b: "y"; }
+>a : 2
+>2 : 2
+>b : "y"
+>'y' : "y"
+
+declare f5: <const T>(obj: { x: T, y: T }) => T;
+>f5 : <const T>(obj: { x: T; y: T; }) => T
+>obj : { x: T; y: T; }
+>x : T
+>y : T
+
+local x51 = f5({ x = { 1, 'x' }, y = { 2, 'y' } })
+>x51 : { readonly 1: 1; readonly 2: "x"; } | { readonly 1: 2; readonly 2: "y"; }
+>f5({ x = { 1, 'x' }, y = { 2, 'y' } }) : { readonly 1: 1; readonly 2: "x"; } | { readonly 1: 2; readonly 2: "y"; }
+>f5 : <const T>(obj: { x: T; y: T; }) => T
+>{ x = { 1, 'x' }, y = { 2, 'y' } } : { x: { 1: 1; 2: "x"; }; y: { 1: 2; 2: "y"; }; }
+>x : { 1: 1; 2: "x"; }
+>{ 1, 'x' } : { 1: 1; 2: "x"; }
+>y : { 1: 2; 2: "y"; }
+>{ 2, 'y' } : { 1: 2; 2: "y"; }
+
+local x52 = f5({ x = { a = 1, b = 'x' }, y = { a = 2, b = 'y' } })
+>x52 : { readonly a: 1; readonly b: "x"; } | { readonly a: 2; readonly b: "y"; }
+>f5({ x = { a = 1, b = 'x' }, y = { a = 2, b = 'y' } }) : { readonly a: 1; readonly b: "x"; } | { readonly a: 2; readonly b: "y"; }
+>f5 : <const T>(obj: { x: T; y: T; }) => T
+>{ x = { a = 1, b = 'x' }, y = { a = 2, b = 'y' } } : { x: { a: 1; b: "x"; }; y: { a: 2; b: "y"; }; }
+>x : { a: 1; b: "x"; }
+>{ a = 1, b = 'x' } : { a: 1; b: "x"; }
+>a : 1
+>1 : 1
+>b : "x"
+>'x' : "x"
+>y : { a: 2; b: "y"; }
+>{ a = 2, b = 'y' } : { a: 2; b: "y"; }
+>a : 2
+>2 : 2
+>b : "y"
+>'y' : "y"
+
+local fx1 = function<const T>(x: T): T
+>fx1 : <const T>(x: T) => T
+>function<const T>(x: T): T    return xend : <const T>(x: T) => T
+>x : T
+
+    return x
+>x : T
+
+end
+
+interface I1<const T> { x: T }  -- Error
+>x : T
+
+interface I2 {
+    f<const T>(x: T): T;
+>f : <const T>(x: T) => T
+>x : T
+}
+
+type T1<const T> = T;  -- Error
+>T1 : T
+
+type T2 = <const T>(x: T) => T;
+>T2 : T2
+>x : T
+
+type T3 = { <const T>(x: T): T };
+>T3 : T3
+>x : T
+
+-- Corrected repro from #51745
+
+type Obj = { a: { b: { c: "123" } } };
+>Obj : Obj
+>a : { b: { c: "123"; }; }
+>b : { c: "123"; }
+>c : "123"
+
+type GetPath<T, P> =
+>GetPath : GetPath<T, P>
+
+    P extends readonly [] ? T :
+    P extends readonly [infer A extends keyof T, ...infer Rest] ? GetPath<T[A], Rest> :
+    never;
+
+function set<T, const P extends readonly string[]>(obj: T, path: P, value: GetPath<T, P>)
+>set : <T, const P extends readonly string[]>(obj: T, path: P, value: GetPath<T, P>) => void
+>obj : T
+>path : P
+>value : GetPath<T, P>
+
+end
+
+declare obj: Obj;
+>obj : Obj
+
+declare value: "123";
+>value : "123"
+
+set(obj, { 'a', 'b', 'c' }, value)
+>set(obj, { 'a', 'b', 'c' }, value) : void
+>set : <T, const P extends readonly string[]>(obj: T, path: P, value: GetPath<T, P>) => void
+>obj : Obj
+>{ 'a', 'b', 'c' } : ["a", "b", "c"]
+>value : "123"
+
+-- Repro from #52007
+
+declare inners2: <const T extends readonly any[]>(args: readonly [unknown, ...T, unknown]) => T;
+>inners2 : <const T extends readonly any[]>(args: readonly [unknown, ...T, unknown]) => T
+>args : readonly [unknown, ...T, unknown]
+
+local test2 = inners2({ 1, 2, 3, 4, 5 })
+>test2 : [2, 3, 4]
+>inners2({ 1, 2, 3, 4, 5 }) : [2, 3, 4]
+>inners2 : <const T extends readonly any[]>(args: readonly [unknown, ...T, unknown]) => T
+>{ 1, 2, 3, 4, 5 } : [number, 2, 3, 4, number]
+
+-- Repro from #53307
+
+type NotEmpty<T extends Table<string, any>> = keyof T extends never ? never : T;
+>NotEmpty : NotEmpty<T>
+
+local thing = function<const O extends Table<string, any>>(o: NotEmpty<O>)
+>thing : <const O extends Table<string, any>>(o: NotEmpty<O>) => NotEmpty<O>
+>function<const O extends Table<string, any>>(o: NotEmpty<O>)    return oend : <const O extends Table<string, any>>(o: NotEmpty<O>) => NotEmpty<O>
+>o : NotEmpty<O>
+
+    return o
+>o : NotEmpty<O>
+
+end
+
+local t = thing({ foo = '' })  -- readonly { foo: "" }
+>t : { readonly foo: ""; }
+>thing({ foo = '' }) : { readonly foo: ""; }
+>thing : <const O extends Table<string, any>>(o: NotEmpty<O>) => NotEmpty<O>
+>{ foo = '' } : { foo: ""; }
+>foo : ""
+>'' : ""
+
+type NotEmptyMapped<T extends Table<string, any>> = keyof T extends never ? never : { [K in keyof T]: T[K] };
+>NotEmptyMapped : NotEmptyMapped<T>
+
+local thingMapped = function<const O extends Table<string, any>>(o: NotEmptyMapped<O>)
+>thingMapped : <const O extends Table<string, any>>(o: NotEmptyMapped<O>) => NotEmptyMapped<O>
+>function<const O extends Table<string, any>>(o: NotEmptyMapped<O>)    return oend : <const O extends Table<string, any>>(o: NotEmptyMapped<O>) => NotEmptyMapped<O>
+>o : NotEmptyMapped<O>
+
+    return o
+>o : NotEmptyMapped<O>
+
+end
+
+local tMapped = thingMapped({ foo = '' })  -- { foo: "" }
+>tMapped : { readonly foo: ""; }
+>thingMapped({ foo = '' }) : { readonly foo: ""; }
+>thingMapped : <const O extends Table<string, any>>(o: NotEmptyMapped<O>) => NotEmptyMapped<O>
+>{ foo = '' } : { foo: ""; }
+>foo : ""
+>'' : ""
+
+-- More examples of non-readonly constraints
+
+declare fa1: <const T extends unknown[]>(args: T) => T;
+>fa1 : <const T extends unknown[]>(args: T) => T
+>args : T
+
+declare fa2: <const T extends readonly unknown[]>(args: T) => T;
+>fa2 : <const T extends readonly unknown[]>(args: T) => T
+>args : T
+
+fa1({ "hello", 42 })
+>fa1({ "hello", 42 }) : ["hello", 42]
+>fa1 : <const T extends unknown[]>(args: T) => T
+>{ "hello", 42 } : ["hello", 42]
+
+fa2({ "hello", 42 })
+>fa2({ "hello", 42 }) : readonly ["hello", 42]
+>fa2 : <const T extends readonly unknown[]>(args: T) => T
+>{ "hello", 42 } : ["hello", 42]
+
+declare fd1: <const T extends string[] | number[]>(args: T) => T;
+>fd1 : <const T extends string[] | number[]>(args: T) => T
+>args : T
+
+declare fd2: <const T extends string[] | readonly number[]>(args: T) => T;
+>fd2 : <const T extends string[] | readonly number[]>(args: T) => T
+>args : T
+
+declare fd3: <const T extends readonly string[] | readonly number[]>(args: T) => T;
+>fd3 : <const T extends readonly string[] | readonly number[]>(args: T) => T
+>args : T
+
+fd1({ "hello", "world" })
+>fd1({ "hello", "world" }) : ["hello", "world"]
+>fd1 : <const T extends string[] | number[]>(args: T) => T
+>{ "hello", "world" } : ["hello", "world"]
+
+fd1({ 1, 2, 3 })
+>fd1({ 1, 2, 3 }) : [1, 2, 3]
+>fd1 : <const T extends string[] | number[]>(args: T) => T
+>{ 1, 2, 3 } : [1, 2, 3]
+
+fd2({ "hello", "world" })
+>fd2({ "hello", "world" }) : ["hello", "world"]
+>fd2 : <const T extends string[] | readonly number[]>(args: T) => T
+>{ "hello", "world" } : ["hello", "world"]
+
+fd2({ 1, 2, 3 })
+>fd2({ 1, 2, 3 }) : [1, 2, 3]
+>fd2 : <const T extends string[] | readonly number[]>(args: T) => T
+>{ 1, 2, 3 } : [1, 2, 3]
+
+fd3({ "hello", "world" })
+>fd3({ "hello", "world" }) : readonly ["hello", "world"]
+>fd3 : <const T extends readonly string[] | readonly number[]>(args: T) => T
+>{ "hello", "world" } : ["hello", "world"]
+
+fd3({ 1, 2, 3 })
+>fd3({ 1, 2, 3 }) : readonly [1, 2, 3]
+>fd3 : <const T extends readonly string[] | readonly number[]>(args: T) => T
+>{ 1, 2, 3 } : [1, 2, 3]
+

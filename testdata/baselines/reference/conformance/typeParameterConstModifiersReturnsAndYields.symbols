@@ -1,0 +1,301 @@
+//// [tests/cases/conformance/ported/typeParameterConstModifiersReturnsAndYields.tlua] ////
+
+=== typeParameterConstModifiersReturnsAndYields.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParameterConstModifiersReturnsAndYields.ts
+-- dropped: @target: esnext directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+-- dropped: enum E cases (enums removed), bigint cases (bigint removed)
+-- dropped: async/Promise cases (async replaced by suspend, Promise removed)
+-- dropped: test3/test4 generator cases (generators removed)
+-- converted: arrow functions to function expressions; the expression-body and
+--   block-body arrow sets collapse into one (tlua functions only have blocks)
+
+declare test1: <const T>(create: () => T) => T;
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 16))
+>create : Symbol(create, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 25))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 16))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 16))
+
+local result1 = test1(function() return { 'a' } end)
+>result1 : Symbol(result1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 11, 5))
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 7))
+
+local result2 = test1(function() return `a${math.random()}` end)
+>result2 : Symbol(result2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 12, 5))
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 7))
+>math.random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>math : Symbol(math, Decl(lib.luajit.d.tlua, --, --))
+>random : Symbol(MathLib.random, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+local result3 = test1(function() return 'a' end)
+>result3 : Symbol(result3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 13, 5))
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 7))
+
+local result4 = test1(function() return true end)
+>result4 : Symbol(result4, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 14, 5))
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 7))
+
+local result6 = test1(function() return false end)
+>result6 : Symbol(result6, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 15, 5))
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 7))
+
+local result7 = test1(function() return 11111 end)
+>result7 : Symbol(result7, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 16, 5))
+>test1 : Symbol(test1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 9, 7))
+
+-- https://github.com/microsoft/TypeScript/issues/53813
+local UploadThingServerHelper = function<const ValidRoutes>(route: {
+>UploadThingServerHelper : Symbol(UploadThingServerHelper, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 19, 5))
+>ValidRoutes : Symbol(ValidRoutes, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 19, 41))
+>route : Symbol(route, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 19, 60))
+
+  readonly [Route in keyof ValidRoutes]: {
+>Route : Symbol(Route, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 20, 12))
+>ValidRoutes : Symbol(ValidRoutes, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 19, 41))
+
+    middleware: () => ValidRoutes[Route];
+>middleware : Symbol(middleware, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 20, 42))
+>ValidRoutes : Symbol(ValidRoutes, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 19, 41))
+>Route : Symbol(Route, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 20, 12))
+
+    onUpload: (response: { metadata: ValidRoutes[Route] }) => void;
+>onUpload : Symbol(onUpload, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 21, 41))
+>response : Symbol(response, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 22, 15))
+>metadata : Symbol(metadata, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 22, 26))
+>ValidRoutes : Symbol(ValidRoutes, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 19, 41))
+>Route : Symbol(Route, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 20, 12))
+
+  };
+})
+end
+
+local FileRouter = UploadThingServerHelper({
+>FileRouter : Symbol(FileRouter, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 27, 5))
+>UploadThingServerHelper : Symbol(UploadThingServerHelper, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 19, 5))
+
+  example = {
+>example : Symbol(example, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 27, 44))
+
+    middleware = function() return "someValue" end,
+>middleware : Symbol(middleware, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 28, 13))
+
+    onUpload = function(response)
+>onUpload : Symbol(onUpload, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 29, 51))
+>response : Symbol(response, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 30, 24))
+
+      local v: "someValue" = response.metadata
+>v : Symbol(v, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 31, 11))
+>response.metadata : Symbol(metadata, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 22, 26))
+>response : Symbol(response, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 30, 24))
+>metadata : Symbol(metadata, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 22, 26))
+
+    end,
+  },
+})
+
+function outer1<const T>(cb: () => T)
+>outer1 : Symbol(outer1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 34, 2))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 36, 16))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 36, 25))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 36, 16))
+
+  local function inner1<const U>(cb2: () => U)
+>inner1 : Symbol(inner1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 36, 37))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 37, 24))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 37, 33))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 37, 24))
+
+    return { cb(), cb2() }
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 36, 25))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 37, 33))
+
+  end
+  return inner1
+>inner1 : Symbol(inner1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 36, 37))
+
+end
+local nestedResult1 = outer1(function() return 1 end)(function() return "foo" end)
+>nestedResult1 : Symbol(nestedResult1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 42, 5))
+>outer1 : Symbol(outer1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 34, 2))
+
+function outer2<T>(cb: () => T)
+>outer2 : Symbol(outer2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 42, 82))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 44, 16))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 44, 19))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 44, 16))
+
+  local function inner2<const U>(cb2: () => U)
+>inner2 : Symbol(inner2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 44, 31))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 45, 24))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 45, 33))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 45, 24))
+
+    return { cb(), cb2() }
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 44, 19))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 45, 33))
+
+  end
+  return inner2
+>inner2 : Symbol(inner2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 44, 31))
+
+end
+local nestedResult2 = outer2(function() return 1 end)(function() return "foo" end)
+>nestedResult2 : Symbol(nestedResult2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 50, 5))
+>outer2 : Symbol(outer2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 42, 82))
+
+function outer3<const T>(cb: () => T)
+>outer3 : Symbol(outer3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 50, 82))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 52, 16))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 52, 25))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 52, 16))
+
+  local function inner3<U>(cb2: () => U)
+>inner3 : Symbol(inner3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 52, 37))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 53, 24))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 53, 27))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 53, 24))
+
+    return { cb(), cb2() }
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 52, 25))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 53, 27))
+
+  end
+  return inner3
+>inner3 : Symbol(inner3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 52, 37))
+
+end
+local nestedResult3 = outer3(function() return 1 end)(function() return "foo" end)
+>nestedResult3 : Symbol(nestedResult3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 58, 5))
+>outer3 : Symbol(outer3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 50, 82))
+
+declare function overloaded1<const T>(cb: () => T): T;
+>overloaded1 : Symbol(overloaded1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 58, 82), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 54))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 29))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 38))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 29))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 29))
+
+declare function overloaded1<const T, const U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded1 : Symbol(overloaded1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 58, 82), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 54))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 37))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 47))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 29))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 59))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 37))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 61, 37))
+
+local overloadA = overloaded1(function() return 42 end)
+>overloadA : Symbol(overloadA, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 62, 5))
+>overloaded1 : Symbol(overloaded1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 58, 82), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 54))
+
+local overloadB = overloaded1(function() return "hi" end, function() return true end)
+>overloadB : Symbol(overloadB, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 63, 5))
+>overloaded1 : Symbol(overloaded1, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 58, 82), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 60, 54))
+
+declare function overloaded2<T>(cb: () => T): T;
+>overloaded2 : Symbol(overloaded2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 63, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 48))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 29))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 32))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 29))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 29))
+
+declare function overloaded2<T, const U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded2 : Symbol(overloaded2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 63, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 48))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 31))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 41))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 29))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 53))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 31))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 66, 31))
+
+local overloadC = overloaded2(function() return 42 end)
+>overloadC : Symbol(overloadC, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 67, 5))
+>overloaded2 : Symbol(overloaded2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 63, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 48))
+
+local overloadD = overloaded2(function() return "hi" end, function() return true end)
+>overloadD : Symbol(overloadD, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 68, 5))
+>overloaded2 : Symbol(overloaded2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 63, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 65, 48))
+
+declare function overloaded3<const T>(cb: () => T): T;
+>overloaded3 : Symbol(overloaded3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 68, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 54))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 29))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 38))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 29))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 29))
+
+declare function overloaded3<const T, U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded3 : Symbol(overloaded3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 68, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 54))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 37))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 41))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 29))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 53))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 37))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 71, 37))
+
+local overloadE = overloaded3(function() return 42 end)
+>overloadE : Symbol(overloadE, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 72, 5))
+>overloaded3 : Symbol(overloaded3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 68, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 54))
+
+local overloadF = overloaded3(function() return "hi" end, function() return true end)
+>overloadF : Symbol(overloadF, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 73, 5))
+>overloaded3 : Symbol(overloaded3, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 68, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 70, 54))
+
+declare function overloaded4<const T>(cb: () => T): T;
+>overloaded4 : Symbol(overloaded4, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 73, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 54))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 29))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 38))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 29))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 29))
+
+declare function overloaded4<T, U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded4 : Symbol(overloaded4, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 73, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 54))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 31))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 35))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 29))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 47))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 31))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 76, 31))
+
+local overloadG = overloaded4(function() return 42 end)
+>overloadG : Symbol(overloadG, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 77, 5))
+>overloaded4 : Symbol(overloaded4, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 73, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 54))
+
+local overloadH = overloaded4(function() return "hi" end, function() return true end)
+>overloadH : Symbol(overloadH, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 78, 5))
+>overloaded4 : Symbol(overloaded4, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 73, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 75, 54))
+
+declare function overloaded5<T>(cb: () => T): T;
+>overloaded5 : Symbol(overloaded5, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 78, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 48))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 29))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 32))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 29))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 29))
+
+declare function overloaded5<const T, U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded5 : Symbol(overloaded5, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 78, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 48))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 37))
+>cb : Symbol(cb, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 41))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 29))
+>cb2 : Symbol(cb2, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 53))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 37))
+>T : Symbol(T, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 29))
+>U : Symbol(U, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 81, 37))
+
+local overloadI = overloaded5(function() return 42 end)
+>overloadI : Symbol(overloadI, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 82, 5))
+>overloaded5 : Symbol(overloaded5, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 78, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 48))
+
+local overloadJ = overloaded5(function() return "hi" end, function() return true end)
+>overloadJ : Symbol(overloadJ, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 83, 5))
+>overloaded5 : Symbol(overloaded5, Decl(typeParameterConstModifiersReturnsAndYields.tlua, 78, 85), Decl(typeParameterConstModifiersReturnsAndYields.tlua, 80, 48))
+

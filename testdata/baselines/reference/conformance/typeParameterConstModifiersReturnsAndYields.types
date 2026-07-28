@@ -1,0 +1,326 @@
+//// [tests/cases/conformance/ported/typeParameterConstModifiersReturnsAndYields.tlua] ////
+
+=== typeParameterConstModifiersReturnsAndYields.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParameterConstModifiersReturnsAndYields.ts
+-- dropped: @target: esnext directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+-- dropped: enum E cases (enums removed), bigint cases (bigint removed)
+-- dropped: async/Promise cases (async replaced by suspend, Promise removed)
+-- dropped: test3/test4 generator cases (generators removed)
+-- converted: arrow functions to function expressions; the expression-body and
+--   block-body arrow sets collapse into one (tlua functions only have blocks)
+
+declare test1: <const T>(create: () => T) => T;
+>test1 : <const T>(create: () => T) => T
+>create : () => T
+
+local result1 = test1(function() return { 'a' } end)
+>result1 : { readonly 1: "a"; }
+>test1(function() return { 'a' } end) : { readonly 1: "a"; }
+>test1 : <const T>(create: () => T) => T
+>function() return { 'a' } end : () => { readonly 1: "a"; }
+>{ 'a' } : { 1: "a"; }
+
+local result2 = test1(function() return `a${math.random()}` end)
+>result2 : `a${number}`
+>test1(function() return `a${math.random()}` end) : `a${number}`
+>test1 : <const T>(create: () => T) => T
+>function() return `a${math.random()}` end : () => `a${number}`
+>`a${math.random()}` : `a${number}`
+>math.random() : number
+>math.random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+>math : MathLib
+>random : { (): number; (upper: number): number; (lower: number, upper: number): number; }
+
+local result3 = test1(function() return 'a' end)
+>result3 : "a"
+>test1(function() return 'a' end) : "a"
+>test1 : <const T>(create: () => T) => T
+>function() return 'a' end : () => "a"
+>'a' : "a"
+
+local result4 = test1(function() return true end)
+>result4 : true
+>test1(function() return true end) : true
+>test1 : <const T>(create: () => T) => T
+>function() return true end : () => true
+>true : true
+
+local result6 = test1(function() return false end)
+>result6 : false
+>test1(function() return false end) : false
+>test1 : <const T>(create: () => T) => T
+>function() return false end : () => false
+>false : false
+
+local result7 = test1(function() return 11111 end)
+>result7 : 11111
+>test1(function() return 11111 end) : 11111
+>test1 : <const T>(create: () => T) => T
+>function() return 11111 end : () => 11111
+>11111 : 11111
+
+-- https://github.com/microsoft/TypeScript/issues/53813
+local UploadThingServerHelper = function<const ValidRoutes>(route: {
+>UploadThingServerHelper : <const ValidRoutes>(route: { readonly [Route in keyof ValidRoutes]: { middleware: () => ValidRoutes[Route]; onUpload: (response: { metadata: ValidRoutes[Route]; }) => void; }; }) => void
+>function<const ValidRoutes>(route: {  readonly [Route in keyof ValidRoutes]: {    middleware: () => ValidRoutes[Route];    onUpload: (response: { metadata: ValidRoutes[Route] }) => void;  };})end : <const ValidRoutes>(route: { readonly [Route in keyof ValidRoutes]: { middleware: () => ValidRoutes[Route]; onUpload: (response: { metadata: ValidRoutes[Route]; }) => void; }; }) => void
+>route : { readonly [Route in keyof ValidRoutes]: { middleware: () => ValidRoutes[Route]; onUpload: (response: { metadata: ValidRoutes[Route]; }) => void; }; }
+
+  readonly [Route in keyof ValidRoutes]: {
+    middleware: () => ValidRoutes[Route];
+>middleware : () => ValidRoutes[Route]
+
+    onUpload: (response: { metadata: ValidRoutes[Route] }) => void;
+>onUpload : (response: { metadata: ValidRoutes[Route]; }) => void
+>response : { metadata: ValidRoutes[Route]; }
+>metadata : ValidRoutes[Route]
+
+  };
+})
+end
+
+local FileRouter = UploadThingServerHelper({
+>FileRouter : void
+>UploadThingServerHelper({  example = {    middleware = function() return "someValue" end,    onUpload = function(response)      local v: "someValue" = response.metadata    end,  },}) : void
+>UploadThingServerHelper : <const ValidRoutes>(route: { readonly [Route in keyof ValidRoutes]: { middleware: () => ValidRoutes[Route]; onUpload: (response: { metadata: ValidRoutes[Route]; }) => void; }; }) => void
+>{  example = {    middleware = function() return "someValue" end,    onUpload = function(response)      local v: "someValue" = response.metadata    end,  },} : { example: { middleware: () => "someValue"; onUpload: (response: { metadata: "someValue"; }) => void; }; }
+
+  example = {
+>example : { middleware: () => "someValue"; onUpload: (response: { metadata: "someValue"; }) => void; }
+>{    middleware = function() return "someValue" end,    onUpload = function(response)      local v: "someValue" = response.metadata    end,  } : { middleware: () => "someValue"; onUpload: (response: { metadata: "someValue"; }) => void; }
+
+    middleware = function() return "someValue" end,
+>middleware : () => "someValue"
+>function() return "someValue" end : () => "someValue"
+>"someValue" : "someValue"
+
+    onUpload = function(response)
+>onUpload : (response: { metadata: "someValue"; }) => void
+>function(response)      local v: "someValue" = response.metadata    end : (response: { metadata: "someValue"; }) => void
+>response : { metadata: "someValue"; }
+
+      local v: "someValue" = response.metadata
+>v : "someValue"
+>response.metadata : "someValue"
+>response : { metadata: "someValue"; }
+>metadata : "someValue"
+
+    end,
+  },
+})
+
+function outer1<const T>(cb: () => T)
+>outer1 : <const T>(cb: () => T) => <const U>(cb2: () => U) => { 1: T; 2: U; }
+>cb : () => T
+
+  local function inner1<const U>(cb2: () => U)
+>inner1 : <const U>(cb2: () => U) => { 1: T; 2: U; }
+>cb2 : () => U
+
+    return { cb(), cb2() }
+>{ cb(), cb2() } : { 1: T; 2: U; }
+>cb() : T
+>cb : () => T
+>cb2() : U
+>cb2 : () => U
+
+  end
+  return inner1
+>inner1 : <const U>(cb2: () => U) => { 1: T; 2: U; }
+
+end
+local nestedResult1 = outer1(function() return 1 end)(function() return "foo" end)
+>nestedResult1 : { 1: 1; 2: "foo"; }
+>outer1(function() return 1 end)(function() return "foo" end) : { 1: 1; 2: "foo"; }
+>outer1(function() return 1 end) : <const U>(cb2: () => U) => { 1: 1; 2: U; }
+>outer1 : <const T>(cb: () => T) => <const U>(cb2: () => U) => { 1: T; 2: U; }
+>function() return 1 end : () => 1
+>1 : 1
+>function() return "foo" end : () => "foo"
+>"foo" : "foo"
+
+function outer2<T>(cb: () => T)
+>outer2 : <T>(cb: () => T) => <const U>(cb2: () => U) => { 1: T; 2: U; }
+>cb : () => T
+
+  local function inner2<const U>(cb2: () => U)
+>inner2 : <const U>(cb2: () => U) => { 1: T; 2: U; }
+>cb2 : () => U
+
+    return { cb(), cb2() }
+>{ cb(), cb2() } : { 1: T; 2: U; }
+>cb() : T
+>cb : () => T
+>cb2() : U
+>cb2 : () => U
+
+  end
+  return inner2
+>inner2 : <const U>(cb2: () => U) => { 1: T; 2: U; }
+
+end
+local nestedResult2 = outer2(function() return 1 end)(function() return "foo" end)
+>nestedResult2 : { 1: number; 2: "foo"; }
+>outer2(function() return 1 end)(function() return "foo" end) : { 1: number; 2: "foo"; }
+>outer2(function() return 1 end) : <const U>(cb2: () => U) => { 1: number; 2: U; }
+>outer2 : <T>(cb: () => T) => <const U>(cb2: () => U) => { 1: T; 2: U; }
+>function() return 1 end : () => number
+>1 : 1
+>function() return "foo" end : () => "foo"
+>"foo" : "foo"
+
+function outer3<const T>(cb: () => T)
+>outer3 : <const T>(cb: () => T) => <U>(cb2: () => U) => { 1: T; 2: U; }
+>cb : () => T
+
+  local function inner3<U>(cb2: () => U)
+>inner3 : <U>(cb2: () => U) => { 1: T; 2: U; }
+>cb2 : () => U
+
+    return { cb(), cb2() }
+>{ cb(), cb2() } : { 1: T; 2: U; }
+>cb() : T
+>cb : () => T
+>cb2() : U
+>cb2 : () => U
+
+  end
+  return inner3
+>inner3 : <U>(cb2: () => U) => { 1: T; 2: U; }
+
+end
+local nestedResult3 = outer3(function() return 1 end)(function() return "foo" end)
+>nestedResult3 : { 1: 1; 2: string; }
+>outer3(function() return 1 end)(function() return "foo" end) : { 1: 1; 2: string; }
+>outer3(function() return 1 end) : <U>(cb2: () => U) => { 1: 1; 2: U; }
+>outer3 : <const T>(cb: () => T) => <U>(cb2: () => U) => { 1: T; 2: U; }
+>function() return 1 end : () => 1
+>1 : 1
+>function() return "foo" end : () => string
+>"foo" : "foo"
+
+declare function overloaded1<const T>(cb: () => T): T;
+>overloaded1 : { <const T>(cb: () => T): T; <const T_1, const U>(cb: () => T_1, cb2: () => U): [T_1, U]; }
+>cb : () => T
+
+declare function overloaded1<const T, const U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded1 : { <const T_1>(cb: () => T_1): T_1; <const T, const U>(cb: () => T, cb2: () => U): [T, U]; }
+>cb : () => T
+>cb2 : () => U
+
+local overloadA = overloaded1(function() return 42 end)
+>overloadA : 42
+>overloaded1(function() return 42 end) : 42
+>overloaded1 : { <const T>(cb: () => T): T; <const T, const U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return 42 end : () => 42
+>42 : 42
+
+local overloadB = overloaded1(function() return "hi" end, function() return true end)
+>overloadB : ["hi", true]
+>overloaded1(function() return "hi" end, function() return true end) : ["hi", true]
+>overloaded1 : { <const T>(cb: () => T): T; <const T, const U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return "hi" end : () => "hi"
+>"hi" : "hi"
+>function() return true end : () => true
+>true : true
+
+declare function overloaded2<T>(cb: () => T): T;
+>overloaded2 : { <T>(cb: () => T): T; <T_1, const U>(cb: () => T_1, cb2: () => U): [T_1, U]; }
+>cb : () => T
+
+declare function overloaded2<T, const U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded2 : { <T_1>(cb: () => T_1): T_1; <T, const U>(cb: () => T, cb2: () => U): [T, U]; }
+>cb : () => T
+>cb2 : () => U
+
+local overloadC = overloaded2(function() return 42 end)
+>overloadC : number
+>overloaded2(function() return 42 end) : number
+>overloaded2 : { <T>(cb: () => T): T; <T, const U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return 42 end : () => number
+>42 : 42
+
+local overloadD = overloaded2(function() return "hi" end, function() return true end)
+>overloadD : [string, true]
+>overloaded2(function() return "hi" end, function() return true end) : [string, true]
+>overloaded2 : { <T>(cb: () => T): T; <T, const U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return "hi" end : () => string
+>"hi" : "hi"
+>function() return true end : () => true
+>true : true
+
+declare function overloaded3<const T>(cb: () => T): T;
+>overloaded3 : { <const T>(cb: () => T): T; <const T_1, U>(cb: () => T_1, cb2: () => U): [T_1, U]; }
+>cb : () => T
+
+declare function overloaded3<const T, U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded3 : { <const T_1>(cb: () => T_1): T_1; <const T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>cb : () => T
+>cb2 : () => U
+
+local overloadE = overloaded3(function() return 42 end)
+>overloadE : 42
+>overloaded3(function() return 42 end) : 42
+>overloaded3 : { <const T>(cb: () => T): T; <const T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return 42 end : () => 42
+>42 : 42
+
+local overloadF = overloaded3(function() return "hi" end, function() return true end)
+>overloadF : ["hi", boolean]
+>overloaded3(function() return "hi" end, function() return true end) : ["hi", boolean]
+>overloaded3 : { <const T>(cb: () => T): T; <const T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return "hi" end : () => "hi"
+>"hi" : "hi"
+>function() return true end : () => boolean
+>true : true
+
+declare function overloaded4<const T>(cb: () => T): T;
+>overloaded4 : { <const T>(cb: () => T): T; <T_1, U>(cb: () => T_1, cb2: () => U): [T_1, U]; }
+>cb : () => T
+
+declare function overloaded4<T, U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded4 : { <const T_1>(cb: () => T_1): T_1; <T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>cb : () => T
+>cb2 : () => U
+
+local overloadG = overloaded4(function() return 42 end)
+>overloadG : 42
+>overloaded4(function() return 42 end) : 42
+>overloaded4 : { <const T>(cb: () => T): T; <T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return 42 end : () => 42
+>42 : 42
+
+local overloadH = overloaded4(function() return "hi" end, function() return true end)
+>overloadH : [string, boolean]
+>overloaded4(function() return "hi" end, function() return true end) : [string, boolean]
+>overloaded4 : { <const T>(cb: () => T): T; <T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return "hi" end : () => string
+>"hi" : "hi"
+>function() return true end : () => boolean
+>true : true
+
+declare function overloaded5<T>(cb: () => T): T;
+>overloaded5 : { <T>(cb: () => T): T; <const T_1, U>(cb: () => T_1, cb2: () => U): [T_1, U]; }
+>cb : () => T
+
+declare function overloaded5<const T, U>(cb: () => T, cb2: () => U): [T, U];
+>overloaded5 : { <T_1>(cb: () => T_1): T_1; <const T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>cb : () => T
+>cb2 : () => U
+
+local overloadI = overloaded5(function() return 42 end)
+>overloadI : number
+>overloaded5(function() return 42 end) : number
+>overloaded5 : { <T>(cb: () => T): T; <const T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return 42 end : () => number
+>42 : 42
+
+local overloadJ = overloaded5(function() return "hi" end, function() return true end)
+>overloadJ : ["hi", boolean]
+>overloaded5(function() return "hi" end, function() return true end) : ["hi", boolean]
+>overloaded5 : { <T>(cb: () => T): T; <const T, U>(cb: () => T, cb2: () => U): [T, U]; }
+>function() return "hi" end : () => "hi"
+>"hi" : "hi"
+>function() return true end : () => boolean
+>true : true
+

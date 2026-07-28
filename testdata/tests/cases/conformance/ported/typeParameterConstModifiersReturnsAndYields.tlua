@@ -1,0 +1,85 @@
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParameterConstModifiersReturnsAndYields.ts
+-- dropped: @target: esnext directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+-- dropped: enum E cases (enums removed), bigint cases (bigint removed)
+-- dropped: async/Promise cases (async replaced by suspend, Promise removed)
+-- dropped: test3/test4 generator cases (generators removed)
+-- converted: arrow functions to function expressions; the expression-body and
+--   block-body arrow sets collapse into one (tlua functions only have blocks)
+// @noEmit: true
+
+declare test1: <const T>(create: () => T) => T;
+
+local result1 = test1(function() return { 'a' } end)
+local result2 = test1(function() return `a${math.random()}` end)
+local result3 = test1(function() return 'a' end)
+local result4 = test1(function() return true end)
+local result6 = test1(function() return false end)
+local result7 = test1(function() return 11111 end)
+
+-- https://github.com/microsoft/TypeScript/issues/53813
+local UploadThingServerHelper = function<const ValidRoutes>(route: {
+  readonly [Route in keyof ValidRoutes]: {
+    middleware: () => ValidRoutes[Route];
+    onUpload: (response: { metadata: ValidRoutes[Route] }) => void;
+  };
+})
+end
+
+local FileRouter = UploadThingServerHelper({
+  example = {
+    middleware = function() return "someValue" end,
+    onUpload = function(response)
+      local v: "someValue" = response.metadata
+    end,
+  },
+})
+
+function outer1<const T>(cb: () => T)
+  local function inner1<const U>(cb2: () => U)
+    return { cb(), cb2() }
+  end
+  return inner1
+end
+local nestedResult1 = outer1(function() return 1 end)(function() return "foo" end)
+
+function outer2<T>(cb: () => T)
+  local function inner2<const U>(cb2: () => U)
+    return { cb(), cb2() }
+  end
+  return inner2
+end
+local nestedResult2 = outer2(function() return 1 end)(function() return "foo" end)
+
+function outer3<const T>(cb: () => T)
+  local function inner3<U>(cb2: () => U)
+    return { cb(), cb2() }
+  end
+  return inner3
+end
+local nestedResult3 = outer3(function() return 1 end)(function() return "foo" end)
+
+declare function overloaded1<const T>(cb: () => T): T;
+declare function overloaded1<const T, const U>(cb: () => T, cb2: () => U): [T, U];
+local overloadA = overloaded1(function() return 42 end)
+local overloadB = overloaded1(function() return "hi" end, function() return true end)
+
+declare function overloaded2<T>(cb: () => T): T;
+declare function overloaded2<T, const U>(cb: () => T, cb2: () => U): [T, U];
+local overloadC = overloaded2(function() return 42 end)
+local overloadD = overloaded2(function() return "hi" end, function() return true end)
+
+declare function overloaded3<const T>(cb: () => T): T;
+declare function overloaded3<const T, U>(cb: () => T, cb2: () => U): [T, U];
+local overloadE = overloaded3(function() return 42 end)
+local overloadF = overloaded3(function() return "hi" end, function() return true end)
+
+declare function overloaded4<const T>(cb: () => T): T;
+declare function overloaded4<T, U>(cb: () => T, cb2: () => U): [T, U];
+local overloadG = overloaded4(function() return 42 end)
+local overloadH = overloaded4(function() return "hi" end, function() return true end)
+
+declare function overloaded5<T>(cb: () => T): T;
+declare function overloaded5<const T, U>(cb: () => T, cb2: () => U): [T, U];
+local overloadI = overloaded5(function() return 42 end)
+local overloadJ = overloaded5(function() return "hi" end, function() return true end)

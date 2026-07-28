@@ -1,0 +1,355 @@
+//// [tests/cases/conformance/ported/typeParameterConstModifiers.tlua] ////
+
+=== typeParameterConstModifiers.tlua ===
+-- ported from tests/cases/conformance/types/typeParameters/typeParameterLists/typeParameterConstModifiers.ts
+-- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- dropped: @strict: true directive (strict checking is enabled by default)
+-- dropped: f6/fb/fc/fn/fn1/factory_55033 rest-parameter cases (rest-tuple
+--   correlation is replaced by generic packs, and const packs are rejected)
+-- dropped: spread arguments (operand spread no longer parses)
+-- dropped: C1/C2 class cases (classes removed)
+-- dropped: T4/T5 construct-signature types (`new` removed)
+-- converted: arrow functions to function expressions; fx2's trailing-comma
+--   variant collapses into fx1 (no arrow ambiguity to disambiguate)
+
+declare f1: <const T>(x: T) => T;
+>f1 : Symbol(f1, Decl(typeParameterConstModifiers.tlua, 11, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 11, 13))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 11, 22))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 11, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 11, 13))
+
+local x11 = f1('a')
+>x11 : Symbol(x11, Decl(typeParameterConstModifiers.tlua, 13, 5))
+>f1 : Symbol(f1, Decl(typeParameterConstModifiers.tlua, 11, 7))
+
+local x12 = f1({ 'a', { 'b', 'c' } })
+>x12 : Symbol(x12, Decl(typeParameterConstModifiers.tlua, 14, 5))
+>f1 : Symbol(f1, Decl(typeParameterConstModifiers.tlua, 11, 7))
+
+local x13 = f1({ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } })
+>x13 : Symbol(x13, Decl(typeParameterConstModifiers.tlua, 15, 5))
+>f1 : Symbol(f1, Decl(typeParameterConstModifiers.tlua, 11, 7))
+>a : Symbol(a, Decl(typeParameterConstModifiers.tlua, 15, 16))
+>b : Symbol(b, Decl(typeParameterConstModifiers.tlua, 15, 23))
+>d : Symbol(d, Decl(typeParameterConstModifiers.tlua, 15, 32))
+>f : Symbol(f, Decl(typeParameterConstModifiers.tlua, 15, 54))
+
+declare f2: <const T, U>(x: T | nil) => T;
+>f2 : Symbol(f2, Decl(typeParameterConstModifiers.tlua, 17, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 17, 13))
+>U : Symbol(U, Decl(typeParameterConstModifiers.tlua, 17, 21))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 17, 25))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 17, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 17, 13))
+
+local x21 = f2('a')
+>x21 : Symbol(x21, Decl(typeParameterConstModifiers.tlua, 19, 5))
+>f2 : Symbol(f2, Decl(typeParameterConstModifiers.tlua, 17, 7))
+
+local x22 = f2({ 'a', { 'b', 'c' } })
+>x22 : Symbol(x22, Decl(typeParameterConstModifiers.tlua, 20, 5))
+>f2 : Symbol(f2, Decl(typeParameterConstModifiers.tlua, 17, 7))
+
+local x23 = f2({ a = 1, b = "c", d = { "e", 2, true, { f = "g" } } })
+>x23 : Symbol(x23, Decl(typeParameterConstModifiers.tlua, 21, 5))
+>f2 : Symbol(f2, Decl(typeParameterConstModifiers.tlua, 17, 7))
+>a : Symbol(a, Decl(typeParameterConstModifiers.tlua, 21, 16))
+>b : Symbol(b, Decl(typeParameterConstModifiers.tlua, 21, 23))
+>d : Symbol(d, Decl(typeParameterConstModifiers.tlua, 21, 32))
+>f : Symbol(f, Decl(typeParameterConstModifiers.tlua, 21, 54))
+
+declare f3: <const T>(x: T) => T[];
+>f3 : Symbol(f3, Decl(typeParameterConstModifiers.tlua, 23, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 23, 13))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 23, 22))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 23, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 23, 13))
+
+local x31 = f3("hello")
+>x31 : Symbol(x31, Decl(typeParameterConstModifiers.tlua, 25, 5))
+>f3 : Symbol(f3, Decl(typeParameterConstModifiers.tlua, 23, 7))
+
+local x32 = f3("hello")
+>x32 : Symbol(x32, Decl(typeParameterConstModifiers.tlua, 26, 5))
+>f3 : Symbol(f3, Decl(typeParameterConstModifiers.tlua, 23, 7))
+
+declare f4: <const T>(obj: [T, T]) => T;
+>f4 : Symbol(f4, Decl(typeParameterConstModifiers.tlua, 28, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 28, 13))
+>obj : Symbol(obj, Decl(typeParameterConstModifiers.tlua, 28, 22))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 28, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 28, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 28, 13))
+
+local x41 = f4({ { 1, 'x' }, { 2, 'y' } })
+>x41 : Symbol(x41, Decl(typeParameterConstModifiers.tlua, 30, 5))
+>f4 : Symbol(f4, Decl(typeParameterConstModifiers.tlua, 28, 7))
+
+local x42 = f4({ { a = 1, b = 'x' }, { a = 2, b = 'y' } })
+>x42 : Symbol(x42, Decl(typeParameterConstModifiers.tlua, 31, 5))
+>f4 : Symbol(f4, Decl(typeParameterConstModifiers.tlua, 28, 7))
+>a : Symbol(a, Decl(typeParameterConstModifiers.tlua, 31, 18))
+>b : Symbol(b, Decl(typeParameterConstModifiers.tlua, 31, 25))
+>a : Symbol(a, Decl(typeParameterConstModifiers.tlua, 31, 38))
+>b : Symbol(b, Decl(typeParameterConstModifiers.tlua, 31, 45))
+
+declare f5: <const T>(obj: { x: T, y: T }) => T;
+>f5 : Symbol(f5, Decl(typeParameterConstModifiers.tlua, 33, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 33, 13))
+>obj : Symbol(obj, Decl(typeParameterConstModifiers.tlua, 33, 22))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 33, 28))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 33, 13))
+>y : Symbol(y, Decl(typeParameterConstModifiers.tlua, 33, 34))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 33, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 33, 13))
+
+local x51 = f5({ x = { 1, 'x' }, y = { 2, 'y' } })
+>x51 : Symbol(x51, Decl(typeParameterConstModifiers.tlua, 35, 5))
+>f5 : Symbol(f5, Decl(typeParameterConstModifiers.tlua, 33, 7))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 35, 16))
+>y : Symbol(y, Decl(typeParameterConstModifiers.tlua, 35, 32))
+
+local x52 = f5({ x = { a = 1, b = 'x' }, y = { a = 2, b = 'y' } })
+>x52 : Symbol(x52, Decl(typeParameterConstModifiers.tlua, 36, 5))
+>f5 : Symbol(f5, Decl(typeParameterConstModifiers.tlua, 33, 7))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 36, 16))
+>a : Symbol(a, Decl(typeParameterConstModifiers.tlua, 36, 22))
+>b : Symbol(b, Decl(typeParameterConstModifiers.tlua, 36, 29))
+>y : Symbol(y, Decl(typeParameterConstModifiers.tlua, 36, 40))
+>a : Symbol(a, Decl(typeParameterConstModifiers.tlua, 36, 46))
+>b : Symbol(b, Decl(typeParameterConstModifiers.tlua, 36, 53))
+
+local fx1 = function<const T>(x: T): T
+>fx1 : Symbol(fx1, Decl(typeParameterConstModifiers.tlua, 38, 5))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 38, 21))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 38, 30))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 38, 21))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 38, 21))
+
+    return x
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 38, 30))
+
+end
+
+interface I1<const T> { x: T }  -- Error
+>I1 : Symbol(I1, Decl(typeParameterConstModifiers.tlua, 40, 3))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 42, 13))
+>x : Symbol(I1.x, Decl(typeParameterConstModifiers.tlua, 42, 23))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 42, 13))
+
+interface I2 {
+>I2 : Symbol(I2, Decl(typeParameterConstModifiers.tlua, 42, 30))
+
+    f<const T>(x: T): T;
+>f : Symbol(I2.f, Decl(typeParameterConstModifiers.tlua, 44, 14))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 45, 6))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 45, 15))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 45, 6))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 45, 6))
+}
+
+type T1<const T> = T;  -- Error
+>T1 : Symbol(T1, Decl(typeParameterConstModifiers.tlua, 46, 1))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 48, 8))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 48, 8))
+
+type T2 = <const T>(x: T) => T;
+>T2 : Symbol(T2, Decl(typeParameterConstModifiers.tlua, 48, 21))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 50, 11))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 50, 20))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 50, 11))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 50, 11))
+
+type T3 = { <const T>(x: T): T };
+>T3 : Symbol(T3, Decl(typeParameterConstModifiers.tlua, 50, 31))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 51, 13))
+>x : Symbol(x, Decl(typeParameterConstModifiers.tlua, 51, 22))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 51, 13))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 51, 13))
+
+-- Corrected repro from #51745
+
+type Obj = { a: { b: { c: "123" } } };
+>Obj : Symbol(Obj, Decl(typeParameterConstModifiers.tlua, 51, 33))
+>a : Symbol(a, Decl(typeParameterConstModifiers.tlua, 55, 12))
+>b : Symbol(b, Decl(typeParameterConstModifiers.tlua, 55, 17))
+>c : Symbol(c, Decl(typeParameterConstModifiers.tlua, 55, 22))
+
+type GetPath<T, P> =
+>GetPath : Symbol(GetPath, Decl(typeParameterConstModifiers.tlua, 55, 38))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 57, 13))
+>P : Symbol(P, Decl(typeParameterConstModifiers.tlua, 57, 15))
+
+    P extends readonly [] ? T :
+>P : Symbol(P, Decl(typeParameterConstModifiers.tlua, 57, 15))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 57, 13))
+
+    P extends readonly [infer A extends keyof T, ...infer Rest] ? GetPath<T[A], Rest> :
+>P : Symbol(P, Decl(typeParameterConstModifiers.tlua, 57, 15))
+>A : Symbol(A, Decl(typeParameterConstModifiers.tlua, 59, 29))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 57, 13))
+>Rest : Symbol(Rest, Decl(typeParameterConstModifiers.tlua, 59, 57))
+>GetPath : Symbol(GetPath, Decl(typeParameterConstModifiers.tlua, 55, 38))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 57, 13))
+>A : Symbol(A, Decl(typeParameterConstModifiers.tlua, 59, 29))
+>Rest : Symbol(Rest, Decl(typeParameterConstModifiers.tlua, 59, 57))
+
+    never;
+
+function set<T, const P extends readonly string[]>(obj: T, path: P, value: GetPath<T, P>)
+>set : Symbol(set, Decl(typeParameterConstModifiers.tlua, 60, 10))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 62, 13))
+>P : Symbol(P, Decl(typeParameterConstModifiers.tlua, 62, 15))
+>obj : Symbol(obj, Decl(typeParameterConstModifiers.tlua, 62, 51))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 62, 13))
+>path : Symbol(path, Decl(typeParameterConstModifiers.tlua, 62, 58))
+>P : Symbol(P, Decl(typeParameterConstModifiers.tlua, 62, 15))
+>value : Symbol(value, Decl(typeParameterConstModifiers.tlua, 62, 67))
+>GetPath : Symbol(GetPath, Decl(typeParameterConstModifiers.tlua, 55, 38))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 62, 13))
+>P : Symbol(P, Decl(typeParameterConstModifiers.tlua, 62, 15))
+
+end
+
+declare obj: Obj;
+>obj : Symbol(obj, Decl(typeParameterConstModifiers.tlua, 65, 7))
+>Obj : Symbol(Obj, Decl(typeParameterConstModifiers.tlua, 51, 33))
+
+declare value: "123";
+>value : Symbol(value, Decl(typeParameterConstModifiers.tlua, 66, 7))
+
+set(obj, { 'a', 'b', 'c' }, value)
+>set : Symbol(set, Decl(typeParameterConstModifiers.tlua, 60, 10))
+>obj : Symbol(obj, Decl(typeParameterConstModifiers.tlua, 65, 7))
+>value : Symbol(value, Decl(typeParameterConstModifiers.tlua, 66, 7))
+
+-- Repro from #52007
+
+declare inners2: <const T extends readonly any[]>(args: readonly [unknown, ...T, unknown]) => T;
+>inners2 : Symbol(inners2, Decl(typeParameterConstModifiers.tlua, 72, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 72, 18))
+>args : Symbol(args, Decl(typeParameterConstModifiers.tlua, 72, 50))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 72, 18))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 72, 18))
+
+local test2 = inners2({ 1, 2, 3, 4, 5 })
+>test2 : Symbol(test2, Decl(typeParameterConstModifiers.tlua, 74, 5))
+>inners2 : Symbol(inners2, Decl(typeParameterConstModifiers.tlua, 72, 7))
+
+-- Repro from #53307
+
+type NotEmpty<T extends Table<string, any>> = keyof T extends never ? never : T;
+>NotEmpty : Symbol(NotEmpty, Decl(typeParameterConstModifiers.tlua, 74, 40))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 78, 14))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 78, 14))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 78, 14))
+
+local thing = function<const O extends Table<string, any>>(o: NotEmpty<O>)
+>thing : Symbol(thing, Decl(typeParameterConstModifiers.tlua, 80, 5))
+>O : Symbol(O, Decl(typeParameterConstModifiers.tlua, 80, 23))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>o : Symbol(o, Decl(typeParameterConstModifiers.tlua, 80, 59))
+>NotEmpty : Symbol(NotEmpty, Decl(typeParameterConstModifiers.tlua, 74, 40))
+>O : Symbol(O, Decl(typeParameterConstModifiers.tlua, 80, 23))
+
+    return o
+>o : Symbol(o, Decl(typeParameterConstModifiers.tlua, 80, 59))
+
+end
+
+local t = thing({ foo = '' })  -- readonly { foo: "" }
+>t : Symbol(t, Decl(typeParameterConstModifiers.tlua, 84, 5))
+>thing : Symbol(thing, Decl(typeParameterConstModifiers.tlua, 80, 5))
+>foo : Symbol(foo, Decl(typeParameterConstModifiers.tlua, 84, 17))
+
+type NotEmptyMapped<T extends Table<string, any>> = keyof T extends never ? never : { [K in keyof T]: T[K] };
+>NotEmptyMapped : Symbol(NotEmptyMapped, Decl(typeParameterConstModifiers.tlua, 84, 29))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 86, 20))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 86, 20))
+>K : Symbol(K, Decl(typeParameterConstModifiers.tlua, 86, 87))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 86, 20))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 86, 20))
+>K : Symbol(K, Decl(typeParameterConstModifiers.tlua, 86, 87))
+
+local thingMapped = function<const O extends Table<string, any>>(o: NotEmptyMapped<O>)
+>thingMapped : Symbol(thingMapped, Decl(typeParameterConstModifiers.tlua, 88, 5))
+>O : Symbol(O, Decl(typeParameterConstModifiers.tlua, 88, 29))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>o : Symbol(o, Decl(typeParameterConstModifiers.tlua, 88, 65))
+>NotEmptyMapped : Symbol(NotEmptyMapped, Decl(typeParameterConstModifiers.tlua, 84, 29))
+>O : Symbol(O, Decl(typeParameterConstModifiers.tlua, 88, 29))
+
+    return o
+>o : Symbol(o, Decl(typeParameterConstModifiers.tlua, 88, 65))
+
+end
+
+local tMapped = thingMapped({ foo = '' })  -- { foo: "" }
+>tMapped : Symbol(tMapped, Decl(typeParameterConstModifiers.tlua, 92, 5))
+>thingMapped : Symbol(thingMapped, Decl(typeParameterConstModifiers.tlua, 88, 5))
+>foo : Symbol(foo, Decl(typeParameterConstModifiers.tlua, 92, 29))
+
+-- More examples of non-readonly constraints
+
+declare fa1: <const T extends unknown[]>(args: T) => T;
+>fa1 : Symbol(fa1, Decl(typeParameterConstModifiers.tlua, 96, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 96, 14))
+>args : Symbol(args, Decl(typeParameterConstModifiers.tlua, 96, 41))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 96, 14))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 96, 14))
+
+declare fa2: <const T extends readonly unknown[]>(args: T) => T;
+>fa2 : Symbol(fa2, Decl(typeParameterConstModifiers.tlua, 97, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 97, 14))
+>args : Symbol(args, Decl(typeParameterConstModifiers.tlua, 97, 50))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 97, 14))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 97, 14))
+
+fa1({ "hello", 42 })
+>fa1 : Symbol(fa1, Decl(typeParameterConstModifiers.tlua, 96, 7))
+
+fa2({ "hello", 42 })
+>fa2 : Symbol(fa2, Decl(typeParameterConstModifiers.tlua, 97, 7))
+
+declare fd1: <const T extends string[] | number[]>(args: T) => T;
+>fd1 : Symbol(fd1, Decl(typeParameterConstModifiers.tlua, 102, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 102, 14))
+>args : Symbol(args, Decl(typeParameterConstModifiers.tlua, 102, 51))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 102, 14))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 102, 14))
+
+declare fd2: <const T extends string[] | readonly number[]>(args: T) => T;
+>fd2 : Symbol(fd2, Decl(typeParameterConstModifiers.tlua, 103, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 103, 14))
+>args : Symbol(args, Decl(typeParameterConstModifiers.tlua, 103, 60))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 103, 14))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 103, 14))
+
+declare fd3: <const T extends readonly string[] | readonly number[]>(args: T) => T;
+>fd3 : Symbol(fd3, Decl(typeParameterConstModifiers.tlua, 104, 7))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 104, 14))
+>args : Symbol(args, Decl(typeParameterConstModifiers.tlua, 104, 69))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 104, 14))
+>T : Symbol(T, Decl(typeParameterConstModifiers.tlua, 104, 14))
+
+fd1({ "hello", "world" })
+>fd1 : Symbol(fd1, Decl(typeParameterConstModifiers.tlua, 102, 7))
+
+fd1({ 1, 2, 3 })
+>fd1 : Symbol(fd1, Decl(typeParameterConstModifiers.tlua, 102, 7))
+
+fd2({ "hello", "world" })
+>fd2 : Symbol(fd2, Decl(typeParameterConstModifiers.tlua, 103, 7))
+
+fd2({ 1, 2, 3 })
+>fd2 : Symbol(fd2, Decl(typeParameterConstModifiers.tlua, 103, 7))
+
+fd3({ "hello", "world" })
+>fd3 : Symbol(fd3, Decl(typeParameterConstModifiers.tlua, 104, 7))
+
+fd3({ 1, 2, 3 })
+>fd3 : Symbol(fd3, Decl(typeParameterConstModifiers.tlua, 104, 7))
+
