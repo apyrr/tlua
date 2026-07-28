@@ -24,6 +24,13 @@ func (item luaAugmentation) declaration() *ast.Node {
 // initializeLuaAugmentations resolves Lua assignment declarations only after all
 // files' ordinary globals exist. It operates on checker-local transient symbols.
 func (c *Checker) initializeLuaAugmentations() {
+	// Attachment runs before the checker's global and special types exist, and
+	// arm resolution must be a function of the program alone. The flag restricts
+	// entity-key naming to syntax and symbols for the duration: checking an
+	// arbitrary key expression here would dereference uninitialized checker
+	// state and cache types computed against a half-attached program.
+	c.attachingLuaAugmentations = true
+	defer func() { c.attachingLuaAugmentations = false }()
 	var candidates []ast.LuaWriteCandidate
 	for _, file := range c.files {
 		candidates = append(candidates, file.LuaWriteCandidates...)

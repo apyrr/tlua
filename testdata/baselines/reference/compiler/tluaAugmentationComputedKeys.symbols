@@ -1,0 +1,354 @@
+//// [tests/cases/compiler/tluaAugmentationComputedKeys.tlua] ////
+
+=== crash.tlua ===
+-- Augmentation-time receiver resolution names element-access keys without
+-- resolving any type: attachment runs before the checker's global and
+-- synthetic types exist. Each key below used to force a type computation
+-- (array annotation, string member lookup, arithmetic, property read) and
+-- crash checker initialization.
+local names: string[] = {"apple"}
+>names : Symbol(names, Decl(crash.tlua, 5, 5))
+
+local akey = names[1]
+>akey : Symbol(akey, Decl(crash.tlua, 6, 5))
+>names : Symbol(names, Decl(crash.tlua, 5, 5))
+
+local registry1 = {}
+>registry1 : Symbol(registry1, Decl(crash.tlua, 7, 5))
+
+local e1 = registry1[akey]
+>e1 : Symbol(e1, Decl(crash.tlua, 8, 5))
+>registry1 : Symbol(registry1, Decl(crash.tlua, 7, 5))
+>akey : Symbol(akey, Decl(crash.tlua, 6, 5))
+
+e1.x = 1
+>e1 : Symbol(e1, Decl(crash.tlua, 8, 5))
+
+local skey = ("apple"):upper()
+>skey : Symbol(skey, Decl(crash.tlua, 11, 5))
+>("apple"):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local registry2 = {}
+>registry2 : Symbol(registry2, Decl(crash.tlua, 12, 5))
+
+local e2 = registry2[skey]
+>e2 : Symbol(e2, Decl(crash.tlua, 13, 5))
+>registry2 : Symbol(registry2, Decl(crash.tlua, 12, 5))
+>skey : Symbol(skey, Decl(crash.tlua, 11, 5))
+
+e2.x = 1
+>e2 : Symbol(e2, Decl(crash.tlua, 13, 5))
+
+local nkey = 1 + 2
+>nkey : Symbol(nkey, Decl(crash.tlua, 16, 5))
+
+local registry3 = {}
+>registry3 : Symbol(registry3, Decl(crash.tlua, 17, 5))
+
+local e3 = registry3[nkey]
+>e3 : Symbol(e3, Decl(crash.tlua, 18, 5))
+>registry3 : Symbol(registry3, Decl(crash.tlua, 17, 5))
+>nkey : Symbol(nkey, Decl(crash.tlua, 16, 5))
+
+e3.x = 1
+>e3 : Symbol(e3, Decl(crash.tlua, 18, 5))
+
+local t = { name = "a" }
+>t : Symbol(t, Decl(crash.tlua, 21, 5))
+>name : Symbol(name, Decl(crash.tlua, 21, 11))
+
+local tkey = t.name
+>tkey : Symbol(tkey, Decl(crash.tlua, 22, 5))
+>t.name : Symbol(name, Decl(crash.tlua, 21, 11))
+>t : Symbol(t, Decl(crash.tlua, 21, 5))
+>name : Symbol(name, Decl(crash.tlua, 21, 11))
+
+local registry4 = {}
+>registry4 : Symbol(registry4, Decl(crash.tlua, 23, 5))
+
+local e4 = registry4[tkey]
+>e4 : Symbol(e4, Decl(crash.tlua, 24, 5))
+>registry4 : Symbol(registry4, Decl(crash.tlua, 23, 5))
+>tkey : Symbol(tkey, Decl(crash.tlua, 22, 5))
+
+e4.x = 1
+>e4 : Symbol(e4, Decl(crash.tlua, 24, 5))
+
+=== static.tlua ===
+-- Literal spellings still resolve statically, so a constant key keeps
+-- routing augmentation through the element access: string and numeric
+-- initializers, a literal type annotation, and a constant alias chain.
+type TKey = "typed"
+>TKey : Symbol(TKey, Decl(static.tlua, 0, 0))
+
+declare makeKey: () => TKey
+>makeKey : Symbol(makeKey, Decl(static.tlua, 4, 7))
+>TKey : Symbol(TKey, Decl(static.tlua, 0, 0))
+
+local KEY = "sub"
+>KEY : Symbol(KEY, Decl(static.tlua, 6, 5))
+
+local NKEY = 1
+>NKEY : Symbol(NKEY, Decl(static.tlua, 7, 5))
+
+local AKEY: "annotated" = "annotated"
+>AKEY : Symbol(AKEY, Decl(static.tlua, 8, 5))
+
+local TKEY: TKey = makeKey()
+>TKEY : Symbol(TKEY, Decl(static.tlua, 9, 5))
+>TKey : Symbol(TKey, Decl(static.tlua, 0, 0))
+>makeKey : Symbol(makeKey, Decl(static.tlua, 4, 7))
+
+local CKEY = ("casted") as const
+>CKEY : Symbol(CKEY, Decl(static.tlua, 10, 5))
+>const : Symbol(const)
+
+local WKEY = "widened" as string
+>WKEY : Symbol(WKEY, Decl(static.tlua, 11, 5))
+
+local M = {}
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+
+M.sub = {}
+>M.sub : Symbol(sub, Decl(static.tlua, 13, 12))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>sub : Symbol(sub, Decl(static.tlua, 13, 12))
+
+M[1] = {}
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>1 : Symbol(1, Decl(static.tlua, 14, 10))
+
+M.annotated = {}
+>M.annotated : Symbol(annotated, Decl(static.tlua, 15, 9))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>annotated : Symbol(annotated, Decl(static.tlua, 15, 9))
+
+M.typed = {}
+>M.typed : Symbol(typed, Decl(static.tlua, 16, 16))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>typed : Symbol(typed, Decl(static.tlua, 16, 16))
+
+M.casted = {}
+>M.casted : Symbol(casted, Decl(static.tlua, 17, 12))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>casted : Symbol(casted, Decl(static.tlua, 17, 12))
+
+M.widened = {}
+>M.widened : Symbol(widened, Decl(static.tlua, 18, 13))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>widened : Symbol(widened, Decl(static.tlua, 18, 13))
+
+local viaKey = M[KEY]
+>viaKey : Symbol(viaKey, Decl(static.tlua, 21, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>KEY : Symbol(KEY, Decl(static.tlua, 6, 5))
+
+function viaKey.helper(): number
+>viaKey : Symbol(viaKey, Decl(static.tlua, 21, 5))
+>helper : Symbol(helper, Decl(static.tlua, 21, 21))
+
+  return 1
+end
+
+local viaNumber = M[NKEY]
+>viaNumber : Symbol(viaNumber, Decl(static.tlua, 26, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>NKEY : Symbol(NKEY, Decl(static.tlua, 7, 5))
+
+viaNumber.count = 2
+>viaNumber : Symbol(viaNumber, Decl(static.tlua, 26, 5))
+
+local viaAnnotation = M[AKEY]
+>viaAnnotation : Symbol(viaAnnotation, Decl(static.tlua, 29, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>AKEY : Symbol(AKEY, Decl(static.tlua, 8, 5))
+
+viaAnnotation.flag = true
+>viaAnnotation.flag : Symbol(flag, Decl(static.tlua, 29, 29))
+>viaAnnotation : Symbol(viaAnnotation, Decl(static.tlua, 29, 5))
+>flag : Symbol(flag, Decl(static.tlua, 29, 29))
+
+local viaTypeAlias = M[TKEY]
+>viaTypeAlias : Symbol(viaTypeAlias, Decl(static.tlua, 32, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>TKEY : Symbol(TKEY, Decl(static.tlua, 9, 5))
+
+viaTypeAlias.deep = 3
+>viaTypeAlias.deep : Symbol(deep, Decl(static.tlua, 32, 28))
+>viaTypeAlias : Symbol(viaTypeAlias, Decl(static.tlua, 32, 5))
+>deep : Symbol(deep, Decl(static.tlua, 32, 28))
+
+-- Alias chains follow literal freshness: an annotated or const-asserted
+-- source stays literal through the hop, while a bare literal initializer
+-- widens once aliased, so FALIAS stops routing augmentation exactly as its
+-- symbol type (string) would.
+local ALIAS = AKEY
+>ALIAS : Symbol(ALIAS, Decl(static.tlua, 39, 5))
+>AKEY : Symbol(AKEY, Decl(static.tlua, 8, 5))
+
+local viaAlias = M[ALIAS]
+>viaAlias : Symbol(viaAlias, Decl(static.tlua, 40, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>ALIAS : Symbol(ALIAS, Decl(static.tlua, 39, 5))
+
+viaAlias.aliased = "yes"
+>viaAlias.aliased : Symbol(aliased, Decl(static.tlua, 40, 25))
+>viaAlias : Symbol(viaAlias, Decl(static.tlua, 40, 5))
+>aliased : Symbol(aliased, Decl(static.tlua, 40, 25))
+
+local CALIAS = CKEY
+>CALIAS : Symbol(CALIAS, Decl(static.tlua, 43, 5))
+>CKEY : Symbol(CKEY, Decl(static.tlua, 10, 5))
+
+local viaConstAlias = M[CALIAS]
+>viaConstAlias : Symbol(viaConstAlias, Decl(static.tlua, 44, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>CALIAS : Symbol(CALIAS, Decl(static.tlua, 43, 5))
+
+viaConstAlias.chained = 6
+>viaConstAlias.chained : Symbol(chained, Decl(static.tlua, 44, 31))
+>viaConstAlias : Symbol(viaConstAlias, Decl(static.tlua, 44, 5))
+>chained : Symbol(chained, Decl(static.tlua, 44, 31))
+
+local FALIAS = KEY
+>FALIAS : Symbol(FALIAS, Decl(static.tlua, 47, 5))
+>KEY : Symbol(KEY, Decl(static.tlua, 6, 5))
+
+local viaFresh = M[FALIAS]
+>viaFresh : Symbol(viaFresh, Decl(static.tlua, 48, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>FALIAS : Symbol(FALIAS, Decl(static.tlua, 47, 5))
+
+viaFresh.dropped = 7
+>viaFresh : Symbol(viaFresh, Decl(static.tlua, 48, 5))
+
+-- A const assertion keeps the literal, so attachment still routes; a plain
+-- widening cast suppresses the literal by design, so the write below checks
+-- against M.widened's own type instead of declaring a new member on it.
+local viaConst = M[CKEY]
+>viaConst : Symbol(viaConst, Decl(static.tlua, 54, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>CKEY : Symbol(CKEY, Decl(static.tlua, 10, 5))
+
+viaConst.kept = 4
+>viaConst.kept : Symbol(kept, Decl(static.tlua, 54, 24))
+>viaConst : Symbol(viaConst, Decl(static.tlua, 54, 5))
+>kept : Symbol(kept, Decl(static.tlua, 54, 24))
+
+local viaWidened = M[WKEY]
+>viaWidened : Symbol(viaWidened, Decl(static.tlua, 56, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>WKEY : Symbol(WKEY, Decl(static.tlua, 11, 5))
+
+viaWidened.dropped = 5
+>viaWidened : Symbol(viaWidened, Decl(static.tlua, 56, 5))
+
+-- A key whose literal-ness exists only in its inferred type (no literal
+-- spelling, no annotation) deliberately does not route augmentation:
+-- attachment decides program shape, so it never consults inferred types.
+-- Check-time naming still resolves the read, so viaInferred sees M.typed
+-- itself and the write below checks against it instead of augmenting.
+local IKEY = makeKey()
+>IKEY : Symbol(IKEY, Decl(static.tlua, 64, 5))
+>makeKey : Symbol(makeKey, Decl(static.tlua, 4, 7))
+
+local viaInferred = M[IKEY]
+>viaInferred : Symbol(viaInferred, Decl(static.tlua, 65, 5))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>IKEY : Symbol(IKEY, Decl(static.tlua, 64, 5))
+
+viaInferred.inferred = 8
+>viaInferred : Symbol(viaInferred, Decl(static.tlua, 65, 5))
+
+-- Lua numerals are unsigned: a minus key is the unary operator applied to
+-- the numeral's value, so key naming negates the value exactly as checking
+-- does — parsing "-0x2" as one text instead would strand every signed radix
+-- spelling on a NaN key, which no Lua table can hold. The hex spelling
+-- routes augmentation to the same arm as its decimal twin, and a
+-- constructor member declared with a signed radix key is likewise the value
+-- it names, so the decimal read below finds it.
+local N = { [-2] = {} }
+>N : Symbol(N, Decl(static.tlua, 75, 5))
+>[-2] : Symbol([-2], Decl(static.tlua, 75, 11))
+
+local HKEY = -0x2
+>HKEY : Symbol(HKEY, Decl(static.tlua, 76, 5))
+
+local viaHex = N[HKEY]
+>viaHex : Symbol(viaHex, Decl(static.tlua, 77, 5))
+>N : Symbol(N, Decl(static.tlua, 75, 5))
+>HKEY : Symbol(HKEY, Decl(static.tlua, 76, 5))
+
+viaHex.hex = 9
+>viaHex : Symbol(viaHex, Decl(static.tlua, 77, 5))
+
+local P = { [-0x10] = 1 }
+>P : Symbol(P, Decl(static.tlua, 80, 5))
+>[-0x10] : Symbol([-0x10], Decl(static.tlua, 80, 11))
+
+local hexResult: number = N[-2].hex
+>hexResult : Symbol(hexResult, Decl(static.tlua, 82, 5))
+>N[-2].hex : Symbol(hex, Decl(static.tlua, 77, 22))
+>N : Symbol(N, Decl(static.tlua, 75, 5))
+>hex : Symbol(hex, Decl(static.tlua, 77, 22))
+
+local radixResult: number = P[-16]
+>radixResult : Symbol(radixResult, Decl(static.tlua, 83, 5))
+>P : Symbol(P, Decl(static.tlua, 80, 5))
+
+local helperResult: number = M.sub.helper()
+>helperResult : Symbol(helperResult, Decl(static.tlua, 85, 5))
+>M.sub.helper : Symbol(helper, Decl(static.tlua, 21, 21))
+>M.sub : Symbol(sub, Decl(static.tlua, 13, 12))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>sub : Symbol(sub, Decl(static.tlua, 13, 12))
+>helper : Symbol(helper, Decl(static.tlua, 21, 21))
+
+local deepResult: number = M.typed.deep
+>deepResult : Symbol(deepResult, Decl(static.tlua, 86, 5))
+>M.typed.deep : Symbol(deep, Decl(static.tlua, 32, 28))
+>M.typed : Symbol(typed, Decl(static.tlua, 16, 16))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>typed : Symbol(typed, Decl(static.tlua, 16, 16))
+>deep : Symbol(deep, Decl(static.tlua, 32, 28))
+
+local keptResult: number = M.casted.kept
+>keptResult : Symbol(keptResult, Decl(static.tlua, 87, 5))
+>M.casted.kept : Symbol(kept, Decl(static.tlua, 54, 24))
+>M.casted : Symbol(casted, Decl(static.tlua, 17, 12))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>casted : Symbol(casted, Decl(static.tlua, 17, 12))
+>kept : Symbol(kept, Decl(static.tlua, 54, 24))
+
+local countResult: number = M[1].count
+>countResult : Symbol(countResult, Decl(static.tlua, 88, 5))
+>M[1].count : Symbol(count, Decl(static.tlua, 26, 25))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>1 : Symbol(1, Decl(static.tlua, 14, 10))
+>count : Symbol(count, Decl(static.tlua, 26, 25))
+
+local flagResult: boolean = M.annotated.flag
+>flagResult : Symbol(flagResult, Decl(static.tlua, 89, 5))
+>M.annotated.flag : Symbol(flag, Decl(static.tlua, 29, 29))
+>M.annotated : Symbol(annotated, Decl(static.tlua, 15, 9))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>annotated : Symbol(annotated, Decl(static.tlua, 15, 9))
+>flag : Symbol(flag, Decl(static.tlua, 29, 29))
+
+local aliasedResult: string = M.annotated.aliased
+>aliasedResult : Symbol(aliasedResult, Decl(static.tlua, 90, 5))
+>M.annotated.aliased : Symbol(aliased, Decl(static.tlua, 40, 25))
+>M.annotated : Symbol(annotated, Decl(static.tlua, 15, 9))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>annotated : Symbol(annotated, Decl(static.tlua, 15, 9))
+>aliased : Symbol(aliased, Decl(static.tlua, 40, 25))
+
+local chainedResult: number = M.casted.chained
+>chainedResult : Symbol(chainedResult, Decl(static.tlua, 91, 5))
+>M.casted.chained : Symbol(chained, Decl(static.tlua, 44, 31))
+>M.casted : Symbol(casted, Decl(static.tlua, 17, 12))
+>M : Symbol(M, Decl(static.tlua, 13, 5))
+>casted : Symbol(casted, Decl(static.tlua, 17, 12))
+>chained : Symbol(chained, Decl(static.tlua, 44, 31))
+

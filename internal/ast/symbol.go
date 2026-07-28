@@ -128,6 +128,20 @@ func NumberKeyNameFromText(text string) string {
 	return NumberKeyName(jsnum.FromString(text))
 }
 
+// NumberKeyNameFromSignedText returns the number-key name for a signed numeric
+// spelling. Lua numerals are unsigned — a leading minus is the unary operator —
+// so the sign applies to the operand's value, exactly as evaluation and
+// checking apply it. Concatenating the sign into the text instead would feed
+// the inherited ES-ToNumber parser a signed radix spelling ("-0x10") it cannot
+// parse, stranding every such key on a NaN key — a key no Lua table can hold.
+func NumberKeyNameFromSignedText(negative bool, text string) string {
+	value := jsnum.FromString(text)
+	if negative {
+		value = -value
+	}
+	return NumberKeyName(value)
+}
+
 // isCanonicalNumberKeyText reports whether text is the ToNumber-canonical
 // spelling of a non-negative integer within the safe-integer range: all ASCII
 // digits, no redundant leading zero, and short enough to round-trip exactly.

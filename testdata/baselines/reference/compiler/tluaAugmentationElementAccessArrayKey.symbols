@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaAugmentationElementAccessArrayKey.tlua] ////
+
+=== a.tlua ===
+-- The augmentation pass resolves the receiver of `entry.x = 1` through the
+-- element access `registry[key]`, whose key name resolution type-checks
+-- `names[1]` and thus `names: string[]` before global initialization is
+-- complete. The synthetic `T[]` target must already exist by then.
+local names: string[] = {"apple"}
+>names : Symbol(names, Decl(a.tlua, 4, 5))
+
+local key = names[1]
+>key : Symbol(key, Decl(a.tlua, 5, 5))
+>names : Symbol(names, Decl(a.tlua, 4, 5))
+
+local registry = {}
+>registry : Symbol(registry, Decl(a.tlua, 7, 5))
+
+local entry = registry[key]
+>entry : Symbol(entry, Decl(a.tlua, 8, 5))
+>registry : Symbol(registry, Decl(a.tlua, 7, 5))
+>key : Symbol(key, Decl(a.tlua, 5, 5))
+
+entry.x = 1
+>entry : Symbol(entry, Decl(a.tlua, 8, 5))
+

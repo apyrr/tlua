@@ -342,7 +342,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			}
 			if ast.IsSignedNumericLiteral(nameExpression) {
 				unaryExpression := nameExpression.AsPrefixUnaryExpression()
-				return ast.NumberKeyNameFromText(scanner.TokenToString(unaryExpression.Operator) + unaryExpression.Operand.Text())
+				return ast.NumberKeyNameFromSignedText(unaryExpression.Operator == ast.KindMinusToken, unaryExpression.Operand.Text())
 			}
 			panic("Only computed properties with literal names have declaration names")
 		}

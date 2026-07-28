@@ -1,0 +1,123 @@
+// @strict: true
+
+// @filename: crash.tlua
+-- Augmentation-time receiver resolution names element-access keys without
+-- resolving any type: attachment runs before the checker's global and
+-- synthetic types exist. Each key below used to force a type computation
+-- (array annotation, string member lookup, arithmetic, property read) and
+-- crash checker initialization.
+local names: string[] = {"apple"}
+local akey = names[1]
+local registry1 = {}
+local e1 = registry1[akey]
+e1.x = 1
+
+local skey = ("apple"):upper()
+local registry2 = {}
+local e2 = registry2[skey]
+e2.x = 1
+
+local nkey = 1 + 2
+local registry3 = {}
+local e3 = registry3[nkey]
+e3.x = 1
+
+local t = { name = "a" }
+local tkey = t.name
+local registry4 = {}
+local e4 = registry4[tkey]
+e4.x = 1
+
+// @filename: static.tlua
+-- Literal spellings still resolve statically, so a constant key keeps
+-- routing augmentation through the element access: string and numeric
+-- initializers, a literal type annotation, and a constant alias chain.
+type TKey = "typed"
+declare makeKey: () => TKey
+
+local KEY = "sub"
+local NKEY = 1
+local AKEY: "annotated" = "annotated"
+local TKEY: TKey = makeKey()
+local CKEY = ("casted") as const
+local WKEY = "widened" as string
+
+local M = {}
+M.sub = {}
+M[1] = {}
+M.annotated = {}
+M.typed = {}
+M.casted = {}
+M.widened = {}
+
+local viaKey = M[KEY]
+function viaKey.helper(): number
+  return 1
+end
+
+local viaNumber = M[NKEY]
+viaNumber.count = 2
+
+local viaAnnotation = M[AKEY]
+viaAnnotation.flag = true
+
+local viaTypeAlias = M[TKEY]
+viaTypeAlias.deep = 3
+
+-- Alias chains follow literal freshness: an annotated or const-asserted
+-- source stays literal through the hop, while a bare literal initializer
+-- widens once aliased, so FALIAS stops routing augmentation exactly as its
+-- symbol type (string) would.
+local ALIAS = AKEY
+local viaAlias = M[ALIAS]
+viaAlias.aliased = "yes"
+
+local CALIAS = CKEY
+local viaConstAlias = M[CALIAS]
+viaConstAlias.chained = 6
+
+local FALIAS = KEY
+local viaFresh = M[FALIAS]
+viaFresh.dropped = 7
+
+-- A const assertion keeps the literal, so attachment still routes; a plain
+-- widening cast suppresses the literal by design, so the write below checks
+-- against M.widened's own type instead of declaring a new member on it.
+local viaConst = M[CKEY]
+viaConst.kept = 4
+local viaWidened = M[WKEY]
+viaWidened.dropped = 5
+
+-- A key whose literal-ness exists only in its inferred type (no literal
+-- spelling, no annotation) deliberately does not route augmentation:
+-- attachment decides program shape, so it never consults inferred types.
+-- Check-time naming still resolves the read, so viaInferred sees M.typed
+-- itself and the write below checks against it instead of augmenting.
+local IKEY = makeKey()
+local viaInferred = M[IKEY]
+viaInferred.inferred = 8
+
+-- Lua numerals are unsigned: a minus key is the unary operator applied to
+-- the numeral's value, so key naming negates the value exactly as checking
+-- does — parsing "-0x2" as one text instead would strand every signed radix
+-- spelling on a NaN key, which no Lua table can hold. The hex spelling
+-- routes augmentation to the same arm as its decimal twin, and a
+-- constructor member declared with a signed radix key is likewise the value
+-- it names, so the decimal read below finds it.
+local N = { [-2] = {} }
+local HKEY = -0x2
+local viaHex = N[HKEY]
+viaHex.hex = 9
+
+local P = { [-0x10] = 1 }
+
+local hexResult: number = N[-2].hex
+local radixResult: number = P[-16]
+
+local helperResult: number = M.sub.helper()
+local deepResult: number = M.typed.deep
+local keptResult: number = M.casted.kept
+local countResult: number = M[1].count
+local flagResult: boolean = M.annotated.flag
+local aliasedResult: string = M.annotated.aliased
+local chainedResult: number = M.casted.chained

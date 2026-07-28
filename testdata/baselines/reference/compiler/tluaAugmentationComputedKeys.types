@@ -1,0 +1,471 @@
+//// [tests/cases/compiler/tluaAugmentationComputedKeys.tlua] ////
+
+=== crash.tlua ===
+-- Augmentation-time receiver resolution names element-access keys without
+-- resolving any type: attachment runs before the checker's global and
+-- synthetic types exist. Each key below used to force a type computation
+-- (array annotation, string member lookup, arithmetic, property read) and
+-- crash checker initialization.
+local names: string[] = {"apple"}
+>names : string[]
+>{"apple"} : { 1: string; }
+
+local akey = names[1]
+>akey : string | nil
+>names[1] : string | nil
+>names : string[]
+>1 : 1
+
+local registry1 = {}
+>registry1 : {}
+>{} : {}
+
+local e1 = registry1[akey]
+>e1 : any
+>registry1[akey] : any
+>registry1 : {}
+>akey : string | nil
+
+e1.x = 1
+>e1.x = 1 : 1
+>e1.x : any
+>e1 : any
+>x : any
+>1 : 1
+
+local skey = ("apple"):upper()
+>skey : string
+>("apple"):upper() : string
+>("apple"):upper : (self: string) => string
+>("apple") : "apple"
+>"apple" : "apple"
+>upper : (self: string) => string
+
+local registry2 = {}
+>registry2 : {}
+>{} : {}
+
+local e2 = registry2[skey]
+>e2 : any
+>registry2[skey] : any
+>registry2 : {}
+>skey : string
+
+e2.x = 1
+>e2.x = 1 : 1
+>e2.x : any
+>e2 : any
+>x : any
+>1 : 1
+
+local nkey = 1 + 2
+>nkey : number
+>1 + 2 : number
+>1 : 1
+>2 : 2
+
+local registry3 = {}
+>registry3 : {}
+>{} : {}
+
+local e3 = registry3[nkey]
+>e3 : any
+>registry3[nkey] : any
+>registry3 : {}
+>nkey : number
+
+e3.x = 1
+>e3.x = 1 : 1
+>e3.x : any
+>e3 : any
+>x : any
+>1 : 1
+
+local t = { name = "a" }
+>t : { name: string; }
+>{ name = "a" } : { name: string; }
+>name : string
+>"a" : "a"
+
+local tkey = t.name
+>tkey : string
+>t.name : string
+>t : { name: string; }
+>name : string
+
+local registry4 = {}
+>registry4 : {}
+>{} : {}
+
+local e4 = registry4[tkey]
+>e4 : any
+>registry4[tkey] : any
+>registry4 : {}
+>tkey : string
+
+e4.x = 1
+>e4.x = 1 : 1
+>e4.x : any
+>e4 : any
+>x : any
+>1 : 1
+
+=== static.tlua ===
+-- Literal spellings still resolve statically, so a constant key keeps
+-- routing augmentation through the element access: string and numeric
+-- initializers, a literal type annotation, and a constant alias chain.
+type TKey = "typed"
+>TKey : "typed"
+
+declare makeKey: () => TKey
+>makeKey : () => TKey
+
+local KEY = "sub"
+>KEY : string
+>"sub" : "sub"
+
+local NKEY = 1
+>NKEY : number
+>1 : 1
+
+local AKEY: "annotated" = "annotated"
+>AKEY : "annotated"
+>"annotated" : "annotated"
+
+local TKEY: TKey = makeKey()
+>TKEY : "typed"
+>makeKey() : "typed"
+>makeKey : () => TKey
+
+local CKEY = ("casted") as const
+>CKEY : "casted"
+>("casted") as const : "casted"
+>("casted") : "casted"
+>"casted" : "casted"
+
+local WKEY = "widened" as string
+>WKEY : string
+>"widened" as string : string
+>"widened" : "widened"
+
+local M = {}
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>{} : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+
+M.sub = {}
+>M.sub = {} : { helper(): number; }
+>M.sub : { helper(): number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>sub : { helper(): number; }
+>{} : { helper(): number; }
+
+M[1] = {}
+>M[1] = {} : { count: number; }
+>M[1] : { count: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>1 : 1
+>{} : { count: number; }
+
+M.annotated = {}
+>M.annotated = {} : { flag: boolean; aliased: string; }
+>M.annotated : { flag: boolean; aliased: string; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>annotated : { flag: boolean; aliased: string; }
+>{} : { flag: boolean; aliased: string; }
+
+M.typed = {}
+>M.typed = {} : { deep: number; }
+>M.typed : { deep: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>typed : { deep: number; }
+>{} : { deep: number; }
+
+M.casted = {}
+>M.casted = {} : { chained: number; kept: number; }
+>M.casted : { chained: number; kept: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>casted : { chained: number; kept: number; }
+>{} : { chained: number; kept: number; }
+
+M.widened = {}
+>M.widened = {} : {}
+>M.widened : {}
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>widened : {}
+>{} : {}
+
+local viaKey = M[KEY]
+>viaKey : any
+>M[KEY] : any
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>KEY : string
+
+function viaKey.helper(): number
+>viaKey : any
+>helper : () => number
+
+  return 1
+>1 : 1
+
+end
+
+local viaNumber = M[NKEY]
+>viaNumber : any
+>M[NKEY] : any
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>NKEY : number
+
+viaNumber.count = 2
+>viaNumber.count = 2 : 2
+>viaNumber.count : any
+>viaNumber : any
+>count : any
+>2 : 2
+
+local viaAnnotation = M[AKEY]
+>viaAnnotation : { flag: boolean; aliased: string; }
+>M[AKEY] : { flag: boolean; aliased: string; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>AKEY : "annotated"
+
+viaAnnotation.flag = true
+>viaAnnotation.flag = true : true
+>viaAnnotation.flag : boolean
+>viaAnnotation : { flag: boolean; aliased: string; }
+>flag : boolean
+>true : true
+
+local viaTypeAlias = M[TKEY]
+>viaTypeAlias : { deep: number; }
+>M[TKEY] : { deep: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>TKEY : "typed"
+
+viaTypeAlias.deep = 3
+>viaTypeAlias.deep = 3 : 3
+>viaTypeAlias.deep : number
+>viaTypeAlias : { deep: number; }
+>deep : number
+>3 : 3
+
+-- Alias chains follow literal freshness: an annotated or const-asserted
+-- source stays literal through the hop, while a bare literal initializer
+-- widens once aliased, so FALIAS stops routing augmentation exactly as its
+-- symbol type (string) would.
+local ALIAS = AKEY
+>ALIAS : "annotated"
+>AKEY : "annotated"
+
+local viaAlias = M[ALIAS]
+>viaAlias : { flag: boolean; aliased: string; }
+>M[ALIAS] : { flag: boolean; aliased: string; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>ALIAS : "annotated"
+
+viaAlias.aliased = "yes"
+>viaAlias.aliased = "yes" : "yes"
+>viaAlias.aliased : string
+>viaAlias : { flag: boolean; aliased: string; }
+>aliased : string
+>"yes" : "yes"
+
+local CALIAS = CKEY
+>CALIAS : "casted"
+>CKEY : "casted"
+
+local viaConstAlias = M[CALIAS]
+>viaConstAlias : { chained: number; kept: number; }
+>M[CALIAS] : { chained: number; kept: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>CALIAS : "casted"
+
+viaConstAlias.chained = 6
+>viaConstAlias.chained = 6 : 6
+>viaConstAlias.chained : number
+>viaConstAlias : { chained: number; kept: number; }
+>chained : number
+>6 : 6
+
+local FALIAS = KEY
+>FALIAS : string
+>KEY : string
+
+local viaFresh = M[FALIAS]
+>viaFresh : any
+>M[FALIAS] : any
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>FALIAS : string
+
+viaFresh.dropped = 7
+>viaFresh.dropped = 7 : 7
+>viaFresh.dropped : any
+>viaFresh : any
+>dropped : any
+>7 : 7
+
+-- A const assertion keeps the literal, so attachment still routes; a plain
+-- widening cast suppresses the literal by design, so the write below checks
+-- against M.widened's own type instead of declaring a new member on it.
+local viaConst = M[CKEY]
+>viaConst : { chained: number; kept: number; }
+>M[CKEY] : { chained: number; kept: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>CKEY : "casted"
+
+viaConst.kept = 4
+>viaConst.kept = 4 : 4
+>viaConst.kept : number
+>viaConst : { chained: number; kept: number; }
+>kept : number
+>4 : 4
+
+local viaWidened = M[WKEY]
+>viaWidened : any
+>M[WKEY] : any
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>WKEY : string
+
+viaWidened.dropped = 5
+>viaWidened.dropped = 5 : 5
+>viaWidened.dropped : any
+>viaWidened : any
+>dropped : any
+>5 : 5
+
+-- A key whose literal-ness exists only in its inferred type (no literal
+-- spelling, no annotation) deliberately does not route augmentation:
+-- attachment decides program shape, so it never consults inferred types.
+-- Check-time naming still resolves the read, so viaInferred sees M.typed
+-- itself and the write below checks against it instead of augmenting.
+local IKEY = makeKey()
+>IKEY : "typed"
+>makeKey() : "typed"
+>makeKey : () => TKey
+
+local viaInferred = M[IKEY]
+>viaInferred : { deep: number; }
+>M[IKEY] : { deep: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>IKEY : "typed"
+
+viaInferred.inferred = 8
+>viaInferred.inferred = 8 : 8
+>viaInferred.inferred : any
+>viaInferred : { deep: number; }
+>inferred : any
+>8 : 8
+
+-- Lua numerals are unsigned: a minus key is the unary operator applied to
+-- the numeral's value, so key naming negates the value exactly as checking
+-- does — parsing "-0x2" as one text instead would strand every signed radix
+-- spelling on a NaN key, which no Lua table can hold. The hex spelling
+-- routes augmentation to the same arm as its decimal twin, and a
+-- constructor member declared with a signed radix key is likewise the value
+-- it names, so the decimal read below finds it.
+local N = { [-2] = {} }
+>N : { [-2]: { hex: number; }; }
+>{ [-2] = {} } : { [-2]: { hex: number; }; }
+>[-2] : { hex: number; }
+>-2 : -2
+>2 : 2
+>{} : { hex: number; }
+
+local HKEY = -0x2
+>HKEY : number
+>-0x2 : -2
+>0x2 : 2
+
+local viaHex = N[HKEY]
+>viaHex : any
+>N[HKEY] : any
+>N : { [-2]: { hex: number; }; }
+>HKEY : number
+
+viaHex.hex = 9
+>viaHex.hex = 9 : 9
+>viaHex.hex : any
+>viaHex : any
+>hex : any
+>9 : 9
+
+local P = { [-0x10] = 1 }
+>P : { [-16]: number; }
+>{ [-0x10] = 1 } : { [-16]: number; }
+>[-0x10] : number
+>-0x10 : -16
+>0x10 : 16
+>1 : 1
+
+local hexResult: number = N[-2].hex
+>hexResult : number
+>N[-2].hex : number
+>N[-2] : { hex: number; }
+>N : { [-2]: { hex: number; }; }
+>-2 : -2
+>2 : 2
+>hex : number
+
+local radixResult: number = P[-16]
+>radixResult : number
+>P[-16] : number
+>P : { [-16]: number; }
+>-16 : -16
+>16 : 16
+
+local helperResult: number = M.sub.helper()
+>helperResult : number
+>M.sub.helper() : number
+>M.sub.helper : () => number
+>M.sub : { helper(): number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>sub : { helper(): number; }
+>helper : () => number
+
+local deepResult: number = M.typed.deep
+>deepResult : number
+>M.typed.deep : number
+>M.typed : { deep: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>typed : { deep: number; }
+>deep : number
+
+local keptResult: number = M.casted.kept
+>keptResult : number
+>M.casted.kept : number
+>M.casted : { chained: number; kept: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>casted : { chained: number; kept: number; }
+>kept : number
+
+local countResult: number = M[1].count
+>countResult : number
+>M[1].count : number
+>M[1] : { count: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>1 : 1
+>count : number
+
+local flagResult: boolean = M.annotated.flag
+>flagResult : boolean
+>M.annotated.flag : boolean
+>M.annotated : { flag: boolean; aliased: string; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>annotated : { flag: boolean; aliased: string; }
+>flag : boolean
+
+local aliasedResult: string = M.annotated.aliased
+>aliasedResult : string
+>M.annotated.aliased : string
+>M.annotated : { flag: boolean; aliased: string; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>annotated : { flag: boolean; aliased: string; }
+>aliased : string
+
+local chainedResult: number = M.casted.chained
+>chainedResult : number
+>M.casted.chained : number
+>M.casted : { chained: number; kept: number; }
+>M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>casted : { chained: number; kept: number; }
+>chained : number
+

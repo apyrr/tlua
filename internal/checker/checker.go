@@ -584,6 +584,7 @@ type Checker struct {
 	moduleSymbols                          map[*ast.Node]*ast.Symbol
 	luaGlobalsSymbol                       *ast.Symbol
 	luaAssignmentAugmentations             map[*ast.Symbol][]luaAugmentation
+	attachingLuaAugmentations              bool
 	luaSnapshotResolving                   map[luaSnapshotKey]bool
 	luaSelfReadSnapshotTypes               map[*ast.Node]*Type
 	luaOrderedSelfSnapshots                map[luaSnapshotKey]*Type
@@ -1340,6 +1341,13 @@ func (c *Checker) initializeChecker() {
 			c.mergeModuleAugmentation(augmentation)
 		}
 	}
+	// `T[]` and all internal array synthesis denote number-key tables, not the
+	// ES Array. The targets are symbol-less and consult no globals, so they can
+	// (and must) exist before the augmentation pass below: resolving a
+	// constructor receiver can type-check an expression, and any array or tuple
+	// type node reached that way needs the target already synthesized.
+	c.luaTableType = c.createLuaTableTargetType(false /*readonly*/)
+	c.luaReadonlyTableType = c.createLuaTableTargetType(true /*readonly*/)
 	// Lua augmentation eligibility consults c.globals (a type-only global such as
 	// a `declare global` interface is a non-constructor arm that closes the
 	// table), so this must run after every global-scope contribution above and,
@@ -1356,10 +1364,6 @@ func (c *Checker) initializeChecker() {
 	c.globalNumberType = c.getGlobalType("Number", 0 /*arity*/, true /*reportErrors*/)
 	c.globalBooleanType = c.getGlobalType("Boolean", 0 /*arity*/, true /*reportErrors*/)
 	c.globalRegExpType = c.getGlobalType("RegExp", 0 /*arity*/, true /*reportErrors*/)
-	// `T[]` and all internal array synthesis denote number-key tables, not the
-	// ES Array. Synthesize the targets before the first createArrayType call.
-	c.luaTableType = c.createLuaTableTargetType(false /*readonly*/)
-	c.luaReadonlyTableType = c.createLuaTableTargetType(true /*readonly*/)
 	c.anyArrayType = c.createArrayType(c.anyType)
 	// The open `(...any)` pack: the implicit constraint of every generic pack
 	// parameter, interned once.

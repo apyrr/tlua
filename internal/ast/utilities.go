@@ -3371,11 +3371,8 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 			return nameExpression.Text()
 		}
 		if IsSignedNumericLiteral(nameExpression) {
-			text := nameExpression.AsPrefixUnaryExpression().Operand.Text()
-			if nameExpression.AsPrefixUnaryExpression().Operator == KindMinusToken {
-				text = "-" + text
-			}
-			return NumberKeyNameFromText(text)
+			unaryExpression := nameExpression.AsPrefixUnaryExpression()
+			return NumberKeyNameFromSignedText(unaryExpression.Operator == KindMinusToken, unaryExpression.Operand.Text())
 		}
 		return InternalSymbolNameMissing
 	}

@@ -1730,6 +1730,16 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 	if declaration == nil {
 		return "", false
 	}
+	// Augmentation attachment runs during checker initialization, before the
+	// global and synthetic types exist, so key naming there must not resolve a
+	// type. The static restriction names exactly the literal spellings; a key
+	// whose literal-ness exists only in an inferred type (say a call whose
+	// return type is a literal) deliberately declines, because attachment
+	// decides program shape and shape must never depend on types computed
+	// against a half-attached program.
+	if c.attachingLuaAugmentations {
+		return c.tryGetStaticNameFromConstantDeclaration(declaration, node)
+	}
 	t := c.tryGetTypeFromTypeNode(declaration)
 	if t != nil {
 		if name, ok := tryGetNameFromType(t); ok {
@@ -1744,6 +1754,130 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 				return tryGetNameFromType(initializerType)
 			}
 		}
+	}
+	return "", false
+}
+
+// tryGetStaticNameFromConstantDeclaration is the augmentation-time restriction
+// of tryGetNameFromEntityNameExpression: it mirrors that function's annotation
+// and initializer probes, but reads literal spellings from syntax instead of
+// resolving types. A constant alias of a constant recurses (still under the
+// restriction); each hop moves to a declaration that precedes its use, so the
+// walk terminates without a cycle guard.
+func (c *Checker) tryGetStaticNameFromConstantDeclaration(declaration *ast.Node, location *ast.Node) (string, bool) {
+	// direct distinguishes the key's own declaration from one reached through a
+	// constant alias. A bare literal initializer is a fresh literal type: it
+	// names its own declaration but widens the moment it becomes an alias's
+	// symbol type, so past the first hop only the non-fresh spellings — a
+	// literal annotation or a const assertion — still denote the literal. Every
+	// name this walker produces is therefore one the type-based path would have
+	// produced; the walker only ever declines more (see the caller).
+	direct := true
+	for {
+		if typeNode := declaration.Type(); typeNode != nil {
+			if literal := c.staticKeyLiteralOfTypeNode(typeNode); literal != nil {
+				if name, ok := tryGetStaticNameFromLiteral(literal); ok {
+					return name, true
+				}
+			}
+			// An alias's symbol type is its annotation; only the key's own
+			// declaration falls through to the initializer the way the
+			// type-based path does.
+			if !direct {
+				return "", false
+			}
+		}
+		if !hasOnlyExpressionInitializer(declaration) || ast.IsBindingElement(declaration) || !c.isBlockScopedNameDeclaredBeforeUse(declaration, location) {
+			return "", false
+		}
+		initializer := declaration.Initializer()
+		if initializer == nil {
+			return "", false
+		}
+		// Erase only the wrappers under which a literal's checked type stays
+		// that literal: parentheses and `satisfies` preserve it (fresh), a
+		// const assertion preserves it non-fresh, and a plain cast widens
+		// (`"x" as string` suppresses the literal by design), so it stops
+		// static naming exactly as its type would stop the type-based path.
+		nonFresh := false
+		for {
+			if ast.IsParenthesizedExpression(initializer) || ast.IsSatisfiesExpression(initializer) {
+				initializer = initializer.Expression()
+			} else if ast.IsConstAssertion(initializer) {
+				nonFresh = true
+				initializer = initializer.Expression()
+			} else {
+				break
+			}
+		}
+		if direct || nonFresh {
+			if name, ok := tryGetStaticNameFromLiteral(initializer); ok {
+				return name, true
+			}
+		}
+		if !ast.IsEntityNameExpression(initializer) {
+			return "", false
+		}
+		symbol := c.resolveEntityName(initializer, ast.SymbolFlagsValue, true /*ignoreErrors*/, false, nil)
+		if symbol == nil || !c.isConstantReference(initializer) {
+			return "", false
+		}
+		declaration = symbol.ValueDeclaration
+		if declaration == nil {
+			return "", false
+		}
+		location = initializer
+		direct = false
+	}
+}
+
+// staticKeyLiteralOfTypeNode returns the literal a type annotation statically
+// denotes: a literal type node directly, or a parameterless type alias whose
+// body is one, followed through alias-of-alias chains. Reading the alias body
+// from its declaration keeps augmentation-time key naming free of type
+// resolution; the visited set breaks declaration cycles that checking
+// diagnoses later.
+func (c *Checker) staticKeyLiteralOfTypeNode(typeNode *ast.Node) *ast.Node {
+	var visited map[*ast.Symbol]bool
+	for {
+		switch typeNode.Kind {
+		case ast.KindLiteralType:
+			return typeNode.AsLiteralTypeNode().Literal
+		case ast.KindTypeReference:
+			reference := typeNode.AsTypeReferenceNode()
+			if reference.TypeArguments != nil {
+				return nil
+			}
+			symbol := c.resolveEntityName(reference.TypeName, ast.SymbolFlagsType, true /*ignoreErrors*/, false, nil)
+			if symbol == nil || visited[symbol] {
+				return nil
+			}
+			declaration := core.Find(symbol.Declarations, ast.IsTypeAliasDeclaration)
+			if declaration == nil || declaration.AsTypeAliasDeclaration().TypeParameters != nil {
+				return nil
+			}
+			if visited == nil {
+				visited = make(map[*ast.Symbol]bool)
+			}
+			visited[symbol] = true
+			typeNode = declaration.AsTypeAliasDeclaration().Type
+		default:
+			return nil
+		}
+	}
+}
+
+// tryGetStaticNameFromLiteral names a literal key the way its type would:
+// string text directly, numeric text through the number-key namespace.
+func tryGetStaticNameFromLiteral(node *ast.Node) (string, bool) {
+	switch {
+	case ast.IsNumericLiteral(node):
+		return ast.NumberKeyNameFromText(node.Text()), true
+	case ast.IsStringLiteralLike(node):
+		return node.Text(), true
+	case ast.IsPrefixUnaryExpression(node) && node.AsPrefixUnaryExpression().Operator == ast.KindMinusToken &&
+		ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand):
+		return ast.NumberKeyNameFromSignedText(true, node.AsPrefixUnaryExpression().Operand.Text()), true
 	}
 	return "", false
 }
