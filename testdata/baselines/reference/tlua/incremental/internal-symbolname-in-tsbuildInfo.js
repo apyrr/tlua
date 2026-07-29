@@ -138,10 +138,10 @@ declare function require(module: string): any;
 local createFileListFromFiles = function(files)
   local fileList = {
     length, files.length,
-    item, function(index: number): File | nil
+    item, function(index)
       return files[index] or nil;
     end,
-    [Symbol.iterator] = , (0 as any) as () => ArrayIterator<File>,
+    [Symbol.iterator] = , 0,
   };
   return fileList;
 end;

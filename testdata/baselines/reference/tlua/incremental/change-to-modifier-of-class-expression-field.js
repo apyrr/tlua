@@ -84,7 +84,7 @@ declare function require(module: string): any;
 //// [/home/src/workspaces/project/MessageablePerson.lua] *new* 
 local Messageable = function()
   return {
-    message, 'hello' as string,
+    message, 'hello',
   };
 end;
 local wrapper = function()
@@ -207,16 +207,7 @@ Output::
 
 Found 1 error in MessageablePerson.tlua[90m:3[0m
 
-//// [/home/src/workspaces/project/MessageablePerson.lua] *modified* 
-local Messageable = function()
-  return {
-    message, 'hello' as 'hello',
-  };
-end;
-local wrapper = function()
-  return Messageable();
-end;
-
+//// [/home/src/workspaces/project/MessageablePerson.lua] *rewrite with same content*
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
 {"version":"FakeTSVersion","errors":true,"root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./MessageablePerson.tlua","./main.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"46eca9f21ecb1d575fe36b6e3900bd65-local Messageable = function()\n    return {\n        message: 'hello' as 'hello',\n    }\nend;\nlocal wrapper = function() return Messageable() end;\ntype MessageablePerson = ReturnType<typeof wrapper>;","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"8a402e9598994cb7a501b71174803091-function logMessage( person: MessageablePerson )\n    console.log( person.message );\nend"],"options":{"module":99},"semanticDiagnosticsPerFile":[1,2,3]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 
@@ -334,16 +325,7 @@ Output::
 
 Found 1 error in MessageablePerson.tlua[90m:3[0m
 
-//// [/home/src/workspaces/project/MessageablePerson.lua] *modified* 
-local Messageable = function()
-  return {
-    message, 'hello' as string,
-  };
-end;
-local wrapper = function()
-  return Messageable();
-end;
-
+//// [/home/src/workspaces/project/MessageablePerson.lua] *rewrite with same content*
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *modified* 
 {"version":"FakeTSVersion","errors":true,"root":[[2,3]],"fileNames":["lib.luajit.d.tlua","./MessageablePerson.tlua","./main.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"02908e1f4269b6ab7bde110f803caae1-local Messageable = function()\n    return {\n        message: 'hello' as string,\n    }\nend;\nlocal wrapper = function() return Messageable() end;\ntype MessageablePerson = ReturnType<typeof wrapper>;","signature":"59f451fde7dea7b84d390cf390374c8b-\n(0,5): error100054: Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054\n","impliedNodeFormat":1},"8a402e9598994cb7a501b71174803091-function logMessage( person: MessageablePerson )\n    console.log( person.message );\nend"],"options":{"module":99},"semanticDiagnosticsPerFile":[1,2,3]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *modified* 

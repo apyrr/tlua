@@ -40,7 +40,7 @@ function f(...)
 end
 -- The same holds in a table constructor, where TS table spread used to live.
 function g(...)
-  local t = { ..., ({} as number) };
+  local t = { ..., {} };
 end
 -- A bare `...` in each of those positions is still fine.
 function h(...)

@@ -3519,6 +3519,10 @@ func (node *TableEntry) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTableEntry(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func (node *TableEntry) computeSubtreeFacts() SubtreeFacts {
+	return propagateSubtreeFacts(node.Expression)
+}
+
 func IsTableEntry(node *Node) bool {
 	return node.Kind == KindTableEntry
 }
