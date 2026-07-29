@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/tluaSuspendAmbientDeclaration.tlua] ////
+
+=== tluaSuspendAmbientDeclaration.tlua ===
+// The ambient form of the suspend contract: `declare suspend function` is
+// what declaration files emit, so the checker must both accept it and keep
+// enforcing caller-context coloring through it.
+
+declare suspend function fetchOk(url: string): (boolean, any);
+>fetchOk : suspend (url: string) => (boolean, any)
+>url : string
+
+// Error: direct call from a sync function.
+function syncCaller(): void
+>syncCaller : () => void
+
+  fetchOk("nope");
+>fetchOk("nope") : boolean
+>fetchOk : suspend (url: string) => (boolean, any)
+>"nope" : "nope"
+
+end
+
+// OK: call from a suspend context.
+suspend function suspendCaller(): number
+>suspendCaller : suspend () => number
+
+  local ok, res = fetchOk("https://example.com");
+>ok : boolean
+>res : any
+>fetchOk("https://example.com") : boolean
+>fetchOk : suspend (url: string) => (boolean, any)
+>"https://example.com" : "https://example.com"
+
+  if ok then
+>ok : boolean
+
+    return 1;
+>1 : 1
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+// OK: passing the ambient suspend function as a value is not a call.
+coroutine.create(fetchOk);
+>coroutine.create(fetchOk) : thread
+>coroutine.create : (fn: function) => thread
+>coroutine : CoroutineLib
+>create : (fn: function) => thread
+>fetchOk : suspend (url: string) => (boolean, any)
+
+// Error: a concrete sync signature still rejects the ambient suspend function.
+local concrete: (url: string) => (boolean, any) = fetchOk;
+>concrete : (url: string) => (boolean, any)
+>url : string
+>fetchOk : suspend (url: string) => (boolean, any)
+
+// Error: `declare` must precede `suspend`.
+suspend declare function backwards(): void;
+>backwards : suspend () => void
+

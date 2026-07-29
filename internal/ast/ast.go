@@ -1490,7 +1490,8 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		KindVoidKeyword,
 		KindUnknownKeyword,
 		KindNilKeyword,
-		KindExportKeyword:
+		KindExportKeyword,
+		KindSuspendKeyword:
 		return SubtreeContainsTypeScript
 	case KindAccessorKeyword:
 		return SubtreeContainsClassFields

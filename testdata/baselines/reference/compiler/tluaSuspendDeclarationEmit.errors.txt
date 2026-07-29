@@ -1,0 +1,34 @@
+main.tlua(3,3): error TLUA100023: A suspend function can only be called from a suspend context.
+main.tlua(17,3): error TLUA100023: A suspend function can only be called from a suspend context.
+
+
+==== net.d.tlua (0 errors) ====
+    declare suspend function fetchOk(url: string): (boolean, any);
+    declare pollBudget: suspend (n: number) => number;
+    
+==== main.tlua (2 errors) ====
+    // Error: direct call from a sync function.
+    function syncCaller(): void
+      fetchOk("nope");
+      ~~~~~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 main.tlua:2:10: Did you mean to mark this function as 'suspend'?
+    end
+    
+    // OK: calls from a suspend context, through both ambient forms.
+    suspend function suspendCaller(): number
+      local ok, res = fetchOk("https://example.com");
+      if ok then
+        return pollBudget(1);
+      end
+      return 0;
+    end
+    
+    // Error: the declared suspend value keeps the contract too.
+    function budgetSyncCaller(): void
+      pollBudget(2);
+      ~~~~~~~~~~
+!!! error TLUA100023: A suspend function can only be called from a suspend context.
+!!! related TLUA100058 main.tlua:16:10: Did you mean to mark this function as 'suspend'?
+    end
+    

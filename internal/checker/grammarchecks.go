@@ -229,7 +229,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 			if flags&ast.ModifierFlagsAmbient != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "declare")
 			} else if flags&ast.ModifierFlagsSuspend != 0 {
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "suspend")
+				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "declare", "suspend")
 			} else if flags&ast.ModifierFlagsOverride != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "override")
 			} else if (node.Parent.Flags&ast.NodeFlagsAmbient != 0) && node.Parent.Kind == ast.KindModuleBlock && !ast.IsVariableStatement(node) {
@@ -249,11 +249,11 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 		case ast.KindSuspendKeyword:
 			if flags&ast.ModifierFlagsSuspend != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "suspend")
-			} else if node.Kind != ast.KindFunctionType && (flags&ast.ModifierFlagsAmbient != 0 || node.Parent.Flags&ast.NodeFlagsAmbient != 0) {
-				// A `suspend (x) => T` function *type* is not an implementation,
-				// so it is allowed in ambient/.d.ts contexts.
-				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_in_an_ambient_context, "suspend")
 			}
+			// Unlike TS `async`, suspend is legal in ambient contexts: the
+			// contract rides the signature, so `declare suspend function` must
+			// round-trip through declaration files to keep caller-context
+			// coloring across module boundaries.
 			if flags&ast.ModifierFlagsAbstract != 0 {
 				return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, "suspend", "abstract")
 			}

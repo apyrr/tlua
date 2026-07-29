@@ -1,0 +1,49 @@
+//// [tests/cases/compiler/tluaSuspendDeclarationEmit.tlua] ////
+
+=== net.d.tlua ===
+declare suspend function fetchOk(url: string): (boolean, any);
+>fetchOk : Symbol(fetchOk, Decl(net.d.tlua, 0, 0))
+>url : Symbol(url, Decl(net.d.tlua, 0, 33))
+
+declare pollBudget: suspend (n: number) => number;
+>pollBudget : Symbol(pollBudget, Decl(net.d.tlua, 1, 7))
+>n : Symbol(n, Decl(net.d.tlua, 1, 29))
+
+=== main.tlua ===
+// Error: direct call from a sync function.
+function syncCaller(): void
+>syncCaller : Symbol(syncCaller, Decl(main.tlua, 0, 0))
+
+  fetchOk("nope");
+>fetchOk : Symbol(fetchOk, Decl(net.d.tlua, 0, 0))
+
+end
+
+// OK: calls from a suspend context, through both ambient forms.
+suspend function suspendCaller(): number
+>suspendCaller : Symbol(suspendCaller, Decl(main.tlua, 3, 3))
+
+  local ok, res = fetchOk("https://example.com");
+>ok : Symbol(ok, Decl(main.tlua, 7, 7))
+>res : Symbol(res, Decl(main.tlua, 7, 11))
+>fetchOk : Symbol(fetchOk, Decl(net.d.tlua, 0, 0))
+
+  if ok then
+>ok : Symbol(ok, Decl(main.tlua, 7, 7))
+
+    return pollBudget(1);
+>pollBudget : Symbol(pollBudget, Decl(net.d.tlua, 1, 7))
+
+  end
+  return 0;
+end
+
+// Error: the declared suspend value keeps the contract too.
+function budgetSyncCaller(): void
+>budgetSyncCaller : Symbol(budgetSyncCaller, Decl(main.tlua, 12, 3))
+
+  pollBudget(2);
+>pollBudget : Symbol(pollBudget, Decl(net.d.tlua, 1, 7))
+
+end
+

@@ -9,6 +9,6 @@ end
 
 
 //// [test.jsx]
-suspend function f()
+function f()
   return <div arguments={42}/>;
 end

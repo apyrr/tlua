@@ -60,6 +60,9 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindOverrideKeyword,
 		ast.KindDeclareKeyword,
 		ast.KindReadonlyKeyword,
+		// The suspend modifier is a checker-only contract; Lua has no keyword for
+		// it, so the emitted function is plain and suspension stays coroutine's job.
+		ast.KindSuspendKeyword,
 		// TypeScript type nodes are elided.
 		ast.KindArrayType,
 		ast.KindTupleType,

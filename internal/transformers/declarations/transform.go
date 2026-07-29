@@ -1627,7 +1627,10 @@ func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierL
 }
 
 func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.ModifierFlags {
-	mask := ast.ModifierFlagsAll ^ (ast.ModifierFlagsPublic | ast.ModifierFlagsSuspend | ast.ModifierFlagsOverride) // No suspend and override modifiers in declaration files
+	// Suspend stays: the tlua coroutine contract rides the signature, so a
+	// declaration file must carry `declare suspend function` or consumers see
+	// a plain sync signature.
+	mask := ast.ModifierFlagsAll ^ (ast.ModifierFlagsPublic | ast.ModifierFlagsOverride) // No override modifier in declaration files
 	additions := ast.ModifierFlagsNone
 	if tx.needsDeclare && !isAlwaysType(node) {
 		additions = ast.ModifierFlagsAmbient

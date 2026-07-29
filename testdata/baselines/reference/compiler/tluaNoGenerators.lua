@@ -36,7 +36,7 @@ function ()
   1;
   yield * more;
 end
-suspend function ()
+function ()
    * suspendGen();
   unknown;
   yield;

@@ -23,7 +23,7 @@ run(fetchOk);
 -- Strict suspend assignability: a suspend function is not assignable to a plain
 -- (non-suspend) function type. This closes the laundering hole — suspend-ness can
 -- no longer be silently erased by annotating a sync function type.
-suspend function fetchOk(url)
+function fetchOk(url)
   return request(url);
 end
 -- Error: suspend fn laundered through a plain (sync) function-typed slot.

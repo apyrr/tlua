@@ -1,0 +1,59 @@
+//// [tests/cases/compiler/tluaSuspendDeclarationEmit.tlua] ////
+
+=== net.d.tlua ===
+declare suspend function fetchOk(url: string): (boolean, any);
+>fetchOk : suspend (url: string) => (boolean, any)
+>url : string
+
+declare pollBudget: suspend (n: number) => number;
+>pollBudget : suspend (n: number) => number
+>n : number
+
+=== main.tlua ===
+// Error: direct call from a sync function.
+function syncCaller(): void
+>syncCaller : () => void
+
+  fetchOk("nope");
+>fetchOk("nope") : boolean
+>fetchOk : suspend (url: string) => (boolean, any)
+>"nope" : "nope"
+
+end
+
+// OK: calls from a suspend context, through both ambient forms.
+suspend function suspendCaller(): number
+>suspendCaller : suspend () => number
+
+  local ok, res = fetchOk("https://example.com");
+>ok : boolean
+>res : any
+>fetchOk("https://example.com") : boolean
+>fetchOk : suspend (url: string) => (boolean, any)
+>"https://example.com" : "https://example.com"
+
+  if ok then
+>ok : boolean
+
+    return pollBudget(1);
+>pollBudget(1) : number
+>pollBudget : suspend (n: number) => number
+>1 : 1
+
+  end
+  return 0;
+>0 : 0
+
+end
+
+// Error: the declared suspend value keeps the contract too.
+function budgetSyncCaller(): void
+>budgetSyncCaller : () => void
+
+  pollBudget(2);
+>pollBudget(2) : number
+>pollBudget : suspend (n: number) => number
+>2 : 2
+
+end
+

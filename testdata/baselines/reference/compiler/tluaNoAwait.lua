@@ -31,12 +31,12 @@ end
 -- `await` is removed: it is an ordinary identifier everywhere — including
 -- suspend function bodies and module top level — and suspend functions emit as
 -- plain functions (no __awaiter, no transform).
-suspend function f()
+function f()
   local await = compute();
   return await;
 end
 -- `await expr` no longer parses as a unary operator.
-suspend function g()
+function g()
   return await;
   f();
 end

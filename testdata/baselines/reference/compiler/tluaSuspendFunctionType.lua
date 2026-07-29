@@ -49,7 +49,7 @@ local n: suspend = 1;
 -- `suspend (params) => T` form). It carries the coroutine contract: a call
 -- through a suspend-typed slot is checked, and suspend-ness is visible in the
 -- type display.
-suspend function fetchOk(url)
+function fetchOk(url)
   return request(url);
 end
 -- OK: suspend fn into a suspend-typed slot; the slot keeps the contract.
@@ -61,7 +61,7 @@ local h = plainOk;
 function sync1()
   g("a");
 end
-suspend function ok()
+function ok()
   g("b");
 end
 -- Passing a suspend fn as a value into the "any function" top signature is fine

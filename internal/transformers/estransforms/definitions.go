@@ -26,8 +26,8 @@ var (
 	NewES2018Transformer transformers.TransformerFactory = nil
 	// The suspend (formerly async) downlevel transform (__awaiter + generator state machine) is
 	// removed in tlua: suspension is the Lua coroutine library's job. The
-	// throwaway JS emit therefore keeps a native `async` keyword at ES2017+
-	// instead of lowering it; Lua — the real target — emits a plain function.
+	// `suspend` modifier is a checker-only contract erased by the type eraser,
+	// so the emitted Lua function is plain and nothing remains to downlevel.
 	NewES2017Transformer = NewES2018Transformer
 	// Chain invokes every member, so the nil predecessor cannot be listed here.
 	NewES2016Transformer transformers.TransformerFactory = newExponentiationTransformer

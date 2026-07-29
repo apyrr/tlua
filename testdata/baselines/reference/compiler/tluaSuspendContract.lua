@@ -100,12 +100,12 @@ end
 -- The tlua coroutine contract: a suspend function may only be called from a
 -- suspend context. Suspend functions return their plain type (or pack), never
 -- Promise<T>.
-suspend function fetchOk(url)
+function fetchOk(url)
   local ok, res = request(url);
   return ok, res;
 end
 -- OK: direct call from a suspend context; the result is the plain pack.
-suspend function handler()
+function handler()
   local ok, res = fetchOk("https://example.com");
   if ok then
     return 1;
@@ -124,7 +124,7 @@ function aliasCaller()
   f("aliased");
 end
 -- OK: alias called from a suspend context.
-suspend function aliasSuspendCaller()
+function aliasSuspendCaller()
   local f = fetchOk;
   f("aliased");
 end
@@ -142,37 +142,37 @@ local topWritten = fetchOk;
 local concrete = fetchOk;
 takesSync(fetchOk);
 -- OK: suspend recursion.
-suspend function pingpong(n)
+function pingpong(n)
   if n <= 0 then
     return 0;
   end
   return pingpong(n - 1);
 end
 -- Suspend arrow expressions participate too.
-local suspendArrow = suspend function()
+local suspendArrow = function()
   return 42;
 end;
 function arrowSyncCaller()
   suspendArrow(); -- error
 end
-suspend function arrowSuspendCaller()
+function arrowSuspendCaller()
   return suspendArrow(); -- OK
 end
 -- Generic suspend functions keep the flag through instantiation.
-suspend function identitySuspend(x)
+function identitySuspend(x)
   return x;
 end
 function genericSyncCaller()
   identitySuspend(1); -- error
 end
-suspend function genericSuspendCaller()
+function genericSuspendCaller()
   return identitySuspend(2); -- OK
 end
 -- The suspend return type is the plain type, not Promise<T>.
-suspend function plain()
+function plain()
   return 3;
 end
-suspend function usePlain()
+function usePlain()
   local n = plain();
   return n + 1;
 end

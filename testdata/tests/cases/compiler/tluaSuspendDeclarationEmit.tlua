@@ -1,0 +1,28 @@
+// Module declaration emit is still TLUA100054, so today the suspend contract
+// reaches consumers through hand-written declaration files (lualibs, typed
+// packages). A .d.tlua carrying `declare suspend function` must parse and keep
+// enforcing caller-context coloring in the files that use it.
+
+// @filename: net.d.tlua
+declare suspend function fetchOk(url: string): (boolean, any);
+declare pollBudget: suspend (n: number) => number;
+
+// @filename: main.tlua
+// Error: direct call from a sync function.
+function syncCaller(): void
+  fetchOk("nope");
+end
+
+// OK: calls from a suspend context, through both ambient forms.
+suspend function suspendCaller(): number
+  local ok, res = fetchOk("https://example.com");
+  if ok then
+    return pollBudget(1);
+  end
+  return 0;
+end
+
+// Error: the declared suspend value keeps the contract too.
+function budgetSyncCaller(): void
+  pollBudget(2);
+end

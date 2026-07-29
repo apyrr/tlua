@@ -22,7 +22,7 @@ end
 
 //// [tluaNoForAwait.lua]
 -- `for await` is no longer supported syntax.
-suspend function f(xs)
+function f(xs)
   local total = 0;
   for await in () do
     local x;
