@@ -53,8 +53,8 @@ local absent = num.missing;
 >absent : Symbol(absent, Decl(tluaMetatableIndexFunction.tlua, 15, 5))
 >num : Symbol(num, Decl(tluaMetatableIndexFunction.tlua, 13, 5))
 
-// A literal key widens to its domain, because an index signature may not be keyed by a
-// literal -- the same widening a computed key gets.
+// A literal key names a member the handler answers for, exactly as a prototype table would
+// declare it: the handler is a virtual property, not an index signature over its domain.
 local litMt = { __index = function(t: table, k: "a"): number return 1; end };
 >litMt : Symbol(litMt, Decl(tluaMetatableIndexFunction.tlua, 19, 5))
 >__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 19, 15))
@@ -67,85 +67,192 @@ local lit = setmetatable({ n = 1 }, litMt);
 >n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 20, 26))
 >litMt : Symbol(litMt, Decl(tluaMetatableIndexFunction.tlua, 19, 5))
 
-local l1: number | nil = lit["zzz"];
+local l1: number = lit.a;
 >l1 : Symbol(l1, Decl(tluaMetatableIndexFunction.tlua, 21, 5))
+>lit.a : Symbol(a)
+>lit : Symbol(lit, Decl(tluaMetatableIndexFunction.tlua, 20, 5))
+>a : Symbol(a)
+
+local l2 = lit["zzz"];
+>l2 : Symbol(l2, Decl(tluaMetatableIndexFunction.tlua, 22, 5))
 >lit : Symbol(lit, Decl(tluaMetatableIndexFunction.tlua, 20, 5))
 
 // A multi-return __index truncates to its first value at the call boundary, as every other
 // call does.
 local packMt = { __index = function(t: table, k: any): (string, number) return "x", 1; end };
->packMt : Symbol(packMt, Decl(tluaMetatableIndexFunction.tlua, 25, 5))
->__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 25, 16))
->t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 25, 36))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 25, 45))
+>packMt : Symbol(packMt, Decl(tluaMetatableIndexFunction.tlua, 26, 5))
+>__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 26, 16))
+>t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 26, 36))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 26, 45))
 
 local pack = setmetatable({ n = 1 }, packMt);
->pack : Symbol(pack, Decl(tluaMetatableIndexFunction.tlua, 26, 5))
+>pack : Symbol(pack, Decl(tluaMetatableIndexFunction.tlua, 27, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
->n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 26, 27))
->packMt : Symbol(packMt, Decl(tluaMetatableIndexFunction.tlua, 25, 5))
+>n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 27, 27))
+>packMt : Symbol(packMt, Decl(tluaMetatableIndexFunction.tlua, 26, 5))
 
 local p1: string | nil = pack.anything;
->p1 : Symbol(p1, Decl(tluaMetatableIndexFunction.tlua, 27, 5))
->pack : Symbol(pack, Decl(tluaMetatableIndexFunction.tlua, 26, 5))
+>p1 : Symbol(p1, Decl(tluaMetatableIndexFunction.tlua, 28, 5))
+>pack : Symbol(pack, Decl(tluaMetatableIndexFunction.tlua, 27, 5))
 
-// Overloads that answer the same key domain both apply: a read of such a key gets whichever
-// one Lua dispatches to.
-declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string } };
->overloaded : Symbol(overloaded, Decl(tluaMetatableIndexFunction.tlua, 31, 7))
->__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 31, 21))
->t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 31, 34))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 31, 43))
->t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 31, 62))
->k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 31, 71))
+// Overloads that answer the same key both apply: a read of such a key gets whichever one Lua
+// dispatches to. Distinct literal keys stay distinct members.
+declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "a"): string; (t: table, k: "b"): boolean } };
+>overloaded : Symbol(overloaded, Decl(tluaMetatableIndexFunction.tlua, 32, 7))
+>__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 32, 21))
+>t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 32, 34))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 32, 43))
+>t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 32, 62))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 32, 71))
+>t : Symbol(t, Decl(tluaMetatableIndexFunction.tlua, 32, 90))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 32, 99))
 
 local ov = setmetatable({ n = 1 }, overloaded);
->ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 32, 5))
+>ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 33, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
->n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 32, 25))
->overloaded : Symbol(overloaded, Decl(tluaMetatableIndexFunction.tlua, 31, 7))
+>n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 33, 25))
+>overloaded : Symbol(overloaded, Decl(tluaMetatableIndexFunction.tlua, 32, 7))
 
-local either: number | string | nil = ov.b;
->either : Symbol(either, Decl(tluaMetatableIndexFunction.tlua, 33, 5))
->ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 32, 5))
+local either: number | string = ov.a;
+>either : Symbol(either, Decl(tluaMetatableIndexFunction.tlua, 34, 5))
+>ov.a : Symbol(a)
+>ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 33, 5))
+>a : Symbol(a)
 
-local notJustNumber: number | nil = ov.b;
->notJustNumber : Symbol(notJustNumber, Decl(tluaMetatableIndexFunction.tlua, 34, 5))
->ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 32, 5))
+local notJustNumber: number = ov.a;
+>notJustNumber : Symbol(notJustNumber, Decl(tluaMetatableIndexFunction.tlua, 35, 5))
+>ov.a : Symbol(a)
+>ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 33, 5))
+>a : Symbol(a)
+
+local justB: boolean = ov.b;
+>justB : Symbol(justB, Decl(tluaMetatableIndexFunction.tlua, 36, 5))
+>ov.b : Symbol(b)
+>ov : Symbol(ov, Decl(tluaMetatableIndexFunction.tlua, 33, 5))
+>b : Symbol(b)
+
+// A virtual property satisfies an interface that requires it, with __newindex typing the write.
+interface StateRef<T> { value: T; get(self: StateRef<T>): T }
+>StateRef : Symbol(StateRef, Decl(tluaMetatableIndexFunction.tlua, 36, 28))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 39, 19))
+>value : Symbol(StateRef.value, Decl(tluaMetatableIndexFunction.tlua, 39, 23))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 39, 19))
+>get : Symbol(StateRef.get, Decl(tluaMetatableIndexFunction.tlua, 39, 33))
+>self : Symbol(self, Decl(tluaMetatableIndexFunction.tlua, 39, 38))
+>StateRef : Symbol(StateRef, Decl(tluaMetatableIndexFunction.tlua, 36, 28))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 39, 19))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 39, 19))
+
+function createState<T>(initial: T): StateRef<T>
+>createState : Symbol(createState, Decl(tluaMetatableIndexFunction.tlua, 39, 61))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 40, 21))
+>initial : Symbol(initial, Decl(tluaMetatableIndexFunction.tlua, 40, 24))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 40, 21))
+>StateRef : Symbol(StateRef, Decl(tluaMetatableIndexFunction.tlua, 36, 28))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 40, 21))
+
+    local value = initial
+>value : Symbol(value, Decl(tluaMetatableIndexFunction.tlua, 41, 9))
+>initial : Symbol(initial, Decl(tluaMetatableIndexFunction.tlua, 40, 24))
+
+    return setmetatable({ get = function() return value end }, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>get : Symbol(get, Decl(tluaMetatableIndexFunction.tlua, 42, 25))
+>value : Symbol(value, Decl(tluaMetatableIndexFunction.tlua, 41, 9))
+
+        __index = function(_, key: "value"): T return value end,
+>__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 42, 64))
+>_ : Symbol(_, Decl(tluaMetatableIndexFunction.tlua, 43, 27))
+>key : Symbol(key, Decl(tluaMetatableIndexFunction.tlua, 43, 29))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 40, 21))
+>value : Symbol(value, Decl(tluaMetatableIndexFunction.tlua, 41, 9))
+
+        __newindex = function(_, key: "value", next: T) value = next end,
+>__newindex : Symbol(__newindex, Decl(tluaMetatableIndexFunction.tlua, 43, 64))
+>_ : Symbol(_, Decl(tluaMetatableIndexFunction.tlua, 44, 30))
+>key : Symbol(key, Decl(tluaMetatableIndexFunction.tlua, 44, 32))
+>next : Symbol(next, Decl(tluaMetatableIndexFunction.tlua, 44, 46))
+>T : Symbol(T, Decl(tluaMetatableIndexFunction.tlua, 40, 21))
+>value : Symbol(value, Decl(tluaMetatableIndexFunction.tlua, 41, 9))
+>next : Symbol(next, Decl(tluaMetatableIndexFunction.tlua, 44, 46))
+
+    })
+end
+local ref = createState(1)
+>ref : Symbol(ref, Decl(tluaMetatableIndexFunction.tlua, 47, 5))
+>createState : Symbol(createState, Decl(tluaMetatableIndexFunction.tlua, 39, 61))
+
+local v: number = ref.value
+>v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 48, 5))
+>ref.value : Symbol(StateRef.value, Decl(tluaMetatableIndexFunction.tlua, 39, 23))
+>ref : Symbol(ref, Decl(tluaMetatableIndexFunction.tlua, 47, 5))
+>value : Symbol(StateRef.value, Decl(tluaMetatableIndexFunction.tlua, 39, 23))
+
+ref.value = 2
+>ref.value : Symbol(StateRef.value, Decl(tluaMetatableIndexFunction.tlua, 39, 23))
+>ref : Symbol(ref, Decl(tluaMetatableIndexFunction.tlua, 47, 5))
+>value : Symbol(StateRef.value, Decl(tluaMetatableIndexFunction.tlua, 39, 23))
+
+ref.value = "no"
+>ref.value : Symbol(StateRef.value, Decl(tluaMetatableIndexFunction.tlua, 39, 23))
+>ref : Symbol(ref, Decl(tluaMetatableIndexFunction.tlua, 47, 5))
+>value : Symbol(StateRef.value, Decl(tluaMetatableIndexFunction.tlua, 39, 23))
+
+// A mapped proxy whose members a literal-keyed handler produces needs no assertion either.
+type Proxy = { [K in "x" | "y"]: (self: Proxy) => K }
+>Proxy : Symbol(Proxy, Decl(tluaMetatableIndexFunction.tlua, 50, 16))
+>K : Symbol(K, Decl(tluaMetatableIndexFunction.tlua, 53, 16))
+>self : Symbol(self, Decl(tluaMetatableIndexFunction.tlua, 53, 34))
+>Proxy : Symbol(Proxy, Decl(tluaMetatableIndexFunction.tlua, 50, 16))
+>K : Symbol(K, Decl(tluaMetatableIndexFunction.tlua, 53, 16))
+
+declare build: (key: string) => any
+>build : Symbol(build, Decl(tluaMetatableIndexFunction.tlua, 54, 7))
+>key : Symbol(key, Decl(tluaMetatableIndexFunction.tlua, 54, 16))
+
+local proxy: Proxy = setmetatable({}, { __index = function(_, key: "x" | "y") return build(key) end })
+>proxy : Symbol(proxy, Decl(tluaMetatableIndexFunction.tlua, 55, 5))
+>Proxy : Symbol(Proxy, Decl(tluaMetatableIndexFunction.tlua, 50, 16))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 55, 39))
+>_ : Symbol(_, Decl(tluaMetatableIndexFunction.tlua, 55, 59))
+>key : Symbol(key, Decl(tluaMetatableIndexFunction.tlua, 55, 61))
+>build : Symbol(build, Decl(tluaMetatableIndexFunction.tlua, 54, 7))
+>key : Symbol(key, Decl(tluaMetatableIndexFunction.tlua, 55, 61))
 
 // The table's own members still win: a function __index only runs on a miss.
 local own = setmetatable({ n = 1 }, anyMt);
->own : Symbol(own, Decl(tluaMetatableIndexFunction.tlua, 37, 5))
+>own : Symbol(own, Decl(tluaMetatableIndexFunction.tlua, 58, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
->n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 37, 26))
+>n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 58, 26))
 >anyMt : Symbol(anyMt, Decl(tluaMetatableIndexFunction.tlua, 5, 5))
 
 local o1: number = own.n;
->o1 : Symbol(o1, Decl(tluaMetatableIndexFunction.tlua, 38, 5))
->own.n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 37, 26))
->own : Symbol(own, Decl(tluaMetatableIndexFunction.tlua, 37, 5))
->n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 37, 26))
+>o1 : Symbol(o1, Decl(tluaMetatableIndexFunction.tlua, 59, 5))
+>own.n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 58, 26))
+>own : Symbol(own, Decl(tluaMetatableIndexFunction.tlua, 58, 5))
+>n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 58, 26))
 
 local o2: string = own.n;
->o2 : Symbol(o2, Decl(tluaMetatableIndexFunction.tlua, 39, 5))
->own.n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 37, 26))
->own : Symbol(own, Decl(tluaMetatableIndexFunction.tlua, 37, 5))
->n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 37, 26))
+>o2 : Symbol(o2, Decl(tluaMetatableIndexFunction.tlua, 60, 5))
+>own.n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 58, 26))
+>own : Symbol(own, Decl(tluaMetatableIndexFunction.tlua, 58, 5))
+>n : Symbol(n, Decl(tluaMetatableIndexFunction.tlua, 58, 26))
 
 // ...unless the member can be nil, which is the miss.
 declare partial: { v?: number };
->partial : Symbol(partial, Decl(tluaMetatableIndexFunction.tlua, 42, 7))
->v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 42, 18))
+>partial : Symbol(partial, Decl(tluaMetatableIndexFunction.tlua, 63, 7))
+>v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 63, 18))
 
 local fallsThrough = setmetatable(partial, anyMt);
->fallsThrough : Symbol(fallsThrough, Decl(tluaMetatableIndexFunction.tlua, 43, 5))
+>fallsThrough : Symbol(fallsThrough, Decl(tluaMetatableIndexFunction.tlua, 64, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
->partial : Symbol(partial, Decl(tluaMetatableIndexFunction.tlua, 42, 7))
+>partial : Symbol(partial, Decl(tluaMetatableIndexFunction.tlua, 63, 7))
 >anyMt : Symbol(anyMt, Decl(tluaMetatableIndexFunction.tlua, 5, 5))
 
 local merged: number | string = fallsThrough.v;
->merged : Symbol(merged, Decl(tluaMetatableIndexFunction.tlua, 44, 5))
->fallsThrough.v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 42, 18))
->fallsThrough : Symbol(fallsThrough, Decl(tluaMetatableIndexFunction.tlua, 43, 5))
->v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 42, 18))
+>merged : Symbol(merged, Decl(tluaMetatableIndexFunction.tlua, 65, 5))
+>fallsThrough.v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 63, 18))
+>fallsThrough : Symbol(fallsThrough, Decl(tluaMetatableIndexFunction.tlua, 64, 5))
+>v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 63, 18))
 

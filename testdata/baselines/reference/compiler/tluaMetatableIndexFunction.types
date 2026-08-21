@@ -73,8 +73,8 @@ local absent = num.missing;
 >num : { [x: number]: boolean; n: number; }
 >missing : any
 
-// A literal key widens to its domain, because an index signature may not be keyed by a
-// literal -- the same widening a computed key gets.
+// A literal key names a member the handler answers for, exactly as a prototype table would
+// declare it: the handler is a virtual property, not an index signature over its domain.
 local litMt = { __index = function(t: table, k: "a"): number return 1; end };
 >litMt : { __index: (t: table, k: "a") => number; }
 >{ __index = function(t: table, k: "a"): number return 1; end } : { __index: (t: table, k: "a") => number; }
@@ -85,18 +85,24 @@ local litMt = { __index = function(t: table, k: "a"): number return 1; end };
 >1 : 1
 
 local lit = setmetatable({ n = 1 }, litMt);
->lit : { [x: string]: number; n: number; }
->setmetatable({ n = 1 }, litMt) : { [x: string]: number; n: number; }
+>lit : { n: number; a: number; }
+>setmetatable({ n = 1 }, litMt) : { n: number; a: number; }
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
 >litMt : { __index: (t: table, k: "a") => number; }
 
-local l1: number | nil = lit["zzz"];
->l1 : number | nil
->lit["zzz"] : number | nil
->lit : { [x: string]: number; n: number; }
+local l1: number = lit.a;
+>l1 : number
+>lit.a : number
+>lit : { n: number; a: number; }
+>a : number
+
+local l2 = lit["zzz"];
+>l2 : any
+>lit["zzz"] : any
+>lit : { n: number; a: number; }
 >"zzz" : "zzz"
 
 // A multi-return __index truncates to its first value at the call boundary, as every other
@@ -127,36 +133,135 @@ local p1: string | nil = pack.anything;
 >pack : { [x: string]: string; [x: number]: string; n: number; }
 >anything : string | nil
 
-// Overloads that answer the same key domain both apply: a read of such a key gets whichever
-// one Lua dispatches to.
-declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string } };
->overloaded : { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string; }; }
->__index : { (t: table, k: "a"): number; (t: table, k: "b"): string; }
+// Overloads that answer the same key both apply: a read of such a key gets whichever one Lua
+// dispatches to. Distinct literal keys stay distinct members.
+declare overloaded: { __index: { (t: table, k: "a"): number; (t: table, k: "a"): string; (t: table, k: "b"): boolean } };
+>overloaded : { __index: { (t: table, k: "a"): number; (t: table, k: "a"): string; (t: table, k: "b"): boolean; }; }
+>__index : { (t: table, k: "a"): number; (t: table, k: "a"): string; (t: table, k: "b"): boolean; }
+>t : table
+>k : "a"
 >t : table
 >k : "a"
 >t : table
 >k : "b"
 
 local ov = setmetatable({ n = 1 }, overloaded);
->ov : { [x: string]: string | number; n: number; }
->setmetatable({ n = 1 }, overloaded) : { [x: string]: string | number; n: number; }
+>ov : { n: number; a: string | number; b: boolean; }
+>setmetatable({ n = 1 }, overloaded) : { n: number; a: string | number; b: boolean; }
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
->overloaded : { __index: { (t: table, k: "a"): number; (t: table, k: "b"): string; }; }
+>overloaded : { __index: { (t: table, k: "a"): number; (t: table, k: "a"): string; (t: table, k: "b"): boolean; }; }
 
-local either: number | string | nil = ov.b;
->either : string | number | nil
->ov.b : string | number | nil
->ov : { [x: string]: string | number; n: number; }
->b : string | number | nil
+local either: number | string = ov.a;
+>either : string | number
+>ov.a : string | number
+>ov : { n: number; a: string | number; b: boolean; }
+>a : string | number
 
-local notJustNumber: number | nil = ov.b;
->notJustNumber : number | nil
->ov.b : string | number | nil
->ov : { [x: string]: string | number; n: number; }
->b : string | number | nil
+local notJustNumber: number = ov.a;
+>notJustNumber : number
+>ov.a : string | number
+>ov : { n: number; a: string | number; b: boolean; }
+>a : string | number
+
+local justB: boolean = ov.b;
+>justB : boolean
+>ov.b : boolean
+>ov : { n: number; a: string | number; b: boolean; }
+>b : boolean
+
+// A virtual property satisfies an interface that requires it, with __newindex typing the write.
+interface StateRef<T> { value: T; get(self: StateRef<T>): T }
+>value : T
+>get : (self: StateRef<T>) => T
+>self : StateRef<T>
+
+function createState<T>(initial: T): StateRef<T>
+>createState : <T>(initial: T) => StateRef<T>
+>initial : T
+
+    local value = initial
+>value : T
+>initial : T
+
+    return setmetatable({ get = function() return value end }, {
+>setmetatable({ get = function() return value end }, {        __index = function(_, key: "value"): T return value end,        __newindex = function(_, key: "value", next: T) value = next end,    }) : { get: () => T; value: T; }
+>setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<NoInfer<T_1>> | nil) => T_1
+>{ get = function() return value end } : { get: () => T; }
+>get : () => T
+>function() return value end : () => T
+>value : T
+>{        __index = function(_, key: "value"): T return value end,        __newindex = function(_, key: "value", next: T) value = next end,    } : { __index: (_: { get: () => T; }, key: "value") => T; __newindex: (_: { get: () => T; }, key: "value", next: T) => void; }
+
+        __index = function(_, key: "value"): T return value end,
+>__index : (_: { get: () => T; }, key: "value") => T
+>function(_, key: "value"): T return value end : (_: { get: () => T; }, key: "value") => T
+>_ : { get: () => T; }
+>key : "value"
+>value : T
+
+        __newindex = function(_, key: "value", next: T) value = next end,
+>__newindex : (_: { get: () => T; }, key: "value", next: T) => void
+>function(_, key: "value", next: T) value = next end : (_: { get: () => T; }, key: "value", next: T) => void
+>_ : { get: () => T; }
+>key : "value"
+>next : T
+>value = next : T
+>value : T
+>next : T
+
+    })
+end
+local ref = createState(1)
+>ref : StateRef<number>
+>createState(1) : StateRef<number>
+>createState : <T>(initial: T) => StateRef<T>
+>1 : 1
+
+local v: number = ref.value
+>v : number
+>ref.value : number
+>ref : StateRef<number>
+>value : number
+
+ref.value = 2
+>ref.value = 2 : 2
+>ref.value : number
+>ref : StateRef<number>
+>value : number
+>2 : 2
+
+ref.value = "no"
+>ref.value = "no" : "no"
+>ref.value : number
+>ref : StateRef<number>
+>value : number
+>"no" : "no"
+
+// A mapped proxy whose members a literal-keyed handler produces needs no assertion either.
+type Proxy = { [K in "x" | "y"]: (self: Proxy) => K }
+>Proxy : Proxy
+>self : Proxy
+
+declare build: (key: string) => any
+>build : (key: string) => any
+>key : string
+
+local proxy: Proxy = setmetatable({}, { __index = function(_, key: "x" | "y") return build(key) end })
+>proxy : Proxy
+>setmetatable({}, { __index = function(_, key: "x" | "y") return build(key) end }) : { x: any; y: any; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = function(_, key: "x" | "y") return build(key) end } : { __index: (_: {}, key: "x" | "y") => any; }
+>__index : (_: {}, key: "x" | "y") => any
+>function(_, key: "x" | "y") return build(key) end : (_: {}, key: "x" | "y") => any
+>_ : {}
+>key : "x" | "y"
+>build(key) : any
+>build : (key: string) => any
+>key : "x" | "y"
 
 // The table's own members still win: a function __index only runs on a miss.
 local own = setmetatable({ n = 1 }, anyMt);

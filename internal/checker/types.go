@@ -1083,7 +1083,7 @@ type MetatableType struct {
 	tableType          *Type // The table passed to setmetatable
 	metatableType      *Type // The metatable passed to setmetatable, returned by getmetatable
 	indexSource        *Type // metatableType's committed __index, nil-stripped, or nil: a table or a function
-	indexIsFunction    bool  // indexSource is a function, so it contributes index infos rather than members
+	indexIsFunction    bool  // indexSource is a function: its key parameter, not its members, says what it answers
 	newindexSource     *Type // metatableType's committed __newindex, nil-stripped, or nil: a table or a function
 	newindexIsFunction bool  // newindexSource is a function, so its value parameter types a fallback write
 	callSource         *Type // metatableType's committed callable __call, or nil: its signatures make the pairing callable

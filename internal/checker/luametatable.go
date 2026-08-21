@@ -1088,17 +1088,15 @@ func (c *Checker) resolveMetatableTypeMembers(t *Type) {
 	c.setStructuredTypeMembers(t, members, callSignatures, constructSignatures, indexInfos)
 	t.objectFlags |= ObjectFlagsUnresolvedMembers
 	if d.indexSource != nil {
-		fallbackInfos := c.getMetatableFallbackIndexInfos(d)
+		fallback := c.getMetatableIndexShape(d)
 		for name, prop := range members {
-			if merged := c.getMetatableFallthroughSymbol(d, fallbackInfos, prop); merged != nil {
+			if merged := c.getMetatableFallthroughSymbol(d, fallback, prop); merged != nil {
 				members[name] = merged
 			}
 		}
-		if !d.indexIsFunction {
-			// The fallback's own members fill the names the table does not have at all.
-			members = c.addInheritedMembers(members, c.getPropertiesOfType(d.indexSource))
-		}
-		for _, info := range fallbackInfos {
+		// The fallback's own members fill the names the table does not have at all.
+		members = c.addInheritedMembers(members, fallback.members)
+		for _, info := range fallback.indexInfos {
 			if findIndexInfo(indexInfos, info.keyType) == nil {
 				indexInfos = append(indexInfos, info)
 			}
@@ -1132,48 +1130,71 @@ func (c *Checker) getLuaCallMetamethodSignature(sig *Signature) *Signature {
 	return result
 }
 
-// getMetatableFallbackIndexInfos returns the index signatures __index contributes. A table
-// contributes the ones it declares. A function contributes one per key domain its parameter
-// admits: it answers a read of *any* key there, which is an index signature and not a property,
-// since nothing names the keys it will be asked for. The domains are the ones a computed table
-// key synthesizes -- `any` keys both strings and numbers, and a literal key widens, because an
-// index may not be keyed by one.
-func (c *Checker) getMetatableFallbackIndexInfos(d *MetatableType) []*IndexInfo {
+// luaIndexShape is what __index contributes to a pairing: the members it answers by name and
+// the index signatures it answers by domain.
+type luaIndexShape struct {
+	members    []*ast.Symbol
+	indexInfos []*IndexInfo
+}
+
+// getMetatableIndexShape returns the shape __index contributes. A table contributes its own
+// members and index signatures. A function contributes what its key parameter admits: a literal
+// key names a member the handler answers for, exactly as a prototype table would declare it --
+// a `key: "value"` handler is a virtual property -- while any other key domain is an index
+// signature, since nothing names the keys it will be asked for. The domains are the ones a
+// computed table key synthesizes: `any` keys both strings and numbers.
+func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 	if !d.indexIsFunction {
-		return c.getIndexInfosOfType(d.indexSource)
+		return luaIndexShape{members: c.getPropertiesOfType(d.indexSource), indexInfos: c.getIndexInfosOfType(d.indexSource)}
 	}
-	var infos []*IndexInfo
+	var shape luaIndexShape
+	memberTypes := make(map[string]*Type)
 	for _, signature := range c.getSignaturesOfType(d.indexSource, SignatureKindCall) {
 		keyType := c.getTypeAtPosition(signature, 1)
 		if !c.isValidIndexArgumentType(keyType) {
 			continue
 		}
 		valueType := c.adjustMultiReturn(c.getReturnTypeOfSignature(signature))
-		c.forEachObjectLiteralIndexKeyType(keyType, func(indexKeyType *Type) {
-			// Overloads that answer the same key domain both apply: a read of such a key gets
-			// whichever one Lua dispatches to. The infos are ours until they are published, so
-			// widening one in place is safe.
-			if existing := findIndexInfo(infos, indexKeyType); existing != nil {
-				existing.valueType = c.getUnionType([]*Type{existing.valueType, valueType})
+		c.forEachIndexKeyType(keyType, func(unitKeyType *Type) {
+			if unitKeyType.flags&TypeFlagsStringOrNumberLiteral != 0 {
+				name := getPropertyNameFromType(unitKeyType)
+				if existing, ok := memberTypes[name]; ok {
+					memberTypes[name] = c.getUnionType([]*Type{existing, valueType})
+					return
+				}
+				memberTypes[name] = valueType
+				shape.members = append(shape.members, c.newSymbol(ast.SymbolFlagsProperty, name))
 				return
 			}
-			infos = append(infos, c.newIndexInfo(indexKeyType, valueType, false /*isReadonly*/, nil /*declaration*/, nil /*components*/))
+			c.forEachObjectLiteralIndexKeyType(unitKeyType, func(indexKeyType *Type) {
+				// Overloads that answer the same key both apply: a read of such a key gets
+				// whichever one Lua dispatches to. The infos are ours until they are published,
+				// so widening one in place is safe.
+				if existing := findIndexInfo(shape.indexInfos, indexKeyType); existing != nil {
+					existing.valueType = c.getUnionType([]*Type{existing.valueType, valueType})
+					return
+				}
+				shape.indexInfos = append(shape.indexInfos, c.newIndexInfo(indexKeyType, valueType, false /*isReadonly*/, nil /*declaration*/, nil /*components*/))
+			})
 		})
 	}
-	return infos
+	for _, member := range shape.members {
+		c.valueSymbolLinks.Get(member).resolvedType = memberTypes[member.Name]
+	}
+	return shape
 }
 
 // getMetatableFallthroughSymbol merges a table member that may be nil with what __index answers
 // for the same key, or returns nil when the member stands as it is. A raw read that comes back
 // nil is what makes Lua run the metatable, so such a member is not the whole answer: it reads as
 // its own non-nil half or the fallback's value. A member that cannot be nil never falls through.
-func (c *Checker) getMetatableFallthroughSymbol(d *MetatableType, fallbackInfos []*IndexInfo, prop *ast.Symbol) *ast.Symbol {
+func (c *Checker) getMetatableFallthroughSymbol(d *MetatableType, fallback luaIndexShape, prop *ast.Symbol) *ast.Symbol {
 	propType := c.getTypeOfSymbol(prop)
 	nonNilType := c.GetNonNullableType(propType)
 	if nonNilType == propType && prop.Flags&ast.SymbolFlagsOptional == 0 {
 		return nil
 	}
-	fallbackType := c.getMetatableFallbackType(d, fallbackInfos, prop.Name)
+	fallbackType := c.getMetatableFallbackType(fallback, prop.Name)
 	if fallbackType == nil {
 		return nil
 	}
@@ -1183,19 +1204,19 @@ func (c *Checker) getMetatableFallthroughSymbol(d *MetatableType, fallbackInfos 
 	return merged
 }
 
-// getMetatableFallbackType returns what __index answers for a key named name: the fallback
-// table's own member, or the index signature that covers the key's domain.
-func (c *Checker) getMetatableFallbackType(d *MetatableType, fallbackInfos []*IndexInfo, name string) *Type {
-	if !d.indexIsFunction {
-		if prop := c.getPropertyOfType(d.indexSource, name); prop != nil {
-			return c.getTypeOfSymbol(prop)
+// getMetatableFallbackType returns what __index answers for a key named name: the fallback's
+// own member, or the index signature that covers the key's domain.
+func (c *Checker) getMetatableFallbackType(fallback luaIndexShape, name string) *Type {
+	for _, member := range fallback.members {
+		if member.Name == name {
+			return c.getTypeOfSymbol(member)
 		}
 	}
 	keyType := c.esSymbolType
 	if !isLateBoundName(name) {
 		keyType = c.keyTypeForPropertyName(name)
 	}
-	if info := c.findApplicableIndexInfo(fallbackInfos, keyType); info != nil {
+	if info := c.findApplicableIndexInfo(fallback.indexInfos, keyType); info != nil {
 		return info.valueType
 	}
 	return nil
