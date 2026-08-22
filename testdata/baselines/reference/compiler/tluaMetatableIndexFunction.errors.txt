@@ -7,13 +7,12 @@ tluaMetatableIndexFunction.tlua(51,1): error TLUA2322: Type 'string' is not assi
 tluaMetatableIndexFunction.tlua(72,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
 tluaMetatableIndexFunction.tlua(73,18): error TLUA2339: Property 'nope' does not exist on type 'Client<"svc">'.
 tluaMetatableIndexFunction.tlua(78,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
-tluaMetatableIndexFunction.tlua(91,5): error TLUA2322: Type '{}' is not assignable to type 'Deferred<P>'.
 tluaMetatableIndexFunction.tlua(101,71): error TLUA2538: Type 'unknown' cannot be used as an index type.
 tluaMetatableIndexFunction.tlua(102,73): error TLUA2538: Type '"a" | nil' cannot be used as an index type.
 tluaMetatableIndexFunction.tlua(103,7): error TLUA2322: Type '{}' is not assignable to type 'string'.
 
 
-==== tluaMetatableIndexFunction.tlua (11 errors) ====
+==== tluaMetatableIndexFunction.tlua (10 errors) ====
     // A function __index answers a read of every key its parameter admits, which is an index
     // signature rather than a property: nothing names the keys it will be asked for.
     
@@ -114,15 +113,13 @@ tluaMetatableIndexFunction.tlua(103,7): error TLUA2322: Type '{}' is not assigna
     local fallsThrough = setmetatable(partial, anyMt);
     local merged: number | string = fallsThrough.v;
     
-    // A key constraint that is still generic inside the body contributes nothing, as a generic
-    // mapped type does: it resolves once the pairing is instantiated. The body cannot prove the
-    // deferred shape, so the declared return type needs an assertion there.
+    // A key constraint that is still generic inside the body makes the handler the generic mapped
+    // type it spells, `{ [K in Names<P> & string]: Deferred<P>[K] }`: it relates to the declared
+    // mapped type by constraint and template, and resolves its members once instantiated.
     type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
     type Deferred<P extends string> = { [N in Names<P>]: number }
     function deferred<P extends string>(prefix: P): Deferred<P>
         return setmetatable({}, {
-        ~~~~~~
-!!! error TLUA2322: Type '{}' is not assignable to type 'Deferred<P>'.
             __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]
                 return callerFor(key)
             end,

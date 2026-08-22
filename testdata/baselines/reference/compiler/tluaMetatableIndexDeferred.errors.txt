@@ -1,0 +1,196 @@
+tluaMetatableIndexDeferred.tlua(119,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaMetatableIndexDeferred.tlua(120,18): error TLUA2339: Property 'nope' does not exist on type 'ReproClient<"service", "server">'.
+tluaMetatableIndexDeferred.tlua(127,5): error TLUA2322: Type '{ [K in Names<P> & string]: string; }' is not assignable to type 'Deferred<P>'.
+  Type 'string' is not assignable to type 'number'.
+tluaMetatableIndexDeferred.tlua(133,5): error TLUA2322: Type '{}' is not assignable to type 'Deferred<P>'.
+tluaMetatableIndexDeferred.tlua(136,5): error TLUA2322: Type '{}' is not assignable to type 'Deferred<P>'.
+tluaMetatableIndexDeferred.tlua(140,5): error TLUA2322: Type '{ x: boolean; }' is not assignable to type 'Deferred<P>'.
+tluaMetatableIndexDeferred.tlua(148,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMetatableIndexDeferred.tlua(155,11): error TLUA2322: Type '{ [K in Names<P> & string]: Deferred<P>[K]; }' is not assignable to type 'number'.
+tluaMetatableIndexDeferred.tlua(159,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMetatableIndexDeferred.tlua(160,27): error TLUA2339: Property 'nope' does not exist on type '{ ping: number; pong: number; }'.
+
+
+==== tluaMetatableIndexDeferred.tlua (10 errors) ====
+    // A function-form __index generic in a key whose domain is still generic where the pairing
+    // forms contributes the generic mapped type it spells. The registry-derived client shape from
+    // the report: the procedure names are a conditional over the prefix, unknowable in the body.
+    
+    type ReproRealm = "server" | "client"
+    
+    interface ReproProcedure<TInput, TOutput, TRealm extends ReproRealm> {
+        input?: TInput;
+        output?: TOutput;
+        realm: TRealm;
+    }
+    
+    type ReproRegisteredRouter<TPrefix extends string, TRoutes> = TRoutes & {
+        __routerType?: {
+            prefix: TPrefix;
+            routes: TRoutes;
+        };
+    }
+    
+    interface ReproModules {
+        first: ReproRegisteredRouter<"service", {
+            ping: ReproProcedure<{ value: number }, string, "server">;
+            pushed: ReproProcedure<{}, boolean, "client">;
+        }>;
+    
+        second: ReproRegisteredRouter<"other", {
+            lookup: ReproProcedure<{ id: string }, number, "server">;
+        }>;
+    }
+    
+    type ReproProcedureNames<
+        TPrefix extends string,
+        TRealm extends ReproRealm
+    > = {
+        [TModuleName in keyof ReproModules]:
+            ReproModules[TModuleName] extends {
+                __routerType?: {
+                    prefix: TPrefix;
+                    routes: infer TRoutes;
+                };
+            }
+                ? {
+                    [TName in keyof TRoutes]:
+                        TRoutes[TName] extends
+                            ReproProcedure<unknown, unknown, TRealm>
+                                ? TName
+                                : never;
+                }[keyof TRoutes]
+                : never;
+    }[keyof ReproModules];
+    
+    type ReproProcedureAt<
+        TPrefix extends string,
+        TRealm extends ReproRealm,
+        TName
+    > = {
+        [TModuleName in keyof ReproModules]:
+            ReproModules[TModuleName] extends {
+                __routerType?: {
+                    prefix: TPrefix;
+                    routes: infer TRoutes;
+                };
+            }
+                ? TName extends keyof TRoutes
+                    ? TRoutes[TName] extends
+                        ReproProcedure<unknown, unknown, TRealm>
+                            ? TRoutes[TName]
+                            : never
+                    : never
+                : never;
+    }[keyof ReproModules];
+    
+    type ReproOutput<TProcedure> =
+        TProcedure extends
+            ReproProcedure<unknown, infer TOutput, ReproRealm>
+                ? TOutput
+                : never;
+    
+    type ReproCaller<TProcedure> =
+        () => ReproOutput<TProcedure>;
+    
+    type ReproClient<
+        TPrefix extends string,
+        TRealm extends ReproRealm
+    > = {
+        [TName in ReproProcedureNames<TPrefix, TRealm>]:
+            ReproCaller<
+                ReproProcedureAt<TPrefix, TRealm, TName>
+            >;
+    };
+    
+    declare function reproBuildCaller<
+        TPrefix extends string,
+        TName extends
+            ReproProcedureNames<TPrefix, "server"> & string
+    >(
+        prefix: TPrefix,
+        name: TName
+    ): ReproClient<TPrefix, "server">[TName];
+    
+    function reproConnect<TPrefix extends string>(
+        prefix: TPrefix
+    ): ReproClient<TPrefix, "server">
+        return setmetatable({}, {
+            __index = function<
+                K extends
+                    ReproProcedureNames<TPrefix, "server"> & string
+            >(
+                _: table,
+                key: K
+            ): ReproClient<TPrefix, "server">[K]
+                return reproBuildCaller<TPrefix, K>(prefix, key);
+            end
+        });
+    end
+    
+    local client = reproConnect("service");
+    local result: string = client.ping();
+    local wrong: number = client.ping();
+          ~~~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    local _ = client.nope;
+                     ~~~~
+!!! error TLUA2339: Property 'nope' does not exist on type 'ReproClient<"service", "server">'.
+    
+    // The same shape with a wrong template is reported against the mapped type, not an empty one.
+    type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
+    type Deferred<P extends string> = { [N in Names<P>]: number }
+    declare callerFor: <K extends string>(name: K) => any
+    function wrongTemplate<P extends string>(prefix: P): Deferred<P>
+        return setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): string return "" end })
+        ~~~~~~
+!!! error TLUA2322: Type '{ [K in Names<P> & string]: string; }' is not assignable to type 'Deferred<P>'.
+!!! error TLUA2322:   Type 'string' is not assignable to type 'number'.
+    end
+    
+    // Only the plain handler shape defers. Each of these keeps the eager expansion, which has no
+    // unit keys here, so the declared type still reports -- nothing degrades silently.
+    function noAnnotation<P extends string>(prefix: P): Deferred<P>
+        return setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K) return callerFor(key) end })
+        ~~~~~~
+!!! error TLUA2322: Type '{}' is not assignable to type 'Deferred<P>'.
+    end
+    function twoParameters<P extends string>(prefix: P): Deferred<P>
+        return setmetatable({}, { __index = function<K extends Names<P> & string, U>(_: table, key: K): Deferred<P>[K] return callerFor(key) end })
+        ~~~~~~
+!!! error TLUA2322: Type '{}' is not assignable to type 'Deferred<P>'.
+    end
+    declare function overloadedMt<P extends string>(): { __index: { <K extends Names<P> & string>(t: table, key: K): Deferred<P>[K]; (t: table, k: "x"): boolean } }
+    function overloaded<P extends string>(prefix: P): Deferred<P>
+        return setmetatable({}, overloadedMt<P>())
+        ~~~~~~
+!!! error TLUA2322: Type '{ x: boolean; }' is not assignable to type 'Deferred<P>'.
+    end
+    
+    // A keyof constraint over a generic table defers as a homomorphic mapped type.
+    function viaKeyof<T extends table>(proto: T): T
+        return setmetatable({}, { __index = function<K extends keyof T>(_: table, key: K): T[K] return (callerFor as any)(key) end })
+    end
+    local k1: number = viaKeyof({ a = 1 }).a
+    local k2: string = viaKeyof({ a = 1 }).a
+          ~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    
+    // Inside the body the pairing is the intersection the generic arm produces: the mapped type
+    // alone when the table is empty. As with a generic __index table, getmetatable does not read
+    // the pairing back there; the instantiated result at a call site resolves its members.
+    function inferred<P extends string>(prefix: P)
+        local t = setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K] return callerFor(key) end })
+        local shape: number = t
+              ~~~~~
+!!! error TLUA2322: Type '{ [K in Names<P> & string]: Deferred<P>[K]; }' is not assignable to type 'number'.
+        return t
+    end
+    local i1: number = inferred("svc").pong
+    local i2: string = inferred("svc").pong
+          ~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    local _ = inferred("svc").nope
+                              ~~~~
+!!! error TLUA2339: Property 'nope' does not exist on type '{ ping: number; pong: number; }'.
+    

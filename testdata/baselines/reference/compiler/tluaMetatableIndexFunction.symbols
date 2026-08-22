@@ -333,9 +333,9 @@ local merged: number | string = fallsThrough.v;
 >fallsThrough : Symbol(fallsThrough, Decl(tluaMetatableIndexFunction.tlua, 81, 5))
 >v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 80, 18))
 
-// A key constraint that is still generic inside the body contributes nothing, as a generic
-// mapped type does: it resolves once the pairing is instantiated. The body cannot prove the
-// deferred shape, so the declared return type needs an assertion there.
+// A key constraint that is still generic inside the body makes the handler the generic mapped
+// type it spells, `{ [K in Names<P> & string]: Deferred<P>[K] }`: it relates to the declared
+// mapped type by constraint and template, and resolves its members once instantiated.
 type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
 >Names : Symbol(Names, Decl(tluaMetatableIndexFunction.tlua, 82, 47))
 >P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 87, 11))

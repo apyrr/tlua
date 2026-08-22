@@ -372,9 +372,9 @@ local merged: number | string = fallsThrough.v;
 >fallsThrough : { [x: string]: string; [x: number]: string; v: string | number; }
 >v : string | number
 
-// A key constraint that is still generic inside the body contributes nothing, as a generic
-// mapped type does: it resolves once the pairing is instantiated. The body cannot prove the
-// deferred shape, so the declared return type needs an assertion there.
+// A key constraint that is still generic inside the body makes the handler the generic mapped
+// type it spells, `{ [K in Names<P> & string]: Deferred<P>[K] }`: it relates to the declared
+// mapped type by constraint and template, and resolves its members once instantiated.
 type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
 >Names : Names<P>
 
@@ -386,7 +386,7 @@ function deferred<P extends string>(prefix: P): Deferred<P>
 >prefix : P
 
     return setmetatable({}, {
->setmetatable({}, {        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]            return callerFor(key)        end,    }) : {}
+>setmetatable({}, {        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]            return callerFor(key)        end,    }) : { [K in Names<P> & string]: Deferred<P>[K]; }
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{} : {}
 >{        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]            return callerFor(key)        end,    } : { __index: <K extends Names<P> & string>(_: table, key: K) => Deferred<P>[K]; }

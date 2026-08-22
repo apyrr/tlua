@@ -1,0 +1,546 @@
+//// [tests/cases/compiler/tluaMetatableIndexDeferred.tlua] ////
+
+=== tluaMetatableIndexDeferred.tlua ===
+// A function-form __index generic in a key whose domain is still generic where the pairing
+// forms contributes the generic mapped type it spells. The registry-derived client shape from
+// the report: the procedure names are a conditional over the prefix, unknowable in the body.
+
+type ReproRealm = "server" | "client"
+>ReproRealm : Symbol(ReproRealm, Decl(tluaMetatableIndexDeferred.tlua, 0, 0))
+
+interface ReproProcedure<TInput, TOutput, TRealm extends ReproRealm> {
+>ReproProcedure : Symbol(ReproProcedure, Decl(tluaMetatableIndexDeferred.tlua, 4, 37))
+>TInput : Symbol(TInput, Decl(tluaMetatableIndexDeferred.tlua, 6, 25))
+>TOutput : Symbol(TOutput, Decl(tluaMetatableIndexDeferred.tlua, 6, 32))
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 6, 41))
+>ReproRealm : Symbol(ReproRealm, Decl(tluaMetatableIndexDeferred.tlua, 0, 0))
+
+    input?: TInput;
+>input : Symbol(ReproProcedure.input, Decl(tluaMetatableIndexDeferred.tlua, 6, 70))
+>TInput : Symbol(TInput, Decl(tluaMetatableIndexDeferred.tlua, 6, 25))
+
+    output?: TOutput;
+>output : Symbol(ReproProcedure.output, Decl(tluaMetatableIndexDeferred.tlua, 7, 19))
+>TOutput : Symbol(TOutput, Decl(tluaMetatableIndexDeferred.tlua, 6, 32))
+
+    realm: TRealm;
+>realm : Symbol(ReproProcedure.realm, Decl(tluaMetatableIndexDeferred.tlua, 8, 21))
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 6, 41))
+}
+
+type ReproRegisteredRouter<TPrefix extends string, TRoutes> = TRoutes & {
+>ReproRegisteredRouter : Symbol(ReproRegisteredRouter, Decl(tluaMetatableIndexDeferred.tlua, 10, 1))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 12, 27))
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 12, 50))
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 12, 50))
+
+    __routerType?: {
+>__routerType : Symbol(__routerType, Decl(tluaMetatableIndexDeferred.tlua, 12, 73))
+
+        prefix: TPrefix;
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 13, 20))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 12, 27))
+
+        routes: TRoutes;
+>routes : Symbol(routes, Decl(tluaMetatableIndexDeferred.tlua, 14, 24))
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 12, 50))
+
+    };
+}
+
+interface ReproModules {
+>ReproModules : Symbol(ReproModules, Decl(tluaMetatableIndexDeferred.tlua, 17, 1))
+
+    first: ReproRegisteredRouter<"service", {
+>first : Symbol(ReproModules.first, Decl(tluaMetatableIndexDeferred.tlua, 19, 24))
+>ReproRegisteredRouter : Symbol(ReproRegisteredRouter, Decl(tluaMetatableIndexDeferred.tlua, 10, 1))
+
+        ping: ReproProcedure<{ value: number }, string, "server">;
+>ping : Symbol(ping, Decl(tluaMetatableIndexDeferred.tlua, 20, 45))
+>ReproProcedure : Symbol(ReproProcedure, Decl(tluaMetatableIndexDeferred.tlua, 4, 37))
+>value : Symbol(value, Decl(tluaMetatableIndexDeferred.tlua, 21, 30))
+
+        pushed: ReproProcedure<{}, boolean, "client">;
+>pushed : Symbol(pushed, Decl(tluaMetatableIndexDeferred.tlua, 21, 66))
+>ReproProcedure : Symbol(ReproProcedure, Decl(tluaMetatableIndexDeferred.tlua, 4, 37))
+
+    }>;
+
+    second: ReproRegisteredRouter<"other", {
+>second : Symbol(ReproModules.second, Decl(tluaMetatableIndexDeferred.tlua, 23, 7))
+>ReproRegisteredRouter : Symbol(ReproRegisteredRouter, Decl(tluaMetatableIndexDeferred.tlua, 10, 1))
+
+        lookup: ReproProcedure<{ id: string }, number, "server">;
+>lookup : Symbol(lookup, Decl(tluaMetatableIndexDeferred.tlua, 25, 44))
+>ReproProcedure : Symbol(ReproProcedure, Decl(tluaMetatableIndexDeferred.tlua, 4, 37))
+>id : Symbol(id, Decl(tluaMetatableIndexDeferred.tlua, 26, 32))
+
+    }>;
+}
+
+type ReproProcedureNames<
+>ReproProcedureNames : Symbol(ReproProcedureNames, Decl(tluaMetatableIndexDeferred.tlua, 28, 1))
+
+    TPrefix extends string,
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 30, 25))
+
+    TRealm extends ReproRealm
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 31, 27))
+>ReproRealm : Symbol(ReproRealm, Decl(tluaMetatableIndexDeferred.tlua, 0, 0))
+
+> = {
+    [TModuleName in keyof ReproModules]:
+>TModuleName : Symbol(TModuleName, Decl(tluaMetatableIndexDeferred.tlua, 34, 5))
+>ReproModules : Symbol(ReproModules, Decl(tluaMetatableIndexDeferred.tlua, 17, 1))
+
+        ReproModules[TModuleName] extends {
+>ReproModules : Symbol(ReproModules, Decl(tluaMetatableIndexDeferred.tlua, 17, 1))
+>TModuleName : Symbol(TModuleName, Decl(tluaMetatableIndexDeferred.tlua, 34, 5))
+
+            __routerType?: {
+>__routerType : Symbol(__routerType, Decl(tluaMetatableIndexDeferred.tlua, 35, 43))
+
+                prefix: TPrefix;
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 36, 28))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 30, 25))
+
+                routes: infer TRoutes;
+>routes : Symbol(routes, Decl(tluaMetatableIndexDeferred.tlua, 37, 32))
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 38, 29))
+
+            };
+        }
+            ? {
+                [TName in keyof TRoutes]:
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 42, 17))
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 38, 29))
+
+                    TRoutes[TName] extends
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 38, 29))
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 42, 17))
+
+                        ReproProcedure<unknown, unknown, TRealm>
+>ReproProcedure : Symbol(ReproProcedure, Decl(tluaMetatableIndexDeferred.tlua, 4, 37))
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 31, 27))
+
+                            ? TName
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 42, 17))
+
+                            : never;
+            }[keyof TRoutes]
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 38, 29))
+
+            : never;
+}[keyof ReproModules];
+>ReproModules : Symbol(ReproModules, Decl(tluaMetatableIndexDeferred.tlua, 17, 1))
+
+type ReproProcedureAt<
+>ReproProcedureAt : Symbol(ReproProcedureAt, Decl(tluaMetatableIndexDeferred.tlua, 49, 22))
+
+    TPrefix extends string,
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 51, 22))
+
+    TRealm extends ReproRealm,
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 52, 27))
+>ReproRealm : Symbol(ReproRealm, Decl(tluaMetatableIndexDeferred.tlua, 0, 0))
+
+    TName
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 53, 30))
+
+> = {
+    [TModuleName in keyof ReproModules]:
+>TModuleName : Symbol(TModuleName, Decl(tluaMetatableIndexDeferred.tlua, 56, 5))
+>ReproModules : Symbol(ReproModules, Decl(tluaMetatableIndexDeferred.tlua, 17, 1))
+
+        ReproModules[TModuleName] extends {
+>ReproModules : Symbol(ReproModules, Decl(tluaMetatableIndexDeferred.tlua, 17, 1))
+>TModuleName : Symbol(TModuleName, Decl(tluaMetatableIndexDeferred.tlua, 56, 5))
+
+            __routerType?: {
+>__routerType : Symbol(__routerType, Decl(tluaMetatableIndexDeferred.tlua, 57, 43))
+
+                prefix: TPrefix;
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 58, 28))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 51, 22))
+
+                routes: infer TRoutes;
+>routes : Symbol(routes, Decl(tluaMetatableIndexDeferred.tlua, 59, 32))
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 60, 29))
+
+            };
+        }
+            ? TName extends keyof TRoutes
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 53, 30))
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 60, 29))
+
+                ? TRoutes[TName] extends
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 60, 29))
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 53, 30))
+
+                    ReproProcedure<unknown, unknown, TRealm>
+>ReproProcedure : Symbol(ReproProcedure, Decl(tluaMetatableIndexDeferred.tlua, 4, 37))
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 52, 27))
+
+                        ? TRoutes[TName]
+>TRoutes : Symbol(TRoutes, Decl(tluaMetatableIndexDeferred.tlua, 60, 29))
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 53, 30))
+
+                        : never
+                : never
+            : never;
+}[keyof ReproModules];
+>ReproModules : Symbol(ReproModules, Decl(tluaMetatableIndexDeferred.tlua, 17, 1))
+
+type ReproOutput<TProcedure> =
+>ReproOutput : Symbol(ReproOutput, Decl(tluaMetatableIndexDeferred.tlua, 70, 22))
+>TProcedure : Symbol(TProcedure, Decl(tluaMetatableIndexDeferred.tlua, 72, 17))
+
+    TProcedure extends
+>TProcedure : Symbol(TProcedure, Decl(tluaMetatableIndexDeferred.tlua, 72, 17))
+
+        ReproProcedure<unknown, infer TOutput, ReproRealm>
+>ReproProcedure : Symbol(ReproProcedure, Decl(tluaMetatableIndexDeferred.tlua, 4, 37))
+>TOutput : Symbol(TOutput, Decl(tluaMetatableIndexDeferred.tlua, 74, 37))
+>ReproRealm : Symbol(ReproRealm, Decl(tluaMetatableIndexDeferred.tlua, 0, 0))
+
+            ? TOutput
+>TOutput : Symbol(TOutput, Decl(tluaMetatableIndexDeferred.tlua, 74, 37))
+
+            : never;
+
+type ReproCaller<TProcedure> =
+>ReproCaller : Symbol(ReproCaller, Decl(tluaMetatableIndexDeferred.tlua, 76, 20))
+>TProcedure : Symbol(TProcedure, Decl(tluaMetatableIndexDeferred.tlua, 78, 17))
+
+    () => ReproOutput<TProcedure>;
+>ReproOutput : Symbol(ReproOutput, Decl(tluaMetatableIndexDeferred.tlua, 70, 22))
+>TProcedure : Symbol(TProcedure, Decl(tluaMetatableIndexDeferred.tlua, 78, 17))
+
+type ReproClient<
+>ReproClient : Symbol(ReproClient, Decl(tluaMetatableIndexDeferred.tlua, 79, 34))
+
+    TPrefix extends string,
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 81, 17))
+
+    TRealm extends ReproRealm
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 82, 27))
+>ReproRealm : Symbol(ReproRealm, Decl(tluaMetatableIndexDeferred.tlua, 0, 0))
+
+> = {
+    [TName in ReproProcedureNames<TPrefix, TRealm>]:
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 85, 5))
+>ReproProcedureNames : Symbol(ReproProcedureNames, Decl(tluaMetatableIndexDeferred.tlua, 28, 1))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 81, 17))
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 82, 27))
+
+        ReproCaller<
+>ReproCaller : Symbol(ReproCaller, Decl(tluaMetatableIndexDeferred.tlua, 76, 20))
+
+            ReproProcedureAt<TPrefix, TRealm, TName>
+>ReproProcedureAt : Symbol(ReproProcedureAt, Decl(tluaMetatableIndexDeferred.tlua, 49, 22))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 81, 17))
+>TRealm : Symbol(TRealm, Decl(tluaMetatableIndexDeferred.tlua, 82, 27))
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 85, 5))
+
+        >;
+};
+
+declare function reproBuildCaller<
+>reproBuildCaller : Symbol(reproBuildCaller, Decl(tluaMetatableIndexDeferred.tlua, 89, 2))
+
+    TPrefix extends string,
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 91, 34))
+
+    TName extends
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 92, 27))
+
+        ReproProcedureNames<TPrefix, "server"> & string
+>ReproProcedureNames : Symbol(ReproProcedureNames, Decl(tluaMetatableIndexDeferred.tlua, 28, 1))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 91, 34))
+
+>(
+    prefix: TPrefix,
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 95, 2))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 91, 34))
+
+    name: TName
+>name : Symbol(name, Decl(tluaMetatableIndexDeferred.tlua, 96, 20))
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 92, 27))
+
+): ReproClient<TPrefix, "server">[TName];
+>ReproClient : Symbol(ReproClient, Decl(tluaMetatableIndexDeferred.tlua, 79, 34))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 91, 34))
+>TName : Symbol(TName, Decl(tluaMetatableIndexDeferred.tlua, 92, 27))
+
+function reproConnect<TPrefix extends string>(
+>reproConnect : Symbol(reproConnect, Decl(tluaMetatableIndexDeferred.tlua, 98, 41))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 22))
+
+    prefix: TPrefix
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 46))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 22))
+
+): ReproClient<TPrefix, "server">
+>ReproClient : Symbol(ReproClient, Decl(tluaMetatableIndexDeferred.tlua, 79, 34))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 22))
+
+    return setmetatable({}, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+        __index = function<
+>__index : Symbol(__index, Decl(tluaMetatableIndexDeferred.tlua, 103, 29))
+
+            K extends
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 104, 27))
+
+                ReproProcedureNames<TPrefix, "server"> & string
+>ReproProcedureNames : Symbol(ReproProcedureNames, Decl(tluaMetatableIndexDeferred.tlua, 28, 1))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 22))
+
+        >(
+            _: table,
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 107, 10))
+
+            key: K
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 108, 21))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 104, 27))
+
+        ): ReproClient<TPrefix, "server">[K]
+>ReproClient : Symbol(ReproClient, Decl(tluaMetatableIndexDeferred.tlua, 79, 34))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 22))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 104, 27))
+
+            return reproBuildCaller<TPrefix, K>(prefix, key);
+>reproBuildCaller : Symbol(reproBuildCaller, Decl(tluaMetatableIndexDeferred.tlua, 89, 2))
+>TPrefix : Symbol(TPrefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 22))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 104, 27))
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 100, 46))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 108, 21))
+
+        end
+    });
+end
+
+local client = reproConnect("service");
+>client : Symbol(client, Decl(tluaMetatableIndexDeferred.tlua, 116, 5))
+>reproConnect : Symbol(reproConnect, Decl(tluaMetatableIndexDeferred.tlua, 98, 41))
+
+local result: string = client.ping();
+>result : Symbol(result, Decl(tluaMetatableIndexDeferred.tlua, 117, 5))
+>client.ping : Symbol(ping)
+>client : Symbol(client, Decl(tluaMetatableIndexDeferred.tlua, 116, 5))
+>ping : Symbol(ping)
+
+local wrong: number = client.ping();
+>wrong : Symbol(wrong, Decl(tluaMetatableIndexDeferred.tlua, 118, 5))
+>client.ping : Symbol(ping)
+>client : Symbol(client, Decl(tluaMetatableIndexDeferred.tlua, 116, 5))
+>ping : Symbol(ping)
+
+local _ = client.nope;
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 119, 5))
+>client : Symbol(client, Decl(tluaMetatableIndexDeferred.tlua, 116, 5))
+
+// The same shape with a wrong template is reported against the mapped type, not an empty one.
+type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
+>Names : Symbol(Names, Decl(tluaMetatableIndexDeferred.tlua, 119, 22))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 122, 11))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 122, 11))
+
+type Deferred<P extends string> = { [N in Names<P>]: number }
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 123, 14))
+>N : Symbol(N, Decl(tluaMetatableIndexDeferred.tlua, 123, 37))
+>Names : Symbol(Names, Decl(tluaMetatableIndexDeferred.tlua, 119, 22))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 123, 14))
+
+declare callerFor: <K extends string>(name: K) => any
+>callerFor : Symbol(callerFor, Decl(tluaMetatableIndexDeferred.tlua, 124, 7))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 124, 20))
+>name : Symbol(name, Decl(tluaMetatableIndexDeferred.tlua, 124, 38))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 124, 20))
+
+function wrongTemplate<P extends string>(prefix: P): Deferred<P>
+>wrongTemplate : Symbol(wrongTemplate, Decl(tluaMetatableIndexDeferred.tlua, 124, 53))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 125, 23))
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 125, 41))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 125, 23))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 125, 23))
+
+    return setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): string return "" end })
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexDeferred.tlua, 126, 29))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 126, 49))
+>Names : Symbol(Names, Decl(tluaMetatableIndexDeferred.tlua, 119, 22))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 125, 23))
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 126, 78))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 126, 87))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 126, 49))
+
+end
+
+// Only the plain handler shape defers. Each of these keeps the eager expansion, which has no
+// unit keys here, so the declared type still reports -- nothing degrades silently.
+function noAnnotation<P extends string>(prefix: P): Deferred<P>
+>noAnnotation : Symbol(noAnnotation, Decl(tluaMetatableIndexDeferred.tlua, 127, 3))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 131, 22))
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 131, 40))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 131, 22))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 131, 22))
+
+    return setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K) return callerFor(key) end })
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexDeferred.tlua, 132, 29))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 132, 49))
+>Names : Symbol(Names, Decl(tluaMetatableIndexDeferred.tlua, 119, 22))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 131, 22))
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 132, 78))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 132, 87))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 132, 49))
+>callerFor : Symbol(callerFor, Decl(tluaMetatableIndexDeferred.tlua, 124, 7))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 132, 87))
+
+end
+function twoParameters<P extends string>(prefix: P): Deferred<P>
+>twoParameters : Symbol(twoParameters, Decl(tluaMetatableIndexDeferred.tlua, 133, 3))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 134, 23))
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 134, 41))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 134, 23))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 134, 23))
+
+    return setmetatable({}, { __index = function<K extends Names<P> & string, U>(_: table, key: K): Deferred<P>[K] return callerFor(key) end })
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexDeferred.tlua, 135, 29))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 135, 49))
+>Names : Symbol(Names, Decl(tluaMetatableIndexDeferred.tlua, 119, 22))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 134, 23))
+>U : Symbol(U, Decl(tluaMetatableIndexDeferred.tlua, 135, 77))
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 135, 81))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 135, 90))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 135, 49))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 134, 23))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 135, 49))
+>callerFor : Symbol(callerFor, Decl(tluaMetatableIndexDeferred.tlua, 124, 7))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 135, 90))
+
+end
+declare function overloadedMt<P extends string>(): { __index: { <K extends Names<P> & string>(t: table, key: K): Deferred<P>[K]; (t: table, k: "x"): boolean } }
+>overloadedMt : Symbol(overloadedMt, Decl(tluaMetatableIndexDeferred.tlua, 136, 3))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 137, 30))
+>__index : Symbol(__index, Decl(tluaMetatableIndexDeferred.tlua, 137, 52))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 137, 65))
+>Names : Symbol(Names, Decl(tluaMetatableIndexDeferred.tlua, 119, 22))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 137, 30))
+>t : Symbol(t, Decl(tluaMetatableIndexDeferred.tlua, 137, 94))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 137, 103))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 137, 65))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 137, 30))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 137, 65))
+>t : Symbol(t, Decl(tluaMetatableIndexDeferred.tlua, 137, 130))
+>k : Symbol(k, Decl(tluaMetatableIndexDeferred.tlua, 137, 139))
+
+function overloaded<P extends string>(prefix: P): Deferred<P>
+>overloaded : Symbol(overloaded, Decl(tluaMetatableIndexDeferred.tlua, 137, 160))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 138, 20))
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 138, 38))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 138, 20))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 138, 20))
+
+    return setmetatable({}, overloadedMt<P>())
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>overloadedMt : Symbol(overloadedMt, Decl(tluaMetatableIndexDeferred.tlua, 136, 3))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 138, 20))
+
+end
+
+// A keyof constraint over a generic table defers as a homomorphic mapped type.
+function viaKeyof<T extends table>(proto: T): T
+>viaKeyof : Symbol(viaKeyof, Decl(tluaMetatableIndexDeferred.tlua, 140, 3))
+>T : Symbol(T, Decl(tluaMetatableIndexDeferred.tlua, 143, 18))
+>proto : Symbol(proto, Decl(tluaMetatableIndexDeferred.tlua, 143, 35))
+>T : Symbol(T, Decl(tluaMetatableIndexDeferred.tlua, 143, 18))
+>T : Symbol(T, Decl(tluaMetatableIndexDeferred.tlua, 143, 18))
+
+    return setmetatable({}, { __index = function<K extends keyof T>(_: table, key: K): T[K] return (callerFor as any)(key) end })
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexDeferred.tlua, 144, 29))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 144, 49))
+>T : Symbol(T, Decl(tluaMetatableIndexDeferred.tlua, 143, 18))
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 144, 68))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 144, 77))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 144, 49))
+>T : Symbol(T, Decl(tluaMetatableIndexDeferred.tlua, 143, 18))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 144, 49))
+>callerFor : Symbol(callerFor, Decl(tluaMetatableIndexDeferred.tlua, 124, 7))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 144, 77))
+
+end
+local k1: number = viaKeyof({ a = 1 }).a
+>k1 : Symbol(k1, Decl(tluaMetatableIndexDeferred.tlua, 146, 5))
+>viaKeyof({ a = 1 }).a : Symbol(a, Decl(tluaMetatableIndexDeferred.tlua, 146, 29))
+>viaKeyof : Symbol(viaKeyof, Decl(tluaMetatableIndexDeferred.tlua, 140, 3))
+>a : Symbol(a, Decl(tluaMetatableIndexDeferred.tlua, 146, 29))
+>a : Symbol(a, Decl(tluaMetatableIndexDeferred.tlua, 146, 29))
+
+local k2: string = viaKeyof({ a = 1 }).a
+>k2 : Symbol(k2, Decl(tluaMetatableIndexDeferred.tlua, 147, 5))
+>viaKeyof({ a = 1 }).a : Symbol(a, Decl(tluaMetatableIndexDeferred.tlua, 147, 29))
+>viaKeyof : Symbol(viaKeyof, Decl(tluaMetatableIndexDeferred.tlua, 140, 3))
+>a : Symbol(a, Decl(tluaMetatableIndexDeferred.tlua, 147, 29))
+>a : Symbol(a, Decl(tluaMetatableIndexDeferred.tlua, 147, 29))
+
+// Inside the body the pairing is the intersection the generic arm produces: the mapped type
+// alone when the table is empty. As with a generic __index table, getmetatable does not read
+// the pairing back there; the instantiated result at a call site resolves its members.
+function inferred<P extends string>(prefix: P)
+>inferred : Symbol(inferred, Decl(tluaMetatableIndexDeferred.tlua, 147, 40))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 152, 18))
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexDeferred.tlua, 152, 36))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 152, 18))
+
+    local t = setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K] return callerFor(key) end })
+>t : Symbol(t, Decl(tluaMetatableIndexDeferred.tlua, 153, 9))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexDeferred.tlua, 153, 32))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 153, 52))
+>Names : Symbol(Names, Decl(tluaMetatableIndexDeferred.tlua, 119, 22))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 152, 18))
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 153, 81))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 153, 90))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 153, 52))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexDeferred.tlua, 122, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexDeferred.tlua, 152, 18))
+>K : Symbol(K, Decl(tluaMetatableIndexDeferred.tlua, 153, 52))
+>callerFor : Symbol(callerFor, Decl(tluaMetatableIndexDeferred.tlua, 124, 7))
+>key : Symbol(key, Decl(tluaMetatableIndexDeferred.tlua, 153, 90))
+
+    local shape: number = t
+>shape : Symbol(shape, Decl(tluaMetatableIndexDeferred.tlua, 154, 9))
+>t : Symbol(t, Decl(tluaMetatableIndexDeferred.tlua, 153, 9))
+
+    return t
+>t : Symbol(t, Decl(tluaMetatableIndexDeferred.tlua, 153, 9))
+
+end
+local i1: number = inferred("svc").pong
+>i1 : Symbol(i1, Decl(tluaMetatableIndexDeferred.tlua, 157, 5))
+>inferred("svc").pong : Symbol(pong)
+>inferred : Symbol(inferred, Decl(tluaMetatableIndexDeferred.tlua, 147, 40))
+>pong : Symbol(pong)
+
+local i2: string = inferred("svc").pong
+>i2 : Symbol(i2, Decl(tluaMetatableIndexDeferred.tlua, 158, 5))
+>inferred("svc").pong : Symbol(pong)
+>inferred : Symbol(inferred, Decl(tluaMetatableIndexDeferred.tlua, 147, 40))
+>pong : Symbol(pong)
+
+local _ = inferred("svc").nope
+>_ : Symbol(_, Decl(tluaMetatableIndexDeferred.tlua, 159, 5))
+>inferred : Symbol(inferred, Decl(tluaMetatableIndexDeferred.tlua, 147, 40))
+

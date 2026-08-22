@@ -1,0 +1,401 @@
+//// [tests/cases/compiler/tluaMetatableIndexDeferred.tlua] ////
+
+=== tluaMetatableIndexDeferred.tlua ===
+// A function-form __index generic in a key whose domain is still generic where the pairing
+// forms contributes the generic mapped type it spells. The registry-derived client shape from
+// the report: the procedure names are a conditional over the prefix, unknowable in the body.
+
+type ReproRealm = "server" | "client"
+>ReproRealm : ReproRealm
+
+interface ReproProcedure<TInput, TOutput, TRealm extends ReproRealm> {
+    input?: TInput;
+>input : TInput | nil
+
+    output?: TOutput;
+>output : TOutput | nil
+
+    realm: TRealm;
+>realm : TRealm
+}
+
+type ReproRegisteredRouter<TPrefix extends string, TRoutes> = TRoutes & {
+>ReproRegisteredRouter : ReproRegisteredRouter<TPrefix, TRoutes>
+
+    __routerType?: {
+>__routerType : { prefix: TPrefix; routes: TRoutes; } | nil
+
+        prefix: TPrefix;
+>prefix : TPrefix
+
+        routes: TRoutes;
+>routes : TRoutes
+
+    };
+}
+
+interface ReproModules {
+    first: ReproRegisteredRouter<"service", {
+>first : ReproRegisteredRouter<"service", { ping: ReproProcedure<{ value: number; }, string, "server">; pushed: ReproProcedure<{}, boolean, "client">; }>
+
+        ping: ReproProcedure<{ value: number }, string, "server">;
+>ping : ReproProcedure<{ value: number; }, string, "server">
+>value : number
+
+        pushed: ReproProcedure<{}, boolean, "client">;
+>pushed : ReproProcedure<{}, boolean, "client">
+
+    }>;
+
+    second: ReproRegisteredRouter<"other", {
+>second : ReproRegisteredRouter<"other", { lookup: ReproProcedure<{ id: string; }, number, "server">; }>
+
+        lookup: ReproProcedure<{ id: string }, number, "server">;
+>lookup : ReproProcedure<{ id: string; }, number, "server">
+>id : string
+
+    }>;
+}
+
+type ReproProcedureNames<
+>ReproProcedureNames : ReproProcedureNames<TPrefix, TRealm>
+
+    TPrefix extends string,
+    TRealm extends ReproRealm
+> = {
+    [TModuleName in keyof ReproModules]:
+        ReproModules[TModuleName] extends {
+            __routerType?: {
+>__routerType : { prefix: TPrefix; routes: infer TRoutes; } | nil
+
+                prefix: TPrefix;
+>prefix : TPrefix
+
+                routes: infer TRoutes;
+>routes : TRoutes
+
+            };
+        }
+            ? {
+                [TName in keyof TRoutes]:
+                    TRoutes[TName] extends
+                        ReproProcedure<unknown, unknown, TRealm>
+                            ? TName
+                            : never;
+            }[keyof TRoutes]
+            : never;
+}[keyof ReproModules];
+
+type ReproProcedureAt<
+>ReproProcedureAt : ReproProcedureAt<TPrefix, TRealm, TName>
+
+    TPrefix extends string,
+    TRealm extends ReproRealm,
+    TName
+> = {
+    [TModuleName in keyof ReproModules]:
+        ReproModules[TModuleName] extends {
+            __routerType?: {
+>__routerType : { prefix: TPrefix; routes: infer TRoutes; } | nil
+
+                prefix: TPrefix;
+>prefix : TPrefix
+
+                routes: infer TRoutes;
+>routes : TRoutes
+
+            };
+        }
+            ? TName extends keyof TRoutes
+                ? TRoutes[TName] extends
+                    ReproProcedure<unknown, unknown, TRealm>
+                        ? TRoutes[TName]
+                        : never
+                : never
+            : never;
+}[keyof ReproModules];
+
+type ReproOutput<TProcedure> =
+>ReproOutput : ReproOutput<TProcedure>
+
+    TProcedure extends
+        ReproProcedure<unknown, infer TOutput, ReproRealm>
+            ? TOutput
+            : never;
+
+type ReproCaller<TProcedure> =
+>ReproCaller : ReproCaller<TProcedure>
+
+    () => ReproOutput<TProcedure>;
+
+type ReproClient<
+>ReproClient : ReproClient<TPrefix, TRealm>
+
+    TPrefix extends string,
+    TRealm extends ReproRealm
+> = {
+    [TName in ReproProcedureNames<TPrefix, TRealm>]:
+        ReproCaller<
+            ReproProcedureAt<TPrefix, TRealm, TName>
+        >;
+};
+
+declare function reproBuildCaller<
+>reproBuildCaller : <TPrefix extends string, TName extends ReproProcedureNames<TPrefix, "server"> & string>(prefix: TPrefix, name: TName) => ReproClient<TPrefix, "server">[TName]
+
+    TPrefix extends string,
+    TName extends
+        ReproProcedureNames<TPrefix, "server"> & string
+>(
+    prefix: TPrefix,
+>prefix : TPrefix
+
+    name: TName
+>name : TName
+
+): ReproClient<TPrefix, "server">[TName];
+
+function reproConnect<TPrefix extends string>(
+>reproConnect : <TPrefix extends string>(prefix: TPrefix) => ReproClient<TPrefix, "server">
+
+    prefix: TPrefix
+>prefix : TPrefix
+
+): ReproClient<TPrefix, "server">
+    return setmetatable({}, {
+>setmetatable({}, {        __index = function<            K extends                ReproProcedureNames<TPrefix, "server"> & string        >(            _: table,            key: K        ): ReproClient<TPrefix, "server">[K]            return reproBuildCaller<TPrefix, K>(prefix, key);        end    }) : { [K in ReproProcedureNames<TPrefix, "server"> & string]: ReproClient<TPrefix, "server">[K]; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{        __index = function<            K extends                ReproProcedureNames<TPrefix, "server"> & string        >(            _: table,            key: K        ): ReproClient<TPrefix, "server">[K]            return reproBuildCaller<TPrefix, K>(prefix, key);        end    } : { __index: <K extends ReproProcedureNames<TPrefix, "server"> & string>(_: table, key: K) => ReproClient<TPrefix, "server">[K]; }
+
+        __index = function<
+>__index : <K extends ReproProcedureNames<TPrefix, "server"> & string>(_: table, key: K) => ReproClient<TPrefix, "server">[K]
+>function<            K extends                ReproProcedureNames<TPrefix, "server"> & string        >(            _: table,            key: K        ): ReproClient<TPrefix, "server">[K]            return reproBuildCaller<TPrefix, K>(prefix, key);        end : <K extends ReproProcedureNames<TPrefix, "server"> & string>(_: table, key: K) => ReproClient<TPrefix, "server">[K]
+
+            K extends
+                ReproProcedureNames<TPrefix, "server"> & string
+        >(
+            _: table,
+>_ : table
+
+            key: K
+>key : K
+
+        ): ReproClient<TPrefix, "server">[K]
+            return reproBuildCaller<TPrefix, K>(prefix, key);
+>reproBuildCaller<TPrefix, K>(prefix, key) : ReproClient<TPrefix, "server">[K]
+>reproBuildCaller : <TPrefix_1 extends string, TName extends ReproProcedureNames<TPrefix_1, "server"> & string>(prefix: TPrefix_1, name: TName) => ReproClient<TPrefix_1, "server">[TName]
+>prefix : TPrefix
+>key : K
+
+        end
+    });
+end
+
+local client = reproConnect("service");
+>client : ReproClient<"service", "server">
+>reproConnect("service") : ReproClient<"service", "server">
+>reproConnect : <TPrefix extends string>(prefix: TPrefix) => ReproClient<TPrefix, "server">
+>"service" : "service"
+
+local result: string = client.ping();
+>result : string
+>client.ping() : string
+>client.ping : ReproCaller<ReproProcedure<{ value: number; }, string, "server">>
+>client : ReproClient<"service", "server">
+>ping : ReproCaller<ReproProcedure<{ value: number; }, string, "server">>
+
+local wrong: number = client.ping();
+>wrong : number
+>client.ping() : string
+>client.ping : ReproCaller<ReproProcedure<{ value: number; }, string, "server">>
+>client : ReproClient<"service", "server">
+>ping : ReproCaller<ReproProcedure<{ value: number; }, string, "server">>
+
+local _ = client.nope;
+>_ : any
+>client.nope : any
+>client : ReproClient<"service", "server">
+>nope : any
+
+// The same shape with a wrong template is reported against the mapped type, not an empty one.
+type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
+>Names : Names<P>
+
+type Deferred<P extends string> = { [N in Names<P>]: number }
+>Deferred : Deferred<P>
+
+declare callerFor: <K extends string>(name: K) => any
+>callerFor : <K extends string>(name: K) => any
+>name : K
+
+function wrongTemplate<P extends string>(prefix: P): Deferred<P>
+>wrongTemplate : <P extends string>(prefix: P) => Deferred<P>
+>prefix : P
+
+    return setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): string return "" end })
+>setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): string return "" end }) : { [K in Names<P> & string]: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = function<K extends Names<P> & string>(_: table, key: K): string return "" end } : { __index: <K extends Names<P> & string>(_: table, key: K) => string; }
+>__index : <K extends Names<P> & string>(_: table, key: K) => string
+>function<K extends Names<P> & string>(_: table, key: K): string return "" end : <K extends Names<P> & string>(_: table, key: K) => string
+>_ : table
+>key : K
+>"" : ""
+
+end
+
+// Only the plain handler shape defers. Each of these keeps the eager expansion, which has no
+// unit keys here, so the declared type still reports -- nothing degrades silently.
+function noAnnotation<P extends string>(prefix: P): Deferred<P>
+>noAnnotation : <P extends string>(prefix: P) => Deferred<P>
+>prefix : P
+
+    return setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K) return callerFor(key) end })
+>setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K) return callerFor(key) end }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = function<K extends Names<P> & string>(_: table, key: K) return callerFor(key) end } : { __index: <K extends Names<P> & string>(_: table, key: K) => any; }
+>__index : <K extends Names<P> & string>(_: table, key: K) => any
+>function<K extends Names<P> & string>(_: table, key: K) return callerFor(key) end : <K extends Names<P> & string>(_: table, key: K) => any
+>_ : table
+>key : K
+>callerFor(key) : any
+>callerFor : <K_1 extends string>(name: K_1) => any
+>key : K
+
+end
+function twoParameters<P extends string>(prefix: P): Deferred<P>
+>twoParameters : <P extends string>(prefix: P) => Deferred<P>
+>prefix : P
+
+    return setmetatable({}, { __index = function<K extends Names<P> & string, U>(_: table, key: K): Deferred<P>[K] return callerFor(key) end })
+>setmetatable({}, { __index = function<K extends Names<P> & string, U>(_: table, key: K): Deferred<P>[K] return callerFor(key) end }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = function<K extends Names<P> & string, U>(_: table, key: K): Deferred<P>[K] return callerFor(key) end } : { __index: <K extends Names<P> & string, U>(_: table, key: K) => Deferred<P>[K]; }
+>__index : <K extends Names<P> & string, U>(_: table, key: K) => Deferred<P>[K]
+>function<K extends Names<P> & string, U>(_: table, key: K): Deferred<P>[K] return callerFor(key) end : <K extends Names<P> & string, U>(_: table, key: K) => Deferred<P>[K]
+>_ : table
+>key : K
+>callerFor(key) : any
+>callerFor : <K_1 extends string>(name: K_1) => any
+>key : K
+
+end
+declare function overloadedMt<P extends string>(): { __index: { <K extends Names<P> & string>(t: table, key: K): Deferred<P>[K]; (t: table, k: "x"): boolean } }
+>overloadedMt : <P extends string>() => { __index: { <K extends Names<P> & string>(t: table, key: K): Deferred<P>[K]; (t: table, k: "x"): boolean; }; }
+>__index : { <K extends Names<P> & string>(t: table, key: K): Deferred<P>[K]; (t: table, k: "x"): boolean; }
+>t : table
+>key : K
+>t : table
+>k : "x"
+
+function overloaded<P extends string>(prefix: P): Deferred<P>
+>overloaded : <P extends string>(prefix: P) => Deferred<P>
+>prefix : P
+
+    return setmetatable({}, overloadedMt<P>())
+>setmetatable({}, overloadedMt<P>()) : { x: boolean; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>overloadedMt<P>() : { __index: { <K extends Names<P> & string>(t: table, key: K): Deferred<P>[K]; (t: table, k: "x"): boolean; }; }
+>overloadedMt : <P_1 extends string>() => { __index: { <K extends Names<P_1> & string>(t: table, key: K): Deferred<P_1>[K]; (t: table, k: "x"): boolean; }; }
+
+end
+
+// A keyof constraint over a generic table defers as a homomorphic mapped type.
+function viaKeyof<T extends table>(proto: T): T
+>viaKeyof : <T extends table>(proto: T) => T
+>proto : T
+
+    return setmetatable({}, { __index = function<K extends keyof T>(_: table, key: K): T[K] return (callerFor as any)(key) end })
+>setmetatable({}, { __index = function<K extends keyof T>(_: table, key: K): T[K] return (callerFor as any)(key) end }) : { [K in keyof T]: T[K]; }
+>setmetatable : <T_1 extends table>(value: T_1, metatable: LuaMetatable<NoInfer<T_1>> | nil) => T_1
+>{} : {}
+>{ __index = function<K extends keyof T>(_: table, key: K): T[K] return (callerFor as any)(key) end } : { __index: <K extends keyof T>(_: table, key: K) => T[K]; }
+>__index : <K extends keyof T>(_: table, key: K) => T[K]
+>function<K extends keyof T>(_: table, key: K): T[K] return (callerFor as any)(key) end : <K extends keyof T>(_: table, key: K) => T[K]
+>_ : table
+>key : K
+>(callerFor as any)(key) : any
+>(callerFor as any) : any
+>callerFor as any : any
+>callerFor : <K_1 extends string>(name: K_1) => any
+>key : string | number | symbol
+
+end
+local k1: number = viaKeyof({ a = 1 }).a
+>k1 : number
+>viaKeyof({ a = 1 }).a : number
+>viaKeyof({ a = 1 }) : { a: number; }
+>viaKeyof : <T extends table>(proto: T) => T
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+>a : number
+
+local k2: string = viaKeyof({ a = 1 }).a
+>k2 : string
+>viaKeyof({ a = 1 }).a : number
+>viaKeyof({ a = 1 }) : { a: number; }
+>viaKeyof : <T extends table>(proto: T) => T
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+>a : number
+
+// Inside the body the pairing is the intersection the generic arm produces: the mapped type
+// alone when the table is empty. As with a generic __index table, getmetatable does not read
+// the pairing back there; the instantiated result at a call site resolves its members.
+function inferred<P extends string>(prefix: P)
+>inferred : <P extends string>(prefix: P) => { [K in Names<P> & string]: Deferred<P>[K]; }
+>prefix : P
+
+    local t = setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K] return callerFor(key) end })
+>t : { [K in Names<P> & string]: Deferred<P>[K]; }
+>setmetatable({}, { __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K] return callerFor(key) end }) : { [K in Names<P> & string]: Deferred<P>[K]; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K] return callerFor(key) end } : { __index: <K extends Names<P> & string>(_: table, key: K) => Deferred<P>[K]; }
+>__index : <K extends Names<P> & string>(_: table, key: K) => Deferred<P>[K]
+>function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K] return callerFor(key) end : <K extends Names<P> & string>(_: table, key: K) => Deferred<P>[K]
+>_ : table
+>key : K
+>callerFor(key) : any
+>callerFor : <K_1 extends string>(name: K_1) => any
+>key : K
+
+    local shape: number = t
+>shape : number
+>t : { [K in Names<P> & string]: Deferred<P>[K]; }
+
+    return t
+>t : { [K in Names<P> & string]: Deferred<P>[K]; }
+
+end
+local i1: number = inferred("svc").pong
+>i1 : number
+>inferred("svc").pong : number
+>inferred("svc") : { ping: number; pong: number; }
+>inferred : <P extends string>(prefix: P) => { [K in Names<P> & string]: Deferred<P>[K]; }
+>"svc" : "svc"
+>pong : number
+
+local i2: string = inferred("svc").pong
+>i2 : string
+>inferred("svc").pong : number
+>inferred("svc") : { ping: number; pong: number; }
+>inferred : <P extends string>(prefix: P) => { [K in Names<P> & string]: Deferred<P>[K]; }
+>"svc" : "svc"
+>pong : number
+
+local _ = inferred("svc").nope
+>_ : any
+>inferred("svc").nope : any
+>inferred("svc") : { ping: number; pong: number; }
+>inferred : <P extends string>(prefix: P) => { [K in Names<P> & string]: Deferred<P>[K]; }
+>"svc" : "svc"
+>nope : any
+

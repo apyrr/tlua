@@ -1025,6 +1025,14 @@ func (c *Checker) getSetmetatableResultType(tableType *Type, metatableType *Type
 	// __index is declared optional, so a nil arm says only that there may be no fallback at all.
 	// What remains has to name a single fallback for the read augmentation to mean anything.
 	indexSource, indexIsFunction := c.getMetatableSource(metatableType, "__index", true /*allowOptional*/)
+	if indexSource != nil && indexIsFunction {
+		// A handler generic in a key whose domain is still generic here is the mapped type it
+		// spells, and contributes as one: it takes the generic arm below and instantiates with
+		// the enclosing type parameters.
+		if deferred := c.getLuaDeferredIndexType(indexSource); deferred != nil {
+			indexSource, indexIsFunction = deferred, false
+		}
+	}
 	if c.isGenericObjectType(tableType) || indexSource != nil && c.isGenericObjectType(indexSource) {
 		// A pairing resolves its members eagerly, so it can only hold concrete types. A generic
 		// one falls back to the intersection of table and __index, as a generic spread does:
@@ -1248,6 +1256,77 @@ func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 		c.valueSymbolLinks.Get(member).resolvedType = memberTypes[member.Name]
 	}
 	return shape
+}
+
+// getLuaDeferredIndexType returns the generic mapped type a function-form __index handler
+// spells when its key's domain is still generic where the pairing forms --
+// `function<K extends Names<P>>(_: table, k: K): Client<P>[K]` inside a body generic in P -- or
+// nil when the handler expands eagerly (getMetatableIndexShape) instead. The eager expansion
+// has no unit keys to work with until P is known, so the shape would be empty; the mapped type
+// `{ [K in Names<P>]: Client<P>[K] }` stays deferred exactly as one written by hand does: it
+// relates to another generic mapped type by constraint and template (mappedTypeRelatedTo) and
+// resolves its members once instantiated.
+//
+// The mapped type is built from the handler's own declaration rather than from parts: a
+// synthetic MappedTypeNode whose type parameter is the handler's real K declaration and whose
+// template is the handler's real return annotation. Every reader of a mapped type's declaration
+// -- constraint, modifiers, name type, template on each instantiation, the node builder -- then
+// sees the ordinary shape. What the node cannot carry itself is seeded: a symbol, since
+// instantiation keys on symbol.Declarations[0]; a parent, since alias lookup walks to it; and
+// the outer type parameters, computed from the handler so that K, the mapped type's own
+// parameter, is not among them.
+//
+// Only the plain shape is taken: one declared signature, one type parameter that is the key,
+// an explicit return annotation that is the signature's return type as the shape reads it. Any
+// other handler keeps the eager path, whose result is still checked against the declared type,
+// so nothing degrades silently.
+func (c *Checker) getLuaDeferredIndexType(indexSource *Type) *Type {
+	signatures := c.getSignaturesOfType(indexSource, SignatureKindCall)
+	if len(signatures) != 1 {
+		return nil
+	}
+	signature := signatures[0]
+	if signature.target != nil || signature.mapper != nil || len(signature.typeParameters) != 1 {
+		return nil
+	}
+	_, keyParameter := c.getLuaIndexHandlerKey(signature)
+	if keyParameter == nil {
+		return nil
+	}
+	keyDeclaration := ast.GetDeclarationOfKind(keyParameter.symbol, ast.KindTypeParameter)
+	if keyDeclaration == nil || keyDeclaration.AsTypeParameterDeclaration().Constraint == nil {
+		return nil
+	}
+	constraint := c.getConstraintOfTypeParameter(keyParameter)
+	if constraint == nil || !c.isValidIndexArgumentType(constraint) || !c.isGenericIndexType(constraint) {
+		return nil
+	}
+	declaration := signature.declaration
+	if declaration == nil || declaration.Type() == nil {
+		return nil
+	}
+	if c.getTypeFromTypeNode(declaration.Type()) != c.adjustMultiReturn(c.getReturnTypeOfSignature(signature)) {
+		// The mapped type reads the annotation raw; a multi-return annotation is not what the
+		// handler answers with.
+		return nil
+	}
+	if cached := c.luaDeferredIndexTypes[declaration]; cached != nil {
+		return cached
+	}
+	outerTypeParameters := c.getOuterTypeParameters(declaration, true /*includeSelfTypes*/)
+	if len(outerTypeParameters) == 0 {
+		return nil
+	}
+	node := c.factory.NewMappedTypeNode(nil /*readonlyToken*/, keyDeclaration, nil /*nameType*/, nil /*questionToken*/, declaration.Type(), nil /*members*/)
+	node.Loc = declaration.Loc
+	node.Parent = declaration
+	symbol := c.newSymbol(ast.SymbolFlagsTypeLiteral, ast.InternalSymbolNameType)
+	symbol.Declarations = []*ast.Node{node}
+	node.DeclarationData().Symbol = symbol
+	c.typeNodeLinks.Get(node).outerTypeParameters = outerTypeParameters
+	t := c.getTypeFromMappedTypeNode(node)
+	c.luaDeferredIndexTypes[declaration] = t
+	return t
 }
 
 // getLuaIndexHandlerKey returns the key a function-form __index signature answers for -- its

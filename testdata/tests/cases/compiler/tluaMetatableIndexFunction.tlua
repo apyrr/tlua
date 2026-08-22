@@ -87,9 +87,9 @@ declare partial: { v?: number };
 local fallsThrough = setmetatable(partial, anyMt);
 local merged: number | string = fallsThrough.v;
 
-// A key constraint that is still generic inside the body contributes nothing, as a generic
-// mapped type does: it resolves once the pairing is instantiated. The body cannot prove the
-// deferred shape, so the declared return type needs an assertion there.
+// A key constraint that is still generic inside the body makes the handler the generic mapped
+// type it spells, `{ [K in Names<P> & string]: Deferred<P>[K] }`: it relates to the declared
+// mapped type by constraint and template, and resolves its members once instantiated.
 type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
 type Deferred<P extends string> = { [N in Names<P>]: number }
 function deferred<P extends string>(prefix: P): Deferred<P>

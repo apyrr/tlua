@@ -616,6 +616,7 @@ type Checker struct {
 	resolveNameForSymbolSuggestion func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	tupleTypes                     map[CacheHashKey]*Type
 	metatableTypes                 map[MetatableTypeKey]*Type
+	luaDeferredIndexTypes          map[*ast.Node]*Type
 	luaSetmetatableFlowStack       []*ast.Node
 	luaBackwardGotoRangeCache      map[*ast.Node][]luaBackwardGotoRange
 	unionTypes                     map[CacheHashKey]*Type
@@ -885,6 +886,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.discriminatedContextualTypes = make(map[DiscriminatedContextualTypeKey]*Type)
 	c.instantiationExpressionTypes = make(map[InstantiationExpressionKey]*Type)
 	c.metatableTypes = make(map[MetatableTypeKey]*Type)
+	c.luaDeferredIndexTypes = make(map[*ast.Node]*Type)
 	c.substitutionTypes = make(map[SubstitutionTypeKey]*Type)
 	c.reverseMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.reverseHomomorphicMappedCache = make(map[ReverseMappedTypeKey]*Type)
